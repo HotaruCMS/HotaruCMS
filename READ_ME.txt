@@ -1,0 +1,1 @@
+1. Edit the hotaru_settings.php file in the root folder.
