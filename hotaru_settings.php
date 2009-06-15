@@ -7,8 +7,12 @@
 /* ****** Names ****** */
 define("sitename", 'Hotaru CMS');
 
+/* ******Paths ******* */
+define('baseurl', "http://localhost/hotarucms/");	//e.g. http://www.mysite.com/ or http://www.mysite.com/bookmarking/
+
 /* ****** Themes ***** */
 define("current_theme", "default" . "/");	// change "default for the folder name of your theme.
+define("current_admin_theme", "default" . "/");	// change "default for the folder name of your admin theme.
 
 /* ****** Database Details ****** */
 define("DB_USER", 'root');			// Add your own database details 
@@ -21,13 +25,6 @@ define("DB_HOST", 'localhost');
 /* *************************** DON'T EDIT BELOW THIS POINT **************************** */
 /* ************************************************************************************ */
 
-/* Work out the paths */
-define('baseurl', "http://" . $_SERVER["HTTP_HOST"]);
-$pos = strrpos($_SERVER["SCRIPT_NAME"], "/");
-$path = substr($_SERVER["SCRIPT_NAME"], 0, $pos);
-if ($path == "/"){$path = "";}
-define('hotarupath', $path);
-
 // define shorthand paths
 define("base", dirname(__FILE__).'/');
 define("includes", dirname(__FILE__).'/includes/');
@@ -36,6 +33,8 @@ define("functions", dirname(__FILE__).'/functions/');
 define("images", dirname(__FILE__).'/images/');
 define("plugins", dirname(__FILE__).'/plugins/');
 define("themes", dirname(__FILE__).'/themes/');
+define("admin", dirname(__FILE__).'/admin/');
+define("admin_themes", dirname(__FILE__).'/admin/themes/');
 
 // include essential libraries
 require_once(includes . 'Inspekt/Inspekt.php');			// for Input sanitation and validation

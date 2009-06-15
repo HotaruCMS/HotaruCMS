@@ -16,26 +16,27 @@ Last updated: June 6th 2009
 global $hotaru; // don't remove
 ?>
 
-<?php echo $hotaru->display_template('header.php'); ?>
+<?php echo $hotaru->display_admin_template('header.php'); ?>
 
 <div id="doc2" class="yui-t7">
 	<div id="hd" role="banner">
-		<img src="<?php echo baseurl; ?>/themes/default/images/hotaru_468x60.png"><br />
-		<ul id="navigation"><li>Top Stories</li><li>Upcoming</li><li><a href="<?php echo baseurl; ?>/admin/index.php">Admin</a></li></ul>
+		<img src="<?php echo baseurl; ?>/admin/themes/default/images/hotaru_468x60.png"><br />
+		<ul id="navigation"><li><a href="<?php echo baseurl; ?>/index.php">Top Stories</a></li><li>Upcoming</li></ul>
 	</div>
 	<div id="bd" role="main">
-		<div class="yui-gc">
+		<div class="yui-gf">
     			<div class="yui-u first">
-    				<div id="index_stories">
-					<?php echo $hotaru->display_stories(10, 'latest'); ?>
-				</div>
-	    		</div>
-    			<div class="yui-u">
     				<ul>
-    					<div id="sidebar_stories">
-						<?php echo $hotaru->display_story_links(10, 'upcoming', '<li>', '</li>'); ?>
+    					<div id="sidebar_links">
+						<?php echo $hotaru->display_admin_links(); ?>
 					</div>
 				</ul>
+	    		</div>
+    			<div class="yui-u">
+    				<div id="index_stories">
+					<h2>Hotaru Admin Control Panel</h2>
+					<p>You've found the admin section...</p>
+				</div>    				
 	    		</div>
 		</div>
 	</div>
@@ -44,4 +45,4 @@ global $hotaru; // don't remove
 	</div>
 </div>
 
-<?php echo $hotaru->display_template('footer.php'); ?>
+<?php echo $hotaru->display_admin_template('footer.php'); ?>
