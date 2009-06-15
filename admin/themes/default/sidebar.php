@@ -2,7 +2,7 @@
 
 /* ******* ADMIN TEMPLATE *********
 Theme name: default
-Template name: footer.php
+Template name: sidebar.php
 Template author: Nick Ramsay
 Version: 0.1
 Last updated: June 15th 2009
@@ -15,5 +15,5 @@ Last updated: June 15th 2009
 global $hotaru; // don't remove
 ?>
 
-</body>
-</html>
+<li><a href="<?php echo baseurl; ?>admin/index.php">Admin Home</a></li>
+<li><a href="<?php echo baseurl; ?>admin/plugins.php">Plugin Management</a></li>

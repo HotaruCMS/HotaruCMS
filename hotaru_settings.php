@@ -20,6 +20,8 @@ define("DB_PASSWORD", '');			// *** DATABASES NOT USED YET 6/15/2009 ***
 define("DB_NAME", 'hotaru');
 define("DB_HOST", 'localhost');
 
+define("db_prefix", 'hotaru_');			// Better leave this for now
+
 
 /* ************************************************************************************ */
 /* *************************** DON'T EDIT BELOW THIS POINT **************************** */

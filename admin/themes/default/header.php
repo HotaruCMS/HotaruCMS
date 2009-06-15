@@ -1,3 +1,20 @@
+<?php 
+
+/* ******* ADMIN TEMPLATE *********
+Theme name: default
+Template name: header.php
+Template author: Nick Ramsay
+Version: 0.1
+Last updated: June 15th 2009
+***************************** */
+
+/* ******* USAGE ************
+
+***************************** */
+
+global $hotaru; // don't remove
+?>
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
  "http://www.w3.org/TR/html4/strict.dtd">
 <html>
