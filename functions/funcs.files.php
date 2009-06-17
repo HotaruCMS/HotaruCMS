@@ -1,5 +1,6 @@
 <?php
 
+/*
 function curPageURL() {
 	$isHTTPS = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on");
 	$port = (isset($_SERVER["SERVER_PORT"]) && ((!$isHTTPS && $_SERVER["SERVER_PORT"] != "80") || ($isHTTPS && $_SERVER["SERVER_PORT"] != "443")));
@@ -15,6 +16,7 @@ function curPageName() {
 		return "404.php";
 	}
 }
+*/
 
 function getFilenames($folder, $type='full') {	// Returns an array containing all the filenames in a folder
 	$filenames = array();

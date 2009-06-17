@@ -16,4 +16,4 @@ global $hotaru; // don't remove
 ?>
 
 <li><a href="<?php echo baseurl; ?>admin/index.php">Admin Home</a></li>
-<li><a href="<?php echo baseurl; ?>admin/plugins.php">Plugin Management</a></li>
+<li><a href="<?php echo baseurl; ?>admin/index.php?page=plugins">Plugin Management</a></li>

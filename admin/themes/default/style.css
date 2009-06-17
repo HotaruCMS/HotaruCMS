@@ -62,3 +62,51 @@ h1, p {
 	-moz-border-radius: 0.5em;
 	-webkit-border-radius: 0.5em;
 }
+
+/* Easy Widgets for Plugin Management */
+
+td.widget-column {
+	width: 25em;
+	vertical-align: top;
+	-moz-border-radius: 0.5em;
+	-webkit-border-radius: 0.5em;
+	border: 0.1em solid #C8C8C8;
+}
+
+td.widget-column p {
+	text-align: center;
+}
+
+.widget-place {
+	margin: 0;
+	height: auto;
+	width: 25em;
+	list-style: none;
+	min-height: 5.0em;
+}
+
+.widget-placeholder {
+	margin:0 0 1.0em 1.0em;
+	width: 23em;
+	height: 8em;
+  	border: 0.1em solid #e5e5e5;
+  	background-color: #fafafa;
+}
+
+.widget {	
+	margin: 1.0em;
+	width: 23em;
+	background-color: #e5e5e5;
+	-moz-border-radius: 0.5em;
+	-webkit-border-radius: 0.5em;
+}
+
+.widget-header {
+	text-align: center;
+	font-weight: bold;
+	padding: 0.5em;
+}
+
+.widget-content {
+	padding: 0.5em;
+}

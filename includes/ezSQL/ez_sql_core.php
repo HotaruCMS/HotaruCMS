@@ -524,7 +524,7 @@
 				echo "<font face=arial size=2>No Results</font>";
 			}
 
-			echo "</blockquote></blockquote>".$this->donation()."<hr noshade color=dddddd size=1>";
+			//echo "</blockquote></blockquote>".$this->donation()."<hr noshade color=dddddd size=1>";
 
 			// Stop output buffering and capture debug HTML
 			$html = ob_get_contents();
@@ -552,7 +552,10 @@
 		 * @param mixed $args,... If additional parameters, they will be set inserted into the query.
 		 * @return null|string Sanitized query string
 		 */
-		 
+		function escape_by_ref(&$s) {
+			$s = $this->escape($s);
+		}
+		
 		function prepare($args=null) {
 			if ( is_null( $args ) )
 				return;

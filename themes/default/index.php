@@ -8,7 +8,7 @@ Last updated: June 6th 2009
 ***************************** */
 
 /* ******* USAGE ************
-<?php echo $hotaru->display_template('TEMPLATE_NAME.php'); ?>			// e.g. header.php
+<?php echo $hotaru->display_template('TEMPLATE_NAME'); ?>			// e.g. header
 <?php echo $hotaru->display_stories(10, 'latest'); ?>				// number, latest/popular
 <?php echo $hotaru->display_story_links(10, 'upcoming', '<li>', '</li>'); ?>	// number, topstories/upcoming, before tag, after tag
 ***************************** */
@@ -16,7 +16,7 @@ Last updated: June 6th 2009
 global $hotaru; // don't remove
 ?>
 
-<?php echo $hotaru->display_template('header.php'); ?>
+<?php echo $hotaru->display_template('header'); ?>
 
 <div id="doc2" class="yui-t7">
 	<div id="hd" role="banner">
@@ -44,4 +44,4 @@ global $hotaru; // don't remove
 	</div>
 </div>
 
-<?php echo $hotaru->display_template('footer.php'); ?>
+<?php echo $hotaru->display_template('footer'); ?>

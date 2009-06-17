@@ -16,11 +16,12 @@ define("current_admin_theme", "default" . "/");	// change "default for the folde
 
 /* ****** Database Details ****** */
 define("DB_USER", 'root');			// Add your own database details 
-define("DB_PASSWORD", '');			// *** DATABASES NOT USED YET 6/15/2009 ***
+define("DB_PASSWORD", '');			
 define("DB_NAME", 'hotaru');
 define("DB_HOST", 'localhost');
 
 define("db_prefix", 'hotaru_');			// Better leave this for now
+define("db_lang", 'en');			// Better leave this for now
 
 
 /* ************************************************************************************ */
@@ -38,10 +39,16 @@ define("themes", dirname(__FILE__).'/themes/');
 define("admin", dirname(__FILE__).'/admin/');
 define("admin_themes", dirname(__FILE__).'/admin/themes/');
 
+// define database tables
+define("table_plugins", db_prefix . "plugins");
+
 // include essential libraries
 require_once(includes . 'Inspekt/Inspekt.php');			// for Input sanitation and validation
 require_once(includes . 'ezSQL/ez_sql_core.php');		// for database usage
 require_once(includes . 'ezSQL/mysql/ez_sql_mysql.php');	// for database usage
+
+// Global Inspekt SuperCage
+$cage = Inspekt::makeSuperCage();
 
 // Initialize database
 $db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);

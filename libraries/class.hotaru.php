@@ -13,6 +13,16 @@ require_once(functions . 'funcs.files.php');
 
 class Hotaru {
 	
+	var $is_home = false;
+	var $is_admin_home = false;
+	var $is_admin_plugins = false;
+	
+	function set_is_page_all_false() {
+		$this->is_home = false;
+		$this->is_admin_home = false;
+		$this->is_admin_plugins = false;
+	}
+	
 	function get_page()  {
 		$current_page = curPageName();
 		return $current_page;
@@ -33,6 +43,7 @@ class Hotaru {
 		
 		/* First tries to load the template from the user specified custom theme, 
 		   and falls back on the default theme if not found. */
+		$page = $page . '.php';
 		if(file_exists(themes . current_theme . $page)) {
 			include_once(themes . current_theme . $page);
 		} elseif(file_exists(themes . 'default/' . $page)) {
@@ -76,6 +87,7 @@ class Hotaru {
 	function display_admin_template($page)  {
 		/* First tries to load the template from the user specified custom theme, 
 		   and falls back on the default theme if not found. */
+		$page = $page . '.php';
 		if(file_exists(admin_themes . current_admin_theme . $page)) {
 			include_once(admin_themes . current_admin_theme . $page);
 		} elseif(file_exists(admin_themes . 'default/' . $page)) {

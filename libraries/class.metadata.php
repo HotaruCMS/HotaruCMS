@@ -101,7 +101,7 @@ class generic_pmd {
       }
       // file not found/readable
       else {
-      	   echo "uh-oh";
+      	   echo "uh-oh, file '" . $fn . "' not found in class.metadata.php";
          //return(NULL);
       }
    }

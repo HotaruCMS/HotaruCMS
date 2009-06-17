@@ -9,14 +9,14 @@ Last updated: June 15th 2009
 ***************************** */
 
 /* ******* USAGE ************
-<?php echo $hotaru->display_admin_template('TEMPLATE_NAME.php'); ?>		// e.g. header.php
-<?php echo $hotaru->display_admin_links(); ?>					// Admin menu
+<?php echo $hotaru->display_admin_template('TEMPLATE_NAME'); ?>		// e.g. header
+<?php echo $hotaru->display_admin_links(); ?>				// Admin menu
 ***************************** */
 
 global $hotaru; // don't remove
 ?>
 
-<?php echo $hotaru->display_admin_template('header.php'); ?>
+<?php echo $hotaru->display_admin_template('header'); ?>
 
 <div id="doc2" class="yui-t7">
 	<div id="hd" role="banner">
@@ -27,18 +27,16 @@ global $hotaru; // don't remove
 		<div class="yui-gf">
     			<div class="yui-u first">
     				<ul id="sidebar_links">
-						<?php echo $hotaru->display_admin_template('sidebar.php'); ?>
+						<?php echo $hotaru->display_admin_template('sidebar'); ?>
 				</ul>
 	    		</div>
     			<div class="yui-u">
     				<div id="index_stories">
-    					<?php if($hotaru->get_page() == 'index.php') { ?>
-						<h2>Hotaru Admin Control Panel</h2>
-						<p>You're in ADMIN INDEX.PHP</p>
-					<?php } elseif($hotaru->get_page() == 'plugins.php') { ?>
-						<h2>Hotaru Admin Control Panel</h2>
-						<p>You're in ADMIN PLUGINS.PHP</p>
-						<?php echo $hotaru->display_admin_template('plugins.php'); ?>
+     					<?php if($hotaru->is_admin_home) { ?>
+						<h2>Hotaru Admin Control Panel &raquo; Admin Home</h2>
+					<?php } elseif($hotaru->is_admin_plugins) { ?>
+						<h2>Hotaru Admin Control Panel &raquo; Plugin Management</h2>
+						<?php echo $hotaru->display_admin_template('plugins'); ?>
 					<?php } ?>
 				</div>    				
 	    		</div>
@@ -49,4 +47,4 @@ global $hotaru; // don't remove
 	</div>
 </div>
 
-<?php echo $hotaru->display_admin_template('footer.php'); ?>
+<?php echo $hotaru->display_admin_template('footer'); ?>

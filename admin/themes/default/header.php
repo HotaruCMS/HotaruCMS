@@ -22,5 +22,10 @@ global $hotaru; // don't remove
    <title><?php echo sitename; ?></title>
    <link rel="stylesheet" href="<?php echo baseurl . 'includes/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
    <link rel="stylesheet" href="<?php echo baseurl . 'admin/themes/' . current_admin_theme . 'style.css'; ?>" type="text/css">
+   <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_ajax.js'; ?>"></script>
+   <script language="JavaScript" src="<?php echo baseurl . 'javascript/jQuery/jquery.min.js'; ?>"></script>
+   <script language="JavaScript" src="<?php echo baseurl . 'javascript/jQuery/jquery-ui.min.js'; ?>"></script>
+   <script language="JavaScript" src="<?php echo baseurl . 'javascript/jQuery/jquery.easywidgets.min.js'; ?>"></script>
+   <script language="JavaScript" src="<?php echo baseurl . 'javascript/jQuery/hotaru_jquery.js'; ?>"></script>
 </head>
 <body>
