@@ -21,7 +21,7 @@ global $hotaru; // don't remove
 <div id="doc2" class="yui-t7">
 	<div id="hd" role="banner">
 		<img src="<?php echo baseurl; ?>/themes/default/images/hotaru_468x60.png"><br />
-		<ul id="navigation"><li>Top Stories</li><li>Upcoming</li><li><a href="<?php echo baseurl; ?>admin/index.php">Admin</a></li></ul>
+		<ul id="navigation"><li>Top Stories</li><li>Upcoming</li><li><a href="<?php echo baseurl; ?>admin/admin_index.php">Admin</a></li></ul>
 	</div>
 	<div id="bd" role="main">
 		<div class="yui-gc">

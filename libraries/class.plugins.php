@@ -1,6 +1,6 @@
 <?php
 
-/* Two Classes: Plugins and Plugin. The fist deals with managing all plugins. The second deals with individual plugins. */
+/* Two Classes: Plugins and Plugin. The first deals with managing all plugins. The second deals with individual plugins. */
 
 // includes
 require_once('../hotaru_header.php');	

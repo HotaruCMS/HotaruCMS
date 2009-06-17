@@ -1,3 +1,9 @@
+/* ******************************************************************** 
+ *  File: /hotaru_ajax.js
+ *  Purpose: Calls functions behind the scenes for live updating without page refreshes.
+ *  Notes: ---
+ ********************************************************************** */
+
 var xmlhttp
 /*@cc_on @*/
 /*@if (@_jscript_version >= 5)
@@ -50,12 +56,22 @@ function myXMLHttpRequest ()
 var ajax = Array ();
 var returnvalue = Array ();
 
+/* ******************************************************************** 
+ *  Function: hide_show_replace
+ *  Parameters: baseurl, type, id, url, parameters, var4, var5 (see function for details)
+ *  Purpose: Used for calling a function to do something and showing the response, without reloading the page.
+ *  Notes: ---
+ ********************************************************************** */
+	 
 function hide_show_replace(baseurl, type, id, url, parameters, var4, var5)
 {
-	/* type = showhide, changetext */
-	/* id = container id to hide, show or replace */
-	/* url = where the file/function we need is*/
-	/* parameters = parameter string, e.g. "action=do&id=4" */
+	/* ******************************************************************** 	
+		type = showhide, changetext
+		id = container id to hide, show or replace
+		url = where the file/function we need is
+		parameters = parameter string, e.g. "action=do&id=4"
+	 	var 4 and 5 are extras if necessary 
+	******************************************************************** */
 	
 	if(type == "showhide") {
 		var display_state=document.getElementById(id).style.display ? '' : 'none';
@@ -93,9 +109,17 @@ function hide_show_replace(baseurl, type, id, url, parameters, var4, var5)
 }
 
 
+/* ******************************************************************** 
+ *  Function: widget_moved
+ *  Parameters: baseurl, str (string of positions returned from EasyWidgets
+ *  Purpose: Used specifically for moving plugins around in Plugin Management. 
+ *           This function calls the admin_plugins file which updates thestatus of each plugin 
+ *  Notes: The jQuery code and baseurl definition is in admin_themes' header.php
+ ********************************************************************** */
+
 function widget_moved(baseurl, str)
 {
-	url = baseurl+"admin/plugins.php";
+	url = baseurl+"admin/admin_plugins.php";
 	if (xmlhttp) {
 		target2 = document.getElementById ('ajax-loader');
 		target2.innerHTML = "<img src='" + baseurl + "images/ajax-loader-mini.gif'>";	

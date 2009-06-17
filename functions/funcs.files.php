@@ -1,23 +1,12 @@
 <?php
 
-/*
-function curPageURL() {
-	$isHTTPS = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on");
-	$port = (isset($_SERVER["SERVER_PORT"]) && ((!$isHTTPS && $_SERVER["SERVER_PORT"] != "80") || ($isHTTPS && $_SERVER["SERVER_PORT"] != "443")));
-	$port = ($port) ? ':'.$_SERVER["SERVER_PORT"] : '';
-	$url = ($isHTTPS ? 'https://' : 'http://').$_SERVER["SERVER_NAME"].$port.$_SERVER["REQUEST_URI"];
-	return $url;
-}
-
-function curPageName() {
-	if(isset($_SERVER["SCRIPT_NAME"])) {
-		return substr($_SERVER["SCRIPT_NAME"],strrpos($_SERVER["SCRIPT_NAME"],"/")+1);
-	} else {
-		return "404.php";
-	}
-}
-*/
-
+/* ******************************************************************** 
+ *  Function: getFilenames
+ *  Parameters: folder and type ('full' path or otherwise just the filename) 
+ *  Purpose: Returns all the filenames/paths in a specified folder.
+ *  Notes: ---
+ ********************************************************************** */
+	 
 function getFilenames($folder, $type='full') {	// Returns an array containing all the filenames in a folder
 	$filenames = array();
 	$handle = opendir($folder);
@@ -34,6 +23,14 @@ function getFilenames($folder, $type='full') {	// Returns an array containing al
 	return $filenames;
 }
 
+
+/* ******************************************************************** 
+ *  Function: stripAllFileExtensions
+ *  Parameters: an array of filenames/paths
+ *  Purpose: Strips extensions from all files, e.g. .php, .js, .html
+ *  Notes: ---
+ ********************************************************************** */
+ 
 function stripAllFileExtensions($fileNames) {	// Takes an array of filenames, returns them without extensions
 	$stripped = array();
 	foreach($fileNames as $fileName) {
@@ -42,6 +39,14 @@ function stripAllFileExtensions($fileNames) {	// Takes an array of filenames, re
 	return $stripped;
 }
 
+
+/* ******************************************************************** 
+ *  Function: stripFileExtension
+ *  Parameters: a single filename/path
+ *  Purpose: Strips extensions from a single file, e.g. .php, .js, .html
+ *  Notes: ---
+ ********************************************************************** */
+ 
 function stripFileExtension($fileName) {	// Takes a single filename, returns it without an extension
 	return strtok($fileName, ".");
 }

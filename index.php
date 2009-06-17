@@ -1,5 +1,11 @@
 <?php
 
+/* ******************************************************************** 
+ *  File: /index.php
+ *  Purpose: Determines which page to display, and then displays it.
+ *  Notes: ---
+ ********************************************************************** */
+	 
 // includes
 require_once('hotaru_header.php');
 require_once(libraries . 'class.hotaru.php');

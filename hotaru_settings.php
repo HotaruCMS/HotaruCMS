@@ -1,7 +1,13 @@
 <?php
 
+/* ******************************************************************** 
+ *  File: /hotaru_settings.php
+ *  Purpose: Configuration file for Hotaru CMS.
+ *  Notes: ---
+ ********************************************************************** */
+ 
 /* ************************************************************************************ */
-/* *************************** EDIT THE FOLLOWING ************************************* */
+/* *************************** EDIT THE FOLLOWING ONLY ******************************** */
 /* ************************************************************************************ */
 
 /* ****** Names ****** */
@@ -12,7 +18,7 @@ define('baseurl', "http://localhost/hotarucms/");	//e.g. http://www.mysite.com/ 
 
 /* ****** Themes ***** */
 define("current_theme", "default" . "/");	// change "default for the folder name of your theme.
-define("current_admin_theme", "default" . "/");	// change "default for the folder name of your admin theme.
+define("current_admin_theme", "admin_default" . "/");	// change "default for the folder name of your admin theme.
 
 /* ****** Database Details ****** */
 define("DB_USER", 'root');			// Add your own database details 
@@ -29,27 +35,17 @@ define("db_lang", 'en');			// Better leave this for now
 /* ************************************************************************************ */
 
 // define shorthand paths
-define("base", dirname(__FILE__).'/');
+//define("base", dirname(__FILE__).'/');
 define("includes", dirname(__FILE__).'/includes/');
 define("libraries", dirname(__FILE__).'/libraries/');
 define("functions", dirname(__FILE__).'/functions/');
-define("images", dirname(__FILE__).'/images/');
+//define("images", dirname(__FILE__).'/images/');
 define("plugins", dirname(__FILE__).'/plugins/');
 define("themes", dirname(__FILE__).'/themes/');
-define("admin", dirname(__FILE__).'/admin/');
+//define("admin", dirname(__FILE__).'/admin/');
 define("admin_themes", dirname(__FILE__).'/admin/themes/');
 
 // define database tables
 define("table_plugins", db_prefix . "plugins");
 
-// include essential libraries
-require_once(includes . 'Inspekt/Inspekt.php');			// for Input sanitation and validation
-require_once(includes . 'ezSQL/ez_sql_core.php');		// for database usage
-require_once(includes . 'ezSQL/mysql/ez_sql_mysql.php');	// for database usage
-
-// Global Inspekt SuperCage
-$cage = Inspekt::makeSuperCage();
-
-// Initialize database
-$db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
 ?>
