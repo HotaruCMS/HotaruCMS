@@ -26,6 +26,28 @@ global $hotaru; // don't remove
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/jQuery/jquery.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/jQuery/jquery-ui.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/jQuery/jquery.easywidgets.min.js'; ?>"></script>
-   <script language="JavaScript" src="<?php echo baseurl . 'javascript/jQuery/hotaru_jquery.js'; ?>"></script>
+   <script>
+	var baseurl = '<?php echo baseurl; ?>';
+	
+	$(document).ready(function(){
+		$(function(){
+		
+		  // Prepare the Easy Widgets for Plugin Management
+		
+		  $.fn.EasyWidgets({
+		  
+		  callbacks : {
+		      
+			onChangePositions : function(str){
+				widget_moved(baseurl,str);
+			}
+		      
+		    }
+		
+		  });
+		
+		});
+	});
+   </script>
 </head>
 <body>
