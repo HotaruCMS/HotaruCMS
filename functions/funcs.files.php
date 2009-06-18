@@ -1,6 +1,12 @@
 <?php
 
 /* ******************************************************************** 
+ *  File: functions/funcs.files.php
+ *  Purpose: A collection of functions to deal with files.
+ *  Notes: ---
+ ********************************************************************** */
+ 
+/* ******************************************************************** 
  *  Function: getFilenames
  *  Parameters: folder and type ('full' path or otherwise just the filename) 
  *  Purpose: Returns all the filenames/paths in a specified folder.

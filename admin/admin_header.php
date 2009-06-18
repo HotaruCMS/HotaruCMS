@@ -1,7 +1,7 @@
 <?php
 
 /* ******************************************************************** 
- *  File: /admin_header.php
+ *  File: /admin/admin_header.php
  *  Purpose: Includes necessary files and sets globals.
  *  Notes: Included in all admin files.
  ********************************************************************** */

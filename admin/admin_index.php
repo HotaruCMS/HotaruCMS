@@ -1,5 +1,11 @@
 <?php
 
+/* ******************************************************************** 
+ *  File: /admin/admin_index.php
+ *  Purpose: Determines which page of Admin should be shown.
+ *  Notes: ---
+ ********************************************************************** */
+ 
 // includes
 require_once('../hotaru_header.php');
 require_once(libraries . 'class.hotaru.php');

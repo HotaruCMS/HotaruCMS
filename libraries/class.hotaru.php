@@ -1,7 +1,11 @@
 <?php
 
-/* The sp (secret project) class is used of the current environment. It contains methods that deal with pages, etc. */
-
+/* ******************************************************************** 
+ *  File: /libraries/class.hotaru.php
+ *  Purpose: The Hotaru class is used for the current environment. It contains methods that deal with pages, etc.
+ *  Notes: ---
+ ********************************************************************** */
+ 
 // includes
 if(file_exists('hotaru_header.php')) {
 	require_once('hotaru_header.php');	// assumes we are in the root directory

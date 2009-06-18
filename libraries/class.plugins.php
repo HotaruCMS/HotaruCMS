@@ -1,7 +1,11 @@
 <?php
 
-/* Two Classes: Plugins and Plugin. The first deals with managing all plugins. The second deals with individual plugins. */
-
+/* ******************************************************************** 
+ *  File: /libraries/class.plugins.php
+ *  Purpose: Two Classes: Plugins and Plugin. The first deals with managing all plugins. The second deals with individual plugins.
+ *  Notes: Plugins extends the generic_pmd class which is a 3rd party script called "Generic PHP Config"
+ ********************************************************************** */
+ 
 // includes
 require_once('../hotaru_header.php');	
 require_once(libraries . 'class.metadata.php');	// This is the generic_pmd class that reads post metadata from the top of a plugin file.

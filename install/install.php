@@ -1,5 +1,11 @@
 <?php
 
+/* ******************************************************************** 
+ *  File: install/install.php
+ *  Purpose: Steps through the set-up process, creating database tables and registering the Admin user.
+ *  Notes: ---
+ ********************************************************************** */
+ 
 // includes
 require_once('../hotaru_header.php');
 if(file_exists(languages . 'install/install_' . strtolower(sitelanguage) . '.php')) {
@@ -18,7 +24,7 @@ switch ($step) {
 		database_setup();		// DB name, user, password, prefix...
 		break;
 	case 3:
-		database_creation();	// Creates the database tables
+		database_creation();		// Creates the database tables
 		break;
 	case 4:
 		hotaru_settings();		// Names, paths, etc.
@@ -35,6 +41,14 @@ switch ($step) {
 }
 
 exit;
+
+
+/* ******************************************************************** 
+ *  Function: getFilenames
+ *  Parameters: None
+ *  Purpose: Returns all the filenames/paths in a specified folder.
+ *  Notes: ---
+ ********************************************************************** */
 
 function html_header() {
 	global $lang;
@@ -53,6 +67,14 @@ function html_header() {
 	return $header;
 }
 
+
+/* ******************************************************************** 
+ *  Function: getFilenames
+ *  Parameters: None
+ *  Purpose: Returns all the filenames/paths in a specified folder.
+ *  Notes: ---
+ ********************************************************************** */
+ 
 function html_footer() {
 	global $lang;
 	$footer = "<div class='clear'></div>\n"; // clear floats
@@ -65,6 +87,14 @@ function html_footer() {
 	return $footer;
 }
 
+
+/* ******************************************************************** 
+ *  Function: installation_welcome
+ *  Parameters: None
+ *  Purpose: Step 1 of installation - Welcome message
+ *  Notes: ---
+ ********************************************************************** */
+ 
 function installation_welcome() {
 	global $lang;
 	echo html_header();
@@ -74,6 +104,14 @@ function installation_welcome() {
 	echo html_footer();
 }
 
+
+/* ******************************************************************** 
+ *  Function: database_setup
+ *  Parameters: None
+ *  Purpose: Step 2 of installation - explains how to put your database info in hotaru_settings.php 
+ *  Notes: ---
+ ********************************************************************** */
+ 
 function database_setup() {
 	global $lang;
 	echo html_header();
@@ -89,6 +127,14 @@ function database_setup() {
 	echo html_footer();
 }
 
+
+/* ******************************************************************** 
+ *  Function: database_creation
+ *  Parameters: None
+ *  Purpose: Step 3 of installation - Creates database tables
+ *  Notes: ---
+ ********************************************************************** */
+ 
 function database_creation() {
 	global $db, $lang;
 	echo html_header();
@@ -106,6 +152,14 @@ function database_creation() {
 	echo html_footer();	
 }
 
+
+/* ******************************************************************** 
+ *  Function: create_table
+ *  Parameters: Name of the table to be created
+ *  Purpose: Creates a database table
+ *  Notes: Deletes the table if it already exists, then makes it again
+ ********************************************************************** */
+ 
 function create_table($table_name) {
 	global $db, $lang;	
 
@@ -140,6 +194,14 @@ function create_table($table_name) {
 	}
 }
 
+
+/* ******************************************************************** 
+ *  Function: hotaru_settings
+ *  Parameters: None
+ *  Purpose: Step 4 of installation - explains how to configure Hotaru
+ *  Notes: ---
+ ********************************************************************** */
+ 
 function hotaru_settings() {
 	global $lang;
 	echo html_header();
@@ -155,6 +217,14 @@ function hotaru_settings() {
 	echo html_footer();
 }
 
+
+/* ******************************************************************** 
+ *  Function: register_admin
+ *  Parameters: None
+ *  Purpose: Step 5 of installation - registers the site Admin.
+ *  Notes: ---
+ ********************************************************************** */
+ 
 function register_admin() {
 	global $lang;
 	echo html_header();
@@ -164,6 +234,14 @@ function register_admin() {
 	echo html_footer();
 }
 	
+	
+/* ******************************************************************** 
+ *  Function: installation_complete 
+ *  Parameters: None
+ *  Purpose: Step 6 of installation - shows completion.
+ *  Notes: ---
+ ********************************************************************** */
+ 
 function installation_complete() {
 	global $lang;
 	echo html_header();	
