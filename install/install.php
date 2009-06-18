@@ -2,7 +2,11 @@
 
 // includes
 require_once('../hotaru_header.php');
-require_once(languages . 'installation/' . strtolower(sitelanguage) . '.php');
+if(file_exists(languages . 'install/install_' . strtolower(sitelanguage) . '.php')) {
+	require_once(languages . 'install/install_' . strtolower(sitelanguage) . '.php');	// language file for admin
+} else {
+	require_once(languages . 'install/install_english.php');	// English file if specified language doesn't exist
+}
 
 $step = $cage->get->getInt('step');		// Installation steps.
 

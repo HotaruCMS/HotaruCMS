@@ -1,7 +1,7 @@
 <?php
 
 // includes
-require_once('../hotaru_settings.php');
+require_once('admin_header.php');
 require_once(libraries . 'class.plugins.php');
 global $db;
 

@@ -34,10 +34,10 @@ $lang["install_step3_success"] = "Database tables created successfully. Click \"
 /* Step 4 */
 $lang["install_step4"] = "Step 4/6: Names, Paths and Themes";
 $lang["install_step4_instructions"] = "Remember <pre>hotaru_settings.php</pre>? If you haven't already, you'll need to fill in the other details now";
-$lang["install_step4_instructions1"] = "Give your site a <i>sitename</i>, e.g \"My Fantastic Hotaru Site\".";
-$lang["install_step4_instructions2"] = "Fill in the <i>baseurl</i>, e.g. http://www.myfantastichotarusite.com/\". Don't forget the trailing slash (/)";
+$lang["install_step4_instructions1"] = "Give your site a <pre>sitename</pre>, e.g \"My Fantastic Hotaru Site\".";
+$lang["install_step4_instructions2"] = "Fill in the <pre>baseurl</pre>, e.g. http://www.myfantastichotarusite.com/. Don't forget the trailing slash (/)";
 $lang["install_step4_instructions3"] = "If you want to use a custom theme instead of the default one, change <i>current_theme</i> to match the folder name of your custom theme.";
-$lang["install_step4_instructions4"] = "Save and upload <i>hotaru_settings.php</i> to your server, then click \"Next\"...";
+$lang["install_step4_instructions4"] = "Save and upload <pre>hotaru_settings.php</pre> to your server, then click \"Next\"...";
 
 /* Step 5 */
 $lang["install_step5"] = "Step 5/6: Admin Registration";
