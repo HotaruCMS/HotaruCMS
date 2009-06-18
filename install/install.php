@@ -141,7 +141,7 @@ function database_creation() {
 	echo "<h2>" . $lang['install_step3'] . "</h2>\n";
 	
 	$skip = 0;
-	$tables = array('settings', 'plugins');
+	$tables = array('settings', 'plugins', 'pluginmeta');
 
 	foreach($tables as $table_name) {
 		create_table($table_name);
@@ -188,6 +188,19 @@ function create_table($table_name) {
 		  `plugin_version` varchar(32) NOT NULL default '0.0',
 		  PRIMARY KEY  (`plugin_id`),
 		  UNIQUE KEY `key` (`plugin_folder`)
+		) TYPE = MyISAM;";
+		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		$db->query($sql);
+	}
+	
+	if($table_name == "pluginmeta") {
+		$sql = "CREATE TABLE `" . db_prefix . $table_name . "` (
+		  `pmeta_id` int(20) NOT NULL auto_increment,
+		  `plugin_id` int(11) NOT NULL default 0,
+		  `plugin_function` varchar(128) NOT NULL default '',
+		  PRIMARY KEY  (`pmeta_id`),
+		  INDEX  (`plugin_id`),
+		  UNIQUE KEY `key` (`plugin_function`)
 		) TYPE = MyISAM;";
 		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);

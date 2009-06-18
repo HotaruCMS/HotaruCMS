@@ -7,7 +7,6 @@
  ********************************************************************** */
  
 // includes
-require_once('../hotaru_header.php');	
 require_once(libraries . 'class.metadata.php');	// This is the generic_pmd class that reads post metadata from the top of a plugin file.
 
 class Plugins extends generic_pmd {
@@ -119,12 +118,18 @@ class Plugins extends generic_pmd {
 	}
 }
 
+/* ****************************************************************************************************************** 
+   ****************************************************************************************************************** 
+   ****************************************************************************************************************** 
+   ****************************************************************************************************************** */
+
 class Plugin extends Plugins {
 	var $id = '';
 	var $enabled = 0;
 	var $name = '';
 	var $desc = '';
 	var $folder = '';
+	var $function = '';
 	var $version = 0;
 
 
@@ -140,18 +145,26 @@ class Plugin extends Plugins {
 		
 		$plugin_metadata = $this->read(plugins . $folder . "/" . $folder . ".php");
 		
-		$this->enabled = 0;	// just because it's installed doesn't mean it should be enabled.
+		$this->enabled = 1;	// Enable it at the same time we add it to the database.
 		$this->name = $plugin_metadata['name'];
 		$this->desc = $plugin_metadata['description'];
 		$this->folder = $folder;
 		$this->version = $plugin_metadata['version'];
+		$this->function = $plugin_metadata['function'];
 		
-		if(!$db->get_var($db->prepare("SELECT plugin_folder FROM " . table_plugins . " WHERE plugin_folder = %s", $this->folder))) {
-			$sql = "INSERT INTO " . table_plugins . " (plugin_enabled, plugin_name, plugin_desc, plugin_folder, plugin_version) VALUES (%d, %s, %s, %s, %s)";
+		$sql = "INSERT INTO " . table_plugins . " (plugin_enabled, plugin_name, plugin_desc, plugin_folder, plugin_version) VALUES (%d, %s, %s, %s, %s)";
+		$db->query($db->prepare($sql, $this->enabled, $this->name, $this->desc, $this->folder, $this->version));
+		
+		$this->id = $db->get_var($db->prepare("SELECT plugin_id FROM " . table_plugins . " WHERE plugin_folder = %s", $this->folder));
+		
+		if(!$db->get_var($db->prepare("SELECT plugin_id FROM " . table_pluginmeta . " WHERE plugin_id = %d", $this->id))) {
+			$sql = "INSERT INTO " . table_pluginmeta . " (plugin_id, plugin_function) VALUES (%d, %s)";
+			$db->query($db->prepare($sql, $this->id, $this->function));
 		} else {
-			$sql = "UPDATE " . table_plugins . " SET plugin_enabled = %d, plugin_name = %s, plugin_desc = %s, plugin_folder = %s, plugin_version = %s WHERE plugin_folder = %s";
+			$sql = "UPDATE " . table_pluginmeta . " SET plugin_function = %s WHERE plugin_id = %d";
+			$db->query($db->prepare($sql, $this->function));
 		}
-		$db->query($db->prepare($sql, $this->enabled, $this->name, $this->desc, $this->folder, $this->version, $this->folder));
+		
 	}
 	
 	
@@ -164,11 +177,48 @@ class Plugin extends Plugins {
 	 
 	function activate_deactivate_plugin($folder = "", $enabled = 0) {	// 0 = deactivate, 1 = activate
 		global $db;
-		if(!$db->get_var($db->prepare("SELECT plugin_folder FROM " . table_plugins . " WHERE plugin_folder = %s", $folder))) {
-			$this->install_plugin($folder);
+		$plugin_row = $db->get_row($db->prepare("SELECT plugin_folder, plugin_enabled FROM " . table_plugins . " WHERE plugin_folder = %s", $folder));
+		if(!$plugin_row) {
+			if($enabled == 1) {	// without this, the plugin would be installed and then deativated, which is dumb. Let's just not install it yet!
+				$this->install_plugin($folder);
+			}
 		} else {
-			$sql = "UPDATE " . table_plugins . " SET plugin_enabled = %d WHERE plugin_folder = %s";
-			$db->query($db->prepare($sql, $enabled, $folder));
+			if($plugin_row->plugin_enabled != $enabled) {		// only update if we're changing the enabled value.
+				$sql = "UPDATE " . table_plugins . " SET plugin_enabled = %d WHERE plugin_folder = %s";
+				$db->query($db->prepare($sql, $enabled, $folder));
+			}
+		}
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: check_actions
+	 *  Parameters: plugin main function name (matches the plugin folder name), array of optional parameters
+	 *  Purpose: Checks if such a function exists and is part of an enabled plugin, then calls the function.
+	 *  Notes: ---
+	 ********************************************************************** */
+	 
+	function check_actions($function_name = '', $parameters = array()) {
+		global $db;
+		if($function_name == '') {
+			echo "Error: Plugin function name not provided.";
+		} else {
+			$sql = "SELECT " . table_plugins . ".plugin_enabled, " . table_plugins . ".plugin_id, " . table_plugins . ".plugin_folder, " . table_pluginmeta . ".plugin_id," . table_pluginmeta . ".plugin_function FROM " . table_pluginmeta . ", " . table_plugins . " WHERE (" . table_pluginmeta . ".plugin_function = %s) AND (" . table_plugins . ".plugin_id = " . table_pluginmeta . ".plugin_id)";
+			$plugin = $db->get_row($db->prepare($sql, $function_name));
+			if($plugin->plugin_folder && $plugin->plugin_function && ($plugin->plugin_enabled == 1)) {
+				if(file_exists(plugins . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php")) {
+					include_once(plugins . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php");
+					$function_name($parameters);
+				} else {
+					echo "Error: Plugin file not found.";
+				}
+			} else {
+				if($plugin->plugin_enabled != 1) {
+					echo "Error: This plugin is not active.";
+				} else {
+					echo "Error: Plugin function not found.";
+				}
+			}	
 		}
 	}
 	

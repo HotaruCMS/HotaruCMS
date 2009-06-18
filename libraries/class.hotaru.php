@@ -94,6 +94,26 @@ class Hotaru {
 	}
 	
 	
+	/* ******************************************************************** 
+	 *  Function: get_simplepie
+	 *  Parameters: None
+	 *  Purpose: includes the SimplePie RSS file and sets the cache
+	 *  Notes: ---
+	 ********************************************************************** */
+	 		
+	function new_simplepie($feed='', $cache=true, $cache_duration=10)  {
+		include_once(includes . "SimplePie/simplepie.inc");
+		
+		$sp = new SimplePie();
+		$sp->set_feed_url($feed);
+		$sp->set_cache_location(includes . "SimplePie/cache/");
+		$sp->set_cache_duration($cache_duration);
+		$sp->enable_cache($cache);
+		$sp->handle_content_type();
+		return $sp;
+	}
+	
+	
 	
 	
 	/* **********************************************************************

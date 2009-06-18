@@ -8,9 +8,7 @@
 	 
 // includes
 require_once('hotaru_header.php');
-require_once(libraries . 'class.hotaru.php');
 
-$hotaru = new Hotaru();
 $hotaru->set_is_page_all_false();
 
 $page = $cage->get->getAlnum('page');

@@ -49,5 +49,6 @@ define("admin_themes", dirname(__FILE__).'/admin/themes/');
 // define database tables
 define("table_settings", db_prefix . "settings");
 define("table_plugins", db_prefix . "plugins");
+define("table_pluginmeta", db_prefix . "pluginmeta");
 
 ?>

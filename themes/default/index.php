@@ -13,7 +13,7 @@ Last updated: June 6th 2009
 <?php echo $hotaru->display_story_links(10, 'upcoming', '<li>', '</li>'); ?>	// number, topstories/upcoming, before tag, after tag
 ***************************** */
 
-global $hotaru; // don't remove
+global $hotaru, $plugin; // don't remove
 ?>
 
 <?php echo $hotaru->display_template('header'); ?>
@@ -33,7 +33,10 @@ global $hotaru; // don't remove
     			<div class="yui-u">
     				<ul>
     					<div id="sidebar_stories">
-						<?php echo $hotaru->display_story_links(10, 'upcoming', '<li>', '</li>'); ?>
+						<?php // echo $hotaru->display_story_links(10, 'upcoming', '<li>', '</li>'); ?>
+						
+						<?php $plugin->check_actions('hello_world'); ?>
+						<?php $plugin->check_actions('rss_sidebar'); ?>
 					</div>
 				</ul>
 	    		</div>
