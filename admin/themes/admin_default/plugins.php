@@ -14,11 +14,12 @@ Last updated: June 15th 2009
 <?php echo $lists[0]; ?>							// 0 = Active plugins, 1 = Inactive, 2 = Not installed 
 ***************************** */
 
-global $hotaru; // don't remove
-global $plugins; // don't remove;
+global $hotaru, $plugins; // don't remove
 $plugin_widgets = $plugins->get_plugins(); // don't remove
 $active_exists = false; $inactive_exists = false;
 ?>
+
+<h2>Hotaru Admin Control Panel &raquo; Plugin Management</h2>
 
 <div id="plugin_list">
 

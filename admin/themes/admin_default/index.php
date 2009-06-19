@@ -27,11 +27,10 @@ global $hotaru; // don't remove
 	    		</div>
     			<div class="yui-u">
     				<div id="index_stories">
-     					<?php if($hotaru->is_admin_home) { ?>
-						<h2>Hotaru Admin Control Panel &raquo; Admin Home</h2>
-					<?php } elseif($hotaru->is_admin_plugins) { ?>
-						<h2>Hotaru Admin Control Panel &raquo; Plugin Management</h2>
+					<?php if($hotaru->is_admin_plugins) { ?>
 						<?php echo $hotaru->display_admin_template('plugins'); ?>
+					<?php } else {?>
+						<?php echo $hotaru->display_admin_template('home'); ?>
 					<?php } ?>
 				</div>    				
 	    		</div>
