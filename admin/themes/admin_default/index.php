@@ -20,19 +20,16 @@ global $hotaru; // don't remove
 	<div id="bd" role="main">
 		<div class="yui-gf">
     			<div class="yui-u first">
-    				<ul id="sidebar">
     					<!-- SIDEBAR -->
 					<?php echo $hotaru->display_admin_template('sidebar'); ?>
-				</ul>
 	    		</div>
     			<div class="yui-u">
-    				<div id="index_stories">
+    				<!-- MAIN -->
 					<?php if($hotaru->is_admin_plugins) { ?>
 						<?php echo $hotaru->display_admin_template('plugins'); ?>
 					<?php } else {?>
 						<?php echo $hotaru->display_admin_template('home'); ?>
-					<?php } ?>
-				</div>    				
+					<?php } ?>    				
 	    		</div>
 		</div>
 	</div>

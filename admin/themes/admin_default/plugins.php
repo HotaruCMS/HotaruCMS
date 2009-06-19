@@ -19,55 +19,57 @@ $plugin_widgets = $plugins->get_plugins(); // don't remove
 $active_exists = false; $inactive_exists = false;
 ?>
 
-<h2>Hotaru Admin Control Panel &raquo; Plugin Management</h2>
-
-<div id="plugin_list">
-
-<div id="ajax-loader"></div>
-
-<table><tr>
-
-<td class="widget-column">
-<p class="plugins_column_header">Inactive plugins</p>
-	<?php foreach($plugin_widgets as $plugin_widget) { ?>
-		<?php if($plugin_widget['status'] == "inactive") { ?>
-			<?php $inactive_exists = true; ?>
-			<div class="widget-place" id="inactive">
-				<div id="<?php echo $plugin_widget['folder']; ?>"  class="widget movable">
-					<div class="widget-header">
-						<?php echo $plugin_widget['name']; ?> 
-					</div>
-					<div class="widget-content">
-						<?php echo $plugin_widget['description']; ?> <br />
-						<?php echo "Version: " . $plugin_widget['version']; ?>
-					</div>
-				</div>
-			</div>
-		<?php } ?> 
-	<?php } ?>
+<div id="main">
+	<h2>Hotaru Admin Control Panel &raquo; Plugin Management</h2>
 	
-	<?php if($inactive_exists == false) { ?><div class="widget-place" id="inactive"></div> <?php } ?>
-</td>
-
-<td class="widget-column">
-<p class="plugins_column_header">Active plugins</p>
-	<?php foreach($plugin_widgets as $plugin_widget) { ?>
-		<?php if($plugin_widget['status'] == "active") { ?>
-			<?php $active_exists = true; ?>
-			<div class="widget-place" id="active">
-				<div id="<?php echo $plugin_widget['folder']; ?>"  class="widget movable">
-					<div class="widget-header">
-						<?php echo $plugin_widget['name']; ?> 
-					</div>
-					<div class="widget-content">
-						<?php echo $plugin_widget['description']; ?> <br />
-						<?php echo "Version: " . $plugin_widget['version']; ?>
+	<div id="plugin_list">
+	
+	<div id="ajax-loader"></div>
+	
+	<table><tr>
+	
+	<td class="widget-column">
+	<p class="plugins_column_header">Inactive plugins</p>
+		<?php foreach($plugin_widgets as $plugin_widget) { ?>
+			<?php if($plugin_widget['status'] == "inactive") { ?>
+				<?php $inactive_exists = true; ?>
+				<div class="widget-place" id="inactive">
+					<div id="<?php echo $plugin_widget['folder']; ?>"  class="widget movable">
+						<div class="widget-header">
+							<?php echo $plugin_widget['name']; ?> 
+						</div>
+						<div class="widget-content">
+							<?php echo $plugin_widget['description']; ?> <br />
+							<?php echo "Version: " . $plugin_widget['version']; ?>
+						</div>
 					</div>
 				</div>
-			</div>
-		<?php } ?> 
-	<?php } ?>
-	<?php if($active_exists == false) { ?><div class="widget-place" id="active"></div> <?php } ?>
-</td>
-</tr></table>
+			<?php } ?> 
+		<?php } ?>
+		
+		<?php if($inactive_exists == false) { ?><div class="widget-place" id="inactive"></div> <?php } ?>
+	</td>
+	
+	<td class="widget-column">
+	<p class="plugins_column_header">Active plugins</p>
+		<?php foreach($plugin_widgets as $plugin_widget) { ?>
+			<?php if($plugin_widget['status'] == "active") { ?>
+				<?php $active_exists = true; ?>
+				<div class="widget-place" id="active">
+					<div id="<?php echo $plugin_widget['folder']; ?>"  class="widget movable">
+						<div class="widget-header">
+							<?php echo $plugin_widget['name']; ?> 
+						</div>
+						<div class="widget-content">
+							<?php echo $plugin_widget['description']; ?> <br />
+							<?php echo "Version: " . $plugin_widget['version']; ?>
+						</div>
+					</div>
+				</div>
+			<?php } ?> 
+		<?php } ?>
+		<?php if($active_exists == false) { ?><div class="widget-place" id="active"></div> <?php } ?>
+	</td>
+	</tr></table>
+	</div>
 </div>

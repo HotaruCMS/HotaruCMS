@@ -121,8 +121,8 @@ function widget_moved(baseurl, str)
 {
 	url = baseurl+"admin/admin_plugins.php";
 	if (xmlhttp) {
-		target2 = document.getElementById ('ajax-loader');
-		target2.innerHTML = "<img src='" + baseurl + "images/ajax-loader-mini.gif'>";	
+		target1 = document.getElementById ('ajax-loader');
+		target1.innerHTML = "<img src='" + baseurl + "images/ajax-loader-mini.gif'>";	
 		ajax['ajax-loader'] = new myXMLHttpRequest ();
 		
 		if (ajax) {
@@ -137,11 +137,11 @@ function widget_moved(baseurl, str)
 					returnvalue['ajax-loader'] = ajax['ajax-loader'].responseText;			
 					if (returnvalue['ajax-loader'].match (errormatch)) {
 						returnvalue['ajax-loader'] = returnvalue['ajax-loader'].substring (6, returnvalue['ajax-loader'].length);						
-						target2 = document.getElementById ('ajax-loader');
-						target2.innerHTML = returnvalue['ajax-loader'];						
+						target1 = document.getElementById ('ajax-loader');
+						target1.innerHTML = returnvalue['ajax-loader'];						
 					} else {
-						target2 = document.getElementById ('ajax-loader');
-						target2.innerHTML = returnvalue['ajax-loader'];
+						target1 = document.getElementById ('ajax-loader');
+						target1.innerHTML = returnvalue['ajax-loader'];
 					}
 				}
 			}

@@ -21,16 +21,17 @@ global $hotaru, $plugin; // don't remove
 	<div id="bd" role="main">
 		<div class="yui-gc">
     			<div class="yui-u first">
-    				<div id="index_stories">
-					<?php echo $hotaru->display_stories(10, 'latest'); ?>
-				</div>
+    				<!-- MAIN -->
+				<?php //if($hotaru->is_upcoming) { ?>
+					<?php // echo $hotaru->display_template('upcoming'); ?>
+				<?php //} else {?>
+					<?php echo $hotaru->display_template('home'); ?>
+				<?php //} ?>
 	    		</div>
     			<div class="yui-u">
-    				<ul>
-    					<div id="sidebar">
-    						<!-- SIDEBAR -->
-						<?php echo $hotaru->display_template('sidebar'); ?>
-					</div>
+    				<ul>	
+					<!-- SIDEBAR -->
+					<?php echo $hotaru->display_template('sidebar'); ?>
 				</ul>
 	    		</div>
 		</div>

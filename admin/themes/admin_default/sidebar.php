@@ -11,8 +11,13 @@ Version: 0.1
 
 ***************************** */
 
-global $hotaru; // don't remove
+global $hotaru, $plugin; // don't remove
 ?>
-
-<li><a href="<?php echo baseurl; ?>admin/admin_index.php">Admin Home</a></li>
-<li><a href="<?php echo baseurl; ?>admin/admin_index.php?page=plugins">Plugin Management</a></li>
+<ul id="sidebar">
+	<li><a href="<?php echo baseurl; ?>admin/admin_index.php">Admin Home</a></li>
+	<li><a href="<?php echo baseurl; ?>admin/admin_index.php?page=plugins">Plugin Management</a></li>
+	<li><a class="dropdown" href="<?php echo baseurl; ?>admin/admin_index.php?page=plugins">Plugin Settings</a></li>
+	<ul id="plugin_settings_list" style="display: none;">
+		<?php $plugin->check_actions('admin_sidebar_plugin_settings'); ?>
+	</ul>
+</ul>

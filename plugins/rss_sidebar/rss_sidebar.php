@@ -4,7 +4,7 @@
  * description: Adds links in the sidebar to the latest posts from a specified RSS feed.
  * version: 0.1
  * folder: rss_sidebar
- * hooks: rss_sidebar
+ * hooks: rss_sidebar, admin_sidebar_plugin_settings
  *
  * Usage: Add <?php $plugin->check_actions('rss_sidebar'); ?> to your theme, wherever you want to show the links.
  */
@@ -35,6 +35,10 @@ function rss_sidebar() {
     }
 	
     echo $output;
+}
+
+function admin_sidebar_plugin_settings() {
+	echo "<li>RSS Sidebar</li>";
 }
  	
 ?>

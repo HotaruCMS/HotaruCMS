@@ -207,19 +207,21 @@ class Plugin extends Plugins {
 		} else {
 			$sql = "SELECT " . table_plugins . ".plugin_enabled, " . table_plugins . ".plugin_id, " . table_plugins . ".plugin_folder, " . table_pluginmeta . ".plugin_id," . table_pluginmeta . ".plugin_hook  FROM " . table_pluginmeta . ", " . table_plugins . " WHERE (" . table_pluginmeta . ".plugin_hook = %s) AND (" . table_plugins . ".plugin_id = " . table_pluginmeta . ".plugin_id)";
 			$plugins = $db->get_results($db->prepare($sql, $hook));
-			foreach($plugins as $plugin) {			
-				if($plugin->plugin_folder && $plugin->plugin_hook && ($plugin->plugin_enabled == 1)) {
-					if(file_exists(plugins . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php")) {
-						include_once(plugins . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php");
-						$hook($parameters);
+			if($plugins) {
+				foreach($plugins as $plugin) {			
+					if($plugin->plugin_folder && $plugin->plugin_hook && ($plugin->plugin_enabled == 1)) {
+						if(file_exists(plugins . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php")) {
+							include_once(plugins . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php");
+							$hook($parameters);
+						} else {
+							echo "Error: Plugin file not found.";
+						}
 					} else {
-						echo "Error: Plugin file not found.";
-					}
-				} else {
-					if($plugin->plugin_enabled != 1) {
-						echo "Error: This plugin is not active.";
-					} else {
-						echo "Error: Plugin function not found.";
+						if($plugin->plugin_enabled != 1) {
+							echo "Error: This plugin is not active.";
+						} else {
+							echo "Error: Plugin function not found.";
+						}
 					}
 				}
 			}	

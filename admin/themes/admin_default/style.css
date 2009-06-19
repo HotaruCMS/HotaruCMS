@@ -36,7 +36,6 @@ a:hover	{
 
 #navigation {
 	padding: 0.3em 0 0 0;
-	color: #ffffff;
 }
 
 #navigation ul {
@@ -72,8 +71,12 @@ a:hover	{
 	-webkit-border-radius: 0.5em;
 }
 
-#index_stories, #sidebar {
+#main, #sidebar {
 	padding: 0.6em;
+}
+
+#sidebar ul li {
+	padding-left: 1.0em;
 }
 
 #ft {
