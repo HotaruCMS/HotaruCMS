@@ -1,11 +1,10 @@
 <?php 
 
 /* ******* ADMIN TEMPLATE *********
-Theme name: default
+Theme name: admin_default
 Template name: sidebar.php
 Template author: Nick Ramsay
 Version: 0.1
-Last updated: June 15th 2009
 ***************************** */
 
 /* ******* USAGE ************

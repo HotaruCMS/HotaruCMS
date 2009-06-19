@@ -1,10 +1,10 @@
 <?php 
 
-/* ******* TEMPLATE *********
-Template name: default
+/* ******* DEFAULT TEMPLATE *********
+Theme name: default
+Template name: index.php
 Template author: Nick Ramsay
 Version: 0.1
-Last updated: June 6th 2009
 ***************************** */
 
 /* ******* USAGE ************
@@ -15,14 +15,9 @@ Last updated: June 6th 2009
 
 global $hotaru, $plugin; // don't remove
 ?>
-
+<!-- HEADER-->
 <?php echo $hotaru->display_template('header'); ?>
 
-<div id="doc2" class="yui-t7">
-	<div id="hd" role="banner">
-		<img src="<?php echo baseurl; ?>/themes/default/images/hotaru_468x60.png"><br />
-		<ul id="navigation"><li>Top Stories</li><li>Upcoming</li><li><a href="<?php echo baseurl; ?>admin/admin_index.php">Admin</a></li></ul>
-	</div>
 	<div id="bd" role="main">
 		<div class="yui-gc">
     			<div class="yui-u first">
@@ -32,11 +27,9 @@ global $hotaru, $plugin; // don't remove
 	    		</div>
     			<div class="yui-u">
     				<ul>
-    					<div id="sidebar_stories">
-						<?php // echo $hotaru->display_story_links(10, 'upcoming', '<li>', '</li>'); ?>
-						
-						<?php $plugin->check_actions('hello_world'); ?>
-						<?php $plugin->check_actions('rss_sidebar'); ?>
+    					<div id="sidebar">
+    						<!-- SIDEBAR -->
+						<?php echo $hotaru->display_template('sidebar'); ?>
 					</div>
 				</ul>
 	    		</div>

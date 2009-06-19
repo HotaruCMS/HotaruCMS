@@ -1,11 +1,10 @@
 <?php 
 
 /* ******* ADMIN TEMPLATE *********
-Theme name: default
+Theme name: admin_default
 Template name: index.php
 Template author: Nick Ramsay
 Version: 0.1
-Last updated: June 15th 2009
 ***************************** */
 
 /* ******* USAGE ************
@@ -15,19 +14,15 @@ Last updated: June 15th 2009
 
 global $hotaru; // don't remove
 ?>
-
+<!-- HEADER-->
 <?php echo $hotaru->display_admin_template('header'); ?>
 
-<div id="doc2" class="yui-t7">
-	<div id="hd" role="banner">
-		<img src="<?php echo baseurl; ?>admin/themes/admin_default/images/hotaru_468x60.png"><br />
-		<ul id="navigation"><li><a href="<?php echo baseurl; ?>index.php">Top Stories</a></li><li>Upcoming</li></ul>
-	</div>
 	<div id="bd" role="main">
 		<div class="yui-gf">
     			<div class="yui-u first">
-    				<ul id="sidebar_links">
-						<?php echo $hotaru->display_admin_template('sidebar'); ?>
+    				<ul id="sidebar">
+    					<!-- SIDEBAR -->
+					<?php echo $hotaru->display_admin_template('sidebar'); ?>
 				</ul>
 	    		</div>
     			<div class="yui-u">

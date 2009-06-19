@@ -1,11 +1,10 @@
 <?php 
 
 /* ******* ADMIN TEMPLATE *********
-Theme name: default
+Theme name: admin_default
 Template name: header.php
 Template author: Nick Ramsay
 Version: 0.1
-Last updated: June 15th 2009
 ***************************** */
 
 /* ******* USAGE ************
@@ -51,3 +50,9 @@ global $hotaru; // don't remove
    </script>
 </head>
 <body>
+<div id="doc2" class="yui-t7">
+	<div id="hd" role="banner">
+		<a href="<?php echo baseurl; ?>index.php"><img src="<?php echo baseurl; ?>admin/themes/admin_default/images/hotaru_468x60.png"></a><br />
+		<!-- NAVIGATION -->
+		<?php echo $hotaru->display_admin_template('navigation'); ?>
+	</div>
