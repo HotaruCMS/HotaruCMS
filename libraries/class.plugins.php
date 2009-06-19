@@ -129,8 +129,8 @@ class Plugin extends Plugins {
 	var $name = '';
 	var $desc = '';
 	var $folder = '';
-	var $function = '';
 	var $version = 0;
+	var $hooks = array();
 
 
 	/* ******************************************************************** 
@@ -150,19 +150,21 @@ class Plugin extends Plugins {
 		$this->desc = $plugin_metadata['description'];
 		$this->folder = $folder;
 		$this->version = $plugin_metadata['version'];
-		$this->function = $plugin_metadata['function'];
-		
+		$this->hooks = explode(',', $plugin_metadata['hooks']);
+	
 		$sql = "INSERT INTO " . table_plugins . " (plugin_enabled, plugin_name, plugin_desc, plugin_folder, plugin_version) VALUES (%d, %s, %s, %s, %s)";
 		$db->query($db->prepare($sql, $this->enabled, $this->name, $this->desc, $this->folder, $this->version));
 		
 		$this->id = $db->get_var($db->prepare("SELECT plugin_id FROM " . table_plugins . " WHERE plugin_folder = %s", $this->folder));
 		
-		if(!$db->get_var($db->prepare("SELECT plugin_id FROM " . table_pluginmeta . " WHERE plugin_id = %d", $this->id))) {
-			$sql = "INSERT INTO " . table_pluginmeta . " (plugin_id, plugin_function) VALUES (%d, %s)";
-			$db->query($db->prepare($sql, $this->id, $this->function));
-		} else {
-			$sql = "UPDATE " . table_pluginmeta . " SET plugin_function = %s WHERE plugin_id = %d";
-			$db->query($db->prepare($sql, $this->function));
+		foreach($this->hooks as $hook) {
+			if(!$db->get_var($db->prepare("SELECT plugin_id FROM " . table_pluginmeta . " WHERE (plugin_id = %d) AND (plugin_hook = %s)", $this->id, $hook))) {
+				$sql = "INSERT INTO " . table_pluginmeta . " (plugin_id, plugin_hook) VALUES (%d, %s)";
+				$db->query($db->prepare($sql, $this->id, trim($hook)));
+			} else {
+				$sql = "UPDATE " . table_pluginmeta . " SET plugin_hook = %s WHERE plugin_id = %d";
+				$db->query($db->prepare($sql, trim($hook), $this->id));
+			}
 		}
 		
 	}
@@ -198,25 +200,27 @@ class Plugin extends Plugins {
 	 *  Notes: ---
 	 ********************************************************************** */
 	 
-	function check_actions($function_name = '', $parameters = array()) {
+	function check_actions($hook = '', $parameters = array()) {
 		global $db;
-		if($function_name == '') {
-			echo "Error: Plugin function name not provided.";
+		if($hook == '') {
+			echo "Error: Plugin hook name not provided.";
 		} else {
-			$sql = "SELECT " . table_plugins . ".plugin_enabled, " . table_plugins . ".plugin_id, " . table_plugins . ".plugin_folder, " . table_pluginmeta . ".plugin_id," . table_pluginmeta . ".plugin_function FROM " . table_pluginmeta . ", " . table_plugins . " WHERE (" . table_pluginmeta . ".plugin_function = %s) AND (" . table_plugins . ".plugin_id = " . table_pluginmeta . ".plugin_id)";
-			$plugin = $db->get_row($db->prepare($sql, $function_name));
-			if($plugin->plugin_folder && $plugin->plugin_function && ($plugin->plugin_enabled == 1)) {
-				if(file_exists(plugins . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php")) {
-					include_once(plugins . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php");
-					$function_name($parameters);
+			$sql = "SELECT " . table_plugins . ".plugin_enabled, " . table_plugins . ".plugin_id, " . table_plugins . ".plugin_folder, " . table_pluginmeta . ".plugin_id," . table_pluginmeta . ".plugin_hook  FROM " . table_pluginmeta . ", " . table_plugins . " WHERE (" . table_pluginmeta . ".plugin_hook = %s) AND (" . table_plugins . ".plugin_id = " . table_pluginmeta . ".plugin_id)";
+			$plugins = $db->get_results($db->prepare($sql, $hook));
+			foreach($plugins as $plugin) {			
+				if($plugin->plugin_folder && $plugin->plugin_hook && ($plugin->plugin_enabled == 1)) {
+					if(file_exists(plugins . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php")) {
+						include_once(plugins . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php");
+						$hook($parameters);
+					} else {
+						echo "Error: Plugin file not found.";
+					}
 				} else {
-					echo "Error: Plugin file not found.";
-				}
-			} else {
-				if($plugin->plugin_enabled != 1) {
-					echo "Error: This plugin is not active.";
-				} else {
-					echo "Error: Plugin function not found.";
+					if($plugin->plugin_enabled != 1) {
+						echo "Error: This plugin is not active.";
+					} else {
+						echo "Error: Plugin function not found.";
+					}
 				}
 			}	
 		}

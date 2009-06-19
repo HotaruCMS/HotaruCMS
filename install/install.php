@@ -197,10 +197,9 @@ function create_table($table_name) {
 		$sql = "CREATE TABLE `" . db_prefix . $table_name . "` (
 		  `pmeta_id` int(20) NOT NULL auto_increment,
 		  `plugin_id` int(11) NOT NULL default 0,
-		  `plugin_function` varchar(128) NOT NULL default '',
+		  `plugin_hook` varchar(128) NOT NULL default '',
 		  PRIMARY KEY  (`pmeta_id`),
-		  INDEX  (`plugin_id`),
-		  UNIQUE KEY `key` (`plugin_function`)
+		  INDEX  (`plugin_id`)
 		) TYPE = MyISAM;";
 		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);

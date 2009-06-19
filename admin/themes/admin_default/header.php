@@ -25,6 +25,7 @@ global $hotaru; // don't remove
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/jQuery/jquery.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/jQuery/jquery-ui.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/jQuery/jquery.easywidgets.min.js'; ?>"></script>
+   <link rel="shortcut icon" href="<?php echo baseurl; ?>favicon.ico">
    <script>
 	var baseurl = '<?php echo baseurl; ?>';
 	
