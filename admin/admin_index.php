@@ -8,17 +8,20 @@
  
 // includes
 require_once('../hotaru_header.php');
-require_once(libraries . 'class.hotaru.php');
-
-$hotaru = new Hotaru();
+global $hotaru, $plugin;
+ 
 $hotaru->set_is_page_all_false();
 
-$page = $cage->get->getAlnum('page');
+$page = $cage->get->getRaw('page');
 switch ($page) {
 	case "plugins":
 		$hotaru->is_admin_plugins = true;
-		require_once(libraries . 'class.plugins.php');
-		$plugins = new Plugin();
+		break;
+	case "plugin_settings":
+		$hotaru->is_admin_plugin_settings = true;
+		$plugin_folder = $cage->get->getRaw('plugin');
+		$plugin->folder = $plugin_folder;
+		$plugin->name = $plugin->plugin_name($plugin_folder);
 		break;
 	default:
 		$hotaru->is_admin_home = true;

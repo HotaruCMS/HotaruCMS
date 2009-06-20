@@ -5,7 +5,6 @@ Theme name: default
 Template name: plugins.php
 Template author: Nick Ramsay
 Version: 0.1
-Last updated: June 15th 2009
 ***************************** */
 
 /* ******* USAGE ************
@@ -14,8 +13,8 @@ Last updated: June 15th 2009
 <?php echo $lists[0]; ?>							// 0 = Active plugins, 1 = Inactive, 2 = Not installed 
 ***************************** */
 
-global $hotaru, $plugins; // don't remove
-$plugin_widgets = $plugins->get_plugins(); // don't remove
+global $hotaru, $plugin; // don't remove
+$plugin_widgets = $plugin->get_plugins(); // don't remove
 ?>
 
 <div id="main">
@@ -87,7 +86,7 @@ $plugin_widgets = $plugins->get_plugins(); // don't remove
 	</tr></table>
 	</div>
 	<div class="clear"></div>
-	<div id="plugin_management_notice" class="info_box">
+	<div id="plugin_management_notice" class="info_box gray_box" style="margin-top: 2.0em";>
 		<p class="info_header">Plugin Management Guide</p>
 		&raquo; To enable or disable plugins, drag them below "Inactive plugins" or "Active plugins".<br />
 		&raquo; Click the " + " icon to expand a plugin and view its details.<br />

@@ -20,6 +20,7 @@ class Hotaru {
 	var $is_home = false;
 	var $is_admin_home = false;
 	var $is_admin_plugins = false;
+	var $is_admin_plugin_settings = false;
 	
 	
 	/* ******************************************************************** 
@@ -33,6 +34,7 @@ class Hotaru {
 		$this->is_home = false;
 		$this->is_admin_home = false;
 		$this->is_admin_plugins = false;
+		$this->is_admin_plugin_settings = false;
 	}
 	
 

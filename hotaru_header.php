@@ -25,12 +25,27 @@ if(file_exists(languages . 'main/main_' . strtolower(sitelanguage) . '.php')) {
 	require_once(languages . 'main/main_english.php');	// English file if specified language doesn't exist
 }
 
+if(file_exists(languages . 'admin/admin_' . strtolower(sitelanguage) . '.php')) {
+	require_once(languages . 'admin/admin_' . strtolower(sitelanguage) . '.php');	// language file for admin
+} else {
+	require_once(languages . 'admin/admin_english.php');	// English file if specified language doesn't exist
+}
+
 // Global Inspekt SuperCage
-$cage = Inspekt::makeSuperCage();
+if(!isset($cage)) { $cage = Inspekt::makeSuperCage(); }
 
 // Initialize database
-$db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
-$hotaru = new Hotaru();
-$plugin = new Plugin();
+if(!isset($db)) { $db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST); }
+
+// Create global objects
+if(!isset($hotaru)) { $hotaru = new Hotaru(); }
+
+if(!isset($plugin)) { 
+	$plugin = new Plugin(); 
+} else {
+	if(!is_object($plugin)) {
+		$plugin = new Plugin(); 
+	}
+}
 
 ?>

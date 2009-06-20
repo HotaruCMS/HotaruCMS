@@ -95,14 +95,16 @@ a:hover	{
 	border: 0.1em solid #888;
 }
 
-.info_box {
-	margin-top: 2.0em;
-	font-size: 1.1em;
-	line-height: 1.5em;
-	padding: 0.8em;
+.gray_box {
 	background-color: #f0f0f0;
 	-moz-border-radius: 0.5em;
 	-webkit-border-radius: 0.5em;
+}
+
+.info_box {
+	font-size: 1.1em;
+	line-height: 1.5em;
+	padding: 0.8em;
 }
 
 .info_header {
@@ -112,8 +114,12 @@ a:hover	{
 	text-decoration: underline;
 }
 
+form {
+	padding: 0.8em;
+}
+
 /* *************************************
-*  Easy Widgets for Plugin Management  *
+*  Plugin Management  *
 ************************************** */
 
 #plugin_list {
@@ -190,4 +196,12 @@ a:hover.widget-expand {
 .widget_uninstall a {
 	font-weight: bold;
 	color: #ff0000;	
+}
+
+/* *************************************
+*  Plugin Settings  *
+************************************** */
+
+#plugin_settings {
+	padding: 0 0.4em 0 0.4em;
 }

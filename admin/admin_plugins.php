@@ -9,22 +9,21 @@
  ********************************************************************** */
  
 // includes
-require_once('admin_header.php');
-require_once(libraries . 'class.plugins.php');
-global $db, $lang;
+require_once('../hotaru_header.php');
+global $lang;
 
-$plugin_management = new Plugin();
+//$plugin_management = new Plugin();
 
 $widget_positions = $cage->post->getRaw('position');	// Use Raw because Alnum strips out underscores!
 //echo "Positions returned from EasyWidgets: " . $widget_position . "<br />";
 if($widget_positions) {
-	$plugin_management->update_plugin_statuses($widget_positions);	// Cycles through all plugins, enables or disables as necessary	
+	$plugin->update_plugin_statuses($widget_positions);	// Cycles through all plugins, enables or disables as necessary	
 }
 
 
 $plugin_to_uninstall = $cage->post->getRaw('plugin_folder');	// Use Raw because Alnum strips out underscores!
 if($plugin_to_uninstall) { 
-	$plugin_management->uninstall_plugin($plugin_to_uninstall);
+	$plugin->uninstall_plugin($plugin_to_uninstall);
 	echo "<br /><b>" . $lang['admin_plugins_uninstall_done'] . "</b> <br /><br />";
 	echo $lang['admin_plugins_uninstall_deleted'] . "<br /><br />";
 	echo $lang['admin_plugins_uninstall_note'] . "<br /><br />";

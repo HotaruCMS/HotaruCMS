@@ -27,6 +27,8 @@ global $hotaru; // don't remove
     				<!-- MAIN -->
 					<?php if($hotaru->is_admin_plugins) { ?>
 						<?php echo $hotaru->display_admin_template('plugins'); ?>
+					<?php } elseif($hotaru->is_admin_plugin_settings) { ?>
+						<?php echo $hotaru->display_admin_template('plugin_settings'); ?>
 					<?php } else {?>
 						<?php echo $hotaru->display_admin_template('home'); ?>
 					<?php } ?>    				

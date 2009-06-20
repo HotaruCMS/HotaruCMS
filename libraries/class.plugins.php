@@ -7,12 +7,12 @@
  ********************************************************************** */
  
 // includes
-require_once(libraries . 'class.metadata.php');	// This is the generic_pmd class that reads post metadata from the top of a plugin file.
-if(file_exists(languages . 'admin/admin_' . strtolower(sitelanguage) . '.php')) {
-	require_once(languages . 'admin/admin_' . strtolower(sitelanguage) . '.php');	// language file for admin
+if(file_exists('hotaru_header.php')) {
+	require_once('hotaru_header.php');	// assumes we are in the root directory
 } else {
-	require_once(languages . 'admin/admin_english.php');	// English file if specified language doesn't exist
+	require_once('../hotaru_header.php');	// assumes we are one level deep, e.g. in the admin directory
 }
+require_once(libraries . 'class.metadata.php');	// This is the generic_pmd class that reads post metadata from the top of a plugin file.
 
 class Plugins extends generic_pmd {
 	
@@ -142,6 +142,7 @@ class Plugin extends Plugins {
 	var $desc = '';
 	var $folder = '';
 	var $version = 0;
+	var $message = '';
 	var $hooks = array();
 
 
@@ -168,7 +169,7 @@ class Plugin extends Plugins {
 		$db->query($db->prepare($sql, $this->enabled, $this->name, $this->desc, $this->folder, $this->version));
 		
 		foreach($this->hooks as $hook) {
-			$sql = "INSERT INTO " . table_pluginmeta . " (plugin_folder, plugin_hook) VALUES (%s, %s)";
+			$sql = "INSERT INTO " . table_pluginhooks . " (plugin_folder, plugin_hook) VALUES (%s, %s)";
 			$db->query($db->prepare($sql, $this->folder, trim($hook)));
 		}
 	}
@@ -196,6 +197,36 @@ class Plugin extends Plugins {
 		}
 	}
 	
+
+	/* ******************************************************************** 
+	 *  Function: plugin_name
+	 *  Parameters: plugin folder name
+	 *  Purpose: Give a plugin's folder name, it returns tha actual name.
+	 *  Notes: ---
+	 ********************************************************************** */
+
+	function plugin_name($folder = "") {	
+		global $db;
+		$this->name = $db->get_var($db->prepare("SELECT plugin_name FROM " . table_plugins . " WHERE plugin_folder = %s", $folder));
+		return $this->name;
+	}
+		
+		
+	/* ******************************************************************** 
+	 *  Function: uninstall_plugin
+	 *  Parameters: plugin folder name
+	 *  Purpose: deletes entry in table_plugins and all its entries in table_pluginhooks
+	 *  Notes: ---
+	 ********************************************************************** */
+
+	function uninstall_plugin($folder = "") {	
+		global $db;
+			
+		$db->query($db->prepare("DELETE FROM " . table_plugins . " WHERE plugin_folder = %s", $folder));
+		$db->query($db->prepare("DELETE FROM " . table_pluginhooks . " WHERE plugin_folder = %s", $folder));
+		$db->query($db->prepare("DELETE FROM " . table_pluginsettings . " WHERE plugin_folder = %s", $folder));
+	}
+		
 	
 	/* ******************************************************************** 
 	 *  Function: check_actions
@@ -209,7 +240,7 @@ class Plugin extends Plugins {
 		if($hook == '') {
 			echo "Error: Plugin hook name not provided.";
 		} else {
-			$sql = "SELECT " . table_plugins . ".plugin_enabled, " . table_plugins . ".plugin_folder, " . table_pluginmeta . ".plugin_hook  FROM " . table_pluginmeta . ", " . table_plugins . " WHERE (" . table_pluginmeta . ".plugin_hook = %s) AND (" . table_plugins . ".plugin_folder = " . table_pluginmeta . ".plugin_folder)";
+			$sql = "SELECT " . table_plugins . ".plugin_enabled, " . table_plugins . ".plugin_folder, " . table_pluginhooks . ".plugin_hook  FROM " . table_pluginhooks . ", " . table_plugins . " WHERE (" . table_pluginhooks . ".plugin_hook = %s) AND (" . table_plugins . ".plugin_folder = " . table_pluginhooks . ".plugin_folder)";
 			$plugins = $db->get_results($db->prepare($sql, $hook));
 			if($plugins) {
 				foreach($plugins as $plugin) {			
@@ -228,23 +259,70 @@ class Plugin extends Plugins {
 						}
 					}
 				}
+			} else {
+				return false;
 			}	
+		}
+	}
+		
+	
+	/* ******************************************************************** 
+	 *  Function: plugin_settings
+	 *  Parameters: Plugin folder name and setting to retrieve
+	 *  Purpose: Returns the settings for a given plugin
+	 *  Notes: ---
+	 ********************************************************************** */
+	 
+	function plugin_settings($folder = '', $setting = '') {
+		global $db;
+		$sql = "SELECT plugin_value FROM " . table_pluginsettings . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
+		$value = $db->get_var($db->prepare($sql, $folder, $setting));
+		if($value) { return $value; } else { return false; }
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: plugin_settings_update
+	 *  Parameters: Plugin folder name, setting to update, and new value
+	 *  Purpose: Updates a plugin setting
+	 *  Notes: ---
+	 ********************************************************************** */
+	
+	function plugin_settings_update ($folder = '', $setting = '', $value = '') {
+		global $db;
+		$exists = $this->plugin_settings($folder, $setting);
+		if(!$exists) {
+			$sql = "INSERT INTO " . table_pluginsettings . " (plugin_folder, plugin_setting, plugin_value) VALUES (%s, %s, %s)";
+			$db->query($db->prepare($sql, $folder, $setting, $value));
+		} else {
+			$sql = "UPDATE " . table_pluginsettings . " SET plugin_folder = %s, plugin_setting = %s, plugin_value = %s WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
+			$db->query($db->prepare($sql, $folder, $setting, $value, $folder, $setting));
 		}
 	}
 	
 	
 	/* ******************************************************************** 
-	 *  Function: uninstall_plugin
-	 *  Parameters: plugin folder name
-	 *  Purpose: deletes entry in table_plugins and all its entries in table_pluginmeta
+	 *  Function: plugin_settings
+	 *  Parameters: Plugin folder name and form method (post or get)
+	 *  Purpose: Opens the form, forces sanitation through Inspekt in functions/funcs.forms.php
+	 *  Notes: Passes the plugin name alomg as a hidden value so we know how to get back to the plugin
+	 ********************************************************************** */
+	 
+	function plugin_form_open($folder = '', $method = 'get') {
+		echo "<form name='" . $folder . "_form' action='" . baseurl . "functions/funcs.forms.php' method='" . $method . "'>\n";
+		echo "<input type='hidden' name='plugin' value='" . $folder . "'>";
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: plugin_form_close
+	 *  Parameters: None
+	 *  Purpose: Closes the form
 	 *  Notes: ---
 	 ********************************************************************** */
-
-	function uninstall_plugin($folder = "") {	
-		global $db;
-			
-		$db->query($db->prepare("DELETE FROM " . table_plugins . " WHERE plugin_folder = %s", $folder));
-		$db->query($db->prepare("DELETE FROM " . table_pluginmeta . " WHERE plugin_folder = %s", $folder));
+	 
+	function plugin_form_close() {
+		echo "</form>\n";
 	}
 }
 

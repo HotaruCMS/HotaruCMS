@@ -141,7 +141,7 @@ function database_creation() {
 	echo "<h2>" . $lang['install_step3'] . "</h2>\n";
 	
 	$skip = 0;
-	$tables = array('settings', 'plugins', 'pluginmeta');
+	$tables = array('settings', 'plugins', 'pluginhooks', 'pluginsettings');
 
 	foreach($tables as $table_name) {
 		create_table($table_name);
@@ -193,12 +193,25 @@ function create_table($table_name) {
 		$db->query($sql);
 	}
 	
-	if($table_name == "pluginmeta") {
+	if($table_name == "pluginhooks") {
 		$sql = "CREATE TABLE `" . db_prefix . $table_name . "` (
-		  `pmeta_id` int(20) NOT NULL auto_increment,
+		  `phook_id` int(20) NOT NULL auto_increment,
 		  `plugin_folder` varchar(64) NOT NULL default '',
 		  `plugin_hook` varchar(128) NOT NULL default '',
-		  PRIMARY KEY  (`pmeta_id`),
+		  PRIMARY KEY  (`phook_id`),
+		  INDEX  (`plugin_folder`)
+		) TYPE = MyISAM;";
+		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		$db->query($sql);
+	}
+	
+	if($table_name == "pluginsettings") {
+		$sql = "CREATE TABLE `" . db_prefix . $table_name . "` (
+		  `psetting_id` int(20) NOT NULL auto_increment,
+		  `plugin_folder` varchar(64) NOT NULL default '',
+		  `plugin_setting` varchar(64) NOT NULL default '',
+		  `plugin_value` text NOT NULL default '',
+		  PRIMARY KEY  (`psetting_id`),
 		  INDEX  (`plugin_folder`)
 		) TYPE = MyISAM;";
 		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
