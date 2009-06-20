@@ -25,7 +25,7 @@ if($widget_positions) {
 $plugin_to_uninstall = $cage->post->getRaw('plugin_folder');	// Use Raw because Alnum strips out underscores!
 if($plugin_to_uninstall) { 
 	$plugin_management->uninstall_plugin($plugin_to_uninstall);
-	echo "<br /><b>Done!</b> <br /><br />This plugin has been deleted from the <i>plugins</i> and <i>pluginmeta</i> database tables (if it was there in the first place).<br /><br /><i>Note: </i>Any other database entries or tables created by the plugin have not been deleted.<br /><br />Please <a href='javascript:history.go(0)'>refresh this page</a> to update these lists.";
+	echo "<br /><b>Done!</b> <br /><br />This plugin has been deleted from the <i>plugins</i> and <i>pluginmeta</i> database tables (if it was there in the first place).<br /><br /><i>Note: </i>Any other database entries or tables created by the plugin have not been deleted.<br /><br />Please <a href='javascript:location.reload(true);' target='_self'>refresh this page</a> to update these lists.";
 }
 
 

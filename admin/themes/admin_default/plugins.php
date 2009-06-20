@@ -20,7 +20,7 @@ $plugin_widgets = $plugins->get_plugins(); // don't remove
 
 <div id="main">
 	<h2>Hotaru Admin Control Panel &raquo; Plugin Management</h2>
-	
+		
 	<div id="plugin_list">
 	
 	<div id="ajax-loader"></div>
@@ -85,5 +85,15 @@ $plugin_widgets = $plugins->get_plugins(); // don't remove
 		</div> 
 	</td>
 	</tr></table>
+	</div>
+	<div class="clear"></div>
+	<div id="plugin_management_notice" class="info_box">
+		<p class="info_header">Plugin Management Guide</p>
+		&raquo; To enable or disable plugins, drag them below "Inactive plugins" or "Active plugins".<br />
+		&raquo; Click the " + " icon to expand an icon and view its details.<br />
+		&raquo; Click "Uninstall" (when expanded) to delete a plugin from the database.<br />
+		&raquo; A red asterisk shows by a plugin's title if a newer version is available in the plugins folder.<br />
+		&raquo; Deactivate and uninstall a plugin before activating a newer version.<br />
+		&raquo; After activating a plugin, refresh the page for its settings link to appear under "Plugin Settings".<br />
 	</div>
 </div>

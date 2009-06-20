@@ -2,8 +2,12 @@
 
 html, body { 
 	min-height: 100%; height: 100%;
-	background-color: #4A7E7C;
+	background-color: #f0f0f0;
 	font-size: 0.9em;
+}
+
+.clear {
+	clear: both;
 }
 
 h1	{ 
@@ -32,10 +36,13 @@ a:hover	{
 	-moz-border-radius: 0.5em;
 	-webkit-border-radius: 0.5em;
 	margin: 1.0em 0 1.0em 0;
+	padding: 0.6em;
+	background-color: #ffffff;
+	border: 0.1em solid #888;
 }
 
 #navigation {
-	padding: 0.3em 0 0 0;
+	padding: 0.8em 0 0 0;
 }
 
 #navigation ul {
@@ -51,16 +58,16 @@ a:hover	{
 }
 
 #navigation li a {
-	color: #ffffff;
+	color: #666666;
 }
 
 #bd {
-	background-color: #F0F0F0;
+
 }
 
 .yui-gf {
 	/* container for both the wide and narrow colums. */
-	background-color: #4A7E7C;
+	background-color: #f0f0f0;
 }
 
 .yui-u, .first {
@@ -69,6 +76,7 @@ a:hover	{
 	background-color: #FCFCFC;
 	-moz-border-radius: 0.5em;
 	-webkit-border-radius: 0.5em;
+	border: 0.1em solid #888;
 }
 
 #main, #sidebar {
@@ -84,6 +92,24 @@ a:hover	{
 	background-color: #ffffff;
 	-moz-border-radius: 0.5em;
 	-webkit-border-radius: 0.5em;
+	border: 0.1em solid #888;
+}
+
+.info_box {
+	margin-top: 2.0em;
+	font-size: 1.1em;
+	line-height: 1.5em;
+	padding: 0.8em;
+	background-color: #f0f0f0;
+	-moz-border-radius: 0.5em;
+	-webkit-border-radius: 0.5em;
+}
+
+.info_header {
+	font-size: 1.0em;
+	font-weight: bold;
+	text-transform: uppercase;
+	text-decoration: underline;
 }
 
 /* *************************************

@@ -35,13 +35,20 @@ class Plugins extends generic_pmd {
 					$allplugins[$count]['description'] = $plugin_row->plugin_desc;
 					$allplugins[$count]['folder'] = $plugin_row->plugin_folder;
 					$allplugins[$count]['status'] = $this->get_plugin_status($plugin_row->plugin_folder);
+				} elseif($plugin_row && version_compare($plugin_details['version'], $plugin_row->plugin_version, '>')) {
+					//plugin exists in database, but it's an older version than the one in the folder...
+					$allplugins[$count]['name'] = $plugin_row->plugin_name . " <span style='color: red'><b>*</b></span>";
+					$allplugins[$count]['description'] = $plugin_row->plugin_desc;
+					$allplugins[$count]['folder'] = $plugin_row->plugin_folder;
+					$allplugins[$count]['status'] = $this->get_plugin_status($plugin_row->plugin_folder);
+					$allplugins[$count]['version'] = $plugin_row->plugin_version ."<br /><span style='color: red'>- Newer version available</span>. <i>Please uninstall</i>.";
 				} else {
-					// if plugin is not in database OR plugin in folder is newer...
+					// if plugin is not in database...
 					$allplugins[$count]['name'] = $plugin_details['name'];
 					$allplugins[$count]['version'] = $plugin_details['version'];
 					$allplugins[$count]['description'] = $plugin_details['description'];
 					$allplugins[$count]['folder'] = $plugin_details['folder'];
-					$allplugins[$count]['status'] = $this->get_plugin_status($plugin_details['folder']);
+					$allplugins[$count]['status'] = "inactive";
 				}
 				$count++;				
 			}	
