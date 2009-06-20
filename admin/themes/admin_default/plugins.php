@@ -16,7 +16,6 @@ Last updated: June 15th 2009
 
 global $hotaru, $plugins; // don't remove
 $plugin_widgets = $plugins->get_plugins(); // don't remove
-$active_exists = false; $inactive_exists = false;
 ?>
 
 <div id="main">
@@ -32,43 +31,58 @@ $active_exists = false; $inactive_exists = false;
 	<p class="plugins_column_header">Inactive plugins</p>
 		<?php foreach($plugin_widgets as $plugin_widget) { ?>
 			<?php if($plugin_widget['status'] == "inactive") { ?>
-				<?php $inactive_exists = true; ?>
 				<div class="widget-place" id="inactive">
 					<div id="<?php echo $plugin_widget['folder']; ?>"  class="widget movable">
 						<div class="widget-header">
+							<a href="#" class="widget-expand" style="float: right;">+</a>
 							<?php echo $plugin_widget['name']; ?> 
 						</div>
-						<div class="widget-content">
+						<div class="widget-content" style="display:none">
 							<?php echo $plugin_widget['description']; ?> <br />
-							<?php echo "Version: " . $plugin_widget['version']; ?>
+							<?php echo "Version: " . $plugin_widget['version']; ?> <br />
+							<div class="widget_uninstall"><a href="javascript://" onclick="hide_show_replace('<?php echo baseurl ?>', 'changetext', 'widget_uninstall_result-<?php echo $plugin_widget['folder'] ?>', '<?php echo baseurl ?>admin/admin_plugins.php', 'plugin_folder=<?php echo $plugin_widget['folder'] ?>');">Uninstall</a></div>
+							<div id="widget_uninstall_result-<?php echo $plugin_widget['folder'] ?>"></div>
 						</div>
 					</div>
 				</div>
 			<?php } ?> 
 		<?php } ?>
-		
-		<?php if($inactive_exists == false) { ?><div class="widget-place" id="inactive"></div> <?php } ?>
+		<!-- EMPTY PLACEHOLDER FOR WIDGET TO BE MOVED INTO IF NO OTHERS EXIST -->		
+		<div class="widget-place" id="inactive" style="min-height: 5.0em; height: 5.0em;">
+				<div id="<?php echo $plugin_widget['folder']; ?>" >
+					<div class="widget-header" style="display:none;"></div>
+					<div class="widget-content" style="display:none"></div>
+				</div>
+		</div> 
 	</td>
 	
 	<td class="widget-column">
 	<p class="plugins_column_header">Active plugins</p>
 		<?php foreach($plugin_widgets as $plugin_widget) { ?>
 			<?php if($plugin_widget['status'] == "active") { ?>
-				<?php $active_exists = true; ?>
 				<div class="widget-place" id="active">
 					<div id="<?php echo $plugin_widget['folder']; ?>"  class="widget movable">
 						<div class="widget-header">
+							<a href="#" class="widget-expand" style="float: right;">+</a>
 							<?php echo $plugin_widget['name']; ?> 
 						</div>
-						<div class="widget-content">
+						<div class="widget-content" style="display:none">
 							<?php echo $plugin_widget['description']; ?> <br />
 							<?php echo "Version: " . $plugin_widget['version']; ?>
+							<div class="widget_uninstall"><a href="javascript://" onclick="hide_show_replace('<?php echo baseurl ?>', 'changetext', 'widget_uninstall_result-<?php echo $plugin_widget['folder'] ?>', '<?php echo baseurl ?>admin/admin_plugins.php', 'plugin_folder=<?php echo $plugin_widget['folder'] ?>');">Uninstall</a></div>
+							<div id="widget_uninstall_result-<?php echo $plugin_widget['folder'] ?>"></div>
 						</div>
 					</div>
 				</div>
 			<?php } ?> 
 		<?php } ?>
-		<?php if($active_exists == false) { ?><div class="widget-place" id="active"></div> <?php } ?>
+		<!-- EMPTY PLACEHOLDER FOR WIDGET TO BE MOVED INTO IF NO OTHERS EXIST -->
+		<div class="widget-place" id="active" style="min-height: 5.0em; height: 5.0em;">
+				<div id="<?php echo $plugin_widget['folder']; ?>" >
+					<div class="widget-header" style="display:none;"></div>
+					<div class="widget-content" style="display:none"></div>
+				</div>
+		</div> 
 	</td>
 	</tr></table>
 	</div>

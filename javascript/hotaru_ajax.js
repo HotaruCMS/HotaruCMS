@@ -79,8 +79,8 @@ function hide_show_replace(baseurl, type, id, url, parameters, var4, var5)
 	}
 
 	if (xmlhttp) {
-		target2 = document.getElementById (id);
-		target2.innerHTML = "<img src='" + baseurl + "images/ajax-loader-mini.gif'>";	
+		target1 = document.getElementById (id);
+		target1.innerHTML = "<img src='" + baseurl + "images/ajax-loader-mini.gif'>";	
 		ajax[id] = new myXMLHttpRequest ();
 		
 		if (ajax) {
@@ -96,11 +96,11 @@ function hide_show_replace(baseurl, type, id, url, parameters, var4, var5)
 					returnvalue[id] = ajax[id].responseText;			
 					if (returnvalue[id].match (errormatch)) {
 						returnvalue[id] = returnvalue[id].substring (6, returnvalue[id].length);						
-						target2 = document.getElementById (id);
-						target2.innerHTML = returnvalue[id];						
+						target1 = document.getElementById (id);
+						target1.innerHTML = returnvalue[id];						
 					} else {
-						target2 = document.getElementById (id);
-						target2.innerHTML = returnvalue[id];
+						target1 = document.getElementById (id);
+						target1.innerHTML = returnvalue[id];
 					}
 				}
 			}

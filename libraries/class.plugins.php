@@ -155,18 +155,10 @@ class Plugin extends Plugins {
 		$sql = "INSERT INTO " . table_plugins . " (plugin_enabled, plugin_name, plugin_desc, plugin_folder, plugin_version) VALUES (%d, %s, %s, %s, %s)";
 		$db->query($db->prepare($sql, $this->enabled, $this->name, $this->desc, $this->folder, $this->version));
 		
-		$this->id = $db->get_var($db->prepare("SELECT plugin_id FROM " . table_plugins . " WHERE plugin_folder = %s", $this->folder));
-		
 		foreach($this->hooks as $hook) {
-			if(!$db->get_var($db->prepare("SELECT plugin_id FROM " . table_pluginmeta . " WHERE (plugin_id = %d) AND (plugin_hook = %s)", $this->id, $hook))) {
-				$sql = "INSERT INTO " . table_pluginmeta . " (plugin_id, plugin_hook) VALUES (%d, %s)";
-				$db->query($db->prepare($sql, $this->id, trim($hook)));
-			} else {
-				$sql = "UPDATE " . table_pluginmeta . " SET plugin_hook = %s WHERE plugin_id = %d";
-				$db->query($db->prepare($sql, trim($hook), $this->id));
-			}
+			$sql = "INSERT INTO " . table_pluginmeta . " (plugin_folder, plugin_hook) VALUES (%s, %s)";
+			$db->query($db->prepare($sql, $this->folder, trim($hook)));
 		}
-		
 	}
 	
 	
@@ -205,7 +197,7 @@ class Plugin extends Plugins {
 		if($hook == '') {
 			echo "Error: Plugin hook name not provided.";
 		} else {
-			$sql = "SELECT " . table_plugins . ".plugin_enabled, " . table_plugins . ".plugin_id, " . table_plugins . ".plugin_folder, " . table_pluginmeta . ".plugin_id," . table_pluginmeta . ".plugin_hook  FROM " . table_pluginmeta . ", " . table_plugins . " WHERE (" . table_pluginmeta . ".plugin_hook = %s) AND (" . table_plugins . ".plugin_id = " . table_pluginmeta . ".plugin_id)";
+			$sql = "SELECT " . table_plugins . ".plugin_enabled, " . table_plugins . ".plugin_folder, " . table_pluginmeta . ".plugin_hook  FROM " . table_pluginmeta . ", " . table_plugins . " WHERE (" . table_pluginmeta . ".plugin_hook = %s) AND (" . table_plugins . ".plugin_folder = " . table_pluginmeta . ".plugin_folder)";
 			$plugins = $db->get_results($db->prepare($sql, $hook));
 			if($plugins) {
 				foreach($plugins as $plugin) {			
@@ -228,13 +220,19 @@ class Plugin extends Plugins {
 		}
 	}
 	
-	/*
-	function remove_plugin($folder = "") {	
+	
+	/* ******************************************************************** 
+	 *  Function: uninstall_plugin
+	 *  Parameters: plugin folder name
+	 *  Purpose: deletes entry in table_plugins and all its entries in table_pluginmeta
+	 *  Notes: ---
+	 ********************************************************************** */
+
+	function uninstall_plugin($folder = "") {	
 		global $db;
 			
-		$sql = "DELETE FROM " . table_plugins . " WHERE plugin_folder = %s";
-		$db->query($db->prepare($sql, $folder));
+		$db->query($db->prepare("DELETE FROM " . table_plugins . " WHERE plugin_folder = %s", $folder));
+		$db->query($db->prepare("DELETE FROM " . table_pluginmeta . " WHERE plugin_folder = %s", $folder));
 	}
-	*/
 }
 

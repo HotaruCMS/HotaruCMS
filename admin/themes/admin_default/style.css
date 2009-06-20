@@ -114,7 +114,6 @@ td.widget-column p {
 	height: auto;
 	width: 25em;
 	list-style: none;
-	min-height: 5.0em;
 }
 
 .widget-placeholder {
@@ -136,8 +135,33 @@ td.widget-column p {
 	text-align: center;
 	font-weight: bold;
 	padding: 0.5em;
+	line-height: 1.5em;
 }
 
 .widget-content {
 	padding: 0.5em;
+}
+
+.widget-expand {
+	font-size: 1.5em;
+	font-weight: bold;
+	margin-right: 0.2em;
+}
+
+a.widget-expand {
+	color: #666666;
+}
+
+a:hover.widget-expand {
+	text-decoration: none;
+	color: #000000;
+}
+
+.widget_uninstall {
+	margin-top: 1.0em;
+}
+
+.widget_uninstall a {
+	font-weight: bold;
+	color: #ff0000;	
 }

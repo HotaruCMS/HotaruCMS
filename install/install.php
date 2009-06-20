@@ -196,10 +196,10 @@ function create_table($table_name) {
 	if($table_name == "pluginmeta") {
 		$sql = "CREATE TABLE `" . db_prefix . $table_name . "` (
 		  `pmeta_id` int(20) NOT NULL auto_increment,
-		  `plugin_id` int(11) NOT NULL default 0,
+		  `plugin_folder` varchar(64) NOT NULL default '',
 		  `plugin_hook` varchar(128) NOT NULL default '',
 		  PRIMARY KEY  (`pmeta_id`),
-		  INDEX  (`plugin_id`)
+		  INDEX  (`plugin_folder`)
 		) TYPE = MyISAM;";
 		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);
