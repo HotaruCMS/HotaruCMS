@@ -11,7 +11,7 @@
 // includes
 require_once('admin_header.php');
 require_once(libraries . 'class.plugins.php');
-global $db;
+global $db, $lang;
 
 $plugin_management = new Plugin();
 
@@ -25,7 +25,10 @@ if($widget_positions) {
 $plugin_to_uninstall = $cage->post->getRaw('plugin_folder');	// Use Raw because Alnum strips out underscores!
 if($plugin_to_uninstall) { 
 	$plugin_management->uninstall_plugin($plugin_to_uninstall);
-	echo "<br /><b>Done!</b> <br /><br />This plugin has been deleted from the <i>plugins</i> and <i>pluginmeta</i> database tables (if it was there in the first place).<br /><br /><i>Note: </i>Any other database entries or tables created by the plugin have not been deleted.<br /><br />Please <a href='javascript:location.reload(true);' target='_self'>refresh this page</a> to update these lists.";
+	echo "<br /><b>" . $lang['admin_plugins_uninstall_done'] . "</b> <br /><br />";
+	echo $lang['admin_plugins_uninstall_deleted'] . "<br /><br />";
+	echo $lang['admin_plugins_uninstall_note'] . "<br /><br />";
+	echo $lang['admin_plugins_uninstall_refresh'];
 }
 
 

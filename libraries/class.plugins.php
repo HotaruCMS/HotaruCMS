@@ -8,6 +8,11 @@
  
 // includes
 require_once(libraries . 'class.metadata.php');	// This is the generic_pmd class that reads post metadata from the top of a plugin file.
+if(file_exists(languages . 'admin/admin_' . strtolower(sitelanguage) . '.php')) {
+	require_once(languages . 'admin/admin_' . strtolower(sitelanguage) . '.php');	// language file for admin
+} else {
+	require_once(languages . 'admin/admin_english.php');	// English file if specified language doesn't exist
+}
 
 class Plugins extends generic_pmd {
 	
@@ -20,7 +25,7 @@ class Plugins extends generic_pmd {
 	 ********************************************************************** */
 	 	
 	function get_plugins() {
-		global $db;
+		global $db, $lang;
 		$plugins_array = $this->get_plugins_array();
 		$count = 0;
 		$allplugins = array();
@@ -31,24 +36,24 @@ class Plugins extends generic_pmd {
 				if($plugin_row && version_compare($plugin_details['version'], $plugin_row->plugin_version, '<=')) {
 					// if plugin in folder is older or equal to plugin in database...
 					$allplugins[$count]['name'] = $plugin_row->plugin_name;
-					$allplugins[$count]['version'] = $plugin_row->plugin_version;
 					$allplugins[$count]['description'] = $plugin_row->plugin_desc;
 					$allplugins[$count]['folder'] = $plugin_row->plugin_folder;
 					$allplugins[$count]['status'] = $this->get_plugin_status($plugin_row->plugin_folder);
+					$allplugins[$count]['version'] = $plugin_row->plugin_version;
 				} elseif($plugin_row && version_compare($plugin_details['version'], $plugin_row->plugin_version, '>')) {
 					//plugin exists in database, but it's an older version than the one in the folder...
 					$allplugins[$count]['name'] = $plugin_row->plugin_name . " <span style='color: red'><b>*</b></span>";
 					$allplugins[$count]['description'] = $plugin_row->plugin_desc;
 					$allplugins[$count]['folder'] = $plugin_row->plugin_folder;
 					$allplugins[$count]['status'] = $this->get_plugin_status($plugin_row->plugin_folder);
-					$allplugins[$count]['version'] = $plugin_row->plugin_version ."<br /><span style='color: red'>- Newer version available</span>. <i>Please uninstall</i>.";
+					$allplugins[$count]['version'] = $plugin_row->plugin_version . "<br />" . $lang['admin_plugins_class_new_version'];
 				} else {
 					// if plugin is not in database...
 					$allplugins[$count]['name'] = $plugin_details['name'];
-					$allplugins[$count]['version'] = $plugin_details['version'];
 					$allplugins[$count]['description'] = $plugin_details['description'];
 					$allplugins[$count]['folder'] = $plugin_details['folder'];
 					$allplugins[$count]['status'] = "inactive";
+					$allplugins[$count]['version'] = $plugin_details['version'];
 				}
 				$count++;				
 			}	
