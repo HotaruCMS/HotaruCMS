@@ -273,7 +273,7 @@ class Plugin extends Plugins {
 	
 	/* ******************************************************************** 
 	 *  Function: plugin_settings
-	 *  Parameters: Plugin folder name and setting to retrieve
+	 *  Parameters: Plugin folder name and setting value to retrieve
 	 *  Purpose: Returns the settings for a given plugin
 	 *  Notes: ---
 	 ********************************************************************** */
@@ -287,6 +287,20 @@ class Plugin extends Plugins {
 	
 	
 	/* ******************************************************************** 
+	 *  Function: plugin_setting_exists
+	 *  Parameters: Plugin folder name and setting name
+	 *  Purpose: Determines is a setting already exists
+	 *  Notes: The actual value is ignored
+	 ********************************************************************** */
+	 	
+	function plugin_setting_exists($folder = '', $setting = '') {
+		global $db;
+		$sql = "SELECT plugin_setting FROM " . table_pluginsettings . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
+		$returned_setting = $db->get_var($db->prepare($sql, $folder, $setting));
+		if($returned_setting) { return $returned_setting; } else { return false; }
+	}	
+	
+	/* ******************************************************************** 
 	 *  Function: plugin_settings_update
 	 *  Parameters: Plugin folder name, setting to update, and new value
 	 *  Purpose: Updates a plugin setting
@@ -295,7 +309,7 @@ class Plugin extends Plugins {
 	
 	function plugin_settings_update ($folder = '', $setting = '', $value = '') {
 		global $db;
-		$exists = $this->plugin_settings($folder, $setting);
+		$exists = $this->plugin_setting_exists($folder, $setting);
 		if(!$exists) {
 			$sql = "INSERT INTO " . table_pluginsettings . " (plugin_folder, plugin_setting, plugin_value) VALUES (%s, %s, %s)";
 			$db->query($db->prepare($sql, $folder, $setting, $value));
