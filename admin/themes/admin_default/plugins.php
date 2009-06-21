@@ -18,7 +18,7 @@ $plugin_widgets = $plugin->get_plugins(); // don't remove
 ?>
 
 <div id="main">
-	<h2>Hotaru Admin Control Panel &raquo; Plugin Management</h2>
+	<h2><a href="<?php echo baseurl ?>admin/admin_index.php">Hotaru Admin Control Panel</a> &raquo; Plugin Management</h2>
 		
 	<div id="plugin_list">
 	
@@ -27,7 +27,7 @@ $plugin_widgets = $plugin->get_plugins(); // don't remove
 	<table><tr>
 	
 	<td class="widget-column">
-	<p class="plugins_column_header">Inactive plugins</p>
+	<p class="admin_header">Inactive plugins</p>
 		<?php foreach($plugin_widgets as $plugin_widget) { ?>
 			<?php if($plugin_widget['status'] == "inactive") { ?>
 				<div class="widget-place" id="inactive">
@@ -56,7 +56,7 @@ $plugin_widgets = $plugin->get_plugins(); // don't remove
 	</td>
 	
 	<td class="widget-column">
-	<p class="plugins_column_header">Active plugins</p>
+	<p class="admin_header">Active plugins</p>
 		<?php foreach($plugin_widgets as $plugin_widget) { ?>
 			<?php if($plugin_widget['status'] == "active") { ?>
 				<div class="widget-place" id="active">

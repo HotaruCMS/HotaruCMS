@@ -20,4 +20,6 @@ global $hotaru, $plugin; // don't remove
 	<ul id="plugin_settings_list" style="display: none;">
 		<?php $plugin->check_actions('admin_sidebar_plugin_settings'); ?>
 	</ul>
+	
+	<?php $plugin->check_actions('admin_sidebar'); ?>
 </ul>

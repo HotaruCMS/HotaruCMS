@@ -27,6 +27,7 @@ switch ($page) {
 		break;
 	default:
 		$hotaru->is_admin_home = true;
+		include('admin_functions/admin_news.php');
 		break;
 }
 

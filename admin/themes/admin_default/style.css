@@ -65,6 +65,14 @@ a:hover	{
 
 }
 
+.admin_header {
+	font-size: 1.5em;
+}
+
+.admin_header_space {
+	padding: 0.8em 0 0.8em 0;
+}
+
 .yui-gf {
 	/* container for both the wide and narrow colums. */
 	background-color: #f0f0f0;
@@ -146,10 +154,6 @@ form {
 
 #plugin_list {
 	margin-top: 1.0em;
-}
-
-.plugins_column_header {
-	font-size: 1.5em;
 }
 
 td.widget-column {

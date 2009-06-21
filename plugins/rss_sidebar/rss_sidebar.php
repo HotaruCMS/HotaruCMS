@@ -40,15 +40,17 @@ if(!is_object($plugin)) {
 
 function rs_rss_sidebar() {
     global $hotaru, $plugin;
-	    
-    /* *********** EDIT THESE SETTINGS ****************************** */
-    $cache = true;
-    $cache_duration = 10; // minutes
-    $max_items = 10;
-    /* ************************************************************** */
-    
+	       
     $feedurl = $plugin->plugin_settings('rss_sidebar', 'rss_sidebar_feed');
+    
+    if($plugin->plugin_settings('rss_sidebar', 'rss_sidebar_cache')) { $cache = true; } else { $cache = false; }
+    
+    $cache_duration = $plugin->plugin_settings('rss_sidebar', 'rss_sidebar_cache_duration');
+    
     $feed = $hotaru->new_simplepie($feedurl, $cache, $cache_duration);
+    
+    $max_items = $plugin->plugin_settings('rss_sidebar', 'rss_sidebar_max_items');
+    
     $feed->init();
         
     $output = "";
