@@ -20,9 +20,6 @@ global $hotaru, $plugin; // don't remove
 	<?php if(!empty($plugin->message)) { echo "<div class='message " . $plugin->message_type . "'>" . $plugin->message . "</div>"; } ?>
 	
 	<div id="plugin_settings">
-		<?php 
-			$parameters = array();
-			$parameters['plugin'] = $plugin->folder;
-			$plugin->check_actions('admin_plugin_settings', $parameters); ?>
+		<?php $plugin->check_actions('admin_plugin_settings', $plugin->folder); ?>
 	</div>
 </div>

@@ -229,21 +229,19 @@ class Plugin extends Plugins {
 	
 	/* ******************************************************************** 
 	 *  Function: check_actions
-	 *  Parameters: plugin main function name (matches the plugin folder name), array of optional parameters
+	 *  Parameters: plugin hook, plugin folder for specifying a plugin, array of optional parameters
 	 *  Purpose: Checks if such a function exists and is part of an enabled plugin, then calls the function.
 	 *  Notes: ---
 	 ********************************************************************** */
 	 
-	function check_actions($hook = '', $parameters = array()) {
+	function check_actions($hook = '', $folder = '', $parameters = array()) {
 		global $db, $cage;
 		if($hook == '') {
 			echo "Error: Plugin hook name not provided.";
 		} else {
-			$folder = "";
 			$where = "";
-			if(is_array($parameters) && (!empty($parameters['plugin']))) {
+			if(!empty($folder)) {
 				$where .= "AND (" . table_plugins . ".plugin_folder = %s)";
-				$folder = $parameters['plugin'];
 			}
 			
 			$sql = "SELECT " . table_plugins . ".plugin_enabled, " . table_plugins . ".plugin_folder, " . table_plugins . ".plugin_prefix, " . table_pluginhooks . ".plugin_hook  FROM " . table_pluginhooks . ", " . table_plugins . " WHERE (" . table_pluginhooks . ".plugin_hook = %s) AND (" . table_plugins . ".plugin_folder = " . table_pluginhooks . ".plugin_folder) " . $where;
