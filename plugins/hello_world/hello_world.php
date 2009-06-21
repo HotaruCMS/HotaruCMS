@@ -5,7 +5,7 @@
  * version: 0.1
  * folder: hello_world
  * prefix: hw
- * hooks: hello_world, admin_sidebar_plugin_settings
+ * hooks: hello_world
  *
  * You can type notes here, e.g:
  * Usage: Add <?php $plugin->check_actions('hello_world'); ?> to your theme, wherever you want to show "Hello World".

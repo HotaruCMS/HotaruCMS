@@ -19,10 +19,6 @@ global $hotaru; // don't remove
 
 	<div id="bd" role="main">
 		<div class="yui-gf">
-    			<div class="yui-u first">
-    					<!-- SIDEBAR -->
-					<?php echo $hotaru->display_admin_template('sidebar'); ?>
-	    		</div>
     			<div class="yui-u">
     				<!-- MAIN -->
 					<?php if($hotaru->is_admin_plugins) { ?>
@@ -33,11 +29,11 @@ global $hotaru; // don't remove
 						<?php echo $hotaru->display_admin_template('home'); ?>
 					<?php } ?>    				
 	    		</div>
+    			<div class="yui-u first">
+    					<!-- SIDEBAR -->
+					<?php echo $hotaru->display_admin_template('sidebar'); ?>
+	    		</div>
 		</div>
 	</div>
-	<div id="ft" role="contentinfo">
-		<p>Footer</p>
-	</div>
-</div>
-
-<?php echo $hotaru->display_admin_template('footer'); ?>
+	<!-- FOOTER -->
+	<?php echo $hotaru->display_admin_template('footer'); ?>
