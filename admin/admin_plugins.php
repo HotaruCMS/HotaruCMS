@@ -14,14 +14,14 @@ global $lang;
 
 //$plugin_management = new Plugin();
 
-$widget_positions = $cage->post->getRaw('position');	// Use Raw because Alnum strips out underscores!
+$widget_positions = $cage->post->noTags('position');	// Use Raw because Alnum strips out underscores!
 //echo "Positions returned from EasyWidgets: " . $widget_position . "<br />";
 if($widget_positions) {
 	$plugin->update_plugin_statuses($widget_positions);	// Cycles through all plugins, enables or disables as necessary	
 }
 
 
-$plugin_to_uninstall = $cage->post->getRaw('plugin_folder');	// Use Raw because Alnum strips out underscores!
+$plugin_to_uninstall = $cage->post->noTags('plugin_folder');	// Use Raw because Alnum strips out underscores!
 if($plugin_to_uninstall) { 
 	$plugin->uninstall_plugin($plugin_to_uninstall);
 	echo "<br /><b>" . $lang['admin_plugins_uninstall_done'] . "</b> <br /><br />";

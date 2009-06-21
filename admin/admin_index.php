@@ -12,15 +12,17 @@ global $hotaru, $plugin;
  
 $hotaru->set_is_page_all_false();
 
-$page = $cage->get->getRaw('page');
+$page = $cage->get->noTags('page');
 switch ($page) {
 	case "plugins":
 		$hotaru->is_admin_plugins = true;
 		break;
 	case "plugin_settings":
 		$hotaru->is_admin_plugin_settings = true;
-		$plugin_folder = $cage->get->getRaw('plugin');
+		$plugin_folder = $cage->get->noTags('plugin');
 		$plugin->folder = $plugin_folder;
+		$plugin->message = $cage->get->noTags('message');
+		$plugin->message_type = $cage->get->getAlpha('message_type');
 		$plugin->name = $plugin->plugin_name($plugin_folder);
 		break;
 	default:

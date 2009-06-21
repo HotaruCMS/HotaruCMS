@@ -16,7 +16,7 @@ require_once('hotaru_settings.php');
 require_once(includes . 'Inspekt/Inspekt.php');			// for Input sanitation and validation
 require_once(includes . 'ezSQL/ez_sql_core.php');		// for database usage
 require_once(includes . 'ezSQL/mysql/ez_sql_mysql.php');	// for database usage
-require_once(libraries . 'class.hotaru.php');
+require_once(libraries . 'class.hotaru.php'); 
 require_once(libraries . 'class.plugins.php');
 
 if(file_exists(languages . 'main/main_' . strtolower(sitelanguage) . '.php')) {

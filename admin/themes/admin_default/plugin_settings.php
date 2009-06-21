@@ -17,9 +17,12 @@ global $hotaru, $plugin; // don't remove
 <div id="main">
 	<h2>Hotaru Admin Control Panel &raquo; Plugin Settings &raquo; <?php echo $plugin->name; ?></h2>
 	
-	<?php echo $plugin->message; ?>
+	<?php if(!empty($plugin->message)) { echo "<div class='message " . $plugin->message_type . "'>" . $plugin->message . "</div>"; } ?>
 	
 	<div id="plugin_settings">
-		<?php $plugin->check_actions('admin_plugin_settings'); ?>
+		<?php 
+			$parameters = array();
+			$parameters['plugin'] = $plugin->folder;
+			$plugin->check_actions('admin_plugin_settings', $parameters); ?>
 	</div>
 </div>

@@ -183,8 +183,9 @@ function create_table($table_name) {
 		  `plugin_id` int(11) NOT NULL auto_increment,
 		  `plugin_enabled` tinyint(1) NOT NULL default '0',
 		  `plugin_name` varchar(64) NOT NULL default '',
-		  `plugin_desc` varchar(255) NOT NULL default '',
+		  `plugin_prefix` varchar(16) NOT NULL default '',
 		  `plugin_folder` varchar(64) NOT NULL default '',
+		  `plugin_desc` varchar(255) NOT NULL default '',
 		  `plugin_version` varchar(32) NOT NULL default '0.0',
 		  PRIMARY KEY  (`plugin_id`),
 		  UNIQUE KEY `key` (`plugin_folder`)

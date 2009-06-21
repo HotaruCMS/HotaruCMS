@@ -30,5 +30,9 @@ $(document).ready(function(){
 		var parentTag = $(this).parents("ul").children("ul#plugin_settings_list");
                 parentTag.fadeToggle();
                 return false;
-        });   
+        });  
+        
+	// Fade message
+	$(".message").css({display: "none"}).fadeIn("slow");
+ 
 });

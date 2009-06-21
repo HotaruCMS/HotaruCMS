@@ -5,14 +5,9 @@
  *  Purpose: Two Classes: Plugins and Plugin. The first deals with managing all plugins. The second deals with individual plugins.
  *  Notes: Plugins extends the generic_pmd class which is a 3rd party script called "Generic PHP Config"
  ********************************************************************** */
- 
-// includes
-if(file_exists('hotaru_header.php')) {
-	require_once('hotaru_header.php');	// assumes we are in the root directory
-} else {
-	require_once('../hotaru_header.php');	// assumes we are one level deep, e.g. in the admin directory
-}
-require_once(libraries . 'class.metadata.php');	// This is the generic_pmd class that reads post metadata from the top of a plugin file.
+
+//includes
+require_once(libraries . 'class.metadata.php');			// This is the generic_pmd class that reads post metadata from the top of a plugin file.
 
 class Plugins extends generic_pmd {
 	
@@ -70,6 +65,7 @@ class Plugins extends generic_pmd {
 	 ********************************************************************** */
 
 	function get_plugins_array() {
+		require_once(functions . 'funcs.files.php');
 		$plugin_list = getFilenames(plugins, "short");
 		$plugins_array = array();
 		foreach($plugin_list as $plugin_folder_name) {
@@ -141,8 +137,10 @@ class Plugin extends Plugins {
 	var $name = '';
 	var $desc = '';
 	var $folder = '';
+	var $prefix = '';
 	var $version = 0;
 	var $message = '';
+	var $message_type = 'green';	// green or red, color of message box
 	var $hooks = array();
 
 
@@ -162,11 +160,12 @@ class Plugin extends Plugins {
 		$this->name = $plugin_metadata['name'];
 		$this->desc = $plugin_metadata['description'];
 		$this->folder = $folder;
+		$this->prefix = $plugin_metadata['prefix'];
 		$this->version = $plugin_metadata['version'];
 		$this->hooks = explode(',', $plugin_metadata['hooks']);
 	
-		$sql = "INSERT INTO " . table_plugins . " (plugin_enabled, plugin_name, plugin_desc, plugin_folder, plugin_version) VALUES (%d, %s, %s, %s, %s)";
-		$db->query($db->prepare($sql, $this->enabled, $this->name, $this->desc, $this->folder, $this->version));
+		$sql = "INSERT INTO " . table_plugins . " (plugin_enabled, plugin_name, plugin_prefix, plugin_folder, plugin_desc, plugin_version) VALUES (%d, %s, %s, %s, %s, %s)";
+		$db->query($db->prepare($sql, $this->enabled, $this->name, $this->prefix, $this->folder, $this->desc, $this->version));
 		
 		foreach($this->hooks as $hook) {
 			$sql = "INSERT INTO " . table_pluginhooks . " (plugin_folder, plugin_hook) VALUES (%s, %s)";
@@ -236,18 +235,26 @@ class Plugin extends Plugins {
 	 ********************************************************************** */
 	 
 	function check_actions($hook = '', $parameters = array()) {
-		global $db;
+		global $db, $cage;
 		if($hook == '') {
 			echo "Error: Plugin hook name not provided.";
 		} else {
-			$sql = "SELECT " . table_plugins . ".plugin_enabled, " . table_plugins . ".plugin_folder, " . table_pluginhooks . ".plugin_hook  FROM " . table_pluginhooks . ", " . table_plugins . " WHERE (" . table_pluginhooks . ".plugin_hook = %s) AND (" . table_plugins . ".plugin_folder = " . table_pluginhooks . ".plugin_folder)";
-			$plugins = $db->get_results($db->prepare($sql, $hook));
+			$folder = "";
+			$where = "";
+			if(is_array($parameters) && (!empty($parameters['plugin']))) {
+				$where .= "AND (" . table_plugins . ".plugin_folder = %s)";
+				$folder = $parameters['plugin'];
+			}
+			
+			$sql = "SELECT " . table_plugins . ".plugin_enabled, " . table_plugins . ".plugin_folder, " . table_plugins . ".plugin_prefix, " . table_pluginhooks . ".plugin_hook  FROM " . table_pluginhooks . ", " . table_plugins . " WHERE (" . table_pluginhooks . ".plugin_hook = %s) AND (" . table_plugins . ".plugin_folder = " . table_pluginhooks . ".plugin_folder) " . $where;
+			$plugins = $db->get_results($db->prepare($sql, $hook, $folder));
 			if($plugins) {
 				foreach($plugins as $plugin) {			
 					if($plugin->plugin_folder && $plugin->plugin_hook && ($plugin->plugin_enabled == 1)) {
 						if(file_exists(plugins . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php")) {
 							include_once(plugins . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php");
-							$hook($parameters);
+							$function_name = $plugin->plugin_prefix . "_" . $hook;
+							$function_name($parameters);
 						} else {
 							echo "Error: Plugin file not found.";
 						}
@@ -298,31 +305,6 @@ class Plugin extends Plugins {
 			$sql = "UPDATE " . table_pluginsettings . " SET plugin_folder = %s, plugin_setting = %s, plugin_value = %s WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
 			$db->query($db->prepare($sql, $folder, $setting, $value, $folder, $setting));
 		}
-	}
-	
-	
-	/* ******************************************************************** 
-	 *  Function: plugin_settings
-	 *  Parameters: Plugin folder name and form method (post or get)
-	 *  Purpose: Opens the form, forces sanitation through Inspekt in functions/funcs.forms.php
-	 *  Notes: Passes the plugin name alomg as a hidden value so we know how to get back to the plugin
-	 ********************************************************************** */
-	 
-	function plugin_form_open($folder = '', $method = 'get') {
-		echo "<form name='" . $folder . "_form' action='" . baseurl . "functions/funcs.forms.php' method='" . $method . "'>\n";
-		echo "<input type='hidden' name='plugin' value='" . $folder . "'>";
-	}
-	
-	
-	/* ******************************************************************** 
-	 *  Function: plugin_form_close
-	 *  Parameters: None
-	 *  Purpose: Closes the form
-	 *  Notes: ---
-	 ********************************************************************** */
-	 
-	function plugin_form_close() {
-		echo "</form>\n";
 	}
 }
 

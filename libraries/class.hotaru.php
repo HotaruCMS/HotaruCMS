@@ -7,13 +7,7 @@
  ********************************************************************** */
  
 // includes
-if(file_exists('hotaru_header.php')) {
-	require_once('hotaru_header.php');	// assumes we are in the root directory
-} else {
-	require_once('../hotaru_header.php');	// assumes we are one level deep, e.g. in the admin directory
-}
 
-require_once(functions . 'funcs.files.php');
 
 class Hotaru {
 	
