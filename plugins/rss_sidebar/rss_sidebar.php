@@ -5,7 +5,7 @@
  * version: 0.1
  * folder: rss_sidebar
  * prefix: rs
- * hooks: rss_sidebar, admin_sidebar_plugin_settings, admin_plugin_settings
+ * hooks: rss_sidebar, admin_sidebar_plugin_settings, admin_plugin_settings, install_plugin_starter_settings
  *
  * Usage: Add <?php $plugin->check_actions('rss_sidebar'); ?> to your theme, wherever you want to show the links.
  */
@@ -31,7 +31,7 @@ if(!is_object($plugin)) {
 
 
 /* ******************************************************************** 
- *  Function: rss_sidebar
+ *  Function: rs_rss_sidebar
  *  Parameters: None
  *  Purpose: Displays the RSS feed.
  *  Notes: Uses Hotaru's built-in SimplePie library, but extra customization 
@@ -71,7 +71,7 @@ function rs_rss_sidebar() {
  * ************************************* */
 
 /* ******************************************************************** 
- *  Function: admin_sidebar_plugin_settings
+ *  Function: rs_admin_sidebar_plugin_settings
  *  Parameters: None
  *  Purpose: Puts a link to the settings page in the Admin sidebar under Plugin Settings
  *  Notes: ---
@@ -83,7 +83,25 @@ function rs_admin_sidebar_plugin_settings() {
 
 
 /* ******************************************************************** 
- *  Function: admin_sidebar_settings
+ *  Function: rs_install_plugin_starter_settings
+ *  Parameters: None
+ *  Purpose: When the plugin is installed, this function inserts some prelimnary 
+ *           settings into the pluginsettings table.
+ *  Notes: All database queries should use the prepare function.
+ ********************************************************************** */
+ 
+function rs_install_plugin_starter_settings() {
+	global $db, $plugin;
+	// parameters: plugin folder name, setting name, setting value
+	$plugin->plugin_settings_update('rss_sidebar', 'rss_sidebar_feed', 'http://feeds2.feedburner.com/hotarucms');
+	$plugin->plugin_settings_update('rss_sidebar', 'rss_sidebar_cache', 'on');
+	$plugin->plugin_settings_update('rss_sidebar', 'rss_sidebar_cache_duration', 10);
+	$plugin->plugin_settings_update('rss_sidebar', 'rss_sidebar_max_items', 10);	
+}
+
+
+/* ******************************************************************** 
+ *  Function: rs_admin_sidebar_settings
  *  Parameters: None
  *  Purpose: Displays the contents of the plugin settings page.
  *  Notes: ---
@@ -118,7 +136,7 @@ function rs_admin_plugin_settings() {
 
 
 /* ******************************************************************** 
- *  Function: get_params
+ *  Function: rs_get_params
  *  Parameters: None
  *  Purpose: Retrieves parameters passed by URL, e.g. a saved feed url, and calls the appropriate functions
  *  Notes: Access to $_GET and $_POST is disabled for security reasons. Please use Inspekt to 
@@ -138,7 +156,7 @@ function rs_get_params() {
 
 
 /* ******************************************************************** 
- *  Function: save_settings
+ *  Function: rs_save_settings
  *  Parameters: The parameters from the form as an array of key-value pairs
  *  Purpose: Saves new or modified settings for this plugin
  *  Notes: Returns to the plugin_settings page via a redirect. 

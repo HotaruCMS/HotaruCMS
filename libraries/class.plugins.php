@@ -171,6 +171,8 @@ class Plugin extends Plugins {
 			$sql = "INSERT INTO " . table_pluginhooks . " (plugin_folder, plugin_hook) VALUES (%s, %s)";
 			$db->query($db->prepare($sql, $this->folder, trim($hook)));
 		}
+		
+		$this->check_actions('install_plugin_starter_settings', $folder);
 	}
 	
 	
