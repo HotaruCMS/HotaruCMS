@@ -27,4 +27,5 @@ RewriteRule ^install/([0-9]+)/?$ install/install.php?step=$1[L]
 # ADMIN
 RewriteRule ^admin/?$ admin/admin_index.php [L]
 RewriteRule ^admin/([a-zA-Z0-9_-]+)/?$ admin/admin_index.php?page=$1[L]
+RewriteRule ^admin/plugins/settings/([a-zA-Z0-9_-]+)/?$ admin/admin_index.php?page=plugin_settings&plugin=$1[L]
 ##### URL Rewriting End #####

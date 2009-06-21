@@ -11,7 +11,7 @@ Version: 0.1
 
 ***************************** */
 
-global $hotaru; // don't remove
+global $hotaru, $plugin; // don't remove
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
@@ -26,6 +26,7 @@ global $hotaru; // don't remove
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/jQuery/jquery-ui.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/jQuery/jquery.easywidgets.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/jQuery/jquery.hotaru_admin.js'; ?>"></script>
+   <?php if($hotaru->is_admin_plugin_settings) { $plugin->check_actions('admin_header_include', $plugin->folder); } ?>
    <link rel="shortcut icon" href="<?php echo baseurl; ?>favicon.ico">
    <script>
 	var baseurl = '<?php echo baseurl; ?>';

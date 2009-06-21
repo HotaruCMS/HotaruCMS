@@ -5,7 +5,7 @@
  * version: 0.1
  * folder: rss_sidebar
  * prefix: rs
- * hooks: rss_sidebar, admin_sidebar_plugin_settings, admin_plugin_settings, install_plugin_starter_settings
+ * hooks: rss_sidebar, admin_header_include, admin_sidebar_plugin_settings, admin_plugin_settings, install_plugin_starter_settings
  *
  * Usage: Add <?php $plugin->check_actions('rss_sidebar'); ?> to your theme, wherever you want to show the links.
  */
@@ -72,6 +72,24 @@ function rs_rss_sidebar() {
  * ********** ADMIN FUNCTIONS **********
  * ************************************* */
 
+
+/* ******************************************************************** 
+ *  Function: rs_admin_sidebar_plugin_settings
+ *  Parameters: None
+ *  Purpose: Puts a link to the settings page in the Admin sidebar under Plugin Settings
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function rs_admin_header_include() {
+	echo "<script type='text/javascript'>\n";
+	echo "$(document).ready(function(){\n";
+		echo "$('#rs_cache').click(function () {\n";
+		echo "$('#rs_cache_duration').slideToggle();\n";
+		echo "});\n";
+	echo "});\n";
+	echo "</script>\n";
+}
+
 /* ******************************************************************** 
  *  Function: rs_admin_sidebar_plugin_settings
  *  Parameters: None
@@ -115,7 +133,9 @@ function rs_admin_plugin_settings() {
 	echo "<form name='rss_sidebar_form' action='" . baseurl . "plugins/rss_sidebar/rss_sidebar.php' method='get'>\n";
 	echo "Feed URL: <input type='text' size=60 name='rss_sidebar_feed' value='" . $plugin->plugin_settings('rss_sidebar', 'rss_sidebar_feed') . "' /><br /><br />\n";
 	if($plugin->plugin_settings('rss_sidebar', 'rss_sidebar_cache')) { $checked = "checked"; } else { $checked = ""; }
-	echo "Cache: <input type='checkbox' name='rss_sidebar_cache' " . $checked . " /><br /><br />\n";
+	echo "Cache: <input type='checkbox' id='rs_cache' name='rss_sidebar_cache' " . $checked . " /><br /><br />\n";
+	if(!$checked) { $display = "style='display:none;'"; } else { $display = ""; }
+	echo "<div id='rs_cache_duration' " . $display . ">";
 	echo "Cache duration: \n";
 		echo "<select name='rss_sidebar_cache_duration'>\n";
 			$cache_duration = $plugin->plugin_settings('rss_sidebar', 'rss_sidebar_cache_duration');
@@ -124,6 +144,7 @@ function rs_admin_plugin_settings() {
 			echo "<option value='30'>30 mins</option>\n";
 			echo "<option value='60'>60 mins</option>\n";
 		echo "</select><br /><br />\n";
+	echo "</div>";
 	echo "Max. Items: \n"; 
 		echo "<select name='rss_sidebar_max_items'>\n";
 			$max_items = $plugin->plugin_settings('rss_sidebar', 'rss_sidebar_max_items');
