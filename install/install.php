@@ -123,7 +123,8 @@ function database_setup() {
 	echo "<li>" . $lang['install_step2_instructions3'] . "</li>\n";
 	echo "</ol>\n";
 	echo "<div class='install_content'><span style='color: red;'>" . $lang['install_step2_warning'] . "</span>: " . $lang['install_step2_warning_note'] . "</div>\n";
-	echo "<div class='back'><a href='install.php?step=1'>" . $lang['install_back'] . "</a></div><div class='next'><a href='install.php?step=3'>" . $lang['install_next'] . "</a></div>\n";
+	echo "<div class='back'><a href='install.php?step=1'>" . $lang['install_back'] . "</a></div>\n";
+	echo "<div class='next'><a href='install.php?step=3'>" . $lang['install_next'] . "</a></div>\n";
 	echo html_footer();
 }
 
@@ -141,14 +142,136 @@ function database_creation() {
 	echo "<h2>" . $lang['install_step3'] . "</h2>\n";
 	
 	$skip = 0;
-	$tables = array('settings', 'plugins', 'pluginhooks', 'pluginsettings');
+	$tables = array('settings', 'users', 'plugins', 'pluginhooks', 'pluginsettings');
 
 	foreach($tables as $table_name) {
 		create_table($table_name);
 	} 
 	
 	echo "<div class='install_content'>" . $lang['install_step3_success'] . "</div>\n";
-	echo "<div class='back'><a href='install.php?step=2'>" . $lang['install_back'] . "</a></div><div class='next'><a href='install.php?step=4'>" . $lang['install_next'] . "</a></div>\n";
+	echo "<div class='back'><a href='install.php?step=2'>" . $lang['install_back'] . "</a></div>\n";
+	echo "<div class='next'><a href='install.php?step=4'>" . $lang['install_next'] . "</a></div>\n";
+	echo html_footer();	
+}
+
+
+/* ******************************************************************** 
+ *  Function: hotaru_settings
+ *  Parameters: None
+ *  Purpose: Step 4 of installation - explains how to configure Hotaru
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function hotaru_settings() {
+	global $lang;
+	echo html_header();
+	echo "<h2>" . $lang['install_step4'] . "</h2>\n";
+	echo "<div class='install_content'>" . $lang['install_step4_instructions'] . ":</div>\n";
+	echo "<ol class='install_content'>\n";
+	echo "<li>" . $lang['install_step4_instructions1'] . "</li>\n";
+	echo "<li>" . $lang['install_step4_instructions2'] . "</li>\n";
+	echo "<li>" . $lang['install_step4_instructions3'] . "</li>\n";
+	echo "<li>" . $lang['install_step4_instructions4'] . "</li>\n";
+	echo "</ol>\n";
+	echo "<div class='back'><a href='install.php?step=3'>" . $lang['install_back'] . "</a></div>\n";
+	echo "<div class='next'><a href='install.php?step=5'>" . $lang['install_next'] . "</a></div>\n";
+	echo html_footer();
+}
+
+
+/* ******************************************************************** 
+ *  Function: register_admin
+ *  Parameters: None
+ *  Purpose: Step 5 of installation - registers the site Admin.
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function register_admin() {
+	global $lang, $cage;
+	require_once(libraries . 'class.userbase.php');
+
+	// default
+	$user = new UserBase();
+
+	echo html_header();
+	echo "<h2>" . $lang['install_step5'] . "</h2>\n";
+	echo "<div class='install_content'>" . $lang['install_step5_instructions'] . ":<br />\n";
+	echo "<form name='install_admin_reg_form' action='" . baseurl . "install/install.php?step=5' method='post'>\n";
+	echo "<table class='install_reg_form'>";
+	
+	$error = 0;
+	if($cage->post->getInt('step') == 5) {
+		$name_check = $cage->post->testRegex('username', '/^([a-z0-9_-])+$/i');	// alphanumeric, dashes and underscores okay, case insensitive
+		if($name_check) {
+			$user->username = $name_check;
+		} else {
+			echo "<tr><td colspan=2 style='color: #ff0000;'>Your username must contain letters, dashes and underscores only.</td></tr>";
+			$error = 1;
+		}
+	
+		$password_check = $cage->post->testRegex('password', '/^([a-z0-9@*#_-]{6,60})+$/i');	
+		if($password_check) {
+			$user->password = $password_check;
+		} else {
+			echo "<tr><td colspan=2 style='color: red;'>The password must be at least 6 characters and can only contain letters, numbers and these symbols: @ * # - _</td></tr>";
+			$error = 1;
+		}
+		
+		$email_check = $cage->post->testEmail('email');	
+		if($email_check) {
+			$user->email = $email_check;
+		} else {
+			echo "<tr><td colspan=2 style='color: #ff0000;'>That doesn't parse as a valid email address.</td></tr>";
+			$error = 1;
+		}
+	}
+	
+	if(($cage->post->getInt('step') == 5) && $error == 0) {
+		echo "<tr><td colspan=2 style='color: #00ff00;'>Updated successfully.</td></tr>";
+	}
+	
+	if($error == 0) {
+		if(!$user->admin_exists()) {
+			$user->add_user_basic('admin', 'administrator', 'password', 'admin@mysite.com');
+			$user_info = $user->get_user_basic(0, 'admin');
+			$user->id = $user_info->user_id;
+			$user->username = $user_info->user_username;
+			$user->email = $user_info->user_email;
+			$user->password = $user_info->user_password;		
+		} else {
+			$user->update_user_basic($user->username, 'administrator', $user->password, $user->email);
+		}
+	}
+
+	echo "<tr><td>Username:&nbsp; </td><td><input type='text' size=30 name='username' value='" . $user->username . "' /></td></tr>\n";
+	echo "<tr><td>Email:&nbsp; </td><td><input type='text' size=30 name='email' value='" . $user->email . "' /></td></tr>\n";
+	echo "<tr><td>Password:&nbsp; </td><td><input type='password' size=30 name='password' value='" . $user->password . "' /></td></tr>\n";
+	echo "<input type='hidden' name='step' value='5' />\n";
+	echo "<tr><td style='text-align:left;'><input type='submit' value='Update' /></td><td>&nbsp;</td></tr>\n";
+	echo "</table>";
+	echo "</form></div>\n";
+	echo "<div class='back'><a href='install.php?step=4'>" . $lang['install_back'] . "</a></div>\n";
+	echo "<div class='next'><a href='install.php?step=6'>" . $lang['install_next'] . "</a></div>\n";
+	echo html_footer();
+}
+	
+	
+/* ******************************************************************** 
+ *  Function: installation_complete 
+ *  Parameters: None
+ *  Purpose: Step 6 of installation - shows completion.
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function installation_complete() {
+	global $lang;
+	echo html_header();	
+	echo "<h2>" . $lang['install_step6'] . "</h2>\n";
+	echo "<div class='install_content'>" . $lang['install_step6_installation_complete'] . "</div>\n";
+	echo "<div class='install_content'>" . $lang['install_step6_installation_delete'] . "</div>\n";
+	echo "<div class='install_content'>" . $lang['install_step6_installation_go_play'] . "</div>\n";
+	echo "<div class='back'><a href='install.php?step=5'>" . $lang['install_back'] . "</a></div>\n";
+	echo "<div class='next'><a href='" . baseurl . "'>" . $lang['install_home'] . " " . sitename . "</a></div>\n";
 	echo html_footer();	
 }
 
@@ -177,7 +300,24 @@ function create_table($table_name) {
 		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);
 	}
-		
+	
+	if($table_name == "users") {	
+		$sql = "CREATE TABLE `" . db_prefix . $table_name . "` (
+		  `user_id` int(20) NOT NULL auto_increment,
+		  `user_username` varchar(32) NOT NULL default '',
+		  `user_role` varchar(32) NOT NULL default 'registered_user',
+		  `user_date` timestamp NOT NULL,
+		  `user_password` varchar(64) NOT NULL default '',
+		  `user_email` varchar(128) NOT NULL default '',
+		  `user_lastlogin` timestamp NOT NULL,
+		  PRIMARY KEY  (`user_id`),
+		  UNIQUE KEY `key` (`user_username`),
+		  KEY `user_email` (`user_email`)
+		) TYPE = MyISAM;";
+		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		$db->query($sql); 
+	}
+	
 	if($table_name == "plugins") {
 		$sql = "CREATE TABLE `" . db_prefix . $table_name . "` (
 		  `plugin_id` int(11) NOT NULL auto_increment,
@@ -219,62 +359,4 @@ function create_table($table_name) {
 		$db->query($sql);
 	}
 }
-
-
-/* ******************************************************************** 
- *  Function: hotaru_settings
- *  Parameters: None
- *  Purpose: Step 4 of installation - explains how to configure Hotaru
- *  Notes: ---
- ********************************************************************** */
- 
-function hotaru_settings() {
-	global $lang;
-	echo html_header();
-	echo "<h2>" . $lang['install_step4'] . "</h2>\n";
-	echo "<div class='install_content'>" . $lang['install_step4_instructions'] . ":</div>\n";
-	echo "<ol class='install_content'>\n";
-	echo "<li>" . $lang['install_step4_instructions1'] . "</li>\n";
-	echo "<li>" . $lang['install_step4_instructions2'] . "</li>\n";
-	echo "<li>" . $lang['install_step4_instructions3'] . "</li>\n";
-	echo "<li>" . $lang['install_step4_instructions4'] . "</li>\n";
-	echo "</ol>\n";
-	echo "<div class='back'><a href='install.php?step=3'>" . $lang['install_back'] . "</a></div><div class='next'><a href='install.php?step=5'>" . $lang['install_next'] . "</a></div>\n";
-	echo html_footer();
-}
-
-
-/* ******************************************************************** 
- *  Function: register_admin
- *  Parameters: None
- *  Purpose: Step 5 of installation - registers the site Admin.
- *  Notes: ---
- ********************************************************************** */
- 
-function register_admin() {
-	global $lang;
-	echo html_header();
-	echo "<h2>" . $lang['install_step5'] . "</h2>\n";
-	echo "<div class='install_content'>" . $lang['install_step5_instructions'] . ":</div>\n";
-	echo "<div class='back'><a href='install.php?step=4'>" . $lang['install_back'] . "</a></div><div class='next'><a href='install.php?step=6'>" . $lang['install_next'] . "</a></div>\n";
-	echo html_footer();
-}
-	
-	
-/* ******************************************************************** 
- *  Function: installation_complete 
- *  Parameters: None
- *  Purpose: Step 6 of installation - shows completion.
- *  Notes: ---
- ********************************************************************** */
- 
-function installation_complete() {
-	global $lang;
-	echo html_header();	
-	echo "<h2>" . $lang['install_step6'] . "</h2>\n";
-	echo "<div class='install_content'>" . $lang['install_step6_installation_complete'] . "</div>\n";
-	echo "<div class='back'><a href='install.php?step=5'>" . $lang['install_back'] . "</a></div><div class='next'><a href='" . baseurl . "'>" . $lang['install_home'] . " " . sitename . "</a></div>\n";
-	echo html_footer();	
-}
-
 ?>

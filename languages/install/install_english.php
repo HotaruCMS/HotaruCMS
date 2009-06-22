@@ -41,11 +41,13 @@ $lang["install_step4_instructions4"] = "Save and upload <pre>hotaru_settings.php
 
 /* Step 5 */
 $lang["install_step5"] = "Step 5/6: Admin Registration";
-$lang["install_step5_instructions"] = "This step is where you will be able to register yourself! Not done yet...";
+$lang["install_step5_instructions"] = "Register yourself as a site administrator";
 
 /* Step 6 */
 $lang["install_step6"] = "Step 6/6: Completion";
 $lang["install_step6_installation_complete"] = "Installation has been successfully completed.";
+$lang["install_step6_installation_delete"] = "You <b>must</b> delete the install folder or someone else could run the install script and wipe everything!";
+$lang["install_step6_installation_go_play"] = "Done? Okay, go and play with your new Hotaru site!";
 $lang["install_home"] = "Visit";
 
 ?>

@@ -46,6 +46,14 @@ div, p {
 	padding: 0.4em; 
 }
 
+form {
+	padding: 1.0em;
+}
+
+td {	padding: 0.5em;
+
+}
+
 .install {
 	padding: 1.0em;
 	-moz-border-radius: 0.5em;
