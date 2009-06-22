@@ -81,9 +81,9 @@ class UserBase {	// Limited to the absolute essential user information. Plugins 
 	 		
 	function admin_exists() {
 		global $db;
-		$sql = "SELECT user_role FROM " . table_users . " WHERE user_role = %s";
-		if($db->get_row($db->prepare($sql, 'administrator'))) {
-			return true; // admin exists
+		$sql = "SELECT user_username FROM " . table_users . " WHERE user_role = %s";
+		if($admin_name = $db->get_var($db->prepare($sql, 'administrator'))) {
+			return $admin_name; // admin exists
 		} else {
 			return false;
 		}

@@ -108,7 +108,7 @@ class Hotaru {
 		$sp->handle_content_type();
 		return $sp;
 	}
-	
+		
 	
 	
 	
@@ -155,6 +155,17 @@ class Hotaru {
 			$admin_links .= "<li>" . "admin link " . ($i+1) . "</li>" . "\n";
 		}
 		return $admin_links;
+	}
+	
+	function check_announcements() {
+		global $lang;
+		// Check if the install file has been deleted:
+		$filename = install . 'install.php';
+		if(file_exists($filename)) {
+			return $lang['admin_announcement_delete_install'];
+		} else {
+			return false;
+		}
 	}
 }
 

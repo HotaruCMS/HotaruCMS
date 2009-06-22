@@ -201,7 +201,7 @@ function register_admin() {
 	
 	$error = 0;
 	if($cage->post->getInt('step') == 5) {
-		$name_check = $cage->post->testRegex('username', '/^([a-z0-9_-])+$/i');	// alphanumeric, dashes and underscores okay, case insensitive
+		$name_check = $cage->post->testRegex('username', '/^([a-z0-9_-]{4,32})+$/i');	// alphanumeric, dashes and underscores okay, case insensitive
 		if($name_check) {
 			$user->username = $name_check;
 		} else {
@@ -209,9 +209,9 @@ function register_admin() {
 			$error = 1;
 		}
 	
-		$password_check = $cage->post->testRegex('password', '/^([a-z0-9@*#_-]{6,60})+$/i');	
+		$password_check = $cage->post->testRegex('password', '/^([a-z0-9@*#_-]{8,60})+$/i');	
 		if($password_check) {
-			$user->password = $password_check;
+			$user->password = crypt(md5($password_check),md5($user->username));
 		} else {
 			echo "<tr><td colspan=2 style='color: red;'>" . $lang['install_step5_password_error'] . "</td></tr>";
 			$error = 1;
@@ -231,7 +231,7 @@ function register_admin() {
 	}
 	
 	if($error == 0) {
-		if(!$user->admin_exists()) {
+		if(!$admin_name = $user->admin_exists()) {
 			$user->add_user_basic('admin', 'administrator', 'password', 'admin@mysite.com');
 			$user_info = $user->get_user_basic(0, 'admin');
 			$user->id = $user_info->user_id;
@@ -239,17 +239,31 @@ function register_admin() {
 			$user->email = $user_info->user_email;
 			$user->password = $user_info->user_password;		
 		} else {
-			$user->update_user_basic($user->username, 'administrator', $user->password, $user->email);
+			$user_info = $user->get_user_basic(0, $admin_name);
+			// On returning to this page via back or next, the fields are empty at this point, so...
+			if(($user->username != "") && ($user->email != "") && ($user->password != "")) {
+				// There's been a change so update...
+				$user->update_user_basic($user->username, 'administrator', $user->password, $user->email);
+			} else {
+				$user->id = $user_info->user_id;
+				$user->username = $user_info->user_username;
+				$user->email = $user_info->user_email;
+				$user->password = $user_info->user_password;
+			}
 		}
 	}
 
+	echo "</table>";
+	echo "<table>";
 	echo "<tr><td>Username:&nbsp; </td><td><input type='text' size=30 name='username' value='" . $user->username . "' /></td></tr>\n";
 	echo "<tr><td>Email:&nbsp; </td><td><input type='text' size=30 name='email' value='" . $user->email . "' /></td></tr>\n";
-	echo "<tr><td>Password:&nbsp; </td><td><input type='password' size=30 name='password' value='" . $user->password . "' /></td></tr>\n";
+	if(!$cage->post->getInt('step') == 5) { $password_check = ""; } // if loaded from database show blank, otherwise shows the password just submitted.
+	echo "<tr><td>Password:&nbsp; </td><td><input type='password' size=30 name='password' value='" . $password_check . "' /></td></tr>\n";
 	echo "<input type='hidden' name='step' value='5' />\n";
-	echo "<tr><td style='text-align:left;'><input type='submit' value='" . $lang['install_step5_form_update'] . "' /></td><td>&nbsp;</td></tr>\n";
+	echo "<tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='" . $lang['install_step5_form_update'] . "' /></td></tr>\n";
 	echo "</table>";
-	echo "</form></div>\n";
+	echo "</form>\n";
+	echo $lang["install_step5_make_note"] . "</div>\n";
 	echo "<div class='back'><a href='install.php?step=4'>" . $lang['install_back'] . "</a></div>\n";
 	echo "<div class='next'><a href='install.php?step=6'>" . $lang['install_next'] . "</a></div>\n";
 	echo html_footer();

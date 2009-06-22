@@ -39,6 +39,7 @@ define("current_admin_theme", "admin_default" . "/");	// change "default for the
 
 // define shorthand paths
 define("includes", dirname(__FILE__).'/includes/');
+define("install", dirname(__FILE__).'/install/');
 define("libraries", dirname(__FILE__).'/libraries/');
 define("languages", dirname(__FILE__).'/languages/');
 define("functions", dirname(__FILE__).'/functions/');
