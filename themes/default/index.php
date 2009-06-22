@@ -29,16 +29,12 @@ global $hotaru, $plugin; // don't remove
 				<?php //} ?>
 	    		</div>
     			<div class="yui-u">
-    				<ul>	
+    				
 					<!-- SIDEBAR -->
 					<?php echo $hotaru->display_template('sidebar'); ?>
 				</ul>
 	    		</div>
 		</div>
 	</div>
-	<div id="ft" role="contentinfo">
-		<p>Footer</p>
-	</div>
-</div>
-
-<?php echo $hotaru->display_template('footer'); ?>
+	<!-- FOOTER -->
+	<?php echo $hotaru->display_template('footer'); ?>

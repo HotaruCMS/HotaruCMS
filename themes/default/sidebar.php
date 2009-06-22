@@ -11,10 +11,9 @@ Version: 0.1
 
 ***************************** */
 
-global $hotaru, $plugin; // don't remove
+global $plugin; // don't remove
 ?>
-
-<div id="sidebar">
+<ul id="sidebar">	
 	<?php $plugin->check_actions('hello_world'); ?>
 	<?php $plugin->check_actions('rss_sidebar'); ?>
-</div>
+</ul>

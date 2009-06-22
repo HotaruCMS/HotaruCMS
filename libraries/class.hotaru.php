@@ -11,6 +11,7 @@
 
 class Hotaru {
 	
+	var $is_debug = false;
 	var $is_home = false;
 	var $is_admin_home = false;
 	var $is_admin_plugins = false;
@@ -108,7 +109,13 @@ class Hotaru {
 		$sp->handle_content_type();
 		return $sp;
 	}
-		
+	
+	function show_queries_and_time() {
+		global $db;
+		if($this->is_debug) { 
+			echo "<p>" . $db->num_queries . " database queries and a page load time of " . timer_stop(1) . " seconds.</p>"; 
+		} 
+	}	
 	
 	
 	
@@ -157,6 +164,14 @@ class Hotaru {
 		return $admin_links;
 	}
 	
+	
+	/* ******************************************************************** 
+	 *  Function: check_announcements
+	 *  Parameters: --- 
+	 *  Purpose: Returns an announcement for display at the top of Admin.
+	 *  Notes: Currently only checks if the install folder has been deleted.
+	 ********************************************************************** */
+	 
 	function check_announcements() {
 		global $lang;
 		// Check if the install file has been deleted:

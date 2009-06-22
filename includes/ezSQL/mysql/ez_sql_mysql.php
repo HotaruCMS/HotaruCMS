@@ -176,6 +176,11 @@
 
 			// Keep track of the last query for debug..
 			$this->last_query = $query;
+			
+			// Perform the query via std mysql_query function.. (Borrowed from Wordpress)
+			if ( defined('SAVEQUERIES') && SAVEQUERIES )
+				$this->timer_start();
+
 
 			// Count how many queries there have been
 			$this->num_queries++;
@@ -196,6 +201,9 @@
 			// Perform the query via std mysql_query function..
 			$this->result = @mysql_query($query,$this->dbh);
 			//echo $query . "<BR /><BR />";
+			
+			if ( defined('SAVEQUERIES') && SAVEQUERIES )	// Borrowed from Wordpress
+			$this->queries[] = array( $query, $this->timer_stop(), $this->get_caller() );
 
 			// If there is an error then take note of it..
 			if ( $str = @mysql_error($this->dbh) )
@@ -260,7 +268,6 @@
 			return $return_val;
 
 		}
-
 	}
 
 ?>

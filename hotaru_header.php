@@ -12,11 +12,19 @@ error_reporting(E_ALL);
 // include settings
 require_once('hotaru_settings.php');
 
-// include essential libraries
+// Initialize Hotaru and start timer if debugging.
+require_once(libraries . 'class.hotaru.php'); 
+if(!isset($hotaru)) { $hotaru = new Hotaru(); }
+if(debug == "on") {
+	include_once(functions . 'funcs.timers.php');
+	$hotaru->is_debug = true;
+	timer_start();
+}
+
+// include other essential libraries
 require_once(includes . 'Inspekt/Inspekt.php');			// for Input sanitation and validation
 require_once(includes . 'ezSQL/ez_sql_core.php');		// for database usage
 require_once(includes . 'ezSQL/mysql/ez_sql_mysql.php');	// for database usage
-require_once(libraries . 'class.hotaru.php'); 
 require_once(libraries . 'class.plugins.php');
 
 if(file_exists(languages . 'main/main_' . strtolower(sitelanguage) . '.php')) {
@@ -37,9 +45,7 @@ if(!isset($cage)) { $cage = Inspekt::makeSuperCage(); }
 // Initialize database
 if(!isset($db)) { $db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST); }
 
-// Create global objects
-if(!isset($hotaru)) { $hotaru = new Hotaru(); }
-
+// Create objects
 if(!isset($plugin)) { 
 	$plugin = new Plugin(); 
 } else {

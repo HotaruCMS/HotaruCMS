@@ -57,4 +57,5 @@ function stripFileExtension($fileName) {	// Takes a single filename, returns it 
 	return strtok($fileName, ".");
 }
 
+
 ?>

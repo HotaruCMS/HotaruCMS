@@ -33,6 +33,9 @@ define('baseurl', "http://localhost/hotarucms/");	//e.g. http://www.mysite.com/ 
 define("current_theme", "default" . "/");	// change "default for the folder name of your theme.
 define("current_admin_theme", "admin_default" . "/");	// change "default for the folder name of your admin theme.
 
+/* ****** Debug ****** */
+define("debug", "off");				// "on" will show the number of database queries and page loading time in the template footer
+
 /* ************************************************************************************ */
 /* *************************** DON'T EDIT BELOW THIS POINT **************************** */
 /* ************************************************************************************ */
