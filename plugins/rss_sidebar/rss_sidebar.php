@@ -40,32 +40,42 @@ if(!is_object($plugin)) {
 
 function rs_rss_sidebar() {
     global $hotaru, $plugin;
-	       
-    $feedurl = $plugin->plugin_settings('rss_sidebar', 'rss_sidebar_feed');
-    
-    if($plugin->plugin_settings('rss_sidebar', 'rss_sidebar_cache')) { $cache = true; } else { $cache = false; }
-    
-    $cache_duration = $plugin->plugin_settings('rss_sidebar', 'rss_sidebar_cache_duration');
-    
-    $feed = $hotaru->new_simplepie($feedurl, $cache, $cache_duration);
-    
-    $max_items = $plugin->plugin_settings('rss_sidebar', 'rss_sidebar_max_items');
-    
-    $feed->init();
-        
-    $output = "";
-    $item_count = 0;
-	    
-    if ($feed->data) { 
-        foreach ($feed->get_items() as $item) {
-                $output .= '';
-                $output .= '<li><a href="' . $item->get_permalink() . '">' . $item->get_title() . '</a></li>';
-            $item_count++;
-            if($item_count >= $max_items) { break;}
-        }
-    }
+	      
+	// Get settings from the database:
+	$settings = unserialize($plugin->plugin_settings('rss_sidebar', 'rss_sidebar_settings')); 
+
+	// Feed settings:
+	$feedurl = $settings['rss_sidebar_feed'];
+	if($settings['rss_sidebar_cache']) { $cache = true; } else { $cache = false; }
+	$cache_duration = $settings['rss_sidebar_cache_duration'];
 	
-    echo $output;
+	// Get the feed...
+	$feed = $hotaru->new_simplepie($feedurl, $cache, $cache_duration);
+	
+	// Limit the number of items:
+	$max_items = $settings['rss_sidebar_max_items'];
+	
+	// Feed is ready.
+	$feed->init();
+	
+	$output = "";
+	$item_count = 0;
+	
+	if($settings['rss_sidebar_title']) { 
+		$output.= "<li class='sidebar_list_title'><a href='" . $settings['rss_sidebar_feed']. "' title='RSS Feed'>" . $settings['rss_sidebar_title'] . "</a></li>"; 
+	}
+	    
+	if ($feed->data) { 
+		foreach ($feed->get_items() as $item) {
+		        $output .= '';
+		        $output .= '<li><a href="' . $item->get_permalink() . '">' . $item->get_title() . '</a></li>';
+		    $item_count++;
+		    if($item_count >= $max_items) { break;}
+		}
+	}
+	
+	// Display the whole thing:
+	echo $output;
 }
 
 /* *************************************
@@ -112,11 +122,15 @@ function rs_admin_sidebar_plugin_settings() {
  
 function rs_install_plugin_starter_settings() {
 	global $db, $plugin;
+	
+	$settings['rss_sidebar_feed'] = 'http://feeds2.feedburner.com/hotarucms';
+	$settings['rss_sidebar_title'] = 'Hotaru CMS Forums';
+	$settings['rss_sidebar_cache'] = 'on';
+	$settings['rss_sidebar_cache_duration'] = 10;
+	$settings['rss_sidebar_max_items'] = 10;
+	
 	// parameters: plugin folder name, setting name, setting value
-	$plugin->plugin_settings_update('rss_sidebar', 'rss_sidebar_feed', 'http://feeds2.feedburner.com/hotarucms');
-	$plugin->plugin_settings_update('rss_sidebar', 'rss_sidebar_cache', 'on');
-	$plugin->plugin_settings_update('rss_sidebar', 'rss_sidebar_cache_duration', 10);
-	$plugin->plugin_settings_update('rss_sidebar', 'rss_sidebar_max_items', 10);	
+	$plugin->plugin_settings_update('rss_sidebar', 'rss_sidebar_settings', serialize($settings));
 }
 
 
@@ -129,16 +143,18 @@ function rs_install_plugin_starter_settings() {
  
 function rs_admin_plugin_settings() {
 	global $plugin;
+	$settings = unserialize($plugin->plugin_settings('rss_sidebar', 'rss_sidebar_settings'));
 	echo "<h1>RSS Sidebar Configuration</h1>\n";
 	echo "<form name='rss_sidebar_form' action='" . baseurl . "plugins/rss_sidebar/rss_sidebar.php' method='get'>\n";
-	echo "Feed URL: <input type='text' size=60 name='rss_sidebar_feed' value='" . $plugin->plugin_settings('rss_sidebar', 'rss_sidebar_feed') . "' /><br /><br />\n";
-	if($plugin->plugin_settings('rss_sidebar', 'rss_sidebar_cache')) { $checked = "checked"; } else { $checked = ""; }
+	echo "Feed URL: <input type='text' size=60 name='rss_sidebar_feed' value='" . $settings['rss_sidebar_feed'] . "' /><br /><br />\n";
+	echo "Feed Title: <input type='text' size=30 name='rss_sidebar_title' value='" . $settings['rss_sidebar_title'] . "' /><br /><br />\n";
+	if($settings['rss_sidebar_cache']) { $checked = "checked"; } else { $checked = ""; }
 	echo "Cache: <input type='checkbox' id='rs_cache' name='rss_sidebar_cache' " . $checked . " /><br /><br />\n";
 	if(!$checked) { $display = "style='display:none;'"; } else { $display = ""; }
 	echo "<div id='rs_cache_duration' " . $display . ">";
 	echo "Cache duration: \n";
 		echo "<select name='rss_sidebar_cache_duration'>\n";
-			$cache_duration = $plugin->plugin_settings('rss_sidebar', 'rss_sidebar_cache_duration');
+			$cache_duration = $settings['rss_sidebar_cache_duration'];
 			if($cache_duration) { echo "<option value='" . $cache_duration . "'>" . $cache_duration . " mins</option>\n"; }
 			echo "<option value='10'>10 mins</option>\n";
 			echo "<option value='30'>30 mins</option>\n";
@@ -147,7 +163,7 @@ function rs_admin_plugin_settings() {
 	echo "</div>";
 	echo "Max. Items: \n"; 
 		echo "<select name='rss_sidebar_max_items'>\n";
-			$max_items = $plugin->plugin_settings('rss_sidebar', 'rss_sidebar_max_items');
+			$max_items = $settings['rss_sidebar_max_items'];
 			if($max_items) { echo "<option value='" . $max_items . "'>" . $max_items . " mins</option>\n"; }
 			echo "<option value='5'>5</option>\n";
 			echo "<option value='10'>10</option>\n";
@@ -170,8 +186,9 @@ function rs_admin_plugin_settings() {
 function rs_get_params() {
 	global $cage;
 	$parameters = array();
-	$parameters['rss_sidebar_feed'] = $cage->get->noTags('rss_sidebar_feed');
-	$parameters['rss_sidebar_cache'] = $cage->get->noTags('rss_sidebar_cache');
+	$parameters['rss_sidebar_feed'] = $cage->get->testUri('rss_sidebar_feed');
+	$parameters['rss_sidebar_title'] = $cage->get->noTags('rss_sidebar_title');
+	$parameters['rss_sidebar_cache'] = $cage->get->getAlpha('rss_sidebar_cache');
 	$parameters['rss_sidebar_cache_duration'] = $cage->get->getInt('rss_sidebar_cache_duration');
 	$parameters['rss_sidebar_max_items'] = $cage->get->getInt('rss_sidebar_max_items');
 	rs_save_settings($parameters);
@@ -195,11 +212,10 @@ function rs_save_settings(&$parameters) {
 		}
 			
 		if($message == "") {
-			foreach($parameters as $key => $value) {
-				$plugin->plugin_settings_update('rss_sidebar', $key, $value);
-				$message = "RSS Sidebar settings updated successfully.";
-				$message_type = "green";
-			}		
+			$values = serialize($parameters);
+			$message = "RSS Sidebar settings updated successfully.";
+			$message_type = "green";
+			$plugin->plugin_settings_update('rss_sidebar', 'rss_sidebar_settings', $values);	
 		}
 	}
 	
