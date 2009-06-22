@@ -42,6 +42,11 @@ $lang["install_step4_instructions4"] = "Save and upload <pre>hotaru_settings.php
 /* Step 5 */
 $lang["install_step5"] = "Step 5/6: Admin Registration";
 $lang["install_step5_instructions"] = "Register yourself as a site administrator";
+$lang["install_step5_username_error"] = "Your username must contain letters, dashes and underscores only.";
+$lang["install_step5_password_error"] = "The password must be at least 6 characters and can only contain letters, numbers and these symbols: @ * # - _";
+$lang["install_step5_email_error"] = "That doesn't parse as a valid email address.";
+$lang["install_step5_update_success"] = "Updated successfully.";
+$lang["install_step5_form_update"] = "Update";
 
 /* Step 6 */
 $lang["install_step6"] = "Step 6/6: Completion";

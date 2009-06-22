@@ -205,7 +205,7 @@ function register_admin() {
 		if($name_check) {
 			$user->username = $name_check;
 		} else {
-			echo "<tr><td colspan=2 style='color: #ff0000;'>Your username must contain letters, dashes and underscores only.</td></tr>";
+			echo "<tr><td colspan=2 style='color: #ff0000;'>" . $lang['install_step5_username_error'] . "</td></tr>";
 			$error = 1;
 		}
 	
@@ -213,7 +213,7 @@ function register_admin() {
 		if($password_check) {
 			$user->password = $password_check;
 		} else {
-			echo "<tr><td colspan=2 style='color: red;'>The password must be at least 6 characters and can only contain letters, numbers and these symbols: @ * # - _</td></tr>";
+			echo "<tr><td colspan=2 style='color: red;'>" . $lang['install_step5_password_error'] . "</td></tr>";
 			$error = 1;
 		}
 		
@@ -221,13 +221,13 @@ function register_admin() {
 		if($email_check) {
 			$user->email = $email_check;
 		} else {
-			echo "<tr><td colspan=2 style='color: #ff0000;'>That doesn't parse as a valid email address.</td></tr>";
+			echo "<tr><td colspan=2 style='color: #ff0000;'>" . $lang['install_step5_email_error'] . "</td></tr>";
 			$error = 1;
 		}
 	}
 	
 	if(($cage->post->getInt('step') == 5) && $error == 0) {
-		echo "<tr><td colspan=2 style='color: #00ff00;'>Updated successfully.</td></tr>";
+		echo "<tr><td colspan=2 style='color: #00ff00;'>" . $lang['install_step5_update_success'] . "</td></tr>";
 	}
 	
 	if($error == 0) {
@@ -247,7 +247,7 @@ function register_admin() {
 	echo "<tr><td>Email:&nbsp; </td><td><input type='text' size=30 name='email' value='" . $user->email . "' /></td></tr>\n";
 	echo "<tr><td>Password:&nbsp; </td><td><input type='password' size=30 name='password' value='" . $user->password . "' /></td></tr>\n";
 	echo "<input type='hidden' name='step' value='5' />\n";
-	echo "<tr><td style='text-align:left;'><input type='submit' value='Update' /></td><td>&nbsp;</td></tr>\n";
+	echo "<tr><td style='text-align:left;'><input type='submit' value='" . $lang['install_step5_form_update'] . "' /></td><td>&nbsp;</td></tr>\n";
 	echo "</table>";
 	echo "</form></div>\n";
 	echo "<div class='back'><a href='install.php?step=4'>" . $lang['install_back'] . "</a></div>\n";

@@ -71,6 +71,24 @@ class UserBase {	// Limited to the absolute essential user information. Plugins 
 		return $user_info;
 	}
 	
+
+	/* ******************************************************************** 
+	 *  Function: admin_exists
+	 *  Parameters: None
+	 *  Purpose: Returns true if a user with administrator role is in the database 
+	 *  Notes: Used during Hotaru installation, but otherwise pretty pointless
+	 ********************************************************************** */
+	 		
+	function admin_exists() {
+		global $db;
+		$sql = "SELECT user_role FROM " . table_users . " WHERE user_role = %s";
+		if($db->get_row($db->prepare($sql, 'administrator'))) {
+			return true; // admin exists
+		} else {
+			return false;
+		}
+	}	
+	
 }
  
 ?>
