@@ -22,6 +22,7 @@ global $hotaru, $plugin; // don't remove
 		<div class="yui-gc">
     			<div class="yui-u first">
     				<!-- MAIN -->
+    				<div id="main">
     				<?php 	
 					$result = $plugin->check_actions('theme_index_display');
 					if(!isset($result) || !is_array($result)) {
@@ -29,6 +30,7 @@ global $hotaru, $plugin; // don't remove
 						$hotaru->display_template($page); 
 					}
 				?>
+				</div>
 	    		</div>
     			<div class="yui-u">
     				

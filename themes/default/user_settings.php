@@ -14,8 +14,6 @@ Version: 0.1
 global $hotaru, $plugin; // don't remove
 ?>
 
-<div id="main">
-	User Settings page. <br /><br />
-	
-	Need to make registration/login ability before continuing work on this page.
-</div>
+User Settings page. <br /><br />
+
+Need to make registration/login ability before continuing work on this page.

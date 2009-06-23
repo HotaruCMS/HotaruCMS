@@ -14,6 +14,4 @@ Version: 0.1
 global $hotaru; // don't remove
 ?>
 
-<div id="main">
-	<?php echo $hotaru->display_stories(10, 'latest'); ?>
-</div>
+<?php echo $hotaru->display_stories(10, 'latest'); ?>

@@ -21,13 +21,15 @@ global $hotaru, $plugin; // don't remove
 		<div class="yui-gf">
     			<div class="yui-u">
     				<!-- MAIN -->
+    					<div id="main">
     					<?php
 						$result = $plugin->check_actions('admin_theme_index_display');
 						if(!isset($result) || !is_array($result)) {
 		    					$page = $hotaru->get_page_name();
 							$hotaru->display_admin_template($page); 
 						} 	
-					?>			
+					?>	
+					</div>		
 	    		</div>
     			<div class="yui-u first">
     					<!-- SIDEBAR -->
