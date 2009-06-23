@@ -246,12 +246,15 @@ class Plugin extends Plugins {
 	
 	/* ******************************************************************** 
 	 *  Function: check_actions
-	 *  Parameters: plugin hook, plugin folder for specifying a plugin, array of optional parameters
+	 *  Parameters: $hook: plugin hook, 
+	 *              $perform: 'true' to run the function or 'false' to just return if the function exists or not
+	 * 	        $folder: plugin folder for specifying a plugin, 
+	 *		$parameters: an array of optional parameters to pass to the function
 	 *  Purpose: Checks if such a function exists and is part of an enabled plugin, then calls the function.
 	 *  Notes: ---
 	 ********************************************************************** */
 	 
-	function check_actions($hook = '', $folder = '', $parameters = array()) {
+	function check_actions($hook = '', $perform = true, $folder = '', $parameters = array()) {
 		global $db, $cage;
 		if($hook == '') {
 			//echo "Error: Plugin hook name not provided.";
@@ -263,13 +266,19 @@ class Plugin extends Plugins {
 			
 			$sql = "SELECT " . table_plugins . ".plugin_enabled, " . table_plugins . ".plugin_folder, " . table_plugins . ".plugin_prefix, " . table_pluginhooks . ".plugin_hook  FROM " . table_pluginhooks . ", " . table_plugins . " WHERE (" . table_pluginhooks . ".plugin_hook = %s) AND (" . table_plugins . ".plugin_folder = " . table_pluginhooks . ".plugin_folder) " . $where;
 			$plugins = $db->get_results($db->prepare($sql, $hook, $folder));
+			
+			$action_found = false;
 			if($plugins) {
 				foreach($plugins as $plugin) {			
 					if($plugin->plugin_folder && $plugin->plugin_hook && ($plugin->plugin_enabled == 1)) {
 						if(file_exists(plugins . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php")) {
 							include_once(plugins . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php");
-							$function_name = $plugin->plugin_prefix . "_" . $hook;
-							$function_name($parameters);
+							if($perform == true) {
+								$function_name = $plugin->plugin_prefix . "_" . $hook;
+								$result = $function_name($parameters);
+								if($result) { $return_array[$function_name] = $result; }
+							}
+							$action_found = true;
 						} else {
 							//echo "Error: Plugin file not found.";
 						}
@@ -284,6 +293,14 @@ class Plugin extends Plugins {
 			} else {
 				return false;
 			}	
+		}
+		
+		if(!empty($return_array)) {
+			return $return_array;		// returns an array of return values from each function, e.g. $return_array['usr_users'] = something
+		} elseif($action_found == true) {
+			return true;			// at least one function was triggered, but nothing was returned
+		} else {
+			return false;			// no functions were triggered. Eitherthey weren't found or they were surpressed by $perform = false.
 		}
 	}
 		

@@ -5,7 +5,7 @@
  * version: 0.1
  * folder: users
  * prefix: usr
- * hooks: users, hotaru_header, install_plugin_starter_settings, navigation
+ * hooks: users, hotaru_header, install_plugin_starter_settings, navigation, theme_index_display_conditional
  *
  */
 	
@@ -94,7 +94,19 @@ function usr_install_plugin_starter_settings() {
  *  Notes: 
  ********************************************************************** */
 
-function usr_navigation() {
+function usr_navigation() {	
+	echo "<li><a href='" . baseurl . "index.php?page=login'>Login</a></li>";
+	echo "<li><a href='" . baseurl . "index.php?page=register'>Register</a></li>";
 	echo "<li><a href='" . baseurl . "index.php?page=user_settings&user='>Settings</a></li>";
+}
+
+function usr_theme_index_display_conditional() {
+	global $hotaru;
+	if($hotaru->is_page('login')) {
+		$hotaru->display_template('/pages/login', 'users'); 
+		return true;
+	} else {
+		return false;
+	}
 }
 ?>

@@ -12,7 +12,7 @@ Version: 0.1
 <?php echo $hotaru->display_admin_links(); ?>				// Admin menu
 ***************************** */
 
-global $hotaru; // don't remove
+global $hotaru, $plugin; // don't remove
 ?>
 <!-- HEADER-->
 <?php echo $hotaru->display_admin_template('header'); ?>
@@ -21,13 +21,13 @@ global $hotaru; // don't remove
 		<div class="yui-gf">
     			<div class="yui-u">
     				<!-- MAIN -->
-					<?php if($hotaru->is_admin_plugins) { ?>
-						<?php echo $hotaru->display_admin_template('plugins'); ?>
-					<?php } elseif($hotaru->is_admin_plugin_settings) { ?>
-						<?php echo $hotaru->display_admin_template('plugin_settings'); ?>
-					<?php } else {?>
-						<?php echo $hotaru->display_admin_template('home'); ?>
-					<?php } ?>    				
+    					<?php
+						$result = $plugin->check_actions('admin_theme_index_display_conditional');
+						if(!isset($result) || !is_array($result)) {
+		    					$page = $hotaru->get_page_name();
+							$hotaru->display_admin_template($page); 
+						} 	
+					?>			
 	    		</div>
     			<div class="yui-u first">
     					<!-- SIDEBAR -->

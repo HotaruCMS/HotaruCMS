@@ -36,20 +36,39 @@ class Hotaru {
 	
 	
 	/* ******************************************************************** 
-	 *  Function: is_custom_page
-	 *  Parameters: Custom page name (filename without .php)
-	 *  Purpose: Checks to see if the page we are checking for is the on we're actually on
-	 *  Notes: E.g. $hotaru->is_custom_page('custom2') returns true if page=custom2 in the url.
+	 *  Function: is_page
+	 *  Parameters: a page name (filename without .php)
+	 *  Purpose: Checks to see if the page we are checking for is the one we're actually on
+	 *  Notes: E.g. $hotaru->is_page('login') returns true if page=login in the url.
 	 ********************************************************************** */
 	 
-	function is_custom_page($page = '') {
+	function is_page($page = '') {
 		global $cage;
 		$real_page = $cage->get->testRegex('page', '/^([a-z0-9_-])+$/i');
+		if(!$real_page) { $real_page = "home"; }
 
 		if($real_page == $page) {
-			return true;
+			return $page;
 		} else {
 			return false;
+		}
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: get_page_name
+	 *  Parameters: None
+	 *  Purpose: Returns the page name, e.g. login, user_settings, etc.
+	 *  Notes: This only works if there is a page=name in the url, else defaults to 'home' (which might not be accurate). 
+	 ********************************************************************** */
+	 
+	function get_page_name() {
+		global $cage;
+		$page = $cage->get->testRegex('page', '/^([a-z0-9_-])+$/i');
+		if($page) {
+			return $page;
+		} else {
+			return 'home';
 		}
 	}
 	
@@ -61,11 +80,22 @@ class Hotaru {
 	 *  Notes: ---
 	 ********************************************************************** */
 
-	function display_template($page)  {
+	function display_template($page = '', $plugin = '')  {
 		
 		/* First tries to load the template from the user specified custom theme, 
 		   and falls back on the default theme if not found. */
 		$page = $page . '.php';
+		
+		/* First check if there's a specified plugin for the file and load 
+		   the template from the plugin folder if it's there. */
+		if($plugin != '') {
+			if(file_exists(plugins .  $plugin . $page)) {
+				include_once(plugins . $plugin . $page);
+				return;
+			}
+		}
+		
+		// Check the custom theme then the default theme...		
 		if(file_exists(themes . current_theme . $page)) {
 			include_once(themes . current_theme . $page);
 		} elseif(file_exists(themes . 'default/' . $page)) {
@@ -131,6 +161,14 @@ class Hotaru {
 		return $sp;
 	}
 	
+	
+	/* ******************************************************************** 
+	 *  Function: show_queries_and_time
+	 *  Parameters: None
+	 *  Purpose: Shows number of database queries and the time ittakes for a page to load
+	 *  Notes: ---
+	 ********************************************************************** */
+	 
 	function show_queries_and_time() {
 		global $db;
 		if($this->is_debug) { 
@@ -154,10 +192,21 @@ class Hotaru {
 	 *  Notes: ---
 	 ********************************************************************** */
 	 
-	function display_admin_template($page)  {
+	function display_admin_template($page = '', $plugin = '')  {
 		/* First tries to load the template from the user specified custom theme, 
 		   and falls back on the default theme if not found. */
 		$page = $page . '.php';
+		
+		/* First check if there's a specified plugin for the file and load 
+		   the template from the plugin folder if it's there. */
+		if($plugin != '') {
+			if(file_exists(plugins .  $plugin . $page)) {
+				include_once(plugins . $plugin . $page);
+				return;
+			}
+		}
+		
+		// Check the custom theme then the default theme...		
 		if(file_exists(admin_themes . current_admin_theme . $page)) {
 			include_once(admin_themes . current_admin_theme . $page);
 		} elseif(file_exists(admin_themes . 'admin_default/' . $page)) {

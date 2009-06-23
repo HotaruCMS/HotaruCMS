@@ -19,7 +19,9 @@ switch ($page) {
 		$hotaru->is_home = true;
 		break;
 	default:
-		$hotaru->is_custom_page($page);
+		if(!$hotaru->is_page($page)) {
+			$hotaru->is_home = true;	
+		}
 		break;
 }
 

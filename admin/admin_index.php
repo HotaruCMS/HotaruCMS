@@ -17,15 +17,22 @@ switch ($page) {
 		break;
 	case "plugin_settings":
 		$hotaru->is_admin_plugin_settings = true;
-		$plugin_folder = $cage->get->noTags('plugin');
+		$plugin_folder = $cage->get->testRegex('plugin', '/^([a-z0-9_-])+$/i');
+		echo $plugin_folder;
 		$plugin->folder = $plugin_folder;
 		$plugin->message = $cage->get->noTags('message');
 		$plugin->message_type = $cage->get->getAlpha('message_type');
 		$plugin->name = $plugin->plugin_name($plugin_folder);
 		break;
-	default:
+	case "":
+		include('admin_functions/admin_news.php');	// for Admin home RSS feed
 		$hotaru->is_admin_home = true;
-		include('admin_functions/admin_news.php');
+		break;
+	default:
+		if(!$hotaru->is_page($page)) {
+			include('admin_functions/admin_news.php');	// for Admin home RSS feed
+			$hotaru->is_admin_home = true;	
+		}
 		break;
 }
 
