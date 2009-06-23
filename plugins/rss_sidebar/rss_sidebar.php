@@ -191,7 +191,7 @@ function rs_admin_plugin_settings() {
 function rs_get_params() {
 	global $cage;
 	$parameters = array();
-	$parameters['rss_sidebar_feed'] = $cage->get->testUri('rss_sidebar_feed');
+	$parameters['rss_sidebar_feed'] = $cage->get->noTags('rss_sidebar_feed');
 	$parameters['rss_sidebar_title'] = $cage->get->noTags('rss_sidebar_title');
 	$parameters['rss_sidebar_cache'] = $cage->get->getAlpha('rss_sidebar_cache');
 	$parameters['rss_sidebar_cache_duration'] = $cage->get->getInt('rss_sidebar_cache_duration');

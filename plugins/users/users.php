@@ -5,33 +5,11 @@
  * version: 0.1
  * folder: users
  * prefix: usr
- * hooks: users, hotaru_header, install_plugin_starter_settings, navigation, theme_index_display_conditional
+ * hooks: users, hotaru_header, install_plugin_starter_settings, navigation, theme_index_display
  *
  */
 	
-/* ***** ACCESS ********************************************************* 
- * This plugin is accessed in two ways:
- * 1. Directly opened via http. This happens if a file links to it <a href=""> or 
- *    sends data from a form, in which case we want to include the Hotaru environment
- *    (hotaru_header.php) and then the get_params() function to process the data;  
- * 2. Included via check_actions() in class.plugins.php. This is done to give Hotaru 
- *    access to the functions, but we don't want to actually run the script from the 
- *    top so we return false for now.
- * ******************************************************************** */
-
-if(isset($user)) {
-	if(!is_object($user)) { 
-		// Accessed via 1 above;
-		require_once('../../hotaru_header.php');
-		//usr_get_params(); 
-	} else {
-		// Not the object we were expecting...
-		return false; die(); 
-	}
-} else { 
-	// Accessed via 2 above;
-	return false; die(); 
-}
+return false; die(); // die on direct access.
 
 
 /* ******************************************************************** 
@@ -54,9 +32,18 @@ function usr_users(&$parameters) {
  ********************************************************************** */
  
 function usr_hotaru_header() {
+	global $lang;
 	define("table_usermeta", db_prefix . 'usermeta');
 	require_once(libraries . 'class.userbase.php');
 	require_once(plugins . 'users/libraries/class.users.php');
+	require_once(plugins . 'users/login.php');
+	
+	// include users language file
+	if(file_exists(plugins . 'users/languages/users_' . strtolower(sitelanguage) . '.php')) {
+		require_once(plugins . 'users/languages/users_' . strtolower(sitelanguage) . '.php');	// language file for admin
+	} else {
+		require_once(plugins . 'users/languages/users_english.php');	// English file if specified language doesn't exist
+	}
 }
 
 
@@ -90,7 +77,7 @@ function usr_install_plugin_starter_settings() {
 /* ******************************************************************** 
  *  Function: usr_navigation
  *  Parameters: None
- *  Purpose: Adds a link in the navigation bar
+ *  Purpose: Adds links to the navigation bar
  *  Notes: 
  ********************************************************************** */
 
@@ -100,13 +87,36 @@ function usr_navigation() {
 	echo "<li><a href='" . baseurl . "index.php?page=user_settings&user='>Settings</a></li>";
 }
 
-function usr_theme_index_display_conditional() {
-	global $hotaru;
+
+/* ******************************************************************** 
+ *  Function: usr_theme_index_display
+ *  Parameters: None
+ *  Purpose: Echos the login form to index.php 
+ *  Notes: Previously directed to a login.php template file included in this plugin, but decided a function was better. (Nick)
+ ********************************************************************** */
+ 
+function usr_theme_index_display() {
+	global $hotaru, $cage;
 	if($hotaru->is_page('login')) {
-		$hotaru->display_template('/pages/login', 'users'); 
+		//$hotaru->display_template('/pages/login', 'users');  
+		usr_login();
 		return true;
 	} else {
 		return false;
 	}
 }
+
+
+/* ******************************************************************** 
+ *  Function: usr_get_params
+ *  Parameters: None
+ *  Purpose: Gets parameters sent from a form of directly via http
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function usr_get_params() {
+	global $cage;
+
+}
+
 ?>

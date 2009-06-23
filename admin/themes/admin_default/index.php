@@ -22,7 +22,7 @@ global $hotaru, $plugin; // don't remove
     			<div class="yui-u">
     				<!-- MAIN -->
     					<?php
-						$result = $plugin->check_actions('admin_theme_index_display_conditional');
+						$result = $plugin->check_actions('admin_theme_index_display');
 						if(!isset($result) || !is_array($result)) {
 		    					$page = $hotaru->get_page_name();
 							$hotaru->display_admin_template($page); 

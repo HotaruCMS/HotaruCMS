@@ -11,6 +11,7 @@ require_once('hotaru_header.php');
 $hotaru->set_is_page_all_false();
 
 $page = $cage->get->testRegex('page', '/^([a-z0-9_-])+$/i');
+
 switch ($page) {
 	case "user_settings":
 		$hotaru->is_user_settings = true;

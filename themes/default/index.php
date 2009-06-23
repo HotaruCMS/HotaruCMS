@@ -23,7 +23,7 @@ global $hotaru, $plugin; // don't remove
     			<div class="yui-u first">
     				<!-- MAIN -->
     				<?php 	
-					$result = $plugin->check_actions('theme_index_display_conditional');
+					$result = $plugin->check_actions('theme_index_display');
 					if(!isset($result) || !is_array($result)) {
 	    					$page = $hotaru->get_page_name();
 						$hotaru->display_template($page); 
