@@ -268,6 +268,23 @@
 			return $return_val;
 
 		}
+		
+		
+		/* ******************************************************************** 
+		 *  Function: table_exists
+		 *  Parameters: The name of the table to check (without the prefix)
+		 *  Purpose: Returns true if the table exists, flase otherwise
+		 *  Notes: This is a custom function, not part of the original ezSQL class
+		 ********************************************************************** */
+ 
+		function table_exists($table2check) {
+			foreach ( $this->get_col("SHOW TABLES",0) as $table_name ) {
+				if($table_name == db_prefix . $table2check) { 
+					return true; 
+				}
+			}
+			return false;
+		}
 	}
 
 ?>
