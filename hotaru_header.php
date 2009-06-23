@@ -54,4 +54,6 @@ if(!isset($plugin)) {
 	}
 }
 
+$plugin->check_actions('hotaru_header');	// Enables plugins to define global settings, etc. 
+
 ?>

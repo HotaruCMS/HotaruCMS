@@ -16,6 +16,7 @@ class Hotaru {
 	var $is_admin_home = false;
 	var $is_admin_plugins = false;
 	var $is_admin_plugin_settings = false;
+	var $is_user_settings = false;
 	
 	
 	/* ******************************************************************** 
@@ -30,6 +31,26 @@ class Hotaru {
 		$this->is_admin_home = false;
 		$this->is_admin_plugins = false;
 		$this->is_admin_plugin_settings = false;
+		$this->is_user_settings = false;
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: is_custom_page
+	 *  Parameters: Custom page name (filename without .php)
+	 *  Purpose: Checks to see if the page we are checking for is the on we're actually on
+	 *  Notes: E.g. $hotaru->is_custom_page('custom2') returns true if page=custom2 in the url.
+	 ********************************************************************** */
+	 
+	function is_custom_page($page = '') {
+		global $cage;
+		$real_page = $cage->get->testRegex('page', '/^([a-z0-9_-])+$/i');
+
+		if($real_page == $page) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 

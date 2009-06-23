@@ -98,6 +98,21 @@ class Plugins extends generic_pmd {
 		return $status;
 		//return $this->get_status_links($plugin_folder, $status);
 	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: active_plugins
+	 *  Parameters: the field to select, e.g. 'plugin_name', 'plugin_desc', or just '*'
+	 *  Purpose: Returns an array of active plugins
+	 *  Notes: Defaults to 'plugin_folder'. Usage: foreach($plugin->active_plugins() as $folder) { echo $folder->plugin_folder; }
+	 ********************************************************************** */
+	 
+	function active_plugins($select = 'plugin_folder') {
+		global $db;
+		$select = $db->escape($select);
+		$active_plugins = $db->get_results($db->prepare("SELECT " . $select . " FROM " . table_plugins . " WHERE plugin_enabled = %d", 1));
+		if($active_plugins) { return $active_plugins; } else {return false; }
+	}
 
 
 	/* ******************************************************************** 
@@ -239,7 +254,7 @@ class Plugin extends Plugins {
 	function check_actions($hook = '', $folder = '', $parameters = array()) {
 		global $db, $cage;
 		if($hook == '') {
-			echo "Error: Plugin hook name not provided.";
+			//echo "Error: Plugin hook name not provided.";
 		} else {
 			$where = "";
 			if(!empty($folder)) {
@@ -256,13 +271,13 @@ class Plugin extends Plugins {
 							$function_name = $plugin->plugin_prefix . "_" . $hook;
 							$function_name($parameters);
 						} else {
-							echo "Error: Plugin file not found.";
+							//echo "Error: Plugin file not found.";
 						}
 					} else {
 						if($plugin->plugin_enabled != 1) {
-							echo "Error: This plugin is not active.";
+							//echo "Error: This plugin is not active.";
 						} else {
-							echo "Error: Plugin function not found.";
+							//echo "Error: Plugin function not found.";
 						}
 					}
 				}

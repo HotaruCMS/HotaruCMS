@@ -6,9 +6,6 @@
  *  Notes: ---
  ********************************************************************** */
  
-// includes
-require_once('../hotaru_header.php');
-
 class UserBase {	// Limited to the absolute essential user information. Plugins extend this.
  
  	var $id = 0;

@@ -20,10 +20,15 @@
  *    top so we return false for now.
  * ******************************************************************** */
 
-if(!is_object($plugin)) { 
-	// Accessed via 1 above;
-	require_once('../../hotaru_header.php');
-	rs_get_params(); 
+if(isset($user)) {
+	if(!is_object($plugin)) { 
+		// Accessed via 1 above;
+		require_once('../../hotaru_header.php');
+		rs_get_params(); 
+	} else {
+		// Not the object we were expecting...
+		return false; die(); 
+	}
 } else { 
 	// Accessed via 2 above;
 	return false; die(); 

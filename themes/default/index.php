@@ -22,11 +22,15 @@ global $hotaru, $plugin; // don't remove
 		<div class="yui-gc">
     			<div class="yui-u first">
     				<!-- MAIN -->
-				<?php //if($hotaru->is_upcoming) { ?>
-					<?php // echo $hotaru->display_template('upcoming'); ?>
-				<?php //} else {?>
+				<?php if($hotaru->is_user_settings) { ?>
+					<?php echo $hotaru->display_template('user_settings'); ?>
+				<?php } elseif($hotaru->is_custom_page('custom2')) {?>
+					<?php echo $hotaru->display_template('custom1'); ?>
+				<?php } elseif($hotaru->is_custom_page('custom2')) {?>
+					<?php echo $hotaru->display_template('custom2'); ?>
+				<?php } else {?>
 					<?php echo $hotaru->display_template('home'); ?>
-				<?php //} ?>
+				<?php } ?>
 	    		</div>
     			<div class="yui-u">
     				

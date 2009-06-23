@@ -34,7 +34,7 @@ define("current_theme", "default" . "/");	// change "default for the folder name
 define("current_admin_theme", "admin_default" . "/");	// change "default for the folder name of your admin theme.
 
 /* ****** Debug ****** */
-define("debug", "off");				// "on" will show the number of database queries and page loading time in the template footer
+define("debug", "on");				// "on" will show the number of database queries and page loading time in the template footer
 
 /* ************************************************************************************ */
 /* *************************** DON'T EDIT BELOW THIS POINT **************************** */

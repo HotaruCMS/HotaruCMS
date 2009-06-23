@@ -364,8 +364,8 @@ function create_table($table_name) {
 		$sql = "CREATE TABLE `" . db_prefix . $table_name . "` (
 		  `psetting_id` int(20) NOT NULL auto_increment,
 		  `plugin_folder` varchar(64) NOT NULL default '',
-		  `plugin_setting` varchar(64) NOT NULL default '',
-		  `plugin_value` text NOT NULL default '',
+		  `plugin_setting` varchar(64) NULL,
+		  `plugin_value` text NULL,
 		  PRIMARY KEY  (`psetting_id`),
 		  INDEX  (`plugin_folder`)
 		) TYPE = MyISAM;";

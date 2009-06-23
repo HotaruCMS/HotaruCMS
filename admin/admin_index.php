@@ -8,11 +8,9 @@
  
 // includes
 require_once('../hotaru_header.php');
-global $hotaru, $plugin;
- 
 $hotaru->set_is_page_all_false();
 
-$page = $cage->get->noTags('page');
+$page = $cage->get->testRegex('page', '/^([a-z0-9_-])+$/i');
 switch ($page) {
 	case "plugins":
 		$hotaru->is_admin_plugins = true;
