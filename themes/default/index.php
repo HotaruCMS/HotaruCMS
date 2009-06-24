@@ -28,8 +28,13 @@ global $hotaru, $plugin; // don't remove
 		?>
 		
 		<div id="bd" role="main">
-			<div class="yui-gc">
-	    			<div class="yui-u first">
+			<?php if($hotaru->sidebar) { ?>
+				<div class='yui-gc'> 
+				<div class="yui-u first"'>
+			<?php } else { ?>
+				<div class='yui-g''>
+	    			<div class="yui-u first" style='width: 100%;'>
+	    		<?php } ?>
 	    				<!-- MAIN -->
 	    				<div id="main">
 	    				<?php 	
@@ -41,17 +46,19 @@ global $hotaru, $plugin; // don't remove
 					?>
 					</div>
 		    		</div>
-	    			<div class="yui-u">
-	    				
-						<!-- SIDEBAR -->
-						<?php
-							$result = $plugin->check_actions('theme_index_sidebar');
-							if(!isset($result) || !is_array($result)) {
-								$hotaru->display_template('sidebar');
-							}
-						?>
-					</ul>
-		    		</div>
+		    		<?php if($hotaru->sidebar) { ?>
+		    			<div class="yui-u">
+		    				
+							<!-- SIDEBAR -->
+							<?php
+								$result = $plugin->check_actions('theme_index_sidebar');
+								if(!isset($result) || !is_array($result)) {
+									$hotaru->display_template('sidebar');
+								}
+							?>
+						</ul>
+			    		</div>
+		    		<?php } ?>
 			</div>
 		</div>
 		<!-- FOOTER -->

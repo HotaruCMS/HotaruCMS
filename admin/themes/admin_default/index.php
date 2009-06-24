@@ -13,6 +13,7 @@ Version: 0.1
 
 global $hotaru, $plugin; // don't remove
 ?>
+
 <!-- WHOLE PAGE-->
 <?php
 	$result = $plugin->check_actions('admin_theme_index_replace');
@@ -26,9 +27,14 @@ global $hotaru, $plugin; // don't remove
 			}
 		?>
 	
-		<div id="bd" role="main">
-			<div class="yui-gf">
-	    			<div class="yui-u">
+		<div id="bd" role="main">  			
+			<?php if($hotaru->sidebar) { ?>
+				<div class='yui-gf'> 
+				<div class="yui-u"'>
+			<?php } else { ?>
+				<div class='yui-g''>
+	    			<div class="yui-u" style='width: 100%;'>
+	    		<?php } ?>
 	    				<!-- MAIN -->
     					<div id="main">
     					<?php
@@ -40,15 +46,17 @@ global $hotaru, $plugin; // don't remove
 					?>	
 					</div>		
 		    		</div>
-	    			<div class="yui-u first">
-					<!-- SIDEBAR -->
-					<?php
-						$result = $plugin->check_actions('admin_theme_index_sidebar');
-						if(!isset($result) || !is_array($result)) {
-							$hotaru->display_admin_template('sidebar');
-						}
-					?>
-		    		</div>
+		    		<?php if($hotaru->sidebar) { ?>
+		    			<div class="yui-u first">
+						<!-- SIDEBAR -->
+						<?php
+							$result = $plugin->check_actions('admin_theme_index_sidebar');
+							if(!isset($result) || !is_array($result)) {
+								$hotaru->display_admin_template('sidebar');
+							}
+						?>
+			    		</div>
+		    		<?php } ?>
 			</div>
 		</div>
 		<!-- FOOTER -->

@@ -59,7 +59,7 @@ a:hover	{
 	background-color: #F0F0F0;
 }
 
-.yui-gc {
+.yui-gc, .yui-g {
 	/* container for both the wide and narrow colums. */
 	background-color: #4A7E7C;
 }

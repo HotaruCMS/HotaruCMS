@@ -17,6 +17,7 @@ class Hotaru {
 	var $is_admin_plugins = false;
 	var $is_admin_plugin_settings = false;
 	var $is_user_settings = false;
+	var $sidebar = true;
 	
 	
 	/* ******************************************************************** 
