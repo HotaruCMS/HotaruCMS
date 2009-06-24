@@ -8,9 +8,7 @@ Version: 0.1
 ***************************** */
 
 /* ******* USAGE ************
-<?php echo $hotaru->display_template('TEMPLATE_NAME'); ?>			// e.g. header
-<?php echo $hotaru->display_stories(10, 'latest'); ?>				// number, latest/popular
-<?php echo $hotaru->display_story_links(10, 'upcoming', '<li>', '</li>'); ?>	// number, topstories/upcoming, before tag, after tag
+<?php echo $hotaru->display_template('TEMPLATE_NAME'); ?>	// e.g. header
 ***************************** */
 
 global $hotaru, $plugin; // don't remove
@@ -29,39 +27,38 @@ global $hotaru, $plugin; // don't remove
 			}
 		?>
 		
-		
-			<div id="bd" role="main">
-				<div class="yui-gc">
-		    			<div class="yui-u first">
-		    				<!-- MAIN -->
-		    				<div id="main">
-		    				<?php 	
-							$result = $plugin->check_actions('theme_index_main');
+		<div id="bd" role="main">
+			<div class="yui-gc">
+	    			<div class="yui-u first">
+	    				<!-- MAIN -->
+	    				<div id="main">
+	    				<?php 	
+						$result = $plugin->check_actions('theme_index_main');
+						if(!isset($result) || !is_array($result)) {
+		    					$page = $hotaru->get_page_name();
+							$hotaru->display_template($page); 
+						}
+					?>
+					</div>
+		    		</div>
+	    			<div class="yui-u">
+	    				
+						<!-- SIDEBAR -->
+						<?php
+							$result = $plugin->check_actions('theme_index_sidebar');
 							if(!isset($result) || !is_array($result)) {
-			    					$page = $hotaru->get_page_name();
-								$hotaru->display_template($page); 
+								$hotaru->display_template('sidebar');
 							}
 						?>
-						</div>
-			    		</div>
-		    			<div class="yui-u">
-		    				
-							<!-- SIDEBAR -->
-							<?php
-								$result = $plugin->check_actions('theme_index_sidebar');
-								if(!isset($result) || !is_array($result)) {
-									$hotaru->display_template('sidebar');
-								}
-							?>
-						</ul>
-			    		</div>
-				</div>
+					</ul>
+		    		</div>
 			</div>
-			<!-- FOOTER -->
-			<?php
-				$result = $plugin->check_actions('theme_index_footer');
-				if(!isset($result) || !is_array($result)) {
-					$hotaru->display_template('footer');
-				}
-			?>
+		</div>
+		<!-- FOOTER -->
+		<?php
+			$result = $plugin->check_actions('theme_index_footer');
+			if(!isset($result) || !is_array($result)) {
+				$hotaru->display_template('footer');
+			}
+		?>
 <?php	} ?>

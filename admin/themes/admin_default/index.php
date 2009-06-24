@@ -9,18 +9,27 @@ Version: 0.1
 
 /* ******* USAGE ************
 <?php echo $hotaru->display_admin_template('TEMPLATE_NAME'); ?>		// e.g. header
-<?php echo $hotaru->display_admin_links(); ?>				// Admin menu
 ***************************** */
 
 global $hotaru, $plugin; // don't remove
 ?>
-<!-- HEADER-->
-<?php echo $hotaru->display_admin_template('header'); ?>
-
-	<div id="bd" role="main">
-		<div class="yui-gf">
-    			<div class="yui-u">
-    				<!-- MAIN -->
+<!-- WHOLE PAGE-->
+<?php
+	$result = $plugin->check_actions('admin_theme_index_replace');
+	if(!isset($result) || !is_array($result)) {
+?>
+		<!-- HEADER-->
+		<?php
+			$result = $plugin->check_actions('admin_theme_index_header');
+			if(!isset($result) || !is_array($result)) {
+				$hotaru->display_admin_template('header');
+			}
+		?>
+	
+		<div id="bd" role="main">
+			<div class="yui-gf">
+	    			<div class="yui-u">
+	    				<!-- MAIN -->
     					<div id="main">
     					<?php
 						$result = $plugin->check_actions('admin_theme_index_display');
@@ -30,12 +39,23 @@ global $hotaru, $plugin; // don't remove
 						} 	
 					?>	
 					</div>		
-	    		</div>
-    			<div class="yui-u first">
-    					<!-- SIDEBAR -->
-					<?php echo $hotaru->display_admin_template('sidebar'); ?>
-	    		</div>
+		    		</div>
+	    			<div class="yui-u first">
+					<!-- SIDEBAR -->
+					<?php
+						$result = $plugin->check_actions('admin_theme_index_sidebar');
+						if(!isset($result) || !is_array($result)) {
+							$hotaru->display_admin_template('sidebar');
+						}
+					?>
+		    		</div>
+			</div>
 		</div>
-	</div>
-	<!-- FOOTER -->
-	<?php echo $hotaru->display_admin_template('footer'); ?>
+		<!-- FOOTER -->
+		<?php
+			$result = $plugin->check_actions('admin_theme_index_footer');
+			if(!isset($result) || !is_array($result)) {
+				$hotaru->display_admin_template('footer');
+			}
+		?>
+<?php	} ?>

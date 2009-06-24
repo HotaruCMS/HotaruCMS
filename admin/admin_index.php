@@ -17,12 +17,10 @@ switch ($page) {
 		break;
 	case "plugin_settings":
 		$hotaru->is_admin_plugin_settings = true;
-		$plugin_folder = $cage->get->testRegex('plugin', '/^([a-z0-9_-])+$/i');
-		echo $plugin_folder;
-		$plugin->folder = $plugin_folder;
+		$plugin->folder = $cage->get->testRegex('plugin', '/^([a-z0-9_-])+$/i');
 		$plugin->message = $cage->get->noTags('message');
 		$plugin->message_type = $cage->get->getAlpha('message_type');
-		$plugin->name = $plugin->plugin_name($plugin_folder);
+		$plugin->name = $plugin->plugin_name($plugin->folder);
 		break;
 	case "":
 		include('admin_functions/admin_news.php');	// for Admin home RSS feed
