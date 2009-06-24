@@ -67,8 +67,44 @@ class UserBase {	// Limited to the absolute essential user information. Plugins 
 		$user_info = $db->get_row($db->prepare($sql, $param));
 		return $user_info;
 	}
-	
 
+	
+	/* ******************************************************************** 
+	 *  Function: user_exists
+	 *  Parameters: is, username, email
+	 *  Purpose: Returns 4 if a user does not exist, otherwise 0-3 for errors
+	 *  Notes: ---
+	 ********************************************************************** */
+	 		
+	function user_exists($id = 0, $username = '', $email = '') {
+		global $db;
+		if($id != 0) {
+			if($db->get_var($db->prepare("SELECT * FROM " . table_users . " WHERE user_id = %d", $id))) {
+				return 0; // id exists
+			} 
+		} 
+		
+		
+		if($username != '') {
+			if($db->get_var($db->prepare("SELECT * FROM " . table_users . " WHERE user_username = %s", $username))) {
+				return 1; // username exists
+			} 		
+		} 
+		
+		if($email != '') {
+			if($db->get_var($db->prepare("SELECT * FROM " . table_users . " WHERE user_email = %s", $email))) {
+				return 2; // email exists
+			} 		
+		} 
+		
+		if(($id == 0) && ($username == '') && ($email == '')) {
+				return 3; // no arguments provided
+		} 
+		
+		return 4; // user exists
+	}
+
+	
 	/* ******************************************************************** 
 	 *  Function: admin_exists
 	 *  Parameters: None
