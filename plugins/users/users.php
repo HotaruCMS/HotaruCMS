@@ -32,7 +32,7 @@ function usr_users(&$parameters) {
  ********************************************************************** */
  
 function usr_hotaru_header() {
-	global $lang;
+	global $lang, $cage;
 	define("table_usermeta", db_prefix . 'usermeta');
 	require_once(libraries . 'class.userbase.php');
 	require_once(plugins . 'users/libraries/class.users.php');
@@ -43,6 +43,23 @@ function usr_hotaru_header() {
 	} else {
 		require_once(plugins . 'users/languages/users_english.php');	// English file if specified language doesn't exist
 	}
+	
+	$current_user = new User();
+	// Check for a cookie. If present then the user is logged in.
+	$hotaru_user = $cage->cookie->testRegex('hotaru_user', '/^([a-z0-9_-]{4,32})+$/i');
+	if(($hotaru_user) && ($cage->cookie->keyExists('hotaru_key'))) {
+		if($hotaru_user) {
+			$current_user->username = $hotaru_user;
+			$current_user->logged_in = true;
+		}
+	}
+		
+	/* IMPORTANT NOTE: declaring $current_user above doesn't make it available to other functions, even with "global".
+	 * So, we need to return it back to hotaru_header.php and declare it there. That's done below by passing it back through 
+	 * check_actions() as an array. Look at hotaru_header.php to see how we extract the $current_user object for global use. */
+	 
+	$vars['current_user'] = $current_user;
+	return $vars;
 }
 
 
@@ -81,9 +98,15 @@ function usr_install_plugin_starter_settings() {
  ********************************************************************** */
 
 function usr_navigation() {	
-	echo "<li><a href='" . baseurl . "index.php?page=login'>Login</a></li>";
-	echo "<li><a href='" . baseurl . "index.php?page=register'>Register</a></li>";
-	echo "<li><a href='" . baseurl . "index.php?page=user_settings&user='>Settings</a></li>";
+	global $current_user;
+	
+	if($current_user->logged_in) {
+		echo "<li><a href='" . baseurl . "index.php?page=user_settings&user='>Settings</a></li>";
+		echo "<li><a href='" . baseurl . "index.php?page=logout'>Logout</a></li>";
+	} else {	
+		echo "<li><a href='" . baseurl . "index.php?page=login'>Login</a></li>";
+		echo "<li><a href='" . baseurl . "index.php?page=register'>Register</a></li>";
+	}
 }
 
 
@@ -95,12 +118,15 @@ function usr_navigation() {
  ********************************************************************** */
  
 function usr_theme_index_main() {
-	global $hotaru, $cage;
+	global $hotaru, $cage, $current_user;
 	if($hotaru->is_page('login')) {
 		require_once(plugins . 'users/login.php');
 		//$hotaru->display_template('/pages/login', 'users');  
 		usr_login();
 		return true;
+	} elseif($hotaru->is_page('logout')) {
+		$current_user->destroy_cookie_and_session();
+		header("Location: " . baseurl);
 	} elseif($hotaru->is_page('register')) {
 		require_once(plugins . 'users/register.php');
 		usr_register();

@@ -45,14 +45,20 @@ function usr_login() {
 				$login_result = $user->login_check($username_check, $password_check);
 				if($login_result) {
 						//success
+						if($cage->post->getInt('remember') == 1){ $remember = 1; } else { $remember = 0; }
+						$user->username = $username_check;
+						$user->set_cookie($remember);
 						header("Location:" . baseurl . "admin/admin_index.php");	// TEMPORARY 
 				} else {
 						// login failed
 						echo "<tr><td colspan=2 style='color: #ff0000;'>" . $lang["users_login_failed"] . "</td></tr>\n";
+						echo "remember = " . $cage->post->getInt('remember') . "<br />";
+						if($cage->post->getInt('remember') == 1){ $remember_check = "checked"; } else { $remember_check = ""; }
 				}
 			} else {
 				$username_check = "";
 				$password_check = "";
+				$remember_check = "";
 			}
 			
 			echo "</table>\n";
@@ -60,7 +66,8 @@ function usr_login() {
 			echo "<table>\n";
 				echo "<tr><td>Username:&nbsp; </td><td><input type='text' size=30 name='username' value='" . $username_check . "' /></td></tr>\n";
 				echo "<tr><td>Password:&nbsp; </td><td><input type='password' size=30 name='password' value='" . $password_check . "' /></td></tr>\n";
-				echo "<tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='" . $lang['users_login_form_submit'] . "' /></td></tr>\n";			
+				echo "<tr><td><small>Remember: <input type='checkbox' name='remember' value='1'" . $remember_check . " /></small></td>\n";
+				echo "<td style='text-align:right;'><input type='submit' value='" . $lang['users_login_form_submit'] . "' /></td></tr>\n";			
 			echo "</table>\n";
 			echo "</form>\n";
 		echo "</div>\n";

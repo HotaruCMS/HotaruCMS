@@ -13,6 +13,7 @@ class UserBase {	// Limited to the absolute essential user information. Plugins 
 	var $role = '';
 	var $password = '';
 	var $email = '';
+	var $logged_in = false;
 	
 	
 	/* ******************************************************************** 
@@ -122,6 +123,88 @@ class UserBase {	// Limited to the absolute essential user information. Plugins 
 		}
 	}	
 	
+	
+	/* ******************************************************************** 
+	 *  Function: login_check
+	 *  Parameters: Username and password
+	 *  Purpose: Returns true if a user is found with a matching username and password
+	 *  Notes: ---
+	 ********************************************************************** */
+	 	
+	function login_check($username = '', $password = '') {
+		global $db;
+		
+		$password = crypt(md5($password),md5($username));
+		$result = $db->get_row($db->prepare("SELECT user_username, user_password FROM " . table_users . " WHERE user_username = %s AND user_password = %s", $username, $password));
+		if(isset($result)) {return true; } else { return false; }
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: set_cookie
+	 *  Parameters: username
+	 *  Purpose: Sets 30 day cookies for the user.
+	 *  Notes: ---
+	 ********************************************************************** */
+	 
+	function set_cookie($remember) {
+             /* Set a 30 day cookie */
+            if(!$this->username) { 
+            	echo "Error setting cookie. Username not provided.";
+            	return false;
+            } else {
+            	$strCookie=base64_encode(join(':', array($this->username, crypt($this->username, 22))));
+		if($remember) { $month = 2592000 + time(); } else { $month = 0; }// (2592000 = 60 seconds * 60 mins * 24 hours * 30 days.)
+		setcookie("hotaru_user", $this->username, $month, "/");
+		setcookie("hotaru_key", $strCookie, $month, "/");
+		return true;
+            }
+        }
+        
+        	
+	/* ******************************************************************** 
+	 *  Function: destory_cookie_and_session
+	 *  Parameters: None
+	 *  Purpose: Deletes cookies and destroys the session.
+	 *  Notes: ---
+	 ********************************************************************** */
+	 
+	function destroy_cookie_and_session() {
+		/* setting a cookie with a negative time expires it */
+		setcookie("hotaru_user", "", time()-3600, "/");
+		setcookie("hotaru_key", "", time()-3600, "/");
+		session_destroy();
+		$this->logged_in = false;
+        }
+        
+        	
+	/* ******************************************************************** 
+	 *  Function: session_defaults
+	 *  Parameters: None
+	 *  Purpose: Sets default session data.
+	 *  Notes: ---
+	 ********************************************************************** */
+	 
+        function session_defaults() {
+        	$_SESSION['loggedin'] = false;
+		$_SESSION['userid'] = 0;
+		$_SESSION['username'] = '';
+		$_SESSION['remember'] = false; 
+        }
+        	
+        	
+	/* ******************************************************************** 
+	 *  Function: set_session
+	 *  Parameters: None
+	 *  Purpose: Sets ession data for this user.
+	 *  Notes: ---
+	 ********************************************************************** */  
+	       
+	function set_session() {
+		$_SESSION['loggedin'] = true;
+		$_SESSION['userid'] = $this->id;
+		$_SESSION['username'] = $this->username;
+	} 
 }
  
 ?>

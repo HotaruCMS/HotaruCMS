@@ -9,6 +9,8 @@
 ini_set('display_errors',1);
 error_reporting(E_ALL);
 
+session_start();
+
 // include settings
 require_once('hotaru_settings.php');
 
@@ -54,6 +56,12 @@ if(!isset($plugin)) {
 	}
 }
 
-$plugin->check_actions('hotaru_header');	// Enables plugins to define global settings, etc. 
+$results = $plugin->check_actions('hotaru_header');	// Enables plugins to define global settings, etc. 
 
+/* The following extracts the results of check_actions - handy for making objects from plugins global */
+if(isset($results) && is_array($results)) {
+	foreach($results as $key => $value) {
+		if(is_array($value)) { extract($value); }
+	} 
+}
 ?>
