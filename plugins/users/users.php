@@ -5,7 +5,7 @@
  * version: 0.1
  * folder: users
  * prefix: usr
- * hooks: users, hotaru_header, install_plugin_starter_settings, navigation, theme_index_display
+ * hooks: users, hotaru_header, install_plugin_starter_settings, navigation, theme_index_main
  *
  */
 	
@@ -94,7 +94,7 @@ function usr_navigation() {
  *  Notes: Previously directed to a login.php template file included in this plugin, but decided a function was better. (Nick)
  ********************************************************************** */
  
-function usr_theme_index_display() {
+function usr_theme_index_main() {
 	global $hotaru, $cage;
 	if($hotaru->is_page('login')) {
 		require_once(plugins . 'users/login.php');
