@@ -24,7 +24,7 @@ function usr_login() {
 		if(!empty($plugin->message)) { echo "<div class='message " . $plugin->message_type . "'>" . $plugin->message . "</div>\n"; } 
 		
 		echo "<div id=''>";
-		echo $lang["users_login_instructions"] . "\n";;
+		echo $lang["users_login_instructions"] . "\n";
 
 			echo "<form name='login_form' action='" . baseurl . "index.php?page=login' method='post'>\n";
 			echo "<table>\n";

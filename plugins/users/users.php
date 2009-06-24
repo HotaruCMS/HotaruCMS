@@ -36,7 +36,6 @@ function usr_hotaru_header() {
 	define("table_usermeta", db_prefix . 'usermeta');
 	require_once(libraries . 'class.userbase.php');
 	require_once(plugins . 'users/libraries/class.users.php');
-	require_once(plugins . 'users/login.php');
 	
 	// include users language file
 	if(file_exists(plugins . 'users/languages/users_' . strtolower(sitelanguage) . '.php')) {
@@ -98,9 +97,14 @@ function usr_navigation() {
 function usr_theme_index_display() {
 	global $hotaru, $cage;
 	if($hotaru->is_page('login')) {
+		require_once(plugins . 'users/login.php');
 		//$hotaru->display_template('/pages/login', 'users');  
 		usr_login();
 		return true;
+	} elseif($hotaru->is_page('register')) {
+		require_once(plugins . 'users/register.php');
+		usr_register();
+		return true;		
 	} else {
 		return false;
 	}
