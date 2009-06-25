@@ -124,26 +124,37 @@ function usr_navigation() {
  
 function usr_theme_index_main() {
 	global $hotaru, $cage, $current_user;
-	if($hotaru->is_page('login')) {
-		require_once(plugins . 'users/login.php');
-		//$hotaru->display_template('/pages/login', 'users');  
-		usr_login();
-		return true;
-	} elseif($hotaru->is_page('logout')) {
-		$current_user->destroy_cookie_and_session();
-		header("Location: " . baseurl);
-		return true;
-	} elseif($hotaru->is_page('user_settings')) {
-		require_once(plugins . 'users/update.php');
-		usr_update();
-		return true;
-	} elseif($hotaru->is_page('register')) {
-		require_once(plugins . 'users/register.php');
-		usr_register();
-		return true;		
+	
+	// Pages you have to be logged in for...
+	if($current_user->logged_in) {
+		 if($hotaru->is_page('logout')) {
+			$current_user->destroy_cookie_and_session();
+			header("Location: " . baseurl);
+			return true;
+		} elseif($hotaru->is_page('user_settings')) {
+			require_once(plugins . 'users/update.php');
+			usr_update();
+			return true;
+		} else {
+			return false;
+		}
+		
+	// Pages you have to be logged out for...
 	} else {
-		return false;
+		if($hotaru->is_page('register')) {
+			require_once(plugins . 'users/register.php');
+			usr_register();
+			return true;	
+		} elseif($hotaru->is_page('login')) {
+			require_once(plugins . 'users/login.php');
+			//$hotaru->display_template('/pages/login', 'users');  
+			usr_login();
+			return true;
+		} else {
+			return false;
+		}	
 	}
+	return false;
 }
 
 
