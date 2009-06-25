@@ -37,10 +37,15 @@ class UserBase {	// Limited to the absolute essential user information. Plugins 
 	 *  Notes: ---
 	 ********************************************************************** */	
 	
-	function update_user_basic($username = '', $role = 'registered_user', $password = 'password', $email = '') {
+	function update_user_basic($id = 0, $username = '', $role = 'registered_user', $password = 'password', $email = '') {
 		global $db;
-		$sql = "UPDATE " . table_users . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s WHERE user_role = %s";
-		$db->query($db->prepare($sql, $username, $role, $password, $email, $role));
+		if($id != 0) {
+			$sql = "UPDATE " . table_users . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s WHERE user_id = %d";
+			$db->query($db->prepare($sql, $username, $role, $password, $email, $id));
+			return true;
+		} else {
+			return false;
+		}
 	}
 		
 	
@@ -66,11 +71,16 @@ class UserBase {	// Limited to the absolute essential user information. Plugins 
 		
 		$sql = "SELECT user_id, user_username, user_role, user_password, user_email FROM " . table_users . " WHERE " . $where;
 		$user_info = $db->get_row($db->prepare($sql, $param));
-		$this->id = $user_info->user_id;
-		$this->username = $user_info->user_username;
-		$this->role = $user_info->user_role;
-		$this->email = $user_info->user_email;
-		return $user_info;
+		if($user_info) {
+			$this->id = $user_info->user_id;
+			$this->username = $user_info->user_username;
+			$this->password = $user_info->user_password;
+			$this->role = $user_info->user_role;
+			$this->email = $user_info->user_email;
+			return $user_info;
+		} else {
+			return false;
+		}
 	}
 
 	

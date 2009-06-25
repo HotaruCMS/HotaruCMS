@@ -18,7 +18,7 @@ function admin_login() {
 		if(!empty($message)) {  } 
 		
 		echo "<div class='main_inner'>";
-		echo $lang["admin_login_reason"] . "<br />\n";
+		echo $lang["admin_login_reason"] . "<br /><br />\n";
 		echo $lang["admin_login_instructions"] . "\n";
 
 			if(!$username_check = $cage->post->testRegex('username', '/^([a-z0-9_-]{4,32})+$/i')) {

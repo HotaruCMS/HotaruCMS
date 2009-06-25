@@ -103,14 +103,14 @@ function usr_navigation() {
 	global $current_user;
 	
 	if($current_user->logged_in) {
-		echo "<li><a href='" . baseurl . "index.php?page=user_settings&user='>Settings</a></li>";
-		echo "<li><a href='" . baseurl . "index.php?page=logout'>Logout</a></li>";
+		echo "<li><a href='" . baseurl . "index.php?page=user_settings&user='>Settings</a></li>\n";
+		echo "<li><a href='" . baseurl . "index.php?page=logout'>Logout</a></li>\n";
 		if($current_user->role == 'administrator') {
-			echo "<li><a href='" . baseurl . "admin/admin_index.php'>Admin</a></li>";	
+			echo "<li><a href='" . baseurl . "admin/admin_index.php'>Admin</a></li>\n";	
 		}
 	} else {	
-		echo "<li><a href='" . baseurl . "index.php?page=login'>Login</a></li>";
-		echo "<li><a href='" . baseurl . "index.php?page=register'>Register</a></li>";
+		echo "<li><a href='" . baseurl . "index.php?page=login'>Login</a></li>\n";
+		echo "<li><a href='" . baseurl . "index.php?page=register'>Register</a></li>\n";
 	}
 }
 
@@ -132,6 +132,11 @@ function usr_theme_index_main() {
 	} elseif($hotaru->is_page('logout')) {
 		$current_user->destroy_cookie_and_session();
 		header("Location: " . baseurl);
+		return true;
+	} elseif($hotaru->is_page('user_settings')) {
+		require_once(plugins . 'users/update.php');
+		usr_update();
+		return true;
 	} elseif($hotaru->is_page('register')) {
 		require_once(plugins . 'users/register.php');
 		usr_register();
