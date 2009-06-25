@@ -1,18 +1,29 @@
 <?php 
 
-/* ******* ADMIN TEMPLATE *********
-Theme name: default
-Template name: 404.php
-Template author: Nick Ramsay
-Version: 0.1
-Last updated: June 15th 2009
-***************************** */
+/* ******* ADMIN TEMPLATE ************************************************************************** 
+ * Theme name: admin_default
+ * Template name: 404.php
+ * Template author: Nick Ramsay
+ * Version: 0.1
+ * License:
+ *
+ *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
+ *
+ *   Hotaru CMS is free software: you can redistribute it and/or modify it under the terms of the 
+ *   GNU General Public License as published by the Free Software Foundation, either version 3 of 
+ *   the License, or (at your option) any later version.
+ *
+ *   Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
+ *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License along with Hotaru CMS. If not, 
+ *   see http://www.gnu.org/licenses/.
+ *   
+ *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
+ *
+ **************************************************************************************************** */
 
-/* ******* USAGE ************
-
-***************************** */
-
-global $hotaru; // don't remove
 ?>
 
-Page not found in admin_themes/default.
+Page not found in admin/admin_themes/default/

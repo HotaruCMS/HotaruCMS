@@ -1,10 +1,27 @@
 <?php
 
-/* ******************************************************************** 
+/* **************************************************************************************************** 
  *  File: /libraries/class.plugins.php
  *  Purpose: Two Classes: Plugins and Plugin. The first deals with managing all plugins. The second deals with individual plugins.
- *  Notes: Plugins extends the generic_pmd class which is a 3rd party script called "Generic PHP Config"
- ********************************************************************** */
+ *  Notes: Plugins extend the generic_pmd class in class.metadata.php which is a 3rd party script called "Generic PHP Config"
+ *  License:
+ *
+ *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
+ *
+ *   Hotaru CMS is free software: you can redistribute it and/or modify it under the terms of the 
+ *   GNU General Public License as published by the Free Software Foundation, either version 3 of 
+ *   the License, or (at your option) any later version.
+ *
+ *   Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
+ *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License along with Hotaru CMS. If not, 
+ *   see http://www.gnu.org/licenses/.
+ *   
+ *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
+ *
+ **************************************************************************************************** */
 
 //includes
 require_once(libraries . 'class.metadata.php');			// This is the generic_pmd class that reads post metadata from the top of a plugin file.
