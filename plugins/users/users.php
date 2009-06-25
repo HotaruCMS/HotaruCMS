@@ -48,7 +48,8 @@ function usr_hotaru_header() {
 	// Check for a cookie. If present then the user is logged in.
 	$hotaru_user = $cage->cookie->testRegex('hotaru_user', '/^([a-z0-9_-]{4,32})+$/i');
 	if(($hotaru_user) && ($cage->cookie->keyExists('hotaru_key'))) {
-		if($hotaru_user) {
+		$user_info=explode(":", base64_decode($cage->cookie->getRaw('hotaru_key')));
+		if(($hotaru_user == $user_info[0]) && (crypt($user_info[0], 22) == $user_info[1])) {
 			$current_user->username = $hotaru_user;
 			$current_user->get_user_basic(0, $current_user->username);
 			$current_user->logged_in = true;

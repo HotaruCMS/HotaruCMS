@@ -66,21 +66,28 @@ function usr_register() {
 			// do nothing
 		} elseif($error == 0) {
 			$result = $user->user_exists(0, $username_check, $email_check);
-			echo "result: " . $result . "<br />"; 
 			if($result == 4) {
 				$user->add_user_basic($user->username, 'registered_user', $user->password, $user->email);
 				//success
 				header("Location:" . baseurl . "index.php");	// TEMPORARY 
 			} elseif($result == 0) {
-				echo $lang['users_register_id_exists'];
+				$plugin->message = $lang['users_register_id_exists'];
+				$plugin->message_type = 'red';
+				echo "<div class='message " . $plugin->message_type . "'>" . $plugin->message . "</div>\n"; 
 
 			} elseif($result == 1) {
-				echo $lang['users_register_username_exists'];
+				$plugin->message = $lang['users_register_username_exists'];
+				$plugin->message_type = 'red';
+				echo "<div class='message " . $plugin->message_type . "'>" . $plugin->message . "</div>\n"; 
 
 			} elseif($result == 2) {
-				echo $lang['users_register_email_exists'];
+				$plugin->message = $lang['users_register_email_exists'];
+				$plugin->message_type = 'red';
+				echo "<div class='message " . $plugin->message_type . "'>" . $plugin->message . "</div>\n"; 
 			} else {
-				echo $lang["users_register_unexpected_error"];
+				$plugin->message = $lang["users_register_unexpected_error"];
+				$plugin->message_type = 'red';
+				echo "<div class='message " . $plugin->message_type . "'>" . $plugin->message . "</div>\n"; 
 			}
 		} else {
 			// error must = 1 so fall through and display the form again
