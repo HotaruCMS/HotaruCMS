@@ -168,21 +168,21 @@ class UserBase {	// Limited to the absolute essential user information. Plugins 
 		$this->logged_in = false;
         }
         
-        	
+	
 	/* ******************************************************************** 
 	 *  Function: session_defaults
 	 *  Parameters: None
 	 *  Purpose: Sets default session data.
 	 *  Notes: ---
 	 ********************************************************************** */
-	 
+	/* 
         function session_defaults() {
         	$_SESSION['loggedin'] = false;
 		$_SESSION['userid'] = 0;
 		$_SESSION['username'] = '';
 		$_SESSION['remember'] = false; 
         }
-        	
+        */	
         	
 	/* ******************************************************************** 
 	 *  Function: set_session
@@ -190,12 +190,14 @@ class UserBase {	// Limited to the absolute essential user information. Plugins 
 	 *  Purpose: Sets ession data for this user.
 	 *  Notes: ---
 	 ********************************************************************** */  
-	       
+	/*       
 	function set_session() {
 		$_SESSION['loggedin'] = true;
 		$_SESSION['userid'] = $this->id;
 		$_SESSION['username'] = $this->username;
 	} 
+	
+	*/
 }
  
 ?>

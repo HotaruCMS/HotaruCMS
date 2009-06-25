@@ -21,19 +21,9 @@ function usr_login() {
 	echo "<div id='main'>";
 		echo "<h2><a href=" . baseurl . "index.php'>Home</a> &raquo; Login</h2>\n";
 		
-		if(!empty($plugin->message)) { echo "<div class='message " . $plugin->message_type . "'>" . $plugin->message . "</div>\n"; } 
-		
-		echo "<div id=''>";
+		echo "<div class='main_inner'>";
 		echo $lang["users_login_instructions"] . "\n";
 
-			echo "<form name='login_form' action='" . baseurl . "index.php?page=login' method='post'>\n";
-			echo "<table>\n";
-			/*
-			if($cage->post->getRaw('username') || $cage->post->getRaw('password')) {
-				echo $cage->post->getRaw('username'); exit;
-			}
-			*/
-	
 			if(!$username_check = $cage->post->testRegex('username', '/^([a-z0-9_-]{4,32})+$/i')) {
 				$username_check = "";
 			} 
@@ -50,11 +40,12 @@ function usr_login() {
 						$current_user->get_user_basic(0, $current_user->username);
 						$current_user->set_cookie($remember);
 						$current_user->logged_in = true;
-						header("Location:" . baseurl . "admin/admin_index.php");	// TEMPORARY 
+						header("Location:" . baseurl);	// Return to front page 
 				} else {
 						// login failed
-						echo "<tr><td colspan=2 style='color: #ff0000;'>" . $lang["users_login_failed"] . "</td></tr>\n";
-						echo "remember = " . $cage->post->getInt('remember') . "<br />";
+						$plugin->message = $lang["users_login_failed"];
+						$plugin->message_type = 'red';
+						echo "<div class='message " . $plugin->message_type . "'>" . $plugin->message . "</div>\n"; 
 						if($cage->post->getInt('remember') == 1){ $remember_check = "checked"; } else { $remember_check = ""; }
 				}
 			} else {
@@ -62,14 +53,14 @@ function usr_login() {
 				$password_check = "";
 				$remember_check = "";
 			}
-			
-			echo "</table>\n";
-		
+
+			echo "<form name='login_form' action='" . baseurl . "index.php?page=login' method='post'>\n";
 			echo "<table>\n";
 				echo "<tr><td>Username:&nbsp; </td><td><input type='text' size=30 name='username' value='" . $username_check . "' /></td></tr>\n";
 				echo "<tr><td>Password:&nbsp; </td><td><input type='password' size=30 name='password' value='" . $password_check . "' /></td></tr>\n";
-				echo "<tr><td><small>Remember: <input type='checkbox' name='remember' value='1'" . $remember_check . " /></small></td>\n";
-				echo "<td style='text-align:right;'><input type='submit' value='" . $lang['users_login_form_submit'] . "' /></td></tr>\n";			
+				echo "<tr><td>Remember: </td><td><input type='checkbox' name='remember' value='1'" . $remember_check . " /></td></tr>\n";
+				echo "<tr><td>&nbsp; </td><td style='text-align:right;'><input type='submit' value='" . $lang['users_login_form_submit'] . "' /></td></tr>\n";
+							
 			echo "</table>\n";
 			echo "</form>\n";
 		echo "</div>\n";

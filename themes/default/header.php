@@ -23,6 +23,12 @@ global $hotaru, $plugin; // don't remove
    <link rel="shortcut icon" href="<?php echo baseurl; ?>favicon.ico">
 </head>
 <body>
+<?php if($announcements = $hotaru->check_announcements()) { ?>
+	<div id="announcement">
+		<?php foreach($announcements as $announcement) { echo $announcement . "<br />"; } ?>
+	</div>
+<?php } ?>
+
 <div id="doc2" class="yui-t7">
 	<div id="hd" role="banner">
 		<a href="<?php echo baseurl; ?>index.php"><img src="<?php echo baseurl; ?>themes/default/images/hotaru_468x60.png"></a><br />

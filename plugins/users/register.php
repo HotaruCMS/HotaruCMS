@@ -23,19 +23,18 @@ function usr_register() {
 		
 		if(!empty($plugin->message)) { echo "<div class='message " . $plugin->message_type . "'>" . $plugin->message . "</div>\n"; } 
 		
-		echo "<div id=''>";
+		echo "<div class='main_inner'>";
 		echo $lang["users_register_instructions"] . "\n";
 		
-		echo "<form name='register_form' action='" . baseurl . "index.php?page=register' method='post'>\n";
-		echo "<table>\n";
-
 		$error = 0;
 		if($cage->post->getAlpha('users_type') == 'register') {
 			$username_check = $cage->post->testRegex('username', '/^([a-z0-9_-]{4,32})+$/i');	// alphanumeric, dashes and underscores okay, case insensitive
 			if($username_check) {
 				$user->username = $username_check;
 			} else {
-				echo "<tr><td colspan=2 style='color: #ff0000;'>" . $lang['users_register_username_error'] . "</td></tr>";
+				$plugin->message = $lang['users_register_username_error'];
+				$plugin->message_type = 'red';
+				echo "<div class='message " . $plugin->message_type . "'>" . $plugin->message . "</div>\n"; 
 				$error = 1;
 			}
 					
@@ -43,7 +42,9 @@ function usr_register() {
 			if($password_check) {
 				$user->password = crypt(md5($password_check),md5($user->username));
 			} else {
-				echo "<tr><td colspan=2 style='color: red;'>" . $lang['users_register_password_error'] . "</td></tr>";
+				$plugin->message = $lang['users_register_password_error'];
+				$plugin->message_type = 'red';
+				echo "<div class='message " . $plugin->message_type . "'>" . $plugin->message . "</div>\n"; 
 				$error = 1;
 			}
 						
@@ -51,7 +52,9 @@ function usr_register() {
 			if($email_check) {
 				$user->email = $email_check;
 			} else {
-				echo "<tr><td colspan=2 style='color: #ff0000;'>" . $lang['users_register_email_error'] . "</td></tr>";
+				$plugin->message = $lang['users_register_email_error'];
+				$plugin->message_type = 'red';
+				echo "<div class='message " . $plugin->message_type . "'>" . $plugin->message . "</div>\n"; 
 				$error = 1;
 			}
 		}
@@ -82,9 +85,8 @@ function usr_register() {
 		} else {
 			// error must = 1 so fall through and display the form again
 		}
-			
-			echo "</table>";
-			
+		
+			echo "<form name='register_form' action='" . baseurl . "index.php?page=register' method='post'>\n";	
 			echo "<table>";
 			echo "<tr><td>Username:&nbsp; </td><td><input type='text' size=30 name='username' value='" . $username_check . "' /></td></tr>\n";
 			echo "<tr><td>Email:&nbsp; </td><td><input type='text' size=30 name='email' value='" . $email_check . "' /></td></tr>\n";

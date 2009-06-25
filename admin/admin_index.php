@@ -8,9 +8,18 @@
  
 // includes
 require_once('../hotaru_header.php');
-$hotaru->set_is_page_all_false();
+require_once('admin_functions/admin_login.php');
 
+$hotaru->set_is_page_all_false();
 $page = $cage->get->testRegex('page', '/^([a-z0-9_-])+$/i');
+
+if(!$plugin->plugin_active('users')) {
+	if(($page != 'admin_login') && !$result = is_admin_session()) {
+		echo "You do not have permission to access this page.<br />";
+		die(); exit;
+	}
+}
+
 switch ($page) {
 	case "plugins":
 		$hotaru->is_admin_plugins = true;

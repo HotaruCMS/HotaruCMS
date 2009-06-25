@@ -53,7 +53,11 @@ global $hotaru, $plugin; // don't remove
    </script>
 </head>
 <body>
-<?php if($hotaru->check_announcements()) { ?><div id="announcement"><?php echo $hotaru->check_announcements(); ?></div><?php } ?>
+<?php if($announcements = $hotaru->check_admin_announcements()) { ?>
+	<div id="announcement">
+		<?php foreach($announcements as $announcement) { echo $announcement . "<br />"; } ?>
+	</div>
+<?php } ?>
 <div id="doc2" class="yui-t7">
 	<div id="hd" role="banner">
 		<a href="<?php echo baseurl; ?>index.php"><img src="<?php echo baseurl; ?>admin/themes/admin_default/images/hotaru_468x60.png"></a><br />

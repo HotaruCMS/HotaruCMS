@@ -108,6 +108,31 @@ class Hotaru {
 	
 	
 	/* ******************************************************************** 
+	 *  Function: check_announcements
+	 *  Parameters: --- 
+	 *  Purpose: Returns an announcement for display at the top of each page.
+	 *  Notes: ---
+	 ********************************************************************** */
+	 
+	function check_announcements() {
+		global $lang, $plugin;
+		
+		$announcements = array();
+		
+		// 1. User login and registration currently disabled.
+		if(!$plugin->plugin_active('users')) {
+			array_push($announcements, $lang['main_announcement_users_disabled']);	
+		}
+		 
+		if(!is_array($announcements)) {
+			return false;
+		} else {
+			return $announcements;
+		}
+	}
+	
+	
+	/* ******************************************************************** 
 	 *  Function: display_stories
 	 *  Parameters: Number of main stories to show and sort order
 	 *  Purpose: Displays stories on the index, upcoming, etc. pages.
@@ -237,20 +262,33 @@ class Hotaru {
 	
 	
 	/* ******************************************************************** 
-	 *  Function: check_announcements
+	 *  Function: check_admin_announcements
 	 *  Parameters: --- 
 	 *  Purpose: Returns an announcement for display at the top of Admin.
-	 *  Notes: Currently only checks if the install folder has been deleted.
+	 *  Notes: ---
 	 ********************************************************************** */
 	 
-	function check_announcements() {
-		global $lang;
+	function check_admin_announcements() {
+		global $lang, $plugin;
 		// Check if the install file has been deleted:
+		
+		$announcements = array();
+		
+		// 1. Check if install file has been deleted
 		$filename = install . 'install.php';
 		if(file_exists($filename)) {
-			return $lang['admin_announcement_delete_install'];
-		} else {
+			array_push($announcements, $lang['admin_announcement_delete_install']);
+		} 
+		
+		// 2. Please install the Users plugin
+		if (!$plugin->plugin_active('users')) {
+			array_push($announcements, $lang['admin_announcement_users_disabled']);	
+		} 
+		
+		if(!is_array($announcements)) {
 			return false;
+		} else {
+			return $announcements;
 		}
 	}
 }

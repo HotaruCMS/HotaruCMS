@@ -1,11 +1,18 @@
 <?php
 
+ /* ******************************************************************** 
+ *  Function: admin_news
+ *  Parameters: None
+ *  Purpose: Displays an RSS feed with summaries from the last few posts in the Hotaru CMS forums
+ *  Notes: Shown on the Admin front page.
+ ********************************************************************** */
+ 
 function admin_news() {
     global $hotaru, $plugin;
 	    
     $cache = true;
-    $cache_duration = 10; // minutes
-    $max_items = 10;
+    $cache_duration = 20; // minutes
+    $max_items = 5;
     
     $feedurl = 'http://feeds2.feedburner.com/hotarucms';
     $feed = $hotaru->new_simplepie($feedurl, $cache, $cache_duration);

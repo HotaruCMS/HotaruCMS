@@ -4,7 +4,7 @@
 
 /* Common language */
 
-/* Registration */
+/* Login */
 $lang["users_login"] = "Login";
 $lang["users_login_instructions"] = "Enter your username and password to login:";
 $lang["users_login_failed"] = "Login failed";
