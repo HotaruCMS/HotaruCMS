@@ -217,7 +217,7 @@ class Plugin extends Plugins {
 	/* ******************************************************************** 
 	 *  Function: plugin_name
 	 *  Parameters: plugin folder name
-	 *  Purpose: Give a plugin's folder name, it returns tha actual name.
+	 *  Purpose: Given a plugin's folder name, it returns the actual name.
 	 *  Notes: ---
 	 ********************************************************************** */
 
@@ -225,6 +225,20 @@ class Plugin extends Plugins {
 		global $db;
 		$this->name = $db->get_var($db->prepare("SELECT plugin_name FROM " . table_plugins . " WHERE plugin_folder = %s", $folder));
 		return $this->name;
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: plugin_active
+	 *  Parameters: plugin folder name
+	 *  Purpose: Given a plugin's folder name, it returns true if currently active.
+	 *  Notes: ---
+	 ********************************************************************** */
+
+	function plugin_active($folder = "") {	
+		global $db;
+		$enabled = $db->get_var($db->prepare("SELECT plugin_enabled FROM " . table_plugins . " WHERE plugin_folder = %s", $folder));
+		if($enabled == 1) { return true; } else { return false; }
 	}
 		
 		
@@ -323,7 +337,7 @@ class Plugin extends Plugins {
 	/* ******************************************************************** 
 	 *  Function: plugin_setting_exists
 	 *  Parameters: Plugin folder name and setting name
-	 *  Purpose: Determines is a setting already exists
+	 *  Purpose: Determines if a setting already exists
 	 *  Notes: The actual value is ignored
 	 ********************************************************************** */
 	 	

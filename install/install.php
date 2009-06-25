@@ -187,11 +187,7 @@ function hotaru_settings() {
  ********************************************************************** */
  
 function register_admin() {
-	global $lang, $cage;
-	require_once(libraries . 'class.userbase.php');
-
-	// default
-	$user = new UserBase();
+	global $lang, $cage, $db;
 
 	echo html_header();
 	echo "<h2>" . $lang['install_step5'] . "</h2>\n";
@@ -203,7 +199,7 @@ function register_admin() {
 	if($cage->post->getInt('step') == 5) {
 		$name_check = $cage->post->testRegex('username', '/^([a-z0-9_-]{4,32})+$/i');	// alphanumeric, dashes and underscores okay, case insensitive
 		if($name_check) {
-			$user->username = $name_check;
+			$user_name = $name_check;
 		} else {
 			echo "<tr><td colspan=2 style='color: #ff0000;'>" . $lang['install_step5_username_error'] . "</td></tr>";
 			$error = 1;
@@ -211,7 +207,7 @@ function register_admin() {
 	
 		$password_check = $cage->post->testRegex('password', '/^([a-z0-9@*#_-]{8,60})+$/i');	
 		if($password_check) {
-			$user->password = crypt(md5($password_check),md5($user->username));
+			$user_password = crypt(md5($password_check),md5($user_name));
 		} else {
 			echo "<tr><td colspan=2 style='color: red;'>" . $lang['install_step5_password_error'] . "</td></tr>";
 			$error = 1;
@@ -219,7 +215,7 @@ function register_admin() {
 		
 		$email_check = $cage->post->testEmail('email');	
 		if($email_check) {
-			$user->email = $email_check;
+			$user_email = $email_check;
 		} else {
 			echo "<tr><td colspan=2 style='color: #ff0000;'>" . $lang['install_step5_email_error'] . "</td></tr>";
 			$error = 1;
@@ -231,32 +227,36 @@ function register_admin() {
 	}
 	
 	if($error == 0) {
-		if(!$admin_name = $user->admin_exists()) {
-			$user->add_user_basic('admin', 'administrator', 'password', 'admin@mysite.com');
-			$user_info = $user->get_user_basic(0, 'admin');
-			$user->id = $user_info->user_id;
-			$user->username = $user_info->user_username;
-			$user->email = $user_info->user_email;
-			$user->password = $user_info->user_password;		
+		if(!$admin_name = admin_exists()) {
+			// Insert default settings
+			$sql = "INSERT INTO " . table_users . " (user_username, user_role, user_password, user_email) VALUES (%s, %s, %s, %s)";
+			$db->query($db->prepare($sql, 'admin', 'administrator', 'password', 'admin@mysite.com'));
+			$user_name = 'admin';
+			$user_email = 'admin@mysite.com';
+			$user_password = 'password';		
 		} else {
-			$user_info = $user->get_user_basic(0, $admin_name);
+			$user_info = get_admin_details(0, $admin_name);
 			// On returning to this page via back or next, the fields are empty at this point, so...
-			if(($user->username != "") && ($user->email != "") && ($user->password != "")) {
+			if(!isset($user_name)) { $user_name = ""; }
+			if(!isset($user_email)){ $user_email = ""; } 
+			if(!isset($user_password)) { $user_password = ""; }
+			if(($user_name != "") && ($user_email != "") && ($user_password != "")) {
 				// There's been a change so update...
-				$user->update_user_basic($user->username, 'administrator', $user->password, $user->email);
+				$sql = "UPDATE " . table_users . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s WHERE user_role = %s";
+				$db->query($db->prepare($sql, $user_name, 'administrator', $user_password, $user_email, 'administrator'));
 			} else {
-				$user->id = $user_info->user_id;
-				$user->username = $user_info->user_username;
-				$user->email = $user_info->user_email;
-				$user->password = $user_info->user_password;
+				$user_id = $user_info->user_id;
+				$user_name = $user_info->user_username;
+				$user_email = $user_info->user_email;
+				$user_password = $user_info->user_password;
 			}
 		}
 	}
 
 	echo "</table>";
 	echo "<table>";
-	echo "<tr><td>Username:&nbsp; </td><td><input type='text' size=30 name='username' value='" . $user->username . "' /></td></tr>\n";
-	echo "<tr><td>Email:&nbsp; </td><td><input type='text' size=30 name='email' value='" . $user->email . "' /></td></tr>\n";
+	echo "<tr><td>Username:&nbsp; </td><td><input type='text' size=30 name='username' value='" . $user_name . "' /></td></tr>\n";
+	echo "<tr><td>Email:&nbsp; </td><td><input type='text' size=30 name='email' value='" . $user_email . "' /></td></tr>\n";
 	if(!$cage->post->getInt('step') == 5) { $password_check = ""; } // if loaded from database show blank, otherwise shows the password just submitted.
 	echo "<tr><td>Password:&nbsp; </td><td><input type='password' size=30 name='password' value='" . $password_check . "' /></td></tr>\n";
 	echo "<input type='hidden' name='step' value='5' />\n";
@@ -290,6 +290,50 @@ function installation_complete() {
 }
 
 
+/* ******************************************************************** 
+ *  Function: admin_exists
+ *  Parameters: None
+ *  Purpose: Returns true if a user with administrator role is in the database 
+ *  Notes: Used during Hotaru installation, but otherwise pretty pointless
+ ********************************************************************** */
+ 		
+function admin_exists() {
+	global $db;
+	$sql = "SELECT user_username FROM " . table_users . " WHERE user_role = %s";
+	if($admin_name = $db->get_var($db->prepare($sql, 'administrator'))) {
+		return $admin_name; // admin exists
+	} else {
+		return false;
+	}
+}
+
+
+/* ******************************************************************** 
+ *  Function: get_admin_details
+ *  Parameters: user id AND/OR username
+ *  Purpose: Returns the most important user details for a given user 
+ *  Notes: ---
+ ********************************************************************** */	
+ 
+ 
+function get_admin_details($userid = 0, $username = '') {
+	global $db;
+	if($userid != 0) {	// use userid
+		$where = "user_id = %d";
+		$param = $userid;
+	} elseif($username != '') {	// use username
+		$where = "user_username = %s";
+		$param = $username;
+	} else {
+		return false;
+	}
+	
+	$sql = "SELECT user_id, user_username, user_role, user_password, user_email FROM " . table_users . " WHERE " . $where;
+	$user_info = $db->get_row($db->prepare($sql, $param));
+	return $user_info;
+}
+	
+	
 /* ******************************************************************** 
  *  Function: create_table
  *  Parameters: Name of the table to be created
