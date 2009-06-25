@@ -16,7 +16,7 @@
 function usr_login() {
 	global $plugin, $cage, $lang;
 	
-	$user = new User();
+	$current_user = new User();
 	
 	echo "<div id='main'>";
 		echo "<h2><a href=" . baseurl . "index.php'>Home</a> &raquo; Login</h2>\n";
@@ -42,12 +42,14 @@ function usr_login() {
 			}
 			
 			if($username_check != "" || $password_check != "") {
-				$login_result = $user->login_check($username_check, $password_check);
+				$login_result = $current_user->login_check($username_check, $password_check);
 				if($login_result) {
 						//success
 						if($cage->post->getInt('remember') == 1){ $remember = 1; } else { $remember = 0; }
-						$user->username = $username_check;
-						$user->set_cookie($remember);
+						$current_user->username = $username_check;
+						$current_user->get_user_basic(0, $current_user->username);
+						$current_user->set_cookie($remember);
+						$current_user->logged_in = true;
 						header("Location:" . baseurl . "admin/admin_index.php");	// TEMPORARY 
 				} else {
 						// login failed

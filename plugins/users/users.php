@@ -34,7 +34,7 @@ function usr_users(&$parameters) {
 function usr_hotaru_header() {
 	global $lang, $cage;
 	define("table_usermeta", db_prefix . 'usermeta');
-	require_once(libraries . 'class.userbase.php');
+	require_once(plugins . 'users/libraries/class.userbase.php');
 	require_once(plugins . 'users/libraries/class.users.php');
 	
 	// include users language file
@@ -50,6 +50,7 @@ function usr_hotaru_header() {
 	if(($hotaru_user) && ($cage->cookie->keyExists('hotaru_key'))) {
 		if($hotaru_user) {
 			$current_user->username = $hotaru_user;
+			$current_user->get_user_basic(0, $current_user->username);
 			$current_user->logged_in = true;
 		}
 	}
@@ -103,6 +104,9 @@ function usr_navigation() {
 	if($current_user->logged_in) {
 		echo "<li><a href='" . baseurl . "index.php?page=user_settings&user='>Settings</a></li>";
 		echo "<li><a href='" . baseurl . "index.php?page=logout'>Logout</a></li>";
+		if($current_user->role == 'administrator') {
+			echo "<li><a href='" . baseurl . "admin/admin_index.php'>Admin</a></li>";	
+		}
 	} else {	
 		echo "<li><a href='" . baseurl . "index.php?page=login'>Login</a></li>";
 		echo "<li><a href='" . baseurl . "index.php?page=register'>Register</a></li>";
