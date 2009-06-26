@@ -121,7 +121,7 @@ function usr_navigation() {
 	global $current_user;
 	
 	if($current_user->logged_in) {
-		echo "<li><a href='" . baseurl . "index.php?page=user_settings&user='>Settings</a></li>\n";
+		echo "<li><a href='" . baseurl . "index.php?page=user_settings'>Settings</a></li>\n";
 		echo "<li><a href='" . baseurl . "index.php?page=logout'>Logout</a></li>\n";
 		if($current_user->role == 'administrator') {
 			echo "<li><a href='" . baseurl . "admin/admin_index.php'>Admin</a></li>\n";	
