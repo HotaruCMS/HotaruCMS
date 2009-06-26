@@ -385,3 +385,4 @@ class Plugin extends Plugins {
 	}
 }
 
+?>

@@ -36,7 +36,7 @@ function admin_login() {
 	global $cage, $lang;
 	
 	echo "<div id='main'>";
-		echo "<h2><a href=" . baseurl . "index.php'>Home</a> &raquo; Login</h2>\n";
+		echo "<h2><a href=" . baseurl . ">Home</a> &raquo; Login</h2>\n";
 		
 		if(!empty($message)) {  } 
 		

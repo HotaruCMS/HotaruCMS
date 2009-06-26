@@ -36,7 +36,7 @@ function usr_login() {
 	$current_user = new User();
 	
 	echo "<div id='main'>";
-		echo "<h2><a href=" . baseurl . "index.php'>Home</a> &raquo; Login</h2>\n";
+		echo "<h2><a href='" . baseurl . "'>Home</a> &raquo; Login</h2>\n";
 		
 		echo "<div class='main_inner'>";
 		echo $lang["users_login_instructions"] . "\n";

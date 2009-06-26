@@ -133,7 +133,7 @@ function rs_admin_header_include() {
  ********************************************************************** */
  
 function rs_admin_sidebar_plugin_settings() {
-	echo "<li><a href='admin_index.php?page=plugin_settings&plugin=rss_sidebar'>RSS Sidebar</a></li>";
+	echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>'rss_sidebar'), 'admin') . "'>RSS Sidebar</a></li>";
 }
 
 

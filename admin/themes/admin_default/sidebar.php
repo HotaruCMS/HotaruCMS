@@ -27,8 +27,8 @@
 global $hotaru, $plugin; // don't remove
 ?>
 <ul id="sidebar">
-	<li><a href="<?php echo baseurl; ?>admin/admin_index.php">Admin Home</a></li>
-	<li><a href="<?php echo baseurl; ?>admin/admin_index.php?page=plugins">Plugin Management</a></li>
+	<li><a href="<?php echo url(array(), 'admin'); ?>">Admin Home</a></li>
+	<li><a href="<?php echo url(array('page' => 'plugins'), 'admin'); ?>">Plugin Management</a></li>
 	<li><a class="dropdown" href="#">Plugin Settings</a></li>
 	<ul id="plugin_settings_list" style="display: none;">
 		<?php $plugin->check_actions('admin_sidebar_plugin_settings'); ?>

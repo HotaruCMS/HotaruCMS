@@ -27,7 +27,6 @@
 require_once('../hotaru_header.php');
 require_once('admin_functions/admin_login.php');
 
-$hotaru->set_is_page_all_false();
 $page = $cage->get->testRegex('page', '/^([a-z0-9_-])+$/i');
 
 // Authenticate the admin if the Users plugin is INACTIVE:
@@ -55,10 +54,9 @@ if(isset($current_user) && $plugin->plugin_active('users')) {
 
 switch ($page) {
 	case "plugins":
-		$hotaru->is_admin_plugins = true;
+		// Nothing special to do...
 		break;
 	case "plugin_settings":
-		$hotaru->is_admin_plugin_settings = true;
 		$plugin->folder = $cage->get->testRegex('plugin', '/^([a-z0-9_-])+$/i');
 		$plugin->message = $cage->get->noTags('message');
 		$plugin->message_type = $cage->get->getAlpha('message_type');
@@ -66,12 +64,10 @@ switch ($page) {
 		break;
 	case "":
 		include('admin_functions/admin_news.php');	// for Admin home RSS feed
-		$hotaru->is_admin_home = true;
 		break;
 	default:
 		if(!$hotaru->is_page($page)) {
 			include('admin_functions/admin_news.php');	// for Admin home RSS feed
-			$hotaru->is_admin_home = true;	
 		}
 		break;
 }

@@ -40,11 +40,12 @@ if(debug == "on") {
 	timer_start();
 }
 
-// include other essential libraries
+// include other essential libraries and functions
 require_once(includes . 'Inspekt/Inspekt.php');			// for Input sanitation and validation
 require_once(includes . 'ezSQL/ez_sql_core.php');		// for database usage
 require_once(includes . 'ezSQL/mysql/ez_sql_mysql.php');	// for database usage
-require_once(libraries . 'class.plugins.php');
+require_once(libraries . 'class.plugins.php');			// for plugins
+require_once(functions . 'funcs.urls.php');			// for default or friendly urls
 
 if(file_exists(languages . 'main/main_' . strtolower(sitelanguage) . '.php')) {
 	require_once(languages . 'main/main_' . strtolower(sitelanguage) . '.php');	// language file for main (not admin, installation or plugins)

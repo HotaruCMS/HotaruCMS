@@ -39,7 +39,7 @@ global $hotaru, $plugin; // don't remove
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/jQuery/jquery-ui.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/jQuery/jquery.easywidgets.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/jQuery/jquery.hotaru_admin.js'; ?>"></script>
-   <?php if($hotaru->is_admin_plugin_settings) { $plugin->check_actions('admin_header_include', $plugin->folder); } ?>
+   <?php if($hotaru->is_page('plugin_settings')) { $plugin->check_actions('admin_header_include', $plugin->folder); } ?>
    <link rel="shortcut icon" href="<?php echo baseurl; ?>favicon.ico">
    <script>
 	var baseurl = '<?php echo baseurl; ?>';
@@ -73,7 +73,7 @@ global $hotaru, $plugin; // don't remove
 <?php } ?>
 <div id="doc2" class="yui-t7">
 	<div id="hd" role="banner">
-		<a href="<?php echo baseurl; ?>index.php"><img src="<?php echo baseurl; ?>admin/themes/admin_default/images/hotaru_468x60.png"></a><br />
+		<a href="<?php echo baseurl; ?>"><img src="<?php echo baseurl; ?>admin/themes/admin_default/images/hotaru_468x60.png"></a><br />
 		<!-- NAVIGATION -->
 		<?php echo $hotaru->display_admin_template('navigation'); ?>
 	</div>

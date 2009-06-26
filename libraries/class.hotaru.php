@@ -35,28 +35,7 @@
 class Hotaru {
 	
 	var $is_debug = false;
-	var $is_home = false;
-	var $is_admin_home = false;
-	var $is_admin_plugins = false;
-	var $is_admin_plugin_settings = false;
-	var $is_user_settings = false;
 	var $sidebar = true;
-	
-	
-	/* ******************************************************************** 
-	 *  Function: set_is_page_all_false
-	 *  Parameters: None
-	 *  Purpose: When a new page is loaded, all others are set to false.
-	 *  Notes: ---
-	 ********************************************************************** */
-	
-	function set_is_page_all_false() {
-		$this->is_home = false;
-		$this->is_admin_home = false;
-		$this->is_admin_plugins = false;
-		$this->is_admin_plugin_settings = false;
-		$this->is_user_settings = false;
-	}
 	
 	
 	/* ******************************************************************** 
@@ -68,8 +47,10 @@ class Hotaru {
 	 
 	function is_page($page = '') {
 		global $cage;
-		$real_page = $cage->get->testRegex('page', '/^([a-z0-9_-])+$/i');
+		$real_page = $cage->get->testRegex('page', '/^([a-z0-9\/_-])+$/i');
 		if(!$real_page) { $real_page = "home"; }
+
+		$real_page = rtrim($real_page, '/');	// remove trailing slash
 
 		if($real_page == $page) {
 			return $page;
@@ -88,8 +69,9 @@ class Hotaru {
 	 
 	function get_page_name() {
 		global $cage;
-		$page = $cage->get->testRegex('page', '/^([a-z0-9_-])+$/i');
+		$page = $cage->get->testRegex('page', '/^([a-z0-9\/_-])+$/i');
 		if($page) {
+			$page = rtrim($page, '/');
 			return $page;
 		} else {
 			return 'home';
@@ -316,3 +298,4 @@ class Hotaru {
 	}
 }
 
+?>

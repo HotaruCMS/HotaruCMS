@@ -36,7 +36,7 @@ function usr_register() {
 	$user = new User();
 	
 	echo "<div id='main'>";
-		echo "<h2><a href=" . baseurl . "index.php'>Home</a> &raquo; Register</h2>\n";
+		echo "<h2><a href='" . baseurl . "'>Home</a> &raquo; Register</h2>\n";
 		
 		if(!empty($plugin->message)) { echo "<div class='message " . $plugin->message_type . "'>" . $plugin->message . "</div>\n"; } 
 		
