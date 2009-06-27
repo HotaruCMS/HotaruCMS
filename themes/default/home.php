@@ -24,7 +24,7 @@
  *
  **************************************************************************************************** */
 
-global $hotaru; // don't remove
+global $hotaru, $plugin; // don't remove
 ?>
 
-<?php echo $hotaru->display_stories(10, 'latest'); ?>
+<?php $plugin->check_actions('rss_show', true, '', array(2)); ?>

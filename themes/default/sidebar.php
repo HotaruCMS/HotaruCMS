@@ -28,5 +28,5 @@ global $plugin; // don't remove
 ?>
 <ul id="sidebar">	
 	<?php $plugin->check_actions('hello_world'); ?>
-	<?php $plugin->check_actions('rss_sidebar'); ?>
+	<?php $plugin->check_actions('rss_show'); ?>
 </ul>

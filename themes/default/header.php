@@ -45,7 +45,7 @@ global $hotaru, $plugin; // don't remove
 
 <div id="doc2" class="yui-t7">
 	<div id="hd" role="banner">
-		<a href="<?php echo baseurl; ?>index.php"><img src="<?php echo baseurl; ?>themes/default/images/hotaru_468x60.png"></a><br />
+		<a href="<?php echo baseurl; ?>"><img src="<?php echo baseurl; ?>themes/default/images/hotaru_468x60.png"></a><br />
 		<!-- NAVIGATION -->
 		<?php echo $hotaru->display_template('navigation'); ?>
 	</div>

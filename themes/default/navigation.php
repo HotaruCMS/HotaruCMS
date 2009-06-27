@@ -28,7 +28,7 @@ global $hotaru, $plugin; // don't remove
 ?>
 
 <ul id="navigation">
-	<?php if(!$plugin->plugin_active('users')) { ?><li><a href="<?php echo baseurl; ?>admin/admin_index.php">Admin</a></li><?php } ?>
-	<li><a href="<?php echo baseurl; ?>index.php">Home</a></li>
+	<?php if(!$plugin->plugin_active('users')) { ?><li><a href="<?php echo baseurl . url(array(), 'admin'); ?>">Admin</a></li><?php } ?>
+	<li><a href="<?php echo baseurl; ?>">Home</a></li>
 	<?php $plugin->check_actions('navigation'); ?>
 </ul>
