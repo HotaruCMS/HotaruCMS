@@ -372,7 +372,7 @@ class Plugin extends Plugins {
 	 *  Notes: ---
 	 ********************************************************************** */
 	
-	function plugin_settings_update ($folder = '', $setting = '', $value = '') {
+	function plugin_settings_update($folder = '', $setting = '', $value = '') {
 		global $db;
 		$exists = $this->plugin_setting_exists($folder, $setting);
 		if(!$exists) {
@@ -382,6 +382,33 @@ class Plugin extends Plugins {
 			$sql = "UPDATE " . table_pluginsettings . " SET plugin_folder = %s, plugin_setting = %s, plugin_value = %s WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
 			$db->query($db->prepare($sql, $folder, $setting, $value, $folder, $setting));
 		}
+	}
+
+
+	/* ******************************************************************** 
+	 *  Function: plugin_settings_remove_setting
+	 *  Parameters: Plugin setting name
+	 *  Purpose: Deletes rows from pluginsettings that match that setting
+	 *  Notes: ---
+	 ********************************************************************** */
+	 	
+	function plugin_settings_remove_setting($setting = '') {
+		global $db;
+		$sql = "DELETE FROM " . table_pluginsettings . " WHERE plugin_setting = %s";
+		$db->query($db->prepare($sql, $setting));
+	}
+
+
+	/* ******************************************************************** 
+	 *  Function: plugin_settings_remove_plugin
+	 *  Parameters: Plugin folder name
+	 *  Purpose: Deletes rows from pluginsettings that match that plugin folder name
+	 *  Notes: ---
+	 ********************************************************************** */	
+	function plugin_settings_remove_plugin($folder = '') {
+		global $db;
+		$sql = "DELETE FROM " . table_pluginsettings . " WHERE plugin_folder = %s";
+		$db->query($db->prepare($sql, $folder));
 	}
 }
 

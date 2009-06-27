@@ -55,7 +55,7 @@ function admin_news() {
 		}
 		$output .= " on " . $item->get_date('j F Y');
 		$output .= "</small><br />";
-		$output .= substr(strip_tags($item->get_description()), 0, 300);
+		$output .= substr(strip_tags($item->get_content()), 0, 300);
 		$output .= "... ";
 		$output .= "<small><a href='" . $item->get_permalink() . "' title='" . $item->get_title() . "'>[Read More]</a>";
 		$output .= "</small>";

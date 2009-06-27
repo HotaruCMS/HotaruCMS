@@ -57,16 +57,16 @@ RewriteRule ^admin/plugin_settings/([a-zA-Z0-9_-]+)/?$ admin/admin_index.php?pag
 RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
 RewriteRule ^(.*)/?$ index.php?page=$1 [L]
 
-#RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
-#RewriteRule ^(.*)/(.*)/?$ index.php?page=$1&pos2=$2 [L]
+RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
+RewriteRule ^(.*)/(.*)/?$ index.php?page=$1&pos2=$2 [L]
 
-#RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
-#RewriteRule ^(.*)/(.*)/(.*)/?$ index.php?page=$1&pos2=$2&pos3=$3 [L]
+RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
+RewriteRule ^(.*)/(.*)/(.*)/?$ index.php?page=$1&pos2=$2&pos3=$3 [L]
 
-#RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
-#RewriteRule ^(.*)/(.*)/(.*)/(.*)/?$ index.php?page=$1&pos2=$2&pos3=$3&pos4=$4 [L]
+RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
+RewriteRule ^(.*)/(.*)/(.*)/(.*)/?$ index.php?page=$1&pos2=$2&pos3=$3&pos4=$4 [L]
 
-#RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
-#RewriteRule ^(.*)/(.*)/(.*)/(.*)/(.*)/?$ index.php?page=$1&pos2=$2&pos3=$3&pos4=$4&pos5=$5 [L]
+RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
+RewriteRule ^(.*)/(.*)/(.*)/(.*)/(.*)/?$ index.php?page=$1&pos2=$2&pos3=$3&pos4=$4&pos5=$5 [L]
 
 ##### URL Rewriting End #####
