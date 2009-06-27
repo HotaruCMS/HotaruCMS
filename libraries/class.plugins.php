@@ -397,6 +397,20 @@ class Plugin extends Plugins {
 		$sql = "DELETE FROM " . table_pluginsettings . " WHERE plugin_setting = %s";
 		$db->query($db->prepare($sql, $setting));
 	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: plugin_settings_remove_value
+	 *  Parameters: Plugin setting name and value name
+	 *  Purpose: Deletes a row from pluginsettings that matches that setting and value
+	 *  Notes: ---
+	 ********************************************************************** */
+	 	
+	function plugin_settings_remove_setting($setting = '', $value = '') {
+		global $db;
+		$sql = "DELETE FROM " . table_pluginsettings . " WHERE plugin_setting = %s AND plugin_value = %s";
+		$db->query($db->prepare($sql, $setting, $value));
+	}
 
 
 	/* ******************************************************************** 
