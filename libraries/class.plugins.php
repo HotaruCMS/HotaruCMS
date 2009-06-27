@@ -406,7 +406,7 @@ class Plugin extends Plugins {
 	 *  Notes: ---
 	 ********************************************************************** */
 	 	
-	function plugin_settings_remove_setting($setting = '', $value = '') {
+	function plugin_settings_remove_value($setting = '', $value = '') {
 		global $db;
 		$sql = "DELETE FROM " . table_pluginsettings . " WHERE plugin_setting = %s AND plugin_value = %s";
 		$db->query($db->prepare($sql, $setting, $value));
