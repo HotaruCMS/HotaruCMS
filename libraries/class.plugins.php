@@ -410,6 +410,19 @@ class Plugin extends Plugins {
 		$sql = "DELETE FROM " . table_pluginsettings . " WHERE plugin_folder = %s";
 		$db->query($db->prepare($sql, $folder));
 	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: show_message
+	 *  Parameters: None
+	 *  Purpose: Displays a success or failure message
+	 *  Notes: ---
+	 ********************************************************************** */	
+	function show_message() {
+		if($this->message != '') {
+			echo "<div class='message " . $this->message_type . "'>" . $this->message . "</div>";
+		}
+	}
 }
 
 ?>

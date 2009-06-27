@@ -1,9 +1,7 @@
-<?php 
-
-/* ******* ADMIN TEMPLATE ************************************************************************** 
- * Theme name: admin_default
- * Template name: plugin_settings.php
- * Template author: Nick Ramsay
+/* ******* CSS STYLE FOR PLUGIN ********************************************************************** 
+ * Plugin name: RSS Show
+ * Stylesheet: rss_show.css
+ * Stylesheet author: Nick Ramsay
  * Version: 0.1
  * License:
  *
@@ -23,12 +21,14 @@
  *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
  *
  **************************************************************************************************** */
-
-global $hotaru, $plugin; // don't remove
-?>
-
-<h2><a href="<?php echo baseurl . url(array(), 'admin'); ?>">Hotaru Admin Control Panel</a> &raquo; Plugin Settings &raquo; <?php echo $plugin->name; ?></h2>
-
-<?php $plugin->check_actions('admin_plugin_settings', true, $plugin->folder); ?>
-
-
+ 
+ li.rss_show_feed_title {
+ 	font-size: 1.5em;
+ 	padding: 0 0 0.5em 0;
+ }
+ 
+ .rss_show_content {
+ 	padding: 0 0 1.0em 0;
+ }
+ 
+ 

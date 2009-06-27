@@ -36,7 +36,7 @@ function usr_update() {
 	echo "<div id='main'>";
 		echo "<h2><a href='" . baseurl . "'>Home</a> &raquo; User Settings</h2>\n";
 		
-		if(!empty($plugin->message)) { echo "<div class='message " . $plugin->message_type . "'>" . $plugin->message . "</div>\n"; } 
+		$plugin->show_message();
 		
 		echo "<div class='main_inner'>";
 		echo $lang["users_update_instructions"] . "\n";
@@ -49,7 +49,7 @@ function usr_update() {
 			} else {
 				$plugin->message = $lang['users_register_username_error'];
 				$plugin->message_type = 'red';
-				echo "<div class='message " . $plugin->message_type . "'>" . $plugin->message . "</div>\n"; 
+				$plugin->show_message();
 				$error = 1;
 			}
 					
@@ -59,7 +59,7 @@ function usr_update() {
 			} else {
 				$plugin->message = $lang['users_register_password_error'];
 				$plugin->message_type = 'red';
-				echo "<div class='message " . $plugin->message_type . "'>" . $plugin->message . "</div>\n"; 
+				$plugin->show_message();
 				$error = 1;
 			}
 						
@@ -69,7 +69,7 @@ function usr_update() {
 			} else {
 				$plugin->message = $lang['users_register_email_error'];
 				$plugin->message_type = 'red';
-				echo "<div class='message " . $plugin->message_type . "'>" . $plugin->message . "</div>\n"; 
+				$plugin->show_message();
 				$error = 1;
 			}
 		}
@@ -87,12 +87,12 @@ function usr_update() {
 				$current_user->set_cookie(0);
 				$plugin->message = $lang['users_update_success'];
 				$plugin->message_type = 'green';
-				echo "<div class='message " . $plugin->message_type . "'>" . $plugin->message . "</div>\n"; 
+				$plugin->show_message();
 			} else {
 				//fail
 				$plugin->message = $lang["users_register_unexpected_error"];
 				$plugin->message_type = 'red';
-				echo "<div class='message " . $plugin->message_type . "'>" . $plugin->message . "</div>\n"; 
+				$plugin->show_message();
 			}
 		} else {
 			// error must = 1 so fall through and display the form again

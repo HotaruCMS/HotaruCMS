@@ -58,8 +58,6 @@ switch ($page) {
 		break;
 	case "plugin_settings":
 		$plugin->folder = $cage->get->testRegex('plugin', '/^([a-z0-9_-])+$/i');
-		$plugin->message = $cage->get->noTags('message');
-		$plugin->message_type = $cage->get->getAlpha('message_type');
 		$plugin->name = $plugin->plugin_name($plugin->folder);
 		break;
 	case "":

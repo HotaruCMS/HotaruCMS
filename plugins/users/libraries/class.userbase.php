@@ -1,12 +1,30 @@
 <?php
 
-/* ******************************************************************** 
- *  File: libraries/class.userbase.php
- *  Purpose: A simple base class for user basics
- *  Notes: ---
- ********************************************************************** */
+/* ********** PLUGIN CLASS****************************************************************************
+ * name: UserBase
+ * description: Basic user functions for logging in , registering, etc.
+ * file: /plugins/users/libraries/class.userbase.php
+ *
+ *  License:
+ *
+ *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
+ *
+ *   Hotaru CMS is free software: you can redistribute it and/or modify it under the terms of the 
+ *   GNU General Public License as published by the Free Software Foundation, either version 3 of 
+ *   the License, or (at your option) any later version.
+ *
+ *   Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
+ *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License along with Hotaru CMS. If not, 
+ *   see http://www.gnu.org/licenses/.
+ *   
+ *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
+ *
+ **************************************************************************************************** */
  
-class UserBase {	// Limited to the absolute essential user information. Plugins extend this.
+class UserBase {	// Limited to essential user information. Plugins extend this.
  
  	var $id = 0;
 	var $username = '';
@@ -177,37 +195,6 @@ class UserBase {	// Limited to the absolute essential user information. Plugins 
 		session_destroy();
 		$this->logged_in = false;
         }
-        
-	
-	/* ******************************************************************** 
-	 *  Function: session_defaults
-	 *  Parameters: None
-	 *  Purpose: Sets default session data.
-	 *  Notes: ---
-	 ********************************************************************** */
-	/* 
-        function session_defaults() {
-        	$_SESSION['loggedin'] = false;
-		$_SESSION['userid'] = 0;
-		$_SESSION['username'] = '';
-		$_SESSION['remember'] = false; 
-        }
-        */	
-        	
-	/* ******************************************************************** 
-	 *  Function: set_session
-	 *  Parameters: None
-	 *  Purpose: Sets ession data for this user.
-	 *  Notes: ---
-	 ********************************************************************** */  
-	/*       
-	function set_session() {
-		$_SESSION['loggedin'] = true;
-		$_SESSION['userid'] = $this->id;
-		$_SESSION['username'] = $this->username;
-	} 
-	
-	*/
 }
  
 ?>

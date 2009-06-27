@@ -62,7 +62,7 @@ function usr_login() {
 						// login failed
 						$plugin->message = $lang["users_login_failed"];
 						$plugin->message_type = 'red';
-						echo "<div class='message " . $plugin->message_type . "'>" . $plugin->message . "</div>\n"; 
+						$plugin->show_message();
 						if($cage->post->getInt('remember') == 1){ $remember_check = "checked"; } else { $remember_check = ""; }
 				}
 			} else {

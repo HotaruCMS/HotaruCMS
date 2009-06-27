@@ -6,7 +6,7 @@
  * version: 0.1
  * folder: rss_show
  * prefix: rs
- * hooks: rss_show, admin_header_include, admin_sidebar_plugin_settings, admin_plugin_settings, install_plugin_starter_settings
+ * hooks: rss_show, admin_header_include, header_include, admin_sidebar_plugin_settings, admin_plugin_settings, install_plugin_starter_settings
  *
  * Usage: Add <?php $plugin->check_actions('rss_show'); ?> to your theme, wherever you want to show the links.
  *
@@ -29,19 +29,7 @@
  *
  **************************************************************************************************** */
  
-	
-if(isset($current_user)) {					// This file is just being included, we don't want to run it yet...
-	return false; die(); 
-} else { 
-	if(file_exists('../../hotaru_header.php')) {		// being access directly, let's get the parameters...
-		require_once('../../hotaru_header.php');
-		rs_get_params(); 
-		return false; die(); 
-	} else {						// on the settings page...
-		// do nothing
-	}
-}
-
+return false; die(); // We don't want to just drop into the file.
 
 /* ******************************************************************** 
  *  Function: rs_rss_show
@@ -79,16 +67,25 @@ function rs_rss_show($ids) {
 		$output = "";
 		$item_count = 0;
 		
+		// SITE TITLE
 		if($settings['rss_show_title']) { 
-			$output.= "<li class='sidebar_list_title'><a href='" . $settings['rss_show_feed']. "' title='RSS Feed'>" . $settings['rss_show_title'] . "</a></li>"; 
+			$output .= "<li class='rss_show_feed_title'>";
+			$output .= "<a href='" . $feed->subscribe_url() . "' title='RSS Feed'><img src='" . baseurl . "images/rss_16.gif'></a>&nbsp;"; // RSS icon
+			$output .= "<a href='" . $feed->get_link(). "' title='Visit the site'>" . $settings['rss_show_title'] . "</a></li>"; 
 		}
 		    
 		if ($feed->data) { 
 			foreach ($feed->get_items() as $item) {
-			        $output .= '';
-			        $output .= '<li><a href="' . $item->get_permalink() . '">' . $item->get_title() . '</a>';
+			        $output .= "";
+			        
+			        // POST TITLE
+			        $output .= "<li class='rss_show_feed_item'>";
+			        $output .= "<span class='rss_show_title'>";
+			        $output .= "<a href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a></span>";
+			        
+			        // AUTHOR / DATE
 				if(($settings['rss_show_author'] == 'yesauthor') || ($settings['rss_show_date'] == 'yesdate')) {
-				        $output .= "<br /><small>Posted";
+				        $output .= "<br /><span class='rss_show_author_date'><small>Posted";
 				        if($settings['rss_show_author'] == 'yesauthor') {
 				        	$output .= " by ";
 				                foreach ($item->get_authors() as $author)  {
@@ -98,20 +95,23 @@ function rs_rss_show($ids) {
 					if($settings['rss_show_date'] == 'yesdate') {
 						$output .= " on " . $item->get_date('j F Y');
 					}
-					$output .= "</small><br />";
+					$output .= "</small></span><br />";
 				}
 				
+				// SUMMARY
 				if($settings['rss_show_content'] == 'summaries') {
-					$output .= substr(strip_tags($item->get_content()), 0, 300);
+					$output .= "<p class='rss_show_content'>" . substr(strip_tags($item->get_content()), 0, 300);
 					$output .= "... ";
 					$output .= "<small><a href='" . $item->get_permalink() . "' title='" . $item->get_title() . "'>[Read More]</a>";
-					$output .= "</small>";
+					$output .= "</small></p>";
 				}
 				
+				// FULL POST
 				if($settings['rss_show_content'] == 'full') {
-					$output .= $item->get_content();
+					$output .= "<p class='rss_show_content'>" . $item->get_content() . "</p>";
 				}
 				$output .= '</li>';
+				
 			    $item_count++;
 			    if($item_count >= $max_items) { break;}
 			}
@@ -122,6 +122,20 @@ function rs_rss_show($ids) {
 	}
 }
 
+
+/* ******************************************************************** 
+ *  Function: rs_header_include()
+ *  Parameters: None
+ *  Purpose: Includes the RSS Show css file
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function rs_header_include() {
+	echo "<link rel='stylesheet' href='" . baseurl . "plugins/rss_show/rss_show.css' type='text/css'>\n";
+}
+
+
+
 /* *************************************
  * ********** ADMIN FUNCTIONS **********
  * ************************************* */
@@ -130,11 +144,12 @@ function rs_rss_show($ids) {
 /* ******************************************************************** 
  *  Function: rs_admin_sidebar_plugin_settings
  *  Parameters: None
- *  Purpose: Puts a link to the settings page in the Admin sidebar under Plugin Settings
+ *  Purpose: Includes jQuery for hiding and showing "cache duration" in plugin settings
  *  Notes: ---
  ********************************************************************** */
  
 function rs_admin_header_include() {
+
 	echo "<script type='text/javascript'>\n";
 	echo "$(document).ready(function(){\n";
 		echo "$('#rs_cache').click(function () {\n";
@@ -193,11 +208,16 @@ function rs_install_plugin_starter_settings($id) {
 function rs_admin_plugin_settings() {
 	global $plugin;
 	
+	rs_get_params();	// get any arguments passed from the form
+	
+	$plugin->show_message();	// display any success or failure messages
+	
 	// Cycle through the RSS feeds, displaying their settings...
 	$id = 1;
 	while($settings = unserialize($plugin->plugin_settings('rss_show', 'rss_show_' . $id . '_settings'))) {
 		echo "<h1>RSS Show Configuration [ id: " . $id . " ]</h1>\n";
-		echo "<form name='rss_show_form' action='" . baseurl . "plugins/rss_show/rss_show.php' method='get'>\n";
+		//echo "<form name='rss_show_form' action='" . baseurl . "plugins/rss_show/rss_show.php' method='get'>\n";
+		echo "<form name='rss_show_form' action='" . baseurl . "admin/admin_index.php' method='get'>\n";
 		
 		echo "Feed URL: <input type='text' size=60 name='rss_show_feed' value='" . $settings['rss_show_feed'] . "' /><br /><br />\n";
 		
@@ -245,13 +265,15 @@ function rs_admin_plugin_settings() {
 		echo "<input type='radio' name='rss_show_content' value='summaries' " . $contentsummaries . " /> Summaries &nbsp;&nbsp;\n";
 		echo "<input type='radio' name='rss_show_content' value='full' " . $contentfull . " /> Full<br /><br />\n";	
 		
+		echo "<input type='hidden' name='page' value='plugin_settings' />\n";
+		echo "<input type='hidden' name='plugin' value='rss_show' />\n";
 		echo "<input type='hidden' name='rss_show_id' value='" . $id . "' />\n";
 		echo "<input type='submit' value='Save' />\n";
 		echo "</form>\n";
 		$id++;
 	}
 	
-	echo "<br /><a href='" . baseurl . "plugins/rss_show/rss_show.php?action=delete_feed&amp;id=" . ($id-1) . "' style='color: red;'>Delete the last feed</a> | <a href='" . baseurl . "plugins/rss_show/rss_show.php?action=new_feed&amp;id=" . $id . "'>Add another RSS feed</a><br /><br />";
+	echo "<br /><a href='" . baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=rss_show&amp;action=delete_feed&amp;id=" . ($id-1) . "' style='color: red;'>Delete the last feed</a> | <a href='" . baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=rss_show&amp;action=new_feed&amp;id=" . $id . "'>Add another RSS feed</a><br /><br />";
 	echo "<div style='padding: 0.8em; line-height: 2.0em; background-color: #f0f0f0; -moz-border-radius: 0.5em;- webkit-border-radius: 0.5em;'>\n";
 		echo "<b>Usage:</b><br />\n";
 		echo "To show the first feed, paste this into your template:<br />\n";
@@ -279,21 +301,20 @@ function rs_get_params() {
 		if($action == 'new_feed') {
 			$id = $cage->get->getInt('id');
 			rs_install_plugin_starter_settings($id);
-			$message = "New default feed added.";
-			$message_type = "green";
-			header("Location: " . baseurl . "admin/admin_index.php?page=plugin_settings&plugin=rss_show&message=" . $message . "&message_type=" . $message_type);
-			die();
+			$plugin->message = "New default feed added.";
+			$plugin->message_type = "green";
+			//header("Location: " . baseurl . "admin/admin_index.php?page=plugin_settings&plugin=rss_show&message=" . $message . "&message_type=" . $message_type);
+			//die();
 		} elseif($action == 'delete_feed') {
 			$id = $cage->get->getInt('id');
 			$plugin->plugin_settings_remove_setting('rss_show_' . $id . '_settings');
-			$message = "Feed removed.";
-			$message_type = "green";
-			header("Location: " . baseurl . "admin/admin_index.php?page=plugin_settings&plugin=rss_show&message=" . $message . "&message_type=" . $message_type);
-			die();		
+			$plugin->message = "Feed removed.";
+			$plugin->message_type = "green";
+			//header("Location: " . baseurl . "admin/admin_index.php?page=plugin_settings&plugin=rss_show&message=" . $message . "&message_type=" . $message_type);
+			//die();		
 		}
-	} else {
+	} elseif($id = $cage->get->getInt('rss_show_id')) {
 		$parameters = array();
-		$id = $cage->get->getInt('rss_show_id');
 		$parameters['rss_show_feed'] = $cage->get->noTags('rss_show_feed');
 		$parameters['rss_show_title'] = $cage->get->noTags('rss_show_title');
 		$parameters['rss_show_cache'] = $cage->get->getAlpha('rss_show_cache');
@@ -316,23 +337,23 @@ function rs_get_params() {
  
 function rs_save_settings($id, &$parameters) {
 	global $plugin;
-	$message = "";
+	$plugin->message = "";
 	if($parameters) {
 		if($parameters['rss_show_feed'] == "") {
-				$message = "No feed provided, so no changes were made.";
-				$message_type = "red";
+				$plugin->message = "No feed provided, so no changes were made.";
+				$plugin->message_type = "red";
 		}
 			
-		if($message == "") {
+		if($plugin->message == "") {
 			$values = serialize($parameters);
-			$message = "RSS Show settings updated successfully.";
-			$message_type = "green";
+			$plugin->message = "RSS Show settings updated successfully.";
+			$plugin->message_type = "green";
 			$plugin->plugin_settings_update('rss_show', 'rss_show_' . $id . '_settings', $values);	
 		}
 	}
 	
-	header("Location: " . baseurl . "admin/admin_index.php?page=plugin_settings&plugin=rss_show&message=" . $message . "&message_type=" . $message_type);
-	die();
+	//header("Location: " . baseurl . "admin/admin_index.php?page=plugin_settings&plugin=rss_show&message=" . $message . "&message_type=" . $message_type);
+	//die();
 }
  	
 ?>
