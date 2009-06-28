@@ -2,7 +2,7 @@
 
 /* ******* TEMPLATE ******************************************************************************** 
  * Theme name: default
- * Template name: home.php
+ * Template name: main.php
  * Template author: Nick Ramsay
  * Version: 0.1
  * License:
@@ -27,10 +27,10 @@
 global $hotaru, $plugin; // don't remove
 ?>
 
-<?php $plugin->check_actions('home_top'); ?>
+<?php $plugin->check_actions('main_top'); ?>
 	
 <?php $plugin->check_actions('rss_show', true, '', array(2)); ?>
 
-<?php $plugin->check_actions('home'); ?>
+<?php $plugin->check_actions('main'); ?>
 
-<?php $plugin->check_actions('home_bottom'); ?>
+<?php $plugin->check_actions('main_bottom'); ?>

@@ -48,7 +48,7 @@ class Hotaru {
 	function is_page($page = '') {
 		global $cage;
 		$real_page = $cage->get->testRegex('page', '/^([a-z0-9\/_-])+$/i');
-		if(!$real_page) { $real_page = "home"; }
+		if(!$real_page) { $real_page = "main"; }
 
 		$real_page = rtrim($real_page, '/');	// remove trailing slash
 
@@ -64,7 +64,7 @@ class Hotaru {
 	 *  Function: get_page_name
 	 *  Parameters: None
 	 *  Purpose: Returns the page name, e.g. login, user_settings, etc.
-	 *  Notes: This only works if there is a page=name in the url, else defaults to 'home' (which might not be accurate). 
+	 *  Notes: This only works if there is a page=name in the url, else defaults to 'main' (which might not be accurate). 
 	 ********************************************************************** */
 	 
 	function get_page_name() {
@@ -74,7 +74,7 @@ class Hotaru {
 			$page = rtrim($page, '/');
 			return $page;
 		} else {
-			return 'home';
+			return 'main';
 		}
 	}
 	
