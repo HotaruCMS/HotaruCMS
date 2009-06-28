@@ -26,6 +26,8 @@
 
 global $hotaru, $plugin; // don't remove
 ?>
+<?php $plugin->check_actions('admin_sidebar_top'); ?>
+
 <ul id="sidebar">
 	<li><a href="<?php echo url(array(), 'admin'); ?>">Admin Home</a></li>
 	<li><a href="<?php echo url(array('page' => 'plugins'), 'admin'); ?>">Plugin Management</a></li>
@@ -36,3 +38,5 @@ global $hotaru, $plugin; // don't remove
 	
 	<?php $plugin->check_actions('admin_sidebar'); ?>
 </ul>
+
+<?php $plugin->check_actions('admin_sidebar_bottom'); ?>

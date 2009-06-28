@@ -24,11 +24,15 @@
  *
  **************************************************************************************************** */
 
-global $hotaru; // don't remove
+global $hotaru, $plugin; // don't remove
 ?>
 	<div id="ft" role="contentinfo">
+		<?php $plugin->check_actions('footer_top'); ?>
+		<?php $plugin->check_actions('footer'); ?>
+		<?php $plugin->check_actions('admin_footer'); ?>
 		<?php $hotaru->show_queries_and_time(); ?>
 		<p>Having trouble? Visit the forums at <a href='http://hotarucms.org'>HotaruCMS.org</a> for help.</p>
+		<?php $plugin->check_actions('footer_bottom'); ?>
 	</div>
 </div>
 </body>

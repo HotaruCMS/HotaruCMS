@@ -26,8 +26,10 @@
 
 global $plugin; // don't remove
 ?>
+
+<?php $plugin->check_actions('sidebar_top'); ?>
+
 <ul id="sidebar">
-	<?php $plugin->check_actions('sidebar_top'); ?>
 	
 	<?php $plugin->check_actions('hello_world'); ?>
 	
@@ -35,5 +37,6 @@ global $plugin; // don't remove
 	
 	<?php $plugin->check_actions('sidebar'); ?>
 		
-	<?php $plugin->check_actions('sidebar_bottom'); ?>	
 </ul>
+
+<?php $plugin->check_actions('sidebar_bottom'); ?>

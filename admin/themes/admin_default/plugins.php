@@ -40,6 +40,8 @@ $plugin_widgets = $plugin->get_plugins(); // don't remove
 
 <div id="ajax-loader"></div>
 
+<?php $plugin->check_actions('plugins_top'); ?>
+
 <table><tr>
 
 <td class="widget-column">
@@ -104,10 +106,14 @@ $plugin_widgets = $plugin->get_plugins(); // don't remove
 <div class="clear"></div>
 <div id="plugin_management_notice" class="info_box gray_box" style="margin-top: 2.0em";>
 	<p class="info_header">Plugin Management Guide</p>
+	<?php $plugin->check_actions('plugins_guide_top'); ?>
 	&raquo; To enable or disable plugins, drag them below "Inactive plugins" or "Active plugins".<br />
 	&raquo; Click the " + " icon to expand a plugin and view its details.<br />
 	&raquo; Click "Uninstall" (when expanded) to delete a plugin from the database.<br />
 	&raquo; A red asterisk shows by a plugin's title if a newer version is available in the plugins folder.<br />
 	&raquo; Deactivate and uninstall a plugin before activating a newer version.<br />
 	&raquo; After activating a plugin, refresh the page for its settings link to appear under "Plugin Settings".<br />
+	<?php $plugin->check_actions('plugins_guide_bottom'); ?>
 </div>
+
+<?php $plugin->check_actions('plugins_bottom'); ?>

@@ -6,7 +6,7 @@
  * version: 0.1
  * folder: users
  * prefix: usr
- * hooks: users, hotaru_header, install_plugin_starter_settings, navigation, theme_index_main
+ * hooks: users, hotaru_header, install_plugin_starter_settings, navigation_last, theme_index_main
  *
  *  License:
  *
@@ -111,13 +111,13 @@ function usr_install_plugin_starter_settings() {
 
 
 /* ******************************************************************** 
- *  Function: usr_navigation
+ *  Function: usr_navigation_last
  *  Parameters: None
- *  Purpose: Adds links to the navigation bar
+ *  Purpose: Adds links to the end of the navigation bar
  *  Notes: 
  ********************************************************************** */
 
-function usr_navigation() {	
+function usr_navigation_last() {	
 	global $current_user;
 	
 	if($current_user->logged_in) {

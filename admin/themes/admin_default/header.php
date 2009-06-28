@@ -68,12 +68,15 @@ global $hotaru, $plugin; // don't remove
 <body>
 <?php if($announcements = $hotaru->check_admin_announcements()) { ?>
 	<div id="announcement">
+		<?php $plugin->check_actions('admin_announcement_first'); ?>
 		<?php foreach($announcements as $announcement) { echo $announcement . "<br />"; } ?>
+		<?php $plugin->check_actions('admin_announcement_last'); ?>
 	</div>
 <?php } ?>
 <div id="doc2" class="yui-t7">
 	<div id="hd" role="banner">
-		<a href="<?php echo baseurl; ?>"><img src="<?php echo baseurl; ?>admin/themes/admin_default/images/hotaru_468x60.png"></a><br />
+		<a href="<?php echo baseurl; ?>"><img src="<?php echo baseurl; ?>admin/themes/admin_default/images/hotaru_468x60.png"></a>
+		<?php $plugin->check_actions('header_post_logo'); ?>
 		<!-- NAVIGATION -->
 		<?php echo $hotaru->display_admin_template('navigation'); ?>
 	</div>
