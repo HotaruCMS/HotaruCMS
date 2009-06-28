@@ -240,7 +240,7 @@ function rs_admin_plugin_settings() {
 		echo "Max. items: \n"; 
 			echo "<select name='rss_show_max_items'>\n";
 				$max_items = $settings['rss_show_max_items'];
-				if($max_items) { echo "<option value='" . $max_items . "'>" . $max_items . " mins</option>\n"; }
+				if($max_items) { echo "<option value='" . $max_items . "'>" . $max_items . "</option>\n"; }
 				echo "<option value='5'>5</option>\n";
 				echo "<option value='10'>10</option>\n";
 				echo "<option value='20'>20</option>\n";
