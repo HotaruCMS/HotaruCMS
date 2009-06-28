@@ -329,7 +329,7 @@ class Plugin extends Plugins {
 		if(!empty($return_array)) {
 			return $return_array;		// returns an array of return values from each function, e.g. $return_array['usr_users'] = something
 		} elseif($action_found == true) {
-			return true;			// at least one function was triggered, but nothing was returned
+			return true;			// at least one function exists, but nothing was returned
 		} else {
 			return false;			// no functions were triggered. Eitherthey weren't found or they were surpressed by $perform = false.
 		}
@@ -400,25 +400,12 @@ class Plugin extends Plugins {
 	
 	
 	/* ******************************************************************** 
-	 *  Function: plugin_settings_remove_value
-	 *  Parameters: Plugin setting name and value name
-	 *  Purpose: Deletes a row from pluginsettings that matches that setting and value
-	 *  Notes: ---
-	 ********************************************************************** */
-	 	
-	function plugin_settings_remove_value($setting = '', $value = '') {
-		global $db;
-		$sql = "DELETE FROM " . table_pluginsettings . " WHERE plugin_setting = %s AND plugin_value = %s";
-		$db->query($db->prepare($sql, $setting, $value));
-	}
-
-
-	/* ******************************************************************** 
 	 *  Function: plugin_settings_remove_plugin
 	 *  Parameters: Plugin folder name
 	 *  Purpose: Deletes rows from pluginsettings that match that plugin folder name
 	 *  Notes: ---
 	 ********************************************************************** */	
+	 
 	function plugin_settings_remove_plugin($folder = '') {
 		global $db;
 		$sql = "DELETE FROM " . table_pluginsettings . " WHERE plugin_folder = %s";

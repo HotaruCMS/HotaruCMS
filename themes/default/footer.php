@@ -29,8 +29,11 @@ global $hotaru;
 ?>
 
 		<div id="ft" role="contentinfo">
+			<?php $plugin->check_actions('footer_top'); ?>
+			<?php $plugin->check_actions('footer'); ?>
 			<p>Brought to you by the <a href="http://hotarucms.org">Hotaru CMS</a> open source community.</p>
 			<?php $hotaru->show_queries_and_time(); ?>
+			<?php $plugin->check_actions('footer_bottom'); ?>
 		</div>
 	</div>
 </body>
