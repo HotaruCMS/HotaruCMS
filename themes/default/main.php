@@ -29,7 +29,7 @@ global $hotaru, $plugin; // don't remove
 
 <?php $plugin->check_actions('main_top'); ?>
 	
-<?php $plugin->check_actions('rss_show', true, '', array(2)); ?>
+<?php // $plugin->check_actions('rss_show', true, '', array(2)); ?>
 
 <?php $plugin->check_actions('main'); ?>
 

@@ -31,9 +31,9 @@ global $plugin; // don't remove
 
 <ul id="sidebar">
 	
-	<?php $plugin->check_actions('hello_world'); ?>
+	<?php // $plugin->check_actions('hello_world'); ?>
 	
-	<?php $plugin->check_actions('rss_show'); ?>
+	<?php // $plugin->check_actions('rss_show'); ?>
 	
 	<?php $plugin->check_actions('sidebar'); ?>
 		
