@@ -43,7 +43,7 @@ define("db_lang", 'en');			// Better leave this for now
 define("sitename", 'Hotaru CMS');
 
 /* ******Paths ******* */
-define('baseurl', "http://localhost/hotarucms/");	//e.g. http://www.mysite.com/ or http://www.mysite.com/bookmarking/
+define('baseurl', "http://localhost/hotaru/");	//e.g. http://www.mysite.com/ or http://www.mysite.com/bookmarking/
 							// IMPORTANT!!! Don't forget the trailing slash (/).
 /* ****** FRIENDLY URLS ******* */
 define('friendly_urls', true);			// true for links like:  /category/finance/
