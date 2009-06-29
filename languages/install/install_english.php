@@ -38,8 +38,8 @@ $lang["install_step1_welcome"] = "Welcome to Hotaru CMS. Click \"Next\" to begin
 /* Step 2 */
 $lang["install_step2"] = "Step 2/6: Database Setup";
 $lang["install_step2_instructions"] = "To set up a database for Hotaru CMS, you'll need to do the following";
-$lang["install_step2_instructions1"] = "Create a database in your web host's control panel. Make a note of your username and password!";
-$lang["install_step2_instructions2"] = "Open <pre>HotaruCMS/hotaru_settings.php</pre> and fill in the \"Database Details\" section.";
+$lang["install_step2_instructions1"] = "Create a database called <i>hotaru</i> in your web host's control panel. Make a note of your username and password!";
+$lang["install_step2_instructions2"] = "Open <pre>/hotaru_settings.php</pre> and fill in the \"Database Details\" section.";
 $lang["install_step2_instructions3"] = "Save and upload <pre>hotaru_settings.php</pre> to your server, then click \"Next\"...";
 $lang["install_step2_warning"] = "<b>Warning</b>";
 $lang["install_step2_warning_note"] = "When you click \"Next\", new database tables will be created, deleting any old ones you may have!";

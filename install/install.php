@@ -22,9 +22,12 @@
  *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
  *
  **************************************************************************************************** */
- 
-// includes
-require_once('../hotaru_header.php');
+
+require_once('../hotaru_settings.php');
+// Global Inspekt SuperCage
+require_once(includes . 'Inspekt/Inspekt.php');	
+if(!isset($cage)) { $cage = Inspekt::makeSuperCage(); }
+
 if(file_exists(languages . 'install/install_' . strtolower(sitelanguage) . '.php')) {
 	require_once(languages . 'install/install_' . strtolower(sitelanguage) . '.php');	// language file for admin
 } else {
@@ -32,6 +35,12 @@ if(file_exists(languages . 'install/install_' . strtolower(sitelanguage) . '.php
 }
 
 $step = $cage->get->getInt('step');		// Installation steps.
+
+if($step > 2) { 
+	require_once(includes . 'ezSQL/ez_sql_core.php');
+	require_once(includes . 'ezSQL/mysql/ez_sql_mysql.php');
+	if(!isset($db)) { $db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST); }; 
+}
 
 switch ($step) {
 	case 1:
