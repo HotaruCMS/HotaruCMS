@@ -46,7 +46,7 @@ define("sitename", 'Hotaru CMS');
 define('baseurl', "http://localhost/hotaru/");	//e.g. http://www.mysite.com/ or http://www.mysite.com/bookmarking/
 							// IMPORTANT!!! Don't forget the trailing slash (/).
 /* ****** FRIENDLY URLS ******* */
-define('friendly_urls', true);			// true for links like:  /category/finance/
+define('friendly_urls', false);			// true for links like:  /category/finance/
 						// false for links like: index.php?category=3
 
 /* ****** Themes ***** */
