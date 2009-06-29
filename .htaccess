@@ -36,7 +36,7 @@ ErrorDocument 404 /404error.php
 Options +Indexes +FollowSymlinks
 RewriteEngine on
 ## If Hotaru is installed in a subfolder, change the below line to RewriteBase /name-of-subfolder
-RewriteBase /hotaru
+RewriteBase /hotaru/trunk
 ## If installed in a subfolder you may need to add ## to the beginning of the next line
 ## RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /.*index\.php\ HTTP/
 
