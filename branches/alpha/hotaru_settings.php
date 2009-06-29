@@ -43,10 +43,10 @@ define("db_lang", 'en');			// Better leave this for now
 define("sitename", 'Hotaru CMS');
 
 /* ******Paths ******* */
-define('baseurl', "http://localhost/hotaru/branches/trunk");	//e.g. http://www.mysite.com/ or http://www.mysite.com/bookmarking/
+define('baseurl', "http://localhost/hotaru/branches/alpha/");	//e.g. http://www.mysite.com/ or http://www.mysite.com/bookmarking/
 							// IMPORTANT!!! Don't forget the trailing slash (/).
 /* ****** FRIENDLY URLS ******* */
-define('friendly_urls', false);			// true for links like:  /category/finance/
+define('friendly_urls', true);			// true for links like:  /category/finance/
 						// false for links like: index.php?category=3
 
 /* ****** Themes ***** */
@@ -54,7 +54,7 @@ define("current_theme", "default" . "/");	// change "default for the folder name
 define("current_admin_theme", "admin_default" . "/");	// change "default for the folder name of your admin theme.
 
 /* ****** Debug ****** */
-define("debug", "off");				// "on" will show the number of database queries and page loading time in the template footer
+define("debug", "on");				// "on" will show the number of database queries and page loading time in the template footer
 
 /* ************************************************************************************ */
 /* *************************** DON'T EDIT BELOW THIS POINT **************************** */
