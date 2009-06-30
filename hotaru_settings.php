@@ -28,7 +28,7 @@
 /* ************************************************************************************ */
 
 /* ****** Language ****** */
-define("sitelanguage", 'English');		// Used for choosing the right language file - must match the name of the language folder (case insensitive)
+define("sitelanguage", 'English');		// Used for choosing the right language file
 
 /* ****** Database Details ****** */
 define("DB_USER", 'root');			// Add your own database details 
@@ -39,22 +39,9 @@ define("DB_HOST", 'localhost');			// You probably won't need to change this
 define("db_prefix", 'hotaru_');			// Better leave this for now
 define("db_lang", 'en');			// Better leave this for now
 
-/* ****** Names ****** */
-define("sitename", 'Hotaru CMS');
-
 /* ******Paths ******* */
 define('baseurl', "http://localhost/hotaru/branches/alpha/");	//e.g. http://www.mysite.com/ or http://www.mysite.com/bookmarking/
-							// IMPORTANT!!! Don't forget the trailing slash (/).
-/* ****** FRIENDLY URLS ******* */
-define('friendly_urls', true);			// true for links like:  /category/finance/
-						// false for links like: index.php?category=3
-
-/* ****** Themes ***** */
-define("current_theme", "default" . "/");	// change "default for the folder name of your theme.
-define("current_admin_theme", "admin_default" . "/");	// change "default for the folder name of your admin theme.
-
-/* ****** Debug ****** */
-define("debug", "on");				// "on" will show the number of database queries and page loading time in the template footer
+								// IMPORTANT!!! Don't forget the trailing slash (/).
 
 /* ************************************************************************************ */
 /* *************************** DON'T EDIT BELOW THIS POINT **************************** */

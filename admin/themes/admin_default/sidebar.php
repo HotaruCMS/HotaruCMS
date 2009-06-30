@@ -30,6 +30,7 @@ global $hotaru, $plugin; // don't remove
 
 <ul id="sidebar">
 	<li><a href="<?php echo url(array(), 'admin'); ?>">Admin Home</a></li>
+	<li><a href="<?php echo url(array('page' => 'settings'), 'admin'); ?>">Settings</a></li>
 	<li><a href="<?php echo url(array('page' => 'plugins'), 'admin'); ?>">Plugin Management</a></li>
 	<li><a class="dropdown" href="#">Plugin Settings</a></li>
 	<ul id="plugin_settings_list" style="display: none;">
