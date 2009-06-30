@@ -378,11 +378,30 @@ function create_table($table_name) {
 		  `settings_id` int(20) NOT NULL auto_increment,
 		  `settings_name` varchar(64) NOT NULL default '',
 		  `settings_value` text NOT NULL default '',
+		  `settings_default` text NOT NULL default '',
+		  `settings_note` text NOT NULL default '',
 		  PRIMARY KEY  (`settings_id`),
 		  UNIQUE KEY `key` (`settings_name`)
 		) TYPE = MyISAM;";
 		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);
+		
+		// Insert default settings...
+		
+		$sql = "INSERT INTO " . db_prefix . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+		$db->query($db->prepare($sql, 'site_name', 'Hotaru CMS', 'Hotaru CMS', ''));
+		
+		$sql = "INSERT INTO " . db_prefix . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+		$db->query($db->prepare($sql, 'friendly_urls', 'false', 'false', ''));
+		
+		$sql = "INSERT INTO " . db_prefix . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+		$db->query($db->prepare($sql, 'theme', 'default/', 'default/', 'You need the "\/"'));
+		
+		$sql = "INSERT INTO " . db_prefix . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+		$db->query($db->prepare($sql, 'admin_theme', 'admin_default/', 'admin_default/', 'You need the "\/"'));
+		
+		$sql = "INSERT INTO " . db_prefix . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+		$db->query($db->prepare($sql, 'debug', 'false', 'false', ''));
 	}
 	
 	if($table_name == "users") {	

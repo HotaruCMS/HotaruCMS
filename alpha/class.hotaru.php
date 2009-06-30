@@ -32,6 +32,21 @@ class Hotaru {
 	
 	
 	/* ******************************************************************** 
+	 *  Function: read_settings
+	 *  Parameters: None
+	 *  Purpose: Returns all setting-value pairs
+	 *  Notes: ---
+	 ********************************************************************** */
+	 
+	function read_settings() {
+		global $db;
+		$sql = "SELECT * FROM " . table_settings;
+		$results = $db->get_results($db->prepare($sql));
+		if($results) { return $results; } else { return false; }
+	}
+	
+	
+	/* ******************************************************************** 
 	 *  Function: is_page
 	 *  Parameters: a page name (filename without .php)
 	 *  Purpose: Checks to see if the page we are checking for is the one we're actually on
@@ -95,8 +110,8 @@ class Hotaru {
 		}
 		
 		// Check the custom theme then the default theme...		
-		if(file_exists(themes . current_theme . $page)) {
-			include_once(themes . current_theme . $page);
+		if(file_exists(themes . theme . $page)) {
+			include_once(themes . theme . $page);
 		} elseif(file_exists(themes . 'default/' . $page)) {
 			include_once(themes . 'default/' . $page);
 		} else {
@@ -231,8 +246,8 @@ class Hotaru {
 		}
 		
 		// Check the custom theme then the default theme...		
-		if(file_exists(admin_themes . current_admin_theme . $page)) {
-			include_once(admin_themes . current_admin_theme . $page);
+		if(file_exists(admin_themes . admin_theme . $page)) {
+			include_once(admin_themes . admin_theme . $page);
 		} elseif(file_exists(admin_themes . 'admin_default/' . $page)) {
 			include_once(admin_themes . 'admin_default/' . $page);
 		} else {

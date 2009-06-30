@@ -216,7 +216,6 @@ function rs_admin_plugin_settings() {
 	$id = 1;
 	while($settings = unserialize($plugin->plugin_settings('rss_show', 'rss_show_' . $id . '_settings'))) {
 		echo "<h1>RSS Show Configuration [ id: " . $id . " ]</h1>\n";
-		//echo "<form name='rss_show_form' action='" . baseurl . "plugins/rss_show/rss_show.php' method='get'>\n";
 		echo "<form name='rss_show_form' action='" . baseurl . "admin/admin_index.php' method='get'>\n";
 		
 		echo "Feed URL: <input type='text' size=60 name='rss_show_feed' value='" . $settings['rss_show_feed'] . "' /><br /><br />\n";

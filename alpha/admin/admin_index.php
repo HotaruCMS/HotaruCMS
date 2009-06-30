@@ -26,6 +26,9 @@
 // includes
 require_once('../hotaru_header.php');
 require_once('admin_login.php');
+require_once('class.admin.php');
+
+$admin = New Admin();
 
 if(file_exists(admin . 'languages/admin_' . strtolower(sitelanguage) . '.php')) {
 	require_once(admin . 'languages/admin_' . strtolower(sitelanguage) . '.php');	// language file for admin

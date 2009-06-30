@@ -98,7 +98,7 @@ function usr_update() {
 			// error must = 1 so fall through and display the form again
 		}
 		
-			echo "<form name='update_form' action='" . baseurl . "index.php?page=settings' method='post'>\n";	
+			echo "<form name='update_form' action='" . baseurl . "index.php?page=profile' method='post'>\n";	
 			echo "<table>";
 			echo "<tr><td>Username:&nbsp; </td><td><input type='text' size=30 name='username' value='" . $username_check . "' /></td></tr>\n";
 			echo "<tr><td>Email:&nbsp; </td><td><input type='text' size=30 name='email' value='" . $email_check . "' /></td></tr>\n";
