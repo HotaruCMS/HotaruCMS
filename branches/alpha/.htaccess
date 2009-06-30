@@ -52,6 +52,7 @@ RewriteBase /hotaru/branches/alpha
 RewriteRule ^admin/?$ admin/admin_index.php [L]
 RewriteRule ^admin/([a-zA-Z0-9_-]+)/?$ admin/admin_index.php?page=$1 [L]
 RewriteRule ^admin/plugins/?$ admin/admin_index.php?page=plugins [L]
+RewriteRule ^admin/settings/?$ admin/admin_index.php?page=settings [L]
 RewriteRule ^admin/plugin_settings/([a-zA-Z0-9_-]+)/?$ admin/admin_index.php?page=plugin_settings&plugin=$1 [L]
 
 ##### GENERIC RULES #####

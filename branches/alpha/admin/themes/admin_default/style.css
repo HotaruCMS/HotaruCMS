@@ -50,10 +50,6 @@ a:hover	{
 	text-decoration: underline; 
 }
 
-form {
-	padding: 1.0em;
-}
-
 td {	padding: 0.5em;
 
 }
@@ -266,6 +262,34 @@ a:hover.widget-expand {
 .widget_uninstall a {
 	font-weight: bold;
 	color: #ff0000;	
+}
+
+
+/* *************************************
+*  Site Settings  *
+************************************** */
+
+#settings_form {
+	padding: 0em;
+}
+
+table#settings {
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#settings td {
+	padding: 1.0em;
+	border: 0.1em solid #ddd;
+	background-color: #f6f6f6;
+}
+
+#settings_submit {
+	float: right;
+	font-size: 1.2em;
+	margin: 0.4em;
+	padding: 0 0.4em 0 0.4em;
 }
 
 /* *************************************

@@ -32,7 +32,7 @@ $lang["admin_login_instructions"] = "Enter your username and password:";
 $lang["admin_login_failed"] = "Login failed";
 $lang["admin_login_form_submit"] = "Login";
 
-/* Announcements libraries/class.hotaru.php */
+/* Announcements /class.hotaru.php */
 $lang['admin_announcement_delete_install'] = "<span style='color: #ff0000;'>Please delete the install folder before someone deletes your database!</span>";
 $lang['admin_announcement_users_disabled'] = "<span style='color: #ff0000;'>Please enable the Users plugin in Plugin Management.</span>";
 
@@ -42,6 +42,10 @@ $lang["admin_plugins_uninstall_deleted"] = "This plugin has been deleted from th
 $lang["admin_plugins_uninstall_note"] = "<i>Note: </i>Any other database entries or tables created by the plugin have not been deleted.";
 $lang["admin_plugins_uninstall_refresh"] = "Please <a href='javascript:location.reload(true);' target='_self'>refresh this page</a> to update these lists.";
 
-/* Plugin info - libraries/class.plugins.php */
+/* Plugin info - /class.plugins.php */
 $lang["admin_plugins_class_new_version"] = "<span style='color: red'>- Newer version available</span>. <b>Please uninstall</b>.";
+
+/* Settings */
+$lang['admin_settings_update_success'] = "Updated successfully.";
+$lang['admin_settings_update_failure'] = "Update failed.";
 ?>
