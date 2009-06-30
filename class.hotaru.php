@@ -23,14 +23,7 @@
  *
  **************************************************************************************************** */
  
-/* ******************************************************************** 
- *  File: /libraries/class.hotaru.php
- *  Purpose: The Hotaru class is used for the current environment. It contains methods that deal with pages, etc.
- *  Notes: ---
- ********************************************************************** */
- 
 // includes
-
 
 class Hotaru {
 	

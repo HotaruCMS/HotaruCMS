@@ -32,31 +32,25 @@ session_start();
 require_once('hotaru_settings.php');
 
 // Initialize Hotaru and start timer if debugging.
-require_once(libraries . 'class.hotaru.php'); 
+require_once('class.hotaru.php'); 
 if(!isset($hotaru)) { $hotaru = new Hotaru(); }
 if(debug == "on") {
-	include_once(functions . 'funcs.timers.php');
+	include_once('funcs.timers.php');
 	$hotaru->is_debug = true;
 	timer_start();
 }
 
 // include other essential libraries and functions
-require_once(includes . 'Inspekt/Inspekt.php');			// for Input sanitation and validation
+require_once(includes . 'Inspekt/Inspekt.php');		// for Input sanitation and validation
 require_once(includes . 'ezSQL/ez_sql_core.php');		// for database usage
 require_once(includes . 'ezSQL/mysql/ez_sql_mysql.php');	// for database usage
-require_once(libraries . 'class.plugins.php');			// for plugins
-require_once(functions . 'funcs.urls.php');			// for default or friendly urls
+require_once('class.plugins.php');				// for plugins
+require_once('funcs.urls.php');					// for default or friendly urls
 
-if(file_exists(languages . 'main/main_' . strtolower(sitelanguage) . '.php')) {
-	require_once(languages . 'main/main_' . strtolower(sitelanguage) . '.php');	// language file for main (not admin, installation or plugins)
+if(file_exists(languages . 'main_' . strtolower(sitelanguage) . '.php')) {
+	require_once(languages . 'main_' . strtolower(sitelanguage) . '.php');	// language file for main (not admin, installation or plugins)
 } else {
-	require_once(languages . 'main/main_english.php');	// English file if specified language doesn't exist
-}
-
-if(file_exists(languages . 'admin/admin_' . strtolower(sitelanguage) . '.php')) {
-	require_once(languages . 'admin/admin_' . strtolower(sitelanguage) . '.php');	// language file for admin
-} else {
-	require_once(languages . 'admin/admin_english.php');	// English file if specified language doesn't exist
+	require_once(languages . 'main_english.php');	// English file if specified language doesn't exist
 }
 
 // Global Inspekt SuperCage

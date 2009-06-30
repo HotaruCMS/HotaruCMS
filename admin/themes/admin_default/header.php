@@ -32,13 +32,13 @@ global $hotaru, $plugin; // don't remove
 <html>
 <head>
    <title><?php echo sitename; ?></title>
-   <link rel="stylesheet" href="<?php echo baseurl . 'includes/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
+   <link rel="stylesheet" href="<?php echo baseurl . '3rd_party/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
    <link rel="stylesheet" href="<?php echo baseurl . 'admin/themes/' . current_admin_theme . 'style.css'; ?>" type="text/css">
+   <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery.min.js'; ?>"></script>
+   <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery-ui.min.js'; ?>"></script>
+   <script language="JavaScript" src="<?php echo baseurl . '3rd_party/EasyWidgets/jquery.easywidgets.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_ajax.js'; ?>"></script>
-   <script language="JavaScript" src="<?php echo baseurl . 'javascript/jQuery/jquery.min.js'; ?>"></script>
-   <script language="JavaScript" src="<?php echo baseurl . 'javascript/jQuery/jquery-ui.min.js'; ?>"></script>
-   <script language="JavaScript" src="<?php echo baseurl . 'javascript/jQuery/jquery.easywidgets.min.js'; ?>"></script>
-   <script language="JavaScript" src="<?php echo baseurl . 'javascript/jQuery/jquery.hotaru_admin.js'; ?>"></script>
+   <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_jquery.js'; ?>"></script>
    <?php if($hotaru->is_page('plugin_settings')) { $plugin->check_actions('admin_header_include', $plugin->folder); } ?>
    <link rel="shortcut icon" href="<?php echo baseurl; ?>favicon.ico">
    <script>

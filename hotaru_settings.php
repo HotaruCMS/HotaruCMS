@@ -61,13 +61,12 @@ define("debug", "on");				// "on" will show the number of database queries and p
 /* ************************************************************************************ */
 
 // define shorthand paths
-define("includes", dirname(__FILE__).'/includes/');
-define("install", dirname(__FILE__).'/install/');
-define("libraries", dirname(__FILE__).'/libraries/');
+define("includes", dirname(__FILE__).'/3rd_party/');
 define("languages", dirname(__FILE__).'/languages/');
-define("functions", dirname(__FILE__).'/functions/');
 define("plugins", dirname(__FILE__).'/plugins/');
+define("install", dirname(__FILE__).'/install/');
 define("themes", dirname(__FILE__).'/themes/');
+define("admin", dirname(__FILE__).'/admin/');
 define("admin_themes", dirname(__FILE__).'/admin/themes/');
 
 // define database tables
