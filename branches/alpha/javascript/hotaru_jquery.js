@@ -1,5 +1,5 @@
 /* **************************************************************************************************** 
- *  File: /javascript/jQuery/jquery.hotaru.js
+ *  File: /javascript/jQuery/hotaru_jquery.js
  *  Purpose: Provides common cosmetic functions, e.g. drop-down boxes
  *  Notes: ---
  *  License:
