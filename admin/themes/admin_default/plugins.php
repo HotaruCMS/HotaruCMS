@@ -28,7 +28,7 @@ global $hotaru, $plugin; // don't remove
 $plugin_widgets = $plugin->get_plugins(); // don't remove
 ?>
 
-<h2><a href="<?php echo baseurl . url(array(), 'admin'); ?>"><?php echo site_name;?> Admin Control Panel</a> &raquo; Plugin Management</h2>
+<h2><a href="<?php echo url(array(), 'admin'); ?>"><?php echo site_name;?> Admin Control Panel</a> &raquo; Plugin Management</h2>
 	
 <div id="plugin_list">
 
