@@ -57,7 +57,7 @@ foreach($settings as $setting) {
 	define($setting->settings_name, $setting->settings_value);
 }
 
-if(debug == "on") {
+if(debug == "true") {
 	include_once('funcs.timers.php');
 	$hotaru->is_debug = true;
 	timer_start();
