@@ -24,7 +24,7 @@
  **************************************************************************************************** */
 
 //includes
-require_once(libraries . 'class.metadata.php');			// This is the generic_pmd class that reads post metadata from the top of a plugin file.
+require_once(includes . 'GenericPHPConfig/class.metadata.php');		// This is the generic_pmd class that reads post metadata from the top of a plugin file.
 
 class Plugins extends generic_pmd {
 	
@@ -82,7 +82,7 @@ class Plugins extends generic_pmd {
 	 ********************************************************************** */
 
 	function get_plugins_array() {
-		require_once(functions . 'funcs.files.php');
+		require_once('funcs.files.php');
 		$plugin_list = getFilenames(plugins, "short");
 		$plugins_array = array();
 		foreach($plugin_list as $plugin_folder_name) {

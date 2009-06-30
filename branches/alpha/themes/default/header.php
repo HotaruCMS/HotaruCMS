@@ -32,7 +32,7 @@ global $hotaru, $plugin; // don't remove
 <html>
 <head>
    <title><?php echo sitename; ?></title>
-   <link rel="stylesheet" href="<?php echo baseurl . 'includes/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
+   <link rel="stylesheet" href="<?php echo baseurl . '3rd_party/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
    <link rel="stylesheet" href="<?php echo baseurl . 'themes/' . current_theme . 'style.css'; ?>" type="text/css">
    <?php $plugin->check_actions('header_include'); ?>
    <link rel="shortcut icon" href="<?php echo baseurl; ?>favicon.ico">
