@@ -40,7 +40,7 @@ define("db_prefix", 'hotaru_');			// Better leave this for now
 define("db_lang", 'en');			// Better leave this for now
 
 /* ******Paths ******* */
-define('baseurl', "http://localhost/hotaru/branches/alpha/");	//e.g. http://www.mysite.com/ or http://www.mysite.com/bookmarking/
+define('baseurl', "http://localhost/hotaru/trunk/");	//e.g. http://www.mysite.com/ or http://www.mysite.com/bookmarking/
 								// IMPORTANT!!! Don't forget the trailing slash (/).
 
 /* ************************************************************************************ */
