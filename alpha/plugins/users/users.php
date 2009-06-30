@@ -121,7 +121,7 @@ function usr_navigation_last() {
 	global $current_user;
 	
 	if($current_user->logged_in) {
-		echo "<li><a href='" . url(array('page'=>'settings')) . "'>Settings</a></li>\n";
+		echo "<li><a href='" . url(array('page'=>'profile')) . "'>Profile</a></li>\n";
 		echo "<li><a href='" . url(array('page'=>'logout')) . "'>Logout</a></li>\n";
 		if($current_user->role == 'administrator') {
 			echo "<li><a href='" . url(array(), 'admin') . "'>Admin</a></li>\n";
@@ -149,7 +149,7 @@ function usr_theme_index_main() {
 			$current_user->destroy_cookie_and_session();
 			header("Location: " . baseurl);
 			return true;
-		} elseif($hotaru->is_page('settings')) {
+		} elseif($hotaru->is_page('profile')) {
 			require_once(plugins . 'users/update.php');
 			usr_update();
 			return true;
