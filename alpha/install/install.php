@@ -28,10 +28,10 @@ require_once('../hotaru_settings.php');
 require_once(includes . 'Inspekt/Inspekt.php');	
 if(!isset($cage)) { $cage = Inspekt::makeSuperCage(); }
 
-if(file_exists(languages . 'install/install_' . strtolower(sitelanguage) . '.php')) {
-	require_once(languages . 'install/install_' . strtolower(sitelanguage) . '.php');	// language file for admin
+if(file_exists(install . 'languages/install_' . strtolower(sitelanguage) . '.php')) {
+	require_once(install . 'languages/install_' . strtolower(sitelanguage) . '.php');	// language file for admin
 } else {
-	require_once(languages . 'install/install_english.php');	// English file if specified language doesn't exist
+	require_once(install . 'languages/install_english.php');	// English file if specified language doesn't exist
 }
 
 $step = $cage->get->getInt('step');		// Installation steps.
@@ -82,12 +82,12 @@ function html_header() {
 	$header .= "<HTML><HEAD>\n";
 	$header .= "<TITLE>" . $lang['install_title'] . "</TITLE>\n";
 	$header .= "<META HTTP-EQUIV='Content-Type' CONTENT='text'>\n";
-	$header .= "<link rel='stylesheet' href='" . baseurl . "includes/YUI-CSS/reset-fonts-grids.css' type='text/css'>\n";
+	$header .= "<link rel='stylesheet' href='" . baseurl . "3rd_party/YUI-CSS/reset-fonts-grids.css' type='text/css'>\n";
 	$header .= "<link rel='stylesheet' type='text/css' href='" . baseurl . "install/install_style.css'>\n";
 	$header .= "</HEAD>\n";
 	$header .= "<BODY>\n";
 	$header .= "<div id='doc' class='yui-t7 install'>\n";
-	$header .= "<div id='hd' role='banner'><img align='left' src='" . baseurl . "images/hotaru.png' style='height:60px; width:69px;'><h1>" . $lang['install_title'] . "</h1></div>\n"; 
+	$header .= "<div id='hd' role='banner'><img align='left' src='" . baseurl . "admin/themes/admin_default/images/hotaru.png' style='height:60px; width:69px;'><h1>" . $lang['install_title'] . "</h1></div>\n"; 
 	$header .= "<div id='bd' role='main'>\n";
 	$header .= "<div class='yui-g'>\n";
 	return $header;

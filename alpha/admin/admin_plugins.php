@@ -27,18 +27,22 @@
  
 // includes
 require_once('../hotaru_header.php');
+if(file_exists(admin . 'languages/admin_' . strtolower(sitelanguage) . '.php')) {
+	require_once(admin . 'languages/admin_' . strtolower(sitelanguage) . '.php');	// language file for admin
+} else {
+	require_once(admin . 'languages/admin_english.php');	// English file if specified language doesn't exist
+}
 global $lang;
 
-//$plugin_management = new Plugin();
 
 $widget_positions = $cage->post->noTags('position');
-//echo "Positions returned from EasyWidgets: " . $widget_position . "<br />";
+//echo "Positions returned from EasyWidgets: " . $widget_positions . "<br />";
 if($widget_positions) {
 	$plugin->update_plugin_statuses($widget_positions);	// Cycles through all plugins, enables or disables as necessary	
 }
 
-
-$plugin_to_uninstall = $cage->post->testRegex('page', '/^([a-z0-9_-])+$/i');
+//$plugin_to_uninstall = $cage->post->testRegex('page', '/^([a-z0-9_-])+$/i');
+$plugin_to_uninstall = $cage->post->testRegex('plugin_folder', '/^([a-z0-9_-])+$/i');
 if($plugin_to_uninstall) { 
 	$plugin->uninstall_plugin($plugin_to_uninstall);
 	echo "<br /><b>" . $lang['admin_plugins_uninstall_done'] . "</b> <br /><br />";

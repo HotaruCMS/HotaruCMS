@@ -81,19 +81,18 @@ var returnvalue = Array ();
 
 /* ******************************************************************** 
  *  Function: hide_show_replace
- *  Parameters: baseurl, type, id, url, parameters, var4, var5 (see function for details)
+ *  Parameters: baseurl, type, id, url, parameters (see function for details)
  *  Purpose: Used for calling a function to do something and showing the response, without reloading the page.
  *  Notes: ---
  ********************************************************************** */
 	 
-function hide_show_replace(baseurl, type, id, url, parameters, var4, var5)
+function hide_show_replace(baseurl, type, id, url, parameters)
 {
 	/* ******************************************************************** 	
 		type = showhide, changetext
 		id = container id to hide, show or replace
 		url = where the file/function we need is
 		parameters = parameter string, e.g. "action=do&id=4"
-	 	var 4 and 5 are extras if necessary 
 	******************************************************************** */
 	
 	if(type == "showhide") {
@@ -103,7 +102,7 @@ function hide_show_replace(baseurl, type, id, url, parameters, var4, var5)
 
 	if (xmlhttp) {
 		target1 = document.getElementById (id);
-		target1.innerHTML = "<img src='" + baseurl + "images/ajax-loader-mini.gif'>";	
+		target1.innerHTML = "<img src='" + baseurl + "themes/admin_default/images/ajax-loader-mini.gif'>";	
 		ajax[id] = new myXMLHttpRequest ();
 		
 		if (ajax) {
@@ -145,7 +144,7 @@ function widget_moved(baseurl, str)
 	url = baseurl+"admin/admin_plugins.php";
 	if (xmlhttp) {
 		target1 = document.getElementById ('ajax-loader');
-		target1.innerHTML = "<img src='" + baseurl + "images/ajax-loader-mini.gif'>";	
+		target1.innerHTML = "<img src='" + baseurl + "themes/admin_default/images/ajax-loader-mini.gif'>";	
 		ajax['ajax-loader'] = new myXMLHttpRequest ();
 		
 		if (ajax) {

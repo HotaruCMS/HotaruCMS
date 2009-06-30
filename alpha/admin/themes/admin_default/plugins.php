@@ -24,12 +24,6 @@
  *
  **************************************************************************************************** */
 
-/* ******* USAGE ************
-<?php echo $hotaru->display_admin_template('TEMPLATE_NAME.php'); ?>		// e.g. header.php
-<?php $lists = $hotaru->show_plugin_list(); ?>					// gets 3 lists of plugins
-<?php echo $lists[0]; ?>							// 0 = Active plugins, 1 = Inactive, 2 = Not installed 
-***************************** */
-
 global $hotaru, $plugin; // don't remove
 $plugin_widgets = $plugin->get_plugins(); // don't remove
 ?>

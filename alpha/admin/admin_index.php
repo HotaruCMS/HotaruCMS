@@ -25,7 +25,13 @@
  
 // includes
 require_once('../hotaru_header.php');
-require_once('admin_functions/admin_login.php');
+require_once('admin_login.php');
+
+if(file_exists(admin . 'languages/admin_' . strtolower(sitelanguage) . '.php')) {
+	require_once(admin . 'languages/admin_' . strtolower(sitelanguage) . '.php');	// language file for admin
+} else {
+	require_once(admin . 'languages/admin_english.php');	// English file if specified language doesn't exist
+}
 
 $page = $cage->get->testRegex('page', '/^([a-z0-9_-])+$/i');
 
@@ -64,11 +70,11 @@ switch ($page) {
 		$plugin->name = $plugin->plugin_name($plugin->folder);
 		break;
 	case "":
-		include('admin_functions/admin_news.php');	// for Admin home RSS feed
+		include('admin_news.php');	// for Admin home RSS feed
 		break;
 	default:
 		if(!$hotaru->is_page($page)) {
-			include('admin_functions/admin_news.php');	// for Admin home RSS feed
+			include('admin_news.php');	// for Admin home RSS feed
 		}
 		break;
 }
