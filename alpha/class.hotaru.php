@@ -133,9 +133,11 @@ class Hotaru {
 		$announcements = array();
 		
 		// 1. User login and registration currently disabled.
+		/*
 		if(!$plugin->plugin_active('users')) {
 			array_push($announcements, $lang['main_announcement_users_disabled']);	
 		}
+		*/
 		 
 		if(!is_array($announcements)) {
 			return false;
@@ -293,10 +295,12 @@ class Hotaru {
 			array_push($announcements, $lang['admin_announcement_delete_install']);
 		} 
 		
+		/*
 		// 2. Please install the Users plugin
 		if (!$plugin->plugin_active('users')) {
 			array_push($announcements, $lang['admin_announcement_users_disabled']);	
 		} 
+		*/
 		
 		if(!is_array($announcements)) {
 			return false;
