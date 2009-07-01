@@ -40,7 +40,7 @@ $page = $cage->get->testRegex('page', '/^([a-z0-9_-])+$/i');
 
 // Authenticate the admin if the Users plugin is INACTIVE:
 if(!$plugin->plugin_active('users')) {
-	if(($page != 'admin_login') && !$result = is_admin_session()) {
+	if(($page != 'admin_login') && !$result = is_admin_cookie()) {
 		echo "You do not have permission to access this page.<br />";
 		die(); exit;
 	}
