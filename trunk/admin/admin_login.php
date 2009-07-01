@@ -55,7 +55,7 @@ function admin_login() {
 				$login_result = admin_login_check($username_check, $password_check);
 				if($login_result) {
 						//success
-						$_SESSION['username'] = $username_check;
+						set_admin_cookie($username_check);
 						header("Location:" . baseurl . 'admin/admin_index.php');	// Return to front page 
 				} else {
 						// login failed
@@ -80,34 +80,58 @@ function admin_login() {
 }
 
 
+/* ******************************************************************** 
+ *  Function: set_admin_cookie
+ *  Parameters: username
+ *  Purpose: Sets 30 day cookies for the admin.
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function set_admin_cookie($username) {
+     /* Set a 30 day cookie */
+    if(!$username) { 
+    	echo "Error setting cookie. Username not provided.";
+    	return false;
+    } else {
+    	$strCookie=base64_encode(join(':', array($username, crypt($username, 22))));
+	$month = 2592000 + time(); // (2592000 = 60 seconds * 60 mins * 24 hours * 30 days.)
+	setcookie("hotaru_user", $username, $month, "/");
+	setcookie("hotaru_key", $strCookie, $month, "/");
+	return true;
+    }
+}
+        
  /* ******************************************************************** 
- *  Function: is_admin_session
+ *  Function: is_admin_cookie
  *  Parameters: None
  *  Purpose: Checks for the existence and validity of the admin trying to log in
  *  Notes: This is only used if the Users plugin is inactive.
  ********************************************************************** */
  
-function is_admin_session() {
-	// check if session exists...
-	if(!isset($_SESSION['username'])) { 
+function is_admin_cookie() {
+	global $cage;
+	// Check for a cookie. If present then the user is logged in.
+	if(!$hotaru_user = $cage->cookie->testRegex('hotaru_user', '/^([a-z0-9_-]{4,32})+$/i')) {
 		header('Location: ' . baseurl . 'admin/admin_index.php?page=admin_login');
 		die();
 	} else {
-		// check if it's a safe username...
-		if(!preg_match('/^([a-z0-9_-])+$/i', $_SESSION['username'])) {
+		// authenticate...
+		if(($hotaru_user) && ($cage->cookie->keyExists('hotaru_key'))) {
+			$user_info=explode(":", base64_decode($cage->cookie->getRaw('hotaru_key')));
+			if(($hotaru_user == $user_info[0]) && (crypt($user_info[0], 22) == $user_info[1])) {
+				if(!is_admin($hotaru_user)) {
+					return false;
+					die();
+				} else {
+					//success...
+					return true;
+				}
+			}
+		} else {
 			return false;
 			die();	
-		} else {
-			// check if the user is an admin
-			$possible_admin_user = $_SESSION['username'];
-			if(!is_admin($possible_admin_user)) {
-				return false;
-				die();
-			}
 		}
 	}
-	
-	return true;
 }
 
 
