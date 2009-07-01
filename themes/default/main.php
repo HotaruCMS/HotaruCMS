@@ -31,4 +31,6 @@ global $hotaru, $plugin; // don't remove
 	
 <?php $plugin->check_actions('main'); ?>
 
+<?php $plugin->check_actions('rss_show', true, '', array(2)); ?>
+
 <?php $plugin->check_actions('main_bottom'); ?>

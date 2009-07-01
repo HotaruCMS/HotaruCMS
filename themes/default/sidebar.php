@@ -33,7 +33,7 @@ global $plugin; // don't remove
 	
 	<?php // $plugin->check_actions('hello_world'); ?>
 	
-	<?php // $plugin->check_actions('rss_show'); ?>
+	<?php $plugin->check_actions('rss_show'); ?>
 	
 	<?php $plugin->check_actions('sidebar'); ?>
 		
