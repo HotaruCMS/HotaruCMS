@@ -24,11 +24,21 @@
  *
  **************************************************************************************************** */
 
-global $hotaru, $plugin; // don't remove
+global $hotaru, $plugin, $current_user; // don't remove
 ?>
 
 <ul id="navigation">
-	<?php if(!$plugin->plugin_active('users')) { ?><li><a href="<?php echo url(array(), 'admin'); ?>">Admin</a></li><?php } ?>
+	<?php 
+		if(!$plugin->plugin_active('users')) { 
+			echo "<li><a href='" . url(array(), 'admin') . "'>";
+			if($current_user->logged_in == true) { 
+				echo "Admin</a></li>"; 
+				echo "<li><a href='" . url(array('page'=>'admin_logout'), 'admin') . "'>Logout</a></li>";
+			} else { 
+				echo "Log in</a></li>"; 
+			}
+		}
+	?>
 	<?php $plugin->check_actions('navigation_first'); ?>
 	<li><a href="<?php echo baseurl ?>">Home</a></li>
 	<?php $plugin->check_actions('navigation_last'); ?>

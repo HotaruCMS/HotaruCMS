@@ -41,7 +41,6 @@ function admin_login() {
 		if(!empty($message)) {  } 
 		
 		echo "<div class='main_inner'>";
-		echo $lang["admin_login_reason"] . "<br /><br />\n";
 		echo $lang["admin_login_instructions"] . "\n";
 
 			if(!$username_check = $cage->post->testRegex('username', '/^([a-z0-9_-]{4,32})+$/i')) {
@@ -162,6 +161,21 @@ function admin_login_check($username = '', $password = '') {
 	$password = crypt(md5($password),md5($username));
 	$result = $db->get_row($db->prepare("SELECT user_username, user_password FROM " . table_users . " WHERE user_username = %s AND user_password = %s", $username, $password));
 	if($result) { return true; } else { return false; }
+}
+
+
+ /* ******************************************************************** 
+ *  Function: admin_logout
+ *  Parameters: None
+ *  Purpose: Logs Admin out
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function admin_logout() {
+	global $current_user;
+	$current_user->destroy_cookie_and_session();
+	header("Location: " . baseurl);
+	return true;
 }
 
 ?>

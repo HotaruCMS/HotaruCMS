@@ -62,6 +62,8 @@ if(isset($current_user) && $plugin->plugin_active('users')) {
 // If we get this far, we know that the Users plugin is active and the user is an administrator.
 
 switch ($page) {
+	case "admin_logout":
+		admin_logout();
 	case "settings":
 		// Nothing special to do...
 		break;

@@ -31,14 +31,15 @@ session_start();
 // include settings
 require_once('hotaru_settings.php');
 
-
-require_once('class.hotaru.php'); 
+// include classes
+require_once('class.hotaru.php'); 	// for environment
+require_once('class.userbase.php');	// for users
+require_once('class.plugins.php');	// for plugins
 
 // include other essential libraries and functions
 require_once(includes . 'Inspekt/Inspekt.php');		// for Input sanitation and validation
 require_once(includes . 'ezSQL/ez_sql_core.php');		// for database usage
 require_once(includes . 'ezSQL/mysql/ez_sql_mysql.php');	// for database usage
-require_once('class.plugins.php');				// for plugins
 require_once('funcs.urls.php');					// for default or friendly urls
 
 if(file_exists(languages . 'main_' . strtolower(sitelanguage) . '.php')) {
@@ -72,6 +73,18 @@ if(!isset($plugin)) {
 } else {
 	if(!is_object($plugin)) {
 		$plugin = new Plugin(); 
+	}
+}
+
+$current_user = new UserBase();
+// Check for a cookie. If present then the user is logged in.
+$hotaru_user = $cage->cookie->testRegex('hotaru_user', '/^([a-z0-9_-]{4,32})+$/i');
+if(($hotaru_user) && ($cage->cookie->keyExists('hotaru_key'))) {
+	$user_info=explode(":", base64_decode($cage->cookie->getRaw('hotaru_key')));
+	if(($hotaru_user == $user_info[0]) && (crypt($user_info[0], 22) == $user_info[1])) {
+		$current_user->username = $hotaru_user;
+		$current_user->get_user_basic(0, $current_user->username);
+		$current_user->logged_in = true;
 	}
 }
 

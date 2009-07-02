@@ -52,8 +52,6 @@ function usr_users(&$parameters) {
 function usr_hotaru_header() {
 	global $lang, $cage;
 	define("table_usermeta", db_prefix . 'usermeta');
-	require_once(plugins . 'users/libraries/class.userbase.php');
-	require_once(plugins . 'users/libraries/class.users.php');
 	
 	// include users language file
 	if(file_exists(plugins . 'users/languages/users_' . strtolower(sitelanguage) . '.php')) {
@@ -61,25 +59,6 @@ function usr_hotaru_header() {
 	} else {
 		require_once(plugins . 'users/languages/users_english.php');	// English file if specified language doesn't exist
 	}
-	
-	$current_user = new User();
-	// Check for a cookie. If present then the user is logged in.
-	$hotaru_user = $cage->cookie->testRegex('hotaru_user', '/^([a-z0-9_-]{4,32})+$/i');
-	if(($hotaru_user) && ($cage->cookie->keyExists('hotaru_key'))) {
-		$user_info=explode(":", base64_decode($cage->cookie->getRaw('hotaru_key')));
-		if(($hotaru_user == $user_info[0]) && (crypt($user_info[0], 22) == $user_info[1])) {
-			$current_user->username = $hotaru_user;
-			$current_user->get_user_basic(0, $current_user->username);
-			$current_user->logged_in = true;
-		}
-	}
-		
-	/* IMPORTANT NOTE: declaring $current_user above doesn't make it available to other functions, even with "global".
-	 * So, we need to return it back to hotaru_header.php and declare it there. That's done below by passing it back through 
-	 * check_actions() as an array. Look at hotaru_header.php to see how we extract the $current_user object for global use. */
-	 
-	$vars['current_user'] = $current_user;
-	return $vars;
 }
 
 
