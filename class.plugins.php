@@ -306,8 +306,10 @@ class Plugin extends Plugins {
 							include_once(plugins . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php");
 							if($perform == true) {
 								$function_name = $plugin->plugin_prefix . "_" . $hook;
-								$result = $function_name($parameters);
-								if($result) { $return_array[$function_name] = $result; }
+								if(function_exists($function_name)) {
+									$result = $function_name($parameters);
+									if($result) { $return_array[$function_name] = $result; }
+								}
 							}
 							$action_found = true;
 						} else {
