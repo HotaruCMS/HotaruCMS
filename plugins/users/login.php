@@ -33,7 +33,7 @@
 function usr_login() {
 	global $plugin, $cage, $lang;
 	
-	$current_user = new User();
+	$current_user = new UserBase();
 	
 	echo "<div id='main'>";
 		echo "<h2><a href='" . baseurl . "'>Home</a> &raquo; Login</h2>\n";
