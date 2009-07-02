@@ -1,9 +1,9 @@
 <?php
 
-/* ********** PLUGIN CLASS****************************************************************************
- * name: UserBase
- * description: Basic user functions for logging in , registering, etc.
- * file: /plugins/users/libraries/class.userbase.php
+/* **************************************************************************************************** 
+ *  File: /class.userbase.php
+ *  Purpose: Basic user functions for logging in , registering, etc.
+ *  Notes: Plugin such as "Users" extend this class.
  *
  *  License:
  *

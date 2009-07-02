@@ -27,7 +27,6 @@
 
 /* Login */
 $lang["admin_login"] = "Login";
-$lang["admin_login_reason"] = "Because the Users plugin is inactive, you'll need to log in again. ";
 $lang["admin_login_instructions"] = "Enter your username and password:";
 $lang["admin_login_failed"] = "Login failed";
 $lang["admin_login_form_submit"] = "Login";
