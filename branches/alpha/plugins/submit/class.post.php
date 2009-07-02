@@ -49,14 +49,14 @@ class Post {
 	/* ******************************************************************** 
 	 *  Function: get_posts
 	 *  Parameters: None
-	 *  Purpose: Gets the last X posts from the database
+	 *  Purpose: Gets all the posts from the database
 	 *  Notes: ---
 	 ********************************************************************** */	
 	 	
-	function get_posts($limit = 20) {
+	function get_posts() {
 		global $db;
-		$sql = "SELECT * FROM " . table_posts . " ORDER BY post_date DESC LIMIT %d";
-		$posts = $db->get_results($db->prepare($sql, $limit));
+		$sql = "SELECT * FROM " . table_posts . " ORDER BY post_date DESC";
+		$posts = $db->get_results($db->prepare($sql));
 		if($posts) { return $posts; } else { return false; }
 	}
 }

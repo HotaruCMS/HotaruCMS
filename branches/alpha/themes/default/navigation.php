@@ -28,6 +28,9 @@ global $hotaru, $plugin, $current_user; // don't remove
 ?>
 
 <ul id="navigation">
+	<?php $plugin->check_actions('navigation_first'); ?>
+	<li><a href="<?php echo baseurl; ?>">Home</a></li>
+	<?php $plugin->check_actions('navigation_last'); ?>
 	<?php 
 		if(!$plugin->plugin_active('users')) { 
 			echo "<li><a href='" . url(array(), 'admin') . "'>";
@@ -39,7 +42,4 @@ global $hotaru, $plugin, $current_user; // don't remove
 			}
 		}
 	?>
-	<?php $plugin->check_actions('navigation_first'); ?>
-	<li><a href="<?php echo baseurl; ?>">Home</a></li>
-	<?php $plugin->check_actions('navigation_last'); ?>
 </ul>

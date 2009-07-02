@@ -110,6 +110,8 @@ function sub_hotaru_header() {
 	}
 	
 	require_once(plugins . 'submit/class.post.php');
+	require_once(includes . 'Paginated/Paginated.php');
+	require_once(includes . 'Paginated/DoubleBarLayout.php');
 }
 
 
