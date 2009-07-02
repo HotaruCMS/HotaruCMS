@@ -27,7 +27,7 @@
  *
  **************************************************************************************************** */
 
-var xmlhttp
+var xmlhttp=false;
 /*@cc_on @*/
 /*@if (@_jscript_version >= 5)
   try {
@@ -49,21 +49,12 @@ if (!xmlhttp && typeof XMLHttpRequest != 'undefined')
 	xmlhttp = new XMLHttpRequest ();
   }
   catch (e) {
-  xmlhttp = false}
+  	xmlhttp = false}
 }
 
 function myXMLHttpRequest ()
 {
   var xmlhttplocal;
-  try {
-  	xmlhttplocal = new ActiveXObject ("Msxml2.XMLHTTP")}
-  catch (e) {
-	try {
-	xmlhttplocal = new ActiveXObject ("Microsoft.XMLHTTP")}
-	catch (E) {
-	  xmlhttplocal = false;
-	}
-  }
 
   if (!xmlhttplocal && typeof XMLHttpRequest != 'undefined') {
 	try {
@@ -102,7 +93,7 @@ function hide_show_replace(baseurl, type, id, url, parameters)
 
 	if (xmlhttp) {
 		target1 = document.getElementById (id);
-		target1.innerHTML = "<img src='" + baseurl + "themes/admin_default/images/ajax-loader-mini.gif'>";	
+		target1.innerHTML = "<img src='" + baseurl + "admin/themes/admin_default/images/ajax-loader-mini.gif'>";	
 		ajax[id] = new myXMLHttpRequest ();
 		
 		if (ajax) {
@@ -144,7 +135,7 @@ function widget_moved(baseurl, str)
 	url = baseurl+"admin/admin_plugins.php";
 	if (xmlhttp) {
 		target1 = document.getElementById ('ajax-loader');
-		target1.innerHTML = "<img src='" + baseurl + "themes/admin_default/images/ajax-loader-mini.gif'>";	
+		target1.innerHTML = "<img src='" + baseurl + "admin/themes/admin_default/images/ajax-loader-mini.gif'>";	
 		ajax['ajax-loader'] = new myXMLHttpRequest ();
 		
 		if (ajax) {
@@ -172,3 +163,46 @@ function widget_moved(baseurl, str)
 }
 
 
+
+/* ******************************************************************** 
+ *  Function: submit_url
+ *  Parameters: baseurl, id (block to show/hide), url (fetch_source.php)
+ *  Purpose: Used for calling a file to fetch remote content then displaying it.
+ *  Notes: ---
+ ********************************************************************** */
+	 
+function submit_url(baseurl, url, parameters)
+{
+	var source_url = document.getElementById('source_url').value;
+	
+	if (xmlhttp) {
+		mycontent = "source_url="+escape(source_url);
+		target2 = document.getElementById ('ajax_loader');
+		target2.innerHTML = "<img src='" + baseurl + "admin/themes/admin_default/images/ajax-loader-mini.gif'>";	
+		ajax['submit_return_value'] = new myXMLHttpRequest ();
+		
+		if (ajax) {
+			ajax['submit_return_value'].open ("POST", url, true);
+			ajax['submit_return_value'].setRequestHeader ('Content-Type',
+					   'application/x-www-form-urlencoded');
+
+			ajax['submit_return_value'].send (mycontent);
+			errormatch = new RegExp ("^ERROR:");
+			target1 = document.getElementById ('submit_return_value');
+			ajax['submit_return_value'].onreadystatechange = function () {
+				if (ajax['submit_return_value'].readyState == 4) {
+					returnvalue['submit_return_value'] = ajax['submit_return_value'].responseText;
+					if (returnvalue['submit_return_value'].match (errormatch)) {
+						returnvalue['submit_return_value'] = returnvalue['submit_return_value'].substring (6, returnvalue['submit_return_value'].length);						
+						target1 = document.getElementById ('submit_return_value');
+						target1.value = returnvalue['submit_return_value'];						
+					} else {
+						target1 = document.getElementById ('submit_return_value');
+						target1.value = returnvalue['submit_return_value'];
+						target2.innerHTML = "&nbsp;";
+					}
+				}
+			}
+		}
+	}
+}
