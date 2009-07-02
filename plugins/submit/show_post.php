@@ -26,20 +26,24 @@
  
 $post = new Post();
 		
-$stories = $post->get_posts(20);
+$stories = $post->get_posts();
 if($stories) {
-	foreach($stories as $story) {
-	
+	$pagedResults = new Paginated($stories, 10, $page);
+	while($story = $pagedResults->fetchPagedRow()) {	//when $story is false loop terminates	
 ?>
 
-<!-- POST -->
+<!-- ************ POST **************** -->
 
 <a href='<?php echo $story->post_orig_url; ?>'><?php echo $story->post_title; ?></a><br />
 
-<!-- END POST -->
+<!-- ************ END POST **************** -->
 
 <?php	
 	}
+	
+	//important to set the strategy to be used before a call to fetchPagedNavigation
+	$pagedResults->setLayout(new DoubleBarLayout());
+	echo $pagedResults->fetchPagedNavigation();
 }
 	
 ?>
