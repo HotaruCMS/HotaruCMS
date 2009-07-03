@@ -333,14 +333,22 @@
 				}
 				else
 				{
+					if($this->num_rows == 0) {
+						$return = "empty";
+					} else {
+						$return = $this->num_rows;
+					}
+					
 					// Cache all result values
 					$result_cache = array
 					(
 						'col_info' => $this->col_info,
 						'last_result' => $this->last_result,
 						'num_rows' => $this->num_rows,
-						'return_value' => $this->num_rows,
+						//'return_value' => $this->num_rows,
+						'return_value' => $return,	// "empty" or number of rows
 					);
+									
 					error_log ( serialize($result_cache), 3, $cache_file);
 				}
 			}

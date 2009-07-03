@@ -141,6 +141,7 @@ function sub_navigation_last() {
 function sub_header_include() {
 
 	echo "<script language='JavaScript' src='" . baseurl . "javascript/hotaru_ajax.js'></script>\n";
+	echo "<link rel='stylesheet' href='" . baseurl . "plugins/submit/submit.css' type='text/css'>\n";
 }
 
 
