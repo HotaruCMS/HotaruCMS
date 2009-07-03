@@ -23,7 +23,9 @@
  *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
  *
  **************************************************************************************************** */
- 
+
+global $plugin;
+
 $post = new Post();
 		
 $stories = $post->get_posts();
@@ -34,7 +36,11 @@ if($stories) {
 
 <!-- ************ POST **************** -->
 
-<a href='<?php echo $story->post_orig_url; ?>'><?php echo $story->post_title; ?></a><br />
+<div class="show_post">
+	<?php $plugin->check_actions('show_post_1'); ?>
+	<div class="show_post_title"><a href='<?php echo $story->post_orig_url; ?>'><?php echo $story->post_title; ?></a></div>
+	<?php $plugin->check_actions('show_post_2'); ?>
+</div>
 
 <!-- ************ END POST **************** -->
 

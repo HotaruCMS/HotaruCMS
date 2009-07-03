@@ -181,16 +181,22 @@
 			if ( defined('SAVEQUERIES') && SAVEQUERIES )
 				$this->timer_start();
 
-
-			// Count how many queries there have been
-			$this->num_queries++;
-
 			// Use core file cache function
 			if ( $cache = $this->get_cache($query) )
 			{
+				// Nick edit: Although it cached queries with zero results, the get_cache 
+				// function returns false (i.e 0) if there are zero rows, so if 0, I've made
+				// it store and return "empty" instead, forcing the above queryto return true
+				// and the cache (with no results) to be used. This saves making repeated SQL
+				// queries that we already know return an empty set of results.
+				// I did this because the check_actions function ramps up the query counts 
+				// but rarely returns anything!
 				return $cache;
 			}
 
+			// Count how many queries there have been
+			$this->num_queries++;
+			
 			// If there is no existing database connection then try to connect
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{
