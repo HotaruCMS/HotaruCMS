@@ -295,8 +295,12 @@ class Plugin extends Plugins {
 				$where .= "AND (" . table_plugins . ".plugin_folder = %s)";
 			}
 			
+			$db->cache_queries = true;	// start using cache
+			
 			$sql = "SELECT " . table_plugins . ".plugin_enabled, " . table_plugins . ".plugin_folder, " . table_plugins . ".plugin_prefix, " . table_pluginhooks . ".plugin_hook  FROM " . table_pluginhooks . ", " . table_plugins . " WHERE (" . table_pluginhooks . ".plugin_hook = %s) AND (" . table_plugins . ".plugin_folder = " . table_pluginhooks . ".plugin_folder) " . $where;
 			$plugins = $db->get_results($db->prepare($sql, $hook, $folder));
+			
+			$db->cache_queries = false;	// stop using cache
 			
 			$action_found = false;
 			if($plugins) {
@@ -336,7 +340,7 @@ class Plugin extends Plugins {
 			return false;			// no functions were triggered. Eitherthey weren't found or they were surpressed by $perform = false.
 		}
 	}
-		
+			
 	
 	/* ******************************************************************** 
 	 *  Function: plugin_settings
