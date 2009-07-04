@@ -31,15 +31,13 @@
  ********************************************************************** */
  
 function usr_register() {
-	global $plugin, $cage, $lang;
+	global $hotaru, $cage, $lang;
 	
 	$user = new User();
 	
 	echo "<div id='main'>";
 		echo "<h2><a href='" . baseurl . "'>Home</a> &raquo; Register</h2>\n";
-		
-		$plugin->show_message(); 
-		
+				
 		echo "<div class='main_inner'>";
 		echo $lang["users_register_instructions"] . "\n";
 		
@@ -49,9 +47,9 @@ function usr_register() {
 			if($username_check) {
 				$user->username = $username_check;
 			} else {
-				$plugin->message = $lang['users_register_username_error'];
-				$plugin->message_type = 'red';
-				$plugin->show_message();
+				$hotaru->message = $lang['users_register_username_error'];
+				$hotaru->message_type = 'red';
+				$hotaru->show_message();
 				$error = 1;
 			}
 					
@@ -59,9 +57,9 @@ function usr_register() {
 			if($password_check) {
 				$user->password = crypt(md5($password_check),md5($user->username));
 			} else {
-				$plugin->message = $lang['users_register_password_error'];
-				$plugin->message_type = 'red';
-				$plugin->show_message();
+				$hotaru->message = $lang['users_register_password_error'];
+				$hotaru->message_type = 'red';
+				$hotaru->show_message();
 				$error = 1;
 			}
 						
@@ -69,9 +67,9 @@ function usr_register() {
 			if($email_check) {
 				$user->email = $email_check;
 			} else {
-				$plugin->message = $lang['users_register_email_error'];
-				$plugin->message_type = 'red';
-				$plugin->show_message();
+				$hotaru->message = $lang['users_register_email_error'];
+				$hotaru->message_type = 'red';
+				$hotaru->show_message();
 				$error = 1;
 			}
 		}
@@ -88,23 +86,23 @@ function usr_register() {
 				//success
 				header("Location:" . baseurl);	// Registered successfully -> Go to front page
 			} elseif($result == 0) {
-				$plugin->message = $lang['users_register_id_exists'];
-				$plugin->message_type = 'red';
-				$plugin->show_message(); 
+				$hotaru->message = $lang['users_register_id_exists'];
+				$hotaru->message_type = 'red';
+				$hotaru->show_message(); 
 
 			} elseif($result == 1) {
-				$plugin->message = $lang['users_register_username_exists'];
-				$plugin->message_type = 'red';
-				$plugin->show_message(); 
+				$hotaru->message = $lang['users_register_username_exists'];
+				$hotaru->message_type = 'red';
+				$hotaru->show_message(); 
 
 			} elseif($result == 2) {
-				$plugin->message = $lang['users_register_email_exists'];
-				$plugin->message_type = 'red';
-				$plugin->show_message(); 
+				$hotaru->message = $lang['users_register_email_exists'];
+				$hotaru->message_type = 'red';
+				$hotaru->show_message(); 
 			} else {
-				$plugin->message = $lang["users_register_unexpected_error"];
-				$plugin->message_type = 'red';
-				$plugin->show_message();
+				$hotaru->message = $lang["users_register_unexpected_error"];
+				$hotaru->message_type = 'red';
+				$hotaru->show_message();
 			}
 		} else {
 			// error must = 1 so fall through and display the form again

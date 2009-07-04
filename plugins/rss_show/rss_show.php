@@ -206,11 +206,11 @@ function rs_install_plugin_starter_settings($id) {
  ********************************************************************** */
  
 function rs_admin_plugin_settings() {
-	global $plugin;
+	global $hotaru, $plugin;
 	
 	rs_get_params();	// get any arguments passed from the form
 	
-	$plugin->show_message();	// display any success or failure messages
+	$hotaru->show_message();	// display any success or failure messages
 	
 	// Cycle through the RSS feeds, displaying their settings...
 	$id = 1;
@@ -295,20 +295,20 @@ function rs_admin_plugin_settings() {
  ********************************************************************** */
  
 function rs_get_params() {
-	global $cage, $plugin;
+	global $cage, $hotaru, $plugin;
 	if($action = $cage->get->testRegex('action', '/^([a-z0-9_-])+$/i')) {
 		if($action == 'new_feed') {
 			$id = $cage->get->getInt('id');
 			rs_install_plugin_starter_settings($id);
-			$plugin->message = "New default feed added.";
-			$plugin->message_type = "green";
+			$hotaru->message = "New default feed added.";
+			$hotaru->message_type = "green";
 			//header("Location: " . baseurl . "admin/admin_index.php?page=plugin_settings&plugin=rss_show&message=" . $message . "&message_type=" . $message_type);
 			//die();
 		} elseif($action == 'delete_feed') {
 			$id = $cage->get->getInt('id');
 			$plugin->plugin_settings_remove_setting('rss_show_' . $id . '_settings');
-			$plugin->message = "Feed removed.";
-			$plugin->message_type = "green";
+			$hotaru->message = "Feed removed.";
+			$hotaru->message_type = "green";
 			//header("Location: " . baseurl . "admin/admin_index.php?page=plugin_settings&plugin=rss_show&message=" . $message . "&message_type=" . $message_type);
 			//die();		
 		}
@@ -335,18 +335,18 @@ function rs_get_params() {
  ********************************************************************** */
  
 function rs_save_settings($id, &$parameters) {
-	global $plugin;
-	$plugin->message = "";
+	global $plugin, $hotaru;
+	$hotaru->message = "";
 	if($parameters) {
 		if($parameters['rss_show_feed'] == "") {
-				$plugin->message = "No feed provided, so no changes were made.";
-				$plugin->message_type = "red";
+				$hotaru->message = "No feed provided, so no changes were made.";
+				$hotaru->message_type = "red";
 		}
 			
-		if($plugin->message == "") {
+		if($hotaru->message == "") {
 			$values = serialize($parameters);
-			$plugin->message = "RSS Show settings updated successfully.";
-			$plugin->message_type = "green";
+			$hotaru->message = "RSS Show settings updated successfully.";
+			$hotaru->message_type = "green";
 			$plugin->plugin_settings_update('rss_show', 'rss_show_' . $id . '_settings', $values);	
 		}
 	}
