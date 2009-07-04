@@ -31,12 +31,10 @@
  ********************************************************************** */
  
 function usr_update() {
-	global $plugin, $cage, $lang, $current_user;
+	global $hotaru, $cage, $lang, $current_user;
 	
 	echo "<div id='main'>";
 		echo "<h2><a href='" . baseurl . "'>Home</a> &raquo; User Settings</h2>\n";
-		
-		$plugin->show_message();
 		
 		echo "<div class='main_inner'>";
 		echo $lang["users_update_instructions"] . "\n";
@@ -47,9 +45,9 @@ function usr_update() {
 			if($username_check) {
 				$current_user->username = $username_check;
 			} else {
-				$plugin->message = $lang['users_register_username_error'];
-				$plugin->message_type = 'red';
-				$plugin->show_message();
+				$hotaru->message = $lang['users_register_username_error'];
+				$hotaru->message_type = 'red';
+				$hotaru->show_message();
 				$error = 1;
 			}
 					
@@ -57,9 +55,9 @@ function usr_update() {
 			if($password_check) {
 				$current_user->password = crypt(md5($password_check),md5($current_user->username));
 			} else {
-				$plugin->message = $lang['users_register_password_error'];
-				$plugin->message_type = 'red';
-				$plugin->show_message();
+				$hotaru->message = $lang['users_register_password_error'];
+				$hotaru->message_type = 'red';
+				$hotaru->show_message();
 				$error = 1;
 			}
 						
@@ -67,9 +65,9 @@ function usr_update() {
 			if($email_check) {
 				$current_user->email = $email_check;
 			} else {
-				$plugin->message = $lang['users_register_email_error'];
-				$plugin->message_type = 'red';
-				$plugin->show_message();
+				$hotaru->message = $lang['users_register_email_error'];
+				$hotaru->message_type = 'red';
+				$hotaru->show_message();
 				$error = 1;
 			}
 		}
@@ -85,14 +83,14 @@ function usr_update() {
 				//success
 				$current_user->update_user_basic($current_user->id, $current_user->username, $current_user->role, $current_user->password, $current_user->email);
 				$current_user->set_cookie(0);
-				$plugin->message = $lang['users_update_success'];
-				$plugin->message_type = 'green';
-				$plugin->show_message();
+				$hotaru->message = $lang['users_update_success'];
+				$hotaru->message_type = 'green';
+				$hotaru->show_message();
 			} else {
 				//fail
-				$plugin->message = $lang["users_register_unexpected_error"];
-				$plugin->message_type = 'red';
-				$plugin->show_message();
+				$hotaru->message = $lang["users_register_unexpected_error"];
+				$hotaru->message_type = 'red';
+				$hotaru->show_message();
 			}
 		} else {
 			// error must = 1 so fall through and display the form again
