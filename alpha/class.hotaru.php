@@ -131,8 +131,13 @@ class Hotaru {
 		global $lang, $plugin;
 		
 		$announcements = array();
-		
-		// 1. User login and registration currently disabled.
+
+		// 1. "All plugins are currently disabled."
+		if(!$plugin->num_active_plugins()) {
+			array_push($announcements, $lang['main_announcement_plugins_disabled']);	
+		}
+				
+		// 2. User login and registration currently disabled.
 		/*
 		if(!$plugin->plugin_active('users')) {
 			array_push($announcements, $lang['main_announcement_users_disabled']);	
@@ -295,8 +300,13 @@ class Hotaru {
 			array_push($announcements, $lang['admin_announcement_delete_install']);
 		} 
 		
+		// 2. "Go to Plugin Management to enable some plugins"
+		if(!$plugin->num_active_plugins()) {
+			array_push($announcements, $lang['admin_announcement_plugins_disabled']);	
+		}
+		
 		/*
-		// 2. Please install the Users plugin
+		// 3. Please install the Users plugin
 		if (!$plugin->plugin_active('users')) {
 			array_push($announcements, $lang['admin_announcement_users_disabled']);	
 		} 
