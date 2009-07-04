@@ -27,7 +27,10 @@
 
 /* Submit Form */
 $lang["submit_submitform_instructions_1"] = "Complete the fields below.";
-$lang["submit_submitform_title_error"] = "There was a problem with the title.";
+$lang["submit_submitform_url_not_present_error"] = "No url was provided.";
+$lang["submit_submitform_url_already_exists_error"] = "Sorry, that url has already been submitted.";
+$lang["submit_submitform_title_not_present_error"] = "No title was provided.";
+$lang["submit_submitform_title_already_exists_error"] = "Sorry, that title has already been used.";
 $lang["submit_submitform_get_title_button"] = "Fetch Title";
 $lang["submit_submitform_submit_button"] = "Submit";
 
