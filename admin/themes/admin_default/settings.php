@@ -33,8 +33,6 @@ global $hotaru, $plugin, $admin, $cage, $lang; // don't remove
 	
 	$plugin->check_actions('admin_settings_top'); 
 
-	$plugin->show_message();	// display any success or failure messages
-	
 	$loaded_settings = $admin->get_all_admin_settings();	// get all admin settings from the database
 	
 	$error = 0;

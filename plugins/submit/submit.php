@@ -99,6 +99,7 @@ function sub_install_plugin_starter_settings() {
  
 function sub_hotaru_header() {
 	global $lang, $cage;
+	
 	define("table_posts", db_prefix . 'posts');
 	define("table_postmeta", db_prefix . 'postmeta');
 	
@@ -112,7 +113,7 @@ function sub_hotaru_header() {
 	require_once(plugins . 'submit/class.post.php');
 	require_once(includes . 'Paginated/Paginated.php');
 	require_once(includes . 'Paginated/DoubleBarLayout.php');
-	
+		
 	$post = new Post();
 	$vars['post'] = $post; 
 	return $vars; 
