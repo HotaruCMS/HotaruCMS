@@ -48,4 +48,8 @@ $lang["admin_plugins_class_new_version"] = "<span style='color: red'>- Newer ver
 /* Settings */
 $lang['admin_settings_update_success'] = "Updated successfully.";
 $lang['admin_settings_update_failure'] = "Update failed.";
+
+/* Maintenance */
+$lang['admin_maintenance_clear_cache_success'] = "At least one cache file was successfully deleted.";
+$lang['admin_maintenance_clear_cache_failure'] = "No cache files were deleted.";
 ?>
