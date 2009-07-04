@@ -24,9 +24,7 @@
  *
  **************************************************************************************************** */
 
-global $plugin;
-
-$post = new Post();
+global $plugin, $post;
 		
 $stories = $post->get_posts();
 if($stories) {

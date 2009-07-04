@@ -31,7 +31,7 @@
  ********************************************************************** */
  
 function sub_submitform() {
-	global $plugin, $cage, $lang;
+	global $plugin, $cage, $lang, $post;
 	
 	echo "<div id='main'>";
 		echo "<h2><a href='" . baseurl . "'>Home</a> &raquo; Submit a Story</h2>\n";
@@ -41,20 +41,20 @@ function sub_submitform() {
 		echo "<div class='main_inner'>";
 		echo $lang["submit_submitform_instructions_1"] . "\n";
 		
+		$error = 0;
+		
 		if($cage->post->getAlpha('submit_type') == 'submit') {
-			$source_url_check = $cage->post->noTags('story_title');	// checks it's a url
-			if($source_url_check) {
-				//$current_user->username = $username_check;
+			if(!sub_check_for_errors()) { 
+				return true; // No errors found, return true.
 			} else {
-				$plugin->message = $lang['submit_submitform_title_error'];
-				$plugin->message_type = 'red';
-				$plugin->show_message();
+				$source_url_check = "";
 				$story_title_check = "";
-				$error = 1;
 			}
 		} else {
 			$source_url_check = "";
+			$story_title_check = "";
 		}
+		
 	
 			echo "<form name='submit_form' action='" . baseurl . "index.php?page=submit' method='post'>\n";
 			echo "<table>";
@@ -68,7 +68,7 @@ function sub_submitform() {
 
 			<tr>
 				<td>Title:&nbsp; </td>
-				<td><input type='text' size=50 id='submit_return_value' name='post_title' value=''></td>
+				<td><input type='text' size=50 id='submit_return_value' name='post_title' value='<?php echo $story_title_check ?>'></td>
 				<td id='ajax_loader'>&nbsp;</td>
 			</tr>
 			<input type='hidden' name='submit_type' value='submit' />
