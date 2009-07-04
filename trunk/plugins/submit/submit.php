@@ -214,22 +214,22 @@ function sub_process_submission() {
  ********************************************************************** */
 
 function sub_check_for_errors() {
-	global $plugin, $post, $cage, $lang;
+	global $hotaru, $post, $cage, $lang;
 
 	// ******** CHECK URL ********
 	
 	$source_url_check = $cage->post->testUri('source_url');
 	if(!$source_url_check) {
 		// No url present...
-		$plugin->message = $lang['submit_submitform_url_not_present_error'];
-		$plugin->message_type = 'red';
-		$plugin->show_message();
+		$hotaru->message = $lang['submit_submitform_url_not_present_error'];
+		$hotaru->message_type = 'red';
+		$hotaru->show_message();
 		$error = 1;
 	} elseif($post->url_exists($source_url_check)) {
 		// URL already exists...
-		$plugin->message = $lang['submit_submitform_url_already_exists_error'];
-		$plugin->message_type = 'red';
-		$plugin->show_message();
+		$hotaru->message = $lang['submit_submitform_url_already_exists_error'];
+		$hotaru->message_type = 'red';
+		$hotaru->show_message();
 		$error = 1;
 	} else {
 		// URL is okay.
@@ -241,15 +241,15 @@ function sub_check_for_errors() {
 	$story_title_check = $cage->post->noTags('post_title');	
 	if(!$story_title_check) {
 		// No title present...
-		$plugin->message = $lang['submit_submitform_title_not_present_error'];
-		$plugin->message_type = 'red';
-		$plugin->show_message();
+		$hotaru->message = $lang['submit_submitform_title_not_present_error'];
+		$hotaru->message_type = 'red';
+		$hotaru->show_message();
 		$error = 1;
 	} elseif($post->title_exists($story_title_check)) {
 		// URL already exists...
-		$plugin->message = $lang['submit_submitform_title_already_exists_error'];
-		$plugin->message_type = 'red';
-		$plugin->show_message();
+		$hotaru->message = $lang['submit_submitform_title_already_exists_error'];
+		$hotaru->message_type = 'red';
+		$hotaru->show_message();
 		$error = 1;
 	} else {
 		// title is okay.

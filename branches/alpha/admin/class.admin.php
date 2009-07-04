@@ -112,17 +112,17 @@ class Admin {
 	 ********************************************************************** */
 
 	function clear_cache($folder) {
-		global $plugin, $lang;
+		global $hotaru, $lang;
 		
 		$success = $this->delete_files(includes . $folder . '/cache');
 		if($success) {
-			$plugin->message = $lang['admin_maintenance_clear_cache_success'];
-			$plugin->message_type = 'green';
+			$hotaru->message = $lang['admin_maintenance_clear_cache_success'];
+			$hotaru->message_type = 'green';
 		} else {
-			$plugin->message = $lang['admin_maintenance_clear_cache_failure'];
-			$plugin->message_type = 'red';	
+			$hotaru->message = $lang['admin_maintenance_clear_cache_failure'];
+			$hotaru->message_type = 'red';	
 		}
-		$plugin->show_message();
+		$hotaru->show_message();
 	}
 
 
@@ -160,7 +160,7 @@ class Admin {
 	 ********************************************************************** */
 	 	
 	function settings() {
-		global $plugin, $cage, $lang;
+		global $hotaru, $cage, $lang;
 		$loaded_settings = $this->get_all_admin_settings();	// get all admin settings from the database
 		
 		$error = 0;
@@ -188,13 +188,13 @@ class Admin {
 			}
 			
 			if($error == 0) {
-				$plugin->message = $lang['admin_settings_update_success'];
-				$plugin->message_type = 'green';
-				$plugin->show_message();		
+				$hotaru->message = $lang['admin_settings_update_success'];
+				$hotaru->message_type = 'green';
+				$hotaru->show_message();		
 			} else {
-				$plugin->message = $lang['admin_settings_update_failure'];
-				$plugin->message_type = 'red';
-				$plugin->show_message();
+				$hotaru->message = $lang['admin_settings_update_failure'];
+				$hotaru->message_type = 'red';
+				$hotaru->show_message();
 			}
 		}	
 		

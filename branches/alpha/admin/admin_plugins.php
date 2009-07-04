@@ -34,6 +34,8 @@ if(file_exists(admin . 'languages/admin_' . strtolower(sitelanguage) . '.php')) 
 }
 global $lang;
 
+require_once('class.admin.php');
+$admin = New Admin();
 
 $widget_positions = $cage->post->noTags('position');
 //echo "Positions returned from EasyWidgets: " . $widget_positions . "<br />";

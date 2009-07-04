@@ -31,7 +31,7 @@
  ********************************************************************** */
  
 function usr_login() {
-	global $plugin, $cage, $lang;
+	global $hotaru, $cage, $lang;
 	
 	$current_user = new UserBase();
 	
@@ -60,9 +60,9 @@ function usr_login() {
 						header("Location:" . baseurl);	// Return to front page 
 				} else {
 						// login failed
-						$plugin->message = $lang["users_login_failed"];
-						$plugin->message_type = 'red';
-						$plugin->show_message();
+						$hotaru->message = $lang["users_login_failed"];
+						$hotaru->message_type = 'red';
+						$hotaru->show_message();
 						if($cage->post->getInt('remember') == 1){ $remember_check = "checked"; } else { $remember_check = ""; }
 				}
 			} else {

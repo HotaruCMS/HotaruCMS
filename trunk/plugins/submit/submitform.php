@@ -31,12 +31,12 @@
  ********************************************************************** */
  
 function sub_submitform() {
-	global $plugin, $cage, $lang, $post;
+	global $hotaru, $cage, $lang, $post;
 	
 	echo "<div id='main'>";
 		echo "<h2><a href='" . baseurl . "'>Home</a> &raquo; Submit a Story</h2>\n";
 			
-		$plugin->show_message();
+		$hotaru->show_message();
 		
 		echo "<div class='main_inner'>";
 		echo $lang["submit_submitform_instructions_1"] . "\n";

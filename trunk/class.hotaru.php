@@ -29,6 +29,8 @@ class Hotaru {
 	
 	var $is_debug = false;
 	var $sidebar = true;
+	var $message = '';
+	var $message_type = 'green';	// green or red, color of message box
 	
 	
 	/* ******************************************************************** 
@@ -222,6 +224,18 @@ class Hotaru {
 		} 
 	}	
 	
+	
+	/* ******************************************************************** 
+	 *  Function: show_message
+	 *  Parameters: None
+	 *  Purpose: Displays a success or failure message
+	 *  Notes: ---
+	 ********************************************************************** */	
+	function show_message() {
+		if($this->message != '') {
+			echo "<div class='message " . $this->message_type . "'>" . $this->message . "</div>";
+		}
+	}
 	
 	
 	/* **********************************************************************
