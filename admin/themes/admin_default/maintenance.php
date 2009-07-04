@@ -24,7 +24,7 @@
  *
  **************************************************************************************************** */
 
-global $hotaru, $plugin, $admin, $cage, $lang; // don't remove
+global $plugin, $admin, $cage, $lang; // don't remove
 ?>
 
 <h2><a href="<?php echo url(array(), 'admin'); ?>"><?php echo site_name;?> Admin Control Panel</a> &raquo; Maintenance</h2>
@@ -36,8 +36,8 @@ global $hotaru, $plugin, $admin, $cage, $lang; // don't remove
 
 <?php
 	if($action = $cage->get->testRegex('action', '/^([a-z0-9\/_-])+$/i')) {
-		if($action == 'clear_db_cache') { clear_cache('ezSQL'); }
-		if($action == 'clear_rss_cache') { clear_cache('SimplePie'); }
+		if($action == 'clear_db_cache') { $admin->clear_cache('ezSQL'); }
+		if($action == 'clear_rss_cache') { $admin->clear_cache('SimplePie'); }
 	}
 	
 ?>
@@ -49,38 +49,3 @@ global $hotaru, $plugin, $admin, $cage, $lang; // don't remove
 	
 <?php $plugin->check_actions('admin_maintenance_bottom'); ?>
 
-<?php
-
-function clear_cache($folder) {
-	global $plugin, $lang;
-	
-	$success = delete_files(includes . $folder . '/cache');
-	if($success) {
-		$plugin->message = $lang['admin_maintenance_clear_cache_success'];
-		$plugin->message_type = 'green';
-	} else {
-		$plugin->message = $lang['admin_maintenance_clear_cache_failure'];
-		$plugin->message_type = 'red';	
-	}
-	$plugin->show_message();
-}
-
-function delete_files($dir) {
-	$handle=opendir($dir);
-
-	while (($file = readdir($handle))!==false) {
-		if($file != 'placeholder.txt') {
-			if(@unlink($dir.'/'.$file)) {
-				$success = true;
-			} else {
-				$success = false;
-			}
-		}
-	}
-	
-	closedir($handle);
-	
-	return $success;
-}
-
-?>
