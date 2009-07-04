@@ -257,6 +257,20 @@ class Plugin extends Plugins {
 		$enabled = $db->get_var($db->prepare("SELECT plugin_enabled FROM " . table_plugins . " WHERE plugin_folder = %s", $folder));
 		if($enabled == 1) { return true; } else { return false; }
 	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: num_active_plugins
+	 *  Parameters: None
+	 *  Purpose: Returns the number of active plugins or false if all are disabled.
+	 *  Notes: ---
+	 ********************************************************************** */
+
+	function num_active_plugins() {	
+		global $db;
+		$enabled = $db->get_var($db->prepare("SELECT count(*) FROM " . table_plugins . " WHERE plugin_enabled = %d", 1));
+		if($enabled > 0) { return $enabled; } else { return false; }
+	}
 		
 		
 	/* ******************************************************************** 

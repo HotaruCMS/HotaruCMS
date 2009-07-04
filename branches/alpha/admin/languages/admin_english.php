@@ -33,6 +33,7 @@ $lang["admin_login_form_submit"] = "Login";
 
 /* Announcements /class.hotaru.php */
 $lang['admin_announcement_delete_install'] = "<span style='color: #ff0000;'>Please delete the install folder before someone deletes your database!</span>";
+$lang['admin_announcement_plugins_disabled'] = "<span style='color: #ff0000;'>Go to Plugin Management to enable some plugins.</span>";
 $lang['admin_announcement_users_disabled'] = "<span style='color: #ff0000;'>Please enable the Users plugin in Plugin Management.</span>";
 
 /* Uninstall a plugin  - admin/plugins.php */
