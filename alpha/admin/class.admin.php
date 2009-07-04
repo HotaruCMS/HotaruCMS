@@ -102,6 +102,105 @@ class Admin {
 		$sql = "DELETE FROM " . table_settings . " WHERE admin_setting = %s";
 		$db->query($db->prepare($sql, $setting));
 	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: clear_cache
+	 *  Parameters: cache folder name in the 3rd party directory
+	 *  Purpose: Calls the delete_files function, then displays a message.
+	 *  Notes: ---
+	 ********************************************************************** */
+
+	function clear_cache($folder) {
+		global $plugin, $lang;
+		
+		$success = $this->delete_files(includes . $folder . '/cache');
+		if($success) {
+			$plugin->message = $lang['admin_maintenance_clear_cache_success'];
+			$plugin->message_type = 'green';
+		} else {
+			$plugin->message = $lang['admin_maintenance_clear_cache_failure'];
+			$plugin->message_type = 'red';	
+		}
+		$plugin->show_message();
+	}
+
+
+	/* ******************************************************************** 
+	 *  Function: delete_files
+	 *  Parameters: Path to directory 
+	 *  Purpose: Deletes all files in the specified directory except placeholder.txt
+	 *  Notes: ---
+	 ********************************************************************** */
+	 	
+	function delete_files($dir) {
+		$handle=opendir($dir);
+	
+		while (($file = readdir($handle))!==false) {
+			if($file != 'placeholder.txt') {
+				if(@unlink($dir.'/'.$file)) {
+					$success = true;
+				} else {
+					$success = false;
+				}
+			}
+		}
+		
+		closedir($handle);
+		
+		return $success;
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: settings
+	 *  Parameters: None
+	 *  Purpose: Processes the settings form.
+	 *  Notes: ---
+	 ********************************************************************** */
+	 	
+	function settings() {
+		global $plugin, $cage, $lang;
+		$loaded_settings = $this->get_all_admin_settings();	// get all admin settings from the database
+		
+		$error = 0;
+		
+		if($cage->post->noTags('settings_update')  == 'true') {
+			foreach($loaded_settings as $setting_name) {
+				if($cage->post->keyExists($setting_name->settings_name)) {
+					$setting_value = $cage->post->noTags($setting_name->settings_name);
+					if($setting_value && $setting_value != $setting_name->settings_value) {
+						$this->admin_setting_update($setting_name->settings_name, $setting_value);
+	
+					} else {
+						if(!$setting_value) {
+							// empty value 
+							$error = 1; 
+						} else { 
+							// No change to the value
+							$error = 0; 
+						}
+					}
+				} else {
+					// error, setting doesn't exist.
+					$error = 1;
+				}
+			}
+			
+			if($error == 0) {
+				$plugin->message = $lang['admin_settings_update_success'];
+				$plugin->message_type = 'green';
+				$plugin->show_message();		
+			} else {
+				$plugin->message = $lang['admin_settings_update_failure'];
+				$plugin->message_type = 'red';
+				$plugin->show_message();
+			}
+		}	
+		
+		$loaded_settings = $this->get_all_admin_settings();
+		return $loaded_settings;	
+	}
 }
 
 ?>
