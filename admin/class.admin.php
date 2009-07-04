@@ -3,7 +3,7 @@
 
 /* **************************************************************************************************** 
  *  File: admin/class.admin.php
- *  Purpose: Two Classes: Plugins and Plugin. The first deals with managing all plugins. The second deals with individual plugins.
+ *  Purpose: Admin related functions
  *  Notes: Plugins extend the generic_pmd class in class.metadata.php which is a 3rd party script called "Generic PHP Config"
  *  License:
  *
