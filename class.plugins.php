@@ -171,8 +171,6 @@ class Plugin extends Plugins {
 	var $folder = '';
 	var $prefix = '';
 	var $version = 0;
-	var $message = '';
-	var $message_type = 'green';	// green or red, color of message box
 	var $hooks = array();
 
 
@@ -216,7 +214,10 @@ class Plugin extends Plugins {
 	 ********************************************************************** */
 	 
 	function activate_deactivate_plugin($folder = "", $enabled = 0) {	// 0 = deactivate, 1 = activate
-		global $db;
+		global $db, $admin;
+		
+		$admin->delete_files(includes . 'ezSQL/cache');	// Clear the database cache to ensure stored plugins and hooks are up-to-date.
+		
 		$plugin_row = $db->get_row($db->prepare("SELECT plugin_folder, plugin_enabled FROM " . table_plugins . " WHERE plugin_folder = %s", $folder));
 		if(!$plugin_row) {
 			if($enabled == 1) {	// without this, the plugin would be installed and then deativated, which is dumb. Let's just not install it yet!
@@ -432,18 +433,6 @@ class Plugin extends Plugins {
 		$db->query($db->prepare($sql, $folder));
 	}
 	
-	
-	/* ******************************************************************** 
-	 *  Function: show_message
-	 *  Parameters: None
-	 *  Purpose: Displays a success or failure message
-	 *  Notes: ---
-	 ********************************************************************** */	
-	function show_message() {
-		if($this->message != '') {
-			echo "<div class='message " . $this->message_type . "'>" . $this->message . "</div>";
-		}
-	}
 }
 
 ?>

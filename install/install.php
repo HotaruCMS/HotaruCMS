@@ -195,7 +195,7 @@ function register_admin() {
 	setcookie("hotaru_key", "", time()-3600, "/");
 	// --------------------------------------------------
 	
-	$plugin = new Plugin();
+	$hotaru = new Hotaru();
 
 	echo html_header();
 	echo "<h2>" . $lang['install_step4'] . "</h2>\n";
@@ -207,9 +207,9 @@ function register_admin() {
 		if($name_check) {
 			$user_name = $name_check;
 		} else {
-			$plugin->message = $lang['install_step4_username_error'];
-			$plugin->message_type = 'red';
-			$plugin->show_message();
+			$hotaru->message = $lang['install_step4_username_error'];
+			$hotaru->message_type = 'red';
+			$hotaru->show_message();
 			$error = 1;
 		}
 	
@@ -217,9 +217,9 @@ function register_admin() {
 		if($password_check) {
 			$user_password = crypt(md5($password_check),md5($user_name));
 		} else {
-			$plugin->message = $lang['install_step4_password_error'];
-			$plugin->message_type = 'red';
-			$plugin->show_message();
+			$hotaru->message = $lang['install_step4_password_error'];
+			$hotaru->message_type = 'red';
+			$hotaru->show_message();
 			$error = 1;
 		}
 		
@@ -227,17 +227,17 @@ function register_admin() {
 		if($email_check) {
 			$user_email = $email_check;
 		} else {
-			$plugin->message = $lang['install_step4_email_error'];
-			$plugin->message_type = 'red';
-			$plugin->show_message();
+			$hotaru->message = $lang['install_step4_email_error'];
+			$hotaru->message_type = 'red';
+			$hotaru->show_message();
 			$error = 1;
 		}
 	}
 	
 	if(($cage->post->getInt('step') == 4) && $error == 0) {
-		$plugin->message = $lang['install_step4_update_success'];
-		$plugin->message_type = 'green';
-		$plugin->show_message();
+		$hotaru->message = $lang['install_step4_update_success'];
+		$hotaru->message_type = 'green';
+		$hotaru->show_message();
 	}
 	
 	if($error == 0) {
