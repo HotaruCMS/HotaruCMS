@@ -25,10 +25,10 @@
  **************************************************************************************************** */
 
 /* ******* USAGE ************
-<?php echo $hotaru->display_admin_template('TEMPLATE_NAME'); ?>		// e.g. header
+<?php echo $admin->display_admin_template('TEMPLATE_NAME'); ?>		// e.g. header
 ***************************** */
 
-global $hotaru, $plugin; // don't remove
+global $hotaru, $admin, $plugin; // don't remove
 ?>
 
 <!-- WHOLE PAGE-->
@@ -40,12 +40,12 @@ global $hotaru, $plugin; // don't remove
 		<?php
 			$result = $plugin->check_actions('admin_theme_index_header');
 			if(!isset($result) || !is_array($result)) {
-				$hotaru->display_admin_template('header');
+				$admin->display_admin_template('header');
 			}
 		?>
 	
 		<div id="bd" role="main">  			
-			<?php if($hotaru->sidebar) { ?>
+			<?php if($admin->sidebar) { ?>
 				<div class='yui-gf'> 
 				<div class="yui-u"'>
 			<?php } else { ?>
@@ -61,7 +61,7 @@ global $hotaru, $plugin; // don't remove
 		    					if($page == 'admin_login') {
 		    						admin_login();
 		    					} else {
-								$hotaru->display_admin_template($page);
+								$admin->display_admin_template($page);
 							} 
 						} 	
 					?>	
@@ -73,7 +73,7 @@ global $hotaru, $plugin; // don't remove
 						<?php
 							$result = $plugin->check_actions('admin_theme_index_sidebar');
 							if(!isset($result) || !is_array($result)) {
-								$hotaru->display_admin_template('sidebar');
+								$admin->display_admin_template('sidebar');
 							}
 						?>
 			    		</div>
@@ -84,7 +84,7 @@ global $hotaru, $plugin; // don't remove
 		<?php
 			$result = $plugin->check_actions('admin_theme_index_footer');
 			if(!isset($result) || !is_array($result)) {
-				$hotaru->display_admin_template('footer');
+				$admin->display_admin_template('footer');
 			}
 		?>
 <?php	} ?>

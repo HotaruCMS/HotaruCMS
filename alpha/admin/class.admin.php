@@ -26,6 +26,79 @@
 
 class Admin {
 	
+	var $sidebar = true;
+	
+	/* ******************************************************************** 
+	 *  Function: display_admin_template
+	 *  Parameters: page name (filename without.php)
+	 *  Purpose: First looks in the user's chosen admin theme directory, if not there, gets the file from the default admin theme.
+	 *  Notes: ---
+	 ********************************************************************** */
+	 
+	function display_admin_template($page = '', $plugin = '')  {
+		/* First tries to load the template from the user specified custom theme, 
+		   and falls back on the default theme if not found. */
+		$page = $page . '.php';
+		
+		/* First check if there's a specified plugin for the file and load 
+		   the template from the plugin folder if it's there. */
+		if($plugin != '') {
+			if(file_exists(plugins .  $plugin . $page)) {
+				include_once(plugins . $plugin . $page);
+				return;
+			}
+		}
+		
+		// Check the custom theme then the default theme...		
+		if(file_exists(admin_themes . admin_theme . $page)) {
+			include_once(admin_themes . admin_theme . $page);
+		} elseif(file_exists(admin_themes . 'admin_default/' . $page)) {
+			include_once(admin_themes . 'admin_default/' . $page);
+		} else {
+			include_once(admin_themes . '404.php');
+		}
+	}
+	
+		
+	/* ******************************************************************** 
+	 *  Function: check_admin_announcements
+	 *  Parameters: --- 
+	 *  Purpose: Returns an announcement for display at the top of Admin.
+	 *  Notes: ---
+	 ********************************************************************** */
+	 
+	function check_admin_announcements() {
+		global $lang, $plugin;
+		// Check if the install file has been deleted:
+		
+		$announcements = array();
+		
+		// 1. Check if install file has been deleted
+		$filename = install . 'install.php';
+		if(file_exists($filename)) {
+			array_push($announcements, $lang['admin_announcement_delete_install']);
+		} 
+		
+		// 2. "Go to Plugin Management to enable some plugins"
+		if(!$plugin->num_active_plugins()) {
+			array_push($announcements, $lang['admin_announcement_plugins_disabled']);	
+		}
+		
+		/*
+		// 3. Please install the Users plugin
+		if (!$plugin->plugin_active('users')) {
+			array_push($announcements, $lang['admin_announcement_users_disabled']);	
+		} 
+		*/
+		
+		if(!is_array($announcements)) {
+			return false;
+		} else {
+			return $announcements;
+		}
+	}
+
+
 	/* ******************************************************************** 
 	 *  Function: get_admin_setting
 	 *  Parameters: Setting name

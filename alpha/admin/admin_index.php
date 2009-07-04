@@ -87,5 +87,5 @@ switch ($page) {
 		break;
 }
 
-$hotaru->display_admin_template('index');	// gets the name of the current page, e.g. index.php and displays the equivalent file from the themes folder.
+$admin->display_admin_template('index');	// gets the name of the current page, e.g. index.php and displays the equivalent file from the themes folder.
 ?>
