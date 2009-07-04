@@ -112,6 +112,10 @@ function sub_hotaru_header() {
 	require_once(plugins . 'submit/class.post.php');
 	require_once(includes . 'Paginated/Paginated.php');
 	require_once(includes . 'Paginated/DoubleBarLayout.php');
+	
+	$post = new Post();
+	$vars['post'] = $post; 
+	return $vars; 
 }
 
 
@@ -158,17 +162,20 @@ function sub_theme_index_main() {
 	// Pages you have to be logged in for...
 	if($current_user->logged_in) {
 		 if($hotaru->is_page('submit')) {
-		 	if($cage->post->getAlpha('submit_type') == 'submit') {
-		 		// form submitted, process it:
-		 		sub_process_submission();
-		 		header("Location: " . baseurl);
-		 		die();
-		 	} else {
-				require_once(plugins . 'submit/submitform.php');
-				sub_submitform();
-				return true;
-			}
+		 
+		 	// Include the form if we haven't already...
+		 	require_once(plugins . 'submit/submitform.php');
+		 	
+	 		// Nothing submitted yet, show the submission form...
+			$success = sub_submitform();
+			if($success) { 
+				sub_process_submission(); // Save story
+				header("Location: " . baseurl);  // Go home
+			} 
+			return true;
+
 		} elseif($hotaru->is_page('main')) {
+			// First time here, let's show the form...
 			$hotaru->display_template('/show_post', 'submit');
 			return true;
 		} else {
@@ -187,17 +194,69 @@ function sub_theme_index_main() {
  ********************************************************************** */
  
 function sub_process_submission() {
-	global $hotaru, $cage;
+	global $hotaru, $cage, $current_user, $post;
 		
-	if($cage->post->getAlpha('submit_type') == 'submit') {
+	$post->source_url = $cage->post->testUri('source_url');
+	$post->post_title = $cage->post->noTags('post_title');
+	$post->post_status = "new";
+	$post->post_author = $current_user->id;
+	$post->add_post();
 
-		$post = new Post();
-		
-		$post->source_url = $cage->post->testUri('source_url');
-		$post->post_title = $cage->post->noTags('post_title');
-		$post->post_status = "new";
-		$post->add_post();
+}
+
+
+/* ******************************************************************** 
+ *  Function: sub_check_for_errors
+ *  Parameters: None
+ *  Purpose: Checks a submitted form for errors
+ *  Notes: ---
+ ********************************************************************** */
+
+function sub_check_for_errors() {
+	global $plugin, $post, $cage, $lang;
+
+	// ******** CHECK URL ********
+	
+	$source_url_check = $cage->post->testUri('source_url');
+	if(!$source_url_check) {
+		// No url present...
+		$plugin->message = $lang['submit_submitform_url_not_present_error'];
+		$plugin->message_type = 'red';
+		$plugin->show_message();
+		$error = 1;
+	} elseif($post->url_exists($source_url_check)) {
+		// URL already exists...
+		$plugin->message = $lang['submit_submitform_url_already_exists_error'];
+		$plugin->message_type = 'red';
+		$plugin->show_message();
+		$error = 1;
+	} else {
+		// URL is okay.
+		$error = 0;
 	}
+	
+	// ******** CHECK TITLE ********
+	
+	$story_title_check = $cage->post->noTags('post_title');	
+	if(!$story_title_check) {
+		// No title present...
+		$plugin->message = $lang['submit_submitform_title_not_present_error'];
+		$plugin->message_type = 'red';
+		$plugin->show_message();
+		$error = 1;
+	} elseif($post->title_exists($story_title_check)) {
+		// URL already exists...
+		$plugin->message = $lang['submit_submitform_title_already_exists_error'];
+		$plugin->message_type = 'red';
+		$plugin->show_message();
+		$error = 1;
+	} else {
+		// title is okay.
+		$error = 0;
+	}
+	
+	// Return true if error is found
+	if($error == 1) { return true; } else { return false; }
 }
 
 
