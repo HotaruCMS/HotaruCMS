@@ -67,6 +67,9 @@ switch ($page) {
 	case "settings":
 		// Nothing special to do...
 		break;
+	case "maintenance":
+		// Nothing special to do...
+		break;
 	case "plugins":
 		// Nothing special to do...
 		break;
