@@ -24,6 +24,7 @@
  **************************************************************************************************** */
 
 require_once('../hotaru_settings.php');
+require_once('../class.plugins.php');	// Needed for error and success messages
 // Global Inspekt SuperCage
 require_once(includes . 'Inspekt/Inspekt.php');	
 if(!isset($cage)) { $cage = Inspekt::makeSuperCage(); }
@@ -53,16 +54,13 @@ switch ($step) {
 		database_creation();		// Creates the database tables
 		break;
 	case 4:
-		hotaru_settings();		// Names, paths, etc.
-		break;
-	case 5:
 		register_admin();		// Username and password for Admin user...
 		break;
-	case 6:
+	case 5:
 		installation_complete();	// "Installation complete. Delete the "install" folder. Visit your site"
 		break;
 	default:
-		installation_welcome();		// Anything other than step=2, 3, 4 or 5 will return user to the welcome page.
+		installation_welcome();		// Anything other than step=2, 3 or 4 will return user to the welcome page.
 		break;		
 }
 
@@ -147,6 +145,7 @@ function database_setup() {
 	echo "<li>" . $lang['install_step2_instructions1'] . "</li>\n";
 	echo "<li>" . $lang['install_step2_instructions2'] . "</li>\n";
 	echo "<li>" . $lang['install_step2_instructions3'] . "</li>\n";
+	echo "<li>" . $lang['install_step2_instructions4'] . "</li>\n";
 	echo "</ol>\n";
 	echo "<div class='install_content'><span style='color: red;'>" . $lang['install_step2_warning'] . "</span>: " . $lang['install_step2_warning_note'] . "</div>\n";
 	echo "<div class='back'><a href='install.php?step=1'>" . $lang['install_back'] . "</a></div>\n";
@@ -182,52 +181,35 @@ function database_creation() {
 
 
 /* ******************************************************************** 
- *  Function: hotaru_settings
- *  Parameters: None
- *  Purpose: Step 4 of installation - explains how to configure Hotaru
- *  Notes: ---
- ********************************************************************** */
- 
-function hotaru_settings() {
-	global $lang;
-	echo html_header();
-	echo "<h2>" . $lang['install_step4'] . "</h2>\n";
-	echo "<div class='install_content'>" . $lang['install_step4_instructions'] . ":</div>\n";
-	echo "<ol class='install_content'>\n";
-	echo "<li>" . $lang['install_step4_instructions1'] . "</li>\n";
-	echo "<li>" . $lang['install_step4_instructions2'] . "</li>\n";
-	echo "<li>" . $lang['install_step4_instructions3'] . "</li>\n";
-	echo "<li>" . $lang['install_step4_instructions4'] . "</li>\n";
-	echo "</ol>\n";
-	echo "<div class='back'><a href='install.php?step=3'>" . $lang['install_back'] . "</a></div>\n";
-	echo "<div class='next'><a href='install.php?step=5'>" . $lang['install_next'] . "</a></div>\n";
-	echo html_footer();
-}
-
-
-/* ******************************************************************** 
  *  Function: register_admin
  *  Parameters: None
- *  Purpose: Step 5 of installation - registers the site Admin.
+ *  Purpose: Step 4 of installation - registers the site Admin.
  *  Notes: ---
  ********************************************************************** */
  
 function register_admin() {
 	global $lang, $cage, $db;
+	
+	// Remove any cookies set in a previous installation:
+	setcookie("hotaru_user", "", time()-3600, "/");
+	setcookie("hotaru_key", "", time()-3600, "/");
+	// --------------------------------------------------
+	
+	$plugin = new Plugin();
 
 	echo html_header();
-	echo "<h2>" . $lang['install_step5'] . "</h2>\n";
-	echo "<div class='install_content'>" . $lang['install_step5_instructions'] . ":<br />\n";
-	echo "<form name='install_admin_reg_form' action='" . baseurl . "install/install.php?step=5' method='post'>\n";
-	echo "<table class='install_reg_form'>";
+	echo "<h2>" . $lang['install_step4'] . "</h2>\n";
+	echo "<div class='install_content'>" . $lang['install_step4_instructions'] . ":<br />\n";
 	
 	$error = 0;
-	if($cage->post->getInt('step') == 5) {
+	if($cage->post->getInt('step') == 4) {
 		$name_check = $cage->post->testRegex('username', '/^([a-z0-9_-]{4,32})+$/i');	// alphanumeric, dashes and underscores okay, case insensitive
 		if($name_check) {
 			$user_name = $name_check;
 		} else {
-			echo "<tr><td colspan=2 style='color: #ff0000;'>" . $lang['install_step5_username_error'] . "</td></tr>";
+			$plugin->message = $lang['install_step4_username_error'];
+			$plugin->message_type = 'red';
+			$plugin->show_message();
 			$error = 1;
 		}
 	
@@ -235,7 +217,9 @@ function register_admin() {
 		if($password_check) {
 			$user_password = crypt(md5($password_check),md5($user_name));
 		} else {
-			echo "<tr><td colspan=2 style='color: red;'>" . $lang['install_step5_password_error'] . "</td></tr>";
+			$plugin->message = $lang['install_step4_password_error'];
+			$plugin->message_type = 'red';
+			$plugin->show_message();
 			$error = 1;
 		}
 		
@@ -243,13 +227,17 @@ function register_admin() {
 		if($email_check) {
 			$user_email = $email_check;
 		} else {
-			echo "<tr><td colspan=2 style='color: #ff0000;'>" . $lang['install_step5_email_error'] . "</td></tr>";
+			$plugin->message = $lang['install_step4_email_error'];
+			$plugin->message_type = 'red';
+			$plugin->show_message();
 			$error = 1;
 		}
 	}
 	
-	if(($cage->post->getInt('step') == 5) && $error == 0) {
-		echo "<tr><td colspan=2 style='color: #00ff00;'>" . $lang['install_step5_update_success'] . "</td></tr>";
+	if(($cage->post->getInt('step') == 4) && $error == 0) {
+		$plugin->message = $lang['install_step4_update_success'];
+		$plugin->message_type = 'green';
+		$plugin->show_message();
 	}
 	
 	if($error == 0) {
@@ -279,19 +267,19 @@ function register_admin() {
 		}
 	}
 
-	echo "</table>";
+	echo "<form name='install_admin_reg_form' action='" . baseurl . "install/install.php?step=4' method='post'>\n";
 	echo "<table>";
 	echo "<tr><td>Username:&nbsp; </td><td><input type='text' size=30 name='username' value='" . $user_name . "' /></td></tr>\n";
 	echo "<tr><td>Email:&nbsp; </td><td><input type='text' size=30 name='email' value='" . $user_email . "' /></td></tr>\n";
-	if(!$cage->post->getInt('step') == 5) { $password_check = ""; } // if loaded from database show blank, otherwise shows the password just submitted.
+	if(!$cage->post->getInt('step') == 4) { $password_check = ""; } // if loaded from database show blank, otherwise shows the password just submitted.
 	echo "<tr><td>Password:&nbsp; </td><td><input type='password' size=30 name='password' value='" . $password_check . "' /></td></tr>\n";
-	echo "<input type='hidden' name='step' value='5' />\n";
-	echo "<tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='" . $lang['install_step5_form_update'] . "' /></td></tr>\n";
+	echo "<input type='hidden' name='step' value='4' />\n";
+	echo "<tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='" . $lang['install_step4_form_update'] . "' /></td></tr>\n";
 	echo "</table>";
 	echo "</form>\n";
-	echo $lang["install_step5_make_note"] . "</div>\n";
-	echo "<div class='back'><a href='install.php?step=4'>" . $lang['install_back'] . "</a></div>\n";
-	echo "<div class='next'><a href='install.php?step=6'>" . $lang['install_next'] . "</a></div>\n";
+	echo $lang["install_step4_make_note"] . "</div>\n";
+	echo "<div class='back'><a href='install.php?step=3'>" . $lang['install_back'] . "</a></div>\n";
+	echo "<div class='next'><a href='install.php?step=5'>" . $lang['install_next'] . "</a></div>\n";
 	echo html_footer();
 }
 	
@@ -299,18 +287,18 @@ function register_admin() {
 /* ******************************************************************** 
  *  Function: installation_complete 
  *  Parameters: None
- *  Purpose: Step 6 of installation - shows completion.
+ *  Purpose: Step 5 of installation - shows completion.
  *  Notes: ---
  ********************************************************************** */
  
 function installation_complete() {
 	global $lang;
 	echo html_header();	
-	echo "<h2>" . $lang['install_step6'] . "</h2>\n";
-	echo "<div class='install_content'>" . $lang['install_step6_installation_complete'] . "</div>\n";
-	echo "<div class='install_content'>" . $lang['install_step6_installation_delete'] . "</div>\n";
-	echo "<div class='install_content'>" . $lang['install_step6_installation_go_play'] . "</div>\n";
-	echo "<div class='back'><a href='install.php?step=5'>" . $lang['install_back'] . "</a></div>\n";
+	echo "<h2>" . $lang['install_step5'] . "</h2>\n";
+	echo "<div class='install_content'>" . $lang['install_step5_installation_complete'] . "</div>\n";
+	echo "<div class='install_content'>" . $lang['install_step5_installation_delete'] . "</div>\n";
+	echo "<div class='install_content'>" . $lang['install_step5_installation_go_play'] . "</div>\n";
+	echo "<div class='back'><a href='install.php?step=4'>" . $lang['install_back'] . "</a></div>\n";
 	echo "<div class='next'><a href='" . baseurl . "'>" . $lang['install_home'] . " " . sitename . "</a></div>\n";
 	echo html_footer();	
 }
