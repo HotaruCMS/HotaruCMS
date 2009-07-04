@@ -29,6 +29,7 @@ class Post {
 	var $source_url = '';
 	var $post_title = '';
 	var $post_status = 'processing';
+	var $post_author = 0;
 
 
 	/* ******************************************************************** 
@@ -40,8 +41,8 @@ class Post {
 	 
 	function add_post() {
 		global $db;
-		$sql = "INSERT INTO " . table_posts . " SET post_orig_url = %s, post_title = %s, post_status = %s";
-		$db->query($db->prepare($sql, $this->source_url, $this->post_title, $this->post_status));
+		$sql = "INSERT INTO " . table_posts . " SET post_orig_url = %s, post_title = %s, post_status = %s, post_author = %d";
+		$db->query($db->prepare($sql, $this->source_url, trim($this->post_title), $this->post_status, $this->post_author));
 		return true;
 	}
 
@@ -58,6 +59,37 @@ class Post {
 		$sql = "SELECT * FROM " . table_posts . " ORDER BY post_date DESC";
 		$posts = $db->get_results($db->prepare($sql));
 		if($posts) { return $posts; } else { return false; }
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: url_exists
+	 *  Parameters: url
+	 *  Purpose: Checks for existence of a url
+	 *  Notes: ---
+	 ********************************************************************** */	
+	 	
+	function url_exists($url = '') {
+		global $db;
+		$sql = "SELECT count(post_id) FROM " . table_posts . " WHERE post_orig_url = %s";
+		$posts = $db->get_var($db->prepare($sql, $url));
+		if($posts > 0) { return $posts; } else { return false; }
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: title_exists
+	 *  Parameters: title
+	 *  Purpose: Checks for existence of a title
+	 *  Notes: ---
+	 ********************************************************************** */	
+	 	
+	function title_exists($title = '') {
+		global $db;
+		$title = trim($title);
+		$sql = "SELECT count(post_id) FROM " . table_posts . " WHERE post_title = %s";
+		$posts = $db->get_var($db->prepare($sql, $title));
+		if($posts > 0) { return $posts; } else { return false; }
 	}
 }
 
