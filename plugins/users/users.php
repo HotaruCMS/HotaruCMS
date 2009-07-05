@@ -144,7 +144,7 @@ function usr_theme_index_main() {
 			return true;	
 		} elseif($hotaru->is_page('login')) {
 			require_once(plugins . 'users/login.php');
-			//$hotaru->display_template('/pages/login', 'users');  
+			//$hotaru->display_template('pages/login', 'users');  
 			usr_login();
 			return true;
 		} else {

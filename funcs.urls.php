@@ -50,7 +50,7 @@ function url($parameters = array(), $head = 'index') {
 		foreach($parameters as $key => $value) {
 			$url .= $key . '=' . $value . '&amp;';
 		}
-		return rtrim($url, '&amp;');	
+		return rstrtrim($url, '&amp;');	
 		
 	} 
 	
