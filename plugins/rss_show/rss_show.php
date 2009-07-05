@@ -58,67 +58,70 @@ function rs_rss_show($ids) {
 		// Get the feed...
 		$feed = $hotaru->new_simplepie($feedurl, $cache, $cache_duration);
 		
-		// Limit the number of items:
-		$max_items = $settings['rss_show_max_items'];
+		if($feed) {
 		
-		// Feed is ready.
-		$feed->init();
-		
-		$output = "";
-		$item_count = 0;
-		
-		// SITE TITLE
-		if($settings['rss_show_title']) { 
-			$output .= "<li class='rss_show_feed_title'>";
-			$output .= "<a href='" . $feed->subscribe_url() . "' title='RSS Feed'><img src='" . baseurl . "images/rss_16.gif'></a>&nbsp;"; // RSS icon
-			$output .= "<a href='" . $feed->get_link(). "' title='Visit the site'>" . $settings['rss_show_title'] . "</a></li>"; 
-		}
-		    
-		if ($feed->data) { 
-			foreach ($feed->get_items() as $item) {
-			        $output .= "";
-			        
-			        // POST TITLE
-			        $output .= "<li class='rss_show_feed_item'>";
-			        $output .= "<span class='rss_show_title'>";
-			        $output .= "<a href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a></span>";
-			        
-			        // AUTHOR / DATE
-				if(($settings['rss_show_author'] == 'yesauthor') || ($settings['rss_show_date'] == 'yesdate')) {
-				        $output .= "<br /><span class='rss_show_author_date'><small>Posted";
-				        if($settings['rss_show_author'] == 'yesauthor') {
-				        	$output .= " by ";
-				                foreach ($item->get_authors() as $author)  {
-							$output .= $author->get_name(); 
+			// Limit the number of items:
+			$max_items = $settings['rss_show_max_items'];
+			
+			// Feed is ready.
+			$feed->init();
+			
+			$output = "";
+			$item_count = 0;
+			
+			// SITE TITLE
+			if($settings['rss_show_title']) { 
+				$output .= "<li class='rss_show_feed_title'>";
+				$output .= "<a href='" . $feed->subscribe_url() . "' title='RSS Feed'><img src='" . baseurl . "images/rss_16.gif'></a>&nbsp;"; // RSS icon
+				$output .= "<a href='" . $feed->get_link(). "' title='Visit the site'>" . $settings['rss_show_title'] . "</a></li>"; 
+			}
+			    
+			if ($feed->data) { 
+				foreach ($feed->get_items() as $item) {
+				        $output .= "";
+				        
+				        // POST TITLE
+				        $output .= "<li class='rss_show_feed_item'>";
+				        $output .= "<span class='rss_show_title'>";
+				        $output .= "<a href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a></span>";
+				        
+				        // AUTHOR / DATE
+					if(($settings['rss_show_author'] == 'yesauthor') || ($settings['rss_show_date'] == 'yesdate')) {
+					        $output .= "<br /><span class='rss_show_author_date'><small>Posted";
+					        if($settings['rss_show_author'] == 'yesauthor') {
+					        	$output .= " by ";
+					                foreach ($item->get_authors() as $author)  {
+								$output .= $author->get_name(); 
+							}
 						}
+						if($settings['rss_show_date'] == 'yesdate') {
+							$output .= " on " . $item->get_date('j F Y');
+						}
+						$output .= "</small></span><br />";
 					}
-					if($settings['rss_show_date'] == 'yesdate') {
-						$output .= " on " . $item->get_date('j F Y');
+					
+					// SUMMARY
+					if($settings['rss_show_content'] == 'summaries') {
+						$output .= "<p class='rss_show_content'>" . substr(strip_tags($item->get_content()), 0, 300);
+						$output .= "... ";
+						$output .= "<small><a href='" . $item->get_permalink() . "' title='" . $item->get_title() . "'>[Read More]</a>";
+						$output .= "</small></p>";
 					}
-					$output .= "</small></span><br />";
+					
+					// FULL POST
+					if($settings['rss_show_content'] == 'full') {
+						$output .= "<p class='rss_show_content'>" . $item->get_content() . "</p>";
+					}
+					$output .= '</li>';
+					
+				    $item_count++;
+				    if($item_count >= $max_items) { break;}
 				}
-				
-				// SUMMARY
-				if($settings['rss_show_content'] == 'summaries') {
-					$output .= "<p class='rss_show_content'>" . substr(strip_tags($item->get_content()), 0, 300);
-					$output .= "... ";
-					$output .= "<small><a href='" . $item->get_permalink() . "' title='" . $item->get_title() . "'>[Read More]</a>";
-					$output .= "</small></p>";
-				}
-				
-				// FULL POST
-				if($settings['rss_show_content'] == 'full') {
-					$output .= "<p class='rss_show_content'>" . $item->get_content() . "</p>";
-				}
-				$output .= '</li>';
-				
-			    $item_count++;
-			    if($item_count >= $max_items) { break;}
 			}
 		}
 		
 		// Display the whole thing:
-		echo $output;
+		if(isset($output)) { echo $output; }
 	}
 }
 
