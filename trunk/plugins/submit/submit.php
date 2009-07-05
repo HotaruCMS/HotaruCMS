@@ -177,7 +177,7 @@ function sub_theme_index_main() {
 
 		} elseif($hotaru->is_page('main')) {
 			// First time here, let's show the form...
-			$hotaru->display_template('/show_post', 'submit');
+			$hotaru->display_template('show_post', 'submit');
 			return true;
 		} else {
 			return false;
