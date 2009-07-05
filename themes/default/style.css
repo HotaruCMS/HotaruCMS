@@ -33,8 +33,17 @@ h1	{
 	padding-top: 0.6em;
 }
 
+h2	{ 
+	font-size: 1.3em;
+	padding: 0.5em 0 0.5em 0.5em;
+}
+
 p {
-	padding: 0.4em;
+	padding: 0.5em;
+}
+
+li { 	
+	padding-left: 0.5em; 
 }
 
 a { 

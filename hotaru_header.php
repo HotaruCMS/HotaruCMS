@@ -41,6 +41,7 @@ require_once(includes . 'Inspekt/Inspekt.php');		// for Input sanitation and val
 require_once(includes . 'ezSQL/ez_sql_core.php');		// for database usage
 require_once(includes . 'ezSQL/mysql/ez_sql_mysql.php');	// for database usage
 require_once('funcs.urls.php');					// for default or friendly urls
+require_once('funcs.strings.php');				// for manipulating strings
 
 if(file_exists(languages . 'main_' . strtolower(sitelanguage) . '.php')) {
 	require_once(languages . 'main_' . strtolower(sitelanguage) . '.php');	// language file for main (not admin, installation or plugins)
