@@ -189,7 +189,13 @@ function submit_url(baseurl, url, parameters)
 			ajax['response'].send (mycontent);
 			ajax['response'].onreadystatechange = function () {
 				if (ajax['response'].readyState == 4) {
-					returnvalue = JSON.decode(ajax['response'].responseText);
+					try{
+						returnvalue = JSON.decode(ajax['response'].responseText);
+					}
+					catch(e) {
+						alert("Unable to fetch content from this url.");
+						// JSONError: bad data
+					}
 					target_title = document.getElementById ('post_title');
 					target_title.value = returnvalue.title;
 					loader1.innerHTML = "&nbsp;";
