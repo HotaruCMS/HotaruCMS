@@ -28,10 +28,38 @@ class Post {
 
 	var $source_url = '';
 	var $post_title = '';
+	var $post_content = '';
+	var $post_content_length = 20;	// min characters for content
+	var $post_tags = '';
+	var $post_max_tags = 50;	// max characters for tags
 	var $post_status = 'processing';
 	var $post_author = 0;
+	
+	// Settings
+	
+	var $use_content = false;
+	var $use_tags = false;
 
 
+	/* ******************************************************************** 
+	 *  Function: read_post
+	 *  Parameters: None
+	 *  Purpose: Get all the settings for the current post
+	 *  Notes: ---
+	 ********************************************************************** */	
+	 
+	function read_post() {
+		global $plugin;
+		if($plugin->plugin_settings('submit', 'submit_content') == 'checked') { $this->use_content = true; }
+		if($plugin->plugin_settings('submit', 'submit_tags') == 'checked') { $this->use_tags = true; }
+		$content_length =  $plugin->plugin_settings('submit', 'submit_content_length');
+		if(!empty($content_length)) { $this->post_content_length = $content_length; }
+		$max_tags = $plugin->plugin_settings('submit', 'submit_max_tags');
+		if(!empty($max_tags)) { $this->post_max_tags = $max_tags; }
+		return true;
+	}
+	
+	
 	/* ******************************************************************** 
 	 *  Function: add_post
 	 *  Parameters: None
@@ -41,8 +69,8 @@ class Post {
 	 
 	function add_post() {
 		global $db;
-		$sql = "INSERT INTO " . table_posts . " SET post_orig_url = %s, post_title = %s, post_status = %s, post_author = %d";
-		$db->query($db->prepare($sql, $this->source_url, trim($this->post_title), $this->post_status, $this->post_author));
+		$sql = "INSERT INTO " . table_posts . " SET post_orig_url = %s, post_title = %s, post_content = %s, post_tags = %s, post_status = %s, post_author = %d";
+		$db->query($db->prepare($sql, $this->source_url, trim($this->post_title), trim($this->post_content), trim($this->post_tags), $this->post_status, $this->post_author));
 		return true;
 	}
 
