@@ -177,29 +177,25 @@ function submit_url(baseurl, url, parameters)
 	
 	if (xmlhttp) {
 		mycontent = "source_url="+escape(source_url);
-		target2 = document.getElementById ('ajax_loader');
-		target2.innerHTML = "<img src='" + baseurl + "admin/themes/admin_default/images/ajax-loader-mini.gif'>";	
-		ajax['submit_return_value'] = new myXMLHttpRequest ();
+		loader1 = document.getElementById ('ajax_loader');
+		loader1.innerHTML = "<img src='" + baseurl + "admin/themes/admin_default/images/ajax-loader-mini.gif'>";	
+		ajax['response'] = new myXMLHttpRequest ();
 		
 		if (ajax) {
-			ajax['submit_return_value'].open ("POST", url, true);
-			ajax['submit_return_value'].setRequestHeader ('Content-Type',
+			ajax['response'].open ("POST", url, true);
+			ajax['response'].setRequestHeader ('Content-Type',
 					   'application/x-www-form-urlencoded');
 
-			ajax['submit_return_value'].send (mycontent);
-			errormatch = new RegExp ("^ERROR:");
-			target1 = document.getElementById ('submit_return_value');
-			ajax['submit_return_value'].onreadystatechange = function () {
-				if (ajax['submit_return_value'].readyState == 4) {
-					returnvalue['submit_return_value'] = ajax['submit_return_value'].responseText;
-					if (returnvalue['submit_return_value'].match (errormatch)) {
-						returnvalue['submit_return_value'] = returnvalue['submit_return_value'].substring (6, returnvalue['submit_return_value'].length);						
-						target1 = document.getElementById ('submit_return_value');
-						target1.value = returnvalue['submit_return_value'];						
-					} else {
-						target1 = document.getElementById ('submit_return_value');
-						target1.value = returnvalue['submit_return_value'];
-						target2.innerHTML = "&nbsp;";
+			ajax['response'].send (mycontent);
+			ajax['response'].onreadystatechange = function () {
+				if (ajax['response'].readyState == 4) {
+					returnvalue = JSON.decode(ajax['response'].responseText);
+					target_title = document.getElementById ('post_title');
+					target_title.value = returnvalue.title;
+					loader1.innerHTML = "&nbsp;";
+					target_content = document.getElementById ('post_content');
+					if(target_content) {
+						target_content.innerHTML = returnvalue.content;
 					}
 				}
 			}

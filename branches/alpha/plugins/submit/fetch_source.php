@@ -39,9 +39,17 @@ if($url != 'http://' && $url != ''){
 }
 
 if(preg_match("'<title>([^<]*?)</title>'", $xxx, $matches)) {
-	echo trim($matches[1]);
+	$title = trim($matches[1]);
 } else {
-	echo "No title found...";
+	$title = "No title found...";
 }
+
+if(preg_match("'<meta name=(\"|\')description(\"|\') content=(\"|\')(.*)(\"|\')'", $xxx, $matches)) {
+	$content = trim($matches[4]);
+} else {
+	$content = "No description found...";
+}
+
+echo json_encode( array('title' => $title, 'content' => $content));
 
 ?>

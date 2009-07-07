@@ -6,7 +6,7 @@
  * version: 0.1
  * folder: submit
  * prefix: sub
- * hooks: submit, hotaru_header, header_include, install_plugin_starter_settings, navigation_last, theme_index_main
+ * hooks: submit, hotaru_header, header_include, install_plugin_starter_settings, navigation_last, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  *  License:
  *
@@ -98,7 +98,7 @@ function sub_install_plugin_starter_settings() {
  ********************************************************************** */
  
 function sub_hotaru_header() {
-	global $lang, $cage;
+	global $lang, $cage, $plugin;
 	
 	define("table_posts", db_prefix . 'posts');
 	define("table_postmeta", db_prefix . 'postmeta');
@@ -115,6 +115,7 @@ function sub_hotaru_header() {
 	require_once(includes . 'Paginated/DoubleBarLayout.php');
 		
 	$post = new Post();
+	$post->read_post();	// get current post's settings
 	$vars['post'] = $post; 
 	return $vars; 
 }
@@ -145,6 +146,7 @@ function sub_navigation_last() {
  
 function sub_header_include() {
 
+	echo "<script language='JavaScript' src='" . baseurl . "3rd_party/JSON/JSON.js'></script>\n";
 	echo "<script language='JavaScript' src='" . baseurl . "javascript/hotaru_ajax.js'></script>\n";
 	echo "<link rel='stylesheet' href='" . baseurl . "plugins/submit/submit.css' type='text/css'>\n";
 }
@@ -165,16 +167,15 @@ function sub_theme_index_main() {
 		 if($hotaru->is_page('submit')) {
 		 
 		 	// Include the form if we haven't already...
-		 	require_once(plugins . 'submit/submitform.php');
+		 	require_once(plugins . 'submit/submit_form.php');
 		 	
 	 		// Nothing submitted yet, show the submission form...
-			$success = sub_submitform();
+			$success = sub_submit_form();
 			if($success) { 
 				sub_process_submission(); // Save story
 				header("Location: " . baseurl);  // Go home
 			} 
 			return true;
-
 		} elseif($hotaru->is_page('main')) {
 			// First time here, let's show the form...
 			$hotaru->display_template('show_post', 'submit');
@@ -188,78 +189,29 @@ function sub_theme_index_main() {
 
 
 /* ******************************************************************** 
- *  Function: sub_process_submission
+ *  Function: sub_admin_sidebar_plugin_settings
  *  Parameters: None
- *  Purpose: Saves the submitted story to the database
+ *  Purpose: Puts a link to the settings page in the Admin sidebar under Plugin Settings
  *  Notes: ---
  ********************************************************************** */
  
-function sub_process_submission() {
-	global $hotaru, $cage, $current_user, $post;
-		
-	$post->source_url = $cage->post->testUri('source_url');
-	$post->post_title = $cage->post->noTags('post_title');
-	$post->post_status = "new";
-	$post->post_author = $current_user->id;
-	$post->add_post();
-
+function sub_admin_sidebar_plugin_settings() {
+	echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>'submit'), 'admin') . "'>Submit</a></li>";
 }
 
 
-/* ******************************************************************** 
- *  Function: sub_check_for_errors
+ /* ******************************************************************** 
+ *  Function: sub_admin_plugin_settings
  *  Parameters: None
- *  Purpose: Checks a submitted form for errors
+ *  Purpose: Calls the function for displaying Admin settings
  *  Notes: ---
  ********************************************************************** */
-
-function sub_check_for_errors() {
-	global $hotaru, $post, $cage, $lang;
-
-	// ******** CHECK URL ********
-	
-	$source_url_check = $cage->post->testUri('source_url');
-	if(!$source_url_check) {
-		// No url present...
-		$hotaru->message = $lang['submit_submitform_url_not_present_error'];
-		$hotaru->message_type = 'red';
-		$hotaru->show_message();
-		$error = 1;
-	} elseif($post->url_exists($source_url_check)) {
-		// URL already exists...
-		$hotaru->message = $lang['submit_submitform_url_already_exists_error'];
-		$hotaru->message_type = 'red';
-		$hotaru->show_message();
-		$error = 1;
-	} else {
-		// URL is okay.
-		$error = 0;
-	}
-	
-	// ******** CHECK TITLE ********
-	
-	$story_title_check = $cage->post->noTags('post_title');	
-	if(!$story_title_check) {
-		// No title present...
-		$hotaru->message = $lang['submit_submitform_title_not_present_error'];
-		$hotaru->message_type = 'red';
-		$hotaru->show_message();
-		$error = 1;
-	} elseif($post->title_exists($story_title_check)) {
-		// URL already exists...
-		$hotaru->message = $lang['submit_submitform_title_already_exists_error'];
-		$hotaru->message_type = 'red';
-		$hotaru->show_message();
-		$error = 1;
-	} else {
-		// title is okay.
-		$error = 0;
-	}
-	
-	// Return true if error is found
-	if($error == 1) { return true; } else { return false; }
+ 
+function sub_admin_plugin_settings() {
+	require_once(plugins . 'submit/submit_settings.php');
+	sub_settings();
+	return true;
 }
-
 
 
 ?>
