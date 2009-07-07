@@ -35,9 +35,21 @@ if($stories) {
 <!-- ************ POST **************** -->
 
 <div class="show_post">
+
 	<?php $plugin->check_actions('show_post_1'); ?>
+	
 	<div class="show_post_title"><a href='<?php echo $story->post_orig_url; ?>'><?php echo $story->post_title; ?></a></div>
+	
+	<?php if($post->use_content) { ?>
+		<div class="show_post_content"><?php echo $story->post_content; ?></div>
+	<?php } ?>
+	
+	<?php if($post->use_tags) { ?>
+		<div class="show_post_tags"><?php echo $story->post_tags; ?></div>
+	<?php } ?>
+	
 	<?php $plugin->check_actions('show_post_2'); ?>
+	
 </div>
 
 <!-- ************ END POST **************** -->
