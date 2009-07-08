@@ -62,7 +62,7 @@ function sub_settings() {
 		
 	echo "<input type='checkbox' name='title' value='title' checked disabled>&nbsp;&nbsp;" . $lang["submit_settings_title"] . "<br />\n";
 	echo "<input type='checkbox' name='author' value='author' " . $author . ">&nbsp;&nbsp;" . $lang["submit_settings_author"] . "<br />\n";
-	echo "<input type='checkbox' name='date' value='date' " . $author . ">&nbsp;&nbsp;" . $lang["submit_settings_date"] . "<br />\n";
+	echo "<input type='checkbox' name='date' value='date' " . $date . ">&nbsp;&nbsp;" . $lang["submit_settings_date"] . "<br />\n";
 	echo "<input type='checkbox' name='content' value='content' " . $content . ">&nbsp;&nbsp;" . $lang["submit_settings_content"];
 	echo "&nbsp;&nbsp;&nbsp;&nbsp;";
 	echo $lang["submit_settings_content_length"] . ": <input type='text' size=5 name='content_length' value='" . $content_length . "' /><br />\n";
