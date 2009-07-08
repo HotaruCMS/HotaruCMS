@@ -25,10 +25,17 @@
  *
  **************************************************************************************************** */
 
-/* Common language */
-
 /* Announcements */
 $lang['main_announcement_users_disabled'] = "<span style='color: #ff0000;'>Login and registration is currently disabled.</span>";
 $lang['main_announcement_plugins_disabled'] = "<span style='color: #ff0000;'>All plugins are currently disabled.</span>";
+
+/* Times */
+$lang['main_times_days'] = "days";
+$lang['main_times_day'] = "day";
+$lang['main_times_hours'] = "hrs";
+$lang['main_times_hour'] = "hr";
+$lang['main_times_minutes'] = "mins";
+$lang['main_times_minute'] = "min";
+$lang['main_times_seconds'] = "a few seconds";
 
 ?>
