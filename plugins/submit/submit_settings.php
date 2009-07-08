@@ -41,6 +41,8 @@ function sub_settings() {
 	echo "<h1>" . $lang["submit_settings_header"] . "</h1>\n";
 	
 	// Get settings from database if they exist...
+	$author = $plugin->plugin_settings('submit', 'submit_author');
+	$date = $plugin->plugin_settings('submit', 'submit_date');
 	$content = $plugin->plugin_settings('submit', 'submit_content');
 	$content_length = $plugin->plugin_settings('submit', 'submit_content_length');
 	$tags = $plugin->plugin_settings('submit', 'submit_tags');
@@ -48,6 +50,8 @@ function sub_settings() {
 	
 	//...otherwise set to blank:
 	if(!$content) { $content = ''; }
+	if(!$author) { $author = ''; }
+	if(!$date) { $date = ''; }
 	if(!$content_length) { $content_length = ''; }
 	if(!$tags) { $tags = ''; }
 	if(!$max_tags) { $max_tags = ''; }
@@ -57,6 +61,8 @@ function sub_settings() {
 	echo "<p>" . $lang["submit_settings_instructions"] . "</p><br />";
 		
 	echo "<input type='checkbox' name='title' value='title' checked disabled>&nbsp;&nbsp;" . $lang["submit_settings_title"] . "<br />\n";
+	echo "<input type='checkbox' name='author' value='author' " . $author . ">&nbsp;&nbsp;" . $lang["submit_settings_author"] . "<br />\n";
+	echo "<input type='checkbox' name='date' value='date' " . $author . ">&nbsp;&nbsp;" . $lang["submit_settings_date"] . "<br />\n";
 	echo "<input type='checkbox' name='content' value='content' " . $content . ">&nbsp;&nbsp;" . $lang["submit_settings_content"];
 	echo "&nbsp;&nbsp;&nbsp;&nbsp;";
 	echo $lang["submit_settings_content_length"] . ": <input type='text' size=5 name='content_length' value='" . $content_length . "' /><br />\n";
@@ -82,6 +88,24 @@ function sub_settings() {
 function sub_save_settings() {
 	global $cage, $hotaru, $plugin, $post, $lang;
 
+	// Author
+	if($cage->post->keyExists('author')) { 
+		$author = 'checked'; 
+		$post->use_author = true;
+	} else { 
+		$author = ''; 
+		$post->use_author = false;
+	}
+	
+	// Date
+	if($cage->post->keyExists('date')) { 
+		$date = 'checked'; 
+		$post->use_date = true;
+	} else { 
+		$date = ''; 
+		$post->use_date = false;
+	}
+	
 	// Description
 	if($cage->post->keyExists('content')) { 
 		$content = 'checked'; 
@@ -116,6 +140,8 @@ function sub_save_settings() {
 		$max_tags = $post->post_max_tags; 
 	} 
 
+	$plugin->plugin_settings_update('submit', 'submit_author', $author);	
+	$plugin->plugin_settings_update('submit', 'submit_date', $date);	
 	$plugin->plugin_settings_update('submit', 'submit_content', $content);	
 	$plugin->plugin_settings_update('submit', 'submit_content_length', $content_length);	
 	$plugin->plugin_settings_update('submit', 'submit_tags', $tags);
