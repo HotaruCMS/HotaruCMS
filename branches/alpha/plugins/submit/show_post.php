@@ -25,6 +25,7 @@
  **************************************************************************************************** */
 
 global $plugin, $post;
+$userbase = new UserBase();
 		
 $stories = $post->get_posts();
 if($stories) {
@@ -39,7 +40,15 @@ if($stories) {
 	<?php $plugin->check_actions('show_post_1'); ?>
 	
 	<div class="show_post_title"><a href='<?php echo $story->post_orig_url; ?>'><?php echo $story->post_title; ?></a></div>
-	
+
+	<?php if($post->use_author || $post->use_date) { ?>
+		<div class="show_post_author_date">	
+			Posted
+			<?php if($post->use_author) { echo " by " . $userbase->get_username($story->post_author); } ?>
+			<?php if($post->use_date) { echo time_difference(unixtimestamp($story->post_date)) . " ago"; } ?>
+		</div>
+	<?php } ?>
+		
 	<?php if($post->use_content) { ?>
 		<div class="show_post_content"><?php echo $story->post_content; ?></div>
 	<?php } ?>

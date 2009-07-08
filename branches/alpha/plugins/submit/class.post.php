@@ -37,6 +37,8 @@ class Post {
 	
 	// Settings
 	
+	var $use_author = false;
+	var $use_date = false;
 	var $use_content = false;
 	var $use_tags = false;
 
@@ -50,12 +52,25 @@ class Post {
 	 
 	function read_post() {
 		global $plugin;
+		
+		//author
+		$this->post_author = $plugin->plugin_settings('submit', 'submit_author');
+		if($plugin->plugin_settings('submit', 'submit_author') == 'checked') { $this->use_author = true; }
+		
+		//date
+		$this->post_date = $plugin->plugin_settings('submit', 'submit_date');
+		if($plugin->plugin_settings('submit', 'submit_date') == 'checked') { $this->use_date = true; }
+		
+		//content
 		if($plugin->plugin_settings('submit', 'submit_content') == 'checked') { $this->use_content = true; }
-		if($plugin->plugin_settings('submit', 'submit_tags') == 'checked') { $this->use_tags = true; }
 		$content_length =  $plugin->plugin_settings('submit', 'submit_content_length');
 		if(!empty($content_length)) { $this->post_content_length = $content_length; }
+		
+		//tags
+		if($plugin->plugin_settings('submit', 'submit_tags') == 'checked') { $this->use_tags = true; }
 		$max_tags = $plugin->plugin_settings('submit', 'submit_max_tags');
 		if(!empty($max_tags)) { $this->post_max_tags = $max_tags; }
+
 		return true;
 	}
 	

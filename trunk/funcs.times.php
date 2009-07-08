@@ -1,7 +1,7 @@
 <?php
 
 /* **************************************************************************************************** 
- *  File: /admin/functions/funcs.timers.php
+ *  File: /admin/functions/funcs.times.php
  *  Purpose: A collection of functions to deal with time.
  *  Notes: ---
  *  License:
@@ -56,5 +56,64 @@ function timer_stop($precision = 3) { //if called like timer_stop(1), will echo 
 	$timetotal = $timeend-$timestart;
 	$r = ( function_exists('number_format_i18n') ) ? number_format_i18n($timetotal, $precision) : number_format($timetotal, $precision);
 	return $r;
+}
+
+
+ /* ******************************************************************** 
+ *  Function: time_difference
+ *  Parameters: "from" time
+ *  Purpose: To show ow long ago a post was submitted
+ *  Notes: Adapted from Pligg & SWCMS' txt_time_diff() function
+ ********************************************************************** */
+ 
+function time_difference($from){
+	
+	$output = '';
+	$now = time();
+	$diff=$now-$from;
+	$days=intval($diff/86400);
+	$diff=$diff%86400;
+	$hours=intval($diff/3600);
+	$diff=$diff%3600;
+	$minutes=intval($diff/60);
+
+	if($days>1) $output .= $days . " days ";
+	elseif ($days==1) $output .= $days . " day ";
+
+	if($days < 2){
+		if($hours>1) $output .= $hours . " hrs ";
+		else if ($hours==1) $output .= $hours . " hr ";
+	
+		if($hours < 3){
+			if($minutes>1) $output .= $minutes . " mins ";
+			else if ($minutes==1) $output .= $minutes . " min ";
+		}
+	}
+	
+	if($output=='') $output = "a few seconds ";
+	return $output;
+}
+
+
+ /* ******************************************************************** 
+ *  Function: unixtimestamp
+ *  Parameters: a timestamp
+ *  Purpose: converts a timestamp into a number
+ *  Notes: Borrowed from Pligg & SWCMS
+ ********************************************************************** */
+ 
+function unixtimestamp($timestamp){
+	if(strlen($timestamp) == 14) {
+		$time = substr($timestamp,0,4)."-".substr($timestamp,4,2)."-".substr($timestamp,6,2);
+		$time .= " ";
+		$time .=  substr($timestamp,8,2).":".substr($timestamp,10,2).":".substr($timestamp,12,2);
+		return strtotime($time);
+	} else {
+		if(strlen($timestamp) == 0) {
+			return 0;
+		} else {
+			return strtotime($timestamp);
+		}
+	}
 }
 ?>

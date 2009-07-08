@@ -195,6 +195,21 @@ class UserBase {	// Limited to essential user information. Plugins extend this.
 		session_destroy();
 		$this->logged_in = false;
         }
+        
+        
+	/* ******************************************************************** 
+	 *  Function: get_username
+	 *  Parameters: None
+	 *  Purpose: Gets the username for a given id
+	 *  Notes: ---
+	 ********************************************************************** */	
+	 
+	function get_username($id = 0) {
+		global $db, $user;
+		$sql = "SELECT user_username FROM " . table_users . " WHERE user_id = %d";
+		$username = $db->get_var($db->prepare($sql, $id));
+		if($username) { return $username; } else { return false; }
+	}
 }
  
 ?>
