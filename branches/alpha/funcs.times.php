@@ -67,6 +67,7 @@ function timer_stop($precision = 3) { //if called like timer_stop(1), will echo 
  ********************************************************************** */
  
 function time_difference($from){
+	global $lang;
 	
 	$output = '';
 	$now = time();
@@ -77,20 +78,20 @@ function time_difference($from){
 	$diff=$diff%3600;
 	$minutes=intval($diff/60);
 
-	if($days>1) $output .= $days . " days ";
-	elseif ($days==1) $output .= $days . " day ";
+	if($days>1) $output .= $days . " " . $lang['main_times_days'] . " ";
+	elseif ($days==1) $output .= $days . " " . $lang['main_times_day'] . " ";
 
 	if($days < 2){
-		if($hours>1) $output .= $hours . " hrs ";
-		else if ($hours==1) $output .= $hours . " hr ";
+		if($hours>1) $output .= $hours . " " . $lang['main_times_hours'] . " ";
+		else if ($hours==1) $output .= $hours . " " . $lang['main_times_hour'] . " ";
 	
 		if($hours < 3){
-			if($minutes>1) $output .= $minutes . " mins ";
-			else if ($minutes==1) $output .= $minutes . " min ";
+			if($minutes>1) $output .= $minutes . " " . $lang['main_times_minutes'] . " ";
+			else if ($minutes==1) $output .= $minutes . " " . $lang['main_times_min'] . " ";
 		}
 	}
 	
-	if($output=='') $output = "a few seconds ";
+	if($output=='') $output = $lang['main_times_seconds'] . " ";
 	return $output;
 }
 
