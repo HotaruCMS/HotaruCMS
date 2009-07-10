@@ -27,7 +27,7 @@ global $cage;
 require_once('../../hotaru_header.php');
 require_once(includes . 'SWCMS/class.httprequest.php');
 
-$url = $cage->post->testURI('source_url');
+$url = $cage->post->testURI('post_orig_url');
 
 if($url != 'http://' && $url != ''){
 	$r = new HTTPRequest($url);

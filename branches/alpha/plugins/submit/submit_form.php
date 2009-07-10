@@ -47,13 +47,13 @@ function sub_submit_form() {
 			if(!sub_check_for_errors()) { 
 				return true; // No errors found, return true.
 			} else {
-				$source_url_check = $cage->post->testUri('source_url');
+				$post_orig_url_check = $cage->post->testUri('post_orig_url');
 				$title_check = $cage->post->noTags('post_title');	
 				$content_check = $cage->post->noTags('post_content');	
 				$tags_check = $cage->post->noTags('post_tags');
 			}
 		} else {
-			$source_url_check = "";
+			$post_orig_url_check = "";
 			$title_check = "";
 			$content_check = "";
 			$tags_check = "";
@@ -66,7 +66,7 @@ function sub_submit_form() {
 			
 			<tr>
 				<td><?php echo $lang["submit_form_url"] ?>:&nbsp; </td>
-				<td><input type='text' size=50 id='source_url' name='source_url' value='<?php echo $source_url_check ?>' /></td>
+				<td><input type='text' size=50 id='post_orig_url' name='post_orig_url' value='<?php echo $post_orig_url_check ?>' /></td>
 				<td style="text-align:right;"><a href="#" onclick="submit_url('<?php echo baseurl; ?>', '<?php echo baseurl; ?>plugins/submit/fetch_source.php');"><b><?php echo $lang['submit_form_get_title_button']; ?></b></a></td>
 			</tr>
 
@@ -126,14 +126,14 @@ function sub_check_for_errors() {
 
 	// ******** CHECK URL ********
 	
-	$source_url_check = $cage->post->testUri('source_url');
-	if(!$source_url_check) {
+	$post_orig_url_check = $cage->post->testUri('post_orig_url');
+	if(!$post_orig_url_check) {
 		// No url present...
 		$hotaru->message = $lang['submit_form_url_not_present_error'];
 		$hotaru->message_type = 'red';
 		$hotaru->show_message();
 		$error = 1;
-	} elseif($post->url_exists($source_url_check)) {
+	} elseif($post->url_exists($post_orig_url_check)) {
 		// URL already exists...
 		$hotaru->message = $lang['submit_form_url_already_exists_error'];
 		$hotaru->message_type = 'red';
@@ -221,7 +221,8 @@ function sub_check_for_errors() {
 function sub_process_submission() {
 	global $hotaru, $cage, $current_user, $post;
 		
-	$post->source_url = $cage->post->testUri('source_url');
+	$post->post_orig_url = $cage->post->testUri('post_orig_url');
+	$post->post_url = $cage->post->getAlnum('post_title');
 	$post->post_title = $cage->post->noTags('post_title');
 	$post->post_content = $cage->post->noTags('post_content');
 	$post->post_tags = $cage->post->noTags('post_tags');
