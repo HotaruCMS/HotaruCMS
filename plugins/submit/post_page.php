@@ -2,7 +2,7 @@
 
 /* ******* PLUGIN TEMPLATE ************************************************************************** 
  * Plugin name: Submit
- * Template name: plugins/submit/show_post.php
+ * Template name: plugins/submit/post_page.php
  * Template author: Nick Ramsay
  * Version: 0.1
  * License:
@@ -24,53 +24,42 @@
  *
  **************************************************************************************************** */
 
-global $plugin, $post;
+global $hotaru, $plugin, $post, $userbase;
 $userbase = new UserBase();
-		
-$stories = $post->get_posts();
-if($stories) {
-	$pagedResults = new Paginated($stories, 10, $page);
-	while($story = $pagedResults->fetchPagedRow()) {	//when $story is false loop terminates	
+
 ?>
 
 <!-- ************ POST **************** -->
 
 <div class="show_post">
 
-	<?php $plugin->check_actions('show_post_1'); ?>
+	<?php $plugin->check_actions('post_page_1'); ?>
 	
-	<div class="show_post_title"><a href='<?php echo $story->post_orig_url; ?>'><?php echo $story->post_title; ?></a></div>
+	<div class="show_post_title"><a href='<?php echo $post->post_orig_url; ?>'><?php echo $post->post_title; ?></a></div>
 
 	<?php if($post->use_author || $post->use_date) { ?>
 		<div class="show_post_author_date">	
 			Posted
-			<?php if($post->use_author) { echo " by " . $userbase->get_username($story->post_author); } ?>
-			<?php if($post->use_date) { echo time_difference(unixtimestamp($story->post_date)) . " ago"; } ?>
+			<?php if($post->use_author) { echo " by " . $userbase->get_username($post->post_author); } ?>
+			<?php if($post->use_date) { echo time_difference(unixtimestamp($post->post_date)) . " ago"; } ?>
 		</div>
 	<?php } ?>
 		
 	<?php if($post->use_content) { ?>
-		<div class="show_post_content"><?php echo $story->post_content; ?></div>
+		<div class="show_post_content"><?php echo $post->post_content; ?></div>
 	<?php } ?>
 	
 	<?php if($post->use_tags) { ?>
-		<div class="show_post_tags"><?php echo $story->post_tags; ?></div>
+		<div class="show_post_tags"><?php echo $post->post_tags; ?></div>
 	<?php } ?>
 	
-	<?php $plugin->check_actions('show_post_2'); ?>
+	<div class="show_permalink"><a href='<?php echo url(array('page'=>$post->post_id)); ?>'>Permalink</a></div>
+	
+	<?php $plugin->check_actions('post_page_2'); ?>
 	
 </div>
 
 <!-- ************ END POST **************** -->
-
-<?php	
-	}
 	
-	//important to set the strategy to be used before a call to fetchPagedNavigation
-	$pagedResults->setLayout(new DoubleBarLayout());
-	echo $pagedResults->fetchPagedNavigation();
-}
-	
-?>
  
  

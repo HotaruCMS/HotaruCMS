@@ -31,6 +31,7 @@
  ********************************************************************** */
  
 function url($parameters = array(), $head = 'index') {	
+	global $post;
 	
 	if(friendly_urls == "false") {
 	
@@ -65,7 +66,13 @@ function url($parameters = array(), $head = 'index') {
 		}
 		
 		foreach($parameters as $key => $value) {
-			$url .= $value . '/';
+			if($key == 'page' && is_numeric($value)) {
+				// must be a post title, let's get the post_url...
+				$value = $post->post_url;
+				$url .= $value . '/';
+			} else {
+				$url .= $value . '/';
+			}
 		}
 		return $url;
 	}
