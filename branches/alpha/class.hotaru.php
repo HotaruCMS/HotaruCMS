@@ -57,7 +57,7 @@ class Hotaru {
 	 
 	function is_page($page = '') {
 		global $cage;
-		$real_page = $cage->get->testRegex('page', '/^([a-z0-9\/_-])+$/i');
+		$real_page = $cage->get->testPage('page');
 		if(!$real_page) { $real_page = "main"; }
 
 		$real_page = rtrim($real_page, '/');	// remove trailing slash
@@ -79,7 +79,7 @@ class Hotaru {
 	 
 	function get_page_name() {
 		global $cage;
-		$page = $cage->get->testRegex('page', '/^([a-z0-9\/_-])+$/i');
+		$page = $cage->get->testPage('page');
 		if($page) {
 			$page = rtrim($page, '/');
 			return $page;
