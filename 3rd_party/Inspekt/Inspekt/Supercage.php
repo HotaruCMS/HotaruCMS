@@ -88,7 +88,7 @@ Class Inspekt_Supercage {
 	function Factory($config_file = NULL, $strict = TRUE) {
 
 		$sc	= new Inspekt_Supercage();
-		$sc->_makeCages($strict, $config_file);
+		$sc->_makeCages($config_file, $strict);
 
 		// eliminate the $_REQUEST superglobal
 		if ($strict) {
