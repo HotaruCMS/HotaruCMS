@@ -98,7 +98,7 @@ function sub_install_plugin_starter_settings() {
  ********************************************************************** */
  
 function sub_hotaru_header() {
-	global $lang, $cage, $plugin;
+	global $hotaru, $lang, $cage, $plugin;
 	
 	define("table_posts", db_prefix . 'posts');
 	define("table_postmeta", db_prefix . 'postmeta');
@@ -115,7 +115,17 @@ function sub_hotaru_header() {
 	require_once(includes . 'Paginated/DoubleBarLayout.php');
 		
 	$post = new Post();
-	$post->read_post();	// get current post's settings
+	if(is_numeric($hotaru->get_page_name())) {
+		// Page name is a number so it must be a post with non-friendly urls
+		$post->read_post($hotaru->get_page_name());	// read current post
+		
+	} elseif($post_id = $post->is_post_url($hotaru->get_page_name())) {
+		// Page name belongs to a story
+		$post->read_post($post_id);	// read current post
+		
+	} else {
+		$post->read_post();	// read current post settings only
+	}
 	$vars['post'] = $post; 
 	return $vars; 
 }
@@ -161,7 +171,7 @@ function sub_header_include() {
  ********************************************************************** */
  
 function sub_theme_index_main() {
-	global $hotaru, $cage, $current_user;
+	global $hotaru, $cage, $post, $current_user;
 		
 	// Pages you have to be logged in for...
 	if($current_user->logged_in) {
@@ -179,7 +189,15 @@ function sub_theme_index_main() {
 			return true;
 		} elseif($hotaru->is_page('main')) {
 			// First time here, let's show the form...
-			$hotaru->display_template('show_post', 'submit');
+			$hotaru->display_template('posts_list', 'submit');
+			return true;
+		} elseif(is_numeric($hotaru->get_page_name())) {
+			// Page name is a number so it must be a post with non-friendly urls
+			$hotaru->display_template('post_page', 'submit');
+			return true;
+		} elseif($post->is_post_url($hotaru->get_page_name())) {
+			// Page name belongs to a story
+			$hotaru->display_template('post_page', 'submit');
 			return true;
 		} else {
 			return false;
