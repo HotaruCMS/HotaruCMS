@@ -26,7 +26,8 @@
  
 class Post {	
 
-	var $source_url = '';
+	var $post_id = 0;
+	var $post_orig_url = '';
 	var $post_title = '';
 	var $post_content = '';
 	var $post_content_length = 20;	// min characters for content
@@ -34,6 +35,7 @@ class Post {
 	var $post_max_tags = 50;	// max characters for tags
 	var $post_status = 'processing';
 	var $post_author = 0;
+	var $post_url = '';
 	
 	// Settings
 	
@@ -45,12 +47,12 @@ class Post {
 
 	/* ******************************************************************** 
 	 *  Function: read_post
-	 *  Parameters: None
+	 *  Parameters: Optional row from the posts table in the database
 	 *  Purpose: Get all the settings for the current post
 	 *  Notes: ---
 	 ********************************************************************** */	
 	 
-	function read_post() {
+	function read_post($post_id = 0) {
 		global $plugin;
 		
 		//author
@@ -70,6 +72,19 @@ class Post {
 		if($plugin->plugin_settings('submit', 'submit_tags') == 'checked') { $this->use_tags = true; }
 		$max_tags = $plugin->plugin_settings('submit', 'submit_max_tags');
 		if(!empty($max_tags)) { $this->post_max_tags = $max_tags; }
+		
+		if($post_id != 0) {
+			$post_row = $this->get_post($post_id);
+			$this->post_id = $post_row->post_id;
+			$this->post_orig_url = $post_row->post_orig_url;
+			$this->post_title = $post_row->post_title;
+			$this->post_content = $post_row->post_content;
+			$this->post_tags = $post_row->post_tags;
+			$this->post_status = $post_row->post_status;
+			$this->post_author = $post_row->post_author;
+			$this->post_url = $post_row->post_url;
+			$this->post_date = $post_row->post_date;
+		}
 
 		return true;
 	}
@@ -84,12 +99,27 @@ class Post {
 	 
 	function add_post() {
 		global $db;
-		$sql = "INSERT INTO " . table_posts . " SET post_orig_url = %s, post_title = %s, post_content = %s, post_tags = %s, post_status = %s, post_author = %d";
-		$db->query($db->prepare($sql, $this->source_url, trim($this->post_title), trim($this->post_content), trim($this->post_tags), $this->post_status, $this->post_author));
+		$sql = "INSERT INTO " . table_posts . " SET post_orig_url = %s, post_title = %s, post_url = %s, post_content = %s, post_tags = %s, post_status = %s, post_author = %d";
+		$db->query($db->prepare($sql, $this->post_orig_url, trim($this->post_title), trim($this->post_url), trim($this->post_content), trim($this->post_tags), $this->post_status, $this->post_author));
 		return true;
 	}
 
 
+	/* ******************************************************************** 
+	 *  Function: get_post
+	 *  Parameters: None
+	 *  Purpose: Gets a single post from the database
+	 *  Notes: ---
+	 ********************************************************************** */	
+	 	
+	function get_post($post_id = 0) {
+		global $db;
+		$sql = "SELECT * FROM " . table_posts . " WHERE post_id = %d ORDER BY post_date DESC";
+		$post = $db->get_row($db->prepare($sql, $post_id));
+		if($post) { return $post; } else { return false; }
+	}
+	
+	
 	/* ******************************************************************** 
 	 *  Function: get_posts
 	 *  Parameters: None
@@ -133,6 +163,22 @@ class Post {
 		$sql = "SELECT count(post_id) FROM " . table_posts . " WHERE post_title = %s";
 		$posts = $db->get_var($db->prepare($sql, $title));
 		if($posts > 0) { return $posts; } else { return false; }
+	}
+	
+	
+	
+	/* ******************************************************************** 
+	 *  Function: is_post_url
+	 *  Parameters: page_name
+	 *  Purpose: Checks for existence of a post with given name
+	 *  Notes: Returns the post_id if true, false otherwise
+	 ********************************************************************** */	
+	 	
+	function is_post_url($page = '') {
+		global $db;
+		$sql = "SELECT post_id FROM " . table_posts . " WHERE post_url = %s";
+		$post_id = $db->get_var($db->prepare($sql, $page));
+		if($post_id) { return $post_id; } else { return false; }
 	}
 }
 
