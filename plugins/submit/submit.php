@@ -156,8 +156,6 @@ function sub_navigation_last() {
  
 function sub_header_include() {
 
-	echo "<script language='JavaScript' src='" . baseurl . "3rd_party/JSON/JSON.js'></script>\n";
-	echo "<script language='JavaScript' src='" . baseurl . "3rd_party/JSON/JSONError.js'></script>\n";
 	echo "<script language='JavaScript' src='" . baseurl . "javascript/hotaru_ajax.js'></script>\n";
 	echo "<link rel='stylesheet' href='" . baseurl . "plugins/submit/submit.css' type='text/css'>\n";
 }
@@ -176,33 +174,52 @@ function sub_theme_index_main() {
 	// Pages you have to be logged in for...
 	if($current_user->logged_in) {
 		 if($hotaru->is_page('submit')) {
-		 
+		  	
 		 	// Include the form if we haven't already...
-		 	require_once(plugins . 'submit/submit_form.php');
+		 	require_once(plugins . 'submit/submit_form_1.php');
 		 	
 	 		// Nothing submitted yet, show the submission form...
-			$success = sub_submit_form();
-			if($success) { 
-				sub_process_submission(); // Save story
-				header("Location: " . baseurl);  // Go home
+			$post_orig_url = sub_submit_form_1();
+			if($post_orig_url) { 
+				header("Location: " . baseurl . "index.php?page=submit2&sourceurl=" . $post_orig_url);  
 			} 
 			return true;
+			
+		} elseif($hotaru->is_page('submit2')) {
+		 	
+		 	// Include submit_form_2...
+		 	require_once(plugins . 'submit/submit_form_2.php');
+		 	
+		 	// Pass the source url to submit_form_2...
+		 	$post_orig_url = $cage->get->testUri('sourceurl');
+		 	$post_orig_title = sub_fetch_title($post_orig_url);
+			$success = sub_submit_form_2($post_orig_url, $post_orig_title);
+			if($success) { 
+				sub_process_submission($post_orig_url);
+				header("Location: " . baseurl);	// Go home  
+			} 
+			return true;
+			
 		} elseif($hotaru->is_page('main')) {
 			// First time here, let's show the form...
 			$hotaru->display_template('posts_list', 'submit');
 			return true;
+			
 		} elseif(is_numeric($hotaru->get_page_name())) {
 			// Page name is a number so it must be a post with non-friendly urls
 			$hotaru->display_template('post_page', 'submit');
 			return true;
+			
 		} elseif($post->is_post_url($hotaru->get_page_name())) {
 			// Page name belongs to a story
 			$hotaru->display_template('post_page', 'submit');
 			return true;
-		} else {
+			
+		} else {		
 			return false;
 		}
 	}
+
 	return false;
 }
 
@@ -233,4 +250,32 @@ function sub_admin_plugin_settings() {
 }
 
 
+ /* ******************************************************************** 
+ *  Function: sub_fetch_title
+ *  Parameters: None
+ *  Purpose: Scrapes the title from the page being submitted
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function sub_fetch_title($url) {
+	global $cage;
+	
+	require_once(includes . 'SWCMS/class.httprequest.php');
+	
+	if($url != 'http://' && $url != ''){
+		$r = new HTTPRequest($url);
+		$string = $r->DownloadToString();
+	} else {
+		$string = '';
+	}
+	
+	if(mb_ereg("<title>([^<].*)</title>", $string, $matches)) {
+		$title = trim($matches[1]);
+	} else {
+		$title = "No title found...";
+	}
+	
+	return $title;
+}
+	
 ?>

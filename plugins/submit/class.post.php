@@ -76,13 +76,13 @@ class Post {
 		if($post_id != 0) {
 			$post_row = $this->get_post($post_id);
 			$this->post_id = $post_row->post_id;
-			$this->post_orig_url = $post_row->post_orig_url;
-			$this->post_title = $post_row->post_title;
-			$this->post_content = $post_row->post_content;
-			$this->post_tags = $post_row->post_tags;
+			$this->post_orig_url = urldecode($post_row->post_orig_url);
+			$this->post_title = urldecode($post_row->post_title);
+			$this->post_content = urldecode($post_row->post_content);
+			$this->post_tags = urldecode($post_row->post_tags);
 			$this->post_status = $post_row->post_status;
 			$this->post_author = $post_row->post_author;
-			$this->post_url = $post_row->post_url;
+			$this->post_url = urldecode($post_row->post_url);
 			$this->post_date = $post_row->post_date;
 		}
 
@@ -100,7 +100,7 @@ class Post {
 	function add_post() {
 		global $db;
 		$sql = "INSERT INTO " . table_posts . " SET post_orig_url = %s, post_title = %s, post_url = %s, post_content = %s, post_tags = %s, post_status = %s, post_author = %d";
-		$db->query($db->prepare($sql, $this->post_orig_url, trim($this->post_title), trim($this->post_url), trim($this->post_content), trim($this->post_tags), $this->post_status, $this->post_author));
+		$db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), urlencode(trim($this->post_tags)), $this->post_status, $this->post_author));
 		return true;
 	}
 
@@ -145,7 +145,7 @@ class Post {
 	function url_exists($url = '') {
 		global $db;
 		$sql = "SELECT count(post_id) FROM " . table_posts . " WHERE post_orig_url = %s";
-		$posts = $db->get_var($db->prepare($sql, $url));
+		$posts = $db->get_var($db->prepare($sql, urlencode($url)));
 		if($posts > 0) { return $posts; } else { return false; }
 	}
 	
@@ -161,7 +161,7 @@ class Post {
 		global $db;
 		$title = trim($title);
 		$sql = "SELECT count(post_id) FROM " . table_posts . " WHERE post_title = %s";
-		$posts = $db->get_var($db->prepare($sql, $title));
+		$posts = $db->get_var($db->prepare($sql, urlencode($title)));
 		if($posts > 0) { return $posts; } else { return false; }
 	}
 	
@@ -177,7 +177,7 @@ class Post {
 	function is_post_url($page = '') {
 		global $db;
 		$sql = "SELECT post_id FROM " . table_posts . " WHERE post_url = %s";
-		$post_id = $db->get_var($db->prepare($sql, $page));
+		$post_id = $db->get_var($db->prepare($sql, urlencode($page)));
 		if($post_id) { return $post_id; } else { return false; }
 	}
 }

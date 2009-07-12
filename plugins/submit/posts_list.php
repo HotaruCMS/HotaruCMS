@@ -26,6 +26,12 @@
 
 global $plugin, $post;
 $userbase = new UserBase();
+/*
+global $cage;
+echo $cage->get->getMixedString2('test');
+//echo $cage->get->getMixedString2('test');
+exit;
+*/
 		
 $stories = $post->get_posts();
 if($stories) {

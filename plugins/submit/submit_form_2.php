@@ -2,7 +2,7 @@
  
 /* **************************************************************************************************** 
  *  File: /plugins/submit/submit_form.php
- *  Purpose: For submitting a new story.
+ *  Purpose: Step 2 for submitting a new story.
  *  Notes: This file is part of the Submit plugin. The main file is /plugins/submit/submit.php
  *  License:
  *
@@ -23,51 +23,50 @@
  *
  **************************************************************************************************** */
  
+
  /* ******************************************************************** 
- *  Function: sub_submit_form
+ *  Function: sub_submit_form_2
  *  Parameters: None
- *  Purpose: Enables a user to submit a story
+ *  Purpose: Step 2 - Enter title, description, tags, etc.
  *  Notes: ---
  ********************************************************************** */
  
-function sub_submit_form() {
+function sub_submit_form_2($post_orig_url, $post_orig_title) {
 	global $hotaru, $cage, $lang, $post;
 		
 	echo "<div id='main'>";
-		echo "<h2><a href='" . baseurl . "'>Home</a> &raquo; Submit a Story</h2>\n";
+		echo "<h2><a href='" . baseurl . "'>Home</a> &raquo; Submit a Story 2/2</h2>\n";
 			
 		$hotaru->show_message();
 				
 		echo "<div class='main_inner'>";
-		echo $lang["submit_form_instructions_1"] . "\n";
+		echo $lang["submit_form_instructions_2"] . "\n";
 		
 		$error = 0;
 		
-		if($cage->post->getAlpha('submitted') == 'true') {
-			if(!sub_check_for_errors()) { 
+		if($cage->post->getAlpha('submit2') == 'true') {
+			if(!sub_check_for_errors_2()) { 
 				return true; // No errors found, return true.
 			} else {
-				$post_orig_url_check = $cage->post->testUri('post_orig_url');
 				$title_check = $cage->post->noTags('post_title');	
 				$content_check = $cage->post->noTags('post_content');	
 				$tags_check = $cage->post->noTags('post_tags');
 			}
 		} else {
-			$post_orig_url_check = "";
-			$title_check = "";
+			$title_check = $post_orig_title;
 			$content_check = "";
 			$tags_check = "";
 		}
 		
 	
-			echo "<form name='submit_form' action='" . baseurl . "index.php?page=submit' method='post'>\n";
+			echo "<form name='submit_form_2' action='" . baseurl . "index.php?page=submit2&sourceurl=" . $post_orig_url . "' method='post'>\n";
 			echo "<table>";
 ?>
 			
 			<tr>
 				<td><?php echo $lang["submit_form_url"] ?>:&nbsp; </td>
-				<td><input type='text' size=50 id='post_orig_url' name='post_orig_url' value='<?php echo $post_orig_url_check ?>' /></td>
-				<td style="text-align:right;"><a href="#" onclick="submit_url('<?php echo baseurl; ?>', '<?php echo baseurl; ?>plugins/submit/fetch_source.php');"><b><?php echo $lang['submit_form_get_title_button']; ?></b></a></td>
+				<td><?php echo $post_orig_url; ?></td>
+				<td>&nbsp;</td>
 			</tr>
 
 
@@ -102,7 +101,7 @@ function sub_submit_form() {
 			
 			
 			
-			<input type='hidden' name='submitted' value='true' />
+			<input type='hidden' name='submit2' value='true' />
 
 <?php				
 			echo "<tr><td colspan=3>&nbsp;</td></tr>";
@@ -115,35 +114,15 @@ function sub_submit_form() {
 
 
 /* ******************************************************************** 
- *  Function: sub_check_for_errors
+ *  Function: sub_check_for_errors_2
  *  Parameters: None
- *  Purpose: Checks submit_form for errors
+ *  Purpose: Checks submit_form_2 for errors
  *  Notes: ---
  ********************************************************************** */
 
-function sub_check_for_errors() {
+function sub_check_for_errors_2() {
 	global $hotaru, $post, $cage, $lang;
 
-	// ******** CHECK URL ********
-	
-	$post_orig_url_check = $cage->post->testUri('post_orig_url');
-	if(!$post_orig_url_check) {
-		// No url present...
-		$hotaru->message = $lang['submit_form_url_not_present_error'];
-		$hotaru->message_type = 'red';
-		$hotaru->show_message();
-		$error = 1;
-	} elseif($post->url_exists($post_orig_url_check)) {
-		// URL already exists...
-		$hotaru->message = $lang['submit_form_url_already_exists_error'];
-		$hotaru->message_type = 'red';
-		$hotaru->show_message();
-		$error = 1;
-	} else {
-		// URL is okay.
-		$error = 0;
-	}
-	
 	// ******** CHECK TITLE ********
 	
 	$title_check = $cage->post->noTags('post_title');	
@@ -218,10 +197,10 @@ function sub_check_for_errors() {
  *  Notes: ---
  ********************************************************************** */
  
-function sub_process_submission() {
+function sub_process_submission($post_orig_url) {
 	global $hotaru, $cage, $current_user, $post;
 		
-	$post->post_orig_url = $cage->post->testUri('post_orig_url');
+	$post->post_orig_url = $post_orig_url;
 	$post->post_url = $cage->post->getFriendlyUrl('post_title');
 	$post->post_title = $cage->post->getMixedString2('post_title');
 	$post->post_content = $cage->post->getMixedString2('post_content');
