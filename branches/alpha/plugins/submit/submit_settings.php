@@ -45,16 +45,14 @@ function sub_settings() {
 	$date = $plugin->plugin_settings('submit', 'submit_date');
 	$content = $plugin->plugin_settings('submit', 'submit_content');
 	$content_length = $plugin->plugin_settings('submit', 'submit_content_length');
-	$tags = $plugin->plugin_settings('submit', 'submit_tags');
-	$max_tags = $plugin->plugin_settings('submit', 'submit_max_tags');
+
+	$plugin->check_actions('submit_settings_get_values');
 	
 	//...otherwise set to blank:
 	if(!$content) { $content = ''; }
 	if(!$author) { $author = ''; }
 	if(!$date) { $date = ''; }
 	if(!$content_length) { $content_length = ''; }
-	if(!$tags) { $tags = ''; }
-	if(!$max_tags) { $max_tags = ''; }
 	
 	echo "<form name='submit_settings_form' action='" . baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=submit' method='post'>\n";
 	
@@ -66,10 +64,8 @@ function sub_settings() {
 	echo "<input type='checkbox' name='content' value='content' " . $content . ">&nbsp;&nbsp;" . $lang["submit_settings_content"];
 	echo "&nbsp;&nbsp;&nbsp;&nbsp;";
 	echo $lang["submit_settings_content_length"] . ": <input type='text' size=5 name='content_length' value='" . $content_length . "' /><br />\n";
-	echo "<input type='checkbox' name='tags' value='tags' " . $tags . ">&nbsp;&nbsp;" . $lang["submit_settings_tags"];
-	echo "&nbsp;&nbsp;&nbsp;&nbsp;";
-	echo $lang["submit_settings_max_tags"] . ": <input type='text' size=5 name='max_tags' value='" . $max_tags . "' /><br />\n";
 
+	$plugin->check_actions('submit_settings_form');
 			
 	echo "<br />\n";	
 	echo "<input type='hidden' name='submitted' value='true' />\n";
@@ -123,29 +119,12 @@ function sub_save_settings() {
 		$content_length = $post->post_content_length; 
 	} 
 	
-	// Tags
-	if($cage->post->keyExists('tags')) { 
-		$tags = 'checked'; 
-		$post->use_tags = true;
-	} else { 
-		$tags = ''; 
-		$post->use_tags = false;
-	}
-		
-	// Tags length
-	if($cage->post->keyExists('max_tags')) { 
-		$max_tags = $cage->post->getInt('max_tags'); 
-		if(empty($max_tags)) { $max_tags = $post->post_max_tags; }
-	} else { 
-		$max_tags = $post->post_max_tags; 
-	} 
-
+	$plugin->check_actions('submit_settings_save_settings');
+	
 	$plugin->plugin_settings_update('submit', 'submit_author', $author);	
 	$plugin->plugin_settings_update('submit', 'submit_date', $date);	
 	$plugin->plugin_settings_update('submit', 'submit_content', $content);	
 	$plugin->plugin_settings_update('submit', 'submit_content_length', $content_length);	
-	$plugin->plugin_settings_update('submit', 'submit_tags', $tags);
-	$plugin->plugin_settings_update('submit', 'submit_max_tags', $max_tags);
 	
 	$hotaru->message = $lang["submit_settings_saved"];
 	$hotaru->message_type = "green";
