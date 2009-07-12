@@ -78,6 +78,7 @@ function html_header() {
 	global $lang;
 	$header = "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 3.2//EN'>\n";
 	$header .= "<HTML><HEAD>\n";
+	$header .= "<meta http-equiv=Content-Type content='text/html; charset=UTF-8'>\n";
 	$header .= "<TITLE>" . $lang['install_title'] . "</TITLE>\n";
 	$header .= "<META HTTP-EQUIV='Content-Type' CONTENT='text'>\n";
 	$header .= "<link rel='stylesheet' href='" . baseurl . "3rd_party/YUI-CSS/reset-fonts-grids.css' type='text/css'>\n";
@@ -203,7 +204,7 @@ function register_admin() {
 	
 	$error = 0;
 	if($cage->post->getInt('step') == 4) {
-		$name_check = $cage->post->testRegex('username', '/^([a-z0-9_-]{4,32})+$/i');	// alphanumeric, dashes and underscores okay, case insensitive
+		$name_check = $cage->post->testUsername('username');	// alphanumeric, dashes and underscores okay, case insensitive
 		if($name_check) {
 			$user_name = $name_check;
 		} else {
@@ -213,7 +214,7 @@ function register_admin() {
 			$error = 1;
 		}
 	
-		$password_check = $cage->post->testRegex('password', '/^([a-z0-9@*#_-]{8,60})+$/i');	
+		$password_check = $cage->post->testPassword('password');	
 		if($password_check) {
 			$user_password = crypt(md5($password_check),md5($user_name));
 		} else {

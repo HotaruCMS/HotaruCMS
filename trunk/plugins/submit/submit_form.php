@@ -222,10 +222,10 @@ function sub_process_submission() {
 	global $hotaru, $cage, $current_user, $post;
 		
 	$post->post_orig_url = $cage->post->testUri('post_orig_url');
-	$post->post_url = $cage->post->getAlnum('post_title');
-	$post->post_title = $cage->post->noTags('post_title');
-	$post->post_content = $cage->post->noTags('post_content');
-	$post->post_tags = $cage->post->noTags('post_tags');
+	$post->post_url = $cage->post->getFriendlyUrl('post_title');
+	$post->post_title = $cage->post->getMixedString2('post_title');
+	$post->post_content = $cage->post->getMixedString2('post_content');
+	$post->post_tags = $cage->post->getMixedString2('post_tags');
 	$post->post_status = "new";
 	$post->post_author = $current_user->id;
 	$post->add_post();

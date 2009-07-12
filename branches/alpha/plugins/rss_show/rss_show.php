@@ -299,7 +299,7 @@ function rs_admin_plugin_settings() {
  
 function rs_get_params() {
 	global $cage, $hotaru, $plugin;
-	if($action = $cage->get->testRegex('action', '/^([a-z0-9_-])+$/i')) {
+	if($action = $cage->get->testAlnumLines('action')) {
 		if($action == 'new_feed') {
 			$id = $cage->get->getInt('id');
 			rs_install_plugin_starter_settings($id);

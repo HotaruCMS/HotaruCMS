@@ -917,16 +917,34 @@ class Inspekt_Cage implements IteratorAggregate, ArrayAccess, Countable
 	 * CUSTOM HOTARU FUNCTIONS *
 	 * **************************************************************************************************
 	 * *********************************************************************************************** */
-	 	 
-	/**
-	* Returns TRUE if every character is alphabetic, a digit, an underscore, a dash or a forward slash.
-	* FALSE otherwise.
-	*
-	* @param mixed $value
-	* @return boolean
-	*
-	* @tag validator
-	*/
+
+	/* ******************************************************************** 
+	 * Function: testAlnumLines
+	 * Parameters: string $key
+	 * Purpose: Checks if the string contains only chars, digits, underscores and dashes.
+	 * Notes: Returns true or false
+	 ********************************************************************** */
+	 
+	function testAlnumLines($key)
+	{
+		if (!$this->keyExists($key)) {
+			return false;
+		}
+		if (Inspekt::isAlnumLines($this->_getValue($key))) {
+			return $this->_getValue($key);
+		}
+
+		return FALSE;
+	}
+	
+		 	 
+	/* ******************************************************************** 
+	 * Function: testPage
+	 * Parameters: string $key
+	 * Purpose: Checks if the string contains only chars, digits, forward slashes, underscores and dashes.
+	 * Notes: Returns true or false
+	 ********************************************************************** */
+	 
 	function testPage($key)
 	{
 		if (!$this->keyExists($key)) {
@@ -937,5 +955,97 @@ class Inspekt_Cage implements IteratorAggregate, ArrayAccess, Countable
 		}
 
 		return FALSE;
+	}
+	
+	
+	/* ******************************************************************** 
+	 * Function: testUsername
+	 * Parameters: string $key
+	 * Purpose: Checks if the string contains only chars, digits, underscores and dashes, and is 4-32 characters long.
+	 * Notes: Returns true or false
+	 ********************************************************************** */
+	 	 
+	function testUsername($key)
+	{
+		if (!$this->keyExists($key)) {
+			return false;
+		}
+		if (Inspekt::isUsername($this->_getValue($key))) {
+			return $this->_getValue($key);
+		}
+
+		return FALSE;
+	}
+	
+	
+	/* ******************************************************************** 
+	 * Function: testPassword
+	 * Parameters: string $key
+	 * Purpose: Checks if the string contains only chars, digits, underscores and dashes, 
+	 *          @, *, # and is 8-60 characters long.
+	 * Notes: Returns true or false
+	 ********************************************************************** */
+	 	 
+	function testPassword($key)
+	{
+		if (!$this->keyExists($key)) {
+			return false;
+		}
+		if (Inspekt::isPassword($this->_getValue($key))) {
+			return $this->_getValue($key);
+		}
+
+		return FALSE;
+	}
+	
+	/* ******************************************************************** 
+	 * Function: getFriendlyUrl
+	 * Parameters: string $key
+	 * Purpose: Makes a friendly url, e.g. "this-is-a-friendly-url"
+	 * Notes: Returns the sanitized string or false
+	 ********************************************************************** */
+	 
+	function getFriendlyUrl($key)
+	{
+		if (!$this->keyExists($key)) {
+			return false;
+		}
+		
+		return Inspekt::MakeFriendlyUrl($this->_getValue($key));
+	}
+	
+	/* ******************************************************************** 
+	 * Function: getMixedString1
+	 * Parameters: string $key
+	 * Purpose: Sanitize input for display to the browser
+	 *	    Uses htmlentities.
+	 * Notes: Returns the sanitized string
+	 ********************************************************************** */
+	 
+	function getMixedString1($key)
+	{
+		if (!$this->keyExists($key)) {
+			return false;
+		}
+
+		return Inspekt::SanitizeMixedString1($this->_getValue($key));
+
+	}
+	
+	/* ******************************************************************** 
+	 * Function: getMixedString2
+	 * Parameters: string $key
+	 * Purpose: Sanitize input for saving to the database or condition testing
+	 *	    Does NOT use htmlentities.
+	 * Notes: Returns the sanitized string
+	 ********************************************************************** */
+	 
+	function getMixedString2($key)
+	{
+		if (!$this->keyExists($key)) {
+			return false;
+		}
+		
+		return Inspekt::SanitizeMixedString2($this->_getValue($key));
 	}
 }

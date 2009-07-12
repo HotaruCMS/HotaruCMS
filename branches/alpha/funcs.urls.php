@@ -69,7 +69,7 @@ function url($parameters = array(), $head = 'index') {
 			if($key == 'page' && is_numeric($value)) {
 				// must be a post title, let's get the post_url...
 				$value = $post->post_url;
-				$url .= $value . '/';
+				$url .= $value . '/';				
 			} else {
 				$url .= $value . '/';
 			}
@@ -79,30 +79,4 @@ function url($parameters = array(), $head = 'index') {
 	
 }
 
-
-/* ******************************************************************** 
- *  Function: rewrite
- *  Parameters: The requested url, an array delimeter and a a pair delimiter
- *  Purpose: Breaks a friendly url into its parts
- *  Notes: Adapted from: http://www.roscripts.com/Mod_rewrite_and_PHP_functions-47.html
- ********************************************************************** */
-/*	 
-function rewrite( $request, $array_delim, $pair_delim ) {
-	global $_GET, $HTTP_GET_VARS, $_REQUEST;
-	
-	echo $request . "<br />";
-	$value_pairs = explode( $array_delim, $request );
-	$make_global = array();
-	
-	foreach( $value_pairs as $pair ) {
-		if($pair) {
-			$pair = explode( $pair_delim, $pair );
-			echo "pair0: " . $pair[0] . ": " . "pair1: " . $pair[1] . '<br />';
-			$_GET[$pair[0]] = $pair[1];
-			$_REQUEST[$pair[0]] = $pair[1];
-			$HTTP_GET_VARS[$pair[0]] = $pair[1];
-		}
-	}
-}
-*/
 ?>

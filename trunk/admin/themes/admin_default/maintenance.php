@@ -35,7 +35,7 @@ global $plugin, $admin, $cage, $lang; // don't remove
 <?php $plugin->check_actions('admin_maintenance_top'); ?>
 
 <?php
-	if($action = $cage->get->testRegex('action', '/^([a-z0-9\/_-])+$/i')) {
+	if($action = $cage->get->testAlnumLines('action')) {
 		if($action == 'clear_db_cache') { $admin->clear_cache('ezSQL'); }
 		if($action == 'clear_rss_cache') { $admin->clear_cache('SimplePie'); }
 	}

@@ -43,10 +43,10 @@ function admin_login() {
 		echo "<div class='main_inner'>";
 		echo $lang["admin_login_instructions"] . "\n";
 
-			if(!$username_check = $cage->post->testRegex('username', '/^([a-z0-9_-]{4,32})+$/i')) {
+			if(!$username_check = $cage->post->testUsername('username')) {
 				$username_check = "";
 			} 
-			if(!$password_check = $cage->post->testRegex('password', '/^([a-z0-9@*#_-]{8,60})+$/i')) {
+			if(!$password_check = $cage->post->testPassword('password')) {
 				$password_check = "";
 			}
 			
@@ -110,7 +110,7 @@ function set_admin_cookie($username) {
 function is_admin_cookie() {
 	global $cage;
 	// Check for a cookie. If present then the user is logged in.
-	if(!$hotaru_user = $cage->cookie->testRegex('hotaru_user', '/^([a-z0-9_-]{4,32})+$/i')) {
+	if(!$hotaru_user = $cage->cookie->testUsername('hotaru_user')) {
 		header('Location: ' . baseurl . 'admin/admin_index.php?page=admin_login');
 		die();
 	} else {
