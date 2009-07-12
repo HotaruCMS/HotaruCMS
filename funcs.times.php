@@ -87,7 +87,7 @@ function time_difference($from){
 	
 		if($hours < 3){
 			if($minutes>1) $output .= $minutes . " " . $lang['main_times_minutes'] . " ";
-			else if ($minutes==1) $output .= $minutes . " " . $lang['main_times_min'] . " ";
+			else if ($minutes==1) $output .= $minutes . " " . $lang['main_times_minute'] . " ";
 		}
 	}
 	

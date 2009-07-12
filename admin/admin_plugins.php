@@ -44,7 +44,7 @@ if($widget_positions) {
 }
 
 //$plugin_to_uninstall = $cage->post->testRegex('page', '/^([a-z0-9_-])+$/i');
-$plugin_to_uninstall = $cage->post->testRegex('plugin_folder', '/^([a-z0-9_-])+$/i');
+$plugin_to_uninstall = $cage->post->testAlnumLines('plugin_folder');
 if($plugin_to_uninstall) { 
 	$plugin->uninstall_plugin($plugin_to_uninstall);
 	echo "<br /><b>" . $lang['admin_plugins_uninstall_done'] . "</b> <br /><br />";

@@ -84,7 +84,7 @@ if(!isset($plugin)) {
 
 $current_user = new UserBase();
 // Check for a cookie. If present then the user is logged in.
-$hotaru_user = $cage->cookie->testRegex('hotaru_user', '/^([a-z0-9_-]{4,32})+$/i');
+$hotaru_user = $cage->cookie->testUsername('hotaru_user');
 if(($hotaru_user) && ($cage->cookie->keyExists('hotaru_key'))) {
 	$user_info=explode(":", base64_decode($cage->cookie->getRaw('hotaru_key')));
 	if(($hotaru_user == $user_info[0]) && (crypt($user_info[0], 22) == $user_info[1])) {

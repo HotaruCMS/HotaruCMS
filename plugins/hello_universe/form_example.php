@@ -35,7 +35,7 @@ echo "<div id='main'>";
 	
 	$error = 0;
 	if($cage->post->getAlpha('submit_example') == 'true') {
-		$answer = $cage->post->testRegex('answer', '/^([a-z0-9_-]{4,32})+$/i');	// alphanumeric, dashes and underscores okay, case insensitive
+		$answer = $cage->post->getMixedString2('answer');
 		if($answer && $answer == 'Paris') {
 			$hotaru->message = $lang['hello_universe_success'];
 			$hotaru->message_type = 'green';

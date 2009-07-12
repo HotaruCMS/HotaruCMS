@@ -173,10 +173,10 @@ function widget_moved(baseurl, str)
 	 
 function submit_url(baseurl, url, parameters)
 {
-	var source_url = document.getElementById('source_url').value;
+	var post_orig_url = document.getElementById('post_orig_url').value;
 	
 	if (xmlhttp) {
-		mycontent = "source_url="+escape(source_url);
+		mycontent = "post_orig_url="+escape(post_orig_url);
 		loader1 = document.getElementById ('ajax_loader');
 		loader1.innerHTML = "<img src='" + baseurl + "admin/themes/admin_default/images/ajax-loader-mini.gif'>";	
 		ajax['response'] = new myXMLHttpRequest ();
@@ -190,20 +190,15 @@ function submit_url(baseurl, url, parameters)
 			ajax['response'].onreadystatechange = function () {
 				if (ajax['response'].readyState == 4) {
 					try{
-						returnvalue = JSON.decode(ajax['response'].responseText);
+						returnvalue = ajax['response'].responseText;
 					}
 					catch(e) {
-						alert("Unable to fetch content from this url.");
-						// JSONError: bad data
+						alert("Unable to fetch the title from this url. Sorry!");
 					}
 					target_title = document.getElementById ('post_title');
-					target_title.value = returnvalue.title;
+					target_title.value = returnvalue;
 					loader1.innerHTML = "&nbsp;";
-					target_content = document.getElementById ('post_content');
-					if(target_content) {
-						target_content.innerHTML = returnvalue.content;
-					}
-				}
+				} 
 			}
 		}
 	}
