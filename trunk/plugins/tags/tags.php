@@ -5,7 +5,7 @@
  * version: 0.1
  * folder: tags
  * prefix: tg
- * hooks: submit_form_2_assign_from_cage, submit_form_2_assign_blank, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_posts_list_extra_fields_1, submit_post_page_extra_fields_1, submit_settings_get_values, submit_settings_form, submit_save_settings
+ * hooks: install_plugin_starter_settings, submit_hotaru_header, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_form_2_assign_from_cage, submit_form_2_assign_blank, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_posts_list_extra_fields_1, submit_post_page_extra_fields_1, submit_settings_get_values, submit_settings_form, submit_save_settings
  *
  * Requires the Submit plugin.
  *
@@ -27,6 +27,99 @@
  *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
  *
  **************************************************************************************************** */
+
+
+ /* ******************************************************************** 
+ * ********************************************************************* 
+ * ********************* FUNCTIONS FOR POST CLASS ********************** 
+ * *********************************************************************
+ * ****************************************************************** */
+ 
+ 
+/* ******************************************************************** 
+ *  Function: tg_install_plugin_starter_settings
+ *  Parameters: None
+ *  Purpose: If it doesn't already exist, add a post_tags field to posts table.
+ *  Notes: Happens when the plugin is installed. The field is never deleted.
+ ********************************************************************** */
+ 
+function tg_install_plugin_starter_settings() {
+	global $db, $plugin;
+	
+	// Create a new table column called "post_tags" if it doesn't already exist
+	$exists = $db->column_exists('posts', 'post_tags');
+	if(!$exists) {
+		$db->query("ALTER TABLE " . table_posts . " ADD post_tags TEXT NULL AFTER post_content");
+		$db->query("ALTER TABLE " . table_posts . " ADD FULLTEXT (post_tags)"); // Make it fulltext searchable
+	} 
+}
+
+
+/* ******************************************************************** 
+ *  Function: tg_submit_hotaru_header
+ *  Parameters: None
+ *  Purpose: Adds additional member variables when the $post object is read in the Submit plugin.
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function tg_submit_hotaru_header() {
+	global $post;
+	
+	$post->post_vars['post_tags'] = '';
+	$post->post_vars['post_max_tags'] = 50;	// max characters for tags
+	$post->post_vars['use_tags'] = false;
+	
+}
+
+
+/* ******************************************************************** 
+ *  Function: tg_submit_class_post_read_post_1
+ *  Parameters: None
+ *  Purpose: Read tag settings
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function tg_submit_class_post_read_post_1() {
+	global $plugin, $post;
+	
+	//tags
+	if(($plugin->plugin_settings('submit', 'submit_tags') == 'checked') && ($plugin->plugin_active('tags'))) { 
+		$post->post_vars['use_tags'] = true; 
+	} else { 
+		$post->post_vars['use_tags'] = false; 
+	}
+	
+	$max_tags = $plugin->plugin_settings('submit', 'submit_max_tags');
+	if(!empty($max_tags)) { $post->post_vars['post_max_tags'] = $max_tags; }
+}
+
+
+/* ******************************************************************** 
+ *  Function: tg_submit_class_post_read_post_2
+ *  Parameters: None
+ *  Purpose: Read tag settings if post_id exists.
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function tg_submit_class_post_read_post_2() {
+	global $post, $post_row;
+	$post->post_tags = urldecode($post_row->post_tags);
+}
+
+
+/* ******************************************************************** 
+ *  Function: tg_submit_class_post_add_post
+ *  Parameters: None
+ *  Purpose: Adds tags to the posts table
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function tg_submit_class_post_add_post() {
+	global $post, $db;
+	$sql = "UPDATE " . table_posts . " SET post_tags = %s WHERE post_id = LAST_INSERT_ID()";
+	$db->query($db->prepare($sql, urlencode(trim($post->post_tags))));
+}
+
 
  /* ******************************************************************** 
  * ********************************************************************* 
@@ -70,6 +163,7 @@ function tg_submit_form_2_assign_blank() {
  
 function tg_submit_form_2_fields() {
 	global $lang, $post, $tags_check;
+
 	if($post->use_tags) { 
 		echo "<tr>";
 			echo "<td>" . $lang["submit_form_tags"] . ":&nbsp; </td>";
@@ -159,6 +253,7 @@ function tg_submit_posts_list_extra_fields_1() {
  
 function tg_submit_post_page_extra_fields_1() {
 	global $post;
+
 	if($post->use_tags) { 
 		echo "<div class='show_post_tags'>" . $post->post_tags . "</div>";
 	}

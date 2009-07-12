@@ -33,7 +33,7 @@ $userbase = new UserBase();
 
 <div class="show_post">
 
-	<?php $plugin->check_actions('post_page_1'); ?>
+	<?php $plugin->check_actions('submit_post_page_1'); ?>
 	
 	<div class="show_post_title"><a href='<?php echo $post->post_orig_url; ?>'><?php echo $post->post_title; ?></a></div>
 
@@ -53,7 +53,7 @@ $userbase = new UserBase();
 	
 	<div class="show_permalink"><a href='<?php echo url(array('page'=>$post->post_id)); ?>'>Permalink</a></div>
 	
-	<?php $plugin->check_actions('post_page_2'); ?>
+	<?php $plugin->check_actions('submit_post_page_2'); ?>
 	
 </div>
 

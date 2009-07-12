@@ -23,7 +23,7 @@
  *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
  *
  **************************************************************************************************** */
- 
+	
 class Post {	
 
 	var $post_id = 0;
@@ -31,18 +31,42 @@ class Post {
 	var $post_title = '';
 	var $post_content = '';
 	var $post_content_length = 20;	// min characters for content
-	var $post_tags = '';
-	var $post_max_tags = 50;	// max characters for tags
 	var $post_status = 'processing';
 	var $post_author = 0;
 	var $post_url = '';
-	
-	// Settings
-	
+	var $post_date = '';
+			
 	var $use_author = false;
 	var $use_date = false;
 	var $use_content = false;
-	var $use_tags = false;
+
+	var $post_vars = array();
+
+
+	/* ******************************************************************** 
+	 *  Functions: PHP __set Magic Method
+	 *  Parameters: The name of the member variable and the value to set it to.
+	 *  Purpose: Plugins use this to set additonal member variables
+	 *  Notes: ---
+	 ********************************************************************** */
+	 			
+	function __set($name, $value) {
+        	$this->post_vars[$name] = $value;
+    	}
+    	
+    	
+	/* ******************************************************************** 
+	 *  Functions: PHP __get Magic Method
+	 *  Parameters: The name of the member variable to retrieve.
+	 *  Purpose: Plugins use this to read values of additonal member variables
+	 *  Notes: ---
+	 ********************************************************************** */
+    	
+	function __get($name) {
+		if (array_key_exists($name, $this->post_vars)) {
+			return $this->post_vars[$name];
+		}
+    	}
 
 
 	/* ******************************************************************** 
@@ -53,7 +77,7 @@ class Post {
 	 ********************************************************************** */	
 	 
 	function read_post($post_id = 0) {
-		global $plugin;
+		global $plugin, $post_row;
 		
 		//author
 		$this->post_author = $plugin->plugin_settings('submit', 'submit_author');
@@ -67,11 +91,8 @@ class Post {
 		if($plugin->plugin_settings('submit', 'submit_content') == 'checked') { $this->use_content = true; }
 		$content_length =  $plugin->plugin_settings('submit', 'submit_content_length');
 		if(!empty($content_length)) { $this->post_content_length = $content_length; }
-		
-		//tags
-		if($plugin->plugin_settings('submit', 'submit_tags') == 'checked') { $this->use_tags = true; }
-		$max_tags = $plugin->plugin_settings('submit', 'submit_max_tags');
-		if(!empty($max_tags)) { $this->post_max_tags = $max_tags; }
+				
+		$plugin->check_actions('submit_class_post_read_post_1');
 		
 		if($post_id != 0) {
 			$post_row = $this->get_post($post_id);
@@ -79,11 +100,11 @@ class Post {
 			$this->post_orig_url = urldecode($post_row->post_orig_url);
 			$this->post_title = urldecode($post_row->post_title);
 			$this->post_content = urldecode($post_row->post_content);
-			$this->post_tags = urldecode($post_row->post_tags);
 			$this->post_status = $post_row->post_status;
 			$this->post_author = $post_row->post_author;
 			$this->post_url = urldecode($post_row->post_url);
 			$this->post_date = $post_row->post_date;
+			$plugin->check_actions('submit_class_post_read_post_2');
 		}
 
 		return true;
@@ -98,9 +119,12 @@ class Post {
 	 ********************************************************************** */	
 	 
 	function add_post() {
-		global $db;
+		global $db, $plugin;
 		$sql = "INSERT INTO " . table_posts . " SET post_orig_url = %s, post_title = %s, post_url = %s, post_content = %s, post_tags = %s, post_status = %s, post_author = %d";
 		$db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), urlencode(trim($this->post_tags)), $this->post_status, $this->post_author));
+		
+		$plugin->check_actions('submit_class_post_add_post');
+		
 		return true;
 	}
 

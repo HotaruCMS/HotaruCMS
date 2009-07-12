@@ -98,7 +98,7 @@ function sub_install_plugin_starter_settings() {
  ********************************************************************** */
  
 function sub_hotaru_header() {
-	global $hotaru, $lang, $cage, $plugin;
+	global $hotaru, $lang, $cage, $plugin, $post;
 	
 	define("table_posts", db_prefix . 'posts');
 	define("table_postmeta", db_prefix . 'postmeta');
@@ -115,6 +115,9 @@ function sub_hotaru_header() {
 	require_once(includes . 'Paginated/DoubleBarLayout.php');
 		
 	$post = new Post();
+	
+	$plugin->check_actions('submit_hotaru_header');
+	
 	if(is_numeric($hotaru->get_page_name())) {
 		// Page name is a number so it must be a post with non-friendly urls
 		$post->read_post($hotaru->get_page_name());	// read current post
@@ -126,6 +129,7 @@ function sub_hotaru_header() {
 	} else {
 		$post->read_post();	// read current post settings only
 	}
+		
 	$vars['post'] = $post; 
 	return $vars; 
 }

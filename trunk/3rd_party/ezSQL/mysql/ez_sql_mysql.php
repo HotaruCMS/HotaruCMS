@@ -291,6 +291,24 @@
 			}
 			return false;
 		}
+		
+
+		/* ******************************************************************** 
+		 *  Function: column_exists
+		 *  Parameters: The names of the table and column to check (without the prefix)
+		 *  Purpose: Returns true if the column exists, flase otherwise
+		 *  Notes: This is a custom function, not part of the original ezSQL class
+		 ********************************************************************** */
+		 
+      		function column_exists($table2check, $column){
+      			foreach ( $this->get_col("SHOW COLUMNS FROM " . db_prefix . $table2check,0) as $column_name ) {
+	      			if($column_name == $column) {
+					return true;
+				} 
+			}
+			return false;
+      		}
+
 	}
 
 ?>

@@ -26,25 +26,20 @@
 
 global $plugin, $post;
 $userbase = new UserBase();
-/*
-global $cage;
-echo $cage->get->getMixedString2('test');
-//echo $cage->get->getMixedString2('test');
-exit;
-*/
 		
 $stories = $post->get_posts();
 if($stories) {
 	$pagedResults = new Paginated($stories, 10, $page);
 	while($story = $pagedResults->fetchPagedRow()) {	//when $story is false loop terminates	
 		$post->read_post($story->post_id);
+
 ?>
 
 <!-- ************ POST **************** -->
 
 <div class="posts_list">
 
-	<?php $plugin->check_actions('posts_list_1'); ?>
+	<?php $plugin->check_actions('submit_posts_list_1'); ?>
 	
 	<div class="show_post_title"><a href='<?php echo $post->post_orig_url; ?>'><?php echo $post->post_title; ?></a></div>
 
@@ -64,7 +59,7 @@ if($stories) {
 		
 	<div class="show_permalink"><a href='<?php echo url(array('page'=>$post->post_id)); ?>'>Permalink</a></div>
 	
-	<?php $plugin->check_actions('posts_list_2'); ?>
+	<?php $plugin->check_actions('submit_posts_list_2'); ?>
 	
 </div>
 
