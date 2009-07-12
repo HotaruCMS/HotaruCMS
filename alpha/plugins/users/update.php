@@ -41,7 +41,7 @@ function usr_update() {
 		
 		$error = 0;
 		if($cage->post->getAlpha('users_type') == 'update') {
-			$username_check = $cage->post->testRegex('username', '/^([a-z0-9_-]{4,32})+$/i');	// alphanumeric, dashes and underscores okay, case insensitive
+			$username_check = $cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
 			if($username_check) {
 				$current_user->username = $username_check;
 			} else {
@@ -51,7 +51,7 @@ function usr_update() {
 				$error = 1;
 			}
 					
-			$password_check = $cage->post->testRegex('password', '/^([a-z0-9@*#_-]{8,60})+$/i');	
+			$password_check = $cage->post->testPassword('password');	
 			if($password_check) {
 				$current_user->password = crypt(md5($password_check),md5($current_user->username));
 			} else {

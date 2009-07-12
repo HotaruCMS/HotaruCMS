@@ -36,7 +36,7 @@ if(file_exists(admin . 'languages/admin_' . strtolower(sitelanguage) . '.php')) 
 	require_once(admin . 'languages/admin_english.php');	// English file if specified language doesn't exist
 }
 
-$page = $cage->get->testRegex('page', '/^([a-z0-9_-])+$/i');
+$page = $cage->get->testPage('page');
 
 // Authenticate the admin if the Users plugin is INACTIVE:
 if(!$plugin->plugin_active('users')) {
@@ -74,7 +74,7 @@ switch ($page) {
 		// Nothing special to do...
 		break;
 	case "plugin_settings":
-		$plugin->folder = $cage->get->testRegex('plugin', '/^([a-z0-9_-])+$/i');
+		$plugin->folder = $cage->get->testAlnumLines('plugin');
 		$plugin->name = $plugin->plugin_name($plugin->folder);
 		break;
 	case "":

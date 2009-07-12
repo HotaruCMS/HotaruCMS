@@ -987,19 +987,96 @@ class Inspekt
 	 * CUSTOM HOTARU FUNCTIONS *
 	 * **************************************************************************************************
 	 * *********************************************************************************************** */
+
+	/* ******************************************************************** 
+	 * Function: isAlnumLines
+	 * Parameters: mixed string
+	 * Purpose: Checks if the string contains only chars, digits, underscores and dashes.
+	 * Notes: Returns true or false
+	 ********************************************************************** */
 	 	 
-	/**
-	* Returns TRUE if every character is alphabetic, a digit, an underscore, a dash or a forward slash.
-	* FALSE otherwise.
-	*
-	* @param mixed $value
-	* @return boolean
-	*
-	* @tag validator
-	*/
+	function isAlnumLines($value)
+	{
+		return preg_match('/^([a-z0-9_-])+$/i', $value);
+	}
+		 
+	 	 
+	/* ******************************************************************** 
+	 * Function: isPage
+	 * Parameters: mixed string
+	 * Purpose: Checks if the string contains only chars, digits, forward slashes, underscores and dashes.
+	 * Notes: Returns true or false
+	 ********************************************************************** */
+	 	 
 	function isPage($value)
 	{
 		return preg_match('/^([a-z0-9\/_-])+$/i', $value);
+	}
+	
+	
+	/* ******************************************************************** 
+	 * Function: isUsername
+	 * Parameters: mixed string
+	 * Purpose: Checks if the string contains only chars, digits, underscores and dashes, and is 4-32 characters long.
+	 * Notes: Returns true or false
+	 ********************************************************************** */
+	 	 
+	function isUsername($value)
+	{
+		return preg_match('/^([a-z0-9_-]{4,32})+$/i', $value);
+	}
+	
+	
+	/* ******************************************************************** 
+	 * Function: isPassword
+	 * Parameters: mixed string
+	 * Purpose: Checks if the string contains only chars, digits, underscores and dashes, 
+	 *          @, *, # and is 8-60 characters long.
+	 * Notes: Returns true or false
+	 ********************************************************************** */
+	 	 
+	function isPassword($value)
+	{
+		return preg_match('/^([a-z0-9@*#_-]{8,60})+$/i', $value);
+	}
+
+
+	/* ******************************************************************** 
+	 * Function: MakeFriendlyUrl
+	 * Parameters: mixed string
+	 * Purpose: Makes a friendly url, e.g. "this-is-a-friendly-url"
+	 * Notes: Returns the sanitized string
+	 ********************************************************************** */
+	 
+	function MakeFriendlyUrl($value)
+	{
+		return make_url_friendly($value);
+	}
+	
+	
+	/* ******************************************************************** 
+	 * Function: SanitizeMixedString1
+	 * Parameters: mixed string
+	 * Purpose: Sanitize input for display to the browser
+	 * Notes: Returns the sanitized string
+	 ********************************************************************** */
+	 
+	function SanitizeMixedString1($value)
+	{
+		return sanitize($value, 1);
+	}
+	
+	
+	/* ******************************************************************** 
+	 * Function: SanitizeMixedString2
+	 * Parameters: mixed string
+	 * Purpose: Sanitize input for saving to the database or condition testing
+	 * Notes: Returns the sanitized string
+	 ********************************************************************** */
+	 
+	function SanitizeMixedString2($value)
+	{
+		return sanitize($value, 2);
 	}
 }
 ?>

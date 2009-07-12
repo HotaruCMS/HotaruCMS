@@ -31,6 +31,7 @@ global $hotaru, $plugin; // don't remove
  "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
+   <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
    <title><?php echo site_name; ?></title>
    <link rel="stylesheet" href="<?php echo baseurl . '3rd_party/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
    <link rel="stylesheet" href="<?php echo baseurl . 'themes/' . theme . 'style.css'; ?>" type="text/css">
