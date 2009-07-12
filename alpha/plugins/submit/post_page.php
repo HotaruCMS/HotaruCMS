@@ -49,9 +49,7 @@ $userbase = new UserBase();
 		<div class="show_post_content"><?php echo $post->post_content; ?></div>
 	<?php } ?>
 	
-	<?php if($post->use_tags) { ?>
-		<div class="show_post_tags"><?php echo $post->post_tags; ?></div>
-	<?php } ?>
+	<?php $plugin->check_actions('submit_post_page_extra_fields_1'); ?>
 	
 	<div class="show_permalink"><a href='<?php echo url(array('page'=>$post->post_id)); ?>'>Permalink</a></div>
 	
