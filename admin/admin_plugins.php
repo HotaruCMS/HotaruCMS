@@ -48,8 +48,6 @@ $plugin_to_uninstall = $cage->post->testAlnumLines('plugin_folder');
 if($plugin_to_uninstall) { 
 	$plugin->uninstall_plugin($plugin_to_uninstall);
 	echo "<br /><b>" . $lang['admin_plugins_uninstall_done'] . "</b> <br /><br />";
-	echo $lang['admin_plugins_uninstall_deleted'] . "<br /><br />";
-	echo $lang['admin_plugins_uninstall_note'] . "<br /><br />";
 	echo $lang['admin_plugins_uninstall_refresh'];
 }
 

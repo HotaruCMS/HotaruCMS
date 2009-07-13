@@ -66,7 +66,10 @@ function url($parameters = array(), $head = 'index') {
 		}
 		
 		foreach($parameters as $key => $value) {
-			if($key == 'page' && is_numeric($value)) {
+			if($key == 'pg' && is_numeric($value)) {
+				// must be pagination...
+				$url .= $key . '/' . $value . '/';				
+			} elseif($key == 'page' && is_numeric($value)) {
 				// must be a post title, let's get the post_url...
 				$value = $post->post_url;
 				$url .= $value . '/';				
