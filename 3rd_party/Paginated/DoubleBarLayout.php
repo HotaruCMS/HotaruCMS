@@ -11,7 +11,7 @@ class DoubleBarLayout implements PageLayout {
 
 		if(!$parent->isFirstPage()) {
 			if($currentPage != 1 && $currentPage != 2 && $currentPage != 3) {
-					$str .= "<a href='?page=1$queryVars' title='Start'>First</a> &lt; ";
+				$str .= "<a href='" . url(array('pg'=>'1' . $queryVars)) . "'  title='Start'>First </a>";
 			}
 		}
 
@@ -19,7 +19,7 @@ class DoubleBarLayout implements PageLayout {
 	   	//if it is not the first page then write previous to the screen
 		if(!$parent->isFirstPage()) {
 			$previousPage = $currentPage - 1;
-			$str .= "<a href=\"?page=$previousPage$queryVars\">&lt; previous</a> ";
+			$str .= "<a href='" . url(array('pg'=>$previousPage . $queryVars)) . "'>&lt; previous </a>";
 		}
 
 		for($i = $currentPage - 2; $i <= $currentPage + 2; $i++) {
@@ -36,21 +36,22 @@ class DoubleBarLayout implements PageLayout {
 				$str .= "<i>Page $i</i>";
 			}
 			else {
-				$str .= "<a href=\"?page=$i$queryVars\">$i</a>";
+				$str .= "<a href='" . url(array('pg'=>$i . $queryVars)) . "'>$i</a>";
 			}
 			($i == $currentPage + 2 || $i == $parent->fetchNumberPages()) ? $str .= " " : $str .= " | ";              //determine if to print bars or not
-		}//end for
+		} //end for
 
 		if (!$parent->isLastPage()) {
 			if($currentPage != $parent->fetchNumberPages() && $currentPage != $parent->fetchNumberPages() -1 && $currentPage != $parent->fetchNumberPages() - 2)
 			{
-				$str .= " &gt; <a href=\"?page=".$parent->fetchNumberPages()."$queryVars\" title=\"Last\">Last(".$parent->fetchNumberPages().") </a>";
+				$str .= " &gt; <a href=\"?pg=".$parent->fetchNumberPages()."$queryVars\" title=\"Last\">Last(".$parent->fetchNumberPages().") </a>";
+				$str .= " &gt; <a href='" . url(array('pg'=>$parent->fetchNumberPages() . $queryVars)) . "'  title='Last'>Last(".$parent->fetchNumberPages().")</a>";
 			}
 		}
 
 		if(!$parent->isLastPage()) {
 			$nextPage = $currentPage + 1;
-			$str .= "<a href=\"?page=$nextPage$queryVars\">next &gt;</a>";
+			$str .= "<a href='" . url(array('pg'=>$nextPage . $queryVars)) . "'>next &gt;</a>";
 		}
 		return $str;
 	}
