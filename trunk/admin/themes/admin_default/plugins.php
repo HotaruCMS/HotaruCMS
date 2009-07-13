@@ -102,11 +102,13 @@ $plugin_widgets = $plugin->get_plugins(); // don't remove
 	<p class="info_header">Plugin Management Guide</p>
 	<?php $plugin->check_actions('plugins_guide_top'); ?>
 	&raquo; To enable or disable plugins, drag them below "Inactive plugins" or "Active plugins".<br />
+	&raquo; After activating a plugin, refresh the page for its settings link to appear under "Plugin Settings".<br />
 	&raquo; Click the " + " icon to expand a plugin and view its details.<br />
 	&raquo; Click "Uninstall" (when expanded) to delete a plugin from the database.<br />
+	&nbsp; &nbsp; &raquo; Uninstalling a plugin will delete it from the <i>plugins</i>, <i>plugin_hooks</i> and <i>plugin_settings</i> tables.<br />
+	&nbsp; &nbsp; &raquo; Any other database entries created by the plugin will not be removed.<br />
 	&raquo; A red asterisk shows by a plugin's title if a newer version is available in the plugins folder.<br />
 	&raquo; Deactivate and uninstall a plugin before activating a newer version.<br />
-	&raquo; After activating a plugin, refresh the page for its settings link to appear under "Plugin Settings".<br />
 	<?php $plugin->check_actions('plugins_guide_bottom'); ?>
 </div>
 

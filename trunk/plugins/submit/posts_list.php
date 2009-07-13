@@ -24,12 +24,13 @@
  *
  **************************************************************************************************** */
 
-global $plugin, $post;
+global $plugin, $post, $cage;
 $userbase = new UserBase();
 		
 $stories = $post->get_posts();
 if($stories) {
-	$pagedResults = new Paginated($stories, 10, $page);
+	$pg = $cage->get->getInt('pg');
+	$pagedResults = new Paginated($stories, 10, $pg);
 	while($story = $pagedResults->fetchPagedRow()) {	//when $story is false loop terminates	
 		$post->read_post($story->post_id);
 
