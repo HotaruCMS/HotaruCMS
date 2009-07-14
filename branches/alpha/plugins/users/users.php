@@ -6,7 +6,7 @@
  * version: 0.1
  * folder: users
  * prefix: usr
- * hooks: users, hotaru_header, install_plugin_starter_settings, navigation_last, theme_index_main
+ * hooks: users, hotaru_header, install_plugin, navigation_last, theme_index_main
  *
  *  License:
  *
@@ -63,13 +63,13 @@ function usr_hotaru_header() {
 
 
 /* ******************************************************************** 
- *  Function: usr_install_plugin_starter_settings
+ *  Function: usr_install_plugin
  *  Parameters: None
  *  Purpose: If it doesn't already exist, a "usermeta" table is created in the database
  *  Notes: Happens when theplugin is installed. The table is never deleted.
  ********************************************************************** */
  
-function usr_install_plugin_starter_settings() {
+function usr_install_plugin() {
 	global $db, $plugin;
 	
 	// Create a new empty table called "usermeta"

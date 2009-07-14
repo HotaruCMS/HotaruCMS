@@ -43,13 +43,19 @@ if($widget_positions) {
 	$plugin->update_plugin_statuses($widget_positions);	// Cycles through all plugins, enables or disables as necessary	
 }
 
-//$plugin_to_uninstall = $cage->post->testRegex('page', '/^([a-z0-9_-])+$/i');
-$plugin_to_uninstall = $cage->post->testAlnumLines('plugin_folder');
-if($plugin_to_uninstall) { 
-	$plugin->uninstall_plugin($plugin_to_uninstall);
+$the_plugin = $cage->post->testAlnumLines('plugin_folder');
+$action = $cage->post->testAlpha('action');
+
+if($the_plugin && ($action == 'upgrade')) {  
+	$plugin->upgrade_plugin($the_plugin);
+	echo "<br /><b>" . $lang['admin_plugins_upgrade_done'] . "</b> <br /><br />";
+	echo $lang['admin_plugins_upgrade_refresh'];
+}
+
+if($the_plugin && ($action == 'uninstall')) { 
+	$plugin->uninstall_plugin($the_plugin);
 	echo "<br /><b>" . $lang['admin_plugins_uninstall_done'] . "</b> <br /><br />";
 	echo $lang['admin_plugins_uninstall_refresh'];
 }
-
 
 ?>
