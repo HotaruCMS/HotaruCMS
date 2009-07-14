@@ -2,7 +2,7 @@
 
 /* **************************************************************************************************** 
  *  File: /class.plugins.php
- *  Purpose: Two Classes: Plugins and Plugin. The first deals with managing all plugins. The second deals with individual plugins.
+ *  Purpose: Manages all things plugin-related.
  *  Notes: Plugins extend the generic_pmd class in class.metadata.php which is a 3rd party script called "Generic PHP Config"
  *  License:
  *
@@ -26,7 +26,16 @@
 //includes
 require_once(includes . 'GenericPHPConfig/class.metadata.php');		// This is the generic_pmd class that reads post metadata from the top of a plugin file.
 
-class Plugins extends generic_pmd {
+class Plugin extends generic_pmd {
+
+	var $id = '';
+	var $enabled = 0;
+	var $name = '';
+	var $desc = '';
+	var $folder = '';
+	var $prefix = '';
+	var $version = 0;
+	var $hooks = array();
 	
 	/* ******************************************************************** 
 	 *  Function: get_plugins
@@ -58,7 +67,26 @@ class Plugins extends generic_pmd {
 					$allplugins[$count]['description'] = $plugin_row->plugin_desc;
 					$allplugins[$count]['folder'] = $plugin_row->plugin_folder;
 					$allplugins[$count]['status'] = $this->get_plugin_status($plugin_row->plugin_folder);
-					$allplugins[$count]['version'] = $plugin_row->plugin_version . "<br />" . $lang['admin_plugins_class_new_version'];
+					$allplugins[$count]['version'] = $plugin_row->plugin_version;
+					
+					// Long string that asks the user to upgrade...
+					if($this->hook_exists($plugin_row->plugin_folder, 'plugin_upgrade')) {
+						// If the plugin has an upgrade script...
+						$allplugins[$count]['version'] .= "<br />";
+						$allplugins[$count]['version'] .= $lang['admin_plugins_class_new_version'];
+						$allplugins[$count]['version'] .= " <a href='javascript://' ";
+						$allplugins[$count]['version'] .= "onclick='hide_show_replace(&quot;" . baseurl . "&quot;, &quot;changetext&quot;, &quot;widget_uninstall_result-";
+						$allplugins[$count]['version'] .= $plugin_row->plugin_folder . "&quot;, &quot;" . baseurl;
+						$allplugins[$count]['version'] .= "admin/admin_plugins.php&quot;, &quot;plugin_folder=";
+						$allplugins[$count]['version'] .= $plugin_row->plugin_folder . "&action=upgrade&quot;);'><b>";
+						$allplugins[$count]['version'] .= $lang['admin_plugins_class_upgrade_now'] . "</b></a>";
+					
+					} else {
+						// If the plugin doesn't have an upgrade script...
+						$allplugins[$count]['version'] .= "<br />";
+						$allplugins[$count]['version'] .= $lang['admin_plugins_class_new_version'];
+						$allplugins[$count]['version'] .= " " . $lang['admin_plugins_class_reinstall'];
+					}
 				} else {
 					// if plugin is not in database...
 					$allplugins[$count]['name'] = $plugin_details['name'];
@@ -156,28 +184,27 @@ class Plugins extends generic_pmd {
 		        }
 		}
 	}
-}
-
-/* ****************************************************************************************************************** 
-   ****************************************************************************************************************** 
-   ****************************************************************************************************************** 
-   ****************************************************************************************************************** */
-
-class Plugin extends Plugins {
-	var $id = '';
-	var $enabled = 0;
-	var $name = '';
-	var $desc = '';
-	var $folder = '';
-	var $prefix = '';
-	var $version = 0;
-	var $hooks = array();
+	
+	
+	/* ******************************************************************** 
+	 *  Function: hook_exists
+	 *  Parameters: plugin folder name, hook name
+	 *  Purpose: Returns true of a given hook exists for the specified plugin.
+	 *  Notes: ---
+	 ********************************************************************** */
+	 
+	function hook_exists($folder = "", $hook = "") {
+		global $db;
+		
+		$sql = "SELECT count(*) FROM " . table_pluginhooks . " WHERE plugin_folder = %s AND plugin_hook = %s";
+		if($db->get_var($db->prepare($sql, $folder, $hook))) { return true;} else { return false; }
+	}
 
 
 	/* ******************************************************************** 
 	 *  Function: install_plugin
 	 *  Parameters: plugin folder name
-	 *  Purpose: Adds plugin to plugins table, or updates it
+	 *  Purpose: Adds plugin to plugins table
 	 *  Notes: ---
 	 ********************************************************************** */
 	 
@@ -202,7 +229,31 @@ class Plugin extends Plugins {
 			$db->query($db->prepare($sql, $this->folder, trim($hook)));
 		}
 		
-		$this->check_actions('install_plugin_starter_settings', $folder);
+		$this->check_actions('install_plugin', $folder);
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: upgrade_plugin
+	 *  Parameters: plugin folder name
+	 *  Purpose: Plugins hook in here with their own upgrade scripts.
+	 *  Notes: This function does nothing by itself other than read the latest file's metadata.
+	 ********************************************************************** */
+	 
+	function upgrade_plugin($folder = "") {
+		global $db;
+		
+		$plugin_metadata = $this->read(plugins . $folder . "/" . $folder . ".php");
+		
+		$this->enabled = 1;	// Enable it at the same time we add it to the database.
+		$this->name = $plugin_metadata['name'];
+		$this->desc = $plugin_metadata['description'];
+		$this->folder = $folder;
+		$this->prefix = $plugin_metadata['prefix'];
+		$this->version = $plugin_metadata['version'];
+		$this->hooks = explode(',', $plugin_metadata['hooks']);
+		
+		$this->check_actions('upgrade_plugin', $folder);
 	}
 	
 	

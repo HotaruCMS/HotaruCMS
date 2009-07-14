@@ -37,11 +37,17 @@ $lang['admin_announcement_plugins_disabled'] = "<span style='color: #ff0000;'>Go
 $lang['admin_announcement_users_disabled'] = "<span style='color: #ff0000;'>Please enable the Users plugin in Plugin Management.</span>";
 
 /* Uninstall a plugin  - admin/plugins.php */
-$lang["admin_plugins_uninstall_done"] = "Done!";
-$lang["admin_plugins_uninstall_refresh"] = "Please <a href='javascript:location.reload(true);' target='_self'>refresh this page</a> to update these lists.";
+$lang["admin_plugins_uninstall_done"] = "Plugin uninstalled.";
+$lang["admin_plugins_uninstall_refresh"] = "Please <a href='javascript:location.reload(true);' target='_self'>refresh this page</a>.";
+
+/* Upgrade a plugin  - admin/plugins.php */
+$lang["admin_plugins_upgrade_done"] = "Plugin upgraded.";
+$lang["admin_plugins_upgrade_refresh"] = "Please <a href='javascript:location.reload(true);' target='_self'>refresh this page</a>.";
 
 /* Plugin info - /class.plugins.php */
-$lang["admin_plugins_class_new_version"] = "<span style='color: red'>- Newer version available</span>. <b>Please uninstall</b>.";
+$lang["admin_plugins_class_new_version"] = "<span style='color: red'>- Newer version available</span>.";
+$lang["admin_plugins_class_upgrade_now"] = "Upgrade now!";
+$lang["admin_plugins_class_reinstall"] = "This plugin doesn't have an upgrade script, so please uninstall and reactivate.";
 
 /* Settings */
 $lang['admin_settings_update_success'] = "Updated successfully.";

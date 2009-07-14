@@ -51,7 +51,7 @@ $plugin_widgets = $plugin->get_plugins(); // don't remove
 					<div class="widget-content" style="display:none">
 						<?php echo $plugin_widget['description']; ?> <br />
 						<?php echo "Version: " . $plugin_widget['version']; ?> <br />
-						<div class="widget_uninstall"><a href="javascript://" onclick="hide_show_replace('<?php echo baseurl ?>', 'changetext', 'widget_uninstall_result-<?php echo $plugin_widget['folder'] ?>', '<?php echo baseurl ?>admin/admin_plugins.php', 'plugin_folder=<?php echo $plugin_widget['folder'] ?>');">Uninstall</a></div>
+						<div class="widget_uninstall"><a href="javascript://" onclick="hide_show_replace('<?php echo baseurl ?>', 'changetext', 'widget_uninstall_result-<?php echo $plugin_widget['folder'] ?>', '<?php echo baseurl ?>admin/admin_plugins.php', 'plugin_folder=<?php echo $plugin_widget['folder'] ?>&action=uninstall');">Uninstall</a></div>
 						<div id="widget_uninstall_result-<?php echo $plugin_widget['folder'] ?>"></div>
 					</div>
 				</div>
@@ -80,7 +80,7 @@ $plugin_widgets = $plugin->get_plugins(); // don't remove
 					<div class="widget-content" style="display:none">
 						<?php echo $plugin_widget['description']; ?> <br />
 						<?php echo "Version: " . $plugin_widget['version']; ?>
-						<div class="widget_uninstall"><a href="javascript://" onclick="hide_show_replace('<?php echo baseurl ?>', 'changetext', 'widget_uninstall_result-<?php echo $plugin_widget['folder'] ?>', '<?php echo baseurl ?>admin/admin_plugins.php', 'plugin_folder=<?php echo $plugin_widget['folder'] ?>');">Uninstall</a></div>
+						<div class="widget_uninstall"><a href="javascript://" onclick="hide_show_replace('<?php echo baseurl ?>', 'changetext', 'widget_uninstall_result-<?php echo $plugin_widget['folder'] ?>', '<?php echo baseurl ?>admin/admin_plugins.php', 'plugin_folder=<?php echo $plugin_widget['folder'] ?>&action=uninstall');">Uninstall</a></div>
 						<div id="widget_uninstall_result-<?php echo $plugin_widget['folder'] ?>"></div>
 					</div>
 				</div>
@@ -108,7 +108,7 @@ $plugin_widgets = $plugin->get_plugins(); // don't remove
 	&nbsp; &nbsp; &raquo; Uninstalling a plugin will delete it from the <i>plugins</i>, <i>plugin_hooks</i> and <i>plugin_settings</i> tables.<br />
 	&nbsp; &nbsp; &raquo; Any other database entries created by the plugin will not be removed.<br />
 	&raquo; A red asterisk shows by a plugin's title if a newer version is available in the plugins folder.<br />
-	&raquo; Deactivate and uninstall a plugin before activating a newer version.<br />
+	&raquo; Some plugins will offer an upgrade link. Others will need uninstalling first.<br />
 	<?php $plugin->check_actions('plugins_guide_bottom'); ?>
 </div>
 
