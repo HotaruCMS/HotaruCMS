@@ -565,9 +565,16 @@
 		}
 		
 		function prepare($args=null) {
+			
 			if ( is_null( $args ) )
 				return;
+							
 			$args = func_get_args();
+			
+			if(is_array($args[0])) {	// This if cond. is a Hotaru hack, enabling args to be built on the fly.
+				$args = $args[0];	// See Submit plugin: class.post.php get_posts() for an example.
+			}
+						
 			$query = array_shift($args);
 			$query = str_replace("'%s'", '%s', $query); // in case someone mistakenly already singlequoted it
 			$query = str_replace('"%s"', '%s', $query); // doublequote unquoting

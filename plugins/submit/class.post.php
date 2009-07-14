@@ -148,15 +148,32 @@ class Post {
 	
 	/* ******************************************************************** 
 	 *  Function: get_posts
-	 *  Parameters: None
+	 *  Parameters: array of search parameters
 	 *  Purpose: Gets all the posts from the database
-	 *  Notes: ---
+	 *  Notes: Example usage: $post->get_posts(array('post_tags LIKE %s' => '%tokyo%'));
 	 ********************************************************************** */	
 	 	
-	function get_posts() {
+	function get_posts($vars = array()) {
 		global $db;
-		$sql = "SELECT * FROM " . table_posts . " ORDER BY post_date DESC";
-		$posts = $db->get_results($db->prepare($sql));
+		
+		$filter = '';
+		$prepare_array = array();
+		$prepare_array[0] = "temp";	// placeholder to be later filled with the SQL query.
+		
+		if(!empty($vars)) {
+			$filter = " WHERE ";
+			foreach($vars as $key => $value) {
+				$filter .= $key . " AND ";	// e.g. " post_tags LIKE %s "
+				array_push($prepare_array, $value);
+			}
+			$filter = rstrtrim($filter, "AND ");
+		}
+		
+		$sql = "SELECT * FROM " . table_posts . $filter . " ORDER BY post_date DESC";
+		
+		$prepare_array[0] = $sql;
+				
+		$posts = $db->get_results($db->prepare($prepare_array));
 		if($posts) { return $posts; } else { return false; }
 	}
 	
