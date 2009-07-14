@@ -119,9 +119,11 @@ class Post {
 	 ********************************************************************** */	
 	 
 	function add_post() {
-		global $db, $plugin;
+		global $db, $plugin, $last_insert_id;
 		$sql = "INSERT INTO " . table_posts . " SET post_orig_url = %s, post_title = %s, post_url = %s, post_content = %s, post_tags = %s, post_status = %s, post_author = %d";
 		$db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), urlencode(trim($this->post_tags)), $this->post_status, $this->post_author));
+		
+		$last_insert_id = $db->get_var($db->prepare("SELECT LAST_INSERT_ID()"));
 		
 		$plugin->check_actions('submit_class_post_add_post');
 		
