@@ -6,7 +6,7 @@
  * version: 0.1
  * folder: submit
  * prefix: sub
- * hooks: submit, hotaru_header, header_include, install_plugin_starter_settings, navigation_last, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: submit, hotaru_header, header_include, install_plugin, navigation_last, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  *  License:
  *
@@ -43,13 +43,13 @@ function sub_submit(&$parameters) {
 
 
 /* ******************************************************************** 
- *  Function: sub_install_plugin_starter_settings
+ *  Function: sub_install_plugin
  *  Parameters: None
  *  Purpose: If they don't already exist, posts and postmeta tables are created
  *  Notes: Happens when the plugin is installed. The tables are never deleted.
  ********************************************************************** */
  
-function sub_install_plugin_starter_settings() {
+function sub_install_plugin() {
 	global $db, $plugin;
 	
 	// Create a new empty table called "posts"
