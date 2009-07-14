@@ -5,7 +5,7 @@
  * version: 0.1
  * folder: tags
  * prefix: tg
- * hooks: install_plugin_starter_settings, submit_hotaru_header, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_form_2_assign_from_cage, submit_form_2_assign_blank, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_posts_list_extra_fields_1, submit_post_page_extra_fields_1, submit_settings_get_values, submit_settings_form, submit_save_settings
+ * hooks: install_plugin_starter_settings, submit_hotaru_header, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_form_2_assign_from_cage, submit_form_2_assign_blank, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_posts_list_extra_fields_1, submit_post_page_extra_fields_1, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter
  *
  * Requires the Submit plugin.
  *
@@ -138,18 +138,10 @@ function tg_submit_class_post_add_post() {
 	$sql = "UPDATE " . table_posts . " SET post_tags = %s WHERE post_id = %d";
 	$db->query($db->prepare($sql, urlencode(trim($post->post_vars['post_tags'])), $last_insert_id));
 	
-	echo "inserted tags into post<br />";
-	
-	echo "<pre>";
-	print_r($post);
-	echo "</pre>";
-	
 	if(!empty($post->post_vars['post_tags'])) {
-		echo "post->post_tags is not empty... proceed<br />";
 		$tags_array = explode(',', $post->post_vars['post_tags']);
 		if($tags_array) {
 			foreach($tags_array as $tag) {
-				echo "tag to insert: " . $tag . "<br />";
 				$sql = "INSERT INTO " . table_tags . " SET tags_post_id = %d, tags_word = %s";
 				$db->query($db->prepare($sql, $last_insert_id, urlencode(trim($tag))));
 			}
@@ -267,6 +259,31 @@ function tg_submit_form_2_process_submission() {
  
 
 /* ******************************************************************** 
+ *  Function: tg_submit_posts_list_filter
+ *  Parameters: None
+ *  Purpose: Gets a tag from the url and sets the filter for get_posts
+ *  Notes: This hook is at the top of posts_list.php in the Sumit plugin.
+ ********************************************************************** */
+ 
+function tg_submit_posts_list_filter() {
+	global $post, $cage, $filter;
+	
+	// friendly URLs: FALSE
+	$tag = $cage->get->getMixedString2('tag'); 
+	
+	// friendly URLs: TRUE
+	if(!$tag) { $tag = $cage->get->getMixedString2('pos2'); } 
+	
+	if($tag) {
+		$filter = array('post_tags LIKE %s' => '%' . $tag . '%'); 
+		return true;	
+	}
+	
+	return false;	
+}
+
+
+/* ******************************************************************** 
  *  Function: tg_submit_posts_list_extra_fields_1
  *  Parameters: None
  *  Purpose: Shows tags in each post on Posts List page
@@ -275,9 +292,14 @@ function tg_submit_form_2_process_submission() {
  
 function tg_submit_posts_list_extra_fields_1() {
 	global $post;
-	if($post->post_vars['use_tags']) { 
-		echo "<div class='show_post_tags'>" . $post->post_vars['post_tags'] . "</div>";
-	}
+	if($post->post_vars['use_tags'] && $post->post_vars['post_tags']) { 
+		echo "<div class='show_post_tags'>";
+		$tags = explode(',', $post->post_vars['post_tags']);
+		foreach($tags as $tag) {
+			echo "<a href='" . url(array('tag' => trim($tag))) . "'>" . trim($tag) . "</a>&nbsp;";
+		}
+		echo "</div>";
+	}	
 }
 
 
