@@ -5,7 +5,7 @@
  * version: 0.1
  * folder: tags
  * prefix: tg
- * hooks: install_plugin_starter_settings, submit_hotaru_header, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_form_2_assign_from_cage, submit_form_2_assign_blank, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_posts_list_extra_fields_1, submit_post_page_extra_fields_1, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter
+ * hooks: install_plugin, submit_hotaru_header, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_form_2_assign_from_cage, submit_form_2_assign_blank, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_posts_list_extra_fields_1, submit_post_page_extra_fields_1, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter
  *
  * Requires the Submit plugin.
  *
@@ -37,13 +37,13 @@
  
  
 /* ******************************************************************** 
- *  Function: tg_install_plugin_starter_settings
+ *  Function: tg_install_plugin
  *  Parameters: None
  *  Purpose: If it doesn't already exist, add a post_tags field to posts table.
  *  Notes: Happens when the plugin is installed. The field is never deleted.
  ********************************************************************** */
  
-function tg_install_plugin_starter_settings() {
+function tg_install_plugin() {
 	global $db, $plugin;
 	
 	// Create a new table column called "post_tags" if it doesn't already exist

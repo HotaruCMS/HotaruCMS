@@ -6,7 +6,7 @@
  * version: 0.1
  * folder: rss_show
  * prefix: rs
- * hooks: rss_show, admin_header_include, header_include, admin_sidebar_plugin_settings, admin_plugin_settings, install_plugin_starter_settings
+ * hooks: rss_show, admin_header_include, header_include, admin_sidebar_plugin_settings, admin_plugin_settings, install_plugin
  *
  * Usage: Add <?php $plugin->check_actions('rss_show'); ?> to your theme, wherever you want to show the links.
  *
@@ -175,14 +175,14 @@ function rs_admin_sidebar_plugin_settings() {
 
 
 /* ******************************************************************** 
- *  Function: rs_install_plugin_starter_settings
+ *  Function: rs_install_plugin
  *  Parameters: None
  *  Purpose: When the plugin is installed, this function inserts some prelimnary 
  *           settings into the pluginsettings table.
  *  Notes: All database queries should use the prepare function.
  ********************************************************************** */
  
-function rs_install_plugin_starter_settings($id) {
+function rs_install_plugin($id) {
 	global $db, $plugin;
 	
 	if(!$id || !is_int($id)) { $id = 1; }
