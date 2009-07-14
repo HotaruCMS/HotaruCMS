@@ -56,23 +56,23 @@ RewriteRule ^admin/settings/?$ admin/admin_index.php?page=settings [L]
 RewriteRule ^admin/maintenance/?$ admin/admin_index.php?page=maintenance [L]
 RewriteRule ^admin/plugin_settings/([a-zA-Z0-9_-]+)/?$ admin/admin_index.php?page=plugin_settings&plugin=$1 [L]
 
-##### PAGINATION RULES ####
-RewriteRule ^pg/(.*)/?$ index.php?pg=$1 [L]
-
 ##### GENERIC RULES #####
 RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
-RewriteRule ^(.*)/?$ index.php?page=$1 [L]
+RewriteRule ^([^/]*)/?$ index.php?page=$1 [L]
 
 RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
-RewriteRule ^(.*)/(.*)/?$ index.php?page=$1&pos2=$2 [L]
+RewriteRule ^([^/]*)/([^/]*)/?$ index.php?$1=$2 [L]
 
 RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
-RewriteRule ^(.*)/(.*)/(.*)/?$ index.php?page=$1&pos2=$2&pos3=$3 [L]
+RewriteRule ^([^/]*)/([^/]*)/([^/]*)/?$ index.php?page=$1&$2=$3 [L]
 
 RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
-RewriteRule ^(.*)/(.*)/(.*)/(.*)/?$ index.php?page=$1&pos2=$2&pos3=$3&pos4=$4 [L]
+RewriteRule ^([^/]*)/([^/]*)/([^/]*)/([^/]*)/?$ index.php?$1=$2&$3=$4 [L]
 
 RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
-RewriteRule ^(.*)/(.*)/(.*)/(.*)/(.*)/?$ index.php?page=$1&pos2=$2&pos3=$3&pos4=$4&pos5=$5 [L]
+RewriteRule ^([^/]*)/([^/]*)/([^/]*)/([^/]*)/([^/]*)/?$ index.php?page=$1&$2=$3&$4=$5 [L]
+
+RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
+RewriteRule ^([^/]*)/([^/]*)/([^/]*)/([^/]*)/([^/]*)/([^/]*)/?$ index.php?$1=$2&$3=$4&$5=$6 [L]
 
 ##### URL Rewriting End #####

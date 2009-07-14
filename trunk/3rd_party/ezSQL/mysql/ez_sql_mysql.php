@@ -170,7 +170,7 @@
 
 			// For reg expressions
 			$query = trim($query);
-
+			
 			// Log how the function was called
 			$this->func_call = "\$db->query(\"$query\")";
 

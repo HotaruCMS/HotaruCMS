@@ -203,9 +203,9 @@ function sub_theme_index_main() {
 				header("Location: " . baseurl);	// Go home  
 			} 
 			return true;
-			
+							
 		} elseif($hotaru->is_page('main')) {
-			// First time here, let's show the form...
+			// Show the list of posts
 			$hotaru->display_template('posts_list', 'submit');
 			return true;
 			

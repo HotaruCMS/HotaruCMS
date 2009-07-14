@@ -24,10 +24,13 @@
  *
  **************************************************************************************************** */
 
-global $plugin, $post, $cage;
+global $plugin, $post, $cage, $filter;
 $userbase = new UserBase();
 		
-$stories = $post->get_posts();
+$filter = array();
+$plugin->check_actions('submit_posts_list_filter');
+$stories = $post->get_posts($filter);
+
 if($stories) {
 	$pg = $cage->get->getInt('pg');
 	$pagedResults = new Paginated($stories, 10, $pg);
