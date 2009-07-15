@@ -25,6 +25,7 @@
  **************************************************************************************************** */
 
 global $hotaru, $plugin, $post, $userbase;
+$hotaru->template_name = 'post_page';
 $userbase = new UserBase();
 
 ?>
@@ -33,7 +34,7 @@ $userbase = new UserBase();
 
 <div class="show_post">
 
-	<?php $plugin->check_actions('submit_post_page_1'); ?>
+	<?php $plugin->check_actions('submit_show_post_post_start'); ?>
 	
 	<div class="show_post_title"><a href='<?php echo $post->post_orig_url; ?>'><?php echo $post->post_title; ?></a></div>
 
@@ -42,6 +43,7 @@ $userbase = new UserBase();
 			Posted
 			<?php if($post->use_author) { echo " by " . $userbase->get_username($post->post_author); } ?>
 			<?php if($post->use_date) { echo time_difference(unixtimestamp($post->post_date)) . " ago"; } ?>
+			<?php $plugin->check_actions('submit_show_post_author_date'); ?>
 		</div>
 	<?php } ?>
 		
@@ -49,11 +51,14 @@ $userbase = new UserBase();
 		<div class="show_post_content"><?php echo $post->post_content; ?></div>
 	<?php } ?>
 	
-	<?php $plugin->check_actions('submit_post_page_extra_fields_1'); ?>
+	<?php $plugin->check_actions('submit_show_post_extra_fields'); ?>
+		
+	<div class="show_post_extras">
+		<a href='<?php echo url(array('page'=>$post->post_id)); ?>'>Permalink</a>
+		<?php $plugin->check_actions('submit_show_post_extras'); ?>
+	</div>
 	
-	<div class="show_permalink"><a href='<?php echo url(array('page'=>$post->post_id)); ?>'>Permalink</a></div>
-	
-	<?php $plugin->check_actions('submit_post_page_2'); ?>
+	<?php $plugin->check_actions('submit_show_post_post_end'); ?>
 	
 </div>
 
