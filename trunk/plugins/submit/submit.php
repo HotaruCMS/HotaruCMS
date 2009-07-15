@@ -29,19 +29,6 @@
  
 return false; die(); // die on direct access.
 
-
-/* ******************************************************************** 
- *  Function: sub_submit
- *  Parameters: None
- *  Purpose: 
- *  Notes: 
- ********************************************************************** */
-
-function sub_submit(&$parameters) {
-
-}
-
-
 /* ******************************************************************** 
  *  Function: sub_install_plugin
  *  Parameters: None
@@ -50,7 +37,7 @@ function sub_submit(&$parameters) {
  ********************************************************************** */
  
 function sub_install_plugin() {
-	global $db, $plugin;
+	global $db, $plugin, $post;
 	
 	// Create a new empty table called "posts"
 	$exists = $db->table_exists('posts');
@@ -87,6 +74,13 @@ function sub_install_plugin() {
 		) TYPE = MyISAM;";
 		$db->query($sql); 
 	}
+	
+	// Default settings (Note: we can't use $post because it hasn't been filled yet.)
+	$plugin->plugin_settings_update('submit', 'submit_author', 'checked');	
+	$plugin->plugin_settings_update('submit', 'submit_date', 'checked');
+	$plugin->plugin_settings_update('submit', 'submit_content', 'checked');	
+	$plugin->plugin_settings_update('submit', 'submit_content_length', 50);		
+	
 }
 
 
