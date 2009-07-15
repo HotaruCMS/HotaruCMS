@@ -24,7 +24,8 @@
  *
  **************************************************************************************************** */
 
-global $plugin, $post, $cage, $filter;
+global $hotaru, $plugin, $post, $cage, $filter;
+$hotaru->template_name = 'posts_list';
 $userbase = new UserBase();
 		
 $filter = array();
@@ -41,9 +42,9 @@ if($stories) {
 
 <!-- ************ POST **************** -->
 
-<div class="posts_list">
+<div class="show_post">
 
-	<?php $plugin->check_actions('submit_posts_list_1'); ?>
+	<?php $plugin->check_actions('submit_show_post_post_start'); ?>
 	
 	<div class="show_post_title"><a href='<?php echo $post->post_orig_url; ?>'><?php echo $post->post_title; ?></a></div>
 
@@ -52,6 +53,7 @@ if($stories) {
 			Posted
 			<?php if($post->use_author) { echo " by " . $userbase->get_username($post->post_author); } ?>
 			<?php if($post->use_date) { echo time_difference(unixtimestamp($post->post_date)) . " ago"; } ?>
+			<?php $plugin->check_actions('submit_show_post_author_date'); ?>
 		</div>
 	<?php } ?>
 		
@@ -59,11 +61,14 @@ if($stories) {
 		<div class="show_post_content"><?php echo $post->post_content; ?></div>
 	<?php } ?>
 	
-	<?php $plugin->check_actions('submit_posts_list_extra_fields_1'); ?>
+	<?php $plugin->check_actions('submit_show_post_extra_fields'); ?>
 		
-	<div class="show_permalink"><a href='<?php echo url(array('page'=>$post->post_id)); ?>'>Permalink</a></div>
+	<div class="show_post_extras">
+		<a href='<?php echo url(array('page'=>$post->post_id)); ?>'>Permalink</a>
+		<?php $plugin->check_actions('submit_show_post_extras'); ?>
+	</div>
 	
-	<?php $plugin->check_actions('submit_posts_list_2'); ?>
+	<?php $plugin->check_actions('submit_show_post_post_end'); ?>
 	
 </div>
 
