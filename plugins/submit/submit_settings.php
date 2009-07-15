@@ -119,7 +119,7 @@ function sub_save_settings() {
 		$content_length = $post->post_content_length; 
 	} 
 	
-	$plugin->check_actions('submit_settings_save_settings');
+	$plugin->check_actions('submit_save_settings');
 	
 	$plugin->plugin_settings_update('submit', 'submit_author', $author);	
 	$plugin->plugin_settings_update('submit', 'submit_date', $date);	

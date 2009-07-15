@@ -44,7 +44,7 @@
  ********************************************************************** */
  
 function tg_install_plugin() {
-	global $db, $plugin;
+	global $db, $plugin, $post;
 	
 	// Create a new table column called "post_tags" if it doesn't already exist
 	$exists = $db->column_exists('posts', 'post_tags');
@@ -66,6 +66,10 @@ function tg_install_plugin() {
 		$db->query($sql); 
 	}
 	
+	// Default settings (Note: we can't use $post->post_vars because it hasn't been filled yet.)
+	$plugin->plugin_settings_update('submit', 'submit_tags', 'checked');
+	$plugin->plugin_settings_update('submit', 'submit_max_tags', 50);
+	
 	// Could possibly do with some code here that extracts all existingtags from the posts table and populates the tags table with them.
 	// Maybe in a later version.
 }
@@ -85,7 +89,7 @@ function tg_submit_hotaru_header() {
 	
 	$post->post_vars['post_tags'] = '';
 	$post->post_vars['post_max_tags'] = 50;	// max characters for tags
-	$post->post_vars['use_tags'] = false;
+	$post->post_vars['use_tags'] = true;
 	
 }
 
@@ -361,7 +365,7 @@ function tg_submit_settings_form() {
 function tg_submit_save_settings() {
 	global $plugin, $cage, $lang, $tags, $max_tags;
 	
-		// Tags
+	// Tags
 	if($cage->post->keyExists('tags')) { 
 		$tags = 'checked'; 
 		$post->post_vars['use_tags'] = true;
