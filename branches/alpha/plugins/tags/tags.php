@@ -5,7 +5,7 @@
  * version: 0.1
  * folder: tags
  * prefix: tg
- * hooks: install_plugin, submit_hotaru_header, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_form_2_assign_from_cage, submit_form_2_assign_blank, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_posts_list_extra_fields_1, submit_post_page_extra_fields_1, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter
+ * hooks: install_plugin, submit_hotaru_header, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_form_2_assign_from_cage, submit_form_2_assign_blank, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_show_post_extra_fields, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter
  *
  * Requires the Submit plugin.
  *
@@ -284,39 +284,28 @@ function tg_submit_posts_list_filter() {
 
 
 /* ******************************************************************** 
- *  Function: tg_submit_posts_list_extra_fields_1
+ *  Function: tg_submit_show_post_extra_fields
  *  Parameters: None
- *  Purpose: Shows tags in each post on Posts List page
+ *  Purpose: Shows tags in each post
  *  Notes: ---
  ********************************************************************** */
  
-function tg_submit_posts_list_extra_fields_1() {
+function tg_submit_show_post_extra_fields() { 
 	global $post;
+	
 	if($post->post_vars['use_tags'] && $post->post_vars['post_tags']) { 
 		echo "<div class='show_post_tags'>";
 		$tags = explode(',', $post->post_vars['post_tags']);
+		
+		echo "Tags: ";
+		
 		foreach($tags as $tag) {
 			echo "<a href='" . url(array('tag' => trim($tag))) . "'>" . trim($tag) . "</a>&nbsp;";
 		}
 		echo "</div>";
-	}	
+	}		
 }
 
-
-/* ******************************************************************** 
- *  Function: tg_submit_post_page_extra_fields_1
- *  Parameters: None
- *  Purpose: Shows tags in each post on Post Page page
- *  Notes: ---
- ********************************************************************** */
- 
-function tg_submit_post_page_extra_fields_1() {
-	global $post;
-
-	if($post->post_vars['use_tags']) { 
-		echo "<div class='show_post_tags'>" . $post->post_vars['post_tags'] . "</div>";
-	}
-}
 
 
  /* ******************************************************************** 

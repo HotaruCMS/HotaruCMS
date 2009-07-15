@@ -31,6 +31,7 @@ class Hotaru {
 	var $sidebar = true;
 	var $message = '';
 	var $message_type = 'green';	// green or red, color of message box
+	var $template_name = '';	// e.g. 'posts_list'
 	
 	
 	/* ******************************************************************** 
