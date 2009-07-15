@@ -34,7 +34,7 @@ $userbase = new UserBase();
 
 <div class="show_post">
 
-	<?php $plugin->check_actions('submit_show_post_post_start'); ?>
+	<?php $plugin->check_actions('submit_show_post_start'); ?>
 	
 	<div class="show_post_title"><a href='<?php echo $post->post_orig_url; ?>'><?php echo $post->post_title; ?></a></div>
 
@@ -58,7 +58,7 @@ $userbase = new UserBase();
 		<?php $plugin->check_actions('submit_show_post_extras'); ?>
 	</div>
 	
-	<?php $plugin->check_actions('submit_show_post_post_end'); ?>
+	<?php $plugin->check_actions('submit_show_post_end'); ?>
 	
 </div>
 
