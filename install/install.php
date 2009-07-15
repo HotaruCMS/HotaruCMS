@@ -24,7 +24,13 @@
  **************************************************************************************************** */
 
 require_once('../hotaru_settings.php');
-require_once('../class.plugins.php');	// Needed for error and success messages
+require_once('../class.hotaru.php');	// Needed for error and success messages
+
+// Clear the database cache in case of a re-install.
+require_once('../admin/class.admin.php'); 
+$admin = new Admin();
+$admin->delete_files(includes . 'ezSQL/cache');	
+
 // Global Inspekt SuperCage
 require_once(includes . 'Inspekt/Inspekt.php');	
 if(!isset($cage)) { $cage = Inspekt::makeSuperCage(); }
@@ -190,14 +196,14 @@ function database_creation() {
  
 function register_admin() {
 	global $lang, $cage, $db;
-	
+		
 	// Remove any cookies set in a previous installation:
 	setcookie("hotaru_user", "", time()-3600, "/");
 	setcookie("hotaru_key", "", time()-3600, "/");
 	// --------------------------------------------------
 	
 	$hotaru = new Hotaru();
-
+	
 	echo html_header();
 	echo "<h2>" . $lang['install_step4'] . "</h2>\n";
 	echo "<div class='install_content'>" . $lang['install_step4_instructions'] . ":<br />\n";
@@ -364,14 +370,15 @@ function create_table($table_name) {
 
 	if($table_name == "settings") {
 		$sql = "CREATE TABLE `" . db_prefix . $table_name . "` (
-		  `settings_id` int(20) NOT NULL auto_increment,
-		  `settings_name` varchar(64) NOT NULL default '',
-		  `settings_value` text NOT NULL default '',
-		  `settings_default` text NOT NULL default '',
-		  `settings_note` text NOT NULL default '',
-		  PRIMARY KEY  (`settings_id`),
+		  `settings_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+		  `settings_name` varchar(64) NOT NULL,
+		  `settings_value` text NOT NULL DEFAULT '',
+		  `settings_default` text NOT NULL DEFAULT '',
+		  `settings_note` text NOT NULL DEFAULT '',
+		  `settings_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		  `settings_updateby` int(20) NOT NULL DEFAULT 0,
 		  UNIQUE KEY `key` (`settings_name`)
-		) TYPE = MyISAM;";
+		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Application Settings';";
 		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);
 		
@@ -395,58 +402,62 @@ function create_table($table_name) {
 	
 	if($table_name == "users") {	
 		$sql = "CREATE TABLE `" . db_prefix . $table_name . "` (
-		  `user_id` int(20) NOT NULL auto_increment,
-		  `user_username` varchar(32) NOT NULL default '',
-		  `user_role` varchar(32) NOT NULL default 'registered_user',
-		  `user_date` timestamp NOT NULL,
-		  `user_password` varchar(64) NOT NULL default '',
-		  `user_email` varchar(128) NOT NULL default '',
-		  `user_lastlogin` timestamp NOT NULL,
-		  PRIMARY KEY  (`user_id`),
+		  `user_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+		  `user_username` varchar(32) NOT NULL,
+		  `user_role` varchar(32) NOT NULL DEFAULT 'registered_user',
+		  `user_date` timestamp NULL,
+		  `user_password` varchar(64) NOT NULL DEFAULT '',
+		  `user_email` varchar(128) NOT NULL DEFAULT '',
+		  `user_lastlogin` timestamp NULL,
+		  `user_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		  `user_updateby` int(20) NOT NULL DEFAULT 0,
 		  UNIQUE KEY `key` (`user_username`),
 		  KEY `user_email` (`user_email`)
-		) TYPE = MyISAM;";
+		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Users and Roles';";
 		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql); 
 	}
 	
 	if($table_name == "plugins") {
 		$sql = "CREATE TABLE `" . db_prefix . $table_name . "` (
-		  `plugin_id` int(11) NOT NULL auto_increment,
-		  `plugin_enabled` tinyint(1) NOT NULL default '0',
-		  `plugin_name` varchar(64) NOT NULL default '',
-		  `plugin_prefix` varchar(16) NOT NULL default '',
-		  `plugin_folder` varchar(64) NOT NULL default '',
-		  `plugin_desc` varchar(255) NOT NULL default '',
-		  `plugin_version` varchar(32) NOT NULL default '0.0',
-		  PRIMARY KEY  (`plugin_id`),
+		  `plugin_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+		  `plugin_enabled` tinyint(1) NOT NULL DEFAULT '0',
+		  `plugin_name` varchar(64) NOT NULL DEFAULT '',
+		  `plugin_prefix` varchar(16) NOT NULL DEFAULT '',
+		  `plugin_folder` varchar(64) NOT NULL,
+		  `plugin_desc` varchar(255) NOT NULL DEFAULT '',
+		  `plugin_version` varchar(32) NOT NULL DEFAULT '0.0',
+		  `plugin_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		  `plugin_updateby` int(20) NOT NULL DEFAULT 0,
 		  UNIQUE KEY `key` (`plugin_folder`)
-		) TYPE = MyISAM;";
+		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Application Plugins';";
 		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);
 	}
 	
 	if($table_name == "pluginhooks") {
 		$sql = "CREATE TABLE `" . db_prefix . $table_name . "` (
-		  `phook_id` int(20) NOT NULL auto_increment,
-		  `plugin_folder` varchar(64) NOT NULL default '',
-		  `plugin_hook` varchar(128) NOT NULL default '',
-		  PRIMARY KEY  (`phook_id`),
+		  `phook_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+		  `plugin_folder` varchar(64) NOT NULL DEFAULT '',
+		  `plugin_hook` varchar(128) NOT NULL DEFAULT '',
+		  `plugin_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		  `plugin_updateby` int(20) NOT NULL DEFAULT 0,
 		  INDEX  (`plugin_folder`)
-		) TYPE = MyISAM;";
+		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Plugins Hooks';";
 		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);
 	}
 	
 	if($table_name == "pluginsettings") {
 		$sql = "CREATE TABLE `" . db_prefix . $table_name . "` (
-		  `psetting_id` int(20) NOT NULL auto_increment,
-		  `plugin_folder` varchar(64) NOT NULL default '',
+		  `psetting_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+		  `plugin_folder` varchar(64) NOT NULL,
 		  `plugin_setting` varchar(64) NULL,
 		  `plugin_value` text NULL,
-		  PRIMARY KEY  (`psetting_id`),
+		  `plugin_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		  `plugin_updateby` int(20) NOT NULL DEFAULT 0,
 		  INDEX  (`plugin_folder`)
-		) TYPE = MyISAM;";
+		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Plugins Settings';";
 		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);
 	}

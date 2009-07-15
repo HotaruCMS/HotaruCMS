@@ -36,9 +36,9 @@ class Post {
 	var $post_url = '';
 	var $post_date = '';
 			
-	var $use_author = false;
-	var $use_date = false;
-	var $use_content = false;
+	var $use_author = true;
+	var $use_date = true;
+	var $use_content = true;
 
 	var $post_vars = array();
 
@@ -81,14 +81,14 @@ class Post {
 		
 		//author
 		$this->post_author = $plugin->plugin_settings('submit', 'submit_author');
-		if($plugin->plugin_settings('submit', 'submit_author') == 'checked') { $this->use_author = true; }
+		if($plugin->plugin_settings('submit', 'submit_author') == 'checked') { $this->use_author = true; } else { $this->use_author = false; }
 		
 		//date
 		$this->post_date = $plugin->plugin_settings('submit', 'submit_date');
-		if($plugin->plugin_settings('submit', 'submit_date') == 'checked') { $this->use_date = true; }
+		if($plugin->plugin_settings('submit', 'submit_date') == 'checked') { $this->use_date = true; } else { $this->use_date = false; }
 		
 		//content
-		if($plugin->plugin_settings('submit', 'submit_content') == 'checked') { $this->use_content = true; }
+		if($plugin->plugin_settings('submit', 'submit_content') == 'checked') { $this->use_content = true; } else { $this->use_content = false; }
 		$content_length =  $plugin->plugin_settings('submit', 'submit_content_length');
 		if(!empty($content_length)) { $this->post_content_length = $content_length; }
 				
