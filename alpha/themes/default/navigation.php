@@ -30,7 +30,7 @@ global $hotaru, $plugin, $current_user; // don't remove
 <ul id="navigation">
 	<?php $plugin->check_actions('navigation_first'); ?>
 	<li><a href="<?php echo baseurl; ?>">Home</a></li>
-	<?php $plugin->check_actions('navigation_last'); ?>
+	<?php $plugin->check_actions('navigation'); ?>
 	<?php 
 		if(!$plugin->plugin_active('users')) { 
 			echo "<li><a href='" . url(array(), 'admin') . "'>";
@@ -40,6 +40,8 @@ global $hotaru, $plugin, $current_user; // don't remove
 			} else { 
 				echo "Log in</a></li>"; 
 			}
+		} else {
+			$plugin->check_actions('navigation_users', true, 'users'); // ensures login/logout/register are last.
 		}
 	?>
 </ul>
