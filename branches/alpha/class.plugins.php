@@ -368,7 +368,11 @@ class Plugin extends generic_pmd {
 	function plugin_active($folder = "") {	
 		global $db;
 		$active= $db->get_row($db->prepare("SELECT plugin_enabled, plugin_version FROM " . table_plugins . " WHERE plugin_folder = %s", $folder));
-		if($active->plugin_enabled == 1) { return $active->plugin_version; } else { return false; }
+		if($active) {
+			if($active->plugin_enabled == 1) { return $active->plugin_version; } else { return false; }
+		} else {
+			return false;
+		}
 	}
 	
 	
