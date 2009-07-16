@@ -6,7 +6,7 @@
  * version: 0.1
  * folder: submit
  * prefix: sub
- * hooks: submit, hotaru_header, header_include, install_plugin, navigation_last, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: submit, hotaru_header, header_include, install_plugin, navigation, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  *  License:
  *
@@ -130,13 +130,13 @@ function sub_hotaru_header() {
 
 
 /* ******************************************************************** 
- *  Function: sub_navigation_last
+ *  Function: sub_navigation
  *  Parameters: None
- *  Purpose: Adds a "submit a story" link to the end of the navigation bar
+ *  Purpose: Adds a "submit a story" link to the navigation bar
  *  Notes: 
  ********************************************************************** */
 
-function sub_navigation_last() {	
+function sub_navigation() {	
 	global $current_user;
 	
 	if($current_user->logged_in) {
