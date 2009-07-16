@@ -48,14 +48,14 @@ $action = $cage->post->testAlpha('action');
 
 if($the_plugin && ($action == 'upgrade')) {  
 	$plugin->upgrade_plugin($the_plugin);
-	echo "<br /><b>" . $lang['admin_plugins_upgrade_done'] . "</b> <br /><br />";
-	echo $lang['admin_plugins_upgrade_refresh'];
+	//echo "<br /><b>" . $lang['admin_plugins_upgrade_done'] . "</b> <br /><br />";
+	//echo $lang['admin_plugins_upgrade_refresh'];
 }
 
 if($the_plugin && ($action == 'uninstall')) { 
 	$plugin->uninstall_plugin($the_plugin);
-	echo "<br /><b>" . $lang['admin_plugins_uninstall_done'] . "</b> <br /><br />";
-	echo $lang['admin_plugins_uninstall_refresh'];
+	//echo "<br /><b>" . $lang['admin_plugins_uninstall_done'] . "</b> <br /><br />";
+	//echo $lang['admin_plugins_uninstall_refresh'];
 }
 
 ?>

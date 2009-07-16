@@ -36,13 +36,15 @@ $lang['admin_announcement_delete_install'] = "<span style='color: #ff0000;'>Plea
 $lang['admin_announcement_plugins_disabled'] = "<span style='color: #ff0000;'>Go to Plugin Management to enable some plugins.</span>";
 $lang['admin_announcement_users_disabled'] = "<span style='color: #ff0000;'>Please enable the Users plugin in Plugin Management.</span>";
 
-/* Uninstall a plugin  - admin/plugins.php */
-$lang["admin_plugins_uninstall_done"] = "Plugin uninstalled.";
-$lang["admin_plugins_uninstall_refresh"] = "Please <a href='javascript:location.reload(true);' target='_self'>refresh this page</a>.";
+/* Un/Install, Upgrade De/Activate a plugin  - admin/plugins.php */
+$lang["admin_plugins_install_done"] = "Plugin successfully installed and activated";
+$lang["admin_plugins_install_error"] = "Sorry, to use this plugin, you need to install and activate";
+$lang["admin_plugins_uninstall_done"] = "Plugin uninstalled";
+$lang["admin_plugins_upgrade_done"] = "Plugin upgraded";
+$lang["admin_plugins_page_refresh"] = "Refresh this page";
 
-/* Upgrade a plugin  - admin/plugins.php */
-$lang["admin_plugins_upgrade_done"] = "Plugin upgraded.";
-$lang["admin_plugins_upgrade_refresh"] = "Please <a href='javascript:location.reload(true);' target='_self'>refresh this page</a>.";
+$lang["admin_plugins_activated"] = "Plugin activated";
+$lang["admin_plugins_deactivated"] = "Plugin deactivated";
 
 /* Plugin info - /class.plugins.php */
 $lang["admin_plugins_class_new_version"] = "<span style='color: red'>- Newer version available</span>.";
@@ -54,6 +56,6 @@ $lang['admin_settings_update_success'] = "Updated successfully.";
 $lang['admin_settings_update_failure'] = "Update failed.";
 
 /* Maintenance */
-$lang['admin_maintenance_clear_cache_success'] = "At least one cache file was successfully deleted.";
+$lang['admin_maintenance_clear_cache_success'] = "Database cache successfully deleted.";
 $lang['admin_maintenance_clear_cache_failure'] = "No cache files were found.";
 ?>
