@@ -163,6 +163,50 @@ function widget_moved(baseurl, str)
 }
 
 
+/* ******************************************************************** 
+ *  Function: uninstall_upgrade
+ *  Parameters: baseurl, parameters
+ *  Purpose: Uninstalls or upgrades a plugin
+ *  Notes: ---
+ ********************************************************************** */
+	 
+function uninstall_upgrade(baseurl, parameters)
+{
+	/* ******************************************************************** 	
+		url = where the file/function we need is
+		parameters = parameter string, e.g. "action=do&id=4"
+	******************************************************************** */
+	
+	url = baseurl+"admin/admin_plugins.php";
+	if (xmlhttp) {
+		target1 = document.getElementById ('ajax-loader');
+		target1.innerHTML = "<img src='" + baseurl + "admin/themes/admin_default/images/ajax-loader-mini.gif'>";	
+		ajax['ajax-loader'] = new myXMLHttpRequest ();
+		
+		if (ajax) {
+			ajax['ajax-loader'].open ("POST", url, true);
+			ajax['ajax-loader'].setRequestHeader ('Content-Type',
+					   'application/x-www-form-urlencoded');
+
+			ajax['ajax-loader'].send (parameters);
+			errormatch = new RegExp ("^ERROR:");
+			ajax['ajax-loader'].onreadystatechange = function () {
+				if (ajax['ajax-loader'].readyState == 4) {
+					returnvalue['ajax-loader'] = ajax['ajax-loader'].responseText;			
+					if (returnvalue['ajax-loader'].match (errormatch)) {
+						returnvalue['ajax-loader'] = returnvalue['ajax-loader'].substring (6, returnvalue['ajax-loader'].length);						
+						target1 = document.getElementById ('ajax-loader');
+						target1.innerHTML = returnvalue['ajax-loader'];						
+					} else {
+						target1 = document.getElementById ('ajax-loader');
+						target1.innerHTML = returnvalue['ajax-loader'];
+					}
+				}
+			}
+		}
+	}
+}
+
 
 /* ******************************************************************** 
  *  Function: submit_url
