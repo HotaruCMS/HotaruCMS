@@ -51,8 +51,7 @@ $plugin_widgets = $plugin->get_plugins(); // don't remove
 					<div class="widget-content" style="display:none">
 						<?php echo $plugin_widget['description']; ?> <br />
 						<?php echo "Version: " . $plugin_widget['version']; ?> <br />
-						<div class="widget_uninstall"><a href="javascript://" onclick="hide_show_replace('<?php echo baseurl ?>', 'changetext', 'widget_uninstall_result-<?php echo $plugin_widget['folder'] ?>', '<?php echo baseurl ?>admin/admin_plugins.php', 'plugin_folder=<?php echo $plugin_widget['folder'] ?>&action=uninstall');">Uninstall</a></div>
-						<div id="widget_uninstall_result-<?php echo $plugin_widget['folder'] ?>"></div>
+						<div class="widget_uninstall"><a href="javascript://" onclick="uninstall_upgrade('<?php echo baseurl ?>', 'plugin_folder=<?php echo $plugin_widget['folder'] ?>&action=uninstall');">Uninstall</a></div>
 					</div>
 				</div>
 			</div>
@@ -80,8 +79,7 @@ $plugin_widgets = $plugin->get_plugins(); // don't remove
 					<div class="widget-content" style="display:none">
 						<?php echo $plugin_widget['description']; ?> <br />
 						<?php echo "Version: " . $plugin_widget['version']; ?>
-						<div class="widget_uninstall"><a href="javascript://" onclick="hide_show_replace('<?php echo baseurl ?>', 'changetext', 'widget_uninstall_result-<?php echo $plugin_widget['folder'] ?>', '<?php echo baseurl ?>admin/admin_plugins.php', 'plugin_folder=<?php echo $plugin_widget['folder'] ?>&action=uninstall');">Uninstall</a></div>
-						<div id="widget_uninstall_result-<?php echo $plugin_widget['folder'] ?>"></div>
+						<div class="widget_uninstall"><a href="javascript://" onclick="uninstall_upgrade('<?php echo baseurl ?>', 'plugin_folder=<?php echo $plugin_widget['folder'] ?>&action=uninstall');">Uninstall</a></div>
 					</div>
 				</div>
 			</div>
