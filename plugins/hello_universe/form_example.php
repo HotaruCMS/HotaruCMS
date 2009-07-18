@@ -26,7 +26,7 @@
 global $hotaru, $cage, $lang;
 
 echo "<div id='main'>";
-	echo "<h2>Example Form</h2>\n";
+	echo "<p class='breadcrumbs'>Example Form</p>\n";
 	
 	echo "This form is in the form_example.php file in the Hello Universe folder. It's called via Function #1 in hello_universe.php and includes a special language file which is included using Function #4.";
 	

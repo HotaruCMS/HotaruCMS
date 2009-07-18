@@ -6,7 +6,7 @@
  * version: 0.1
  * folder: submit
  * prefix: sub
- * hooks: submit, hotaru_header, header_include, install_plugin, navigation, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: hotaru_header, header_include, install_plugin, navigation, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  *  License:
  *
@@ -159,10 +159,10 @@ function sub_header_include() {
 
 
 /* ******************************************************************** 
- *  Function: usr_theme_index_display
+ *  Function: sub_theme_index_display
  *  Parameters: None
- *  Purpose: Echos the login form to index.php 
- *  Notes: Previously directed to a login.php template file included in this plugin, but decided a function was better. (Nick)
+ *  Purpose: Determines which submit page to display
+ *  Notes: ---
  ********************************************************************** */
  
 function sub_theme_index_main() {

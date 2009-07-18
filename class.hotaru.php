@@ -241,12 +241,22 @@ class Hotaru {
 	
 	/* ******************************************************************** 
 	 *  Function: show_message
-	 *  Parameters: None
+	 *  Parameters: Optional message and message type ('green' or 'red')
 	 *  Purpose: Displays a success or failure message
-	 *  Notes: ---
-	 ********************************************************************** */	
-	function show_message() {
-		if($this->message != '') {
+	 *  Notes: Two ways to use this: 
+	 *	Longhand:
+	 *	 	$hotaru->message = "This is a message";
+	 *		$hotaru->message_type = "green";
+	 *		$hotaru->show_message();
+	 *		
+	 *	Shorthand:
+	 *		$hotaru->show_message("This is a message", "green");
+	 ********************************************************************** */
+	 	
+	function show_message($msg = '', $msg_type = 'green') {
+		if($msg != '') {
+			echo "<div class='message " . $msg_type . "'>" . $msg . "</div>";
+		} elseif($this->message != '') {
 			echo "<div class='message " . $this->message_type . "'>" . $this->message . "</div>";
 		}
 	}
