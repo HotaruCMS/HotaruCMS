@@ -66,13 +66,26 @@ function url($parameters = array(), $head = 'index') {
 		}
 		
 		foreach($parameters as $key => $value) {
-			if($key == 'page' && is_numeric($value)) {
+		
+			if($key == 'page' && is_numeric($value) ) {
+			
 				// must be a post title, let's get the post_url...
 				$value = $post->post_url;
+				if($post->post_vars['post_category'] != 1) {
+					$url .= $post->post_vars['post_cat_safe_name'] . '/';
+				}
 				$url .= $value . '/';
+				
+			} elseif($key == 'category' && is_numeric($value) ) {
+			
+				//function call to plugins/categories/categories.php
+				$url .= $key . '/' . get_cat_safe_name($value) . '/';
+					
 			} elseif($key == 'page') {
+			
 				// don't show "page" in the url, only the value
-				$url .= $value . '/';					
+				$url .= $value . '/';	
+								
 			} else {
 				$url .= $key . '/' . $value . '/';
 			}

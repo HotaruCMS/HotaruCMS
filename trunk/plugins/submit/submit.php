@@ -6,7 +6,7 @@
  * version: 0.1
  * folder: submit
  * prefix: sub
- * hooks: hotaru_header, header_include, install_plugin, navigation, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: hotaru_header, header_include, install_plugin, navigation, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, submit_show_post_extras
  *
  *  License:
  *
@@ -46,7 +46,7 @@ function sub_install_plugin() {
 		$sql = "CREATE TABLE `" . db_prefix . "posts` (
 		  `post_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		  `post_author` int(20) NOT NULL DEFAULT 0,
-		  `post_category` int(20) NOT NULL DEFAULT 0,
+		  `post_category` int(20) NOT NULL DEFAULT 1,
 		  `post_status` varchar(32) NOT NULL DEFAULT 'processing',
 		  `post_date` timestamp NOT NULL,
 		  `post_title` varchar(255) NULL, 
@@ -54,6 +54,8 @@ function sub_install_plugin() {
 		  `post_url` varchar(255) NULL, 
 		  `post_content` text NULL,
 		  `post_tags` text NULL,
+		  `post_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+ 		  `post_updateby` int(20) NOT NULL DEFAULT 0, 
 		  FULLTEXT (`post_title`, `post_url`, `post_content`, `post_tags`)
 		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Story Posts';";
 		$db->query($sql); 
@@ -68,6 +70,8 @@ function sub_install_plugin() {
 		  `postmeta_postid` int(20) NOT NULL DEFAULT 0,
 		  `postmeta_key` varchar(255) NULL,
 		  `postmeta_value` text NULL,
+		  `postmeta_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+ 		  `postmeta_updateby` int(20) NOT NULL DEFAULT 0, 
 		  INDEX  (`postmeta_postid`)
 		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Post Meta';";
 		$db->query($sql); 
@@ -95,12 +99,8 @@ function sub_hotaru_header() {
 	define("table_posts", db_prefix . 'posts');
 	define("table_postmeta", db_prefix . 'postmeta');
 	
-	// include submit language file
-	if(file_exists(plugins . 'submit/languages/submit_' . strtolower(sitelanguage) . '.php')) {
-		require_once(plugins . 'submit/languages/submit_' . strtolower(sitelanguage) . '.php');	// language file for admin
-	} else {
-		require_once(plugins . 'submit/languages/submit_english.php');	// English file if specified language doesn't exist
-	}
+	// include language file
+	$plugin->include_language_file('submit');
 	
 	require_once(plugins . 'submit/class.post.php');
 	require_once(includes . 'Paginated/Paginated.php');
@@ -108,7 +108,7 @@ function sub_hotaru_header() {
 		
 	$post = new Post();
 	
-	$plugin->check_actions('submit_hotaru_header');
+	$plugin->check_actions('submit_hotaru_header_1');
 	
 	if(is_numeric($hotaru->get_page_name())) {
 		// Page name is a number so it must be a post with non-friendly urls
@@ -121,6 +121,8 @@ function sub_hotaru_header() {
 	} else {
 		$post->read_post();	// read current post settings only
 	}
+	
+	$plugin->check_actions('submit_hotaru_header_2');
 		
 	$vars['post'] = $post; 
 	return $vars; 
@@ -164,8 +166,8 @@ function sub_header_include() {
  ********************************************************************** */
  
 function sub_theme_index_main() {
-	global $hotaru, $cage, $post, $current_user;
-		
+	global $hotaru, $cage, $post, $plugin, $current_user;
+	
 	// Pages you have to be logged in for...
 	if($current_user->logged_in) {
 		 if($hotaru->is_page('submit')) {
@@ -194,8 +196,13 @@ function sub_theme_index_main() {
 				header("Location: " . baseurl);	// Go home  
 			} 
 			return true;
-							
+										
 		} elseif($hotaru->is_page('main')) {
+		
+			// Plugin hook
+			$result = $plugin->check_actions('submit_is_page_main');
+			if($result && is_array($result)) { return true; }
+		
 			// Show the list of posts
 			$hotaru->display_template('posts_list', 'submit');
 			return true;
@@ -285,5 +292,22 @@ function sub_fetch_title($url) {
 	
 	return $title;
 }
+
+
+ /* ******************************************************************** 
+ *  Function: sub_submit_show_post_extras
+ *  Parameters: None
+ *  Purpose: Adds a permalink
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function sub_submit_show_post_extras() {
+	global $post, $plugin, $cage;
+	
+	if(!$plugin->plugin_active('categories')) {
+		echo "<a href='" . url(array('page'=>$post->post_id)) . "'>Permalink</a>";
+	}
+}
+
 	
 ?>

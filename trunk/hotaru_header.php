@@ -58,13 +58,14 @@ if(!isset($db)) {
 	$db->use_disk_cache = true;	// However, queries are only cached following $db->cache_queries = true;
 }
 
-// Initialize Hotaru and start timer if debugging.
+// Initialize Hotaru
 if(!isset($hotaru)) { $hotaru = new Hotaru(); }
 $settings = $hotaru->read_settings();
 foreach($settings as $setting) {
 	define($setting->settings_name, $setting->settings_value);
 }
 
+// Start timer if debugging
 if(debug == "true") {
 	$hotaru->is_debug = true;
 	timer_start();

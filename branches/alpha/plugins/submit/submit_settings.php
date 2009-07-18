@@ -67,7 +67,7 @@ function sub_settings() {
 
 	$plugin->check_actions('submit_settings_form');
 			
-	echo "<br />\n";	
+	echo "<br /><br />\n";	
 	echo "<input type='hidden' name='submitted' value='true' />\n";
 	echo "<input type='submit' value='" . $lang["submit_settings_save"] . "' />\n";
 	echo "</form>\n";

@@ -177,3 +177,21 @@ small {
 	margin-bottom: 0.4em;
 	font-size: 0.825em;
 }
+
+/* *************************************** 
+ * ******** CATEGORIES PLUGIN ************
+ * ************************************* */
+ 
+ /* SIDEBAR CATEGORIES */
+ 
+ .yui-u h2 {
+ 	margin: 0em 0.5em 0em 0.5em;
+ }
+ 
+ ul.sidebar_categories {
+ 	margin: 0em 0.5em 0.5em 1.0em;
+ }
+ 
+ ul.sidebar_categories li {
+ 	padding: 0em;
+ }

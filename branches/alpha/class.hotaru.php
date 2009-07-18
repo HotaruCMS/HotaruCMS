@@ -165,42 +165,6 @@ class Hotaru {
 	
 	
 	/* ******************************************************************** 
-	 *  Function: display_stories
-	 *  Parameters: Number of main stories to show and sort order
-	 *  Purpose: Displays stories on the index, upcoming, etc. pages.
-	 *  Notes: ---
-	 ********************************************************************** */
-	 
-	function display_stories($limit=10, $sort="latest")  {
-		// call a function to return story links.
-		// TEMP:
-		$stories = '';
-		for($i=0; $i<$limit; $i++) {
-			$stories .= "This is story number " . ($i+1) . ". The real stories will be pulled in from a separate template so they can be styled more easily.<br /><br />\n";
-		}
-		return $stories;
-	}
-	
-	
-	/* ******************************************************************** 
-	 *  Function: display_story_links
-	 *  Parameters: Number of story links to show, type (e.g. upcoming, top sories) and HTML tags. 
-	 *  Purpose: Displays a list of story links in the sidebar (for example).
-	 *  Notes: ---
-	 ********************************************************************** */
-	 		
-	function display_story_links($limit=10, $type="upcoming", $before="<li>", $after="</li>")  {
-		// call a function to return story links.
-		// TEMP:
-		$story_links = '';
-		for($i=0; $i<$limit; $i++) {
-			$story_links .= $before . "story link " . ($i+1) . $after . "\n";
-		}
-		return $story_links;
-	}
-	
-	
-	/* ******************************************************************** 
 	 *  Function: get_simplepie
 	 *  Parameters: None
 	 *  Purpose: includes the SimplePie RSS file and sets the cache
