@@ -77,13 +77,14 @@ function usr_install_plugin() {
 	if(!$exists) {
 		//echo "table doesn't exist. Stopping before creation."; exit;
 		$sql = "CREATE TABLE `" . db_prefix . "usermeta` (
-		  `usermeta_id` int(20) NOT NULL auto_increment,
-		  `user_id` int(20) NOT NULL default 0,
-		  `user_key` varchar(255) NULL,
-		  `user_value` text NULL,
-		  PRIMARY KEY  (`usermeta_id`),
-		  INDEX  (`user_id`)
-		) TYPE = MyISAM;";
+		  `usermeta_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+		  `usermeta_userid` int(20) NOT NULL DEFAULT 0,
+		  `usermeta_key` varchar(255) NULL,
+		  `usermeta_value` text NULL,
+		  `usermeta_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+ 		  `usermeta_updateby` int(20) NOT NULL DEFAULT 0, 
+		  INDEX  (`usermeta_userid`)
+		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='User Meta';";
 		$db->query($sql); 
 	}
 }

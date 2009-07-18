@@ -38,7 +38,7 @@ $lang['admin_announcement_users_disabled'] = "<span style='color: #ff0000;'>Plea
 
 /* Un/Install, Upgrade De/Activate a plugin  - admin/plugins.php */
 $lang["admin_plugins_install_done"] = "Plugin successfully installed and activated";
-$lang["admin_plugins_install_error"] = "Sorry, to use this plugin, you need to install and activate";
+$lang["admin_plugins_install_error"] = "Sorry, this plugin requires ";
 $lang["admin_plugins_uninstall_done"] = "Plugin uninstalled";
 $lang["admin_plugins_upgrade_done"] = "Plugin upgraded";
 $lang["admin_plugins_page_refresh"] = "Refresh this page";

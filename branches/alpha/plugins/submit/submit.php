@@ -44,19 +44,18 @@ function sub_install_plugin() {
 	if(!$exists) {
 		//echo "table doesn't exist. Stopping before creation."; exit;
 		$sql = "CREATE TABLE `" . db_prefix . "posts` (
-		  `post_id` int(20) NOT NULL auto_increment,
-		  `post_author` int(20) NOT NULL default 0,
-		  `post_category` int(20) NOT NULL default 0,
-		  `post_status` varchar(32) NOT NULL default 'processing',
+		  `post_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+		  `post_author` int(20) NOT NULL DEFAULT 0,
+		  `post_category` int(20) NOT NULL DEFAULT 0,
+		  `post_status` varchar(32) NOT NULL DEFAULT 'processing',
 		  `post_date` timestamp NOT NULL,
 		  `post_title` varchar(255) NULL, 
 		  `post_orig_url` varchar(255) NULL, 
 		  `post_url` varchar(255) NULL, 
 		  `post_content` text NULL,
 		  `post_tags` text NULL,
-		  PRIMARY KEY  (`post_id`),
-		  FULLTEXT (`post_title`, `post_url`, `post_content`, `post_tags`),
-		) TYPE = MyISAM;";
+		  FULLTEXT (`post_title`, `post_url`, `post_content`, `post_tags`)
+		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Story Posts';";
 		$db->query($sql); 
 	}
 	
@@ -65,13 +64,12 @@ function sub_install_plugin() {
 	if(!$exists) {
 		//echo "table doesn't exist. Stopping before creation."; exit;
 		$sql = "CREATE TABLE `" . db_prefix . "postmeta` (
-		  `postmeta_id` int(20) NOT NULL auto_increment,
-		  `post_id` int(20) NOT NULL default 0,
-		  `post_key` varchar(255) NULL,
-		  `post_value` text NULL,
-		  PRIMARY KEY  (`postmeta_id`),
-		  INDEX  (`post_id`)
-		) TYPE = MyISAM;";
+		  `postmeta_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+		  `postmeta_postid` int(20) NOT NULL DEFAULT 0,
+		  `postmeta_key` varchar(255) NULL,
+		  `postmeta_value` text NULL,
+		  INDEX  (`postmeta_postid`)
+		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Post Meta';";
 		$db->query($sql); 
 	}
 	

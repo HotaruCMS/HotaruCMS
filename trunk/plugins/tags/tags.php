@@ -58,12 +58,12 @@ function tg_install_plugin() {
 	$exists = $db->table_exists('tags');
 	if(!$exists) {
 		//echo "table doesn't exist. Stopping before creation."; exit;
-		$sql = "CREATE TABLE `" . table_tags . "` (
-		  `tags_post_id` int(11) NOT NULL default '0',
+		$sql = "CREATE TABLE `" . db_prefix . "tags` (
+		  `tags_post_id` int(11) NOT NULL DEFAULT '0',
 		  `tags_date` timestamp NOT NULL,
-		  `tags_word` varchar(64) NOT NULL default '',
-		  UNIQUE KEY `tag_link_id` (`tags_post_id`,`tags_word`)
-		) TYPE = MyISAM;";
+		  `tags_word` varchar(64) NOT NULL DEFAULT '',
+		  UNIQUE KEY `tags_post_id` (`tags_post_id`,`tags_word`)
+		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Post Tags';";
 		$db->query($sql); 
 	}
 	
