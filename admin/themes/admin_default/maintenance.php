@@ -27,7 +27,7 @@
 global $plugin, $admin, $cage, $lang; // don't remove
 ?>
 
-<h2><a href="<?php echo url(array(), 'admin'); ?>"><?php echo site_name;?> Admin Control Panel</a> &raquo; Maintenance</h2>
+<p class="breadcrumbs"><a href="<?php echo url(array(), 'admin'); ?>"><?php echo site_name;?> Admin Control Panel</a> &raquo; Maintenance</p>
 
 	
 <h1>Hotaru Maintenance</h1>

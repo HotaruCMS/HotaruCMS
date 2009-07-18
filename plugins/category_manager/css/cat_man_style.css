@@ -1,10 +1,6 @@
-<?php 
-
-/* ******* ADMIN TEMPLATE ************************************************************************** 
- * Theme name: admin_default
- * Template name: home.php
- * Template author: Nick Ramsay
- * Version: 0.1
+/* ******* CSS STYLE FOR PLUGIN ********************************************************************** 
+ * Plugin name: Category Manager
+ * Stylesheet: cat_man_style.css
  * License:
  *
  *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
@@ -24,10 +20,34 @@
  *
  **************************************************************************************************** */
 
-global $hotaru; // don't remove
-?>
+.cat_man_table { width: 100%; }
 
-<p class="breadcrumbs"><a href="<?php echo url(array(), 'admin'); ?>"><?php echo site_name;?> Admin Control Panel</a> &raquo; Admin Home</p>
+.cat_man_table
 
-<div class="admin_header admin_header_space"><a href="http://feeds2.feedburner.com/hotarucms"><img src="<?php echo baseurl ?>admin/themes/admin_default/images/rss_16.gif"></a>&nbsp; Latest from Hotaru CMS</div>
-<?php echo admin_news(); ?>
+.cat_man_body	{
+	width: 70%;
+	vertical-align: top;
+}
+
+.cat_man_body input	{
+	margin: 0.2em;
+}
+
+.cat_man_menu_holder {
+	vertical-align: top; 
+}
+ 
+.cat_man_menu, .cat_man_tree	{
+	padding:8px;
+}
+
+.cat_man_tree	{	
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left;
+}
+
+.cat_man_move_form, .cat_man_edit_meta_form	{
+	padding: 8px;
+	background: #f0f0f0;
+}
