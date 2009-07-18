@@ -34,7 +34,7 @@ function usr_update() {
 	global $hotaru, $cage, $lang, $current_user;
 	
 	echo "<div id='main'>";
-		echo "<h2><a href='" . baseurl . "'>Home</a> &raquo; User Settings</h2>\n";
+		echo "<p class='breadcrumbs'><a href='" . baseurl . "'>Home</a> &raquo; User Settings</p>\n";
 		
 		echo "<div class='main_inner'>";
 		echo $lang["users_update_instructions"] . "\n";

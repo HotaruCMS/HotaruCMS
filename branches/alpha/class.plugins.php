@@ -533,6 +533,27 @@ class Plugin extends generic_pmd {
 		$db->query($db->prepare($sql, $folder));
 	}
 	
+	
+	/* ******************************************************************** 
+	 *  Function: include_language_file
+	 *  Parameters: plugin folder name
+	 *  Purpose: Includes a plugin's language file
+	 *  Notes: the language file must be in a folder named languages and a file of the format plugin_name_language, e.g. sumbit_english.php
+	 ********************************************************************** */	
+	 
+	function include_language_file($folder = '') {
+		global $lang;
+		if($folder) {
+			if(file_exists(plugins . $folder . '/languages/' . $folder . '_' . strtolower(sitelanguage) . '.php')) {
+				// language file specified language..
+				require_once(plugins . $folder . '/languages/' . $folder . '_' . strtolower(sitelanguage) . '.php');	
+			} else {
+				// English file if specified language doesn't exist
+				require_once(plugins . $folder . '/languages/' . $folder . '_english.php');
+			}
+		}
+	}
+	
 }
 
 ?>

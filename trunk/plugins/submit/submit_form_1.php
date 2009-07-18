@@ -34,7 +34,7 @@ function sub_submit_form_1() {
 	global $hotaru, $cage, $lang, $post;
 		
 	echo "<div id='main'>";
-		echo "<h2><a href='" . baseurl . "'>Home</a> &raquo; Submit a Story 1/2</h2>\n";
+		echo "<p class='breadcrumbs'><a href='" . baseurl . "'>Home</a> &raquo; Submit a Story 1/2</p>\n";
 			
 		$hotaru->show_message();
 				

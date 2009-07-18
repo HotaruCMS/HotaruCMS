@@ -27,7 +27,7 @@
 global $hotaru; // don't remove
 ?>
 
-<h2><a href="<?php echo url(array(), 'admin'); ?>"><?php echo site_name;?> Admin Control Panel</a> &raquo; Admin Home</h2>
+<p class="breadcrumbs"><a href="<?php echo url(array(), 'admin'); ?>"><?php echo site_name;?> Admin Control Panel</a> &raquo; Admin Home</p>
 
 <div class="admin_header admin_header_space"><a href="http://feeds2.feedburner.com/hotarucms"><img src="<?php echo baseurl ?>admin/themes/admin_default/images/rss_16.gif"></a>&nbsp; Latest from Hotaru CMS</div>
 <?php echo admin_news(); ?>

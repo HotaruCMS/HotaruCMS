@@ -36,7 +36,7 @@ function usr_register() {
 	$user = new User();
 	
 	echo "<div id='main'>";
-		echo "<h2><a href='" . baseurl . "'>Home</a> &raquo; Register</h2>\n";
+		echo "<p class='breadcrumbs'><a href='" . baseurl . "'>Home</a> &raquo; Register</p>\n";
 				
 		echo "<div class='main_inner'>";
 		echo $lang["users_register_instructions"] . "\n";
