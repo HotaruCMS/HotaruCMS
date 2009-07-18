@@ -27,7 +27,7 @@
 global $hotaru, $plugin; // don't remove
 ?>
 
-<h2><a href="<?php echo url(array(), 'admin'); ?>"><?php echo site_name;?> Admin Control Panel</a> &raquo; Plugin Settings &raquo; <?php echo $plugin->name; ?></h2>
+<p class="breadcrumbs"><a href="<?php echo url(array(), 'admin'); ?>"><?php echo site_name;?> Admin Control Panel</a> &raquo; Plugin Settings &raquo; <?php echo $plugin->name; ?></p>
 
 <?php $plugin->check_actions('admin_plugin_settings', true, $plugin->folder); ?>
 
