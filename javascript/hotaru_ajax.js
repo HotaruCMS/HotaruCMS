@@ -126,8 +126,9 @@ function hide_show_replace(baseurl, type, id, url, parameters)
  *  Function: widget_moved
  *  Parameters: baseurl, str (string of positions returned from EasyWidgets
  *  Purpose: Used specifically for moving plugins around in Plugin Management. 
- *           This function calls the admin_plugins file which updates thestatus of each plugin 
+ *           This function calls the admin_plugins file which updates the status of each plugin 
  *  Notes: The jQuery code and baseurl definition is in admin_themes' header.php
+ *  URL: http://bb.magudas.com/jq/easywidgets/index.html
  ********************************************************************** */
 
 function widget_moved(baseurl, str)
