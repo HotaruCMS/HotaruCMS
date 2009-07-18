@@ -26,6 +26,7 @@
 
 global $hotaru, $plugin, $post, $cage, $filter;
 $hotaru->template_name = 'posts_list';
+
 $userbase = new UserBase();
 		
 $filter = array();
@@ -64,7 +65,6 @@ if($stories) {
 	<?php $plugin->check_actions('submit_show_post_extra_fields'); ?>
 		
 	<div class="show_post_extras">
-		<a href='<?php echo url(array('page'=>$post->post_id)); ?>'>Permalink</a>
 		<?php $plugin->check_actions('submit_show_post_extras'); ?>
 	</div>
 	

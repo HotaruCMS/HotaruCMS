@@ -6,7 +6,7 @@
  * folder: tags
  * prefix: tg
  * requires: submit 0.1
- * hooks: install_plugin, submit_hotaru_header, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_form_2_assign_from_cage, submit_form_2_assign_blank, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_show_post_extra_fields, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter
+ * hooks: install_plugin, submit_hotaru_header_1, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_form_2_assign_from_cage, submit_form_2_assign_blank, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_show_post_extra_fields, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter
  *
  * Requires the Submit plugin.
  *
@@ -62,6 +62,8 @@ function tg_install_plugin() {
 		  `tags_post_id` int(11) NOT NULL DEFAULT '0',
 		  `tags_date` timestamp NOT NULL,
 		  `tags_word` varchar(64) NOT NULL DEFAULT '',
+		  `tags_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+ 		  `tags_updateby` int(20) NOT NULL DEFAULT 0, 
 		  UNIQUE KEY `tags_post_id` (`tags_post_id`,`tags_word`)
 		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Post Tags';";
 		$db->query($sql); 
@@ -77,16 +79,19 @@ function tg_install_plugin() {
 
 
 /* ******************************************************************** 
- *  Function: tg_submit_hotaru_header
+ *  Function: tg_submit_hotaru_header_1
  *  Parameters: None
  *  Purpose: Adds additional member variables when the $post object is read in the Submit plugin.
  *  Notes: ---
  ********************************************************************** */
  
-function tg_submit_hotaru_header() {
-	global $post;
+function tg_submit_hotaru_header_1() {
+	global $post, $plugin;
 	
 	define("table_tags", db_prefix . 'tags');
+	
+	// include language file
+	$plugin->include_language_file('tags');
 	
 	$post->post_vars['post_tags'] = '';
 	$post->post_vars['post_max_tags'] = 50;	// max characters for tags
