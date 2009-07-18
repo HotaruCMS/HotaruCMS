@@ -50,15 +50,11 @@ function usr_users(&$parameters) {
  ********************************************************************** */
  
 function usr_hotaru_header() {
-	global $lang, $cage;
+	global $lang, $cage, $plugin;
 	define("table_usermeta", db_prefix . 'usermeta');
 	
-	// include users language file
-	if(file_exists(plugins . 'users/languages/users_' . strtolower(sitelanguage) . '.php')) {
-		require_once(plugins . 'users/languages/users_' . strtolower(sitelanguage) . '.php');	// language file for admin
-	} else {
-		require_once(plugins . 'users/languages/users_english.php');	// English file if specified language doesn't exist
-	}
+	// include language file
+	$plugin->include_language_file('users');
 }
 
 

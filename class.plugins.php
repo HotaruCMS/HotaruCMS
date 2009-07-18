@@ -236,7 +236,13 @@ class Plugin extends generic_pmd {
 		
 		if($dependency_error == 1) {
 			foreach($this->dependencies as $dependency => $version) {
-					$dependency  = ucfirst($dependency);
+			
+					// Converts plugin folder names to well formatted names...
+					$dep_array = array();
+					$dep_array = explode('_', $dependency);
+					$dep_array = array_map('ucfirst', $dep_array);
+					$dependency = implode(' ', $dep_array);
+					
 					$hotaru->message = $lang["admin_plugins_install_error"] . " " . $dependency . " " . $version . " - <a href='javascript:location.reload(true);' target='_self'>" . $lang["admin_plugins_page_refresh"] . "</a>";;
 					$hotaru->message_type = 'red';
 					$hotaru->show_message();
