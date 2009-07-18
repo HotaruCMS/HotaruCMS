@@ -237,7 +237,7 @@ class Plugin extends generic_pmd {
 		if($dependency_error == 1) {
 			foreach($this->dependencies as $dependency => $version) {
 					$dependency  = ucfirst($dependency);
-					$hotaru->message = $lang["admin_plugins_install_error"] . " " . $dependency . " " . $version;
+					$hotaru->message = $lang["admin_plugins_install_error"] . " " . $dependency . " " . $version . " - <a href='javascript:location.reload(true);' target='_self'>" . $lang["admin_plugins_page_refresh"] . "</a>";;
 					$hotaru->message_type = 'red';
 					$hotaru->show_message();
 			}
