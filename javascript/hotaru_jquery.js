@@ -35,13 +35,9 @@ jQuery.fn.fadeToggle = function(speed, easing, callback) {
 
 $(document).ready(function(){
 
-	// SlideToggle example
-	$(".widget-header a").click(function () {
-		var parentTag = $(this).parent("div").next();
-                parentTag.slideToggle();
-                return false;
-	});
-
+	// Fade message
+	$(".message").css({display: "none"}).fadeIn("slow");
+	
 	// Show/Hide box
 	$(".dropdown").click(function () {
 		var parentTag = $(this).parents("ul").children("ul#plugin_settings_list");
@@ -49,7 +45,17 @@ $(document).ready(function(){
                 return false;
         });  
         
-	// Fade message
-	$(".message").css({display: "none"}).fadeIn("slow");
+	// Show/Hide plugin details
+	$(".plugin_drop_down").click(function () {
+		var target = $(this).parents("tr").next("tr");
+                target.fadeToggle();
+                return false;
+        });   
+        
+	// Hide plugin details
+	$(".plugin_hide_details").click(function () {
+                $(this).parents("tr").fadeOut();
+                return false;
+        });   
  
 });
