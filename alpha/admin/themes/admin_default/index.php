@@ -28,7 +28,7 @@
 <?php echo $admin->display_admin_template('TEMPLATE_NAME'); ?>		// e.g. header
 ***************************** */
 
-global $hotaru, $admin, $plugin; // don't remove
+global $hotaru, $admin, $plugin, $current_user; // don't remove
 ?>
 
 <!-- WHOLE PAGE-->
@@ -59,7 +59,11 @@ global $hotaru, $admin, $plugin; // don't remove
 						if(!isset($result) || !is_array($result)) {
 		    					$page = $hotaru->get_page_name();
 		    					if($page == 'admin_login') {
-		    						admin_login();
+		    						if($current_user->logged_in) {
+		    							$admin->display_admin_template('main');
+		    						} else {
+		    							admin_login_form();
+		    						}
 		    					} else {
 								$admin->display_admin_template($page);
 							} 
