@@ -25,89 +25,56 @@
  **************************************************************************************************** */
 
 global $hotaru, $plugin; // don't remove
-$plugin_widgets = $plugin->get_plugins(); // don't remove
+$the_plugins = $plugin->get_plugins(); // don't remove
 ?>
 
 <p class="breadcrumbs"><a href="<?php echo url(array(), 'admin'); ?>"><?php echo site_name;?> Admin Control Panel</a> &raquo; Plugin Management</p>
 	
-<div id="plugin_list">
+<?php $hotaru->show_message(); ?>
 
-<div id="ajax-loader"></div>
+<div id="plugin_list">
 
 <?php $plugin->check_actions('plugins_top'); ?>
 
-<table><tr>
+<table>
 
-<td class="widget-column">
-<p class="admin_header">Inactive plugins</p>
-	<?php foreach($plugin_widgets as $plugin_widget) { ?>
-		<?php if($plugin_widget['status'] == "inactive") { ?>
-			<div class="widget-place" id="inactive">
-				<div id="<?php echo $plugin_widget['folder']; ?>"  class="widget movable">
-					<div class="widget-header">
-						<a href="#" class="widget-expand" style="float: right;">+</a>
-						<?php echo $plugin_widget['name']; ?> 
-					</div>
-					<div class="widget-content" style="display:none">
-						<?php echo $plugin_widget['description']; ?> <br />
-						<?php echo "Version: " . $plugin_widget['version']; ?> <br />
-						<div class="widget_uninstall"><a href="javascript://" onclick="uninstall_upgrade('<?php echo baseurl ?>', 'plugin_folder=<?php echo $plugin_widget['folder'] ?>&action=uninstall');">Uninstall</a></div>
-					</div>
-				</div>
-			</div>
-		<?php } ?> 
-	<?php } ?>
-	<!-- EMPTY PLACEHOLDER FOR WIDGET TO BE MOVED INTO IF NO OTHERS EXIST -->		
-	<div class="widget-place" id="inactive" style="min-height: 5.0em; height: 5.0em;">
-			<div id="<?php echo $plugin_widget['folder']; ?>" >
-				<div class="widget-header" style="display:none;"></div>
-				<div class="widget-content" style="display:none"></div>
-			</div>
-	</div> 
-</td>
+<tr class='plugins_table_headers'>
+<td>Active</td>
+<td>Switch</td>
+<td>Plugin</td>
+<td>Requires</td>
+<td>Install</td>
+<td>Details</td>
+</tr>
 
-<td class="widget-column">
-<p class="admin_header">Active plugins</p>
-	<?php foreach($plugin_widgets as $plugin_widget) { ?>
-		<?php if($plugin_widget['status'] == "active") { ?>
-			<div class="widget-place" id="active">
-				<div id="<?php echo $plugin_widget['folder']; ?>"  class="widget movable">
-					<div class="widget-header">
-						<a href="#" class="widget-expand" style="float: right;">+</a>
-						<?php echo $plugin_widget['name']; ?> 
-					</div>
-					<div class="widget-content" style="display:none">
-						<?php echo $plugin_widget['description']; ?> <br />
-						<?php echo "Version: " . $plugin_widget['version']; ?>
-						<div class="widget_uninstall"><a href="javascript://" onclick="uninstall_upgrade('<?php echo baseurl ?>', 'plugin_folder=<?php echo $plugin_widget['folder'] ?>&action=uninstall');">Uninstall</a></div>
-					</div>
-				</div>
-			</div>
-		<?php } ?> 
-	<?php } ?>
-	<!-- EMPTY PLACEHOLDER FOR WIDGET TO BE MOVED INTO IF NO OTHERS EXIST -->
-	<div class="widget-place" id="active" style="min-height: 5.0em; height: 5.0em;">
-			<div id="<?php echo $plugin_widget['folder']; ?>" >
-				<div class="widget-header" style="display:none;"></div>
-				<div class="widget-content" style="display:none"></div>
-			</div>
-	</div> 
-</td>
-</tr></table>
+<?php
+	$alt = 0;
+	foreach($the_plugins as $plug) {
+		$alt++;
+
+		
+		echo "<tr id='plugins_tr' class='plugins_table_row_" . $alt % 2 . "'>\n";
+		echo "<td class='plugins_active'>" . $plug['active'] . "</td>\n";
+		echo "<td class='plugins_status'>" . $plug['status'] . "</td>\n";
+		echo "<td class='plugins_name'>" . $plug['name'] . " " . $plug['version'] . "</td>\n";
+		echo "<td class='plugins_requires'>" . $plug['requires'] . "</td>\n";
+		echo "<td class='plugins_install'>" . $plug['install'] . "</td>\n";
+		echo "<td class='plugins_details'><a class='plugin_drop_down' href='#'><img src='" . baseurl . "admin/themes/" . admin_theme . "images/info.png'></a></td>\n";
+		echo "</tr>\n";
+		echo "<tr id='plugins_tr_details' style='display:none;'><td colspan=5 class='plugin_description'>" . $plug['description'] . "</td>";
+		echo "<td class='plugin_description_close'><a class='plugin_hide_details' href='#'>Close</a></td></tr>\n";
+	}
+?>
+</table>
 </div>
 <div class="clear"></div>
 <div id="plugin_management_notice" class="info_box gray_box" style="margin-top: 2.0em";>
 	<p class="info_header">Plugin Management Guide</p>
 	<?php $plugin->check_actions('plugins_guide_top'); ?>
-	&raquo; To enable or disable plugins, drag them below "Inactive plugins" or "Active plugins".<br />
-	&raquo; After activating a plugin, refresh the page for its settings link to appear under "Plugin Settings".<br />
-	&raquo; Click the " + " icon to expand a plugin and view its details.<br />
-	&raquo; Click "Uninstall" (when expanded) to delete a plugin from the database.<br />
-	&nbsp; &nbsp; &raquo; Uninstalling a plugin will delete it from the <i>plugins</i>, <i>plugin_hooks</i> and <i>plugin_settings</i> tables.<br />
-	&nbsp; &nbsp; &raquo; Any other database entries created by the plugin will not be removed.<br />
-	&raquo; A red asterisk shows by a plugin's title if a newer version is available in the plugins folder.<br />
-	&raquo; Some plugins will offer an upgrade link. Others will need uninstalling first.<br />
+	&raquo; Uninstalling a plugin will delete it from the <i>plugins</i>, <i>plugin_hooks</i> and <i>plugin_settings</i> tables.<br />
+	&raquo; Any other database entries created by the plugin will not be removed.<br />
 	<?php $plugin->check_actions('plugins_guide_bottom'); ?>
 </div>
+
 
 <?php $plugin->check_actions('plugins_bottom'); ?>

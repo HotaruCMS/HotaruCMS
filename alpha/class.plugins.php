@@ -38,6 +38,7 @@ class Plugin extends generic_pmd {
 	var $dependencies = array();
 	var $hooks = array();
 	
+
 	/* ******************************************************************** 
 	 *  Function: get_plugins
 	 *  Parameters: None
@@ -62,31 +63,15 @@ class Plugin extends generic_pmd {
 					$allplugins[$count]['folder'] = $plugin_row->plugin_folder;
 					$allplugins[$count]['status'] = $this->get_plugin_status($plugin_row->plugin_folder);
 					$allplugins[$count]['version'] = $plugin_row->plugin_version;
+					$allplugins[$count]['install'] = "installed";
 				} elseif($plugin_row && version_compare($plugin_details['version'], $plugin_row->plugin_version, '>')) {
 					//plugin exists in database, but it's an older version than the one in the folder...
-					$allplugins[$count]['name'] = $plugin_row->plugin_name . " <span style='color: red'><b>*</b></span>";
+					$allplugins[$count]['name'] = $plugin_row->plugin_name;
 					$allplugins[$count]['description'] = $plugin_row->plugin_desc;
 					$allplugins[$count]['folder'] = $plugin_row->plugin_folder;
 					$allplugins[$count]['status'] = $this->get_plugin_status($plugin_row->plugin_folder);
 					$allplugins[$count]['version'] = $plugin_row->plugin_version;
-					
-					// Long string that asks the user to upgrade...
-					if($this->hook_exists($plugin_row->plugin_folder, 'upgrade_plugin')) {
-						// If the plugin has an upgrade script...
-						$allplugins[$count]['version'] .= "<br />";
-						$allplugins[$count]['version'] .= $lang['admin_plugins_class_new_version'];
-						$allplugins[$count]['version'] .= " <a href='javascript://' ";
-						$allplugins[$count]['version'] .= "onclick='uninstall_upgrade(&quot;" . baseurl . "&quot;, ";
-						$allplugins[$count]['version'] .= "&quot;plugin_folder=";
-						$allplugins[$count]['version'] .= $plugin_row->plugin_folder . "&action=upgrade&quot;);'><b>";
-						$allplugins[$count]['version'] .= $lang['admin_plugins_class_upgrade_now'] . "</b></a>";
-					
-					} else {
-						// If the plugin doesn't have an upgrade script...
-						$allplugins[$count]['version'] .= "<br />";
-						$allplugins[$count]['version'] .= $lang['admin_plugins_class_new_version'];
-						$allplugins[$count]['version'] .= " " . $lang['admin_plugins_class_reinstall'];
-					}
+					$allplugins[$count]['install'] = "upgrade";
 				} else {
 					// if plugin is not in database...
 					$allplugins[$count]['name'] = $plugin_details['name'];
@@ -94,7 +79,56 @@ class Plugin extends generic_pmd {
 					$allplugins[$count]['folder'] = $plugin_details['folder'];
 					$allplugins[$count]['status'] = "inactive";
 					$allplugins[$count]['version'] = $plugin_details['version'];
+					$allplugins[$count]['install'] = "install";
 				}
+				
+				// Conditions for "active"...
+				if($allplugins[$count]['status'] == 'active') {
+					$allplugins[$count]['active'] = "<img src='" . baseurl . "admin/themes/" . admin_theme . "images/active.png'>";
+				} else {
+					$allplugins[$count]['active'] = "<img src='" . baseurl . "admin/themes/" . admin_theme . "images/inactive.png'>";
+				}
+				
+				// Conditions for "status"...
+				if($allplugins[$count]['status'] == 'active') { 
+					$allplugins[$count]['status'] = "<a href='" . baseurl;
+					$allplugins[$count]['status'] .= "admin/admin_index.php?page=plugins&amp;action=deactivate&amp;plugin=";
+					$allplugins[$count]['status'] .= $allplugins[$count]['folder'] . "'>Off</a>";
+				} elseif($allplugins[$count]['status'] != 'install') { 
+					$allplugins[$count]['status'] = "<a href='" . baseurl;
+					$allplugins[$count]['status'] .= "admin/admin_index.php?page=plugins&amp;action=activate&amp;plugin=";
+					$allplugins[$count]['status'] .= $allplugins[$count]['folder'] . "'>On</a>";
+				} else {
+					$allplugins[$count]['status'] = '';
+				}
+				
+				// Conditions for "install"...
+				if($allplugins[$count]['install'] == 'install') { 
+					$allplugins[$count]['install'] = "<a href='" . baseurl . "admin/admin_index.php?page=plugins&amp;action=install&amp;plugin=". $allplugins[$count]['folder'] . "'>Install</a>";
+				} elseif($allplugins[$count]['install'] == 'installed') { 
+					$allplugins[$count]['install'] = "<a href='" . baseurl . "admin/admin_index.php?page=plugins&amp;action=uninstall&amp;plugin=". $allplugins[$count]['folder'] . "' style='color: red; font-weight: bold'>Uninstall</a>";
+				} elseif($allplugins[$count]['install'] == 'upgrade') { 
+					$allplugins[$count]['install'] = "<a href='" . baseurl . "admin/admin_index.php?page=plugins&amp;action=upgrade&amp;plugin=". $allplugins[$count]['folder'] . "' style='color: #ff9900; font-weight: bold'>Upgrade</a>";
+				} else {
+					$allplugins[$count]['install'] = 'Installed';
+				}
+				
+				// Conditions for "requires"...
+				if(isset($plugin_details['requires']) && $plugin_details['requires']) {
+					$requirements = explode(',', $plugin_details['requires']);
+					// Converts plugin folder names to well formatted names...
+					$dependencies = '';
+					foreach($requirements as $requirement) {
+						$dep_array = array();
+						$dep_array = explode('_', trim($requirement));
+						$dep_array = array_map('ucfirst', $dep_array);
+						$dependencies .= implode(' ', $dep_array) . "<br />";
+					}
+					$allplugins[$count]['requires'] = $dependencies;
+				} else {
+					$allplugins[$count]['requires'] = "";
+				}
+				
 				$count++;				
 			}	
 		}
@@ -161,32 +195,6 @@ class Plugin extends generic_pmd {
 
 
 	/* ******************************************************************** 
-	 *  Function: update_plugin_statuses
-	 *  Parameters: widget positions returned from EasyWidgets
-	 *  Purpose: Breaks down position string from EasyWidgets, then calls necessary functions
-	 *  Notes: This function is used in Plugin Management.
-	 ********************************************************************** */
-	 	
-	function update_plugin_statuses($widget_positions) {
-		foreach (explode('|',$widget_positions) as $pair) {
-			list ($status,$widget) = explode ('=',$pair);
-			if($widget) { 
-				$comma_widgets = explode (',', $widget);	// This deals with cases such as inactive=plugin1,plugin2|active=plugin3,plugin4
-				foreach($comma_widgets as $cw) {
-					$pairs[$status] = $cw; 
-					if($status == "active") {
-						$this->activate_deactivate_plugin($pairs[$status], 1);
-					} else {
-						$this->activate_deactivate_plugin($pairs[$status], 0);
-					}
-					//echo "Confirmed status of " . $cw . " is " . $this->get_plugin_status($cw) . "<br />";
-				}
-		        }
-		}
-	}
-	
-	
-	/* ******************************************************************** 
 	 *  Function: hook_exists
 	 *  Parameters: plugin folder name, hook name
 	 *  Purpose: Returns true of a given hook exists for the specified plugin.
@@ -203,12 +211,15 @@ class Plugin extends generic_pmd {
 
 	/* ******************************************************************** 
 	 *  Function: install_plugin
-	 *  Parameters: plugin folder name
+	 *  Parameters: plugin folder name, optional upgrade flag
 	 *  Purpose: Adds plugin to plugins table
-	 *  Notes: ---
+	 *  Notes: The upgrade argument is used by upgrade_plugin(). If a a new 
+	 * 	   version of a plugin doesn't have an upgrade script, it's 
+	 *         uninstalled then sent here for a reinstall instead.
+	 *         The flag is used to disable show_message.
 	 ********************************************************************** */
 	 
-	function install_plugin($folder = "") {
+	function install_plugin($folder = "", $upgrade = 0) {
 		global $db, $lang, $hotaru, $current_user;
 		
 		$plugin_metadata = $this->read(plugins . $folder . "/" . $folder . ".php");
@@ -243,18 +254,17 @@ class Plugin extends generic_pmd {
 					$dep_array = array_map('ucfirst', $dep_array);
 					$dependency = implode(' ', $dep_array);
 					
-					$hotaru->message = $lang["admin_plugins_install_error"] . " " . $dependency . " " . $version . " - <a href='javascript:location.reload(true);' target='_self'>" . $lang["admin_plugins_page_refresh"] . "</a>";;
+					$hotaru->message = $lang["admin_plugins_install_error"] . " " . $dependency . " " . $version;
 					$hotaru->message_type = 'red';
-					$hotaru->show_message();
 			}
 			return false;	
 		}
-						
-		$sql = "INSERT INTO " . table_plugins . " (plugin_enabled, plugin_name, plugin_prefix, plugin_folder, plugin_desc, plugin_version, plugin_updateby) VALUES (%d, %s, %s, %s, %s, %s, %d)";
+					
+		$sql = "REPLACE INTO " . table_plugins . " (plugin_enabled, plugin_name, plugin_prefix, plugin_folder, plugin_desc, plugin_version, plugin_updateby) VALUES (%d, %s, %s, %s, %s, %s, %d)";
 		$db->query($db->prepare($sql, $this->enabled, $this->name, $this->prefix, $this->folder, $this->desc, $this->version, $current_user->id));
 		
 		foreach($this->hooks as $hook) {
-			$sql = "INSERT INTO " . table_pluginhooks . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
+			$sql = "REPLACE INTO " . table_pluginhooks . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
 			$db->query($db->prepare($sql, $this->folder, trim($hook), $current_user->id));
 		}
 		
@@ -262,9 +272,12 @@ class Plugin extends generic_pmd {
 		
 		// For plugins to avoid showing this success message, they need to return a non-boolean value to $result.
 		if(!is_array($result)) {
-			$hotaru->message = $lang["admin_plugins_install_done"];
+			if($upgrade == 0) {
+				$hotaru->message = $lang["admin_plugins_install_done"];
+			} else {
+				$hotaru->message = $lang["admin_plugins_upgrade_done"];
+			}
 			$hotaru->message_type = 'green';
-			$hotaru->show_message();
 		}
 	}
 	
@@ -278,6 +291,11 @@ class Plugin extends generic_pmd {
 	 
 	function upgrade_plugin($folder = "") {
 		global $db, $lang, $hotaru;
+		
+		if(!$this->hook_exists($folder, 'upgrade_plugin')) {
+			$this->uninstall_plugin($folder, 1);
+			$this->install_plugin($folder, 1);
+		}
 		
 		$plugin_metadata = $this->read(plugins . $folder . "/" . $folder . ".php");
 		
@@ -293,9 +311,8 @@ class Plugin extends generic_pmd {
 				
 		// For plugins to avoid showing this success message, they need to return a non-boolean value to $result.
 		if(!is_array($result)) {
-			$hotaru->message = $lang["admin_plugins_upgrade_done"] . " - <a href='javascript:location.reload(true);' target='_self'>" . $lang["admin_plugins_page_refresh"] . "</a>";
+			$hotaru->message = $lang["admin_plugins_upgrade_done"];
 			$hotaru->message_type = 'green';
-			$hotaru->show_message();
 		}
 	}
 	
@@ -325,7 +342,6 @@ class Plugin extends generic_pmd {
 				if($enabled == 1) { $hotaru->message = $lang["admin_plugins_activated"]; }
 				if($enabled == 0) { $hotaru->message = $lang["admin_plugins_deactivated"]; }
 				$hotaru->message_type = 'green';
-				$hotaru->show_message();
 			}
 		}
 	}
@@ -333,21 +349,22 @@ class Plugin extends generic_pmd {
 	
 	/* ******************************************************************** 
 	 *  Function: uninstall_plugin
-	 *  Parameters: plugin folder name
+	 *  Parameters: plugin folder name, optional upgrade flag
 	 *  Purpose: deletes entry in table_plugins and all its entries in table_pluginhooks
-	 *  Notes: ---
+	 *  Notes: If upgrade_plugin() calls this function, the flag is used to disable the message.
 	 ********************************************************************** */
 
-	function uninstall_plugin($folder = "") {	
+	function uninstall_plugin($folder = "", $upgrade = 0) {	
 		global $db, $hotaru, $lang;
 			
 		$db->query($db->prepare("DELETE FROM " . table_plugins . " WHERE plugin_folder = %s", $folder));
 		$db->query($db->prepare("DELETE FROM " . table_pluginhooks . " WHERE plugin_folder = %s", $folder));
 		$db->query($db->prepare("DELETE FROM " . table_pluginsettings . " WHERE plugin_folder = %s", $folder));
 		
-		$hotaru->message = $lang["admin_plugins_uninstall_done"] . " - <a href='javascript:location.reload(true);' target='_self'>" . $lang["admin_plugins_page_refresh"] . "</a>";
-		$hotaru->message_type = 'green';
-		$hotaru->show_message();
+		if($upgrade == 0) {
+			$hotaru->message = $lang["admin_plugins_uninstall_done"];
+			$hotaru->message_type = 'green';
+		}
 	}
 
 	/* ******************************************************************** 

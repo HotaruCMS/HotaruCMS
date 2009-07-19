@@ -27,7 +27,8 @@
 require_once('../hotaru_header.php');
 require_once('admin_login.php');
 require_once('class.admin.php');
-include_once('admin_news.php');
+require_once('admin_news.php');
+require_once('admin_plugins.php');
 
 $admin = New Admin();
 
@@ -78,7 +79,7 @@ switch ($page) {
 		// Nothing special to do...
 		break;
 	case "plugins":
-		// Nothing special to do...
+		plugins();
 		break;
 	case "plugin_settings":
 		$plugin->folder = $cage->get->testAlnumLines('plugin');
