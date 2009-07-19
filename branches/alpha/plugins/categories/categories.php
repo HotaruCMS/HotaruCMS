@@ -96,7 +96,8 @@ function cts_submit_hotaru_header_2() {
 			if($pairs[0]) {
 				list($key, $value) = explode('=', $pairs[0]);
 				if($key) {
-					$sql = "SELECT category_id FROM " . table_categories . " WHERE category_safe_name = %s LIMIT 1";
+					// Using db_prefix because table_categories might not be defined yet (depends on plugin install order)
+					$sql = "SELECT category_id FROM " . db_prefix . "categories WHERE category_safe_name = %s LIMIT 1";
 					$exists = $db->get_var($db->prepare($sql, $key));		
 					if($exists && $value) {
 						// Now we know that $key is a category so $value must be the post name. Go get the post_id...

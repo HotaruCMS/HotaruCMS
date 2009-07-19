@@ -407,7 +407,7 @@ class Plugin extends generic_pmd {
 	 ********************************************************************** */
 	 
 	function check_actions($hook = '', $perform = true, $folder = '', $parameters = array()) {
-		global $db, $cage;
+		global $db, $cage, $current_user;
 		if($hook == '') {
 			//echo "Error: Plugin hook name not provided.";
 		} else {
@@ -419,7 +419,10 @@ class Plugin extends generic_pmd {
 			$db->cache_queries = true;	// start using cache
 			
 			$sql = "SELECT " . table_plugins . ".plugin_enabled, " . table_plugins . ".plugin_folder, " . table_plugins . ".plugin_prefix, " . table_pluginhooks . ".plugin_hook  FROM " . table_pluginhooks . ", " . table_plugins . " WHERE (" . table_pluginhooks . ".plugin_hook = %s) AND (" . table_plugins . ".plugin_folder = " . table_pluginhooks . ".plugin_folder) " . $where;
+			
+			
 			$plugins = $db->get_results($db->prepare($sql, $hook, $folder));
+			
 			
 			$db->cache_queries = false;	// stop using cache
 			
@@ -458,7 +461,7 @@ class Plugin extends generic_pmd {
 		} elseif($action_found == true) {
 			return true;			// at least one function exists, but nothing was returned
 		} else {
-			return false;			// no functions were triggered. Eitherthey weren't found or they were surpressed by $perform = false.
+			return false;			// no functions were triggered. Either they weren't found or they were surpressed by $perform = false.
 		}
 	}
 			
