@@ -168,10 +168,10 @@ function sub_header_include() {
 function sub_theme_index_main() {
 	global $hotaru, $cage, $post, $plugin, $current_user;
 	
-	// Pages you have to be logged in for...
-	if($current_user->logged_in) {
-		 if($hotaru->is_page('submit')) {
-		  	
+	
+	 if($hotaru->is_page('submit')) {
+	  	
+	  	if($current_user->logged_in) {
 		 	// Include the form if we haven't already...
 		 	require_once(plugins . 'submit/submit_form_1.php');
 		 	
@@ -181,9 +181,13 @@ function sub_theme_index_main() {
 				header("Location: " . baseurl . "index.php?page=submit2&sourceurl=" . $post_orig_url);  
 			} 
 			return true;
-			
-		} elseif($hotaru->is_page('submit2')) {
-		 	
+		} else {
+			return false;
+		}
+		
+	} elseif($hotaru->is_page('submit2')) {
+	 	
+		if($current_user->logged_in) {
 		 	// Include submit_form_2...
 		 	require_once(plugins . 'submit/submit_form_2.php');
 		 	
@@ -196,30 +200,32 @@ function sub_theme_index_main() {
 				header("Location: " . baseurl);	// Go home  
 			} 
 			return true;
-										
-		} elseif($hotaru->is_page('main')) {
-		
-			// Plugin hook
-			$result = $plugin->check_actions('submit_is_page_main');
-			if($result && is_array($result)) { return true; }
-		
-			// Show the list of posts
-			$hotaru->display_template('posts_list', 'submit');
-			return true;
-			
-		} elseif(is_numeric($hotaru->get_page_name())) {
-			// Page name is a number so it must be a post with non-friendly urls
-			$hotaru->display_template('post_page', 'submit');
-			return true;
-			
-		} elseif($post->is_post_url($hotaru->get_page_name())) {
-			// Page name belongs to a story
-			$hotaru->display_template('post_page', 'submit');
-			return true;
-			
-		} else {		
+		} else {
 			return false;
 		}
+									
+	} elseif($hotaru->is_page('main')) {
+	
+		// Plugin hook
+		$result = $plugin->check_actions('submit_is_page_main');
+		if($result && is_array($result)) { return true; }
+	
+		// Show the list of posts
+		$hotaru->display_template('posts_list', 'submit');
+		return true;
+		
+	} elseif(is_numeric($hotaru->get_page_name())) {
+		// Page name is a number so it must be a post with non-friendly urls
+		$hotaru->display_template('post_page', 'submit');
+		return true;
+		
+	} elseif($post->is_post_url($hotaru->get_page_name())) {
+		// Page name belongs to a story
+		$hotaru->display_template('post_page', 'submit');
+		return true;
+		
+	} else {		
+		return false;
 	}
 
 	return false;
