@@ -143,7 +143,7 @@ function tg_submit_class_post_read_post_2() {
  ********************************************************************** */
  
 function tg_submit_class_post_add_post() {
-	global $post, $db, $last_insert_id;
+	global $post, $db, $last_insert_id, $current_user;
 	
 	$sql = "UPDATE " . table_posts . " SET post_tags = %s WHERE post_id = %d";
 	$db->query($db->prepare($sql, urlencode(trim($post->post_vars['post_tags'])), $last_insert_id));
@@ -152,8 +152,8 @@ function tg_submit_class_post_add_post() {
 		$tags_array = explode(',', $post->post_vars['post_tags']);
 		if($tags_array) {
 			foreach($tags_array as $tag) {
-				$sql = "INSERT INTO " . table_tags . " SET tags_post_id = %d, tags_word = %s";
-				$db->query($db->prepare($sql, $last_insert_id, urlencode(trim($tag))));
+				$sql = "INSERT INTO " . table_tags . " SET tags_post_id = %d, tags_word = %s, tags_updateby = %d";
+				$db->query($db->prepare($sql, $last_insert_id, urlencode(trim($tag), $current_user->id)));
 			}
 		}
 	}
