@@ -61,10 +61,12 @@ class Hotaru {
 		if(!$real_page) { 
 			// Possibly a post with multi-byte characters? Try getMixedString2...
 			$real_page = $cage->get->getMixedString2('page');
-			if(!$real_page) { 
-				$real_page = "main"; 
-			}
 		}
+			
+		// Try POST...
+		if(!$real_page) { $real_page = $cage->post->testPage('page'); }
+		
+		if(!$real_page) { $real_page = "main"; }
 
 		$real_page = rtrim($real_page, '/');	// remove trailing slash
 
@@ -85,11 +87,16 @@ class Hotaru {
 	 
 	function get_page_name() {
 		global $cage;
+		
+		// Try GET...
 		$page = $cage->get->testPage('page');
 		if(!$page) {
 			// Possibly a post with multi-byte characters? Try getMixedString2...
 			$page = $cage->get->getMixedString2('page');
 		}
+		
+		// Try POST...
+		if(!$page) { $page = $cage->post->testPage('page'); }
 
 		if($page) {
 			$page = rtrim($page, '/');
