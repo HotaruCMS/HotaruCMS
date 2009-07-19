@@ -209,7 +209,7 @@ class Plugin extends generic_pmd {
 	 ********************************************************************** */
 	 
 	function install_plugin($folder = "") {
-		global $db, $lang, $hotaru;
+		global $db, $lang, $hotaru, $current_user;
 		
 		$plugin_metadata = $this->read(plugins . $folder . "/" . $folder . ".php");
 		
@@ -250,12 +250,12 @@ class Plugin extends generic_pmd {
 			return false;	
 		}
 						
-		$sql = "INSERT INTO " . table_plugins . " (plugin_enabled, plugin_name, plugin_prefix, plugin_folder, plugin_desc, plugin_version) VALUES (%d, %s, %s, %s, %s, %s)";
-		$db->query($db->prepare($sql, $this->enabled, $this->name, $this->prefix, $this->folder, $this->desc, $this->version));
+		$sql = "INSERT INTO " . table_plugins . " (plugin_enabled, plugin_name, plugin_prefix, plugin_folder, plugin_desc, plugin_version, plugin_updateby) VALUES (%d, %s, %s, %s, %s, %s, %d)";
+		$db->query($db->prepare($sql, $this->enabled, $this->name, $this->prefix, $this->folder, $this->desc, $this->version, $current_user->id));
 		
 		foreach($this->hooks as $hook) {
-			$sql = "INSERT INTO " . table_pluginhooks . " (plugin_folder, plugin_hook) VALUES (%s, %s)";
-			$db->query($db->prepare($sql, $this->folder, trim($hook)));
+			$sql = "INSERT INTO " . table_pluginhooks . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
+			$db->query($db->prepare($sql, $this->folder, trim($hook), $current_user->id));
 		}
 		
 		$result = $this->check_actions('install_plugin', $folder);
@@ -308,7 +308,7 @@ class Plugin extends generic_pmd {
 	 ********************************************************************** */
 	 
 	function activate_deactivate_plugin($folder = "", $enabled = 0) {	// 0 = deactivate, 1 = activate
-		global $db, $hotaru, $lang, $admin;
+		global $db, $hotaru, $lang, $admin, $current_user;
 		
 		$admin->delete_files(includes . 'ezSQL/cache');	// Clear the database cache to ensure stored plugins and hooks are up-to-date.
 		
@@ -319,8 +319,8 @@ class Plugin extends generic_pmd {
 			}
 		} else {
 			if($plugin_row->plugin_enabled != $enabled) {		// only update if we're changing the enabled value.
-				$sql = "UPDATE " . table_plugins . " SET plugin_enabled = %d WHERE plugin_folder = %s";
-				$db->query($db->prepare($sql, $enabled, $folder));
+				$sql = "UPDATE " . table_plugins . " SET plugin_enabled = %d, plugin_updateby = %d WHERE plugin_folder = %s";
+				$db->query($db->prepare($sql, $enabled, $current_user->id, $folder));
 				
 				if($enabled == 1) { $hotaru->message = $lang["admin_plugins_activated"]; }
 				if($enabled == 0) { $hotaru->message = $lang["admin_plugins_deactivated"]; }
@@ -500,14 +500,14 @@ class Plugin extends generic_pmd {
 	 ********************************************************************** */
 	
 	function plugin_settings_update($folder = '', $setting = '', $value = '') {
-		global $db;
+		global $db, $current_user;
 		$exists = $this->plugin_setting_exists($folder, $setting);
 		if(!$exists) {
-			$sql = "INSERT INTO " . table_pluginsettings . " (plugin_folder, plugin_setting, plugin_value) VALUES (%s, %s, %s)";
-			$db->query($db->prepare($sql, $folder, $setting, $value));
+			$sql = "INSERT INTO " . table_pluginsettings . " (plugin_folder, plugin_setting, plugin_value, plugin_updateby) VALUES (%s, %s, %s, %d)";
+			$db->query($db->prepare($sql, $folder, $setting, $value, $current_user->id));
 		} else {
-			$sql = "UPDATE " . table_pluginsettings . " SET plugin_folder = %s, plugin_setting = %s, plugin_value = %s WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
-			$db->query($db->prepare($sql, $folder, $setting, $value, $folder, $setting));
+			$sql = "UPDATE " . table_pluginsettings . " SET plugin_folder = %s, plugin_setting = %s, plugin_value = %s, plugin_updateby = %d WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
+			$db->query($db->prepare($sql, $folder, $setting, $value, $current_user->id, $folder, $setting));
 		}
 	}
 
