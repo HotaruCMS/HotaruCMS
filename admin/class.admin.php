@@ -151,14 +151,14 @@ class Admin {
 	 ********************************************************************** */
 	
 	function admin_setting_update($setting = '', $value = '') {
-		global $db;
+		global $db, $current_user;
 		$exists = $this->admin_setting_exists($setting);
 		if(!$exists) {
-			$sql = "INSERT INTO " . table_settings . " (settings_name, settings_value) VALUES (%s, %s)";
-			$db->query($db->prepare($sql, $setting, $value));
+			$sql = "INSERT INTO " . table_settings . " (settings_name, settings_value, settings_updateby) VALUES (%s, %s, %d)";
+			$db->query($db->prepare($sql, $setting, $value, $current_user->id));
 		} else {
-			$sql = "UPDATE " . table_settings . " SET settings_name = %s, settings_value = %s WHERE (settings_name = %s)";
-			$db->query($db->prepare($sql, $setting, $value, $setting));
+			$sql = "UPDATE " . table_settings . " SET settings_name = %s, settings_value = %s, settings_updateby = %d WHERE (settings_name = %s)";
+			$db->query($db->prepare($sql, $setting, $value, $current_user->id, $setting));
 		}
 	}
 

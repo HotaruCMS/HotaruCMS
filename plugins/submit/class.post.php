@@ -120,10 +120,10 @@ class Post {
 	 ********************************************************************** */	
 	 
 	function add_post() {
-		global $db, $plugin, $last_insert_id;
-		$sql = "INSERT INTO " . table_posts . " SET post_orig_url = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d";
+		global $db, $plugin, $last_insert_id, $current_user;
+		$sql = "INSERT INTO " . table_posts . " SET post_orig_url = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_date = CURRENT_TIMESTAMP, post_updateby = %d";
 		
-		$db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), $this->post_status, $this->post_author));
+		$db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), $this->post_status, $this->post_author, $current_user->id));
 		
 		$last_insert_id = $db->get_var($db->prepare("SELECT LAST_INSERT_ID()"));
 				
