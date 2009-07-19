@@ -27,6 +27,7 @@
 require_once('../hotaru_header.php');
 require_once('admin_login.php');
 require_once('class.admin.php');
+include_once('admin_news.php');
 
 $admin = New Admin();
 
@@ -36,13 +37,13 @@ if(file_exists(admin . 'languages/admin_' . strtolower(sitelanguage) . '.php')) 
 	require_once(admin . 'languages/admin_english.php');	// English file if specified language doesn't exist
 }
 
-$page = $cage->get->testPage('page');
+$page = $cage->get->testPage('page');	// check with "get";
+if(!$page) { $page = $cage->post->testPage('page'); }  // check with "post" - used in admin_login_form().
 
 // Authenticate the admin if the Users plugin is INACTIVE:
 if(!$plugin->plugin_active('users')) {
 	if(($page != 'admin_login') && !$result = is_admin_cookie()) {
-		echo "You do not have permission to access this page.<br />";
-		die(); exit;
+		header('Location: ' . baseurl . 'admin/admin_index.php?page=admin_login');
 	}
 }
 
@@ -59,13 +60,17 @@ if(isset($current_user) && $plugin->plugin_active('users')) {
 	}
 }
 
-// If we get this far, we know that the Users plugin is active and the user is an administrator.
+// If we get this far, we know that the user is an administrator.
 
 $plugin->check_actions('admin_index');
 
 switch ($page) {
+	case "admin_login":
+		admin_login();
+		break;
 	case "admin_logout":
 		admin_logout();
+		break;
 	case "settings":
 		// Nothing special to do...
 		break;
@@ -79,13 +84,7 @@ switch ($page) {
 		$plugin->folder = $cage->get->testAlnumLines('plugin');
 		$plugin->name = $plugin->plugin_name($plugin->folder);
 		break;
-	case "":
-		include('admin_news.php');	// for Admin home RSS feed
-		break;
 	default:
-		if(!$hotaru->is_page($page)) {
-			include('admin_news.php');	// for Admin home RSS feed
-		}
 		break;
 }
 

@@ -32,45 +32,59 @@
  ********************************************************************** */
 
 function admin_login() {
-
-	global $cage, $lang;
+	global $cage, $lang, $current_user, $hotaru;
+			
+	if(!$username_check = $cage->post->testUsername('username')) { $username_check = ""; } 
+	if(!$password_check = $cage->post->testPassword('password')) { $password_check = ""; }
+				
+	if($username_check != "" || $password_check != "") {
+		$login_result = admin_login_check($username_check, $password_check);
+		if($login_result) {
+				//success
+				set_admin_cookie($username_check);
+				$current_user->username = $username_check;
+				$current_user->get_user_basic(0, $username_check);
+				$current_user->logged_in = true;
+				return true;
+		} else {
+				// login failed
+				$hotaru->message = $lang["admin_login_failed"];
+				$hotaru->message_type = "red";
+		}
+	} else {
+		if($cage->post->keyExists('login_attempted')) {
+			$hotaru->message = $lang["admin_login_failed"];
+			$hotaru->message_type = "red";
+		}
+		$username_check = "";
+		$password_check = "";
+	}
+	
+	return false;
+}
+	
+function admin_login_form() {
+	global $cage, $lang, $hotaru;	
+	
+	if(!$username_check = $cage->post->testUsername('username')) { $username_check = ""; } 
+	if(!$password_check = $cage->post->testPassword('password')) { $password_check = ""; }
 	
 	echo "<div id='main'>";
 		echo "<h2><a href=" . baseurl . ">Home</a> &raquo; Login</h2>\n";
 		
-		if(!empty($message)) {  } 
-		
+		$hotaru->show_message();
+			
 		echo "<div class='main_inner'>";
-		echo $lang["admin_login_instructions"] . "\n";
-
-			if(!$username_check = $cage->post->testUsername('username')) {
-				$username_check = "";
-			} 
-			if(!$password_check = $cage->post->testPassword('password')) {
-				$password_check = "";
-			}
+			echo $lang["admin_login_instructions"] . "\n";
 			
-			if($username_check != "" || $password_check != "") {
-				$login_result = admin_login_check($username_check, $password_check);
-				if($login_result) {
-						//success
-						set_admin_cookie($username_check);
-						header("Location:" . baseurl . 'admin/admin_index.php');	// Return to front page 
-				} else {
-						// login failed
-						$message = $lang["admin_login_failed"];
-						echo "<div class='message red'>" . $message . "</div>\n";
-				}
-			} else {
-				$username_check = "";
-				$password_check = "";
-			}
-			
-			echo "<form name='login_form' action='" . baseurl . "admin/admin_index.php?page=admin_login' method='post'>\n";	
+			echo "<form name='login_form' action='" . baseurl . "admin/admin_index.php' method='post'>\n";	
 			echo "<table>\n";
 				echo "<tr><td>Username:&nbsp; </td><td><input type='text' size=30 name='username' value='" . $username_check . "' /></td></tr>\n";
 				echo "<tr><td>Password:&nbsp; </td><td><input type='password' size=30 name='password' value='" . $password_check . "' /></td></tr>\n";
-				echo "<tr><td>&nbsp; </td><td style='text-align:right;'><input type='submit' value='" . $lang['admin_login_form_submit'] . "' /></td></tr>\n";
+				echo "<tr><td>&nbsp; </td><td style='text-align:right;'>\n";
+				echo "<input type='hidden' name='login_attempted' value='true'>";
+				echo "<input type='hidden' name='page' value='admin_login'>";
+				echo "<input type='submit' value='" . $lang['admin_login_form_submit'] . "' /></td></tr>\n";
 							
 			echo "</table>\n";
 			echo "</form>\n";
@@ -111,7 +125,7 @@ function is_admin_cookie() {
 	global $cage;
 	// Check for a cookie. If present then the user is logged in.
 	if(!$hotaru_user = $cage->cookie->testUsername('hotaru_user')) {
-		header('Location: ' . baseurl . 'admin/admin_index.php?page=admin_login');
+		return false;
 		die();
 	} else {
 		// authenticate...
