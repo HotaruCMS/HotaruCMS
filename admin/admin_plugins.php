@@ -25,37 +25,43 @@
  *
  **************************************************************************************************** */
  
-// includes
-require_once('../hotaru_header.php');
-if(file_exists(admin . 'languages/admin_' . strtolower(sitelanguage) . '.php')) {
-	require_once(admin . 'languages/admin_' . strtolower(sitelanguage) . '.php');	// language file for admin
-} else {
-	require_once(admin . 'languages/admin_english.php');	// English file if specified language doesn't exist
+ /* ******************************************************************** 
+ *  Function: plugins
+ *  Parameters: None
+ *  Purpose: Manages actions sent from the plugins template
+ *  Notes: ---
+ ********************************************************************** */ 
+ 
+function plugins() {
+	global $lang, $cage, $hotaru, $plugin;
+	
+	require_once('class.admin.php');
+	$admin = New Admin();
+	
+	$action = $cage->get->testAlpha('action');
+	$pfolder = $cage->get->testAlnumLines('plugin');
+	
+	switch ($action) {
+		case "activate":
+			$plugin->activate_deactivate_plugin($pfolder, 1);
+			break;
+		case "deactivate":
+			$plugin->activate_deactivate_plugin($pfolder, 0);
+			break;	
+		case "install":
+			$plugin->install_plugin($pfolder);
+			break;
+		case "uninstall":
+			$plugin->uninstall_plugin($pfolder);
+			break;	
+		case "upgrade":
+			$plugin->upgrade_plugin($pfolder);
+			break;	
+		default:
+			// do nothing...
+			return false;
+			break;
+	}
+	return true;
 }
-global $lang;
-
-require_once('class.admin.php');
-$admin = New Admin();
-
-$widget_positions = $cage->post->noTags('position');
-//echo "Positions returned from EasyWidgets: " . $widget_positions . "<br />";
-if($widget_positions) {
-	$plugin->update_plugin_statuses($widget_positions);	// Cycles through all plugins, enables or disables as necessary	
-}
-
-$the_plugin = $cage->post->testAlnumLines('plugin_folder');
-$action = $cage->post->testAlpha('action');
-
-if($the_plugin && ($action == 'upgrade')) {  
-	$plugin->upgrade_plugin($the_plugin);
-	//echo "<br /><b>" . $lang['admin_plugins_upgrade_done'] . "</b> <br /><br />";
-	//echo $lang['admin_plugins_upgrade_refresh'];
-}
-
-if($the_plugin && ($action == 'uninstall')) { 
-	$plugin->uninstall_plugin($the_plugin);
-	//echo "<br /><b>" . $lang['admin_plugins_uninstall_done'] . "</b> <br /><br />";
-	//echo $lang['admin_plugins_uninstall_refresh'];
-}
-
 ?>
