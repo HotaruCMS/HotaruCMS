@@ -29,7 +29,7 @@ class UserBase {	// Limited to essential user information. Plugins extend this.
  	var $id = 0;
 	var $username = '';
 	var $role = 'registered_user';
-	var $password = '';
+	var $password = 'password';
 	var $email = '';
 	var $logged_in = false;
 	
@@ -41,10 +41,10 @@ class UserBase {	// Limited to essential user information. Plugins extend this.
 	 *  Notes: ---
 	 ********************************************************************** */
 	 
-	function add_user_basic($username = '', $role = 'registered_user', $password = 'password', $email = '') {
+	function add_user_basic() {
 		global $db;
-		$sql = "INSERT INTO " . table_users . " (user_username, user_role, user_password, user_email) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, $username, $role, $password, $email));
+		$sql = "INSERT INTO " . table_users . " (user_username, user_role, user_date, user_password, user_email) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s)";
+		$db->query($db->prepare($sql, $this->username, $this->role, $this->password, $this->email));
 	}
 	
 	
@@ -55,17 +55,36 @@ class UserBase {	// Limited to essential user information. Plugins extend this.
 	 *  Notes: ---
 	 ********************************************************************** */	
 	
-	function update_user_basic($id = 0, $username = '', $role = 'registered_user', $password = 'password', $email = '') {
+	function update_user_basic() {
 		global $db;
-		if($id != 0) {
-			$sql = "UPDATE " . table_users . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s WHERE user_id = %d";
-			$db->query($db->prepare($sql, $username, $role, $password, $email, $id));
+		if($this->id != 0) {
+			$sql = "UPDATE " . table_users . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s, user_updateby = %d WHERE user_id = %d";
+			$db->query($db->prepare($sql, $this->username, $this->role, $this->password, $this->email, $this->id, $this->id));
 			return true;
 		} else {
 			return false;
 		}
 	}
-		
+	
+	
+	/* ******************************************************************** 
+	 *  Function: update_user_lastlogin
+	 *  Parameters: user id
+	 *  Purpose: Updates the lastlogin field in the users table.
+	 *  Notes: Updated when the user successfully logs in.
+	 ********************************************************************** */	
+	
+	function update_user_lastlogin() {
+		global $db;
+		if($this->id != 0) {
+			$sql = "UPDATE " . table_users . " SET user_lastlogin = CURRENT_TIMESTAMP WHERE user_id = %d";
+			$db->query($db->prepare($sql, $this->id));
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	
 	/* ******************************************************************** 
 	 *  Function: get_user_basic

@@ -33,7 +33,7 @@
 function usr_register() {
 	global $hotaru, $cage, $lang;
 	
-	$user = new User();
+	$current_user = new UserBase();
 	
 	echo "<div id='main'>";
 		echo "<p class='breadcrumbs'><a href='" . baseurl . "'>Home</a> &raquo; Register</p>\n";
@@ -45,7 +45,7 @@ function usr_register() {
 		if($cage->post->getAlpha('users_type') == 'register') {
 			$username_check = $cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
 			if($username_check) {
-				$user->username = $username_check;
+				$current_user->username = $username_check;
 			} else {
 				$hotaru->message = $lang['users_register_username_error'];
 				$hotaru->message_type = 'red';
@@ -55,7 +55,7 @@ function usr_register() {
 					
 			$password_check = $cage->post->testPassword('password');	
 			if($password_check) {
-				$user->password = crypt(md5($password_check),md5($user->username));
+				$current_user->password = crypt(md5($password_check),md5($current_user->username));
 			} else {
 				$hotaru->message = $lang['users_register_password_error'];
 				$hotaru->message_type = 'red';
@@ -65,7 +65,7 @@ function usr_register() {
 						
 			$email_check = $cage->post->testEmail('email');	
 			if($email_check) {
-				$user->email = $email_check;
+				$current_user->email = $email_check;
 			} else {
 				$hotaru->message = $lang['users_register_email_error'];
 				$hotaru->message_type = 'red';
@@ -80,9 +80,9 @@ function usr_register() {
 			$email_check = "";
 			// do nothing
 		} elseif($error == 0) {
-			$result = $user->user_exists(0, $username_check, $email_check);
+			$result = $current_user->user_exists(0, $username_check, $email_check);
 			if($result == 4) {
-				$user->add_user_basic($user->username, 'registered_user', $user->password, $user->email);
+				$current_user->add_user_basic();
 				//success
 				header("Location:" . baseurl);	// Registered successfully -> Go to front page
 			} elseif($result == 0) {
