@@ -45,6 +45,7 @@ function admin_login() {
 				$current_user->username = $username_check;
 				$current_user->get_user_basic(0, $username_check);
 				$current_user->logged_in = true;
+				$current_user->update_user_lastlogin();
 				return true;
 		} else {
 				// login failed

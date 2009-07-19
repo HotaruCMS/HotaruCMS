@@ -70,6 +70,6 @@ $lang["install_step5"] = "Step 5/5: Completion";
 $lang["install_step5_installation_complete"] = "Installation has been successfully completed.";
 $lang["install_step5_installation_delete"] = "You <b>must</b> delete the install folder or someone else could run the install script and wipe everything!";
 $lang["install_step5_installation_go_play"] = "Done? Okay, go and play with your new Hotaru site!";
-$lang["install_home"] = "Visit";
+$lang["install_home"] = "Get Started!";
 
 ?>
