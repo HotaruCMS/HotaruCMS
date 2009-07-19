@@ -37,34 +37,10 @@ global $hotaru, $admin, $plugin; // don't remove
    <link rel="stylesheet" href="<?php echo baseurl . 'admin/themes/' . admin_theme . 'style.css'; ?>" type="text/css">
    <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery-ui.min.js'; ?>"></script>
-   <script language="JavaScript" src="<?php echo baseurl . '3rd_party/EasyWidgets/jquery.easywidgets.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_ajax.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_jquery.js'; ?>"></script>
    <?php if($hotaru->is_page('plugin_settings')) { $plugin->check_actions('admin_header_include', $plugin->folder); } ?>
    <link rel="shortcut icon" href="<?php echo baseurl; ?>favicon.ico">
-   <script>
-	var baseurl = '<?php echo baseurl; ?>';
-	
-	$(document).ready(function(){
-		$(function(){
-		
-		  // Prepare the Easy Widgets for Plugin Management
-		
-		  $.fn.EasyWidgets({
-		  
-		  callbacks : {
-		      
-			onChangePositions : function(str){
-				widget_moved(baseurl,str);
-			}
-		      
-		    }
-		
-		  });
-		
-		});
-	});
-   </script>
 </head>
 <body>
 <?php if($announcements = $admin->check_admin_announcements()) { ?>

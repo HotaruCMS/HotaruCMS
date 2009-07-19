@@ -46,14 +46,8 @@ $lang["admin_plugins_page_refresh"] = "Refresh this page";
 $lang["admin_plugins_activated"] = "Plugin activated";
 $lang["admin_plugins_deactivated"] = "Plugin deactivated";
 
-/* Plugin info - /class.plugins.php */
-$lang["admin_plugins_class_new_version"] = "<span style='color: red'>- Newer version available</span>.";
-$lang["admin_plugins_class_upgrade_now"] = "Upgrade now!";
-$lang["admin_plugins_class_reinstall"] = "This plugin doesn't have an upgrade script, so please uninstall and reactivate.";
-
 /* Settings */
-$lang['admin_settings_update_success'] = "Updated successfully.";
-$lang['admin_settings_update_failure'] = "Update failed.";
+$lang['admin_settings_update_done'] = "Updated successfully.";
 
 /* Maintenance */
 $lang['admin_maintenance_clear_cache_success'] = "Cache successfully deleted.";
