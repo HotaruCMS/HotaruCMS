@@ -56,6 +56,6 @@ $lang['admin_settings_update_success'] = "Updated successfully.";
 $lang['admin_settings_update_failure'] = "Update failed.";
 
 /* Maintenance */
-$lang['admin_maintenance_clear_cache_success'] = "Database cache successfully deleted.";
+$lang['admin_maintenance_clear_cache_success'] = "Cache successfully deleted.";
 $lang['admin_maintenance_clear_cache_failure'] = "No cache files were found.";
 ?>
