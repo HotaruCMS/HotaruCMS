@@ -57,6 +57,7 @@ function usr_login() {
 						$current_user->get_user_basic(0, $current_user->username);
 						$current_user->set_cookie($remember);
 						$current_user->logged_in = true;
+						$current_user->update_user_lastlogin();
 						header("Location:" . baseurl);	// Return to front page 
 				} else {
 						// login failed

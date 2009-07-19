@@ -81,7 +81,7 @@ function usr_update() {
 			$result = $current_user->user_exists(0, $username_check, $email_check);
 			if($result != 4) { // 4 is returned when the user does not exist in the database
 				//success
-				$current_user->update_user_basic($current_user->id, $current_user->username, $current_user->role, $current_user->password, $current_user->email);
+				$current_user->update_user_basic();
 				$current_user->set_cookie(0);
 				$hotaru->message = $lang['users_update_success'];
 				$hotaru->message_type = 'green';

@@ -250,7 +250,7 @@ function register_admin() {
 	if($error == 0) {
 		if(!$admin_name = admin_exists()) {
 			// Insert default settings
-			$sql = "INSERT INTO " . table_users . " (user_username, user_role, user_password, user_email) VALUES (%s, %s, %s, %s)";
+			$sql = "INSERT INTO " . table_users . " (user_username, user_role, user_date, user_password, user_email) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s)";
 			$db->query($db->prepare($sql, 'admin', 'administrator', 'password', 'admin@mysite.com'));
 			$user_name = 'admin';
 			$user_email = 'admin@mysite.com';
@@ -263,7 +263,7 @@ function register_admin() {
 			if(!isset($user_password)) { $user_password = ""; }
 			if(($user_name != "") && ($user_email != "") && ($user_password != "")) {
 				// There's been a change so update...
-				$sql = "UPDATE " . table_users . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s WHERE user_role = %s";
+				$sql = "UPDATE " . table_users . " SET user_username = %s, user_role = %s, user_date = CURRENT_TIMESTAMP, user_password = %s, user_email = %s WHERE user_role = %s";
 				$db->query($db->prepare($sql, $user_name, 'administrator', $user_password, $user_email, 'administrator'));
 			} else {
 				$user_id = $user_info->user_id;
@@ -306,7 +306,7 @@ function installation_complete() {
 	echo "<div class='install_content'>" . $lang['install_step5_installation_delete'] . "</div>\n";
 	echo "<div class='install_content'>" . $lang['install_step5_installation_go_play'] . "</div>\n";
 	echo "<div class='back'><a href='install.php?step=4'>" . $lang['install_back'] . "</a></div>\n";
-	echo "<div class='next'><a href='" . baseurl . "'>" . $lang['install_home'] . " " . sitename . "</a></div>\n";
+	echo "<div class='next'><a href='" . baseurl . "'>" . $lang['install_home'] . "</a></div>\n";
 	echo html_footer();	
 }
 
