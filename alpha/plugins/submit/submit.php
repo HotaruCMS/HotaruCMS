@@ -48,7 +48,7 @@ function sub_install_plugin() {
 		  `post_author` int(20) NOT NULL DEFAULT 0,
 		  `post_category` int(20) NOT NULL DEFAULT 1,
 		  `post_status` varchar(32) NOT NULL DEFAULT 'processing',
-		  `post_date` timestamp NOT NULL,
+		  `post_date` timestamp NULL,
 		  `post_title` varchar(255) NULL, 
 		  `post_orig_url` varchar(255) NULL, 
 		  `post_url` varchar(255) NULL, 

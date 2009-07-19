@@ -35,7 +35,7 @@ function admin_news() {
     global $hotaru, $plugin;
 	    
     $cache = true;
-    $cache_duration = 20; // minutes
+    $cache_duration = 60; // minutes
     $max_items = 5;
     
     $feedurl = 'http://feeds2.feedburner.com/hotarucms';

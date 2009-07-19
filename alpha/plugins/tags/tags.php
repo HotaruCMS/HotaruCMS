@@ -60,7 +60,7 @@ function tg_install_plugin() {
 		//echo "table doesn't exist. Stopping before creation."; exit;
 		$sql = "CREATE TABLE `" . db_prefix . "tags` (
 		  `tags_post_id` int(11) NOT NULL DEFAULT '0',
-		  `tags_date` timestamp NOT NULL,
+		  `tags_date` timestamp NULL,
 		  `tags_word` varchar(64) NOT NULL DEFAULT '',
 		  `tags_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
  		  `tags_updateby` int(20) NOT NULL DEFAULT 0, 
@@ -147,13 +147,13 @@ function tg_submit_class_post_add_post() {
 	
 	$sql = "UPDATE " . table_posts . " SET post_tags = %s WHERE post_id = %d";
 	$db->query($db->prepare($sql, urlencode(trim($post->post_vars['post_tags'])), $last_insert_id));
-	
+		
 	if(!empty($post->post_vars['post_tags'])) {
 		$tags_array = explode(',', $post->post_vars['post_tags']);
 		if($tags_array) {
 			foreach($tags_array as $tag) {
-				$sql = "INSERT INTO " . table_tags . " SET tags_post_id = %d, tags_word = %s, tags_updateby = %d";
-				$db->query($db->prepare($sql, $last_insert_id, urlencode(trim($tag), $current_user->id)));
+				$sql = "INSERT INTO " . table_tags . " SET tags_post_id = %d, tags_date = CURRENT_TIMESTAMP, tags_word = %s, tags_updateby = %d";
+				$db->query($db->prepare($sql, $last_insert_id, urlencode(trim($tag)), $current_user->id));
 			}
 		}
 	}
