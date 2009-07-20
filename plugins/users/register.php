@@ -26,7 +26,7 @@
  /* ******************************************************************** 
  *  Function: usr_register
  *  Parameters: None, but gets register and password for verification from $cage
- *  Purpose: Displays a register form, retrieves submitted values and calls the User class to verify them.
+ *  Purpose: Registering a new user.
  *  Notes: 
  ********************************************************************** */
  
@@ -35,79 +35,97 @@ function usr_register() {
 	
 	$current_user = new UserBase();
 	
+	$error = 0;
+	if($cage->post->getAlpha('users_type') == 'register') {
+		$username_check = $cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
+		if($username_check) {
+			$current_user->username = $username_check;
+		} else {
+			$hotaru->message = $lang['users_register_username_error'];
+			$hotaru->message_type = 'red';
+			$error = 1;
+		}
+				
+		$password_check = $cage->post->testPassword('password');	
+		if($password_check) {
+			$current_user->password = crypt(md5($password_check),md5($current_user->username));
+		} else {
+			$hotaru->message = $lang['users_register_password_error'];
+			$hotaru->message_type = 'red';
+			$error = 1;
+		}
+					
+		$email_check = $cage->post->testEmail('email');	
+		if($email_check) {
+			$current_user->email = $email_check;
+		} else {
+			$hotaru->message = $lang['users_register_email_error'];
+			$hotaru->message_type = 'red';
+			$error = 1;
+		}
+	}
+			
+	if(!isset($username_check) && !isset($password_check) && !isset($email_check)) {
+		$username_check = "";
+		$password_check = "";
+		$email_check = "";
+		// do nothing
+	} elseif($error == 0) {
+		$result = $current_user->user_exists(0, $username_check, $email_check);
+		if($result == 4) {
+			$current_user->add_user_basic();
+			//success
+			return true;
+		} elseif($result == 0) {
+			$hotaru->message = $lang['users_register_id_exists'];
+			$hotaru->message_type = 'red';
+
+		} elseif($result == 1) {
+			$hotaru->message = $lang['users_register_username_exists'];
+			$hotaru->message_type = 'red';
+
+		} elseif($result == 2) {
+			$hotaru->message = $lang['users_register_email_exists'];
+			$hotaru->message_type = 'red';
+		} else {
+			$hotaru->message = $lang["users_register_unexpected_error"];
+			$hotaru->message_type = 'red';
+		}
+	} else {
+		// error must = 1 so fall through and display the form again
+	}
+	return false;
+}
+
+
+ /* ******************************************************************** 
+ *  Function: usr_register_form
+ *  Parameters: None, but gets login and password for verification from $cage
+ *  Purpose: Displays a login form
+ *  Notes: 
+ ********************************************************************** */
+ 
+function usr_register_form() {
+	global $hotaru, $cage, $lang;
+	
+	if($cage->post->getAlpha('users_type') == 'register') {
+		$username_check = $cage->post->testUsername('username');
+		$password_check = $cage->post->testPassword('password');
+		$email_check = $cage->post->testEmail('email');	
+	} else {
+		$username_check = "";
+		$password_check = "";
+		$email_check = "";
+	}
+	
 	echo "<div id='main'>";
 		echo "<p class='breadcrumbs'><a href='" . baseurl . "'>Home</a> &raquo; Register</p>\n";
-				
+			
+		$hotaru->show_message();
+			
 		echo "<div class='main_inner'>";
 		echo $lang["users_register_instructions"] . "\n";
-		
-		$error = 0;
-		if($cage->post->getAlpha('users_type') == 'register') {
-			$username_check = $cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
-			if($username_check) {
-				$current_user->username = $username_check;
-			} else {
-				$hotaru->message = $lang['users_register_username_error'];
-				$hotaru->message_type = 'red';
-				$hotaru->show_message();
-				$error = 1;
-			}
-					
-			$password_check = $cage->post->testPassword('password');	
-			if($password_check) {
-				$current_user->password = crypt(md5($password_check),md5($current_user->username));
-			} else {
-				$hotaru->message = $lang['users_register_password_error'];
-				$hotaru->message_type = 'red';
-				$hotaru->show_message();
-				$error = 1;
-			}
-						
-			$email_check = $cage->post->testEmail('email');	
-			if($email_check) {
-				$current_user->email = $email_check;
-			} else {
-				$hotaru->message = $lang['users_register_email_error'];
-				$hotaru->message_type = 'red';
-				$hotaru->show_message();
-				$error = 1;
-			}
-		}
 				
-		if(!isset($username_check) && !isset($password_check) && !isset($email_check)) {
-			$username_check = "";
-			$password_check = "";
-			$email_check = "";
-			// do nothing
-		} elseif($error == 0) {
-			$result = $current_user->user_exists(0, $username_check, $email_check);
-			if($result == 4) {
-				$current_user->add_user_basic();
-				//success
-				header("Location:" . baseurl);	// Registered successfully -> Go to front page
-			} elseif($result == 0) {
-				$hotaru->message = $lang['users_register_id_exists'];
-				$hotaru->message_type = 'red';
-				$hotaru->show_message(); 
-
-			} elseif($result == 1) {
-				$hotaru->message = $lang['users_register_username_exists'];
-				$hotaru->message_type = 'red';
-				$hotaru->show_message(); 
-
-			} elseif($result == 2) {
-				$hotaru->message = $lang['users_register_email_exists'];
-				$hotaru->message_type = 'red';
-				$hotaru->show_message(); 
-			} else {
-				$hotaru->message = $lang["users_register_unexpected_error"];
-				$hotaru->message_type = 'red';
-				$hotaru->show_message();
-			}
-		} else {
-			// error must = 1 so fall through and display the form again
-		}
-		
 			echo "<form name='register_form' action='" . baseurl . "index.php?page=register' method='post'>\n";	
 			echo "<table>";
 			echo "<tr><td>Username:&nbsp; </td><td><input type='text' size=30 name='username' value='" . $username_check . "' /></td></tr>\n";
@@ -118,7 +136,7 @@ function usr_register() {
 			echo "</table>\n";
 			echo "</form>\n";
 		echo "</div>\n";
-	echo "</div>\n";
+	echo "</div>\n";	
 }
 
 ?>
