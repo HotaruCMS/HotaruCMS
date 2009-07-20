@@ -43,6 +43,7 @@ require_once(includes . 'ezSQL/ez_sql_core.php');		// for database usage
 require_once(includes . 'ezSQL/mysql/ez_sql_mysql.php');	// for database usage
 require_once('funcs.urls.php');					// for default or friendly urls
 require_once('funcs.strings.php');				// for manipulating strings
+require_once('funcs.arrays.php');				// for manipulating arrays
 require_once('funcs.times.php');				// for everything related to time
 
 if(file_exists(languages . 'main_' . strtolower(sitelanguage) . '.php')) {

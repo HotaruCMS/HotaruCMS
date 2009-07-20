@@ -83,7 +83,7 @@ function cats_install_plugin() {
  
 function cats_hotaru_header() {
 	global $hotaru, $lang, $plugin;
-	define("table_categories", db_prefix . 'categories');
+	if(!defined('table_categories')) { define("table_categories", db_prefix . 'categories'); }
 	return true;
 }
 

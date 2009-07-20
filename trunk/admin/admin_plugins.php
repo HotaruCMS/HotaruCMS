@@ -40,6 +40,7 @@ function plugins() {
 	
 	$action = $cage->get->testAlpha('action');
 	$pfolder = $cage->get->testAlnumLines('plugin');
+	$order = $cage->get->testAlnumLines('order');
 	
 	switch ($action) {
 		case "activate":
@@ -57,11 +58,23 @@ function plugins() {
 		case "upgrade":
 			$plugin->upgrade_plugin($pfolder);
 			break;	
+		case "orderup":
+			$plugin->plugin_order($pfolder, $order, "up");
+			break;	
+		case "orderdown":
+			$plugin->plugin_order($pfolder, $order, "down");
+			break;	
 		default:
 			// do nothing...
 			return false;
 			break;
 	}
+	
+	/* Redirect to the same page to clear the query string from the url, preventing a user 
+	from refreshing the page and causing problems by executing a script with values that 
+	no longer apply, */
+	
+	//header("location: " . url(array('page'=>'plugins'), 'admin'));
 	return true;
 }
 ?>
