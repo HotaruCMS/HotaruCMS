@@ -31,11 +31,13 @@ class Plugin extends generic_pmd {
 	var $id = '';
 	var $enabled = 0;
 	var $name = '';
-	var $desc = '';
-	var $folder = '';
 	var $prefix = '';
+	var $folder = '';
+	var $desc = '';
 	var $version = 0;
-	var $dependencies = array();
+	var $order = 0;
+	var $requires = '';		// string
+	var $dependencies = array();	// same as $requires but an array of plugin->version pairs.
 	var $hooks = array();
 	
 
@@ -65,6 +67,7 @@ class Plugin extends generic_pmd {
 					$allplugins[$count]['version'] = $plugin_row->plugin_version;
 					$allplugins[$count]['install'] = "installed";
 					$allplugins[$count]['location'] = "database";
+					$allplugins[$count]['order'] = $plugin_row->plugin_order;
 				} elseif($plugin_row && version_compare($plugin_details['version'], $plugin_row->plugin_version, '>')) {
 					//plugin exists in database, but it's an older version than the one in the folder...
 					$allplugins[$count]['name'] = $plugin_row->plugin_name;
@@ -74,6 +77,7 @@ class Plugin extends generic_pmd {
 					$allplugins[$count]['version'] = $plugin_row->plugin_version;
 					$allplugins[$count]['install'] = "upgrade";
 					$allplugins[$count]['location'] = "database";
+					$allplugins[$count]['order'] = $plugin_row->plugin_order;
 				} else {
 					// if plugin is not in database...
 					$allplugins[$count]['name'] = $plugin_details['name'];
@@ -83,6 +87,7 @@ class Plugin extends generic_pmd {
 					$allplugins[$count]['version'] = $plugin_details['version'];
 					$allplugins[$count]['install'] = "install";
 					$allplugins[$count]['location'] = "folder";
+					$allplugins[$count]['order'] = 0;
 				}
 				
 				// Conditions for "active"...
@@ -118,19 +123,40 @@ class Plugin extends generic_pmd {
 				
 				// Conditions for "requires"...
 				if(isset($plugin_details['requires']) && $plugin_details['requires']) {
-					$requirements = explode(',', $plugin_details['requires']);
+					$this->requires = $plugin_details['requires'];
+					$this->requires_to_dependencies();
+					
 					// Converts plugin folder names to well formatted names...
-					$dependencies = '';
-					foreach($requirements as $requirement) {
-						$dep_array = array();
-						$dep_array = explode('_', trim($requirement));
-						$dep_array = array_map('ucfirst', $dep_array);
-						$dependencies .= implode(' ', $dep_array) . "<br />";
+					foreach($this->dependencies as $this_plugin => $version) {
+						$formatted_plugin = $this->folder_to_name($this_plugin);
+						unset($this->dependencies[$this_plugin]);
+						$this->dependencies[$formatted_plugin] = $version;
+						$allplugins[$count]['requires'][$formatted_plugin] = $this->dependencies[$formatted_plugin];
 					}
-					$allplugins[$count]['requires'] = $dependencies;
+					
 				} else {
-					$allplugins[$count]['requires'] = "";
+					$allplugins[$count]['requires'] = array();
 				}
+				
+				
+				// Conditions for "order"...
+				// The order is sorted numerically in the plugins.php template, so we need separate order and order_output elements.
+				if($allplugins[$count]['order'] != 0) { 
+					$order = $allplugins[$count]['order'];
+					$allplugins[$count]['order_output'] = "<a href='" . baseurl;
+					$allplugins[$count]['order_output'] .= "admin/admin_index.php?page=plugins&amp;";
+					$allplugins[$count]['order_output'] .= "action=orderup&amp;plugin=". $allplugins[$count]['folder'];
+					$allplugins[$count]['order_output'] .= "&amp;order=" . $order . "'>";
+					$allplugins[$count]['order_output'] .= "<img src='" . baseurl . "admin/themes/" . admin_theme . "images/up.png'>";
+					$allplugins[$count]['order_output'] .= "</a> \n<a href='" . baseurl;
+					$allplugins[$count]['order_output'] .= "admin/admin_index.php?page=plugins&amp;";
+					$allplugins[$count]['order_output'] .= "action=orderdown&amp;plugin=". $allplugins[$count]['folder'];
+					$allplugins[$count]['order_output'] .= "&amp;order=" . $order . "'>";
+					$allplugins[$count]['order_output'] .= "<img src='" . baseurl . "admin/themes/" . admin_theme . "images/down.png'>";
+					$allplugins[$count]['order_output'] .= "</a>\n";
+				} else {
+					$allplugins[$count]['order_output'] = "";
+				}				
 				
 				$count++;				
 			}	
@@ -158,6 +184,42 @@ class Plugin extends generic_pmd {
 		}	
 		return $plugins_array;
 	}
+
+
+	/* ******************************************************************** 
+	 *  Function: requires_to_dependencies
+	 *  Parameters: None
+	 *  Purpose: Converts $this->requires into $this->dependencies array.
+	 *  Notes: Result is array containing 'category_manager' -> '0.1' pairs
+	 ********************************************************************** */
+
+	function requires_to_dependencies() {
+		unset($this->dependencies);
+		foreach(explode(',', $this->requires) as $pair) {
+			list($k,$v) = explode (' ', trim($pair));
+       			$this->dependencies[$k] = $v;
+		}
+	}
+
+	
+	/* ******************************************************************** 
+	 *  Function: folder_to_name
+	 *  Parameters: A plugin folder name, e.g. 'category_manager'
+	 *  Purpose: Changes 'category_manager' into 'Category Manager'
+	 *  Notes: ---
+	 ********************************************************************** */
+
+	function folder_to_name($plugin) {
+		$dep_array = array();
+		
+		$dep_array = explode('_', trim($plugin));
+		$dep_array = array_map('ucfirst', $dep_array);
+		$plugin = implode(' ', $dep_array);
+		
+		return $plugin;
+	}
+
+
 	/* ******************************************************************** 
 	 *  Function: get_plugin_status
 	 *  Parameters: widget folder name
@@ -234,11 +296,10 @@ class Plugin extends generic_pmd {
 		$this->prefix = $plugin_metadata['prefix'];
 		$this->version = $plugin_metadata['version'];
 		$this->hooks = explode(',', $plugin_metadata['hooks']);
+		
 		if(isset($plugin_metadata['requires']) && $plugin_metadata['requires']) {
-			foreach(explode(',', $plugin_metadata['requires']) as $pair) {
-				list($k,$v) = explode (' ', trim($pair));
-               			$this->dependencies[$k] = $v;
-			}
+			$this->requires = $plugin_metadata['requires'];
+			$this->requires_to_dependencies();
 		}
 		
 		$dependency_error = 0;
@@ -250,22 +311,25 @@ class Plugin extends generic_pmd {
 		
 		if($dependency_error == 1) {
 			foreach($this->dependencies as $dependency => $version) {
-			
-					// Converts plugin folder names to well formatted names...
-					$dep_array = array();
-					$dep_array = explode('_', $dependency);
-					$dep_array = array_map('ucfirst', $dep_array);
-					$dependency = implode(' ', $dep_array);
-					
-					$hotaru->message = $lang["admin_plugins_install_error"] . " " . $dependency . " " . $version;
+					$dependency = $this->folder_to_name($dependency);				
+					$hotaru->message = $lang["admin_plugins_install_sorry"] . " " . $this->name . " " . $lang["admin_plugins_install_requires"] . " " . $dependency . " " . $version;
 					$hotaru->message_type = 'red';
 			}
 			return false;	
 		}
 					
-		$sql = "REPLACE INTO " . table_plugins . " (plugin_enabled, plugin_name, plugin_prefix, plugin_folder, plugin_desc, plugin_version, plugin_updateby) VALUES (%d, %s, %s, %s, %s, %s, %d)";
-		$db->query($db->prepare($sql, $this->enabled, $this->name, $this->prefix, $this->folder, $this->desc, $this->version, $current_user->id));
+		$sql = "REPLACE INTO " . table_plugins . " (plugin_enabled, plugin_name, plugin_prefix, plugin_folder, plugin_desc, plugin_requires, plugin_version, plugin_updateby) VALUES (%d, %s, %s, %s, %s, %s, %s, %d)";
+		$db->query($db->prepare($sql, $this->enabled, $this->name, $this->prefix, $this->folder, $this->desc, $this->requires, $this->version, $current_user->id));
 		
+		// Get the last order number - doing this after REPLACE INTO because we don't know whether the above will insert or replace.
+		$sql = "SELECT plugin_order FROM " . table_plugins . " ORDER BY plugin_order DESC LIMIT 1";
+		$highest_order = $db->get_var($db->prepare($sql));
+		
+		// Give the new plugin the order number + 1
+		$sql = "UPDATE " . table_plugins . " SET plugin_order = %d WHERE plugin_id = LAST_INSERT_ID()";
+		$db->query($db->prepare($sql, ($highest_order + 1)));
+		
+		// Add any plugin hooks to the hooks table
 		foreach($this->hooks as $hook) {
 			$sql = "REPLACE INTO " . table_pluginhooks . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
 			$db->query($db->prepare($sql, $this->folder, trim($hook), $current_user->id));
@@ -368,7 +432,139 @@ class Plugin extends generic_pmd {
 			$hotaru->message = $lang["admin_plugins_uninstall_done"];
 			$hotaru->message_type = 'green';
 		}
+		
+		$this->refresh_plugin_order();
 	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: plugin_order
+	 *  Parameters: plugin folder name, current order#, direction (up or down)
+	 *  Purpose: Updates plugin order and order of their hooks, i.e. changes the order of plugins in check_actions.
+	 *  Notes: ---
+	 ********************************************************************** */
+
+	function plugin_order($folder = "", $order = 0, $arrow = "up") {	
+		global $db, $hotaru, $lang;
+			
+		if($order == 0) {
+			$hotaru->message = "Error: The order value is zero";
+			$hotaru->message_type = 'red';
+			return false;
+		}
+				
+		if($arrow == "up") {
+			// get row above
+			$sql= "SELECT * FROM " . table_plugins . " WHERE plugin_order = %d";
+			$row_above = $db->get_row($db->prepare($sql, ($order - 1)));
+			
+			if(!$row_above) {
+				$hotaru->message = $this->folder_to_name($folder) . " " . "is already first";
+				$hotaru->message_type = 'red';
+				return false;
+			}
+			
+			if($row_above->plugin_order == $order) {
+				$hotaru->message = "Error: The plugin to move above has the same order value";
+				$hotaru->message_type = 'red';
+				return false;
+			}
+			
+			// update row above 
+			$sql = "UPDATE " . table_plugins . " SET plugin_order = %d WHERE plugin_id = %d";
+			$db->query($db->prepare($sql, ($row_above->plugin_order + 1), $row_above->plugin_id)); 
+			
+			// update current plugin
+			$sql = "UPDATE " . table_plugins . " SET plugin_order = %d WHERE plugin_folder = %s";
+			$db->query($db->prepare($sql, ($order - 1), $folder)); 
+		} else {
+			// get row below
+			$sql= "SELECT * FROM " . table_plugins . " WHERE plugin_order = %d";
+			$row_below = $db->get_row($db->prepare($sql, ($order + 1)));
+			
+			if(!$row_below) {
+				$hotaru->message = $this->folder_to_name($folder) . " " . "is already last";
+				$hotaru->message_type = 'red';
+				return false;
+			}
+			
+			if($row_below->plugin_order == $order) {
+				$hotaru->message = "Error: The plugin to move below has the same order value";
+				$hotaru->message_type = 'red';
+				return false;
+			}
+			
+			// update row above 
+			$sql = "UPDATE " . table_plugins . " SET plugin_order = %d WHERE plugin_id = %d";
+			$db->query($db->prepare($sql, ($row_below->plugin_order - 1), $row_below->plugin_id)); 
+			
+			// update current plugin
+			$sql = "UPDATE " . table_plugins . " SET plugin_order = %d WHERE plugin_folder = %s";
+			$db->query($db->prepare($sql, ($order + 1), $folder)); 
+		}
+		
+		$hotaru->message = "Order updated";
+		$hotaru->message_type = 'green';
+		
+		$this->refresh_plugin_order();	// Resort all orders and remove any accidental gaps
+		
+		$this->sort_plugin_hooks();
+		
+		return true;
+
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: refresh_plugin_order
+	 *  Parameters: None
+	 *  Purpose: Removes gaps in plugin order where plugins have been uninstalled.
+	 *  Notes: ---
+	 ********************************************************************** */
+
+	function refresh_plugin_order() {	
+		global $db;
+		
+		$sql = "SELECT * FROM " . table_plugins . " ORDER BY plugin_order ASC";
+		$rows = $db->get_results($db->prepare($sql));
+		
+		if($rows) { 
+			$i = 1;
+			foreach($rows as $row) {
+				$sql = "UPDATE " . table_plugins . " SET plugin_order = %d WHERE plugin_id = %d";
+				$db->query($db->prepare($sql, $i, $row->plugin_id));
+				$i++; 
+			}
+		} else {
+			return true;
+		}
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: sort_plugin_hooks
+	 *  Parameters: None
+	 *  Purpose: Orders the plugin hooks by plugin_order
+	 *  Notes: ---
+	 ********************************************************************** */
+
+	function sort_plugin_hooks() {	
+		global $db, $current_user;
+		
+		$sql = "SELECT p.plugin_folder, p.plugin_order, p.plugin_id, h.* FROM " . table_pluginhooks . " h, " . table_plugins . " p WHERE p.plugin_folder = h.plugin_folder ORDER BY p.plugin_order ASC";
+		$rows = $db->get_results($db->prepare($sql));
+
+		// Drop and recreate the pluginhooks table, i.e. empty it.
+		$db->query($db->prepare("TRUNCATE TABLE " . table_pluginhooks));
+			
+		// Add plugin hooks back into the hooks table
+		foreach($rows  as $row) {
+			$sql = "INSERT INTO " . table_pluginhooks . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
+			$db->query($db->prepare($sql, $row->plugin_folder, $row->plugin_hook, $current_user->id));
+		}
+		
+	}
+	
 
 	/* ******************************************************************** 
 	 *  Function: plugin_name

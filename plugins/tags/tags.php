@@ -88,7 +88,7 @@ function tg_install_plugin() {
 function tg_submit_hotaru_header_1() {
 	global $post, $plugin;
 	
-	define("table_tags", db_prefix . 'tags');
+	if(!defined('table_tags')) { define("table_tags", db_prefix . 'tags'); }
 	
 	// include language file
 	$plugin->include_language_file('tags');

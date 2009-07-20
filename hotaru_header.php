@@ -24,6 +24,7 @@
  **************************************************************************************************** */
  
 ini_set('display_errors',1);
+ini_set('log_errors',1);
 error_reporting(E_ALL);
 
 session_start();
@@ -42,6 +43,7 @@ require_once(includes . 'ezSQL/ez_sql_core.php');		// for database usage
 require_once(includes . 'ezSQL/mysql/ez_sql_mysql.php');	// for database usage
 require_once('funcs.urls.php');					// for default or friendly urls
 require_once('funcs.strings.php');				// for manipulating strings
+require_once('funcs.arrays.php');				// for manipulating arrays
 require_once('funcs.times.php');				// for everything related to time
 
 if(file_exists(languages . 'main_' . strtolower(sitelanguage) . '.php')) {
@@ -53,7 +55,7 @@ if(file_exists(languages . 'main_' . strtolower(sitelanguage) . '.php')) {
 // Initialize database
 if(!isset($db)) { 
 	$db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST); 
-	$db->cache_timeout = 1; // Note: this is hours
+	$db->cache_timeout = 0; // Note: this is hours
 	$db->cache_dir = includes . 'ezSQL/cache';
 	$db->use_disk_cache = true;	// However, queries are only cached following $db->cache_queries = true;
 }
