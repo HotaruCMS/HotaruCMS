@@ -38,6 +38,7 @@ $the_plugins = $plugin->get_plugins(); // don't remove
 
 <table>
 
+<tr class='plugins_table_installed'><td colspan=6>Installed</td></tr>
 <tr class='plugins_table_headers'>
 <td>Active</td>
 <td>Switch</td>
@@ -51,19 +52,50 @@ $the_plugins = $plugin->get_plugins(); // don't remove
 	$alt = 0;
 	foreach($the_plugins as $plug) {
 		$alt++;
-
-		
-		echo "<tr id='plugins_tr' class='plugins_table_row_" . $alt % 2 . "'>\n";
-		echo "<td class='plugins_active'>" . $plug['active'] . "</td>\n";
-		echo "<td class='plugins_status'>" . $plug['status'] . "</td>\n";
-		echo "<td class='plugins_name'>" . $plug['name'] . " " . $plug['version'] . "</td>\n";
-		echo "<td class='plugins_requires'>" . $plug['requires'] . "</td>\n";
-		echo "<td class='plugins_install'>" . $plug['install'] . "</td>\n";
-		echo "<td class='plugins_details'><a class='plugin_drop_down' href='#'><img src='" . baseurl . "admin/themes/" . admin_theme . "images/info.png'></a></td>\n";
-		echo "</tr>\n";
-		echo "<tr id='plugins_tr_details' style='display:none;'><td colspan=5 class='plugin_description'>" . $plug['description'] . "</td>";
-		echo "<td class='plugin_description_close'><a class='plugin_hide_details' href='#'>Close</a></td></tr>\n";
+		if($plug['location'] == 'database') {		
+			echo "<tr id='plugins_tr' class='plugins_table_row_" . $alt % 2 . "'>\n";
+			echo "<td class='plugins_active'>" . $plug['active'] . "</td>\n";
+			echo "<td class='plugins_status'>" . $plug['status'] . "</td>\n";
+			echo "<td class='plugins_name'>" . $plug['name'] . " " . $plug['version'] . "</td>\n";
+			echo "<td class='plugins_requires'>" . $plug['requires'] . "</td>\n";
+			echo "<td class='plugins_install'>" . $plug['install'] . "</td>\n";
+			echo "<td class='plugins_details'><a class='plugin_drop_down' href='#'><img src='" . baseurl . "admin/themes/" . admin_theme . "images/info.png'></a></td>\n";
+			echo "</tr>\n";
+			echo "<tr id='plugins_tr_details' style='display:none;'><td colspan=5 class='plugin_description'>" . $plug['description'] . "</td>";
+			echo "<td class='plugin_description_close'><a class='plugin_hide_details' href='#'>Close</a></td></tr>\n";
+		}
 	}
+?>
+	
+<tr><td colspan=6>&nbsp;</td></tr>
+<tr class='plugins_table_not_installed'><td colspan=6>Not installed</td></tr>
+<tr class='plugins_table_headers'>
+<td>Active</td>
+<td>Switch</td>
+<td>Plugin</td>
+<td>Requires</td>
+<td>Install</td>
+<td>Details</td>
+</tr>
+
+<?php
+	$alt = 0;
+	foreach($the_plugins as $plug) {
+		$alt++;
+		if($plug['location'] == 'folder') {		
+			echo "<tr id='plugins_tr' class='plugins_table_row_" . $alt % 2 . "'>\n";
+			echo "<td class='plugins_active'>" . $plug['active'] . "</td>\n";
+			echo "<td class='plugins_status'>" . $plug['status'] . "</td>\n";
+			echo "<td class='plugins_name'>" . $plug['name'] . " " . $plug['version'] . "</td>\n";
+			echo "<td class='plugins_requires'>" . $plug['requires'] . "</td>\n";
+			echo "<td class='plugins_install'>" . $plug['install'] . "</td>\n";
+			echo "<td class='plugins_details'><a class='plugin_drop_down' href='#'><img src='" . baseurl . "admin/themes/" . admin_theme . "images/info.png'></a></td>\n";
+			echo "</tr>\n";
+			echo "<tr id='plugins_tr_details' style='display:none;'><td colspan=5 class='plugin_description'>" . $plug['description'] . "</td>";
+			echo "<td class='plugin_description_close'><a class='plugin_hide_details' href='#'>Close</a></td></tr>\n";
+		}
+	}
+
 ?>
 </table>
 </div>
