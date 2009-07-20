@@ -64,6 +64,7 @@ class Plugin extends generic_pmd {
 					$allplugins[$count]['status'] = $this->get_plugin_status($plugin_row->plugin_folder);
 					$allplugins[$count]['version'] = $plugin_row->plugin_version;
 					$allplugins[$count]['install'] = "installed";
+					$allplugins[$count]['location'] = "database";
 				} elseif($plugin_row && version_compare($plugin_details['version'], $plugin_row->plugin_version, '>')) {
 					//plugin exists in database, but it's an older version than the one in the folder...
 					$allplugins[$count]['name'] = $plugin_row->plugin_name;
@@ -72,6 +73,7 @@ class Plugin extends generic_pmd {
 					$allplugins[$count]['status'] = $this->get_plugin_status($plugin_row->plugin_folder);
 					$allplugins[$count]['version'] = $plugin_row->plugin_version;
 					$allplugins[$count]['install'] = "upgrade";
+					$allplugins[$count]['location'] = "database";
 				} else {
 					// if plugin is not in database...
 					$allplugins[$count]['name'] = $plugin_details['name'];
@@ -80,6 +82,7 @@ class Plugin extends generic_pmd {
 					$allplugins[$count]['status'] = "inactive";
 					$allplugins[$count]['version'] = $plugin_details['version'];
 					$allplugins[$count]['install'] = "install";
+					$allplugins[$count]['location'] = "folder";
 				}
 				
 				// Conditions for "active"...
