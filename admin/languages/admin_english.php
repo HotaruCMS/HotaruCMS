@@ -48,7 +48,7 @@ $lang["admin_plugins_activated"] = "Plugin activated";
 $lang["admin_plugins_deactivated"] = "Plugin deactivated";
 
 /* Settings */
-$lang['admin_settings_update_done'] = "Updated successfully.";
+$lang['admin_settings_update_success'] = "Updated successfully.";
 
 /* Maintenance */
 $lang['admin_maintenance_clear_cache_success'] = "Cache successfully deleted.";

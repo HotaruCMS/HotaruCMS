@@ -6,7 +6,7 @@
  * version: 0.1
  * folder: submit
  * prefix: sub
- * hooks: hotaru_header, header_include, install_plugin, navigation, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, submit_show_post_extras
+ * hooks: hotaru_header, header_include, install_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, submit_show_post_extras
  *
  *  License:
  *
@@ -159,7 +159,38 @@ function sub_header_include() {
 
 
 /* ******************************************************************** 
- *  Function: sub_theme_index_display
+ *  Function: sub_theme_index_replace
+ *  Parameters: None
+ *  Purpose: Checks results from submit form 2.
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function sub_theme_index_replace() {
+	global $hotaru, $cage, $post, $plugin, $current_user;
+	
+	if($hotaru->is_page('submit2')) {
+	 	
+		if($current_user->logged_in) {
+		 	
+		 	if($cage->post->getAlpha('submit2') == 'true') {		 	
+		 		// Include submit_form_2...
+		 		require_once(plugins . 'submit/submit_step2.php');		 		
+			 	if(!sub_check_for_errors_2()) { 
+			 		$post_orig_url = $cage->post->testUri('post_orig_url'); 
+					sub_process_submission($post_orig_url);
+					header("Location: " . baseurl);	// Go home  
+					die();
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+
+/* ******************************************************************** 
+ *  Function: sub_theme_index_main
  *  Parameters: None
  *  Purpose: Determines which submit page to display
  *  Notes: ---
@@ -167,20 +198,33 @@ function sub_header_include() {
  
 function sub_theme_index_main() {
 	global $hotaru, $cage, $post, $plugin, $current_user;
-	
-	
+		
 	 if($hotaru->is_page('submit')) {
 	  	
 	  	if($current_user->logged_in) {
-		 	// Include the form if we haven't already...
-		 	require_once(plugins . 'submit/submit_form_1.php');
-		 	
-	 		// Nothing submitted yet, show the submission form...
-			$post_orig_url = sub_submit_form_1();
-			if($post_orig_url) { 
-				header("Location: " . baseurl . "index.php?page=submit2&sourceurl=" . $post_orig_url);  
-			} 
-			return true;
+	  		
+	  		require_once(plugins . 'submit/submit_step1.php');
+	  		require_once(plugins . 'submit/submit_step2.php');
+	  		
+	  		if($cage->post->getAlpha('submit1') == 'true') {
+				if(!sub_check_for_errors_1()) { 
+					// No errors found, proceed to step 2
+					$post_orig_url = $cage->post->testUri('post_orig_url'); 
+					$post_orig_title = sub_fetch_title($post_orig_url);
+					sub_submit_form_2($post_orig_url, $post_orig_title);
+					return true;
+					
+				} else {
+					// Errors found, go back to step 1
+					$post_orig_url = $cage->post->testUri('post_orig_url');
+					sub_submit_form_1($post_orig_url);
+					return true;
+				}
+			} else {
+				// First time to step 1...
+				sub_submit_form_1();
+				return true;
+			}
 		} else {
 			return false;
 		}
@@ -188,22 +232,16 @@ function sub_theme_index_main() {
 	} elseif($hotaru->is_page('submit2')) {
 	 	
 		if($current_user->logged_in) {
-		 	// Include submit_form_2...
-		 	require_once(plugins . 'submit/submit_form_2.php');
 		 	
-		 	// Pass the source url to submit_form_2...
-		 	$post_orig_url = $cage->get->testUri('sourceurl');
-		 	$post_orig_title = sub_fetch_title($post_orig_url);
-			$success = sub_submit_form_2($post_orig_url, $post_orig_title);
-			if($success) { 
-				sub_process_submission($post_orig_url);
-				header("Location: " . baseurl);	// Go home  
-			} 
-			return true;
-		} else {
-			return false;
+		 	if($cage->post->getAlpha('submit2') == 'true') {		 	
+		 		// Include submit_form_2...
+		 		require_once(plugins . 'submit/submit_step2.php');
+		 		$post_orig_url = $cage->post->testUri('post_orig_url'); 		 		
+			 	sub_submit_form_2($post_orig_url);
+			 	return true;
+			}
 		}
-									
+											
 	} elseif($hotaru->is_page('main')) {
 	
 		// Plugin hook
@@ -290,7 +328,7 @@ function sub_fetch_title($url) {
 	}
 		
 	
-	if(mb_ereg("<title>([^<].*)</title>", $string, $matches)) {
+	if(preg_match("'<title>([^<]*?)</title>'", $string, $matches)) {
 		$title = trim($matches[1]);
 	} else {
 		$title = "No title found...";

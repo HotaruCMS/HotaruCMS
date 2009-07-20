@@ -23,42 +23,37 @@
  *
  **************************************************************************************************** */
  
-
  /* ******************************************************************** 
  *  Function: sub_submit_form_2
  *  Parameters: None
  *  Purpose: Step 2 - Enter title, description, tags, etc.
  *  Notes: ---
  ********************************************************************** */
- 
-function sub_submit_form_2($post_orig_url, $post_orig_title) {
+	
+function sub_submit_form_2($post_orig_url = "", $post_orig_title = "") {
 	global $hotaru, $cage, $lang, $post, $plugin;
+	
+	$error = 0;
 		
+	if($cage->post->getAlpha('submit2') == 'true') {
+		$title_check = $cage->post->noTags('post_title');	
+		$content_check = $cage->post->noTags('post_content');	
+		$plugin->check_actions('submit_form_2_assign_from_cage');
+	} else {
+		$title_check = $post_orig_title;
+		$content_check = "";
+		$plugin->check_actions('submit_form_2_assign_blank');
+	}
+	
 	echo "<div id='main'>";
 		echo "<p class='breadcrumbs'><a href='" . baseurl . "'>Home</a> &raquo; Submit a Story 2/2</p>\n";
 			
 		$hotaru->show_message();
 				
 		echo "<div class='main_inner'>";
-		echo $lang["submit_form_instructions_2"] . "\n";
 		
-		$error = 0;
+			echo $lang["submit_form_instructions_2"] . "\n";
 		
-		if($cage->post->getAlpha('submit2') == 'true') {
-			if(!sub_check_for_errors_2()) { 
-				return true; // No errors found, return true.
-			} else {
-				$title_check = $cage->post->noTags('post_title');	
-				$content_check = $cage->post->noTags('post_content');	
-				$plugin->check_actions('submit_form_2_assign_from_cage');
-			}
-		} else {
-			$title_check = $post_orig_title;
-			$content_check = "";
-			$plugin->check_actions('submit_form_2_assign_blank');
-		}
-		
-	
 			echo "<form name='submit_form_2' action='" . baseurl . "index.php?page=submit2&sourceurl=" . $post_orig_url . "' method='post'>\n";
 			echo "<table>";
 ?>
@@ -92,7 +87,7 @@ function sub_submit_form_2($post_orig_url, $post_orig_title) {
 			
 			<?php $plugin->check_actions('submit_form_2_fields'); ?>
 				
-			
+			<input type='hidden' name='post_orig_url' value='<?php echo $post_orig_url; ?>' />
 			<input type='hidden' name='submit2' value='true' />
 
 <?php				
@@ -122,13 +117,11 @@ function sub_check_for_errors_2() {
 		// No title present...
 		$hotaru->message = $lang['submit_form_title_not_present_error'];
 		$hotaru->message_type = 'red';
-		$hotaru->show_message();
 		$error_title= 1;
 	} elseif($post->title_exists($title_check )) {
 		// URL already exists...
 		$hotaru->message = $lang['submit_form_title_already_exists_error'];
 		$hotaru->message_type = 'red';
-		$hotaru->show_message();
 		$error_title = 1;
 	} else {
 		// title is okay.
@@ -142,13 +135,11 @@ function sub_check_for_errors_2() {
 			// No content present...
 			$hotaru->message = $lang['submit_form_content_not_present_error'];
 			$hotaru->message_type = 'red';
-			$hotaru->show_message();
 			$error_content = 1;
 		} elseif(strlen($content_check) < $post->post_content_length) {
 			// content is too short
 			$hotaru->message = $lang['submit_form_content_too_short_error'];
 			$hotaru->message_type = 'red';
-			$hotaru->show_message();
 			$error_content = 1;
 		} else {
 			// content is okay.

@@ -23,6 +23,11 @@
  *
  **************************************************************************************************** */
 
+// Remove any cookies set in a previous installation:
+setcookie("hotaru_user", "", time()-3600, "/");
+setcookie("hotaru_key", "", time()-3600, "/");
+// --------------------------------------------------
+
 require_once('../hotaru_settings.php');
 require_once('../class.hotaru.php');	// Needed for error and success messages
 
@@ -196,12 +201,7 @@ function database_creation() {
  
 function register_admin() {
 	global $lang, $cage, $db;
-		
-	// Remove any cookies set in a previous installation:
-	setcookie("hotaru_user", "", time()-3600, "/");
-	setcookie("hotaru_key", "", time()-3600, "/");
-	// --------------------------------------------------
-	
+			
 	$hotaru = new Hotaru();
 	
 	echo html_header();
