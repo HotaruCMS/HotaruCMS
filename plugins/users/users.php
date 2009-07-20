@@ -51,7 +51,8 @@ function usr_users(&$parameters) {
  
 function usr_hotaru_header() {
 	global $lang, $cage, $plugin;
-	define("table_usermeta", db_prefix . 'usermeta');
+
+	if(!defined('table_usermeta')) { define("table_usermeta", db_prefix . 'usermeta'); }
 	
 	// include language file
 	$plugin->include_language_file('users');

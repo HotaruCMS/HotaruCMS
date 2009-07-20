@@ -96,9 +96,9 @@ function sub_install_plugin() {
 function sub_hotaru_header() {
 	global $hotaru, $lang, $cage, $plugin, $post;
 	
-	define("table_posts", db_prefix . 'posts');
-	define("table_postmeta", db_prefix . 'postmeta');
-	
+	if(!defined('table_posts')) { define("table_posts", db_prefix . 'posts'); }
+	if(!defined('table_postmeta')) { define("table_postmeta", db_prefix . 'postmeta'); }
+
 	// include language file
 	$plugin->include_language_file('submit');
 	
