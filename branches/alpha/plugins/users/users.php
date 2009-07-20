@@ -6,7 +6,7 @@
  * version: 0.1
  * folder: users
  * prefix: usr
- * hooks: users, hotaru_header, install_plugin, navigation_users, theme_index_main
+ * hooks: users, hotaru_header, install_plugin, navigation_users, theme_index_replace, theme_index_main
  *
  *  License:
  *
@@ -111,13 +111,13 @@ function usr_navigation_users() {
 
 
 /* ******************************************************************** 
- *  Function: usr_theme_index_display
+ *  Function: usr_theme_index_replace
  *  Parameters: None
  *  Purpose: Echos the login form to index.php 
- *  Notes: Previously directed to a login.php template file included in this plugin, but decided a function was better. (Nick)
+ *  Notes: Work to do *before* we send output to the page.
  ********************************************************************** */
  
-function usr_theme_index_main() {
+function usr_theme_index_replace() {
 	global $hotaru, $cage, $current_user;
 	
 	// Pages you have to be logged in for...
@@ -125,10 +125,46 @@ function usr_theme_index_main() {
 		 if($hotaru->is_page('logout')) {
 			$current_user->destroy_cookie_and_session();
 			header("Location: " . baseurl);
-			return true;
 		} elseif($hotaru->is_page('profile')) {
 			require_once(plugins . 'users/update.php');
 			usr_update();
+		} 
+				
+	// Pages you have to be logged out for...
+	} else {
+		if($hotaru->is_page('register')) {
+			require_once(plugins . 'users/register.php');
+			if(usr_register()) { 
+				// success, return to front page, logged OUT.
+				header("Location: " . baseurl);
+			}
+		} elseif($hotaru->is_page('login')) {
+			require_once(plugins . 'users/login.php');
+			if(usr_login()) { 
+				// success, return to front page, logged IN.
+				header("Location: " . baseurl);
+			}
+		} 	
+	}
+	return false;
+}
+
+
+/* ******************************************************************** 
+ *  Function: usr_theme_index_main
+ *  Parameters: None
+ *  Purpose: Displays various forms within the body of the page.
+ *  Notes: 
+ ********************************************************************** */
+ 
+function usr_theme_index_main() {
+	global $hotaru, $cage, $current_user;
+	
+	// Pages you have to be logged in for...
+	if($current_user->logged_in) {
+		if($hotaru->is_page('profile')) {
+			require_once(plugins . 'users/update.php');
+			usr_update_form();
 			return true;
 		} else {
 			return false;
@@ -138,12 +174,11 @@ function usr_theme_index_main() {
 	} else {
 		if($hotaru->is_page('register')) {
 			require_once(plugins . 'users/register.php');
-			usr_register();
+			usr_register_form();
 			return true;	
 		} elseif($hotaru->is_page('login')) {
 			require_once(plugins . 'users/login.php');
-			//$hotaru->display_template('pages/login', 'users');  
-			usr_login();
+			usr_login_form();
 			return true;
 		} else {
 			return false;

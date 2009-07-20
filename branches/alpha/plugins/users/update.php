@@ -33,69 +33,90 @@
 function usr_update() {
 	global $hotaru, $cage, $lang, $current_user;
 	
-	echo "<div id='main'>";
-		echo "<p class='breadcrumbs'><a href='" . baseurl . "'>Home</a> &raquo; User Settings</p>\n";
-		
-		echo "<div class='main_inner'>";
-		echo $lang["users_update_instructions"] . "\n";
-		
-		$error = 0;
-		if($cage->post->getAlpha('users_type') == 'update') {
-			$username_check = $cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
-			if($username_check) {
-				$current_user->username = $username_check;
-			} else {
-				$hotaru->message = $lang['users_register_username_error'];
-				$hotaru->message_type = 'red';
-				$hotaru->show_message();
-				$error = 1;
-			}
-					
-			$password_check = $cage->post->testPassword('password');	
-			if($password_check) {
-				$current_user->password = crypt(md5($password_check),md5($current_user->username));
-			} else {
-				$hotaru->message = $lang['users_register_password_error'];
-				$hotaru->message_type = 'red';
-				$hotaru->show_message();
-				$error = 1;
-			}
-						
-			$email_check = $cage->post->testEmail('email');	
-			if($email_check) {
-				$current_user->email = $email_check;
-			} else {
-				$hotaru->message = $lang['users_register_email_error'];
-				$hotaru->message_type = 'red';
-				$hotaru->show_message();
-				$error = 1;
-			}
+	$error = 0;
+	if($cage->post->getAlpha('users_type') == 'update') {
+		$username_check = $cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
+		if($username_check) {
+			$current_user->username = $username_check;
+		} else {
+			$hotaru->message = $lang['users_register_username_error'];
+			$hotaru->message_type = 'red';
+			$error = 1;
 		}
 				
-		if(!isset($username_check) && !isset($password_check) && !isset($email_check)) {
-			$username_check = $current_user->username;
-			$password_check = $current_user->password;
-			$email_check = $current_user->email;
-			// do nothing
-		} elseif($error == 0) {
-			$result = $current_user->user_exists(0, $username_check, $email_check);
-			if($result != 4) { // 4 is returned when the user does not exist in the database
-				//success
-				$current_user->update_user_basic();
-				$current_user->set_cookie(0);
-				$hotaru->message = $lang['users_update_success'];
-				$hotaru->message_type = 'green';
-				$hotaru->show_message();
-			} else {
-				//fail
-				$hotaru->message = $lang["users_register_unexpected_error"];
-				$hotaru->message_type = 'red';
-				$hotaru->show_message();
-			}
+		$password_check = $cage->post->testPassword('password');	
+		if($password_check) {
+			$current_user->password = crypt(md5($password_check),md5($current_user->username));
 		} else {
-			// error must = 1 so fall through and display the form again
+			$hotaru->message = $lang['users_register_password_error'];
+			$hotaru->message_type = 'red';
+			$error = 1;
 		}
+					
+		$email_check = $cage->post->testEmail('email');	
+		if($email_check) {
+			$current_user->email = $email_check;
+		} else {
+			$hotaru->message = $lang['users_register_email_error'];
+			$hotaru->message_type = 'red';
+			$error = 1;
+		}
+	}
+			
+	if(!isset($username_check) && !isset($password_check) && !isset($email_check)) {
+		$username_check = $current_user->username;
+		$password_check = $current_user->password;
+		$email_check = $current_user->email;
+		// do nothing
+	} elseif($error == 0) {
+		$result = $current_user->user_exists(0, $username_check, $email_check);
+		if($result != 4) { // 4 is returned when the user does not exist in the database
+			//success
+			$current_user->update_user_basic();
+			$current_user->set_cookie(0);
+			$hotaru->message = $lang['users_update_success'];
+			$hotaru->message_type = 'green';
+			return true;
+		} else {
+			//fail
+			$hotaru->message = $lang["users_register_unexpected_error"];
+			$hotaru->message_type = 'red';
+			return false;
+		}
+	} else {
+		// error must = 1 so fall through and display the form again
+		return false;
+	}
+}
+
+
+ /* ******************************************************************** 
+ *  Function: usr_update_form
+ *  Parameters: None
+ *  Purpose: A form for updating user info
+ *  Notes: ---
+ ********************************************************************** */
+
+function usr_update_form() {
+	global $hotaru, $cage, $lang, $current_user;
 		
+	if($cage->post->getAlpha('users_type') == 'update') {	
+		$username_check = $cage->post->testUsername('username');
+		$password_check = $cage->post->testPassword('password');
+		$email_check = $cage->post->testEmail('email');	
+	} else {
+		$username_check = $current_user->username;
+		$password_check = $current_user->password;
+		$email_check = $current_user->email;
+	}
+	
+	echo "<div id='main'>";
+		echo "<p class='breadcrumbs'><a href='" . baseurl . "'>Home</a> &raquo; User Settings</p>\n";
+				
+			$hotaru->show_message();
+			
+			echo "<div class='main_inner'>";
+			echo $lang["users_update_instructions"] . "\n";		
 			echo "<form name='update_form' action='" . baseurl . "index.php?page=profile' method='post'>\n";	
 			echo "<table>";
 			echo "<tr><td>Username:&nbsp; </td><td><input type='text' size=30 name='username' value='" . $username_check . "' /></td></tr>\n";

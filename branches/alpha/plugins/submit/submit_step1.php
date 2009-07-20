@@ -24,15 +24,15 @@
  **************************************************************************************************** */
  
  /* ******************************************************************** 
- *  Function: sub_submit_form_1
+ *  Function: sub_submit_1
  *  Parameters: None
- *  Purpose: Step 1 - Enter source url 
+ *  Purpose: Show the form for submit step 1
  *  Notes: ---
  ********************************************************************** */
  
-function sub_submit_form_1() {
+function sub_submit_form_1($post_orig_url = "") {
 	global $hotaru, $cage, $lang, $post;
-		
+	
 	echo "<div id='main'>";
 		echo "<p class='breadcrumbs'><a href='" . baseurl . "'>Home</a> &raquo; Submit a Story 1/2</p>\n";
 			
@@ -42,26 +42,14 @@ function sub_submit_form_1() {
 		echo $lang["submit_form_instructions_1"] . "\n";
 		
 		$error = 0;
-		
-		if($cage->post->getAlpha('submit1') == 'true') {
-			if(!sub_check_for_errors_1()) { 
-				// No errors found, return the url being submitted so it can be passed to submit_form_2.
-				return $cage->post->testUri('post_orig_url'); 
-			} else {
-				$post_orig_url_check = $cage->post->testUri('post_orig_url');
-			}
-		} else {
-			$post_orig_url_check = "";
-		}
-		
-	
+			
 			echo "<form name='submit_form_1' action='" . baseurl . "index.php?page=submit' method='post'>\n";
 			echo "<table>";
 ?>
 			
 			<tr>
 				<td><?php echo $lang["submit_form_url"] ?>:&nbsp; </td>
-				<td><input type='text' size=50 id='post_orig_url' name='post_orig_url' value='<?php echo $post_orig_url_check ?>' /></td>
+				<td><input type='text' size=50 id='post_orig_url' name='post_orig_url' value='<?php echo $post_orig_url; ?>' /></td>
 				<td>&nbsp;</td>
 			</tr>
 
@@ -95,13 +83,11 @@ function sub_check_for_errors_1() {
 		// No url present...
 		$hotaru->message = $lang['submit_form_url_not_present_error'];
 		$hotaru->message_type = 'red';
-		$hotaru->show_message();
 		$error = 1;
 	} elseif($post->url_exists($post_orig_url_check)) {
 		// URL already exists...
 		$hotaru->message = $lang['submit_form_url_already_exists_error'];
 		$hotaru->message_type = 'red';
-		$hotaru->show_message();
 		$error = 1;
 	} else {
 		// URL is okay.
