@@ -426,7 +426,9 @@ function create_table($table_name) {
 		  `plugin_prefix` varchar(16) NOT NULL DEFAULT '',
 		  `plugin_folder` varchar(64) NOT NULL,
 		  `plugin_desc` varchar(255) NOT NULL DEFAULT '',
+		  `plugin_requires` varchar(255) NOT NULL DEFAULT '',
 		  `plugin_version` varchar(32) NOT NULL DEFAULT '0.0',
+		  `plugin_order` int(11) NOT NULL DEFAULT 0,
 		  `plugin_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		  `plugin_updateby` int(20) NOT NULL DEFAULT 0,
 		  UNIQUE KEY `key` (`plugin_folder`)
