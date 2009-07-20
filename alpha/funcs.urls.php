@@ -71,7 +71,7 @@ function url($parameters = array(), $head = 'index') {
 			
 				// must be a post title, let's get the post_url...
 				$value = $post->post_url;
-				if($post->post_vars['post_category'] != 1) {
+				if(isset($post->post_vars['post_category']) && $post->post_vars['post_category'] != 1) {
 					$url .= $post->post_vars['post_cat_safe_name'] . '/';
 				}
 				$url .= $value . '/';

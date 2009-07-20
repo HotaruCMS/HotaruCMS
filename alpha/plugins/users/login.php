@@ -26,7 +26,7 @@
  /* ******************************************************************** 
  *  Function: usr_login
  *  Parameters: None, but gets login and password for verification from $cage
- *  Purpose: Displays a login form, retrieves submitted values and calls the User class to verify them.
+ *  Purpose: Verifies whether a user can log in or not.
  *  Notes: 
  ********************************************************************** */
  
@@ -35,43 +35,56 @@ function usr_login() {
 	
 	$current_user = new UserBase();
 	
+	if(!$username_check = $cage->post->testUsername('username')) {
+		$username_check = "";
+	} 
+	if(!$password_check = $cage->post->testPassword('password')) {
+		$password_check = "";
+	}
+	
+	if($username_check != "" || $password_check != "") {
+		$login_result = $current_user->login_check($username_check, $password_check);
+		if($login_result) {
+				//success
+				if($cage->post->getInt('remember') == 1){ $remember = 1; } else { $remember = 0; }
+				$current_user->username = $username_check;
+				$current_user->get_user_basic(0, $current_user->username);
+				$current_user->set_cookie($remember);
+				$current_user->logged_in = true;
+				$current_user->update_user_lastlogin();
+				return true;
+		} else {
+				// login failed
+				$hotaru->message = $lang["users_login_failed"];
+				$hotaru->message_type = 'red';
+		}
+	} 
+	return false;
+}
+
+
+ /* ******************************************************************** 
+ *  Function: usr_login_form
+ *  Parameters: None, but gets login and password for verification from $cage
+ *  Purpose: Displays a login form
+ *  Notes: 
+ ********************************************************************** */
+ 
+function usr_login_form() {
+	global $hotaru, $cage, $lang;
+	
+	if(!$username_check = $cage->post->testUsername('username')) { $username_check = ""; } 
+	if(!$password_check = $cage->post->testPassword('password')) { $password_check = ""; }
+	if($cage->post->getInt('remember') == 1){ $remember_check = "checked"; } else { $remember_check = ""; }
+	
 	echo "<div id='main'>";
 		echo "<p class='breadcrumbs'><a href='" . baseurl . "'>Home</a> &raquo; Login</p>\n";
 		
+		$hotaru->show_message();
+		
 		echo "<div class='main_inner'>";
 		echo $lang["users_login_instructions"] . "\n";
-
-			if(!$username_check = $cage->post->testUsername('username')) {
-				$username_check = "";
-			} 
-			if(!$password_check = $cage->post->testPassword('password')) {
-				$password_check = "";
-			}
-			
-			if($username_check != "" || $password_check != "") {
-				$login_result = $current_user->login_check($username_check, $password_check);
-				if($login_result) {
-						//success
-						if($cage->post->getInt('remember') == 1){ $remember = 1; } else { $remember = 0; }
-						$current_user->username = $username_check;
-						$current_user->get_user_basic(0, $current_user->username);
-						$current_user->set_cookie($remember);
-						$current_user->logged_in = true;
-						$current_user->update_user_lastlogin();
-						header("Location:" . baseurl);	// Return to front page 
-				} else {
-						// login failed
-						$hotaru->message = $lang["users_login_failed"];
-						$hotaru->message_type = 'red';
-						$hotaru->show_message();
-						if($cage->post->getInt('remember') == 1){ $remember_check = "checked"; } else { $remember_check = ""; }
-				}
-			} else {
-				$username_check = "";
-				$password_check = "";
-				$remember_check = "";
-			}
-
+		
 			echo "<form name='login_form' action='" . baseurl . "index.php?page=login' method='post'>\n";
 			echo "<table>\n";
 				echo "<tr><td>Username:&nbsp; </td><td><input type='text' size=30 name='username' value='" . $username_check . "' /></td></tr>\n";
@@ -82,7 +95,7 @@ function usr_login() {
 			echo "</table>\n";
 			echo "</form>\n";
 		echo "</div>\n";
-	echo "</div>\n";
+	echo "</div>\n";	
 }
 
 ?>

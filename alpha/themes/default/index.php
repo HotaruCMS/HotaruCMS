@@ -25,15 +25,14 @@
  **************************************************************************************************** */
 
 global $hotaru, $plugin; // don't remove
-?>
 
-<!-- WHOLE PAGE-->
-<?php
-	$result = $plugin->check_actions('theme_index_replace');
-	if(!isset($result) || !is_array($result)) {
+// plugin hook
+$result = $plugin->check_actions('theme_index_replace');
+if(!isset($result) || !is_array($result)) {
 ?>
 		<!-- HEADER-->
 		<?php
+			// plugin hook
 			$result = $plugin->check_actions('theme_index_header');
 			if(!isset($result) || !is_array($result)) {
 				$hotaru->display_template('header');
@@ -51,6 +50,7 @@ global $hotaru, $plugin; // don't remove
 	    				<!-- MAIN -->
 	    				<div id="main">
 	    				<?php 	
+	    					// plugin hook
 						$result = $plugin->check_actions('theme_index_main');
 						if(!isset($result) || !is_array($result)) {
 		    					$page = $hotaru->get_page_name();
@@ -64,6 +64,7 @@ global $hotaru, $plugin; // don't remove
 		    				
 							<!-- SIDEBAR -->
 							<?php
+								// plugin hook
 								$result = $plugin->check_actions('theme_index_sidebar');
 								if(!isset($result) || !is_array($result)) {
 									$hotaru->display_template('sidebar');
@@ -76,6 +77,7 @@ global $hotaru, $plugin; // don't remove
 		</div>
 		<!-- FOOTER -->
 		<?php
+			// plugin hook
 			$result = $plugin->check_actions('theme_index_footer');
 			if(!isset($result) || !is_array($result)) {
 				$hotaru->display_template('footer');
