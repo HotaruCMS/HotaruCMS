@@ -198,6 +198,18 @@ form {
 	width: 98%;
 }
 
+
+tr.plugins_table_installed td, tr.plugins_table_not_installed td {
+	font-size: 1.2em;
+	font-weight: bold;
+	padding: 0.4em 0.5em 0.4em 0.5em; 
+	text-align: left;
+
+}
+
+tr.plugins_table_installed td {	background-color: #D4FFBF; }
+tr.plugins_table_not_installed td {	background-color: #CBE2FF; }
+
 tr.plugins_table_headers td {
 	font-weight: bold;
 	padding: 0.4em 0.5em 0.4em 0.5em; 
