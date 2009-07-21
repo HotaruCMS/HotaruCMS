@@ -1,7 +1,7 @@
 <?php
 
 /* **************************************************************************************************** 
- *  File: /admin/functions/funcs.urls.php
+ *  File: /funcs.urls.php
  *  Purpose: A collection of functions for making friendly urls.
  *  Notes: ---
  *  License:

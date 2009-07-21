@@ -1,7 +1,7 @@
 <?php
 
 /* **************************************************************************************************** 
- *  File: /admin/functions/funcs.strings.php
+ *  File: /funcs.strings.php
  *  Purpose: A collection of functions for manipulating strings.
  *  Notes: ---
  *  License:
