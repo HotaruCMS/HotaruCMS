@@ -24,16 +24,16 @@
  *
  **************************************************************************************************** */
 
-global $hotaru, $plugin; // don't remove
+global $hotaru, $plugin, $lang; // don't remove
 ?>
 <?php $plugin->check_actions('admin_sidebar_top'); ?>
 
 <ul id="sidebar">
-	<li><a href="<?php echo url(array(), 'admin'); ?>">Admin Home</a></li>
-	<li><a href="<?php echo url(array('page' => 'settings'), 'admin'); ?>">Settings</a></li>
-	<li><a href="<?php echo url(array('page' => 'maintenance'), 'admin'); ?>">Maintenance</a></li>
-	<li><a href="<?php echo url(array('page' => 'plugins'), 'admin'); ?>">Plugin Management</a></li>
-	<li>Plugin Settings</li>
+	<li><a href="<?php echo url(array(), 'admin'); ?>"><?php echo $lang["admin_theme_main_admin_home"] ?></a></li>
+	<li><a href="<?php echo url(array('page' => 'settings'), 'admin'); ?>"><?php echo $lang["admin_theme_settings"] ?></a></li>
+	<li><a href="<?php echo url(array('page' => 'maintenance'), 'admin'); ?>"><?php echo $lang["admin_theme_maintenance"] ?></a></li>
+	<li><a href="<?php echo url(array('page' => 'plugins'), 'admin'); ?>"><?php echo $lang["admin_theme_plugins"] ?></a></li>
+	<li><?php echo $lang["admin_theme_plugin_settings"] ?></li>
 	<ul id="plugin_settings_list">
 		<?php $plugin->check_actions('admin_sidebar_plugin_settings'); ?>
 	</ul>

@@ -24,7 +24,7 @@
  *
  **************************************************************************************************** */
 
-global $hotaru, $admin, $plugin; // don't remove
+global $hotaru, $admin, $plugin, $lang; // don't remove
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"

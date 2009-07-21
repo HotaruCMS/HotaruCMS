@@ -2,7 +2,7 @@
 
 /* ******* ADMIN TEMPLATE ************************************************************************** 
  * Theme name: admin_default
- * Template name: home.php
+ * Template name: main.php
  * Template author: Nick Ramsay
  * Version: 0.1
  * License:
@@ -24,10 +24,19 @@
  *
  **************************************************************************************************** */
 
-global $hotaru; // don't remove
+global $hotaru, $lang; // don't remove
 ?>
 
-<p class="breadcrumbs"><a href="<?php echo url(array(), 'admin'); ?>"><?php echo site_name;?> Admin Control Panel</a> &raquo; Admin Home</p>
+<p class="breadcrumbs">
+	<a href="<?php echo baseurl; ?>"><?php echo site_name?></a> 
+	&raquo; <a href="<?php echo url(array(), 'admin'); ?>"><?php echo $lang["admin_theme_main_admin_cp"]?></a> 
+	&raquo; <?php echo $lang["admin_theme_main_admin_home"]?>
+</p>
 
-<div class="admin_header admin_header_space"><a href="http://feeds2.feedburner.com/hotarucms"><img src="<?php echo baseurl ?>admin/themes/admin_default/images/rss_16.gif"></a>&nbsp; Latest from Hotaru CMS</div>
+<div class="admin_header admin_header_space">
+	<!-- TITLE FOR ADMIN NEWS -->
+	<a href="http://feeds2.feedburner.com/hotarucms"><img src="<?php echo baseurl ?>admin/themes/admin_default/images/rss_16.gif"></a>
+	&nbsp;<?php echo $lang["admin_theme_main_latest"]?>
+</div>
+
 <?php echo admin_news(); ?>

@@ -27,10 +27,13 @@
 global $plugin, $admin, $cage, $lang; // don't remove
 ?>
 
-<p class="breadcrumbs"><a href="<?php echo url(array(), 'admin'); ?>"><?php echo site_name;?> Admin Control Panel</a> &raquo; Maintenance</p>
-
+<p class="breadcrumbs">
+	<a href="<?php echo baseurl; ?>"><?php echo site_name?></a> 
+	&raquo; <a href="<?php echo url(array(), 'admin'); ?>"><?php echo $lang["admin_theme_main_admin_cp"]?></a> 
+	&raquo; <?php echo $lang["admin_theme_maintenance"]; ?>
+</p>
 	
-<h1>Hotaru Maintenance</h1>
+<h2><?php echo $lang["admin_theme_maintenance_title"] ?></h2>
 	
 <?php $plugin->check_actions('admin_maintenance_top'); ?>
 
@@ -43,8 +46,10 @@ global $plugin, $admin, $cage, $lang; // don't remove
 ?>
 <br />
 <ul>
-	<li><a href="<?php echo baseurl; ?>admin/admin_index.php?page=maintenance&amp;action=clear_db_cache">Clear database cache</a> - deletes cached database queries.</li>
-	<li><a href="<?php echo baseurl; ?>admin/admin_index.php?page=maintenance&amp;action=clear_rss_cache">Clear RSS cache</a> - deletes cached RSS feeds.</li>
+	<li><a href="<?php echo baseurl; ?>admin/admin_index.php?page=maintenance&amp;action=clear_db_cache">
+		<?php echo $lang["admin_theme_maintenance_db_cache"] ?></a> - <?php echo $lang["admin_theme_maintenance_db_cache_desc"]?></li>
+	<li><a href="<?php echo baseurl; ?>admin/admin_index.php?page=maintenance&amp;action=clear_rss_cache">
+		<?php echo $lang["admin_theme_maintenance_rss_cache_desc"]?></a> - <?php echo $lang["admin_theme_maintenance_rss_cache_desc"]?></li>
 </ul>	
 	
 <?php $plugin->check_actions('admin_maintenance_bottom'); ?>

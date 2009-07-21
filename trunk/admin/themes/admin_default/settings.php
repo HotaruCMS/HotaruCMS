@@ -24,14 +24,18 @@
  *
  **************************************************************************************************** */
 
-global $plugin, $admin, $cage; // don't remove
+global $plugin, $admin, $cage, $lang; // don't remove
 ?>
 
-<p class="breadcrumbs"><a href="<?php echo url(array(), 'admin'); ?>"><?php echo site_name;?> Admin Control Panel</a> &raquo; Settings</p>
+<p class="breadcrumbs">
+	<a href="<?php echo baseurl; ?>"><?php echo site_name?></a> 
+	&raquo; <a href="<?php echo url(array(), 'admin'); ?>"><?php echo $lang["admin_theme_main_admin_cp"]?></a> 
+	&raquo; <?php echo $lang["admin_theme_settings"]; ?>
+</p>
 
 <?php $plugin->check_actions('admin_settings_top'); ?>
 	
-	<h1>Hotaru Settings</h1>
+	<h2><?php echo $lang["admin_theme_settings_title"] ?></h2>
 	
 	<?php $loaded_settings = $admin->settings();	// Prepare or process the form ?>
 	
@@ -39,10 +43,10 @@ global $plugin, $admin, $cage; // don't remove
 	
 	<table id="settings">	
 	<tr>
-		<td><b><u>Setting</u></b></td>
-		<td><b><u>Value</u></b></td>
-		<td><b><u>Default</u></b></td>
-		<td><b><u>Notes</u></b></td>
+		<td><b><u><?php echo $lang["admin_theme_settings_setting"] ?></u></b></td>
+		<td><b><u><?php echo $lang["admin_theme_settings_value"] ?></u></b></td>
+		<td><b><u><?php echo $lang["admin_theme_settings_default"] ?></u></b></td>
+		<td><b><u><?php echo $lang["admin_theme_settings_notes"] ?></u></b></td>
 	</tr>
 	
 	<?php 	// **********************************************************
