@@ -25,6 +25,16 @@
  *
  **************************************************************************************************** */
 
+/* UserBase Class */
+$lang['main_userbase_cookie_error'] = "Error setting cookie. Username not provided.";
+
+/* Hotaru Class */
+$lang['main_hotaru_queries_time'] = "database queries and a page load time of";
+$lang['main_hotaru_seconds'] = "seconds.";
+
+/* Plugins Class */
+/* Language for the class.plugins.php is in /admin/languages/admin_english.php */
+
 /* Announcements */
 $lang['main_announcement_users_disabled'] = "<span style='color: #ff0000;'>Login and registration is currently disabled.</span>";
 $lang['main_announcement_plugins_disabled'] = "<span style='color: #ff0000;'>All plugins are currently disabled.</span>";
