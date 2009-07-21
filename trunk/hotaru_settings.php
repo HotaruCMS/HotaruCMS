@@ -53,7 +53,7 @@ define("languages", dirname(__FILE__).'/custom/core_language/');
 define("functions", dirname(__FILE__).'/functions/');
 define("plugins", dirname(__FILE__).'/plugins/');
 define("install", dirname(__FILE__).'/install/');
-define("themes", dirname(__FILE__).'/themes/');
+define("themes", dirname(__FILE__).'/custom/themes/');
 define("admin", dirname(__FILE__).'/admin/');
 define("admin_themes", dirname(__FILE__).'/custom/admin_themes/');
 
