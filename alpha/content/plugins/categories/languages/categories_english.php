@@ -1,7 +1,5 @@
 <?php
 
-// TAGS
-
 /* **************************************************************************************************** 
  *  File: plugins/tags/languages/tags_english.php
  *  Purpose: A language file for Tags. It's used with the Submit plugin.
