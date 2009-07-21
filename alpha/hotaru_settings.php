@@ -48,13 +48,13 @@ define('baseurl', "http://localhost/hotaru/branches/alpha/");	//e.g. http://www.
 /* ************************************************************************************ */
 
 // define shorthand paths
-define("includes", dirname(__FILE__).'/3rd_party/');
-define("languages", dirname(__FILE__).'/content/core_language/');
-define("functions", dirname(__FILE__).'/functions/');
-define("plugins", dirname(__FILE__).'/plugins/');
-define("install", dirname(__FILE__).'/install/');
-define("themes", dirname(__FILE__).'/content/themes/');
 define("admin", dirname(__FILE__).'/admin/');
+define("install", dirname(__FILE__).'/install/');
+define("includes", dirname(__FILE__).'/3rd_party/');
+define("functions", dirname(__FILE__).'/functions/');
+define("themes", dirname(__FILE__).'/content/themes/');
+define("plugins", dirname(__FILE__).'/content/plugins/');
+define("languages", dirname(__FILE__).'/content/core_language/');
 define("admin_themes", dirname(__FILE__).'/content/admin_themes/');
 
 // define database tables
