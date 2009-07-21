@@ -25,5 +25,20 @@
 	 
 // includes
 require_once('hotaru_header.php');
+
+// Include language file for MAIN CORE
+if(file_exists(languages . 'main_' . strtolower(sitelanguage) . '.php')) {
+	require_once(languages . 'main_' . strtolower(sitelanguage) . '.php');	// language file for main (not admin, installation or plugins)
+} else {
+	require_once(languages . 'main_english.php');	// English file if specified language doesn't exist
+}
+
+// Include language file for MAIN THEMES
+if(file_exists(themes . theme . 'languages/main_' . strtolower(sitelanguage) . '.php')) {
+	require_once(themes . theme . 'languages/main_' . strtolower(sitelanguage) . '.php');	// language file for main (not admin, installation or plugins)
+} else {
+	require_once(themes . theme . 'languages/main_english.php');	// English file if specified language doesn't exist
+}
+
 $hotaru->display_template('index');
 ?>

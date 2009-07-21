@@ -3,7 +3,7 @@
 // MAIN
 
 /* **************************************************************************************************** 
- *  File: /languages/main/main_english.php
+ *  File: /languages/main_english.php
  *  Purpose: A language file for English. It's used whenever a core file needs to output language.
  *  Notes: ---
  *  License:

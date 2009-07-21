@@ -24,7 +24,7 @@
  *
  **************************************************************************************************** */
 
-global $plugin; // don't remove
+global $plugin, $lang; // don't remove
 ?>
 
 <?php $plugin->check_actions('sidebar_top'); ?>

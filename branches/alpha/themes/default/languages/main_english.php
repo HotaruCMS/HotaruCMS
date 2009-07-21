@@ -1,10 +1,8 @@
 <?php
 
-// MAIN
-
 /* **************************************************************************************************** 
- *  File: /languages/main_english.php
- *  Purpose: A language file for English. It's used whenever a core file needs to output language.
+ *  File: /themes/default/languages/main_english.php
+ *  Purpose: A language file for English. It's used whenever a theme file needs to output language.
  *  Notes: ---
  *  License:
  *
@@ -25,19 +23,15 @@
  *
  **************************************************************************************************** */
 
-/* UserBase Class */
-$lang['main_userbase_cookie_error'] = "Error setting cookie. Username not provided.";
+/* navigation */
+$lang["main_theme_navigation_home"] = "Home";
+$lang["main_theme_navigation_admin"] = "Admin";
+$lang["main_theme_navigation_login"] = "Login";
+$lang["main_theme_navigation_logout"] = "Logout";
 
-/* Hotaru Class */
-$lang['main_hotaru_queries_time'] = "database queries and a page load time of";
-$lang['main_hotaru_seconds'] = "seconds.";
-
-/* Plugins Class */
-/* Language for the class.plugins.php is in /admin/languages/admin_english.php */
-
-/* Announcements */
-$lang['main_announcement_users_disabled'] = "<span style='color: #ff0000;'>Login and registration is currently disabled.</span>";
-$lang['main_announcement_plugins_disabled'] = "<span style='color: #ff0000;'>All plugins are currently disabled.</span>";
+/* footer */
+$lang["main_theme_footer_brought_by"] = "Brought to you by the";
+$lang["main_theme_footer_open_source"] = "open source community.";
 
 /* Times */
 $lang['main_times_days'] = "days";
@@ -47,5 +41,8 @@ $lang['main_times_hour'] = "hr";
 $lang['main_times_minutes'] = "mins";
 $lang['main_times_minute'] = "min";
 $lang['main_times_seconds'] = "a few seconds";
+
+/* 404 */
+$lang["main_theme_page_not_found"] = "Page not found.";
 
 ?>

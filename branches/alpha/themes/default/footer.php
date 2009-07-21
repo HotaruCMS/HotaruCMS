@@ -24,17 +24,22 @@
  *
  **************************************************************************************************** */
 
-global $hotaru, $plugin; 
-
+global $hotaru, $plugin, $lang; 
 ?>
-
-		<div id="ft" role="contentinfo">
-			<?php $plugin->check_actions('footer_top'); ?>
-			<?php $plugin->check_actions('footer'); ?>
-			<p>Brought to you by the <a href="http://hotarucms.org">Hotaru CMS</a> open source community.</p>
-			<?php $hotaru->show_queries_and_time(); ?>
-			<?php $plugin->check_actions('footer_bottom'); ?>
-		</div>
+	<div id="ft" role="contentinfo">
+		<?php 
+			$plugin->check_actions('footer_top');
+			$plugin->check_actions('footer');
+		
+			// Link to forums...
+			echo "<p>" . $lang["main_theme_footer_brought_by"];
+			echo " <a href='http://hotarucms.org'>Hotaru CMS</a> ";
+			echo $lang["main_theme_footer_open_source"] . "</p>";
+		
+			$hotaru->show_queries_and_time();
+			$plugin->check_actions('footer_bottom'); 
+		?>
 	</div>
+</div>
 </body>
 </html>

@@ -24,21 +24,22 @@
  *
  **************************************************************************************************** */
 
-global $hotaru, $plugin, $current_user; // don't remove
+global $hotaru, $plugin, $current_user, $lang; // don't remove
 ?>
 
 <ul id="navigation">
 	<?php $plugin->check_actions('navigation_first'); ?>
-	<li><a href="<?php echo baseurl; ?>">Home</a></li>
+	<li><a href="<?php echo baseurl; ?>"><?php echo $lang["main_theme_navigation_home"] ?></a></li>
 	<?php $plugin->check_actions('navigation'); ?>
 	<?php 
 		if(!$plugin->plugin_active('users')) { 
 			echo "<li><a href='" . url(array(), 'admin') . "'>";
 			if($current_user->logged_in == true) { 
-				echo "Admin</a></li>"; 
-				echo "<li><a href='" . url(array('page'=>'admin_logout'), 'admin') . "'>Logout</a></li>";
+				echo $lang["main_theme_navigation_admin"] . "</a></li>"; 
+				echo "<li><a href='" . url(array('page'=>'admin_logout'), 'admin') . "'>";
+				echo $lang["main_theme_navigation_logout"] . "</a></li>";
 			} else { 
-				echo "Log in</a></li>"; 
+				echo $lang["main_theme_navigation_login"] . "</a></li>"; 
 			}
 		} else {
 			$plugin->check_actions('navigation_users', true, 'users'); // ensures login/logout/register are last.

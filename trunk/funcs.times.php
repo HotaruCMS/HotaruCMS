@@ -62,7 +62,7 @@ function timer_stop($precision = 3) { //if called like timer_stop(1), will echo 
  /* ******************************************************************** 
  *  Function: time_difference
  *  Parameters: "from" time
- *  Purpose: To show ow long ago a post was submitted
+ *  Purpose: To show how long ago a post was submitted
  *  Notes: Adapted from Pligg & SWCMS' txt_time_diff() function
  ********************************************************************** */
  
