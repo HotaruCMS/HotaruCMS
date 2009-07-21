@@ -49,7 +49,7 @@ define('baseurl', "http://localhost/hotaru/branches/alpha/");	//e.g. http://www.
 
 // define shorthand paths
 define("includes", dirname(__FILE__).'/3rd_party/');
-define("languages", dirname(__FILE__).'/languages/');
+define("languages", dirname(__FILE__).'/custom/core_language/');
 define("functions", dirname(__FILE__).'/functions/');
 define("plugins", dirname(__FILE__).'/plugins/');
 define("install", dirname(__FILE__).'/install/');
