@@ -250,8 +250,7 @@ function cts_submit_form_2_check_for_errors() {
 		$category_check = $cage->post->getInt('post_category');	
 		if(!$category_check) {
 			// No category present...
-			$hotaru->message = $lang['submit_form_category_error'];
-			$hotaru->message_type = "red";
+			$hotaru->messages[$lang['submit_form_category_error']] = "red";
 			$error_category = 1;
 		} else {
 			// category is okay.

@@ -48,7 +48,7 @@ function sub_submit_form_2($post_orig_url = "", $post_orig_title = "") {
 	echo "<div id='main'>";
 		echo "<p class='breadcrumbs'><a href='" . baseurl . "'>Home</a> &raquo; Submit a Story 2/2</p>\n";
 			
-		$hotaru->show_message();
+		$hotaru->show_messages();
 				
 		echo "<div class='main_inner'>";
 		
@@ -115,13 +115,11 @@ function sub_check_for_errors_2() {
 	$title_check = $cage->post->noTags('post_title');	
 	if(!$title_check) {
 		// No title present...
-		$hotaru->message = $lang['submit_form_title_not_present_error'];
-		$hotaru->message_type = 'red';
+		$hotaru->messages[$lang['submit_form_title_not_present_error']] = "red";
 		$error_title= 1;
 	} elseif($post->title_exists($title_check )) {
 		// URL already exists...
-		$hotaru->message = $lang['submit_form_title_already_exists_error'];
-		$hotaru->message_type = 'red';
+		$hotaru->messages[$lang['submit_form_title_already_exists_error']] = "red";
 		$error_title = 1;
 	} else {
 		// title is okay.
@@ -133,13 +131,11 @@ function sub_check_for_errors_2() {
 		$content_check = $cage->post->noTags('post_content');	
 		if(!$content_check) {
 			// No content present...
-			$hotaru->message = $lang['submit_form_content_not_present_error'];
-			$hotaru->message_type = 'red';
+			$hotaru->messages[$lang['submit_form_content_not_present_error']] = "red";
 			$error_content = 1;
 		} elseif(strlen($content_check) < $post->post_content_length) {
 			// content is too short
-			$hotaru->message = $lang['submit_form_content_too_short_error'];
-			$hotaru->message_type = 'red';
+			$hotaru->messages[$lang['submit_form_content_too_short_error']] = "red";
 			$error_content = 1;
 		} else {
 			// content is okay.
