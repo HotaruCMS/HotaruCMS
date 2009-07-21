@@ -92,9 +92,9 @@ class Plugin extends generic_pmd {
 				
 				// Conditions for "active"...
 				if($allplugins[$count]['status'] == 'active') {
-					$allplugins[$count]['active'] = "<img src='" . baseurl . "custom/admin_themes/" . admin_theme . "images/active.png'>";
+					$allplugins[$count]['active'] = "<img src='" . baseurl . "content/admin_themes/" . admin_theme . "images/active.png'>";
 				} else {
-					$allplugins[$count]['active'] = "<img src='" . baseurl . "custom/admin_themes/" . admin_theme . "images/inactive.png'>";
+					$allplugins[$count]['active'] = "<img src='" . baseurl . "content/admin_themes/" . admin_theme . "images/inactive.png'>";
 				}
 				
 				// Conditions for "status"...
@@ -147,12 +147,12 @@ class Plugin extends generic_pmd {
 					$allplugins[$count]['order_output'] .= "admin/admin_index.php?page=plugins&amp;";
 					$allplugins[$count]['order_output'] .= "action=orderup&amp;plugin=". $allplugins[$count]['folder'];
 					$allplugins[$count]['order_output'] .= "&amp;order=" . $order . "'>";
-					$allplugins[$count]['order_output'] .= "<img src='" . baseurl . "custom/admin_themes/" . admin_theme . "images/up.png'>";
+					$allplugins[$count]['order_output'] .= "<img src='" . baseurl . "content/admin_themes/" . admin_theme . "images/up.png'>";
 					$allplugins[$count]['order_output'] .= "</a> \n<a href='" . baseurl;
 					$allplugins[$count]['order_output'] .= "admin/admin_index.php?page=plugins&amp;";
 					$allplugins[$count]['order_output'] .= "action=orderdown&amp;plugin=". $allplugins[$count]['folder'];
 					$allplugins[$count]['order_output'] .= "&amp;order=" . $order . "'>";
-					$allplugins[$count]['order_output'] .= "<img src='" . baseurl . "custom/admin_themes/" . admin_theme . "images/down.png'>";
+					$allplugins[$count]['order_output'] .= "<img src='" . baseurl . "content/admin_themes/" . admin_theme . "images/down.png'>";
 					$allplugins[$count]['order_output'] .= "</a>\n";
 				} else {
 					$allplugins[$count]['order_output'] = "";
