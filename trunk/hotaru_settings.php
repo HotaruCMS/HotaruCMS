@@ -55,7 +55,7 @@ define("plugins", dirname(__FILE__).'/plugins/');
 define("install", dirname(__FILE__).'/install/');
 define("themes", dirname(__FILE__).'/themes/');
 define("admin", dirname(__FILE__).'/admin/');
-define("admin_themes", dirname(__FILE__).'/admin/themes/');
+define("admin_themes", dirname(__FILE__).'/custom/admin_themes/');
 
 // define database tables
 define("table_settings", db_prefix . "settings");

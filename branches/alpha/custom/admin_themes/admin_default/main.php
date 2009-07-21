@@ -35,7 +35,7 @@ global $hotaru, $lang; // don't remove
 
 <!-- TITLE FOR ADMIN NEWS -->
 <h2>
-	<a href="http://feeds2.feedburner.com/hotarucms"><img src="<?php echo baseurl ?>admin/themes/admin_default/images/rss_16.gif"></a>
+	<a href="http://feeds2.feedburner.com/hotarucms"><img src="<?php echo baseurl ?>custom/admin_themes/<?php echo admin_theme ?>images/rss_16.gif"></a>
 	&nbsp;<?php echo $lang["admin_theme_main_latest"]?>
 </h2>
 
