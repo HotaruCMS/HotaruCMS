@@ -1,7 +1,7 @@
 <?php
 
 /* **************************************************************************************************** 
- *  File: /admin/functions/funcs.files.php
+ *  File: /funcs.files.php
  *  Purpose: A collection of functions to deal with files.
  *  Notes: ---
  *  License:

@@ -206,7 +206,7 @@ class Hotaru {
 	function show_queries_and_time() {
 		global $db;
 		if($this->is_debug) { 
-			echo "<p>" . $db->num_queries . " database queries and a page load time of " . timer_stop(1) . " seconds.</p>"; 
+			echo "<p>" . $db->num_queries . " " . $lang['main_hotaru_queries_time'] . " " . timer_stop(1) . " " . $lang['main_hotaru_seconds'] . "</p>"; 
 		} 
 	}	
 	
