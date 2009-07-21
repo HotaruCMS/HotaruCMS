@@ -64,7 +64,7 @@ $the_plugins = sksort($the_plugins, "order", "int", true);	// sorts plugins by "
 			echo "<td class='plugins_name'>" . $plug['name'] . " " . $plug['version'] . "</td>\n";
 			echo "<td class='plugins_install'>" . $plug['install'] . "</td>\n";
 			echo "<td class='plugins_order'>" . $plug['order_output'] . "</td>\n";
-			echo "<td class='plugins_details'><a class='plugin_drop_down' href='#'><img src='" . baseurl . "custom/admin_themes/" . admin_theme . "images/info.png'></a></td>\n";
+			echo "<td class='plugins_details'><a class='plugin_drop_down' href='#'><img src='" . baseurl . "content/admin_themes/" . admin_theme . "images/info.png'></a></td>\n";
 			echo "</tr>\n";
 			echo "<tr id='plugins_tr_details' style='display:none;'><td colspan=5 class='plugin_description'>";
 			echo "<b>" . $lang["admin_theme_plugins_description"] . ":</b> " . $plug['description'] . "<br />";
@@ -107,7 +107,7 @@ $the_plugins = sksort($the_plugins, "order", "int", true);	// sorts plugins by "
 			}
 			echo "</td>\n";
 			echo "<td class='plugins_install'>" . $plug['install'] . "</td>\n";
-			echo "<td class='plugins_details'><a class='plugin_drop_down' href='#'><img src='" . baseurl . "custom/admin_themes/" . admin_theme . "images/info.png'></a></td>\n";
+			echo "<td class='plugins_details'><a class='plugin_drop_down' href='#'><img src='" . baseurl . "content/admin_themes/" . admin_theme . "images/info.png'></a></td>\n";
 			echo "</tr>\n";
 			echo "<tr id='plugins_tr_details' style='display:none;'><td colspan=5 class='plugin_description'>";
 			echo "<b>" . $lang["admin_theme_plugins_description"] . ":</b> " . $plug['description'] . "</td>";
