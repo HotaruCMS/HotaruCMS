@@ -40,10 +40,10 @@ $admin->delete_files(includes . 'ezSQL/cache');
 require_once(includes . 'Inspekt/Inspekt.php');	
 if(!isset($cage)) { $cage = Inspekt::makeSuperCage(); }
 
-if(file_exists(install . 'languages/install_' . strtolower(sitelanguage) . '.php')) {
-	require_once(install . 'languages/install_' . strtolower(sitelanguage) . '.php');	// language file for admin
+if(file_exists(languages . 'install/install_' . strtolower(sitelanguage) . '.php')) {
+	require_once(languages . 'install/install_' . strtolower(sitelanguage) . '.php');	// language file for admin
 } else {
-	require_once(install . 'languages/install_english.php');	// English file if specified language doesn't exist
+	require_once(languages . 'install/install_english.php');	// English file if specified language doesn't exist
 }
 
 $step = $cage->get->getInt('step');		// Installation steps.
