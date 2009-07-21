@@ -149,13 +149,13 @@ function cats_admin_plugin_settings() {
  
 function cat_man_menu() {
 
-	$home_link = url(array('page'=>'plugin_settings', 'plugin'=>'category_manager'), 'admin');
-	$order_link = url(array('page'=>'plugin_settings', 'plugin'=>'category_manager', 'action'=>'order'), 'admin');
-	$add_link = url(array('page'=>'plugin_settings', 'plugin'=>'category_manager', 'action'=>'add'), 'admin');
-	$edit_link = url(array('page'=>'plugin_settings', 'plugin'=>'category_manager', 'action'=>'edit'), 'admin');
-	$edit_meta_link = url(array('page'=>'plugin_settings', 'plugin'=>'category_manager', 'action'=>'edit_meta'), 'admin');
-	$move_link = url(array('page'=>'plugin_settings', 'plugin'=>'category_manager', 'action'=>'move'), 'admin');
-	$delete_link = url(array('page'=>'plugin_settings', 'plugin'=>'category_manager', 'action'=>'delete'), 'admin');
+	$home_link = baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager";
+	$order_link = baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order";
+	$add_link = baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=add";
+	$edit_link = baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit";
+	$edit_meta_link = baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit_meta";
+	$move_link = baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=move";
+	$delete_link = baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=delete";
 	
 	$menu = "<div class='cat_man_menu'>";
 	$menu .= "&raquo; <a href = '" . $home_link . "'>Category Manager</a><br />";
