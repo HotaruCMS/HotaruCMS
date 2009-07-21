@@ -24,12 +24,16 @@
  *
  **************************************************************************************************** */
 
-global $hotaru, $plugin; // don't remove
+global $hotaru, $plugin, $lang; // don't remove
 $the_plugins = $plugin->get_plugins(); // don't remove
-$the_plugins = sksort($the_plugins, "order", "int", true);
+$the_plugins = sksort($the_plugins, "order", "int", true);	// sorts plugins by "order"
 ?>
 
-<p class="breadcrumbs"><a href="<?php echo url(array(), 'admin'); ?>"><?php echo site_name;?> Admin Control Panel</a> &raquo; Plugin Management</p>
+<p class="breadcrumbs">
+	<a href="<?php echo baseurl; ?>"><?php echo site_name?></a> 
+	&raquo; <a href="<?php echo url(array(), 'admin'); ?>"><?php echo $lang["admin_theme_main_admin_cp"]?></a> 
+	&raquo; <?php echo $lang["admin_theme_plugins"]; ?>
+</p>
 	
 <?php $hotaru->show_message(); ?>
 
@@ -39,14 +43,14 @@ $the_plugins = sksort($the_plugins, "order", "int", true);
 
 <table>
 
-<tr class='plugins_table_installed'><td colspan=6>Installed</td></tr>
+<tr class='plugins_table_installed'><td colspan=6><?php echo $lang["admin_theme_plugins_installed"]; ?></td></tr>
 <tr class='plugins_table_headers'>
-<td>Active</td>
-<td>Switch</td>
-<td>Plugin</td>
-<td>Install</td>
-<td>Order</td>
-<td>Details</td>
+<td><?php echo $lang["admin_theme_plugins_active"]; ?></td>
+<td><?php echo $lang["admin_theme_plugins_switch"]; ?></td>
+<td><?php echo $lang["admin_theme_plugins_plugin"]; ?></td>
+<td><?php echo $lang["admin_theme_plugins_install"]; ?></td>
+<td><?php echo $lang["admin_theme_plugins_order"]; ?></td>
+<td><?php echo $lang["admin_theme_plugins_details"]; ?></td>
 </tr>
 
 <?php
@@ -62,14 +66,17 @@ $the_plugins = sksort($the_plugins, "order", "int", true);
 			echo "<td class='plugins_order'>" . $plug['order_output'] . "</td>\n";
 			echo "<td class='plugins_details'><a class='plugin_drop_down' href='#'><img src='" . baseurl . "admin/themes/" . admin_theme . "images/info.png'></a></td>\n";
 			echo "</tr>\n";
-			echo "<tr id='plugins_tr_details' style='display:none;'><td colspan=5 class='plugin_description'><b>Description:</b> " . $plug['description'] . "<br /><b>Requires:</b> ";
+			echo "<tr id='plugins_tr_details' style='display:none;'><td colspan=5 class='plugin_description'>";
+			echo "<b>" . $lang["admin_theme_plugins_description"] . ":</b> " . $plug['description'] . "<br />";
+			echo "<b>" . $lang["admin_theme_plugins_requires"] . ":</b> ";
 			$requires = "";
 			foreach($plug['requires'] as $key=>$value) {
 				$requires .= $key . " " . $value . ", ";
 			}
-			if($requires != "") { echo rstrtrim($requires, ", "); } else { echo "No additional plugins needed."; }
+			if($requires != "") { echo rstrtrim($requires, ", "); } else { echo $lang["admin_theme_plugins_no_plugins"]; }
 			echo "</td>";
-			echo "<td class='plugin_description_close'><a class='plugin_hide_details' href='#'>Close</a></td></tr>\n";
+			echo "<td class='plugin_description_close'><a class='plugin_hide_details' href='#'>";
+			echo $lang["admin_theme_plugins_close"] . "</a></td></tr>\n";
 		}
 	}
 ?>
@@ -77,13 +84,13 @@ $the_plugins = sksort($the_plugins, "order", "int", true);
 
 <table>	
 <tr><td colspan=5>&nbsp;</td></tr>
-<tr class='plugins_table_not_installed'><td colspan=6>Not installed</td></tr>
+<tr class='plugins_table_not_installed'><td colspan=6><?php echo $lang["admin_theme_plugins_not_installed"]; ?></td></tr>
 <tr class='plugins_table_headers'>
-<td>Active</td>
-<td colspan=2>Plugin</td>
-<td>Requires</td>
-<td>Install</td>
-<td>Details</td>
+<td><?php echo $lang["admin_theme_plugins_active"]; ?></td>
+<td colspan=2><?php echo $lang["admin_theme_plugins_plugin"]; ?></td>
+<td><?php echo $lang["admin_theme_plugins_requires"]; ?></td>
+<td><?php echo $lang["admin_theme_plugins_install"]; ?></td>
+<td><?php echo $lang["admin_theme_plugins_details"]; ?></td>
 </tr>
 
 <?php
@@ -102,8 +109,10 @@ $the_plugins = sksort($the_plugins, "order", "int", true);
 			echo "<td class='plugins_install'>" . $plug['install'] . "</td>\n";
 			echo "<td class='plugins_details'><a class='plugin_drop_down' href='#'><img src='" . baseurl . "admin/themes/" . admin_theme . "images/info.png'></a></td>\n";
 			echo "</tr>\n";
-			echo "<tr id='plugins_tr_details' style='display:none;'><td colspan=5 class='plugin_description'><b>Description:</b> " . $plug['description'] . "</td>";
-			echo "<td class='plugin_description_close'><a class='plugin_hide_details' href='#'>Close</a></td></tr>\n";
+			echo "<tr id='plugins_tr_details' style='display:none;'><td colspan=5 class='plugin_description'>";
+			echo "<b>" . $lang["admin_theme_plugins_description"] . ":</b> " . $plug['description'] . "</td>";
+			echo "<td class='plugin_description_close'><a class='plugin_hide_details' href='#'>";
+			echo $lang["admin_theme_plugins_close"] . "</a></td></tr>\n";
 		}
 	}
 
@@ -112,12 +121,11 @@ $the_plugins = sksort($the_plugins, "order", "int", true);
 </div>
 <div class="clear"></div>
 <div id="plugin_management_notice" class="info_box gray_box" style="margin-top: 2.0em";>
-	<p class="info_header">Plugin Management Guide</p>
+	<p class="info_header"><?php echo $lang["admin_theme_plugins_guide"]?></p>
 	<?php $plugin->check_actions('plugins_guide_top'); ?>
-	&raquo; The order column is used to determine which plugins are checked for hooks first.<br />
-	&raquo; If for any reason duplicates occur in the plugin order, uninstalling a plugin will re-sort the order.<br />
-	&raquo; Uninstalling a plugin will delete it from the <i>plugins</i>, <i>pluginhooks</i> and <i>pluginsettings</i> tables.<br />
-	&raquo; Any other database entries created by the plugin will not be removed.<br />
+	&raquo; <?php echo $lang["admin_theme_plugins_guide1"]?><br />
+	&raquo; <?php echo $lang["admin_theme_plugins_guide2"]?><br />
+	&raquo; <?php echo $lang["admin_theme_plugins_guide3"]?><br />
 	<?php $plugin->check_actions('plugins_guide_bottom'); ?>
 </div>
 
