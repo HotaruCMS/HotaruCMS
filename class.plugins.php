@@ -822,9 +822,13 @@ class Plugin extends generic_pmd {
 	function include_js_file($folder = '') {
 		global $lang;
 		if($folder) {
-			// Look in the plugin folder for a jss file... 
+			// First, look in the plugin folder for a js file... 
 			if(file_exists(plugins . $folder . '/javascript/' . $folder . '.js')) {
 				echo "<script language='JavaScript' src='" . baseurl . "content/plugins/" . $folder . "/javascript/" . $folder . ".js'></script>\n";
+			
+			// If not found, look in the theme folder for a js file... 	
+			} elseif(file_exists(themes . theme . 'javascript/' . $folder . '.js')) {	
+				echo "<script language='JavaScript' src='" . baseurl . "content/themes/" . theme . "javascript/" . $folder . ".js'></script>\n";
 			}
 		}
 	}
