@@ -788,6 +788,47 @@ class Plugin extends generic_pmd {
 		}
 	}
 	
+	
+	/* ******************************************************************** 
+	 *  Function: include_css_file
+	 *  Parameters: plugin folder name
+	 *  Purpose: Includes a plugin's CSS file
+	 *  Notes: the css file must be in a folder named css and a file of the format plugin_name.css, e.g. rss_show.css
+	 ********************************************************************** */	
+	 
+	function include_css_file($folder = '') {
+		global $lang;
+		if($folder) {
+		
+			// First look in the plugin folder for a css file... 
+			if(file_exists(plugins . $folder . '/css/' . $folder . '.css')) {
+				echo "<link rel='stylesheet' href='" . baseurl . "content/plugins/" . $folder . "/css/" . $folder . ".css' type='text/css'>\n";
+				
+			// If not found, look in the theme folder for a css file... 	
+			} elseif(file_exists(themes . theme . 'css/' . $folder . '.css')) {	
+				echo "<link rel='stylesheet' href='" . baseurl . "content/themes/" . theme . "css/" . $folder . ".css' type='text/css'>\n";
+			}
+		}
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: include_js_file
+	 *  Parameters: plugin folder name
+	 *  Purpose: Includes a plugin's javascript file
+	 *  Notes: the js file must be in a folder named javascript and a file of the format plugin_name.js, e.g. category_manager.js
+	 ********************************************************************** */	
+	 
+	function include_js_file($folder = '') {
+		global $lang;
+		if($folder) {
+			// Look in the plugin folder for a jss file... 
+			if(file_exists(plugins . $folder . '/javascript/' . $folder . '.js')) {
+				echo "<script language='JavaScript' src='" . baseurl . "content/plugins/" . $folder . "/javascript/" . $folder . ".js'></script>\n";
+			}
+		}
+	}
+	
 }
 
 ?>
