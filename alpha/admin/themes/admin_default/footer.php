@@ -24,15 +24,22 @@
  *
  **************************************************************************************************** */
 
-global $hotaru, $plugin; // don't remove
+global $hotaru, $plugin, $lang; // don't remove
 ?>
 	<div id="ft" role="contentinfo">
-		<?php $plugin->check_actions('footer_top'); ?>
-		<?php $plugin->check_actions('footer'); ?>
-		<?php $plugin->check_actions('admin_footer'); ?>
-		<?php $hotaru->show_queries_and_time(); ?>
-		<p>Having trouble? Visit the forums at <a href='http://hotarucms.org'>HotaruCMS.org</a> for help.</p>
-		<?php $plugin->check_actions('footer_bottom'); ?>
+		<?php
+			$plugin->check_actions('footer_top');
+			$plugin->check_actions('footer');
+			$plugin->check_actions('admin_footer');
+			$hotaru->show_queries_and_time();
+			
+			// Link to forums...
+			echo "<p>" . $lang["admin_theme_footer_having_trouble_vist_forums"];
+			echo " <a href='http://hotarucms.org'>HotaruCMS.org</a> ";
+			echo $lang["admin_theme_footer_for_help"] . "</p>";
+			
+			$plugin->check_actions('footer_bottom'); 
+		?>
 	</div>
 </div>
 </body>

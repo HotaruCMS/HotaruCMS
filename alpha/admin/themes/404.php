@@ -23,8 +23,9 @@
  *
  **************************************************************************************************** */
 
+global $lang;
 ?>
 
-Page not found in admin/admin_themes/
+<?php echo $lang['admin_theme_404_page_not_found']; ?>
 
 

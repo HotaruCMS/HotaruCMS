@@ -24,20 +24,15 @@
  *
  **************************************************************************************************** */
 
-/* ******* USAGE ************
-<?php echo $admin->display_admin_template('TEMPLATE_NAME'); ?>		// e.g. header
-***************************** */
+global $hotaru, $admin, $plugin, $current_user, $lang; // don't remove
 
-global $hotaru, $admin, $plugin, $current_user; // don't remove
-?>
-
-<!-- WHOLE PAGE-->
-<?php
-	$result = $plugin->check_actions('admin_theme_index_replace');
-	if(!isset($result) || !is_array($result)) {
+// plugin hook
+$result = $plugin->check_actions('admin_theme_index_replace');
+if(!isset($result) || !is_array($result)) {
 ?>
 		<!-- HEADER-->
 		<?php
+			// plugin hook
 			$result = $plugin->check_actions('admin_theme_index_header');
 			if(!isset($result) || !is_array($result)) {
 				$admin->display_admin_template('header');
@@ -55,6 +50,7 @@ global $hotaru, $admin, $plugin, $current_user; // don't remove
 	    				<!-- MAIN -->
     					<div id="main">
     					<?php
+    						// plugin hook
 						$result = $plugin->check_actions('admin_theme_index_display');
 						if(!isset($result) || !is_array($result)) {
 		    					$page = $hotaru->get_page_name();
@@ -75,6 +71,7 @@ global $hotaru, $admin, $plugin, $current_user; // don't remove
 		    			<div class="yui-u first">
 						<!-- SIDEBAR -->
 						<?php
+							// plugin hook
 							$result = $plugin->check_actions('admin_theme_index_sidebar');
 							if(!isset($result) || !is_array($result)) {
 								$admin->display_admin_template('sidebar');
@@ -86,6 +83,7 @@ global $hotaru, $admin, $plugin, $current_user; // don't remove
 		</div>
 		<!-- FOOTER -->
 		<?php
+			// plugin hook
 			$result = $plugin->check_actions('admin_theme_index_footer');
 			if(!isset($result) || !is_array($result)) {
 				$admin->display_admin_template('footer');

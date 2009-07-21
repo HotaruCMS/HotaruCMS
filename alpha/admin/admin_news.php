@@ -32,7 +32,7 @@
  ********************************************************************** */
  
 function admin_news() {
-    global $hotaru, $plugin;
+    global $hotaru, $plugin, $lang;
 	    
     $cache = true;
     $cache_duration = 60; // minutes
@@ -49,15 +49,15 @@ function admin_news() {
         foreach ($feed->get_items() as $item) {
                 $output .= "<div>";
                 $output .= "<a href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a><br />";
-                $output .= "<small>Posted by ";
+                $output .= "<small>" . $lang["admin_news_posted_by"] . " ";
                 foreach ($item->get_authors() as $author)  {
 			$output .= $author->get_name(); 
 		}
-		$output .= " on " . $item->get_date('j F Y');
+		$output .= " " . $lang["admin_news_on"] . " " . $item->get_date('j F Y');
 		$output .= "</small><br />";
 		$output .= substr(strip_tags($item->get_content()), 0, 300);
 		$output .= "... ";
-		$output .= "<small><a href='" . $item->get_permalink() . "' title='" . $item->get_title() . "'>[Read More]</a>";
+		$output .= "<small><a href='" . $item->get_permalink() . "' title='" . $item->get_title() . "'>[" . $lang["admin_news_read_more"] . "]</a>";
 		$output .= "</small>";
 		$output .= "</div><br />";
 
