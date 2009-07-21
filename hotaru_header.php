@@ -41,10 +41,10 @@ require_once('class.plugins.php');	// for plugins
 require_once(includes . 'Inspekt/Inspekt.php');		// for Input sanitation and validation
 require_once(includes . 'ezSQL/ez_sql_core.php');		// for database usage
 require_once(includes . 'ezSQL/mysql/ez_sql_mysql.php');	// for database usage
-require_once('funcs.urls.php');					// for default or friendly urls
-require_once('funcs.strings.php');				// for manipulating strings
-require_once('funcs.arrays.php');				// for manipulating arrays
-require_once('funcs.times.php');				// for everything related to time
+require_once(functions . 'funcs.urls.php');			// for default or friendly urls
+require_once(functions . 'funcs.strings.php');			// for manipulating strings
+require_once(functions . 'funcs.arrays.php');			// for manipulating arrays
+require_once(functions . 'funcs.times.php');			// for everything related to time
 
 // Initialize database
 if(!isset($db)) { 
