@@ -113,6 +113,8 @@ function usr_update_form() {
 	echo "<div id='main'>";
 		echo "<p class='breadcrumbs'><a href='" . baseurl . "'>Home</a> &raquo; User Settings</p>\n";
 				
+			echo "<h2>User Settings</h2>";
+			
 			$hotaru->show_message();
 			
 			echo "<div class='main_inner'>";

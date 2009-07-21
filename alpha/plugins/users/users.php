@@ -136,7 +136,7 @@ function usr_theme_index_replace() {
 			require_once(plugins . 'users/register.php');
 			if(usr_register()) { 
 				// success, return to front page, logged OUT.
-				header("Location: " . baseurl);
+				header("Location: " . baseurl . "index.php?page=login");
 			}
 		} elseif($hotaru->is_page('login')) {
 			require_once(plugins . 'users/login.php');
