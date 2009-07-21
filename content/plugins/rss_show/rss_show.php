@@ -134,7 +134,9 @@ function rs_rss_show($ids) {
  ********************************************************************** */
  
 function rs_header_include() {
-	echo "<link rel='stylesheet' href='" . baseurl . "content/plugins/rss_show/rss_show.css' type='text/css'>\n";
+	global $plugin;
+	
+	$plugin->include_css_file('rss_show');
 }
 
 
