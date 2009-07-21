@@ -111,18 +111,14 @@ function hu_theme_index_sidebar() {
  *  Function: hu_hotaru_header
  *  Parameters: None
  *  Purpose: Includes the Hello Universe language file
- *  Notes: This is used in the example form, but could be used anywhere in this plugin.
+ *  Notes: This is used in the example form.
  ********************************************************************** */
  
 function hu_hotaru_header() {
-	global $lang;
+	global $lang, $plugin;
 	
 	// include hello_universe language file
-	if(file_exists(plugins . 'hello_universe/languages/hello_universe_' . strtolower(sitelanguage) . '.php')) {
-		require_once(plugins . 'hello_universe/languages/hello_universe_' . strtolower(sitelanguage) . '.php');	// language file for admin
-	} else {
-		require_once(plugins . 'hello_universe/languages/hello_universe_english.php');	// English file if specified language doesn't exist
-	}
+	$plugin->include_language_file('hello_universe');
 }
 
 ?>

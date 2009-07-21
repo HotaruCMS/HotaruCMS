@@ -42,7 +42,7 @@
 					echo "<a href='#' class='cat_man_drop_down' title='Show options'>" . $cat['category_name'] . "</a><br />";
 				}
 				echo "<div class='cat_move_options' style='display:none'>";
-					echo "<form class='cat_man_move_form' style='margin-bottom: 0px;' name='category_manager_move_form' action='" . url(array('page'=>'plugin_settings', 'plugin'=>'category_manager', 'action'=>'move_save', 'id'=>$cat['category_id']), 'admin') . "' method='post'>";
+					echo "<form class='cat_man_move_form' style='margin-bottom: 0px;' name='category_manager_move_form' action='" . baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=move_save&amp;id=" . $cat['category_id'] . "' method='post'>";
 							echo "Put '" . $cat['category_name'] . "'";   
 							?>
 							<select name="placement">";
@@ -70,7 +70,7 @@
 					<?php
 					if($cat['category_parent'] > 1) {
 						echo "OR...";
-						echo "<form class='cat_man_move_form' style='margin-bottom: 0px;' name='category_manager_move_form2' action='" . url(array('page'=>'plugin_settings', 'plugin'=>'category_manager', 'action'=>'move_save', 'id'=>$cat['category_id']), 'admin') . "' method='post'>";
+						echo "<form class='cat_man_move_form' style='margin-bottom: 0px;' name='category_manager_move_form2' action='" . baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=move_save&amp;id=" . $cat['category_id'] . "' method='post'>";
 							echo "Move '" . $cat['category_name'] . "' to ";
 							echo "<select name='moveup'>";
 							echo "<option value='top'>Top-level</option>";

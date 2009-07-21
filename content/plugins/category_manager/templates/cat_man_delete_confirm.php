@@ -29,7 +29,7 @@
 
 	<table class="cat_man_table">
 	<tr><td class="cat_man_body">
-		<form name='category_manager_delete_confirm_form' action='<?php echo url(array('page'=>'plugin_settings', 'plugin'=>'category_manager', 'action'=>'delete_confirm'), 'admin'); ?>' method='post'>
+		<form name='category_manager_delete_confirm_form' action='<?php echo baseurl ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=delete_confirm' method='post'>
 		You are about to delete the following categories:<br /><br />
 		<?php
 		$counter = 0; 

@@ -31,13 +31,13 @@
 	<tr><td class="cat_man_body">
 		There are four ways to automatically sort your categories:<br />
 
-		<h3>1. <a href="<?php echo url(array('page'=>'plugin_settings', 'plugin'=>'category_manager', 'action'=>'order_alpha'), 'admin'); ?>">Order Alphabetically</a></h3>
+		<h3>1. <a href="<?php echo baseurl ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order_alpha">Order Alphabetically</a></h3>
 		Order you categories alphabetically, from A-Z. Sub-categories will also be ordered within their parent category. <br />
-		<h3>2. <a href="<?php echo url(array('page'=>'plugin_settings', 'plugin'=>'category_manager', 'action'=>'order_length'), 'admin'); ?>">Order by Name Length</a></h3>
+		<h3>2. <a href="<?php echo baseurl ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order_length">Order by Name Length</a></h3>
 		This will order your categories by the number of characters in their titles, shortest first.  <br />
-		<h3>3. <a href="<?php echo url(array('page'=>'plugin_settings', 'plugin'=>'category_manager', 'action'=>'order_id'), 'admin'); ?>">Order by ID</a></h3>
+		<h3>3. <a href="<?php echo baseurl ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order_id">Order by ID</a></h3>
 		The ID of each character was assigned when you created it, so this will sort your categories by date of creation. <br />
-		<h3>4. <a href="<?php echo url(array('page'=>'plugin_settings', 'plugin'=>'category_manager', 'action'=>'order_posts'), 'admin'); ?>">Order by Posts</a></h3>
+		<h3>4. <a href="<?php echo baseurl ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order_posts">Order by Posts</a></h3>
 		Order your categories by the number of posts they have in them. The most popular categories go at the top.
 
 	</td>
