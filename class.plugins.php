@@ -768,12 +768,22 @@ class Plugin extends generic_pmd {
 	function include_language_file($folder = '') {
 		global $lang;
 		if($folder) {
+		
+			// First look in the plugin folder for a language file... 
 			if(file_exists(plugins . $folder . '/languages/' . $folder . '_' . strtolower(sitelanguage) . '.php')) {
-				// language file specified language..
-				require_once(plugins . $folder . '/languages/' . $folder . '_' . strtolower(sitelanguage) . '.php');	
+				require_once(plugins . $folder . '/languages/' . $folder . '_' . strtolower(sitelanguage) . '.php');
+				
+			// If not found, look in the theme folder for a language file... 	
+			} elseif(file_exists(themes . theme . '/languages/' . $folder . '_' . strtolower(sitelanguage) . '.php')) { 	
+				require_once(themes . theme . '/languages/' . $folder . '_' . strtolower(sitelanguage) . '.php');
+				
+			// If not found, look in the plugin folder for an English language file... 	
+			} elseif(file_exists(plugins . $folder . '/languages/' . $folder . '_' . 'english.php')) {
+				require_once(plugins . $folder . '/languages/' . $folder . '_' . 'english.php');
+				
+			// Finally, look in the theme folder for an English language file...
 			} else {
-				// English file if specified language doesn't exist
-				require_once(plugins . $folder . '/languages/' . $folder . '_english.php');
+				require_once(themes . theme . '/languages/' . $folder . '_english.php');
 			}
 		}
 	}
