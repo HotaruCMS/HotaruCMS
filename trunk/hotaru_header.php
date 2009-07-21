@@ -32,11 +32,6 @@ session_start();
 // include settings
 require_once('hotaru_settings.php');
 
-// include classes
-require_once('class.hotaru.php'); 	// for environment
-require_once('class.userbase.php');	// for users
-require_once('class.plugins.php');	// for plugins
-
 // include other essential libraries and functions
 require_once(includes . 'Inspekt/Inspekt.php');		// for Input sanitation and validation
 require_once(includes . 'ezSQL/ez_sql_core.php');		// for database usage
@@ -45,6 +40,12 @@ require_once(functions . 'funcs.urls.php');			// for default or friendly urls
 require_once(functions . 'funcs.strings.php');			// for manipulating strings
 require_once(functions . 'funcs.arrays.php');			// for manipulating arrays
 require_once(functions . 'funcs.times.php');			// for everything related to time
+require_once(functions . 'funcs.files.php');			// for everything related to files
+
+// include classes
+require_once('class.hotaru.php'); 	// for environment
+require_once('class.userbase.php');	// for users
+require_once('class.plugins.php');	// for plugins
 
 // Initialize database
 if(!isset($db)) { 

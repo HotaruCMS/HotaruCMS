@@ -173,7 +173,6 @@ class Plugin extends generic_pmd {
 	 ********************************************************************** */
 
 	function get_plugins_array() {
-		require_once('funcs.files.php');
 		$plugin_list = getFilenames(plugins, "short");
 		$plugins_array = array();
 		foreach($plugin_list as $plugin_folder_name) {

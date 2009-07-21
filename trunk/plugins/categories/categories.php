@@ -61,6 +61,9 @@ function cts_install_plugin() {
 function cts_submit_hotaru_header_1() {
 	global $post, $plugin;
 	
+	// The categories table is defined 
+	if(!defined('table_categories')) { define("table_categories", db_prefix . "categories"); }
+	
 	// include language file
 	$plugin->include_language_file('categories');
 	
