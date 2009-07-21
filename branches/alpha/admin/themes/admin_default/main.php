@@ -33,10 +33,10 @@ global $hotaru, $lang; // don't remove
 	&raquo; <?php echo $lang["admin_theme_main_admin_home"]?>
 </p>
 
-<div class="admin_header admin_header_space">
-	<!-- TITLE FOR ADMIN NEWS -->
+<!-- TITLE FOR ADMIN NEWS -->
+<h2>
 	<a href="http://feeds2.feedburner.com/hotarucms"><img src="<?php echo baseurl ?>admin/themes/admin_default/images/rss_16.gif"></a>
 	&nbsp;<?php echo $lang["admin_theme_main_latest"]?>
-</div>
+</h2>
 
 <?php echo admin_news(); ?>

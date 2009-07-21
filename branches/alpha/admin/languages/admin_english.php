@@ -35,6 +35,13 @@
 ******************************************************************** 
 ***************************************************************** */
 
+/* login */
+$lang["admin_theme_login"] = "Login";
+$lang["admin_theme_login_username"] = "Username";
+$lang["admin_theme_login_password"] = "Password";
+$lang["admin_theme_login_instructions"] = "Enter your username and password:";
+$lang["admin_theme_login_form_submit"] = "Login";
+
 /* navigation */
 $lang["admin_theme_navigation_home"] = "Home";
 $lang["admin_theme_navigation_admin"] = "Admin";
@@ -109,13 +116,8 @@ $lang["admin_breadcrumbs_home"] = "Home";
 $lang["admin_breadcrumbs_login"] = "Login";
 
 /* Login */
-$lang["admin_login"] = "Login";
-$lang["admin_login_username"] = "Username";
-$lang["admin_login_password"] = "Password";
-$lang["admin_login_instructions"] = "Enter your username and password:";
 $lang["admin_login_failed"] = "Login failed";
-$lang["admin_login_form_submit"] = "Login";
-$lang["admin_login_eror_cookie"] = "Error setting cookie. Username not provided";
+$lang["admin_login_error_cookie"] = "Error setting cookie. Username not provided";
 
 /* News */
 $lang["admin_news_posted_by"] = "Posted by";
