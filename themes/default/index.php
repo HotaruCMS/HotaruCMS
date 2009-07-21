@@ -24,7 +24,7 @@
  *
  **************************************************************************************************** */
 
-global $hotaru, $plugin; // don't remove
+global $hotaru, $plugin, $lang; // don't remove
 
 // plugin hook
 $result = $plugin->check_actions('theme_index_replace');
