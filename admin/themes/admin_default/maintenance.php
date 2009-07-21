@@ -43,8 +43,8 @@ global $plugin, $admin, $cage, $lang; // don't remove
 ?>
 <br />
 <ul>
-	<li><a href="<?php echo url(array('page'=>'maintenance', 'action'=>'clear_db_cache'), 'admin'); ?>">Clear database cache</a> - deletes cached database queries.</li>
-	<li><a href="<?php echo url(array('page'=>'maintenance', 'action'=>'clear_rss_cache'), 'admin'); ?>">Clear RSS cache</a> - deletes cached RSS feeds.</li>
+	<li><a href="<?php echo baseurl; ?>admin/admin_index.php?page=maintenance&amp;action=clear_db_cache">Clear database cache</a> - deletes cached database queries.</li>
+	<li><a href="<?php echo baseurl; ?>admin/admin_index.php?page=maintenance&amp;action=clear_rss_cache">Clear RSS cache</a> - deletes cached RSS feeds.</li>
 </ul>	
 	
 <?php $plugin->check_actions('admin_maintenance_bottom'); ?>
