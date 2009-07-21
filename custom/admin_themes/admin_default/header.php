@@ -34,7 +34,7 @@ global $hotaru, $admin, $plugin, $lang; // don't remove
    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
    <title><?php echo site_name; ?></title>
    <link rel="stylesheet" href="<?php echo baseurl . '3rd_party/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
-   <link rel="stylesheet" href="<?php echo baseurl . 'admin/themes/' . admin_theme . 'style.css'; ?>" type="text/css">
+   <link rel="stylesheet" href="<?php echo baseurl . 'custom/admin_themes/' . admin_theme . 'style.css'; ?>" type="text/css">
    <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery-ui.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_ajax.js'; ?>"></script>
@@ -52,7 +52,7 @@ global $hotaru, $admin, $plugin, $lang; // don't remove
 <?php } ?>
 <div id="doc2" class="yui-t7">
 	<div id="hd" role="banner">
-		<a href="<?php echo baseurl; ?>"><img src="<?php echo baseurl; ?>admin/themes/admin_default/images/hotaru_468x60.png"></a>
+		<a href="<?php echo baseurl; ?>"><img src="<?php echo baseurl; ?>custom/admin_themes/<?php echo admin_theme ?>images/hotaru_468x60.png"></a>
 		<?php $plugin->check_actions('header_post_logo'); ?>
 		<!-- NAVIGATION -->
 		<?php echo $admin->display_admin_template('navigation'); ?>
