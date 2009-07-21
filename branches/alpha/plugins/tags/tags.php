@@ -228,13 +228,11 @@ function tg_submit_form_2_check_for_errors() {
 		$tags_check = $cage->post->noTags('post_tags');	
 		if(!$tags_check) {
 			// No tags present...
-			$hotaru->message = $lang['submit_form_tags_not_present_error'];
-			$hotaru->message_type = 'red';
+			$hotaru->messages[$lang['submit_form_tags_not_present_error']] = "red";
 			$error_tags = 1;
 		} elseif(strlen($tags_check) > $post->post_max_tags) {
 			// total tag length is too long
-			$hotaru->message = $lang['submit_form_tags_length_error'];
-			$hotaru->message_type = 'red';
+			$hotaru->messages[$lang['submit_form_tags_length_error']] = "red";
 			$error_tags = 1;
 		} else {
 			// tags are okay.
