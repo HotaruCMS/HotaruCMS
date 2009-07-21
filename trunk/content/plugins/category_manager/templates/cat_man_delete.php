@@ -34,7 +34,7 @@
 		1. If a category contains links, it can't be deleted and is grayed out. <br />
 		2. If you delete a category with children, they will be assigned to their grandparent or otherwise become top-level categories.<br /><br />
 	
-		<form name='category_manager_delete_form' action='<?php echo url(array('page'=>'plugin_settings', 'plugin'=>'category_manager', 'action'=>'delete_save'), 'admin'); ?>' method='post'>
+		<form name='category_manager_delete_form' action='<?php echo baseurl ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=delete_save' method='post'>
 		<?php 
 		foreach($the_cats as $cat) {
 			if($cat['category_name'] != "all") {

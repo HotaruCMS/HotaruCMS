@@ -122,8 +122,8 @@ class Hotaru {
 		/* First check if there's a specified plugin for the file and load 
 		   the template from the plugin folder if it's there. */
 		if($plugin != '') {
-			if(file_exists(plugins .  $plugin . '/' . $page)) {
-				include_once(plugins . $plugin . '/' . $page);
+			if(file_exists(plugins .  $plugin . '/templates/' . $page)) {
+				include_once(plugins . $plugin . '/templates/' . $page);
 				return true;
 				die();
 			}

@@ -31,7 +31,7 @@
 	<tr><td class="cat_man_body">
 		Edit the names of your categories below and <b>click "Save All"</b>. <br /><br />
 	
-		<form name='category_manager_edit_form' action='<?php echo url(array('page'=>'plugin_settings', 'plugin'=>'category_manager', 'action'=>'edit_save'), 'admin'); ?>' method='post'>
+		<form name='category_manager_edit_form' action='<?php echo baseurl ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit_save' method='post'>
 		<?php
 		foreach($the_cats as $cat) {
 			if($cat['category_name'] != "all") {
