@@ -188,16 +188,4 @@ function usr_theme_index_main() {
 }
 
 
-/* ******************************************************************** 
- *  Function: usr_get_params
- *  Parameters: None
- *  Purpose: Gets parameters sent from a form of directly via http
- *  Notes: ---
- ********************************************************************** */
- 
-function usr_get_params() {
-	global $cage;
-
-}
-
 ?>

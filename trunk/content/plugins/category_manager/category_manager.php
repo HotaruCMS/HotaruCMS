@@ -96,8 +96,10 @@ function cats_hotaru_header() {
  ********************************************************************** */
  
 function cats_admin_header_include() {
-	echo "<link rel='stylesheet' href='" . baseurl . "content/plugins/category_manager/css/cat_man_style.css' type='text/css'>\n";
-	echo "<script language='JavaScript' src='" . baseurl . "content/plugins/category_manager/javascript/cat_man_jquery.js'></script>\n";
+	global $plugin;
+	
+	$plugin->include_css_file('category_manager');
+	$plugin->include_js_file('category_manager');
 }
 
 
