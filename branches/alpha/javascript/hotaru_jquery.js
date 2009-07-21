@@ -38,12 +38,6 @@ $(document).ready(function(){
 	// Fade message
 	$(".message").css({display: "none"}).fadeIn("slow");
 	
-	// Show/Hide box
-	$(".dropdown").click(function () {
-		var parentTag = $(this).parents("ul").children("ul#plugin_settings_list");
-                parentTag.fadeToggle();
-                return false;
-        });  
         
 	// Show/Hide plugin details
 	$(".plugin_drop_down").click(function () {

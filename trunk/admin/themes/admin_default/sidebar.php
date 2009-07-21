@@ -33,8 +33,8 @@ global $hotaru, $plugin; // don't remove
 	<li><a href="<?php echo url(array('page' => 'settings'), 'admin'); ?>">Settings</a></li>
 	<li><a href="<?php echo url(array('page' => 'maintenance'), 'admin'); ?>">Maintenance</a></li>
 	<li><a href="<?php echo url(array('page' => 'plugins'), 'admin'); ?>">Plugin Management</a></li>
-	<li><a class="dropdown" href="#">Plugin Settings</a></li>
-	<ul id="plugin_settings_list" style="display: none;">
+	<li>Plugin Settings</li>
+	<ul id="plugin_settings_list">
 		<?php $plugin->check_actions('admin_sidebar_plugin_settings'); ?>
 	</ul>
 	
