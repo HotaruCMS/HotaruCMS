@@ -30,12 +30,12 @@
 	<table class="cat_man_table">
 	<tr><td class="cat_man_body">
 	<h3>1. Add a Main Category</h3>
-	<form name='category_manager_add_parent_form' action='<?php echo url(array('page'=>'plugin_settings', 'plugin'=>'category_manager', 'action'=>'add_save'), 'admin'); ?>' method='post'>
+	<form name='category_manager_add_parent_form' action='<?php echo baseurl ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=add_save' method='post'>
 	Add a new top-level category and name it <input name="new_category" type="text" value=""> &nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='save_new_category1' value='Save'>
 	</form>
 
 	<h3>2. Add a Child Category to a Main Category</h3>
-	<form name='category_manager_add_child_form' action='<?php echo url(array('page'=>'plugin_settings', 'plugin'=>'category_manager', 'action'=>'add_save'), 'admin'); ?>' method='post'>
+	<form name='category_manager_add_child_form' action='<?php echo baseurl ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=add_save' method='post'>
 	Add to 
 		<select name="parent">
 		<?php
@@ -52,7 +52,7 @@
 	</form>
 
 	<h3>3. Add a Child Category to a Child Category</h3>
-	<form name='category_manager_add_child2_form' action='<?php echo url(array('page'=>'plugin_settings', 'plugin'=>'category_manager', 'action'=>'add_save'), 'admin'); ?>' method='post'>
+	<form name='category_manager_add_child2_form' action='<?php echo baseurl ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=add_save' method='post'>
 	Add to 
 		<select name="parent">
 		<?php
