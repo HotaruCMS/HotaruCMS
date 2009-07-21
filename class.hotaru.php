@@ -29,6 +29,7 @@ class Hotaru {
 	var $sidebar = true;
 	var $message = '';
 	var $message_type = 'green';	// green or red, color of message box
+	var $messages = array();	// for multiple messages
 	var $template_name = '';	// e.g. 'posts_list'
 	
 	
@@ -213,7 +214,7 @@ class Hotaru {
 	/* ******************************************************************** 
 	 *  Function: show_message
 	 *  Parameters: Optional message and message type ('green' or 'red')
-	 *  Purpose: Displays a success or failure message
+	 *  Purpose: Displays a SINGLE success or failure message
 	 *  Notes: Two ways to use this: 
 	 *	Longhand:
 	 *	 	$hotaru->message = "This is a message";
@@ -229,6 +230,24 @@ class Hotaru {
 			echo "<div class='message " . $msg_type . "'>" . $msg . "</div>";
 		} elseif($this->message != '') {
 			echo "<div class='message " . $this->message_type . "'>" . $this->message . "</div>";
+		}
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: show_messages
+	 *  Parameters: None
+	 *  Purpose: Displays ALL success or failure messages
+	 *  Notes: Use like this:
+	 *	 	$hotaru->messages['This is a message'] = "green";
+	 *		$hotaru->show_messages();
+	 ********************************************************************** */
+	 	
+	function show_messages() {
+		if(!empty($this->messages)) {
+			foreach($this->messages as $msg => $msg_type) {
+				echo "<div class='message " . $msg_type . "'>" . $msg . "</div>";
+			}
 		}
 	}
 }
