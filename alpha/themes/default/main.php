@@ -24,7 +24,7 @@
  *
  **************************************************************************************************** */
 
-global $hotaru, $plugin; // don't remove
+global $hotaru, $plugin, $lang; // don't remove
 ?>
 
 <?php $plugin->check_actions('main_top'); ?>

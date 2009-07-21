@@ -23,7 +23,7 @@
  *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
  *
  **************************************************************************************************** */
-
+global $lang;
 ?>
 
-Page not found in /themes/default/
+<?php echo $lang['main_theme_page_not_found']; ?>

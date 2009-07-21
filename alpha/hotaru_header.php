@@ -46,12 +46,6 @@ require_once('funcs.strings.php');				// for manipulating strings
 require_once('funcs.arrays.php');				// for manipulating arrays
 require_once('funcs.times.php');				// for everything related to time
 
-if(file_exists(languages . 'main_' . strtolower(sitelanguage) . '.php')) {
-	require_once(languages . 'main_' . strtolower(sitelanguage) . '.php');	// language file for main (not admin, installation or plugins)
-} else {
-	require_once(languages . 'main_english.php');	// English file if specified language doesn't exist
-}
-
 // Initialize database
 if(!isset($db)) { 
 	$db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST); 
