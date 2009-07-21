@@ -71,7 +71,7 @@ function admin_login_form() {
 	if(!$password_check = $cage->post->testPassword('password')) { $password_check = ""; }
 	
 	echo "<div id='main'>";
-		echo "<h2><a href=" . baseurl . ">Home</a> &raquo; Login</h2>\n";
+		echo "<h2><a href=" . baseurl . ">" . $lang["admin_breadcrumbs_home"] . "</a> &raquo; " . $lang["admin_breadcrumbs_login"] . "</h2>\n";
 		
 		$hotaru->show_message();
 			
@@ -80,8 +80,8 @@ function admin_login_form() {
 			
 			echo "<form name='login_form' action='" . baseurl . "admin/admin_index.php' method='post'>\n";	
 			echo "<table>\n";
-				echo "<tr><td>Username:&nbsp; </td><td><input type='text' size=30 name='username' value='" . $username_check . "' /></td></tr>\n";
-				echo "<tr><td>Password:&nbsp; </td><td><input type='password' size=30 name='password' value='" . $password_check . "' /></td></tr>\n";
+				echo "<tr><td>" . $lang["admin_login_username"] . ":&nbsp; </td><td><input type='text' size=30 name='username' value='" . $username_check . "' /></td></tr>\n";
+				echo "<tr><td>" . $lang["admin_login_password"] . ":&nbsp; </td><td><input type='password' size=30 name='password' value='" . $password_check . "' /></td></tr>\n";
 				echo "<tr><td>&nbsp; </td><td style='text-align:right;'>\n";
 				echo "<input type='hidden' name='login_attempted' value='true'>";
 				echo "<input type='hidden' name='page' value='admin_login'>";
@@ -102,17 +102,18 @@ function admin_login_form() {
  ********************************************************************** */
  
 function set_admin_cookie($username) {
-     /* Set a 30 day cookie */
-    if(!$username) { 
-    	echo "Error setting cookie. Username not provided.";
-    	return false;
-    } else {
-    	$strCookie=base64_encode(join(':', array($username, crypt($username, 22))));
-	$month = 2592000 + time(); // (2592000 = 60 seconds * 60 mins * 24 hours * 30 days.)
-	setcookie("hotaru_user", $username, $month, "/");
-	setcookie("hotaru_key", $strCookie, $month, "/");
-	return true;
-    }
+	global $lang;
+
+	if(!$username) { 
+		echo $lang["admin_login_eror_cookie"];
+		return false;
+	} else {
+		$strCookie=base64_encode(join(':', array($username, crypt($username, 22))));
+		$month = 2592000 + time(); // (2592000 = 60 seconds * 60 mins * 24 hours * 30 days.)
+		setcookie("hotaru_user", $username, $month, "/");
+		setcookie("hotaru_key", $strCookie, $month, "/");
+		return true;
+	}
 }
         
  /* ******************************************************************** 
