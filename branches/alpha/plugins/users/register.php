@@ -121,6 +121,8 @@ function usr_register_form() {
 	echo "<div id='main'>";
 		echo "<p class='breadcrumbs'><a href='" . baseurl . "'>Home</a> &raquo; Register</p>\n";
 			
+		echo "<h2>Register</h2>";
+		
 		$hotaru->show_message();
 			
 		echo "<div class='main_inner'>";

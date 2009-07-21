@@ -80,6 +80,8 @@ function usr_login_form() {
 	echo "<div id='main'>";
 		echo "<p class='breadcrumbs'><a href='" . baseurl . "'>Home</a> &raquo; Login</p>\n";
 		
+		echo "<h2>Login</h2>";
+		
 		$hotaru->show_message();
 		
 		echo "<div class='main_inner'>";
