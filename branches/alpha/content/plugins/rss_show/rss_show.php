@@ -72,7 +72,7 @@ function rs_rss_show($ids) {
 			// SITE TITLE
 			if($settings['rss_show_title']) { 
 				$output .= "<li class='rss_show_feed_title'>";
-				$output .= "<a href='" . $feed->subscribe_url() . "' title='RSS Feed'><img src='" . baseurl . "images/rss_16.gif'></a>&nbsp;"; // RSS icon
+				$output .= "<a href='" . $feed->subscribe_url() . "' title='RSS Feed'><img src='" . baseurl . "content/themes/" . theme . "images/rss_16.gif'></a>&nbsp;"; // RSS icon
 				$output .= "<a href='" . $feed->get_link(). "' title='Visit the site'>" . $settings['rss_show_title'] . "</a></li>"; 
 			}
 			    
@@ -134,7 +134,7 @@ function rs_rss_show($ids) {
  ********************************************************************** */
  
 function rs_header_include() {
-	echo "<link rel='stylesheet' href='" . baseurl . "plugins/rss_show/rss_show.css' type='text/css'>\n";
+	echo "<link rel='stylesheet' href='" . baseurl . "content/plugins/rss_show/rss_show.css' type='text/css'>\n";
 }
 
 
