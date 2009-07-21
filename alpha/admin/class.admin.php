@@ -36,8 +36,7 @@ class Admin {
 	 ********************************************************************** */
 	 
 	function display_admin_template($page = '', $plugin = '')  {
-		/* First tries to load the template from the user specified custom theme, 
-		   and falls back on the default theme if not found. */
+
 		$page = $page . '.php';
 		
 		/* First check if there's a specified plugin for the file and load 
