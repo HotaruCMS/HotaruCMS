@@ -24,7 +24,7 @@
  *
  **************************************************************************************************** */
  
-class UserBase {	// Limited to essential user information. Plugins extend this.
+class UserBase {	
  
  	var $id = 0;
 	var $username = '';
@@ -186,9 +186,10 @@ class UserBase {	// Limited to essential user information. Plugins extend this.
 	 ********************************************************************** */
 	 
 	function set_cookie($remember) {
+		global $lang;
              /* Set a 30 day cookie */
             if(!$this->username) { 
-            	echo "Error setting cookie. Username not provided.";
+            	echo $lang['main_userbase_cookie_error'];
             	return false;
             } else {
             	$strCookie=base64_encode(join(':', array($this->username, crypt($this->username, 22))));

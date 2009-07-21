@@ -1,7 +1,7 @@
 <?php
 
 /* **************************************************************************************************** 
- *  File: /admin/functions/funcs.times.php
+ *  File: /funcs.times.php
  *  Purpose: A collection of functions to deal with time.
  *  Notes: ---
  *  License:

@@ -101,24 +101,24 @@ class Plugin extends generic_pmd {
 				if($allplugins[$count]['status'] == 'active') { 
 					$allplugins[$count]['status'] = "<a href='" . baseurl;
 					$allplugins[$count]['status'] .= "admin/admin_index.php?page=plugins&amp;action=deactivate&amp;plugin=";
-					$allplugins[$count]['status'] .= $allplugins[$count]['folder'] . "'>Off</a>";
+					$allplugins[$count]['status'] .= $allplugins[$count]['folder'] . "'>" . $lang['admin_plugins_off'] . "</a>";
 				} elseif($allplugins[$count]['status'] != 'install') { 
 					$allplugins[$count]['status'] = "<a href='" . baseurl;
 					$allplugins[$count]['status'] .= "admin/admin_index.php?page=plugins&amp;action=activate&amp;plugin=";
-					$allplugins[$count]['status'] .= $allplugins[$count]['folder'] . "'>On</a>";
+					$allplugins[$count]['status'] .= $allplugins[$count]['folder'] . "'>" . $lang['admin_plugins_on'] . "</a>";
 				} else {
 					$allplugins[$count]['status'] = '';
 				}
 				
 				// Conditions for "install"...
 				if($allplugins[$count]['install'] == 'install') { 
-					$allplugins[$count]['install'] = "<a href='" . baseurl . "admin/admin_index.php?page=plugins&amp;action=install&amp;plugin=". $allplugins[$count]['folder'] . "'>Install</a>";
+					$allplugins[$count]['install'] = "<a href='" . baseurl . "admin/admin_index.php?page=plugins&amp;action=install&amp;plugin=". $allplugins[$count]['folder'] . "'>" . $lang['admin_plugins_install'] . "</a>";
 				} elseif($allplugins[$count]['install'] == 'installed') { 
-					$allplugins[$count]['install'] = "<a href='" . baseurl . "admin/admin_index.php?page=plugins&amp;action=uninstall&amp;plugin=". $allplugins[$count]['folder'] . "' style='color: red; font-weight: bold'>Uninstall</a>";
+					$allplugins[$count]['install'] = "<a href='" . baseurl . "admin/admin_index.php?page=plugins&amp;action=uninstall&amp;plugin=". $allplugins[$count]['folder'] . "' style='color: red; font-weight: bold'>" . $lang['admin_plugins_uninstall'] . "</a>";
 				} elseif($allplugins[$count]['install'] == 'upgrade') { 
-					$allplugins[$count]['install'] = "<a href='" . baseurl . "admin/admin_index.php?page=plugins&amp;action=upgrade&amp;plugin=". $allplugins[$count]['folder'] . "' style='color: #ff9900; font-weight: bold'>Upgrade</a>";
+					$allplugins[$count]['install'] = "<a href='" . baseurl . "admin/admin_index.php?page=plugins&amp;action=upgrade&amp;plugin=". $allplugins[$count]['folder'] . "' style='color: #ff9900; font-weight: bold'>" . $lang['admin_plugins_upgrade'] . "</a>";
 				} else {
-					$allplugins[$count]['install'] = 'Installed';
+					$allplugins[$count]['install'] = $lang['admin_plugins_installed'];
 				}
 				
 				// Conditions for "requires"...
@@ -448,7 +448,7 @@ class Plugin extends generic_pmd {
 		global $db, $hotaru, $lang;
 			
 		if($order == 0) {
-			$hotaru->message = "Error: The order value is zero";
+			$hotaru->message = $lang['admin_plugins_order_zero'];
 			$hotaru->message_type = 'red';
 			return false;
 		}
@@ -459,13 +459,13 @@ class Plugin extends generic_pmd {
 			$row_above = $db->get_row($db->prepare($sql, ($order - 1)));
 			
 			if(!$row_above) {
-				$hotaru->message = $this->folder_to_name($folder) . " " . "is already first";
+				$hotaru->message = $this->folder_to_name($folder) . " " . $lang['admin_plugins_order_first'];
 				$hotaru->message_type = 'red';
 				return false;
 			}
 			
 			if($row_above->plugin_order == $order) {
-				$hotaru->message = "Error: The plugin to move above has the same order value";
+				$hotaru->message = $lang['admin_plugins_order_above'];
 				$hotaru->message_type = 'red';
 				return false;
 			}
@@ -483,13 +483,13 @@ class Plugin extends generic_pmd {
 			$row_below = $db->get_row($db->prepare($sql, ($order + 1)));
 			
 			if(!$row_below) {
-				$hotaru->message = $this->folder_to_name($folder) . " " . "is already last";
+				$hotaru->message = $this->folder_to_name($folder) . " " . $lang['admin_plugins_order_last'];
 				$hotaru->message_type = 'red';
 				return false;
 			}
 			
 			if($row_below->plugin_order == $order) {
-				$hotaru->message = "Error: The plugin to move below has the same order value";
+				$hotaru->message = $lang['admin_plugins_order_below'];
 				$hotaru->message_type = 'red';
 				return false;
 			}
