@@ -27,11 +27,6 @@
 #
 # ####################################################################################################
 
-##### 404 Error Begin #####
-## If Hotaru is installed in a subfolder, change the below line to ErrorDocument 404 /name-of-subfolder/404error.php
-ErrorDocument 404 /404error.php
-##### 404 Error End #####
-
 ##### Re-directing Begin #####
 Options +Indexes +FollowSymlinks
 RewriteEngine on
@@ -55,9 +50,6 @@ RewriteRule ^admin/plugins/?$ admin/admin_index.php?page=plugins [L]
 RewriteRule ^admin/settings/?$ admin/admin_index.php?page=settings [L]
 RewriteRule ^admin/maintenance/?$ admin/admin_index.php?page=maintenance [L]
 RewriteRule ^admin/plugin_settings/([a-zA-Z0-9_-]+)/?$ admin/admin_index.php?page=plugin_settings&plugin=$1 [L]
-
-##### PAGINATION RULES ####
-RewriteRule ^pg/(.*)/?$ index.php?pg=$1 [L]
 
 ##### GENERIC RULES #####
 RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
