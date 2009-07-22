@@ -22,7 +22,7 @@
  *
  **************************************************************************************************** */
  
- global $lang, $the_cats;
+ global $hotaru, $lang, $the_cats;
  ?>
  
 	<h2>Category Manager Home</h2>
@@ -49,7 +49,7 @@
 	<td class="cat_man_menu_holder">
 		<div>
 			<h3>Navigation</h3>
-			<?php cat_man_menu(); ?>
+			<?php $hotaru->display_template('cat_man_menu', 'category_manager'); ?>
 			
 			<h3>Category Tree</h3>
 			<?php cat_man_tree($the_cats); ?>

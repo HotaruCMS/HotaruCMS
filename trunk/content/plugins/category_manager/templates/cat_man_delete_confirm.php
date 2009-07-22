@@ -22,7 +22,7 @@
  *
  **************************************************************************************************** */
  
- global $lang, $delete_list;
+ global $hotaru, $lang, $delete_list;
  ?>
  
 	<h2>Category Manager: Delete</h2>
