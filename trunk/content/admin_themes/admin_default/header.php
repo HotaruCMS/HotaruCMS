@@ -34,7 +34,7 @@ global $hotaru, $admin, $plugin, $lang; // don't remove
    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
    <title><?php echo site_name; ?></title>
    <link rel="stylesheet" href="<?php echo baseurl . '3rd_party/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
-   <link rel="stylesheet" href="<?php echo baseurl . 'content/admin_themes/' . admin_theme . 'style.css'; ?>" type="text/css">
+   <link rel="stylesheet" href="<?php echo baseurl . 'content/admin_themes/' . admin_theme . 'css/style.css'; ?>" type="text/css">
    <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery-ui.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_ajax.js'; ?>"></script>

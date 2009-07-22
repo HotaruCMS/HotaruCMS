@@ -23,17 +23,16 @@
  *
  **************************************************************************************************** */
  
+// error reporting
 ini_set('display_errors',1);
 ini_set('log_errors',1);
 error_reporting(E_ALL);
-
-session_start();
 
 // include settings
 require_once('hotaru_settings.php');
 
 // include other essential libraries and functions
-require_once(includes . 'Inspekt/Inspekt.php');		// for Input sanitation and validation
+require_once(includes . 'Inspekt/Inspekt.php');			// for Input sanitation and validation
 require_once(includes . 'ezSQL/ez_sql_core.php');		// for database usage
 require_once(includes . 'ezSQL/mysql/ez_sql_mysql.php');	// for database usage
 require_once(functions . 'funcs.urls.php');			// for default or friendly urls
@@ -59,7 +58,9 @@ if(!isset($db)) {
 if(!isset($hotaru)) { $hotaru = new Hotaru(); }
 $settings = $hotaru->read_settings();
 foreach($settings as $setting) {
-	define($setting->settings_name, $setting->settings_value);
+	if(!defined($setting->settings_name)) { 
+		define($setting->settings_name, $setting->settings_value);
+	}
 }
 
 // Start timer if debugging

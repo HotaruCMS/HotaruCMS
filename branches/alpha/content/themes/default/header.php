@@ -34,7 +34,7 @@ global $hotaru, $plugin, $lang; // don't remove
    <meta name="Language" content="en-us" />
    <title><?php echo site_name; ?></title>
    <link rel="stylesheet" href="<?php echo baseurl . '3rd_party/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
-   <link rel="stylesheet" href="<?php echo baseurl . 'content/themes/' . theme . 'style.css'; ?>" type="text/css">
+   <link rel="stylesheet" href="<?php echo baseurl . 'content/themes/' . theme . 'css/style.css'; ?>" type="text/css">
    <?php $plugin->check_actions('header_include'); ?>
    <link rel="shortcut icon" href="<?php echo baseurl; ?>favicon.ico">
 </head>

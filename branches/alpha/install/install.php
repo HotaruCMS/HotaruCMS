@@ -40,11 +40,7 @@ $admin->delete_files(includes . 'ezSQL/cache');
 require_once(includes . 'Inspekt/Inspekt.php');	
 if(!isset($cage)) { $cage = Inspekt::makeSuperCage(); }
 
-if(file_exists(languages . 'install/install_' . strtolower(sitelanguage) . '.php')) {
-	require_once(languages . 'install/install_' . strtolower(sitelanguage) . '.php');	// language file for admin
-} else {
-	require_once(languages . 'install/install_english.php');	// English file if specified language doesn't exist
-}
+require_once(install . 'install_language.php');	// language file for install
 
 $step = $cage->get->getInt('step');		// Installation steps.
 
@@ -97,7 +93,7 @@ function html_header() {
 	$header .= "</HEAD>\n";
 	$header .= "<BODY>\n";
 	$header .= "<div id='doc' class='yui-t7 install'>\n";
-	$header .= "<div id='hd' role='banner'><img align='left' src='" . baseurl . "admin/themes/admin_default/images/hotaru.png' style='height:60px; width:69px;'><h1>" . $lang['install_title'] . "</h1></div>\n"; 
+	$header .= "<div id='hd' role='banner'><img align='left' src='" . baseurl . "content/admin_themes/admin_default/images/hotaru.png' style='height:60px; width:69px;'><h1>" . $lang['install_title'] . "</h1></div>\n"; 
 	$header .= "<div id='bd' role='main'>\n";
 	$header .= "<div class='yui-g'>\n";
 	return $header;
@@ -388,13 +384,18 @@ function create_table($table_name) {
 		$db->query($db->prepare($sql, 'site_name', 'Hotaru CMS', 'Hotaru CMS', ''));
 		
 		$sql = "INSERT INTO " . db_prefix . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'friendly_urls', 'false', 'false', ''));
-		
-		$sql = "INSERT INTO " . db_prefix . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
 		$db->query($db->prepare($sql, 'theme', 'default/', 'default/', 'You need the "\/"'));
 		
 		$sql = "INSERT INTO " . db_prefix . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
 		$db->query($db->prepare($sql, 'admin_theme', 'admin_default/', 'admin_default/', 'You need the "\/"'));
+		
+		// language_pack is defined in hotaru_settings (necessary to use the right language file for installation.)
+		if(!isset($language_pack)) { $language_pack = 'default/'; }	// just in case!
+		$sql = "INSERT INTO " . db_prefix . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+		$db->query($db->prepare($sql, 'language_pack', $language_pack, 'language_default/', 'You need the "\/"'));
+		
+		$sql = "INSERT INTO " . db_prefix . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+		$db->query($db->prepare($sql, 'friendly_urls', 'false', 'false', ''));
 		
 		$sql = "INSERT INTO " . db_prefix . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
 		$db->query($db->prepare($sql, 'debug', 'false', 'false', ''));

@@ -54,7 +54,7 @@ define("includes", dirname(__FILE__).'/3rd_party/');
 define("functions", dirname(__FILE__).'/functions/');
 define("themes", dirname(__FILE__).'/content/themes/');
 define("plugins", dirname(__FILE__).'/content/plugins/');
-define("languages", dirname(__FILE__).'/content/core_language/');
+define("languages", dirname(__FILE__).'/content/language_packs/');
 define("admin_themes", dirname(__FILE__).'/content/admin_themes/');
 
 // define database tables
