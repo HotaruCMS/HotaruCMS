@@ -77,12 +77,15 @@ function cats_install_plugin() {
 /* ******************************************************************** 
  *  Function: cats_hotaru_header
  *  Parameters: None
- *  Purpose: Defines a global "table_categories" for referring to the db table
+ *  Purpose: Defines a global "table_categories" and includes language
  *  Notes: ---
  ********************************************************************** */
  
 function cats_hotaru_header() {
 	global $hotaru, $lang, $plugin;
+	
+	$plugin->include_language_file('category_manager');
+	
 	if(!defined('table_categories')) { define("table_categories", db_prefix . 'categories'); }
 	return true;
 }
@@ -111,7 +114,8 @@ function cats_admin_header_include() {
  ********************************************************************** */
  
 function cats_admin_sidebar_plugin_settings() {
-	echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>'category_manager'), 'admin') . "'>Category Manager</a></li>";
+	global $lang;
+	echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>'category_manager'), 'admin') . "'>". $lang["cat_man_admin_sidebar"] . "</a></li>";
 }
 
 
@@ -124,8 +128,6 @@ function cats_admin_sidebar_plugin_settings() {
  
 function cats_admin_plugin_settings() {
 	global $hotaru, $plugin, $lang;
-	
-	$plugin->include_language_file('category_manager');
 	
 	require_once(plugins . 'category_manager/cat_man_engine.php');
 	cat_man_main();
@@ -140,37 +142,6 @@ function cats_admin_plugin_settings() {
  * *********************************************************************
  * ****************************************************************** */
  
- /* ******************************************************************** 
- *  Function: cat_man_menu
- *  Parameters: None
- *  Purpose: Displays navigation for Category Manager.
- *  Notes: ---
- ********************************************************************** */
- 
-function cat_man_menu() {
-
-	$home_link = baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager";
-	$order_link = baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order";
-	$add_link = baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=add";
-	$edit_link = baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit";
-	$edit_meta_link = baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit_meta";
-	$move_link = baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=move";
-	$delete_link = baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=delete";
-	
-	$menu = "<div class='cat_man_menu'>";
-	$menu .= "&raquo; <a href = '" . $home_link . "'>Category Manager</a><br />";
-	$menu .= "&raquo; <a href = '" . $order_link . "'>Order Categories</a><br />";
-	$menu .= "&raquo; <a href = '" . $add_link . "'>Add Categories</a><br />";
-	$menu .= "&raquo; <a href = '" . $edit_link . "'>Edit Categories</a><br />";
-	$menu .= "&raquo; <a href = '" . $edit_meta_link . "'>Edit Desc / Keywords</a><br />";
-	$menu .= "&raquo; <a href = '" . $move_link . "'>Move Categories</a><br />";
-	$menu .= "&raquo; <a href = '" . $delete_link . "'>Delete Categories</a><br />";
-	$menu .= "</div>";
-	
-	echo $menu;
-}
-
-
  /* ******************************************************************** 
  *  Function: cat_man_tree
  *  Parameters: None
