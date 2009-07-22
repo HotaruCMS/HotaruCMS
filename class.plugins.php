@@ -796,11 +796,11 @@ class Plugin extends generic_pmd {
 	 *  Notes: the css file must be in a folder named css and a file of the format plugin_name.css, e.g. rss_show.css
 	 ********************************************************************** */	
 	 
-	function include_css_file($folder = '', $filename = "") {
+	function include_css_file($folder = '', $filename = '') {
 		global $lang;
 		if($folder) {
 		
-			if($filename = "") { $filename = $folder; }
+			if(!$filename) { $filename = $folder; }
 			
 			// First look in the plugin folder for a css file... 
 			if(file_exists(plugins . $folder . '/css/' . $filename . '.css')) {
@@ -821,11 +821,11 @@ class Plugin extends generic_pmd {
 	 *  Notes: the js file must be in a folder named javascript and a file of the format plugin_name.js, e.g. category_manager.js
 	 ********************************************************************** */	
 	 
-	function include_js_file($folder = '', $filename = "") {
+	function include_js_file($folder = '', $filename = '') {
 		global $lang;
 		
 		if($folder) {
-			if($filename = "") { $filename = $folder; }
+			if(!$filename) { $filename = $folder; }
 			
 			// First, look in the plugin folder for a js file... 
 			if(file_exists(plugins . $folder . '/javascript/' . $filename . '.js')) {

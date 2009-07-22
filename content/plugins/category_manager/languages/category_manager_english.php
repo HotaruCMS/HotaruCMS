@@ -26,6 +26,18 @@
 /* Main Page */
 $lang["cat_man_title"] = "Category Manager";
 
+/* Sidebar */
+$lang["cat_man_admin_sidebar"] = "Category Manager";
+
+/* Menu */
+$lang["cat_man_menu_home"] = "Category Manager";
+$lang["cat_man_menu_order"] = "Order categories";
+$lang["cat_man_menu_add"] = "Add categories";
+$lang["cat_man_menu_edit"] = "Edit categories";
+$lang["cat_man_menu_edit_meta"] = "Edit desc / keywords";
+$lang["cat_man_menu_move"] = "Move Categories";
+$lang["cat_man_menu_delete"] = "Delete Categories";
+
 /* Success and Failure Messages */
 $lang["cat_man_changes_saved"] = "Changes Saved";
 $lang["cat_man_changes_cancelled"] = "Changes Cancelled";
