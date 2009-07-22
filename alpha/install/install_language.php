@@ -1,10 +1,8 @@
 <?php
 
-// INSTALL 
-
 /* **************************************************************************************************** 
- *  File: /languages/install/install_english.php
- *  Purpose: A language file for English. It's used whenever an install file needs to output language.
+ *  File: /install/install_language.php
+ *  Purpose: A language file for Install. It's used whenever the install file needs to output language.
  *  Notes: ---
  *  License:
  *
@@ -25,17 +23,17 @@
  *
  **************************************************************************************************** */
 
-/* Common language */
+/* Install Common */
 $lang["install_title"] = "Hotaru CMS Setup";
 $lang["install_next"] = "Next";
 $lang["install_back"] = "Back";
 $lang["install_trouble"] = "Having trouble? Visit the forums at <a href='http://hotarucms.org'>HotaruCMS.org</a> for help.";
 
-/* Step 1 */
+/* Install Step 1 */
 $lang["install_step1"] = "Step 1/5: Welcome";
 $lang["install_step1_welcome"] = "Welcome to Hotaru CMS. Click \"Next\" to begin setting up your site...";
 
-/* Step 2 */
+/* Install Step 2 */
 $lang["install_step2"] = "Step 2/5: Database Setup";
 $lang["install_step2_instructions"] = "To set up a database for Hotaru CMS, you'll need to do the following";
 $lang["install_step2_instructions1"] = "Create a database called <i>hotaru</i> in your web host's control panel. Make a note of your username and password!";
@@ -46,7 +44,7 @@ $lang["install_step2_warning"] = "<b>Warning</b>";
 $lang["install_step2_warning_note"] = "When you click \"Next\", new database tables will be created, deleting any old ones you may have!";
 
 
-/* Step 3 */
+/* Install Step 3 */
 $lang["install_step3"] = "Step 3/5: Create Database Tables";
 $lang["install_step3_creating_table"] = "Creating table";
 $lang["install_step3_already_exists"] = "It seems there are already tables for Hotaru CMS in the database.";
@@ -55,7 +53,7 @@ $lang["install_step3_rebuild_note"] = "<i>Note</i>: If you'd like to start fresh
 $lang["install_step3_rebuild_link"] = "delete and rebuild the database tables";
 $lang["install_step3_success"] = "Database tables created successfully. Click \"Next\" to configure Hotaru CMS.";
 
-/* Step 4 */
+/* Install Step 4 */
 $lang["install_step4"] = "Step 4/5: Admin Registration";
 $lang["install_step4_instructions"] = "Register yourself as a site administrator";
 $lang["install_step4_username_error"] = "Your username must be at least 4 characters and can contain letters, dashes and underscores only.";
@@ -65,7 +63,7 @@ $lang["install_step4_make_note"] = "Make a note of your new username, email and 
 $lang["install_step4_update_success"] = "Updated successfully.";
 $lang["install_step4_form_update"] = "Update";
 
-/* Step 5 */
+/* Install Step 5 */
 $lang["install_step5"] = "Step 5/5: Completion";
 $lang["install_step5_installation_complete"] = "Installation has been successfully completed.";
 $lang["install_step5_installation_delete"] = "You <b>must</b> delete the install folder or someone else could run the install script and wipe everything!";

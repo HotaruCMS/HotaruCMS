@@ -153,7 +153,7 @@ function tg_submit_class_post_add_post() {
 		if($tags_array) {
 			foreach($tags_array as $tag) {
 				$sql = "INSERT INTO " . table_tags . " SET tags_post_id = %d, tags_date = CURRENT_TIMESTAMP, tags_word = %s, tags_updateby = %d";
-				$db->query($db->prepare($sql, $last_insert_id, urlencode(trim($tag)), $current_user->id));
+				$db->query($db->prepare($sql, $last_insert_id, urlencode(str_replace(' ', '_', trim($tag))), $current_user->id));
 			}
 		}
 	}
@@ -306,7 +306,7 @@ function tg_submit_show_post_extra_fields() {
 		echo "Tags: ";
 		
 		foreach($tags as $tag) {
-			echo "<a href='" . url(array('tag' => trim($tag))) . "'>" . trim($tag) . "</a>&nbsp;";
+			echo "<a href='" . url(array('tag' => trim($tag))) . "'>" . str_replace('_', ' ', trim($tag)) . "</a>&nbsp;";
 		}
 		echo "</div>";
 	}		
