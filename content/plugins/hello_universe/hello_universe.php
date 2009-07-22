@@ -49,6 +49,7 @@ function hu_theme_index_main() {
 			return true;
 			break;
 		case 'form_example':
+			hu_check_sent_form();	// Function #5
 			$hotaru->display_template('form_example', 'hello_universe'); // Displays the page from this plugin folder
 			return true;
 			break;
@@ -77,14 +78,15 @@ function hu_theme_index_main() {
  ********************************************************************** */
  
 function hu_main_page() {
+	global $lang;
 	// If the current page is "main" (which it is by default)...
 	echo "<div class='main_inner' style='margin: 1.0em; background-color: #eee;'>";
-	echo "<h2>Hello Universe!</h2>";
-	echo "<p>This text is shown by including the <i>theme_index_main</i> hook. See Functions #1 and #2 in hello_universe.php</p>";  
+	echo "<h2>" . $lang["hello_universe"] . "</h2>";
+	echo "<p>" . $lang["hello_universe_explanation"] . "</p>";  
 	echo "<ul>";
 	// Note these links allow for either friendly or unfriendly urls...
-	echo "<li><a href='" . url(array('page'=>'plugin_template')) . "'>See a theme page made by this plugin</a></li>";
-	echo "<li><a href='" . url(array('page'=>'form_example')) . "'>See an example form made with this plugin</a></li>";
+	echo "<li><a href='" . url(array('page'=>'plugin_template')) . "'>" . $lang["hello_universe_see_page"] . "</a></li>";
+	echo "<li><a href='" . url(array('page'=>'form_example')) . "'>" . $lang["hello_universe_see_form"] . "</a></li>";
 	echo "</ul></div>";
 }
 
@@ -119,6 +121,34 @@ function hu_hotaru_header() {
 	
 	// include hello_universe language file
 	$plugin->include_language_file('hello_universe');
+}
+
+
+/* ******************************************************************** 
+ *  FUNCTION #5
+ *  -----------
+ *  Function: hu_check_sent_form
+ *  Parameters: None
+ *  Purpose: Checks the response from the form and prepares a message
+ *  Notes: This is used for the example form.
+ ********************************************************************** */
+ 
+function hu_check_sent_form() {
+	global $hotaru, $cage, $lang;
+
+	if($cage->post->getAlpha('submit_example') == 'true') {
+		$answer = $cage->post->getMixedString2('answer');
+		if($answer && $answer == 'Paris') {
+			$hotaru->message = $lang['hello_universe_success'];
+			$hotaru->message_type = 'green';
+			return true;
+		} else {
+			$hotaru->message = $lang['hello_universe_failure'];
+			$hotaru->message_type = 'red';	
+		}
+	} 
+	
+	return false;
 }
 
 ?>
