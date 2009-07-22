@@ -32,18 +32,11 @@ require_once('admin_plugins.php');
 
 $admin = New Admin();
 
-// Include admin language file for ADMIN CORE
-if(file_exists(languages . 'admin/admin_' . strtolower(sitelanguage) . '.php')) {
-	require_once(languages . 'admin/admin_' . strtolower(sitelanguage) . '.php');	// language file for admin core
+// Include admin language file
+if(file_exists(languages . language_pack . 'admin/admin_language.php')) {
+	require_once(languages . language_pack . 'admin/admin_language.php');	// language file for admin 
 } else {
-	require_once(languages . 'admin/admin_english.php');	// English file if specified language doesn't exist
-}
-
-// Include admin language file for ADMIN THEMES
-if(file_exists(admin_themes . admin_theme . 'languages/admin_' . strtolower(sitelanguage) . '.php')) {
-	require_once(admin_themes . admin_theme . 'languages/admin_' . strtolower(sitelanguage) . '.php');	// language file for admin theme
-} else {
-	require_once(admin_themes . admin_theme . 'languages/admin_english.php');	// English file if specified language doesn't exist
+	require_once(languages . 'language_default/admin/admin_language.php');	// try default language pack
 }
 
 $page = $cage->get->testPage('page');	// check with "get";
