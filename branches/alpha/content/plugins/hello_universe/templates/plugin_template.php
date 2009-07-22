@@ -24,7 +24,7 @@
  *
  **************************************************************************************************** */
 
-global $hotaru, $plugin; // don't remove
+global $hotaru, $plugin, $lang; // don't remove
 ?>
 
 <h2>A new template!</h2>
@@ -33,4 +33,4 @@ global $hotaru, $plugin; // don't remove
 
 <p>To see how we made this page, look at Function #1 in hello_universe.php.</p>
 
-<p><a href="<?php echo baseurl; ?>">Back Home</a></p>
+<p><a href="<?php echo baseurl; ?>"><?php echo $lang["hello_universe_back_home"] ?></a></p>
