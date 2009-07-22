@@ -24,44 +24,32 @@
  **************************************************************************************************** */
 
 global $hotaru, $cage, $lang;
+?>
 
-echo "<div id='main'>";
-	echo "<p class='breadcrumbs'>Example Form</p>\n";
+<div id='main'>
+	<p class='breadcrumbs'><?php echo $lang["hello_universe_form_example"] ?></p>
 	
-	echo "This form is in the form_example.php file in the Hello Universe folder. It's called via Function #1 in hello_universe.php and includes a special language file which is included using Function #4.";
+	This form is in the form_example.php file in the Hello Universe folder. 
+	It's called via Function #1 in hello_universe.php and includes a special language file which is included using Function #4.
 	
-	echo "<div class='main_inner'>";
-	echo $lang["hello_universe_question"] . "\n";
+	<div class='main_inner'>
+	<?php echo $lang["hello_universe_question"] ?>
 	
-	$error = 0;
-	if($cage->post->getAlpha('submit_example') == 'true') {
+	<?php
 		$answer = $cage->post->getMixedString2('answer');
-		if($answer && $answer == 'Paris') {
-			$hotaru->message = $lang['hello_universe_success'];
-			$hotaru->message_type = 'green';
-			$hotaru->show_message();
-		} else {
-			$hotaru->message = $lang['hello_universe_failure'];
-			$hotaru->message_type = 'red';
-			$hotaru->show_message();
-			$error = 1;
-		}
-	} else {
-		$answer = '';
-	}
+		if(!$answer) { $answer = ""; }
+		$hotaru->show_message();
+	?>
 			
 	
-		echo "<form name='update_form' action='" . baseurl . "index.php?page=form_example' method='post'>\n";	
-		echo "<table>";
-		echo "<tr><td>" . $lang['hello_universe_answer'] . "&nbsp; </td><td><input type='text' size=30 name='answer' value='" . $answer . "' /></td></tr>\n";
-		echo "<input type='hidden' name='submit_example' value='true' />\n";
-		echo "<tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='" . $lang['hello_universe_form_submit'] . "' /></td></tr>\n";			
-		echo "</table>\n";
-		echo "</form>\n";
-	echo "</div>\n";
+	<form name='update_form' action='<?php echo baseurl ?>index.php?page=form_example' method='post'>
+	<table>
+	<tr><td><?php $lang['hello_universe_answer'] ?> &nbsp; </td><td><input type='text' size=30 name='answer' value='<?php echo $answer ?>' /></td></tr>
+	<input type='hidden' name='submit_example' value='true' />
+	<tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $lang['hello_universe_form_submit'] ?>' /></td></tr>			
+	</table>
+	</form>
+</div>
 	
-	echo "<p><a href='" . baseurl . "'>Back Home</a></p>\n";
-echo "</div>\n";
-
-
-?>
+	<p><a href='<?php echo baseurl ?>'><?php echo $lang["hello_universe_back_home"] ?></a></p>
+	</div>
