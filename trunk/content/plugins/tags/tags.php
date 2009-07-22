@@ -306,7 +306,7 @@ function tg_submit_show_post_extra_fields() {
 		echo "Tags: ";
 		
 		foreach($tags as $tag) {
-			echo "<a href='" . url(array('tag' => trim($tag))) . "'>" . str_replace('_', ' ', trim($tag)) . "</a>&nbsp;";
+			echo "<a href='" . url(array('tag' => str_replace(' ', '_', trim($tag)))) . "'>" . trim($tag) . "</a>&nbsp;";
 		}
 		echo "</div>";
 	}		
