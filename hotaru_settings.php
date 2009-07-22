@@ -27,9 +27,6 @@
 /* *************************** EDIT THE FOLLOWING ONLY ******************************** */
 /* ************************************************************************************ */
 
-/* ****** Language ****** */
-define("sitelanguage", 'English');		// Used for choosing the right language file
-
 /* ****** Database Details ****** */
 define("DB_USER", 'root');			// Add your own database details 
 define("DB_PASSWORD", '');			
@@ -42,9 +39,8 @@ define("db_lang", 'en');			// Better leave this for now
 /* ******Paths ******* */
 define('baseurl', "http://localhost/hotaru/branches/alpha/");	//e.g. http://www.mysite.com/ or http://www.mysite.com/bookmarking/
 								// IMPORTANT!!! Don't forget the trailing slash (/).
-
 /* ************************************************************************************ */
-/* *************************** DON'T EDIT BELOW THIS POINT **************************** */
+/* *************************** DO NOT EDIT THE FOLLOWING ****************************** */
 /* ************************************************************************************ */
 
 // define shorthand paths
@@ -54,7 +50,7 @@ define("includes", dirname(__FILE__).'/3rd_party/');
 define("functions", dirname(__FILE__).'/functions/');
 define("themes", dirname(__FILE__).'/content/themes/');
 define("plugins", dirname(__FILE__).'/content/plugins/');
-define("languages", dirname(__FILE__).'/content/core_language/');
+define("languages", dirname(__FILE__).'/content/language_packs/');
 define("admin_themes", dirname(__FILE__).'/content/admin_themes/');
 
 // define database tables

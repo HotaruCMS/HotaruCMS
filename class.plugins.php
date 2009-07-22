@@ -760,30 +760,28 @@ class Plugin extends generic_pmd {
 	
 	/* ******************************************************************** 
 	 *  Function: include_language_file
-	 *  Parameters: plugin folder name
+	 *  Parameters: plugin folder name, optional filename (no extension)
 	 *  Purpose: Includes a plugin's language file
-	 *  Notes: the language file must be in a folder named languages and a file of the format plugin_name_language, e.g. sumbit_english.php
+	 *  Notes: the language file must be in a folder named languages. '_language.php' is appended automatically.
 	 ********************************************************************** */	
 	 
-	function include_language_file($folder = '') {
+	function include_language_file($folder = '', $filename = '') {
 		global $lang;
 		if($folder) {
 		
+			if(!$filename) { $filename = $folder; }
+			
 			// First look in the plugin folder for a language file... 
-			if(file_exists(plugins . $folder . '/languages/' . $folder . '_' . strtolower(sitelanguage) . '.php')) {
-				require_once(plugins . $folder . '/languages/' . $folder . '_' . strtolower(sitelanguage) . '.php');
+			if(file_exists(plugins . $folder . '/languages/' . $filename . '_language.php')) {
+				require_once(plugins . $folder . '/languages/' . $filename . '_language.php');
+			
+			// If not there, look in the user's language_pack folder for a language file...
+			} elseif(file_exists(languages . language_pack . 'plugins/' . $filename . '_language.php')) {
+				require_once(languages . language_pack . 'plugins/' . $filename . '_language.php');
 				
-			// If not found, look in the theme folder for a language file... 	
-			} elseif(file_exists(themes . theme . '/languages/' . $folder . '_' . strtolower(sitelanguage) . '.php')) { 	
-				require_once(themes . theme . '/languages/' . $folder . '_' . strtolower(sitelanguage) . '.php');
-				
-			// If not found, look in the plugin folder for an English language file... 	
-			} elseif(file_exists(plugins . $folder . '/languages/' . $folder . '_' . 'english.php')) {
-				require_once(plugins . $folder . '/languages/' . $folder . '_' . 'english.php');
-				
-			// Finally, look in the theme folder for an English language file...
+			// Finally, look in the default language_pack folder for a language file...
 			} else {
-				require_once(themes . theme . '/languages/' . $folder . '_english.php');
+				require_once(languages . 'language_default/plugins/' . $filename . '_language.php');
 			}
 		}
 	}
