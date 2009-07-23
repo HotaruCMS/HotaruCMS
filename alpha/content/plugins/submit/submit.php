@@ -81,7 +81,11 @@ function sub_install_plugin() {
 	$plugin->plugin_settings_update('submit', 'submit_author', 'checked');	
 	$plugin->plugin_settings_update('submit', 'submit_date', 'checked');
 	$plugin->plugin_settings_update('submit', 'submit_content', 'checked');	
-	$plugin->plugin_settings_update('submit', 'submit_content_length', 50);		
+	$plugin->plugin_settings_update('submit', 'submit_content_length', 50);	
+	
+	// Include language file. Also included in hotaru_header, but needed here so 
+	// that the link in the Admin sidebar shows immediately after installation.
+	$plugin->include_language_file('submit');	
 	
 }
 
