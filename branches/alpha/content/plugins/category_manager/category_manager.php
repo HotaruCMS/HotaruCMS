@@ -70,6 +70,9 @@ function cats_install_plugin() {
 	// 'checked' means that categories are enabled by the Submit plugin.
 	$plugin->plugin_settings_update('submit', 'submit_categories', 'checked');	
 
+	// Include language file. Also included in hotaru_header, but needed here so 
+	// that the link in the Admin sidebar shows immediately after installation.
+	$plugin->include_language_file('category_manager');
 	
 }
 

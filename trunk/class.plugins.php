@@ -330,10 +330,13 @@ class Plugin extends generic_pmd {
 		
 		// Add any plugin hooks to the hooks table
 		foreach($this->hooks as $hook) {
-			$sql = "REPLACE INTO " . table_pluginhooks . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
-			$db->query($db->prepare($sql, $this->folder, trim($hook), $current_user->id));
+			$exists = $this->plugin_hook_exists(trim($hook));
+			if(!$exists) {
+				$sql = "INSERT INTO " . table_pluginhooks . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
+				$db->query($db->prepare($sql, $this->folder, trim($hook), $current_user->id));
+			}
 		}
-		
+			
 		$result = $this->check_actions('install_plugin', $folder);
 		
 		// For plugins to avoid showing this success message, they need to return a non-boolean value to $result.
@@ -345,6 +348,22 @@ class Plugin extends generic_pmd {
 			}
 			$hotaru->message_type = 'green';
 		}
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: plugin_hook_exists
+	 *  Parameters: Hook name
+	 *  Purpose: Determines if a hook already exists
+	 *  Notes: ---
+	 ********************************************************************** */
+	 	
+	function plugin_hook_exists($hook = "") {
+		global $db;
+		
+		$sql = "SELECT plugin_hook FROM " . table_pluginhooks . " WHERE (plugin_folder = %s) AND (plugin_hook = %s)";
+		$returned_hook = $db->get_var($db->prepare($sql, $this->folder, $hook));
+		if($returned_hook) { return $returned_hook; } else { return false; }
 	}
 	
 	
