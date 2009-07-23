@@ -98,8 +98,8 @@ class Post {
 			$post_row = $this->get_post($post_id);
 			$this->post_id = $post_row->post_id;
 			$this->post_orig_url = urldecode($post_row->post_orig_url);
-			$this->post_title = urldecode($post_row->post_title);
-			$this->post_content = urldecode($post_row->post_content);
+			$this->post_title = htmlentities(stripslashes(urldecode($post_row->post_title)));
+			$this->post_content = htmlentities(stripslashes(urldecode($post_row->post_content)));
 			$this->post_status = $post_row->post_status;
 			$this->post_author = $post_row->post_author;
 			$this->post_url = urldecode($post_row->post_url);
