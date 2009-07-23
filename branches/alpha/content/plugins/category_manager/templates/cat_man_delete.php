@@ -25,14 +25,14 @@
  global $hotaru, $lang, $the_cats;
  ?>
  
- 	<h2>Category Manager: Delete</h2>
+ 	<h2><?php echo $lang["cat_man_delete"] ?></h2>
 
 	<table class="cat_man_table">
 	<tr><td class="cat_man_body">
-		Check the boxes below for the categories you wish to delete.
-		<h3><i>Notes:</i></h3>
-		1. If a category contains links, it can't be deleted and is grayed out. <br />
-		2. If you delete a category with children, they will be assigned to their grandparent or otherwise become top-level categories.<br /><br />
+		<?php echo $lang["cat_man_delete_instruct"] ?>
+		<h3><i><?php echo $lang["cat_man_delete_notes"] ?></i></h3>
+		1. <?php echo $lang["cat_man_delete_note1"] ?> <br />
+		2. <?php echo $lang["cat_man_delete_note2"] ?><br /><br />
 	
 		<form name='category_manager_delete_form' action='<?php echo baseurl ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=delete_save' method='post'>
 		<?php 
@@ -61,17 +61,17 @@
 		?>
 		<br />
 		<div style="text-align: center;">
-			<input type='submit' name='cancel_all' value='Cancel'>&nbsp;&nbsp;<input type='submit' name='delete' value='Delete Selected'>
+			<input type='submit' name='cancel_all' value='<?php echo $lang["cat_man_cancel"] ?>'>&nbsp;&nbsp;<input type='submit' name='delete' value='<?php echo $lang["cat_man_delete_selected"] ?>'>
 		</div>
 		</form>
 	</td>
 	
 	<td class="cat_man_menu_holder">
 		<div>
-			<h3>Navigation</h3>
+			<h3><?php echo $lang["cat_man_menu_title"] ?></h3>
 			<?php $hotaru->display_template('cat_man_menu', 'category_manager'); ?>
 			
-			<h3>Category Tree</h3>
+			<h3><?php echo $lang["cat_man_category_tree"] ?></h3>
 			<?php cat_man_tree($the_cats); ?>
 
 		</div>

@@ -25,12 +25,12 @@
  global $hotaru, $lang, $delete_list;
  ?>
  
-	<h2>Category Manager: Delete</h2>
+	<h2><?php echo $lang["cat_man_delete"] ?></h2>
 
 	<table class="cat_man_table">
 	<tr><td class="cat_man_body">
 		<form name='category_manager_delete_confirm_form' action='<?php echo baseurl ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=delete_confirm' method='post'>
-		You are about to delete the following categories:<br /><br />
+		<?php echo $lang["cat_man_delete_following"] ?><br /><br />
 		<?php
 		$counter = 0; 
 		foreach($delete_list as $del) {
@@ -40,9 +40,9 @@
 		}
 		?>
 		<br />
-		<h3>Are you sure you want to delete the above?</h3>
+		<h3><?php echo $lang["cat_man_delete_are_you_sure"] ?></h3>
 		<div style="float: right;">
-			<input style='padding: 2px;' type='submit' name='delete_confirm_no' value='No, cancel'>&nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='delete_confirm_yes' value='Yes, delete'>
+			<input style='padding: 2px;' type='submit' name='delete_confirm_no' value='<?php echo $lang["cat_man_delete_no_cancel"] ?>'>&nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='delete_confirm_yes' value='<?php echo $lang["cat_man_delete_yes_delete"] ?>'>
 		</div>
 		</form>
 	</td>

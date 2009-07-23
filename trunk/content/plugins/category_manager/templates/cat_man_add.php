@@ -25,18 +25,18 @@
  global $hotaru, $lang, $the_cats;
  ?>
  
-	<h2>Category Manager: Add</h2>
+	<h2><?php echo $lang["cat_man_add"] ?></h2>
 
 	<table class="cat_man_table">
 	<tr><td class="cat_man_body">
-	<h3>1. Add a Main Category</h3>
+	<h3>1. <?php echo $lang["cat_man_add_main"] ?></h3>
 	<form name='category_manager_add_parent_form' action='<?php echo baseurl ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=add_save' method='post'>
-	Add a new top-level category and name it <input name="new_category" type="text" value=""> &nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='save_new_category1' value='Save'>
+	<?php echo $lang["cat_man_add_top_level"] ?> <input name="new_category" type="text" value=""> &nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='save_new_category1' value='<?php echo $lang["cat_man_save"] ?>'>
 	</form>
 
-	<h3>2. Add a Child Category to a Main Category</h3>
+	<h3>2. <?php echo $lang["cat_man_add_child_to_main"] ?></h3>
 	<form name='category_manager_add_child_form' action='<?php echo baseurl ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=add_save' method='post'>
-	Add to 
+	<?php echo $lang["cat_man_add_add_to"] ?>
 		<select name="parent">
 		<?php
 		foreach($the_cats as $cat) {
@@ -48,12 +48,12 @@
 	  	}
 	  	?>
 	  	</select>
-	and name it <input name="new_category" type="text" value=""> &nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='save_new_category2' value='Save'>
+	<?php echo $lang["cat_man_add_name_it"] ?> <input name="new_category" type="text" value=""> &nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='save_new_category2' value='<?php echo $lang["cat_man_save"] ?>'>
 	</form>
 
-	<h3>3. Add a Child Category to a Child Category</h3>
+	<h3>3. <?php echo $lang["cat_man_add_child_to_child"] ?></h3>
 	<form name='category_manager_add_child2_form' action='<?php echo baseurl ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=add_save' method='post'>
-	Add to 
+	<?php echo $lang["cat_man_add_add_to"] ?> 
 		<select name="parent">
 		<?php
 		foreach($the_cats as $cat) {
@@ -65,16 +65,16 @@
 	  	}
 	  	?>
 	  	</select>
-	and name it <input name="new_category" type="text" value=""> &nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='save_new_category3' value='Save'>
+	<?php echo $lang["cat_man_add_name_it"] ?> <input name="new_category" type="text" value=""> &nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='save_new_category3' value='<?php echo $lang["cat_man_save"] ?>'>
 	</form>
 	</td>
 	
 	<td class="cat_man_menu_holder">
 		<div>
-			<h3>Navigation</h3>
+			<h3><?php echo $lang["cat_man_menu_title"] ?></h3>
 			<?php $hotaru->display_template('cat_man_menu', 'category_manager'); ?>
 			
-			<h3>Category Tree</h3>
+			<h3><?php echo $lang["cat_man_category_tree"] ?></h3>
 			<?php cat_man_tree($the_cats); ?>
 
 		</div>
