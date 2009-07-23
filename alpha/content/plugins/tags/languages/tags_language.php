@@ -25,7 +25,11 @@
  *
  **************************************************************************************************** */
 
+/* Show Post */
+$lang["submit_show_tags"] = "Tags:";
+
 /* Submit Form */
+$lang["submit_form_tags"] = "Tags:";
 $lang['submit_form_tags_not_present_error'] = "No tags entered.";
 $lang['submit_form_tags_length_error'] = "Sorry, you've entered too many tags.";
 

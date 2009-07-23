@@ -297,13 +297,13 @@ function tg_submit_posts_list_filter() {
  ********************************************************************** */
  
 function tg_submit_show_post_extra_fields() { 
-	global $post;
+	global $post, $lang;
 	
 	if($post->post_vars['use_tags'] && $post->post_vars['post_tags']) { 
 		echo "<div class='show_post_tags'>";
 		$tags = explode(',', $post->post_vars['post_tags']);
 		
-		echo "Tags: ";
+		echo $lang["submit_show_tags"] . " ";
 		
 		foreach($tags as $tag) {
 			echo "<a href='" . url(array('tag' => str_replace(' ', '_', trim($tag)))) . "'>" . trim($tag) . "</a>&nbsp;";
