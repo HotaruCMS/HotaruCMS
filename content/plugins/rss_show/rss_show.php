@@ -74,7 +74,8 @@ function rs_rss_show($ids) {
 			if($settings['rss_show_title']) { 
 				$output .= "<li class='rss_show_feed_title'>";
 				$output .= "<a href='" . $feed->subscribe_url() . "' title='" . $lang["rss_show_icon_anchor_title"] . "'><img src='" . baseurl . "content/themes/" . theme . "images/rss_16.gif'></a>&nbsp;"; // RSS icon
-				$output .= "<a href='" . $feed->get_link(). "' title='" . $lang["rss_show_title_anchor_title"] . "'>" . $settings['rss_show_title'] . "</a></li>"; 
+				if($feed->get_link()) { $link = $feed->get_link(); } else { $link = $feed->subscribe_url(); }
+				$output .= "<a href='" . $link . "' title='" . $lang["rss_show_title_anchor_title"] . "'>" . $settings['rss_show_title'] . "</a></li>"; 
 			}
 			    
 			if ($feed->data) { 
