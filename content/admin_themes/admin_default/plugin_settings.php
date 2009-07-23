@@ -31,9 +31,14 @@ global $hotaru, $plugin, $lang; // don't remove
 	<a href="<?php echo baseurl; ?>"><?php echo site_name?></a> 
 	&raquo; <a href="<?php echo url(array(), 'admin'); ?>"><?php echo $lang["admin_theme_main_admin_cp"]?></a> 
 	&raquo; <?php echo $lang["admin_theme_plugin_settings"]?> 
-	&raquo; <?php echo $plugin->name; ?>
+	<?php if($plugin->name) { echo "&raquo; " .  $plugin->name; } ?>
 </p>
 
-<?php $plugin->check_actions('admin_plugin_settings', true, $plugin->folder); ?>
-
+<?php 
+	if($plugin->folder == "") {
+		$plugin->check_actions('admin_sidebar_plugin_settings');
+	} else {
+		$plugin->check_actions('admin_plugin_settings', true, $plugin->folder); 
+	}
+?>
 

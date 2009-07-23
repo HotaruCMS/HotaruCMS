@@ -1,8 +1,7 @@
 <?php
 
-// HELLO UNIVERSE
 /* **************************************************************************************************** 
- *  File: plugins/hello_universe/languages/hello_universe_english.php
+ *  File: plugins/hello_universe/languages/hello_universe_language.php
  *  Purpose: A language file for Hello Universe.
  *  Notes: ---
  *  License:
