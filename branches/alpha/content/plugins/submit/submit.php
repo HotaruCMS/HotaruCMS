@@ -177,8 +177,7 @@ function sub_theme_index_replace() {
 		if($current_user->logged_in) {
 		 	
 		 	if($cage->post->getAlpha('submit2') == 'true') {		 	
-		 		// Include submit_form_2...
-		 		require_once(plugins . 'submit/submit_step2.php');		 		
+	
 			 	if(!sub_check_for_errors_2()) { 
 			 		$post_orig_url = $cage->post->testUri('post_orig_url'); 
 					sub_process_submission($post_orig_url);
@@ -202,31 +201,29 @@ function sub_theme_index_replace() {
  
 function sub_theme_index_main() {
 	global $hotaru, $cage, $post, $plugin, $current_user;
+	global $post_orig_url, $post_orig_title;
 		
 	 if($hotaru->is_page('submit')) {
 	  	
 	  	if($current_user->logged_in) {
-	  		
-	  		require_once(plugins . 'submit/submit_step1.php');
-	  		require_once(plugins . 'submit/submit_step2.php');
 	  		
 	  		if($cage->post->getAlpha('submit1') == 'true') {
 				if(!sub_check_for_errors_1()) { 
 					// No errors found, proceed to step 2
 					$post_orig_url = $cage->post->testUri('post_orig_url'); 
 					$post_orig_title = sub_fetch_title($post_orig_url);
-					sub_submit_form_2($post_orig_url, $post_orig_title);
+					$hotaru->display_template('submit_step2' , 'submit');
 					return true;
 					
 				} else {
 					// Errors found, go back to step 1
 					$post_orig_url = $cage->post->testUri('post_orig_url');
-					sub_submit_form_1($post_orig_url);
+					$hotaru->display_template('submit_step2', 'submit');
 					return true;
 				}
 			} else {
 				// First time to step 1...
-				sub_submit_form_1();
+				$hotaru->display_template('submit_step1', 'submit');
 				return true;
 			}
 		} else {
@@ -238,10 +235,9 @@ function sub_theme_index_main() {
 		if($current_user->logged_in) {
 		 	
 		 	if($cage->post->getAlpha('submit2') == 'true') {		 	
-		 		// Include submit_form_2...
-		 		require_once(plugins . 'submit/submit_step2.php');
-		 		$post_orig_url = $cage->post->testUri('post_orig_url'); 		 		
-			 	sub_submit_form_2($post_orig_url);
+		 		$post_orig_url = $cage->post->testUri('post_orig_url'); 
+		 		global $post_orig_url;		 		
+			 	$hotaru->display_template('submit_step2', 'submit');
 			 	return true;
 			}
 		}
@@ -355,6 +351,118 @@ function sub_submit_show_post_extras() {
 	if(!$plugin->plugin_active('categories')) {
 		echo "<a href='" . url(array('page'=>$post->post_id)) . "'>Permalink</a>";
 	}
+}
+
+
+/* ******************************************************************** 
+ *  Function: sub_check_for_errors_1
+ *  Parameters: None
+ *  Purpose: Checks submit_step1 for errors
+ *  Notes: ---
+ ********************************************************************** */
+
+function sub_check_for_errors_1() {
+	global $hotaru, $post, $cage, $lang;
+
+	// ******** CHECK URL ********
+	
+	$post_orig_url_check = $cage->post->testUri('post_orig_url');
+	if(!$post_orig_url_check) {
+		// No url present...
+		$hotaru->message = $lang['submit_form_url_not_present_error'];
+		$hotaru->message_type = 'red';
+		$error = 1;
+	} elseif($post->url_exists($post_orig_url_check)) {
+		// URL already exists...
+		$hotaru->message = $lang['submit_form_url_already_exists_error'];
+		$hotaru->message_type = 'red';
+		$error = 1;
+	} else {
+		// URL is okay.
+		$error = 0;
+	}
+	
+	// Return true if error is found
+	if($error == 1) { return true; } else { return false; }
+}
+
+
+/* ******************************************************************** 
+ *  Function: sub_check_for_errors_2
+ *  Parameters: None
+ *  Purpose: Checks submit_step2 for errors
+ *  Notes: ---
+ ********************************************************************** */
+
+function sub_check_for_errors_2() {
+	global $hotaru, $post, $cage, $plugin, $lang;
+
+	// ******** CHECK TITLE ********
+	
+	$title_check = $cage->post->noTags('post_title');	
+	if(!$title_check) {
+		// No title present...
+		$hotaru->messages[$lang['submit_form_title_not_present_error']] = "red";
+		$error_title= 1;
+	} elseif($post->title_exists($title_check )) {
+		// URL already exists...
+		$hotaru->messages[$lang['submit_form_title_already_exists_error']] = "red";
+		$error_title = 1;
+	} else {
+		// title is okay.
+		$error_title = 0;
+	}
+	
+	// ******** CHECK DESCRIPTION ********
+	if($post->use_content) {
+		$content_check = $cage->post->noTags('post_content');	
+		if(!$content_check) {
+			// No content present...
+			$hotaru->messages[$lang['submit_form_content_not_present_error']] = "red";
+			$error_content = 1;
+		} elseif(strlen($content_check) < $post->post_content_length) {
+			// content is too short
+			$hotaru->messages[$lang['submit_form_content_too_short_error']] = "red";
+			$error_content = 1;
+		} else {
+			// content is okay.
+			$error_content = 0;
+		}
+	}
+	
+	// Check for errors from plugin fields, e.g. Tags
+	$error_check_actions = 0;
+	$error_array = $plugin->check_actions('submit_form_2_check_for_errors');
+	if(is_array($error_array)) {
+		foreach($error_array as $err) { if($err == 1) { $error_check_actions = 1; } }
+	}
+	
+	// Return true if error is found
+	if($error_title == 1 || $error_content == 1 || $error_check_actions == 1) { return true; } else { return false; }
+}
+
+
+/* ******************************************************************** 
+ *  Function: sub_process_submission
+ *  Parameters: None
+ *  Purpose: Saves the submitted story to the database
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function sub_process_submission($post_orig_url) {
+	global $hotaru, $cage, $plugin, $current_user, $post;
+		
+	$post->post_orig_url = $post_orig_url;
+	$post->post_url = $cage->post->getFriendlyUrl('post_title');
+	$post->post_title = $cage->post->getMixedString2('post_title');
+	$post->post_content = $cage->post->getMixedString2('post_content');
+	$post->post_status = "new";
+	$post->post_author = $current_user->id;
+	
+	$plugin->check_actions('submit_form_2_process_submission');
+	
+	$post->add_post();
+
 }
 
 	
