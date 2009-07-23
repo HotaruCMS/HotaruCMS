@@ -6,7 +6,7 @@
  * version: 0.1
  * folder: rss_show
  * prefix: rs
- * hooks: rss_show, admin_header_include, header_include, admin_sidebar_plugin_settings, admin_plugin_settings, install_plugin
+ * hooks: rss_show, install_plugin, hotaru_header, admin_header_include, header_include, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * Usage: Add <?php $plugin->check_actions('rss_show'); ?> to your theme, wherever you want to show the links.
  *
@@ -31,6 +31,7 @@
  
 return false; die(); // We don't want to just drop into the file.
 
+
 /* ******************************************************************** 
  *  Function: rs_rss_show
  *  Parameters: None
@@ -40,7 +41,7 @@ return false; die(); // We don't want to just drop into the file.
  ********************************************************************** */
 
 function rs_rss_show($ids) {
-    global $hotaru, $plugin;
+    global $hotaru, $plugin, $lang;
     
     	// if no feed id is specified in the plugin hook, we default to 1.
     	if(empty($ids)) { $ids[0] = 1; }
@@ -72,8 +73,8 @@ function rs_rss_show($ids) {
 			// SITE TITLE
 			if($settings['rss_show_title']) { 
 				$output .= "<li class='rss_show_feed_title'>";
-				$output .= "<a href='" . $feed->subscribe_url() . "' title='RSS Feed'><img src='" . baseurl . "content/themes/" . theme . "images/rss_16.gif'></a>&nbsp;"; // RSS icon
-				$output .= "<a href='" . $feed->get_link(). "' title='Visit the site'>" . $settings['rss_show_title'] . "</a></li>"; 
+				$output .= "<a href='" . $feed->subscribe_url() . "' title='" . $lang["rss_show_icon_anchor_title"] . "'><img src='" . baseurl . "content/themes/" . theme . "images/rss_16.gif'></a>&nbsp;"; // RSS icon
+				$output .= "<a href='" . $feed->get_link(). "' title='" . $lang["rss_show_title_anchor_title"] . "'>" . $settings['rss_show_title'] . "</a></li>"; 
 			}
 			    
 			if ($feed->data) { 
@@ -104,7 +105,7 @@ function rs_rss_show($ids) {
 					if($settings['rss_show_content'] == 'summaries') {
 						$output .= "<p class='rss_show_content'>" . substr(strip_tags($item->get_content()), 0, 300);
 						$output .= "... ";
-						$output .= "<small><a href='" . $item->get_permalink() . "' title='" . $item->get_title() . "'>[Read More]</a>";
+						$output .= "<small><a href='" . $item->get_permalink() . "' title='" . $item->get_title() . "'>" . $lang["rss_show_read_more"] . "</a>";
 						$output .= "</small></p>";
 					}
 					
@@ -126,6 +127,20 @@ function rs_rss_show($ids) {
 }
 
 
+/* ******************************************************************** 
+ *  Function: rs_hotaru_header()
+ *  Parameters: None
+ *  Purpose: Includes the RSS Show language file
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function rs_hotaru_header() {
+	global $plugin, $lang;
+	
+	$plugin->include_language_file('rss_show');
+}
+	
+	
 /* ******************************************************************** 
  *  Function: rs_header_include()
  *  Parameters: None
@@ -154,7 +169,6 @@ function rs_header_include() {
  ********************************************************************** */
  
 function rs_admin_header_include() {
-
 	echo "<script type='text/javascript'>\n";
 	echo "$(document).ready(function(){\n";
 		echo "$('#rs_cache').click(function () {\n";
@@ -172,7 +186,8 @@ function rs_admin_header_include() {
  ********************************************************************** */
  
 function rs_admin_sidebar_plugin_settings() {
-	echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>'rss_show'), 'admin') . "'>RSS Show</a></li>";
+	global $lang;
+	echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>'rss_show'), 'admin') . "'>" . $lang["rss_show"] . "</a></li>";
 }
 
 
@@ -200,6 +215,10 @@ function rs_install_plugin($id) {
 	
 	// parameters: plugin folder name, setting name, setting value
 	$plugin->plugin_settings_update('rss_show', 'rss_show_' . $id . '_settings', serialize($settings));
+	
+	// Include language file. Also included in hotaru_header, but needed here so 
+	// that the link in the Admin sidebar shows immediately after installation.
+	$plugin->include_language_file('rss_show');
 }
 
 
@@ -214,79 +233,8 @@ function rs_admin_plugin_settings() {
 	global $hotaru, $plugin;
 	
 	rs_get_params();	// get any arguments passed from the form
-	
 	$hotaru->show_message();	// display any success or failure messages
-	
-	// Cycle through the RSS feeds, displaying their settings...
-	$id = 1;
-	while($settings = unserialize($plugin->plugin_settings('rss_show', 'rss_show_' . $id . '_settings'))) {
-		echo "<h1>RSS Show Configuration [ id: " . $id . " ]</h1>\n";
-		echo "<form name='rss_show_form' action='" . baseurl . "admin/admin_index.php' method='get'>\n";
-		
-		echo "Feed URL: <input type='text' size=60 name='rss_show_feed' value='" . $settings['rss_show_feed'] . "' /><br /><br />\n";
-		
-		echo "Feed title: <input type='text' size=30 name='rss_show_title' value='" . $settings['rss_show_title'] . "' /><br /><br />\n";
-		if($settings['rss_show_cache']) { $checked = "checked"; } else { $checked = ""; }
-		echo "Cache: <input type='checkbox' id='rs_cache' name='rss_show_cache' " . $checked . " /><br /><br />\n";
-		
-		if(!$checked) { $display = "style='display:none;'"; } else { $display = ""; }
-		echo "<div id='rs_cache_duration' " . $display . ">";
-		echo "Cache duration: \n";
-			echo "<select name='rss_show_cache_duration'>\n";
-				$cache_duration = $settings['rss_show_cache_duration'];
-				if($cache_duration) { echo "<option value='" . $cache_duration . "'>" . $cache_duration . " mins</option>\n"; }
-				echo "<option value='10'>10 mins</option>\n";
-				echo "<option value='30'>30 mins</option>\n";
-				echo "<option value='60'>60 mins</option>\n";
-			echo "</select><br /><br />\n";
-		echo "</div>";
-		
-		echo "Max. items: \n"; 
-			echo "<select name='rss_show_max_items'>\n";
-				$max_items = $settings['rss_show_max_items'];
-				if($max_items) { echo "<option value='" . $max_items . "'>" . $max_items . "</option>\n"; }
-				echo "<option value='5'>5</option>\n";
-				echo "<option value='10'>10</option>\n";
-				echo "<option value='20'>20</option>\n";
-			echo "</select><br /><br />\n";
-		
-		if($settings['rss_show_author'] == 'yesauthor') { $yeschecked = "checked"; $nochecked = ""; } else { $yeschecked = ""; $nochecked = "checked";}
-		echo "Show author: &nbsp;&nbsp;<input type='radio' name='rss_show_author' value='yesauthor' " . $yeschecked . " /> Yes &nbsp;&nbsp;\n";
-		echo "<input type='radio' name='rss_show_author' value='noauthor' " . $nochecked . " /> No<br /><br />\n";	
-		
-		if($settings['rss_show_date'] == 'yesdate') { $yeschecked = "checked"; $nochecked = ""; } else { $yeschecked = ""; $nochecked = "checked";}
-		echo "Show date: &nbsp;&nbsp;<input type='radio' name='rss_show_date' value='yesdate' " . $yeschecked . " /> Yes &nbsp;&nbsp;\n";
-		echo "<input type='radio' name='rss_show_date' value='nodate' " . $nochecked . " /> No<br /><br />\n";	
-		
-		if($settings['rss_show_content'] == 'none') { 
-			$contentnone = "checked"; $contentsummaries = ""; $contentfull = "";
-		} elseif($settings['rss_show_content'] == 'summaries') { 
-			$contentnone = ""; $contentsummaries = "checked"; $contentfull = "";
-		} else {
-			$contentnone = ""; $contentsummaries = ""; $contentfull = "checked";
-		}
-		echo "Show content: &nbsp;&nbsp;<input type='radio' name='rss_show_content' value='none' " . $contentnone . " /> Titles only &nbsp;&nbsp;\n";
-		echo "<input type='radio' name='rss_show_content' value='summaries' " . $contentsummaries . " /> Summaries &nbsp;&nbsp;\n";
-		echo "<input type='radio' name='rss_show_content' value='full' " . $contentfull . " /> Full<br /><br />\n";	
-		
-		echo "<input type='hidden' name='page' value='plugin_settings' />\n";
-		echo "<input type='hidden' name='plugin' value='rss_show' />\n";
-		echo "<input type='hidden' name='rss_show_id' value='" . $id . "' />\n";
-		echo "<input type='submit' value='Save' />\n";
-		echo "</form>\n";
-		$id++;
-	}
-	
-	echo "<br /><a href='" . baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=rss_show&amp;action=delete_feed&amp;id=" . ($id-1) . "' style='color: red;'>Delete the last feed</a> | <a href='" . baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=rss_show&amp;action=new_feed&amp;id=" . $id . "'>Add another RSS feed</a><br /><br />";
-	echo "<div style='padding: 0.8em; line-height: 2.0em; background-color: #f0f0f0; -moz-border-radius: 0.5em;- webkit-border-radius: 0.5em;'>\n";
-		echo "<b>Usage:</b><br />\n";
-		echo "To show the first feed, paste this into your template:<br />\n";
-		echo "<pre>&lt;?php &#36;plugin-&gt;check_actions('rss_show'); ?&gt;</pre><br />\n";
-		echo "To show another feed, use this with the feed id in the array:<br />\n";
-		echo "<pre>&lt;?php &#36;plugin-&gt;check_actions('rss_show', true, '', array(2)); ?&gt;</pre><br />\n";
-		echo "To show two feeds back to back, paste this into your template with the ids in the array:<br />\n";
-		echo "<pre>&lt;?php &#36;plugin-&gt;check_actions('rss_show', true, '', array(1, 2)); ?&gt;</pre><br />\n";
-	echo "</div>\n";
+	$hotaru->display_template('rss_show_settings', 'rss_show');
 }
 
 
@@ -300,22 +248,19 @@ function rs_admin_plugin_settings() {
  ********************************************************************** */
  
 function rs_get_params() {
-	global $cage, $hotaru, $plugin;
+	global $cage, $hotaru, $plugin, $lang;
 	if($action = $cage->get->testAlnumLines('action')) {
 		if($action == 'new_feed') {
 			$id = $cage->get->getInt('id');
 			rs_install_plugin_starter_settings($id);
-			$hotaru->message = "New default feed added.";
+			$hotaru->message = $lang["rss_show_feed_added"];
 			$hotaru->message_type = "green";
-			//header("Location: " . baseurl . "admin/admin_index.php?page=plugin_settings&plugin=rss_show&message=" . $message . "&message_type=" . $message_type);
-			//die();
+			
 		} elseif($action == 'delete_feed') {
 			$id = $cage->get->getInt('id');
 			$plugin->plugin_settings_remove_setting('rss_show_' . $id . '_settings');
-			$hotaru->message = "Feed removed.";
+			$hotaru->message = $lang["rss_show_feed_removed"];
 			$hotaru->message_type = "green";
-			//header("Location: " . baseurl . "admin/admin_index.php?page=plugin_settings&plugin=rss_show&message=" . $message . "&message_type=" . $message_type);
-			//die();		
 		}
 	} elseif($id = $cage->get->getInt('rss_show_id')) {
 		$parameters = array();
@@ -340,24 +285,22 @@ function rs_get_params() {
  ********************************************************************** */
  
 function rs_save_settings($id, &$parameters) {
-	global $plugin, $hotaru;
+	global $plugin, $hotaru, $lang;
 	$hotaru->message = "";
 	if($parameters) {
 		if($parameters['rss_show_feed'] == "") {
-				$hotaru->message = "No feed provided, so no changes were made.";
+				$hotaru->message = $lang["rss_show_no_changes"];
 				$hotaru->message_type = "red";
 		}
 			
 		if($hotaru->message == "") {
 			$values = serialize($parameters);
-			$hotaru->message = "RSS Show settings updated successfully.";
+			$hotaru->message = $lang["rss_show_update_successful"];
 			$hotaru->message_type = "green";
 			$plugin->plugin_settings_update('rss_show', 'rss_show_' . $id . '_settings', $values);	
 		}
 	}
 	
-	//header("Location: " . baseurl . "admin/admin_index.php?page=plugin_settings&plugin=rss_show&message=" . $message . "&message_type=" . $message_type);
-	//die();
 }
  	
 ?>

@@ -24,6 +24,10 @@
  **************************************************************************************************** */
 
 global $hotaru, $cage, $lang;
+
+$answer = $cage->post->getMixedString2('answer');
+if(!$answer) { $answer = ""; }
+		
 ?>
 
 <div id='main'>
@@ -35,13 +39,8 @@ global $hotaru, $cage, $lang;
 	<div class='main_inner'>
 	<?php echo $lang["hello_universe_question"] ?>
 	
-	<?php
-		$answer = $cage->post->getMixedString2('answer');
-		if(!$answer) { $answer = ""; }
-		$hotaru->show_message();
-	?>
+	<?php $hotaru->show_message(); ?>
 			
-	
 	<form name='update_form' action='<?php echo baseurl ?>index.php?page=form_example' method='post'>
 	<table>
 	<tr><td><?php $lang['hello_universe_answer'] ?> &nbsp; </td><td><input type='text' size=30 name='answer' value='<?php echo $answer ?>' /></td></tr>
