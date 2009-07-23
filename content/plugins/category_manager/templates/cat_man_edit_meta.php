@@ -25,11 +25,11 @@
  global $hotaru, $lang, $the_cats;
  ?>
  
-	<h2>Category Manager: Edit</h2>
+	<h2><?php echo $lang["cat_man_edit"] ?></h2>
 
 	<table class="cat_man_table">
 	<tr><td class="cat_man_body">
-		Click a category and enter a description and some keywords (comma separated) to describe it. Save after editing each category.<br /><br />
+		<?php echo $lang["cat_man_edit_meta_instruct"] ?> <br /><br />
 	
 		<?php
 		foreach($the_cats as $cat) {
@@ -38,30 +38,31 @@
 					for($i=1; $i<$cat['category_level']; $i++) {
 						echo "--- ";
 					}
-					echo "<a href='#' class='cat_man_drop_down' title='Edit Meta'>" . $cat['category_name'] . "</a><br />";
+					echo "<a href='#' class='cat_man_drop_down' title='" . $lang["cat_man_edit_meta_anchor_title"] . "'>" . $cat['category_name'] . "</a><br />";
 				} else {
-					echo "<a href='#' class='cat_man_drop_down' title='Edit Meta'>" . $cat['category_name'] . "</a><br />";
+					echo "<a href='#' class='cat_man_drop_down' title='" . $lang["cat_man_edit_meta_anchor_title"] . "'>" . $cat['category_name'] . "</a><br />";
 				}
-				echo "<div id='" . $cat['category_id'] . "' style='display: none;'>";
-					echo "<form class='cat_man_edit_meta_form' style='margin-bottom: 0px;' name='category_manager_edit_meta_form' action='" . baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit_meta_save&amp;id=" . $cat['category_id'] . "' method='post'>";
-					echo "Description: <input size='40' name='description' type='text' value='" . $cat['category_description'] . "'>";
-					echo "<br />";
-					echo "Keywords: &nbsp;&nbsp;<input size='40' name='keywords' type='text' value='" . $cat['category_keywords'] . "'>";
-					echo "&nbsp;&nbsp;<input type='submit' name='save_edit_meta' value='Save'>";
-					echo "</form>";
-				echo "</div>";
-			}
-		}
-		?>
+				?>
+				
+				<div id='<?php echo $cat['category_id'] ?>' style='display: none;'>
+					<form class='cat_man_edit_meta_form' style='margin-bottom: 0px;' name='category_manager_edit_meta_form' action='<?php echo baseurl ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit_meta_save&amp;id=<?php echo $cat['category_id'] ?>' method='post'>
+					<?php echo $lang["cat_man_edit_meta_description"] ?> <input size='40' name='description' type='text' value='<?php echo $cat['category_description'] ?>'>
+					<br />
+					<?php echo $lang["cat_man_edit_meta_keywords"] ?> &nbsp;&nbsp;<input size='40' name='keywords' type='text' value='<?php echo $cat['category_keywords'] ?>'>
+					&nbsp;&nbsp;<input type='submit' name='save_edit_meta' value='<?php echo $lang["cat_man_save"] ?>'>
+					</form>
+				</div>
+			<?php } ?>
+		<?php } ?>
 		<br />
 	</td>
 	
 	<td class="cat_man_menu_holder">
 		<div>
-			<h3>Navigation</h3>
+			<h3><?php echo $lang["cat_man_menu_title"] ?></h3>
 			<?php $hotaru->display_template('cat_man_menu', 'category_manager'); ?>
 			
-			<h3>Category Tree</h3>
+			<h3><?php echo $lang["cat_man_category_tree"] ?></h3>
 			<?php cat_man_tree($the_cats); ?>
 
 		</div>
