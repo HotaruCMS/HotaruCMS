@@ -205,7 +205,7 @@ function tg_submit_form_2_fields() {
 
 	if($post->post_vars['use_tags']) { 
 		echo "<tr>";
-			echo "<td>" . $lang["submit_form_tags"] . ":&nbsp; </td>";
+			echo "<td>" . $lang["submit_form_tags"] . "&nbsp; </td>";
 			echo "<td><input type='text' size=50 name='post_tags' value='" . $tags_check . "'></td>";
 			echo "<td>&nbsp;</td>";
 		echo "</tr>";
