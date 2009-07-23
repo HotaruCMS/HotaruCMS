@@ -460,7 +460,7 @@ function cts_submit_settings_get_values() {
 function cts_submit_settings_form() {
 	global $plugin, $lang, $categories;
 	
-	echo "<input type='checkbox' name='categories' value='categories' " . $categories . ">&nbsp;&nbsp;" . $lang["submit_settings_categories"];
+	echo "<input type='checkbox' name='categories' value='categories' " . $categories . ">&nbsp;&nbsp;" . $lang["submit_settings_categories"] . "<br />";
 
 }
 

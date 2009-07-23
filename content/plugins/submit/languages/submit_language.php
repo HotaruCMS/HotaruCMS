@@ -30,7 +30,6 @@ $lang["submit_form_step2"] = "Submit a Story 2/2";
 $lang["submit_form_url"] = "Source URL:";
 $lang["submit_form_title"] = "Title:";
 $lang["submit_form_content"] = "Description:";
-$lang["submit_form_tags"] = "Tags:";
 $lang["submit_form_instructions_1"] = "Enter a url to submit:";
 $lang["submit_form_instructions_2"] = "Complete the fields below.";
 $lang["submit_form_url_not_present_error"] = "No url was provided.";
@@ -39,8 +38,6 @@ $lang["submit_form_title_not_present_error"] = "No title was provided.";
 $lang["submit_form_title_already_exists_error"] = "Sorry, that title has already been used.";
 $lang["submit_form_content_not_present_error"] = "No description entered.";
 $lang["submit_form_content_too_short_error"] = "Sorry, that description is too short.";
-$lang["submit_form_tags_not_present_error"] = "No tags entered.";
-$lang["submit_form_tags_length_error"] = "Sorry, you've entered too many tags.";
 $lang["submit_form_submit_button"] = "Submit";
 
 /* Submit Settings */
