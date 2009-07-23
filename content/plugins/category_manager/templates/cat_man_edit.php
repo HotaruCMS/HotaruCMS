@@ -25,11 +25,11 @@
  global $hotaru, $lang, $the_cats;
  ?>
  
-	<h2>Category Manager: Edit</h2>
+	<h2><?php echo $lang["cat_man_edit"] ?></h2>
 
 	<table class="cat_man_table">
 	<tr><td class="cat_man_body">
-		Edit the names of your categories below and <b>click "Save All"</b>. <br /><br />
+		<?php echo $lang["cat_man_edit_instruct"] ?> <br /><br />
 	
 		<form name='category_manager_edit_form' action='<?php echo baseurl ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit_save' method='post'>
 		<?php
@@ -48,17 +48,17 @@
 		?>
 		<br />
 		<div style="text-align: center;">
-			<input type='submit' name='cancel_all' value='Cancel'>&nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='save_all' value='Save All'>
+			<input type='submit' name='cancel_all' value='<?php echo $lang["cat_man_cancel"] ?>'>&nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='save_all' value='<?php echo $lang["cat_man_save_all"] ?>'>
 		</div>
 		</form>
 	</td>
 	
 	<td class="cat_man_menu_holder">
 		<div>
-			<h3>Navigation</h3>
+			<h3><?php echo $lang["cat_man_menu_title"] ?></h3>
 			<?php $hotaru->display_template('cat_man_menu', 'category_manager'); ?>
 			
-			<h3>Category Tree</h3>
+			<h3><?php echo $lang["cat_man_category_tree"] ?></h3>
 			<?php cat_man_tree($the_cats); ?>
 
 		</div>
