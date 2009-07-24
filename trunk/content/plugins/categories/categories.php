@@ -6,7 +6,7 @@
  * folder: categories
  * prefix: cts
  * requires: submit 0.1, category_manager 0.1
- * hooks: install_plugin, submit_hotaru_header_1, submit_hotaru_header_2, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_form_2_assign_from_cage, submit_form_2_assign_blank, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter, submit_show_post_author_date, submit_show_post_extras, submit_is_page_main, sidebar_top
+ * hooks: install_plugin, header_include, submit_hotaru_header_1, submit_hotaru_header_2, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_form_2_assign_from_cage, submit_form_2_assign_blank, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter, submit_show_post_author_date, submit_show_post_extras, submit_is_page_main, sidebar_top
  *
  *  License:
  *
@@ -290,6 +290,19 @@ function cts_submit_form_2_process_submission() {
  * ****************************************************************** */
  
 
+/* ******************************************************************** 
+ *  Function: cts_header_include
+ *  Parameters: None
+ *  Purpose: Includes css file.
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function cts_header_include() {
+	global $plugin;
+	$plugin->include_css_file('categories');
+}
+
+
  /* ******************************************************************** 
  *  Function: cts_submit_is_page_main
  *  Parameters: None
@@ -341,17 +354,19 @@ function cts_submit_posts_list_filter() {
  *  Function: cts_submit_show_post_author_date
  *  Parameters: None
  *  Purpose: Shows tags in each post
- *  Notes: ---
+ *  Notes: echos "in" before the category name.
  ********************************************************************** */
  
 function cts_submit_show_post_author_date() { 
-	global $post;
+	global $post, $lang;
 	
 	if($post->post_vars['use_categories'] && $post->post_vars['post_category']) { 
 	
 		$category =  $post->post_vars['post_category'];
 		$cat_name = $post->post_vars['post_cat_name'];
-		echo " in " . $cat_name;
+		
+		echo " " . $lang["submit_show_post_in_category"] . " ";
+		echo "<a href='" . url(array('category'=>$category)) . "'>" . $cat_name . "</a></li>\n";
 	}		
 }
 
@@ -378,12 +393,12 @@ function cts_submit_show_post_extras() {
  ********************************************************************** */
 
 function cts_sidebar_top() {
-	global $db, $the_cats, $cat_level;
+	global $db, $the_cats, $cat_level, $lang;
 	
 	$sql = "SELECT * FROM " . table_categories . " ORDER BY category_order ASC";
 	$the_cats = $db->get_results($db->prepare($sql));
 	
-	echo "<h2>Categories</h2>";
+	echo "<h2>" . $lang["sidebar_categories"] . "</h2>";
 	echo "<ul class='sidebar_categories'>\n";
 	foreach($the_cats as $cat) {
 		$cat_level = 1;	// top level category.

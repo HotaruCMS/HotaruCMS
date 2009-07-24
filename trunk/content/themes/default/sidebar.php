@@ -27,16 +27,14 @@
 global $plugin, $lang; // don't remove
 ?>
 
-<?php $plugin->check_actions('sidebar_top'); ?>
+<div id="sidebar">
 
-<ul id="sidebar">
-	
-	<?php // $plugin->check_actions('hello_world'); ?>
+	<?php $plugin->check_actions('sidebar_top'); ?>
 	
 	<?php $plugin->check_actions('rss_show'); ?>
 	
 	<?php $plugin->check_actions('sidebar'); ?>
-		
-</ul>
+			
+	<?php $plugin->check_actions('sidebar_bottom'); ?>
 
-<?php $plugin->check_actions('sidebar_bottom'); ?>
+</div>

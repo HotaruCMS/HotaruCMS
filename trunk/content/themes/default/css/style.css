@@ -22,176 +22,81 @@
  *
  **************************************************************************************************** */
 
-html, body { 
-	min-height: 100%; height: 100%;
-	background-color: #4A7E7C;
-	font-size: 0.9em;
-}
+/* BODY */
+html, body { 	line-height: 1.5em; color: #666;
+		font-family: Helvetica, Arial, 'Liberation Sans', FreeSans, sans-serif; }
 
-h1, h2, h3 { padding: 0.5em 0 0.5em 0; }
+/* DEFAULTS */
+
+h1, h2, h3 { padding: 0em 0 0.5em 0; color: #444; }
 h1	{ font-size: 1.6em; }
-h2	{ font-size: 1.4em; }
+h2	{ font-size: 1.5em; }
 h3	{ font-weight: bold; }
-p { padding: 0.5em 0 0.5em 0; }
+p 	{ padding: 0.5em 0 0.5em 0; }
+li 	{ padding: 0.5em 0 0.5em 0; }
+a 	{ text-decoration: none; color: #444; }
+a:hover	{ text-decoration: underline; }
+form 	{ padding: 1.0em; }
+td 	{ padding: 0.5em; }
+small 	{ font-size: 0.8em; }
 
-li { 	
-	padding: 0.5em 0 0.5em 0;
-}
+/* LAYOUT */
+	
+/* YAHOO USER INTERFACE (YUI) : http://developer.yahoo.com/yui/grids/  */
 
-a { 
-	text-decoration: none; 
-	color: #0000ff;	
-}
+.yui-t7 { }		/* Template 7 - complete frame*/
+.yui-gc { }		/* Grid C: 66% + 33% - container around content and sidebar*/
+.yui-g { }		/* Grid: 100% - container around content when sidebar disabled */
+.yui-u, .first { }	/* Units - the content (first) and sidebar */
 
-a:hover	{ 
-	text-decoration: underline; 
-}
-
-.yui-t7 {
-	min-height: 100%; height: 100%;
-}
-
-form {
-	padding: 1.0em;
-}
-
-td {	padding: 0.5em;
-
-}
-
-small {
-	font-size: 0.8em;
-}
-
-#hd {
-	-moz-border-radius: 0.5em;
-	-webkit-border-radius: 0.5em;
-	margin: 1.0em 0 1.0em 0;
-}
-
-#navigation {
-	padding: 0.3em 0 0 0;
-	color: #ffffff;
-}
-
-#navigation ul {
-	list-style: none;
-}
-
-#navigation li {
-	display: inline;
-	padding-right: 1em;
-	font-size: 1.2em;
-	font-weight: bold;
-}
-
-#navigation li a {
-	color: #ffffff;
-}
-
-#bd {
-	background-color: #F0F0F0;
-}
+/* ANNOUNCEMENTS */
 
 #announcement {
-	background-color: #ffffff;
-	border-bottom: 1px solid #666;
+	background-color: #ff0000;
+	color: #ffffff;
+	border-bottom: 1px solid #ff0000;
 	padding: 0.4em;
 	text-align: center;
 }
 
+/* HEADER */
+
+#hd { margin-bottom: 1.0em; background-color: #222;}
+#hd_title h1 { font-size: 2.2em; font-weight: bold; padding: 0.4em;}	/* Site title */
+#hd_title h1 a { color: #ffffff; }
+ul#navigation { list-style: none; padding: 0.5em; }
+#navigation li { display: inline; padding-right: 1.0em; font-size: 1.2em; font-weight: bold; }
+#navigation li a { color: #fafafa; }
+
+/* BODY */
+
+#bd { }
+
 .message {
-	margin: 1.0em auto 0.0em auto;
+	margin: 1.0em auto 0 auto;
 	width: 90%;
 	padding: 0.8em;
-	-moz-border-radius: 0.5em;
-	-webkit-border-radius: 0.5em;
 	text-align: center;
 	font-size: 1.2em;
 	font-weight: bold;
 }
 
-.green {
-	background-color: #99FF66;
-}
+.green 	{ background-color: #99FF66; }
+.red 	{ background-color: #FF6A55; color: #ffffff; }
 
-.red {
-	background-color: #FF6A55;
-	color: #ffffff;
-}
+/* SIDEBAR */
 
-.yui-gc, .yui-g {
-	/* container for both the wide and narrow colums. */
-	background-color: #4A7E7C;
-}
+#sidebar { padding-left: 2.0em; }
+#sidebar ul { margin-bottom: 1.2em; }
+#sidebar ul li { padding: 0.1em; border-bottom: solid 1px #eee; }
 
-.yui-u, .first {
-	min-height: 100%; height: 100%;
-	margin-bottom: 1.0em;
-	background-color: #FCFCFC;
-	-moz-border-radius: 0.5em;
-	-webkit-border-radius: 0.5em;
-}
-
-#main, #sidebar {
-	padding: 0.6em;
-}
-
-.main_inner {
-	padding: 1.0em;	
-}
+/* FOOTER */
 
 #ft {
-	height: auto;
 	background-color: #ffffff;
-	-moz-border-radius: 0.5em;
-	-webkit-border-radius: 0.5em;
-	border: 0.1em solid #888;
-	padding: 1.0em 0 1.0em 0;
+	border-top: 0.1em solid #888;
+	margin-top: 1.0em;
+	padding-top: 1.0em;
 	text-align: center;
 	font-size: 1.0em;
 }
-
-/* *************************************** 
- * *********** SUBMIT PLUGIN *************
- * ************************************* */
-
-.show_post {
-	margin-bottom: 1.0em;
-}
-
-.show_post_title {
-	font-size: 1.2em;
-	font-weight: bold;
-}
-.show_post_author_date {
-	font-size: 0.825em;
-	font-style: italic;
-}
-
-.show_post_content {
-	margin: 0.4em 0 0.4em 0;
-}
-
-.show_post_tags {
-	margin-bottom: 0.4em;
-	font-size: 0.825em;
-}
-
-/* *************************************** 
- * ******** CATEGORIES PLUGIN ************
- * ************************************* */
- 
- /* SIDEBAR CATEGORIES */
- 
- .yui-u h2 {
- 	margin: 0em 0.5em 0em 0.5em;
- }
- 
- ul.sidebar_categories {
- 	margin: 0em 0.5em 0.5em 1.0em;
- }
- 
- ul.sidebar_categories li {
- 	padding: 0em;
- }

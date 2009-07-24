@@ -39,26 +39,25 @@ if(!isset($result) || !is_array($result)) {
 			}
 		?>
 		
-		<div id="bd" role="main">
-			<?php if($hotaru->sidebar) { ?>
+		<div id="bd">
+			<div id="yui-main"> 
+			<?php if($hotaru->sidebar) { // determines whether to show the sidebar or not ?>
 				<div class='yui-gc'> 
-				<div class="yui-u first"'>
+					<div class="yui-u first"'>
 			<?php } else { ?>
 				<div class='yui-g''>
-	    			<div class="yui-u first" style='width: 100%;'>
+	    				<div class="yui-u first" style='width: 100%;'>
 	    		<?php } ?>
-	    				<!-- MAIN -->
-	    				<div id="main">
-	    				<?php 	
-	    					// plugin hook
-						$result = $plugin->check_actions('theme_index_main');
-						if(!isset($result) || !is_array($result)) {
-		    					$page = $hotaru->get_page_name();
-							$hotaru->display_template($page); 
-						}
-					?>
-					</div>
-		    		</div>
+		    				<!-- MAIN -->
+		    				<?php 	
+		    					// plugin hook
+							$result = $plugin->check_actions('theme_index_main');
+							if(!isset($result) || !is_array($result)) {
+			    					$page = $hotaru->get_page_name();
+								$hotaru->display_template($page); 
+							}
+						?>
+		    			</div> <!-- close "yui-u first" -->
 		    		<?php if($hotaru->sidebar) { ?>
 		    			<div class="yui-u">
 		    				
@@ -70,11 +69,12 @@ if(!isset($result) || !is_array($result)) {
 									$hotaru->display_template('sidebar');
 								}
 							?>
-						</ul>
-			    		</div>
+						</ul> 
+			    		</div> <!-- close "yui-u" -->
 		    		<?php } ?>
-			</div>
-		</div>
+			</div> <!-- close "yui-gc" or "yui-g" -->
+			</div> <!-- close "yui-main" -->
+		</div> <!-- close "bd" -->
 		<!-- FOOTER -->
 		<?php
 			// plugin hook

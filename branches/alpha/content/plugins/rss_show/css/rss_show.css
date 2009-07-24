@@ -20,13 +20,8 @@
  *
  **************************************************************************************************** */
  
- li.rss_show_feed_title {
- 	font-size: 1.5em;
- 	padding: 0 0 0.5em 0;
- }
- 
- .rss_show_content {
+.rss_show_content {
  	padding: 0 0 1.0em 0;
- }
+}
  
  
