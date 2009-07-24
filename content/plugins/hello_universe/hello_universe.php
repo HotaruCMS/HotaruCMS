@@ -80,7 +80,7 @@ function hu_theme_index_main() {
 function hu_main_page() {
 	global $lang;
 	// If the current page is "main" (which it is by default)...
-	echo "<div class='main_inner' style='margin: 1.0em; background-color: #eee;'>";
+	echo "<div id='hello_universe' style='margin: 1.0em; background-color: #eee;'>";
 	echo "<h2>" . $lang["hello_universe"] . "</h2>";
 	echo "<p>" . $lang["hello_universe_explanation"] . "</p>";  
 	echo "<ul>";

@@ -26,7 +26,7 @@
 
 global $hotaru, $plugin, $lang; 
 ?>
-	<div id="ft" role="contentinfo">
+	<div id="ft">
 		<?php 
 			$plugin->check_actions('footer_top');
 			$plugin->check_actions('footer');
@@ -39,7 +39,7 @@ global $hotaru, $plugin, $lang;
 			$hotaru->show_queries_and_time();
 			$plugin->check_actions('footer_bottom'); 
 		?>
-	</div>
-</div>
+	</div> <!-- close "ft" -->
+</div> <!-- close "yui-t7 first" -->
 </body>
 </html>
