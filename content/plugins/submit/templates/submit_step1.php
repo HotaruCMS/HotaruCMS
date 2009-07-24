@@ -26,27 +26,26 @@
 global $hotaru, $cage, $lang, $post, $post_orig_url;
 
 ?>
-	<div id='main'>
-		<p class='breadcrumbs'><a href='<?php echo baseurl ?>'><?php echo $lang['submit_form_home'] ?></a> &raquo; <?php echo $lang["submit_form_step1"] ?></p>
-			
-		<?php echo $hotaru->show_message(); ?>
-				
-		<div class='main_inner'>
-		<?php echo $lang["submit_form_instructions_1"] ?>
-		
-			<form name='submit_form_1' action='<?php echo baseurl ?>index.php?page=submit' method='post'>
-			<table>
-			<tr>
-				<td><?php echo $lang["submit_form_url"] ?>&nbsp; </td>
-				<td><input type='text' size=50 id='post_orig_url' name='post_orig_url' value='<?php echo $post_orig_url; ?>' /></td>
-				<td>&nbsp;</td>
-			</tr>
-		
-			<input type='hidden' name='submit1' value='true' />
 
-			<tr><td colspan=3>&nbsp;</td></tr>
-			<tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' name='submit' value='<?php echo $lang['submit_form_submit_button'] ?>' /></td></tr>	
-			</table>
-			</form>
-		</div>
-	</div>
+	<p class='breadcrumbs'><a href='<?php echo baseurl ?>'><?php echo $lang['submit_form_home'] ?></a> &raquo; <?php echo $lang["submit_form_step1"] ?></p>
+		
+	<?php echo $hotaru->show_message(); ?>
+			
+
+	<?php echo $lang["submit_form_instructions_1"] ?>
+	
+	<form name='submit_form_1' action='<?php echo baseurl ?>index.php?page=submit' method='post'>
+	<table>
+	<tr>
+		<td><?php echo $lang["submit_form_url"] ?>&nbsp; </td>
+		<td><input type='text' size=50 id='post_orig_url' name='post_orig_url' value='<?php echo $post_orig_url; ?>' /></td>
+		<td>&nbsp;</td>
+	</tr>
+
+	<input type='hidden' name='submit1' value='true' />
+
+	<tr><td colspan=3>&nbsp;</td></tr>
+	<tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' name='submit' value='<?php echo $lang['submit_form_submit_button'] ?>' /></td></tr>	
+	</table>
+	</form>
+

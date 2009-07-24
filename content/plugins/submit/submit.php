@@ -152,13 +152,14 @@ function sub_navigation() {
 /* ******************************************************************** 
  *  Function: sub_header_include
  *  Parameters: None
- *  Purpose: Includes javascript for fetching remote url content.
+ *  Purpose: Includes css and javascript for fetching remote url content.
  *  Notes: ---
  ********************************************************************** */
  
 function sub_header_include() {
-
-	echo "<script language='JavaScript' src='" . baseurl . "javascript/hotaru_ajax.js'></script>\n";
+	global $plugin;
+	$plugin->include_css_file('submit');
+	$plugin->include_js_file('submit');
 }
 
 
