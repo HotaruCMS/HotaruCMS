@@ -30,13 +30,11 @@ if(!$answer) { $answer = ""; }
 		
 ?>
 
-<div id='main'>
 	<p class='breadcrumbs'><?php echo $lang["hello_universe_form_example"] ?></p>
 	
 	This form is in the form_example.php file in the Hello Universe folder. 
 	It's called via Function #1 in hello_universe.php and includes a special language file which is included using Function #4.
 	
-	<div class='main_inner'>
 	<?php echo $lang["hello_universe_question"] ?>
 	
 	<?php $hotaru->show_message(); ?>
@@ -48,7 +46,5 @@ if(!$answer) { $answer = ""; }
 	<tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $lang['hello_universe_form_submit'] ?>' /></td></tr>			
 	</table>
 	</form>
-</div>
 	
 	<p><a href='<?php echo baseurl ?>'><?php echo $lang["hello_universe_back_home"] ?></a></p>
-	</div>

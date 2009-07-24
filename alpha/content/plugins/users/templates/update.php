@@ -37,23 +37,20 @@ if($cage->post->getAlpha('users_type') == 'update') {
 
 ?>
 	
-	<div id='main'>
-		<p class='breadcrumbs'><a href='<?php echo baseurl ?>'><?php echo $lang["users_home"] ?></a> &raquo; <?php echo $lang["users_update_user_settings"] ?></p>
-				
-			<h2><?php echo $lang["users_update_user_settings"] ?></h2>
+	<p class='breadcrumbs'><a href='<?php echo baseurl ?>'><?php echo $lang["users_home"] ?></a> &raquo; <?php echo $lang["users_update_user_settings"] ?></p>
 			
-			<?php echo $hotaru->show_message(); ?>
-			
-			<div class='main_inner'>
-			<?php echo $lang["users_update_instructions"] ?>		
-			<form name='update_form' action='<?php echo baseurl ?>index.php?page=profile' method='post'>	
-			<table>
-			<tr><td><?php echo $lang["users_update_username"] ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check ?>' /></td></tr>
-			<tr><td><?php echo $lang["users_update_email"] ?>&nbsp; </td><td><input type='text' size=30 name='email' value='<?php echo $email_check ?>' /></td></tr>
-			<tr><td><?php echo $lang["users_update_password"] ?>&nbsp; </td><td><input type='password' size=30 name='password' value='<?php echo $password_check ?>' /></td></tr>
-			<input type='hidden' name='users_type' value='update' />
-			<tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $lang['users_update_form_submit'] ?>' /></td></tr>			
-			</table>
-			</form>
-		</div>
-	</div>
+	<h2><?php echo $lang["users_update_user_settings"] ?></h2>
+	
+	<?php echo $hotaru->show_message(); ?>
+	
+	<?php echo $lang["users_update_instructions"] ?>		
+	<form name='update_form' action='<?php echo baseurl ?>index.php?page=profile' method='post'>	
+	<table>
+	<tr><td><?php echo $lang["users_update_username"] ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check ?>' /></td></tr>
+	<tr><td><?php echo $lang["users_update_email"] ?>&nbsp; </td><td><input type='text' size=30 name='email' value='<?php echo $email_check ?>' /></td></tr>
+	<tr><td><?php echo $lang["users_update_password"] ?>&nbsp; </td><td><input type='password' size=30 name='password' value='<?php echo $password_check ?>' /></td></tr>
+	<input type='hidden' name='users_type' value='update' />
+	<tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $lang['users_update_form_submit'] ?>' /></td></tr>			
+	</table>
+	</form>
+

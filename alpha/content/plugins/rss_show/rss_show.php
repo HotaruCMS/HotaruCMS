@@ -72,15 +72,15 @@ function rs_rss_show($ids) {
 			
 			// SITE TITLE
 			if($settings['rss_show_title']) { 
-				$output .= "<li class='rss_show_feed_title'>";
+				$output .= "<h2 class='rss_show_feed_title'>";
 				$output .= "<a href='" . $feed->subscribe_url() . "' title='" . $lang["rss_show_icon_anchor_title"] . "'><img src='" . baseurl . "content/themes/" . theme . "images/rss_16.gif'></a>&nbsp;"; // RSS icon
 				if($feed->get_link()) { $link = $feed->get_link(); } else { $link = $feed->subscribe_url(); }
-				$output .= "<a href='" . $link . "' title='" . $lang["rss_show_title_anchor_title"] . "'>" . $settings['rss_show_title'] . "</a></li>"; 
+				$output .= "<a href='" . $link . "' title='" . $lang["rss_show_title_anchor_title"] . "'>" . $settings['rss_show_title'] . "</a></h2>"; 
 			}
 			    
-			if ($feed->data) { 
+			if($feed->data) { 
+				$output .= "<ul class='rss_feed_item'>";
 				foreach ($feed->get_items() as $item) {
-				        $output .= "";
 				        
 				        // POST TITLE
 				        $output .= "<li class='rss_show_feed_item'>";
@@ -123,7 +123,7 @@ function rs_rss_show($ids) {
 		}
 		
 		// Display the whole thing:
-		if(isset($output)) { echo $output; }
+		if(isset($output)) { echo $output . "</ul>"; }
 	}
 }
 

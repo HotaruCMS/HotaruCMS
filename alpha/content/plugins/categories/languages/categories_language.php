@@ -23,6 +23,9 @@
  *
  **************************************************************************************************** */
 
+/* ...posted in "category" */
+$lang["submit_show_post_in_category"] = "in";
+
 /* Submit Form */
 $lang["submit_form_category"] = "Category";
 $lang['submit_form_category_select'] = "Select a category";
@@ -30,5 +33,8 @@ $lang['submit_form_category_error'] = "Please choose a category.";
 
 /* Submit Settings */
 $lang["submit_settings_categories"] = "Categories";
+
+/* Sidebar Categories */
+$lang["sidebar_categories"] = "Categories";
 
 ?>

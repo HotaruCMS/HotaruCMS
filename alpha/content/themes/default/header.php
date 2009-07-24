@@ -52,8 +52,10 @@ global $hotaru, $plugin, $lang; // don't remove
 <?php } ?>
 
 <div id="doc2" class="yui-t7">
-	<div id="hd" role="banner">
-		<a href="<?php echo baseurl; ?>"><img src="<?php echo baseurl; ?>content/themes/<?php echo theme ?>images/hotaru_468x60.png"></a>
+	<div id="hd">
+		<div id="hd_title">
+			<h1><a href="<?php echo baseurl; ?>"><?php echo site_name ?></a></h1>
+		</div>
 		<?php $plugin->check_actions('header_post_logo'); ?>
 		<!-- NAVIGATION -->
 		<?php echo $hotaru->display_template('navigation'); ?>

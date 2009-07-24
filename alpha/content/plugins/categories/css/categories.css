@@ -1,6 +1,6 @@
-/* ******* CSS STYLE FOR PLUGIN ********************************************************************** 
- * Plugin name: RSS Show
- * Stylesheet: rss_show.css
+/* ******* CSS STYLE ************************************************************************** 
+ * Plugin name: default
+ * Stylesheet: categories.css
  * License:
  *
  *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
@@ -19,9 +19,7 @@
  *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
  *
  **************************************************************************************************** */
- 
-.rss_show_content {
- 	padding: 0 0 1.0em 0;
-}
- 
+
+
+ /* SIDEBAR CATEGORIES */
  
