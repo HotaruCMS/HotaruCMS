@@ -187,6 +187,12 @@ function sub_theme_index_replace() {
 				}
 			}
 		}
+	
+	} elseif($hotaru->is_page('rss')) {
+	
+		// Display RSS Feed - index.php?page=rss&status=new&limit=10
+		$post->rss_feed();
+		return true;
 	}
 
 	return false;
@@ -242,7 +248,7 @@ function sub_theme_index_main() {
 			 	return true;
 			}
 		}
-											
+													
 	} elseif($hotaru->is_page('main')) {
 	
 		// Plugin hook
