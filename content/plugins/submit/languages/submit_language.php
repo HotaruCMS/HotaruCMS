@@ -53,4 +53,7 @@ $lang["submit_settings_tags"] = "Tags";
 $lang["submit_settings_max_tags"] = "Maximum characters";
 $lang["submit_settings_saved"] = "Settings Saved.";
 
+/* Submit RSS Feed */
+$lang["submit_rss_latest_from"] = "Latest from";
+
 ?>

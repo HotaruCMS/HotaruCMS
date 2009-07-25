@@ -65,6 +65,7 @@ $lang['admin_plugins_install'] = "Install";
 $lang['admin_plugins_uninstall'] = "Uninstall";
 $lang['admin_plugins_upgrade'] = "Upgrade";
 $lang['admin_plugins_installed'] = "Installed";
+$lang['admin_plugins_order_updated'] = "Order updated";
 $lang['admin_plugins_order_last'] = "is already last.";
 $lang['admin_plugins_order_zero'] = "Error: The order value is zero.";
 $lang['admin_plugins_order_first'] = "is already first.";

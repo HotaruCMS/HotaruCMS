@@ -225,6 +225,44 @@ class Post {
 		$post_id = $db->get_var($db->prepare($sql, urlencode($page)));
 		if($post_id) { return $post_id; } else { return false; }
 	}
+	
+	
+	
+	/* ******************************************************************** 
+	 *  Function: rss_feed
+	 *  Parameters: 
+	 *  Purpose: Publishes content as an RSS feed
+	 *  Notes: Uses the 3rd party RSS Writer class.
+	 ********************************************************************** */	
+	 	
+	function rss_feed() {
+		global $db, $lang, $cage;
+		require_once(includes . 'RSSWriterClass/rsswriter.php');
+		
+		$status = $cage->get->testAlpha('status');
+		$limit = $cage->get->getInt('limit');
+		
+		if(!$status) { $status = "new"; }
+		if(!$limit) { $limit = 10; }
+		
+		$feed = new RSS();
+		$feed->title       = site_name;
+		$feed->link        = baseurl;
+		$feed->description = $lang["submit_rss_latest_from"] . " " . site_name;
+
+		$sql = "SELECT * from " . table_posts . " WHERE post_status = %s ORDER BY post_date DESC LIMIT %d";
+		$results = $db->get_results($db->prepare($sql, $status, $limit));
+		foreach($results as $result) 
+		{
+			$item = new RSSItem();
+			$item->title = stripslashes(urldecode($result->post_title));
+			$item->link  = urldecode($result->post_url);
+			$item->setPubDate($result->post_date); 
+			$item->description = "<![CDATA[ " . stripslashes(urldecode($result->post_content)) . " ]]>";
+			$feed->addItem($item);
+		}
+		echo $feed->serve();
+	}
 }
 
 ?>

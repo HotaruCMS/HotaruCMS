@@ -6,7 +6,7 @@
  * folder: categories
  * prefix: cts
  * requires: submit 0.1, category_manager 0.1
- * hooks: install_plugin, header_include, submit_hotaru_header_1, submit_hotaru_header_2, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_form_2_assign_from_cage, submit_form_2_assign_blank, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter, submit_show_post_author_date, submit_show_post_extras, submit_is_page_main, sidebar_top
+ * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_form_2_assign_from_cage, submit_form_2_assign_blank, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter, submit_show_post_author_date, submit_show_post_extras, submit_is_page_main, sidebar_top
  *
  *  License:
  *
@@ -48,6 +48,24 @@ function cts_install_plugin() {
 	// Default settings (Note: we can't use $post->post_vars because it hasn't been filled yet.)
 	$plugin->plugin_settings_update('submit', 'submit_categories', 'checked');
 
+}
+
+
+/* ******************************************************************** 
+ *  Function: cts_hotaru_header
+ *  Parameters: None
+ *  Purpose: Defines db table and includes language file
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function cts_hotaru_header() {
+	global $post, $plugin;
+	
+	// The categories table is defined 
+	if(!defined('table_categories')) { define("table_categories", db_prefix . "categories"); }
+	
+	// include language file
+	$plugin->include_language_file('categories');
 }
 
 

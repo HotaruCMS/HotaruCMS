@@ -60,12 +60,13 @@ small 	{ font-size: 0.8em; }
 
 /* HEADER */
 
-#hd { margin-bottom: 1.0em; background-color: #222;}
+#hd { margin-bottom: 1.0em; background-color: #222; }
 #hd_title h1 { font-size: 2.2em; font-weight: bold; padding: 0.4em;}	/* Site title */
 #hd_title h1 a { color: #ffffff; }
-ul#navigation { list-style: none; padding: 0.5em; }
+ul#navigation { list-style: none; padding: 0 0 0.5em 0.5em; }
 #navigation li { display: inline; padding-right: 1.0em; font-size: 1.2em; font-weight: bold; }
 #navigation li a { color: #fafafa; }
+#navigation li a img { vertical-align: middle; }
 
 /* BODY */
 
