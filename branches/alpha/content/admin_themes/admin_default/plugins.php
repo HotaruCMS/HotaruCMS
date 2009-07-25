@@ -35,7 +35,7 @@ $the_plugins = sksort($the_plugins, "order", "int", true);	// sorts plugins by "
 	&raquo; <?php echo $lang["admin_theme_plugins"]; ?>
 </p>
 	
-<?php $hotaru->show_message(); ?>
+<?php $hotaru->show_messages(); ?>
 
 <div id="plugin_list">
 

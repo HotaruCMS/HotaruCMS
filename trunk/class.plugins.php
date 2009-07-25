@@ -223,7 +223,7 @@ class Plugin extends generic_pmd {
 	 *  Function: get_plugin_status
 	 *  Parameters: widget folder name
 	 *  Purpose: Determines if a plugin is enabled or not
-	 *  Notes: Needs to be in this class because its used by get_plugins()
+	 *  Notes: ---
 	 ********************************************************************** */
 	 
 	 	
@@ -310,9 +310,10 @@ class Plugin extends generic_pmd {
 		
 		if($dependency_error == 1) {
 			foreach($this->dependencies as $dependency => $version) {
-					$dependency = $this->folder_to_name($dependency);				
-					$hotaru->message = $lang["admin_plugins_install_sorry"] . " " . $this->name . " " . $lang["admin_plugins_install_requires"] . " " . $dependency . " " . $version;
-					$hotaru->message_type = 'red';
+					if($this->get_plugin_status($dependency) == 'inactive') {
+						$dependency = $this->folder_to_name($dependency);				
+						$hotaru->messages[$lang["admin_plugins_install_sorry"] . " " . $this->name . " " . $lang["admin_plugins_install_requires"] . " " . $dependency . " " . $version] = 'red';
+					}
 			}
 			return false;	
 		}
@@ -342,11 +343,10 @@ class Plugin extends generic_pmd {
 		// For plugins to avoid showing this success message, they need to return a non-boolean value to $result.
 		if(!is_array($result)) {
 			if($upgrade == 0) {
-				$hotaru->message = $lang["admin_plugins_install_done"];
+				$hotaru->messages[$lang["admin_plugins_install_done"]] = 'green';
 			} else {
-				$hotaru->message = $lang["admin_plugins_upgrade_done"];
+				$hotaru->messages[$lang["admin_plugins_upgrade_done"]] = 'green';
 			}
-			$hotaru->message_type = 'green';
 		}
 	}
 	
@@ -396,8 +396,7 @@ class Plugin extends generic_pmd {
 				
 		// For plugins to avoid showing this success message, they need to return a non-boolean value to $result.
 		if(!is_array($result)) {
-			$hotaru->message = $lang["admin_plugins_upgrade_done"];
-			$hotaru->message_type = 'green';
+			$hotaru->messages[$lang["admin_plugins_upgrade_done"]] = 'green';
 		}
 	}
 	
@@ -424,9 +423,8 @@ class Plugin extends generic_pmd {
 				$sql = "UPDATE " . table_plugins . " SET plugin_enabled = %d, plugin_updateby = %d WHERE plugin_folder = %s";
 				$db->query($db->prepare($sql, $enabled, $current_user->id, $folder));
 				
-				if($enabled == 1) { $hotaru->message = $lang["admin_plugins_activated"]; }
-				if($enabled == 0) { $hotaru->message = $lang["admin_plugins_deactivated"]; }
-				$hotaru->message_type = 'green';
+				if($enabled == 1) { $hotaru->messages[$lang["admin_plugins_activated"]] = 'green'; }
+				if($enabled == 0) { $hotaru->messages[$lang["admin_plugins_deactivated"]] = 'green'; }
 			}
 		}
 	}
@@ -447,8 +445,7 @@ class Plugin extends generic_pmd {
 		$db->query($db->prepare("DELETE FROM " . table_pluginsettings . " WHERE plugin_folder = %s", $folder));
 		
 		if($upgrade == 0) {
-			$hotaru->message = $lang["admin_plugins_uninstall_done"];
-			$hotaru->message_type = 'green';
+			$hotaru->messages[$lang["admin_plugins_uninstall_done"]] = 'green';
 		}
 		
 		$this->refresh_plugin_order();
@@ -466,8 +463,7 @@ class Plugin extends generic_pmd {
 		global $db, $hotaru, $lang;
 			
 		if($order == 0) {
-			$hotaru->message = $lang['admin_plugins_order_zero'];
-			$hotaru->message_type = 'red';
+			$hotaru->messages[$lang['admin_plugins_order_zero']] = 'red';
 			return false;
 		}
 				
@@ -477,14 +473,12 @@ class Plugin extends generic_pmd {
 			$row_above = $db->get_row($db->prepare($sql, ($order - 1)));
 			
 			if(!$row_above) {
-				$hotaru->message = $this->folder_to_name($folder) . " " . $lang['admin_plugins_order_first'];
-				$hotaru->message_type = 'red';
+				$hotaru->messages[$this->folder_to_name($folder) . " " . $lang['admin_plugins_order_first']] = 'red';
 				return false;
 			}
 			
 			if($row_above->plugin_order == $order) {
-				$hotaru->message = $lang['admin_plugins_order_above'];
-				$hotaru->message_type = 'red';
+				$hotaru->messages[$lang['admin_plugins_order_above']] = 'red';
 				return false;
 			}
 			
@@ -501,14 +495,12 @@ class Plugin extends generic_pmd {
 			$row_below = $db->get_row($db->prepare($sql, ($order + 1)));
 			
 			if(!$row_below) {
-				$hotaru->message = $this->folder_to_name($folder) . " " . $lang['admin_plugins_order_last'];
-				$hotaru->message_type = 'red';
+				$hotaru->messages[$this->folder_to_name($folder) . " " . $lang['admin_plugins_order_last']] = 'red';
 				return false;
 			}
 			
 			if($row_below->plugin_order == $order) {
-				$hotaru->message = $lang['admin_plugins_order_below'];
-				$hotaru->message_type = 'red';
+				$hotaru->messages[$lang['admin_plugins_order_below']] = 'red';
 				return false;
 			}
 			
@@ -521,8 +513,7 @@ class Plugin extends generic_pmd {
 			$db->query($db->prepare($sql, ($order + 1), $folder)); 
 		}
 		
-		$hotaru->message = "Order updated";
-		$hotaru->message_type = 'green';
+		$hotaru->messages[$lang['admin_plugins_order_updated']] = 'green';
 		
 		$this->refresh_plugin_order();	// Resort all orders and remove any accidental gaps
 		

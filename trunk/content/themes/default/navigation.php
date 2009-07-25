@@ -45,4 +45,15 @@ global $hotaru, $plugin, $current_user, $lang; // don't remove
 			$plugin->check_actions('navigation_users', true, 'users'); // ensures login/logout/register are last.
 		}
 	?>
+	
+	<?php 	// RSS Link and icon if Submit plugin is active
+		if($plugin->get_plugin_status('submit') == 'active') { ?>
+		<li>
+		<a href="<?php echo url(array('page'=>'rss')) ?>">RSS</a> 
+		<a href="<?php echo url(array('page'=>'rss')) ?>">
+			<img src="<?php echo baseurl ?>content/themes/<?php echo theme ?>images/rss_16.png">
+		</a>
+		</li>
+	<?php } ?>
+			
 </ul>
