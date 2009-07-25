@@ -55,8 +55,8 @@ global $hotaru, $plugin, $lang; // don't remove
 	<div id="hd">
 		<div id="hd_title">
 			<h1><a href="<?php echo baseurl; ?>"><?php echo site_name ?></a></h1>
+			<?php $plugin->check_actions('header_post_title'); ?>
 		</div>
-		<?php $plugin->check_actions('header_post_logo'); ?>
 		<!-- NAVIGATION -->
 		<?php echo $hotaru->display_template('navigation'); ?>
 	</div>
