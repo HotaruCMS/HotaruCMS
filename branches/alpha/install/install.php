@@ -218,8 +218,19 @@ function register_admin() {
 	
 		$password_check = $cage->post->testPassword('password');	
 		if($password_check) {
-			$user_password = crypt(md5($password_check),md5($user_name));
+			$password2_check = $cage->post->testPassword('password2');
+			if($password_check == $password2_check) {
+				// success
+				$user_password = crypt(md5($password_check),md5($user_name));
+			} else {
+				$hotaru->message = $lang['install_step4_password_match_error'];
+				$hotaru->message_type = 'red';
+				$hotaru->show_message();
+				$error = 1;
+			}
 		} else {
+			$password_check = "";
+			$password2_check = "";
 			$hotaru->message = $lang['install_step4_password_error'];
 			$hotaru->message_type = 'red';
 			$hotaru->show_message();
@@ -250,7 +261,7 @@ function register_admin() {
 			$db->query($db->prepare($sql, 'admin', 'administrator', 'password', 'admin@mysite.com'));
 			$user_name = 'admin';
 			$user_email = 'admin@mysite.com';
-			$user_password = 'password';		
+			$user_password = 'password';
 		} else {
 			$user_info = get_admin_details(0, $admin_name);
 			// On returning to this page via back or next, the fields are empty at this point, so...
@@ -269,13 +280,13 @@ function register_admin() {
 			}
 		}
 	}
-
+	
 	echo "<form name='install_admin_reg_form' action='" . baseurl . "install/install.php?step=4' method='post'>\n";
 	echo "<table>";
-	echo "<tr><td>Username:&nbsp; </td><td><input type='text' size=30 name='username' value='" . $user_name . "' /></td></tr>\n";
-	echo "<tr><td>Email:&nbsp; </td><td><input type='text' size=30 name='email' value='" . $user_email . "' /></td></tr>\n";
-	if(!$cage->post->getInt('step') == 4) { $password_check = ""; } // if loaded from database show blank, otherwise shows the password just submitted.
-	echo "<tr><td>Password:&nbsp; </td><td><input type='password' size=30 name='password' value='" . $password_check . "' /></td></tr>\n";
+	echo "<tr><td>" . $lang["install_step4_username"] . "&nbsp; </td><td><input type='text' size=30 name='username' value='" . $user_name . "' /></td></tr>\n";
+	echo "<tr><td>" . $lang["install_step4_email"] . "&nbsp; </td><td><input type='text' size=30 name='email' value='" . $user_email . "' /></td></tr>\n";
+	echo "<tr><td>" . $lang["install_step4_password"] . "&nbsp; </td><td><input type='password' size=30 name='password' value='' /></td></tr>\n";
+		echo "<tr><td>" . $lang["install_step4_password_verify"] . "&nbsp; </td><td><input type='password' size=30 name='password2' value='' /></td></tr>\n";
 	echo "<input type='hidden' name='step' value='4' />\n";
 	echo "<tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='" . $lang['install_step4_form_update'] . "' /></td></tr>\n";
 	echo "</table>";

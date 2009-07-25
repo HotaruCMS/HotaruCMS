@@ -39,8 +39,8 @@ $lang['main_hotaru_seconds'] = "seconds.";
 /* Plugins Class - Language for class.plugins.php is in admin_language.php */
 
 /* Announcements */
-$lang['main_announcement_users_disabled'] = "<span style='color: #ff0000;'>Login and registration is currently disabled.</span>";
-$lang['main_announcement_plugins_disabled'] = "<span style='color: #ff0000;'>All plugins are currently disabled.</span>";
+$lang['main_announcement_users_disabled'] = "Login and registration is currently disabled.";
+$lang['main_announcement_plugins_disabled'] = "All plugins are currently disabled.";
 
 /* Times */
 $lang['main_times_days'] = "days";
