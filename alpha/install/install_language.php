@@ -56,11 +56,16 @@ $lang["install_step3_success"] = "Database tables created successfully. Click \"
 /* Install Step 4 */
 $lang["install_step4"] = "Step 4/5: Admin Registration";
 $lang["install_step4_instructions"] = "Register yourself as a site administrator";
-$lang["install_step4_username_error"] = "Your username must be at least 4 characters and can contain letters, dashes and underscores only.";
+$lang["install_step4_username"] = "Username:";
+$lang["install_step4_email"] = "Email:";
+$lang["install_step4_password"] = "Password:";
+$lang["install_step4_password_verify"] = "Password (again):";
+$lang["install_step4_username_error"] = "Your username must be at least 4 characters and can contain letters, dashes and underscores only";
 $lang["install_step4_password_error"] = "The password must be at least 8 characters and can only contain letters, numbers and these symbols: @ * # - _";
-$lang["install_step4_email_error"] = "That doesn't parse as a valid email address.";
+$lang["install_step4_password_match_error"] = "The password fields don't match";
+$lang["install_step4_email_error"] = "That doesn't parse as a valid email address";
 $lang["install_step4_make_note"] = "Make a note of your new username, email and password before clicking \"Next\"...";
-$lang["install_step4_update_success"] = "Updated successfully.";
+$lang["install_step4_update_success"] = "Updated successfully";
 $lang["install_step4_form_update"] = "Update";
 
 /* Install Step 5 */

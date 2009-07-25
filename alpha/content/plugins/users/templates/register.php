@@ -27,11 +27,13 @@ global $hotaru, $cage, $lang;
 	
 if($cage->post->getAlpha('users_type') == 'register') {
 	$username_check = $cage->post->testUsername('username');
-	$password_check = $cage->post->testPassword('password');
+	$password_check = "";
+	$password2_check = "";
 	$email_check = $cage->post->testEmail('email');	
 } else {
 	$username_check = "";
 	$password_check = "";
+	$password2_check = "";
 	$email_check = "";
 }
 ?>
@@ -41,7 +43,7 @@ if($cage->post->getAlpha('users_type') == 'register') {
 			
 		<h2><?php echo $lang["users_register"] ?></h2>
 		
-		<?php echo $hotaru->show_message(); ?>
+		<?php echo $hotaru->show_messages(); ?>
 			
 		<div class='main_inner'>
 		<?php echo $lang["users_register_instructions"] ?>
@@ -51,6 +53,7 @@ if($cage->post->getAlpha('users_type') == 'register') {
 			<tr><td><?php echo $lang["users_register_username"] ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check ?>' /></td></tr>
 			<tr><td><?php echo $lang["users_register_email"] ?>&nbsp; </td><td><input type='text' size=30 name='email' value='<?php echo $email_check ?>' /></td></tr>
 			<tr><td><?php echo $lang["users_register_password"] ?>&nbsp; </td><td><input type='password' size=30 name='password' value='<?php echo $password_check ?>' /></td></tr>
+			<tr><td><?php echo $lang["users_register_password_verify"] ?>&nbsp; </td><td><input type='password' size=30 name='password2' value='<?php echo $password2_check ?>' /></td></tr>
 			<input type='hidden' name='users_type' value='register' />
 			<tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $lang['users_register_form_submit'] ?>' /></td></tr>			
 			</table>

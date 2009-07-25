@@ -126,7 +126,8 @@ function usr_theme_index_replace() {
 			$current_user->destroy_cookie_and_session();
 			header("Location: " . baseurl);
 		} elseif($hotaru->is_page('profile')) {
-			usr_update();
+			usr_update_general();
+			usr_update_password();	
 		} 
 				
 	// Pages you have to be logged out for...
@@ -183,48 +184,38 @@ function usr_theme_index_main() {
 
 
  /* ******************************************************************** 
- *  Function: usr_update
+ *  Function: usr_update_general
  *  Parameters: None
- *  Purpose: Enables a user to change their username, email or password.
+ *  Purpose: Enables a user to change their username or email.
  *  Notes: ---
  ********************************************************************** */
  
-function usr_update() {
+function usr_update_general() {
 	global $hotaru, $cage, $lang, $current_user;
 	
 	$error = 0;
-	if($cage->post->getAlpha('users_type') == 'update') {
+	
+	// Updating general profile info
+	if($cage->post->testAlnumLines('users_type') == 'update_general') {
 		$username_check = $cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
 		if($username_check) {
 			$current_user->username = $username_check;
 		} else {
-			$hotaru->message = $lang['users_register_username_error'];
-			$hotaru->message_type = 'red';
+			$hotaru->messages[$lang['users_register_username_error']] = 'red';
 			$error = 1;
 		}
-				
-		$password_check = $cage->post->testPassword('password');	
-		if($password_check) {
-			$current_user->password = crypt(md5($password_check),md5($current_user->username));
-		} else {
-			$hotaru->message = $lang['users_register_password_error'];
-			$hotaru->message_type = 'red';
-			$error = 1;
-		}
-					
+							
 		$email_check = $cage->post->testEmail('email');	
 		if($email_check) {
 			$current_user->email = $email_check;
 		} else {
-			$hotaru->message = $lang['users_register_email_error'];
-			$hotaru->message_type = 'red';
+			$hotaru->messages[$lang['users_register_email_error']] = 'red';
 			$error = 1;
 		}
 	}
-			
-	if(!isset($username_check) && !isset($password_check) && !isset($email_check)) {
+	
+	if(!isset($username_check) && !isset($email_check)) {
 		$username_check = $current_user->username;
-		$password_check = $current_user->password;
 		$email_check = $current_user->email;
 		// do nothing
 	} elseif($error == 0) {
@@ -233,13 +224,80 @@ function usr_update() {
 			//success
 			$current_user->update_user_basic();
 			$current_user->set_cookie(0);
-			$hotaru->message = $lang['users_update_success'];
-			$hotaru->message_type = 'green';
+			$hotaru->messages[$lang['users_update_success']] = 'green';
 			return true;
 		} else {
 			//fail
-			$hotaru->message = $lang["users_register_unexpected_error"];
-			$hotaru->message_type = 'red';
+			$hotaru->messages[$lang["users_register_unexpected_error"]] = 'red';
+			return false;
+		}
+	} else {
+		// error must = 1 so fall through and display the form again
+		return false;
+	}
+}
+
+
+ /* ******************************************************************** 
+ *  Function: usr_update_password
+ *  Parameters: None
+ *  Purpose: Enables a user to change their password.
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function usr_update_password() {
+	global $hotaru, $cage, $lang, $current_user;
+	
+	$error = 0;
+	
+	// Updating password
+	if($cage->post->testAlnumLines('users_type') == 'update_password') {
+		$password_check_old = $cage->post->testPassword('password_old');	
+		if($password_check_old && (crypt(md5($password_check_old),md5($current_user->username) == $current_user->password))) {
+			// safe, the old password matches the password for this user.
+		} else {
+			$hotaru->messages[$lang['users_update_password_error_old']] = 'red';
+			$error = 1;
+		}
+	
+		$password_check_new = $cage->post->testPassword('password_new');	
+		if($password_check_new) {
+			$password_check_new2 = $cage->post->testPassword('password_new2');	
+			if($password_check_new2) { 
+				if($password_check_new == $password_check_new2) {
+					// safe, the two new password fields match
+				} else {
+					$hotaru->messages[$lang['users_update_password_error_match']] = 'red';
+					$error = 1;
+				}
+			} else {
+				$hotaru->messages[$lang['users_update_password_error_new']] = 'red';
+				$error = 1;
+			}
+		} else {
+			$hotaru->messages[$lang['users_update_password_error_not_provided']] = 'red';
+			$error = 1;
+		}
+					
+	}
+			
+	if(!isset($password_check_old) && !isset($password_check_new) && !isset($password_check_new2)) {
+		$password_check_old = "";
+		$password_check_new = "";
+		$password_check_new2 = "";
+		// do nothing
+	} elseif($error == 0) {
+		$result = $current_user->user_exists(0, $current_user->username, $current_user->email);
+		if($result != 4) { // 4 is returned when the user does not exist in the database
+			//success
+			$current_user->password = crypt(md5($password_check_new),md5($current_user->username));
+			$current_user->update_user_basic();
+			$current_user->set_cookie(0);
+			$hotaru->messages[$lang['users_update_success']] = 'green';
+			return true;
+		} else {
+			//fail
+			$hotaru->messages[$lang["users_register_unexpected_error"]] = 'red';
 			return false;
 		}
 	} else {
@@ -307,17 +365,23 @@ function usr_register() {
 		if($username_check) {
 			$current_user->username = $username_check;
 		} else {
-			$hotaru->message = $lang['users_register_username_error'];
-			$hotaru->message_type = 'red';
+			$hotaru->messages[$lang['users_register_username_error']] = 'red';
 			$error = 1;
 		}
 				
 		$password_check = $cage->post->testPassword('password');	
 		if($password_check) {
-			$current_user->password = crypt(md5($password_check),md5($current_user->username));
+			$password2_check = $cage->post->testPassword('password2');
+			if($password_check == $password2_check) {
+				// safe, the two new password fields match
+				$current_user->password = crypt(md5($password_check),md5($current_user->username));
+			} else {
+				$hotaru->messages[$lang['users_register_password_match_error']] = 'red';
+				$error = 1;
+			}
+			
 		} else {
-			$hotaru->message = $lang['users_register_password_error'];
-			$hotaru->message_type = 'red';
+			$hotaru->messages[$lang['users_register_password_error']] = 'red';
 			$error = 1;
 		}
 					
@@ -325,15 +389,15 @@ function usr_register() {
 		if($email_check) {
 			$current_user->email = $email_check;
 		} else {
-			$hotaru->message = $lang['users_register_email_error'];
-			$hotaru->message_type = 'red';
+			$hotaru->messages[$lang['users_register_email_error']] = 'red';
 			$error = 1;
 		}
 	}
 			
-	if(!isset($username_check) && !isset($password_check) && !isset($email_check)) {
+	if(!isset($username_check) && !isset($password_check) && !isset($password2_check) && !isset($email_check)) {
 		$username_check = "";
 		$password_check = "";
+		$password2_check = "";
 		$email_check = "";
 		// do nothing
 	} elseif($error == 0) {
@@ -343,19 +407,15 @@ function usr_register() {
 			//success
 			return true;
 		} elseif($result == 0) {
-			$hotaru->message = $lang['users_register_id_exists'];
-			$hotaru->message_type = 'red';
+			$hotaru->messages[$lang['users_register_id_exists']] = 'red';
 
 		} elseif($result == 1) {
-			$hotaru->message = $lang['users_register_username_exists'];
-			$hotaru->message_type = 'red';
+			$hotaru->messages[$lang['users_register_username_exists']] = 'red';
 
 		} elseif($result == 2) {
-			$hotaru->message = $lang['users_register_email_exists'];
-			$hotaru->message_type = 'red';
+			$hotaru->messages[$lang['users_register_email_exists']] = 'red';
 		} else {
-			$hotaru->message = $lang["users_register_unexpected_error"];
-			$hotaru->message_type = 'red';
+			$hotaru->messages[$lang["users_register_unexpected_error"]] = 'red';
 		}
 	} else {
 		// error must = 1 so fall through and display the form again
