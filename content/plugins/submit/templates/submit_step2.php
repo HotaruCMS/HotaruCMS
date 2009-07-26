@@ -26,14 +26,28 @@
 global $hotaru, $cage, $lang, $post, $plugin, $post_orig_url, $post_orig_title;
 
 if($cage->post->getAlpha('submit2') == 'true') {
+	// Submitted this form...
 	$title_check = $cage->post->noTags('post_title');	
 	$content_check = $cage->post->noTags('post_content');	
+	$post_id = $cage->post->getInt('post_id');	
+	$post->post_id = $post_id;
 	$plugin->check_actions('submit_form_2_assign_from_cage');
+	
+} elseif($cage->post->getAlpha('submit3') == 'edit') {
+	// Come back from step 3 to make changes...
+	$title_check = $post->post_title;
+	$content_check = $post->post_content;
+	$post_orig_url = $post->post_orig_url;
+	$post_id = $post->post_id;
 } else {
+	// First time here...
 	$title_check = $post_orig_title;
 	$content_check = "";
+	$post_id = 0;
 	$plugin->check_actions('submit_form_2_assign_blank');
 }
+
+$plugin->check_actions('submit_form_2_assign');
 
 ?>
 
@@ -67,6 +81,7 @@ if($cage->post->getAlpha('submit2') == 'true') {
 	<?php $plugin->check_actions('submit_form_2_fields'); ?>
 		
 	<input type='hidden' name='post_orig_url' value='<?php echo $post_orig_url; ?>' />
+	<input type='hidden' name='post_id' value='<?php echo $post_id ?>' />
 	<input type='hidden' name='submit2' value='true' />
 	
 	<tr><td colspan=3>&nbsp;</td></tr>
