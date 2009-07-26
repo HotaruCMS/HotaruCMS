@@ -153,13 +153,38 @@ function sub_navigation() {
  *  Function: sub_header_include
  *  Parameters: None
  *  Purpose: Includes css and javascript for fetching remote url content.
- *  Notes: ---
+ *  Notes: Also adds javascript to preview page to prevent a user clicking away
  ********************************************************************** */
  
 function sub_header_include() {
-	global $plugin;
+	global $plugin, $lang, $hotaru;
 	$plugin->include_css_file('submit');
 	$plugin->include_js_file('submit');
+	
+	/* This code (courtesy of Pligg.com and SocialWebCMS.com) pops up a 
+	   box asking the user of they are sure they want to leave the page
+	   without submitting their post. */
+	   
+	if($hotaru->is_page('submit2')) {
+		echo '
+			<script type="text/javascript">
+	
+			var safeExit = false;
+		
+			window.onbeforeunload = function (event) 
+			{
+				if (safeExit)
+					return;
+	
+				if (!event && window.event) 
+		          		event = window.event;
+		          		
+		   		event.returnValue = "' . $lang['submit_form_submit_accidental_click'] . '";
+			}
+			
+			</script>
+		';
+	}
 }
 
 
@@ -179,12 +204,29 @@ function sub_theme_index_replace() {
 		 	
 		 	if($cage->post->getAlpha('submit2') == 'true') {		 	
 	
-			 	if(!sub_check_for_errors_2()) { 
-			 		$post_orig_url = $cage->post->testUri('post_orig_url'); 
+		 		$post_orig_url = $cage->post->testUri('post_orig_url'); 
+		 		if(!sub_check_for_errors_2()) { 
 					sub_process_submission($post_orig_url);
-					header("Location: " . baseurl);	// Go home  
-					die();
 				}
+			}
+		}
+		
+	} elseif($hotaru->is_page('submit3')) {
+	 	
+		if($current_user->logged_in) {
+
+		 	if($cage->post->getAlpha('submit3') == 'edit') {		 	
+	
+		 		$post_id = $cage->post->getInt('post_id'); 
+				$post->read_post($post_id, $raw = true);
+			}
+					 	
+		 	if($cage->post->getAlpha('submit3') == 'confirm') {		 	
+	
+		 		$post_id = $cage->post->getInt('post_id');
+				$post->change_status('new');
+				header("Location: " . baseurl);	// Go home  
+				die();
 			}
 		}
 	
@@ -225,7 +267,7 @@ function sub_theme_index_main() {
 				} else {
 					// Errors found, go back to step 1
 					$post_orig_url = $cage->post->testUri('post_orig_url');
-					$hotaru->display_template('submit_step2', 'submit');
+					$hotaru->display_template('submit_step1', 'submit');
 					return true;
 				}
 			} else {
@@ -241,9 +283,26 @@ function sub_theme_index_main() {
 	 	
 		if($current_user->logged_in) {
 		 	
-		 	if($cage->post->getAlpha('submit2') == 'true') {		 	
+		 	if($cage->post->getAlpha('submit2') == 'true') {
 		 		$post_orig_url = $cage->post->testUri('post_orig_url'); 
-		 		global $post_orig_url;		 		
+		 		if($post->post_status == "processing") { 	
+		 			// No errors, go to step 3...	
+		 			$post->read_post($post->post_id);
+			 		$hotaru->display_template('submit_step3', 'submit');
+			 		return true;
+			 	} else {
+			 		// Errors found, show step 2 again...
+			 		$hotaru->display_template('submit_step2', 'submit');
+			 		return true;
+			 	}
+			}
+		}
+	
+	} elseif($hotaru->is_page('submit3')) {
+	 	
+		if($current_user->logged_in) {
+		 	
+		 	if($cage->post->getAlpha('submit3') == 'edit') {		 	
 			 	$hotaru->display_template('submit_step2', 'submit');
 			 	return true;
 			}
@@ -404,17 +463,25 @@ function sub_check_for_errors_1() {
 function sub_check_for_errors_2() {
 	global $hotaru, $post, $cage, $plugin, $lang;
 
+	$post_id = $cage->post->getInt('post_id'); // 0 unless come back from step 3.
+
 	// ******** CHECK TITLE ********
 	
 	$title_check = $cage->post->noTags('post_title');	
+		
 	if(!$title_check) {
 		// No title present...
 		$hotaru->messages[$lang['submit_form_title_not_present_error']] = "red";
 		$error_title= 1;
-	} elseif($post->title_exists($title_check )) {
-		// URL already exists...
-		$hotaru->messages[$lang['submit_form_title_already_exists_error']] = "red";
-		$error_title = 1;
+	} elseif($post->title_exists($title_check)) {
+		// title already exists...
+		if($post_id != $post->title_exists($title_check)) {
+			$hotaru->messages[$lang['submit_form_title_already_exists_error']] = "red";
+			$error_title = 1;
+		} else {
+			// the matching title is for the post we're currently modifying so no error...
+			$error_title = 0;
+		}
 	} else {
 		// title is okay.
 		$error_title = 0;
@@ -423,6 +490,7 @@ function sub_check_for_errors_2() {
 	// ******** CHECK DESCRIPTION ********
 	if($post->use_content) {
 		$content_check = $cage->post->noTags('post_content');	
+				
 		if(!$content_check) {
 			// No content present...
 			$hotaru->messages[$lang['submit_form_content_not_present_error']] = "red";
@@ -436,6 +504,7 @@ function sub_check_for_errors_2() {
 			$error_content = 0;
 		}
 	}
+	
 	
 	// Check for errors from plugin fields, e.g. Tags
 	$error_check_actions = 0;
@@ -459,16 +528,28 @@ function sub_check_for_errors_2() {
 function sub_process_submission($post_orig_url) {
 	global $hotaru, $cage, $plugin, $current_user, $post;
 		
-	$post->post_orig_url = $post_orig_url;
-	$post->post_url = $cage->post->getFriendlyUrl('post_title');
-	$post->post_title = $cage->post->getMixedString2('post_title');
-	$post->post_content = $cage->post->getMixedString2('post_content');
-	$post->post_status = "new";
-	$post->post_author = $current_user->id;
+	if($cage->post->getAlpha('submit2') == 'true') {	
 	
-	$plugin->check_actions('submit_form_2_process_submission');
+		$post->post_id = $cage->post->getInt('post_id');
+		$post->post_orig_url = $cage->post->testUri('post_orig_url');
+		$post->post_url = $cage->post->getFriendlyUrl('post_title');
+		$post->post_title = $cage->post->noTags('post_title');
+		$post->post_content = $cage->post->noTags('post_content');
+		$post->post_status = "processing";
+		$post->post_author = $current_user->id;
+		
+		$plugin->check_actions('submit_form_2_process_submission');
+		
+		if($post->post_id != 0) {
+			$post->update_post();	// Updates an existing post (e.g. returning to step 2 from step 3 to modify it)
+		} else {
+			$post->add_post();	// Adds a new post
+		}
 	
-	$post->add_post();
+	} elseif($cage->post->getAlpha('submit3') == 'confirm') {	
+	
+		$post->change_status('new');
+	}
 
 }
 

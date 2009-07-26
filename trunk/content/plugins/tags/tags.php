@@ -6,7 +6,7 @@
  * folder: tags
  * prefix: tg
  * requires: submit 0.1
- * hooks: install_plugin, submit_hotaru_header_1, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_form_2_assign_from_cage, submit_form_2_assign_blank, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_show_post_extra_fields, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter
+ * hooks: install_plugin, submit_hotaru_header_1, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_class_post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_show_post_extra_fields, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter
  *
  * Requires the Submit plugin.
  *
@@ -138,22 +138,55 @@ function tg_submit_class_post_read_post_2() {
 /* ******************************************************************** 
  *  Function: tg_submit_class_post_add_post
  *  Parameters: None
- *  Purpose: Adds tags to the posts table
+ *  Purpose: Adds tags to the posts and tags tables
  *  Notes: ---
  ********************************************************************** */
  
 function tg_submit_class_post_add_post() {
 	global $post, $db, $last_insert_id, $current_user;
 	
+	// Posts table
 	$sql = "UPDATE " . table_posts . " SET post_tags = %s WHERE post_id = %d";
 	$db->query($db->prepare($sql, urlencode(trim($post->post_vars['post_tags'])), $last_insert_id));
 		
+	// Tags table
 	if(!empty($post->post_vars['post_tags'])) {
 		$tags_array = explode(',', $post->post_vars['post_tags']);
 		if($tags_array) {
 			foreach($tags_array as $tag) {
 				$sql = "INSERT INTO " . table_tags . " SET tags_post_id = %d, tags_date = CURRENT_TIMESTAMP, tags_word = %s, tags_updateby = %d";
 				$db->query($db->prepare($sql, $last_insert_id, urlencode(str_replace(' ', '_', trim($tag))), $current_user->id));
+			}
+		}
+	}
+}
+
+
+/* ******************************************************************** 
+ *  Function: tg_submit_class_post_update_post
+ *  Parameters: None
+ *  Purpose: Updates tags in the posts and tags tables
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function tg_submit_class_post_update_post() {
+	global $post, $db, $current_user;
+	
+	// Posts table
+	$sql = "UPDATE " . table_posts . " SET post_tags = %s WHERE post_id = %d";
+	$db->query($db->prepare($sql, urlencode(trim($post->post_vars['post_tags'])), $post->post_id));
+		
+	// Delete existing tags from tags table
+	$sql = "DELETE from " . table_tags . " WHERE tags_post_id = %d";
+	$db->query($db->prepare($sql, $post->post_id));
+	
+	// Reinsert into tags table
+	if(!empty($post->post_vars['post_tags'])) {
+		$tags_array = explode(',', $post->post_vars['post_tags']);
+		if($tags_array) {
+			foreach($tags_array as $tag) {
+				$sql = "INSERT INTO " . table_tags . " SET tags_post_id = %d, tags_date = CURRENT_TIMESTAMP, tags_word = %s, tags_updateby = %d";
+				$db->query($db->prepare($sql, $post->post_id, urlencode(str_replace(' ', '_', trim($tag))), $current_user->id));
 			}
 		}
 	}
@@ -168,30 +201,29 @@ function tg_submit_class_post_add_post() {
  
 
 /* ******************************************************************** 
- *  Function: tg_submit_form_2_assign_from_cage
+ *  Function: tg_submit_form_2_assign
  *  Parameters: None
  *  Purpose: Sets $tags_check to the value submitted through the form
  *  Notes: ---
  ********************************************************************** */
  
-function tg_submit_form_2_assign_from_cage() {
-	global $cage, $tags_check;
-	$tags_check = $cage->post->noTags('post_tags');
+function tg_submit_form_2_assign() {
+	global $cage, $tags_check, $post;
+	
+	if($cage->post->getAlpha('submit2') == 'true') {
+		// Submitted this form...
+		$tags_check = $cage->post->noTags('post_tags');	
+		
+	} elseif($cage->post->getAlpha('submit3') == 'edit') {
+		// Come back from step 3 to make changes...
+		$tags_check = $post->post_vars['post_tags'];
+		
+	} else {
+		// First time here...
+		$tags_check = "";
+	}
+
 }
-
-
-/* ******************************************************************** 
- *  Function: tg_submit_form_2_assign_blank
- *  Parameters: None
- *  Purpose: Sets $tags_check to blank
- *  Notes: ---
- ********************************************************************** */
- 
-function tg_submit_form_2_assign_blank() {
-	global $tags_check;
-	$tags_check = "";
-}
-
 
 /* ******************************************************************** 
  *  Function: tg_submit_form_2_fields
@@ -253,7 +285,7 @@ function tg_submit_form_2_check_for_errors() {
  
 function tg_submit_form_2_process_submission() {
 	global $cage, $post;
-	$post->post_vars['post_tags'] = $cage->post->getMixedString2('post_tags');
+	$post->post_vars['post_tags'] = $cage->post->noTags('post_tags');
 }
 
 
@@ -275,10 +307,10 @@ function tg_submit_posts_list_filter() {
 	global $post, $cage, $filter;
 	
 	// friendly URLs: FALSE
-	$tag = $cage->get->getMixedString2('tag'); 
+	$tag = $cage->get->noTags('tag'); 
 	
 	// friendly URLs: TRUE
-	if(!$tag) { $tag = $cage->get->getMixedString2('pos2'); } 
+	if(!$tag) { $tag = $cage->get->noTags('pos2'); } 
 	
 	if($tag) {
 		$filter = array('post_tags LIKE %s' => '%' . $tag . '%'); 

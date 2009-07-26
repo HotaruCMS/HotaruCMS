@@ -31,7 +31,7 @@ class Post {
 	var $post_title = '';
 	var $post_content = '';
 	var $post_content_length = 20;	// min characters for content
-	var $post_status = 'processing';
+	var $post_status = 'unsaved';
 	var $post_author = 0;
 	var $post_url = '';
 	var $post_date = '';
@@ -72,11 +72,12 @@ class Post {
 	/* ******************************************************************** 
 	 *  Function: read_post
 	 *  Parameters: Optional row from the posts table in the database
+	 *              "raw" determines whether to use htmlentities and striplslashes or not
 	 *  Purpose: Get all the settings for the current post
 	 *  Notes: ---
 	 ********************************************************************** */	
 	 
-	function read_post($post_id = 0) {
+	function read_post($post_id = 0, $raw = false) {
 		global $plugin, $post_row;
 		
 		//author
@@ -96,10 +97,10 @@ class Post {
 		
 		if($post_id != 0) {
 			$post_row = $this->get_post($post_id);
+			$this->post_title = stripslashes(urldecode($post_row->post_title));
+			$this->post_content = stripslashes(urldecode($post_row->post_content));
 			$this->post_id = $post_row->post_id;
-			$this->post_orig_url = urldecode($post_row->post_orig_url);
-			$this->post_title = htmlentities(stripslashes(urldecode($post_row->post_title)));
-			$this->post_content = htmlentities(stripslashes(urldecode($post_row->post_content)));
+			$this->post_orig_url = urldecode($post_row->post_orig_url);			
 			$this->post_status = $post_row->post_status;
 			$this->post_author = $post_row->post_author;
 			$this->post_url = urldecode($post_row->post_url);
@@ -126,9 +127,48 @@ class Post {
 		$db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), $this->post_status, $this->post_author, $current_user->id));
 		
 		$last_insert_id = $db->get_var($db->prepare("SELECT LAST_INSERT_ID()"));
+		
+		$this->post_id = $last_insert_id;
 				
 		$plugin->check_actions('submit_class_post_add_post');
 		
+		return true;
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: update_post
+	 *  Parameters: None
+	 *  Purpose: Updates a post in the database
+	 *  Notes: ---
+	 ********************************************************************** */	
+	 
+	function update_post() {
+		global $db, $plugin, $current_user;
+		$sql = "UPDATE " . table_posts . " SET post_orig_url = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_date = CURRENT_TIMESTAMP, post_updateby = %d WHERE post_id = %d";
+		
+		$db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), $this->post_status, $this->post_author, $current_user->id, $this->post_id));
+		
+		$plugin->check_actions('submit_class_post_update_post');
+		
+		return true;
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: change_status
+	 *  Parameters: None
+	 *  Purpose: Updates a post's status
+	 *  Notes: ---
+	 ********************************************************************** */	
+	 
+	function change_status($status = "processing") {
+		global $db;
+		
+		$this->post_status = $status;
+		
+		$sql = "UPDATE " . table_posts . " SET (post_status = %s WHERE post_id = %d";
+		$db->query($db->prepare($sql, $this->post_status, $this->post_id));		
 		return true;
 	}
 
@@ -199,15 +239,15 @@ class Post {
 	 *  Function: title_exists
 	 *  Parameters: title
 	 *  Purpose: Checks for existence of a title
-	 *  Notes: ---
+	 *  Notes: Returns the id of the post with the specified title
 	 ********************************************************************** */	
 	 	
 	function title_exists($title = '') {
 		global $db;
 		$title = trim($title);
-		$sql = "SELECT count(post_id) FROM " . table_posts . " WHERE post_title = %s";
-		$posts = $db->get_var($db->prepare($sql, urlencode($title)));
-		if($posts > 0) { return $posts; } else { return false; }
+		$sql = "SELECT post_id FROM " . table_posts . " WHERE post_title = %s";
+		$post_id = $db->get_var($db->prepare($sql, urlencode($title)));
+		if($post_id) { return $post_id; } else { return false; }
 	}
 	
 	
