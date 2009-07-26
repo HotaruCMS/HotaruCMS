@@ -6,7 +6,7 @@
  * folder: categories
  * prefix: cts
  * requires: submit 0.1, category_manager 0.1
- * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_form_2_assign_from_cage, submit_form_2_assign_blank, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter, submit_show_post_author_date, submit_show_post_extras, submit_is_page_main, sidebar_top
+ * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_class_post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter, submit_show_post_author_date, submit_show_post_extras, submit_is_page_main, sidebar_top
  *
  *  License:
  *
@@ -189,6 +189,21 @@ function cts_submit_class_post_add_post() {
 }
 
 
+/* ******************************************************************** 
+ *  Function: cts_submit_class_post_update_post
+ *  Parameters: None
+ *  Purpose: Updates category in the posts table
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function cts_submit_class_post_update_post() {
+	global $post, $db;
+	
+	$sql = "UPDATE " . table_posts . " SET post_category = %d WHERE post_id = %d";
+	$db->query($db->prepare($sql, $post->post_vars['post_category'], $post->post_id));
+}
+
+
  /* ******************************************************************** 
  * ********************************************************************* 
  * ********************* FUNCTIONS FOR SUBMIT FORM ********************* 
@@ -203,22 +218,22 @@ function cts_submit_class_post_add_post() {
  *  Notes: ---
  ********************************************************************** */
  
-function cts_submit_form_2_assign_from_cage() {
-	global $cage, $category_check;
-	$category_check = $cage->post->getInt('post_category');
-}
+function cts_submit_form_2_assign() {
+	global $cage, $category_check, $post;
+	
+	if($cage->post->getAlpha('submit2') == 'true') {
+		// Submitted this form...
+		$category_check = $cage->post->getInt('post_category');
+		
+	} elseif($cage->post->getAlpha('submit3') == 'edit') {
+		// Come back from step 3 to make changes...
+		$category_check = $post->post_vars['post_category'];
+		
+	} else {
+		// First time here...
+		$category_check = 1;
+	}
 
-
-/* ******************************************************************** 
- *  Function: cts_submit_form_2_assign_blank
- *  Parameters: None
- *  Purpose: Sets $category_check to default ('all') - "Select a category"
- *  Notes: ---
- ********************************************************************** */
- 
-function cts_submit_form_2_assign_blank() {
-	global $category_check;
-	$category_check = 1;	// category_id for "all"
 }
 
 
@@ -230,7 +245,7 @@ function cts_submit_form_2_assign_blank() {
  ********************************************************************** */
  
 function cts_submit_form_2_fields() {
-	global $db, $lang, $post, $category_check;;
+	global $db, $lang, $post, $category_check;
 
 	if($post->post_vars['use_categories']) { 
 		echo "<tr>\n";
@@ -351,7 +366,7 @@ function cts_submit_posts_list_filter() {
 	global $post, $cage, $filter;
 	
 	if(friendly_urls == "true") {
-		$category = $cage->get->getMixedString2('category'); 
+		$category = $cage->get->noTags('category'); 
 		if($category) { 
 			$filter = array('post_category = %d' => get_cat_id($category)); 
 			return true;	
