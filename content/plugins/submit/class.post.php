@@ -172,10 +172,10 @@ class Post {
 	 
 	function change_status($status = "processing") {
 		global $db;
-		
+			
 		$this->post_status = $status;
-		
-		$sql = "UPDATE " . table_posts . " SET (post_status = %s WHERE post_id = %d";
+			
+		$sql = "UPDATE " . table_posts . " SET post_status = %s WHERE post_id = %d";
 		$db->query($db->prepare($sql, $this->post_status, $this->post_id));		
 		return true;
 	}
