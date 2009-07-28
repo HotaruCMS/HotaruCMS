@@ -6,7 +6,7 @@
  * folder: tags
  * prefix: tg
  * requires: submit 0.1
- * hooks: install_plugin, submit_hotaru_header_1, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_class_post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_show_post_extra_fields, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter
+ * hooks: install_plugin, header_include, submit_hotaru_header_1, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_class_post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_show_post_extra_fields, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter
  *
  * Requires the Submit plugin.
  *
@@ -99,6 +99,18 @@ function tg_submit_hotaru_header_1() {
 	
 }
 
+
+/* ******************************************************************** 
+ *  Function: tg_header_include
+ *  Parameters: None
+ *  Purpose: Includes css and javascript for fetching remote url content.
+ *  Notes: Also adds javascript to preview page to prevent a user clicking away
+ ********************************************************************** */
+ 
+function tg_header_include() {
+	global $plugin;
+	$plugin->include_css_file('tags');
+}
 
 /* ******************************************************************** 
  *  Function: tg_submit_class_post_read_post_1
@@ -332,11 +344,11 @@ function tg_submit_show_post_extra_fields() {
 	global $post, $lang;
 	
 	if($post->post_vars['use_tags'] && $post->post_vars['post_tags']) { 
-		echo "<div class='show_post_tags'>";
 		$tags = explode(',', $post->post_vars['post_tags']);
 		
 		echo $lang["submit_show_tags"] . " ";
 		
+		echo "<div class='show_post_tags'>";
 		foreach($tags as $tag) {
 			echo "<a href='" . url(array('tag' => str_replace(' ', '_', trim($tag)))) . "'>" . trim($tag) . "</a>&nbsp;";
 		}
