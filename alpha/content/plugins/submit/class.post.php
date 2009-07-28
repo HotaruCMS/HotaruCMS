@@ -80,7 +80,7 @@ class Post {
 	 *  Notes: ---
 	 ********************************************************************** */	
 	 
-	function read_post($post_id = 0, $raw = false) {
+	function read_post($post_id = 0) {
 		global $plugin, $post_row;
 		
 		//author
@@ -311,6 +311,149 @@ class Post {
 		}
 		echo $feed->serve();
 	}
+	
+	
+	
+	/* ******************************************************************** 
+	 *  Function: send_trackback
+	 *  Parameters: 
+	 *  Purpose: Prepares and calls functions to send a trackback
+	 *  Notes: ---
+	 ********************************************************************** */
+	 
+	function send_trackback() {
+		global $lang, $post;
+			
+		// Scan content for trackback urls
+		$tb_array = array();
+		
+		$trackback = $this->detect_trackback();
+		
+		// Clean up the title and description...
+		$title = htmlspecialchars(strip_tags($post->post_title));
+		$title = (strlen($post->post_title) > 150) ? substr($post->post_title, 0, 150) . '...' : $post->post_title;
+		$excerpt = strip_tags($post->post_content);
+		$excerpt = (strlen($excerpt) > 200) ? substr($excerpt, 0, 200) . '...' : $excerpt;
+
+		if($this->ping($trackback, url(array('page'=>$post->post_id)), $title, $excerpt)) {
+			echo "Trackback sent successfully...";
+		} else {
+			echo "Error sending trackback....";
+		}
+	}
+	
+	
+	
+	/* ******************************************************************** 
+	 *  Function: detect_trackback
+	 *  Parameters: None
+	 *  Purpose: Scans content of source url for a trackback url
+	 *  Notes: Adapted from Pligg.com and SocialWebCMS.com
+	 ********************************************************************** */
+	 
+	function detect_trackback() {
+		global $post;
+		
+		include_once(includes . 'SWCMS/class.httprequest.php');
+		
+		// Fetch the content of the original url...
+		$url = $post->post_orig_url;
+		if($url != 'http://' && $url != ''){
+		$r = new HTTPRequest($url);
+		$content = $r->DownloadToString();
+		} else {
+			$content = '';
+		}
+		
+		if (preg_match('/trackback:ping="([^"]+)"/i', $content, $matches) ||
+			preg_match('/trackback:ping +rdf:resource="([^>]+)"/i', $content, $matches) ||
+			preg_match('/<trackback:ping>([^<>]+)/i', $content, $matches)) {
+				$trackback = trim($matches[1]);
+				
+		} elseif (preg_match('/<a[^>]+rel="trackback"[^>]*>/i', $content, $matches)) {
+			if (preg_match('/href="([^"]+)"/i', $matches[0], $matches2)) {
+				$trackback = trim($matches2[1]);
+			}
+			
+		} elseif (preg_match('/<a[^>]+href=[^>]+>trackback<\/a>/i', $content, $matches)) {
+			if (preg_match('/href="([^"]+)"/i', $matches[0], $matches2)) {
+				$trackback = trim($matches2[1]);
+			}
+		} elseif (preg_match('/http:([^ ]+)trackback.php([^<|^ ]+)/i', $content, $matches)) {
+				$trackback = trim($matches[1]);
+				
+		} elseif (preg_match('/trackback:ping="([^"]+)"/', $content, $matches)) {
+				$trackback = trim($matches[1]);
+		}
+				
+		return $trackback;
+	}
+	
+	
+
+	/* ******************************************************************** 
+	 *  Function: ping
+	 *  Parameters: trackback url, Hotaru post url, post title, post excerpt
+	 *  Purpose: Sends a trackback to the source url
+	 *  Notes: From PHP Trackback: http://phptrackback.sourceforge.net/docs/
+	 ********************************************************************** */
+	 
+   	function ping($trackback, $url, $title = "", $excerpt = "") {
+   		global $lang;
+   		
+	        $response = "";
+	        $reason = ""; 
+	        
+	        // Set default values
+	        if (empty($title)) {
+	            $title = site_name;
+	        } 
+	        if (empty($excerpt)) {
+	            // If no excerpt show "This article has been featured on Site Name".
+	            $excerpt = $lang['submit_trackback_excerpt'] . " " . site_name;
+	        } 
+	        // Parse the target
+	        $target = parse_url($trackback);
+	
+	        if ((isset($target["query"])) && ($target["query"] != "")) {
+	            $target["query"] = "?" . $target["query"];
+	        } else {
+	            $target["query"] = "";
+	        } 
+	
+	        if ((isset($target["port"]) && !is_numeric($target["port"])) || (!isset($target["port"]))) {
+	            $target["port"] = 80;
+	        } 
+	        // Open the socket
+	        $tb_sock = fsockopen($target["host"], $target["port"]); 
+	        // Something didn't work out, return
+	        if (!is_resource($tb_sock)) {
+	            return '$post->ping: Tring to send a trackback but can\'t connect to: ' . $tb . '.';
+	            exit;
+	        } 
+	        
+	        // Put together the things we want to send
+	        $tb_send = "url=" . rawurlencode($url) . "&title=" . rawurlencode($title) . "&blog_name=" . rawurlencode(site_name) . "&excerpt=" . rawurlencode($excerpt); 
+	         
+	        // Send the trackback
+	        fputs($tb_sock, "POST " . $target["path"] . $target["query"] . " HTTP/1.1\r\n");
+	        fputs($tb_sock, "Host: " . $target["host"] . "\r\n");
+	        fputs($tb_sock, "Content-type: application/x-www-form-urlencoded\r\n");
+	        fputs($tb_sock, "Content-length: " . strlen($tb_send) . "\r\n");
+	        fputs($tb_sock, "Connection: close\r\n\r\n");
+	        fputs($tb_sock, $tb_send); 
+	        // Gather result
+	        while (!feof($tb_sock)) {
+	            $response .= fgets($tb_sock, 128);
+	        } 
+	
+	        // Close socket
+	        fclose($tb_sock); 
+	        // Did the trackback ping work
+	        strpos($response, '<error>0</error>') ? $return = true : $return = false;
+	        // send result
+	        return $return;
+	} 
 }
 
 ?>
