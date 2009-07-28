@@ -30,7 +30,9 @@ class Post {
 	var $post_orig_url = '';
 	var $post_title = '';
 	var $post_content = '';
-	var $post_content_length = 20;	// min characters for content
+	var $post_content_length = 50;	// default min characters for content
+	var $post_summary = '';
+	var $post_summary_length = 200;	// default max characters for summary
 	var $post_status = 'unsaved';
 	var $post_author = 0;
 	var $post_url = '';
@@ -39,6 +41,7 @@ class Post {
 	var $use_author = true;
 	var $use_date = true;
 	var $use_content = true;
+	var $use_summary = true;
 
 	var $post_vars = array();
 
@@ -92,6 +95,11 @@ class Post {
 		if($plugin->plugin_settings('submit', 'submit_content') == 'checked') { $this->use_content = true; } else { $this->use_content = false; }
 		$content_length =  $plugin->plugin_settings('submit', 'submit_content_length');
 		if(!empty($content_length)) { $this->post_content_length = $content_length; }
+		
+		//summary
+		if($plugin->plugin_settings('submit', 'submit_summary') == 'checked') { $this->use_summary = true; } else { $this->use_summary = false; }
+		$summary_length =  $plugin->plugin_settings('submit', 'submit_summary_length');
+		if(!empty($summary_length)) { $this->post_summary_length = $summary_length; }
 				
 		$plugin->check_actions('submit_class_post_read_post_1');
 		

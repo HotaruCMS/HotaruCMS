@@ -45,14 +45,18 @@ function sub_settings() {
 	$date = $plugin->plugin_settings('submit', 'submit_date');
 	$content = $plugin->plugin_settings('submit', 'submit_content');
 	$content_length = $plugin->plugin_settings('submit', 'submit_content_length');
+	$summary = $plugin->plugin_settings('submit', 'submit_summary');
+	$summary_length = $plugin->plugin_settings('submit', 'submit_summary_length');
 
 	$plugin->check_actions('submit_settings_get_values');
 	
 	//...otherwise set to blank:
-	if(!$content) { $content = ''; }
 	if(!$author) { $author = ''; }
 	if(!$date) { $date = ''; }
+	if(!$content) { $content = ''; }
 	if(!$content_length) { $content_length = ''; }
+	if(!$summary) { $summary = ''; }
+	if(!$summary_length) { $summary_length = ''; }
 	
 	echo "<form name='submit_settings_form' action='" . baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=submit' method='post'>\n";
 	
@@ -63,7 +67,12 @@ function sub_settings() {
 	echo "<input type='checkbox' name='date' value='date' " . $date . ">&nbsp;&nbsp;" . $lang["submit_settings_date"] . "<br />\n";
 	echo "<input type='checkbox' name='content' value='content' " . $content . ">&nbsp;&nbsp;" . $lang["submit_settings_content"];
 	echo "&nbsp;&nbsp;&nbsp;&nbsp;";
-	echo $lang["submit_settings_content_length"] . ": <input type='text' size=5 name='content_length' value='" . $content_length . "' /><br />\n";
+	echo $lang["submit_settings_content_min_length"] . ": <input type='text' size=5 name='content_length' value='" . $content_length . "' /><br />\n";
+	echo "<input type='checkbox' name='summary' value='summary' " . $summary . ">&nbsp;&nbsp;" . $lang["submit_settings_summary"];
+	echo "&nbsp;&nbsp;&nbsp;&nbsp;";
+	echo $lang["submit_settings_summary_max_length"] . ": <input type='text' size=5 name='summary_length' value='" . $summary_length . "' />\n";
+	echo "&nbsp;&nbsp;&nbsp;&nbsp;";
+	echo $lang["submit_settings_summary_instruct"] . "<br />\n";
 
 	$plugin->check_actions('submit_settings_form');
 			
@@ -119,12 +128,31 @@ function sub_save_settings() {
 		$content_length = $post->post_content_length; 
 	} 
 	
+	// Summary
+	if($cage->post->keyExists('summary')) { 
+		$summary = 'checked'; 
+		$post->use_summary = true;
+	} else { 
+		$summary = ''; 
+		$post->use_summary = false;
+	}
+	
+	// Summary length
+	if($cage->post->keyExists('summary_length')) { 
+		$summary_length = $cage->post->getInt('summary_length'); 
+		if(empty($summary_length)) { $summary_length = $post->post_summary_length; }
+	} else { 
+		$summary_length = $post->post_summary_length; 
+	} 
+	
 	$plugin->check_actions('submit_save_settings');
 	
 	$plugin->plugin_settings_update('submit', 'submit_author', $author);	
 	$plugin->plugin_settings_update('submit', 'submit_date', $date);	
 	$plugin->plugin_settings_update('submit', 'submit_content', $content);	
 	$plugin->plugin_settings_update('submit', 'submit_content_length', $content_length);	
+	$plugin->plugin_settings_update('submit', 'submit_summary', $summary);	
+	$plugin->plugin_settings_update('submit', 'submit_summary_length', $summary_length);
 	
 	$hotaru->message = $lang["submit_settings_saved"];
 	$hotaru->message_type = "green";
