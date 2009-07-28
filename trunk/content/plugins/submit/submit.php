@@ -6,7 +6,7 @@
  * version: 0.1
  * folder: submit
  * prefix: sub
- * hooks: hotaru_header, header_include, install_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, submit_show_post_extras
+ * hooks: hotaru_header, header_include, install_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, submit_show_post_extra_fields
  *
  *  License:
  *
@@ -82,6 +82,8 @@ function sub_install_plugin() {
 	$plugin->plugin_settings_update('submit', 'submit_date', 'checked');
 	$plugin->plugin_settings_update('submit', 'submit_content', 'checked');	
 	$plugin->plugin_settings_update('submit', 'submit_content_length', 50);	
+	$plugin->plugin_settings_update('submit', 'submit_summary', 'checked');	
+	$plugin->plugin_settings_update('submit', 'submit_summary_length', 200);	
 	
 	// Include language file. Also included in hotaru_header, but needed here so 
 	// that the link in the Admin sidebar shows immediately after installation.
@@ -370,7 +372,7 @@ function sub_admin_plugin_settings() {
  ********************************************************************** */
  
 function sub_fetch_title($url) {
-	global $cage;
+	global $cage, $lang;
 	
 	require_once(includes . 'SWCMS/class.httprequest.php');
 	
@@ -397,7 +399,7 @@ function sub_fetch_title($url) {
 	if(preg_match("'<title>([^<]*?)</title>'", $string, $matches)) {
 		$title = trim($matches[1]);
 	} else {
-		$title = "No title found...";
+		$title = $lang["submit_form_not_found"];
 	}
 	
 	return $title;
@@ -405,18 +407,16 @@ function sub_fetch_title($url) {
 
 
  /* ******************************************************************** 
- *  Function: sub_submit_show_post_extras
+ *  Function: sub_submit_show_post_extra_fields
  *  Parameters: None
  *  Purpose: Adds a permalink
  *  Notes: ---
  ********************************************************************** */
  
-function sub_submit_show_post_extras() {
-	global $post, $plugin, $cage;
+function sub_submit_show_post_extra_fields() {
+	global $post, $plugin, $cage, $lang;
 	
-	if(!$plugin->plugin_active('categories')) {
-		echo "<a href='" . url(array('page'=>$post->post_id)) . "'>Permalink</a>";
-	}
+	echo "<a href='" . url(array('page'=>$post->post_id)) . "'>" . $lang['submit_post_read_more'] . "</a> &nbsp;&nbsp;";
 }
 
 

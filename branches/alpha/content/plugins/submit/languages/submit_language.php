@@ -32,6 +32,7 @@ $lang["submit_form_url"] = "Source URL:";
 $lang["submit_form_title"] = "Title:";
 $lang["submit_form_content"] = "Description:";
 $lang["submit_form_instructions_1"] = "Enter a url to submit:";
+$lang["submit_form_not_found"] = "No title found";
 $lang["submit_form_instructions_2"] = "Complete the fields below.";
 $lang["submit_form_instructions_3"] = "Your submission will look like this. Use the buttons below to modify or confirm it.";
 $lang["submit_form_url_not_present_error"] = "No url was provided.";
@@ -53,10 +54,16 @@ $lang["submit_settings_title"] = "Title";
 $lang["submit_settings_author"] = "Author";
 $lang["submit_settings_date"] = "Date";
 $lang["submit_settings_content"] = "Description";
-$lang["submit_settings_content_length"] = "Minimum characters";
+$lang["submit_settings_content_min_length"] = "Minimum characters";
+$lang["submit_settings_summary"] = "Summary";
+$lang["submit_settings_summary_max_length"] = "Maximum characters";
+$lang["submit_settings_summary_instruct"] = "(Description truncated on list pages)";
 $lang["submit_settings_tags"] = "Tags";
 $lang["submit_settings_max_tags"] = "Maximum characters";
 $lang["submit_settings_saved"] = "Settings Saved.";
+
+/* Submit Show Post */
+$lang["submit_post_read_more"] = "Read More";
 
 /* Submit RSS Feed */
 $lang["submit_rss_latest_from"] = "Latest from";

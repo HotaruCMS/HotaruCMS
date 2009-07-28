@@ -37,10 +37,5 @@
 	margin: 0.4em 0 0.4em 0;
 }
 
-.show_post_tags {
-	margin-bottom: 0.4em;
-	font-size: 0.825em;
-}
-
 #submit_edit_confirm { width: 100%; text-align: center; }
 #submit_edit_confirm input { width: 10.0em; }

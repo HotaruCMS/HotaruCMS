@@ -59,10 +59,19 @@ if($stories) {
 	<?php } ?>
 		
 	<?php if($post->use_content) { ?>
-		<div class="show_post_content"><?php echo $post->post_content; ?></div>
+		<div class="show_post_content">
+			<?php if($post->use_summary) { ?>
+				<?php echo substr(strip_tags($post->post_content), 0, $post->post_summary_length) ?>
+				<?php if(strlen(strip_tags($post->post_content)) >= $post->post_summary_length) { echo "..."; } ?>
+			<?php } else { ?>
+				<?php echo $post->post_content; ?>
+			<?php } ?>		
+		</div>
 	<?php } ?>
 	
-	<?php $plugin->check_actions('submit_show_post_extra_fields'); ?>
+	<div class="show_post_extra_fields">
+		<?php $plugin->check_actions('submit_show_post_extra_fields'); ?>
+	</div>
 		
 	<div class="show_post_extras">
 		<?php $plugin->check_actions('submit_show_post_extras'); ?>
