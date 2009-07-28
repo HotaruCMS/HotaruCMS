@@ -220,13 +220,15 @@ function sub_theme_index_replace() {
 		 	if($cage->post->getAlpha('submit3') == 'edit') {		 	
 	
 		 		$post_id = $cage->post->getInt('post_id'); 
-				$post->read_post($post_id, $raw = true);
+				$post->read_post($post_id);
 			}
 					 	
 		 	if($cage->post->getAlpha('submit3') == 'confirm') {		 	
 	
-		 		$post->post_id = $cage->post->getInt('post_id');
+		 		$post_id = $cage->post->getInt('post_id');
+		 		$post->read_post($post_id);
 				$post->change_status('new');
+				$post->send_trackback();
 				header("Location: " . baseurl);	// Go home  
 				die();
 			}
@@ -546,11 +548,7 @@ function sub_process_submission($post_orig_url) {
 			$post->add_post();	// Adds a new post
 		}
 	
-	} elseif($cage->post->getAlpha('submit3') == 'confirm') {	
-	
-		$post->change_status('new');
-	}
-
+	} 
 }
 
 	

@@ -45,7 +45,11 @@ $lang["submit_form_submit_button"] = "Submit";
 $lang['submit_form_submit_edit_button'] = "Edit";
 $lang['submit_form_submit_confirm_button'] = "Confirm";
 $lang['submit_form_submit_next_button'] = "Next";
-$lang['submit_form_submit_accidental_click'] = "You have not hit the Confirm button to submit your story yet!";
+$lang['submit_form_submit_accidental_click'] = "Wait, you have not submitted your story yet!";
+
+/* Submit Trackback */
+$lang['submit_trackback_excerpt'] = "This article has been featured on";
+
 
 /* Submit Settings */
 $lang["submit_settings_header"] = "Submit Configuration";

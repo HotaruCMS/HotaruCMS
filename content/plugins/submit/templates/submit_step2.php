@@ -85,6 +85,6 @@ $plugin->check_actions('submit_form_2_assign');
 	<input type='hidden' name='submit2' value='true' />
 	
 	<tr><td colspan=3>&nbsp;</td></tr>
-	<tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' name='submit' value='<?php echo $lang['submit_form_submit_next_button'] ?>' /></td></tr>	
+	<tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' onclick="javascript:safeExit=true;" name='submit' value='<?php echo $lang['submit_form_submit_next_button'] ?>' /></td></tr>	
 	</table>
 	</form>
