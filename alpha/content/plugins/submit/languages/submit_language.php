@@ -44,6 +44,7 @@ $lang["submit_form_content_too_short_error"] = "Sorry, that description is too s
 $lang["submit_form_submit_button"] = "Submit";
 $lang['submit_form_submit_edit_button'] = "Edit";
 $lang['submit_form_submit_confirm_button'] = "Confirm";
+$lang['submit_form_submit_next_button'] = "Next";
 $lang['submit_form_submit_accidental_click'] = "You have not hit the Confirm button to submit your story yet!";
 
 /* Submit Settings */
