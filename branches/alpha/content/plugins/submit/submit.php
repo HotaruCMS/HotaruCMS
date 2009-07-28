@@ -225,7 +225,7 @@ function sub_theme_index_replace() {
 					 	
 		 	if($cage->post->getAlpha('submit3') == 'confirm') {		 	
 	
-		 		$post_id = $cage->post->getInt('post_id');
+		 		$post->post_id = $cage->post->getInt('post_id');
 				$post->change_status('new');
 				header("Location: " . baseurl);	// Go home  
 				die();
