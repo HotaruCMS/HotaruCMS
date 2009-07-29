@@ -41,6 +41,7 @@ function sub_settings() {
 	echo "<h1>" . $lang["submit_settings_header"] . "</h1>\n";
 	
 	// Get settings from database if they exist...
+	$enabled = $plugin->plugin_settings('submit', 'submit_enabled');
 	$author = $plugin->plugin_settings('submit', 'submit_author');
 	$date = $plugin->plugin_settings('submit', 'submit_date');
 	$content = $plugin->plugin_settings('submit', 'submit_content');
@@ -51,6 +52,7 @@ function sub_settings() {
 	$plugin->check_actions('submit_settings_get_values');
 	
 	//...otherwise set to blank:
+	if(!$enabled) { $enabled = ''; }
 	if(!$author) { $author = ''; }
 	if(!$date) { $date = ''; }
 	if(!$content) { $content = ''; }
@@ -61,7 +63,8 @@ function sub_settings() {
 	echo "<form name='submit_settings_form' action='" . baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=submit' method='post'>\n";
 	
 	echo "<p>" . $lang["submit_settings_instructions"] . "</p><br />";
-		
+	
+	echo "<input type='checkbox' name='enabled' value='enabled' " . $enabled . " >&nbsp;&nbsp;" . $lang["submit_settings_enable"] . "<br />\n";	
 	echo "<input type='checkbox' name='title' value='title' checked disabled>&nbsp;&nbsp;" . $lang["submit_settings_title"] . "<br />\n";
 	echo "<input type='checkbox' name='author' value='author' " . $author . ">&nbsp;&nbsp;" . $lang["submit_settings_author"] . "<br />\n";
 	echo "<input type='checkbox' name='date' value='date' " . $date . ">&nbsp;&nbsp;" . $lang["submit_settings_date"] . "<br />\n";
@@ -93,6 +96,15 @@ function sub_settings() {
 function sub_save_settings() {
 	global $cage, $hotaru, $plugin, $post, $lang;
 
+	// Enabled
+	if($cage->post->keyExists('enabled')) { 
+		$enabled = 'checked'; 
+		$post->use_submission = true;
+	} else { 
+		$enabled = ''; 
+		$post->use_submission = false;
+	}
+	
 	// Author
 	if($cage->post->keyExists('author')) { 
 		$author = 'checked'; 
@@ -147,6 +159,7 @@ function sub_save_settings() {
 	
 	$plugin->check_actions('submit_save_settings');
 	
+	$plugin->plugin_settings_update('submit', 'submit_enabled', $enabled);
 	$plugin->plugin_settings_update('submit', 'submit_author', $author);	
 	$plugin->plugin_settings_update('submit', 'submit_date', $date);	
 	$plugin->plugin_settings_update('submit', 'submit_content', $content);	

@@ -47,6 +47,9 @@ $lang['submit_form_submit_confirm_button'] = "Confirm";
 $lang['submit_form_submit_next_button'] = "Next";
 $lang['submit_form_submit_accidental_click'] = "Wait, you have not submitted your story yet!";
 
+/* Submission Disabled */
+$lang['submit_disabled'] = "Sorry, story submission is disabled at this time.";
+
 /* Submit Trackback */
 $lang['submit_trackback_excerpt'] = "This article has been featured on";
 
@@ -55,6 +58,7 @@ $lang['submit_trackback_excerpt'] = "This article has been featured on";
 $lang["submit_settings_header"] = "Submit Configuration";
 $lang["submit_settings_instructions"] = "Check the components you want submissions to have:";
 $lang["submit_settings_save"] = "Save";
+$lang["submit_settings_enable"] = "Enable story submission";
 $lang["submit_settings_title"] = "Title";
 $lang["submit_settings_author"] = "Author";
 $lang["submit_settings_date"] = "Date";

@@ -38,6 +38,7 @@ class Post {
 	var $post_url = '';
 	var $post_date = '';
 			
+	var $use_submission = true;
 	var $use_author = true;
 	var $use_date = true;
 	var $use_content = true;
@@ -82,6 +83,10 @@ class Post {
 	 
 	function read_post($post_id = 0) {
 		global $plugin, $post_row;
+		
+		//enabled
+		$this->post_author = $plugin->plugin_settings('submit', 'submit_enabled');
+		if($plugin->plugin_settings('submit', 'submit_enabled') == 'checked') { $this->use_submission = true; } else { $this->use_submission = false; }
 		
 		//author
 		$this->post_author = $plugin->plugin_settings('submit', 'submit_author');
