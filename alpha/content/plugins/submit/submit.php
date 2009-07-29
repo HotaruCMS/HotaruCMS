@@ -78,6 +78,7 @@ function sub_install_plugin() {
 	}
 	
 	// Default settings (Note: we can't use $post because it hasn't been filled yet.)
+	$plugin->plugin_settings_update('submit', 'submit_enabled', 'checked');	
 	$plugin->plugin_settings_update('submit', 'submit_author', 'checked');	
 	$plugin->plugin_settings_update('submit', 'submit_date', 'checked');
 	$plugin->plugin_settings_update('submit', 'submit_content', 'checked');	
@@ -200,7 +201,7 @@ function sub_header_include() {
 function sub_theme_index_replace() {
 	global $hotaru, $cage, $post, $plugin, $current_user;
 	
-	if($hotaru->is_page('submit2')) {
+	if($hotaru->is_page('submit2') && $post->use_submission) {
 	 	
 		if($current_user->logged_in) {
 		 	
@@ -213,7 +214,7 @@ function sub_theme_index_replace() {
 			}
 		}
 		
-	} elseif($hotaru->is_page('submit3')) {
+	} elseif($hotaru->is_page('submit3') && $post->use_submission) {
 	 	
 		if($current_user->logged_in) {
 
@@ -253,12 +254,17 @@ function sub_theme_index_replace() {
  ********************************************************************** */
  
 function sub_theme_index_main() {
-	global $hotaru, $cage, $post, $plugin, $current_user;
+	global $hotaru, $cage, $post, $plugin, $current_user, $lang;
 	global $post_orig_url, $post_orig_title;
-		
-	 if($hotaru->is_page('submit')) {
+	
+	if($hotaru->is_page('submit')) {
 	  	
 	  	if($current_user->logged_in) {
+	  		 		
+	  		if(!$post->use_submission) {
+				echo $lang['submit_disabled'];	
+				return true;
+			}
 	  		
 	  		if($cage->post->getAlpha('submit1') == 'true') {
 				if(!sub_check_for_errors_1()) { 
@@ -286,6 +292,11 @@ function sub_theme_index_main() {
 	} elseif($hotaru->is_page('submit2')) {
 	 	
 		if($current_user->logged_in) {
+		
+			if(!$post->use_submission) {
+				echo $lang['submit_disabled'];	
+				return true;
+			}
 		 	
 		 	if($cage->post->getAlpha('submit2') == 'true') {
 		 		$post_orig_url = $cage->post->testUri('post_orig_url'); 
@@ -305,6 +316,11 @@ function sub_theme_index_main() {
 	} elseif($hotaru->is_page('submit3')) {
 	 	
 		if($current_user->logged_in) {
+		
+			if(!$post->use_submission) {
+				echo $lang['submit_disabled'];	
+				return true;
+			}
 		 	
 		 	if($cage->post->getAlpha('submit3') == 'edit') {		 	
 			 	$hotaru->display_template('submit_step2', 'submit');
@@ -335,7 +351,7 @@ function sub_theme_index_main() {
 	} else {		
 		return false;
 	}
-
+	
 	return false;
 }
 
