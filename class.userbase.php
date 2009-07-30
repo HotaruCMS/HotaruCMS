@@ -31,7 +31,36 @@ class UserBase {
 	var $role = 'registered_user';
 	var $password = 'password';
 	var $email = '';
+	var $email_valid = 0;
 	var $logged_in = false;
+	
+	var $userbase_vars = array();
+	
+	
+	/* ******************************************************************** 
+	 *  Functions: PHP __set Magic Method
+	 *  Parameters: The name of the member variable and the value to set it to.
+	 *  Purpose: Plugins use this to set additonal member variables
+	 *  Notes: ---
+	 ********************************************************************** */
+	 			
+	function __set($name, $value) {
+        	$this->userbase_vars[$name] = $value;
+    	}
+    	
+    	
+	/* ******************************************************************** 
+	 *  Functions: PHP __get Magic Method
+	 *  Parameters: The name of the member variable to retrieve.
+	 *  Purpose: Plugins use this to read values of additonal member variables
+	 *  Notes: ---
+	 ********************************************************************** */
+    	
+	function __get($name) {
+		if (array_key_exists($name, $this->userbase_vars)) {
+			return $this->userbase_vars[$name];
+		}
+    	}
 	
 	
 	/* ******************************************************************** 
@@ -106,7 +135,7 @@ class UserBase {
 			return false;
 		}
 		
-		$sql = "SELECT user_id, user_username, user_role, user_password, user_email FROM " . table_users . " WHERE " . $where;
+		$sql = "SELECT * FROM " . table_users . " WHERE " . $where;
 		$user_info = $db->get_row($db->prepare($sql, $param));
 		if($user_info) {
 			$this->id = $user_info->user_id;
@@ -114,6 +143,7 @@ class UserBase {
 			$this->password = $user_info->user_password;
 			$this->role = $user_info->user_role;
 			$this->email = $user_info->user_email;
+			$this->email_valid = $user_info->user_email_valid;
 			return $user_info;
 		} else {
 			return false;
