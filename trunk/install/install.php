@@ -270,8 +270,8 @@ function register_admin() {
 			if(!isset($user_password)) { $user_password = ""; }
 			if(($user_name != "") && ($user_email != "") && ($user_password != "")) {
 				// There's been a change so update...
-				$sql = "UPDATE " . table_users . " SET user_username = %s, user_role = %s, user_date = CURRENT_TIMESTAMP, user_password = %s, user_email = %s WHERE user_role = %s";
-				$db->query($db->prepare($sql, $user_name, 'administrator', $user_password, $user_email, 'administrator'));
+				$sql = "UPDATE " . table_users . " SET user_username = %s, user_role = %s, user_date = CURRENT_TIMESTAMP, user_password = %s, user_email = %s, user_email_valid = %d WHERE user_role = %s";
+				$db->query($db->prepare($sql, $user_name, 'administrator', $user_password, $user_email, 1, 'administrator'));
 			} else {
 				$user_id = $user_info->user_id;
 				$user_name = $user_info->user_username;
@@ -409,6 +409,9 @@ function create_table($table_name) {
 		$db->query($db->prepare($sql, 'friendly_urls', 'false', 'false', ''));
 		
 		$sql = "INSERT INTO " . db_prefix . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+		$db->query($db->prepare($sql, 'site_email', 'admin@hotarucms.org', 'admin@hotarucms.org', 'Must be changed'));
+		
+		$sql = "INSERT INTO " . db_prefix . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
 		$db->query($db->prepare($sql, 'debug', 'false', 'false', ''));
 	}
 	
@@ -420,6 +423,8 @@ function create_table($table_name) {
 		  `user_date` timestamp NULL,
 		  `user_password` varchar(64) NOT NULL DEFAULT '',
 		  `user_email` varchar(128) NOT NULL DEFAULT '',
+		  `user_email_valid` tinyint(3) NOT NULL DEFAULT 0,
+		  `user_email_conf` varchar(128) NULL,
 		  `user_lastlogin` timestamp NULL,
 		  `user_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		  `user_updateby` int(20) NOT NULL DEFAULT 0,

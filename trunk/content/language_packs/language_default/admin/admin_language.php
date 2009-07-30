@@ -49,6 +49,7 @@ $lang["admin_news_read_more"] = "Read more";
 $lang['admin_announcement_delete_install'] = "<span style='color: #ff0000;'>Please delete the install folder before someone deletes your database!</span>";
 $lang['admin_announcement_plugins_disabled'] = "<span style='color: #ff0000;'>Go to Plugin Management to enable some plugins.</span>";
 $lang['admin_announcement_users_disabled'] = "<span style='color: #ff0000;'>Please enable the Users plugin in Plugin Management.</span>";
+$lang['admin_announcement_change_site_email'] = "<span style='color: #ff0000;'>Please change the site email address in the Settings page.</span>";
 
 /* Plugins /class.plugins.php */
 $lang["admin_plugins_install_done"] = "Plugin successfully installed and activated";

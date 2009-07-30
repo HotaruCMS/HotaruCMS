@@ -78,17 +78,15 @@ class Admin {
 			array_push($announcements, $lang['admin_announcement_delete_install']);
 		} 
 		
-		// 2. "Go to Plugin Management to enable some plugins"
+		// 2. Please enter a site email address
+		if (site_email == "admin@hotarucms.org") {
+			array_push($announcements, $lang['admin_announcement_change_site_email']);	
+		} 
+		
+		// 3. "Go to Plugin Management to enable some plugins"
 		if(!$plugin->num_active_plugins()) {
 			array_push($announcements, $lang['admin_announcement_plugins_disabled']);	
 		}
-		
-		/*
-		// 3. Please install the Users plugin
-		if (!$plugin->plugin_active('users')) {
-			array_push($announcements, $lang['admin_announcement_users_disabled']);	
-		} 
-		*/
 		
 		if(!is_array($announcements)) {
 			return false;
@@ -152,6 +150,7 @@ class Admin {
 	function admin_setting_update($setting = '', $value = '') {
 		global $db, $current_user;
 		$exists = $this->admin_setting_exists($setting);
+		
 		if(!$exists) {
 			$sql = "INSERT INTO " . table_settings . " (settings_name, settings_value, settings_updateby) VALUES (%s, %s, %d)";
 			$db->query($db->prepare($sql, $setting, $value, $current_user->id));
@@ -254,7 +253,7 @@ class Admin {
 						}
 					}
 				} else {
-					// error, setting doesn't exist.
+					// error, setting empty.
 					$error = 1;
 				}
 			}

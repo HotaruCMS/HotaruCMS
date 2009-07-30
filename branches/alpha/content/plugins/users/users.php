@@ -6,7 +6,7 @@
  * version: 0.1
  * folder: users
  * prefix: usr
- * hooks: users, hotaru_header, install_plugin, navigation_users, theme_index_replace, theme_index_main
+ * hooks: hotaru_header, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main
  *
  *  License:
  *
@@ -31,35 +31,6 @@ return false; die(); // die on direct access.
 
 
 /* ******************************************************************** 
- *  Function: usr_users
- *  Parameters: None
- *  Purpose: 
- *  Notes: 
- ********************************************************************** */
-
-function usr_users(&$parameters) {
-
-}
-
-
-/* ******************************************************************** 
- *  Function: usr_hotaru_header
- *  Parameters: None
- *  Purpose: Defines a global "table_usermeta" constant for referring to the db table
- *  Notes: ---
- ********************************************************************** */
- 
-function usr_hotaru_header() {
-	global $lang, $cage, $plugin;
-
-	if(!defined('table_usermeta')) { define("table_usermeta", db_prefix . 'usermeta'); }
-	
-	// include language file
-	$plugin->include_language_file('users');
-}
-
-
-/* ******************************************************************** 
  *  Function: usr_install_plugin
  *  Parameters: None
  *  Purpose: If it doesn't already exist, a "usermeta" table is created in the database
@@ -67,7 +38,10 @@ function usr_hotaru_header() {
  ********************************************************************** */
  
 function usr_install_plugin() {
-	global $db, $plugin;
+	global $db, $plugin, $lang;
+	
+	// include language file
+	$plugin->include_language_file('users');
 	
 	// Create a new empty table called "usermeta"
 	$exists = $db->table_exists('usermeta');
@@ -84,6 +58,65 @@ function usr_install_plugin() {
 		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='User Meta';";
 		$db->query($sql); 
 	}
+	
+	// Default settings (Note: we can't use $post because it hasn't been filled yet.)
+	$plugin->plugin_settings_update('users', 'users_recaptcha_enabled', '');	
+	$plugin->plugin_settings_update('users', 'users_recaptcha_pubkey', '');	
+	$plugin->plugin_settings_update('users', 'users_recaptcha_privkey', '');
+	$plugin->plugin_settings_update('users', 'users_emailconf_enabled', '');
+	
+	// Include language file. Also included in hotaru_header, but needed here  
+	// to prevent errors immediately after installation.
+	$plugin->include_language_file('users');	
+	
+}
+
+
+/* ******************************************************************** 
+ *  Function: usr_hotaru_header
+ *  Parameters: None
+ *  Purpose: Defines a global "table_usermeta" constant for referring to the db table
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function usr_hotaru_header() {
+	global $lang, $cage, $plugin, $userbase;
+
+	if(!defined('table_usermeta')) { define("table_usermeta", db_prefix . 'usermeta'); }
+	
+	// include language file
+	$plugin->include_language_file('users');
+	
+	// Create a new global object called "userbase" (in addition to the default "current_user").
+	$userbase = new Userbase();
+	$vars['userbase'] = $userbase; 
+	return $vars; 
+}
+
+
+/* ******************************************************************** 
+ *  Function: usr_admin_sidebar_plugin_settings
+ *  Parameters: None
+ *  Purpose: Puts a link to the settings page in the Admin sidebar under Plugin Settings
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function usr_admin_sidebar_plugin_settings() {
+	echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>'users'), 'admin') . "'>Users</a></li>";
+}
+
+
+ /* ******************************************************************** 
+ *  Function: usr_admin_plugin_settings
+ *  Parameters: None
+ *  Purpose: Calls the function for displaying Admin settings
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function usr_admin_plugin_settings() {
+	require_once(plugins . 'users/users_settings.php');
+	usr_settings();
+	return true;
 }
 
 
@@ -118,7 +151,12 @@ function usr_navigation_users() {
  ********************************************************************** */
  
 function usr_theme_index_replace() {
-	global $hotaru, $cage, $current_user;
+	global $hotaru, $cage, $current_user, $userbase, $plugin;
+	global $send_email_confirmation;
+	
+	// $send_email_confirmation set to true in "is_page('register')" if email confirmation is enabled
+	// it's a global so we can use it in usr_theme_index_main
+	$send_email_confirmation = false; 
 	
 	// Pages you have to be logged in for...
 	if($current_user->logged_in) {
@@ -133,15 +171,25 @@ function usr_theme_index_replace() {
 	// Pages you have to be logged out for...
 	} else {
 		if($hotaru->is_page('register')) {
-			if(usr_register()) { 
-				// success, return to front page, logged OUT.
-				header("Location: " . baseurl . "index.php?page=login");
+			$userbase->userbase_vars['users_recaptcha_enabled'] = $plugin->plugin_settings('users', 'users_recaptcha_enabled');
+			$userbase->userbase_vars['users_emailconf_enabled'] = $plugin->plugin_settings('users', 'users_emailconf_enabled');
+			$user_id = usr_register();
+			if($user_id) { 
+				// success!
+				if($userbase->userbase_vars['users_emailconf_enabled']) {
+					$send_email_confirmation = true;
+					usr_send_confirmation_email($user_id);
+					// fall through and display "email sent" message
+				} else {
+					// redirect to login page
+					header("Location: " . baseurl . "index.php?page=login");
+				}
 			}
 		} elseif($hotaru->is_page('login')) {
 			if(usr_login()) { 
 				// success, return to front page, logged IN.
 				header("Location: " . baseurl);
-			}
+			} 
 		} 	
 	}
 	return false;
@@ -156,7 +204,8 @@ function usr_theme_index_replace() {
  ********************************************************************** */
  
 function usr_theme_index_main() {
-	global $hotaru, $cage, $current_user;
+	global $hotaru, $cage, $current_user, $userbase, $lang;
+	global $send_email_confirmation;
 	
 	// Pages you have to be logged in for...
 	if($current_user->logged_in) {
@@ -170,10 +219,19 @@ function usr_theme_index_main() {
 	// Pages you have to be logged out for...
 	} else {
 		if($hotaru->is_page('register')) {
+			if($send_email_confirmation) {
+				$hotaru->messages[$lang['users_register_emailconf_sent']] = 'green';
+				$hotaru->show_messages();
+				return true;
+			}
 			$hotaru->display_template('register', 'users');
 			return true;	
 		} elseif($hotaru->is_page('login')) {
 			$hotaru->display_template('login', 'users');
+			return true;
+		} elseif($hotaru->is_page('emailconf')) {
+			usr_check_email_confirmation();
+			$hotaru->show_messages();
 			return true;
 		} else {
 			return false;
@@ -315,7 +373,7 @@ function usr_update_password() {
  ********************************************************************** */
  
 function usr_login() {
-	global $hotaru, $cage, $lang;
+	global $hotaru, $cage, $lang, $plugin;
 	
 	$current_user = new UserBase();
 	
@@ -330,17 +388,27 @@ function usr_login() {
 		$login_result = $current_user->login_check($username_check, $password_check);
 		if($login_result) {
 				//success
+							
 				if($cage->post->getInt('remember') == 1){ $remember = 1; } else { $remember = 0; }
 				$current_user->username = $username_check;
 				$current_user->get_user_basic(0, $current_user->username);
+				
+				$userbase->userbase_vars['users_emailconf_enabled'] = $plugin->plugin_settings('users', 'users_emailconf_enabled');
+				
+				if($userbase->userbase_vars['users_emailconf_enabled'] && ($current_user->email_valid == 0)) {
+					usr_send_confirmation_email($current_user->id);
+					$hotaru->messages[$lang["users_login_failed_email_not_validated"]] = 'red';
+					$hotaru->messages[$lang["users_login_failed_email_request_sent"]] = 'green';
+					return false;
+				}
+				
 				$current_user->set_cookie($remember);
 				$current_user->logged_in = true;
 				$current_user->update_user_lastlogin();
 				return true;
 		} else {
 				// login failed
-				$hotaru->message = $lang["users_login_failed"];
-				$hotaru->message_type = 'red';
+				$hotaru->message[$lang["users_login_failed"]] = 'red';
 		}
 	} 
 	return false;
@@ -355,12 +423,17 @@ function usr_login() {
  ********************************************************************** */
  
 function usr_register() {
-	global $hotaru, $cage, $lang;
+	global $db, $hotaru, $cage, $lang, $userbase, $plugin;
 	
 	$current_user = new UserBase();
 	
+	if($userbase->userbase_vars['users_recaptcha_enabled']) {
+		require_once(plugins . 'users/recaptcha/recaptchalib.php');
+	}
+	
 	$error = 0;
 	if($cage->post->getAlpha('users_type') == 'register') {
+	
 		$username_check = $cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
 		if($username_check) {
 			$current_user->username = $username_check;
@@ -392,8 +465,37 @@ function usr_register() {
 			$hotaru->messages[$lang['users_register_email_error']] = 'red';
 			$error = 1;
 		}
-	}
+	
+		if($userbase->userbase_vars['users_recaptcha_enabled']) {
+									
+			$recaptcha_pubkey = $plugin->plugin_settings('users', 'users_recaptcha_pubkey');
+			$recaptcha_privkey = $plugin->plugin_settings('users', 'users_recaptcha_privkey');
 			
+			$rc_resp = null;
+			$rc_error = null;
+			
+			# was there a reCAPTCHA response?
+			if($cage->post->keyExists('recaptcha_response_field')) {
+			        $rc_resp = recaptcha_check_answer ($recaptcha_privkey,
+			                                        $cage->server->getRaw('REMOTE_ADDR'),
+			                                        $cage->post->getRaw('recaptcha_challenge_field'),
+			                                        $cage->post->getRaw('recaptcha_response_field'));
+			                                        
+			        if ($rc_resp->is_valid) {
+			                // success, do nothing.
+			        } else {
+			                # set the error code so that we can display it
+			                //$rc_error = $rc_resp->error;
+			                $hotaru->messages[$lang['users_register_recaptcha_error']] = 'red';
+					$error = 1;
+			        }
+			} else {
+				$hotaru->messages[$lang['users_register_recaptcha_empty']] = 'red';
+					$error = 1;
+			}
+		}
+	}	
+	
 	if(!isset($username_check) && !isset($password_check) && !isset($password2_check) && !isset($email_check)) {
 		$username_check = "";
 		$password_check = "";
@@ -403,9 +505,10 @@ function usr_register() {
 	} elseif($error == 0) {
 		$result = $current_user->user_exists(0, $username_check, $email_check);
 		if($result == 4) {
-			$current_user->add_user_basic();
 			//success
-			return true;
+			$current_user->add_user_basic();
+			$last_insert_id = $db->get_var($db->prepare("SELECT LAST_INSERT_ID()"));
+			return $last_insert_id; // so we can retrieve this user's details for the email confirmation step;
 		} elseif($result == 0) {
 			$hotaru->messages[$lang['users_register_id_exists']] = 'red';
 
@@ -421,6 +524,92 @@ function usr_register() {
 		// error must = 1 so fall through and display the form again
 	}
 	return false;
+}
+
+
+ /* ******************************************************************** 
+ *  Function: usr_send_confirmation_email
+ *  Parameters: Sends an email to the newly registered user
+ *  Purpose: Anti-spam measure
+ *  Notes: 
+ ********************************************************************** */
+ 
+function usr_send_confirmation_email($user_id) {
+	global $db, $hotaru, $cage, $lang, $current_user;
+	
+	// Check that the site email has been changed from the default...
+	/*
+	if(site_email == "admin@hotarucms.org") {
+		echo "Error: Site email not updated in Admin -> Settings";
+		die(); exit;
+	} 
+	*/
+		
+	$current_user->get_user_basic($user_id);
+	
+	// generate the email confirmation code
+	$email_conf = md5(crypt(md5($current_user->email),md5($current_user->email)));
+	
+	// store the hash in the user table
+	$sql = "UPDATE " . table_users . " SET user_email_conf = %s WHERE user_id = %d";
+	$db->query($db->prepare($sql, $email_conf, $current_user->id));
+	
+	$line_break = "\r\n\r\n";
+	$next_line = "\r\n";
+	
+	// send email
+	$subject = $lang['users_register_emailconf_subject'];
+	$body = $lang['users_register_emailconf_body_hello'] . " " . $current_user->username;
+	$body .= $line_break;
+	$body .= $lang['users_register_emailconf_body_welcome'];
+	$body .= $line_break;
+	$body .= $lang['users_register_emailconf_body_click'];
+	$body .= $line_break;
+	$body .= baseurl . "index.php?page=emailconf&plugin=users&id=" . $current_user->id . "&conf=" . $email_conf;
+	$body .= $line_break;
+	$body .= $lang['users_register_emailconf_body_regards'];
+	$body .= $next_line;
+	$body .= $lang['users_register_emailconf_body_sign'];
+	$to = $current_user->email;
+	$headers = "From: " . site_email . "\r\nReply-To: " . site_email . "\r\nX-Priority: 3\r\n";
+
+	mail($to, $subject, $body, $headers);	
+}
+
+
+ /* ******************************************************************** 
+ *  Function: usr_email_confirmation
+ *  Parameters: Sends an email to the newly registered user
+ *  Purpose: Anti-spam measure
+ *  Notes: 
+ ********************************************************************** */
+ 
+function usr_check_email_confirmation() {
+	global $db, $hotaru, $cage, $lang, $current_user;
+	
+	$user_id = $cage->get->getInt('id');
+	$conf = $cage->get->getAlnum('conf');
+	
+	$current_user->get_user_basic($user_id);
+	
+	if(!$user_id || !$conf) {
+		$hotaru->messages[$lang['users_register_emailconf_fail']] = 'red';
+	}
+	
+	$sql = "SELECT user_email_conf FROM " . table_users . " WHERE user_id = %d";
+	$user_email_conf = $db->get_var($db->prepare($sql, $user_id));
+	
+	if($conf === $user_email_conf) {
+		$sql = "UPDATE " . table_users . " SET user_email_valid = %d WHERE user_id = %d";
+		$db->query($db->prepare($sql, 1, $current_user->id));
+	
+		$success_message = $lang['users_register_emailconf_success'] . " <b><a href='" . url(array('page'=>'login')) . "'>" . $lang['users_register_emailconf_success_login'] . "</a></b>";
+		$hotaru->messages[$success_message] = 'green';
+	} else {
+		$hotaru->messages[$lang['users_register_emailconf_fail']] = 'red';
+	}
+		
+	return true;
 }
 
 ?>
