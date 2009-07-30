@@ -49,7 +49,7 @@ global $plugin, $admin, $cage, $lang; // don't remove
 	<li><a href="<?php echo baseurl; ?>admin/admin_index.php?page=maintenance&amp;action=clear_db_cache">
 		<?php echo $lang["admin_theme_maintenance_db_cache"] ?></a> - <?php echo $lang["admin_theme_maintenance_db_cache_desc"]?></li>
 	<li><a href="<?php echo baseurl; ?>admin/admin_index.php?page=maintenance&amp;action=clear_rss_cache">
-		<?php echo $lang["admin_theme_maintenance_rss_cache_desc"]?></a> - <?php echo $lang["admin_theme_maintenance_rss_cache_desc"]?></li>
+		<?php echo $lang["admin_theme_maintenance_rss_cache"]?></a> - <?php echo $lang["admin_theme_maintenance_rss_cache_desc"]?></li>
 </ul>	
 	
 <?php $plugin->check_actions('admin_maintenance_bottom'); ?>
