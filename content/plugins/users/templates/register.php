@@ -23,7 +23,7 @@
  *
  **************************************************************************************************** */
  
-global $hotaru, $cage, $lang;
+global $hotaru, $cage, $lang, $plugin, $userbase;
 	
 if($cage->post->getAlpha('users_type') == 'register') {
 	$username_check = $cage->post->testUsername('username');
@@ -54,6 +54,14 @@ if($cage->post->getAlpha('users_type') == 'register') {
 			<tr><td><?php echo $lang["users_register_email"] ?>&nbsp; </td><td><input type='text' size=30 name='email' value='<?php echo $email_check ?>' /></td></tr>
 			<tr><td><?php echo $lang["users_register_password"] ?>&nbsp; </td><td><input type='password' size=30 name='password' value='<?php echo $password_check ?>' /></td></tr>
 			<tr><td><?php echo $lang["users_register_password_verify"] ?>&nbsp; </td><td><input type='password' size=30 name='password2' value='<?php echo $password2_check ?>' /></td></tr>
+			
+			<?php 
+				if($userbase->userbase_vars['users_recaptcha_enabled']) { 
+					$recaptcha_pubkey = $plugin->plugin_settings('users', 'users_recaptcha_pubkey');
+					echo "<tr><td colspan=2>" . recaptcha_get_html($recaptcha_pubkey) . "</td></tr>";
+				}
+			?>
+			
 			<input type='hidden' name='users_type' value='register' />
 			<tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $lang['users_register_form_submit'] ?>' /></td></tr>			
 			</table>

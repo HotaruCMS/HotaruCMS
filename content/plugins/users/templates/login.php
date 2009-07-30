@@ -35,7 +35,7 @@ if($cage->post->getInt('remember') == 1){ $remember_check = "checked"; } else { 
 		
 		<h2>Login</h2>
 		
-		<?php echo $hotaru->show_message(); ?>
+		<?php echo $hotaru->show_messages(); ?>
 		
 		<div class='main_inner'>
 		<?php echo $lang["users_login_instructions"] ?>

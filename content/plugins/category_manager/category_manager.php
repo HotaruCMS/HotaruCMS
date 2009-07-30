@@ -38,7 +38,7 @@ return false; die(); // die on direct access.
  ********************************************************************** */
  
 function cats_install_plugin() {
-	global $db, $plugin, $post;
+	global $db, $plugin, $post, $lang;
 	
 	// Create a new empty table called "categories"
 	$exists = $db->table_exists('categories');

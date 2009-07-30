@@ -201,7 +201,7 @@ function rs_admin_sidebar_plugin_settings() {
  ********************************************************************** */
  
 function rs_install_plugin($id) {
-	global $db, $plugin;
+	global $db, $plugin, $lang;
 	
 	if(!$id || !is_int($id)) { $id = 1; }
 	
