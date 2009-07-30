@@ -33,11 +33,11 @@ define("DB_PASSWORD", '');
 define("DB_NAME", 'hotaru');
 define("DB_HOST", 'localhost');			// You probably won't need to change this
 
-define("db_prefix", 'hotaru_');			// Better leave this for now
-define("db_lang", 'en');			// Better leave this for now
+define("db_prefix", 'hotaru_');			// Database prefix, e.g. "hotaru_"
+define("db_lang", 'en');			// Database language, e.g. "en"
 
 /* ******Paths ******* */
-define('baseurl', "http://localhost/hotaru/");	//e.g. http://www.mysite.com/ or http://www.mysite.com/bookmarking/
+define('baseurl', "http://www.mysite.com/");	//e.g. http://www.mysite.com/ or http://www.mysite.com/bookmarking/
 						// IMPORTANT!!! Don't forget the trailing slash (/).
 
 /* ************************************************************************************ */
