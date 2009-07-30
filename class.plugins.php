@@ -286,6 +286,8 @@ class Plugin extends generic_pmd {
 	function install_plugin($folder = "", $upgrade = 0) {
 		global $db, $lang, $hotaru, $current_user;
 		
+		$admin->delete_files(includes . 'ezSQL/cache');	// Clear the database cache to ensure stored plugins and hooks are up-to-date.
+		
 		$plugin_metadata = $this->read(plugins . $folder . "/" . $folder . ".php");
 		
 		$this->enabled = 1;	// Enable it at the same time we add it to the database.
@@ -380,6 +382,8 @@ class Plugin extends generic_pmd {
 		if(!$this->hook_exists($folder, 'upgrade_plugin')) {
 			$this->uninstall_plugin($folder, 1);
 			$this->install_plugin($folder, 1);
+		} else {
+			$admin->delete_files(includes . 'ezSQL/cache');	// Clear the database cache to ensure stored plugins and hooks are up-to-date.
 		}
 		
 		$plugin_metadata = $this->read(plugins . $folder . "/" . $folder . ".php");
@@ -439,6 +443,8 @@ class Plugin extends generic_pmd {
 
 	function uninstall_plugin($folder = "", $upgrade = 0) {	
 		global $db, $hotaru, $lang;
+		
+		$admin->delete_files(includes . 'ezSQL/cache');	// Clear the database cache to ensure stored plugins and hooks are up-to-date.
 			
 		$db->query($db->prepare("DELETE FROM " . table_plugins . " WHERE plugin_folder = %s", $folder));
 		$db->query($db->prepare("DELETE FROM " . table_pluginhooks . " WHERE plugin_folder = %s", $folder));
