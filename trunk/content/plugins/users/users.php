@@ -40,6 +40,9 @@ return false; die(); // die on direct access.
 function usr_install_plugin() {
 	global $db, $plugin, $lang;
 	
+	// include language file
+	$plugin->include_language_file('users');
+	
 	// Create a new empty table called "usermeta"
 	$exists = $db->table_exists('usermeta');
 	if(!$exists) {
@@ -65,7 +68,7 @@ function usr_install_plugin() {
 	// Include language file. Also included in hotaru_header, but needed here  
 	// to prevent errors immediately after installation.
 	$plugin->include_language_file('users');	
-		
+	
 }
 
 

@@ -25,7 +25,7 @@
  **************************************************************************************************** */
 
 global $hotaru, $plugin, $post, $userbase;
-$hotaru->template_name = 'post_page';
+
 $userbase = new UserBase();
 
 ?>

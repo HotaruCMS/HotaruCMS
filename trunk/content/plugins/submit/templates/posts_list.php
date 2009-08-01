@@ -25,7 +25,6 @@
  **************************************************************************************************** */
 
 global $hotaru, $plugin, $post, $cage, $filter;
-$hotaru->template_name = 'posts_list';
 
 $userbase = new UserBase();
 		

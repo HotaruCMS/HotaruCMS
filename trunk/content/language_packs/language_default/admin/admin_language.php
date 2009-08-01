@@ -32,6 +32,9 @@
 ******************************************************************** 
 ***************************************************************** */
 
+/* Title */
+$lang["admin"] = "Admin";
+
 /* Breadcrumbs */
 $lang["admin_breadcrumbs_home"] = "Home";
 $lang["admin_breadcrumbs_login"] = "Login";

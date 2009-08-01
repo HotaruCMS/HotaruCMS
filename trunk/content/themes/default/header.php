@@ -32,7 +32,24 @@ global $hotaru, $plugin, $lang; // don't remove
 <head>
    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
    <meta name="Language" content="en-us" />
-   <title><?php echo site_name; ?></title>
+
+   <title>
+   	<?php 
+   		if($hotaru->title != "")
+   		{
+   			echo $hotaru->title . " &laquo; " . site_name;
+   		}
+   		elseif($hotaru->get_page_name() != "main")
+   		{
+   			echo $hotaru->page_to_title_caps($hotaru->get_page_name()) . " &laquo; " . site_name;
+   		}
+   		else
+   		{ 
+   			echo site_name; 
+   		} 
+   	?>
+   </title>
+   
    <link rel="stylesheet" href="<?php echo baseurl . '3rd_party/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
    <link rel="stylesheet" href="<?php echo baseurl . 'content/themes/' . theme . 'css/style.css'; ?>" type="text/css">
    <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery.min.js'; ?>"></script>
