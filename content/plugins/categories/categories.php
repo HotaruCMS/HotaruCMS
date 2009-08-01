@@ -59,13 +59,22 @@ function cts_install_plugin() {
  ********************************************************************** */
  
 function cts_hotaru_header() {
-	global $post, $plugin;
+	global $post, $hotaru, $cage, $plugin;
 	
 	// The categories table is defined 
 	if(!defined('table_categories')) { define("table_categories", db_prefix . "categories"); }
 	
 	// include language file
 	$plugin->include_language_file('categories');
+	
+	// Get page title	
+	if($cage->get->keyExists('category')) {
+		if(is_numeric($cage->get->notags('category'))) { 
+			$hotaru->title = get_cat_name($cage->get->getInt('category')); // friendly URLs: FALSE
+		} else {
+			$hotaru->title = $hotaru->page_to_title_caps(($cage->get->notags('category'))); // friendly URLs: TRUE
+		} 
+	}
 }
 
 
@@ -530,7 +539,7 @@ function cts_submit_save_settings() {
  * ****************************************************************** */
  
  /* ******************************************************************** 
- *  Function: cts_submit_save_settings
+ *  Function: get_cat_safe_name
  *  Parameters: Category ID
  *  Purpose: Returns the category safe name for a give category id.
  *  Notes: Used in /funcs.urls.php
@@ -542,6 +551,22 @@ function get_cat_safe_name($cat_id) {
 	$sql = "SELECT category_safe_name FROM " . table_categories . " WHERE category_id = %d";
 	$cat_safe_name = $db->get_var($db->prepare($sql, $cat_id));
 	return urldecode($cat_safe_name);
+}
+
+
+ /* ******************************************************************** 
+ *  Function: get_cat_name
+ *  Parameters: Category ID
+ *  Purpose: Returns the category name for a give category id.
+ *  Notes: Used in this file (cts_hotaru_header function) for header's title tags
+ ********************************************************************** */
+ 
+function get_cat_name($cat_id) {
+	global $db;
+	
+	$sql = "SELECT category_name FROM " . table_categories . " WHERE category_id = %d";
+	$cat_name = $db->get_var($db->prepare($sql, $cat_id));
+	return urldecode($cat_name);
 }
 
 

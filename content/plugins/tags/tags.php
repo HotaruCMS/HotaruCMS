@@ -86,7 +86,7 @@ function tg_install_plugin() {
  ********************************************************************** */
  
 function tg_submit_hotaru_header_1() {
-	global $post, $plugin;
+	global $post, $hotaru, $plugin, $cage;
 	
 	if(!defined('table_tags')) { define("table_tags", db_prefix . 'tags'); }
 	
@@ -96,6 +96,10 @@ function tg_submit_hotaru_header_1() {
 	$post->post_vars['post_tags'] = '';
 	$post->post_vars['post_max_tags'] = 50;	// max characters for tags
 	$post->post_vars['use_tags'] = true;
+	
+	// Get page title
+	if($cage->get->keyExists('tag')) { $hotaru->title = $hotaru->page_to_title_caps(($cage->get->noTags('tag'))); } // friendly URLs: FALSE
+	if(!$hotaru->title && $cage->get->keyExists('pos2')) { $hotaru->title = $hotaru->page_to_title_caps(($cage->get->noTags('pos2'))); } // friendly URLs: TRUE
 	
 }
 
