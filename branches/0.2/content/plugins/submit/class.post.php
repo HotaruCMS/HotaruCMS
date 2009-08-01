@@ -28,6 +28,7 @@ class Post {
 
 	var $post_id = 0;
 	var $post_orig_url = '';
+	var $post_domain = '';		// the domain of the submitted url
 	var $post_title = '';
 	var $post_content = '';
 	var $post_content_length = 50;	// default min characters for content
@@ -140,9 +141,13 @@ class Post {
 	 
 	function add_post() {
 		global $db, $plugin, $last_insert_id, $current_user;
-		$sql = "INSERT INTO " . table_posts . " SET post_orig_url = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_date = CURRENT_TIMESTAMP, post_updateby = %d";
 		
-		$db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), $this->post_status, $this->post_author, $current_user->id));
+		$parsed = parse_url($this->post_orig_url);
+		if(isset($parsed['scheme'])){ $this->post_domain = $parsed['scheme'] . "://" . $parsed['host']; }
+			
+		$sql = "INSERT INTO " . table_posts . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_date = CURRENT_TIMESTAMP, post_updateby = %d";
+		
+		$db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode($this->post_domain), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), $this->post_status, $this->post_author, $current_user->id));
 		
 		$last_insert_id = $db->get_var($db->prepare("SELECT LAST_INSERT_ID()"));
 		
@@ -163,9 +168,13 @@ class Post {
 	 
 	function update_post() {
 		global $db, $plugin, $current_user;
-		$sql = "UPDATE " . table_posts . " SET post_orig_url = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_date = CURRENT_TIMESTAMP, post_updateby = %d WHERE post_id = %d";
 		
-		$db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), $this->post_status, $this->post_author, $current_user->id, $this->post_id));
+		$parsed = parse_url($this->post_orig_url);
+		if(isset($parsed['scheme'])){ $this->post_domain = $parsed['scheme'] . "://" . $parsed['host']; }
+		
+		$sql = "UPDATE " . table_posts . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_date = CURRENT_TIMESTAMP, post_updateby = %d WHERE post_id = %d";
+		
+		$db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode($this->post_domain), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), $this->post_status, $this->post_author, $current_user->id, $this->post_id));
 		
 		$plugin->check_actions('submit_class_post_update_post');
 		
