@@ -82,7 +82,7 @@ class Post {
 	 ********************************************************************** */	
 	 
 	function read_post($post_id = 0) {
-		global $plugin, $post_row;
+		global $plugin, $post_row, $hotaru;
 		
 		//enabled
 		$this->post_author = $plugin->plugin_settings('submit', 'submit_enabled');
@@ -118,11 +118,16 @@ class Post {
 			$this->post_author = $post_row->post_author;
 			$this->post_url = urldecode($post_row->post_url);
 			$this->post_date = $post_row->post_date;
+			
 			$plugin->check_actions('submit_class_post_read_post_2');
+			
+			$hotaru->title = $this->post_title;
+			
 			return true;
 		} else {
 			return false;
 		}
+		
 	}
 	
 	

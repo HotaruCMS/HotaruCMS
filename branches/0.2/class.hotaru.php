@@ -30,7 +30,7 @@ class Hotaru {
 	var $message = '';
 	var $message_type = 'green';	// green or red, color of message box
 	var $messages = array();	// for multiple messages
-	var $template_name = '';	// e.g. 'posts_list'
+	var $title = '';		// for the broswer's TITLE tags
 	
 	
 	/* ******************************************************************** 
@@ -105,6 +105,41 @@ class Hotaru {
 		} else {
 			return 'main';
 		}
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: page_to_title
+	 *  Parameters: A page name, e.g. 'posts_list'
+	 *  Purpose: Changes 'posts_list' into 'Posts list'
+	 *  Notes: ---
+	 ********************************************************************** */
+
+	function page_to_title($page) {
+		$word_array = array();
+		
+		$word_array = explode('_', trim($page));
+		$page = ucfirst(implode(' ', $word_array));
+				
+		return $page;
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: page_to_title_caps
+	 *  Parameters: A page name, e.g. 'japanese_culture'
+	 *  Purpose: Changes 'japanese_culture' into 'Japanese Culture'
+	 *  Notes: ---
+	 ********************************************************************** */
+
+	function page_to_title_caps($page) {
+		$word_array = array();
+		
+		$word_array = explode('_', trim($page));
+		$word_array = array_map('ucfirst', $word_array);
+		$page = implode(' ', $word_array);
+				
+		return $page;
 	}
 	
 
