@@ -332,13 +332,7 @@ class Plugin extends generic_pmd {
 		$db->query($db->prepare($sql, ($highest_order + 1)));
 		
 		// Add any plugin hooks to the hooks table
-		foreach($this->hooks as $hook) {
-			$exists = $this->plugin_hook_exists(trim($hook));
-			if(!$exists) {
-				$sql = "INSERT INTO " . table_pluginhooks . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
-				$db->query($db->prepare($sql, $this->folder, trim($hook), $current_user->id));
-			}
-		}
+		$this->add_plugin_hooks();
 			
 		$result = $this->check_actions('install_plugin', $folder);
 		
@@ -370,6 +364,26 @@ class Plugin extends generic_pmd {
 	
 	
 	/* ******************************************************************** 
+	 *  Function: add_plugin_hooks
+	 *  Parameters: None
+	 *  Purpose: Adds all hooks for a given plugin
+	 *  Notes: ---
+	 ********************************************************************** */
+	 	
+	function add_plugin_hooks() {
+		global $db, $current_user;
+		
+		foreach($this->hooks as $hook) {
+			$exists = $this->plugin_hook_exists(trim($hook));
+			if(!$exists) {
+				$sql = "INSERT INTO " . table_pluginhooks . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
+				$db->query($db->prepare($sql, $this->folder, trim($hook), $current_user->id));
+			}
+		}
+	}
+	
+	
+	/* ******************************************************************** 
 	 *  Function: upgrade_plugin
 	 *  Parameters: plugin folder name
 	 *  Purpose: Plugins hook in here with their own upgrade scripts.
@@ -378,13 +392,6 @@ class Plugin extends generic_pmd {
 	 
 	function upgrade_plugin($folder = "") {
 		global $db, $lang, $hotaru, $admin;
-		
-		if(!$this->hook_exists($folder, 'upgrade_plugin')) {
-			$this->uninstall_plugin($folder, 1);
-			$this->install_plugin($folder, 1);
-		} else {
-			$admin->delete_files(includes . 'ezSQL/cache');	// Clear the database cache to ensure stored plugins and hooks are up-to-date.
-		}
 		
 		$plugin_metadata = $this->read(plugins . $folder . "/" . $folder . ".php");
 		
@@ -396,6 +403,15 @@ class Plugin extends generic_pmd {
 		$this->version = $plugin_metadata['version'];
 		$this->hooks = explode(',', $plugin_metadata['hooks']);
 		
+		if(in_array('upgrade_plugin', $this->hooks)) {
+			$admin->delete_files(includes . 'ezSQL/cache');	// Clear the database cache to ensure stored plugins and hooks are up-to-date.
+			$this->add_plugin_hooks(); // Add any new plugin hooks to the hooks table before proceeding with upgrade
+		} else {
+			// Uninstall and then re-install because there's no upgrade function
+			$this->uninstall_plugin($folder, 1);
+			$this->install_plugin($folder, 1);
+		}
+				
 		$result = $this->check_actions('upgrade_plugin', $folder);
 				
 		// For plugins to avoid showing this success message, they need to return a non-boolean value to $result.

@@ -3,10 +3,10 @@
 /* ********** PLUGIN *********************************************************************************
  * name: Submit
  * description: Submit and manage stories.
- * version: 0.1
+ * version: 0.2
  * folder: submit
  * prefix: sub
- * hooks: hotaru_header, header_include, install_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, submit_show_post_extra_fields
+ * hooks: hotaru_header, header_include, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, submit_show_post_extra_fields
  *
  *  License:
  *
@@ -29,6 +29,26 @@
  
 return false; die(); // die on direct access.
 
+
+/* ******************************************************************** 
+ *  Function: sub_upgrade_plugin
+ *  Parameters: None
+ *  Purpose: If it doesn't already exist, add a post_domain field to posts table.
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function sub_upgrade_plugin() {
+	global $db, $plugin, $post;
+	
+	// Create a new table column called "post_tags" if it doesn't already exist
+	$exists = $db->column_exists('posts', 'post_domain');
+	if(!$exists) {
+		$db->query("ALTER TABLE " . table_posts . " ADD post_domain varchar(255) NULL AFTER post_orig_url");
+		$db->query("ALTER TABLE " . table_posts . " ADD FULLTEXT (post_domain)"); // Make it fulltext searchable
+	} 
+}
+	
+	
 /* ******************************************************************** 
  *  Function: sub_install_plugin
  *  Parameters: None
@@ -51,12 +71,13 @@ function sub_install_plugin() {
 		  `post_date` timestamp NULL,
 		  `post_title` varchar(255) NULL, 
 		  `post_orig_url` varchar(255) NULL, 
+		  `post_domain` varchar(255) NULL, 
 		  `post_url` varchar(255) NULL, 
 		  `post_content` text NULL,
 		  `post_tags` text NULL,
 		  `post_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
  		  `post_updateby` int(20) NOT NULL DEFAULT 0, 
-		  FULLTEXT (`post_title`, `post_url`, `post_content`, `post_tags`)
+		  FULLTEXT (`post_title`, `post_domain`, `post_url`, `post_content`, `post_tags`)
 		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Story Posts';";
 		$db->query($sql); 
 	}
