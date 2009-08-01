@@ -284,7 +284,7 @@ class Plugin extends generic_pmd {
 	 ********************************************************************** */
 	 
 	function install_plugin($folder = "", $upgrade = 0) {
-		global $db, $lang, $hotaru, $current_user;
+		global $db, $lang, $hotaru, $current_user, $admin;
 		
 		$admin->delete_files(includes . 'ezSQL/cache');	// Clear the database cache to ensure stored plugins and hooks are up-to-date.
 		
@@ -377,7 +377,7 @@ class Plugin extends generic_pmd {
 	 ********************************************************************** */
 	 
 	function upgrade_plugin($folder = "") {
-		global $db, $lang, $hotaru;
+		global $db, $lang, $hotaru, $admin;
 		
 		if(!$this->hook_exists($folder, 'upgrade_plugin')) {
 			$this->uninstall_plugin($folder, 1);
@@ -442,7 +442,7 @@ class Plugin extends generic_pmd {
 	 ********************************************************************** */
 
 	function uninstall_plugin($folder = "", $upgrade = 0) {	
-		global $db, $hotaru, $lang;
+		global $db, $hotaru, $lang, $admin;
 		
 		$admin->delete_files(includes . 'ezSQL/cache');	// Clear the database cache to ensure stored plugins and hooks are up-to-date.
 			
