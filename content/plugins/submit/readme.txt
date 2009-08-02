@@ -15,6 +15,7 @@ Changelog
 ---------
 Version 0.2
 
+2009-08-02: Filters posts by user when clicking a username in a post.
 2009-08-01: Updated the Post class to convert original urls into domains and add them to the db. 
 2009-08-01: Made an upgrade function to add a post_domain field to the posts table.
 
