@@ -28,8 +28,9 @@ global $hotaru, $plugin, $post, $cage, $filter;
 
 $userbase = new UserBase();
 		
-$filter = array();
+if(!$filter) { $filter = array(); }
 $plugin->check_actions('submit_posts_list_filter');
+
 $stories = $post->get_posts($filter);
 
 if($stories) {
@@ -51,7 +52,9 @@ if($stories) {
 	<?php if($post->use_author || $post->use_date) { ?>
 		<div class="show_post_author_date">	
 			Posted
-			<?php if($post->use_author) { echo " by " . $userbase->get_username($post->post_author); } ?>
+			<?php if($post->use_author) { 
+				echo " by <a href='" . url(array('user' => $userbase->get_username($post->post_author))) . "'>" . $userbase->get_username($post->post_author) . "</a>"; } 
+			?>
 			<?php if($post->use_date) { echo time_difference(unixtimestamp($post->post_date)) . " ago"; } ?>
 			<?php $plugin->check_actions('submit_show_post_author_date'); ?>
 		</div>
