@@ -3,7 +3,7 @@
 /* ********** PLUGIN *********************************************************************************
  * name: Submit
  * description: Submit and manage stories.
- * version: 0.2
+ * version: 0.2.1
  * folder: submit
  * prefix: sub
  * hooks: hotaru_header, header_include, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, submit_show_post_extra_fields
@@ -275,7 +275,7 @@ function sub_theme_index_replace() {
  ********************************************************************** */
  
 function sub_theme_index_main() {
-	global $hotaru, $cage, $post, $plugin, $current_user, $userbase, $lang;
+	global $hotaru, $cage, $post, $plugin, $current_user, $lang;
 	global $post_orig_url, $post_orig_title, $filter;
 	
 	if($hotaru->is_page('submit')) {
@@ -351,7 +351,7 @@ function sub_theme_index_main() {
 	
 	} elseif($cage->get->keyExists('user')) {
 		// Must have clicked on the submitter's name
-		$filter = array('post_author = %d' => $userbase->get_user_id($cage->get->keyExists('user'))); 
+		$filter = array('post_author = %d' => $current_user->get_user_id($cage->get->keyExists('user'))); 
 		$hotaru->display_template('posts_list', 'submit');
 		return true;
 														
