@@ -260,6 +260,21 @@ class UserBase {
 		$username = $db->get_var($db->prepare($sql, $id));
 		if($username) { return $username; } else { return false; }
 	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: get_user_id
+	 *  Parameters: None
+	 *  Purpose: Gets the user id for a given username
+	 *  Notes: ---
+	 ********************************************************************** */	
+	 
+	function get_user_id($username = '') {
+		global $db, $user;
+		$sql = "SELECT user_id FROM " . table_users . " WHERE user_username = %s";
+		$user_id = $db->get_var($db->prepare($sql, $username));
+		if($user_id) { return $user_id; } else { return false; }
+	}
 }
  
 ?>

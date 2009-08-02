@@ -275,8 +275,8 @@ function sub_theme_index_replace() {
  ********************************************************************** */
  
 function sub_theme_index_main() {
-	global $hotaru, $cage, $post, $plugin, $current_user, $lang;
-	global $post_orig_url, $post_orig_title;
+	global $hotaru, $cage, $post, $plugin, $current_user, $userbase, $lang;
+	global $post_orig_url, $post_orig_title, $filter;
 	
 	if($hotaru->is_page('submit')) {
 	  	
@@ -348,7 +348,13 @@ function sub_theme_index_main() {
 			 	return true;
 			}
 		}
-													
+	
+	} elseif($cage->get->keyExists('user')) {
+		// Must have clicked on the submitter's name
+		$filter = array('post_author = %d' => $userbase->get_user_id($cage->get->keyExists('user'))); 
+		$hotaru->display_template('posts_list', 'submit');
+		return true;
+														
 	} elseif($hotaru->is_page('main')) {
 	
 		// Plugin hook
