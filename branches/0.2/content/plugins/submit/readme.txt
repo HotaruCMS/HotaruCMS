@@ -8,13 +8,14 @@ Enable users to submit and display stories to your site.
 
 Instructions
 ------------
-1. Upload the <i>submit</i> folder to your plugins folder. Install it from Plugin Management in Admin.
+1. Upload the "submit" folder to your plugins folder. Install it from Plugin Management in Admin.
 2. The index page for your site will show posts submitted using the "Submit a story" link in the navigation bar.
 
 Changelog
 ---------
 Version 0.2
 
+2009-08-02: Filters posts by user when clicking a username in a post.
 2009-08-01: Updated the Post class to convert original urls into domains and add them to the db. 
 2009-08-01: Made an upgrade function to add a post_domain field to the posts table.
 
