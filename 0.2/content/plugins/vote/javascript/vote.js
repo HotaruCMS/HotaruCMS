@@ -36,8 +36,29 @@
 function vote(baseurl, user, id, type, rating)
 {
 	url = baseurl+"content/plugins/vote/vote_functions.php";
-	var target_votes = document.getElementById("vote_bury_votes_"+id);
-	var target_text = document.getElementById("vote_bury_text_"+id);
+	
+	if(type == 'vote_unvote') {
+		var target_votes = document.getElementById("vote_unvote_votes_"+id);
+		var target_text_vote = document.getElementById("vote_unvote_text_vote_"+id);
+		var target_text_unvote = document.getElementById("vote_unvote_text_unvote_"+id);
+	}
+	
+	if(type == 'up_down') {
+		var target_votes = document.getElementById("up_down_votes_"+id);
+		var target_text_up_vote = document.getElementById("up_down_text_up_vote_"+id);
+		var target_text_up_voted = document.getElementById("up_down_text_up_voted_"+id);
+		var target_text_down_vote = document.getElementById("up_down_text_down_vote_"+id);
+		var target_text_down_voted = document.getElementById("up_down_text_down_voted_"+id);
+	}
+	
+	if(type == 'yes_no') {
+		var target_votes_yes = document.getElementById("yes_no_votes_yes_"+id);
+		var target_votes_no = document.getElementById("yes_no_votes_no_"+id);
+		var target_text_yes_vote = document.getElementById("yes_no_text_yes_vote_"+id);
+		var target_text_yes_voted = document.getElementById("yes_no_text_yes_voted_"+id);
+		var target_text_no_vote = document.getElementById("yes_no_text_no_vote_"+id);
+		var target_text_no_voted = document.getElementById("yes_no_text_no_voted_"+id);
+	}
 	
 	if (xmlhttp) {
 		mycontent = "baseurl="+baseurl+"&user="+user+"&post_id="+id+"&type="+type+"&rating="+rating;
@@ -58,9 +79,54 @@ function vote(baseurl, user, id, type, rating)
 					catch(e) {
 						alert("Unable to add your vote. Sorry!");
 					}
+						
+					if(returnvalue.result) {
+						alert(returnvalue.result);
+						return;
+					}
+							
+					if(type == 'vote_unvote') {
+						target_votes.innerHTML = returnvalue.votes;
+						if(rating == 'positive') {
+							target_text_vote.style.display = 'none';
+							target_text_unvote.style.display = '';
+						} else {
+							target_text_vote.style.display = '';
+							target_text_unvote.style.display = 'none';
+						}
+					}
 					
-					target_votes.innerHTML = returnvalue.votes;
-					target_text.innerHTML = returnvalue.text;
+					if(type == 'up_down') {
+						target_votes.innerHTML = returnvalue.votes;
+						if(rating == 'positive') {
+							target_text_up_vote.style.display = 'none';
+							target_text_up_voted.style.display = '';
+							target_text_down_vote.style.display = '';
+							target_text_down_voted.style.display = 'none';
+						} else {
+							target_text_up_vote.style.display = '';
+							target_text_up_voted.style.display = 'none';
+							target_text_down_vote.style.display = 'none';
+							target_text_down_voted.style.display = '';
+						}
+						
+					}
+	
+					if(type == 'yes_no') {
+						target_votes_yes.innerHTML = returnvalue.votes_yes;
+						target_votes_no.innerHTML = returnvalue.votes_no;
+						if(rating == 'positive') {
+							target_text_yes_vote.style.display = 'none';
+							target_text_yes_voted.style.display = '';
+							target_text_no_vote.style.display = '';
+							target_text_no_voted.style.display = 'none';
+						} else {
+							target_text_yes_vote.style.display = '';
+							target_text_yes_voted.style.display = 'none';
+							target_text_no_vote.style.display = 'none';
+							target_text_no_voted.style.display = '';
+						}
+					}
 				} 
 			}
 		}

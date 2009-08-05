@@ -24,20 +24,20 @@
  * ********* VOTE BURY BUTTON *********
  * ********************************* */
  
-.vote_vote_bury_button {
+.vote_vote_unvote_button {
 	float: left; 
 	margin: 0 6px 6px 0;
 	text-align: center;
 }
 
-.vote_vote_bury_button_top {
+.vote_vote_unvote_button_top {
 	line-height: 2.0em;
 	font-size: 1.5em;
 	width: 50px; 
 	background-color: #F0F0F0;
 }
 
-.vote_vote_bury_button_bottom {
+.vote_vote_unvote_button_bottom {
 	width: 50px; 
 	background-color: #FFCC66;
 }
@@ -94,6 +94,6 @@
 }
 
 /* Used in submit plugin - button width + padding: */
-.vote_button_space_vote_bury { 	margin-left: 56px; }
+.vote_button_space_vote_unvote { margin-left: 56px; }
 .vote_button_space_up_down { margin-left: 56px; }
 .vote_button_space_yes_no { margin-left: 112px; }
