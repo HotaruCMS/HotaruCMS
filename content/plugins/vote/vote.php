@@ -69,7 +69,7 @@ function vote_install_plugin() {
 	}   
     
 	// Default settings
-	$plugin->plugin_settings_update('vote', 'vote_vote_bury', 'checked');  
+	$plugin->plugin_settings_update('vote', 'vote_vote_unvote', 'checked');  
 	$plugin->plugin_settings_update('vote', 'vote_up_down', '');    
 	$plugin->plugin_settings_update('vote', 'vote_yes_no', '');  
 	
@@ -121,8 +121,8 @@ function vote_submit_class_post_read_post_1() {
 	
 	if($plugin->plugin_active('vote')) { 
 		// Determine vote type
-		if(($plugin->plugin_settings('vote', 'vote_vote_bury') == 'checked')) {
-			$post->post_vars['vote_type'] = "vote_bury";
+		if(($plugin->plugin_settings('vote', 'vote_vote_unvote') == 'checked')) {
+			$post->post_vars['vote_type'] = "vote_unvote";
 		} elseif(($plugin->plugin_settings('vote', 'vote_up_down') == 'checked')) {
 			$post->post_vars['vote_type'] = "up_down";
 		} else {
@@ -177,8 +177,8 @@ function vote_header_include() {
 function vote_submit_pre_show_post() {
 	global $hotaru, $db, $post, $current_user, $voted;
 	
-	$sql = "SELECT vote_rating FROM " . table_votes . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_type = %s";
- 	$voted = $db->get_var($db->prepare($sql, $post->post_id, $current_user->id, 'vote_bury'));
+	$sql = "SELECT vote_rating FROM " . table_votes . " WHERE vote_post_id = %d AND vote_user_id = %d";
+ 	$voted = $db->get_var($db->prepare($sql, $post->post_id, $current_user->id));
   	
  	$hotaru->display_template('vote_button', 'vote');
 }
@@ -221,12 +221,12 @@ function vote_admin_plugin_settings() {
 	echo "<h1>" . $lang["vote_settings_header"] . "</h1>\n";
 	
 	// Get settings from the database if they exist...
-	$vote_bury = $plugin->plugin_settings('vote', 'vote_vote_bury');
+	$vote_unvote = $plugin->plugin_settings('vote', 'vote_vote_unvote');
 	$up_down = $plugin->plugin_settings('vote', 'vote_up_down');
 	$yes_no = $plugin->plugin_settings('vote', 'vote_yes_no');
 	
 	//...otherwise set to blank:
-	if(!$vote_bury) { $vote_bury = ''; }
+	if(!$vote_unvote) { $vote_unvote = ''; }
 	if(!$up_down) { $up_down = ''; }
 	if(!$yes_no) { $yes_no = ''; }
 	
@@ -238,7 +238,7 @@ function vote_admin_plugin_settings() {
 	
 	echo "<p>" . $lang["vote_settings_instructions"] . "</p><br />";
 	
-	echo "<input type='radio' name='vote_type' value='vote_bury' " . $vote_bury . " >&nbsp;&nbsp;" . $lang["vote_settings_vote_bury"] . "<br />\n";    
+	echo "<input type='radio' name='vote_type' value='vote_unvote' " . $vote_unvote . " >&nbsp;&nbsp;" . $lang["vote_settings_vote_unvote"] . "<br />\n";    
 	echo "<input type='radio' name='vote_type' value='up_down' " . $up_down . " >&nbsp;&nbsp;" . $lang["vote_settings_up_down"] . "<br />\n"; 
 	echo "<input type='radio' name='vote_type' value='yes_no' " . $yes_no . " >&nbsp;&nbsp;" . $lang["vote_settings_yes_no"] . "<br />\n"; 
 	
@@ -266,23 +266,23 @@ function vote_save_settings() {
 	if($cage->post->keyExists('vote_type')) { 
 		$selected = $cage->post->testAlnumLines('vote_type'); 
 		switch($selected) {
-			case 'vote_bury':
-				$vote_bury = "checked";
+			case 'vote_unvote':
+				$vote_unvote = "checked";
 				$up_down = "";
 				$yes_no = "";
 				break;
 			case 'up_down':
-				$vote_bury = "";
+				$vote_unvote = "";
 				$up_down = "checked";
 				$yes_no = "";
 				break;
 			case 'yes_no':
-				$vote_bury = "";
+				$vote_unvote = "";
 				$up_down = "";
 				$yes_no = "checked";
 				break;
 			default:
-				$vote_bury = "checked";
+				$vote_unvote = "checked";
 				$up_down = "";
 				$yes_no = "";
 				break;
@@ -293,7 +293,7 @@ function vote_save_settings() {
 	// A plugin hook so other plugin developers can save settings   
 	$plugin->check_actions('vote_save_settings');
 	
-	$plugin->plugin_settings_update('vote', 'vote_vote_bury', $vote_bury);
+	$plugin->plugin_settings_update('vote', 'vote_vote_unvote', $vote_unvote);
 	$plugin->plugin_settings_update('vote', 'vote_up_down', $up_down);
 	$plugin->plugin_settings_update('vote', 'vote_yes_no', $yes_no);
 	
