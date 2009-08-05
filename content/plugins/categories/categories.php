@@ -372,18 +372,22 @@ function cts_submit_is_page_main() {
  ********************************************************************** */
  
 function cts_submit_posts_list_filter() {
-	global $post, $cage, $filter;
+	global $post, $cage, $filter, $filter_heading, $lang;
 	
 	if(friendly_urls == "true") {
 		$category = $cage->get->noTags('category'); 
 		if($category) { 
-			$filter = array('post_category = %d' => get_cat_id($category)); 
+			$filter['post_category = %d'] = get_cat_id($category); 
+			$filter_heading = $lang["submit_post_filter_category"] . " '" . $category . "'";
+			$filter_heading .= " <small>(<a href='" . url(array('page'=>'rss', 'category'=>get_cat_id($category))) . "'>RSS</a>)</small>";	
 			return true;	
 		} 
 	} else {
 		$category = $cage->get->getInt('category'); 
 		if($category) {
-			$filter = array('post_category = %d' => $category); 
+			$filter['post_category = %d'] = $category; 
+			$filter_heading = $lang["submit_post_filter_category"] . " '" . get_cat_name($category) . "'";
+			$filter_heading .= " <small>(<a href='" . url(array('page'=>'rss', 'category'=>$category)) . "'>RSS</a>)</small>";	
 			return true;	
 		}
 	}
