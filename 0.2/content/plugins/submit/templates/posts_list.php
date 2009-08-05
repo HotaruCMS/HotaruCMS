@@ -24,14 +24,19 @@
  *
  **************************************************************************************************** */
 
-global $hotaru, $plugin, $post, $cage, $filter;
+global $hotaru, $plugin, $post, $cage, $filter, $filter_heading;
 
 $userbase = new UserBase();
 		
 if(!$filter) { $filter = array(); }
+
+$filter['post_status != %s'] = 'processing';
 $plugin->check_actions('submit_posts_list_filter');
 
-$stories = $post->get_posts($filter);
+$prepared_filter = $post->filter($filter);
+$stories = $post->get_posts($prepared_filter);
+
+if($filter_heading) { echo "<h3>" . $filter_heading . "</h3>"; }
 
 if($stories) {
 	$pg = $cage->get->getInt('pg');
@@ -43,9 +48,9 @@ if($stories) {
 
 <!-- ************ POST **************** -->
 
-<div class="show_post">
+<?php $plugin->check_actions('submit_pre_show_post'); ?>
 
-	<?php $plugin->check_actions('submit_show_post_start'); ?>
+<div class="show_post vote_button_space_<?php echo $post->post_vars['vote_type'] ?>">
 	
 	<div class="show_post_title"><a href='<?php echo $post->post_orig_url; ?>'><?php echo $post->post_title; ?></a></div>
 
@@ -78,10 +83,10 @@ if($stories) {
 	<div class="show_post_extras">
 		<?php $plugin->check_actions('submit_show_post_extras'); ?>
 	</div>
-	
-	<?php $plugin->check_actions('submit_show_post_end'); ?>
-	
+		
 </div>
+
+<?php $plugin->check_actions('submit_post_show_post'); ?>
 
 <!-- ************ END POST **************** -->
 
