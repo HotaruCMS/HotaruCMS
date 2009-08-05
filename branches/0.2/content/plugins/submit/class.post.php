@@ -172,7 +172,7 @@ class Post {
 		$parsed = parse_url($this->post_orig_url);
 		if(isset($parsed['scheme'])){ $this->post_domain = $parsed['scheme'] . "://" . $parsed['host']; }
 		
-		$sql = "UPDATE " . table_posts . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_date = CURRENT_TIMESTAMP, post_updateby = %d WHERE post_id = %d";
+		$sql = "UPDATE " . table_posts . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_updateby = %d WHERE post_id = %d";
 		
 		$db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode($this->post_domain), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), $this->post_status, $this->post_author, $current_user->id, $this->post_id));
 		
@@ -216,13 +216,13 @@ class Post {
 	
 	
 	/* ******************************************************************** 
-	 *  Function: get_posts
+	 *  Function: filter
 	 *  Parameters: array of search parameters
 	 *  Purpose: Gets all the posts from the database
-	 *  Notes: Example usage: $post->get_posts(array('post_tags LIKE %s' => '%tokyo%'));
+	 *  Notes: Example usage: $post->filter(array('post_tags LIKE %s' => '%tokyo%'), 10);
 	 ********************************************************************** */	
 	 	
-	function get_posts($vars = array()) {
+	function filter($vars = array(), $limit = 0) {
 		global $db;
 		
 		$filter = '';
@@ -238,12 +238,83 @@ class Post {
 			$filter = rstrtrim($filter, "AND ");
 		}
 		
-		$sql = "SELECT * FROM " . table_posts . $filter . " ORDER BY post_date DESC";
+		if($limit == 0) { $limit = ''; } else { $limit = "LIMIT " . $limit; }
+		
+		$sql = "SELECT * FROM " . table_posts . $filter . " ORDER BY post_date DESC " . $limit;
 				
 		$prepare_array[0] = $sql;
 				
-		$posts = $db->get_results($db->prepare($prepare_array));
-		if($posts) { return $posts; } else { return false; }
+		// $prepare_array needs to be passed to $db->prepare, i.e. $db->get_results($db->prepare($prepare_array));
+				
+		if($prepare_array) { return $prepare_array; } else { return false; }
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: get_posts
+	 *  Parameters: prepared array of search arguments from filter()
+	 *  Purpose: Gets all the posts from the database
+	 *  Notes: ---
+	 ********************************************************************** */	
+	 	
+	function get_posts($prepared_array = array()) {
+		global $db;
+		
+		if(!empty($prepared_array)) {				
+			$posts = $db->get_results($db->prepare($prepared_array));
+			if($posts) { return $posts; }
+		} 
+		
+		return false;
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: rss_feed
+	 *  Parameters: 
+	 *  Purpose: Publishes content as an RSS feed
+	 *  Notes: Uses the 3rd party RSS Writer class.
+	 ********************************************************************** */	
+	 	
+	function rss_feed() {
+		global $db, $lang, $cage, $plugin, $current_user;
+		require_once(includes . 'RSSWriterClass/rsswriter.php');
+		
+		$status = $cage->get->testAlpha('status');
+		$limit = $cage->get->getInt('limit');
+		$user = $cage->get->testUsername('user');
+		$tag = $cage->get->noTags('tag');
+		$category = $cage->get->noTags('category');
+		
+		if(!$status) { $status = "new"; }
+		if(!$limit) { $limit = 10; }
+					
+		if($status) { $filter['post_status = %s'] = $status; }
+		if($user) { $filter['post_author = %d'] = $current_user->get_user_id($cage->get->testUsername('user'));  }
+		if($tag) { $filter['post_tags LIKE %s'] = '%' . $tag . '%'; }
+		if($category && (friendly_urls == "true")) { $filter['post_category = %d'] = get_cat_id($category); }
+		if($category && (friendly_urls == "false")) { $filter['post_category = %d'] = $category; }
+		
+		$plugin->check_actions('submit_class_post_rss_feed');
+		
+		$feed = new RSS();
+		$feed->title       = site_name;
+		$feed->link        = baseurl;
+		$feed->description = $lang["submit_rss_latest_from"] . " " . site_name;
+		
+		$prepared_array = $this->filter($filter, $limit);
+		$results = $db->get_results($db->prepare($prepared_array));
+
+		foreach($results as $result) 
+		{
+			$item = new RSSItem();
+			$item->title = stripslashes(urldecode($result->post_title));
+			$item->link  = urldecode($result->post_url);
+			$item->setPubDate($result->post_date); 
+			$item->description = "<![CDATA[ " . stripslashes(urldecode($result->post_content)) . " ]]>";
+			$feed->addItem($item);
+		}
+		echo $feed->serve();
 	}
 	
 	
@@ -293,46 +364,7 @@ class Post {
 		if($post_id) { return $post_id; } else { return false; }
 	}
 	
-	
-	
-	/* ******************************************************************** 
-	 *  Function: rss_feed
-	 *  Parameters: 
-	 *  Purpose: Publishes content as an RSS feed
-	 *  Notes: Uses the 3rd party RSS Writer class.
-	 ********************************************************************** */	
-	 	
-	function rss_feed() {
-		global $db, $lang, $cage;
-		require_once(includes . 'RSSWriterClass/rsswriter.php');
 		
-		$status = $cage->get->testAlpha('status');
-		$limit = $cage->get->getInt('limit');
-		
-		if(!$status) { $status = "new"; }
-		if(!$limit) { $limit = 10; }
-		
-		$feed = new RSS();
-		$feed->title       = site_name;
-		$feed->link        = baseurl;
-		$feed->description = $lang["submit_rss_latest_from"] . " " . site_name;
-
-		$sql = "SELECT * from " . table_posts . " WHERE post_status = %s ORDER BY post_date DESC LIMIT %d";
-		$results = $db->get_results($db->prepare($sql, $status, $limit));
-		foreach($results as $result) 
-		{
-			$item = new RSSItem();
-			$item->title = stripslashes(urldecode($result->post_title));
-			$item->link  = urldecode($result->post_url);
-			$item->setPubDate($result->post_date); 
-			$item->description = "<![CDATA[ " . stripslashes(urldecode($result->post_content)) . " ]]>";
-			$feed->addItem($item);
-		}
-		echo $feed->serve();
-	}
-	
-	
-	
 	/* ******************************************************************** 
 	 *  Function: send_trackback
 	 *  Parameters: 

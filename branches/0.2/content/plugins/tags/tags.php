@@ -320,7 +320,7 @@ function tg_submit_form_2_process_submission() {
  ********************************************************************** */
  
 function tg_submit_posts_list_filter() {
-	global $post, $cage, $filter;
+	global $post, $cage, $filter, $filter_heading, $lang;
 	
 	// friendly URLs: FALSE
 	$tag = $cage->get->noTags('tag'); 
@@ -329,7 +329,9 @@ function tg_submit_posts_list_filter() {
 	if(!$tag) { $tag = $cage->get->noTags('pos2'); } 
 	
 	if($tag) {
-		$filter = array('post_tags LIKE %s' => '%' . $tag . '%'); 
+		$filter['post_tags LIKE %s'] = '%' . $tag . '%'; 
+		$filter_heading = $lang["submit_post_filter_tag"] . " '" . $tag . "'";
+		$filter_heading .= " <small>(<a href='" . url(array('page'=>'rss', 'tag'=>$tag)) . "'>RSS</a>)</small>";	
 		return true;	
 	}
 	

@@ -158,7 +158,12 @@ class Hotaru {
 		   the template from the plugin folder if it's there. */
 		if($plugin != '') {
 			if(file_exists(plugins .  $plugin . '/templates/' . $page)) {
-				include_once(plugins . $plugin . '/templates/' . $page);
+				if($plugin == 'vote') {
+					// Special case, do not restrict to include once.
+					include(plugins . $plugin . '/templates/' . $page);
+				} else {
+					include_once(plugins . $plugin . '/templates/' . $page);
+				}
 				return true;
 				die();
 			}

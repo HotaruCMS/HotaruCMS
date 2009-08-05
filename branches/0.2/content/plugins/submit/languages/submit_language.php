@@ -73,6 +73,9 @@ $lang["submit_settings_saved"] = "Settings Saved.";
 
 /* Submit Show Post */
 $lang["submit_post_read_more"] = "Read More";
+$lang["submit_post_filter_user"] = "Filtered to stories submitted by";
+$lang["submit_post_filter_tag"] = "Filtered to stories tagged";
+$lang["submit_post_filter_category"] = "Filtered to stories in";
 
 /* Submit RSS Feed */
 $lang["submit_rss_latest_from"] = "Latest from";
