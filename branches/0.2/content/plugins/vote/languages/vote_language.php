@@ -28,12 +28,21 @@ $lang["vote_admin_sidebar"] = "Vote";
 
 /* Vote Button */
 $lang["vote_button_vote"] = "Vote!";
-$lang["vote_button_voted"] = "Voted";
+$lang["vote_button_unvote"] = "Un-vote";
+$lang["vote_button_up_link"] = "Up!";
+$lang["vote_button_up"] = "Up";
+$lang["vote_button_down_link"] = "Down!";
+$lang["vote_button_down"] = "Down";
+$lang["vote_button_yes_link"] = "Yes!";
+$lang["vote_button_yes"] = "Yes";
+$lang["vote_button_no_link"] = "No!";
+$lang["vote_button_no"] = "No";
+$lang['vote_already_voted'] = "Error: You have already voted for this story. If you can't see it, try refreshing the page.";
 
 /* Vote Settings */
 $lang["vote_settings_header"] = "Vote Settings";
 $lang["vote_settings_instructions"] = "Choose the vote type you want to use:";
-$lang["vote_settings_vote_bury"] = "Vote & Bury - Digg-style voting";
+$lang["vote_settings_vote_unvote"] = "Vote & Un-vote - Digg-style voting";
 $lang["vote_settings_up_down"] = "Up & Down - Reddit-style voting";
 $lang["vote_settings_yes_no"] = "Yes/No Poll - Show positive <i>and</i> negative votes";
 $lang["vote_settings_save"] = "Save";
