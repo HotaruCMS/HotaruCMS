@@ -48,8 +48,18 @@ if($cage->post->keyExists('post_id')) {
 		if($vote_rating == 'positive') {
 			if(!($voted && $vote_type == 'up_down')) {
 				// skip this if we are undoing a vote using up_down voting
-				$sql = "UPDATE " . table_posts . " SET post_votes_up=post_votes_up+1 WHERE post_id = %d";
-				$db->query($db->prepare($sql, $post_id));
+				
+				//get vote settings
+				$vote_settings = unserialize($plugin->plugin_settings('vote', 'vote_settings')); 
+				
+				// Get status and positive vote count o determine if the post should be promoted or not...
+				$sql = "SELECT post_status, post_votes_up FROM " . table_posts . " WHERE post_id = %d";
+				$result = $db->get_row($db->prepare($sql, $post_id));
+				if(($result->post_votes_up+1) >= $vote_settings['vote_votes_to_promote']) { $post_status = 'top'; } else { $post_status = $result->post_status; }
+				
+				// Update the post with the new vote count and possible a new status...
+				$sql = "UPDATE " . table_posts . " SET post_status = %s, post_votes_up=post_votes_up+1 WHERE post_id = %d";
+				$db->query($db->prepare($sql, $post_status, $post_id));
 			}
 			$sql = "INSERT INTO " . table_votes . " (vote_post_id, vote_user_id, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, CURRENT_TIMESTAMP, %s, %s, %d)";
 			$db->query($db->prepare($sql, $post_id, $current_user->id, $vote_type, $vote_rating, $current_user->id));

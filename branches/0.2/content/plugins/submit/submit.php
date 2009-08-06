@@ -165,10 +165,10 @@ function sub_hotaru_header() {
  ********************************************************************** */
 
 function sub_navigation() {	
-	global $current_user;
+	global $current_user, $lang;
 	
 	if($current_user->logged_in) {
-		echo "<li><a href='" . url(array('page'=>'submit')) . "'>Submit a Story</a></li>\n";
+		echo "<li><a href='" . url(array('page'=>'submit')) . "'>" . $lang['submit_submit_a_story'] . "</a></li>\n";
 	}
 }
 
@@ -361,6 +361,26 @@ function sub_theme_index_main() {
 	
 		// Plugin hook
 		$result = $plugin->check_actions('submit_is_page_main');
+		if($result && is_array($result)) { return true; }
+	
+		// Show the list of posts
+		$hotaru->display_template('posts_list', 'submit');
+		return true;
+		
+	} elseif($hotaru->is_page('latest')) {
+	
+		// Plugin hook
+		$result = $plugin->check_actions('submit_is_page_latest');
+		if($result && is_array($result)) { return true; }
+	
+		// Show the list of posts
+		$hotaru->display_template('posts_list', 'submit');
+		return true;
+		
+	} elseif($hotaru->is_page('all')) {
+	
+		// Plugin hook
+		$result = $plugin->check_actions('submit_is_page_all');
 		if($result && is_array($result)) { return true; }
 	
 		// Show the list of posts
