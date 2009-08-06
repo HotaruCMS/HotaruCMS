@@ -61,7 +61,7 @@ function vote(baseurl, user, id, type, rating)
 	}
 	
 	if (xmlhttp) {
-		mycontent = "baseurl="+baseurl+"&user="+user+"&post_id="+id+"&type="+type+"&rating="+rating;
+		mycontent = "baseurl="+baseurl+"&user_ip="+user+"&post_id="+id+"&type="+type+"&rating="+rating;
 		ajax['response'] = new myXMLHttpRequest ();
 		
 		if (ajax) {
