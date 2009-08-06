@@ -57,6 +57,7 @@ function vote_install_plugin() {
 		$sql = "CREATE TABLE `" . db_prefix . "votes` (
 		  `vote_post_id` int(11) NOT NULL DEFAULT '0',
 		  `vote_user_id` int(11) NOT NULL DEFAULT '0',
+		  `vote_user_ip` varchar(32) NOT NULL DEFAULT '0',
 		  `vote_date` timestamp NULL,
 		  `vote_type` varchar(32) NOT NULL DEFAULT 'post',
 		  `vote_rating` enum('positive','negative') NULL,
@@ -73,6 +74,7 @@ function vote_install_plugin() {
 	$vote_settings['vote_vote_unvote'] = "checked";
 	$vote_settings['vote_up_down'] = "";
 	$vote_settings['vote_yes_no'] = "";
+	$vote_settings['vote_anonymous_votes'] = "";
 	$vote_settings['vote_submit_vote'] = "checked";
 	$vote_settings['vote_submit_vote_value'] = 1;
 	$vote_settings['vote_votes_to_promote'] = 5;
@@ -115,7 +117,8 @@ function vote_submit_hotaru_header_1() {
 	global $post, $hotaru, $plugin, $cage;
 		
 	$post->post_vars['post_votes_up'] = 0;
-	$post->post_vars['post_votes_down'] = 0;	
+	$post->post_vars['post_votes_down'] = 0;
+	$post->post_vars['vote_anonymous_votes'] = '';	
 }
 
 /* ******************************************************************** 
@@ -141,6 +144,9 @@ function vote_submit_class_post_read_post_1() {
 		} else {
 			$post->post_vars['vote_type'] = "yes_no";
 		}
+		
+		// Enable anonymous voters?
+		$post->post_vars['vote_anonymous_votes'] = $vote_settings['vote_anonymous_votes'];
 	}
 }
 
@@ -188,7 +194,7 @@ function vote_header_include() {
  ********************************************************************** */
   
 function vote_submit_class_post_add_post() {
- 	global $db, $current_user, $post, $plugin;
+ 	global $db, $current_user, $post, $plugin, $cage;
  	
  	//get vote settings
 	$vote_settings = unserialize($plugin->plugin_settings('vote', 'vote_settings')); 
@@ -212,8 +218,8 @@ function vote_submit_class_post_add_post() {
 	
 		//Insert one vote for each of $submit_vote_value;
 		for($i=0; $i<$submit_vote_value; $i++) {
-			$sql = "INSERT INTO " . table_votes . " (vote_post_id, vote_user_id, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, CURRENT_TIMESTAMP, %s, %s, %d)";
-			$db->query($db->prepare($sql, $post->post_id, $current_user->id, $post->post_vars['vote_type'], 'positive', $current_user->id));
+			$sql = "INSERT INTO " . table_votes . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, CURRENT_TIMESTAMP, %s, %s, %d)";
+			$db->query($db->prepare($sql, $post->post_id, $current_user->id, $cage->server->testIp('REMOTE_ADDR'), $post->post_vars['vote_type'], 'positive', $current_user->id));
 		}	
 	}			
 				
@@ -301,6 +307,7 @@ function vote_admin_plugin_settings() {
 	$vote_unvote = $vote_settings['vote_vote_unvote'];
 	$up_down = $vote_settings['vote_up_down'];
 	$yes_no = $vote_settings['vote_yes_no'];
+	$anonymous_votes = $vote_settings['vote_anonymous_votes'];
 	$submit_vote = $vote_settings['vote_submit_vote'];
 	$submit_vote_value = $vote_settings['vote_submit_vote_value'];
 	$votes_to_promote = $vote_settings['vote_votes_to_promote'];
@@ -311,6 +318,7 @@ function vote_admin_plugin_settings() {
 	if(!$vote_unvote) { $vote_unvote = ''; }
 	if(!$up_down) { $up_down = ''; }
 	if(!$yes_no) { $yes_no = ''; }
+	if(!$anonymous_votes) { $anonymous_votes = ''; }
 	if(!$submit_vote) { $submit_vote = ''; }
 	if(!$submit_vote_value) { $submit_vote_value = 1; }
 	if(!$votes_to_promote) { $votes_to_promote = 5; }
@@ -333,6 +341,9 @@ function vote_admin_plugin_settings() {
 	
 	echo "<p><input type='checkbox' name='vote_submit_vote' value='vote_submit_vote' " . $submit_vote . " > " . $lang["vote_settings_submit_vote"] . "</p>\n";
 	echo "<p>" . $lang["vote_settings_submit_vote_value"] . " <input type='text' size=5 name='vote_submit_vote_value' value='" . $submit_vote_value . "' /> <small> (Default: 1)</small></p>\n";
+	
+	echo "<br /><p><b>" . $lang["vote_settings_vote_anonymous"] . "</b></p>";
+	echo "<p><input type='checkbox' name='vote_anonymous_votes' value='vote_anonymous_votes' " . $anonymous_votes . " > " . $lang["vote_settings_anonymous_votes"] . "</p>\n";
 	
 	// A plugin hook so other plugin developers can show settings
 	$plugin->check_actions('vote_settings_form_1');
@@ -420,6 +431,14 @@ function vote_save_settings() {
 		$submit_vote_value = $vote_settings['vote_submit_vote_value'];
 	}
 	
+	
+	// Anonymous Vote
+	if($cage->post->keyExists('vote_anonymous_votes')) { 
+		$anonymous_votes = 'checked'; 
+	} else { 
+		$anonymous_votes = ''; 
+	}
+	
 		
 	// Check the content for votes_to_promote
 	if($cage->post->keyExists('vote_votes_to_promote')) {
@@ -465,6 +484,7 @@ function vote_save_settings() {
 	$vote_settings['vote_vote_unvote'] = $vote_unvote;
 	$vote_settings['vote_up_down'] = $up_down;
 	$vote_settings['vote_yes_no'] = $yes_no;
+	$vote_settings['vote_anonymous_votes'] = $anonymous_votes;
 	$vote_settings['vote_submit_vote'] = $submit_vote;
 	$vote_settings['vote_submit_vote_value'] = $submit_vote_value;
 	$vote_settings['vote_votes_to_promote'] = $votes_to_promote;
