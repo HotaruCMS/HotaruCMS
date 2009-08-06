@@ -412,6 +412,7 @@ function cts_submit_show_post_author_date() {
 		$cat_name = $post->post_vars['post_cat_name'];
 		
 		echo " " . $lang["submit_show_post_in_category"] . " ";
+		
 		echo "<a href='" . url(array('category'=>$category)) . "'>" . $cat_name . "</a></li>\n";
 	}		
 }

@@ -6,7 +6,7 @@
  * folder: vote
  * prefix: vote
  * requires: submit 0.2, users 0.1
- * hooks: install_plugin, hotaru_header, submit_hotaru_header_1, submit_class_post_read_post_1, submit_class_post_read_post_2, header_include, submit_pre_show_post, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: install_plugin, hotaru_header, submit_hotaru_header_1, submit_class_post_read_post_1, submit_class_post_read_post_2, header_include, submit_pre_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_class_post_add_post, navigation
  *
  *
  *  License:
@@ -69,9 +69,18 @@ function vote_install_plugin() {
 	}   
     
 	// Default settings
-	$plugin->plugin_settings_update('vote', 'vote_vote_unvote', 'checked');  
-	$plugin->plugin_settings_update('vote', 'vote_up_down', '');    
-	$plugin->plugin_settings_update('vote', 'vote_yes_no', '');  
+	
+	$vote_settings['vote_vote_unvote'] = "checked";
+	$vote_settings['vote_up_down'] = "";
+	$vote_settings['vote_yes_no'] = "";
+	$vote_settings['vote_submit_vote'] = "checked";
+	$vote_settings['vote_submit_vote_value'] = 1;
+	$vote_settings['vote_votes_to_promote'] = 5;
+	$vote_settings['vote_alerts_to_bury'] = 5;
+	$vote_settings['vote_physical_delete'] = "";
+	
+	// parameters: plugin folder name, setting name, setting value
+	$plugin->plugin_settings_update('vote', 'vote_settings', serialize($vote_settings));
 	
 	// Include language file. Also included in hotaru_header, but needed here so 
 	// that the link in the Admin sidebar shows immediately after installation.
@@ -120,10 +129,14 @@ function vote_submit_class_post_read_post_1() {
 	global $plugin, $post;
 	
 	if($plugin->plugin_active('vote')) { 
+	
+		// Get settings from the database if they exist...
+		$vote_settings = unserialize($plugin->plugin_settings('vote', 'vote_settings')); 
+	
 		// Determine vote type
-		if(($plugin->plugin_settings('vote', 'vote_vote_unvote') == 'checked')) {
+		if($vote_settings['vote_vote_unvote'] == 'checked') {
 			$post->post_vars['vote_type'] = "vote_unvote";
-		} elseif(($plugin->plugin_settings('vote', 'vote_up_down') == 'checked')) {
+		} elseif($vote_settings['vote_up_down'] == 'checked') {
 			$post->post_vars['vote_type'] = "up_down";
 		} else {
 			$post->post_vars['vote_type'] = "yes_no";
@@ -167,6 +180,67 @@ function vote_header_include() {
  * ****************************************************************** */
  
  
+/* ******************************************************************** 
+ *  Function: vote_submit_class_post_add_post
+ *  Parameters: None
+ *  Purpose: If auto-vote is enabled, the new post is automatically voted for by the person who submitted it.
+ *  Notes: ---
+ ********************************************************************** */
+  
+function vote_submit_class_post_add_post() {
+ 	global $db, $current_user, $post, $plugin;
+ 	
+ 	//get vote settings
+	$vote_settings = unserialize($plugin->plugin_settings('vote', 'vote_settings')); 
+	$submit_vote = $vote_settings['vote_submit_vote'];
+	$submit_vote_value = $vote_settings['vote_submit_vote_value'];
+	
+	// Automatically vote for a post when it's submitted...
+	if($submit_vote == 'checked') {
+		// Determine vote type
+		if($vote_settings['vote_vote_unvote'] == 'checked') {
+			$post->post_vars['vote_type'] = "vote_unvote";
+		} elseif($vote_settings['vote_up_down'] == 'checked') {
+			$post->post_vars['vote_type'] = "up_down";
+		} else {
+			$post->post_vars['vote_type'] = "yes_no";
+		}
+		
+		//update the vote count
+		$sql = "UPDATE " . table_posts . " SET post_votes_up=post_votes_up+%d WHERE post_id = %d";
+		$db->query($db->prepare($sql, $submit_vote_value, $post->post_id));
+	
+		//Insert one vote for each of $submit_vote_value;
+		for($i=0; $i<$submit_vote_value; $i++) {
+			$sql = "INSERT INTO " . table_votes . " (vote_post_id, vote_user_id, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, CURRENT_TIMESTAMP, %s, %s, %d)";
+			$db->query($db->prepare($sql, $post->post_id, $current_user->id, $post->post_vars['vote_type'], 'positive', $current_user->id));
+		}	
+	}			
+				
+}
+ 
+
+ /* ******************************************************************** 
+ * ********************************************************************* 
+ * ******************* FUNCTIONS FOR SHOWING VOTES ********************* 
+ * *********************************************************************
+ * ****************************************************************** */
+ 
+
+/* ******************************************************************** 
+ *  Function: vote_navigation
+ *  Parameters: None
+ *  Purpose: Adds "Top Posts" and "Latest" links to the navigation bar
+ *  Notes: 
+ ********************************************************************** */
+
+function vote_navigation() {	
+	global $lang;
+	
+	echo "<li><a href='" . baseurl . "'>" . $lang["vote_navigation_top_posts"] . "</a></li>\n";
+	echo "<li><a href='" . url(array('page'=>'latest')) . "'>" . $lang["vote_navigation_latest"] . "</a></li>\n";
+}
+
  /* ******************************************************************** 
  *  Function: vote_submit_pre_show_post
  *  Parameters: None
@@ -182,6 +256,7 @@ function vote_submit_pre_show_post() {
   	
  	$hotaru->display_template('vote_button', 'vote');
 }
+
 
  /* ******************************************************************** 
  * ********************************************************************* 
@@ -221,14 +296,26 @@ function vote_admin_plugin_settings() {
 	echo "<h1>" . $lang["vote_settings_header"] . "</h1>\n";
 	
 	// Get settings from the database if they exist...
-	$vote_unvote = $plugin->plugin_settings('vote', 'vote_vote_unvote');
-	$up_down = $plugin->plugin_settings('vote', 'vote_up_down');
-	$yes_no = $plugin->plugin_settings('vote', 'vote_yes_no');
+	$vote_settings = unserialize($plugin->plugin_settings('vote', 'vote_settings')); 
 	
-	//...otherwise set to blank:
+	$vote_unvote = $vote_settings['vote_vote_unvote'];
+	$up_down = $vote_settings['vote_up_down'];
+	$yes_no = $vote_settings['vote_yes_no'];
+	$submit_vote = $vote_settings['vote_submit_vote'];
+	$submit_vote_value = $vote_settings['vote_submit_vote_value'];
+	$votes_to_promote = $vote_settings['vote_votes_to_promote'];
+	$alerts_to_bury = $vote_settings['vote_alerts_to_bury'];
+	$physical_delete = $vote_settings['vote_physical_delete'];
+	
+	//...otherwise set to blank or default:
 	if(!$vote_unvote) { $vote_unvote = ''; }
 	if(!$up_down) { $up_down = ''; }
 	if(!$yes_no) { $yes_no = ''; }
+	if(!$submit_vote) { $submit_vote = ''; }
+	if(!$submit_vote_value) { $submit_vote_value = 1; }
+	if(!$votes_to_promote) { $votes_to_promote = 5; }
+	if(!$alerts_to_bury) { $alerts_to_bury = 5; }
+	if(!$physical_delete) { $physical_delete = ''; }
 	
 	// A plugin hook so other plugin developers can add settings
 	$plugin->check_actions('vote_settings_get_values');
@@ -236,16 +323,31 @@ function vote_admin_plugin_settings() {
 	// The form should be submitted to the admin_index.php page:
 	echo "<form name='vote_settings_form' action='" . baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=vote' method='post'>\n";
 	
-	echo "<p>" . $lang["vote_settings_instructions"] . "</p><br />";
+	echo "<p><b>" . $lang["vote_settings_vote_type"] . "</b></p>";
 	
-	echo "<input type='radio' name='vote_type' value='vote_unvote' " . $vote_unvote . " >&nbsp;&nbsp;" . $lang["vote_settings_vote_unvote"] . "<br />\n";    
-	echo "<input type='radio' name='vote_type' value='up_down' " . $up_down . " >&nbsp;&nbsp;" . $lang["vote_settings_up_down"] . "<br />\n"; 
-	echo "<input type='radio' name='vote_type' value='yes_no' " . $yes_no . " >&nbsp;&nbsp;" . $lang["vote_settings_yes_no"] . "<br />\n"; 
+	echo "<p><input type='radio' name='vote_type' value='vote_unvote' " . $vote_unvote . " >&nbsp;&nbsp;" . $lang["vote_settings_vote_unvote"] . "</p>\n";    
+	echo "<p><input type='radio' name='vote_type' value='up_down' " . $up_down . " >&nbsp;&nbsp;" . $lang["vote_settings_up_down"] . "</p>\n"; 
+	echo "<p><input type='radio' name='vote_type' value='yes_no' " . $yes_no . " >&nbsp;&nbsp;" . $lang["vote_settings_yes_no"] . "</p>\n"; 
+	
+	echo "<br /><p><b>" . $lang["vote_settings_vote_auto"] . "</b></p>";
+	
+	echo "<p><input type='checkbox' name='vote_submit_vote' value='vote_submit_vote' " . $submit_vote . " > " . $lang["vote_settings_submit_vote"] . "</p>\n";
+	echo "<p>" . $lang["vote_settings_submit_vote_value"] . " <input type='text' size=5 name='vote_submit_vote_value' value='" . $submit_vote_value . "' /> <small> (Default: 1)</small></p>\n";
 	
 	// A plugin hook so other plugin developers can show settings
-	$plugin->check_actions('vote_settings_form');
+	$plugin->check_actions('vote_settings_form_1');
+	
+	echo "<br /><p><b>" . $lang["vote_settings_vote_promote_bury"] . "</b></p>";
+	
+	echo "<p>" . $lang["vote_settings_votes_to_promote"] . " <input type='text' size=5 name='vote_votes_to_promote' value='" . $votes_to_promote . "' /> <small> (Default: 5)</small></p>\n";
+	echo "<p>" . $lang["vote_settings_alerts_to_bury"] . " <input type='text' size=5 name='vote_alerts_to_bury' value='" . $alerts_to_bury . "' /> <small> (Default: 5)</small></p>\n";
+	
+	echo "<p><input type='checkbox' id='vote_physical_delete' name='vote_physical_delete' " . $physical_delete . " /> " . $lang["vote_settings_physical_delete"] . "</p>";
 	    
-	echo "<br /><br />\n";    
+	// A plugin hook so other plugin developers can show settings
+	$plugin->check_actions('vote_settings_form_2');
+	
+	echo "<br />\n";    
 	echo "<input type='hidden' name='submitted' value='true' />\n";
 	echo "<input type='submit' value='" . $lang["vote_settings_save"] . "' />\n";
 	echo "</form>\n";
@@ -262,7 +364,12 @@ function vote_admin_plugin_settings() {
 function vote_save_settings() {
 	global $cage, $hotaru, $plugin, $lang;
 	
-	// Check the status of our checkbox
+	$error = 0;
+	
+	// Get settings from the database if they exist...
+	$vote_settings = unserialize($plugin->plugin_settings('vote', 'vote_settings')); 
+		
+	// Check the status of our radio buttons for vote type
 	if($cage->post->keyExists('vote_type')) { 
 		$selected = $cage->post->testAlnumLines('vote_type'); 
 		switch($selected) {
@@ -289,18 +396,89 @@ function vote_save_settings() {
 		}
 
 	}
+
+
+	// Submit Vote
+	if($cage->post->keyExists('vote_submit_vote')) { 
+		$submit_vote = 'checked'; 
+	} else { 
+		$submit_vote = ''; 
+	}
+	
+	
+	// Check the content for submit_vote_value
+	if($cage->post->keyExists('vote_submit_vote_value')) {
+		$submit_vote_value = $cage->post->testInt('vote_submit_vote_value'); 
+		if($submit_vote_value < 1) {
+			$hotaru->messages[$lang["vote_settings_submit_vote_value_invalid"]] = "red";
+			$error = 1;
+			$submit_vote_value = $vote_settings['vote_submit_vote_value'];
+		}
+	} else { 
+		$hotaru->messages[$lang["vote_settings_submit_vote_value_invalid"]] = "red";
+		$error = 1;
+		$submit_vote_value = $vote_settings['vote_submit_vote_value'];
+	}
+	
+		
+	// Check the content for votes_to_promote
+	if($cage->post->keyExists('vote_votes_to_promote')) {
+		$votes_to_promote = $cage->post->testInt('vote_votes_to_promote'); 
+		if($votes_to_promote < 1) {
+			$hotaru->messages[$lang["vote_settings_votes_to_promote_invalid"]] = "red";
+			$error = 1;
+			$votes_to_promote = $vote_settings['vote_votes_to_promote'];
+		}
+	} else { 
+		$hotaru->messages[$lang["vote_settings_votes_to_promote_invalid"]] = "red";
+		$error = 1;
+		$votes_to_promote = $vote_settings['vote_votes_to_promote'];
+	}
+	
+	
+	// Check the content for alerts_to_bury
+	if($cage->post->keyExists('vote_alerts_to_bury')) { 
+		$alerts_to_bury = $cage->post->testInt('vote_alerts_to_bury'); 
+		if($alerts_to_bury < 1) {
+			$hotaru->messages[$lang["vote_settings_alerts_to_bury_invalid"] ] = "red";
+			$error = 1;
+			$alerts_to_bury = $vote_settings['vote_alerts_to_bury'];
+		}
+	} else { 
+		$hotaru->messages[$lang["vote_settings_alerts_to_bury_invalid"] ] = "red";
+		$error = 1;
+		$alerts_to_bury = $vote_settings['vote_alerts_to_bury'];
+	}
+	
+	
+	// Check the status of our checkbox for physical delete
+	if($cage->post->keyExists('vote_physical_delete')) { 
+		$physical_delete = 'checked'; 
+	} else { 
+		$physical_delete = ''; 
+	}
 	
 	// A plugin hook so other plugin developers can save settings   
 	$plugin->check_actions('vote_save_settings');
 	
-	$plugin->plugin_settings_update('vote', 'vote_vote_unvote', $vote_unvote);
-	$plugin->plugin_settings_update('vote', 'vote_up_down', $up_down);
-	$plugin->plugin_settings_update('vote', 'vote_yes_no', $yes_no);
+	// Save new settings...	
+	$vote_settings['vote_vote_unvote'] = $vote_unvote;
+	$vote_settings['vote_up_down'] = $up_down;
+	$vote_settings['vote_yes_no'] = $yes_no;
+	$vote_settings['vote_submit_vote'] = $submit_vote;
+	$vote_settings['vote_submit_vote_value'] = $submit_vote_value;
+	$vote_settings['vote_votes_to_promote'] = $votes_to_promote;
+	$vote_settings['vote_alerts_to_bury'] = $alerts_to_bury;
+	$vote_settings['vote_physical_delete'] = $physical_delete;
 	
-	// This is just a radio selction, so we'll assume it was updated successfully:
-	$hotaru->message = $lang["vote_settings_saved"];
-	$hotaru->message_type = "green";
-	$hotaru->show_message();
+	// parameters: plugin folder name, setting name, setting value
+	$plugin->plugin_settings_update('vote', 'vote_settings', serialize($vote_settings));
+	
+	if($error == 0) {
+		$hotaru->messages[$lang["vote_settings_saved"]] = "green";
+	}
+	
+	$hotaru->show_messages();
 	
 	return true;    
 } 

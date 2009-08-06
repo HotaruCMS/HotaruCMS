@@ -665,7 +665,7 @@ class Plugin extends generic_pmd {
 			
 			$db->cache_queries = true;	// start using cache
 			
-			$sql = "SELECT " . table_plugins . ".plugin_enabled, " . table_plugins . ".plugin_folder, " . table_plugins . ".plugin_prefix, " . table_pluginhooks . ".plugin_hook  FROM " . table_pluginhooks . ", " . table_plugins . " WHERE (" . table_pluginhooks . ".plugin_hook = %s) AND (" . table_plugins . ".plugin_folder = " . table_pluginhooks . ".plugin_folder) " . $where;
+			$sql = "SELECT " . table_plugins . ".plugin_enabled, " . table_plugins . ".plugin_folder, " . table_plugins . ".plugin_prefix, " . table_pluginhooks . ".plugin_hook  FROM " . table_pluginhooks . ", " . table_plugins . " WHERE (" . table_pluginhooks . ".plugin_hook = %s) AND (" . table_plugins . ".plugin_folder = " . table_pluginhooks . ".plugin_folder) " . $where . "ORDER BY " . table_pluginhooks . ".phook_id";
 			
 			
 			$plugins = $db->get_results($db->prepare($sql, $hook, $folder));

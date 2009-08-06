@@ -39,7 +39,7 @@
 
 .vote_vote_unvote_button_bottom {
 	width: 50px; 
-	background-color: #FFCC66;
+	background-color: #98AFC7;
 }
 
 /* ************************************
@@ -54,7 +54,7 @@
 
 .vote_up_down_button_top {
 	width: 50px; 
-	background-color: #FFCC66;
+	background-color: #98AFC7;
 }
 
 .vote_up_down_button_middle {
@@ -66,7 +66,7 @@
 
 .vote_up_down_button_bottom {
 	width: 50px; 
-	background-color: #FFCC66;
+	background-color: #98AFC7;
 }
 
 /* ************************************
@@ -79,8 +79,8 @@
 	text-align: center;
 }
 
-.bg_yes { background-color: #CCFF99; }
-.bg_no { background-color: #FF9966; }
+.bg_yes { background-color: #CFECEC; }
+.bg_no { background-color: #FAF8CC; }
 
 .vote_yes_no_button_top {
 	line-height: 2.0em;
@@ -90,10 +90,10 @@
 
 .vote_yes_no_button_bottom {
 	width: 50px; 
-	background-color: #FFCC66;
+	background-color: #98AFC7;
 }
 
 /* Used in submit plugin - button width + padding: */
-.vote_button_space_vote_unvote { margin-left: 56px; }
-.vote_button_space_up_down { margin-left: 56px; }
-.vote_button_space_yes_no { margin-left: 112px; }
+.vote_button_space_vote_unvote { margin-left: 58px; }
+.vote_button_space_up_down { margin-left: 58px; }
+.vote_button_space_yes_no { margin-left: 116px; }

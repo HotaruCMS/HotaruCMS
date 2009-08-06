@@ -102,7 +102,9 @@
 			<?php } ?>	
  			
  			<!-- VOTE COUNT -->
-   			<div id='up_down_votes_<?php echo $post->post_id ?>' class='vote_up_down_button_middle'><?php echo ($post->post_votes_up - $post->post_votes_down) ?></div>
+ 			<?php $vote_count = ($post->post_votes_up - $post->post_votes_down); ?>
+  
+ 			<div id='up_down_votes_<?php echo $post->post_id ?>' class='vote_up_down_button_middle'><?php echo $vote_count; ?></div>
    			
    			<!-- DOWN LINK -->
   			<?php if($current_user->logged_in && (!$voted || $voted == 'positive')) { ?> 

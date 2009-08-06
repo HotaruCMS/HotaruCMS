@@ -53,6 +53,8 @@ $lang['submit_disabled'] = "Sorry, story submission is disabled at this time.";
 /* Submit Trackback */
 $lang['submit_trackback_excerpt'] = "This article has been featured on";
 
+/* Navigation */
+$lang['submit_submit_a_story'] = "Submit a Story";
 
 /* Submit Settings */
 $lang["submit_settings_header"] = "Submit Configuration";
@@ -72,10 +74,14 @@ $lang["submit_settings_max_tags"] = "Maximum characters";
 $lang["submit_settings_saved"] = "Settings Saved.";
 
 /* Submit Show Post */
+$lang["submit_page_title_main"] = "top";
+$lang["submit_page_title_latest"] = "latest";
+$lang["submit_page_title_all"] = "all";
 $lang["submit_post_read_more"] = "Read More";
-$lang["submit_post_filter_user"] = "Filtered to stories submitted by";
-$lang["submit_post_filter_tag"] = "Filtered to stories tagged";
-$lang["submit_post_filter_category"] = "Filtered to stories in";
+$lang["submit_post_filtered_to"] = "Filtered to";
+$lang["submit_post_filter_user"] = "stories submitted by";
+$lang["submit_post_filter_tag"] = "stories tagged";
+$lang["submit_post_filter_category"] = "stories in";
 
 /* Submit RSS Feed */
 $lang["submit_rss_latest_from"] = "Latest from";
