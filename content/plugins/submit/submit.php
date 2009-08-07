@@ -3,10 +3,10 @@
 /* ********** PLUGIN *********************************************************************************
  * name: Submit
  * description: Submit and manage stories.
- * version: 0.2.1
+ * version: 0.2
  * folder: submit
  * prefix: sub
- * hooks: hotaru_header, header_include, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, submit_show_post_extra_fields
+ * hooks: hotaru_header, header_include, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  *  License:
  *
@@ -165,10 +165,10 @@ function sub_hotaru_header() {
  ********************************************************************** */
 
 function sub_navigation() {	
-	global $current_user;
+	global $current_user, $lang;
 	
 	if($current_user->logged_in) {
-		echo "<li><a href='" . url(array('page'=>'submit')) . "'>Submit a Story</a></li>\n";
+		echo "<li><a href='" . url(array('page'=>'submit')) . "'>" . $lang['submit_submit_a_story'] . "</a></li>\n";
 	}
 }
 
@@ -276,7 +276,7 @@ function sub_theme_index_replace() {
  
 function sub_theme_index_main() {
 	global $hotaru, $cage, $post, $plugin, $current_user, $lang;
-	global $post_orig_url, $post_orig_title, $filter;
+	global $post_orig_url, $post_orig_title, $filter, $filter_heading;
 	
 	if($hotaru->is_page('submit')) {
 	  	
@@ -351,7 +351,9 @@ function sub_theme_index_main() {
 	
 	} elseif($cage->get->keyExists('user')) {
 		// Must have clicked on the submitter's name
-		$filter = array('post_author = %d' => $current_user->get_user_id($cage->get->keyExists('user'))); 
+		$filter['post_author = %d'] = $current_user->get_user_id($cage->get->testUsername('user')); 
+		$filter_heading = $lang["submit_post_filter_user"] . " " . $cage->get->testUsername('user');
+		$filter_heading .= " <small>(<a href='" . url(array('page'=>'rss', 'user'=>$cage->get->testUsername('user'))) . "'>RSS</a>)</small>";
 		$hotaru->display_template('posts_list', 'submit');
 		return true;
 														
@@ -365,12 +367,34 @@ function sub_theme_index_main() {
 		$hotaru->display_template('posts_list', 'submit');
 		return true;
 		
+	} elseif($hotaru->is_page('latest')) {
+	
+		// Plugin hook
+		$result = $plugin->check_actions('submit_is_page_latest');
+		if($result && is_array($result)) { return true; }
+	
+		// Show the list of posts
+		$hotaru->display_template('posts_list', 'submit');
+		return true;
+		
+	} elseif($hotaru->is_page('all')) {
+	
+		// Plugin hook
+		$result = $plugin->check_actions('submit_is_page_all');
+		if($result && is_array($result)) { return true; }
+	
+		// Show the list of posts
+		$hotaru->display_template('posts_list', 'submit');
+		return true;
+		
 	} elseif(is_numeric($hotaru->get_page_name())) {
 		// Page name is a number so it must be a post with non-friendly urls
+		
 		$hotaru->display_template('post_page', 'submit');
 		return true;
 		
 	} elseif($post->is_post_url($hotaru->get_page_name())) {
+	
 		// Page name belongs to a story
 		$hotaru->display_template('post_page', 'submit');
 		return true;
@@ -448,20 +472,6 @@ function sub_fetch_title($url) {
 	}
 	
 	return $title;
-}
-
-
- /* ******************************************************************** 
- *  Function: sub_submit_show_post_extra_fields
- *  Parameters: None
- *  Purpose: Adds a permalink
- *  Notes: ---
- ********************************************************************** */
- 
-function sub_submit_show_post_extra_fields() {
-	global $post, $plugin, $cage, $lang;
-	
-	echo "<a href='" . url(array('page'=>$post->post_id)) . "'>" . $lang['submit_post_read_more'] . "</a> &nbsp;&nbsp;";
 }
 
 

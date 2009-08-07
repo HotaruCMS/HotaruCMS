@@ -24,14 +24,30 @@
  *
  **************************************************************************************************** */
 
-global $hotaru, $plugin, $post, $cage, $filter;
+global $hotaru, $plugin, $post, $cage, $filter, $filter_heading, $lang;
 
 $userbase = new UserBase();
+$post->template_name = "posts_list";
 		
 if(!$filter) { $filter = array(); }
+
+if($cage->get->keyExists('user') || $cage->get->keyExists('tag') || $cage->get->keyExists('category')) {
+	$filter['post_status != %s'] = 'processing';
+	$page_title = "all";
+} elseif($cage->get->testPage('page') == 'latest') {
+	$filter['post_status = %s'] = 'new'; 
+	$page_title = $lang["submit_page_title_latest"];
+} else {
+	$filter['post_status = %s'] = 'top';
+	$page_title = $lang["submit_page_title_main"];
+}
+
 $plugin->check_actions('submit_posts_list_filter');
 
-$stories = $post->get_posts($filter);
+$prepared_filter = $post->filter($filter);
+$stories = $post->get_posts($prepared_filter);
+
+if($filter_heading) { echo "<h3>" . $lang["submit_post_filtered_to"] . " " . $page_title . " " . $filter_heading . "</h3>"; }
 
 if($stories) {
 	$pg = $cage->get->getInt('pg');
@@ -43,45 +59,48 @@ if($stories) {
 
 <!-- ************ POST **************** -->
 
-<div class="show_post">
+<?php $plugin->check_actions('submit_pre_show_post'); ?>
 
-	<?php $plugin->check_actions('submit_show_post_start'); ?>
-	
-	<div class="show_post_title"><a href='<?php echo $post->post_orig_url; ?>'><?php echo $post->post_title; ?></a></div>
-
-	<?php if($post->use_author || $post->use_date) { ?>
-		<div class="show_post_author_date">	
-			Posted
-			<?php if($post->use_author) { 
-				echo " by <a href='" . url(array('user' => $userbase->get_username($post->post_author))) . "'>" . $userbase->get_username($post->post_author) . "</a>"; } 
-			?>
-			<?php if($post->use_date) { echo time_difference(unixtimestamp($post->post_date)) . " ago"; } ?>
-			<?php $plugin->check_actions('submit_show_post_author_date'); ?>
-		</div>
-	<?php } ?>
+	<div class="show_post vote_button_space_<?php echo $post->post_vars['vote_type'] ?>">
 		
-	<?php if($post->use_content) { ?>
-		<div class="show_post_content">
-			<?php if($post->use_summary) { ?>
-				<?php echo substr(strip_tags($post->post_content), 0, $post->post_summary_length) ?>
-				<?php if(strlen(strip_tags($post->post_content)) >= $post->post_summary_length) { echo "..."; } ?>
-			<?php } else { ?>
-				<?php echo $post->post_content; ?>
-			<?php } ?>		
-		</div>
-	<?php } ?>
+		<div class="show_post_title"><a href='<?php echo $post->post_orig_url; ?>'><?php echo $post->post_title; ?></a></div>
 	
-	<div class="show_post_extra_fields">
-		<?php $plugin->check_actions('submit_show_post_extra_fields'); ?>
-	</div>
+		<?php if($post->use_author || $post->use_date) { ?>
+			<div class="show_post_author_date">	
+				Posted
+				<?php 
+				if($post->use_author) { 
+					echo " by <a href='" . url(array('user' => $userbase->get_username($post->post_author))) . "'>" . $userbase->get_username($post->post_author) . "</a>";
+				}
+				?>
+				<?php if($post->use_date) { echo time_difference(unixtimestamp($post->post_date)) . " ago"; } ?>
+				<?php $plugin->check_actions('submit_show_post_author_date'); ?>
+			</div>
+		<?php } ?>
+			
+		<?php if($post->use_content) { ?>
+			<div class="show_post_content">
+				<?php if($post->use_summary) { ?>
+					<?php echo substr(strip_tags($post->post_content), 0, $post->post_summary_length) ?>
+					<?php if(strlen(strip_tags($post->post_content)) >= $post->post_summary_length) { echo "..."; } ?>
+				<?php } else { ?>
+					<?php echo $post->post_content; ?>
+				<?php } ?>	
+				<small><a href='<?php echo url(array('page'=>$post->post_id)) ?>'><?php echo $lang['submit_post_read_more'] ?></a></small>
+			</div>
+		<?php } ?>
 		
-	<div class="show_post_extras">
-		<?php $plugin->check_actions('submit_show_post_extras'); ?>
+		<div class="show_post_extra_fields">
+			<?php $plugin->check_actions('submit_show_post_extra_fields'); ?>
+		</div>
+			
+		<div class="show_post_extras">
+			<?php $plugin->check_actions('submit_show_post_extras'); ?>
+		</div>
+			
 	</div>
 	
-	<?php $plugin->check_actions('submit_show_post_end'); ?>
-	
-</div>
+	<?php $plugin->check_actions('submit_post_show_post'); ?>
 
 <!-- ************ END POST **************** -->
 

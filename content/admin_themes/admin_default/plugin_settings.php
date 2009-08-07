@@ -34,11 +34,13 @@ global $hotaru, $plugin, $lang; // don't remove
 	<?php if($plugin->name) { echo "&raquo; " .  $plugin->name; } ?>
 </p>
 
-<?php 
-	if($plugin->folder == "") {
-		$plugin->check_actions('admin_sidebar_plugin_settings');
-	} else {
-		$plugin->check_actions('admin_plugin_settings', true, $plugin->folder); 
-	}
-?>
+<div id="plugin_settings">
+	<?php 
+		if($plugin->folder == "") {
+			$plugin->check_actions('admin_sidebar_plugin_settings');
+		} else {
+			$plugin->check_actions('admin_plugin_settings', true, $plugin->folder); 
+		}
+	?>
+</div>
 
