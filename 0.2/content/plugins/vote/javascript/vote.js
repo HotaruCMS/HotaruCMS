@@ -26,6 +26,20 @@
  *   Portions are Copyright (C) 2008 - 2009 by the Social Web CMS Team <swcms@socialwebcms.com>.
  *
  **************************************************************************************************** */
+
+/* Hide/Show Alert choices below each story */
+
+$(document).ready(function(){
+
+	// Show/Hide box
+	$(".alert_link").click(function () {
+		var target = $(this).parent('div').next('div').children('div.alert_choices');
+                target.fadeToggle();
+                return false;
+        });  
+        
+}); 
+
 /* ******************************************************************** 
  *  Function: vote
  *  Parameters: user id, post id, vote type

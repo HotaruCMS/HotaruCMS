@@ -6,7 +6,7 @@
  * folder: vote
  * prefix: vote
  * requires: submit 0.2, users 0.1
- * hooks: install_plugin, hotaru_header, submit_hotaru_header_1, submit_class_post_read_post_1, submit_class_post_read_post_2, header_include, submit_pre_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_class_post_add_post, navigation
+ * hooks: install_plugin, hotaru_header, submit_hotaru_header_1, submit_class_post_read_post_1, submit_class_post_read_post_2, header_include, submit_pre_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_class_post_add_post, navigation, submit_show_post_extra_fields, submit_show_post_extras
  *
  *
  *  License:
@@ -268,6 +268,35 @@ function vote_submit_pre_show_post() {
 	}
  	  	
  	$hotaru->display_template('vote_button', 'vote');
+}
+
+ /* ******************************************************************** 
+ *  Function: vote_submit_show_post_extra_fields
+ *  Parameters: None
+ *  Purpose: Add an "alert" link below the story
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function vote_submit_show_post_extra_fields() {
+	global $post, $lang;
+	
+	echo "<a class='alert_link' href='#'>" . $lang["vote_alert"]  . "</a> &nbsp;&nbsp;";
+}
+
+
+ /* ******************************************************************** 
+ *  Function: vote_submit_show_post_extras
+ *  Parameters: None
+ *  Purpose: List of alert reasons to choose from.
+ *  Notes: ---
+ ********************************************************************** */
+ 
+function vote_submit_show_post_extras() {
+	global $post, $lang;
+
+	echo "<div class='alert_choices' style='display: none;'>";
+		echo "<h3>" . $lang["vote_alert_reason_title"]  . "</h3>";
+	echo "</div>";
 }
 
 
