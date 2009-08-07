@@ -177,6 +177,7 @@ form {
 	background-color: #FF6A55;
 	color: #ffffff;
 }
+
 /* *************************************
 *  Plugin Management  *
 ************************************** */
@@ -277,5 +278,5 @@ table#settings {
 ************************************** */
 
 #plugin_settings {
-	padding: 0 0.4em 0 0.4em;
+
 }
