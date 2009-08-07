@@ -242,7 +242,7 @@ class UserBase {
 		/* setting a cookie with a negative time expires it */
 		setcookie("hotaru_user", "", time()-3600, "/");
 		setcookie("hotaru_key", "", time()-3600, "/");
-		session_destroy();
+		// session_destroy(); There is no session in Hotaru yet!
 		$this->logged_in = false;
         }
         
