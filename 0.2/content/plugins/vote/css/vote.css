@@ -21,7 +21,7 @@
  **************************************************************************************************** */
 
 /* ************************************
- * ********* VOTE BURY BUTTON *********
+ * ******** VOTE UNVOTE BUTTON ********
  * ********************************* */
  
 .vote_vote_unvote_button {
@@ -69,8 +69,8 @@
 	background-color: #98AFC7;
 }
 
-/* ************************************
- * ********* VOTE BURY BUTTON *********
+/* ***********************************
+ * ********** YES NO BUTTON **********
  * ********************************* */
  
 .vote_yes_no_button {
@@ -93,7 +93,20 @@
 	background-color: #98AFC7;
 }
 
+/* ***********************************
+ * ** SPACE BETWEEN BUTTON AND POST **
+ * ********************************* */
+ 
 /* Used in submit plugin - button width + padding: */
 .vote_button_space_vote_unvote { margin-left: 58px; }
 .vote_button_space_up_down { margin-left: 58px; }
 .vote_button_space_yes_no { margin-left: 116px; }
+
+/* ***********************************
+ * ******** FLAGGED MESSAGE **********
+ * ********************************* */
+ 
+ .alert_message {
+ 	font-size: 0.9em;
+ 	color: #ff0000;
+ }

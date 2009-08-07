@@ -44,9 +44,23 @@ $lang["vote_button_no_link"] = "No!";
 $lang["vote_button_no"] = "No";
 $lang['vote_already_voted'] = "Sorry, you have already voted for this story.";
 
-/* Show Post - ALert links */
-$lang["vote_alert"] = "Alert";
-$lang["vote_alert_reason_title"] = "Reason for alert:";
+/* Show Post - ALert links and flagged message */
+$lang["vote_alert"] = "Flag it";
+$lang["vote_alert_reason_title"] = "Reason for flagging this post:";
+$lang["vote_alert_reason_1"] = "Spam";
+$lang["vote_alert_reason_2"] = "Inappropriate";
+$lang["vote_alert_reason_3"] = "Broken Link";
+$lang["vote_alert_reason_4"] = "Duplicate";
+$lang["vote_alert_reason_5"] = "Wrong Category";
+$lang["vote_alert_reason_6"] = "Really lame";
+$lang["vote_alert_already_flagged"] = "You've already flagged this post";
+$lang["vote_alert_flagged_message_1"] = "This post has been flagged by";
+$lang["vote_alert_flagged_message_2"] = "as";
+$lang["vote_alert_flagged_message_user"] = "user";
+$lang["vote_alert_flagged_message_users"] = "users";
+$lang["vote_alert_flagged_message_reason"] = "reason";
+$lang["vote_alert_flagged_message_reasons"] = "reasons";
+$lang["vote_alert_post_buried"] = "This post has been buried";
 
 /* Vote Settings */
 $lang["vote_settings_header"] = "Vote Settings";
@@ -63,6 +77,7 @@ $lang["vote_settings_submit_vote_value_invalid"] = "The automatic vote must be a
 $lang["vote_settings_vote_promote_bury"] = "Promoting and burying posts:";
 $lang["vote_settings_votes_to_promote"] = "Number of votes needed to get on the front page:";
 $lang["vote_settings_votes_to_promote_invalid"] = "The number of votes needed must be a positive integer";
+$lang["vote_settings_use_alerts"] = "Enable Alerts (i.e. flag / bury). Alerts are only used on \"new\" posts";
 $lang["vote_settings_alerts_to_bury"] = "Number of alerts to automatically bury a post:";
 $lang["vote_settings_alerts_to_bury_invalid"] = "The number of alerts needed must be a positive integer";
 $lang["vote_settings_physical_delete"] = "Physically delete a post from the database when buried";

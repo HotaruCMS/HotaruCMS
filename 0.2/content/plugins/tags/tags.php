@@ -6,7 +6,7 @@
  * folder: tags
  * prefix: tg
  * requires: submit 0.1
- * hooks: install_plugin, header_include, submit_hotaru_header_1, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_class_post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_show_post_extra_fields, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter
+ * hooks: install_plugin, header_include, submit_hotaru_header_1, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_class_post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_show_post_extra_fields, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter, submit_class_post_delete_post
  *
  * Requires the Submit plugin.
  *
@@ -206,6 +206,20 @@ function tg_submit_class_post_update_post() {
 			}
 		}
 	}
+}
+
+
+/* ******************************************************************** 
+ *  Function: tg_submit_class_post_delete_post
+ *  Parameters: None
+ *  Purpose: Delete tags for a deleted post
+ *  Notes: ---
+ ********************************************************************** */	
+ 	
+function tg_delete_post() {
+	global $db, $post;
+	$sql = "DELETE FROM " . table_tags . " WHERE tags_post_id = %d";
+	$db->query($db->prepare($sql, $post->post_id));		
 }
 
 

@@ -27,6 +27,7 @@
 global $hotaru, $plugin, $post, $cage, $filter, $filter_heading, $lang;
 
 $userbase = new UserBase();
+$post->template_name = "posts_list";
 		
 if(!$filter) { $filter = array(); }
 
@@ -60,46 +61,46 @@ if($stories) {
 
 <?php $plugin->check_actions('submit_pre_show_post'); ?>
 
-<div class="show_post vote_button_space_<?php echo $post->post_vars['vote_type'] ?>">
+	<div class="show_post vote_button_space_<?php echo $post->post_vars['vote_type'] ?>">
+		
+		<div class="show_post_title"><a href='<?php echo $post->post_orig_url; ?>'><?php echo $post->post_title; ?></a></div>
 	
-	<div class="show_post_title"><a href='<?php echo $post->post_orig_url; ?>'><?php echo $post->post_title; ?></a></div>
-
-	<?php if($post->use_author || $post->use_date) { ?>
-		<div class="show_post_author_date">	
-			Posted
-			<?php 
-			if($post->use_author) { 
-				echo " by <a href='" . url(array('user' => $userbase->get_username($post->post_author))) . "'>" . $userbase->get_username($post->post_author) . "</a>";
-			}
-			?>
-			<?php if($post->use_date) { echo time_difference(unixtimestamp($post->post_date)) . " ago"; } ?>
-			<?php $plugin->check_actions('submit_show_post_author_date'); ?>
-		</div>
-	<?php } ?>
+		<?php if($post->use_author || $post->use_date) { ?>
+			<div class="show_post_author_date">	
+				Posted
+				<?php 
+				if($post->use_author) { 
+					echo " by <a href='" . url(array('user' => $userbase->get_username($post->post_author))) . "'>" . $userbase->get_username($post->post_author) . "</a>";
+				}
+				?>
+				<?php if($post->use_date) { echo time_difference(unixtimestamp($post->post_date)) . " ago"; } ?>
+				<?php $plugin->check_actions('submit_show_post_author_date'); ?>
+			</div>
+		<?php } ?>
+			
+		<?php if($post->use_content) { ?>
+			<div class="show_post_content">
+				<?php if($post->use_summary) { ?>
+					<?php echo substr(strip_tags($post->post_content), 0, $post->post_summary_length) ?>
+					<?php if(strlen(strip_tags($post->post_content)) >= $post->post_summary_length) { echo "..."; } ?>
+				<?php } else { ?>
+					<?php echo $post->post_content; ?>
+				<?php } ?>	
+				<small><a href='<?php echo url(array('page'=>$post->post_id)) ?>'><?php echo $lang['submit_post_read_more'] ?></a></small>
+			</div>
+		<?php } ?>
 		
-	<?php if($post->use_content) { ?>
-		<div class="show_post_content">
-			<?php if($post->use_summary) { ?>
-				<?php echo substr(strip_tags($post->post_content), 0, $post->post_summary_length) ?>
-				<?php if(strlen(strip_tags($post->post_content)) >= $post->post_summary_length) { echo "..."; } ?>
-			<?php } else { ?>
-				<?php echo $post->post_content; ?>
-			<?php } ?>	
-			<small><a href='<?php echo url(array('page'=>$post->post_id)) ?>'><?php echo $lang['submit_post_read_more'] ?></a></small>
+		<div class="show_post_extra_fields">
+			<?php $plugin->check_actions('submit_show_post_extra_fields'); ?>
 		</div>
-	<?php } ?>
+			
+		<div class="show_post_extras">
+			<?php $plugin->check_actions('submit_show_post_extras'); ?>
+		</div>
+			
+	</div>
 	
-	<div class="show_post_extra_fields">
-		<?php $plugin->check_actions('submit_show_post_extra_fields'); ?>
-	</div>
-		
-	<div class="show_post_extras">
-		<?php $plugin->check_actions('submit_show_post_extras'); ?>
-	</div>
-		
-</div>
-
-<?php $plugin->check_actions('submit_post_show_post'); ?>
+	<?php $plugin->check_actions('submit_post_show_post'); ?>
 
 <!-- ************ END POST **************** -->
 
