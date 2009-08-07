@@ -60,7 +60,7 @@ function vote_install_plugin() {
 		  `vote_user_ip` varchar(32) NOT NULL DEFAULT '0',
 		  `vote_date` timestamp NULL,
 		  `vote_type` varchar(32) NOT NULL DEFAULT 'post',
-		  `vote_rating` enum('positive','negative') NULL,
+		  `vote_rating` enum('positive','negative','alert') NULL,
 		  `vote_reason` varchar(255) NULL,
 		  `vote_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
  		  `vote_updateby` int(20) NOT NULL DEFAULT 0,
@@ -255,11 +255,18 @@ function vote_navigation() {
  ********************************************************************** */
  
 function vote_submit_pre_show_post() {
-	global $hotaru, $db, $post, $current_user, $voted;
+	global $hotaru, $db, $post, $current_user, $voted, $cage;
 	
-	$sql = "SELECT vote_rating FROM " . table_votes . " WHERE vote_post_id = %d AND vote_user_id = %d";
- 	$voted = $db->get_var($db->prepare($sql, $post->post_id, $current_user->id));
-  	
+ 	if($current_user->logged_in) {
+		$sql = "SELECT vote_rating FROM " . table_votes . " WHERE vote_post_id = %d AND (vote_user_id = %d OR vote_user_ip = %s) AND vote_rating != %s";
+		$voted = $db->get_var($db->prepare($sql, $post->post_id, $current_user->id, $cage->server->testIp('REMOTE_ADDR'), 'alert'));
+	} 
+	
+	if(!$current_user->logged_in && ($post->post_vars['vote_anonymous_votes'] == 'checked')) {
+		$sql = "SELECT vote_rating FROM " . table_votes . " WHERE vote_post_id = %d AND vote_user_ip = %s AND vote_rating != %s";
+		$voted = $db->get_var($db->prepare($sql, $post->post_id, $cage->server->testIp('REMOTE_ADDR'), 'alert'));
+	}
+ 	  	
  	$hotaru->display_template('vote_button', 'vote');
 }
 
