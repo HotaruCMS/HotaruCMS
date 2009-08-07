@@ -6,7 +6,7 @@
  * version: 0.2
  * folder: submit
  * prefix: sub
- * hooks: hotaru_header, header_include, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, submit_show_post_extra_fields
+ * hooks: hotaru_header, header_include, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  *  License:
  *
@@ -470,20 +470,6 @@ function sub_fetch_title($url) {
 	}
 	
 	return $title;
-}
-
-
- /* ******************************************************************** 
- *  Function: sub_submit_show_post_extra_fields
- *  Parameters: None
- *  Purpose: Adds a permalink
- *  Notes: ---
- ********************************************************************** */
- 
-function sub_submit_show_post_extra_fields() {
-	global $post, $plugin, $cage, $lang;
-	
-	echo "<a href='" . url(array('page'=>$post->post_id)) . "'>" . $lang['submit_post_read_more'] . "</a> &nbsp;&nbsp;";
 }
 
 
