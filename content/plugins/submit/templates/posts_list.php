@@ -84,7 +84,8 @@ if($stories) {
 				<?php if(strlen(strip_tags($post->post_content)) >= $post->post_summary_length) { echo "..."; } ?>
 			<?php } else { ?>
 				<?php echo $post->post_content; ?>
-			<?php } ?>		
+			<?php } ?>	
+			<small><a href='<?php echo url(array('page'=>$post->post_id)) ?>'><?php echo $lang['submit_post_read_more'] ?></a></small>
 		</div>
 	<?php } ?>
 	

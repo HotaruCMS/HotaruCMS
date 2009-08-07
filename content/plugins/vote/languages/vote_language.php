@@ -44,6 +44,10 @@ $lang["vote_button_no_link"] = "No!";
 $lang["vote_button_no"] = "No";
 $lang['vote_already_voted'] = "Sorry, you have already voted for this story.";
 
+/* Show Post - ALert links */
+$lang["vote_alert"] = "Alert";
+$lang["vote_alert_reason_title"] = "Reason for alert:";
+
 /* Vote Settings */
 $lang["vote_settings_header"] = "Vote Settings";
 $lang["vote_settings_vote_type"] = "Choose the vote type you want to use:";
