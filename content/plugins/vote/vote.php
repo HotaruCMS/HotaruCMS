@@ -51,21 +51,21 @@ function vote_install_plugin() {
 	} 
 	
 	// Create a new empty table called "votes" if it doesn't already exist
-	$exists = $db->table_exists('votes');
+	$exists = $db->table_exists('postvotes');
 	if(!$exists) {
 		//echo "table doesn't exist. Stopping before creation."; exit;
-		$sql = "CREATE TABLE `" . db_prefix . "votes` (
+		$sql = "CREATE TABLE `" . db_prefix . "postvotes` (
 		  `vote_post_id` int(11) NOT NULL DEFAULT '0',
 		  `vote_user_id` int(11) NOT NULL DEFAULT '0',
 		  `vote_user_ip` varchar(32) NOT NULL DEFAULT '0',
 		  `vote_date` timestamp NULL,
 		  `vote_type` varchar(32) NOT NULL DEFAULT 'post',
 		  `vote_rating` enum('positive','negative','alert') NULL,
-		  `vote_reason` varchar(255) NULL,
+		  `vote_reason` tinyint(3) NOT NULL DEFAULT 0,
 		  `vote_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
  		  `vote_updateby` int(20) NOT NULL DEFAULT 0,
  		  INDEX  (`vote_post_id`)
-		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Votes';";
+		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Post Votes';";
 		$db->query($sql); 
 	}   
     
@@ -78,6 +78,7 @@ function vote_install_plugin() {
 	$vote_settings['vote_submit_vote'] = "checked";
 	$vote_settings['vote_submit_vote_value'] = 1;
 	$vote_settings['vote_votes_to_promote'] = 5;
+	$vote_settings['vote_use_alerts'] = "checked";
 	$vote_settings['vote_alerts_to_bury'] = 5;
 	$vote_settings['vote_physical_delete'] = "";
 	
@@ -101,7 +102,7 @@ function vote_install_plugin() {
 function vote_hotaru_header() {
 	global $plugin, $post;
 	
-	if(!defined('table_votes')) { define("table_votes", db_prefix . 'votes'); }
+	if(!defined('table_postvotes')) { define("table_postvotes", db_prefix . 'postvotes'); }
 	
 	$plugin->include_language_file('vote');	
 }
@@ -119,6 +120,7 @@ function vote_submit_hotaru_header_1() {
 	$post->post_vars['post_votes_up'] = 0;
 	$post->post_vars['post_votes_down'] = 0;
 	$post->post_vars['vote_anonymous_votes'] = '';	
+	$post->post_vars['vote_use_alerts'] = 'checked';	
 }
 
 /* ******************************************************************** 
@@ -147,6 +149,9 @@ function vote_submit_class_post_read_post_1() {
 		
 		// Enable anonymous voters?
 		$post->post_vars['vote_anonymous_votes'] = $vote_settings['vote_anonymous_votes'];
+		
+		// Use alerts?
+		$post->post_vars['vote_use_alerts'] = $vote_settings['vote_use_alerts'];
 	}
 }
 
@@ -218,7 +223,7 @@ function vote_submit_class_post_add_post() {
 	
 		//Insert one vote for each of $submit_vote_value;
 		for($i=0; $i<$submit_vote_value; $i++) {
-			$sql = "INSERT INTO " . table_votes . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, CURRENT_TIMESTAMP, %s, %s, %d)";
+			$sql = "INSERT INTO " . table_postvotes . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, CURRENT_TIMESTAMP, %s, %s, %d)";
 			$db->query($db->prepare($sql, $post->post_id, $current_user->id, $cage->server->testIp('REMOTE_ADDR'), $post->post_vars['vote_type'], 'positive', $current_user->id));
 		}	
 	}			
@@ -237,14 +242,21 @@ function vote_submit_class_post_add_post() {
  *  Function: vote_navigation
  *  Parameters: None
  *  Purpose: Adds "Top Posts" and "Latest" links to the navigation bar
- *  Notes: 
+ *  Notes: If you can automatically vote for a story you submit, and that value is equal to or greater than the number of votes you need to get on the Top Stories page, then there's no need for a "Latest" page at all. In that case, we don't add anything to the navigation bar because the "Home" link will show all the stories. HOWEVER, any old posts with "new" status instead of "top" status will become inaccessible.
  ********************************************************************** */
 
 function vote_navigation() {	
-	global $lang;
+	global $lang, $plugin;
 	
-	echo "<li><a href='" . baseurl . "'>" . $lang["vote_navigation_top_posts"] . "</a></li>\n";
-	echo "<li><a href='" . url(array('page'=>'latest')) . "'>" . $lang["vote_navigation_latest"] . "</a></li>\n";
+	//get vote settings
+	$vote_settings = unserialize($plugin->plugin_settings('vote', 'vote_settings')); 
+	
+	if(($vote_settings['vote_submit_vote'] == "checked") && ($vote_settings['vote_submit_vote_value'] >= $vote_settings['vote_votes_to_promote'])) {
+		// these settings make the latest page unnecessary so the "Home" link is sufficient, otherwise...
+	} else {
+		echo "<li><a href='" . baseurl . "'>" . $lang["vote_navigation_top_posts"] . "</a></li>\n";
+		echo "<li><a href='" . url(array('page'=>'latest')) . "'>" . $lang["vote_navigation_latest"] . "</a></li>\n";
+	}
 }
 
  /* ******************************************************************** 
@@ -255,15 +267,84 @@ function vote_navigation() {
  ********************************************************************** */
  
 function vote_submit_pre_show_post() {
-	global $hotaru, $db, $post, $current_user, $voted, $cage;
+	global $hotaru, $db, $post, $current_user, $voted, $cage, $lang, $plugin;
 	
+	if($post->post_status == 'new' && $post->post_vars['vote_use_alerts'] == "checked") {
+		// CHECK TO SEE IF THIS POST IS BEING FLAGGED AND IF SO, ADD IT TO THE DATABASE
+		if($cage->get->keyExists('alert') && $current_user->logged_in) {
+			// Check if already flagged...
+			$sql = "SELECT vote_rating FROM " . table_postvotes . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating = %s";
+			$flagged = $db->get_var($db->prepare($sql, $post->post_id, $current_user->id, 'alert'));
+			if(!$flagged) {
+				$sql = "INSERT INTO " . table_postvotes . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_reason, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d, %d)";
+				$db->query($db->prepare($sql, $post->post_id, $current_user->id, $cage->server->testIp('REMOTE_ADDR'), $post->post_vars['vote_type'], 'alert', $cage->get->testInt('alert'), $current_user->id));
+			}
+			else
+			{
+				$hotaru->message = $lang["vote_alert_already_flagged"];
+				$hotaru->message_type = "red";
+				$hotaru->show_message();
+			}
+		}
+		
+		// CHECK TO SEE IF THIS POST HAS BEEN FLAGGED AND IF SO, SHOW THE ALERT STATUS
+	
+		// Get settings from the database if they exist...
+		$vote_settings = unserialize($plugin->plugin_settings('vote', 'vote_settings')); 
+		
+		// Check if already flagged...
+		$sql = "SELECT * FROM " . table_postvotes . " WHERE vote_post_id = %d AND vote_rating = %s";
+		$flagged = $db->get_results($db->prepare($sql, $post->post_id, 'alert'));
+		if($flagged) {
+			$flag_count = 0;
+			$reasons = array();
+			foreach($flagged as $flag) {
+				array_push($reasons, $flag->vote_reason);
+				$flag_count++;
+			}
+			
+			// Buries or Deletes a post if this new flag sends it over the limit set in Vote Settings
+			if($cage->get->keyExists('alert') && $flag_count >= $vote_settings['vote_alerts_to_bury']) {
+				if($vote_settings['vote_physical_delete']) { 
+					$sql = "DELETE FROM " . table_postvotes . " WHERE vote_post_id = %d";
+					$db->query($db->prepare($sql, $post->post_id));
+					$post->delete_post($post->post_id); 
+				} else {
+					$post->change_status('buried');
+				}
+				
+				$hotaru->message = $lang["vote_alert_post_buried"];
+				$hotaru->message_type = "red";
+				$hotaru->show_message();
+				return true; // This will stop the post from showing	
+			}
+			
+			if($flag_count > 1) { 
+				echo "<p class='alert_message'>" . $lang["vote_alert_flagged_message_1"] . " " . $flag_count . " " . $lang["vote_alert_flagged_message_users"]  . " " . $lang["vote_alert_flagged_message_2"] . " <i>";
+			} else {
+				echo "<p class='alert_message'>" . $lang["vote_alert_flagged_message_1"] . " " . $flag_count . " " . $lang["vote_alert_flagged_message_user"]  . " " . $lang["vote_alert_flagged_message_2"] . " <i>";
+			}
+			
+			$why_list = "";
+			foreach($reasons as $why) {
+				$alert_lang = "vote_alert_reason_" . $why;
+				$why_list .= $lang[$alert_lang] . ", ";
+			}
+			$why_list = rstrtrim($why_list, ", ");	// removes trailing comma
+			echo $why_list . "</i></p>";
+		}
+	}
+	
+	
+	// CHECK TO SEE IF THE CURRENT USER HAS VOTED FOR THIS POST
  	if($current_user->logged_in) {
-		$sql = "SELECT vote_rating FROM " . table_votes . " WHERE vote_post_id = %d AND (vote_user_id = %d OR vote_user_ip = %s) AND vote_rating != %s";
+		$sql = "SELECT vote_rating FROM " . table_postvotes . " WHERE vote_post_id = %d AND (vote_user_id = %d OR vote_user_ip = %s) AND vote_rating != %s";
 		$voted = $db->get_var($db->prepare($sql, $post->post_id, $current_user->id, $cage->server->testIp('REMOTE_ADDR'), 'alert'));
 	} 
 	
+	// CHECK TO SEE IF THIS ANONYMOUS USER HAS VOTED FOR THIS POST
 	if(!$current_user->logged_in && ($post->post_vars['vote_anonymous_votes'] == 'checked')) {
-		$sql = "SELECT vote_rating FROM " . table_votes . " WHERE vote_post_id = %d AND vote_user_ip = %s AND vote_rating != %s";
+		$sql = "SELECT vote_rating FROM " . table_postvotes . " WHERE vote_post_id = %d AND vote_user_ip = %s AND vote_rating != %s";
 		$voted = $db->get_var($db->prepare($sql, $post->post_id, $cage->server->testIp('REMOTE_ADDR'), 'alert'));
 	}
  	  	
@@ -278,9 +359,12 @@ function vote_submit_pre_show_post() {
  ********************************************************************** */
  
 function vote_submit_show_post_extra_fields() {
-	global $post, $lang;
+	global $post, $lang, $current_user;
 	
-	echo "<a class='alert_link' href='#'>" . $lang["vote_alert"]  . "</a> &nbsp;&nbsp;";
+	// Only show the Alert link ("Flag it") on new posts, not top stories
+	if($current_user->logged_in && $post->post_status == "new" && ($post->post_vars['vote_use_alerts'] == "checked")) {
+		echo "<a class='alert_link' href='#'>" . $lang["vote_alert"]  . "</a> &nbsp;&nbsp;";
+	}
 }
 
 
@@ -294,9 +378,19 @@ function vote_submit_show_post_extra_fields() {
 function vote_submit_show_post_extras() {
 	global $post, $lang;
 
-	echo "<div class='alert_choices' style='display: none;'>";
-		echo "<h3>" . $lang["vote_alert_reason_title"]  . "</h3>";
-	echo "</div>";
+	if($post->post_status == "new" && ($post->post_vars['vote_use_alerts'] == "checked")) {
+		echo "<div class='alert_choices' style='display: none;'>";
+			echo "<h3>" . $lang["vote_alert_reason_title"]  . "</h3>";
+			echo "<ul>";
+			echo "<li><a href='" . url(array('page'=>$post->post_id, 'alert'=>1)) . "'>" . $lang["vote_alert_reason_1"]  . "</a></li>";
+			echo "<li><a href='" . url(array('page'=>$post->post_id, 'alert'=>2)) . "'>" . $lang["vote_alert_reason_2"]  . "</a></li>";
+			echo "<li><a href='" . url(array('page'=>$post->post_id, 'alert'=>3)) . "'>" . $lang["vote_alert_reason_3"]  . "</a></li>";
+			echo "<li><a href='" . url(array('page'=>$post->post_id, 'alert'=>4)) . "'>" . $lang["vote_alert_reason_4"]  . "</a></li>";
+			echo "<li><a href='" . url(array('page'=>$post->post_id, 'alert'=>5)) . "'>" . $lang["vote_alert_reason_5"]  . "</a></li>";
+			echo "<li><a href='" . url(array('page'=>$post->post_id, 'alert'=>6)) . "'>" . $lang["vote_alert_reason_6"]  . "</a></li>";
+			echo "</ul>";
+		echo "</div>";
+	}
 }
 
 
@@ -347,6 +441,7 @@ function vote_admin_plugin_settings() {
 	$submit_vote = $vote_settings['vote_submit_vote'];
 	$submit_vote_value = $vote_settings['vote_submit_vote_value'];
 	$votes_to_promote = $vote_settings['vote_votes_to_promote'];
+	$use_alerts = $vote_settings['vote_use_alerts'];
 	$alerts_to_bury = $vote_settings['vote_alerts_to_bury'];
 	$physical_delete = $vote_settings['vote_physical_delete'];
 	
@@ -358,6 +453,7 @@ function vote_admin_plugin_settings() {
 	if(!$submit_vote) { $submit_vote = ''; }
 	if(!$submit_vote_value) { $submit_vote_value = 1; }
 	if(!$votes_to_promote) { $votes_to_promote = 5; }
+	if(!$use_alerts) { $use_alerts = 'checked'; }
 	if(!$alerts_to_bury) { $alerts_to_bury = 5; }
 	if(!$physical_delete) { $physical_delete = ''; }
 	
@@ -387,6 +483,7 @@ function vote_admin_plugin_settings() {
 	echo "<br /><p><b>" . $lang["vote_settings_vote_promote_bury"] . "</b></p>";
 	
 	echo "<p>" . $lang["vote_settings_votes_to_promote"] . " <input type='text' size=5 name='vote_votes_to_promote' value='" . $votes_to_promote . "' /> <small> (Default: 5)</small></p>\n";
+	echo "<p><input type='checkbox' name='vote_use_alerts' value='vote_use_alerts' " . $use_alerts . " > " . $lang["vote_settings_use_alerts"] . "</p>\n";
 	echo "<p>" . $lang["vote_settings_alerts_to_bury"] . " <input type='text' size=5 name='vote_alerts_to_bury' value='" . $alerts_to_bury . "' /> <small> (Default: 5)</small></p>\n";
 	
 	echo "<p><input type='checkbox' id='vote_physical_delete' name='vote_physical_delete' " . $physical_delete . " /> " . $lang["vote_settings_physical_delete"] . "</p>";
@@ -491,6 +588,14 @@ function vote_save_settings() {
 	}
 	
 	
+	// Use alerts
+	if($cage->post->keyExists('vote_use_alerts')) { 
+		$use_alerts = 'checked'; 
+	} else { 
+		$use_alerts = ''; 
+	}
+	
+	
 	// Check the content for alerts_to_bury
 	if($cage->post->keyExists('vote_alerts_to_bury')) { 
 		$alerts_to_bury = $cage->post->testInt('vote_alerts_to_bury'); 
@@ -524,6 +629,7 @@ function vote_save_settings() {
 	$vote_settings['vote_submit_vote'] = $submit_vote;
 	$vote_settings['vote_submit_vote_value'] = $submit_vote_value;
 	$vote_settings['vote_votes_to_promote'] = $votes_to_promote;
+	$vote_settings['vote_use_alerts'] = $use_alerts;
 	$vote_settings['vote_alerts_to_bury'] = $alerts_to_bury;
 	$vote_settings['vote_physical_delete'] = $physical_delete;
 	

@@ -389,10 +389,12 @@ function sub_theme_index_main() {
 		
 	} elseif(is_numeric($hotaru->get_page_name())) {
 		// Page name is a number so it must be a post with non-friendly urls
+		
 		$hotaru->display_template('post_page', 'submit');
 		return true;
 		
 	} elseif($post->is_post_url($hotaru->get_page_name())) {
+	
 		// Page name belongs to a story
 		$hotaru->display_template('post_page', 'submit');
 		return true;

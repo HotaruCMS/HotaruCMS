@@ -38,6 +38,8 @@ class Post {
 	var $post_author = 0;
 	var $post_url = '';
 	var $post_date = '';
+	
+	var $template_name = '';
 			
 	var $use_submission = true;
 	var $use_author = true;
@@ -212,6 +214,23 @@ class Post {
 		$sql = "SELECT * FROM " . table_posts . " WHERE post_id = %d ORDER BY post_date DESC";
 		$post = $db->get_row($db->prepare($sql, $post_id));
 		if($post) { return $post; } else { return false; }
+	}
+	
+
+	/* ******************************************************************** 
+	 *  Function: delete_post
+	 *  Parameters: None
+	 *  Purpose: Physically deletes a post from the database 
+	 *  Notes: Plugin hook in here to delete their parts, e.g. votes, coments, tags, etc.
+	 ********************************************************************** */	
+	 	
+	function delete_post() {
+		global $db, $plugin;
+		$sql = "DELETE FROM " . table_posts . " WHERE post_id = %d";
+		$db->query($db->prepare($sql, $this->post_id));
+		
+		$plugin->check_actions('submit_class_post_delete_post');
+		
 	}
 	
 	
