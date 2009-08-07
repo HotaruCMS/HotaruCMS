@@ -41,21 +41,21 @@
 			<!-- Logged in (or anonymous voter) and not voted yet -->
 			<!-- Shown -->
 			<div id='vote_unvote_text_vote_<?php echo $post->post_id ?>' class='vote_vote_unvote_button_bottom'>
-				<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'vote_unvote', 'positive');"><b><?php echo $lang["vote_button_vote"] ?></b></a>
+				<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'vote_unvote', 'positive'); return false;"><b><?php echo $lang["vote_button_vote"] ?></b></a>
 			</div>	
 			<!-- Hidden -->
 			<div id='vote_unvote_text_unvote_<?php echo $post->post_id ?>' class='vote_vote_unvote_button_bottom' style="display: none;">
-				<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'vote_unvote', 'negative');"><?php echo $lang["vote_button_unvote"] ?></a>
+				<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'vote_unvote', 'negative'); return false;"><?php echo $lang["vote_button_unvote"] ?></a>
 			</div>		
 		<?php } elseif(($current_user->logged_in || ($post->post_vars['vote_anonymous_votes'] == 'checked')) && $voted) { ?>
 			<!-- Logged in (or anonymous voter) and already voted -->
 			<!-- Hidden -->
 			<div id='vote_unvote_text_vote_<?php echo $post->post_id ?>' class='vote_vote_unvote_button_bottom' style="display: none;">
-				<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'vote_unvote', 'positive');"><b><?php echo $lang["vote_button_vote"] ?></b></a>
+				<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'vote_unvote', 'positive'); return false;"><b><?php echo $lang["vote_button_vote"] ?></b></a>
 			</div>	
 			<!-- Shown -->
 			<div id='vote_unvote_text_unvote_<?php echo $post->post_id ?>' class='vote_vote_unvote_button_bottom'>
-				<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'vote_unvote', 'negative');"><?php echo $lang["vote_button_unvote"] ?></a>
+				<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'vote_unvote', 'negative'); return false;"><?php echo $lang["vote_button_unvote"] ?></a>
 			</div>
 		<?php } else { ?>
 			<!-- Need to login -->
@@ -82,7 +82,7 @@
  				<!-- Logged in (or anonymous voting ok), not voted, or voted negative -->
  				<!-- Shown -->
  				<div id='up_down_text_up_vote_<?php echo $post->post_id ?>' class='vote_up_down_button_top'>
-  					<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'up_down', 'positive');"><b><?php echo $lang["vote_button_up_link"] ?></b></a>
+  					<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'up_down', 'positive'); return false;"><b><?php echo $lang["vote_button_up_link"] ?></b></a>
 				</div>
 				<!-- Hidden -->
 				<div id='up_down_text_up_voted_<?php echo $post->post_id ?>' class='vote_up_down_button_top' style="display:none;">
@@ -92,7 +92,7 @@
  				<!-- Logged in, not voted, or voted positive -->
  				<!-- Hidden -->
   				<div id='up_down_text_up_vote_<?php echo $post->post_id ?>' class='vote_up_down_button_top' style="display:none;">
-  					<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'up_down', 'positive');"><b><?php echo $lang["vote_button_up_link"] ?></b></a>
+  					<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'up_down', 'positive'); return false;"><b><?php echo $lang["vote_button_up_link"] ?></b></a>
 				</div>
 				<!-- Shown -->
 				<div id='up_down_text_up_voted_<?php echo $post->post_id ?>' class='vote_up_down_button_top'>
@@ -115,7 +115,7 @@
   				<!-- Logged in (or anonymous voting ok), not voted, or voted positive -->
   				<!-- Shown -->
 				<div id='up_down_text_down_vote_<?php echo $post->post_id ?>' class='vote_up_down_button_bottom'>
- 					<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'up_down', 'negative');"><b><?php echo $lang["vote_button_down_link"] ?></b></a>
+ 					<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'up_down', 'negative'); return false;"><b><?php echo $lang["vote_button_down_link"] ?></b></a>
  				</div>
  				<!-- Hidden -->
  				<div id='up_down_text_down_voted_<?php echo $post->post_id ?>' class='vote_up_down_button_bottom' style="display:none;">
@@ -125,7 +125,7 @@
  				<!-- Logged in, not voted, or voted negative -->
  				<!-- Hidden -->
 				<div id='up_down_text_down_vote_<?php echo $post->post_id ?>' class='vote_up_down_button_bottom' style="display:none;">
- 					<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'up_down', 'negative');"><b><?php echo $lang["vote_button_down_link"] ?></b></a>
+ 					<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'up_down', 'negative'); return false;"><b><?php echo $lang["vote_button_down_link"] ?></b></a>
  				</div>
  				<!-- Shown -->
  				<div id='up_down_text_down_voted_<?php echo $post->post_id ?>' class='vote_up_down_button_bottom'>
@@ -160,7 +160,7 @@
 				<!-- Logged in (or anonymous voter), not voted, or voted negative -->
 				<!-- Shown -->
 				<div id='yes_no_text_yes_vote_<?php echo $post->post_id ?>' class='vote_yes_no_button_bottom'>
-					<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'yes_no', 'positive');"><b><?php echo $lang["vote_button_yes_link"] ?></b></a>
+					<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'yes_no', 'positive'); return false;"><b><?php echo $lang["vote_button_yes_link"] ?></b></a>
 				</div>
 				<!-- Hidden -->
 				<div id='yes_no_text_yes_voted_<?php echo $post->post_id ?>' class='vote_yes_no_button_bottom' style="display:none;">
@@ -170,7 +170,7 @@
  				<!-- Logged in (or anonymous voter), not voted, or voted positive -->
 				<!-- Hidden -->
 				<div id='yes_no_text_yes_vote_<?php echo $post->post_id ?>' class='vote_yes_no_button_bottom' style="display:none;">
-					<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'yes_no', 'positive');"><b><?php echo $lang["vote_button_yes_link"] ?></b></a>
+					<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'yes_no', 'positive'); return false;"><b><?php echo $lang["vote_button_yes_link"] ?></b></a>
 				</div>
 				<!-- Shown -->
 				<div id='yes_no_text_yes_voted_<?php echo $post->post_id ?>' class='vote_yes_no_button_bottom'>
@@ -194,7 +194,7 @@
 	 			<!-- Logged in (or anonymous voter), not voted, or voted positive -->
 	 			<!-- Shown -->
 	 			<div id='yes_no_text_no_vote_<?php echo $post->post_id ?>' class='vote_yes_no_button_bottom'>
-	 				<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'yes_no', 'negative');"><b><?php echo $lang["vote_button_no_link"] ?></b></a>
+	 				<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'yes_no', 'negative'); return false;"><b><?php echo $lang["vote_button_no_link"] ?></b></a>
 	 			</div>
 	 			<!-- Hidden -->
 	 			<div id='yes_no_text_no_voted_<?php echo $post->post_id ?>' class='vote_yes_no_button_bottom' style="display:none;">
@@ -204,7 +204,7 @@
  				<!-- Logged in (or anonymous voter), not voted, or voted negative -->
 				<!-- Hidden -->
 				<div id='yes_no_text_no_vote_<?php echo $post->post_id ?>' class='vote_yes_no_button_bottom' style="display:none;">
-	 				<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'yes_no', 'negative');"><b><?php echo $lang["vote_button_no_link"] ?></b></a>
+	 				<a href="#" onclick="vote('<?php echo baseurl ?>', '<?php echo $cage->server->testIp('REMOTE_ADDR') ?>', <?php echo $post->post_id ?>, 'yes_no', 'negative'); return false;"><b><?php echo $lang["vote_button_no_link"] ?></b></a>
 	 			</div>
 	 			<!-- Shown -->
 	 			<div id='yes_no_text_no_voted_<?php echo $post->post_id ?>' class='vote_yes_no_button_bottom'>

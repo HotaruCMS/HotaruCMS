@@ -43,11 +43,11 @@ if($cage->post->keyExists('post_id')) {
 		// get vote history for this post:
 		
 		if($current_user->logged_in) {
-			$sql = "SELECT vote_rating FROM " . table_votes . " WHERE vote_post_id = %d AND (vote_user_id = %d OR vote_user_ip = %s)";
-			$voted = $db->get_var($db->prepare($sql, $post_id, $current_user->id, $user_ip));
+			$sql = "SELECT vote_rating FROM " . table_votes . " WHERE vote_post_id = %d AND (vote_user_id = %d OR vote_user_ip = %s AND vote_rating != %s)";
+			$voted = $db->get_var($db->prepare($sql, $post_id, $current_user->id, $user_ip, 'alert'));
 		} else {
-			$sql = "SELECT vote_rating FROM " . table_votes . " WHERE vote_post_id = %d AND vote_user_ip = %s";
-			$voted = $db->get_var($db->prepare($sql, $post_id, $user_ip));
+			$sql = "SELECT vote_rating FROM " . table_votes . " WHERE vote_post_id = %d AND vote_user_ip = %s AND vote_rating != %s";
+			$voted = $db->get_var($db->prepare($sql, $post_id, $user_ip, 'alert'));
 		}
 		
 		if($voted == $vote_rating) {
