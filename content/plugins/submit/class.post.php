@@ -305,7 +305,7 @@ class Post {
 		$tag = $cage->get->noTags('tag');
 		$category = $cage->get->noTags('category');
 		
-		if(!$status) { $status = "new"; }
+		if(!$status) { $status = "top"; }
 		if(!$limit) { $limit = 10; }
 					
 		if($status) { $filter['post_status = %s'] = $status; }
