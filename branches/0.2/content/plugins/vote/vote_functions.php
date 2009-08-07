@@ -43,10 +43,10 @@ if($cage->post->keyExists('post_id')) {
 		// get vote history for this post:
 		
 		if($current_user->logged_in) {
-			$sql = "SELECT vote_rating FROM " . table_votes . " WHERE vote_post_id = %d AND (vote_user_id = %d OR vote_user_ip = %s AND vote_rating != %s)";
+			$sql = "SELECT vote_rating FROM " . table_postvotes . " WHERE vote_post_id = %d AND (vote_user_id = %d OR vote_user_ip = %s AND vote_rating != %s)";
 			$voted = $db->get_var($db->prepare($sql, $post_id, $current_user->id, $user_ip, 'alert'));
 		} else {
-			$sql = "SELECT vote_rating FROM " . table_votes . " WHERE vote_post_id = %d AND vote_user_ip = %s AND vote_rating != %s";
+			$sql = "SELECT vote_rating FROM " . table_postvotes . " WHERE vote_post_id = %d AND vote_user_ip = %s AND vote_rating != %s";
 			$voted = $db->get_var($db->prepare($sql, $post_id, $user_ip, 'alert'));
 		}
 		
@@ -76,14 +76,14 @@ if($cage->post->keyExists('post_id')) {
 				$sql = "UPDATE " . table_posts . " SET post_status = %s, post_votes_up=post_votes_up+1 WHERE post_id = %d";
 				$db->query($db->prepare($sql, $post_status, $post_id));
 			}
-			$sql = "INSERT INTO " . table_votes . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d)";
+			$sql = "INSERT INTO " . table_postvotes . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d)";
 			$db->query($db->prepare($sql, $post_id, $user_id, $user_ip, $vote_type, $vote_rating, $user_id));
 			
 			// Remove negative vote, i.e. undo a vote if the user is changing his/her mind...
 			if($voted && $voted == 'negative') {
 				$sql = "UPDATE " . table_posts . " SET post_votes_down=post_votes_down-1 WHERE post_id = %d";
 				$db->query($db->prepare($sql, $post_id));
-				$sql = "DELETE FROM  " . table_votes . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_user_ip = %s AND vote_type = %s AND vote_rating = %s";
+				$sql = "DELETE FROM  " . table_postvotes . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_user_ip = %s AND vote_type = %s AND vote_rating = %s";
 				$db->query($db->prepare($sql, $post_id, $user_id, $user_ip, $vote_type, $voted));
 			}
 		} else {
@@ -94,14 +94,14 @@ if($cage->post->keyExists('post_id')) {
 			}
 			if(!($voted && $vote_type == 'vote_unvote')) {
 				// skip this if we are undoing a vote using vote_unvote voting
-				$sql = "INSERT INTO " . table_votes . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d)";
+				$sql = "INSERT INTO " . table_postvotes . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d)";
 				$db->query($db->prepare($sql, $post_id, $user_id, $user_ip, $vote_type, $vote_rating, $current_user->id));
 			}
 			// Remove positive vote, i.e. undo a vote if the user is changing his/her mind...
 			if($voted && $voted == 'positive') {
 				$sql = "UPDATE " . table_posts . " SET post_votes_up=post_votes_up-1 WHERE post_id = %d";
 				$db->query($db->prepare($sql, $post_id));
-				$sql = "DELETE FROM  " . table_votes . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_user_ip = %s AND vote_type = %s AND vote_rating = %s";
+				$sql = "DELETE FROM  " . table_postvotes . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_user_ip = %s AND vote_type = %s AND vote_rating = %s";
 				$db->query($db->prepare($sql, $post_id, $user_id, $user_ip, $vote_type, $voted));
 			}
 		}
