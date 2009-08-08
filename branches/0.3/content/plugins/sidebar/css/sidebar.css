@@ -1,10 +1,6 @@
-<?php 
-
-/* ******* TEMPLATE ******************************************************************************** 
- * Theme name: default
- * Template name: sidebar.php
- * Template author: Nick Ramsay
- * Version: 0.1
+/* ******* CSS STYLE ************************************************************************** 
+ * Plugin name: default
+ * Stylesheet: tags.css
  * License:
  *
  *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
@@ -24,11 +20,7 @@
  *
  **************************************************************************************************** */
 
-global $plugin, $lang; // don't remove
-?>
-
-<div id="sidebar">
-
-	<?php $plugin->check_actions('sidebar', true, '', array(1)); ?>
-
-</div>
+.show_post_tags {
+	display: inline;
+	font-size: 0.825em;
+}
