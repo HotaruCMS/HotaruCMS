@@ -67,9 +67,8 @@ if(!isset($result) || !is_array($result)) {
 								$result = $plugin->check_actions('theme_index_sidebar');
 								if(!isset($result) || !is_array($result)) {
 									$hotaru->display_template('sidebar');
-								}
+								}								
 							?>
-						</ul> 
 			    		</div> <!-- close "yui-u" -->
 		    		<?php } ?>
 			</div> <!-- close "yui-gc" or "yui-g" -->
