@@ -85,5 +85,9 @@ $lang["submit_post_filter_category"] = "stories in";
 
 /* Submit RSS Feed */
 $lang["submit_rss_latest_from"] = "Latest from";
+$lang["submit_rss_top_stories_from"] = "Top Stories from";
+$lang["submit_rss_stories_from_user"] = "Stories submitted by";
+$lang["submit_rss_stories_tagged"] = "Stories tagged"; 
+$lang["submit_rss_stories_in_category"] = "Stories posted in";
 
 ?>

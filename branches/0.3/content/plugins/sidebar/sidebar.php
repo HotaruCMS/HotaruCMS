@@ -108,7 +108,7 @@ function sidebar_header_include() {
  ********************************************************************** */
  
 function sidebar_sidebar($sidebar_id = array(1)) {
-	global $plugin, $sidebar;
+	global $plugin, $sidebar, $hotaru;
 
 	$sidebar_id = $sidebar_id[0];
 		
