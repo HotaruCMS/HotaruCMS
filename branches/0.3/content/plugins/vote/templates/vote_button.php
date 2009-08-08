@@ -4,7 +4,6 @@
  * Plugin name: Vote
  * Template name: plugins/vote/vote_button.php
  * Template author: Nick Ramsay
- * Version: 0.1
  * License:
  *
  *   This file is part of Hotaru CMS (http://www.hotarucms.org/).

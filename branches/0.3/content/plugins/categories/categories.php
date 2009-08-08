@@ -6,7 +6,7 @@
  * folder: categories
  * prefix: cts
  * requires: submit 0.1, category_manager 0.1
- * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_class_post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter, submit_show_post_author_date, submit_is_page_main, sidebar_top
+ * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_class_post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter, submit_show_post_author_date, submit_is_page_main
  *
  *  License:
  *
@@ -47,7 +47,8 @@ function cts_install_plugin() {
 	
 	// Default settings (Note: we can't use $post->post_vars because it hasn't been filled yet.)
 	$plugin->plugin_settings_update('submit', 'submit_categories', 'checked');
-
+	$plugin->plugin_settings_update('sidebar_widgets', 'categories', '');
+		
 }
 
 
@@ -419,15 +420,15 @@ function cts_submit_show_post_author_date() {
 
 
  /* ******************************************************************** 
- *  Function: cts_sidebar_top
+ *  Function: sidebar_widget_categories
  *  Parameters: None
  *  Purpose: Displays categories as a tree
- *  Notes: ---
+ *  Notes: This isn't a plugin hook, but a function call created in the Sidebar plugin.
  ********************************************************************** */
 
-function cts_sidebar_top() {
-	global $db, $the_cats, $cat_level, $lang;
-	
+function sidebar_widget_categories($args) {
+	global $db, $the_cats, $cat_level, $lang, $hotaru, $plugin, $sidebar;
+		
 	$sql = "SELECT * FROM " . table_categories . " ORDER BY category_order ASC";
 	$the_cats = $db->get_results($db->prepare($sql));
 	
@@ -452,7 +453,7 @@ function cts_sidebar_top() {
 
 
  /* ******************************************************************** 
- *  Function: cts_sidebar_top
+ *  Function: cat_level
  *  Parameters: None
  *  Purpose: Recursive function to find level depth
  *  Notes: Starting level is 0

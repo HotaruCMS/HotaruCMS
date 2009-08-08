@@ -129,6 +129,18 @@ function rs_rss_show($ids) {
 
 
 /* ******************************************************************** 
+ *  Function: rs_sidebar_show_rss_show
+ *  Parameters: None
+ *  Purpose: Redirects to the main RSS Show function.
+ *  Notes: This isn't a plugin hook, but a function call created in the Sidebar plugin. 
+ ********************************************************************** */
+
+function sidebar_widget_rss_show($args) {
+
+	rs_rss_show(array($args));
+}
+
+/* ******************************************************************** 
  *  Function: rs_hotaru_header()
  *  Parameters: None
  *  Purpose: Includes the RSS Show language file
@@ -216,6 +228,7 @@ function rs_install_plugin($id) {
 	
 	// parameters: plugin folder name, setting name, setting value
 	$plugin->plugin_settings_update('rss_show', 'rss_show_' . $id . '_settings', serialize($settings));
+	$plugin->plugin_settings_update('sidebar_widgets', 'rss_show_' . $id, $id);
 	
 	// Include language file. Also included in hotaru_header, but needed here so 
 	// that the link in the Admin sidebar shows immediately after installation.
@@ -253,13 +266,14 @@ function rs_get_params() {
 	if($action = $cage->get->testAlnumLines('action')) {
 		if($action == 'new_feed') {
 			$id = $cage->get->getInt('id');
-			rs_install_plugin_starter_settings($id);
+			rs_install_plugin($id);
 			$hotaru->message = $lang["rss_show_feed_added"];
 			$hotaru->message_type = "green";
 			
 		} elseif($action == 'delete_feed') {
 			$id = $cage->get->getInt('id');
 			$plugin->plugin_settings_remove_setting('rss_show_' . $id . '_settings');
+			$plugin->plugin_settings_remove_setting('sidebar_widgets', 'rss_show_' . $id);
 			$hotaru->message = $lang["rss_show_feed_removed"];
 			$hotaru->message_type = "green";
 		}
