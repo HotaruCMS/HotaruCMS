@@ -29,12 +29,6 @@ global $plugin, $lang; // don't remove
 
 <div id="sidebar">
 
-	<?php $plugin->check_actions('sidebar_top'); ?>
-	
-	<?php $plugin->check_actions('rss_show'); ?>
-	
-	<?php $plugin->check_actions('sidebar'); ?>
-			
-	<?php $plugin->check_actions('sidebar_bottom'); ?>
+	<?php $plugin->check_actions('show_in_sidebar'); ?>
 
 </div>

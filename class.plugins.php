@@ -717,7 +717,7 @@ class Plugin extends generic_pmd {
 	 *  Function: plugin_settings
 	 *  Parameters: Plugin folder name and setting value to retrieve
 	 *  Purpose: Returns the settings for a given plugin
-	 *  Notes: ---
+	 *  Notes: If there are multiple settings with the same name, this will only get the first.
 	 ********************************************************************** */
 	 
 	function plugin_settings($folder = '', $setting = '') {
@@ -725,6 +725,22 @@ class Plugin extends generic_pmd {
 		$sql = "SELECT plugin_value FROM " . table_pluginsettings . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
 		$value = $db->get_var($db->prepare($sql, $folder, $setting));
 		if($value) { return $value; } else { return false; }
+	}
+	
+	
+	/* ******************************************************************** 
+	 *  Function: plugin_settings_array
+	 *  Parameters: Plugin folder name (or other group name, e.g. sidebar_widgets)
+	 *  Purpose: Returns an array of settings for a given plugin
+	 *  Notes: Unlike "plugin_settings", this will get ALL settings with the same name.
+	 ********************************************************************** */
+	 
+	function plugin_settings_array($folder = '') {
+		global $db;
+		$sql = "SELECT plugin_setting, plugin_value FROM " . table_pluginsettings . " WHERE (plugin_folder = %s)";
+		$results = $db->get_results($db->prepare($sql, $folder));
+		
+		if($results) { return $results; } else { return false; }
 	}
 	
 	
