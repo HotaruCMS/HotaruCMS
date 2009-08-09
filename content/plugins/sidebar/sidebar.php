@@ -118,7 +118,7 @@ function sidebar_sidebar($sidebar_id = array(1)) {
 		$function_name = "sidebar_widget_" . $widget;
 		
 		// Only show widgets intended for this sidebar
-		if($details['sidebar'] == $sidebar_id) {
+		if(($details['sidebar'] == $sidebar_id) && $details['enabled']) {
 		
 			// Call this widget's function
 			if(function_exists($function_name)) {
@@ -191,23 +191,23 @@ function sidebar_admin_plugin_settings() {
 					if($details['order'] == ($this_widget_order - 1)) {
 					
 						//Check if this widget and the target are in the same sidebar
-						if($sidebar_settings['sidebar_settings_block_order'][$widget]['sidebar'] == $sidebar_settings['sidebar_settings_block_order'][$this_widget_name]['sidebar']) {
+						if($sidebar_settings['sidebar_widgets'][$widget]['sidebar'] == $sidebar_settings['sidebar_widgets'][$this_widget_name]['sidebar']) {
 						
-							$sidebar_settings['sidebar_settings_block_order'][$widget]['order'] = $details['order'] + 1;
-							$sidebar_settings['sidebar_settings_block_order'][$this_widget_name]['order'] = $this_widget_order - 1;
+							$sidebar_settings['sidebar_widgets'][$widget]['order'] = $details['order'] + 1;
+							$sidebar_settings['sidebar_widgets'][$this_widget_name]['order'] = $this_widget_order - 1;
 							$hotaru->messages[$lang['sidebar_order_updated']] = 'green';
 							break;
 						} else {
 							// In different sidebars so don't change the order, just the sidebar value
-							$sidebar_settings['sidebar_settings_block_order'][$this_widget_name]['sidebar']--;
+							$sidebar_settings['sidebar_widgets'][$this_widget_name]['sidebar']--;
 						}
 					}
 				}
 						
 			} else {
 				// prevent moving into sidebar 0:
-				if(($sidebar->get_last_sidebar($widgets) > 1) && ($sidebar_settings['sidebar_settings_block_order'][$this_widget_name]['sidebar'] > 1)) {
-					$sidebar_settings['sidebar_settings_block_order'][$this_widget_name]['sidebar']--;
+				if(($sidebar->get_last_sidebar($widgets) > 1) && ($sidebar_settings['sidebar_widgets'][$this_widget_name]['sidebar'] > 1)) {
+					$sidebar_settings['sidebar_widgets'][$this_widget_name]['sidebar']--;
 				} else {
 					$hotaru->messages[$lang['sidebar_order_already_first']] = 'red';
 				}
@@ -218,16 +218,26 @@ function sidebar_admin_plugin_settings() {
 				// find widget in the target spot...
 				foreach($widgets as $widget => $details) {
 					if($details['order'] == ($this_widget_order + 1)) {
-						$sidebar_settings['sidebar_settings_block_order'][$widget]['order'] = $details['order'] - 1;
-						$sidebar_settings['sidebar_settings_block_order'][$this_widget_name]['order'] = $this_widget_order + 1;
+						$sidebar_settings['sidebar_widgets'][$widget]['order'] = $details['order'] - 1;
+						$sidebar_settings['sidebar_widgets'][$this_widget_name]['order'] = $this_widget_order + 1;
 						$hotaru->messages[$lang['sidebar_order_updated']] = 'green';
 						break;
 					}
 				}
 			} else {
-				$sidebar_settings['sidebar_settings_block_order'][$this_widget_name]['sidebar']++;
+				$sidebar_settings['sidebar_widgets'][$this_widget_name]['sidebar']++;
 				//$hotaru->messages[$lang['sidebar_order_already_last']] = 'red';
 			}		
+		} 
+		elseif($cage->get->testAlpha('action') == 'enable') 
+		{
+			$sidebar_settings['sidebar_widgets'][$this_widget_name]['enabled'] = true;
+			$hotaru->messages[$lang['sidebar_order_enabled']] = 'green';
+		} 
+		elseif($cage->get->testAlpha('action') == 'disable') 
+		{
+			$sidebar_settings['sidebar_widgets'][$this_widget_name]['enabled'] = false;
+			$hotaru->messages[$lang['sidebar_order_disabled']] = 'green';
 		}
 		
 		// Save updated sidebar settings

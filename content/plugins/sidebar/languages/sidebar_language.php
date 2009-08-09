@@ -33,11 +33,14 @@ $lang["sidebar_settings_saved"] = "Settings Saved";
 
 /* Sidebar Ordering */
 $lang["sidebar_ordering_title"] = "Sidebar";
+$lang["sidebar_ordering_block_enabled"] = "On/Off";
 $lang["sidebar_ordering_block_name"] = "Widget";
 $lang["sidebar_ordering_block_order"] = "Order";
 $lang['sidebar_order_updated'] = "Order updated";
 $lang['sidebar_order_already_first'] = "That sidebar widget is already first";
 $lang['sidebar_order_already_last'] = "That sidebar widget is already last";
+$lang['sidebar_order_enabled'] = "Sidebar widget enabled!";
+$lang['sidebar_order_disabled'] = "Sidebar widget disabled.";
 $lang["sidebar_ordering_guide"] = "Sidebar Tips";
 $lang["sidebar_ordering_guide_1"] = "Once you've set up multiple sidebars (<a href='http://hotarucms.org/showthread.php?t=64'>read how</a>), you can move the <i>last</i> plugin in a sidebar to the next one by clciking the down arrow. Try it!";
 
