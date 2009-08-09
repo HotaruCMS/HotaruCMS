@@ -6,7 +6,7 @@
  * version: 0.1
  * folder: sidebar_posts
  * prefix: sp
- * requires: submit 0.1
+ * requires: sidebar 0.1, submit 0.1
  * hooks: install_plugin, hotaru_header
  *
  *  License:

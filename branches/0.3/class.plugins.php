@@ -91,24 +91,22 @@ class Plugin extends generic_pmd {
 				}
 				
 				// Conditions for "active"...
-				if($allplugins[$count]['status'] == 'active') {
-					$allplugins[$count]['active'] = "<img src='" . baseurl . "content/admin_themes/" . admin_theme . "images/active.png'>";
+				if(($allplugins[$count]['status'] == 'active') && ($allplugins[$count]['install'] == 'install')) {
+					$allplugins[$count]['active'] = "<img src='" . baseurl . "content/admin_themes/" . admin_theme . "images/active.png'></a>";
+				} elseif(($allplugins[$count]['status'] == 'inactive') && ($allplugins[$count]['install'] == 'install')) {
+					$allplugins[$count]['active'] = "<img src='" . baseurl . "content/admin_themes/" . admin_theme . "images/inactive.png'></a>";
+				} elseif($allplugins[$count]['status'] == 'active') {
+					$allplugins[$count]['active'] = "<a href='" . baseurl;
+					$allplugins[$count]['active'] .= "admin/admin_index.php?page=plugins&amp;action=deactivate&amp;plugin=";
+					$allplugins[$count]['active'] .= $allplugins[$count]['folder'] . "'>";
+					$allplugins[$count]['active'] .= "<img src='" . baseurl . "content/admin_themes/" . admin_theme . "images/active.png'></a>";
 				} else {
-					$allplugins[$count]['active'] = "<img src='" . baseurl . "content/admin_themes/" . admin_theme . "images/inactive.png'>";
+					$allplugins[$count]['active'] = "<a href='" . baseurl;
+					$allplugins[$count]['active'] .= "admin/admin_index.php?page=plugins&amp;action=activate&amp;plugin=";
+					$allplugins[$count]['active'] .= $allplugins[$count]['folder'] . "'>";
+					$allplugins[$count]['active'] .= "<img src='" . baseurl . "content/admin_themes/" . admin_theme . "images/inactive.png'></a>";
 				}
 				
-				// Conditions for "status"...
-				if($allplugins[$count]['status'] == 'active') { 
-					$allplugins[$count]['status'] = "<a href='" . baseurl;
-					$allplugins[$count]['status'] .= "admin/admin_index.php?page=plugins&amp;action=deactivate&amp;plugin=";
-					$allplugins[$count]['status'] .= $allplugins[$count]['folder'] . "'>" . $lang['admin_plugins_off'] . "</a>";
-				} elseif($allplugins[$count]['status'] != 'install') { 
-					$allplugins[$count]['status'] = "<a href='" . baseurl;
-					$allplugins[$count]['status'] .= "admin/admin_index.php?page=plugins&amp;action=activate&amp;plugin=";
-					$allplugins[$count]['status'] .= $allplugins[$count]['folder'] . "'>" . $lang['admin_plugins_on'] . "</a>";
-				} else {
-					$allplugins[$count]['status'] = '';
-				}
 				
 				// Conditions for "install"...
 				if($allplugins[$count]['install'] == 'install') { 

@@ -36,6 +36,7 @@ for($i=1; $i<=$sidebars; $i++) {
 	
 	<tr class='plugins_table_installed'><td colspan=6><?php echo $lang["sidebar_ordering_title"] . " " . $i; ?> </td></tr>
 	<tr class='plugins_table_headers'>
+	<td><?php echo $lang["sidebar_ordering_block_enabled"]; ?></td>
 	<td><?php echo $lang["sidebar_ordering_block_name"]; ?></td>
 	<td><?php echo $lang["sidebar_ordering_block_order"]; ?></td>
 	</tr>
@@ -45,6 +46,19 @@ for($i=1; $i<=$sidebars; $i++) {
 		foreach($widgets as $widget => $details) {
 		
 			if($details['sidebar'] == $i) {
+				// For the enabled button...
+				if($details['enabled']) {
+					$enabled_output = "<a href='" . baseurl;
+					$enabled_output .= "admin/admin_index.php?page=plugin_settings&amp;plugin=sidebar&amp;";
+					$enabled_output .= "action=disable&amp;widget=". $widget . "'>";
+					$enabled_output .= "<img src='" . baseurl . "content/admin_themes/" . admin_theme . "images/active.png'></a>";
+				} else {
+					$enabled_output = "<a href='" . baseurl;
+					$enabled_output .= "admin/admin_index.php?page=plugin_settings&amp;plugin=sidebar&amp;";
+					$enabled_output .= "action=enable&amp;widget=". $widget . "'>";
+					$enabled_output .= "<img src='" . baseurl . "content/admin_themes/" . admin_theme . "images/inactive.png'></a>";
+				}
+				
 				// For the up and down arrows...
 				$order_output = "<a href='" . baseurl;
 				$order_output .= "admin/admin_index.php?page=plugin_settings&amp;plugin=sidebar&amp;";
@@ -58,6 +72,7 @@ for($i=1; $i<=$sidebars; $i++) {
 							
 				$alt++;
 				echo "<tr id='plugins_tr' class='plugins_table_row_" . $alt % 2 . "'>\n";
+					echo "<td class='plugins_active'>" . $enabled_output . "</td>\n";
 					echo "<td class='plugins_name'>" . $hotaru->page_to_title_caps($widget) . " </td>\n";
 					echo "<td class='plugins_order'>" . $order_output . "</td>\n";
 				echo "</tr>\n";
