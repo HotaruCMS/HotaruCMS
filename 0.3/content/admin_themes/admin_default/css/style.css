@@ -230,6 +230,10 @@ tr.plugins_table_row_1 td {
 	font-weight: bold;
 }
 
+.plugins_install {
+	font-weight: bold;
+}
+
 td.plugin_description {
 	background-color: #fefefe;
 	border-style:solid;
