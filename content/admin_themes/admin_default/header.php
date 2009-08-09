@@ -40,11 +40,13 @@ global $hotaru, $admin, $plugin, $lang; // don't remove
    		}
    		elseif($hotaru->get_page_name() != "main")
    		{
-   			echo $hotaru->page_to_title_caps($hotaru->get_page_name()) . " &laquo; " . $lang["admin"] . " &laquo; " . site_name;
+   			$hotaru->title = $hotaru->get_page_name();
+   			echo $hotaru->page_to_title_caps($hotaru->title) . " &laquo; " . $lang["admin"] . " &laquo; " . site_name;
    		}
    		else
    		{ 
    			echo $lang["admin"] . " &laquo; " . site_name;
+   			$hotaru->title = 'admin';
    		} 
    	?>
    </title>

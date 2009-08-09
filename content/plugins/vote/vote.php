@@ -246,7 +246,7 @@ function vote_submit_class_post_add_post() {
  ********************************************************************** */
 
 function vote_navigation() {	
-	global $lang, $plugin;
+	global $lang, $plugin, $hotaru;
 	
 	//get vote settings
 	$vote_settings = unserialize($plugin->plugin_settings('vote', 'vote_settings')); 
@@ -254,8 +254,9 @@ function vote_navigation() {
 	if(($vote_settings['vote_submit_vote'] == "checked") && ($vote_settings['vote_submit_vote_value'] >= $vote_settings['vote_votes_to_promote'])) {
 		// these settings make the latest page unnecessary so the "Home" link is sufficient, otherwise...
 	} else {
-		echo "<li><a href='" . baseurl . "'>" . $lang["vote_navigation_top_posts"] . "</a></li>\n";
-		echo "<li><a href='" . url(array('page'=>'latest')) . "'>" . $lang["vote_navigation_latest"] . "</a></li>\n";
+	
+		if($hotaru->title == 'latest') { $status = "id='navigation_active'"; } else { $status = ""; }
+		echo "<li><a " . $status . " href='" . url(array('page'=>'latest')) . "'>" . $lang["vote_navigation_latest"] . "</a></li>\n";
 	}
 }
 

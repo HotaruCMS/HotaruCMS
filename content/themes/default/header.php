@@ -41,10 +41,12 @@ global $hotaru, $plugin, $lang; // don't remove
    		}
    		elseif($hotaru->get_page_name() != "main")
    		{
-   			echo $hotaru->page_to_title_caps($hotaru->get_page_name()) . " &laquo; " . site_name;
+   			$hotaru->title = $hotaru->get_page_name();
+   			echo $hotaru->page_to_title_caps($hotaru->title) . " &laquo; " . site_name;
    		}
    		else
    		{ 
+   			$hotaru->title = 'top';
    			echo site_name; 
    		} 
    	?>
