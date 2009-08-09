@@ -60,7 +60,7 @@ $lang['main_times_seconds'] = "a few seconds";
  * ************************************************************* */
  
 /* navigation */
-$lang["main_theme_navigation_home"] = "Home";
+$lang["main_theme_navigation_home"] = "Top Posts";
 $lang["main_theme_navigation_admin"] = "Admin";
 $lang["main_theme_navigation_login"] = "Login";
 $lang["main_theme_navigation_logout"] = "Logout";

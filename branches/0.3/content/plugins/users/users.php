@@ -128,17 +128,26 @@ function usr_admin_plugin_settings() {
  ********************************************************************** */
 
 function usr_navigation_users() {	
-	global $current_user, $lang;
+	global $current_user, $lang, $hotaru;
 	
 	if($current_user->logged_in) {
-		echo "<li><a href='" . url(array('page'=>'profile')) . "'>" . $lang["users_profile"] . "</a></li>\n";
-		echo "<li><a href='" . url(array('page'=>'logout')) . "'>" . $lang["users_logout"] . "</a></li>\n";
+		if($hotaru->title == 'profile') { $status = "id='navigation_active'"; } else { $status = ""; }
+		echo "<li><a  " . $status . " href='" . url(array('page'=>'profile')) . "'>" . $lang["users_profile"] . "</a></li>\n";
+		
+		if($hotaru->title == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
+		echo "<li><a  " . $status . " href='" . url(array('page'=>'logout')) . "'>" . $lang["users_logout"] . "</a></li>\n";
+		
 		if($current_user->role == 'administrator') {
-			echo "<li><a href='" . url(array(), 'admin') . "'>" . $lang["users_admin"] . "</a></li>\n";
+			
+			if($hotaru->title == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
+			echo "<li><a  " . $status . " href='" . url(array(), 'admin') . "'>" . $lang["users_admin"] . "</a></li>\n";
 		}
 	} else {	
-		echo "<li><a href='" . url(array('page'=>'login')) . "'>" . $lang["users_login"] . "</a></li>\n";
-		echo "<li><a href='" . url(array('page'=>'register')) . "'>" . $lang["users_register"] . "</a></li>\n";
+		if($hotaru->title == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
+		echo "<li><a  " . $status . " href='" . url(array('page'=>'login')) . "'>" . $lang["users_login"] . "</a></li>\n";
+		
+		if($hotaru->title == 'register') { $status = "id='navigation_active'"; } else { $status = ""; }
+		echo "<li><a  " . $status . " href='" . url(array('page'=>'register')) . "'>" . $lang["users_register"] . "</a></li>\n";
 	}
 }
 

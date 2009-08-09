@@ -66,23 +66,24 @@ function sidebar_widget_sidebar_posts($type = 'top') {
     	$plugin->include_language_file('sidebar_posts');
     	//$hotaru->title = $hotaru->get_page_name();
 	
-	// FILTER TO NEW OR TOP?
-	if($type == 'new') { 
+	// FILTER TO NEW POSTS OR TOP POSTS?
+	if($type == 'new' && $hotaru->title != 'latest') { 
 		$posts = $post->get_posts($post->filter(array('post_status = %s' => 'new'), 10));	// get latest stories
 		$title = $lang['sidebar_posts_latest_posts'];
-	} else {
+	} elseif($type == 'top' && $hotaru->title != 'top') {
 		$posts = $post->get_posts($post->filter(array('post_status = %s' => 'top'), 10));	// get top stories
 		$title = $lang['sidebar_posts_top_posts'];
 	}
 	
-	$output = "<h2 class='sidebar_posts_title'>";
-	$output .= "<a href='" . url(array('page'=>'rss', 'status'=>$type)) . "' title='" . $lang["sidebar_posts_icon_anchor_title"] . "'><img src='" . baseurl . "content/themes/" . theme . "images/rss_16.png'></a>&nbsp;"; // RSS icon
-	$link = baseurl;
-	$output .= "<a href='" . $link . "' title='" . $lang["sidebar_posts_title_anchor_title"] . "'>" . $title . "</a></h2>"; 
-	    
-	$output .= "<ul class='sidebar_posts_items'>";
+	if(isset($posts) && !empty($posts)) {
+		
+		$output = "<h2 class='sidebar_posts_title'>";
+		$output .= "<a href='" . url(array('page'=>'rss', 'status'=>$type)) . "' title='" . $lang["sidebar_posts_icon_anchor_title"] . "'><img src='" . baseurl . "content/themes/" . theme . "images/rss_16.png'></a>&nbsp;"; // RSS icon
+		$link = baseurl;
+		$output .= "<a href='" . $link . "' title='" . $lang["sidebar_posts_title_anchor_title"] . "'>" . $title . "</a></h2>"; 
+		    
+		$output .= "<ul class='sidebar_posts_items'>";
 	
-	if($posts) {
 		foreach ($posts as $item) {
 		        
 		        // POST TITLE
