@@ -87,6 +87,8 @@ small {
 	color: #666666;
 }
 
+li a#navigation_active { text-decoration: underline; }
+
 #bd {
 
 }

@@ -123,9 +123,7 @@ class Post {
 			$this->post_date = $post_row->post_date;
 			
 			$plugin->check_actions('submit_class_post_read_post_2');
-			
-			$hotaru->title = $this->post_title;
-			
+						
 			return true;
 		} else {
 			return false;
@@ -257,7 +255,7 @@ class Post {
 			$filter = rstrtrim($filter, "AND ");
 		}
 		
-		if($limit == 0) { $limit = ''; } else { $limit = "LIMIT " . $limit; }
+		if($limit == 0) { $limit = "LIMIT 20"; } else { $limit = "LIMIT " . $limit; }
 		
 		$sql = "SELECT * FROM " . table_posts . $filter . " ORDER BY post_date DESC " . $limit;
 				
@@ -327,6 +325,7 @@ class Post {
 		elseif($category && (friendly_urls == "true")) { $feed->description = $lang["submit_rss_stories_in_category"] . " " . $category; }
 		elseif($category && (friendly_urls == "false")) { $feed->description = $lang["submit_rss_stories_in_category"] . " " . get_cat_name($category); }
 				
+		if(!isset($filter))  $filter = array();
 		$prepared_array = $this->filter($filter, $limit);
 		$results = $db->get_results($db->prepare($prepared_array));
 

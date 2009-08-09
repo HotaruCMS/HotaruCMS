@@ -31,6 +31,7 @@ class Hotaru {
 	var $message_type = 'green';	// green or red, color of message box
 	var $messages = array();	// for multiple messages
 	var $title = '';		// for the broswer's TITLE tags
+	var $page_type = '';		// to help determine what kind of page we're looking at
 	
 	
 	/* ******************************************************************** 
