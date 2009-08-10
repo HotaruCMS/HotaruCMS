@@ -46,8 +46,9 @@ global $hotaru, $admin, $plugin, $lang; // don't remove
    		else
    		{ 
    			echo $lang["admin"] . " &laquo; " . site_name;
-   			$hotaru->title = 'admin';
    		} 
+   		
+   		$hotaru->title = 'admin';	// highlights "Admin" in the navigation bar, for all pages in Admin
    	?>
    </title>
    <link rel="stylesheet" href="<?php echo baseurl . '3rd_party/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
