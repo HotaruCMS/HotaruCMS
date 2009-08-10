@@ -5,7 +5,7 @@
  * version: 0.1
  * folder: sidebar
  * prefix: sidebar
- * hooks: install_plugin, hotaru_header, header_include, admin_plugin_settings, admin_sidebar_plugin_settings, sidebar
+ * hooks: install_plugin, hotaru_header, header_include, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, sidebar
  *
  *
  *  License:
@@ -78,20 +78,24 @@ function sidebar_hotaru_header() {
 
 
 /* ******************************************************************** 
- *  Function: sidebar_header_include
+ *  Functions: sidebar_header_include & sidebar_admin_header_include
  *  Parameters: None
- *  Purpose: Includes css and language files.
+ *  Purpose: Includes css.
  *  Notes: ---
  ********************************************************************** */
  
-function sidebar_header_include() {
-	global $plugin;
-	$plugin->include_css_file('sidebar');
-	
-	// A plugin hook so other plugin developers can include files here
-	$plugin->check_actions('sidebar_admin_header_include');
+function sidebar_header_include() { 
+	global $plugin; 
+	$plugin->include_css_file('sidebar'); 
 }
 
+function sidebar_admin_header_include() { 
+	global $plugin, $admin;
+	
+	if($admin->is_settings_page('sidebar')) { 
+		$plugin->include_css_file('sidebar');
+	} 
+}
 
 
  /* ******************************************************************** 
