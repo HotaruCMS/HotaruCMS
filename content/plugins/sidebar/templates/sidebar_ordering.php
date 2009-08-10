@@ -72,9 +72,9 @@ for($i=1; $i<=$sidebars; $i++) {
 							
 				$alt++;
 				echo "<tr id='plugins_tr' class='plugins_table_row_" . $alt % 2 . "'>\n";
-					echo "<td class='plugins_active'>" . $enabled_output . "</td>\n";
+					echo "<td class='plugins_active sidebar_active'>" . $enabled_output . "</td>\n";
 					echo "<td class='plugins_name'>" . $hotaru->page_to_title_caps($widget) . " </td>\n";
-					echo "<td class='plugins_order'>" . $order_output . "</td>\n";
+					echo "<td class='plugins_order sidebar_order'>" . $order_output . "</td>\n";
 				echo "</tr>\n";
 			}
 		}

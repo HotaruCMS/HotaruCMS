@@ -182,13 +182,17 @@ function rs_header_include() {
  ********************************************************************** */
  
 function rs_admin_header_include() {
-	echo "<script type='text/javascript'>\n";
-	echo "$(document).ready(function(){\n";
-		echo "$('#rs_cache').click(function () {\n";
-		echo "$('#rs_cache_duration').slideToggle();\n";
+	global $admin;
+	
+	if($admin->is_settings_page('rss_show')) {
+		echo "<script type='text/javascript'>\n";
+		echo "$(document).ready(function(){\n";
+			echo "$('#rs_cache').click(function () {\n";
+			echo "$('#rs_cache_duration').slideToggle();\n";
+			echo "});\n";
 		echo "});\n";
-	echo "});\n";
-	echo "</script>\n";
+		echo "</script>\n";
+	}
 }
 
 /* ******************************************************************** 

@@ -1,6 +1,6 @@
 /* ******* CSS STYLE ************************************************************************** 
  * Plugin name: default
- * Stylesheet: tags.css
+ * Stylesheet: sidebar.css
  * License:
  *
  *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
@@ -20,7 +20,6 @@
  *
  **************************************************************************************************** */
 
-.show_post_tags {
-	display: inline;
-	font-size: 0.825em;
+td.sidebar_active, td.sidebar_order {
+	width: 6.0em;
 }
