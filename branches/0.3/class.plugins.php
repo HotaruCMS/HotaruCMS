@@ -283,86 +283,12 @@ class Plugin extends generic_pmd {
     }
 
 
+
+
     /**
-     *  Function: install_plugin
-     *  Parameters: plugin folder name, optional upgrade flag
-     *  Purpose: Adds plugin to plugins table
-     *  Notes: The upgrade argument is used by upgrade_plugin(). If a a new 
-     *        version of a plugin doesn't have an upgrade script, it's 
-     *         uninstalled then sent here for a reinstall instead.
-     *         The flag is used to disable show_message.
-     */
-     
-    function install_plugin($folder = "", $upgrade = 0)
-    {
-        global $db, $lang, $hotaru, $current_user, $admin;
-        
-        $admin->delete_files(includes . 'ezSQL/cache');    // Clear the database cache to ensure stored plugins and hooks are up-to-date.
-        
-        $plugin_metadata = $this->read(plugins . $folder . "/" . $folder . ".php");
-        
-        $this->enabled = 1;    // Enable it at the same time we add it to the database.
-        $this->name = $plugin_metadata['name'];
-        $this->desc = $plugin_metadata['description'];
-        $this->folder = $folder;
-        $this->prefix = $plugin_metadata['prefix'];
-        $this->version = $plugin_metadata['version'];
-        $this->hooks = explode(',', $plugin_metadata['hooks']);
-        
-        if (isset($plugin_metadata['requires']) && $plugin_metadata['requires']) {
-            $this->requires = $plugin_metadata['requires'];
-            $this->requires_to_dependencies();
-        }
-        
-        $dependency_error = 0;
-        foreach ($this->dependencies as $dependency => $version) {
-            if (version_compare($version, $this->plugin_active($dependency), '>')) {
-                $dependency_error = 1;
-            }
-        }
-        
-        if ($dependency_error == 1) {
-            foreach ($this->dependencies as $dependency => $version) {
-                    if ($this->get_plugin_status($dependency) == 'inactive') {
-                        $dependency = $this->folder_to_name($dependency);                
-                        $hotaru->messages[$lang["admin_plugins_install_sorry"] . " " . $this->name . " " . $lang["admin_plugins_install_requires"] . " " . $dependency . " " . $version] = 'red';
-                    }
-            }
-            return false;    
-        }
-                    
-        $sql = "REPLACE INTO " . table_plugins . " (plugin_enabled, plugin_name, plugin_prefix, plugin_folder, plugin_desc, plugin_requires, plugin_version, plugin_updateby) VALUES (%d, %s, %s, %s, %s, %s, %s, %d)";
-        $db->query($db->prepare($sql, $this->enabled, $this->name, $this->prefix, $this->folder, $this->desc, $this->requires, $this->version, $current_user->id));
-        
-        // Get the last order number - doing this after REPLACE INTO because we don't know whether the above will insert or replace.
-        $sql = "SELECT plugin_order FROM " . table_plugins . " ORDER BY plugin_order DESC LIMIT 1";
-        $highest_order = $db->get_var($db->prepare($sql));
-        
-        // Give the new plugin the order number + 1
-        $sql = "UPDATE " . table_plugins . " SET plugin_order = %d WHERE plugin_id = LAST_INSERT_ID()";
-        $db->query($db->prepare($sql, ($highest_order + 1)));
-        
-        // Add any plugin hooks to the hooks table
-        $this->add_plugin_hooks();
-            
-        $result = $this->check_actions('install_plugin', $folder);
-        
-        // For plugins to avoid showing this success message, they need to return a non-boolean value to $result.
-        if (!is_array($result)) {
-            if ($upgrade == 0) {
-                $hotaru->messages[$lang["admin_plugins_install_done"]] = 'green';
-            } else {
-                $hotaru->messages[$lang["admin_plugins_upgrade_done"]] = 'green';
-            }
-        }
-    }
-    
-    
-    /**
-     *  Function: plugin_hook_exists
-     *  Parameters: Hook name
-     *  Purpose: Determines if a hook already exists
-     *  Notes: ---
+     * Determines if a hook already exists
+     *
+     * @param string $hook plugin hook name
      */
     function plugin_hook_exists($hook = "")
     {
@@ -372,20 +298,97 @@ class Plugin extends generic_pmd {
         $returned_hook = $db->get_var($db->prepare($sql, $this->folder, $hook));
         if ($returned_hook) { return $returned_hook; } else { return false; }
     }
-    
-    
+
+
     /**
-     *  Function: add_plugin_hooks
-     *  Parameters: None
-     *  Purpose: Adds all hooks for a given plugin
-     *  Notes: ---
+     * Add a plugin to the plugins table
+     *
+     * @param string $folder plugin folder name
+     * @param int $upgrade flag to indicate upgrade script available
+     */
+    function install_plugin($folder = "", $upgrade = 0)
+    {
+        global $db, $lang, $hotaru, $current_user, $admin;
+        
+        // Clear the database cache to ensure stored plugins and hooks 
+        // are up-to-date.
+        $admin->delete_files(includes . 'ezSQL/cache');
+        
+        $plugin_metadata = $this->read(plugins . $folder . "/" . $folder . ".php");
+        
+        $this->enabled  = 1;    // Enable it when we add it to the database.
+        $this->name     = $plugin_metadata['name'];
+        $this->desc     = $plugin_metadata['description'];
+        $this->folder   = $folder;
+        $this->prefix   = $plugin_metadata['prefix'];
+        $this->version  = $plugin_metadata['version'];
+        $this->hooks    = explode(',', $plugin_metadata['hooks']);
+        
+        if (isset($plugin_metadata['requires']) && $plugin_metadata['requires']) {
+            $this->requires = $plugin_metadata['requires'];
+            $this->requires_to_dependencies();
+        }
+        
+        $dependency_error = 0;
+        foreach ($this->dependencies as $dependency => $version)
+        {
+            if (version_compare($version, $this->plugin_active($dependency), '>')) {
+                $dependency_error = 1;
+            }
+        }
+        
+        if ($dependency_error == 1)
+        {
+            foreach ($this->dependencies as $dependency => $version)
+            {
+                    if ($this->get_plugin_status($dependency) == 'inactive') {
+                        $dependency = $this->folder_to_name($dependency);
+                        $hotaru->messages[$lang["admin_plugins_install_sorry"] . " " . $this->name . " " . $lang["admin_plugins_install_requires"] . " " . $dependency . " " . $version] = 'red';
+                    }
+            }
+            return false;
+        }
+                    
+        $sql = "REPLACE INTO " . table_plugins . " (plugin_enabled, plugin_name, plugin_prefix, plugin_folder, plugin_desc, plugin_requires, plugin_version, plugin_updateby) VALUES (%d, %s, %s, %s, %s, %s, %s, %d)";
+        $db->query($db->prepare($sql, $this->enabled, $this->name, $this->prefix, $this->folder, $this->desc, $this->requires, $this->version, $current_user->id));
+
+        // Get the last order number - doing this after REPLACE INTO because 
+        // we don't know whether the above will insert or replace.
+        $sql = "SELECT plugin_order FROM " . table_plugins . " ORDER BY plugin_order DESC LIMIT 1";
+        $highest_order = $db->get_var($db->prepare($sql));
+
+        // Give the new plugin the order number + 1
+        $sql = "UPDATE " . table_plugins . " SET plugin_order = %d WHERE plugin_id = LAST_INSERT_ID()";
+        $db->query($db->prepare($sql, ($highest_order + 1)));
+        
+        // Add any plugin hooks to the hooks table
+        $this->add_plugin_hooks();
+            
+        $result = $this->check_actions('install_plugin', $folder);
+        
+        // For plugins to avoid showing this success message, they need to 
+        // return a non-boolean value to $result.
+        if (!is_array($result))
+        {
+            if ($upgrade == 0) {
+                $hotaru->messages[$lang["admin_plugins_install_done"]] = 'green';
+            } else {
+                $hotaru->messages[$lang["admin_plugins_upgrade_done"]] = 'green';
+            }
+        }
+    }
+
+    /**
+     * Adds all hooks for a given plugin
      */
     function add_plugin_hooks()
     {
         global $db, $current_user;
         
-        foreach ($this->hooks as $hook) {
+        foreach ($this->hooks as $hook)
+        {
             $exists = $this->plugin_hook_exists(trim($hook));
+
             if (!$exists) {
                 $sql = "INSERT INTO " . table_pluginhooks . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
                 $db->query($db->prepare($sql, $this->folder, trim($hook), $current_user->id));
@@ -395,10 +398,12 @@ class Plugin extends generic_pmd {
     
     
     /**
-     *  Function: upgrade_plugin
-     *  Parameters: plugin folder name
-     *  Purpose: Plugins hook in here with their own upgrade scripts.
-     *  Notes: This function does nothing by itself other than read the latest file's metadata.
+     * Upgrade plugin
+     *
+     * @param string $folder plugin folder name
+     *
+     * Note: This function does nothing by itself other than read the latest 
+     * file's metadata.
      */
     function upgrade_plugin($folder = "")
     {
@@ -406,17 +411,22 @@ class Plugin extends generic_pmd {
         
         $plugin_metadata = $this->read(plugins . $folder . "/" . $folder . ".php");
         
-        $this->enabled = 1;    // Enable it at the same time we add it to the database.
-        $this->name = $plugin_metadata['name'];
-        $this->desc = $plugin_metadata['description'];
-        $this->folder = $folder;
-        $this->prefix = $plugin_metadata['prefix'];
-        $this->version = $plugin_metadata['version'];
-        $this->hooks = explode(',', $plugin_metadata['hooks']);
+        $this->enabled  = 1;    // Enable it when we add it to the database.
+        $this->name     = $plugin_metadata['name'];
+        $this->desc     = $plugin_metadata['description'];
+        $this->folder   = $folder;
+        $this->prefix   = $plugin_metadata['prefix'];
+        $this->version  = $plugin_metadata['version'];
+        $this->hooks    = explode(',', $plugin_metadata['hooks']);
         
-        if (in_array('upgrade_plugin', $this->hooks)) {
-            $admin->delete_files(includes . 'ezSQL/cache');    // Clear the database cache to ensure stored plugins and hooks are up-to-date.
-            $this->add_plugin_hooks(); // Add any new plugin hooks to the hooks table before proceeding with upgrade
+        if (in_array('upgrade_plugin', $this->hooks)) 
+        {
+        // Clear the database cache to ensure stored plugins and hooks 
+        // are up-to-date.
+            $admin->delete_files(includes . 'ezSQL/cache');
+            
+            // Add any new hooks to the hooks table before proceeding.
+            $this->add_plugin_hooks(); 
         } else {
             // Uninstall and then re-install because there's no upgrade function
             $this->uninstall_plugin($folder, 1);
@@ -425,7 +435,8 @@ class Plugin extends generic_pmd {
                 
         $result = $this->check_actions('upgrade_plugin', $folder);
                 
-        // For plugins to avoid showing this success message, they need to return a non-boolean value to $result.
+        // For plugins to avoid showing this success message, they need to
+        // return a non-boolean value to $result.
         if (!is_array($result)) {
             $hotaru->messages[$lang["admin_plugins_upgrade_done"]] = 'green';
         }
@@ -433,46 +444,59 @@ class Plugin extends generic_pmd {
     
     
     /**
-     *  Function: activate_deactivate_plugin
-     *  Parameters: plugin folder name, enabled status
-     *  Purpose: Enables or disables a plugin, installing if necessary
-     *  Notes: This function does not uninstall/delete a plugin.
+     * Enables or disables a plugin, installing if necessary
+     *
+     * @param string $folder plugin folder name
+     * @param int $enabled 
+     * Note: This function does not uninstall/delete a plugin.
      */
     function activate_deactivate_plugin($folder = "", $enabled = 0)
     {    // 0 = deactivate, 1 = activate
         global $db, $hotaru, $lang, $admin, $current_user;
         
-        $admin->delete_files(includes . 'ezSQL/cache');    // Clear the database cache to ensure stored plugins and hooks are up-to-date.
+        // Clear the database cache to ensure plugins and hooks are up-to-date.
+        $admin->delete_files(includes . 'ezSQL/cache');
         
         $plugin_row = $db->get_row($db->prepare("SELECT plugin_folder, plugin_enabled FROM " . table_plugins . " WHERE plugin_folder = %s", $folder));
-        if (!$plugin_row) {
-            if ($enabled == 1) {    // without this, the plugin would be installed and then deactivated, which is dumb. Let's just not install it yet!
+        if (!$plugin_row) 
+        {
+            // Without this condition, the plugin would be installed and then
+            // deactivated, which is dumb. Let's just not install it yet!
+            if ($enabled == 1) {    
                 $this->install_plugin($folder);
             }
-        } else {
+        } 
+        else 
+        {
             if ($plugin_row->plugin_enabled != $enabled) {        // only update if we're changing the enabled value.
                 $sql = "UPDATE " . table_plugins . " SET plugin_enabled = %d, plugin_updateby = %d WHERE plugin_folder = %s";
                 $db->query($db->prepare($sql, $enabled, $current_user->id, $folder));
                 
-                if ($enabled == 1) { $hotaru->messages[$lang["admin_plugins_activated"]] = 'green'; }
-                if ($enabled == 0) { $hotaru->messages[$lang["admin_plugins_deactivated"]] = 'green'; }
+                if ($enabled == 1) { 
+                    $hotaru->messages[$lang["admin_plugins_activated"]] = 'green'; 
+                }
+                
+                if ($enabled == 0) { 
+                    $hotaru->messages[$lang["admin_plugins_deactivated"]] = 'green'; 
+                }
             }
         }
     }
     
     
     /**
-     *  Function: uninstall_plugin
-     *  Parameters: plugin folder name, optional upgrade flag
-     *  Purpose: deletes entry in table_plugins and all its entries in table_pluginhooks
-     *  Notes: If upgrade_plugin() calls this function, the flag is used to disable the message.
+     * Delete plugin from table_plugins, pluginhooks and pluginsettings
+     *
+     * @param string $folder plugin folder name
+     * @param int $upgrade flag to disable message
      */
     function uninstall_plugin($folder = "", $upgrade = 0)
     {    
         global $db, $hotaru, $lang, $admin;
         
-        $admin->delete_files(includes . 'ezSQL/cache');    // Clear the database cache to ensure stored plugins and hooks are up-to-date.
-            
+        // Clear the database cache to ensure plugins and hooks are up-to-date.
+        $admin->delete_files(includes . 'ezSQL/cache');
+
         $db->query($db->prepare("DELETE FROM " . table_plugins . " WHERE plugin_folder = %s", $folder));
         $db->query($db->prepare("DELETE FROM " . table_pluginhooks . " WHERE plugin_folder = %s", $folder));
         $db->query($db->prepare("DELETE FROM " . table_pluginsettings . " WHERE plugin_folder = %s", $folder));
@@ -486,10 +510,12 @@ class Plugin extends generic_pmd {
     
     
     /**
-     *  Function: plugin_order
-     *  Parameters: plugin folder name, current order#, direction (up or down)
-     *  Purpose: Updates plugin order and order of their hooks, i.e. changes the order of plugins in check_actions.
-     *  Notes: ---
+     * Updates plugin order and order of their hooks, i.e. changes the order 
+     * of plugins in check_actions.
+     * 
+     * @param string $folder plugin folder name
+     * @param int $order current order
+     * @param string $arrow direction to move
      */
     function plugin_order($folder = "", $order = 0, $arrow = "up")
     {
@@ -500,7 +526,8 @@ class Plugin extends generic_pmd {
             return false;
         }
                 
-        if ($arrow == "up") {
+        if ($arrow == "up")
+        {
             // get row above
             $sql= "SELECT * FROM " . table_plugins . " WHERE plugin_order = %d";
             $row_above = $db->get_row($db->prepare($sql, ($order - 1)));
@@ -522,7 +549,9 @@ class Plugin extends generic_pmd {
             // update current plugin
             $sql = "UPDATE " . table_plugins . " SET plugin_order = %d WHERE plugin_folder = %s";
             $db->query($db->prepare($sql, ($order - 1), $folder)); 
-        } else {
+        }
+        else
+        {
             // get row below
             $sql= "SELECT * FROM " . table_plugins . " WHERE plugin_order = %d";
             $row_below = $db->get_row($db->prepare($sql, ($order + 1)));
@@ -545,23 +574,21 @@ class Plugin extends generic_pmd {
             $sql = "UPDATE " . table_plugins . " SET plugin_order = %d WHERE plugin_folder = %s";
             $db->query($db->prepare($sql, ($order + 1), $folder)); 
         }
-        
+
         $hotaru->messages[$lang['admin_plugins_order_updated']] = 'green';
-        
-        $this->refresh_plugin_order();    // Resort all orders and remove any accidental gaps
-        
+
+        // Resort all orders and remove any accidental gaps
+        $this->refresh_plugin_order();
+
         $this->sort_plugin_hooks();
-        
+
         return true;
 
     }
     
     
     /**
-     *  Function: refresh_plugin_order
-     *  Parameters: None
-     *  Purpose: Removes gaps in plugin order where plugins have been uninstalled.
-     *  Notes: ---
+     * Removes gaps in plugin order where plugins have been uninstalled.
      */
     function refresh_plugin_order()
     {    
@@ -572,22 +599,19 @@ class Plugin extends generic_pmd {
         
         if ($rows) { 
             $i = 1;
-            foreach ($rows as $row) {
+            foreach ($rows as $row) 
+            {
                 $sql = "UPDATE " . table_plugins . " SET plugin_order = %d WHERE plugin_id = %d";
                 $db->query($db->prepare($sql, $i, $row->plugin_id));
                 $i++; 
             }
-        } else {
-            return true;
         }
+        return true;
     }
     
     
     /**
-     *  Function: sort_plugin_hooks
-     *  Parameters: None
-     *  Purpose: Orders the plugin hooks by plugin_order
-     *  Notes: ---
+     * Orders the plugin hooks by plugin_order
      */
     function sort_plugin_hooks()
     {    
@@ -600,7 +624,8 @@ class Plugin extends generic_pmd {
         $db->query($db->prepare("TRUNCATE TABLE " . table_pluginhooks));
             
         // Add plugin hooks back into the hooks table
-        foreach ($rows  as $row) {
+        foreach ($rows  as $row)
+        {
             $sql = "INSERT INTO " . table_pluginhooks . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
             $db->query($db->prepare($sql, $row->plugin_folder, $row->plugin_hook, $current_user->id));
         }
@@ -609,10 +634,10 @@ class Plugin extends generic_pmd {
     
 
     /**
-     *  Function: plugin_name
-     *  Parameters: plugin folder name
-     *  Purpose: Given a plugin's folder name, it returns the actual name.
-     *  Notes: ---
+     * Get a plugin's actual name from its folder name
+     *
+     * @param string $folder plugin folder name
+     * @return string
      */
     function plugin_name($folder = "")
     {    
@@ -623,28 +648,30 @@ class Plugin extends generic_pmd {
     
     
     /**
-     *  Function: plugin_active
-     *  Parameters: plugin folder name
-     *  Purpose: Given a plugin's folder name, it returns the version if currently active.
-     *  Notes: ---
+     * Get version number of plugin if active
+     *
+     * @param string $folder plugin folder name
+     * @return string|false
      */
     function plugin_active($folder = "")
     {
         global $db;
+        
         $active= $db->get_row($db->prepare("SELECT plugin_enabled, plugin_version FROM " . table_plugins . " WHERE plugin_folder = %s", $folder));
+        
         if ($active) {
-            if ($active->plugin_enabled == 1) { return $active->plugin_version; } else { return false; }
-        } else {
-            return false;
-        }
+            if ($active->plugin_enabled == 1) { 
+                return $active->plugin_version; 
+            } 
+        } 
+        return false;
     }
     
     
     /**
-     *  Function: num_active_plugins
-     *  Parameters: None
-     *  Purpose: Returns the number of active plugins or false if all are disabled.
-     *  Notes: ---
+     * Get number of active plugins
+     *
+     * @return int|false
      */
     function num_active_plugins()
     {
@@ -655,46 +682,60 @@ class Plugin extends generic_pmd {
                 
     
     /**
-     *  Function: check_actions
-     *  Parameters: $hook: plugin hook, 
-     *              $perform: 'true' to run the function or 'false' to just return if the function exists or not
-     *             $folder: plugin folder for specifying a plugin, 
-     *        $parameters: an array of optional parameters to pass to the function
-     *  Purpose: Checks if such a function exists and is part of an enabled plugin, then calls the function.
-     *  Notes: ---
+     * Look for and run actions at a given plugin hook
+     *
+     * @param string $hook name of the plugin hook
+     * @param bool $perform false to check existence, true to actually run
+     * @param string $folder name of plugin folder
+     * @param array $parameters mixed values passed from plugin hook
+     * @return array | bool
      */
-    function check_actions($hook = '', $perform = true, $folder = '', $parameters = array())
+    function check_actions(
+        $hook = '', $perform = true, $folder = '', $parameters = array()
+    )
     {
         global $db, $cage, $current_user;
+
         if ($hook == '') {
             //echo "Error: Plugin hook name not provided.";
         } else {
             $where = "";
+
             if (!empty($folder)) {
                 $where .= "AND (" . table_plugins . ".plugin_folder = %s)";
             }
-            
+
             $db->cache_queries = true;    // start using cache
-            
+
             $sql = "SELECT " . table_plugins . ".plugin_enabled, " . table_plugins . ".plugin_folder, " . table_plugins . ".plugin_prefix, " . table_pluginhooks . ".plugin_hook  FROM " . table_pluginhooks . ", " . table_plugins . " WHERE (" . table_pluginhooks . ".plugin_hook = %s) AND (" . table_plugins . ".plugin_folder = " . table_pluginhooks . ".plugin_folder) " . $where . "ORDER BY " . table_pluginhooks . ".phook_id";
-            
-            
+
             $plugins = $db->get_results($db->prepare($sql, $hook, $folder));
-            
-            
+
             $db->cache_queries = false;    // stop using cache
-            
+
             $action_found = false;
-            if ($plugins) {
-                foreach ($plugins as $plugin) {            
-                    if ($plugin->plugin_folder && $plugin->plugin_hook && ($plugin->plugin_enabled == 1)) {
-                        if (file_exists(plugins . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php")) {
+            if ($plugins)
+            {
+                foreach ($plugins as $plugin)
+                {
+                    if (    $plugin->plugin_folder 
+                        &&  $plugin->plugin_hook 
+                        &&  ($plugin->plugin_enabled == 1)
+                    ) {
+                        if (file_exists(plugins . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php"))
+                        {
                             include_once(plugins . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php");
-                            if ($perform == true) {
+                            
+                            if ($perform == true)
+                            {
                                 $function_name = $plugin->plugin_prefix . "_" . $hook;
-                                if (function_exists($function_name)) {
+                                
+                                if (function_exists($function_name))
+                                {
                                     $result = $function_name($parameters);
-                                    if ($result) { $return_array[$function_name] = $result; }
+                                    if ($result) {
+                                        $return_array[$function_name] = $result;
+                                    }
                                 }
                             }
                             $action_found = true;
@@ -709,29 +750,47 @@ class Plugin extends generic_pmd {
                         }
                     }
                 }
-            } else {
+            } 
+            else 
+            {
                 return false;
-            }    
+            }
         }
         
-        if (!empty($return_array)) {
-            return $return_array;        // returns an array of return values from each function, e.g. $return_array['usr_users'] = something
-        } elseif ($action_found == true) {
-            return true;            // at least one function exists, but nothing was returned
-        } else {
-            return false;            // no functions were triggered. Either they weren't found or they were surpressed by $perform = false.
+        if (!empty($return_array))
+        {
+            // return an array of return values from each function, 
+            // e.g. $return_array['usr_users'] = something
+            return $return_array;
+        } 
+        elseif ($action_found == true) 
+        {
+            // at least one function exists, but nothing was returned
+            return true;
+
+        }
+        else 
+        {
+            // no functions were triggered. Either they weren't found or 
+            // they were surpressed by $perform = false.
+            return false;
         }
     }
-            
-    
+
+
     /**
-     *  Function: plugin_settings
-     *  Parameters: Plugin folder name and setting value to retrieve
-     *  Purpose: Returns the settings for a given plugin
-     *  Notes: If there are multiple settings with the same name, this will only get the first.
+     * Get the value for a given plugin and setting
+     *
+     * @param string $folder name of plugin folder
+     * @param string $setting name of the setting to retrieve
+     * @return string|false
+     *
+     * Notes: If there are multiple settings with the same name,
+     * this will only get the first.
      */
     function plugin_settings($folder = '', $setting = '') {
         global $db;
+        
         $sql = "SELECT plugin_value FROM " . table_pluginsettings . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
         $value = $db->get_var($db->prepare($sql, $folder, $setting));
         if ($value) { return $value; } else { return false; }
@@ -739,13 +798,16 @@ class Plugin extends generic_pmd {
     
     
     /**
-     *  Function: plugin_settings_array
-     *  Parameters: Plugin folder name (or other group name, e.g. sidebar_widgets)
-     *  Purpose: Returns an array of settings for a given plugin
-     *  Notes: Unlike "plugin_settings", this will get ALL settings with the same name.
+     * Get an array of settings for a given plugin
+     *
+     * @param string $folder name of plugin folder
+     * @return array|false
+     *
+     * Note: Unlike "plugin_settings", this will get ALL settings with the same name.
      */
     function plugin_settings_array($folder = '') {
         global $db;
+        
         $sql = "SELECT plugin_setting, plugin_value FROM " . table_pluginsettings . " WHERE (plugin_folder = %s)";
         $results = $db->get_results($db->prepare($sql, $folder));
         
@@ -754,32 +816,42 @@ class Plugin extends generic_pmd {
     
     
     /**
-     *  Function: plugin_setting_exists
-     *  Parameters: Plugin folder name and setting name
-     *  Purpose: Determines if a setting already exists
-     *  Notes: The actual value is ignored
+     * Determine if a plugin setting already exists
+     *
+     * @param string $folder name of plugin folder
+     * @param string $setting name of the setting to retrieve
+     * @return string|false
      */
     function plugin_setting_exists($folder = '', $setting = '') {
         global $db;
+        
         $sql = "SELECT plugin_setting FROM " . table_pluginsettings . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
         $returned_setting = $db->get_var($db->prepare($sql, $folder, $setting));
-        if ($returned_setting) { return $returned_setting; } else { return false; }
+        if ($returned_setting) { 
+            return $returned_setting; 
+        } else { 
+            return false; 
+        }
     }
     
     /**
-     *  Function: plugin_settings_update
-     *  Parameters: Plugin folder name, setting to update, and new value
-     *  Purpose: Updates a plugin setting
-     *  Notes: ---
+     * Update a plugin setting
+     *
+     * @param string $folder name of plugin folder
+     * @param string $setting name of the setting
+     * @param string $setting stting value
      */
     function plugin_settings_update($folder = '', $setting = '', $value = '')
     {
         global $db, $current_user;
+        
         $exists = $this->plugin_setting_exists($folder, $setting);
-        if (!$exists) {
+        if (!$exists) 
+        {
             $sql = "INSERT INTO " . table_pluginsettings . " (plugin_folder, plugin_setting, plugin_value, plugin_updateby) VALUES (%s, %s, %s, %d)";
             $db->query($db->prepare($sql, $folder, $setting, $value, $current_user->id));
-        } else {
+        } else 
+        {
             $sql = "UPDATE " . table_pluginsettings . " SET plugin_folder = %s, plugin_setting = %s, plugin_value = %s, plugin_updateby = %d WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
             $db->query($db->prepare($sql, $folder, $setting, $value, $current_user->id, $folder, $setting));
         }
@@ -787,25 +859,24 @@ class Plugin extends generic_pmd {
 
 
     /**
-     *  Function: plugin_settings_remove_setting
-     *  Parameters: Plugin setting name
-     *  Purpose: Deletes rows from pluginsettings that match that setting
-     *  Notes: ---
+     * Delete rows from pluginsettings that match a given setting
+     *
+     * @param string $setting name of the setting to remove
      */
     function plugin_settings_remove_setting($setting = '')
     {
         global $db;
+        
         $sql = "DELETE FROM " . table_pluginsettings . " WHERE plugin_setting = %s";
         $db->query($db->prepare($sql, $setting));
     }
     
     
     /**
-     *  Function: plugin_settings_remove_plugin
-     *  Parameters: Plugin folder name
-     *  Purpose: Deletes rows from pluginsettings that match that plugin folder name
-     *  Notes: ---
-     */    
+     * Deletes rows from pluginsettings that match a given plugin
+     *
+     * @param string $folder name of plugin folder
+     */
     function plugin_settings_remove_plugin($folder = '')
     {
         global $db;
@@ -815,26 +886,31 @@ class Plugin extends generic_pmd {
 
 
     /**
-     *  Function: include_language_file
-     *  Parameters: plugin folder name, optional filename (no extension)
-     *  Purpose: Includes a plugin's language file
-     *  Notes: the language file must be in a folder named languages. '_language.php' is appended automatically.
+     * Include a language file in a plugin
+     *
+     * @param string $folder name of plugin folder
+     * @param string $filename optional filename without file extension
+     *
+     * Note: the language file must be in a folder named languages.
+     * '_language.php' is appended automatically to the folder of file name.
      */    
     function include_language_file($folder = '', $filename = '')
     {
         global $lang;
+        
         if ($folder) {
         
+            // If not filename given, make the plugin name the file name
             if (!$filename) { $filename = $folder; }
             
             // First look in the plugin folder for a language file... 
             if (file_exists(plugins . $folder . '/languages/' . $filename . '_language.php')) {
                 require_once(plugins . $folder . '/languages/' . $filename . '_language.php');
-            
+
             // If not there, look in the user's language_pack folder for a language file...
             } elseif (file_exists(languages . language_pack . 'plugins/' . $filename . '_language.php')) {
                 require_once(languages . language_pack . 'plugins/' . $filename . '_language.php');
-                
+
             // Finally, look in the default language_pack folder for a language file...
             } else {
                 require_once(languages . 'language_default/plugins/' . $filename . '_language.php');
@@ -844,22 +920,27 @@ class Plugin extends generic_pmd {
 
 
     /**
-     *  Function: include_css_file
-     *  Parameters: plugin folder name, optional filename (no extension)
-     *  Purpose: Includes a plugin's CSS file
-     *  Notes: the css file must be in a folder named css and a file of the format plugin_name.css, e.g. rss_show.css
+     * Include CSS file
+     *
+     * @param string $folder name of plugin folder
+     * @param string $filename optional filename without file extension
+     *
+     * Note: the css file must be in a folder named css and a file of 
+     * the format plugin_name.css, e.g. rss_show.css
      */    
     function include_css_file($folder = '', $filename = '')
     {
         global $lang;
-        if ($folder) {
         
+        if ($folder) {
+
+            // If not filename given, make the plugin name the file name
             if (!$filename) { $filename = $folder; }
-            
+
             // First look in the plugin folder for a css file... 
             if (file_exists(plugins . $folder . '/css/' . $filename . '.css')) {
                 echo "<link rel='stylesheet' href='" . baseurl . "content/plugins/" . $folder . "/css/" . $filename. ".css' type='text/css'>\n";
-                
+
             // If not found, look in the theme folder for a css file...     
             } elseif (file_exists(themes . theme . 'css/' . $filename . '.css')) {    
                 echo "<link rel='stylesheet' href='" . baseurl . "content/themes/" . theme . "css/" . $filename . ".css' type='text/css'>\n";
@@ -869,16 +950,20 @@ class Plugin extends generic_pmd {
 
 
     /**
-     *  Function: include_js_file
-     *  Parameters: plugin folder name, optional filename (no extension)
-     *  Purpose: Includes a plugin's javascript file
-     *  Notes: the js file must be in a folder named javascript and a file of the format plugin_name.js, e.g. category_manager.js
+     * Include JavaScript file
+     *
+     * @param string $folder name of plugin folder
+     * @param string $filename optional filename without file extension
+     *
+     * Note: the js file must be in a folder named javascript and a file of the format plugin_name.js, e.g. category_manager.js
      */    
     function include_js_file($folder = '', $filename = '')
     {
         global $lang;
         
         if ($folder) {
+
+            // If not filename given, make the plugin name the file name
             if (!$filename) { $filename = $folder; }
             
             // First, look in the plugin folder for a js file... 
@@ -891,7 +976,6 @@ class Plugin extends generic_pmd {
             }
         }
     }
-    
 }
 
 ?>
