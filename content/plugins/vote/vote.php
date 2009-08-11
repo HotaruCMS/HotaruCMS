@@ -454,7 +454,7 @@ function vote_admin_plugin_settings() {
 	if(!$submit_vote) { $submit_vote = ''; }
 	if(!$submit_vote_value) { $submit_vote_value = 1; }
 	if(!$votes_to_promote) { $votes_to_promote = 5; }
-	if(!$use_alerts) { $use_alerts = 'checked'; }
+	if(!isset($use_alerts)) { $use_alerts = 'checked'; }
 	if(!$alerts_to_bury) { $alerts_to_bury = 5; }
 	if(!$physical_delete) { $physical_delete = ''; }
 	
