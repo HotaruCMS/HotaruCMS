@@ -23,66 +23,64 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class UserBase {    
+class UserBase {
  
-     var $id = 0;
-    var $username = '';
-    var $role = 'registered_user';
-    var $password = 'password';
-    var $email = '';
-    var $email_valid = 0;
-    var $logged_in = false;
+    var $id             = 0;
+    var $username       = '';
+    var $role           = 'registered_user';
+    var $password       = 'password';
+    var $email          = '';
+    var $email_valid    = 0;
+    var $logged_in      = false;
     
     var $userbase_vars = array();
-    
-    
+
+
     /**
-     *  Functions: PHP __set Magic Method
-     *  Parameters: The name of the member variable and the value to set it to.
-     *  Purpose: Plugins use this to set additonal member variables
-     *  Notes: ---
+     * Set additonal member variables
+     *
+     * @param string $name
+     * @param mixed $value
      */
-                 
-    function __set($name, $value) {
-            $this->userbase_vars[$name] = $value;
-        }
-        
-        
+    function __set($name, $value)
+    {
+        $this->userbase_vars[$name] = $value;
+    }
+
+
     /**
-     *  Functions: PHP __get Magic Method
-     *  Parameters: The name of the member variable to retrieve.
-     *  Purpose: Plugins use this to read values of additonal member variables
-     *  Notes: ---
+     * Get additonal member variables
+     *
+     * @param string $name
+     * @return mixed
      */
-        
-    function __get($name) {
+    function __get($name)
+    {
         if (array_key_exists($name, $this->userbase_vars)) {
             return $this->userbase_vars[$name];
         }
-        }
-    
-    
-    /**
-     *  Function: add_user_basic
-     *  Parameters: username, role, password, email
-     *  Purpose: Inserts a new user into the database with most important data only
-     *  Notes: ---
-     */
-    function add_user_basic() {
-        global $db;
-        $sql = "INSERT INTO " . table_users . " (user_username, user_role, user_date, user_password, user_email) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s)";
-        $db->query($db->prepare($sql, $this->username, $this->role, $this->password, $this->email));
     }
     
     
     /**
-     *  Function: update_user_basic
-     *  Parameters: username, role, password, email
-     *  Purpose: Updates user's most important details only.
-     *  Notes: ---
+     * Add a new user
      */
-    function update_user_basic() {
+    function add_user_basic()
+    {
         global $db;
+        
+        $sql = "INSERT INTO " . table_users . " (user_username, user_role, user_date, user_password, user_email) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s)";
+        $db->query($db->prepare($sql, $this->username, $this->role, $this->password, $this->email));
+    }
+
+
+    /**
+     * Update a user
+     */
+    function update_user_basic()
+    {
+        global $db;
+        
         if ($this->id != 0) {
             $sql = "UPDATE " . table_users . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s, user_updateby = %d WHERE user_id = %d";
             $db->query($db->prepare($sql, $this->username, $this->role, $this->password, $this->email, $this->id, $this->id));
@@ -94,13 +92,14 @@ class UserBase {
     
     
     /**
-     *  Function: update_user_lastlogin
-     *  Parameters: user id
-     *  Purpose: Updates the lastlogin field in the users table.
-     *  Notes: Updated when the user successfully logs in.
+     * Update last login
+     *
+     * @return bool
      */
-    function update_user_lastlogin() {
+    function update_user_lastlogin()
+    {
         global $db;
+        
         if ($this->id != 0) {
             $sql = "UPDATE " . table_users . " SET user_lastlogin = CURRENT_TIMESTAMP WHERE user_id = %d";
             $db->query($db->prepare($sql, $this->id));
@@ -112,16 +111,20 @@ class UserBase {
     
     
     /**
-     *  Function: get_user_basic
-     *  Parameters: user id AND/OR username
-     *  Purpose: Returns the most important user details for a given user 
-     *  Notes: ---
+     * Get basic user details
+     *
+     * @param int $userid 
+     * @param string $username
+     * @return array|false
+     *
+     * Note: Needs either userid or username, not both
      */    
-     
-     
-    function get_user_basic($userid = 0, $username = '') {
+    function get_user_basic($userid = 0, $username = '')
+    {
         global $db;
-        if ($userid != 0) {    // use userid
+        
+        // Prepare SQL
+        if ($userid != 0){              // use userid
             $where = "user_id = %d";
             $param = $userid;
         } elseif ($username != '') {    // use username
@@ -131,7 +134,10 @@ class UserBase {
             return false;
         }
         
+        // Build SQL
         $sql = "SELECT * FROM " . table_users . " WHERE " . $where;
+        
+        // Fetch from database
         $user_info = $db->get_row($db->prepare($sql, $param));
         if ($user_info) {
             $this->id = $user_info->user_id;
@@ -148,55 +154,70 @@ class UserBase {
 
     
     /**
-     *  Function: user_exists
-     *  Parameters: is, username, email
-     *  Purpose: Returns 4 if a user does not exist, otherwise 0-3 for errors
-     *  Notes: ---
+     * Check if a user exists
+     *
+     * @param int $userid 
+     * @param string $username
+     * @return int
+     *
+     * Notes: Returns 4 if a user exists, otherwise 0-3 for errors
      */
              
-    function user_exists($id = 0, $username = '', $email = '') {
+    function user_exists($id = 0, $username = '', $email = '')
+    {
         global $db;
+        
+        // Error 0 - id exists
         if ($id != 0) {
             if ($db->get_var($db->prepare("SELECT * FROM " . table_users . " WHERE user_id = %d", $id))) {
                 return 0; // id exists
             } 
         } 
         
-        
+        // Error 1 - username exists
         if ($username != '') {
             if ($db->get_var($db->prepare("SELECT * FROM " . table_users . " WHERE user_username = %s", $username))) {
                 return 1; // username exists
             }         
         } 
         
+        // Error 2 - email exists
         if ($email != '') {
             if ($db->get_var($db->prepare("SELECT * FROM " . table_users . " WHERE user_email = %s", $email))) {
                 return 2; // email exists
             }         
         } 
         
+        // Error 3 - no arguments provided
         if (($id == 0) && ($username == '') && ($email == '')) {
                 return 3; // no arguments provided
         } 
         
+        // Success
         return 4; // user exists
     }
 
         
     /**
-     *  Function: login_check
-     *  Parameters: Username and password
-     *  Purpose: Returns true if a user is found with a matching username and password
-     *  Notes: ---
+     * Log a user in if their username and password are valid
+     *
+     * @param string $username
+     * @param string $password
+     * @return bool
      */
-         
-    function login_check($username = '', $password = '') {
+    function login_check($username = '', $password = '')
+    {
         global $db;
         
         $password = crypt(md5($password),md5($username));
-        $result = $db->get_row($db->prepare("SELECT user_username, user_password FROM " . table_users . " WHERE user_username = %s AND user_password = %s", $username, $password));
+        
+        $sql = "SELECT user_username, user_password FROM " . table_users . " WHERE user_username = %s AND user_password = %s";
+        
+        $result = $db->get_row($db->prepare($sql, $username, $password));
+        
         if (isset($result)) {
-            $this->get_user_basic(0, $username);    // Read the current user's basic details
+            // Read the current user's basic details
+            $this->get_user_basic(0, $username);
             return true; 
         } else { 
             return false; 
@@ -205,65 +226,82 @@ class UserBase {
     
     
     /**
-     *  Function: set_cookie
-     *  Parameters: username
-     *  Purpose: Sets 30 day cookies for the user.
-     *  Notes: ---
+     * Set a 30-day cookie
+     *
+     * @param string $remember checkbox with value "checked" or empty
+     * @return bool
      */
-    function set_cookie($remember) {
+    function set_cookie($remember)
+    {
         global $lang;
-             /* Set a 30 day cookie */
-            if (!$this->username) { 
-                echo $lang['main_userbase_cookie_error'];
-                return false;
-            } else {
-                $strCookie=base64_encode(join(':', array($this->username, crypt($this->username, 22))));
-        if ($remember) { $month = 2592000 + time(); } else { $month = 0; }// (2592000 = 60 seconds * 60 mins * 24 hours * 30 days.)
-        setcookie("hotaru_user", $this->username, $month, "/");
-        setcookie("hotaru_key", $strCookie, $month, "/");
-        return true;
+
+        if (!$this->username)
+        { 
+            echo $lang['main_userbase_cookie_error'];
+            return false;
+        } else {
+            $strCookie=base64_encode(
+                join(':', array($this->username, crypt($this->username, 22)))
+            );
+            
+            if ($remember) { 
+                // 2592000 = 60 seconds * 60 mins * 24 hours * 30 days
+                $month = 2592000 + time(); 
+            } else { 
+                $month = 0; 
             }
+            
+            setcookie("hotaru_user", $this->username, $month, "/");
+            setcookie("hotaru_key", $strCookie, $month, "/");
+            return true;
         }
+    }
         
             
     /**
-     *  Function: destory_cookie_and_session
-     *  Parameters: None
-     *  Purpose: Deletes cookies and destroys the session.
-     *  Notes: ---
+     * Delete cookie and destroy session
      */
-    function destroy_cookie_and_session() {
-        /* setting a cookie with a negative time expires it */
+    function destroy_cookie_and_session()
+    {
+        // setting a cookie with a negative time expires it
         setcookie("hotaru_user", "", time()-3600, "/");
         setcookie("hotaru_key", "", time()-3600, "/");
-        // session_destroy(); There is no session in Hotaru yet!
+        
+        // session_destroy(); There is no session in Hotaru yet
+        
         $this->logged_in = false;
-        }
+    }
         
         
     /**
-     *  Function: get_username
-     *  Parameters: None
-     *  Purpose: Gets the username for a given id
-     *  Notes: ---
+     * Get the username for a given user id
+     *
+     * @param int $id user id
+     * @return string|false
      */
-    function get_username($id = 0) {
+    function get_username($id = 0)
+    {
         global $db, $user;
+        
         $sql = "SELECT user_username FROM " . table_users . " WHERE user_id = %d";
+        
         $username = $db->get_var($db->prepare($sql, $id));
         if ($username) { return $username; } else { return false; }
     }
     
     
     /**
-     *  Function: get_user_id
-     *  Parameters: None
-     *  Purpose: Gets the user id for a given username
-     *  Notes: ---
+     * Get the user id for a given username
+     *
+     * @param string $username
+     * @return int|false
      */
-    function get_user_id($username = '') {
+    function get_user_id($username = '')
+    {
         global $db, $user;
+        
         $sql = "SELECT user_id FROM " . table_users . " WHERE user_username = %s";
+        
         $user_id = $db->get_var($db->prepare($sql, $username));
         if ($user_id) { return $user_id; } else { return false; }
     }
