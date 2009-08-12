@@ -31,7 +31,6 @@
  * @param string $head either 'index' or 'admin'
  * @return string
  */
- 
 function url($parameters = array(), $head = 'index')
 {
     global $post;
