@@ -3,7 +3,7 @@
 /* ********** PLUGIN *********************************************************************************
  * name: Submit
  * description: Submit and manage stories.
- * version: 0.2
+ * version: 0.1
  * folder: submit
  * prefix: sub
  * hooks: hotaru_header, header_include, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
@@ -141,13 +141,18 @@ function sub_hotaru_header() {
 	if(is_numeric($hotaru->get_page_name())) {
 		// Page name is a number so it must be a post with non-friendly urls
 		$post->read_post($hotaru->get_page_name());	// read current post
+		$hotaru->page_type = 'post';
+		$hotaru->title = $post->post_title;
 		
 	} elseif($post_id = $post->is_post_url($hotaru->get_page_name())) {
 		// Page name belongs to a story
 		$post->read_post($post_id);	// read current post
+		$hotaru->page_type = 'post';
+		$hotaru->title = $post->post_title;
 		
 	} else {
 		$post->read_post();	// read current post settings only
+		$hotaru->page_type = '';
 	}
 	
 	$plugin->check_actions('submit_hotaru_header_2');
@@ -165,10 +170,11 @@ function sub_hotaru_header() {
  ********************************************************************** */
 
 function sub_navigation() {	
-	global $current_user, $lang;
+	global $current_user, $lang, $hotaru;
 	
 	if($current_user->logged_in) {
-		echo "<li><a href='" . url(array('page'=>'submit')) . "'>" . $lang['submit_submit_a_story'] . "</a></li>\n";
+		if($hotaru->title == 'submit') { $status = "id='navigation_active'"; } else { $status = ""; }
+		echo "<li><a  " . $status . " href='" . url(array('page'=>'submit')) . "'>" . $lang['submit_submit_a_story'] . "</a></li>\n";
 	}
 }
 
@@ -387,15 +393,9 @@ function sub_theme_index_main() {
 		$hotaru->display_template('posts_list', 'submit');
 		return true;
 		
-	} elseif(is_numeric($hotaru->get_page_name())) {
-		// Page name is a number so it must be a post with non-friendly urls
+	} elseif($hotaru->page_type == 'post') {
+		// We found out this is a post from the hotaru_header function above.
 		
-		$hotaru->display_template('post_page', 'submit');
-		return true;
-		
-	} elseif($post->is_post_url($hotaru->get_page_name())) {
-	
-		// Page name belongs to a story
 		$hotaru->display_template('post_page', 'submit');
 		return true;
 		

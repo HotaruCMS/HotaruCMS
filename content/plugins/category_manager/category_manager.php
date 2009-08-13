@@ -102,10 +102,12 @@ function cats_hotaru_header() {
  ********************************************************************** */
  
 function cats_admin_header_include() {
-	global $plugin;
+	global $plugin, $admin, $cage;
 	
-	$plugin->include_css_file('category_manager');
-	$plugin->include_js_file('category_manager');
+	if($admin->is_settings_page('category_manager')) {
+		$plugin->include_css_file('category_manager');
+		$plugin->include_js_file('category_manager');
+	}
 }
 
 

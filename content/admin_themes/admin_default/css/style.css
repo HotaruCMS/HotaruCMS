@@ -87,6 +87,8 @@ small {
 	color: #666666;
 }
 
+li a#navigation_active { text-decoration: underline; }
+
 #bd {
 
 }
@@ -227,6 +229,10 @@ tr.plugins_table_row_1 td {
 
 .plugins_name {
 	font-size: 1.2em;
+	font-weight: bold;
+}
+
+.plugins_install {
 	font-weight: bold;
 }
 

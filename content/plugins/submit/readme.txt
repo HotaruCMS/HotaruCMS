@@ -4,7 +4,7 @@ Created by: Nick Ramsay
 
 Description
 -----------
-Enable users to submit and display stories to your site.
+Enable users to submit and display stories to your site. 
 
 Instructions
 ------------
@@ -13,12 +13,4 @@ Instructions
 
 Changelog
 ---------
-Version 0.2
-
-2009-08-02: Filters posts by user when clicking a username in a post.
-2009-08-01: Updated the Post class to convert original urls into domains and add them to the db. 
-2009-08-01: Made an upgrade function to add a post_domain field to the posts table.
-
-Version 0.1
-
-2009-07-29: Submit 0.1 released with Hotaru CMS 0.1 Alpha
+v.0.1 2009-07-29 - Nick - Released first version
