@@ -67,6 +67,7 @@ ul#navigation { list-style: none; padding: 0 0 0.6em 0.95em; }
 #navigation li { display: inline; padding-right: 1.0em; font-size: 1.2em; font-weight: bold; }
 #navigation li a { color: #fafafa; }
 #navigation li a img { vertical-align: middle; }
+li a#navigation_active { text-decoration: underline; }
 
 /* BODY */
 

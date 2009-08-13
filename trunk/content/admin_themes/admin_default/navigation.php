@@ -34,13 +34,12 @@ global $hotaru, $plugin, $current_user, $lang; // don't remove
 	<?php $plugin->check_actions('admin_navigation'); ?>
 	<?php 
 		if(!$plugin->plugin_active('users')) { 
-			echo "<li><a href='" . url(array(), 'admin') . "'>";
+
 			if($current_user->logged_in == true) { 
-				echo $lang["admin_theme_navigation_admin"] . "</a></li>"; 
-				echo "<li><a href='" . url(array('page'=>'admin_logout'), 'admin') . "'>";
-				echo $lang["admin_theme_navigation_logout"] . "</a></li>";
+				echo "<li><a id='navigation_active' href='" . url(array(), 'admin') . "'>" . $lang["admin_theme_navigation_admin"] . "</a></li>"; 
+				echo "<li><a href='" . url(array('page'=>'admin_logout'), 'admin') . "'>" . $lang["admin_theme_navigation_logout"] . "</a></li>";
 			} else { 
-				echo $lang["admin_theme_navigation_login"] . "</a></li>"; 
+				echo "<li><a href='" . url(array(), 'admin') . "'>" . $lang["admin_theme_navigation_login"] . "</a></li>"; 
 			}
 		} else {
 			$plugin->check_actions('navigation_users', true, 'users'); // ensures login/logout/register are last.

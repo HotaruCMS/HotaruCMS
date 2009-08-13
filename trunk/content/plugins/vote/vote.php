@@ -5,7 +5,7 @@
  * version: 0.1
  * folder: vote
  * prefix: vote
- * requires: submit 0.2, users 0.1
+ * requires: submit 0.1, users 0.1
  * hooks: install_plugin, hotaru_header, submit_hotaru_header_1, submit_class_post_read_post_1, submit_class_post_read_post_2, header_include, submit_pre_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_class_post_add_post, navigation, submit_show_post_extra_fields, submit_show_post_extras
  *
  *
@@ -246,7 +246,7 @@ function vote_submit_class_post_add_post() {
  ********************************************************************** */
 
 function vote_navigation() {	
-	global $lang, $plugin;
+	global $lang, $plugin, $hotaru;
 	
 	//get vote settings
 	$vote_settings = unserialize($plugin->plugin_settings('vote', 'vote_settings')); 
@@ -254,8 +254,9 @@ function vote_navigation() {
 	if(($vote_settings['vote_submit_vote'] == "checked") && ($vote_settings['vote_submit_vote_value'] >= $vote_settings['vote_votes_to_promote'])) {
 		// these settings make the latest page unnecessary so the "Home" link is sufficient, otherwise...
 	} else {
-		echo "<li><a href='" . baseurl . "'>" . $lang["vote_navigation_top_posts"] . "</a></li>\n";
-		echo "<li><a href='" . url(array('page'=>'latest')) . "'>" . $lang["vote_navigation_latest"] . "</a></li>\n";
+	
+		if($hotaru->title == 'latest') { $status = "id='navigation_active'"; } else { $status = ""; }
+		echo "<li><a " . $status . " href='" . url(array('page'=>'latest')) . "'>" . $lang["vote_navigation_latest"] . "</a></li>\n";
 	}
 }
 
@@ -453,7 +454,7 @@ function vote_admin_plugin_settings() {
 	if(!$submit_vote) { $submit_vote = ''; }
 	if(!$submit_vote_value) { $submit_vote_value = 1; }
 	if(!$votes_to_promote) { $votes_to_promote = 5; }
-	if(!$use_alerts) { $use_alerts = 'checked'; }
+	if(!isset($use_alerts)) { $use_alerts = 'checked'; }
 	if(!$alerts_to_bury) { $alerts_to_bury = 5; }
 	if(!$physical_delete) { $physical_delete = ''; }
 	

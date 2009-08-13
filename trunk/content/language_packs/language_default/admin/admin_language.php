@@ -101,7 +101,7 @@ $lang["admin_theme_login_instructions"] = "Enter your username and password:";
 $lang["admin_theme_login_form_submit"] = "Login";
 
 /* navigation */
-$lang["admin_theme_navigation_home"] = "Home";
+$lang["admin_theme_navigation_home"] = "Top Posts";
 $lang["admin_theme_navigation_admin"] = "Admin";
 $lang["admin_theme_navigation_login"] = "Login";
 $lang["admin_theme_navigation_logout"] = "Logout";
@@ -123,6 +123,7 @@ $lang["admin_theme_maintenance_rss_cache_desc"] = "deletes cached RSS feeds.";
 $lang["admin_theme_plugins"] = "Plugin Management";
 $lang["admin_theme_plugins_installed"] = "Installed";
 $lang["admin_theme_plugins_not_installed"] = "Not installed";
+$lang["admin_theme_plugins_on_off"] = "On/Off";
 $lang["admin_theme_plugins_active"] = "Active";
 $lang["admin_theme_plugins_switch"] = "Switch";
 $lang["admin_theme_plugins_plugin"] = "Plugin";

@@ -123,9 +123,7 @@ class Post {
 			$this->post_date = $post_row->post_date;
 			
 			$plugin->check_actions('submit_class_post_read_post_2');
-			
-			$hotaru->title = $this->post_title;
-			
+						
 			return true;
 		} else {
 			return false;
@@ -257,7 +255,7 @@ class Post {
 			$filter = rstrtrim($filter, "AND ");
 		}
 		
-		if($limit == 0) { $limit = ''; } else { $limit = "LIMIT " . $limit; }
+		if($limit == 0) { $limit = "LIMIT 20"; } else { $limit = "LIMIT " . $limit; }
 		
 		$sql = "SELECT * FROM " . table_posts . $filter . " ORDER BY post_date DESC " . $limit;
 				
@@ -305,7 +303,7 @@ class Post {
 		$tag = $cage->get->noTags('tag');
 		$category = $cage->get->noTags('category');
 		
-		if(!$status) { $status = "top"; }
+		//if(!$status) { $status = "top"; }
 		if(!$limit) { $limit = 10; }
 					
 		if($status) { $filter['post_status = %s'] = $status; }
@@ -319,19 +317,28 @@ class Post {
 		$feed = new RSS();
 		$feed->title       = site_name;
 		$feed->link        = baseurl;
-		$feed->description = $lang["submit_rss_latest_from"] . " " . site_name;
 		
+		if($status == 'new') { $feed->description = $lang["submit_rss_latest_from"] . " " . site_name; }
+		elseif($status == 'top') { $feed->description = $lang["submit_rss_top_stories_from"] . " " . site_name; }
+		elseif($user) { $feed->description = $lang["submit_rss_stories_from_user"] . " " . $user; }
+		elseif($tag) { $feed->description = $lang["submit_rss_stories_tagged"] . " " . $tag; }
+		elseif($category && (friendly_urls == "true")) { $feed->description = $lang["submit_rss_stories_in_category"] . " " . $category; }
+		elseif($category && (friendly_urls == "false")) { $feed->description = $lang["submit_rss_stories_in_category"] . " " . get_cat_name($category); }
+				
+		if(!isset($filter))  $filter = array();
 		$prepared_array = $this->filter($filter, $limit);
 		$results = $db->get_results($db->prepare($prepared_array));
 
-		foreach($results as $result) 
-		{
-			$item = new RSSItem();
-			$item->title = stripslashes(urldecode($result->post_title));
-			$item->link  = urldecode($result->post_url);
-			$item->setPubDate($result->post_date); 
-			$item->description = "<![CDATA[ " . stripslashes(urldecode($result->post_content)) . " ]]>";
-			$feed->addItem($item);
+		if($results) {
+			foreach($results as $result) 
+			{
+				$item = new RSSItem();
+				$item->title = stripslashes(urldecode($result->post_title));
+				$item->link  = urldecode($result->post_url);
+				$item->setPubDate($result->post_date); 
+				$item->description = "<![CDATA[ " . stripslashes(urldecode($result->post_content)) . " ]]>";
+				$feed->addItem($item);
+			}
 		}
 		echo $feed->serve();
 	}
