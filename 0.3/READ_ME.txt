@@ -1,13 +1,13 @@
 HOTARU CMS
-Version: Alpha 0.2
-Released: August 8th 2009
+Version: Alpha 0.3
+Released: August 13th 2009
 
 INSTALLATION
 ------------
 
 Please visit http://hotarucms.org/showthread.php?t=14 for the most up-to-date version of these instructions.
 
-Last updated: August 8th 2009
+Instructions last updated: August 8th 2009
 
 Requirements
 
