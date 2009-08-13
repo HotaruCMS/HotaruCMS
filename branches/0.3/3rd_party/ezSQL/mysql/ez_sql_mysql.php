@@ -294,6 +294,22 @@
             return false;
         }
         
+        /**
+         * Check if table empty
+         *
+         * @param string $table2check
+         * @return bool
+         *
+         * Notes: This is a custom function for Hotaru CMS
+         */
+        function table_empty($table2check) {
+            $rowcount = $this->get_var($this->prepare("SELECT COUNT(*) FROM " . db_prefix . $table2check));
+            if($rowcount && $rowcount > 0) {
+                return false; // table not empty
+            } else {
+                return true; // table is empty
+            }
+        }
 
         /**
          * Check if table column exists
