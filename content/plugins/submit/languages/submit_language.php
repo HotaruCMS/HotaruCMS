@@ -73,6 +73,13 @@ $lang["submit_settings_tags"] = "Tags";
 $lang["submit_settings_max_tags"] = "Maximum characters";
 $lang["submit_settings_saved"] = "Settings Saved.";
 
+/* Submit Post Breadcrumbs */
+$lang["submit_page_breadcrumbs_top"] = "Top Posts";
+$lang["submit_page_breadcrumbs_latest"] = "Latest Posts";
+$lang["submit_page_breadcrumbs_tag"] = "Tag";
+$lang["submit_page_breadcrumbs_category"] = "Category";
+$lang["submit_page_breadcrumbs_user"] = "User";
+
 /* Submit Show Post */
 $lang["submit_page_title_main"] = "top";
 $lang["submit_page_title_latest"] = "latest";
