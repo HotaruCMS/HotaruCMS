@@ -102,6 +102,10 @@ function pliggimp_admin_plugin_settings()
         $table = $cage->post->testAlpha('table');
         pliggimp_upload_result($file_name, $table);
     } 
+    elseif ($cage->get->keyExists('wizard'))
+    {
+        character_encoding_wizard();
+    }
     elseif ($cage->get->keyExists('step'))
     {
         $step = $cage->get->testInt('step');
@@ -206,8 +210,8 @@ function pliggimp_page_welcome() {
     }
      
     if ($error == 0) {
-        echo "<h2 style='color: green;'>All plugins are active! Click \"continue\"...</b></h2><br />";
-        echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'step'=>1), 'admin') . "'>Continue</a><br /><br />";
+        echo "<h2 style='color: green;'>All plugins are active! Click \"Import a Pligg Database\" to begin...</b></h2><br />";
+        echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'step'=>1), 'admin') . "'>Import a Pligg Database</a><br /><br />";
     } else {
         echo "<h2>Please fix the following problems:</h2>";
         echo "<ul>";
@@ -215,8 +219,14 @@ function pliggimp_page_welcome() {
         echo "</ul>";
     }
     
+    echo "";
+    echo "<h2>Character Encoding Wizard</h2><br />";
+    echo "The Character Encoding Wizard should be used <b><i>after</i></b> importing a Pligg database and <b><i>only</i></b> if you are having trouble with strange characters in posts. What it does is take the post titles and content out of the database in latin format, and then reinserts it in UTF-8 format. <b>Note: </b> This script may take some time to run depending on the size of your database.";
+    echo "<br /><a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'wizard'=>1), 'admin') . "'>Run the Character Encoding Wizard</a>";
+    
     echo "</div> <!-- close pliggimp div -->";
 }
+
 
 /**
  * Show the result of the file upload and offer link to continue
@@ -387,6 +397,42 @@ function pliggimp_page_6()
     echo "<h2>Pligg Import Complete</h2>";
     echo "<p>Before you take a look at your site, please understand that because Hotaru CMS is different form Pligg in many ways, not everything from your Pligg database could be included. However, most of your content has been imported so your site shouldn't be too disrupted by the changeover. <b>Okay, we're done, go take a look!</b></p>";
     echo "</div>";
+}
+
+
+/**
+ * Corrects botched utf-8 content
+ */
+function character_encoding_wizard()
+{
+    global $db, $hotaru;
+    
+    // Set connection as latin
+    $db->query("SET NAMES 'latin1'");
+    
+    $sql = "SELECT post_id, post_title, post_content FROM " . table_posts;
+    $content = $db->get_results($db->prepare($sql));
+       
+    // Set connection back to utf-8
+    $db->query("SET NAMES 'utf8'");
+    
+    if ($content) {
+        foreach ($content as $item) {
+            $item->post_title = fix_encoding(urldecode($item->post_title));
+            $item->post_content = fix_encoding(urldecode($item->post_content));
+            
+            echo "<pre>";
+            print_r($item);
+            echo "</pre>";
+            
+            $sql = "UPDATE " . table_posts . " SET post_title = %s, post_content = %s WHERE post_id = %d";
+            $db->query($db->prepare($sql, urlencode($item->post_title), urlencode($item->post_content), $item->post_id));
+        }
+        
+        $hotaru->message = "Post titles and descriptions updated";
+        $hotaru->message_type = "green";
+        $hotaru->show_message();
+    }
 }
 
 ?>
