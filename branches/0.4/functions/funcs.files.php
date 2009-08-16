@@ -80,4 +80,30 @@ function stripFileExtension($fileName)
     return strtok($fileName, ".");
 }
 
+
+/**
+ * Displaya filesize in a legible format
+ *
+ * @param int $filesize 
+ * @return string
+ * @link http://us3.php.net/manual/en/features.file-upload.php
+ */
+function display_filesize($filesize)
+{
+    if(is_numeric($filesize)){
+    $decr = 1024; $step = 0;
+    $prefix = array('Byte','KB','MB','GB','TB','PB');
+       
+    while(($filesize / $decr) > 0.9)
+    {
+        $filesize = $filesize / $decr;
+        $step++;
+    }
+    return round($filesize,2).' '.$prefix[$step];
+    } else {
+
+    return 'Error displaying filesize';
+    }
+   
+}
 ?>

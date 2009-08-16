@@ -239,7 +239,7 @@ class Post {
 	 *  Notes: Example usage: $post->filter(array('post_tags LIKE %s' => '%tokyo%'), 10);
 	 ********************************************************************** */	
 	 	
-	function filter($vars = array(), $limit = 0) {
+	function filter($vars = array(), $limit = 0, $all = false) {
 		global $db;
 		
 		$filter = '';
@@ -255,7 +255,13 @@ class Post {
 			$filter = rstrtrim($filter, "AND ");
 		}
 		
-		if($limit == 0) { $limit = "LIMIT 20"; } else { $limit = "LIMIT " . $limit; }
+		if ($all == true) {
+		    $limit = '';
+		} elseif ($limit == 0) { 
+		    $limit = "LIMIT 20"; 
+		} else { 
+		    $limit = "LIMIT " . $limit; 
+		}
 		
 		$sql = "SELECT * FROM " . table_posts . $filter . " ORDER BY post_date DESC " . $limit;
 				
