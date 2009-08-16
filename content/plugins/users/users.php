@@ -137,7 +137,7 @@ function usr_navigation_users() {
 		if($hotaru->title == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
 		echo "<li><a  " . $status . " href='" . url(array('page'=>'logout')) . "'>" . $lang["users_logout"] . "</a></li>\n";
 		
-		if($current_user->role == 'administrator') {
+		if($current_user->role == 'admin') {
 			
 			if($hotaru->title == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
 			echo "<li><a  " . $status . " href='" . url(array(), 'admin') . "'>" . $lang["users_admin"] . "</a></li>\n";
@@ -320,7 +320,8 @@ function usr_update_password() {
 	// Updating password
 	if($cage->post->testAlnumLines('users_type') == 'update_password') {
 		$password_check_old = $cage->post->testPassword('password_old');	
-		if($password_check_old && (crypt(md5($password_check_old),md5($current_user->username) == $current_user->password))) {
+		
+		if($current_user->login_check($current_user->username, $password_check_old)) {
 			// safe, the old password matches the password for this user.
 		} else {
 			$hotaru->messages[$lang['users_update_password_error_old']] = 'red';
@@ -357,7 +358,7 @@ function usr_update_password() {
 		$result = $current_user->user_exists(0, $current_user->username, $current_user->email);
 		if($result != 4) { // 4 is returned when the user does not exist in the database
 			//success
-			$current_user->password = crypt(md5($password_check_new),md5($current_user->username));
+			$current_user->password = $current_user->generateHash($password_check_new);
 			$current_user->update_user_basic();
 			$current_user->set_cookie(0);
 			$hotaru->messages[$lang['users_update_success']] = 'green';
@@ -374,14 +375,11 @@ function usr_update_password() {
 }
 
 
- /* ******************************************************************** 
- *  Function: usr_login
- *  Parameters: None, but gets login and password for verification from $cage
- *  Purpose: Verifies whether a user can log in or not.
- *  Notes: 
- ********************************************************************** */
- 
-function usr_login() {
+ /**
+ * User Login
+ */
+function usr_login()
+{
 	global $hotaru, $cage, $lang, $plugin;
 	
 	$current_user = new UserBase();
@@ -417,7 +415,7 @@ function usr_login() {
 				return true;
 		} else {
 				// login failed
-				$hotaru->message[$lang["users_login_failed"]] = 'red';
+				$hotaru->messages[$lang["users_login_failed"]] = 'red';
 		}
 	} 
 	return false;
@@ -456,7 +454,7 @@ function usr_register() {
 			$password2_check = $cage->post->testPassword('password2');
 			if($password_check == $password2_check) {
 				// safe, the two new password fields match
-				$current_user->password = crypt(md5($password_check),md5($current_user->username));
+				$current_user->password = $userbase->generateHash($password_check);
 			} else {
 				$hotaru->messages[$lang['users_register_password_match_error']] = 'red';
 				$error = 1;

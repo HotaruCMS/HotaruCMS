@@ -44,7 +44,7 @@ if($cage->get->keyExists('user') || $cage->get->keyExists('tag') || $cage->get->
 
 $plugin->check_actions('submit_posts_list_filter');
 
-$prepared_filter = $post->filter($filter);
+$prepared_filter = $post->filter($filter, 0, true);
 $stories = $post->get_posts($prepared_filter);
 
 if($filter_heading) { echo "<h3>" . $lang["submit_post_filtered_to"] . " " . $page_title . " " . $filter_heading . "</h3>"; }

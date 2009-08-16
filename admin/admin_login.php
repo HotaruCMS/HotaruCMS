@@ -47,7 +47,7 @@ function admin_login()
                 
     if ($username_check != "" || $password_check != "") 
     {
-        $login_result = admin_login_check($username_check, $password_check);
+        $login_result = $current_user->login_check($username_check, $password_check);
         
         if ($login_result) {
                 //success
@@ -138,7 +138,7 @@ function set_admin_cookie($username)
  */
 function is_admin_cookie()
 {
-    global $cage;
+    global $cage, $current_user;
     
     // Check for a cookie. If present then the user goes through authentication
     if (!$hotaru_user = $cage->cookie->testUsername('hotaru_user'))
@@ -158,7 +158,7 @@ function is_admin_cookie()
             if (($hotaru_user == $user_info[0]) 
                 && (crypt($user_info[0], 22) == $user_info[1])) 
             {
-                if (!is_admin($hotaru_user)) {
+                if (!$current_user->is_admin($hotaru_user)) {
                     return false;
                     die();
                 } else {
@@ -174,44 +174,6 @@ function is_admin_cookie()
         }
     }
 }
-
-
- /**
- * Checks if the user has an 'administrator' role
- *
- * @return bool
- */
-function is_admin($username)
-{
-    global $db;
-    
-    $sql = "SELECT * FROM " . table_users . " WHERE user_username = %s AND user_role = %s";
-    
-    $role = $db->get_row($db->prepare($sql, $username, 'administrator'));
-    
-    if ($role) { return true; } else { return false; }
-}
-
-
- /**
- * Check if the username and password are a valid match
- *
- * @param string $username
- * @param string $password
- * @return bool
- */
-function admin_login_check($username = '', $password = '')
-{
-    global $db;
-    
-    $password = crypt(md5($password),md5($username));
-    
-    $sql = "SELECT user_username, user_password FROM " . table_users . " WHERE user_username = %s AND user_password = %s";
-    
-    $result = $db->get_row($db->prepare($sql, $username, $password));
-    if ($result) { return true; } else { return false; }
-}
-
 
  /**
  * Admin logout

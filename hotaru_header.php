@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along 
  * with Hotaru CMS. If not, see http://www.gnu.org/licenses/.
  * 
- * @category  Content Management Systemii
+ * @category  Content Management System
  * @package   HotaruCMS
  * @author    Nick Ramsay <admin@hotarucms.org>
  * @copyright Copyright (c) 2009, Hotaru CMS

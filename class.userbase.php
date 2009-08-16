@@ -27,7 +27,7 @@ class UserBase {
  
     var $id             = 0;
     var $username       = '';
-    var $role           = 'registered_user';
+    var $role           = 'member';
     var $password       = 'password';
     var $email          = '';
     var $email_valid    = 0;
@@ -197,7 +197,43 @@ class UserBase {
         return 4; // user exists
     }
 
-        
+
+/**
+ * Check if an admin exists
+ *
+ * @return string|false
+ */
+function admin_exists()
+{
+    global $db;
+    
+    $sql = "SELECT user_username FROM " . table_users . " WHERE user_role = %s";
+    
+    if ($admin_name = $db->get_var($db->prepare($sql, 'admin'))) {
+        return $admin_name; // admin exists
+    } else {
+        return false;
+    }
+}
+
+
+ /**
+ * Checks if the user has an 'admin' role
+ *
+ * @return bool
+ */
+function is_admin($username)
+{
+    global $db;
+    
+    $sql = "SELECT * FROM " . table_users . " WHERE user_username = %s AND user_role = %s";
+    
+    $role = $db->get_row($db->prepare($sql, $username, 'admin'));
+    
+    if ($role) { return true; } else { return false; }
+}
+
+
     /**
      * Log a user in if their username and password are valid
      *
@@ -208,23 +244,41 @@ class UserBase {
     function login_check($username = '', $password = '')
     {
         global $db;
-        
-        $password = crypt(md5($password),md5($username));
+
+        // Read the current user's basic details
+        $userX = $this->get_user_basic(0, $username);
+            
+        $salt_length = 9;
+        $password = $this->generateHash($password, substr($userX->user_password, 0, $salt_length));
         
         $sql = "SELECT user_username, user_password FROM " . table_users . " WHERE user_username = %s AND user_password = %s";
         
         $result = $db->get_row($db->prepare($sql, $username, $password));
         
-        if (isset($result)) {
-            // Read the current user's basic details
-            $this->get_user_basic(0, $username);
-            return true; 
-        } else { 
-            return false; 
-        }
+        if (isset($result)) { return true; } else { return false; }
     }
     
     
+    /**
+     * Generate a hash for the password
+     *
+     * @param string $plainText - the password
+     * @param mixed $salt
+     *
+     * Note: Adapted from SocialWebCMS
+     */
+    function generateHash($plainText, $salt = null)
+    {
+        $salt_length = 9;
+        if ($salt === null) {
+            $salt = substr(md5(uniqid(rand(), true)), 0, $salt_length); }
+        else {
+            $salt = substr($salt, 0, $salt_length);
+            }
+        return $salt . sha1($salt . $plainText);
+    }
+
+
     /**
      * Set a 30-day cookie
      *
