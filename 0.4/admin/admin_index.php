@@ -70,7 +70,7 @@ if (isset($current_user) && $plugin->plugin_active('users'))
         header('Location: ' . baseurl . 'index.php?page=login');
         die; exit;
     } 
-    elseif (!is_admin($current_user->username)) 
+    elseif (!$current_user->is_admin($current_user->username)) 
     {
         echo "You do not have permission to access this page.<br />";
         die(); exit;

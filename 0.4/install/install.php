@@ -35,6 +35,7 @@ setcookie("hotaru_key", "", time()-3600, "/");
 
 require_once('../hotaru_settings.php');
 require_once('../class.hotaru.php');    // Needed for error and success messages
+require_once('../class.userbase.php');  // Needed for login/registration
 
 // Clear the database cache in case of a re-install.
 require_once('../admin/class.admin.php'); 
@@ -232,9 +233,10 @@ function database_creation()
  */
 function register_admin()
 {
-    global $lang, $cage, $db;
+    global $lang, $cage, $db, $userbase;
 
     $hotaru = new Hotaru();
+    $userbase = new Userbase();
     
     echo html_header();
     
@@ -265,7 +267,7 @@ function register_admin()
             $password2_check = $cage->post->testPassword('password2');
             if ($password_check == $password2_check) {
                 // success
-                $user_password = crypt(md5($password_check),md5($user_name));
+                $user_password = $userbase->generateHash($password_check);
             } else {
                 $hotaru->message = $lang['install_step4_password_match_error'];
                 $hotaru->message_type = 'red';
@@ -301,18 +303,18 @@ function register_admin()
     }
     
     if ($error == 0) {
-        if (!$admin_name = admin_exists())
+        if (!$admin_name = $userbase->admin_exists())
         {
             // Insert default settings
             $sql = "INSERT INTO " . table_users . " (user_username, user_role, user_date, user_password, user_email) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s)";
-            $db->query($db->prepare($sql, 'admin', 'administrator', 'password', 'admin@mysite.com'));
+            $db->query($db->prepare($sql, 'admin', 'admin', 'password', 'admin@mysite.com'));
             $user_name = 'admin';
             $user_email = 'admin@mysite.com';
             $user_password = 'password';
         } 
         else 
         {
-            $user_info = get_admin_details(0, $admin_name);
+            $user_info = $userbase->get_user_basic(0, $admin_name);
             // On returning to this page via back or next, the fields are empty at this point, so...
             if (!isset($user_name)) { $user_name = ""; }
             if (!isset($user_email)){ $user_email = ""; } 
@@ -320,7 +322,7 @@ function register_admin()
             if (($user_name != "") && ($user_email != "") && ($user_password != "")) {
                 // There's been a change so update...
                 $sql = "UPDATE " . table_users . " SET user_username = %s, user_role = %s, user_date = CURRENT_TIMESTAMP, user_password = %s, user_email = %s, user_email_valid = %d WHERE user_role = %s";
-                $db->query($db->prepare($sql, $user_name, 'administrator', $user_password, $user_email, 1, 'administrator'));
+                $db->query($db->prepare($sql, $user_name, 'admin', $user_password, $user_email, 1, 'admin'));
             } else {
                 $user_id = $user_info->user_id;
                 $user_name = $user_info->user_username;
@@ -391,57 +393,6 @@ function installation_complete()
 }
 
 
-/**
- * Check if an admin already exists
- *
- * @return string|false
- */
-function admin_exists()
-{
-    global $db;
-    
-    $sql = "SELECT user_username FROM " . table_users . " WHERE user_role = %s";
-    
-    if ($admin_name = $db->get_var($db->prepare($sql, 'administrator'))) {
-        return $admin_name; // admin exists
-    } else {
-        return false;
-    }
-}
-
-
-/**
- * Get admin details
- *
- * @param int $userid
- * @param string $username
- * @return array|false
- *
- * Notes: Provide either a user id or username, not both.
- */
-function get_admin_details($userid = 0, $username = '')
-{
-    global $db;
-    
-    // use userid
-    if ($userid != 0) {
-        $where = "user_id = %d";
-        $param = $userid;
-        
-    // use username
-    } elseif ($username != '') {
-        $where = "user_username = %s";
-        $param = $username;
-
-    } else {
-        return false;
-    }
-    
-    $sql = "SELECT user_id, user_username, user_role, user_password, user_email FROM " . table_users . " WHERE " . $where;
-    $user_info = $db->get_row($db->prepare($sql, $param));
-
-    return $user_info;
-}
     
     
 /**
@@ -513,7 +464,7 @@ function create_table($table_name)
         $sql = "CREATE TABLE `" . db_prefix . $table_name . "` (
           `user_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
           `user_username` varchar(32) NOT NULL,
-          `user_role` varchar(32) NOT NULL DEFAULT 'registered_user',
+          `user_role` varchar(32) NOT NULL DEFAULT 'member',
           `user_date` timestamp NULL,
           `user_password` varchar(64) NOT NULL DEFAULT '',
           `user_email` varchar(128) NOT NULL DEFAULT '',

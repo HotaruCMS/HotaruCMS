@@ -101,3 +101,28 @@ li a#navigation_active { text-decoration: underline; }
 	text-align: center;
 	font-size: 1.0em;
 }
+
+/* PAGINATION */
+
+#pagination {
+	margin-top: 2.0em;
+	text-align: right;
+}
+
+#pagination a {
+	display: inline;
+	padding: 0.3em 0.7em 0.3em 0.7em;
+	border:solid 1px #F0F0F0;
+}
+
+#pagination .current {
+	background-color: #98AFC7;
+	font-weight: bold;
+	padding: 0.3em 0.7em 0.3em 0.7em;
+	border:solid 1px #444444;
+}
+
+#pagination a:hover {
+	border:solid 1px #444444;
+	text-decoration: none;
+}
