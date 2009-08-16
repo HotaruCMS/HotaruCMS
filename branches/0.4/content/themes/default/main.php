@@ -26,9 +26,14 @@
 
 global $hotaru, $plugin, $lang; // don't remove
 ?>
+<div id="breadcrumbs">
+    <a href="<?php echo baseurl; ?>"><?php echo site_name?></a> 
+    <?php $plugin->check_actions('breadcrumbs'); ?> 
+    &raquo; <?php echo $hotaru->title; ?>
+</div>
 
 <?php $plugin->check_actions('main_top'); ?>
-	
+    
 <?php $plugin->check_actions('main'); ?>
 
 <?php // $plugin->check_actions('rss_show', true, '', array(2)); ?>

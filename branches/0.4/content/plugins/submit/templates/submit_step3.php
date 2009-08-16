@@ -25,26 +25,26 @@
  
 global $hotaru, $plugin, $post, $lang;
 ?>
-	<p class='breadcrumbs'><a href='<?php echo baseurl ?>'><?php echo $lang['submit_form_home'] ?></a> &raquo; <?php echo $lang["submit_form_step3"] ?></p>
-		
-	<?php echo $lang["submit_form_instructions_3"] ?> <br /><br />
-	
-	<?php $hotaru->display_template('post_page', 'submit') ?>
-	
-	<div id="submit_edit_confirm">
-	
-		<!-- EDIT BUTTON -->
-		<form name='submit_form_3' action='<?php baseurl ?>index.php?page=submit3' method='post'>
-		<input type='hidden' name='post_id' value='<?php echo $post->post_id; ?>' />
-		<input type='hidden' name='submit3' value='edit' />
-		<input type='submit' name='submit' onclick="javascript:safeExit=true;" value='<?php echo $lang['submit_form_submit_edit_button'] ?>' />
-		</form>	
+    <div id="breadcrumbs"><a href='<?php echo baseurl ?>'><?php echo $lang['submit_form_home'] ?></a> &raquo; <?php echo $lang["submit_form_step3"] ?></div>
+        
+    <?php echo $lang["submit_form_instructions_3"] ?> <br /><br />
+    
+    <?php $hotaru->display_template('post_page', 'submit') ?>
+    
+    <div id="submit_edit_confirm">
+    
+        <!-- EDIT BUTTON -->
+        <form name='submit_form_3' action='<?php baseurl ?>index.php?page=submit3' method='post'>
+        <input type='hidden' name='post_id' value='<?php echo $post->post_id; ?>' />
+        <input type='hidden' name='submit3' value='edit' />
+        <input type='submit' name='submit' onclick="javascript:safeExit=true;" value='<?php echo $lang['submit_form_submit_edit_button'] ?>' />
+        </form>    
 
-		<!-- CONFIRM BUTTON -->
-		<form name='submit_form_3' action='<?php baseurl ?>index.php?page=submit3' method='post'>
-		<input type='hidden' name='post_id' value='<?php echo $post->post_id; ?>' />
-		<input type='hidden' name='submit3' value='confirm' />
-		<input type='submit' name='submit' onclick="javascript:safeExit=true;" value='<?php echo $lang['submit_form_submit_confirm_button'] ?>' />
-		</form>
-	</div>
-	
+        <!-- CONFIRM BUTTON -->
+        <form name='submit_form_3' action='<?php baseurl ?>index.php?page=submit3' method='post'>
+        <input type='hidden' name='post_id' value='<?php echo $post->post_id; ?>' />
+        <input type='hidden' name='submit3' value='confirm' />
+        <input type='submit' name='submit' onclick="javascript:safeExit=true;" value='<?php echo $lang['submit_form_submit_confirm_button'] ?>' />
+        </form>
+    </div>
+    
