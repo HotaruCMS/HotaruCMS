@@ -37,15 +37,12 @@
  * *********************************************************************
  * ****************************************************************** */
  
- 
-/* ******************************************************************** 
- *  Function: cts_install_plugin
- *  Parameters: None
- *  Purpose: Adds default settings for Submit plugin
- *  Notes: This determines whether the Submit plugin should offer categories or not.
- ********************************************************************** */
- 
-function cts_install_plugin() {
+
+/**
+ * Adds default settings for Submit plugin
+ */
+function cts_install_plugin()
+{
     global $db, $plugin, $post;
     
     // Default settings (Note: we can't use $post->post_vars because it hasn't been filled yet.)
@@ -55,14 +52,11 @@ function cts_install_plugin() {
 }
 
 
-/* ******************************************************************** 
- *  Function: cts_hotaru_header
- *  Parameters: None
- *  Purpose: Defines db table and includes language file
- *  Notes: ---
- ********************************************************************** */
- 
-function cts_hotaru_header() {
+/**
+ * Defines db table and includes language file
+ */
+function cts_hotaru_header()
+{
     global $post, $hotaru, $cage, $plugin;
     
     // The categories table is defined 
@@ -72,24 +66,25 @@ function cts_hotaru_header() {
     $plugin->include_language_file('categories');
     
     // Get page title    
-    if ($cage->get->keyExists('category')) {
-        if (is_numeric($cage->get->notags('category'))) { 
+    if ($cage->get->keyExists('category'))
+    {
+        if (is_numeric($cage->get->notags('category'))) 
+        { 
             $hotaru->title = get_cat_name($cage->get->getInt('category')); // friendly URLs: FALSE
-        } else {
+        } 
+        else 
+        {
             $hotaru->title = $hotaru->page_to_title_caps(($cage->get->notags('category'))); // friendly URLs: TRUE
         } 
     }
 }
 
 
-/* ******************************************************************** 
- *  Function: cts_submit_hotaru_header_1
- *  Parameters: None
- *  Purpose: Adds additional member variables when the $post object is read in the Submit plugin.
- *  Notes: ---
- ********************************************************************** */
- 
-function cts_submit_hotaru_header_1() {
+/**
+ * Adds additional member variables when the $post object is read in the Submit plugin.
+ */
+function cts_submit_hotaru_header_1()
+{
     global $post, $plugin;
     
     // The categories table is defined 
@@ -106,15 +101,16 @@ function cts_submit_hotaru_header_1() {
 }
 
 
-/* ******************************************************************** 
- *  Function: cts_submit_hotaru_header_2
- *  Parameters: None
- *  Purpose: Checks if url query string is /category_name/post_name/
- *  Notes: Only used for friendly urls. This is necessary because if a 
- *  url is /people/top-10-longest-beards/ there's no actual mention of "category" there!
- ********************************************************************** */
- 
-function cts_submit_hotaru_header_2() {
+/**
+ * Checks if url query string is /category_name/post_name/
+ *
+ * @return bool
+ *
+ * Only used for friendly urls. This is necessary because if a url is 
+ * /people/top-10-longest-beards/ there's no actual mention of "category" there!
+ */
+function cts_submit_hotaru_header_2()
+{
     global $db, $hotaru, $post, $plugin, $cage;
         
     if (friendly_urls == "true" && $post->post_id == 0) {
@@ -150,18 +146,16 @@ function cts_submit_hotaru_header_2() {
 }
 
 
-/* ******************************************************************** 
- *  Function: cts_submit_class_post_read_post_1
- *  Parameters: None
- *  Purpose: Read category settings
- *  Notes: ---
- ********************************************************************** */
- 
-function cts_submit_class_post_read_post_1() {
+/**
+ * Read category settings
+ */
+function cts_submit_class_post_read_post_1()
+{
     global $plugin, $post;
     
     //categories
-    if (($plugin->plugin_settings('submit', 'submit_categories') == 'checked') && ($plugin->plugin_active('categories'))) { 
+    if (($plugin->plugin_settings('submit', 'submit_categories') == 'checked') 
+        && ($plugin->plugin_active('categories'))) { 
         $post->post_vars['use_categories'] = true; 
     } else { 
         $post->post_vars['use_categories'] = false; 
@@ -169,15 +163,13 @@ function cts_submit_class_post_read_post_1() {
 }
 
 
-/* ******************************************************************** 
- *  Function: cts_submit_class_post_read_post_2
- *  Parameters: None
- *  Purpose: Read category from the post in the database.
- *  Notes: ---
- ********************************************************************** */
- 
-function cts_submit_class_post_read_post_2() {
+/**
+ * Read category from the post in the database.
+ */
+function cts_submit_class_post_read_post_2()
+{
     global $db, $post, $post_row;
+    
     $post->post_vars['post_category'] = $post_row->post_category;
     
     $sql = "SELECT category_name, category_safe_name FROM " . table_categories . " WHERE category_id = %d";
@@ -187,14 +179,11 @@ function cts_submit_class_post_read_post_2() {
 }
 
 
-/* ******************************************************************** 
- *  Function: cts_submit_class_post_add_post
- *  Parameters: None
- *  Purpose: Adds category to the posts table
- *  Notes: ---
- ********************************************************************** */
- 
-function cts_submit_class_post_add_post() {
+/**
+ * Adds category to the posts table
+ */
+function cts_submit_class_post_add_post()
+{
     global $post, $db, $last_insert_id;
     
     $sql = "UPDATE " . table_posts . " SET post_category = %d WHERE post_id = %d";
@@ -202,14 +191,11 @@ function cts_submit_class_post_add_post() {
 }
 
 
-/* ******************************************************************** 
- *  Function: cts_submit_class_post_update_post
- *  Parameters: None
- *  Purpose: Updates category in the posts table
- *  Notes: ---
- ********************************************************************** */
- 
-function cts_submit_class_post_update_post() {
+/**
+ * Updates category in the posts table
+ */
+function cts_submit_class_post_update_post()
+{
     global $post, $db;
     
     $sql = "UPDATE " . table_posts . " SET post_category = %d WHERE post_id = %d";
@@ -224,14 +210,11 @@ function cts_submit_class_post_update_post() {
  * ****************************************************************** */
  
 
-/* ******************************************************************** 
- *  Function: cts_submit_form_2_assign_from_cage
- *  Parameters: None
- *  Purpose: Sets $category_check to the value of the chosen category
- *  Notes: ---
- ********************************************************************** */
- 
-function cts_submit_form_2_assign() {
+/**
+ * Sets $category_check to the value of the chosen category
+ */
+function cts_submit_form_2_assign()
+{
     global $cage, $category_check, $post;
     
     if ($cage->post->getAlpha('submit2') == 'true') {
@@ -250,14 +233,11 @@ function cts_submit_form_2_assign() {
 }
 
 
-/* ******************************************************************** 
- *  Function: cts_submit_form_2_fields
- *  Parameters: None
- *  Purpose: Adds a category drop-down box to submit form 2
- *  Notes: ---
- ********************************************************************** */
- 
-function cts_submit_form_2_fields() {
+/**
+ * Adds a category drop-down box to submit form 2
+ */
+function cts_submit_form_2_fields()
+{
     global $db, $lang, $post, $category_check;
 
     if ($post->post_vars['use_categories']) { 
@@ -284,14 +264,13 @@ function cts_submit_form_2_fields() {
 }
 
 
-/* ******************************************************************** 
- *  Function: cts_submit_form_2_check_for_errors
- *  Parameters: None
- *  Purpose: Checks for category error from submit form 2
- *  Notes: ---
- ********************************************************************** */
- 
-function cts_submit_form_2_check_for_errors() {
+/**
+ * Checks for category error from submit form 2
+ *
+ * @return int
+ */
+function cts_submit_form_2_check_for_errors()
+{
     global $hotaru, $lang, $post, $cage, $category_check;
     
     // ******** CHECK CATEGORY ********
@@ -311,15 +290,13 @@ function cts_submit_form_2_check_for_errors() {
 }
 
 
-/* ******************************************************************** 
- *  Function: cts_submit_form_2_process_submission
- *  Parameters: None
- *  Purpose: Sets $post->post_category to submitted category id
- *  Notes: ---
- ********************************************************************** */
- 
-function cts_submit_form_2_process_submission() {
+/**
+ * Sets $post->post_category to submitted category id
+ */
+function cts_submit_form_2_process_submission()
+{
     global $db, $cage, $post;
+    
     $post->post_vars['post_category'] = $cage->post->getInt('post_category');
     
     $sql = "SELECT category_name, category_safe_name FROM " . table_categories . " WHERE category_id = %d";
@@ -336,27 +313,24 @@ function cts_submit_form_2_process_submission() {
  * ****************************************************************** */
  
 
-/* ******************************************************************** 
- *  Function: cts_header_include
- *  Parameters: None
- *  Purpose: Includes css file.
- *  Notes: ---
- ********************************************************************** */
- 
-function cts_header_include() {
+/**
+ * Includes css file.
+ */
+function cts_header_include()
+{
     global $plugin;
+    
     $plugin->include_css_file('categories');
 }
 
 
- /* ******************************************************************** 
- *  Function: cts_submit_is_page_main
- *  Parameters: None
- *  Purpose: Checks is the url is a category->post name pair and displays the post
- *  Notes: ---
- ********************************************************************** */
- 
-function cts_submit_is_page_main() {
+/**
+ * Checks is the url is a category->post name pair and displays the post
+ *
+ * @return bool
+ */
+function cts_submit_is_page_main()
+{
     global $db, $post, $plugin, $cage, $hotaru;
     
     if ($post->post_vars['is_category_post']) {
@@ -367,14 +341,11 @@ function cts_submit_is_page_main() {
     }
 }
 
-
-/* ******************************************************************** 
- *  Function: cts_submit_posts_list_filter
- *  Parameters: None
- *  Purpose: Gets a category from the url and sets the filter for get_posts
- *  Notes: This hook is at the top of posts_list.php in the Submit plugin.
- ********************************************************************** */
- 
+/**
+ * Gets a category from the url and sets the filter for get_posts
+ *
+ * @return bool
+ */
 function cts_submit_posts_list_filter()
 {
     global $hotaru, $post, $cage, $filter, $lang, $page_title;
@@ -409,14 +380,11 @@ function cts_submit_posts_list_filter()
 }
 
 
-/* ******************************************************************** 
- *  Function: cts_submit_show_post_author_date
- *  Parameters: None
- *  Purpose: Shows tags in each post
- *  Notes: echos "in" before the category name.
- ********************************************************************** */
- 
-function cts_submit_show_post_author_date() { 
+/**
+ * Shows tags in each post
+ */
+function cts_submit_show_post_author_date()
+{ 
     global $post, $lang;
     
     if ($post->post_vars['use_categories'] && $post->post_vars['post_category']) { 
@@ -431,14 +399,15 @@ function cts_submit_show_post_author_date() {
 }
 
 
- /* ******************************************************************** 
- *  Function: sidebar_widget_categories
- *  Parameters: None
- *  Purpose: Displays categories as a tree
- *  Notes: This isn't a plugin hook, but a function call created in the Sidebar plugin.
- ********************************************************************** */
-
-function sidebar_widget_categories($args) {
+/**
+ * Displays categories as a tree
+ *
+ * @param mixed $args
+ *
+ * This isn't a plugin hook, but a function call created in the Sidebar plugin.
+ */
+function sidebar_widget_categories($args)
+{
     global $db, $the_cats, $cat_level, $lang, $hotaru, $plugin, $sidebar;
         
     $sql = "SELECT * FROM " . table_categories . " ORDER BY category_order ASC";
@@ -464,17 +433,17 @@ function sidebar_widget_categories($args) {
 }
 
 
- /* ******************************************************************** 
- *  Function: cat_level
- *  Parameters: None
- *  Purpose: Recursive function to find level depth
- *  Notes: Starting level is 0
- ********************************************************************** */
- 
-function cat_level($cat_id) {
+/**
+ * Recursive function to find level depth
+ *
+ * @param int $ccat_id
+ * @return int
+ */
+function cat_level($cat_id)
+{
     global $cat_level, $the_cats;
         
-    foreach($the_cats as $cat) {
+    foreach ($the_cats as $cat) {
         if (($cat->category_id == $cat_id) && $cat->category_parent > 1) {
             $cat_level++;
             cat_level($cat->category_parent);
@@ -492,14 +461,11 @@ function cat_level($cat_id) {
  * ****************************************************************** */
  
 
-/* ******************************************************************** 
- *  Function: cts_submit_settings_get_values
- *  Parameters: None
- *  Purpose: Gets current tag settings from the database
- *  Notes: ---
- ********************************************************************** */
- 
-function cts_submit_settings_get_values() {
+/**
+ * Gets current tag settings from the database
+ */
+function cts_submit_settings_get_values()
+{
     global $plugin, $categories;
     
     // Get settings from database if they exist... should return 'checked'
@@ -511,14 +477,11 @@ function cts_submit_settings_get_values() {
 }
 
 
-/* ******************************************************************** 
- *  Function: cts_submit_settings_form
- *  Parameters: None
- *  Purpose: Add tags field to the submit settings form
- *  Notes: ---
- ********************************************************************** */
- 
-function cts_submit_settings_form() {
+/**
+ * Add tags field to the submit settings form
+ */
+function cts_submit_settings_form()
+{
     global $plugin, $lang, $categories;
     
     echo "<input type='checkbox' name='categories' value='categories' " . $categories . ">&nbsp;&nbsp;" . $lang["submit_settings_categories"] . "<br />";
@@ -526,14 +489,11 @@ function cts_submit_settings_form() {
 }
 
 
-/* ******************************************************************** 
- *  Function: cts_submit_save_settings
- *  Parameters: None
- *  Purpose: Save tag settings.
- *  Notes: ---
- ********************************************************************** */
- 
-function cts_submit_save_settings() {
+/**
+ * Save tag settings.
+ */
+function cts_submit_save_settings()
+{
     global $plugin, $cage, $lang, $categories;
     
     // Categories
@@ -556,14 +516,14 @@ function cts_submit_save_settings() {
  * *********************************************************************
  * ****************************************************************** */
  
- /* ******************************************************************** 
- *  Function: get_cat_safe_name
- *  Parameters: Category ID
- *  Purpose: Returns the category safe name for a give category id.
- *  Notes: Used in /funcs.urls.php
- ********************************************************************** */
- 
-function get_cat_safe_name($cat_id) {
+/**
+ * Returns the category safe name for a give category id.
+ *
+ * @param int $cat_id
+ * @return string
+ */
+function get_cat_safe_name($cat_id)
+{
     global $db;
     
     $sql = "SELECT category_safe_name FROM " . table_categories . " WHERE category_id = %d";
@@ -572,13 +532,12 @@ function get_cat_safe_name($cat_id) {
 }
 
 
- /* ******************************************************************** 
- *  Function: get_cat_name
- *  Parameters: Category ID
- *  Purpose: Returns the category name for a give category id.
- *  Notes: Used in this file (cts_hotaru_header function) for header's title tags
- ********************************************************************** */
- 
+/**
+ * Returns the category name for a give category id.
+ *
+ * @param int $cat_id
+ * @return string
+ */
 function get_cat_name($cat_id) {
     global $db;
     
@@ -588,19 +547,19 @@ function get_cat_name($cat_id) {
 }
 
 
- /* ******************************************************************** 
- *  Function: get_cat_id
- *  Parameters: Category safe name
- *  Purpose: Returns the category id for a given category safe name.
- *  Notes: ---
- ********************************************************************** */
- 
-function get_cat_id($cat_name) {
+/**
+ * Returns the category id for a given category safe name.
+ *
+ * @param string $cat_name
+ * @return int
+ */
+function get_cat_id($cat_name)
+{
     global $db;
     
     $sql = "SELECT category_id FROM " . table_categories . " WHERE category_safe_name = %s";
     $cat_id = $db->get_var($db->prepare($sql, urlencode($cat_name)));
     return $cat_id;
 }
- 
+
 ?>
