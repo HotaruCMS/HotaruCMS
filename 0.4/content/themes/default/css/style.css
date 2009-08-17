@@ -64,10 +64,11 @@ small     { font-size: 0.8em; }
 #hd_title h1 { font-size: 2.2em; font-weight: bold; padding: 0.4em 0.4em 0.4em 0.4em;}    /* Site title */
 #hd_title h1 a { color: #ffffff; }
 ul#navigation { list-style: none; padding: 0 0 0.6em 0.95em; }
-#navigation li { display: inline; padding-right: 1.0em; font-size: 1.2em; font-weight: bold; }
-#navigation li a { color: #fafafa; }
+#navigation li { display: inline; font-size: 1.2em; font-weight: bold; }
+#navigation li a { color: #fafafa; padding: 0.4em 0.4em 0.4em 0.4em;  }
+#navigation li a:hover { background-color: #444; text-decoration: none;}
 #navigation li a img { vertical-align: middle; }
-li a#navigation_active { text-decoration: underline; }
+li #navigation_active { background-color: #444; }
 
 /* BODY */
 
