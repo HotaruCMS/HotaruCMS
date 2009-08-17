@@ -27,39 +27,41 @@
 global $hotaru, $plugin, $current_user, $lang; // don't remove
 ?>
 
+<!-- Navigation Bar -->
 <ul id="navigation">
-	<?php $plugin->check_actions('navigation_first'); ?>
-	
-	<?php if($hotaru->title == 'top') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
-	<li><a <?php echo $status; ?> href="<?php echo baseurl; ?>"><?php echo $lang["main_theme_navigation_home"] ?></a></li>
-	<?php $plugin->check_actions('navigation'); ?>
-	<?php 
-		if(!$plugin->plugin_active('users')) { 
+    <?php $plugin->check_actions('navigation_first'); ?>
+    
+    <?php if($hotaru->title == 'top') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
+    <li><a <?php echo $status; ?> href="<?php echo baseurl; ?>"><?php echo $lang["main_theme_navigation_home"] ?></a></li>
+    <?php $plugin->check_actions('navigation'); ?>
+    <?php 
+        if(!$plugin->plugin_active('users')) { 
 
-			if($current_user->logged_in == true) { 
-			
-				if($hotaru->title == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
-				echo "<li><a " . $status . " href='" . url(array(), 'admin') . "'>" . $lang["main_theme_navigation_admin"] . "</a></li>"; 
-				
-				if($hotaru->title == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
-				echo "<li><a " . $status . " href='" . url(array('page'=>'admin_logout'), 'admin') . "'>" . $lang["main_theme_navigation_logout"] . "</a></li>";
-			} else { 
-				if($hotaru->title == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
-				echo "<li><a " . $status . " href='" . url(array(), 'admin') . "'>" . $lang["main_theme_navigation_login"] . "</a></li>"; 
-			}
-		} else {
-			$plugin->check_actions('navigation_users', true, 'users'); // ensures login/logout/register are last.
-		}
-	?>
-	
-	<?php 	// RSS Link and icon if Submit plugin is active
-		if($plugin->get_plugin_status('submit') == 'active') { ?>
-		<li>
-		<a href="<?php echo url(array('page'=>'rss')) ?>">RSS</a> 
-		<a href="<?php echo url(array('page'=>'rss')) ?>">
-			<img src="<?php echo baseurl ?>content/themes/<?php echo theme ?>images/rss_16.png">
-		</a>
-		</li>
-	<?php } ?>
-			
+            if($current_user->logged_in == true) { 
+            
+                if($hotaru->title == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
+                echo "<li><a " . $status . " href='" . url(array(), 'admin') . "'>" . $lang["main_theme_navigation_admin"] . "</a></li>"; 
+                
+                if($hotaru->title == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
+                echo "<li><a " . $status . " href='" . url(array('page'=>'admin_logout'), 'admin') . "'>" . $lang["main_theme_navigation_logout"] . "</a></li>";
+            } else { 
+                if($hotaru->title == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
+                echo "<li><a " . $status . " href='" . url(array(), 'admin') . "'>" . $lang["main_theme_navigation_login"] . "</a></li>"; 
+            }
+        } else {
+            $plugin->check_actions('navigation_users', true, 'users'); // ensures login/logout/register are last.
+        }
+    ?>
+    
+    <?php     // RSS Link and icon if Submit plugin is active
+        if($plugin->get_plugin_status('submit') == 'active') { ?>
+        <li>
+        <a href="<?php echo url(array('page'=>'rss')) ?>">RSS 
+            <img src="<?php echo baseurl ?>content/themes/<?php echo theme ?>images/rss_16.png">
+        </a>
+        </li>
+    <?php } ?>
+            
 </ul>
+
+<?php $plugin->check_actions('navigation_last'); ?>
