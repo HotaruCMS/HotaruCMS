@@ -6,7 +6,7 @@
  * folder: categories
  * prefix: cts
  * requires: submit 0.1, category_manager 0.1
- * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_class_post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter, submit_show_post_author_date, submit_is_page_main, navigation_last
+ * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_class_post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter, submit_show_post_author_date, submit_is_page_main, navigation_last, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * PHP version 5
  *
@@ -48,7 +48,7 @@ function cts_install_plugin()
     // Default settings (Note: we can't use $post->post_vars because it hasn't been filled yet.)
     $plugin->plugin_settings_update('submit', 'submit_categories', 'checked');
     $plugin->plugin_settings_update('sidebar_widgets', 'categories', '');
-        
+    $plugin->plugin_settings_update('categories', 'categories_bar', 'menu');
 }
 
 
@@ -411,27 +411,35 @@ function cts_submit_show_post_author_date()
 function sidebar_widget_categories($args)
 {
     global $db, $the_cats, $cat_level, $lang, $hotaru, $plugin, $sidebar;
-        
-    $sql = "SELECT * FROM " . table_categories . " ORDER BY category_order ASC";
-    $the_cats = $db->get_results($db->prepare($sql));
     
-    echo "<h2>" . $lang["sidebar_categories"] . "</h2>";
-    echo "<ul class='sidebar_categories'>\n";
-    foreach ($the_cats as $cat) {
-        $cat_level = 1;    // top level category.
-        if ($cat->category_name != "all") {
-            echo "<li>";
-            if ($cat->category_parent > 1) {
-                $depth = cat_level($cat->category_id);
-                for($i=1; $i<$depth; $i++) {
-                    echo "--- ";
-                }
-            } 
-            echo "<a href='" . url(array('category'=>$cat->category_id)) . "'>";
-            echo urldecode($cat->category_name) . "</a></li>\n";
+    // Get settings from database if they exist...
+    $bar = $plugin->plugin_settings('categories', 'categories_bar');
+    
+    // Only show if the sidebar is enabled
+    if($bar == 'side') {
+    
+        $sql = "SELECT * FROM " . table_categories . " ORDER BY category_order ASC";
+        $the_cats = $db->get_results($db->prepare($sql));
+        
+        echo "<h2>" . $lang["sidebar_categories"] . "</h2>";
+        echo "<ul class='sidebar_categories'>\n";
+        foreach ($the_cats as $cat) {
+            $cat_level = 1;    // top level category.
+            if ($cat->category_name != "all") {
+                echo "<li>";
+                if ($cat->category_parent > 1) {
+                    $depth = cat_level($cat->category_id);
+                    for($i=1; $i<$depth; $i++) {
+                        echo "--- ";
+                    }
+                } 
+                echo "<a href='" . url(array('category'=>$cat->category_id)) . "'>";
+                echo urldecode($cat->category_name) . "</a></li>\n";
+            }
         }
+        echo "</ul>\n";
+    
     }
-    echo "</ul>\n";
 }
 
 
@@ -514,6 +522,29 @@ function cts_submit_save_settings()
 
  /* ******************************************************************** 
  * ********************************************************************* 
+ * ************************* ADMIN SETTINGS **************************** 
+ * *********************************************************************
+ * ****************************************************************** */
+
+/**
+ * Admin sidebar link to settings page
+ */
+function cts_admin_sidebar_plugin_settings() {
+    echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>'categories'), 'admin') . "'>Categories</a></li>";
+}
+
+
+/**
+ * Call the settings function
+ */
+function cts_admin_plugin_settings() {
+    require_once(plugins . 'categories/categories_settings.php');
+    cts_settings();
+    return true;
+}
+
+ /* ******************************************************************** 
+ * ********************************************************************* 
  * ************************* EXTRA FUNCTIONS *************************** 
  * *********************************************************************
  * ****************************************************************** */
@@ -567,60 +598,70 @@ function get_cat_id($cat_name)
 
 /**
  * Category Bar - shows categories as a drop-down suckerfish menu
+ *
+ * @link http://www.cssnewbie.com/easy-css-dropdown-menus/
  */
 function cts_navigation_last()
 {
-    global $db;
-    
-    $output = '';
+    global $db, $plugin;
 
-    $sql    = "SELECT * FROM " . table_categories . " WHERE category_parent = %d AND category_id != %d ORDER BY category_order ASC";
-    $categories = $db->get_results($db->prepare($sql, 1, 1));
+    // Get settings from database if they exist...
+    $bar = $plugin->plugin_settings('categories', 'categories_bar');
     
-    //$sql    = "SELECT count(*) FROM " . table_categories . " WHERE category_parent = %d AND category_id != %d";
-    //$count  = $db->get_var($db->prepare($sql, 1, 1));
+    // Only show if the menu bar is enabled
+    if($bar == 'menu') {
     
-    foreach ($categories as $category) {
-
-        if (friendly_urls == "true") { 
-            $link = $category->category_safe_name; 
-        } else {
-            $link = $category->category_id;
-        }
+        $output = '';
+    
+        $sql    = "SELECT * FROM " . table_categories . " WHERE category_parent = %d AND category_id != %d ORDER BY category_order ASC";
+        $categories = $db->get_results($db->prepare($sql, 1, 1));
         
-        $output .= '<li><a href="' . url(array('category'=>$link)) . '">' . urldecode($category->category_name) . "</a>\n";
-        $parent = $category->category_id;
+        //$sql    = "SELECT count(*) FROM " . table_categories . " WHERE category_parent = %d AND category_id != %d";
+        //$count  = $db->get_var($db->prepare($sql, 1, 1));
         
-        if ($parent > 1) 
-        {
-            $sql = "SELECT * FROM " . table_categories . " WHERE category_parent = %d ORDER BY category_order ASC";
-            $children = $db->get_results($db->prepare($sql, $parent));
+        foreach ($categories as $category) {
+    
+            if (friendly_urls == "true") { 
+                $link = $category->category_safe_name; 
+            } else {
+                $link = $category->category_id;
+            }
             
-            $sql = "SELECT count(*) FROM " . table_categories . " WHERE category_parent = %d";
-            $countchildren = $db->get_var($db->prepare($sql, $parent));
+            $output .= '<li><a href="' . url(array('category'=>$link)) . '">' . urldecode($category->category_name) . "</a>\n";
+            $parent = $category->category_id;
             
-            if ($countchildren) 
+            if ($parent > 1) 
             {
-                $output .= "<ul>\n";
-                    foreach ($children as $child) 
-                    {
-                        if (friendly_urls == "true") { 
-                            $link = $child->category_safe_name; 
-                        } else {
-                            $link = $child->category_id;
+                $sql = "SELECT * FROM " . table_categories . " WHERE category_parent = %d ORDER BY category_order ASC";
+                $children = $db->get_results($db->prepare($sql, $parent));
+                
+                $sql = "SELECT count(*) FROM " . table_categories . " WHERE category_parent = %d";
+                $countchildren = $db->get_var($db->prepare($sql, $parent));
+                
+                if ($countchildren) 
+                {
+                    $output .= "<ul>\n";
+                        foreach ($children as $child) 
+                        {
+                            if (friendly_urls == "true") { 
+                                $link = $child->category_safe_name; 
+                            } else {
+                                $link = $child->category_id;
+                            }
+                            $output .= '<li><a href="' . url(array('category'=>$link)) .'">' . urldecode($child->category_name) . "</a>\n";
                         }
-                        $output .= '<li><a href="' . url(array('category'=>$link)) .'">' . urldecode($child->category_name) . "</a>\n";
-                    }
-                $output .= "</ul>\n";
-                $output .= "</li>\n";
+                    $output .= "</ul>\n";
+                    $output .= "</li>\n";
+                }
             }
         }
+        
+        // Output the category bar
+        echo "<ul id='category_bar'>\n";
+        echo $output;
+        echo "</ul>\n";
+
     }
-    
-    // Output the category bar
-    echo "<ul id='category_bar'>\n";
-    echo $output;
-    echo "</ul>\n";
 }
 
 ?>
