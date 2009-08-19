@@ -37,5 +37,11 @@
 	margin: 0.4em 0 0.4em 0;
 }
 
+.show_post_edit {
+	font-style: normal;
+	padding: 0 0.6em 0 0.6em;
+	background-color: #f0f0f0;
+}
+
 #submit_edit_confirm { width: 100%; text-align: center; }
 #submit_edit_confirm input { width: 10.0em; }
