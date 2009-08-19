@@ -28,16 +28,17 @@ class Post {
 
     var $post_id = 0;
     var $post_orig_url = '';
-    var $post_domain = '';        // the domain of the submitted url
+    var $post_domain = '';              // the domain of the submitted url
     var $post_title = '';
     var $post_content = '';
-    var $post_content_length = 50;    // default min characters for content
+    var $post_content_length = 50;      // default min characters for content
     var $post_summary = '';
-    var $post_summary_length = 200;    // default max characters for summary
+    var $post_summary_length = 200;     // default max characters for summary
     var $post_status = 'unsaved';
     var $post_author = 0;
     var $post_url = '';
     var $post_date = '';
+    var $posts_per_page = '10';
     
     var $template_name = '';
             
@@ -108,6 +109,10 @@ class Post {
         if($plugin->plugin_settings('submit', 'submit_summary') == 'checked') { $this->use_summary = true; } else { $this->use_summary = false; }
         $summary_length =  $plugin->plugin_settings('submit', 'submit_summary_length');
         if(!empty($summary_length)) { $this->post_summary_length = $summary_length; }
+        
+        //posts_per_page
+        $posts_per_page =  $plugin->plugin_settings('submit', 'submit_posts_per_page');
+        if(!empty($posts_per_page)) { $this->posts_per_page = $posts_per_page; }
                 
         $plugin->check_actions('submit_class_post_read_post_1');
         
