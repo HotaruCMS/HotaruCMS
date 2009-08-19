@@ -227,7 +227,11 @@ function cts_submit_form_2_assign()
         
     } elseif ($hotaru->is_page('edit_post')) {
         // Editing a previously submitted post
-        $category_check = $post->post_vars['post_category'];
+        if ($cage->post->getAlpha('edit_post') == 'true') {
+            $category_check = $cage->post->getInt('post_category');
+        } else {
+            $category_check = $post->post_vars['post_category'];
+        }
     
     } else {
         // First time here...
