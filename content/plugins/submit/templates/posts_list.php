@@ -43,7 +43,7 @@ $stories = sub_prepare_posts_list();
 
 if ($stories) {
     $pg = $cage->get->getInt('pg');
-    $pagedResults = new Paginated($stories, 10, $pg);
+    $pagedResults = new Paginated($stories, $post->posts_per_page, $pg);
     while($story = $pagedResults->fetchPagedRow()) {    //when $story is false loop terminates    
         $post->read_post($story->post_id);
         $user->get_user_basic($post->post_author);
