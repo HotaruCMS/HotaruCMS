@@ -1,6 +1,6 @@
-/* ******* CSS STYLE ************************************************************************** 
- * Plugin name: Categories
- * Stylesheet: categories.css
+/** CSS STYLE ** 
+ * Plugin name: Gravatar
+ * Stylesheet: gravatar.css
  * License:
  *
  *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
@@ -17,9 +17,10 @@
  *   see http://www.gnu.org/licenses/.
  *   
  *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
- *
- **************************************************************************************************** */
-
-
- /* SIDEBAR CATEGORIES */
+ */
  
+ /* Posts_List and Post_page */
+ .show_post_gravatar {
+ 	padding-right: 0.6em;
+ 	float: left;
+ }

@@ -13,4 +13,5 @@ Instructions
 
 Changelog
 ---------
+v.0.2 2009/8/19 - Nick - Added breadcrumb navigation, plus various changes for compatibility with other plugins.
 v.0.1 2009-07-29 - Nick - Released first version
