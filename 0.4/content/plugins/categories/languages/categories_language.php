@@ -1,6 +1,6 @@
 <?php
 /**
- * A language file for Tags.
+ * A language file for Categories.
  *
  * PHP version 5
  *

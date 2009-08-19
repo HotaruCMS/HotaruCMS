@@ -12,4 +12,5 @@ Instructions
 
 Changelog
 ---------
+v.0.2 2009/8/19 - Nick - Added optional drop-down menu bar
 v.0.1 2009/8/13 - Nick - Released first version
