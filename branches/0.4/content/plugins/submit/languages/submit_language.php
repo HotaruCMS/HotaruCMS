@@ -47,6 +47,13 @@ $lang['submit_form_submit_confirm_button'] = "Confirm";
 $lang['submit_form_submit_next_button'] = "Next";
 $lang['submit_form_submit_accidental_click'] = "Wait, you have not submitted your story yet!";
 
+/* Edit Post */
+$lang["submit_edit_post_title"] = "Edit Post";
+$lang["submit_edit_post_instructions"] = "Edit the fields below.";
+$lang["submit_edit_post_title_not_present_error"] = "No title was provided.";
+$lang["submit_edit_post_content_not_present_error"] = "No description entered.";
+$lang["submit_edit_post_save"] = "Save";
+
 /* Submission Disabled */
 $lang['submit_disabled'] = "Sorry, story submission is disabled at this time.";
 
@@ -84,6 +91,7 @@ $lang["submit_page_breadcrumbs_user"] = "User";
 $lang["submit_page_title_main"] = "top";
 $lang["submit_page_title_latest"] = "latest";
 $lang["submit_page_title_all"] = "all";
+$lang["submit_post_edit"] = "EDIT";
 $lang["submit_post_read_more"] = "[Read More]";
 $lang["submit_post_filtered_to"] = "Filtered to";
 $lang["submit_post_filter_user"] = "stories submitted by";

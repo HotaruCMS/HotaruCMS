@@ -24,7 +24,9 @@
  *
  **************************************************************************************************** */
 
-global $hotaru, $plugin, $post, $cage, $filter, $lang, $page_title, $userbase;
+global $hotaru, $plugin, $post, $cage, $filter, $lang, $page_title, $current_user;
+
+$user = new UserBase();
 
 // Prepare filter and breadcrumbs
 $stories = sub_prepare_posts_list();
@@ -44,7 +46,7 @@ if ($stories) {
     $pagedResults = new Paginated($stories, 10, $pg);
     while($story = $pagedResults->fetchPagedRow()) {    //when $story is false loop terminates    
         $post->read_post($story->post_id);
-
+        $user->get_user_basic($post->post_author);
 ?>
 
 <!-- POST -->
@@ -58,12 +60,15 @@ if ($stories) {
             <div class="show_post_author_date">    
                 Posted
                 <?php 
-                if ($post->use_author) { 
-                    echo " by <a href='" . url(array('user' => $userbase->get_username($post->post_author))) . "'>" . $userbase->get_username($post->post_author) . "</a>";
-                }
+                if ($post->use_author) { echo " by <a href='" . url(array('user' => $user->username)) . "'>" . $user->username . "</a>"; } 
                 ?>
                 <?php if ($post->use_date) { echo time_difference(unixtimestamp($post->post_date)) . " ago"; } ?>
                 <?php $plugin->check_actions('submit_show_post_author_date'); ?>
+                <?php 
+                    if ($current_user->role == 'admin' || ($current_user->id == $user->id)) { 
+                        echo "<a class='show_post_edit' href='" . url(array('page'=>'edit_post', 'post_id'=>$post->post_id)) . "'>" . $lang["submit_post_edit"] . "</a>"; 
+                    }
+                ?> 
             </div>
         <?php } ?>
             

@@ -215,7 +215,7 @@ function cts_submit_class_post_update_post()
  */
 function cts_submit_form_2_assign()
 {
-    global $cage, $category_check, $post;
+    global $cage, $hotaru, $category_check, $post;
     
     if ($cage->post->getAlpha('submit2') == 'true') {
         // Submitted this form...
@@ -225,6 +225,10 @@ function cts_submit_form_2_assign()
         // Come back from step 3 to make changes...
         $category_check = $post->post_vars['post_category'];
         
+    } elseif ($hotaru->is_page('edit_post')) {
+        // Editing a previously submitted post
+        $category_check = $post->post_vars['post_category'];
+    
     } else {
         // First time here...
         $category_check = 1;

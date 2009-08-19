@@ -239,7 +239,7 @@ function tg_delete_post() {
  ********************************************************************** */
  
 function tg_submit_form_2_assign() {
-    global $cage, $tags_check, $post;
+    global $cage, $hotaru, $tags_check, $post;
     
     if ($cage->post->getAlpha('submit2') == 'true') {
         // Submitted this form...
@@ -247,6 +247,10 @@ function tg_submit_form_2_assign() {
         
     } elseif ($cage->post->getAlpha('submit3') == 'edit') {
         // Come back from step 3 to make changes...
+        $tags_check = $post->post_vars['post_tags'];
+        
+    } elseif ($hotaru->is_page('edit_post')) {
+        // Editing a previously submitted post
         $tags_check = $post->post_vars['post_tags'];
         
     } else {

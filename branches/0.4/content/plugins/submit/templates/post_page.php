@@ -24,10 +24,10 @@
  *
  **************************************************************************************************** */
 
-global $hotaru, $plugin, $post, $userbase, $lang;
+global $hotaru, $plugin, $post, $current_user, $lang;
 
-$userbase = new UserBase();
-$post->template_name = "post_page";
+$user = new UserBase();
+$user->get_user_basic($post->post_author);
 ?>
 
 <!-- BREADCRUMBS -->
@@ -53,10 +53,15 @@ $post->template_name = "post_page";
                 <div class="show_post_author_date">    
                     Posted
                     <?php if ($post->use_author) { 
-                        echo " by <a href='" . url(array('user' => $userbase->get_username($post->post_author))) . "'>" . $userbase->get_username($post->post_author) . "</a>"; } 
+                        echo " by <a href='" . url(array('user' => $user->username)) . "'>" . $user->username . "</a>"; } 
                     ?>
                     <?php if ($post->use_date) { echo time_difference(unixtimestamp($post->post_date)) . " ago"; } ?>
                     <?php $plugin->check_actions('submit_show_post_author_date'); ?>
+                    <?php 
+                        if ($current_user->role == 'admin' || ($current_user->id == $user->id)) { 
+                            echo "<a class='show_post_edit' href='" . url(array('page'=>'edit_post', 'post_id'=>$post->post_id)) . "'>" . $lang["submit_post_edit"] . "</a>"; 
+                        }
+                    ?> 
                 </div>
             <?php } ?>
                 
