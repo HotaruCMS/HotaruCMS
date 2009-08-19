@@ -47,6 +47,8 @@ $user->get_user_basic($post->post_author);
     
         <div class="show_post vote_button_space_<?php echo $post->post_vars['vote_type'] ?>">
         
+            <?php $plugin->check_actions('submit_show_post_pre_title'); ?>
+        
             <div class="show_post_title"><a href='<?php echo $post->post_orig_url; ?>'><?php echo $post->post_title; ?></a></div>
         
             <?php if ($post->use_author || $post->use_date) { ?>
