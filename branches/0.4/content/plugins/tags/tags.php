@@ -251,7 +251,11 @@ function tg_submit_form_2_assign() {
         
     } elseif ($hotaru->is_page('edit_post')) {
         // Editing a previously submitted post
-        $tags_check = $post->post_vars['post_tags'];
+        if ($cage->post->getAlpha('edit_post') == 'true') {
+            $tags_check = $cage->post->noTags('post_tags');
+        } else {
+            $tags_check = $post->post_vars['post_tags'];
+        }
         
     } else {
         // First time here...

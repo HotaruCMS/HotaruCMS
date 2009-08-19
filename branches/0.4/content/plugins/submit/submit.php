@@ -573,6 +573,19 @@ function sub_check_for_errors_2()
     
     if ($cage->post->keyExists('edit_post')) { $edit = true; } else {$edit = false; }
 
+    // ******** CHECK URL ********
+    $error_url = 0;
+    // Only for Admin user
+    if ($edit) {
+        $orig_url_check = $cage->post->testUri('post_orig_url');    
+        
+        if (!$orig_url_check) {
+            // No url present...
+            $hotaru->messages[$lang['submit_form_url_not_complete_error']] = "red";
+            $error_url = 1;
+        }
+    }
+    
     // ******** CHECK TITLE ********
     
     $title_check = $cage->post->noTags('post_title');    
@@ -622,7 +635,7 @@ function sub_check_for_errors_2()
     }
     
     // Return true if error is found
-    if ($error_title == 1 || $error_content == 1 || $error_check_actions == 1) { return true; } else { return false; }
+    if ($error_url == 1 || $error_title == 1 || $error_content == 1 || $error_check_actions == 1) { return true; } else { return false; }
 }
 
 
@@ -659,9 +672,12 @@ function sub_process_submission($post_orig_url) {
         // Editing an existing post.
         $post->post_id = $cage->post->getInt('post_id');
         $post->read_post($post->post_id);
+        $post->post_orig_url = $cage->post->testUri('post_orig_url');
         $post->post_title = $cage->post->noTags('post_title');
         $post->post_url = $cage->post->getFriendlyUrl('post_title');
         $post->post_content = $cage->post->noTags('post_content');
+        $post->post_status = $cage->post->testAlnumLines('post_status');
+        $plugin->check_actions('submit_form_2_process_submission');
         $post->update_post();
     }
 }

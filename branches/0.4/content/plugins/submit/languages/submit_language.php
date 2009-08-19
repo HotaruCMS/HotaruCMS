@@ -48,10 +48,13 @@ $lang['submit_form_submit_next_button'] = "Next";
 $lang['submit_form_submit_accidental_click'] = "Wait, you have not submitted your story yet!";
 
 /* Edit Post */
+$lang["submit_edit_post_admin_only"] = "Admin Only...";
 $lang["submit_edit_post_title"] = "Edit Post";
 $lang["submit_edit_post_instructions"] = "Edit the fields below.";
 $lang["submit_edit_post_title_not_present_error"] = "No title was provided.";
 $lang["submit_edit_post_content_not_present_error"] = "No description entered.";
+$lang["submit_edit_post_status"] = "Post status:";
+$lang['submit_form_url_not_complete_error'] = "Source URL error...";
 $lang["submit_edit_post_save"] = "Save";
 
 /* Submission Disabled */

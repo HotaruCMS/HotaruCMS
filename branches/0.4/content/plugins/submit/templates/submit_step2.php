@@ -31,7 +31,6 @@ if ($cage->post->getAlpha('submit2') == 'true') {
     $content_check = $cage->post->noTags('post_content');    
     $post_id = $cage->post->getInt('post_id');    
     $post->post_id = $post_id;
-    $plugin->check_actions('submit_form_2_assign_from_cage');
     
 } elseif ($cage->post->getAlpha('submit3') == 'edit') {
     // Come back from step 3 to make changes...
