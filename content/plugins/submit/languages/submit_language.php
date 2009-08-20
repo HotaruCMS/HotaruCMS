@@ -82,6 +82,8 @@ $lang["submit_settings_summary_instruct"] = "(Description truncated on list page
 $lang["submit_settings_tags"] = "Tags";
 $lang["submit_settings_max_tags"] = "Maximum characters";
 $lang["submit_settings_posts_per_page"] = "posts per page <small>(default: 10)</small>";
+$lang["submit_settings_allowable_tags"] = "Allowed HTML tags in post description:";
+$lang["submit_settings_allowable_tags_example"] = "<small>(E.g. &lt;b&gt;&lt;u&gt;&lt;i&gt;&lt;blockquote&gt;)</small>";
 $lang["submit_settings_saved"] = "Settings Saved.";
 
 /* Submit Post Breadcrumbs */

@@ -107,7 +107,7 @@ class getFriendlyUrl extends AccessorAbstract {
     */
     protected function inspekt($val)
     {
-        return make_url_friendly($value);
+        return make_url_friendly($val);
    }
 }
 
@@ -121,7 +121,7 @@ class getMixedString1 extends AccessorAbstract {
     */
     protected function inspekt($val)
     {
-        return sanitize($value, 1);
+        return sanitize($val, 1);
    }
 }
 
@@ -135,7 +135,7 @@ class getMixedString2 extends AccessorAbstract {
     */
     protected function inspekt($val)
     {
-        return sanitize($value, 2);
+        return sanitize($val, 2);
    }
 }
 
