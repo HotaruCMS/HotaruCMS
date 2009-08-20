@@ -24,7 +24,7 @@
 
 html, body { 
 	min-height: 100%; height: 100%;
-	background-color: #f0f0f0;
+	background-color: #3F749B;
 	font-size: 0.9em;
 }
 
@@ -65,7 +65,7 @@ small {
 	margin: 1.0em 0 1.0em 0;
 	padding: 0.6em;
 	background-color: #ffffff;
-	border: 0.1em solid #888;
+	/*border: 0.1em solid #888;*/
 }
 
 #navigation {
@@ -102,7 +102,7 @@ li a#navigation_active { text-decoration: underline; }
 
 .yui-gf {
 	/* container for both the wide and narrow colums. */
-	background-color: #f0f0f0;
+	background-color: #3F749B;
 }
 
 .yui-u, .first {
@@ -111,11 +111,11 @@ li a#navigation_active { text-decoration: underline; }
 	background-color: #FCFCFC;
 	-moz-border-radius: 0.5em;
 	-webkit-border-radius: 0.5em;
-	border: 0.1em solid #888;
+	/*border: 0.1em solid #888;*/
 }
 
 #main, #sidebar {
-	padding: 0.6em;
+	padding: 1.2em;
 }
 
 .main_inner {
@@ -131,7 +131,7 @@ li a#navigation_active { text-decoration: underline; }
 	background-color: #ffffff;
 	-moz-border-radius: 0.5em;
 	-webkit-border-radius: 0.5em;
-	border: 0.1em solid #888;
+	/*border: 0.1em solid #888;*/
 	padding: 1.0em 0 1.0em 0;
 	text-align: center;
 	font-size: 1.0em;

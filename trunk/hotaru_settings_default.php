@@ -44,6 +44,7 @@ define('baseurl', "http://www.mysite.com/");    // e.g. http://www.mysite.com/
 // define shorthand paths
 define("admin", dirname(__FILE__).'/admin/');
 define("install", dirname(__FILE__).'/install/');
+define("classes", dirname(__FILE__).'/classes/');
 define("includes", dirname(__FILE__).'/3rd_party/');
 define("functions", dirname(__FILE__).'/functions/');
 define("themes", dirname(__FILE__).'/content/themes/');

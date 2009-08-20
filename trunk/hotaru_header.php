@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along 
  * with Hotaru CMS. If not, see http://www.gnu.org/licenses/.
  * 
- * @category  Content Management Systemii
+ * @category  Content Management System
  * @package   HotaruCMS
  * @author    Nick Ramsay <admin@hotarucms.org>
  * @copyright Copyright (c) 2009, Hotaru CMS
@@ -57,9 +57,10 @@ require_once(functions . 'funcs.times.php');
 require_once(functions . 'funcs.files.php');
 
 // include classes
-require_once('class.hotaru.php');       // for environment
-require_once('class.userbase.php');     // for users
-require_once('class.plugins.php');      // for plugins
+require_once(classes . 'class.hotaru.php');       // for environment
+require_once(classes . 'class.userbase.php');     // for users
+require_once(classes . 'class.plugins.php');      // for plugins
+require_once(classes . 'class.inspekt.php');      // for custom Inspekt methods
 
 // Initialize database
 if (!isset($db)) { 
@@ -87,7 +88,18 @@ if (debug == "true") {
 }
 
 // Global Inspekt SuperCage
-if (!isset($cage)) { $cage = Inspekt::makeSuperCage(); }
+if (!isset($cage)) { 
+    $cage = Inspekt::makeSuperCage(); 
+
+    // Add Hotaru custom methods
+    $cage->addAccessor('testAlnumLines');
+    $cage->addAccessor('testPage');
+    $cage->addAccessor('testUsername');
+    $cage->addAccessor('testPassword');
+    $cage->addAccessor('getFriendlyUrl');
+    $cage->addAccessor('getMixedString1');
+    $cage->addAccessor('getMixedString2');
+}
 
 // Create objects
 if (!isset($plugin)) { 

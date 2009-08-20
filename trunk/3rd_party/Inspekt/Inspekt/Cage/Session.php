@@ -6,15 +6,18 @@
  * @author Ed Finkler <coj@funkatron.com>
  *
  * @package Inspekt
+ * 
+ * @deprecated
  */
 
+require_once dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'Cage.php';
 
 /**
  * @package Inspekt
  */
 class Inspekt_Cage_Session extends Inspekt_Cage {
 	
-	public function Factory(&$source, $conf_file = NULL, $conf_section = NULL, $strict = TRUE) {
+	static public function Factory(&$source, $conf_file = NULL, $conf_section = NULL, $strict = TRUE) {
 
 		if (!is_array($source)) {
 			user_error('$source '.$source.' is not an array', E_USER_NOTICE);

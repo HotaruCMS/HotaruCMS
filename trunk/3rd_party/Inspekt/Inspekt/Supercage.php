@@ -74,7 +74,7 @@ Class Inspekt_Supercage {
 	 *
 	 * @return Inspekt_Supercage
 	 */
-	function Inspekt_Supercage() {
+	public function Inspekt_Supercage() {
 		// placeholder
 	}
 
@@ -85,7 +85,7 @@ Class Inspekt_Supercage {
 	 * @param boolean $strict
 	 * @return Inspekt_Supercage
 	 */
-	function Factory($config_file = NULL, $strict = TRUE) {
+	static public function Factory($config_file = NULL, $strict = TRUE) {
 
 		$sc	= new Inspekt_Supercage();
 		$sc->_makeCages($config_file, $strict);
@@ -106,7 +106,7 @@ Class Inspekt_Supercage {
 	 * @param string  $config_file
 	 * @param boolean $strict
 	 */
-	function _makeCages($config_file=NULL, $strict=TRUE) {
+	protected function _makeCages($config_file=NULL, $strict=TRUE) {
 		$this->get		= Inspekt::makeGetCage($config_file, $strict);
 		$this->post		= Inspekt::makePostCage($config_file, $strict);
 		$this->cookie	= Inspekt::makeCookieCage($config_file, $strict);
@@ -114,6 +114,17 @@ Class Inspekt_Supercage {
 		$this->files	= Inspekt::makeFilesCage($config_file, $strict);
 		// $this->session	= Inspekt::makeSessionCage($config_file, $strict);
 		$this->server	= Inspekt::makeServerCage($config_file, $strict);
+	}
+	
+	
+	public function addAccessor($name) {
+		$this->get->addAccessor($name);
+		$this->post->addAccessor($name);
+		$this->cookie->addAccessor($name);
+		$this->env->addAccessor($name);
+		$this->files->addAccessor($name);
+		// $this->session->addAccessor($name);
+		$this->server->addAccessor($name);
 	}
 
 }

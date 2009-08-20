@@ -29,25 +29,25 @@ if(!$password_check = $cage->post->testPassword('password')) { $password_check =
 if($cage->post->getInt('remember') == 1){ $remember_check = "checked"; } else { $remember_check = ""; }
  
 ?>
-	
-	<div id='main'>
-		<p class='breadcrumbs'><a href='<?php echo baseurl ?>'><?php echo $lang["users_home"] ?></a> &raquo; <?php echo $lang["users_login"] ?></p>
-		
-		<h2>Login</h2>
-		
-		<?php echo $hotaru->show_messages(); ?>
-		
-		<div class='main_inner'>
-		<?php echo $lang["users_login_instructions"] ?>
-		
-			<form name='login_form' action='<?php echo baseurl ?>index.php?page=login' method='post'>
-			<table>
-				<tr><td>Username:&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check ?>' /></td></tr>
-				<tr><td>Password:&nbsp; </td><td><input type='password' size=30 name='password' value='<?php echo $password_check ?>' /></td></tr>
-				<tr><td>Remember: </td><td><input type='checkbox' name='remember' value='1' <?php echo $remember_check ?> /></td></tr>
-				<tr><td>&nbsp; </td><td style='text-align:right;'><input type='submit' value='<?php echo $lang['users_login_form_submit'] ?>' /></td></tr>
-							
-			</table>
-			</form>
-		</div>
-	</div>	
+    
+    <div id='main'>
+        <div id='breadcrumbs'><a href='<?php echo baseurl ?>'><?php echo $lang["users_home"] ?></a> &raquo; <?php echo $lang["users_login"] ?></div>
+        
+        <h2>Login</h2>
+        
+        <?php echo $hotaru->show_messages(); ?>
+        
+        <div class='main_inner'>
+        <?php echo $lang["users_login_instructions"] ?>
+        
+            <form name='login_form' action='<?php echo baseurl ?>index.php?page=login' method='post'>
+            <table>
+                <tr><td>Username:&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check ?>' /></td></tr>
+                <tr><td>Password:&nbsp; </td><td><input type='password' size=30 name='password' value='<?php echo $password_check ?>' /></td></tr>
+                <tr><td>Remember: </td><td><input type='checkbox' name='remember' value='1' <?php echo $remember_check ?> /></td></tr>
+                <tr><td>&nbsp; </td><td style='text-align:right;'><input type='submit' value='<?php echo $lang['users_login_form_submit'] ?>' /></td></tr>
+                            
+            </table>
+            </form>
+        </div>
+    </div>    
