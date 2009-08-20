@@ -34,8 +34,8 @@ setcookie("hotaru_key", "", time()-3600, "/");
 // --------------------------------------------------
 
 require_once('../hotaru_settings.php');
-require_once('../class.hotaru.php');    // Needed for error and success messages
-require_once('../class.userbase.php');  // Needed for login/registration
+require_once(classes . 'class.hotaru.php');    // Needed for error and success messages
+require_once(classes . 'class.userbase.php');  // Needed for login/registration
 
 // Clear the database cache in case of a re-install.
 require_once('../admin/class.admin.php'); 
