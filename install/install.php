@@ -36,6 +36,8 @@ setcookie("hotaru_key", "", time()-3600, "/");
 require_once('../hotaru_settings.php');
 require_once(classes . 'class.hotaru.php');    // Needed for error and success messages
 require_once(classes . 'class.userbase.php');  // Needed for login/registration
+require_once(classes . 'class.inspekt.php');      // for custom Inspekt methods
+$hotaru = new Hotaru();
 
 // Clear the database cache in case of a re-install.
 require_once('../admin/class.admin.php'); 
@@ -44,7 +46,7 @@ $admin->delete_files(includes . 'ezSQL/cache');
 
 // Global Inspekt SuperCage
 require_once(includes . 'Inspekt/Inspekt.php');
-if (!isset($cage)) { $cage = Inspekt::makeSuperCage(); }
+$hotaru->initialize_inspekt();
 
 require_once(install . 'install_language.php');    // language file for install
 
@@ -233,9 +235,8 @@ function database_creation()
  */
 function register_admin()
 {
-    global $lang, $cage, $db, $userbase;
-
-    $hotaru = new Hotaru();
+    global $lang, $cage, $db, $userbase, $hotaru;
+    
     $userbase = new Userbase();
     
     echo html_header();
