@@ -87,19 +87,8 @@ if (debug == "true") {
     timer_start();
 }
 
-// Global Inspekt SuperCage
-if (!isset($cage)) { 
-    $cage = Inspekt::makeSuperCage(); 
-
-    // Add Hotaru custom methods
-    $cage->addAccessor('testAlnumLines');
-    $cage->addAccessor('testPage');
-    $cage->addAccessor('testUsername');
-    $cage->addAccessor('testPassword');
-    $cage->addAccessor('getFriendlyUrl');
-    $cage->addAccessor('getMixedString1');
-    $cage->addAccessor('getMixedString2');
-}
+// Initialize Inspekt
+$hotaru->initialize_inspekt();
 
 // Create objects
 if (!isset($plugin)) { 

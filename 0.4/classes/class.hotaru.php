@@ -35,6 +35,30 @@ class Hotaru
     
     
     /**
+     * Initialize Inspekt
+     *
+     * @return object
+     */
+    function initialize_inspekt()
+    {
+        global $cage;
+        // Global Inspekt SuperCage
+        if (!isset($cage)) { 
+            $cage = Inspekt::makeSuperCage(); 
+        
+            // Add Hotaru custom methods
+            $cage->addAccessor('testAlnumLines');
+            $cage->addAccessor('testPage');
+            $cage->addAccessor('testUsername');
+            $cage->addAccessor('testPassword');
+            $cage->addAccessor('getFriendlyUrl');
+            $cage->addAccessor('getMixedString1');
+            $cage->addAccessor('getMixedString2');
+        }
+    }
+    
+    
+    /**
      * Returns all setting-value pairs
      */
     function read_settings()
