@@ -50,6 +50,7 @@ function sub_settings()
     $summary = $plugin->plugin_settings('submit', 'submit_summary');
     $summary_length = $plugin->plugin_settings('submit', 'submit_summary_length');
     $posts_per_page = $plugin->plugin_settings('submit', 'submit_posts_per_page');
+    $allowable_tags = $plugin->plugin_settings('submit', 'submit_allowable_tags');
 
     $plugin->check_actions('submit_settings_get_values');
     
@@ -82,7 +83,10 @@ function sub_settings()
     $plugin->check_actions('submit_settings_form');
     
     echo "<br /><input type='text' size=5 name='posts_per_page' value='" . $posts_per_page . "' /> ";
-    echo $lang["submit_settings_posts_per_page"] . "<br />\n";
+    echo $lang["submit_settings_posts_per_page"] . "<br /><br />\n";
+    
+    echo $lang["submit_settings_allowable_tags"] . " <input type='text' size=40 name='allowable_tags' value='" . $allowable_tags . "' /><br />";
+    echo $lang["submit_settings_allowable_tags_example"] . "\n";
 
     echo "<br /><br />\n";    
     echo "<input type='hidden' name='submitted' value='true' />\n";
@@ -171,6 +175,14 @@ function sub_save_settings()
         $posts_per_page = $post->$posts_per_page; 
     } 
     
+    // Allowable tags
+    if($cage->post->keyExists('allowable_tags')) { 
+        $allowable_tags = $cage->post->getRaw('allowable_tags'); 
+        if(empty($allowable_tags)) { $allowable_tags = $post->$allowable_tags; }
+    } else { 
+        $allowable_tags = $post->$allowable_tags; 
+    }
+    
     $plugin->check_actions('submit_save_settings');
     
     $plugin->plugin_settings_update('submit', 'submit_enabled', $enabled);
@@ -181,6 +193,7 @@ function sub_save_settings()
     $plugin->plugin_settings_update('submit', 'submit_summary', $summary);    
     $plugin->plugin_settings_update('submit', 'submit_summary_length', $summary_length);
     $plugin->plugin_settings_update('submit', 'submit_posts_per_page', $posts_per_page);
+    $plugin->plugin_settings_update('submit', 'submit_allowable_tags', $allowable_tags);
     
     $hotaru->message = $lang["submit_settings_saved"];
     $hotaru->message_type = "green";

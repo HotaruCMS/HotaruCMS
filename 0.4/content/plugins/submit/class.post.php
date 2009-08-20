@@ -40,6 +40,8 @@ class Post {
     var $post_date = '';
     var $posts_per_page = '10';
     
+    var $allowable_tags = '<b><i><u><a><blockquote><strike>';
+    
     var $template_name = '';
             
     var $use_submission = true;
@@ -113,6 +115,10 @@ class Post {
         //posts_per_page
         $posts_per_page =  $plugin->plugin_settings('submit', 'submit_posts_per_page');
         if(!empty($posts_per_page)) { $this->posts_per_page = $posts_per_page; }
+        
+        //allowable_tags
+        $allowable_tags =  $plugin->plugin_settings('submit', 'submit_allowable_tags');
+        if(!empty($allowable_tags)) { $this->allowable_tags = $allowable_tags; }
                 
         $plugin->check_actions('submit_class_post_read_post_1');
         
