@@ -47,6 +47,16 @@ $lang['submit_form_submit_confirm_button'] = "Confirm";
 $lang['submit_form_submit_next_button'] = "Next";
 $lang['submit_form_submit_accidental_click'] = "Wait, you have not submitted your story yet!";
 
+/* Edit Post */
+$lang["submit_edit_post_admin_only"] = "Admin Only...";
+$lang["submit_edit_post_title"] = "Edit Post";
+$lang["submit_edit_post_instructions"] = "Edit the fields below.";
+$lang["submit_edit_post_title_not_present_error"] = "No title was provided.";
+$lang["submit_edit_post_content_not_present_error"] = "No description entered.";
+$lang["submit_edit_post_status"] = "Post status:";
+$lang['submit_form_url_not_complete_error'] = "Source URL error...";
+$lang["submit_edit_post_save"] = "Save";
+
 /* Submission Disabled */
 $lang['submit_disabled'] = "Sorry, story submission is disabled at this time.";
 
@@ -71,12 +81,23 @@ $lang["submit_settings_summary_max_length"] = "Maximum characters";
 $lang["submit_settings_summary_instruct"] = "(Description truncated on list pages)";
 $lang["submit_settings_tags"] = "Tags";
 $lang["submit_settings_max_tags"] = "Maximum characters";
+$lang["submit_settings_posts_per_page"] = "posts per page <small>(default: 10)</small>";
+$lang["submit_settings_allowable_tags"] = "Allowed HTML tags in post description:";
+$lang["submit_settings_allowable_tags_example"] = "<small>(E.g. &lt;b&gt;&lt;u&gt;&lt;i&gt;&lt;blockquote&gt;)</small>";
 $lang["submit_settings_saved"] = "Settings Saved.";
+
+/* Submit Post Breadcrumbs */
+$lang["submit_page_breadcrumbs_top"] = "Top Posts";
+$lang["submit_page_breadcrumbs_latest"] = "Latest Posts";
+$lang["submit_page_breadcrumbs_tag"] = "Tag";
+$lang["submit_page_breadcrumbs_category"] = "Category";
+$lang["submit_page_breadcrumbs_user"] = "User";
 
 /* Submit Show Post */
 $lang["submit_page_title_main"] = "top";
 $lang["submit_page_title_latest"] = "latest";
 $lang["submit_page_title_all"] = "all";
+$lang["submit_post_edit"] = "EDIT";
 $lang["submit_post_read_more"] = "[Read More]";
 $lang["submit_post_filtered_to"] = "Filtered to";
 $lang["submit_post_filter_user"] = "stories submitted by";

@@ -24,65 +24,74 @@
  *
  **************************************************************************************************** */
 
-global $hotaru, $plugin, $post, $userbase, $lang;
+global $hotaru, $plugin, $post, $current_user, $lang;
 
-$userbase = new UserBase();
-$post->template_name = "post_page";
-
+$user = new UserBase();
+$user->get_user_basic($post->post_author);
 ?>
 
-<?php if($post->post_status != 'buried') { ?>
+<!-- BREADCRUMBS -->
+<div id="breadcrumbs">
+    <a href="<?php echo baseurl; ?>"><?php echo $lang['submit_form_home']; ?></a> &raquo; 
+    <?php $plugin->check_actions('breadcrumbs'); ?> 
+    <?php echo $hotaru->title ?>
+</div>
 
-	<!-- ************ POST **************** -->
-	
-	<?php $result = $plugin->check_actions('submit_pre_show_post'); 
-		if(!isset($result) || !is_array($result)) {
-		// if buried during that plugin call, the post won't show...
-	?>
-	
-		<div class="show_post vote_button_space_<?php echo $post->post_vars['vote_type'] ?>">
-		
-			<div class="show_post_title"><a href='<?php echo $post->post_orig_url; ?>'><?php echo $post->post_title; ?></a></div>
-		
-			<?php if($post->use_author || $post->use_date) { ?>
-				<div class="show_post_author_date">	
-					Posted
-					<?php if($post->use_author) { 
-						echo " by <a href='" . url(array('user' => $userbase->get_username($post->post_author))) . "'>" . $userbase->get_username($post->post_author) . "</a>"; } 
-					?>
-					<?php if($post->use_date) { echo time_difference(unixtimestamp($post->post_date)) . " ago"; } ?>
-					<?php $plugin->check_actions('submit_show_post_author_date'); ?>
-				</div>
-			<?php } ?>
-				
-			<?php if($post->use_content) { ?>
-				<div class="show_post_content"><?php echo $post->post_content; ?></div>
-			<?php } ?>
-			
-			<div class="show_post_extra_fields">
-				<?php $plugin->check_actions('submit_show_post_extra_fields'); ?>
-			</div>
-				
-			<div class="show_post_extras">
-				<?php $plugin->check_actions('submit_show_post_extras'); ?>
-			</div>
-			
-		</div>
-		
-		<?php $plugin->check_actions('submit_post_show_post'); ?>
-		
-	<?php } ?>
-	
-	<!-- ************ END POST **************** -->
+<!-- POST -->
+<?php if ($post->post_status != 'buried') { ?>
 
+    <?php $result = $plugin->check_actions('submit_pre_show_post'); 
+        if (!isset($result) || !is_array($result)) {
+        // if buried during that plugin call, the post won't show...
+    ?>
+    
+        <div class="show_post vote_button_space_<?php echo $post->post_vars['vote_type'] ?>">
+        
+            <?php $plugin->check_actions('submit_show_post_pre_title'); ?>
+        
+            <div class="show_post_title"><a href='<?php echo $post->post_orig_url; ?>'><?php echo $post->post_title; ?></a></div>
+        
+            <?php if ($post->use_author || $post->use_date) { ?>
+                <div class="show_post_author_date">    
+                    Posted
+                    <?php if ($post->use_author) { 
+                        echo " by <a href='" . url(array('user' => $user->username)) . "'>" . $user->username . "</a>"; } 
+                    ?>
+                    <?php if ($post->use_date) { echo time_difference(unixtimestamp($post->post_date)) . " ago"; } ?>
+                    <?php $plugin->check_actions('submit_show_post_author_date'); ?>
+                    <?php 
+                        if ($current_user->role == 'admin' || ($current_user->id == $user->id)) { 
+                            echo "<a class='show_post_edit' href='" . url(array('page'=>'edit_post', 'post_id'=>$post->post_id)) . "'>" . $lang["submit_post_edit"] . "</a>"; 
+                        }
+                    ?> 
+                </div>
+            <?php } ?>
+                
+            <?php if ($post->use_content) { ?>
+                <div class="show_post_content"><?php echo $post->post_content; ?></div>
+            <?php } ?>
+            
+            <div class="show_post_extra_fields">
+                <?php $plugin->check_actions('submit_show_post_extra_fields'); ?>
+            </div>
+                
+            <div class="show_post_extras">
+                <?php $plugin->check_actions('submit_show_post_extras'); ?>
+            </div>
+            
+        </div>
+        
+        <?php $plugin->check_actions('submit_post_show_post'); ?>
+        
+    <?php } ?>
+    
 <?php 
 } else {
-	// Show "Post buried" message...
-	$hotaru->message = $lang["vote_alert_post_buried"];
-	$hotaru->message_type = "red";
-	$hotaru->show_message();
+    // Show "Post buried" message...
+    $hotaru->message = $lang["vote_alert_post_buried"];
+    $hotaru->message_type = "red";
+    $hotaru->show_message();
 }
-?> 
-	
- 
- 
+?>
+
+<!-- END POST --> 
