@@ -57,10 +57,10 @@ require_once(functions . 'funcs.times.php');
 require_once(functions . 'funcs.files.php');
 
 // include classes
-require_once('class.hotaru.php');       // for environment
-require_once('class.userbase.php');     // for users
-require_once('class.plugins.php');      // for plugins
-require_once('class.inspekt.php');      // for custom Inspekt methods
+require_once(classes . 'class.hotaru.php');       // for environment
+require_once(classes . 'class.userbase.php');     // for users
+require_once(classes . 'class.plugins.php');      // for plugins
+require_once(classes . 'class.inspekt.php');      // for custom Inspekt methods
 
 // Initialize database
 if (!isset($db)) { 
