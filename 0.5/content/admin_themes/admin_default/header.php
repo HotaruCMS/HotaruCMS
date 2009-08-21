@@ -51,13 +51,13 @@ global $hotaru, $admin, $plugin, $lang; // don't remove
    		$hotaru->title = 'admin';	// highlights "Admin" in the navigation bar, for all pages in Admin
    	?>
    </title>
-   <link rel="stylesheet" href="<?php echo baseurl . '3rd_party/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
-   <link rel="stylesheet" href="<?php echo baseurl . 'content/admin_themes/' . admin_theme . 'css/style.css'; ?>" type="text/css">
    <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery-ui.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_ajax.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_jquery.js'; ?>"></script>
    <?php if($hotaru->is_page('plugin_settings')) { $plugin->check_actions('admin_header_include', $plugin->folder); } ?>
+   <link rel="stylesheet" href="<?php echo baseurl . '3rd_party/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
+   <link rel="stylesheet" href="<?php echo baseurl . 'content/admin_themes/' . admin_theme . 'css/style.css'; ?>" type="text/css">
    <link rel="shortcut icon" href="<?php echo baseurl; ?>favicon.ico">
 </head>
 <body>

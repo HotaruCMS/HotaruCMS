@@ -52,13 +52,13 @@ global $hotaru, $plugin, $lang; // don't remove
    	?>
    </title>
    
-   <link rel="stylesheet" href="<?php echo baseurl . '3rd_party/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
-   <link rel="stylesheet" href="<?php echo baseurl . 'content/themes/' . theme . 'css/style.css'; ?>" type="text/css">
    <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery-ui.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_ajax.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_jquery.js'; ?>"></script>
    <?php $plugin->check_actions('header_include'); ?>
+   <link rel="stylesheet" href="<?php echo baseurl . '3rd_party/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
+   <link rel="stylesheet" href="<?php echo baseurl . 'content/themes/' . theme . 'css/style.css'; ?>" type="text/css">
    <link rel="shortcut icon" href="<?php echo baseurl; ?>favicon.ico">
 </head>
 <body>
