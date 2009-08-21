@@ -34,15 +34,15 @@ require_once('admin_plugins.php');
 $admin = New Admin();
 
 // Include admin language file
-if (file_exists(languages . language_pack . 'admin/admin_language.php')) 
+if (file_exists(languages . language_pack . 'admin_language.php')) 
 {
     // language file for admin 
-    require_once(languages . language_pack . 'admin/admin_language.php');
+    require_once(languages . language_pack . 'admin_language.php');
 } 
 else 
 {
     // try the default language pack
-    require_once(languages . 'language_default/admin/admin_language.php');
+    require_once(languages . 'language_default/admin_language.php');
 }
 
 $page = $cage->get->testPage('page');    // check with "get";
