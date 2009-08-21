@@ -168,10 +168,22 @@ class Hotaru
     {
         $page = $page . '.php';
                 
-        /* First check if there's a specified plugin for the file and load 
-           the template from the plugin folder if it's there. */
-        if ($plugin != '') {
-            if (file_exists(plugins .  $plugin . '/templates/' . $page)) {
+        /* 
+            1. Check the custom theme
+            2. Check the default theme
+            3. Check the plugin folder
+            4. Show the 404 Not Found page
+        */
+        if (file_exists(themes . theme . $page))
+        {
+            include_once(themes . theme . $page);
+        } 
+        elseif (file_exists(themes . 'default/' . $page))
+        {
+            include_once(themes . 'default/' . $page);
+        }
+        elseif ($plugin != '' && file_exists(plugins .  $plugin . '/templates/' . $page))
+        {
                 if ($plugin == 'vote') {
                     // Special case, do not restrict to include once.
                     include(plugins . $plugin . '/templates/' . $page);
@@ -180,15 +192,9 @@ class Hotaru
                 }
                 return true;
                 die();
-            }
         }
-        
-        // Check the custom theme then the default theme...        
-        if (file_exists(themes . theme . $page)) {
-            include_once(themes . theme . $page);
-        } elseif (file_exists(themes . 'default/' . $page)) {
-            include_once(themes . 'default/' . $page);
-        } else {
+        else 
+        {
             include_once(themes . '404.php');
         }
     }

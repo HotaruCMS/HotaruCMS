@@ -29,15 +29,15 @@
 require_once('hotaru_header.php');
 
 // Include "main" language file
-if (file_exists(languages . language_pack . 'main/main_language.php'))
+if (file_exists(languages . language_pack . 'main_language.php'))
 {
     // language file from the chosen language pack
-    include_once(languages . language_pack . 'main/main_language.php');
+    include_once(languages . language_pack . 'main_language.php');
 }
 else 
 {
    // try the default language pack
-    require_once(languages . 'language_default/main/main_language.php'); 
+    require_once(languages . 'language_default/main_language.php'); 
 }
 
 $hotaru->display_template('index');
