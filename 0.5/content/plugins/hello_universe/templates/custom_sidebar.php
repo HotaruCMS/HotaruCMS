@@ -29,7 +29,7 @@ global $hotaru, $plugin; // don't remove
 
 <h2>A New Sidebar</h2>
 
-<p>This is the sidebar.php file in the Hello Universe plugin folder.</p>
+<p>This is the custom_sidebar.php file in the Hello Universe plugin folder.</p>
 
-<p>We managed to override the regular sidebar by creating a new sidebar.php in the plugin folder, and writing Function #3 in hello_universe.php.</p>
+<p>We managed to override the regular sidebar by creating a new sidebar in the plugin folder, and writing Function #3 in hello_universe.php.</p>
 

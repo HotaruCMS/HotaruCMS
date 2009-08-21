@@ -2,7 +2,7 @@
 /* ********** PLUGIN *********************************************************************************
  * name: Hello Universe
  * description: Demonstrates how to make plugins
- * version: 0.1
+ * version: 0.2
  * folder: hello_universe
  * prefix: hu
  * hooks: theme_index_main, theme_index_sidebar, hotaru_header
@@ -102,7 +102,7 @@ function hu_main_page() {
 function hu_theme_index_sidebar() {
 	global $hotaru;
 
-	$hotaru->display_template('sidebar', 'hello_universe'); // Overrides the current sidebar with a new one.
+	$hotaru->display_template('custom_sidebar', 'hello_universe'); // Overrides the current sidebar with a new one.
 	return true;
 }
 
