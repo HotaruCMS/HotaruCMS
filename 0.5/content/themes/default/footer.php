@@ -26,20 +26,23 @@
 
 global $hotaru, $plugin, $lang; 
 ?>
-	<div id="ft">
-		<?php 
-			$plugin->check_actions('footer_top');
-			$plugin->check_actions('footer');
-		
-			// Link to forums...
-			echo "<p>" . $lang["main_theme_footer_brought_by"];
-			echo " <a href='http://hotarucms.org'>Hotaru CMS</a> ";
-			echo $lang["main_theme_footer_open_source"] . "</p>";
-		
-			$hotaru->show_queries_and_time();
-			$plugin->check_actions('footer_bottom'); 
-		?>
-	</div> <!-- close "ft" -->
+    <div id="ft">
+        <?php 
+            $plugin->check_actions('footer_top');
+            $plugin->check_actions('footer');
+        
+            // Link to forums...
+            echo "<p>" . $lang["main_theme_footer_brought_by"];
+            echo " <a href='http://hotarucms.org'>Hotaru CMS</a> ";
+            echo $lang["main_theme_footer_open_source"] . "</p>";
+        
+            $hotaru->show_queries_and_time();
+            $plugin->check_actions('footer_bottom'); 
+        ?>
+    </div> <!-- close "ft" -->
 </div> <!-- close "yui-t7 first" -->
+
+<?php $plugin->check_actions('pre_close_body'); ?>
+
 </body>
 </html>
