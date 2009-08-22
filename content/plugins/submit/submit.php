@@ -391,7 +391,7 @@ function sub_theme_index_main() {
         if ($result && is_array($result)) { return true; }
     
         // Show the list of posts
-        $hotaru->display_template('posts_list', 'submit');
+        $hotaru->display_template('list', 'submit');
         return true;
         
     } elseif ($hotaru->is_page('latest')) {
@@ -401,7 +401,7 @@ function sub_theme_index_main() {
         if ($result && is_array($result)) { return true; }
     
         // Show the list of posts
-        $hotaru->display_template('posts_list', 'submit');
+        $hotaru->display_template('list', 'submit');
         return true;
         
     } elseif ($hotaru->is_page('all')) {
@@ -411,13 +411,13 @@ function sub_theme_index_main() {
         if ($result && is_array($result)) { return true; }
     
         // Show the list of posts
-        $hotaru->display_template('posts_list', 'submit');
+        $hotaru->display_template('list', 'submit');
         return true;
         
     } elseif ($hotaru->page_type == 'post') {
         // We found out this is a post from the hotaru_header function above.
         
-        $hotaru->display_template('post_page', 'submit');
+        $hotaru->display_template('post', 'submit');
         return true;
         
     } else {        
@@ -432,12 +432,12 @@ function sub_theme_index_main() {
  *
  * @return array
  */ 
-function sub_prepare_posts_list()
+function sub_prepare_list()
 {
     global $hotaru, $plugin, $post, $cage, $filter, $lang, $page_title;
 
     $userbase = new UserBase();
-    $post->template_name = "posts_list";
+    $post->template_name = "list";
             
     if (!$filter) { $filter = array(); }
     
@@ -456,7 +456,7 @@ function sub_prepare_posts_list()
         $page_title = $lang["submit_page_breadcrumbs_top"] . $rss;
     }
     
-    $plugin->check_actions('submit_posts_list_filter');
+    $plugin->check_actions('submit_list_filter');
     
     $prepared_filter = $post->filter($filter, 0, true);
     $stories = $post->get_posts($prepared_filter);

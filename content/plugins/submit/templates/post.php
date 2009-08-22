@@ -2,7 +2,7 @@
 
 /* ******* PLUGIN TEMPLATE ************************************************************************** 
  * Plugin name: Submit
- * Template name: plugins/submit/post_page.php
+ * Template name: plugins/submit/post.php
  * Template author: Nick Ramsay
  * Version: 0.1
  * License:
