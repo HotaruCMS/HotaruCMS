@@ -34,22 +34,22 @@ global $hotaru, $plugin, $lang; // don't remove
    <meta name="Language" content="en-us" />
 
    <title>
-   	<?php 
-   		if($hotaru->title != "")
-   		{
-   			echo $hotaru->title . " &laquo; " . site_name;
-   		}
-   		elseif($hotaru->get_page_name() != "main")
-   		{
-   			$hotaru->title = $hotaru->get_page_name();
-   			echo $hotaru->page_to_title_caps($hotaru->title) . " &laquo; " . site_name;
-   		}
-   		else
-   		{ 
-   			$hotaru->title = 'top';
-   			echo site_name; 
-   		} 
-   	?>
+       <?php 
+           if($hotaru->title != "")
+           {
+               echo $hotaru->title . " &laquo; " . site_name;
+           }
+           elseif($hotaru->get_page_name() != "main")
+           {
+               $hotaru->title = $hotaru->get_page_name();
+               echo $hotaru->page_to_title_caps($hotaru->title) . " &laquo; " . site_name;
+           }
+           else
+           { 
+               $hotaru->title = 'top';
+               echo site_name; 
+           } 
+       ?>
    </title>
    
    <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery.min.js'; ?>"></script>
@@ -62,20 +62,22 @@ global $hotaru, $plugin, $lang; // don't remove
    <link rel="shortcut icon" href="<?php echo baseurl; ?>favicon.ico">
 </head>
 <body>
+<?php $plugin->check_actions('post_open_body'); ?>
+
 <?php if($announcements = $hotaru->check_announcements()) { ?>
-	<div id="announcement">
-		<?php $plugin->check_actions('announcement_first'); ?>
-		<?php foreach($announcements as $announcement) { echo $announcement . "<br />"; } ?>
-		<?php $plugin->check_actions('announcement_last'); ?>
-	</div>
+    <div id="announcement">
+        <?php $plugin->check_actions('announcement_first'); ?>
+        <?php foreach($announcements as $announcement) { echo $announcement . "<br />"; } ?>
+        <?php $plugin->check_actions('announcement_last'); ?>
+    </div>
 <?php } ?>
 
 <div id="doc2" class="yui-t7">
-	<div id="hd">
-		<div id="hd_title">
-			<h1><a href="<?php echo baseurl; ?>"><?php echo site_name ?></a></h1>
-			<?php $plugin->check_actions('header_post_title'); ?>
-		</div>
-		<!-- NAVIGATION -->
-		<?php echo $hotaru->display_template('navigation'); ?>
-	</div>
+    <div id="hd">
+        <div id="hd_title">
+            <h1><a href="<?php echo baseurl; ?>"><?php echo site_name ?></a></h1>
+            <?php $plugin->check_actions('header_post_title'); ?>
+        </div>
+        <!-- NAVIGATION -->
+        <?php echo $hotaru->display_template('navigation'); ?>
+    </div>

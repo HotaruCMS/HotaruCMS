@@ -382,13 +382,14 @@ function tg_submit_show_post_extra_fields() {
     if ($post->post_vars['use_tags'] && $post->post_vars['post_tags']) { 
         $tags = explode(',', $post->post_vars['post_tags']);
         
-        echo $lang["submit_show_tags"] . " ";
+        echo "<li>" . $lang["submit_show_tags"] . " ";
         
         echo "<div class='show_post_tags'>";
         foreach($tags as $tag) {
             echo "<a href='" . url(array('tag' => str_replace(' ', '_', trim($tag)))) . "'>" . trim($tag) . "</a>&nbsp;";
         }
         echo "</div>";
+        echo "<li>";
     }        
 }
 

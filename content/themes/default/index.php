@@ -30,56 +30,56 @@ global $hotaru, $plugin, $lang; // don't remove
 $result = $plugin->check_actions('theme_index_replace');
 if(!isset($result) || !is_array($result)) {
 ?>
-		<!-- HEADER-->
-		<?php
-			// plugin hook
-			$result = $plugin->check_actions('theme_index_header');
-			if(!isset($result) || !is_array($result)) {
-				$hotaru->display_template('header');
-			}
-		?>
-		
-		<div id="bd">
-			<div id="yui-main"> 
-			<?php if($hotaru->sidebar) { // determines whether to show the sidebar or not ?>
-				<div class='yui-gc'> 
-					<div class="yui-u first"'>
-			<?php } else { ?>
-				<div class='yui-g''>
-	    				<div class="yui-u first" style='width: 100%;'>
-	    		<?php } ?>
-		    				<!-- MAIN -->
-		    				<?php 	
-		    					// plugin hook
-							$result = $plugin->check_actions('theme_index_main');
-							if(!isset($result) || !is_array($result)) {
-			    					$page = $hotaru->get_page_name();
-								$hotaru->display_template($page); 
-							}
-						?>
-		    			</div> <!-- close "yui-u first" -->
-		    		<?php if($hotaru->sidebar) { ?>
-		    			<div class="yui-u">
-		    				
-							<!-- SIDEBAR -->
-							<?php
-								// plugin hook
-								$result = $plugin->check_actions('theme_index_sidebar');
-								if(!isset($result) || !is_array($result)) {
-									$hotaru->display_template('sidebar');
-								}								
-							?>
-			    		</div> <!-- close "yui-u" -->
-		    		<?php } ?>
-			</div> <!-- close "yui-gc" or "yui-g" -->
-			</div> <!-- close "yui-main" -->
-		</div> <!-- close "bd" -->
-		<!-- FOOTER -->
-		<?php
-			// plugin hook
-			$result = $plugin->check_actions('theme_index_footer');
-			if(!isset($result) || !is_array($result)) {
-				$hotaru->display_template('footer');
-			}
-		?>
-<?php	} ?>
+        <!-- HEADER-->
+        <?php
+            // plugin hook
+            $result = $plugin->check_actions('theme_index_header');
+            if(!isset($result) || !is_array($result)) {
+                $hotaru->display_template('header');
+            }
+        ?>
+        
+        <div id="bd">
+            <div id="yui-main"> 
+            <?php if($hotaru->sidebar) { // determines whether to show the sidebar or not ?>
+                <div class='yui-gc'> 
+                    <div class="yui-u first"'>
+            <?php } else { ?>
+                <div class='yui-g''>
+                        <div class="yui-u first" style='width: 100%;'>
+                <?php } ?>
+                            <!-- MAIN -->
+                            <?php     
+                                // plugin hook
+                            $result = $plugin->check_actions('theme_index_main');
+                            if(!isset($result) || !is_array($result)) {
+                                    $page = $hotaru->get_page_name();
+                                $hotaru->display_template($page); 
+                            }
+                        ?>
+                        </div> <!-- close "yui-u first" -->
+                    <?php if($hotaru->sidebar) { ?>
+                        <div class="yui-u">
+                            
+                            <!-- SIDEBAR -->
+                            <?php
+                                // plugin hook
+                                $result = $plugin->check_actions('theme_index_sidebar');
+                                if(!isset($result) || !is_array($result)) {
+                                    $hotaru->display_template('sidebar');
+                                }                                
+                            ?>
+                        </div> <!-- close "yui-u" -->
+                    <?php } ?>
+            </div> <!-- close "yui-gc" or "yui-g" -->
+            </div> <!-- close "yui-main" -->
+        </div> <!-- close "bd" -->
+        <!-- FOOTER -->
+        <?php
+            // plugin hook
+            $result = $plugin->check_actions('theme_index_footer');
+            if(!isset($result) || !is_array($result)) {
+                $hotaru->display_template('footer');
+            }
+        ?>
+<?php    } ?>

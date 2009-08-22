@@ -87,17 +87,13 @@ if ($stories) {
         <?php } ?>
         
         <div class="show_post_extra_fields">
-            <?php $plugin->check_actions('submit_show_post_extra_fields'); ?>
-        </div>
-            
-        <div class="show_post_extras">
-            <?php $plugin->check_actions('submit_show_post_extras'); ?>
+            <ul>
+                <?php $plugin->check_actions('submit_show_post_extra_fields'); ?>
+            </ul>
         </div>
             
     </div>
     
-    <?php $plugin->check_actions('submit_post_show_post'); ?>
-
     <!-- END POST --> 
 
 <?php    
