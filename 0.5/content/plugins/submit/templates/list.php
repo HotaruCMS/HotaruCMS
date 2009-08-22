@@ -2,7 +2,7 @@
 
 /* ******* PLUGIN TEMPLATE ************************************************************************** 
  * Plugin name: Submit
- * Template name: plugins/submit/posts_list.php
+ * Template name: plugins/submit/list.php
  * Template author: Nick Ramsay
  * Version: 0.1
  * License:
@@ -29,7 +29,7 @@ global $hotaru, $plugin, $post, $cage, $filter, $lang, $page_title, $current_use
 $user = new UserBase();
 
 // Prepare filter and breadcrumbs
-$stories = sub_prepare_posts_list();
+$stories = sub_prepare_list();
 ?>
 
 <!-- BREADCRUMBS -->
