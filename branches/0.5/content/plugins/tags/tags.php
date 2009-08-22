@@ -6,7 +6,7 @@
  * folder: tags
  * prefix: tg
  * requires: submit 0.1
- * hooks: install_plugin, header_include, submit_hotaru_header_1, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_class_post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_show_post_extra_fields, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter, submit_class_post_delete_post
+ * hooks: install_plugin, header_include, submit_hotaru_header_1, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_class_post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_show_post_extra_fields, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_list_filter, submit_class_post_delete_post
  *
  * PHP version 5
  *
@@ -336,13 +336,13 @@ function tg_submit_form_2_process_submission() {
  
 
 /* ******************************************************************** 
- *  Function: tg_submit_posts_list_filter
+ *  Function: tg_submit_list_filter
  *  Parameters: None
  *  Purpose: Gets a tag from the url and sets the filter for get_posts
- *  Notes: This hook is at the top of posts_list.php in the Sumit plugin.
+ *  Notes: This hook is at the top of list.php in the Sumit plugin.
  ********************************************************************** */
  
-function tg_submit_posts_list_filter() {
+function tg_submit_list_filter() {
     global $hotaru, $post, $cage, $filter, $lang, $page_title;
     
     if ($cage->get->keyExists('tag')) 

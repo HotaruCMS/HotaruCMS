@@ -6,7 +6,7 @@
  * folder: categories
  * prefix: cts
  * requires: submit 0.1, category_manager 0.1
- * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_class_post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter, submit_show_post_author_date, submit_is_page_main, navigation_last, admin_sidebar_plugin_settings, admin_plugin_settings
+ * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_class_post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_list_filter, submit_show_post_author_date, submit_is_page_main, navigation_last, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * PHP version 5
  *
@@ -344,7 +344,7 @@ function cts_submit_is_page_main()
     global $db, $post, $plugin, $cage, $hotaru;
     
     if ($post->post_vars['is_category_post']) {
-        $hotaru->display_template('post_page', 'submit');
+        $hotaru->display_template('post', 'submit');
         return true;
     } else {
         return false;
@@ -356,7 +356,7 @@ function cts_submit_is_page_main()
  *
  * @return bool
  */
-function cts_submit_posts_list_filter()
+function cts_submit_list_filter()
 {
     global $hotaru, $post, $cage, $filter, $lang, $page_title;
     

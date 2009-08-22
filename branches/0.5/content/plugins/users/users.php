@@ -5,7 +5,7 @@
  * version: 0.2
  * folder: users
  * prefix: usr
- * hooks: hotaru_header, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, submit_posts_list_filter
+ * hooks: hotaru_header, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, submit_list_filter
  *
  * PHP version 5
  *
@@ -261,7 +261,7 @@ function usr_theme_index_main() {
  *
  * @return bool
  */
-function usr_submit_posts_list_filter() 
+function usr_submit_list_filter() 
 {
     global $hotaru, $current_user, $cage, $filter, $lang, $page_title;
 

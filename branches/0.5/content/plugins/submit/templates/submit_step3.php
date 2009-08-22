@@ -29,7 +29,7 @@ global $hotaru, $plugin, $post, $lang;
         
     <?php echo $lang["submit_form_instructions_3"] ?> <br /><br />
     
-    <?php $hotaru->display_template('post_page', 'submit') ?>
+    <?php $hotaru->display_template('post', 'submit') ?>
     
     <div id="submit_edit_confirm">
     

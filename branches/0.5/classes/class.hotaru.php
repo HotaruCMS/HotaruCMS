@@ -128,7 +128,7 @@ class Hotaru
     
     
     /**
-     * Formats page name, e.g.'posts_list' into 'Posts list'
+     * Formats page name, e.g.'page_name' into 'Page name'
      *
      * @param string $page page name
      */
@@ -143,7 +143,7 @@ class Hotaru
     
     
     /**
-     * Formats page name, e.g.'posts_list' into 'Posts List'
+     * Formats page name, e.g.'page_name' into 'Page Name'
      *
      * @param string $page page name
      */
