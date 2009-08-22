@@ -1,6 +1,8 @@
-/* ******* CSS STYLE ************************************************************************** 
- * Plugin name: default
- * Stylesheet: submit.css
+<?php
+/** PLUGIN TEMPLATE **
+ * Plugin name: Disqus
+ * Template name: plugins/disqus/disqus_comments.php
+ * Template author: Nick Ramsay
  * License:
  *
  *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
@@ -18,35 +20,13 @@
  *   
  *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
  *
- **************************************************************************************************** */
+ */
+ 
+global $plugin;
+$shortname = $plugin->plugin_settings('disqus', 'disqus_shortname');
+?>
 
-.show_post {
-	margin-bottom: 1.0em;
-}
-
-.show_post_title {
-	font-size: 1.2em;
-	font-weight: bold;
-}
-.show_post_author_date {
-	font-size: 0.825em;
-	font-style: italic;
-}
-
-.show_post_content {
-	margin: 0.4em 0 0.4em 0;
-}
-
-.show_post_edit {
-	font-style: normal;
-	padding: 0 0.6em 0 0.6em;
-	background-color: #f0f0f0;
-}
-
-.show_post_extra_fields ul li {
-	padding-right: 0.4em;
-	display: inline; 
-}
-
-#submit_edit_confirm { width: 100%; text-align: center; }
-#submit_edit_confirm input { width: 10.0em; }
+<div id="disqus_thread"></div>
+<script type="text/javascript" src="http://disqus.com/forums/<?php echo $shortname; ?>/embed.js"></script>
+<noscript><a href="http://<?php echo $shortname; ?>.disqus.com/?url=ref">View the discussion thread.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a> 
