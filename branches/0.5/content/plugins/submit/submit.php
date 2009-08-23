@@ -5,7 +5,7 @@
  * version: 0.2
  * folder: submit
  * prefix: sub
- * hooks: hotaru_header, header_include, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: hotaru_header, header_include, header_include_raw, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  * PHP version 5
  *
@@ -113,7 +113,7 @@ function sub_install_plugin() {
     
     // Include language file. Also included in hotaru_header, but needed here so 
     // that the link in the Admin sidebar shows immediately after installation.
-    $plugin->include_language_file('submit');    
+    $plugin->include_language('submit');    
     
 }
 
@@ -135,7 +135,7 @@ function sub_hotaru_header() {
     $cage->post->loadHTMLPurifier(includes . 'HTMLPurifier/HTMLPurifier.standalone.php');
 
     // include language file
-    $plugin->include_language_file('submit');
+    $plugin->include_language('submit');
     
     require_once(plugins . 'submit/class.post.php');
     require_once(includes . 'Paginated/Paginated.php');
@@ -186,17 +186,24 @@ function sub_navigation() {
 }
 
 
-/* ******************************************************************** 
- *  Function: sub_header_include
- *  Parameters: None
- *  Purpose: Includes css and javascript for fetching remote url content.
- *  Notes: Also adds javascript to preview page to prevent a user clicking away
- ********************************************************************** */
- 
-function sub_header_include() {
+/**
+ * Include CSS/JavaScript
+ */
+function sub_header_include()
+{
     global $plugin, $lang, $hotaru;
-    $plugin->include_css_file('submit');
-    $plugin->include_js_file('submit');
+    
+    $plugin->include_css('submit');
+    $plugin->include_js('submit');
+}
+
+
+/**
+ * Output raw javascript directly to the header (instead of caching a .js file)
+ */
+function sub_header_include_raw()
+{
+    global $lang, $hotaru;
     
     /* This code (courtesy of Pligg.com and SocialWebCMS.com) pops up a 
        box asking the user of they are sure they want to leave the page

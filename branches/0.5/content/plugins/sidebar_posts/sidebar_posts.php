@@ -63,7 +63,7 @@ function sp_hotaru_header() {
 function sidebar_widget_sidebar_posts($type = 'top') {
 	global $hotaru, $plugin, $post, $lang;
     
-    	$plugin->include_language_file('sidebar_posts');
+    	$plugin->include_language('sidebar_posts');
     	//$hotaru->title = $hotaru->get_page_name();
 	
 	// FILTER TO NEW POSTS OR TOP POSTS?

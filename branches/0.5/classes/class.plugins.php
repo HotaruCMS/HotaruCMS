@@ -40,9 +40,12 @@ class Plugin extends generic_pmd {
     var $desc           = '';
     var $version        = 0;
     var $order          = 0;
-    var $requires       = '';           // string of plugin->version pairs
-    var $dependencies   = array();    // array of plugin->version pairs
+    var $requires       = '';       // string of plugin->version pairs
+    var $dependencies   = array();  // array of plugin->version pairs
     var $hooks          = array();
+    var $include_css    = array();  // a list of css files to include
+    var $include_js     = array();  // a list of js files to include
+    var $include_type   = '';       // 'css' or 'js'
 
 
     /**
@@ -894,7 +897,7 @@ class Plugin extends generic_pmd {
      * Note: the language file should be in a plugin folder named 'languages'.
      * '_language.php' is appended automatically to the folder of file name.
      */    
-    function include_language_file($folder = '', $filename = '')
+    function include_language($folder = '', $filename = '')
     {
         global $lang;
         
@@ -933,7 +936,7 @@ class Plugin extends generic_pmd {
 
 
     /**
-     * Include CSS file
+     * Find CSS file
      *
      * @param string $folder name of plugin folder
      * @param string $filename optional filename without file extension
@@ -941,7 +944,7 @@ class Plugin extends generic_pmd {
      * Note: the css file should be in a folder named 'css' and a file of 
      * the format plugin_name.css, e.g. rss_show.css
      */    
-    function include_css_file($folder = '', $filename = '')
+    function find_css_file($folder = '', $filename = '')
     {
         global $lang;
         
@@ -949,29 +952,23 @@ class Plugin extends generic_pmd {
 
             // If filename not given, make the plugin name the file name
             if (!$filename) { $filename = $folder; }
-
+            
             // First look in the theme folder for a css file...     
             if (file_exists(themes . theme . 'css/' . $filename . '.css')) {    
-                echo "<link rel='stylesheet' href='" . baseurl . "content/themes/" . theme . "css/" . $filename . ".css' type='text/css'>\n";
+                $file_location = themes . theme . 'css/' . $filename . '.css';
             
             // If not found, look in the default theme folder for a css file...     
             } elseif (file_exists(themes . 'default/css/' . $filename . '.css')) {    
-                echo "<link rel='stylesheet' href='" . baseurl . "content/themes/default/css/" . $filename . ".css' type='text/css'>\n";
+                $file_location = themes . 'default/css/' . $filename . '.css';
             
             // If still not found, look in the plugin folder for a css file... 
             } elseif (file_exists(plugins . $folder . '/css/' . $filename . '.css')) {
-                echo "<link rel='stylesheet' href='" . baseurl . "content/plugins/" . $folder . "/css/" . $filename. ".css' type='text/css'>\n";
-
-            // If STILL not found, look in the user's theme's css folder for a style.css file...     
-            } elseif (file_exists(themes . theme . 'css/style.css')) {    
-                echo "<link rel='stylesheet' href='" . baseurl . "content/themes/" . theme . "css/style.css' type='text/css'>\n";
-
-            // Finally, look in the default theme's css folder for a style.css file...     
-            } elseif (file_exists(themes . 'default/css/style.css')) {    
-                echo "<link rel='stylesheet' href='" . baseurl . "content/themes/default/css/style.css' type='text/css'>\n";
+                $file_location = plugins . $folder . '/css/' . $filename . '.css';
             }
-            
-            return true;
+             
+            if(isset($file_location)) {
+                return $file_location;
+            }
             
         }
         
@@ -980,14 +977,14 @@ class Plugin extends generic_pmd {
 
 
     /**
-     * Include JavaScript file
+     * Find JavaScript file
      *
      * @param string $folder name of plugin folder
      * @param string $filename optional filename without file extension
      *
      * Note: the js file should be in a folder named 'javascript' and a file of the format plugin_name.js, e.g. category_manager.js
      */    
-    function include_js_file($folder = '', $filename = '')
+    function find_js_file($folder = '', $filename = '')
     {
         global $lang;
         
@@ -998,31 +995,62 @@ class Plugin extends generic_pmd {
             
             // First look in the theme folder for a js file...     
             if (file_exists(themes . theme . 'javascript/' . $filename . '.js')) {    
-                echo "<script language='JavaScript' src='" . baseurl . "content/themes/" . theme . "javascript/" . $filename . ".js'></script>\n";
-            
+                $file_location = themes . theme . 'javascript/' . $filename . '.js';
+                
             // If not found, look in the default theme folder for a js file...     
             } elseif (file_exists(themes . 'default/javascript/' . $filename . '.js')) {    
-                echo "<script language='JavaScript' src='" . baseurl . "content/themes/default/javascript/" . $filename . ".js'></script>\n";
-            
+                $file_location = themes . 'default/javascript/' . $filename . '.js';
+                
             // If still not found, look in the plugin folder for a js file... 
             } elseif (file_exists(plugins . $folder . '/javascript/' . $filename . '.js')) {
-                echo "<script language='JavaScript' src='" . baseurl . "content/plugins/" . $folder . "/javascript/" . $filename . ".js'></script>\n";
-
-            // If STILL not found, look in the user's theme's javascript folder for a "javascript.js" file...     
-            } elseif (file_exists(themes . theme . 'javascript/javascript.js')) {    
-                echo "<script language='JavaScript' src='" . baseurl . "content/themes/" . theme . "javascript/javascript.js'></script>\n";
-
-            // Finally, look in the default theme's javascript folder for a "javascript.js" file...     
-            } elseif (file_exists(themes . 'default/javascript/javascript.js')) {    
-                echo "<script language='JavaScript' src='" . baseurl . "content/themes/default/javascript/javascript.js'></script>\n";
+                $file_location = plugins . $folder . '/javascript/' . $filename . '.js';
             }
-
-            return true;
-
+             
+            if(isset($file_location)) {
+                return $file_location;
+            }
+            
         }
         
-        return false;
+        return false; 
     }
+
+
+    /**
+     * Build an array of css files to combine
+     *
+     * @param $plugin - the folder name of the plugin
+     * @param $filename - optional css file without an extension
+     */
+     function include_css($plugin = '', $filename = '')
+     {
+        // If no filename provided, the filename is assigned the plugin name.
+        if (!$filename) { $filename = $plugin; }
+        
+        $file_location = $this->find_css_file($plugin, $filename);
+        
+        // Add this css file to the global array of css_files
+        array_push($this->include_css, $file_location);
+     }
+
+
+    /**
+     * Build an array of JavaScript files to combine
+     *
+     * @param $plugin - the folder name of the plugin
+     * @param $filename - optional js file without an extension
+     */
+     function include_js($plugin = '', $filename = '')
+     {
+        // If no filename provided, the filename is assigned the plugin name.
+        if (!$filename) { $filename = $plugin; }
+        
+        $file_location = $this->find_js_file($plugin, $filename);
+        
+        // Add this css file to the global array of css_files
+        array_push($this->include_js, $file_location);
+     }
+
 }
 
 ?>

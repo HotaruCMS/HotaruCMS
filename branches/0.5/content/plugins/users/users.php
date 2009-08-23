@@ -43,7 +43,7 @@ function usr_install_plugin() {
     global $db, $plugin, $lang;
     
     // include language file
-    $plugin->include_language_file('users');
+    $plugin->include_language('users');
     
     // Create a new empty table called "usermeta"
     $exists = $db->table_exists('usermeta');
@@ -69,7 +69,7 @@ function usr_install_plugin() {
     
     // Include language file. Also included in hotaru_header, but needed here  
     // to prevent errors immediately after installation.
-    $plugin->include_language_file('users');    
+    $plugin->include_language('users');    
     
 }
 
@@ -87,7 +87,7 @@ function usr_hotaru_header() {
     if (!defined('table_usermeta')) { define("table_usermeta", db_prefix . 'usermeta'); }
     
     // include language file
-    $plugin->include_language_file('users');
+    $plugin->include_language('users');
     
     if ($username = $cage->get->testUsername('user')) {
         $hotaru->title = $username;

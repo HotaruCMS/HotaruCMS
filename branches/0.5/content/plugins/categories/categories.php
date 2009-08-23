@@ -63,7 +63,7 @@ function cts_hotaru_header()
     if (!defined('table_categories')) { define("table_categories", db_prefix . "categories"); }
     
     // include language file
-    $plugin->include_language_file('categories');
+    $plugin->include_language('categories');
     
     // Get page title    
     if ($cage->get->keyExists('category'))
@@ -91,7 +91,7 @@ function cts_submit_hotaru_header_1()
     if (!defined('table_categories')) { define("table_categories", db_prefix . "categories"); }
     
     // include language file
-    $plugin->include_language_file('categories');
+    $plugin->include_language('categories');
     
     $post->post_vars['post_category'] = 1;    // default category ('all').
     $post->post_vars['post_cat_name'] = '';
@@ -328,9 +328,9 @@ function cts_header_include()
 {
     global $plugin;
     
-    $plugin->include_css_file('categories');
-    $plugin->include_css_file('categories', 'category_bar');
-    $plugin->include_js_file('categories');
+    $plugin->include_css('categories');
+    $plugin->include_css('categories', 'category_bar');
+    $plugin->include_js('categories');
 }
 
 

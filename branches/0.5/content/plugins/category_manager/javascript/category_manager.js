@@ -25,7 +25,7 @@
 
 $(document).ready(function(){
 
-	// Show/Hide box
+	// Show/Hide box 
 	$(".cat_man_drop_down").click(function () {
 		var target = $(this).next().next();
                 target.fadeToggle();

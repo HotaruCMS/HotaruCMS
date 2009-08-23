@@ -20,9 +20,7 @@
  *
  **************************************************************************************************** */
 
-.cat_man_table { width: 100%; }
-
-.cat_man_table
+.cat_man_table { width: 100%; vertical-align: top; }
 
 .cat_man_body	{
 	width: 70%;

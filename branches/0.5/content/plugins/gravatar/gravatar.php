@@ -34,8 +34,9 @@
  * Include CSS
  */
 function grav_header_include() {
-    global $plugin;
-    $plugin->include_css_file('gravatar');
+    global $plugin, $css_files;
+
+    $plugin->include_css('gravatar');
 }
 
 

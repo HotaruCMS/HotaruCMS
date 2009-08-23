@@ -120,7 +120,7 @@ function hu_hotaru_header() {
 	global $lang, $plugin;
 	
 	// include hello_universe language file
-	$plugin->include_language_file('hello_universe');
+	$plugin->include_language('hello_universe');
 }
 
 

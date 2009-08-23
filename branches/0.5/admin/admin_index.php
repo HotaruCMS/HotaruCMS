@@ -81,6 +81,8 @@ if (isset($current_user) && $plugin->plugin_active('users'))
 
 $plugin->check_actions('admin_index');
 
+$hotaru->page_type = 'admin';
+
 switch ($page) {
     case "admin_login":
         admin_login();
