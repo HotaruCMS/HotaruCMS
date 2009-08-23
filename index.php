@@ -25,6 +25,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
+global $cage;
+
 // includes
 require_once('hotaru_header.php');
 
@@ -38,6 +40,13 @@ else
 {
    // try the default language pack
     require_once(languages . 'language_default/main_language.php'); 
+}
+
+// Include combined css and js files
+if ($cage->get->keyExists('combine')) {
+    $type = $cage->get->testAlpha('type');
+    $version = $cage->get->testInt('version');
+    $hotaru->combine_includes($type, $version);
 }
 
 $hotaru->display_template('index');

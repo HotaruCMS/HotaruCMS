@@ -1,28 +1,30 @@
 <?php
-
-/* ******* TEMPLATE ******************************************************************************** 
+/**
  * Theme name: default
  * Template name: header.php
  * Template author: Nick Ramsay
- * Version: 0.1
- * License:
  *
- *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
+ * PHP version 5
  *
- *   Hotaru CMS is free software: you can redistribute it and/or modify it under the terms of the 
- *   GNU General Public License as published by the Free Software Foundation, either version 3 of 
- *   the License, or (at your option) any later version.
+ * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation, either version 3 of 
+ * the License, or (at your option) any later version. 
  *
- *   Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
- *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
+ * Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE. 
  *
- *   You should have received a copy of the GNU General Public License along with Hotaru CMS. If not, 
- *   see http://www.gnu.org/licenses/.
- *   
- *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
- *
- **************************************************************************************************** */
+ * You should have received a copy of the GNU General Public License along 
+ * with Hotaru CMS. If not, see http://www.gnu.org/licenses/.
+ * 
+ * @category  Content Management System
+ * @package   HotaruCMS
+ * @author    Nick Ramsay <admin@hotarucms.org>
+ * @copyright Copyright (c) 2009, Hotaru CMS
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * @link      http://www.hotarucms.org/
+ */
 
 global $hotaru, $plugin, $lang; // don't remove
 ?>
@@ -35,11 +37,11 @@ global $hotaru, $plugin, $lang; // don't remove
 
     <title>
        <?php 
-           if($hotaru->title != "")
+           if ($hotaru->title != "")
            {
                echo $hotaru->title . " &laquo; " . site_name;
            }
-           elseif($hotaru->get_page_name() != "main")
+           elseif ($hotaru->get_page_name() != "main")
            {
                $hotaru->title = $hotaru->get_page_name();
                echo $hotaru->page_to_title_caps($hotaru->title) . " &laquo; " . site_name;
@@ -57,10 +59,14 @@ global $hotaru, $plugin, $lang; // don't remove
     <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_ajax.js'; ?>"></script>
     <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_jquery.js'; ?>"></script>
 
-    <!-- Include a single, merged file of all the plugin javascript files, and another for stylesheets -->
-    <script type="text/javascript" src="<?php echo baseurl; ?>functions/combine_includes.php?type=js&version=<?php $plugin->include_type = 'js'; require(functions . 'combine_includes.php'); ?>"></script>
-    <link rel="stylesheet" href="<?php echo baseurl; ?>functions/combine_includes.php?type=css&version=<?php $plugin->include_type = 'css'; require(functions . 'combine_includes.php'); ?>" type="text/css">
-   
+    <!-- Include merged files for all the plugin css and javascript (if any) -->
+    <?php 
+        $version_js = $hotaru->combine_includes('js');
+        $version_css = $hotaru->combine_includes('css');
+        $hotaru->include_combined($version_js, $version_css);
+    ?>
+    <!-- End -->
+       
     <link rel="stylesheet" href="<?php echo baseurl . '3rd_party/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
     <link rel="stylesheet" href="<?php echo baseurl . 'content/themes/' . theme . 'css/style.css'; ?>" type="text/css">
     <link rel="shortcut icon" href="<?php echo baseurl; ?>favicon.ico">
@@ -71,10 +77,10 @@ global $hotaru, $plugin, $lang; // don't remove
 <body>
 <?php $plugin->check_actions('post_open_body'); ?>
 
-<?php if($announcements = $hotaru->check_announcements()) { ?>
+<?php if ($announcements = $hotaru->check_announcements()) { ?>
     <div id="announcement">
         <?php $plugin->check_actions('announcement_first'); ?>
-        <?php foreach($announcements as $announcement) { echo $announcement . "<br />"; } ?>
+        <?php foreach ($announcements as $announcement) { echo $announcement . "<br />"; } ?>
         <?php $plugin->check_actions('announcement_last'); ?>
     </div>
 <?php } ?>
