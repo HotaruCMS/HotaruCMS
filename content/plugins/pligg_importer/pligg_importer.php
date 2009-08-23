@@ -73,9 +73,8 @@ function pliggimp_admin_header_include()
 {
     global $admin, $plugin;
     
-    if ($admin->is_settings_page('pligg_importer'))
-    {
-        $plugin->include_css_file('pligg_importer');
+    if($admin->is_settings_page('pligg_importer')) {
+        $plugin->include_css('pligg_importer');
     }
 }
 

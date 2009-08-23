@@ -31,7 +31,7 @@
 
 $(document).ready(function(){
 
-	// Show/Hide box
+	// Show/Hide box 
 	$(".alert_link").click(function () {
 		var target = $(this).parent('div').next('div').children('div.alert_choices');
                 target.fadeToggle();

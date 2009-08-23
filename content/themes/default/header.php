@@ -30,10 +30,10 @@ global $hotaru, $plugin, $lang; // don't remove
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-   <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
-   <meta name="Language" content="en-us" />
+    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
+    <meta name="Language" content="en-us" />
 
-   <title>
+    <title>
        <?php 
            if($hotaru->title != "")
            {
@@ -50,16 +50,23 @@ global $hotaru, $plugin, $lang; // don't remove
                echo site_name; 
            } 
        ?>
-   </title>
+    </title>
    
-   <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery.min.js'; ?>"></script>
-   <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery-ui.min.js'; ?>"></script>
-   <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_ajax.js'; ?>"></script>
-   <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_jquery.js'; ?>"></script>
-   <?php $plugin->check_actions('header_include'); ?>
-   <link rel="stylesheet" href="<?php echo baseurl . '3rd_party/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
-   <link rel="stylesheet" href="<?php echo baseurl . 'content/themes/' . theme . 'css/style.css'; ?>" type="text/css">
-   <link rel="shortcut icon" href="<?php echo baseurl; ?>favicon.ico">
+    <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery.min.js'; ?>"></script>
+    <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery-ui.min.js'; ?>"></script>
+    <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_ajax.js'; ?>"></script>
+    <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_jquery.js'; ?>"></script>
+
+    <!-- Include a single, merged file of all the plugin javascript files, and another for stylesheets -->
+    <script type="text/javascript" src="<?php echo baseurl; ?>functions/combine_includes.php?type=js&version=<?php $plugin->include_type = 'js'; require(functions . 'combine_includes.php'); ?>"></script>
+    <link rel="stylesheet" href="<?php echo baseurl; ?>functions/combine_includes.php?type=css&version=<?php $plugin->include_type = 'css'; require(functions . 'combine_includes.php'); ?>" type="text/css">
+   
+    <link rel="stylesheet" href="<?php echo baseurl . '3rd_party/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
+    <link rel="stylesheet" href="<?php echo baseurl . 'content/themes/' . theme . 'css/style.css'; ?>" type="text/css">
+    <link rel="shortcut icon" href="<?php echo baseurl; ?>favicon.ico">
+   
+    <?php $plugin->check_actions('header_include_raw'); ?>
+   
 </head>
 <body>
 <?php $plugin->check_actions('post_open_body'); ?>
