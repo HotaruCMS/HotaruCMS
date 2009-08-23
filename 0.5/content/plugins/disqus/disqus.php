@@ -6,7 +6,7 @@
  * folder: disqus
  * prefix: disq
  * requires: submit 0.1
- * hooks: header_include, install_plugin, hotaru_header, submit_show_post_extra_fields, submit_post_show_post, pre_close_body, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: header_include, header_include_raw, install_plugin, hotaru_header, submit_show_post_extra_fields, submit_post_show_post, pre_close_body, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  * PHP version 5
  *
@@ -41,7 +41,7 @@ function disq_install_plugin() {
     
     // Include language file. Also included in hotaru_header, but needed here so 
     // that the link in the Admin sidebar shows immediately after installation.
-    $plugin->include_language_file('disqus');
+    $plugin->include_language('disqus');
     
 }
 
@@ -51,7 +51,7 @@ function disq_install_plugin() {
  *
  * @link http://wiki.disqus.net/JSEmbed/
  */
-function disq_header_include() {
+function disq_header_include_raw() {
     global $lang, $plugin, $post;
 
     echo '
@@ -69,7 +69,7 @@ function disq_header_include() {
 function disq_hotaru_header() {
     global $lang, $plugin;
 
-    $plugin->include_language_file('disqus');
+    $plugin->include_language('disqus');
 }
 
 

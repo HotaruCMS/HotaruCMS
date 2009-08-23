@@ -6,7 +6,7 @@
  * version: 0.1
  * folder: rss_show
  * prefix: rs
- * hooks: rss_show, install_plugin, hotaru_header, admin_header_include, header_include, admin_sidebar_plugin_settings, admin_plugin_settings
+ * hooks: rss_show, install_plugin, hotaru_header, admin_header_include_raw, header_include, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * Usage: Add <?php $plugin->check_actions('rss_show'); ?> to your theme, wherever you want to show the links.
  *
@@ -150,7 +150,7 @@ function sidebar_widget_rss_show($args) {
 function rs_hotaru_header() {
 	global $plugin, $lang;
 	
-	$plugin->include_language_file('rss_show');
+	$plugin->include_language('rss_show');
 }
 	
 	
@@ -164,7 +164,7 @@ function rs_hotaru_header() {
 function rs_header_include() {
 	global $plugin;
 	
-	$plugin->include_css_file('rss_show');
+	$plugin->include_css('rss_show');
 }
 
 
@@ -181,7 +181,7 @@ function rs_header_include() {
  *  Notes: ---
  ********************************************************************** */
  
-function rs_admin_header_include() {
+function rs_admin_header_include_raw() {
 	global $admin;
 	
 	if($admin->is_settings_page('rss_show')) {
@@ -236,7 +236,7 @@ function rs_install_plugin($id) {
 	
 	// Include language file. Also included in hotaru_header, but needed here so 
 	// that the link in the Admin sidebar shows immediately after installation.
-	$plugin->include_language_file('rss_show');
+	$plugin->include_language('rss_show');
 }
 
 

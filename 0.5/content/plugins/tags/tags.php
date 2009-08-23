@@ -92,7 +92,7 @@ function tg_submit_hotaru_header_1() {
     if (!defined('table_tags')) { define("table_tags", db_prefix . 'tags'); }
     
     // include language file
-    $plugin->include_language_file('tags');
+    $plugin->include_language('tags');
     
     $post->post_vars['post_tags'] = '';
     $post->post_vars['post_max_tags'] = 50;    // max characters for tags
@@ -114,7 +114,7 @@ function tg_submit_hotaru_header_1() {
  
 function tg_header_include() {
     global $plugin;
-    $plugin->include_css_file('tags');
+    $plugin->include_css('tags');
 }
 
 /* ******************************************************************** 

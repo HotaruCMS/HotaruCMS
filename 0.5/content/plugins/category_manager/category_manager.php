@@ -72,7 +72,7 @@ function cats_install_plugin() {
 
 	// Include language file. Also included in hotaru_header, but needed here so 
 	// that the link in the Admin sidebar shows immediately after installation.
-	$plugin->include_language_file('category_manager');
+	$plugin->include_language('category_manager');
 	
 }
 
@@ -87,7 +87,7 @@ function cats_install_plugin() {
 function cats_hotaru_header() {
 	global $hotaru, $lang, $plugin;
 	
-	$plugin->include_language_file('category_manager');
+	$plugin->include_language('category_manager');
 	
 	if(!defined('table_categories')) { define("table_categories", db_prefix . 'categories'); }
 	return true;
@@ -103,11 +103,11 @@ function cats_hotaru_header() {
  
 function cats_admin_header_include() {
 	global $plugin, $admin, $cage;
-	
-	if($admin->is_settings_page('category_manager')) {
-		$plugin->include_css_file('category_manager');
-		$plugin->include_js_file('category_manager');
-	}
+
+    if($admin->is_settings_page('category_manager')) {
+        $plugin->include_css('category_manager');
+        $plugin->include_js('category_manager');
+    }
 }
 
 

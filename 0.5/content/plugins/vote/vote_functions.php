@@ -26,7 +26,7 @@ include_once('../../../hotaru_header.php');    // Not the cleanest way of gettin
 
 global $cage, $db, $current_user, $post, $lang, $plugin;
 
-$plugin->include_language_file('vote');
+$plugin->include_language('vote');
 
 if ($cage->post->keyExists('post_id')) {
     $post_id = $cage->post->testInt('post_id');

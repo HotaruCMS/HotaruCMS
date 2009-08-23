@@ -55,10 +55,17 @@ global $hotaru, $admin, $plugin, $lang; // don't remove
    <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery-ui.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_ajax.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_jquery.js'; ?>"></script>
-   <?php if($hotaru->is_page('plugin_settings')) { $plugin->check_actions('admin_header_include', $plugin->folder); } ?>
+   
+   <!-- Include a single, merged file of all the plugin javascript files, and another for stylesheets -->
+    <script type="text/javascript" src="<?php echo baseurl; ?>functions/combine_includes.php?type=js&admin=1&version=<?php $plugin->include_type = 'js'; require(functions . 'combine_includes.php'); ?>"></script>
+    <link rel="stylesheet" href="<?php echo baseurl; ?>functions/combine_includes.php?type=css&admin=1&version=<?php $plugin->include_type = 'css'; require(functions . 'combine_includes.php'); ?>" type="text/css">
+    
    <link rel="stylesheet" href="<?php echo baseurl . '3rd_party/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
    <link rel="stylesheet" href="<?php echo baseurl . 'content/admin_themes/' . admin_theme . 'css/style.css'; ?>" type="text/css">
    <link rel="shortcut icon" href="<?php echo baseurl; ?>favicon.ico">
+   
+   <?php $plugin->check_actions('admin_header_include_raw'); ?>
+      
 </head>
 <body>
 <?php if($announcements = $admin->check_admin_announcements()) { ?>

@@ -48,7 +48,7 @@ function sidebar_install_plugin() {
     // A plugin hook so other plugin developers can add defaultsettings
     $plugin->check_actions('sidebar_install_plugin');
     
-    $plugin->include_language_file('sidebar');
+    $plugin->include_language('sidebar');
 }
 
 
@@ -62,7 +62,7 @@ function sidebar_install_plugin() {
 function sidebar_hotaru_header() {
     global $hotaru, $plugin, $sidebar, $lang;
     
-    $plugin->include_language_file('sidebar');
+    $plugin->include_language('sidebar');
     
     if($hotaru->sidebar) {
         require_once(plugins . 'sidebar/class.sidebar.php');
@@ -86,15 +86,15 @@ function sidebar_hotaru_header() {
  
 function sidebar_header_include() { 
     global $plugin; 
-    $plugin->include_css_file('sidebar'); 
+    $plugin->include_css('sidebar'); 
 }
 
 function sidebar_admin_header_include() { 
     global $plugin, $admin;
     
-    if($admin->is_settings_page('sidebar')) { 
-        $plugin->include_css_file('sidebar');
-    } 
+    if($admin->is_settings_page('sidebar')) {
+        $plugin->include_css('sidebar');
+    }
 }
 
 
@@ -160,7 +160,7 @@ function sidebar_admin_sidebar_plugin_settings() {
     global $lang, $plugin;
     
     if(!isset($lang["sidebar_admin_sidebar"])) {
-        $plugin->include_language_file('sidebar');
+        $plugin->include_language('sidebar');
     }
     echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>'sidebar'), 'admin') . "'>" . $lang["sidebar_admin_sidebar"] . "</a></li>";
 }
