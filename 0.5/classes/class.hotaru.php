@@ -310,5 +310,148 @@ class Hotaru
             }
         }
     }
+    
+    
+    /**
+     * Combine Included CSS & JSS files
+     *
+     * @param string $type either 'css' or 'js'
+     * @return int version number or echo output to cache file
+     * @link http://www.ejeliot.com/blog/72 Based on work by Ed Eliot
+     */
+     function combine_includes($type = 'css', $version = 0)
+     {
+        global $cage, $plugin;
+        
+        if ($this->page_type == 'admin') {
+            $plugin->check_actions('admin_header_include');
+            $prefix = 'hotaru_admin_';
+        } else {
+            $plugin->check_actions('header_include');
+            $prefix = 'hotaru_';
+        }
+        
+        $cache_length = 31356000;   // about one year
+        $cache = cache . 'css_js_cache/';
+        
+        if($type == 'css') { 
+            $content_type = 'text/css';
+            $includes = $plugin->include_css;
+        } else { 
+            $type = 'js'; 
+            $content_type = 'text/javascript';
+            $includes = $plugin->include_js;
+        }
+        
+        if(empty($includes)) { return false; }
+        
+         /*
+            if etag parameter is present then the script is being called directly, otherwise we're including it in 
+            another script with require or include. If calling directly we return code othewise we return the etag 
+            representing the latest files
+        */
+        if ($version > 0) {
+        
+            $iETag = $version;
+            $sLastModified = gmdate('D, d M Y H:i:s', $iETag).' GMT';
+            
+            // see if the user has an updated copy in browser cache
+            if (
+                ($cage->server->keyExists('HTTP_IF_MODIFIED_SINCE') && $cage->server->testDate('HTTP_IF_MODIFIED_SINCE') == $sLastModified) ||
+                ($cage->server->keyExists('HTTP_IF_NONE_MATCH') && $cage->server->testint('HTTP_IF_NONE_MATCH') == $iETag)
+            ) {
+                header("{$cage->server->getRaw('SERVER_PROTOCOL')} 304 Not Modified");
+                exit;
+            }
+        
+            // create a directory for storing current and archive versions
+            if (!is_dir($cache)) {
+                mkdir($cache);
+            }
+               
+            // get code from archive folder if it exists, otherwise grab latest files, merge and save in archive folder
+            if (file_exists($cache . $prefix . $type . '_' . $iETag . '.cache')) {
+                $sCode = file_get_contents($cache . $prefix . $type . '_' . $iETag . '.cache');
+            } else {
+                // get and merge code
+                $sCode = '';
+                $aLastModifieds = array();
+        
+                foreach ($includes as $sFile) {
+                    $aLastModifieds[] = filemtime($sFile);
+                    $sCode .= file_get_contents($sFile);
+                }
+                // sort dates, newest first
+                rsort($aLastModifieds);
+             
+                if ($iETag == $aLastModifieds[0]) { // check for valid etag, we don't want invalid requests to fill up archive folder
+                    $oFile = fopen($cache . $prefix . $type . '_' . $iETag . '.cache', 'w');
+                    if (flock($oFile, LOCK_EX)) {
+                        fwrite($oFile, $sCode);
+                        flock($oFile, LOCK_UN);
+                    }
+                    fclose($oFile);
+                } else {
+                    // archive file no longer exists or invalid etag specified
+                    header("{$cage->server->getRaw('SERVER_PROTOCOL')} 404 Not Found");
+                    exit;
+                }
+        
+            }
+        
+            // send HTTP headers to ensure aggressive caching
+            header('Expires: '.gmdate('D, d M Y H:i:s', time() + $cache_length).' GMT'); // 1 year from now
+            header('Content-Type: ' . $content_type);
+            header('Content-Length: '.strlen($sCode));
+            header("Last-Modified: $sLastModified");
+            header("ETag: $iETag");
+            header('Cache-Control: max-age=' . $cache_length);
+        
+          // output merged code
+          echo $sCode;
+          
+        } else {
+        
+            // get file last modified dates
+            $aLastModifieds = array();
+            foreach ($includes as $sFile) {
+                $aLastModifieds[] = filemtime($sFile);
+            }
+            // sort dates, newest first
+            rsort($aLastModifieds);
+            
+            // output latest timestamp
+            return $aLastModifieds[0];
+        
+        }
+     }
+        
+
+    /**
+     * Included combined files
+     *
+     * @param int $version_js 
+     * @param int $version_css 
+     * @param string $page e.g. admin_settings 
+     * @param string $plugin e.g. category_manager
+     */
+     function include_combined($version_js = 0, $version_css = 0, $page = '', $folder = '')
+     {
+        if ($this->page_type == 'admin') { $index = 'admin/admin_index'; } else { $index = 'index'; }
+        if ($page && $folder) { 
+            $page = 'page=' . $page; 
+            $folder = '&plugin=' . $folder . "&";
+        }
+        
+        if ($version_js > 0) {
+            echo "<script type='text/javascript' src='" . baseurl . $index . ".php?" . $page . "&" . $folder . "combine=1&type=js&version=" . $version_js . "'></script>\n";
+        }
+        
+        if ($version_css > 0) {
+            echo "<link rel='stylesheet' href='" . baseurl . $index . ".php?" . $page . "&" . $folder . "combine=1&type=css&version=" . $version_css . "' type='text/css'>\n";
+        }
+
+     }
+     
 }
 ?>

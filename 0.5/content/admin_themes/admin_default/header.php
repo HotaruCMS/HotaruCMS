@@ -33,32 +33,36 @@ global $hotaru, $admin, $plugin, $lang; // don't remove
 <head>
    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
    <title>
-   	<?php 
-   		if($hotaru->title != "")
-   		{
-   			echo $hotaru->title . " &laquo; " . $lang["admin"] . " &laquo; " . site_name;
-   		}
-   		elseif($hotaru->get_page_name() != "main")
-   		{
-   			$hotaru->title = $hotaru->get_page_name();
-   			echo $hotaru->page_to_title_caps($hotaru->title) . " &laquo; " . $lang["admin"] . " &laquo; " . site_name;
-   		}
-   		else
-   		{ 
-   			echo $lang["admin"] . " &laquo; " . site_name;
-   		} 
-   		
-   		$hotaru->title = 'admin';	// highlights "Admin" in the navigation bar, for all pages in Admin
-   	?>
+       <?php 
+           if($hotaru->title != "")
+           {
+               echo $hotaru->title . " &laquo; " . $lang["admin"] . " &laquo; " . site_name;
+           }
+           elseif($hotaru->get_page_name() != "main")
+           {
+               $hotaru->title = $hotaru->get_page_name();
+               echo $hotaru->page_to_title_caps($hotaru->title) . " &laquo; " . $lang["admin"] . " &laquo; " . site_name;
+           }
+           else
+           { 
+               echo $lang["admin"] . " &laquo; " . site_name;
+           } 
+           
+           $hotaru->title = 'admin';    // highlights "Admin" in the navigation bar, for all pages in Admin
+       ?>
    </title>
    <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery-ui.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_ajax.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_jquery.js'; ?>"></script>
    
-   <!-- Include a single, merged file of all the plugin javascript files, and another for stylesheets -->
-    <script type="text/javascript" src="<?php echo baseurl; ?>functions/combine_includes.php?type=js&admin=1&version=<?php $plugin->include_type = 'js'; require(functions . 'combine_includes.php'); ?>"></script>
-    <link rel="stylesheet" href="<?php echo baseurl; ?>functions/combine_includes.php?type=css&admin=1&version=<?php $plugin->include_type = 'css'; require(functions . 'combine_includes.php'); ?>" type="text/css">
+    <!-- Include merged files for all the plugin css and javascript (if any) -->
+    <?php 
+        $version_js = $hotaru->combine_includes('js');
+        $version_css = $hotaru->combine_includes('css');
+        $hotaru->include_combined($version_js, $version_css, $hotaru->get_page_name(), $plugin->folder);
+    ?>
+    <!-- End -->
     
    <link rel="stylesheet" href="<?php echo baseurl . '3rd_party/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
    <link rel="stylesheet" href="<?php echo baseurl . 'content/admin_themes/' . admin_theme . 'css/style.css'; ?>" type="text/css">
@@ -69,16 +73,16 @@ global $hotaru, $admin, $plugin, $lang; // don't remove
 </head>
 <body>
 <?php if($announcements = $admin->check_admin_announcements()) { ?>
-	<div id="announcement">
-		<?php $plugin->check_actions('admin_announcement_first'); ?>
-		<?php foreach($announcements as $announcement) { echo $announcement . "<br />"; } ?>
-		<?php $plugin->check_actions('admin_announcement_last'); ?>
-	</div>
+    <div id="announcement">
+        <?php $plugin->check_actions('admin_announcement_first'); ?>
+        <?php foreach($announcements as $announcement) { echo $announcement . "<br />"; } ?>
+        <?php $plugin->check_actions('admin_announcement_last'); ?>
+    </div>
 <?php } ?>
 <div id="doc2" class="yui-t7">
-	<div id="hd" role="banner">
-		<a href="<?php echo baseurl; ?>"><img src="<?php echo baseurl; ?>content/admin_themes/<?php echo admin_theme ?>images/hotaru_468x60.png"></a>
-		<?php $plugin->check_actions('header_post_logo'); ?>
-		<!-- NAVIGATION -->
-		<?php echo $admin->display_admin_template('navigation'); ?>
-	</div>
+    <div id="hd" role="banner">
+        <a href="<?php echo baseurl; ?>"><img src="<?php echo baseurl; ?>content/admin_themes/<?php echo admin_theme ?>images/hotaru_468x60.png"></a>
+        <?php $plugin->check_actions('header_post_logo'); ?>
+        <!-- NAVIGATION -->
+        <?php echo $admin->display_admin_template('navigation'); ?>
+    </div>

@@ -966,7 +966,7 @@ class Plugin extends generic_pmd {
                 $file_location = plugins . $folder . '/css/' . $filename . '.css';
             }
              
-            if(isset($file_location)) {
+            if (isset($file_location)) {
                 return $file_location;
             }
             
@@ -1006,7 +1006,7 @@ class Plugin extends generic_pmd {
                 $file_location = plugins . $folder . '/javascript/' . $filename . '.js';
             }
              
-            if(isset($file_location)) {
+            if (isset($file_location)) {
                 return $file_location;
             }
             
