@@ -42,7 +42,9 @@ define('baseurl', "http://www.mysite.com/");    // e.g. http://www.mysite.com/
 // DON'T EDIT ANYTHING BEYOND THIS POINT
 
 // define shorthand paths
+define("base", dirname(__FILE__). '/');
 define("admin", dirname(__FILE__).'/admin/');
+define("cache", dirname(__FILE__). '/cache/');
 define("install", dirname(__FILE__).'/install/');
 define("classes", dirname(__FILE__).'/classes/');
 define("includes", dirname(__FILE__).'/3rd_party/');
