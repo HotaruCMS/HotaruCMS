@@ -92,9 +92,7 @@ function sidebar_header_include() {
 function sidebar_admin_header_include() { 
     global $plugin, $admin;
     
-    if($admin->is_settings_page('sidebar')) {
-        $plugin->include_css('sidebar');
-    }
+    $plugin->include_css('sidebar');
 }
 
 

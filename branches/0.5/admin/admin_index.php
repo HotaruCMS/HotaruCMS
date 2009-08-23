@@ -33,6 +33,16 @@ require_once('admin_plugins.php');
 
 $admin = New Admin();
 
+$hotaru->page_type = 'admin';
+
+// Include combined css and js files
+if ($cage->get->keyExists('combine')) {
+    $type = $cage->get->testAlpha('type');
+    $version = $cage->get->testInt('version');
+    $hotaru->combine_includes($type, $version);
+    return true;
+}
+
 // Include admin language file
 if (file_exists(languages . language_pack . 'admin_language.php')) 
 {
@@ -80,8 +90,6 @@ if (isset($current_user) && $plugin->plugin_active('users'))
 // If we get this far, we know that the user is an administrator.
 
 $plugin->check_actions('admin_index');
-
-$hotaru->page_type = 'admin';
 
 switch ($page) {
     case "admin_login":
