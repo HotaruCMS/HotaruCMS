@@ -243,7 +243,7 @@ class Hotaru
         if ($feed != '') {
             $sp = new SimplePie();
             $sp->set_feed_url($feed);
-            $sp->set_cache_location(includes . "SimplePie/cache/");
+            $sp->set_cache_location(cache . "rss_cache/");
             $sp->set_cache_duration($cache_duration);
             $sp->enable_cache($cache);
             $sp->handle_content_type();

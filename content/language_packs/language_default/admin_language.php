@@ -26,9 +26,9 @@
 
 /* ***************************************************************** 
 ******************************************************************** 
-**********						  **********
-**********		ADMIN CORE LANGUAGE 		  **********
-**********						  **********
+**********                                                **********
+**********            ADMIN CORE LANGUAGE                 **********
+**********                                                **********
 ******************************************************************** 
 ***************************************************************** */
 
@@ -116,7 +116,9 @@ $lang["admin_theme_maintenance"] = "Maintenance";
 $lang["admin_theme_maintenance_title"] = "Hotaru Maintenance";
 $lang["admin_theme_maintenance_db_cache"] = "Clear database cache";
 $lang["admin_theme_maintenance_db_cache_desc"] = "deletes cached database queries.";
-$lang["admin_theme_maintenance_rss_cache"] = "Clear RSS cache";
+$lang["admin_theme_maintenance_css_js_cache"] = "Clear css/js cache";
+$lang["admin_theme_maintenance_css_js_cache_desc"] = "deletes cached CSS and JavaScript files from plugins.";
+$lang["admin_theme_maintenance_rss_cache"] = "Clear rss cache";
 $lang["admin_theme_maintenance_rss_cache_desc"] = "deletes cached RSS feeds.";
 
 /* plugins */
