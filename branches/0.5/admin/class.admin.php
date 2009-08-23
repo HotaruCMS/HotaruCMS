@@ -224,7 +224,7 @@ class Admin
     {
         global $hotaru, $lang;
         
-        $success = $this->delete_files(includes . $folder . '/cache');
+        $success = $this->delete_files(cache . $folder);
         if ($success) {
             $hotaru->message = $lang['admin_maintenance_clear_cache_success'];
             $hotaru->message_type = 'green';

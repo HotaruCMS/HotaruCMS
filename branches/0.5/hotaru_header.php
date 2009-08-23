@@ -66,7 +66,7 @@ require_once(classes . 'class.inspekt.php');      // for custom Inspekt methods
 if (!isset($db)) { 
     $db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST); 
     $db->cache_timeout = 0;         // Note: this is hours
-    $db->cache_dir = includes . 'ezSQL/cache';
+    $db->cache_dir = cache . 'db_cache';
     $db->use_disk_cache = true;     // Note: Queries are only cached following
                                     // $db->cache_queries = true;
 }

@@ -2,6 +2,8 @@
 /**
  * Combine plugin css and js files into one big file for each.
  *
+ * Based on Ed Eliot's work here: http://www.ejeliot.com/blog/72
+ *
  * PHP version 5
  *
  * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
@@ -56,7 +58,7 @@ if ($hotaru->page_type == 'admin' || $cage->get->keyExists('admin')) {
 }
 
 $cache_length = 31356000;   // about one year
-$cache = base . 'cache/';
+$cache = cache . 'css_js_cache/';
 
 if(($plugin->include_type == 'css') || ($cage->get->testAlpha('type') == 'css')) { 
     $type = 'css'; 

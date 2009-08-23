@@ -31,71 +31,65 @@
 return false; die(); // We don't want to just drop into the file.
 
 
-/* ******************************************************************** 
- *  Function: sp_install_plugin
- *  Parameters: None
- *  Purpose: Adds default settings for Sidebar Posts plugin
- *  Notes: ---
- ********************************************************************** */
- 
+/**
+ *  Add default settings for Sidebar Posts plugin on installation
+ */
 function sp_install_plugin() {
-	global $db, $plugin;
-	
-	// Default settings
-	$plugin->plugin_settings_update('sidebar_widgets', 'sidebar_posts_top', 'top');
-	$plugin->plugin_settings_update('sidebar_widgets', 'sidebar_posts_latest', 'new');
-		
+    global $db, $plugin;
+    
+    // Default settings
+    $plugin->plugin_settings_update('sidebar_widgets', 'sidebar_posts_top', 'top');
+    $plugin->plugin_settings_update('sidebar_widgets', 'sidebar_posts_latest', 'new');
+        
 }
 
 function sp_hotaru_header() {
-	// NOthing to do but this hook and function forces the file to be included during check_actions().
+    // Nothing to do but this hook and function forces the file to be included during check_actions().
 }
 
 
-/* ******************************************************************** 
- *  Function: sidebar_widget_sidebar_posts
- *  Parameters: None
- *  Purpose: Displays the RSS feed.
- *  Notes: Uses Hotaru's built-in SimplePie library, but extra customization 
- *         to the feed is possible by inserting SimplePie calls before $feed->init();
- ********************************************************************** */
-
-function sidebar_widget_sidebar_posts($type = 'top') {
-	global $hotaru, $plugin, $post, $lang;
+/**
+ * Display the top or latest posts in the sidebar
+ *
+ * @param $type either 'top' or 'new', matching the post_status in the db.
+ */
+function sidebar_widget_sidebar_posts($type = 'top')
+{
+    global $hotaru, $plugin, $post, $lang;
     
-    	$plugin->include_language('sidebar_posts');
-    	//$hotaru->title = $hotaru->get_page_name();
-	
-	// FILTER TO NEW POSTS OR TOP POSTS?
-	if($type == 'new' && $hotaru->title != 'latest') { 
-		$posts = $post->get_posts($post->filter(array('post_status = %s' => 'new'), 10));	// get latest stories
-		$title = $lang['sidebar_posts_latest_posts'];
-	} elseif($type == 'top' && $hotaru->title != 'top') {
-		$posts = $post->get_posts($post->filter(array('post_status = %s' => 'top'), 10));	// get top stories
-		$title = $lang['sidebar_posts_top_posts'];
-	}
-	
-	if(isset($posts) && !empty($posts)) {
-		
-		$output = "<h2 class='sidebar_posts_title'>";
-		$output .= "<a href='" . url(array('page'=>'rss', 'status'=>$type)) . "' title='" . $lang["sidebar_posts_icon_anchor_title"] . "'><img src='" . baseurl . "content/themes/" . theme . "images/rss_16.png'></a>&nbsp;"; // RSS icon
-		$link = baseurl;
-		$output .= "<a href='" . $link . "' title='" . $lang["sidebar_posts_title_anchor_title"] . "'>" . $title . "</a></h2>"; 
-		    
-		$output .= "<ul class='sidebar_posts_items'>";
-	
-		foreach ($posts as $item) {
-		        
-		        // POST TITLE
-		        $output .= "<li class='sidebar_posts_item'>";
-		        $output .= "<span class='sidebar_posts_title'>";
-		        $output .= "<a href='" . url(array('page'=>$item->post_id)) . "'>" . urldecode($item->post_title) . "</a></span>";
-			$output .= '</li>';
-		}
-	}
-	
-	// Display the whole thing:
-	if(isset($output)) { echo $output . "</ul>"; }
+        $plugin->include_language('sidebar_posts');
+        //$hotaru->title = $hotaru->get_page_name();
+    
+    // FILTER TO NEW POSTS OR TOP POSTS?
+    if ($type == 'new' && $hotaru->title != 'latest') { 
+        $posts = $post->get_posts($post->filter(array('post_status = %s' => 'new'), 10));    // get latest stories
+        $title = $lang['sidebar_posts_latest_posts'];
+    } elseif ($type == 'top' && $hotaru->title != 'top') {
+        $posts = $post->get_posts($post->filter(array('post_status = %s' => 'top'), 10));    // get top stories
+        $title = $lang['sidebar_posts_top_posts'];
+    }
+    
+    if (isset($posts) && !empty($posts)) {
+        
+        $output = "<h2 class='sidebar_posts_title'>";
+        $output .= "<a href='" . url(array('page'=>'rss', 'status'=>$type)) . "' title='" . $lang["sidebar_posts_icon_anchor_title"] . "'><img src='" . baseurl . "content/themes/" . theme . "images/rss_16.png'></a>&nbsp;"; // RSS icon
+        $link = baseurl;
+        $output .= "<a href='" . $link . "' title='" . $lang["sidebar_posts_title_anchor_title"] . "'>" . $title . "</a></h2>"; 
+            
+        $output .= "<ul class='sidebar_posts_items'>";
+    
+        foreach ($posts as $item) {
+                
+                // POST TITLE
+                $output .= "<li class='sidebar_posts_item'>";
+                $output .= "<span class='sidebar_posts_title'>";
+                $output .= "<a href='" . url(array('page'=>$item->post_id)) . "'>" . urldecode($item->post_title) . "</a></span>";
+            $output .= '</li>';
+        }
+    }
+    
+    // Display the whole thing:
+    if (isset($output)) { echo $output . "</ul>"; }
 }
- 	
+     
 ?>
