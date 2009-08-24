@@ -43,10 +43,10 @@ function usr_install_plugin()
     $plugin->include_language('users');
     
     // Create a new empty table called "usermeta"
-    $exists = $db->table_exists('usermeta');
+    $exists = $db->TABLE_TAGSexists('usermeta');
     if (!$exists) {
         //echo "table doesn't exist. Stopping before creation."; exit;
-        $sql = "CREATE TABLE `" . db_prefix . "usermeta` (
+        $sql = "CREATE TABLE `" . DB_PREFIX . "usermeta` (
           `usermeta_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
           `usermeta_userid` int(20) NOT NULL DEFAULT 0,
           `usermeta_key` varchar(255) NULL,
@@ -72,12 +72,12 @@ function usr_install_plugin()
 
 
 /**
- * Define a global "table_usermeta" constant for referring to the db table
+ * Define a global "TABLE_TAGSusermeta" constant for referring to the db table
  */
 function usr_hotaru_header() {
     global $hotaru, $lang, $cage, $plugin, $userbase;
 
-    if (!defined('table_usermeta')) { define("table_usermeta", db_prefix . 'usermeta'); }
+    if (!defined('TABLE_USERMETA')) { define("TABLE_USERMETA", DB_PREFIX . 'usermeta'); }
     
     // include language file
     $plugin->include_language('users');
@@ -109,7 +109,7 @@ function usr_admin_sidebar_plugin_settings()
  */
 function usr_admin_plugin_settings()
 {
-    require_once(plugins . 'users/users_settings.php');
+    require_once(PLUGINS . 'users/users_settings.php');
     usr_settings();
     return true;
 }
@@ -162,7 +162,7 @@ function usr_theme_index_replace()
     if ($current_user->logged_in) {
          if ($hotaru->is_page('logout')) {
             $current_user->destroy_cookie_and_session();
-            header("Location: " . baseurl);
+            header("Location: " . BASEURL);
         } elseif ($hotaru->is_page('profile')) {
             usr_update_general();
             usr_update_password();    
@@ -182,13 +182,13 @@ function usr_theme_index_replace()
                     // fall through and display "email sent" message
                 } else {
                     // redirect to login page
-                    header("Location: " . baseurl . "index.php?page=login");
+                    header("Location: " . BASEURL . "index.php?page=login");
                 }
             }
         } elseif ($hotaru->is_page('login')) {
             if (usr_login()) { 
                 // success, return to front page, logged IN.
-                header("Location: " . baseurl);
+                header("Location: " . BASEURL);
             } 
         }     
     }
@@ -253,7 +253,7 @@ function usr_submit_list_filter()
     {
         $filter['post_author = %d'] = $current_user->get_user_id($cage->get->testUsername('user')); 
         $rss = " <a href='" . url(array('page'=>'rss', 'user'=>$cage->get->testUsername('user'))) . "'>";
-        $rss .= "<img src='" . baseurl . "content/themes/" . theme . "images/rss_10.png'></a>";
+        $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
         $filter['post_status != %s'] = 'processing';
         $page_title = $lang["submit_page_breadcrumbs_user"] . " &raquo; " . $hotaru->title . $rss;
         
@@ -448,7 +448,7 @@ function usr_register()
     $current_user = new UserBase();
     
     if ($userbase->userbase_vars['users_recaptcha_enabled']) {
-        require_once(plugins . 'users/recaptcha/recaptchalib.php');
+        require_once(PLUGINS . 'users/recaptcha/recaptchalib.php');
     }
     
     $error = 0;
@@ -496,7 +496,7 @@ function usr_register()
             
             # was there a reCAPTCHA response?
             if ($cage->post->keyExists('recaptcha_response_field')) {
-                    $rc_resp = recaptcha_check_answer ($recaptcha_privkey,
+                    $rc_resp = recaptcha_check_answer($recaptcha_privkey,
                                                     $cage->server->getRaw('REMOTE_ADDR'),
                                                     $cage->post->getRaw('recaptcha_challenge_field'),
                                                     $cage->post->getRaw('recaptcha_response_field'));
@@ -558,7 +558,7 @@ function usr_send_confirmation_email($user_id)
     
     // Check that the site email has been changed from the default...
     /*
-    if (site_email == "admin@hotarucms.org") {
+    if (SITE_EMAIL == "admin@hotarucms.org") {
         echo "Error: Site email not updated in Admin -> Settings";
         die(); exit;
     } 
@@ -570,7 +570,7 @@ function usr_send_confirmation_email($user_id)
     $email_conf = md5(crypt(md5($current_user->email),md5($current_user->email)));
     
     // store the hash in the user table
-    $sql = "UPDATE " . table_users . " SET user_email_conf = %s WHERE user_id = %d";
+    $sql = "UPDATE " . TABLE_USERS . " SET user_email_conf = %s WHERE user_id = %d";
     $db->query($db->prepare($sql, $email_conf, $current_user->id));
     
     $line_break = "\r\n\r\n";
@@ -584,13 +584,13 @@ function usr_send_confirmation_email($user_id)
     $body .= $line_break;
     $body .= $lang['users_register_emailconf_body_click'];
     $body .= $line_break;
-    $body .= baseurl . "index.php?page=emailconf&plugin=users&id=" . $current_user->id . "&conf=" . $email_conf;
+    $body .= BASEURL . "index.php?page=emailconf&plugin=users&id=" . $current_user->id . "&conf=" . $email_conf;
     $body .= $line_break;
     $body .= $lang['users_register_emailconf_body_regards'];
     $body .= $next_line;
     $body .= $lang['users_register_emailconf_body_sign'];
     $to = $current_user->email;
-    $headers = "From: " . site_email . "\r\nReply-To: " . site_email . "\r\nX-Priority: 3\r\n";
+    $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
 
     mail($to, $subject, $body, $headers);    
 }
@@ -614,11 +614,11 @@ function usr_check_email_confirmation()
         $hotaru->messages[$lang['users_register_emailconf_fail']] = 'red';
     }
     
-    $sql = "SELECT user_email_conf FROM " . table_users . " WHERE user_id = %d";
+    $sql = "SELECT user_email_conf FROM " . TABLE_USERS . " WHERE user_id = %d";
     $user_email_conf = $db->get_var($db->prepare($sql, $user_id));
     
     if ($conf === $user_email_conf) {
-        $sql = "UPDATE " . table_users . " SET user_email_valid = %d WHERE user_id = %d";
+        $sql = "UPDATE " . TABLE_USERS . " SET user_email_valid = %d WHERE user_id = %d";
         $db->query($db->prepare($sql, 1, $current_user->id));
     
         $success_message = $lang['users_register_emailconf_success'] . " <b><a href='" . url(array('page'=>'login')) . "'>" . $lang['users_register_emailconf_success_login'] . "</a></b>";

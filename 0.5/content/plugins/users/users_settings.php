@@ -1,8 +1,6 @@
 <?php
 /**
- *  File: /plugins/users/users_settings.php
- * Admin settings for the Users plugin
- *  Notes: This file is part of the Users plugin. The main file is /plugins/users/users.php
+ * Users Settings
  *
  * PHP version 5
  *
@@ -55,13 +53,13 @@ function usr_settings()
     if (!$recaptcha_privkey) { $recaptcha_privkey = ''; }
     if (!$emailconf_enabled) { $emailconf_enabled = ''; }
     
-    echo "<form name='users_settings_form' action='" . baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=users' method='post'>\n";
+    echo "<form name='users_settings_form' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=users' method='post'>\n";
     
     echo "<p>" . $lang["users_settings_instructions"] . "</p><br />";
     
     echo "<b>" . $lang["users_settings_registration"] . "</b><br /><br />";
     
-    $thisdomain =  rstrtrim(str_replace("http://", "", baseurl), '/');
+    $thisdomain =  rstrtrim(str_replace("http://", "", BASEURL), '/');
     echo "<input type='checkbox' name='rc_enabled' value='enabled' " . $recaptcha_enabled . " >&nbsp;&nbsp;" . $lang["users_settings_recaptcha_enable"] . " <a href='http://recaptcha.net/api/getkey?domain=" . $thisdomain . "&app=HotaruCMS'>reCAPTCHA.net</a><br /><br />\n";    
     echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $lang["users_settings_recaptcha_public_key"] . ": <input type='text' name='rc_pubkey' value='" . $recaptcha_pubkey . "'><br /><br />\n";
     echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $lang["users_settings_recaptcha_private_key"] . ": <input type='text' name='rc_privkey' value='" . $recaptcha_privkey . "'><br /><br />\n";

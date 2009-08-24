@@ -39,20 +39,20 @@ function vote_install_plugin() {
     // Create a new table column called "post_votes_up" if it doesn't already exist
     $exists = $db->column_exists('posts', 'post_votes_up');
     if (!$exists) {
-        $db->query("ALTER TABLE " . table_posts . " ADD post_votes_up smallint(11) NOT NULL DEFAULT '0' AFTER post_content");
+        $db->query("ALTER TABLE " . TABLE_POSTS . " ADD post_votes_up smallint(11) NOT NULL DEFAULT '0' AFTER post_content");
     } 
     
     // Create a new table column called "post_votes_down" if it doesn't already exist
     $exists = $db->column_exists('posts', 'post_votes_down');
     if (!$exists) {
-        $db->query("ALTER TABLE " . table_posts . " ADD post_votes_down smallint(11) NOT NULL DEFAULT '0' AFTER post_votes_up");
+        $db->query("ALTER TABLE " . TABLE_POSTS . " ADD post_votes_down smallint(11) NOT NULL DEFAULT '0' AFTER post_votes_up");
     } 
     
     // Create a new empty table called "votes" if it doesn't already exist
     $exists = $db->table_exists('postvotes');
     if (!$exists) {
         //echo "table doesn't exist. Stopping before creation."; exit;
-        $sql = "CREATE TABLE `" . db_prefix . "postvotes` (
+        $sql = "CREATE TABLE `" . DB_PREFIX . "postvotes` (
           `vote_post_id` int(11) NOT NULL DEFAULT '0',
           `vote_user_id` int(11) NOT NULL DEFAULT '0',
           `vote_user_ip` varchar(32) NOT NULL DEFAULT '0',
@@ -96,7 +96,7 @@ function vote_install_plugin() {
 function vote_hotaru_header() {
     global $plugin, $post;
     
-    if (!defined('table_postvotes')) { define("table_postvotes", db_prefix . 'postvotes'); }
+    if (!defined('TABLE_POSTVOTES')) { define("TABLE_POSTVOTES", DB_PREFIX . 'postvotes'); }
     
     $plugin->include_language('vote');    
 }
@@ -196,12 +196,12 @@ function vote_submit_class_post_add_post()
         }
         
         //update the vote count
-        $sql = "UPDATE " . table_posts . " SET post_votes_up=post_votes_up+%d WHERE post_id = %d";
+        $sql = "UPDATE " . TABLE_POSTS . " SET post_votes_up=post_votes_up+%d WHERE post_id = %d";
         $db->query($db->prepare($sql, $submit_vote_value, $post->post_id));
     
         //Insert one vote for each of $submit_vote_value;
-        for($i=0; $i<$submit_vote_value; $i++) {
-            $sql = "INSERT INTO " . table_postvotes . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d)";
+        for ($i=0; $i<$submit_vote_value; $i++) {
+            $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d)";
             $db->query($db->prepare($sql, $post->post_id, $current_user->id, $cage->server->testIp('REMOTE_ADDR'), $post->post_vars['vote_type'], 'positive', $current_user->id));
         }    
     }            
@@ -246,10 +246,10 @@ function vote_submit_pre_show_post() {
         // CHECK TO SEE IF THIS POST IS BEING FLAGGED AND IF SO, ADD IT TO THE DATABASE
         if ($cage->get->keyExists('alert') && $current_user->logged_in) {
             // Check if already flagged...
-            $sql = "SELECT vote_rating FROM " . table_postvotes . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating = %s";
+            $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating = %s";
             $flagged = $db->get_var($db->prepare($sql, $post->post_id, $current_user->id, 'alert'));
             if (!$flagged) {
-                $sql = "INSERT INTO " . table_postvotes . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_reason, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d, %d)";
+                $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_reason, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d, %d)";
                 $db->query($db->prepare($sql, $post->post_id, $current_user->id, $cage->server->testIp('REMOTE_ADDR'), $post->post_vars['vote_type'], 'alert', $cage->get->testInt('alert'), $current_user->id));
             }
             else
@@ -266,7 +266,7 @@ function vote_submit_pre_show_post() {
         $vote_settings = unserialize($plugin->plugin_settings('vote', 'vote_settings')); 
         
         // Check if already flagged...
-        $sql = "SELECT * FROM " . table_postvotes . " WHERE vote_post_id = %d AND vote_rating = %s";
+        $sql = "SELECT * FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_rating = %s";
         $flagged = $db->get_results($db->prepare($sql, $post->post_id, 'alert'));
         if ($flagged) {
             $flag_count = 0;
@@ -279,7 +279,7 @@ function vote_submit_pre_show_post() {
             // Buries or Deletes a post if this new flag sends it over the limit set in Vote Settings
             if ($cage->get->keyExists('alert') && $flag_count >= $vote_settings['vote_alerts_to_bury']) {
                 if ($vote_settings['vote_physical_delete']) { 
-                    $sql = "DELETE FROM " . table_postvotes . " WHERE vote_post_id = %d";
+                    $sql = "DELETE FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d";
                     $db->query($db->prepare($sql, $post->post_id));
                     $post->delete_post($post->post_id); 
                 } else {
@@ -311,13 +311,13 @@ function vote_submit_pre_show_post() {
     
     // CHECK TO SEE IF THE CURRENT USER HAS VOTED FOR THIS POST
      if ($current_user->logged_in) {
-        $sql = "SELECT vote_rating FROM " . table_postvotes . " WHERE vote_post_id = %d AND (vote_user_id = %d OR vote_user_ip = %s) AND vote_rating != %s";
+        $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND (vote_user_id = %d OR vote_user_ip = %s) AND vote_rating != %s";
         $voted = $db->get_var($db->prepare($sql, $post->post_id, $current_user->id, $cage->server->testIp('REMOTE_ADDR'), 'alert'));
     } 
     
     // CHECK TO SEE IF THIS ANONYMOUS USER HAS VOTED FOR THIS POST
     if (!$current_user->logged_in && ($post->post_vars['vote_anonymous_votes'] == 'checked')) {
-        $sql = "SELECT vote_rating FROM " . table_postvotes . " WHERE vote_post_id = %d AND vote_user_ip = %s AND vote_rating != %s";
+        $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_ip = %s AND vote_rating != %s";
         $voted = $db->get_var($db->prepare($sql, $post->post_id, $cage->server->testIp('REMOTE_ADDR'), 'alert'));
     }
            
@@ -418,7 +418,7 @@ function vote_admin_plugin_settings() {
     $plugin->check_actions('vote_settings_get_values');
     
     // The form should be submitted to the admin_index.php page:
-    echo "<form name='vote_settings_form' action='" . baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=vote' method='post'>\n";
+    echo "<form name='vote_settings_form' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=vote' method='post'>\n";
     
     echo "<p><b>" . $lang["vote_settings_vote_type"] . "</b></p>";
     

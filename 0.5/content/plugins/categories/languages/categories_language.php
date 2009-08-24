@@ -1,6 +1,6 @@
 <?php
 /**
- * A language file for Categories.
+ * CATEGORIES LANGUAGE
  *
  * PHP version 5
  *
