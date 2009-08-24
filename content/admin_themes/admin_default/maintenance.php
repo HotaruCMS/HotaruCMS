@@ -1,28 +1,30 @@
 <?php 
-
-/* ******* ADMIN TEMPLATE ************************************************************************** 
+/**
  * Theme name: admin_default
  * Template name: maintenance.php
  * Template author: Nick Ramsay
- * Version: 0.1
- * License:
  *
- *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
+ * PHP version 5
  *
- *   Hotaru CMS is free software: you can redistribute it and/or modify it under the terms of the 
- *   GNU General Public License as published by the Free Software Foundation, either version 3 of 
- *   the License, or (at your option) any later version.
+ * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation, either version 3 of 
+ * the License, or (at your option) any later version. 
  *
- *   Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
- *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
+ * Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE. 
  *
- *   You should have received a copy of the GNU General Public License along with Hotaru CMS. If not, 
- *   see http://www.gnu.org/licenses/.
- *   
- *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
- *
- **************************************************************************************************** */
+ * You should have received a copy of the GNU General Public License along 
+ * with Hotaru CMS. If not, see http://www.gnu.org/licenses/.
+ * 
+ * @category  Content Management System
+ * @package   HotaruCMS
+ * @author    Nick Ramsay <admin@hotarucms.org>
+ * @copyright Copyright (c) 2009, Hotaru CMS
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * @link      http://www.hotarucms.org/
+ */
 
 global $plugin, $admin, $cage, $lang; // don't remove
 ?>
@@ -39,9 +41,9 @@ global $plugin, $admin, $cage, $lang; // don't remove
 
 <?php
     if ($action = $cage->get->testAlnumLines('action')) {
-        if($action == 'clear_db_cache') { $admin->clear_cache('db_cache'); }
-        if($action == 'clear_css_js_cache') { $admin->clear_cache('css_js_cache'); }
-        if($action == 'clear_rss_cache') { $admin->clear_cache('rss_cache'); }
+        if ($action == 'clear_db_cache') { $admin->clear_cache('db_cache'); }
+        if ($action == 'clear_css_js_cache') { $admin->clear_cache('css_js_cache'); }
+        if ($action == 'clear_rss_cache') { $admin->clear_cache('rss_cache'); }
     }
     
 ?>
