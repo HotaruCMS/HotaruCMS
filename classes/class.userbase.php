@@ -69,7 +69,7 @@ class UserBase {
     {
         global $db;
         
-        $sql = "INSERT INTO " . table_users . " (user_username, user_role, user_date, user_password, user_email) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s)";
+        $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s)";
         $db->query($db->prepare($sql, $this->username, $this->role, $this->password, $this->email));
     }
 
@@ -82,7 +82,7 @@ class UserBase {
         global $db;
         
         if ($this->id != 0) {
-            $sql = "UPDATE " . table_users . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s, user_updateby = %d WHERE user_id = %d";
+            $sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s, user_updateby = %d WHERE user_id = %d";
             $db->query($db->prepare($sql, $this->username, $this->role, $this->password, $this->email, $this->id, $this->id));
             return true;
         } else {
@@ -101,7 +101,7 @@ class UserBase {
         global $db;
         
         if ($this->id != 0) {
-            $sql = "UPDATE " . table_users . " SET user_lastlogin = CURRENT_TIMESTAMP WHERE user_id = %d";
+            $sql = "UPDATE " . TABLE_USERS . " SET user_lastlogin = CURRENT_TIMESTAMP WHERE user_id = %d";
             $db->query($db->prepare($sql, $this->id));
             return true;
         } else {
@@ -135,7 +135,7 @@ class UserBase {
         }
         
         // Build SQL
-        $sql = "SELECT * FROM " . table_users . " WHERE " . $where;
+        $sql = "SELECT * FROM " . TABLE_USERS . " WHERE " . $where;
         
         // Fetch from database
         $user_info = $db->get_row($db->prepare($sql, $param));
@@ -169,21 +169,21 @@ class UserBase {
         
         // Error 0 - id exists
         if ($id != 0) {
-            if ($db->get_var($db->prepare("SELECT * FROM " . table_users . " WHERE user_id = %d", $id))) {
+            if ($db->get_var($db->prepare("SELECT * FROM " . TABLE_USERS . " WHERE user_id = %d", $id))) {
                 return 0; // id exists
             } 
         } 
         
         // Error 1 - username exists
         if ($username != '') {
-            if ($db->get_var($db->prepare("SELECT * FROM " . table_users . " WHERE user_username = %s", $username))) {
+            if ($db->get_var($db->prepare("SELECT * FROM " . TABLE_USERS . " WHERE user_username = %s", $username))) {
                 return 1; // username exists
             }         
         } 
         
         // Error 2 - email exists
         if ($email != '') {
-            if ($db->get_var($db->prepare("SELECT * FROM " . table_users . " WHERE user_email = %s", $email))) {
+            if ($db->get_var($db->prepare("SELECT * FROM " . TABLE_USERS . " WHERE user_email = %s", $email))) {
                 return 2; // email exists
             }         
         } 
@@ -207,7 +207,7 @@ function admin_exists()
 {
     global $db;
     
-    $sql = "SELECT user_username FROM " . table_users . " WHERE user_role = %s";
+    $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_role = %s";
     
     if ($admin_name = $db->get_var($db->prepare($sql, 'admin'))) {
         return $admin_name; // admin exists
@@ -226,7 +226,7 @@ function is_admin($username)
 {
     global $db;
     
-    $sql = "SELECT * FROM " . table_users . " WHERE user_username = %s AND user_role = %s";
+    $sql = "SELECT * FROM " . TABLE_USERS . " WHERE user_username = %s AND user_role = %s";
     
     $role = $db->get_row($db->prepare($sql, $username, 'admin'));
     
@@ -251,7 +251,7 @@ function is_admin($username)
         $salt_length = 9;
         $password = $this->generateHash($password, substr($userX->user_password, 0, $salt_length));
         
-        $sql = "SELECT user_username, user_password FROM " . table_users . " WHERE user_username = %s AND user_password = %s";
+        $sql = "SELECT user_username, user_password FROM " . TABLE_USERS . " WHERE user_username = %s AND user_password = %s";
         
         $result = $db->get_row($db->prepare($sql, $username, $password));
         
@@ -337,7 +337,7 @@ function is_admin($username)
     {
         global $db, $user;
         
-        $sql = "SELECT user_username FROM " . table_users . " WHERE user_id = %d";
+        $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_id = %d";
         
         $username = $db->get_var($db->prepare($sql, $id));
         if ($username) { return $username; } else { return false; }
@@ -354,7 +354,7 @@ function is_admin($username)
     {
         global $db, $user;
         
-        $sql = "SELECT user_id FROM " . table_users . " WHERE user_username = %s";
+        $sql = "SELECT user_id FROM " . TABLE_USERS . " WHERE user_username = %s";
         
         $user_id = $db->get_var($db->prepare($sql, $username));
         if ($user_id) { return $user_id; } else { return false; }

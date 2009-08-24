@@ -65,7 +65,7 @@ class Hotaru
     {
         global $db;
         
-        $sql = "SELECT * FROM " . table_settings;
+        $sql = "SELECT * FROM " . TABLE_SETTINGS;
         $results = $db->get_results($db->prepare($sql));
         if ($results) { return $results; } else { return false; }
     }
@@ -174,28 +174,28 @@ class Hotaru
             3. Check the plugin folder
             4. Show the 404 Not Found page
         */
-        if (file_exists(themes . theme . $page))
+        if (file_exists(THEMES . THEME . $page))
         {
-            include_once(themes . theme . $page);
+            include_once(THEMES . THEME . $page);
         } 
-        elseif (file_exists(themes . 'default/' . $page))
+        elseif (file_exists(THEMES . 'default/' . $page))
         {
-            include_once(themes . 'default/' . $page);
+            include_once(THEMES . 'default/' . $page);
         }
-        elseif ($plugin != '' && file_exists(plugins .  $plugin . '/templates/' . $page))
+        elseif ($plugin != '' && file_exists(PLUGINS .  $plugin . '/templates/' . $page))
         {
                 if ($plugin == 'vote') {
                     // Special case, do not restrict to include once.
-                    include(plugins . $plugin . '/templates/' . $page);
+                    include(PLUGINS . $plugin . '/templates/' . $page);
                 } else {
-                    include_once(plugins . $plugin . '/templates/' . $page);
+                    include_once(PLUGINS . $plugin . '/templates/' . $page);
                 }
                 return true;
                 die();
         }
         else 
         {
-            include_once(themes . '404.php');
+            include_once(THEMES . '404.php');
         }
     }
     
@@ -238,12 +238,12 @@ class Hotaru
      */
     function new_simplepie($feed='', $cache=true, $cache_duration=10)
     {
-        include_once(includes . "SimplePie/simplepie.inc");
+        include_once(INCLUDES . "SimplePie/simplepie.inc");
         
         if ($feed != '') {
             $sp = new SimplePie();
             $sp->set_feed_url($feed);
-            $sp->set_cache_location(cache . "rss_cache/");
+            $sp->set_cache_location(CACHE . "rss_cache/");
             $sp->set_cache_duration($cache_duration);
             $sp->enable_cache($cache);
             $sp->handle_content_type();
@@ -332,7 +332,7 @@ class Hotaru
         }
         
         $cache_length = 31356000;   // about one year
-        $cache = cache . 'css_js_cache/';
+        $cache = CACHE . 'css_js_cache/';
         
         if($type == 'css') { 
             $content_type = 'text/css';
@@ -444,11 +444,11 @@ class Hotaru
         }
         
         if ($version_js > 0) {
-            echo "<script type='text/javascript' src='" . baseurl . $index . ".php?" . $page . "&" . $folder . "combine=1&type=js&version=" . $version_js . "'></script>\n";
+            echo "<script type='text/javascript' src='" . BASEURL . $index . ".php?" . $page . "&" . $folder . "combine=1&type=js&version=" . $version_js . "'></script>\n";
         }
         
         if ($version_css > 0) {
-            echo "<link rel='stylesheet' href='" . baseurl . $index . ".php?" . $page . "&" . $folder . "combine=1&type=css&version=" . $version_css . "' type='text/css'>\n";
+            echo "<link rel='stylesheet' href='" . BASEURL . $index . ".php?" . $page . "&" . $folder . "combine=1&type=css&version=" . $version_css . "' type='text/css'>\n";
         }
 
      }
