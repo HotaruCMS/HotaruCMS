@@ -34,7 +34,7 @@ global $hotaru, $plugin, $current_user, $lang; // don't remove
     <?php $plugin->check_actions('navigation_first'); ?>
     
     <?php if ($hotaru->title == 'top') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
-    <li><a <?php echo $status; ?> href="<?php echo baseurl; ?>"><?php echo $lang["main_theme_navigation_home"] ?></a></li>
+    <li><a <?php echo $status; ?> href="<?php echo BASEURL; ?>"><?php echo $lang["main_theme_navigation_home"]; ?></a></li>
     <?php $plugin->check_actions('navigation'); ?>
     <?php 
         if (!$plugin->plugin_active('users')) { 
@@ -58,8 +58,8 @@ global $hotaru, $plugin, $current_user, $lang; // don't remove
     <?php     // RSS Link and icon if Submit plugin is active
         if ($plugin->get_plugin_status('submit') == 'active') { ?>
         <li>
-        <a href="<?php echo url(array('page'=>'rss')) ?>">RSS 
-            <img src="<?php echo baseurl ?>content/themes/<?php echo theme ?>images/rss_16.png">
+        <a href="<?php echo url(array('page'=>'rss')); ?>">RSS 
+            <img src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png">
         </a>
         </li>
     <?php } ?>
