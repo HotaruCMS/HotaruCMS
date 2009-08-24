@@ -28,7 +28,7 @@
  */
 
 // Include the generic_pmd class that reads post metadata from the a plugin
-require_once(includes . 'GenericPHPConfig/class.metadata.php');
+require_once(INCLUDES . 'GenericPHPConfig/class.metadata.php');
 
 class Plugin extends generic_pmd {
 
@@ -67,7 +67,7 @@ class Plugin extends generic_pmd {
             foreach ($plugins_array as $plugin_details) {
             
                 $allplugins[$count] = array();
-                $sql = "SELECT * FROM " . table_plugins . " WHERE plugin_folder = %s";
+                $sql = "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
                 $plugin_row = $db->get_row($db->prepare($sql, $plugin_details['folder']));
                 
                 if ($plugin_row && version_compare($plugin_details['version'], $plugin_row->plugin_version, '<=')) 
@@ -109,29 +109,29 @@ class Plugin extends generic_pmd {
 
                 // Conditions for "active"...
                 if (($allplugins[$count]['status'] == 'active') && ($allplugins[$count]['install'] == 'install')) {
-                    $allplugins[$count]['active'] = "<img src='" . baseurl . "content/admin_themes/" . admin_theme . "images/active.png'></a>";
+                    $allplugins[$count]['active'] = "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/active.png'></a>";
                 } elseif (($allplugins[$count]['status'] == 'inactive') && ($allplugins[$count]['install'] == 'install')) {
-                    $allplugins[$count]['active'] = "<img src='" . baseurl . "content/admin_themes/" . admin_theme . "images/inactive.png'></a>";
+                    $allplugins[$count]['active'] = "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/inactive.png'></a>";
                 } elseif ($allplugins[$count]['status'] == 'active') {
-                    $allplugins[$count]['active'] = "<a href='" . baseurl;
+                    $allplugins[$count]['active'] = "<a href='" . BASEURL;
                     $allplugins[$count]['active'] .= "admin/admin_index.php?page=plugins&amp;action=deactivate&amp;plugin=";
                     $allplugins[$count]['active'] .= $allplugins[$count]['folder'] . "'>";
-                    $allplugins[$count]['active'] .= "<img src='" . baseurl . "content/admin_themes/" . admin_theme . "images/active.png'></a>";
+                    $allplugins[$count]['active'] .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/active.png'></a>";
                 } else {
-                    $allplugins[$count]['active'] = "<a href='" . baseurl;
+                    $allplugins[$count]['active'] = "<a href='" . BASEURL;
                     $allplugins[$count]['active'] .= "admin/admin_index.php?page=plugins&amp;action=activate&amp;plugin=";
                     $allplugins[$count]['active'] .= $allplugins[$count]['folder'] . "'>";
-                    $allplugins[$count]['active'] .= "<img src='" . baseurl . "content/admin_themes/" . admin_theme . "images/inactive.png'></a>";
+                    $allplugins[$count]['active'] .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/inactive.png'></a>";
                 }
 
 
                 // Conditions for "install"...
                 if ($allplugins[$count]['install'] == 'install') { 
-                    $allplugins[$count]['install'] = "<a href='" . baseurl . "admin/admin_index.php?page=plugins&amp;action=install&amp;plugin=". $allplugins[$count]['folder'] . "'>" . $lang['admin_plugins_install'] . "</a>";
+                    $allplugins[$count]['install'] = "<a href='" . BASEURL . "admin/admin_index.php?page=plugins&amp;action=install&amp;plugin=". $allplugins[$count]['folder'] . "'>" . $lang['admin_plugins_install'] . "</a>";
                 } elseif ($allplugins[$count]['install'] == 'installed') { 
-                    $allplugins[$count]['install'] = "<a href='" . baseurl . "admin/admin_index.php?page=plugins&amp;action=uninstall&amp;plugin=". $allplugins[$count]['folder'] . "' style='color: red; font-weight: bold'>" . $lang['admin_plugins_uninstall'] . "</a>";
+                    $allplugins[$count]['install'] = "<a href='" . BASEURL . "admin/admin_index.php?page=plugins&amp;action=uninstall&amp;plugin=". $allplugins[$count]['folder'] . "' style='color: red; font-weight: bold'>" . $lang['admin_plugins_uninstall'] . "</a>";
                 } elseif ($allplugins[$count]['install'] == 'upgrade') { 
-                    $allplugins[$count]['install'] = "<a href='" . baseurl . "admin/admin_index.php?page=plugins&amp;action=upgrade&amp;plugin=". $allplugins[$count]['folder'] . "' style='color: #ff9900; font-weight: bold'>" . $lang['admin_plugins_upgrade'] . "</a>";
+                    $allplugins[$count]['install'] = "<a href='" . BASEURL . "admin/admin_index.php?page=plugins&amp;action=upgrade&amp;plugin=". $allplugins[$count]['folder'] . "' style='color: #ff9900; font-weight: bold'>" . $lang['admin_plugins_upgrade'] . "</a>";
                 } else {
                     $allplugins[$count]['install'] = $lang['admin_plugins_installed'];
                 }
@@ -159,16 +159,16 @@ class Plugin extends generic_pmd {
                 // The order is sorted numerically in the plugins.php template, so we need separate order and order_output elements.
                 if ($allplugins[$count]['order'] != 0) { 
                     $order = $allplugins[$count]['order'];
-                    $allplugins[$count]['order_output'] = "<a href='" . baseurl;
+                    $allplugins[$count]['order_output'] = "<a href='" . BASEURL;
                     $allplugins[$count]['order_output'] .= "admin/admin_index.php?page=plugins&amp;";
                     $allplugins[$count]['order_output'] .= "action=orderup&amp;plugin=". $allplugins[$count]['folder'];
                     $allplugins[$count]['order_output'] .= "&amp;order=" . $order . "'>";
-                    $allplugins[$count]['order_output'] .= "<img src='" . baseurl . "content/admin_themes/" . admin_theme . "images/up.png'>";
-                    $allplugins[$count]['order_output'] .= "</a> \n<a href='" . baseurl;
+                    $allplugins[$count]['order_output'] .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/up.png'>";
+                    $allplugins[$count]['order_output'] .= "</a> \n<a href='" . BASEURL;
                     $allplugins[$count]['order_output'] .= "admin/admin_index.php?page=plugins&amp;";
                     $allplugins[$count]['order_output'] .= "action=orderdown&amp;plugin=". $allplugins[$count]['folder'];
                     $allplugins[$count]['order_output'] .= "&amp;order=" . $order . "'>";
-                    $allplugins[$count]['order_output'] .= "<img src='" . baseurl . "content/admin_themes/" . admin_theme . "images/down.png'>";
+                    $allplugins[$count]['order_output'] .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/down.png'>";
                     $allplugins[$count]['order_output'] .= "</a>\n";
                 } else {
                     $allplugins[$count]['order_output'] = "";
@@ -185,11 +185,11 @@ class Plugin extends generic_pmd {
      */
     function get_plugins_array()
     {
-        $plugin_list = getFilenames(plugins, "short");
+        $plugin_list = getFilenames(PLUGINS, "short");
         $plugins_array = array();
         foreach ($plugin_list as $plugin_folder_name)
         {
-            $plugin_metadata = $this->read(plugins . $plugin_folder_name . "/" 
+            $plugin_metadata = $this->read(PLUGINS . $plugin_folder_name . "/" 
             . $plugin_folder_name . ".php");
             
             if ($plugin_metadata) {
@@ -242,7 +242,7 @@ class Plugin extends generic_pmd {
     {
         global $db;
         
-        $sql = "SELECT * FROM " . table_plugins . " WHERE plugin_folder = %s";
+        $sql = "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
         $plugin_row = $db->get_row($db->prepare($sql, $plugin_folder));
         
         if ($plugin_row && $plugin_row->plugin_enabled == 1) {
@@ -264,7 +264,7 @@ class Plugin extends generic_pmd {
     function active_plugins($select = 'plugin_folder')
     {
         global $db;
-        $sql = "SELECT " . $select . " FROM " . table_plugins . " WHERE plugin_enabled = %d";
+        $sql = "SELECT " . $select . " FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d";
         $active_plugins = $db->get_results($db->prepare($sql, $select, 1));
         if ($active_plugins) { return $active_plugins; } else {return false; }
     }
@@ -281,7 +281,7 @@ class Plugin extends generic_pmd {
     {
         global $db;
         
-        $sql = "SELECT count(*) FROM " . table_pluginhooks . " WHERE plugin_folder = %s AND plugin_hook = %s";
+        $sql = "SELECT count(*) FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_folder = %s AND plugin_hook = %s";
         if ($db->get_var($db->prepare($sql, $folder, $hook))) { return true;} else { return false; }
     }
 
@@ -297,7 +297,7 @@ class Plugin extends generic_pmd {
     {
         global $db;
         
-        $sql = "SELECT plugin_hook FROM " . table_pluginhooks . " WHERE (plugin_folder = %s) AND (plugin_hook = %s)";
+        $sql = "SELECT plugin_hook FROM " . TABLE_PLUGINHOOKS . " WHERE (plugin_folder = %s) AND (plugin_hook = %s)";
         $returned_hook = $db->get_var($db->prepare($sql, $this->folder, $hook));
         if ($returned_hook) { return $returned_hook; } else { return false; }
     }
@@ -315,9 +315,9 @@ class Plugin extends generic_pmd {
         
         // Clear the database cache to ensure stored plugins and hooks 
         // are up-to-date.
-        $admin->delete_files(includes . 'ezSQL/cache');
+        $admin->delete_files(CACHE . 'db_cache');
         
-        $plugin_metadata = $this->read(plugins . $folder . "/" . $folder . ".php");
+        $plugin_metadata = $this->read(PLUGINS . $folder . "/" . $folder . ".php");
         
         $this->enabled  = 1;    // Enable it when we add it to the database.
         $this->name     = $plugin_metadata['name'];
@@ -352,16 +352,16 @@ class Plugin extends generic_pmd {
             return false;
         }
                     
-        $sql = "REPLACE INTO " . table_plugins . " (plugin_enabled, plugin_name, plugin_prefix, plugin_folder, plugin_desc, plugin_requires, plugin_version, plugin_updateby) VALUES (%d, %s, %s, %s, %s, %s, %s, %d)";
+        $sql = "REPLACE INTO " . TABLE_PLUGINS . " (plugin_enabled, plugin_name, plugin_prefix, plugin_folder, plugin_desc, plugin_requires, plugin_version, plugin_updateby) VALUES (%d, %s, %s, %s, %s, %s, %s, %d)";
         $db->query($db->prepare($sql, $this->enabled, $this->name, $this->prefix, $this->folder, $this->desc, $this->requires, $this->version, $current_user->id));
 
         // Get the last order number - doing this after REPLACE INTO because 
         // we don't know whether the above will insert or replace.
-        $sql = "SELECT plugin_order FROM " . table_plugins . " ORDER BY plugin_order DESC LIMIT 1";
+        $sql = "SELECT plugin_order FROM " . TABLE_PLUGINS . " ORDER BY plugin_order DESC LIMIT 1";
         $highest_order = $db->get_var($db->prepare($sql));
 
         // Give the new plugin the order number + 1
-        $sql = "UPDATE " . table_plugins . " SET plugin_order = %d WHERE plugin_id = LAST_INSERT_ID()";
+        $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_id = LAST_INSERT_ID()";
         $db->query($db->prepare($sql, ($highest_order + 1)));
         
         // Add any plugin hooks to the hooks table
@@ -393,7 +393,7 @@ class Plugin extends generic_pmd {
             $exists = $this->plugin_hook_exists(trim($hook));
 
             if (!$exists) {
-                $sql = "INSERT INTO " . table_pluginhooks . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
+                $sql = "INSERT INTO " . TABLE_PLUGINHOOKS . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
                 $db->query($db->prepare($sql, $this->folder, trim($hook), $current_user->id));
             }
         }
@@ -412,7 +412,7 @@ class Plugin extends generic_pmd {
     {
         global $db, $lang, $hotaru, $admin;
         
-        $plugin_metadata = $this->read(plugins . $folder . "/" . $folder . ".php");
+        $plugin_metadata = $this->read(PLUGINS . $folder . "/" . $folder . ".php");
         
         $this->enabled  = 1;    // Enable it when we add it to the database.
         $this->name     = $plugin_metadata['name'];
@@ -426,7 +426,7 @@ class Plugin extends generic_pmd {
         {
         // Clear the database cache to ensure stored plugins and hooks 
         // are up-to-date.
-            $admin->delete_files(includes . 'ezSQL/cache');
+            $admin->delete_files(CACHE . 'db_cache');
             
             // Add any new hooks to the hooks table before proceeding.
             $this->add_plugin_hooks(); 
@@ -458,9 +458,9 @@ class Plugin extends generic_pmd {
         global $db, $hotaru, $lang, $admin, $current_user;
         
         // Clear the database cache to ensure plugins and hooks are up-to-date.
-        $admin->delete_files(includes . 'ezSQL/cache');
+        $admin->delete_files(CACHE . 'db_cache');
         
-        $plugin_row = $db->get_row($db->prepare("SELECT plugin_folder, plugin_enabled FROM " . table_plugins . " WHERE plugin_folder = %s", $folder));
+        $plugin_row = $db->get_row($db->prepare("SELECT plugin_folder, plugin_enabled FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
         if (!$plugin_row) 
         {
             // Without this condition, the plugin would be installed and then
@@ -472,7 +472,7 @@ class Plugin extends generic_pmd {
         else 
         {
             if ($plugin_row->plugin_enabled != $enabled) {        // only update if we're changing the enabled value.
-                $sql = "UPDATE " . table_plugins . " SET plugin_enabled = %d, plugin_updateby = %d WHERE plugin_folder = %s";
+                $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_enabled = %d, plugin_updateby = %d WHERE plugin_folder = %s";
                 $db->query($db->prepare($sql, $enabled, $current_user->id, $folder));
                 
                 if ($enabled == 1) { 
@@ -498,11 +498,11 @@ class Plugin extends generic_pmd {
         global $db, $hotaru, $lang, $admin;
         
         // Clear the database cache to ensure plugins and hooks are up-to-date.
-        $admin->delete_files(includes . 'ezSQL/cache');
+        $admin->delete_files(CACHE . 'db_cache');
 
-        $db->query($db->prepare("DELETE FROM " . table_plugins . " WHERE plugin_folder = %s", $folder));
-        $db->query($db->prepare("DELETE FROM " . table_pluginhooks . " WHERE plugin_folder = %s", $folder));
-        $db->query($db->prepare("DELETE FROM " . table_pluginsettings . " WHERE plugin_folder = %s", $folder));
+        $db->query($db->prepare("DELETE FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
+        $db->query($db->prepare("DELETE FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_folder = %s", $folder));
+        $db->query($db->prepare("DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_folder = %s", $folder));
         
         if ($upgrade == 0) {
             $hotaru->messages[$lang["admin_plugins_uninstall_done"]] = 'green';
@@ -532,7 +532,7 @@ class Plugin extends generic_pmd {
         if ($arrow == "up")
         {
             // get row above
-            $sql= "SELECT * FROM " . table_plugins . " WHERE plugin_order = %d";
+            $sql= "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_order = %d";
             $row_above = $db->get_row($db->prepare($sql, ($order - 1)));
             
             if (!$row_above) {
@@ -546,17 +546,17 @@ class Plugin extends generic_pmd {
             }
             
             // update row above 
-            $sql = "UPDATE " . table_plugins . " SET plugin_order = %d WHERE plugin_id = %d";
+            $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_id = %d";
             $db->query($db->prepare($sql, ($row_above->plugin_order + 1), $row_above->plugin_id)); 
             
             // update current plugin
-            $sql = "UPDATE " . table_plugins . " SET plugin_order = %d WHERE plugin_folder = %s";
+            $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_folder = %s";
             $db->query($db->prepare($sql, ($order - 1), $folder)); 
         }
         else
         {
             // get row below
-            $sql= "SELECT * FROM " . table_plugins . " WHERE plugin_order = %d";
+            $sql= "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_order = %d";
             $row_below = $db->get_row($db->prepare($sql, ($order + 1)));
             
             if (!$row_below) {
@@ -570,11 +570,11 @@ class Plugin extends generic_pmd {
             }
             
             // update row above 
-            $sql = "UPDATE " . table_plugins . " SET plugin_order = %d WHERE plugin_id = %d";
+            $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_id = %d";
             $db->query($db->prepare($sql, ($row_below->plugin_order - 1), $row_below->plugin_id)); 
             
             // update current plugin
-            $sql = "UPDATE " . table_plugins . " SET plugin_order = %d WHERE plugin_folder = %s";
+            $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_folder = %s";
             $db->query($db->prepare($sql, ($order + 1), $folder)); 
         }
 
@@ -597,14 +597,14 @@ class Plugin extends generic_pmd {
     {    
         global $db;
         
-        $sql = "SELECT * FROM " . table_plugins . " ORDER BY plugin_order ASC";
+        $sql = "SELECT * FROM " . TABLE_PLUGINS . " ORDER BY plugin_order ASC";
         $rows = $db->get_results($db->prepare($sql));
         
         if ($rows) { 
             $i = 1;
             foreach ($rows as $row) 
             {
-                $sql = "UPDATE " . table_plugins . " SET plugin_order = %d WHERE plugin_id = %d";
+                $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_id = %d";
                 $db->query($db->prepare($sql, $i, $row->plugin_id));
                 $i++; 
             }
@@ -620,16 +620,16 @@ class Plugin extends generic_pmd {
     {    
         global $db, $current_user;
         
-        $sql = "SELECT p.plugin_folder, p.plugin_order, p.plugin_id, h.* FROM " . table_pluginhooks . " h, " . table_plugins . " p WHERE p.plugin_folder = h.plugin_folder ORDER BY p.plugin_order ASC";
+        $sql = "SELECT p.plugin_folder, p.plugin_order, p.plugin_id, h.* FROM " . TABLE_PLUGINHOOKS . " h, " . TABLE_PLUGINS . " p WHERE p.plugin_folder = h.plugin_folder ORDER BY p.plugin_order ASC";
         $rows = $db->get_results($db->prepare($sql));
 
         // Drop and recreate the pluginhooks table, i.e. empty it.
-        $db->query($db->prepare("TRUNCATE TABLE " . table_pluginhooks));
+        $db->query($db->prepare("TRUNCATE TABLE " . TABLE_PLUGINHOOKS));
             
         // Add plugin hooks back into the hooks table
         foreach ($rows  as $row)
         {
-            $sql = "INSERT INTO " . table_pluginhooks . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
+            $sql = "INSERT INTO " . TABLE_PLUGINHOOKS . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
             $db->query($db->prepare($sql, $row->plugin_folder, $row->plugin_hook, $current_user->id));
         }
         
@@ -645,7 +645,7 @@ class Plugin extends generic_pmd {
     function plugin_name($folder = "")
     {    
         global $db;
-        $this->name = $db->get_var($db->prepare("SELECT plugin_name FROM " . table_plugins . " WHERE plugin_folder = %s", $folder));
+        $this->name = $db->get_var($db->prepare("SELECT plugin_name FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
         return $this->name;
     }
     
@@ -660,7 +660,7 @@ class Plugin extends generic_pmd {
     {
         global $db;
         
-        $active= $db->get_row($db->prepare("SELECT plugin_enabled, plugin_version FROM " . table_plugins . " WHERE plugin_folder = %s", $folder));
+        $active= $db->get_row($db->prepare("SELECT plugin_enabled, plugin_version FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
         
         if ($active) {
             if ($active->plugin_enabled == 1) { 
@@ -679,7 +679,7 @@ class Plugin extends generic_pmd {
     function num_active_plugins()
     {
         global $db;
-        $enabled = $db->get_var($db->prepare("SELECT count(*) FROM " . table_plugins . " WHERE plugin_enabled = %d", 1));
+        $enabled = $db->get_var($db->prepare("SELECT count(*) FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d", 1));
         if ($enabled > 0) { return $enabled; } else { return false; }
     }
                 
@@ -705,12 +705,12 @@ class Plugin extends generic_pmd {
             $where = "";
 
             if (!empty($folder)) {
-                $where .= "AND (" . table_plugins . ".plugin_folder = %s)";
+                $where .= "AND (" . TABLE_PLUGINS . ".plugin_folder = %s)";
             }
 
             $db->cache_queries = true;    // start using cache
 
-            $sql = "SELECT " . table_plugins . ".plugin_enabled, " . table_plugins . ".plugin_folder, " . table_plugins . ".plugin_prefix, " . table_pluginhooks . ".plugin_hook  FROM " . table_pluginhooks . ", " . table_plugins . " WHERE (" . table_pluginhooks . ".plugin_hook = %s) AND (" . table_plugins . ".plugin_folder = " . table_pluginhooks . ".plugin_folder) " . $where . "ORDER BY " . table_pluginhooks . ".phook_id";
+            $sql = "SELECT " . TABLE_PLUGINS . ".plugin_enabled, " . TABLE_PLUGINS . ".plugin_folder, " . TABLE_PLUGINS . ".plugin_prefix, " . TABLE_PLUGINHOOKS . ".plugin_hook  FROM " . TABLE_PLUGINHOOKS . ", " . TABLE_PLUGINS . " WHERE (" . TABLE_PLUGINHOOKS . ".plugin_hook = %s) AND (" . TABLE_PLUGINS . ".plugin_folder = " . TABLE_PLUGINHOOKS . ".plugin_folder) " . $where . "ORDER BY " . TABLE_PLUGINHOOKS . ".phook_id";
 
             $plugins = $db->get_results($db->prepare($sql, $hook, $folder));
 
@@ -725,9 +725,9 @@ class Plugin extends generic_pmd {
                         &&  $plugin->plugin_hook 
                         &&  ($plugin->plugin_enabled == 1)
                     ) {
-                        if (file_exists(plugins . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php"))
+                        if (file_exists(PLUGINS . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php"))
                         {
-                            include_once(plugins . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php");
+                            include_once(PLUGINS . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php");
                             
                             if ($perform == true)
                             {
@@ -794,7 +794,7 @@ class Plugin extends generic_pmd {
     function plugin_settings($folder = '', $setting = '') {
         global $db;
         
-        $sql = "SELECT plugin_value FROM " . table_pluginsettings . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
+        $sql = "SELECT plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
         $value = $db->get_var($db->prepare($sql, $folder, $setting));
         if ($value) { return $value; } else { return false; }
     }
@@ -811,7 +811,7 @@ class Plugin extends generic_pmd {
     function plugin_settings_array($folder = '') {
         global $db;
         
-        $sql = "SELECT plugin_setting, plugin_value FROM " . table_pluginsettings . " WHERE (plugin_folder = %s)";
+        $sql = "SELECT plugin_setting, plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s)";
         $results = $db->get_results($db->prepare($sql, $folder));
         
         if ($results) { return $results; } else { return false; }
@@ -828,7 +828,7 @@ class Plugin extends generic_pmd {
     function plugin_setting_exists($folder = '', $setting = '') {
         global $db;
         
-        $sql = "SELECT plugin_setting FROM " . table_pluginsettings . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
+        $sql = "SELECT plugin_setting FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
         $returned_setting = $db->get_var($db->prepare($sql, $folder, $setting));
         if ($returned_setting) { 
             return $returned_setting; 
@@ -851,11 +851,11 @@ class Plugin extends generic_pmd {
         $exists = $this->plugin_setting_exists($folder, $setting);
         if (!$exists) 
         {
-            $sql = "INSERT INTO " . table_pluginsettings . " (plugin_folder, plugin_setting, plugin_value, plugin_updateby) VALUES (%s, %s, %s, %d)";
+            $sql = "INSERT INTO " . TABLE_PLUGINSETTINGS . " (plugin_folder, plugin_setting, plugin_value, plugin_updateby) VALUES (%s, %s, %s, %d)";
             $db->query($db->prepare($sql, $folder, $setting, $value, $current_user->id));
         } else 
         {
-            $sql = "UPDATE " . table_pluginsettings . " SET plugin_folder = %s, plugin_setting = %s, plugin_value = %s, plugin_updateby = %d WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
+            $sql = "UPDATE " . TABLE_PLUGINSETTINGS . " SET plugin_folder = %s, plugin_setting = %s, plugin_value = %s, plugin_updateby = %d WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
             $db->query($db->prepare($sql, $folder, $setting, $value, $current_user->id, $folder, $setting));
         }
     }
@@ -870,7 +870,7 @@ class Plugin extends generic_pmd {
     {
         global $db;
         
-        $sql = "DELETE FROM " . table_pluginsettings . " WHERE plugin_setting = %s";
+        $sql = "DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_setting = %s";
         $db->query($db->prepare($sql, $setting));
     }
     
@@ -883,7 +883,7 @@ class Plugin extends generic_pmd {
     function plugin_settings_remove_plugin($folder = '')
     {
         global $db;
-        $sql = "DELETE FROM " . table_pluginsettings . " WHERE plugin_folder = %s";
+        $sql = "DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_folder = %s";
         $db->query($db->prepare($sql, $folder));
     }
 
@@ -907,24 +907,24 @@ class Plugin extends generic_pmd {
             if (!$filename) { $filename = $folder; }
             
             // First, look in the user's language_pack folder for a language file...
-            if (file_exists(languages . language_pack . $filename . '_language.php')) {
-                include_once(languages . language_pack . $filename . '_language.php');
+            if (file_exists(LANGUAGES . LANGUAGE_PACK . $filename . '_language.php')) {
+                include_once(LANGUAGES . LANGUAGE_PACK . $filename . '_language.php');
                 
             // If not there, look in the default language_pack folder for a language file...
-            } elseif (file_exists(languages . 'language_default/' . $filename . '_language.php')) {
-                include_once(languages . 'language_default/' . $filename . '_language.php');
+            } elseif (file_exists(LANGUAGES . 'language_default/' . $filename . '_language.php')) {
+                include_once(LANGUAGES . 'language_default/' . $filename . '_language.php');
 
             // If still not found, look in the plugin folder for a language file... 
-            } elseif (file_exists(plugins . $folder . '/languages/' . $filename . '_language.php')) {
-                include_once(plugins . $folder . '/languages/' . $filename . '_language.php');
+            } elseif (file_exists(PLUGINS . $folder . '/languages/' . $filename . '_language.php')) {
+                include_once(PLUGINS . $folder . '/languages/' . $filename . '_language.php');
             
             // If STILL not found, include the user's main language file...
-            } elseif (file_exists(languages . language_pack . 'main_language.php')) {
-                include_once(languages . language_pack . 'main_language.php');
+            } elseif (file_exists(LANGUAGES . LANGUAGE_PACK . 'main_language.php')) {
+                include_once(LANGUAGES . LANGUAGE_PACK . 'main_language.php');
 
             // Finally, give up and include the main default language file...
             } else {
-                include_once(languages . 'language_default/main_language.php');
+                include_once(LANGUAGES . 'language_default/main_language.php');
             }
             
             return true;
@@ -954,16 +954,16 @@ class Plugin extends generic_pmd {
             if (!$filename) { $filename = $folder; }
             
             // First look in the theme folder for a css file...     
-            if (file_exists(themes . theme . 'css/' . $filename . '.css')) {    
-                $file_location = themes . theme . 'css/' . $filename . '.css';
+            if (file_exists(THEMES . THEME . 'css/' . $filename . '.css')) {    
+                $file_location = THEMES . THEME . 'css/' . $filename . '.css';
             
             // If not found, look in the default theme folder for a css file...     
-            } elseif (file_exists(themes . 'default/css/' . $filename . '.css')) {    
-                $file_location = themes . 'default/css/' . $filename . '.css';
+            } elseif (file_exists(THEMES . 'default/css/' . $filename . '.css')) {    
+                $file_location = THEMES . 'default/css/' . $filename . '.css';
             
             // If still not found, look in the plugin folder for a css file... 
-            } elseif (file_exists(plugins . $folder . '/css/' . $filename . '.css')) {
-                $file_location = plugins . $folder . '/css/' . $filename . '.css';
+            } elseif (file_exists(PLUGINS . $folder . '/css/' . $filename . '.css')) {
+                $file_location = PLUGINS . $folder . '/css/' . $filename . '.css';
             }
              
             if (isset($file_location)) {
@@ -994,16 +994,16 @@ class Plugin extends generic_pmd {
             if (!$filename) { $filename = $folder; }
             
             // First look in the theme folder for a js file...     
-            if (file_exists(themes . theme . 'javascript/' . $filename . '.js')) {    
-                $file_location = themes . theme . 'javascript/' . $filename . '.js';
+            if (file_exists(THEMES . THEME . 'javascript/' . $filename . '.js')) {    
+                $file_location = THEMES . THEME . 'javascript/' . $filename . '.js';
                 
             // If not found, look in the default theme folder for a js file...     
-            } elseif (file_exists(themes . 'default/javascript/' . $filename . '.js')) {    
-                $file_location = themes . 'default/javascript/' . $filename . '.js';
+            } elseif (file_exists(THEMES . 'default/javascript/' . $filename . '.js')) {    
+                $file_location = THEMES . 'default/javascript/' . $filename . '.js';
                 
             // If still not found, look in the plugin folder for a js file... 
-            } elseif (file_exists(plugins . $folder . '/javascript/' . $filename . '.js')) {
-                $file_location = plugins . $folder . '/javascript/' . $filename . '.js';
+            } elseif (file_exists(PLUGINS . $folder . '/javascript/' . $filename . '.js')) {
+                $file_location = PLUGINS . $folder . '/javascript/' . $filename . '.js';
             }
              
             if (isset($file_location)) {

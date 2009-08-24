@@ -35,38 +35,38 @@ require_once('hotaru_settings.php');
 // include other essential libraries and functions
 
 // for Input sanitation and validation
-require_once(includes . 'Inspekt/Inspekt.php');
+require_once(INCLUDES . 'Inspekt/Inspekt.php');
 
 // for database usage
-require_once(includes . 'ezSQL/ez_sql_core.php');
-require_once(includes . 'ezSQL/mysql/ez_sql_mysql.php');
+require_once(INCLUDES . 'ezSQL/ez_sql_core.php');
+require_once(INCLUDES . 'ezSQL/mysql/ez_sql_mysql.php');
 
 // for default or friendly urls
-require_once(functions . 'funcs.urls.php');
+require_once(FUNCTIONS . 'funcs.urls.php');
 
 // for manipulating strings
-require_once(functions . 'funcs.strings.php');
+require_once(FUNCTIONS . 'funcs.strings.php');
 
 // for manipulating arrays
-require_once(functions . 'funcs.arrays.php');
+require_once(FUNCTIONS . 'funcs.arrays.php');
 
 // for everything related to time
-require_once(functions . 'funcs.times.php');
+require_once(FUNCTIONS . 'funcs.times.php');
 
 // for everything related to files
-require_once(functions . 'funcs.files.php');
+require_once(FUNCTIONS . 'funcs.files.php');
 
 // include classes
-require_once(classes . 'class.hotaru.php');       // for environment
-require_once(classes . 'class.userbase.php');     // for users
-require_once(classes . 'class.plugins.php');      // for plugins
-require_once(classes . 'class.inspekt.php');      // for custom Inspekt methods
+require_once(CLASSES . 'class.hotaru.php');       // for environment
+require_once(CLASSES . 'class.userbase.php');     // for users
+require_once(CLASSES . 'class.plugins.php');      // for plugins
+require_once(CLASSES . 'class.inspekt.php');      // for custom Inspekt methods
 
 // Initialize database
 if (!isset($db)) { 
     $db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST); 
     $db->cache_timeout = 0;         // Note: this is hours
-    $db->cache_dir = cache . 'db_cache';
+    $db->cache_dir = CACHE . 'db_cache';
     $db->use_disk_cache = true;     // Note: Queries are only cached following
                                     // $db->cache_queries = true;
 }
@@ -82,7 +82,7 @@ foreach ($settings as $setting)
 }
 
 // Start timer if debugging
-if (debug == "true") {
+if (DEBUG == "true") {
     $hotaru->is_debug = true;
     timer_start();
 }
