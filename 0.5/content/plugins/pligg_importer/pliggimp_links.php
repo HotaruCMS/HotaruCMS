@@ -28,7 +28,8 @@
 /**
  * Page 2 - Request links file
  */
-function pliggimp_page_2() {
+function pliggimp_page_2()
+{
     global $plugin;
     
     echo "<h2>Step 2/5 - Links</h2>";
@@ -45,6 +46,7 @@ function pliggimp_page_2() {
 
 /**
  * Step 2 - Import Links
+ *
  * @param array $xml
  * @param string $file_name
  * @return bool
@@ -56,8 +58,8 @@ function step2($xml, $file_name)
     echo "<b>Table:</b> Links...<br /><br />";
     
     $this_table = "posts";
-    if(!$db->table_empty($this_table)) {
-        if(!$cage->get->getAlpha('overwrite') == 'true') {
+    if (!$db->table_empty($this_table)) {
+        if (!$cage->get->getAlpha('overwrite') == 'true') {
             echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . table_posts . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
             echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'file_name'=>$file_name, 'step'=>2, 'overwrite'=>'true'), 'admin') . "'>Continue</a>";
             return false;
@@ -74,7 +76,7 @@ function step2($xml, $file_name)
     {
 
         // Skip any record that has no title
-        if($child->link_title != "") 
+        if ($child->link_title != "") 
         {
             $count++;
             
@@ -165,7 +167,7 @@ function get_new_link_id($old_link_id)
     
     $new_link_id = $db->get_var($db->prepare($sql, 'link_id', $old_link_id));
     
-    if($new_link_id) { return $new_link_id; } else { return false; }
+    if ($new_link_id) { return $new_link_id; } else { return false; }
 }
 
 ?>

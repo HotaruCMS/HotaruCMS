@@ -28,7 +28,8 @@
 /**
  * Page 5 - Request votes file
  */
-function pliggimp_page_5() {
+function pliggimp_page_5()
+{
     global $plugin;
     
     echo "<h2>Step 5/5 - Votes</h2>";
@@ -56,8 +57,8 @@ function step5($xml, $file_name)
     echo "<b>Table:</b> Votes...<br /><br />";
     
     $this_table = "postvotes";
-    if(!$db->table_empty($this_table)) {
-        if(!$cage->get->getAlpha('overwrite') == 'true') {
+    if (!$db->table_empty($this_table)) {
+        if (!$cage->get->getAlpha('overwrite') == 'true') {
             echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . table_postvotes . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
             echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'file_name'=>$file_name, 'step'=>5, 'overwrite'=>'true'), 'admin') . "'>Continue</a>";
             return false;
@@ -74,7 +75,7 @@ function step5($xml, $file_name)
     {
 
         // Skip all comment votes.
-        if($child->vote_type == 'links') 
+        if ($child->vote_type == 'links') 
         {
             $count++;
 
