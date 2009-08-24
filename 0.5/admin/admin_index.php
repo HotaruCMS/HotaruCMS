@@ -44,15 +44,15 @@ if ($cage->get->keyExists('combine')) {
 }
 
 // Include admin language file
-if (file_exists(languages . language_pack . 'admin_language.php')) 
+if (file_exists(LANGUAGES . LANGUAGE_PACK . 'admin_language.php')) 
 {
     // language file for admin 
-    require_once(languages . language_pack . 'admin_language.php');
+    require_once(LANGUAGES . LANGUAGE_PACK . 'admin_language.php');
 } 
 else 
 {
     // try the default language pack
-    require_once(languages . 'language_default/admin_language.php');
+    require_once(LANGUAGES . 'language_default/admin_language.php');
 }
 
 $page = $cage->get->testPage('page');    // check with "get";
@@ -66,7 +66,7 @@ if (!$plugin->plugin_active('users'))
 {
     if (($page != 'admin_login') && !$result = is_admin_cookie())
     {
-        header('Location: ' . baseurl . 'admin/admin_index.php?page=admin_login');
+        header('Location: ' . BASEURL . 'admin/admin_index.php?page=admin_login');
     }
 }
 
@@ -77,7 +77,7 @@ if (isset($current_user) && $plugin->plugin_active('users'))
     // and there's no cookie for the Admin yet.
     if (($current_user->username == "") && $plugin->plugin_active('users')) 
     {
-        header('Location: ' . baseurl . 'index.php?page=login');
+        header('Location: ' . BASEURL . 'index.php?page=login');
         die; exit;
     } 
     elseif (!$current_user->is_admin($current_user->username)) 

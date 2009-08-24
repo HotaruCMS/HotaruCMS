@@ -32,33 +32,33 @@ define("DB_PASSWORD", '');
 define("DB_NAME", 'hotaru');
 define("DB_HOST", 'localhost');     // You probably won't need to change this
 
-define("db_prefix", 'hotaru_');     // Database prefix, e.g. "hotaru_"
-define("db_lang", 'en');            // Database language, e.g. "en"
+define("DB_PREFIX", 'hotaru_');     // Database prefix, e.g. "hotaru_"
+define("DB_LANG", 'en');            // Database language, e.g. "en"
 
 // Paths
-define('baseurl', "http://www.mysite.com/");    // e.g. http://www.mysite.com/
+define('BASEURL', "http://www.mysite.com/");    // e.g. http://www.mysite.com/
                                                 // Needs trailing slash (/)
 
 // DON'T EDIT ANYTHING BEYOND THIS POINT
 
 // define shorthand paths
-define("base", dirname(__FILE__). '/');
-define("admin", dirname(__FILE__).'/admin/');
-define("cache", dirname(__FILE__). '/cache/');
-define("install", dirname(__FILE__).'/install/');
-define("classes", dirname(__FILE__).'/classes/');
-define("includes", dirname(__FILE__).'/3rd_party/');
-define("functions", dirname(__FILE__).'/functions/');
-define("themes", dirname(__FILE__).'/content/themes/');
-define("plugins", dirname(__FILE__).'/content/plugins/');
-define("languages", dirname(__FILE__).'/content/language_packs/');
-define("admin_themes", dirname(__FILE__).'/content/admin_themes/');
+define("BASE", dirname(__FILE__). '/');
+define("ADMIN", dirname(__FILE__).'/admin/');
+define("CACHE", dirname(__FILE__). '/cache/');
+define("INSTALL", dirname(__FILE__).'/install/');
+define("CLASSES", dirname(__FILE__).'/classes/');
+define("INCLUDES", dirname(__FILE__).'/3rd_party/');
+define("FUNCTIONS", dirname(__FILE__).'/functions/');
+define("THEMES", dirname(__FILE__).'/content/themes/');
+define("PLUGINS", dirname(__FILE__).'/content/plugins/');
+define("LANGUAGES", dirname(__FILE__).'/content/language_packs/');
+define("ADMIN_THEMES", dirname(__FILE__).'/content/admin_themes/');
 
 // define database tables
-define("table_settings", db_prefix . "settings");
-define("table_users", db_prefix . "users");
-define("table_plugins", db_prefix . "plugins");
-define("table_pluginhooks", db_prefix . "pluginhooks");
-define("table_pluginsettings", db_prefix . "pluginsettings");
+define("TABLE_SETTINGS", DB_PREFIX . "settings");
+define("TABLE_USERS", DB_PREFIX . "users");
+define("TABLE_PLUGINS", DB_PREFIX . "plugins");
+define("TABLE_PLUGINHOOKS", DB_PREFIX . "pluginhooks");
+define("TABLE_PLUGINSETTINGS", DB_PREFIX . "pluginsettings");
 
 ?>

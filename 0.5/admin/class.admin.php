@@ -45,28 +45,28 @@ class Admin
             3. Check the plugin folder
             4. Show the 404 Not Found page
         */
-        if (file_exists(admin_themes . admin_theme . $page))
+        if (file_exists(ADMIN_THEMES . ADMIN_THEME . $page))
         {
-            include_once(admin_themes . admin_theme . $page);
+            include_once(ADMIN_THEMES . ADMIN_THEME . $page);
         } 
-        elseif (file_exists(admin_themes . 'admin_default/' . $page))
+        elseif (file_exists(ADMIN_THEMES . 'admin_default/' . $page))
         {
-            include_once(admin_themes . 'admin_default/' . $page);
+            include_once(ADMIN_THEMES . 'admin_default/' . $page);
         }
-        elseif ($plugin != '' && file_exists(plugins .  $plugin . '/templates/' . $page))
+        elseif ($plugin != '' && file_exists(PLUGINS .  $plugin . '/templates/' . $page))
         {
                 if ($plugin == 'vote') {
                     // Special case, do not restrict to include once.
-                    include(plugins . $plugin . '/templates/' . $page);
+                    include(PLUGINS . $plugin . '/templates/' . $page);
                 } else {
-                    include_once(plugins . $plugin . '/templates/' . $page);
+                    include_once(PLUGINS . $plugin . '/templates/' . $page);
                 }
                 return true;
                 die();
         }
         else 
         {
-            include_once(admin_themes . '404.php');
+            include_once(ADMIN_THEMES . '404.php');
         }
     }
     
@@ -107,13 +107,13 @@ class Admin
         $announcements = array();
         
         // 1. Check if install file has been deleted
-        $filename = install . 'install.php';
+        $filename = INSTALL . 'install.php';
         if (file_exists($filename)) {
             array_push($announcements, $lang['admin_announcement_delete_install']);
         } 
         
         // 2. Please enter a site email address
-        if (site_email == "admin@hotarucms.org") {
+        if (SITE_EMAIL == "admin@hotarucms.org") {
             array_push($announcements, $lang['admin_announcement_change_site_email']);    
         } 
         
@@ -140,7 +140,7 @@ class Admin
     {
         global $db;
         
-        $sql = "SELECT settings_value FROM " . table_settings . " WHERE (settings_name = %s)";
+        $sql = "SELECT settings_value FROM " . TABLE_SETTINGS . " WHERE (settings_name = %s)";
         $value = $db->get_var($db->prepare($sql, $setting));
         if ($value) { return $value; } else { return false; }
     }
@@ -156,7 +156,7 @@ class Admin
     {
         global $db;
         
-        $sql = "SELECT * FROM " . table_settings;
+        $sql = "SELECT * FROM " . TABLE_SETTINGS;
         $results = $db->get_results($db->prepare($sql));
         if ($results) { return $results; } else { return false; }
     }
@@ -171,7 +171,7 @@ class Admin
     {
         global $db;
         
-        $sql = "SELECT settings_name FROM " . table_settings . " WHERE (settings_name = %s)";
+        $sql = "SELECT settings_name FROM " . TABLE_SETTINGS . " WHERE (settings_name = %s)";
         $returned_setting = $db->get_var($db->prepare($sql, $setting));
         if ($returned_setting) { return $returned_setting; } else { return false; }
     }    
@@ -190,10 +190,10 @@ class Admin
         $exists = $this->admin_setting_exists($setting);
         
         if (!$exists) {
-            $sql = "INSERT INTO " . table_settings . " (settings_name, settings_value, settings_updateby) VALUES (%s, %s, %d)";
+            $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_updateby) VALUES (%s, %s, %d)";
             $db->query($db->prepare($sql, $setting, $value, $current_user->id));
         } else {
-            $sql = "UPDATE " . table_settings . " SET settings_name = %s, settings_value = %s, settings_updateby = %d WHERE (settings_name = %s)";
+            $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_name = %s, settings_value = %s, settings_updateby = %d WHERE (settings_name = %s)";
             $db->query($db->prepare($sql, $setting, $value, $current_user->id, $setting));
         }
     }
@@ -208,7 +208,7 @@ class Admin
     {
         global $db;
         
-        $sql = "DELETE FROM " . table_settings . " WHERE admin_setting = %s";
+        $sql = "DELETE FROM " . TABLE_SETTINGS . " WHERE admin_setting = %s";
         $db->query($db->prepare($sql, $setting));
     }
     
@@ -224,7 +224,7 @@ class Admin
     {
         global $hotaru, $lang;
         
-        $success = $this->delete_files(cache . $folder);
+        $success = $this->delete_files(CACHE . $folder);
         if ($success) {
             $hotaru->message = $lang['admin_maintenance_clear_cache_success'];
             $hotaru->message_type = 'green';

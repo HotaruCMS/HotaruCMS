@@ -34,18 +34,18 @@ setcookie("hotaru_key", "", time()-3600, "/");
 // --------------------------------------------------
 
 require_once('../hotaru_settings.php');
-require_once(classes . 'class.hotaru.php');    // Needed for error and success messages
-require_once(classes . 'class.userbase.php');  // Needed for login/registration
-require_once(classes . 'class.inspekt.php');      // for custom Inspekt methods
+require_once(CLASSES . 'class.hotaru.php');    // Needed for error and success messages
+require_once(CLASSES . 'class.userbase.php');  // Needed for login/registration
+require_once(CLASSES . 'class.inspekt.php');      // for custom Inspekt methods
 $hotaru = new Hotaru();
 
 // Clear the database cache in case of a re-install.
 require_once('../admin/class.admin.php'); 
 $admin = new Admin();
-$admin->delete_files(includes . 'ezSQL/cache');
+$admin->delete_files(INCLUDES . 'ezSQL/cache');
 
 // Global Inspekt SuperCage
-require_once(includes . 'Inspekt/Inspekt.php');
+require_once(INCLUDES . 'Inspekt/Inspekt.php');
 $hotaru->initialize_inspekt();
 
 require_once(install . 'install_language.php');    // language file for install
@@ -53,8 +53,8 @@ require_once(install . 'install_language.php');    // language file for install
 $step = $cage->get->getInt('step');        // Installation steps.
 
 if ($step > 2) { 
-    require_once(includes . 'ezSQL/ez_sql_core.php');
-    require_once(includes . 'ezSQL/mysql/ez_sql_mysql.php');
+    require_once(INCLUDES . 'ezSQL/ez_sql_core.php');
+    require_once(INCLUDES . 'ezSQL/mysql/ez_sql_mysql.php');
     if (!isset($db)) { 
         $db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST); 
     } 
@@ -101,15 +101,15 @@ function html_header()
     // Title
     $header .= "<TITLE>" . $lang['install_title'] . "</TITLE>\n";
     $header .= "<META HTTP-EQUIV='Content-Type' CONTENT='text'>\n";
-    $header .= "<link rel='stylesheet' href='" . baseurl . "3rd_party/YUI-CSS/reset-fonts-grids.css' type='text/css'>\n";
-    $header .= "<link rel='stylesheet' type='text/css' href='" . baseurl . "install/install_style.css'>\n";
+    $header .= "<link rel='stylesheet' href='" . BASEURL . "3rd_party/YUI-CSS/reset-fonts-grids.css' type='text/css'>\n";
+    $header .= "<link rel='stylesheet' type='text/css' href='" . BASEURL . "install/install_style.css'>\n";
     $header .= "</HEAD>\n";
     
     // Body start
     $header .= "<BODY>\n";
     $header .= "<div id='doc' class='yui-t7 install'>\n";
     $header .= "<div id='hd' role='banner'>";
-    $header .= "<img align='left' src='" . baseurl . "content/admin_themes/admin_default/images/hotaru.png' style='height:60px; width:69px;'>";
+    $header .= "<img align='left' src='" . BASEURL . "content/admin_themes/admin_default/images/hotaru.png' style='height:60px; width:69px;'>";
     $header .= "<h1>" . $lang['install_title'] . "</h1></div>\n"; 
     $header .= "<div id='bd' role='main'>\n";
     $header .= "<div class='yui-g'>\n";
@@ -322,7 +322,7 @@ function register_admin()
             if (!isset($user_password)) { $user_password = ""; }
             if (($user_name != "") && ($user_email != "") && ($user_password != "")) {
                 // There's been a change so update...
-                $sql = "UPDATE " . table_users . " SET user_username = %s, user_role = %s, user_date = CURRENT_TIMESTAMP, user_password = %s, user_email = %s, user_email_valid = %d WHERE user_role = %s";
+                $sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_date = CURRENT_TIMESTAMP, user_password = %s, user_email = %s, user_email_valid = %d WHERE user_role = %s";
                 $db->query($db->prepare($sql, $user_name, 'admin', $user_password, $user_email, 1, 'admin'));
             } else {
                 $user_id = $user_info->user_id;
@@ -334,7 +334,7 @@ function register_admin()
     }
 
     // Registration form
-    echo "<form name='install_admin_reg_form' action='" . baseurl . "install/install.php?step=4' method='post'>\n";
+    echo "<form name='install_admin_reg_form' action='" . BASEURL . "install/install.php?step=4' method='post'>\n";
 
     echo "<table>";
 
@@ -388,14 +388,12 @@ function installation_complete()
 
     // Previous/Next buttons
     echo "<div class='back'><a href='install.php?step=4'>" . $lang['install_back'] . "</a></div>\n";
-    echo "<div class='next'><a href='" . baseurl . "'>" . $lang['install_home'] . "</a></div>\n";
+    echo "<div class='next'><a href='" . BASEURL . "'>" . $lang['install_home'] . "</a></div>\n";
     
     echo html_footer();    
 }
 
 
-    
-    
 /**
  * Create database tables
  *
@@ -407,13 +405,13 @@ function create_table($table_name)
 {
     global $db, $lang;
 
-    $sql = 'DROP TABLE IF EXISTS `' . db_prefix . $table_name . '`;';
+    $sql = 'DROP TABLE IF EXISTS `' . DB_PREFIX . $table_name . '`;';
     $db->query($sql);
 
     // SETTINGS TABLE
     
     if ($table_name == "settings") {
-        $sql = "CREATE TABLE `" . db_prefix . $table_name . "` (
+        $sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
           `settings_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
           `settings_name` varchar(64) NOT NULL,
           `settings_value` text NOT NULL DEFAULT '',
@@ -429,40 +427,40 @@ function create_table($table_name)
         // Default settings:
         
         // Site name
-        $sql = "INSERT INTO " . db_prefix . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'site_name', 'Hotaru CMS', 'Hotaru CMS', ''));
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $db->query($db->prepare($sql, 'SITE_NAME', 'Hotaru CMS', 'Hotaru CMS', ''));
         
         // Main theme
-        $sql = "INSERT INTO " . db_prefix . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'theme', 'default/', 'default/', 'You need the "\/"'));
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $db->query($db->prepare($sql, 'THEME', 'default/', 'default/', 'You need the "\/"'));
         
         // Admin theme
-        $sql = "INSERT INTO " . db_prefix . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'admin_theme', 'admin_default/', 'admin_default/', 'You need the "\/"'));
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $db->query($db->prepare($sql, 'ADMIN_THEME', 'admin_default/', 'admin_default/', 'You need the "\/"'));
         
         // Language_pack 
         /* Defined in hotaru_settings because we need it for this installation script, but here we check it has been defined, just in case.*/
         if (!isset($language_pack)) { $language_pack = 'default/'; }
-        $sql = "INSERT INTO " . db_prefix . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'language_pack', $language_pack, 'language_default/', 'You need the "\/"'));
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $db->query($db->prepare($sql, 'LANGUAGE_PACK', $language_pack, 'language_default/', 'You need the "\/"'));
         
         // Friendly urls
-        $sql = "INSERT INTO " . db_prefix . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'friendly_urls', 'false', 'false', ''));
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $db->query($db->prepare($sql, 'FRIENDLY_URLS', 'false', 'false', ''));
         
         // Site email
-        $sql = "INSERT INTO " . db_prefix . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'site_email', 'admin@hotarucms.org', 'admin@hotarucms.org', 'Must be changed'));
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $db->query($db->prepare($sql, 'SITE_EMAIL', 'admin@hotarucms.org', 'admin@hotarucms.org', 'Must be changed'));
         
         // Debug
-        $sql = "INSERT INTO " . db_prefix . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'debug', 'false', 'false', ''));
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $db->query($db->prepare($sql, 'DEBUG', 'false', 'false', ''));
     }
     
     // USERS TABLE
     
     if ($table_name == "users") {    
-        $sql = "CREATE TABLE `" . db_prefix . $table_name . "` (
+        $sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
           `user_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
           `user_username` varchar(32) NOT NULL,
           `user_role` varchar(32) NOT NULL DEFAULT 'member',
@@ -484,7 +482,7 @@ function create_table($table_name)
     // PLUGINS TABLE
     
     if ($table_name == "plugins") {
-        $sql = "CREATE TABLE `" . db_prefix . $table_name . "` (
+        $sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
           `plugin_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
           `plugin_enabled` tinyint(1) NOT NULL DEFAULT '0',
           `plugin_name` varchar(64) NOT NULL DEFAULT '',
@@ -505,7 +503,7 @@ function create_table($table_name)
     // PLUGIN HOOKS TABLE
     
     if ($table_name == "pluginhooks") {
-        $sql = "CREATE TABLE `" . db_prefix . $table_name . "` (
+        $sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
           `phook_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
           `plugin_folder` varchar(64) NOT NULL DEFAULT '',
           `plugin_hook` varchar(128) NOT NULL DEFAULT '',
@@ -520,7 +518,7 @@ function create_table($table_name)
     // PLUGIN SETTINGS TABLE
     
     if ($table_name == "pluginsettings") {
-        $sql = "CREATE TABLE `" . db_prefix . $table_name . "` (
+        $sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
           `psetting_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
           `plugin_folder` varchar(64) NOT NULL,
           `plugin_setting` varchar(64) NULL,

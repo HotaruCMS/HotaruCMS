@@ -93,7 +93,7 @@ function admin_login_form()
         $password_check = ""; 
     }
     
-    require_once(admin_themes . admin_theme . 'login.php');
+    require_once(ADMIN_THEMES . ADMIN_THEME . 'login.php');
 }
 
 
@@ -185,7 +185,7 @@ function admin_logout()
     global $current_user;
     
     $current_user->destroy_cookie_and_session();
-    header("Location: " . baseurl);
+    header("Location: " . BASEURL);
     return true;
 }
 
