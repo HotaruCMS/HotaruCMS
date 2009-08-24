@@ -34,7 +34,7 @@ function pliggimp_page_4()
     
     echo "<h2>Step 4/5 - Users</h2>";
     echo "Please upload your <b>users</b> XML file:<br />";
-    echo "<form name='pligg_importer_form' enctype='multipart/form-data' action='" . baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=pligg_importer' method='post'>\n";
+    echo "<form name='pligg_importer_form' enctype='multipart/form-data' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=pligg_importer' method='post'>\n";
     echo "<label for='file'>Exported Pligg Users table (<span stye='color: red;'>.xml</span>):</label>\n";
     echo "<input type='file' name='file' id='file' />\n";
     echo "<input type='hidden' name='submitted' value='true' />\n";
@@ -60,11 +60,11 @@ function step4($xml, $file_name)
     $this_table = "users";
     if (!$db->table_empty($this_table)) {
         if (!$cage->get->getAlpha('overwrite') == 'true') {
-            echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . table_users . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
+            echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . TABLE_USERS . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
             echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'file_name'=>$file_name, 'step'=>4, 'overwrite'=>'true'), 'admin') . "'>Continue</a>";
             return false;
         } else {
-            $db->query($db->prepare("TRUNCATE " . db_prefix . $this_table));
+            $db->query($db->prepare("TRUNCATE " . DB_PREFIX . $this_table));
         }
     }
     
@@ -99,7 +99,7 @@ function step4($xml, $file_name)
             
             $columns    = "user_username, user_role, user_date, user_password, user_email, user_email_valid, user_email_conf, user_lastlogin, user_updateby";
             
-            $sql        = "INSERT INTO " . db_prefix . $this_table . " (" . $columns . ") VALUES(%s, %s, %s, %s, %s, %d, %s, %s, %d)";
+            $sql        = "INSERT INTO " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%s, %s, %s, %s, %s, %d, %s, %s, %d)";
             
             //if not using SWCMS' email registration module, set to zero:
             if (!$child->valid_email) { $child->valid_email = 0;}
@@ -121,19 +121,19 @@ function step4($xml, $file_name)
             // Grab the ID of the last insert. 
             $users[$count]['old_id']['new_id'] = $db->get_var($db->prepare("SELECT LAST_INSERT_ID()"));
             
-            $sql = "REPLACE INTO " . db_prefix . "pliggimp_temp (pliggimp_setting, pliggimp_old_value, pliggimp_new_value) VALUES(%s, %d, %d)";
+            $sql = "REPLACE INTO " . DB_PREFIX . "pliggimp_temp (pliggimp_setting, pliggimp_old_value, pliggimp_new_value) VALUES(%s, %d, %d)";
             
             $db->query($db->prepare($sql, 'user_id', $users[$count]['old_id'], $users[$count]['old_id']['new_id']));
         }
     }
     
     // Update post_author fields with new user ids
-    $sql = "SELECT * FROM " . db_prefix . "pliggimp_temp WHERE pliggimp_setting = %s";
+    $sql = "SELECT * FROM " . DB_PREFIX . "pliggimp_temp WHERE pliggimp_setting = %s";
     $user_ids = $db->get_results($db->prepare($sql, 'user_id'));
     
     foreach ($user_ids as $author)
     {
-        $sql = "UPDATE " . table_posts . " SET post_author = %d WHERE post_author = %d";
+        $sql = "UPDATE " . TABLE_POSTS . " SET post_author = %d WHERE post_author = %d";
         $db->query($db->prepare(
             $sql, 
             $author->pliggimp_new_value, 
@@ -160,7 +160,7 @@ function get_new_user_id($old_user_id)
 {
     global $db;
     
-    $sql = "SELECT pliggimp_new_value FROM " . db_prefix . "pliggimp_temp WHERE pliggimp_setting = %s AND pliggimp_old_value = %d";
+    $sql = "SELECT pliggimp_new_value FROM " . DB_PREFIX . "pliggimp_temp WHERE pliggimp_setting = %s AND pliggimp_old_value = %d";
     
     $new_user_id = $db->get_var($db->prepare($sql, 'user_id', $old_user_id));
     

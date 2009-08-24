@@ -34,7 +34,7 @@ function pliggimp_page_5()
     
     echo "<h2>Step 5/5 - Votes</h2>";
     echo "Please upload your <b>votes</b> XML file:<br />";
-    echo "<form name='pligg_importer_form' enctype='multipart/form-data' action='" . baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=pligg_importer' method='post'>\n";
+    echo "<form name='pligg_importer_form' enctype='multipart/form-data' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=pligg_importer' method='post'>\n";
     echo "<label for='file'>Exported Pligg Votes table (<span stye='color: red;'>.xml</span>):</label>\n";
     echo "<input type='file' name='file' id='file' />\n";
     echo "<input type='hidden' name='submitted' value='true' />\n";
@@ -59,11 +59,11 @@ function step5($xml, $file_name)
     $this_table = "postvotes";
     if (!$db->table_empty($this_table)) {
         if (!$cage->get->getAlpha('overwrite') == 'true') {
-            echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . table_postvotes . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
+            echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . TABLE_POSTVOTES . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
             echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'file_name'=>$file_name, 'step'=>5, 'overwrite'=>'true'), 'admin') . "'>Continue</a>";
             return false;
         } else {
-            $db->query($db->prepare("TRUNCATE " . db_prefix . $this_table));
+            $db->query($db->prepare("TRUNCATE " . DB_PREFIX . $this_table));
         }
     }
     
@@ -87,7 +87,7 @@ function step5($xml, $file_name)
             
             $columns    = "vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_reason, vote_updateby";
             
-            $sql        = "INSERT IGNORE " . db_prefix . $this_table . " (" . $columns . ") VALUES(%d, %d, %s, %s, %s, %s, %d, %d)";
+            $sql        = "INSERT IGNORE " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%d, %d, %s, %s, %s, %s, %d, %d)";
             
             // Insert into postvotes table
             $db->query($db->prepare(

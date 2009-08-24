@@ -157,7 +157,7 @@ class Post {
         $parsed = parse_url($this->post_orig_url);
         if (isset($parsed['scheme'])){ $this->post_domain = $parsed['scheme'] . "://" . $parsed['host']; }
             
-        $sql = "INSERT INTO " . table_posts . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_date = CURRENT_TIMESTAMP, post_updateby = %d";
+        $sql = "INSERT INTO " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_date = CURRENT_TIMESTAMP, post_updateby = %d";
         
         $db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode($this->post_domain), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), $this->post_status, $this->post_author, $current_user->id));
         
@@ -183,7 +183,7 @@ class Post {
         $parsed = parse_url($this->post_orig_url);
         if (isset($parsed['scheme'])){ $this->post_domain = $parsed['scheme'] . "://" . $parsed['host']; }
         
-        $sql = "UPDATE " . table_posts . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_updateby = %d WHERE post_id = %d";
+        $sql = "UPDATE " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_updateby = %d WHERE post_id = %d";
         
         $db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode($this->post_domain), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), $this->post_status, $this->post_author, $current_user->id, $this->post_id));
         
@@ -204,7 +204,7 @@ class Post {
             
         $this->post_status = $status;
             
-        $sql = "UPDATE " . table_posts . " SET post_status = %s WHERE post_id = %d";
+        $sql = "UPDATE " . TABLE_POSTS . " SET post_status = %s WHERE post_id = %d";
         $db->query($db->prepare($sql, $this->post_status, $this->post_id));        
         return true;
     }
@@ -218,7 +218,7 @@ class Post {
     function get_post($post_id = 0)
     {
         global $db;
-        $sql = "SELECT * FROM " . table_posts . " WHERE post_id = %d ORDER BY post_date DESC";
+        $sql = "SELECT * FROM " . TABLE_POSTS . " WHERE post_id = %d ORDER BY post_date DESC";
         $post = $db->get_row($db->prepare($sql, $post_id));
         if ($post) { return $post; } else { return false; }
     }
@@ -232,7 +232,7 @@ class Post {
     function delete_post()
     {
         global $db, $plugin;
-        $sql = "DELETE FROM " . table_posts . " WHERE post_id = %d";
+        $sql = "DELETE FROM " . TABLE_POSTS . " WHERE post_id = %d";
         $db->query($db->prepare($sql, $this->post_id));
         
         $plugin->check_actions('submit_class_post_delete_post');
@@ -275,7 +275,7 @@ class Post {
             $limit = "LIMIT " . $limit; 
         }
         
-        $sql = "SELECT * FROM " . table_posts . $filter . " ORDER BY post_date DESC " . $limit;
+        $sql = "SELECT * FROM " . TABLE_POSTS . $filter . " ORDER BY post_date DESC " . $limit;
                 
         $prepare_array[0] = $sql;
                 
@@ -311,7 +311,7 @@ class Post {
     function rss_feed()
     {
         global $db, $lang, $cage, $plugin, $current_user;
-        require_once(includes . 'RSSWriterClass/rsswriter.php');
+        require_once(INCLUDES . 'RSSWriterClass/rsswriter.php');
         
         $status = $cage->get->testAlpha('status');
         $limit = $cage->get->getInt('limit');
@@ -325,21 +325,21 @@ class Post {
         if ($status) { $filter['post_status = %s'] = $status; }
         if ($user) { $filter['post_author = %d'] = $current_user->get_user_id($cage->get->testUsername('user'));  }
         if ($tag) { $filter['post_tags LIKE %s'] = '%' . $tag . '%'; }
-        if ($category && (friendly_urls == "true")) { $filter['post_category = %d'] = get_cat_id($category); }
-        if ($category && (friendly_urls == "false")) { $filter['post_category = %d'] = $category; }
+        if ($category && (FRIENDLY_URLS == "true")) { $filter['post_category = %d'] = get_cat_id($category); }
+        if ($category && (FRIENDLY_URLS == "false")) { $filter['post_category = %d'] = $category; }
         
         $plugin->check_actions('submit_class_post_rss_feed');
         
         $feed = new RSS();
-        $feed->title       = site_name;
-        $feed->link        = baseurl;
+        $feed->title       = SITE_NAME;
+        $feed->link        = BASEURL;
         
-        if ($status == 'new') { $feed->description = $lang["submit_rss_latest_from"] . " " . site_name; }
-        elseif ($status == 'top') { $feed->description = $lang["submit_rss_top_stories_from"] . " " . site_name; }
+        if ($status == 'new') { $feed->description = $lang["submit_rss_latest_from"] . " " . SITE_NAME; }
+        elseif ($status == 'top') { $feed->description = $lang["submit_rss_top_stories_from"] . " " . SITE_NAME; }
         elseif ($user) { $feed->description = $lang["submit_rss_stories_from_user"] . " " . $user; }
         elseif ($tag) { $feed->description = $lang["submit_rss_stories_tagged"] . " " . $tag; }
-        elseif ($category && (friendly_urls == "true")) { $feed->description = $lang["submit_rss_stories_in_category"] . " " . $category; }
-        elseif ($category && (friendly_urls == "false")) { $feed->description = $lang["submit_rss_stories_in_category"] . " " . get_cat_name($category); }
+        elseif ($category && (FRIENDLY_URLS == "true")) { $feed->description = $lang["submit_rss_stories_in_category"] . " " . $category; }
+        elseif ($category && (FRIENDLY_URLS == "false")) { $feed->description = $lang["submit_rss_stories_in_category"] . " " . get_cat_name($category); }
                 
         if (!isset($filter))  $filter = array();
         $prepared_array = $this->filter($filter, $limit);
@@ -368,7 +368,7 @@ class Post {
     function url_exists($url = '')
     {
         global $db;
-        $sql = "SELECT count(post_id) FROM " . table_posts . " WHERE post_orig_url = %s";
+        $sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_orig_url = %s";
         $posts = $db->get_var($db->prepare($sql, urlencode($url)));
         if ($posts > 0) { return $posts; } else { return false; }
     }
@@ -384,7 +384,7 @@ class Post {
     {
         global $db;
         $title = trim($title);
-        $sql = "SELECT post_id FROM " . table_posts . " WHERE post_title = %s";
+        $sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_title = %s";
         $post_id = $db->get_var($db->prepare($sql, urlencode($title)));
         if ($post_id) { return $post_id; } else { return false; }
     }
@@ -399,7 +399,7 @@ class Post {
     function is_post_url($post_url = '')
     {
         global $db;
-        $sql = "SELECT post_id FROM " . table_posts . " WHERE post_url = %s";
+        $sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_url = %s";
         $post_id = $db->get_var($db->prepare($sql, urlencode($post_url)));
         if ($post_id) { return $post_id; } else { return false; }
     }
@@ -412,7 +412,7 @@ class Post {
     function get_unique_statuses() 
     {
         global $db;
-        $sql = "SELECT DISTINCT post_status FROM " . table_posts;
+        $sql = "SELECT DISTINCT post_status FROM " . TABLE_POSTS;
         $statuses = $db->get_results($db->prepare($sql));
         if ($statuses) { return $statuses; } else { return false; }
     }
@@ -458,7 +458,7 @@ class Post {
     {
         global $post;
         
-        include_once(includes . 'SWCMS/class.httprequest.php');
+        include_once(INCLUDES . 'SWCMS/class.httprequest.php');
         
         // Fetch the content of the original url...
         $url = $post->post_orig_url;
@@ -513,11 +513,11 @@ class Post {
         
         // Set default values
         if (empty($title)) {
-            $title = site_name;
+            $title = SITE_NAME;
         } 
         if (empty($excerpt)) {
             // If no excerpt show "This article has been featured on Site Name".
-            $excerpt = $lang['submit_trackback_excerpt'] . " " . site_name;
+            $excerpt = $lang['submit_trackback_excerpt'] . " " . SITE_NAME;
         } 
         // Parse the target
         $target = parse_url($trackback);
@@ -540,7 +540,7 @@ class Post {
             } 
             
             // Put together the things we want to send
-            $tb_send = "url=" . rawurlencode($url) . "&title=" . rawurlencode($title) . "&blog_name=" . rawurlencode(site_name) . "&excerpt=" . rawurlencode($excerpt); 
+            $tb_send = "url=" . rawurlencode($url) . "&title=" . rawurlencode($title) . "&blog_name=" . rawurlencode(SITE_NAME) . "&excerpt=" . rawurlencode($excerpt); 
              
             // Send the trackback
             fputs($tb_sock, "POST " . $target["path"] . $target["query"] . " HTTP/1.1\r\n");

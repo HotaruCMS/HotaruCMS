@@ -34,7 +34,7 @@ function pliggimp_page_3()
     
     echo "<h2>Step 3/5 - Tags</h2>";
     echo "Please upload your <b>tags</b> XML file:<br />";
-    echo "<form name='pligg_importer_form' enctype='multipart/form-data' action='" . baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=pligg_importer' method='post'>\n";
+    echo "<form name='pligg_importer_form' enctype='multipart/form-data' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=pligg_importer' method='post'>\n";
     echo "<label for='file'>Exported Pligg Tags table (<span stye='color: red;'>.xml</span>):</label>\n";
     echo "<input type='file' name='file' id='file' />\n";
     echo "<input type='hidden' name='submitted' value='true' />\n";
@@ -60,11 +60,11 @@ function step3($xml, $file_name)
     $this_table = "tags";
     if (!$db->table_empty($this_table)) {
         if (!$cage->get->getAlpha('overwrite') == 'true') {
-            echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . table_tags . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
+            echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . TABLE_TAGS . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
             echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'file_name'=>$file_name, 'step'=>3, 'overwrite'=>'true'), 'admin') . "'>Continue</a>";
             return false;
         } else {
-            $db->query($db->prepare("TRUNCATE " . db_prefix . $this_table));
+            $db->query($db->prepare("TRUNCATE " . DB_PREFIX . $this_table));
         }
     }
     
@@ -82,7 +82,7 @@ function step3($xml, $file_name)
             
             $columns    = "tags_post_id, tags_date, tags_word, tags_updateby";
             
-            $sql        = "INSERT IGNORE " . db_prefix . $this_table . " (" . $columns . ") VALUES(%d, %s, %s, %d)";
+            $sql        = "INSERT IGNORE " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%d, %s, %s, %d)";
             
             // Insert into tags table
             $db->query($db->prepare(

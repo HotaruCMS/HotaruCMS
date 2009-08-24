@@ -41,10 +41,10 @@ function pliggimp_install_plugin()
     // PLIGGIMP_TEMP TABLE - stores mappings between old and new data.
     
     // Drop and rebuild the table if it already exists
-    $sql = 'DROP TABLE IF EXISTS `' . db_prefix . 'pliggimp_temp`;';
+    $sql = 'DROP TABLE IF EXISTS `' . DB_PREFIX . 'pliggimp_temp`;';
     $db->query($sql);
     
-    $sql = "CREATE TABLE `" . db_prefix . "pliggimp_temp` (
+    $sql = "CREATE TABLE `" . DB_PREFIX . "pliggimp_temp` (
       `pliggimp_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
       `pliggimp_setting` varchar(64) NOT NULL,
       `pliggimp_old_value` int(20) NOT NULL DEFAULT 0,
@@ -84,7 +84,7 @@ function pliggimp_admin_plugin_settings()
 {
     global $cage, $status, $plugin, $cat;
     
-    $pliggimp_path = plugins . "/pligg_importer/";
+    $pliggimp_path = PLUGINS . "/pligg_importer/";
     
     include_once($pliggimp_path . "pliggimp_categories.php");
     include_once($pliggimp_path . "pliggimp_links.php");
@@ -296,7 +296,7 @@ function pliggimp_save_uploaded_file()
     $file_type = $cage->files->testPage('/file/type');
     $file_size = $cage->files->testInt('/file/size');
     $file_error = $cage->files->testInt('/file/error');
-    $destination = plugins . "pligg_importer/uploads/";
+    $destination = PLUGINS . "pligg_importer/uploads/";
     
     if ($file_type == "text/xml" && $file_size < $size_limit)
     {
@@ -349,7 +349,7 @@ function pliggimp_process_file($step = 0, $file_name = '')
 {
     global $cage, $current_user, $db;
     
-    $uploads_folder = plugins . "pligg_importer/uploads/";
+    $uploads_folder = PLUGINS . "pligg_importer/uploads/";
     $xml = simplexml_load_file($uploads_folder . $file_name);
 
     echo "<h2>Importing data from <i>" . $xml->getName() . "</i></h2>";
@@ -386,11 +386,11 @@ function pliggimp_page_6()
     global $hotaru, $db, $admin;
     
     // Drop the pliggimp_temp table...
-    $sql = 'DROP TABLE IF EXISTS `' . db_prefix . 'pliggimp_temp`;';
+    $sql = 'DROP TABLE IF EXISTS `' . DB_PREFIX . 'pliggimp_temp`;';
     $db->query($sql);
     
     // Delete the uploaded XML files
-    $admin->delete_files(plugins . 'pligg_importer/uploads/');
+    $admin->delete_files(PLUGINS . 'pligg_importer/uploads/');
     
     // Import Complete
     
@@ -415,7 +415,7 @@ function character_encoding_wizard()
     // Set connection as latin
     $db->query("SET NAMES 'latin1'");
     
-    $sql = "SELECT post_id, post_title, post_content FROM " . table_posts;
+    $sql = "SELECT post_id, post_title, post_content FROM " . TABLE_POSTS;
     $content = $db->get_results($db->prepare($sql));
        
     // Set connection back to utf-8
@@ -430,7 +430,7 @@ function character_encoding_wizard()
             print_r($item);
             echo "</pre>";
             
-            $sql = "UPDATE " . table_posts . " SET post_title = %s, post_content = %s WHERE post_id = %d";
+            $sql = "UPDATE " . TABLE_POSTS . " SET post_title = %s, post_content = %s WHERE post_id = %d";
             $db->query($db->prepare($sql, urlencode($item->post_title), urlencode($item->post_content), $item->post_id));
         }
         
