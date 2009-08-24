@@ -92,7 +92,7 @@ function disq_admin_sidebar_plugin_settings()
  */
 function disq_admin_plugin_settings()
 {
-    require_once(plugins . 'disqus/disqus_settings.php');
+    require_once(PLUGINS . 'disqus/disqus_settings.php');
     disq_settings();
     return true;
 }
@@ -129,7 +129,4 @@ function disq_pre_close_body()
     
     $hotaru->display_template('disqus_footer', 'disqus');
 }
-
-
-
 ?>

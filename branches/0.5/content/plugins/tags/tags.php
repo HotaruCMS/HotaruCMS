@@ -48,15 +48,15 @@ function tg_install_plugin()
     // Create a new table column called "post_tags" if it doesn't already exist
     $exists = $db->column_exists('posts', 'post_tags');
     if (!$exists) {
-        $db->query("ALTER TABLE " . table_posts . " ADD post_tags TEXT NULL AFTER post_content");
-        $db->query("ALTER TABLE " . table_posts . " ADD FULLTEXT (post_tags)"); // Make it fulltext searchable
+        $db->query("ALTER TABLE " . TABLE_POSTS . " ADD post_tags TEXT NULL AFTER post_content");
+        $db->query("ALTER TABLE " . TABLE_POSTS . " ADD FULLTEXT (post_tags)"); // Make it fulltext searchable
     } 
     
     // Create a new empty table called "tags" if it doesn't already exist
-    $exists = $db->table_exists('tags');
+    $exists = $db->TABLE_TAGSexists('tags');
     if (!$exists) {
         //echo "table doesn't exist. Stopping before creation."; exit;
-        $sql = "CREATE TABLE `" . db_prefix . "tags` (
+        $sql = "CREATE TABLE `" . DB_PREFIX . "tags` (
           `tags_post_id` int(11) NOT NULL DEFAULT '0',
           `tags_date` timestamp NULL,
           `tags_word` varchar(64) NOT NULL DEFAULT '',
@@ -83,7 +83,7 @@ function tg_submit_hotaru_header_1()
 {
     global $post, $hotaru, $plugin, $cage;
     
-    if (!defined('table_tags')) { define("table_tags", db_prefix . 'tags'); }
+    if (!defined('TABLE_TAGS')) { define("TABLE_TAGS", DB_PREFIX . 'tags'); }
     
     // include language file
     $plugin->include_language('tags');
@@ -146,7 +146,7 @@ function tg_submit_class_post_add_post()
     global $post, $db, $last_insert_id, $current_user;
     
     // Posts table
-    $sql = "UPDATE " . table_posts . " SET post_tags = %s WHERE post_id = %d";
+    $sql = "UPDATE " . TABLE_POSTS . " SET post_tags = %s WHERE post_id = %d";
     $db->query($db->prepare($sql, urlencode(trim($post->post_vars['post_tags'])), $last_insert_id));
         
     // Tags table
@@ -154,7 +154,7 @@ function tg_submit_class_post_add_post()
         $tags_array = explode(',', $post->post_vars['post_tags']);
         if ($tags_array) {
             foreach ($tags_array as $tag) {
-                $sql = "INSERT INTO " . table_tags . " SET tags_post_id = %d, tags_date = CURRENT_TIMESTAMP, tags_word = %s, tags_updateby = %d";
+                $sql = "INSERT INTO " . TABLE_TAGS . " SET tags_post_id = %d, tags_date = CURRENT_TIMESTAMP, tags_word = %s, tags_updateby = %d";
                 $db->query($db->prepare($sql, $last_insert_id, urlencode(str_replace(' ', '_', trim($tag))), $current_user->id));
             }
         }
@@ -170,11 +170,11 @@ function tg_submit_class_post_update_post()
     global $post, $db, $current_user;
     
     // Posts table
-    $sql = "UPDATE " . table_posts . " SET post_tags = %s WHERE post_id = %d";
+    $sql = "UPDATE " . TABLE_POSTS . " SET post_tags = %s WHERE post_id = %d";
     $db->query($db->prepare($sql, urlencode(trim($post->post_vars['post_tags'])), $post->post_id));
         
     // Delete existing tags from tags table
-    $sql = "DELETE from " . table_tags . " WHERE tags_post_id = %d";
+    $sql = "DELETE from " . TABLE_TAGS . " WHERE tags_post_id = %d";
     $db->query($db->prepare($sql, $post->post_id));
     
     // Reinsert into tags table
@@ -182,7 +182,7 @@ function tg_submit_class_post_update_post()
         $tags_array = explode(',', $post->post_vars['post_tags']);
         if ($tags_array) {
             foreach ($tags_array as $tag) {
-                $sql = "INSERT INTO " . table_tags . " SET tags_post_id = %d, tags_date = CURRENT_TIMESTAMP, tags_word = %s, tags_updateby = %d";
+                $sql = "INSERT INTO " . TABLE_TAGS . " SET tags_post_id = %d, tags_date = CURRENT_TIMESTAMP, tags_word = %s, tags_updateby = %d";
                 $db->query($db->prepare($sql, $post->post_id, urlencode(str_replace(' ', '_', trim($tag))), $current_user->id));
             }
         }
@@ -196,7 +196,7 @@ function tg_submit_class_post_update_post()
 function tg_delete_post()
 {
     global $db, $post;
-    $sql = "DELETE FROM " . table_tags . " WHERE tags_post_id = %d";
+    $sql = "DELETE FROM " . TABLE_TAGS . " WHERE tags_post_id = %d";
     $db->query($db->prepare($sql, $post->post_id));        
 }
 
@@ -323,7 +323,7 @@ function tg_submit_list_filter()
             $rss = " <a href='" . url(array('page'=>'rss', 'tag'=>$tag)) . "'>";
         }
         
-        $rss .= "<img src='" . baseurl . "content/themes/" . theme . "images/rss_10.png'></a>";
+        $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
         $filter['post_status != %s'] = 'processing';
         $page_title = $lang["submit_page_breadcrumbs_tag"] . " &raquo; " . $hotaru->title . $rss;
         
