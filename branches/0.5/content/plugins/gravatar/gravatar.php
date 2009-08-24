@@ -52,7 +52,7 @@ function grav_submit_show_post_pre_title()
     $user = new UserBase;
     $user->get_user_basic($post->post_author);
     $email = $user->email;
-    $default = baseurl . "content/plugins/gravatar/images/default_32.png";
+    $default = BASEURL . "content/plugins/gravatar/images/default_32.png";
     $size = 32;
     
     $grav_url = "http://www.gravatar.com/avatar.php?gravatar_id=".md5( strtolower($email) ).

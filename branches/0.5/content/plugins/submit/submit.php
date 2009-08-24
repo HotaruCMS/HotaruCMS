@@ -42,8 +42,8 @@ function sub_upgrade_plugin()
     // Create a new table column called "post_tags" if it doesn't already exist
     $exists = $db->column_exists('posts', 'post_domain');
     if (!$exists) {
-        $db->query("ALTER TABLE " . table_posts . " ADD post_domain varchar(255) NULL AFTER post_orig_url");
-        $db->query("ALTER TABLE " . table_posts . " ADD FULLTEXT (post_domain)"); // Make it fulltext searchable
+        $db->query("ALTER TABLE " . TABLE_POSTS . " ADD post_domain varchar(255) NULL AFTER post_orig_url");
+        $db->query("ALTER TABLE " . TABLE_POSTS . " ADD FULLTEXT (post_domain)"); // Make it fulltext searchable
     } 
 }
     
@@ -59,7 +59,7 @@ function sub_install_plugin()
     $exists = $db->table_exists('posts');
     if (!$exists) {
         //echo "table doesn't exist. Stopping before creation."; exit;
-        $sql = "CREATE TABLE `" . db_prefix . "posts` (
+        $sql = "CREATE TABLE `" . DB_PREFIX . "posts` (
           `post_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
           `post_author` int(20) NOT NULL DEFAULT 0,
           `post_category` int(20) NOT NULL DEFAULT 1,
@@ -82,7 +82,7 @@ function sub_install_plugin()
     $exists = $db->table_exists('postmeta');
     if (!$exists) {
         //echo "table doesn't exist. Stopping before creation."; exit;
-        $sql = "CREATE TABLE `" . db_prefix . "postmeta` (
+        $sql = "CREATE TABLE `" . DB_PREFIX . "postmeta` (
           `postmeta_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
           `postmeta_postid` int(20) NOT NULL DEFAULT 0,
           `postmeta_key` varchar(255) NULL,
@@ -119,18 +119,18 @@ function sub_hotaru_header()
 {
     global $hotaru, $lang, $cage, $plugin, $post;
     
-    if (!defined('table_posts')) { define("table_posts", db_prefix . 'posts'); }
-    if (!defined('table_postmeta')) { define("table_postmeta", db_prefix . 'postmeta'); }
+    if (!defined('TABLE_POSTS')) { define("TABLE_POSTS", DB_PREFIX . 'posts'); }
+    if (!defined('TABLE_POSTMETA')) { define("TABLE_POSTMETA", DB_PREFIX . 'postmeta'); }
     
     //Include HTMLPurifier which we'll use on post_content
-    $cage->post->loadHTMLPurifier(includes . 'HTMLPurifier/HTMLPurifier.standalone.php');
+    $cage->post->loadHTMLPurifier(INCLUDES . 'HTMLPurifier/HTMLPurifier.standalone.php');
 
     // include language file
     $plugin->include_language('submit');
     
-    require_once(plugins . 'submit/class.post.php');
-    require_once(includes . 'Paginated/Paginated.php');
-    require_once(includes . 'Paginated/DoubleBarLayout.php');
+    require_once(PLUGINS . 'submit/class.post.php');
+    require_once(INCLUDES . 'Paginated/Paginated.php');
+    require_once(INCLUDES . 'Paginated/DoubleBarLayout.php');
         
     $post = new Post();
     
@@ -258,7 +258,7 @@ function sub_theme_index_replace()
                 $post->read_post($post_id);
                 $post->change_status('new');
                 $post->send_trackback();
-                header("Location: " . baseurl);    // Go home  
+                header("Location: " . BASEURL);    // Go home  
                 die();
             }
         }
@@ -438,14 +438,14 @@ function sub_prepare_list()
     {
         $filter['post_status = %s'] = 'new'; 
         $rss = "<a href='" . url(array('page'=>'rss', 'status'=>'new')) . "'>";
-        $rss .= " <img src='" . baseurl . "content/themes/" . theme . "images/rss_10.png'></a>";
+        $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
         $page_title = $lang["submit_page_breadcrumbs_latest"] . $rss;
     } 
     else 
     {
         $filter['post_status = %s'] = 'top';
         $rss = "<a href='" . url(array('page'=>'rss')) . "'>";
-        $rss .= " <img src='" . baseurl . "content/themes/" . theme . "images/rss_10.png'></a>";
+        $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
         $page_title = $lang["submit_page_breadcrumbs_top"] . $rss;
     }
     
@@ -472,7 +472,7 @@ function sub_admin_sidebar_plugin_settings()
  */
 function sub_admin_plugin_settings()
 {
-    require_once(plugins . 'submit/submit_settings.php');
+    require_once(PLUGINS . 'submit/submit_settings.php');
     sub_settings();
     return true;
 }
@@ -485,7 +485,7 @@ function sub_fetch_title($url)
 {
     global $cage, $lang;
     
-    require_once(includes . 'SWCMS/class.httprequest.php');
+    require_once(INCLUDES . 'SWCMS/class.httprequest.php');
     
     if ($url != 'http://' && $url != ''){
         $r = new HTTPRequest($url);
