@@ -31,7 +31,7 @@ global $hotaru, $plugin, $current_user, $lang; // don't remove
 
 <ul id="navigation">
     <?php $plugin->check_actions('navigation_first'); ?>
-    <li><a href="<?php echo baseurl ?>"><?php echo $lang["admin_theme_navigation_home"]?></a></li>
+    <li><a href="<?php echo BASEURL; ?>"><?php echo $lang["admin_theme_navigation_home"]; ?></a></li>
     <?php $plugin->check_actions('navigation'); ?>
     <?php $plugin->check_actions('admin_navigation'); ?>
     <?php 
