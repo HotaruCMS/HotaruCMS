@@ -31,21 +31,18 @@
  */
 
 
- /* ******************************************************************** 
+ /**
  * ********************************************************************* 
  * ********************* FUNCTIONS FOR POST CLASS ********************** 
  * *********************************************************************
  * ****************************************************************** */
  
  
-/* ******************************************************************** 
- *  Function: tg_install_plugin
- *  Parameters: None
- *  Purpose: If it doesn't already exist, add a post_tags field to posts table.
- *  Notes: Happens when the plugin is installed. The field is never deleted.
- ********************************************************************** */
- 
-function tg_install_plugin() {
+/**
+ * Add a post_tags field to posts table if it doesn't alredy exist
+ */
+function tg_install_plugin()
+{
     global $db, $plugin, $post;
     
     // Create a new table column called "post_tags" if it doesn't already exist
@@ -79,14 +76,11 @@ function tg_install_plugin() {
 }
 
 
-/* ******************************************************************** 
- *  Function: tg_submit_hotaru_header_1
- *  Parameters: None
- *  Purpose: Adds additional member variables when the $post object is read in the Submit plugin.
- *  Notes: ---
- ********************************************************************** */
- 
-function tg_submit_hotaru_header_1() {
+/**
+ * Add additional member variables when the $post object is read in the Submit plugin.
+ */
+function tg_submit_hotaru_header_1()
+{
     global $post, $hotaru, $plugin, $cage;
     
     if (!defined('table_tags')) { define("table_tags", db_prefix . 'tags'); }
@@ -105,26 +99,20 @@ function tg_submit_hotaru_header_1() {
 }
 
 
-/* ******************************************************************** 
- *  Function: tg_header_include
- *  Parameters: None
- *  Purpose: Includes css and javascript for fetching remote url content.
- *  Notes: Also adds javascript to preview page to prevent a user clicking away
- ********************************************************************** */
- 
-function tg_header_include() {
+/**
+ * Include css
+ */
+function tg_header_include()
+{
     global $plugin;
     $plugin->include_css('tags');
 }
 
-/* ******************************************************************** 
- *  Function: tg_submit_class_post_read_post_1
- *  Parameters: None
- *  Purpose: Read tag settings
- *  Notes: ---
- ********************************************************************** */
- 
-function tg_submit_class_post_read_post_1() {
+/**
+ * Read tag settings
+ */
+function tg_submit_class_post_read_post_1()
+{
     global $plugin, $post;
     
     //tags
@@ -139,27 +127,22 @@ function tg_submit_class_post_read_post_1() {
 }
 
 
-/* ******************************************************************** 
- *  Function: tg_submit_class_post_read_post_2
- *  Parameters: None
- *  Purpose: Read tag settings if post_id exists.
- *  Notes: ---
- ********************************************************************** */
- 
-function tg_submit_class_post_read_post_2() {
+/**
+ * Read tag settings if post_id exists.
+ */
+function tg_submit_class_post_read_post_2()
+{
     global $post, $post_row;
+    
     $post->post_vars['post_tags'] = urldecode($post_row->post_tags);
 }
 
 
-/* ******************************************************************** 
- *  Function: tg_submit_class_post_add_post
- *  Parameters: None
- *  Purpose: Adds tags to the posts and tags tables
- *  Notes: ---
- ********************************************************************** */
- 
-function tg_submit_class_post_add_post() {
+/**
+ * Add tags to the posts and tags tables
+ */
+function tg_submit_class_post_add_post()
+{
     global $post, $db, $last_insert_id, $current_user;
     
     // Posts table
@@ -170,7 +153,7 @@ function tg_submit_class_post_add_post() {
     if (!empty($post->post_vars['post_tags'])) {
         $tags_array = explode(',', $post->post_vars['post_tags']);
         if ($tags_array) {
-            foreach($tags_array as $tag) {
+            foreach ($tags_array as $tag) {
                 $sql = "INSERT INTO " . table_tags . " SET tags_post_id = %d, tags_date = CURRENT_TIMESTAMP, tags_word = %s, tags_updateby = %d";
                 $db->query($db->prepare($sql, $last_insert_id, urlencode(str_replace(' ', '_', trim($tag))), $current_user->id));
             }
@@ -179,14 +162,11 @@ function tg_submit_class_post_add_post() {
 }
 
 
-/* ******************************************************************** 
- *  Function: tg_submit_class_post_update_post
- *  Parameters: None
- *  Purpose: Updates tags in the posts and tags tables
- *  Notes: ---
- ********************************************************************** */
- 
-function tg_submit_class_post_update_post() {
+/**
+ * Update tags in the posts and tags tables
+ */
+function tg_submit_class_post_update_post()
+{
     global $post, $db, $current_user;
     
     // Posts table
@@ -201,7 +181,7 @@ function tg_submit_class_post_update_post() {
     if (!empty($post->post_vars['post_tags'])) {
         $tags_array = explode(',', $post->post_vars['post_tags']);
         if ($tags_array) {
-            foreach($tags_array as $tag) {
+            foreach ($tags_array as $tag) {
                 $sql = "INSERT INTO " . table_tags . " SET tags_post_id = %d, tags_date = CURRENT_TIMESTAMP, tags_word = %s, tags_updateby = %d";
                 $db->query($db->prepare($sql, $post->post_id, urlencode(str_replace(' ', '_', trim($tag))), $current_user->id));
             }
@@ -210,35 +190,29 @@ function tg_submit_class_post_update_post() {
 }
 
 
-/* ******************************************************************** 
- *  Function: tg_submit_class_post_delete_post
- *  Parameters: None
- *  Purpose: Delete tags for a deleted post
- *  Notes: ---
- ********************************************************************** */    
-     
-function tg_delete_post() {
+/**
+ * Delete tags for a deleted post
+ */    
+function tg_delete_post()
+{
     global $db, $post;
     $sql = "DELETE FROM " . table_tags . " WHERE tags_post_id = %d";
     $db->query($db->prepare($sql, $post->post_id));        
 }
 
 
- /* ******************************************************************** 
+ /**
  * ********************************************************************* 
  * ********************* FUNCTIONS FOR SUBMIT FORM ********************* 
  * *********************************************************************
  * ****************************************************************** */
  
 
-/* ******************************************************************** 
- *  Function: tg_submit_form_2_assign
- *  Parameters: None
- *  Purpose: Sets $tags_check to the value submitted through the form
- *  Notes: ---
- ********************************************************************** */
- 
-function tg_submit_form_2_assign() {
+/**
+ * Set $tags_check to the value submitted through the form
+ */
+function tg_submit_form_2_assign()
+{
     global $cage, $hotaru, $tags_check, $post;
     
     if ($cage->post->getAlpha('submit2') == 'true') {
@@ -264,14 +238,11 @@ function tg_submit_form_2_assign() {
 
 }
 
-/* ******************************************************************** 
- *  Function: tg_submit_form_2_fields
- *  Parameters: None
- *  Purpose: Adds a tags field to submit form 2
- *  Notes: ---
- ********************************************************************** */
- 
-function tg_submit_form_2_fields() {
+/**
+ * Add a tags field to submit form 2
+ */
+function tg_submit_form_2_fields()
+{
     global $lang, $post, $tags_check;
 
     if ($post->post_vars['use_tags']) { 
@@ -284,14 +255,13 @@ function tg_submit_form_2_fields() {
 }
 
 
-/* ******************************************************************** 
- *  Function: tg_submit_form_2_check_for_errors
- *  Parameters: None
- *  Purpose: Adds a tags field to submit form 2
- *  Notes: ---
- ********************************************************************** */
- 
-function tg_submit_form_2_check_for_errors() {
+/**
+ * Add s a tags field to submit form 2
+ *
+ * @return int $error_tags
+ */
+function tg_submit_form_2_check_for_errors()
+{
     global $hotaru, $lang, $post, $cage, $lang, $tags_check;
     
     // ******** CHECK TAGS ********
@@ -315,34 +285,29 @@ function tg_submit_form_2_check_for_errors() {
 }
 
 
-/* ******************************************************************** 
- *  Function: tg_submit_form_2_process_submission
- *  Parameters: None
- *  Purpose: Sets $post->post_tags to submitted string of tags
- *  Notes: ---
- ********************************************************************** */
- 
-function tg_submit_form_2_process_submission() {
+/**
+ * Set $post->post_tags to submitted string of tags
+ */
+function tg_submit_form_2_process_submission()
+{
     global $cage, $post;
+    
     $post->post_vars['post_tags'] = $cage->post->noTags('post_tags');
 }
 
 
- /* ******************************************************************** 
+ /**
  * ********************************************************************* 
  * ******************* FUNCTIONS FOR SHOWING POSTS ********************* 
  * *********************************************************************
  * ****************************************************************** */
  
 
-/* ******************************************************************** 
- *  Function: tg_submit_list_filter
- *  Parameters: None
- *  Purpose: Gets a tag from the url and sets the filter for get_posts
- *  Notes: This hook is at the top of list.php in the Sumit plugin.
- ********************************************************************** */
- 
-function tg_submit_list_filter() {
+/**
+ * Gets a tag from the url and sets the filter for get_posts
+ */
+function tg_submit_list_filter()
+{
     global $hotaru, $post, $cage, $filter, $lang, $page_title;
     
     if ($cage->get->keyExists('tag')) 
@@ -369,14 +334,11 @@ function tg_submit_list_filter() {
 }
 
 
-/* ******************************************************************** 
- *  Function: tg_submit_show_post_extra_fields
- *  Parameters: None
- *  Purpose: Shows tags in each post
- *  Notes: ---
- ********************************************************************** */
- 
-function tg_submit_show_post_extra_fields() { 
+/**
+ * Shows tags in each post
+ */
+function tg_submit_show_post_extra_fields()
+{ 
     global $post, $lang;
     
     if ($post->post_vars['use_tags'] && $post->post_vars['post_tags']) { 
@@ -385,7 +347,7 @@ function tg_submit_show_post_extra_fields() {
         echo "<li>" . $lang["submit_show_tags"] . " ";
         
         echo "<div class='show_post_tags'>";
-        foreach($tags as $tag) {
+        foreach ($tags as $tag) {
             echo "<a href='" . url(array('tag' => str_replace(' ', '_', trim($tag)))) . "'>" . trim($tag) . "</a>&nbsp;";
         }
         echo "</div>";
@@ -395,21 +357,18 @@ function tg_submit_show_post_extra_fields() {
 
 
 
- /* ******************************************************************** 
+ /**
  * ********************************************************************* 
  * ****************** FUNCTIONS FOR SUBMIT SETTINGS ******************** 
  * *********************************************************************
  * ****************************************************************** */
  
 
-/* ******************************************************************** 
- *  Function: tg_submit_settings_get_values
- *  Parameters: None
- *  Purpose: Gets current tag settings from the database
- *  Notes: ---
- ********************************************************************** */
- 
-function tg_submit_settings_get_values() {
+/**
+ * Gets current tag settings from the database
+ */
+function tg_submit_settings_get_values()
+{
     global $plugin, $tags, $max_tags;
     
     // Get settings from database if they exist...
@@ -422,14 +381,11 @@ function tg_submit_settings_get_values() {
 }
 
 
-/* ******************************************************************** 
- *  Function: tg_submit_settings_form
- *  Parameters: None
- *  Purpose: Add tags field to the submit settings form
- *  Notes: ---
- ********************************************************************** */
- 
-function tg_submit_settings_form() {
+/**
+ * Add tags field to the submit settings form
+ */
+function tg_submit_settings_form()
+{
     global $plugin, $lang, $tags, $max_tags;
     
     echo "<input type='checkbox' name='tags' value='tags' " . $tags . ">&nbsp;&nbsp;" . $lang["submit_settings_tags"];
@@ -438,14 +394,11 @@ function tg_submit_settings_form() {
 }
 
 
-/* ******************************************************************** 
- *  Function: tg_submit_save_settings
- *  Parameters: None
- *  Purpose: Save tag settings.
- *  Notes: ---
- ********************************************************************** */
- 
-function tg_submit_save_settings() {
+/**
+ * Save tag settings.
+ */
+function tg_submit_save_settings()
+{
     global $plugin, $cage, $lang, $tags, $max_tags;
     
     // Tags

@@ -33,7 +33,8 @@
 /**
  * Include CSS
  */
-function grav_header_include() {
+function grav_header_include()
+{
     global $plugin, $css_files;
 
     $plugin->include_css('gravatar');
@@ -43,7 +44,8 @@ function grav_header_include() {
 /**
  * Show gravatar
  */
-function grav_submit_show_post_pre_title() {
+function grav_submit_show_post_pre_title()
+{
     
     global $post;
     

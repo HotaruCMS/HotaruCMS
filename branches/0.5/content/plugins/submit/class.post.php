@@ -1,28 +1,30 @@
 <?php
-
-/* ********** PLUGIN CLASSES**************************************************************************
+/**
  * name: Post
  * description: Class for functions related to submitting and organizing posts
  * file: /plugins/submit/libraries/class.post.php
  *
- *  License:
+ * PHP version 5
  *
- *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
+ * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation, either version 3 of 
+ * the License, or (at your option) any later version. 
  *
- *   Hotaru CMS is free software: you can redistribute it and/or modify it under the terms of the 
- *   GNU General Public License as published by the Free Software Foundation, either version 3 of 
- *   the License, or (at your option) any later version.
+ * Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE. 
  *
- *   Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
- *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License along with Hotaru CMS. If not, 
- *   see http://www.gnu.org/licenses/.
- *   
- *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
- *
- **************************************************************************************************** */
+ * You should have received a copy of the GNU General Public License along 
+ * with Hotaru CMS. If not, see http://www.gnu.org/licenses/.
+ * 
+ * @category  Content Management System
+ * @package   HotaruCMS
+ * @author    Nick Ramsay <admin@hotarucms.org>
+ * @copyright Copyright (c) 2009, Hotaru CMS
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * @link      http://www.hotarucms.org/
+ */
     
 class Post {    
 
@@ -53,76 +55,76 @@ class Post {
     var $post_vars = array();
 
 
-    /* ******************************************************************** 
-     *  Functions: PHP __set Magic Method
-     *  Parameters: The name of the member variable and the value to set it to.
-     *  Purpose: Plugins use this to set additonal member variables
-     *  Notes: ---
-     ********************************************************************** */
-                 
-    function __set($name, $value) {
-            $this->post_vars[$name] = $value;
-        }
-        
-        
-    /* ******************************************************************** 
-     *  Functions: PHP __get Magic Method
-     *  Parameters: The name of the member variable to retrieve.
-     *  Purpose: Plugins use this to read values of additonal member variables
-     *  Notes: ---
-     ********************************************************************** */
-        
-    function __get($name) {
+    /**
+     * PHP __set Magic Method
+     * Plugins use this to set additonal member variables
+     *
+     * @param str $name - the name of the member variable
+     * @param mixed $value - the value to set it to.
+     */
+    function __set($name, $value)
+    {
+        $this->post_vars[$name] = $value;
+    }
+
+
+    /**
+     * PHP __get Magic Method
+     * Plugins use this to read values of additonal member variables
+     *
+     * @param str $name - the name of the member variable
+     */
+    function __get($name)
+    {
         if (array_key_exists($name, $this->post_vars)) {
             return $this->post_vars[$name];
         }
-        }
+    }
 
 
-    /* ******************************************************************** 
-     *  Function: read_post
-     *  Parameters: Optional row from the posts table in the database
-     *              "raw" determines whether to use htmlentities and striplslashes or not
-     *  Purpose: Get all the settings for the current post
-     *  Notes: ---
-     ********************************************************************** */    
-     
-    function read_post($post_id = 0) {
+    /**
+     * Get all the settings for the current post
+     *
+     * @param int $post_id - Optional row from the posts table in the database
+     * @return bool
+     */    
+    function read_post($post_id = 0)
+    {
         global $plugin, $post_row, $hotaru;
         
         //enabled
         $this->post_author = $plugin->plugin_settings('submit', 'submit_enabled');
-        if($plugin->plugin_settings('submit', 'submit_enabled') == 'checked') { $this->use_submission = true; } else { $this->use_submission = false; }
+        if ($plugin->plugin_settings('submit', 'submit_enabled') == 'checked') { $this->use_submission = true; } else { $this->use_submission = false; }
         
         //author
         $this->post_author = $plugin->plugin_settings('submit', 'submit_author');
-        if($plugin->plugin_settings('submit', 'submit_author') == 'checked') { $this->use_author = true; } else { $this->use_author = false; }
+        if ($plugin->plugin_settings('submit', 'submit_author') == 'checked') { $this->use_author = true; } else { $this->use_author = false; }
         
         //date
         $this->post_date = $plugin->plugin_settings('submit', 'submit_date');
-        if($plugin->plugin_settings('submit', 'submit_date') == 'checked') { $this->use_date = true; } else { $this->use_date = false; }
+        if ($plugin->plugin_settings('submit', 'submit_date') == 'checked') { $this->use_date = true; } else { $this->use_date = false; }
         
         //content
-        if($plugin->plugin_settings('submit', 'submit_content') == 'checked') { $this->use_content = true; } else { $this->use_content = false; }
+        if ($plugin->plugin_settings('submit', 'submit_content') == 'checked') { $this->use_content = true; } else { $this->use_content = false; }
         $content_length =  $plugin->plugin_settings('submit', 'submit_content_length');
-        if(!empty($content_length)) { $this->post_content_length = $content_length; }
+        if (!empty($content_length)) { $this->post_content_length = $content_length; }
         
         //summary
-        if($plugin->plugin_settings('submit', 'submit_summary') == 'checked') { $this->use_summary = true; } else { $this->use_summary = false; }
+        if ($plugin->plugin_settings('submit', 'submit_summary') == 'checked') { $this->use_summary = true; } else { $this->use_summary = false; }
         $summary_length =  $plugin->plugin_settings('submit', 'submit_summary_length');
-        if(!empty($summary_length)) { $this->post_summary_length = $summary_length; }
+        if (!empty($summary_length)) { $this->post_summary_length = $summary_length; }
         
         //posts_per_page
         $posts_per_page =  $plugin->plugin_settings('submit', 'submit_posts_per_page');
-        if(!empty($posts_per_page)) { $this->posts_per_page = $posts_per_page; }
+        if (!empty($posts_per_page)) { $this->posts_per_page = $posts_per_page; }
         
         //allowable_tags
         $allowable_tags =  $plugin->plugin_settings('submit', 'submit_allowable_tags');
-        if(!empty($allowable_tags)) { $this->allowable_tags = $allowable_tags; }
+        if (!empty($allowable_tags)) { $this->allowable_tags = $allowable_tags; }
                 
         $plugin->check_actions('submit_class_post_read_post_1');
         
-        if($post_id != 0) {
+        if ($post_id != 0) {
             $post_row = $this->get_post($post_id);
             $this->post_title = stripslashes(urldecode($post_row->post_title));
             $this->post_content = stripslashes(urldecode($post_row->post_content));
@@ -143,18 +145,17 @@ class Post {
     }
     
     
-    /* ******************************************************************** 
-     *  Function: add_post
-     *  Parameters: None
-     *  Purpose: Adds a post to the database
-     *  Notes: ---
-     ********************************************************************** */    
-     
-    function add_post() {
+    /**
+     * Add a post to the database
+     *
+     * @return true
+     */    
+    function add_post()
+    {
         global $db, $plugin, $last_insert_id, $current_user;
         
         $parsed = parse_url($this->post_orig_url);
-        if(isset($parsed['scheme'])){ $this->post_domain = $parsed['scheme'] . "://" . $parsed['host']; }
+        if (isset($parsed['scheme'])){ $this->post_domain = $parsed['scheme'] . "://" . $parsed['host']; }
             
         $sql = "INSERT INTO " . table_posts . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_date = CURRENT_TIMESTAMP, post_updateby = %d";
         
@@ -170,18 +171,17 @@ class Post {
     }
     
     
-    /* ******************************************************************** 
-     *  Function: update_post
-     *  Parameters: None
-     *  Purpose: Updates a post in the database
-     *  Notes: ---
-     ********************************************************************** */    
-     
-    function update_post() {
+    /**
+     * Update a post in the database
+     *
+     * @return true
+     */    
+    function update_post()
+    {
         global $db, $plugin, $current_user;
         
         $parsed = parse_url($this->post_orig_url);
-        if(isset($parsed['scheme'])){ $this->post_domain = $parsed['scheme'] . "://" . $parsed['host']; }
+        if (isset($parsed['scheme'])){ $this->post_domain = $parsed['scheme'] . "://" . $parsed['host']; }
         
         $sql = "UPDATE " . table_posts . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_updateby = %d WHERE post_id = %d";
         
@@ -193,14 +193,13 @@ class Post {
     }
     
     
-    /* ******************************************************************** 
-     *  Function: change_status
-     *  Parameters: None
-     *  Purpose: Updates a post's status
-     *  Notes: ---
-     ********************************************************************** */    
-     
-    function change_status($status = "processing") {
+    /**
+     * Update a post's status
+     *
+     * @return true
+     */    
+    function change_status($status = "processing")
+    {
         global $db;
             
         $this->post_status = $status;
@@ -211,29 +210,27 @@ class Post {
     }
 
 
-    /* ******************************************************************** 
-     *  Function: get_post
-     *  Parameters: None
-     *  Purpose: Gets a single post from the database
-     *  Notes: ---
-     ********************************************************************** */    
-         
-    function get_post($post_id = 0) {
+    /**
+     * Gets a single post from the database
+     *
+     * @return array|false
+     */    
+    function get_post($post_id = 0)
+    {
         global $db;
         $sql = "SELECT * FROM " . table_posts . " WHERE post_id = %d ORDER BY post_date DESC";
         $post = $db->get_row($db->prepare($sql, $post_id));
-        if($post) { return $post; } else { return false; }
+        if ($post) { return $post; } else { return false; }
     }
     
 
-    /* ******************************************************************** 
-     *  Function: delete_post
-     *  Parameters: None
-     *  Purpose: Physically deletes a post from the database 
-     *  Notes: Plugin hook in here to delete their parts, e.g. votes, coments, tags, etc.
-     ********************************************************************** */    
-         
-    function delete_post() {
+    /**
+     * Physically delete a post from the database 
+     *
+     * There's a plugin hook in here to delete their parts, e.g. votes, coments, tags, etc.
+     */    
+    function delete_post()
+    {
         global $db, $plugin;
         $sql = "DELETE FROM " . table_posts . " WHERE post_id = %d";
         $db->query($db->prepare($sql, $this->post_id));
@@ -243,23 +240,27 @@ class Post {
     }
     
     
-    /* ******************************************************************** 
-     *  Function: filter
-     *  Parameters: array of search parameters
-     *  Purpose: Gets all the posts from the database
-     *  Notes: Example usage: $post->filter(array('post_tags LIKE %s' => '%tokyo%'), 10);
-     ********************************************************************** */    
-         
-    function filter($vars = array(), $limit = 0, $all = false) {
+    /**
+     * Gets all the posts from the database
+     *
+     * @param array $vars - search parameters
+     * @param int $limit - no. of rows to retrieve
+     * @param bool $all - true to retrieve ALL rows, else default 20
+     * @return array|false $prepare_array is the prepared SQL statement
+     *
+     * Example usage: $post->filter(array('post_tags LIKE %s' => '%tokyo%'), 10);
+     */    
+    function filter($vars = array(), $limit = 0, $all = false)
+    {
         global $db;
         
         $filter = '';
         $prepare_array = array();
         $prepare_array[0] = "temp";    // placeholder to be later filled with the SQL query.
         
-        if(!empty($vars)) {
+        if (!empty($vars)) {
             $filter = " WHERE ";
-            foreach($vars as $key => $value) {
+            foreach ($vars as $key => $value) {
                 $filter .= $key . " AND ";    // e.g. " post_tags LIKE %s "
                 array_push($prepare_array, $value);
             }
@@ -280,37 +281,35 @@ class Post {
                 
         // $prepare_array needs to be passed to $db->prepare, i.e. $db->get_results($db->prepare($prepare_array));
                 
-        if($prepare_array) { return $prepare_array; } else { return false; }
+        if ($prepare_array) { return $prepare_array; } else { return false; }
     }
     
     
-    /* ******************************************************************** 
-     *  Function: get_posts
-     *  Parameters: prepared array of search arguments from filter()
-     *  Purpose: Gets all the posts from the database
-     *  Notes: ---
-     ********************************************************************** */    
-         
-    function get_posts($prepared_array = array()) {
+    /**
+     * Gets all the posts from the database
+     *
+     * @param array $prepared array - prepared SQL statement from filter()
+     * @return array|false - array of posts
+     */    
+    function get_posts($prepared_array = array())
+    {
         global $db;
         
-        if(!empty($prepared_array)) {                
+        if (!empty($prepared_array)) {                
             $posts = $db->get_results($db->prepare($prepared_array));
-            if($posts) { return $posts; }
+            if ($posts) { return $posts; }
         } 
         
         return false;
     }
     
     
-    /* ******************************************************************** 
-     *  Function: rss_feed
-     *  Parameters: 
-     *  Purpose: Publishes content as an RSS feed
-     *  Notes: Uses the 3rd party RSS Writer class.
-     ********************************************************************** */    
-         
-    function rss_feed() {
+    /**
+     * Publish content as an RSS feed
+     * Uses the 3rd party RSS Writer class.
+     */    
+    function rss_feed()
+    {
         global $db, $lang, $cage, $plugin, $current_user;
         require_once(includes . 'RSSWriterClass/rsswriter.php');
         
@@ -320,14 +319,14 @@ class Post {
         $tag = $cage->get->noTags('tag');
         $category = $cage->get->noTags('category');
         
-        //if(!$status) { $status = "top"; }
-        if(!$limit) { $limit = 10; }
+        //if (!$status) { $status = "top"; }
+        if (!$limit) { $limit = 10; }
                     
-        if($status) { $filter['post_status = %s'] = $status; }
-        if($user) { $filter['post_author = %d'] = $current_user->get_user_id($cage->get->testUsername('user'));  }
-        if($tag) { $filter['post_tags LIKE %s'] = '%' . $tag . '%'; }
-        if($category && (friendly_urls == "true")) { $filter['post_category = %d'] = get_cat_id($category); }
-        if($category && (friendly_urls == "false")) { $filter['post_category = %d'] = $category; }
+        if ($status) { $filter['post_status = %s'] = $status; }
+        if ($user) { $filter['post_author = %d'] = $current_user->get_user_id($cage->get->testUsername('user'));  }
+        if ($tag) { $filter['post_tags LIKE %s'] = '%' . $tag . '%'; }
+        if ($category && (friendly_urls == "true")) { $filter['post_category = %d'] = get_cat_id($category); }
+        if ($category && (friendly_urls == "false")) { $filter['post_category = %d'] = $category; }
         
         $plugin->check_actions('submit_class_post_rss_feed');
         
@@ -335,19 +334,19 @@ class Post {
         $feed->title       = site_name;
         $feed->link        = baseurl;
         
-        if($status == 'new') { $feed->description = $lang["submit_rss_latest_from"] . " " . site_name; }
-        elseif($status == 'top') { $feed->description = $lang["submit_rss_top_stories_from"] . " " . site_name; }
-        elseif($user) { $feed->description = $lang["submit_rss_stories_from_user"] . " " . $user; }
-        elseif($tag) { $feed->description = $lang["submit_rss_stories_tagged"] . " " . $tag; }
-        elseif($category && (friendly_urls == "true")) { $feed->description = $lang["submit_rss_stories_in_category"] . " " . $category; }
-        elseif($category && (friendly_urls == "false")) { $feed->description = $lang["submit_rss_stories_in_category"] . " " . get_cat_name($category); }
+        if ($status == 'new') { $feed->description = $lang["submit_rss_latest_from"] . " " . site_name; }
+        elseif ($status == 'top') { $feed->description = $lang["submit_rss_top_stories_from"] . " " . site_name; }
+        elseif ($user) { $feed->description = $lang["submit_rss_stories_from_user"] . " " . $user; }
+        elseif ($tag) { $feed->description = $lang["submit_rss_stories_tagged"] . " " . $tag; }
+        elseif ($category && (friendly_urls == "true")) { $feed->description = $lang["submit_rss_stories_in_category"] . " " . $category; }
+        elseif ($category && (friendly_urls == "false")) { $feed->description = $lang["submit_rss_stories_in_category"] . " " . get_cat_name($category); }
                 
-        if(!isset($filter))  $filter = array();
+        if (!isset($filter))  $filter = array();
         $prepared_array = $this->filter($filter, $limit);
         $results = $db->get_results($db->prepare($prepared_array));
 
-        if($results) {
-            foreach($results as $result) 
+        if ($results) {
+            foreach ($results as $result) 
             {
                 $item = new RSSItem();
                 $item->title = stripslashes(urldecode($result->post_title));
@@ -361,50 +360,48 @@ class Post {
     }
     
     
-    /* ******************************************************************** 
-     *  Function: url_exists
-     *  Parameters: url
-     *  Purpose: Checks for existence of a url
-     *  Notes: ---
-     ********************************************************************** */    
-         
-    function url_exists($url = '') {
+    /**
+     * Checks for existence of a url
+     *
+     * @return array|false - array of posts
+     */    
+    function url_exists($url = '')
+    {
         global $db;
         $sql = "SELECT count(post_id) FROM " . table_posts . " WHERE post_orig_url = %s";
         $posts = $db->get_var($db->prepare($sql, urlencode($url)));
-        if($posts > 0) { return $posts; } else { return false; }
+        if ($posts > 0) { return $posts; } else { return false; }
     }
     
     
-    /* ******************************************************************** 
-     *  Function: title_exists
-     *  Parameters: title
-     *  Purpose: Checks for existence of a title
-     *  Notes: Returns the id of the post with the specified title
-     ********************************************************************** */    
-         
-    function title_exists($title = '') {
+    /**
+     * Checks for existence of a title
+     *
+     * @param str $title
+     * @return int - id of post with matching title
+     */
+    function title_exists($title = '')
+    {
         global $db;
         $title = trim($title);
         $sql = "SELECT post_id FROM " . table_posts . " WHERE post_title = %s";
         $post_id = $db->get_var($db->prepare($sql, urlencode($title)));
-        if($post_id) { return $post_id; } else { return false; }
+        if ($post_id) { return $post_id; } else { return false; }
     }
     
     
-    
-    /* ******************************************************************** 
-     *  Function: is_post_url
-     *  Parameters: page_name
-     *  Purpose: Checks for existence of a post with given name
-     *  Notes: Returns the post_id if true, false otherwise
-     ********************************************************************** */    
-         
-    function is_post_url($page = '') {
+    /**
+     * Checks for existence of a post with given post_url
+     *
+     * @param str $post_url
+     * @return int - id of post with matching url
+     */
+    function is_post_url($post_url = '')
+    {
         global $db;
         $sql = "SELECT post_id FROM " . table_posts . " WHERE post_url = %s";
-        $post_id = $db->get_var($db->prepare($sql, urlencode($page)));
-        if($post_id) { return $post_id; } else { return false; }
+        $post_id = $db->get_var($db->prepare($sql, urlencode($post_url)));
+        if ($post_id) { return $post_id; } else { return false; }
     }
     
     /**
@@ -417,18 +414,15 @@ class Post {
         global $db;
         $sql = "SELECT DISTINCT post_status FROM " . table_posts;
         $statuses = $db->get_results($db->prepare($sql));
-        if($statuses) { return $statuses; } else { return false; }
+        if ($statuses) { return $statuses; } else { return false; }
     }
     
         
-    /* ******************************************************************** 
-     *  Function: send_trackback
-     *  Parameters: 
-     *  Purpose: Prepares and calls functions to send a trackback
-     *  Notes: ---
-     ********************************************************************** */
-     
-    function send_trackback() {
+    /**
+     * Prepares and calls functions to send a trackback
+     */
+    function send_trackback()
+    {
         global $lang, $post;
             
         // Scan content for trackback urls
@@ -443,7 +437,7 @@ class Post {
         $excerpt = (strlen($excerpt) > 200) ? substr($excerpt, 0, 200) . '...' : $excerpt;
 
         /* THIS WORKS, BUT IS TEMPORARILY DISABLED DURING HOTARU ALPHA DEVELOPMENT
-        if($this->ping($trackback, url(array('page'=>$post->post_id)), $title, $excerpt)) {
+        if ($this->ping($trackback, url(array('page'=>$post->post_id)), $title, $excerpt)) {
             echo "Trackback sent successfully...";
         } else {
             echo "Error sending trackback....";
@@ -453,21 +447,22 @@ class Post {
     
     
     
-    /* ******************************************************************** 
-     *  Function: detect_trackback
-     *  Parameters: None
-     *  Purpose: Scans content of source url for a trackback url
-     *  Notes: Adapted from Pligg.com and SocialWebCMS.com
-     ********************************************************************** */
-     
-    function detect_trackback() {
+    /**
+     * Scan content of source url for a trackback url
+     *
+     * @return str - trackback url
+     *
+     * Adapted from Pligg.com and SocialWebCMS.com
+     */
+    function detect_trackback()
+    {
         global $post;
         
         include_once(includes . 'SWCMS/class.httprequest.php');
         
         // Fetch the content of the original url...
         $url = $post->post_orig_url;
-        if($url != 'http://' && $url != ''){
+        if ($url != 'http://' && $url != ''){
         $r = new HTTPRequest($url);
         $content = $r->DownloadToString();
         } else {
@@ -500,14 +495,17 @@ class Post {
     
     
 
-    /* ******************************************************************** 
-     *  Function: ping
-     *  Parameters: trackback url, Hotaru post url, post title, post excerpt
-     *  Purpose: Sends a trackback to the source url
-     *  Notes: From PHP Trackback: http://phptrackback.sourceforge.net/docs/
-     ********************************************************************** */
-     
-    function ping($trackback, $url, $title = "", $excerpt = "") {
+    /**
+     * Send a trackback to the source url
+     *
+     * @param str $trackback - url of source
+     * @param str $url - of Hotaru post
+     * @param str $title
+     * @param str $excerpt
+     * @link http://phptrackback.sourceforge.net/docs/
+     */
+    function ping($trackback, $url, $title = "", $excerpt = "")
+    {
         global $lang;
         
         $response = "";

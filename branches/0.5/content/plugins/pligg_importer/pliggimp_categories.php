@@ -45,6 +45,7 @@ function pliggimp_page_1() {
 
 /**
  * Step 1 - Import Categories
+ *
  * @param array $xml
  * @param string $file_name
  * @return bool
@@ -56,8 +57,8 @@ function step1($xml, $file_name)
     echo "<b>Table:</b> Categories...<br /><br />";
     
     $this_table = "categories";
-    if(!$db->table_empty($this_table)) {
-        if(!$cage->get->getAlpha('overwrite') == 'true') {
+    if (!$db->table_empty($this_table)) {
+        if (!$cage->get->getAlpha('overwrite') == 'true') {
             echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . table_categories . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
             echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'file_name'=>$file_name, 'step'=>1, 'overwrite'=>'true'), 'admin') . "'>Continue</a>";
             return false;
@@ -160,7 +161,7 @@ function get_new_cat_id($old_cat_id)
     
     $new_cat_id = $db->get_var($db->prepare($sql, 'category_id', $old_cat_id));
     
-    if($new_cat_id) { return $new_cat_id; } else { return false; }
+    if ($new_cat_id) { return $new_cat_id; } else { return false; }
 }
 
 

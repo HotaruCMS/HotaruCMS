@@ -28,7 +28,8 @@
 /**
  * Page 4 - Request votes file
  */
-function pliggimp_page_4() {
+function pliggimp_page_4()
+{
     global $plugin;
     
     echo "<h2>Step 4/5 - Users</h2>";
@@ -45,6 +46,7 @@ function pliggimp_page_4() {
 
 /**
  * Step 4 - Import Users
+ *
  * @param array $xml
  * @param string $file_name
  * @return bool
@@ -56,8 +58,8 @@ function step4($xml, $file_name)
     echo "<b>Table:</b> Users...<br /><br />";
     
     $this_table = "users";
-    if(!$db->table_empty($this_table)) {
-        if(!$cage->get->getAlpha('overwrite') == 'true') {
+    if (!$db->table_empty($this_table)) {
+        if (!$cage->get->getAlpha('overwrite') == 'true') {
             echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . table_users . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
             echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'file_name'=>$file_name, 'step'=>4, 'overwrite'=>'true'), 'admin') . "'>Continue</a>";
             return false;
@@ -74,7 +76,7 @@ function step4($xml, $file_name)
     {
 
         // Skip any record that has no username
-        if($child->user_login != "") 
+        if ($child->user_login != "") 
         {
             $count++;
             
@@ -100,8 +102,8 @@ function step4($xml, $file_name)
             $sql        = "INSERT INTO " . db_prefix . $this_table . " (" . $columns . ") VALUES(%s, %s, %s, %s, %s, %d, %s, %s, %d)";
             
             //if not using SWCMS' email registration module, set to zero:
-            if(!$child->valid_email) { $child->valid_email = 0;}
-            if(!$child->email_conf) { $child->email_conf = 0; }
+            if (!$child->valid_email) { $child->valid_email = 0;}
+            if (!$child->email_conf) { $child->email_conf = 0; }
             
             // Insert into users table
             $db->query($db->prepare(
@@ -162,7 +164,7 @@ function get_new_user_id($old_user_id)
     
     $new_user_id = $db->get_var($db->prepare($sql, 'user_id', $old_user_id));
     
-    if($new_user_id) { return $new_user_id; } else { return false; }
+    if ($new_user_id) { return $new_user_id; } else { return false; }
 }
 
 ?>

@@ -424,7 +424,7 @@ function sidebar_widget_categories($args)
     $bar = $plugin->plugin_settings('categories', 'categories_bar');
     
     // Only show if the sidebar is enabled
-    if($bar == 'side') {
+    if ($bar == 'side') {
     
         $sql = "SELECT * FROM " . table_categories . " ORDER BY category_order ASC";
         $the_cats = $db->get_results($db->prepare($sql));
@@ -617,7 +617,7 @@ function cts_navigation_last()
     $bar = $plugin->plugin_settings('categories', 'categories_bar');
     
     // Only show if the menu bar is enabled
-    if($bar == 'menu') {
+    if ($bar == 'menu') {
     
         $output = '';
     

@@ -1,5 +1,5 @@
 <?php
-/* ********** PLUGIN *********************************************************************************
+/**
  * name: Vote
  * description: Adds voting ability to posted stories.
  * version: 0.1
@@ -8,51 +8,49 @@
  * requires: submit 0.1, users 0.1
  * hooks: install_plugin, hotaru_header, submit_hotaru_header_1, submit_class_post_read_post_1, submit_class_post_read_post_2, header_include, submit_pre_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_class_post_add_post, navigation, submit_show_post_extra_fields, submit_show_post_extras
  *
+ * PHP version 5
  *
- *  License:
+ * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation, either version 3 of 
+ * the License, or (at your option) any later version. 
  *
- *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
+ * Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE. 
  *
- *   Hotaru CMS is free software: you can redistribute it and/or modify it under the terms of the 
- *   GNU General Public License as published by the Free Software Foundation, either version 3 of 
- *   the License, or (at your option) any later version.
- *
- *   Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
- *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License along with Hotaru CMS. If not, 
- *   see http://www.gnu.org/licenses/.
- *   
- *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
- *
- **************************************************************************************************** */
+ * You should have received a copy of the GNU General Public License along 
+ * with Hotaru CMS. If not, see http://www.gnu.org/licenses/.
+ * 
+ * @category  Content Management System
+ * @package   HotaruCMS
+ * @author    Nick Ramsay <admin@hotarucms.org>
+ * @copyright Copyright (c) 2009, Hotaru CMS
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * @link      http://www.hotarucms.org/
+ */
 
-/* ******************************************************************** 
- *  Function: vote_install_plugin
- *  Parameters: None
- *  Purpose: Install: Add vote fields to the post table and make a dedicated Votes table.
- *  Notes: ---
- ********************************************************************** */
- 
+/**
+ * Add vote fields to the post table and make a dedicated Votes table.
+ */
 function vote_install_plugin() {
     global $db, $plugin;
     
     // Create a new table column called "post_votes_up" if it doesn't already exist
     $exists = $db->column_exists('posts', 'post_votes_up');
-    if(!$exists) {
+    if (!$exists) {
         $db->query("ALTER TABLE " . table_posts . " ADD post_votes_up smallint(11) NOT NULL DEFAULT '0' AFTER post_content");
     } 
     
     // Create a new table column called "post_votes_down" if it doesn't already exist
     $exists = $db->column_exists('posts', 'post_votes_down');
-    if(!$exists) {
+    if (!$exists) {
         $db->query("ALTER TABLE " . table_posts . " ADD post_votes_down smallint(11) NOT NULL DEFAULT '0' AFTER post_votes_up");
     } 
     
     // Create a new empty table called "votes" if it doesn't already exist
     $exists = $db->table_exists('postvotes');
-    if(!$exists) {
+    if (!$exists) {
         //echo "table doesn't exist. Stopping before creation."; exit;
         $sql = "CREATE TABLE `" . db_prefix . "postvotes` (
           `vote_post_id` int(11) NOT NULL DEFAULT '0',
@@ -92,28 +90,20 @@ function vote_install_plugin() {
 }  
 
 
-/* ******************************************************************** 
- *  Function: vote_hotaru_header
- *  Parameters: None
- *  Purpose: Set things up when the page is first loaded
- *  Notes: ---
- ********************************************************************** */
- 
+/**
+ * Set things up when the page is first loaded
+ */
 function vote_hotaru_header() {
     global $plugin, $post;
     
-    if(!defined('table_postvotes')) { define("table_postvotes", db_prefix . 'postvotes'); }
+    if (!defined('table_postvotes')) { define("table_postvotes", db_prefix . 'postvotes'); }
     
     $plugin->include_language('vote');    
 }
 
-/* ******************************************************************** 
- *  Function: vote_submit_hotaru_header_1
- *  Parameters: None
- *  Purpose: Adds additional member variables when the $post object is read in the Submit plugin.
- *  Notes: ---
- ********************************************************************** */
- 
+/**
+ * Adds additional member variables when the $post object is read in the Submit plugin
+ */
 function vote_submit_hotaru_header_1() {
     global $post, $hotaru, $plugin, $cage;
         
@@ -123,25 +113,21 @@ function vote_submit_hotaru_header_1() {
     $post->post_vars['vote_use_alerts'] = 'checked';    
 }
 
-/* ******************************************************************** 
- *  Function: vote_submit_class_post_read_post_1
- *  Parameters: None
- *  Purpose: Read vote settings
- *  Notes: ---
- ********************************************************************** */
- 
+/**
+ * Read vote settings
+ */
 function vote_submit_class_post_read_post_1() {
     global $plugin, $post;
     
-    if($plugin->plugin_active('vote')) { 
+    if ($plugin->plugin_active('vote')) { 
     
         // Get settings from the database if they exist...
         $vote_settings = unserialize($plugin->plugin_settings('vote', 'vote_settings')); 
     
         // Determine vote type
-        if($vote_settings['vote_vote_unvote'] == 'checked') {
+        if ($vote_settings['vote_vote_unvote'] == 'checked') {
             $post->post_vars['vote_type'] = "vote_unvote";
-        } elseif($vote_settings['vote_up_down'] == 'checked') {
+        } elseif ($vote_settings['vote_up_down'] == 'checked') {
             $post->post_vars['vote_type'] = "up_down";
         } else {
             $post->post_vars['vote_type'] = "yes_no";
@@ -156,26 +142,19 @@ function vote_submit_class_post_read_post_1() {
 }
 
 
-/* ******************************************************************** 
- *  Function: vote_submit_class_post_read_post_2
- *  Parameters: None
- *  Purpose: Read number of votes if post exists.
- *  Notes: ---
- ********************************************************************** */
- 
+/**
+ * Read number of votes if post exists.
+ */
 function vote_submit_class_post_read_post_2() {
     global $post, $post_row;
     $post->post_vars['post_votes_up'] = $post_row->post_votes_up;
     $post->post_vars['post_votes_down'] = $post_row->post_votes_down;
 }
 
-/* ******************************************************************** 
- *  Function: vote_header_include
- *  Parameters: None
- *  Purpose: Includes css for the vote buttons.
- *  Notes: ---
- ********************************************************************** */
- 
+
+/**
+ * Includes css and javascript for the vote buttons.
+ */
 function vote_header_include()
 {
     global $plugin, $lang, $hotaru;
@@ -186,20 +165,16 @@ function vote_header_include()
 }
 
 
- /* ******************************************************************** 
+ /**
  * ********************************************************************* 
  * *********************** FUNCTIONS FOR VOTING ************************ 
  * *********************************************************************
  * ****************************************************************** */
  
  
-/* ******************************************************************** 
- *  Function: vote_submit_class_post_add_post
- *  Parameters: None
- *  Purpose: If auto-vote is enabled, the new post is automatically voted for by the person who submitted it.
- *  Notes: ---
- ********************************************************************** */
-  
+/**
+ * If auto-vote is enabled, the new post is automatically voted for by the person who submitted it.
+ */
 function vote_submit_class_post_add_post()
 {
      global $db, $current_user, $post, $plugin, $cage;
@@ -210,11 +185,11 @@ function vote_submit_class_post_add_post()
     $submit_vote_value = $vote_settings['vote_submit_vote_value'];
     
     // Automatically vote for a post when it's submitted...
-    if($submit_vote == 'checked') {
+    if ($submit_vote == 'checked') {
         // Determine vote type
-        if($vote_settings['vote_vote_unvote'] == 'checked') {
+        if ($vote_settings['vote_vote_unvote'] == 'checked') {
             $post->post_vars['vote_type'] = "vote_unvote";
-        } elseif($vote_settings['vote_up_down'] == 'checked') {
+        } elseif ($vote_settings['vote_up_down'] == 'checked') {
             $post->post_vars['vote_type'] = "up_down";
         } else {
             $post->post_vars['vote_type'] = "yes_no";
@@ -234,52 +209,46 @@ function vote_submit_class_post_add_post()
 }
  
 
- /* ******************************************************************** 
+ /**
  * ********************************************************************* 
  * ******************* FUNCTIONS FOR SHOWING VOTES ********************* 
  * *********************************************************************
  * ****************************************************************** */
  
 
-/* ******************************************************************** 
- *  Function: vote_navigation
- *  Parameters: None
- *  Purpose: Adds "Top Posts" and "Latest" links to the navigation bar
- *  Notes: If you can automatically vote for a story you submit, and that value is equal to or greater than the number of votes you need to get on the Top Stories page, then there's no need for a "Latest" page at all. In that case, we don't add anything to the navigation bar because the "Home" link will show all the stories. HOWEVER, any old posts with "new" status instead of "top" status will become inaccessible.
- ********************************************************************** */
-
+/**
+ * Adds "Top Posts" and "Latest" links to the navigation bar
+ *
+ * Notes: If you can automatically vote for a story you submit, and that value is equal to or greater than the number of votes you need to get on the Top Stories page, then there's no need for a "Latest" page at all. In that case, we don't add anything to the navigation bar because the "Home" link will show all the stories. HOWEVER, any old posts with "new" status instead of "top" status will become inaccessible.
+ */
 function vote_navigation() {    
     global $lang, $plugin, $hotaru;
     
     //get vote settings
     $vote_settings = unserialize($plugin->plugin_settings('vote', 'vote_settings')); 
     
-    if(($vote_settings['vote_submit_vote'] == "checked") && ($vote_settings['vote_submit_vote_value'] >= $vote_settings['vote_votes_to_promote'])) {
+    if (($vote_settings['vote_submit_vote'] == "checked") && ($vote_settings['vote_submit_vote_value'] >= $vote_settings['vote_votes_to_promote'])) {
         // these settings make the latest page unnecessary so the "Home" link is sufficient, otherwise...
     } else {
     
-        if($hotaru->title == 'latest') { $status = "id='navigation_active'"; } else { $status = ""; }
+        if ($hotaru->title == 'latest') { $status = "id='navigation_active'"; } else { $status = ""; }
         echo "<li><a " . $status . " href='" . url(array('page'=>'latest')) . "'>" . $lang["vote_navigation_latest"] . "</a></li>\n";
     }
 }
 
- /* ******************************************************************** 
- *  Function: vote_submit_pre_show_post
- *  Parameters: None
- *  Purpose: Displays the vote button.
- *  Notes: ---
- ********************************************************************** */
- 
+ /**
+ * Displays the vote button.
+ */
 function vote_submit_pre_show_post() {
     global $hotaru, $db, $post, $current_user, $voted, $cage, $lang, $plugin;
     
-    if($post->post_status == 'new' && $post->post_vars['vote_use_alerts'] == "checked") {
+    if ($post->post_status == 'new' && $post->post_vars['vote_use_alerts'] == "checked") {
         // CHECK TO SEE IF THIS POST IS BEING FLAGGED AND IF SO, ADD IT TO THE DATABASE
-        if($cage->get->keyExists('alert') && $current_user->logged_in) {
+        if ($cage->get->keyExists('alert') && $current_user->logged_in) {
             // Check if already flagged...
             $sql = "SELECT vote_rating FROM " . table_postvotes . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating = %s";
             $flagged = $db->get_var($db->prepare($sql, $post->post_id, $current_user->id, 'alert'));
-            if(!$flagged) {
+            if (!$flagged) {
                 $sql = "INSERT INTO " . table_postvotes . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_reason, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d, %d)";
                 $db->query($db->prepare($sql, $post->post_id, $current_user->id, $cage->server->testIp('REMOTE_ADDR'), $post->post_vars['vote_type'], 'alert', $cage->get->testInt('alert'), $current_user->id));
             }
@@ -299,17 +268,17 @@ function vote_submit_pre_show_post() {
         // Check if already flagged...
         $sql = "SELECT * FROM " . table_postvotes . " WHERE vote_post_id = %d AND vote_rating = %s";
         $flagged = $db->get_results($db->prepare($sql, $post->post_id, 'alert'));
-        if($flagged) {
+        if ($flagged) {
             $flag_count = 0;
             $reasons = array();
-            foreach($flagged as $flag) {
+            foreach ($flagged as $flag) {
                 array_push($reasons, $flag->vote_reason);
                 $flag_count++;
             }
             
             // Buries or Deletes a post if this new flag sends it over the limit set in Vote Settings
-            if($cage->get->keyExists('alert') && $flag_count >= $vote_settings['vote_alerts_to_bury']) {
-                if($vote_settings['vote_physical_delete']) { 
+            if ($cage->get->keyExists('alert') && $flag_count >= $vote_settings['vote_alerts_to_bury']) {
+                if ($vote_settings['vote_physical_delete']) { 
                     $sql = "DELETE FROM " . table_postvotes . " WHERE vote_post_id = %d";
                     $db->query($db->prepare($sql, $post->post_id));
                     $post->delete_post($post->post_id); 
@@ -323,14 +292,14 @@ function vote_submit_pre_show_post() {
                 return true; // This will stop the post from showing    
             }
             
-            if($flag_count > 1) { 
+            if ($flag_count > 1) { 
                 echo "<p class='alert_message'>" . $lang["vote_alert_flagged_message_1"] . " " . $flag_count . " " . $lang["vote_alert_flagged_message_users"]  . " " . $lang["vote_alert_flagged_message_2"] . " <i>";
             } else {
                 echo "<p class='alert_message'>" . $lang["vote_alert_flagged_message_1"] . " " . $flag_count . " " . $lang["vote_alert_flagged_message_user"]  . " " . $lang["vote_alert_flagged_message_2"] . " <i>";
             }
             
             $why_list = "";
-            foreach($reasons as $why) {
+            foreach ($reasons as $why) {
                 $alert_lang = "vote_alert_reason_" . $why;
                 $why_list .= $lang[$alert_lang] . ", ";
             }
@@ -341,13 +310,13 @@ function vote_submit_pre_show_post() {
     
     
     // CHECK TO SEE IF THE CURRENT USER HAS VOTED FOR THIS POST
-     if($current_user->logged_in) {
+     if ($current_user->logged_in) {
         $sql = "SELECT vote_rating FROM " . table_postvotes . " WHERE vote_post_id = %d AND (vote_user_id = %d OR vote_user_ip = %s) AND vote_rating != %s";
         $voted = $db->get_var($db->prepare($sql, $post->post_id, $current_user->id, $cage->server->testIp('REMOTE_ADDR'), 'alert'));
     } 
     
     // CHECK TO SEE IF THIS ANONYMOUS USER HAS VOTED FOR THIS POST
-    if(!$current_user->logged_in && ($post->post_vars['vote_anonymous_votes'] == 'checked')) {
+    if (!$current_user->logged_in && ($post->post_vars['vote_anonymous_votes'] == 'checked')) {
         $sql = "SELECT vote_rating FROM " . table_postvotes . " WHERE vote_post_id = %d AND vote_user_ip = %s AND vote_rating != %s";
         $voted = $db->get_var($db->prepare($sql, $post->post_id, $cage->server->testIp('REMOTE_ADDR'), 'alert'));
     }
@@ -355,34 +324,26 @@ function vote_submit_pre_show_post() {
      $hotaru->display_template('vote_button', 'vote');
 }
 
- /* ******************************************************************** 
- *  Function: vote_submit_show_post_extra_fields
- *  Parameters: None
- *  Purpose: Add an "alert" link below the story
- *  Notes: ---
- ********************************************************************** */
- 
+ /**
+ * Add an "alert" link below the story
+ */
 function vote_submit_show_post_extra_fields() {
     global $post, $lang, $current_user;
     
     // Only show the Alert link ("Flag it") on new posts, not top stories
-    if($current_user->logged_in && $post->post_status == "new" && ($post->post_vars['vote_use_alerts'] == "checked")) {
+    if ($current_user->logged_in && $post->post_status == "new" && ($post->post_vars['vote_use_alerts'] == "checked")) {
         echo "<a class='alert_link' href='#'>" . $lang["vote_alert"]  . "</a> &nbsp;&nbsp;";
     }
 }
 
 
- /* ******************************************************************** 
- *  Function: vote_submit_show_post_extras
- *  Parameters: None
- *  Purpose: List of alert reasons to choose from.
- *  Notes: ---
- ********************************************************************** */
- 
+ /**
+ * List of alert reasons to choose from.
+ */
 function vote_submit_show_post_extras() {
     global $post, $lang;
 
-    if($post->post_status == "new" && ($post->post_vars['vote_use_alerts'] == "checked")) {
+    if ($post->post_status == "new" && ($post->post_vars['vote_use_alerts'] == "checked")) {
         echo "<div class='alert_choices' style='display: none;'>";
             echo "<h3>" . $lang["vote_alert_reason_title"]  . "</h3>";
             echo "<ul>";
@@ -398,19 +359,15 @@ function vote_submit_show_post_extras() {
 }
 
 
- /* ******************************************************************** 
+ /**
  * ********************************************************************* 
  * ******************* FUNCTIONS FOR ADMIN SETTINGS ******************** 
  * *********************************************************************
  * ****************************************************************** */
  
-/* ******************************************************************** 
- *  Function: vote_admin_sidebar_plugin_settings
- *  Parameters: None
- *  Purpose: Link to settings page in the Admin sidebar
- *  Notes: ---
- ********************************************************************** */
- 
+/**
+ * Link to settings page in the Admin sidebar
+ */
 function vote_admin_sidebar_plugin_settings() {
     global $lang;
     
@@ -418,18 +375,14 @@ function vote_admin_sidebar_plugin_settings() {
 }
 
 
-/* ******************************************************************** 
- *  Function: vote_admin_plugin_settings
- *  Parameters: None
- *  Purpose: Vote Settings Page
- *  Notes: ---
- ********************************************************************** */
- 
+/**
+ * Vote Settings Page
+ */
 function vote_admin_plugin_settings() {
     global $hotaru, $plugin, $cage, $lang;
     
     // If the form has been submitted, go and save the data...
-    if($cage->post->getAlpha('submitted') == 'true') { 
+    if ($cage->post->getAlpha('submitted') == 'true') { 
         vote_save_settings(); 
     }    
     
@@ -450,16 +403,16 @@ function vote_admin_plugin_settings() {
     $physical_delete = $vote_settings['vote_physical_delete'];
     
     //...otherwise set to blank or default:
-    if(!$vote_unvote) { $vote_unvote = ''; }
-    if(!$up_down) { $up_down = ''; }
-    if(!$yes_no) { $yes_no = ''; }
-    if(!$anonymous_votes) { $anonymous_votes = ''; }
-    if(!$submit_vote) { $submit_vote = ''; }
-    if(!$submit_vote_value) { $submit_vote_value = 1; }
-    if(!$votes_to_promote) { $votes_to_promote = 5; }
-    if(!isset($use_alerts)) { $use_alerts = 'checked'; }
-    if(!$alerts_to_bury) { $alerts_to_bury = 5; }
-    if(!$physical_delete) { $physical_delete = ''; }
+    if (!$vote_unvote) { $vote_unvote = ''; }
+    if (!$up_down) { $up_down = ''; }
+    if (!$yes_no) { $yes_no = ''; }
+    if (!$anonymous_votes) { $anonymous_votes = ''; }
+    if (!$submit_vote) { $submit_vote = ''; }
+    if (!$submit_vote_value) { $submit_vote_value = 1; }
+    if (!$votes_to_promote) { $votes_to_promote = 5; }
+    if (!isset($use_alerts)) { $use_alerts = 'checked'; }
+    if (!$alerts_to_bury) { $alerts_to_bury = 5; }
+    if (!$physical_delete) { $physical_delete = ''; }
     
     // A plugin hook so other plugin developers can add settings
     $plugin->check_actions('vote_settings_get_values');
@@ -502,13 +455,9 @@ function vote_admin_plugin_settings() {
 }
 
 
-/* ******************************************************************** 
- *  Function: vote_save_settings
- *  Parameters: None
- *  Purpose: Save Vote Settings
- *  Notes: ---
- ********************************************************************** */
-
+/**
+ * Save Vote Settings
+ */
 function vote_save_settings() {
     global $cage, $hotaru, $plugin, $lang;
     
@@ -518,7 +467,7 @@ function vote_save_settings() {
     $vote_settings = unserialize($plugin->plugin_settings('vote', 'vote_settings')); 
         
     // Check the status of our radio buttons for vote type
-    if($cage->post->keyExists('vote_type')) { 
+    if ($cage->post->keyExists('vote_type')) { 
         $selected = $cage->post->testAlnumLines('vote_type'); 
         switch($selected) {
             case 'vote_unvote':
@@ -547,7 +496,7 @@ function vote_save_settings() {
 
 
     // Submit Vote
-    if($cage->post->keyExists('vote_submit_vote')) { 
+    if ($cage->post->keyExists('vote_submit_vote')) { 
         $submit_vote = 'checked'; 
     } else { 
         $submit_vote = ''; 
@@ -555,9 +504,9 @@ function vote_save_settings() {
     
     
     // Check the content for submit_vote_value
-    if($cage->post->keyExists('vote_submit_vote_value')) {
+    if ($cage->post->keyExists('vote_submit_vote_value')) {
         $submit_vote_value = $cage->post->testInt('vote_submit_vote_value'); 
-        if($submit_vote_value < 1) {
+        if ($submit_vote_value < 1) {
             $hotaru->messages[$lang["vote_settings_submit_vote_value_invalid"]] = "red";
             $error = 1;
             $submit_vote_value = $vote_settings['vote_submit_vote_value'];
@@ -570,7 +519,7 @@ function vote_save_settings() {
     
     
     // Anonymous Vote
-    if($cage->post->keyExists('vote_anonymous_votes')) { 
+    if ($cage->post->keyExists('vote_anonymous_votes')) { 
         $anonymous_votes = 'checked'; 
     } else { 
         $anonymous_votes = ''; 
@@ -578,9 +527,9 @@ function vote_save_settings() {
     
         
     // Check the content for votes_to_promote
-    if($cage->post->keyExists('vote_votes_to_promote')) {
+    if ($cage->post->keyExists('vote_votes_to_promote')) {
         $votes_to_promote = $cage->post->testInt('vote_votes_to_promote'); 
-        if($votes_to_promote < 1) {
+        if ($votes_to_promote < 1) {
             $hotaru->messages[$lang["vote_settings_votes_to_promote_invalid"]] = "red";
             $error = 1;
             $votes_to_promote = $vote_settings['vote_votes_to_promote'];
@@ -593,7 +542,7 @@ function vote_save_settings() {
     
     
     // Use alerts
-    if($cage->post->keyExists('vote_use_alerts')) { 
+    if ($cage->post->keyExists('vote_use_alerts')) { 
         $use_alerts = 'checked'; 
     } else { 
         $use_alerts = ''; 
@@ -601,9 +550,9 @@ function vote_save_settings() {
     
     
     // Check the content for alerts_to_bury
-    if($cage->post->keyExists('vote_alerts_to_bury')) { 
+    if ($cage->post->keyExists('vote_alerts_to_bury')) { 
         $alerts_to_bury = $cage->post->testInt('vote_alerts_to_bury'); 
-        if($alerts_to_bury < 1) {
+        if ($alerts_to_bury < 1) {
             $hotaru->messages[$lang["vote_settings_alerts_to_bury_invalid"] ] = "red";
             $error = 1;
             $alerts_to_bury = $vote_settings['vote_alerts_to_bury'];
@@ -616,7 +565,7 @@ function vote_save_settings() {
     
     
     // Check the status of our checkbox for physical delete
-    if($cage->post->keyExists('vote_physical_delete')) { 
+    if ($cage->post->keyExists('vote_physical_delete')) { 
         $physical_delete = 'checked'; 
     } else { 
         $physical_delete = ''; 
@@ -640,7 +589,7 @@ function vote_save_settings() {
     // parameters: plugin folder name, setting name, setting value
     $plugin->plugin_settings_update('vote', 'vote_settings', serialize($vote_settings));
     
-    if($error == 0) {
+    if ($error == 0) {
         $hotaru->messages[$lang["vote_settings_saved"]] = "green";
     }
     

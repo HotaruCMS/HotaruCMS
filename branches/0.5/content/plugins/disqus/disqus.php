@@ -33,7 +33,8 @@
 /**
  * Default settings on install
  */
-function disq_install_plugin() {
+function disq_install_plugin()
+{
     global $plugin, $lang;
         
     // Default settings 
@@ -42,7 +43,6 @@ function disq_install_plugin() {
     // Include language file. Also included in hotaru_header, but needed here so 
     // that the link in the Admin sidebar shows immediately after installation.
     $plugin->include_language('disqus');
-    
 }
 
 
@@ -51,7 +51,8 @@ function disq_install_plugin() {
  *
  * @link http://wiki.disqus.net/JSEmbed/
  */
-function disq_header_include_raw() {
+function disq_header_include_raw()
+{
     global $lang, $plugin, $post;
 
     echo '
@@ -66,7 +67,8 @@ function disq_header_include_raw() {
 /**
  * Include language file
  */
-function disq_hotaru_header() {
+function disq_hotaru_header()
+{
     global $lang, $plugin;
 
     $plugin->include_language('disqus');
@@ -76,7 +78,8 @@ function disq_hotaru_header() {
 /**
  * Display Admin sidebar link
  */
-function disq_admin_sidebar_plugin_settings() {
+function disq_admin_sidebar_plugin_settings()
+{
     global $lang;
     
     echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>'disqus'), 'admin') . "'>" . $lang['disqus_admin_sidebar'] . "</a></li>";
@@ -84,8 +87,11 @@ function disq_admin_sidebar_plugin_settings() {
 
 /**
  * Display Admin settings page
+ *
+ * @return true
  */
-function disq_admin_plugin_settings() {
+function disq_admin_plugin_settings()
+{
     require_once(plugins . 'disqus/disqus_settings.php');
     disq_settings();
     return true;
@@ -119,7 +125,6 @@ function disq_submit_post_show_post()
  */
 function disq_pre_close_body()
 {
-
     global $hotaru;
     
     $hotaru->display_template('disqus_footer', 'disqus');
