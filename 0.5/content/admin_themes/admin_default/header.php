@@ -38,25 +38,25 @@ global $hotaru, $admin, $plugin, $lang; // don't remove
        <?php 
            if ($hotaru->title != "")
            {
-               echo $hotaru->title . " &laquo; " . $lang["admin"] . " &laquo; " . site_name;
+               echo $hotaru->title . " &laquo; " . $lang["admin"] . " &laquo; " . SITE_NAME;
            }
            elseif ($hotaru->get_page_name() != "main")
            {
                $hotaru->title = $hotaru->get_page_name();
-               echo $hotaru->page_to_title_caps($hotaru->title) . " &laquo; " . $lang["admin"] . " &laquo; " . site_name;
+               echo $hotaru->page_to_title_caps($hotaru->title) . " &laquo; " . $lang["admin"] . " &laquo; " . SITE_NAME;
            }
            else
            { 
-               echo $lang["admin"] . " &laquo; " . site_name;
+               echo $lang["admin"] . " &laquo; " . SITE_NAME;
            } 
            
            $hotaru->title = 'admin';    // highlights "Admin" in the navigation bar, for all pages in Admin
        ?>
    </title>
-   <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery.min.js'; ?>"></script>
-   <script language="JavaScript" src="<?php echo baseurl . '3rd_party/jQuery/jquery-ui.min.js'; ?>"></script>
-   <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_ajax.js'; ?>"></script>
-   <script language="JavaScript" src="<?php echo baseurl . 'javascript/hotaru_jquery.js'; ?>"></script>
+   <script language="JavaScript" src="<?php echo BASEURL . '3rd_party/jQuery/jquery.min.js'; ?>"></script>
+   <script language="JavaScript" src="<?php echo BASEURL . '3rd_party/jQuery/jquery-ui.min.js'; ?>"></script>
+   <script language="JavaScript" src="<?php echo BASEURL . 'javascript/hotaru_ajax.js'; ?>"></script>
+   <script language="JavaScript" src="<?php echo BASEURL . 'javascript/hotaru_jquery.js'; ?>"></script>
    
     <!-- Include merged files for all the plugin css and javascript (if any) -->
     <?php 
@@ -66,9 +66,9 @@ global $hotaru, $admin, $plugin, $lang; // don't remove
     ?>
     <!-- End -->
     
-   <link rel="stylesheet" href="<?php echo baseurl . '3rd_party/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
-   <link rel="stylesheet" href="<?php echo baseurl . 'content/admin_themes/' . admin_theme . 'css/style.css'; ?>" type="text/css">
-   <link rel="shortcut icon" href="<?php echo baseurl; ?>favicon.ico">
+   <link rel="stylesheet" href="<?php echo BASEURL . '3rd_party/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
+   <link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css'; ?>" type="text/css">
+   <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico">
    
    <?php $plugin->check_actions('admin_header_include_raw'); ?>
       
@@ -83,7 +83,7 @@ global $hotaru, $admin, $plugin, $lang; // don't remove
 <?php } ?>
 <div id="doc2" class="yui-t7">
     <div id="hd" role="banner">
-        <a href="<?php echo baseurl; ?>"><img src="<?php echo baseurl; ?>content/admin_themes/<?php echo admin_theme ?>images/hotaru_468x60.png"></a>
+        <a href="<?php echo BASEURL; ?>"><img src="<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/hotaru_468x60.png"></a>
         <?php $plugin->check_actions('header_post_logo'); ?>
         
         <!-- NAVIGATION -->

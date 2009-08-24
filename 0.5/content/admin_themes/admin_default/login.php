@@ -30,29 +30,29 @@ global $hotaru, $lang; // don't remove
 ?>
 
 <p class="breadcrumbs">
-    <a href="<?php echo baseurl; ?>"><?php echo site_name?></a> 
-    &raquo; <a href="<?php echo url(array(), 'admin'); ?>"><?php echo $lang["admin_theme_main_admin_cp"]?></a> 
+    <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
+    &raquo; <a href="<?php echo url(array(), 'admin'); ?>"><?php echo $lang["admin_theme_main_admin_cp"]; ?></a> 
     &raquo; <?php echo $lang["admin_theme_login"]; ?>
 </p>
         
 <?php $hotaru->show_message(); ?>
         
 <div class='main_inner'>
-    <?php echo $lang["admin_theme_login_instructions"] ?>
+    <?php echo $lang["admin_theme_login_instructions"]; ?>
     
-    <form name='login_form' action='<?php echo baseurl ?>admin/admin_index.php' method='post'>    
+    <form name='login_form' action='<?php echo BASEURL; ?>admin/admin_index.php' method='post'>    
     <table>
         <tr>
-        <td><?php echo $lang["admin_theme_login_username"] ?>:&nbsp; </td>
-        <td><input type='text' size=30 name='username' value='<?php echo $username_check ?>' /></td>
+        <td><?php echo $lang["admin_theme_login_username"]; ?>:&nbsp; </td>
+        <td><input type='text' size=30 name='username' value='<?php echo $username_check; ?>' /></td>
         </tr>
         <tr>
-        <td><?php echo $lang["admin_theme_login_password"] ?>:&nbsp; </td>
-        <td><input type='password' size=30 name='password' value='<?php echo $password_check ?>' /></td>
+        <td><?php echo $lang["admin_theme_login_password"]; ?>:&nbsp; </td>
+        <td><input type='password' size=30 name='password' value='<?php echo $password_check; ?>' /></td>
         </tr>
         <tr>
         <td>&nbsp; </td>
-        <td style='text-align:right;'><input type='submit' value='<?php echo $lang['admin_theme_login_form_submit'] ?>' /></td>
+        <td style='text-align:right;'><input type='submit' value='<?php echo $lang['admin_theme_login_form_submit']; ?>' /></td>
         </tr>            
     </table>
     <input type='hidden' name='login_attempted' value='true'>
