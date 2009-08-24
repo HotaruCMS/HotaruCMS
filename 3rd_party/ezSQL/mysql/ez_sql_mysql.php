@@ -287,7 +287,7 @@
  
         function table_exists($table2check) {
             foreach ( $this->get_col("SHOW TABLES",0) as $table_name ) {
-                if($table_name == db_prefix . $table2check) { 
+                if($table_name == DB_PREFIX . $table2check) { 
                     return true; 
                 }
             }
@@ -303,7 +303,7 @@
          * Notes: This is a custom function for Hotaru CMS
          */
         function table_empty($table2check) {
-            $rowcount = $this->get_var($this->prepare("SELECT COUNT(*) FROM " . db_prefix . $table2check));
+            $rowcount = $this->get_var($this->prepare("SELECT COUNT(*) FROM " . DB_PREFIX . $table2check));
             if($rowcount && $rowcount > 0) {
                 return false; // table not empty
             } else {
@@ -322,7 +322,7 @@
          */
         function column_exists($table2check, $column)
         {
-            $sql = "SHOW COLUMNS FROM " . db_prefix . $table2check;
+            $sql = "SHOW COLUMNS FROM " . DB_PREFIX . $table2check;
             foreach ($this->get_col($sql,0) as $column_name)
             {
                 if ($column_name == $column) {

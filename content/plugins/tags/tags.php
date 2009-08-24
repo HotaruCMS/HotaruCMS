@@ -53,7 +53,7 @@ function tg_install_plugin()
     } 
     
     // Create a new empty table called "tags" if it doesn't already exist
-    $exists = $db->TABLE_TAGSexists('tags');
+    $exists = $db->table_exists('tags');
     if (!$exists) {
         //echo "table doesn't exist. Stopping before creation."; exit;
         $sql = "CREATE TABLE `" . DB_PREFIX . "tags` (
