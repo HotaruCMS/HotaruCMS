@@ -42,13 +42,13 @@ $hotaru = new Hotaru();
 // Clear the database cache in case of a re-install.
 require_once('../admin/class.admin.php'); 
 $admin = new Admin();
-$admin->delete_files(INCLUDES . 'ezSQL/cache');
+$admin->delete_files(CACHE . 'db_cache');
 
 // Global Inspekt SuperCage
 require_once(INCLUDES . 'Inspekt/Inspekt.php');
 $hotaru->initialize_inspekt();
 
-require_once(install . 'install_language.php');    // language file for install
+require_once(INSTALL . 'install_language.php');    // language file for install
 
 $step = $cage->get->getInt('step');        // Installation steps.
 
@@ -307,7 +307,7 @@ function register_admin()
         if (!$admin_name = $userbase->admin_exists())
         {
             // Insert default settings
-            $sql = "INSERT INTO " . table_users . " (user_username, user_role, user_date, user_password, user_email) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s)";
+            $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s)";
             $db->query($db->prepare($sql, 'admin', 'admin', 'password', 'admin@mysite.com'));
             $user_name = 'admin';
             $user_email = 'admin@mysite.com';
