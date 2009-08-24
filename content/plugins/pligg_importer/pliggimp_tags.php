@@ -28,7 +28,8 @@
 /**
  * Page 3 - Request tags file
  */
-function pliggimp_page_3() {
+function pliggimp_page_3()
+{
     global $plugin;
     
     echo "<h2>Step 3/5 - Tags</h2>";
@@ -45,6 +46,7 @@ function pliggimp_page_3() {
 
 /**
  * Step 3 - Import Tags
+ *
  * @param array $xml
  * @param string $file_name
  * @return bool
@@ -56,8 +58,8 @@ function step3($xml, $file_name)
     echo "<b>Table:</b> Tags...<br /><br />";
     
     $this_table = "tags";
-    if(!$db->table_empty($this_table)) {
-        if(!$cage->get->getAlpha('overwrite') == 'true') {
+    if (!$db->table_empty($this_table)) {
+        if (!$cage->get->getAlpha('overwrite') == 'true') {
             echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . table_tags . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
             echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'file_name'=>$file_name, 'step'=>3, 'overwrite'=>'true'), 'admin') . "'>Continue</a>";
             return false;
@@ -74,7 +76,7 @@ function step3($xml, $file_name)
     {
 
         // Skip any record that has no words
-        if($child->tag_words != "") 
+        if ($child->tag_words != "") 
         {
             $count++;
             

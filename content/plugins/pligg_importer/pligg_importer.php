@@ -108,7 +108,7 @@ function pliggimp_admin_plugin_settings()
         $step = $cage->get->testInt('step');
         $file_name = $cage->get->getmixedString2('file_name');
         
-        if(!isset($file_name) || !$file_name) { 
+        if (!isset($file_name) || !$file_name) { 
             // Go to page 
             $function_name = "pliggimp_page_" . $step; 
             $function_name();
@@ -128,7 +128,8 @@ function pliggimp_admin_plugin_settings()
 /**
  * Page 1 - welcome message, instructions and checks plugins are active
  */
-function pliggimp_page_welcome() {
+function pliggimp_page_welcome()
+{
     global $plugin;
     
     // FIRST PAGE WITH UPLOAD FORM
@@ -227,6 +228,9 @@ function pliggimp_page_welcome() {
 
 /**
  * Show the result of the file upload and offer link to continue
+ *
+ * @param str $file_name
+ * @param str $table table name
  */
 function pliggimp_upload_result($file_name, $table)
 {
@@ -274,7 +278,8 @@ function pliggimp_upload_result($file_name, $table)
  *
  * @return string|false
  */
-function pliggimp_save_uploaded_file() {
+function pliggimp_save_uploaded_file()
+{
     global $cage, $hotaru, $status;
     
     /* *****************************
@@ -336,6 +341,9 @@ function pliggimp_save_uploaded_file() {
 
 /**
  * Import data into the database from an XML file
+ *
+ * @param int $step
+ * @param str $file_name
  */
 function pliggimp_process_file($step = 0, $file_name = '')
 {

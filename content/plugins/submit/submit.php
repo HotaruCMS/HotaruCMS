@@ -32,14 +32,11 @@
 return false; die(); // die on direct access.
 
 
-/* ******************************************************************** 
- *  Function: sub_upgrade_plugin
- *  Parameters: None
- *  Purpose: If it doesn't already exist, add a post_domain field to posts table.
- *  Notes: ---
- ********************************************************************** */
- 
-function sub_upgrade_plugin() {
+/**
+ * If it doesn't already exist, add a post_domain field to posts table.
+ */
+function sub_upgrade_plugin()
+{
     global $db, $plugin, $post;
     
     // Create a new table column called "post_tags" if it doesn't already exist
@@ -51,14 +48,11 @@ function sub_upgrade_plugin() {
 }
     
     
-/* ******************************************************************** 
- *  Function: sub_install_plugin
- *  Parameters: None
- *  Purpose: If they don't already exist, posts and postmeta tables are created
- *  Notes: Happens when the plugin is installed. The tables are never deleted.
- ********************************************************************** */
- 
-function sub_install_plugin() {
+/**
+ * If they don't already exist, create "posts" and "postmeta" tables
+ */
+function sub_install_plugin()
+{
     global $db, $plugin, $post;
     
     // Create a new empty table called "posts"
@@ -118,14 +112,11 @@ function sub_install_plugin() {
 }
 
 
-/* ******************************************************************** 
- *  Function: sub_hotaru_header
- *  Parameters: None
- *  Purpose: Defines global "table_posts" and "table_postmeta" constants for referring to the db tables
- *  Notes: ---
- ********************************************************************** */
- 
-function sub_hotaru_header() {
+/**
+ * Define global "table_posts" and "table_postmeta" constants for referring to the db tables
+ */
+function sub_hotaru_header()
+{
     global $hotaru, $lang, $cage, $plugin, $post;
     
     if (!defined('table_posts')) { define("table_posts", db_prefix . 'posts'); }
@@ -169,14 +160,11 @@ function sub_hotaru_header() {
 }
 
 
-/* ******************************************************************** 
- *  Function: sub_navigation
- *  Parameters: None
- *  Purpose: Adds a "submit a story" link to the navigation bar
- *  Notes: 
- ********************************************************************** */
-
-function sub_navigation() {    
+/**
+ * Add a "submit a story" link to the navigation bar
+ */
+function sub_navigation()
+{    
     global $current_user, $lang, $hotaru;
     
     if ($current_user->logged_in) {
@@ -232,14 +220,13 @@ function sub_header_include_raw()
 }
 
 
-/* ******************************************************************** 
- *  Function: sub_theme_index_replace
- *  Parameters: None
- *  Purpose: Checks results from submit form 2.
- *  Notes: ---
- ********************************************************************** */
- 
-function sub_theme_index_replace() {
+/**
+ * Checks results from submit form 2.
+ *
+ * @return bool
+ */
+function sub_theme_index_replace()
+{
     global $hotaru, $cage, $post, $plugin, $current_user;
     
     if ($hotaru->is_page('submit2') && $post->use_submission) {
@@ -300,14 +287,13 @@ function sub_theme_index_replace() {
 }
 
 
-/* ******************************************************************** 
- *  Function: sub_theme_index_main
- *  Parameters: None
- *  Purpose: Determines which submit page to display
- *  Notes: ---
- ********************************************************************** */
- 
-function sub_theme_index_main() {
+/**
+ * Determines which submit page to display
+ *
+ * @return bool
+ */
+function sub_theme_index_main()
+{
     global $hotaru, $cage, $post, $plugin, $current_user, $lang, $user;
     global $post_orig_url, $post_orig_title, $filter, $filter_heading;
     
@@ -438,7 +424,7 @@ function sub_theme_index_main() {
  * Prepare filter and breadcrumbs for Posts List
  *
  * @return array
- */ 
+ */
 function sub_prepare_list()
 {
     global $hotaru, $plugin, $post, $cage, $filter, $lang, $page_title;
@@ -472,40 +458,31 @@ function sub_prepare_list()
 }
 
  
-/* ******************************************************************** 
- *  Function: sub_admin_sidebar_plugin_settings
- *  Parameters: None
- *  Purpose: Puts a link to the settings page in the Admin sidebar under Plugin Settings
- *  Notes: ---
- ********************************************************************** */
- 
-function sub_admin_sidebar_plugin_settings() {
+/**
+ * Add a link to the Admin sidebar under Plugin Settings
+ */
+function sub_admin_sidebar_plugin_settings()
+{
     echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>'submit'), 'admin') . "'>Submit</a></li>";
 }
 
 
- /* ******************************************************************** 
- *  Function: sub_admin_plugin_settings
- *  Parameters: None
- *  Purpose: Calls the function for displaying Admin settings
- *  Notes: ---
- ********************************************************************** */
- 
-function sub_admin_plugin_settings() {
+/**
+ * Calls the function for displaying Admin settings
+ */
+function sub_admin_plugin_settings()
+{
     require_once(plugins . 'submit/submit_settings.php');
     sub_settings();
     return true;
 }
 
 
- /* ******************************************************************** 
- *  Function: sub_fetch_title
- *  Parameters: None
- *  Purpose: Scrapes the title from the page being submitted
- *  Notes: ---
- ********************************************************************** */
- 
-function sub_fetch_title($url) {
+/**
+ * Scrapes the title from the page being submitted
+ */
+function sub_fetch_title($url)
+{
     global $cage, $lang;
     
     require_once(includes . 'SWCMS/class.httprequest.php');
@@ -540,14 +517,11 @@ function sub_fetch_title($url) {
 }
 
 
-/* ******************************************************************** 
- *  Function: sub_check_for_errors_1
- *  Parameters: None
- *  Purpose: Checks submit_step1 for errors
- *  Notes: ---
- ********************************************************************** */
-
-function sub_check_for_errors_1() {
+/**
+ * Checks submit_step1 for errors
+ */
+function sub_check_for_errors_1()
+{
     global $hotaru, $post, $cage, $lang;
 
     // ******** CHECK URL ********
@@ -644,7 +618,7 @@ function sub_check_for_errors_2()
     $error_check_actions = 0;
     $error_array = $plugin->check_actions('submit_form_2_check_for_errors');
     if (is_array($error_array)) {
-        foreach($error_array as $err) { if ($err == 1) { $error_check_actions = 1; } }
+        foreach ($error_array as $err) { if ($err == 1) { $error_check_actions = 1; } }
     }
     
     // Return true if error is found
@@ -652,14 +626,11 @@ function sub_check_for_errors_2()
 }
 
 
-/* ******************************************************************** 
- *  Function: sub_process_submission
- *  Parameters: None
- *  Purpose: Saves the submitted story to the database
- *  Notes: ---
- ********************************************************************** */
- 
-function sub_process_submission($post_orig_url) {
+/**
+ * Saves the submitted story to the database
+ */
+function sub_process_submission($post_orig_url)
+{
     global $hotaru, $cage, $plugin, $current_user, $post;
         
     if ($cage->post->getAlpha('submit2') == 'true') {    
@@ -695,5 +666,4 @@ function sub_process_submission($post_orig_url) {
     }
 }
 
-    
 ?>

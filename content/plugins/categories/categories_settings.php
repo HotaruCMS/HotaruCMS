@@ -74,7 +74,8 @@ function cts_settings()
  *
  * @return true
  */
-function cts_save_settings() {
+function cts_save_settings()
+{
     global $cage, $hotaru, $plugin, $post, $lang;
 
     // bar

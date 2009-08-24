@@ -32,14 +32,11 @@
 return false; die(); // die on direct access.
 
 
-/* ******************************************************************** 
- *  Function: usr_install_plugin
- *  Parameters: None
- *  Purpose: If it doesn't already exist, a "usermeta" table is created in the database
- *  Notes: Happens when theplugin is installed. The table is never deleted.
- ********************************************************************** */
- 
-function usr_install_plugin() {
+/**
+ * Create a "usermeta" table when on installation, if it doesn't already exist
+ */
+function usr_install_plugin()
+{
     global $db, $plugin, $lang;
     
     // include language file
@@ -74,13 +71,9 @@ function usr_install_plugin() {
 }
 
 
-/* ******************************************************************** 
- *  Function: usr_hotaru_header
- *  Parameters: None
- *  Purpose: Defines a global "table_usermeta" constant for referring to the db table
- *  Notes: ---
- ********************************************************************** */
- 
+/**
+ * Define a global "table_usermeta" constant for referring to the db table
+ */
 function usr_hotaru_header() {
     global $hotaru, $lang, $cage, $plugin, $userbase;
 
@@ -100,40 +93,33 @@ function usr_hotaru_header() {
 }
 
 
-/* ******************************************************************** 
- *  Function: usr_admin_sidebar_plugin_settings
- *  Parameters: None
- *  Purpose: Puts a link to the settings page in the Admin sidebar under Plugin Settings
- *  Notes: ---
- ********************************************************************** */
- 
-function usr_admin_sidebar_plugin_settings() {
+/**
+ * Put a link to the settings page in the Admin sidebar under Plugin Settings
+ */
+function usr_admin_sidebar_plugin_settings()
+{
     echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>'users'), 'admin') . "'>Users</a></li>";
 }
 
 
- /* ******************************************************************** 
- *  Function: usr_admin_plugin_settings
- *  Parameters: None
- *  Purpose: Calls the function for displaying Admin settings
- *  Notes: ---
- ********************************************************************** */
- 
-function usr_admin_plugin_settings() {
+ /**
+ * Call the function for displaying Admin settings
+ *
+ * @return true
+ */
+function usr_admin_plugin_settings()
+{
     require_once(plugins . 'users/users_settings.php');
     usr_settings();
     return true;
 }
 
 
-/* ******************************************************************** 
- *  Function: usr_navigation_users
- *  Parameters: None
- *  Purpose: Adds links to the end of the navigation bar
- *  Notes: 
- ********************************************************************** */
-
-function usr_navigation_users() {    
+/**
+ * Add links to the end of the navigation bar
+ */
+function usr_navigation_users()
+{
     global $current_user, $lang, $hotaru;
     
     if ($current_user->logged_in) {
@@ -158,14 +144,13 @@ function usr_navigation_users() {
 }
 
 
-/* ******************************************************************** 
- *  Function: usr_theme_index_replace
- *  Parameters: None
- *  Purpose: Echos the login form to index.php 
- *  Notes: Work to do *before* we send output to the page.
- ********************************************************************** */
- 
-function usr_theme_index_replace() {
+/**
+ * This function does work *before* output is sent to the page.
+ *
+ * @return false
+ */
+function usr_theme_index_replace()
+{
     global $hotaru, $cage, $current_user, $userbase, $plugin;
     global $send_email_confirmation;
     
@@ -211,14 +196,13 @@ function usr_theme_index_replace() {
 }
 
 
-/* ******************************************************************** 
- *  Function: usr_theme_index_main
- *  Parameters: None
- *  Purpose: Displays various forms within the body of the page.
- *  Notes: 
- ********************************************************************** */
- 
-function usr_theme_index_main() {
+/**
+ * Display various forms within the body of the page.
+ *
+ * @return bool
+ */
+function usr_theme_index_main()
+{
     global $hotaru, $cage, $current_user, $userbase, $lang;
     global $send_email_confirmation;
     
@@ -280,14 +264,13 @@ function usr_submit_list_filter()
 }
 
 
- /* ******************************************************************** 
- *  Function: usr_update_general
- *  Parameters: None
- *  Purpose: Enables a user to change their username or email.
- *  Notes: ---
- ********************************************************************** */
- 
-function usr_update_general() {
+ /**
+ * Change username or email
+ *
+ * @return bool
+ */
+function usr_update_general()
+{
     global $hotaru, $cage, $lang, $current_user;
     
     $error = 0;
@@ -335,14 +318,13 @@ function usr_update_general() {
 }
 
 
- /* ******************************************************************** 
- *  Function: usr_update_password
- *  Parameters: None
- *  Purpose: Enables a user to change their password.
- *  Notes: ---
- ********************************************************************** */
- 
-function usr_update_password() {
+ /**
+ * Enable a user to change their password
+ *
+ * @return bool
+ */
+function usr_update_password()
+{
     global $hotaru, $cage, $lang, $current_user;
     
     $error = 0;
@@ -407,6 +389,8 @@ function usr_update_password() {
 
  /**
  * User Login
+ *
+ * @return bool
  */
 function usr_login()
 {
@@ -452,14 +436,13 @@ function usr_login()
 }
 
 
- /* ******************************************************************** 
- *  Function: usr_register
- *  Parameters: None, but gets register and password for verification from $cage
- *  Purpose: Registering a new user.
- *  Notes: 
- ********************************************************************** */
- 
-function usr_register() {
+ /**
+ * Register a new user
+ *
+ * @return false
+ */
+function usr_register()
+{
     global $db, $hotaru, $cage, $lang, $userbase, $plugin;
     
     $current_user = new UserBase();
@@ -564,14 +547,13 @@ function usr_register() {
 }
 
 
- /* ******************************************************************** 
- *  Function: usr_send_confirmation_email
- *  Parameters: Sends an email to the newly registered user
- *  Purpose: Anti-spam measure
- *  Notes: 
- ********************************************************************** */
- 
-function usr_send_confirmation_email($user_id) {
+ /**
+ * Send an email to the newly registered user
+ *
+ * @param int $user_id
+ */
+function usr_send_confirmation_email($user_id)
+{
     global $db, $hotaru, $cage, $lang, $current_user;
     
     // Check that the site email has been changed from the default...
@@ -614,14 +596,13 @@ function usr_send_confirmation_email($user_id) {
 }
 
 
- /* ******************************************************************** 
- *  Function: usr_email_confirmation
- *  Parameters: Sends an email to the newly registered user
- *  Purpose: Anti-spam measure
- *  Notes: 
- ********************************************************************** */
- 
-function usr_check_email_confirmation() {
+ /**
+ * Check email confirmation code
+ *
+ * @return true;
+ */
+function usr_check_email_confirmation()
+{
     global $db, $hotaru, $cage, $lang, $current_user;
     
     $user_id = $cage->get->getInt('id');
