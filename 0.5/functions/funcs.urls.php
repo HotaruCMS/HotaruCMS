@@ -35,7 +35,7 @@ function url($parameters = array(), $head = 'index')
 {
     global $post;
     
-    if (friendly_urls == "false") {
+    if (FRIENDLY_URLS == "false") {
     
         if ($head == 'index') {
             $url = BASEURL . 'index.php?';
@@ -57,7 +57,7 @@ function url($parameters = array(), $head = 'index')
         
     } 
     
-    if (friendly_urls == "true") {
+    if (FRIENDLY_URLS == "true") {
     
         if ($head == 'index') { 
             $url = BASEURL;

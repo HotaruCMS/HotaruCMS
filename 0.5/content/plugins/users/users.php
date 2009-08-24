@@ -43,7 +43,7 @@ function usr_install_plugin()
     $plugin->include_language('users');
     
     // Create a new empty table called "usermeta"
-    $exists = $db->TABLE_TAGSexists('usermeta');
+    $exists = $db->table_exists('usermeta');
     if (!$exists) {
         //echo "table doesn't exist. Stopping before creation."; exit;
         $sql = "CREATE TABLE `" . DB_PREFIX . "usermeta` (
