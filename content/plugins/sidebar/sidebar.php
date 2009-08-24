@@ -61,7 +61,7 @@ function sidebar_hotaru_header()
     $plugin->include_language('sidebar');
     
     if ($hotaru->sidebar) {
-        require_once(plugins . 'sidebar/class.sidebar.php');
+        require_once(PLUGINS . 'sidebar/class.sidebar.php');
         // Create a new global object called "sidebar".
         $sidebar = new Sidebar();
         

@@ -76,8 +76,8 @@ function sidebar_widget_sidebar_posts($type = 'top')
     if (isset($posts) && !empty($posts)) {
         
         $output = "<h2 class='sidebar_posts_title'>";
-        $output .= "<a href='" . url(array('page'=>'rss', 'status'=>$type)) . "' title='" . $lang["sidebar_posts_icon_anchor_title"] . "'><img src='" . baseurl . "content/themes/" . theme . "images/rss_16.png'></a>&nbsp;"; // RSS icon
-        $link = baseurl;
+        $output .= "<a href='" . url(array('page'=>'rss', 'status'=>$type)) . "' title='" . $lang["sidebar_posts_icon_anchor_title"] . "'><img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'></a>&nbsp;"; // RSS icon
+        $link = BASEURL;
         $output .= "<a href='" . $link . "' title='" . $lang["sidebar_posts_title_anchor_title"] . "'>" . $title . "</a></h2>"; 
             
         $output .= "<ul class='sidebar_posts_items'>";
