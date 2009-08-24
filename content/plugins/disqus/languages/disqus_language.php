@@ -1,6 +1,6 @@
 <?php
 /**
- * A language file for Disqus.
+ * DISQUS LANGUAGE
  *
  * PHP version 5
  *

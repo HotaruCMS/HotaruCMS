@@ -1,29 +1,28 @@
 <?php
-
-// USERS
-
-/* **************************************************************************************************** 
- *  File: plugins/users/languages/users_english.php
- *  Purpose: A language file for Users. It's used whenever a Users file needs to output language.
- *  Notes: ---
- *  License:
+/**
+ * USERS LANGUAGE
  *
- *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
+ * PHP version 5
  *
- *   Hotaru CMS is free software: you can redistribute it and/or modify it under the terms of the 
- *   GNU General Public License as published by the Free Software Foundation, either version 3 of 
- *   the License, or (at your option) any later version.
+ * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation, either version 3 of 
+ * the License, or (at your option) any later version. 
  *
- *   Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
- *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
+ * Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE. 
  *
- *   You should have received a copy of the GNU General Public License along with Hotaru CMS. If not, 
- *   see http://www.gnu.org/licenses/.
- *   
- *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
- *
- **************************************************************************************************** */
+ * You should have received a copy of the GNU General Public License along 
+ * with Hotaru CMS. If not, see http://www.gnu.org/licenses/.
+ * 
+ * @category  Content Management System
+ * @package   HotaruCMS
+ * @author    Nick Ramsay <admin@hotarucms.org>
+ * @copyright Copyright (c) 2009, Hotaru CMS
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * @link      http://www.hotarucms.org/
+ */
 
 /* Users Admin Settings */
 $lang["users_settings_header"] = "Users Configuration";
@@ -51,6 +50,9 @@ $lang["users_login_failed"] = "Login failed";
 $lang["users_login_failed_email_not_validated"] = "Sorry, you haven't validated your email yet."; 
 $lang["users_login_failed_email_request_sent"] = "Email confirmation request sent!";
 $lang["users_login_form_submit"] = "Login";
+$lang["users_login_form_submit_username"] = "Username:";
+$lang["users_login_form_submit_password"] = "Password:";
+$lang["users_login_form_submit_remember"] = "Remember:";
 
 /* Register (and also used in User Settings) */
 $lang["users_register_username"] = "Username:";
