@@ -30,9 +30,9 @@ global $hotaru, $plugin, $lang; // don't remove
 ?>
 
 <p class="breadcrumbs">
-    <a href="<?php echo baseurl; ?>"><?php echo site_name?></a> 
-    &raquo; <a href="<?php echo url(array(), 'admin'); ?>"><?php echo $lang["admin_theme_main_admin_cp"]?></a> 
-    &raquo; <?php echo $lang["admin_theme_plugin_settings"]?> 
+    <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
+    &raquo; <a href="<?php echo url(array(), 'admin'); ?>"><?php echo $lang["admin_theme_main_admin_cp"]; ?></a> 
+    &raquo; <?php echo $lang["admin_theme_plugin_settings"]; ?> 
     <?php if ($plugin->name) { echo "&raquo; " .  $plugin->name; } ?>
 </p>
 
