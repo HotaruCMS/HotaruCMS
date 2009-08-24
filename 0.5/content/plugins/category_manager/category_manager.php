@@ -43,7 +43,7 @@ function cats_install_plugin()
     $exists = $db->table_exists('categories');
     if (!$exists) {
         //echo "table doesn't exist. Stopping before creation."; exit;
-        $sql = "CREATE TABLE `" . db_prefix . "categories` (
+        $sql = "CREATE TABLE `" . DB_PREFIX . "categories` (
           `category_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
           `category_parent` int(11) NOT NULL DEFAULT '1',
           `category_name` varchar(64) NOT NULL DEFAULT '',
@@ -61,7 +61,7 @@ function cats_install_plugin()
     
     // Insert default settings...
         
-    $sql = "INSERT INTO " . db_prefix . "categories (category_name, category_safe_name) VALUES (%s, %s)";
+    $sql = "INSERT INTO " . DB_PREFIX . "categories (category_name, category_safe_name) VALUES (%s, %s)";
     $db->query($db->prepare($sql, urlencode('all'), urlencode('all')));
     
     }
@@ -87,7 +87,7 @@ function cats_hotaru_header()
     
     $plugin->include_language('category_manager');
     
-    if (!defined('table_categories')) { define("table_categories", db_prefix . 'categories'); }
+    if (!defined('TABLE_CATEGORIES')) { define("TABLE_CATEGORIES", DB_PREFIX . 'categories'); }
     return true;
 }
 
@@ -123,7 +123,7 @@ function cats_admin_plugin_settings()
 {
     global $hotaru, $plugin, $lang;
     
-    require_once(plugins . 'category_manager/cat_man_engine.php');
+    require_once(PLUGINS . 'category_manager/cat_man_engine.php');
     cat_man_main();
     return true;
 }

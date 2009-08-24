@@ -1,7 +1,7 @@
 <?php
 /**
- *  File: plugins/category_manager/cat_man_engine.php
- *  Purpose: The functions that do the hard work such as adding, deleting and sorting categories.
+ * File: plugins/category_manager/cat_man_engine.php
+ * Purpose: The functions that do the hard work such as adding, deleting and sorting categories.
  *
  * PHP version 5
  *
@@ -279,7 +279,7 @@ function get_categories()
     
     // This function gets all categories from the database.
     $all_cats = array();
-    $sql = "SELECT category_name, category_id, category_parent, category_desc, category_keywords FROM " . table_categories . " ORDER BY category_order ASC";
+    $sql = "SELECT category_name, category_id, category_parent, category_desc, category_keywords FROM " . TABLE_CATEGORIES . " ORDER BY category_order ASC";
     $categories = $db->get_results($db->prepare($sql));
     $count = 0;
     foreach ($categories as $category) {
@@ -320,7 +320,7 @@ function get_category_levels($parent, $level)
     global $db;
     
     $level++; 
-    $sql = "SELECT category_parent FROM " . table_categories . " WHERE category_id = %d";
+    $sql = "SELECT category_parent FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
     $parent = $db->get_var($db->prepare($sql, $parent));
     if ($parent != 1) {
         $level = get_category_levels($parent, $level); // recursive function to find level depth
@@ -339,11 +339,11 @@ function order($order_type)
     global $db, $current_user;
     
     $order = 1;
-    $sql = "SELECT * FROM " . table_categories . " WHERE category_id != %d AND category_parent = %d ORDER BY $order_type ASC";
+    $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_id != %d AND category_parent = %d ORDER BY $order_type ASC";
     $categories = $db->get_results($db->prepare($sql, 1, 1));
     if ($categories) {
         foreach ( $categories as $category ) {
-            $sql = "UPDATE " . table_categories . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
+            $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
             $db->query($db->prepare($sql, $order, $current_user->id, $category->category_id));
             // get and update children of this category
             $order = order_children($category, $order, $order_type);
@@ -366,12 +366,12 @@ function order_children($category, $order, $order_type)
 {
     global $db, $current_user;
     
-    $sql = "SELECT * FROM " . table_categories . " WHERE category_parent = %d ORDER BY $order_type ASC";
+    $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d ORDER BY $order_type ASC";
     $children = $db->get_results($db->prepare($sql, $category->category_id));
     if ($children) {
         foreach ( $children as $child ) {
             $order++;
-            $sql = "UPDATE " . table_categories . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
+            $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
             $db->query($db->prepare($sql, $order, $current_user->id, $child->category_id));
             $order = order_children($child, $order, $order_type);
         }
@@ -388,13 +388,13 @@ function order_by_posts()
     global $db, $current_user;
     
     $order = 1;
-    $sql = "SELECT " . table_categories . ".*, COUNT(" . table_posts . ".post_category) as count, " . table_posts . ".post_category FROM " . table_categories . ", " . table_posts . " WHERE " . table_categories . ".category_id != %d AND " . table_categories . ".category_parent = %d AND " . table_categories . ".category_id = " . table_posts . ".post_category GROUP BY " . table_posts . ".post_category ORDER BY count DESC";
+    $sql = "SELECT " . TABLE_CATEGORIES . ".*, COUNT(" . TABLE_POSTS . ".post_category) as count, " . TABLE_POSTS . ".post_category FROM " . TABLE_CATEGORIES . ", " . TABLE_POSTS . " WHERE " . TABLE_CATEGORIES . ".category_id != %d AND " . TABLE_CATEGORIES . ".category_parent = %d AND " . TABLE_CATEGORIES . ".category_id = " . TABLE_POSTS . ".post_category GROUP BY " . TABLE_POSTS . ".post_category ORDER BY count DESC";
     
     $categories = $db->get_results($db->prepare($sql, 1, 1));
     if ($categories) {
         foreach ( $categories as $category ) {
         
-            $sql = "UPDATE " . table_categories . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
+            $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
             $db->query($db->prepare($sql, $order, $current_user->id, $category->category_id));
             // get and update children of this category
             $order = order_children_by_posts($category, $order);
@@ -403,17 +403,17 @@ function order_by_posts()
     } 
     
     //check for categories with zero posts
-    $sql = "SELECT * FROM " . table_categories . " WHERE category_id != %d AND category_parent = %d ORDER BY category_name ASC";
+    $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_id != %d AND category_parent = %d ORDER BY category_name ASC";
     $categories = $db->get_results($db->prepare($sql, 1, 0));
     if ($categories) {
         foreach ( $categories as $category ) {
-            $sql = "SELECT COUNT(post_category) as count, post_category FROM " . table_posts . " WHERE post_category = %d GROUP BY post_category";
+            $sql = "SELECT COUNT(post_category) as count, post_category FROM " . TABLE_POSTS . " WHERE post_category = %d GROUP BY post_category";
             $posts = $db->get_results($db->prepare($sql, $category->category_id));
             if ($posts) { 
                 // posts exist so we can ignore this category because it's already be done above
             } else {
                 $order++;
-                $sql = "UPDATE " . table_categories . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
+                $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
                 $db->query($db->prepare($sql, $order, $current_user->id, $category->category_id));
             }
         }
@@ -432,29 +432,29 @@ function order_children_by_posts($category, $order)
 {
     global $db, $current_user;
     
-    $sql = "SELECT " . table_categories . ".*, COUNT(" . table_posts . ".post_category) as count, " . table_posts . ".post_category FROM " . table_categories . ", " . table_posts . " WHERE " . table_categories . ".category_parent = %d  AND " . table_categories . ".category_id = " . table_posts . ".post_category GROUP BY " . table_posts . ".post_category ORDER BY count DESC";
+    $sql = "SELECT " . TABLE_CATEGORIES . ".*, COUNT(" . TABLE_POSTS . ".post_category) as count, " . TABLE_POSTS . ".post_category FROM " . TABLE_CATEGORIES . ", " . TABLE_POSTS . " WHERE " . TABLE_CATEGORIES . ".category_parent = %d  AND " . TABLE_CATEGORIES . ".category_id = " . TABLE_POSTS . ".post_category GROUP BY " . TABLE_POSTS . ".post_category ORDER BY count DESC";
     $children = $db->get_results($db->prepare($sql, $category->category_id));
     if ($children) {
         foreach ( $children as $child ) {
             $order++;
-            $sql = "UPDATE " . table_categories . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
+            $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
             $db->query($db->prepare($sql, $order, $current_user->id, $child->category_id));
             $order = order_children_by_posts($child, $order);
         }
     } 
     
     //check for children with zero posts
-        $sql = "SELECT * FROM " . table_categories . " WHERE category_parent = %d ORDER BY category_name ASC";
+        $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d ORDER BY category_name ASC";
         $children = $db->get_results($db->prepare($sql, $category->category_id));
         if ($children) {
             foreach ( $children as $child ) {
-                $sql = "SELECT COUNT(post_category) as count, post_category FROM " . table_posts . " WHERE post_category = %d GROUP BY post_category";
+                $sql = "SELECT COUNT(post_category) as count, post_category FROM " . TABLE_POSTS . " WHERE post_category = %d GROUP BY post_category";
                 $posts = $db->get_results($db->prepare($sql, $child->category_id));
                 if ($posts) { 
                     // posts exist so we can ignore this child because it's already be done above
                 } else {
                     $order++;
-                    $sql = "UPDATE " . table_categories . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
+                    $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
                     $db->query($db->prepare($sql, $order, $current_user->id, $child->category_id));
                 }
             }
@@ -470,12 +470,12 @@ function update_category_names()
 {
     global $db, $cage, $current_user;
     
-    $sql = "SELECT category_id, category_name, category_safe_name FROM " . table_categories . " WHERE category_id != %d ORDER BY category_order ASC";
+    $sql = "SELECT category_id, category_name, category_safe_name FROM " . TABLE_CATEGORIES . " WHERE category_id != %d ORDER BY category_order ASC";
     $categories = $db->get_results($db->prepare($sql, 1));
     foreach ( $categories as $category ) {
         $new_name = $cage->post->getMixedString2($category->category_id);
         if ($new_name != "") {
-            $sql = "UPDATE " . table_categories . " SET category_name = %s, category_safe_name = %s, category_updateby = %d WHERE category_id = %d";
+            $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_name = %s, category_safe_name = %s, category_updateby = %d WHERE category_id = %d";
             $db->query($db->prepare($sql, urlencode($new_name), urlencode(make_url_friendly($new_name)), $current_user->id, $category->category_id));
         }
     }
@@ -493,28 +493,28 @@ function add_new_category($parent, $new_cat_name)
 {
     global $db, $current_user;
     
-    $sql = "SELECT category_order FROM " . table_categories . " WHERE category_id = %d";
+    $sql = "SELECT category_order FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
     $category_order = $db->get_var($db->prepare($sql, $parent));
     
     $position = $category_order + 1; // our new category will go right after the parent category
     
     // return false if duplicate name
-    $sql = "SELECT category_name FROM " . table_categories . " WHERE category_name = %s";
+    $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_name = %s";
     $exists = $db->get_var($db->prepare($sql, urlencode($new_cat_name)));
     if ($exists) { return false; }
     
     // increment category_order for all categories after the parent:
-    $sql = "SELECT category_id, category_name, category_order FROM " . table_categories . " WHERE category_order > %d ORDER BY category_order ASC";
+    $sql = "SELECT category_id, category_name, category_order FROM " . TABLE_CATEGORIES . " WHERE category_order > %d ORDER BY category_order ASC";
     $categories = $db->get_results($db->prepare($sql, $category_order));    
     if ($categories) {
         foreach ( $categories as $category ) {
-            $sql = "UPDATE " . table_categories . " SET category_order = category_order+1, category_updateby = %d WHERE category_id = %d";
+            $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = category_order+1, category_updateby = %d WHERE category_id = %d";
             $db->query($db->prepare($sql, $current_user->id, $category->category_id));
         }
     }
     
     //insert new category after parent category:
-    $sql = "INSERT INTO " . table_categories . " (category_parent, category_name, category_safe_name, category_order, category_updateby) VALUES (%d, %s, %s, %d, %d)";
+    $sql = "INSERT INTO " . TABLE_CATEGORIES . " (category_parent, category_name, category_safe_name, category_order, category_updateby) VALUES (%d, %s, %s, %d, %d)";
     $db->query($db->prepare($sql, $parent, urlencode($new_cat_name), urlencode(make_url_friendly($new_cat_name)), $position, $current_user->id));
         
     cat_man_rebuild_tree(1, 0);
@@ -533,7 +533,7 @@ function is_empty($cat_id)
 {
     global $db;
     
-    $sql = "SELECT count(*) FROM " . table_posts . " WHERE post_category = %d ";
+    $sql = "SELECT count(*) FROM " . TABLE_POSTS . " WHERE post_category = %d ";
     $posts = $db->get_var($db->prepare($sql, $cat_id));
     if ($posts == 0) {
         return true;    //empty
@@ -558,11 +558,11 @@ function move($cat_to_move, $placement, $target)
         
     if ($target) {
         if ($target == "top") { $target = 1; }
-        $sql = "SELECT * FROM " . table_categories . " WHERE category_id = %d";
+        $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
         $target = $db->get_row($db->prepare($sql, $target));
         if ($placement == "after") { // need to find the last child and assign that as the target.
             $skip_children = move_count($target->category_id, 0);
-            $sql = "SELECT * FROM " . table_categories . " WHERE category_order = %d";
+            $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_order = %d";
               $target = $db->get_row($db->prepare($sql, ($target->category_order+$skip_children)));
         }
         $target_id = $target->category_id;
@@ -571,10 +571,10 @@ function move($cat_to_move, $placement, $target)
 
         //echo "Move " . $cat_to_move . " " . $placement . " " . $target->category_name . "<br />";
         if ($placement == "before") {
-            $sql = "SELECT * FROM " . table_categories . " WHERE category_id != %d AND category_order >= %d";
+            $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_id != %d AND category_order >= %d";
             $categories = $db->get_results($db->prepare($sql, 1, $target_order));
         } elseif (($placement == "after") || ($placement == "aschild") || ($placement == "none")) {
-            $sql = "SELECT * FROM " . table_categories . " WHERE category_id != %d AND category_order > %d";
+            $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_id != %d AND category_order > %d";
             $categories = $db->get_results($db->prepare($sql, 1, $target_order));
         } 
         
@@ -588,20 +588,20 @@ function move($cat_to_move, $placement, $target)
         if ($categories) {
             foreach ( $categories as $category ) {
                 if (descendant($category, $cat_to_move, "no") == "no") { //if not cat_to_move or one of its descendants...
-                    $sql = "UPDATE " . table_categories . " SET category_order = category_order + %d, category_updateby = %d WHERE category_id = %d";
+                    $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = category_order + %d, category_updateby = %d WHERE category_id = %d";
                     $db->query($db->prepare($sql, $number, $current_user->id, $category->category_id));
                 }
                 //echo "Update " . $category->category_id . ", " . $category->category_name . ", with parent " . $category->category_parent . ". Assign order " . ($category->category_order+1) . "<br />";
             }
         }
         if ($placement == "before") {
-            $sql = "UPDATE " . table_categories . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
+            $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
             $db->query($db->prepare($sql, $target_order, $current_user->id, $cat_to_move));
         } elseif ($placement == "after") {
-            $sql = "UPDATE " . table_categories . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
+            $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
             $db->query($db->prepare($sql, ($target_order+1), $current_user->id, $cat_to_move));
         } elseif (($placement == "aschild") || ($placement == "none")) {
-            $sql = "UPDATE " . table_categories . " SET category_order = %d, category_parent = %d, category_updateby = %d WHERE category_id = %d";
+            $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_parent = %d, category_updateby = %d WHERE category_id = %d";
             $db->query($db->prepare($sql, ($target_order+1), $target_id, $current_user->id, $cat_to_move));
         }
         
@@ -631,7 +631,7 @@ function move_count($category, $number)
 {
     global $db;
     
-    $sql = "SELECT category_parent, category_id FROM " . table_categories . " WHERE category_parent = %d";
+    $sql = "SELECT category_parent, category_id FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d";
     $children = $db->get_results($db->prepare($sql, $category));
     if ($children) {
         foreach ( $children as $child ) {
@@ -658,7 +658,7 @@ function descendant($category, $cat_to_move, $descendant)
     if ($category->category_id == $cat_to_move) {
         $descendant = "yes";
     } else {
-        $sql = "SELECT category_parent, category_id FROM " . table_categories . " WHERE category_parent = %d";
+        $sql = "SELECT category_parent, category_id FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d";
         $children = $db->get_results($db->prepare($sql, $cat_to_move));
         if ($children) {
             foreach ( $children as $child ) {
@@ -683,16 +683,16 @@ function move_children($parent, $order, $target_parent)
 {
     global $db, $current_user;
     
-    $sql = "SELECT * FROM " . table_categories . " WHERE category_parent = %d";
+    $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d";
     $children = $db->get_results($db->prepare($sql, $parent));
     if ($children) {
         foreach ( $children as $child ) {
             $order++;
-            $sql = "UPDATE " . table_categories . " SET category_order = %d, category_parent = %d, category_updateby = %d WHERE category_id != %d AND category_id = %d";
+            $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_parent = %d, category_updateby = %d WHERE category_id != %d AND category_id = %d";
             $db->query($db->prepare($sql, $order, $target_parent, $current_user->id, 1, $child->category_id));
             //echo "Update " . $child->category_parent . " with order " . $order . "<br />";
             
-            $sql = "SELECT * FROM " . table_categories . " WHERE category_parent = %d";
+            $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d";
             $children = $db->get_results($db->prepare($sql, $child->category_id));
             if ($children) {
                 $target_parent = $child->category_id;
@@ -716,7 +716,7 @@ function get_name_for_delete_confirm($delete_id)
 {
     global $db;
         
-    $sql = "SELECT category_name FROM " . table_categories . " WHERE category_id = %d";
+    $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
     $cat_name = $db->get_var($db->prepare($sql, $delete_id));
     return urldecode($cat_name);
 }
@@ -732,19 +732,19 @@ function delete_categories($delete_category)
     global $db, $current_user;
     
     // First, we need to get the parent of this category
-    $sql = "SELECT category_parent FROM  " . table_categories . " WHERE category_id = %d";
+    $sql = "SELECT category_parent FROM  " . TABLE_CATEGORIES . " WHERE category_id = %d";
     $grandparent = $db->get_var($db->prepare($sql, $delete_category));
     // Second, we need to find children of this category and assign them to their "grandparent" instead
-    $sql = "SELECT category_id, category_parent FROM  " . table_categories . " WHERE category_parent = %d";
+    $sql = "SELECT category_id, category_parent FROM  " . TABLE_CATEGORIES . " WHERE category_parent = %d";
     $children = $db->get_results($db->prepare($sql, $delete_category));
     if ($children) {
         foreach ($children as $child) {
-            $sql = "UPDATE " . table_categories . " SET category_parent = %d, category_updateby = %d WHERE category_id = %d";
+            $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_parent = %d, category_updateby = %d WHERE category_id = %d";
              $db->query($db->prepare($sql, $grandparent, $current_user->id, $child->category_id));
         }
     }    
     // Third, delete the category
-    $sql = "DELETE FROM " . table_categories . " WHERE category_id = %d";
+    $sql = "DELETE FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
     $db->query($db->prepare($sql, $delete_category));
 }
 
@@ -760,7 +760,7 @@ function save_meta($id, $desc, $words)
 {
     global $db, $current_user;
     
-    $sql = "UPDATE " . table_categories . " SET category_desc = %s, category_keywords = %s, category_updateby = %d WHERE category_id = %d";
+    $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_desc = %s, category_keywords = %s, category_updateby = %d WHERE category_id = %d";
     $db->query($db->prepare($sql, urlencode($desc), urlencode($words), $current_user->id, $id)); 
 }
 
@@ -772,12 +772,12 @@ function clean_order()
 {    
     global $db, $current_user;
     
-    $sql = "SELECT category_order, category_id FROM " . table_categories . " WHERE category_id != %d ORDER BY category_order ASC";
+    $sql = "SELECT category_order, category_id FROM " . TABLE_CATEGORIES . " WHERE category_id != %d ORDER BY category_order ASC";
     $categories = $db->get_results($db->prepare($sql, 1));
     if ($categories) {
         $count = 1;
         foreach ( $categories as $category ) {
-        $sql = "UPDATE " . table_categories . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
+        $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
         $db->query($db->prepare($sql, $count, $current_user->id, $category->category_id));
         $count++;
         }
@@ -798,7 +798,7 @@ function cat_man_rebuild_tree($parent_id, $left)
     
     $right = $left+1;
     // get all children of this node
-    $sql = "SELECT category_id FROM " . table_categories . " WHERE category_id != %d AND category_parent = %d ORDER BY category_order ASC";
+    $sql = "SELECT category_id FROM " . TABLE_CATEGORIES . " WHERE category_id != %d AND category_parent = %d ORDER BY category_order ASC";
     $categories = $db->get_results($db->prepare($sql, $parent_id, $parent_id));
     if ($categories) {
         foreach ($categories as $this_category) {
@@ -808,7 +808,7 @@ function cat_man_rebuild_tree($parent_id, $left)
     
     // we've got the left value, and now that we've processed
     // the children of this node we also know the right value
-    $sql = "UPDATE " . table_categories . " SET lft = %d, rgt = %d, category_updateby = %d WHERE category_id = %d";
+    $sql = "UPDATE " . TABLE_CATEGORIES . " SET lft = %d, rgt = %d, category_updateby = %d WHERE category_id = %d";
     $db->query($db->prepare($sql, $left, $right, $current_user->id, $parent_id));
     
     // return the right value of this node + 1
