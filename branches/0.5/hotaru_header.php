@@ -69,6 +69,7 @@ if (!isset($db)) {
     $db->cache_dir = CACHE . 'db_cache';
     $db->use_disk_cache = true;     // Note: Queries are only cached following
                                     // $db->cache_queries = true;
+    $db->query("SET NAMES 'utf8'");
 }
 
 // Initialize Hotaru
