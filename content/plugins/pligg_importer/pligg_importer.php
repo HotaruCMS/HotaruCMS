@@ -106,7 +106,7 @@ function pliggimp_admin_plugin_settings()
     elseif ($cage->get->keyExists('step'))
     {
         $step = $cage->get->testInt('step');
-        $file_name = $cage->get->getmixedString2('file_name');
+        $file_name = $cage->get->getMixedString2('file_name');
         
         if (!isset($file_name) || !$file_name) { 
             // Go to page 
@@ -413,8 +413,9 @@ function character_encoding_wizard()
     global $db, $hotaru;
     
     // Set connection as latin
-    $db->query("SET NAMES 'latin1'");
     
+    $db->query("SET NAMES 'latin1'");
+     
     $sql = "SELECT post_id, post_title, post_content FROM " . TABLE_POSTS;
     $content = $db->get_results($db->prepare($sql));
        
@@ -425,11 +426,7 @@ function character_encoding_wizard()
         foreach ($content as $item) {
             $item->post_title = fix_encoding(urldecode($item->post_title));
             $item->post_content = fix_encoding(urldecode($item->post_content));
-            
-            echo "<pre>";
-            print_r($item);
-            echo "</pre>";
-            
+                        
             $sql = "UPDATE " . TABLE_POSTS . " SET post_title = %s, post_content = %s WHERE post_id = %d";
             $db->query($db->prepare($sql, urlencode($item->post_title), urlencode($item->post_content), $item->post_id));
         }

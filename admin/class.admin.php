@@ -30,18 +30,18 @@ class Admin
     var $sidebar = true;
     
     /**
-     *  Function: display_admin_template
-     *  Parameters: page name (filename without.php)
-     *  Purpose: First looks in the user's chosen admin theme directory, if not there, gets the file from the default admin theme.
-
+     * Display admin template
+     *
+     * @param string $page - page name (filename without.php)
+     * @param string $plugin - plugin folder name
      */
     function display_admin_template($page = '', $plugin = '')
     {
         $page = $page . '.php';
                 
         /* 
-            1. Check the custom theme
-            2. Check the default theme
+            1. Check the custom admin theme
+            2. Check the default admin theme
             3. Check the plugin folder
             4. Show the 404 Not Found page
         */
@@ -72,10 +72,12 @@ class Admin
     
     
     /**
-     *  Function: is_settings_page
-     *  Parameters: a plugin folder name
-     *  Purpose: Checks to see if the Admin settings page we are looking at  
-     *           matches the plugin passed to this function. 
+     * Check to see if the Admin settings page we are looking at  
+     * matches the plugin passed to this function.
+     *
+     * @param string $folder - plugin folder
+     * @return bool
+     *
      *  Notes: This is used in "admin_header_include" so we only include the css, 
      *         javascript etc. for the plugin we're trying to change settings for.
      *  Usage: $hotaru->is_settings_page('login') returns true if 
@@ -93,10 +95,9 @@ class Admin
     }
         
     /**
-     *  Function: check_admin_announcements
-     *  Parameters: --- 
-     *  Purpose: Returns an announcement for display at the top of Admin.
-
+     * Returns an announcement for display at the top of Admin
+     *
+     * @return array|false - array of announcements
      */
     function check_admin_announcements()
     {
@@ -131,10 +132,10 @@ class Admin
 
 
     /**
-     *  Function: get_admin_setting
-     *  Parameters: Setting name
-     *  Purpose: Returns the value for a given setting
-
+     * Returns the value for a given setting
+     *
+     * @param string $setting
+     * @return mixed|false
      */
     function get_admin_setting($setting = '')
     {
@@ -147,10 +148,9 @@ class Admin
     
 
     /**
-     *  Function: get_all_admin_settings
-     *  Parameters: None
-     *  Purpose: Returns all setting-value pairs
-
+     * Returns all setting-value pairs
+     *
+     * @return array|false
      */
     function get_all_admin_settings()
     {
@@ -163,10 +163,13 @@ class Admin
     
     
     /**
-     *  Function: admin_setting_exists
-     *  Parameters: Setting name
-     *  Purpose: Determines if a setting already exists
-     *  Notes: The actual value is ignored     */    
+     * Determine if a setting already exists
+     *
+     * Note: The actual value is ignored
+     *
+     * @param string $setting
+     * @return mixed|false
+     */
     function admin_setting_exists($setting = '')
     {
         global $db;
@@ -177,12 +180,11 @@ class Admin
     }    
     
     /**
-     *  Function: admin_setting_update
-     *  Parameters: Setting to update, and new value
-     *  Purpose: Updates an admin setting
-
+     * Update an admin setting
+     *
+     * @param string $setting
+     * @param string $value
      */
-    
     function admin_setting_update($setting = '', $value = '')
     {
         global $db, $current_user;
@@ -200,9 +202,9 @@ class Admin
 
 
     /**
-     *  Function: admin_setting_remove
-     *  Parameters: Setting name
-     *  Purpose: Deletes rows from settings that match that setting
+     * Delete rows from settings that match the given setting
+     *
+     * @param string $setting
      */    
     function admin_settings_remove($setting = '')
     {
@@ -214,12 +216,10 @@ class Admin
     
     
     /**
-     *  Function: clear_cache
-     *  Parameters: cache folder name in the 3rd party directory
-     *  Purpose: Calls the delete_files function, then displays a message.
-
+     * Calls the delete_files function, then displays a message.
+     *
+     * @param string $folder - path to the cache folder
      */
-
     function clear_cache($folder)
     {
         global $hotaru, $lang;
@@ -237,9 +237,10 @@ class Admin
 
 
     /**
-     *  Function: delete_files
-     *  Parameters: Path to directory 
-     *  Purpose: Deletes all files in the specified directory except placeholder.txt
+     * Delete all files in the specified directory except placeholder.txt
+     *
+     * @param string $dir - path to the cache folder
+     * @return bool
      */    
     function delete_files($dir)
     {
@@ -262,9 +263,8 @@ class Admin
     
     
     /**
-     *  Function: settings
-     *  Parameters: None
-     *  Purpose: Processes the settings form.     */    
+     * Process the settings form
+    */    
     function settings()
     {
         global $hotaru, $cage, $lang;
