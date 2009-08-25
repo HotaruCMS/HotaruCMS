@@ -6,7 +6,7 @@
  * folder: pligg_importer
  * prefix: pliggimp
  * requires: category_manager 0.1, categories 0.1, submit 0.1, tags 0.1, users 0.1, vote 0.1
- * hooks: install_plugin, admin_plugin_settings, admin_sidebar_plugin_settings, admin_header_include
+ * hooks: admin_plugin_settings, admin_sidebar_plugin_settings, admin_header_include
  *
  * PHP version 5
  *
@@ -29,32 +29,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-
-
-/**
- * Install the Pligg Importer plugin
- */
-function pliggimp_install_plugin()
-{
-    global $db;
-    
-    // PLIGGIMP_TEMP TABLE - stores mappings between old and new data.
-    
-    // Drop and rebuild the table if it already exists
-    $sql = 'DROP TABLE IF EXISTS `' . DB_PREFIX . 'pliggimp_temp`;';
-    $db->query($sql);
-    
-    $sql = "CREATE TABLE `" . DB_PREFIX . "pliggimp_temp` (
-      `pliggimp_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-      `pliggimp_setting` varchar(64) NOT NULL,
-      `pliggimp_old_value` int(20) NOT NULL DEFAULT 0,
-      `pliggimp_new_value` int(20) NOT NULL DEFAULT 0,
-      `pliggimp_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-      `pliggimp_updateby` int(20) NOT NULL DEFAULT 0
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Pligg Importer Temporary Data';";
-
-    $db->query($sql);
-}
 
 
 /**
@@ -99,9 +73,9 @@ function pliggimp_admin_plugin_settings()
         $table = $cage->post->testAlpha('table');
         pliggimp_upload_result($file_name, $table);
     } 
-    elseif ($cage->get->keyExists('wizard'))
+    elseif ($cage->get->keyExists('cleaner'))
     {
-        character_encoding_wizard();
+        character_cleaner();
     }
     elseif ($cage->get->keyExists('step'))
     {
@@ -218,9 +192,9 @@ function pliggimp_page_welcome()
     }
     
     echo "";
-    echo "<h2>Character Encoding Wizard</h2><br />";
-    echo "The Character Encoding Wizard should be used <b><i>after</i></b> importing a Pligg database and <b><i>only</i></b> if you are having trouble with strange characters in posts. What it does is take the post titles and content out of the database in latin format, and then reinserts it in UTF-8 format. <b>Note: </b> This script may take some time to run depending on the size of your database.";
-    echo "<br /><a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'wizard'=>1), 'admin') . "'>Run the Character Encoding Wizard</a>";
+    echo "<h2>Character Cleaner</h2><br />";
+    echo "The Character Cleaner should be used <b><i>after</i></b> importing a Pligg database and <b><i>only</i></b> if you are having trouble with strange characters in posts. What it does is simply strip common problem characters from post titles and content. <b>Note: </b> This script may take some time to run depending on the size of your database.";
+    echo "<br /><a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'cleaner'=>1), 'admin') . "'>Run the Character Cleaner</a>";
     
     echo "</div> <!-- close pliggimp div -->";
 }
@@ -356,6 +330,7 @@ function pliggimp_process_file($step = 0, $file_name = '')
         
     switch($step) {
         case 1:
+            create_temp_table();
             step1($xml, $file_name);
             break;
         case 2:
@@ -378,6 +353,32 @@ function pliggimp_process_file($step = 0, $file_name = '')
 
 }
 
+
+/**
+ * Create a temporary table
+ */
+function create_temp_table()
+{
+    global $db;
+    
+    // PLIGGIMP_TEMP TABLE - stores mappings between old and new data.
+    
+    // Drop and rebuild the table if it already exists
+    $sql = 'DROP TABLE IF EXISTS `' . DB_PREFIX . 'pliggimp_temp`;';
+    $db->query($sql);
+    
+    $sql = "CREATE TABLE `" . DB_PREFIX . "pliggimp_temp` (
+      `pliggimp_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+      `pliggimp_setting` varchar(64) NOT NULL,
+      `pliggimp_old_value` int(20) NOT NULL DEFAULT 0,
+      `pliggimp_new_value` int(20) NOT NULL DEFAULT 0,
+      `pliggimp_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      `pliggimp_updateby` int(20) NOT NULL DEFAULT 0
+    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Pligg Importer Temporary Data';";
+
+    $db->query($sql);
+}
+    
 /**
  * Import complete
  */
@@ -408,24 +409,17 @@ function pliggimp_page_6()
 /**
  * Corrects botched utf-8 content
  */
-function character_encoding_wizard()
+function character_cleaner()
 {
     global $db, $hotaru;
     
-    // Set connection as latin
-    
-    $db->query("SET NAMES 'latin1'");
-     
     $sql = "SELECT post_id, post_title, post_content FROM " . TABLE_POSTS;
     $content = $db->get_results($db->prepare($sql));
-       
-    // Set connection back to utf-8
-    $db->query("SET NAMES 'utf8'");
-    
+           
     if ($content) {
         foreach ($content as $item) {
-            $item->post_title = fix_encoding(urldecode($item->post_title));
-            $item->post_content = fix_encoding(urldecode($item->post_content));
+            $item->post_title = strip_foreign_characters(urldecode($item->post_title));
+            $item->post_content = strip_foreign_characters(urldecode($item->post_content));
                         
             $sql = "UPDATE " . TABLE_POSTS . " SET post_title = %s, post_content = %s WHERE post_id = %d";
             $db->query($db->prepare($sql, urlencode($item->post_title), urlencode($item->post_content), $item->post_id));
