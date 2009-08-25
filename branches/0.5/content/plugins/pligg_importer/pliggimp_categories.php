@@ -62,11 +62,11 @@ function step1($xml, $file_name)
             echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . TABLE_CATEGORIES . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
             echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'file_name'=>$file_name, 'step'=>1, 'overwrite'=>'true'), 'admin') . "'>Continue</a>";
             return false;
-        } else {
-            $db->query($db->prepare("TRUNCATE " . DB_PREFIX . $this_table));
-        }
+        } 
     }
     
+    $db->query($db->prepare("TRUNCATE " . DB_PREFIX . $this_table));
+
     echo "<i>Adding...</i> ";
     
     $count = 0;

@@ -467,21 +467,16 @@ function utf8_uri_encode( $utf8_string, $length = 0 )
     return $unicode;
 }
 
-
 /**
- * Fix Character Encoding
+ * Strip foreign characters from latin1/utf8 database yuckiness
  *
- * @link http://us2.php.net/manual/en/function.utf8-encode.php
+ * @param string $str
+ * @return string
  */
-function fix_encoding($in_str)
+function strip_foreign_characters($str)
 {
-    $cur_encoding = mb_detect_encoding($in_str) ;
-        if ($cur_encoding == "UTF-8" && mb_check_encoding($in_str,"UTF-8")) {
-            return $in_str;
-        }
-    else 
-        {
-            return utf8_encode($in_str);
-        }
+    $str = str_replace('Â', '', $str);
+    $str = str_replace('â€™', '\'', $str);
+    return $str;
 }
 ?>
