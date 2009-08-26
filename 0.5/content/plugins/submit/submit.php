@@ -61,18 +61,18 @@ function sub_install_plugin()
         //echo "table doesn't exist. Stopping before creation."; exit;
         $sql = "CREATE TABLE `" . DB_PREFIX . "posts` (
           `post_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          `post_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
           `post_author` int(20) NOT NULL DEFAULT 0,
           `post_category` int(20) NOT NULL DEFAULT 1,
           `post_status` varchar(32) NOT NULL DEFAULT 'processing',
-          `post_date` timestamp NULL,
+          `post_date` timestamp NOT NULL,
           `post_title` varchar(255) NULL, 
           `post_orig_url` varchar(255) NULL, 
           `post_domain` varchar(255) NULL, 
           `post_url` varchar(255) NULL, 
           `post_content` text NULL,
           `post_tags` text NULL,
-          `post_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-           `post_updateby` int(20) NOT NULL DEFAULT 0, 
+          `post_updateby` int(20) NOT NULL DEFAULT 0, 
           FULLTEXT (`post_title`, `post_domain`, `post_url`, `post_content`, `post_tags`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Story Posts';";
         $db->query($sql); 
@@ -84,10 +84,10 @@ function sub_install_plugin()
         //echo "table doesn't exist. Stopping before creation."; exit;
         $sql = "CREATE TABLE `" . DB_PREFIX . "postmeta` (
           `postmeta_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          `postmeta_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
           `postmeta_postid` int(20) NOT NULL DEFAULT 0,
           `postmeta_key` varchar(255) NULL,
           `postmeta_value` text NULL,
-          `postmeta_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
            `postmeta_updateby` int(20) NOT NULL DEFAULT 0, 
           INDEX  (`postmeta_postid`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Post Meta';";
