@@ -26,13 +26,13 @@
 
 
 /**
- * Page 4 - Request votes file
+ * Page 5 - Request votes file
  */
-function pliggimp_page_4()
+function pliggimp_page_5()
 {
     global $plugin;
     
-    echo "<h2>Step 4/5 - Users</h2>";
+    echo "<h2>Step 5/6 - Users</h2>";
     echo "Please upload your <b>users</b> XML file:<br />";
     echo "<form name='pligg_importer_form' enctype='multipart/form-data' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=pligg_importer' method='post'>\n";
     echo "<label for='file'>Exported Pligg Users table (<span stye='color: red;'>.xml</span>):</label>\n";
@@ -45,13 +45,13 @@ function pliggimp_page_4()
 
 
 /**
- * Step 4 - Import Users
+ * Step 5 - Import Users
  *
  * @param array $xml
  * @param string $file_name
  * @return bool
  */
-function step4($xml, $file_name)
+function step5($xml, $file_name)
 {
     global $db, $current_user, $cage, $links;
     
@@ -60,8 +60,8 @@ function step4($xml, $file_name)
     $this_table = "users";
     if (!$db->table_empty($this_table)) {
         if (!$cage->get->getAlpha('overwrite') == 'true') {
-            echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . TABLE_USERS . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
-            echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'file_name'=>$file_name, 'step'=>4, 'overwrite'=>'true'), 'admin') . "'>Continue</a>";
+            echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . DB_PREFIX . $this_table . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
+            echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'file_name'=>$file_name, 'step'=>5, 'overwrite'=>'true'), 'admin') . "'>Continue</a>";
             return false;
         } 
     }
@@ -127,7 +127,7 @@ function step4($xml, $file_name)
         }
     }
     
-    // Update post_author fields with new user ids
+    // Update post and comment authors with new user ids
     $sql = "SELECT * FROM " . DB_PREFIX . "pliggimp_temp WHERE pliggimp_setting = %s";
     $user_ids = $db->get_results($db->prepare($sql, 'user_id'));
     
@@ -138,13 +138,21 @@ function step4($xml, $file_name)
             $sql, 
             $author->pliggimp_new_value, 
             $author->pliggimp_old_value));
+            
+        $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_user_id = %d WHERE comment_user_id = %d";
+        $db->query($db->prepare(
+            $sql, 
+            $author->pliggimp_new_value, 
+            $author->pliggimp_old_value));
     }
+    // End of updating post and comment author fields
     
+   
     //Output the number of records added
     echo $count . "<br /><br />";
     echo "<span style='color: green;'><b>Users table imported successfully!</b></span><br /><br />";
     
-    echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'step'=>5), 'admin') . "'>Continue</a>";
+    echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'step'=>6), 'admin') . "'>Continue</a>";
     
     return true;
 }

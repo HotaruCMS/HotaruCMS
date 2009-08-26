@@ -62,6 +62,7 @@ function pliggimp_admin_plugin_settings()
     
     include_once($pliggimp_path . "pliggimp_categories.php");
     include_once($pliggimp_path . "pliggimp_links.php");
+    include_once($pliggimp_path . "pliggimp_comments.php");
     include_once($pliggimp_path . "pliggimp_tags.php");
     include_once($pliggimp_path . "pliggimp_users.php");
     include_once($pliggimp_path . "pliggimp_votes.php");
@@ -122,6 +123,7 @@ function pliggimp_page_welcome()
     echo "<li>Category Manager</li>";
     echo "<li>Categories</li>";
     echo "<li>Submit</li>";
+    echo "<li>Comments</li>";
     echo "<li>Tags</li>";
     echo "<li>Users</li>";
     echo "<li>Vote</li>";
@@ -134,6 +136,7 @@ function pliggimp_page_welcome()
     echo "<li class='list_header'>XML files from Pligg</li>";
     echo "<li>categories</li>";
     echo "<li>links</li>";
+    echo "<li>comments</li>";
     echo "<li>tags</li>";
     echo "<li>users</li>";
     echo "<li>votes</li>";
@@ -158,6 +161,10 @@ function pliggimp_page_welcome()
     
     if (!$plugin->plugin_active('submit')) {
         $inactive .= "<li style='color: red;'><b>Submit plugin is inactive</b></li>"; 
+        $error = 1;
+    }
+    if (!$plugin->plugin_active('comments')) {
+        $inactive .= "<li style='color: red;'><b>Comments plugin is inactive</b></li>"; 
         $error = 1;
     }
     if (!$plugin->plugin_active('category_manager')) {
@@ -218,14 +225,17 @@ function pliggimp_upload_result($file_name, $table)
             case "Links":
                 $step = 2;
                 break;
-            case "Tags":
+            case "Comments":
                 $step = 3;
                 break;
-            case "Users":
+            case "Tags":
                 $step = 4;
                 break;
-            case "Votes":
+            case "Users":
                 $step = 5;
+                break;
+            case "Votes":
+                $step = 6;
                 break;
             default:
                 $step = 0;
@@ -345,6 +355,9 @@ function pliggimp_process_file($step = 0, $file_name = '')
         case 5:
             step5($xml, $file_name);
             break;
+        case 6:
+            step6($xml, $file_name);
+            break;
         default:
             break;
     }
@@ -382,7 +395,7 @@ function create_temp_table()
 /**
  * Import complete
  */
-function pliggimp_page_6()
+function pliggimp_page_7()
 {
     global $hotaru, $db, $admin;
     
@@ -424,11 +437,23 @@ function character_cleaner()
             $sql = "UPDATE " . TABLE_POSTS . " SET post_title = %s, post_content = %s WHERE post_id = %d";
             $db->query($db->prepare($sql, urlencode($item->post_title), urlencode($item->post_content), $item->post_id));
         }
-        
-        $hotaru->message = "Post titles and descriptions updated";
-        $hotaru->message_type = "green";
-        $hotaru->show_message();
     }
+    
+    $sql = "SELECT comment_id, comment_content FROM " . TABLE_COMMENTS;
+    $content = $db->get_results($db->prepare($sql));
+           
+    if ($content) {
+        foreach ($content as $item) {
+            $item->comment_content = strip_foreign_characters(urldecode($item->comment_content));
+                        
+            $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_content = %s WHERE comment_id = %d";
+            $db->query($db->prepare($sql, urlencode($item->comment_content), $item->comment_id));
+        }
+    }
+    
+    $hotaru->message = "Post titles and descriptions updated";
+    $hotaru->message_type = "green";
+    $hotaru->show_message();
 }
 
 ?>

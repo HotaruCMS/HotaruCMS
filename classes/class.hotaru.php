@@ -163,8 +163,9 @@ class Hotaru
      *
      * @param string $page page name
      * @param string $plugin optional plugin name
+     * @param bool $include_once true or false
      */
-    function display_template($page = '', $plugin = '')
+    function display_template($page = '', $plugin = '', $include_once = true)
     {
         $page = $page . '.php';
                 
@@ -184,7 +185,7 @@ class Hotaru
         }
         elseif ($plugin != '' && file_exists(PLUGINS .  $plugin . '/templates/' . $page))
         {
-                if ($plugin == 'vote') {
+                if (!$include_once) {
                     // Special case, do not restrict to include once.
                     include(PLUGINS . $plugin . '/templates/' . $page);
                 } else {

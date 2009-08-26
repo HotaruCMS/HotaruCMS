@@ -462,15 +462,15 @@ function create_table($table_name)
     if ($table_name == "users") {    
         $sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
           `user_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          `user_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
           `user_username` varchar(32) NOT NULL,
           `user_role` varchar(32) NOT NULL DEFAULT 'member',
-          `user_date` timestamp NULL,
+          `user_date` timestamp NOT NULL,
           `user_password` varchar(64) NOT NULL DEFAULT '',
           `user_email` varchar(128) NOT NULL DEFAULT '',
           `user_email_valid` tinyint(3) NOT NULL DEFAULT 0,
           `user_email_conf` varchar(128) NULL,
           `user_lastlogin` timestamp NULL,
-          `user_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
           `user_updateby` int(20) NOT NULL DEFAULT 0,
           UNIQUE KEY `key` (`user_username`),
           KEY `user_email` (`user_email`)

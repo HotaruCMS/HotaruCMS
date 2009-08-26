@@ -53,15 +53,15 @@ function vote_install_plugin() {
     if (!$exists) {
         //echo "table doesn't exist. Stopping before creation."; exit;
         $sql = "CREATE TABLE `" . DB_PREFIX . "postvotes` (
+          `vote_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
           `vote_post_id` int(11) NOT NULL DEFAULT '0',
           `vote_user_id` int(11) NOT NULL DEFAULT '0',
           `vote_user_ip` varchar(32) NOT NULL DEFAULT '0',
-          `vote_date` timestamp NULL,
-          `vote_type` varchar(32) NOT NULL DEFAULT 'post',
+          `vote_date` timestamp NOT NULL,
+          `vote_type` varchar(32) NULL,
           `vote_rating` enum('positive','negative','alert') NULL,
           `vote_reason` tinyint(3) NOT NULL DEFAULT 0,
-          `vote_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-           `vote_updateby` int(20) NOT NULL DEFAULT 0,
+          `vote_updateby` int(20) NOT NULL DEFAULT 0,
            INDEX  (`vote_post_id`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Post Votes';";
         $db->query($sql); 
@@ -321,7 +321,7 @@ function vote_submit_pre_show_post() {
         $voted = $db->get_var($db->prepare($sql, $post->post_id, $cage->server->testIp('REMOTE_ADDR'), 'alert'));
     }
            
-     $hotaru->display_template('vote_button', 'vote');
+     $hotaru->display_template('vote_button', 'vote', false);
 }
 
  /**

@@ -32,7 +32,7 @@ function pliggimp_page_2()
 {
     global $plugin;
     
-    echo "<h2>Step 2/5 - Links</h2>";
+    echo "<h2>Step 2/6 - Links</h2>";
     echo "Please upload your <b>links</b> XML file:<br />";
     echo "<form name='pligg_importer_form' enctype='multipart/form-data' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=pligg_importer' method='post'>\n";
     echo "<label for='file'>Exported Pligg Links table (<span stye='color: red;'>.xml</span>):</label>\n";
@@ -60,7 +60,7 @@ function step2($xml, $file_name)
     $this_table = "posts";
     if (!$db->table_empty($this_table)) {
         if (!$cage->get->getAlpha('overwrite') == 'true') {
-            echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . TABLE_POSTS . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
+            echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . DB_PREFIX . $this_table . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
             echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'file_name'=>$file_name, 'step'=>2, 'overwrite'=>'true'), 'admin') . "'>Continue</a>";
             return false;
         } 
@@ -120,7 +120,7 @@ function step2($xml, $file_name)
             // Insert into links table
             $db->query($db->prepare(
                 $sql,
-                urlencode($child->link_author),
+                $child->link_author,
                 get_new_cat_id($child->link_category),
                 $child->link_status,
                 $child->link_date,
