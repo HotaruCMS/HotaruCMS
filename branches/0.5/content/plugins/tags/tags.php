@@ -58,10 +58,10 @@ function tg_install_plugin()
         //echo "table doesn't exist. Stopping before creation."; exit;
         $sql = "CREATE TABLE `" . DB_PREFIX . "tags` (
           `tags_post_id` int(11) NOT NULL DEFAULT '0',
-          `tags_date` timestamp NULL,
-          `tags_word` varchar(64) NOT NULL DEFAULT '',
           `tags_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-           `tags_updateby` int(20) NOT NULL DEFAULT 0, 
+          `tags_date` timestamp NOT NULL,
+          `tags_word` varchar(64) NOT NULL DEFAULT '',
+          `tags_updateby` int(20) NOT NULL DEFAULT 0, 
           UNIQUE KEY `tags_post_id` (`tags_post_id`,`tags_word`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Post Tags';";
         $db->query($sql); 

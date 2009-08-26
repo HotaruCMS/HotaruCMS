@@ -54,7 +54,7 @@ function cats_install_plugin()
           `category_desc` text NULL,
           `category_keywords` varchar(255) NOT NULL,
           `category_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-           `category_updateby` int(20) NOT NULL DEFAULT 0, 
+          `category_updateby` int(20) NOT NULL DEFAULT 0, 
           UNIQUE KEY `key` (`category_name`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Categories';";
         $db->query($sql); 

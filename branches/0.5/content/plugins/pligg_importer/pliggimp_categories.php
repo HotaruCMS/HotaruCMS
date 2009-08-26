@@ -31,7 +31,7 @@
 function pliggimp_page_1() {
     global $plugin;
     
-    echo "<h2>Step 1/5 - Categories</h2>";
+    echo "<h2>Step 1/6 - Categories</h2>";
     echo "Please upload your <b>categories</b> XML file:<br />";
     echo "<form name='pligg_importer_form' enctype='multipart/form-data' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=pligg_importer' method='post'>\n";
     echo "<label for='file'>Exported Pligg Categories table (<span stye='color: red;'>.xml</span>):</label>\n";
@@ -59,7 +59,7 @@ function step1($xml, $file_name)
     $this_table = "categories";
     if (!$db->table_empty($this_table)) {
         if (!$cage->get->getAlpha('overwrite') == 'true') {
-            echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . TABLE_CATEGORIES . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
+            echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . DB_PREFIX . $this_table . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
             echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'file_name'=>$file_name, 'step'=>1, 'overwrite'=>'true'), 'admin') . "'>Continue</a>";
             return false;
         } 

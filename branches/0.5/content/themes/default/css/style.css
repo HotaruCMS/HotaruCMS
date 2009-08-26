@@ -41,6 +41,10 @@ td     { padding: 0.5em; }
 small     { font-size: 0.8em; }
 
 /* LAYOUT */
+
+.clear	{
+	clear: both;
+}
     
 /* YAHOO USER INTERFACE (YUI) : http://developer.yahoo.com/yui/grids/  */
 

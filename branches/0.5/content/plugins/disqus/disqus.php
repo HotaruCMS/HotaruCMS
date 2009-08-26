@@ -121,7 +121,7 @@ function disq_submit_post_show_post()
 
 
 /**
- * Include CSS
+ * Include JavaScript to change the comments link
  */
 function disq_pre_close_body()
 {
