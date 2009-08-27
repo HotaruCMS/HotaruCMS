@@ -6,7 +6,7 @@
  * folder: comments
  * prefix: cmmts
  * requires: submit 0.2, users 0.2
- * hooks: header_include, install_plugin, hotaru_header, theme_index_replace, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: header_include, install_plugin, hotaru_header, theme_index_replace, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_form_2_process_submission
  *
  * PHP version 5
  *
@@ -78,6 +78,7 @@ function cmmts_install_plugin()
     $comment_settings['comment_form'] = "checked";
     $comment_settings['comment_avatars'] = "";
     $comment_settings['comment_voting'] = "";
+    $comment_settings['comment_levels'] = 5;
     $comment_settings['comment_allowable_tags'] = "<b><i><u><a><blockquote><strike>";
     $plugin->plugin_settings_update('comments', 'comment_settings', serialize($comment_settings));
     
@@ -123,6 +124,7 @@ function cmmts_hotaru_header()
     $comment->comment_avatars = $comment_settings['comment_avatars'];
     $comment->comment_voting = $comment_settings['comment_voting'];
     $comment->comment_allowable_tags = $comment_settings['comment_allowable_tags'];
+    $comment->comment_levels = $comment_settings['comment_levels'];
         
     $vars['comment'] = $comment; 
     return $vars; 
@@ -170,7 +172,14 @@ function cmmts_theme_index_replace()
                     $comment->unsubscribe($comment->comment_post_id);
                 }
                 
-                $comment->add_comment();
+                // A user can unsubscribe by submitting an empty comment, so...
+                if(!empty($comment->comment_content)) {
+                    $comment->add_comment();
+                    $comment->email_comment_subscribers($comment->comment_post_id);
+                } else {
+                    //comment empty so just check subscribe box:
+                    $comment->update_subscribe($comment->comment_post_id);
+                }
                 
                 header("Location: " . url(array('page'=>$comment->comment_post_id)));    // Go to the post
                 die();
@@ -214,9 +223,9 @@ function cmmts_admin_plugin_settings()
  */
 function cmmts_submit_show_post_extra_fields()
 {
-    global $post, $lang;
+    global $post, $lang, $comment;
     
-    echo '<li><a class="comments_comments_link" href="' . url(array('page'=>$post->post_id)) . '">' . $lang['comments_comments_singular_link'] . '</a></li>' . "\n";
+    echo '<li><a class="comments_comments_link" href="' . url(array('page'=>$post->post_id)) . '">' . $comment->count_comments() . '</a></li>' . "\n";
 }
 
 
@@ -227,26 +236,32 @@ function cmmts_submit_post_show_post()
 {
     global $db, $hotaru, $comment, $post, $current_user;
     
+    // set default
+    $current_user->userbase_vars['post_subscribed'] = false; 
+    
     // Check if the current_user is the post author
-    if ($post->post_author == $current_user->user_id) {
-        // Will do something here later
-    } else {
-        $sql = "SELECT COUNT(comment_subscribe) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_user_id = %d AND comment_subscribe = %d";
-        $subscribe_result = $db->get_var($db->prepare($sql, $post->post_id, $current_user->id, 1));
-        
-        if ($subscribe_result > 0) { 
+    if ($post->post_author == $current_user->id) {
+        // Check if the user subscribed to comments as a submitter
+        if ($post->post_subscribe == 1) { 
             $current_user->userbase_vars['post_subscribed'] = true; 
-        } else {
-            $current_user->userbase_vars['post_subscribed'] = false; 
-        }
-    }
+        } 
+    } 
+    
+    // Check if the user subscribed to comments as a commenter
+    $sql = "SELECT COUNT(comment_subscribe) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_user_id = %d AND comment_subscribe = %d";
+    $subscribe_result = $db->get_var($db->prepare($sql, $post->post_id, $current_user->id, 1));
+    
+    if ($subscribe_result > 0) { 
+        $current_user->userbase_vars['post_subscribed'] = true; 
+    } 
     
     $parents = $comment->read_all_parents($post->post_id);
     if ($parents) { 
         
         echo "<!--  START COMMENTS_WRAPPER -->\n";
         echo "<div id='comments_wrapper'>\n";
-
+        echo "<h2>" . $comment->count_comments() . "</h2>\n";
+        
         foreach ($parents as $parent) {
             
             display_comment($parent);
@@ -258,7 +273,7 @@ function cmmts_submit_post_show_post()
         
     }
     
-    if ($comment->comment_form == 'checked') {
+    if ($comment->comment_form == 'checked' && !$hotaru->is_page('submit2')) {
         // force non-reply form to have parent "0" and depth "0"
         $comment->comment_id = 0;
         $comment->comment_depth = 0;
@@ -281,6 +296,11 @@ function comment_tree($item_id, $depth)
     while ($children = $comment->read_all_children($post->post_id, $item_id)) {
         foreach ($children as $child) {
             $depth++;
+            if ($depth == $comment->comment_levels) { 
+                // Prevent depth exceeding nesting levels
+                // levels start at 0 so we're using -1.
+                $depth = $comment->comment_levels - 1;
+            }
             $comment->comment_depth = $depth;
             display_comment($child);
             if (comment_tree($child->comment_id, $depth)) {
@@ -301,11 +321,67 @@ function comment_tree($item_id, $depth)
 function display_comment($item)
 {
     global $hotaru, $comment, $current_user;
+       
+    if (!$hotaru->is_page('submit2')) {
+        $comment->read_comment($item);
     
-    $comment->read_comment($item);
+        $hotaru->display_template('show_comments', 'comments', false);
+        $hotaru->display_template('comment_form', 'comments', false);
+    }
+}
+
+
+/**
+ * Check and update post_submit in Submit step 2 and Post Edit pages
+ */
+function cmmts_submit_form_2_assign()
+{
+    global $hotaru, $cage, $post, $subscribe_check;
     
-    $hotaru->display_template('show_comments', 'comments', false);
-    $hotaru->display_template('comment_form', 'comments', false);
+    if ($cage->post->getAlpha('submit2') == 'true') 
+    {
+        if ($cage->post->keyExists('post_subscribe')) { $subscribe_check = 'checked'; } else { $subscribe_check = ''; }
+    } 
+    elseif ($cage->post->getAlpha('submit3') == 'edit')
+    {
+        if ($post->post_subscribe == 1) { $subscribe_check = 'checked'; } else { $subscribe_check = ''; }
+    }
+    elseif ($hotaru->is_page('edit_post')) 
+    {
+        if ($cage->post->getAlpha('edit_post') == 'true') {
+            if ($cage->post->keyExists('post_subscribe')) { $subscribe_check = 'checked'; } else { $subscribe_check = ''; }
+        } else {
+            if ($post->post_subscribe == 1) { $subscribe_check = 'checked'; } else { $subscribe_check = ''; }
+        }
+    }
+    else 
+    {
+        $subscribe_check = "";
+    }
+}
+
+
+/**
+ * Show post_subscribe option in Submit step 2 and Post Edit
+ */
+function cmmts_submit_form_2_fields()
+{
+    global $lang, $subscribe_check;
+    
+    echo "<tr><td colspan='3'>\n";
+    echo "<input id='post_subscribe' name='post_subscribe' type='checkbox' " . $subscribe_check . "> " . $lang['submit_form_subscribe']; 
+    echo "</tr>";
+}
+
+
+/**
+ * Save post_subscribe to the database
+ */
+function cmmts_submit_form_2_process_submission() 
+{
+    global $post, $cage;
+    
+    if ($cage->post->keyExists('post_subscribe')) { $post->post_subscribe = 1; } else { $post->post_subscribe = 0; } 
 }
 
 ?>

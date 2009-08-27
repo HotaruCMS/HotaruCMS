@@ -254,6 +254,8 @@ function usr_submit_list_filter()
         $filter['post_author = %d'] = $current_user->get_user_id($cage->get->testUsername('user')); 
         $rss = " <a href='" . url(array('page'=>'rss', 'user'=>$cage->get->testUsername('user'))) . "'>";
         $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
+        // Undo the filter that limits results to either 'top' or 'new' (See submit.php -> sub_prepare_list())
+        if(isset($filter['post_status = %s'])) { unset($filter['post_status = %s']); }
         $filter['post_status != %s'] = 'processing';
         $page_title = $lang["submit_page_breadcrumbs_user"] . " &raquo; " . $hotaru->title . $rss;
         

@@ -30,6 +30,7 @@ if ($cage->post->getAlpha('edit_post') == 'true') {
     // Submitted this form...
     $title_check = $cage->post->noTags('post_title');    
     $content_check = sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->allowable_tags);
+    if ($cage->post->keyExists('post_subscribe')) { $subscribe_check = 'checked'; } else { $subscribe_check = ''; }   
     $status_check = $cage->post->testAlnumLines('post_status');    
     $post_id = $cage->post->getInt('post_id');    
     $post->post_id = $post_id;
@@ -39,6 +40,7 @@ if ($cage->post->getAlpha('edit_post') == 'true') {
     $post->read_post($post_id);
     $title_check = $post->post_title;
     $content_check = $post->post_content;
+    if ($post->post_subscribe == 1) { $subscribe_check = 'checked'; } else { $subscribe_check = ''; }
     $status_check = $post->post_status;
     $post_orig_url = $post->post_orig_url;
     $post_id = $post->post_id;
@@ -90,7 +92,7 @@ $plugin->check_actions('submit_form_2_assign');
     <?php } ?>
     
     <?php $plugin->check_actions('submit_form_2_fields'); ?>
-    
+        
     <?php if ($current_user->role == 'admin') { ?>
     <!-- Admin only options -->
     

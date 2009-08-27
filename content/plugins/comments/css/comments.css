@@ -19,6 +19,10 @@
  *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
  */
  
+#comments_wrapper h2 {
+	padding-bottom: 0em;
+}
+
 .comment {
 	background-color: #fafafa;
 	margin-top: 1.0em;

@@ -29,7 +29,7 @@ global $hotaru, $cage, $lang, $post, $plugin, $post_orig_url, $post_orig_title;
 if ($cage->post->getAlpha('submit2') == 'true') {
     // Submitted this form...
     $title_check = $cage->post->noTags('post_title');    
-    $content_check = sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->allowable_tags);
+    $content_check = sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->allowable_tags);    
     $post_id = $cage->post->getInt('post_id');    
     $post->post_id = $post_id;
     
@@ -44,7 +44,6 @@ if ($cage->post->getAlpha('submit2') == 'true') {
     $title_check = $post_orig_title;
     $content_check = "";
     $post_id = 0;
-    $plugin->check_actions('submit_form_2_assign_blank');
 }
 
 $plugin->check_actions('submit_form_2_assign');
@@ -79,7 +78,7 @@ $plugin->check_actions('submit_form_2_assign');
     <?php } ?>
     
     <?php $plugin->check_actions('submit_form_2_fields'); ?>
-        
+            
     <input type='hidden' name='post_orig_url' value='<?php echo $post_orig_url; ?>' />
     <input type='hidden' name='post_id' value='<?php echo $post_id; ?>' />
     <input type='hidden' name='submit2' value='true' />
