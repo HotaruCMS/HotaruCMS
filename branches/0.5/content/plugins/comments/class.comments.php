@@ -35,6 +35,7 @@ class Comment {
     var $comment_date = '';
     var $comment_votes = 0;
     var $comment_content = '';
+    var $comment_type = 'newcomment';   // or "editcomment"
     var $comment_subscribe = 0;
     var $comment_levels = 0;         // max nesting levels
     var $comment_depth = 0;         // this nesting level
@@ -177,6 +178,22 @@ class Comment {
         return true;
     }
     
+
+    /**
+     * Edit comment
+     *
+     * @return true
+     */
+    function edit_comment()
+    {
+        global $db, $current_user;
+            
+        $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_content = %s, comment_subscribe = %d, comment_updateby = %d";
+                
+        $db->query($db->prepare($sql, urlencode(trim(stripslashes($this->comment_content))), $this->comment_subscribe, $current_user->id));
+        
+        return true;
+    }
 
     /**
      * Unsubscribe from a thread

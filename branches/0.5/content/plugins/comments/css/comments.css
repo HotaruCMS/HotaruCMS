@@ -33,7 +33,7 @@
 	background-color: #fafafa;
 }
 
-.comment_reply_link {
+.comment_reply_link, .comment_edit_link {
 	padding: 0.4em;
 	background-color: #ffffff;
 	font-size: 1.2em;
