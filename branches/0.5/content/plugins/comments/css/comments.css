@@ -1,0 +1,50 @@
+/** CSS STYLE ** 
+ * Plugin name: Comments
+ * Stylesheet: comments.css
+ * License:
+ *
+ *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
+ *
+ *   Hotaru CMS is free software: you can redistribute it and/or modify it under the terms of the 
+ *   GNU General Public License as published by the Free Software Foundation, either version 3 of 
+ *   the License, or (at your option) any later version.
+ *
+ *   Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
+ *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License along with Hotaru CMS. If not, 
+ *   see http://www.gnu.org/licenses/.
+ *   
+ *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
+ */
+ 
+.comment {
+	background-color: #fafafa;
+	margin-top: 1.0em;
+	padding: 0.4em;
+}
+
+.comment_reply {
+	background-color: #fafafa;
+}
+
+.comment_reply_link {
+	padding: 0.4em;
+	background-color: #ffffff;
+	font-size: 1.2em;
+}
+
+.comment_author_date {
+	font-size: 0.8em;
+	float: right;
+}
+
+.comment_form textarea {
+	width: 100%;
+}
+
+.comments_please_login {
+	margin-top: 2.0em;
+	text-align: center;
+}
