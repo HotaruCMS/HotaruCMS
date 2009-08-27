@@ -35,3 +35,22 @@ $(document).ready(function(){
         });  
         
 });  
+
+
+/**
+ * Edit Comment
+ *
+ * @param string baseurl
+ * @param int comment_id
+ * @param string comment_content
+ * @param string submit button text
+ */
+function edit_comment(baseurl, comment_id, comment_content, comment_submit)
+{
+	var targetdisplay = document.getElementById("comment_"+comment_id).style.display ? '' : 'none';
+	document.getElementById("comment_"+comment_id).style.display = targetdisplay;
+	
+	document.getElementById("comment_process_"+comment_id).value = 'editcomment';
+	document.getElementById("comment_content_"+comment_id).innerHTML = comment_content;
+	document.getElementById("comment_submit_"+comment_id).value = comment_submit;
+}

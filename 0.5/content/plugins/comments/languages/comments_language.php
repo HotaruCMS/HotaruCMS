@@ -33,10 +33,12 @@ $lang['comments_comments_none_link'] = "No comments";
 $lang['comments_written_by'] = "Written by";
 $lang['comments_time_ago'] = "ago.";
 $lang['comments_reply_link'] = "REPLY";
+$lang['comments_edit_link'] = "EDIT";
 
 /* Comment Form */
 $lang['comments_please_login'] = "You need to be logged in to comment.";
 $lang['comments_comment_form_submit'] = "Submit";
+$lang['comments_comment_form_edit'] = "Update";
 $lang['comments_comment_form_subscribe'] = "Subscribe to comments";
 $lang['comments_comment_form_unsubscribe'] = "To unsubscribe, uncheck the box and submit an empty comment";
 $lang['comments_comment_form_allowable_tags'] = "Allowed HTML tags:";
