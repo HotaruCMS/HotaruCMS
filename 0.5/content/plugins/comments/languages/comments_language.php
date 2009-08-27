@@ -24,9 +24,10 @@
  * @link      http://www.hotarucms.org/
  */
 
-/* Comment Link */
-$lang['comments_comments_singular_link'] = "Comment";
-$lang['comments_comments_plural_link'] = "Comments";
+/* Comment Link - see class.comments.php -> count_comments function */
+$lang['comments_comments_singular_link'] = "comment";
+$lang['comments_comments_plural_link'] = "comments";
+$lang['comments_comments_none_link'] = "No comments";
 
 /* Comment */
 $lang['comments_written_by'] = "Written by";
@@ -37,6 +38,7 @@ $lang['comments_reply_link'] = "REPLY";
 $lang['comments_please_login'] = "You need to be logged in to comment.";
 $lang['comments_comment_form_submit'] = "Submit";
 $lang['comments_comment_form_subscribe'] = "Subscribe to comments";
+$lang['comments_comment_form_unsubscribe'] = "To unsubscribe, uncheck the box and submit an empty comment";
 $lang['comments_comment_form_allowable_tags'] = "Allowed HTML tags:";
 
 /* Admin Settings */
@@ -46,6 +48,7 @@ $lang["comments_settings_instructions"] = "Options for comments:";
 $lang["comments_settings_form"] = "Enable the comment form on all posts";
 $lang["comments_settings_avatars"] = "Enable avatars on comments (requires an avatar plugin, e.g. <i>Gravatar</i>)";
 $lang["comments_settings_votes"] = "Enable votes on comments (requires a comment voting plugin)";
+$lang["comments_settings_levels"] = "Comment nesting levels:";
 $lang["comments_settings_allowable_tags"] = "Allowed HTML tags in comments:";
 $lang["comments_settings_allowable_tags_example"] = "<small>(E.g. &lt;b&gt;&lt;u&gt;&lt;i&gt;&lt;blockquote&gt;)</small>";
 $lang["comments_settings_save"] = "Save";

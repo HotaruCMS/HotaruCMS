@@ -43,6 +43,7 @@ function cmmts_settings()
     if (!$comment->comment_form) { $comment->comment_form = ''; }
     if (!$comment->comment_avatars) { $comment->comment_avatars = ''; }
     if (!$comment->comment_voting) { $comment->comment_voting = ''; }
+    if (!$comment->comment_levels) { $comment->comment_levels = 5; }
     if (!$comment->comment_allowable_tags) { $comment->comment_allowable_tags = ''; }
 
     // Determine if checkboxes are checked or not
@@ -60,7 +61,8 @@ function cmmts_settings()
     echo "<p><input type='checkbox' name='comment_form' value='comment_form' " . $check_form . " >&nbsp;&nbsp;" . $lang["comments_settings_form"] . "</p>\n";    
     echo "<p><input type='checkbox' name='comment_avatars' value='comment_avatars' " . $check_avatars . " >&nbsp;&nbsp;" . $lang["comments_settings_avatars"] . "</p>\n"; 
     echo "<p><input type='checkbox' name='comment_voting' value='comment_voting' " . $check_votes . " >&nbsp;&nbsp;" . $lang["comments_settings_votes"] . "</p>\n"; 
-    
+
+    echo "<br />" . $lang["comments_settings_levels"] . " <input type='text' size=5 name='levels' value='" . $comment->comment_levels . "' /><br />";
     echo "<br />" . $lang["comments_settings_allowable_tags"] . " <input type='text' size=40 name='allowabletags' value='" . $comment->comment_allowable_tags . "' /><br />";
     echo $lang["comments_settings_allowable_tags_example"] . "\n";
     
@@ -103,12 +105,20 @@ function cmmts_save_settings()
         $comment->comment_voting = '';
     }
     
+    // levels
+    if ($cage->post->keyExists('levels')) { 
+        $levels = $cage->post->testInt('levels'); 
+        if (empty($levels)) { $levels = $comment->comment_levels; }
+    } else { 
+        $levels = $comment->comment_levels; 
+    }
+    
     // Allowable tags
     if ($cage->post->keyExists('allowabletags')) { 
-        $allowabletags = $cage->post->getRaw('allowabletags'); 
-        if (empty($allowabletags)) { $allowabletags = $comment->comment_allowable_tags; }
+        $allowable_tags = $cage->post->getRaw('allowabletags'); 
+        if (empty($allowable_tags)) { $allowable_tags = $comment->comment_allowable_tags; }
     } else { 
-        $allowabletags = $comment->comment_allowable_tags; 
+        $allowable_tags = $comment->comment_allowable_tags; 
     }
     
     $plugin->check_actions('comments_save_settings');
@@ -116,7 +126,8 @@ function cmmts_save_settings()
     $comment_settings['comment_form'] = $comment->comment_form;
     $comment_settings['comment_avatars'] = $comment->comment_avatars;
     $comment_settings['comment_voting'] = $comment->comment_voting;
-    $comment_settings['comment_allowable_tags'] = $comment->comment_allowable_tags;
+    $comment_settings['comment_levels'] = $levels;
+    $comment_settings['comment_allowable_tags'] = $allowable_tags;
     $plugin->plugin_settings_update('comments', 'comment_settings', serialize($comment_settings));
     
     $hotaru->message = $lang["comments_settings_saved"];

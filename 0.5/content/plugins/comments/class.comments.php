@@ -36,7 +36,8 @@ class Comment {
     var $comment_votes = 0;
     var $comment_content = '';
     var $comment_subscribe = 0;
-    var $comment_depth = 0;         // used for nesting comments
+    var $comment_levels = 0;         // max nesting levels
+    var $comment_depth = 0;         // this nesting level
     var $comment_allowable_tags = '';
     var $comment_form = '';
     var $comment_avatars = '';
@@ -86,6 +87,28 @@ class Comment {
     }
 
 
+    /**
+     * Count comments
+     *
+     * @return string - text to show in the link, e.g. "3 comments"
+     */
+    function count_comments()
+    {
+        global $db, $post, $lang;
+        
+        $sql = "SELECT COUNT(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d";
+        $num_comments = $db->get_var($db->prepare($sql, $post->post_id));
+        
+        if ($num_comments == 1) {
+            return "1 " . $lang['comments_comments_singular_link'];
+        } elseif ($num_comments > 1) {
+            return $num_comments . " " . $lang['comments_comments_plural_link'];
+        } else {
+            return $lang['comments_comments_none_link'];
+        }
+    }
+    
+    
     /**
      * Read all comment parents
      *
@@ -140,6 +163,8 @@ class Comment {
     
     /**
      * Add comment
+     *
+     * @return true
      */
     function add_comment()
     {
@@ -155,14 +180,125 @@ class Comment {
 
     /**
      * Unsubscribe from a thread
+     *
+     * @param int $post_id
+     * @return true
      */
     function unsubscribe($post_id)
     {
-        global $db, $current_user;
+        global $db, $current_user, $post;
+        
+        $post->read_post($post_id);
             
         $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_subscribe = %d WHERE comment_post_id = %d AND comment_user_id = %d";
-        $subscribe_result = $db->get_var($db->prepare($sql, 0, $post_id, $current_user->id));
+        $db->query($db->prepare($sql, 0, $post->post_id, $current_user->id));
+               
+        // Check if the current_user is the post author
+        if ($post->post_author == $current_user->id) {
+        // Check if the user subscribed to comments as a submitter
+            if ($post->post_subscribe == 1) { 
+                $sql = "UPDATE " . TABLE_POSTS . " SET post_subscribe = %d WHERE post_id = %d AND post_author = %d";
+                $db->query($db->prepare($sql, 0, $post->post_id, $current_user->id));
+            } 
+        }
         return true;
+    }
+    
+    
+    /**
+     * Update thread subscription 
+     *
+     * @param int $post_id
+     * @return true
+     */
+    function update_subscribe($post_id)
+    {
+        global $db, $current_user, $post, $comment;
+        
+        if ($comment->comment_subscribe == 1)
+        {
+            $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_subscribe = %d WHERE comment_post_id = %d AND comment_user_id = %d";
+            $db->query($db->prepare($sql, 1, $post->post_id, $current_user->id));
+        } 
+        else 
+        {
+            $this->unsubscribe($post_id);
+        }
+    }
+    
+    
+    /**
+    * Send an email to thread subscribers
+    *
+    * @param int $post_id
+    */
+    function email_comment_subscribers($post_id)
+    {
+        global $db, $comment, $post, $userbase;
+        
+        $post->read_post($post_id);
+    
+        // build a list of subscribers
+        $subscriber_ids = array();
+        
+        // Get id of post author if subscribed
+        if ($post->post_subscribe == 1) {
+            array_push($subscriber_ids, $post->post_author); 
+        }
+        
+        // Get ids of comment authors if subscribed
+        $sql = "SELECT comment_user_id FROM " . TABLE_COMMENTS . " WHERE comment_subscribe = %d AND comment_post_id = %d";
+        $comment_subscribers = $db->get_results($db->prepare($sql, 1, $post->post_id));
+        if ($comment_subscribers) {
+            foreach ($comment_subscribers as $comment_subscriber) {
+                array_push($subscriber_ids, $comment_subscriber->comment_user_id); 
+            }
+        }
+        
+        // Use the ids to make an array of unique email addresses
+        $subscribers = array();
+        $subscriber_ids = array_unique($subscriber_ids);
+        foreach ($subscriber_ids as $subscriber_id) {
+            // remove the current comment author so he/she doesn't get emailed his own comment
+            //if ($subscriber_id != $comment->comment_author) {
+                $email = $db->get_var($db->prepare("SELECT user_email FROM " . TABLE_USERS . " WHERE user_id = %d", $subscriber_id));
+                array_push($subscribers, $email);
+            //}
+        }
+        
+        $send_to = trim(implode(",", $subscribers),",");
+        
+        $comment_author = $userbase->get_username($comment->comment_author);
+        
+        $subject = $comment_author . ' has commented on ' . $post->post_title;
+        
+        $message =  $comment_author . " has commented on a story you are subscribed to at " . SITE_NAME . ": \r\n\r\n";
+        $message .= "Story Title: " . $post->post_title . "\r\n"; 
+        $message .= "Story Link: " . url(array('page'=>$post->post_id)) . "\r\n\r\n";
+        $message .= "Comment: " . $comment_author . "\r\n\r\n";
+        $message .= "************************ \r\n";
+        $message .= "Do not reply to this email. Please visit the above link and comment there. \r\n";
+        $message .= "To unsubscribe, uncheck the \"Subscribe to comments\" box and submit an empty comment. ";
+        
+        $from = SITE_EMAIL;
+        $to = SITE_EMAIL;  // send email to admin; 
+        if($send_to != "") {
+            $bcc = "\r\nBCC: " . $send_to;    // BCC individual addresses;
+        } else {
+            $bcc = "";
+        }
+        $headers = "From: " . $from . $bcc . "\r\nReply-To: " . $from . "\r\nX-Priority: 3\r\n";
+    
+        /*
+        echo "to: " . $to . "<br />";
+        echo "bcc: " . $bcc . "<br />";
+        echo "subject: " . $subject . "<br />";
+        echo "message: " . $message . "<br />";
+        echo "headers: " . $headers . "<br />";
+        exit;
+        */
+    
+        @mail($to, $subject, $message, $headers);
     }
     
 }
