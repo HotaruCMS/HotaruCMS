@@ -144,7 +144,9 @@ function cmmts_theme_index_replace()
          
         if ($current_user->logged_in) {
                      
-            if ($cage->post->getAlpha('comment_process') == 'newcomment') {
+            if (($cage->post->getAlpha('comment_process') == 'newcomment') || 
+                ($cage->post->getAlpha('comment_process') == 'editcomment'))
+            {
             
                 //Include HTMLPurifier which we'll use on comment_content
                 $cage->post->loadHTMLPurifier(INCLUDES . 'HTMLPurifier/HTMLPurifier.standalone.php');
@@ -172,13 +174,20 @@ function cmmts_theme_index_replace()
                     $comment->unsubscribe($comment->comment_post_id);
                 }
                 
-                // A user can unsubscribe by submitting an empty comment, so...
-                if(!empty($comment->comment_content)) {
-                    $comment->add_comment();
-                    $comment->email_comment_subscribers($comment->comment_post_id);
-                } else {
-                    //comment empty so just check subscribe box:
-                    $comment->update_subscribe($comment->comment_post_id);
+                if ($cage->post->getAlpha('comment_process') == 'newcomment')
+                {
+                    // A user can unsubscribe by submitting an empty comment, so...
+                    if(!empty($comment->comment_content)) {
+                        $comment->add_comment();
+                        $comment->email_comment_subscribers($comment->comment_post_id);
+                    } else {
+                        //comment empty so just check subscribe box:
+                        $comment->update_subscribe($comment->comment_post_id);
+                    }
+                }
+                elseif($cage->post->getAlpha('comment_process') == 'editcomment')
+                {
+                        $comment->edit_comment();
                 }
                 
                 header("Location: " . url(array('page'=>$comment->comment_post_id)));    // Go to the post

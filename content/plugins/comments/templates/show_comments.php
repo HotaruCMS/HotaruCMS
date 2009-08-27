@@ -59,6 +59,15 @@ global $plugin, $comment, $lang, $userbase, $current_user;
                     <a href='#' class='comment_reply_link'><?php echo $lang['comments_reply_link']; ?></a>
                 <?php } ?>
             <?php } ?>
+            
+            <?php if ($current_user->id == $comment->comment_author || $current_user->role == 'admin') { ?>
+                    <a href='#' class='comment_edit_link' onclick="edit_comment(
+                        '<?php echo BASEURL; ?>', 
+                        '<?php echo $comment->comment_id; ?>', 
+                        '<?php echo addslashes($comment->comment_content); ?>', 
+                        '<?php echo $lang['comments_comment_form_edit']; ?>'); 
+                        return false;" ><?php echo $lang['comments_edit_link']; ?></a>
+            <?php } ?>
         </div>
         
         <div class="clear"></div>
