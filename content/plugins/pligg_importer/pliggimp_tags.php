@@ -26,14 +26,15 @@
 
 
 /**
- * Page 3 - Request tags file
+ * Page 4 - Request tags file
  */
-function pliggimp_page_3() {
+function pliggimp_page_4()
+{
     global $plugin;
     
-    echo "<h2>Step 3/5 - Tags</h2>";
+    echo "<h2>Step 4/6 - Tags</h2>";
     echo "Please upload your <b>tags</b> XML file:<br />";
-    echo "<form name='pligg_importer_form' enctype='multipart/form-data' action='" . baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=pligg_importer' method='post'>\n";
+    echo "<form name='pligg_importer_form' enctype='multipart/form-data' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=pligg_importer' method='post'>\n";
     echo "<label for='file'>Exported Pligg Tags table (<span stye='color: red;'>.xml</span>):</label>\n";
     echo "<input type='file' name='file' id='file' />\n";
     echo "<input type='hidden' name='submitted' value='true' />\n";
@@ -44,27 +45,28 @@ function pliggimp_page_3() {
 
 
 /**
- * Step 3 - Import Tags
+ * Step 4 - Import Tags
+ *
  * @param array $xml
  * @param string $file_name
  * @return bool
  */
-function step3($xml, $file_name)
+function step4($xml, $file_name)
 {
     global $db, $current_user, $cage, $links;
     
     echo "<b>Table:</b> Tags...<br /><br />";
     
     $this_table = "tags";
-    if(!$db->table_empty($this_table)) {
-        if(!$cage->get->getAlpha('overwrite') == 'true') {
-            echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . table_tags . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
-            echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'file_name'=>$file_name, 'step'=>3, 'overwrite'=>'true'), 'admin') . "'>Continue</a>";
+    if (!$db->table_empty($this_table)) {
+        if (!$cage->get->getAlpha('overwrite') == 'true') {
+            echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . DB_PREFIX . $this_table . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
+            echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'file_name'=>$file_name, 'step'=>4, 'overwrite'=>'true'), 'admin') . "'>Continue</a>";
             return false;
-        } else {
-            $db->query($db->prepare("TRUNCATE " . db_prefix . $this_table));
-        }
+        } 
     }
+    
+    $db->query($db->prepare("TRUNCATE " . DB_PREFIX . $this_table));
     
     echo "<i>Number of records added:</i> ";
     
@@ -74,13 +76,13 @@ function step3($xml, $file_name)
     {
 
         // Skip any record that has no words
-        if($child->tag_words != "") 
+        if ($child->tag_words != "") 
         {
             $count++;
             
             $columns    = "tags_post_id, tags_date, tags_word, tags_updateby";
             
-            $sql        = "INSERT IGNORE " . db_prefix . $this_table . " (" . $columns . ") VALUES(%d, %s, %s, %d)";
+            $sql        = "INSERT IGNORE " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%d, %s, %s, %d)";
             
             // Insert into tags table
             $db->query($db->prepare(
@@ -96,7 +98,7 @@ function step3($xml, $file_name)
     echo $count . " minus duplicate entries.<br /><br />";
     echo "<span style='color: green;'><b>Tags table imported successfully!</b></span><br /><br />";
     
-    echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'step'=>4), 'admin') . "'>Continue</a>";
+    echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'step'=>5), 'admin') . "'>Continue</a>";
     
     return true;
 }

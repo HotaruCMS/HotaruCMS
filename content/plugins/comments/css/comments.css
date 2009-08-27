@@ -1,10 +1,6 @@
-<?php 
-
-/* ******* PLUGIN TEMPLATE ******************************************************************************** 
- * Plugin name: Hello Universe
- * Template name: sidebar.php
- * Template author: Nick Ramsay
- * Version: 0.1
+/** CSS STYLE ** 
+ * Plugin name: Comments
+ * Stylesheet: comments.css
  * License:
  *
  *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
@@ -21,15 +17,38 @@
  *   see http://www.gnu.org/licenses/.
  *   
  *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
- *
- **************************************************************************************************** */
+ */
+ 
+#comments_wrapper h2 {
+	padding-bottom: 0em;
+}
 
-global $hotaru, $plugin; // don't remove
-?>
+.comment {
+	background-color: #fafafa;
+	margin-top: 1.0em;
+	padding: 0.4em;
+}
 
-<h2>A New Sidebar</h2>
+.comment_reply {
+	background-color: #fafafa;
+}
 
-<p>This is the sidebar.php file in the Hello Universe plugin folder.</p>
+.comment_reply_link, .comment_edit_link {
+	padding: 0.4em;
+	background-color: #ffffff;
+	font-size: 1.2em;
+}
 
-<p>We managed to override the regular sidebar by creating a new sidebar.php in the plugin folder, and writing Function #3 in hello_universe.php.</p>
+.comment_author_date {
+	font-size: 0.8em;
+	float: right;
+}
 
+.comment_form textarea {
+	width: 100%;
+}
+
+.comments_please_login {
+	margin-top: 2.0em;
+	text-align: center;
+}

@@ -30,6 +30,7 @@ if ($cage->post->getAlpha('edit_post') == 'true') {
     // Submitted this form...
     $title_check = $cage->post->noTags('post_title');    
     $content_check = sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->allowable_tags);
+    if ($cage->post->keyExists('post_subscribe')) { $subscribe_check = 'checked'; } else { $subscribe_check = ''; }   
     $status_check = $cage->post->testAlnumLines('post_status');    
     $post_id = $cage->post->getInt('post_id');    
     $post->post_id = $post_id;
@@ -39,6 +40,7 @@ if ($cage->post->getAlpha('edit_post') == 'true') {
     $post->read_post($post_id);
     $title_check = $post->post_title;
     $content_check = $post->post_content;
+    if ($post->post_subscribe == 1) { $subscribe_check = 'checked'; } else { $subscribe_check = ''; }
     $status_check = $post->post_status;
     $post_orig_url = $post->post_orig_url;
     $post_id = $post->post_id;
@@ -59,7 +61,7 @@ $plugin->check_actions('submit_form_2_assign');
 ?>
 
     <div id="breadcrumbs">
-        <a href='<?php echo baseurl; ?>'><?php echo $lang['submit_form_home']; ?></a> &raquo; 
+        <a href='<?php echo BASEURL; ?>'><?php echo $lang['submit_form_home']; ?></a> &raquo; 
         <?php echo $lang["submit_edit_post_title"]; ?> &raquo; 
         <?php echo $post_id; ?>
     </div>
@@ -67,45 +69,45 @@ $plugin->check_actions('submit_form_2_assign');
     <?php echo $hotaru->show_messages(); ?>
             
     
-    <?php echo $lang["submit_edit_post_instructions"] ?>
+    <?php echo $lang["submit_edit_post_instructions"]; ?>
 
-    <form name='submit_edit_post' action='<?php baseurl ?>index.php?page=edit_post&sourceurl=<?php echo $post_orig_url ?>' method='post'>
+    <form name='submit_edit_post' action='<?php BASEURL; ?>index.php?page=edit_post&sourceurl=<?php echo $post_orig_url; ?>' method='post'>
     <table>
     <tr>
-        <td><?php echo $lang["submit_form_url"] ?>&nbsp; </td>
+        <td><?php echo $lang["submit_form_url"]; ?>&nbsp; </td>
         <td><?php echo $post_orig_url; ?></td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td><?php echo $lang["submit_form_title"] ?>&nbsp; </td>
-        <td><input type='text' size=50 id='post_title' name='post_title' value='<?php echo $title_check ?>'></td>
+        <td><?php echo $lang["submit_form_title"]; ?>&nbsp; </td>
+        <td><input type='text' size=50 id='post_title' name='post_title' value='<?php echo $title_check; ?>'></td>
         <td>&nbsp;</td>
     </tr>
     
     <?php if ($post->use_content) { ?>
     <tr>
-        <td style='vertical-align: top;'><?php echo $lang["submit_form_content"] ?>&nbsp; </td>
-        <td colspan=2><textarea id='post_content' name='post_content' rows='6' maxlength='<?php $post->post_content_length; ?>' style='width: 32em;'><?php echo $content_check ?></textarea></td>
+        <td style='vertical-align: top;'><?php echo $lang["submit_form_content"]; ?>&nbsp; </td>
+        <td colspan=2><textarea id='post_content' name='post_content' rows='6' maxlength='<?php $post->post_content_length; ?>' style='width: 32em;'><?php echo $content_check; ?></textarea></td>
     </tr>
     <?php } ?>
     
     <?php $plugin->check_actions('submit_form_2_fields'); ?>
-    
+        
     <?php if ($current_user->role == 'admin') { ?>
     <!-- Admin only options -->
     
     <tr><td colspan=3><u><?php echo $lang["submit_edit_post_admin_only"]; ?></u></td></tr>
     
     <tr>
-        <td><?php echo $lang["submit_form_url"] ?>&nbsp; </td>
-        <td><input type='text' size=50 id='post_orig_url' name='post_orig_url' value='<?php echo $post_orig_url ?>'></td>
+        <td><?php echo $lang["submit_form_url"]; ?>&nbsp; </td>
+        <td><input type='text' size=50 id='post_orig_url' name='post_orig_url' value='<?php echo $post_orig_url; ?>'></td>
         <td>&nbsp;</td>
     </tr>
     
     <tr>
-        <td style='vertical-align: top;'><?php echo $lang["submit_edit_post_status"] ?>&nbsp; </td>
+        <td style='vertical-align: top;'><?php echo $lang["submit_edit_post_status"]; ?>&nbsp; </td>
         <td><select name='post_status'>
-            <option value="<?php echo $status_check ?>"><?php echo $status_check ?></option>
+            <option value="<?php echo $status_check; ?>"><?php echo $status_check; ?></option>
             <?php 
             $statuses = $post->get_unique_statuses(); 
             print_r($statuses);
@@ -129,6 +131,6 @@ $plugin->check_actions('submit_form_2_assign');
     <input type='hidden' name='edit_post' value='true' />
     
     <tr><td colspan=3>&nbsp;</td></tr>
-    <tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' name='submit_edit_post' value='<?php echo $lang["submit_edit_post_save"] ?>' /></td></tr>    
+    <tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' name='submit_edit_post' value='<?php echo $lang["submit_edit_post_save"]; ?>' /></td></tr>    
     </table>
     </form>

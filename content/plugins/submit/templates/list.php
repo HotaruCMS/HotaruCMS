@@ -1,40 +1,40 @@
 <?php
-
-/* ******* PLUGIN TEMPLATE ************************************************************************** 
- * Plugin name: Submit
- * Template name: plugins/submit/posts_list.php
- * Template author: Nick Ramsay
- * Version: 0.1
- * License:
+/**
+ * Template for Submit: LIST
  *
- *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
+ * PHP version 5
  *
- *   Hotaru CMS is free software: you can redistribute it and/or modify it under the terms of the 
- *   GNU General Public License as published by the Free Software Foundation, either version 3 of 
- *   the License, or (at your option) any later version.
+ * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation, either version 3 of 
+ * the License, or (at your option) any later version. 
  *
- *   Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
- *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
+ * Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE. 
  *
- *   You should have received a copy of the GNU General Public License along with Hotaru CMS. If not, 
- *   see http://www.gnu.org/licenses/.
- *   
- *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
- *
- **************************************************************************************************** */
+ * You should have received a copy of the GNU General Public License along 
+ * with Hotaru CMS. If not, see http://www.gnu.org/licenses/.
+ * 
+ * @category  Content Management System
+ * @package   HotaruCMS
+ * @author    Nick Ramsay <admin@hotarucms.org>
+ * @copyright Copyright (c) 2009, Hotaru CMS
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * @link      http://www.hotarucms.org/
+ */
 
 global $hotaru, $plugin, $post, $cage, $filter, $lang, $page_title, $current_user;
 
 $user = new UserBase();
 
 // Prepare filter and breadcrumbs
-$stories = sub_prepare_posts_list();
+$stories = sub_prepare_list();
 ?>
 
 <!-- BREADCRUMBS -->
 <div id="breadcrumbs">
-    <a href="<?php echo baseurl; ?>"><?php echo $lang['submit_form_home']; ?></a> &raquo; 
+    <a href="<?php echo BASEURL; ?>"><?php echo $lang['submit_form_home']; ?></a> &raquo; 
     <?php $plugin->check_actions('breadcrumbs'); ?> 
     <?php echo $page_title; ?>
 </div>
@@ -52,7 +52,7 @@ if ($stories) {
 <!-- POST -->
 <?php $plugin->check_actions('submit_pre_show_post'); ?>
 
-    <div class="show_post vote_button_space_<?php echo $post->post_vars['vote_type'] ?>">
+    <div class="show_post vote_button_space_<?php echo $post->post_vars['vote_type']; ?>">
     
         <?php $plugin->check_actions('submit_show_post_pre_title'); ?>
         
@@ -82,22 +82,18 @@ if ($stories) {
                 <?php } else { ?>
                     <?php echo $post->post_content; ?>
                 <?php } ?>    
-                <small><a href='<?php echo url(array('page'=>$post->post_id)) ?>'><?php echo $lang['submit_post_read_more'] ?></a></small>
+                <small><a href='<?php echo url(array('page'=>$post->post_id)); ?>'><?php echo $lang['submit_post_read_more']; ?></a></small>
             </div>
         <?php } ?>
         
         <div class="show_post_extra_fields">
-            <?php $plugin->check_actions('submit_show_post_extra_fields'); ?>
-        </div>
-            
-        <div class="show_post_extras">
-            <?php $plugin->check_actions('submit_show_post_extras'); ?>
+            <ul>
+                <?php $plugin->check_actions('submit_show_post_extra_fields'); ?>
+            </ul>
         </div>
             
     </div>
     
-    <?php $plugin->check_actions('submit_post_show_post'); ?>
-
     <!-- END POST --> 
 
 <?php    
@@ -109,5 +105,4 @@ if ($stories) {
 }
     
 ?>
- 
  

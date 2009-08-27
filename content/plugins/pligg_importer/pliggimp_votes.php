@@ -26,14 +26,15 @@
 
 
 /**
- * Page 5 - Request votes file
+ * Page 6 - Request votes file
  */
-function pliggimp_page_5() {
+function pliggimp_page_6()
+{
     global $plugin;
     
-    echo "<h2>Step 5/5 - Votes</h2>";
+    echo "<h2>Step 6/6 - Votes</h2>";
     echo "Please upload your <b>votes</b> XML file:<br />";
-    echo "<form name='pligg_importer_form' enctype='multipart/form-data' action='" . baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=pligg_importer' method='post'>\n";
+    echo "<form name='pligg_importer_form' enctype='multipart/form-data' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=pligg_importer' method='post'>\n";
     echo "<label for='file'>Exported Pligg Votes table (<span stye='color: red;'>.xml</span>):</label>\n";
     echo "<input type='file' name='file' id='file' />\n";
     echo "<input type='hidden' name='submitted' value='true' />\n";
@@ -44,27 +45,28 @@ function pliggimp_page_5() {
 
 
 /**
- * Step 5 - Import Votes
+ * Step 6 - Import Votes
  * @param array $xml
  * @param string $file_name
  * @return bool
  */
-function step5($xml, $file_name)
+function step6($xml, $file_name)
 {
     global $db, $current_user, $cage, $links;
     
     echo "<b>Table:</b> Votes...<br /><br />";
     
     $this_table = "postvotes";
-    if(!$db->table_empty($this_table)) {
-        if(!$cage->get->getAlpha('overwrite') == 'true') {
-            echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . table_postvotes . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
-            echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'file_name'=>$file_name, 'step'=>5, 'overwrite'=>'true'), 'admin') . "'>Continue</a>";
+    if (!$db->table_empty($this_table)) {
+        if (!$cage->get->getAlpha('overwrite') == 'true') {
+            echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . DB_PREFIX . $this_table . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data, and also any data in the <i>commentvotes</i> table.<br />";
+            echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'file_name'=>$file_name, 'step'=>6, 'overwrite'=>'true'), 'admin') . "'>Continue</a>";
             return false;
-        } else {
-            $db->query($db->prepare("TRUNCATE " . db_prefix . $this_table));
-        }
+        } 
     }
+    
+    $db->query($db->prepare("TRUNCATE " . DB_PREFIX . 'postvotes'));
+    $db->query($db->prepare("TRUNCATE " . DB_PREFIX . 'commentvotes'));
     
     echo "<i>Number of records added:</i> ";
     
@@ -73,8 +75,8 @@ function step5($xml, $file_name)
     foreach ($xml->children() as $child)
     {
 
-        // Skip all comment votes.
-        if($child->vote_type == 'links') 
+        // Skip all comment votes...
+        if ($child->vote_type == 'links') 
         {
             $count++;
 
@@ -86,16 +88,44 @@ function step5($xml, $file_name)
             
             $columns    = "vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_reason, vote_updateby";
             
-            $sql        = "INSERT IGNORE " . db_prefix . $this_table . " (" . $columns . ") VALUES(%d, %d, %s, %s, %s, %s, %d, %d)";
+            $sql        = "INSERT IGNORE " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%d, %d, %s, %s, %s, %s, %d, %d)";
             
             // Insert into postvotes table
             $db->query($db->prepare(
                 $sql,
                 get_new_link_id($child->vote_link_id),
                 get_new_user_id($child->vote_user_id),
-                $child->vote_user_ip,
+                $child->vote_ip,
                 $child->vote_date,
                 'vote_unvote',
+                $rating,
+                0,
+                $current_user->id));
+        }
+        
+        // Now do comment votes...
+        if ($child->vote_type == 'comments') 
+        {
+            $count++;
+
+            if ($child->vote_value > 0) { 
+                $rating = 'positive'; 
+            } else {
+                $rating = 'negative';
+            }
+            
+            $columns    = "cvote_post_id, cvote_comment_id, cvote_user_id, cvote_user_ip, cvote_date, cvote_rating, cvote_reason, cvote_updateby";
+            
+            $sql        = "INSERT IGNORE " . DB_PREFIX . "commentvotes (" . $columns . ") VALUES(%d, %d, %d, %s, %s, %s, %d, %d)";
+            
+            // Insert into commentvotes table
+            $db->query($db->prepare(
+                $sql,
+                get_new_link_id($child->vote_link_id),
+                0,
+                get_new_user_id($child->vote_user_id),
+                $child->vote_ip,
+                $child->vote_date,
                 $rating,
                 0,
                 $current_user->id));
@@ -106,7 +136,7 @@ function step5($xml, $file_name)
     echo $count . " minus duplicate entries.<br /><br />";
     echo "<span style='color: green;'><b>Votes table imported successfully!</b></span><br /><br />";
     
-    echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'step'=>6), 'admin') . "'>Continue</a>";
+    echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'step'=>7), 'admin') . "'>Continue</a>";
     
     return true;
 }

@@ -10,7 +10,7 @@
 /**
  * require main Inspekt class
  */
-require_once includes . 'Inspekt/Inspekt.php';
+require_once INCLUDES . 'Inspekt/Inspekt.php';
 
 /**
  * require the Cage class

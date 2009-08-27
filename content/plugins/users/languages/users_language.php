@@ -1,29 +1,28 @@
 <?php
-
-// USERS
-
-/* **************************************************************************************************** 
- *  File: plugins/users/languages/users_english.php
- *  Purpose: A language file for Users. It's used whenever a Users file needs to output language.
- *  Notes: ---
- *  License:
+/**
+ * USERS LANGUAGE
  *
- *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
+ * PHP version 5
  *
- *   Hotaru CMS is free software: you can redistribute it and/or modify it under the terms of the 
- *   GNU General Public License as published by the Free Software Foundation, either version 3 of 
- *   the License, or (at your option) any later version.
+ * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation, either version 3 of 
+ * the License, or (at your option) any later version. 
  *
- *   Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
- *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
+ * Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE. 
  *
- *   You should have received a copy of the GNU General Public License along with Hotaru CMS. If not, 
- *   see http://www.gnu.org/licenses/.
- *   
- *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
- *
- **************************************************************************************************** */
+ * You should have received a copy of the GNU General Public License along 
+ * with Hotaru CMS. If not, see http://www.gnu.org/licenses/.
+ * 
+ * @category  Content Management System
+ * @package   HotaruCMS
+ * @author    Nick Ramsay <admin@hotarucms.org>
+ * @copyright Copyright (c) 2009, Hotaru CMS
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * @link      http://www.hotarucms.org/
+ */
 
 /* Users Admin Settings */
 $lang["users_settings_header"] = "Users Configuration";
@@ -51,6 +50,9 @@ $lang["users_login_failed"] = "Login failed";
 $lang["users_login_failed_email_not_validated"] = "Sorry, you haven't validated your email yet."; 
 $lang["users_login_failed_email_request_sent"] = "Email confirmation request sent!";
 $lang["users_login_form_submit"] = "Login";
+$lang["users_login_form_submit_username"] = "Username:";
+$lang["users_login_form_submit_password"] = "Password:";
+$lang["users_login_form_submit_remember"] = "Remember:";
 
 /* Register (and also used in User Settings) */
 $lang["users_register_username"] = "Username:";
@@ -71,12 +73,12 @@ $lang["users_register_unexpected_error"] = "Sorry, there's been an unexpected er
 $lang["users_register_make_note"] = "Make a note of your new username, email and password before clicking \"Next\"...";
 $lang["users_register_form_submit"] = "Register";
 $lang['users_register_emailconf_sent'] = "An email has been sent to the address provided. <br />Please confirm it to complete registration. Thank you!";
-$lang['users_register_emailconf_subject'] = site_name . " Registration"; 
+$lang['users_register_emailconf_subject'] = SITE_NAME . " Registration"; 
 $lang['users_register_emailconf_body_hello'] = "Hi";
-$lang['users_register_emailconf_body_welcome'] = "Thank you for registering at " . site_name . ".";
+$lang['users_register_emailconf_body_welcome'] = "Thank you for registering at " . SITE_NAME . ".";
 $lang['users_register_emailconf_body_click'] = "Your email address must be validated before you can log in. Please click this url or copy it into your browser:";
 $lang['users_register_emailconf_body_regards'] = "Regards,";
-$lang['users_register_emailconf_body_sign'] = site_name . " Admin";
+$lang['users_register_emailconf_body_sign'] = SITE_NAME . " Admin";
 $lang['users_register_emailconf_success'] = "Your email address has been successfully confirmed.";
 $lang['users_register_emailconf_success_login'] = "Click here to log in.";
 $lang['users_register_emailconf_fail'] = "Unable to confirm your email address. Please try the link again.";

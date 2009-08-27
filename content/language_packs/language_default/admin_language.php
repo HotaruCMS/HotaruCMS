@@ -1,34 +1,35 @@
 <?php
-
 /* **************************************************************************************************** 
- *  File: /admin/languages/admin_language.php
- *  Purpose: A language file for Admin core and theme files. It's used whenever an admin file needs to output language.
- *  Notes: ---
- *  License:
+ * ADMIN LANGUAGE
  *
- *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
+ * PHP version 5
  *
- *   Hotaru CMS is free software: you can redistribute it and/or modify it under the terms of the 
- *   GNU General Public License as published by the Free Software Foundation, either version 3 of 
- *   the License, or (at your option) any later version.
+ * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation, either version 3 of 
+ * the License, or (at your option) any later version. 
  *
- *   Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
- *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
+ * Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE. 
  *
- *   You should have received a copy of the GNU General Public License along with Hotaru CMS. If not, 
- *   see http://www.gnu.org/licenses/.
- *   
- *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
- *
- **************************************************************************************************** */
+ * You should have received a copy of the GNU General Public License along 
+ * with Hotaru CMS. If not, see http://www.gnu.org/licenses/.
+ * 
+ * @category  Content Management System
+ * @package   HotaruCMS
+ * @author    Nick Ramsay <admin@hotarucms.org>
+ * @copyright Copyright (c) 2009, Hotaru CMS
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * @link      http://www.hotarucms.org/
+ */
 
 
 /* ***************************************************************** 
 ******************************************************************** 
-**********						  **********
-**********		ADMIN CORE LANGUAGE 		  **********
-**********						  **********
+**********                                                **********
+**********            ADMIN CORE LANGUAGE                 **********
+**********                                                **********
 ******************************************************************** 
 ***************************************************************** */
 
@@ -116,7 +117,9 @@ $lang["admin_theme_maintenance"] = "Maintenance";
 $lang["admin_theme_maintenance_title"] = "Hotaru Maintenance";
 $lang["admin_theme_maintenance_db_cache"] = "Clear database cache";
 $lang["admin_theme_maintenance_db_cache_desc"] = "deletes cached database queries.";
-$lang["admin_theme_maintenance_rss_cache"] = "Clear RSS cache";
+$lang["admin_theme_maintenance_css_js_cache"] = "Clear css/js cache";
+$lang["admin_theme_maintenance_css_js_cache_desc"] = "deletes cached CSS and JavaScript files from plugins.";
+$lang["admin_theme_maintenance_rss_cache"] = "Clear rss cache";
 $lang["admin_theme_maintenance_rss_cache_desc"] = "deletes cached RSS feeds.";
 
 /* plugins */

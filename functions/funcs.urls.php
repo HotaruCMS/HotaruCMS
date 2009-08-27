@@ -35,12 +35,12 @@ function url($parameters = array(), $head = 'index')
 {
     global $post;
     
-    if (friendly_urls == "false") {
+    if (FRIENDLY_URLS == "false") {
     
         if ($head == 'index') {
-            $url = baseurl . 'index.php?';
+            $url = BASEURL . 'index.php?';
         } elseif ($head == 'admin') {
-            $url = baseurl . 'admin/admin_index.php?';    
+            $url = BASEURL . 'admin/admin_index.php?';    
         } else {
             // Error. $head must be index or admin
         }
@@ -57,14 +57,14 @@ function url($parameters = array(), $head = 'index')
         
     } 
     
-    if (friendly_urls == "true") {
+    if (FRIENDLY_URLS == "true") {
     
         if ($head == 'index') { 
-            $url = baseurl;
+            $url = BASEURL;
         } elseif ($head == 'admin') {
-            $url = baseurl . 'admin/';    
+            $url = BASEURL . 'admin/';    
         } else {
-            $url = baseurl . $head . '/';
+            $url = BASEURL . $head . '/';
         }
         
         foreach ($parameters as $key => $value) {
