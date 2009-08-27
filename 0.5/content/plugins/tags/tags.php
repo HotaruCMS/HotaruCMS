@@ -319,7 +319,7 @@ function tg_submit_list_filter()
         if (!$tag) { $tag = $cage->get->noTags('pos2'); } 
         
         if ($tag) {
-            $filter['post_tags LIKE %s'] = '%' . $tag . '%'; 
+            $filter['post_tags LIKE %s'] = '%' . urlencode($tag) . '%'; 
             $rss = " <a href='" . url(array('page'=>'rss', 'tag'=>$tag)) . "'>";
         }
         
