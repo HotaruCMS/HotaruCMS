@@ -72,6 +72,7 @@ function sub_install_plugin()
           `post_url` varchar(255) NULL, 
           `post_content` text NULL,
           `post_tags` text NULL,
+          `post_subscribe` tinyint(1) NOT NULL DEFAULT '0',
           `post_updateby` int(20) NOT NULL DEFAULT 0, 
           FULLTEXT (`post_title`, `post_domain`, `post_url`, `post_content`, `post_tags`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Story Posts';";

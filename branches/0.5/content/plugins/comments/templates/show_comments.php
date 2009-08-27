@@ -55,7 +55,9 @@ global $plugin, $comment, $lang, $userbase, $current_user;
                 echo $lang['comments_time_ago']; 
             ?>
             <?php if ($current_user->logged_in) { ?>
-                <a href='#' class='comment_reply_link'><?php echo $lang['comments_reply_link']; ?></a>
+                <?php if ($comment->comment_depth < $comment->comment_levels-1) { // No nesting after X levels (minus 1 because nestings tarts at 0) ?>
+                    <a href='#' class='comment_reply_link'><?php echo $lang['comments_reply_link']; ?></a>
+                <?php } ?>
             <?php } ?>
         </div>
         

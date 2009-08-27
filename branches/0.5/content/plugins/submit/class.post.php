@@ -40,6 +40,7 @@ class Post {
     var $post_author = 0;
     var $post_url = '';
     var $post_date = '';
+    var $post_subscribe = 0;
     var $posts_per_page = '10';
     
     var $allowable_tags = '';
@@ -93,15 +94,12 @@ class Post {
         global $plugin, $post_row, $hotaru;
         
         //enabled
-        $this->post_author = $plugin->plugin_settings('submit', 'submit_enabled');
         if ($plugin->plugin_settings('submit', 'submit_enabled') == 'checked') { $this->use_submission = true; } else { $this->use_submission = false; }
         
         //author
-        $this->post_author = $plugin->plugin_settings('submit', 'submit_author');
         if ($plugin->plugin_settings('submit', 'submit_author') == 'checked') { $this->use_author = true; } else { $this->use_author = false; }
         
         //date
-        $this->post_date = $plugin->plugin_settings('submit', 'submit_date');
         if ($plugin->plugin_settings('submit', 'submit_date') == 'checked') { $this->use_date = true; } else { $this->use_date = false; }
         
         //content
@@ -134,6 +132,7 @@ class Post {
             $this->post_author = $post_row->post_author;
             $this->post_url = urldecode($post_row->post_url);
             $this->post_date = $post_row->post_date;
+            $this->post_subscribe = $post_row->post_subscribe;
             
             $plugin->check_actions('submit_class_post_read_post_2');
                         
@@ -157,9 +156,9 @@ class Post {
         $parsed = parse_url($this->post_orig_url);
         if (isset($parsed['scheme'])){ $this->post_domain = $parsed['scheme'] . "://" . $parsed['host']; }
             
-        $sql = "INSERT INTO " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_date = CURRENT_TIMESTAMP, post_updateby = %d";
+        $sql = "INSERT INTO " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_date = CURRENT_TIMESTAMP, post_subscribe = %d, post_updateby = %d";
         
-        $db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode($this->post_domain), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), $this->post_status, $this->post_author, $current_user->id));
+        $db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode($this->post_domain), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), $this->post_status, $this->post_author, $this->post_subscribe, $current_user->id));
         
         $last_insert_id = $db->get_var($db->prepare("SELECT LAST_INSERT_ID()"));
         
@@ -183,9 +182,9 @@ class Post {
         $parsed = parse_url($this->post_orig_url);
         if (isset($parsed['scheme'])){ $this->post_domain = $parsed['scheme'] . "://" . $parsed['host']; }
         
-        $sql = "UPDATE " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_updateby = %d WHERE post_id = %d";
+        $sql = "UPDATE " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_subscribe = %d, post_updateby = %d WHERE post_id = %d";
         
-        $db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode($this->post_domain), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), $this->post_status, $this->post_author, $current_user->id, $this->post_id));
+        $db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode($this->post_domain), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), $this->post_status, $this->post_author, $this->post_subscribe, $current_user->id, $this->post_id));
         
         $plugin->check_actions('submit_class_post_update_post');
         
