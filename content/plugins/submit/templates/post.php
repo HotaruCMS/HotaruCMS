@@ -31,11 +31,13 @@ $user->get_user_basic($post->post_author);
 ?>
 
 <!-- BREADCRUMBS -->
+<?php if($hotaru->title != 'submit2') { ?>
 <div id="breadcrumbs">
     <a href="<?php echo BASEURL; ?>"><?php echo $lang['submit_form_home']; ?></a> &raquo; 
     <?php $plugin->check_actions('breadcrumbs'); ?> 
     <?php echo $hotaru->title ?>
 </div>
+<?php } ?>
 
 <!-- POST -->
 <?php if ($post->post_status != 'buried') { ?>
