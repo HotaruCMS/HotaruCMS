@@ -11,7 +11,7 @@
 /**
  * require main Inspekt file
  */
-require_once includes . 'Inspekt/Inspekt.php';
+require_once INCLUDES . 'Inspekt/Inspekt.php';
 
 
 define ('ISPK_ARRAY_PATH_SEPARATOR', '/');

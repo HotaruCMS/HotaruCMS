@@ -31,9 +31,9 @@
 function pliggimp_page_1() {
     global $plugin;
     
-    echo "<h2>Step 1/5 - Categories</h2>";
+    echo "<h2>Step 1/6 - Categories</h2>";
     echo "Please upload your <b>categories</b> XML file:<br />";
-    echo "<form name='pligg_importer_form' enctype='multipart/form-data' action='" . baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=pligg_importer' method='post'>\n";
+    echo "<form name='pligg_importer_form' enctype='multipart/form-data' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=pligg_importer' method='post'>\n";
     echo "<label for='file'>Exported Pligg Categories table (<span stye='color: red;'>.xml</span>):</label>\n";
     echo "<input type='file' name='file' id='file' />\n";
     echo "<input type='hidden' name='submitted' value='true' />\n";
@@ -45,6 +45,7 @@ function pliggimp_page_1() {
 
 /**
  * Step 1 - Import Categories
+ *
  * @param array $xml
  * @param string $file_name
  * @return bool
@@ -56,16 +57,16 @@ function step1($xml, $file_name)
     echo "<b>Table:</b> Categories...<br /><br />";
     
     $this_table = "categories";
-    if(!$db->table_empty($this_table)) {
-        if(!$cage->get->getAlpha('overwrite') == 'true') {
-            echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . table_categories . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
+    if (!$db->table_empty($this_table)) {
+        if (!$cage->get->getAlpha('overwrite') == 'true') {
+            echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . DB_PREFIX . $this_table . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
             echo "<a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'file_name'=>$file_name, 'step'=>1, 'overwrite'=>'true'), 'admin') . "'>Continue</a>";
             return false;
-        } else {
-            $db->query($db->prepare("TRUNCATE " . db_prefix . $this_table));
-        }
+        } 
     }
     
+    $db->query($db->prepare("TRUNCATE " . DB_PREFIX . $this_table));
+
     echo "<i>Adding...</i> ";
     
     $count = 0;
@@ -83,7 +84,7 @@ function step1($xml, $file_name)
 
         $columns    = "category_name, category_safe_name, category_order, category_desc, category_keywords, category_updateby";
         
-        $sql        = "INSERT INTO " . db_prefix . $this_table . " (" . $columns . ") VALUES(%s, %s, %d, %s, %s, %d)";
+        $sql        = "INSERT INTO " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%s, %s, %d, %s, %s, %d)";
         
         // Insert what we can so far...
         $db->query($db->prepare(
@@ -98,7 +99,7 @@ function step1($xml, $file_name)
         // Grab the ID of the last insert. We'll use this to match parents...
         $cat[$count]['old_id']['new_id'] = $db->get_var($db->prepare("SELECT LAST_INSERT_ID()"));
         
-        $sql = "REPLACE INTO " . db_prefix . "pliggimp_temp (pliggimp_setting, pliggimp_old_value, pliggimp_new_value) VALUES(%s, %d, %d)";
+        $sql = "REPLACE INTO " . DB_PREFIX . "pliggimp_temp (pliggimp_setting, pliggimp_old_value, pliggimp_new_value) VALUES(%s, %d, %d)";
         
         $db->query($db->prepare($sql, 'category_id', $cat[$count]['old_id'], $cat[$count]['old_id']['new_id']));
     }
@@ -121,7 +122,7 @@ function step1($xml, $file_name)
             if ($a == $b) {
                     //echo "New id of old id's parent: " . $c2['old_id']['new_id'] . "<br />";
                     
-                    $sql = "UPDATE " . db_prefix . $this_table . " SET category_parent = %d WHERE category_id = %d";
+                    $sql = "UPDATE " . DB_PREFIX . $this_table . " SET category_parent = %d WHERE category_id = %d";
 
                     // Set this parent to the new_id of the old_id's parent...
                     $db->query($db->prepare(
@@ -156,11 +157,11 @@ function get_new_cat_id($old_cat_id)
 {
     global $db;
     
-    $sql = "SELECT pliggimp_new_value FROM " . db_prefix . "pliggimp_temp WHERE pliggimp_setting = %s AND pliggimp_old_value = %d";
+    $sql = "SELECT pliggimp_new_value FROM " . DB_PREFIX . "pliggimp_temp WHERE pliggimp_setting = %s AND pliggimp_old_value = %d";
     
     $new_cat_id = $db->get_var($db->prepare($sql, 'category_id', $old_cat_id));
     
-    if($new_cat_id) { return $new_cat_id; } else { return false; }
+    if ($new_cat_id) { return $new_cat_id; } else { return false; }
 }
 
 
@@ -178,7 +179,7 @@ function pligg_imp_rebuild_cat_tree($parent_id, $left, $this_table)
     $right = $left+1;
     
     // get all children of this node
-    $sql = "SELECT category_id FROM " . db_prefix . $this_table . " WHERE category_id != %d AND category_parent = %d ORDER BY category_order ASC";
+    $sql = "SELECT category_id FROM " . DB_PREFIX . $this_table . " WHERE category_id != %d AND category_parent = %d ORDER BY category_order ASC";
     
     $categories = $db->get_results($db->prepare($sql, $parent_id, $parent_id));
     
@@ -190,7 +191,7 @@ function pligg_imp_rebuild_cat_tree($parent_id, $left, $this_table)
     
     // we've got the left value, and now that we've processed
     // the children of this node we also know the right value
-    $sql = "UPDATE " . db_prefix . $this_table . " SET lft = %d, rgt = %d, category_updateby = %d WHERE category_id = %d";
+    $sql = "UPDATE " . DB_PREFIX . $this_table . " SET lft = %d, rgt = %d, category_updateby = %d WHERE category_id = %d";
     
     $db->query($db->prepare($sql, $left, $right, $current_user->id, $parent_id));
     

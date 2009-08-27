@@ -43,5 +43,10 @@
 	background-color: #f0f0f0;
 }
 
+.show_post_extra_fields ul li {
+	padding-right: 0.4em;
+	display: inline; 
+}
+
 #submit_edit_confirm { width: 100%; text-align: center; }
 #submit_edit_confirm input { width: 10.0em; }

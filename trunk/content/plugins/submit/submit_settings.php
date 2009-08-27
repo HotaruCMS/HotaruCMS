@@ -1,41 +1,40 @@
 <?php
- 
-/* **************************************************************************************************** 
+/**
  *  File: /plugins/submit/submit_settings.php
- *  Purpose: Admin settings for the Submit plugin
+ * Admin settings for the Submit plugin
  *  Notes: This file is part of the Submit plugin. The main file is /plugins/submit/submit.php
- *  License:
  *
- *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
+ * PHP version 5
  *
- *   Hotaru CMS is free software: you can redistribute it and/or modify it under the terms of the 
- *   GNU General Public License as published by the Free Software Foundation, either version 3 of 
- *   the License, or (at your option) any later version.
+ * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation, either version 3 of 
+ * the License, or (at your option) any later version. 
  *
- *   Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
- *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
+ * Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE. 
  *
- *   You should have received a copy of the GNU General Public License along with Hotaru CMS. If not, 
- *   see http://www.gnu.org/licenses/.
- *   
- *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
- *
- **************************************************************************************************** */
+ * You should have received a copy of the GNU General Public License along 
+ * with Hotaru CMS. If not, see http://www.gnu.org/licenses/.
+ * 
+ * @category  Content Management System
+ * @package   HotaruCMS
+ * @author    Nick Ramsay <admin@hotarucms.org>
+ * @copyright Copyright (c) 2009, Hotaru CMS
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * @link      http://www.hotarucms.org/
+ */
  
- /* ******************************************************************** 
- *  Function: sub_settings
- *  Parameters: None
- *  Purpose: Admin settings for the Submit plugin
- *  Notes: ---
- ********************************************************************** */
- 
+ /**
+ * Admin settings for the Submit plugin
+ */
 function sub_settings()
 {
     global $hotaru, $plugin, $cage, $lang;
     
     // If the form has been submitted, go and save the data...
-    if($cage->post->getAlpha('submitted') == 'true') { 
+    if ($cage->post->getAlpha('submitted') == 'true') { 
         sub_save_settings(); 
     }    
     
@@ -55,15 +54,15 @@ function sub_settings()
     $plugin->check_actions('submit_settings_get_values');
     
     //...otherwise set to blank:
-    if(!$enabled) { $enabled = ''; }
-    if(!$author) { $author = ''; }
-    if(!$date) { $date = ''; }
-    if(!$content) { $content = ''; }
-    if(!$content_length) { $content_length = ''; }
-    if(!$summary) { $summary = ''; }
-    if(!$summary_length) { $summary_length = ''; }
+    if (!$enabled) { $enabled = ''; }
+    if (!$author) { $author = ''; }
+    if (!$date) { $date = ''; }
+    if (!$content) { $content = ''; }
+    if (!$content_length) { $content_length = ''; }
+    if (!$summary) { $summary = ''; }
+    if (!$summary_length) { $summary_length = ''; }
     
-    echo "<form name='submit_settings_form' action='" . baseurl . "admin/admin_index.php?page=plugin_settings&amp;plugin=submit' method='post'>\n";
+    echo "<form name='submit_settings_form' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=submit' method='post'>\n";
     
     echo "<p>" . $lang["submit_settings_instructions"] . "</p><br />";
     
@@ -95,19 +94,15 @@ function sub_settings()
 }
 
 
-/* ******************************************************************** 
- *  Function: sub_save_settings
- *  Parameters: None
- *  Purpose: Takes updated Submit settings and saves them in the pluginsettings database table.
- *  Notes: Also updates settings in Post class so we can easily reference them: if($post->use_tags) ... etc.
- ********************************************************************** */
- 
+/**
+ * Save Submit Settings
+ */
 function sub_save_settings() 
 {
     global $cage, $hotaru, $plugin, $post, $lang;
 
     // Enabled
-    if($cage->post->keyExists('enabled')) { 
+    if ($cage->post->keyExists('enabled')) { 
         $enabled = 'checked'; 
         $post->use_submission = true;
     } else { 
@@ -116,7 +111,7 @@ function sub_save_settings()
     }
     
     // Author
-    if($cage->post->keyExists('author')) { 
+    if ($cage->post->keyExists('author')) { 
         $author = 'checked'; 
         $post->use_author = true;
     } else { 
@@ -125,7 +120,7 @@ function sub_save_settings()
     }
     
     // Date
-    if($cage->post->keyExists('date')) { 
+    if ($cage->post->keyExists('date')) { 
         $date = 'checked'; 
         $post->use_date = true;
     } else { 
@@ -134,7 +129,7 @@ function sub_save_settings()
     }
     
     // Description
-    if($cage->post->keyExists('content')) { 
+    if ($cage->post->keyExists('content')) { 
         $content = 'checked'; 
         $post->use_content = true;
     } else { 
@@ -143,15 +138,15 @@ function sub_save_settings()
     }
     
     // Description length
-    if($cage->post->keyExists('content_length')) { 
+    if ($cage->post->keyExists('content_length')) { 
         $content_length = $cage->post->getInt('content_length'); 
-        if(empty($content_length)) { $content_length = $post->post_content_length; }
+        if (empty($content_length)) { $content_length = $post->post_content_length; }
     } else { 
         $content_length = $post->post_content_length; 
     } 
     
     // Summary
-    if($cage->post->keyExists('summary')) { 
+    if ($cage->post->keyExists('summary')) { 
         $summary = 'checked'; 
         $post->use_summary = true;
     } else { 
@@ -160,25 +155,25 @@ function sub_save_settings()
     }
     
     // Summary length
-    if($cage->post->keyExists('summary_length')) { 
+    if ($cage->post->keyExists('summary_length')) { 
         $summary_length = $cage->post->getInt('summary_length'); 
-        if(empty($summary_length)) { $summary_length = $post->post_summary_length; }
+        if (empty($summary_length)) { $summary_length = $post->post_summary_length; }
     } else { 
         $summary_length = $post->post_summary_length; 
     } 
     
     // Posts per page
-    if($cage->post->keyExists('posts_per_page')) { 
+    if ($cage->post->keyExists('posts_per_page')) { 
         $posts_per_page = $cage->post->testInt('posts_per_page'); 
-        if(empty($posts_per_page) || $posts_per_page == 0) { $posts_per_page = $post->$posts_per_page; }
+        if (empty($posts_per_page) || $posts_per_page == 0) { $posts_per_page = $post->$posts_per_page; }
     } else { 
         $posts_per_page = $post->$posts_per_page; 
     } 
     
     // Allowable tags
-    if($cage->post->keyExists('allowable_tags')) { 
+    if ($cage->post->keyExists('allowable_tags')) { 
         $allowable_tags = $cage->post->getRaw('allowable_tags'); 
-        if(empty($allowable_tags)) { $allowable_tags = $post->$allowable_tags; }
+        if (empty($allowable_tags)) { $allowable_tags = $post->$allowable_tags; }
     } else { 
         $allowable_tags = $post->$allowable_tags; 
     }

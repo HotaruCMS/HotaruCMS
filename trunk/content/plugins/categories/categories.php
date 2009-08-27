@@ -6,7 +6,7 @@
  * folder: categories
  * prefix: cts
  * requires: submit 0.1, category_manager 0.1
- * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_class_post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_posts_list_filter, submit_show_post_author_date, submit_is_page_main, navigation_last, admin_sidebar_plugin_settings, admin_plugin_settings
+ * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_class_post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_list_filter, submit_show_post_author_date, submit_is_page_main, navigation_last, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * PHP version 5
  *
@@ -60,10 +60,10 @@ function cts_hotaru_header()
     global $post, $hotaru, $cage, $plugin;
     
     // The categories table is defined 
-    if (!defined('table_categories')) { define("table_categories", db_prefix . "categories"); }
+    if (!defined('TABLE_CATEGORIES')) { define("TABLE_CATEGORIES", DB_PREFIX . "categories"); }
     
     // include language file
-    $plugin->include_language_file('categories');
+    $plugin->include_language('categories');
     
     // Get page title    
     if ($cage->get->keyExists('category'))
@@ -88,10 +88,10 @@ function cts_submit_hotaru_header_1()
     global $post, $plugin;
     
     // The categories table is defined 
-    if (!defined('table_categories')) { define("table_categories", db_prefix . "categories"); }
+    if (!defined('TABLE_CATEGORIES')) { define("TABLE_CATEGORIES", DB_PREFIX . "categories"); }
     
     // include language file
-    $plugin->include_language_file('categories');
+    $plugin->include_language('categories');
     
     $post->post_vars['post_category'] = 1;    // default category ('all').
     $post->post_vars['post_cat_name'] = '';
@@ -113,7 +113,7 @@ function cts_submit_hotaru_header_2()
 {
     global $db, $hotaru, $post, $plugin, $cage;
         
-    if (friendly_urls == "true" && $post->post_id == 0) {
+    if (FRIENDLY_URLS == "true" && $post->post_id == 0) {
         // No post stored in post object, nothing was succesfully read by the Submit plugin        
                 
         // Can't get keys from the url with Inspekt, so must get the whole query string instead.
@@ -127,7 +127,7 @@ function cts_submit_hotaru_header_2()
                 list($key, $value) = explode('=', $pairs[0]);
                 if ($key) {
                     // Using db_prefix because table_categories might not be defined yet (depends on plugin install order)
-                    $sql = "SELECT category_id FROM " . db_prefix . "categories WHERE category_safe_name = %s LIMIT 1";
+                    $sql = "SELECT category_id FROM " . DB_PREFIX . "categories WHERE category_safe_name = %s LIMIT 1";
                     $exists = $db->get_var($db->prepare($sql, $key));        
                     if ($exists && $value) {
                         // Now we know that $key is a category so $value must be the post name. Go get the post_id...
@@ -172,7 +172,7 @@ function cts_submit_class_post_read_post_2()
     
     $post->post_vars['post_category'] = $post_row->post_category;
     
-    $sql = "SELECT category_name, category_safe_name FROM " . table_categories . " WHERE category_id = %d";
+    $sql = "SELECT category_name, category_safe_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
     $cat = $db->get_row($db->prepare($sql, $post->post_vars['post_category']));
     $post->post_vars['post_cat_name'] = urldecode($cat->category_name);
     $post->post_vars['post_cat_safe_name'] = urldecode($cat->category_safe_name);
@@ -186,7 +186,7 @@ function cts_submit_class_post_add_post()
 {
     global $post, $db, $last_insert_id;
     
-    $sql = "UPDATE " . table_posts . " SET post_category = %d WHERE post_id = %d";
+    $sql = "UPDATE " . TABLE_POSTS . " SET post_category = %d WHERE post_id = %d";
     $db->query($db->prepare($sql, $post->post_vars['post_category'], $last_insert_id));
 }
 
@@ -198,7 +198,7 @@ function cts_submit_class_post_update_post()
 {
     global $post, $db;
     
-    $sql = "UPDATE " . table_posts . " SET post_category = %d WHERE post_id = %d";
+    $sql = "UPDATE " . TABLE_POSTS . " SET post_category = %d WHERE post_id = %d";
     $db->query($db->prepare($sql, $post->post_vars['post_category'], $post->post_id));
 }
 
@@ -252,11 +252,11 @@ function cts_submit_form_2_fields()
         echo "<tr>\n";
             echo "<td>" . $lang["submit_form_category"] . ":&nbsp; </td>\n";
             echo "<td><select name='post_category'>\n";
-            $sql = "SELECT category_name FROM " . table_categories . " WHERE category_id = %d";
+            $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
             $category_name = $db->get_var($db->prepare($sql, $category_check));
             if ($category_name == 'all') { $category_name = $lang['submit_form_category_select']; }
             echo "<option value=" . $category_check . ">" . urldecode($category_name) . "</option>\n";
-            $sql = "SELECT category_id, category_name FROM " . table_categories . " ORDER BY category_order ASC";
+            $sql = "SELECT category_id, category_name FROM " . TABLE_CATEGORIES . " ORDER BY category_order ASC";
             $cats = $db->get_results($db->prepare($sql));
             if ($cats) {
                 foreach ($cats as $cat) {
@@ -307,7 +307,7 @@ function cts_submit_form_2_process_submission()
     
     $post->post_vars['post_category'] = $cage->post->getInt('post_category');
     
-    $sql = "SELECT category_name, category_safe_name FROM " . table_categories . " WHERE category_id = %d";
+    $sql = "SELECT category_name, category_safe_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
     $cat = $db->get_row($db->prepare($sql, $post->post_vars['post_category']));
     $post->post_vars['post_cat_name'] = urldecode($cat->category_name);
     $post->post_vars['post_cat_safe_name'] = urldecode($cat->category_safe_name);
@@ -328,9 +328,9 @@ function cts_header_include()
 {
     global $plugin;
     
-    $plugin->include_css_file('categories');
-    $plugin->include_css_file('categories', 'category_bar');
-    $plugin->include_js_file('categories');
+    $plugin->include_css('categories');
+    $plugin->include_css('categories', 'category_bar');
+    $plugin->include_js('categories');
 }
 
 
@@ -344,7 +344,7 @@ function cts_submit_is_page_main()
     global $db, $post, $plugin, $cage, $hotaru;
     
     if ($post->post_vars['is_category_post']) {
-        $hotaru->display_template('post_page', 'submit');
+        $hotaru->display_template('post', 'submit');
         return true;
     } else {
         return false;
@@ -356,13 +356,13 @@ function cts_submit_is_page_main()
  *
  * @return bool
  */
-function cts_submit_posts_list_filter()
+function cts_submit_list_filter()
 {
     global $hotaru, $post, $cage, $filter, $lang, $page_title;
     
     if ($cage->get->keyExists('category')) 
     {
-        if (friendly_urls == "true") 
+        if (FRIENDLY_URLS == "true") 
         {
             $category = $cage->get->noTags('category'); 
             if ($category) { 
@@ -379,7 +379,9 @@ function cts_submit_posts_list_filter()
             }
         }
         
-        $rss .= "<img src='" . baseurl . "content/themes/" . theme . "images/rss_10.png'></a>";
+        $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
+        // Undo the filter that limits results to either 'top' or 'new' (See submit.php -> sub_prepare_list())
+        if(isset($filter['post_status = %s'])) { unset($filter['post_status = %s']); }
         $filter['post_status != %s'] = 'processing';
         $page_title = $lang["submit_page_breadcrumbs_category"] . " &raquo; " . $hotaru->title . $rss;
         
@@ -424,9 +426,9 @@ function sidebar_widget_categories($args)
     $bar = $plugin->plugin_settings('categories', 'categories_bar');
     
     // Only show if the sidebar is enabled
-    if($bar == 'side') {
+    if ($bar == 'side') {
     
-        $sql = "SELECT * FROM " . table_categories . " ORDER BY category_order ASC";
+        $sql = "SELECT * FROM " . TABLE_CATEGORIES . " ORDER BY category_order ASC";
         $the_cats = $db->get_results($db->prepare($sql));
         
         echo "<h2>" . $lang["sidebar_categories"] . "</h2>";
@@ -546,7 +548,7 @@ function cts_admin_sidebar_plugin_settings() {
  * Call the settings function
  */
 function cts_admin_plugin_settings() {
-    require_once(plugins . 'categories/categories_settings.php');
+    require_once(PLUGINS . 'categories/categories_settings.php');
     cts_settings();
     return true;
 }
@@ -567,7 +569,7 @@ function get_cat_safe_name($cat_id)
 {
     global $db;
     
-    $sql = "SELECT category_safe_name FROM " . table_categories . " WHERE category_id = %d";
+    $sql = "SELECT category_safe_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
     $cat_safe_name = $db->get_var($db->prepare($sql, $cat_id));
     return urldecode($cat_safe_name);
 }
@@ -582,7 +584,7 @@ function get_cat_safe_name($cat_id)
 function get_cat_name($cat_id) {
     global $db;
     
-    $sql = "SELECT category_name FROM " . table_categories . " WHERE category_id = %d";
+    $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
     $cat_name = $db->get_var($db->prepare($sql, $cat_id));
     return urldecode($cat_name);
 }
@@ -598,7 +600,7 @@ function get_cat_id($cat_name)
 {
     global $db;
     
-    $sql = "SELECT category_id FROM " . table_categories . " WHERE category_safe_name = %s";
+    $sql = "SELECT category_id FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s";
     $cat_id = $db->get_var($db->prepare($sql, urlencode($cat_name)));
     return $cat_id;
 }
@@ -617,19 +619,16 @@ function cts_navigation_last()
     $bar = $plugin->plugin_settings('categories', 'categories_bar');
     
     // Only show if the menu bar is enabled
-    if($bar == 'menu') {
+    if ($bar == 'menu') {
     
         $output = '';
     
-        $sql    = "SELECT * FROM " . table_categories . " WHERE category_parent = %d AND category_id != %d ORDER BY category_order ASC";
+        $sql    = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d AND category_id != %d ORDER BY category_order ASC";
         $categories = $db->get_results($db->prepare($sql, 1, 1));
-        
-        //$sql    = "SELECT count(*) FROM " . table_categories . " WHERE category_parent = %d AND category_id != %d";
-        //$count  = $db->get_var($db->prepare($sql, 1, 1));
         
         foreach ($categories as $category) {
     
-            if (friendly_urls == "true") { 
+            if (FRIENDLY_URLS == "true") { 
                 $link = $category->category_safe_name; 
             } else {
                 $link = $category->category_id;
@@ -640,10 +639,10 @@ function cts_navigation_last()
             
             if ($parent > 1) 
             {
-                $sql = "SELECT * FROM " . table_categories . " WHERE category_parent = %d ORDER BY category_order ASC";
+                $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d ORDER BY category_order ASC";
                 $children = $db->get_results($db->prepare($sql, $parent));
                 
-                $sql = "SELECT count(*) FROM " . table_categories . " WHERE category_parent = %d";
+                $sql = "SELECT count(*) FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d";
                 $countchildren = $db->get_var($db->prepare($sql, $parent));
                 
                 if ($countchildren) 
@@ -651,7 +650,7 @@ function cts_navigation_last()
                     $output .= "<ul>\n";
                         foreach ($children as $child) 
                         {
-                            if (friendly_urls == "true") { 
+                            if (FRIENDLY_URLS == "true") { 
                                 $link = $child->category_safe_name; 
                             } else {
                                 $link = $child->category_id;

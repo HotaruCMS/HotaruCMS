@@ -65,7 +65,7 @@ class Hotaru
     {
         global $db;
         
-        $sql = "SELECT * FROM " . table_settings;
+        $sql = "SELECT * FROM " . TABLE_SETTINGS;
         $results = $db->get_results($db->prepare($sql));
         if ($results) { return $results; } else { return false; }
     }
@@ -128,7 +128,7 @@ class Hotaru
     
     
     /**
-     * Formats page name, e.g.'posts_list' into 'Posts list'
+     * Formats page name, e.g.'page_name' into 'Page name'
      *
      * @param string $page page name
      */
@@ -143,7 +143,7 @@ class Hotaru
     
     
     /**
-     * Formats page name, e.g.'posts_list' into 'Posts List'
+     * Formats page name, e.g.'page_name' into 'Page Name'
      *
      * @param string $page page name
      */
@@ -163,33 +163,40 @@ class Hotaru
      *
      * @param string $page page name
      * @param string $plugin optional plugin name
+     * @param bool $include_once true or false
      */
-    function display_template($page = '', $plugin = '')
+    function display_template($page = '', $plugin = '', $include_once = true)
     {
         $page = $page . '.php';
                 
-        /* First check if there's a specified plugin for the file and load 
-           the template from the plugin folder if it's there. */
-        if ($plugin != '') {
-            if (file_exists(plugins .  $plugin . '/templates/' . $page)) {
-                if ($plugin == 'vote') {
+        /* 
+            1. Check the custom theme
+            2. Check the default theme
+            3. Check the plugin folder
+            4. Show the 404 Not Found page
+        */
+        if (file_exists(THEMES . THEME . $page))
+        {
+            include_once(THEMES . THEME . $page);
+        } 
+        elseif (file_exists(THEMES . 'default/' . $page))
+        {
+            include_once(THEMES . 'default/' . $page);
+        }
+        elseif ($plugin != '' && file_exists(PLUGINS .  $plugin . '/templates/' . $page))
+        {
+                if (!$include_once) {
                     // Special case, do not restrict to include once.
-                    include(plugins . $plugin . '/templates/' . $page);
+                    include(PLUGINS . $plugin . '/templates/' . $page);
                 } else {
-                    include_once(plugins . $plugin . '/templates/' . $page);
+                    include_once(PLUGINS . $plugin . '/templates/' . $page);
                 }
                 return true;
                 die();
-            }
         }
-        
-        // Check the custom theme then the default theme...        
-        if (file_exists(themes . theme . $page)) {
-            include_once(themes . theme . $page);
-        } elseif (file_exists(themes . 'default/' . $page)) {
-            include_once(themes . 'default/' . $page);
-        } else {
-            include_once(themes . '404.php');
+        else 
+        {
+            include_once(THEMES . '404.php');
         }
     }
     
@@ -232,12 +239,12 @@ class Hotaru
      */
     function new_simplepie($feed='', $cache=true, $cache_duration=10)
     {
-        include_once(includes . "SimplePie/simplepie.inc");
+        include_once(INCLUDES . "SimplePie/simplepie.inc");
         
         if ($feed != '') {
             $sp = new SimplePie();
             $sp->set_feed_url($feed);
-            $sp->set_cache_location(includes . "SimplePie/cache/");
+            $sp->set_cache_location(CACHE . "rss_cache/");
             $sp->set_cache_duration($cache_duration);
             $sp->enable_cache($cache);
             $sp->handle_content_type();
@@ -304,5 +311,148 @@ class Hotaru
             }
         }
     }
+    
+    
+    /**
+     * Combine Included CSS & JSS files
+     *
+     * @param string $type either 'css' or 'js'
+     * @return int version number or echo output to cache file
+     * @link http://www.ejeliot.com/blog/72 Based on work by Ed Eliot
+     */
+     function combine_includes($type = 'css', $version = 0)
+     {
+        global $cage, $plugin;
+        
+        if ($this->page_type == 'admin') {
+            $plugin->check_actions('admin_header_include');
+            $prefix = 'hotaru_admin_';
+        } else {
+            $plugin->check_actions('header_include');
+            $prefix = 'hotaru_';
+        }
+        
+        $cache_length = 31356000;   // about one year
+        $cache = CACHE . 'css_js_cache/';
+        
+        if($type == 'css') { 
+            $content_type = 'text/css';
+            $includes = $plugin->include_css;
+        } else { 
+            $type = 'js'; 
+            $content_type = 'text/javascript';
+            $includes = $plugin->include_js;
+        }
+        
+        if(empty($includes)) { return false; }
+        
+         /*
+            if etag parameter is present then the script is being called directly, otherwise we're including it in 
+            another script with require or include. If calling directly we return code othewise we return the etag 
+            representing the latest files
+        */
+        if ($version > 0) {
+        
+            $iETag = $version;
+            $sLastModified = gmdate('D, d M Y H:i:s', $iETag).' GMT';
+            
+            // see if the user has an updated copy in browser cache
+            if (
+                ($cage->server->keyExists('HTTP_IF_MODIFIED_SINCE') && $cage->server->testDate('HTTP_IF_MODIFIED_SINCE') == $sLastModified) ||
+                ($cage->server->keyExists('HTTP_IF_NONE_MATCH') && $cage->server->testint('HTTP_IF_NONE_MATCH') == $iETag)
+            ) {
+                header("{$cage->server->getRaw('SERVER_PROTOCOL')} 304 Not Modified");
+                exit;
+            }
+        
+            // create a directory for storing current and archive versions
+            if (!is_dir($cache)) {
+                mkdir($cache);
+            }
+               
+            // get code from archive folder if it exists, otherwise grab latest files, merge and save in archive folder
+            if (file_exists($cache . $prefix . $type . '_' . $iETag . '.cache')) {
+                $sCode = file_get_contents($cache . $prefix . $type . '_' . $iETag . '.cache');
+            } else {
+                // get and merge code
+                $sCode = '';
+                $aLastModifieds = array();
+        
+                foreach ($includes as $sFile) {
+                    $aLastModifieds[] = filemtime($sFile);
+                    $sCode .= file_get_contents($sFile);
+                }
+                // sort dates, newest first
+                rsort($aLastModifieds);
+             
+                if ($iETag == $aLastModifieds[0]) { // check for valid etag, we don't want invalid requests to fill up archive folder
+                    $oFile = fopen($cache . $prefix . $type . '_' . $iETag . '.cache', 'w');
+                    if (flock($oFile, LOCK_EX)) {
+                        fwrite($oFile, $sCode);
+                        flock($oFile, LOCK_UN);
+                    }
+                    fclose($oFile);
+                } else {
+                    // archive file no longer exists or invalid etag specified
+                    header("{$cage->server->getRaw('SERVER_PROTOCOL')} 404 Not Found");
+                    exit;
+                }
+        
+            }
+        
+            // send HTTP headers to ensure aggressive caching
+            header('Expires: '.gmdate('D, d M Y H:i:s', time() + $cache_length).' GMT'); // 1 year from now
+            header('Content-Type: ' . $content_type);
+            header('Content-Length: '.strlen($sCode));
+            header("Last-Modified: $sLastModified");
+            header("ETag: $iETag");
+            header('Cache-Control: max-age=' . $cache_length);
+        
+          // output merged code
+          echo $sCode;
+          
+        } else {
+        
+            // get file last modified dates
+            $aLastModifieds = array();
+            foreach ($includes as $sFile) {
+                $aLastModifieds[] = filemtime($sFile);
+            }
+            // sort dates, newest first
+            rsort($aLastModifieds);
+            
+            // output latest timestamp
+            return $aLastModifieds[0];
+        
+        }
+     }
+        
+
+    /**
+     * Included combined files
+     *
+     * @param int $version_js 
+     * @param int $version_css 
+     * @param string $page e.g. admin_settings 
+     * @param string $plugin e.g. category_manager
+     */
+     function include_combined($version_js = 0, $version_css = 0, $page = '', $folder = '')
+     {
+        if ($this->page_type == 'admin') { $index = 'admin/admin_index'; } else { $index = 'index'; }
+        if ($page && $folder) { 
+            $page = 'page=' . $page; 
+            $folder = '&plugin=' . $folder . "&";
+        }
+        
+        if ($version_js > 0) {
+            echo "<script type='text/javascript' src='" . BASEURL . $index . ".php?" . $page . "&" . $folder . "combine=1&type=js&version=" . $version_js . "'></script>\n";
+        }
+        
+        if ($version_css > 0) {
+            echo "<link rel='stylesheet' href='" . BASEURL . $index . ".php?" . $page . "&" . $folder . "combine=1&type=css&version=" . $version_css . "' type='text/css'>\n";
+        }
+
+     }
+     
 }
 ?>

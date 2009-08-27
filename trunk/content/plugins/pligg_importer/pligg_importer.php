@@ -6,7 +6,7 @@
  * folder: pligg_importer
  * prefix: pliggimp
  * requires: category_manager 0.1, categories 0.1, submit 0.1, tags 0.1, users 0.1, vote 0.1
- * hooks: install_plugin, admin_plugin_settings, admin_sidebar_plugin_settings, admin_header_include
+ * hooks: admin_plugin_settings, admin_sidebar_plugin_settings, admin_header_include
  *
  * PHP version 5
  *
@@ -32,32 +32,6 @@
 
 
 /**
- * Install the Pligg Importer plugin
- */
-function pliggimp_install_plugin()
-{
-    global $db;
-    
-    // PLIGGIMP_TEMP TABLE - stores mappings between old and new data.
-    
-    // Drop and rebuild the table if it already exists
-    $sql = 'DROP TABLE IF EXISTS `' . db_prefix . 'pliggimp_temp`;';
-    $db->query($sql);
-    
-    $sql = "CREATE TABLE `" . db_prefix . "pliggimp_temp` (
-      `pliggimp_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-      `pliggimp_setting` varchar(64) NOT NULL,
-      `pliggimp_old_value` int(20) NOT NULL DEFAULT 0,
-      `pliggimp_new_value` int(20) NOT NULL DEFAULT 0,
-      `pliggimp_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-      `pliggimp_updateby` int(20) NOT NULL DEFAULT 0
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Pligg Importer Temporary Data';";
-
-    $db->query($sql);
-}
-
-
-/**
  * Link to settings page in the Admin sidebar
  */
 function pliggimp_admin_sidebar_plugin_settings()
@@ -73,10 +47,7 @@ function pliggimp_admin_header_include()
 {
     global $admin, $plugin;
     
-    if ($admin->is_settings_page('pligg_importer'))
-    {
-        $plugin->include_css_file('pligg_importer');
-    }
+    $plugin->include_css('pligg_importer');
 }
 
 
@@ -87,10 +58,11 @@ function pliggimp_admin_plugin_settings()
 {
     global $cage, $status, $plugin, $cat;
     
-    $pliggimp_path = plugins . "/pligg_importer/";
+    $pliggimp_path = PLUGINS . "/pligg_importer/";
     
     include_once($pliggimp_path . "pliggimp_categories.php");
     include_once($pliggimp_path . "pliggimp_links.php");
+    include_once($pliggimp_path . "pliggimp_comments.php");
     include_once($pliggimp_path . "pliggimp_tags.php");
     include_once($pliggimp_path . "pliggimp_users.php");
     include_once($pliggimp_path . "pliggimp_votes.php");
@@ -102,16 +74,16 @@ function pliggimp_admin_plugin_settings()
         $table = $cage->post->testAlpha('table');
         pliggimp_upload_result($file_name, $table);
     } 
-    elseif ($cage->get->keyExists('wizard'))
+    elseif ($cage->get->keyExists('cleaner'))
     {
-        character_encoding_wizard();
+        character_cleaner();
     }
     elseif ($cage->get->keyExists('step'))
     {
         $step = $cage->get->testInt('step');
-        $file_name = $cage->get->getmixedString2('file_name');
+        $file_name = $cage->get->getMixedString2('file_name');
         
-        if(!isset($file_name) || !$file_name) { 
+        if (!isset($file_name) || !$file_name) { 
             // Go to page 
             $function_name = "pliggimp_page_" . $step; 
             $function_name();
@@ -131,7 +103,8 @@ function pliggimp_admin_plugin_settings()
 /**
  * Page 1 - welcome message, instructions and checks plugins are active
  */
-function pliggimp_page_welcome() {
+function pliggimp_page_welcome()
+{
     global $plugin;
     
     // FIRST PAGE WITH UPLOAD FORM
@@ -150,6 +123,7 @@ function pliggimp_page_welcome() {
     echo "<li>Category Manager</li>";
     echo "<li>Categories</li>";
     echo "<li>Submit</li>";
+    echo "<li>Comments</li>";
     echo "<li>Tags</li>";
     echo "<li>Users</li>";
     echo "<li>Vote</li>";
@@ -162,6 +136,7 @@ function pliggimp_page_welcome() {
     echo "<li class='list_header'>XML files from Pligg</li>";
     echo "<li>categories</li>";
     echo "<li>links</li>";
+    echo "<li>comments</li>";
     echo "<li>tags</li>";
     echo "<li>users</li>";
     echo "<li>votes</li>";
@@ -186,6 +161,10 @@ function pliggimp_page_welcome() {
     
     if (!$plugin->plugin_active('submit')) {
         $inactive .= "<li style='color: red;'><b>Submit plugin is inactive</b></li>"; 
+        $error = 1;
+    }
+    if (!$plugin->plugin_active('comments')) {
+        $inactive .= "<li style='color: red;'><b>Comments plugin is inactive</b></li>"; 
         $error = 1;
     }
     if (!$plugin->plugin_active('category_manager')) {
@@ -220,9 +199,9 @@ function pliggimp_page_welcome() {
     }
     
     echo "";
-    echo "<h2>Character Encoding Wizard</h2><br />";
-    echo "The Character Encoding Wizard should be used <b><i>after</i></b> importing a Pligg database and <b><i>only</i></b> if you are having trouble with strange characters in posts. What it does is take the post titles and content out of the database in latin format, and then reinserts it in UTF-8 format. <b>Note: </b> This script may take some time to run depending on the size of your database.";
-    echo "<br /><a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'wizard'=>1), 'admin') . "'>Run the Character Encoding Wizard</a>";
+    echo "<h2>Character Cleaner</h2><br />";
+    echo "The Character Cleaner should be used <b><i>after</i></b> importing a Pligg database and <b><i>only</i></b> if you are having trouble with strange characters in posts. What it does is simply strip common problem characters from post titles and content. <b>Note: </b> This script may take some time to run depending on the size of your database.";
+    echo "<br /><a class='next' href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer', 'cleaner'=>1), 'admin') . "'>Run the Character Cleaner</a>";
     
     echo "</div> <!-- close pliggimp div -->";
 }
@@ -230,6 +209,9 @@ function pliggimp_page_welcome() {
 
 /**
  * Show the result of the file upload and offer link to continue
+ *
+ * @param str $file_name
+ * @param str $table table name
  */
 function pliggimp_upload_result($file_name, $table)
 {
@@ -243,14 +225,17 @@ function pliggimp_upload_result($file_name, $table)
             case "Links":
                 $step = 2;
                 break;
-            case "Tags":
+            case "Comments":
                 $step = 3;
                 break;
-            case "Users":
+            case "Tags":
                 $step = 4;
                 break;
-            case "Votes":
+            case "Users":
                 $step = 5;
+                break;
+            case "Votes":
+                $step = 6;
                 break;
             default:
                 $step = 0;
@@ -277,7 +262,8 @@ function pliggimp_upload_result($file_name, $table)
  *
  * @return string|false
  */
-function pliggimp_save_uploaded_file() {
+function pliggimp_save_uploaded_file()
+{
     global $cage, $hotaru, $status;
     
     /* *****************************
@@ -294,7 +280,7 @@ function pliggimp_save_uploaded_file() {
     $file_type = $cage->files->testPage('/file/type');
     $file_size = $cage->files->testInt('/file/size');
     $file_error = $cage->files->testInt('/file/error');
-    $destination = plugins . "pligg_importer/uploads/";
+    $destination = PLUGINS . "pligg_importer/uploads/";
     
     if ($file_type == "text/xml" && $file_size < $size_limit)
     {
@@ -339,18 +325,22 @@ function pliggimp_save_uploaded_file() {
 
 /**
  * Import data into the database from an XML file
+ *
+ * @param int $step
+ * @param str $file_name
  */
 function pliggimp_process_file($step = 0, $file_name = '')
 {
     global $cage, $current_user, $db;
     
-    $uploads_folder = plugins . "pligg_importer/uploads/";
+    $uploads_folder = PLUGINS . "pligg_importer/uploads/";
     $xml = simplexml_load_file($uploads_folder . $file_name);
 
     echo "<h2>Importing data from <i>" . $xml->getName() . "</i></h2>";
         
     switch($step) {
         case 1:
+            create_temp_table();
             step1($xml, $file_name);
             break;
         case 2:
@@ -365,6 +355,9 @@ function pliggimp_process_file($step = 0, $file_name = '')
         case 5:
             step5($xml, $file_name);
             break;
+        case 6:
+            step6($xml, $file_name);
+            break;
         default:
             break;
     }
@@ -373,19 +366,45 @@ function pliggimp_process_file($step = 0, $file_name = '')
 
 }
 
+
+/**
+ * Create a temporary table
+ */
+function create_temp_table()
+{
+    global $db;
+    
+    // PLIGGIMP_TEMP TABLE - stores mappings between old and new data.
+    
+    // Drop and rebuild the table if it already exists
+    $sql = 'DROP TABLE IF EXISTS `' . DB_PREFIX . 'pliggimp_temp`;';
+    $db->query($sql);
+    
+    $sql = "CREATE TABLE `" . DB_PREFIX . "pliggimp_temp` (
+      `pliggimp_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+      `pliggimp_setting` varchar(64) NOT NULL,
+      `pliggimp_old_value` int(20) NOT NULL DEFAULT 0,
+      `pliggimp_new_value` int(20) NOT NULL DEFAULT 0,
+      `pliggimp_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      `pliggimp_updateby` int(20) NOT NULL DEFAULT 0
+    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Pligg Importer Temporary Data';";
+
+    $db->query($sql);
+}
+    
 /**
  * Import complete
  */
-function pliggimp_page_6()
+function pliggimp_page_7()
 {
     global $hotaru, $db, $admin;
     
     // Drop the pliggimp_temp table...
-    $sql = 'DROP TABLE IF EXISTS `' . db_prefix . 'pliggimp_temp`;';
+    $sql = 'DROP TABLE IF EXISTS `' . DB_PREFIX . 'pliggimp_temp`;';
     $db->query($sql);
     
     // Delete the uploaded XML files
-    $admin->delete_files(plugins . 'pligg_importer/uploads/');
+    $admin->delete_files(PLUGINS . 'pligg_importer/uploads/');
     
     // Import Complete
     
@@ -403,36 +422,38 @@ function pliggimp_page_6()
 /**
  * Corrects botched utf-8 content
  */
-function character_encoding_wizard()
+function character_cleaner()
 {
     global $db, $hotaru;
     
-    // Set connection as latin
-    $db->query("SET NAMES 'latin1'");
-    
-    $sql = "SELECT post_id, post_title, post_content FROM " . table_posts;
+    $sql = "SELECT post_id, post_title, post_content FROM " . TABLE_POSTS;
     $content = $db->get_results($db->prepare($sql));
-       
-    // Set connection back to utf-8
-    $db->query("SET NAMES 'utf8'");
-    
+           
     if ($content) {
         foreach ($content as $item) {
-            $item->post_title = fix_encoding(urldecode($item->post_title));
-            $item->post_content = fix_encoding(urldecode($item->post_content));
-            
-            echo "<pre>";
-            print_r($item);
-            echo "</pre>";
-            
-            $sql = "UPDATE " . table_posts . " SET post_title = %s, post_content = %s WHERE post_id = %d";
+            $item->post_title = strip_foreign_characters(urldecode($item->post_title));
+            $item->post_content = strip_foreign_characters(urldecode($item->post_content));
+                        
+            $sql = "UPDATE " . TABLE_POSTS . " SET post_title = %s, post_content = %s WHERE post_id = %d";
             $db->query($db->prepare($sql, urlencode($item->post_title), urlencode($item->post_content), $item->post_id));
         }
-        
-        $hotaru->message = "Post titles and descriptions updated";
-        $hotaru->message_type = "green";
-        $hotaru->show_message();
     }
+    
+    $sql = "SELECT comment_id, comment_content FROM " . TABLE_COMMENTS;
+    $content = $db->get_results($db->prepare($sql));
+           
+    if ($content) {
+        foreach ($content as $item) {
+            $item->comment_content = strip_foreign_characters(urldecode($item->comment_content));
+                        
+            $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_content = %s WHERE comment_id = %d";
+            $db->query($db->prepare($sql, urlencode($item->comment_content), $item->comment_id));
+        }
+    }
+    
+    $hotaru->message = "Post titles and descriptions updated";
+    $hotaru->message_type = "green";
+    $hotaru->show_message();
 }
 
 ?>

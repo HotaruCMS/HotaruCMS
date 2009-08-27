@@ -30,41 +30,54 @@ class Admin
     var $sidebar = true;
     
     /**
-     *  Function: display_admin_template
-     *  Parameters: page name (filename without.php)
-     *  Purpose: First looks in the user's chosen admin theme directory, if not there, gets the file from the default admin theme.
-
+     * Display admin template
+     *
+     * @param string $page - page name (filename without.php)
+     * @param string $plugin - plugin folder name
      */
     function display_admin_template($page = '', $plugin = '')
     {
-
         $page = $page . '.php';
-        
-        /* First check if there's a specified plugin for the file and load 
-           the template from the plugin folder if it's there. */
-        if ($plugin != '') {
-            if (file_exists(plugins .  $plugin . '/templates/' . $page)) {
-                include_once(plugins . $plugin . '/templates/' . $page);
-                return;
-            }
+                
+        /* 
+            1. Check the custom admin theme
+            2. Check the default admin theme
+            3. Check the plugin folder
+            4. Show the 404 Not Found page
+        */
+        if (file_exists(ADMIN_THEMES . ADMIN_THEME . $page))
+        {
+            include_once(ADMIN_THEMES . ADMIN_THEME . $page);
+        } 
+        elseif (file_exists(ADMIN_THEMES . 'admin_default/' . $page))
+        {
+            include_once(ADMIN_THEMES . 'admin_default/' . $page);
         }
-        
-        // Check the custom theme then the default theme...        
-        if (file_exists(admin_themes . admin_theme . $page)) {
-            include_once(admin_themes . admin_theme . $page);
-        } elseif (file_exists(admin_themes . 'admin_default/' . $page)) {
-            include_once(admin_themes . 'admin_default/' . $page);
-        } else {
-            include_once(admin_themes . '404.php');
+        elseif ($plugin != '' && file_exists(PLUGINS .  $plugin . '/templates/' . $page))
+        {
+                if ($plugin == 'vote') {
+                    // Special case, do not restrict to include once.
+                    include(PLUGINS . $plugin . '/templates/' . $page);
+                } else {
+                    include_once(PLUGINS . $plugin . '/templates/' . $page);
+                }
+                return true;
+                die();
+        }
+        else 
+        {
+            include_once(ADMIN_THEMES . '404.php');
         }
     }
     
     
     /**
-     *  Function: is_settings_page
-     *  Parameters: a plugin folder name
-     *  Purpose: Checks to see if the Admin settings page we are looking at  
-     *           matches the plugin passed to this function. 
+     * Check to see if the Admin settings page we are looking at  
+     * matches the plugin passed to this function.
+     *
+     * @param string $folder - plugin folder
+     * @return bool
+     *
      *  Notes: This is used in "admin_header_include" so we only include the css, 
      *         javascript etc. for the plugin we're trying to change settings for.
      *  Usage: $hotaru->is_settings_page('login') returns true if 
@@ -82,10 +95,9 @@ class Admin
     }
         
     /**
-     *  Function: check_admin_announcements
-     *  Parameters: --- 
-     *  Purpose: Returns an announcement for display at the top of Admin.
-
+     * Returns an announcement for display at the top of Admin
+     *
+     * @return array|false - array of announcements
      */
     function check_admin_announcements()
     {
@@ -96,13 +108,13 @@ class Admin
         $announcements = array();
         
         // 1. Check if install file has been deleted
-        $filename = install . 'install.php';
+        $filename = INSTALL . 'install.php';
         if (file_exists($filename)) {
             array_push($announcements, $lang['admin_announcement_delete_install']);
         } 
         
         // 2. Please enter a site email address
-        if (site_email == "admin@hotarucms.org") {
+        if (SITE_EMAIL == "admin@hotarucms.org") {
             array_push($announcements, $lang['admin_announcement_change_site_email']);    
         } 
         
@@ -120,58 +132,59 @@ class Admin
 
 
     /**
-     *  Function: get_admin_setting
-     *  Parameters: Setting name
-     *  Purpose: Returns the value for a given setting
-
+     * Returns the value for a given setting
+     *
+     * @param string $setting
+     * @return mixed|false
      */
     function get_admin_setting($setting = '')
     {
         global $db;
         
-        $sql = "SELECT settings_value FROM " . table_settings . " WHERE (settings_name = %s)";
+        $sql = "SELECT settings_value FROM " . TABLE_SETTINGS . " WHERE (settings_name = %s)";
         $value = $db->get_var($db->prepare($sql, $setting));
         if ($value) { return $value; } else { return false; }
     }
     
 
     /**
-     *  Function: get_all_admin_settings
-     *  Parameters: None
-     *  Purpose: Returns all setting-value pairs
-
+     * Returns all setting-value pairs
+     *
+     * @return array|false
      */
     function get_all_admin_settings()
     {
         global $db;
         
-        $sql = "SELECT * FROM " . table_settings;
+        $sql = "SELECT * FROM " . TABLE_SETTINGS;
         $results = $db->get_results($db->prepare($sql));
         if ($results) { return $results; } else { return false; }
     }
     
     
     /**
-     *  Function: admin_setting_exists
-     *  Parameters: Setting name
-     *  Purpose: Determines if a setting already exists
-     *  Notes: The actual value is ignored     */    
+     * Determine if a setting already exists
+     *
+     * Note: The actual value is ignored
+     *
+     * @param string $setting
+     * @return mixed|false
+     */
     function admin_setting_exists($setting = '')
     {
         global $db;
         
-        $sql = "SELECT settings_name FROM " . table_settings . " WHERE (settings_name = %s)";
+        $sql = "SELECT settings_name FROM " . TABLE_SETTINGS . " WHERE (settings_name = %s)";
         $returned_setting = $db->get_var($db->prepare($sql, $setting));
         if ($returned_setting) { return $returned_setting; } else { return false; }
     }    
     
     /**
-     *  Function: admin_setting_update
-     *  Parameters: Setting to update, and new value
-     *  Purpose: Updates an admin setting
-
+     * Update an admin setting
+     *
+     * @param string $setting
+     * @param string $value
      */
-    
     function admin_setting_update($setting = '', $value = '')
     {
         global $db, $current_user;
@@ -179,41 +192,39 @@ class Admin
         $exists = $this->admin_setting_exists($setting);
         
         if (!$exists) {
-            $sql = "INSERT INTO " . table_settings . " (settings_name, settings_value, settings_updateby) VALUES (%s, %s, %d)";
+            $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_updateby) VALUES (%s, %s, %d)";
             $db->query($db->prepare($sql, $setting, $value, $current_user->id));
         } else {
-            $sql = "UPDATE " . table_settings . " SET settings_name = %s, settings_value = %s, settings_updateby = %d WHERE (settings_name = %s)";
+            $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_name = %s, settings_value = %s, settings_updateby = %d WHERE (settings_name = %s)";
             $db->query($db->prepare($sql, $setting, $value, $current_user->id, $setting));
         }
     }
 
 
     /**
-     *  Function: admin_setting_remove
-     *  Parameters: Setting name
-     *  Purpose: Deletes rows from settings that match that setting
+     * Delete rows from settings that match the given setting
+     *
+     * @param string $setting
      */    
     function admin_settings_remove($setting = '')
     {
         global $db;
         
-        $sql = "DELETE FROM " . table_settings . " WHERE admin_setting = %s";
+        $sql = "DELETE FROM " . TABLE_SETTINGS . " WHERE admin_setting = %s";
         $db->query($db->prepare($sql, $setting));
     }
     
     
     /**
-     *  Function: clear_cache
-     *  Parameters: cache folder name in the 3rd party directory
-     *  Purpose: Calls the delete_files function, then displays a message.
-
+     * Calls the delete_files function, then displays a message.
+     *
+     * @param string $folder - path to the cache folder
      */
-
     function clear_cache($folder)
     {
         global $hotaru, $lang;
         
-        $success = $this->delete_files(includes . $folder . '/cache');
+        $success = $this->delete_files(CACHE . $folder);
         if ($success) {
             $hotaru->message = $lang['admin_maintenance_clear_cache_success'];
             $hotaru->message_type = 'green';
@@ -226,9 +237,10 @@ class Admin
 
 
     /**
-     *  Function: delete_files
-     *  Parameters: Path to directory 
-     *  Purpose: Deletes all files in the specified directory except placeholder.txt
+     * Delete all files in the specified directory except placeholder.txt
+     *
+     * @param string $dir - path to the cache folder
+     * @return bool
      */    
     function delete_files($dir)
     {
@@ -251,9 +263,8 @@ class Admin
     
     
     /**
-     *  Function: settings
-     *  Parameters: None
-     *  Purpose: Processes the settings form.     */    
+     * Process the settings form
+    */    
     function settings()
     {
         global $hotaru, $cage, $lang;

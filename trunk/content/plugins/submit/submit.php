@@ -5,7 +5,7 @@
  * version: 0.2
  * folder: submit
  * prefix: sub
- * hooks: hotaru_header, header_include, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: hotaru_header, header_include, header_include_raw, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  * PHP version 5
  *
@@ -32,53 +32,48 @@
 return false; die(); // die on direct access.
 
 
-/* ******************************************************************** 
- *  Function: sub_upgrade_plugin
- *  Parameters: None
- *  Purpose: If it doesn't already exist, add a post_domain field to posts table.
- *  Notes: ---
- ********************************************************************** */
- 
-function sub_upgrade_plugin() {
+/**
+ * If it doesn't already exist, add a post_domain field to posts table.
+ */
+function sub_upgrade_plugin()
+{
     global $db, $plugin, $post;
     
     // Create a new table column called "post_tags" if it doesn't already exist
     $exists = $db->column_exists('posts', 'post_domain');
     if (!$exists) {
-        $db->query("ALTER TABLE " . table_posts . " ADD post_domain varchar(255) NULL AFTER post_orig_url");
-        $db->query("ALTER TABLE " . table_posts . " ADD FULLTEXT (post_domain)"); // Make it fulltext searchable
+        $db->query("ALTER TABLE " . TABLE_POSTS . " ADD post_domain varchar(255) NULL AFTER post_orig_url");
+        $db->query("ALTER TABLE " . TABLE_POSTS . " ADD FULLTEXT (post_domain)"); // Make it fulltext searchable
     } 
 }
     
     
-/* ******************************************************************** 
- *  Function: sub_install_plugin
- *  Parameters: None
- *  Purpose: If they don't already exist, posts and postmeta tables are created
- *  Notes: Happens when the plugin is installed. The tables are never deleted.
- ********************************************************************** */
- 
-function sub_install_plugin() {
+/**
+ * If they don't already exist, create "posts" and "postmeta" tables
+ */
+function sub_install_plugin()
+{
     global $db, $plugin, $post;
     
     // Create a new empty table called "posts"
     $exists = $db->table_exists('posts');
     if (!$exists) {
         //echo "table doesn't exist. Stopping before creation."; exit;
-        $sql = "CREATE TABLE `" . db_prefix . "posts` (
+        $sql = "CREATE TABLE `" . DB_PREFIX . "posts` (
           `post_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          `post_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
           `post_author` int(20) NOT NULL DEFAULT 0,
           `post_category` int(20) NOT NULL DEFAULT 1,
           `post_status` varchar(32) NOT NULL DEFAULT 'processing',
-          `post_date` timestamp NULL,
+          `post_date` timestamp NOT NULL,
           `post_title` varchar(255) NULL, 
           `post_orig_url` varchar(255) NULL, 
           `post_domain` varchar(255) NULL, 
           `post_url` varchar(255) NULL, 
           `post_content` text NULL,
           `post_tags` text NULL,
-          `post_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-           `post_updateby` int(20) NOT NULL DEFAULT 0, 
+          `post_subscribe` tinyint(1) NOT NULL DEFAULT '0',
+          `post_updateby` int(20) NOT NULL DEFAULT 0, 
           FULLTEXT (`post_title`, `post_domain`, `post_url`, `post_content`, `post_tags`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Story Posts';";
         $db->query($sql); 
@@ -88,12 +83,12 @@ function sub_install_plugin() {
     $exists = $db->table_exists('postmeta');
     if (!$exists) {
         //echo "table doesn't exist. Stopping before creation."; exit;
-        $sql = "CREATE TABLE `" . db_prefix . "postmeta` (
+        $sql = "CREATE TABLE `" . DB_PREFIX . "postmeta` (
           `postmeta_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          `postmeta_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
           `postmeta_postid` int(20) NOT NULL DEFAULT 0,
           `postmeta_key` varchar(255) NULL,
           `postmeta_value` text NULL,
-          `postmeta_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
            `postmeta_updateby` int(20) NOT NULL DEFAULT 0, 
           INDEX  (`postmeta_postid`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Post Meta';";
@@ -113,33 +108,30 @@ function sub_install_plugin() {
     
     // Include language file. Also included in hotaru_header, but needed here so 
     // that the link in the Admin sidebar shows immediately after installation.
-    $plugin->include_language_file('submit');    
+    $plugin->include_language('submit');    
     
 }
 
 
-/* ******************************************************************** 
- *  Function: sub_hotaru_header
- *  Parameters: None
- *  Purpose: Defines global "table_posts" and "table_postmeta" constants for referring to the db tables
- *  Notes: ---
- ********************************************************************** */
- 
-function sub_hotaru_header() {
+/**
+ * Define global "table_posts" and "table_postmeta" constants for referring to the db tables
+ */
+function sub_hotaru_header()
+{
     global $hotaru, $lang, $cage, $plugin, $post;
     
-    if (!defined('table_posts')) { define("table_posts", db_prefix . 'posts'); }
-    if (!defined('table_postmeta')) { define("table_postmeta", db_prefix . 'postmeta'); }
+    if (!defined('TABLE_POSTS')) { define("TABLE_POSTS", DB_PREFIX . 'posts'); }
+    if (!defined('TABLE_POSTMETA')) { define("TABLE_POSTMETA", DB_PREFIX . 'postmeta'); }
     
     //Include HTMLPurifier which we'll use on post_content
-    $cage->post->loadHTMLPurifier(includes . 'HTMLPurifier/HTMLPurifier.standalone.php');
+    $cage->post->loadHTMLPurifier(INCLUDES . 'HTMLPurifier/HTMLPurifier.standalone.php');
 
     // include language file
-    $plugin->include_language_file('submit');
+    $plugin->include_language('submit');
     
-    require_once(plugins . 'submit/class.post.php');
-    require_once(includes . 'Paginated/Paginated.php');
-    require_once(includes . 'Paginated/DoubleBarLayout.php');
+    require_once(PLUGINS . 'submit/class.post.php');
+    require_once(INCLUDES . 'Paginated/Paginated.php');
+    require_once(INCLUDES . 'Paginated/DoubleBarLayout.php');
         
     $post = new Post();
     
@@ -169,14 +161,11 @@ function sub_hotaru_header() {
 }
 
 
-/* ******************************************************************** 
- *  Function: sub_navigation
- *  Parameters: None
- *  Purpose: Adds a "submit a story" link to the navigation bar
- *  Notes: 
- ********************************************************************** */
-
-function sub_navigation() {    
+/**
+ * Add a "submit a story" link to the navigation bar
+ */
+function sub_navigation()
+{    
     global $current_user, $lang, $hotaru;
     
     if ($current_user->logged_in) {
@@ -186,17 +175,24 @@ function sub_navigation() {
 }
 
 
-/* ******************************************************************** 
- *  Function: sub_header_include
- *  Parameters: None
- *  Purpose: Includes css and javascript for fetching remote url content.
- *  Notes: Also adds javascript to preview page to prevent a user clicking away
- ********************************************************************** */
- 
-function sub_header_include() {
+/**
+ * Include CSS/JavaScript
+ */
+function sub_header_include()
+{
     global $plugin, $lang, $hotaru;
-    $plugin->include_css_file('submit');
-    $plugin->include_js_file('submit');
+    
+    $plugin->include_css('submit');
+    $plugin->include_js('submit');
+}
+
+
+/**
+ * Output raw javascript directly to the header (instead of caching a .js file)
+ */
+function sub_header_include_raw()
+{
+    global $lang, $hotaru;
     
     /* This code (courtesy of Pligg.com and SocialWebCMS.com) pops up a 
        box asking the user of they are sure they want to leave the page
@@ -225,14 +221,13 @@ function sub_header_include() {
 }
 
 
-/* ******************************************************************** 
- *  Function: sub_theme_index_replace
- *  Parameters: None
- *  Purpose: Checks results from submit form 2.
- *  Notes: ---
- ********************************************************************** */
- 
-function sub_theme_index_replace() {
+/**
+ * Checks results from submit form 2.
+ *
+ * @return bool
+ */
+function sub_theme_index_replace()
+{
     global $hotaru, $cage, $post, $plugin, $current_user;
     
     if ($hotaru->is_page('submit2') && $post->use_submission) {
@@ -264,7 +259,7 @@ function sub_theme_index_replace() {
                 $post->read_post($post_id);
                 $post->change_status('new');
                 $post->send_trackback();
-                header("Location: " . baseurl);    // Go home  
+                header("Location: " . BASEURL);    // Go home  
                 die();
             }
         }
@@ -293,14 +288,13 @@ function sub_theme_index_replace() {
 }
 
 
-/* ******************************************************************** 
- *  Function: sub_theme_index_main
- *  Parameters: None
- *  Purpose: Determines which submit page to display
- *  Notes: ---
- ********************************************************************** */
- 
-function sub_theme_index_main() {
+/**
+ * Determines which submit page to display
+ *
+ * @return bool
+ */
+function sub_theme_index_main()
+{
     global $hotaru, $cage, $post, $plugin, $current_user, $lang, $user;
     global $post_orig_url, $post_orig_title, $filter, $filter_heading;
     
@@ -391,7 +385,7 @@ function sub_theme_index_main() {
         if ($result && is_array($result)) { return true; }
     
         // Show the list of posts
-        $hotaru->display_template('posts_list', 'submit');
+        $hotaru->display_template('list', 'submit');
         return true;
         
     } elseif ($hotaru->is_page('latest')) {
@@ -401,7 +395,7 @@ function sub_theme_index_main() {
         if ($result && is_array($result)) { return true; }
     
         // Show the list of posts
-        $hotaru->display_template('posts_list', 'submit');
+        $hotaru->display_template('list', 'submit');
         return true;
         
     } elseif ($hotaru->is_page('all')) {
@@ -411,13 +405,13 @@ function sub_theme_index_main() {
         if ($result && is_array($result)) { return true; }
     
         // Show the list of posts
-        $hotaru->display_template('posts_list', 'submit');
+        $hotaru->display_template('list', 'submit');
         return true;
         
     } elseif ($hotaru->page_type == 'post') {
         // We found out this is a post from the hotaru_header function above.
         
-        $hotaru->display_template('post_page', 'submit');
+        $hotaru->display_template('post', 'submit');
         return true;
         
     } else {        
@@ -431,13 +425,13 @@ function sub_theme_index_main() {
  * Prepare filter and breadcrumbs for Posts List
  *
  * @return array
- */ 
-function sub_prepare_posts_list()
+ */
+function sub_prepare_list()
 {
     global $hotaru, $plugin, $post, $cage, $filter, $lang, $page_title;
 
     $userbase = new UserBase();
-    $post->template_name = "posts_list";
+    $post->template_name = "list";
             
     if (!$filter) { $filter = array(); }
     
@@ -445,18 +439,23 @@ function sub_prepare_posts_list()
     {
         $filter['post_status = %s'] = 'new'; 
         $rss = "<a href='" . url(array('page'=>'rss', 'status'=>'new')) . "'>";
-        $rss .= " <img src='" . baseurl . "content/themes/" . theme . "images/rss_10.png'></a>";
+        $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
         $page_title = $lang["submit_page_breadcrumbs_latest"] . $rss;
     } 
     else 
     {
         $filter['post_status = %s'] = 'top';
         $rss = "<a href='" . url(array('page'=>'rss')) . "'>";
+<<<<<<< .mine
+        $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
+        $page_title = $lang["submit_page_breadcrumbs_top"] . $rss;
+=======
         $rss .= " <img src='" . baseurl . "content/themes/" . theme . "images/rss_10.png'></a>";
         $page_title = $lang["submit_page_breadcrumbs_top"] . $rss;
+>>>>>>> .r309
     }
     
-    $plugin->check_actions('submit_posts_list_filter');
+    $plugin->check_actions('submit_list_filter');
     
     $prepared_filter = $post->filter($filter, 0, true);
     $stories = $post->get_posts($prepared_filter);
@@ -465,43 +464,34 @@ function sub_prepare_posts_list()
 }
 
  
-/* ******************************************************************** 
- *  Function: sub_admin_sidebar_plugin_settings
- *  Parameters: None
- *  Purpose: Puts a link to the settings page in the Admin sidebar under Plugin Settings
- *  Notes: ---
- ********************************************************************** */
- 
-function sub_admin_sidebar_plugin_settings() {
+/**
+ * Add a link to the Admin sidebar under Plugin Settings
+ */
+function sub_admin_sidebar_plugin_settings()
+{
     echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>'submit'), 'admin') . "'>Submit</a></li>";
 }
 
 
- /* ******************************************************************** 
- *  Function: sub_admin_plugin_settings
- *  Parameters: None
- *  Purpose: Calls the function for displaying Admin settings
- *  Notes: ---
- ********************************************************************** */
- 
-function sub_admin_plugin_settings() {
-    require_once(plugins . 'submit/submit_settings.php');
+/**
+ * Calls the function for displaying Admin settings
+ */
+function sub_admin_plugin_settings()
+{
+    require_once(PLUGINS . 'submit/submit_settings.php');
     sub_settings();
     return true;
 }
 
 
- /* ******************************************************************** 
- *  Function: sub_fetch_title
- *  Parameters: None
- *  Purpose: Scrapes the title from the page being submitted
- *  Notes: ---
- ********************************************************************** */
- 
-function sub_fetch_title($url) {
+/**
+ * Scrapes the title from the page being submitted
+ */
+function sub_fetch_title($url)
+{
     global $cage, $lang;
     
-    require_once(includes . 'SWCMS/class.httprequest.php');
+    require_once(INCLUDES . 'SWCMS/class.httprequest.php');
     
     if ($url != 'http://' && $url != ''){
         $r = new HTTPRequest($url);
@@ -533,14 +523,11 @@ function sub_fetch_title($url) {
 }
 
 
-/* ******************************************************************** 
- *  Function: sub_check_for_errors_1
- *  Parameters: None
- *  Purpose: Checks submit_step1 for errors
- *  Notes: ---
- ********************************************************************** */
-
-function sub_check_for_errors_1() {
+/**
+ * Checks submit_step1 for errors
+ */
+function sub_check_for_errors_1()
+{
     global $hotaru, $post, $cage, $lang;
 
     // ******** CHECK URL ********
@@ -637,7 +624,7 @@ function sub_check_for_errors_2()
     $error_check_actions = 0;
     $error_array = $plugin->check_actions('submit_form_2_check_for_errors');
     if (is_array($error_array)) {
-        foreach($error_array as $err) { if ($err == 1) { $error_check_actions = 1; } }
+        foreach ($error_array as $err) { if ($err == 1) { $error_check_actions = 1; } }
     }
     
     // Return true if error is found
@@ -645,14 +632,11 @@ function sub_check_for_errors_2()
 }
 
 
-/* ******************************************************************** 
- *  Function: sub_process_submission
- *  Parameters: None
- *  Purpose: Saves the submitted story to the database
- *  Notes: ---
- ********************************************************************** */
- 
-function sub_process_submission($post_orig_url) {
+/**
+ * Saves the submitted story to the database
+ */
+function sub_process_submission($post_orig_url)
+{
     global $hotaru, $cage, $plugin, $current_user, $post;
         
     if ($cage->post->getAlpha('submit2') == 'true') {    
@@ -688,5 +672,4 @@ function sub_process_submission($post_orig_url) {
     }
 }
 
-    
 ?>
