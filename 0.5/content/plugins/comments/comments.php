@@ -167,6 +167,7 @@ function cmmts_theme_index_replace()
                     $comment->comment_subscribe = 1;
                 } else {
                     $comment->comment_subscribe = 0;
+                    $comment->unsubscribe($comment->comment_post_id);
                 }
                 
                 $comment->add_comment();
@@ -224,7 +225,21 @@ function cmmts_submit_show_post_extra_fields()
  */
 function cmmts_submit_post_show_post()
 {
-    global $hotaru, $comment, $post;
+    global $db, $hotaru, $comment, $post, $current_user;
+    
+    // Check if the current_user is the post author
+    if ($post->post_author == $current_user->user_id) {
+        // Will do something here later
+    } else {
+        $sql = "SELECT COUNT(comment_subscribe) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_user_id = %d AND comment_subscribe = %d";
+        $subscribe_result = $db->get_var($db->prepare($sql, $post->post_id, $current_user->id, 1));
+        
+        if ($subscribe_result > 0) { 
+            $current_user->userbase_vars['post_subscribed'] = true; 
+        } else {
+            $current_user->userbase_vars['post_subscribed'] = false; 
+        }
+    }
     
     $parents = $comment->read_all_parents($post->post_id);
     if ($parents) { 
@@ -285,13 +300,12 @@ function comment_tree($item_id, $depth)
  */
 function display_comment($item)
 {
-    global $hotaru, $comment;
+    global $hotaru, $comment, $current_user;
     
     $comment->read_comment($item);
     
     $hotaru->display_template('show_comments', 'comments', false);
     $hotaru->display_template('comment_form', 'comments', false);
 }
-
 
 ?>

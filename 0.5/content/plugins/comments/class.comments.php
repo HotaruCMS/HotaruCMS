@@ -152,5 +152,18 @@ class Comment {
         return true;
     }
     
+
+    /**
+     * Unsubscribe from a thread
+     */
+    function unsubscribe($post_id)
+    {
+        global $db, $current_user;
+            
+        $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_subscribe = %d WHERE comment_post_id = %d AND comment_user_id = %d";
+        $subscribe_result = $db->get_var($db->prepare($sql, 0, $post_id, $current_user->id));
+        return true;
+    }
+    
 }
 ?>
