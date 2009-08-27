@@ -42,7 +42,7 @@ class Post {
     var $post_date = '';
     var $posts_per_page = '10';
     
-    var $allowable_tags = '<b><i><u><a><blockquote><strike>';
+    var $allowable_tags = '';
     
     var $template_name = '';
             
