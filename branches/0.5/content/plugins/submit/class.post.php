@@ -435,13 +435,11 @@ class Post {
         $excerpt = strip_tags($post->post_content);
         $excerpt = (strlen($excerpt) > 200) ? substr($excerpt, 0, 200) . '...' : $excerpt;
 
-        /* THIS WORKS, BUT IS TEMPORARILY DISABLED DURING HOTARU ALPHA DEVELOPMENT
         if ($this->ping($trackback, url(array('page'=>$post->post_id)), $title, $excerpt)) {
             echo "Trackback sent successfully...";
         } else {
             echo "Error sending trackback....";
         }
-        */
     }
     
     

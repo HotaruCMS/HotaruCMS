@@ -31,7 +31,7 @@ global $hotaru, $plugin, $lang; // don't remove
 <div id="breadcrumbs">
     <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
     <?php $plugin->check_actions('breadcrumbs'); ?> 
-    &raquo; <?php echo $hotaru->title; ?>
+    &raquo; <?php if ($hotaru->title == 'top') { echo $lang['main_theme_home']; } else { echo $hotaru->title; } ?>
 </div>
 
 <?php $plugin->check_actions('main_top'); ?>

@@ -446,15 +446,35 @@ function create_table($table_name)
         
         // Friendly urls
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'FRIENDLY_URLS', 'false', 'false', ''));
+        $db->query($db->prepare($sql, 'FRIENDLY_URLS', 'false', 'false', 'true/false'));
         
         // Site email
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'SITE_EMAIL', 'admin@hotarucms.org', 'admin@hotarucms.org', 'Must be changed'));
+        $db->query($db->prepare($sql, 'SITE_EMAIL', 'admin@mysite.com', 'admin@mysite.com', 'Must be changed'));
+        
+        // Database cache
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $db->query($db->prepare($sql, 'DB_CACHE_ON', 'false', 'true', 'true/false'));
+        
+        // Database cache duration (hours)
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %d, %d, %s)";
+        $db->query($db->prepare($sql, 'DB_CACHE_DURATION', 12, 12, 'Hours'));
+        
+        // RSS cache
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $db->query($db->prepare($sql, 'RSS_CACHE_ON', 'true', 'true', 'true/false'));
+        
+        // RSS cache duration (hours)
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %d, %d, %s)";
+        $db->query($db->prepare($sql, 'RSS_CACHE_DURATION', 60, 60, 'Minutes'));
+        
+        // CSS/JavaScript cache
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $db->query($db->prepare($sql, 'CSS_JS_CACHE_ON', 'true', 'true', 'true/false'));
         
         // Debug
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'DEBUG', 'false', 'false', ''));
+        $db->query($db->prepare($sql, 'DEBUG', 'false', 'false', 'true/false'));
     }
     
     // USERS TABLE
