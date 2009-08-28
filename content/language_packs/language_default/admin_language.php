@@ -82,15 +82,18 @@ $lang['admin_plugins_order_below'] = "Error: The plugin to move below has the sa
 $lang['admin_settings_update_success'] = "Updated successfully.";
 
 /* Maintenance */
-$lang['admin_maintenance_clear_cache_success'] = "Cache successfully deleted.";
-$lang['admin_maintenance_clear_cache_failure'] = "No cache files were found.";
+$lang['admin_maintenance_clear_cache_success'] = "Cache successfully deleted";
+$lang['admin_maintenance_clear_cache_failure'] = "No cache files were found";
+$lang['admin_maintenance_optimize_success'] = "All database tables optimized";
+$lang['admin_maintenance_table_emptied'] = "Table emptied";
+$lang['admin_maintenance_table_deleted'] = "Table deleted";
 
 
 /* ***************************************************************** 
 ******************************************************************** 
-**********						  **********
-**********		ADMIN THEME LANGUAGE 		  **********
-**********						  **********
+**********                                                **********
+**********           ADMIN THEME LANGUAGE                 **********
+**********                                                **********
 ******************************************************************** 
 ***************************************************************** */
 
@@ -115,12 +118,23 @@ $lang["admin_theme_main_latest"] = "Latest from Hotaru CMS";
 /* maintenance */
 $lang["admin_theme_maintenance"] = "Maintenance";
 $lang["admin_theme_maintenance_title"] = "Hotaru Maintenance";
+$lang["admin_theme_maintenance_cache"] = "Cache:";
+$lang["admin_theme_maintenance_database"] = "Database:";
+$lang["admin_theme_maintenance_plugin_tables"] = "Plugin tables:";
 $lang["admin_theme_maintenance_db_cache"] = "Clear database cache";
 $lang["admin_theme_maintenance_db_cache_desc"] = "deletes cached database queries.";
 $lang["admin_theme_maintenance_css_js_cache"] = "Clear css/js cache";
 $lang["admin_theme_maintenance_css_js_cache_desc"] = "deletes cached CSS and JavaScript files from plugins.";
 $lang["admin_theme_maintenance_rss_cache"] = "Clear rss cache";
 $lang["admin_theme_maintenance_rss_cache_desc"] = "deletes cached RSS feeds.";
+$lang["admin_theme_maintenance_optimize"] = "Optimize database";
+$lang["admin_theme_maintenance_optimize_desc"] = "Optimize all the database tables.";
+$lang["admin_theme_maintenance_empty"] = "Empty";
+$lang["admin_theme_maintenance_drop"] = "Delete";
+$lang["admin_theme_maintenance_plugin_table_warning"] = "<b>Warning!</b> Use these with extreme caution.";
+$lang["admin_theme_maintenance_plugin_table_explanation"] = "Some Hotaru CMS plugins create their own database tables. These continue to exist even if you reinstall Hotaru. Therefore, these options allow you to easily clear or remove them <b>when absolutely necessary</b>.";
+$lang["admin_theme_maintenance_empty_explanation"] = "Emptying tables will remove any data, but retain the structure. Remember, other plugins may rely on the data in these tables so removing them may cause problems with your site.";
+$lang["admin_theme_maintenance_drop_explanation"] = "Deleting tables can <b>really mess up your site!</b> Only do it if you are starting your site completely from scratch, or if required by a plugin's instructions or developer.";
 
 /* plugins */
 $lang["admin_theme_plugins"] = "Plugin Management";

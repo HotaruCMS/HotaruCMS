@@ -48,7 +48,7 @@ global $hotaru, $plugin, $lang; // don't remove
            }
            else
            { 
-               $hotaru->title = 'top';
+               $hotaru->title = 'top'; // don't change this
                echo SITE_NAME; 
            } 
        ?>

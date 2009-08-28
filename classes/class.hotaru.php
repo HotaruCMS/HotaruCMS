@@ -237,7 +237,7 @@ class Hotaru
      *
      * @return object|false $sp
      */
-    function new_simplepie($feed='', $cache=true, $cache_duration=10)
+    function new_simplepie($feed='', $cache=RSS_CACHE_ON, $cache_duration=RSS_CACHE_DURATION)
     {
         include_once(INCLUDES . "SimplePie/simplepie.inc");
         
@@ -246,7 +246,11 @@ class Hotaru
             $sp->set_feed_url($feed);
             $sp->set_cache_location(CACHE . "rss_cache/");
             $sp->set_cache_duration($cache_duration);
-            $sp->enable_cache($cache);
+            if ($cache == "true") { 
+                $sp->enable_cache(true);
+            } else {
+                $sp->enable_cache(false);
+            }
             $sp->handle_content_type();
             return $sp;
         } else { 
@@ -371,7 +375,7 @@ class Hotaru
             }
                
             // get code from archive folder if it exists, otherwise grab latest files, merge and save in archive folder
-            if (file_exists($cache . $prefix . $type . '_' . $iETag . '.cache')) {
+            if ((CSS_JS_CACHE_ON == "true") && file_exists($cache . $prefix . $type . '_' . $iETag . '.cache')) {
                 $sCode = file_get_contents($cache . $prefix . $type . '_' . $iETag . '.cache');
             } else {
                 // get and merge code
