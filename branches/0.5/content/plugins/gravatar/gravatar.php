@@ -2,10 +2,10 @@
 /**
  * name: Gravatar
  * description: Enables Gravatar avatars for users
- * version: 0.1
+ * version: 0.2
  * folder: gravatar
  * prefix: grav
- * requires: users 0.1, submit 0.1
+ * requires: users 0.3, submit 0.3
  * hooks: header_include, submit_show_post_pre_title, show_comments_avatar
  *
  * PHP version 5

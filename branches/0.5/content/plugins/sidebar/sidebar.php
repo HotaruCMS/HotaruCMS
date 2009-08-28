@@ -2,7 +2,7 @@
 /**
  * name: Sidebar
  * description: Manages the contents of the sidebar
- * version: 0.1
+ * version: 0.2
  * folder: sidebar
  * prefix: sidebar
  * hooks: install_plugin, hotaru_header, header_include, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, sidebar
