@@ -114,7 +114,7 @@ class Admin
         } 
         
         // 2. Please enter a site email address
-        if (SITE_EMAIL == "admin@hotarucms.org") {
+        if (SITE_EMAIL == "admin@mysite.com") {
             array_push($announcements, $lang['admin_announcement_change_site_email']);    
         } 
         
