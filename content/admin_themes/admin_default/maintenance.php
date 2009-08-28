@@ -74,20 +74,29 @@ global $plugin, $admin, $cage, $lang; // don't remove
 <h2><?php echo $lang["admin_theme_maintenance_plugin_tables"]; ?></h2>
 <?php echo $lang["admin_theme_maintenance_plugin_table_explanation"]; ?><br /><br />
 <span style='color: red;'><?php echo $lang["admin_theme_maintenance_plugin_table_warning"]; ?></span><br /><br />
+<span style='color: red;'><?php echo $lang["admin_theme_maintenance_plugin_table_warning2"]; ?></span><br /><br />
 <?php echo $lang["admin_theme_maintenance_empty_explanation"]; ?><br /><br />
 <ul>
+<?php if($plugin_tables) { ?>
     <?php foreach ($plugin_tables as $table) { ?>
     <li><a href="<?php echo BASEURL; ?>admin/admin_index.php?page=maintenance&amp;action=empty&amp;table=<?php echo $table; ?>">
         <?php echo $lang["admin_theme_maintenance_empty"] . " " . $table; ?> </a></li>
     <?php } ?>
+<?php } else { ?>
+    <?php echo $lang["admin_theme_maintenance_no_plugin_tables_to_empty"] . " " . $table; ?>
+<?php } ?>
 </ul>
 <br />
 <?php echo $lang["admin_theme_maintenance_drop_explanation"]; ?><br /><br />
 <ul>
+<?php if($plugin_tables) { ?>
     <?php foreach ($plugin_tables as $table) { ?>
     <li><a href="<?php echo BASEURL; ?>admin/admin_index.php?page=maintenance&amp;action=drop&amp;table=<?php echo $table; ?>">
         <?php echo $lang["admin_theme_maintenance_drop"] . " " . $table; ?> </a></li>
     <?php } ?>
+<?php } else { ?>
+    <?php echo $lang["admin_theme_maintenance_no_plugin_tables_to_drop"] . " " . $table; ?>
+<?php } ?>
 </ul>
     
 <?php $plugin->check_actions('admin_maintenance_bottom'); ?>
