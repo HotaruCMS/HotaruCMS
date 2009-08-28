@@ -5,7 +5,7 @@
  * version: 0.1
  * folder: comments
  * prefix: cmmts
- * requires: submit 0.2, users 0.2
+ * requires: submit 0.3, users 0.3
  * hooks: header_include, install_plugin, hotaru_header, theme_index_replace, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_form_2_process_submission
  *
  * PHP version 5

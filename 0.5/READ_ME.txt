@@ -1,6 +1,6 @@
 HOTARU CMS
-Version: Alpha 0.4
-Released: August 20th 2009
+Version: Alpha 0.5
+Released: August 28th 2009
 
 INSTALLATION
 ------------
@@ -20,7 +20,7 @@ Installation
    3. Rename /hotaru_settings_default.php to /hotaru_settings.php
    4. Open /hotaru_settings.php and edit the top section with your database details and path to Hotaru, e.g. http://www.myhotarusite.com/
    5. Files should have permissions set to 644 and folders should be set to 755, except...
-   6. Set the two cache folders to 777: /3rd_party/ezSQL/cache and /3rd_party/SimplePie/cache
+   6. Set the cache folder and its sub-folders to 777
    7. Go to /install/install.php and step through the six steps, following the instructions in each.
 
 Friendly URLS
