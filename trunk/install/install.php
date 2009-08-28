@@ -38,8 +38,6 @@ require_once(CLASSES . 'class.hotaru.php');    // Needed for error and success m
 require_once(CLASSES . 'class.userbase.php');  // Needed for login/registration
 require_once(CLASSES . 'class.inspekt.php');      // for custom Inspekt methods
 $hotaru = new Hotaru();
-require_once(classes . 'class.inspekt.php');      // for custom Inspekt methods
-$hotaru = new Hotaru();
 
 // Clear the database cache in case of a re-install.
 require_once('../admin/class.admin.php'); 
@@ -47,13 +45,8 @@ $admin = new Admin();
 $admin->delete_files(CACHE . 'db_cache');
 
 // Global Inspekt SuperCage
-<<<<<<< .mine
 require_once(INCLUDES . 'Inspekt/Inspekt.php');
 $hotaru->initialize_inspekt();
-=======
-require_once(includes . 'Inspekt/Inspekt.php');
-$hotaru->initialize_inspekt();
->>>>>>> .r309
 
 require_once(INSTALL . 'install_language.php');    // language file for install
 
