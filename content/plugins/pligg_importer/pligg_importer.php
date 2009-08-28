@@ -5,7 +5,7 @@
  * version: 0.2
  * folder: pligg_importer
  * prefix: pliggimp
- * requires: category_manager 0.2, categories 0.3, submit 0.3, tags 0.3, users 0.3, vote 0.2
+ * requires: category_manager 0.2, categories 0.3, comments 0.1, submit 0.3, tags 0.3, users 0.3, vote 0.2
  * hooks: admin_plugin_settings, admin_sidebar_plugin_settings, admin_header_include
  *
  * PHP version 5
@@ -248,7 +248,7 @@ function pliggimp_upload_result($file_name, $table)
         }
         else
         {
-            echo "<span style='color: red;'>Import aborted.</span> <a href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer'), 'admin') . "'>Click here</a> to return to the file upload form.";
+            echo "<span style='color: red;'>Import aborted.</span> <a href='" . url(array('page'=>'plugin_settings', 'plugin'=>'pligg_importer'), 'admin') . "'>Click here</a> to return to the start.";
         }
         echo "</div>";
         

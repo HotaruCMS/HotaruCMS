@@ -626,47 +626,51 @@ function cts_navigation_last()
         $sql    = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d AND category_id != %d ORDER BY category_order ASC";
         $categories = $db->get_results($db->prepare($sql, 1, 1));
         
-        foreach ($categories as $category) {
-    
-            if (FRIENDLY_URLS == "true") { 
-                $link = $category->category_safe_name; 
-            } else {
-                $link = $category->category_id;
-            }
-            
-            $output .= '<li><a href="' . url(array('category'=>$link)) . '">' . urldecode($category->category_name) . "</a>\n";
-            $parent = $category->category_id;
-            
-            if ($parent > 1) 
-            {
-                $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d ORDER BY category_order ASC";
-                $children = $db->get_results($db->prepare($sql, $parent));
+        if($categories)
+        {
+            foreach ($categories as $category) {
+        
+                if (FRIENDLY_URLS == "true") { 
+                    $link = $category->category_safe_name; 
+                } else {
+                    $link = $category->category_id;
+                }
                 
-                $sql = "SELECT count(*) FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d";
-                $countchildren = $db->get_var($db->prepare($sql, $parent));
+                $output .= '<li><a href="' . url(array('category'=>$link)) . '">' . urldecode($category->category_name) . "</a>\n";
+                $parent = $category->category_id;
                 
-                if ($countchildren) 
+                if ($parent > 1) 
                 {
-                    $output .= "<ul>\n";
-                        foreach ($children as $child) 
-                        {
-                            if (FRIENDLY_URLS == "true") { 
-                                $link = $child->category_safe_name; 
-                            } else {
-                                $link = $child->category_id;
+                    $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d ORDER BY category_order ASC";
+                    $children = $db->get_results($db->prepare($sql, $parent));
+                    
+                    $sql = "SELECT count(*) FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d";
+                    $countchildren = $db->get_var($db->prepare($sql, $parent));
+                    
+                    if ($countchildren) 
+                    {
+                        $output .= "<ul>\n";
+                            foreach ($children as $child) 
+                            {
+                                if (FRIENDLY_URLS == "true") { 
+                                    $link = $child->category_safe_name; 
+                                } else {
+                                    $link = $child->category_id;
+                                }
+                                $output .= '<li><a href="' . url(array('category'=>$link)) .'">' . urldecode($child->category_name) . "</a>\n";
                             }
-                            $output .= '<li><a href="' . url(array('category'=>$link)) .'">' . urldecode($child->category_name) . "</a>\n";
-                        }
-                    $output .= "</ul>\n";
-                    $output .= "</li>\n";
+                        $output .= "</ul>\n";
+                        $output .= "</li>\n";
+                    }
                 }
             }
-        }
+                    
+            // Output the category bar
+            echo "<ul id='category_bar'>\n";
+            echo $output;
+            echo "</ul>\n";
         
-        // Output the category bar
-        echo "<ul id='category_bar'>\n";
-        echo $output;
-        echo "</ul>\n";
+        }
 
     }
 }
