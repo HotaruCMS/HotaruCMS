@@ -83,7 +83,7 @@ global $plugin, $admin, $cage, $lang; // don't remove
         <?php echo $lang["admin_theme_maintenance_empty"] . " " . $table; ?> </a></li>
     <?php } ?>
 <?php } else { ?>
-    <?php echo $lang["admin_theme_maintenance_no_plugin_tables_to_empty"] . " " . $table; ?>
+    <i><?php echo $lang["admin_theme_maintenance_no_plugin_tables_to_empty"]; ?></i>
 <?php } ?>
 </ul>
 <br />
@@ -95,7 +95,7 @@ global $plugin, $admin, $cage, $lang; // don't remove
         <?php echo $lang["admin_theme_maintenance_drop"] . " " . $table; ?> </a></li>
     <?php } ?>
 <?php } else { ?>
-    <?php echo $lang["admin_theme_maintenance_no_plugin_tables_to_drop"] . " " . $table; ?>
+    <i><?php echo $lang["admin_theme_maintenance_no_plugin_tables_to_drop"]; ?></i>
 <?php } ?>
 </ul>
     
