@@ -9,6 +9,8 @@ Import a Pligg database into Hotaru CMS. Version 0.1 imports the following table
 Instructions
 ------------
 1. Upload the "pligg_importer" folder to your plugins folder. Install it from Plugin Management in Admin and follow the instructions.
+2. Set permissions on the Uploads folder to 777.
+3. Go to Pligg Importer in the Admin Sidebar and follow the instructions and steps.
 
 Changelog
 ---------
