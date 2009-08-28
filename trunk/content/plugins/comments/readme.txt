@@ -4,7 +4,7 @@ Created by: Nick Ramsay
 
 Description
 -----------
-Enable logged-in users to comment on posts.
+Enable logged-in users to comment on posts. Includes comment subscription.
 
 Instructions
 ------------

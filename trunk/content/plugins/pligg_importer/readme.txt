@@ -4,7 +4,7 @@ Created by: Nick Ramsay
 
 Description
 -----------
-Import a Pligg database into Hotaru CMS. Version 0.1 imports the following tables: Links, Users, Categories, Tags and Votes. Support for Comments will be added soon after a Hotaru 'comments' plugin is made available. Of course, without comments, this plugin is incomplete and should only be used in a test environment.
+Import a Pligg database into Hotaru CMS. Version 0.1 imports the following tables: Links, Comments, Users, Categories, Tags and Votes. 
 
 Instructions
 ------------
@@ -12,4 +12,5 @@ Instructions
 
 Changelog
 ---------
+v.0.2 2009/8/28 - Nick - Added Comments and changed "Character Cleaner"
 v.0.1 2009/8/16 - Nick - Released first version

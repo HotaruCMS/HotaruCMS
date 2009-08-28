@@ -2,10 +2,10 @@
 /**
  * name: Vote
  * description: Adds voting ability to posted stories.
- * version: 0.1
+ * version: 0.2
  * folder: vote
  * prefix: vote
- * requires: submit 0.1, users 0.1
+ * requires: submit 0.3, users 0.3
  * hooks: install_plugin, hotaru_header, submit_hotaru_header_1, submit_class_post_read_post_1, submit_class_post_read_post_2, header_include, submit_pre_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_class_post_add_post, navigation, submit_show_post_extra_fields, submit_show_post_extras
  *
  * PHP version 5
