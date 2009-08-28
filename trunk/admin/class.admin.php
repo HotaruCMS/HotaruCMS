@@ -310,6 +310,90 @@ class Admin
         
         return $loaded_settings;
     }
+    
+    
+    /**
+     * List all plugin created tables
+     */
+    function list_plugin_tables()
+    {
+        global $db;
+        
+        $core_tables = array(
+            'hotaru_settings',
+            'hotaru_users',
+            'hotaru_plugins',
+            'hotaru_pluginsettings',
+            'hotaru_pluginhooks'
+        );
+        
+        $plugin_tables = array();
+            
+        $db->select(DB_NAME);
+        
+        foreach ( $db->get_col("SHOW TABLES",0) as $table_name )
+        {
+            if (!in_array($table_name, $core_tables)) {
+                array_push($plugin_tables, $table_name);
+            }
+        }
+        
+        return $plugin_tables;
+    }
+    
+    
+    /**
+     * Optimize all database tables
+     */
+    function optimize_tables()
+    {
+        global $db, $lang, $hotaru;
+        
+        $db->select(DB_NAME);
+        
+        foreach ( $db->get_col("SHOW TABLES",0) as $table_name )
+        {
+            $db->query("OPTIMIZE TABLE " . $table_name);
+        }
+        
+        $hotaru->message = $lang['admin_maintenance_optimize_success'];
+        $hotaru->message_type = 'green';
+        $hotaru->show_message();
+    }
+    
+    
+    /**
+     * Empty plugin database table
+     *
+     * @param string $table_name - table to empty
+     */
+    function empty_table($table_name)
+    {
+        global $db, $lang, $hotaru;
+        
+        $db->query("TRUNCATE TABLE " . $table_name);
+        
+        $hotaru->message = $lang['admin_maintenance_table_emptied'];
+        $hotaru->message_type = 'green';
+        $hotaru->show_message();
+    }
+    
+    
+    /**
+     * Delete plugin database table
+     *
+     * @param string $table_name - table to drop
+     */
+    function drop_table($table_name)
+    {
+        global $db, $lang, $hotaru;
+        
+        $db->query("DROP TABLE " . $table_name);
+        
+        $hotaru->message = $lang['admin_maintenance_table_deleted'];
+        $hotaru->message_type = 'green';
+        $hotaru->show_message();
+    }
 }
 
 ?>

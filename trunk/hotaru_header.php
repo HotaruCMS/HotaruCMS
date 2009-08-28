@@ -65,10 +65,6 @@ require_once(CLASSES . 'class.inspekt.php');      // for custom Inspekt methods
 // Initialize database
 if (!isset($db)) { 
     $db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST); 
-    $db->cache_timeout = 0;         // Note: this is hours
-    $db->cache_dir = CACHE . 'db_cache';
-    $db->use_disk_cache = true;     // Note: Queries are only cached following
-                                    // $db->cache_queries = true;
     $db->query("SET NAMES 'utf8'");
 }
 
@@ -81,6 +77,16 @@ foreach ($settings as $setting)
         define($setting->settings_name, $setting->settings_value);
     }
 }
+
+// Setup database cache
+$db->cache_timeout = DB_CACHE_DURATION; // Note: this is hours
+$db->cache_dir = CACHE . 'db_cache';
+if (DB_CACHE_ON == "true") {
+    $db->use_disk_cache = true;
+} else {
+    $db->use_disk_cache = false;
+}   
+// Note: Queries are still only cached following $db->cache_queries = true;
 
 // Start timer if debugging
 if (DEBUG == "true") {
