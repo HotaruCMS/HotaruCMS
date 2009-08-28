@@ -2,10 +2,10 @@
 /**
  * name: Category Manager
  * description: Manage categories.
- * version: 0.1
+ * version: 0.2
  * folder: category_manager
  * prefix: cats
- * requires: submit 0.1
+ * requires: submit 0.3
  * hooks: hotaru_header, admin_index, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  * PHP version 5

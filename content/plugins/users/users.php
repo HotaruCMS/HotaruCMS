@@ -2,7 +2,7 @@
 /**
  * name: Users
  * description: Manages users within Hotaru.
- * version: 0.2
+ * version: 0.3
  * folder: users
  * prefix: usr
  * hooks: hotaru_header, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, submit_list_filter

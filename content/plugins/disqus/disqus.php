@@ -2,10 +2,10 @@
 /**
  * name: Disqus
  * description: Enables comments using Disqus
- * version: 0.1
+ * version: 0.2
  * folder: disqus
  * prefix: disq
- * requires: submit 0.1
+ * requires: submit 0.3
  * hooks: header_include, header_include_raw, install_plugin, hotaru_header, submit_show_post_extra_fields, submit_post_show_post, pre_close_body, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  * PHP version 5

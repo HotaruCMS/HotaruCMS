@@ -2,10 +2,10 @@
 /**
  * name: Sidebar Posts
  * description: Adds links in the sidebar to the latest posts and top stories on the site.
- * version: 0.1
+ * version: 0.2
  * folder: sidebar_posts
  * prefix: sp
- * requires: sidebar 0.1, submit 0.1
+ * requires: sidebar 0.2, submit 0.3
  * hooks: install_plugin, hotaru_header
  *
  * PHP version 5
