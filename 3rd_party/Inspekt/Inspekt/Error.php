@@ -62,3 +62,4 @@ class Inspekt_Error {
 		}
 	}
 }
+?>

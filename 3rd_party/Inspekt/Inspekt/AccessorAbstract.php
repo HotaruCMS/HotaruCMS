@@ -98,7 +98,4 @@ abstract class AccessorAbstract {
 	
 }
 
-
-
-
 ?>
