@@ -1289,4 +1289,4 @@ class Inspekt
 	}
 
 }
-
+?>

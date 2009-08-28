@@ -1065,3 +1065,4 @@ class Inspekt_Cage implements IteratorAggregate, ArrayAccess, Countable {
 		}
 	}
 }
+?>

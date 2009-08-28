@@ -446,13 +446,8 @@ function sub_prepare_list()
     {
         $filter['post_status = %s'] = 'top';
         $rss = "<a href='" . url(array('page'=>'rss')) . "'>";
-<<<<<<< .mine
         $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
         $page_title = $lang["submit_page_breadcrumbs_top"] . $rss;
-=======
-        $rss .= " <img src='" . baseurl . "content/themes/" . theme . "images/rss_10.png'></a>";
-        $page_title = $lang["submit_page_breadcrumbs_top"] . $rss;
->>>>>>> .r309
     }
     
     $plugin->check_actions('submit_list_filter');
