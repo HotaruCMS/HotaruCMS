@@ -105,7 +105,7 @@ $lang["admin_theme_login_instructions"] = "Enter your username and password:";
 $lang["admin_theme_login_form_submit"] = "Login";
 
 /* navigation */
-$lang["admin_theme_navigation_home"] = "Top Posts";
+$lang["admin_theme_navigation_home"] = "Home";
 $lang["admin_theme_navigation_admin"] = "Admin";
 $lang["admin_theme_navigation_login"] = "Login";
 $lang["admin_theme_navigation_logout"] = "Logout";
