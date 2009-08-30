@@ -34,8 +34,32 @@ $(document).ready(function(){
                 return false;
         });  
         
+	// Show/Hide box 
+	$(".comment_edit_link").click(function () {
+		var target = $(this).parents(".comment");
+		target = $(target).next("div").next("div");
+		target.fadeToggle();
+                //target.next().fadeToggle();
+                return false;
+        }); 
+        
 });  
 
+
+/**
+ * Reply Comment
+ *
+ * @param string baseurl
+ * @param int comment_id
+ * @param string comment_content
+ * @param string submit button text
+ */
+function reply_comment(baseurl, comment_id, comment_submit)
+{
+	document.getElementById("comment_process_"+comment_id).value = 'newcomment';	
+	document.getElementById("comment_content_"+comment_id).innerHTML = '';
+	document.getElementById("comment_submit_"+comment_id).value = comment_submit;	
+}
 
 /**
  * Edit Comment
@@ -47,10 +71,7 @@ $(document).ready(function(){
  */
 function edit_comment(baseurl, comment_id, comment_content, comment_submit)
 {
-	var targetdisplay = document.getElementById("comment_"+comment_id).style.display ? '' : 'none';
-	document.getElementById("comment_"+comment_id).style.display = targetdisplay;
-	
-	document.getElementById("comment_process_"+comment_id).value = 'editcomment';
-	document.getElementById("comment_content_"+comment_id).innerHTML = comment_content;
-	document.getElementById("comment_submit_"+comment_id).value = comment_submit;
+	document.getElementById("comment_process_"+comment_id).value = 'editcomment';	
+	document.getElementById("comment_content_"+comment_id).innerHTML = urldecode(comment_content);
+	document.getElementById("comment_submit_"+comment_id).value = comment_submit;	
 }
