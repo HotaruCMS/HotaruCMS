@@ -84,6 +84,21 @@ class Post {
 
 
     /**
+     * Get submit settings
+     *
+     * @return array - of submit settings
+     */
+    function get_submit_settings()
+    {
+        global $plugin;
+        
+        // Get settings from the database if they exist...
+        $submit_settings = unserialize($plugin->plugin_settings('submit', 'submit_settings'));
+        return $submit_settings;
+    }
+    
+    
+    /**
      * Get all the settings for the current post
      *
      * @param int $post_id - Optional row from the posts table in the database
@@ -93,32 +108,35 @@ class Post {
     {
         global $plugin, $post_row, $hotaru;
         
+        // Get settings from database if they exist...
+        $submit_settings = $this->get_submit_settings();
+    
+        // Assign settings to class member
+        $this->use_submission = $submit_settings['submit_enabled'];
+        $this->use_author = $submit_settings['submit_author'];
+        $this->use_date = $submit_settings['submit_date'];
+        $this->use_content = $submit_settings['submit_content'];
+        $this->post_content_length = $submit_settings['submit_content_length'];
+        $this->use_summary = $submit_settings['submit_summary'];
+        $this->post_summary_length = $submit_settings['submit_summary_length'];
+        $this->posts_per_page = $submit_settings['submit_posts_per_page'];
+        $this->allowable_tags = $submit_settings['submit_allowable_tags'];
+        
         //enabled
-        if ($plugin->plugin_settings('submit', 'submit_enabled') == 'checked') { $this->use_submission = true; } else { $this->use_submission = false; }
+        if ($this->use_submission == 'checked') { $this->use_submission = true; } else { $this->use_submission = false; }
         
         //author
-        if ($plugin->plugin_settings('submit', 'submit_author') == 'checked') { $this->use_author = true; } else { $this->use_author = false; }
+        if ($this->use_author == 'checked') { $this->use_author = true; } else { $this->use_author = false; }
         
         //date
-        if ($plugin->plugin_settings('submit', 'submit_date') == 'checked') { $this->use_date = true; } else { $this->use_date = false; }
+        if ($this->use_date == 'checked') { $this->use_date = true; } else { $this->use_date = false; }
         
         //content
-        if ($plugin->plugin_settings('submit', 'submit_content') == 'checked') { $this->use_content = true; } else { $this->use_content = false; }
-        $content_length =  $plugin->plugin_settings('submit', 'submit_content_length');
-        if (!empty($content_length)) { $this->post_content_length = $content_length; }
+        if ($this->use_content == 'checked') { $this->use_content = true; } else { $this->use_content = false; }
         
         //summary
-        if ($plugin->plugin_settings('submit', 'submit_summary') == 'checked') { $this->use_summary = true; } else { $this->use_summary = false; }
-        $summary_length =  $plugin->plugin_settings('submit', 'submit_summary_length');
-        if (!empty($summary_length)) { $this->post_summary_length = $summary_length; }
-        
-        //posts_per_page
-        $posts_per_page =  $plugin->plugin_settings('submit', 'submit_posts_per_page');
-        if (!empty($posts_per_page)) { $this->posts_per_page = $posts_per_page; }
-        
-        //allowable_tags
-        $allowable_tags =  $plugin->plugin_settings('submit', 'submit_allowable_tags');
-        if (!empty($allowable_tags)) { $this->allowable_tags = $allowable_tags; }
+        if ($this->use_summary == 'checked') { $this->use_summary = true; } else { $this->use_summary = false; }
+
                 
         $plugin->check_actions('submit_class_post_read_post_1');
         
