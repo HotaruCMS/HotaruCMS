@@ -37,6 +37,17 @@ function cmmts_settings()
         cmmts_save_settings(); 
     }
     
+    // Get settings from database if they exist...
+    $comment_settings = $comment->get_comment_settings();
+
+    // Assign settings to class member
+    $comment->comment_form = $comment_settings['comment_form'];
+    $comment->comment_avatars = $comment_settings['comment_avatars'];
+    $comment->comment_voting = $comment_settings['comment_voting'];
+    $comment->comment_email = $comment_settings['comment_email'];
+    $comment->comment_allowable_tags = $comment_settings['comment_allowable_tags'];
+    $comment->comment_levels = $comment_settings['comment_levels'];
+    
     echo "<h1>" . $lang["comments_settings_header"] . "</h1>\n";
       
     // Set defaults for empty values:
@@ -44,6 +55,7 @@ function cmmts_settings()
     if (!$comment->comment_avatars) { $comment->comment_avatars = ''; }
     if (!$comment->comment_voting) { $comment->comment_voting = ''; }
     if (!$comment->comment_levels) { $comment->comment_levels = 5; }
+    if (!$comment->comment_email) { $comment->comment_email = ''; }
     if (!$comment->comment_allowable_tags) { $comment->comment_allowable_tags = ''; }
 
     // Determine if checkboxes are checked or not
@@ -63,6 +75,8 @@ function cmmts_settings()
     echo "<p><input type='checkbox' name='comment_voting' value='comment_voting' " . $check_votes . " >&nbsp;&nbsp;" . $lang["comments_settings_votes"] . "</p>\n"; 
 
     echo "<br />" . $lang["comments_settings_levels"] . " <input type='text' size=5 name='levels' value='" . $comment->comment_levels . "' /><br />";
+    echo "<br />" . $lang["comments_settings_email"] . " <input type='text' size=30 name='email' value='" . $comment->comment_email . "' /> ";
+    echo $lang["comments_settings_email_desc"] . "<br />";
     echo "<br />" . $lang["comments_settings_allowable_tags"] . " <input type='text' size=40 name='allowabletags' value='" . $comment->comment_allowable_tags . "' /><br />";
     echo $lang["comments_settings_allowable_tags_example"] . "\n";
     
@@ -113,6 +127,14 @@ function cmmts_save_settings()
         $levels = $comment->comment_levels; 
     }
     
+    // email
+    if ($cage->post->keyExists('email')) { 
+        $email = $cage->post->testEmail('email'); 
+        if (empty($email)) { $email = $comment->comment_email; }
+    } else { 
+        $email = $comment->comment_email; 
+    }
+    
     // Allowable tags
     if ($cage->post->keyExists('allowabletags')) { 
         $allowable_tags = $cage->post->getRaw('allowabletags'); 
@@ -127,6 +149,7 @@ function cmmts_save_settings()
     $comment_settings['comment_avatars'] = $comment->comment_avatars;
     $comment_settings['comment_voting'] = $comment->comment_voting;
     $comment_settings['comment_levels'] = $levels;
+    $comment_settings['comment_email'] = $email;
     $comment_settings['comment_allowable_tags'] = $allowable_tags;
     $plugin->plugin_settings_update('comments', 'comment_settings', serialize($comment_settings));
     

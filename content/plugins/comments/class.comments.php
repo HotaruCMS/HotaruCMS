@@ -39,6 +39,7 @@ class Comment {
     var $comment_subscribe = 0;
     var $comment_levels = 0;         // max nesting levels
     var $comment_depth = 0;         // this nesting level
+    var $comment_email = '';
     var $comment_allowable_tags = '';
     var $comment_form = '';
     var $comment_avatars = '';
@@ -298,7 +299,7 @@ class Comment {
         $message .= "To unsubscribe, uncheck the \"Subscribe to comments\" box and submit an empty comment. ";
         
         $from = SITE_EMAIL;
-        $to = SITE_EMAIL;  // send email to admin; 
+        $to = $comment->comment_email;  // send email to address specified in Comment Settings; 
         if($send_to != "") {
             $bcc = "\r\nBCC: " . $send_to;    // BCC individual addresses;
         } else {

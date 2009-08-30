@@ -45,7 +45,7 @@ if ($current_user->userbase_vars['post_subscribed']) { $subscribe_check = 'check
 <?php } else { // STANDARD COMMENT FORM ?>
 <div class="comment_form">
     
-<?php } ?>
+<?php } // JavaScript changes this form! See comments.js ?>
 
     <form name='comment_form' action='<?php echo BASEURL; ?>index.php?page=comments' method='post'>
         <textarea name="comment_content" id="comment_content_<?php echo $comment->comment_id; ?>" rows="6" cols="50"/></textarea><br />

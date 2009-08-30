@@ -2,7 +2,7 @@
 /**
  * name: Comments
  * description: Enables logged-in users to comment on posts
- * version: 0.1
+ * version: 0.2
  * folder: comments
  * prefix: cmmts
  * requires: submit 0.3, users 0.3
@@ -79,6 +79,7 @@ function cmmts_install_plugin()
     $comment_settings['comment_avatars'] = "";
     $comment_settings['comment_voting'] = "";
     $comment_settings['comment_levels'] = 5;
+    $comment_settings['comment_email'] = SITE_EMAIL;
     $comment_settings['comment_allowable_tags'] = "<b><i><u><a><blockquote><strike>";
     $plugin->plugin_settings_update('comments', 'comment_settings', serialize($comment_settings));
     
@@ -97,6 +98,7 @@ function cmmts_header_include()
     
     $plugin->include_css('comments');
     $plugin->include_js('comments');
+    $plugin->include_js('comments', 'urldecode.min');
 }
 
 
@@ -123,6 +125,7 @@ function cmmts_hotaru_header()
     $comment->comment_form = $comment_settings['comment_form'];
     $comment->comment_avatars = $comment_settings['comment_avatars'];
     $comment->comment_voting = $comment_settings['comment_voting'];
+    $comment->comment_email = $comment_settings['comment_email'];
     $comment->comment_allowable_tags = $comment_settings['comment_allowable_tags'];
     $comment->comment_levels = $comment_settings['comment_levels'];
         
