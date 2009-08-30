@@ -68,7 +68,7 @@ global $plugin, $comment, $lang, $userbase, $current_user;
                     <a href='#' class='comment_edit_link' onclick="edit_comment(
                         '<?php echo BASEURL; ?>', 
                         '<?php echo $comment->comment_id; ?>', 
-                        '<?php echo urlencode(addslashes($comment->comment_content)); ?>', 
+                        '<?php echo urlencode($comment->comment_content); ?>', 
                         '<?php echo $lang['comments_comment_form_edit']; ?>'); 
                         return false;" ><?php echo $lang['comments_edit_link']; ?></a>
             <?php } ?>

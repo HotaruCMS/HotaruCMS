@@ -14,5 +14,5 @@ Instructions
 
 Changelog
 ---------
-v.0.2 2009/8/30 - Nick - Fixed bugs with Reply/Edit and added email address option
+v.0.2 2009/8/30 - Nick - Fixed Reply/Edit bug, newline bug, save settings bug and added email address option
 v.0.1 2009/8/26 - Nick - Released first version
