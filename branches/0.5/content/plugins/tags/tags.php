@@ -2,7 +2,7 @@
 /**
  * name: Tags
  * description: Enables tags for posts
- * version: 0.3
+ * version: 0.4
  * folder: tags
  * prefix: tg
  * requires: submit 0.3
@@ -353,7 +353,7 @@ function tg_submit_show_post_extra_fields()
             echo "<a href='" . url(array('tag' => str_replace(' ', '_', trim($tag)))) . "'>" . trim($tag) . "</a>&nbsp;";
         }
         echo "</div>";
-        echo "<li>";
+        echo "</li>";
     }        
 }
 
@@ -424,4 +424,15 @@ function tg_submit_save_settings()
     $plugin->plugin_settings_update('submit', 'submit_max_tags', $max_tags);
 }
 
+
+/**
+ * Delete tags when post deleted
+ */
+function tg_submit_class_post_delete_post()
+{
+    global $db, $post;
+    
+    $sql = "DELETE FROM " . TABLE_TAGS . " WHERE tags_post_id = %d";
+    $db->query($db->prepare($sql, $post->post_id));
+}
 ?>

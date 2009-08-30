@@ -31,7 +31,7 @@
  */
 function sub_settings()
 {
-    global $hotaru, $plugin, $cage, $lang;
+    global $hotaru, $plugin, $cage, $lang, $post;
     
     // If the form has been submitted, go and save the data...
     if ($cage->post->getAlpha('submitted') == 'true') { 
@@ -41,15 +41,17 @@ function sub_settings()
     echo "<h1>" . $lang["submit_settings_header"] . "</h1>\n";
     
     // Get settings from database if they exist...
-    $enabled = $plugin->plugin_settings('submit', 'submit_enabled');
-    $author = $plugin->plugin_settings('submit', 'submit_author');
-    $date = $plugin->plugin_settings('submit', 'submit_date');
-    $content = $plugin->plugin_settings('submit', 'submit_content');
-    $content_length = $plugin->plugin_settings('submit', 'submit_content_length');
-    $summary = $plugin->plugin_settings('submit', 'submit_summary');
-    $summary_length = $plugin->plugin_settings('submit', 'submit_summary_length');
-    $posts_per_page = $plugin->plugin_settings('submit', 'submit_posts_per_page');
-    $allowable_tags = $plugin->plugin_settings('submit', 'submit_allowable_tags');
+    $submit_settings = $post->get_submit_settings();
+    
+    $enabled = $submit_settings['submit_enabled'];
+    $author = $submit_settings['submit_author'];
+    $date = $submit_settings['submit_date'];
+    $content = $submit_settings['submit_content'];
+    $content_length = $submit_settings['submit_content_length'];
+    $summary = $submit_settings['submit_summary'];
+    $summary_length = $submit_settings['submit_summary_length'];
+    $posts_per_page = $submit_settings['submit_posts_per_page'];
+    $allowable_tags = $submit_settings['submit_allowable_tags'];
 
     $plugin->check_actions('submit_settings_get_values');
     
@@ -180,15 +182,17 @@ function sub_save_settings()
     
     $plugin->check_actions('submit_save_settings');
     
-    $plugin->plugin_settings_update('submit', 'submit_enabled', $enabled);
-    $plugin->plugin_settings_update('submit', 'submit_author', $author);    
-    $plugin->plugin_settings_update('submit', 'submit_date', $date);    
-    $plugin->plugin_settings_update('submit', 'submit_content', $content);    
-    $plugin->plugin_settings_update('submit', 'submit_content_length', $content_length);    
-    $plugin->plugin_settings_update('submit', 'submit_summary', $summary);    
-    $plugin->plugin_settings_update('submit', 'submit_summary_length', $summary_length);
-    $plugin->plugin_settings_update('submit', 'submit_posts_per_page', $posts_per_page);
-    $plugin->plugin_settings_update('submit', 'submit_allowable_tags', $allowable_tags);
+    $submit_settings['submit_enabled'] = $enabled;
+    $submit_settings['submit_author'] = $author;
+    $submit_settings['submit_date'] = $date;
+    $submit_settings['submit_content'] = $content;
+    $submit_settings['submit_content_length'] = $content_length;
+    $submit_settings['submit_summary'] = $summary;
+    $submit_settings['submit_summary_length'] = $summary_length;
+    $submit_settings['submit_posts_per_page'] = $posts_per_page;
+    $submit_settings['submit_allowable_tags'] = $allowable_tags;
+
+    $plugin->plugin_settings_update('submit', 'submit_settings', serialize($submit_settings));
     
     $hotaru->message = $lang["submit_settings_saved"];
     $hotaru->message_type = "green";

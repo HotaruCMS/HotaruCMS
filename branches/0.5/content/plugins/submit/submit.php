@@ -2,7 +2,7 @@
 /**
  * name: Submit
  * description: Submit and manage stories.
- * version: 0.3
+ * version: 0.4
  * folder: submit
  * prefix: sub
  * hooks: hotaru_header, header_include, header_include_raw, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
@@ -30,23 +30,6 @@
  */
  
 return false; die(); // die on direct access.
-
-
-/**
- * If it doesn't already exist, add a post_domain field to posts table.
- */
-function sub_upgrade_plugin()
-{
-    global $db, $plugin, $post;
-    
-    // Create a new table column called "post_tags" if it doesn't already exist
-    $exists = $db->column_exists('posts', 'post_domain');
-    if (!$exists) {
-        $db->query("ALTER TABLE " . TABLE_POSTS . " ADD post_domain varchar(255) NULL AFTER post_orig_url");
-        $db->query("ALTER TABLE " . TABLE_POSTS . " ADD FULLTEXT (post_domain)"); // Make it fulltext searchable
-    } 
-}
-    
     
 /**
  * If they don't already exist, create "posts" and "postmeta" tables
@@ -95,16 +78,18 @@ function sub_install_plugin()
         $db->query($sql); 
     }
     
-    // Default settings (Note: we can't use $post because it hasn't been filled yet.)
-    $plugin->plugin_settings_update('submit', 'submit_enabled', 'checked');    
-    $plugin->plugin_settings_update('submit', 'submit_author', 'checked');    
-    $plugin->plugin_settings_update('submit', 'submit_date', 'checked');
-    $plugin->plugin_settings_update('submit', 'submit_content', 'checked');    
-    $plugin->plugin_settings_update('submit', 'submit_content_length', 50);    
-    $plugin->plugin_settings_update('submit', 'submit_summary', 'checked');    
-    $plugin->plugin_settings_update('submit', 'submit_summary_length', 200);    
-    $plugin->plugin_settings_update('submit', 'submit_posts_per_page', 10);
-    $plugin->plugin_settings_update('submit', 'submit_allowable_tags', '<b><i><u><a><blockquote><strike>');
+    // Default settings 
+    $submit_settings['submit_enabled'] = "checked";
+    $submit_settings['submit_author'] = "checked";
+    $submit_settings['submit_date'] = "checked";
+    $submit_settings['submit_content'] = "checked";
+    $submit_settings['submit_content_length'] = 50;
+    $submit_settings['submit_summary'] = "checked";
+    $submit_settings['submit_summary_length'] = 200;
+    $submit_settings['submit_posts_per_page'] = 10;
+    $submit_settings['submit_allowable_tags'] = "<b><i><u><a><blockquote><strike>";
+    
+    $plugin->plugin_settings_update('submit', 'submit_settings', serialize($submit_settings));
     
     // Include language file. Also included in hotaru_header, but needed here so 
     // that the link in the Admin sidebar shows immediately after installation.
