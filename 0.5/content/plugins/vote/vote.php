@@ -332,7 +332,7 @@ function vote_submit_show_post_extra_fields() {
     
     // Only show the Alert link ("Flag it") on new posts, not top stories
     if ($current_user->logged_in && $post->post_status == "new" && ($post->post_vars['vote_use_alerts'] == "checked")) {
-        echo "<a class='alert_link' href='#'>" . $lang["vote_alert"]  . "</a> &nbsp;&nbsp;";
+        echo "<li><a class='alert_link' href='#'>" . $lang["vote_alert"]  . "</a></li>";
     }
 }
 

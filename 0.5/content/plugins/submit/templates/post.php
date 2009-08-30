@@ -85,6 +85,8 @@ $user->get_user_basic($post->post_author);
             
         </div>
         
+        <?php $plugin->check_actions('submit_show_post_middle'); ?>
+        
         <?php $plugin->check_actions('submit_post_show_post'); ?>
         
     <?php } ?>

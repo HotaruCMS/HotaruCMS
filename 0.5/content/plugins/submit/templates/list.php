@@ -91,6 +91,10 @@ if ($stories) {
                 <?php $plugin->check_actions('submit_show_post_extra_fields'); ?>
             </ul>
         </div>
+        
+        <div class="show_post_extras">
+            <?php $plugin->check_actions('submit_show_post_extras'); ?>
+        </div>
             
     </div>
     
