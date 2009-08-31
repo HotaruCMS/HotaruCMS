@@ -51,7 +51,7 @@ $the_plugins = sksort($the_plugins, "order", "int", true);    // sorts plugins b
 <td><?php echo $lang["admin_theme_plugins_plugin"]; ?></td>
 <td><?php echo $lang["admin_theme_plugins_order"]; ?></td>
 <td><?php echo $lang["admin_theme_plugins_details"]; ?></td>
-<td><?php echo $lang["admin_theme_plugins_install"]; ?></td>
+<td><?php echo $lang["admin_theme_plugins_uninstall"]; ?></td>
 </tr>
 
 <?php
@@ -86,7 +86,7 @@ $the_plugins = sksort($the_plugins, "order", "int", true);    // sorts plugins b
 <tr><td colspan=5>&nbsp;</td></tr>
 <tr class='plugins_table_not_installed'><td colspan=6><?php echo $lang["admin_theme_plugins_not_installed"]; ?></td></tr>
 <tr class='plugins_table_headers'>
-<td><?php echo $lang["admin_theme_plugins_active"]; ?></td>
+<td><?php echo $lang["admin_theme_plugins_off"]; ?></td>
 <td colspan=2><?php echo $lang["admin_theme_plugins_plugin"]; ?></td>
 <td><?php echo $lang["admin_theme_plugins_requires"]; ?></td>
 <td><?php echo $lang["admin_theme_plugins_details"]; ?></td>
