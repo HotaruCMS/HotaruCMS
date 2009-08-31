@@ -112,5 +112,6 @@ $lang["submit_rss_top_stories_from"] = "Top Stories from";
 $lang["submit_rss_stories_from_user"] = "Stories submitted by";
 $lang["submit_rss_stories_tagged"] = "Stories tagged"; 
 $lang["submit_rss_stories_in_category"] = "Stories posted in";
+$lang["submit_rss_stories_search"] = "Search results for";
 
 ?>
