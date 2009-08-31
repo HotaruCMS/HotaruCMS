@@ -51,9 +51,6 @@ function plugins()
         case "uninstall":
             $plugin->uninstall_plugin($pfolder);
             break;    
-        case "upgrade":
-            $plugin->upgrade_plugin($pfolder);
-            break;    
         case "orderup":
             $plugin->plugin_order($pfolder, $order, "up");
             break;    
