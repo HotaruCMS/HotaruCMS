@@ -267,11 +267,11 @@ class Post {
      *
      * Example usage: $post->filter(array('post_tags LIKE %s' => '%tokyo%'), 10);
      */    
-    function filter($vars = array(), $limit = 0, $all = false)
+    function filter($vars = array(), $limit = 0, $all = false, $select = '*', $orderby = 'post_date DESC')
     {
         global $db;
         
-        $filter = '';
+        if(!isset($filter)) { $filter = ''; }
         $prepare_array = array();
         $prepare_array[0] = "temp";    // placeholder to be later filled with the SQL query.
         
@@ -292,10 +292,10 @@ class Post {
             $limit = "LIMIT " . $limit; 
         }
         
-        $sql = "SELECT * FROM " . TABLE_POSTS . $filter . " ORDER BY post_date DESC " . $limit;
-                
+        $sql = "SELECT " . $select . " FROM " . TABLE_POSTS . $filter . " ORDER BY " . $orderby . " " . $limit;
+        
         $prepare_array[0] = $sql;
-                
+        
         // $prepare_array needs to be passed to $db->prepare, i.e. $db->get_results($db->prepare($prepare_array));
                 
         if ($prepare_array) { return $prepare_array; } else { return false; }
@@ -312,10 +312,14 @@ class Post {
     {
         global $db;
         
-        if (!empty($prepared_array)) {                
-            $posts = $db->get_results($db->prepare($prepared_array));
+        if (!empty($prepared_array)) {
+            if (empty($prepared_array[1])) {
+                $posts = $db->get_results($prepared_array[0]); // ignoring the prepare function.
+            } else {
+                $posts = $db->get_results($db->prepare($prepared_array)); 
+            }
             if ($posts) { return $posts; }
-        } 
+        }
         
         return false;
     }
@@ -330,11 +334,15 @@ class Post {
         global $db, $lang, $cage, $plugin, $current_user;
         require_once(INCLUDES . 'RSSWriterClass/rsswriter.php');
         
+        $select = '';
+        $orderby = '';
+        
         $status = $cage->get->testAlpha('status');
         $limit = $cage->get->getInt('limit');
         $user = $cage->get->testUsername('user');
         $tag = $cage->get->noTags('tag');
         $category = $cage->get->noTags('category');
+        $search = $cage->get->getMixedString2('search');
         
         //if (!$status) { $status = "top"; }
         if (!$limit) { $limit = 10; }
@@ -344,6 +352,11 @@ class Post {
         if ($tag) { $filter['post_tags LIKE %s'] = '%' . $tag . '%'; }
         if ($category && (FRIENDLY_URLS == "true")) { $filter['post_category = %d'] = get_cat_id($category); }
         if ($category && (FRIENDLY_URLS == "false")) { $filter['post_category = %d'] = $category; }
+        if ($search && $plugin->plugin_active('search')) { 
+            $prepared_search = prepare_search_filter($search); 
+            extract($prepared_search);
+            $orderby = "post_date DESC";    // override "relevance DESC" so the RSS feed updates with the latest related terms. 
+        }
         
         $plugin->check_actions('submit_class_post_rss_feed');
         
@@ -357,10 +370,11 @@ class Post {
         elseif ($tag) { $feed->description = $lang["submit_rss_stories_tagged"] . " " . $tag; }
         elseif ($category && (FRIENDLY_URLS == "true")) { $feed->description = $lang["submit_rss_stories_in_category"] . " " . $category; }
         elseif ($category && (FRIENDLY_URLS == "false")) { $feed->description = $lang["submit_rss_stories_in_category"] . " " . get_cat_name($category); }
+        elseif ($search) { $feed->description = $lang["submit_rss_stories_search"] . " " . stripslashes($search); }
                 
         if (!isset($filter))  $filter = array();
-        $prepared_array = $this->filter($filter, $limit);
-        $results = $db->get_results($db->prepare($prepared_array));
+        $prepared_array = $this->filter($filter, $limit, false, $select, $orderby);
+        $results = $this->get_posts($prepared_array);
 
         if ($results) {
             foreach ($results as $result) 

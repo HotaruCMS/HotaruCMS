@@ -5,7 +5,7 @@
  * version: 0.4
  * folder: submit
  * prefix: sub
- * hooks: hotaru_header, header_include, header_include_raw, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: hotaru_header, header_include, header_include_raw, upgrade_plugin, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  * PHP version 5
  *
@@ -30,7 +30,18 @@
  */
  
 return false; die(); // die on direct access.
-    
+
+/**
+ * Upgrade plugin
+ */
+function sub_upgrade_plugin()
+{
+    /* Having this here makes hotaru ignore the install function. For this version, 
+       we don't need to make any database changes and don't want to reset our settings, 
+       so we'll just do nothing and let the "upgrade" simply be the updated files. */
+}
+
+
 /**
  * If they don't already exist, create "posts" and "postmeta" tables
  */
@@ -90,10 +101,6 @@ function sub_install_plugin()
     $submit_settings['submit_allowable_tags'] = "<b><i><u><a><blockquote><strike>";
     
     $plugin->plugin_settings_update('submit', 'submit_settings', serialize($submit_settings));
-    
-    // Include language file. Also included in hotaru_header, but needed here so 
-    // that the link in the Admin sidebar shows immediately after installation.
-    $plugin->include_language('submit');    
     
 }
 
@@ -413,7 +420,7 @@ function sub_theme_index_main()
  */
 function sub_prepare_list()
 {
-    global $hotaru, $plugin, $post, $cage, $filter, $lang, $page_title;
+    global $hotaru, $plugin, $post, $cage, $filter, $lang, $page_title, $select, $orderby;
 
     $userbase = new UserBase();
     $post->template_name = "list";
@@ -437,7 +444,11 @@ function sub_prepare_list()
     
     $plugin->check_actions('submit_list_filter');
     
-    $prepared_filter = $post->filter($filter, 0, true);
+    // defaults
+    if (!isset($select)) { $select = '*'; }
+    if (!isset($orderby)) { $orderby = 'post_date DESC'; }
+    
+    $prepared_filter = $post->filter($filter, 0, true, $select, $orderby);
     $stories = $post->get_posts($prepared_filter);
     
     return $stories;
