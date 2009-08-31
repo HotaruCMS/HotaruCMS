@@ -86,4 +86,32 @@ function sksort(&$array, $subkey="id", $type="int", $sort_ascending=false)
     return $array;
 }
 
+/**
+ * Is in case insensitive array
+ *
+ * @link http://jp.php.net/array_unique 
+ */
+function in_iarray($str, $a)
+{
+    foreach($a as $v) {
+        if (strcasecmp($str, $v) == 0) { return true;}
+    }
+    return false;
+}
+
+
+/**
+ * Is unique in case insensitive array
+ *
+ * @link http://jp.php.net/array_unique 
+ */
+function array_iunique($a)
+{
+    $n = array();
+    foreach ($a as $k=>$v) {
+        if (!in_iarray($v, $n)) { $n[$k] = $v; }
+    }
+    return $n;
+}
+
 ?>

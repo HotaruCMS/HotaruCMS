@@ -70,7 +70,7 @@ class Plugin extends generic_pmd {
                 $sql = "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
                 $plugin_row = $db->get_row($db->prepare($sql, $plugin_details['folder']));
                 
-                if ($plugin_row && version_compare($plugin_details['version'], $plugin_row->plugin_version, '<=')) 
+                if ($plugin_row) 
                 {
                     // if plugin in folder is older or equal to plugin in database...
                     $allplugins[$count]['name'] = $plugin_row->plugin_name;
@@ -79,18 +79,6 @@ class Plugin extends generic_pmd {
                     $allplugins[$count]['status'] = $this->get_plugin_status($plugin_row->plugin_folder);
                     $allplugins[$count]['version'] = $plugin_row->plugin_version;
                     $allplugins[$count]['install'] = "installed";
-                    $allplugins[$count]['location'] = "database";
-                    $allplugins[$count]['order'] = $plugin_row->plugin_order;
-                } 
-                elseif ($plugin_row && version_compare($plugin_details['version'], $plugin_row->plugin_version, '>')) {
-                
-                    //plugin exists in database, but it's an older version than the one in the folder...
-                    $allplugins[$count]['name'] = $plugin_row->plugin_name;
-                    $allplugins[$count]['description'] = $plugin_row->plugin_desc;
-                    $allplugins[$count]['folder'] = $plugin_row->plugin_folder;
-                    $allplugins[$count]['status'] = $this->get_plugin_status($plugin_row->plugin_folder);
-                    $allplugins[$count]['version'] = $plugin_row->plugin_version;
-                    $allplugins[$count]['install'] = "upgrade";
                     $allplugins[$count]['location'] = "database";
                     $allplugins[$count]['order'] = $plugin_row->plugin_order;
                 } 
@@ -127,14 +115,12 @@ class Plugin extends generic_pmd {
 
                 // Conditions for "install"...
                 if ($allplugins[$count]['install'] == 'install') { 
-                    $allplugins[$count]['install'] = "<a href='" . BASEURL . "admin/admin_index.php?page=plugins&amp;action=install&amp;plugin=". $allplugins[$count]['folder'] . "'>" . $lang['admin_plugins_install'] . "</a>";
-                } elseif ($allplugins[$count]['install'] == 'installed') { 
-                    $allplugins[$count]['install'] = "<a href='" . BASEURL . "admin/admin_index.php?page=plugins&amp;action=uninstall&amp;plugin=". $allplugins[$count]['folder'] . "' style='color: red; font-weight: bold'>" . $lang['admin_plugins_uninstall'] . "</a>";
-                } elseif ($allplugins[$count]['install'] == 'upgrade') { 
-                    $allplugins[$count]['install'] = "<a href='" . BASEURL . "admin/admin_index.php?page=plugins&amp;action=upgrade&amp;plugin=". $allplugins[$count]['folder'] . "' style='color: #ff9900; font-weight: bold'>" . $lang['admin_plugins_upgrade'] . "</a>";
-                } else {
-                    $allplugins[$count]['install'] = $lang['admin_plugins_installed'];
+                    $allplugins[$count]['install'] = "<a href='" . BASEURL . "admin/admin_index.php?page=plugins&amp;action=install&amp;plugin=". $allplugins[$count]['folder'] . "'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/install.png'></a>";
+                } else { 
+                    $allplugins[$count]['install'] = "<a href='" . BASEURL . "admin/admin_index.php?page=plugins&amp;action=uninstall&amp;plugin=". $allplugins[$count]['folder'] . "' style='color: red; font-weight: bold'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/uninstall.png'></a>";
                 }
+                
+                
 
                 // Conditions for "requires"...
                 if (isset($plugin_details['requires']) && $plugin_details['requires']) {
@@ -335,7 +321,7 @@ class Plugin extends generic_pmd {
         $dependency_error = 0;
         foreach ($this->dependencies as $dependency => $version)
         {
-            if (version_compare($version, $this->plugin_active($dependency), '>')) {
+            if (version_compare($version, $this->plugin_version($dependency), '>')) {
                 $dependency_error = 1;
             }
         }
@@ -344,7 +330,8 @@ class Plugin extends generic_pmd {
         {
             foreach ($this->dependencies as $dependency => $version)
             {
-                    if ($this->get_plugin_status($dependency) == 'inactive') {
+                    if (($this->get_plugin_status($dependency) == 'inactive') 
+                        || version_compare($version, $this->plugin_version($dependency), '>')) {
                         $dependency = $this->folder_to_name($dependency);
                         $hotaru->messages[$lang["admin_plugins_install_sorry"] . " " . $this->name . " " . $lang["admin_plugins_install_requires"] . " " . $dependency . " " . $version] = 'red';
                     }
@@ -366,6 +353,10 @@ class Plugin extends generic_pmd {
         
         // Add any plugin hooks to the hooks table
         $this->add_plugin_hooks();
+        
+        // Force inclusion of a language file (if exists) because the 
+        // plugin isn't ready to include it itself yet.
+        $this->include_language($folder);
             
         $result = $this->check_actions('install_plugin', $folder);
         
@@ -424,9 +415,13 @@ class Plugin extends generic_pmd {
         
         if (in_array('upgrade_plugin', $this->hooks)) 
         {
-        // Clear the database cache to ensure stored plugins and hooks 
-        // are up-to-date.
+            // Clear the database cache to ensure stored plugins and hooks 
+            // are up-to-date.
             $admin->delete_files(CACHE . 'db_cache');
+            
+            // Force inclusion of a language file (if exists) because the 
+            // plugin isn't ready to include it itself yet.
+            $this->include_language($folder);
             
             // Add any new hooks to the hooks table before proceeding.
             $this->add_plugin_hooks(); 
@@ -460,23 +455,40 @@ class Plugin extends generic_pmd {
         // Clear the database cache to ensure plugins and hooks are up-to-date.
         $admin->delete_files(CACHE . 'db_cache');
         
+        // Get the enabled status for this plugin...
         $plugin_row = $db->get_row($db->prepare("SELECT plugin_folder, plugin_enabled FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
+        
+        // If no result, then it's obviously not installed...
         if (!$plugin_row) 
         {
-            // Without this condition, the plugin would be installed and then
-            // deactivated, which is dumb. Let's just not install it yet!
+            // If the user is activating the plugin, go and install it...
             if ($enabled == 1) {    
                 $this->install_plugin($folder);
             }
         } 
         else 
         {
+            // The plugin is already installed. Activate or deactivate according to $enabled (the user's action).
             if ($plugin_row->plugin_enabled != $enabled) {        // only update if we're changing the enabled value.
                 $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_enabled = %d, plugin_updateby = %d WHERE plugin_folder = %s";
                 $db->query($db->prepare($sql, $enabled, $current_user->id, $folder));
                 
-                if ($enabled == 1) { 
-                    $hotaru->messages[$lang["admin_plugins_activated"]] = 'green'; 
+                if ($enabled == 1) { // Activating now...
+                
+                    // Get plugin version from the database...
+                    $db_version = $this->plugin_version($folder);
+                    
+                    // Get plugin version from the file....
+                    $plugin_metadata = $this->read(PLUGINS . $folder . "/" . $folder . ".php");
+                    $file_version = $plugin_metadata['version'];
+                    
+                    // If file version is newer the the current plugin version, then upgrade...
+                    if (version_compare($file_version, $db_version, '>')) {
+                        $this->upgrade_plugin($folder);
+                    } else {
+                        // else simply show an activated message...
+                        $hotaru->messages[$lang["admin_plugins_activated"]] = 'green'; 
+                    }
                 }
                 
                 if ($enabled == 0) { 
@@ -484,6 +496,21 @@ class Plugin extends generic_pmd {
                 }
             }
         }
+    }
+    
+
+    /**
+     * Get plugin version number from the database
+     *
+     * @param string $folder plugin folder name
+     * @return int - version number
+     */
+    function plugin_version($folder = "")
+    {    
+        global $db;
+
+        $version = $db->get_var($db->prepare("SELECT plugin_version FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
+        if ($version) { return $version; } else { return false; }
     }
     
     
@@ -694,7 +721,7 @@ class Plugin extends generic_pmd {
      * @return array | bool
      */
     function check_actions(
-        $hook = '', $perform = true, $folder = '', $parameters = array()
+        $hook = '', $perform = true, $folder = '', $parameters = array(), $exclude = array()
     )
     {
         global $db, $cage, $current_user;
@@ -724,6 +751,7 @@ class Plugin extends generic_pmd {
                     if (    $plugin->plugin_folder 
                         &&  $plugin->plugin_hook 
                         &&  ($plugin->plugin_enabled == 1)
+                        && !in_array($plugin->plugin_folder, $exclude)
                     ) {
                         if (file_exists(PLUGINS . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php"))
                         {

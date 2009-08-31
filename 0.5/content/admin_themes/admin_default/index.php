@@ -53,7 +53,7 @@ if (!isset($result) || !is_array($result)) {
                         <div id="main">
                         <?php
                             // plugin hook
-                        $result = $plugin->check_actions('admin_theme_index_display');
+                        $result = $plugin->check_actions('admin_theme_index_main');
                         if (!isset($result) || !is_array($result)) {
                                 $page = $hotaru->get_page_name();
                                 if ($page == 'admin_login') {
