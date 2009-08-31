@@ -1,0 +1,288 @@
+/* ******* ADMIN CSS STYLE ************************************************************************** 
+ * Theme name: admin_default
+ * Stylesheet: style.css
+ * Stylesheet author: Nick Ramsay
+ * Version: 0.1
+ * License:
+ *
+ *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
+ *
+ *   Hotaru CMS is free software: you can redistribute it and/or modify it under the terms of the 
+ *   GNU General Public License as published by the Free Software Foundation, either version 3 of 
+ *   the License, or (at your option) any later version.
+ *
+ *   Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
+ *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License along with Hotaru CMS. If not, 
+ *   see http://www.gnu.org/licenses/.
+ *   
+ *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
+ *
+ **************************************************************************************************** */
+
+html, body { 
+	min-height: 100%; height: 100%;
+	background-color: #3F749B;
+	font-size: 0.9em;
+}
+
+.clear {
+	clear: both;
+}
+
+h1, h2, h3 { padding: 0.5em 0 0.5em 0; }
+h1	{ font-size: 1.6em; }
+h2	{ font-size: 1.4em; }
+h3	{ font-weight: bold; }
+p { padding: 0.5em 0 0.5em 0; }
+
+a { 
+	text-decoration: none; 
+	color: #0000ff;	
+}
+
+a:hover	{ 
+	text-decoration: underline; 
+}
+
+td {	
+	padding: 0.5em;
+}
+
+small {
+	font-size: 0.8em;
+}
+
+.yui-t7 {
+	min-height: 100%; height: 100%;
+}
+
+#hd {
+	-moz-border-radius: 0.5em;
+	-webkit-border-radius: 0.5em;
+	margin: 1.0em 0 1.0em 0;
+	padding: 0.6em;
+	background-color: #ffffff;
+	/*border: 0.1em solid #888;*/
+}
+
+#navigation {
+	padding: 0.8em 0 0 0;
+}
+
+#navigation ul {
+	list-style: none;
+}
+
+#navigation li {
+	display: inline;
+	padding-right: 1em;
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+#navigation li a {
+	color: #666666;
+}
+
+li a#navigation_active { text-decoration: underline; }
+
+#bd {
+
+}
+
+#announcement {
+	background-color: #ffffff;
+	border-bottom: 1px solid #666;
+	padding: 0.4em;
+	text-align: center;
+}
+
+.yui-gf {
+	/* container for both the wide and narrow colums. */
+	background-color: #3F749B;
+}
+
+.yui-u, .first {
+	min-height: 100%; height: 100%;
+	margin-bottom: 1.0em;
+	background-color: #FCFCFC;
+	-moz-border-radius: 0.5em;
+	-webkit-border-radius: 0.5em;
+	/*border: 0.1em solid #888;*/
+}
+
+#main, #sidebar {
+	padding: 1.2em;
+}
+
+.main_inner {
+	padding: 1.0em;	
+}
+
+#sidebar ul li {
+	padding-left: 1.0em;
+}
+
+#ft {
+	height: auto;
+	background-color: #ffffff;
+	-moz-border-radius: 0.5em;
+	-webkit-border-radius: 0.5em;
+	/*border: 0.1em solid #888;*/
+	padding: 1.0em 0 1.0em 0;
+	text-align: center;
+	font-size: 1.0em;
+}
+
+.gray_box {
+	background-color: #f0f0f0;
+	-moz-border-radius: 0.5em;
+	-webkit-border-radius: 0.5em;
+}
+
+.info_box {
+	font-size: 1.1em;
+	line-height: 1.5em;
+	padding: 0.8em;
+}
+
+.info_header {
+	font-size: 1.0em;
+	font-weight: bold;
+	text-transform: uppercase;
+	text-decoration: underline;
+}
+
+form {
+	padding: 0.8em;
+}
+
+.message {
+	margin: 1.0em auto 0.0em auto;
+	width: 90%;
+	padding: 0.8em;
+	-moz-border-radius: 0.5em;
+	-webkit-border-radius: 0.5em;
+	text-align: center;
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+.green {
+	background-color: #99FF66;
+}
+
+.red {
+	background-color: #FF6A55;
+	color: #ffffff;
+}
+
+/* *************************************
+*  Plugin Management  *
+************************************** */
+
+#plugin_list {
+	margin-top: 1.0em;
+}
+
+#plugin_list table {
+	margin: auto;
+	width: 98%;
+}
+
+
+tr.plugins_table_installed td, tr.plugins_table_not_installed td {
+	font-size: 1.2em;
+	font-weight: bold;
+	padding: 0.4em 0.5em 0.4em 0.5em; 
+	text-align: left;
+
+}
+
+tr.plugins_table_installed td {	background-color: #D4FFBF; }
+tr.plugins_table_not_installed td {	background-color: #CBE2FF; }
+
+tr.plugins_table_headers td {
+	font-weight: bold;
+	padding: 0.4em 0.5em 0.4em 0.5em; 
+	background-color: #e0e0e0;
+	text-align: center;
+	border-right: 1px solid #d0d0d0;
+}
+
+tr.plugins_table_row_0 td {
+	background-color: #f0f0f0;
+	padding: 0.4em 1.0em 0.4em 1.0em; 
+	text-align: center;
+	border-right: 1px solid #e0e0e0;
+}
+
+tr.plugins_table_row_1 td {
+	background-color: #f6f6f6;
+	padding: 0.4em 1.0em 0.4em 1.0em; 
+	text-align: center;
+	border-right: 1px solid #e0e0e0;
+}
+
+.plugins_name {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+.plugins_install {
+	font-weight: bold;
+}
+
+td.plugin_description {
+	background-color: #fefefe;
+	border-style:solid;
+	border-width: 0.2em 0 0.2em 0.2em;
+	border-color: #e0e0e0;
+}
+
+td.plugin_description_close {
+	background-color: #fefefe;
+	border-style:solid;
+	border-width: 0.2em 0.2em 0.2em 0;
+	border-color: #e0e0e0;
+	text-align: center;
+}
+
+
+/* *************************************
+*  Site Settings  *
+************************************** */
+
+#settings_form {
+	padding: 0em;
+}
+
+table#settings {
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#settings td {
+	padding: 1.0em;
+	border: 0.1em solid #ddd;
+	background-color: #f6f6f6;
+}
+
+#settings_submit {
+	float: right;
+	font-size: 1.2em;
+	margin: 0.4em;
+	padding: 0 0.4em 0 0.4em;
+}
+
+/* *************************************
+*  Plugin Settings  *
+************************************** */
+
+#plugin_settings {
+
+}
