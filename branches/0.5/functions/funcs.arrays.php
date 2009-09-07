@@ -39,6 +39,8 @@
 function sksort(&$array, $subkey="id", $type="int", $sort_ascending=false)
 {
 
+    if (empty($array)) { return false; }
+    
     if (count($array)) {
         $temp_array[key($array)] = array_shift($array);
     }
