@@ -351,9 +351,10 @@ function register_admin()
     echo "<tr><td>" . $lang["install_step4_password_verify"] . "&nbsp; </td><td><input type='password' size=30 name='password2' value='' /></td></tr>\n";
 
     echo "<input type='hidden' name='step' value='4' />\n";
+    echo "<input type='hidden' name='updated' value='true' />\n";
     
     // Update button
-    echo "<tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='" . $lang['install_step4_form_update'] . "' /></td></tr>\n";
+    echo "<tr><td>&nbsp;</td><td style='text-align:right;'><input id='update' type='submit' value='" . $lang['install_step4_form_update'] . "' /></td></tr>\n";
     
     echo "</table>";
     echo "</form>\n";
@@ -363,7 +364,13 @@ function register_admin()
 
     // Previous/Next buttons
     echo "<div class='back'><a href='install.php?step=3'>" . $lang['install_back'] . "</a></div>\n";
-    echo "<div class='next'><a href='install.php?step=5'>" . $lang['install_next'] . "</a></div>\n";
+    if ($cage->post->getAlpha('updated') == 'true') {
+        // active "next" link if user has been updated
+        echo "<div class='next'><a href='install.php?step=5'>" . $lang['install_next'] . "</a></div>\n";
+    } else {
+        // link disbaled until "update" button pressed
+        echo "<div class='next'>" . $lang['install_next'] . "</div>\n";
+    }
     
     echo html_footer();
 }
