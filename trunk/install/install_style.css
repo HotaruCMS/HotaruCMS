@@ -110,6 +110,16 @@ small {
 	color: #ffffff;
 }
 
+#update {
+	padding: 0.3em 0.5em 0.3em 0.5em;
+	background-color: #f6f6f6;
+	-moz-border-radius: 0.5em;
+	-webkit-border-radius: 0.5em;
+	border: 0.1em solid #666;
+	font-weight: bold;
+	color: #00f;
+}
+
 .next, .back	{
 	margin-top: 0.8em;
 	float: right;

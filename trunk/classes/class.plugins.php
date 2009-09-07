@@ -175,11 +175,13 @@ class Plugin extends generic_pmd {
         $plugins_array = array();
         foreach ($plugin_list as $plugin_folder_name)
         {
-            $plugin_metadata = $this->read(PLUGINS . $plugin_folder_name . "/" 
-            . $plugin_folder_name . ".php");
-            
-            if ($plugin_metadata) {
-                array_push($plugins_array, $plugin_metadata);
+            if($plugin_folder_name != 'placeholder.txt') {
+                $plugin_metadata = $this->read(PLUGINS . $plugin_folder_name . "/" 
+                . $plugin_folder_name . ".php");
+                
+                if ($plugin_metadata) {
+                    array_push($plugins_array, $plugin_metadata);
+                }
             }
         }    
         return $plugins_array;
