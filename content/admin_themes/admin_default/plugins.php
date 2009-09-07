@@ -28,7 +28,7 @@
 
 global $hotaru, $plugin, $lang; // don't remove
 $the_plugins = $plugin->get_plugins(); // don't remove
-$the_plugins = sksort($the_plugins, "order", "int", true);    // sorts plugins by "order"
+if($the_plugins) { $the_plugins = sksort($the_plugins, "order", "int", true); }    // sorts plugins by "order"
 ?>
 
 <p class="breadcrumbs">
