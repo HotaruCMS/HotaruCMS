@@ -1,0 +1,112 @@
+/* ******* CSS STYLE ************************************************************************** 
+ * Plugin name: default
+ * Stylesheet: vote.css
+ * License:
+ *
+ *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
+ *
+ *   Hotaru CMS is free software: you can redistribute it and/or modify it under the terms of the 
+ *   GNU General Public License as published by the Free Software Foundation, either version 3 of 
+ *   the License, or (at your option) any later version.
+ *
+ *   Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
+ *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License along with Hotaru CMS. If not, 
+ *   see http://www.gnu.org/licenses/.
+ *   
+ *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
+ *
+ **************************************************************************************************** */
+
+/* ************************************
+ * ******** VOTE UNVOTE BUTTON ********
+ * ********************************* */
+ 
+.vote_vote_unvote_button {
+	float: left; 
+	margin: 0 6px 6px 0;
+	text-align: center;
+}
+
+.vote_vote_unvote_button_top {
+	line-height: 2.0em;
+	font-size: 1.5em;
+	width: 50px; 
+	background-color: #F0F0F0;
+}
+
+.vote_vote_unvote_button_bottom {
+	width: 50px; 
+	background-color: #98AFC7;
+}
+
+/* ************************************
+ * ********** UP DOWN BUTTON **********
+ * ********************************* */
+
+.vote_up_down_button {
+	float: left; 
+	margin: 0 6px 6px 0;
+	text-align: center;
+}
+
+.vote_up_down_button_top {
+	width: 50px; 
+	background-color: #98AFC7;
+}
+
+.vote_up_down_button_middle {
+	line-height: 2.0em;
+	font-size: 1.5em;
+	width: 50px; 
+	background-color: #F0F0F0;
+}
+
+.vote_up_down_button_bottom {
+	width: 50px; 
+	background-color: #98AFC7;
+}
+
+/* ***********************************
+ * ********** YES NO BUTTON **********
+ * ********************************* */
+ 
+.vote_yes_no_button {
+	float: left; 
+	margin: 0 6px 6px 0;
+	text-align: center;
+}
+
+.bg_yes { background-color: #CFECEC; }
+.bg_no { background-color: #FAF8CC; }
+
+.vote_yes_no_button_top {
+	line-height: 2.0em;
+	font-size: 1.5em;
+	width: 50px;
+}
+
+.vote_yes_no_button_bottom {
+	width: 50px; 
+	background-color: #98AFC7;
+}
+
+/* ***********************************
+ * ** SPACE BETWEEN BUTTON AND POST **
+ * ********************************* */
+ 
+/* Used in submit plugin - button width + padding: */
+.vote_button_space_vote_unvote { margin-left: 58px; }
+.vote_button_space_up_down { margin-left: 58px; }
+.vote_button_space_yes_no { margin-left: 116px; }
+
+/* ***********************************
+ * ******** FLAGGED MESSAGE **********
+ * ********************************* */
+ 
+ .alert_message {
+ 	font-size: 0.9em;
+ 	color: #ff0000;
+ }

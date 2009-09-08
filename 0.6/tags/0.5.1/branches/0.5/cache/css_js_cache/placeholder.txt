@@ -1,0 +1,3 @@
+My Zip program removes empty folders, so this file is here to make sure the folder is included in the Hotaru .zip package. 
+~~
+Nick.
