@@ -1,11 +1,11 @@
 <?php
 
-class PluginItems extends Plugin
+class PluginManagement extends Plugin
 {
 
-    protected $includeCSS    = array();  // a list of css files to include
-    protected $includeJS     = array();  // a list of js files to include
-    protected $includeType   = '';       // 'css' or 'js'
+    private $includeCSS    = array();  // a list of css files to include
+    private $includeJS     = array();  // a list of js files to include
+    private $includeType   = '';       // 'css' or 'js'
     
     /**
      * getIncludeCSS
@@ -62,7 +62,7 @@ class PluginItems extends Plugin
                     $allplugins[$count]['name'] = $plugin_row->plugin_name;
                     $allplugins[$count]['description'] = $plugin_row->plugin_desc;
                     $allplugins[$count]['folder'] = $plugin_row->plugin_folder;
-                    $allplugins[$count]['status'] = $this->get_plugin_status($plugin_row->plugin_folder);
+                    $allplugins[$count]['status'] = $this->getPluginStatus($plugin_row->plugin_folder);
                     $allplugins[$count]['version'] = $plugin_row->plugin_version;
                     $allplugins[$count]['install'] = "installed";
                     $allplugins[$count]['location'] = "database";
@@ -228,8 +228,11 @@ class PluginItems extends Plugin
                                 }
                                 elseif($plugin->plugin_class)
                                 {
-                                    $this_plugin = new $plugin->plugin_class;
-                                    $result = $this_plugin->$hook();
+                                    $this_plugin = new $plugin->plugin_class($plugin->plugin_folder);
+                                    $result = $this_plugin->$hook($parameters);
+                                    if ($result) {
+                                        $return_array[$function_name] = $result;
+                                    }
                                 }
                             }
                             $action_found = true;

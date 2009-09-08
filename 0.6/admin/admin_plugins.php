@@ -35,7 +35,7 @@ function plugins()
     $pfolder = $cage->get->testAlnumLines('plugin');
     $order = $cage->get->testAlnumLines('order');
     
-    $this_plugin = new Plugin($pfolder);
+    $this_plugin = new PluginFunctions($pfolder);
     
     switch ($action) {
         case "activate":

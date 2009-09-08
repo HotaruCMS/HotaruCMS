@@ -69,7 +69,7 @@ if (!isset($result) || !is_array($result)) {
                     ?>    
                     </div>        
                     </div>
-                    <?php if ($hotaru->sidebar) { ?>
+                    <?php if ($hotaru->getSidebar()) { ?>
                         <div class="yui-u first">
                         <!-- SIDEBAR -->
                         <?php

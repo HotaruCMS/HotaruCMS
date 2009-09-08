@@ -24,11 +24,11 @@
  * @link      http://www.hotarucms.org/
  */
  
-global $plugin;
-$shortname = $plugin->plugin_settings('disqus', 'disqus_shortname');
+global $plugins;
+$shortname = $plugins->pluginSettings('disqus', 'disqus_shortname');
 ?>
 
 <div id="disqus_thread"></div>
 <script type="text/javascript" src="http://disqus.com/forums/<?php echo $shortname; ?>/embed.js"></script>
 <noscript><a href="http://<?php echo $shortname; ?>.disqus.com/?url=ref">View the discussion thread.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a> 
+<a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a> 

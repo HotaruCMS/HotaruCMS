@@ -37,7 +37,12 @@ $lang['main_userbase_cookie_error'] = "Error setting cookie. Username not provid
 $lang['main_hotaru_queries_time'] = "database queries and a page load time of";
 $lang['main_hotaru_seconds'] = "seconds.";
 
-/* Plugins Class - Language for class.plugins.php is in admin_language.php */
+/* Post Class - breadcrumbs */
+$lang["post_breadcrumbs_top"] = "Top Posts";
+$lang["post_breadcrumbs_latest"] = "Latest Posts";
+$lang["post_breadcrumbs_tag"] = "Tag";
+$lang["post_breadcrumbs_category"] = "Category";
+$lang["post_breadcrumbs_user"] = "User";
 
 /* Announcements */
 $lang['main_announcement_users_disabled'] = "Login and registration is currently disabled.";

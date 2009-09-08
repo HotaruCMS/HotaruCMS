@@ -88,13 +88,6 @@ $lang["submit_settings_allowable_tags"] = "Allowed HTML tags in post description
 $lang["submit_settings_allowable_tags_example"] = "<small>(E.g. &lt;b&gt;&lt;u&gt;&lt;i&gt;&lt;blockquote&gt;)</small>";
 $lang["submit_settings_saved"] = "Settings Saved.";
 
-/* Submit Post Breadcrumbs */
-$lang["submit_page_breadcrumbs_top"] = "Top Posts";
-$lang["submit_page_breadcrumbs_latest"] = "Latest Posts";
-$lang["submit_page_breadcrumbs_tag"] = "Tag";
-$lang["submit_page_breadcrumbs_category"] = "Category";
-$lang["submit_page_breadcrumbs_user"] = "User";
-
 /* Submit Show Post */
 $lang["submit_page_title_main"] = "top";
 $lang["submit_page_title_latest"] = "latest";
