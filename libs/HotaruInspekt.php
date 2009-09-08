@@ -24,7 +24,7 @@
  * @link      http://www.hotarucms.org/
  */
  
-require_once(INCLUDES . 'Inspekt/Inspekt/AccessorAbstract.php');
+require_once(EXTENSIONS . 'Inspekt/Inspekt/AccessorAbstract.php');
  
 class testAlnumLines extends AccessorAbstract {
 

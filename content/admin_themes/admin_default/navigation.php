@@ -26,16 +26,16 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $plugin, $current_user, $lang; // don't remove
+global $hotaru, $plugins, $current_user, $lang; // don't remove
 ?>
 
 <ul id="navigation">
-    <?php $plugin->check_actions('navigation_first'); ?>
+    <?php $plugins->checkActions('navigation_first'); ?>
     <li><a href="<?php echo BASEURL; ?>"><?php echo $lang["admin_theme_navigation_home"]; ?></a></li>
-    <?php $plugin->check_actions('navigation'); ?>
-    <?php $plugin->check_actions('admin_navigation'); ?>
+    <?php $plugins->checkActions('navigation'); ?>
+    <?php $plugins->checkActions('admin_navigation'); ?>
     <?php 
-        if (!$plugin->plugin_active('users')) { 
+        if (!$plugins->pluginActive('users')) { 
 
             if ($current_user->logged_in == true) { 
                 echo "<li><a id='navigation_active' href='" . url(array(), 'admin') . "'>" . $lang["admin_theme_navigation_admin"] . "</a></li>"; 
@@ -44,7 +44,7 @@ global $hotaru, $plugin, $current_user, $lang; // don't remove
                 echo "<li><a href='" . url(array(), 'admin') . "'>" . $lang["admin_theme_navigation_login"] . "</a></li>"; 
             }
         } else {
-            $plugin->check_actions('navigation_users', true, 'users'); // ensures login/logout/register are last.
+            $plugins->checkActions('navigation_users', true, 'users'); // ensures login/logout/register are last.
         }
     ?>
 </ul>

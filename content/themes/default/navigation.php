@@ -26,18 +26,18 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $plugin, $current_user, $lang; // don't remove
+global $hotaru, $plugins, $current_user, $lang; // don't remove
 ?>
 
 <!-- Navigation Bar -->
 <ul id="navigation">
-    <?php $plugin->check_actions('navigation_first'); ?>
+    <?php $plugins->checkActions('navigation_first'); ?>
     
     <?php if ($hotaru->title == 'top') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
     <li><a <?php echo $status; ?> href="<?php echo BASEURL; ?>"><?php echo $lang["main_theme_navigation_home"]; ?></a></li>
-    <?php $plugin->check_actions('navigation'); ?>
+    <?php $plugins->checkActions('navigation'); ?>
     <?php 
-        if (!$plugin->plugin_active('users')) { 
+        if (!$plugins->pluginActive('users')) { 
 
             if ($current_user->logged_in == true) { 
             
@@ -51,12 +51,12 @@ global $hotaru, $plugin, $current_user, $lang; // don't remove
                 echo "<li><a " . $status . " href='" . url(array(), 'admin') . "'>" . $lang["main_theme_navigation_login"] . "</a></li>"; 
             }
         } else {
-            $plugin->check_actions('navigation_users', true, 'users'); // ensures login/logout/register are last.
+            $plugins->checkActions('navigation_users', true, 'users'); // ensures login/logout/register are last.
         }
     ?>
     
     <?php     // RSS Link and icon if Submit plugin is active
-        if ($plugin->get_plugin_status('submit') == 'active') { ?>
+        if ($plugins->get_plugin_status('submit') == 'active') { ?>
         <li>
         <a href="<?php echo url(array('page'=>'rss')); ?>">RSS 
             <img src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png">
@@ -66,4 +66,4 @@ global $hotaru, $plugin, $current_user, $lang; // don't remove
             
 </ul>
 
-<?php $plugin->check_actions('navigation_last'); ?>
+<?php $plugins->checkActions('navigation_last'); ?>

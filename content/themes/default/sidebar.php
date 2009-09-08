@@ -26,11 +26,11 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $plugin, $lang; // don't remove
+global $plugins, $lang; // don't remove
 ?>
 
 <div id="sidebar">
 
-    <?php $plugin->check_actions('sidebar', true, '', array(1)); ?>
+    <?php $plugins->checkActions('sidebar', true, '', array(1)); ?>
 
 </div>

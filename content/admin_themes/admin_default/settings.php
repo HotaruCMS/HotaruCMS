@@ -26,7 +26,7 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $plugin, $admin, $cage, $lang; // don't remove
+global $plugins, $admin, $cage, $lang; // don't remove
 ?>
 
 <p class="breadcrumbs">
@@ -35,7 +35,7 @@ global $plugin, $admin, $cage, $lang; // don't remove
     &raquo; <?php echo $lang["admin_theme_settings"]; ?>
 </p>
 
-<?php $plugin->check_actions('admin_settings_top'); ?>
+<?php $plugins->checkActions('admin_settings_top'); ?>
     
     <h2><?php echo $lang["admin_theme_settings_title"]; ?></h2>
     
@@ -76,4 +76,4 @@ global $plugin, $admin, $cage, $lang; // don't remove
     
     
     
-<?php $plugin->check_actions('admin_settings_bottom'); ?>
+<?php $plugins->checkActions('admin_settings_bottom'); ?>

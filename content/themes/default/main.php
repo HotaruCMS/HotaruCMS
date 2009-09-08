@@ -26,16 +26,18 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $plugin, $lang; // don't remove
+global $hotaru, $plugins, $lang; // don't remove
 ?>
 <div id="breadcrumbs">
     <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
-    <?php $plugin->check_actions('breadcrumbs'); ?> 
+    <?php $plugins->checkActions('breadcrumbs'); ?> 
     &raquo; <?php if ($hotaru->title == 'top') { echo $lang['main_theme_home']; } else { echo $hotaru->title; } ?>
 </div>
 
-<?php $plugin->check_actions('main_top'); ?>
-    
-<?php $plugin->check_actions('main'); ?>
+<?php $plugins->checkActions('hello_world'); ?>
 
-<?php $plugin->check_actions('main_bottom'); ?>
+<?php $plugins->checkActions('main_top'); ?>
+    
+<?php $plugins->checkActions('main'); ?>
+
+<?php $plugins->checkActions('main_bottom'); ?>

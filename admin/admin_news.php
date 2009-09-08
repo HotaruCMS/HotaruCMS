@@ -32,12 +32,12 @@
  */
 function admin_news()
 {
-    global $hotaru, $plugin, $lang;
+    global $hotaru, $plugins, $lang;
         
     $max_items = 5;
     
     $feedurl = 'http://feeds2.feedburner.com/hotarucms';
-    $feed = $hotaru->new_simplepie($feedurl);
+    $feed = $hotaru->newSimplePie($feedurl);
     $feed->init();
         
     $output = "";

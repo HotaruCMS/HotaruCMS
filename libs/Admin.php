@@ -35,7 +35,7 @@ class Admin
      * @param string $page - page name (filename without.php)
      * @param string $plugin - plugin folder name
      */
-    function display_admin_template($page = '', $plugin = '')
+    function displayAdminTemplate($page = '', $plugin = '')
     {
         $page = $page . '.php';
                 
@@ -83,7 +83,7 @@ class Admin
      *  Usage: $hotaru->is_settings_page('login') returns true if 
      *         page=plugin_settings and plugin=THIS_PLUGIN in the url.
      */
-    function is_settings_page($folder = '')
+    function isSettingsPage($folder = '')
     {
         global $cage, $hotaru;
         
@@ -99,9 +99,9 @@ class Admin
      *
      * @return array|false - array of announcements
      */
-    function check_admin_announcements()
+    function checkAdminAnnouncements()
     {
-        global $lang, $plugin;
+        global $lang, $plugins;
         
         // Check if the install file has been deleted:
         
@@ -119,7 +119,7 @@ class Admin
         } 
         
         // 3. "Go to Plugin Management to enable some plugins"
-        if (!$plugin->num_active_plugins()) {
+        if (!$plugins->numActivePlugins()) {
             array_push($announcements, $lang['admin_announcement_plugins_disabled']);    
         }
         
@@ -137,7 +137,7 @@ class Admin
      * @param string $setting
      * @return mixed|false
      */
-    function get_admin_setting($setting = '')
+    function getAdminSetting($setting = '')
     {
         global $db;
         
@@ -152,7 +152,7 @@ class Admin
      *
      * @return array|false
      */
-    function get_all_admin_settings()
+    function getAllAdminSettings()
     {
         global $db;
         
@@ -170,7 +170,7 @@ class Admin
      * @param string $setting
      * @return mixed|false
      */
-    function admin_setting_exists($setting = '')
+    function adminSettingExists($setting = '')
     {
         global $db;
         
@@ -185,11 +185,11 @@ class Admin
      * @param string $setting
      * @param string $value
      */
-    function admin_setting_update($setting = '', $value = '')
+    function adminSettingUpdate($setting = '', $value = '')
     {
         global $db, $current_user;
         
-        $exists = $this->admin_setting_exists($setting);
+        $exists = $this->adminSettingExists($setting);
         
         if (!$exists) {
             $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_updateby) VALUES (%s, %s, %d)";
@@ -206,7 +206,7 @@ class Admin
      *
      * @param string $setting
      */    
-    function admin_settings_remove($setting = '')
+    function adminSettingsRemove($setting = '')
     {
         global $db;
         
@@ -220,19 +220,19 @@ class Admin
      *
      * @param string $folder - path to the cache folder
      */
-    function clear_cache($folder)
+    function clearCache($folder)
     {
         global $hotaru, $lang;
         
-        $success = $this->delete_files(CACHE . $folder);
+        $success = $this->deleteFiles(CACHE . $folder);
         if ($success) {
             $hotaru->message = $lang['admin_maintenance_clear_cache_success'];
-            $hotaru->message_type = 'green';
+            $hotaru->messageType = 'green';
         } else {
             $hotaru->message = $lang['admin_maintenance_clear_cache_failure'];
-            $hotaru->message_type = 'red';    
+            $hotaru->messageType = 'red';    
         }
-        $hotaru->show_message();
+        $hotaru->showMessage();
     }
 
 
@@ -242,7 +242,7 @@ class Admin
      * @param string $dir - path to the cache folder
      * @return bool
      */    
-    function delete_files($dir)
+    function deleteFiles($dir)
     {
         $handle=opendir($dir);
     
@@ -269,7 +269,7 @@ class Admin
     {
         global $hotaru, $cage, $lang;
         
-        $loaded_settings = $this->get_all_admin_settings();    // get all admin settings from the database
+        $loaded_settings = $this->getAllAdminSettings();    // get all admin settings from the database
         
         $error = 0;
         
@@ -278,7 +278,7 @@ class Admin
                 if ($cage->post->keyExists($setting_name->settings_name)) {
                     $setting_value = $cage->post->noTags($setting_name->settings_name);
                     if ($setting_value && $setting_value != $setting_name->settings_value) {
-                        $this->admin_setting_update($setting_name->settings_name, $setting_value);
+                        $this->adminSettingUpdate($setting_name->settings_name, $setting_value);
     
                     } else {
                         if (!$setting_value) {
@@ -297,16 +297,16 @@ class Admin
             
             if ($error == 0) {
                 $hotaru->message = $lang['admin_settings_update_success'];
-                $hotaru->message_type = 'green';
-                $hotaru->show_message();        
+                $hotaru->messageType = 'green';
+                $hotaru->showMessage();        
             } else {
                 $hotaru->message = $lang['admin_settings_update_failure'];
-                $hotaru->message_type = 'red';
-                $hotaru->show_message();
+                $hotaru->messageType = 'red';
+                $hotaru->showMessage();
             }
         }    
         
-        $loaded_settings = $this->get_all_admin_settings();
+        $loaded_settings = $this->getAllAdminSettings();
         
         return $loaded_settings;
     }
@@ -315,7 +315,7 @@ class Admin
     /**
      * List all plugin created tables
      */
-    function list_plugin_tables()
+    function listPluginTables()
     {
         global $db;
         
@@ -345,7 +345,7 @@ class Admin
     /**
      * Optimize all database tables
      */
-    function optimize_tables()
+    function optimizeTables()
     {
         global $db, $lang, $hotaru;
         
@@ -357,8 +357,8 @@ class Admin
         }
         
         $hotaru->message = $lang['admin_maintenance_optimize_success'];
-        $hotaru->message_type = 'green';
-        $hotaru->show_message();
+        $hotaru->messageType = 'green';
+        $hotaru->showMessage();
     }
     
     
@@ -367,15 +367,15 @@ class Admin
      *
      * @param string $table_name - table to empty
      */
-    function empty_table($table_name)
+    function emptyTable($table_name)
     {
         global $db, $lang, $hotaru;
         
         $db->query("TRUNCATE TABLE " . $table_name);
         
         $hotaru->message = $lang['admin_maintenance_table_emptied'];
-        $hotaru->message_type = 'green';
-        $hotaru->show_message();
+        $hotaru->messageType = 'green';
+        $hotaru->showMessage();
     }
     
     
@@ -384,15 +384,15 @@ class Admin
      *
      * @param string $table_name - table to drop
      */
-    function drop_table($table_name)
+    function dropTable($table_name)
     {
         global $db, $lang, $hotaru;
         
         $db->query("DROP TABLE " . $table_name);
         
         $hotaru->message = $lang['admin_maintenance_table_deleted'];
-        $hotaru->message_type = 'green';
-        $hotaru->show_message();
+        $hotaru->messageType = 'green';
+        $hotaru->showMessage();
     }
 }
 

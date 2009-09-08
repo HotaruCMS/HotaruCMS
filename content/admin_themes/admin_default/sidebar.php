@@ -26,9 +26,9 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $plugin, $lang; // don't remove
+global $hotaru, $plugins, $lang; // don't remove
 ?>
-<?php $plugin->check_actions('admin_sidebar_top'); ?>
+<?php $plugins->checkActions('admin_sidebar_top'); ?>
 
 <ul id="sidebar">
     <li><a href="<?php echo url(array(), 'admin'); ?>"><?php echo $lang["admin_theme_main_admin_home"]; ?></a></li>
@@ -37,10 +37,10 @@ global $hotaru, $plugin, $lang; // don't remove
     <li><a href="<?php echo url(array('page' => 'plugins'), 'admin'); ?>"><?php echo $lang["admin_theme_plugins"]; ?></a></li>
     <li><?php echo $lang["admin_theme_plugin_settings"]; ?></li>
     <ul id="plugin_settings_list">
-        <?php $plugin->check_actions('admin_sidebar_plugin_settings'); ?>
+        <?php $plugins->checkActions('admin_sidebar_plugin_settings'); ?>
     </ul>
     
-    <?php $plugin->check_actions('admin_sidebar'); ?>
+    <?php $plugins->checkActions('admin_sidebar'); ?>
 </ul>
 
-<?php $plugin->check_actions('admin_sidebar_bottom'); ?>
+<?php $plugins->checkActions('admin_sidebar_bottom'); ?>

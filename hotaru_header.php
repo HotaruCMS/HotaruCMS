@@ -35,11 +35,11 @@ require_once('hotaru_settings.php');
 // include other essential libraries and functions
 
 // for Input sanitation and validation
-require_once(INCLUDES . 'Inspekt/Inspekt.php');
+require_once(EXTENSIONS . 'Inspekt/Inspekt.php');
 
 // for database usage
-require_once(INCLUDES . 'ezSQL/ez_sql_core.php');
-require_once(INCLUDES . 'ezSQL/mysql/ez_sql_mysql.php');
+require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php');
+require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php');
 
 // for default or friendly urls
 require_once(FUNCTIONS . 'funcs.urls.php');
@@ -56,11 +56,12 @@ require_once(FUNCTIONS . 'funcs.times.php');
 // for everything related to files
 require_once(FUNCTIONS . 'funcs.files.php');
 
-// include classes
-require_once(CLASSES . 'class.hotaru.php');       // for environment
-require_once(CLASSES . 'class.userbase.php');     // for users
-require_once(CLASSES . 'class.plugins.php');      // for plugins
-require_once(CLASSES . 'class.inspekt.php');      // for custom Inspekt methods
+// include LIBS
+require_once(LIBS . 'Hotaru.php');       // for environment
+require_once(LIBS . 'UserBase.php');     // for users
+require_once(LIBS . 'Plugin.php');
+require_once(LIBS . 'PluginItems.php');
+require_once(LIBS . 'HotaruInspekt.php');      // for custom Inspekt methods
 
 // Initialize database
 if (!isset($db)) { 
@@ -70,7 +71,7 @@ if (!isset($db)) {
 
 // Initialize Hotaru
 if (!isset($hotaru)) { $hotaru = new Hotaru(); }
-$settings = $hotaru->read_settings();
+$settings = $hotaru->readSettings();
 foreach ($settings as $setting)
 {
     if (!defined($setting->settings_name)) { 
@@ -95,16 +96,17 @@ if (DEBUG == "true") {
 }
 
 // Initialize Inspekt
-$hotaru->initialize_inspekt();
+$hotaru->initializeInspekt();
 
 // Create objects
-if (!isset($plugin)) { 
-    $plugin = new Plugin(); 
+if (!isset($plugins)) { 
+    $plugins = new PluginItems(); 
 } else {
-    if (!is_object($plugin)) {
-        $plugin = new Plugin(); 
+    if (!is_object($plugins)) {
+        $plugins = new PluginItems(); 
     }
 }
+
 
 $current_user = new UserBase();
 
@@ -124,9 +126,9 @@ if (($hotaru_user) && ($cage->cookie->keyExists('hotaru_key'))) {
 }
 
 // Enable plugins to define global settings, etc. 
-$results = $plugin->check_actions('hotaru_header');
+$results = $plugins->checkActions('hotaru_header');
 
-/*  The following extracts the results of check_actions which is 
+/*  The following extracts the results of checkActions which is 
     handy for making objects from plugins global */
 if (isset($results) && is_array($results)) 
 {
