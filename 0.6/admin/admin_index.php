@@ -24,10 +24,11 @@
  * @link      http://www.hotarucms.org/
  */
  
+
 // includes
 require_once('../hotaru_header.php');
 require_once('admin_login.php');
-require_once('class.admin.php');
+require_once(LIBS . 'Admin.php');
 require_once('admin_news.php');
 require_once('admin_plugins.php');
 
@@ -39,7 +40,7 @@ $hotaru->page_type = 'admin';
 if ($cage->get->keyExists('combine')) {
     $type = $cage->get->testAlpha('type');
     $version = $cage->get->testInt('version');
-    $hotaru->combine_includes($type, $version);
+    //$hotaru->combine_includes($type, $version);
     return true;
 }
 
@@ -62,7 +63,7 @@ if (!$page) {
 }
 
 // Authenticate the admin if the Users plugin is INACTIVE:
-if (!$plugin->plugin_active('users'))
+if (!$plugins->pluginActive('users'))
 {
     if (($page != 'admin_login') && !$result = is_admin_cookie())
     {
@@ -71,7 +72,7 @@ if (!$plugin->plugin_active('users'))
 }
 
 // Authenticate the admin if the Users plugin is ACTIVE:
-if (isset($current_user) && $plugin->plugin_active('users'))
+if (isset($current_user) && $plugins->pluginActive('users'))
 {
     // This first condition happens when the Users plugin is activated 
     // and there's no cookie for the Admin yet.
@@ -89,7 +90,7 @@ if (isset($current_user) && $plugin->plugin_active('users'))
 
 // If we get this far, we know that the user is an administrator.
 
-$plugin->check_actions('admin_index');
+$plugins->checkActions('admin_index');
 
 switch ($page) {
     case "admin_login":
@@ -108,14 +109,14 @@ switch ($page) {
         plugins();
         break;
     case "plugin_settings":
-        $plugin->folder = $cage->get->testAlnumLines('plugin');
-        $plugin->name = $plugin->plugin_name($plugin->folder);
+        $plugins->folder = $cage->get->testAlnumLines('plugin');
+        $plugins->name = $plugin->pluginName($plugin->folder);
         break;
     default:
         break;
 }
 
 // Display the main theme's index.php template
-$admin->display_admin_template('index');
+$admin->displayAdminTemplate('index');
 
 ?>

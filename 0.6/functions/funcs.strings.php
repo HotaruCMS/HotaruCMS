@@ -53,6 +53,22 @@ function rstrtrim($str, $remove=null)
 }
 
 
+    /**
+     * Changes 'plugin_name' into 'Plugin Name'
+     *
+     * @param string $string e.g. a plugin folder name
+     * @return string
+     */
+    function make_name($string)
+    {
+        $dep_array  = array();
+        $dep_array  = explode('_', trim($string));
+        $dep_array  = array_map('ucfirst', $dep_array);
+        $string     = implode(' ', $dep_array);
+
+        return $string;
+    }
+
 /**
  * Sanitize input
  *

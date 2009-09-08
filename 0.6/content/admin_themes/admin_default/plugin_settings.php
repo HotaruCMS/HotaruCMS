@@ -26,7 +26,7 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $plugin, $lang; // don't remove
+global $hotaru, $plugins, $lang; // don't remove
 ?>
 
 <p class="breadcrumbs">
@@ -39,9 +39,9 @@ global $hotaru, $plugin, $lang; // don't remove
 <div id="plugin_settings">
     <?php 
         if ($plugin->folder == "") {
-            $plugin->check_actions('admin_sidebar_plugin_settings');
+            $plugins->checkActions('admin_sidebar_plugin_settings');
         } else {
-            $plugin->check_actions('admin_plugin_settings', true, $plugin->folder); 
+            $plugins->checkActions('admin_plugin_settings', true, $plugin->folder); 
         }
     ?>
 </div>

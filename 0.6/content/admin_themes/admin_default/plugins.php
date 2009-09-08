@@ -26,8 +26,8 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $plugin, $lang; // don't remove
-$the_plugins = $plugin->get_plugins(); // don't remove
+global $hotaru, $plugins, $lang; // don't remove
+$the_plugins = $plugins->getPlugins(); // don't remove
 if($the_plugins) { $the_plugins = sksort($the_plugins, "order", "int", true); }    // sorts plugins by "order"
 ?>
 
@@ -37,11 +37,11 @@ if($the_plugins) { $the_plugins = sksort($the_plugins, "order", "int", true); } 
     &raquo; <?php echo $lang["admin_theme_plugins"]; ?>
 </p>
     
-<?php $hotaru->show_messages(); ?>
+<?php $hotaru->showMessages(); ?>
 
 <div id="plugin_list">
 
-<?php $plugin->check_actions('plugins_top'); ?>
+<?php $plugins->checkActions('plugins_top'); ?>
 
 <table>
 
@@ -122,12 +122,12 @@ if($the_plugins) { $the_plugins = sksort($the_plugins, "order", "int", true); } 
 <div class="clear"></div>
 <div id="plugin_management_notice" class="info_box gray_box" style="margin-top: 2.0em";>
     <p class="info_header"><?php echo $lang["admin_theme_plugins_guide"]; ?></p>
-    <?php $plugin->check_actions('plugins_guide_top'); ?>
+    <?php $plugins->checkActions('plugins_guide_top'); ?>
     &raquo; <?php echo $lang["admin_theme_plugins_guide1"]; ?><br />
     &raquo; <?php echo $lang["admin_theme_plugins_guide2"]; ?><br />
     &raquo; <?php echo $lang["admin_theme_plugins_guide3"]; ?><br />
-    <?php $plugin->check_actions('plugins_guide_bottom'); ?>
+    <?php $plugins->checkActions('plugins_guide_bottom'); ?>
 </div>
 
 
-<?php $plugin->check_actions('plugins_bottom'); ?>
+<?php $plugins->checkActions('plugins_bottom'); ?>

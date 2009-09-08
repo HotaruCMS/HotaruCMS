@@ -35,7 +35,7 @@ global $hotaru, $lang; // don't remove
     &raquo; <?php echo $lang["admin_theme_login"]; ?>
 </p>
         
-<?php $hotaru->show_message(); ?>
+<?php $hotaru->showMessage(); ?>
         
 <div class='main_inner'>
     <?php echo $lang["admin_theme_login_instructions"]; ?>

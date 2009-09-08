@@ -29,33 +29,32 @@
  */
 function plugins()
 {
-    global $lang, $cage, $hotaru, $plugin;
-    
-    require_once('class.admin.php');
-    $admin = New Admin();
+    global $lang, $cage, $hotaru, $plugins;
     
     $action = $cage->get->testAlpha('action');
     $pfolder = $cage->get->testAlnumLines('plugin');
     $order = $cage->get->testAlnumLines('order');
     
+    $this_plugin = new Plugin($pfolder);
+    
     switch ($action) {
         case "activate":
-            $plugin->activate_deactivate_plugin($pfolder, 1);
+            $this_plugin->activateDeactivate(1);
             break;
         case "deactivate":
-            $plugin->activate_deactivate_plugin($pfolder, 0);
+            $this_plugin->activateDeactivate(0);
             break;    
         case "install":
-            $plugin->install_plugin($pfolder);
+            $this_plugin->install();
             break;
         case "uninstall":
-            $plugin->uninstall_plugin($pfolder);
+            $this_plugin->uninstall();
             break;    
         case "orderup":
-            $plugin->plugin_order($pfolder, $order, "up");
+            $this_plugin->pluginOrder($order, "up");
             break;    
         case "orderdown":
-            $plugin->plugin_order($pfolder, $order, "down");
+            $this_plugin->pluginOrder($order, "down");
             break;    
         default:
             // do nothing...

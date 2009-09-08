@@ -34,27 +34,27 @@ setcookie("hotaru_key", "", time()-3600, "/");
 // --------------------------------------------------
 
 require_once('../hotaru_settings.php');
-require_once(CLASSES . 'class.hotaru.php');    // Needed for error and success messages
-require_once(CLASSES . 'class.userbase.php');  // Needed for login/registration
-require_once(CLASSES . 'class.inspekt.php');      // for custom Inspekt methods
+require_once(LIBS . 'Hotaru.php');    // Needed for error and success messages
+require_once(LIBS . 'class.userbase.php');  // Needed for login/registration
+require_once(LIBS . 'class.inspekt.php');      // for custom Inspekt methods
 $hotaru = new Hotaru();
 
 // Clear the database cache in case of a re-install.
-require_once('../admin/class.admin.php'); 
+require_once(LIBS . 'Admin.php'); 
 $admin = new Admin();
-$admin->delete_files(CACHE . 'db_cache');
+$admin->deleteFiles(CACHE . 'db_cache');
 
 // Global Inspekt SuperCage
-require_once(INCLUDES . 'Inspekt/Inspekt.php');
-$hotaru->initialize_inspekt();
+require_once(EXTENSIONS . 'Inspekt/Inspekt.php');
+$hotaru->initializeInspekt();
 
 require_once(INSTALL . 'install_language.php');    // language file for install
 
 $step = $cage->get->getInt('step');        // Installation steps.
 
 if ($step > 2) { 
-    require_once(INCLUDES . 'ezSQL/ez_sql_core.php');
-    require_once(INCLUDES . 'ezSQL/mysql/ez_sql_mysql.php');
+    require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php');
+    require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php');
     if (!isset($db)) { 
         $db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST); 
     } 
@@ -257,8 +257,8 @@ function register_admin()
             $user_name = $name_check;
         } else {
             $hotaru->message = $lang['install_step4_username_error'];
-            $hotaru->message_type = 'red';
-            $hotaru->show_message();
+            $hotaru->messageType = 'red';
+            $hotaru->showMessage();
             $error = 1;
         }
 
@@ -271,16 +271,16 @@ function register_admin()
                 $user_password = $userbase->generateHash($password_check);
             } else {
                 $hotaru->message = $lang['install_step4_password_match_error'];
-                $hotaru->message_type = 'red';
-                $hotaru->show_message();
+                $hotaru->messageType = 'red';
+                $hotaru->showMessage();
                 $error = 1;
             }
         } else {
             $password_check = "";
             $password2_check = "";
             $hotaru->message = $lang['install_step4_password_error'];
-            $hotaru->message_type = 'red';
-            $hotaru->show_message();
+            $hotaru->messageType = 'red';
+            $hotaru->showMessage();
             $error = 1;
         }
 
@@ -290,8 +290,8 @@ function register_admin()
             $user_email = $email_check;
         } else {
             $hotaru->message = $lang['install_step4_email_error'];
-            $hotaru->message_type = 'red';
-            $hotaru->show_message();
+            $hotaru->messageType = 'red';
+            $hotaru->showMessage();
             $error = 1;
         }
     }
@@ -299,8 +299,8 @@ function register_admin()
     // Show success message
     if (($cage->post->getInt('step') == 4) && $error == 0) {
         $hotaru->message = $lang['install_step4_update_success'];
-        $hotaru->message_type = 'green';
-        $hotaru->show_message();
+        $hotaru->messageType = 'green';
+        $hotaru->showMessage();
     }
     
     if ($error == 0) {
@@ -515,6 +515,7 @@ function create_table($table_name)
           `plugin_name` varchar(64) NOT NULL DEFAULT '',
           `plugin_prefix` varchar(16) NOT NULL DEFAULT '',
           `plugin_folder` varchar(64) NOT NULL,
+          `plugin_class` varchar(64) NOT NULL DEFAULT '',
           `plugin_desc` varchar(255) NOT NULL DEFAULT '',
           `plugin_requires` varchar(255) NOT NULL DEFAULT '',
           `plugin_version` varchar(32) NOT NULL DEFAULT '0.0',
