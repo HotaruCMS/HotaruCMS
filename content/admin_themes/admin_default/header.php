@@ -36,21 +36,21 @@ global $hotaru, $admin, $plugins, $lang; // don't remove
    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
    <title>
        <?php 
-           if ($hotaru->title != "")
+           if ($hotaru->getTitle() != "")
            {
-               echo $hotaru->title . " &laquo; " . $lang["admin"] . " &laquo; " . SITE_NAME;
+               echo $hotaru->getTitle() . " &laquo; " . $lang["admin"] . " &laquo; " . SITE_NAME;
            }
            elseif ($hotaru->getPageName() != "main")
            {
                $hotaru->title = $hotaru->getPageName();
-               echo $hotaru->pageToTitleCaps($hotaru->title) . " &laquo; " . $lang["admin"] . " &laquo; " . SITE_NAME;
+               echo $hotaru->pageToTitleCaps($hotaru->getTitle()) . " &laquo; " . $lang["admin"] . " &laquo; " . SITE_NAME;
            }
            else
            { 
                echo $lang["admin"] . " &laquo; " . SITE_NAME;
            } 
            
-           $hotaru->title = 'admin';    // highlights "Admin" in the navigation bar, for all pages in Admin
+           $hotaru->setTitle('admin');    // highlights "Admin" in the navigation bar, for all pages in Admin
        ?>
    </title>
    <script language="JavaScript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery.min.js'; ?>"></script>
@@ -62,7 +62,7 @@ global $hotaru, $admin, $plugins, $lang; // don't remove
     <?php 
         $version_js = $hotaru->combineIncludes('js');
         $version_css = $hotaru->combineIncludes('css');
-        $hotaru->includeCombined($version_js, $version_css, $hotaru->getPageName(), $plugins->getPluginFolder());
+        $hotaru->includeCombined($version_js, $version_css, $hotaru->getPageName(), $plugins->getFolder());
     ?>
     <!-- End -->
     

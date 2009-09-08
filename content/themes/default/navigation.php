@@ -56,7 +56,7 @@ global $hotaru, $plugins, $current_user, $lang; // don't remove
     ?>
     
     <?php     // RSS Link and icon if Submit plugin is active
-        if ($plugins->get_plugin_status('submit') == 'active') { ?>
+        if ($plugins->getPluginStatus('submit') == 'active') { ?>
         <li>
         <a href="<?php echo url(array('page'=>'rss')); ?>">RSS 
             <img src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png">

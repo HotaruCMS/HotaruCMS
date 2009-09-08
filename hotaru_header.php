@@ -57,11 +57,13 @@ require_once(FUNCTIONS . 'funcs.times.php');
 require_once(FUNCTIONS . 'funcs.files.php');
 
 // include LIBS
+require_once(LIBS . 'HotaruInspekt.php');      // for custom Inspekt methods
 require_once(LIBS . 'Hotaru.php');       // for environment
 require_once(LIBS . 'UserBase.php');     // for users
 require_once(LIBS . 'Plugin.php');
-require_once(LIBS . 'PluginItems.php');
-require_once(LIBS . 'HotaruInspekt.php');      // for custom Inspekt methods
+require_once(LIBS . 'PluginManagement.php');
+require_once(LIBS . 'PluginFunctions.php');
+require_once(LIBS . 'Post.php');
 
 // Initialize database
 if (!isset($db)) { 
@@ -100,10 +102,10 @@ $hotaru->initializeInspekt();
 
 // Create objects
 if (!isset($plugins)) { 
-    $plugins = new PluginItems(); 
+    $plugins = new PluginFunctions(); 
 } else {
     if (!is_object($plugins)) {
-        $plugins = new PluginItems(); 
+        $plugins = new PluginFunctions(); 
     }
 }
 

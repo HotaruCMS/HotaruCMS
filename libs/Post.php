@@ -28,32 +28,32 @@
     
 class Post {    
 
-    var $post_id = 0;
-    var $post_orig_url = '';
-    var $post_domain = '';              // the domain of the submitted url
-    var $post_title = '';
-    var $post_content = '';
-    var $post_content_length = 50;      // default min characters for content
-    var $post_summary = '';
-    var $post_summary_length = 200;     // default max characters for summary
-    var $post_status = 'unsaved';
-    var $post_author = 0;
-    var $post_url = '';
-    var $post_date = '';
-    var $post_subscribe = 0;
-    var $posts_per_page = '10';
+    protected $id = 0;
+    protected $origUrl = '';
+    protected $domain = '';              // the domain of the submitted url
+    protected $title = '';
+    protected $content = '';
+    protected $contentLength = 50;      // default min characters for content
+    protected $summary = '';
+    protected $summaryLength = 200;     // default max characters for summary
+    protected $status = 'unsaved';
+    protected $author = 0;
+    protected $url = '';
+    protected $date = '';
+    protected $subscribe = 0;
+    protected $postsPerPage = 10;
     
-    var $allowable_tags = '';
+    protected $allowableTags = '';
     
-    var $template_name = '';
+    protected $templateName = '';
             
-    var $use_submission = true;
-    var $use_author = true;
-    var $use_date = true;
-    var $use_content = true;
-    var $use_summary = true;
+    protected $useSubmission = true;
+    protected $useAuthor = true;
+    protected $useDate = true;
+    protected $useContent = true;
+    protected $useSummary = true;
 
-    var $post_vars = array();
+    public $vars = array();
 
 
     /**
@@ -63,9 +63,9 @@ class Post {
      * @param str $name - the name of the member variable
      * @param mixed $value - the value to set it to.
      */
-    function __set($name, $value)
+    public function __set($name, $value)
     {
-        $this->post_vars[$name] = $value;
+        $this->vars[$name] = $value;
     }
 
 
@@ -75,26 +75,297 @@ class Post {
      *
      * @param str $name - the name of the member variable
      */
-    function __get($name)
+    public function __get($name)
     {
-        if (array_key_exists($name, $this->post_vars)) {
-            return $this->post_vars[$name];
+        if (array_key_exists($name, $this->vars)) {
+            return $this->vars[$name];
         }
     }
 
 
     /**
-     * Get submit settings
+     * Get post id
      *
-     * @return array - of submit settings
-     */
-    function get_submit_settings()
+     * @return int
+     */    
+    public function getId()
     {
-        global $plugin;
-        
-        // Get settings from the database if they exist...
-        $submit_settings = unserialize($plugin->plugin_settings('submit', 'submit_settings'));
-        return $submit_settings;
+        return $this->id;
+    }
+    
+
+    /**
+     * Get original url
+     *
+     * @return string
+     */    
+    public function getOrigUrl()
+    {
+        return $this->origUrl;
+    }
+    
+
+    /**
+     * Get original domain
+     *
+     * @return string
+     */    
+    public function getDomain()
+    {
+        return $this->domain;
+    }
+    
+
+    /**
+     * Get post title
+     *
+     * @return string
+     */    
+    public function getTitle()
+    {
+        return $this->title;
+    }
+    
+    
+    /**
+     * Get post author
+     *
+     * @return int
+     */    
+    public function getAuthor()
+    {
+        return $this->author;
+    }
+    
+    
+    /**
+     * Get post content
+     *
+     * @return string
+     */    
+    public function getContent()
+    {
+        return $this->content;
+    }
+    
+    
+    /**
+     * Get post date
+     *
+     * @return string
+     */    
+    public function getDate()
+    {
+        return $this->date;
+    }
+    
+    
+    /**
+     * Get post status
+     *
+     * @return string
+     */    
+    public function getStatus()
+    {
+        return $this->status;
+    }
+    
+    
+    /**
+     * Set Summary Length
+     *
+     * @param int $length
+     */    
+    public function setSummaryLength($length)
+    {
+        $this->summaryLength = $length;
+    }
+    
+    
+    /**
+     * Get Summary Length
+     *
+     * @return int $length
+     */    
+    public function getSummaryLength()
+    {
+        return $this->summaryLength;
+    }
+    
+    
+    /**
+     * Set Content Length
+     *
+     * @param int $length
+     */    
+    public function setContentLength($length)
+    {
+        $this->contentLength = $length;
+    }
+    
+    
+    /**
+     * Get Content Length
+     *
+     * @return int $length
+     */    
+    public function getContentLength()
+    {
+        return $this->contentLength;
+    }
+    
+    
+    /**
+     * Set Posts Per Page
+     *
+     * @param int $num
+     */    
+    public function setPostsPerPage($num)
+    {
+        $this->postsPerPage = $num;
+    }
+    
+    
+    /**
+     * Get Posts Per Page
+     *
+     * @return int $num
+     */    
+    public function getPostsPerPage()
+    {
+        return $this->postsPerPage;
+    }
+    
+    
+    /**
+     * Set Allowable Tags
+     *
+     * @param string $allowed
+     */    
+    public function setAllowableTags($allowed)
+    {
+        $this->allowableTags = $allowed;
+    }
+    
+    
+    /**
+     * Get Allowable Tags
+     *
+     * @return string $allowed
+     */    
+    public function getAllowableTags()
+    {
+        return $this->allowableTags;
+    }
+    
+    
+    /**
+     * Set useSubmission
+     *
+     * @param bool $bool
+     */    
+    public function setUseSubmission($bool)
+    {
+        $this->useSubmission = $bool;
+    }
+    
+    
+    /**
+     * Get useSubmission
+     *
+     * @return bool
+     */    
+    public function getUseSubmission()
+    {
+        return $this->useSubmission;
+    }
+    
+    
+    /**
+     * Set useAuthor
+     *
+     * @param bool $bool
+     */    
+    public function setUseAuthor($bool)
+    {
+        $this->useAuthor = $bool;
+    }
+    
+    
+    /**
+     * Get useAuthor
+     *
+     * @return bool
+     */    
+    public function getUseAuthor()
+    {
+        return $this->useAuthor;
+    }
+    
+    
+    /**
+     * Set useDate
+     *
+     * @param bool $bool
+     */    
+    public function setUseDate($bool)
+    {
+        $this->useDate = $bool;
+    }
+    
+    
+    /**
+     * Get useDate
+     *
+     * @return bool
+     */    
+    public function getUseDate()
+    {
+        return $this->useDate;
+    }
+    
+    
+    /**
+     * Set useContent
+     *
+     * @param bool $bool
+     */    
+    public function setUseContent($bool)
+    {
+        $this->useContent = $bool;
+    }
+    
+    
+    /**
+     * Get useContent
+     *
+     * @return bool
+     */    
+    public function getUseContent()
+    {
+        return $this->useContent;
+    }
+    
+    
+    /**
+     * Set useSummary
+     *
+     * @param bool $bool
+     */    
+    public function setUseSummary($bool)
+    {
+        $this->useSummary = $bool;
+    }
+    
+    
+    /**
+     * Get useSummary
+     *
+     * @return bool
+     */    
+    public function getUseSummary()
+    {
+        return $this->useSummary;
     }
     
     
@@ -104,55 +375,56 @@ class Post {
      * @param int $post_id - Optional row from the posts table in the database
      * @return bool
      */    
-    function read_post($post_id = 0)
+    public function readPost($post_id = 0)
     {
-        global $plugin, $post_row, $hotaru;
+        global $plugins, $post_row, $hotaru;
         
         // Get settings from database if they exist...
-        $submit_settings = $this->get_submit_settings();
+        $submit_settings = $plugins->getSerializedSettings('submit');
     
         // Assign settings to class member
-        $this->use_submission = $submit_settings['submit_enabled'];
-        $this->use_author = $submit_settings['submit_author'];
-        $this->use_date = $submit_settings['submit_date'];
-        $this->use_content = $submit_settings['submit_content'];
-        $this->post_content_length = $submit_settings['submit_content_length'];
-        $this->use_summary = $submit_settings['submit_summary'];
-        $this->post_summary_length = $submit_settings['submit_summary_length'];
-        $this->posts_per_page = $submit_settings['submit_posts_per_page'];
-        $this->allowable_tags = $submit_settings['submit_allowable_tags'];
+        $this->setContentLength($submit_settings['post_content_length']);
+        $this->setSummaryLength($submit_settings['post_summary_length']);
+        $this->setPostsPerPage($submit_settings['post_posts_per_page']);
+        $this->setAllowableTags($submit_settings['post_allowable_tags']);
+
+        $use_submission = $submit_settings['post_enabled'];
+        $use_author = $submit_settings['post_author'];
+        $use_date = $submit_settings['post_date'];
+        $use_content = $submit_settings['post_content'];
+        $use_summary = $submit_settings['post_summary'];
         
         //enabled
-        if ($this->use_submission == 'checked') { $this->use_submission = true; } else { $this->use_submission = false; }
+        if ($use_submission == 'checked') { $this->setUseSubmission(true);  } else { $this->setUseSubmission(false);  }
         
         //author
-        if ($this->use_author == 'checked') { $this->use_author = true; } else { $this->use_author = false; }
+        if ($use_author == 'checked') { $this->setUseAuthor(true); } else { $this->setUseAuthor(false);  }
         
         //date
-        if ($this->use_date == 'checked') { $this->use_date = true; } else { $this->use_date = false; }
+        if ($use_date == 'checked') { $this->setUseDate(true); } else { $this->setUseDate(false);  }
         
         //content
-        if ($this->use_content == 'checked') { $this->use_content = true; } else { $this->use_content = false; }
+        if ($use_content == 'checked') { $this->setUseContent(true); } else { $this->setUseContent(false);  }
         
         //summary
-        if ($this->use_summary == 'checked') { $this->use_summary = true; } else { $this->use_summary = false; }
+        if ($use_summary == 'checked') { $this->setUseSummary(true); } else { $this->setUseSummary(false); }
 
                 
-        $plugin->check_actions('submit_class_post_read_post_1');
+        $plugins->checkActions('post_read_post_1');
         
         if ($post_id != 0) {
-            $post_row = $this->get_post($post_id);
-            $this->post_title = stripslashes(urldecode($post_row->post_title));
-            $this->post_content = stripslashes(urldecode($post_row->post_content));
-            $this->post_id = $post_row->post_id;
-            $this->post_orig_url = urldecode($post_row->post_orig_url);            
-            $this->post_status = $post_row->post_status;
-            $this->post_author = $post_row->post_author;
-            $this->post_url = urldecode($post_row->post_url);
-            $this->post_date = $post_row->post_date;
-            $this->post_subscribe = $post_row->post_subscribe;
+            $post_row = $this->getPost($post_id);
+            $this->title = stripslashes(urldecode($post_row->post_title));
+            $this->content = stripslashes(urldecode($post_row->post_content));
+            $this->id = $post_row->post_id;
+            $this->origUrl = urldecode($post_row->post_orig_url);            
+            $this->status = $post_row->post_status;
+            $this->author = $post_row->post_author;
+            $this->url = urldecode($post_row->post_url);
+            $this->date = $post_row->post_date;
+            $this->subscribe = $post_row->post_subscribe;
             
-            $plugin->check_actions('submit_class_post_read_post_2');
+            $plugins->checkActions('post_read_post_2');
                         
             return true;
         } else {
@@ -167,9 +439,9 @@ class Post {
      *
      * @return true
      */    
-    function add_post()
+    public function addPost()
     {
-        global $db, $plugin, $last_insert_id, $current_user;
+        global $db, $plugins, $last_insert_id, $current_user;
         
         $parsed = parse_url($this->post_orig_url);
         if (isset($parsed['scheme'])){ $this->post_domain = $parsed['scheme'] . "://" . $parsed['host']; }
@@ -182,7 +454,7 @@ class Post {
         
         $this->post_id = $last_insert_id;
                 
-        $plugin->check_actions('submit_class_post_add_post');
+        $plugins->check_actions('submit_class_post_add_post');
         
         return true;
     }
@@ -193,9 +465,9 @@ class Post {
      *
      * @return true
      */    
-    function update_post()
+    public function updatePost()
     {
-        global $db, $plugin, $current_user;
+        global $db, $plugins, $current_user;
         
         $parsed = parse_url($this->post_orig_url);
         if (isset($parsed['scheme'])){ $this->post_domain = $parsed['scheme'] . "://" . $parsed['host']; }
@@ -204,7 +476,7 @@ class Post {
         
         $db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode($this->post_domain), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), $this->post_status, $this->post_author, $this->post_subscribe, $current_user->id, $this->post_id));
         
-        $plugin->check_actions('submit_class_post_update_post');
+        $plugins->check_actions('submit_class_post_update_post');
         
         return true;
     }
@@ -215,7 +487,7 @@ class Post {
      *
      * @return true
      */    
-    function change_status($status = "processing")
+    public function changeStatus($status = "processing")
     {
         global $db;
             
@@ -232,7 +504,7 @@ class Post {
      *
      * @return array|false
      */    
-    function get_post($post_id = 0)
+    public function getPost($post_id = 0)
     {
         global $db;
         $sql = "SELECT * FROM " . TABLE_POSTS . " WHERE post_id = %d ORDER BY post_date DESC";
@@ -246,13 +518,13 @@ class Post {
      *
      * There's a plugin hook in here to delete their parts, e.g. votes, coments, tags, etc.
      */    
-    function delete_post()
+    public function deletePost()
     {
         global $db, $plugin;
         $sql = "DELETE FROM " . TABLE_POSTS . " WHERE post_id = %d";
         $db->query($db->prepare($sql, $this->post_id));
         
-        $plugin->check_actions('submit_class_post_delete_post');
+        $plugins->check_actions('submit_class_post_delete_post');
         
     }
     
@@ -267,7 +539,7 @@ class Post {
      *
      * Example usage: $post->filter(array('post_tags LIKE %s' => '%tokyo%'), 10);
      */    
-    function filter($vars = array(), $limit = 0, $all = false, $select = '*', $orderby = 'post_date DESC')
+    public function filter($vars = array(), $limit = 0, $all = false, $select = '*', $orderby = 'post_date DESC')
     {
         global $db;
         
@@ -308,7 +580,7 @@ class Post {
      * @param array $prepared array - prepared SQL statement from filter()
      * @return array|false - array of posts
      */    
-    function get_posts($prepared_array = array())
+    public function getPosts($prepared_array = array())
     {
         global $db;
         
@@ -329,9 +601,9 @@ class Post {
      * Publish content as an RSS feed
      * Uses the 3rd party RSS Writer class.
      */    
-    function rss_feed()
+    public function rssFeed()
     {
-        global $db, $lang, $cage, $plugin, $current_user;
+        global $db, $lang, $cage, $plugins, $current_user;
         require_once(INCLUDES . 'RSSWriterClass/rsswriter.php');
         
         $select = '';
@@ -352,13 +624,13 @@ class Post {
         if ($tag) { $filter['post_tags LIKE %s'] = '%' . $tag . '%'; }
         if ($category && (FRIENDLY_URLS == "true")) { $filter['post_category = %d'] = get_cat_id($category); }
         if ($category && (FRIENDLY_URLS == "false")) { $filter['post_category = %d'] = $category; }
-        if ($search && $plugin->plugin_active('search')) { 
+        if ($search && $plugins->plugin_active('search')) { 
             $prepared_search = prepare_search_filter($search); 
             extract($prepared_search);
             $orderby = "post_date DESC";    // override "relevance DESC" so the RSS feed updates with the latest related terms. 
         }
         
-        $plugin->check_actions('submit_class_post_rss_feed');
+        $plugins->check_actions('submit_class_post_rss_feed');
         
         $feed = new RSS();
         $feed->title       = SITE_NAME;
@@ -396,7 +668,7 @@ class Post {
      *
      * @return array|false - array of posts
      */    
-    function url_exists($url = '')
+    public function urlExists($url = '')
     {
         global $db;
         $sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_orig_url = %s";
@@ -411,7 +683,7 @@ class Post {
      * @param str $title
      * @return int - id of post with matching title
      */
-    function title_exists($title = '')
+    public function titleExists($title = '')
     {
         global $db;
         $title = trim($title);
@@ -427,7 +699,7 @@ class Post {
      * @param str $post_url
      * @return int - id of post with matching url
      */
-    function is_post_url($post_url = '')
+    public function isPostUrl($post_url = '')
     {
         global $db;
         $sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_url = %s";
@@ -440,7 +712,7 @@ class Post {
      *
      * @return array|false
      */
-    function get_unique_statuses() 
+    public function getUniqueStatuses() 
     {
         global $db;
         $sql = "SELECT DISTINCT post_status FROM " . TABLE_POSTS;
@@ -448,18 +720,60 @@ class Post {
         if ($statuses) { return $statuses; } else { return false; }
     }
     
+
+    /**
+     * Prepare filter and breadcrumbs for Posts List
+     *
+     * @return array
+     */
+    public function prepareList()
+    {
+        global $hotaru, $plugins, $cage, $filter, $lang, $page_title, $select, $orderby;
+    
+        $userbase = new UserBase();
+        $this->templateName = "list";
+                
+        if (!$filter) { $filter = array(); }
         
+        if ($cage->get->testPage('page') == 'latest') 
+        {
+            $filter['post_status = %s'] = 'new'; 
+            $rss = "<a href='" . url(array('page'=>'rss', 'status'=>'new')) . "'>";
+            $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
+            $page_title = $lang["post_breadcrumbs_latest"] . $rss;
+        } 
+        else 
+        {
+            $filter['post_status = %s'] = 'top';
+            $rss = "<a href='" . url(array('page'=>'rss')) . "'>";
+            $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
+            $page_title = $lang["post_breadcrumbs_top"] . $rss;
+        }
+        
+        $plugins->checkActions('post_list_filter');
+        
+        // defaults
+        if (!isset($select)) { $select = '*'; }
+        if (!isset($orderby)) { $orderby = 'post_date DESC'; }
+        
+        $prepared_filter = $this->filter($filter, 0, true, $select, $orderby);
+        $stories = $this->getPosts($prepared_filter);
+        
+        return $stories;
+    }
+    
+    
     /**
      * Prepares and calls functions to send a trackback
      */
-    function send_trackback()
+    public function sendTrackback()
     {
         global $lang, $post;
             
         // Scan content for trackback urls
         $tb_array = array();
         
-        $trackback = $this->detect_trackback();
+        $trackback = $this->detectTrackback();
         
         // Clean up the title and description...
         $title = htmlspecialchars(strip_tags($post->post_title));
@@ -483,7 +797,7 @@ class Post {
      *
      * Adapted from Pligg.com and SocialWebCMS.com
      */
-    function detect_trackback()
+    public function detectTrackback()
     {
         global $post;
         
@@ -533,7 +847,7 @@ class Post {
      * @param str $excerpt
      * @link http://phptrackback.sourceforge.net/docs/
      */
-    function ping($trackback, $url, $title = "", $excerpt = "")
+    public function ping($trackback, $url, $title = "", $excerpt = "")
     {
         global $lang;
         

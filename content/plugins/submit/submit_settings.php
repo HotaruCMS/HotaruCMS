@@ -31,7 +31,7 @@
  */
 function sub_settings()
 {
-    global $hotaru, $plugin, $cage, $lang, $post;
+    global $hotaru, $plugins, $cage, $lang, $post;
     
     // If the form has been submitted, go and save the data...
     if ($cage->post->getAlpha('submitted') == 'true') { 
@@ -41,19 +41,19 @@ function sub_settings()
     echo "<h1>" . $lang["submit_settings_header"] . "</h1>\n";
     
     // Get settings from database if they exist...
-    $submit_settings = $post->get_submit_settings();
+    $submit_settings = $plugins->getSerializedSettings();
     
-    $enabled = $submit_settings['submit_enabled'];
-    $author = $submit_settings['submit_author'];
-    $date = $submit_settings['submit_date'];
-    $content = $submit_settings['submit_content'];
-    $content_length = $submit_settings['submit_content_length'];
-    $summary = $submit_settings['submit_summary'];
-    $summary_length = $submit_settings['submit_summary_length'];
-    $posts_per_page = $submit_settings['submit_posts_per_page'];
-    $allowable_tags = $submit_settings['submit_allowable_tags'];
+    $enabled = $submit_settings['post_enabled'];
+    $author = $submit_settings['post_author'];
+    $date = $submit_settings['post_date'];
+    $content = $submit_settings['post_content'];
+    $content_length = $submit_settings['post_content_length'];
+    $summary = $submit_settings['post_summary'];
+    $summary_length = $submit_settings['post_summary_length'];
+    $posts_per_page = $submit_settings['post_posts_per_page'];
+    $allowable_tags = $submit_settings['post_allowable_tags'];
 
-    $plugin->check_actions('submit_settings_get_values');
+    $plugins->checkActions('submit_settings_get_values');
     
     //...otherwise set to blank:
     if (!$enabled) { $enabled = ''; }
@@ -81,7 +81,7 @@ function sub_settings()
     echo "&nbsp;&nbsp;&nbsp;&nbsp;";
     echo $lang["submit_settings_summary_instruct"] . "<br />\n";
 
-    $plugin->check_actions('submit_settings_form');
+    $plugins->checkActions('submit_settings_form');
     
     echo "<br /><input type='text' size=5 name='posts_per_page' value='" . $posts_per_page . "' /> ";
     echo $lang["submit_settings_posts_per_page"] . "<br /><br />\n";
@@ -101,7 +101,7 @@ function sub_settings()
  */
 function sub_save_settings() 
 {
-    global $cage, $hotaru, $plugin, $post, $lang;
+    global $cage, $hotaru, $plugins, $post, $lang;
 
     // Enabled
     if ($cage->post->keyExists('enabled')) { 
@@ -180,23 +180,23 @@ function sub_save_settings()
         $allowable_tags = $post->$allowable_tags; 
     }
     
-    $plugin->check_actions('submit_save_settings');
+    $plugins->checkActions('submit_save_settings');
     
-    $submit_settings['submit_enabled'] = $enabled;
-    $submit_settings['submit_author'] = $author;
-    $submit_settings['submit_date'] = $date;
-    $submit_settings['submit_content'] = $content;
-    $submit_settings['submit_content_length'] = $content_length;
-    $submit_settings['submit_summary'] = $summary;
-    $submit_settings['submit_summary_length'] = $summary_length;
-    $submit_settings['submit_posts_per_page'] = $posts_per_page;
-    $submit_settings['submit_allowable_tags'] = $allowable_tags;
+    $submit_settings['post_enabled'] = $enabled;
+    $submit_settings['post_author'] = $author;
+    $submit_settings['post_date'] = $date;
+    $submit_settings['post_content'] = $content;
+    $submit_settings['post_content_length'] = $content_length;
+    $submit_settings['post_summary'] = $summary;
+    $submit_settings['post_summary_length'] = $summary_length;
+    $submit_settings['post_posts_per_page'] = $posts_per_page;
+    $submit_settings['post_allowable_tags'] = $allowable_tags;
 
-    $plugin->plugin_settings_update('submit', 'submit_settings', serialize($submit_settings));
+    $plugins->pluginSettingsUpdate('submit', 'submit_settings', serialize($submit_settings));
     
     $hotaru->message = $lang["submit_settings_saved"];
-    $hotaru->message_type = "green";
-    $hotaru->show_message();
+    $hotaru->messageType = "green";
+    $hotaru->showMessage();
     
     return true;    
 }

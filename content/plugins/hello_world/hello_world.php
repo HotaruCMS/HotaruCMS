@@ -32,7 +32,7 @@
  * @link      http://www.hotarucms.org/
  */
 
-class HelloWorld extends Plugin
+class HelloWorld extends PluginFunctions
 {
 
     /**

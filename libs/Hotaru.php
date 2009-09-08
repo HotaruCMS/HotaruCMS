@@ -25,13 +25,79 @@
  */
 class Hotaru
 {
-    var $is_debug       = false;    // show db queries and page loading time
-    var $sidebar        = true;     // enable or diable the sidebar
-    var $message        = '';       // message to display
-    var $message_type   = 'green';  // green or red, color of message box
-    var $messages       = array();  // for multiple messages
-    var $title          = '';       // for the broswer's TITLE tags
-    var $page_type      = '';       // what kind of page we're looking at
+    protected $isDebug       = false;    // show db queries and page loading time
+    protected $sidebar        = true;     // enable or diable the sidebar
+    protected $message        = '';       // message to display
+    protected $messageType   = 'green';  // green or red, color of message box
+    protected $messages       = array();  // for multiple messages
+    protected $title          = '';       // for the broswer's TITLE tags
+    protected $pageType      = '';       // what kind of page we're looking at
+    
+    
+    /**
+     * Set hotaru sidebar status
+     *
+     * @param bool $bool
+     */    
+    public function setSidebar($bool)
+    {
+        $this->sidebar = $bool;
+    }
+    
+    
+    /**
+     * Get hotaru sidebar status
+     *
+     * @return bool
+     */    
+    public function getSidebar()
+    {
+        return $this->sidebar;
+    }
+    
+    
+    /**
+     * Set hotaru title
+     *
+     * @param string $title
+     */    
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
+    
+    
+    /**
+     * Get hotaru title
+     *
+     * @return string
+     */    
+    public function getTitle()
+    {
+        return $this->title;
+    }
+    
+    
+    /**
+     * Set page type
+     *
+     * @param string $type
+     */    
+    public function setPageType($type)
+    {
+        $this->pageType = $type;
+    }
+    
+    
+    /**
+     * Get page type
+     *
+     * @return string
+     */    
+    public function getPageType()
+    {
+        return $this->pageType;
+    }
     
     
     /**
@@ -266,7 +332,7 @@ class Hotaru
     function showQueriesAndTime()
     {
         global $db;
-        if ($this->is_debug) { 
+        if ($this->isDebug) { 
             echo "<p class='debug'>" . $db->num_queries . " " . $lang['main_hotaru_queries_time'] . " " . timer_stop(1) . " " . 
             $lang['main_hotaru_seconds'] . "</p>"; 
         }
@@ -328,7 +394,7 @@ class Hotaru
      {
         global $cage, $plugins;
         
-        if ($this->page_type == 'admin') {
+        if ($this->pageType == 'admin') {
             $plugins->checkActions('admin_header_include');
             $prefix = 'hotaru_admin_';
         } else {
@@ -442,7 +508,7 @@ class Hotaru
      */
      function includeCombined($version_js = 0, $version_css = 0, $page = '', $folder = '')
      {
-        if ($this->page_type == 'admin') { $index = 'admin/admin_index'; } else { $index = 'index'; }
+        if ($this->pageType == 'admin') { $index = 'admin/admin_index'; } else { $index = 'index'; }
         if ($page && $folder) { 
             $page = 'page=' . $page; 
             $folder = '&plugin=' . $folder . "&";

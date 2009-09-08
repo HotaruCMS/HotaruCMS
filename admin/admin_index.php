@@ -34,7 +34,7 @@ require_once('admin_plugins.php');
 
 $admin = New Admin();
 
-$hotaru->page_type = 'admin';
+$hotaru->setPageType('admin');
 
 // Include combined css and js files
 if ($cage->get->keyExists('combine')) {
@@ -109,8 +109,8 @@ switch ($page) {
         plugins();
         break;
     case "plugin_settings":
-        $plugins->folder = $cage->get->testAlnumLines('plugin');
-        $plugins->name = $plugin->pluginName($plugin->folder);
+        $plugins->setFolder($cage->get->testAlnumLines('plugin'));
+        $plugins->setName($plugins->getName($plugins->getFolder()));
         break;
     default:
         break;
