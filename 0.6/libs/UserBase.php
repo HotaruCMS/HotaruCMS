@@ -139,6 +139,7 @@ class UserBase {
         
         // Fetch from database
         $user_info = $db->get_row($db->prepare($sql, $param));
+        
         if ($user_info) {
             $this->id = $user_info->user_id;
             $this->username = $user_info->user_username;

@@ -1,7 +1,7 @@
 <?php
 /**
  * name: Sidebar
- * description: Class to manage the sidebar
+ * description: Class to manage a sidebar
  * file: /plugins/sidebar/class.sidebar.php
  *
  * PHP version 5
@@ -28,7 +28,7 @@
     
 class Sidebar {    
 
-    var $sidebar_vars = array();
+    protected $vars = array();
 
     /**
      * PHP __set Magic Method
@@ -37,9 +37,9 @@ class Sidebar {
      * @param str $name - the name of the member variable
      * @param mixed $value - the value to set it to.
      */
-    function __set($name, $value)
+    public function __set($name, $value)
     {
-        $this->sidebar_vars[$name] = $value;
+        $this->vars[$name] = $value;
     }
         
         
@@ -49,10 +49,10 @@ class Sidebar {
      *
      * @param str $name - the name of the member variable
      */
-    function __get($name)
+    public function __get($name)
     {
-        if (array_key_exists($name, $this->sidebar_vars)) {
-            return $this->sidebar_vars[$name];
+        if (array_key_exists($name, $this->vars)) {
+            return $this->vars[$name];
         }
     }
 
@@ -63,14 +63,14 @@ class Sidebar {
      * Find which plugins have "plugin_settings" for "sidebar_widgets", give 
      * them an initial order and serialize them in "sidebar_settings"
      */
-    function initialize_sidebar_widgets()
+    public function initializeSidebarWidgets()
     {
-        global $plugin;
+        global $plugins;
         
         // Get settings from the database if they exist...
-        $sidebar_settings = $this->get_sidebar_settings();
+        $sidebar_settings = $this->getSidebarSettings();
             
-        $sidebar_widgets = $plugin->plugin_settings_array('sidebar_widgets');
+        $sidebar_widgets = $plugins->pluginSettingsArray('sidebar_widgets');
         
         if ($sidebar_widgets) {
             $count = 1;
@@ -90,7 +90,7 @@ class Sidebar {
                 $sidebar_settings['sidebar_widgets'][$widget->plugin_setting]['args'] = $widget->plugin_value;
                 $count++;
             }
-            $plugin->plugin_settings_update('sidebar', 'sidebar_settings', serialize($sidebar_settings));
+            $plugins->pluginSettingsUpdate('sidebar', 'sidebar_settings', serialize($sidebar_settings));
         }
     }
 
@@ -100,12 +100,12 @@ class Sidebar {
      *
      * @return array - of sidebar settings
      */
-    function get_sidebar_settings()
+    public function getSidebarSettings()
     {
-        global $plugin;
+        global $plugins;
         
         // Get settings from the database if they exist...
-        $sidebar_settings = unserialize($plugin->plugin_settings('sidebar', 'sidebar_settings'));         
+        $sidebar_settings = unserialize($plugins->pluginSettings('sidebar', 'sidebar_settings'));         
         return $sidebar_settings;
     }
     
@@ -118,17 +118,17 @@ class Sidebar {
      * 
      * @return array - of sidebar widgets
      */
-    function get_sidebar_widgets()
+    public function getSidebarWidgets()
     {
-        global $plugin;
+        global $plugins;
         
         // Get settings from the database if they exist...
-        $sidebar_settings = $this->get_sidebar_settings();
+        $sidebar_settings = $this->getSidebarSettings();
         
         if ($sidebar_settings['sidebar_widgets']) {
             $widgets = $sidebar_settings['sidebar_widgets'];    // associative array
                     
-            $widgets = $this->order_sidebar_widgets($widgets);    // sorts plugins by "order"
+            $widgets = $this->orderSidebarWidgets($widgets);    // sorts plugins by "order"
     
             return $widgets;
         }
@@ -140,7 +140,7 @@ class Sidebar {
      * @param array $widgets
      * @return array - sorted widgets
      */
-    function order_sidebar_widgets($widgets)
+    public function orderSidebarWidgets($widgets)
     {
         return sksort($widgets, "order", "int", true);
     }
@@ -151,9 +151,9 @@ class Sidebar {
      * @param array $widgets
      * @return int the highest sidebar value of all the widgets, i.e. the number of sidebars. 
      */
-    function get_last_sidebar($widgets)
+    public function getLastSidebar($widgets)
     {
-        global $plugin;
+        global $plugins;
             
         $highest = 1;
         foreach ($widgets as $widget => $details) {

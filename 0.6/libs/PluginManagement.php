@@ -184,7 +184,7 @@ class PluginManagement extends Plugin
         foreach ($plugin_list as $plugin_folder_name)
         {
             if($plugin_metadata = $this->readPluginMeta($plugin_folder_name)) {
-                    array_push($plugins_array, $plugin_metadata);
+                array_push($plugins_array, $plugin_metadata);
             }
         }    
         return $plugins_array;

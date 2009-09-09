@@ -28,9 +28,10 @@
 // includes
 require_once('../hotaru_header.php');
 require_once('admin_login.php');
-require_once(LIBS . 'Admin.php');
 require_once('admin_news.php');
 require_once('admin_plugins.php');
+require_once(LIBS . 'Admin.php');
+require_once(LIBS . 'PluginSettings.php');
 
 $admin = New Admin();
 

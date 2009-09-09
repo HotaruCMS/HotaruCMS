@@ -139,6 +139,17 @@ class Post {
     
     
     /**
+     * Get url
+     *
+     * @return string
+     */    
+    public function getUrl()
+    {
+        return $this->url;
+    }
+    
+    
+    /**
      * Get post content
      *
      * @return string
@@ -454,7 +465,7 @@ class Post {
         
         $this->post_id = $last_insert_id;
                 
-        $plugins->check_actions('submit_class_post_add_post');
+        $plugins->check_actions('post_add_post');
         
         return true;
     }
@@ -476,7 +487,7 @@ class Post {
         
         $db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode($this->post_domain), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), $this->post_status, $this->post_author, $this->post_subscribe, $current_user->id, $this->post_id));
         
-        $plugins->check_actions('submit_class_post_update_post');
+        $plugins->check_actions('post_update_post');
         
         return true;
     }
@@ -524,7 +535,7 @@ class Post {
         $sql = "DELETE FROM " . TABLE_POSTS . " WHERE post_id = %d";
         $db->query($db->prepare($sql, $this->post_id));
         
-        $plugins->check_actions('submit_class_post_delete_post');
+        $plugins->check_actions('post_delete_post');
         
     }
     
@@ -564,7 +575,9 @@ class Post {
             $limit = "LIMIT " . $limit; 
         }
         
-        $sql = "SELECT " . $select . " FROM " . TABLE_POSTS . $filter . " ORDER BY " . $orderby . " " . $limit;
+        if ($orderby) { $orderby = "ORDER BY " . $orderby; }
+        
+        $sql = "SELECT " . $select . " FROM " . TABLE_POSTS . $filter . " " . $orderby . " " . $limit;
         
         $prepare_array[0] = $sql;
         
@@ -604,7 +617,7 @@ class Post {
     public function rssFeed()
     {
         global $db, $lang, $cage, $plugins, $current_user;
-        require_once(INCLUDES . 'RSSWriterClass/rsswriter.php');
+        require_once(EXTENSIONS . 'RSSWriterClass/rsswriter.php');
         
         $select = '';
         $orderby = '';
@@ -613,16 +626,17 @@ class Post {
         $limit = $cage->get->getInt('limit');
         $user = $cage->get->testUsername('user');
         $tag = $cage->get->noTags('tag');
-        $category = $cage->get->noTags('category');
         $search = $cage->get->getMixedString2('search');
-        
+        $category = $cage->get->noTags('category');
+        if ($category) { $cat = new Category(); } // so we can use a couple of functions from the Category class
+                
         //if (!$status) { $status = "top"; }
         if (!$limit) { $limit = 10; }
                     
         if ($status) { $filter['post_status = %s'] = $status; }
         if ($user) { $filter['post_author = %d'] = $current_user->get_user_id($cage->get->testUsername('user'));  }
         if ($tag) { $filter['post_tags LIKE %s'] = '%' . $tag . '%'; }
-        if ($category && (FRIENDLY_URLS == "true")) { $filter['post_category = %d'] = get_cat_id($category); }
+        if ($category && (FRIENDLY_URLS == "true")) { $filter['post_category = %d'] = $cat->getCatId($category); }
         if ($category && (FRIENDLY_URLS == "false")) { $filter['post_category = %d'] = $category; }
         if ($search && $plugins->plugin_active('search')) { 
             $prepared_search = prepare_search_filter($search); 
@@ -630,7 +644,7 @@ class Post {
             $orderby = "post_date DESC";    // override "relevance DESC" so the RSS feed updates with the latest related terms. 
         }
         
-        $plugins->check_actions('submit_class_post_rss_feed');
+        $plugins->checkActions('post_rss_feed');
         
         $feed = new RSS();
         $feed->title       = SITE_NAME;
@@ -641,12 +655,12 @@ class Post {
         elseif ($user) { $feed->description = $lang["submit_rss_stories_from_user"] . " " . $user; }
         elseif ($tag) { $feed->description = $lang["submit_rss_stories_tagged"] . " " . $tag; }
         elseif ($category && (FRIENDLY_URLS == "true")) { $feed->description = $lang["submit_rss_stories_in_category"] . " " . $category; }
-        elseif ($category && (FRIENDLY_URLS == "false")) { $feed->description = $lang["submit_rss_stories_in_category"] . " " . get_cat_name($category); }
+        elseif ($category && (FRIENDLY_URLS == "false")) { $feed->description = $lang["submit_rss_stories_in_category"] . " " . $cat->getCatName($category); }
         elseif ($search) { $feed->description = $lang["submit_rss_stories_search"] . " " . stripslashes($search); }
                 
         if (!isset($filter))  $filter = array();
         $prepared_array = $this->filter($filter, $limit, false, $select, $orderby);
-        $results = $this->get_posts($prepared_array);
+        $results = $this->getPosts($prepared_array);
 
         if ($results) {
             foreach ($results as $result) 

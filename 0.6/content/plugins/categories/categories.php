@@ -6,7 +6,7 @@
  * folder: categories
  * class: Categories
  * requires: submit 0.3, category_manager 0.2
- * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_class_post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_list_filter, submit_show_post_author_date, submit_is_page_main, navigation_last, admin_sidebar_plugin_settings, admin_plugin_settings
+ * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, post_read_post_1, post_read_post_2, post_add_post, post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, post_list_filter, submit_show_post_author_date, submit_is_page_main, navigation_last, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * PHP version 5
  *
@@ -44,12 +44,12 @@ class Categories extends PluginFunctions
      */
     public function install_plugin()
     {
-        global $db, $plugin, $post;
+        global $db, $plugins, $post;
         
-        // Default settings (Note: we can't use $post->post_vars because it hasn't been filled yet.)
-        $plugins->plugin_settings_update('submit', 'submit_categories', 'checked');
-        $plugins->plugin_settings_update('sidebar_widgets', 'categories', '');
-        $plugins->plugin_settings_update('categories', 'categories_bar', 'menu');
+        // Default settings (Note: we can't use $post->vars because it hasn't been filled yet.)
+        $plugins->pluginSettingsUpdate('submit', 'submit_categories', 'checked');
+        $plugins->pluginSettingsUpdate('sidebar_widgets', 'categories', '');
+        $plugins->pluginSettingsUpdate('categories', 'categories_bar', 'menu');
     }
     
     
@@ -58,24 +58,26 @@ class Categories extends PluginFunctions
      */
     public function hotaru_header()
     {
-        global $post, $hotaru, $cage, $plugin;
+        global $post, $hotaru, $cage, $plugins;
         
         // The categories table is defined 
         if (!defined('TABLE_CATEGORIES')) { define("TABLE_CATEGORIES", DB_PREFIX . "categories"); }
         
         // include language file
-        $plugins->include_language('categories');
+        $plugins->includeLanguage('categories');
         
         // Get page title    
         if ($cage->get->keyExists('category'))
         {
+            $cat = new Category();
+            
             if (is_numeric($cage->get->notags('category'))) 
             { 
-                $hotaru->title = get_cat_name($cage->get->getInt('category')); // friendly URLs: FALSE
+                $hotaru->setTitle($cat->getCatName($cage->get->getInt('category'))); // friendly URLs: FALSE
             } 
             else 
             {
-                $hotaru->title = $hotaru->page_to_title_caps(($cage->get->notags('category'))); // friendly URLs: TRUE
+                $hotaru->setTitle($hotaru->pageToTitleCaps(($cage->get->notags('category')))); // friendly URLs: TRUE
             } 
         }
     }
@@ -86,18 +88,18 @@ class Categories extends PluginFunctions
      */
     public function submit_hotaru_header_1()
     {
-        global $post, $plugin;
+        global $post, $plugins;
         
         // The categories table is defined 
         if (!defined('TABLE_CATEGORIES')) { define("TABLE_CATEGORIES", DB_PREFIX . "categories"); }
         
         // include language file
-        $plugins->include_language('categories');
+        $plugins->includeLanguage('categories');
         
-        $post->post_vars['post_category'] = 1;    // default category ('all').
-        $post->post_vars['post_cat_name'] = '';
-        $post->post_vars['post_cat_safe_name'] = '';
-        $post->post_vars['use_categories'] = true;
+        $post->vars['category'] = 1;    // default category ('all').
+        $post->vars['catName'] = '';
+        $post->vars['catSafeName'] = '';
+        $post->vars['useCategories'] = true;
         
     }
     
@@ -112,9 +114,9 @@ class Categories extends PluginFunctions
      */
     public function submit_hotaru_header_2()
     {
-        global $db, $hotaru, $post, $plugin, $cage;
+        global $db, $hotaru, $post, $plugins, $cage;
             
-        if (FRIENDLY_URLS == "true" && $post->post_id == 0) {
+        if (FRIENDLY_URLS == "true" && $post->id == 0) {
             // No post stored in post object, nothing was succesfully read by the Submit plugin        
                     
             // Can't get keys from the url with Inspekt, so must get the whole query string instead.
@@ -132,9 +134,9 @@ class Categories extends PluginFunctions
                         $exists = $db->get_var($db->prepare($sql, $key));        
                         if ($exists && $value) {
                             // Now we know that $key is a category so $value must be the post name. Go get the post_id...
-                            $post->post_id = $post->is_post_url($value);
-                            $post->read_post($post->post_id);
-                            $post->post_vars['is_category_post'] = true; 
+                            $post->id = $post->isPostUrl($value);
+                            $post->readPost($post->id);
+                            $post->vars['isCategoryPost'] = true; 
                             return true;
                         } 
                     }
@@ -142,7 +144,7 @@ class Categories extends PluginFunctions
             }
         }
             
-        $post->post_vars['is_category_post'] = false;
+        $post->vars['isCategoryPost'] = false;
         return false;
     }
     
@@ -150,16 +152,16 @@ class Categories extends PluginFunctions
     /**
      * Read category settings
      */
-    public function submit_class_post_read_post_1()
+    public function post_read_post_1()
     {
-        global $plugin, $post;
+        global $plugins, $post;
         
         //categories
-        if (($plugins->plugin_settings('submit', 'submit_categories') == 'checked') 
-            && ($plugins->plugin_active('categories'))) { 
-            $post->post_vars['use_categories'] = true; 
+        if (($plugins->pluginSettings('submit', 'submit_categories') == 'checked') 
+            && ($plugins->pluginActive('categories'))) { 
+            $post->vars['useCategories'] = true; 
         } else { 
-            $post->post_vars['use_categories'] = false; 
+            $post->vars['useCategories'] = false; 
         }
     }
     
@@ -167,40 +169,40 @@ class Categories extends PluginFunctions
     /**
      * Read category from the post in the database.
      */
-    public function submit_class_post_read_post_2()
+    public function post_read_post_2()
     {
         global $db, $post, $post_row;
         
-        $post->post_vars['post_category'] = $post_row->post_category;
+        $post->vars['category'] = $post_row->post_category;
         
         $sql = "SELECT category_name, category_safe_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
-        $cat = $db->get_row($db->prepare($sql, $post->post_vars['post_category']));
-        $post->post_vars['post_cat_name'] = urldecode($cat->category_name);
-        $post->post_vars['post_cat_safe_name'] = urldecode($cat->category_safe_name);
+        $cat = $db->get_row($db->prepare($sql, $post->vars['category']));
+        $post->vars['catName'] = urldecode($cat->category_name);
+        $post->vars['catSafeName'] = urldecode($cat->category_safe_name);
     }
     
     
     /**
      * Adds category to the posts table
      */
-    public function submit_class_post_add_post()
+    public function post_add_post()
     {
         global $post, $db, $last_insert_id;
         
         $sql = "UPDATE " . TABLE_POSTS . " SET post_category = %d WHERE post_id = %d";
-        $db->query($db->prepare($sql, $post->post_vars['post_category'], $last_insert_id));
+        $db->query($db->prepare($sql, $post->vars['category'], $last_insert_id));
     }
     
     
     /**
      * Updates category in the posts table
      */
-    public function submit_class_post_update_post()
+    public function post_update_post()
     {
         global $post, $db;
         
         $sql = "UPDATE " . TABLE_POSTS . " SET post_category = %d WHERE post_id = %d";
-        $db->query($db->prepare($sql, $post->post_vars['post_category'], $post->post_id));
+        $db->query($db->prepare($sql, $post->vars['category'], $post->id));
     }
     
     
@@ -224,14 +226,14 @@ class Categories extends PluginFunctions
             
         } elseif ($cage->post->getAlpha('submit3') == 'edit') {
             // Come back from step 3 to make changes...
-            $category_check = $post->post_vars['post_category'];
+            $category_check = $post->vars['category'];
             
         } elseif ($hotaru->is_page('edit_post')) {
             // Editing a previously submitted post
             if ($cage->post->getAlpha('edit_post') == 'true') {
                 $category_check = $cage->post->getInt('post_category');
             } else {
-                $category_check = $post->post_vars['post_category'];
+                $category_check = $post->vars['category'];
             }
         
         } else {
@@ -249,7 +251,7 @@ class Categories extends PluginFunctions
     {
         global $db, $lang, $post, $category_check;
     
-        if ($post->post_vars['use_categories']) { 
+        if ($post->vars['useCategories']) { 
             echo "<tr>\n";
                 echo "<td>" . $lang["submit_form_category"] . ":&nbsp; </td>\n";
                 echo "<td><select name='post_category'>\n";
@@ -283,7 +285,7 @@ class Categories extends PluginFunctions
         global $hotaru, $lang, $post, $cage, $category_check;
         
         // ******** CHECK CATEGORY ********
-        if ($post->post_vars['use_categories']) {
+        if ($post->vars['useCategories']) {
             $category_check = $cage->post->getInt('post_category');    
             if (!$category_check) {
                 // No category present...
@@ -306,12 +308,12 @@ class Categories extends PluginFunctions
     {
         global $db, $cage, $post;
         
-        $post->post_vars['post_category'] = $cage->post->getInt('post_category');
+        $post->vars['category'] = $cage->post->getInt('post_category');
         
         $sql = "SELECT category_name, category_safe_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
-        $cat = $db->get_row($db->prepare($sql, $post->post_vars['post_category']));
-        $post->post_vars['post_cat_name'] = urldecode($cat->category_name);
-        $post->post_vars['post_cat_safe_name'] = urldecode($cat->category_safe_name);
+        $cat = $db->get_row($db->prepare($sql, $post->vars['category']));
+        $post->vars['catName'] = urldecode($cat->category_name);
+        $post->vars['catSafeName'] = urldecode($cat->category_safe_name);
     }
     
     
@@ -323,29 +325,16 @@ class Categories extends PluginFunctions
      
     
     /**
-     * Includes css file.
-     */
-    public function header_include()
-    {
-        global $plugin;
-        
-        $plugins->include_css('categories');
-        $plugins->include_css('categories', 'category_bar');
-        $plugins->include_js('categories');
-    }
-    
-    
-    /**
      * Checks is the url is a category->post name pair and displays the post
      *
      * @return bool
      */
     public function submit_is_page_main()
     {
-        global $db, $post, $plugin, $cage, $hotaru;
+        global $db, $post, $plugins, $cage, $hotaru;
         
-        if ($post->post_vars['is_category_post']) {
-            $hotaru->display_template('post', 'submit');
+        if ($post->vars['isCategoryPost']) {
+            $hotaru->displayTemplate('post', 'submit');
             return true;
         } else {
             return false;
@@ -357,18 +346,20 @@ class Categories extends PluginFunctions
      *
      * @return bool
      */
-    public function submit_list_filter()
+    public function post_list_filter()
     {
         global $hotaru, $post, $cage, $filter, $lang, $page_title;
         
         if ($cage->get->keyExists('category')) 
         {
+            $cat = new Category();
+            
             if (FRIENDLY_URLS == "true") 
             {
                 $category = $cage->get->noTags('category'); 
                 if ($category) { 
-                    $filter['post_category = %d'] = get_cat_id($category); 
-                    $rss = " <a href='" . url(array('page'=>'rss', 'category'=>get_cat_id($category))) . "'>";
+                    $filter['post_category = %d'] = $cat->getCatId($category); 
+                    $rss = " <a href='" . url(array('page'=>'rss', 'category'=>$cat->getCatId($category))) . "'>";
                 } 
             } 
             else 
@@ -384,7 +375,7 @@ class Categories extends PluginFunctions
             // Undo the filter that limits results to either 'top' or 'new' (See submit.php -> sub_prepare_list())
             if(isset($filter['post_status = %s'])) { unset($filter['post_status = %s']); }
             $filter['post_status != %s'] = 'processing';
-            $page_title = $lang["submit_page_breadcrumbs_category"] . " &raquo; " . $hotaru->title . $rss;
+            $page_title = $lang["post_breadcrumbs_category"] . " &raquo; " . $hotaru->getTitle() . $rss;
             
             return true;
         } 
@@ -400,10 +391,10 @@ class Categories extends PluginFunctions
     { 
         global $post, $lang;
         
-        if ($post->post_vars['use_categories'] && $post->post_vars['post_category']) { 
+        if ($post->vars['useCategories'] && $post->vars['category']) { 
         
-            $category =  $post->post_vars['post_category'];
-            $cat_name = $post->post_vars['post_cat_name'];
+            $category =  $post->vars['category'];
+            $cat_name = $post->vars['catName'];
             
             echo " " . $lang["submit_show_post_in_category"] . " ";
             
@@ -421,7 +412,7 @@ class Categories extends PluginFunctions
      */
     public function sidebar_widget_categories($args)
     {
-        global $db, $the_cats, $cat_level, $lang, $hotaru, $plugin, $sidebar;
+        global $db, $the_cats, $cat_level, $lang, $hotaru, $plugins, $sidebar;
         
         // Get settings from database if they exist...
         $bar = $plugins->plugin_settings('categories', 'categories_bar');
@@ -487,10 +478,10 @@ class Categories extends PluginFunctions
      */
     public function submit_settings_get_values()
     {
-        global $plugin, $categories;
+        global $plugins, $categories;
         
         // Get settings from database if they exist... should return 'checked'
-        $categories = $plugins->plugin_settings('submit', 'submit_categories');
+        $categories = $plugins->pluginSettings('submit', 'submit_categories');
         
         // otherwise set to blank...
         if (!$categories) { $categories = ''; }
@@ -503,7 +494,7 @@ class Categories extends PluginFunctions
      */
     public function submit_settings_form()
     {
-        global $plugin, $lang, $categories;
+        global $plugins, $lang, $categories;
         
         echo "<input type='checkbox' name='categories' value='categories' " . $categories . ">&nbsp;&nbsp;" . $lang["submit_settings_categories"] . "<br />";
     
@@ -515,18 +506,18 @@ class Categories extends PluginFunctions
      */
     public function submit_save_settings()
     {
-        global $plugin, $cage, $lang, $categories;
+        global $plugins, $cage, $lang, $categories;
         
         // Categories
         if ($cage->post->keyExists('categories')) { 
             $categories = 'checked'; 
-            $post->post_vars['use_categories'] = true;
+            $post->vars['useCategories'] = true;
         } else { 
             $categories = ''; 
-            $post->post_vars['use_categories'] = false;
+            $post->vars['useCategories'] = false;
         }
             
-        $plugins->plugin_settings_update('submit', 'submit_categories', $categories);
+        $plugins->pluginSettingsUpdate('submit', 'submit_categories', $categories);
     
     }
     
@@ -550,7 +541,8 @@ class Categories extends PluginFunctions
      */
     public function admin_plugin_settings() {
         require_once(PLUGINS . 'categories/categories_settings.php');
-        $this->settings();
+        $catSettings = new CategoriesSettings();
+        $catSettings->settings();
         return true;
     }
     
@@ -560,52 +552,6 @@ class Categories extends PluginFunctions
      * *********************************************************************
      * ****************************************************************** */
      
-    /**
-     * Returns the category safe name for a give category id.
-     *
-     * @param int $cat_id
-     * @return string
-     */
-    public function get_cat_safe_name($cat_id)
-    {
-        global $db;
-        
-        $sql = "SELECT category_safe_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
-        $cat_safe_name = $db->get_var($db->prepare($sql, $cat_id));
-        return urldecode($cat_safe_name);
-    }
-    
-    
-    /**
-     * Returns the category name for a give category id.
-     *
-     * @param int $cat_id
-     * @return string
-     */
-    public function get_cat_name($cat_id) {
-        global $db;
-        
-        $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
-        $cat_name = $db->get_var($db->prepare($sql, $cat_id));
-        return urldecode($cat_name);
-    }
-    
-    
-    /**
-     * Returns the category id for a given category safe name.
-     *
-     * @param string $cat_name
-     * @return int
-     */
-    public function get_cat_id($cat_name)
-    {
-        global $db;
-        
-        $sql = "SELECT category_id FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s";
-        $cat_id = $db->get_var($db->prepare($sql, urlencode($cat_name)));
-        return $cat_id;
-    }
-    
     
     /**
      * Category Bar - shows categories as a drop-down suckerfish menu
@@ -614,10 +560,10 @@ class Categories extends PluginFunctions
      */
     public function navigation_last()
     {
-        global $db, $plugin;
+        global $db, $plugins;
     
         // Get settings from database if they exist...
-        $bar = $plugins->plugin_settings('categories', 'categories_bar');
+        $bar = $plugins->pluginSettings('categories', 'categories_bar');
         
         // Only show if the menu bar is enabled
         if ($bar == 'menu') {

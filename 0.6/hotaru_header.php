@@ -64,6 +64,8 @@ require_once(LIBS . 'Plugin.php');
 require_once(LIBS . 'PluginManagement.php');
 require_once(LIBS . 'PluginFunctions.php');
 require_once(LIBS . 'Post.php');
+require_once(LIBS . 'Category.php');
+require_once(LIBS . 'Sidebar.php');
 
 // Initialize database
 if (!isset($db)) { 

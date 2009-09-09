@@ -24,77 +24,80 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
- 
- /**
- * Admin settings for Categories
- */
-function cts_settings()
+
+class CategoriesSettings extends PluginSettings
 {
-    global $hotaru, $plugin, $cage, $lang;
+     /**
+     * Admin settings for Categories
+     */
+    public function settings()
+    {
+        global $hotaru, $plugins, $cage, $lang;
+        
+        // If the form has been submitted, go and save the data...
+        if ($cage->post->getAlpha('submitted') == 'true') { 
+            $this->save_settings(); 
+        }
+        
+        echo "<h1>" . $lang["categories_settings_header"] . "</h1>\n";
+          
+        // Get settings from database if they exist...
+        $bar = $plugins->pluginSettings('categories', 'categories_bar');
     
-    // If the form has been submitted, go and save the data...
-    if ($cage->post->getAlpha('submitted') == 'true') { 
-        cts_save_settings(); 
+        $plugins->checkActions('categories_settings_get_values');
+        
+        //...otherwise set to blank:
+        if (!$bar) { $menubar = 'checked'; }
+        
+        // which is checked?
+        if ($bar == 'menu') { $menubar = 'checked'; $sidebar = ''; }
+        if ($bar == 'side') { $menubar = ''; $sidebar = 'checked'; }
+        
+        echo "<form name='categories_settings_form' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=categories' method='post'>\n";
+        
+        echo "<p>" . $lang["categories_settings_instructions"] . "</p><br />";
+        
+        echo "<p><input type='radio' name='bar' value='menubar' " . $menubar . " >&nbsp;&nbsp;" . $lang["categories_settings_menubar"] . "</p>\n";    
+        echo "<p><input type='radio' name='bar' value='sidebar' " . $sidebar . " >&nbsp;&nbsp;" . $lang["categories_settings_sidebar"] . "</p>\n"; 
+        
+        echo "<p>" . $lang["categories_settings_note"] . "</p><br />";
+    
+        $plugins->checkActions('categories_settings_form');
+                
+        echo "<br /><br />\n";    
+        echo "<input type='hidden' name='submitted' value='true' />\n";
+        echo "<input type='submit' value='" . $lang["categories_settings_save"] . "' />\n";
+        echo "</form>\n";
     }
     
-    echo "<h1>" . $lang["categories_settings_header"] . "</h1>\n";
-      
-    // Get settings from database if they exist...
-    $bar = $plugins->plugin_settings('categories', 'categories_bar');
-
-    $plugins->checkActions('categories_settings_get_values');
     
-    //...otherwise set to blank:
-    if (!$bar) { $menubar = 'checked'; }
+     /**
+     * Save admin settings for Categories
+     *
+     * @return true
+     */
+    public function save_settings()
+    {
+        global $cage, $hotaru, $plugins, $post, $lang;
     
-    // which is checked?
-    if ($bar == 'menu') { $menubar = 'checked'; $sidebar = ''; }
-    if ($bar == 'side') { $menubar = ''; $sidebar = 'checked'; }
-    
-    echo "<form name='categories_settings_form' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=categories' method='post'>\n";
-    
-    echo "<p>" . $lang["categories_settings_instructions"] . "</p><br />";
-    
-    echo "<p>" . $lang["categories_settings_note"] . "</p><br />";
-    
-    echo "<p><input type='radio' name='bar' value='menubar' " . $menubar . " >&nbsp;&nbsp;" . $lang["categories_settings_menubar"] . "</p>\n";    
-    echo "<p><input type='radio' name='bar' value='sidebar' " . $sidebar . " >&nbsp;&nbsp;" . $lang["categories_settings_sidebar"] . "</p>\n"; 
-
-    $plugins->checkActions('categories_settings_form');
-            
-    echo "<br /><br />\n";    
-    echo "<input type='hidden' name='submitted' value='true' />\n";
-    echo "<input type='submit' value='" . $lang["categories_settings_save"] . "' />\n";
-    echo "</form>\n";
-}
-
-
- /**
- * Save admin settings for Categories
- *
- * @return true
- */
-function cts_save_settings()
-{
-    global $cage, $hotaru, $plugin, $post, $lang;
-
-    // bar
-    if ($cage->post->keyExists('bar')) { 
-            if ($cage->post->getAlpha('bar') == 'menubar') { 
-                $bar = 'menu'; 
-            } else { 
-                $bar = 'side'; 
-            }
+        // bar
+        if ($cage->post->keyExists('bar')) { 
+                if ($cage->post->getAlpha('bar') == 'menubar') { 
+                    $bar = 'menu'; 
+                } else { 
+                    $bar = 'side'; 
+                }
+        }
+        
+        $plugins->checkActions('categories_save_settings');
+        
+        $plugins->pluginSettingsUpdate('categories', 'categories_bar', $bar);
+        
+        $hotaru->message = $lang["categories_settings_saved"];
+        $hotaru->messageType = "green";
+        $hotaru->showMessage();
+        
+        return true;    
     }
-    
-    $plugins->checkActions('categories_save_settings');
-    
-    $plugins->plugin_settings_update('categories', 'categories_bar', $bar);
-    
-    $hotaru->message = $lang["categories_settings_saved"];
-    $hotaru->message_type = "green";
-    $hotaru->show_message();
-    
-    return true;    
 }
 ?>
