@@ -85,10 +85,13 @@ class PluginFunctions extends PluginManagement
         
         $this->name     = $plugin_metadata['name'];
         $this->desc     = $plugin_metadata['description'];
-        $this->prefix   = $plugin_metadata['prefix'];
         $this->version  = $plugin_metadata['version'];
         $this->folder   = $plugin_metadata['folder'];
         $this->hooks    = explode(',', $plugin_metadata['hooks']);
+        
+        if (isset($plugin_metadata['prefix']) && $plugin_metadata['prefix']) {
+            $this->prefix   = $plugin_metadata['prefix'];
+        }
             
         if (isset($plugin_metadata['requires']) && $plugin_metadata['requires']) {
             $this->requires = $plugin_metadata['requires'];
@@ -328,6 +331,10 @@ class PluginFunctions extends PluginManagement
                         // else simply show an activated message...
                         $hotaru->messages[$lang["admin_plugins_activated"]] = 'green'; 
                     }
+                    
+                    // Force inclusion of a language file (if exists) because the 
+                    // plugin isn't ready to include it itself yet.
+                    $this->includeLanguage($this->folder);
                 }
                 
                 if ($enabled == 0) { 
@@ -744,7 +751,7 @@ class PluginFunctions extends PluginManagement
         $file_location = $this->findCSSFile($plugin, $filename);
         
         // Add this css file to the global array of css_files
-        array_push($this->getIncludeCSS(), $file_location);
+        $this->setIncludeCSS($file_location);
      }
 
 
@@ -762,7 +769,7 @@ class PluginFunctions extends PluginManagement
         $file_location = $this->findJSFile($plugin, $filename);
         
         // Add this css file to the global array of css_files
-        array_push($this->getIncludeJS(), $file_location);
+        $this->setIncludeJS($file_location);
      }
 }
 

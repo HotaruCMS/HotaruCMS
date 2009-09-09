@@ -8,11 +8,33 @@ class PluginManagement extends Plugin
     private $includeType   = '';       // 'css' or 'js'
     
     /**
+     * setIncludeCSS
+     *
+     * @param string $file - full path to the CSS file
+     */
+    public function setIncludeCSS($file)
+    {
+        array_push($this->includeCSS, $file);
+    }
+    
+
+    /**
      * getIncludeCSS
      */
     public function getIncludeCSS()
     {
         return $this->includeCSS;
+    }
+    
+
+    /**
+     * setIncludeJS
+     *
+     * @param string $file - full path to the JS file
+     */
+    public function setIncludeJS($file)
+    {
+        array_push($this->includeJS, $file);
     }
     
 

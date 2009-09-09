@@ -34,18 +34,6 @@
 
 class HelloWorld extends PluginFunctions
 {
-
-    /**
-     * Reads metadata from the top of this file and assign it 
-     * to the current object
-     */
-    public function __construct()
-    {
-        $plugin_metadata = $this->readPluginMeta('hello_world');
-        $this->assignPluginMeta($plugin_metadata);
-    }
-    
-    
     /**
      * Displays "Hello World!" wherever the plugin hook is.
      */
