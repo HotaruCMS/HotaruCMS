@@ -43,7 +43,7 @@ class SidebarWidgets extends PluginFunctions
         // A plugin hook so other plugin developers can add defaultsettings
         $plugins->checkActions('sidebar_install_plugin');
         
-        $plugins->includeLanguage('sidebar');
+        $plugins->includeLanguage('sidebar_widgets');
     }
     
     
@@ -54,7 +54,7 @@ class SidebarWidgets extends PluginFunctions
     {
         global $hotaru, $plugins, $sidebar, $lang;
         
-        $plugins->includeLanguage('sidebar');
+        $plugins->includeLanguage('sidebar_widgets');
         
         if ($hotaru->getSidebar()) {
             // Create a new global object called "sidebar".
@@ -93,9 +93,18 @@ class SidebarWidgets extends PluginFunctions
             if (($details['sidebar'] == $sidebar_id) && $details['enabled']) {
             
                 // Call this widget's function
-                if (function_exists($function_name)) {
+                if (function_exists($function_name))
+                {
                     $function_name($details['args']);    // pass an argument, e.g. a feed ID for the RSS Show plugin
-                } else {
+                } 
+                elseif ($details['class']) 
+                {   
+                    // must be a class object!
+                    $class = new $details['class'];
+                    $class->$function_name($details['args']);
+                } 
+                else 
+                {
                     /* For multiple instances of widgets, we need to strip the id off the end and use the argument as the identifier.
                        E.g. CHANGE sidebar_widget_rss_show_1(1); 
                             TO     sidebar_widget_rss_show(1); */
@@ -103,7 +112,16 @@ class SidebarWidgets extends PluginFunctions
                     $function_name_array = explode('_', $function_name);
                     array_pop($function_name_array); 
                     $function_name = implode('_', $function_name_array);
-                    $function_name($details['args']);    // pass an argument, e.g. a feed ID for the RSS Show plugin
+                    if (function_exists($function_name))
+                    {
+                        $function_name($details['args']);    // pass an argument, e.g. a feed ID for the RSS Show plugin
+                    } 
+                    elseif ($details['class'])
+                    {
+                        // must be a class object!
+                        $class = new $details['class'];
+                        $class->$function_name($details['args']);
+                    }
                 }
             }
         }
@@ -116,19 +134,6 @@ class SidebarWidgets extends PluginFunctions
      * ******************* FUNCTIONS FOR ADMIN SETTINGS ******************** 
      * *********************************************************************
      * ****************************************************************** */
-    
-    /**
-     * Link to settings page in the Admin sidebar
-     */
-    public function admin_sidebar_plugin_settings()
-    {
-        global $lang, $plugins;
-        
-        if (!isset($lang["sidebar_admin_sidebar"])) {
-            $plugins->includeLanguage('sidebar');
-        }
-        echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>'sidebar'), 'admin') . "'>" . $lang["sidebar_admin_sidebar"] . "</a></li>";
-    }
     
     
     /**
@@ -215,7 +220,7 @@ class SidebarWidgets extends PluginFunctions
         }
         
         $hotaru->showMessages();
-        $hotaru->displayTemplate('sidebar_ordering', 'sidebar');
+        $hotaru->displayTemplate('sidebar_ordering', 'sidebar_widgets');
     }
     
     

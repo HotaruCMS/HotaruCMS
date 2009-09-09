@@ -87,6 +87,10 @@ class Sidebar {
                 if (!isset($sidebar_settings['sidebar_widgets'][$widget->plugin_setting]['enabled'])) {
                     $sidebar_settings['sidebar_widgets'][$widget->plugin_setting]['enabled'] = true;
                 }
+                // Only reset enabled if it doesn't already exist.
+                if (!isset($sidebar_settings['sidebar_widgets'][$widget->plugin_setting]['class'])) {
+                    $sidebar_settings['sidebar_widgets'][$widget->plugin_setting]['class'] = $plugins->pluginClass($widget->plugin_setting);
+                }
                 $sidebar_settings['sidebar_widgets'][$widget->plugin_setting]['args'] = $widget->plugin_value;
                 $count++;
             }
