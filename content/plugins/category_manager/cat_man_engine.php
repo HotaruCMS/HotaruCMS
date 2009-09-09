@@ -52,7 +52,7 @@ function cat_man_main()
         
     if ($action == "order_alpha") { 
         order("category_name");     // ORDER ALPHABETICALLY PERMANENTLY IN THE DATABASE
-        $hotaru->show_message($lang["cat_man_order_alpha"], 'green');
+        $hotaru->showMessage($lang["cat_man_order_alpha"], 'green');
         $the_cats = get_categories();     // Get all the category info
         $hotaru->displayTemplate('cat_man_order', 'category_manager');
         return true;
@@ -60,7 +60,7 @@ function cat_man_main()
     
     if ($action == "order_length") { 
         order("length(category_name)");     // ORDER BY LENGTH PERMANENTLY IN THE DATABASE
-        $hotaru->show_message($lang["cat_man_order_length"], 'green');
+        $hotaru->showMessage($lang["cat_man_order_length"], 'green');
         $the_cats = get_categories();     // Get all the category info
         $hotaru->displayTemplate('cat_man_order', 'category_manager');
         return true;
@@ -68,7 +68,7 @@ function cat_man_main()
 
     if ($action == "order_posts") { 
         order_by_posts();     // ORDER BY POSTS PERMANENTLY IN THE DATABASE
-        $hotaru->show_message($lang["cat_man_order_posts"], 'green');
+        $hotaru->showMessage($lang["cat_man_order_posts"], 'green');
         $the_cats = get_categories();     // Get all the category info
         $hotaru->displayTemplate('cat_man_order', 'category_manager');
         return true;
@@ -76,7 +76,7 @@ function cat_man_main()
 
     if ($action == "order_id") { 
         order("category_id");     // ORDER BY ID PERMANENTLY IN THE DATABASE
-        $hotaru->show_message($lang["cat_man_order_id"], 'green');
+        $hotaru->showMessage($lang["cat_man_order_id"], 'green');
         $the_cats = get_categories();     // Get all the category info
         $hotaru->displayTemplate('cat_man_order', 'category_manager');
         return true;
@@ -91,9 +91,9 @@ function cat_man_main()
     if ($action == "edit_save") { 
         if ($cage->post->keyExists('save_all')) {
             update_category_names();
-            $hotaru->show_message($lang["cat_man_changes_saved"], 'green');
+            $hotaru->showMessage($lang["cat_man_changes_saved"], 'green');
         } else {
-            $hotaru->show_message($lang["cat_man_changes_cancelled"], 'green');
+            $hotaru->showMessage($lang["cat_man_changes_cancelled"], 'green');
         }
         $the_cats = get_categories();     // Get all the category info
         $hotaru->displayTemplate('cat_man_edit', 'category_manager');
@@ -113,10 +113,10 @@ function cat_man_main()
                 $description = $cage->post->getMixedString2('description');
                 $keywords = $cage->post->getMixedString2('keywords');
                 save_meta($category_meta_id, $description, $keywords);
-                $hotaru->show_message($lang["cat_man_changes_saved"], 'green');
+                $hotaru->showMessage($lang["cat_man_changes_saved"], 'green');
             }
         } else {
-            $hotaru->show_message($lang["cat_man_form_error"], 'red');
+            $hotaru->showMessage($lang["cat_man_form_error"], 'red');
         }
         $the_cats = get_categories();     // Get all the category info
         $hotaru->displayTemplate('cat_man_edit_meta', 'category_manager');
@@ -136,12 +136,12 @@ function cat_man_main()
             if ($new_cat_name != "") {
                 $result = add_new_category($parent, $new_cat_name);
                 if ($result) {
-                    $hotaru->show_message($lang["cat_man_category_added"], 'green');
+                    $hotaru->showMessage($lang["cat_man_category_added"], 'green');
                 } else {
-                    $hotaru->show_message($lang["cat_man_category_exists"], 'red');
+                    $hotaru->showMessage($lang["cat_man_category_exists"], 'red');
                 }
             } else {
-                $hotaru->show_message($lang["cat_man_category_not_added"], 'red');
+                $hotaru->showMessage($lang["cat_man_category_not_added"], 'red');
             }
         } elseif ($cage->post->keyExists('save_new_category2')) {
             $parent = $cage->post->getInt('parent');
@@ -149,12 +149,12 @@ function cat_man_main()
             if ($new_cat_name != "") {
                 $result = add_new_category($parent, $new_cat_name);
                 if ($result) {
-                    $hotaru->show_message($lang["cat_man_category_added"], 'green');
+                    $hotaru->showMessage($lang["cat_man_category_added"], 'green');
                 } else {
-                    $hotaru->show_message($lang["cat_man_category_exists"], 'red');
+                    $hotaru->showMessage($lang["cat_man_category_exists"], 'red');
                 }
             } else {
-                $hotaru->show_message($lang["cat_man_category_not_added"], 'red');
+                $hotaru->showMessage($lang["cat_man_category_not_added"], 'red');
             }
         } elseif ($cage->post->keyExists('save_new_category3')) {
             $parent = $cage->post->getInt('parent');
@@ -162,15 +162,15 @@ function cat_man_main()
             if ($new_cat_name != "") {
                 $result = add_new_category($parent, $new_cat_name);
                 if ($result) {
-                    $hotaru->show_message($lang["cat_man_category_added"], 'green');
+                    $hotaru->showMessage($lang["cat_man_category_added"], 'green');
                 } else {
-                    $hotaru->show_message($lang["cat_man_category_exists"], 'red');
+                    $hotaru->showMessage($lang["cat_man_category_exists"], 'red');
                 }
             } else {
-                $hotaru->show_message($lang["cat_man_category_not_added"], 'red');
+                $hotaru->showMessage($lang["cat_man_category_not_added"], 'red');
             }
         } else {
-            $hotaru->show_message($lang["cat_man_form_error"], 'red');    
+            $hotaru->showMessage($lang["cat_man_form_error"], 'red');    
         }
         $the_cats = get_categories();     // Get all the category info
         $hotaru->displayTemplate('cat_man_add', 'category_manager');
@@ -192,25 +192,25 @@ function cat_man_main()
                 $target = $cage->post->testAlnum('parents');
                 $success = move($cat_to_move, $placement, $target);
                 if ($success) { 
-                    $hotaru->show_message($lang["cat_man_category_moved"], 'green');
+                    $hotaru->showMessage($lang["cat_man_category_moved"], 'green');
                 } else { 
-                    $hotaru->show_message($lang["cat_man_category_not_moved"], 'red');
+                    $hotaru->showMessage($lang["cat_man_category_not_moved"], 'red');
                 }
 
             } elseif ($cage->post->keyExists('save_form2')) {
                 $target = $cage->post->testAlnum('moveup');
                 $success = move($cat_to_move, 'none', $target);
                 if ($success) { 
-                    $hotaru->show_message($lang["cat_man_category_moved"], 'green');
+                    $hotaru->showMessage($lang["cat_man_category_moved"], 'green');
                 } else { 
-                    $hotaru->show_message($lang["cat_man_category_not_moved"], 'red');
+                    $hotaru->showMessage($lang["cat_man_category_not_moved"], 'red');
                 }
             } else {
-                $hotaru->show_message($lang["cat_man_category_not_moved"], 'red');
+                $hotaru->showMessage($lang["cat_man_category_not_moved"], 'red');
             }
             
         } else { 
-            $hotaru->show_message($lang["cat_man_category_not_moved"], 'red');
+            $hotaru->showMessage($lang["cat_man_category_not_moved"], 'red');
         }
         $the_cats = get_categories();     // Get all the category info
         $hotaru->displayTemplate('cat_man_move', 'category_manager');
@@ -238,7 +238,7 @@ function cat_man_main()
             $hotaru->displayTemplate('cat_man_delete_confirm', 'category_manager');
             return true;
         } else {
-            $hotaru->show_message($lang["cat_man_category_not_deleted"], 'red');
+            $hotaru->showMessage($lang["cat_man_category_not_deleted"], 'red');
             $the_cats = get_categories();     // Get all the category info
             $hotaru->displayTemplate('cat_man_delete', 'category_manager');
             return true;
@@ -252,10 +252,10 @@ function cat_man_main()
                     delete_categories($cat_id); 
             }
             cat_man_rebuild_tree(1, 0);
-            $hotaru->show_message($lang["cat_man_category_deleted"], 'green');
+            $hotaru->showMessage($lang["cat_man_category_deleted"], 'green');
         } else {
-            $hotaru->show_message($lang["cat_man_category_not_deleted"], 'red');
-            $hotaru->show_message();
+            $hotaru->showMessage($lang["cat_man_category_not_deleted"], 'red');
+            $hotaru->showMessage();
         }
 
         $the_cats = get_categories();     // Get all the category info

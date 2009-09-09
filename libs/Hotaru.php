@@ -106,7 +106,7 @@ class Hotaru
      *
      * @return object
      */
-    function initializeInspekt()
+    public function initializeInspekt()
     {
         global $cage;
         // Global Inspekt SuperCage
@@ -128,7 +128,7 @@ class Hotaru
     /**
      * Returns all site settings
      */
-    function readSettings()
+    public function readSettings()
     {
         global $db;
         
@@ -144,7 +144,7 @@ class Hotaru
      * @param string $page page name
      *
      */
-    function isPage($page = '')
+    public function isPage($page = '')
     {
         global $cage;
         
@@ -170,7 +170,7 @@ class Hotaru
     /**
      * Gets the current page name
      */
-    function getPageName()
+    public function getPageName()
     {
         global $cage;
         
@@ -199,7 +199,7 @@ class Hotaru
      *
      * @param string $page page name
      */
-    function pageToTitle($page)
+    public function pageToTitle($page)
     {
         $word_array = array();
         $word_array = explode('_', trim($page));
@@ -214,7 +214,7 @@ class Hotaru
      *
      * @param string $page page name
      */
-    function pageToTitleCaps($page)
+    public function pageToTitleCaps($page)
     {
         $word_array = array();
         $word_array = explode('_', trim($page));
@@ -232,7 +232,7 @@ class Hotaru
      * @param string $plugin optional plugin name
      * @param bool $include_once true or false
      */
-    function displayTemplate($page = '', $plugin = '', $include_once = true)
+    public function displayTemplate($page = '', $plugin = '', $include_once = true)
     {
         $page = $page . '.php';
                 
@@ -272,7 +272,7 @@ class Hotaru
      * Displays an announcement at the top of the screen
      * @return array
      */
-    function checkAnnouncements() 
+    public function checkAnnouncements() 
     {
         global $lang, $plugins;
         
@@ -304,7 +304,7 @@ class Hotaru
      *
      * @return object|false $sp
      */
-    function newSimplePie($feed='', $cache=RSS_CACHE_ON, $cache_duration=RSS_CACHE_DURATION)
+    public function newSimplePie($feed='', $cache=RSS_CACHE_ON, $cache_duration=RSS_CACHE_DURATION)
     {
         include_once(EXTENSIONS . "SimplePie/simplepie.inc");
         
@@ -330,7 +330,7 @@ class Hotaru
      * Shows number of database queries and the time it takes for a page to load
      */
      
-    function showQueriesAndTime()
+    public function showQueriesAndTime()
     {
         global $db;
         if ($this->isDebug) { 
@@ -355,7 +355,7 @@ class Hotaru
      *    Shorthand:
      *        $hotaru->showMessage("This is a message", "green");
      */
-    function showMessage($msg = '', $msg_type = 'green')
+    public function showMessage($msg = '', $msg_type = 'green')
     {
         if ($msg != '') {
             echo "<div class='message " . $msg_type . "'>" . $msg . "</div>";
@@ -373,7 +373,7 @@ class Hotaru
      *        $hotaru->messages['This is a message'] = "green";
      *        $hotaru->showMessages();
      */
-    function showMessages()
+    public function showMessages()
     {
         if (!empty($this->messages)) {
             foreach ($this->messages as $msg => $msg_type) {
@@ -392,7 +392,7 @@ class Hotaru
      * @return int version number or echo output to cache file
      * @link http://www.ejeliot.com/blog/72 Based on work by Ed Eliot
      */
-     function combineIncludes($type = 'css', $version = 0)
+     public function combineIncludes($type = 'css', $version = 0)
      {
         global $cage, $plugins;
         
@@ -509,7 +509,7 @@ class Hotaru
      * @param string $page e.g. admin_settings 
      * @param string $plugin e.g. category_manager
      */
-     function includeCombined($version_js = 0, $version_css = 0, $page = '', $folder = '')
+     public function includeCombined($version_js = 0, $version_css = 0, $page = '', $folder = '')
      {
         if ($this->pageType == 'admin') { $index = 'admin/admin_index'; } else { $index = 'index'; }
         if ($page && $folder) { 
