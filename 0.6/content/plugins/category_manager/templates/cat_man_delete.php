@@ -72,7 +72,7 @@
     <td class="cat_man_menu_holder">
         <div>
             <h3><?php echo $lang["cat_man_menu_title"]; ?></h3>
-            <?php $hotaru->display_template('cat_man_menu', 'category_manager'); ?>
+            <?php $hotaru->displayTemplate('cat_man_menu', 'category_manager'); ?>
             
             <h3><?php echo $lang["cat_man_category_tree"]; ?></h3>
             <?php cat_man_tree($the_cats); ?>

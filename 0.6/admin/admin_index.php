@@ -40,7 +40,7 @@ $hotaru->setPageType('admin');
 if ($cage->get->keyExists('combine')) {
     $type = $cage->get->testAlpha('type');
     $version = $cage->get->testInt('version');
-    //$hotaru->combine_includes($type, $version);
+    $hotaru->combineIncludes($type, $version);
     return true;
 }
 

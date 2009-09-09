@@ -25,13 +25,14 @@
  */
 class Hotaru
 {
-    protected $isDebug       = false;    // show db queries and page loading time
-    protected $sidebar        = true;     // enable or diable the sidebar
-    protected $message        = '';       // message to display
-    protected $messageType   = 'green';  // green or red, color of message box
-    protected $messages       = array();  // for multiple messages
-    protected $title          = '';       // for the broswer's TITLE tags
-    protected $pageType      = '';       // what kind of page we're looking at
+    public $message         = '';       // message to display
+    public $messageType     = 'green';  // green or red, color of message box
+    public $messages        = array();  // for multiple messages
+
+    protected $isDebug      = false;    // show db queries and page loading time
+    protected $sidebar      = true;     // enable or diable the sidebar
+    protected $title        = '';       // for the broswer's TITLE tags
+    protected $pageType     = '';       // what kind of page we're looking at
     
     
     /**
@@ -359,7 +360,7 @@ class Hotaru
         if ($msg != '') {
             echo "<div class='message " . $msg_type . "'>" . $msg . "</div>";
         } elseif ($this->message != '') {
-            echo "<div class='message " . $this->message_type . "'>" . 
+            echo "<div class='message " . $this->messageType . "'>" . 
             $this->message . "</div>";
         }
     }
@@ -387,6 +388,7 @@ class Hotaru
      * Combine Included CSS & JSS files
      *
      * @param string $type either 'css' or 'js'
+     * @param string $prefix either 'hotaru_' or ''hotaru_admin_'
      * @return int version number or echo output to cache file
      * @link http://www.ejeliot.com/blog/72 Based on work by Ed Eliot
      */
@@ -401,7 +403,7 @@ class Hotaru
             $plugins->checkActions('header_include');
             $prefix = 'hotaru_';
         }
-        
+
         $cache_length = 31356000;   // about one year
         $cache = CACHE . 'css_js_cache/';
         
@@ -413,14 +415,15 @@ class Hotaru
             $content_type = 'text/javascript';
             $includes = $plugins->getIncludeJS();
         }
-        
+
         if(empty($includes)) { return false; }
-        
+
          /*
             if etag parameter is present then the script is being called directly, otherwise we're including it in 
             another script with require or include. If calling directly we return code othewise we return the etag 
             representing the latest files
         */
+        
         if ($version > 0) {
         
             $iETag = $version;
@@ -511,7 +514,7 @@ class Hotaru
         if ($this->pageType == 'admin') { $index = 'admin/admin_index'; } else { $index = 'index'; }
         if ($page && $folder) { 
             $page = 'page=' . $page; 
-            $folder = '&plugin=' . $folder . "&";
+            $folder = 'plugin=' . $folder . "&";
         }
         
         if ($version_js > 0) {

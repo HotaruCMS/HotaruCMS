@@ -42,7 +42,7 @@ global $hotaru, $admin, $plugins, $lang; // don't remove
            }
            elseif ($hotaru->getPageName() != "main")
            {
-               $hotaru->title = $hotaru->getPageName();
+               $hotaru->setTitle($hotaru->getPageName());
                echo $hotaru->pageToTitleCaps($hotaru->getTitle()) . " &laquo; " . $lang["admin"] . " &laquo; " . SITE_NAME;
            }
            else

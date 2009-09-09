@@ -1,4 +1,32 @@
 <?php
+/**
+ * The Base Plugin class. It contains member data and default methods for many
+ * of the plugin hooks. That means, plugins wishing to use the default behavior
+ * just have to include the hook at the top of the plugin file, but need not
+ * write a function for it. Hotaru will use these defaults instead. Of course, 
+ * by writing a function for the hook, you can override these defaults.
+ *
+ * PHP version 5
+ *
+ * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation, either version 3 of 
+ * the License, or (at your option) any later version. 
+ *
+ * Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE. 
+ *
+ * You should have received a copy of the GNU General Public License along 
+ * with Hotaru CMS. If not, see http://www.gnu.org/licenses/.
+ * 
+ * @category  Content Management System
+ * @package   HotaruCMS
+ * @author    Nick Ramsay <admin@hotarucms.org>
+ * @copyright Copyright (c) 2009, Hotaru CMS
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * @link      http://www.hotarucms.org/
+ */
 
 // Include the generic_pmd class that reads post metadata from the a plugin
 require_once(EXTENSIONS . 'GenericPHPConfig/class.metadata.php');
@@ -19,7 +47,10 @@ class Plugin extends generic_pmd
     protected $dependencies = array();    // array of plugin->version pairs
     protected $hooks        = array();    // array of plugin hooks
 
-
+     /* ******************************************************************** 
+     * 
+     * ****************************************************************** */
+     
     /**
      * Include language file if available
      */
@@ -31,6 +62,46 @@ class Plugin extends generic_pmd
     }
     
 
+    /**
+     * Include All CSS and JavaScript files for this plugin
+     */
+    public function header_include()
+    {
+        global $plugins, $admin, $cage;
+        
+        // include a files that match the name of the plugin folder:
+        $plugins->includeJS($this->folder);
+        $plugins->includeCSS($this->folder);
+    }
+    
+    
+    /**
+     * Include All CSS and JavaScript files for this plugin in Admin
+     */
+    public function admin_header_include()
+    {
+        global $plugins, $admin, $cage;
+
+        $this->header_include();
+    }
+    
+    /**
+     * Include code as a template before the closing </body> tag
+     */
+    public function pre_close_body()
+    {
+        global $hotaru;
+        
+        $hotaru->displayTemplate($this->folder . '_footer', $this->folder);
+    }
+    
+
+     /* ******************************************************************** 
+     * ********************************************************************* 
+     * ************************ METHODS FOR ADMIN ************************** 
+     * *********************************************************************
+     * ****************************************************************** */
+    
     /**
      * Display Admin sidebar link
      */
@@ -56,41 +127,6 @@ class Plugin extends generic_pmd
         return true;
     }
     
-
-    /**
-     * Include All CSS and JavaScript files for this plugin
-     */
-    public function header_include()
-    {
-        global $plugins;
-        
-        if (is_dir(PLUGINS . $this->folder . '/css/')) {
-            $css_files = getFilenames(PLUGINS . $this->folder . '/css/', 'short');
-            $css_files = stripAllFileExtensions($css_files);
-            foreach($css_files as $file) {
-                $plugins->includeCSS(stripFileExtension($file));
-            }
-        }
-        
-        if (is_dir(PLUGINS . $this->folder . '/javascript/')) {
-            $css_files = getFilenames(PLUGINS . $this->folder . '/javascript/', 'short');
-            $css_files = stripAllFileExtensions($js_files);
-            foreach($js_files as $file) {
-                $plugins->includeJS(stripFileExtension($file));
-            }
-        }
-    }
-    
-    
-    /**
-     * Include code as a template before the closing </body> tag
-     */
-    public function pre_close_body()
-    {
-        global $hotaru;
-        
-        $hotaru->displayTemplate($this->folder . '_footer', $this->folder);
-    }
 }
 
 ?>

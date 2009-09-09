@@ -40,9 +40,9 @@ function cts_settings()
     echo "<h1>" . $lang["categories_settings_header"] . "</h1>\n";
       
     // Get settings from database if they exist...
-    $bar = $plugin->plugin_settings('categories', 'categories_bar');
+    $bar = $plugins->plugin_settings('categories', 'categories_bar');
 
-    $plugin->check_actions('categories_settings_get_values');
+    $plugins->checkActions('categories_settings_get_values');
     
     //...otherwise set to blank:
     if (!$bar) { $menubar = 'checked'; }
@@ -60,7 +60,7 @@ function cts_settings()
     echo "<p><input type='radio' name='bar' value='menubar' " . $menubar . " >&nbsp;&nbsp;" . $lang["categories_settings_menubar"] . "</p>\n";    
     echo "<p><input type='radio' name='bar' value='sidebar' " . $sidebar . " >&nbsp;&nbsp;" . $lang["categories_settings_sidebar"] . "</p>\n"; 
 
-    $plugin->check_actions('categories_settings_form');
+    $plugins->checkActions('categories_settings_form');
             
     echo "<br /><br />\n";    
     echo "<input type='hidden' name='submitted' value='true' />\n";
@@ -87,9 +87,9 @@ function cts_save_settings()
             }
     }
     
-    $plugin->check_actions('categories_save_settings');
+    $plugins->checkActions('categories_save_settings');
     
-    $plugin->plugin_settings_update('categories', 'categories_bar', $bar);
+    $plugins->plugin_settings_update('categories', 'categories_bar', $bar);
     
     $hotaru->message = $lang["categories_settings_saved"];
     $hotaru->message_type = "green";
