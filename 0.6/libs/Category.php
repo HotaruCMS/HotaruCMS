@@ -71,6 +71,27 @@ class Category
         $cat_safe_name = $db->get_var($db->prepare($sql, $cat_id));
         return urldecode($cat_safe_name);
     }
+    
+    
+    /**
+     * Recursive public function to find level depth
+     *
+     * @param int $cat_id
+     * @return int
+     */
+    public function getCatLevel($cat_id)
+    {
+        global $cat_level, $the_cats;
+            
+        foreach ($the_cats as $cat) {
+            if (($cat->category_id == $cat_id) && $cat->category_parent > 1) {
+                $cat_level++;
+                $this->getCatLevel($cat->category_parent);
+            }
+        }
+    
+        return $cat_level;
+    }
 }
 
 ?>

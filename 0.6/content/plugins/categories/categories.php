@@ -414,8 +414,10 @@ class Categories extends PluginFunctions
     {
         global $db, $the_cats, $cat_level, $lang, $hotaru, $plugins, $sidebar;
         
+        $catObj = new Category();
+        
         // Get settings from database if they exist...
-        $bar = $plugins->plugin_settings('categories', 'categories_bar');
+        $bar = $plugins->pluginSettings('categories', 'categories_bar');
         
         // Only show if the sidebar is enabled
         if ($bar == 'side') {
@@ -430,7 +432,7 @@ class Categories extends PluginFunctions
                 if ($cat->category_name != "all") {
                     echo "<li>";
                     if ($cat->category_parent > 1) {
-                        $depth = cat_level($cat->category_id);
+                        $depth = $catObj->getCatLevel($cat->category_id);
                         for($i=1; $i<$depth; $i++) {
                             echo "--- ";
                         }
@@ -442,27 +444,6 @@ class Categories extends PluginFunctions
             echo "</ul>\n";
         
         }
-    }
-    
-    
-    /**
-     * Recursive public function to find level depth
-     *
-     * @param int $ccat_id
-     * @return int
-     */
-    public function cat_level($cat_id)
-    {
-        global $cat_level, $the_cats;
-            
-        foreach ($the_cats as $cat) {
-            if (($cat->category_id == $cat_id) && $cat->category_parent > 1) {
-                $cat_level++;
-                cat_level($cat->category_parent);
-            }
-        }
-    
-        return $cat_level;
     }
     
     

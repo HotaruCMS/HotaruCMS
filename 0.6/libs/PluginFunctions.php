@@ -478,6 +478,25 @@ class PluginFunctions extends PluginManagement
     
     
     /**
+     * Get a plugin's class from its folder name
+     *
+     * @param string $folder plugin folder name
+     * @return string|false
+     */
+    function pluginClass($folder = "")
+    {    
+        global $db;
+        $class = $db->get_var($db->prepare("SELECT plugin_class FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
+        if ($class) {
+            $this->class = $class;
+            return $this->class;
+        } else {
+            return false;
+        }
+    }
+    
+    
+    /**
      * Get version number of plugin if active
      *
      * @param string $folder plugin folder name
