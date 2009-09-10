@@ -6,7 +6,7 @@
  * folder: submit
  * class: Submit
  * prefix: sub
- * hooks: hotaru_header, header_include_raw, upgrade_plugin, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: hotaru_header, header_include, header_include_raw, upgrade_plugin, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  * PHP version 5
  *
