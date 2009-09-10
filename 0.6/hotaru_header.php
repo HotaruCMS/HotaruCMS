@@ -56,16 +56,16 @@ require_once(FUNCTIONS . 'funcs.times.php');
 // for everything related to files
 require_once(FUNCTIONS . 'funcs.files.php');
 
-// include LIBS
-require_once(LIBS . 'HotaruInspekt.php');      // for custom Inspekt methods
-require_once(LIBS . 'Hotaru.php');       // for environment
-require_once(LIBS . 'UserBase.php');     // for users
-require_once(LIBS . 'Plugin.php');
-require_once(LIBS . 'PluginManagement.php');
-require_once(LIBS . 'PluginFunctions.php');
-require_once(LIBS . 'Post.php');
-require_once(LIBS . 'Category.php');
-require_once(LIBS . 'Sidebar.php');
+// include libraries
+require_once(LIBS . 'Hotaru.php');          // for environment
+require_once(LIBS . 'HotaruInspekt.php');   // for custom Inspekt methods
+
+// automatically load other classes as needed...
+function __autoload($class_name) {
+        if(file_exists(LIBS . $class_name . '.php')) {
+            require LIBS . $class_name . '.php';
+        }
+}
 
 // Initialize database
 if (!isset($db)) { 

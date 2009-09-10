@@ -142,7 +142,7 @@ class Submit extends PluginFunctions
             // Page name belongs to a story
             $post->readPost($post_id);    // read current post
             $hotaru->setPageType('post');
-            $hotaru->setTitle = $post->getTitle();
+            $hotaru->setTitle($post->getTitle());
             
         } else {
             $post->readPost();    // read current post settings only

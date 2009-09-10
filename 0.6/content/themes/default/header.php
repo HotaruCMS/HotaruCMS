@@ -37,18 +37,18 @@ global $hotaru, $plugins, $lang; // don't remove
 
     <title>
        <?php 
-           if ($hotaru->title != "")
+           if ($hotaru->getTitle() != "")
            {
-               echo $hotaru->title . " &laquo; " . SITE_NAME;
+               echo $hotaru->getTitle() . " &laquo; " . SITE_NAME;
            }
            elseif ($hotaru->getPageName() != "main")
            {
-               $hotaru->title = $hotaru->getPageName();
-               echo $hotaru->pageToTitleCaps($hotaru->title) . " &laquo; " . SITE_NAME;
+               $hotaru->setTitle($hotaru->getPageName());
+               echo $hotaru->pageToTitleCaps($hotaru->getTitle()) . " &laquo; " . SITE_NAME;
            }
            else
            { 
-               $hotaru->title = 'top'; // don't change this
+               $hotaru->setTitle('top'); // don't change this
                echo SITE_NAME; 
            } 
        ?>
