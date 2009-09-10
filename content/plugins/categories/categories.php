@@ -126,7 +126,7 @@ class Categories extends PluginFunctions
                 // we actually only need the first pair, so won't bother looping.
                 $query_string = preg_replace('/&amp;/', '&', $query_string);
                 $pairs = explode('&', $query_string); 
-                if ($pairs[0]) {
+                if ($pairs[0] && strpos($pairs[0], '=')) {
                     list($key, $value) = explode('=', $pairs[0]);
                     if ($key) {
                         // Using db_prefix because table_categories might not be defined yet (depends on plugin install order)
