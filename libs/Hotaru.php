@@ -198,11 +198,12 @@ class Hotaru
      * Formats page name, e.g.'page_name' into 'Page name'
      *
      * @param string $page page name
+     * @param string $delimiter
      */
-    public function pageToTitle($page)
+    public function pageToTitle($page, $delimiter = '_')
     {
         $word_array = array();
-        $word_array = explode('_', trim($page));
+        $word_array = explode($delimiter, trim($page));
         $page       = ucfirst(implode(' ', $word_array));
                 
         return $page;
@@ -213,11 +214,12 @@ class Hotaru
      * Formats page name, e.g.'page_name' into 'Page Name'
      *
      * @param string $page page name
+     * @param string $delimiter
      */
-    public function pageToTitleCaps($page)
+    public function pageToTitleCaps($page, $delimiter = '_')
     {
         $word_array = array();
-        $word_array = explode('_', trim($page));
+        $word_array = explode($delimiter, trim($page));
         $word_array = array_map('ucfirst', $word_array);
         $page       = implode(' ', $word_array);
                 

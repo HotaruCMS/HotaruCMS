@@ -77,7 +77,7 @@ class Categories extends PluginFunctions
             } 
             else 
             {
-                $hotaru->setTitle($hotaru->pageToTitleCaps(($cage->get->notags('category')))); // friendly URLs: TRUE
+                $hotaru->setTitle($cat->getCatName(0, $cage->get->notags('category'))); // friendly URLs: TRUE
             } 
         }
     }
@@ -137,6 +137,8 @@ class Categories extends PluginFunctions
                             $post->id = $post->isPostUrl($value);
                             $post->readPost($post->id);
                             $post->vars['isCategoryPost'] = true; 
+                            $hotaru->setPageType('post');
+                            $hotaru->setTitle($post->getTitle());
                             return true;
                         } 
                     }

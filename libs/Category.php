@@ -43,27 +43,35 @@ class Category
     
 
     /**
-     * Returns the category name for a give category id.
+     * Returns the category name for a given category id or safe name.
      *
      * @param int $cat_id
+     * @param string $cat_safe_name
      * @return string
      */
-    public function getCatName($cat_id) {
+    public function getCatName($cat_id = 0, $cat_safe_name = '') {
         global $db;
         
-        $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
-        $cat_name = $db->get_var($db->prepare($sql, $cat_id));
+        if ($cat_id == 0 && $cat_safe_name != '') {
+            // Use safe name
+            $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s";
+            $cat_name = $db->get_var($db->prepare($sql, $cat_safe_name));
+        } else {
+            // Use id
+            $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
+            $cat_name = $db->get_var($db->prepare($sql, $cat_id));
+        }
         return urldecode($cat_name);
     }
     
 
     /**
-     * Returns the category safe name for a give category id.
+     * Returns the category safe name for a given category id 
      *
      * @param int $cat_id
      * @return string
      */
-    public function getCatSafeName($cat_id)
+    public function getCatSafeName($cat_id = 0)
     {
         global $db;
         
