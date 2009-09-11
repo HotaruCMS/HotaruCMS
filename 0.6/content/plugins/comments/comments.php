@@ -35,7 +35,7 @@
  */
 function cmmts_install_plugin()
 {
-    global $db, $plugin, $lang;
+    global $db, $plugins, $lang;
         
     // Create a new empty table called "comments"
     $exists = $db->table_exists('comments');
@@ -81,11 +81,11 @@ function cmmts_install_plugin()
     $comment_settings['comment_levels'] = 5;
     $comment_settings['comment_email'] = SITE_EMAIL;
     $comment_settings['comment_allowable_tags'] = "<b><i><u><a><blockquote><strike>";
-    $plugin->plugin_settings_update('comments', 'comment_settings', serialize($comment_settings));
+    $plugins->plugin_settings_update('comments', 'comment_settings', serialize($comment_settings));
     
     // Include language file. Also included in hotaru_header, but needed here so 
     // that the link in the Admin sidebar shows immediately after installation.
-    $plugin->include_language('comments');
+    $plugins->includeLanguage('comments');
 }
 
 
@@ -94,11 +94,11 @@ function cmmts_install_plugin()
  */
 function cmmts_header_include()
 { 
-    global $plugin; 
+    global $plugins; 
     
-    $plugin->include_css('comments');
-    $plugin->include_js('comments');
-    $plugin->include_js('comments', 'urldecode.min');
+    $plugins->includeCSS('comments');
+    $plugins->includeJS('comments');
+    $plugins->includeJS('comments', 'urldecode.min');
 }
 
 
@@ -107,12 +107,12 @@ function cmmts_header_include()
  */
 function cmmts_hotaru_header()
 {
-    global $lang, $plugin, $comment;
+    global $lang, $plugins, $comment;
 
     if (!defined('TABLE_COMMENTS')) { define("TABLE_COMMENTS", DB_PREFIX . 'comments'); }
     if (!defined('TABLE_COMMENTVOTES')) { define("TABLE_COMMENTVOTES", DB_PREFIX . 'commentvotes'); }
     
-    $plugin->include_language('comments');
+    $plugins->includeLanguage('comments');
     
     require_once(PLUGINS . 'comments/class.comments.php');
     // Create a new global object called "comments".
@@ -141,7 +141,7 @@ function cmmts_hotaru_header()
  */
 function cmmts_theme_index_replace()
 {
-    global $hotaru, $cage, $post, $plugin, $current_user, $comment;
+    global $hotaru, $cage, $post, $plugins, $current_user, $comment;
     
     if (($hotaru->is_page('comments')) && ($comment->comment_form == 'checked')) {
          

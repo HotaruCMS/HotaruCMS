@@ -45,9 +45,9 @@ function pliggimp_admin_sidebar_plugin_settings()
  */
 function pliggimp_admin_header_include()
 {
-    global $admin, $plugin;
+    global $admin, $plugins;
     
-    $plugin->include_css('pligg_importer');
+    $plugins->includeCSS('pligg_importer');
 }
 
 
@@ -56,7 +56,7 @@ function pliggimp_admin_header_include()
  */
 function pliggimp_admin_plugin_settings()
 {
-    global $cage, $status, $plugin, $cat;
+    global $cage, $status, $plugins, $cat;
     
     $pliggimp_path = PLUGINS . "/pligg_importer/";
     
@@ -105,7 +105,7 @@ function pliggimp_admin_plugin_settings()
  */
 function pliggimp_page_welcome()
 {
-    global $plugin;
+    global $plugins;
     
     // FIRST PAGE WITH UPLOAD FORM
     echo "<div id='pliggimp'>";
@@ -159,31 +159,31 @@ function pliggimp_page_welcome()
     $error = 0;
     $inactive = "";
     
-    if (!$plugin->plugin_active('submit')) {
+    if (!$plugins->plugin_active('submit')) {
         $inactive .= "<li style='color: red;'><b>Submit plugin is inactive</b></li>"; 
         $error = 1;
     }
-    if (!$plugin->plugin_active('comments')) {
+    if (!$plugins->plugin_active('comments')) {
         $inactive .= "<li style='color: red;'><b>Comments plugin is inactive</b></li>"; 
         $error = 1;
     }
-    if (!$plugin->plugin_active('category_manager')) {
+    if (!$plugins->plugin_active('category_manager')) {
         $inactive .= "<li style='color: red;'><b>Category Manager plugin is inactive</b></li>"; 
         $error = 1;
     }
-    if (!$plugin->plugin_active('categories')) {
+    if (!$plugins->plugin_active('categories')) {
         $inactive .= "<li style='color: red;'><b>Categories plugin is inactive</b></li>"; 
         $error = 1;
     }
-    if (!$plugin->plugin_active('tags')) {
+    if (!$plugins->plugin_active('tags')) {
         $inactive .= "<li style='color: red;'><b>Tags plugin is inactive</b></li>"; 
         $error = 1;
     }
-    if (!$plugin->plugin_active('users')) {
+    if (!$plugins->plugin_active('users')) {
         $inactive .= "<li style='color: red;'><b>Users plugin is inactive</b></li>"; 
         $error = 1;
     }
-    if (!$plugin->plugin_active('vote')) {
+    if (!$plugins->plugin_active('vote')) {
         $inactive .= "<li style='color: red;'><b>Vote plugin is inactive</b></li>"; 
         $error = 1;
     }

@@ -81,10 +81,10 @@ class Comment {
      */
     function get_comment_settings()
     {
-        global $plugin;
+        global $plugins;
         
         // Get settings from the database if they exist...
-        $comment_settings = unserialize($plugin->plugin_settings('comments', 'comment_settings'));         
+        $comment_settings = unserialize($plugins->plugin_settings('comments', 'comment_settings'));         
         return $comment_settings;
     }
 

@@ -115,10 +115,10 @@ function hu_theme_index_sidebar()
  */
 function hu_hotaru_header()
 {
-    global $lang, $plugin;
+    global $lang, $plugins;
     
     // include hello_universe language file
-    $plugin->include_language('hello_universe');
+    $plugins->includeLanguage('hello_universe');
 }
 
 

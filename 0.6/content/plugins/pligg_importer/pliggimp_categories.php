@@ -29,7 +29,7 @@
  * Page 1 - Request categories file
  */
 function pliggimp_page_1() {
-    global $plugin;
+    global $plugins;
     
     echo "<h2>Step 1/6 - Categories</h2>";
     echo "Please upload your <b>categories</b> XML file:<br />";
