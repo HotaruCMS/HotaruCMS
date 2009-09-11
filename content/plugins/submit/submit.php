@@ -420,7 +420,8 @@ class Submit extends PluginFunctions
     public function admin_plugin_settings()
     {
         require_once(PLUGINS . 'submit/submit_settings.php');
-        sub_settings();
+        $submitSettings = new SubmitSettings();
+        $submitSettings->settings();
         return true;
     }
     

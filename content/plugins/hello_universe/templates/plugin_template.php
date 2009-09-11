@@ -26,7 +26,7 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $plugin, $lang; // don't remove
+global $hotaru, $plugins, $lang; // don't remove
 ?>
 
 <h2>A new template!</h2>

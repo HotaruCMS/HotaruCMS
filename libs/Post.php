@@ -619,8 +619,7 @@ class Post {
         global $db, $lang, $cage, $plugins, $current_user;
         require_once(EXTENSIONS . 'RSSWriterClass/rsswriter.php');
         
-        $select = '';
-        $orderby = '';
+        $select = '*';
         
         $status = $cage->get->testAlpha('status');
         $limit = $cage->get->getInt('limit');
@@ -646,9 +645,9 @@ class Post {
         
         $plugins->checkActions('post_rss_feed');
         
-        $feed = new RSS();
-        $feed->title       = SITE_NAME;
-        $feed->link        = BASEURL;
+        $feed           = new RSS();
+        $feed->title    = SITE_NAME;
+        $feed->link     = BASEURL;
         
         if ($status == 'new') { $feed->description = $lang["submit_rss_latest_from"] . " " . SITE_NAME; }
         elseif ($status == 'top') { $feed->description = $lang["submit_rss_top_stories_from"] . " " . SITE_NAME; }
@@ -659,7 +658,8 @@ class Post {
         elseif ($search) { $feed->description = $lang["submit_rss_stories_search"] . " " . stripslashes($search); }
                 
         if (!isset($filter))  $filter = array();
-        $prepared_array = $this->filter($filter, $limit, false, $select, $orderby);
+        $prepared_array = $this->filter($filter, $limit, false, $select);
+        
         $results = $this->getPosts($prepared_array);
 
         if ($results) {

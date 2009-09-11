@@ -30,7 +30,7 @@
  */
 function cmmts_settings()
 {
-    global $hotaru, $plugin, $cage, $lang, $comment;
+    global $hotaru, $plugins, $cage, $lang, $comment;
     
     // If the form has been submitted, go and save the data...
     if ($cage->post->getAlpha('submitted') == 'true') { 
@@ -64,7 +64,7 @@ function cmmts_settings()
     if ($comment->comment_voting == 'checked') { $check_votes = 'checked'; } else { $check_votes = ''; }
     
      
-    $plugin->check_actions('comments_settings_get_values');
+    $plugins->checkActions('comments_settings_get_values');
            
     echo "<form name='comments_settings_form' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=comments' method='post'>\n";
     
@@ -80,7 +80,7 @@ function cmmts_settings()
     echo "<br />" . $lang["comments_settings_allowable_tags"] . " <input type='text' size=40 name='allowabletags' value='" . $comment->comment_allowable_tags . "' /><br />";
     echo $lang["comments_settings_allowable_tags_example"] . "\n";
     
-    $plugin->check_actions('comments_settings_form');
+    $plugins->checkActions('comments_settings_form');
             
     echo "<br /><br />\n";    
     echo "<input type='hidden' name='submitted' value='true' />\n";
@@ -96,7 +96,7 @@ function cmmts_settings()
  */
 function cmmts_save_settings()
 {
-    global $cage, $hotaru, $plugin, $lang, $comment;
+    global $cage, $hotaru, $plugins, $lang, $comment;
 
     // enable comment form globally
     if ($cage->post->keyExists('comment_form')) { 
@@ -143,7 +143,7 @@ function cmmts_save_settings()
         $allowable_tags = $comment->comment_allowable_tags; 
     }
     
-    $plugin->check_actions('comments_save_settings');
+    $plugins->checkActions('comments_save_settings');
     
     $comment_settings['comment_form'] = $comment->comment_form;
     $comment_settings['comment_avatars'] = $comment->comment_avatars;
@@ -151,7 +151,7 @@ function cmmts_save_settings()
     $comment_settings['comment_levels'] = $levels;
     $comment_settings['comment_email'] = $email;
     $comment_settings['comment_allowable_tags'] = $allowable_tags;
-    $plugin->plugin_settings_update('comments', 'comment_settings', serialize($comment_settings));
+    $plugins->plugin_settings_update('comments', 'comment_settings', serialize($comment_settings));
     
     $hotaru->message = $lang["comments_settings_saved"];
     $hotaru->message_type = "green";

@@ -24,7 +24,7 @@
  * @link      http://www.hotarucms.org/
  */
  
-global $plugin, $comment, $lang, $userbase, $current_user;
+global $plugins, $comment, $lang, $userbase, $current_user;
 
 ?>
 
@@ -32,7 +32,7 @@ global $plugin, $comment, $lang, $userbase, $current_user;
        
         <?php   // Show avatars if enabled (requires an avatars plugin)
                 if ($comment->comment_avatars == 'checked') {
-                    $plugin->check_actions('show_comments_avatar'); 
+                    $plugins->checkActions('show_comments_avatar'); 
                 }
         ?>
         
@@ -42,7 +42,7 @@ global $plugin, $comment, $lang, $userbase, $current_user;
         
         <?php   // Show votes if enabled (requires a comment voting plugin)
                 if ($comment->comment_voting == 'checked') {
-                    $plugin->check_actions('show_comments_votes'); 
+                    $plugins->checkActions('show_comments_votes'); 
                 }
         ?>
         

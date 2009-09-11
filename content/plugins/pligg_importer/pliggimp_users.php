@@ -30,7 +30,7 @@
  */
 function pliggimp_page_5()
 {
-    global $plugin;
+    global $plugins;
     
     echo "<h2>Step 5/6 - Users</h2>";
     echo "Please upload your <b>users</b> XML file:<br />";
