@@ -27,9 +27,9 @@
 
 include_once('../../../hotaru_header.php');    // Not the cleanest way of getting to the root...
 
-global $cage, $db, $current_user, $post, $lang, $plugin;
+global $cage, $db, $current_user, $post, $lang, $plugins;
 
-$plugin->include_language('vote');
+$plugins->includeLanguage('vote');
 
 if ($cage->post->keyExists('post_id')) {
     $post_id = $cage->post->testInt('post_id');
@@ -38,14 +38,14 @@ if ($cage->post->keyExists('post_id')) {
     $vote_rating = $cage->post->testAlnumLines('rating');
         
     //get vote settings
-    $vote_settings = unserialize($plugin->plugin_settings('vote', 'vote_settings')); 
+    $vote_settings = unserialize($plugins->pluginSettings('vote', 'vote_settings')); 
     
     // Only proceed if the user is logged in OR anonyous votes are allowed
-    if ($current_user->logged_in || ($post->post_vars['vote_anonymous_votes'] == 'checked')) {
+    if ($current_user->loggedIn || ($post->vars['vote_anonymous_votes'] == 'checked')) {
             
         // get vote history for this post:
         
-        if ($current_user->logged_in) {
+        if ($current_user->loggedIn) {
             $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND (vote_user_id = %d OR vote_user_ip = %s AND vote_rating != %s)";
             $voted = $db->get_var($db->prepare($sql, $post_id, $current_user->id, $user_ip, 'alert'));
         } else {
@@ -60,7 +60,7 @@ if ($cage->post->keyExists('post_id')) {
             return false;
         }
         
-        if ($current_user->logged_in) {
+        if ($current_user->loggedIn) {
             $user_id = $current_user->id;
         } else {
             $user_id = 0;    // anonymous users get id 0.
@@ -71,12 +71,12 @@ if ($cage->post->keyExists('post_id')) {
                 // skip this if we are undoing a vote using up_down voting
                             
                 // Get status and positive vote count to determine if the post should be promoted or not...
-                $sql = "SELECT post_status, post_votes_up FROM " . TABLE_POSTS . " WHERE post_id = %d";
+                $sql = "SELECT post_status, postVotesUp FROM " . TABLE_POSTS . " WHERE post_id = %d";
                 $result = $db->get_row($db->prepare($sql, $post_id));
-                if (($result->post_votes_up+1) >= $vote_settings['vote_votes_to_promote']) { $post_status = 'top'; } else { $post_status = $result->post_status; }
+                if (($result->postVotesUp+1) >= $vote_settings['vote_votes_to_promote']) { $post_status = 'top'; } else { $post_status = $result->post_status; }
                 
                 // Update the post with the new vote count and possible a new status...
-                $sql = "UPDATE " . TABLE_POSTS . " SET post_status = %s, post_votes_up=post_votes_up+1 WHERE post_id = %d";
+                $sql = "UPDATE " . TABLE_POSTS . " SET post_status = %s, postVotesUp=postVotesUp+1 WHERE post_id = %d";
                 $db->query($db->prepare($sql, $post_status, $post_id));
             }
             $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d)";
@@ -84,7 +84,7 @@ if ($cage->post->keyExists('post_id')) {
             
             // Remove negative vote, i.e. undo a vote if the user is changing his/her mind...
             if ($voted && $voted == 'negative') {
-                $sql = "UPDATE " . TABLE_POSTS . " SET post_votes_down=post_votes_down-1 WHERE post_id = %d";
+                $sql = "UPDATE " . TABLE_POSTS . " SET postVotesDown=postVotesDown-1 WHERE post_id = %d";
                 $db->query($db->prepare($sql, $post_id));
                 $sql = "DELETE FROM  " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_user_ip = %s AND vote_type = %s AND vote_rating = %s";
                 $db->query($db->prepare($sql, $post_id, $user_id, $user_ip, $vote_type, $voted));
@@ -92,7 +92,7 @@ if ($cage->post->keyExists('post_id')) {
         } else {
             if (!($voted && $vote_type == 'up_down')) {
                 // skip this if we are undoing a vote using up_down voting
-                $sql = "UPDATE " . TABLE_POSTS . " SET post_votes_down=post_votes_down+1 WHERE post_id = %d";
+                $sql = "UPDATE " . TABLE_POSTS . " SET postVotesDown=postVotesDown+1 WHERE post_id = %d";
                 $db->query($db->prepare($sql, $post_id));
             }
             if (!($voted && $vote_type == 'vote_unvote')) {
@@ -102,26 +102,26 @@ if ($cage->post->keyExists('post_id')) {
             }
             // Remove positive vote, i.e. undo a vote if the user is changing his/her mind...
             if ($voted && $voted == 'positive') {
-                $sql = "UPDATE " . TABLE_POSTS . " SET post_votes_up=post_votes_up-1 WHERE post_id = %d";
+                $sql = "UPDATE " . TABLE_POSTS . " SET postVotesUp=postVotesUp-1 WHERE post_id = %d";
                 $db->query($db->prepare($sql, $post_id));
                 $sql = "DELETE FROM  " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_user_ip = %s AND vote_type = %s AND vote_rating = %s";
                 $db->query($db->prepare($sql, $post_id, $user_id, $user_ip, $vote_type, $voted));
             }
         }
         
-        $sql = "SELECT post_votes_up, post_votes_down FROM " . TABLE_POSTS . " WHERE post_id = %d";
+        $sql = "SELECT postVotesUp, postVotesDown FROM " . TABLE_POSTS . " WHERE post_id = %d";
         $votes = $db->get_row($db->prepare($sql, $post_id));
         
         if ($vote_type == 'vote_unvote') {
-            $json_array = array('votes'=>$votes->post_votes_up);
+            $json_array = array('votes'=>$votes->postVotesUp);
     
         } elseif ($vote_type == 'up_down') {
-            $json_array = array('votes'=>($votes->post_votes_up - $votes->post_votes_down));
+            $json_array = array('votes'=>($votes->postVotesUp - $votes->postVotesDown));
     
         } elseif ($vote_type == 'yes_no' && $vote_rating == 'positive') {
-            $json_array = array('votes_yes'=>$votes->post_votes_up, 'votes_no'=>$votes->post_votes_down);
+            $json_array = array('votes_yes'=>$votes->postVotesUp, 'votes_no'=>$votes->postVotesDown);
         } elseif ($vote_type == 'yes_no' && $vote_rating == 'negative') {
-            $json_array = array('votes_no'=>$votes->post_votes_down, 'votes_yes'=>$votes->post_votes_up);
+            $json_array = array('votes_no'=>$votes->postVotesDown, 'votes_yes'=>$votes->postVotesUp);
             
         }
         

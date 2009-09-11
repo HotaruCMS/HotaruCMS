@@ -25,15 +25,15 @@
  */
 class UserBase {
  
-    var $id             = 0;
-    var $username       = '';
-    var $role           = 'member';
-    var $password       = 'password';
-    var $email          = '';
-    var $email_valid    = 0;
-    var $logged_in      = false;
+    protected $id           = 0;
+    protected $userName     = '';
+    protected $role         = 'member';
+    protected $password     = 'password';
+    protected $email        = '';
+    protected $emailValid   = 0;
+    protected $loggedIn     = false;
     
-    var $userbase_vars = array();
+    public $vars = array();
 
 
     /**
@@ -42,9 +42,9 @@ class UserBase {
      * @param string $name
      * @param mixed $value
      */
-    function __set($name, $value)
+    private function __set($name, $value)
     {
-        $this->userbase_vars[$name] = $value;
+        $this->vars[$name] = $value;
     }
 
 
@@ -54,36 +54,58 @@ class UserBase {
      * @param string $name
      * @return mixed
      */
-    function __get($name)
+    private function __get($name)
     {
-        if (array_key_exists($name, $this->userbase_vars)) {
-            return $this->userbase_vars[$name];
+        if (array_key_exists($name, $this->vars)) {
+            return $this->vars[$name];
         }
+    }
+    
+    
+    /**
+     * Get user id
+     *
+     * @return int
+     */    
+    public function getId()
+    {
+        return $this->id;
+    }
+    
+    
+    /**
+     * Get user role
+     *
+     * @return string
+     */    
+    public function getRole()
+    {
+        return $this->role;
     }
     
     
     /**
      * Add a new user
      */
-    function add_user_basic()
+    public function addUserBasic()
     {
         global $db;
         
         $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s)";
-        $db->query($db->prepare($sql, $this->username, $this->role, $this->password, $this->email));
+        $db->query($db->prepare($sql, $this->userName, $this->role, $this->password, $this->email));
     }
 
 
     /**
      * Update a user
      */
-    function update_user_basic()
+    public function updateUserBasic()
     {
         global $db;
         
         if ($this->id != 0) {
             $sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s, user_updateby = %d WHERE user_id = %d";
-            $db->query($db->prepare($sql, $this->username, $this->role, $this->password, $this->email, $this->id, $this->id));
+            $db->query($db->prepare($sql, $this->userName, $this->role, $this->password, $this->email, $this->id, $this->id));
             return true;
         } else {
             return false;
@@ -96,7 +118,7 @@ class UserBase {
      *
      * @return bool
      */
-    function update_user_lastlogin()
+    public function updateUserLastLogin()
     {
         global $db;
         
@@ -119,7 +141,7 @@ class UserBase {
      *
      * Note: Needs either userid or username, not both
      */    
-    function get_user_basic($userid = 0, $username = '')
+    public function getUserBasic($userid = 0, $username = '')
     {
         global $db;
         
@@ -142,11 +164,11 @@ class UserBase {
         
         if ($user_info) {
             $this->id = $user_info->user_id;
-            $this->username = $user_info->user_username;
+            $this->userName = $user_info->user_username;
             $this->password = $user_info->user_password;
             $this->role = $user_info->user_role;
             $this->email = $user_info->user_email;
-            $this->email_valid = $user_info->user_email_valid;
+            $this->emailValid = $user_info->user_email_valid;
             return $user_info;
         } else {
             return false;
@@ -164,7 +186,7 @@ class UserBase {
      * Notes: Returns 4 if a user exists, otherwise 0-3 for errors
      */
              
-    function user_exists($id = 0, $username = '', $email = '')
+    public function userExists($id = 0, $username = '', $email = '')
     {
         global $db;
         
@@ -204,7 +226,7 @@ class UserBase {
  *
  * @return string|false
  */
-function admin_exists()
+function adminExists()
 {
     global $db;
     
@@ -223,7 +245,7 @@ function admin_exists()
  *
  * @return bool
  */
-function is_admin($username)
+function isAdmin($username)
 {
     global $db;
     
@@ -242,12 +264,12 @@ function is_admin($username)
      * @param string $password
      * @return bool
      */
-    function login_check($username = '', $password = '')
+    public function loginCheck($username = '', $password = '')
     {
         global $db;
 
         // Read the current user's basic details
-        $userX = $this->get_user_basic(0, $username);
+        $userX = $this->getUserBasic(0, $username);
             
         $salt_length = 9;
         $password = $this->generateHash($password, substr($userX->user_password, 0, $salt_length));
@@ -268,7 +290,7 @@ function is_admin($username)
      *
      * Note: Adapted from SocialWebCMS
      */
-    function generateHash($plainText, $salt = null)
+    public function generateHash($plainText, $salt = null)
     {
         $salt_length = 9;
         if ($salt === null) {
@@ -286,17 +308,17 @@ function is_admin($username)
      * @param string $remember checkbox with value "checked" or empty
      * @return bool
      */
-    function set_cookie($remember)
+    public function setCookie($remember)
     {
         global $lang;
 
-        if (!$this->username)
+        if (!$this->userName)
         { 
             echo $lang['main_userbase_cookie_error'];
             return false;
         } else {
             $strCookie=base64_encode(
-                join(':', array($this->username, crypt($this->username, 22)))
+                join(':', array($this->userName, crypt($this->userName, 22)))
             );
             
             if ($remember) { 
@@ -306,7 +328,7 @@ function is_admin($username)
                 $month = 0; 
             }
             
-            setcookie("hotaru_user", $this->username, $month, "/");
+            setcookie("hotaru_user", $this->userName, $month, "/");
             setcookie("hotaru_key", $strCookie, $month, "/");
             return true;
         }
@@ -316,7 +338,7 @@ function is_admin($username)
     /**
      * Delete cookie and destroy session
      */
-    function destroy_cookie_and_session()
+    public function destroyCookieAndSession()
     {
         // setting a cookie with a negative time expires it
         setcookie("hotaru_user", "", time()-3600, "/");
@@ -324,7 +346,7 @@ function is_admin($username)
         
         // session_destroy(); There is no session in Hotaru yet
         
-        $this->logged_in = false;
+        $this->loggedIn = false;
     }
         
         
@@ -334,7 +356,7 @@ function is_admin($username)
      * @param int $id user id
      * @return string|false
      */
-    function get_username($id = 0)
+    public function getUserName($id = 0)
     {
         global $db, $user;
         
@@ -351,7 +373,7 @@ function is_admin($username)
      * @param string $username
      * @return int|false
      */
-    function get_user_id($username = '')
+    public function getUserId($username = '')
     {
         global $db, $user;
         

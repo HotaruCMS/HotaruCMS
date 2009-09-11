@@ -33,21 +33,21 @@ global $hotaru, $plugins, $current_user, $lang; // don't remove
 <ul id="navigation">
     <?php $plugins->checkActions('navigation_first'); ?>
     
-    <?php if ($hotaru->title == 'top') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
+    <?php if ($hotaru->getTitle() == 'top') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
     <li><a <?php echo $status; ?> href="<?php echo BASEURL; ?>"><?php echo $lang["main_theme_navigation_home"]; ?></a></li>
     <?php $plugins->checkActions('navigation'); ?>
     <?php 
         if (!$plugins->pluginActive('users')) { 
 
-            if ($current_user->logged_in == true) { 
+            if ($current_user->loggedIn == true) { 
             
-                if ($hotaru->title == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
+                if ($hotaru->getTitle() == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
                 echo "<li><a " . $status . " href='" . url(array(), 'admin') . "'>" . $lang["main_theme_navigation_admin"] . "</a></li>"; 
                 
-                if ($hotaru->title == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
+                if ($hotaru->getTitle() == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
                 echo "<li><a " . $status . " href='" . url(array('page'=>'admin_logout'), 'admin') . "'>" . $lang["main_theme_navigation_logout"] . "</a></li>";
             } else { 
-                if ($hotaru->title == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
+                if ($hotaru->getTitle() == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
                 echo "<li><a " . $status . " href='" . url(array(), 'admin') . "'>" . $lang["main_theme_navigation_login"] . "</a></li>"; 
             }
         } else {

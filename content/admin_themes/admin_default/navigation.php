@@ -37,7 +37,7 @@ global $hotaru, $plugins, $current_user, $lang; // don't remove
     <?php 
         if (!$plugins->pluginActive('users')) { 
 
-            if ($current_user->logged_in == true) { 
+            if ($current_user->loggedIn == true) { 
                 echo "<li><a id='navigation_active' href='" . url(array(), 'admin') . "'>" . $lang["admin_theme_navigation_admin"] . "</a></li>"; 
                 echo "<li><a href='" . url(array('page'=>'admin_logout'), 'admin') . "'>" . $lang["admin_theme_navigation_logout"] . "</a></li>";
             } else { 

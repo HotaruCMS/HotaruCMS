@@ -57,10 +57,10 @@ if (!isset($result) || !is_array($result)) {
                         if (!isset($result) || !is_array($result)) {
                                 $page = $hotaru->getPageName();
                                 if ($page == 'admin_login') {
-                                    if ($current_user->logged_in) {
+                                    if ($current_user->loggedIn) {
                                         $admin->displayAdminTemplate('main');
                                     } else {
-                                        admin_login_form();
+                                        $admin->adminLoginForm();
                                     }
                                 } else {
                                 $admin->displayAdminTemplate($page);

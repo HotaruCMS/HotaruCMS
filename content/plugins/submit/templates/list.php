@@ -47,7 +47,7 @@ if ($stories) {
     $pagedResults = new Paginated($stories, $post->getPostsPerPage(), $pg);
     while($story = $pagedResults->fetchPagedRow()) {    //when $story is false loop terminates    
         $post->readPost($story->post_id);
-        $user->get_user_basic($post->author);
+        $user->getUserBasic($post->author);
 ?>
 
 <!-- POST -->
@@ -68,8 +68,8 @@ if ($stories) {
                 <?php if ($post->getUseDate()) { echo time_difference(unixtimestamp($post->getDate())) . " ago"; } ?>
                 <?php $plugins->checkActions('submit_show_post_author_date'); ?>
                 <?php 
-                    if ($current_user->role == 'admin' || ($current_user->id == $user->id)) { 
-                        echo "<a class='show_post_edit' href='" . url(array('page'=>'edit_post', 'post_id'=>$post->getId())) . "'>" . $lang["submit_post_edit"] . "</a>"; 
+                    if ($current_user->getRole() == 'admin' || ($current_user->getId() == $user->getId())) { 
+                        echo "<a class='show_post_edit' href='" . BASEURL . "index.php?page=edit_post&amp;post_id=" . $post->getId() . "'>" . $lang["submit_post_edit"] . "</a>"; 
                     }
                 ?> 
             </div>
