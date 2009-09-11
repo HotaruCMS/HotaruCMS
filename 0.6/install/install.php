@@ -35,8 +35,8 @@ setcookie("hotaru_key", "", time()-3600, "/");
 
 require_once('../hotaru_settings.php');
 require_once(LIBS . 'Hotaru.php');    // Needed for error and success messages
-require_once(LIBS . 'class.userbase.php');  // Needed for login/registration
-require_once(LIBS . 'class.inspekt.php');      // for custom Inspekt methods
+require_once(LIBS . 'UserBase.php');  // Needed for login/registration
+require_once(LIBS . 'HotaruInspekt.php');      // for custom Inspekt methods
 $hotaru = new Hotaru();
 
 // Clear the database cache in case of a re-install.
@@ -101,7 +101,7 @@ function html_header()
     // Title
     $header .= "<TITLE>" . $lang['install_title'] . "</TITLE>\n";
     $header .= "<META HTTP-EQUIV='Content-Type' CONTENT='text'>\n";
-    $header .= "<link rel='stylesheet' href='" . BASEURL . "3rd_party/YUI-CSS/reset-fonts-grids.css' type='text/css'>\n";
+    $header .= "<link rel='stylesheet' href='" . BASEURL . "libs/extensions/YUI-CSS/reset-fonts-grids.css' type='text/css'>\n";
     $header .= "<link rel='stylesheet' type='text/css' href='" . BASEURL . "install/install_style.css'>\n";
     $header .= "</HEAD>\n";
     
@@ -304,7 +304,7 @@ function register_admin()
     }
     
     if ($error == 0) {
-        if (!$admin_name = $userbase->admin_exists())
+        if (!$admin_name = $userbase->adminExists())
         {
             // Insert default settings
             $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s)";
@@ -315,7 +315,7 @@ function register_admin()
         } 
         else 
         {
-            $user_info = $userbase->get_user_basic(0, $admin_name);
+            $user_info = $userbase->getUserBasic(0, $admin_name);
             // On returning to this page via back or next, the fields are empty at this point, so...
             if (!isset($user_name)) { $user_name = ""; }
             if (!isset($user_email)){ $user_email = ""; } 

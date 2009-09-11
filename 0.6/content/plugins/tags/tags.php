@@ -4,7 +4,7 @@
  * description: Enables tags for posts
  * version: 0.4
  * folder: tags
- * prefix: tg
+ * class: Tags
  * requires: submit 0.3
  * hooks: install_plugin, header_include, submit_hotaru_header_1, submit_class_post_read_post_1, submit_class_post_read_post_2, submit_class_post_add_post, submit_class_post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_show_post_extra_fields, submit_settings_get_values, submit_settings_form, submit_save_settings, submit_list_filter, submit_class_post_delete_post
  *
@@ -43,7 +43,7 @@
  */
 function tg_install_plugin()
 {
-    global $db, $plugin, $post;
+    global $db, $plugins, $post;
     
     // Create a new table column called "post_tags" if it doesn't already exist
     $exists = $db->column_exists('posts', 'post_tags');
@@ -67,9 +67,9 @@ function tg_install_plugin()
         $db->query($sql); 
     }
     
-    // Default settings (Note: we can't use $post->post_vars because it hasn't been filled yet.)
-    $plugin->plugin_settings_update('submit', 'submit_tags', 'checked');
-    $plugin->plugin_settings_update('submit', 'submit_max_tags', 50);
+    // Default settings (Note: we can't use $post->vars because it hasn't been filled yet.)
+    $plugins->pluginSettingsUpdate('submit', 'submit_tags', 'checked');
+    $plugins->pluginSettingsUpdate('submit', 'submit_max_tags', 50);
     
     // Could possibly do with some code here that extracts all existingtags from the posts table and populates the tags table with them.
     // Maybe in a later version.
@@ -81,20 +81,20 @@ function tg_install_plugin()
  */
 function tg_submit_hotaru_header_1()
 {
-    global $post, $hotaru, $plugin, $cage;
+    global $post, $hotaru, $plugins, $cage;
     
     if (!defined('TABLE_TAGS')) { define("TABLE_TAGS", DB_PREFIX . 'tags'); }
     
     // include language file
-    $plugin->include_language('tags');
+    $plugins->includeLanguage('tags');
     
-    $post->post_vars['post_tags'] = '';
-    $post->post_vars['post_max_tags'] = 50;    // max characters for tags
-    $post->post_vars['use_tags'] = true;
+    $post->vars['post_tags'] = '';
+    $post->vars['post_max_tags'] = 50;    // max characters for tags
+    $post->vars['use_tags'] = true;
     
     // Get page title
-    if ($cage->get->keyExists('tag')) { $hotaru->title = $hotaru->page_to_title_caps(($cage->get->noTags('tag'))); } // friendly URLs: FALSE
-    if (!$hotaru->title && $cage->get->keyExists('pos2')) { $hotaru->title = $hotaru->page_to_title_caps(($cage->get->noTags('pos2'))); } // friendly URLs: TRUE
+    if ($cage->get->keyExists('tag')) { $hotaru->setTitle($hotaru->pageToTitleCaps(($cage->get->noTags('tag')))); } // friendly URLs: FALSE
+    if (!$hotaru->getTitle() && $cage->get->keyExists('pos2')) { $hotaru->setTitle($hotaru->pageToTitleCaps(($cage->get->noTags('pos2')))); } // friendly URLs: TRUE
     
 }
 
@@ -104,8 +104,8 @@ function tg_submit_hotaru_header_1()
  */
 function tg_header_include()
 {
-    global $plugin;
-    $plugin->include_css('tags');
+    global $plugins;
+    $plugins->includeCSS('tags');
 }
 
 /**
@@ -113,17 +113,17 @@ function tg_header_include()
  */
 function tg_submit_class_post_read_post_1()
 {
-    global $plugin, $post;
+    global $plugins, $post;
     
     //tags
-    if (($plugin->plugin_settings('submit', 'submit_tags') == 'checked') && ($plugin->plugin_active('tags'))) { 
-        $post->post_vars['use_tags'] = true; 
+    if (($plugins->pluginSettings('submit', 'submit_tags') == 'checked') && ($plugins->pluginActive('tags'))) { 
+        $post->vars['use_tags'] = true; 
     } else { 
-        $post->post_vars['use_tags'] = false; 
+        $post->vars['use_tags'] = false; 
     }
     
-    $max_tags = $plugin->plugin_settings('submit', 'submit_max_tags');
-    if (!empty($max_tags)) { $post->post_vars['post_max_tags'] = $max_tags; }
+    $max_tags = $plugins->pluginSettings('submit', 'submit_max_tags');
+    if (!empty($max_tags)) { $post->vars['post_max_tags'] = $max_tags; }
 }
 
 
@@ -134,7 +134,7 @@ function tg_submit_class_post_read_post_2()
 {
     global $post, $post_row;
     
-    $post->post_vars['post_tags'] = urldecode($post_row->post_tags);
+    $post->vars['post_tags'] = urldecode($post_row->post_tags);
 }
 
 
@@ -147,15 +147,15 @@ function tg_submit_class_post_add_post()
     
     // Posts table
     $sql = "UPDATE " . TABLE_POSTS . " SET post_tags = %s WHERE post_id = %d";
-    $db->query($db->prepare($sql, urlencode(trim($post->post_vars['post_tags'])), $last_insert_id));
+    $db->query($db->prepare($sql, urlencode(trim($post->vars['post_tags'])), $last_insert_id));
         
     // Tags table
-    if (!empty($post->post_vars['post_tags'])) {
-        $tags_array = explode(',', $post->post_vars['post_tags']);
+    if (!empty($post->vars['post_tags'])) {
+        $tags_array = explode(',', $post->vars['post_tags']);
         if ($tags_array) {
             foreach ($tags_array as $tag) {
                 $sql = "INSERT INTO " . TABLE_TAGS . " SET tags_post_id = %d, tags_date = CURRENT_TIMESTAMP, tags_word = %s, tags_updateby = %d";
-                $db->query($db->prepare($sql, $last_insert_id, urlencode(str_replace(' ', '_', trim($tag))), $current_user->id));
+                $db->query($db->prepare($sql, $last_insert_id, urlencode(str_replace(' ', '_', trim($tag))), $current_user->getId()));
             }
         }
     }
@@ -171,19 +171,19 @@ function tg_submit_class_post_update_post()
     
     // Posts table
     $sql = "UPDATE " . TABLE_POSTS . " SET post_tags = %s WHERE post_id = %d";
-    $db->query($db->prepare($sql, urlencode(trim($post->post_vars['post_tags'])), $post->post_id));
+    $db->query($db->prepare($sql, urlencode(trim($post->vars['post_tags'])), $post->post_id));
         
     // Delete existing tags from tags table
     $sql = "DELETE from " . TABLE_TAGS . " WHERE tags_post_id = %d";
     $db->query($db->prepare($sql, $post->post_id));
     
     // Reinsert into tags table
-    if (!empty($post->post_vars['post_tags'])) {
-        $tags_array = explode(',', $post->post_vars['post_tags']);
+    if (!empty($post->vars['post_tags'])) {
+        $tags_array = explode(',', $post->vars['post_tags']);
         if ($tags_array) {
             foreach ($tags_array as $tag) {
                 $sql = "INSERT INTO " . TABLE_TAGS . " SET tags_post_id = %d, tags_date = CURRENT_TIMESTAMP, tags_word = %s, tags_updateby = %d";
-                $db->query($db->prepare($sql, $post->post_id, urlencode(str_replace(' ', '_', trim($tag))), $current_user->id));
+                $db->query($db->prepare($sql, $post->post_id, urlencode(str_replace(' ', '_', trim($tag))), $current_user->getId()));
             }
         }
     }
@@ -221,14 +221,14 @@ function tg_submit_form_2_assign()
         
     } elseif ($cage->post->getAlpha('submit3') == 'edit') {
         // Come back from step 3 to make changes...
-        $tags_check = $post->post_vars['post_tags'];
+        $tags_check = $post->vars['post_tags'];
         
-    } elseif ($hotaru->is_page('edit_post')) {
+    } elseif ($hotaru->isPage('edit_post')) {
         // Editing a previously submitted post
         if ($cage->post->getAlpha('edit_post') == 'true') {
             $tags_check = $cage->post->noTags('post_tags');
         } else {
-            $tags_check = $post->post_vars['post_tags'];
+            $tags_check = $post->vars['post_tags'];
         }
         
     } else {
@@ -245,7 +245,7 @@ function tg_submit_form_2_fields()
 {
     global $lang, $post, $tags_check;
 
-    if ($post->post_vars['use_tags']) { 
+    if ($post->vars['use_tags']) { 
         echo "<tr>";
             echo "<td>" . $lang["submit_form_tags"] . "&nbsp; </td>";
             echo "<td><input type='text' size=50 name='post_tags' value='" . $tags_check . "'></td>";
@@ -265,7 +265,7 @@ function tg_submit_form_2_check_for_errors()
     global $hotaru, $lang, $post, $cage, $lang, $tags_check;
     
     // ******** CHECK TAGS ********
-    if ($post->post_vars['use_tags']) {
+    if ($post->vars['use_tags']) {
         $tags_check = $cage->post->noTags('post_tags');    
         if (!$tags_check) {
             // No tags present...
@@ -292,7 +292,7 @@ function tg_submit_form_2_process_submission()
 {
     global $cage, $post;
     
-    $post->post_vars['post_tags'] = $cage->post->noTags('post_tags');
+    $post->vars['post_tags'] = $cage->post->noTags('post_tags');
 }
 
 
@@ -327,7 +327,7 @@ function tg_submit_list_filter()
         // Undo the filter that limits results to either 'top' or 'new' (See submit.php -> sub_prepare_list())
         if(isset($filter['post_status = %s'])) { unset($filter['post_status = %s']); }
         $filter['post_status != %s'] = 'processing';
-        $page_title = $lang["submit_page_breadcrumbs_tag"] . " &raquo; " . $hotaru->title . $rss;
+        $page_title = $lang["submit_page_breadcrumbs_tag"] . " &raquo; " . $hotaru->getTitle() . $rss;
         
         return true;    
     }
@@ -343,8 +343,8 @@ function tg_submit_show_post_extra_fields()
 { 
     global $post, $lang;
     
-    if ($post->post_vars['use_tags'] && $post->post_vars['post_tags']) { 
-        $tags = explode(',', $post->post_vars['post_tags']);
+    if ($post->vars['use_tags'] && $post->vars['post_tags']) { 
+        $tags = explode(',', $post->vars['post_tags']);
         
         echo "<li>" . $lang["submit_show_tags"] . " ";
         
@@ -371,11 +371,11 @@ function tg_submit_show_post_extra_fields()
  */
 function tg_submit_settings_get_values()
 {
-    global $plugin, $tags, $max_tags;
+    global $plugins, $tags, $max_tags;
     
     // Get settings from database if they exist...
-    $tags = $plugin->plugin_settings('submit', 'submit_tags');
-    $max_tags = $plugin->plugin_settings('submit', 'submit_max_tags');
+    $tags = $plugins->pluginSettings('submit', 'submit_tags');
+    $max_tags = $plugins->pluginSettings('submit', 'submit_max_tags');
     
     // otherwise set to blank...
     if (!$tags) { $tags = ''; }
@@ -388,7 +388,7 @@ function tg_submit_settings_get_values()
  */
 function tg_submit_settings_form()
 {
-    global $plugin, $lang, $tags, $max_tags;
+    global $plugins, $lang, $tags, $max_tags;
     
     echo "<input type='checkbox' name='tags' value='tags' " . $tags . ">&nbsp;&nbsp;" . $lang["submit_settings_tags"];
     echo "&nbsp;&nbsp;&nbsp;&nbsp;";
@@ -401,27 +401,27 @@ function tg_submit_settings_form()
  */
 function tg_submit_save_settings()
 {
-    global $plugin, $cage, $lang, $tags, $max_tags;
+    global $plugins, $cage, $lang, $tags, $max_tags;
     
     // Tags
     if ($cage->post->keyExists('tags')) { 
         $tags = 'checked'; 
-        $post->post_vars['use_tags'] = true;
+        $post->vars['use_tags'] = true;
     } else { 
         $tags = ''; 
-        $post->post_vars['use_tags'] = false;
+        $post->vars['use_tags'] = false;
     }
         
     // Tags length
     if ($cage->post->keyExists('max_tags')) { 
         $max_tags = $cage->post->getInt('max_tags'); 
-        if (empty($max_tags)) { $max_tags = $post->post_vars['post_max_tags']; }
+        if (empty($max_tags)) { $max_tags = $post->vars['post_max_tags']; }
     } else { 
-        $max_tags = $post->post_vars['post_max_tags']; 
+        $max_tags = $post->vars['post_max_tags']; 
     } 
     
-    $plugin->plugin_settings_update('submit', 'submit_tags', $tags);
-    $plugin->plugin_settings_update('submit', 'submit_max_tags', $max_tags);
+    $plugins->pluginSettingsUpdate('submit', 'submit_tags', $tags);
+    $plugins->pluginSettingsUpdate('submit', 'submit_max_tags', $max_tags);
 }
 
 

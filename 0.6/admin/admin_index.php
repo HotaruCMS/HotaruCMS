@@ -27,7 +27,6 @@
 
 // includes
 require_once('../hotaru_header.php');
-require_once('admin_login.php');
 require_once('admin_news.php');
 require_once('admin_plugins.php');
 require_once(LIBS . 'Admin.php');
@@ -66,7 +65,7 @@ if (!$page) {
 // Authenticate the admin if the Users plugin is INACTIVE:
 if (!$plugins->pluginActive('users'))
 {
-    if (($page != 'admin_login') && !$result = is_admin_cookie())
+    if (($page != 'admin_login') && !$result = $admin->isAdminCookie())
     {
         header('Location: ' . BASEURL . 'admin/admin_index.php?page=admin_login');
     }
@@ -77,12 +76,12 @@ if (isset($current_user) && $plugins->pluginActive('users'))
 {
     // This first condition happens when the Users plugin is activated 
     // and there's no cookie for the Admin yet.
-    if (($current_user->username == "") && $plugin->plugin_active('users')) 
+    if (($current_user->userName == "") && $plugins->pluginActive('users')) 
     {
         header('Location: ' . BASEURL . 'index.php?page=login');
         die; exit;
     } 
-    elseif (!$current_user->is_admin($current_user->username)) 
+    elseif (!$current_user->isAdmin($current_user->userName)) 
     {
         echo "You do not have permission to access this page.<br />";
         die(); exit;
@@ -95,10 +94,10 @@ $plugins->checkActions('admin_index');
 
 switch ($page) {
     case "admin_login":
-        admin_login();
+        $admin->adminLogin();
         break;
     case "admin_logout":
-        admin_logout();
+        $admin->adminLogout();
         break;
     case "settings":
         // Nothing special to do...

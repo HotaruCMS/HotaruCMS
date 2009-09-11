@@ -4,11 +4,11 @@
  * description: Displays "Search!"
  * version: 0.1
  * folder: search
- * prefix: srch
+ * class: Search
  * requires: submit 0.4, sidebar 0.1
  * hooks: install_plugin, hotaru_header, header_include, submit_list_filter
  *
- * Usage: Add <?php $plugin->check_actions('search'); ?> to your theme, wherever you want to the "Search" form.
+ * Usage: Add <?php $plugins->checkActions('search'); ?> to your theme, wherever you want to the "Search" form.
 *
  * PHP version 5
  *
@@ -37,9 +37,9 @@
  */
 function srch_install_plugin()
 {
-    global $plugin;
+    global $plugins;
     
-    $plugin->plugin_settings_update('sidebar_widgets', 'search', '');
+    $plugins->pluginSettingsUpdate('sidebar_widgets', 'search', '');
 } 
 
 /**
@@ -47,12 +47,12 @@ function srch_install_plugin()
  */
 function srch_hotaru_header()
 {
-    global $plugin, $cage, $hotaru;
+    global $plugins, $cage, $hotaru;
     
-    $plugin->include_language('search');
+    $plugins->includeLanguage('search');
     
     // Get page title
-    if ($cage->get->keyExists('search')) { $hotaru->title = $hotaru->page_to_title_caps($cage->get->getMixedString2('search')); }
+    if ($cage->get->keyExists('search')) { $hotaru->setTitle($hotaru->pageToTitleCaps($cage->get->getMixedString2('search'))); }
 } 
 
 
@@ -61,9 +61,9 @@ function srch_hotaru_header()
  */
 function srch_header_include()
 {
-    global $plugin;
+    global $plugins;
     
-    $plugin->include_css('search');
+    $plugins->includeCSS('search');
 } 
 
 
@@ -72,9 +72,9 @@ function srch_header_include()
  */
 function sidebar_widget_search()
 {
-    global $hotaru, $plugin, $lang;
+    global $hotaru, $plugins, $lang;
     
-    $hotaru->display_template('search_box', 'search');
+    $hotaru->displayTemplate('search_box', 'search');
 }
 
 /**
@@ -86,7 +86,7 @@ function srch_theme_index_replace()
 {
     global $hotaru, $cage;
 
-    if ($hotaru->is_page('search')) {
+    if ($hotaru->isPage('search')) {
     
         $search_terms = $cage->get->getMixedString2('search');
         

@@ -138,9 +138,8 @@ class PluginManagement extends Plugin
                     // Converts plugin folder names to well formatted names...
                     foreach ($this->dependencies as $this_plugin => $version)
                     {
-                        unset($this->dependencies[$this_plugin]);
-                        $this->dependencies[$this->name] = $version;
-                        $allplugins[$count]['requires'][$this->name] = $this->dependencies[$this->name];
+                        $this->dependencies[$this_plugin] = $version;
+                        $allplugins[$count]['requires'][$this_plugin] = $this->dependencies[$this_plugin];
                     }
 
                 } else {

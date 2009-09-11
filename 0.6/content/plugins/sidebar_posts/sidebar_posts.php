@@ -4,7 +4,7 @@
  * description: Adds links in the sidebar to the latest posts and top stories on the site.
  * version: 0.2
  * folder: sidebar_posts
- * prefix: sp
+ * class: SidebarPosts
  * requires: sidebar 0.2, submit 0.3
  * hooks: install_plugin, hotaru_header
  *
@@ -38,17 +38,17 @@ return false; die(); // We don't want to just drop into the file.
  */
 function sp_install_plugin()
 {
-    global $db, $plugin;
+    global $db, $plugins;
     
     // Default settings
-    $plugin->plugin_settings_update('sidebar_widgets', 'sidebar_posts_top', 'top');
-    $plugin->plugin_settings_update('sidebar_widgets', 'sidebar_posts_latest', 'new');
+    $plugins->pluginSettingsUpdate('sidebar_widgets', 'sidebar_posts_top', 'top');
+    $plugins->pluginSettingsUpdate('sidebar_widgets', 'sidebar_posts_latest', 'new');
         
 }
 
 function sp_hotaru_header()
 {
-    // Nothing to do but this hook and function forces the file to be included during check_actions().
+    // Nothing to do but this hook and function forces the file to be included during checkActions().
 }
 
 
@@ -59,16 +59,15 @@ function sp_hotaru_header()
  */
 function sidebar_widget_sidebar_posts($type = 'top')
 {
-    global $hotaru, $plugin, $post, $lang;
+    global $hotaru, $plugins, $post, $lang;
     
-        $plugin->include_language('sidebar_posts');
-        //$hotaru->title = $hotaru->get_page_name();
+        $plugins->includeLanguage('sidebar_posts');
     
     // FILTER TO NEW POSTS OR TOP POSTS?
-    if ($type == 'new' && $hotaru->title != 'latest') { 
+    if ($type == 'new' && $hotaru->getTitle() != 'latest') { 
         $posts = $post->get_posts($post->filter(array('post_status = %s' => 'new'), 10));    // get latest stories
         $title = $lang['sidebar_posts_latest_posts'];
-    } elseif ($type == 'top' && $hotaru->title != 'top') {
+    } elseif ($type == 'top' && $hotaru->getTitle() != 'top') {
         $posts = $post->get_posts($post->filter(array('post_status = %s' => 'top'), 10));    // get top stories
         $title = $lang['sidebar_posts_top_posts'];
     }

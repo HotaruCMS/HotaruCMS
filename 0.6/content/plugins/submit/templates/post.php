@@ -27,7 +27,7 @@
 global $hotaru, $plugins, $post, $current_user, $lang;
 
 $user = new UserBase();
-$user->get_user_basic($post->getAuthor());
+$user->getUserBasic($post->getAuthor());
 ?>
 
 <!-- BREADCRUMBS -->
@@ -57,13 +57,13 @@ $user->get_user_basic($post->getAuthor());
                 <div class="show_post_author_date">    
                     Posted
                     <?php 
-                    if ($post->getUseAuthor()) { echo " by <a href='" . url(array('user' => $user->username)) . "'>" . $user->username . "</a>"; } 
+                    if ($post->getUseAuthor()) { echo " by <a href='" . url(array('user' => $user->userName)) . "'>" . $user->userName . "</a>"; } 
                     ?>
                     <?php if ($post->getUseDate()) { echo time_difference(unixtimestamp($post->getDate())) . " ago"; } ?>
                     <?php $plugins->checkActions('submit_show_post_author_date'); ?>
                     <?php 
-                        if ($current_user->role == 'admin' || ($current_user->id == $user->id)) { 
-                            echo "<a class='show_post_edit' href='" . url(array('page'=>'edit_post', 'post_id'=>$post->getId())) . "'>" . $lang["submit_post_edit"] . "</a>"; 
+                        if ($current_user->getRole() == 'admin' || ($current_user->getId() == $user->getId())) { 
+                            echo "<a class='show_post_edit' href='" . BASEURL . "index.php?page=edit_post&amp;post_id=" . $post->getId() . "'>" . $lang["submit_post_edit"] . "</a>"; 
                         }
                     ?> 
                 </div>

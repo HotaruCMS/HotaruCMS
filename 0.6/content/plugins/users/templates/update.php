@@ -30,7 +30,7 @@ if ($cage->post->testAlnumLines('users_type') == 'update_general') {
     $username_check = $cage->post->testUsername('username');
     $email_check = $cage->post->testEmail('email');    
 } else {
-    $username_check = $current_user->username;
+    $username_check = $current_user->userName;
     $email_check = $current_user->email;
 }
 
@@ -44,7 +44,7 @@ $password_check_new2 = "";
             
     <h2><?php echo $lang["users_update_user_settings"]; ?></h2>
     
-    <?php echo $hotaru->show_messages(); ?>
+    <?php echo $hotaru->showMessages(); ?>
     
     <?php echo $lang["users_update_instructions"]; ?>        
     <form name='update_form' action='<?php echo BASEURL; ?>index.php?page=profile' method='post'>    

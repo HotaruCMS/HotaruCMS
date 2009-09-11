@@ -27,7 +27,7 @@
 class Admin
 {
     
-    var $sidebar = true;
+    public $sidebar = true;
     
     /**
      * Display admin template
@@ -35,7 +35,7 @@ class Admin
      * @param string $page - page name (filename without.php)
      * @param string $plugin - plugin folder name
      */
-    function displayAdminTemplate($page = '', $plugin = '')
+    public function displayAdminTemplate($page = '', $plugin = '')
     {
         $page = $page . '.php';
                 
@@ -83,7 +83,7 @@ class Admin
      *  Usage: $hotaru->is_settings_page('login') returns true if 
      *         page=plugin_settings and plugin=THIS_PLUGIN in the url.
      */
-    function isSettingsPage($folder = '')
+    public function isSettingsPage($folder = '')
     {
         global $cage, $hotaru;
         
@@ -99,7 +99,7 @@ class Admin
      *
      * @return array|false - array of announcements
      */
-    function checkAdminAnnouncements()
+    public function checkAdminAnnouncements()
     {
         global $lang, $plugins;
         
@@ -137,7 +137,7 @@ class Admin
      * @param string $setting
      * @return mixed|false
      */
-    function getAdminSetting($setting = '')
+    public function getAdminSetting($setting = '')
     {
         global $db;
         
@@ -152,7 +152,7 @@ class Admin
      *
      * @return array|false
      */
-    function getAllAdminSettings()
+    public function getAllAdminSettings()
     {
         global $db;
         
@@ -170,7 +170,7 @@ class Admin
      * @param string $setting
      * @return mixed|false
      */
-    function adminSettingExists($setting = '')
+    public function adminSettingExists($setting = '')
     {
         global $db;
         
@@ -185,7 +185,7 @@ class Admin
      * @param string $setting
      * @param string $value
      */
-    function adminSettingUpdate($setting = '', $value = '')
+    public function adminSettingUpdate($setting = '', $value = '')
     {
         global $db, $current_user;
         
@@ -206,7 +206,7 @@ class Admin
      *
      * @param string $setting
      */    
-    function adminSettingsRemove($setting = '')
+    public function adminSettingsRemove($setting = '')
     {
         global $db;
         
@@ -220,7 +220,7 @@ class Admin
      *
      * @param string $folder - path to the cache folder
      */
-    function clearCache($folder)
+    public function clearCache($folder)
     {
         global $hotaru, $lang;
         
@@ -242,7 +242,7 @@ class Admin
      * @param string $dir - path to the cache folder
      * @return bool
      */    
-    function deleteFiles($dir)
+    public function deleteFiles($dir)
     {
         $handle=opendir($dir);
     
@@ -265,7 +265,7 @@ class Admin
     /**
      * Process the settings form
     */    
-    function settings()
+    public function settings()
     {
         global $hotaru, $cage, $lang;
         
@@ -315,7 +315,7 @@ class Admin
     /**
      * List all plugin created tables
      */
-    function listPluginTables()
+    public function listPluginTables()
     {
         global $db;
         
@@ -345,7 +345,7 @@ class Admin
     /**
      * Optimize all database tables
      */
-    function optimizeTables()
+    public function optimizeTables()
     {
         global $db, $lang, $hotaru;
         
@@ -367,7 +367,7 @@ class Admin
      *
      * @param string $table_name - table to empty
      */
-    function emptyTable($table_name)
+    public function emptyTable($table_name)
     {
         global $db, $lang, $hotaru;
         
@@ -384,7 +384,7 @@ class Admin
      *
      * @param string $table_name - table to drop
      */
-    function dropTable($table_name)
+    public function dropTable($table_name)
     {
         global $db, $lang, $hotaru;
         
@@ -394,6 +394,171 @@ class Admin
         $hotaru->messageType = 'green';
         $hotaru->showMessage();
     }
+    
+    
+     /**
+     * Admin login
+     * 
+     * @return bool
+     */
+    public function adminLogin()
+    {
+        global $cage, $lang, $current_user, $hotaru;
+        
+        // Check username
+        if (!$username_check = $cage->post->testUsername('username')) { 
+            $username_check = ""; 
+        } 
+        
+        // Check password
+        if (!$password_check = $cage->post->testPassword('password')) {
+            $password_check = ""; 
+        }
+                    
+        if ($username_check != "" || $password_check != "") 
+        {
+            $login_result = $current_user->loginCheck($username_check, $password_check);
+            
+            if ($login_result) {
+                    //success
+                    $this->setAdminCookie($username_check);
+                    $current_user->username = $username_check;
+                    $current_user->getUserBasic(0, $username_check);
+                    $current_user->loggedIn = true;
+                    $current_user->updateUserLastLogin();
+                    return true;
+            } else {
+                    // login failed
+                    $hotaru->message = $lang["admin_login_failed"];
+                    $hotaru->messageType = "red";
+            }
+        } 
+        else 
+        {
+            if ($cage->post->keyExists('login_attempted')) {
+                $hotaru->message = $lang["admin_login_failed"];
+                $hotaru->messageType = "red";
+            }
+            $username_check = "";
+            $password_check = "";
+        }
+        
+        return false;
+    }
+    
+     /**
+     * Admin login form
+     */
+    public function adminLoginForm()
+    {
+        global $cage, $lang, $hotaru;
+    
+        // Check username
+        if (!$username_check = $cage->post->testUsername('username')) {
+            $username_check = "";
+        } 
+    
+        // Check password
+        if (!$password_check = $cage->post->testPassword('password')) {
+            $password_check = ""; 
+        }
+        
+        require_once(ADMIN_THEMES . ADMIN_THEME . 'login.php');
+    }
+    
+    
+    /**
+     * Set a 30-day cookie for the administrator
+     *
+     * @param string $username
+     *
+     * @return bool
+     */
+    public function setAdminCookie($username)
+    {
+        global $lang;
+    
+        if (!$username) 
+        { 
+            echo $lang["admin_login_error_cookie"];
+            return false;
+        } 
+        else 
+        {
+            $strCookie=base64_encode(
+                        join(':', array($username, crypt($username, 22)))
+            );
+            
+            // (2592000 = 60 seconds * 60 mins * 24 hours * 30 days.)
+            $month = 2592000 + time();
+            
+            setcookie("hotaru_user", $username, $month, "/");
+            setcookie("hotaru_key", $strCookie, $month, "/");
+            
+            return true;
+        }
+    }
+            
+     /**
+     *  Checks if a cookie exists and if it belongs to an Admin user
+     *
+     * @return bool
+     *
+     * Note: This is only used if the Users plugin is inactive.
+     */
+    public function isAdminCookie()
+    {
+        global $cage, $current_user;
+        
+        // Check for a cookie. If present then the user goes through authentication
+        if (!$hotaru_user = $cage->cookie->testUsername('hotaru_user'))
+        {
+            return false;
+            die();
+        }
+        else 
+        {
+            // authenticate...
+            if (($hotaru_user) && ($cage->cookie->keyExists('hotaru_key')))
+            {
+                $user_info=explode(":", base64_decode(
+                                        $cage->cookie->getRaw('hotaru_key'))
+                );
+                
+                if (($hotaru_user == $user_info[0]) 
+                    && (crypt($user_info[0], 22) == $user_info[1])) 
+                {
+                    if (!$current_user->isAdmin($hotaru_user)) {
+                        return false;
+                        die();
+                    } else {
+                        //success...
+                        return true;
+                    }
+                }
+            } 
+            else 
+            {
+                return false;
+                die();    
+            }
+        }
+    }
+    
+     /**
+     * Admin logout
+     *
+     * @return true
+     */
+    public function adminLogout()
+    {
+        global $current_user;
+        
+        $current_user->destroyCookieAndSession();
+        header("Location: " . BASEURL);
+        return true;
+    }
+
 }
 
 ?>
