@@ -61,8 +61,8 @@ $user->getUserBasic($post->getAuthor());
                     ?>
                     <?php if ($post->getUseDate()) { echo time_difference(unixtimestamp($post->getDate())) . " ago"; } ?>
                     <?php $plugins->checkActions('submit_show_post_author_date'); ?>
-                    <?php 
-                        if ($current_user->getRole() == 'admin' || ($current_user->getId() == $user->getId())) { 
+                    <?php
+                        if (($hotaru->getTitle() != 'submit2') && ($current_user->getRole() == 'admin' || ($current_user->getId() == $user->getId()))) { 
                             echo "<a class='show_post_edit' href='" . BASEURL . "index.php?page=edit_post&amp;post_id=" . $post->getId() . "'>" . $lang["submit_post_edit"] . "</a>"; 
                         }
                     ?> 
@@ -95,8 +95,8 @@ $user->getUserBasic($post->getAuthor());
 } else {
     // Show "Post buried" message...
     $hotaru->message = $lang["vote_alert_post_buried"];
-    $hotaru->message_type = "red";
-    $hotaru->show_message();
+    $hotaru->messageType = "red";
+    $hotaru->showMessage();
 }
 ?>
 

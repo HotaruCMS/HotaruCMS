@@ -136,7 +136,7 @@ class Submit extends PluginFunctions
             // Page name is a number so it must be a post with non-friendly urls
             $post->readPost($hotaru->getPageName());    // read current post
             $hotaru->setPageType('post');
-            $hotaru->setTitle = $post->getTitle();
+            $hotaru->setTitle($post->getTitle());
             
         } elseif ($post_id = $post->isPostUrl($hotaru->getPageName())) {
             // Page name belongs to a story
@@ -146,11 +146,11 @@ class Submit extends PluginFunctions
             
         } else {
             $post->readPost();    // read current post settings only
-            $hotaru->setPageType = '';
+            $hotaru->setPageType('');
         }
         
         $plugins->checkActions('submit_hotaru_header_2');
-                    
+       
         $vars['post'] = $post; 
         return $vars; 
     }
@@ -163,7 +163,7 @@ class Submit extends PluginFunctions
     {    
         global $current_user, $lang, $hotaru;
         
-        if ($current_user->logged_in) {
+        if ($current_user->loggedIn) {
             if ($hotaru->getTitle() == 'submit') { $status = "id='navigation_active'"; } else { $status = ""; }
             echo "<li><a  " . $status . " href='" . url(array('page'=>'submit')) . "'>" . $lang['submit_submit_a_story'] . "</a></li>\n";
         }
@@ -213,22 +213,22 @@ class Submit extends PluginFunctions
     {
         global $hotaru, $cage, $post, $plugins, $current_user;
         
-        if ($hotaru->isPage('submit2') && $post->useSubmission) {
+        if ($hotaru->isPage('submit2') && $post->getUseSubmission()) {
              
-            if ($current_user->logged_in) {
+            if ($current_user->loggedIn) {
                          
                 if ($cage->post->getAlpha('submit2') == 'true') {             
         
                     $post_orig_url = $cage->post->testUri('post_orig_url'); 
-                    if (!sub_check_for_errors_2()) { 
-                        sub_process_submission($post_orig_url);
+                    if (!$this->check_for_errors_2()) { 
+                        $this->process_submission($post_orig_url);
                     }
                 }
             }
             
-        } elseif ($hotaru->isPage('submit3') && $post->useSubmission) {
+        } elseif ($hotaru->isPage('submit3') && $post->getUseSubmission()) {
              
-            if ($current_user->logged_in) {
+            if ($current_user->loggedIn) {
     
                  if ($cage->post->getAlpha('submit3') == 'edit') {             
         
@@ -248,13 +248,13 @@ class Submit extends PluginFunctions
             }
             
         } elseif ($hotaru->isPage('edit_post')) {
-            if ($current_user->logged_in) {
+            if ($current_user->loggedIn) {
                        
                 if ($cage->post->getAlpha('edit_post') == 'true') {
                     $post_orig_url = $cage->post->testUri('post_orig_url'); 
-                    if (!sub_check_for_errors_2()) { 
-                        sub_process_submission($post_orig_url);
-                        header("Location: " . url(array('page'=>$post->post_id)));    // Go to the post
+                    if (!$this->check_for_errors_2()) { 
+                        $this->process_submission($post_orig_url);
+                        header("Location: " . url(array('page'=>$post->getId())));    // Go to the post
                         die();
                     }
                 }
@@ -283,18 +283,18 @@ class Submit extends PluginFunctions
         
         if ($hotaru->isPage('submit')) {
               
-              if ($current_user->logged_in) {
+              if ($current_user->loggedIn) {
                            
-                  if (!$post->useSubmission) {
+                  if (!$post->getUseSubmission()) {
                     echo $lang['submit_disabled'];    
                     return true;
                 }
                   
                   if ($cage->post->getAlpha('submit1') == 'true') {
-                    if (!sub_check_for_errors_1()) { 
+                    if (!$this->check_for_errors_1()) { 
                         // No errors found, proceed to step 2
                         $post_orig_url = $cage->post->testUri('post_orig_url'); 
-                        $post_orig_title = sub_fetch_title($post_orig_url);
+                        $post_orig_title = $post->fetch_title($post_orig_url);
                         $hotaru->displayTemplate('submit_step2' , 'submit');
                         return true;
                         
@@ -315,19 +315,19 @@ class Submit extends PluginFunctions
             
         } elseif ($hotaru->isPage('submit2')) {
              
-            if ($current_user->logged_in) {
+            if ($current_user->loggedIn) {
             
-                if (!$post->useSubmission) {
+                if (!$post->getUseSubmission()) {
                     echo $lang['submit_disabled'];    
                     return true;
                 }
                  
                  if ($cage->post->getAlpha('submit2') == 'true') {
-                             
+                 
                     $post_orig_url = $cage->post->testUri('post_orig_url'); 
-                    if ($post->status == "processing") {     
+                    if ($post->getStatus() == 'processing') {     
                         // No errors, go to step 3...    
-                        $post->read_post($post->post_id);
+                        $post->readPost($post->getId());
                         $hotaru->displayTemplate('submit_step3', 'submit');
                         return true;
                     } else {
@@ -340,9 +340,9 @@ class Submit extends PluginFunctions
         
         } elseif ($hotaru->isPage('submit3')) {
              
-            if ($current_user->logged_in) {
+            if ($current_user->loggedIn) {
             
-                if (!$post->useSubmission) {
+                if (!$post->getUseSubmission()) {
                     echo $lang['submit_disabled'];    
                     return true;
                 }
@@ -354,7 +354,7 @@ class Submit extends PluginFunctions
             }
             
         } elseif ($hotaru->isPage('edit_post')) {
-            if ($current_user->logged_in) {
+            if ($current_user->loggedIn) {
                 if ($cage->get->keyExists('sourceurl') || $cage->get->keyExists('post_id')) {
                     $hotaru->displayTemplate('submit_edit_post', 'submit');
                     return true;
@@ -393,7 +393,6 @@ class Submit extends PluginFunctions
             
         } elseif ($hotaru->getPageType() == 'post') {
             // We found out this is a post from the hotaru_header function above.
-            
             $hotaru->displayTemplate('post', 'submit');
             return true;
             
@@ -427,45 +426,6 @@ class Submit extends PluginFunctions
     
     
     /**
-     * Scrapes the title from the page being submitted
-     */
-    public function fetch_title($url)
-    {
-        global $cage, $lang;
-        
-        require_once(EXTENSIONS . 'SWCMS/class.httprequest.php');
-        
-        if ($url != 'http://' && $url != ''){
-            $r = new HTTPRequest($url);
-            $string = $r->DownloadToString();
-        } else {
-            $string = '';
-        }
-        
-        if (preg_match('/charset=([a-zA-Z0-9-_]+)/i', $string , $matches)) {
-            $encoding=trim($matches[1]);
-            //you need iconv to encode to utf-8
-            if (function_exists("iconv"))
-            {
-                if (strcasecmp($encoding, 'utf-8') != 0) {
-                    //convert the html code into utf-8 whatever encoding it is using
-                    $string=iconv($encoding, 'UTF-8//IGNORE', $string);
-                }
-            }
-        }
-            
-        
-        if (preg_match("'<title>([^<]*?)</title>'", $string, $matches)) {
-            $title = trim($matches[1]);
-        } else {
-            $title = $lang["submit_form_not_found"];
-        }
-        
-        return $title;
-    }
-    
-    
-    /**
      * Checks submit_step1 for errors
      */
     public function check_for_errors_1()
@@ -480,7 +440,7 @@ class Submit extends PluginFunctions
             $hotaru->message = $lang['submit_form_url_not_present_error'];
             $hotaru->message_type = 'red';
             $error = 1;
-        } elseif ($post->url_exists($post_orig_url_check)) {
+        } elseif ($post->urlExists($post_orig_url_check)) {
             // URL already exists...
             $hotaru->message = $lang['submit_form_url_already_exists_error'];
             $hotaru->message_type = 'red';
@@ -502,7 +462,7 @@ class Submit extends PluginFunctions
      */
     public function check_for_errors_2() 
     {
-        global $hotaru, $post, $cage, $plugin, $lang;
+        global $hotaru, $post, $cage, $plugins, $lang;
         
         $post_id = $cage->post->getInt('post_id'); // 0 unless come back from step 3.
         
@@ -529,9 +489,9 @@ class Submit extends PluginFunctions
             // No title present...
             $hotaru->messages[$lang['submit_form_title_not_present_error']] = "red";
             $error_title= 1;
-        } elseif (!$edit && $post->title_exists($title_check)) {
+        } elseif (!$edit && $post->titleExists($title_check)) {
             // title already exists...
-            if ($post_id != $post->title_exists($title_check)) {
+            if ($post_id != $post->titleExists($title_check)) {
                 $hotaru->messages[$lang['submit_form_title_already_exists_error']] = "red";
                 $error_title = 1;
             } else {
@@ -544,8 +504,8 @@ class Submit extends PluginFunctions
         }
         
         // ******** CHECK DESCRIPTION ********
-        if ($post->use_content) {
-            $content_check = sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->allowable_tags);
+        if ($post->getUseContent()) {
+            $content_check = sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->allowableTags);
                     
             if (!$content_check) {
                 // No content present...
@@ -579,38 +539,38 @@ class Submit extends PluginFunctions
      */
     public function process_submission($post_orig_url)
     {
-        global $hotaru, $cage, $plugin, $current_user;
+        global $hotaru, $cage, $plugins, $current_user, $post;
             
         if ($cage->post->getAlpha('submit2') == 'true') {    
         
-            $post->post_id = $cage->post->getInt('post_id');
-            $post->post_orig_url = $cage->post->testUri('post_orig_url');
-            $post->post_title = $cage->post->noTags('post_title');
-            $post->post_url = $cage->post->getFriendlyUrl('post_title');
-            $post->post_content = sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->allowable_tags);
-            $post->post_status = "processing";
-            $post->post_author = $current_user->id;
+            $post->setId($cage->post->getInt('post_id'));
+            $post->setOrigUrl($cage->post->testUri('post_orig_url'));
+            $post->setTitle($cage->post->noTags('post_title'));
+            $post->setUrl($cage->post->getFriendlyUrl('post_title'));
+            $post->setContent(sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->allowableTags));
+            $post->setStatus('processing');
+            $post->setAuthor($current_user->getId());
             
             $plugins->checkActions('submit_form_2_process_submission');
             
-            if ($post->post_id != 0) {
-                $post->update_post();    // Updates an existing post (e.g. returning to step 2 from step 3 to modify it)
+            if ($post->getId() != 0) {
+                $post->updatePost();    // Updates an existing post (e.g. returning to step 2 from step 3 to modify it)
             } else {
-                $post->add_post();    // Adds a new post
+                $post->addPost();    // Adds a new post
             }
-        
+            
         } elseif ($cage->post->keyExists('edit_post')) { 
             
             // Editing an existing post.
-            $post->post_id = $cage->post->getInt('post_id');
-            $post->read_post($post->post_id);
-            $post->post_orig_url = $cage->post->testUri('post_orig_url');
-            $post->post_title = $cage->post->noTags('post_title');
-            $post->post_url = $cage->post->getFriendlyUrl('post_title');
-            $post->post_content = sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->allowable_tags);
-            $post->post_status = $cage->post->testAlnumLines('post_status');
+            $post->setId($cage->post->getInt('post_id'));
+            $post->readPost($post->getId());
+            $post->setOrigUrl($cage->post->testUri('post_orig_url'));
+            $post->setTitle($cage->post->noTags('post_title'));
+            $post->setUrl($cage->post->getFriendlyUrl('post_title'));
+            $post->setContent(sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->allowableTags));
+            $post->setStatus('processing');
             $plugins->checkActions('submit_form_2_process_submission');
-            $post->update_post();
+            $post->updatePost();
         }
     }
 

@@ -83,6 +83,7 @@ $lang["submit_settings_summary_max_length"] = "Maximum characters";
 $lang["submit_settings_summary_instruct"] = "(Description truncated on list pages)";
 $lang["submit_settings_tags"] = "Tags";
 $lang["submit_settings_max_tags"] = "Maximum characters";
+$lang["submit_settings_latest"] = "Split posts into 'Top' and 'Latest'";
 $lang["submit_settings_posts_per_page"] = "posts per page <small>(default: 10)</small>";
 $lang["submit_settings_allowable_tags"] = "Allowed HTML tags in post description:";
 $lang["submit_settings_allowable_tags_example"] = "<small>(E.g. &lt;b&gt;&lt;u&gt;&lt;i&gt;&lt;blockquote&gt;)</small>";
