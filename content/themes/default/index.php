@@ -55,7 +55,7 @@ if (!isset($result) || !is_array($result)) {
                                 // plugin hook
                             $result = $plugins->checkActions('theme_index_main');
                             if (!isset($result) || !is_array($result)) {
-                                    $page = $hotaru->getPageName();
+                                $page = $hotaru->getPageName();
                                 $hotaru->displayTemplate($page); 
                             }
                         ?>

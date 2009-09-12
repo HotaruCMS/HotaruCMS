@@ -230,7 +230,7 @@ class Categories extends PluginFunctions
             // Come back from step 3 to make changes...
             $category_check = $post->vars['category'];
             
-        } elseif ($hotaru->is_page('edit_post')) {
+        } elseif ($hotaru->isPage('edit_post')) {
             // Editing a previously submitted post
             if ($cage->post->getAlpha('edit_post') == 'true') {
                 $category_check = $cage->post->getInt('post_category');

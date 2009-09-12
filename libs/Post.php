@@ -42,11 +42,11 @@ class Post {
     protected $date = '';
     protected $subscribe = 0;
     protected $postsPerPage = 10;
-    
     protected $allowableTags = '';
-    
+
     protected $templateName = '';
             
+    protected $useLatest = false;       // Split posts into "Top" and "Latest" pages
     protected $useSubmission = true;
     protected $useAuthor = true;
     protected $useDate = true;
@@ -84,6 +84,17 @@ class Post {
 
 
     /**
+     * Set post ID
+     *
+     * @param int $id
+     */    
+    public function setId($id)
+    {
+        return $this->id = $id;
+    }
+    
+    
+    /**
      * Get post id
      *
      * @return int
@@ -94,6 +105,17 @@ class Post {
     }
     
 
+    /**
+     * Set source url
+     *
+     * @param string $orig_url
+     */    
+    public function setOrigUrl($orig_url)
+    {
+        return $this->origUrl = $orig_url;
+    }
+    
+    
     /**
      * Get original url
      *
@@ -106,6 +128,17 @@ class Post {
     
 
     /**
+     * Set post domain
+     *
+     * @param string $domain
+     */    
+    public function setDomain($domain)
+    {
+        return $this->domain = $domain;
+    }
+    
+    
+    /**
      * Get original domain
      *
      * @return string
@@ -117,6 +150,17 @@ class Post {
     
 
     /**
+     * Set post title
+     *
+     * @param string $title
+     */    
+    public function setTitle($title)
+    {
+        return $this->title = $title;
+    }
+    
+    
+    /**
      * Get post title
      *
      * @return string
@@ -124,6 +168,17 @@ class Post {
     public function getTitle()
     {
         return $this->title;
+    }
+    
+    
+    /**
+     * Set post author
+     *
+     * @param string $author
+     */    
+    public function setAuthor($author)
+    {
+        return $this->author = $author;
     }
     
     
@@ -139,6 +194,17 @@ class Post {
     
     
     /**
+     * Set post url
+     *
+     * @param string $url
+     */    
+    public function setUrl($url)
+    {
+        return $this->url = $url;
+    }
+    
+    
+    /**
      * Get url
      *
      * @return string
@@ -150,6 +216,17 @@ class Post {
     
     
     /**
+     * Set post content
+     *
+     * @param string $content
+     */    
+    public function setContent($content)
+    {
+        return $this->content = $content;
+    }
+    
+    
+    /**
      * Get post content
      *
      * @return string
@@ -157,6 +234,17 @@ class Post {
     public function getContent()
     {
         return $this->content;
+    }
+    
+    
+    /**
+     * Set post date
+     *
+     * @param string $date
+     */    
+    public function setDate($date)
+    {
+        return $this->date = $date;
     }
     
     
@@ -179,6 +267,17 @@ class Post {
     public function getStatus()
     {
         return $this->status;
+    }
+    
+    
+    /**
+     * Set post status
+     *
+     * @param string $status
+     */    
+    public function setStatus($status)
+    {
+        return $this->status = $status;
     }
     
     
@@ -227,6 +326,50 @@ class Post {
     
     
     /**
+     * Enable/Disable latest page
+     *
+     * @param bool $bool
+     */    
+    public function setUseLatest($bool)
+    {
+        return $this->useLatest = $bool;
+    }
+    
+    
+    /**
+     * Get latest page status
+     *
+     * @return bool
+     */    
+    public function getUseLatest()
+    {
+        return $this->useLatest;
+    }
+    
+    
+    /**
+     * Set Subscribe
+     *
+     * @param bool $num - should be 1 (subscribed) or 0
+     */    
+    public function setSubscribe($num)
+    {
+        $this->subscribe = $num;
+    }
+    
+    
+    /**
+     * Get Subscribe
+     *
+     * @return int
+     */    
+    public function getSubscribe()
+    {
+        return $this->subscribe;
+    }
+    
+    
+    /**
      * Set Posts Per Page
      *
      * @param int $num
@@ -240,7 +383,7 @@ class Post {
     /**
      * Get Posts Per Page
      *
-     * @return int $num
+     * @return int
      */    
     public function getPostsPerPage()
     {
@@ -419,21 +562,20 @@ class Post {
         
         //summary
         if ($use_summary == 'checked') { $this->setUseSummary(true); } else { $this->setUseSummary(false); }
-
                 
         $plugins->checkActions('post_read_post_1');
         
         if ($post_id != 0) {
             $post_row = $this->getPost($post_id);
-            $this->title = stripslashes(urldecode($post_row->post_title));
-            $this->content = stripslashes(urldecode($post_row->post_content));
-            $this->id = $post_row->post_id;
-            $this->origUrl = urldecode($post_row->post_orig_url);            
-            $this->status = $post_row->post_status;
-            $this->author = $post_row->post_author;
-            $this->url = urldecode($post_row->post_url);
-            $this->date = $post_row->post_date;
-            $this->subscribe = $post_row->post_subscribe;
+            $this->setTitle(stripslashes(urldecode($post_row->post_title)));
+            $this->setContent(stripslashes(urldecode($post_row->post_content)));
+            $this->setId($post_row->post_id);
+            $this->setOrigUrl(urldecode($post_row->post_orig_url));            
+            $this->setStatus($post_row->post_status);
+            $this->setAuthor($post_row->post_author);
+            $this->setUrl(urldecode($post_row->post_url));
+            $this->setDate($post_row->post_date);
+            $this->setSubscribe($post_row->post_subscribe);
             
             $plugins->checkActions('post_read_post_2');
                         
@@ -454,18 +596,18 @@ class Post {
     {
         global $db, $plugins, $last_insert_id, $current_user;
         
-        $parsed = parse_url($this->post_orig_url);
-        if (isset($parsed['scheme'])){ $this->post_domain = $parsed['scheme'] . "://" . $parsed['host']; }
+        $parsed = parse_url($this->origUrl);
+        if (isset($parsed['scheme'])){ $this->domain = $parsed['scheme'] . "://" . $parsed['host']; }
             
         $sql = "INSERT INTO " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_date = CURRENT_TIMESTAMP, post_subscribe = %d, post_updateby = %d";
         
-        $db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode($this->post_domain), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), $this->post_status, $this->post_author, $this->post_subscribe, $current_user->id));
+        $db->query($db->prepare($sql, urlencode($this->origUrl), urlencode($this->domain), urlencode(trim($this->title)), urlencode(trim($this->url)), urlencode(trim($this->content)), $this->status, $this->author, $this->subscribe, $current_user->getId()));
         
         $last_insert_id = $db->get_var($db->prepare("SELECT LAST_INSERT_ID()"));
         
-        $this->post_id = $last_insert_id;
+        $this->id = $last_insert_id;
                 
-        $plugins->check_actions('post_add_post');
+        $plugins->checkActions('post_add_post');
         
         return true;
     }
@@ -480,14 +622,14 @@ class Post {
     {
         global $db, $plugins, $current_user;
         
-        $parsed = parse_url($this->post_orig_url);
-        if (isset($parsed['scheme'])){ $this->post_domain = $parsed['scheme'] . "://" . $parsed['host']; }
+        $parsed = parse_url($this->origUrl);
+        if (isset($parsed['scheme'])){ $this->domain = $parsed['scheme'] . "://" . $parsed['host']; }
         
         $sql = "UPDATE " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_subscribe = %d, post_updateby = %d WHERE post_id = %d";
         
-        $db->query($db->prepare($sql, urlencode($this->post_orig_url), urlencode($this->post_domain), urlencode(trim($this->post_title)), urlencode(trim($this->post_url)), urlencode(trim($this->post_content)), $this->post_status, $this->post_author, $this->post_subscribe, $current_user->id, $this->post_id));
+        $db->query($db->prepare($sql, urlencode($this->origUrl), urlencode($this->domain), urlencode(trim($this->title)), urlencode(trim($this->url)), urlencode(trim($this->content)), $this->status, $this->author, $this->subscribe, $current_user->getId(), $this->id));
         
-        $plugins->check_actions('post_update_post');
+        $plugins->checkActions('post_update_post');
         
         return true;
     }
@@ -502,10 +644,10 @@ class Post {
     {
         global $db;
             
-        $this->post_status = $status;
+        $this->status = $status;
             
         $sql = "UPDATE " . TABLE_POSTS . " SET post_status = %s WHERE post_id = %d";
-        $db->query($db->prepare($sql, $this->post_status, $this->post_id));        
+        $db->query($db->prepare($sql, $this->status, $this->id));        
         return true;
     }
 
@@ -531,11 +673,11 @@ class Post {
      */    
     public function deletePost()
     {
-        global $db, $plugin;
+        global $db, $plugins;
         $sql = "DELETE FROM " . TABLE_POSTS . " WHERE post_id = %d";
-        $db->query($db->prepare($sql, $this->post_id));
+        $db->query($db->prepare($sql, $this->id));
         
-        $plugins->check_actions('post_delete_post');
+        $plugins->checkActions('post_delete_post');
         
     }
     
@@ -729,9 +871,64 @@ class Post {
     public function getUniqueStatuses() 
     {
         global $db;
+        
+        /* This function pulls all the different statuses from current links, 
+        or adds some defaults if not present.*/
+
+        $unique_statuses = array();
         $sql = "SELECT DISTINCT post_status FROM " . TABLE_POSTS;
         $statuses = $db->get_results($db->prepare($sql));
-        if ($statuses) { return $statuses; } else { return false; }
+        if ($statuses) {
+            foreach ($statuses as $status) {
+                array_push($unique_statuses, $status->post_status);
+            }
+        }
+        // Some essentials if not already included:
+        if (!in_array('new', $unique_statuses)) { array_push($unique_statuses, 'new'); }
+        if (!in_array('top', $unique_statuses)) { array_push($unique_statuses, 'top'); }
+        if (!in_array('buried', $unique_statuses)) { array_push($unique_statuses, 'buried'); }
+        if (!in_array('pending', $unique_statuses)) { array_push($unique_statuses, 'pending'); }
+        
+        if ($unique_statuses) { return $unique_statuses; } else { return false; }
+    }
+    
+    
+    /**
+     * Scrapes the title from the page being submitted
+     */
+    public function fetch_title($url)
+    {
+        global $cage, $lang;
+        
+        require_once(EXTENSIONS . 'SWCMS/class.httprequest.php');
+        
+        if ($url != 'http://' && $url != ''){
+            $r = new HTTPRequest($url);
+            $string = $r->DownloadToString();
+        } else {
+            $string = '';
+        }
+        
+        if (preg_match('/charset=([a-zA-Z0-9-_]+)/i', $string , $matches)) {
+            $encoding=trim($matches[1]);
+            //you need iconv to encode to utf-8
+            if (function_exists("iconv"))
+            {
+                if (strcasecmp($encoding, 'utf-8') != 0) {
+                    //convert the html code into utf-8 whatever encoding it is using
+                    $string=iconv($encoding, 'UTF-8//IGNORE', $string);
+                }
+            }
+        }
+            
+        
+        if (preg_match("'<title>([^<]*?)</title>'", $string, $matches)) {
+            $title = trim($matches[1]);
+        } else {
+            $title = $lang["submit_form_not_found"];
+        }
+        
+        return $title;
     }
     
 
@@ -751,17 +948,26 @@ class Post {
         
         if ($cage->get->testPage('page') == 'latest') 
         {
+            // Filters page to "new" stories only
             $filter['post_status = %s'] = 'new'; 
             $rss = "<a href='" . url(array('page'=>'rss', 'status'=>'new')) . "'>";
             $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
             $page_title = $lang["post_breadcrumbs_latest"] . $rss;
         } 
-        else 
+        elseif ($this->getUseLatest())
         {
+            // Filters page to "top" stories only
             $filter['post_status = %s'] = 'top';
             $rss = "<a href='" . url(array('page'=>'rss')) . "'>";
             $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
             $page_title = $lang["post_breadcrumbs_top"] . $rss;
+        }
+        else
+        {
+            // Filters page to "all" stories
+            $rss = "<a href='" . url(array('page'=>'rss')) . "'>";
+            $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
+            $page_title = $lang["post_breadcrumbs_all"] . $rss;
         }
         
         $plugins->checkActions('post_list_filter');
@@ -790,12 +996,12 @@ class Post {
         $trackback = $this->detectTrackback();
         
         // Clean up the title and description...
-        $title = htmlspecialchars(strip_tags($post->post_title));
-        $title = (strlen($post->post_title) > 150) ? substr($post->post_title, 0, 150) . '...' : $post->post_title;
-        $excerpt = strip_tags($post->post_content);
+        $title = htmlspecialchars(strip_tags($post->getTitle()));
+        $title = (strlen($post->getTitle()) > 150) ? substr($post->getTitle(), 0, 150) . '...' : $post->getTitle();
+        $excerpt = strip_tags($post->getContent());
         $excerpt = (strlen($excerpt) > 200) ? substr($excerpt, 0, 200) . '...' : $excerpt;
 
-        if ($this->ping($trackback, url(array('page'=>$post->post_id)), $title, $excerpt)) {
+        if ($this->ping($trackback, url(array('page'=>$post->getId())), $title, $excerpt)) {
             echo "Trackback sent successfully...";
         } else {
             echo "Error sending trackback....";
@@ -815,10 +1021,10 @@ class Post {
     {
         global $post;
         
-        include_once(INCLUDES . 'SWCMS/class.httprequest.php');
+        include_once(EXTENSIONS . 'SWCMS/class.httprequest.php');
         
         // Fetch the content of the original url...
-        $url = $post->post_orig_url;
+        $url = $post->getOrigUrl();
         if ($url != 'http://' && $url != ''){
         $r = new HTTPRequest($url);
         $content = $r->DownloadToString();

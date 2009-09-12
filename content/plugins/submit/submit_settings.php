@@ -108,78 +108,78 @@ class SubmitSettings extends PluginSettings
         // Enabled
         if ($cage->post->keyExists('enabled')) { 
             $enabled = 'checked'; 
-            $post->useSubmission = true;
+            $post->setUseSubmission(true);
         } else { 
             $enabled = ''; 
-            $post->useSubmission = false;
+            $post->setUseSubmission(false);
         }
         
         // Author
         if ($cage->post->keyExists('author')) { 
             $author = 'checked'; 
-            $post->useAuthor = true;
+            $post->setUseAuthor(true);
         } else { 
             $author = ''; 
-            $post->useAuthor = false;
+            $post->setUseAuthor(false);
         }
         
         // Date
         if ($cage->post->keyExists('date')) { 
             $date = 'checked'; 
-            $post->useDate = true;
+            $post->setUseDate(true);
         } else { 
             $date = ''; 
-            $post->useDate = false;
+            $post->setUseDate(false);
         }
         
         // Description
         if ($cage->post->keyExists('content')) { 
             $content = 'checked'; 
-            $post->useContent = true;
+            $post->setUseContent(true);
         } else { 
             $content = ''; 
-            $post->useContent = false;
+            $post->setUseContent(false);
         }
         
         // Description length
         if ($cage->post->keyExists('content_length')) { 
             $content_length = $cage->post->getInt('content_length'); 
-            if (empty($content_length)) { $content_length = $post->contentLength; }
+            if (empty($content_length)) { $content_length = $post->getContentLength(); }
         } else { 
-            $content_length = $post->contentLength; 
+            $content_length = $post->getContentLength(); 
         } 
         
         // Summary
         if ($cage->post->keyExists('summary')) { 
             $summary = 'checked'; 
-            $post->useSummary = true;
+            $post->setUseSummary(true);
         } else { 
             $summary = ''; 
-            $post->useSummary = false;
+            $post->setUseSummary(false);
         }
         
         // Summary length
         if ($cage->post->keyExists('summary_length')) { 
             $summary_length = $cage->post->getInt('summary_length'); 
-            if (empty($summary_length)) { $summary_length = $post->summaryLength; }
+            if (empty($summary_length)) { $summary_length = $post->getSummaryLength(); }
         } else { 
-            $summary_length = $post->summaryLength; 
+            $summary_length = $post->getSummaryLength(); 
         } 
         
         // Posts per page
         if ($cage->post->keyExists('posts_per_page')) { 
             $posts_per_page = $cage->post->testInt('posts_per_page'); 
-            if (empty($posts_per_page) || $posts_per_page == 0) { $posts_per_page = $post->$postsPerPage; }
+            if (empty($posts_per_page) || $posts_per_page == 0) { $posts_per_page = $post->getPostsPerPage(); }
         } else { 
-            $posts_per_page = $post->$postsPerPage; 
+            $posts_per_page = $post->getPostsPerPage(); 
         } 
         
         // Allowable tags
         if ($cage->post->keyExists('allowable_tags')) { 
             $allowable_tags = $cage->post->getRaw('allowable_tags'); 
-            if (empty($allowable_tags)) { $allowable_tags = $post->$allowableTags; }
+            if (empty($allowable_tags)) { $allowable_tags = $post->getAllowableTags(); }
         } else { 
-            $allowable_tags = $post->$allowableTags; 
+            $allowable_tags = $post->getAllowableTags(); 
         }
         
         $plugins->checkActions('submit_save_settings');
@@ -193,6 +193,8 @@ class SubmitSettings extends PluginSettings
         $submit_settings['post_summary_length'] = $summary_length;
         $submit_settings['post_posts_per_page'] = $posts_per_page;
         $submit_settings['post_allowable_tags'] = $allowable_tags;
+        // necessary to force all posts onto the main page. Plugins such as "Vote" can override this:
+        $submit_settings['post_latest'] = false;
     
         $plugins->pluginSettingsUpdate('submit', 'submit_settings', serialize($submit_settings));
         

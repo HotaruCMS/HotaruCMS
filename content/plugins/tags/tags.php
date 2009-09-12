@@ -88,7 +88,7 @@ class Tags extends PluginFunctions
         $plugins->includeLanguage('tags');
         
         $post->vars['tags'] = '';
-        $post->vars['postMaxTags'] = 50;    // max characters for tags
+        $post->vars['maxTags'] = 50;    // max characters for tags
         $post->vars['useTags'] = true;
         
         // Get page title
@@ -113,7 +113,7 @@ class Tags extends PluginFunctions
         }
         
         $max_tags = $plugins->pluginSettings('submit', 'submit_max_tags');
-        if (!empty($max_tags)) { $post->vars['postMaxTags'] = $max_tags; }
+        if (!empty($max_tags)) { $post->vars['maxTags'] = $max_tags; }
     }
     
     
@@ -261,7 +261,7 @@ class Tags extends PluginFunctions
                 // No tags present...
                 $hotaru->messages[$lang['submit_form_tags_not_present_error']] = "red";
                 $error_tags = 1;
-            } elseif (strlen($tags_check) > $post->post_max_tags) {
+            } elseif (strlen($tags_check) > $post->maxTags) {
                 // total tag length is too long
                 $hotaru->messages[$lang['submit_form_tags_length_error']] = "red";
                 $error_tags = 1;
@@ -405,9 +405,9 @@ class Tags extends PluginFunctions
         // Tags length
         if ($cage->post->keyExists('max_tags')) { 
             $max_tags = $cage->post->getInt('max_tags'); 
-            if (empty($max_tags)) { $max_tags = $post->vars['postMaxTags']; }
+            if (empty($max_tags)) { $max_tags = $post->vars['maxTags']; }
         } else { 
-            $max_tags = $post->vars['postMaxTags']; 
+            $max_tags = $post->vars['maxTags']; 
         } 
         
         $plugins->pluginSettingsUpdate('submit', 'submit_tags', $tags);
@@ -423,7 +423,7 @@ class Tags extends PluginFunctions
         global $db, $post;
         
         $sql = "DELETE FROM " . TABLE_TAGS . " WHERE tags_post_id = %d";
-        $db->query($db->prepare($sql, $post->post_id));
+        $db->query($db->prepare($sql, $post->id));
     }
     
 }

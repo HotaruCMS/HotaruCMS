@@ -38,6 +38,7 @@ $lang['main_hotaru_queries_time'] = "database queries and a page load time of";
 $lang['main_hotaru_seconds'] = "seconds.";
 
 /* Post Class - breadcrumbs */
+$lang["post_breadcrumbs_all"] = "All Posts";
 $lang["post_breadcrumbs_top"] = "Top Posts";
 $lang["post_breadcrumbs_latest"] = "Latest Posts";
 $lang["post_breadcrumbs_tag"] = "Tag";

@@ -24,21 +24,21 @@
  * @link      http://www.hotarucms.org/
  */
  
-global $hotaru, $cage, $lang, $post, $plugin, $post_orig_url, $post_orig_title;
+global $hotaru, $cage, $lang, $post, $plugins, $post_orig_url, $post_orig_title;
                 
 if ($cage->post->getAlpha('submit2') == 'true') {
     // Submitted this form...
     $title_check = $cage->post->noTags('post_title');    
-    $content_check = sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->allowable_tags);    
+    $content_check = sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->getAllowableTags());    
     $post_id = $cage->post->getInt('post_id');    
-    $post->post_id = $post_id;
+    $post->setId($post_id);
     
 } elseif ($cage->post->getAlpha('submit3') == 'edit') {
     // Come back from step 3 to make changes...
-    $title_check = $post->post_title;
-    $content_check = $post->post_content;
-    $post_orig_url = $post->post_orig_url;
-    $post_id = $post->post_id;
+    $title_check = $post->getTitle();
+    $content_check = $post->getContent();
+    $post_orig_url = $post->getOrigUrl();
+    $post_id = $post->getId();
 } else {
     // First time here...
     $title_check = $post_orig_title;
@@ -46,13 +46,13 @@ if ($cage->post->getAlpha('submit2') == 'true') {
     $post_id = 0;
 }
 
-$plugin->check_actions('submit_form_2_assign');
+$plugins->checkActions('submit_form_2_assign');
 
 ?>
 
     <div id="breadcrumbs"><a href='<?php echo BASEURL; ?>'><?php echo $lang['submit_form_home']; ?></a> &raquo; <?php echo $lang["submit_form_step2"]; ?></div>
         
-    <?php echo $hotaru->show_messages(); ?>
+    <?php echo $hotaru->showMessages(); ?>
             
     
     <?php echo $lang["submit_form_instructions_2"]; ?>
@@ -70,14 +70,14 @@ $plugin->check_actions('submit_form_2_assign');
         <td id='ajax_loader'>&nbsp;</td>
     </tr>
     
-    <?php if ($post->use_content) { ?>
+    <?php if ($post->getUseContent()) { ?>
     <tr>
         <td style='vertical-align: top;'><?php echo $lang["submit_form_content"]; ?>&nbsp; </td>
-        <td colspan='2'><textarea id='post_content' name='post_content' rows='6' maxlength='<?php $post->post_content_length; ?>' style='width: 32em;'><?php echo $content_check; ?></textarea></td>
+        <td colspan='2'><textarea id='post_content' name='post_content' rows='6' maxlength='<?php $post->getContentLength(); ?>' style='width: 32em;'><?php echo $content_check; ?></textarea></td>
     </tr>
     <?php } ?>
     
-    <?php $plugin->check_actions('submit_form_2_fields'); ?>
+    <?php $plugins->checkActions('submit_form_2_fields'); ?>
             
     <input type='hidden' name='post_orig_url' value='<?php echo $post_orig_url; ?>' />
     <input type='hidden' name='post_id' value='<?php echo $post_id; ?>' />

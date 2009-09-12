@@ -27,7 +27,6 @@
 global $hotaru, $plugins, $cage, $filter, $lang, $page_title, $current_user, $post;
 
 $user = new UserBase();
-$post = new Post();
 
 // Prepare filter and breadcrumbs
 $stories = $post->prepareList();

@@ -140,6 +140,10 @@ class Vote extends PluginFunctions
             
             // Use alerts?
             $post->vars['vote_use_alerts'] = $vote_settings['vote_use_alerts'];
+            
+            // Prevent Hotaru from merging "top" and "new" posts on the same page:
+            $post->setUseLatest(true); 
+
         }
     }
     
