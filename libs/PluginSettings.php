@@ -44,8 +44,10 @@ class PluginSettings extends PluginAccess
         
         // Set default to the current plugin if not specified
         if (!$folder) { $folder = $this->folder; }
+        
         $sql = "SELECT plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
         $value = $db->get_var($db->prepare($sql, $folder, $setting));
+
         if ($value) { return $value; } else { return false; }
     }
     
@@ -78,8 +80,6 @@ class PluginSettings extends PluginAccess
      */
     function getSerializedSettings($folder = '')
     {
-        global $plugins;
-        
         // Set default to the current plugin if not specified
         if (!$folder) { $folder = $this->folder; }
         

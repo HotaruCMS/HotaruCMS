@@ -81,8 +81,10 @@ class Disqus extends PluginFunctions
     {
         global $hotaru;
         
-        $shortname = $this->getSetting('disqus_shortname');
-        $hotaru->displayTemplate('disqus_comments', 'disqus');
+        if (!$hotaru->isPage('submit2')) {
+            $shortname = $this->getSetting('disqus_shortname');
+            $hotaru->displayTemplate('disqus_comments', 'disqus');
+        }
     }
     
     

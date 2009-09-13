@@ -44,15 +44,15 @@ class CommentsSettings extends Comments
         }
         
         // Get settings from database if they exist...
-        $comment_settings = $this->getSerializedSettings();
-    
+        $comments_settings = $this->getSerializedSettings();
+        
         // Assign settings to class member
-        $comment->setForm($comment_settings['comment_form']);
-        $comment->setAvatars($comment_settings['comment_avatars']);
-        $comment->setVoting($comment_settings['comment_voting']);
-        $comment->setEmail($comment_settings['comment_email']);
-        $comment->setAllowableTags($comment_settings['comment_allowable_tags']);
-        $comment->setLevels($comment_settings['comment_levels']);
+        $comment->setForm($comments_settings['comment_form']);
+        $comment->setAvatars($comments_settings['comment_avatars']);
+        $comment->setVoting($comments_settings['comment_voting']);
+        $comment->setEmail($comments_settings['comment_email']);
+        $comment->setAllowableTags($comments_settings['comment_allowable_tags']);
+        $comment->setLevels($comments_settings['comment_levels']);
         
         echo "<h1>" . $lang["comments_settings_header"] . "</h1>\n";
           
@@ -151,13 +151,13 @@ class CommentsSettings extends Comments
         
         $this->pluginHook('comments_save_settings');
         
-        $comment_settings['comment_form'] = $comment->getForm();
-        $comment_settings['comment_avatars'] = $comment->getAvatars();
-        $comment_settings['comment_voting'] = $comment->getVoting();
-        $comment_settings['comment_levels'] = $levels;
-        $comment_settings['comment_email'] = $email;
-        $comment_settings['comment_allowable_tags'] = $allowable_tags;
-        $this->updateSetting('comment_settings', serialize($comment_settings));
+        $comments_settings['comment_form'] = $comment->getForm();
+        $comments_settings['comment_avatars'] = $comment->getAvatars();
+        $comments_settings['comment_voting'] = $comment->getVoting();
+        $comments_settings['comment_levels'] = $levels;
+        $comments_settings['comment_email'] = $email;
+        $comments_settings['comment_allowable_tags'] = $allowable_tags;
+        $this->updateSetting('comments_settings', serialize($comments_settings));
         
         $hotaru->message = $lang["comments_settings_saved"];
         $hotaru->messageType = "green";

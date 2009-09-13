@@ -69,7 +69,7 @@ class CategoryManager extends PluginFunctions
         }
             
         // 'checked' means that categories are enabled by the Submit plugin.
-        $plugins->pluginSettingsUpdate('submit', 'submit_categories', 'checked');    
+        $this->updateSetting('submit_categories', 'checked', 'submit');    
     
         // Include language file. Also included in hotaru_header, but needed here so 
         // that the link in the Admin sidebar shows immediately after installation.

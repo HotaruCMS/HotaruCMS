@@ -47,9 +47,9 @@ class Categories extends PluginFunctions
         global $db, $post;
         
         // Default settings (Note: we can't use $post->vars because it hasn't been filled yet.)
-        $this->updateSetting('submit', 'submit_categories', 'checked');
-        $this->updateSetting('sidebar_widgets', 'categories', '');
-        $this->updateSetting('categories', 'categories_bar', 'menu');
+        $this->updateSetting('submit_categories', 'checked', 'submit');
+        $this->updateSetting('categories', '', 'sidebar_widgets');
+        $this->updateSetting('categories_bar', 'menu');
     }
     
     
