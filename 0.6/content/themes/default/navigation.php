@@ -31,13 +31,13 @@ global $hotaru, $plugins, $current_user, $lang; // don't remove
 
 <!-- Navigation Bar -->
 <ul id="navigation">
-    <?php $plugins->checkActions('navigation_first'); ?>
+    <?php $plugins->pluginHook('navigation_first'); ?>
     
     <?php if ($hotaru->getTitle() == 'top') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
     <li><a <?php echo $status; ?> href="<?php echo BASEURL; ?>"><?php echo $lang["main_theme_navigation_home"]; ?></a></li>
-    <?php $plugins->checkActions('navigation'); ?>
+    <?php $plugins->pluginHook('navigation'); ?>
     <?php 
-        if (!$plugins->pluginActive('users')) { 
+        if (!$plugins->isActive('users')) { 
 
             if ($current_user->loggedIn == true) { 
             
@@ -51,7 +51,7 @@ global $hotaru, $plugins, $current_user, $lang; // don't remove
                 echo "<li><a " . $status . " href='" . url(array(), 'admin') . "'>" . $lang["main_theme_navigation_login"] . "</a></li>"; 
             }
         } else {
-            $plugins->checkActions('navigation_users', true, 'users'); // ensures login/logout/register are last.
+            $plugins->pluginHook('navigation_users', true, 'users'); // ensures login/logout/register are last.
         }
     ?>
     
@@ -66,4 +66,4 @@ global $hotaru, $plugins, $current_user, $lang; // don't remove
             
 </ul>
 
-<?php $plugins->checkActions('navigation_last'); ?>
+<?php $plugins->pluginHook('navigation_last'); ?>

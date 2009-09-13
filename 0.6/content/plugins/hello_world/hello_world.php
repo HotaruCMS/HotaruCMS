@@ -8,7 +8,7 @@
  * prefix: hw
  * hooks: hello_world
  *
- * Usage: Add <?php $plugins->checkActions('hello_world'); ?> to your theme, wherever you want to show "Hello World".
+ * Usage: Add <?php $plugins->pluginHook('hello_world'); ?> to your theme, wherever you want to show "Hello World".
 *
  * PHP version 5
  *

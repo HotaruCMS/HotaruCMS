@@ -56,14 +56,14 @@ if ($current_user->getRole() != 'admin' && ($current_user->getId() != $user->get
     die();
 }
 
-$plugins->checkActions('submit_form_2_assign');
+$plugins->pluginHook('submit_form_2_assign');
 
 ?>
 
     <div id="breadcrumbs">
         <a href='<?php echo BASEURL; ?>'><?php echo $lang['submit_form_home']; ?></a> &raquo; 
         <?php echo $lang["submit_edit_post_title"]; ?> &raquo; 
-        <?php echo $post_id; ?>
+        <?php echo $post->getTitle(); ?>
     </div>
         
     <?php echo $hotaru->showMessages(); ?>
@@ -91,7 +91,7 @@ $plugins->checkActions('submit_form_2_assign');
     </tr>
     <?php } ?>
     
-    <?php $plugins->checkActions('submit_form_2_fields'); ?>
+    <?php $plugins->pluginHook('submit_form_2_fields'); ?>
         
     <?php if ($current_user->getRole() == 'admin') { ?>
     <!-- Admin only options -->

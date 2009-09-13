@@ -3,56 +3,6 @@
 class PluginFunctions extends PluginManagement
 {
 
-    protected $id           = '';         // plugin id
-    protected $enabled      = 0;          // activate (1), inactive (0)
-    protected $name         = '';         // plugin proper name
-    protected $prefix       = '';         // plugin prefix
-    protected $folder       = '';         // plugin folder name
-    protected $class        = '';         // plugin class name
-    protected $desc         = '';         // plugin description
-    protected $version      = 0;          // plugin version number
-    protected $order        = 0;          // plugin order number
-    protected $requires     = '';         // string of plugin->version pairs
-    protected $dependencies = array();    // array of plugin->version pairs
-    protected $hooks        = array();    // array of plugin hooks
-        
-    public function __construct($folder = '') 
-    {
-        $this->setFolder($folder);
-        $this->setName(make_name($folder));
-    }
-    
-    public function __toString()
-    {
-        return $this->class;
-    }
-    
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    public function getName()
-    {
-        return $this->name;
-    }
-    
-    public function setFolder($folder)
-    {
-        $this->folder = $folder;
-    }
-
-    public function getFolder()
-    {
-        return $this->folder;
-    }
-        
-    public function nameLength()
-    {
-        return strlen($this->name);
-    }
-
-
     /**
      * Read and return plugin info from top of a plugin file.
      *
@@ -61,7 +11,7 @@ class PluginFunctions extends PluginManagement
      */
     function readPluginMeta($plugin_file)
     {
-        if($plugin_file != 'placeholder.txt') {
+        if ($plugin_file != 'placeholder.txt') {
             $plugin_metadata = $this->read(PLUGINS . $plugin_file . "/" 
             . $plugin_file . ".php");
             
@@ -81,7 +31,7 @@ class PluginFunctions extends PluginManagement
      */
     function assignPluginMeta($plugin_metadata)
     {
-        if(!$plugin_metadata) { return false; }
+        if (!$plugin_metadata) { return false; }
         
         $this->name     = $plugin_metadata['name'];
         $this->desc     = $plugin_metadata['description'];
@@ -109,15 +59,17 @@ class PluginFunctions extends PluginManagement
     /**
      * Determines if a plugin is enabled or not
      *
-     * @param string $plugin_folder plugin folder name
+     * @param string $folder plugin folder name
      * @return string
      */
-    public function getPluginStatus($plugin_folder = '')
+    public function getPluginStatus($folder = '')
     {
         global $db;
         
+        if (!$folder) { $folder = $this->folder; } 
+        
         $sql = "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
-        $plugin_row = $db->get_row($db->prepare($sql, $plugin_folder));
+        $plugin_row = $db->get_row($db->prepare($sql, $folder));
         
         if ($plugin_row && $plugin_row->plugin_enabled == 1) {
             $status = "active";
@@ -136,9 +88,11 @@ class PluginFunctions extends PluginManagement
      * @param string $hook plugin hook name
      * @return int|false
      */
-    function pluginHookExists($folder = "", $hook = "")
+    function isHook($hook = "", $folder = "")
     {
         global $db;
+        
+        if (!$folder) { $folder = $this->folder; }
         
         $sql = "SELECT count(*) FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_folder = %s AND plugin_hook = %s";
         if ($db->get_var($db->prepare($sql, $folder, $hook))) { return true;} else { return false; }
@@ -152,7 +106,7 @@ class PluginFunctions extends PluginManagement
      */
     function install($upgrade = 0)
     {
-        global $db, $lang, $hotaru, $current_user, $admin, $plugins;
+        global $db, $lang, $hotaru, $current_user, $admin;
         
         // Clear the database cache to ensure stored plugins and hooks 
         // are up-to-date.
@@ -204,7 +158,7 @@ class PluginFunctions extends PluginManagement
         // plugin isn't ready to include it itself yet.
         $this->includeLanguage($this->folder);
             
-        $result = $plugins->checkActions('install_plugin', $this->folder);
+        $result = $this->pluginHook('install_plugin', $this->folder);
         
         // For plugins to avoid showing this success message, they need to 
         // return a non-boolean value to $result.
@@ -227,7 +181,7 @@ class PluginFunctions extends PluginManagement
         
         foreach ($this->hooks as $hook)
         {
-            $exists = $this->pluginHookExists(trim($hook));
+            $exists = $this->isHook(trim($hook));
 
             if (!$exists) {
                 $sql = "INSERT INTO " . TABLE_PLUGINHOOKS . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
@@ -247,7 +201,7 @@ class PluginFunctions extends PluginManagement
      */
     function upgrade()
     {
-        global $db, $lang, $hotaru, $admin, $plugins;
+        global $db, $lang, $hotaru, $admin;
         
         // Read meta from the top of the plugin file
         $plugin_metadata = $this->read(PLUGINS . $this->folder . "/" . $this->folder . ".php");
@@ -273,7 +227,7 @@ class PluginFunctions extends PluginManagement
             $this->install(1);      // 1 indicates that "upgrade" is true. 
         }
                 
-        $result = $plugins->checkActions('upgrade_plugin', $this->folder);
+        $result = $this->pluginHook('upgrade_plugin', $this->folder);
                 
         // For plugins to avoid showing this success message, they need to
         // return a non-boolean value to $result.
@@ -369,7 +323,7 @@ class PluginFunctions extends PluginManagement
      */
     function uninstall($upgrade = 0)
     {    
-        global $db, $hotaru, $lang, $admin, $plugins;
+        global $db, $hotaru, $lang, $admin;
         
         // Clear the database cache to ensure plugins and hooks are up-to-date.
         $admin->deleteFiles(CACHE . 'db_cache');
@@ -382,13 +336,13 @@ class PluginFunctions extends PluginManagement
             $hotaru->messages[$lang["admin_plugins_uninstall_done"]] = 'green';
         }
         
-        $plugins->refreshPluginOrder();
+        $this->refreshPluginOrder();
     }
     
     
     /**
      * Updates plugin order and order of their hooks, i.e. changes the order 
-     * of plugins in check_actions.
+     * of plugins in pluginHook.
      * 
      * @param string $folder plugin folder name
      * @param int $order current order
@@ -396,7 +350,7 @@ class PluginFunctions extends PluginManagement
      */
     function pluginOrder($order = 0, $arrow = "up")
     {
-        global $db, $hotaru, $lang, $plugins;
+        global $db, $hotaru, $lang;
             
         if ($order == 0) {
             $hotaru->messages[$lang['admin_plugins_order_zero']] = 'red';
@@ -455,8 +409,8 @@ class PluginFunctions extends PluginManagement
         $hotaru->messages[$lang['admin_plugins_order_updated']] = 'green';
 
         // Resort all orders and remove any accidental gaps
-        $plugins->refreshPluginOrder();
-        $plugins->sortPluginHooks();
+        $this->refreshPluginOrder();
+        $this->sortPluginHooks();
 
         return true;
 
@@ -469,9 +423,12 @@ class PluginFunctions extends PluginManagement
      * @param string $folder plugin folder name
      * @return string
      */
-    function pluginName($folder = "")
+    function getPluginName($folder = "")
     {    
         global $db;
+        
+        if (!$folder) { $folder = $this->folder; } 
+        
         $this->name = $db->get_var($db->prepare("SELECT plugin_name FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
         return $this->name;
     }
@@ -483,9 +440,12 @@ class PluginFunctions extends PluginManagement
      * @param string $folder plugin folder name
      * @return string|false
      */
-    function pluginClass($folder = "")
+    function getClassName($folder = "")
     {    
         global $db;
+        
+        if (!$folder) { $folder = $this->folder; } 
+        
         $class = $db->get_var($db->prepare("SELECT plugin_class FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
         if ($class) {
             $this->class = $class;
@@ -502,9 +462,11 @@ class PluginFunctions extends PluginManagement
      * @param string $folder plugin folder name
      * @return string|false
      */
-    function pluginActive($folder = "")
+    function isActive($folder = "")
     {
         global $db;
+        
+        if (!$folder) { $folder = $this->folder; } 
         
         $active= $db->get_row($db->prepare("SELECT plugin_enabled, plugin_version FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
         
@@ -515,119 +477,8 @@ class PluginFunctions extends PluginManagement
         } 
         return false;
     }
+       
     
-    
-    /**
-     * Get the value for a given plugin and setting
-     *
-     * @param string $folder name of plugin folder
-     * @param string $setting name of the setting to retrieve
-     * @return string|false
-     *
-     * Notes: If there are multiple settings with the same name,
-     * this will only get the first.
-     */
-    function pluginSettings($folder = '', $setting = '') {
-        global $db;
-        
-        $sql = "SELECT plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
-        $value = $db->get_var($db->prepare($sql, $folder, $setting));
-        if ($value) { return $value; } else { return false; }
-    }
-    
-    
-    /**
-     * Get an array of settings for a given plugin
-     *
-     * @param string $folder name of plugin folder
-     * @return array|false
-     *
-     * Note: Unlike "plugin_settings", this will get ALL settings with the same name.
-     */
-    function pluginSettingsArray($folder = '') {
-        global $db;
-        
-        $sql = "SELECT plugin_setting, plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s)";
-        $results = $db->get_results($db->prepare($sql, $folder));
-        
-        if ($results) { return $results; } else { return false; }
-    }
-    
-    
-    /**
-     * Get and unserialize serialized settings
-     *
-     * @return array - of submit settings
-     */
-    function getSerializedSettings($folder = '')
-    {
-        global $plugins;
-        
-        // Set default to the current plugin if not specified
-        if(!$folder) { $folder = $this->folder; }
-        
-        // Get settings from the database if they exist...
-        $settings = unserialize($this->pluginSettings($folder, $folder . '_settings'));
-        return $settings;
-    }
-    
-    
-    /**
-     * Determine if a plugin setting already exists
-     *
-     * @param string $folder name of plugin folder
-     * @param string $setting name of the setting to retrieve
-     * @return string|false
-     */
-    function pluginSettingExists($folder = '', $setting = '') {
-        global $db;
-        
-        $sql = "SELECT plugin_setting FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
-        $returned_setting = $db->get_var($db->prepare($sql, $folder, $setting));
-        if ($returned_setting) { 
-            return $returned_setting; 
-        } else { 
-            return false; 
-        }
-    }
-    
-    /**
-     * Update a plugin setting
-     *
-     * @param string $folder name of plugin folder
-     * @param string $setting name of the setting
-     * @param string $setting stting value
-     */
-    function pluginSettingsUpdate($folder = '', $setting = '', $value = '')
-    {
-        global $db, $current_user;
-        
-        $exists = $this->pluginSettingExists($folder, $setting);
-        if (!$exists) 
-        {
-            $sql = "INSERT INTO " . TABLE_PLUGINSETTINGS . " (plugin_folder, plugin_setting, plugin_value, plugin_updateby) VALUES (%s, %s, %s, %d)";
-            $db->query($db->prepare($sql, $folder, $setting, $value, $current_user->id));
-        } else 
-        {
-            $sql = "UPDATE " . TABLE_PLUGINSETTINGS . " SET plugin_folder = %s, plugin_setting = %s, plugin_value = %s, plugin_updateby = %d WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
-            $db->query($db->prepare($sql, $folder, $setting, $value, $current_user->id, $folder, $setting));
-        }
-    }
-    
-
-    /**
-     * Deletes rows from pluginsettings that match a given plugin
-     *
-     * @param string $folder name of plugin folder
-     */
-    function pluginSettingsRemovePlugin($folder = '')
-    {
-        global $db;
-        $sql = "DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_folder = %s";
-        $db->query($db->prepare($sql, $folder));
-    }
-
-
     /**
      * Include a language file in a plugin
      *
@@ -637,9 +488,11 @@ class PluginFunctions extends PluginManagement
      * Note: the language file should be in a plugin folder named 'languages'.
      * '_language.php' is appended automatically to the folder of file name.
      */    
-    function includeLanguage($folder = '', $filename = '')
+    function includeLanguage($filename = '', $folder = '')
     {
         global $lang;
+        
+        if (!$folder) { $folder = $this->folder; }
         
         if ($folder) {
         
@@ -653,7 +506,7 @@ class PluginFunctions extends PluginManagement
             // If not there, look in the default language_pack folder for a language file...
             } elseif (file_exists(LANGUAGES . 'language_default/' . $filename . '_language.php')) {
                 include_once(LANGUAGES . 'language_default/' . $filename . '_language.php');
-
+    
             // If still not found, look in the plugin folder for a language file... 
             } elseif (file_exists(PLUGINS . $folder . '/languages/' . $filename . '_language.php')) {
                 include_once(PLUGINS . $folder . '/languages/' . $filename . '_language.php');
@@ -661,17 +514,14 @@ class PluginFunctions extends PluginManagement
             // If STILL not found, include the user's main language file...
             } elseif (file_exists(LANGUAGES . LANGUAGE_PACK . 'main_language.php')) {
                 include_once(LANGUAGES . LANGUAGE_PACK . 'main_language.php');
-
+    
             // Finally, give up and include the main default language file...
             } else {
                 include_once(LANGUAGES . 'language_default/main_language.php');
             }
             
-            return true;
-            
         }
-        
-        return false; 
+            
     }
 
 
@@ -684,9 +534,11 @@ class PluginFunctions extends PluginManagement
      * Note: the css file should be in a folder named 'css' and a file of 
      * the format plugin_name.css, e.g. rss_show.css
      */    
-    function findCSSFile($folder = '', $filename = '')
+    function findCssFile($filename = '', $folder = '')
     {
         global $lang;
+        
+        if (!$folder) { $folder = $this->folder; }
         
         if ($folder) {
 
@@ -709,10 +561,7 @@ class PluginFunctions extends PluginManagement
             if (isset($file_location)) {
                 return $file_location;
             }
-            
         }
-        
-        return false; 
     }
 
 
@@ -724,9 +573,11 @@ class PluginFunctions extends PluginManagement
      *
      * Note: the js file should be in a folder named 'javascript' and a file of the format plugin_name.js, e.g. category_manager.js
      */    
-    function findJSFile($folder = '', $filename = '')
+    function findJsFile($filename = '', $folder = '')
     {
         global $lang;
+        
+        if (!$folder) { $folder = $this->folder; }
         
         if ($folder) {
 
@@ -749,28 +600,27 @@ class PluginFunctions extends PluginManagement
             if (isset($file_location)) {
                 return $file_location;
             }
-            
         }
-        
-        return false; 
     }
 
 
     /**
      * Build an array of css files to combine
      *
-     * @param $plugin - the folder name of the plugin
+     * @param $folder - the folder name of the plugin
      * @param $filename - optional css file without an extension
      */
-     function includeCSS($plugin = '', $filename = '')
+     function includeCss($filename = '', $folder = '')
      {
+        if (!$folder) { $folder = $this->folder; }
+
         // If no filename provided, the filename is assigned the plugin name.
-        if (!$filename) { $filename = $plugin; }
-        
-        $file_location = $this->findCSSFile($plugin, $filename);
-        
+        if (!$filename) { $filename = $folder; }
+
+        $file_location = $this->findCssFile($filename, $folder);
+                
         // Add this css file to the global array of css_files
-        $this->setIncludeCSS($file_location);
+        $this->setCssIncludes($file_location);
      }
 
 
@@ -780,15 +630,17 @@ class PluginFunctions extends PluginManagement
      * @param $plugin - the folder name of the plugin
      * @param $filename - optional js file without an extension
      */
-     function includeJS($plugin = '', $filename = '')
+     function includeJs($filename = '', $folder = '')
      {
-        // If no filename provided, the filename is assigned the plugin name.
-        if (!$filename) { $filename = $plugin; }
+        if (!$folder) { $folder = $this->folder; }
         
-        $file_location = $this->findJSFile($plugin, $filename);
+        // If no filename provided, the filename is assigned the plugin name.
+        if (!$filename) { $filename = $folder; }
+        
+        $file_location = $this->findJsFile($filename, $folder);
         
         // Add this css file to the global array of css_files
-        $this->setIncludeJS($file_location);
+        $this->setJsIncludes($file_location);
      }
 }
 

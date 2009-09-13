@@ -39,9 +39,9 @@ global $hotaru, $plugins, $lang; // don't remove
 <div id="plugin_settings">
     <?php 
         if ($plugins->getFolder() == "") {
-            $plugins->checkActions('admin_sidebar_plugin_settings');
+            $plugins->pluginHook('admin_sidebar_plugin_settings');
         } else {
-            $plugins->checkActions('admin_plugin_settings', true, $plugins->getFolder()); 
+            $plugins->pluginHook('admin_plugin_settings', true, $plugins->getFolder()); 
         }
     ?>
 </div>

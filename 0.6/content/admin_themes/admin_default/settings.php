@@ -35,7 +35,7 @@ global $plugins, $admin, $cage, $lang; // don't remove
     &raquo; <?php echo $lang["admin_theme_settings"]; ?>
 </p>
 
-<?php $plugins->checkActions('admin_settings_top'); ?>
+<?php $plugins->pluginHook('admin_settings_top'); ?>
     
     <h2><?php echo $lang["admin_theme_settings_title"]; ?></h2>
     
@@ -76,4 +76,4 @@ global $plugins, $admin, $cage, $lang; // don't remove
     
     
     
-<?php $plugins->checkActions('admin_settings_bottom'); ?>
+<?php $plugins->pluginHook('admin_settings_bottom'); ?>

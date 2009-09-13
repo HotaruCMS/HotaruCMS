@@ -1,8 +1,6 @@
 <?php
 /**
- * name: Comments
- * description: Class to manage comments
- * file: /plugins/comments/class.comments.php
+ * The Comment class contains some useful methods for using comments
  *
  * PHP version 5
  *
@@ -28,24 +26,24 @@
     
 class Comment {    
 
-    var $comment_id = 0;
-    var $comment_parent = 0;
-    var $comment_post_id = 0;
-    var $comment_author = 0;
-    var $comment_date = '';
-    var $comment_votes = 0;
-    var $comment_content = '';
-    var $comment_type = 'newcomment';   // or "editcomment"
-    var $comment_subscribe = 0;
-    var $comment_levels = 0;         // max nesting levels
-    var $comment_depth = 0;         // this nesting level
-    var $comment_email = '';
-    var $comment_allowable_tags = '';
-    var $comment_form = '';
-    var $comment_avatars = '';
-    var $comment_voting = '';
+    protected $id = 0;
+    protected $parent = 0;
+    protected $postId = 0;
+    protected $author = 0;
+    protected $date = '';
+    protected $votes = 0;
+    protected $content = '';
+    protected $type = 'newcomment';   // or "editcomment"
+    protected $subscribe = 0;
+    protected $levels = 0;         // max nesting levels
+    protected $depth = 0;         // this nesting level
+    protected $email = '';
+    protected $allowableTags = '';
+    protected $form = '';
+    protected $avatars = '';
+    protected $voting = '';
     
-    var $comment_vars = array();
+    public $vars = array();
 
     /**
      * PHP __set Magic Method
@@ -56,7 +54,7 @@ class Comment {
      */
     function __set($name, $value)
     {
-        $this->comment_vars[$name] = $value;
+        $this->vars[$name] = $value;
     }
         
         
@@ -68,38 +66,371 @@ class Comment {
      */
     function __get($name)
     {
-        if (array_key_exists($name, $this->comment_vars)) {
-            return $this->comment_vars[$name];
+        if (array_key_exists($name, $this->vars)) {
+            return $this->vars[$name];
         }
+    }
+    
+
+    /**
+     * Set comment ID
+     *
+     * @param int $id
+     */    
+    public function setId($id = 0)
+    {
+        return $this->id = $id;
     }
     
     
     /**
-     * Get comments settings
+     * Get comment id
      *
-     * @return array - of comments settings
-     */
-    function get_comment_settings()
+     * @return int
+     */    
+    public function getId()
     {
-        global $plugins;
-        
-        // Get settings from the database if they exist...
-        $comment_settings = unserialize($plugins->plugin_settings('comments', 'comment_settings'));         
-        return $comment_settings;
+        return $this->id;
     }
-
-
+    
+    
+    /**
+     * Set comment parent
+     *
+     * @param int $parent
+     */    
+    public function setParent($parent = 0)
+    {
+        return $this->parent = $parent;
+    }
+    
+    
+    /**
+     * Get comment parent
+     *
+     * @return int
+     */    
+    public function getParent()
+    {
+        return $this->parent;
+    }
+    
+    
+    /**
+     * Set post ID
+     *
+     * @param int $id
+     */    
+    public function setPostId($postid = 0)
+    {
+        return $this->postid = $postid;
+    }
+    
+    
+    /**
+     * Get post id
+     *
+     * @return int
+     */    
+    public function gePostId()
+    {
+        return $this->postId;
+    }
+    
+    
+    /**
+     * Set author
+     *
+     * @param int $author
+     */    
+    public function setAuthor($author = 0)
+    {
+        return $this->author = $author;
+    }
+    
+    
+    /**
+     * Get author
+     *
+     * @return int
+     */    
+    public function getAuthor()
+    {
+        return $this->author;
+    }
+    
+    
+    /**
+     * Set date
+     *
+     * @param string $date
+     */    
+    public function setDate($date = '')
+    {
+        return $this->date = $date;
+    }
+    
+    
+    /**
+     * Get date
+     *
+     * @return string
+     */    
+    public function getDate()
+    {
+        return $this->date;
+    }
+    
+    
+    /**
+     * Set votes
+     *
+     * @param int $votes
+     */    
+    public function setVotes($votes = 0)
+    {
+        return $this->votes = $votes;
+    }
+    
+    
+    /**
+     * Get votes
+     *
+     * @return int
+     */    
+    public function getVotes()
+    {
+        return $this->votes;
+    }
+    
+    
+    /**
+     * Set content
+     *
+     * @param string $content
+     */    
+    public function setContent($content = '')
+    {
+        return $this->content = $content;
+    }
+    
+    
+    /**
+     * Get content
+     *
+     * @return string
+     */    
+    public function getContent()
+    {
+        return $this->content;
+    }
+    
+    
+    /**
+     * Set type
+     *
+     * @param string $type
+     */    
+    public function setType($type = '')
+    {
+        return $this->type = $type;
+    }
+    
+    
+    /**
+     * Get type
+     *
+     * @return string
+     */    
+    public function getType()
+    {
+        return $this->type;
+    }
+    
+    
+    /**
+     * Set subscribe
+     *
+     * @param int $subscribe
+     */    
+    public function setSubscribe($subscribe = 0)
+    {
+        return $this->subscribe = $subscribe;
+    }
+    
+    
+    /**
+     * Get subscribe
+     *
+     * @return int
+     */    
+    public function getSubscribe()
+    {
+        return $this->subscribe;
+    }
+    
+    /**
+     * Set levels
+     *
+     * @param int $levels
+     */    
+    public function setLevels($levels = 0)
+    {
+        return $this->levels = $levels;
+    }
+    
+    
+    /**
+     * Get levels
+     *
+     * @return int
+     */    
+    public function getLevels()
+    {
+        return $this->levels;
+    }
+    
+    /**
+     * Set depth
+     *
+     * @param int $id
+     */    
+    public function setDepth($depth = 0)
+    {
+        return $this->depth = $depth;
+    }
+    
+    
+    /**
+     * Get depth
+     *
+     * @return int
+     */    
+    public function getDepth()
+    {
+        return $this->depth;
+    }
+    
+    /**
+     * Set email
+     *
+     * @param string $email
+     */    
+    public function setEmail($email = '')
+    {
+        return $this->email = $email;
+    }
+    
+    
+    /**
+     * Get email
+     *
+     * @return string
+     */    
+    public function getEmail()
+    {
+        return $this->email;
+    }
+    
+    /**
+     * Set allowable tags
+     *
+     * @param string $tags
+     */    
+    public function setAllowableTags($tags = '')
+    {
+        return $this->allowableTags = $tags;
+    }
+    
+    
+    /**
+     * Get allowable tags
+     *
+     * @return string
+     */    
+    public function getAllowableTags()
+    {
+        return $this->allowableTags;
+    }
+    
+    
+    /**
+     * Set form
+     *
+     * @param string $id
+     */    
+    public function setForm($form = '')
+    {
+        return $this->form = $form;
+    }
+    
+    
+    /**
+     * Get form
+     *
+     * @return string
+     */    
+    public function getForm()
+    {
+        return $this->form;
+    }
+    
+    
+    /**
+     * Set avatars
+     *
+     * @param string $id
+     */    
+    public function setAvatars($avatars = '')
+    {
+        return $this->avatars = $avatars;
+    }
+    
+    
+    /**
+     * Get avatars
+     *
+     * @return string
+     */    
+    public function getAvatars()
+    {
+        return $this->avatars;
+    }
+    
+    
+    /**
+     * Set voting
+     *
+     * @param string $id
+     */    
+    public function setVoting($voting = '')
+    {
+        return $this->voting = $voting;
+    }
+    
+    
+    /**
+     * Get voting
+     *
+     * @return string
+     */    
+    public function getVoting()
+    {
+        return $this->voting;
+    }
+    
+    
     /**
      * Count comments
      *
      * @return string - text to show in the link, e.g. "3 comments"
      */
-    function count_comments()
+    function countComments()
     {
         global $db, $post, $lang;
         
         $sql = "SELECT COUNT(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d";
-        $num_comments = $db->get_var($db->prepare($sql, $post->post_id));
+        $num_comments = $db->get_var($db->prepare($sql, $post->getId()));
         
         if ($num_comments == 1) {
             return "1 " . $lang['comments_comments_singular_link'];
@@ -117,12 +448,12 @@ class Comment {
      * @param int $post_id - the id of the post this comment is on
      * @param array|false
      */
-    function read_all_parents($post_id)
+    function readAllParents($post_id)
     {
         global $db, $post;
         
         $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_parent = %d";
-        $parents = $db->get_results($db->prepare($sql, $post->post_id, 0));
+        $parents = $db->get_results($db->prepare($sql, $post->getId(), 0));
         
         if($parents) { return $parents; } else { return false; }
     }
@@ -134,12 +465,12 @@ class Comment {
      * @param int $post_id - the id of the post this comment is on
      * @param array|false
      */
-    function read_all_children($post_id, $parent)
+    function readAllChildren($post_id, $parent)
     {
         global $db, $post;
         
         $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_parent = %d";
-        $children = $db->get_results($db->prepare($sql, $post->post_id, $parent));
+        $children = $db->get_results($db->prepare($sql, $post->getId(), $parent));
         
         if($children) { return $children; } else { return false; }
     }
@@ -150,7 +481,7 @@ class Comment {
      *
      * @param array $comment
      */
-    function read_comment($comment)
+    function readComment($comment)
     {
         $this->comment_id           = $comment->comment_id;
         $this->comment_parent       = $comment->comment_parent;
@@ -168,13 +499,13 @@ class Comment {
      *
      * @return true
      */
-    function add_comment()
+    function addComment()
     {
         global $db, $current_user;
             
         $sql = "INSERT INTO " . TABLE_COMMENTS . " SET comment_post_id = %d, comment_user_id = %d, comment_parent = %d, comment_date = CURRENT_TIMESTAMP, comment_content = %s, comment_subscribe = %d, comment_updateby = %d";
                 
-        $db->query($db->prepare($sql, $this->comment_post_id, $this->comment_author, $this->comment_parent, urlencode(trim($this->comment_content)), $this->comment_subscribe, $current_user->id));
+        $db->query($db->prepare($sql, $this->comment_post_id, $this->comment_author, $this->comment_parent, urlencode(trim($this->comment_content)), $this->comment_subscribe, $current_user->getId()));
         
         return true;
     }
@@ -185,13 +516,13 @@ class Comment {
      *
      * @return true
      */
-    function edit_comment()
+    function editComment()
     {
         global $db, $current_user;
             
         $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_content = %s, comment_subscribe = %d, comment_updateby = %d";
                 
-        $db->query($db->prepare($sql, urlencode(trim(stripslashes($this->comment_content))), $this->comment_subscribe, $current_user->id));
+        $db->query($db->prepare($sql, urlencode(trim(stripslashes($this->comment_content))), $this->comment_subscribe, $current_user->getId()));
         
         return true;
     }
@@ -206,17 +537,17 @@ class Comment {
     {
         global $db, $current_user, $post;
         
-        $post->read_post($post_id);
+        $post->readPost($post_id);
             
         $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_subscribe = %d WHERE comment_post_id = %d AND comment_user_id = %d";
-        $db->query($db->prepare($sql, 0, $post->post_id, $current_user->id));
+        $db->query($db->prepare($sql, 0, $post->getId(), $current_user->getId()));
                
         // Check if the current_user is the post author
-        if ($post->post_author == $current_user->id) {
+        if ($post->post_author == $current_user->getId()) {
         // Check if the user subscribed to comments as a submitter
-            if ($post->post_subscribe == 1) { 
+            if ($post->getSubscribe() == 1) { 
                 $sql = "UPDATE " . TABLE_POSTS . " SET post_subscribe = %d WHERE post_id = %d AND post_author = %d";
-                $db->query($db->prepare($sql, 0, $post->post_id, $current_user->id));
+                $db->query($db->prepare($sql, 0, $post->getId(), $current_user->getId()));
             } 
         }
         return true;
@@ -229,14 +560,14 @@ class Comment {
      * @param int $post_id
      * @return true
      */
-    function update_subscribe($post_id)
+    function updateSubscribe($post_id)
     {
         global $db, $current_user, $post, $comment;
         
         if ($comment->comment_subscribe == 1)
         {
             $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_subscribe = %d WHERE comment_post_id = %d AND comment_user_id = %d";
-            $db->query($db->prepare($sql, 1, $post->post_id, $current_user->id));
+            $db->query($db->prepare($sql, 1, $post->getId(), $current_user->getId()));
         } 
         else 
         {
@@ -250,7 +581,7 @@ class Comment {
     *
     * @param int $post_id
     */
-    function email_comment_subscribers($post_id)
+    function emailCommentSubscribers($post_id)
     {
         global $db, $comment, $post, $userbase;
         
@@ -260,13 +591,13 @@ class Comment {
         $subscriber_ids = array();
         
         // Get id of post author if subscribed
-        if ($post->post_subscribe == 1) {
-            array_push($subscriber_ids, $post->post_author); 
+        if ($post->getSubscribe() == 1) {
+            array_push($subscriber_ids, $post->getAuthor());
         }
         
         // Get ids of comment authors if subscribed
         $sql = "SELECT comment_user_id FROM " . TABLE_COMMENTS . " WHERE comment_subscribe = %d AND comment_post_id = %d";
-        $comment_subscribers = $db->get_results($db->prepare($sql, 1, $post->post_id));
+        $comment_subscribers = $db->get_results($db->prepare($sql, 1, $post->getId()));
         if ($comment_subscribers) {
             foreach ($comment_subscribers as $comment_subscriber) {
                 array_push($subscriber_ids, $comment_subscriber->comment_user_id); 
@@ -292,7 +623,7 @@ class Comment {
         
         $message =  $comment_author . " has commented on a story you are subscribed to at " . SITE_NAME . ": \r\n\r\n";
         $message .= "Story Title: " . $post->post_title . "\r\n"; 
-        $message .= "Story Link: " . url(array('page'=>$post->post_id)) . "\r\n\r\n";
+        $message .= "Story Link: " . url(array('page'=>$post->getId())) . "\r\n\r\n";
         $message .= "Comment: " . $comment_author . "\r\n\r\n";
         $message .= "************************ \r\n";
         $message .= "Do not reply to this email. Please visit the above link and comment there. \r\n";

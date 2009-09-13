@@ -8,7 +8,7 @@
  * requires: submit 0.4, sidebar 0.1
  * hooks: install_plugin, hotaru_header, header_include, submit_list_filter
  *
- * Usage: Add <?php $plugins->checkActions('search'); ?> to your theme, wherever you want to the "Search" form.
+ * Usage: Add <?php $plugins->pluginHook('search'); ?> to your theme, wherever you want to the "Search" form.
 *
  * PHP version 5
  *

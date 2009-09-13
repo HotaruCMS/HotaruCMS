@@ -39,10 +39,8 @@ class Disqus extends PluginFunctions
      */
     public function install_plugin()
     {
-        global $plugins;
-            
         // Default settings 
-        $plugins->pluginSettingsUpdate('disqus', 'disqus_shortname', 'subconcious');    // This is the default in Disqus' generic code
+        $this->updateSetting('disqus_shortname', 'subconcious');    // This is the default in Disqus' generic code
     }
     
     
@@ -83,7 +81,22 @@ class Disqus extends PluginFunctions
     {
         global $hotaru;
         
+        $shortname = $this->getSetting('disqus_shortname');
         $hotaru->displayTemplate('disqus_comments', 'disqus');
+    }
+    
+    
+    /**
+     * Display Admin settings page
+     *
+     * @return true
+     */
+    public function admin_plugin_settings()
+    {
+        require_once(PLUGINS . 'disqus/disqus_settings.php');
+        $disqSettings = new DisqusSettings($this->folder);
+        $disqSettings->settings();
+        return true;
     }
 
 }

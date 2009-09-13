@@ -31,6 +31,6 @@ global $plugins, $lang; // don't remove
 
 <div id="sidebar">
 
-    <?php $plugins->checkActions('sidebar', true, '', array(1)); ?>
+    <?php $plugins->pluginHook('sidebar', true, '', array(1)); ?>
 
 </div>

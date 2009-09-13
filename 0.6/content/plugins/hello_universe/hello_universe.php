@@ -42,15 +42,15 @@ function hu_theme_index_main()
     global $hotaru;
     
     // These lines get the current page and display any matches...
-    $page = $hotaru->get_page_name();
+    $page = $hotaru->getPageName();
     switch($page) {
         case 'plugin_template':
-            $hotaru->display_template('plugin_template', 'hello_universe'); // Displays the page from this plugin folder
+            $hotaru->displayTemplate('plugin_template', 'hello_universe'); // Displays the page from this plugin folder
             return true;
             break;
         case 'form_example':
             hu_check_sent_form();    // Function #5
-            $hotaru->display_template('form_example', 'hello_universe'); // Displays the page from this plugin folder
+            $hotaru->displayTemplate('form_example', 'hello_universe'); // Displays the page from this plugin folder
             return true;
             break;
         case 'main':
@@ -101,7 +101,7 @@ function hu_theme_index_sidebar()
 {
     global $hotaru;
 
-    $hotaru->display_template('custom_sidebar', 'hello_universe'); // Overrides the current sidebar with a new one.
+    $hotaru->displayTemplate('custom_sidebar', 'hello_universe'); // Overrides the current sidebar with a new one.
     return true;
 }
 
@@ -137,11 +137,11 @@ function hu_check_sent_form()
         $answer = $cage->post->getMixedString2('answer');
         if ($answer && $answer == 'Paris') {
             $hotaru->message = $lang['hello_universe_success'];
-            $hotaru->message_type = 'green';
+            $hotaru->messageType = 'green';
             return true;
         } else {
             $hotaru->message = $lang['hello_universe_failure'];
-            $hotaru->message_type = 'red';    
+            $hotaru->messageType = 'red';    
         }
     } 
     

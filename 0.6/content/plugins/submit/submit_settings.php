@@ -26,14 +26,17 @@
  * @link      http://www.hotarucms.org/
  */
 
-class SubmitSettings extends PluginSettings
+class SubmitSettings extends Submit
 {
+    /* Allows us to call functions without specifying what plugin this is. */
+    public function __construct($folder) { $this->folder = $folder; }
+    
      /**
      * Admin settings for the Submit plugin
      */
     public function settings()
     {
-        global $hotaru, $plugins, $cage, $lang, $post;
+        global $hotaru, $cage, $lang, $post;
         
         // If the form has been submitted, go and save the data...
         if ($cage->post->getAlpha('submitted') == 'true') { 
@@ -43,7 +46,7 @@ class SubmitSettings extends PluginSettings
         echo "<h1>" . $lang["submit_settings_header"] . "</h1>\n";
         
         // Get settings from database if they exist...
-        $submit_settings = $plugins->getSerializedSettings();
+        $submit_settings = $this->getSerializedSettings();
         
         $enabled = $submit_settings['post_enabled'];
         $author = $submit_settings['post_author'];
@@ -55,7 +58,7 @@ class SubmitSettings extends PluginSettings
         $posts_per_page = $submit_settings['post_posts_per_page'];
         $allowable_tags = $submit_settings['post_allowable_tags'];
     
-        $plugins->checkActions('submit_settings_get_values');
+        $this->pluginHook('submit_settings_get_values');
         
         //...otherwise set to blank:
         if (!$enabled) { $enabled = ''; }
@@ -83,7 +86,7 @@ class SubmitSettings extends PluginSettings
         echo "&nbsp;&nbsp;&nbsp;&nbsp;";
         echo $lang["submit_settings_summary_instruct"] . "<br />\n";
     
-        $plugins->checkActions('submit_settings_form');
+        $this->pluginHook('submit_settings_form');
         
         echo "<br /><input type='text' size=5 name='posts_per_page' value='" . $posts_per_page . "' /> ";
         echo $lang["submit_settings_posts_per_page"] . "<br /><br />\n";
@@ -103,7 +106,7 @@ class SubmitSettings extends PluginSettings
      */
     public function saveSettings() 
     {
-        global $cage, $hotaru, $plugins, $post, $lang;
+        global $cage, $hotaru, $post, $lang;
     
         // Enabled
         if ($cage->post->keyExists('enabled')) { 
@@ -182,7 +185,7 @@ class SubmitSettings extends PluginSettings
             $allowable_tags = $post->getAllowableTags(); 
         }
         
-        $plugins->checkActions('submit_save_settings');
+        $this->pluginHook('submit_save_settings');
         
         $submit_settings['post_enabled'] = $enabled;
         $submit_settings['post_author'] = $author;
@@ -196,7 +199,7 @@ class SubmitSettings extends PluginSettings
         // necessary to force all posts onto the main page. Plugins such as "Vote" can override this:
         $submit_settings['post_latest'] = false;
     
-        $plugins->pluginSettingsUpdate('submit', 'submit_settings', serialize($submit_settings));
+        $this->updateSetting('submit_settings', serialize($submit_settings));
         
         $hotaru->message = $lang["submit_settings_saved"];
         $hotaru->messageType = "green";

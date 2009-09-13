@@ -24,14 +24,17 @@
  * @link      http://www.hotarucms.org/
  */
  
-class UsersSettings extends PluginSettings
+class UsersSettings extends Users
 {
+    /* Allows us to call functions without specifying what plugin this is. */
+    public function __construct($folder) { $this->folder = $folder; }
+    
      /**
      * Admin settings for the Users plugin
      */
     public function settings()
     {
-        global $hotaru, $plugins, $cage, $lang;
+        global $hotaru, $cage, $lang;
         
         // If the form has been submitted, go and save the data...
         if ($cage->post->getAlpha('submitted') == 'true') { 
@@ -41,13 +44,13 @@ class UsersSettings extends PluginSettings
         echo "<h1>" . $lang["users_settings_header"] . "</h1>\n";
         
         // Get settings from database if they exist...
-        $recaptcha_enabled = $plugins->pluginSettings('users', 'users_recaptcha_enabled');
-        $recaptcha_pubkey = $plugins->pluginSettings('users', 'users_recaptcha_pubkey');
-        $recaptcha_privkey = $plugins->pluginSettings('users', 'users_recaptcha_privkey');
-        $emailconf_enabled = $plugins->pluginSettings('users', 'users_emailconf_enabled');
+        $recaptcha_enabled = $this->getSetting('users_recaptcha_enabled');
+        $recaptcha_pubkey = $this->getSetting('users_recaptcha_pubkey');
+        $recaptcha_privkey = $this->getSetting('users_recaptcha_privkey');
+        $emailconf_enabled = $this->getSetting('users_emailconf_enabled');
     
     
-        $plugins->checkActions('users_settings_get_values');
+        $this->pluginHook('users_settings_get_values');
         
         //...otherwise set to blank:
         if (!$recaptcha_enabled) { $recaptcha_enabled = ''; }
@@ -67,7 +70,7 @@ class UsersSettings extends PluginSettings
         echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $lang["users_settings_recaptcha_private_key"] . ": <input type='text' name='rc_privkey' value='" . $recaptcha_privkey . "'><br /><br />\n";
         echo "<input type='checkbox' name='emailconf' value='emailconf' " . $emailconf_enabled . ">&nbsp;&nbsp;" . $lang["users_settings_email_conf"] . "<br />\n";
     
-        $plugins->checkActions('users_settings_form');
+        $this->pluginHook('users_settings_form');
                 
         echo "<br /><br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
@@ -81,7 +84,7 @@ class UsersSettings extends PluginSettings
      */
     public function saveSettings()
     {
-        global $cage, $hotaru, $plugins, $userbase, $lang;
+        global $cage, $hotaru, $userbase, $lang;
     
         // Recaptcha Enabled
         if ($cage->post->keyExists('rc_enabled')) { 
@@ -116,12 +119,12 @@ class UsersSettings extends PluginSettings
         }
         
         
-        $plugins->checkActions('users_save_settings');
+        $this->pluginHook('users_save_settings');
         
-        $plugins->pluginSettingsUpdate('users', 'users_recaptcha_enabled', $recaptcha_enabled);    
-        $plugins->pluginSettingsUpdate('users', 'users_recaptcha_pubkey', $recaptcha_pubkey);    
-        $plugins->pluginSettingsUpdate('users', 'users_recaptcha_privkey', $recaptcha_privkey);
-        $plugins->pluginSettingsUpdate('users', 'users_emailconf_enabled', $emailconf_enabled);        
+        $this->updateSetting('users_recaptcha_enabled', $recaptcha_enabled);    
+        $this->updateSetting('users_recaptcha_pubkey', $recaptcha_pubkey);    
+        $this->updateSetting('users_recaptcha_privkey', $recaptcha_privkey);
+        $this->updateSetting('users_emailconf_enabled', $emailconf_enabled);        
         
         if (($recaptcha_enabled == 'checked') && ($recaptcha_pubkey == "" || $recaptcha_privkey == "")) {
             $hotaru->message = $lang["users_settings_no_keys"];

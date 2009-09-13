@@ -73,7 +73,7 @@ class CategoryManager extends PluginFunctions
     
         // Include language file. Also included in hotaru_header, but needed here so 
         // that the link in the Admin sidebar shows immediately after installation.
-        $plugins->includeLanguage('category_manager');
+        $plugins->includeLanguage();
         
     }
     
@@ -85,9 +85,9 @@ class CategoryManager extends PluginFunctions
      */
     public function hotaru_header()
     {
-        global $hotaru, $lang, $plugins;
+        global $hotaru, $lang;
         
-        $plugins->includeLanguage('category_manager');
+        $this->includeLanguage();
         
         if (!defined('TABLE_CATEGORIES')) { define("TABLE_CATEGORIES", DB_PREFIX . 'categories'); }
         return true;

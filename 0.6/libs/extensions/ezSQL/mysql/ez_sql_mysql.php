@@ -189,7 +189,7 @@
                 // it store and return "empty" instead, forcing the above queryto return true
                 // and the cache (with no results) to be used. This saves making repeated SQL
                 // queries that we already know return an empty set of results.
-                // I did this because the check_actions function ramps up the query counts 
+                // I did this because the pluginHook function ramps up the query counts 
                 // but rarely returns anything!
                 return $cache;
             }

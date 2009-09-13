@@ -25,26 +25,30 @@
  * @link      http://www.hotarucms.org/
  */
 
-class CategoriesSettings extends PluginSettings
+class CategoriesSettings extends Categories
 {
+    /* Allows us to call functions without specifying what plugin this is. */
+    public function __construct($folder) { $this->folder = $folder; }
+    
+    
      /**
      * Admin settings for Categories
      */
     public function settings()
     {
-        global $hotaru, $plugins, $cage, $lang;
+        global $hotaru, $cage, $lang;
         
         // If the form has been submitted, go and save the data...
         if ($cage->post->getAlpha('submitted') == 'true') { 
-            $this->save_settings(); 
+            $this->saveSettings(); 
         }
         
         echo "<h1>" . $lang["categories_settings_header"] . "</h1>\n";
           
         // Get settings from database if they exist...
-        $bar = $plugins->pluginSettings('categories', 'categories_bar');
+        $bar = $this->getSetting('categories', 'categories_bar');
     
-        $plugins->checkActions('categories_settings_get_values');
+        $this->pluginHook('categories_settings_get_values');
         
         //...otherwise set to blank:
         if (!$bar) { $menubar = 'checked'; }
@@ -62,7 +66,7 @@ class CategoriesSettings extends PluginSettings
         
         echo "<p>" . $lang["categories_settings_note"] . "</p><br />";
     
-        $plugins->checkActions('categories_settings_form');
+        $this->pluginHook('categories_settings_form');
                 
         echo "<br /><br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
@@ -76,9 +80,9 @@ class CategoriesSettings extends PluginSettings
      *
      * @return true
      */
-    public function save_settings()
+    public function saveSettings()
     {
-        global $cage, $hotaru, $plugins, $post, $lang;
+        global $cage, $hotaru, $post, $lang;
     
         // bar
         if ($cage->post->keyExists('bar')) { 
@@ -89,9 +93,9 @@ class CategoriesSettings extends PluginSettings
                 }
         }
         
-        $plugins->checkActions('categories_save_settings');
+        $this->pluginHook('categories_save_settings');
         
-        $plugins->pluginSettingsUpdate('categories', 'categories_bar', $bar);
+        $this->updateSetting('categories_bar', $bar);
         
         $hotaru->message = $lang["categories_settings_saved"];
         $hotaru->messageType = "green";

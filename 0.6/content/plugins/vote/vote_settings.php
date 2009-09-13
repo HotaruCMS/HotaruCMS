@@ -25,13 +25,16 @@
  * @link      http://www.hotarucms.org/
  */
 
-class VoteSettings extends PluginSettings
+class VoteSettings extends Vote
 {
+    /* Allows us to call functions without specifying what plugin this is. */
+    public function __construct($folder) { $this->folder = $folder; }
+    
     /**
      * Vote Settings Page
      */
     public function settings() {
-        global $hotaru, $plugins, $cage, $lang;
+        global $hotaru, $cage, $lang;
         
         // If the form has been submitted, go and save the data...
         if ($cage->post->getAlpha('submitted') == 'true') { 
@@ -41,7 +44,7 @@ class VoteSettings extends PluginSettings
         echo "<h1>" . $lang["vote_settings_header"] . "</h1>\n";
         
         // Get settings from the database if they exist...
-        $vote_settings = unserialize($plugins->pluginSettings('vote', 'vote_settings')); 
+        $vote_settings = unserialize($this->getSetting('vote_settings')); 
         
         $vote_unvote = $vote_settings['vote_vote_unvote'];
         $up_down = $vote_settings['vote_up_down'];
@@ -67,7 +70,7 @@ class VoteSettings extends PluginSettings
         if (!$physical_delete) { $physical_delete = ''; }
         
         // A plugin hook so other plugin developers can add settings
-        $plugins->checkActions('vote_settings_get_values');
+        $this->pluginHook('vote_settings_get_values');
         
         // The form should be submitted to the admin_index.php page:
         echo "<form name='vote_settings_form' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=vote' method='post'>\n";
@@ -87,7 +90,7 @@ class VoteSettings extends PluginSettings
         echo "<p><input type='checkbox' name='vote_anonymous_votes' value='vote_anonymous_votes' " . $anonymous_votes . " > " . $lang["vote_settings_anonymous_votes"] . "</p>\n";
         
         // A plugin hook so other plugin developers can show settings
-        $plugins->checkActions('vote_settings_form_1');
+        $this->pluginHook('vote_settings_form_1');
         
         echo "<br /><p><b>" . $lang["vote_settings_vote_promote_bury"] . "</b></p>";
         
@@ -98,7 +101,7 @@ class VoteSettings extends PluginSettings
         echo "<p><input type='checkbox' id='vote_physical_delete' name='vote_physical_delete' " . $physical_delete . " /> " . $lang["vote_settings_physical_delete"] . "</p>";
             
         // A plugin hook so other plugin developers can show settings
-        $plugins->checkActions('vote_settings_form_2');
+        $this->pluginHook('vote_settings_form_2');
         
         echo "<br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
@@ -111,12 +114,12 @@ class VoteSettings extends PluginSettings
      * Save Vote Settings
      */
     public function saveSettings() {
-        global $cage, $hotaru, $plugins, $lang;
+        global $cage, $hotaru, $lang;
         
         $error = 0;
         
         // Get settings from the database if they exist...
-        $vote_settings = unserialize($plugins->pluginSettings('vote', 'vote_settings')); 
+        $vote_settings = unserialize($this->getSetting('vote_settings')); 
             
         // Check the status of our radio buttons for vote type
         if ($cage->post->keyExists('vote_type')) { 
@@ -224,7 +227,7 @@ class VoteSettings extends PluginSettings
         }
         
         // A plugin hook so other plugin developers can save settings   
-        $plugins->checkActions('vote_save_settings');
+        $this->pluginHook('vote_save_settings');
         
         // Save new settings...    
         $vote_settings['vote_vote_unvote'] = $vote_unvote;
@@ -239,7 +242,7 @@ class VoteSettings extends PluginSettings
         $vote_settings['vote_physical_delete'] = $physical_delete;
         
         // parameters: plugin folder name, setting name, setting value
-        $plugins->pluginSettingsUpdate('vote', 'vote_settings', serialize($vote_settings));
+        $this->updateSetting('vote_settings', serialize($vote_settings));
         
         if ($error == 0) {
             $hotaru->messages[$lang["vote_settings_saved"]] = "green";

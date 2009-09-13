@@ -119,10 +119,10 @@ while($settings = unserialize($plugins->pluginSettings('rss_show', 'rss_show_' .
 <div style='padding: 0.8em; line-height: 2.0em; background-color: #f0f0f0; -moz-border-radius: 0.5em;- webkit-border-radius: 0.5em;'>
     <b><?php echo $lang["rss_show_usage"]; ?></b><br />
     <?php echo $lang["rss_show_usage1"]; ?><br />
-    <pre>&lt;?php &#36;plugin-&gt;checkActions('rss_show'); ?&gt;</pre><br />
+    <pre>&lt;?php &#36;plugin-&gt;pluginHook('rss_show'); ?&gt;</pre><br />
     <?php echo $lang["rss_show_usage2"]; ?><br />
-    <pre>&lt;?php &#36;plugin-&gt;checkActions('rss_show', true, '', array(2)); ?&gt;</pre><br />
+    <pre>&lt;?php &#36;plugin-&gt;pluginHook('rss_show', true, '', array(2)); ?&gt;</pre><br />
     <?php echo $lang["rss_show_usage3"]; ?><br />
-    <pre>&lt;?php &#36;plugin-&gt;checkActions('rss_show', true, '', array(1, 2)); ?&gt;</pre><br />
+    <pre>&lt;?php &#36;plugin-&gt;pluginHook('rss_show', true, '', array(1, 2)); ?&gt;</pre><br />
 </div>
     

@@ -38,10 +38,10 @@ class Users extends PluginFunctions
      */
     public function install_plugin()
     {
-        global $db, $plugins, $lang;
+        global $db, $lang;
         
         // include language file
-        $plugins->includeLanguage('users');
+        $this->includeLanguage();
         
         // Create a new empty table called "usermeta"
         $exists = $db->table_exists('usermeta');
@@ -53,21 +53,20 @@ class Users extends PluginFunctions
               `usermeta_key` varchar(255) NULL,
               `usermeta_value` text NULL,
               `usermeta_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-               `usermeta_updateby` int(20) NOT NULL DEFAULT 0, 
+              `usermeta_updateby` int(20) NOT NULL DEFAULT 0, 
               INDEX  (`usermeta_userid`)
             ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='User Meta';";
             $db->query($sql); 
         }
         
-        // Default settings (Note: we can't use $post because it hasn't been filled yet.)
-        $plugins->pluginSettingsUpdate('users', 'users_recaptcha_enabled', '');    
-        $plugins->pluginSettingsUpdate('users', 'users_recaptcha_pubkey', '');    
-        $plugins->pluginSettingsUpdate('users', 'users_recaptcha_privkey', '');
-        $plugins->pluginSettingsUpdate('users', 'users_emailconf_enabled', '');
+        $this->updateSetting('users_recaptcha_enabled', '');    
+        $this->updateSetting('users_recaptcha_pubkey', '');    
+        $this->updateSetting('users_recaptcha_privkey', '');
+        $this->updateSetting('users_emailconf_enabled', '');
         
         // Include language file. Also included in hotaru_header, but needed here  
         // to prevent errors immediately after installation.
-        $plugins->includeLanguage('users');    
+        $this->includeLanguage();    
         
     }
     
@@ -76,12 +75,12 @@ class Users extends PluginFunctions
      * Define a global "TABLE_TAGSusermeta" constant for referring to the db table
      */
     public function hotaru_header() {
-        global $hotaru, $lang, $cage, $plugins, $userbase;
+        global $hotaru, $lang, $cage, $userbase;
     
         if (!defined('TABLE_USERMETA')) { define("TABLE_USERMETA", DB_PREFIX . 'usermeta'); }
         
         // include language file
-        $plugins->includeLanguage('users');
+        $this->includeLanguage();
         
         if ($username = $cage->get->testUsername('user')) {
             $hotaru->setTitle($username);
@@ -111,7 +110,7 @@ class Users extends PluginFunctions
     public function admin_plugin_settings()
     {
         require_once(PLUGINS . 'users/users_settings.php');
-        $usersSettings = new UsersSettings();
+        $usersSettings = new UsersSettings($this->folder);
         $usersSettings->settings();
         return true;
     }
@@ -153,7 +152,7 @@ class Users extends PluginFunctions
      */
     public function theme_index_replace()
     {
-        global $hotaru, $cage, $current_user, $userbase, $plugins;
+        global $hotaru, $cage, $current_user, $userbase;
         global $send_email_confirmation;
         
         // $send_email_confirmation set to true in "is_page('register')" if email confirmation is enabled
@@ -173,8 +172,8 @@ class Users extends PluginFunctions
         // Pages you have to be logged out for...
         } else {
             if ($hotaru->isPage('register')) {
-                $userbase->vars['users_recaptcha_enabled'] = $plugins->pluginSettings('users', 'users_recaptcha_enabled');
-                $userbase->vars['users_emailconf_enabled'] = $plugins->pluginSettings('users', 'users_emailconf_enabled');
+                $userbase->vars['users_recaptcha_enabled'] = $this->getSetting('users_recaptcha_enabled');
+                $userbase->vars['users_emailconf_enabled'] = $this->getSetting('users_emailconf_enabled');
                 $user_id = $this->register();
                 if ($user_id) { 
                     // success!
@@ -398,7 +397,7 @@ class Users extends PluginFunctions
      */
     public function login()
     {
-        global $hotaru, $cage, $lang, $plugins;
+        global $hotaru, $cage, $lang;
         
         $current_user = new UserBase();
         
@@ -418,7 +417,7 @@ class Users extends PluginFunctions
                     $current_user->userName = $username_check;
                     $current_user->getUserBasic(0, $current_user->userName);
                     
-                    $userbase->vars['users_emailconf_enabled'] = $plugins->pluginSettings('users', 'users_emailconf_enabled');
+                    $userbase->vars['users_emailconf_enabled'] = $this->getSetting('users_emailconf_enabled');
                     
                     if ($userbase->vars['users_emailconf_enabled'] && ($current_user->emailValid == 0)) {
                         $this->sendConfirmationEmail($current_user->getId());
@@ -447,7 +446,7 @@ class Users extends PluginFunctions
      */
     public function register()
     {
-        global $db, $hotaru, $cage, $lang, $userbase, $plugins;
+        global $db, $hotaru, $cage, $lang, $userbase;
         
         $current_user = new UserBase();
         
@@ -492,8 +491,8 @@ class Users extends PluginFunctions
         
             if ($userbase->vars['users_recaptcha_enabled']) {
                                         
-                $recaptcha_pubkey = $plugins->pluginSettings('users', 'users_recaptcha_pubkey');
-                $recaptcha_privkey = $plugins->pluginSettings('users', 'users_recaptcha_privkey');
+                $recaptcha_pubkey = $this->getSetting('users_recaptcha_pubkey');
+                $recaptcha_privkey = $this->getSetting('users_recaptcha_privkey');
                 
                 $rc_resp = null;
                 $rc_error = null;

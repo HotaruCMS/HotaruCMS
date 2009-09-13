@@ -28,7 +28,7 @@
 
 global $hotaru, $plugins, $lang; // don't remove
 ?>
-<?php $plugins->checkActions('admin_sidebar_top'); ?>
+<?php $plugins->pluginHook('admin_sidebar_top'); ?>
 
 <ul id="sidebar">
     <li><a href="<?php echo url(array(), 'admin'); ?>"><?php echo $lang["admin_theme_main_admin_home"]; ?></a></li>
@@ -37,10 +37,10 @@ global $hotaru, $plugins, $lang; // don't remove
     <li><a href="<?php echo url(array('page' => 'plugins'), 'admin'); ?>"><?php echo $lang["admin_theme_plugins"]; ?></a></li>
     <li><?php echo $lang["admin_theme_plugin_settings"]; ?></li>
     <ul id="plugin_settings_list">
-        <?php $plugins->checkActions('admin_sidebar_plugin_settings'); ?>
+        <?php $plugins->pluginHook('admin_sidebar_plugin_settings'); ?>
     </ul>
     
-    <?php $plugins->checkActions('admin_sidebar'); ?>
+    <?php $plugins->pluginHook('admin_sidebar'); ?>
 </ul>
 
-<?php $plugins->checkActions('admin_sidebar_bottom'); ?>
+<?php $plugins->pluginHook('admin_sidebar_bottom'); ?>

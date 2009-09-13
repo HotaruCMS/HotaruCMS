@@ -1,8 +1,6 @@
 <?php
 /**
- * name: Post
- * description: Class for functions related to submitting and organizing posts
- * file: /plugins/submit/libraries/class.post.php
+ * The Post class contains some useful methods for using posts
  *
  * PHP version 5
  *
@@ -535,7 +533,7 @@ class Post {
         
         // Get settings from database if they exist...
         $submit_settings = $plugins->getSerializedSettings('submit');
-    
+        
         // Assign settings to class member
         $this->setContentLength($submit_settings['post_content_length']);
         $this->setSummaryLength($submit_settings['post_summary_length']);
@@ -563,7 +561,7 @@ class Post {
         //summary
         if ($use_summary == 'checked') { $this->setUseSummary(true); } else { $this->setUseSummary(false); }
                 
-        $plugins->checkActions('post_read_post_1');
+        $plugins->pluginHook('post_read_post_1');
         
         if ($post_id != 0) {
             $post_row = $this->getPost($post_id);
@@ -577,7 +575,7 @@ class Post {
             $this->setDate($post_row->post_date);
             $this->setSubscribe($post_row->post_subscribe);
             
-            $plugins->checkActions('post_read_post_2');
+            $plugins->pluginHook('post_read_post_2');
                         
             return true;
         } else {
@@ -607,7 +605,7 @@ class Post {
         
         $this->id = $last_insert_id;
                 
-        $plugins->checkActions('post_add_post');
+        $plugins->pluginHook('post_add_post');
         
         return true;
     }
@@ -629,7 +627,7 @@ class Post {
         
         $db->query($db->prepare($sql, urlencode($this->origUrl), urlencode($this->domain), urlencode(trim($this->title)), urlencode(trim($this->url)), urlencode(trim($this->content)), $this->status, $this->author, $this->subscribe, $current_user->getId(), $this->id));
         
-        $plugins->checkActions('post_update_post');
+        $plugins->pluginHook('post_update_post');
         
         return true;
     }
@@ -677,7 +675,7 @@ class Post {
         $sql = "DELETE FROM " . TABLE_POSTS . " WHERE post_id = %d";
         $db->query($db->prepare($sql, $this->id));
         
-        $plugins->checkActions('post_delete_post');
+        $plugins->pluginHook('post_delete_post');
         
     }
     
@@ -785,7 +783,7 @@ class Post {
             $orderby = "post_date DESC";    // override "relevance DESC" so the RSS feed updates with the latest related terms. 
         }
         
-        $plugins->checkActions('post_rss_feed');
+        $plugins->pluginHook('post_rss_feed');
         
         $feed           = new RSS();
         $feed->title    = SITE_NAME;
@@ -970,7 +968,7 @@ class Post {
             $page_title = $lang["post_breadcrumbs_all"] . $rss;
         }
         
-        $plugins->checkActions('post_list_filter');
+        $plugins->pluginHook('post_list_filter');
         
         // defaults
         if (!isset($select)) { $select = '*'; }

@@ -30,14 +30,14 @@ global $hotaru, $plugins, $lang; // don't remove
 ?>
 <div id="breadcrumbs">
     <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
-    <?php $plugins->checkActions('breadcrumbs'); ?> 
+    <?php $plugins->pluginHook('breadcrumbs'); ?> 
     &raquo; <?php if ($hotaru->title == 'top') { echo $lang['main_theme_home']; } else { echo $hotaru->title; } ?>
 </div>
 
-<?php $plugins->checkActions('hello_world'); ?>
+<?php $plugins->pluginHook('hello_world'); ?>
 
-<?php $plugins->checkActions('main_top'); ?>
+<?php $plugins->pluginHook('main_top'); ?>
     
-<?php $plugins->checkActions('main'); ?>
+<?php $plugins->pluginHook('main'); ?>
 
-<?php $plugins->checkActions('main_bottom'); ?>
+<?php $plugins->pluginHook('main_bottom'); ?>

@@ -1,61 +1,8 @@
 <?php
 
-class PluginManagement extends Plugin
+class PluginManagement extends PluginSettings
 {
 
-    private $includeCSS    = array();  // a list of css files to include
-    private $includeJS     = array();  // a list of js files to include
-    private $includeType   = '';       // 'css' or 'js'
-    
-    /**
-     * setIncludeCSS
-     *
-     * @param string $file - full path to the CSS file
-     */
-    public function setIncludeCSS($file)
-    {
-        array_push($this->includeCSS, $file);
-    }
-    
-
-    /**
-     * getIncludeCSS
-     */
-    public function getIncludeCSS()
-    {
-        return $this->includeCSS;
-    }
-    
-
-    /**
-     * setIncludeJS
-     *
-     * @param string $file - full path to the JS file
-     */
-    public function setIncludeJS($file)
-    {
-        array_push($this->includeJS, $file);
-    }
-    
-
-    /**
-     * getIncludeJS
-     */
-    public function getIncludeJS()
-    {
-        return $this->includeJS;
-    }
-    
-    
-    /**
-     * getIncludeType
-     */
-    public function getIncludeType()
-    {
-        return $this->includeType;
-    }
-    
-    
     /**
      * Get an array of plugins
      *
@@ -199,7 +146,7 @@ class PluginManagement extends Plugin
      * @param array $parameters mixed values passed from plugin hook
      * @return array | bool
      */
-    function checkActions(
+    function pluginHook(
         $hook = '', $perform = true, $folder = '', $parameters = array(), $exclude = array()
     )
     {
@@ -400,18 +347,6 @@ class PluginManagement extends Plugin
     }
     
     
-    /**
-     * Delete rows from pluginsettings that match a given setting
-     *
-     * @param string $setting name of the setting to remove
-     */
-    function pluginSettingsRemoveSetting($setting = '')
-    {
-        global $db;
-        
-        $sql = "DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_setting = %s";
-        $db->query($db->prepare($sql, $setting));
-    }
 }
 
 ?>

@@ -25,7 +25,7 @@
  */
 
 global $plugins;
-$shortname = $plugins->pluginSettings('disqus', 'disqus_shortname');
+$shortname = $plugins->getSetting('disqus', 'disqus_shortname');
 ?>
 
     <script type="text/javascript">

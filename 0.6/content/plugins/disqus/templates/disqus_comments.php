@@ -24,8 +24,7 @@
  * @link      http://www.hotarucms.org/
  */
  
-global $plugins;
-$shortname = $plugins->pluginSettings('disqus', 'disqus_shortname');
+global $shortname;
 ?>
 
 <div id="disqus_thread"></div>
