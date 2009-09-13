@@ -4,7 +4,7 @@
  * description: Enables Gravatar avatars for users
  * version: 0.2
  * folder: gravatar
- * prefix: grav
+ * class: Gravatar
  * requires: users 0.3, submit 0.3
  * hooks: header_include, submit_show_post_pre_title, show_comments_avatar
  *
@@ -30,79 +30,73 @@
  * @link      http://www.hotarucms.org/
  */
 
-/**
- * Include CSS
- */
-function grav_header_include()
+class Gravatar extends PluginFunctions
 {
-    global $plugin, $css_files;
-
-    $plugin->include_css('gravatar');
-}
-
-/**
- * Show gravatar in posts
- */
-function grav_submit_show_post_pre_title()
-{
-    
-    global $post;
-    
-    $user = new UserBase;
-    $user->get_user_basic($post->post_author);
-    $email = $user->email;
-    $size = 32;
-    
-    show_gravatar_link($user->username, $email, $size);
-}
-
-
-/**
- * Show gravatar in comments
- */
-function grav_show_comments_avatar()
-{
-    global $db, $comment;
-    
-    $sql = "SELECT user_username, user_email FROM " . TABLE_USERS . " WHERE user_id = %d";
-    $commenter = $db->get_row($db->prepare($sql, $comment->comment_author));
-    $size = 32;
-    
-    show_gravatar_link($commenter->user_username, $commenter->user_email, $size);
-}
-
-
-/**
- * Show Gravatar link
- *
- * @param string $username - user to link to
- */
-function show_gravatar_link($username, $email, $size)
-{
-    echo "<div class='show_post_gravatar'>";
-    echo "<a href='" . url(array('user' => $username)) . "'>";
-    echo build_gravatar_image($email, $size);
-    echo "</a></div>";
-}
-
-
-/**
- * Build Gravatar image
- *
- * @param string $email - email of avatar user
- * @return string - html for image
- */
-function build_gravatar_image($email, $size)
-{
-    $default = BASEURL . "content/plugins/gravatar/images/default_32.png";
-    
-    $grav_url = "http://www.gravatar.com/avatar.php?gravatar_id=".md5( strtolower($email) ).
-        "&default=".urlencode($default).
-        "&size=".$size; 
+    /**
+     * Show gravatar in posts
+     */
+    public function submit_show_post_pre_title()
+    {
         
-    $img_url = "<img class='gravatar' src='" . $grav_url . "'>";
+        global $post;
+        
+        $user = new UserBase;
+        $user->getUserBasic($post->getAuthor());
+        $email = $user->getEmail();
+        $size = 32;
+        
+        $this->showGravatarLink($user->getName(), $email, $size);
+    }
     
-    return $img_url;
+    
+    /**
+     * Show gravatar in comments
+     */
+    public function show_comments_avatar()
+    {
+        global $db, $comment;
+        
+        $sql = "SELECT user_username, user_email FROM " . TABLE_USERS . " WHERE user_id = %d";
+        $commenter = $db->get_row($db->prepare($sql, $comment->getAuthor()));
+        $size = 32;
+        
+        $this->showGravatarLink($commenter->user_username, $commenter->user_email, $size);
+    }
+    
+    
+    /**
+     * Show Gravatar link
+     *
+     * @param string $username - user to link to
+     */
+    public function showGravatarLink($username, $email, $size)
+    {
+        echo "<div class='show_post_gravatar'>";
+        echo "<a href='" . url(array('user' => $username)) . "'>";
+        echo $this->buildGravatarImage($email, $size);
+        echo "</a></div>";
+    }
+    
+    
+    /**
+     * Build Gravatar image
+     *
+     * @param string $email - email of avatar user
+     * @return string - html for image
+     */
+    public function buildGravatarImage($email, $size)
+    {
+        $default = BASEURL . "content/plugins/gravatar/images/default_32.png";
+        
+        $grav_url = "http://www.gravatar.com/avatar.php?gravatar_id=".md5( strtolower($email) ).
+            "&default=".urlencode($default).
+            "&size=".$size; 
+            
+        $img_url = "<img class='gravatar' src='" . $grav_url . "'>";
+        
+        return $img_url;
+    }
+
 }
 
 ?>

@@ -123,9 +123,9 @@ if (($hotaru_user) && ($cage->cookie->keyExists('hotaru_key'))) {
     if (    ($hotaru_user == $user_info[0]) 
         &&  (crypt($user_info[0], 22) == $user_info[1])
     ) {
-        $current_user->userName = $hotaru_user;
-        $current_user->getUserBasic(0, $current_user->userName);
-        $current_user->loggedIn = true;
+        $current_user->setName($hotaru_user);
+        $current_user->getUserBasic(0, $current_user->getName());
+        $current_user->setLoggedIn(true);
     }
 }
 

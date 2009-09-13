@@ -79,7 +79,7 @@ class Comment {
      */    
     public function setId($id = 0)
     {
-        return $this->id = $id;
+        $this->id = $id;
     }
     
     
@@ -101,7 +101,7 @@ class Comment {
      */    
     public function setParent($parent = 0)
     {
-        return $this->parent = $parent;
+        $this->parent = $parent;
     }
     
     
@@ -123,7 +123,7 @@ class Comment {
      */    
     public function setPostId($postid = 0)
     {
-        return $this->postid = $postid;
+        $this->postId = $postid;
     }
     
     
@@ -132,7 +132,7 @@ class Comment {
      *
      * @return int
      */    
-    public function gePostId()
+    public function getPostId()
     {
         return $this->postId;
     }
@@ -145,7 +145,7 @@ class Comment {
      */    
     public function setAuthor($author = 0)
     {
-        return $this->author = $author;
+        $this->author = $author;
     }
     
     
@@ -167,7 +167,7 @@ class Comment {
      */    
     public function setDate($date = '')
     {
-        return $this->date = $date;
+        $this->date = $date;
     }
     
     
@@ -189,7 +189,7 @@ class Comment {
      */    
     public function setVotes($votes = 0)
     {
-        return $this->votes = $votes;
+        $this->votes = $votes;
     }
     
     
@@ -211,7 +211,7 @@ class Comment {
      */    
     public function setContent($content = '')
     {
-        return $this->content = $content;
+        $this->content = $content;
     }
     
     
@@ -233,7 +233,7 @@ class Comment {
      */    
     public function setType($type = '')
     {
-        return $this->type = $type;
+        $this->type = $type;
     }
     
     
@@ -255,7 +255,7 @@ class Comment {
      */    
     public function setSubscribe($subscribe = 0)
     {
-        return $this->subscribe = $subscribe;
+        $this->subscribe = $subscribe;
     }
     
     
@@ -276,7 +276,7 @@ class Comment {
      */    
     public function setLevels($levels = 0)
     {
-        return $this->levels = $levels;
+        $this->levels = $levels;
     }
     
     
@@ -297,7 +297,7 @@ class Comment {
      */    
     public function setDepth($depth = 0)
     {
-        return $this->depth = $depth;
+        $this->depth = $depth;
     }
     
     
@@ -318,7 +318,7 @@ class Comment {
      */    
     public function setEmail($email = '')
     {
-        return $this->email = $email;
+        $this->email = $email;
     }
     
     
@@ -339,7 +339,7 @@ class Comment {
      */    
     public function setAllowableTags($tags = '')
     {
-        return $this->allowableTags = $tags;
+        $this->allowableTags = $tags;
     }
     
     
@@ -361,7 +361,7 @@ class Comment {
      */    
     public function setForm($form = '')
     {
-        return $this->form = $form;
+        $this->form = $form;
     }
     
     
@@ -383,7 +383,7 @@ class Comment {
      */    
     public function setAvatars($avatars = '')
     {
-        return $this->avatars = $avatars;
+        $this->avatars = $avatars;
     }
     
     
@@ -405,7 +405,7 @@ class Comment {
      */    
     public function setVoting($voting = '')
     {
-        return $this->voting = $voting;
+        $this->voting = $voting;
     }
     
     
@@ -483,14 +483,14 @@ class Comment {
      */
     function readComment($comment)
     {
-        $this->comment_id           = $comment->comment_id;
-        $this->comment_parent       = $comment->comment_parent;
-        $this->comment_post_id      = $comment->comment_post_id;
-        $this->comment_author       = $comment->comment_user_id;
-        $this->comment_date         = $comment->comment_date;
-        $this->comment_votes        = $comment->comment_votes;
-        $this->comment_content      = urldecode($comment->comment_content);
-        $this->comment_subscribe    = $comment->comment_subscribe;
+        $this->setId($comment->comment_id);
+        $this->setParent($comment->comment_parent);
+        $this->setPostId($comment->comment_post_id);
+        $this->setAuthor($comment->comment_user_id);
+        $this->setDate($comment->comment_date);
+        $this->setVotes($comment->comment_votes);
+        $this->setContent(urldecode($comment->comment_content));
+        $this->setSubscribe($comment->comment_subscribe);
     }
     
     
@@ -505,7 +505,7 @@ class Comment {
             
         $sql = "INSERT INTO " . TABLE_COMMENTS . " SET comment_post_id = %d, comment_user_id = %d, comment_parent = %d, comment_date = CURRENT_TIMESTAMP, comment_content = %s, comment_subscribe = %d, comment_updateby = %d";
                 
-        $db->query($db->prepare($sql, $this->comment_post_id, $this->comment_author, $this->comment_parent, urlencode(trim($this->comment_content)), $this->comment_subscribe, $current_user->getId()));
+        $db->query($db->prepare($sql, $this->getPostId(), $this->getAuthor(), $this->getParent(), urlencode(trim($this->getContent())), $this->getSubscribe(), $current_user->getId()));
         
         return true;
     }
@@ -522,7 +522,7 @@ class Comment {
             
         $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_content = %s, comment_subscribe = %d, comment_updateby = %d";
                 
-        $db->query($db->prepare($sql, urlencode(trim(stripslashes($this->comment_content))), $this->comment_subscribe, $current_user->getId()));
+        $db->query($db->prepare($sql, urlencode(trim(stripslashes($this->getContent()))), $this->getSubscribe(), $current_user->getId()));
         
         return true;
     }
@@ -585,7 +585,7 @@ class Comment {
     {
         global $db, $comment, $post, $userbase;
         
-        $post->read_post($post_id);
+        $post->readPost($post_id);
     
         // build a list of subscribers
         $subscriber_ids = array();
@@ -617,7 +617,7 @@ class Comment {
         
         $send_to = trim(implode(",", $subscribers),",");
         
-        $comment_author = $userbase->get_username($comment->comment_author);
+        $comment_author = $userbase->getUserNameFromId($comment->getAuthor());
         
         $subject = $comment_author . ' has commented on ' . $post->post_title;
         
@@ -630,7 +630,7 @@ class Comment {
         $message .= "To unsubscribe, uncheck the \"Subscribe to comments\" box and submit an empty comment. ";
         
         $from = SITE_EMAIL;
-        $to = $comment->comment_email;  // send email to address specified in Comment Settings; 
+        $to = $comment->getEmail();  // send email to address specified in Comment Settings; 
         if($send_to != "") {
             $bcc = "\r\nBCC: " . $send_to;    // BCC individual addresses;
         } else {

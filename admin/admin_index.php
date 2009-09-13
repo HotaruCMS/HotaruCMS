@@ -76,12 +76,12 @@ if (isset($current_user) && $plugins->isActive('users'))
 {
     // This first condition happens when the Users plugin is activated 
     // and there's no cookie for the Admin yet.
-    if (($current_user->userName == "") && $plugins->isActive('users')) 
+    if (($current_user->getName() == "") && $plugins->isActive('users')) 
     {
         header('Location: ' . BASEURL . 'index.php?page=login');
         die; exit;
     } 
-    elseif (!$current_user->isAdmin($current_user->userName)) 
+    elseif (!$current_user->isAdmin($current_user->getName())) 
     {
         echo "You do not have permission to access this page.<br />";
         die(); exit;

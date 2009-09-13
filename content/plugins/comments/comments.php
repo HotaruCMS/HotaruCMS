@@ -96,9 +96,11 @@ class Comments extends pluginFunctions
      */
     public function header_include()
     { 
-        $this->includeCss();
-        $this->includeJs();
-        $this->includeJs('urldecode.min');
+        global $hotaru;
+        
+        $hotaru->includeCss('comments', 'comments');
+        $hotaru->includeJs('comments', 'comments');
+        $hotaru->includeJs('urldecode.min', 'comments');
     }
     
     
@@ -143,15 +145,15 @@ class Comments extends pluginFunctions
         global $hotaru, $cage, $post, $current_user, $comment;
         
         if (($hotaru->isPage('comments')) && ($comment->getForm() == 'checked')) {
-             
-            if ($current_user->loggedIn) {
-                         
+        
+            if ($current_user->getLoggedIn()) {
+
                 if (($cage->post->getAlpha('comment_process') == 'newcomment') || 
                     ($cage->post->getAlpha('comment_process') == 'editcomment'))
                 {
-                
+                    
                     //Include HTMLPurifier which we'll use on comment_content
-                    $cage->post->loadHTMLPurifier(INCLUDES . 'HTMLPurifier/HTMLPurifier.standalone.php');
+                    $cage->post->loadHTMLPurifier(EXTENSIONS . 'HTMLPurifier/HTMLPurifier.standalone.php');
         
                     if ($cage->post->keyExists('comment_content')) {
                         $comment->setContent(sanitize($cage->post->getPurifiedHTML('comment_content'), 2, $comment->getAllowableTags()));
@@ -159,9 +161,11 @@ class Comments extends pluginFunctions
                     
                     if ($cage->post->keyExists('comment_post_id')) {
                         $comment->setPostId($cage->post->testInt('comment_post_id'));
+                        echo $comment->getPostId();
                     }
                     
                     if ($cage->post->keyExists('comment_user_id')) {
+                        echo "userid: " . $cage->post->testInt('comment_user_id') . "<br />";
                         $comment->setAuthor($cage->post->testInt('comment_user_id'));
                     }
                     
@@ -179,7 +183,7 @@ class Comments extends pluginFunctions
                     if ($cage->post->getAlpha('comment_process') == 'newcomment')
                     {
                         // A user can unsubscribe by submitting an empty comment, so...
-                        if(!$comment->getContent()) {
+                        if($comment->getContent() != '') {
                             $comment->addComment();
                             $comment->emailCommentSubscribers($comment->getPostId());
                         } else {
@@ -238,22 +242,22 @@ class Comments extends pluginFunctions
         global $db, $hotaru, $comment, $post, $current_user;
         
         // set default
-        $current_user->userbase_vars['post_subscribed'] = false; 
+        $current_user->vars['postSubscribed'] = false; 
         
         // Check if the current_user is the post author
-        if ($post->post_author == $current_user->id) {
+        if ($post->getAuthor() == $current_user->getId()) {
             // Check if the user subscribed to comments as a submitter
-            if ($post->post_subscribe == 1) { 
-                $current_user->userbase_vars['post_subscribed'] = true; 
+            if ($post->getSubscribe() == 1) { 
+                $current_user->vars['postSubscribed'] = true; 
             } 
         } 
         
         // Check if the user subscribed to comments as a commenter
         $sql = "SELECT COUNT(comment_subscribe) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_user_id = %d AND comment_subscribe = %d";
-        $subscribe_result = $db->get_var($db->prepare($sql, $post->post_id, $current_user->id, 1));
+        $subscribe_result = $db->get_var($db->prepare($sql, $post->getId(), $current_user->getId(), 1));
         
         if ($subscribe_result > 0) { 
-            $current_user->userbase_vars['post_subscribed'] = true; 
+            $current_user->vars['postSubscribed'] = true; 
         } 
         
         $parents = $comment->readAllParents($post->getId());
@@ -302,9 +306,9 @@ class Comments extends pluginFunctions
                     // levels start at 0 so we're using -1.
                     $depth = $comment->getLevels() - 1;
                 }
-                $comment->depth = $depth;
+                $comment->setDepth($depth);
                 $this->displayComment($child);
-                if (comment_tree($child->comment_id, $depth)) {
+                if ($this->commentTree($child->comment_id, $depth)) {
                     return true;
                 }
             }

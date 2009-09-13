@@ -88,17 +88,9 @@ class Users extends PluginFunctions
         
         // Create a new global object called "userbase" (in addition to the default "current_user").
         $userbase = new Userbase();
+        
         $vars['userbase'] = $userbase; 
         return $vars; 
-    }
-    
-    
-    /**
-     * Put a link to the settings page in the Admin sidebar under Plugin Settings
-     */
-    public function admin_sidebar_plugin_settings()
-    {
-        echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>'users'), 'admin') . "'>Users</a></li>";
     }
     
     
@@ -123,7 +115,7 @@ class Users extends PluginFunctions
     {
         global $current_user, $lang, $hotaru;
         
-        if ($current_user->loggedIn) {
+        if ($current_user->getLoggedIn()) {
             if ($hotaru->getTitle() == 'profile') { $status = "id='navigation_active'"; } else { $status = ""; }
             echo "<li><a  " . $status . " href='" . url(array('page'=>'profile')) . "'>" . $lang["users_profile"] . "</a></li>\n";
             
@@ -160,7 +152,7 @@ class Users extends PluginFunctions
         $send_email_confirmation = false; 
         
         // Pages you have to be logged in for...
-        if ($current_user->loggedIn) {
+        if ($current_user->getLoggedIn()) {
              if ($hotaru->isPage('logout')) {
                 $current_user->destroyCookieAndSession();
                 header("Location: " . BASEURL);
@@ -172,12 +164,12 @@ class Users extends PluginFunctions
         // Pages you have to be logged out for...
         } else {
             if ($hotaru->isPage('register')) {
-                $userbase->vars['users_recaptcha_enabled'] = $this->getSetting('users_recaptcha_enabled');
-                $userbase->vars['users_emailconf_enabled'] = $this->getSetting('users_emailconf_enabled');
+                $userbase->vars['usersRecaptchaEnabled'] = $this->getSetting('users_recaptcha_enabled');
+                $userbase->vars['usersEmailConfEnabled'] = $this->getSetting('users_emailconf_enabled');
                 $user_id = $this->register();
                 if ($user_id) { 
                     // success!
-                    if ($userbase->vars['users_emailconf_enabled']) {
+                    if ($userbase->vars['usersEmailConfEnabled']) {
                         $send_email_confirmation = true;
                         $this->sendConfirmationEmail($user_id);
                         // fall through and display "email sent" message
@@ -208,7 +200,7 @@ class Users extends PluginFunctions
         global $send_email_confirmation;
         
         // Pages you have to be logged in for...
-        if ($current_user->loggedIn) {
+        if ($current_user->getLoggedIn()) {
             if ($hotaru->isPage('profile')) {
                 $hotaru->displayTemplate('update', 'users');
                 return true;
@@ -252,7 +244,7 @@ class Users extends PluginFunctions
     
         if ($cage->get->keyExists('user')) 
         {
-            $filter['post_author = %d'] = $current_user->getUserId($cage->get->testUsername('user')); 
+            $filter['post_author = %d'] = $current_user->getUserIdFromName($cage->get->testUsername('user')); 
             $rss = " <a href='" . url(array('page'=>'rss', 'user'=>$cage->get->testUsername('user'))) . "'>";
             $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
             // Undo the filter that limits results to either 'top' or 'new' (See submit.php -> sub_prepare_list())
@@ -282,7 +274,7 @@ class Users extends PluginFunctions
         if ($cage->post->testAlnumLines('users_type') == 'update_general') {
             $username_check = $cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
             if ($username_check) {
-                $current_user->userName = $username_check;
+                $current_user->setName($username_check); // updates the db record
             } else {
                 $hotaru->messages[$lang['users_register_username_error']] = 'red';
                 $error = 1;
@@ -414,12 +406,12 @@ class Users extends PluginFunctions
                     //success
                                 
                     if ($cage->post->getInt('remember') == 1){ $remember = 1; } else { $remember = 0; }
-                    $current_user->userName = $username_check;
+                    $current_user->setName($username_check);
                     $current_user->getUserBasic(0, $current_user->userName);
                     
-                    $userbase->vars['users_emailconf_enabled'] = $this->getSetting('users_emailconf_enabled');
+                    $userbase->vars['usersEmailConfEnabled'] = $this->getSetting('users_emailconf_enabled');
                     
-                    if ($userbase->vars['users_emailconf_enabled'] && ($current_user->emailValid == 0)) {
+                    if ($userbase->vars['usersEmailConfEnabled'] && ($current_user->getEmailValid() == 0)) {
                         $this->sendConfirmationEmail($current_user->getId());
                         $hotaru->messages[$lang["users_login_failed_email_not_validated"]] = 'red';
                         $hotaru->messages[$lang["users_login_failed_email_request_sent"]] = 'green';
@@ -427,7 +419,7 @@ class Users extends PluginFunctions
                     }
                     
                     $current_user->setCookie($remember);
-                    $current_user->loggedIn = true;
+                    $current_user->setLoggedIn(true);
                     $current_user->updateUserLastLogin();
                     return true;
             } else {
@@ -450,7 +442,7 @@ class Users extends PluginFunctions
         
         $current_user = new UserBase();
         
-        if ($userbase->vars['users_recaptcha_enabled']) {
+        if ($userbase->vars['usersRecaptchaEnabled']) {
             require_once(PLUGINS . 'users/recaptcha/recaptchalib.php');
         }
         
@@ -459,7 +451,7 @@ class Users extends PluginFunctions
         
             $username_check = $cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
             if ($username_check) {
-                $current_user->userName = $username_check;
+                $current_user->setName($username_check);
             } else {
                 $hotaru->messages[$lang['users_register_username_error']] = 'red';
                 $error = 1;
@@ -489,7 +481,7 @@ class Users extends PluginFunctions
                 $error = 1;
             }
         
-            if ($userbase->vars['users_recaptcha_enabled']) {
+            if ($userbase->vars['usersRecaptchaEnabled']) {
                                         
                 $recaptcha_pubkey = $this->getSetting('users_recaptcha_pubkey');
                 $recaptcha_privkey = $this->getSetting('users_recaptcha_privkey');
