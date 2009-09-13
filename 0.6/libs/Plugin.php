@@ -46,10 +46,6 @@ class Plugin extends generic_pmd
     protected $requires     = '';         // string of plugin->version pairs
     protected $dependencies = array();    // array of plugin->version pairs
     protected $hooks        = array();    // array of plugin hooks
-    
-    protected $cssIncludes    = array();  // a list of css files to include
-    protected $jsIncludes     = array();  // a list of js files to include
-    protected $includeType   = '';       // 'css' or 'js'
 
      /* ******************************************************************** 
      * 
@@ -71,11 +67,11 @@ class Plugin extends generic_pmd
      */
     public function header_include()
     {
-        global $plugins, $admin, $cage;
+        global $hotaru, $admin, $cage;
         
         // include a files that match the name of the plugin folder:
-        $plugins->includeJs('', $this->folder); // filename, folder name
-        $plugins->includeCss('', $this->folder);
+        $hotaru->includeJs('', $this->folder); // filename, folder name
+        $hotaru->includeCss('', $this->folder);
     }
     
     

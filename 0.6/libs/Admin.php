@@ -193,10 +193,10 @@ class Admin
         
         if (!$exists) {
             $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_updateby) VALUES (%s, %s, %d)";
-            $db->query($db->prepare($sql, $setting, $value, $current_user->id));
+            $db->query($db->prepare($sql, $setting, $value, $current_user->getId()));
         } else {
             $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_name = %s, settings_value = %s, settings_updateby = %d WHERE (settings_name = %s)";
-            $db->query($db->prepare($sql, $setting, $value, $current_user->id, $setting));
+            $db->query($db->prepare($sql, $setting, $value, $current_user->getId(), $setting));
         }
     }
 
@@ -422,9 +422,9 @@ class Admin
             if ($login_result) {
                     //success
                     $this->setAdminCookie($username_check);
-                    $current_user->username = $username_check;
+                    $current_user->setName($username_check);
                     $current_user->getUserBasic(0, $username_check);
-                    $current_user->loggedIn = true;
+                    $current_user->setLoggedIn(true);
                     $current_user->updateUserLastLogin();
                     return true;
             } else {

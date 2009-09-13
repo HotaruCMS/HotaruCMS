@@ -63,6 +63,17 @@ class UserBase {
     
     
     /**
+     * Set user id
+     *
+     * @param int
+     */    
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+    
+    
+    /**
      * Get user id
      *
      * @return int
@@ -70,6 +81,39 @@ class UserBase {
     public function getId()
     {
         return $this->id;
+    }
+    
+    
+    /**
+     * Set user name
+     *
+     * @param string
+     */    
+    public function setName($username)
+    {
+        $this->userName = $username;
+    }
+    
+    
+    /**
+     * Get user name
+     *
+     * @return string
+     */    
+    public function getName()
+    {
+        return $this->userName;
+    }
+    
+    
+    /**
+     * Set user role
+     *
+     * @param string
+     */    
+    public function setRole($role)
+    {
+        $this->role = $role;
     }
     
     
@@ -85,6 +129,94 @@ class UserBase {
     
     
     /**
+     * Set user password
+     *
+     * @param string
+     */    
+    public function setPassword($pass)
+    {
+        $this->password = $pass;
+    }
+    
+    
+    /**
+     * Get user password
+     *
+     * @return string
+     */    
+    public function getPassword()
+    {
+        return $this->password;
+    }
+    
+    
+    /**
+     * Set user email
+     *
+     * @param string
+     */    
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    }
+    
+    
+    /**
+     * Get user email
+     *
+     * @return string
+     */    
+    public function getEmail()
+    {
+        return $this->email;
+    }
+    
+    
+    /**
+     * Set user emailValid
+     *
+     * @param int
+     */    
+    public function setEmailValid($ev)
+    {
+        $this->emailValid = $ev;
+    }
+    
+    
+    /**
+     * Get user emailValid
+     *
+     * @return int
+     */    
+    public function getEmailValid()
+    {
+        return $this->emailValid;
+    }
+    
+    
+    /**
+     * Set logged in
+     *
+     * @param bool
+     */    
+    public function setLoggedIn($bool)
+    {
+        $this->loggedIn = $bool;
+    }
+    
+    
+    /**
+     * Get logged in
+     *
+     * @return bool
+     */    
+    public function getLoggedIn()
+    {
+        return $this->loggedIn;
+    }
+    
+    
+    /**
      * Add a new user
      */
     public function addUserBasic()
@@ -92,7 +224,7 @@ class UserBase {
         global $db;
         
         $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s)";
-        $db->query($db->prepare($sql, $this->userName, $this->role, $this->password, $this->email));
+        $db->query($db->prepare($sql, $this->getName(), $this->getRole(), $this->getPassword(), $this->getEmail()));
     }
 
 
@@ -103,9 +235,9 @@ class UserBase {
     {
         global $db;
         
-        if ($this->id != 0) {
+        if ($this->getId() != 0) {
             $sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s, user_updateby = %d WHERE user_id = %d";
-            $db->query($db->prepare($sql, $this->userName, $this->role, $this->password, $this->email, $this->id, $this->id));
+            $db->query($db->prepare($sql, $this->getName(), $this->getRole(), $this->getPassword(), $this->getEmail(), $this->getId(), $this->getId()));
             return true;
         } else {
             return false;
@@ -122,9 +254,9 @@ class UserBase {
     {
         global $db;
         
-        if ($this->id != 0) {
+        if ($this->getId() != 0) {
             $sql = "UPDATE " . TABLE_USERS . " SET user_lastlogin = CURRENT_TIMESTAMP WHERE user_id = %d";
-            $db->query($db->prepare($sql, $this->id));
+            $db->query($db->prepare($sql, $this->getId()));
             return true;
         } else {
             return false;
@@ -163,12 +295,12 @@ class UserBase {
         $user_info = $db->get_row($db->prepare($sql, $param));
         
         if ($user_info) {
-            $this->id = $user_info->user_id;
-            $this->userName = $user_info->user_username;
-            $this->password = $user_info->user_password;
-            $this->role = $user_info->user_role;
-            $this->email = $user_info->user_email;
-            $this->emailValid = $user_info->user_email_valid;
+            $this->setId($user_info->user_id);
+            $this->setName($user_info->user_username);
+            $this->setPassword($user_info->user_password);
+            $this->setRole($user_info->user_role);
+            $this->setEmail($user_info->user_email);
+            $this->setEmailValid($user_info->user_email_valid);
             return $user_info;
         } else {
             return false;
@@ -270,7 +402,7 @@ function isAdmin($username)
 
         // Read the current user's basic details
         $userX = $this->getUserBasic(0, $username);
-            
+        
         $salt_length = 9;
         $password = $this->generateHash($password, substr($userX->user_password, 0, $salt_length));
         
@@ -312,13 +444,13 @@ function isAdmin($username)
     {
         global $lang;
 
-        if (!$this->userName)
+        if (!$this->getName())
         { 
             echo $lang['main_userbase_cookie_error'];
             return false;
         } else {
             $strCookie=base64_encode(
-                join(':', array($this->userName, crypt($this->userName, 22)))
+                join(':', array($this->getName(), crypt($this->getName(), 22)))
             );
             
             if ($remember) { 
@@ -328,7 +460,7 @@ function isAdmin($username)
                 $month = 0; 
             }
             
-            setcookie("hotaru_user", $this->userName, $month, "/");
+            setcookie("hotaru_user", $this->getName(), $month, "/");
             setcookie("hotaru_key", $strCookie, $month, "/");
             return true;
         }
@@ -346,7 +478,7 @@ function isAdmin($username)
         
         // session_destroy(); There is no session in Hotaru yet
         
-        $this->loggedIn = false;
+        $this->setLoggedIn(false);
     }
         
         
@@ -356,7 +488,7 @@ function isAdmin($username)
      * @param int $id user id
      * @return string|false
      */
-    public function getUserName($id = 0)
+    public function getUserNameFromId($id = 0)
     {
         global $db, $user;
         
@@ -373,7 +505,7 @@ function isAdmin($username)
      * @param string $username
      * @return int|false
      */
-    public function getUserId($username = '')
+    public function getUserIdFromName($username = '')
     {
         global $db, $user;
         

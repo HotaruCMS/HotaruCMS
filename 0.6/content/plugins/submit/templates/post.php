@@ -57,7 +57,7 @@ $user->getUserBasic($post->getAuthor());
                 <div class="show_post_author_date">    
                     Posted
                     <?php 
-                    if ($post->getUseAuthor()) { echo " by <a href='" . url(array('user' => $user->userName)) . "'>" . $user->userName . "</a>"; } 
+                    if ($post->getUseAuthor()) { echo " by <a href='" . url(array('user' => $user->getName())) . "'>" . $user->getName() . "</a>"; } 
                     ?>
                     <?php if ($post->getUseDate()) { echo time_difference(unixtimestamp($post->getDate())) . " ago"; } ?>
                     <?php $plugins->pluginHook('submit_show_post_author_date'); ?>

@@ -34,6 +34,10 @@ class Hotaru
     protected $title        = '';       // for the broswer's TITLE tags
     protected $pageType     = '';       // what kind of page we're looking at
     
+    protected $cssIncludes    = array();  // a list of css files to include
+    protected $jsIncludes     = array();  // a list of js files to include
+    protected $includeType   = '';       // 'css' or 'js'
+    
     
     /**
      * Set hotaru sidebar status
@@ -98,6 +102,55 @@ class Hotaru
     public function getPageType()
     {
         return $this->pageType;
+    }
+    
+    
+    /**
+     * setCssIncludes
+     *
+     * @param string $file - full path to the CSS file
+     */
+    public function setCssIncludes($file)
+    {
+        array_push($this->cssIncludes, $file);
+    }
+    
+
+    /**
+     * getCssIncludes
+     */
+    public function getCssIncludes()
+    {
+        return $this->cssIncludes;
+    }
+    
+    
+    /**
+     * setJsIncludes
+     *
+     * @param string $file - full path to the JS file
+     */
+    public function setJsIncludes($file)
+    {
+        array_push($this->jsIncludes, $file);
+    }
+    
+
+    /**
+     * getJsIncludes
+     */
+    public function getJsIncludes()
+    {
+        return $this->jsIncludes;
+    }
+    
+    
+    /**
+     * getIncludeType
+     */
+    public function getIncludeType()
+    {
+        return $this->includeType;
     }
     
     
@@ -387,6 +440,128 @@ class Hotaru
     
     
     /**
+     * Build an array of css files to combine
+     *
+     * @param $folder - the folder name of the plugin
+     * @param $filename - optional css file without an extension
+     */
+     function includeCss($filename = '', $folder = '')
+     {
+        global $plugins;
+        
+        if (!$folder) { $folder = $plugins->folder; }
+
+        // If no filename provided, the filename is assigned the plugin name.
+        if (!$filename) { $filename = $folder; }
+
+        $file_location = $this->findCssFile($filename, $folder);
+        
+        // Add this css file to the global array of css_files
+        $this->setCssIncludes($file_location);
+     }
+
+
+    /**
+     * Build an array of JavaScript files to combine
+     *
+     * @param $plugin - the folder name of the plugin
+     * @param $filename - optional js file without an extension
+     */
+     function includeJs($filename = '', $folder = '')
+     {
+        global $plugins;
+        
+        if (!$folder) { $folder = $plugins->folder; }
+        
+        // If no filename provided, the filename is assigned the plugin name.
+        if (!$filename) { $filename = $folder; }
+        
+        $file_location = $this->findJsFile($filename, $folder);
+        
+        // Add this css file to the global array of css_files
+        $this->setJsIncludes($file_location);
+     }
+     
+     
+    /**
+     * Find CSS file
+     *
+     * @param string $folder name of plugin folder
+     * @param string $filename optional filename without file extension
+     *
+     * Note: the css file should be in a folder named 'css' and a file of 
+     * the format plugin_name.css, e.g. rss_show.css
+     */    
+    function findCssFile($filename = '', $folder = '')
+    {
+        global $lang, $plugins;
+        
+        if (!$folder) { $folder = $plugins->folder; }
+        
+        if ($folder) {
+
+            // If filename not given, make the plugin name the file name
+            if (!$filename) { $filename = $folder; }
+            
+            // First look in the theme folder for a css file...     
+            if (file_exists(THEMES . THEME . 'css/' . $filename . '.css')) {    
+                $file_location = THEMES . THEME . 'css/' . $filename . '.css';
+            
+            // If not found, look in the default theme folder for a css file...     
+            } elseif (file_exists(THEMES . 'default/css/' . $filename . '.css')) {    
+                $file_location = THEMES . 'default/css/' . $filename . '.css';
+            
+            // If still not found, look in the plugin folder for a css file... 
+            } elseif (file_exists(PLUGINS . $folder . '/css/' . $filename . '.css')) {
+                $file_location = PLUGINS . $folder . '/css/' . $filename . '.css';
+            }
+             
+            if (isset($file_location)) {
+                return $file_location;
+            }
+        }
+    }
+
+
+    /**
+     * Find JavaScript file
+     *
+     * @param string $folder name of plugin folder
+     * @param string $filename optional filename without file extension
+     *
+     * Note: the js file should be in a folder named 'javascript' and a file of the format plugin_name.js, e.g. category_manager.js
+     */    
+    function findJsFile($filename = '', $folder = '')
+    {
+        global $lang, $plugins;
+        
+        if (!$folder) { $folder = $plugins->folder; }
+        
+        if ($folder) {
+
+            // If filename not given, make the plugin name the file name
+            if (!$filename) { $filename = $folder; }
+            
+            // First look in the theme folder for a js file...     
+            if (file_exists(THEMES . THEME . 'javascript/' . $filename . '.js')) {    
+                $file_location = THEMES . THEME . 'javascript/' . $filename . '.js';
+                
+            // If not found, look in the default theme folder for a js file...     
+            } elseif (file_exists(THEMES . 'default/javascript/' . $filename . '.js')) {    
+                $file_location = THEMES . 'default/javascript/' . $filename . '.js';
+                
+            // If still not found, look in the plugin folder for a js file... 
+            } elseif (file_exists(PLUGINS . $folder . '/javascript/' . $filename . '.js')) {
+                $file_location = PLUGINS . $folder . '/javascript/' . $filename . '.js';
+            }
+             
+            if (isset($file_location)) {
+                return $file_location;
+            }
+        }
+    }
+
+    /**
      * Combine Included CSS & JSS files
      *
      * @param string $type either 'css' or 'js'
@@ -411,11 +586,11 @@ class Hotaru
         
         if($type == 'css') { 
             $content_type = 'text/css';
-            $includes = $plugins->getCssIncludes();
+            $includes = $this->getCssIncludes();
         } else { 
             $type = 'js'; 
             $content_type = 'text/javascript';
-            $includes = $plugins->getJsIncludes();
+            $includes = $this->getJsIncludes();
         }
 
         if(empty($includes)) { return false; }
