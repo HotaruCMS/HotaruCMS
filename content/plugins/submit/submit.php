@@ -50,7 +50,7 @@ class Submit extends PluginFunctions
      */
     public function install_plugin()
     {
-        global $db, $plugins, $post;
+        global $db, $post;
         
         // Create a new empty table called "posts"
         $exists = $db->table_exists('posts');
@@ -103,7 +103,7 @@ class Submit extends PluginFunctions
         $submit_settings['post_posts_per_page'] = 10;
         $submit_settings['post_allowable_tags'] = "<b><i><u><a><blockquote><strike>";
         
-        $plugins->pluginSettingsUpdate('submit', 'submit_settings', serialize($submit_settings));
+        $this->updateSetting('submit_settings', serialize($submit_settings));
         
     }
     
@@ -113,7 +113,7 @@ class Submit extends PluginFunctions
      */
     public function hotaru_header()
     {
-        global $hotaru, $lang, $cage, $plugins, $post;
+        global $hotaru, $lang, $cage, $post;
         
         if (!defined('TABLE_POSTS')) { define("TABLE_POSTS", DB_PREFIX . 'posts'); }
         if (!defined('TABLE_POSTMETA')) { define("TABLE_POSTMETA", DB_PREFIX . 'postmeta'); }
@@ -122,7 +122,7 @@ class Submit extends PluginFunctions
         $cage->post->loadHTMLPurifier(EXTENSIONS . 'HTMLPurifier/HTMLPurifier.standalone.php');
     
         // include language file
-        $plugins->includeLanguage('submit');
+        $this->includeLanguage();
         
         require_once(LIBS . 'Post.php');
         require_once(EXTENSIONS . 'Paginated/Paginated.php');
@@ -130,7 +130,7 @@ class Submit extends PluginFunctions
             
         $post = new Post();
         
-        $plugins->checkActions('submit_hotaru_header_1');
+        $this->pluginHook('submit_hotaru_header_1');
         
         if (is_numeric($hotaru->getPageName())) {
             // Page name is a number so it must be a post with non-friendly urls
@@ -148,9 +148,9 @@ class Submit extends PluginFunctions
             $post->readPost();    // read current post settings only
             $hotaru->setPageType('');
         }
-        
-        $plugins->checkActions('submit_hotaru_header_2');
-       
+                
+        $this->pluginHook('submit_hotaru_header_2');
+               
         $vars['post'] = $post; 
         return $vars; 
     }
@@ -211,7 +211,7 @@ class Submit extends PluginFunctions
      */
     public function theme_index_replace()
     {
-        global $hotaru, $cage, $post, $plugins, $current_user;
+        global $hotaru, $cage, $post, $current_user;
         
         if ($hotaru->isPage('submit2') && $post->getUseSubmission()) {
              
@@ -278,7 +278,7 @@ class Submit extends PluginFunctions
      */
     public function theme_index_main()
     {
-        global $hotaru, $cage, $post, $plugins, $current_user, $lang, $user;
+        global $hotaru, $cage, $post, $current_user, $lang, $user;
         global $post_orig_url, $post_orig_title, $filter, $filter_heading;
         
         if ($hotaru->isPage('submit')) {
@@ -364,7 +364,7 @@ class Submit extends PluginFunctions
         } elseif ($hotaru->isPage('main')) {
         
             // Plugin hook
-            $result = $plugins->checkActions('submit_is_page_main');
+            $result = $this->pluginHook('submit_is_page_main');
             if ($result && is_array($result)) { return true; }
         
             // Show the list of posts
@@ -374,7 +374,7 @@ class Submit extends PluginFunctions
         } elseif ($hotaru->isPage('latest')) {
         
             // Plugin hook
-            $result = $plugins->checkActions('submit_is_page_latest');
+            $result = $this->pluginHook('submit_is_page_latest');
             if ($result && is_array($result)) { return true; }
         
             // Show the list of posts
@@ -384,7 +384,7 @@ class Submit extends PluginFunctions
         } elseif ($hotaru->isPage('all')) {
         
             // Plugin hook
-            $result = $plugins->checkActions('submit_is_page_all');
+            $result = $this->pluginHook('submit_is_page_all');
             if ($result && is_array($result)) { return true; }
         
             // Show the list of posts
@@ -419,7 +419,7 @@ class Submit extends PluginFunctions
     public function admin_plugin_settings()
     {
         require_once(PLUGINS . 'submit/submit_settings.php');
-        $submitSettings = new SubmitSettings();
+        $submitSettings = new SubmitSettings($this->folder);
         $submitSettings->settings();
         return true;
     }
@@ -462,7 +462,7 @@ class Submit extends PluginFunctions
      */
     public function check_for_errors_2() 
     {
-        global $hotaru, $post, $cage, $plugins, $lang;
+        global $hotaru, $post, $cage, $lang;
         
         $post_id = $cage->post->getInt('post_id'); // 0 unless come back from step 3.
         
@@ -523,14 +523,14 @@ class Submit extends PluginFunctions
         
         
         // Check for errors from plugin fields, e.g. Tags
-        $error_check_actions = 0;
-        $error_array = $plugins->checkActions('submit_form_2_check_for_errors');
+        $error_hooks = 0;
+        $error_array = $this->pluginHook('submit_form_2_check_for_errors');
         if (is_array($error_array)) {
-            foreach ($error_array as $err) { if ($err == 1) { $error_check_actions = 1; } }
+            foreach ($error_array as $err) { if ($err == 1) { $error_hooks = 1; } }
         }
         
         // Return true if error is found
-        if ($error_url == 1 || $error_title == 1 || $error_content == 1 || $error_check_actions == 1) { return true; } else { return false; }
+        if ($error_url == 1 || $error_title == 1 || $error_content == 1 || $error_hooks == 1) { return true; } else { return false; }
     }
     
     
@@ -539,7 +539,7 @@ class Submit extends PluginFunctions
      */
     public function process_submission($post_orig_url)
     {
-        global $hotaru, $cage, $plugins, $current_user, $post;
+        global $hotaru, $cage, $current_user, $post;
             
         if ($cage->post->getAlpha('submit2') == 'true') {    
         
@@ -551,7 +551,7 @@ class Submit extends PluginFunctions
             $post->setStatus('processing');
             $post->setAuthor($current_user->getId());
             
-            $plugins->checkActions('submit_form_2_process_submission');
+            $this->pluginHook('submit_form_2_process_submission');
             
             if ($post->getId() != 0) {
                 $post->updatePost();    // Updates an existing post (e.g. returning to step 2 from step 3 to modify it)
@@ -568,8 +568,8 @@ class Submit extends PluginFunctions
             $post->setTitle($cage->post->noTags('post_title'));
             $post->setUrl($cage->post->getFriendlyUrl('post_title'));
             $post->setContent(sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->allowableTags));
-            $post->setStatus('processing');
-            $plugins->checkActions('submit_form_2_process_submission');
+            $post->setStatus($cage->post->testAlnumLines('post_status'));
+            $this->pluginHook('submit_form_2_process_submission');
             $post->updatePost();
         }
     }

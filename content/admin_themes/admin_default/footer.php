@@ -30,9 +30,9 @@ global $hotaru, $plugins, $lang; // don't remove
 ?>
     <div id="ft" role="contentinfo">
         <?php
-            $plugins->checkActions('footer_top');
-            $plugins->checkActions('footer');
-            $plugins->checkActions('admin_footer');
+            $plugins->pluginHook('footer_top');
+            $plugins->pluginHook('footer');
+            $plugins->pluginHook('admin_footer');
             $hotaru->showQueriesAndTime();
             
             // Link to forums...
@@ -40,7 +40,7 @@ global $hotaru, $plugins, $lang; // don't remove
             echo " <a href='http://hotarucms.org'>HotaruCMS.org</a> ";
             echo $lang["admin_theme_footer_for_help"] . "</p>";
             
-            $plugins->checkActions('footer_bottom'); 
+            $plugins->pluginHook('footer_bottom'); 
         ?>
     </div>
 </div>

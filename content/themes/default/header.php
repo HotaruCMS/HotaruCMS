@@ -71,17 +71,17 @@ global $hotaru, $plugins, $lang; // don't remove
     <link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME . 'css/style.css'; ?>" type="text/css">
     <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico">
    
-    <?php $plugins->checkActions('header_include_raw'); ?>
+    <?php $plugins->pluginHook('header_include_raw'); ?>
    
 </head>
 <body>
-<?php $plugins->checkActions('post_open_body'); ?>
+<?php $plugins->pluginHook('post_open_body'); ?>
 
 <?php if ($announcements = $hotaru->checkAnnouncements()) { ?>
     <div id="announcement">
-        <?php $plugins->checkActions('announcement_first'); ?>
+        <?php $plugins->pluginHook('announcement_first'); ?>
         <?php foreach ($announcements as $announcement) { echo $announcement . "<br />"; } ?>
-        <?php $plugins->checkActions('announcement_last'); ?>
+        <?php $plugins->pluginHook('announcement_last'); ?>
     </div>
 <?php } ?>
 
@@ -89,7 +89,7 @@ global $hotaru, $plugins, $lang; // don't remove
     <div id="hd">
         <div id="hd_title">
             <h1><a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a></h1>
-            <?php $plugins->checkActions('header_post_title'); ?>
+            <?php $plugins->pluginHook('header_post_title'); ?>
         </div>
         <!-- NAVIGATION -->
         <?php echo $hotaru->displayTemplate('navigation'); ?>

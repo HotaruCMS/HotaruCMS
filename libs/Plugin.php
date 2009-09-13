@@ -46,6 +46,10 @@ class Plugin extends generic_pmd
     protected $requires     = '';         // string of plugin->version pairs
     protected $dependencies = array();    // array of plugin->version pairs
     protected $hooks        = array();    // array of plugin hooks
+    
+    protected $cssIncludes    = array();  // a list of css files to include
+    protected $jsIncludes     = array();  // a list of js files to include
+    protected $includeType   = '';       // 'css' or 'js'
 
      /* ******************************************************************** 
      * 
@@ -58,7 +62,7 @@ class Plugin extends generic_pmd
     {
         global $plugins;
 
-        $plugins->includeLanguage($this->folder);
+        $plugins->includeLanguage('', $this->folder);
     }
     
 
@@ -70,8 +74,8 @@ class Plugin extends generic_pmd
         global $plugins, $admin, $cage;
         
         // include a files that match the name of the plugin folder:
-        $plugins->includeJS($this->folder);
-        $plugins->includeCSS($this->folder);
+        $plugins->includeJs('', $this->folder); // filename, folder name
+        $plugins->includeCss('', $this->folder);
     }
     
     

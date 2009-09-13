@@ -399,10 +399,10 @@ class Hotaru
         global $cage, $plugins;
         
         if ($this->pageType == 'admin') {
-            $plugins->checkActions('admin_header_include');
+            $plugins->pluginHook('admin_header_include');
             $prefix = 'hotaru_admin_';
         } else {
-            $plugins->checkActions('header_include');
+            $plugins->pluginHook('header_include');
             $prefix = 'hotaru_';
         }
 
@@ -411,11 +411,11 @@ class Hotaru
         
         if($type == 'css') { 
             $content_type = 'text/css';
-            $includes = $plugins->getIncludeCSS();
+            $includes = $plugins->getCssIncludes();
         } else { 
             $type = 'js'; 
             $content_type = 'text/javascript';
-            $includes = $plugins->getIncludeJS();
+            $includes = $plugins->getJsIncludes();
         }
 
         if(empty($includes)) { return false; }

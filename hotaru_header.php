@@ -130,9 +130,9 @@ if (($hotaru_user) && ($cage->cookie->keyExists('hotaru_key'))) {
 }
 
 // Enable plugins to define global settings, etc. 
-$results = $plugins->checkActions('hotaru_header');
+$results = $plugins->pluginHook('hotaru_header');
 
-/*  The following extracts the results of checkActions which is 
+/*  The following extracts the results of pluginHook which is 
     handy for making objects from plugins global */
 if (isset($results) && is_array($results)) 
 {

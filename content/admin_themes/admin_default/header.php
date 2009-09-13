@@ -70,21 +70,21 @@ global $hotaru, $admin, $plugins, $lang; // don't remove
    <link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css'; ?>" type="text/css">
    <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico">
    
-   <?php $plugins->checkActions('admin_header_include_raw'); ?>
+   <?php $plugins->pluginHook('admin_header_include_raw'); ?>
       
 </head>
 <body>
 <?php if ($announcements = $admin->checkAdminAnnouncements()) { ?>
     <div id="announcement">
-        <?php $plugins->checkActions('admin_announcement_first'); ?>
+        <?php $plugins->pluginHook('admin_announcement_first'); ?>
         <?php foreach ($announcements as $announcement) { echo $announcement . "<br />"; } ?>
-        <?php $plugins->checkActions('admin_announcement_last'); ?>
+        <?php $plugins->pluginHook('admin_announcement_last'); ?>
     </div>
 <?php } ?>
 <div id="doc2" class="yui-t7">
     <div id="hd" role="banner">
         <a href="<?php echo BASEURL; ?>"><img src="<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/hotaru_468x60.png"></a>
-        <?php $plugins->checkActions('header_post_logo'); ?>
+        <?php $plugins->pluginHook('header_post_logo'); ?>
         
         <!-- NAVIGATION -->
         <?php echo $admin->displayAdminTemplate('navigation'); ?>

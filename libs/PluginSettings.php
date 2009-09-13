@@ -25,9 +25,139 @@
  * @link      http://www.hotarucms.org/
  */
 
-class PluginSettings
+class PluginSettings extends PluginAccess
 {
 
+    /**
+     * Get the value for a given plugin and setting
+     *
+     * @param string $folder name of plugin folder
+     * @param string $setting name of the setting to retrieve
+     * @return string|false
+     *
+     * Notes: If there are multiple settings with the same name,
+     * this will only get the first.
+     */
+    function getSetting($setting = '', $folder = '')
+    {
+        global $db;
+        
+        // Set default to the current plugin if not specified
+        if (!$folder) { $folder = $this->folder; }
+        $sql = "SELECT plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
+        $value = $db->get_var($db->prepare($sql, $folder, $setting));
+        if ($value) { return $value; } else { return false; }
+    }
+    
+    
+    /**
+     * Get an array of settings for a given plugin
+     *
+     * @param string $folder name of plugin folder
+     * @return array|false
+     *
+     * Note: Unlike "getSetting", this will get ALL settings with the same name.
+     */
+    function getSettingsArray($folder = '') {
+        global $db;
+        
+        // Set default to the current plugin if not specified
+        if (!$folder) { $folder = $this->folder; }
+        
+        $sql = "SELECT plugin_setting, plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s)";
+        $results = $db->get_results($db->prepare($sql, $folder));
+        
+        if ($results) { return $results; } else { return false; }
+    }
+    
+    
+    /**
+     * Get and unserialize serialized settings
+     *
+     * @return array - of submit settings
+     */
+    function getSerializedSettings($folder = '')
+    {
+        global $plugins;
+        
+        // Set default to the current plugin if not specified
+        if (!$folder) { $folder = $this->folder; }
+        
+        // Get settings from the database if they exist...
+        $settings = unserialize($this->getSetting($folder . '_settings', $folder));
+        return $settings;
+    }
+    
+    
+    /**
+     * Determine if a plugin setting already exists
+     *
+     * @param string $folder name of plugin folder
+     * @param string $setting name of the setting to retrieve
+     * @return string|false
+     */
+    function isSetting($setting = '', $folder = '') {
+        global $db;
+        
+        // Set default to the current plugin if not specified
+        if (!$folder) { $folder = $this->folder; }
+        
+        $sql = "SELECT plugin_setting FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
+        $returned_setting = $db->get_var($db->prepare($sql, $folder, $setting));
+        if ($returned_setting) { 
+            return $returned_setting; 
+        } else { 
+            return false; 
+        }
+    }
+    
+    /**
+     * Update a plugin setting
+     *
+     * @param string $folder name of plugin folder
+     * @param string $setting name of the setting
+     * @param string $setting stting value
+     */
+    function updateSetting($setting = '', $value = '', $folder = '')
+    {
+        global $db, $current_user;
+        
+        if (!$folder) { $folder = $this->folder; }
+        
+        $exists = $this->isSetting($setting, $folder);
+        if (!$exists) 
+        {
+            $sql = "INSERT INTO " . TABLE_PLUGINSETTINGS . " (plugin_folder, plugin_setting, plugin_value, plugin_updateby) VALUES (%s, %s, %s, %d)";
+            $db->query($db->prepare($sql, $folder, $setting, $value, $current_user->getId()));
+        } else 
+        {
+            $sql = "UPDATE " . TABLE_PLUGINSETTINGS . " SET plugin_folder = %s, plugin_setting = %s, plugin_value = %s, plugin_updateby = %d WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
+            $db->query($db->prepare($sql, $folder, $setting, $value, $current_user->getId(), $folder, $setting));
+        }
+    }
+    
+
+    /**
+     * Deletes rows from pluginsettings that match a given setting or plugin
+     *
+     * @param string $setting name of the setting to remove
+     * @param string $folder name of plugin folder
+     */
+    function deleteSettings($setting = '', $folder = '')
+    {
+        global $db;
+        
+        if ($setting) {
+            $sql = "DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_setting = %s";
+            $db->query($db->prepare($sql, $setting));
+        }
+        
+        if ($folder) {
+            $sql = "DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_folder = %s";
+            $db->query($db->prepare($sql, $folder));
+        }
+    }
+    
 }
 
 ?>

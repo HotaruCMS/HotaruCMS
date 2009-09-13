@@ -46,7 +46,7 @@ if ($cage->post->getAlpha('submit2') == 'true') {
     $post_id = 0;
 }
 
-$plugins->checkActions('submit_form_2_assign');
+$plugins->pluginHook('submit_form_2_assign');
 
 ?>
 
@@ -77,7 +77,7 @@ $plugins->checkActions('submit_form_2_assign');
     </tr>
     <?php } ?>
     
-    <?php $plugins->checkActions('submit_form_2_fields'); ?>
+    <?php $plugins->pluginHook('submit_form_2_fields'); ?>
             
     <input type='hidden' name='post_orig_url' value='<?php echo $post_orig_url; ?>' />
     <input type='hidden' name='post_id' value='<?php echo $post_id; ?>' />

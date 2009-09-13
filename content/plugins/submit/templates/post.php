@@ -34,7 +34,7 @@ $user->getUserBasic($post->getAuthor());
 <?php if($hotaru->title != 'submit2') { ?>
 <div id="breadcrumbs">
     <a href="<?php echo BASEURL; ?>"><?php echo $lang['submit_form_home']; ?></a> &raquo; 
-    <?php $plugins->checkActions('breadcrumbs'); ?> 
+    <?php $plugins->pluginHook('breadcrumbs'); ?> 
     <?php echo $hotaru->title ?>
 </div>
 <?php } ?>
@@ -42,14 +42,14 @@ $user->getUserBasic($post->getAuthor());
 <!-- POST -->
 <?php if ($post->getStatus() != 'buried') { ?>
 
-    <?php $result = $plugins->checkActions('submit_pre_show_post'); 
+    <?php $result = $plugins->pluginHook('submit_pre_show_post'); 
         if (!isset($result) || !is_array($result)) {
         // if buried during that plugin call, the post won't show...
     ?>
     
         <div class="show_post vote_button_space_<?php echo $post->post_vars['vote_type']; ?>">
         
-            <?php $plugins->checkActions('submit_show_post_pre_title'); ?>
+            <?php $plugins->pluginHook('submit_show_post_pre_title'); ?>
         
             <div class="show_post_title"><a href='<?php echo $post->getOrigUrl(); ?>'><?php echo $post->getTitle(); ?></a></div>
         
@@ -60,7 +60,7 @@ $user->getUserBasic($post->getAuthor());
                     if ($post->getUseAuthor()) { echo " by <a href='" . url(array('user' => $user->userName)) . "'>" . $user->userName . "</a>"; } 
                     ?>
                     <?php if ($post->getUseDate()) { echo time_difference(unixtimestamp($post->getDate())) . " ago"; } ?>
-                    <?php $plugins->checkActions('submit_show_post_author_date'); ?>
+                    <?php $plugins->pluginHook('submit_show_post_author_date'); ?>
                     <?php
                         if (($hotaru->getTitle() != 'submit2') && ($current_user->getRole() == 'admin' || ($current_user->getId() == $user->getId()))) { 
                             echo "<a class='show_post_edit' href='" . BASEURL . "index.php?page=edit_post&amp;post_id=" . $post->getId() . "'>" . $lang["submit_post_edit"] . "</a>"; 
@@ -75,19 +75,19 @@ $user->getUserBasic($post->getAuthor());
             
             <div class="show_post_extra_fields">
                 <ul>
-                    <?php $plugins->checkActions('submit_show_post_extra_fields'); ?>
+                    <?php $plugins->pluginHook('submit_show_post_extra_fields'); ?>
                 </ul>
             </div>
                 
             <div class="show_post_extras">
-                <?php $plugins->checkActions('submit_show_post_extras'); ?>
+                <?php $plugins->pluginHook('submit_show_post_extras'); ?>
             </div>
             
         </div>
         
-        <?php $plugins->checkActions('submit_show_post_middle'); ?>
+        <?php $plugins->pluginHook('submit_show_post_middle'); ?>
         
-        <?php $plugins->checkActions('submit_post_show_post'); ?>
+        <?php $plugins->pluginHook('submit_post_show_post'); ?>
         
     <?php } ?>
     

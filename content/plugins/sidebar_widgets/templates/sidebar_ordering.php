@@ -91,7 +91,7 @@ for ($i=1; $i<=$sidebars; $i++) {
 <div class="clear"></div>
 <div id="plugin_management_notice" class="info_box gray_box" style="margin-top: 2.0em";>
     <p class="info_header"><?php echo $lang["sidebar_ordering_guide"]; ?></p>
-    <?php $plugins->checkActions('sidebar_ordering_guide_top'); ?>
+    <?php $plugins->pluginHook('sidebar_ordering_guide_top'); ?>
     &raquo; <?php echo $lang["sidebar_ordering_guide_1"]; ?><br />
-    <?php $plugins->checkActions('sidebar_ordering_guide_bottom'); ?>
+    <?php $plugins->pluginHook('sidebar_ordering_guide_bottom'); ?>
 </div>

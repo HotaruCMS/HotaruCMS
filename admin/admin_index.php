@@ -63,7 +63,7 @@ if (!$page) {
 }
 
 // Authenticate the admin if the Users plugin is INACTIVE:
-if (!$plugins->pluginActive('users'))
+if (!$plugins->isActive('users'))
 {
     if (($page != 'admin_login') && !$result = $admin->isAdminCookie())
     {
@@ -72,11 +72,11 @@ if (!$plugins->pluginActive('users'))
 }
 
 // Authenticate the admin if the Users plugin is ACTIVE:
-if (isset($current_user) && $plugins->pluginActive('users'))
+if (isset($current_user) && $plugins->isActive('users'))
 {
     // This first condition happens when the Users plugin is activated 
     // and there's no cookie for the Admin yet.
-    if (($current_user->userName == "") && $plugins->pluginActive('users')) 
+    if (($current_user->userName == "") && $plugins->isActive('users')) 
     {
         header('Location: ' . BASEURL . 'index.php?page=login');
         die; exit;
@@ -90,7 +90,7 @@ if (isset($current_user) && $plugins->pluginActive('users'))
 
 // If we get this far, we know that the user is an administrator.
 
-$plugins->checkActions('admin_index');
+$plugins->pluginHook('admin_index');
 
 switch ($page) {
     case "admin_login":

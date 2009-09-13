@@ -41,7 +41,7 @@ class SidebarWidgets extends PluginFunctions
         global $db, $plugins, $post;
         
         // A plugin hook so other plugin developers can add defaultsettings
-        $plugins->checkActions('sidebar_install_plugin');
+        $plugins->pluginHook('sidebar_install_plugin');
         
         $plugins->includeLanguage('sidebar_widgets');
     }
@@ -239,7 +239,7 @@ class SidebarWidgets extends PluginFunctions
         $sidebar_settings = unserialize($plugins->pluginSettings('sidebar', 'sidebar_settings')); 
             
         // A plugin hook so other plugin developers can save settings   
-        $plugins->checkActions('sidebar_save_settings');
+        $plugins->pluginHook('sidebar_save_settings');
         
         // Save new settings...    
     

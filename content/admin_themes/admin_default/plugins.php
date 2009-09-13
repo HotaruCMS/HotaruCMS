@@ -41,7 +41,7 @@ if($the_plugins) { $the_plugins = sksort($the_plugins, "order", "int", true); } 
 
 <div id="plugin_list">
 
-<?php $plugins->checkActions('plugins_top'); ?>
+<?php $plugins->pluginHook('plugins_top'); ?>
 
 <table>
 
@@ -122,12 +122,12 @@ if($the_plugins) { $the_plugins = sksort($the_plugins, "order", "int", true); } 
 <div class="clear"></div>
 <div id="plugin_management_notice" class="info_box gray_box" style="margin-top: 2.0em";>
     <p class="info_header"><?php echo $lang["admin_theme_plugins_guide"]; ?></p>
-    <?php $plugins->checkActions('plugins_guide_top'); ?>
+    <?php $plugins->pluginHook('plugins_guide_top'); ?>
     &raquo; <?php echo $lang["admin_theme_plugins_guide1"]; ?><br />
     &raquo; <?php echo $lang["admin_theme_plugins_guide2"]; ?><br />
     &raquo; <?php echo $lang["admin_theme_plugins_guide3"]; ?><br />
-    <?php $plugins->checkActions('plugins_guide_bottom'); ?>
+    <?php $plugins->pluginHook('plugins_guide_bottom'); ?>
 </div>
 
 
-<?php $plugins->checkActions('plugins_bottom'); ?>
+<?php $plugins->pluginHook('plugins_bottom'); ?>

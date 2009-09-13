@@ -44,12 +44,12 @@ class Categories extends PluginFunctions
      */
     public function install_plugin()
     {
-        global $db, $plugins, $post;
+        global $db, $post;
         
         // Default settings (Note: we can't use $post->vars because it hasn't been filled yet.)
-        $plugins->pluginSettingsUpdate('submit', 'submit_categories', 'checked');
-        $plugins->pluginSettingsUpdate('sidebar_widgets', 'categories', '');
-        $plugins->pluginSettingsUpdate('categories', 'categories_bar', 'menu');
+        $this->updateSetting('submit', 'submit_categories', 'checked');
+        $this->updateSetting('sidebar_widgets', 'categories', '');
+        $this->updateSetting('categories', 'categories_bar', 'menu');
     }
     
     
@@ -58,13 +58,13 @@ class Categories extends PluginFunctions
      */
     public function hotaru_header()
     {
-        global $post, $hotaru, $cage, $plugins;
+        global $post, $hotaru, $cage;
         
         // The categories table is defined 
         if (!defined('TABLE_CATEGORIES')) { define("TABLE_CATEGORIES", DB_PREFIX . "categories"); }
         
         // include language file
-        $plugins->includeLanguage('categories');
+        $this->includeLanguage();
         
         // Get page title    
         if ($cage->get->keyExists('category'))
@@ -88,13 +88,13 @@ class Categories extends PluginFunctions
      */
     public function submit_hotaru_header_1()
     {
-        global $post, $plugins;
+        global $post;
         
         // The categories table is defined 
         if (!defined('TABLE_CATEGORIES')) { define("TABLE_CATEGORIES", DB_PREFIX . "categories"); }
         
         // include language file
-        $plugins->includeLanguage('categories');
+        $this->includeLanguage('categories');
         
         $post->vars['category'] = 1;    // default category ('all').
         $post->vars['catName'] = '';
@@ -114,7 +114,7 @@ class Categories extends PluginFunctions
      */
     public function submit_hotaru_header_2()
     {
-        global $db, $hotaru, $post, $plugins, $cage;
+        global $db, $hotaru, $post, $cage;
             
         if (FRIENDLY_URLS == "true" && $post->id == 0) {
             // No post stored in post object, nothing was succesfully read by the Submit plugin        
@@ -156,11 +156,11 @@ class Categories extends PluginFunctions
      */
     public function post_read_post_1()
     {
-        global $plugins, $post;
+        global $post;
         
         //categories
-        if (($plugins->pluginSettings('submit', 'submit_categories') == 'checked') 
-            && ($plugins->pluginActive('categories'))) { 
+        if (($this->getSetting('submit', 'submit_categories') == 'checked') 
+            && ($this->pluginActive())) { 
             $post->vars['useCategories'] = true; 
         } else { 
             $post->vars['useCategories'] = false; 
@@ -333,7 +333,7 @@ class Categories extends PluginFunctions
      */
     public function submit_is_page_main()
     {
-        global $db, $post, $plugins, $cage, $hotaru;
+        global $db, $post, $cage, $hotaru;
         
         if ($post->vars['isCategoryPost']) {
             $hotaru->displayTemplate('post', 'submit');
@@ -414,12 +414,12 @@ class Categories extends PluginFunctions
      */
     public function sidebar_widget_categories($args)
     {
-        global $db, $the_cats, $cat_level, $lang, $hotaru, $plugins, $sidebar;
+        global $db, $the_cats, $cat_level, $lang, $hotaru, $sidebar;
         
         $catObj = new Category();
         
         // Get settings from database if they exist...
-        $bar = $plugins->pluginSettings('categories', 'categories_bar');
+        $bar = $this->getSetting('categories_bar');
         
         // Only show if the sidebar is enabled
         if ($bar == 'side') {
@@ -461,10 +461,10 @@ class Categories extends PluginFunctions
      */
     public function submit_settings_get_values()
     {
-        global $plugins, $categories;
+        global $categories;
         
         // Get settings from database if they exist... should return 'checked'
-        $categories = $plugins->pluginSettings('submit', 'submit_categories');
+        $categories = $this->getSetting('submit', 'submit_categories');
         
         // otherwise set to blank...
         if (!$categories) { $categories = ''; }
@@ -477,7 +477,7 @@ class Categories extends PluginFunctions
      */
     public function submit_settings_form()
     {
-        global $plugins, $lang, $categories;
+        global $lang, $categories;
         
         echo "<input type='checkbox' name='categories' value='categories' " . $categories . ">&nbsp;&nbsp;" . $lang["submit_settings_categories"] . "<br />";
     
@@ -489,7 +489,7 @@ class Categories extends PluginFunctions
      */
     public function submit_save_settings()
     {
-        global $plugins, $cage, $lang, $categories;
+        global $cage, $lang, $categories;
         
         // Categories
         if ($cage->post->keyExists('categories')) { 
@@ -500,7 +500,7 @@ class Categories extends PluginFunctions
             $post->vars['useCategories'] = false;
         }
             
-        $plugins->pluginSettingsUpdate('submit', 'submit_categories', $categories);
+        $this->updateSetting('submit', 'submit_categories', $categories);
     
     }
     
@@ -524,7 +524,7 @@ class Categories extends PluginFunctions
      */
     public function admin_plugin_settings() {
         require_once(PLUGINS . 'categories/categories_settings.php');
-        $catSettings = new CategoriesSettings();
+        $catSettings = new CategoriesSettings($this->folder);
         $catSettings->settings();
         return true;
     }
@@ -543,10 +543,10 @@ class Categories extends PluginFunctions
      */
     public function navigation_last()
     {
-        global $db, $plugins;
+        global $db;
     
         // Get settings from database if they exist...
-        $bar = $plugins->pluginSettings('categories', 'categories_bar');
+        $bar = $this->getSetting('categories_bar');
         
         // Only show if the menu bar is enabled
         if ($bar == 'menu') {

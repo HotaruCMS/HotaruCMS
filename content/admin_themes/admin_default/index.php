@@ -29,13 +29,13 @@
 global $hotaru, $admin, $plugins, $current_user, $lang; // don't remove
 
 // plugin hook
-$result = $plugins->checkActions('admin_theme_index_replace');
+$result = $plugins->pluginHook('admin_theme_index_replace');
 if (!isset($result) || !is_array($result)) {
 ?>
         <!-- HEADER-->
         <?php
             // plugin hook
-            $result = $plugins->checkActions('admin_theme_index_header');
+            $result = $plugins->pluginHook('admin_theme_index_header');
             if (!isset($result) || !is_array($result)) {
                 $admin->displayAdminTemplate('header');
             }
@@ -53,7 +53,7 @@ if (!isset($result) || !is_array($result)) {
                         <div id="main">
                         <?php
                             // plugin hook
-                        $result = $plugins->checkActions('admin_theme_index_main');
+                        $result = $plugins->pluginHook('admin_theme_index_main');
                         if (!isset($result) || !is_array($result)) {
                                 $page = $hotaru->getPageName();
                                 if ($page == 'admin_login') {
@@ -74,7 +74,7 @@ if (!isset($result) || !is_array($result)) {
                         <!-- SIDEBAR -->
                         <?php
                             // plugin hook
-                            $result = $plugins->checkActions('admin_theme_index_sidebar');
+                            $result = $plugins->pluginHook('admin_theme_index_sidebar');
                             if (!isset($result) || !is_array($result)) {
                                 $admin->displayAdminTemplate('sidebar');
                             }
@@ -86,7 +86,7 @@ if (!isset($result) || !is_array($result)) {
         <!-- FOOTER -->
         <?php
             // plugin hook
-            $result = $plugins->checkActions('admin_theme_index_footer');
+            $result = $plugins->pluginHook('admin_theme_index_footer');
             if (!isset($result) || !is_array($result)) {
                 $admin->displayAdminTemplate('footer');
             }

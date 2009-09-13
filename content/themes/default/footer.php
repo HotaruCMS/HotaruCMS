@@ -30,8 +30,8 @@ global $hotaru, $plugins, $lang;
 ?>
     <div id="ft">
         <?php 
-            $plugins->checkActions('footer_top');
-            $plugins->checkActions('footer');
+            $plugins->pluginHook('footer_top');
+            $plugins->pluginHook('footer');
         
             // Link to forums...
             echo "<p>" . $lang["main_theme_footer_brought_by"];
@@ -39,12 +39,12 @@ global $hotaru, $plugins, $lang;
             echo $lang["main_theme_footer_open_source"] . "</p>";
         
             $hotaru->showQueriesAndTime();
-            $plugins->checkActions('footer_bottom'); 
+            $plugins->pluginHook('footer_bottom'); 
         ?>
     </div> <!-- close "ft" -->
 </div> <!-- close "yui-t7 first" -->
 
-<?php $plugins->checkActions('pre_close_body'); ?>
+<?php $plugins->pluginHook('pre_close_body'); ?>
 
 </body>
 </html>

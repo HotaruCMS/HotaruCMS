@@ -30,12 +30,13 @@ $user = new UserBase();
 
 // Prepare filter and breadcrumbs
 $stories = $post->prepareList();
+
 ?>
 
 <!-- BREADCRUMBS -->
 <div id="breadcrumbs">
     <a href="<?php echo BASEURL; ?>"><?php echo $lang['submit_form_home']; ?></a> &raquo; 
-    <?php $plugins->checkActions('breadcrumbs'); ?> 
+    <?php $plugins->pluginHook('breadcrumbs'); ?> 
     <?php echo $page_title; ?>
 </div>
 
@@ -46,15 +47,15 @@ if ($stories) {
     $pagedResults = new Paginated($stories, $post->getPostsPerPage(), $pg);
     while($story = $pagedResults->fetchPagedRow()) {    //when $story is false loop terminates    
         $post->readPost($story->post_id);
-        $user->getUserBasic($post->author);
+        $user->getUserBasic($post->getAuthor());
 ?>
 
 <!-- POST -->
-<?php $plugins->checkActions('submit_pre_show_post'); ?>
+<?php $plugins->pluginHook('submit_pre_show_post'); ?>
 
     <div class="show_post vote_button_space_<?php echo $post->vars['vote_type']; ?>">
     
-        <?php $plugins->checkActions('submit_show_post_pre_title'); ?>
+        <?php $plugins->pluginHook('submit_show_post_pre_title'); ?>
         
         <div class="show_post_title"><a href='<?php echo $post->getOrigUrl(); ?>'><?php echo $post->getTitle(); ?></a></div>
     
@@ -65,7 +66,7 @@ if ($stories) {
                 if ($post->getUseAuthor()) { echo " by <a href='" . url(array('user' => $user->username)) . "'>" . $user->username . "</a>"; } 
                 ?>
                 <?php if ($post->getUseDate()) { echo time_difference(unixtimestamp($post->getDate())) . " ago"; } ?>
-                <?php $plugins->checkActions('submit_show_post_author_date'); ?>
+                <?php $plugins->pluginHook('submit_show_post_author_date'); ?>
                 <?php 
                     if ($current_user->getRole() == 'admin' || ($current_user->getId() == $user->getId())) { 
                         echo "<a class='show_post_edit' href='" . BASEURL . "index.php?page=edit_post&amp;post_id=" . $post->getId() . "'>" . $lang["submit_post_edit"] . "</a>"; 
@@ -88,12 +89,12 @@ if ($stories) {
         
         <div class="show_post_extra_fields">
             <ul>
-                <?php $plugins->checkActions('submit_show_post_extra_fields'); ?>
+                <?php $plugins->pluginHook('submit_show_post_extra_fields'); ?>
             </ul>
         </div>
         
         <div class="show_post_extras">
-            <?php $plugins->checkActions('submit_show_post_extras'); ?>
+            <?php $plugins->pluginHook('submit_show_post_extras'); ?>
         </div>
             
     </div>

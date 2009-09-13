@@ -1,8 +1,6 @@
 <?php
 /**
- * name: Sidebar
- * description: Class to manage a sidebar
- * file: /plugins/sidebar/class.sidebar.php
+ * The Sidebar class contains some useful methods when using a sidebar
  *
  * PHP version 5
  *
@@ -70,7 +68,7 @@ class Sidebar {
         // Get settings from the database if they exist...
         $sidebar_settings = $this->getSidebarSettings();
             
-        $sidebar_widgets = $plugins->pluginSettingsArray('sidebar_widgets');
+        $sidebar_widgets = $plugins->getSettingsArray('sidebar_widgets');
         
         if ($sidebar_widgets) {
             $count = 1;
@@ -94,7 +92,7 @@ class Sidebar {
                 $sidebar_settings['sidebar_widgets'][$widget->plugin_setting]['args'] = $widget->plugin_value;
                 $count++;
             }
-            $plugins->pluginSettingsUpdate('sidebar', 'sidebar_settings', serialize($sidebar_settings));
+            $plugins->updateSetting('sidebar', 'sidebar_settings', serialize($sidebar_settings));
         }
     }
 
@@ -109,7 +107,7 @@ class Sidebar {
         global $plugins;
         
         // Get settings from the database if they exist...
-        $sidebar_settings = unserialize($plugins->pluginSettings('sidebar', 'sidebar_settings'));         
+        $sidebar_settings = unserialize($plugins->getSetting('sidebar_settings', 'sidebar'));         
         return $sidebar_settings;
     }
     

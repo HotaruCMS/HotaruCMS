@@ -37,7 +37,7 @@ global $plugins, $admin, $cage, $lang; // don't remove
     
 <h2><?php echo $lang["admin_theme_maintenance_title"]; ?></h2>
     
-<?php $plugins->checkActions('admin_maintenance_top'); ?>
+<?php $plugins->pluginHook('admin_maintenance_top'); ?>
 
 <?php
     if ($action = $cage->get->testAlnumLines('action')) {
@@ -99,4 +99,4 @@ global $plugins, $admin, $cage, $lang; // don't remove
 <?php } ?>
 </ul>
     
-<?php $plugins->checkActions('admin_maintenance_bottom'); ?>
+<?php $plugins->pluginHook('admin_maintenance_bottom'); ?>
