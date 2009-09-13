@@ -77,13 +77,13 @@ class Comments extends pluginFunctions
         }
         
         // Default settings 
-        $comment_settings['comment_form'] = "checked";
-        $comment_settings['comment_avatars'] = "";
-        $comment_settings['comment_voting'] = "";
-        $comment_settings['comment_levels'] = 5;
-        $comment_settings['comment_email'] = SITE_EMAIL;
-        $comment_settings['comment_allowable_tags'] = "<b><i><u><a><blockquote><strike>";
-        $this->updateSetting('comment_settings', serialize($comment_settings));
+        $comments_settings['comment_form'] = "checked";
+        $comments_settings['comment_avatars'] = "";
+        $comments_settings['comment_voting'] = "";
+        $comments_settings['comment_levels'] = 5;
+        $comments_settings['comment_email'] = SITE_EMAIL;
+        $comments_settings['comment_allowable_tags'] = "<b><i><u><a><blockquote><strike>";
+        $this->updateSetting('comments_settings', serialize($comments_settings));
         
         // Include language file. Also included in hotaru_header, but needed here so 
         // that the link in the Admin sidebar shows immediately after installation.
@@ -118,15 +118,15 @@ class Comments extends pluginFunctions
         $comment = new Comment();
         
         // Get settings from database if they exist...
-        $comment_settings = $this->getSerializedSettings();
+        $comments_settings = $this->getSerializedSettings();
     
         // Assign settings to class member
-        $comment->setForm($comment_settings['comment_form']);
-        $comment->setAvatars($comment_settings['comment_avatars']);
-        $comment->setVoting($comment_settings['comment_voting']);
-        $comment->setEmail($comment_settings['comment_email']);
-        $comment->setAllowableTags($comment_settings['comment_allowable_tags']);
-        $comment->setLevels($comment_settings['comment_levels']);
+        $comment->setForm($comments_settings['comment_form']);
+        $comment->setAvatars($comments_settings['comment_avatars']);
+        $comment->setVoting($comments_settings['comment_voting']);
+        $comment->setEmail($comments_settings['comment_email']);
+        $comment->setAllowableTags($comments_settings['comment_allowable_tags']);
+        $comment->setLevels($comments_settings['comment_levels']);
             
         $vars['comment'] = $comment; 
         return $vars; 

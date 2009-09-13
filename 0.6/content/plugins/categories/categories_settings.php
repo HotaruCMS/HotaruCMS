@@ -46,7 +46,7 @@ class CategoriesSettings extends Categories
         echo "<h1>" . $lang["categories_settings_header"] . "</h1>\n";
           
         // Get settings from database if they exist...
-        $bar = $this->getSetting('categories', 'categories_bar');
+        $bar = $this->getSetting('categories_bar');
     
         $this->pluginHook('categories_settings_get_values');
         
