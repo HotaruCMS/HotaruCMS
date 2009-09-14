@@ -521,10 +521,35 @@ class PluginFunctions extends PluginManagement
             }
             
         }
-            
     }
-
-
+        
+    /**
+     * Redirect to Hotaru for including CSS (simplifies plugin development to include via Plugins)
+     *
+     * @param string $filename optional filename without file extension
+     *
+     */    
+    public function includeCss($filename = '')
+    {
+        global $hotaru;
+        
+        return $hotaru->includeCss($filename, $this->getFolder()); // returned for testing purposes only
+    }
+    
+    
+    /**
+     * Redirect to Hotaru for including CSS (simplifies plugin development to include via Plugins)
+     *
+     * @param string $filename optional filename without file extension
+     *
+     */    
+    public function includeJs($filename = '')
+    {
+        global $hotaru;
+        
+        return $hotaru->includeJs($filename, $this->getFolder()); // returned for testing purposes only
+    }
+            
 }
 
 ?>

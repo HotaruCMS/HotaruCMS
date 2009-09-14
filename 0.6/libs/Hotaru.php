@@ -458,6 +458,8 @@ class Hotaru
         
         // Add this css file to the global array of css_files
         $this->setCssIncludes($file_location);
+        
+        return $folder; // returned for testing purposes only
      }
 
 
@@ -480,6 +482,8 @@ class Hotaru
         
         // Add this css file to the global array of css_files
         $this->setJsIncludes($file_location);
+        
+        return $folder; // returned for testing purposes only
      }
      
      

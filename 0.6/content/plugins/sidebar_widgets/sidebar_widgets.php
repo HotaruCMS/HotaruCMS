@@ -95,11 +95,12 @@ class SidebarWidgets extends PluginFunctions
                 // Call this widget's function
                 if (function_exists($function_name))
                 {
+                    echo $function_name . " exists<br />";
                     $function_name($details['args']);    // pass an argument, e.g. a feed ID for the RSS Show plugin
                 } 
-                elseif ($details['class']) 
+                elseif ($details['class'] && method_exists($details['class'], $function_name)) 
                 {   
-                    // must be a class object!
+                    // must be a class object with a method that matches!
                     $class = new $details['class'];
                     $class->$function_name($details['args']);
                 } 
@@ -222,39 +223,7 @@ class SidebarWidgets extends PluginFunctions
         $hotaru->showMessages();
         $hotaru->displayTemplate('sidebar_ordering', 'sidebar_widgets');
     }
-    
-    
-    /**
-     * Save Sidebar Settings
-     *
-     * @return true
-     */
-    public function save_settings()
-    {
-        global $cage, $hotaru, $lang;
-        
-        $error = 0;
-        
-        // Get settings from the database if they exist...
-        $sidebar_settings = unserialize($this->getSetting('sidebar_settings')); 
-            
-        // A plugin hook so other plugin developers can save settings   
-        $this->pluginHook('sidebar_save_settings');
-        
-        // Save new settings...    
-    
-        
-        // parameters: plugin folder name, setting name, setting value
-        $this->updateSetting('sidebar_settings', serialize($sidebar_settings));
-        
-        if ($error == 0) {
-            $hotaru->messages[$lang["sidebar_settings_saved"]] = "green";
-        }
-        
-        $hotaru->showMessages();
-        
-        return true;    
-    } 
+
 }
 
 ?>

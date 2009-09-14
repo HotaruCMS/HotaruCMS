@@ -6,7 +6,7 @@
  * folder: search
  * class: Search
  * requires: submit 0.4, sidebar_widgets 0.1
- * hooks: install_plugin, hotaru_header, header_include, submit_list_filter
+ * hooks: install_plugin, hotaru_header, header_include, post_list_filter
  *
  * Usage: Add <?php $plugins->pluginHook('search'); ?> to your theme, wherever you want to the "Search" form.
 *
@@ -94,7 +94,7 @@ class Search extends PluginFunctions
     /**
      * Use the search terms to build a filter
      */
-    public function submit_list_filter()
+    public function post_list_filter()
     {
         global $hotaru, $cage, $filter, $lang, $page_title, $orderby, $select;
         
@@ -107,7 +107,7 @@ class Search extends PluginFunctions
             {
     
                 // fetch sleect, orderby and filter,,,
-                $prepared_search = prepare_search_filter($search_terms);
+                $prepared_search = $this->prepareSearchFilter($search_terms);
                 extract($prepared_search);
                 
                 $rss = " <a href='" . url(array('page'=>'rss', 'search'=>stripslashes($orig_search_terms))) . "'>";
@@ -137,7 +137,7 @@ class Search extends PluginFunctions
             if (strlen(trim($search_term)) < 4) {
                 $full_index = false;
             }
-            if (is_stopword($search_term) == false) {
+            if ($this->isStopword($search_term) == false) {
                 $search_terms_clean .= $search_term . " ";
             }
         }
