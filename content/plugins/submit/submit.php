@@ -163,7 +163,7 @@ class Submit extends PluginFunctions
     {    
         global $current_user, $lang, $hotaru;
         
-        if ($current_user->loggedIn) {
+        if ($current_user->getLoggedIn()) {
             if ($hotaru->getTitle() == 'submit') { $status = "id='navigation_active'"; } else { $status = ""; }
             echo "<li><a  " . $status . " href='" . url(array('page'=>'submit')) . "'>" . $lang['submit_submit_a_story'] . "</a></li>\n";
         }
@@ -215,7 +215,7 @@ class Submit extends PluginFunctions
         
         if ($hotaru->isPage('submit2') && $post->getUseSubmission()) {
              
-            if ($current_user->loggedIn) {
+            if ($current_user->getLoggedIn()) {
                          
                 if ($cage->post->getAlpha('submit2') == 'true') {             
         
@@ -228,7 +228,7 @@ class Submit extends PluginFunctions
             
         } elseif ($hotaru->isPage('submit3') && $post->getUseSubmission()) {
              
-            if ($current_user->loggedIn) {
+            if ($current_user->getLoggedIn()) {
     
                  if ($cage->post->getAlpha('submit3') == 'edit') {             
         
@@ -248,7 +248,7 @@ class Submit extends PluginFunctions
             }
             
         } elseif ($hotaru->isPage('edit_post')) {
-            if ($current_user->loggedIn) {
+            if ($current_user->getLoggedIn()) {
                        
                 if ($cage->post->getAlpha('edit_post') == 'true') {
                     $post_orig_url = $cage->post->testUri('post_orig_url'); 
@@ -283,7 +283,7 @@ class Submit extends PluginFunctions
         
         if ($hotaru->isPage('submit')) {
               
-              if ($current_user->loggedIn) {
+              if ($current_user->getLoggedIn()) {
                            
                   if (!$post->getUseSubmission()) {
                     echo $lang['submit_disabled'];    
@@ -315,7 +315,7 @@ class Submit extends PluginFunctions
             
         } elseif ($hotaru->isPage('submit2')) {
              
-            if ($current_user->loggedIn) {
+            if ($current_user->getLoggedIn()) {
             
                 if (!$post->getUseSubmission()) {
                     echo $lang['submit_disabled'];    
@@ -340,7 +340,7 @@ class Submit extends PluginFunctions
         
         } elseif ($hotaru->isPage('submit3')) {
              
-            if ($current_user->loggedIn) {
+            if ($current_user->getLoggedIn()) {
             
                 if (!$post->getUseSubmission()) {
                     echo $lang['submit_disabled'];    
@@ -354,7 +354,7 @@ class Submit extends PluginFunctions
             }
             
         } elseif ($hotaru->isPage('edit_post')) {
-            if ($current_user->loggedIn) {
+            if ($current_user->getLoggedIn()) {
                 if ($cage->get->keyExists('sourceurl') || $cage->get->keyExists('post_id')) {
                     $hotaru->displayTemplate('submit_edit_post', 'submit');
                     return true;

@@ -39,12 +39,9 @@ class SidebarPosts extends PluginFunctions
      */
     public function install_plugin()
     {
-        global $db, $plugins;
-        
         // Default settings
-        $plugins->updateSetting('sidebar_posts_top', 'top', 'sidebar_widgets');
-        $plugins->updateSetting('sidebar_posts_latest', 'new', 'sidebar_widgets');
-            
+        $this->updateSetting('sidebar_posts_top', 'top', 'sidebar_widgets');
+        $this->updateSetting('sidebar_posts_latest', 'new', 'sidebar_widgets');
     }
     
     
@@ -55,16 +52,18 @@ class SidebarPosts extends PluginFunctions
      */
     function sidebar_widget_sidebar_posts($type = 'top')
     {
-        global $hotaru, $plugins, $post, $lang;
+        global $hotaru, $post, $lang;
         
-        $plugins->includeLanguage('sidebar_posts');
+        echo "IN SIDEBAR POSTS";
+        
+        $this->includeLanguage();
         
         // FILTER TO NEW POSTS OR TOP POSTS?
         if ($type == 'new' && $hotaru->getTitle() != 'latest') { 
-            $posts = $post->get_posts($post->filter(array('post_status = %s' => 'new'), 10));    // get latest stories
+            $posts = $post->getPosts($post->filter(array('post_status = %s' => 'new'), 10));    // get latest stories
             $title = $lang['sidebar_posts_latest_posts'];
         } elseif ($type == 'top' && $hotaru->getTitle() != 'top') {
-            $posts = $post->get_posts($post->filter(array('post_status = %s' => 'top'), 10));    // get top stories
+            $posts = $post->getPosts($post->filter(array('post_status = %s' => 'top'), 10));    // get top stories
             $title = $lang['sidebar_posts_top_posts'];
         }
         
@@ -79,10 +78,10 @@ class SidebarPosts extends PluginFunctions
         
             foreach ($posts as $item) {
                     
-                    // POST TITLE
-                    $output .= "<li class='sidebar_posts_item'>";
-                    $output .= "<span class='sidebar_posts_title'>";
-                    $output .= "<a href='" . url(array('page'=>$item->post_id)) . "'>" . urldecode($item->post_title) . "</a></span>";
+                // POST TITLE
+                $output .= "<li class='sidebar_posts_item'>";
+                $output .= "<span class='sidebar_posts_title'>";
+                $output .= "<a href='" . url(array('page'=>$item->post_id)) . "'>" . urldecode($item->post_title) . "</a></span>";
                 $output .= '</li>';
             }
         }

@@ -41,7 +41,7 @@ if ($cage->post->keyExists('post_id')) {
     $vote_settings = unserialize($plugins->pluginSettings('vote', 'vote_settings')); 
     
     // Only proceed if the user is logged in OR anonyous votes are allowed
-    if ($current_user->getLoggedIn() || ($post->vars['vote_anonymous_votes'] == 'checked')) {
+    if ($current_user->getLoggedIn() || ($post->vars['voteAnonymousVotes'] == 'checked')) {
             
         // get vote history for this post:
         

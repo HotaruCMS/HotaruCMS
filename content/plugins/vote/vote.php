@@ -87,7 +87,7 @@ class Vote extends PluginFunctions
         
         // Include language file. Also included in hotaru_header, but needed here so 
         // that the link in the Admin sidebar shows immediately after installation.
-        $this->includeLanguage('vote');
+        $this->includeLanguage();
        
     }  
     
@@ -100,7 +100,7 @@ class Vote extends PluginFunctions
         
         if (!defined('TABLE_POSTVOTES')) { define("TABLE_POSTVOTES", DB_PREFIX . 'postvotes'); }
         
-        $this->includeLanguage('vote');    
+        $this->includeLanguage();    
     }
     
     /**
@@ -109,10 +109,10 @@ class Vote extends PluginFunctions
     public function submit_hotaru_header_1() {
         global $post, $hotaru, $cage;
             
-        $post->vars['postVotesUp'] = 0;
-        $post->vars['postVotesDown'] = 0;
-        $post->vars['vote_anonymous_votes'] = '';    
-        $post->vars['vote_use_alerts'] = 'checked';    
+        $post->vars['votesUp'] = 0;
+        $post->vars['votesDown'] = 0;
+        $post->vars['voteAnonymousVotes'] = '';    
+        $post->vars['useAlerts'] = 'checked';    
     }
     
     /**
@@ -128,15 +128,15 @@ class Vote extends PluginFunctions
         
             // Determine vote type
             if ($vote_settings['vote_vote_unvote'] == 'checked') {
-                $post->vars['vote_type'] = "vote_unvote";
+                $post->vars['voteType'] = "vote_unvote";
             } elseif ($vote_settings['vote_up_down'] == 'checked') {
-                $post->vars['vote_type'] = "up_down";
+                $post->vars['voteType'] = "up_down";
             } else {
-                $post->vars['vote_type'] = "yes_no";
+                $post->vars['voteType'] = "yes_no";
             }
             
             // Enable anonymous voters?
-            $post->vars['vote_anonymous_votes'] = $vote_settings['vote_anonymous_votes'];
+            $post->vars['voteAnonymousVotes'] = $vote_settings['vote_anonymous_votes'];
             
             // Use alerts?
             $post->vars['vote_use_alerts'] = $vote_settings['vote_use_alerts'];
@@ -153,8 +153,8 @@ class Vote extends PluginFunctions
      */
     public function post_read_post_2() {
         global $post, $post_row;
-        $post->vars['postVotesUp'] = $post_row->postVotesUp;
-        $post->vars['postVotesDown'] = $post_row->postVotesDown;
+        $post->vars['votesUp'] = $post_row->postVotesUp;
+        $post->vars['votesDown'] = $post_row->postVotesDown;
     }
     
     
@@ -163,11 +163,11 @@ class Vote extends PluginFunctions
      */
     public function header_include()
     {
-        global $lang, $hotaru;
+        global $lang;
         
-        $hotaru->includeCss('vote');
-        $hotaru->includeJs('vote');
-        $hotaru->includeJs('vote', 'json2.min');
+        $this->includeCss();
+        $this->includeJs();
+        $this->includeJs('json2.min');
     }
     
     
@@ -194,11 +194,11 @@ class Vote extends PluginFunctions
         if ($submit_vote == 'checked') {
             // Determine vote type
             if ($vote_settings['vote_vote_unvote'] == 'checked') {
-                $post->vars['vote_type'] = "vote_unvote";
+                $post->vars['voteType'] = "vote_unvote";
             } elseif ($vote_settings['vote_up_down'] == 'checked') {
-                $post->vars['vote_type'] = "up_down";
+                $post->vars['voteType'] = "up_down";
             } else {
-                $post->vars['vote_type'] = "yes_no";
+                $post->vars['voteType'] = "yes_no";
             }
             
             //update the vote count
@@ -208,7 +208,7 @@ class Vote extends PluginFunctions
             //Insert one vote for each of $submit_vote_value;
             for ($i=0; $i<$submit_vote_value; $i++) {
                 $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d)";
-                $db->query($db->prepare($sql, $post->id, $current_user->getId(), $cage->server->testIp('REMOTE_ADDR'), $post->vars['vote_type'], 'positive', $current_user->getId()));
+                $db->query($db->prepare($sql, $post->id, $current_user->getId(), $cage->server->testIp('REMOTE_ADDR'), $post->vars['voteType'], 'positive', $current_user->getId()));
             }    
         }            
                     
@@ -256,7 +256,7 @@ class Vote extends PluginFunctions
                 $flagged = $db->get_var($db->prepare($sql, $post->getId(), $current_user->getId(), 'alert'));
                 if (!$flagged) {
                     $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_reason, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d, %d)";
-                    $db->query($db->prepare($sql, $post->getId(), $current_user->getId(), $cage->server->testIp('REMOTE_ADDR'), $post->vars['vote_type'], 'alert', $cage->get->testInt('alert'), $current_user->getId()));
+                    $db->query($db->prepare($sql, $post->getId(), $current_user->getId(), $cage->server->testIp('REMOTE_ADDR'), $post->vars['voteType'], 'alert', $cage->get->testInt('alert'), $current_user->getId()));
                 }
                 else
                 {
@@ -322,7 +322,7 @@ class Vote extends PluginFunctions
         } 
         
         // CHECK TO SEE IF THIS ANONYMOUS USER HAS VOTED FOR THIS POST
-        if (!$current_user->getLoggedIn() && ($post->vars['vote_anonymous_votes'] == 'checked')) {
+        if (!$current_user->getLoggedIn() && ($post->vars['voteAnonymousVotes'] == 'checked')) {
             $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_ip = %s AND vote_rating != %s";
             $voted = $db->get_var($db->prepare($sql, $post->id, $cage->server->testIp('REMOTE_ADDR'), 'alert'));
         }
