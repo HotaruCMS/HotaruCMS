@@ -42,8 +42,8 @@ class SidebarPosts extends PluginFunctions
         global $db, $plugins;
         
         // Default settings
-        $plugins->pluginSettingsUpdate('sidebar_widgets', 'sidebar_posts_top', 'top');
-        $plugins->pluginSettingsUpdate('sidebar_widgets', 'sidebar_posts_latest', 'new');
+        $plugins->updateSetting('sidebar_posts_top', 'top', 'sidebar_widgets');
+        $plugins->updateSetting('sidebar_posts_latest', 'new', 'sidebar_widgets');
             
     }
     
@@ -57,7 +57,7 @@ class SidebarPosts extends PluginFunctions
     {
         global $hotaru, $plugins, $post, $lang;
         
-            $plugins->includeLanguage('sidebar_posts');
+        $plugins->includeLanguage('sidebar_posts');
         
         // FILTER TO NEW POSTS OR TOP POSTS?
         if ($type == 'new' && $hotaru->getTitle() != 'latest') { 

@@ -39,7 +39,7 @@ global $hotaru, $plugins, $current_user, $lang; // don't remove
     <?php 
         if (!$plugins->isActive('users')) { 
 
-            if ($current_user->loggedIn == true) { 
+            if ($current_user->getLoggedIn() == true) { 
             
                 if ($hotaru->getTitle() == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
                 echo "<li><a " . $status . " href='" . url(array(), 'admin') . "'>" . $lang["main_theme_navigation_admin"] . "</a></li>"; 

@@ -38,12 +38,12 @@ class SidebarWidgets extends PluginFunctions
      */
     public function install_plugin()
     {
-        global $db, $plugins, $post;
+        global $db, $post;
         
         // A plugin hook so other plugin developers can add defaultsettings
-        $plugins->pluginHook('sidebar_install_plugin');
+        $this->pluginHook('sidebar_install_plugin');
         
-        $plugins->includeLanguage('sidebar_widgets');
+        $this->includeLanguage();
     }
     
     
@@ -52,9 +52,9 @@ class SidebarWidgets extends PluginFunctions
      */
     public function hotaru_header()
     {
-        global $hotaru, $plugins, $sidebar, $lang;
+        global $hotaru, $sidebar, $lang;
         
-        $plugins->includeLanguage('sidebar_widgets');
+        $this->includeLanguage();
         
         if ($hotaru->getSidebar()) {
             // Create a new global object called "sidebar".
@@ -80,12 +80,12 @@ class SidebarWidgets extends PluginFunctions
      */
     public function sidebar($sidebar_id = array(1))
     {
-        global $plugins, $sidebar, $hotaru;
+        global $sidebar, $hotaru;
     
         $sidebar_id = $sidebar_id[0];
             
         $widgets = $sidebar->getSidebarWidgets();
-    
+        
         foreach ($widgets as $widget => $details) {
             $function_name = "sidebar_widget_" . $widget;
             
@@ -141,14 +141,14 @@ class SidebarWidgets extends PluginFunctions
      */
     public function admin_plugin_settings()
     {
-        global $hotaru, $plugins, $cage, $lang, $sidebar;
+        global $hotaru, $cage, $lang, $sidebar;
         
         echo "<h1>" . $lang["sidebar_settings_header"] . "</h1>\n";
         
         if ($cage->get->testAlpha('action')) {
         
             // Get sidebar settings from the database...
-            $sidebar_settings = unserialize($plugins->pluginSettings('sidebar', 'sidebar_settings')); 
+            $sidebar_settings = unserialize($this->getSetting('sidebar_settings')); 
             
             // Get the list of sidebar widgets...
             $widgets = $sidebar->getSidebarWidgets();
@@ -215,7 +215,7 @@ class SidebarWidgets extends PluginFunctions
             }
             
             // Save updated sidebar settings
-            $plugins->pluginSettingsUpdate('sidebar', 'sidebar_settings', serialize($sidebar_settings));
+            $this->updateSetting('sidebar_settings', serialize($sidebar_settings));
             
         }
         
@@ -231,21 +231,21 @@ class SidebarWidgets extends PluginFunctions
      */
     public function save_settings()
     {
-        global $cage, $hotaru, $plugins, $lang;
+        global $cage, $hotaru, $lang;
         
         $error = 0;
         
         // Get settings from the database if they exist...
-        $sidebar_settings = unserialize($plugins->pluginSettings('sidebar', 'sidebar_settings')); 
+        $sidebar_settings = unserialize($this->getSetting('sidebar_settings')); 
             
         // A plugin hook so other plugin developers can save settings   
-        $plugins->pluginHook('sidebar_save_settings');
+        $this->pluginHook('sidebar_save_settings');
         
         // Save new settings...    
     
         
         // parameters: plugin folder name, setting name, setting value
-        $plugins->pluginSettingsUpdate('sidebar', 'sidebar_settings', serialize($sidebar_settings));
+        $this->updateSetting('sidebar_settings', serialize($sidebar_settings));
         
         if ($error == 0) {
             $hotaru->messages[$lang["sidebar_settings_saved"]] = "green";

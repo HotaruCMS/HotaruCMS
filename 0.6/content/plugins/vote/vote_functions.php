@@ -41,13 +41,13 @@ if ($cage->post->keyExists('post_id')) {
     $vote_settings = unserialize($plugins->pluginSettings('vote', 'vote_settings')); 
     
     // Only proceed if the user is logged in OR anonyous votes are allowed
-    if ($current_user->loggedIn || ($post->vars['vote_anonymous_votes'] == 'checked')) {
+    if ($current_user->getLoggedIn() || ($post->vars['vote_anonymous_votes'] == 'checked')) {
             
         // get vote history for this post:
         
-        if ($current_user->loggedIn) {
+        if ($current_user->getLoggedIn()) {
             $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND (vote_user_id = %d OR vote_user_ip = %s AND vote_rating != %s)";
-            $voted = $db->get_var($db->prepare($sql, $post_id, $current_user->id, $user_ip, 'alert'));
+            $voted = $db->get_var($db->prepare($sql, $post_id, $current_user->getId(), $user_ip, 'alert'));
         } else {
             $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_ip = %s AND vote_rating != %s";
             $voted = $db->get_var($db->prepare($sql, $post_id, $user_ip, 'alert'));
@@ -60,8 +60,8 @@ if ($cage->post->keyExists('post_id')) {
             return false;
         }
         
-        if ($current_user->loggedIn) {
-            $user_id = $current_user->id;
+        if ($current_user->getLoggedIn()) {
+            $user_id = $current_user->getId();
         } else {
             $user_id = 0;    // anonymous users get id 0.
         }
@@ -98,7 +98,7 @@ if ($cage->post->keyExists('post_id')) {
             if (!($voted && $vote_type == 'vote_unvote')) {
                 // skip this if we are undoing a vote using vote_unvote voting
                 $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d)";
-                $db->query($db->prepare($sql, $post_id, $user_id, $user_ip, $vote_type, $vote_rating, $current_user->id));
+                $db->query($db->prepare($sql, $post_id, $user_id, $user_ip, $vote_type, $vote_rating, $current_user->getId()));
             }
             // Remove positive vote, i.e. undo a vote if the user is changing his/her mind...
             if ($voted && $voted == 'positive') {

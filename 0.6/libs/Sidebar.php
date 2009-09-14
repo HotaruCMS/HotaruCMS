@@ -87,12 +87,12 @@ class Sidebar {
                 }
                 // Only reset enabled if it doesn't already exist.
                 if (!isset($sidebar_settings['sidebar_widgets'][$widget->plugin_setting]['class'])) {
-                    $sidebar_settings['sidebar_widgets'][$widget->plugin_setting]['class'] = $plugins->pluginClass($widget->plugin_setting);
+                    $sidebar_settings['sidebar_widgets'][$widget->plugin_setting]['class'] = $plugins->getClassName($widget->plugin_setting);
                 }
                 $sidebar_settings['sidebar_widgets'][$widget->plugin_setting]['args'] = $widget->plugin_value;
                 $count++;
             }
-            $plugins->updateSetting('sidebar', 'sidebar_settings', serialize($sidebar_settings));
+            $plugins->updateSetting('sidebar_settings', serialize($sidebar_settings), 'sidebar_widgets');
         }
     }
 
@@ -107,7 +107,7 @@ class Sidebar {
         global $plugins;
         
         // Get settings from the database if they exist...
-        $sidebar_settings = unserialize($plugins->getSetting('sidebar_settings', 'sidebar'));         
+        $sidebar_settings = unserialize($plugins->getSetting('sidebar_settings', 'sidebar_widgets'));         
         return $sidebar_settings;
     }
     

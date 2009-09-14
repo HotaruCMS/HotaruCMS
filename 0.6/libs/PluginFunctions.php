@@ -140,7 +140,7 @@ class PluginFunctions extends PluginManagement
         }
                     
         $sql = "REPLACE INTO " . TABLE_PLUGINS . " (plugin_enabled, plugin_name, plugin_prefix, plugin_folder, plugin_class, plugin_desc, plugin_requires, plugin_version, plugin_updateby) VALUES (%d, %s, %s, %s, %s, %s, %s, %s, %d)";
-        $db->query($db->prepare($sql, $this->enabled, $this->name, $this->prefix, $this->folder, $this->class, $this->desc, $this->requires, $this->version, $current_user->id));
+        $db->query($db->prepare($sql, $this->enabled, $this->name, $this->prefix, $this->folder, $this->class, $this->desc, $this->requires, $this->version, $current_user->getId()));
 
         // Get the last order number - doing this after REPLACE INTO because 
         // we don't know whether the above will insert or replace.
@@ -185,7 +185,7 @@ class PluginFunctions extends PluginManagement
 
             if (!$exists) {
                 $sql = "INSERT INTO " . TABLE_PLUGINHOOKS . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
-                $db->query($db->prepare($sql, $this->folder, trim($hook), $current_user->id));
+                $db->query($db->prepare($sql, $this->folder, trim($hook), $current_user->getId()));
             }
         }
     }
@@ -267,7 +267,7 @@ class PluginFunctions extends PluginManagement
             // The plugin is already installed. Activate or deactivate according to $enabled (the user's action).
             if ($plugin_row->plugin_enabled != $enabled) {        // only update if we're changing the enabled value.
                 $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_enabled = %d, plugin_updateby = %d WHERE plugin_folder = %s";
-                $db->query($db->prepare($sql, $enabled, $current_user->id, $this->folder));
+                $db->query($db->prepare($sql, $enabled, $current_user->getId(), $this->folder));
                 
                 if ($enabled == 1) { // Activating now...
                 

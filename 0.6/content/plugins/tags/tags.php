@@ -43,7 +43,7 @@ class Tags extends PluginFunctions
      */
     public function install_plugin()
     {
-        global $db, $plugins, $post;
+        global $db, $post;
         
         // Create a new table column called "post_tags" if it doesn't already exist
         $exists = $db->column_exists('posts', 'post_tags');
@@ -67,8 +67,8 @@ class Tags extends PluginFunctions
             $db->query($sql); 
         }
         
-        $plugins->pluginSettingsUpdate('submit', 'submit_tags', 'checked');
-        $plugins->pluginSettingsUpdate('submit', 'submit_max_tags', 50);
+        $this->updateSetting('submit_tags', 'checked', 'submit');
+        $this->updateSetting('submit_max_tags', 50, 'submit');
         
         // Could possibly do with some code here that extracts all existingtags from the posts table and populates the tags table with them.
         // Maybe in a later version.
@@ -80,12 +80,12 @@ class Tags extends PluginFunctions
      */
     public function submit_hotaru_header_1()
     {
-        global $post, $hotaru, $plugins, $cage;
+        global $post, $hotaru, $cage;
         
         if (!defined('TABLE_TAGS')) { define("TABLE_TAGS", DB_PREFIX . 'tags'); }
         
         // include language file
-        $plugins->includeLanguage('tags');
+        $this->includeLanguage();
         
         $post->vars['tags'] = '';
         $post->vars['maxTags'] = 50;    // max characters for tags
@@ -103,16 +103,16 @@ class Tags extends PluginFunctions
      */
     public function post_read_post_1()
     {
-        global $plugins, $post;
+        global $post;
         
         //tags
-        if (($plugins->pluginSettings('submit', 'submit_tags') == 'checked') && ($plugins->pluginActive('tags'))) { 
+        if (($this->getSetting('submit_tags', 'submit') == 'checked') && ($this->isActive())) { 
             $post->vars['useTags'] = true; 
         } else { 
             $post->vars['useTags'] = false; 
         }
         
-        $max_tags = $plugins->pluginSettings('submit', 'submit_max_tags');
+        $max_tags = $this->getSetting('submit_max_tags', 'submit');
         if (!empty($max_tags)) { $post->vars['maxTags'] = $max_tags; }
     }
     
@@ -361,11 +361,11 @@ class Tags extends PluginFunctions
      */
     public function submit_settings_get_values()
     {
-        global $plugins, $tags, $max_tags;
+        global $tags, $max_tags;
         
         // Get settings from database if they exist...
-        $tags = $plugins->pluginSettings('submit', 'submit_tags');
-        $max_tags = $plugins->pluginSettings('submit', 'submit_max_tags');
+        $tags = $this->getSetting('submit_tags', 'submit');
+        $max_tags = $this->getSetting('submit_max_tags', 'submit');
         
         // otherwise set to blank...
         if (!$tags) { $tags = ''; }
@@ -378,7 +378,7 @@ class Tags extends PluginFunctions
      */
     public function submit_settings_form()
     {
-        global $plugins, $lang, $tags, $max_tags;
+        global $lang, $tags, $max_tags;
         
         echo "<input type='checkbox' name='tags' value='tags' " . $tags . ">&nbsp;&nbsp;" . $lang["submit_settings_tags"];
         echo "&nbsp;&nbsp;&nbsp;&nbsp;";
@@ -391,7 +391,7 @@ class Tags extends PluginFunctions
      */
     public function submit_save_settings()
     {
-        global $plugins, $cage, $lang, $tags, $max_tags;
+        global $cage, $lang, $tags, $max_tags;
         
         // Tags
         if ($cage->post->keyExists('tags')) { 
@@ -410,8 +410,8 @@ class Tags extends PluginFunctions
             $max_tags = $post->vars['maxTags']; 
         } 
         
-        $plugins->pluginSettingsUpdate('submit', 'submit_tags', $tags);
-        $plugins->pluginSettingsUpdate('submit', 'submit_max_tags', $max_tags);
+        $this->updateSetting('submit_tags', $tags, 'submit');
+        $this->updateSetting('submit_max_tags', $max_tags, 'submit');
     }
     
     
