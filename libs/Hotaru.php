@@ -449,7 +449,7 @@ class Hotaru
      {
         global $plugins;
         
-        if (!$folder) { $folder = $plugins->folder; }
+        if (!$folder) { $folder = $plugins->getFolder(); }
 
         // If no filename provided, the filename is assigned the plugin name.
         if (!$filename) { $filename = $folder; }
@@ -471,7 +471,7 @@ class Hotaru
      {
         global $plugins;
         
-        if (!$folder) { $folder = $plugins->folder; }
+        if (!$folder) { $folder = $plugins->getFolder(); }
         
         // If no filename provided, the filename is assigned the plugin name.
         if (!$filename) { $filename = $folder; }
@@ -496,7 +496,7 @@ class Hotaru
     {
         global $lang, $plugins;
         
-        if (!$folder) { $folder = $plugins->folder; }
+        if (!$folder) { $folder = $plugins->getFolder(); }
         
         if ($folder) {
 
@@ -535,7 +535,7 @@ class Hotaru
     {
         global $lang, $plugins;
         
-        if (!$folder) { $folder = $plugins->folder; }
+        if (!$folder) { $folder = $plugins->getFolder(); }
         
         if ($folder) {
 

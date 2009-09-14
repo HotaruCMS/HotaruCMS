@@ -39,7 +39,7 @@ if(!$answer) { $answer = ""; }
     
     <?php echo $lang["hello_universe_question"]; ?>
     
-    <?php $hotaru->show_message(); ?>
+    <?php $hotaru->showMessage(); ?>
             
     <form name='update_form' action='<?php echo BASEURL; ?>index.php?page=form_example' method='post'>
     <table>

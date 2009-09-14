@@ -36,7 +36,7 @@ class Vote extends PluginFunctions
      * Add vote fields to the post table and make a dedicated Votes table.
      */
     public function install_plugin() {
-        global $db, $plugins;
+        global $db;
         
         // Create a new table column called "postVotesUp" if it doesn't already exist
         $exists = $db->column_exists('posts', 'postVotesUp');
@@ -83,11 +83,11 @@ class Vote extends PluginFunctions
         $vote_settings['vote_physical_delete'] = "";
         
         // parameters: plugin folder name, setting name, setting value
-        $plugins->pluginSettingsUpdate('vote', 'vote_settings', serialize($vote_settings));
+        $this->updateSetting('vote_settings', serialize($vote_settings));
         
         // Include language file. Also included in hotaru_header, but needed here so 
         // that the link in the Admin sidebar shows immediately after installation.
-        $plugins->includeLanguage('vote');
+        $this->includeLanguage('vote');
        
     }  
     
@@ -96,18 +96,18 @@ class Vote extends PluginFunctions
      * Set things up when the page is first loaded
      */
     public function hotaru_header() {
-        global $plugins, $post;
+        global $post;
         
         if (!defined('TABLE_POSTVOTES')) { define("TABLE_POSTVOTES", DB_PREFIX . 'postvotes'); }
         
-        $plugins->includeLanguage('vote');    
+        $this->includeLanguage('vote');    
     }
     
     /**
      * Adds additional member variables when the $post object is read in the Submit plugin
      */
     public function submit_hotaru_header_1() {
-        global $post, $hotaru, $plugins, $cage;
+        global $post, $hotaru, $cage;
             
         $post->vars['postVotesUp'] = 0;
         $post->vars['postVotesDown'] = 0;
@@ -119,12 +119,12 @@ class Vote extends PluginFunctions
      * Read vote settings
      */
     public function post_read_post_1() {
-        global $plugins, $post;
+        global $post;
         
-        if ($plugins->pluginActive('vote')) { 
+        if ($this->isActive()) { 
         
             // Get settings from the database if they exist...
-            $vote_settings = unserialize($plugins->pluginSettings('vote', 'vote_settings')); 
+            $vote_settings = unserialize($this->getSetting('vote_settings')); 
         
             // Determine vote type
             if ($vote_settings['vote_vote_unvote'] == 'checked') {
@@ -163,11 +163,11 @@ class Vote extends PluginFunctions
      */
     public function header_include()
     {
-        global $plugins, $lang, $hotaru;
+        global $lang, $hotaru;
         
-        $plugins->includeCSS('vote');
-        $plugins->includeJS('vote');
-        $plugins->includeJS('vote', 'json2.min');
+        $hotaru->includeCss('vote');
+        $hotaru->includeJs('vote');
+        $hotaru->includeJs('vote', 'json2.min');
     }
     
     
@@ -183,10 +183,10 @@ class Vote extends PluginFunctions
      */
     public function post_add_post()
     {
-         global $db, $current_user, $post, $plugins, $cage;
+         global $db, $current_user, $post, $cage;
          
          //get vote settings
-        $vote_settings = unserialize($plugins->pluginSettings('vote', 'vote_settings')); 
+        $vote_settings = unserialize($this->getSetting('vote_settings')); 
         $submit_vote = $vote_settings['vote_submit_vote'];
         $submit_vote_value = $vote_settings['vote_submit_vote_value'];
         
@@ -208,7 +208,7 @@ class Vote extends PluginFunctions
             //Insert one vote for each of $submit_vote_value;
             for ($i=0; $i<$submit_vote_value; $i++) {
                 $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d)";
-                $db->query($db->prepare($sql, $post->id, $current_user->id, $cage->server->testIp('REMOTE_ADDR'), $post->vars['vote_type'], 'positive', $current_user->id));
+                $db->query($db->prepare($sql, $post->id, $current_user->getId(), $cage->server->testIp('REMOTE_ADDR'), $post->vars['vote_type'], 'positive', $current_user->getId()));
             }    
         }            
                     
@@ -228,10 +228,10 @@ class Vote extends PluginFunctions
      * Notes: If you can automatically vote for a story you submit, and that value is equal to or greater than the number of votes you need to get on the Top Stories page, then there's no need for a "Latest" page at all. In that case, we don't add anything to the navigation bar because the "Home" link will show all the stories. HOWEVER, any old posts with "new" status instead of "top" status will become inaccessible.
      */
     public function navigation() {    
-        global $lang, $plugins, $hotaru;
+        global $lang, $hotaru;
         
         //get vote settings
-        $vote_settings = unserialize($plugins->pluginSettings('vote', 'vote_settings')); 
+        $vote_settings = unserialize($this->getSetting('vote_settings')); 
         
         if (($vote_settings['vote_submit_vote'] == "checked") && ($vote_settings['vote_submit_vote_value'] >= $vote_settings['vote_votes_to_promote'])) {
             // these settings make the latest page unnecessary so the "Home" link is sufficient, otherwise...
@@ -246,17 +246,17 @@ class Vote extends PluginFunctions
      * Displays the vote button.
      */
     public function submit_pre_show_post() {
-        global $hotaru, $db, $post, $current_user, $voted, $cage, $lang, $plugins;
+        global $hotaru, $db, $post, $current_user, $voted, $cage, $lang;
         
-        if ($post->status == 'new' && $post->vars['vote_use_alerts'] == "checked") {
+        if ($post->getStatus() == 'new' && $post->vars['vote_use_alerts'] == "checked") {
             // CHECK TO SEE IF THIS POST IS BEING FLAGGED AND IF SO, ADD IT TO THE DATABASE
-            if ($cage->get->keyExists('alert') && $current_user->loggedIn) {
+            if ($cage->get->keyExists('alert') && $current_user->getLoggedIn()) {
                 // Check if already flagged...
                 $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating = %s";
-                $flagged = $db->get_var($db->prepare($sql, $post->id, $current_user->id, 'alert'));
+                $flagged = $db->get_var($db->prepare($sql, $post->getId(), $current_user->getId(), 'alert'));
                 if (!$flagged) {
                     $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_reason, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d, %d)";
-                    $db->query($db->prepare($sql, $post->id, $current_user->id, $cage->server->testIp('REMOTE_ADDR'), $post->vars['vote_type'], 'alert', $cage->get->testInt('alert'), $current_user->id));
+                    $db->query($db->prepare($sql, $post->getId(), $current_user->getId(), $cage->server->testIp('REMOTE_ADDR'), $post->vars['vote_type'], 'alert', $cage->get->testInt('alert'), $current_user->getId()));
                 }
                 else
                 {
@@ -269,7 +269,7 @@ class Vote extends PluginFunctions
             // CHECK TO SEE IF THIS POST HAS BEEN FLAGGED AND IF SO, SHOW THE ALERT STATUS
         
             // Get settings from the database if they exist...
-            $vote_settings = unserialize($plugins->pluginSettings('vote', 'vote_settings')); 
+            $vote_settings = unserialize($this->getSetting('vote_settings')); 
             
             // Check if already flagged...
             $sql = "SELECT * FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_rating = %s";
@@ -316,13 +316,13 @@ class Vote extends PluginFunctions
         
         
         // CHECK TO SEE IF THE CURRENT USER HAS VOTED FOR THIS POST
-         if ($current_user->loggedIn) {
+         if ($current_user->getLoggedIn()) {
             $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND (vote_user_id = %d OR vote_user_ip = %s) AND vote_rating != %s";
-            $voted = $db->get_var($db->prepare($sql, $post->id, $current_user->id, $cage->server->testIp('REMOTE_ADDR'), 'alert'));
+            $voted = $db->get_var($db->prepare($sql, $post->getId(), $current_user->getId(), $cage->server->testIp('REMOTE_ADDR'), 'alert'));
         } 
         
         // CHECK TO SEE IF THIS ANONYMOUS USER HAS VOTED FOR THIS POST
-        if (!$current_user->loggedIn && ($post->vars['vote_anonymous_votes'] == 'checked')) {
+        if (!$current_user->getLoggedIn() && ($post->vars['vote_anonymous_votes'] == 'checked')) {
             $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_ip = %s AND vote_rating != %s";
             $voted = $db->get_var($db->prepare($sql, $post->id, $cage->server->testIp('REMOTE_ADDR'), 'alert'));
         }
@@ -337,7 +337,7 @@ class Vote extends PluginFunctions
         global $post, $lang, $current_user;
         
         // Only show the Alert link ("Flag it") on new posts, not top stories
-        if ($current_user->loggedIn && $post->status == "new" && ($post->vars['vote_use_alerts'] == "checked")) {
+        if ($current_user->getLoggedIn() && $post->status == "new" && ($post->vars['vote_use_alerts'] == "checked")) {
             echo "<li><a class='alert_link' href='#'>" . $lang["vote_alert"]  . "</a></li>";
         }
     }

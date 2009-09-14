@@ -34,8 +34,6 @@ global $hotaru, $plugins, $lang; // don't remove
     &raquo; <?php if ($hotaru->title == 'top') { echo $lang['main_theme_home']; } else { echo $hotaru->title; } ?>
 </div>
 
-<?php $plugins->pluginHook('hello_world'); ?>
-
 <?php $plugins->pluginHook('main_top'); ?>
     
 <?php $plugins->pluginHook('main'); ?>
