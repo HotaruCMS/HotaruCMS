@@ -767,7 +767,11 @@ class Post {
         $tag = $cage->get->noTags('tag');
         $search = $cage->get->getMixedString2('search');
         $category = $cage->get->noTags('category');
-        if ($category) { $cat = new Category(); } // so we can use a couple of functions from the Category class
+        if ($category) { 
+            // so we can use a couple of functions from the Category class
+            require_once(PLUGINS . 'categories/libs/Category.php');
+            $cat = new Category(); 
+        } 
                 
         //if (!$status) { $status = "top"; }
         if (!$limit) { $limit = 10; }

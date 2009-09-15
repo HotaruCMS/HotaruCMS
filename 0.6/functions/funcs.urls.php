@@ -82,6 +82,7 @@ function url($parameters = array(), $head = 'index')
                 
             } elseif ($key == 'category' && is_numeric($value) ) {
                 
+                require_once(PLUGINS . 'categories/libs/Category.php');
                 $cat = new Category();
                 $url .= $key . '/' . $cat->getCatSafeName($value) . '/';
                     

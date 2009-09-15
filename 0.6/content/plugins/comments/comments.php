@@ -117,6 +117,7 @@ class Comments extends pluginFunctions
         $this->includeLanguage();
         
         // Create a new global object called "comments".
+        require_once(PLUGINS . 'comments/libs/Comment.php');
         $comment = new Comment();
         
         // Get settings from database if they exist...
