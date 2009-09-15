@@ -59,7 +59,7 @@ while($settings = unserialize($plugins->pluginSettings('rss_show', 'rss_show_' .
 ?>
 
     <h1><?php echo $lang["rss_show_settings"]; ?> [ id: <?php echo $id; ?> ]</h1>
-    <form name='rss_show_form' action='<?php echo BASEURL ?>admin/admin_index.php' method='get'>
+    <form name='rss_show_form' action='<?php echo BASEURL ?>admin_index.php' method='get'>
     
     <?php echo $lang["rss_show_feed_url"]; ?> <input type='text' size=60 name='rss_show_feed' value='<?php echo $settings['rss_show_feed']; ?>' /><br /><br />
     
@@ -115,7 +115,7 @@ while($settings = unserialize($plugins->pluginSettings('rss_show', 'rss_show_' .
     
 <br />
 
-<a href='<?php echo BASEURL; ?>admin/admin_index.php?page=plugin_settings&amp;plugin=rss_show&amp;action=delete_feed&amp;id=<?php echo ($id-1); ?>' style='color: red;'><?php echo $lang["rss_show_delete"]; ?></a> | <a href='<?php echo BASEURL ?>admin/admin_index.php?page=plugin_settings&amp;plugin=rss_show&amp;action=new_feed&amp;id=<?php echo $id; ?>'><?php echo $lang["rss_show_add"]; ?></a><br /><br />
+<a href='<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=rss_show&amp;action=delete_feed&amp;id=<?php echo ($id-1); ?>' style='color: red;'><?php echo $lang["rss_show_delete"]; ?></a> | <a href='<?php echo BASEURL ?>admin_index.php?page=plugin_settings&amp;plugin=rss_show&amp;action=new_feed&amp;id=<?php echo $id; ?>'><?php echo $lang["rss_show_add"]; ?></a><br /><br />
 <div style='padding: 0.8em; line-height: 2.0em; background-color: #f0f0f0; -moz-border-radius: 0.5em;- webkit-border-radius: 0.5em;'>
     <b><?php echo $lang["rss_show_usage"]; ?></b><br />
     <?php echo $lang["rss_show_usage1"]; ?><br />

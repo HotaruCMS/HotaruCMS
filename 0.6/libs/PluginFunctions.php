@@ -56,12 +56,12 @@ class PluginFunctions extends Plugin
                     $allplugins[$count]['active'] = "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/inactive.png'></a>";
                 } elseif ($allplugins[$count]['status'] == 'active') {
                     $allplugins[$count]['active'] = "<a href='" . BASEURL;
-                    $allplugins[$count]['active'] .= "admin/admin_index.php?page=plugins&amp;action=deactivate&amp;plugin=";
+                    $allplugins[$count]['active'] .= "admin_index.php?page=plugins&amp;action=deactivate&amp;plugin=";
                     $allplugins[$count]['active'] .= $allplugins[$count]['folder'] . "'>";
                     $allplugins[$count]['active'] .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/active.png'></a>";
                 } else {
                     $allplugins[$count]['active'] = "<a href='" . BASEURL;
-                    $allplugins[$count]['active'] .= "admin/admin_index.php?page=plugins&amp;action=activate&amp;plugin=";
+                    $allplugins[$count]['active'] .= "admin_index.php?page=plugins&amp;action=activate&amp;plugin=";
                     $allplugins[$count]['active'] .= $allplugins[$count]['folder'] . "'>";
                     $allplugins[$count]['active'] .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/inactive.png'></a>";
                 }
@@ -69,9 +69,9 @@ class PluginFunctions extends Plugin
 
                 // Conditions for "install"...
                 if ($allplugins[$count]['install'] == 'install') { 
-                    $allplugins[$count]['install'] = "<a href='" . BASEURL . "admin/admin_index.php?page=plugins&amp;action=install&amp;plugin=". $allplugins[$count]['folder'] . "'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/install.png'></a>";
+                    $allplugins[$count]['install'] = "<a href='" . BASEURL . "admin_index.php?page=plugins&amp;action=install&amp;plugin=". $allplugins[$count]['folder'] . "'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/install.png'></a>";
                 } else { 
-                    $allplugins[$count]['install'] = "<a href='" . BASEURL . "admin/admin_index.php?page=plugins&amp;action=uninstall&amp;plugin=". $allplugins[$count]['folder'] . "' style='color: red; font-weight: bold'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/uninstall.png'></a>";
+                    $allplugins[$count]['install'] = "<a href='" . BASEURL . "admin_index.php?page=plugins&amp;action=uninstall&amp;plugin=". $allplugins[$count]['folder'] . "' style='color: red; font-weight: bold'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/uninstall.png'></a>";
                 }
                 
                 
@@ -98,12 +98,12 @@ class PluginFunctions extends Plugin
                 if ($allplugins[$count]['order'] != 0) { 
                     $order = $allplugins[$count]['order'];
                     $allplugins[$count]['order_output'] = "<a href='" . BASEURL;
-                    $allplugins[$count]['order_output'] .= "admin/admin_index.php?page=plugins&amp;";
+                    $allplugins[$count]['order_output'] .= "admin_index.php?page=plugins&amp;";
                     $allplugins[$count]['order_output'] .= "action=orderup&amp;plugin=". $allplugins[$count]['folder'];
                     $allplugins[$count]['order_output'] .= "&amp;order=" . $order . "'>";
                     $allplugins[$count]['order_output'] .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/up.png'>";
                     $allplugins[$count]['order_output'] .= "</a> \n<a href='" . BASEURL;
-                    $allplugins[$count]['order_output'] .= "admin/admin_index.php?page=plugins&amp;";
+                    $allplugins[$count]['order_output'] .= "admin_index.php?page=plugins&amp;";
                     $allplugins[$count]['order_output'] .= "action=orderdown&amp;plugin=". $allplugins[$count]['folder'];
                     $allplugins[$count]['order_output'] .= "&amp;order=" . $order . "'>";
                     $allplugins[$count]['order_output'] .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/down.png'>";
@@ -149,7 +149,7 @@ class PluginFunctions extends Plugin
         $hook = '', $perform = true, $folder = '', $parameters = array(), $exclude = array()
     )
     {
-        global $db, $cage, $current_user;
+        global $hotaru, $db, $cage, $current_user;
 
         if ($hook == '') {
             //echo "Error: Plugin hook name not provided.";

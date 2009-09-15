@@ -52,23 +52,23 @@ for ($i=1; $i<=$sidebars; $i++) {
                 // For the enabled button...
                 if ($details['enabled']) {
                     $enabled_output = "<a href='" . BASEURL;
-                    $enabled_output .= "admin/admin_index.php?page=plugin_settings&amp;plugin=sidebar_widgets&amp;";
+                    $enabled_output .= "admin_index.php?page=plugin_settings&amp;plugin=sidebar_widgets&amp;";
                     $enabled_output .= "action=disable&amp;widget=". $widget . "'>";
                     $enabled_output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/active.png'></a>";
                 } else {
                     $enabled_output = "<a href='" . BASEURL;
-                    $enabled_output .= "admin/admin_index.php?page=plugin_settings&amp;plugin=sidebar_widgets&amp;";
+                    $enabled_output .= "admin_index.php?page=plugin_settings&amp;plugin=sidebar_widgets&amp;";
                     $enabled_output .= "action=enable&amp;widget=". $widget . "'>";
                     $enabled_output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/inactive.png'></a>";
                 }
                 
                 // For the up and down arrows...
                 $order_output = "<a href='" . BASEURL;
-                $order_output .= "admin/admin_index.php?page=plugin_settings&amp;plugin=sidebar_widgets&amp;";
+                $order_output .= "admin_index.php?page=plugin_settings&amp;plugin=sidebar_widgets&amp;";
                 $order_output .= "action=orderup&amp;widget=". $widget . "&amp;args=". $details['args'] . "&amp;sidebar=" . $details['sidebar'] . "&amp;order=" . $details['order'] . "'>";
                 $order_output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/up.png'>";
                 $order_output .= "</a> \n<a href='" . BASEURL;
-                $order_output .= "admin/admin_index.php?page=plugin_settings&amp;plugin=sidebar_widgets&amp;";
+                $order_output .= "admin_index.php?page=plugin_settings&amp;plugin=sidebar_widgets&amp;";
                 $order_output .= "action=orderdown&amp;widget=". $widget . "&amp;args=". $details['args'] . "&amp;sidebar=" . $details['sidebar'] . "&amp;order=" . $details['order'] . "'>";
                 $order_output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/down.png'>";
                 $order_output .= "</a>\n";

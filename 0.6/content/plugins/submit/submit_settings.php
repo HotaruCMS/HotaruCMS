@@ -70,7 +70,7 @@ class SubmitSettings extends Submit
         if (!$summary) { $summary = ''; }
         if (!$summary_length) { $summary_length = ''; }
         
-        echo "<form name='submit_settings_form' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=submit' method='post'>\n";
+        echo "<form name='submit_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=submit' method='post'>\n";
         
         echo "<p>" . $lang["submit_settings_instructions"] . "</p><br />";
         

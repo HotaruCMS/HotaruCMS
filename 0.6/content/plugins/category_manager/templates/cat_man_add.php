@@ -33,12 +33,12 @@
     <table class="cat_man_table">
     <tr><td class="cat_man_body">
     <h3>1. <?php echo $lang["cat_man_add_main"]; ?></h3>
-    <form name='category_manager_add_parent_form' action='<?php echo BASEURL; ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=add_save' method='post'>
+    <form name='category_manager_add_parent_form' action='<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=add_save' method='post'>
     <?php echo $lang["cat_man_add_top_level"]; ?> <input name="new_category" type="text" value=""> &nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='save_new_category1' value='<?php echo $lang["cat_man_save"]; ?>'>
     </form>
 
     <h3>2. <?php echo $lang["cat_man_add_child_to_main"]; ?></h3>
-    <form name='category_manager_add_child_form' action='<?php echo BASEURL; ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=add_save' method='post'>
+    <form name='category_manager_add_child_form' action='<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=add_save' method='post'>
     <?php echo $lang["cat_man_add_add_to"]; ?>
         <select name="parent">
         <?php
@@ -55,7 +55,7 @@
     </form>
 
     <h3>3. <?php echo $lang["cat_man_add_child_to_child"]; ?></h3>
-    <form name='category_manager_add_child2_form' action='<?php echo BASEURL; ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=add_save' method='post'>
+    <form name='category_manager_add_child2_form' action='<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=add_save' method='post'>
     <?php echo $lang["cat_man_add_add_to"]; ?> 
         <select name="parent">
         <?php

@@ -54,18 +54,18 @@ global $plugins, $admin, $cage, $lang; // don't remove
 <br />
 <h2><?php echo $lang["admin_theme_maintenance_cache"]; ?></h2>
 <ul>
-    <li><a href="<?php echo BASEURL; ?>admin/admin_index.php?page=maintenance&amp;action=clear_db_cache">
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=clear_db_cache">
         <?php echo $lang["admin_theme_maintenance_db_cache"]; ?></a> - <?php echo $lang["admin_theme_maintenance_db_cache_desc"]; ?></li>
-    <li><a href="<?php echo BASEURL; ?>admin/admin_index.php?page=maintenance&amp;action=clear_css_js_cache">
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=clear_css_js_cache">
         <?php echo $lang["admin_theme_maintenance_css_js_cache"]; ?></a> - <?php echo $lang["admin_theme_maintenance_css_js_cache_desc"]; ?></li>
-    <li><a href="<?php echo BASEURL; ?>admin/admin_index.php?page=maintenance&amp;action=clear_rss_cache">
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=clear_rss_cache">
         <?php echo $lang["admin_theme_maintenance_rss_cache"]; ?></a> - <?php echo $lang["admin_theme_maintenance_rss_cache_desc"]; ?></li>
 </ul>
 
 <br />
 <h2><?php echo $lang["admin_theme_maintenance_database"]; ?></h2>
 <ul>
-    <li><a href="<?php echo BASEURL; ?>admin/admin_index.php?page=maintenance&amp;action=optimize">
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=optimize">
         <?php echo $lang["admin_theme_maintenance_optimize"]; ?></a> - <?php echo $lang["admin_theme_maintenance_optimize_desc"]; ?></li>
 </ul>
 
@@ -79,7 +79,7 @@ global $plugins, $admin, $cage, $lang; // don't remove
 <ul>
 <?php if($plugin_tables) { ?>
     <?php foreach ($plugin_tables as $table) { ?>
-    <li><a href="<?php echo BASEURL; ?>admin/admin_index.php?page=maintenance&amp;action=empty&amp;table=<?php echo $table; ?>">
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=empty&amp;table=<?php echo $table; ?>">
         <?php echo $lang["admin_theme_maintenance_empty"] . " " . $table; ?> </a></li>
     <?php } ?>
 <?php } else { ?>
@@ -91,7 +91,7 @@ global $plugins, $admin, $cage, $lang; // don't remove
 <ul>
 <?php if($plugin_tables) { ?>
     <?php foreach ($plugin_tables as $table) { ?>
-    <li><a href="<?php echo BASEURL; ?>admin/admin_index.php?page=maintenance&amp;action=drop&amp;table=<?php echo $table; ?>">
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=drop&amp;table=<?php echo $table; ?>">
         <?php echo $lang["admin_theme_maintenance_drop"] . " " . $table; ?> </a></li>
     <?php } ?>
 <?php } else { ?>

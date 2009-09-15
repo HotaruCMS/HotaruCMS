@@ -58,7 +58,7 @@ class UsersSettings extends Users
         if (!$recaptcha_privkey) { $recaptcha_privkey = ''; }
         if (!$emailconf_enabled) { $emailconf_enabled = ''; }
         
-        echo "<form name='users_settings_form' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=users' method='post'>\n";
+        echo "<form name='users_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=users' method='post'>\n";
         
         echo "<p>" . $lang["users_settings_instructions"] . "</p><br />";
         

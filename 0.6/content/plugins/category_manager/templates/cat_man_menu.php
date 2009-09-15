@@ -27,13 +27,13 @@
  
 global $hotaru, $lang;
  
-$home_link = BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager";
-$order_link = BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order";
-$add_link = BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=add";
-$edit_link = BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit";
-$edit_meta_link = BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit_meta";
-$move_link = BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=move";
-$delete_link = BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=delete";
+$home_link = BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=category_manager";
+$order_link = BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order";
+$add_link = BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=add";
+$edit_link = BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit";
+$edit_meta_link = BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit_meta";
+$move_link = BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=move";
+$delete_link = BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=delete";
 
 ?>
  

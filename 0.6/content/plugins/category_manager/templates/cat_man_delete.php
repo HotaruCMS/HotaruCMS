@@ -37,7 +37,7 @@
         1. <?php echo $lang["cat_man_delete_note1"]; ?> <br />
         2. <?php echo $lang["cat_man_delete_note2"]; ?><br /><br />
     
-        <form name='category_manager_delete_form' action='<?php echo BASEURL; ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=delete_save' method='post'>
+        <form name='category_manager_delete_form' action='<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=delete_save' method='post'>
         <?php 
         foreach ($the_cats as $cat) {
             if ($cat['category_name'] != "all") {

@@ -41,7 +41,7 @@ global $plugins, $admin, $cage, $lang; // don't remove
     
     <?php $loaded_settings = $admin->settings();    // Prepare or process the form ?>
     
-    <form id='settings_form' name='settings_form' action='<?php echo BASEURL; ?>admin/admin_index.php?page=settings' method='post'>
+    <form id='settings_form' name='settings_form' action='<?php echo BASEURL; ?>admin_index.php?page=settings' method='post'>
     
     <table id="settings">    
     <tr>

@@ -48,7 +48,7 @@
                 ?>
                 
                 <div id='<?php echo $cat['category_id']; ?>' style='display: none;'>
-                    <form class='cat_man_edit_meta_form' style='margin-bottom: 0px;' name='category_manager_edit_meta_form' action='<?php echo BASEURL; ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit_meta_save&amp;id=<?php echo $cat['category_id']; ?>' method='post'>
+                    <form class='cat_man_edit_meta_form' style='margin-bottom: 0px;' name='category_manager_edit_meta_form' action='<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit_meta_save&amp;id=<?php echo $cat['category_id']; ?>' method='post'>
                     <?php echo $lang["cat_man_edit_meta_description"]; ?> <input size='40' name='description' type='text' value='<?php echo $cat['category_description']; ?>'>
                     <br />
                     <?php echo $lang["cat_man_edit_meta_keywords"]; ?> &nbsp;&nbsp;<input size='40' name='keywords' type='text' value='<?php echo $cat['category_keywords']; ?>'>

@@ -52,7 +52,7 @@ class DisqusSettings extends Disqus
         //...otherwise set to blank:
         if (!$shortname) { $shortname = 'subconcious'; }  // This is the default in Disqus' generic code
             
-        echo "<form name='disqus_settings_form' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=disqus' method='post'>\n";
+        echo "<form name='disqus_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=disqus' method='post'>\n";
         
         echo "<p>" . $lang["disqus_settings_instructions"] . "</p><br />";
             

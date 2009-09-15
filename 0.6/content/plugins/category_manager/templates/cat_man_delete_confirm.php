@@ -32,7 +32,7 @@
 
     <table class="cat_man_table">
     <tr><td class="cat_man_body">
-        <form name='category_manager_delete_confirm_form' action='<?php echo BASEURL; ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=delete_confirm' method='post'>
+        <form name='category_manager_delete_confirm_form' action='<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=delete_confirm' method='post'>
         <?php echo $lang["cat_man_delete_following"]; ?><br /><br />
         <?php
         $counter = 0; 

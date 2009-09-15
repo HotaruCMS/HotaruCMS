@@ -29,6 +29,138 @@ class Admin
     
     public $sidebar = true;
     
+
+    /**
+     * Admin constructor
+     */
+    public function __construct($entrance = '')
+    {
+        global $db, $current_user, $hotaru, $plugins, $admin, $cage;
+        
+        if ($entrance != 'admin') { return false; } // e.g. when called from Install
+        
+        require_once(LIBS . 'Hotaru.php');
+        $hotaru = new Hotaru('admin');
+        $hotaru->setPageType('admin');
+        
+        // Include combined css and js files
+        if ($cage->get->keyExists('combine')) {
+            $type = $cage->get->testAlpha('type');
+            $version = $cage->get->testInt('version');
+            $hotaru->combineIncludes($type, $version);
+            return true;
+        }
+        
+        $page = $cage->get->testPage('page');    // check with "get";
+        if (!$page) { 
+            // check with "post" - used in admin_login_form().
+            $page = $cage->post->testPage('page'); 
+        }
+        
+        // Authenticate the admin if the Users plugin is INACTIVE:
+        if (!$plugins->isActive('users'))
+        {
+            if (($page != 'admin_login') && !$result = $this->isAdminCookie())
+            {
+                header('Location: ' . BASEURL . 'admin_index.php?page=admin_login');
+            }
+        }
+        
+        // Authenticate the admin if the Users plugin is ACTIVE:
+        if (isset($current_user) && $plugins->isActive('users'))
+        {
+            // This first condition happens when the Users plugin is activated 
+            // and there's no cookie for the Admin yet.
+            if (($current_user->getName() == "") && $plugins->isActive('users')) 
+            {
+                header('Location: ' . BASEURL . 'index.php?page=login');
+                die; exit;
+            } 
+            elseif (!$current_user->isAdmin($current_user->getName())) 
+            {
+                echo "You do not have permission to access this page.<br />";
+                die(); exit;
+            }
+        }
+        
+        // If we get this far, we know that the user is an administrator.
+        
+        $admin = $this;    // $admin won't exist until this constructor is finished, 
+                           // but plugins using this hook can't wait that long!
+        
+        $plugins->pluginHook('admin_index');
+        
+        switch ($page) {
+            case "admin_login":
+                $this->adminLogin();
+                break;
+            case "admin_logout":
+                $this->adminLogout();
+                break;
+            case "settings":
+                // Nothing special to do...
+                break;
+            case "maintenance":
+                // Nothing special to do...
+                break;
+            case "plugins":
+                $this->plugins();
+                break;
+            case "plugin_settings":
+                $plugins->setFolder($cage->get->testAlnumLines('plugin'));
+                $plugins->setName($plugins->getName($plugins->getFolder()));
+                break;
+            default:
+                break;
+        }
+        
+        // Display the main theme's index.php template
+        $this->displayAdminTemplate('index');
+    }
+    
+    
+     /**
+     * Call functions based on user actions in Plugin Management
+     */
+    public function plugins()
+    {
+        global $lang, $cage, $hotaru, $plugins;
+        
+        $action = $cage->get->testAlpha('action');
+        $pfolder = $cage->get->testAlnumLines('plugin');
+        $order = $cage->get->testAlnumLines('order');
+        
+        $this_plugin = new PluginFunctions($pfolder);
+        
+        switch ($action) {
+            case "activate":
+                $this_plugin->activateDeactivate(1);
+                break;
+            case "deactivate":
+                $this_plugin->activateDeactivate(0);
+                break;    
+            case "install":
+                $this_plugin->install();
+                break;
+            case "uninstall":
+                $this_plugin->uninstall();
+                break;    
+            case "orderup":
+                $this_plugin->pluginOrder($order, "up");
+                break;    
+            case "orderdown":
+                $this_plugin->pluginOrder($order, "down");
+                break;    
+            default:
+                // do nothing...
+                return false;
+                break;
+        }
+    
+        return true;
+    }
+
+
     /**
      * Display admin template
      *
@@ -557,6 +689,63 @@ class Admin
         $current_user->destroyCookieAndSession();
         header("Location: " . BASEURL);
         return true;
+    }
+    
+    
+     /**
+     * Display Hotaru forums feed on Admin front page
+     *
+     * @return string Returns the html output for the feed 
+     */
+    public function adminNews()
+    {
+        global $hotaru, $plugins, $lang;
+            
+        $max_items = 5;
+        
+        $feedurl = 'http://feeds2.feedburner.com/hotarucms';
+        $feed = $hotaru->newSimplePie($feedurl);
+        $feed->init();
+            
+        $output = "";
+        $item_count = 0;
+            
+        if ($feed->data) { 
+            foreach ($feed->get_items() as $item)
+            {
+                $output .= "<div>";
+                
+                // Title
+                $output .= "<a href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a><br />";
+                
+                // Posted by
+                $output .= "<small>" . $lang["admin_news_posted_by"] . " ";
+                
+                foreach ($item->get_authors() as $author) 
+                {
+                    $output .= $author->get_name(); 
+                }
+                
+                // Date
+                $output .= " " . $lang["admin_news_on"] . " " . $item->get_date('j F Y');
+                $output .= "</small><br />";
+                
+                // Content
+                $output .= substr(strip_tags($item->get_content()), 0, 300);
+                $output .= "... ";
+                
+                // Read more
+                $output .= "<small><a href='" . $item->get_permalink() . "' title='" . $item->get_title() . "'>[" . $lang["admin_news_read_more"] . "]</a>";
+                $output .= "</small>";
+                
+                $output .= "</div><br />";
+                
+                $item_count++;
+                if ($item_count >= $max_items) { break;}
+            }
+        }
+        
+        echo $output;
     }
 
 }
