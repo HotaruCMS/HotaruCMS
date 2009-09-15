@@ -59,10 +59,6 @@ class Plugin
         if ($folder) { 
             $this->setFolder($folder); 
         }
-
-        // Include the PluginAccess class that lets derived plugins access proteced properties and methods
-        require_once(LIBS . 'PluginSettings.php');
-        $this->settings = new PluginSettings();
     }
     
     
@@ -199,52 +195,7 @@ class Plugin
         $settings_function();   // call the settings function
         return true;
     }
-    
-    
-    /* *************************************************************
-     *                      REDIRECT METHODS
-     * ********************************************************** */
-     
-    function getSetting($setting = '', $folder = '')
-    {
-        if (!$folder) { $folder = $this->getFolder(); }
-        return $this->settings->getSetting($setting, $folder);
-    }
-    
-    
-    function getSettingsArray($folder = '') 
-    {
-        if (!$folder) { $folder = $this->getFolder(); }
-        return $this->settings->getSettingsArray($folder);
-    }
 
-
-    function getSerializedSettings($folder = '')
-    {
-        if (!$folder) { $folder = $this->getFolder(); }
-        return $this->settings->getSerializedSettings($folder);
-    }
-    
-    
-    function isSetting($setting = '', $folder = '') 
-    {
-        if (!$folder) { $folder = $this->getFolder(); }
-        return $this->settings->isSetting($setting, $folder);
-    }
-    
-
-    function updateSetting($setting = '', $value = '', $folder = '')
-    {
-        if (!$folder) { $folder = $this->getFolder(); }
-        $this->settings->updateSetting($setting, $value, $folder);
-    }
-    
-
-    function deleteSettings($setting = '', $folder = '')
-    {
-        if (!$folder) { $folder = $this->getFolder(); }
-        $this->settings->deleteSettings($setting, $folder);
-    }
 }
 
 ?>
