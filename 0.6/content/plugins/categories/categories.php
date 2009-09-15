@@ -48,8 +48,9 @@ class Categories extends PluginFunctions
         
         // Default settings (Note: we can't use $post->vars because it hasn't been filled yet.)
         $this->updateSetting('submit_categories', 'checked', 'submit');
-        $this->updateSetting('categories', '', 'sidebar_widgets');
         $this->updateSetting('categories_bar', 'menu');
+        $sidebar = new Sidebar();
+        $sidebar->addWidget('categories', 'categories', 'side'); // plugin name, function name, optional arguments
     }
     
     
@@ -419,8 +420,9 @@ class Categories extends PluginFunctions
         $catObj = new Category();
         
         // Get settings from database if they exist...
-        $bar = $this->getSetting('categories_bar');
-        
+        //setting name. plugin name.
+        $bar = $this->getSetting('categories_bar', 'categories');
+                
         // Only show if the sidebar is enabled
         if ($bar == 'side') {
         

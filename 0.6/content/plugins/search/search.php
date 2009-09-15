@@ -40,7 +40,7 @@ class Search extends PluginFunctions
     public function install_plugin()
     {
         $sidebar = new Sidebar();
-        $sidebar->addWidget('search', 'search', 'top');
+        $sidebar->addWidget('search', 'search', '');  // plugin name, function name, optional arguments
     } 
     
     /**

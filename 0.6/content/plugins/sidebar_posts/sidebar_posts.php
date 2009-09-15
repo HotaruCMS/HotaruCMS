@@ -41,6 +41,7 @@ class SidebarPosts extends PluginFunctions
     {
         // Default settings
         $sidebar = new Sidebar();
+        // plugin name, function name, optional arguments
         $sidebar->addWidget('sidebar_posts', 'sidebar_posts_top', 'top');
         $sidebar->addWidget('sidebar_posts', 'sidebar_posts_latest', 'new');
     }
