@@ -1,6 +1,6 @@
 <?php
 
-class PluginManagement extends PluginSettings
+class PluginManagement extends Plugin
 {
 
     /**

@@ -524,8 +524,8 @@ class Categories extends PluginFunctions
      */
     public function admin_plugin_settings() {
         require_once(PLUGINS . 'categories/categories_settings.php');
-        $catSettings = new CategoriesSettings($this->folder);
-        $catSettings->settings();
+        $catSettings = new CategoriesSettings();
+        $catSettings->settings($this->folder);
         return true;
     }
     

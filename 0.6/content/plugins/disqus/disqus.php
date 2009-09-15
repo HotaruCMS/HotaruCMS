@@ -96,8 +96,8 @@ class Disqus extends PluginFunctions
     public function admin_plugin_settings()
     {
         require_once(PLUGINS . 'disqus/disqus_settings.php');
-        $disqSettings = new DisqusSettings($this->folder);
-        $disqSettings->settings();
+        $disqSettings = new DisqusSettings();
+        $disqSettings->settings($this->folder);
         return true;
     }
 

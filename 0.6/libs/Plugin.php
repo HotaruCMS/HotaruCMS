@@ -43,10 +43,90 @@ class Plugin
     protected $requires     = '';         // string of plugin->version pairs
     protected $dependencies = array();    // array of plugin->version pairs
     protected $hooks        = array();    // array of plugin hooks
+    private $settings;                    // instance of PluginSettings object
 
      /* ******************************************************************** 
      * 
      * ****************************************************************** */
+     
+
+    /**
+     * Constructor - make a PluginAcess object
+     */
+    public function __construct($folder = '')
+    {
+        // We don't need to fill the object with anything other than the plugin folder name at this time:
+        if ($folder) { $this->setFolder($folder); }
+        
+        // Include the PluginAccess class that lets derived plugins access proteced properties and methods
+        require_once(LIBS . 'PluginSettings.php');
+        $this->settings = new PluginSettings();
+    }
+    
+    
+    /* *************************************************************
+     *                      ACCESSOR METHODS
+     * ********************************************************** */
+     
+     
+    /**
+     * Set plugin name
+     *
+     * @param string $name
+     */    
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * Get plugin name
+     *
+     * @return string
+     */    
+    public function getName()
+    {
+        return $this->name;
+    }
+    
+
+    /**
+     * Set plugin folder
+     *
+     * @param string $folder
+     */    
+    public function setFolder($folder)
+    {
+        $this->folder = $folder;
+    }
+
+
+    /**
+     * Get plugin folder
+     *
+     * @return string
+     */    
+    public function getFolder()
+    {
+        return $this->folder;
+    }
+        
+        
+    /**
+     * Get plugin name length
+     *
+     * @return int
+     */    
+    public function nameLength()
+    {
+        return strlen($this->name);
+    }
+    
+    
+
+    /* *************************************************************
+     *              DEFAULT PLUGIN HOOK ACTIONS
+     * ********************************************************** */
      
     /**
      * Include language file if available
@@ -55,10 +135,10 @@ class Plugin
     {
         global $plugins;
 
-        $plugins->includeLanguage('', $this->folder);
+        $plugins->includeLanguage('', $this->getFolder());
     }
-    
-
+     
+     
     /**
      * Include All CSS and JavaScript files for this plugin
      */
@@ -67,8 +147,8 @@ class Plugin
         global $hotaru, $admin, $cage;
         
         // include a files that match the name of the plugin folder:
-        $hotaru->includeJs('', $this->folder); // filename, folder name
-        $hotaru->includeCss('', $this->folder);
+        $hotaru->includeJs('', $this->getFolder()); // filename, folder name
+        $hotaru->includeCss('', $this->getFolder());
     }
     
     
@@ -89,22 +169,16 @@ class Plugin
     {
         global $hotaru;
         
-        $hotaru->displayTemplate($this->folder . '_footer', $this->folder);
+        $hotaru->displayTemplate($this->getFolder() . '_footer', $this->getFolder());
     }
     
 
-     /* ******************************************************************** 
-     * ********************************************************************* 
-     * ************************ METHODS FOR ADMIN ************************** 
-     * *********************************************************************
-     * ****************************************************************** */
-    
     /**
      * Display Admin sidebar link
      */
     public function admin_sidebar_plugin_settings()
     {
-        echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>$this->folder), 'admin') . "'>" . $this->name . "</a></li>";
+        echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>$this->getFolder()), 'admin') . "'>" . $this->name . "</a></li>";
     }
     
     
@@ -115,15 +189,60 @@ class Plugin
      */
     public function admin_plugin_settings()
     {
-        if (file_exists(PLUGINS . $this->folder . '/' . $this->folder . '_settings.php')) {
-            include_once(PLUGINS . $this->folder . '/' . $this->folder . '_settings.php');
+        if (file_exists(PLUGINS . $this->getFolder() . '/' . $this->getFolder() . '_settings.php')) {
+            include_once(PLUGINS . $this->getFolder() . '/' . $this->getFolder() . '_settings.php');
         }
         
-        $settings_function = $this->folder . '_settings';
+        $settings_function = $this->getFolder() . '_settings';
         $settings_function();   // call the settings function
         return true;
     }
     
+    
+    /* *************************************************************
+     *                      REDIRECT METHODS
+     * ********************************************************** */
+     
+    function getSetting($setting = '', $folder = '')
+    {
+        if (!$folder) { $folder = $this->getFolder(); }
+        return $this->settings->getSetting($setting, $folder);
+    }
+    
+    
+    function getSettingsArray($folder = '') 
+    {
+        if (!$folder) { $folder = $this->getFolder(); }
+        return $this->settings->getSettingsArray($folder);
+    }
+
+
+    function getSerializedSettings($folder = '')
+    {
+        if (!$folder) { $folder = $this->getFolder(); }
+        return $this->settings->getSerializedSettings($folder);
+    }
+    
+    
+    function isSetting($setting = '', $folder = '') 
+    {
+        if (!$folder) { $folder = $this->getFolder(); }
+        return $this->settings->isSetting($setting, $folder);
+    }
+    
+
+    function updateSetting($setting = '', $value = '', $folder = '')
+    {
+        if (!$folder) { $folder = $this->getFolder(); }
+        $this->settings->updateSetting($setting, $value, $folder);
+    }
+    
+
+    function deleteSettings($setting = '', $folder = '')
+    {
+        if (!$folder) { $folder = $this->getFolder(); }
+        $this->settings->deleteSettings($setting, $folder);
+    }
 }
 
 ?>

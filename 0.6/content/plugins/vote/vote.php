@@ -376,8 +376,8 @@ class Vote extends PluginFunctions
      */
     public function admin_plugin_settings() {
         require_once(PLUGINS . 'vote/vote_settings.php');
-        $voteSettings = new VoteSettings($this->folder);
-        $voteSettings->settings();
+        $voteSettings = new VoteSettings();
+        $voteSettings->settings($this->folder);
         return true;
     }
     

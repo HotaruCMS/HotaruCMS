@@ -25,7 +25,7 @@
  * @link      http://www.hotarucms.org/
  */
 
-class PluginSettings extends PluginAccess
+class PluginSettings
 {
 
     /**
@@ -38,12 +38,9 @@ class PluginSettings extends PluginAccess
      * Notes: If there are multiple settings with the same name,
      * this will only get the first.
      */
-    function getSetting($setting = '', $folder = '')
+    public function getSetting($setting = '', $folder = '')
     {
         global $db;
-        
-        // Set default to the current plugin if not specified
-        if (!$folder) { $folder = $this->folder; }
         
         $sql = "SELECT plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
         $value = $db->get_var($db->prepare($sql, $folder, $setting));
@@ -60,11 +57,9 @@ class PluginSettings extends PluginAccess
      *
      * Note: Unlike "getSetting", this will get ALL settings with the same name.
      */
-    function getSettingsArray($folder = '') {
+    public function getSettingsArray($folder = '')
+    {
         global $db;
-        
-        // Set default to the current plugin if not specified
-        if (!$folder) { $folder = $this->folder; }
         
         $sql = "SELECT plugin_setting, plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s)";
         $results = $db->get_results($db->prepare($sql, $folder));
@@ -78,11 +73,8 @@ class PluginSettings extends PluginAccess
      *
      * @return array - of submit settings
      */
-    function getSerializedSettings($folder = '')
+    public function getSerializedSettings($folder = '')
     {
-        // Set default to the current plugin if not specified
-        if (!$folder) { $folder = $this->folder; }
-        
         // Get settings from the database if they exist...
         $settings = unserialize($this->getSetting($folder . '_settings', $folder));
         return $settings;
@@ -96,11 +88,9 @@ class PluginSettings extends PluginAccess
      * @param string $setting name of the setting to retrieve
      * @return string|false
      */
-    function isSetting($setting = '', $folder = '') {
+    public function isSetting($setting = '', $folder = '')
+    {
         global $db;
-        
-        // Set default to the current plugin if not specified
-        if (!$folder) { $folder = $this->folder; }
         
         $sql = "SELECT plugin_setting FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
         $returned_setting = $db->get_var($db->prepare($sql, $folder, $setting));
@@ -118,11 +108,9 @@ class PluginSettings extends PluginAccess
      * @param string $setting name of the setting
      * @param string $setting stting value
      */
-    function updateSetting($setting = '', $value = '', $folder = '')
+    public function updateSetting($setting = '', $value = '', $folder = '')
     {
         global $db, $current_user;
-        
-        if (!$folder) { $folder = $this->folder; }
         
         $exists = $this->isSetting($setting, $folder);
         if (!$exists) 
@@ -143,7 +131,7 @@ class PluginSettings extends PluginAccess
      * @param string $setting name of the setting to remove
      * @param string $folder name of plugin folder
      */
-    function deleteSettings($setting = '', $folder = '')
+    public function deleteSettings($setting = '', $folder = '')
     {
         global $db;
         

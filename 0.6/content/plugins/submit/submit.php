@@ -419,8 +419,8 @@ class Submit extends PluginFunctions
     public function admin_plugin_settings()
     {
         require_once(PLUGINS . 'submit/submit_settings.php');
-        $submitSettings = new SubmitSettings($this->folder);
-        $submitSettings->settings();
+        $submitSettings = new SubmitSettings();
+        $submitSettings->settings($this->folder);
         return true;
     }
     
