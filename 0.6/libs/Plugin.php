@@ -28,10 +28,7 @@
  * @link      http://www.hotarucms.org/
  */
 
-// Include the generic_pmd class that reads post metadata from the a plugin
-require_once(EXTENSIONS . 'GenericPHPConfig/class.metadata.php');
-
-class Plugin extends generic_pmd
+class Plugin
 {
 
     protected $id           = '';         // plugin id

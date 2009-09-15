@@ -12,7 +12,10 @@ class PluginFunctions extends PluginManagement
     function readPluginMeta($plugin_file)
     {
         if ($plugin_file != 'placeholder.txt') {
-            $plugin_metadata = $this->read(PLUGINS . $plugin_file . "/" 
+        // Include the generic_pmd class that reads post metadata from the a plugin
+        require_once(EXTENSIONS . 'GenericPHPConfig/class.metadata.php');
+            $metaReader = new generic_pmd();
+            $plugin_metadata = $metaReader->read(PLUGINS . $plugin_file . "/" 
             . $plugin_file . ".php");
             
             if ($plugin_metadata) {
@@ -113,7 +116,7 @@ class PluginFunctions extends PluginManagement
         $admin->deleteFiles(CACHE . 'db_cache');
         
         // Read meta from the top of the plugin file
-        $plugin_metadata = $this->read(PLUGINS . $this->folder . "/" . $this->folder . ".php");
+        $plugin_metadata = $this->readPluginMeta($this->folder);
         
         $this->enabled  = 1;    // Enable it when we add it to the database.
         $this->assignPluginMeta($plugin_metadata);
@@ -204,7 +207,7 @@ class PluginFunctions extends PluginManagement
         global $db, $lang, $hotaru, $admin;
         
         // Read meta from the top of the plugin file
-        $plugin_metadata = $this->read(PLUGINS . $this->folder . "/" . $this->folder . ".php");
+        $plugin_metadata = $this->readPluginMeta($this->folder);
         
         $this->enabled  = 1;    // Enable it when we add it to the database.
         $this->assignPluginMeta($plugin_metadata);
@@ -275,7 +278,7 @@ class PluginFunctions extends PluginManagement
                     $db_version = $this->getVersion();
                     
                     // Get plugin version from the file....
-                    $plugin_metadata = $this->read(PLUGINS . $this->folder . "/" . $this->folder . ".php");
+                    $plugin_metadata = $this->readPluginMeta($this->folder);
                     $file_version = $plugin_metadata['version'];
                     
                     // If file version is newer the the current plugin version, then upgrade...
