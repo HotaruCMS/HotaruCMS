@@ -111,7 +111,6 @@ if (!isset($plugins)) {
     }
 }
 
-
 $current_user = new UserBase();
 
 // Check for a cookie. If present then the user is logged in.

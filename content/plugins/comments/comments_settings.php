@@ -27,16 +27,15 @@
 
 class CommentsSettings extends Comments
 {
-    /* Allows us to call functions without specifying what plugin this is. */
-    public function __construct($folder) { $this->folder = $folder; }
-    
-    
      /**
      * Admin settings for Comments
      */
-    public function settings()
+    public function settings($folder)
     {
         global $hotaru, $cage, $lang, $comment;
+        
+         /* Allows us to call functions without specifying what plugin this is. */
+        $this->setFolder($folder);
         
         // If the form has been submitted, go and save the data...
         if ($cage->post->getAlpha('submitted') == 'true') { 

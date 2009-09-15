@@ -12,8 +12,8 @@ class PluginFunctions extends PluginManagement
     function readPluginMeta($plugin_file)
     {
         if ($plugin_file != 'placeholder.txt') {
-        // Include the generic_pmd class that reads post metadata from the a plugin
-        require_once(EXTENSIONS . 'GenericPHPConfig/class.metadata.php');
+            // Include the generic_pmd class that reads post metadata from the a plugin
+            require_once(EXTENSIONS . 'GenericPHPConfig/class.metadata.php');
             $metaReader = new generic_pmd();
             $plugin_metadata = $metaReader->read(PLUGINS . $plugin_file . "/" 
             . $plugin_file . ".php");
@@ -495,7 +495,7 @@ class PluginFunctions extends PluginManagement
     {
         global $lang;
         
-        if (!$folder) { $folder = $this->folder; }
+        if (!$folder) { $folder = $this->getFolder(); }
         
         if ($folder) {
         

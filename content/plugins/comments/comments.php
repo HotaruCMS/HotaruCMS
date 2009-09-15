@@ -217,8 +217,8 @@ class Comments extends pluginFunctions
     public function admin_plugin_settings()
     {
         require_once(PLUGINS . 'comments/comments_settings.php');
-        $comSettings = new CommentsSettings($this->folder);
-        $comSettings->settings();
+        $comSettings = new CommentsSettings();
+        $comSettings->settings($this->folder);
         return true;
     }
     

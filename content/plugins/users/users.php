@@ -102,8 +102,8 @@ class Users extends PluginFunctions
     public function admin_plugin_settings()
     {
         require_once(PLUGINS . 'users/users_settings.php');
-        $usersSettings = new UsersSettings($this->folder);
-        $usersSettings->settings();
+        $usersSettings = new UsersSettings();
+        $usersSettings->settings($this->folder);
         return true;
     }
     
