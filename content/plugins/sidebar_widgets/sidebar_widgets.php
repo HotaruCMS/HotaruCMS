@@ -75,6 +75,7 @@ class SidebarWidgets extends PluginFunctions
         
         if ($hotaru->getSidebar()) {
             // Create a new global object called "sidebar".
+            require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
             $sidebar = new Sidebar();
             
             $sidebar->initializeSidebarWidgets();

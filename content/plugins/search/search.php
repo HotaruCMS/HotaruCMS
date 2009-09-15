@@ -39,6 +39,7 @@ class Search extends PluginFunctions
      */
     public function install_plugin()
     {
+        require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
         $sidebar = new Sidebar();
         $sidebar->addWidget('search', 'search', '');  // plugin name, function name, optional arguments
     } 

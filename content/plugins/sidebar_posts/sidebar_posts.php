@@ -40,6 +40,7 @@ class SidebarPosts extends PluginFunctions
     public function install_plugin()
     {
         // Default settings
+        require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
         $sidebar = new Sidebar();
         // plugin name, function name, optional arguments
         $sidebar->addWidget('sidebar_posts', 'sidebar_posts_top', 'top');

@@ -49,8 +49,12 @@ class Categories extends PluginFunctions
         // Default settings (Note: we can't use $post->vars because it hasn't been filled yet.)
         $this->updateSetting('submit_categories', 'checked', 'submit');
         $this->updateSetting('categories_bar', 'menu');
-        $sidebar = new Sidebar();
-        $sidebar->addWidget('categories', 'categories', 'side'); // plugin name, function name, optional arguments
+        
+        if ($this->isActive('sidebar_widgets')) {
+            require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
+            $sidebar = new Sidebar();
+            $sidebar->addWidget('categories', 'categories', ''); // plugin name, function name, optional arguments
+        }
     }
     
     
@@ -70,6 +74,7 @@ class Categories extends PluginFunctions
         // Get page title    
         if ($cage->get->keyExists('category'))
         {
+            require_once(PLUGINS . 'categories/libs/Category.php');
             $cat = new Category();
             
             if (is_numeric($cage->get->notags('category'))) 
@@ -353,37 +358,36 @@ class Categories extends PluginFunctions
     {
         global $hotaru, $post, $cage, $filter, $lang, $page_title;
         
-        if ($cage->get->keyExists('category')) 
+        if (!$cage->get->keyExists('category')) { return false; }
+
+        require_once(PLUGINS . 'categories/libs/Category.php');
+        $cat = new Category();
+        
+        if (FRIENDLY_URLS == "true") 
         {
-            $cat = new Category();
-            
-            if (FRIENDLY_URLS == "true") 
-            {
-                $category = $cage->get->noTags('category'); 
-                if ($category) { 
-                    $filter['post_category = %d'] = $cat->getCatId($category); 
-                    $rss = " <a href='" . url(array('page'=>'rss', 'category'=>$cat->getCatId($category))) . "'>";
-                } 
+            $category = $cage->get->noTags('category'); 
+            if ($category) { 
+                $filter['post_category = %d'] = $cat->getCatId($category); 
+                $rss = " <a href='" . url(array('page'=>'rss', 'category'=>$cat->getCatId($category))) . "'>";
             } 
-            else 
-            {
-                $category = $cage->get->getInt('category'); 
-                if ($category) {
-                    $filter['post_category = %d'] = $category; 
-                    $rss = " <a href='" . url(array('page'=>'rss', 'category'=>$category)) . "'>";
-                }
-            }
-            
-            $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
-            // Undo the filter that limits results to either 'top' or 'new' (See submit.php -> sub_prepare_list())
-            if(isset($filter['post_status = %s'])) { unset($filter['post_status = %s']); }
-            $filter['post_status != %s'] = 'processing';
-            $page_title = $lang["post_breadcrumbs_category"] . " &raquo; " . $hotaru->getTitle() . $rss;
-            
-            return true;
         } 
-    
-        return false;
+        else 
+        {
+            $category = $cage->get->getInt('category'); 
+            if ($category) {
+                $filter['post_category = %d'] = $category; 
+                $rss = " <a href='" . url(array('page'=>'rss', 'category'=>$category)) . "'>";
+            }
+        }
+        
+        $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
+        // Undo the filter that limits results to either 'top' or 'new' (See submit.php -> sub_prepare_list())
+        if(isset($filter['post_status = %s'])) { unset($filter['post_status = %s']); }
+        $filter['post_status != %s'] = 'processing';
+        $page_title = $lang["post_breadcrumbs_category"] . " &raquo; " . $hotaru->getTitle() . $rss;
+        
+        return true;
+
     }
     
     
@@ -417,6 +421,9 @@ class Categories extends PluginFunctions
     {
         global $db, $the_cats, $cat_level, $lang, $hotaru, $sidebar;
         
+        if (!$this->isActive('sidebar_widgets')) { return false; }
+        
+        require_once(PLUGINS . 'categories/libs/Category.php');
         $catObj = new Category();
         
         // Get settings from database if they exist...

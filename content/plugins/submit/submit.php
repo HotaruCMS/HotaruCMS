@@ -123,11 +123,12 @@ class Submit extends PluginFunctions
     
         // include language file
         $this->includeLanguage();
-        
-        require_once(LIBS . 'Post.php');
+                
+        require_once(PLUGINS . 'submit/libs/Post.php');
         require_once(EXTENSIONS . 'Paginated/Paginated.php');
         require_once(EXTENSIONS . 'Paginated/DoubleBarLayout.php');
             
+        require_once(PLUGINS . 'submit/libs/Post.php');
         $post = new Post();
         
         $this->pluginHook('submit_hotaru_header_1');
