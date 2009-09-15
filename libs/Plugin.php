@@ -56,8 +56,10 @@ class Plugin
     public function __construct($folder = '')
     {
         // We don't need to fill the object with anything other than the plugin folder name at this time:
-        if ($folder) { $this->setFolder($folder); }
-        
+        if ($folder) { 
+            $this->setFolder($folder); 
+        }
+
         // Include the PluginAccess class that lets derived plugins access proteced properties and methods
         require_once(LIBS . 'PluginSettings.php');
         $this->settings = new PluginSettings();
@@ -178,7 +180,7 @@ class Plugin
      */
     public function admin_sidebar_plugin_settings()
     {
-        echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>$this->getFolder()), 'admin') . "'>" . $this->name . "</a></li>";
+        echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>$this->getFolder()), 'admin') . "'>" . make_name($this->getFolder()) . "</a></li>";
     }
     
     

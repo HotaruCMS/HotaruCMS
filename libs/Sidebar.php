@@ -57,9 +57,6 @@ class Sidebar {
 
     /**
      * Initialize sidebar widgets
-     *
-     * Find which plugins have "plugin_settings" for "sidebar_widgets", give 
-     * them an initial order and serialize them in "sidebar_settings"
      */
     public function initializeSidebarWidgets()
     {
@@ -68,28 +65,28 @@ class Sidebar {
         // Get settings from the database if they exist...
         $sidebar_settings = $this->getSidebarSettings();
             
-        $sidebar_widgets = $plugins->getSettingsArray('sidebar_widgets');
+        $widgets = $this->getWidgets();
         
-        if ($sidebar_widgets) {
+        if ($widgets) {
             $count = 1;
-            foreach ($sidebar_widgets as $widget) {
+            foreach ($widgets as $widget) {
                 // Only reset order if it doesn't already exist.
-                if (!isset($sidebar_settings['sidebar_widgets'][$widget->plugin_setting]['order'])) {
-                    $sidebar_settings['sidebar_widgets'][$widget->plugin_setting]['order'] = $count;
+                if (!isset($sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['order'])) {
+                    $sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['order'] = $count;
                 }
                 // Only reset sidebar_id if it doesn't already exist.
-                if (!isset($sidebar_settings['sidebar_widgets'][$widget->plugin_setting]['sidebar'])) {
-                    $sidebar_settings['sidebar_widgets'][$widget->plugin_setting]['sidebar'] = 1;
+                if (!isset($sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['sidebar'])) {
+                    $sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['sidebar'] = 1;
                 }
                 // Only reset enabled if it doesn't already exist.
-                if (!isset($sidebar_settings['sidebar_widgets'][$widget->plugin_setting]['enabled'])) {
-                    $sidebar_settings['sidebar_widgets'][$widget->plugin_setting]['enabled'] = true;
+                if (!isset($sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['enabled'])) {
+                    $sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['enabled'] = true;
                 }
-                // Only reset enabled if it doesn't already exist.
-                if (!isset($sidebar_settings['sidebar_widgets'][$widget->plugin_setting]['class'])) {
-                    $sidebar_settings['sidebar_widgets'][$widget->plugin_setting]['class'] = $plugins->getClassName($widget->plugin_setting);
-                }
-                $sidebar_settings['sidebar_widgets'][$widget->plugin_setting]['args'] = $widget->plugin_value;
+
+                $sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['class'] = $plugins->getClassName($widget->widget_plugin);
+                $sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['function'] = $widget->widget_function;
+                $sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['args'] = $widget->widget_args;
+
                 $count++;
             }
             $plugins->updateSetting('sidebar_settings', serialize($sidebar_settings), 'sidebar_widgets');
@@ -97,6 +94,44 @@ class Sidebar {
     }
 
 
+    /**
+     * Add widget
+     *
+     * @param string $plugin
+     * @param string $function
+     * @param string $value
+     */
+    public function addWidget($plugin = '', $function = '', $args = '')
+    {
+        global $db, $current_user;
+        
+        // Check if it exists so we don't add a duplicate
+        $sql = "SELECT * FROM " . TABLE_WIDGETS . " WHERE widget_plugin = %s AND widget_function = %s AND widget_args = %s";
+        $results = $db->get_results($db->prepare($sql, $plugin, $function, $args));
+        
+        if (!$results) {
+            $sql = "INSERT INTO " . TABLE_WIDGETS . " (widget_plugin, widget_function, widget_args, widget_updateby) VALUES(%s, %s, %s, %d)";
+            $db->query($db->prepare($sql, $plugin, $function, $args, $current_user->getId()));
+        }
+    }
+    
+    
+    /**
+     * Get widgets
+     *
+     * @return array - of widget settings
+     */
+    public function getWidgets()
+    {
+        global $db, $plugins;
+        
+        // Get settings from the database if they exist...
+        $sql = "SELECT * FROM " . TABLE_WIDGETS;
+        $widget_settings = $db->get_results($db->prepare($sql));
+        return $widget_settings;
+    }
+    
+    
     /**
      * Get sidebar settings
      *

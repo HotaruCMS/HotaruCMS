@@ -40,8 +40,9 @@ class SidebarPosts extends PluginFunctions
     public function install_plugin()
     {
         // Default settings
-        $this->updateSetting('sidebar_posts_top', 'top', 'sidebar_widgets');
-        $this->updateSetting('sidebar_posts_latest', 'new', 'sidebar_widgets');
+        $sidebar = new Sidebar();
+        $sidebar->addWidget('sidebar_posts', 'sidebar_posts_top', 'top');
+        $sidebar->addWidget('sidebar_posts', 'sidebar_posts_latest', 'new');
     }
     
     
@@ -53,8 +54,6 @@ class SidebarPosts extends PluginFunctions
     function sidebar_widget_sidebar_posts($type = 'top')
     {
         global $hotaru, $post, $lang;
-        
-        echo "IN SIDEBAR POSTS";
         
         $this->includeLanguage();
         

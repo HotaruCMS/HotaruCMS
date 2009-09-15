@@ -40,6 +40,21 @@ class SidebarWidgets extends PluginFunctions
     {
         global $db, $post;
         
+        // Create a new empty table called "posts"
+        $exists = $db->table_exists('widgets');
+        if (!$exists) {
+            //echo "table doesn't exist. Stopping before creation."; exit;
+            $sql = "CREATE TABLE `" . DB_PREFIX . "widgets` (
+              `widget_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+              `widget_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+              `widget_plugin` varchar(32) NOT NULL DEFAULT '',
+              `widget_function` varchar(255) NULL, 
+              `widget_args` varchar(255) NULL, 
+              `widget_updateby` int(20) NOT NULL DEFAULT 0
+            ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Widgets';";
+            $db->query($sql); 
+        }
+        
         // A plugin hook so other plugin developers can add defaultsettings
         $this->pluginHook('sidebar_install_plugin');
         
@@ -55,6 +70,8 @@ class SidebarWidgets extends PluginFunctions
         global $hotaru, $sidebar, $lang;
         
         $this->includeLanguage();
+        
+        if (!defined('TABLE_WIDGETS')) { define("TABLE_WIDGETS", DB_PREFIX . 'widgets'); }
         
         if ($hotaru->getSidebar()) {
             // Create a new global object called "sidebar".
