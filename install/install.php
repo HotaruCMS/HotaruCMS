@@ -37,18 +37,16 @@ require_once('../hotaru_settings.php');
 require_once(LIBS . 'Hotaru.php');    // Needed for error and success messages
 require_once(LIBS . 'UserBase.php');  // Needed for login/registration
 require_once(LIBS . 'HotaruInspekt.php');      // for custom Inspekt methods
-$hotaru = new Hotaru();
+$hotaru = new Hotaru('install');
 
 // Clear the database cache in case of a re-install.
 require_once(LIBS . 'Admin.php'); 
-$admin = new Admin();
+$admin = new Admin('install');
 $admin->deleteFiles(CACHE . 'db_cache');
 
 // Global Inspekt SuperCage
 require_once(EXTENSIONS . 'Inspekt/Inspekt.php');
 $hotaru->initializeInspekt();
-
-require_once(INSTALL . 'install_language.php');    // language file for install
 
 $step = $cage->get->getInt('step');        // Installation steps.
 

@@ -155,6 +155,122 @@ class Hotaru
     
     
     /**
+     * Hotaru Header constructor
+     */
+    public function __construct($entrance = 'index')
+    {
+        global $hotaru, $db, $cage, $plugins, $current_user, $lang;
+        
+        // error reporting
+        ini_set('display_errors',1);
+        ini_set('log_errors',1);
+        error_reporting(E_ALL);
+        
+        // include third party libraries
+        require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
+        require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
+        require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php'); // database
+        
+        // utilities
+        require_once(FUNCTIONS . 'funcs.urls.php');
+        require_once(FUNCTIONS . 'funcs.strings.php');
+        require_once(FUNCTIONS . 'funcs.arrays.php');
+        require_once(FUNCTIONS . 'funcs.times.php');
+        require_once(FUNCTIONS . 'funcs.files.php');
+        
+        // include libraries
+        require_once(LIBS . 'Hotaru.php');          // for environment
+        require_once(LIBS . 'HotaruInspekt.php');   // for custom Inspekt methods
+        require_once(LIBS . 'Plugin.php');          // for plugins
+        require_once(LIBS . 'PluginFunctions.php'); // for plugins
+        require_once(LIBS . 'UserBase.php');        // for users
+        
+        // Initialize database
+        if (!isset($db)) { 
+            $db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST); 
+            $db->query("SET NAMES 'utf8'");
+        }
+        
+        // Read Hotaru settings
+        $settings = $this->readSettings(); // Settings from database
+        foreach ($settings as $setting)
+        {
+            if (!defined($setting->settings_name)) { 
+                define($setting->settings_name, $setting->settings_value);
+            }
+        }
+        
+        // Setup database cache
+        $db->cache_timeout = DB_CACHE_DURATION; // Note: this is hours
+        $db->cache_dir = CACHE . 'db_cache';
+        if (DB_CACHE_ON == "true") {
+            $db->use_disk_cache = true;
+        } else {
+            $db->use_disk_cache = false;
+        }   
+        // Note: Queries are still only cached following $db->cache_queries = true;
+        
+        // Start timer if debugging
+        if (DEBUG == "true") {
+            $this->isDebug = true;
+            timer_start();
+        }
+        
+        // Initialize Inspekt
+        $this->initializeInspekt();
+                
+        // Create objects
+        $plugins = new PluginFunctions(); 
+        $current_user = new UserBase();
+        
+        // Check for a cookie. If present then the user is logged in.
+        $hotaru_user = $cage->cookie->testUsername('hotaru_user');
+        if (($hotaru_user) && ($cage->cookie->keyExists('hotaru_key'))) {
+        
+            $user_info=explode(":", base64_decode($cage->cookie->getRaw('hotaru_key')));
+            
+            if (    ($hotaru_user == $user_info[0]) 
+                &&  (crypt($user_info[0], 22) == $user_info[1])
+            ) {
+                $current_user->setName($hotaru_user);
+                $current_user->getUserBasic(0, $current_user->getName());
+                $current_user->setLoggedIn(true);
+            }
+        }
+        
+        $hotaru = $this;    // $hotaru won't exist until this constructor is finished, 
+                            // but plugins using this hook can't wait that long!
+                            
+        // Enable plugins to define global settings, etc. 
+        $results = $plugins->pluginHook('hotaru_header');
+        
+        /*  The following extracts the results of pluginHook which is 
+            handy for making objects from plugins global */
+        if (isset($results) && is_array($results)) 
+        {
+            foreach ($results as $key => $value) {
+                if (is_array($value)) { extract($value); }
+            } 
+        }
+        
+        if ($entrance == 'admin') {
+            $this->includeLanguagePack('admin');
+        } elseif ($entrance == 'install') {
+            $this->includeLanguagePack('install');      
+        } else {
+            $this->includeLanguagePack('main');
+            // Include combined css and js files
+            if ($cage->get->keyExists('combine')) {
+                $type = $cage->get->testAlpha('type');
+                $version = $cage->get->testInt('version');
+                $this->combineIncludes($type, $version);
+            }
+            $this->displayTemplate('index');
+        }
+    }
+    
+
+    /**
      * Initialize Inspekt
      *
      * @return object
@@ -191,6 +307,31 @@ class Hotaru
     }
     
     
+    /**
+     * Include main or admin language pack
+     *
+     * @param string $pack
+     */
+    public function includeLanguagePack($pack = 'main')
+    {
+        global $lang;
+               
+        if ($pack == 'install') {
+            include_once(INSTALL . 'install_language.php');    // language file for install
+        } 
+        elseif (file_exists(LANGUAGES . LANGUAGE_PACK . $pack . '_language.php'))
+        {
+            // language file from the chosen language pack
+            include_once(LANGUAGES . LANGUAGE_PACK . $pack . '_language.php');
+        }
+        else 
+        {
+           // try the default language pack
+            require_once(LANGUAGES . 'language_default/' . $pack . '_language.php'); 
+        }
+    }
+    
+
     /**
      * Checks if current page (in url) matches the page parameter
      *
@@ -692,7 +833,7 @@ class Hotaru
      */
      public function includeCombined($version_js = 0, $version_css = 0, $page = '', $folder = '')
      {
-        if ($this->pageType == 'admin') { $index = 'admin/admin_index'; } else { $index = 'index'; }
+        if ($this->pageType == 'admin') { $index = 'admin_index'; } else { $index = 'index'; }
         if ($page && $folder) { 
             $page = 'page=' . $page; 
             $folder = 'plugin=' . $folder . "&";

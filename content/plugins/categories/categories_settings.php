@@ -56,7 +56,7 @@ class CategoriesSettings extends Categories
         if ($bar == 'menu') { $menubar = 'checked'; $sidebar = ''; }
         if ($bar == 'side') { $menubar = ''; $sidebar = 'checked'; }
         
-        echo "<form name='categories_settings_form' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=categories' method='post'>\n";
+        echo "<form name='categories_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=categories' method='post'>\n";
         
         echo "<p>" . $lang["categories_settings_instructions"] . "</p><br />";
         

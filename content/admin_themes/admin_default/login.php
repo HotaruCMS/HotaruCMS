@@ -40,7 +40,7 @@ global $hotaru, $lang; // don't remove
 <div class='main_inner'>
     <?php echo $lang["admin_theme_login_instructions"]; ?>
     
-    <form name='login_form' action='<?php echo BASEURL; ?>admin/admin_index.php' method='post'>    
+    <form name='login_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>    
     <table>
         <tr>
         <td><?php echo $lang["admin_theme_login_username"]; ?>:&nbsp; </td>

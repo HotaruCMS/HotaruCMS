@@ -71,7 +71,7 @@ class CommentsSettings extends Comments
          
         $this->pluginHook('comments_settings_get_values');
                
-        echo "<form name='comments_settings_form' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=comments' method='post'>\n";
+        echo "<form name='comments_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=comments' method='post'>\n";
         
         echo "<p>" . $lang["comments_settings_instructions"] . "</p><br />";
             

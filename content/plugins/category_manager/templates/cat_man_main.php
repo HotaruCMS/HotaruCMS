@@ -35,17 +35,17 @@
         <?php echo $lang["cat_man_home_intro1"]; ?><br /><br />
         <?php echo $lang["cat_man_home_intro2"]; ?><br />
 
-        <h3>1. <a href="<?php echo BASEURL; ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order"><?php echo $lang["cat_man_home_order_categories"]; ?></a></h3>
+        <h3>1. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order"><?php echo $lang["cat_man_home_order_categories"]; ?></a></h3>
         <?php echo $lang["cat_man_home_order_categories_desc"]; ?> <br />
-        <h3>2. <a href="<?php echo BASEURL; ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=add"><?php echo $lang["cat_man_home_add_categories"]; ?></a></h3>
+        <h3>2. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=add"><?php echo $lang["cat_man_home_add_categories"]; ?></a></h3>
         <?php echo $lang["cat_man_home_add_categories_desc"]; ?> <br />
-        <h3>3. <a href="<?php echo BASEURL; ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit"><?php echo $lang["cat_man_home_edit_categories"]; ?></a></h3>
+        <h3>3. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit"><?php echo $lang["cat_man_home_edit_categories"]; ?></a></h3>
         <?php echo $lang["cat_man_home_edit_categories_desc"]; ?> <br />
-        <h3>4. <a href="<?php echo BASEURL; ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit_meta"><?php echo $lang["cat_man_home_edit_categories_meta"]; ?></a></h3>
+        <h3>4. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit_meta"><?php echo $lang["cat_man_home_edit_categories_meta"]; ?></a></h3>
         <?php echo $lang["cat_man_home_edit_categories_meta_desc"]; ?><br />
-        <h3>5. <a href="<?php echo BASEURL; ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=move"><?php echo $lang["cat_man_home_move_categories"]; ?></a></h3>
+        <h3>5. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=move"><?php echo $lang["cat_man_home_move_categories"]; ?></a></h3>
         <?php echo $lang["cat_man_home_move_categories_desc"]; ?> <br />
-        <h3>6. <a href="<?php echo BASEURL; ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=delete"><?php echo $lang["cat_man_home_delete_categories"]; ?></a></h3>
+        <h3>6. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=delete"><?php echo $lang["cat_man_home_delete_categories"]; ?></a></h3>
         <?php echo $lang["cat_man_home_delete_categories_desc"]; ?>
     </td>
     

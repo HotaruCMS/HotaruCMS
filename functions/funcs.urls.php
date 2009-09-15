@@ -40,7 +40,7 @@ function url($parameters = array(), $head = 'index')
         if ($head == 'index') {
             $url = BASEURL . 'index.php?';
         } elseif ($head == 'admin') {
-            $url = BASEURL . 'admin/admin_index.php?';    
+            $url = BASEURL . 'admin_index.php?';    
         } else {
             // Error. $head must be index or admin
         }

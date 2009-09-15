@@ -1,8 +1,6 @@
-<?php 
+<?php
 /**
- * Theme name: admin_default
- * Template name: main.php
- * Template author: Nick Ramsay
+ * Determines which page of Admin should be shown
  *
  * PHP version 5
  *
@@ -25,20 +23,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
+ 
 
-global $hotaru, $lang, $admin; // don't remove
+// includes
+require_once('hotaru_settings.php');
+require_once(LIBS . 'Admin.php');
+$admin = new Admin('admin');
+
 ?>
-
-<p class="breadcrumbs">
-    <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
-    &raquo; <a href="<?php echo url(array(), 'admin'); ?>"><?php echo $lang["admin_theme_main_admin_cp"]; ?></a> 
-    &raquo; <?php echo $lang["admin_theme_main_admin_home"]; ?>
-</p>
-
-<!-- TITLE FOR ADMIN NEWS -->
-<h2>
-    <a href="http://feeds2.feedburner.com/hotarucms"><img src="<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/rss_16.png"></a>
-    &nbsp;<?php echo $lang["admin_theme_main_latest"]; ?>
-</h2>
-
-<?php echo $admin->adminNews(); ?>

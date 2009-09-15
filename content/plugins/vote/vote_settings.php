@@ -73,7 +73,7 @@ class VoteSettings extends Vote
         $this->pluginHook('vote_settings_get_values');
         
         // The form should be submitted to the admin_index.php page:
-        echo "<form name='vote_settings_form' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=vote' method='post'>\n";
+        echo "<form name='vote_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=vote' method='post'>\n";
         
         echo "<p><b>" . $lang["vote_settings_vote_type"] . "</b></p>";
         
