@@ -95,7 +95,7 @@ if (DB_CACHE_ON == "true") {
 
 // Start timer if debugging
 if (DEBUG == "true") {
-    $hotaru->is_debug = true;
+    $hotaru->isDebug = true;
     timer_start();
 }
 

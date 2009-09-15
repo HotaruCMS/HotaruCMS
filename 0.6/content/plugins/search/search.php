@@ -39,7 +39,8 @@ class Search extends PluginFunctions
      */
     public function install_plugin()
     {
-        $this->updateSetting('search', '', 'sidebar_widgets');
+        $sidebar = new Sidebar();
+        $sidebar->addWidget('search', 'search', 'top');
     } 
     
     /**
