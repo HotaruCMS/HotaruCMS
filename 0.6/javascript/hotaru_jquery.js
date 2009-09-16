@@ -50,6 +50,13 @@ $(document).ready(function(){
 	$(".plugin_hide_details").click(function () {
                 $(this).parents("tr").fadeOut();
                 return false;
-        });   
+        });  
+        
+	// Show/Hide forgoot password form
+	$(".forgot_password").click(function () {
+		var target = $(this).next("form");
+                target.fadeToggle();
+                return false;
+        });  
  
 });

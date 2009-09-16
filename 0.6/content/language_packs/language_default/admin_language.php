@@ -43,6 +43,19 @@ $lang["admin_breadcrumbs_login"] = "Login";
 /* Login */
 $lang["admin_login_failed"] = "Login failed";
 $lang["admin_login_error_cookie"] = "Error setting cookie. Username not provided";
+$lang["admin_login_email_invalid"] = "Email invalid";
+
+/* Forgotten Password */
+$lang['admin_email_password_conf_sent'] = "An email has been sent to the address provided";
+$lang['admin_email_password_conf_subject'] = SITE_NAME . " Password Reset Request"; 
+$lang['admin_email_password_conf_body_hello'] = "Hi";
+$lang['admin_email_password_conf_body_welcome'] = "If you have requested a new password at " . SITE_NAME . ", ";
+$lang['admin_email_password_conf_body_click'] = "click this url or copy it into your browser:";
+$lang['admin_email_password_conf_body_no_request'] = "If you have NOT requested a new password, please ignore this email.";
+$lang['admin_email_password_conf_body_regards'] = "Regards,";
+$lang['admin_email_password_conf_body_sign'] = SITE_NAME . " Admin";
+$lang['admin_email_password_conf_success'] = "A new password has been sent to your email address.";
+$lang['admin_email_password_conf_fail'] = "Unable to confirm your email address. Please try the link again.";
 
 /* News */
 $lang["admin_news_posted_by"] = "Posted by";
@@ -103,6 +116,26 @@ $lang["admin_theme_login_username"] = "Username";
 $lang["admin_theme_login_password"] = "Password";
 $lang["admin_theme_login_instructions"] = "Enter your username and password:";
 $lang["admin_theme_login_form_submit"] = "Login";
+$lang["admin_theme_login_forgot_password"] = "Forgot your password?";
+$lang['admin_theme_login_forgot_password_submit'] = "Submit";
+$lang['admin_theme_login_forgot_password_submit_instruct_1'] = "Enter the email address for your Admin account:";
+$lang['admin_theme_login_forgot_password_submit_instruct_2'] = "You will be emailed a confirmation code. Click that confirmation code to be sent a new, random password. Use that to access your account and change it to something you can remember.";
+
+/* account */
+$lang["admin_theme_account"] = "Account";
+$lang["admin_theme_account_instructions"] = "Update your account information:";
+$lang["admin_theme_update_username"] = "Username:";
+$lang["admin_theme_update_email"] = "Email:";
+$lang["admin_theme_update_password_instruct"] = "Change your password?";
+$lang["admin_theme_update_old_password"] = "Old password:";
+$lang["admin_theme_update_new_password"] = "New password:";
+$lang["admin_theme_update_new_password_verify"] = "New password (again):";
+$lang["admin_theme_update_success"] = "Updated successfully.";
+$lang["admin_theme_update_form_submit"] = "Update";
+$lang["admin_theme_update_password_error_old"] = "Your old password doesn't match our records";
+$lang["admin_theme_update_password_error_new"] = "The new password must be at least 8 characters and can only contain letters, numbers and these symbols: @ * # - _";
+$lang["admin_theme_update_password_error_match"] = "The two \"New password\" fields don't match";
+$lang["admin_theme_update_password_error_not_provided"] = "Please fill in all the password fields";
 
 /* navigation */
 $lang["admin_theme_navigation_home"] = "Home";

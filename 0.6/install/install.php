@@ -492,6 +492,7 @@ function create_table($table_name)
           `user_role` varchar(32) NOT NULL DEFAULT 'member',
           `user_date` timestamp NOT NULL,
           `user_password` varchar(64) NOT NULL DEFAULT '',
+          `user_password_conf` varchar(128) NULL,
           `user_email` varchar(128) NOT NULL DEFAULT '',
           `user_email_valid` tinyint(3) NOT NULL DEFAULT 0,
           `user_email_conf` varchar(128) NULL,

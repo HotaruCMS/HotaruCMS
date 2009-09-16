@@ -490,7 +490,7 @@ function isAdmin($username)
      */
     public function getUserNameFromId($id = 0)
     {
-        global $db, $user;
+        global $db;
         
         $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_id = %d";
         
@@ -507,12 +507,98 @@ function isAdmin($username)
      */
     public function getUserIdFromName($username = '')
     {
-        global $db, $user;
+        global $db;
         
         $sql = "SELECT user_id FROM " . TABLE_USERS . " WHERE user_username = %s";
         
         $user_id = $db->get_var($db->prepare($sql, $username));
         if ($user_id) { return $user_id; } else { return false; }
+    }
+    
+    
+    /**
+     * Get the username from email
+     *
+     * @param string $email
+     * @return string|false
+     */
+    public function getUserNameFromEmail($email = '')
+    {
+        global $db;
+        
+        $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_email = %s";
+        
+        $username = $db->get_var($db->prepare($sql, $email));
+        if ($username) { return $username; } else { return false; }
+    }
+    
+    /**
+     * Get the username for a given user id
+     *
+     * @param int $id user id
+     * @return string|false
+     */
+    public function validEmail($email = '', $role = '')
+    {
+        global $db, $user;
+        
+        if (!$email) {  return false; }
+        
+        if ($role) { 
+            $sql = "SELECT user_email FROM " . TABLE_USERS . " WHERE user_email = %s AND user_role = %s";
+            $valid_email = $db->get_var($db->prepare($sql, $email, $role));
+        } else {
+            $sql = "SELECT user_email FROM " . TABLE_USERS . " WHERE user_email = %s";
+            $valid_email = $db->get_var($db->prepare($sql, $email));
+        }
+
+        if ($valid_email) { return $valid_email; } else { return false; }
+    }
+    
+    
+    
+    
+     /**
+     * Send a confirmation code to a user who has forgotten his/her password
+     *
+     * @param string $email - already validated above
+     */
+    public function sendPasswordConf($email)
+    {
+        global $db, $hotaru, $cage, $lang, $plugins;
+        
+        // generate the email confirmation code
+        $pass_conf = md5(crypt(md5($email),md5($email)));
+        
+        // store the hash in the user table
+        $sql = "UPDATE " . TABLE_USERS . " SET user_password_conf = %s WHERE user_email = %s";
+        $db->query($db->prepare($sql, $pass_conf, $email));
+        
+        $line_break = "\r\n\r\n";
+        $next_line = "\r\n";
+        
+        if ($plugins->isActive('users')) { $page = 'users'; } else { $page = 'admin_login'; }
+        
+        // send email
+        $subject = $lang['admin_email_password_conf_subject'];
+        $body = $lang['admin_email_password_conf_body_hello'] . " " . $this->getUserNameFromEmail($email);
+        $body .= $line_break;
+        $body .= $lang['admin_email_password_conf_body_welcome'];
+        $body .= $lang['admin_email_password_conf_body_click'];
+        $body .= $line_break;
+        $body .= BASEURL . "index.php?page=" . $page . "&conf=" . $pass_conf;
+        $body .= $line_break;
+        $body .= $lang['admin_email_password_conf_body_no_request'];
+        $body .= $line_break;
+        $body .= $lang['admin_email_password_conf_body_regards'];
+        $body .= $next_line;
+        $body .= $lang['admin_email_password_conf_body_sign'];
+        $to = $email;
+        $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
+    
+        mail($to, $subject, $body, $headers);    
+        
+        return true;
     }
 }
  
