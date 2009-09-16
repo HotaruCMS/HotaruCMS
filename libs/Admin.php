@@ -57,6 +57,7 @@ class Admin
             $page = $cage->post->testPage('page'); 
         }
         
+        
         // Authenticate the admin if the Users plugin is INACTIVE:
         if (!$plugins->isActive('users'))
         {
@@ -82,6 +83,7 @@ class Admin
                 die(); exit;
             }
         }
+        
         
         // If we get this far, we know that the user is an administrator.
         
@@ -539,15 +541,15 @@ class Admin
         
         // Check username
         if (!$username_check = $cage->post->testUsername('username')) { 
-            $username_check = ""; 
+            $username_check = ''; 
         } 
         
         // Check password
         if (!$password_check = $cage->post->testPassword('password')) {
-            $password_check = ""; 
+            $password_check = ''; 
         }
                     
-        if ($username_check != "" || $password_check != "") 
+        if ($username_check != '' || $password_check != '') 
         {
             $login_result = $current_user->loginCheck($username_check, $password_check);
             
@@ -571,12 +573,52 @@ class Admin
                 $hotaru->message = $lang["admin_login_failed"];
                 $hotaru->messageType = "red";
             }
-            $username_check = "";
-            $password_check = "";
+            $username_check = '';
+            $password_check = '';
+            
+            if ($cage->post->keyExists('forgotten_password')) {
+                $this->adminPassword();
+            }
         }
         
         return false;
     }
+    
+    
+     /**
+     * Admin login
+     * 
+     * @return bool
+     */
+    public function adminPassword()
+    {
+        global $cage, $lang, $current_user, $hotaru;
+        
+        // Check email
+        if (!$email_check = $cage->post->testEmail('email')) { 
+            $email_check = ''; 
+            // login failed
+            $hotaru->message = $lang["admin_login_email_invalid"];
+            $hotaru->messageType = "red";
+            return false;
+        } 
+                    
+        $valid_email = $current_user->validEmail($email_check, 'admin');
+        
+        if ($valid_email) {
+                //success
+                $current_user->sendPasswordConf($valid_email);
+                $hotaru->message = $lang['admin_email_password_conf_sent'];
+                $hotaru->messageType = "green";
+                return true;
+        } else {
+                // login failed
+                $hotaru->message = $lang["admin_login_email_invalid"];
+                $hotaru->messageType = "red";
+                return false;
+        }
+    }
+    
     
      /**
      * Admin login form
@@ -593,6 +635,11 @@ class Admin
         // Check password
         if (!$password_check = $cage->post->testPassword('password')) {
             $password_check = ""; 
+        }
+        
+        // Check email (for forgotten password form)
+        if (!$email_check = $cage->post->testEmail('email')) {
+            $email_check = ''; 
         }
         
         require_once(ADMIN_THEMES . ADMIN_THEME . 'login.php');
