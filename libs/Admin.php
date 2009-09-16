@@ -99,6 +99,9 @@ class Admin
             case "admin_logout":
                 $this->adminLogout();
                 break;
+            case "admin_account":
+                // Nothing special to do...
+                break;
             case "settings":
                 // Nothing special to do...
                 break;
@@ -576,8 +579,23 @@ class Admin
             $username_check = '';
             $password_check = '';
             
+            // forgotten password request
             if ($cage->post->keyExists('forgotten_password')) {
                 $this->adminPassword();
+            }
+            
+            // confirming forgotten password email
+            $passconf = $cage->get->getAlnum('passconf');
+            $userid = $cage->get->testInt('userid');
+            
+            if ($passconf && $userid) {
+                if ($current_user->newRandomPassword($userid, $passconf)) {
+                    $hotaru->message = $lang['admin_email_password_conf_success'];
+                    $hotaru->messageType = "green";
+                } else {
+                    $hotaru->message = $lang['admin_email_password_conf_fail'];
+                    $hotaru->messageType = "red";
+                }
             }
         }
         
@@ -604,10 +622,11 @@ class Admin
         } 
                     
         $valid_email = $current_user->validEmail($email_check, 'admin');
+        $userid = $current_user->getUserIdFromEmail($valid_email);
         
-        if ($valid_email) {
+        if ($valid_email && $userid) {
                 //success
-                $current_user->sendPasswordConf($valid_email);
+                $current_user->sendPasswordConf($userid, $valid_email);
                 $hotaru->message = $lang['admin_email_password_conf_sent'];
                 $hotaru->messageType = "green";
                 return true;

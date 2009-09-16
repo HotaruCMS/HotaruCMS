@@ -33,7 +33,7 @@ global $hotaru, $plugins, $lang, $current_user; // don't remove
 <ul id="sidebar">
     <li><a href="<?php echo url(array(), 'admin'); ?>"><?php echo $lang["admin_theme_main_admin_home"]; ?></a></li>
     <?php if ($current_user->getLoggedIn() == true) { ?>
-        <li><a href="<?php echo url(array('page' => 'account'), 'admin'); ?>"><?php echo $lang["admin_theme_account"]; ?></a></li>
+        <li><a href="<?php echo url(array('page' => 'admin_account'), 'admin'); ?>"><?php echo $lang["admin_theme_account"]; ?></a></li>
     <?php } ?>
     <li><a href="<?php echo url(array('page' => 'settings'), 'admin'); ?>"><?php echo $lang["admin_theme_settings"]; ?></a></li>
     <li><a href="<?php echo url(array('page' => 'maintenance'), 'admin'); ?>"><?php echo $lang["admin_theme_maintenance"]; ?></a></li>
