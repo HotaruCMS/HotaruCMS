@@ -26,7 +26,7 @@ global $hotaru, $plugins, $lang; // don't remove
 
 // Cycle through the RSS feeds, displaying their settings...
 $id = 1;
-while($settings = unserialize($plugins->pluginSettings('rss_show', 'rss_show_' . $id . '_settings'))) {
+while($settings = unserialize($plugins->getSetting('rss_show_' . $id . '_settings', 'rss_show'))) {
 
     // ************* SET VARIABLES *************
     

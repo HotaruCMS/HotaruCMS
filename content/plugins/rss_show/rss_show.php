@@ -4,7 +4,8 @@
  * description: Adds links in the sidebar to the latest posts from a specified RSS feed.
  * version: 0.2
  * folder: rss_show
- * class: RssShow
+ * prefix: rs
+ * requires: sidebar_widgets 0.2
  * hooks: rss_show, install_plugin, hotaru_header, admin_header_include_raw, header_include, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * PHP version 5
@@ -48,7 +49,7 @@ function rs_rss_show($ids)
     foreach ($ids as $id) { 
         
         // Get settings from the database:
-        $settings = unserialize($plugins->pluginSettings('rss_show', 'rss_show_' . $id . '_settings')); 
+        $settings = unserialize($plugins->getSetting('rss_show_' . $id . '_settings', 'rss_show')); 
     
         // Feed settings:
         $feedurl = $settings['rss_show_feed'];
@@ -56,7 +57,7 @@ function rs_rss_show($ids)
         $cache_duration = $settings['rss_show_cache_duration'];
         
         // Get the feed...
-        $feed = $hotaru->new_simplepie($feedurl, $cache, $cache_duration);
+        $feed = $hotaru->newSimplePie($feedurl, $cache, $cache_duration);
         
         if ($feed) {
         
@@ -145,7 +146,7 @@ function rs_hotaru_header()
 {
     global $plugins, $lang;
     
-    $plugins->includeLanguage('rss_show');
+    $plugins->includeLanguage('rss_show', 'rss_show');
 }
     
     
@@ -156,7 +157,7 @@ function rs_header_include()
 {
     global $plugins;
     
-    $plugins->includeCSS('rss_show');
+    $plugins->includeCss('rss_show', 'rss_show'); 
 }
 
 
@@ -173,7 +174,7 @@ function rs_admin_header_include_raw()
 {
     global $admin;
     
-    if ($admin->is_settings_page('rss_show')) {
+    if ($admin->isSettingsPage('rss_show')) {
         echo "<script type='text/javascript'>\n";
         echo "$(document).ready(function(){\n";
             echo "$('#rs_cache').click(function () {\n";
@@ -183,6 +184,7 @@ function rs_admin_header_include_raw()
         echo "</script>\n";
     }
 }
+
 
 /**
  * Put a link to the settings page in the Admin sidebar under Plugin Settings
@@ -214,12 +216,15 @@ function rs_install_plugin($id)
     $settings['rss_show_content'] = "none";
     
     // parameters: plugin folder name, setting name, setting value
-    $plugins->pluginSettingsUpdate('rss_show', 'rss_show_' . $id . '_settings', serialize($settings));
-    $plugins->pluginSettingsUpdate('sidebar_widgets', 'rss_show_' . $id, $id);
+    $plugins->updateSetting('rss_show_' . $id . '_settings', serialize($settings), 'rss_show');
+    
+    require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
+    $sidebar = new Sidebar();
+    $sidebar->addWidget('rss_show', 'rss_show_' . $id, $id); // plugin name, function name, optional arguments
     
     // Include language file. Also included in hotaru_header, but needed here so 
     // that the link in the Admin sidebar shows immediately after installation.
-    $plugins->includeLanguage('rss_show');
+    $plugins->includeLanguage('rss_show', 'rss_show');
 }
 
 
@@ -252,8 +257,12 @@ function rs_get_params()
             
         } elseif ($action == 'delete_feed') {
             $id = $cage->get->getInt('id');
-            $plugins->pluginSettings_remove_setting('rss_show_' . $id . '_settings');
-            $plugins->pluginSettings_remove_setting('sidebar_widgets', 'rss_show_' . $id);
+            $plugins->deleteSettings('rss_show_' . $id . '_settings'); // setting
+            
+            require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
+            $sidebar = new Sidebar();
+            $sidebar->deleteWidget('rss_show_' . $id); // function suffix
+            
             $hotaru->message = $lang["rss_show_feed_removed"];
             $hotaru->messageType = "green";
         }
@@ -293,7 +302,7 @@ function rs_save_settings($id, &$parameters)
             $values = serialize($parameters);
             $hotaru->message = $lang["rss_show_update_successful"];
             $hotaru->messageType = "green";
-            $plugins->pluginSettingsUpdate('rss_show', 'rss_show_' . $id . '_settings', $values);    
+            $plugins->updateSetting('rss_show', 'rss_show_' . $id . '_settings', $values);    
         }
     }
     

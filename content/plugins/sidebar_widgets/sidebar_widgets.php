@@ -113,7 +113,6 @@ class SidebarWidgets extends PluginFunctions
                 // Call this widget's function
                 if (function_exists($function_name))
                 {
-                    echo $function_name . " exists<br />";
                     $function_name($details['args']);    // pass an argument, e.g. a feed ID for the RSS Show plugin
                 } 
                 elseif ($details['class'] && method_exists($details['class'], $function_name)) 
@@ -224,8 +223,14 @@ class SidebarWidgets extends PluginFunctions
             } 
             elseif ($cage->get->testAlpha('action') == 'enable') 
             {
-                $sidebar_settings['sidebar_widgets'][$this_widget_name]['enabled'] = true;
-                $hotaru->messages[$lang['sidebar_order_enabled']] = 'green';
+                // enable a sidebar widget
+                if ($this->isActive($this_widget_name)) {
+                    $sidebar_settings['sidebar_widgets'][$this_widget_name]['enabled'] = true;
+                    $hotaru->messages[$lang['sidebar_order_enabled']] = 'green';
+                } else {
+                    // don't enable it if the plugin is inactive
+                    $hotaru->messages[$lang['sidebar_order_not_active']] = 'red';
+                }
             } 
             elseif ($cage->get->testAlpha('action') == 'disable') 
             {

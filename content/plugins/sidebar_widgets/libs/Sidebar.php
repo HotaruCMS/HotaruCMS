@@ -70,19 +70,28 @@ class Sidebar {
         if ($widgets) {
             $count = 1;
             foreach ($widgets as $widget) {
-                // Only reset order if it doesn't already exist.
+            
+                // Assign order number if not already assigned one.
                 if (!isset($sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['order'])) {
                     $sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['order'] = $count;
                 }
-                // Only reset sidebar_id if it doesn't already exist.
+                
+                // Assign widget number if not already assigned one.
                 if (!isset($sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['sidebar'])) {
                     $sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['sidebar'] = 1;
                 }
-                // Only reset enabled if it doesn't already exist.
+                
+                // Enable the widget if enabled status is not currently set...
                 if (!isset($sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['enabled'])) {
                     $sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['enabled'] = true;
                 }
+                
+                // But! Disable it if the plugin for that widget is not currently active.
+                if (!$plugins->isActive($widget->widget_plugin) ) {
+                    $sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['enabled'] = false;
+                }
 
+                // Add plugin name, function suffix and arguments to sidebar_settings:
                 $sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['class'] = $plugins->getClassName($widget->widget_plugin);
                 $sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['function'] = $widget->widget_function;
                 $sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['args'] = $widget->widget_args;
@@ -117,18 +126,33 @@ class Sidebar {
     
     
     /**
-     * Get widgets
+     * Get widgets from widget db table
      *
      * @return array - of widget settings
      */
     public function getWidgets()
     {
-        global $db, $plugins;
+        global $db;
         
         // Get settings from the database if they exist...
         $sql = "SELECT * FROM " . TABLE_WIDGETS;
         $widget_settings = $db->get_results($db->prepare($sql));
         return $widget_settings;
+    }
+    
+    
+    /**
+     * Delete a widget from the widget db table
+     *
+     * @param string $function 
+     */
+    public function deleteWidget($function)
+    {
+        global $db;
+        
+        // Get settings from the database if they exist...
+        $sql = "DELETE FROM " . TABLE_WIDGETS . " WHERE widget_function = %s";
+        $db->query($db->prepare($sql, $function));
     }
     
     
@@ -148,7 +172,7 @@ class Sidebar {
     
     
     /**
-     * Get sidebar widgets
+     * Get sidebar widgets from sidebar_settings array
      *
      * USAGE: foreach ($widgets as $widget=>$details) 
      * { echo "Name: " . $widget; echo $details['order']; echo $details['args']; } 
