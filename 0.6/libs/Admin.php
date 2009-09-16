@@ -219,7 +219,7 @@ class Admin
     {
         global $cage, $hotaru;
         
-        if ($hotaru->is_page('plugin_settings') && $cage->get->testAlnumLines('plugin') == $folder) {
+        if ($hotaru->isPage('plugin_settings') && $cage->get->testAlnumLines('plugin') == $folder) {
             return true;
         } else {    
             return false;

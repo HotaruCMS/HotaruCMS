@@ -586,7 +586,7 @@ class Hotaru
      * @param $folder - the folder name of the plugin
      * @param $filename - optional css file without an extension
      */
-     function includeCss($filename = '', $folder = '')
+     public function includeCss($filename = '', $folder = '')
      {
         global $plugins;
         
@@ -610,7 +610,7 @@ class Hotaru
      * @param $plugin - the folder name of the plugin
      * @param $filename - optional js file without an extension
      */
-     function includeJs($filename = '', $folder = '')
+     public function includeJs($filename = '', $folder = '')
      {
         global $plugins;
         
@@ -637,7 +637,7 @@ class Hotaru
      * Note: the css file should be in a folder named 'css' and a file of 
      * the format plugin_name.css, e.g. rss_show.css
      */    
-    function findCssFile($filename = '', $folder = '')
+    public function findCssFile($filename = '', $folder = '')
     {
         global $lang, $plugins;
         
@@ -676,7 +676,7 @@ class Hotaru
      *
      * Note: the js file should be in a folder named 'javascript' and a file of the format plugin_name.js, e.g. category_manager.js
      */    
-    function findJsFile($filename = '', $folder = '')
+    public function findJsFile($filename = '', $folder = '')
     {
         global $lang, $plugins;
         

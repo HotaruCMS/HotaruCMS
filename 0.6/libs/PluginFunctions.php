@@ -10,7 +10,7 @@ class PluginFunctions extends Plugin
      * the database. If not in database or newer version, uses info from plugin 
      * file. Used by Plugin Management.
      */
-    function getPlugins()
+    public function getPlugins()
     {
         global $db, $lang;
         $plugins_array = $this->getPluginsMeta();
@@ -122,7 +122,7 @@ class PluginFunctions extends Plugin
     /**
      * Read and return plugin info directly from plugin files.
      */
-    function getPluginsMeta()
+    public function getPluginsMeta()
     {
         $plugin_list = getFilenames(PLUGINS, "short");
         $plugins_array = array();
@@ -145,7 +145,7 @@ class PluginFunctions extends Plugin
      * @param array $parameters mixed values passed from plugin hook
      * @return array | bool
      */
-    function pluginHook(
+    public function pluginHook(
         $hook = '', $perform = true, $folder = '', $parameters = array(), $exclude = array()
     )
     {
@@ -246,7 +246,7 @@ class PluginFunctions extends Plugin
      * Converts $this->requires into $this->dependencies array.
      * Result is an array containing 'plugin' -> 'version' pairs
      */
-    function requiresToDependencies()
+    public function requiresToDependencies()
     {
         unset($this->dependencies);
         foreach (explode(',', $this->requires) as $pair) 
@@ -263,7 +263,7 @@ class PluginFunctions extends Plugin
      * @param string $select the table column to return
      * @return array
      */
-    function activePlugins($select = 'plugin_folder')
+    public function activePlugins($select = 'plugin_folder')
     {
         global $db;
         $sql = "SELECT " . $select . " FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d";
@@ -277,7 +277,7 @@ class PluginFunctions extends Plugin
      *
      * @param string $hook plugin hook name
      */
-    function HookExists($hook = "")
+    public function HookExists($hook = '')
     {
         global $db;
         
@@ -290,7 +290,7 @@ class PluginFunctions extends Plugin
     /**
      * Removes gaps in plugin order where plugins have been uninstalled.
      */
-    function refreshPluginOrder()
+    public function refreshPluginOrder()
     {    
         global $db;
         
@@ -313,7 +313,7 @@ class PluginFunctions extends Plugin
     /**
      * Orders the plugin hooks by plugin_order
      */
-    function sortPluginHooks()
+    public function sortPluginHooks()
     {    
         global $db, $current_user;
         
@@ -338,7 +338,7 @@ class PluginFunctions extends Plugin
      *
      * @return int|false
      */
-    function numActivePlugins()
+    public function numActivePlugins()
     {
         global $db;
         $enabled = $db->get_var($db->prepare("SELECT count(*) FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d", 1));
@@ -352,7 +352,7 @@ class PluginFunctions extends Plugin
      * @param string $plugin_file - a file from the /plugins folder 
      * @return array|false
      */
-    function readPluginMeta($plugin_file)
+    public function readPluginMeta($plugin_file)
     {
         if ($plugin_file != 'placeholder.txt') {
             // Include the generic_pmd class that reads post metadata from the a plugin
@@ -375,7 +375,7 @@ class PluginFunctions extends Plugin
      * @param array $plugin_metadata 
      * @return array|false
      */
-    function assignPluginMeta($plugin_metadata)
+    public function assignPluginMeta($plugin_metadata)
     {
         if (!$plugin_metadata) { return false; }
         
@@ -434,7 +434,7 @@ class PluginFunctions extends Plugin
      * @param string $hook plugin hook name
      * @return int|false
      */
-    function isHook($hook = "", $folder = "")
+    public function isHook($hook = "", $folder = "")
     {
         global $db;
         
@@ -450,7 +450,7 @@ class PluginFunctions extends Plugin
      *
      * @param int $upgrade flag to indicate upgrade script available
      */
-    function install($upgrade = 0)
+    public function install($upgrade = 0)
     {
         global $db, $lang, $hotaru, $current_user, $admin;
         
@@ -521,7 +521,7 @@ class PluginFunctions extends Plugin
     /**
      * Adds all hooks for a given plugin
      */
-    function addPluginHooks()
+    public function addPluginHooks()
     {
         global $db, $current_user;
         
@@ -545,7 +545,7 @@ class PluginFunctions extends Plugin
      * Note: This function does nothing by itself other than read the latest 
      * file's metadata.
      */
-    function upgrade()
+    public function upgrade()
     {
         global $db, $lang, $hotaru, $admin;
         
@@ -590,7 +590,7 @@ class PluginFunctions extends Plugin
      * @param int $enabled 
      * Note: This function does not uninstall/delete a plugin.
      */
-    function activateDeactivate($enabled = 0)
+    public function activateDeactivate($enabled = 0)
     {    // 0 = deactivate, 1 = activate
         global $db, $hotaru, $lang, $admin, $current_user;
         
@@ -650,7 +650,7 @@ class PluginFunctions extends Plugin
      *
      * @return int - version number
      */
-    function getVersion($folder = '')
+    public function getVersion($folder = '')
     {    
         global $db;
         
@@ -667,7 +667,7 @@ class PluginFunctions extends Plugin
      *
      * @param int $upgrade flag to disable message
      */
-    function uninstall($upgrade = 0)
+    public function uninstall($upgrade = 0)
     {    
         global $db, $hotaru, $lang, $admin;
         
@@ -694,7 +694,7 @@ class PluginFunctions extends Plugin
      * @param int $order current order
      * @param string $arrow direction to move
      */
-    function pluginOrder($order = 0, $arrow = "up")
+    public function pluginOrder($order = 0, $arrow = "up")
     {
         global $db, $hotaru, $lang;
             
@@ -769,7 +769,7 @@ class PluginFunctions extends Plugin
      * @param string $folder plugin folder name
      * @return string
      */
-    function getPluginName($folder = "")
+    public function getPluginName($folder = "")
     {    
         global $db;
         
@@ -786,7 +786,7 @@ class PluginFunctions extends Plugin
      * @param string $folder plugin folder name
      * @return string|false
      */
-    function getClassName($folder = "")
+    public function getClassName($folder = "")
     {    
         global $db;
         
@@ -808,7 +808,7 @@ class PluginFunctions extends Plugin
      * @param string $folder plugin folder name
      * @return string|false
      */
-    function isActive($folder = "")
+    public function isActive($folder = "")
     {
         global $db;
         
@@ -834,7 +834,7 @@ class PluginFunctions extends Plugin
      * Note: the language file should be in a plugin folder named 'languages'.
      * '_language.php' is appended automatically to the folder of file name.
      */    
-    function includeLanguage($filename = '', $folder = '')
+    public function includeLanguage($filename = '', $folder = '')
     {
         global $lang;
         
@@ -875,11 +875,11 @@ class PluginFunctions extends Plugin
      * @param string $filename optional filename without file extension
      *
      */    
-    public function includeCss($filename = '')
+    public function includeCss($filename = '', $folder = '')
     {
         global $hotaru;
         
-        return $hotaru->includeCss($filename, $this->getFolder()); // returned for testing purposes only
+        return $hotaru->includeCss($filename, $folder); // returned for testing purposes only
     }
     
     
@@ -889,11 +889,11 @@ class PluginFunctions extends Plugin
      * @param string $filename optional filename without file extension
      *
      */    
-    public function includeJs($filename = '')
+    public function includeJs($filename = '', $folder = '')
     {
         global $hotaru;
         
-        return $hotaru->includeJs($filename, $this->getFolder()); // returned for testing purposes only
+        return $hotaru->includeJs($filename, $folder); // returned for testing purposes only
     }
             
             
@@ -1014,14 +1014,12 @@ class PluginFunctions extends Plugin
     {
         global $db;
         
-        if (!$folder) { $folder = $this->getFolder(); }
-        
         if ($setting) {
             $sql = "DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_setting = %s";
             $db->query($db->prepare($sql, $setting));
-        }
-        
-        if ($folder) {
+        } 
+        elseif ($folder) 
+        {
             $sql = "DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_folder = %s";
             $db->query($db->prepare($sql, $folder));
         }
