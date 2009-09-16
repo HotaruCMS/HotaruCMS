@@ -692,6 +692,138 @@ function isAdmin($username)
         
         return true;
     }
+    
+    
+     /**
+     * Change username or email
+     *
+     * @return bool
+     */
+    public function updateAccount()
+    {
+        global $hotaru, $cage, $lang, $current_user;
+                
+        $error = 0;
+        
+        // fill checks
+        $checks['username_check'] = '';
+        $checks['email_check'] = '';
+        $checks['password_check_old'] = '';
+        $checks['password_check_new'] = '';
+        $checks['password_check_new2'] = '';
+        
+        // Updating account info (username and email address)
+        if ($cage->post->testAlnumLines('update_type') == 'update_general') {
+            $username_check = $cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
+            if ($username_check) {
+                $current_user->setName($username_check); // updates the db record
+            } else {
+                $hotaru->messages[$lang['admin_account_update_username_error']] = 'red';
+                $error = 1;
+            }
+                                
+            $email_check = $cage->post->testEmail('email');    
+            if ($email_check) {
+                $current_user->email = $email_check;
+            } else {
+                $hotaru->messages[$lang['admin_account_update_email_error']] = 'red';
+                $error = 1;
+            }
+        }
+        
+        if (!isset($username_check) && !isset($email_check)) {
+            $username_check = $current_user->getName();
+            $email_check = $current_user->getEmail();
+            // do nothing
+        } elseif ($error == 0) {
+            $result = $current_user->userExists(0, $username_check, $email_check);
+            if ($result != 4) { // 4 is returned when the user does not exist in the database
+                //success
+                $current_user->updateUserBasic();
+                $current_user->setCookie(0);
+                $hotaru->messages[$lang['admin_account_update_success']] = 'green';
+            } else {
+                //fail
+                $hotaru->messages[$lang["admin_account_update_unexpected_error"]] = 'red';
+            }
+        } else {
+            // error must = 1 so fall through and display the form again
+        }
+        
+        //update checks
+        $this->updatePassword();
+        $checks['username_check'] = $username_check;
+        $checks['email_check'] = $email_check;
+        return $checks;
+    }
+    
+    
+     /**
+     * Enable a user to change their password
+     *
+     * @return bool
+     */
+    public function updatePassword()
+    {
+        global $hotaru, $cage, $lang, $current_user;
+        
+        $error = 0;
+        
+        // Updating password
+        if ($cage->post->testAlnumLines('update_type') == 'update_password') {
+            $password_check_old = $cage->post->testPassword('password_old');    
+            
+            if ($current_user->loginCheck($current_user->getName(), $password_check_old)) {
+                // safe, the old password matches the password for this user.
+            } else {
+                $hotaru->messages[$lang['admin_account_update_password_error_old']] = 'red';
+                $error = 1;
+            }
+        
+            $password_check_new = $cage->post->testPassword('password_new');    
+            if ($password_check_new) {
+                $password_check_new2 = $cage->post->testPassword('password_new2');    
+                if ($password_check_new2) { 
+                    if ($password_check_new == $password_check_new2) {
+                        // safe, the two new password fields match
+                    } else {
+                        $hotaru->messages[$lang['admin_account_update_password_error_match']] = 'red';
+                        $error = 1;
+                    }
+                } else {
+                    $hotaru->messages[$lang['admin_account_updatee_password_error_new']] = 'red';
+                    $error = 1;
+                }
+            } else {
+                $hotaru->messages[$lang['admin_account_update_password_error_not_provided']] = 'red';
+                $error = 1;
+            }
+                        
+        }
+
+                
+        if (!isset($password_check_old) && !isset($password_check_new) && !isset($password_check_new2)) {
+            $password_check_old = "";
+            $password_check_new = "";
+            $password_check_new2 = "";
+            // do nothing
+        } elseif ($error == 0) {
+            $result = $current_user->userExists(0, $current_user->userName, $current_user->email);
+            if ($result != 4) { // 4 is returned when the user does not exist in the database
+                //success
+                //$current_user->setPassword($current_user->generateHash($password_check_new));
+                //$current_user->updateUserBasic();
+                //$current_user->setCookie(0);
+                $hotaru->messages[$lang['admin_account_update_password_success']] = 'green';
+            } else {
+                //fail
+                $hotaru->messages[$lang["admin_account_update_unexpected_error"]] = 'red';
+            }
+        } else {
+            // error must = 1 so fall through and display the form again
+        }
+
+    }
 }
  
 ?>

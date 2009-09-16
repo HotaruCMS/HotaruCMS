@@ -61,7 +61,16 @@ $lang['admin_email_password_conf_body_remember'] = "Please make a note of it and
 $lang['admin_email_password_conf_body_pass_change'] = "You can change it to something more memorable from your account page.";
 
 /* Account */
-
+$lang["admin_account_update_success"] = "Updated successfully";
+$lang["admin_account_update_password_success"] = "Updated password successfully";
+$lang["admin_account_update_password_error_old"] = "Your old password doesn't match our records";
+$lang["admin_account_update_password_error_new"] = "The new password must be at least 8 characters and can only contain letters, numbers and these symbols: @ * # - _";
+$lang["admin_account_update_password_error_match"] = "The two \"New password\" fields don't match";
+$lang["admin_account_update_password_error_not_provided"] = "Please fill in all the password fields with at least 8 characters";
+$lang["admin_account_update_username_error"] = "Your username must be at least 4 characters and can contain letters, dashes and underscores only";
+$lang["admin_account_update_password_error"] = "The password must be at least 8 characters and can only contain letters, numbers and these symbols: @ * # - _";
+$lang['admin_account_update_password_match_error'] = "The password fields don't match";
+$lang["admin_account_update_email_error"] = "That doesn't parse as a valid email address";
 
 /* News */
 $lang["admin_news_posted_by"] = "Posted by";
@@ -136,12 +145,7 @@ $lang["admin_theme_update_password_instruct"] = "Change your password?";
 $lang["admin_theme_update_old_password"] = "Old password:";
 $lang["admin_theme_update_new_password"] = "New password:";
 $lang["admin_theme_update_new_password_verify"] = "New password (again):";
-$lang["admin_theme_update_success"] = "Updated successfully.";
 $lang["admin_theme_update_form_submit"] = "Update";
-$lang["admin_theme_update_password_error_old"] = "Your old password doesn't match our records";
-$lang["admin_theme_update_password_error_new"] = "The new password must be at least 8 characters and can only contain letters, numbers and these symbols: @ * # - _";
-$lang["admin_theme_update_password_error_match"] = "The two \"New password\" fields don't match";
-$lang["admin_theme_update_password_error_not_provided"] = "Please fill in all the password fields";
 
 /* navigation */
 $lang["admin_theme_navigation_home"] = "Home";
