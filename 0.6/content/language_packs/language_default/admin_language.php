@@ -56,6 +56,12 @@ $lang['admin_email_password_conf_body_regards'] = "Regards,";
 $lang['admin_email_password_conf_body_sign'] = SITE_NAME . " Admin";
 $lang['admin_email_password_conf_success'] = "A new password has been sent to your email address.";
 $lang['admin_email_password_conf_fail'] = "Unable to confirm your email address. Please try the link again.";
+$lang['admin_email_password_conf_body_requested'] = "Here is the new password you requested at " . SITE_NAME . ": ";
+$lang['admin_email_password_conf_body_remember'] = "Please make a note of it and use it to login next time you visit.";
+$lang['admin_email_password_conf_body_pass_change'] = "You can change it to something more memorable from your account page.";
+
+/* Account */
+
 
 /* News */
 $lang["admin_news_posted_by"] = "Posted by";

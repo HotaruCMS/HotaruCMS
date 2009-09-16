@@ -511,25 +511,59 @@ function isAdmin($username)
         
         $sql = "SELECT user_id FROM " . TABLE_USERS . " WHERE user_username = %s";
         
-        $user_id = $db->get_var($db->prepare($sql, $username));
-        if ($user_id) { return $user_id; } else { return false; }
+        $userid = $db->get_var($db->prepare($sql, $username));
+        if ($userid) { return $userid; } else { return false; }
     }
     
     
     /**
-     * Get the username from email
+     * Get the user id from email
      *
      * @param string $email
      * @return string|false
      */
-    public function getUserNameFromEmail($email = '')
+    public function getUserIdFromEmail($email = '')
     {
         global $db;
         
-        $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_email = %s";
+        $sql = "SELECT user_id FROM " . TABLE_USERS . " WHERE user_email = %s";
         
-        $username = $db->get_var($db->prepare($sql, $email));
-        if ($username) { return $username; } else { return false; }
+        $userid = $db->get_var($db->prepare($sql, $email));
+        if ($userid) { return $userid; } else { return false; }
+    }
+    
+    
+    /**
+     * Get the email from password conf
+     *
+     * @param int $userid
+     * @return string|false
+     */
+    public function getEmailFromId($userid = 0)
+    {
+        global $db;
+        
+        $sql = "SELECT user_email FROM " . TABLE_USERS . " WHERE user_id = %d";
+        
+        $email = $db->get_var($db->prepare($sql, $userid));
+        if ($email) { return $email; } else { return false; }
+    }
+    
+    
+    /**
+     * Get the email from password conf
+     *
+     * @param string $passconf
+     * @return string|false
+     */
+    public function getEmailFromPassConf($passconf = '')
+    {
+        global $db;
+        
+        $sql = "SELECT user_email FROM " . TABLE_USERS . " WHERE user_password_conf = %s";
+        
+        $email = $db->get_var($db->prepare($sql, $passconf));
+        if ($email) { return $email; } else { return false; }
     }
     
     /**
@@ -556,14 +590,12 @@ function isAdmin($username)
     }
     
     
-    
-    
      /**
      * Send a confirmation code to a user who has forgotten his/her password
      *
      * @param string $email - already validated above
      */
-    public function sendPasswordConf($email)
+    public function sendPasswordConf($userid, $email)
     {
         global $db, $hotaru, $cage, $lang, $plugins;
         
@@ -571,24 +603,84 @@ function isAdmin($username)
         $pass_conf = md5(crypt(md5($email),md5($email)));
         
         // store the hash in the user table
-        $sql = "UPDATE " . TABLE_USERS . " SET user_password_conf = %s WHERE user_email = %s";
-        $db->query($db->prepare($sql, $pass_conf, $email));
+        $sql = "UPDATE " . TABLE_USERS . " SET user_password_conf = %s WHERE user_id = %d";
+        $db->query($db->prepare($sql, $pass_conf, $userid));
         
         $line_break = "\r\n\r\n";
         $next_line = "\r\n";
         
-        if ($plugins->isActive('users')) { $page = 'users'; } else { $page = 'admin_login'; }
+        if ($plugins->isActive('users')) { 
+            $url = BASEURL . 'index.php?page=login&plugin=users&userid=' . $userid . '&passconf=' . $pass_conf; 
+        } else { 
+            $url = BASEURL . 'admin_index.php?page=admin_login&userid=' . $userid . '&passconf=' . $pass_conf; 
+        }
         
         // send email
         $subject = $lang['admin_email_password_conf_subject'];
-        $body = $lang['admin_email_password_conf_body_hello'] . " " . $this->getUserNameFromEmail($email);
+        $body = $lang['admin_email_password_conf_body_hello'] . " " . $this->getUserNameFromId($userid);
         $body .= $line_break;
         $body .= $lang['admin_email_password_conf_body_welcome'];
         $body .= $lang['admin_email_password_conf_body_click'];
         $body .= $line_break;
-        $body .= BASEURL . "index.php?page=" . $page . "&conf=" . $pass_conf;
+        $body .= $url;
         $body .= $line_break;
         $body .= $lang['admin_email_password_conf_body_no_request'];
+        $body .= $line_break;
+        $body .= $lang['admin_email_password_conf_body_regards'];
+        $body .= $next_line;
+        $body .= $lang['admin_email_password_conf_body_sign'];
+        $to = $email;
+        $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
+    
+        mail($to, $subject, $body, $headers);    
+        
+        return true;
+    }
+    
+    
+     /**
+     * Reset the user's password to soemthing random and email it.
+     *
+     * @param string $passconf - confirmation code clicked in email
+     */
+    public function newRandomPassword($userid, $passconf)
+    {
+        global $db, $hotaru, $cage, $lang, $plugins;
+        
+        $email = $this->getEmailFromId($userid);
+        
+        // check the email and confirmation code are a pair
+        $pass_conf_check = md5(crypt(md5($email),md5($email)));
+        if ($pass_conf_check != $passconf) {
+            return false;
+        }
+        
+        // update the password to something random
+        $temp_pass = random_string(8);
+        $sql = "UPDATE " . TABLE_USERS . " SET user_password = %s WHERE user_id = %d";
+        $db->query($db->prepare($sql, $this->generateHash($temp_pass), $userid));
+        $line_break = "\r\n\r\n";
+        $next_line = "\r\n";
+        
+        if ($plugins->isActive('users')) { 
+            $url = BASEURL . 'index.php?page=login&plugin=users'; 
+        } else { 
+            $url = BASEURL . 'admin_index.php?page=admin_login'; 
+        }
+        
+        // send email
+        $subject = $lang['admin_email_password_conf_subject'];
+        $body = $lang['admin_email_password_conf_body_hello'] . " " . $this->getUserNameFromId($userid);
+        $body .= $line_break;
+        $body .= $lang['admin_email_password_conf_body_requested'];
+        $body .= $line_break;
+        $body .= $temp_pass;
+        $body .= $line_break;
+        $body .= $lang['admin_email_password_conf_body_remember'];
+        $body .= $line_break;
+        $body .= $lang['admin_email_password_conf_body_pass_change'];
+        $body .= $line_break;
+        $body .= $url; 
         $body .= $line_break;
         $body .= $lang['admin_email_password_conf_body_regards'];
         $body .= $next_line;
