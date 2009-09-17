@@ -72,29 +72,29 @@ class Sidebar {
             foreach ($widgets as $widget) {
             
                 // Assign order number if not already assigned one.
-                if (!isset($sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['order'])) {
-                    $sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['order'] = $count;
+                if (!isset($sidebar_settings['sidebar_widgets'][$widget->widget_function]['order'])) {
+                    $sidebar_settings['sidebar_widgets'][$widget->widget_function]['order'] = $count;
                 }
                 
                 // Assign widget number if not already assigned one.
-                if (!isset($sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['sidebar'])) {
-                    $sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['sidebar'] = 1;
+                if (!isset($sidebar_settings['sidebar_widgets'][$widget->widget_function]['sidebar'])) {
+                    $sidebar_settings['sidebar_widgets'][$widget->widget_function]['sidebar'] = 1;
                 }
                 
                 // Enable the widget if enabled status is not currently set...
-                if (!isset($sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['enabled'])) {
-                    $sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['enabled'] = true;
+                if (!isset($sidebar_settings['sidebar_widgets'][$widget->widget_function]['enabled'])) {
+                    $sidebar_settings['sidebar_widgets'][$widget->widget_function]['enabled'] = true;
                 }
                 
                 // But! Disable it if the plugin for that widget is not currently active.
                 if (!$plugins->isActive($widget->widget_plugin) ) {
-                    $sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['enabled'] = false;
+                    $sidebar_settings['sidebar_widgets'][$widget->widget_function]['enabled'] = false;
                 }
 
                 // Add plugin name, function suffix and arguments to sidebar_settings:
-                $sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['class'] = $plugins->getClassName($widget->widget_plugin);
-                $sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['function'] = $widget->widget_function;
-                $sidebar_settings['sidebar_widgets'][$widget->widget_plugin]['args'] = $widget->widget_args;
+                $sidebar_settings['sidebar_widgets'][$widget->widget_function]['class'] = $plugins->getClassName($widget->widget_plugin);
+                $sidebar_settings['sidebar_widgets'][$widget->widget_function]['function'] = $widget->widget_function;
+                $sidebar_settings['sidebar_widgets'][$widget->widget_function]['args'] = $widget->widget_args;
 
                 $count++;
             }
@@ -226,6 +226,23 @@ class Sidebar {
         }
         return $highest;
     }
+    
+    
+    /**
+     * Get plugin name from widget function name
+     *
+     * @return string
+     */
+    public function getPluginFromFunction($function)
+    {
+        global $db;
+        
+        // Get settings from the database if they exist...
+        $sql = "SELECT widget_plugin FROM " . DB_PREFIX . 'widgets WHERE widget_function = %s';
+        $widget_plugin = $db->get_var($db->prepare($sql, $function));
+        return $widget_plugin;
+    }
+    
 }
 
 ?>
