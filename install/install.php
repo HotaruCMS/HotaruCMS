@@ -203,16 +203,21 @@ function database_setup()
  */
 function database_creation()
 {
-    global $db, $lang;
+    global $db, $lang, $admin;
     
     echo html_header();
     
     // Step title
     echo "<h2>" . $lang['install_step3'] . "</h2>\n";
     
-    $skip = 0;
+    // delete *all* plugin tables:
+    $plugin_tables = $admin->listPluginTables();
+    foreach ($plugin_tables as $pt) {
+        $admin->dropTable($pt, false); // table name, show message = false
+    }
+    
+    //create tables 
     $tables = array('settings', 'users', 'plugins', 'pluginhooks', 'pluginsettings');
-
     foreach ($tables as $table_name) {
         create_table($table_name);
     } 
