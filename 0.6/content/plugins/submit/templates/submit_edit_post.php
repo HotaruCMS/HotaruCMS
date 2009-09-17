@@ -63,7 +63,7 @@ $plugins->pluginHook('submit_form_2_assign');
     <div id="breadcrumbs">
         <a href='<?php echo BASEURL; ?>'><?php echo $lang['submit_form_home']; ?></a> &raquo; 
         <?php echo $lang["submit_edit_post_title"]; ?> &raquo; 
-        <?php echo $post->getTitle(); ?>
+        <a href='<?php echo url(array('page'=>$post->getId())); ?>'><?php echo $post->getTitle(); ?></a>
     </div>
         
     <?php echo $hotaru->showMessages(); ?>
