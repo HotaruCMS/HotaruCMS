@@ -2,10 +2,10 @@
 /**
  * name: RSS Show
  * description: Adds links in the sidebar to the latest posts from a specified RSS feed.
- * version: 0.2
+ * version: 0.3
  * folder: rss_show
  * prefix: rs
- * requires: sidebar_widgets 0.2
+ * requires: sidebar_widgets 0.3
  * hooks: rss_show, install_plugin, hotaru_header, admin_header_include_raw, header_include, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * PHP version 5

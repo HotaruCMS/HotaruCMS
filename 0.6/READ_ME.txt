@@ -1,13 +1,13 @@
 HOTARU CMS
-Version: Alpha 0.5.2
-Released: September 7th 2009
+Version: Alpha 0.6
+Released: October 1st 2009
 
 INSTALLATION
 ------------
 
 Please visit http://hotarucms.org/showthread.php?t=14 for the most up-to-date version of these instructions.
 
-Instructions last updated: August 31st 2009
+Instructions last updated: September 17th 2009
 
 Requirements
 
@@ -24,20 +24,6 @@ First-time Installation
    7. Set /cache and its sub-folders to 777
    8. Go to /install/install.php and step through the six steps, following the instructions in each.
    9. When finished, delete the install folder.
-
-
-Re-installing Hotaru
-
-If you are trying to re-install Hotaru and start fresh, here are some extra tips to follow:
-
-   1. After installing, go to Admin -> Plugin Management
-   2. Make sure all plugins are uninstalled
-   3. Go to Admin -> Settings
-   4. Disable the three caches
-   5. Go to Admin -> Maintenance
-   6. Clear the three caches
-   7. Delete any plugin tables
-
 
 Setting up your site
 

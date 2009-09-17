@@ -14,5 +14,6 @@ Instructions
 
 Changelog
 ---------
-v.0.2 2009/8/30 - Nick - Fixed Reply/Edit bug, newline bug, save settings bug and added email address option
-v.0.1 2009/8/26 - Nick - Released first version
+v.0.3 2009/10/01 - Nick - Updates for compatibility with Hotaru 0.6
+v.0.2 2009/08/30 - Nick - Fixed Reply/Edit bug, newline bug, save settings bug and added email address option
+v.0.1 2009/08/26 - Nick - Released first version

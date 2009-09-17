@@ -306,6 +306,10 @@ class PluginFunctions extends Plugin
                 $i++; 
             }
         }
+        
+        // optimize the table
+        $db->query("OPTIMIZE TABLE " . TABLE_PLUGINS);
+        
         return true;
     }
     
@@ -329,6 +333,9 @@ class PluginFunctions extends Plugin
             $sql = "INSERT INTO " . TABLE_PLUGINHOOKS . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
             $db->query($db->prepare($sql, $row->plugin_folder, $row->plugin_hook, $current_user->id));
         }
+        
+        // optimize the table
+        $db->query("OPTIMIZE TABLE " . TABLE_PLUGINHOOKS);
         
     }
     
@@ -1019,6 +1026,9 @@ class PluginFunctions extends Plugin
             $sql = "UPDATE " . TABLE_PLUGINSETTINGS . " SET plugin_folder = %s, plugin_setting = %s, plugin_value = %s, plugin_updateby = %d WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
             $db->query($db->prepare($sql, $folder, $setting, $value, $current_user->getId(), $folder, $setting));
         }
+        
+        // optimize the table
+        $db->query("OPTIMIZE TABLE " . TABLE_PLUGINSETTINGS);
     }
     
 
@@ -1041,6 +1051,9 @@ class PluginFunctions extends Plugin
             $sql = "DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_folder = %s";
             $db->query($db->prepare($sql, $folder));
         }
+        
+        // optimize the table
+        $db->query("OPTIMIZE TABLE " . TABLE_PLUGINSETTINGS);
     }
 }
 

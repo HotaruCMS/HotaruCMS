@@ -39,10 +39,12 @@ require_once(LIBS . 'UserBase.php');  // Needed for login/registration
 require_once(LIBS . 'HotaruInspekt.php');      // for custom Inspekt methods
 $hotaru = new Hotaru('install');
 
-// Clear the database cache in case of a re-install.
+// Clear all the cache folders just in case
 require_once(LIBS . 'Admin.php'); 
 $admin = new Admin('install');
 $admin->deleteFiles(CACHE . 'db_cache');
+$admin->deleteFiles(CACHE . 'css_js_cache');
+$admin->deleteFiles(CACHE . 'rss_cache');
 
 // Global Inspekt SuperCage
 require_once(EXTENSIONS . 'Inspekt/Inspekt.php');

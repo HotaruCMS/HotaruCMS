@@ -122,6 +122,8 @@ class Sidebar {
             $sql = "INSERT INTO " . DB_PREFIX . "widgets (widget_plugin, widget_function, widget_args, widget_updateby) VALUES(%s, %s, %s, %d)";
             $db->query($db->prepare($sql, $plugin, $function, $args, $current_user->getId()));
         }
+        
+        $db->query("OPTIMIZE TABLE " . DB_PREFIX . "widgets");
     }
     
     
@@ -153,6 +155,8 @@ class Sidebar {
         // Get settings from the database if they exist...
         $sql = "DELETE FROM " . DB_PREFIX . "widgets WHERE widget_function = %s";
         $db->query($db->prepare($sql, $function));
+        
+        $db->query("OPTIMIZE TABLE " . DB_PREFIX . "widgets");
     }
     
     
