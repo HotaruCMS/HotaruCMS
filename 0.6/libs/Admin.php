@@ -661,7 +661,7 @@ class Admin
             $email_check = ''; 
         }
         
-        require_once(ADMIN_THEMES . ADMIN_THEME . 'login.php');
+        require_once(ADMIN_THEMES . ADMIN_THEME . 'admin_login.php');
     }
     
     
