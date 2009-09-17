@@ -163,10 +163,10 @@ class Categories extends PluginFunctions
     public function post_read_post_1()
     {
         global $post;
-        
+       
         //categories
-        if (($this->getSetting('submit', 'submit_categories') == 'checked') 
-            && ($this->pluginActive())) { 
+        if (($this->getSetting('submit_categories', 'submit') == 'checked') 
+            && ($this->isActive())) { 
             $post->vars['useCategories'] = true; 
         } else { 
             $post->vars['useCategories'] = false; 
@@ -473,7 +473,7 @@ class Categories extends PluginFunctions
         global $categories;
         
         // Get settings from database if they exist... should return 'checked'
-        $categories = $this->getSetting('submit', 'submit_categories');
+        $categories = $this->getSetting('submit_categories', 'submit');
         
         // otherwise set to blank...
         if (!$categories) { $categories = ''; }
@@ -509,7 +509,7 @@ class Categories extends PluginFunctions
             $post->vars['useCategories'] = false;
         }
             
-        $this->updateSetting('submit', 'submit_categories', $categories);
+        $this->updateSetting('submit_categories', $categories, 'submit');
     
     }
     

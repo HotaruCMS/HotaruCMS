@@ -115,11 +115,11 @@ class Sidebar {
         global $db, $current_user;
         
         // Check if it exists so we don't add a duplicate
-        $sql = "SELECT * FROM " . TABLE_WIDGETS . " WHERE widget_plugin = %s AND widget_function = %s AND widget_args = %s";
+        $sql = "SELECT * FROM " . DB_PREFIX . "widgets WHERE widget_plugin = %s AND widget_function = %s AND widget_args = %s";
         $results = $db->get_results($db->prepare($sql, $plugin, $function, $args));
         
         if (!$results) {
-            $sql = "INSERT INTO " . TABLE_WIDGETS . " (widget_plugin, widget_function, widget_args, widget_updateby) VALUES(%s, %s, %s, %d)";
+            $sql = "INSERT INTO " . DB_PREFIX . "widgets (widget_plugin, widget_function, widget_args, widget_updateby) VALUES(%s, %s, %s, %d)";
             $db->query($db->prepare($sql, $plugin, $function, $args, $current_user->getId()));
         }
     }
@@ -135,7 +135,7 @@ class Sidebar {
         global $db;
         
         // Get settings from the database if they exist...
-        $sql = "SELECT * FROM " . TABLE_WIDGETS;
+        $sql = "SELECT * FROM " . DB_PREFIX . 'widgets';
         $widget_settings = $db->get_results($db->prepare($sql));
         return $widget_settings;
     }
@@ -151,7 +151,7 @@ class Sidebar {
         global $db;
         
         // Get settings from the database if they exist...
-        $sql = "DELETE FROM " . TABLE_WIDGETS . " WHERE widget_function = %s";
+        $sql = "DELETE FROM " . DB_PREFIX . "widgets WHERE widget_function = %s";
         $db->query($db->prepare($sql, $function));
     }
     
