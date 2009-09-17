@@ -2,10 +2,10 @@
 /**
  * name: Pligg Importer
  * description: Imports and converts a Pligg database to Hotaru CMS
- * version: 0.2
+ * version: 0.3
  * folder: pligg_importer
  * prefix: pliggimp
- * requires: category_manager 0.2, categories 0.3, comments 0.1, submit 0.3, tags 0.3, users 0.3, vote 0.2
+ * requires: category_manager 0.3, categories 0.4, comments 0.3, submit 0.6, tags 0.5, users 0.4, vote 0.3
  * hooks: admin_plugin_settings, admin_sidebar_plugin_settings, admin_header_include
  *
  * PHP version 5

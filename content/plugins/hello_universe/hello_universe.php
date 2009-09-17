@@ -2,7 +2,7 @@
 /**
  * name: Hello Universe
  * description: Demonstrates how to make plugins
- * version: 0.2
+ * version: 0.3
  * folder: hello_universe
  * prefix: hu
  * hooks: theme_index_main, theme_index_sidebar, hotaru_header

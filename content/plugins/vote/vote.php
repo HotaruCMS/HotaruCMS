@@ -5,7 +5,7 @@
  * version: 0.3
  * folder: vote
  * class: Vote
- * requires: submit 0.3, users 0.3
+ * requires: submit 0.6, users 0.4
  * hooks: install_plugin, hotaru_header, submit_hotaru_header_1, post_read_post_1, post_read_post_2, header_include, submit_pre_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, post_add_post, navigation, submit_show_post_extra_fields, submit_show_post_extras
  *
  * PHP version 5

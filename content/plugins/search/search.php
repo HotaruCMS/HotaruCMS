@@ -2,10 +2,10 @@
 /**
  * name: Search
  * description: Displays "Search!"
- * version: 0.1
+ * version: 0.2
  * folder: search
  * class: Search
- * requires: submit 0.4, sidebar_widgets 0.1
+ * requires: submit 0.6, sidebar_widgets 0.3
  * hooks: install_plugin, hotaru_header, header_include, post_list_filter
  *
  * Usage: Add <?php $plugins->pluginHook('search'); ?> to your theme, wherever you want to the "Search" form.

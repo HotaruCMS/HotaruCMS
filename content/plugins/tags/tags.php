@@ -2,10 +2,10 @@
 /**
  * name: Tags
  * description: Enables tags for posts
- * version: 0.4
+ * version: 0.5
  * folder: tags
  * class: Tags
- * requires: submit 0.3
+ * requires: submit 0.6
  * hooks: install_plugin, header_include, submit_hotaru_header_1, post_read_post_1, post_read_post_2, post_add_post, post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_show_post_extra_fields, submit_settings_get_values, submit_settings_form, submit_save_settings, post_list_filter, post_delete_post
  *
  * PHP version 5

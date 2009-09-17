@@ -2,10 +2,9 @@
 /**
  * name: Hello World
  * description: Displays "Hello World!"
- * version: 0.2
+ * version: 0.3
  * folder: hello_world
  * class: HelloWorld
- * prefix: hw
  * hooks: hello_world
  *
  * Usage: Add <?php $plugins->pluginHook('hello_world'); ?> to your theme, wherever you want to show "Hello World".
