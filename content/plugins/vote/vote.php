@@ -38,16 +38,16 @@ class Vote extends PluginFunctions
     public function install_plugin() {
         global $db;
         
-        // Create a new table column called "postVotesUp" if it doesn't already exist
-        $exists = $db->column_exists('posts', 'postVotesUp');
+        // Create a new table column called "post_votes_up" if it doesn't already exist
+        $exists = $db->column_exists('posts', 'post_votes_up');
         if (!$exists) {
-            $db->query("ALTER TABLE " . TABLE_POSTS . " ADD postVotesUp smallint(11) NOT NULL DEFAULT '0' AFTER post_content");
+            $db->query("ALTER TABLE " . TABLE_POSTS . " ADD post_votes_up smallint(11) NOT NULL DEFAULT '0' AFTER post_content");
         } 
         
-        // Create a new table column called "postVotesDown" if it doesn't already exist
-        $exists = $db->column_exists('posts', 'postVotesDown');
+        // Create a new table column called "post_votes_down" if it doesn't already exist
+        $exists = $db->column_exists('posts', 'post_votes_down');
         if (!$exists) {
-            $db->query("ALTER TABLE " . TABLE_POSTS . " ADD postVotesDown smallint(11) NOT NULL DEFAULT '0' AFTER postVotesUp");
+            $db->query("ALTER TABLE " . TABLE_POSTS . " ADD post_votes_down smallint(11) NOT NULL DEFAULT '0' AFTER post_votes_up");
         } 
         
         // Create a new empty table called "votes" if it doesn't already exist
@@ -153,8 +153,8 @@ class Vote extends PluginFunctions
      */
     public function post_read_post_2() {
         global $post, $post_row;
-        $post->vars['votesUp'] = $post_row->postVotesUp;
-        $post->vars['votesDown'] = $post_row->postVotesDown;
+        $post->vars['votesUp'] = $post_row->post_votes_up;
+        $post->vars['votesDown'] = $post_row->post_votes_down;
     }
     
     
@@ -202,7 +202,7 @@ class Vote extends PluginFunctions
             }
             
             //update the vote count
-            $sql = "UPDATE " . TABLE_POSTS . " SET postVotesUp=postVotesUp+%d WHERE post_id = %d";
+            $sql = "UPDATE " . TABLE_POSTS . " SET post_votes_up=post_votes_up+%d WHERE post_id = %d";
             $db->query($db->prepare($sql, $submit_vote_value, $post->id));
         
             //Insert one vote for each of $submit_vote_value;
