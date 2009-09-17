@@ -48,6 +48,7 @@ $lang["admin_login_email_invalid"] = "Email invalid";
 /* Forgotten Password */
 $lang['admin_email_password_conf_sent'] = "An email has been sent to the address provided";
 $lang['admin_email_password_conf_subject'] = SITE_NAME . " Password Reset Request"; 
+$lang['admin_email_new_password_subject'] = "Your New Password for " . SITE_NAME; 
 $lang['admin_email_password_conf_body_hello'] = "Hi";
 $lang['admin_email_password_conf_body_welcome'] = "If you have requested a new password at " . SITE_NAME . ", ";
 $lang['admin_email_password_conf_body_click'] = "click this url or copy it into your browser:";
@@ -57,7 +58,7 @@ $lang['admin_email_password_conf_body_sign'] = SITE_NAME . " Admin";
 $lang['admin_email_password_conf_success'] = "A new password has been sent to your email address.";
 $lang['admin_email_password_conf_fail'] = "Unable to confirm your email address. Please try the link again.";
 $lang['admin_email_password_conf_body_requested'] = "Here is the new password you requested at " . SITE_NAME . ": ";
-$lang['admin_email_password_conf_body_remember'] = "Please make a note of it and use it to login next time you visit.";
+$lang['admin_email_password_conf_body_remember'] = "Please make a note of it and use it next time you log in.";
 $lang['admin_email_password_conf_body_pass_change'] = "You can change it to something more memorable from your account page.";
 
 /* Account */

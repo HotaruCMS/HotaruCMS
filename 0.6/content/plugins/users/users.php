@@ -116,8 +116,8 @@ class Users extends PluginFunctions
         global $current_user, $lang, $hotaru;
         
         if ($current_user->getLoggedIn()) {
-            if ($hotaru->getTitle() == 'profile') { $status = "id='navigation_active'"; } else { $status = ""; }
-            echo "<li><a  " . $status . " href='" . url(array('page'=>'profile')) . "'>" . $lang["users_profile"] . "</a></li>\n";
+            if ($hotaru->getTitle() == 'account') { $status = "id='navigation_active'"; } else { $status = ""; }
+            echo "<li><a  " . $status . " href='" . url(array('page'=>'account')) . "'>" . $lang["users_account"] . "</a></li>\n";
             
             if ($hotaru->getTitle() == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
             echo "<li><a  " . $status . " href='" . url(array('page'=>'logout')) . "'>" . $lang["users_logout"] . "</a></li>\n";
@@ -156,10 +156,7 @@ class Users extends PluginFunctions
              if ($hotaru->isPage('logout')) {
                 $current_user->destroyCookieAndSession();
                 header("Location: " . BASEURL);
-            } elseif ($hotaru->isPage('profile')) {
-                $this->updateGeneral();
-                $this->updatePassword();    
-            } 
+            }
                     
         // Pages you have to be logged out for...
         } else {
@@ -201,8 +198,10 @@ class Users extends PluginFunctions
         
         // Pages you have to be logged in for...
         if ($current_user->getLoggedIn()) {
-            if ($hotaru->isPage('profile')) {
-                $hotaru->displayTemplate('update', 'users');
+            if ($hotaru->isPage('account')) {
+                // Note: the "account" template calls the functions it needs 
+                // from the UserBase class.
+                $hotaru->displayTemplate('account', 'users');
                 return true;
             } else {
                 return false;
@@ -260,129 +259,6 @@ class Users extends PluginFunctions
     
     
      /**
-     * Change username or email
-     *
-     * @return bool
-     */
-    public function updateGeneral()
-    {
-        global $hotaru, $cage, $lang, $current_user;
-        
-        $error = 0;
-        
-        // Updating general profile info
-        if ($cage->post->testAlnumLines('users_type') == 'update_general') {
-            $username_check = $cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
-            if ($username_check) {
-                $current_user->setName($username_check); // updates the db record
-            } else {
-                $hotaru->messages[$lang['users_register_username_error']] = 'red';
-                $error = 1;
-            }
-                                
-            $email_check = $cage->post->testEmail('email');    
-            if ($email_check) {
-                $current_user->email = $email_check;
-            } else {
-                $hotaru->messages[$lang['users_register_email_error']] = 'red';
-                $error = 1;
-            }
-        }
-        
-        if (!isset($username_check) && !isset($email_check)) {
-            $username_check = $current_user->userName;
-            $email_check = $current_user->email;
-            // do nothing
-        } elseif ($error == 0) {
-            $result = $current_user->userExists(0, $username_check, $email_check);
-            if ($result != 4) { // 4 is returned when the user does not exist in the database
-                //success
-                $current_user->updateUserBasic();
-                $current_user->setCookie(0);
-                $hotaru->messages[$lang['users_update_success']] = 'green';
-                return true;
-            } else {
-                //fail
-                $hotaru->messages[$lang["users_register_unexpected_error"]] = 'red';
-                return false;
-            }
-        } else {
-            // error must = 1 so fall through and display the form again
-            return false;
-        }
-    }
-    
-    
-     /**
-     * Enable a user to change their password
-     *
-     * @return bool
-     */
-    public function updatePassword()
-    {
-        global $hotaru, $cage, $lang, $current_user;
-        
-        $error = 0;
-        
-        // Updating password
-        if ($cage->post->testAlnumLines('users_type') == 'update_password') {
-            $password_check_old = $cage->post->testPassword('password_old');    
-            
-            if ($current_user->loginCheck($current_user->userName, $password_check_old)) {
-                // safe, the old password matches the password for this user.
-            } else {
-                $hotaru->messages[$lang['users_update_password_error_old']] = 'red';
-                $error = 1;
-            }
-        
-            $password_check_new = $cage->post->testPassword('password_new');    
-            if ($password_check_new) {
-                $password_check_new2 = $cage->post->testPassword('password_new2');    
-                if ($password_check_new2) { 
-                    if ($password_check_new == $password_check_new2) {
-                        // safe, the two new password fields match
-                    } else {
-                        $hotaru->messages[$lang['users_update_password_error_match']] = 'red';
-                        $error = 1;
-                    }
-                } else {
-                    $hotaru->messages[$lang['users_update_password_error_new']] = 'red';
-                    $error = 1;
-                }
-            } else {
-                $hotaru->messages[$lang['users_update_password_error_not_provided']] = 'red';
-                $error = 1;
-            }
-                        
-        }
-                
-        if (!isset($password_check_old) && !isset($password_check_new) && !isset($password_check_new2)) {
-            $password_check_old = "";
-            $password_check_new = "";
-            $password_check_new2 = "";
-            // do nothing
-        } elseif ($error == 0) {
-            $result = $current_user->userExists(0, $current_user->userName, $current_user->email);
-            if ($result != 4) { // 4 is returned when the user does not exist in the database
-                //success
-                $current_user->password = $current_user->generateHash($password_check_new);
-                $current_user->updateUserBasic();
-                $current_user->setCookie(0);
-                $hotaru->messages[$lang['users_update_success']] = 'green';
-                return true;
-            } else {
-                //fail
-                $hotaru->messages[$lang["users_register_unexpected_error"]] = 'red';
-                return false;
-            }
-        } else {
-            // error must = 1 so fall through and display the form again
-            return false;
-        }
-    }
-    
-    
-     /**
      * User Login
      *
      * @return bool
@@ -426,8 +302,59 @@ class Users extends PluginFunctions
                     // login failed
                     $hotaru->messages[$lang["users_login_failed"]] = 'red';
             }
-        } 
+        } else {
+        
+            // forgotten password request
+            if ($cage->post->keyExists('forgotten_password')) {
+                $this->password();
+            }
+            
+            // confirming forgotten password email
+            $passconf = $cage->get->getAlnum('passconf');
+            $userid = $cage->get->testInt('userid');
+            
+            if ($passconf && $userid) {
+                if ($current_user->newRandomPassword($userid, $passconf)) {
+                    $hotaru->messages[$lang['users_email_password_conf_success']] = 'green';
+                } else {
+                    $hotaru->messages[$lang['users_email_password_conf_fail']] = 'red';
+                }
+            }
+        }
         return false;
+    }
+    
+    
+     /**
+     * Password forgotten
+     * 
+     * @return bool
+     */
+    public function password()
+    {
+        global $cage, $lang, $current_user, $hotaru;
+        
+        // Check email
+        if (!$email_check = $cage->post->testEmail('email')) { 
+            $email_check = ''; 
+            // login failed
+            $hotaru->messages[$lang["users_email_invalid"]] = 'red';
+            return false;
+        } 
+                    
+        $valid_email = $current_user->validEmail($email_check);
+        $userid = $current_user->getUserIdFromEmail($valid_email);
+        
+        if ($valid_email && $userid) {
+                //success
+                $current_user->sendPasswordConf($userid, $valid_email);
+                $hotaru->messages[$lang['users_email_password_conf_sent']] = 'green';
+                return true;
+        } else {
+                // login failed
+                $hotaru->messages[$lang["users_email_invalid"]] = 'red';
+                return false;
+        }
     }
     
     

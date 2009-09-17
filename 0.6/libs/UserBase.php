@@ -599,6 +599,10 @@ function isAdmin($username)
     {
         global $db, $hotaru, $cage, $lang, $plugins;
         
+        // We need to explicity include the Admin language file 
+        // for plugins using this function (e.g. Users).
+        $hotaru->includeLanguagePack('admin');
+        
         // generate the email confirmation code
         $pass_conf = md5(crypt(md5($email),md5($email)));
         
@@ -655,6 +659,10 @@ function isAdmin($username)
             return false;
         }
         
+        // We need to explicity include the Admin language file 
+        // for plugins using this function (e.g. Users).
+        $hotaru->includeLanguagePack('admin');
+        
         // update the password to something random
         $temp_pass = random_string(8);
         $sql = "UPDATE " . TABLE_USERS . " SET user_password = %s WHERE user_id = %d";
@@ -669,7 +677,7 @@ function isAdmin($username)
         }
         
         // send email
-        $subject = $lang['admin_email_password_conf_subject'];
+        $subject = $lang['admin_email_new_password_subject'];
         $body = $lang['admin_email_password_conf_body_hello'] . " " . $this->getUserNameFromId($userid);
         $body .= $line_break;
         $body .= $lang['admin_email_password_conf_body_requested'];
@@ -704,6 +712,10 @@ function isAdmin($username)
         global $hotaru, $cage, $lang, $current_user;
                 
         $error = 0;
+        
+        // We need to explicity include the Admin language file 
+        // for plugins using this function (e.g. Users).
+        $hotaru->includeLanguagePack('admin');
         
         // fill checks
         $checks['username_check'] = '';
