@@ -504,15 +504,17 @@ class Admin
      *
      * @param string $table_name - table to empty
      */
-    public function emptyTable($table_name)
+    public function emptyTable($table_name, $msg = true)
     {
         global $db, $lang, $hotaru;
         
         $db->query("TRUNCATE TABLE " . $table_name);
         
-        $hotaru->message = $lang['admin_maintenance_table_emptied'];
-        $hotaru->messageType = 'green';
-        $hotaru->showMessage();
+        if ($msg) {
+            $hotaru->message = $lang['admin_maintenance_table_emptied'];
+            $hotaru->messageType = 'green';
+            $hotaru->showMessage();
+        }
     }
     
     
@@ -521,15 +523,17 @@ class Admin
      *
      * @param string $table_name - table to drop
      */
-    public function dropTable($table_name)
+    public function dropTable($table_name, $msg = true)
     {
         global $db, $lang, $hotaru;
         
         $db->query("DROP TABLE " . $table_name);
         
-        $hotaru->message = $lang['admin_maintenance_table_deleted'];
-        $hotaru->messageType = 'green';
-        $hotaru->showMessage();
+        if ($msg) {
+            $hotaru->message = $lang['admin_maintenance_table_deleted'];
+            $hotaru->messageType = 'green';
+            $hotaru->showMessage();
+        }
     }
     
     
