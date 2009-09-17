@@ -172,9 +172,11 @@ class SidebarWidgets extends PluginFunctions
             $widgets = $sidebar->getSidebarWidgets();
             $last = count($widgets);
                 
-            $this_widget_name = $cage->get->testAlnumLines('widget');
+            $this_widget_function = $cage->get->testAlnumLines('widget');
             $this_widget_order = $cage->get->testInt('order');
             $this_widget_sidebar = $cage->get->testInt('sidebar');
+            
+            $this_widget_name = $sidebar->getPluginFromFunction($this_widget_function);
             
             if ($cage->get->testAlpha('action') == 'orderup') {
                 if ($this_widget_order > 1) {
@@ -183,23 +185,23 @@ class SidebarWidgets extends PluginFunctions
                         if ($details['order'] == ($this_widget_order - 1)) {
                         
                             //Check if this widget and the target are in the same sidebar
-                            if ($sidebar_settings['sidebar_widgets'][$widget]['sidebar'] == $sidebar_settings['sidebar_widgets'][$this_widget_name]['sidebar']) {
+                            if ($sidebar_settings['sidebar_widgets'][$widget]['sidebar'] == $sidebar_settings['sidebar_widgets'][$this_widget_function]['sidebar']) {
                             
                                 $sidebar_settings['sidebar_widgets'][$widget]['order'] = $details['order'] + 1;
-                                $sidebar_settings['sidebar_widgets'][$this_widget_name]['order'] = $this_widget_order - 1;
+                                $sidebar_settings['sidebar_widgets'][$this_widget_function]['order'] = $this_widget_order - 1;
                                 $hotaru->messages[$lang['sidebar_order_updated']] = 'green';
                                 break;
                             } else {
                                 // In different sidebars so don't change the order, just the sidebar value
-                                $sidebar_settings['sidebar_widgets'][$this_widget_name]['sidebar']--;
+                                $sidebar_settings['sidebar_widgets'][$this_widget_function]['sidebar']--;
                             }
                         }
                     }
                             
                 } else {
                     // prevent moving into sidebar 0:
-                    if (($sidebar->getLastSidebar($widgets) > 1) && ($sidebar_settings['sidebar_widgets'][$this_widget_name]['sidebar'] > 1)) {
-                        $sidebar_settings['sidebar_widgets'][$this_widget_name]['sidebar']--;
+                    if (($sidebar->getLastSidebar($widgets) > 1) && ($sidebar_settings['sidebar_widgets'][$this_widget_function]['sidebar'] > 1)) {
+                        $sidebar_settings['sidebar_widgets'][$this_widget_function]['sidebar']--;
                     } else {
                         $hotaru->messages[$lang['sidebar_order_already_first']] = 'red';
                     }
@@ -211,13 +213,13 @@ class SidebarWidgets extends PluginFunctions
                     foreach ($widgets as $widget => $details) {
                         if ($details['order'] == ($this_widget_order + 1)) {
                             $sidebar_settings['sidebar_widgets'][$widget]['order'] = $details['order'] - 1;
-                            $sidebar_settings['sidebar_widgets'][$this_widget_name]['order'] = $this_widget_order + 1;
+                            $sidebar_settings['sidebar_widgets'][$this_widget_function]['order'] = $this_widget_order + 1;
                             $hotaru->messages[$lang['sidebar_order_updated']] = 'green';
                             break;
                         }
                     }
                 } else {
-                    $sidebar_settings['sidebar_widgets'][$this_widget_name]['sidebar']++;
+                    $sidebar_settings['sidebar_widgets'][$this_widget_function]['sidebar']++;
                     //$hotaru->messages[$lang['sidebar_order_already_last']] = 'red';
                 }        
             } 
@@ -225,7 +227,7 @@ class SidebarWidgets extends PluginFunctions
             {
                 // enable a sidebar widget
                 if ($this->isActive($this_widget_name)) {
-                    $sidebar_settings['sidebar_widgets'][$this_widget_name]['enabled'] = true;
+                    $sidebar_settings['sidebar_widgets'][$this_widget_function]['enabled'] = true;
                     $hotaru->messages[$lang['sidebar_order_enabled']] = 'green';
                 } else {
                     // don't enable it if the plugin is inactive
@@ -234,7 +236,7 @@ class SidebarWidgets extends PluginFunctions
             } 
             elseif ($cage->get->testAlpha('action') == 'disable') 
             {
-                $sidebar_settings['sidebar_widgets'][$this_widget_name]['enabled'] = false;
+                $sidebar_settings['sidebar_widgets'][$this_widget_function]['enabled'] = false;
                 $hotaru->messages[$lang['sidebar_order_disabled']] = 'green';
             }
             

@@ -302,7 +302,7 @@ function rs_save_settings($id, &$parameters)
             $values = serialize($parameters);
             $hotaru->message = $lang["rss_show_update_successful"];
             $hotaru->messageType = "green";
-            $plugins->updateSetting('rss_show', 'rss_show_' . $id . '_settings', $values);    
+            $plugins->updateSetting('rss_show_' . $id . '_settings', $values, 'rss_show');    
         }
     }
     
