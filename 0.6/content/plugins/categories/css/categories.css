@@ -36,4 +36,18 @@
 	padding: 0.2em; }
 #category_bar li li a:hover {
 	color: #fff;}
- 
+	
+
+/* Level 3, 4, 5, etc. */
+
+#category_bar li ul li ul li {
+	display: none; 
+	margin-left: 4.0em;
+	width: 10em; /* Width to help Opera out */ }
+	
+/* Level 3, 4, 5, etc. HOVER */
+
+#category_bar  li ul li:hover ul li, #category_bar li ul li:hover ul li {
+	display: block;
+	background-color: #F0F0F0;
+	position: absolute; }

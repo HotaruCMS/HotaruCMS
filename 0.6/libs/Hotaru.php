@@ -741,12 +741,14 @@ class Hotaru
         if(empty($includes)) { return false; }
 
          /*
-            if etag parameter is present then the script is being called directly, otherwise we're including it in 
+            if version parameter is present then the script is being called directly, otherwise we're including it in 
             another script with require or include. If calling directly we return code othewise we return the etag 
-            representing the latest files
+            (version number) representing the latest files
         */
         
         if ($version > 0) {
+        
+            // GET ACTUAL CODE - IF IT'S CACHED, SHOW THE CACHED CODE, OTHERWISE, GET INCLUDE FILES, BUILD AN ARCHIVE AND SHOW IT
         
             $iETag = $version;
             $sLastModified = gmdate('D, d M Y H:i:s', $iETag).' GMT';
@@ -808,7 +810,7 @@ class Hotaru
           
         } else {
         
-            // get file last modified dates
+            // get last modified dates for all files to include
             $aLastModifieds = array();
             foreach ($includes as $sFile) {
                 $aLastModifieds[] = filemtime($sFile);
@@ -816,7 +818,7 @@ class Hotaru
             // sort dates, newest first
             rsort($aLastModifieds);
             
-            // output latest timestamp
+            // return latest timestamp, i.e. the most recently updated include file
             return $aLastModifieds[0];
         
         }
