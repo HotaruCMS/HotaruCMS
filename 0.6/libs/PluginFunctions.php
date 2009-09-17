@@ -879,6 +879,9 @@ class PluginFunctions extends Plugin
     {
         global $hotaru;
         
+        if (!$folder) { $folder = $this->getFolder(); }
+        if (!$filename) { $filename = $folder; }
+        
         return $hotaru->includeCss($filename, $folder); // returned for testing purposes only
     }
     
@@ -892,6 +895,9 @@ class PluginFunctions extends Plugin
     public function includeJs($filename = '', $folder = '')
     {
         global $hotaru;
+        
+        if (!$folder) { $folder = $this->getFolder(); }
+        if (!$filename) { $filename = $folder; }
         
         return $hotaru->includeJs($filename, $folder); // returned for testing purposes only
     }
