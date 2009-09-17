@@ -357,11 +357,12 @@ class Admin
      *
      * @param string $folder - path to the cache folder
      */
-    public function clearCache($folder)
+    public function clearCache($folder, $msg = true)
     {
         global $hotaru, $lang;
         
         $success = $this->deleteFiles(CACHE . $folder);
+        if (!$msg) { return true; }
         if ($success) {
             $hotaru->message = $lang['admin_maintenance_clear_cache_success'];
             $hotaru->messageType = 'green';

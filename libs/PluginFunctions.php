@@ -458,6 +458,9 @@ class PluginFunctions extends Plugin
         // are up-to-date.
         $admin->deleteFiles(CACHE . 'db_cache');
         
+        // Clear the css/js cache to ensure any new ones get included
+        $admin->clearCache('css_js_cache', false);
+        
         // Read meta from the top of the plugin file
         $plugin_metadata = $this->readPluginMeta($this->folder);
         
@@ -561,6 +564,9 @@ class PluginFunctions extends Plugin
             // are up-to-date.
             $admin->delete_files(CACHE . 'db_cache');
             
+            // Clear the css/js cache to ensure any new ones get included
+            $admin->clearCache('css_js_cache', false);
+            
             // Force inclusion of a language file (if exists) because the 
             // plugin isn't ready to include it itself yet.
             $this->includeLanguage($folder);
@@ -596,6 +602,9 @@ class PluginFunctions extends Plugin
         
         // Clear the database cache to ensure plugins and hooks are up-to-date.
         $admin->deleteFiles(CACHE . 'db_cache');
+        
+        // Clear the css/js cache to ensure any new ones get included
+        $admin->clearCache('css_js_cache', false);
         
         // Get the enabled status for this plugin...
         $plugin_row = $db->get_row($db->prepare("SELECT plugin_folder, plugin_enabled FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $this->folder));
@@ -673,6 +682,9 @@ class PluginFunctions extends Plugin
         
         // Clear the database cache to ensure plugins and hooks are up-to-date.
         $admin->deleteFiles(CACHE . 'db_cache');
+        
+        // Clear the css/js cache to ensure this plugin's files are removed
+        $admin->clearCache('css_js_cache', false);
 
         $db->query($db->prepare("DELETE FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $this->folder));
         $db->query($db->prepare("DELETE FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_folder = %s", $this->folder));
