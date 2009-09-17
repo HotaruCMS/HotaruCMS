@@ -38,7 +38,7 @@ $lang["users_settings_saved"] = "Settings Saved";
 
 /* Navigation & General */
 $lang["users_home"] = "Home";
-$lang["users_profile"] = "Profile";
+$lang["users_account"] = "Account";
 $lang["users_login"] = "Login";
 $lang["users_logout"] = "Logout";
 $lang["users_register"] = "Register";
@@ -53,8 +53,18 @@ $lang["users_login_form_submit"] = "Login";
 $lang["users_login_form_submit_username"] = "Username:";
 $lang["users_login_form_submit_password"] = "Password:";
 $lang["users_login_form_submit_remember"] = "Remember:";
+$lang["users_login_forgot_password"] = "Forgot your password?";
+$lang['users_login_forgot_password_submit'] = "Submit";
+$lang['users_login_forgot_password_submit_instruct_1'] = "Enter the email address for your " . SITE_NAME . " account:";
+$lang['users_login_forgot_password_submit_instruct_2'] = "You will be emailed a confirmation code. Click that confirmation code to be sent a new, random password. Use that to access your account and change it to something you can remember.";
 
-/* Register (and also used in User Settings) */
+/* Forgotten Password */
+$lang['users_email_password_conf_sent'] = "An email has been sent to the address provided";
+$lang['users_email_password_conf_success'] = "A new password has been sent to your email address.";
+$lang['users_email_password_conf_fail'] = "Unable to confirm your email address. Please try the link again.";
+$lang["users_email_invalid"] = "Email invalid";
+
+/* Register (and also used in User Account) */
 $lang["users_register_username"] = "Username:";
 $lang["users_register_email"] = "Email:";
 $lang["users_register_password"] = "Password:";
@@ -83,20 +93,16 @@ $lang['users_register_emailconf_success'] = "Your email address has been success
 $lang['users_register_emailconf_success_login'] = "Click here to log in.";
 $lang['users_register_emailconf_fail'] = "Unable to confirm your email address. Please try the link again.";
 
-/* User Profile Update */
-$lang["users_update_user_settings"] = "User Settings";
-$lang["users_update_username"] = "Username:";
-$lang["users_update_email"] = "Email:";
-$lang["users_update_password_instruct"] = "Change your password?";
-$lang["users_update_old_password"] = "Old password:";
-$lang["users_update_new_password"] = "New password:";
-$lang["users_update_new_password_verify"] = "New password (again):";
-$lang["users_update_success"] = "Updated successfully.";
-$lang["users_update_instructions"] = "Update your account information:";
-$lang["users_update_form_submit"] = "Update";
-$lang["users_update_password_error_old"] = "Your old password doesn't match our records";
-$lang["users_update_password_error_new"] = "The new password must be at least 8 characters and can only contain letters, numbers and these symbols: @ * # - _";
-$lang["users_update_password_error_match"] = "The two \"New password\" fields don't match";
-$lang["users_update_password_error_not_provided"] = "Please fill in all the password fields";
-
+/* User Account Update */
+$lang["users_account_user_settings"] = "User Account";
+$lang["users_account_username"] = "Username:";
+$lang["users_account_email"] = "Email:";
+$lang["users_account_password_instruct"] = "Change your password?";
+$lang["users_account_old_password"] = "Old password:";
+$lang["users_account_new_password"] = "New password:";
+$lang["users_account_new_password_verify"] = "New password (again):";
+$lang["users_account_success"] = "Updated successfully.";
+$lang["users_account_instructions"] = "Update your account information:";
+$lang["users_account_form_submit"] = "Update";
+// Other language is used in content/language_packs/language_default/admin_language
 ?>

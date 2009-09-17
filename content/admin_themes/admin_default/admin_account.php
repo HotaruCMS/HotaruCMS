@@ -1,7 +1,7 @@
 <?php 
 /**
  * Theme name: admin_default
- * Template name: admin_profile.php
+ * Template name: admin_account.php
  * Template author: Nick Ramsay
  *
  * PHP version 5

@@ -604,7 +604,7 @@ class Admin
     
 
      /**
-     * Admin login
+     * Admin password forgotten
      * 
      * @return bool
      */
