@@ -40,6 +40,8 @@ $stories = $post->prepareList();
     <?php echo $page_title; ?>
 </div>
 
+<?php $plugins->pluginHook('submit_post_breadcrumbs'); ?> 
+
 <?php 
 
 if ($stories) {

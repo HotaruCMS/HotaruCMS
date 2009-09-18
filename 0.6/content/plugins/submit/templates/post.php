@@ -39,6 +39,8 @@ $user->getUserBasic($post->getAuthor());
 </div>
 <?php } ?>
 
+<?php $plugins->pluginHook('submit_post_breadcrumbs'); ?> 
+
 <!-- POST -->
 <?php if ($post->getStatus() != 'buried') { ?>
 
