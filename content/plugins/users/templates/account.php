@@ -24,8 +24,7 @@
  * @link      http://www.hotarucms.org/
  */
  
-global $hotaru, $lang, $current_user;
-$checks = $current_user->updateAccount();
+global $hotaru, $lang, $checks, $current_user, $userid;
 extract($checks); // extracts $username_check, etc.
 ?>
     
@@ -34,25 +33,30 @@ extract($checks); // extracts $username_check, etc.
     <h2><?php echo $lang["users_account_user_settings"]; ?></h2>
     
     <?php echo $hotaru->showMessages(); ?>
-    
-    <?php echo $lang["users_account_instructions"]; ?>        
-    <form name='update_form' action='<?php echo BASEURL; ?>index.php?page=account' method='post'>    
+
+    <form name='update_form' action='<?php echo BASEURL; ?>index.php' method='post'>    
     <table>
     <tr><td><?php echo $lang["users_account_username"]; ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check; ?>' /></td></tr>
     <tr><td><?php echo $lang["users_account_email"]; ?>&nbsp; </td><td><input type='text' size=30 name='email' value='<?php echo $email_check; ?>' /></td></tr>
+    <input type='hidden' name='userid' value='<?php echo $userid; ?>' />
+    <input type='hidden' name='page' value='account' />
     <input type='hidden' name='update_type' value='update_general' />
     <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $lang['users_account_form_submit']; ?>' /></td></tr>
     </table>    
     </form>
     
-    <?php echo $lang["users_account_password_instruct"]; ?>
-    <form name='update_form' action='<?php echo BASEURL; ?>index.php?page=account' method='post'>
-    <table>
-    <tr><td><?php echo $lang["users_account_old_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_old' value='<?php echo $password_check_old; ?>' /></td></tr>
-    <tr><td><?php echo $lang["users_account_new_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_new' value='<?php echo $password_check_new; ?>' /></td></tr>
-    <tr><td><?php echo $lang["users_account_new_password_verify"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_new2' value='<?php echo $password_check_new2; ?>' /></td></tr>
-    <input type='hidden' name='update_type' value='update_password' />
-    <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $lang['users_account_form_submit']; ?>' /></td></tr>            
-    </table>
-    </form>
+    <?php if (!$userid) { // must be looking at own account so show password change form: ?>
+        <?php echo $lang["users_account_password_instruct"]; ?>
+        <form name='update_form' action='<?php echo BASEURL; ?>index.php' method='post'>
+        <table>
+        <tr><td><?php echo $lang["users_account_old_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_old' value='<?php echo $password_check_old; ?>' /></td></tr>
+        <tr><td><?php echo $lang["users_account_new_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_new' value='<?php echo $password_check_new; ?>' /></td></tr>
+        <tr><td><?php echo $lang["users_account_new_password_verify"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_new2' value='<?php echo $password_check_new2; ?>' /></td></tr>
+        <input type='hidden' name='userid' value='<?php echo $userid; ?>' />
+        <input type='hidden' name='page' value='account' />
+        <input type='hidden' name='update_type' value='update_password' />
+        <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $lang['users_account_form_submit']; ?>' /></td></tr>            
+        </table>
+        </form>
+    <?php } ?>
 

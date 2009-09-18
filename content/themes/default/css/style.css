@@ -71,6 +71,13 @@ li #navigation_active { background-color: #444; }
 .green     { background-color: #99FF66; }
 .red     { background-color: #FF6A55; color: #ffffff; }
 
+.special_links_bar {
+	padding: 0.2em 0.6em 0.2em 0.6em;
+	margin-bottom: 0.8em;
+	background-color: #f0f0f0;
+	border: 1px solid #fff;
+}
+
 
 /* BREADCRUMBS */
 

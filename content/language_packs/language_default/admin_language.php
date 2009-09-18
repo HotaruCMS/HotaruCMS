@@ -64,6 +64,7 @@ $lang['admin_email_password_conf_body_pass_change'] = "You can change it to some
 /* Account */
 $lang["admin_account_update_success"] = "Updated successfully";
 $lang["admin_account_update_password_success"] = "Updated password successfully";
+$lang["admin_account_update_unexpected_error"] = "Sorry, there has been an unexpected error";
 $lang["admin_account_update_password_error_old"] = "Your old password doesn't match our records";
 $lang["admin_account_update_password_error_new"] = "The new password must be at least 8 characters and can only contain letters, numbers and these symbols: @ * # - _";
 $lang["admin_account_update_password_error_match"] = "The two \"New password\" fields don't match";

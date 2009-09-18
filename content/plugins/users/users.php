@@ -5,7 +5,7 @@
  * version: 0.4
  * folder: users
  * class: Users
- * hooks: hotaru_header, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, post_list_filter
+ * hooks: hotaru_header, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs
  *
  * PHP version 5
  *
@@ -145,7 +145,7 @@ class Users extends PluginFunctions
     public function theme_index_replace()
     {
         global $hotaru, $cage, $current_user, $userbase;
-        global $send_email_confirmation;
+        global $send_email_confirmation, $checks, $userid;
         
         // $send_email_confirmation set to true in "is_page('register')" if email confirmation is enabled
         // it's a global so we can use it in usr_theme_index_main
@@ -153,9 +153,17 @@ class Users extends PluginFunctions
         
         // Pages you have to be logged in for...
         if ($current_user->getLoggedIn()) {
-             if ($hotaru->isPage('logout')) {
+            if ($hotaru->isPage('logout')) {
                 $current_user->destroyCookieAndSession();
                 header("Location: " . BASEURL);
+            } elseif ($hotaru->isPage('account')) {
+                if ($user = $cage->get->testUsername('user')) {
+                    $userid = $userbase->getUserIdFromName($user);
+                } else {
+                    $userid = $cage->post->testInt('userid');
+                }
+                // if $userid is blank it defaults to current_user->getId();
+                $checks = $current_user->updateAccount($userid);
             }
                     
         // Pages you have to be logged out for...
@@ -250,6 +258,8 @@ class Users extends PluginFunctions
             if(isset($filter['post_status = %s'])) { unset($filter['post_status = %s']); }
             $filter['post_status != %s'] = 'processing';
             $page_title = $lang["post_breadcrumbs_user"] . " &raquo; " . $hotaru->getTitle() . $rss;
+            
+            $hotaru->setPageType('user');
             
             return true;    
         }
@@ -550,6 +560,27 @@ class Users extends PluginFunctions
         }
             
         return true;
+    }
+    
+    /** 
+     * Enable admins to edit a user
+     */
+    public function submit_post_breadcrumbs()
+    {
+        global $hotaru, $current_user, $user, $lang;
+
+        // $user contaings the target user's username
+        // Make a new instance of UserBase for that user:
+        $member = new UserBase();
+        $member->getUserBasic(0, $user);
+
+        if ($hotaru->getPageType() == 'user' && $current_user->getRole() == 'admin') {
+            echo "<div class='special_links_bar'>";
+            echo $lang["users_account_have_permission"];
+            echo " <a href='" . url(array('page' => 'account', 'user' => $member->getName())) . "'>";
+            echo $lang["users_account_edit"] . " " . $member->getName() . ".</a>";
+            echo "</div>";
+        }
     }
 
 }

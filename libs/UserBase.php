@@ -301,6 +301,7 @@ class UserBase {
             $this->setRole($user_info->user_role);
             $this->setEmail($user_info->user_email);
             $this->setEmailValid($user_info->user_email_valid);
+        
             return $user_info;
         } else {
             return false;
@@ -704,12 +705,20 @@ class UserBase {
      /**
      * Change username or email
      *
+     * @param int $userid
      * @return bool
      */
-    public function updateAccount()
+    public function updateAccount($userid)
     {
         global $hotaru, $cage, $lang, $current_user;
+        // current_user is the person looking at the page
+        // "this" will represent the person whose account is being modified
                 
+        // Get the details of the account to show.
+        // If no account is specified, assume it's your own.
+        if (!$userid) { $userid = $current_user->getId(); }
+        $this->getUserBasic($userid);
+
         $error = 0;
         
         // We need to explicity include the Admin language file 
@@ -727,7 +736,7 @@ class UserBase {
         if ($cage->post->testAlnumLines('update_type') == 'update_general') {
             $username_check = $cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
             if ($username_check) {
-                $current_user->setName($username_check); // updates the db record
+                $this->setName($username_check); // updates the db record
             } else {
                 $hotaru->messages[$lang['admin_account_update_username_error']] = 'red';
                 $error = 1;
@@ -735,7 +744,7 @@ class UserBase {
                                 
             $email_check = $cage->post->testEmail('email');    
             if ($email_check) {
-                $current_user->email = $email_check;
+                $this->email = $email_check;
             } else {
                 $hotaru->messages[$lang['admin_account_update_email_error']] = 'red';
                 $error = 1;
@@ -743,15 +752,16 @@ class UserBase {
         }
         
         if (!isset($username_check) && !isset($email_check)) {
-            $username_check = $current_user->getName();
-            $email_check = $current_user->getEmail();
+            $username_check = $this->getName();
+            $email_check = $this->getEmail();
             // do nothing
         } elseif ($error == 0) {
-            $result = $current_user->userExists(0, $username_check, $email_check);
+            $result = $this->userExists(0, $username_check, $email_check);
             if ($result != 4) { // 4 is returned when the user does not exist in the database
                 //success
-                $current_user->updateUserBasic();
-                $current_user->setCookie(0);
+                $this->updateUserBasic();
+                // only update the cookie if it's your own account:
+                if ($current_user->getId() != $this->getId()) { $this->setCookie(0); }
                 $hotaru->messages[$lang['admin_account_update_success']] = 'green';
             } else {
                 //fail
@@ -776,7 +786,11 @@ class UserBase {
      */
     public function updatePassword()
     {
-        global $hotaru, $cage, $lang, $current_user;
+        global $hotaru, $cage, $lang, $current_user; 
+        // current_user is the person looking at the page
+        
+        // we don't want to edit the password if this isn't our own account.
+        if ($current_user->getId() != $this->getId()) { return false; }
         
         $error = 0;
         
