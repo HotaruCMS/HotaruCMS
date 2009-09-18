@@ -55,11 +55,11 @@ $user->getUserBasic($post->getAuthor());
         
             <?php if ($post->getUseAuthor() || $post->getUseDate()) { ?>
                 <div class="show_post_author_date">    
-                    Posted
+                    <?php echo $lang["submit_post_posted"]; ?>
                     <?php 
-                    if ($post->getUseAuthor()) { echo " by <a href='" . url(array('user' => $user->getName())) . "'>" . $user->getName() . "</a>"; } 
+                    if ($post->getUseAuthor()) { echo " " . $lang["submit_post_by"] . " <a href='" . url(array('user' => $user->getName())) . "'>" . $user->getName() . "</a>"; }
                     ?>
-                    <?php if ($post->getUseDate()) { echo time_difference(unixtimestamp($post->getDate())) . " ago"; } ?>
+                    <?php if ($post->getUseDate()) { echo time_difference(unixtimestamp($post->getDate())) . " " . $lang["submit_post_ago"]; } ?>
                     <?php $plugins->pluginHook('submit_show_post_author_date'); ?>
                     <?php
                         if (($hotaru->getTitle() != 'submit2') && ($current_user->getRole() == 'admin' || ($current_user->getId() == $user->getId()))) { 

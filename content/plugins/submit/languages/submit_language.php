@@ -99,6 +99,9 @@ $lang["submit_post_filtered_to"] = "Filtered to";
 $lang["submit_post_filter_user"] = "stories submitted by";
 $lang["submit_post_filter_tag"] = "stories tagged";
 $lang["submit_post_filter_category"] = "stories in";
+$lang["submit_post_posted"] = "Posted";
+$lang["submit_post_by"] = "by";
+$lang["submit_post_ago"] = "ago";
 
 /* Submit RSS Feed */
 $lang["submit_rss_latest_from"] = "Latest from";
