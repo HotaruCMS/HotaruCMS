@@ -317,7 +317,6 @@ class UserBase {
      *
      * Notes: Returns 4 if a user exists, otherwise 0-3 for errors
      */
-             
     public function userExists($id = 0, $username = '', $email = '')
     {
         global $db;
@@ -353,40 +352,40 @@ class UserBase {
     }
 
 
-/**
- * Check if an admin exists
- *
- * @return string|false
- */
-function adminExists()
-{
-    global $db;
-    
-    $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_role = %s";
-    
-    if ($admin_name = $db->get_var($db->prepare($sql, 'admin'))) {
-        return $admin_name; // admin exists
-    } else {
-        return false;
+    /**
+     * Check if an admin exists
+     *
+     * @return string|false
+     */
+    public function adminExists()
+    {
+        global $db;
+        
+        $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_role = %s";
+        
+        if ($admin_name = $db->get_var($db->prepare($sql, 'admin'))) {
+            return $admin_name; // admin exists
+        } else {
+            return false;
+        }
     }
-}
-
-
- /**
- * Checks if the user has an 'admin' role
- *
- * @return bool
- */
-function isAdmin($username)
-{
-    global $db;
     
-    $sql = "SELECT * FROM " . TABLE_USERS . " WHERE user_username = %s AND user_role = %s";
     
-    $role = $db->get_row($db->prepare($sql, $username, 'admin'));
-    
-    if ($role) { return true; } else { return false; }
-}
+     /**
+     * Checks if the user has an 'admin' role
+     *
+     * @return bool
+     */
+    public function isAdmin($username)
+    {
+        global $db;
+        
+        $sql = "SELECT * FROM " . TABLE_USERS . " WHERE user_username = %s AND user_role = %s";
+        
+        $role = $db->get_row($db->prepare($sql, $username, 'admin'));
+        
+        if ($role) { return true; } else { return false; }
+    }
 
 
     /**
