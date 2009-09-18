@@ -777,7 +777,7 @@ class Post {
         if (!$limit) { $limit = 10; }
                     
         if ($status) { $filter['post_status = %s'] = $status; }
-        if ($user) { $filter['post_author = %d'] = $current_user->get_user_id($cage->get->testUsername('user'));  }
+        if ($user) { $filter['post_author = %d'] = $current_user->getUserIdFromName($cage->get->testUsername('user'));  }
         if ($tag) { $filter['post_tags LIKE %s'] = '%' . $tag . '%'; }
         if ($category && (FRIENDLY_URLS == "true")) { $filter['post_category = %d'] = $cat->getCatId($category); }
         if ($category && (FRIENDLY_URLS == "false")) { $filter['post_category = %d'] = $category; }
@@ -811,7 +811,7 @@ class Post {
             {
                 $item = new RSSItem();
                 $item->title = stripslashes(urldecode($result->post_title));
-                $item->link  = urldecode($result->post_url);
+                $item->link  = url(array('page'=>$result->post_id)); 
                 $item->setPubDate($result->post_date); 
                 $item->description = "<![CDATA[ " . stripslashes(urldecode($result->post_content)) . " ]]>";
                 $feed->addItem($item);

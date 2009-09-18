@@ -5,7 +5,7 @@
  * version: 0.4
  * folder: users
  * class: Users
- * hooks: hotaru_header, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, submit_list_filter
+ * hooks: hotaru_header, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, post_list_filter
  *
  * PHP version 5
  *
@@ -237,7 +237,7 @@ class Users extends PluginFunctions
      *
      * @return bool
      */
-    public function submit_list_filter() 
+    public function post_list_filter() 
     {
         global $hotaru, $current_user, $cage, $filter, $lang, $page_title;
     
@@ -249,7 +249,7 @@ class Users extends PluginFunctions
             // Undo the filter that limits results to either 'top' or 'new' (See submit.php -> sub_prepare_list())
             if(isset($filter['post_status = %s'])) { unset($filter['post_status = %s']); }
             $filter['post_status != %s'] = 'processing';
-            $page_title = $lang["submit_page_breadcrumbs_user"] . " &raquo; " . $hotaru->getTitle() . $rss;
+            $page_title = $lang["post_breadcrumbs_user"] . " &raquo; " . $hotaru->getTitle() . $rss;
             
             return true;    
         }
