@@ -38,7 +38,7 @@ class Users extends PluginFunctions
      */
     public function install_plugin()
     {
-        global $db, $lang;
+        global $db, $lang, $current_user;
         
         // include language file
         $this->includeLanguage();
@@ -122,7 +122,7 @@ class Users extends PluginFunctions
             if ($hotaru->getTitle() == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
             echo "<li><a  " . $status . " href='" . url(array('page'=>'logout')) . "'>" . $lang["users_logout"] . "</a></li>\n";
             
-            if ($current_user->getRole() == 'admin') {
+            if ($current_user->getPermission('can_access_admin') == 'yes') {
                 
                 if ($hotaru->getTitle() == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
                 echo "<li><a  " . $status . " href='" . url(array(), 'admin') . "'>" . $lang["users_admin"] . "</a></li>\n";
@@ -487,14 +487,6 @@ class Users extends PluginFunctions
     public function sendConfirmationEmail($user_id)
     {
         global $db, $hotaru, $cage, $lang, $current_user;
-        
-        // Check that the site email has been changed from the default...
-        /*
-        if (SITE_EMAIL == "admin@hotarucms.org") {
-            echo "Error: Site email not updated in Admin -> Settings";
-            die(); exit;
-        } 
-        */
             
         $current_user->getUserBasic($user_id);
         

@@ -312,8 +312,8 @@ function register_admin()
         if (!$admin_name = $userbase->adminExists())
         {
             // Insert default settings
-            $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s)";
-            $db->query($db->prepare($sql, 'admin', 'admin', 'password', 'admin@mysite.com'));
+            $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email, user_permissions) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s)";
+            $db->query($db->prepare($sql, 'admin', 'admin', 'password', 'admin@mysite.com', $userbase->defaultPermissions('admin')));
             $user_name = 'admin';
             $user_email = 'admin@mysite.com';
             $user_password = 'password';
@@ -503,6 +503,7 @@ function create_table($table_name)
           `user_email` varchar(128) NOT NULL DEFAULT '',
           `user_email_valid` tinyint(3) NOT NULL DEFAULT 0,
           `user_email_conf` varchar(128) NULL,
+          `user_permissions` text NOT NULL DEFAULT '',
           `user_lastlogin` timestamp NULL,
           `user_updateby` int(20) NOT NULL DEFAULT 0,
           UNIQUE KEY `key` (`user_username`),

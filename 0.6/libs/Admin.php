@@ -67,6 +67,9 @@ class Admin
             }
         }
         
+        $admin = $this;    // $admin won't exist until this constructor is finished, 
+                           // but we need it now!
+        
         // Authenticate the admin if the Users plugin is ACTIVE:
         if (isset($current_user) && $plugins->isActive('users'))
         {
@@ -77,18 +80,17 @@ class Admin
                 header('Location: ' . BASEURL . 'index.php?page=login');
                 die; exit;
             } 
-            elseif (!$current_user->isAdmin($current_user->getName())) 
+            elseif ($current_user->getPermission('can_access_admin') != 'yes') 
             {
-                echo "You do not have permission to access this page.<br />";
+                // User doesn't have permission to access Admin
+                $hotaru->messages['Access Denied'] = 'red';
+                $this->displayAdminTemplate('access_denied');
                 die(); exit;
             }
         }
         
         
         // If we get this far, we know that the user is an administrator.
-        
-        $admin = $this;    // $admin won't exist until this constructor is finished, 
-                           // but plugins using this hook can't wait that long!
         
         $plugins->pluginHook('admin_index');
         

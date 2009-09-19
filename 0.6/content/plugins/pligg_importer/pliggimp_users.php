@@ -97,9 +97,9 @@ function step5($xml, $file_name)
                     break;
             }
             
-            $columns    = "user_username, user_role, user_date, user_password, user_email, user_email_valid, user_email_conf, user_lastlogin, user_updateby";
+            $columns    = "user_username, user_role, user_date, user_password, user_email, user_email_valid, user_email_conf, user_permissions, user_lastlogin, user_updateby";
             
-            $sql        = "INSERT INTO " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%s, %s, %s, %s, %s, %d, %s, %s, %d)";
+            $sql        = "INSERT INTO " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%s, %s, %s, %s, %s, %d, %s, %s, %s, %d)";
             
             //if not using SWCMS' email registration module, set to zero:
             if (!$child->valid_email) { $child->valid_email = 0;}
@@ -115,6 +115,7 @@ function step5($xml, $file_name)
                 $child->user_email,
                 $child->valid_email,
                 $child->email_conf,
+                $current_user->defaultPermissions($child->user_level),
                 $child->user_lastlogin,
                 $current_user->id));
                 

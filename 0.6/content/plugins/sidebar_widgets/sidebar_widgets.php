@@ -42,6 +42,7 @@ class SidebarWidgets extends PluginFunctions
         
         // Create a new empty table called "posts"
         $exists = $db->table_exists('widgets');
+        
         if (!$exists) {
             //echo "table doesn't exist. Stopping before creation."; exit;
             $sql = "CREATE TABLE `" . DB_PREFIX . "widgets` (
