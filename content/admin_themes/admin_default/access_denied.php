@@ -1,7 +1,7 @@
 <?php 
 /**
  * Theme name: admin_default
- * Template name: 404.php
+ * Template name: access_denied.php
  * Template author: Nick Ramsay
  *
  * PHP version 5
@@ -25,7 +25,23 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-global $lang;
-?>
 
-<?php echo $lang['admin_theme_404_page_not_found']; ?>
+global $hotaru, $admin; // don't remove
+?>
+        <!-- HEADER-->
+        <?php $admin->displayAdminTemplate('header'); ?>
+    
+        <div id="bd" role="main">
+            <div class='yui-g''>
+                <div class="yui-u" style='width: 100%;'>
+
+                    <!-- MAIN -->
+                    <div id="main">
+                        <?php echo $hotaru->showMessages(); ?>
+                    </div>        
+                </div>
+            </div>
+        </div>
+        
+        <!-- FOOTER -->
+        <?php $admin->displayAdminTemplate('footer'); ?>

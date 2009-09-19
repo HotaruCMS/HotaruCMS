@@ -26,7 +26,7 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $admin, $plugins, $lang; // don't remove
+global $hotaru, $admin, $plugins, $lang, $current_user; // don't remove
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
@@ -74,7 +74,10 @@ global $hotaru, $admin, $plugins, $lang; // don't remove
       
 </head>
 <body>
-<?php if ($announcements = $admin->checkAdminAnnouncements()) { ?>
+<?php 
+    if ($admin->checkAdminAnnouncements() && ($current_user->getPermission('can_access_admin') == 'yes')) { 
+        $announcements = $admin->checkAdminAnnouncements();
+?>
     <div id="announcement">
         <?php $plugins->pluginHook('admin_announcement_first'); ?>
         <?php foreach ($announcements as $announcement) { echo $announcement . "<br />"; } ?>

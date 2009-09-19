@@ -32,8 +32,9 @@ class UserBase {
     protected $email        = '';
     protected $emailValid   = 0;
     protected $loggedIn     = false;
+    protected $perms        = array();    // permissions
     
-    public $vars = array();
+    public $vars = array();     // multi-purpose, used by plugins
 
 
     /**
@@ -217,14 +218,66 @@ class UserBase {
     
     
     /**
+     * Set permission 
+     *
+     * @param string $perm_name
+     * @param mixed $setting
+     */
+    public function setPermission($perm_name, $setting)
+    {
+        $this->perms[$perm_name] = $setting;
+    }
+    
+    
+    /**
+     * Set ALL permissions 
+     *
+     * @param string $setting
+     */
+    public function setAllPermissions($perms)
+    {
+        foreach ($perms as $key => $value) {
+            $this->setPermission($key, $value);
+        }
+    }
+    
+    
+    /**
+     * Get permission 
+     *
+     * @param string $perm_name
+     * @return mixed 
+     */
+    public function getPermission($perm_name)
+    {
+        if (!isset($this->perms[$perm_name])) { 
+            return false; 
+        } else {
+            return $this->perms[$perm_name];
+        }
+    }
+    
+    
+    /**
+     * Get ALL permissions (serialized)
+     *
+     * @return string 
+     */
+    public function getAllPermissions()
+    {
+        return serialize($this->perms);
+    }
+    
+    
+    /**
      * Add a new user
      */
     public function addUserBasic()
     {
         global $db;
         
-        $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s)";
-        $db->query($db->prepare($sql, $this->getName(), $this->getRole(), $this->getPassword(), $this->getEmail()));
+        $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email, user_permissions) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s)";
+        $db->query($db->prepare($sql, $this->getName(), $this->getRole(), $this->getPassword(), $this->getEmail(), $this->defaultPermissions($this->getRole())));
     }
 
 
@@ -236,8 +289,8 @@ class UserBase {
         global $db;
         
         if ($this->getId() != 0) {
-            $sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s, user_updateby = %d WHERE user_id = %d";
-            $db->query($db->prepare($sql, $this->getName(), $this->getRole(), $this->getPassword(), $this->getEmail(), $this->getId(), $this->getId()));
+            $sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s, user_permissions = %s, user_updateby = %d WHERE user_id = %d";
+            $db->query($db->prepare($sql, $this->getName(), $this->getRole(), $this->getPassword(), $this->getEmail(), $this->getAllPermissions(), $this->getId(), $this->getId()));
             return true;
         } else {
             return false;
@@ -275,7 +328,7 @@ class UserBase {
      */    
     public function getUserBasic($userid = 0, $username = '')
     {
-        global $db;
+        global $db, $plugins;
         
         // Prepare SQL
         if ($userid != 0){              // use userid
@@ -301,6 +354,7 @@ class UserBase {
             $this->setRole($user_info->user_role);
             $this->setEmail($user_info->user_email);
             $this->setEmailValid($user_info->user_email_valid);
+            $this->setAllPermissions(unserialize($user_info->user_permissions));
         
             return $user_info;
         } else {
@@ -708,7 +762,7 @@ class UserBase {
      * @param int $userid
      * @return bool
      */
-    public function updateAccount($userid)
+    public function updateAccount($userid = 0)
     {
         global $hotaru, $cage, $lang, $current_user;
         // current_user is the person looking at the page
@@ -848,6 +902,64 @@ class UserBase {
             // error must = 1 so fall through and display the form again
         }
 
+    }
+    
+    
+    /**
+     * Default permissions
+     *
+     * @param string $role
+     * @return string $permissions - serialized
+     */
+    public function defaultPermissions($role) 
+    {
+        global $plugins;
+        
+        $perms = array();
+        
+        switch ($role) {
+            case 'admin':
+                $perms['can_access_admin'] = 'yes';
+                break;
+            case 'member':
+                $perms['can_access_admin'] = 'no';
+                break;
+            default:
+                $perms['can_access_admin'] = 'no';
+        }
+        
+        // plugin hook:
+        $plugins->pluginHook('userbase_default_permissions');
+        
+        return serialize($perms);
+    }
+    
+    
+    /**
+     * Read permissions from the database
+     *
+     * @return string (serialized)
+     */
+    public function readPermissions()
+    {
+        global $db;
+        
+        $sql = "SELECT user_permissions FROM " . TABLE_USERS . " WHERE user_id = %d";
+        $permissions = $db->get_var($db->prepare($sql, $this->getId()));
+        
+        if ($permissions) { $this->setAllPermissions(unserialize($permissions)); }
+    }
+    
+    
+    /**
+     * update permissions in the database
+     */
+    public function updatePermissions()
+    {
+        global $db;
+        
+        $sql = "UPDATE " . TABLE_USERS . " SET user_permissions = %s WHERE user_id = %d";
+        $db->get_var($db->prepare($sql, $this->getAllPermissions, $this->getId()));
     }
 }
  
