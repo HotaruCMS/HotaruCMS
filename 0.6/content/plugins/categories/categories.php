@@ -583,6 +583,22 @@ class Categories extends PluginFunctions
                     } else {
                         $menu[$category->category_id]['parent']     = $category->category_parent;
                     }
+<<<<<<< .mine
+                
+                    // This category is our new parent...
+                    $parent = $category->category_id;
+                            
+                    // Check for children
+                    $sql = "SELECT count(*) FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d";
+                    $countchildren = $db->get_var($db->prepare($sql, $parent));
+                            
+                    // If children, go to a recursive function to build links for all children of this top-level category
+                    if ($countchildren) {
+                        $output = $this->buildMenuBar($category, $output, $parent, 1); // 1 means top-level category
+                        $output .= "</li>\n";
+                    }
+=======
+>>>>>>> .r385
                 }
                 
                 $output = $this->buildMenuBar($menu);
@@ -600,7 +616,11 @@ class Categories extends PluginFunctions
      * @param array $menu
      * @return string $out
      */
+<<<<<<< .mine
+    public function buildMenuBar($category, $output, $parent, $depth)
+=======
     function buildMenuBar($menu)
+>>>>>>> .r385
     {
         $out = '<div class="cat_menu_container">' . "\n";
         $out .= '    <div class="cat_menu">' . "\n";
@@ -610,12 +630,31 @@ class Categories extends PluginFunctions
         {
             if ($category['show_condition'] && ($category['parent'] == 0)) {//are we allowed to see this menu?
 
+<<<<<<< .mine
+            $sql = "SELECT count(*) FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d";
+            $countchildren = $db->get_var($db->prepare($sql, $category->category_id));
+                        
+            if ($countchildren) {
+                $output .=  "<ul>\n";
+                $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d ORDER BY category_order ASC";
+                $children = $db->get_results($db->prepare($sql, $category->category_id));
+                $depth++;
+                foreach ($children as $child) {
+                    if ($depth < 3) { 
+                        $output = $this->buildMenuBar($child, $output, $child->category_id, $depth);
+                    }
+                }
+                $output .= "</ul>";
+                return $output;
+            } 
+=======
                 $out .= '<li class="' . $category['class'] . '"><a href="' . url(array('category'=>$category['id'])) . '">';
                 $out .= $category['text'];
                 $out .= '</a>';
                 $out .= $this->getChildren($menu, $category['id']);
                 $out .= '</li>' . "\n";
             }
+>>>>>>> .r385
         }
         
         $out .= '</ul>'."\n";
