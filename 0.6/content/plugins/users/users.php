@@ -211,6 +211,9 @@ class Users extends PluginFunctions
                 // from the UserBase class.
                 $hotaru->displayTemplate('account', 'users');
                 return true;
+            } elseif ($hotaru->isPage('permissions')) {
+                $this->editPermissions();
+                return true;
             } else {
                 return false;
             }
@@ -568,13 +571,29 @@ class Users extends PluginFunctions
 
         if ($hotaru->getPageType() == 'user' && $current_user->getRole() == 'admin') {
             echo "<div class='special_links_bar'>";
-            echo $lang["users_account_have_permission"];
+            echo $lang["users_account_edit"] . " " . $member->getName() . ": ";
             echo " <a href='" . url(array('page' => 'account', 'user' => $member->getName())) . "'>";
-            echo $lang["users_account_edit"] . " " . $member->getName() . ".</a>";
+            echo $lang["users_account_account"] . "</a> | ";
+            echo " <a href='" . url(array('page' => 'permissions', 'user' => $member->getName())) . "'>";
+            echo $lang["users_account_permissions"] . "</a>";
             echo "</div>";
         }
     }
-
+    
+    
+    /** 
+     * Enable admins to edit a user
+     */
+    public function editPermissions()
+    {
+        global $current_user;
+        
+        $perms = unserialize($current_user->getAllPermissions());
+        
+        foreach ($perms as $key => $value) {
+            echo $key . ": " . $value;
+        }
+    }
 }
 
 ?>

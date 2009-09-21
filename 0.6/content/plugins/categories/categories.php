@@ -550,7 +550,7 @@ class Categories extends PluginFunctions
      * Category Bar - shows categories as a drop-down menu
      *
      * Adapted from:
-     * @link http://www.roscripts.com/Building_a_dynamic_drop_down_menu-216.html
+     * @link http://www.cssnewbie.com/easy-css-dropdown-menus/
      */
     public function navigation_last()
     {
@@ -565,131 +565,90 @@ class Categories extends PluginFunctions
             $output = '';
         
             // get all top-level categories
-            $sql    = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_id != %d ORDER BY category_order ASC";
-            $categories = $db->get_results($db->prepare($sql, 1));
+            $sql    = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_id != %d AND category_parent = %d ORDER BY category_order ASC";
+            $categories = $db->get_results($db->prepare($sql, 1, 1));
            
             if($categories)
             {
-                $menu = array();
                 foreach ($categories as $category)
                 {
-                    $menu[$category->category_id]['id']             = $category->category_id;
-                    $menu[$category->category_id]['text']           = urldecode($category->category_name);
-                    $menu[$category->category_id]['class']          = '';
-                    $menu[$category->category_id]['show_condition'] = TRUE;
-                    
-                    if ($category->category_parent == 1) {
-                        $menu[$category->category_id]['parent']     = 0;
-                    } else {
-                        $menu[$category->category_id]['parent']     = $category->category_parent;
-                    }
-<<<<<<< .mine
-                
-                    // This category is our new parent...
                     $parent = $category->category_id;
-                            
-                    // Check for children
-                    $sql = "SELECT count(*) FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d";
-                    $countchildren = $db->get_var($db->prepare($sql, $parent));
-                            
-                    // If children, go to a recursive function to build links for all children of this top-level category
-                    if ($countchildren) {
-                        $output = $this->buildMenuBar($category, $output, $parent, 1); // 1 means top-level category
+                    
+                    // Check for children 
+                    $sql = "SELECT count(*) FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d"; 
+                    $countchildren = $db->get_var($db->prepare($sql, $parent)); 
+                       
+                    // If children, go to a recursive function to build links for all children of this top-level category 
+                    if ($countchildren) { 
+                        $depth = 1;
+                        $output = $this->buildMenuBar($category, $output, $parent, $depth); 
                         $output .= "</li>\n";
                     }
-=======
->>>>>>> .r385
                 }
-                
-                $output = $this->buildMenuBar($menu);
                 
                 // Output the category bar
-                echo $output;
+                echo "<ul id='category_bar'>\n"; 
+                echo $output; 
+                echo "</ul>\n"; 
             }
         }
     }
     
 
-    /**
-     * Build menu bar
-     *
-     * @param array $menu
-     * @return string $out
-     */
-<<<<<<< .mine
-    public function buildMenuBar($category, $output, $parent, $depth)
-=======
-    function buildMenuBar($menu)
->>>>>>> .r385
-    {
-        $out = '<div class="cat_menu_container">' . "\n";
-        $out .= '    <div class="cat_menu">' . "\n";
-        $out .= "\n".'<ul>' . "\n";
-        
-        foreach ($menu as $category)
-        {
-            if ($category['show_condition'] && ($category['parent'] == 0)) {//are we allowed to see this menu?
+    /** 
+     * Build Category Menu Bar - recursive function 
+     * 
+     * @param array $category  
+     * @param string $output  
+     * @param int $parent 
+     * @return string $output 
+     */ 
+    public function buildMenuBar($category, $output, $parent, $depth) 
+    { 
+        global $db; 
 
-<<<<<<< .mine
-            $sql = "SELECT count(*) FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d";
-            $countchildren = $db->get_var($db->prepare($sql, $category->category_id));
-                        
-            if ($countchildren) {
-                $output .=  "<ul>\n";
-                $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d ORDER BY category_order ASC";
-                $children = $db->get_results($db->prepare($sql, $category->category_id));
-                $depth++;
-                foreach ($children as $child) {
-                    if ($depth < 3) { 
-                        $output = $this->buildMenuBar($child, $output, $child->category_id, $depth);
-                    }
+        $output = $this->categoryLink($category, $output); 
+
+        $sql = "SELECT count(*) FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d"; 
+        $countchildren = $db->get_var($db->prepare($sql, $category->category_id)); 
+
+        if ($countchildren) { 
+            $output .=  "<ul>\n"; 
+            $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d ORDER BY category_order ASC"; 
+            $children = $db->get_results($db->prepare($sql, $category->category_id)); 
+            $depth++;
+            foreach ($children as $child) { 
+                if ($depth < 3) { 
+                    $output = $this->buildMenuBar($child, $output, $child->category_id, $depth);
                 }
-                $output .= "</ul>";
-                return $output;
             } 
-=======
-                $out .= '<li class="' . $category['class'] . '"><a href="' . url(array('category'=>$category['id'])) . '">';
-                $out .= $category['text'];
-                $out .= '</a>';
-                $out .= $this->getChildren($menu, $category['id']);
-                $out .= '</li>' . "\n";
-            }
->>>>>>> .r385
-        }
-        
-        $out .= '</ul>'."\n";
-        $out .= "\n\t" . '</div>';
-        return $out . "\n\t" . '</div>';
+            $output .= "</ul>"; 
+            return $output; 
+        }  
+
+        return $output; 
     }
+
+
+    /** 
+     * HTML link for each category 
+     * 
+     * @param array $category  
+     * @param string $output  
+     * @return string $output 
+     */ 
+    public function categoryLink($category, $output) 
+    { 
+        if (FRIENDLY_URLS == "true") {  
+            $link = $category->category_safe_name;  
+        } else { 
+            $link = $category->category_id; 
+        } 
     
+        $output .= '<li><a href="' . url(array('category'=>$link)) .'">' . urldecode($category->category_name) . "</a>\n"; 
     
-    /**
-     * Get children for menu bar
-     *
-     * @param array $menu
-     * @param int $cat_id (parent id)
-     * @return string|false $out
-     */
-    function getChildren($menu, $cat_id)
-    {
-        $has_subcats = FALSE;
-        $out = '';
-        $out .= "\n".'    <ul>' . "\n";
-        foreach ($menu as $child)
-        {
-            if ($child['show_condition'] && $child['parent'] == $cat_id) {//are we allowed to see this menu?
-                $has_subcats = TRUE;
-                $add_class = ($this->getChildren($menu, $child['id']) != FALSE ) ? ' sub_cat' : '';
-                $out .= '        <li class="' . $child['class'] . $add_class . '"><a href="' . url(array('category'=>$child['id'])) . '">';
-                $out .= str_replace(' ', '&nbsp;', $child['text']);
-                $out .= '</a>';
-                $out .= $this->getChildren($menu, $child['id']);
-                $out .= '</li>' . "\n";
-            }
-        }
-        $out .= '    </ul>'."\n";
-        return ($has_subcats) ? $out : FALSE;
-    }
+        return $output; 
+    } 
 
 }
 
