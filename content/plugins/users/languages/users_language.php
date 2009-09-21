@@ -103,7 +103,8 @@ $lang["users_account_new_password"] = "New password:";
 $lang["users_account_new_password_verify"] = "New password (again):";
 $lang["users_account_success"] = "Updated successfully.";
 $lang["users_account_form_submit"] = "Update";
-$lang["users_account_have_permission"] = "You have permission to";
-$lang["users_account_edit"] = "edit";
+$lang["users_account_edit"] = "Edit";
+$lang["users_account_account"] = "Account";
+$lang["users_account_permissions"] = "Permissions";
 // Other language is used in content/language_packs/language_default/admin_language
 ?>
