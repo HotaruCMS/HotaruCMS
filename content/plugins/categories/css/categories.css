@@ -4,141 +4,34 @@
 
 /* DROP-DOWN CATEGORY MENU BAR */
 
-.cat_menu_container {
-	border-top: 1px solid #F0F0F0;
-	height:20px;
-}
-
-.cat_menu {
-	margin-left: 0.8em;
-	text-align:left; 
-	position:relative; 
-	height:20px; 
-}
-
-.cat_menu ul {
-	padding:0; 
-	margin:0; 
-	list-style-type: none;
-}
-
-.cat_menu ul li {
-	float:left; 
-	position:relative;
-}
-
-.cat_menu ul li.sub_cat {
-	background-image:url(content/plugins/categories/images/next.gif); 
-	background-repeat: no-repeat; 
-	background-position: right;
-}
-
-.cat_menu ul li a {
-	display:block; 
-	text-decoration:none; 
-	height:20px; 
-	color:#fff; 
-	padding: 0.2em 0.8em 0.2em 0.8em; 
-	line-height:19px;
-}
-
-.cat_menu ul li a:hover {
-	background-color: #444;
-}
-
-
-.cat_menu ul li ul {
-	visibility:hidden; 
-	position:absolute; 
-	top:0; 
-	left:0; 
-	height:0; 
-	overflow:hidden;
-}
-
-.cat_menu ul li:hover ul,
-.cat_menu ul li a:hover ul {
-	visibility:visible; 
-	height:auto; 
-	position:absolute; 
-	top:30px; 
-	left:-1px; 
-	background:#fff; 
-	border:1px solid #666; 
-	overflow:visible;
-}
-
-.cat_menu ul li:hover ul li a,
-.cat_menu ul li a:hover ul li a {
-	display:block; 
-	background:transparent; 
-	text-decoration:none; 
-	color:#000; height:auto; 
-	line-height:1.5em; 
-	padding:5px 10px 5px 15px; 
-	width:170px; 
-	w\idth:125px;
-}
-
-.cat_menu ul li:hover ul li a.drop,
-.cat_menu ul li a:hover ul li a.drop {
-	display:block; 
-	color:#000; 
-	height:auto; 
-	line-height:1.5em; 
-	padding:5px 10px 5px 15px; 
-	width:170px; 
-	w\idth:125px;
-}
-
-.cat_menu ul li:hover ul li ul,
-.cat_menu ul li a:hover ul li a ul {
-	visibility:hidden; 
-	position:absolute; 
-	top:0; 
-	left:0; 
-	height:0; 
-	overflow:hidden;
-}
-
-.cat_menu ul li:hover ul li a:hover,
-.cat_menu ul li a:hover ul li a:hover {
-	background-color: #444; 
-	color: #fff;
-}
-
-.cat_menu ul li:hover ul li:hover ul,
-.cat_menu ul li a:hover ul li a:hover ul {
-	visibility:visible; 
-	position:absolute; 
-	top:0; 
-	color:#000; 
-	left:146px; 
-	height:auto; 
-	border:1px solid #909;
-}
-
-.cat_menu ul li:hover ul li:hover ul.left,
-.cat_menu ul li a:hover ul li a:hover ul.left {
-	left:-146px;
-}
-
-.cat_menu ul li:hover ul li:hover ul li a,
-.cat_menu ul li a:hover ul li a:hover ul li a {
-	display:block; 
-	height:auto; 
-	line-height:1.5em; 
-	padding:5px 10px 4px 15px; 
-	width:170px; 
-	w\idth:140px;
-}
-
-* html .cat_menu ul li a:hover ul li a:hover ul li a {
-	padding:4px 10px 4px 15px;
-}
-
-.cat_menu ul li:hover ul li:hover ul li:hover a,
-.cat_menu ul li a:hover ul li a:hover ul li a:hover {
-	background-color: #444; 
-	color: #fff;
-}
+#category_bar { 
+	border-top: 1px solid #F0F0F0; 
+	margin: 0; 
+	padding: 0 0 0 0.8em; } 
+#category_bar li { 
+	list-style: none; 
+	float: left; 
+	margin: 0.4em 0em 0.4em 0em; 
+	padding: 0.2em 0.8em 0.2em 0.8em; } 
+#category_bar li a { 
+	display: block; 
+	color: #fff; 
+	text-decoration: none; } 
+#category_bar li ul { 
+	display: none;  
+	width: 10em; /* Width to help Opera out */ } 
+ 
+/* HOVER */      
+#category_bar li:hover { 
+	background-color: #444;  } 
+#category_bar li:hover ul, #category_bar li.hover ul { 
+	display: block; 
+	background-color: #F0F0F0; 
+	position: absolute; } 
+#category_bar li:hover li, #category_bar li.hover li { 
+	float: none; } 
+#category_bar li:hover li a, #category_bar li.hover li a { 
+	color: #000; 
+	padding: 0.2em; } 
+#category_bar li li a:hover { 
+	color: #fff;} 
