@@ -30,7 +30,7 @@ extract($checks); // extracts $username_check, etc.
     
     <div id='breadcrumbs'><a href='<?php echo BASEURL; ?>'><?php echo $lang["users_home"]; ?></a> 
         &raquo; <a href='<?php echo url(array('user' => $username_check)); ?>'><?php echo $username_check; ?></a> 
-        &raquo; <?php echo $lang["users_account_user_settings"]; ?></div>
+        &raquo; <?php echo $lang["users_account_account"]; ?></div>
             
     <h2><?php echo $lang["users_account_user_settings"]; ?></h2>
     
@@ -40,10 +40,26 @@ extract($checks); // extracts $username_check, etc.
     <table>
     <tr><td><?php echo $lang["users_account_username"]; ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check; ?>' /></td></tr>
     <tr><td><?php echo $lang["users_account_email"]; ?>&nbsp; </td><td><input type='text' size=30 name='email' value='<?php echo $email_check; ?>' /></td></tr>
+    <?php if ($current_user->getPermission('can_access_admin') == 'yes') { ?>
+        <tr><td colspan=2><?php echo $lang["users_account_role_note"]; ?></td></tr>
+        <tr><td><?php echo $lang["users_account_role"]; ?>&nbsp; </td>
+        <td><select name='user_role'>
+                <option value='<?php echo $role_check; ?>'><?php echo $role_check; ?></option>
+                <?php 
+                    $roles = $current_user->getUniqueRoles(); 
+                    if ($roles) {
+                        foreach ($roles as $role) {
+                            echo "<option value='" . $role . "'>" . $role . "</option>\n";
+                        }
+                    }
+                ?>
+            </select>
+        </td>
+    <?php } ?>
     <input type='hidden' name='userid' value='<?php echo $userid; ?>' />
     <input type='hidden' name='page' value='account' />
     <input type='hidden' name='update_type' value='update_general' />
-    <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $lang['users_account_form_submit']; ?>' /></td></tr>
+    <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $lang['users_account_form_submit']; ?>' /></td></tr>
     </table>    
     </form>
     
@@ -57,7 +73,7 @@ extract($checks); // extracts $username_check, etc.
         <input type='hidden' name='userid' value='<?php echo $userid; ?>' />
         <input type='hidden' name='page' value='account' />
         <input type='hidden' name='update_type' value='update_password' />
-        <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $lang['users_account_form_submit']; ?>' /></td></tr>            
+        <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $lang['users_account_form_submit']; ?>' /></td></tr>            
         </table>
         </form>
     <?php } ?>

@@ -105,6 +105,10 @@ function step5($xml, $file_name)
             if (!$child->valid_email) { $child->valid_email = 0;}
             if (!$child->email_conf) { $child->email_conf = 0; }
             
+            // get permissions
+            $perms = $current_user->getDefaultPermissions($child->user_level);
+            unset($perms['options']); // don't need options.
+            
             // Insert into users table
             $db->query($db->prepare(
                 $sql,
@@ -115,7 +119,7 @@ function step5($xml, $file_name)
                 $child->user_email,
                 $child->valid_email,
                 $child->email_conf,
-                $current_user->defaultPermissions($child->user_level),
+                serialize($perms),
                 $child->user_lastlogin,
                 $current_user->id));
                 
