@@ -265,7 +265,7 @@ class UserBase {
      */
     public function getAllPermissions()
     {
-        return serialize($this->perms);
+        return $this->perms;
     }
     
     
@@ -277,7 +277,7 @@ class UserBase {
         global $db;
         
         $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email, user_permissions) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s)";
-        $db->query($db->prepare($sql, $this->getName(), $this->getRole(), $this->getPassword(), $this->getEmail(), $this->defaultPermissions($this->getRole())));
+        $db->query($db->prepare($sql, $this->getName(), $this->getRole(), $this->getPassword(), $this->getEmail(), serialize($this->getDefaultPermissions($this->getRole()))));
     }
 
 
@@ -290,7 +290,7 @@ class UserBase {
         
         if ($this->getId() != 0) {
             $sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s, user_permissions = %s, user_updateby = %d WHERE user_id = %d";
-            $db->query($db->prepare($sql, $this->getName(), $this->getRole(), $this->getPassword(), $this->getEmail(), $this->getAllPermissions(), $this->getId(), $this->getId()));
+            $db->query($db->prepare($sql, $this->getName(), $this->getRole(), $this->getPassword(), $this->getEmail(), serialize($this->getAllPermissions()), $this->getId(), $this->getId()));
             return true;
         } else {
             return false;
@@ -911,12 +911,16 @@ class UserBase {
      * @param string $role
      * @return string $permissions - serialized
      */
-    public function defaultPermissions($role) 
+    public function getDefaultPermissions($role = '') 
     {
         global $plugins;
         
         $perms = array();
         
+        // Permission Options
+        $perms['options']['can_access_admin'] = array('yes', 'no');
+            
+        // Permissions for $role
         switch ($role) {
             case 'admin':
                 $perms['can_access_admin'] = 'yes';
@@ -931,7 +935,7 @@ class UserBase {
         // plugin hook:
         $plugins->pluginHook('userbase_default_permissions');
         
-        return serialize($perms);
+        return $perms;
     }
     
     

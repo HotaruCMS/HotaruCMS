@@ -586,13 +586,34 @@ class Users extends PluginFunctions
      */
     public function editPermissions()
     {
-        global $current_user;
+        global $current_user, $lang, $hotaru, $cage;
         
-        $perms = unserialize($current_user->getAllPermissions());
+        $user = new UserBase();
+        $user->getUserbasic(0, $cage->get->testUsername('user'));
         
-        foreach ($perms as $key => $value) {
-            echo $key . ": " . $value;
+        $perm_options = $user->getDefaultPermissions();
+        $perms = $user->getAllPermissions();
+        
+        // Breadcrumbs:
+        echo "<div id='breadcrumbs'><a href='" . BASEURL . "'>" . $lang["users_home"] . "</a> "; 
+        echo "&raquo; <a href='" . url(array('user' => $user->getName())) . "'>" . $user->getName() . "</a> "; 
+        echo "&raquo; " . $lang["users_account"] . "</div>";
+            
+        echo '<h2>' . $lang["users_account_user_permissions"] . ': ' . $user->getName() . '</h2>';
+    
+        $hotaru->showMessages();
+        
+        echo "<form>\n";
+        echo "<table class='permissions'>\n";
+        foreach ($perm_options['options'] as $key => $options) {
+            echo "<tr><td>" . make_name($key) . ": </td>\n";
+            foreach($options as $value) {
+                if ($perms[$key] == $value) { $checked = 'checked'; } else { $checked = ''; } 
+                echo "<td><input type='radio' name='" . $key . "' value='" . $value . "' " . $checked . "> " . $value . " &nbsp;</td>\n";
+            }
+            echo "</tr>";
         }
+        echo "</table>\n</form>\n";
     }
 }
 

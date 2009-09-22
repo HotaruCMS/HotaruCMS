@@ -28,7 +28,9 @@ global $hotaru, $lang, $checks, $current_user, $userid;
 extract($checks); // extracts $username_check, etc.
 ?>
     
-    <div id='breadcrumbs'><a href='<?php echo BASEURL; ?>'><?php echo $lang["users_home"]; ?></a> &raquo; <?php echo $lang["users_account_user_settings"]; ?></div>
+    <div id='breadcrumbs'><a href='<?php echo BASEURL; ?>'><?php echo $lang["users_home"]; ?></a> 
+        &raquo; <a href='<?php echo url(array('user' => $username_check)); ?>'><?php echo $username_check; ?></a> 
+        &raquo; <?php echo $lang["users_account_user_settings"]; ?></div>
             
     <h2><?php echo $lang["users_account_user_settings"]; ?></h2>
     

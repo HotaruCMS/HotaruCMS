@@ -95,6 +95,8 @@ $lang['users_register_emailconf_fail'] = "Unable to confirm your email address. 
 
 /* User Account Update */
 $lang["users_account_user_settings"] = "User Account";
+$lang["users_account_user_permissions"] = "User Permissions";
+$lang["users_account_user_role"] = "Role";
 $lang["users_account_username"] = "Username:";
 $lang["users_account_email"] = "Email:";
 $lang["users_account_password_instruct"] = "Change your password?";
