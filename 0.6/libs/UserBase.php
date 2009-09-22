@@ -784,6 +784,7 @@ class UserBase {
         // fill checks
         $checks['username_check'] = '';
         $checks['email_check'] = '';
+        $checks['role_check'] = '';
         $checks['password_check_old'] = '';
         $checks['password_check_new'] = '';
         $checks['password_check_new2'] = '';
@@ -800,16 +801,26 @@ class UserBase {
                                 
             $email_check = $cage->post->testEmail('email');    
             if ($email_check) {
-                $this->email = $email_check;
+                $this->setEmail($email_check);
             } else {
                 $hotaru->messages[$lang['admin_account_update_email_error']] = 'red';
                 $error = 1;
             }
+            
+            $role_check = $cage->post->testAlnumLines('user_role');    
+                // compare with current role and update if different
+                if ($role_check != $this->getRole()) {
+                    $this->setRole($role_check);
+                    $new_perms = $this->getDefaultPermissions($role_check);
+                    $this->setAllPermissions($new_perms);
+                    $this->updatePermissions();
+                }
         }
         
         if (!isset($username_check) && !isset($email_check)) {
             $username_check = $this->getName();
             $email_check = $this->getEmail();
+            $role_check = $this->getRole();
             // do nothing
         } elseif ($error == 0) {
             $result = $this->userExists(0, $username_check, $email_check);
@@ -817,7 +828,7 @@ class UserBase {
                 //success
                 $this->updateUserBasic();
                 // only update the cookie if it's your own account:
-                if ($current_user->getId() != $this->getId()) { $this->setCookie(0); }
+                if ($current_user->getId() == $this->getId()) { $this->setCookie(0); }
                 $hotaru->messages[$lang['admin_account_update_success']] = 'green';
             } else {
                 //fail
@@ -831,6 +842,7 @@ class UserBase {
         $this->updatePassword();
         $checks['username_check'] = $username_check;
         $checks['email_check'] = $email_check;
+        $checks['role_check'] = $role_check;
         return $checks;
     }
     
@@ -1001,6 +1013,34 @@ class UserBase {
                 $db->get_var($db->prepare($sql, serialize($existing_perms), $user->user_id));
             }
         }
+    }
+    
+    
+    /**
+     * Get Unique Roles
+     *
+     * @return array|false
+     */
+    public function getUniqueRoles() 
+    {
+        global $db;
+        
+        /* This function pulls all the different user roles from the database, 
+        or adds some defaults if not present.*/
+
+        $unique_roles = array();
+        $sql = "SELECT DISTINCT user_role FROM " . TABLE_USERS;
+        $roles = $db->get_results($db->prepare($sql));
+        if ($roles) {
+            foreach ($roles as $role) {
+                array_push($unique_roles, $role->user_role);
+            }
+        }
+        // Some essentials if not already included:
+        if (!in_array('admin', $unique_roles)) { array_push($unique_roles, 'admin'); }
+        if (!in_array('member', $unique_roles)) { array_push($unique_roles, 'member'); }
+        
+        if ($unique_roles) { return $unique_roles; } else { return false; }
     }
 }
  

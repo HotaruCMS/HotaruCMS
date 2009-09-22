@@ -165,7 +165,7 @@ class Users extends PluginFunctions
                     $userid = $cage->post->testInt('userid');
                 }
                 // if $userid is blank it defaults to current_user->getId();
-                $checks = $current_user->updateAccount($userid);
+                $checks = $userbase->updateAccount($userid);
             } 
                     
         // Pages you have to be logged out for...
@@ -571,7 +571,7 @@ class Users extends PluginFunctions
         $member = new UserBase();
         $member->getUserBasic(0, $user);
 
-        if ($hotaru->getPageType() == 'user' && $current_user->getRole() == 'admin') {
+        if ($hotaru->getPageType() == 'user' && $current_user->getPermission('can_Access_admin') == 'yes') {
             echo "<div class='special_links_bar'>";
             echo $lang["users_account_edit"] . " " . $member->getName() . ": ";
             echo " <a href='" . url(array('page' => 'account', 'user' => $member->getName())) . "'>";
@@ -617,17 +617,17 @@ class Users extends PluginFunctions
             // get the newly updated latest permissions:
             $perm_options = $user->getDefaultPermissions();
             $perms = $user->getAllPermissions();
-        
             $hotaru->messages[$lang['users_account_permissions_updated']] = 'green';
-            $hotaru->showMessages();
         }
                
         // Breadcrumbs:
         echo "<div id='breadcrumbs'><a href='" . BASEURL . "'>" . $lang["users_home"] . "</a> "; 
         echo "&raquo; <a href='" . url(array('user' => $user->getName())) . "'>" . $user->getName() . "</a> "; 
-        echo "&raquo; " . $lang["users_account"] . "</div>";
+        echo "&raquo; " . $lang["users_account_permissions"] . "</div>";
             
         echo '<h2>' . $lang["users_account_user_permissions"] . ': ' . $user->getName() . '</h2>';
+        
+        $hotaru->showMessages();
             
         echo "<form name='permissions_form' action='" . BASEURL . "index.php' method='post'>\n";
         echo "<table class='permissions'>\n";
@@ -640,6 +640,7 @@ class Users extends PluginFunctions
             }
             echo "</tr>";
         }
+        
         echo "</table>\n";
         echo "<input type='hidden' name='page' value='permissions' />\n";
         echo "<input type='hidden' name='permissions' value='updated' />\n";
