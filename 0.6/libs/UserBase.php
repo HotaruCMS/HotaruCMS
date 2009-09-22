@@ -225,6 +225,9 @@ class UserBase {
      */
     public function setPermission($perm_name, $setting)
     {
+        // don't need options for each user:
+        if ($perm_name == 'options') { return false; }
+        
         $this->perms[$perm_name] = $setting;
     }
     
@@ -286,11 +289,11 @@ class UserBase {
      */
     public function updateUserBasic()
     {
-        global $db;
+        global $db, $current_user;
         
         if ($this->getId() != 0) {
             $sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s, user_permissions = %s, user_updateby = %d WHERE user_id = %d";
-            $db->query($db->prepare($sql, $this->getName(), $this->getRole(), $this->getPassword(), $this->getEmail(), serialize($this->getAllPermissions()), $this->getId(), $this->getId()));
+            $db->query($db->prepare($sql, $this->getName(), $this->getRole(), $this->getPassword(), $this->getEmail(), serialize($this->getAllPermissions()), $current_user->getId(), $this->getId()));
             return true;
         } else {
             return false;
@@ -355,7 +358,6 @@ class UserBase {
             $this->setEmail($user_info->user_email);
             $this->setEmailValid($user_info->user_email_valid);
             $this->setAllPermissions(unserialize($user_info->user_permissions));
-        
             return $user_info;
         } else {
             return false;
@@ -913,7 +915,7 @@ class UserBase {
      */
     public function getDefaultPermissions($role = '') 
     {
-        global $plugins;
+        global $plugins, $perms;
         
         $perms = array();
         
@@ -933,7 +935,10 @@ class UserBase {
         }
         
         // plugin hook:
-        $plugins->pluginHook('userbase_default_permissions');
+        $results = $plugins->pluginHook('userbase_default_permissions', true, '', array('perms' => $perms, 'role' => $role));
+        if (isset($results) && is_array($results)) {
+            $perms = $results['userbase_default_permissions'];
+        }
         
         return $perms;
     }
@@ -942,6 +947,7 @@ class UserBase {
     /**
      * Read permissions from the database
      *
+     * @param int $userid
      * @return string (serialized)
      */
     public function readPermissions()
@@ -957,13 +963,44 @@ class UserBase {
     
     /**
      * update permissions in the database
+     *
+     * @param int $userid
      */
     public function updatePermissions()
     {
         global $db;
         
         $sql = "UPDATE " . TABLE_USERS . " SET user_permissions = %s WHERE user_id = %d";
-        $db->get_var($db->prepare($sql, $this->getAllPermissions, $this->getId()));
+        $db->get_var($db->prepare($sql, serialize($this->getAllPermissions()), $this->getId()));
+    }
+    
+    
+    /**
+     * Add new permission to all users when installing a plugin
+     *
+     * @param string $perms (serialized)
+     * @param int $userid
+     */
+    public function addPluginPermissions()
+    {
+        global $db;
+        
+        $sql = "SELECT user_id, user_role, user_permissions FROM " . TABLE_USERS;
+        $users = $db->get_results($db->prepare($sql));
+        if ($users) {
+            foreach ($users as $user) {
+                $existing_perms = unserialize($user->user_permissions);
+                $default_perms = $this->getDefaultPermissions($user->user_role);
+                foreach ($default_perms as $def_perm => $value) {
+                    if (!isset($existing_perms[$def_perm])) {
+                            $existing_perms[$def_perm] = $value;
+                    }
+                }
+                unset($existing_perms['options']);  // don't need this for each user
+                $sql = "UPDATE " . TABLE_USERS . " SET user_permissions = %s WHERE user_id = %d";
+                $db->get_var($db->prepare($sql, serialize($existing_perms), $user->user_id));
+            }
+        }
     }
 }
  

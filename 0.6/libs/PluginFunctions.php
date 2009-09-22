@@ -198,7 +198,7 @@ class PluginFunctions extends Plugin
                                     $this_plugin = new $plugin->plugin_class($plugin->plugin_folder);
                                     $result = $this_plugin->$hook($parameters);
                                     if ($result) {
-                                        $return_array[$function_name] = $result;
+                                        $return_array[$hook] = $result;
                                     }
                                 }
                             }

@@ -68,6 +68,8 @@ class Users extends PluginFunctions
         // to prevent errors immediately after installation.
         $this->includeLanguage();    
         
+        $current_user->addPluginPermissions(); // won't work because this plugin isn't finished installing.
+        
     }
     
     
@@ -164,7 +166,7 @@ class Users extends PluginFunctions
                 }
                 // if $userid is blank it defaults to current_user->getId();
                 $checks = $current_user->updateAccount($userid);
-            }
+            } 
                     
         // Pages you have to be logged out for...
         } else {
@@ -211,7 +213,7 @@ class Users extends PluginFunctions
                 // from the UserBase class.
                 $hotaru->displayTemplate('account', 'users');
                 return true;
-            } elseif ($hotaru->isPage('permissions')) {
+            } elseif ($hotaru->isPage('permissions') && ($current_user->getPermission('can_access_admin') == 'yes')) {
                 $this->editPermissions();
                 return true;
             } else {
@@ -589,31 +591,61 @@ class Users extends PluginFunctions
         global $current_user, $lang, $hotaru, $cage;
         
         $user = new UserBase();
-        $user->getUserbasic(0, $cage->get->testUsername('user'));
+
+        // Read this user...
+        if ($cage->get->keyExists('user')) {
+            $user->getUserbasic(0, $cage->get->testUsername('user'));   // username when viewing perms page
+        } elseif ($cage->post->keyExists('userid')) {
+            $user->getUserbasic($cage->post->testInt('userid'));        // userid when submitting perms form
+        } else {
+            return false;
+        }
         
         $perm_options = $user->getDefaultPermissions();
         $perms = $user->getAllPermissions();
         
+        // If the form has been submitted...
+        if ($cage->post->keyExists('permissions')) {
+           foreach ($perm_options['options'] as $key => $options) {
+                if ($value = $cage->post->testAlnumLines($key)) {
+                    $user->setPermission($key, $value);
+                }
+            }
+
+            $user->updatePermissions();   // physically store changes in the database
+            
+            // get the newly updated latest permissions:
+            $perm_options = $user->getDefaultPermissions();
+            $perms = $user->getAllPermissions();
+        
+            $hotaru->messages[$lang['users_account_permissions_updated']] = 'green';
+            $hotaru->showMessages();
+        }
+               
         // Breadcrumbs:
         echo "<div id='breadcrumbs'><a href='" . BASEURL . "'>" . $lang["users_home"] . "</a> "; 
         echo "&raquo; <a href='" . url(array('user' => $user->getName())) . "'>" . $user->getName() . "</a> "; 
         echo "&raquo; " . $lang["users_account"] . "</div>";
             
         echo '<h2>' . $lang["users_account_user_permissions"] . ': ' . $user->getName() . '</h2>';
-    
-        $hotaru->showMessages();
-        
-        echo "<form>\n";
+            
+        echo "<form name='permissions_form' action='" . BASEURL . "index.php' method='post'>\n";
         echo "<table class='permissions'>\n";
         foreach ($perm_options['options'] as $key => $options) {
             echo "<tr><td>" . make_name($key) . ": </td>\n";
             foreach($options as $value) {
-                if ($perms[$key] == $value) { $checked = 'checked'; } else { $checked = ''; } 
-                echo "<td><input type='radio' name='" . $key . "' value='" . $value . "' " . $checked . "> " . $value . " &nbsp;</td>\n";
+                if (isset($perms[$key]) && ($perms[$key] == $value)) { $checked = 'checked'; } else { $checked = ''; } 
+                if ($key == 'can_access_admin' && $user->getRole() == 'admin') { $disabled = 'disabled'; } else { $disabled = ''; }
+                echo "<td><input type='radio' name='" . $key . "' value='" . $value . "' " . $checked . " " . $disabled . "> " . $value . " &nbsp;</td>\n";
             }
             echo "</tr>";
         }
-        echo "</table>\n</form>\n";
+        echo "</table>\n";
+        echo "<input type='hidden' name='page' value='permissions' />\n";
+        echo "<input type='hidden' name='permissions' value='updated' />\n";
+        echo "<input type='hidden' name='userid' value='" . $user->getId() . "' />\n";
+        echo "<div style='text-align: right'><input class='submit' type='submit' value='" . $lang['users_account_form_submit'] . "' /></div>\n";
+        echo "</form>\n";
     }
 }
 
