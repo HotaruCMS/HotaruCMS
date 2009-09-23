@@ -257,6 +257,8 @@ class Hotaru
             $this->includeLanguagePack('admin');
         } elseif ($entrance == 'install') {
             $this->includeLanguagePack('install');      
+        } elseif ($entrance == 'no_template') {
+            return true;
         } else {
             $this->includeLanguagePack('main');
             // Include combined css and js files
