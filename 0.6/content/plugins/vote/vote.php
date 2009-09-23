@@ -203,12 +203,12 @@ class Vote extends PluginFunctions
             
             //update the vote count
             $sql = "UPDATE " . TABLE_POSTS . " SET post_votes_up=post_votes_up+%d WHERE post_id = %d";
-            $db->query($db->prepare($sql, $submit_vote_value, $post->id));
+            $db->query($db->prepare($sql, $submit_vote_value, $post->getId()));
         
             //Insert one vote for each of $submit_vote_value;
             for ($i=0; $i<$submit_vote_value; $i++) {
                 $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d)";
-                $db->query($db->prepare($sql, $post->id, $current_user->getId(), $cage->server->testIp('REMOTE_ADDR'), $post->vars['voteType'], 'positive', $current_user->getId()));
+                $db->query($db->prepare($sql, $post->getId(), $current_user->getId(), $cage->server->testIp('REMOTE_ADDR'), $post->vars['voteType'], 'positive', $current_user->getId()));
             }    
         }            
                     
