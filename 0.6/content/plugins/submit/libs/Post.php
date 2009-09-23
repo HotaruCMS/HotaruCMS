@@ -686,6 +686,8 @@ class Post {
      * @param array $vars - search parameters
      * @param int $limit - no. of rows to retrieve
      * @param bool $all - true to retrieve ALL rows, else default 20
+     * @param string $select - the select clause
+     * @param string $orderby - the order by clause
      * @return array|false $prepare_array is the prepared SQL statement
      *
      * Example usage: $post->filter(array('post_tags LIKE %s' => '%tokyo%'), 10);
