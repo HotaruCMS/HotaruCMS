@@ -571,7 +571,7 @@ class Users extends PluginFunctions
         $member = new UserBase();
         $member->getUserBasic(0, $user);
 
-        if ($hotaru->getPageType() == 'user' && $current_user->getPermission('can_Access_admin') == 'yes') {
+        if ($hotaru->getPageType() == 'user' && $current_user->getPermission('can_access_admin') == 'yes') {
             echo "<div class='special_links_bar'>";
             echo $lang["users_account_edit"] . " " . $member->getName() . ": ";
             echo " <a href='" . url(array('page' => 'account', 'user' => $member->getName())) . "'>";

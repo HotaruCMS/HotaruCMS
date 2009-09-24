@@ -57,14 +57,15 @@ function rstrtrim($str, $remove=null)
  * Changes 'plugin_name' into 'Plugin Name'
  *
  * @param string $string e.g. a plugin folder name
+ * @param string $delim - the character to replace underscores with
  * @return string
  */
-function make_name($string)
+function make_name($string, $delim = ' ')
 {
     $dep_array  = array();
     $dep_array  = explode('_', trim($string));
     $dep_array  = array_map('ucfirst', $dep_array);
-    $string     = implode(' ', $dep_array);
+    $string     = implode($delim, $dep_array);
 
     return $string;
 }
