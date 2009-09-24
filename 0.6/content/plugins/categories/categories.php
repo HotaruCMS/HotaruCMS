@@ -523,20 +523,24 @@ class Categories extends PluginFunctions
     /**
      * Admin sidebar link to settings page
      */
+     /*
     public function admin_sidebar_plugin_settings() {
         echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>'categories'), 'admin') . "'>Categories</a></li>";
     }
+    */
     
     
     /**
      * Call the settings function
      */
+     /*
     public function admin_plugin_settings() {
         require_once(PLUGINS . 'categories/categories_settings.php');
         $catSettings = new CategoriesSettings();
         $catSettings->settings($this->folder);
         return true;
     }
+    */
     
     
      /* ******************************************************************** 

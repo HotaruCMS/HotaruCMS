@@ -108,6 +108,28 @@ class Plugin
     {
         return $this->folder;
     }
+    
+    
+    /**
+     * Set plugin class
+     *
+     * @param string $class
+     */    
+    public function setClass($class)
+    {
+        $this->class = $class;
+    }
+
+
+    /**
+     * Get plugin class
+     *
+     * @return string
+     */    
+    public function getClass()
+    {
+        return $this->class;
+    }
         
         
     /**
@@ -187,12 +209,16 @@ class Plugin
      */
     public function admin_plugin_settings()
     {
+        // This requires there to be a file in the plugin folder called pluginname_settings.php
+        // The file must contain a class titled PluginNameSettings
+        // The class must have a method called "settings".
         if (file_exists(PLUGINS . $this->getFolder() . '/' . $this->getFolder() . '_settings.php')) {
             include_once(PLUGINS . $this->getFolder() . '/' . $this->getFolder() . '_settings.php');
         }
         
-        $settings_function = $this->getFolder() . '_settings';
-        $settings_function();   // call the settings function
+        $settings_class = make_name($this->getFolder(), '') . 'Settings'; // e.g. CategoriesSettings
+        $settings_object = new $settings_class();
+        $settings_object->settings($this->getFolder());   // call the settings function
         return true;
     }
 
