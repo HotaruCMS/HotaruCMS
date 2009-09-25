@@ -58,6 +58,12 @@ $lang['main_times_minutes'] = "mins";
 $lang['main_times_minute'] = "min";
 $lang['main_times_seconds'] = "a few seconds";
 
+/* Pagination */
+$lang['pagination_first'] = "First";
+$lang['pagination_last'] = "Last";
+$lang['pagination_previous'] = "Previous";
+$lang['pagination_next'] = "Next";
+
 
 
 /* ****************************************************************
