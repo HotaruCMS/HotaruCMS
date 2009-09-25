@@ -60,5 +60,6 @@ define("TABLE_USERS", DB_PREFIX . "users");
 define("TABLE_PLUGINS", DB_PREFIX . "plugins");
 define("TABLE_PLUGINHOOKS", DB_PREFIX . "pluginhooks");
 define("TABLE_PLUGINSETTINGS", DB_PREFIX . "pluginsettings");
+define("TABLE_BLOCKED", DB_PREFIX . "blocked");
 
 ?>
