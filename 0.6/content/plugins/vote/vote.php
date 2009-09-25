@@ -248,7 +248,7 @@ class Vote extends PluginFunctions
     public function submit_pre_show_post() {
         global $hotaru, $db, $post, $current_user, $voted, $cage, $lang;
         
-        if ($post->getStatus() == 'new' && $post->vars['vote_use_alerts'] == "checked") {
+        if ($post->getStatus() == 'new' && $post->vars['useAlerts'] == "checked") {
             // CHECK TO SEE IF THIS POST IS BEING FLAGGED AND IF SO, ADD IT TO THE DATABASE
             if ($cage->get->keyExists('alert') && $current_user->getLoggedIn()) {
                 // Check if already flagged...
@@ -273,7 +273,7 @@ class Vote extends PluginFunctions
             
             // Check if already flagged...
             $sql = "SELECT * FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_rating = %s";
-            $flagged = $db->get_results($db->prepare($sql, $post->id, 'alert'));
+            $flagged = $db->get_results($db->prepare($sql, $post->getId(), 'alert'));
             if ($flagged) {
                 $flag_count = 0;
                 $reasons = array();
@@ -286,10 +286,10 @@ class Vote extends PluginFunctions
                 if ($cage->get->keyExists('alert') && $flag_count >= $vote_settings['vote_alerts_to_bury']) {
                     if ($vote_settings['vote_physical_delete']) { 
                         $sql = "DELETE FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d";
-                        $db->query($db->prepare($sql, $post->id));
-                        $post->delete_post($post->id); 
+                        $db->query($db->prepare($sql, $post->getId()));
+                        $post->deletePost($post->getId()); 
                     } else {
-                        $post->change_status('buried');
+                        $post->changeStatus('buried');
                     }
                     
                     $hotaru->message = $lang["vote_alert_post_buried"];
@@ -324,7 +324,7 @@ class Vote extends PluginFunctions
         // CHECK TO SEE IF THIS ANONYMOUS USER HAS VOTED FOR THIS POST
         if (!$current_user->getLoggedIn() && ($post->vars['voteAnonymousVotes'] == 'checked')) {
             $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_ip = %s AND vote_rating != %s";
-            $voted = $db->get_var($db->prepare($sql, $post->id, $cage->server->testIp('REMOTE_ADDR'), 'alert'));
+            $voted = $db->get_var($db->prepare($sql, $post->getId(), $cage->server->testIp('REMOTE_ADDR'), 'alert'));
         }
                
          $hotaru->displayTemplate('vote_button', 'vote', false);
@@ -337,7 +337,7 @@ class Vote extends PluginFunctions
         global $post, $lang, $current_user;
         
         // Only show the Alert link ("Flag it") on new posts, not top stories
-        if ($current_user->getLoggedIn() && $post->status == "new" && ($post->vars['vote_use_alerts'] == "checked")) {
+        if ($current_user->getLoggedIn() && $post->getStatus() == "new" && ($post->vars['useAlerts'] == "checked")) {
             echo "<li><a class='alert_link' href='#'>" . $lang["vote_alert"]  . "</a></li>";
         }
     }
@@ -349,16 +349,16 @@ class Vote extends PluginFunctions
     public function submit_show_post_extras() {
         global $post, $lang;
     
-        if ($post->status == "new" && ($post->vars['vote_use_alerts'] == "checked")) {
+        if ($post->getStatus() == "new" && ($post->vars['useAlerts'] == "checked")) {
             echo "<div class='alert_choices' style='display: none;'>";
                 echo "<h3>" . $lang["vote_alert_reason_title"]  . "</h3>";
                 echo "<ul>";
-                echo "<li><a href='" . url(array('page'=>$post->id, 'alert'=>1)) . "'>" . $lang["vote_alert_reason_1"]  . "</a></li>";
-                echo "<li><a href='" . url(array('page'=>$post->id, 'alert'=>2)) . "'>" . $lang["vote_alert_reason_2"]  . "</a></li>";
-                echo "<li><a href='" . url(array('page'=>$post->id, 'alert'=>3)) . "'>" . $lang["vote_alert_reason_3"]  . "</a></li>";
-                echo "<li><a href='" . url(array('page'=>$post->id, 'alert'=>4)) . "'>" . $lang["vote_alert_reason_4"]  . "</a></li>";
-                echo "<li><a href='" . url(array('page'=>$post->id, 'alert'=>5)) . "'>" . $lang["vote_alert_reason_5"]  . "</a></li>";
-                echo "<li><a href='" . url(array('page'=>$post->id, 'alert'=>6)) . "'>" . $lang["vote_alert_reason_6"]  . "</a></li>";
+                echo "<li><a href='" . url(array('page'=>$post->getId(), 'alert'=>1)) . "'>" . $lang["vote_alert_reason_1"]  . "</a></li>";
+                echo "<li><a href='" . url(array('page'=>$post->getId(), 'alert'=>2)) . "'>" . $lang["vote_alert_reason_2"]  . "</a></li>";
+                echo "<li><a href='" . url(array('page'=>$post->getId(), 'alert'=>3)) . "'>" . $lang["vote_alert_reason_3"]  . "</a></li>";
+                echo "<li><a href='" . url(array('page'=>$post->getId(), 'alert'=>4)) . "'>" . $lang["vote_alert_reason_4"]  . "</a></li>";
+                echo "<li><a href='" . url(array('page'=>$post->getId(), 'alert'=>5)) . "'>" . $lang["vote_alert_reason_5"]  . "</a></li>";
+                echo "<li><a href='" . url(array('page'=>$post->getId(), 'alert'=>6)) . "'>" . $lang["vote_alert_reason_6"]  . "</a></li>";
                 echo "</ul>";
             echo "</div>";
         }
@@ -377,7 +377,7 @@ class Vote extends PluginFunctions
     public function admin_plugin_settings() {
         require_once(PLUGINS . 'vote/vote_settings.php');
         $voteSettings = new VoteSettings();
-        $voteSettings->settings($this->folder);
+        $voteSettings->settings($this->getFolder());
         return true;
     }
     
