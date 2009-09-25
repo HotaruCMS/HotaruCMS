@@ -459,12 +459,14 @@ class Admin
     {
         global $db;
         
+        // These should match the tables created in the install script.
         $core_tables = array(
             'hotaru_settings',
             'hotaru_users',
             'hotaru_plugins',
             'hotaru_pluginsettings',
-            'hotaru_pluginhooks'
+            'hotaru_pluginhooks',
+            'hotaru_blocked'
         );
         
         $plugin_tables = array();
