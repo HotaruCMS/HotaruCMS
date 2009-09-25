@@ -118,6 +118,11 @@ $lang['admin_maintenance_optimize_success'] = "All database tables optimized";
 $lang['admin_maintenance_table_emptied'] = "Table emptied";
 $lang['admin_maintenance_table_deleted'] = "Table deleted";
 
+/* Blocked List */
+$lang['admin_blocked_list_empty'] = "No value entered";
+$lang['admin_blocked_list_added'] = "New item added";
+$lang['admin_blocked_list_updated'] = "New item updated";
+
 
 /* ***************************************************************** 
 ******************************************************************** 
@@ -215,6 +220,18 @@ $lang["admin_theme_settings_notes"] = "Notes";
 
 /* plugin settings */
 $lang["admin_theme_plugin_settings"] = "Plugin Settings";
+
+/* blocked */
+$lang["admin_theme_blocked_list"] = "Blocked List";
+$lang["admin_theme_blocked_type"] = "Type";
+$lang["admin_theme_blocked_value"] = "Value";
+$lang["admin_theme_blocked_edit"] = "Edit";
+$lang["admin_theme_blocked_remove"] = "Remove";
+$lang["admin_theme_blocked_new"] = "Block a new item:";
+$lang["admin_theme_blocked_submit"] = "Submit";
+$lang["admin_theme_blocked_ip"] = "IP address";
+$lang["admin_theme_blocked_email"] = "Email address/domain";
+$lang["admin_theme_blocked_url"] = "URL";
 
 /* footer */
 $lang["admin_theme_footer_having_trouble_vist_forums"] = "Having trouble? Visit the forums at";

@@ -110,6 +110,9 @@ class Admin
             case "maintenance":
                 // Nothing special to do...
                 break;
+            case "blocked_list":
+                // Nothing special to do...
+                break;
             case "plugins":
                 $this->plugins();
                 break;
@@ -823,6 +826,82 @@ class Admin
         echo $output;
     }
 
+     /**
+     * Show a list of blocked items o the Admin "Blocked List" page
+     *
+     * @return array|false
+     */
+    public function blockedList()
+    {
+        global $db, $cage, $hotaru, $lang, $plugins;
+        
+        // if new item to block
+        if ($cage->post->getAlpha('type')) {
+            $type = $cage->post->testAlnumLines('blocked_type');
+            switch ($type) {
+                case 'ip':
+                    $value = $cage->post->testIp('value');
+                    break;
+                case 'email':
+                    $value = $cage->post->testEmail('value');
+                    break;
+                case 'url':
+                    $value = $cage->post->testUri('value');
+                    break;
+                default:
+                    $value = '';
+            }
+            
+            if (!$value) {
+                $hotaru->showMessage($lang['admin_blocked_list_empty'], 'red');
+            } else {
+                $this->addToBlockedList($type, $value);
+            }
+        }
+        
+        // get currently blocked items...
+        $sql = "SELECT * FROM " . TABLE_BLOCKED;
+        $blocked_items = $db->get_results($db->prepare($sql));
+        
+        if ($blocked_items) {
+            $pg = $cage->get->getInt('pg');
+            $items = 20;
+            $output = "";
+            $pagedResults = new Paginated($blocked_items, $items, $pg);
+            while($block = $pagedResults->fetchPagedRow()) {    //when $story is false loop terminates    
+                $output .= "<tr>";
+                $output .= "<td>" . $block->blocked_type . "</td>";
+                $output .= "<td>" . $block->blocked_value . "</td>";
+                $output .= "<td>" . "edit" . "</td>";
+                $output .= "<td>" . "remove" . "</td>";
+                $output .= "</tr>";
+            }
+            return $output;
+        }
+    }
+    
+    
+     /**
+     * Add to or update items 
+     *
+     * @return array|false
+     */
+    public function addToBlockedList($type = '', $value = 0)
+    {
+        global $db, $current_user;
+        
+        $sql = "SELECT blocked_id FROM " . TABLE_BLOCKED . " WHERE blocked_type = %s AND blocked_value = %s"; 
+        $id = $db->get_var($db->prepare($sql, $type, $value));
+        
+        if ($id) { return false; } // already exists
+        
+        $sql = "INSERT INTO " . TABLE_BLOCKED . " (blocked_type, blocked_value, blocked_updateby) VALUES (%s, %s, %d)"; 
+        $db->query($db->prepare($sql, $type, $value, $current_user->getId()));
+        $hotaru->showMessage($lang['admin_blocked_list_added'], 'green');
+        
+        return true;
+    }
+    
 }
 
 ?>

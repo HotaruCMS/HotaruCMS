@@ -37,6 +37,7 @@ global $hotaru, $plugins, $lang, $current_user; // don't remove
     <?php } ?>
     <li><a href="<?php echo url(array('page' => 'settings'), 'admin'); ?>"><?php echo $lang["admin_theme_settings"]; ?></a></li>
     <li><a href="<?php echo url(array('page' => 'maintenance'), 'admin'); ?>"><?php echo $lang["admin_theme_maintenance"]; ?></a></li>
+    <li><a href="<?php echo url(array('page' => 'blocked_list'), 'admin'); ?>"><?php echo $lang["admin_theme_blocked_list"]; ?></a></li>
     <li><a href="<?php echo url(array('page' => 'plugins'), 'admin'); ?>"><?php echo $lang["admin_theme_plugins"]; ?></a></li>
     <li><?php echo $lang["admin_theme_plugin_settings"]; ?></li>
     <ul id="plugin_settings_list">
