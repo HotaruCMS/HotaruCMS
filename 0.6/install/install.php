@@ -218,8 +218,8 @@ function database_creation()
         $admin->dropTable($pt, false); // table name, show message = false
     }
     
-    //create tables 
-    $tables = array('settings', 'users', 'plugins', 'pluginhooks', 'pluginsettings');
+    //create tables  - these should match the list in the listPluginTables function in libs/Admin.php
+    $tables = array('settings', 'users', 'plugins', 'pluginhooks', 'pluginsettings', 'blocked');
     foreach ($tables as $table_name) {
         create_table($table_name);
     } 
@@ -562,6 +562,22 @@ function create_table($table_name)
           `plugin_updateby` int(20) NOT NULL DEFAULT 0,
           INDEX  (`plugin_folder`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Plugins Settings';";
+        echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+        $db->query($sql);
+    }
+    
+    
+    // BLOCKED TABLE - blocked IPs, users, email types, etc...
+    
+    if ($table_name == "blocked") {
+        $sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
+          `blocked_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          `blocked_type` varchar(64) NULL,
+          `blocked_value` text NULL,
+          `blocked_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          `blocked_updateby` int(20) NOT NULL DEFAULT 0,
+          INDEX  (`blocked_type`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Blocked IPs, users, emails, etc';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql);
     }
