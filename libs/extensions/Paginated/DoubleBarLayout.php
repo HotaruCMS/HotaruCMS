@@ -7,25 +7,27 @@ class DoubleBarLayout implements PageLayout
 
     public function fetchPagedLinks($parent, $queryVars) 
     {
-    
+        global $lang;
+        
         $currentPage = $parent->getPageNumber();
         $str = "";
         
-        $before = 3;
+        $before = 4;
         $after = 3;
-
-        // NOT FIRST PAGE
-        if (!$parent->isFirstPage()) {
-            if ($currentPage != 1) {
-                $str .= "<a class='first' href='" . url(array('pg'=>'1' . $queryVars)) . "'  title='First'>&lt;&lt;</a> ";
-            }
-        }
 
         //write statement that handles the previous and next phases
            //if it is not the first page then write previous to the screen
         if (!$parent->isFirstPage()) {
             $previousPage = $currentPage - 1;
-            $str .= "<a class='previous' href='" . url(array('pg'=>$previousPage . $queryVars)) . "' title='Previous'>&lt;</a> ";
+            $str .= "<a class='previous' href='" . url(array('pg'=>$previousPage . $queryVars)) . "' title='" . $lang['pagination_previous'] . "'>&laquo; " . $lang['pagination_previous'] . "</a> ";
+        }
+        
+        // NOT FIRST PAGE
+        if (!$parent->isFirstPage() && !($currentPage <= ($before + 1))) {
+            if ($currentPage != 1) {
+                $str .= "<a class='first' href='" . url(array('pg'=>'1' . $queryVars)) . "'  title='" . $lang['pagination_first'] . "'>1</a> ";
+                $str .= " <span class='dots'>...</span> ";
+            }
         }
 
         for ($i = $currentPage - $before; $i <= $currentPage + $after; $i++) {
@@ -50,19 +52,18 @@ class DoubleBarLayout implements PageLayout
 
         //$str = rstrtrim($str, '| '); // trim trailing bar
               
-        if (!$parent->isLastPage()) {
+        if (!$parent->isLastPage() && !($currentPage > ($parent->fetchNumberPages() - $after))) {
             if ($currentPage != $parent->fetchNumberPages() && $currentPage != $parent->fetchNumberPages() -1 && $currentPage != $parent->fetchNumberPages() - $before)
             {
-                $str .= " <span class='dots'>...</span> ";
-                $str .= "<a class='last' href='" . url(array('pg'=>$parent->fetchNumberPages() . $queryVars)) . "'  title='Last'>".$parent->fetchNumberPages()."</a> ";
+                if ($currentPage < ($parent->fetchNumberPages() - ($after + 1))) { $str .= " <span class='dots'>...</span> "; }
+                $str .= "<a class='last' href='" . url(array('pg'=>$parent->fetchNumberPages() . $queryVars)) . "'  title='" . $lang['pagination_last'] . "'>".$parent->fetchNumberPages()."</a> ";
             }
         }
         
         // NOT LAST PAGE
         if (!$parent->isLastPage()) {
             $nextPage = $currentPage + 1;
-            $str .= "<a class='next' href='" . url(array('pg'=>$nextPage . $queryVars)) . "' title='Next'>&gt;</a> ";
-            $str .= "<a class='last' href='" . url(array('pg'=>$parent->fetchNumberPages() . $queryVars)) . "'  title='Last'>&gt;&gt;</a>";
+            $str .= "<a class='next' href='" . url(array('pg'=>$nextPage . $queryVars)) . "' title='" . $lang['pagination_next'] . "'>" . $lang['pagination_next'] . " &raquo;</a> ";
         }
         
         // Wrap in a div
