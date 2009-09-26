@@ -39,14 +39,14 @@ if($the_plugins) { $the_plugins = sksort($the_plugins, "order", "int", true); } 
     
 <?php $hotaru->showMessages(); ?>
 
-<div id="plugin_list">
+<div id="table_list">
 
 <?php $plugins->pluginHook('plugins_top'); ?>
 
 <table>
 
-<tr class='plugins_table_installed'><td colspan=6><?php echo $lang["admin_theme_plugins_installed"]; ?></td></tr>
-<tr class='plugins_table_headers'>
+<tr class='table_a'><td colspan=6><?php echo $lang["admin_theme_plugins_installed"]; ?></td></tr>
+<tr class='table_headers'>
 <td><?php echo $lang["admin_theme_plugins_on_off"]; ?></td>
 <td><?php echo $lang["admin_theme_plugins_plugin"]; ?></td>
 <td><?php echo $lang["admin_theme_plugins_order"]; ?></td>
@@ -59,14 +59,14 @@ if($the_plugins) { $the_plugins = sksort($the_plugins, "order", "int", true); } 
     foreach ($the_plugins as $plug) {
         $alt++;
         if ($plug['location'] == 'database') {        
-            echo "<tr id='plugins_tr' class='plugins_table_row_" . $alt % 2 . "'>\n";
-            echo "<td class='plugins_active'>" . $plug['active'] . "</td>\n";
-            echo "<td class='plugins_name'>" . $plug['name'] . " " . $plug['version'] . "</td>\n";
-            echo "<td class='plugins_order'>" . $plug['order_output'] . "</td>\n";
-            echo "<td class='plugins_details'><a class='plugin_drop_down' href='#'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/info.png'></a></td>\n";
-            echo "<td class='plugins_install'>" . $plug['install'] . "</td>\n";
+            echo "<tr class='table_tr table_row_" . $alt % 2 . "'>\n";
+            echo "<td class='table_active'>" . $plug['active'] . "</td>\n";
+            echo "<td class='table_text'>" . $plug['name'] . " " . $plug['version'] . "</td>\n";
+            echo "<td class='table_order'>" . $plug['order_output'] . "</td>\n";
+            echo "<td class='table_details'><a class='table_drop_down' href='#'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/info.png'></a></td>\n";
+            echo "<td class='table_install'>" . $plug['install'] . "</td>\n";
             echo "</tr>\n";
-            echo "<tr id='plugins_tr_details' style='display:none;'><td colspan=4 class='plugin_description'>";
+            echo "<tr class='table_tr_details' style='display:none;'><td colspan=4 class='table_description'>";
             echo "<b>" . $lang["admin_theme_plugins_description"] . ":</b> " . $plug['description'] . "<br />";
             echo "<b>" . $lang["admin_theme_plugins_requires"] . ":</b> ";
             $requires = "";
@@ -75,7 +75,7 @@ if($the_plugins) { $the_plugins = sksort($the_plugins, "order", "int", true); } 
             }
             if ($requires != "") { echo rstrtrim($requires, ", "); } else { echo $lang["admin_theme_plugins_no_plugins"]; }
             echo "</td>";
-            echo "<td class='plugin_description_close'><a class='plugin_hide_details' href='#'>";
+            echo "<td class='table_description_close'><a class='table_hide_details' href='#'>";
             echo $lang["admin_theme_plugins_close"] . "</a></td></tr>\n";
         }
     }
@@ -84,8 +84,8 @@ if($the_plugins) { $the_plugins = sksort($the_plugins, "order", "int", true); } 
 
 <table>    
 <tr><td colspan=5>&nbsp;</td></tr>
-<tr class='plugins_table_not_installed'><td colspan=6><?php echo $lang["admin_theme_plugins_not_installed"]; ?></td></tr>
-<tr class='plugins_table_headers'>
+<tr class='table_b'><td colspan=6><?php echo $lang["admin_theme_plugins_not_installed"]; ?></td></tr>
+<tr class='table_headers'>
 <td><?php echo $lang["admin_theme_plugins_off"]; ?></td>
 <td colspan=2><?php echo $lang["admin_theme_plugins_plugin"]; ?></td>
 <td><?php echo $lang["admin_theme_plugins_requires"]; ?></td>
@@ -98,20 +98,20 @@ if($the_plugins) { $the_plugins = sksort($the_plugins, "order", "int", true); } 
     foreach ($the_plugins as $plug) {
         $alt++;
         if ($plug['location'] == 'folder') {        
-            echo "<tr id='plugins_tr' class='plugins_table_row_" . $alt % 2 . "'>\n";
-            echo "<td class='plugins_active'>" . $plug['active'] . "</td>\n";
-            echo "<td class='plugins_name' colspan=2>" . $plug['name'] . " " . $plug['version'] . "</td>\n";
-            echo "<td class='plugins_requires'>";
+            echo "<tr id='table_tr' class='table_row_" . $alt % 2 . "'>\n";
+            echo "<td class='table_active'>" . $plug['active'] . "</td>\n";
+            echo "<td class='table_text' colspan=2>" . $plug['name'] . " " . $plug['version'] . "</td>\n";
+            echo "<td class='table_requires'>";
             foreach ($plug['requires'] as $key=>$value) {
                 echo $key . " " . $value . "<br />";
             }
             echo "</td>\n";
-            echo "<td class='plugins_details'><a class='plugin_drop_down' href='#'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/info.png'></a></td>\n";
-            echo "<td class='plugins_install'>" . $plug['install'] . "</td>\n";
+            echo "<td class='table_details'><a class='table_drop_down' href='#'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/info.png'></a></td>\n";
+            echo "<td class='table_install'>" . $plug['install'] . "</td>\n";
             echo "</tr>\n";
-            echo "<tr id='plugins_tr_details' style='display:none;'><td colspan=5 class='plugin_description'>";
+            echo "<tr id='tr_details' style='display:none;'><td colspan=5 class='table_description'>";
             echo "<b>" . $lang["admin_theme_plugins_description"] . ":</b> " . $plug['description'] . "</td>";
-            echo "<td class='plugin_description_close'><a class='plugin_hide_details' href='#'>";
+            echo "<td class='table_description_close'><a class='table_hide_details' href='#'>";
             echo $lang["admin_theme_plugins_close"] . "</a></td></tr>\n";
         }
     }

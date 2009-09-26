@@ -836,27 +836,31 @@ class Admin
         global $db, $cage, $hotaru, $lang, $plugins;
         
         // if new item to block
-        if ($cage->post->getAlpha('type')) {
+        if ($cage->post->getAlpha('type') == 'new') {
             $type = $cage->post->testAlnumLines('blocked_type');
-            switch ($type) {
-                case 'ip':
-                    $value = $cage->post->testIp('value');
-                    break;
-                case 'email':
-                    $value = $cage->post->testEmail('value');
-                    break;
-                case 'url':
-                    $value = $cage->post->testUri('value');
-                    break;
-                default:
-                    $value = '';
-            }
+            $value = $cage->post->getMixedString2('value');
             
             if (!$value) {
                 $hotaru->showMessage($lang['admin_blocked_list_empty'], 'red');
             } else {
                 $this->addToBlockedList($type, $value);
             }
+        }
+        
+        // if edit item
+        if ($cage->post->getAlpha('type') == 'edit') {
+            $id = $cage->post->testInt('id');
+            $type = $cage->post->testAlnumLines('blocked_type');
+            $value = $cage->post->getMixedString2('value');
+            $this->updateBlockedList($id, $type, $value);
+            $hotaru->showMessage($lang['admin_blocked_list_updated'], 'green');
+        }
+        
+        // if remove item
+        if ($cage->get->getAlpha('action') == 'remove') {
+            $id = $cage->get->testInt('id');
+            $this->removeFromBlockedList($id);
+            $hotaru->showMessage($lang["admin_blocked_list_removed"], 'green');
         }
         
         // get currently blocked items...
@@ -868,12 +872,48 @@ class Admin
             $items = 20;
             $output = "";
             $pagedResults = new Paginated($blocked_items, $items, $pg);
+            $alt = 0;
             while($block = $pagedResults->fetchPagedRow()) {    //when $story is false loop terminates    
-                $output .= "<tr>";
-                $output .= "<td>" . $block->blocked_type . "</td>";
-                $output .= "<td>" . $block->blocked_value . "</td>";
-                $output .= "<td>" . "edit" . "</td>";
-                $output .= "<td>" . "remove" . "</td>";
+                $alt++;
+                $output .= "<tr class='table_row_" . $alt % 2 . "'>\n";
+                $output .= "<td>" . $block->blocked_type . "</td>\n";
+                $output .= "<td>" . $block->blocked_value . "</td>\n";
+                $output .= "<td>" . "<a class='table_drop_down' href='#'>\n";
+                $output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/edit.png'>" . "</a></td>\n";
+                $output .= "<td>" . "<a href='" . BASEURL . "admin_index.php?page=blocked_list&amp;action=remove&amp;id=" . $block->blocked_id . "'>\n";
+                $output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/delete.png'>" . "</a></td>\n";
+                $output .= "</tr>\n";
+                $output .= "<tr class='table_tr_details' style='display:none;'>\n";
+                $output .= "<td colspan=3 class='table_description'>\n";
+                $output .= "<form name='blocked_list_edit_form' action='" . BASEURL . "admin_index.php' method='post'>\n";
+                $output .= "<table><tr><td><select name='blocked_type'>\n";
+                
+                switch($block->blocked_type) { 
+                    case 'url':
+                        $text = $lang["admin_theme_blocked_url"];
+                        break;
+                    case 'email':
+                        $text = $lang["admin_theme_blocked_email"];
+                        break;
+                    default:
+                        $text = $lang["admin_theme_blocked_ip"];
+                        break;
+                }
+                
+                $output .= "<option value='" . $block->blocked_type . "'>" . $text . "</option>\n";
+                $output .= "<option value='ip'>" . $lang["admin_theme_blocked_ip"] . "</option>\n";
+                $output .= "<option value='url'>" . $lang["admin_theme_blocked_url"] . "</option>\n";
+                $output .= "<option value='email'>" . $lang["admin_theme_blocked_email"] . "</option>\n";
+                $output .= "</select></td>\n";
+                $output .= "<td><input type='text' size=30 name='value' value='" . $block->blocked_value . "' /></td>\n";
+                $output .= "<td><input class='submit' type='submit' value='" . $lang['admin_blocked_list_update'] . "' /></td>\n";
+                $output .= "</tr></table>\n";
+                $output .= "<input type='hidden' name='id' value='" . $block->blocked_id . "' />\n";
+                $output .= "<input type='hidden' name='page' value='blocked_list' />\n";
+                $output .= "<input type='hidden' name='type' value='edit' />\n";
+                $output .= "</form>\n";
+                $output .= "</td>";
+                $output .= "<td class='table_description_close'><a class='table_hide_details' href='#'>" . $lang["admin_theme_plugins_close"] . "</a></td>";
                 $output .= "</tr>";
             }
             return $output;
@@ -886,20 +926,49 @@ class Admin
      *
      * @return array|false
      */
-    public function addToBlockedList($type = '', $value = 0)
+    public function addToBlockedList($type = '', $value = 0, $msg = true)
     {
-        global $db, $current_user;
+        global $db, $current_user, $hotaru, $lang;
         
         $sql = "SELECT blocked_id FROM " . TABLE_BLOCKED . " WHERE blocked_type = %s AND blocked_value = %s"; 
         $id = $db->get_var($db->prepare($sql, $type, $value));
         
-        if ($id) { return false; } // already exists
+        if ($id) { // already exists
+            if ($msg) { $hotaru->showMessage($lang['admin_blocked_list_exists'], 'red'); }
+            return false;
+        } 
         
         $sql = "INSERT INTO " . TABLE_BLOCKED . " (blocked_type, blocked_value, blocked_updateby) VALUES (%s, %s, %d)"; 
         $db->query($db->prepare($sql, $type, $value, $current_user->getId()));
-        $hotaru->showMessage($lang['admin_blocked_list_added'], 'green');
+        if ($msg) { $hotaru->showMessage($lang['admin_blocked_list_added'], 'green'); }
         
         return true;
+    }
+    
+    
+     /**
+     * Add to or update items 
+     *
+     * @return array|false
+     */
+    public function updateBlockedList($id = 0, $type = '', $value = 0)
+    {
+        global $db, $current_user;
+        
+        $sql = "UPDATE " . TABLE_BLOCKED . " SET blocked_type = %s, blocked_value = %s, blocked_updateby = %d WHERE blocked_id = %d"; 
+        $db->query($db->prepare($sql, $type, $value, $current_user->getId(), $id));
+    }
+    
+    
+     /**
+     * Remove from blocked list
+     */
+    public function removeFromBlockedList($id = 0)
+    {
+        global $db;
+        
+        $sql = "DELETE FROM " . TABLE_BLOCKED . " WHERE blocked_id = %d"; 
+        $db->get_var($db->prepare($sql, $id));
     }
     
 }

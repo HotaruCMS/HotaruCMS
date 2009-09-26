@@ -39,20 +39,20 @@ $(document).ready(function(){
 	$(".message").css({display: "none"}).fadeIn("slow");
 	
         
-	// Show/Hide plugin details
-	$(".plugin_drop_down").click(function () {
+	// Show/Hide table details (Plugin Management page and similar tables)
+	$(".table_drop_down").click(function () {
 		var target = $(this).parents("tr").next("tr");
                 target.fadeToggle();
                 return false;
         });   
         
-	// Hide plugin details
-	$(".plugin_hide_details").click(function () {
+	// Hide table details (Plugin Management page and similar tables)
+	$(".table_hide_details").click(function () {
                 $(this).parents("tr").fadeOut();
                 return false;
         });  
         
-	// Show/Hide forgoot password form
+	// Show/Hide forgot password form
 	$(".forgot_password").click(function () {
 		var target = $(this).next("form");
                 target.fadeToggle();
