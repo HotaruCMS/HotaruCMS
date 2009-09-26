@@ -225,16 +225,22 @@ $lang["admin_theme_settings_notes"] = "Notes";
 $lang["admin_theme_plugin_settings"] = "Plugin Settings";
 
 /* blocked */
+$lang["admin_theme_blocked_desc"] = "By itself, this list doesn't do anything, but plugins can use it to block users during registration, post submission, etc.";
 $lang["admin_theme_blocked_list"] = "Blocked List";
 $lang["admin_theme_blocked_type"] = "Type";
 $lang["admin_theme_blocked_value"] = "Value";
 $lang["admin_theme_blocked_edit"] = "Edit";
 $lang["admin_theme_blocked_remove"] = "Remove";
 $lang["admin_theme_blocked_new"] = "Block a new item:";
-$lang["admin_theme_blocked_submit"] = "Submit";
+$lang["admin_theme_blocked_search"] = "Search for an item:";
+$lang["admin_theme_blocked_filter"] = "Filter items:";
+$lang["admin_theme_blocked_submit_add"] = "Add";
+$lang["admin_theme_blocked_submit_search"] = "Search";
+$lang["admin_theme_blocked_submit_filter"] = "Filter";
 $lang["admin_theme_blocked_ip"] = "IP address";
 $lang["admin_theme_blocked_email"] = "Email address/domain";
 $lang["admin_theme_blocked_url"] = "URL";
+$lang["admin_theme_blocked_all"] = "All";
 
 /* footer */
 $lang["admin_theme_footer_having_trouble_vist_forums"] = "Having trouble? Visit the forums at";

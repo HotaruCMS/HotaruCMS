@@ -177,7 +177,7 @@ class Search extends PluginFunctions
         $query = '';
         
         foreach(explode(' ', trim($search_terms)) as $word){
-            $query .= $column . " LIKE '%" . urlencode(" " . trim($word) . " ") . "%' OR ";
+            $query .= $column . " LIKE '%" . urlencode(" " . trim($db->escape($word)) . " ") . "%' OR ";
         }
         
         return substr($query, 0, -4);

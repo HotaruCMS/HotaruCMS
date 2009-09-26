@@ -833,7 +833,7 @@ class Admin
      */
     public function blockedList()
     {
-        global $db, $cage, $hotaru, $lang, $plugins;
+        global $db, $cage, $hotaru, $lang, $plugins, $pagedResults;
         
         // if new item to block
         if ($cage->post->getAlpha('type') == 'new') {
@@ -863,9 +863,32 @@ class Admin
             $hotaru->showMessage($lang["admin_blocked_list_removed"], 'green');
         }
         
-        // get currently blocked items...
-        $sql = "SELECT * FROM " . TABLE_BLOCKED;
-        $blocked_items = $db->get_results($db->prepare($sql));
+        // GET CURRENTLY BLOCKED ITEMS...
+        
+        $where_clause = '';
+        
+        // if search
+        if ($cage->post->getAlpha('type') == 'search') {
+            $search_term = $cage->post->getMixedString2('search_value');
+            $where_clause = " WHERE blocked_value LIKE '%" . trim($db->escape($search_term)) . "%'";
+        }
+        
+        // if filter
+        if ($cage->post->getAlpha('type') == 'filter') {
+            $filter = $cage->post->testAlnumLines('blocked_type');
+            if ($filter == 'all') { $where_clause = ''; } else { $where_clause = " WHERE blocked_type = %s"; }
+        }
+        
+        // SQL
+        $sql = "SELECT * FROM " . TABLE_BLOCKED . $where_clause;
+
+        if (isset($search_term)) { 
+            $blocked_items = $db->get_results($sql);
+        } elseif (isset($filter)) { 
+            $blocked_items = $db->get_results($db->prepare($sql, $filter));
+        } else {
+            $blocked_items = $db->get_results($db->prepare($sql));
+        }
         
         if ($blocked_items) {
             $pg = $cage->get->getInt('pg');

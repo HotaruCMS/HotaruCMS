@@ -26,7 +26,7 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $lang, $admin; // don't remove
+global $hotaru, $lang, $admin, $pagedResults; // don't remove
 ?>
 
 <p class="breadcrumbs">
@@ -37,6 +37,8 @@ global $hotaru, $lang, $admin; // don't remove
 
 <!-- TITLE FOR ADMIN NEWS -->
 <h2><?php echo $lang["admin_theme_blocked_list"]; ?></h2>
+
+<?php echo $lang["admin_theme_blocked_desc"]; ?>
 
 <?php 
     $blocked_items = $admin->blockedList();
@@ -53,12 +55,47 @@ global $hotaru, $lang, $admin; // don't remove
                 <option value='email'><?php echo $lang["admin_theme_blocked_email"]; ?></option>
             </select></td>
             <td><input type='text' size=30 name='value' value='' /></td>
-            <td><input class='submit' type='submit' value='<?php echo $lang['admin_theme_blocked_submit']; ?>' /></td>
+            <td><input class='submit' type='submit' value='<?php echo $lang['admin_theme_blocked_submit_add']; ?>' /></td>
         </tr>
     </table>
     <input type='hidden' name='page' value='blocked_list' />
     <input type='hidden' name='type' value='new' />
 </form>
+
+<table><tr><td>
+
+<form name='blocked_list_search_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>
+    <h3><?php echo $lang["admin_theme_blocked_search"]; ?></h3>
+    <table>
+        <tr class='table_headers'>
+            <td><input type='text' size=30 name='search_value' value='' /></td>
+            <td><input class='submit' type='submit' value='<?php echo $lang['admin_theme_blocked_submit_search']; ?>' /></td>
+        </tr>
+    </table>
+    <input type='hidden' name='page' value='blocked_list' />
+    <input type='hidden' name='type' value='search' />
+</form>
+
+</td><td>
+
+<form name='blocked_list_filter_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>
+    <h3><?php echo $lang["admin_theme_blocked_filter"]; ?></h3>
+    <table>
+        <tr class='table_headers'>
+            <td><select name='blocked_type'>
+                <option value='all'><?php echo $lang["admin_theme_blocked_all"]; ?></option>
+                <option value='ip'><?php echo $lang["admin_theme_blocked_ip"]; ?></option>
+                <option value='url'><?php echo $lang["admin_theme_blocked_url"]; ?></option>
+                <option value='email'><?php echo $lang["admin_theme_blocked_email"]; ?></option>
+            </select></td>
+            <td><input class='submit' type='submit' value='<?php echo $lang['admin_theme_blocked_submit_filter']; ?>' /></td>
+        </tr>
+    </table>
+    <input type='hidden' name='page' value='blocked_list' />
+    <input type='hidden' name='type' value='filter' />
+</form>
+
+</tr></table>
 
 <div id="table_list">
     <table>
@@ -71,3 +108,10 @@ global $hotaru, $lang, $admin; // don't remove
             <?php echo $blocked_items; ?>
     </table>
 </div>
+
+<?php 
+    if ($pagedResults) {
+        $pagedResults->setLayout(new DoubleBarLayout());
+        echo $pagedResults->fetchPagedNavigation();
+    }
+?>
