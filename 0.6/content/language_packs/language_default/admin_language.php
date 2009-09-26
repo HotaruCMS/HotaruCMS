@@ -121,7 +121,10 @@ $lang['admin_maintenance_table_deleted'] = "Table deleted";
 /* Blocked List */
 $lang['admin_blocked_list_empty'] = "No value entered";
 $lang['admin_blocked_list_added'] = "New item added";
-$lang['admin_blocked_list_updated'] = "New item updated";
+$lang['admin_blocked_list_updated'] = "Item updated";
+$lang["admin_blocked_list_removed"] = "Item removed";
+$lang['admin_blocked_list_exists'] = "Item already exists";
+$lang['admin_blocked_list_update'] = "Update"; 
 
 
 /* ***************************************************************** 

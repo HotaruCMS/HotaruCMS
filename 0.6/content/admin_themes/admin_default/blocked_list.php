@@ -45,8 +45,8 @@ global $hotaru, $lang, $admin; // don't remove
 
 <form name='blocked_list_new_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>
     <h3><?php echo $lang["admin_theme_blocked_new"]; ?></h3>
-    <table class='blocked_list'>
-        <tr>
+    <table>
+        <tr class='table_headers'>
             <td><select name='blocked_type'>
                 <option value='ip'><?php echo $lang["admin_theme_blocked_ip"]; ?></option>
                 <option value='url'><?php echo $lang["admin_theme_blocked_url"]; ?></option>
@@ -60,12 +60,14 @@ global $hotaru, $lang, $admin; // don't remove
     <input type='hidden' name='type' value='new' />
 </form>
 
-<table>
-<tr>
-    <td><?php echo $lang["admin_theme_blocked_type"]; ?></td>
-    <td><?php echo $lang["admin_theme_blocked_value"]; ?></td>
-    <td><?php echo $lang["admin_theme_blocked_edit"]; ?></td>
-    <td><?php echo $lang["admin_theme_blocked_remove"]; ?></td>
-</tr>
-        <?php echo $blocked_items; ?>
-</table>
+<div id="table_list">
+    <table>
+    <tr class='table_headers'>
+        <td><?php echo $lang["admin_theme_blocked_type"]; ?></td>
+        <td><?php echo $lang["admin_theme_blocked_value"]; ?></td>
+        <td><?php echo $lang["admin_theme_blocked_edit"]; ?></td>
+        <td><?php echo $lang["admin_theme_blocked_remove"]; ?></td>
+    </tr>
+            <?php echo $blocked_items; ?>
+    </table>
+</div>
