@@ -25,17 +25,7 @@
  */
 
 global $plugins, $current_user, $lang, $post, $comment;
-
 ?>
-
-<?php // NOT LOGGED IN
-if (!$current_user->getLoggedIn() && $comment->getId() == 0) { ?>
-
-<div class="comments_please_login">
-    <?php echo $lang['comments_please_login']; ?>
-</div>
-    
-<?php } else { // LOGGED IN?>
 
 <?php // CHECK SUBSCRIBED
 if ($current_user->vars['postSubscribed']) { $subscribe_check = 'checked'; } else { $subscribe_check = ''; } ?>
@@ -60,5 +50,4 @@ if ($current_user->vars['postSubscribed']) { $subscribe_check = 'checked'; } els
         <input type="hidden" name="comment_user_id" value="<?php echo $current_user->getId(); ?>" />
     </form>
 </div>
-    
-<?php } ?>
+

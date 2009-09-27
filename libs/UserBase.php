@@ -947,10 +947,7 @@ class UserBase {
         }
         
         // plugin hook:
-        $results = $plugins->pluginHook('userbase_default_permissions', true, '', array('perms' => $perms, 'role' => $role));
-        if (isset($results) && is_array($results)) {
-            $perms = $results['userbase_default_permissions'];
-        }
+        $results = $plugins->pluginHook('userbase_default_permissions', true, '', array('role' => $role));
         
         return $perms;
     }

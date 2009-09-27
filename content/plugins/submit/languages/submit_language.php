@@ -39,6 +39,7 @@ $lang['submit_form_subscribe'] = "Subscribe to comments";
 $lang["submit_form_instructions_3"] = "Your submission will look like this. Use the buttons below to modify or confirm it.";
 $lang["submit_form_url_not_present_error"] = "No url was provided.";
 $lang["submit_form_url_already_exists_error"] = "Sorry, that url has already been submitted.";
+$lang["submit_form_no_permission"] = "Sorry, you don't have permission to post links.";
 $lang["submit_form_title_not_present_error"] = "No title was provided.";
 $lang["submit_form_title_already_exists_error"] = "Sorry, that title has already been used.";
 $lang["submit_form_content_not_present_error"] = "No description entered.";
