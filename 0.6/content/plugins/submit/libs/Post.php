@@ -593,9 +593,8 @@ class Post {
     public function addPost()
     {
         global $db, $plugins, $last_insert_id, $current_user;
-        
-        $parsed = parse_url($this->origUrl);
-        if (isset($parsed['scheme'])){ $this->domain = $parsed['scheme'] . "://" . $parsed['host']; }
+
+        $this->domain = get_domain($this->origUrl); // returns domain including http:// (from /functions/funcs.urls.php)
             
         $sql = "INSERT INTO " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_date = CURRENT_TIMESTAMP, post_subscribe = %d, post_updateby = %d";
         
