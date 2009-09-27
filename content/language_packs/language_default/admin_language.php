@@ -240,6 +240,7 @@ $lang["admin_theme_blocked_submit_filter"] = "Filter";
 $lang["admin_theme_blocked_ip"] = "IP address";
 $lang["admin_theme_blocked_email"] = "Email address/domain";
 $lang["admin_theme_blocked_url"] = "URL";
+$lang["admin_theme_blocked_username"] = "Username";
 $lang["admin_theme_blocked_all"] = "All";
 
 /* footer */
