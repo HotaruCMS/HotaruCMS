@@ -50,6 +50,7 @@ $lang['submit_form_submit_edit_button'] = "Edit";
 $lang['submit_form_submit_confirm_button'] = "Confirm";
 $lang['submit_form_submit_next_button'] = "Next";
 $lang['submit_form_submit_accidental_click'] = "Wait, you have not submitted your story yet!";
+$lang['submit_form_allowable_tags'] = "Allowed HTML tags:";
 
 /* Edit Post */
 $lang["submit_edit_post_admin_only"] = "Admin Only...";

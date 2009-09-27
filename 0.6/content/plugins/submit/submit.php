@@ -118,7 +118,7 @@ class Submit extends PluginFunctions
         if (!defined('TABLE_POSTMETA')) { define("TABLE_POSTMETA", DB_PREFIX . 'postmeta'); }
         
         //Include HTMLPurifier which we'll use on post_content
-        $cage->post->loadHTMLPurifier(EXTENSIONS . 'HTMLPurifier/HTMLPurifier.standalone.php');
+        $cage->post->loadHTMLPurifier(EXTENSIONS . 'HTMLPurifier/library/HTMLPurifier.auto.php');
     
         // include language file
         $this->includeLanguage();
@@ -543,7 +543,7 @@ class Submit extends PluginFunctions
         
         // ******** CHECK DESCRIPTION ********
         if ($post->getUseContent()) {
-            $content_check = sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->allowableTags);
+            $content_check = sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->getAllowableTags());
                     
             if (!$content_check) {
                 // No content present...
@@ -585,7 +585,7 @@ class Submit extends PluginFunctions
             $post->setOrigUrl($cage->post->testUri('post_orig_url'));
             $post->setTitle($cage->post->noTags('post_title'));
             $post->setUrl($cage->post->getFriendlyUrl('post_title'));
-            $post->setContent(sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->allowableTags));
+            $post->setContent(sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->getAllowableTags()));
             $post->setStatus('processing');
             $post->setAuthor($current_user->getId());
             
@@ -605,7 +605,7 @@ class Submit extends PluginFunctions
             $post->setOrigUrl($cage->post->testUri('post_orig_url'));
             $post->setTitle($cage->post->noTags('post_title'));
             $post->setUrl($cage->post->getFriendlyUrl('post_title'));
-            $post->setContent(sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->allowableTags));
+            $post->setContent(sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->getAllowableTags()));
             $post->setStatus($cage->post->testAlnumLines('post_status'));
             $this->pluginHook('submit_form_2_process_submission');
             $post->updatePost();

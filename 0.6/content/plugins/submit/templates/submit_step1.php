@@ -46,7 +46,7 @@ global $hotaru, $cage, $lang, $post, $post_orig_url;
     <input type='hidden' name='submit1' value='true' />
 
     <tr><td colspan=3>&nbsp;</td></tr>
-    <tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' name='submit' value='<?php echo $lang['submit_form_submit_button']; ?>' /></td></tr>    
+    <tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' class='submit' name='submit' value='<?php echo $lang['submit_form_submit_button']; ?>' /></td></tr>    
     </table>
     </form>
 
