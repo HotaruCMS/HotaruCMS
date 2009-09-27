@@ -30,11 +30,11 @@
  */
 function pliggimp_page_5()
 {
-    global $plugin;
+    global $plugins;
     
     echo "<h2>Step 5/6 - Users</h2>";
     echo "Please upload your <b>users</b> XML file:<br />";
-    echo "<form name='pligg_importer_form' enctype='multipart/form-data' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=pligg_importer' method='post'>\n";
+    echo "<form name='pligg_importer_form' enctype='multipart/form-data' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer' method='post'>\n";
     echo "<label for='file'>Exported Pligg Users table (<span stye='color: red;'>.xml</span>):</label>\n";
     echo "<input type='file' name='file' id='file' />\n";
     echo "<input type='hidden' name='submitted' value='true' />\n";
@@ -97,13 +97,17 @@ function step5($xml, $file_name)
                     break;
             }
             
-            $columns    = "user_username, user_role, user_date, user_password, user_email, user_email_valid, user_email_conf, user_lastlogin, user_updateby";
+            $columns    = "user_username, user_role, user_date, user_password, user_email, user_email_valid, user_email_conf, user_permissions, user_lastlogin, user_updateby";
             
-            $sql        = "INSERT INTO " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%s, %s, %s, %s, %s, %d, %s, %s, %d)";
+            $sql        = "INSERT INTO " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%s, %s, %s, %s, %s, %d, %s, %s, %s, %d)";
             
             //if not using SWCMS' email registration module, set to zero:
             if (!$child->valid_email) { $child->valid_email = 0;}
             if (!$child->email_conf) { $child->email_conf = 0; }
+            
+            // get permissions
+            $perms = $current_user->getDefaultPermissions($child->user_level);
+            unset($perms['options']); // don't need options.
             
             // Insert into users table
             $db->query($db->prepare(
@@ -115,6 +119,7 @@ function step5($xml, $file_name)
                 $child->user_email,
                 $child->valid_email,
                 $child->email_conf,
+                serialize($perms),
                 $child->user_lastlogin,
                 $current_user->id));
                 

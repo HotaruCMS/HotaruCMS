@@ -25,67 +25,74 @@
  * @link      http://www.hotarucms.org/
  */
  
- /**
- * Admin settings for disqus
- */
-function disq_settings()
+class DisqusSettings extends Disqus
 {
-    global $hotaru, $plugin, $cage, $lang;
-    
-    // If the form has been submitted, go and save the data...
-    if ($cage->post->getAlpha('submitted') == 'true') { 
-        disq_save_settings(); 
-    }
-    
-    echo "<h1>" . $lang["disqus_settings_header"] . "</h1>\n";
-      
-    // Get settings from database if they exist...
-    $shortname = $plugin->plugin_settings('disqus', 'disqus_shortname');
-
-    $plugin->check_actions('disqus_settings_get_values');
-    
-    //...otherwise set to blank:
-    if (!$shortname) { $shortname = 'subconcious'; }  // This is the default in Disqus' generic code
+     /**
+     * Admin settings for disqus
+     */
+    public function settings($folder)
+    {
+        global $hotaru, $cage, $lang;
         
-    echo "<form name='disqus_settings_form' action='" . BASEURL . "admin/admin_index.php?page=plugin_settings&amp;plugin=disqus' method='post'>\n";
-    
-    echo "<p>" . $lang["disqus_settings_instructions"] . "</p><br />";
+        /* Allows us to call functions without specifying what plugin this is. */
+        $this->setFolder($folder);
         
-    echo "<p>" . $lang["disqus_settings_shortname"] . " <input type='text' size=30 name='shortname' value='" . $shortname . "'><br />" . $lang["disqus_settings_shortname_note"] . "</p>\n";    
-
-    $plugin->check_actions('disqus_settings_form');
+        // If the form has been submitted, go and save the data...
+        if ($cage->post->getAlpha('submitted') == 'true') { 
+            $this->saveSettings(); 
+        }
+        
+        echo "<h1>" . $lang["disqus_settings_header"] . "</h1>\n";
+          
+        // Get settings from database if they exist...
+        $shortname = $this->getSetting('disqus_shortname');
+    
+        $this->pluginHook('disqus_settings_get_values');
+        
+        //...otherwise set to blank:
+        if (!$shortname) { $shortname = 'subconcious'; }  // This is the default in Disqus' generic code
             
-    echo "<br /><br />\n";    
-    echo "<input type='hidden' name='submitted' value='true' />\n";
-    echo "<input type='submit' value='" . $lang["disqus_settings_save"] . "' />\n";
-    echo "</form>\n";
-}
-
-
- /**
- * Save admin settings for disqus
- *
- * @return true
- */
-function disq_save_settings()
-{
-    global $cage, $hotaru, $plugin, $post, $lang;
-
-    // short name
-    if ($cage->post->keyExists('shortname')) { 
-        $shortname = $cage->post->testAlnumLines('shortname');
-    } else {
-        $shortname = 'subconcious'; // This is the default in Disqus' generic code
+        echo "<form name='disqus_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=disqus' method='post'>\n";
+        
+        echo "<p>" . $lang["disqus_settings_instructions"] . "</p><br />";
+            
+        echo "<p>" . $lang["disqus_settings_shortname"] . " <input type='text' size=30 name='shortname' value='" . $shortname . "'><br />" . $lang["disqus_settings_shortname_note"] . "</p>\n";    
+    
+        $this->pluginHook('disqus_settings_form');
+                
+        echo "<br /><br />\n";    
+        echo "<input type='hidden' name='submitted' value='true' />\n";
+        echo "<input type='submit' value='" . $lang["disqus_settings_save"] . "' />\n";
+        echo "</form>\n";
     }
     
-    $plugin->check_actions('disqus_save_settings');
     
-    $plugin->plugin_settings_update('disqus', 'disqus_shortname', $shortname);
+     /**
+     * Save admin settings for disqus
+     *
+     * @return true
+     */
+    public function saveSettings()
+    {
+        global $cage, $hotaru,$lang;
     
-    $hotaru->message = $lang["disqus_settings_saved"];
-    $hotaru->message_type = "green";
-    $hotaru->show_message();
+        // short name
+        if ($cage->post->keyExists('shortname')) { 
+            $shortname = $cage->post->testAlnumLines('shortname');
+        } else {
+            $shortname = 'subconcious'; // This is the default in Disqus' generic code
+        }
+        
+        $this->pluginHook('disqus_save_settings');
+        
+        $this->updateSetting('disqus_shortname', $shortname);
+        
+        $hotaru->message = $lang["disqus_settings_saved"];
+        $hotaru->messageType = "green";
+        $hotaru->showMessage();
+        
+        return true;    
+    }
     
-    return true;    
 }
 ?>

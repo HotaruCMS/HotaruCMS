@@ -24,23 +24,14 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $plugin, $current_user, $lang, $post, $comment;
+global $plugins, $current_user, $lang, $post, $comment;
 ?>
 
-<?php // NOT LOGGED IN
-if (!$current_user->logged_in && $comment->comment_id == 0) { ?>
-
-<div class="comments_please_login">
-    <?php echo $lang['comments_please_login']; ?>
-</div>
-    
-<?php } else { // LOGGED IN?>
-
 <?php // CHECK SUBSCRIBED
-if ($current_user->userbase_vars['post_subscribed']) { $subscribe_check = 'checked'; } else { $subscribe_check = ''; } ?>
+if ($current_user->vars['postSubscribed']) { $subscribe_check = 'checked'; } else { $subscribe_check = ''; } ?>
 
-<?php if ($comment->comment_id != 0) { // IF COMMENT REPLY ?>
-<div class="comment_form comment_reply" id="<?php echo "comment_" . $comment->comment_id; ?>" style="margin-left: <?php echo $comment->comment_depth * 2.0; ?>em; display: none;">
+<?php if ($comment->getId() != 0) { // IF COMMENT REPLY ?>
+<div class="comment_form comment_reply" id="<?php echo "comment_" . $comment->getId(); ?>" style="margin-left: <?php echo $comment->getDepth() * 2.0; ?>em; display: none;">
 
 <?php } else { // STANDARD COMMENT FORM ?>
 <div class="comment_form">
@@ -48,16 +39,15 @@ if ($current_user->userbase_vars['post_subscribed']) { $subscribe_check = 'check
 <?php } // JavaScript changes this form! See comments.js ?>
 
     <form name='comment_form' action='<?php echo BASEURL; ?>index.php?page=comments' method='post'>
-        <textarea name="comment_content" id="comment_content_<?php echo $comment->comment_id; ?>" rows="6" cols="50"/></textarea><br />
-        <div class="comment_instructions"><?php echo $lang['comments_comment_form_allowable_tags']; ?><?php echo htmlentities($comment->comment_allowable_tags); ?></div>
+        <textarea name="comment_content" id="comment_content_<?php echo $comment->getId(); ?>" rows="6" cols="50"/></textarea><br />
+        <div class="comment_instructions"><?php echo $lang['comments_comment_form_allowable_tags']; ?><?php echo htmlentities($comment->getAllowableTags()); ?></div>
         <div class="comment_subscribe"><input id="comment_subscribe" name="comment_subscribe" type="checkbox" <?php echo $subscribe_check; ?>> <?php echo $lang['comments_comment_form_subscribe']; ?><?php if ($subscribe_check) { echo " <small>(" . $lang['comments_comment_form_unsubscribe'] . ")</small>"; } ?></div>
-        <div class="comment_extras"><?php echo $plugin->check_actions('comment_form_extras'); ?></div>
-        <input type="submit" name="submit" id="comment_submit_<?php echo $comment->comment_id; ?>" value="<?php echo $lang['comments_comment_form_submit']; ?>" class="submit" />
-        <input type="hidden" name="comment_process" id="comment_process_<?php echo $comment->comment_id; ?>" value="newcomment" />
-        <input type="hidden" name="comment_parent" value="<?php echo $comment->comment_id; ?>" />
-        <input type="hidden" name="comment_post_id" value="<?php echo $post->post_id; ?>" />
-        <input type="hidden" name="comment_user_id" value="<?php echo $current_user->id; ?>" />
+        <div class="comment_extras"><?php echo $plugins->pluginHook('comment_form_extras'); ?></div>
+        <input type="submit" name="submit" id="comment_submit_<?php echo $comment->getId(); ?>" value="<?php echo $lang['comments_comment_form_submit']; ?>" class="submit" />
+        <input type="hidden" name="comment_process" id="comment_process_<?php echo $comment->getId(); ?>" value="newcomment" />
+        <input type="hidden" name="comment_parent" value="<?php echo $comment->getId(); ?>" />
+        <input type="hidden" name="comment_post_id" value="<?php echo $post->getId(); ?>" />
+        <input type="hidden" name="comment_user_id" value="<?php echo $current_user->getId(); ?>" />
     </form>
 </div>
-    
-<?php } ?>
+

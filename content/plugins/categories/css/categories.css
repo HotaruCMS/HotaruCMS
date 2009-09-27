@@ -1,25 +1,37 @@
-/* ******* CSS STYLE ************************************************************************** 
- * Plugin name: Categories
- * Stylesheet: categories.css
- * License:
- *
- *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
- *
- *   Hotaru CMS is free software: you can redistribute it and/or modify it under the terms of the 
- *   GNU General Public License as published by the Free Software Foundation, either version 3 of 
- *   the License, or (at your option) any later version.
- *
- *   Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
- *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License along with Hotaru CMS. If not, 
- *   see http://www.gnu.org/licenses/.
- *   
- *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
- *
- **************************************************************************************************** */
+/* **************************************
+ *	CATEGORIES PLUGIN CSS           *
+ ************************************** */
 
+/* DROP-DOWN CATEGORY MENU BAR */
 
- /* SIDEBAR CATEGORIES */
+#category_bar { 
+	border-top: 1px solid #F0F0F0; 
+	margin: 0; 
+	padding: 0 0 0 0.8em; } 
+#category_bar li { 
+	list-style: none; 
+	float: left; 
+	margin: 0.4em 0em 0.4em 0em; 
+	padding: 0.2em 0.8em 0.2em 0.8em; } 
+#category_bar li a { 
+	display: block; 
+	color: #fff; 
+	text-decoration: none; } 
+#category_bar li ul { 
+	display: none;  
+	width: 10em; /* Width to help Opera out */ } 
  
+/* HOVER */      
+#category_bar li:hover { 
+	background-color: #444;  } 
+#category_bar li:hover ul, #category_bar li.hover ul { 
+	display: block; 
+	background-color: #F0F0F0; 
+	position: absolute; } 
+#category_bar li:hover li, #category_bar li.hover li { 
+	float: none; } 
+#category_bar li:hover li a, #category_bar li.hover li a { 
+	color: #000; 
+	padding: 0.2em; } 
+#category_bar li li a:hover { 
+	color: #fff;} 

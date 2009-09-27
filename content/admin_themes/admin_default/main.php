@@ -26,7 +26,7 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $lang; // don't remove
+global $hotaru, $lang, $admin; // don't remove
 ?>
 
 <p class="breadcrumbs">
@@ -41,4 +41,4 @@ global $hotaru, $lang; // don't remove
     &nbsp;<?php echo $lang["admin_theme_main_latest"]; ?>
 </h2>
 
-<?php echo admin_news(); ?>
+<?php echo $admin->adminNews(); ?>

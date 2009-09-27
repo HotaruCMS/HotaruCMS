@@ -26,21 +26,25 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $plugin, $lang; // don't remove
+global $hotaru, $plugins, $lang, $current_user; // don't remove
 ?>
-<?php $plugin->check_actions('admin_sidebar_top'); ?>
+<?php $plugins->pluginHook('admin_sidebar_top'); ?>
 
 <ul id="sidebar">
     <li><a href="<?php echo url(array(), 'admin'); ?>"><?php echo $lang["admin_theme_main_admin_home"]; ?></a></li>
+    <?php if ($current_user->getLoggedIn() == true) { ?>
+        <li><a href="<?php echo url(array('page' => 'admin_account'), 'admin'); ?>"><?php echo $lang["admin_theme_account"]; ?></a></li>
+    <?php } ?>
     <li><a href="<?php echo url(array('page' => 'settings'), 'admin'); ?>"><?php echo $lang["admin_theme_settings"]; ?></a></li>
     <li><a href="<?php echo url(array('page' => 'maintenance'), 'admin'); ?>"><?php echo $lang["admin_theme_maintenance"]; ?></a></li>
+    <li><a href="<?php echo url(array('page' => 'blocked_list'), 'admin'); ?>"><?php echo $lang["admin_theme_blocked_list"]; ?></a></li>
     <li><a href="<?php echo url(array('page' => 'plugins'), 'admin'); ?>"><?php echo $lang["admin_theme_plugins"]; ?></a></li>
     <li><?php echo $lang["admin_theme_plugin_settings"]; ?></li>
     <ul id="plugin_settings_list">
-        <?php $plugin->check_actions('admin_sidebar_plugin_settings'); ?>
+        <?php $plugins->pluginHook('admin_sidebar_plugin_settings'); ?>
     </ul>
     
-    <?php $plugin->check_actions('admin_sidebar'); ?>
+    <?php $plugins->pluginHook('admin_sidebar'); ?>
 </ul>
 
-<?php $plugin->check_actions('admin_sidebar_bottom'); ?>
+<?php $plugins->pluginHook('admin_sidebar_bottom'); ?>

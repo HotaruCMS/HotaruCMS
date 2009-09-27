@@ -43,6 +43,36 @@ $lang["admin_breadcrumbs_login"] = "Login";
 /* Login */
 $lang["admin_login_failed"] = "Login failed";
 $lang["admin_login_error_cookie"] = "Error setting cookie. Username not provided";
+$lang["admin_login_email_invalid"] = "Email invalid";
+
+/* Forgotten Password */
+$lang['admin_email_password_conf_sent'] = "An email has been sent to the address provided";
+$lang['admin_email_password_conf_subject'] = SITE_NAME . " Password Reset Request"; 
+$lang['admin_email_new_password_subject'] = "Your New Password for " . SITE_NAME; 
+$lang['admin_email_password_conf_body_hello'] = "Hi";
+$lang['admin_email_password_conf_body_welcome'] = "If you have requested a new password at " . SITE_NAME . ", ";
+$lang['admin_email_password_conf_body_click'] = "click this url or copy it into your browser:";
+$lang['admin_email_password_conf_body_no_request'] = "If you have NOT requested a new password, please ignore this email.";
+$lang['admin_email_password_conf_body_regards'] = "Regards,";
+$lang['admin_email_password_conf_body_sign'] = SITE_NAME . " Admin";
+$lang['admin_email_password_conf_success'] = "A new password has been sent to your email address.";
+$lang['admin_email_password_conf_fail'] = "Unable to confirm your email address. Please try the link again.";
+$lang['admin_email_password_conf_body_requested'] = "Here is the new password you requested at " . SITE_NAME . ": ";
+$lang['admin_email_password_conf_body_remember'] = "Please make a note of it and use it next time you log in.";
+$lang['admin_email_password_conf_body_pass_change'] = "You can change it to something more memorable from your account page.";
+
+/* Account */
+$lang["admin_account_update_success"] = "Updated successfully";
+$lang["admin_account_update_password_success"] = "Updated password successfully";
+$lang["admin_account_update_unexpected_error"] = "Sorry, there has been an unexpected error";
+$lang["admin_account_update_password_error_old"] = "Your old password doesn't match our records";
+$lang["admin_account_update_password_error_new"] = "The new password must be at least 8 characters and can only contain letters, numbers and these symbols: @ * # - _";
+$lang["admin_account_update_password_error_match"] = "The two \"New password\" fields don't match";
+$lang["admin_account_update_password_error_not_provided"] = "Please fill in all the password fields with at least 8 characters";
+$lang["admin_account_update_username_error"] = "Your username must be at least 4 characters and can contain letters, dashes and underscores only";
+$lang["admin_account_update_password_error"] = "The password must be at least 8 characters and can only contain letters, numbers and these symbols: @ * # - _";
+$lang['admin_account_update_password_match_error'] = "The password fields don't match";
+$lang["admin_account_update_email_error"] = "That doesn't parse as a valid email address";
 
 /* News */
 $lang["admin_news_posted_by"] = "Posted by";
@@ -88,6 +118,14 @@ $lang['admin_maintenance_optimize_success'] = "All database tables optimized";
 $lang['admin_maintenance_table_emptied'] = "Table emptied";
 $lang['admin_maintenance_table_deleted'] = "Table deleted";
 
+/* Blocked List */
+$lang['admin_blocked_list_empty'] = "No value entered";
+$lang['admin_blocked_list_added'] = "New item added";
+$lang['admin_blocked_list_updated'] = "Item updated";
+$lang["admin_blocked_list_removed"] = "Item removed";
+$lang['admin_blocked_list_exists'] = "Item already exists";
+$lang['admin_blocked_list_update'] = "Update"; 
+
 
 /* ***************************************************************** 
 ******************************************************************** 
@@ -103,6 +141,21 @@ $lang["admin_theme_login_username"] = "Username";
 $lang["admin_theme_login_password"] = "Password";
 $lang["admin_theme_login_instructions"] = "Enter your username and password:";
 $lang["admin_theme_login_form_submit"] = "Login";
+$lang["admin_theme_login_forgot_password"] = "Forgot your password?";
+$lang['admin_theme_login_forgot_password_submit'] = "Submit";
+$lang['admin_theme_login_forgot_password_submit_instruct_1'] = "Enter the email address for your Admin account:";
+$lang['admin_theme_login_forgot_password_submit_instruct_2'] = "You will be emailed a confirmation code. Click that confirmation code to be sent a new, random password. Use that to access your account and change it to something you can remember.";
+
+/* account */
+$lang["admin_theme_account"] = "Account";
+$lang["admin_theme_account_instructions"] = "Update your account information:";
+$lang["admin_theme_update_username"] = "Username:";
+$lang["admin_theme_update_email"] = "Email:";
+$lang["admin_theme_update_password_instruct"] = "Change your password?";
+$lang["admin_theme_update_old_password"] = "Old password:";
+$lang["admin_theme_update_new_password"] = "New password:";
+$lang["admin_theme_update_new_password_verify"] = "New password (again):";
+$lang["admin_theme_update_form_submit"] = "Update";
 
 /* navigation */
 $lang["admin_theme_navigation_home"] = "Home";
@@ -133,7 +186,7 @@ $lang["admin_theme_maintenance_empty"] = "Empty";
 $lang["admin_theme_maintenance_drop"] = "Delete";
 $lang["admin_theme_maintenance_plugin_table_warning"] = "<b>Warning: Use these with extreme caution!</b>";
 $lang["admin_theme_maintenance_plugin_table_warning2"] = "Note: Uninstall the plugins before emptying or deleting their tables.";
-$lang["admin_theme_maintenance_plugin_table_explanation"] = "Some Hotaru CMS plugins create their own database tables. These continue to exist even if you reinstall Hotaru. Therefore, these options allow you to easily clear or remove them <b>when absolutely necessary</b>.";
+$lang["admin_theme_maintenance_plugin_table_explanation"] = "Some Hotaru CMS plugins create their own database tables. These options allow you to easily clear or remove them <b>if absolutely necessary</b>.";
 $lang["admin_theme_maintenance_empty_explanation"] = "Emptying tables will remove any data, but retain the structure. Remember, other plugins may rely on the data in these tables so removing them may cause problems with your site.";
 $lang["admin_theme_maintenance_drop_explanation"] = "Deleting tables can <b>really mess up your site!</b> Only do it if you are starting your site completely from scratch, or if required by a plugin's instructions or developer.";
 $lang["admin_theme_maintenance_no_plugin_tables_to_empty"] = "No plugin tables to empty.";
@@ -170,6 +223,25 @@ $lang["admin_theme_settings_notes"] = "Notes";
 
 /* plugin settings */
 $lang["admin_theme_plugin_settings"] = "Plugin Settings";
+
+/* blocked */
+$lang["admin_theme_blocked_desc"] = "By itself, this list doesn't do anything, but plugins can use it to block users during registration, post submission, etc.";
+$lang["admin_theme_blocked_list"] = "Blocked List";
+$lang["admin_theme_blocked_type"] = "Type";
+$lang["admin_theme_blocked_value"] = "Value";
+$lang["admin_theme_blocked_edit"] = "Edit";
+$lang["admin_theme_blocked_remove"] = "Remove";
+$lang["admin_theme_blocked_new"] = "Block a new item:";
+$lang["admin_theme_blocked_search"] = "Search for an item:";
+$lang["admin_theme_blocked_filter"] = "Filter items:";
+$lang["admin_theme_blocked_submit_add"] = "Add";
+$lang["admin_theme_blocked_submit_search"] = "Search";
+$lang["admin_theme_blocked_submit_filter"] = "Filter";
+$lang["admin_theme_blocked_ip"] = "IP address";
+$lang["admin_theme_blocked_email"] = "Email address/domain";
+$lang["admin_theme_blocked_url"] = "URL";
+$lang["admin_theme_blocked_username"] = "Username";
+$lang["admin_theme_blocked_all"] = "All";
 
 /* footer */
 $lang["admin_theme_footer_having_trouble_vist_forums"] = "Having trouble? Visit the forums at";

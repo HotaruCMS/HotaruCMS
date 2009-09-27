@@ -37,8 +37,10 @@ $lang["submit_form_not_found"] = "No title found";
 $lang["submit_form_instructions_2"] = "Complete the fields below.";
 $lang['submit_form_subscribe'] = "Subscribe to comments";
 $lang["submit_form_instructions_3"] = "Your submission will look like this. Use the buttons below to modify or confirm it.";
-$lang["submit_form_url_not_present_error"] = "No url was provided.";
+$lang["submit_form_url_not_present_error"] = "Invalid url";
 $lang["submit_form_url_already_exists_error"] = "Sorry, that url has already been submitted.";
+$lang["submit_form_no_permission"] = "Sorry, you don't have permission to post links.";
+$lang['submit_form_url_blocked'] = "Sorry, this url or domain is on the blocked list.";
 $lang["submit_form_title_not_present_error"] = "No title was provided.";
 $lang["submit_form_title_already_exists_error"] = "Sorry, that title has already been used.";
 $lang["submit_form_content_not_present_error"] = "No description entered.";
@@ -83,17 +85,11 @@ $lang["submit_settings_summary_max_length"] = "Maximum characters";
 $lang["submit_settings_summary_instruct"] = "(Description truncated on list pages)";
 $lang["submit_settings_tags"] = "Tags";
 $lang["submit_settings_max_tags"] = "Maximum characters";
+$lang["submit_settings_latest"] = "Split posts into 'Top' and 'Latest'";
 $lang["submit_settings_posts_per_page"] = "posts per page <small>(default: 10)</small>";
 $lang["submit_settings_allowable_tags"] = "Allowed HTML tags in post description:";
 $lang["submit_settings_allowable_tags_example"] = "<small>(E.g. &lt;b&gt;&lt;u&gt;&lt;i&gt;&lt;blockquote&gt;)</small>";
 $lang["submit_settings_saved"] = "Settings Saved.";
-
-/* Submit Post Breadcrumbs */
-$lang["submit_page_breadcrumbs_top"] = "Top Posts";
-$lang["submit_page_breadcrumbs_latest"] = "Latest Posts";
-$lang["submit_page_breadcrumbs_tag"] = "Tag";
-$lang["submit_page_breadcrumbs_category"] = "Category";
-$lang["submit_page_breadcrumbs_user"] = "User";
 
 /* Submit Show Post */
 $lang["submit_page_title_main"] = "top";
@@ -105,6 +101,9 @@ $lang["submit_post_filtered_to"] = "Filtered to";
 $lang["submit_post_filter_user"] = "stories submitted by";
 $lang["submit_post_filter_tag"] = "stories tagged";
 $lang["submit_post_filter_category"] = "stories in";
+$lang["submit_post_posted"] = "Posted";
+$lang["submit_post_by"] = "by";
+$lang["submit_post_ago"] = "ago";
 
 /* Submit RSS Feed */
 $lang["submit_rss_latest_from"] = "Latest from";

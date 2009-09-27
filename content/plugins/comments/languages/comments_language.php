@@ -24,10 +24,10 @@
  * @link      http://www.hotarucms.org/
  */
 
-/* Comment Link - see class.comments.php -> count_comments function */
-$lang['comments_comments_singular_link'] = "comment";
-$lang['comments_comments_plural_link'] = "comments";
-$lang['comments_comments_none_link'] = "No comments";
+/* Comment Link - see libs/Comment.php -> count_comments function */
+$lang['comments_singular_link'] = "comment";
+$lang['comments_plural_link'] = "comments";
+$lang['comments_none_link'] = "No comments";
 
 /* Comment */
 $lang['comments_written_by'] = "Written by";
@@ -37,6 +37,8 @@ $lang['comments_edit_link'] = "EDIT";
 
 /* Comment Form */
 $lang['comments_please_login'] = "You need to be logged in to comment.";
+$lang['comments_no_permission'] = "You do not have permission to comment.";
+$lang['comments_form_closed'] = "Comments are closed.";
 $lang['comments_comment_form_submit'] = "Submit";
 $lang['comments_comment_form_edit'] = "Update";
 $lang['comments_comment_form_subscribe'] = "Subscribe to comments";

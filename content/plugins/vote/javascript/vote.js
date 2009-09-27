@@ -42,7 +42,7 @@ $(document).ready(function(){
 
 /* ******************************************************************** 
  *  Function: vote
- *  Parameters: user id, post id, vote type
+ *  Parameters: user ip, post id, vote type
  *  Purpose: Used for instant voting without reloading the page
  *  Notes: ---
  ********************************************************************** */

@@ -1,0 +1,7 @@
+/* **************************************
+ *     SIDEBAR_WIDGETS PLUGIN CSS       *
+ ************************************** */
+
+td.sidebar_active, td.sidebar_order {
+	width: 6.0em;
+}

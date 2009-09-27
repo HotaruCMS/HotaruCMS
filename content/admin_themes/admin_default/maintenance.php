@@ -26,7 +26,7 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $plugin, $admin, $cage, $lang; // don't remove
+global $plugins, $admin, $cage, $lang; // don't remove
 ?>
 
 <p class="breadcrumbs">
@@ -37,16 +37,16 @@ global $plugin, $admin, $cage, $lang; // don't remove
     
 <h2><?php echo $lang["admin_theme_maintenance_title"]; ?></h2>
     
-<?php $plugin->check_actions('admin_maintenance_top'); ?>
+<?php $plugins->pluginHook('admin_maintenance_top'); ?>
 
 <?php
     if ($action = $cage->get->testAlnumLines('action')) {
-        if ($action == 'clear_db_cache') { $admin->clear_cache('db_cache'); }
-        if ($action == 'clear_css_js_cache') { $admin->clear_cache('css_js_cache'); }
-        if ($action == 'clear_rss_cache') { $admin->clear_cache('rss_cache'); }
-        if ($action == 'optimize') { $admin->optimize_tables(); }
-        if ($action == 'empty') { $admin->empty_table($cage->get->testAlnumLines('table')); }
-        if ($action == 'drop') { $admin->drop_table($cage->get->testAlnumLines('table')); }
+        if ($action == 'clear_db_cache') { $admin->clearCache('db_cache'); }
+        if ($action == 'clear_css_js_cache') { $admin->clearCache('css_js_cache'); }
+        if ($action == 'clear_rss_cache') { $admin->clearCache('rss_cache'); }
+        if ($action == 'optimize') { $admin->optimizeTables(); }
+        if ($action == 'empty') { $admin->emptyTable($cage->get->testAlnumLines('table')); }
+        if ($action == 'drop') { $admin->dropTable($cage->get->testAlnumLines('table')); }
     }
 ?>
 
@@ -54,22 +54,22 @@ global $plugin, $admin, $cage, $lang; // don't remove
 <br />
 <h2><?php echo $lang["admin_theme_maintenance_cache"]; ?></h2>
 <ul>
-    <li><a href="<?php echo BASEURL; ?>admin/admin_index.php?page=maintenance&amp;action=clear_db_cache">
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=clear_db_cache">
         <?php echo $lang["admin_theme_maintenance_db_cache"]; ?></a> - <?php echo $lang["admin_theme_maintenance_db_cache_desc"]; ?></li>
-    <li><a href="<?php echo BASEURL; ?>admin/admin_index.php?page=maintenance&amp;action=clear_css_js_cache">
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=clear_css_js_cache">
         <?php echo $lang["admin_theme_maintenance_css_js_cache"]; ?></a> - <?php echo $lang["admin_theme_maintenance_css_js_cache_desc"]; ?></li>
-    <li><a href="<?php echo BASEURL; ?>admin/admin_index.php?page=maintenance&amp;action=clear_rss_cache">
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=clear_rss_cache">
         <?php echo $lang["admin_theme_maintenance_rss_cache"]; ?></a> - <?php echo $lang["admin_theme_maintenance_rss_cache_desc"]; ?></li>
 </ul>
 
 <br />
 <h2><?php echo $lang["admin_theme_maintenance_database"]; ?></h2>
 <ul>
-    <li><a href="<?php echo BASEURL; ?>admin/admin_index.php?page=maintenance&amp;action=optimize">
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=optimize">
         <?php echo $lang["admin_theme_maintenance_optimize"]; ?></a> - <?php echo $lang["admin_theme_maintenance_optimize_desc"]; ?></li>
 </ul>
 
-<?php $plugin_tables = $admin->list_plugin_tables(); ?>
+<?php $plugin_tables = $admin->listPluginTables(); ?>
 <br />
 <h2><?php echo $lang["admin_theme_maintenance_plugin_tables"]; ?></h2>
 <?php echo $lang["admin_theme_maintenance_plugin_table_explanation"]; ?><br /><br />
@@ -79,7 +79,7 @@ global $plugin, $admin, $cage, $lang; // don't remove
 <ul>
 <?php if($plugin_tables) { ?>
     <?php foreach ($plugin_tables as $table) { ?>
-    <li><a href="<?php echo BASEURL; ?>admin/admin_index.php?page=maintenance&amp;action=empty&amp;table=<?php echo $table; ?>">
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=empty&amp;table=<?php echo $table; ?>">
         <?php echo $lang["admin_theme_maintenance_empty"] . " " . $table; ?> </a></li>
     <?php } ?>
 <?php } else { ?>
@@ -91,7 +91,7 @@ global $plugin, $admin, $cage, $lang; // don't remove
 <ul>
 <?php if($plugin_tables) { ?>
     <?php foreach ($plugin_tables as $table) { ?>
-    <li><a href="<?php echo BASEURL; ?>admin/admin_index.php?page=maintenance&amp;action=drop&amp;table=<?php echo $table; ?>">
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=drop&amp;table=<?php echo $table; ?>">
         <?php echo $lang["admin_theme_maintenance_drop"] . " " . $table; ?> </a></li>
     <?php } ?>
 <?php } else { ?>
@@ -99,4 +99,4 @@ global $plugin, $admin, $cage, $lang; // don't remove
 <?php } ?>
 </ul>
     
-<?php $plugin->check_actions('admin_maintenance_bottom'); ?>
+<?php $plugins->pluginHook('admin_maintenance_bottom'); ?>

@@ -34,13 +34,13 @@
     <tr><td class="cat_man_body">
         <?php echo $lang["cat_man_order_instruct"]; ?><br />
 
-        <h3>1. <a href="<?php echo BASEURL; ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order_alpha"><?php echo $lang["cat_man_order_alpha"]; ?></a></h3>
+        <h3>1. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order_alpha"><?php echo $lang["cat_man_order_alpha"]; ?></a></h3>
         <?php echo $lang["cat_man_order_alpha_desc"]; ?> <br />
-        <h3>2. <a href="<?php echo BASEURL; ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order_length"><?php echo $lang["cat_man_order_length"]; ?></a></h3>
+        <h3>2. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order_length"><?php echo $lang["cat_man_order_length"]; ?></a></h3>
         <?php echo $lang["cat_man_order_length_desc"]; ?>  <br />
-        <h3>3. <a href="<?php echo BASEURL; ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order_id"><?php echo $lang["cat_man_order_id"]; ?></a></h3>
+        <h3>3. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order_id"><?php echo $lang["cat_man_order_id"]; ?></a></h3>
         <?php echo $lang["cat_man_order_id_desc"]; ?> <br />
-        <h3>4. <a href="<?php echo BASEURL; ?>admin/admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order_posts"><?php echo $lang["cat_man_order_posts"]; ?></a></h3>
+        <h3>4. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order_posts"><?php echo $lang["cat_man_order_posts"]; ?></a></h3>
         <?php echo $lang["cat_man_order_posts_desc"]; ?>
 
     </td>
@@ -48,7 +48,7 @@
     <td class="cat_man_menu_holder">
         <div>
             <h3><?php echo $lang["cat_man_menu_title"]; ?></h3>
-            <?php $hotaru->display_template('cat_man_menu', 'category_manager'); ?>
+            <?php $hotaru->displayTemplate('cat_man_menu', 'category_manager'); ?>
             
             <h3><?php echo $lang["cat_man_category_tree"]; ?></h3>
             <?php cat_man_tree($the_cats); ?>

@@ -24,7 +24,7 @@
  * @link      http://www.hotarucms.org/
  */
  
-global $hotaru, $cage, $lang, $plugin, $userbase;
+global $hotaru, $cage, $lang, $plugins, $userbase;
     
 if ($cage->post->getAlpha('users_type') == 'register') {
     $username_check = $cage->post->testUsername('username');
@@ -44,7 +44,7 @@ if ($cage->post->getAlpha('users_type') == 'register') {
             
         <h2><?php echo $lang["users_register"]; ?></h2>
         
-        <?php echo $hotaru->show_messages(); ?>
+        <?php echo $hotaru->showMessages(); ?>
             
         <div class='main_inner'>
         <?php echo $lang["users_register_instructions"]; ?>
@@ -57,14 +57,14 @@ if ($cage->post->getAlpha('users_type') == 'register') {
             <tr><td><?php echo $lang["users_register_password_verify"]; ?>&nbsp; </td><td><input type='password' size=30 name='password2' value='<?php echo $password2_check; ?>' /></td></tr>
             
             <?php 
-                if ($userbase->userbase_vars['users_recaptcha_enabled']) { 
-                    $recaptcha_pubkey = $plugin->plugin_settings('users', 'users_recaptcha_pubkey');
+                if ($userbase->vars['usersRecaptchaEnabled']) { 
+                    $recaptcha_pubkey = $plugins->getSetting('users_recaptcha_pubkey', 'users');
                     echo "<tr><td colspan=2>" . recaptcha_get_html($recaptcha_pubkey) . "</td></tr>";
                 }
             ?>
             
             <input type='hidden' name='users_type' value='register' />
-            <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $lang['users_register_form_submit']; ?>' /></td></tr>            
+            <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $lang['users_register_form_submit']; ?>' /></td></tr>            
             </table>
             </form>
         </div>

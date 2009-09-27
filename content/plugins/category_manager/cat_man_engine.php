@@ -40,69 +40,69 @@ function cat_man_main()
 
     if ($action == "home") {    
         $the_cats = get_categories();     // Get all the category info                
-        $hotaru->display_template('cat_man_main', 'category_manager');
+        $hotaru->displayTemplate('cat_man_main', 'category_manager');
         return true;
     }
     
     if ($action == "order") { 
         $the_cats = get_categories();     // Get all the category info
-        $hotaru->display_template('cat_man_order', 'category_manager');
+        $hotaru->displayTemplate('cat_man_order', 'category_manager');
         return true;
     }     
         
     if ($action == "order_alpha") { 
         order("category_name");     // ORDER ALPHABETICALLY PERMANENTLY IN THE DATABASE
-        $hotaru->show_message($lang["cat_man_order_alpha"], 'green');
+        $hotaru->showMessage($lang["cat_man_order_alpha"], 'green');
         $the_cats = get_categories();     // Get all the category info
-        $hotaru->display_template('cat_man_order', 'category_manager');
+        $hotaru->displayTemplate('cat_man_order', 'category_manager');
         return true;
     } 
     
     if ($action == "order_length") { 
         order("length(category_name)");     // ORDER BY LENGTH PERMANENTLY IN THE DATABASE
-        $hotaru->show_message($lang["cat_man_order_length"], 'green');
+        $hotaru->showMessage($lang["cat_man_order_length"], 'green');
         $the_cats = get_categories();     // Get all the category info
-        $hotaru->display_template('cat_man_order', 'category_manager');
+        $hotaru->displayTemplate('cat_man_order', 'category_manager');
         return true;
     }
 
     if ($action == "order_posts") { 
         order_by_posts();     // ORDER BY POSTS PERMANENTLY IN THE DATABASE
-        $hotaru->show_message($lang["cat_man_order_posts"], 'green');
+        $hotaru->showMessage($lang["cat_man_order_posts"], 'green');
         $the_cats = get_categories();     // Get all the category info
-        $hotaru->display_template('cat_man_order', 'category_manager');
+        $hotaru->displayTemplate('cat_man_order', 'category_manager');
         return true;
     }
 
     if ($action == "order_id") { 
         order("category_id");     // ORDER BY ID PERMANENTLY IN THE DATABASE
-        $hotaru->show_message($lang["cat_man_order_id"], 'green');
+        $hotaru->showMessage($lang["cat_man_order_id"], 'green');
         $the_cats = get_categories();     // Get all the category info
-        $hotaru->display_template('cat_man_order', 'category_manager');
+        $hotaru->displayTemplate('cat_man_order', 'category_manager');
         return true;
     }
                 
     if ($action == "edit") { 
         $the_cats = get_categories();     // Get all the category info
-        $hotaru->display_template('cat_man_edit', 'category_manager');
+        $hotaru->displayTemplate('cat_man_edit', 'category_manager');
         return true;
     } 
     
     if ($action == "edit_save") { 
         if ($cage->post->keyExists('save_all')) {
             update_category_names();
-            $hotaru->show_message($lang["cat_man_changes_saved"], 'green');
+            $hotaru->showMessage($lang["cat_man_changes_saved"], 'green');
         } else {
-            $hotaru->show_message($lang["cat_man_changes_cancelled"], 'green');
+            $hotaru->showMessage($lang["cat_man_changes_cancelled"], 'green');
         }
         $the_cats = get_categories();     // Get all the category info
-        $hotaru->display_template('cat_man_edit', 'category_manager');
+        $hotaru->displayTemplate('cat_man_edit', 'category_manager');
         return true;
     } 
     
     if ($action == "edit_meta") { 
         $the_cats = get_categories();     // Get all the category info
-        $hotaru->display_template('cat_man_edit_meta', 'category_manager');
+        $hotaru->displayTemplate('cat_man_edit_meta', 'category_manager');
         return true;
     } 
     
@@ -113,19 +113,19 @@ function cat_man_main()
                 $description = $cage->post->getMixedString2('description');
                 $keywords = $cage->post->getMixedString2('keywords');
                 save_meta($category_meta_id, $description, $keywords);
-                $hotaru->show_message($lang["cat_man_changes_saved"], 'green');
+                $hotaru->showMessage($lang["cat_man_changes_saved"], 'green');
             }
         } else {
-            $hotaru->show_message($lang["cat_man_form_error"], 'red');
+            $hotaru->showMessage($lang["cat_man_form_error"], 'red');
         }
         $the_cats = get_categories();     // Get all the category info
-        $hotaru->display_template('cat_man_edit_meta', 'category_manager');
+        $hotaru->displayTemplate('cat_man_edit_meta', 'category_manager');
         return true;
     } 
 
     if ($action == "add") { 
         $the_cats = get_categories();     // Get all the category info
-        $hotaru->display_template('cat_man_add', 'category_manager');
+        $hotaru->displayTemplate('cat_man_add', 'category_manager');
         return true;
     } 
     
@@ -136,12 +136,12 @@ function cat_man_main()
             if ($new_cat_name != "") {
                 $result = add_new_category($parent, $new_cat_name);
                 if ($result) {
-                    $hotaru->show_message($lang["cat_man_category_added"], 'green');
+                    $hotaru->showMessage($lang["cat_man_category_added"], 'green');
                 } else {
-                    $hotaru->show_message($lang["cat_man_category_exists"], 'red');
+                    $hotaru->showMessage($lang["cat_man_category_exists"], 'red');
                 }
             } else {
-                $hotaru->show_message($lang["cat_man_category_not_added"], 'red');
+                $hotaru->showMessage($lang["cat_man_category_not_added"], 'red');
             }
         } elseif ($cage->post->keyExists('save_new_category2')) {
             $parent = $cage->post->getInt('parent');
@@ -149,12 +149,12 @@ function cat_man_main()
             if ($new_cat_name != "") {
                 $result = add_new_category($parent, $new_cat_name);
                 if ($result) {
-                    $hotaru->show_message($lang["cat_man_category_added"], 'green');
+                    $hotaru->showMessage($lang["cat_man_category_added"], 'green');
                 } else {
-                    $hotaru->show_message($lang["cat_man_category_exists"], 'red');
+                    $hotaru->showMessage($lang["cat_man_category_exists"], 'red');
                 }
             } else {
-                $hotaru->show_message($lang["cat_man_category_not_added"], 'red');
+                $hotaru->showMessage($lang["cat_man_category_not_added"], 'red');
             }
         } elseif ($cage->post->keyExists('save_new_category3')) {
             $parent = $cage->post->getInt('parent');
@@ -162,24 +162,24 @@ function cat_man_main()
             if ($new_cat_name != "") {
                 $result = add_new_category($parent, $new_cat_name);
                 if ($result) {
-                    $hotaru->show_message($lang["cat_man_category_added"], 'green');
+                    $hotaru->showMessage($lang["cat_man_category_added"], 'green');
                 } else {
-                    $hotaru->show_message($lang["cat_man_category_exists"], 'red');
+                    $hotaru->showMessage($lang["cat_man_category_exists"], 'red');
                 }
             } else {
-                $hotaru->show_message($lang["cat_man_category_not_added"], 'red');
+                $hotaru->showMessage($lang["cat_man_category_not_added"], 'red');
             }
         } else {
-            $hotaru->show_message($lang["cat_man_form_error"], 'red');    
+            $hotaru->showMessage($lang["cat_man_form_error"], 'red');    
         }
         $the_cats = get_categories();     // Get all the category info
-        $hotaru->display_template('cat_man_add', 'category_manager');
+        $hotaru->displayTemplate('cat_man_add', 'category_manager');
         return true;
     }
     
     if ($action == "move") { 
         $the_cats = get_categories();     // Get all the category info
-        $hotaru->display_template('cat_man_move', 'category_manager');
+        $hotaru->displayTemplate('cat_man_move', 'category_manager');
         return true;
     } 
     
@@ -192,34 +192,34 @@ function cat_man_main()
                 $target = $cage->post->testAlnum('parents');
                 $success = move($cat_to_move, $placement, $target);
                 if ($success) { 
-                    $hotaru->show_message($lang["cat_man_category_moved"], 'green');
+                    $hotaru->showMessage($lang["cat_man_category_moved"], 'green');
                 } else { 
-                    $hotaru->show_message($lang["cat_man_category_not_moved"], 'red');
+                    $hotaru->showMessage($lang["cat_man_category_not_moved"], 'red');
                 }
 
             } elseif ($cage->post->keyExists('save_form2')) {
                 $target = $cage->post->testAlnum('moveup');
                 $success = move($cat_to_move, 'none', $target);
                 if ($success) { 
-                    $hotaru->show_message($lang["cat_man_category_moved"], 'green');
+                    $hotaru->showMessage($lang["cat_man_category_moved"], 'green');
                 } else { 
-                    $hotaru->show_message($lang["cat_man_category_not_moved"], 'red');
+                    $hotaru->showMessage($lang["cat_man_category_not_moved"], 'red');
                 }
             } else {
-                $hotaru->show_message($lang["cat_man_category_not_moved"], 'red');
+                $hotaru->showMessage($lang["cat_man_category_not_moved"], 'red');
             }
             
         } else { 
-            $hotaru->show_message($lang["cat_man_category_not_moved"], 'red');
+            $hotaru->showMessage($lang["cat_man_category_not_moved"], 'red');
         }
         $the_cats = get_categories();     // Get all the category info
-        $hotaru->display_template('cat_man_move', 'category_manager');
+        $hotaru->displayTemplate('cat_man_move', 'category_manager');
         return true;
     }
 
     if ($action == "delete") { 
         $the_cats = get_categories();     // Get all the category info
-        $hotaru->display_template('cat_man_delete', 'category_manager');
+        $hotaru->displayTemplate('cat_man_delete', 'category_manager');
         return true;
     } 
     
@@ -235,12 +235,12 @@ function cat_man_main()
                 $del_count++;
             }
             $the_cats = get_categories();     // Get all the category info
-            $hotaru->display_template('cat_man_delete_confirm', 'category_manager');
+            $hotaru->displayTemplate('cat_man_delete_confirm', 'category_manager');
             return true;
         } else {
-            $hotaru->show_message($lang["cat_man_category_not_deleted"], 'red');
+            $hotaru->showMessage($lang["cat_man_category_not_deleted"], 'red');
             $the_cats = get_categories();     // Get all the category info
-            $hotaru->display_template('cat_man_delete', 'category_manager');
+            $hotaru->displayTemplate('cat_man_delete', 'category_manager');
             return true;
         }
         
@@ -252,14 +252,14 @@ function cat_man_main()
                     delete_categories($cat_id); 
             }
             cat_man_rebuild_tree(1, 0);
-            $hotaru->show_message($lang["cat_man_category_deleted"], 'green');
+            $hotaru->showMessage($lang["cat_man_category_deleted"], 'green');
         } else {
-            $hotaru->show_message($lang["cat_man_category_not_deleted"], 'red');
-            $hotaru->show_message();
+            $hotaru->showMessage($lang["cat_man_category_not_deleted"], 'red');
+            $hotaru->showMessage();
         }
 
         $the_cats = get_categories();     // Get all the category info
-        $hotaru->display_template('cat_man_delete', 'category_manager');
+        $hotaru->displayTemplate('cat_man_delete', 'category_manager');
         return true;
     }
             
@@ -813,6 +813,30 @@ function cat_man_rebuild_tree($parent_id, $left)
     
     // return the right value of this node + 1
     return $right+1;
+}
+
+
+ /**
+ * Display category tree.
+ *
+ * @param array $the_cats
+ */
+function cat_man_tree($the_cats)
+{
+    echo "<div class='cat_man_tree'>";
+    foreach ($the_cats as $cat) {
+        if ($cat['category_name'] != "all") {
+            if ($cat['category_parent'] > 1) {
+                for($i=1; $i<$cat['category_level']; $i++) {
+                    echo "--- ";
+                }
+                 echo $cat['category_name'] . " <span style='font-size: 0.7em; color: #888;'>[" . $cat['category_id'] . "]</span><br />";
+            } else {
+                 echo $cat['category_name'] . " <span style='font-size: 0.7em; color: #888;'>[" . $cat['category_id'] . "]</span><br />";
+            }
+        }
+    }
+    echo "</div>";
 }
 
 ?>

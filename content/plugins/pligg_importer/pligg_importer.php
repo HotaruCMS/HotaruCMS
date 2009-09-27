@@ -2,10 +2,10 @@
 /**
  * name: Pligg Importer
  * description: Imports and converts a Pligg database to Hotaru CMS
- * version: 0.2
+ * version: 0.3
  * folder: pligg_importer
  * prefix: pliggimp
- * requires: category_manager 0.2, categories 0.3, comments 0.1, submit 0.3, tags 0.3, users 0.3, vote 0.2
+ * requires: category_manager 0.3, categories 0.4, comments 0.3, submit 0.6, tags 0.5, users 0.4, vote 0.3
  * hooks: admin_plugin_settings, admin_sidebar_plugin_settings, admin_header_include
  *
  * PHP version 5
@@ -45,9 +45,9 @@ function pliggimp_admin_sidebar_plugin_settings()
  */
 function pliggimp_admin_header_include()
 {
-    global $admin, $plugin;
+    global $admin, $plugins;
     
-    $plugin->include_css('pligg_importer');
+    $plugins->includeCSS('pligg_importer', 'pligg_importer');
 }
 
 
@@ -56,7 +56,7 @@ function pliggimp_admin_header_include()
  */
 function pliggimp_admin_plugin_settings()
 {
-    global $cage, $status, $plugin, $cat;
+    global $cage, $status, $plugins, $cat;
     
     $pliggimp_path = PLUGINS . "/pligg_importer/";
     
@@ -105,7 +105,7 @@ function pliggimp_admin_plugin_settings()
  */
 function pliggimp_page_welcome()
 {
-    global $plugin;
+    global $plugins;
     
     // FIRST PAGE WITH UPLOAD FORM
     echo "<div id='pliggimp'>";
@@ -159,31 +159,31 @@ function pliggimp_page_welcome()
     $error = 0;
     $inactive = "";
     
-    if (!$plugin->plugin_active('submit')) {
+    if (!$plugins->isActive('submit')) {
         $inactive .= "<li style='color: red;'><b>Submit plugin is inactive</b></li>"; 
         $error = 1;
     }
-    if (!$plugin->plugin_active('comments')) {
+    if (!$plugins->isActive('comments')) {
         $inactive .= "<li style='color: red;'><b>Comments plugin is inactive</b></li>"; 
         $error = 1;
     }
-    if (!$plugin->plugin_active('category_manager')) {
+    if (!$plugins->isActive('category_manager')) {
         $inactive .= "<li style='color: red;'><b>Category Manager plugin is inactive</b></li>"; 
         $error = 1;
     }
-    if (!$plugin->plugin_active('categories')) {
+    if (!$plugins->isActive('categories')) {
         $inactive .= "<li style='color: red;'><b>Categories plugin is inactive</b></li>"; 
         $error = 1;
     }
-    if (!$plugin->plugin_active('tags')) {
+    if (!$plugins->isActive('tags')) {
         $inactive .= "<li style='color: red;'><b>Tags plugin is inactive</b></li>"; 
         $error = 1;
     }
-    if (!$plugin->plugin_active('users')) {
+    if (!$plugins->isActive('users')) {
         $inactive .= "<li style='color: red;'><b>Users plugin is inactive</b></li>"; 
         $error = 1;
     }
-    if (!$plugin->plugin_active('vote')) {
+    if (!$plugins->isActive('vote')) {
         $inactive .= "<li style='color: red;'><b>Vote plugin is inactive</b></li>"; 
         $error = 1;
     }
@@ -287,22 +287,22 @@ function pliggimp_save_uploaded_file()
         if ($file_error > 0)
         {
             $hotaru->message = "Error: code " . $file_error;
-            $hotaru->message_type = "red";
-            $hotaru->show_message();
+            $hotaru->messageType = "red";
+            $hotaru->showMessage();
             return false;
         }
         else
         {
             if (!move_uploaded_file($tmp_filepath, $destination . $file_name)) {
                 $hotaru->message = "Failed to move the file to the pligg_importer uploads folder.";
-                $hotaru->message_type = "red";
-                $hotaru->show_message();
+                $hotaru->messageType = "red";
+                $hotaru->showMessage();
                 return false;
             }
             
             $hotaru->message = "Uploaded succesfully!";
-            $hotaru->message_type = "green";
-            $hotaru->show_message();
+            $hotaru->messageType = "green";
+            $hotaru->showMessage();
             $status = "uploaded";
                         
             return $file_name;
@@ -317,8 +317,8 @@ function pliggimp_save_uploaded_file()
                 display_filesize($file_size);
         }
         
-        $hotaru->message_type = "red";
-        $hotaru->show_message();
+        $hotaru->messageType = "red";
+        $hotaru->showMessage();
         return false;
     }
 }
@@ -404,13 +404,13 @@ function pliggimp_page_7()
     $db->query($sql);
     
     // Delete the uploaded XML files
-    $admin->delete_files(PLUGINS . 'pligg_importer/uploads/');
+    $admin->deleteFiles(PLUGINS . 'pligg_importer/uploads/');
     
     // Import Complete
     
     $hotaru->message = "Congratulations! You have completed the import.";
-    $hotaru->message_type = 'green';
-    $hotaru->show_message();
+    $hotaru->messageType = 'green';
+    $hotaru->showMessage();
     
     echo "<div id='pliggimp'>";
     echo "<h2>Pligg Import Complete</h2>";
@@ -452,8 +452,8 @@ function character_cleaner()
     }
     
     $hotaru->message = "Post titles and descriptions updated";
-    $hotaru->message_type = "green";
-    $hotaru->show_message();
+    $hotaru->messageType = "green";
+    $hotaru->showMessage();
 }
 
 ?>

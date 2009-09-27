@@ -24,49 +24,49 @@
  * @link      http://www.hotarucms.org/
  */
  
-global $hotaru, $cage, $lang, $post, $plugin, $post_orig_url, $post_orig_title, $current_user;
+global $hotaru, $cage, $lang, $post, $plugins, $post_orig_url, $post_orig_title, $current_user;
 
 if ($cage->post->getAlpha('edit_post') == 'true') {
     // Submitted this form...
     $title_check = $cage->post->noTags('post_title');    
-    $content_check = sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->allowable_tags);
+    $content_check = sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->getAllowableTags());
     if ($cage->post->keyExists('post_subscribe')) { $subscribe_check = 'checked'; } else { $subscribe_check = ''; }   
     $status_check = $cage->post->testAlnumLines('post_status');    
     $post_id = $cage->post->getInt('post_id');    
-    $post->post_id = $post_id;
+    $post->setId($post_id);
     
 } elseif ($cage->get->testInt('post_id'))  {
     $post_id = $cage->get->testInt('post_id');
-    $post->read_post($post_id);
-    $title_check = $post->post_title;
-    $content_check = $post->post_content;
-    if ($post->post_subscribe == 1) { $subscribe_check = 'checked'; } else { $subscribe_check = ''; }
-    $status_check = $post->post_status;
-    $post_orig_url = $post->post_orig_url;
-    $post_id = $post->post_id;
+    $post->readPost($post_id);
+    $title_check = $post->getTitle();
+    $content_check = $post->getContent();
+    if ($post->getSubscribe() == 1) { $subscribe_check = 'checked'; } else { $subscribe_check = ''; }
+    $status_check = $post->getStatus();
+    $post_orig_url = $post->getOrigUrl();
+    $post_id = $post->getId();
 }
 
 $user = new UserBase();
-$user->get_user_basic($post->post_author);
-if ($current_user->role != 'admin' && ($current_user->id != $user->id)) { 
+$user->getUserBasic($post->getAuthor());
+if ($current_user->getRole() != 'admin' && ($current_user->getId() != $user->getId())) { 
     $hotaru->message = "You don't have permission to edit this post.";
-    $hotaru->message_type = "red";
-    $hotaru->show_message();
+    $hotaru->messageType = "red";
+    $hotaru->showMessage();
     return false;
     die();
 }
 
-$plugin->check_actions('submit_form_2_assign');
+$plugins->pluginHook('submit_form_2_assign');
 
 ?>
 
     <div id="breadcrumbs">
         <a href='<?php echo BASEURL; ?>'><?php echo $lang['submit_form_home']; ?></a> &raquo; 
         <?php echo $lang["submit_edit_post_title"]; ?> &raquo; 
-        <?php echo $post_id; ?>
+        <a href='<?php echo url(array('page'=>$post->getId())); ?>'><?php echo $post->getTitle(); ?></a>
     </div>
         
-    <?php echo $hotaru->show_messages(); ?>
+    <?php echo $hotaru->showMessages(); ?>
             
     
     <?php echo $lang["submit_edit_post_instructions"]; ?>
@@ -84,16 +84,16 @@ $plugin->check_actions('submit_form_2_assign');
         <td>&nbsp;</td>
     </tr>
     
-    <?php if ($post->use_content) { ?>
+    <?php if ($post->getUseContent()) { ?>
     <tr>
         <td style='vertical-align: top;'><?php echo $lang["submit_form_content"]; ?>&nbsp; </td>
-        <td colspan=2><textarea id='post_content' name='post_content' rows='6' maxlength='<?php $post->post_content_length; ?>' style='width: 32em;'><?php echo $content_check; ?></textarea></td>
+        <td colspan=2><textarea id='post_content' name='post_content' rows='6' maxlength='<?php $post->getContentLength(); ?>' style='width: 32em;'><?php echo $content_check; ?></textarea></td>
     </tr>
     <?php } ?>
     
-    <?php $plugin->check_actions('submit_form_2_fields'); ?>
+    <?php $plugins->pluginHook('submit_form_2_fields'); ?>
         
-    <?php if ($current_user->role == 'admin') { ?>
+    <?php if ($current_user->getRole() == 'admin') { ?>
     <!-- Admin only options -->
     
     <tr><td colspan=3><u><?php echo $lang["submit_edit_post_admin_only"]; ?></u></td></tr>
@@ -109,12 +109,11 @@ $plugin->check_actions('submit_form_2_assign');
         <td><select name='post_status'>
             <option value="<?php echo $status_check; ?>"><?php echo $status_check; ?></option>
             <?php 
-            $statuses = $post->get_unique_statuses(); 
-            print_r($statuses);
+            $statuses = $post->getUniqueStatuses(); 
             if ($statuses) {
                 foreach ($statuses as $status) {
-                    if ($status->post_status != 'unsaved') { 
-                        echo "<option value=" . $status->post_status . ">" . $status->post_status . "</option>\n";
+                    if ($status != 'unsaved') { 
+                        echo "<option value=" . $status . ">" . $status . "</option>\n";
                     }
                 }
             }
@@ -124,7 +123,7 @@ $plugin->check_actions('submit_form_2_assign');
     <!-- END Admin only options -->
     <?php } ?>
         
-    <?php if ($current_user->role != 'admin') { ?>
+    <?php if ($current_user->getRole() != 'admin') { ?>
         <input type='hidden' name='post_orig_url' value='<?php echo $post_orig_url; ?>' />
     <?php } ?>
     <input type='hidden' name='post_id' value='<?php echo $post_id ?>' />

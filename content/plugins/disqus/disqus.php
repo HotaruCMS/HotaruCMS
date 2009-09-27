@@ -2,10 +2,10 @@
 /**
  * name: Disqus
  * description: Enables comments using Disqus
- * version: 0.2
+ * version: 0.3
  * folder: disqus
- * prefix: disq
- * requires: submit 0.3
+ * class: Disqus
+ * requires: submit 0.6
  * hooks: header_include, header_include_raw, install_plugin, hotaru_header, submit_show_post_extra_fields, submit_post_show_post, pre_close_body, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  * PHP version 5
@@ -30,103 +30,75 @@
  * @link      http://www.hotarucms.org/
  */
 
-/**
- * Default settings on install
- */
-function disq_install_plugin()
+class Disqus extends PluginFunctions
 {
-    global $plugin, $lang;
+
+    /**
+     * Default settings on install
+     */
+    public function install_plugin()
+    {
+        // Default settings 
+        $this->updateSetting('disqus_shortname', 'subconcious');    // This is the default in Disqus' generic code
+    }
+    
+    
+    /**
+     * Parameters for Developers
+     *
+     * @link http://wiki.disqus.net/JSEmbed/
+     */
+    public function header_include_raw()
+    {
+        global $post;
+    
+        echo '
+        <script type="text/javascript">
+            var disqus_developer = true; 
+            var disqus_identifier = ' . $post->getId() . 
+        '</script>';
+        echo "\n";
+    }
+    
+    
+    /**
+     * Link to comments
+     */
+    public function submit_show_post_extra_fields()
+    {
+        global $post, $lang;
         
-    // Default settings 
-    $plugin->plugin_settings_update('disqus', 'disqus_shortname', 'subconcious'); // This is the default in Disqus' generic code
+        $url = url(array('page'=>$post->getId()));
+        echo '<li><a class="disqus_comments_link" href="' . $url . '#disqus_thread">' . $lang['disqus_comments_link'] . '</a></li>' . "\n";
+    }
     
-    // Include language file. Also included in hotaru_header, but needed here so 
-    // that the link in the Admin sidebar shows immediately after installation.
-    $plugin->include_language('disqus');
-}
-
-
-/**
- * Parameters for Developers
- *
- * @link http://wiki.disqus.net/JSEmbed/
- */
-function disq_header_include_raw()
-{
-    global $lang, $plugin, $post;
-
-    echo '
-    <script type="text/javascript">
-        var disqus_developer = true; 
-        var disqus_identifier = ' . $post->post_id . 
-    '</script>';
-    echo "\n";
-}
-
-
-/**
- * Include language file
- */
-function disq_hotaru_header()
-{
-    global $lang, $plugin;
-
-    $plugin->include_language('disqus');
-}
-
-
-/**
- * Display Admin sidebar link
- */
-function disq_admin_sidebar_plugin_settings()
-{
-    global $lang;
     
-    echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>'disqus'), 'admin') . "'>" . $lang['disqus_admin_sidebar'] . "</a></li>";
-}
-
-/**
- * Display Admin settings page
- *
- * @return true
- */
-function disq_admin_plugin_settings()
-{
-    require_once(PLUGINS . 'disqus/disqus_settings.php');
-    disq_settings();
-    return true;
-}
-
-/**
- * Link to comments
- */
-function disq_submit_show_post_extra_fields()
-{
-    global $post, $lang;
+    /**
+     * Display Disqus comments and form
+     */
+    public function submit_post_show_post()
+    {
+        global $hotaru;
+        
+        if (!$hotaru->isPage('submit2')) {
+            $shortname = $this->getSetting('disqus_shortname');
+            $hotaru->displayTemplate('disqus_comments', 'disqus');
+        }
+    }
     
-    $url = url(array('page'=>$post->post_id));
-    echo '<li><a class="disqus_comments_link" href="' . $url . '#disqus_thread">' . $lang['disqus_comments_link'] . '</a></li>' . "\n";
-}
-
-
-/**
- * Display Disqus comments and form
- */
-function disq_submit_post_show_post()
-{
-    global $hotaru;
     
-    $hotaru->display_template('disqus_comments', 'disqus');
-}
+    /**
+     * Display Admin settings page
+     *
+     * @return true
+     */
+    public function admin_plugin_settings()
+    {
+        require_once(PLUGINS . 'disqus/disqus_settings.php');
+        $disqSettings = new DisqusSettings();
+        $disqSettings->settings($this->folder);
+        return true;
+    }
 
-
-/**
- * Include JavaScript to change the comments link
- */
-function disq_pre_close_body()
-{
-    global $hotaru;
-    
-    $hotaru->display_template('disqus_footer', 'disqus');
 }
 ?>

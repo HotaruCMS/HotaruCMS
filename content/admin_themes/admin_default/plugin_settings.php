@@ -26,22 +26,22 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $plugin, $lang; // don't remove
+global $hotaru, $plugins, $lang; // don't remove
 ?>
 
 <p class="breadcrumbs">
     <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
     &raquo; <a href="<?php echo url(array(), 'admin'); ?>"><?php echo $lang["admin_theme_main_admin_cp"]; ?></a> 
     &raquo; <?php echo $lang["admin_theme_plugin_settings"]; ?> 
-    <?php if ($plugin->name) { echo "&raquo; " .  $plugin->name; } ?>
+    <?php if ($plugins->getName()) { echo "&raquo; " .  $plugins->getName(); } ?>
 </p>
 
 <div id="plugin_settings">
     <?php 
-        if ($plugin->folder == "") {
-            $plugin->check_actions('admin_sidebar_plugin_settings');
+        if ($plugins->getFolder() == "") {
+            $plugins->pluginHook('admin_sidebar_plugin_settings');
         } else {
-            $plugin->check_actions('admin_plugin_settings', true, $plugin->folder); 
+            $plugins->pluginHook('admin_plugin_settings', true, $plugins->getFolder()); 
         }
     ?>
 </div>

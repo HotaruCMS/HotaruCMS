@@ -2,10 +2,10 @@
 /**
  * name: Users
  * description: Manages users within Hotaru.
- * version: 0.3
+ * version: 0.4
  * folder: users
- * prefix: usr
- * hooks: hotaru_header, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, submit_list_filter
+ * class: Users
+ * hooks: hotaru_header, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs
  *
  * PHP version 5
  *
@@ -31,605 +31,664 @@
  
 return false; die(); // die on direct access.
 
-
-/**
- * Create a "usermeta" table when on installation, if it doesn't already exist
- */
-function usr_install_plugin()
+class Users extends PluginFunctions
 {
-    global $db, $plugin, $lang;
-    
-    // include language file
-    $plugin->include_language('users');
-    
-    // Create a new empty table called "usermeta"
-    $exists = $db->table_exists('usermeta');
-    if (!$exists) {
-        //echo "table doesn't exist. Stopping before creation."; exit;
-        $sql = "CREATE TABLE `" . DB_PREFIX . "usermeta` (
-          `usermeta_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-          `usermeta_userid` int(20) NOT NULL DEFAULT 0,
-          `usermeta_key` varchar(255) NULL,
-          `usermeta_value` text NULL,
-          `usermeta_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-           `usermeta_updateby` int(20) NOT NULL DEFAULT 0, 
-          INDEX  (`usermeta_userid`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='User Meta';";
-        $db->query($sql); 
-    }
-    
-    // Default settings (Note: we can't use $post because it hasn't been filled yet.)
-    $plugin->plugin_settings_update('users', 'users_recaptcha_enabled', '');    
-    $plugin->plugin_settings_update('users', 'users_recaptcha_pubkey', '');    
-    $plugin->plugin_settings_update('users', 'users_recaptcha_privkey', '');
-    $plugin->plugin_settings_update('users', 'users_emailconf_enabled', '');
-    
-    // Include language file. Also included in hotaru_header, but needed here  
-    // to prevent errors immediately after installation.
-    $plugin->include_language('users');    
-    
-}
-
-
-/**
- * Define a global "TABLE_TAGSusermeta" constant for referring to the db table
- */
-function usr_hotaru_header() {
-    global $hotaru, $lang, $cage, $plugin, $userbase;
-
-    if (!defined('TABLE_USERMETA')) { define("TABLE_USERMETA", DB_PREFIX . 'usermeta'); }
-    
-    // include language file
-    $plugin->include_language('users');
-    
-    if ($username = $cage->get->testUsername('user')) {
-        $hotaru->title = $username;
-    }
-    
-    // Create a new global object called "userbase" (in addition to the default "current_user").
-    $userbase = new Userbase();
-    $vars['userbase'] = $userbase; 
-    return $vars; 
-}
-
-
-/**
- * Put a link to the settings page in the Admin sidebar under Plugin Settings
- */
-function usr_admin_sidebar_plugin_settings()
-{
-    echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>'users'), 'admin') . "'>Users</a></li>";
-}
-
-
- /**
- * Call the function for displaying Admin settings
- *
- * @return true
- */
-function usr_admin_plugin_settings()
-{
-    require_once(PLUGINS . 'users/users_settings.php');
-    usr_settings();
-    return true;
-}
-
-
-/**
- * Add links to the end of the navigation bar
- */
-function usr_navigation_users()
-{
-    global $current_user, $lang, $hotaru;
-    
-    if ($current_user->logged_in) {
-        if ($hotaru->title == 'profile') { $status = "id='navigation_active'"; } else { $status = ""; }
-        echo "<li><a  " . $status . " href='" . url(array('page'=>'profile')) . "'>" . $lang["users_profile"] . "</a></li>\n";
-        
-        if ($hotaru->title == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
-        echo "<li><a  " . $status . " href='" . url(array('page'=>'logout')) . "'>" . $lang["users_logout"] . "</a></li>\n";
-        
-        if ($current_user->role == 'admin') {
-            
-            if ($hotaru->title == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
-            echo "<li><a  " . $status . " href='" . url(array(), 'admin') . "'>" . $lang["users_admin"] . "</a></li>\n";
-        }
-    } else {    
-        if ($hotaru->title == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
-        echo "<li><a  " . $status . " href='" . url(array('page'=>'login')) . "'>" . $lang["users_login"] . "</a></li>\n";
-        
-        if ($hotaru->title == 'register') { $status = "id='navigation_active'"; } else { $status = ""; }
-        echo "<li><a  " . $status . " href='" . url(array('page'=>'register')) . "'>" . $lang["users_register"] . "</a></li>\n";
-    }
-}
-
-
-/**
- * This function does work *before* output is sent to the page.
- *
- * @return false
- */
-function usr_theme_index_replace()
-{
-    global $hotaru, $cage, $current_user, $userbase, $plugin;
-    global $send_email_confirmation;
-    
-    // $send_email_confirmation set to true in "is_page('register')" if email confirmation is enabled
-    // it's a global so we can use it in usr_theme_index_main
-    $send_email_confirmation = false; 
-    
-    // Pages you have to be logged in for...
-    if ($current_user->logged_in) {
-         if ($hotaru->is_page('logout')) {
-            $current_user->destroy_cookie_and_session();
-            header("Location: " . BASEURL);
-        } elseif ($hotaru->is_page('profile')) {
-            usr_update_general();
-            usr_update_password();    
-        } 
-                
-    // Pages you have to be logged out for...
-    } else {
-        if ($hotaru->is_page('register')) {
-            $userbase->userbase_vars['users_recaptcha_enabled'] = $plugin->plugin_settings('users', 'users_recaptcha_enabled');
-            $userbase->userbase_vars['users_emailconf_enabled'] = $plugin->plugin_settings('users', 'users_emailconf_enabled');
-            $user_id = usr_register();
-            if ($user_id) { 
-                // success!
-                if ($userbase->userbase_vars['users_emailconf_enabled']) {
-                    $send_email_confirmation = true;
-                    usr_send_confirmation_email($user_id);
-                    // fall through and display "email sent" message
-                } else {
-                    // redirect to login page
-                    header("Location: " . BASEURL . "index.php?page=login");
-                }
-            }
-        } elseif ($hotaru->is_page('login')) {
-            if (usr_login()) { 
-                // success, return to front page, logged IN.
-                header("Location: " . BASEURL);
-            } 
-        }     
-    }
-    return false;
-}
-
-
-/**
- * Display various forms within the body of the page.
- *
- * @return bool
- */
-function usr_theme_index_main()
-{
-    global $hotaru, $cage, $current_user, $userbase, $lang;
-    global $send_email_confirmation;
-    
-    // Pages you have to be logged in for...
-    if ($current_user->logged_in) {
-        if ($hotaru->is_page('profile')) {
-            $hotaru->display_template('update', 'users');
-            return true;
-        } else {
-            return false;
-        }
-        
-    // Pages you have to be logged out for...
-    } else {
-        if ($hotaru->is_page('register')) {
-            if ($send_email_confirmation) {
-                $hotaru->messages[$lang['users_register_emailconf_sent']] = 'green';
-                $hotaru->show_messages();
-                return true;
-            }
-            $hotaru->display_template('register', 'users');
-            return true;    
-        } elseif ($hotaru->is_page('login')) {
-            $hotaru->display_template('login', 'users');
-            return true;
-        } elseif ($hotaru->is_page('emailconf')) {
-            usr_check_email_confirmation();
-            $hotaru->show_messages();
-            return true;
-        } else {
-            return false;
-        }    
-    }
-    return false;
-}
-
-
-/**
- * Filter and breadcrumbs for users
- *
- * @return bool
- */
-function usr_submit_list_filter() 
-{
-    global $hotaru, $current_user, $cage, $filter, $lang, $page_title;
-
-    if ($cage->get->keyExists('user')) 
+    /**
+     * Create a "usermeta" table when on installation, if it doesn't already exist
+     */
+    public function install_plugin()
     {
-        $filter['post_author = %d'] = $current_user->get_user_id($cage->get->testUsername('user')); 
-        $rss = " <a href='" . url(array('page'=>'rss', 'user'=>$cage->get->testUsername('user'))) . "'>";
-        $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
-        // Undo the filter that limits results to either 'top' or 'new' (See submit.php -> sub_prepare_list())
-        if(isset($filter['post_status = %s'])) { unset($filter['post_status = %s']); }
-        $filter['post_status != %s'] = 'processing';
-        $page_title = $lang["submit_page_breadcrumbs_user"] . " &raquo; " . $hotaru->title . $rss;
+        global $db, $lang, $current_user;
         
-        return true;    
+        // include language file
+        $this->includeLanguage();
+        
+        // Create a new empty table called "usermeta"
+        $exists = $db->table_exists('usermeta');
+        if (!$exists) {
+            //echo "table doesn't exist. Stopping before creation."; exit;
+            $sql = "CREATE TABLE `" . DB_PREFIX . "usermeta` (
+              `usermeta_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+              `usermeta_userid` int(20) NOT NULL DEFAULT 0,
+              `usermeta_key` varchar(255) NULL,
+              `usermeta_value` text NULL,
+              `usermeta_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+              `usermeta_updateby` int(20) NOT NULL DEFAULT 0, 
+              INDEX  (`usermeta_userid`)
+            ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='User Meta';";
+            $db->query($sql); 
+        }
+        
+        $this->updateSetting('users_recaptcha_enabled', '');    
+        $this->updateSetting('users_recaptcha_pubkey', '');    
+        $this->updateSetting('users_recaptcha_privkey', '');
+        $this->updateSetting('users_emailconf_enabled', '');
+        
+        // Include language file. Also included in hotaru_header, but needed here  
+        // to prevent errors immediately after installation.
+        $this->includeLanguage();    
+        
+        $current_user->addPluginPermissions(); // won't work because this plugin isn't finished installing.
+        
     }
     
-    return false;    
-}
-
-
- /**
- * Change username or email
- *
- * @return bool
- */
-function usr_update_general()
-{
-    global $hotaru, $cage, $lang, $current_user;
     
-    $error = 0;
+    /**
+     * Define a global "TABLE_TAGSusermeta" constant for referring to the db table
+     */
+    public function hotaru_header() {
+        global $hotaru, $lang, $cage, $userbase;
     
-    // Updating general profile info
-    if ($cage->post->testAlnumLines('users_type') == 'update_general') {
-        $username_check = $cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
-        if ($username_check) {
-            $current_user->username = $username_check;
-        } else {
-            $hotaru->messages[$lang['users_register_username_error']] = 'red';
-            $error = 1;
+        if (!defined('TABLE_USERMETA')) { define("TABLE_USERMETA", DB_PREFIX . 'usermeta'); }
+        
+        // include language file
+        $this->includeLanguage();
+        
+        if ($username = $cage->get->testUsername('user')) {
+            $hotaru->setTitle($username);
         }
-                            
-        $email_check = $cage->post->testEmail('email');    
-        if ($email_check) {
-            $current_user->email = $email_check;
-        } else {
-            $hotaru->messages[$lang['users_register_email_error']] = 'red';
-            $error = 1;
+        
+        // Create a new global object called "userbase" (in addition to the default "current_user").
+        $userbase = new Userbase();
+        
+        $vars['userbase'] = $userbase; 
+        return $vars; 
+    }
+    
+    
+     /**
+     * Call the function for displaying Admin settings
+     *
+     * @return true
+     */
+    public function admin_plugin_settings()
+    {
+        require_once(PLUGINS . 'users/users_settings.php');
+        $usersSettings = new UsersSettings();
+        $usersSettings->settings($this->folder);
+        return true;
+    }
+    
+    
+    /**
+     * Add links to the end of the navigation bar
+     */
+    public function navigation_users()
+    {
+        global $current_user, $lang, $hotaru;
+        
+        if ($current_user->getLoggedIn()) {
+            if ($hotaru->getTitle() == 'account') { $status = "id='navigation_active'"; } else { $status = ""; }
+            echo "<li><a  " . $status . " href='" . url(array('page'=>'account')) . "'>" . $lang["users_account"] . "</a></li>\n";
+            
+            if ($hotaru->getTitle() == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
+            echo "<li><a  " . $status . " href='" . url(array('page'=>'logout')) . "'>" . $lang["users_logout"] . "</a></li>\n";
+            
+            if ($current_user->getPermission('can_access_admin') == 'yes') {
+                
+                if ($hotaru->getTitle() == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
+                echo "<li><a  " . $status . " href='" . url(array(), 'admin') . "'>" . $lang["users_admin"] . "</a></li>\n";
+            }
+        } else {    
+            if ($hotaru->getTitle() == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
+            echo "<li><a  " . $status . " href='" . url(array('page'=>'login')) . "'>" . $lang["users_login"] . "</a></li>\n";
+            
+            if ($hotaru->getTitle() == 'register') { $status = "id='navigation_active'"; } else { $status = ""; }
+            echo "<li><a  " . $status . " href='" . url(array('page'=>'register')) . "'>" . $lang["users_register"] . "</a></li>\n";
         }
     }
     
-    if (!isset($username_check) && !isset($email_check)) {
-        $username_check = $current_user->username;
-        $email_check = $current_user->email;
-        // do nothing
-    } elseif ($error == 0) {
-        $result = $current_user->user_exists(0, $username_check, $email_check);
-        if ($result != 4) { // 4 is returned when the user does not exist in the database
-            //success
-            $current_user->update_user_basic();
-            $current_user->set_cookie(0);
-            $hotaru->messages[$lang['users_update_success']] = 'green';
-            return true;
+    
+    /**
+     * This function does work *before* output is sent to the page.
+     *
+     * @return false
+     */
+    public function theme_index_replace()
+    {
+        global $hotaru, $cage, $current_user, $userbase;
+        global $send_email_confirmation, $checks, $userid;
+        
+        // $send_email_confirmation set to true in "is_page('register')" if email confirmation is enabled
+        // it's a global so we can use it in usr_theme_index_main
+        $send_email_confirmation = false; 
+        
+        // Pages you have to be logged in for...
+        if ($current_user->getLoggedIn()) {
+            if ($hotaru->isPage('logout')) {
+                $current_user->destroyCookieAndSession();
+                header("Location: " . BASEURL);
+            } elseif ($hotaru->isPage('account')) {
+                if ($user = $cage->get->testUsername('user')) {
+                    $userid = $userbase->getUserIdFromName($user);
+                } else {
+                    $userid = $cage->post->testInt('userid');
+                }
+                // if $userid is blank it defaults to current_user->getId();
+                $checks = $userbase->updateAccount($userid);
+            } 
+                    
+        // Pages you have to be logged out for...
         } else {
-            //fail
-            $hotaru->messages[$lang["users_register_unexpected_error"]] = 'red';
-            return false;
+            if ($hotaru->isPage('register')) {
+                $userbase->vars['usersRecaptchaEnabled'] = $this->getSetting('users_recaptcha_enabled');
+                $userbase->vars['usersEmailConfEnabled'] = $this->getSetting('users_emailconf_enabled');
+                $user_id = $this->register();
+                if ($user_id) { 
+                    // success!
+                    if ($userbase->vars['usersEmailConfEnabled']) {
+                        $send_email_confirmation = true;
+                        $this->sendConfirmationEmail($user_id);
+                        // fall through and display "email sent" message
+                    } else {
+                        // redirect to login page
+                        header("Location: " . BASEURL . "index.php?page=login");
+                    }
+                }
+            } elseif ($hotaru->isPage('login')) {
+                if ($this->login()) { 
+                    // success, return to front page, logged IN.
+                    header("Location: " . BASEURL);
+                } 
+            }     
         }
-    } else {
-        // error must = 1 so fall through and display the form again
         return false;
     }
-}
-
-
- /**
- * Enable a user to change their password
- *
- * @return bool
- */
-function usr_update_password()
-{
-    global $hotaru, $cage, $lang, $current_user;
     
-    $error = 0;
     
-    // Updating password
-    if ($cage->post->testAlnumLines('users_type') == 'update_password') {
-        $password_check_old = $cage->post->testPassword('password_old');    
+    /**
+     * Display various forms within the body of the page.
+     *
+     * @return bool
+     */
+    public function theme_index_main()
+    {
+        global $hotaru, $cage, $current_user, $userbase, $lang;
+        global $send_email_confirmation;
         
-        if ($current_user->login_check($current_user->username, $password_check_old)) {
-            // safe, the old password matches the password for this user.
-        } else {
-            $hotaru->messages[$lang['users_update_password_error_old']] = 'red';
-            $error = 1;
-        }
-    
-        $password_check_new = $cage->post->testPassword('password_new');    
-        if ($password_check_new) {
-            $password_check_new2 = $cage->post->testPassword('password_new2');    
-            if ($password_check_new2) { 
-                if ($password_check_new == $password_check_new2) {
-                    // safe, the two new password fields match
-                } else {
-                    $hotaru->messages[$lang['users_update_password_error_match']] = 'red';
-                    $error = 1;
-                }
+        // Pages you have to be logged in for...
+        if ($current_user->getLoggedIn()) {
+            if ($hotaru->isPage('account')) {
+                // Note: the "account" template calls the functions it needs 
+                // from the UserBase class.
+                $hotaru->displayTemplate('account', 'users');
+                return true;
+            } elseif ($hotaru->isPage('permissions') && ($current_user->getPermission('can_access_admin') == 'yes')) {
+                $this->editPermissions();
+                return true;
             } else {
-                $hotaru->messages[$lang['users_update_password_error_new']] = 'red';
-                $error = 1;
+                return false;
+            }
+            
+        // Pages you have to be logged out for...
+        } else {
+            if ($hotaru->isPage('register')) {
+                if ($send_email_confirmation) {
+                    $hotaru->messages[$lang['users_register_emailconf_sent']] = 'green';
+                    $hotaru->showMessages();
+                    return true;
+                }
+                $hotaru->displayTemplate('register', 'users');
+                return true;    
+            } elseif ($hotaru->isPage('login')) {
+                $hotaru->displayTemplate('login', 'users');
+                return true;
+            } elseif ($hotaru->isPage('emailconf')) {
+                $this->checkEmailConfirmation();
+                $hotaru->showMessages();
+                return true;
+            } else {
+                return false;
+            }    
+        }
+        return false;
+    }
+    
+    
+    /**
+     * Filter and breadcrumbs for users
+     *
+     * @return bool
+     */
+    public function post_list_filter() 
+    {
+        global $hotaru, $current_user, $cage, $filter, $lang, $page_title;
+    
+        if ($cage->get->keyExists('user')) 
+        {
+            $filter['post_author = %d'] = $current_user->getUserIdFromName($cage->get->testUsername('user')); 
+            $rss = " <a href='" . url(array('page'=>'rss', 'user'=>$cage->get->testUsername('user'))) . "'>";
+            $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
+            // Undo the filter that limits results to either 'top' or 'new' (See submit.php -> sub_prepare_list())
+            if(isset($filter['post_status = %s'])) { unset($filter['post_status = %s']); }
+            $filter['post_status != %s'] = 'processing';
+            $page_title = $lang["post_breadcrumbs_user"] . " &raquo; " . $hotaru->getTitle() . $rss;
+            
+            $hotaru->setPageType('user');
+            
+            return true;    
+        }
+        
+        return false;    
+    }
+    
+    
+     /**
+     * User Login
+     *
+     * @return bool
+     */
+    public function login()
+    {
+        global $hotaru, $cage, $lang;
+        
+        $current_user = new UserBase();
+        
+        if (!$username_check = $cage->post->testUsername('username')) {
+            $username_check = "";
+        } 
+        if (!$password_check = $cage->post->testPassword('password')) {
+            $password_check = "";
+        }
+        
+        if ($username_check != "" || $password_check != "") {
+            $login_result = $current_user->loginCheck($username_check, $password_check);
+            if ($login_result) {
+                    //success
+                                
+                    if ($cage->post->getInt('remember') == 1){ $remember = 1; } else { $remember = 0; }
+                    $current_user->setName($username_check);
+                    $current_user->getUserBasic(0, $current_user->userName);
+                    
+                    $userbase->vars['usersEmailConfEnabled'] = $this->getSetting('users_emailconf_enabled');
+                    
+                    if ($userbase->vars['usersEmailConfEnabled'] && ($current_user->getEmailValid() == 0)) {
+                        $this->sendConfirmationEmail($current_user->getId());
+                        $hotaru->messages[$lang["users_login_failed_email_not_validated"]] = 'red';
+                        $hotaru->messages[$lang["users_login_failed_email_request_sent"]] = 'green';
+                        return false;
+                    }
+                    
+                    $current_user->setCookie($remember);
+                    $current_user->setLoggedIn(true);
+                    $current_user->updateUserLastLogin();
+                    return true;
+            } else {
+                    // login failed
+                    $hotaru->messages[$lang["users_login_failed"]] = 'red';
             }
         } else {
-            $hotaru->messages[$lang['users_update_password_error_not_provided']] = 'red';
-            $error = 1;
-        }
-                    
-    }
+        
+            // forgotten password request
+            if ($cage->post->keyExists('forgotten_password')) {
+                $this->password();
+            }
             
-    if (!isset($password_check_old) && !isset($password_check_new) && !isset($password_check_new2)) {
-        $password_check_old = "";
-        $password_check_new = "";
-        $password_check_new2 = "";
-        // do nothing
-    } elseif ($error == 0) {
-        $result = $current_user->user_exists(0, $current_user->username, $current_user->email);
-        if ($result != 4) { // 4 is returned when the user does not exist in the database
-            //success
-            $current_user->password = $current_user->generateHash($password_check_new);
-            $current_user->update_user_basic();
-            $current_user->set_cookie(0);
-            $hotaru->messages[$lang['users_update_success']] = 'green';
-            return true;
-        } else {
-            //fail
-            $hotaru->messages[$lang["users_register_unexpected_error"]] = 'red';
-            return false;
+            // confirming forgotten password email
+            $passconf = $cage->get->getAlnum('passconf');
+            $userid = $cage->get->testInt('userid');
+            
+            if ($passconf && $userid) {
+                if ($current_user->newRandomPassword($userid, $passconf)) {
+                    $hotaru->messages[$lang['users_email_password_conf_success']] = 'green';
+                } else {
+                    $hotaru->messages[$lang['users_email_password_conf_fail']] = 'red';
+                }
+            }
         }
-    } else {
-        // error must = 1 so fall through and display the form again
         return false;
     }
-}
-
-
- /**
- * User Login
- *
- * @return bool
- */
-function usr_login()
-{
-    global $hotaru, $cage, $lang, $plugin;
     
-    $current_user = new UserBase();
     
-    if (!$username_check = $cage->post->testUsername('username')) {
-        $username_check = "";
-    } 
-    if (!$password_check = $cage->post->testPassword('password')) {
-        $password_check = "";
-    }
-    
-    if ($username_check != "" || $password_check != "") {
-        $login_result = $current_user->login_check($username_check, $password_check);
-        if ($login_result) {
+     /**
+     * Password forgotten
+     * 
+     * @return bool
+     */
+    public function password()
+    {
+        global $cage, $lang, $current_user, $hotaru;
+        
+        // Check email
+        if (!$email_check = $cage->post->testEmail('email')) { 
+            $email_check = ''; 
+            // login failed
+            $hotaru->messages[$lang["users_email_invalid"]] = 'red';
+            return false;
+        } 
+                    
+        $valid_email = $current_user->validEmail($email_check);
+        $userid = $current_user->getUserIdFromEmail($valid_email);
+        
+        if ($valid_email && $userid) {
                 //success
-                            
-                if ($cage->post->getInt('remember') == 1){ $remember = 1; } else { $remember = 0; }
-                $current_user->username = $username_check;
-                $current_user->get_user_basic(0, $current_user->username);
-                
-                $userbase->userbase_vars['users_emailconf_enabled'] = $plugin->plugin_settings('users', 'users_emailconf_enabled');
-                
-                if ($userbase->userbase_vars['users_emailconf_enabled'] && ($current_user->email_valid == 0)) {
-                    usr_send_confirmation_email($current_user->id);
-                    $hotaru->messages[$lang["users_login_failed_email_not_validated"]] = 'red';
-                    $hotaru->messages[$lang["users_login_failed_email_request_sent"]] = 'green';
-                    return false;
-                }
-                
-                $current_user->set_cookie($remember);
-                $current_user->logged_in = true;
-                $current_user->update_user_lastlogin();
+                $current_user->sendPasswordConf($userid, $valid_email);
+                $hotaru->messages[$lang['users_email_password_conf_sent']] = 'green';
                 return true;
         } else {
                 // login failed
-                $hotaru->messages[$lang["users_login_failed"]] = 'red';
+                $hotaru->messages[$lang["users_email_invalid"]] = 'red';
+                return false;
         }
-    } 
-    return false;
-}
-
-
- /**
- * Register a new user
- *
- * @return false
- */
-function usr_register()
-{
-    global $db, $hotaru, $cage, $lang, $userbase, $plugin;
-    
-    $current_user = new UserBase();
-    
-    if ($userbase->userbase_vars['users_recaptcha_enabled']) {
-        require_once(PLUGINS . 'users/recaptcha/recaptchalib.php');
     }
     
-    $error = 0;
-    if ($cage->post->getAlpha('users_type') == 'register') {
     
-        $username_check = $cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
-        if ($username_check) {
-            $current_user->username = $username_check;
-        } else {
-            $hotaru->messages[$lang['users_register_username_error']] = 'red';
-            $error = 1;
+     /**
+     * Register a new user
+     *
+     * @return false
+     */
+    public function register()
+    {
+        global $db, $hotaru, $cage, $lang, $userbase;
+        
+        $current_user = new UserBase();
+        
+        if ($userbase->vars['usersRecaptchaEnabled']) {
+            require_once(PLUGINS . 'users/recaptcha/recaptchalib.php');
         }
-                
-        $password_check = $cage->post->testPassword('password');    
-        if ($password_check) {
-            $password2_check = $cage->post->testPassword('password2');
-            if ($password_check == $password2_check) {
-                // safe, the two new password fields match
-                $current_user->password = $userbase->generateHash($password_check);
+        
+        $error = 0;
+        if ($cage->post->getAlpha('users_type') == 'register') {
+        
+            $username_check = $cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
+            if ($username_check) {
+                $current_user->setName($username_check);
             } else {
-                $hotaru->messages[$lang['users_register_password_match_error']] = 'red';
+                $hotaru->messages[$lang['users_register_username_error']] = 'red';
                 $error = 1;
             }
-            
-        } else {
-            $hotaru->messages[$lang['users_register_password_error']] = 'red';
-            $error = 1;
-        }
                     
-        $email_check = $cage->post->testEmail('email');    
-        if ($email_check) {
-            $current_user->email = $email_check;
-        } else {
-            $hotaru->messages[$lang['users_register_email_error']] = 'red';
-            $error = 1;
-        }
-    
-        if ($userbase->userbase_vars['users_recaptcha_enabled']) {
-                                    
-            $recaptcha_pubkey = $plugin->plugin_settings('users', 'users_recaptcha_pubkey');
-            $recaptcha_privkey = $plugin->plugin_settings('users', 'users_recaptcha_privkey');
-            
-            $rc_resp = null;
-            $rc_error = null;
-            
-            # was there a reCAPTCHA response?
-            if ($cage->post->keyExists('recaptcha_response_field')) {
-                    $rc_resp = recaptcha_check_answer($recaptcha_privkey,
-                                                    $cage->server->getRaw('REMOTE_ADDR'),
-                                                    $cage->post->getRaw('recaptcha_challenge_field'),
-                                                    $cage->post->getRaw('recaptcha_response_field'));
-                                                    
-                    if ($rc_resp->is_valid) {
-                            // success, do nothing.
-                    } else {
-                            # set the error code so that we can display it
-                            //$rc_error = $rc_resp->error;
-                            $hotaru->messages[$lang['users_register_recaptcha_error']] = 'red';
+            $password_check = $cage->post->testPassword('password');    
+            if ($password_check) {
+                $password2_check = $cage->post->testPassword('password2');
+                if ($password_check == $password2_check) {
+                    // safe, the two new password fields match
+                    $current_user->setPassword($userbase->generateHash($password_check));
+                } else {
+                    $hotaru->messages[$lang['users_register_password_match_error']] = 'red';
                     $error = 1;
-                    }
+                }
+                
             } else {
-                $hotaru->messages[$lang['users_register_recaptcha_empty']] = 'red';
-                    $error = 1;
+                $hotaru->messages[$lang['users_register_password_error']] = 'red';
+                $error = 1;
             }
-        }
-    }    
+                        
+            $email_check = $cage->post->testEmail('email');    
+            if ($email_check) {
+                $current_user->setEmail($email_check);
+            } else {
+                $hotaru->messages[$lang['users_register_email_error']] = 'red';
+                $error = 1;
+            }
+        
+            if ($userbase->vars['usersRecaptchaEnabled']) {
+                                        
+                $recaptcha_pubkey = $this->getSetting('users_recaptcha_pubkey');
+                $recaptcha_privkey = $this->getSetting('users_recaptcha_privkey');
+                
+                $rc_resp = null;
+                $rc_error = null;
+                
+                # was there a reCAPTCHA response?
+                if ($cage->post->keyExists('recaptcha_response_field')) {
+                        $rc_resp = recaptcha_check_answer($recaptcha_privkey,
+                                                        $cage->server->getRaw('REMOTE_ADDR'),
+                                                        $cage->post->getRaw('recaptcha_challenge_field'),
+                                                        $cage->post->getRaw('recaptcha_response_field'));
+                                                        
+                        if ($rc_resp->is_valid) {
+                                // success, do nothing.
+                        } else {
+                                # set the error code so that we can display it
+                                //$rc_error = $rc_resp->error;
+                                $hotaru->messages[$lang['users_register_recaptcha_error']] = 'red';
+                        $error = 1;
+                        }
+                } else {
+                    $hotaru->messages[$lang['users_register_recaptcha_empty']] = 'red';
+                        $error = 1;
+                }
+            }
+        }    
+        
+        if (!isset($username_check) && !isset($password_check) && !isset($password2_check) && !isset($email_check)) {
+            $username_check = "";
+            $password_check = "";
+            $password2_check = "";
+            $email_check = "";
+            // do nothing
+        } elseif ($error == 0) {
+            $blocked = $this->checkBlocked($username_check, $email_check); // true if blocked, false if safe
+            $result = $current_user->userExists(0, $username_check, $email_check);
+            if (!$blocked && $result == 4) {
+                //success
+                $current_user->addUserBasic();
+                $last_insert_id = $db->get_var($db->prepare("SELECT LAST_INSERT_ID()"));
+                return $last_insert_id; // so we can retrieve this user's details for the email confirmation step;
+            } elseif ($result == 0) {
+                $hotaru->messages[$lang['users_register_id_exists']] = 'red';
     
-    if (!isset($username_check) && !isset($password_check) && !isset($password2_check) && !isset($email_check)) {
-        $username_check = "";
-        $password_check = "";
-        $password2_check = "";
-        $email_check = "";
-        // do nothing
-    } elseif ($error == 0) {
-        $result = $current_user->user_exists(0, $username_check, $email_check);
-        if ($result == 4) {
-            //success
-            $current_user->add_user_basic();
-            $last_insert_id = $db->get_var($db->prepare("SELECT LAST_INSERT_ID()"));
-            return $last_insert_id; // so we can retrieve this user's details for the email confirmation step;
-        } elseif ($result == 0) {
-            $hotaru->messages[$lang['users_register_id_exists']] = 'red';
-
-        } elseif ($result == 1) {
-            $hotaru->messages[$lang['users_register_username_exists']] = 'red';
-
-        } elseif ($result == 2) {
-            $hotaru->messages[$lang['users_register_email_exists']] = 'red';
+            } elseif ($result == 1) {
+                $hotaru->messages[$lang['users_register_username_exists']] = 'red';
+    
+            } elseif ($result == 2) {
+                $hotaru->messages[$lang['users_register_email_exists']] = 'red';
+            } elseif ($blocked) {
+                $hotaru->messages[$lang['users_register_user_blocked']] = 'red';
+            } else {
+                $hotaru->messages[$lang["users_register_unexpected_error"]] = 'red';
+            }
         } else {
-            $hotaru->messages[$lang["users_register_unexpected_error"]] = 'red';
+            // error must = 1 so fall through and display the form again
         }
-    } else {
-        // error must = 1 so fall through and display the form again
+        return false;
     }
-    return false;
-}
-
-
- /**
- * Send an email to the newly registered user
- *
- * @param int $user_id
- */
-function usr_send_confirmation_email($user_id)
-{
-    global $db, $hotaru, $cage, $lang, $current_user;
     
-    // Check that the site email has been changed from the default...
-    /*
-    if (SITE_EMAIL == "admin@hotarucms.org") {
-        echo "Error: Site email not updated in Admin -> Settings";
-        die(); exit;
-    } 
-    */
+    
+    /**
+     * Check if user is on the blocked list
+     *
+     * @param string $username
+     * @param string $email
+     * @return bool - true if blocked
+     */
+    public function checkBlocked($username, $email)
+    {
+        global $cage;
         
-    $current_user->get_user_basic($user_id);
-    
-    // generate the email confirmation code
-    $email_conf = md5(crypt(md5($current_user->email),md5($current_user->email)));
-    
-    // store the hash in the user table
-    $sql = "UPDATE " . TABLE_USERS . " SET user_email_conf = %s WHERE user_id = %d";
-    $db->query($db->prepare($sql, $email_conf, $current_user->id));
-    
-    $line_break = "\r\n\r\n";
-    $next_line = "\r\n";
-    
-    // send email
-    $subject = $lang['users_register_emailconf_subject'];
-    $body = $lang['users_register_emailconf_body_hello'] . " " . $current_user->username;
-    $body .= $line_break;
-    $body .= $lang['users_register_emailconf_body_welcome'];
-    $body .= $line_break;
-    $body .= $lang['users_register_emailconf_body_click'];
-    $body .= $line_break;
-    $body .= BASEURL . "index.php?page=emailconf&plugin=users&id=" . $current_user->id . "&conf=" . $email_conf;
-    $body .= $line_break;
-    $body .= $lang['users_register_emailconf_body_regards'];
-    $body .= $next_line;
-    $body .= $lang['users_register_emailconf_body_sign'];
-    $to = $current_user->email;
-    $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
-
-    mail($to, $subject, $body, $headers);    
-}
-
-
- /**
- * Check email confirmation code
- *
- * @return true;
- */
-function usr_check_email_confirmation()
-{
-    global $db, $hotaru, $cage, $lang, $current_user;
-    
-    $user_id = $cage->get->getInt('id');
-    $conf = $cage->get->getAlnum('conf');
-    
-    $current_user->get_user_basic($user_id);
-    
-    if (!$user_id || !$conf) {
-        $hotaru->messages[$lang['users_register_emailconf_fail']] = 'red';
-    }
-    
-    $sql = "SELECT user_email_conf FROM " . TABLE_USERS . " WHERE user_id = %d";
-    $user_email_conf = $db->get_var($db->prepare($sql, $user_id));
-    
-    if ($conf === $user_email_conf) {
-        $sql = "UPDATE " . TABLE_USERS . " SET user_email_valid = %d WHERE user_id = %d";
-        $db->query($db->prepare($sql, 1, $current_user->id));
-    
-        $success_message = $lang['users_register_emailconf_success'] . " <b><a href='" . url(array('page'=>'login')) . "'>" . $lang['users_register_emailconf_success_login'] . "</a></b>";
-        $hotaru->messages[$success_message] = 'green';
-    } else {
-        $hotaru->messages[$lang['users_register_emailconf_fail']] = 'red';
-    }
+        // Is user IP address blocked?
+        $ip = $cage->server->testIp('REMOTE_ADDR');
+        if ($this->isBlocked('ip', $ip)) {
+            return true;
+        }
         
-    return true;
+        // Is email domain blocked?
+        $email_bits = split('@', $email);
+        $email_domain = $email_bits[1];
+        if ($this->isBlocked('email', $email_domain)) {
+            return true;
+        }
+        
+        // Is email blocked?
+        if ($this->isBlocked('email', $email)) {
+            return true;
+        }
+        
+        // Is username blocked?
+        if ($this->isBlocked('user', $username)) {
+            return true;
+        }
+                        
+        return false;   // not blocked
+    }
+    
+    
+     /**
+     * Send an email to the newly registered user
+     *
+     * @param int $user_id
+     */
+    public function sendConfirmationEmail($user_id)
+    {
+        global $db, $hotaru, $cage, $lang, $current_user;
+            
+        $current_user->getUserBasic($user_id);
+        
+        // generate the email confirmation code
+        $email_conf = md5(crypt(md5($current_user->email),md5($current_user->email)));
+        
+        // store the hash in the user table
+        $sql = "UPDATE " . TABLE_USERS . " SET user_email_conf = %s WHERE user_id = %d";
+        $db->query($db->prepare($sql, $email_conf, $current_user->getId()));
+        
+        $line_break = "\r\n\r\n";
+        $next_line = "\r\n";
+        
+        // send email
+        $subject = $lang['users_register_emailconf_subject'];
+        $body = $lang['users_register_emailconf_body_hello'] . " " . $current_user->userName;
+        $body .= $line_break;
+        $body .= $lang['users_register_emailconf_body_welcome'];
+        $body .= $line_break;
+        $body .= $lang['users_register_emailconf_body_click'];
+        $body .= $line_break;
+        $body .= BASEURL . "index.php?page=emailconf&plugin=users&id=" . $current_user->getId() . "&conf=" . $email_conf;
+        $body .= $line_break;
+        $body .= $lang['users_register_emailconf_body_regards'];
+        $body .= $next_line;
+        $body .= $lang['users_register_emailconf_body_sign'];
+        $to = $current_user->email;
+        $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
+    
+        mail($to, $subject, $body, $headers);    
+    }
+    
+    
+     /**
+     * Check email confirmation code
+     *
+     * @return true;
+     */
+    public function checkEmailConfirmation()
+    {
+        global $db, $hotaru, $cage, $lang, $current_user;
+        
+        $user_id = $cage->get->getInt('id');
+        $conf = $cage->get->getAlnum('conf');
+        
+        $current_user->getUserBasic($user_id);
+        
+        if (!$user_id || !$conf) {
+            $hotaru->messages[$lang['users_register_emailconf_fail']] = 'red';
+        }
+        
+        $sql = "SELECT user_email_conf FROM " . TABLE_USERS . " WHERE user_id = %d";
+        $user_email_conf = $db->get_var($db->prepare($sql, $user_id));
+        
+        if ($conf === $user_email_conf) {
+            $sql = "UPDATE " . TABLE_USERS . " SET user_email_valid = %d WHERE user_id = %d";
+            $db->query($db->prepare($sql, 1, $current_user->getId()));
+        
+            $success_message = $lang['users_register_emailconf_success'] . " <b><a href='" . url(array('page'=>'login')) . "'>" . $lang['users_register_emailconf_success_login'] . "</a></b>";
+            $hotaru->messages[$success_message] = 'green';
+        } else {
+            $hotaru->messages[$lang['users_register_emailconf_fail']] = 'red';
+        }
+            
+        return true;
+    }
+    
+    /** 
+     * Enable admins to edit a user
+     */
+    public function submit_post_breadcrumbs()
+    {
+        global $hotaru, $current_user, $user, $lang;
+
+        // $user contaings the target user's username
+        // Make a new instance of UserBase for that user:
+        $member = new UserBase();
+        $member->getUserBasic(0, $user);
+
+        if ($hotaru->getPageType() == 'user' && $current_user->getPermission('can_access_admin') == 'yes') {
+            echo "<div class='special_links_bar'>";
+            echo $lang["users_account_edit"] . " " . $member->getName() . ": ";
+            echo " <a href='" . url(array('page' => 'account', 'user' => $member->getName())) . "'>";
+            echo $lang["users_account_account"] . "</a> | ";
+            echo " <a href='" . url(array('page' => 'permissions', 'user' => $member->getName())) . "'>";
+            echo $lang["users_account_permissions"] . "</a>";
+            echo "</div>";
+        }
+    }
+    
+    
+    /** 
+     * Enable admins to edit a user
+     */
+    public function editPermissions()
+    {
+        global $current_user, $lang, $hotaru, $cage;
+        
+        $user = new UserBase();
+
+        // Read this user...
+        if ($cage->get->keyExists('user')) {
+            $user->getUserbasic(0, $cage->get->testUsername('user'));   // username when viewing perms page
+        } elseif ($cage->post->keyExists('userid')) {
+            $user->getUserbasic($cage->post->testInt('userid'));        // userid when submitting perms form
+        } else {
+            return false;
+        }
+        
+        $perm_options = $user->getDefaultPermissions();
+        $perms = $user->getAllPermissions();
+        
+        // If the form has been submitted...
+        if ($cage->post->keyExists('permissions')) {
+           foreach ($perm_options['options'] as $key => $options) {
+                if ($value = $cage->post->testAlnumLines($key)) {
+                    $user->setPermission($key, $value);
+                }
+            }
+
+            $user->updatePermissions();   // physically store changes in the database
+            
+            // get the newly updated latest permissions:
+            $perm_options = $user->getDefaultPermissions();
+            $perms = $user->getAllPermissions();
+            $hotaru->messages[$lang['users_account_permissions_updated']] = 'green';
+        }
+               
+        // Breadcrumbs:
+        echo "<div id='breadcrumbs'><a href='" . BASEURL . "'>" . $lang["users_home"] . "</a> "; 
+        echo "&raquo; <a href='" . url(array('user' => $user->getName())) . "'>" . $user->getName() . "</a> "; 
+        echo "&raquo; " . $lang["users_account_permissions"] . "</div>";
+            
+        echo '<h2>' . $lang["users_account_user_permissions"] . ': ' . $user->getName() . '</h2>';
+        
+        $hotaru->showMessages();
+            
+        echo "<form name='permissions_form' action='" . BASEURL . "index.php' method='post'>\n";
+        echo "<table class='permissions'>\n";
+        foreach ($perm_options['options'] as $key => $options) {
+            echo "<tr><td>" . make_name($key) . ": </td>\n";
+            foreach($options as $value) {
+                if (isset($perms[$key]) && ($perms[$key] == $value)) { $checked = 'checked'; } else { $checked = ''; } 
+                if ($key == 'can_access_admin' && $user->getRole() == 'admin') { $disabled = 'disabled'; } else { $disabled = ''; }
+                echo "<td><input type='radio' name='" . $key . "' value='" . $value . "' " . $checked . " " . $disabled . "> " . $value . " &nbsp;</td>\n";
+            }
+            echo "</tr>";
+        }
+        
+        echo "</table>\n";
+        echo "<input type='hidden' name='page' value='permissions' />\n";
+        echo "<input type='hidden' name='permissions' value='updated' />\n";
+        echo "<input type='hidden' name='userid' value='" . $user->getId() . "' />\n";
+        echo "<div style='text-align: right'><input class='submit' type='submit' value='" . $lang['users_account_form_submit'] . "' /></div>\n";
+        echo "</form>\n";
+    }
 }
 
 ?>

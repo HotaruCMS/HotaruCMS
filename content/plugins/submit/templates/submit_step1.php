@@ -30,7 +30,7 @@ global $hotaru, $cage, $lang, $post, $post_orig_url;
 
     <div id="breadcrumbs"><a href='<?php echo BASEURL; ?>'><?php echo $lang['submit_form_home']; ?></a> &raquo; <?php echo $lang["submit_form_step1"]; ?></div>
         
-    <?php echo $hotaru->show_message(); ?>
+    <?php echo $hotaru->showMessage(); ?>
             
 
     <?php echo $lang["submit_form_instructions_1"]; ?>

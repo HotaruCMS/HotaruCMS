@@ -26,7 +26,7 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $plugin, $admin, $cage, $lang; // don't remove
+global $plugins, $admin, $cage, $lang; // don't remove
 ?>
 
 <p class="breadcrumbs">
@@ -35,13 +35,13 @@ global $plugin, $admin, $cage, $lang; // don't remove
     &raquo; <?php echo $lang["admin_theme_settings"]; ?>
 </p>
 
-<?php $plugin->check_actions('admin_settings_top'); ?>
+<?php $plugins->pluginHook('admin_settings_top'); ?>
     
     <h2><?php echo $lang["admin_theme_settings_title"]; ?></h2>
     
     <?php $loaded_settings = $admin->settings();    // Prepare or process the form ?>
     
-    <form id='settings_form' name='settings_form' action='<?php echo BASEURL; ?>admin/admin_index.php?page=settings' method='post'>
+    <form id='settings_form' name='settings_form' action='<?php echo BASEURL; ?>admin_index.php?page=settings' method='post'>
     
     <table id="settings">    
     <tr>
@@ -76,4 +76,4 @@ global $plugin, $admin, $cage, $lang; // don't remove
     
     
     
-<?php $plugin->check_actions('admin_settings_bottom'); ?>
+<?php $plugins->pluginHook('admin_settings_bottom'); ?>

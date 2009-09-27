@@ -41,9 +41,9 @@ $lang["sidebar_categories"] = "Categories";
 /* Admin Settings */
 $lang["categories_settings_header"] = "Category Settings";
 $lang["categories_settings_instructions"] = "Choose how you would like categories displayed:";
-$lang["categories_settings_note"] = "<b>Note</b>: If you use the menu bar, the categories widget in the sidebar will be ignored, even if turned on in the Sidebar plugin.";
+$lang["categories_settings_note"] = "<b>Note</b>: If you use the menu bar, the categories widget in the sidebar will be ignored, even if turned on in the Sidebar Widgets plugin.";
 $lang["categories_settings_menubar"] = "Menu bar - categories as a drop-down menu bar";
-$lang["categories_settings_sidebar"] = "Side bar - categories as a tree in the sidebar";
+$lang["categories_settings_sidebar"] = "Side bar - categories as a tree in the sidebar (<b>requires the Sidebar Widgets plugin</b>)";
 $lang["categories_settings_save"] = "Save";
 $lang["categories_settings_saved"] = "Settings saved";
 

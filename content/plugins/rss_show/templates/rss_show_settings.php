@@ -22,11 +22,11 @@
  *
  **************************************************************************************************** */
 
-global $hotaru, $plugin, $lang; // don't remove
+global $hotaru, $plugins, $lang; // don't remove
 
 // Cycle through the RSS feeds, displaying their settings...
 $id = 1;
-while($settings = unserialize($plugin->plugin_settings('rss_show', 'rss_show_' . $id . '_settings'))) {
+while($settings = unserialize($plugins->getSetting('rss_show_' . $id . '_settings', 'rss_show'))) {
 
     // ************* SET VARIABLES *************
     
@@ -59,7 +59,7 @@ while($settings = unserialize($plugin->plugin_settings('rss_show', 'rss_show_' .
 ?>
 
     <h1><?php echo $lang["rss_show_settings"]; ?> [ id: <?php echo $id; ?> ]</h1>
-    <form name='rss_show_form' action='<?php echo BASEURL ?>admin/admin_index.php' method='get'>
+    <form name='rss_show_form' action='<?php echo BASEURL ?>admin_index.php' method='get'>
     
     <?php echo $lang["rss_show_feed_url"]; ?> <input type='text' size=60 name='rss_show_feed' value='<?php echo $settings['rss_show_feed']; ?>' /><br /><br />
     
@@ -115,14 +115,14 @@ while($settings = unserialize($plugin->plugin_settings('rss_show', 'rss_show_' .
     
 <br />
 
-<a href='<?php echo BASEURL; ?>admin/admin_index.php?page=plugin_settings&amp;plugin=rss_show&amp;action=delete_feed&amp;id=<?php echo ($id-1); ?>' style='color: red;'><?php echo $lang["rss_show_delete"]; ?></a> | <a href='<?php echo BASEURL ?>admin/admin_index.php?page=plugin_settings&amp;plugin=rss_show&amp;action=new_feed&amp;id=<?php echo $id; ?>'><?php echo $lang["rss_show_add"]; ?></a><br /><br />
+<a href='<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=rss_show&amp;action=delete_feed&amp;id=<?php echo ($id-1); ?>' style='color: red;'><?php echo $lang["rss_show_delete"]; ?></a> | <a href='<?php echo BASEURL ?>admin_index.php?page=plugin_settings&amp;plugin=rss_show&amp;action=new_feed&amp;id=<?php echo $id; ?>'><?php echo $lang["rss_show_add"]; ?></a><br /><br />
 <div style='padding: 0.8em; line-height: 2.0em; background-color: #f0f0f0; -moz-border-radius: 0.5em;- webkit-border-radius: 0.5em;'>
     <b><?php echo $lang["rss_show_usage"]; ?></b><br />
     <?php echo $lang["rss_show_usage1"]; ?><br />
-    <pre>&lt;?php &#36;plugin-&gt;check_actions('rss_show'); ?&gt;</pre><br />
+    <pre>&lt;?php &#36;plugin-&gt;pluginHook('rss_show'); ?&gt;</pre><br />
     <?php echo $lang["rss_show_usage2"]; ?><br />
-    <pre>&lt;?php &#36;plugin-&gt;check_actions('rss_show', true, '', array(2)); ?&gt;</pre><br />
+    <pre>&lt;?php &#36;plugin-&gt;pluginHook('rss_show', true, '', array(2)); ?&gt;</pre><br />
     <?php echo $lang["rss_show_usage3"]; ?><br />
-    <pre>&lt;?php &#36;plugin-&gt;check_actions('rss_show', true, '', array(1, 2)); ?&gt;</pre><br />
+    <pre>&lt;?php &#36;plugin-&gt;pluginHook('rss_show', true, '', array(1, 2)); ?&gt;</pre><br />
 </div>
     

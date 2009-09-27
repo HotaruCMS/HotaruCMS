@@ -26,7 +26,7 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $plugin; // don't remove
+global $hotaru, $plugins; // don't remove
 ?>
 
 <h2>A New Sidebar</h2>

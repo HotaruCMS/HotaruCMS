@@ -25,11 +25,13 @@
  * @link      http://www.hotarucms.org/
  */
 
-include_once('../../../hotaru_header.php');    // Not the cleanest way of getting to the root...
+require_once('../../../hotaru_settings.php');
+require_once('../../../libs/Hotaru.php');    // Not the cleanest way of getting to the root...
+$hotaru = new Hotaru('no_template');  // the constructor includes everything we need.
 
-global $cage, $db, $current_user, $post, $lang, $plugin;
+global $cage, $db, $current_user, $post, $lang, $plugins;
 
-$plugin->include_language('vote');
+$plugins->includeLanguage('vote', 'vote');
 
 if ($cage->post->keyExists('post_id')) {
     $post_id = $cage->post->testInt('post_id');
@@ -38,16 +40,16 @@ if ($cage->post->keyExists('post_id')) {
     $vote_rating = $cage->post->testAlnumLines('rating');
         
     //get vote settings
-    $vote_settings = unserialize($plugin->plugin_settings('vote', 'vote_settings')); 
+    $vote_settings = unserialize($plugins->getSetting('vote_settings', 'vote')); 
     
     // Only proceed if the user is logged in OR anonyous votes are allowed
-    if ($current_user->logged_in || ($post->post_vars['vote_anonymous_votes'] == 'checked')) {
+    if ($current_user->getLoggedIn() || ($post->vars['voteAnonymousVotes'] == 'checked')) {
             
         // get vote history for this post:
         
-        if ($current_user->logged_in) {
+        if ($current_user->getLoggedIn()) {
             $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND (vote_user_id = %d OR vote_user_ip = %s AND vote_rating != %s)";
-            $voted = $db->get_var($db->prepare($sql, $post_id, $current_user->id, $user_ip, 'alert'));
+            $voted = $db->get_var($db->prepare($sql, $post_id, $current_user->getId(), $user_ip, 'alert'));
         } else {
             $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_ip = %s AND vote_rating != %s";
             $voted = $db->get_var($db->prepare($sql, $post_id, $user_ip, 'alert'));
@@ -60,8 +62,8 @@ if ($cage->post->keyExists('post_id')) {
             return false;
         }
         
-        if ($current_user->logged_in) {
-            $user_id = $current_user->id;
+        if ($current_user->getLoggedIn()) {
+            $user_id = $current_user->getId();
         } else {
             $user_id = 0;    // anonymous users get id 0.
         }
@@ -86,8 +88,15 @@ if ($cage->post->keyExists('post_id')) {
             if ($voted && $voted == 'negative') {
                 $sql = "UPDATE " . TABLE_POSTS . " SET post_votes_down=post_votes_down-1 WHERE post_id = %d";
                 $db->query($db->prepare($sql, $post_id));
-                $sql = "DELETE FROM  " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_user_ip = %s AND vote_type = %s AND vote_rating = %s";
-                $db->query($db->prepare($sql, $post_id, $user_id, $user_ip, $vote_type, $voted));
+                if ($current_user->getLoggedIn()) {
+                    // logged-in user - User ID
+                    $sql = "DELETE FROM  " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_type = %s AND vote_rating = %s";
+                    $db->query($db->prepare($sql, $post_id, $user_id, $vote_type, $voted));
+                } else {
+                    // anonymous user - IP address
+                    $sql = "DELETE FROM  " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_ip = %s AND vote_type = %s AND vote_rating = %s";
+                    $db->query($db->prepare($sql, $post_id, $user_ip, $vote_type, $voted));
+                }
             }
         } else {
             if (!($voted && $vote_type == 'up_down')) {
@@ -98,14 +107,21 @@ if ($cage->post->keyExists('post_id')) {
             if (!($voted && $vote_type == 'vote_unvote')) {
                 // skip this if we are undoing a vote using vote_unvote voting
                 $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d)";
-                $db->query($db->prepare($sql, $post_id, $user_id, $user_ip, $vote_type, $vote_rating, $current_user->id));
+                $db->query($db->prepare($sql, $post_id, $user_id, $user_ip, $vote_type, $vote_rating, $current_user->getId()));
             }
             // Remove positive vote, i.e. undo a vote if the user is changing his/her mind...
             if ($voted && $voted == 'positive') {
                 $sql = "UPDATE " . TABLE_POSTS . " SET post_votes_up=post_votes_up-1 WHERE post_id = %d";
                 $db->query($db->prepare($sql, $post_id));
-                $sql = "DELETE FROM  " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_user_ip = %s AND vote_type = %s AND vote_rating = %s";
-                $db->query($db->prepare($sql, $post_id, $user_id, $user_ip, $vote_type, $voted));
+                if ($current_user->getLoggedIn()) {
+                    // logged-in user - User ID
+                    $sql = "DELETE FROM  " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_type = %s AND vote_rating = %s";
+                    $db->query($db->prepare($sql, $post_id, $user_id, $vote_type, $voted));
+                } else {
+                    // anonymous user - IP address
+                    $sql = "DELETE FROM  " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND AND vote_user_ip = %s AND vote_type = %s AND vote_rating = %s";
+                    $db->query($db->prepare($sql, $post_id, $user_ip, $vote_type, $voted));
+                }
             }
         }
         

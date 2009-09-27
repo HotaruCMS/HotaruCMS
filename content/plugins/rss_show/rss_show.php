@@ -2,9 +2,10 @@
 /**
  * name: RSS Show
  * description: Adds links in the sidebar to the latest posts from a specified RSS feed.
- * version: 0.2
+ * version: 0.3
  * folder: rss_show
  * prefix: rs
+ * requires: sidebar_widgets 0.3
  * hooks: rss_show, install_plugin, hotaru_header, admin_header_include_raw, header_include, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * PHP version 5
@@ -40,7 +41,7 @@ return false; die(); // We don't want to just drop into the file.
  */
 function rs_rss_show($ids)
 {
-    global $hotaru, $plugin, $lang;
+    global $hotaru, $plugins, $lang;
     
         // if no feed id is specified in the plugin hook, we default to 1.
         if (empty($ids)) { $ids[0] = 1; }
@@ -48,7 +49,7 @@ function rs_rss_show($ids)
     foreach ($ids as $id) { 
         
         // Get settings from the database:
-        $settings = unserialize($plugin->plugin_settings('rss_show', 'rss_show_' . $id . '_settings')); 
+        $settings = unserialize($plugins->getSetting('rss_show_' . $id . '_settings', 'rss_show')); 
     
         // Feed settings:
         $feedurl = $settings['rss_show_feed'];
@@ -56,7 +57,7 @@ function rs_rss_show($ids)
         $cache_duration = $settings['rss_show_cache_duration'];
         
         // Get the feed...
-        $feed = $hotaru->new_simplepie($feedurl, $cache, $cache_duration);
+        $feed = $hotaru->newSimplePie($feedurl, $cache, $cache_duration);
         
         if ($feed) {
         
@@ -143,9 +144,9 @@ function sidebar_widget_rss_show($args)
  */
 function rs_hotaru_header()
 {
-    global $plugin, $lang;
+    global $plugins, $lang;
     
-    $plugin->include_language('rss_show');
+    $plugins->includeLanguage('rss_show', 'rss_show');
 }
     
     
@@ -154,9 +155,9 @@ function rs_hotaru_header()
  */
 function rs_header_include()
 {
-    global $plugin;
+    global $plugins;
     
-    $plugin->include_css('rss_show');
+    $plugins->includeCss('rss_show', 'rss_show'); 
 }
 
 
@@ -173,7 +174,7 @@ function rs_admin_header_include_raw()
 {
     global $admin;
     
-    if ($admin->is_settings_page('rss_show')) {
+    if ($admin->isSettingsPage('rss_show')) {
         echo "<script type='text/javascript'>\n";
         echo "$(document).ready(function(){\n";
             echo "$('#rs_cache').click(function () {\n";
@@ -183,6 +184,7 @@ function rs_admin_header_include_raw()
         echo "</script>\n";
     }
 }
+
 
 /**
  * Put a link to the settings page in the Admin sidebar under Plugin Settings
@@ -200,7 +202,7 @@ function rs_admin_sidebar_plugin_settings()
  */
 function rs_install_plugin($id)
 {
-    global $db, $plugin, $lang;
+    global $db, $plugins, $lang;
     
     if (!$id || !is_int($id)) { $id = 1; }
     
@@ -214,12 +216,15 @@ function rs_install_plugin($id)
     $settings['rss_show_content'] = "none";
     
     // parameters: plugin folder name, setting name, setting value
-    $plugin->plugin_settings_update('rss_show', 'rss_show_' . $id . '_settings', serialize($settings));
-    $plugin->plugin_settings_update('sidebar_widgets', 'rss_show_' . $id, $id);
+    $plugins->updateSetting('rss_show_' . $id . '_settings', serialize($settings), 'rss_show');
+    
+    require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
+    $sidebar = new Sidebar();
+    $sidebar->addWidget('rss_show', 'rss_show_' . $id, $id); // plugin name, function name, optional arguments
     
     // Include language file. Also included in hotaru_header, but needed here so 
     // that the link in the Admin sidebar shows immediately after installation.
-    $plugin->include_language('rss_show');
+    $plugins->includeLanguage('rss_show', 'rss_show');
 }
 
 
@@ -228,11 +233,11 @@ function rs_install_plugin($id)
  */
 function rs_admin_plugin_settings()
 {
-    global $hotaru, $plugin;
+    global $hotaru, $plugins;
     
     rs_get_params();    // get any arguments passed from the form
-    $hotaru->show_message();    // display any success or failure messages
-    $hotaru->display_template('rss_show_settings', 'rss_show');
+    $hotaru->showMessage();    // display any success or failure messages
+    $hotaru->displayTemplate('rss_show_settings', 'rss_show');
 }
 
 
@@ -241,21 +246,25 @@ function rs_admin_plugin_settings()
  */
 function rs_get_params()
 {
-    global $cage, $hotaru, $plugin, $lang;
+    global $cage, $hotaru, $plugins, $lang;
     
     if ($action = $cage->get->testAlnumLines('action')) {
         if ($action == 'new_feed') {
             $id = $cage->get->getInt('id');
             rs_install_plugin($id);
             $hotaru->message = $lang["rss_show_feed_added"];
-            $hotaru->message_type = "green";
+            $hotaru->messageType = "green";
             
         } elseif ($action == 'delete_feed') {
             $id = $cage->get->getInt('id');
-            $plugin->plugin_settings_remove_setting('rss_show_' . $id . '_settings');
-            $plugin->plugin_settings_remove_setting('sidebar_widgets', 'rss_show_' . $id);
+            $plugins->deleteSettings('rss_show_' . $id . '_settings'); // setting
+            
+            require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
+            $sidebar = new Sidebar();
+            $sidebar->deleteWidget('rss_show_' . $id); // function suffix
+            
             $hotaru->message = $lang["rss_show_feed_removed"];
-            $hotaru->message_type = "green";
+            $hotaru->messageType = "green";
         }
     } elseif ($id = $cage->get->getInt('rss_show_id')) {
         $parameters = array();
@@ -280,20 +289,20 @@ function rs_get_params()
  */
 function rs_save_settings($id, &$parameters)
 {
-    global $plugin, $hotaru, $lang;
+    global $plugins, $hotaru, $lang;
     
     $hotaru->message = "";
     if ($parameters) {
         if ($parameters['rss_show_feed'] == "") {
                 $hotaru->message = $lang["rss_show_no_changes"];
-                $hotaru->message_type = "red";
+                $hotaru->messageType = "red";
         }
             
         if ($hotaru->message == "") {
             $values = serialize($parameters);
             $hotaru->message = $lang["rss_show_update_successful"];
-            $hotaru->message_type = "green";
-            $plugin->plugin_settings_update('rss_show', 'rss_show_' . $id . '_settings', $values);    
+            $hotaru->messageType = "green";
+            $plugins->updateSetting('rss_show_' . $id . '_settings', $values, 'rss_show');    
         }
     }
     

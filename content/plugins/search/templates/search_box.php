@@ -24,7 +24,8 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $lang;
+global $lang, $current_user;
+if ($current_user->getPermission('can_search') == 'yes') { $disabled = ''; } else { $disabled = 'disabled'; }
 ?>
 
 <h2><?php echo $lang['search_title']; ?></h2>
@@ -34,7 +35,7 @@ global $lang;
         onfocus="if (this.value == '<?php echo $lang['search_text']; ?>') {this.value = '';}"
     />
     <input type="hidden" id="dosearch" />
-    <input id="search_button" type="submit" id="search-submit" value="<?php echo $lang['search_submit']; ?>" />
+    <input id="search_button" type="submit" id="search-submit" value="<?php echo $lang['search_submit']; ?>" <?php echo $disabled; ?> />
 </form>
 
 

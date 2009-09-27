@@ -1,7 +1,7 @@
 <?php 
 /**
  * Theme name: admin_default
- * Template name: login.php
+ * Template name: admin_login.php
  * Template author: Nick Ramsay
  *
  * PHP version 5
@@ -35,12 +35,12 @@ global $hotaru, $lang; // don't remove
     &raquo; <?php echo $lang["admin_theme_login"]; ?>
 </p>
         
-<?php $hotaru->show_message(); ?>
+<?php $hotaru->showMessage(); ?>
         
 <div class='main_inner'>
     <?php echo $lang["admin_theme_login_instructions"]; ?>
     
-    <form name='login_form' action='<?php echo BASEURL; ?>admin/admin_index.php' method='post'>    
+    <form name='login_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>    
     <table>
         <tr>
         <td><?php echo $lang["admin_theme_login_username"]; ?>:&nbsp; </td>
@@ -58,4 +58,21 @@ global $hotaru, $lang; // don't remove
     <input type='hidden' name='login_attempted' value='true'>
     <input type='hidden' name='page' value='admin_login'>
     </form>
+    
+    <a href="#" class="forgot_password"><?php echo $lang["admin_theme_login_forgot_password"]; ?></a>
+    
+    <form style="display: none;" name='forgot_password_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>    
+        <?php echo $lang['admin_theme_login_forgot_password_submit_instruct_1']; ?>
+    <table>
+        <tr>
+        <td><?php echo $lang["admin_theme_update_email"]; ?>&nbsp; </td>
+        <td><input type='text' size=30 name='email' value='<?php echo $email_check; ?>' /></td>
+        <td><input type='submit' value='<?php echo $lang['admin_theme_login_forgot_password_submit']; ?>' /></td>
+        </tr>            
+    </table>
+    <input type='hidden' name='forgotten_password' value='true'>
+    <input type='hidden' name='page' value='admin_login'>
+        <?php echo $lang['admin_theme_login_forgot_password_submit_instruct_2']; ?>
+    </form>
+
 </div>

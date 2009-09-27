@@ -26,7 +26,7 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $admin, $plugin, $lang; // don't remove
+global $hotaru, $admin, $plugins, $lang, $current_user; // don't remove
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
@@ -36,56 +36,59 @@ global $hotaru, $admin, $plugin, $lang; // don't remove
    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
    <title>
        <?php 
-           if ($hotaru->title != "")
+           if ($hotaru->getTitle() != "")
            {
-               echo $hotaru->title . " &laquo; " . $lang["admin"] . " &laquo; " . SITE_NAME;
+               echo $hotaru->getTitle() . " &laquo; " . $lang["admin"] . " &laquo; " . SITE_NAME;
            }
-           elseif ($hotaru->get_page_name() != "main")
+           elseif ($hotaru->getPageName() != "main")
            {
-               $hotaru->title = $hotaru->get_page_name();
-               echo $hotaru->page_to_title_caps($hotaru->title) . " &laquo; " . $lang["admin"] . " &laquo; " . SITE_NAME;
+               $hotaru->setTitle($hotaru->getPageName());
+               echo $hotaru->pageToTitleCaps($hotaru->getTitle()) . " &laquo; " . $lang["admin"] . " &laquo; " . SITE_NAME;
            }
            else
            { 
                echo $lang["admin"] . " &laquo; " . SITE_NAME;
            } 
            
-           $hotaru->title = 'admin';    // highlights "Admin" in the navigation bar, for all pages in Admin
+           $hotaru->setTitle('admin');    // highlights "Admin" in the navigation bar, for all pages in Admin
        ?>
    </title>
-   <script language="JavaScript" src="<?php echo BASEURL . '3rd_party/jQuery/jquery.min.js'; ?>"></script>
-   <script language="JavaScript" src="<?php echo BASEURL . '3rd_party/jQuery/jquery-ui.min.js'; ?>"></script>
+   <script language="JavaScript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery.min.js'; ?>"></script>
+   <script language="JavaScript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery-ui.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo BASEURL . 'javascript/hotaru_ajax.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo BASEURL . 'javascript/hotaru_jquery.js'; ?>"></script>
    
     <!-- Include merged files for all the plugin css and javascript (if any) -->
     <?php 
-        $version_js = $hotaru->combine_includes('js');
-        $version_css = $hotaru->combine_includes('css');
-        $hotaru->include_combined($version_js, $version_css, $hotaru->get_page_name(), $plugin->folder);
+        $version_js = $hotaru->combineIncludes('js');
+        $version_css = $hotaru->combineIncludes('css');
+        $hotaru->includeCombined($version_js, $version_css, $hotaru->getPageName(), $plugins->getFolder());
     ?>
     <!-- End -->
     
-   <link rel="stylesheet" href="<?php echo BASEURL . '3rd_party/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
+   <link rel="stylesheet" href="<?php echo BASEURL . 'libs/extensions/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
    <link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css'; ?>" type="text/css">
    <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico">
    
-   <?php $plugin->check_actions('admin_header_include_raw'); ?>
+   <?php $plugins->pluginHook('admin_header_include_raw'); ?>
       
 </head>
 <body>
-<?php if ($announcements = $admin->check_admin_announcements()) { ?>
+<?php 
+    if ($admin->checkAdminAnnouncements() && ($current_user->getPermission('can_access_admin') == 'yes')) { 
+        $announcements = $admin->checkAdminAnnouncements();
+?>
     <div id="announcement">
-        <?php $plugin->check_actions('admin_announcement_first'); ?>
+        <?php $plugins->pluginHook('admin_announcement_first'); ?>
         <?php foreach ($announcements as $announcement) { echo $announcement . "<br />"; } ?>
-        <?php $plugin->check_actions('admin_announcement_last'); ?>
+        <?php $plugins->pluginHook('admin_announcement_last'); ?>
     </div>
 <?php } ?>
 <div id="doc2" class="yui-t7">
     <div id="hd" role="banner">
         <a href="<?php echo BASEURL; ?>"><img src="<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/hotaru_468x60.png"></a>
-        <?php $plugin->check_actions('header_post_logo'); ?>
+        <?php $plugins->pluginHook('header_post_logo'); ?>
         
         <!-- NAVIGATION -->
-        <?php echo $admin->display_admin_template('navigation'); ?>
+        <?php echo $admin->displayAdminTemplate('navigation'); ?>
     </div>

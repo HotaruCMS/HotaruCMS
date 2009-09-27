@@ -26,18 +26,18 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $admin, $plugin, $current_user, $lang; // don't remove
+global $hotaru, $admin, $plugins, $current_user, $lang; // don't remove
 
 // plugin hook
-$result = $plugin->check_actions('admin_theme_index_replace');
+$result = $plugins->pluginHook('admin_theme_index_replace');
 if (!isset($result) || !is_array($result)) {
 ?>
         <!-- HEADER-->
         <?php
             // plugin hook
-            $result = $plugin->check_actions('admin_theme_index_header');
+            $result = $plugins->pluginHook('admin_theme_index_header');
             if (!isset($result) || !is_array($result)) {
-                $admin->display_admin_template('header');
+                $admin->displayAdminTemplate('header');
             }
         ?>
     
@@ -53,30 +53,30 @@ if (!isset($result) || !is_array($result)) {
                         <div id="main">
                         <?php
                             // plugin hook
-                        $result = $plugin->check_actions('admin_theme_index_main');
+                        $result = $plugins->pluginHook('admin_theme_index_main');
                         if (!isset($result) || !is_array($result)) {
-                                $page = $hotaru->get_page_name();
+                                $page = $hotaru->getPageName();
                                 if ($page == 'admin_login') {
-                                    if ($current_user->logged_in) {
-                                        $admin->display_admin_template('main');
+                                    if ($current_user->getLoggedIn()) {
+                                        $admin->displayAdminTemplate('main');
                                     } else {
-                                        admin_login_form();
+                                        $admin->adminLoginForm();
                                     }
                                 } else {
-                                $admin->display_admin_template($page);
+                                $admin->displayAdminTemplate($page);
                             } 
                         }     
                     ?>    
                     </div>        
                     </div>
-                    <?php if ($hotaru->sidebar) { ?>
+                    <?php if ($hotaru->getSidebar()) { ?>
                         <div class="yui-u first">
                         <!-- SIDEBAR -->
                         <?php
                             // plugin hook
-                            $result = $plugin->check_actions('admin_theme_index_sidebar');
+                            $result = $plugins->pluginHook('admin_theme_index_sidebar');
                             if (!isset($result) || !is_array($result)) {
-                                $admin->display_admin_template('sidebar');
+                                $admin->displayAdminTemplate('sidebar');
                             }
                         ?>
                         </div>
@@ -86,9 +86,9 @@ if (!isset($result) || !is_array($result)) {
         <!-- FOOTER -->
         <?php
             // plugin hook
-            $result = $plugin->check_actions('admin_theme_index_footer');
+            $result = $plugins->pluginHook('admin_theme_index_footer');
             if (!isset($result) || !is_array($result)) {
-                $admin->display_admin_template('footer');
+                $admin->displayAdminTemplate('footer');
             }
         ?>
 <?php    } ?>
