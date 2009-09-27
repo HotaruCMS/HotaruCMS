@@ -33,12 +33,12 @@ $sidebars = $sidebar->getLastSidebar($widgets);
 for ($i=1; $i<=$sidebars; $i++) {
 ?>
 
-    <div id="plugin_list">
+    <div id="table_list">
     
     <table>
     
-    <tr class='plugins_table_installed'><td colspan=6><?php echo $lang["sidebar_ordering_title"] . " " . $i; ?> </td></tr>
-    <tr class='plugins_table_headers'>
+    <tr class='table_a'><td colspan=6><?php echo $lang["sidebar_ordering_title"] . " " . $i; ?> </td></tr>
+    <tr class='table_headers'>
     <td><?php echo $lang["sidebar_ordering_block_enabled"]; ?></td>
     <td><?php echo $lang["sidebar_ordering_block_name"]; ?></td>
     <td><?php echo $lang["sidebar_ordering_block_order"]; ?></td>
@@ -74,9 +74,9 @@ for ($i=1; $i<=$sidebars; $i++) {
                 $order_output .= "</a>\n";
                             
                 $alt++;
-                echo "<tr id='plugins_tr' class='plugins_table_row_" . $alt % 2 . "'>\n";
+                echo "<tr id='table_tr' class='table_row_" . $alt % 2 . "'>\n";
                     echo "<td class='plugins_active sidebar_active'>" . $enabled_output . "</td>\n";
-                    echo "<td class='plugins_name'>" . $hotaru->pageToTitleCaps($widget) . " </td>\n";
+                    echo "<td class='table_text'>" . $hotaru->pageToTitleCaps($widget) . " </td>\n";
                     echo "<td class='plugins_order sidebar_order'>" . $order_output . "</td>\n";
                 echo "</tr>\n";
             }

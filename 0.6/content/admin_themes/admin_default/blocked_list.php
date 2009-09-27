@@ -53,6 +53,7 @@ global $hotaru, $lang, $admin, $pagedResults; // don't remove
                 <option value='ip'><?php echo $lang["admin_theme_blocked_ip"]; ?></option>
                 <option value='url'><?php echo $lang["admin_theme_blocked_url"]; ?></option>
                 <option value='email'><?php echo $lang["admin_theme_blocked_email"]; ?></option>
+                <option value='user'><?php echo $lang["admin_theme_blocked_username"]; ?></option>
             </select></td>
             <td><input type='text' size=30 name='value' value='' /></td>
             <td><input class='submit' type='submit' value='<?php echo $lang['admin_theme_blocked_submit_add']; ?>' /></td>
@@ -87,6 +88,7 @@ global $hotaru, $lang, $admin, $pagedResults; // don't remove
                 <option value='ip'><?php echo $lang["admin_theme_blocked_ip"]; ?></option>
                 <option value='url'><?php echo $lang["admin_theme_blocked_url"]; ?></option>
                 <option value='email'><?php echo $lang["admin_theme_blocked_email"]; ?></option>
+                <option value='user'><?php echo $lang["admin_theme_blocked_username"]; ?></option>
             </select></td>
             <td><input class='submit' type='submit' value='<?php echo $lang['admin_theme_blocked_submit_filter']; ?>' /></td>
         </tr>

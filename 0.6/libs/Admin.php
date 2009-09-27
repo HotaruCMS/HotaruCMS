@@ -927,6 +927,7 @@ class Admin
                 $output .= "<option value='ip'>" . $lang["admin_theme_blocked_ip"] . "</option>\n";
                 $output .= "<option value='url'>" . $lang["admin_theme_blocked_url"] . "</option>\n";
                 $output .= "<option value='email'>" . $lang["admin_theme_blocked_email"] . "</option>\n";
+                $output .= "<option value='user'>" . $lang["admin_theme_blocked_username"] . "</option>\n";
                 $output .= "</select></td>\n";
                 $output .= "<td><input type='text' size=30 name='value' value='" . $block->blocked_value . "' /></td>\n";
                 $output .= "<td><input class='submit' type='submit' value='" . $lang['admin_blocked_list_update'] . "' /></td>\n";
