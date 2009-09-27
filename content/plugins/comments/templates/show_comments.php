@@ -63,7 +63,7 @@ global $plugins, $comment, $lang, $userbase, $current_user;
                     <a href='#' class='comment_reply_link' onclick="reply_comment(
                         '<?php echo BASEURL; ?>', 
                         '<?php echo $comment->getId(); ?>', 
-                        '<?php echo $lang['comments_comment_form_submit']; ?>'); 
+                        '<?php echo $lang['comments_form_submit']; ?>'); 
                         return false;" ><?php echo $lang['comments_reply_link']; ?></a>
                 <?php } ?>
             <?php } ?>
@@ -75,7 +75,7 @@ global $plugins, $comment, $lang, $userbase, $current_user;
                         '<?php echo BASEURL; ?>', 
                         '<?php echo $comment->getId(); ?>', 
                         '<?php echo urlencode($comment->getContent()); ?>', 
-                        '<?php echo $lang['comments_comment_form_edit']; ?>'); 
+                        '<?php echo $lang['comments_form_edit']; ?>'); 
                         return false;" ><?php echo $lang['comments_edit_link']; ?></a>
             <?php } ?>
         </div>

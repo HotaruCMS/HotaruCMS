@@ -89,6 +89,10 @@ $plugins->pluginHook('submit_form_2_assign');
         <td style='vertical-align: top;'><?php echo $lang["submit_form_content"]; ?>&nbsp; </td>
         <td colspan=2><textarea id='post_content' name='post_content' rows='6' maxlength='<?php $post->getContentLength(); ?>' style='width: 32em;'><?php echo $content_check; ?></textarea></td>
     </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td colspan=2 style='vertical-align: top;' class="submit_instructions"><?php echo $lang['submit_form_allowable_tags']; ?><?php echo htmlentities($post->getAllowableTags()); ?></td>
+    </tr>
     <?php } ?>
     
     <?php $plugins->pluginHook('submit_form_2_fields'); ?>
@@ -130,6 +134,6 @@ $plugins->pluginHook('submit_form_2_assign');
     <input type='hidden' name='edit_post' value='true' />
     
     <tr><td colspan=3>&nbsp;</td></tr>
-    <tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' name='submit_edit_post' value='<?php echo $lang["submit_edit_post_save"]; ?>' /></td></tr>    
+    <tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' class='submit' name='submit_edit_post' value='<?php echo $lang["submit_edit_post_save"]; ?>' /></td></tr>    
     </table>
     </form>

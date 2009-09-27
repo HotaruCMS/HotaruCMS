@@ -38,14 +38,14 @@ global $hotaru, $plugins, $post, $lang;
         <form name='submit_form_3' action='<?php BASEURL; ?>index.php?page=submit3' method='post'>
         <input type='hidden' name='post_id' value='<?php echo $post->getId(); ?>' />
         <input type='hidden' name='submit3' value='edit' />
-        <input type='submit' name='submit' onclick="javascript:safeExit=true;" value='<?php echo $lang['submit_form_submit_edit_button']; ?>' />
+        <input type='submit' name='submit' onclick="javascript:safeExit=true;" class='submit' value='<?php echo $lang['submit_form_submit_edit_button']; ?>' />
         </form>    
 
         <!-- CONFIRM BUTTON -->
         <form name='submit_form_3' action='<?php BASEURL; ?>index.php?page=submit3' method='post'>
         <input type='hidden' name='post_id' value='<?php echo $post->getId(); ?>' />
         <input type='hidden' name='submit3' value='confirm' />
-        <input type='submit' name='submit' onclick="javascript:safeExit=true;" value='<?php echo $lang['submit_form_submit_confirm_button']; ?>' />
+        <input type='submit' name='submit' onclick="javascript:safeExit=true;" class='submit' value='<?php echo $lang['submit_form_submit_confirm_button']; ?>' />
         </form>
     </div>
     
