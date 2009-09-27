@@ -279,8 +279,14 @@ class UserBase {
     {
         global $db;
         
+        // get default permissions
+        $permissions = $this->getDefaultPermissions($this->getRole());
+        unset($permissions['options']);  // don't need this for individual users
+        $permissions = serialize($permissions);
+
+        // add user to the database
         $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email, user_permissions) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s)";
-        $db->query($db->prepare($sql, $this->getName(), $this->getRole(), $this->getPassword(), $this->getEmail(), serialize($this->getDefaultPermissions($this->getRole()))));
+        $db->query($db->prepare($sql, $this->getName(), $this->getRole(), $this->getPassword(), $this->getEmail(), $permissions));
     }
 
 
@@ -357,7 +363,22 @@ class UserBase {
             $this->setRole($user_info->user_role);
             $this->setEmail($user_info->user_email);
             $this->setEmailValid($user_info->user_email_valid);
-            $this->setAllPermissions(unserialize($user_info->user_permissions));
+            
+            // If a new plugin is installed, we need a way of adding any new default permissions
+            // that plugin provides. So, we get all defaults, then overwrite with existing perms.
+            
+            // get default permissions
+            $default_perms = $this->getDefaultPermissions($this->getRole());
+            unset($default_perms['options']);  // don't need this for individual users
+            
+            // get existing permissions
+            $existing_perms = unserialize($user_info->user_permissions);
+            
+            // merge permissions
+            $updated_perms = array_merge($default_perms, $existing_perms);
+            $this->setAllPermissions($updated_perms);
+            $user_info->user_permissions = serialize($updated_perms);   // update user_info
+            
             return $user_info;
         } else {
             return false;
@@ -951,24 +972,7 @@ class UserBase {
         
         return $perms;
     }
-    
-    
-    /**
-     * Read permissions from the database
-     *
-     * @param int $userid
-     * @return string (serialized)
-     */
-    public function readPermissions()
-    {
-        global $db;
-        
-        $sql = "SELECT user_permissions FROM " . TABLE_USERS . " WHERE user_id = %d";
-        $permissions = $db->get_var($db->prepare($sql, $this->getId()));
-        
-        if ($permissions) { $this->setAllPermissions(unserialize($permissions)); }
-    }
-    
+
     
     /**
      * update permissions in the database
@@ -981,35 +985,6 @@ class UserBase {
         
         $sql = "UPDATE " . TABLE_USERS . " SET user_permissions = %s WHERE user_id = %d";
         $db->get_var($db->prepare($sql, serialize($this->getAllPermissions()), $this->getId()));
-    }
-    
-    
-    /**
-     * Add new permission to all users when installing a plugin
-     *
-     * @param string $perms (serialized)
-     * @param int $userid
-     */
-    public function addPluginPermissions()
-    {
-        global $db;
-        
-        $sql = "SELECT user_id, user_role, user_permissions FROM " . TABLE_USERS;
-        $users = $db->get_results($db->prepare($sql));
-        if ($users) {
-            foreach ($users as $user) {
-                $existing_perms = unserialize($user->user_permissions);
-                $default_perms = $this->getDefaultPermissions($user->user_role);
-                foreach ($default_perms as $def_perm => $value) {
-                    if (!isset($existing_perms[$def_perm])) {
-                            $existing_perms[$def_perm] = $value;
-                    }
-                }
-                unset($existing_perms['options']);  // don't need this for each user
-                $sql = "UPDATE " . TABLE_USERS . " SET user_permissions = %s WHERE user_id = %d";
-                $db->get_var($db->prepare($sql, serialize($existing_perms), $user->user_id));
-            }
-        }
     }
     
     
