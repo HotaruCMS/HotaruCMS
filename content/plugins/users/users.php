@@ -404,7 +404,7 @@ class Users extends PluginFunctions
                 $password2_check = $cage->post->testPassword('password2');
                 if ($password_check == $password2_check) {
                     // safe, the two new password fields match
-                    $current_user->password = $userbase->generateHash($password_check);
+                    $current_user->setPassword($userbase->generateHash($password_check));
                 } else {
                     $hotaru->messages[$lang['users_register_password_match_error']] = 'red';
                     $error = 1;
@@ -417,7 +417,7 @@ class Users extends PluginFunctions
                         
             $email_check = $cage->post->testEmail('email');    
             if ($email_check) {
-                $current_user->email = $email_check;
+                $current_user->setEmail($email_check);
             } else {
                 $hotaru->messages[$lang['users_register_email_error']] = 'red';
                 $error = 1;
@@ -460,8 +460,9 @@ class Users extends PluginFunctions
             $email_check = "";
             // do nothing
         } elseif ($error == 0) {
+            $blocked = $this->checkBlocked($username_check, $email_check); // true if blocked, false if safe
             $result = $current_user->userExists(0, $username_check, $email_check);
-            if ($result == 4) {
+            if (!$blocked && $result == 4) {
                 //success
                 $current_user->addUserBasic();
                 $last_insert_id = $db->get_var($db->prepare("SELECT LAST_INSERT_ID()"));
@@ -474,6 +475,8 @@ class Users extends PluginFunctions
     
             } elseif ($result == 2) {
                 $hotaru->messages[$lang['users_register_email_exists']] = 'red';
+            } elseif ($blocked) {
+                $hotaru->messages[$lang['users_register_user_blocked']] = 'red';
             } else {
                 $hotaru->messages[$lang["users_register_unexpected_error"]] = 'red';
             }
@@ -481,6 +484,44 @@ class Users extends PluginFunctions
             // error must = 1 so fall through and display the form again
         }
         return false;
+    }
+    
+    
+    /**
+     * Check if user is on the blocked list
+     *
+     * @param string $username
+     * @param string $email
+     * @return bool - true if blocked
+     */
+    public function checkBlocked($username, $email)
+    {
+        global $cage;
+        
+        // Is user IP address blocked?
+        $ip = $cage->server->testIp('REMOTE_ADDR');
+        if ($this->isBlocked('ip', $ip)) {
+            return true;
+        }
+        
+        // Is email domain blocked?
+        $email_bits = split('@', $email);
+        $email_domain = $email_bits[1];
+        if ($this->isBlocked('email', $email_domain)) {
+            return true;
+        }
+        
+        // Is email blocked?
+        if ($this->isBlocked('email', $email)) {
+            return true;
+        }
+        
+        // Is username blocked?
+        if ($this->isBlocked('user', $username)) {
+            return true;
+        }
+                        
+        return false;   // not blocked
     }
     
     

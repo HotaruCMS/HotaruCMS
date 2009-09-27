@@ -64,7 +64,7 @@ if ($cage->post->getAlpha('users_type') == 'register') {
             ?>
             
             <input type='hidden' name='users_type' value='register' />
-            <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $lang['users_register_form_submit']; ?>' /></td></tr>            
+            <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $lang['users_register_form_submit']; ?>' /></td></tr>            
             </table>
             </form>
         </div>

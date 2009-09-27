@@ -1055,6 +1055,37 @@ class PluginFunctions extends Plugin
         // optimize the table
         $db->query("OPTIMIZE TABLE " . TABLE_PLUGINSETTINGS);
     }
+    
+    
+     /**
+     * Check if a value is blocked
+     *
+     * Note: Other methods for the Blocked List can be found in the Admin class
+     *
+     * @param string $type - i.e. ip, url, email, user
+     * @param sting $value
+     * @return bool
+     */
+    public function isBlocked($type = '', $value = '')
+    {
+        global $db;
+        
+        $exists = 0;
+        
+        // if both type and value provided...
+        if ($type && $value) {
+            $sql = "SELECT blocked_value FROM " . TABLE_BLOCKED . " WHERE blocked_type = %s AND blocked_value = %s"; 
+            $exists = $db->get_var($db->prepare($sql, $type, $value));
+        } 
+        // if only value provided...
+        elseif ($value) 
+        {
+            $sql = "SELECT blocked_value FROM " . TABLE_BLOCKED . " WHERE blocked_value = %s"; 
+            $exists = $db->get_var($db->prepare($sql, $value));
+        }
+        
+        if ($exists) { return true; } else { return false; }
+    }
 }
 
 ?>

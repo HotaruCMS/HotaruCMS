@@ -77,6 +77,7 @@ $lang["users_register_email_error"] = "That doesn't parse as a valid email addre
 $lang["users_register_id_exists"] = "There's been a problem with id numbers";
 $lang["users_register_username_exists"] = "That username has been taken";
 $lang["users_register_email_exists"] = "That email address is already in use";
+$lang['users_register_user_blocked'] = "Sorry, you are on the blocked list. Please contact the site administrator.";
 $lang['users_register_recaptcha_error'] = "Please confirm your password and try the captcha again";
 $lang['users_register_recaptcha_empty'] = "Please confirm your password and complete the captcha";
 $lang["users_register_unexpected_error"] = "Sorry, there's been an unexpected error";

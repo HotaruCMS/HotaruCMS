@@ -994,7 +994,7 @@ class Admin
         $sql = "DELETE FROM " . TABLE_BLOCKED . " WHERE blocked_id = %d"; 
         $db->get_var($db->prepare($sql, $id));
     }
-    
+
 }
 
 ?>
