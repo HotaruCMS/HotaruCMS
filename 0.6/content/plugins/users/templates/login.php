@@ -47,7 +47,7 @@ if ($cage->post->getInt('remember') == 1){ $remember_check = "checked"; } else {
                 <tr><td><?php echo $lang["users_login_form_submit_username"]; ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check; ?>' /></td></tr>
                 <tr><td><?php echo $lang["users_login_form_submit_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password' value='<?php echo $password_check; ?>' /></td></tr>
                 <tr><td><?php echo $lang["users_login_form_submit_remember"]; ?> </td><td><input type='checkbox' name='remember' value='1' <?php echo $remember_check; ?> /></td></tr>
-                <tr><td>&nbsp; </td><td style='text-align:right;'><input type='submit' value='<?php echo $lang['users_login_form_submit']; ?>' /></td></tr>
+                <tr><td>&nbsp; </td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $lang['users_login_form_submit']; ?>' /></td></tr>
             </table>
             <input type='hidden' name='page' value='login'>
             </form>
@@ -61,7 +61,7 @@ if ($cage->post->getInt('remember') == 1){ $remember_check = "checked"; } else {
             <tr>
             <td><?php echo $lang["users_account_email"]; ?>&nbsp; </td>
             <td><input type='text' size=30 name='email' value='<?php echo $email_check; ?>' /></td>
-            <td><input type='submit' value='<?php echo $lang['users_login_forgot_password_submit']; ?>' /></td>
+            <td><input type='submit' class='submit' value='<?php echo $lang['users_login_forgot_password_submit']; ?>' /></td>
             </tr>            
         </table>
         <input type='hidden' name='forgotten_password' value='true'>
