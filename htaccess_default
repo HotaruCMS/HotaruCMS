@@ -52,12 +52,12 @@ RewriteRule ^\/?(.*)$ http://www.%{HTTP_HOST}/$1 [R=301,L]
 ##### URL Rewriting Begin #####
 
 ##### CORE ADMIN #####
-RewriteRule ^admin/?$ admin/admin_index.php [L]
-RewriteRule ^admin/([a-zA-Z0-9_-]+)/?$ admin/admin_index.php?page=$1 [L]
-RewriteRule ^admin/plugins/?$ admin/admin_index.php?page=plugins [L]
-RewriteRule ^admin/settings/?$ admin/admin_index.php?page=settings [L]
-RewriteRule ^admin/maintenance/?$ admin/admin_index.php?page=maintenance [L]
-RewriteRule ^admin/plugin_settings/([a-zA-Z0-9_-]+)/?$ admin/admin_index.php?page=plugin_settings&plugin=$1 [L]
+RewriteRule ^admin/?$ admin_index.php [L]
+RewriteRule ^admin/([a-zA-Z0-9_-]+)/?$ admin_index.php?page=$1 [L]
+RewriteRule ^admin/plugins/?$ admin_index.php?page=plugins [L]
+RewriteRule ^admin/settings/?$ admin_index.php?page=settings [L]
+RewriteRule ^admin/maintenance/?$ admin_index.php?page=maintenance [L]
+RewriteRule ^admin/plugin_settings/([a-zA-Z0-9_-]+)/?$ admin_index.php?page=plugin_settings&plugin=$1 [L]
 
 ##### GENERIC RULES #####
 RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$

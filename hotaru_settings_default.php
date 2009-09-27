@@ -46,8 +46,8 @@ define("BASE", dirname(__FILE__). '/');
 define("ADMIN", dirname(__FILE__).'/admin/');
 define("CACHE", dirname(__FILE__). '/cache/');
 define("INSTALL", dirname(__FILE__).'/install/');
-define("CLASSES", dirname(__FILE__).'/classes/');
-define("INCLUDES", dirname(__FILE__).'/3rd_party/');
+define("LIBS", dirname(__FILE__).'/libs/');
+define("EXTENSIONS", dirname(__FILE__).'/libs/extensions/');
 define("FUNCTIONS", dirname(__FILE__).'/functions/');
 define("THEMES", dirname(__FILE__).'/content/themes/');
 define("PLUGINS", dirname(__FILE__).'/content/plugins/');
@@ -60,5 +60,6 @@ define("TABLE_USERS", DB_PREFIX . "users");
 define("TABLE_PLUGINS", DB_PREFIX . "plugins");
 define("TABLE_PLUGINHOOKS", DB_PREFIX . "pluginhooks");
 define("TABLE_PLUGINSETTINGS", DB_PREFIX . "pluginsettings");
+define("TABLE_BLOCKED", DB_PREFIX . "blocked");
 
 ?>

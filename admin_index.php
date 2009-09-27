@@ -1,6 +1,6 @@
 <?php
 /**
- * Includes settings and constructs Hotaru.
+ * Determines which page of Admin should be shown
  *
  * PHP version 5
  *
@@ -24,9 +24,10 @@
  * @link      http://www.hotarucms.org/
  */
  
+
 // includes
 require_once('hotaru_settings.php');
-require_once(LIBS . 'Hotaru.php');
-$hotaru = new Hotaru('index');
+require_once(LIBS . 'Admin.php');
+$admin = new Admin('admin');
 
 ?>
