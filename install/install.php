@@ -34,27 +34,27 @@ setcookie("hotaru_key", "", time()-3600, "/");
 // --------------------------------------------------
 
 require_once('../hotaru_settings.php');
-require_once(CLASSES . 'class.hotaru.php');    // Needed for error and success messages
-require_once(CLASSES . 'class.userbase.php');  // Needed for login/registration
-require_once(CLASSES . 'class.inspekt.php');      // for custom Inspekt methods
-$hotaru = new Hotaru();
+require_once(LIBS . 'Hotaru.php');    // Needed for error and success messages
+require_once(LIBS . 'UserBase.php');  // Needed for login/registration
+require_once(LIBS . 'HotaruInspekt.php');      // for custom Inspekt methods
+$hotaru = new Hotaru('install');
 
-// Clear the database cache in case of a re-install.
-require_once('../admin/class.admin.php'); 
-$admin = new Admin();
-$admin->delete_files(CACHE . 'db_cache');
+// Clear all the cache folders just in case
+require_once(LIBS . 'Admin.php'); 
+$admin = new Admin('install');
+$admin->deleteFiles(CACHE . 'db_cache');
+$admin->deleteFiles(CACHE . 'css_js_cache');
+$admin->deleteFiles(CACHE . 'rss_cache');
 
 // Global Inspekt SuperCage
-require_once(INCLUDES . 'Inspekt/Inspekt.php');
-$hotaru->initialize_inspekt();
-
-require_once(INSTALL . 'install_language.php');    // language file for install
+require_once(EXTENSIONS . 'Inspekt/Inspekt.php');
+$hotaru->initializeInspekt();
 
 $step = $cage->get->getInt('step');        // Installation steps.
 
 if ($step > 2) { 
-    require_once(INCLUDES . 'ezSQL/ez_sql_core.php');
-    require_once(INCLUDES . 'ezSQL/mysql/ez_sql_mysql.php');
+    require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php');
+    require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php');
     if (!isset($db)) { 
         $db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST); 
     } 
@@ -101,7 +101,7 @@ function html_header()
     // Title
     $header .= "<TITLE>" . $lang['install_title'] . "</TITLE>\n";
     $header .= "<META HTTP-EQUIV='Content-Type' CONTENT='text'>\n";
-    $header .= "<link rel='stylesheet' href='" . BASEURL . "3rd_party/YUI-CSS/reset-fonts-grids.css' type='text/css'>\n";
+    $header .= "<link rel='stylesheet' href='" . BASEURL . "libs/extensions/YUI-CSS/reset-fonts-grids.css' type='text/css'>\n";
     $header .= "<link rel='stylesheet' type='text/css' href='" . BASEURL . "install/install_style.css'>\n";
     $header .= "</HEAD>\n";
     
@@ -205,16 +205,21 @@ function database_setup()
  */
 function database_creation()
 {
-    global $db, $lang;
+    global $db, $lang, $admin;
     
     echo html_header();
     
     // Step title
     echo "<h2>" . $lang['install_step3'] . "</h2>\n";
     
-    $skip = 0;
-    $tables = array('settings', 'users', 'plugins', 'pluginhooks', 'pluginsettings');
-
+    // delete *all* plugin tables:
+    $plugin_tables = $admin->listPluginTables();
+    foreach ($plugin_tables as $pt) {
+        $admin->dropTable($pt, false); // table name, show message = false
+    }
+    
+    //create tables  - these should match the list in the listPluginTables function in libs/Admin.php
+    $tables = array('settings', 'users', 'plugins', 'pluginhooks', 'pluginsettings', 'blocked');
     foreach ($tables as $table_name) {
         create_table($table_name);
     } 
@@ -257,8 +262,8 @@ function register_admin()
             $user_name = $name_check;
         } else {
             $hotaru->message = $lang['install_step4_username_error'];
-            $hotaru->message_type = 'red';
-            $hotaru->show_message();
+            $hotaru->messageType = 'red';
+            $hotaru->showMessage();
             $error = 1;
         }
 
@@ -271,16 +276,16 @@ function register_admin()
                 $user_password = $userbase->generateHash($password_check);
             } else {
                 $hotaru->message = $lang['install_step4_password_match_error'];
-                $hotaru->message_type = 'red';
-                $hotaru->show_message();
+                $hotaru->messageType = 'red';
+                $hotaru->showMessage();
                 $error = 1;
             }
         } else {
             $password_check = "";
             $password2_check = "";
             $hotaru->message = $lang['install_step4_password_error'];
-            $hotaru->message_type = 'red';
-            $hotaru->show_message();
+            $hotaru->messageType = 'red';
+            $hotaru->showMessage();
             $error = 1;
         }
 
@@ -290,8 +295,8 @@ function register_admin()
             $user_email = $email_check;
         } else {
             $hotaru->message = $lang['install_step4_email_error'];
-            $hotaru->message_type = 'red';
-            $hotaru->show_message();
+            $hotaru->messageType = 'red';
+            $hotaru->showMessage();
             $error = 1;
         }
     }
@@ -299,23 +304,23 @@ function register_admin()
     // Show success message
     if (($cage->post->getInt('step') == 4) && $error == 0) {
         $hotaru->message = $lang['install_step4_update_success'];
-        $hotaru->message_type = 'green';
-        $hotaru->show_message();
+        $hotaru->messageType = 'green';
+        $hotaru->showMessage();
     }
     
     if ($error == 0) {
-        if (!$admin_name = $userbase->admin_exists())
+        if (!$admin_name = $userbase->adminExists())
         {
             // Insert default settings
-            $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s)";
-            $db->query($db->prepare($sql, 'admin', 'admin', 'password', 'admin@mysite.com'));
+            $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email, user_permissions) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s)";
+            $db->query($db->prepare($sql, 'admin', 'admin', 'password', 'admin@mysite.com', serialize($userbase->getDefaultPermissions('admin'))));
             $user_name = 'admin';
             $user_email = 'admin@mysite.com';
             $user_password = 'password';
         } 
         else 
         {
-            $user_info = $userbase->get_user_basic(0, $admin_name);
+            $user_info = $userbase->getUserBasic(0, $admin_name);
             // On returning to this page via back or next, the fields are empty at this point, so...
             if (!isset($user_name)) { $user_name = ""; }
             if (!isset($user_email)){ $user_email = ""; } 
@@ -494,9 +499,11 @@ function create_table($table_name)
           `user_role` varchar(32) NOT NULL DEFAULT 'member',
           `user_date` timestamp NOT NULL,
           `user_password` varchar(64) NOT NULL DEFAULT '',
+          `user_password_conf` varchar(128) NULL,
           `user_email` varchar(128) NOT NULL DEFAULT '',
           `user_email_valid` tinyint(3) NOT NULL DEFAULT 0,
           `user_email_conf` varchar(128) NULL,
+          `user_permissions` text NOT NULL DEFAULT '',
           `user_lastlogin` timestamp NULL,
           `user_updateby` int(20) NOT NULL DEFAULT 0,
           UNIQUE KEY `key` (`user_username`),
@@ -515,6 +522,7 @@ function create_table($table_name)
           `plugin_name` varchar(64) NOT NULL DEFAULT '',
           `plugin_prefix` varchar(16) NOT NULL DEFAULT '',
           `plugin_folder` varchar(64) NOT NULL,
+          `plugin_class` varchar(64) NOT NULL DEFAULT '',
           `plugin_desc` varchar(255) NOT NULL DEFAULT '',
           `plugin_requires` varchar(255) NOT NULL DEFAULT '',
           `plugin_version` varchar(32) NOT NULL DEFAULT '0.0',
@@ -554,6 +562,22 @@ function create_table($table_name)
           `plugin_updateby` int(20) NOT NULL DEFAULT 0,
           INDEX  (`plugin_folder`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Plugins Settings';";
+        echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+        $db->query($sql);
+    }
+    
+    
+    // BLOCKED TABLE - blocked IPs, users, email types, etc...
+    
+    if ($table_name == "blocked") {
+        $sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
+          `blocked_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          `blocked_type` varchar(64) NULL,
+          `blocked_value` text NULL,
+          `blocked_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          `blocked_updateby` int(20) NOT NULL DEFAULT 0,
+          INDEX  (`blocked_type`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Blocked IPs, users, emails, etc';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql);
     }

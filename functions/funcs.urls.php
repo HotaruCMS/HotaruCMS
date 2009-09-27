@@ -24,6 +24,25 @@
  * @link      http://www.hotarucms.org/
  */
  
+ 
+/**
+ * Strip domain from url
+ *
+ * @param string $url
+ * @return string|false $domain - including http://
+ */
+function get_domain($url = '')
+{
+    $parsed = parse_url($url);
+    if (isset($parsed['scheme'])){ 
+        $domain = $parsed['scheme'] . "://" . $parsed['host']; 
+        return $domain;
+    }
+    
+    return false;
+}
+
+
 /**
  * Generate either default or friendly urls
  *
@@ -40,7 +59,7 @@ function url($parameters = array(), $head = 'index')
         if ($head == 'index') {
             $url = BASEURL . 'index.php?';
         } elseif ($head == 'admin') {
-            $url = BASEURL . 'admin/admin_index.php?';    
+            $url = BASEURL . 'admin_index.php?';    
         } else {
             // Error. $head must be index or admin
         }
@@ -72,18 +91,19 @@ function url($parameters = array(), $head = 'index')
             if ($key == 'page' && is_numeric($value) ) {
             
                 // must be a post title, let's get the post_url...
-                $value = $post->post_url;
+                $value = $post->getUrl();
                 
-                if (isset($post->post_vars['post_category']) && $post->post_vars['post_category'] != 1) {
-                    $url .= $post->post_vars['post_cat_safe_name'] . '/';
+                if (isset($post->vars['category']) && $post->vars['category'] != 1) {
+                    $url .= $post->vars['catSafeName'] . '/';
                 }
                 
                 $url .= $value . '/';
                 
             } elseif ($key == 'category' && is_numeric($value) ) {
-            
-                //function call to plugins/categories/categories.php
-                $url .= $key . '/' . get_cat_safe_name($value) . '/';
+                
+                require_once(PLUGINS . 'categories/libs/Category.php');
+                $cat = new Category();
+                $url .= $key . '/' . $cat->getCatSafeName($value) . '/';
                     
             } elseif ($key == 'page') {
             

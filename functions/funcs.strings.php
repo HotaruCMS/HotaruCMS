@@ -54,6 +54,43 @@ function rstrtrim($str, $remove=null)
 
 
 /**
+ * Changes 'plugin_name' into 'Plugin Name'
+ *
+ * @param string $string e.g. a plugin folder name
+ * @param string $delim - the character to replace underscores with
+ * @return string
+ */
+function make_name($string, $delim = ' ')
+{
+    $dep_array  = array();
+    $dep_array  = explode('_', trim($string));
+    $dep_array  = array_map('ucfirst', $dep_array);
+    $string     = implode($delim, $dep_array);
+
+    return $string;
+}
+
+
+/**
+ * Generates a random string
+ *
+ * @param int $length 
+ * @return string
+ * @link http://us2.php.net/manual/en/ref.strings.php (Moe 10-July-2007)
+ */
+function random_string($length = 8)
+{
+    $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxwz0123456789";
+    $string = '';
+    for($i = 0; $i < $length; $i++){
+        $rand_key = mt_rand(0, strlen($chars));
+        $string .= substr($chars, $rand_key, 1);
+    }
+    return str_shuffle($string);
+}
+
+
+/**
  * Sanitize input
  *
  * @param string $var the string to sanitize
