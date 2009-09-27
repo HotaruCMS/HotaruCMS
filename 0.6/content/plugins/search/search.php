@@ -206,10 +206,16 @@ class Search extends PluginFunctions
     }
     
     
+    /**
+     * Default permissions 
+     *
+     * @param array $params - conatins "role"
+     */
     public function userbase_default_permissions($params)
     {
+        global $perms;
+        
         $role = $params['role'];
-        $perms = $params['perms'];
 
         // Permission Options
         $perms['options']['can_search'] = array('yes', 'no');
@@ -225,8 +231,6 @@ class Search extends PluginFunctions
             default:
                 $perms['can_search'] = 'yes';
         }
-        
-        return $perms;
     }
     
 }

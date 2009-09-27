@@ -6,7 +6,7 @@
  * folder: comments
  * class: Comments
  * requires: submit 0.6, users 0.4
- * hooks: header_include, install_plugin, hotaru_header, theme_index_replace, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_form_2_process_submission
+ * hooks: header_include, install_plugin, hotaru_header, theme_index_replace, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_form_2_process_submission, userbase_default_permissions
  *
  * PHP version 5
  *
@@ -240,7 +240,7 @@ class Comments extends pluginFunctions
      */
     public function submit_post_show_post()
     {
-        global $db, $hotaru, $comment, $post, $current_user;
+        global $db, $hotaru, $comment, $post, $current_user, $lang;
         
         // set default
         $current_user->vars['postSubscribed'] = false; 
@@ -279,7 +279,22 @@ class Comments extends pluginFunctions
             
         }
         
-        if ($comment->getForm() == 'checked' && !$hotaru->isPage('submit2')) {
+        if ($current_user->getPermission('can_comment') == 'no') {
+            echo "<div class='comment_form_off'>" . $lang['comments_no_permission'] . "</div>";
+            return false;
+        }
+        
+        if (!$current_user->getLoggedIn()) {
+            echo "<div class='comment_form_off'>" . $lang['comments_please_login'] . "</div>";
+            return false;
+        }
+        
+        if ($comment->getForm() != 'checked') {
+            echo "<div class='comment_form_off'>" . $lang['comments_form_closed'] . "</div>";
+            return false;
+        }
+ 
+        if (!$hotaru->isPage('submit2')) {
             // force non-reply form to have parent "0" and depth "0"
             $comment->setId(0);
             $comment->setDepth(0);
@@ -388,6 +403,38 @@ class Comments extends pluginFunctions
         global $post, $cage;
         
         if ($cage->post->keyExists('post_subscribe')) { $post->setSubscribe(1); } else { $post->setSubscribe(0); } 
+    }
+    
+    
+    /**
+     * Default permissions 
+     *
+     * @param array $params - conatins "role"
+     */
+    public function userbase_default_permissions($params)
+    {
+        global $perms;
+
+        $role = $params['role'];
+        
+        // Permission Options
+        $perms['options']['can_comment'] = array('yes', 'no');
+        $perms['options']['can_edit_comments'] = array('yes', 'no', 'own');
+        
+        // Permissions for $role
+        switch ($role) {
+            case 'admin':
+                $perms['can_comment'] = 'yes';
+                $perms['can_edit_comments'] = 'yes';
+                break;
+            case 'member':
+                $perms['can_comment'] = 'yes';
+                $perms['can_edit_comments'] = 'own';
+                break;
+            default:
+                $perms['can_submit'] = 'no';
+                $perms['can_edit_comments'] = 'no';
+        }
     }
     
 }

@@ -433,11 +433,11 @@ class Comment {
         $num_comments = $db->get_var($db->prepare($sql, $post->getId()));
         
         if ($num_comments == 1) {
-            return "1 " . $lang['comments_comments_singular_link'];
+            return "1 " . $lang['comments_singular_link'];
         } elseif ($num_comments > 1) {
-            return $num_comments . " " . $lang['comments_comments_plural_link'];
+            return $num_comments . " " . $lang['comments_plural_link'];
         } else {
-            return $lang['comments_comments_none_link'];
+            return $lang['comments_none_link'];
         }
     }
     

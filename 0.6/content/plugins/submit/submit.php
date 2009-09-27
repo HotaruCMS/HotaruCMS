@@ -5,7 +5,7 @@
  * version: 0.6
  * folder: submit
  * class: Submit
- * hooks: hotaru_header, header_include, header_include_raw, upgrade_plugin, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: hotaru_header, header_include, header_include_raw, upgrade_plugin, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, userbase_default_permissions
  *
  * PHP version 5
  *
@@ -426,11 +426,39 @@ class Submit extends PluginFunctions
     
     
     /**
+     * Default permissions 
+     *
+     * @param array $params - conatins "role"
+     */
+    public function userbase_default_permissions($params)
+    {
+        global $perms;
+
+        $role = $params['role'];
+        
+        // Permission Options
+        $perms['options']['can_submit'] = array('yes', 'no');
+        
+        // Permissions for $role
+        switch ($role) {
+            case 'admin':
+                $perms['can_submit'] = 'yes';
+                break;
+            case 'member':
+                $perms['can_submit'] = 'yes';
+                break;
+            default:
+                $perms['can_submit'] = 'no';
+        }
+    }
+    
+    
+    /**
      * Checks submit_step1 for errors
      */
     public function check_for_errors_1()
     {
-        global $hotaru, $post, $cage, $lang;
+        global $hotaru, $post, $cage, $lang, $current_user;
     
         // ******** CHECK URL ********
         
@@ -443,6 +471,11 @@ class Submit extends PluginFunctions
         } elseif ($post->urlExists($post_orig_url_check)) {
             // URL already exists...
             $hotaru->message = $lang['submit_form_url_already_exists_error'];
+            $hotaru->message_type = 'red';
+            $error = 1;
+        } elseif ($current_user->getPermission('can_submit') == 'no') {
+            // URL already exists...
+            $hotaru->message = $lang['submit_form_no_permission'];
             $hotaru->message_type = 'red';
             $error = 1;
         } else {

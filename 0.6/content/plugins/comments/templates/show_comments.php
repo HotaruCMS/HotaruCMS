@@ -54,7 +54,11 @@ global $plugins, $comment, $lang, $userbase, $current_user;
                 echo time_difference(unixtimestamp($comment->getDate())) . " ";
                 echo $lang['comments_time_ago']; 
             ?>
-            <?php if ($current_user->getLoggedIn()) { // REPLY LINK?>
+            <?php   // REPLY LINK - (if logged in) AND (can comment) AND (form is turned on)...
+                if ($current_user->getLoggedIn() 
+                    && ($current_user->getPermission('can_comment') != 'no')
+                    && ($comment->getForm() == 'checked')) { ?>
+                        
                 <?php if ($comment->getDepth < $comment->getLevels()-1) { // No nesting after X levels (minus 1 because nestings tarts at 0) ?>
                     <a href='#' class='comment_reply_link' onclick="reply_comment(
                         '<?php echo BASEURL; ?>', 
@@ -64,7 +68,9 @@ global $plugins, $comment, $lang, $userbase, $current_user;
                 <?php } ?>
             <?php } ?>
             
-            <?php if ($current_user->getId() == $comment->getAuthor() || $current_user->getRole() == 'admin') { // EDIT LINK ?>
+            <?php   // EDIT LINK - (if comment owner AND permission to edit own comments) OR (permission to edit ALL comments)...
+                if (($current_user->getId() == $comment->getAuthor() && ($current_user->getPermission('can_edit_comments') == 'own'))
+                    || ($current_user->getPermission('can_edit_comments') == 'yes')) { ?>
                     <a href='#' class='comment_edit_link' onclick="edit_comment(
                         '<?php echo BASEURL; ?>', 
                         '<?php echo $comment->getId(); ?>', 
