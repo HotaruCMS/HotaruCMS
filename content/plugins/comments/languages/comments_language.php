@@ -39,11 +39,11 @@ $lang['comments_edit_link'] = "EDIT";
 $lang['comments_please_login'] = "You need to be logged in to comment.";
 $lang['comments_no_permission'] = "You do not have permission to comment.";
 $lang['comments_form_closed'] = "Comments are closed.";
-$lang['comments_comment_form_submit'] = "Submit";
-$lang['comments_comment_form_edit'] = "Update";
-$lang['comments_comment_form_subscribe'] = "Subscribe to comments";
-$lang['comments_comment_form_unsubscribe'] = "To unsubscribe, uncheck the box and submit an empty comment";
-$lang['comments_comment_form_allowable_tags'] = "Allowed HTML tags:";
+$lang['comments_form_submit'] = "Submit";
+$lang['comments_form_edit'] = "Update";
+$lang['comments_form_subscribe'] = "Subscribe to comments";
+$lang['comments_form_unsubscribe'] = "To unsubscribe, uncheck the box and submit an empty comment";
+$lang['comments_form_allowable_tags'] = "Allowed HTML tags:";
 
 /* Admin Settings */
 $lang['comments_admin_sidebar'] = "Comments";

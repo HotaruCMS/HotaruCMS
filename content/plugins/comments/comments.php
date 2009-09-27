@@ -154,7 +154,7 @@ class Comments extends pluginFunctions
                 {
                     
                     //Include HTMLPurifier which we'll use on comment_content
-                    $cage->post->loadHTMLPurifier(EXTENSIONS . 'HTMLPurifier/HTMLPurifier.standalone.php');
+                    $cage->post->loadHTMLPurifier(EXTENSIONS . 'HTMLPurifier/library/HTMLPurifier.auto.php');
         
                     if ($cage->post->keyExists('comment_content')) {
                         $comment->setContent(sanitize($cage->post->getPurifiedHTML('comment_content'), 2, $comment->getAllowableTags()));

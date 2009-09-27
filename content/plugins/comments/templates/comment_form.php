@@ -40,10 +40,10 @@ if ($current_user->vars['postSubscribed']) { $subscribe_check = 'checked'; } els
 
     <form name='comment_form' action='<?php echo BASEURL; ?>index.php?page=comments' method='post'>
         <textarea name="comment_content" id="comment_content_<?php echo $comment->getId(); ?>" rows="6" cols="50"/></textarea><br />
-        <div class="comment_instructions"><?php echo $lang['comments_comment_form_allowable_tags']; ?><?php echo htmlentities($comment->getAllowableTags()); ?></div>
-        <div class="comment_subscribe"><input id="comment_subscribe" name="comment_subscribe" type="checkbox" <?php echo $subscribe_check; ?>> <?php echo $lang['comments_comment_form_subscribe']; ?><?php if ($subscribe_check) { echo " <small>(" . $lang['comments_comment_form_unsubscribe'] . ")</small>"; } ?></div>
+        <div class="comment_instructions"><?php echo $lang['comments_form_allowable_tags']; ?><?php echo htmlentities($comment->getAllowableTags()); ?></div>
+        <div class="comment_subscribe"><input id="comment_subscribe" name="comment_subscribe" type="checkbox" <?php echo $subscribe_check; ?>> <?php echo $lang['comments_form_subscribe']; ?><?php if ($subscribe_check) { echo " <small>(" . $lang['comments_form_unsubscribe'] . ")</small>"; } ?></div>
         <div class="comment_extras"><?php echo $plugins->pluginHook('comment_form_extras'); ?></div>
-        <input type="submit" name="submit" id="comment_submit_<?php echo $comment->getId(); ?>" value="<?php echo $lang['comments_comment_form_submit']; ?>" class="submit" />
+        <input type="submit" name="submit" id="comment_submit_<?php echo $comment->getId(); ?>" value="<?php echo $lang['comments_form_submit']; ?>" class="submit" />
         <input type="hidden" name="comment_process" id="comment_process_<?php echo $comment->getId(); ?>" value="newcomment" />
         <input type="hidden" name="comment_parent" value="<?php echo $comment->getId(); ?>" />
         <input type="hidden" name="comment_post_id" value="<?php echo $post->getId(); ?>" />
