@@ -1063,10 +1063,11 @@ class PluginFunctions extends Plugin
      * Note: Other methods for the Blocked List can be found in the Admin class
      *
      * @param string $type - i.e. ip, url, email, user
-     * @param sting $value
+     * @param string $value
+     * @param bool $like - used for LIKE sql if true
      * @return bool
      */
-    public function isBlocked($type = '', $value = '')
+    public function isBlocked($type = '', $value = '', $operator = '=')
     {
         global $db;
         
@@ -1074,13 +1075,13 @@ class PluginFunctions extends Plugin
         
         // if both type and value provided...
         if ($type && $value) {
-            $sql = "SELECT blocked_value FROM " . TABLE_BLOCKED . " WHERE blocked_type = %s AND blocked_value = %s"; 
+            $sql = "SELECT blocked_value FROM " . TABLE_BLOCKED . " WHERE blocked_type = %s AND blocked_value " . $operator . " %s"; 
             $exists = $db->get_var($db->prepare($sql, $type, $value));
         } 
         // if only value provided...
         elseif ($value) 
         {
-            $sql = "SELECT blocked_value FROM " . TABLE_BLOCKED . " WHERE blocked_value = %s"; 
+            $sql = "SELECT blocked_value FROM " . TABLE_BLOCKED . " WHERE blocked_value " . $operator . " %s"; 
             $exists = $db->get_var($db->prepare($sql, $value));
         }
         

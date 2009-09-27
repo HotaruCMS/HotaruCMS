@@ -466,17 +466,22 @@ class Submit extends PluginFunctions
         if (!$post_orig_url_check) {
             // No url present...
             $hotaru->message = $lang['submit_form_url_not_present_error'];
-            $hotaru->message_type = 'red';
+            $hotaru->messageType = 'red';
             $error = 1;
         } elseif ($post->urlExists($post_orig_url_check)) {
             // URL already exists...
             $hotaru->message = $lang['submit_form_url_already_exists_error'];
-            $hotaru->message_type = 'red';
+            $hotaru->messageType = 'red';
             $error = 1;
         } elseif ($current_user->getPermission('can_submit') == 'no') {
             // URL already exists...
             $hotaru->message = $lang['submit_form_no_permission'];
-            $hotaru->message_type = 'red';
+            $hotaru->messageType = 'red';
+            $error = 1;
+        } elseif ($this->checkBlocked($post_orig_url_check)) {
+            // URL already exists...
+            $hotaru->message = $lang['submit_form_url_blocked'];
+            $hotaru->messageType = 'red';
             $error = 1;
         } else {
             // URL is okay.
@@ -607,6 +612,31 @@ class Submit extends PluginFunctions
         }
     }
 
+    /**
+     * Check if user is on the blocked list
+     *
+     * @param string $username
+     * @param string $email
+     * @return bool - true if blocked
+     */
+    public function checkBlocked($url)
+    {
+        global $cage;
+
+        // Is url blocked?
+        if ($this->isBlocked('url', $url)) {
+            return true;
+        }
+        
+        // Is domain blocked?
+        $domain = get_domain($url); // returns the domain including http (from /functions/funcs.urls.php)
+        if ($this->isBlocked('url', $domain)) {
+            return true;
+        }
+                        
+        return false;   // not blocked
+    }
+    
 }
 
 ?>
