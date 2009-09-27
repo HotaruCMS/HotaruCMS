@@ -67,9 +67,7 @@ class Users extends PluginFunctions
         // Include language file. Also included in hotaru_header, but needed here  
         // to prevent errors immediately after installation.
         $this->includeLanguage();    
-        
-        $current_user->addPluginPermissions(); // won't work because this plugin isn't finished installing.
-        
+    
     }
     
     
