@@ -29,7 +29,7 @@ global $plugins, $comment, $lang, $userbase, $current_user;
 ?>
 
     <div class="comment" style="margin-left: <?php echo $comment->getDepth() * 2.0; ?>em;">
-       
+       <?php echo $comment->getParent(); ?>
         <?php   // Show avatars if enabled (requires an avatars plugin)
                 if ($comment->getAvatars() == 'checked') {
                     $plugins->pluginHook('show_comments_avatar'); 

@@ -423,9 +423,10 @@ class Comment {
     /**
      * Count comments
      *
+     * @param bool $link - true used for comment links, false for header of comment tree
      * @return string - text to show in the link, e.g. "3 comments"
      */
-    function countComments()
+    function countComments($link = true)
     {
         global $db, $post, $lang;
         
@@ -437,7 +438,13 @@ class Comment {
         } elseif ($num_comments > 1) {
             return $num_comments . " " . $lang['comments_plural_link'];
         } else {
-            return $lang['comments_none_link'];
+            if (!$link) { 
+                return $lang['comments_leave_comment'];  // shows "Leave a comment" above comment form when no comments
+            }
+            else
+            {
+                return $lang['comments_none_link']; // Shows "No comments"
+            }
         }
     }
     
@@ -450,10 +457,10 @@ class Comment {
      */
     function readAllParents($post_id)
     {
-        global $db, $post;
+        global $db;
         
-        $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_parent = %d";
-        $parents = $db->get_results($db->prepare($sql, $post->getId(), 0));
+        $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_parent = %d ORDER BY comment_date";
+        $parents = $db->get_results($db->prepare($sql, $post_id, 0));
         
         if($parents) { return $parents; } else { return false; }
     }
@@ -467,10 +474,10 @@ class Comment {
      */
     function readAllChildren($post_id, $parent)
     {
-        global $db, $post;
+        global $db;
         
-        $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_parent = %d";
-        $children = $db->get_results($db->prepare($sql, $post->getId(), $parent));
+        $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_parent = %d ORDER BY comment_date";
+        $children = $db->get_results($db->prepare($sql, $post_id, $parent));
         
         if($children) { return $children; } else { return false; }
     }
@@ -505,7 +512,7 @@ class Comment {
             
         $sql = "INSERT INTO " . TABLE_COMMENTS . " SET comment_post_id = %d, comment_user_id = %d, comment_parent = %d, comment_date = CURRENT_TIMESTAMP, comment_content = %s, comment_subscribe = %d, comment_updateby = %d";
                 
-        $db->query($db->prepare($sql, $this->getPostId(), $this->getAuthor(), $this->getParent(), urlencode(trim($this->getContent())), $this->getSubscribe(), $current_user->getId()));
+        $db->query($db->prepare($sql, $this->getPostId(), $this->getAuthor(), $this->getParent(), urlencode(trim(stripslashes($this->getContent()))), $this->getSubscribe(), $current_user->getId()));
         
         return true;
     }
@@ -520,9 +527,8 @@ class Comment {
     {
         global $db, $current_user;
             
-        $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_content = %s, comment_subscribe = %d, comment_updateby = %d";
-                
-        $db->query($db->prepare($sql, urlencode(trim(stripslashes($this->getContent()))), $this->getSubscribe(), $current_user->getId()));
+        $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_content = %s, comment_subscribe = %d, comment_updateby = %d WHERE comment_id = %d";
+        $db->query($db->prepare($sql, urlencode(trim(stripslashes($this->getContent()))), $this->getSubscribe(), $current_user->getId(), $this->getId()));
         
         return true;
     }

@@ -139,4 +139,29 @@ class getMixedString2 extends AccessorAbstract {
    }
 }
 
+
+class getHtmLawed extends AccessorAbstract {
+
+   /**
+    * a function to sanitize a string without htmlentities
+    *
+    * @return string
+    */
+    protected function inspekt($text)
+    {
+        $config = array('safe' => 1);
+        
+        require_once(EXTENSIONS . 'htmLawed/htmLawed.php');
+        
+        if (!get_magic_quotes_gpc()) {
+            return htmLawed($text, $config);
+        }
+        else 
+        {
+            return htmLawed(stripslashes($text, $config));
+        }
+        return false;
+   }
+}
+
 ?>

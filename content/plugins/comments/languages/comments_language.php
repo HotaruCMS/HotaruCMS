@@ -28,6 +28,7 @@
 $lang['comments_singular_link'] = "comment";
 $lang['comments_plural_link'] = "comments";
 $lang['comments_none_link'] = "No comments";
+$lang['comments_leave_comment'] = "Leave a comment";
 
 /* Comment */
 $lang['comments_written_by'] = "Written by";
