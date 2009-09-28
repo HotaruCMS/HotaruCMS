@@ -116,9 +116,6 @@ class Submit extends PluginFunctions
 
         if (!defined('TABLE_POSTS')) { define("TABLE_POSTS", DB_PREFIX . 'posts'); }
         if (!defined('TABLE_POSTMETA')) { define("TABLE_POSTMETA", DB_PREFIX . 'postmeta'); }
-        
-        //Include HTMLPurifier which we'll use on post_content
-        $cage->post->loadHTMLPurifier(EXTENSIONS . 'HTMLPurifier/library/HTMLPurifier.auto.php');
     
         // include language file
         $this->includeLanguage();
@@ -242,7 +239,11 @@ class Submit extends PluginFunctions
                     $post->readPost($post_id);
                     $post->changeStatus('new');
                     $post->sendTrackback();
-                    header("Location: " . BASEURL);    // Go home  
+                    if ($post->getUseLatest()) {
+                        header("Location: " . url(array('page'=>'latest')));    // Go to the Latest page
+                    } else {
+                        header("Location: " . BASEURL);    // Go home  
+                    }
                     die();
                 }
             }
@@ -543,7 +544,7 @@ class Submit extends PluginFunctions
         
         // ******** CHECK DESCRIPTION ********
         if ($post->getUseContent()) {
-            $content_check = sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->getAllowableTags());
+            $content_check = sanitize($cage->post->getHtmLawed('post_content'), 2, $post->getAllowableTags());
                     
             if (!$content_check) {
                 // No content present...
@@ -585,7 +586,7 @@ class Submit extends PluginFunctions
             $post->setOrigUrl($cage->post->testUri('post_orig_url'));
             $post->setTitle($cage->post->noTags('post_title'));
             $post->setUrl($cage->post->getFriendlyUrl('post_title'));
-            $post->setContent(sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->getAllowableTags()));
+            $post->setContent(sanitize($cage->post->getHtmLawed('post_content'), 2, $post->getAllowableTags()));
             $post->setStatus('processing');
             $post->setAuthor($current_user->getId());
             
@@ -605,7 +606,7 @@ class Submit extends PluginFunctions
             $post->setOrigUrl($cage->post->testUri('post_orig_url'));
             $post->setTitle($cage->post->noTags('post_title'));
             $post->setUrl($cage->post->getFriendlyUrl('post_title'));
-            $post->setContent(sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->getAllowableTags()));
+            $post->setContent(sanitize($cage->post->getHtmLawed('post_content'), 2, $post->getAllowableTags()));
             $post->setStatus($cage->post->testAlnumLines('post_status'));
             $this->pluginHook('submit_form_2_process_submission');
             $post->updatePost();

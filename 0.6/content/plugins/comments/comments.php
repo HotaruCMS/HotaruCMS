@@ -152,12 +152,9 @@ class Comments extends pluginFunctions
                 if (($cage->post->getAlpha('comment_process') == 'newcomment') || 
                     ($cage->post->getAlpha('comment_process') == 'editcomment'))
                 {
-                    
-                    //Include HTMLPurifier which we'll use on comment_content
-                    $cage->post->loadHTMLPurifier(EXTENSIONS . 'HTMLPurifier/library/HTMLPurifier.auto.php');
         
                     if ($cage->post->keyExists('comment_content')) {
-                        $comment->setContent(sanitize($cage->post->getPurifiedHTML('comment_content'), 2, $comment->getAllowableTags()));
+                        $comment->setContent(sanitize($cage->post->getHtmLawed('comment_content'), 2, $comment->getAllowableTags()));
                     }
                     
                     if ($cage->post->keyExists('comment_post_id')) {
@@ -169,9 +166,12 @@ class Comments extends pluginFunctions
                         echo "userid: " . $cage->post->testInt('comment_user_id') . "<br />";
                         $comment->setAuthor($cage->post->testInt('comment_user_id'));
                     }
-                    
+                
                     if ($cage->post->keyExists('comment_parent')) {
                         $comment->setParent($cage->post->testInt('comment_parent'));
+                        if ($cage->post->getAlpha('comment_process') == 'editcomment') {
+                            $comment->setId($cage->post->testInt('comment_parent'));
+                        }
                     }
                     
                     if ($cage->post->keyExists('comment_subscribe')) {
@@ -262,22 +262,22 @@ class Comments extends pluginFunctions
         } 
         
         $parents = $comment->readAllParents($post->getId());
+            
+        echo "<!--  START COMMENTS_WRAPPER -->\n";
+        echo "<div id='comments_wrapper'>\n";
+        echo "<h2>" . $comment->countComments(false) . "</h2>\n";
+        
         if ($parents) { 
-            
-            echo "<!--  START COMMENTS_WRAPPER -->\n";
-            echo "<div id='comments_wrapper'>\n";
-            echo "<h2>" . $comment->countComments() . "</h2>\n";
-            
             foreach ($parents as $parent) {
                 
                 $this->displayComment($parent);
                 $this->commentTree($parent->comment_id, 0);
+                $comment->setDepth(0);
             }
-            
-            echo "</div><!-- close comments_wrapper -->\n";
-            echo "<!--  END COMMENTS -->\n";
-            
         }
+        
+        echo "</div><!-- close comments_wrapper -->\n";
+        echo "<!--  END COMMENTS -->\n";
         
         if ($current_user->getPermission('can_comment') == 'no') {
             echo "<div class='comment_form_off'>" . $lang['comments_no_permission'] . "</div>";
