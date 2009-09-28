@@ -292,6 +292,7 @@ class Hotaru
             $cage->addAccessor('getFriendlyUrl');
             $cage->addAccessor('getMixedString1');
             $cage->addAccessor('getMixedString2');
+            $cage->addAccessor('getHtmLawed');
         }
     }
     
