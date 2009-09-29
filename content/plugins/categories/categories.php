@@ -5,7 +5,7 @@
  * version: 0.4
  * folder: categories
  * class: Categories
- * requires: submit 0.6, category_manager 0.3
+ * requires: submit 0.6, category_manager 0.4
  * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, post_read_post_1, post_read_post_2, post_add_post, post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, post_list_filter, submit_show_post_author_date, submit_is_page_main, navigation_last, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * PHP version 5

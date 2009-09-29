@@ -29,7 +29,7 @@ global $hotaru, $cage, $lang, $post, $plugins, $post_orig_url, $post_orig_title,
 if ($cage->post->getAlpha('edit_post') == 'true') {
     // Submitted this form...
     $title_check = $cage->post->noTags('post_title');    
-    $content_check = sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->getAllowableTags());
+    $content_check = sanitize($cage->post->getHtmLawed('post_content'), 2, $post->getAllowableTags());
     if ($cage->post->keyExists('post_subscribe')) { $subscribe_check = 'checked'; } else { $subscribe_check = ''; }   
     $status_check = $cage->post->testAlnumLines('post_status');    
     $post_id = $cage->post->getInt('post_id');    

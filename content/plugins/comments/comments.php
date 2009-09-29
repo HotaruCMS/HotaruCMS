@@ -263,21 +263,22 @@ class Comments extends pluginFunctions
         
         $parents = $comment->readAllParents($post->getId());
             
-        echo "<!--  START COMMENTS_WRAPPER -->\n";
-        echo "<div id='comments_wrapper'>\n";
-        echo "<h2>" . $comment->countComments(false) . "</h2>\n";
-        
-        if ($parents) { 
-            foreach ($parents as $parent) {
-                
-                $this->displayComment($parent);
-                $this->commentTree($parent->comment_id, 0);
-                $comment->setDepth(0);
+        if (!$hotaru->isPage('submit2')) {
+            echo "<!--  START COMMENTS_WRAPPER -->\n";
+            echo "<div id='comments_wrapper'>\n";
+            echo "<h2>" . $comment->countComments(false) . "</h2>\n";
+            
+            if ($parents) { 
+                foreach ($parents as $parent) {
+                    
+                    $this->displayComment($parent);
+                    $this->commentTree($parent->comment_id, 0);
+                    $comment->setDepth(0);
+                }
             }
+            echo "</div><!-- close comments_wrapper -->\n";
+            echo "<!--  END COMMENTS -->\n";
         }
-        
-        echo "</div><!-- close comments_wrapper -->\n";
-        echo "<!--  END COMMENTS -->\n";
         
         if ($current_user->getPermission('can_comment') == 'no') {
             echo "<div class='comment_form_off'>" . $lang['comments_no_permission'] . "</div>";
