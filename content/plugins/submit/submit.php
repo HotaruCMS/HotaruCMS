@@ -112,7 +112,7 @@ class Submit extends PluginFunctions
      */
     public function hotaru_header()
     {
-        global $hotaru, $lang, $cage, $post;
+        global $hotaru, $cage, $post;
 
         if (!defined('TABLE_POSTS')) { define("TABLE_POSTS", DB_PREFIX . 'posts'); }
         if (!defined('TABLE_POSTMETA')) { define("TABLE_POSTMETA", DB_PREFIX . 'postmeta'); }
