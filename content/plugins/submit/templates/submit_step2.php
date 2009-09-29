@@ -29,7 +29,7 @@ global $hotaru, $cage, $lang, $post, $plugins, $post_orig_url, $post_orig_title;
 if ($cage->post->getAlpha('submit2') == 'true') {
     // Submitted this form...
     $title_check = $cage->post->noTags('post_title');    
-    $content_check = sanitize($cage->post->getPurifiedHTML('post_content'), 2, $post->getAllowableTags());    
+    $content_check = sanitize($cage->post->getHtmLawed('post_content'), 2, $post->getAllowableTags());
     $post_id = $cage->post->getInt('post_id');    
     $post->setId($post_id);
     
