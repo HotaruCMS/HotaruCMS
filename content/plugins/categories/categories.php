@@ -586,8 +586,11 @@ class Categories extends PluginFunctions
                     if ($countchildren) { 
                         $depth = 1;
                         $output = $this->buildMenuBar($category, $output, $parent, $depth); 
-                        $output .= "</li>\n";
+                    } else {
+                        $output = $this->categoryLink($category, $output); 
                     }
+                    
+                    $output .= "</li>\n";
                 }
                 
                 // Output the category bar
