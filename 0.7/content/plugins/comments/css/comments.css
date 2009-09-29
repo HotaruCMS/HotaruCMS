@@ -1,0 +1,37 @@
+/* **************************************
+ *	 COMMENTS PLUGIN CSS            *
+ ************************************** */
+ 
+#comments_wrapper h2 {
+	padding-bottom: 0em;
+}
+
+.comment {
+	background-color: #fafafa;
+	margin-top: 1.0em;
+	padding: 0.4em;
+}
+
+.comment_reply {
+	background-color: #fafafa;
+}
+
+.comment_reply_link, .comment_edit_link {
+	padding: 0.4em;
+	background-color: #ffffff;
+	font-size: 1.2em;
+}
+
+.comment_author_date {
+	font-size: 0.8em;
+	float: right;
+}
+
+.comment_form textarea {
+	width: 100%;
+}
+
+.comment_form_off {
+	margin-top: 2.0em;
+	text-align: center;
+}
