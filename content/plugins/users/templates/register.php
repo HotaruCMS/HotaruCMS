@@ -57,7 +57,7 @@ if ($cage->post->getAlpha('users_type') == 'register') {
             <tr><td><?php echo $lang["users_register_password_verify"]; ?>&nbsp; </td><td><input type='password' size=30 name='password2' value='<?php echo $password2_check; ?>' /></td></tr>
             
             <?php 
-                if ($userbase->vars['usersRecaptchaEnabled']) { 
+                if ($userbase->vars['useRecaptcha']) { 
                     $recaptcha_pubkey = $plugins->getSetting('users_recaptcha_pubkey', 'users');
                     echo "<tr><td colspan=2>" . recaptcha_get_html($recaptcha_pubkey) . "</td></tr>";
                 }

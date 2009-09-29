@@ -169,12 +169,12 @@ class Users extends PluginFunctions
         // Pages you have to be logged out for...
         } else {
             if ($hotaru->isPage('register')) {
-                $userbase->vars['usersRecaptchaEnabled'] = $this->getSetting('users_recaptcha_enabled');
-                $userbase->vars['usersEmailConfEnabled'] = $this->getSetting('users_emailconf_enabled');
+                $userbase->vars['useRecaptcha'] = $this->getSetting('users_recaptcha_enabled');
+                $userbase->vars['useEmailConf'] = $this->getSetting('users_emailconf_enabled');
                 $user_id = $this->register();
                 if ($user_id) { 
                     // success!
-                    if ($userbase->vars['usersEmailConfEnabled']) {
+                    if ($userbase->vars['useEmailConf']) {
                         $send_email_confirmation = true;
                         $this->sendConfirmationEmail($user_id);
                         // fall through and display "email sent" message
@@ -298,9 +298,9 @@ class Users extends PluginFunctions
                     $current_user->setName($username_check);
                     $current_user->getUserBasic(0, $current_user->userName);
                     
-                    $userbase->vars['usersEmailConfEnabled'] = $this->getSetting('users_emailconf_enabled');
+                    $userbase->vars['useEmailConf'] = $this->getSetting('users_emailconf_enabled');
                     
-                    if ($userbase->vars['usersEmailConfEnabled'] && ($current_user->getEmailValid() == 0)) {
+                    if ($userbase->vars['useEmailConf'] && ($current_user->getEmailValid() == 0)) {
                         $this->sendConfirmationEmail($current_user->getId());
                         $hotaru->messages[$lang["users_login_failed_email_not_validated"]] = 'red';
                         $hotaru->messages[$lang["users_login_failed_email_request_sent"]] = 'green';
@@ -382,7 +382,7 @@ class Users extends PluginFunctions
         
         $current_user = new UserBase();
         
-        if ($userbase->vars['usersRecaptchaEnabled']) {
+        if ($userbase->vars['useRecaptcha']) {
             require_once(PLUGINS . 'users/recaptcha/recaptchalib.php');
         }
         
@@ -421,7 +421,7 @@ class Users extends PluginFunctions
                 $error = 1;
             }
         
-            if ($userbase->vars['usersRecaptchaEnabled']) {
+            if ($userbase->vars['useRecaptcha']) {
                                         
                 $recaptcha_pubkey = $this->getSetting('users_recaptcha_pubkey');
                 $recaptcha_privkey = $this->getSetting('users_recaptcha_privkey');
@@ -429,7 +429,7 @@ class Users extends PluginFunctions
                 $rc_resp = null;
                 $rc_error = null;
                 
-                # was there a reCAPTCHA response?
+                // was there a reCAPTCHA response?
                 if ($cage->post->keyExists('recaptcha_response_field')) {
                         $rc_resp = recaptcha_check_answer($recaptcha_privkey,
                                                         $cage->server->getRaw('REMOTE_ADDR'),
@@ -440,7 +440,7 @@ class Users extends PluginFunctions
                                 // success, do nothing.
                         } else {
                                 # set the error code so that we can display it
-                                //$rc_error = $rc_resp->error;
+                                $rc_error = $rc_resp->error;
                                 $hotaru->messages[$lang['users_register_recaptcha_error']] = 'red';
                         $error = 1;
                         }
@@ -535,7 +535,7 @@ class Users extends PluginFunctions
         $current_user->getUserBasic($user_id);
         
         // generate the email confirmation code
-        $email_conf = md5(crypt(md5($current_user->email),md5($current_user->email)));
+        $email_conf = md5(crypt(md5($current_user->getEmail()),md5($current_user->getEmail())));
         
         // store the hash in the user table
         $sql = "UPDATE " . TABLE_USERS . " SET user_email_conf = %s WHERE user_id = %d";
@@ -546,7 +546,7 @@ class Users extends PluginFunctions
         
         // send email
         $subject = $lang['users_register_emailconf_subject'];
-        $body = $lang['users_register_emailconf_body_hello'] . " " . $current_user->userName;
+        $body = $lang['users_register_emailconf_body_hello'] . " " . $current_user->getName();
         $body .= $line_break;
         $body .= $lang['users_register_emailconf_body_welcome'];
         $body .= $line_break;
@@ -557,9 +557,9 @@ class Users extends PluginFunctions
         $body .= $lang['users_register_emailconf_body_regards'];
         $body .= $next_line;
         $body .= $lang['users_register_emailconf_body_sign'];
-        $to = $current_user->email;
+        $to = $current_user->getEmail();
         $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
-    
+
         mail($to, $subject, $body, $headers);    
     }
     
