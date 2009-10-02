@@ -29,11 +29,8 @@ class UsersSettings extends Users
      /**
      * Admin settings for the Users plugin
      */
-    public function settings($folder)
+    public function settings()
     {
-         /* Allows us to call functions without specifying what plugin this is. */
-        $this->setFolder($folder);
-        
         // If the form has been submitted, go and save the data...
         if ($this->cage->post->getAlpha('submitted') == 'true') { 
             $this->saveSettings(); 
