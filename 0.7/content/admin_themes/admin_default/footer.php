@@ -26,21 +26,20 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $plugins, $lang; // don't remove
 ?>
     <div id="ft" role="contentinfo">
         <?php
-            $plugins->pluginHook('footer_top');
-            $plugins->pluginHook('footer');
-            $plugins->pluginHook('admin_footer');
-            $hotaru->showQueriesAndTime();
+            $admin->plugins->pluginHook('footer_top');
+            $admin->plugins->pluginHook('footer');
+            $admin->plugins->pluginHook('admin_footer');
+            $admin->hotaru->showQueriesAndTime();
             
             // Link to forums...
-            echo "<p>" . $lang["admin_theme_footer_having_trouble_vist_forums"];
+            echo "<p>" . $admin->lang["admin_theme_footer_having_trouble_vist_forums"];
             echo " <a href='http://hotarucms.org'>HotaruCMS.org</a> ";
-            echo $lang["admin_theme_footer_for_help"] . "</p>";
+            echo $admin->lang["admin_theme_footer_for_help"] . "</p>";
             
-            $plugins->pluginHook('footer_bottom'); 
+            $admin->plugins->pluginHook('footer_bottom'); 
         ?>
     </div>
 </div>

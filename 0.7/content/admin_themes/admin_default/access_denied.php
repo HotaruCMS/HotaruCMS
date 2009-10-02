@@ -26,10 +26,9 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $admin; // don't remove
 ?>
         <!-- HEADER-->
-        <?php $admin->displayAdminTemplate('header'); ?>
+        <?php $admin->displayAdminTemplate('header', $admin); ?>
     
         <div id="bd" role="main">
             <div class='yui-g''>
@@ -37,11 +36,11 @@ global $hotaru, $admin; // don't remove
 
                     <!-- MAIN -->
                     <div id="main">
-                        <?php echo $hotaru->showMessages(); ?>
+                        <?php echo $admin->hotaru->showMessages(); ?>
                     </div>        
                 </div>
             </div>
         </div>
         
         <!-- FOOTER -->
-        <?php $admin->displayAdminTemplate('footer'); ?>
+        <?php $admin->displayAdminTemplate('footer', $admin); ?>

@@ -26,18 +26,16 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $plugins, $lang; // don't remove
-
 // plugin hook
-$result = $plugins->pluginHook('theme_index_replace');
+$result = $hotaru->plugins->pluginHook('theme_index_replace');
 if (!isset($result) || !is_array($result)) {
 ?>
         <!-- HEADER-->
         <?php
             // plugin hook
-            $result = $plugins->pluginHook('theme_index_header');
+            $result = $hotaru->plugins->pluginHook('theme_index_header');
             if (!isset($result) || !is_array($result)) {
-                $hotaru->displayTemplate('header');
+                $hotaru->displayTemplate('header', $hotaru);
             }
         ?>
         
@@ -53,10 +51,10 @@ if (!isset($result) || !is_array($result)) {
                             <!-- MAIN -->
                             <?php     
                                 // plugin hook
-                            $result = $plugins->pluginHook('theme_index_main');
+                            $result = $hotaru->plugins->pluginHook('theme_index_main');
                             if (!isset($result) || !is_array($result)) {
                                 $page = $hotaru->getPageName();
-                                $hotaru->displayTemplate($page); 
+                                $hotaru->displayTemplate($page, $hotaru); 
                             }
                         ?>
                         </div> <!-- close "yui-u first" -->
@@ -66,9 +64,9 @@ if (!isset($result) || !is_array($result)) {
                             <!-- SIDEBAR -->
                             <?php
                                 // plugin hook
-                                $result = $plugins->pluginHook('theme_index_sidebar');
+                                $result = $hotaru->plugins->pluginHook('theme_index_sidebar');
                                 if (!isset($result) || !is_array($result)) {
-                                    $hotaru->displayTemplate('sidebar');
+                                    $hotaru->displayTemplate('sidebar', $hotaru);
                                 }                                
                             ?>
                         </div> <!-- close "yui-u" -->
@@ -79,9 +77,9 @@ if (!isset($result) || !is_array($result)) {
         <!-- FOOTER -->
         <?php
             // plugin hook
-            $result = $plugins->pluginHook('theme_index_footer');
+            $result = $hotaru->plugins->pluginHook('theme_index_footer');
             if (!isset($result) || !is_array($result)) {
-                $hotaru->displayTemplate('footer');
+                $hotaru->displayTemplate('footer', $hotaru);
             }
         ?>
 <?php    } ?>

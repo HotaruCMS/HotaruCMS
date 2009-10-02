@@ -25,18 +25,62 @@
  */
 class Hotaru
 {
+    public $db;                         // database object
+    public $cage;                       // Inspekt object
+    public $plugins;                    // Inspekt object
+    public $lang            = array();  // stores language file content
+    public $current_user;               // UserBase object
+    
     public $message         = '';       // message to display
     public $messageType     = 'green';  // green or red, color of message box
     public $messages        = array();  // for multiple messages
-
+    
     protected $isDebug      = false;    // show db queries and page loading time
     protected $sidebar      = true;     // enable or diable the sidebar
     protected $title        = '';       // for the broswer's TITLE tags
     protected $pageType     = '';       // what kind of page we're looking at
     
-    protected $cssIncludes    = array();  // a list of css files to include
-    protected $jsIncludes     = array();  // a list of js files to include
-    protected $includeType   = '';       // 'css' or 'js'
+    protected $cssIncludes  = array();  // a list of css files to include
+    protected $jsIncludes   = array();  // a list of js files to include
+    protected $includeType  = '';       // 'css' or 'js'
+    
+    public $vars            = array();  // multi-purpose
+    
+    
+    /**
+     * Build a $hotaru object containing $db and $cage
+     */
+    public function __construct($entrance = 'main')
+    {
+        // Initialize
+        require_once(LIBS . 'HotaruStart.php');
+        $start = new HotaruStart();
+        $this->isDebug  = $start->isDebug;
+        $this->db       = $start->db;
+        $this->cage     = $start->cage;
+        
+        switch ($entrance) {
+            case 'admin':
+                $this->includeLanguagePack('admin');
+                break;
+            case 'install':
+                $this->includeLanguagePack('install');
+                break;
+            case 'no_template':
+                return true;
+                break;
+            default:
+                $this->includeLanguagePack('main');
+                break;
+        }
+        
+        $this->plugins  = new PluginFunctions('', $this);
+        
+        $this->checkCookie();   // Log in user if cookie
+        $this->hotaruHeader($entrance);  // plugin hook method
+    }
+    
+    
     
     
     /**
@@ -155,97 +199,53 @@ class Hotaru
     
     
     /**
-     * Hotaru Header constructor
+     * check cookie and log in
+     *
+     * @return bool
      */
-    public function __construct($entrance = 'index')
+    public function checkCookie()
     {
-        global $hotaru, $db, $cage, $plugins, $current_user, $lang;
-        
-        // error reporting
-        ini_set('display_errors',1);
-        ini_set('log_errors',1);
-        error_reporting(E_ALL);
-        
-        // include third party libraries
-        require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
-        require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
-        require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php'); // database
-        
-        // utilities
-        require_once(FUNCTIONS . 'funcs.urls.php');
-        require_once(FUNCTIONS . 'funcs.strings.php');
-        require_once(FUNCTIONS . 'funcs.arrays.php');
-        require_once(FUNCTIONS . 'funcs.times.php');
-        require_once(FUNCTIONS . 'funcs.files.php');
-        
-        // include libraries
-        require_once(LIBS . 'Hotaru.php');          // for environment
-        require_once(LIBS . 'HotaruInspekt.php');   // for custom Inspekt methods
-        require_once(LIBS . 'Plugin.php');          // for plugins
-        require_once(LIBS . 'PluginFunctions.php'); // for plugins
-        require_once(LIBS . 'UserBase.php');        // for users
-        
-        // Initialize database
-        if (!isset($db)) { 
-            $db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST); 
-            $db->query("SET NAMES 'utf8'");
-        }
-        
-        // Read Hotaru settings
-        $settings = $this->readSettings(); // Settings from database
-        foreach ($settings as $setting)
-        {
-            if (!defined($setting->settings_name)) { 
-                define($setting->settings_name, $setting->settings_value);
-            }
-        }
-        
-        // Setup database cache
-        $db->cache_timeout = DB_CACHE_DURATION; // Note: this is hours
-        $db->cache_dir = CACHE . 'db_cache';
-        if (DB_CACHE_ON == "true") {
-            $db->use_disk_cache = true;
-        } else {
-            $db->use_disk_cache = false;
-        }   
-        // Note: Queries are still only cached following $db->cache_queries = true;
-        
-        // Start timer if debugging
-        if (DEBUG == "true") {
-            $this->isDebug = true;
-            timer_start();
-        }
-        
-        // Initialize Inspekt
-        $this->initializeInspekt();
-                
-        // Create objects
-        $plugins = new PluginFunctions(); 
-        $current_user = new UserBase();
+        $this->current_user = new UserBase($this);
         
         // Check for a cookie. If present then the user is logged in.
-        $hotaru_user = $cage->cookie->testUsername('hotaru_user');
-        if (($hotaru_user) && ($cage->cookie->keyExists('hotaru_key'))) {
+        $hotaru_user = $this->cage->cookie->testUsername('hotaru_user');
         
-            $user_info=explode(":", base64_decode($cage->cookie->getRaw('hotaru_key')));
-            
-            if (    ($hotaru_user == $user_info[0]) 
-                &&  (crypt($user_info[0], 22) == $user_info[1])
-            ) {
-                $current_user->setName($hotaru_user);
-                $current_user->getUserBasic(0, $current_user->getName());
-                $current_user->setLoggedIn(true);
-            }
+        if((!$hotaru_user) || (!$this->cage->cookie->keyExists('hotaru_key'))) { return false; }
+        
+        $user_info=explode(":", base64_decode($this->cage->cookie->getRaw('hotaru_key')));
+        
+        if (($hotaru_user != $user_info[0]) || (crypt($user_info[0], 22) != $user_info[1])) { return false; }
+
+        $this->current_user->setName($hotaru_user);
+        $this->current_user->getUserBasic(0, $this->current_user->getName());
+        $this->current_user->setLoggedIn(true);
+        
+        return true;
+    }
+    
+    
+    /**
+     * check cookie and log in
+     *
+     * @return bool
+     */
+    public function hotaruHeader($entrance = 'main')
+    {
+
+        // Include combined css and js files
+        if ($this->cage->get->keyExists('combine')) {
+            $type = $this->cage->get->testAlpha('type');
+            $version = $this->cage->get->testInt('version');
+            $this->combineIncludes($type, $version);
         }
         
-        $hotaru = $this;    // $hotaru won't exist until this constructor is finished, 
-                            // but plugins using this hook can't wait that long!
-                            
         // Enable plugins to define global settings, etc. 
-        $results = $plugins->pluginHook('hotaru_header');
+        $results = $this->plugins->pluginHook('hotaru_header');
+        
+        // NOTE TO SELF - THE FOLLOWING CREATES GLOBALS WHICH ARE TRAPPED IN THIS METHOD
         
         /*  The following extracts the results of pluginHook which is 
-            handy for making objects from plugins global */
+            handy for making global objects with plugins */
         if (isset($results) && is_array($results)) 
         {
             foreach ($results as $key => $value) {
@@ -253,62 +253,11 @@ class Hotaru
             } 
         }
         
-        if ($entrance == 'admin') {
-            $this->includeLanguagePack('admin');
-        } elseif ($entrance == 'install') {
-            $this->includeLanguagePack('install');      
-        } elseif ($entrance == 'no_template') {
-            return true;
-        } else {
-            $this->includeLanguagePack('main');
-            // Include combined css and js files
-            if ($cage->get->keyExists('combine')) {
-                $type = $cage->get->testAlpha('type');
-                $version = $cage->get->testInt('version');
-                $this->combineIncludes($type, $version);
-            }
-            $this->displayTemplate('index');
+        if (!$entrance || $entrance == 'main') {
+            $this->displayTemplate('index', $this);
         }
     }
-    
 
-    /**
-     * Initialize Inspekt
-     *
-     * @return object
-     */
-    public function initializeInspekt()
-    {
-        global $cage;
-        // Global Inspekt SuperCage
-        if (!isset($cage)) { 
-            $cage = Inspekt::makeSuperCage(); 
-        
-            // Add Hotaru custom methods
-            $cage->addAccessor('testAlnumLines');
-            $cage->addAccessor('testPage');
-            $cage->addAccessor('testUsername');
-            $cage->addAccessor('testPassword');
-            $cage->addAccessor('getFriendlyUrl');
-            $cage->addAccessor('getMixedString1');
-            $cage->addAccessor('getMixedString2');
-            $cage->addAccessor('getHtmLawed');
-        }
-    }
-    
-    
-    /**
-     * Returns all site settings
-     */
-    public function readSettings()
-    {
-        global $db;
-        
-        $sql = "SELECT * FROM " . TABLE_SETTINGS;
-        $results = $db->get_results($db->prepare($sql));
-        if ($results) { return $results; } else { return false; }
-    }
-    
     
     /**
      * Include main or admin language pack
@@ -317,8 +266,6 @@ class Hotaru
      */
     public function includeLanguagePack($pack = 'main')
     {
-        global $lang;
-               
         if ($pack == 'install') {
             include_once(INSTALL . 'install_language.php');    // language file for install
         } 
@@ -332,6 +279,13 @@ class Hotaru
            // try the default language pack
             require_once(LANGUAGES . 'language_default/' . $pack . '_language.php'); 
         }
+        
+        // Add new language to our lang property
+        if ($lang) {
+            foreach($lang as $l => $text) {
+                $this->lang[$l] = $text;
+            }
+        }
     }
     
 
@@ -343,18 +297,16 @@ class Hotaru
      */
     public function isPage($page = '')
     {
-        global $cage;
-        
-        $real_page = $cage->get->testPage('page');
+        $real_page = $this->cage->get->testPage('page');
         
         if (!$real_page) { 
             /*  Possibly a post with multi-byte characters? 
                 Try getMixedString2... */
-            $real_page = $cage->get->getMixedString2('page');
+            $real_page = $this->cage->get->getMixedString2('page');
         }
         
         // Try POST...
-        if (!$real_page) { $real_page = $cage->post->testPage('page'); }
+        if (!$real_page) { $real_page = $this->cage->post->testPage('page'); }
         
         if (!$real_page) { $real_page = "main"; }
 
@@ -369,18 +321,16 @@ class Hotaru
      */
     public function getPageName()
     {
-        global $cage;
-        
         // Try GET...
-        $page = $cage->get->testPage('page');
+        $page = $this->cage->get->testPage('page');
         if (!$page) {
             /*  Possibly a post with multi-byte characters? 
                 Try getMixedString2... */
-            $page = $cage->get->getMixedString2('page');
+            $page = $this->cage->get->getMixedString2('page');
         }
         
         // Try POST...
-        if (!$page) { $page = $cage->post->testPage('page'); }
+        if (!$page) { $page = $this->cage->post->testPage('page'); }
 
         if ($page) {
             $page = rtrim($page, '/');
@@ -428,13 +378,14 @@ class Hotaru
      * Includes a template to display
      *
      * @param string $page page name
+     * @param array $args - usually an array of objects
      * @param string $plugin optional plugin name
      * @param bool $include_once true or false
      */
-    public function displayTemplate($page = '', $plugin = '', $include_once = true)
+    public function displayTemplate($page = '', $hotaru, $plugin = '', $include_once = true)
     {
         $page = $page . '.php';
-                
+
         /* 
             1. Check the custom theme
             2. Check the default theme
@@ -473,15 +424,13 @@ class Hotaru
      */
     public function checkAnnouncements() 
     {
-        global $lang, $plugins;
-        
         $announcements = array();
-
+        
         // 1. "All plugins are currently disabled."
-        if (!$plugins->numActivePlugins()) {
+        if (!$this->plugins->numActivePlugins()) {
             array_push(
                 $announcements, 
-                $lang['main_announcement_plugins_disabled']
+                $this->lang['main_announcement_plugins_disabled']
             );
         }
 
@@ -531,10 +480,9 @@ class Hotaru
      
     public function showQueriesAndTime()
     {
-        global $db;
         if ($this->isDebug) { 
-            echo "<p class='debug'>" . $db->num_queries . " " . $lang['main_hotaru_queries_time'] . " " . timer_stop(1) . " " . 
-            $lang['main_hotaru_seconds'] . "</p>"; 
+            echo "<p class='debug'>" . $this->db->num_queries . " " . $this->lang['main_hotaru_queries_time'] . " " . timer_stop(1) . " " . 
+            $this->lang['main_hotaru_seconds'] . "</p>"; 
         }
     }
     
@@ -547,12 +495,12 @@ class Hotaru
      * 
      *  Usage:
      *    Longhand:
-     *         $hotaru->message = "This is a message";
-     *        $hotaru->messageType = "green";
-     *        $hotaru->showMessage();
+     *        $this->hotaru->message = "This is a message";
+     *        $this->hotaru->messageType = "green";
+     *        $this->hotaru->showMessage();
      *        
      *    Shorthand:
-     *        $hotaru->showMessage("This is a message", "green");
+     *        $this->hotaru->showMessage("This is a message", "green");
      */
     public function showMessage($msg = '', $msg_type = 'green')
     {
@@ -569,8 +517,8 @@ class Hotaru
      * Displays ALL success or failure messages
      *
      *  Usage:
-     *        $hotaru->messages['This is a message'] = "green";
-     *        $hotaru->showMessages();
+     *        $this->hotaru->messages['This is a message'] = "green";
+     *        $this->hotaru->showMessages();
      */
     public function showMessages()
     {
@@ -591,10 +539,6 @@ class Hotaru
      */
      public function includeCss($filename = '', $folder = '')
      {
-        global $plugins;
-        
-        if (!$folder) { $folder = $plugins->getFolder(); }
-
         // If no filename provided, the filename is assigned the plugin name.
         if (!$filename) { $filename = $folder; }
 
@@ -615,10 +559,6 @@ class Hotaru
      */
      public function includeJs($filename = '', $folder = '')
      {
-        global $plugins;
-        
-        if (!$folder) { $folder = $plugins->getFolder(); }
-        
         // If no filename provided, the filename is assigned the plugin name.
         if (!$filename) { $filename = $folder; }
         
@@ -642,10 +582,6 @@ class Hotaru
      */    
     public function findCssFile($filename = '', $folder = '')
     {
-        global $lang, $plugins;
-        
-        if (!$folder) { $folder = $plugins->getFolder(); }
-        
         if ($folder) {
 
             // If filename not given, make the plugin name the file name
@@ -681,10 +617,6 @@ class Hotaru
      */    
     public function findJsFile($filename = '', $folder = '')
     {
-        global $lang, $plugins;
-        
-        if (!$folder) { $folder = $plugins->getFolder(); }
-        
         if ($folder) {
 
             // If filename not given, make the plugin name the file name
@@ -719,13 +651,11 @@ class Hotaru
      */
      public function combineIncludes($type = 'css', $version = 0)
      {
-        global $cage, $plugins;
-        
         if ($this->pageType == 'admin') {
-            $plugins->pluginHook('admin_header_include');
+            $this->plugins->pluginHook('admin_header_include');
             $prefix = 'hotaru_admin_';
         } else {
-            $plugins->pluginHook('header_include');
+            $this->plugins->pluginHook('header_include');
             $prefix = 'hotaru_';
         }
 
@@ -758,10 +688,10 @@ class Hotaru
             
             // see if the user has an updated copy in browser cache
             if (
-                ($cage->server->keyExists('HTTP_IF_MODIFIED_SINCE') && $cage->server->testDate('HTTP_IF_MODIFIED_SINCE') == $sLastModified) ||
-                ($cage->server->keyExists('HTTP_IF_NONE_MATCH') && $cage->server->testint('HTTP_IF_NONE_MATCH') == $iETag)
+                ($this->cage->server->keyExists('HTTP_IF_MODIFIED_SINCE') && $this->cage->server->testDate('HTTP_IF_MODIFIED_SINCE') == $sLastModified) ||
+                ($this->cage->server->keyExists('HTTP_IF_NONE_MATCH') && $this->cage->server->testint('HTTP_IF_NONE_MATCH') == $iETag)
             ) {
-                header("{$cage->server->getRaw('SERVER_PROTOCOL')} 304 Not Modified");
+                header("{$this->cage->server->getRaw('SERVER_PROTOCOL')} 304 Not Modified");
                 exit;
             }
         
@@ -794,7 +724,7 @@ class Hotaru
                     fclose($oFile);
                 } else {
                     // archive file no longer exists or invalid etag specified
-                    header("{$cage->server->getRaw('SERVER_PROTOCOL')} 404 Not Found");
+                    header("{$this->cage->server->getRaw('SERVER_PROTOCOL')} 404 Not Found");
                     exit;
                 }
         
@@ -853,6 +783,6 @@ class Hotaru
         }
 
      }
-     
+
 }
 ?>

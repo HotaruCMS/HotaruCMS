@@ -25,7 +25,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-global $lang;
+
 ?>
 
-<?php echo $lang['main_theme_page_not_found']; ?>
+<?php echo $hotaru->lang['main_theme_page_not_found']; ?>
