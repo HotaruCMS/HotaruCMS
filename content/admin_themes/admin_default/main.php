@@ -26,19 +26,18 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $lang, $admin; // don't remove
 ?>
 
 <p class="breadcrumbs">
     <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
-    &raquo; <a href="<?php echo url(array(), 'admin'); ?>"><?php echo $lang["admin_theme_main_admin_cp"]; ?></a> 
-    &raquo; <?php echo $lang["admin_theme_main_admin_home"]; ?>
+    &raquo; <a href="<?php echo url(array(), 'admin'); ?>"><?php echo $admin->lang["admin_theme_main_admin_cp"]; ?></a> 
+    &raquo; <?php echo $admin->lang["admin_theme_main_admin_home"]; ?>
 </p>
 
 <!-- TITLE FOR ADMIN NEWS -->
 <h2>
     <a href="http://feeds2.feedburner.com/hotarucms"><img src="<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/rss_16.png"></a>
-    &nbsp;<?php echo $lang["admin_theme_main_latest"]; ?>
+    &nbsp;<?php echo $admin->lang["admin_theme_main_latest"]; ?>
 </h2>
 
 <?php echo $admin->adminNews(); ?>

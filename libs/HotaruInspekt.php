@@ -158,7 +158,7 @@ class getHtmLawed extends AccessorAbstract {
         }
         else 
         {
-            return htmLawed(stripslashes($text, $config));
+            return htmLawed(stripslashes($text), $config);
         }
         return false;
    }

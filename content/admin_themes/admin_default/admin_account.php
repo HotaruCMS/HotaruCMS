@@ -25,42 +25,40 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-
-global $hotaru, $lang, $current_user; // don't remove
-$checks = $current_user->updateAccount();
+$checks = $admin->current_user->updateAccount();
 extract($checks); // extracts $username_check, etc.
 ?>
 
 <p class="breadcrumbs">
     <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
-    &raquo; <a href="<?php echo url(array(), 'admin'); ?>"><?php echo $lang["admin_theme_main_admin_cp"]; ?></a> 
-    &raquo; <?php echo $lang["admin_theme_account"]; ?>
+    &raquo; <a href="<?php echo url(array(), 'admin'); ?>"><?php echo $admin->lang["admin_theme_main_admin_cp"]; ?></a> 
+    &raquo; <?php echo $admin->lang["admin_theme_account"]; ?>
 </p>
         
-<?php $hotaru->showMessages(); ?>
+<?php $admin->hotaru->showMessages(); ?>
         
 <div class='main_inner'>
 
-    <?php echo $lang["admin_theme_account_instructions"]; ?>
+    <?php echo $admin->lang["admin_theme_account_instructions"]; ?>
     <form name='admin_theme_update_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>    
     <table>
-    <tr><td><?php echo $lang["admin_theme_update_username"]; ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check; ?>' /></td></tr>
-    <tr><td><?php echo $lang["admin_theme_update_email"]; ?>&nbsp; </td><td><input type='text' size=30 name='email' value='<?php echo $email_check; ?>' /></td></tr>
+    <tr><td><?php echo $admin->lang["admin_theme_update_username"]; ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check; ?>' /></td></tr>
+    <tr><td><?php echo $admin->lang["admin_theme_update_email"]; ?>&nbsp; </td><td><input type='text' size=30 name='email' value='<?php echo $email_check; ?>' /></td></tr>
     <input type='hidden' name='update_type' value='update_general' />
     <input type='hidden' name='page' value='admin_account'>
-    <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $lang['admin_theme_update_form_submit']; ?>' /></td></tr>
+    <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $admin->lang['admin_theme_update_form_submit']; ?>' /></td></tr>
     </table>    
     </form>
     
-    <?php echo $lang["admin_theme_update_password_instruct"]; ?>
+    <?php echo $admin->lang["admin_theme_update_password_instruct"]; ?>
     <form name='update_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>
     <table>
-    <tr><td><?php echo $lang["admin_theme_update_old_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_old' value='<?php echo $password_check_old; ?>' /></td></tr>
-    <tr><td><?php echo $lang["admin_theme_update_new_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_new' value='<?php echo $password_check_new; ?>' /></td></tr>
-    <tr><td><?php echo $lang["admin_theme_update_new_password_verify"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_new2' value='<?php echo $password_check_new2; ?>' /></td></tr>
+    <tr><td><?php echo $admin->lang["admin_theme_update_old_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_old' value='<?php echo $password_check_old; ?>' /></td></tr>
+    <tr><td><?php echo $admin->lang["admin_theme_update_new_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_new' value='<?php echo $password_check_new; ?>' /></td></tr>
+    <tr><td><?php echo $admin->lang["admin_theme_update_new_password_verify"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_new2' value='<?php echo $password_check_new2; ?>' /></td></tr>
     <input type='hidden' name='update_type' value='update_password' />
     <input type='hidden' name='page' value='admin_account'>
-    <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $lang['admin_theme_update_form_submit']; ?>' /></td></tr>            
+    <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $admin->lang['admin_theme_update_form_submit']; ?>' /></td></tr>            
     </table>
     </form>
 

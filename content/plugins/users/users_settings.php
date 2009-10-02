@@ -31,17 +31,15 @@ class UsersSettings extends Users
      */
     public function settings($folder)
     {
-        global $hotaru, $cage, $lang;
-        
          /* Allows us to call functions without specifying what plugin this is. */
         $this->setFolder($folder);
         
         // If the form has been submitted, go and save the data...
-        if ($cage->post->getAlpha('submitted') == 'true') { 
+        if ($this->cage->post->getAlpha('submitted') == 'true') { 
             $this->saveSettings(); 
         }    
         
-        echo "<h1>" . $lang["users_settings_header"] . "</h1>\n";
+        echo "<h1>" . $this->lang["users_settings_header"] . "</h1>\n";
         
         // Get settings from database if they exist...
         $recaptcha_enabled = $this->getSetting('users_recaptcha_enabled');
@@ -60,21 +58,21 @@ class UsersSettings extends Users
         
         echo "<form name='users_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=users' method='post'>\n";
         
-        echo "<p>" . $lang["users_settings_instructions"] . "</p><br />";
+        echo "<p>" . $this->lang["users_settings_instructions"] . "</p><br />";
         
-        echo "<b>" . $lang["users_settings_registration"] . "</b><br /><br />";
+        echo "<b>" . $this->lang["users_settings_registration"] . "</b><br /><br />";
         
         $thisdomain =  rstrtrim(str_replace("http://", "", BASEURL), '/');
-        echo "<input type='checkbox' name='rc_enabled' value='enabled' " . $recaptcha_enabled . " >&nbsp;&nbsp;" . $lang["users_settings_recaptcha_enable"] . " <a href='http://recaptcha.net/api/getkey?domain=" . $thisdomain . "&app=HotaruCMS'>reCAPTCHA.net</a><br /><br />\n";    
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $lang["users_settings_recaptcha_public_key"] . ": <input type='text' name='rc_pubkey' size=50 value='" . $recaptcha_pubkey . "'><br /><br />\n";
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $lang["users_settings_recaptcha_private_key"] . ": <input type='text' name='rc_privkey' size=50 value='" . $recaptcha_privkey . "'><br /><br />\n";
-        echo "<input type='checkbox' name='emailconf' value='emailconf' " . $emailconf_enabled . ">&nbsp;&nbsp;" . $lang["users_settings_email_conf"] . "<br />\n";
+        echo "<input type='checkbox' name='rc_enabled' value='enabled' " . $recaptcha_enabled . " >&nbsp;&nbsp;" . $this->lang["users_settings_recaptcha_enable"] . " <a href='http://recaptcha.net/api/getkey?domain=" . $thisdomain . "&app=HotaruCMS'>reCAPTCHA.net</a><br /><br />\n";    
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $this->lang["users_settings_recaptcha_public_key"] . ": <input type='text' name='rc_pubkey' size=50 value='" . $recaptcha_pubkey . "'><br /><br />\n";
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $this->lang["users_settings_recaptcha_private_key"] . ": <input type='text' name='rc_privkey' size=50 value='" . $recaptcha_privkey . "'><br /><br />\n";
+        echo "<input type='checkbox' name='emailconf' value='emailconf' " . $emailconf_enabled . ">&nbsp;&nbsp;" . $this->lang["users_settings_email_conf"] . "<br />\n";
     
         $this->pluginHook('users_settings_form');
                 
         echo "<br /><br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
-        echo "<input type='submit' value='" . $lang["users_settings_save"] . "' />\n";
+        echo "<input type='submit' value='" . $this->lang["users_settings_save"] . "' />\n";
         echo "</form>\n";
     }
     
@@ -84,10 +82,10 @@ class UsersSettings extends Users
      */
     public function saveSettings()
     {
-        global $cage, $hotaru, $userbase, $lang;
+        global $userbase;
     
         // Recaptcha Enabled
-        if ($cage->post->keyExists('rc_enabled')) { 
+        if ($this->cage->post->keyExists('rc_enabled')) { 
             $recaptcha_enabled = 'checked'; 
             $userbase->vars['useRecaptcha'] = true;
         } else { 
@@ -96,7 +94,7 @@ class UsersSettings extends Users
         }
         
         // Email Confirmation Enabled
-        if ($cage->post->keyExists('emailconf')) { 
+        if ($this->cage->post->keyExists('emailconf')) { 
             $emailconf_enabled = 'checked'; 
             $userbase->vars['useEmailConf'] = true;
         } else { 
@@ -105,15 +103,15 @@ class UsersSettings extends Users
         }
         
         // ReCaptcha Public Key
-        if ($cage->post->keyExists('rc_pubkey')) { 
-            $recaptcha_pubkey = $cage->post->testAlnumLines('rc_pubkey');
+        if ($this->cage->post->keyExists('rc_pubkey')) { 
+            $recaptcha_pubkey = $this->cage->post->testAlnumLines('rc_pubkey');
         } else { 
             $recaptcha_pubkey = "";
         }
         
         // ReCaptcha Private Key
-        if ($cage->post->keyExists('rc_privkey')) {     
-            $recaptcha_privkey = $cage->post->testAlnumLines('rc_privkey');
+        if ($this->cage->post->keyExists('rc_privkey')) {     
+            $recaptcha_privkey = $this->cage->post->testAlnumLines('rc_privkey');
         } else { 
             $recaptcha_privkey = ""; 
         }
@@ -127,13 +125,13 @@ class UsersSettings extends Users
         $this->updateSetting('users_emailconf_enabled', $emailconf_enabled);        
         
         if (($recaptcha_enabled == 'checked') && ($recaptcha_pubkey == "" || $recaptcha_privkey == "")) {
-            $hotaru->message = $lang["users_settings_no_keys"];
-            $hotaru->messageType = "red";
-            $hotaru->showMessage();
+            $this->hotaru->message = $this->lang["users_settings_no_keys"];
+            $this->hotaru->messageType = "red";
+            $this->hotaru->showMessage();
         } else {
-            $hotaru->message = $lang["users_settings_saved"];
-            $hotaru->messageType = "green";
-            $hotaru->showMessage();
+            $this->hotaru->message = $this->lang["users_settings_saved"];
+            $this->hotaru->messageType = "green";
+            $this->hotaru->showMessage();
         }
         
         return true;    

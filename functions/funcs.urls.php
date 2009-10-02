@@ -54,6 +54,8 @@ function url($parameters = array(), $head = 'index')
 {
     global $post;
     
+    require_once(FUNCTIONS . 'funcs.strings.php'); // needed for rtrim function
+    
     if (FRIENDLY_URLS == "false") {
     
         if ($head == 'index') {

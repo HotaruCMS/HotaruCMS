@@ -24,13 +24,11 @@
  * @link      http://www.hotarucms.org/
  */
  
-global $hotaru, $cage, $lang, $plugins, $userbase;
-    
-if ($cage->post->getAlpha('users_type') == 'register') {
-    $username_check = $cage->post->testUsername('username');
+if ($hotaru->cage->post->getAlpha('users_type') == 'register') {
+    $username_check = $hotaru->cage->post->testUsername('username');
     $password_check = "";
     $password2_check = "";
-    $email_check = $cage->post->testEmail('email');    
+    $email_check = $hotaru->cage->post->testEmail('email');    
 } else {
     $username_check = "";
     $password_check = "";
@@ -40,31 +38,31 @@ if ($cage->post->getAlpha('users_type') == 'register') {
 ?>
 
     <div id='main'>
-        <div id='breadcrumbs'><a href='<?php echo BASEURL; ?>'><?php echo $lang["users_home"]; ?></a> &raquo; <?php echo $lang["users_register"]; ?></div>
+        <div id='breadcrumbs'><a href='<?php echo BASEURL; ?>'><?php echo $hotaru->lang["users_home"]; ?></a> &raquo; <?php echo $hotaru->lang["users_register"]; ?></div>
             
-        <h2><?php echo $lang["users_register"]; ?></h2>
+        <h2><?php echo $hotaru->lang["users_register"]; ?></h2>
         
         <?php echo $hotaru->showMessages(); ?>
             
         <div class='main_inner'>
-        <?php echo $lang["users_register_instructions"]; ?>
+        <?php echo $hotaru->lang["users_register_instructions"]; ?>
                 
             <form name='register_form' action='<?php echo BASEURL; ?>index.php?page=register' method='post'>    
             <table>
-            <tr><td><?php echo $lang["users_register_username"]; ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check; ?>' /></td></tr>
-            <tr><td><?php echo $lang["users_register_email"]; ?>&nbsp; </td><td><input type='text' size=30 name='email' value='<?php echo $email_check; ?>' /></td></tr>
-            <tr><td><?php echo $lang["users_register_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password' value='<?php echo $password_check; ?>' /></td></tr>
-            <tr><td><?php echo $lang["users_register_password_verify"]; ?>&nbsp; </td><td><input type='password' size=30 name='password2' value='<?php echo $password2_check; ?>' /></td></tr>
+            <tr><td><?php echo $hotaru->lang["users_register_username"]; ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check; ?>' /></td></tr>
+            <tr><td><?php echo $hotaru->lang["users_register_email"]; ?>&nbsp; </td><td><input type='text' size=30 name='email' value='<?php echo $email_check; ?>' /></td></tr>
+            <tr><td><?php echo $hotaru->lang["users_register_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password' value='<?php echo $password_check; ?>' /></td></tr>
+            <tr><td><?php echo $hotaru->lang["users_register_password_verify"]; ?>&nbsp; </td><td><input type='password' size=30 name='password2' value='<?php echo $password2_check; ?>' /></td></tr>
             
             <?php 
-                if ($userbase->vars['useRecaptcha']) { 
+                if ($hotaru->current_user->vars['useRecaptcha']) { 
                     $recaptcha_pubkey = $plugins->getSetting('users_recaptcha_pubkey', 'users');
                     echo "<tr><td colspan=2>" . recaptcha_get_html($recaptcha_pubkey) . "</td></tr>";
                 }
             ?>
             
             <input type='hidden' name='users_type' value='register' />
-            <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $lang['users_register_form_submit']; ?>' /></td></tr>            
+            <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $hotaru->lang['users_register_form_submit']; ?>' /></td></tr>            
             </table>
             </form>
         </div>

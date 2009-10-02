@@ -44,6 +44,12 @@ class Plugin
     protected $dependencies = array();    // array of plugin->version pairs
     protected $hooks        = array();    // array of plugin hooks
     private $settings;                    // instance of PluginSettings object
+    
+    public $db;                             // database object
+    public $cage;                           // Inspekt object
+    public $hotaru;                         // Hotaru object
+    public $lang            = array();      // stores language file content
+    public $current_user;                   // UserBase object
 
      /* ******************************************************************** 
      * 
@@ -51,14 +57,20 @@ class Plugin
      
 
     /**
-     * Constructor - make a PluginAcess object
+     * Constructor - make a Plugin object
      */
-    public function __construct($folder = '')
+    public function __construct($folder = '', $hotaru)
     {
         // We don't need to fill the object with anything other than the plugin folder name at this time:
         if ($folder) { 
             $this->setFolder($folder); 
         }
+
+        $this->hotaru           = $hotaru;
+        $this->db               = $hotaru->db;
+        $this->cage             = $hotaru->cage;
+        $this->lang             = &$hotaru->lang;    // reference to main lang array
+        $this->current_user     = $hotaru->current_user;
     }
     
     
@@ -153,9 +165,7 @@ class Plugin
      */
     public function hotaru_header()
     {
-        global $plugins;
-
-        $plugins->includeLanguage('', $this->getFolder());
+        $this->includeLanguage('', $this->getFolder());
     }
      
      
@@ -164,11 +174,9 @@ class Plugin
      */
     public function header_include()
     {
-        global $hotaru, $admin, $cage;
-        
         // include a files that match the name of the plugin folder:
-        $hotaru->includeJs('', $this->getFolder()); // filename, folder name
-        $hotaru->includeCss('', $this->getFolder());
+        $this->hotaru->includeJs('', $this->getFolder()); // filename, folder name
+        $this->hotaru->includeCss('', $this->getFolder());
     }
     
     
@@ -177,8 +185,6 @@ class Plugin
      */
     public function admin_header_include()
     {
-        global $plugins, $admin, $cage;
-
         $this->header_include();
     }
     
@@ -187,9 +193,7 @@ class Plugin
      */
     public function pre_close_body()
     {
-        global $hotaru;
-        
-        $hotaru->displayTemplate($this->getFolder() . '_footer', $this->getFolder());
+        $this->hotaru->displayTemplate($this->getFolder() . '_footer', $this->getFolder());
     }
     
 

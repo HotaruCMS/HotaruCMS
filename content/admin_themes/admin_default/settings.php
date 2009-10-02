@@ -26,18 +26,17 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $plugins, $admin, $cage, $lang; // don't remove
 ?>
 
 <p class="breadcrumbs">
     <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
-    &raquo; <a href="<?php echo url(array(), 'admin'); ?>"><?php echo $lang["admin_theme_main_admin_cp"]; ?></a> 
-    &raquo; <?php echo $lang["admin_theme_settings"]; ?>
+    &raquo; <a href="<?php echo url(array(), 'admin'); ?>"><?php echo $admin->lang["admin_theme_main_admin_cp"]; ?></a> 
+    &raquo; <?php echo $admin->lang["admin_theme_settings"]; ?>
 </p>
 
-<?php $plugins->pluginHook('admin_settings_top'); ?>
+<?php $admin->plugins->pluginHook('admin_settings_top'); ?>
     
-    <h2><?php echo $lang["admin_theme_settings_title"]; ?></h2>
+    <h2><?php echo $admin->lang["admin_theme_settings_title"]; ?></h2>
     
     <?php $loaded_settings = $admin->settings();    // Prepare or process the form ?>
     
@@ -45,10 +44,10 @@ global $plugins, $admin, $cage, $lang; // don't remove
     
     <table id="settings">    
     <tr>
-        <td><b><u><?php echo $lang["admin_theme_settings_setting"]; ?></u></b></td>
-        <td><b><u><?php echo $lang["admin_theme_settings_value"]; ?></u></b></td>
-        <td><b><u><?php echo $lang["admin_theme_settings_default"]; ?></u></b></td>
-        <td><b><u><?php echo $lang["admin_theme_settings_notes"]; ?></u></b></td>
+        <td><b><u><?php echo $admin->lang["admin_theme_settings_setting"]; ?></u></b></td>
+        <td><b><u><?php echo $admin->lang["admin_theme_settings_value"]; ?></u></b></td>
+        <td><b><u><?php echo $admin->lang["admin_theme_settings_default"]; ?></u></b></td>
+        <td><b><u><?php echo $admin->lang["admin_theme_settings_notes"]; ?></u></b></td>
     </tr>
     
     <?php     // **********************************************************
@@ -76,4 +75,4 @@ global $plugins, $admin, $cage, $lang; // don't remove
     
     
     
-<?php $plugins->pluginHook('admin_settings_bottom'); ?>
+<?php $admin->plugins->pluginHook('admin_settings_bottom'); ?>
