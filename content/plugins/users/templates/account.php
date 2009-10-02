@@ -61,7 +61,7 @@ extract($hotaru->vars['checks']); // extracts $username_check, etc.
     </table>    
     </form>
     
-    <?php if ($hotaru->vars['userid'] == $hotaru->current_user->getId()) { // must be looking at own account so show password change form: ?>
+    <?php if ($hotaru->vars['userid'] == $hotaru->current_user->id) { // must be looking at own account so show password change form: ?>
         <?php echo $hotaru->lang["users_account_password_instruct"]; ?>
         <form name='update_form' action='<?php echo BASEURL; ?>index.php' method='post'>
         <table>

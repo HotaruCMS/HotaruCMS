@@ -79,7 +79,7 @@ class Users extends PluginFunctions
         $this->includeLanguage();
         
         if ($username = $this->cage->get->testUsername('user')) {
-            $this->hotaru->setTitle($username);
+            $this->hotaru->title = $username;
         }
     }
     
@@ -103,24 +103,24 @@ class Users extends PluginFunctions
      */
     public function navigation_users()
     {
-        if ($this->current_user->getLoggedIn()) {
+        if ($this->current_user->loggedIn) {
             
-            if ($this->hotaru->getTitle() == 'account') { $status = "id='navigation_active'"; } else { $status = ""; }
+            if ($this->hotaru->title == 'account') { $status = "id='navigation_active'"; } else { $status = ""; }
             echo "<li><a  " . $status . " href='" . url(array('page'=>'account')) . "'>" . $this->lang["users_account"] . "</a></li>\n";
             
-            if ($this->hotaru->getTitle() == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
+            if ($this->hotaru->title == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
             echo "<li><a  " . $status . " href='" . url(array('page'=>'logout')) . "'>" . $this->lang["users_logout"] . "</a></li>\n";
             
             if ($this->current_user->getPermission('can_access_admin') == 'yes') {
                 
-                if ($this->hotaru->getTitle() == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
+                if ($this->hotaru->title == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
                 echo "<li><a  " . $status . " href='" . url(array(), 'admin') . "'>" . $this->lang["users_admin"] . "</a></li>\n";
             }
         } else {    
-            if ($this->hotaru->getTitle() == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
+            if ($this->hotaru->title == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
             echo "<li><a  " . $status . " href='" . url(array('page'=>'login')) . "'>" . $this->lang["users_login"] . "</a></li>\n";
             
-            if ($this->hotaru->getTitle() == 'register') { $status = "id='navigation_active'"; } else { $status = ""; }
+            if ($this->hotaru->title == 'register') { $status = "id='navigation_active'"; } else { $status = ""; }
             echo "<li><a  " . $status . " href='" . url(array('page'=>'register')) . "'>" . $this->lang["users_register"] . "</a></li>\n";
         }
     }
@@ -137,7 +137,7 @@ class Users extends PluginFunctions
         $this->vars['send_email_confirmation'] = false; 
         
         // Pages you have to be logged in for...
-        if ($this->current_user->getLoggedIn()) {
+        if ($this->current_user->loggedIn) {
             if ($this->hotaru->isPage('logout')) {
                 $this->current_user->destroyCookieAndSession();
                 header("Location: " . BASEURL);
@@ -149,7 +149,7 @@ class Users extends PluginFunctions
                 }
                 
                 // if userid is blank, assume current user's id.
-                if (!$this->hotaru->vars['userid']) { $this->hotaru->vars['userid'] = $this->current_user->getId(); }
+                if (!$this->hotaru->vars['userid']) { $this->hotaru->vars['userid'] = $this->current_user->id; }
 
                 $this->hotaru->vars['checks'] = $this->current_user->updateAccount($this->hotaru->vars['userid']);
             } 
@@ -190,7 +190,7 @@ class Users extends PluginFunctions
     public function theme_index_main()
     {
         // Pages you have to be logged in for...
-        if ($this->current_user->getLoggedIn()) {
+        if ($this->current_user->loggedIn) {
             if ($this->hotaru->isPage('account')) {
                 // Note: the "account" template calls the functions it needs 
                 // from the UserBase class.
@@ -245,7 +245,7 @@ class Users extends PluginFunctions
             // Undo the filter that limits results to either 'top' or 'new' (See submit.php -> sub_prepare_list())
             if(isset($filter['post_status = %s'])) { unset($filter['post_status = %s']); }
             $filter['post_status != %s'] = 'processing';
-            $page_title = $this->lang["post_breadcrumbs_user"] . " &raquo; " . $this->hotaru->getTitle() . $rss;
+            $page_title = $this->lang["post_breadcrumbs_user"] . " &raquo; " . $this->hotaru->title . $rss;
             
             $this->hotaru->setPageType('user');
             
@@ -278,20 +278,20 @@ class Users extends PluginFunctions
                     //success
                                 
                     if ($this->cage->post->getInt('remember') == 1){ $remember = 1; } else { $remember = 0; }
-                    $this->current_user->setName($username_check);
+                    $this->current_user->name = $username_check;
                     $this->current_user->getUserBasic(0, $this->current_user->userName);
                     
                     $this->current_user->vars['useEmailConf'] = $this->getSetting('users_emailconf_enabled');
                     
-                    if ($this->current_user->vars['useEmailConf'] && ($this->current_user->getEmailValid() == 0)) {
-                        $this->sendConfirmationEmail($this->current_user->getId());
+                    if ($this->current_user->vars['useEmailConf'] && ($this->current_user->emailValid == 0)) {
+                        $this->sendConfirmationEmail($this->current_user->id);
                         $this->hotaru->messages[$this->lang["users_login_failed_email_not_validated"]] = 'red';
                         $this->hotaru->messages[$this->lang["users_login_failed_email_request_sent"]] = 'green';
                         return false;
                     }
                     
                     $this->current_user->setCookie($remember);
-                    $this->current_user->setLoggedIn(true);
+                    $this->current_user->loggedIn = true;
                     $this->current_user->updateUserLastLogin();
                     return true;
             } else {
@@ -372,7 +372,7 @@ class Users extends PluginFunctions
         
             $username_check = $this->cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
             if ($username_check) {
-                $this->current_user->setName($username_check);
+                $this->current_user->name = $username_check;
             } else {
                 $this->hotaru->messages[$this->lang['users_register_username_error']] = 'red';
                 $error = 1;
@@ -383,7 +383,7 @@ class Users extends PluginFunctions
                 $password2_check = $this->cage->post->testPassword('password2');
                 if ($password_check == $password2_check) {
                     // safe, the two new password fields match
-                    $this->current_user->setPassword($this->current_user->generateHash($password_check));
+                    $this->current_user->password = $this->current_user->generateHash($password_check);
                 } else {
                     $this->hotaru->messages[$this->lang['users_register_password_match_error']] = 'red';
                     $error = 1;
@@ -396,7 +396,7 @@ class Users extends PluginFunctions
                         
             $email_check = $this->cage->post->testEmail('email');    
             if ($email_check) {
-                $this->current_user->setEmail($email_check);
+                $this->current_user->email = $email_check;
             } else {
                 $this->hotaru->messages[$this->lang['users_register_email_error']] = 'red';
                 $error = 1;
@@ -512,29 +512,29 @@ class Users extends PluginFunctions
         $this->current_user->getUserBasic($user_id);
         
         // generate the email confirmation code
-        $email_conf = md5(crypt(md5($this->current_user->getEmail()),md5($this->current_user->getEmail())));
+        $email_conf = md5(crypt(md5($this->current_user->email),md5($this->current_user->email)));
         
         // store the hash in the user table
         $sql = "UPDATE " . TABLE_USERS . " SET user_email_conf = %s WHERE user_id = %d";
-        $this->db->query($this->db->prepare($sql, $email_conf, $this->current_user->getId()));
+        $this->db->query($this->db->prepare($sql, $email_conf, $this->current_user->id));
         
         $line_break = "\r\n\r\n";
         $next_line = "\r\n";
         
         // send email
         $subject = $this->lang['users_register_emailconf_subject'];
-        $body = $this->lang['users_register_emailconf_body_hello'] . " " . $this->current_user->getName();
+        $body = $this->lang['users_register_emailconf_body_hello'] . " " . $this->current_user->name;
         $body .= $line_break;
         $body .= $this->lang['users_register_emailconf_body_welcome'];
         $body .= $line_break;
         $body .= $this->lang['users_register_emailconf_body_click'];
         $body .= $line_break;
-        $body .= BASEURL . "index.php?page=emailconf&plugin=users&id=" . $this->current_user->getId() . "&conf=" . $email_conf;
+        $body .= BASEURL . "index.php?page=emailconf&plugin=users&id=" . $this->current_user->id . "&conf=" . $email_conf;
         $body .= $line_break;
         $body .= $this->lang['users_register_emailconf_body_regards'];
         $body .= $next_line;
         $body .= $this->lang['users_register_emailconf_body_sign'];
-        $to = $this->current_user->getEmail();
+        $to = $this->current_user->email;
         $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
 
         mail($to, $subject, $body, $headers);    
@@ -562,7 +562,7 @@ class Users extends PluginFunctions
         
         if ($conf === $user_email_conf) {
             $sql = "UPDATE " . TABLE_USERS . " SET user_email_valid = %d WHERE user_id = %d";
-            $this->db->query($this->db->prepare($sql, 1, $this->current_user->getId()));
+            $this->db->query($this->db->prepare($sql, 1, $this->current_user->id));
         
             $success_message = $this->lang['users_register_emailconf_success'] . " <b><a href='" . url(array('page'=>'login')) . "'>" . $this->lang['users_register_emailconf_success_login'] . "</a></b>";
             $this->hotaru->messages[$success_message] = 'green';
@@ -587,10 +587,10 @@ class Users extends PluginFunctions
 
         if ($this->hotaru->getPageType() == 'user' && $this->current_user->getPermission('can_access_admin') == 'yes') {
             echo "<div class='special_links_bar'>";
-            echo $this->lang["users_account_edit"] . " " . $member->getName() . ": ";
-            echo " <a href='" . url(array('page' => 'account', 'user' => $member->getName())) . "'>";
+            echo $this->lang["users_account_edit"] . " " . $member->name . ": ";
+            echo " <a href='" . url(array('page' => 'account', 'user' => $member->name)) . "'>";
             echo $this->lang["users_account_account"] . "</a> | ";
-            echo " <a href='" . url(array('page' => 'permissions', 'user' => $member->getName())) . "'>";
+            echo " <a href='" . url(array('page' => 'permissions', 'user' => $member->name)) . "'>";
             echo $this->lang["users_account_permissions"] . "</a>";
             echo "</div>";
         }
@@ -634,10 +634,10 @@ class Users extends PluginFunctions
                
         // Breadcrumbs:
         echo "<div id='breadcrumbs'><a href='" . BASEURL . "'>" . $this->lang["users_home"] . "</a> "; 
-        echo "&raquo; <a href='" . url(array('user' => $user->getName())) . "'>" . $user->getName() . "</a> "; 
+        echo "&raquo; <a href='" . url(array('user' => $user->name)) . "'>" . $user->name . "</a> "; 
         echo "&raquo; " . $this->lang["users_account_permissions"] . "</div>";
             
-        echo '<h2>' . $this->lang["users_account_user_permissions"] . ': ' . $user->getName() . '</h2>';
+        echo '<h2>' . $this->lang["users_account_user_permissions"] . ': ' . $user->name . '</h2>';
         
         $this->hotaru->showMessages();
             
@@ -647,7 +647,7 @@ class Users extends PluginFunctions
             echo "<tr><td>" . make_name($key) . ": </td>\n";
             foreach($options as $value) {
                 if (isset($perms[$key]) && ($perms[$key] == $value)) { $checked = 'checked'; } else { $checked = ''; } 
-                if ($key == 'can_access_admin' && $user->getRole() == 'admin') { $disabled = 'disabled'; } else { $disabled = ''; }
+                if ($key == 'can_access_admin' && $user->role == 'admin') { $disabled = 'disabled'; } else { $disabled = ''; }
                 echo "<td><input type='radio' name='" . $key . "' value='" . $value . "' " . $checked . " " . $disabled . "> " . $value . " &nbsp;</td>\n";
             }
             echo "</tr>";
@@ -656,7 +656,7 @@ class Users extends PluginFunctions
         echo "</table>\n";
         echo "<input type='hidden' name='page' value='permissions' />\n";
         echo "<input type='hidden' name='permissions' value='updated' />\n";
-        echo "<input type='hidden' name='userid' value='" . $user->getId() . "' />\n";
+        echo "<input type='hidden' name='userid' value='" . $user->id . "' />\n";
         echo "<div style='text-align: right'><input class='submit' type='submit' value='" . $this->lang['users_account_form_submit'] . "' /></div>\n";
         echo "</form>\n";
     }

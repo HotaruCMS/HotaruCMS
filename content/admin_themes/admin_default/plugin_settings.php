@@ -32,15 +32,15 @@
     <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
     &raquo; <a href="<?php echo url(array(), 'admin'); ?>"><?php echo $admin->lang["admin_theme_main_admin_cp"]; ?></a> 
     &raquo; <?php echo $admin->lang["admin_theme_plugin_settings"]; ?> 
-    <?php if ($admin->plugins->getName()) { echo "&raquo; " .  $admin->plugins->getName(); } ?>
+    <?php if ($admin->plugins->name) { echo "&raquo; " .  $admin->plugins->name; } ?>
 </p>
 
 <div id="plugin_settings">
     <?php 
-        if ($admin->plugins->getFolder() == "") {
+        if ($admin->plugins->folder == "") {
             $admin->plugins->pluginHook('admin_sidebar_plugin_settings');
         } else {
-            $admin->plugins->pluginHook('admin_plugin_settings', true, $admin->plugins->getFolder()); 
+            $admin->plugins->pluginHook('admin_plugin_settings', true, $admin->plugins->folder); 
         }
     ?>
 </div>

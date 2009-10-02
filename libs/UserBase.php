@@ -42,7 +42,7 @@ class UserBase {
     public $plugins;                    // PluginFunctions object
     
     /**
-     * Build a $plugins object containing $db and $cage
+     * Build a userbase object containing $db and $cage
      */
     public function __construct($hotaru)
     {
@@ -55,185 +55,28 @@ class UserBase {
     
 
     /**
-     * Set additonal member variables
-     *
-     * @param string $name
-     * @param mixed $value
+     * Access modifier to set protected properties
      */
-    private function __set($name, $value)
+    public function __set($var, $val)
     {
-        $this->vars[$name] = $value;
+        $this->$var = $val;  
+    }
+    
+    
+    /**
+     * Access modifier to get protected properties
+     */
+    public function __get($var)
+    {
+        return $this->$var;
     }
 
 
-    /**
-     * Get additonal member variables
-     *
-     * @param string $name
-     * @return mixed
-     */
-    private function __get($name)
-    {
-        if (array_key_exists($name, $this->vars)) {
-            return $this->vars[$name];
-        }
-    }
-    
-    
-    /**
-     * Set user id
-     *
-     * @param int
-     */    
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-    
-    
-    /**
-     * Get user id
-     *
-     * @return int
-     */    
-    public function getId()
-    {
-        return $this->id;
-    }
-    
-    
-    /**
-     * Set user name
-     *
-     * @param string
-     */    
-    public function setName($username)
-    {
-        $this->userName = $username;
-    }
-    
-    
-    /**
-     * Get user name
-     *
-     * @return string
-     */    
-    public function getName()
-    {
-        return $this->userName;
-    }
-    
-    
-    /**
-     * Set user role
-     *
-     * @param string
-     */    
-    public function setRole($role)
-    {
-        $this->role = $role;
-    }
-    
-    
-    /**
-     * Get user role
-     *
-     * @return string
-     */    
-    public function getRole()
-    {
-        return $this->role;
-    }
-    
-    
-    /**
-     * Set user password
-     *
-     * @param string
-     */    
-    public function setPassword($pass)
-    {
-        $this->password = $pass;
-    }
-    
-    
-    /**
-     * Get user password
-     *
-     * @return string
-     */    
-    public function getPassword()
-    {
-        return $this->password;
-    }
-    
-    
-    /**
-     * Set user email
-     *
-     * @param string
-     */    
-    public function setEmail($email)
-    {
-        $this->email = $email;
-    }
-    
-    
-    /**
-     * Get user email
-     *
-     * @return string
-     */    
-    public function getEmail()
-    {
-        return $this->email;
-    }
-    
-    
-    /**
-     * Set user emailValid
-     *
-     * @param int
-     */    
-    public function setEmailValid($ev)
-    {
-        $this->emailValid = $ev;
-    }
-    
-    
-    /**
-     * Get user emailValid
-     *
-     * @return int
-     */    
-    public function getEmailValid()
-    {
-        return $this->emailValid;
-    }
-    
-    
-    /**
-     * Set logged in
-     *
-     * @param bool
-     */    
-    public function setLoggedIn($bool)
-    {
-        $this->loggedIn = $bool;
-    }
-    
-    
-    /**
-     * Get logged in
-     *
-     * @return bool
-     */    
-    public function getLoggedIn()
-    {
-        return $this->loggedIn;
-    }
-    
-    
+    /* *************************************************************
+     *              UNIQUE ACCESS MODIFIERS
+     * ********************************************************** */
+
+
     /**
      * Set permission 
      *
@@ -289,19 +132,24 @@ class UserBase {
     }
     
     
+    /* *************************************************************
+     *              REGULAR METHODS
+     * ********************************************************** */
+    
+    
     /**
      * Add a new user
      */
     public function addUserBasic()
     {
         // get default permissions
-        $permissions = $this->getDefaultPermissions($this->getRole());
+        $permissions = $this->getDefaultPermissions($this->role);
         unset($permissions['options']);  // don't need this for individual users
         $permissions = serialize($permissions);
 
         // add user to the database
         $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email, user_permissions) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s)";
-        $this->db->query($this->db->prepare($sql, $this->getName(), $this->getRole(), $this->getPassword(), $this->getEmail(), $permissions));
+        $this->db->query($this->db->prepare($sql, $this->name, $this->role, $this->password, $this->email, $permissions));
     }
 
 
@@ -311,15 +159,15 @@ class UserBase {
     public function updateUserBasic($userid = 0)
     {
         //determine if the current user is the same as this object's user
-        if($userid != $this->getId()) {
+        if($userid != $this->id) {
             $updatedby = $userid;
         } else {
-            $updatedby = $this->getId();
+            $updatedby = $this->id;
         }
         
-        if ($this->getId() != 0) {
+        if ($this->id != 0) {
             $sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s, user_permissions = %s, user_updateby = %d WHERE user_id = %d";
-            $this->db->query($this->db->prepare($sql, $this->getName(), $this->getRole(), $this->getPassword(), $this->getEmail(), serialize($this->getAllPermissions()), $userid, $this->getId()));
+            $this->db->query($this->db->prepare($sql, $this->name, $this->role, $this->password, $this->email, serialize($this->getAllPermissions()), $userid, $this->id));
             return true;
         } else {
             return false;
@@ -334,9 +182,9 @@ class UserBase {
      */
     public function updateUserLastLogin()
     {
-        if ($this->getId() != 0) {
+        if ($this->id != 0) {
             $sql = "UPDATE " . TABLE_USERS . " SET user_lastlogin = CURRENT_TIMESTAMP WHERE user_id = %d";
-            $this->db->query($this->db->prepare($sql, $this->getId()));
+            $this->db->query($this->db->prepare($sql, $this->id));
             return true;
         } else {
             return false;
@@ -373,18 +221,18 @@ class UserBase {
         $user_info = $this->db->get_row($this->db->prepare($sql, $param));
         
         if ($user_info) {
-            $this->setId($user_info->user_id);
-            $this->setName($user_info->user_username);
-            $this->setPassword($user_info->user_password);
-            $this->setRole($user_info->user_role);
-            $this->setEmail($user_info->user_email);
-            $this->setEmailValid($user_info->user_email_valid);
+            $this->id = $user_info->user_id;
+            $this->name = $user_info->user_username;
+            $this->password = $user_info->user_password;
+            $this->role = $user_info->user_role;
+            $this->email = $user_info->user_email;
+            $this->emailValid = $user_info->user_email_valid;
             
             // If a new plugin is installed, we need a way of adding any new default permissions
             // that plugin provides. So, we get all defaults, then overwrite with existing perms.
             
             // get default permissions
-            $default_perms = $this->getDefaultPermissions($this->getRole());
+            $default_perms = $this->getDefaultPermissions($this->role);
             unset($default_perms['options']);  // don't need this for individual users
             
             // get existing permissions
@@ -527,13 +375,13 @@ class UserBase {
      */
     public function setCookie($remember)
     {
-        if (!$this->getName())
+        if (!$this->name)
         { 
             echo $this->lang['main_userbase_cookie_error'];
             return false;
         } else {
             $strCookie=base64_encode(
-                join(':', array($this->getName(), crypt($this->getName(), 22)))
+                join(':', array($this->name, crypt($this->name, 22)))
             );
             
             if ($remember) { 
@@ -543,7 +391,7 @@ class UserBase {
                 $month = 0; 
             }
             
-            setcookie("hotaru_user", $this->getName(), $month, "/");
+            setcookie("hotaru_user", $this->name, $month, "/");
             setcookie("hotaru_key", $strCookie, $month, "/");
             return true;
         }
@@ -561,7 +409,7 @@ class UserBase {
         
         // session_destroy(); There is no session in Hotaru yet
         
-        $this->setLoggedIn(false);
+        $this->loggedIn = false;
     }
         
         
@@ -784,7 +632,7 @@ class UserBase {
         // If no account is specified, assume it's your own.
 
         if (!$userid) {
-            $userid = $this->getId();
+            $userid = $this->id;
         }
             
         $this->getUserBasic($userid);
@@ -807,7 +655,7 @@ class UserBase {
         if ($this->cage->post->testAlnumLines('update_type') == 'update_general') {
             $username_check = $this->cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
             if ($username_check) {
-                $this->setName($username_check); // updates the db record
+                $this->name = $username_check; // updates the db record
             } else {
                 $this->hotaru->messages[$this->lang['admin_account_update_username_error']] = 'red';
                 $error = 1;
@@ -815,7 +663,7 @@ class UserBase {
                                 
             $email_check = $this->cage->post->testEmail('email');    
             if ($email_check) {
-                $this->setEmail($email_check);
+                $this->email = $email_check;
             } else {
                 $this->hotaru->messages[$this->lang['admin_account_update_email_error']] = 'red';
                 $error = 1;
@@ -823,8 +671,8 @@ class UserBase {
             
             $role_check = $this->cage->post->testAlnumLines('user_role'); // from Users plugin account page
             // compare with current role and update if different
-            if ($role_check && ($role_check != $this->getRole())) {
-                $this->setRole($role_check);
+            if ($role_check && ($role_check != $this->role)) {
+                $this->role = $role_check;
                 $new_perms = $this->getDefaultPermissions($role_check);
                 $this->setAllPermissions($new_perms);
                 $this->updatePermissions();
@@ -832,9 +680,9 @@ class UserBase {
         }
         
         if (!isset($username_check) && !isset($email_check)) {
-            $username_check = $this->getName();
-            $email_check = $this->getEmail();
-            $role_check = $this->getRole();
+            $username_check = $this->name;
+            $email_check = $this->email;
+            $role_check = $this->role;
             // do nothing
         } elseif ($error == 0) {
             $result = $this->userExists(0, $username_check, $email_check);
@@ -842,7 +690,7 @@ class UserBase {
                 //success
                 $this->updateUserBasic($userid);
                 // only update the cookie if it's your own account:
-                if ($userid == $this->getId()) { 
+                if ($userid == $this->id) { 
                     $this->setCookie(true); 
                 }
                 $this->hotaru->messages[$this->lang['admin_account_update_success']] = 'green';
@@ -873,7 +721,7 @@ class UserBase {
         // current_user is the person looking at the page
         
         // we don't want to edit the password if this isn't our own account.
-        if ($userid != $this->getId()) { return false; }
+        if ($userid != $this->id) { return false; }
         
         $error = 0;
         
@@ -881,7 +729,7 @@ class UserBase {
         if ($this->cage->post->testAlnumLines('update_type') == 'update_password') {
             $password_check_old = $this->cage->post->testPassword('password_old');    
             
-            if ($this->loginCheck($this->getName(), $password_check_old)) {
+            if ($this->loginCheck($this->name, $password_check_old)) {
                 // safe, the old password matches the password for this user.
             } else {
                 $this->hotaru->messages[$this->lang['admin_account_update_password_error_old']] = 'red';
@@ -919,7 +767,7 @@ class UserBase {
             $result = $this->userExists(0, $this->userName, $this->email);
             if ($result != 4) { // 4 is returned when the user does not exist in the database
                 //success
-                $this->setPassword($this->generateHash($password_check_new));
+                $this->password = $this->generateHash($password_check_new);
                 $this->updateUserBasic();
                 $this->setCookie(0);
                 $this->hotaru->messages[$this->lang['admin_account_update_password_success']] = 'green';
@@ -976,7 +824,7 @@ class UserBase {
     public function updatePermissions()
     {
         $sql = "UPDATE " . TABLE_USERS . " SET user_permissions = %s WHERE user_id = %d";
-        $this->db->get_var($this->db->prepare($sql, serialize($this->getAllPermissions()), $this->getId()));
+        $this->db->get_var($this->db->prepare($sql, serialize($this->getAllPermissions()), $this->id));
     }
     
     

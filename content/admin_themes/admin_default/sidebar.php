@@ -31,7 +31,7 @@
 
 <ul id="sidebar">
     <li><a href="<?php echo url(array(), 'admin'); ?>"><?php echo $admin->lang["admin_theme_main_admin_home"]; ?></a></li>
-    <?php if ($admin->current_user->getLoggedIn() == true) { ?>
+    <?php if ($admin->current_user->loggedIn == true) { ?>
         <li><a href="<?php echo url(array('page' => 'admin_account'), 'admin'); ?>"><?php echo $admin->lang["admin_theme_account"]; ?></a></li>
     <?php } ?>
     <li><a href="<?php echo url(array('page' => 'settings'), 'admin'); ?>"><?php echo $admin->lang["admin_theme_settings"]; ?></a></li>

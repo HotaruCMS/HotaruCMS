@@ -55,7 +55,7 @@ if (!isset($result) || !is_array($result)) {
                         if (!isset($result) || !is_array($result)) {
                                 $page = $admin->hotaru->getPageName();
                                 if ($page == 'admin_login') {
-                                    if ($admin->current_user->getLoggedIn()) {
+                                    if ($admin->current_user->loggedIn) {
                                         $admin->displayAdminTemplate('main', $admin);
                                     } else {
                                         $admin->adminLoginForm();
@@ -67,7 +67,7 @@ if (!isset($result) || !is_array($result)) {
                     ?>    
                     </div>        
                     </div>
-                    <?php if ($admin->hotaru->getSidebar()) { ?>
+                    <?php if ($admin->hotaru->sidebar) { ?>
                         <div class="yui-u first">
                         <!-- SIDEBAR -->
                         <?php

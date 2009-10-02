@@ -35,17 +35,6 @@ class BlockedList
     
     
      /**
-     * Return outout as a string from teh constructor
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->output;
-    }
-    
-    
-     /**
      * Prepare a list of blocked items for the Admin "Blocked List" page
      */
     public function __construct($object, $execute = false, $lang_pack = 'admin')
@@ -172,6 +161,40 @@ class BlockedList
         }
     }
     
+
+     /**
+     * Return outout as a string from the constructor
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->output;
+    }
+    
+
+    /**
+     * Access modifier to set protected properties
+     */
+    public function __set($var, $val)
+    {
+        $this->$var = $val;  
+    }
+    
+    
+    /**
+     * Access modifier to get protected properties
+     */
+    public function __get($var)
+    {
+        return $this->$var;
+    }
+    
+    
+    /* *************************************************************
+     *              REGULAR METHODS
+     * ********************************************************** */
+    
     
      /**
      * Add to or update items 
@@ -191,7 +214,7 @@ class BlockedList
         } 
         
         $sql = "INSERT INTO " . TABLE_BLOCKED . " (blocked_type, blocked_value, blocked_updateby) VALUES (%s, %s, %d)"; 
-        $this->db->query($this->db->prepare($sql, $type, $value, $current_user->getId()));
+        $this->db->query($this->db->prepare($sql, $type, $value, $current_user->id));
         if ($msg) { $this->hotaru->showMessage($this->lang['admin_blocked_list_added'], 'green'); }
         
         return true;
@@ -208,7 +231,7 @@ class BlockedList
         $current_user = $this->getCurrentUser();
         
         $sql = "UPDATE " . TABLE_BLOCKED . " SET blocked_type = %s, blocked_value = %s, blocked_updateby = %d WHERE blocked_id = %d"; 
-        $this->db->query($this->db->prepare($sql, $type, $value, $current_user->getId(), $id));
+        $this->db->query($this->db->prepare($sql, $type, $value, $current_user->id, $id));
     }
     
     
@@ -269,8 +292,8 @@ class BlockedList
         
         if (($hotaru_user != $user_info[0]) || (crypt($user_info[0], 22) != $user_info[1])) { return false; }
 
-        $current_user->setName($hotaru_user);
-        $current_user->getUserBasic(0, $current_user->getName());
+        $current_user->name = $hotaru_user;
+        $current_user->getUserBasic(0, $current_user->name);
         return $current_user;
     }
     

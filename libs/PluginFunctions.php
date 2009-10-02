@@ -79,7 +79,7 @@ class PluginFunctions extends Plugin
                 if (isset($plugin_details['requires']) && $plugin_details['requires']) {
                     $this->requires = $plugin_details['requires'];
                     $this->requiresToDependencies();
-
+                    
                     // Converts plugin folder names to well formatted names...
                     foreach ($this->dependencies as $this_plugin => $version)
                     {
@@ -247,7 +247,11 @@ class PluginFunctions extends Plugin
      */
     public function requiresToDependencies()
     {
-        unset($this->dependencies);
+        // unset each key from previous time here
+        foreach ($this->dependencies as $k => $v) {
+            unset($this->dependencies[$k]);
+        }
+        
         foreach (explode(',', $this->requires) as $pair) 
         {
             list($k,$v) = explode (' ', trim($pair));
@@ -483,7 +487,7 @@ class PluginFunctions extends Plugin
         }
                     
         $sql = "REPLACE INTO " . TABLE_PLUGINS . " (plugin_enabled, plugin_name, plugin_prefix, plugin_folder, plugin_class, plugin_desc, plugin_requires, plugin_version, plugin_updateby) VALUES (%d, %s, %s, %s, %s, %s, %s, %s, %d)";
-        $this->db->query($this->db->prepare($sql, $this->enabled, $this->name, $this->prefix, $this->folder, $this->class, $this->desc, $this->requires, $this->version, $this->current_user->getId()));
+        $this->db->query($this->db->prepare($sql, $this->enabled, $this->name, $this->prefix, $this->folder, $this->class, $this->desc, $this->requires, $this->version, $this->current_user->id));
 
         // Get the last order number - doing this after REPLACE INTO because 
         // we don't know whether the above will insert or replace.
@@ -526,7 +530,7 @@ class PluginFunctions extends Plugin
 
             if (!$exists) {
                 $sql = "INSERT INTO " . TABLE_PLUGINHOOKS . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
-                $this->db->query($this->db->prepare($sql, $this->folder, trim($hook), $this->current_user->getId()));
+                $this->db->query($this->db->prepare($sql, $this->folder, trim($hook), $this->current_user->id));
             }
         }
     }
@@ -614,7 +618,7 @@ class PluginFunctions extends Plugin
             // The plugin is already installed. Activate or deactivate according to $enabled (the user's action).
             if ($plugin_row->plugin_enabled != $enabled) {        // only update if we're changing the enabled value.
                 $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_enabled = %d, plugin_updateby = %d WHERE plugin_folder = %s";
-                $this->db->query($this->db->prepare($sql, $enabled, $this->current_user->getId(), $this->folder));
+                $this->db->query($this->db->prepare($sql, $enabled, $this->current_user->id, $this->folder));
                 
                 if ($enabled == 1) { // Activating now...
                 
@@ -830,7 +834,7 @@ class PluginFunctions extends Plugin
      */    
     public function includeLanguage($filename = '', $folder = '')
     {
-        if (!$folder) { $folder = $this->getFolder(); }
+        if (!$folder) { $folder = $this->folder; }
         
         if ($folder) {
         
@@ -875,7 +879,7 @@ class PluginFunctions extends Plugin
      */    
     public function includeCss($filename = '', $folder = '')
     {
-        if (!$folder) { $folder = $this->getFolder(); }
+        if (!$folder) { $folder = $this->folder; }
         if (!$filename) { $filename = $folder; }
         
         return $this->hotaru->includeCss($filename, $folder); // returned for testing purposes only
@@ -890,7 +894,7 @@ class PluginFunctions extends Plugin
      */    
     public function includeJs($filename = '', $folder = '')
     {
-        if (!$folder) { $folder = $this->getFolder(); }
+        if (!$folder) { $folder = $this->folder; }
         if (!$filename) { $filename = $folder; }
         
         return $this->hotaru->includeJs($filename, $folder); // returned for testing purposes only
@@ -909,7 +913,7 @@ class PluginFunctions extends Plugin
      */
     public function getSetting($setting = '', $folder = '')
     {
-        if (!$folder) { $folder = $this->getFolder(); }
+        if (!$folder) { $folder = $this->folder; }
         
         $sql = "SELECT plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
         $value = $this->db->get_var($this->db->prepare($sql, $folder, $setting));
@@ -928,7 +932,7 @@ class PluginFunctions extends Plugin
      */
     public function getSettingsArray($folder = '')
     {
-        if (!$folder) { $folder = $this->getFolder(); }
+        if (!$folder) { $folder = $this->folder; }
         
         $sql = "SELECT plugin_setting, plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s)";
         $results = $this->db->get_results($this->db->prepare($sql, $folder));
@@ -944,7 +948,7 @@ class PluginFunctions extends Plugin
      */
     public function getSerializedSettings($folder = '')
     {
-        if (!$folder) { $folder = $this->getFolder(); }
+        if (!$folder) { $folder = $this->folder; }
     
         // Get settings from the database if they exist...
         $settings = unserialize($this->getSetting($folder . '_settings', $folder));
@@ -961,7 +965,7 @@ class PluginFunctions extends Plugin
      */
     public function isSetting($setting = '', $folder = '')
     {
-        if (!$folder) { $folder = $this->getFolder(); }
+        if (!$folder) { $folder = $this->folder; }
         
         $sql = "SELECT plugin_setting FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
         $returned_setting = $this->db->get_var($this->db->prepare($sql, $folder, $setting));
@@ -981,17 +985,17 @@ class PluginFunctions extends Plugin
      */
     public function updateSetting($setting = '', $value = '', $folder = '')
     {
-        if (!$folder) { $folder = $this->getFolder(); }
+        if (!$folder) { $folder = $this->folder; }
         
         $exists = $this->isSetting($setting, $folder);
         if (!$exists) 
         {
             $sql = "INSERT INTO " . TABLE_PLUGINSETTINGS . " (plugin_folder, plugin_setting, plugin_value, plugin_updateby) VALUES (%s, %s, %s, %d)";
-            $this->db->query($this->db->prepare($sql, $folder, $setting, $value, $this->current_user->getId()));
+            $this->db->query($this->db->prepare($sql, $folder, $setting, $value, $this->current_user->id));
         } else 
         {
             $sql = "UPDATE " . TABLE_PLUGINSETTINGS . " SET plugin_folder = %s, plugin_setting = %s, plugin_value = %s, plugin_updateby = %d WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
-            $this->db->query($this->db->prepare($sql, $folder, $setting, $value, $this->current_user->getId(), $folder, $setting));
+            $this->db->query($this->db->prepare($sql, $folder, $setting, $value, $this->current_user->id, $folder, $setting));
         }
         
         // optimize the table

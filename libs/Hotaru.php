@@ -80,74 +80,29 @@ class Hotaru
         $this->hotaruHeader($entrance);  // plugin hook method
     }
     
-    
-    
-    
+
     /**
-     * Set hotaru sidebar status
-     *
-     * @param bool $bool
-     */    
-    public function setSidebar($bool)
+     * Access modifier to set protected properties
+     */
+    public function __set($var, $val)
     {
-        $this->sidebar = $bool;
+        $this->$var = $val;  
     }
     
     
     /**
-     * Get hotaru sidebar status
-     *
-     * @return bool
-     */    
-    public function getSidebar()
+     * Access modifier to get protected properties
+     */
+    public function __get($var)
     {
-        return $this->sidebar;
+        return $this->$var;
     }
-    
-    
-    /**
-     * Set hotaru title
-     *
-     * @param string $title
-     */    
-    public function setTitle($title)
-    {
-        $this->title = $title;
-    }
-    
-    
-    /**
-     * Get hotaru title
-     *
-     * @return string
-     */    
-    public function getTitle()
-    {
-        return $this->title;
-    }
-    
-    
-    /**
-     * Set page type
-     *
-     * @param string $type
-     */    
-    public function setPageType($type)
-    {
-        $this->pageType = $type;
-    }
-    
-    
-    /**
-     * Get page type
-     *
-     * @return string
-     */    
-    public function getPageType()
-    {
-        return $this->pageType;
-    }
-    
+
+
+    /* *************************************************************
+     *              UNIQUE ACCESS MODIFIERS
+     * ********************************************************** */
+
     
     /**
      * setCssIncludes
@@ -179,7 +134,7 @@ class Hotaru
         array_push($this->jsIncludes, $file);
     }
     
-
+    
     /**
      * getJsIncludes
      */
@@ -189,15 +144,11 @@ class Hotaru
     }
     
     
-    /**
-     * getIncludeType
-     */
-    public function getIncludeType()
-    {
-        return $this->includeType;
-    }
-    
-    
+    /* *************************************************************
+     *              REGULAR METHODS
+     * ********************************************************** */
+     
+
     /**
      * check cookie and log in
      *
@@ -216,9 +167,9 @@ class Hotaru
         
         if (($hotaru_user != $user_info[0]) || (crypt($user_info[0], 22) != $user_info[1])) { return false; }
 
-        $this->current_user->setName($hotaru_user);
-        $this->current_user->getUserBasic(0, $this->current_user->getName());
-        $this->current_user->setLoggedIn(true);
+        $this->current_user->name = $hotaru_user;
+        $this->current_user->getUserBasic(0, $this->current_user->name);
+        $this->current_user->loggedIn = true;
         
         return true;
     }

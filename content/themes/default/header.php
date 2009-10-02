@@ -36,18 +36,18 @@
 
     <title>
        <?php 
-           if ($hotaru->getTitle() != "")
+           if ($hotaru->title != "")
            {
-               echo $hotaru->getTitle() . " &laquo; " . SITE_NAME;
+               echo $hotaru->title . " &laquo; " . SITE_NAME;
            }
            elseif ($hotaru->getPageName() != "main")
            {
-               $hotaru->setTitle($hotaru->getPageName());
-               echo $hotaru->pageToTitleCaps($hotaru->getTitle()) . " &laquo; " . SITE_NAME;
+               $hotaru->title = $hotaru->getPageName();
+               echo $hotaru->pageToTitleCaps($hotaru->title) . " &laquo; " . SITE_NAME;
            }
            else
            { 
-               $hotaru->setTitle('top'); // don't change this
+               $hotaru->title = 'top'; // don't change this
                echo SITE_NAME; 
            } 
        ?>
