@@ -35,21 +35,21 @@
    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
    <title>
        <?php 
-           if ($admin->hotaru->getTitle() != "")
+           if ($admin->hotaru->title != "")
            {
-               echo $admin->hotaru->getTitle() . " &laquo; " . $admin->lang["admin"] . " &laquo; " . SITE_NAME;
+               echo $admin->hotaru->title . " &laquo; " . $admin->lang["admin"] . " &laquo; " . SITE_NAME;
            }
            elseif ($admin->hotaru->getPageName() != "main")
            {
-               $admin->hotaru->setTitle($admin->hotaru->getPageName());
-               echo $admin->hotaru->pageToTitleCaps($admin->hotaru->getTitle()) . " &laquo; " . $admin->lang["admin"] . " &laquo; " . SITE_NAME;
+               $admin->hotaru->title = $admin->hotaru->getPageName();
+               echo $admin->hotaru->pageToTitleCaps($admin->hotaru->title) . " &laquo; " . $admin->lang["admin"] . " &laquo; " . SITE_NAME;
            }
            else
            { 
                echo $admin->lang["admin"] . " &laquo; " . SITE_NAME;
            } 
            
-           $admin->hotaru->setTitle('admin');    // highlights "Admin" in the navigation bar, for all pages in Admin
+           $admin->hotaru->title = 'admin';    // highlights "Admin" in the navigation bar, for all pages in Admin
        ?>
    </title>
    <script language="JavaScript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery.min.js'; ?>"></script>
@@ -61,7 +61,7 @@
     <?php 
         $version_js = $admin->hotaru->combineIncludes('js');
         $version_css = $admin->hotaru->combineIncludes('css');
-        $admin->hotaru->includeCombined($version_js, $version_css, $admin->hotaru->getPageName(), $admin->plugins->getFolder());
+        $admin->hotaru->includeCombined($version_js, $version_css, $admin->hotaru->getPageName(), $admin->plugins->folder);
     ?>
     <!-- End -->
     

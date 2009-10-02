@@ -33,7 +33,7 @@ class Admin
     public $plugins;                        // PluginFunctions object
     public $current_user;                   // UserBase object
 
-    public $sidebar = true;
+    protected $sidebar = true;
     
     /**
      * Constructor - make an Admin object
@@ -53,7 +53,7 @@ class Admin
         
         // We don't need to fill the object with anything other than the plugin folder name at this time:
         if ($folder) { 
-            $this->setFolder($folder); 
+            $this->folder = $folder; 
         }
         
         $this->adminInit();
@@ -61,11 +61,34 @@ class Admin
 
 
     /**
+     * Access modifier to set protected properties
+     */
+    public function __set($var, $val)
+    {
+        $this->$var = $val;  
+    }
+    
+    
+    /**
+     * Access modifier to get protected properties
+     */
+    public function __get($var)
+    {
+        return $this->$var;
+    }
+        
+    
+    /* *************************************************************
+     *              REGULAR METHODS
+     * ********************************************************** */
+
+
+    /**
      * Admin constructor
      */
     public function adminInit($entrance = '')
     {
-        $this->hotaru->setPageType('admin');
+        $this->hotaru->pageType = 'admin';
         
         // Include combined css and js files
         if ($this->cage->get->keyExists('combine')) {
@@ -96,7 +119,7 @@ class Admin
         {
             // This first condition happens when the Users plugin is activated 
             // and there's no cookie for the Admin yet.
-            if (($this->current_user->getName() == "") && $this->plugins->isActive('users')) 
+            if (($this->current_user->name == "") && $this->plugins->isActive('users')) 
             {
                 header('Location: ' . BASEURL . 'index.php?page=login');
                 die; exit;
@@ -138,8 +161,8 @@ class Admin
                 $this->plugins();
                 break;
             case "plugin_settings":
-                $this->plugins->setFolder($this->cage->get->testAlnumLines('plugin'));
-                $this->plugins->setName($this->plugins->getName($this->plugins->getFolder()));
+                $this->plugins->folder = $this->cage->get->testAlnumLines('plugin');
+                $this->plugins->name = $this->plugins->name = $this->plugins->folder;
                 break;
             default:
                 break;
@@ -342,10 +365,10 @@ class Admin
         
         if (!$exists) {
             $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_updateby) VALUES (%s, %s, %d)";
-            $this->db->query($this->db->prepare($sql, $setting, $value, $this->current_user->getId()));
+            $this->db->query($this->db->prepare($sql, $setting, $value, $this->current_user->id));
         } else {
             $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_name = %s, settings_value = %s, settings_updateby = %d WHERE (settings_name = %s)";
-            $this->db->query($this->db->prepare($sql, $setting, $value, $this->current_user->getId(), $setting));
+            $this->db->query($this->db->prepare($sql, $setting, $value, $this->current_user->id, $setting));
         }
     }
 
@@ -562,9 +585,9 @@ class Admin
             if ($login_result) {
                     //success
                     $this->setAdminCookie($username_check);
-                    $this->current_user->setName($username_check);
+                    $this->current_user->name = $username_check;
                     $this->current_user->getUserBasic(0, $username_check);
-                    $this->current_user->setLoggedIn(true);
+                    $this->current_user->loggedIn = true;
                     $this->current_user->updateUserLastLogin();
                     return true;
             } else {

@@ -36,7 +36,7 @@ require_once(FUNCTIONS . 'funcs.urls.php'); // needed for "url" function
     <?php 
         if (!$admin->plugins->isActive('users')) { 
 
-            if ($admin->current_user->getLoggedIn() == true) { 
+            if ($admin->current_user->loggedIn == true) { 
                 echo "<li><a id='navigation_active' href='" . url(array(), 'admin') . "'>" . $admin->lang["admin_theme_navigation_admin"] . "</a></li>"; 
                 echo "<li><a href='" . url(array('page'=>'admin_logout'), 'admin') . "'>" . $admin->lang["admin_theme_navigation_logout"] . "</a></li>";
             } else { 

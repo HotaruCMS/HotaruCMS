@@ -32,21 +32,21 @@ require_once(FUNCTIONS . 'funcs.urls.php'); // needed for "url" function
 <ul id="navigation">
     <?php $hotaru->plugins->pluginHook('navigation_first'); ?>
     
-    <?php if ($hotaru->getTitle() == 'top') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
+    <?php if ($hotaru->title == 'top') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
     <li><a <?php echo $status; ?> href="<?php echo BASEURL; ?>"><?php echo $hotaru->lang["main_theme_navigation_home"]; ?></a></li>
     <?php $hotaru->plugins->pluginHook('navigation'); ?>
     <?php 
         if (!$hotaru->plugins->isActive('users')) { 
 
-            if ($hotaru->current_user->getLoggedIn() == true) { 
+            if ($hotaru->current_user->loggedIn == true) { 
             
-                if ($hotaru->getTitle() == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
+                if ($hotaru->title == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
                 echo "<li><a " . $status . " href='" . url(array(), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_admin"] . "</a></li>"; 
                 
-                if ($hotaru->getTitle() == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
+                if ($hotaru->title == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
                 echo "<li><a " . $status . " href='" . url(array('page'=>'admin_logout'), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_logout"] . "</a></li>";
             } else { 
-                if ($hotaru->getTitle() == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
+                if ($hotaru->title == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
                 echo "<li><a " . $status . " href='" . url(array(), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_login"] . "</a></li>"; 
             }
         } else {
