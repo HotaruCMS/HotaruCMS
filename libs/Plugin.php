@@ -173,8 +173,8 @@ class Plugin
         }
         
         $settings_class = make_name($this->folder, '') . 'Settings'; // e.g. CategoriesSettings
-        $settings_object = new $settings_class();
-        $settings_object->settings($this->folder);   // call the settings function
+        $settings_object = new $settings_class($this->folder, $this->hotaru);
+        $settings_object->settings();   // call the settings function
         return true;
     }
 
