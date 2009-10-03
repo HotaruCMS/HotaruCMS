@@ -123,7 +123,6 @@ class PluginFunctions extends Plugin
      */
     public function getPluginsMeta()
     {
-        require_once(FUNCTIONS . 'funcs.files.php');
         $plugin_list = getFilenames(PLUGINS, "short");
         $plugins_array = array();
         foreach ($plugin_list as $plugin_folder_name)
@@ -1036,9 +1035,8 @@ class PluginFunctions extends Plugin
      */
     public function isBlocked($type = '', $value = '', $operator = '=')
     {
-        require_once(LIBS . 'BlockedList.php');
-        $blocked = new BlockedList($this);
-        return $blocked->isBlocked($type, $value, $operator);
+        $admin = $this->getAdminFunctions();
+        return $admin->isBlocked($type, $value, $operator);
     }
 
 

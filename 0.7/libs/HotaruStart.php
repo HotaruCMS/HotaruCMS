@@ -74,6 +74,14 @@ class HotaruStart
         require_once(LIBS . 'UserBase.php');        // for users
         require_once(LIBS . 'Plugin.php');          // for plugins
         require_once(LIBS . 'PluginFunctions.php'); // for plugin functions
+        
+        // include functions
+        require_once(FUNCTIONS . 'funcs.strings.php');
+        require_once(FUNCTIONS . 'funcs.urls.php');
+        require_once(FUNCTIONS . 'funcs.arrays.php');
+        require_once(FUNCTIONS . 'funcs.times.php');
+        require_once(FUNCTIONS . 'funcs.files.php');
+        
     }
     
     

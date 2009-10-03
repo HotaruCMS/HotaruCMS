@@ -790,8 +790,6 @@ class UserBase {
      */
     public function getDefaultPermissions($role = '') 
     {
-        global $perms;
-        
         $perms = array();
         
         // Permission Options
@@ -809,10 +807,12 @@ class UserBase {
                 $perms['can_access_admin'] = 'no';
         }
         
+        $this->hotaru->vars['perms'] = $perms;
+        
         // plugin hook:
         $results = $this->plugins->pluginHook('userbase_default_permissions', true, '', array('role' => $role));
         
-        return $perms;
+        return $this->hotaru->vars['perms'];
     }
 
     
