@@ -38,9 +38,6 @@ class Users extends PluginFunctions
      */
     public function install_plugin()
     {
-        // include language file
-        $this->includeLanguage();
-        
         // Create a new empty table called "usermeta"
         $exists = $this->db->table_exists('usermeta');
         if (!$exists) {
@@ -65,7 +62,6 @@ class Users extends PluginFunctions
         // Include language file. Also included in hotaru_header, but needed here  
         // to prevent errors immediately after installation.
         $this->includeLanguage();    
-    
     }
     
     
@@ -221,7 +217,7 @@ class Users extends PluginFunctions
      */
     public function post_list_filter() 
     {
-        global $filter, $page_title;
+        global $filter;
     
         if ($this->cage->get->keyExists('user')) 
         {
@@ -231,9 +227,9 @@ class Users extends PluginFunctions
             // Undo the filter that limits results to either 'top' or 'new' (See submit.php -> sub_prepare_list())
             if(isset($filter['post_status = %s'])) { unset($filter['post_status = %s']); }
             $filter['post_status != %s'] = 'processing';
-            $page_title = $this->lang["post_breadcrumbs_user"] . " &raquo; " . $this->hotaru->title . $rss;
+            $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_user"] . " &raquo; " . $this->hotaru->title . $rss;
             
-            $this->hotaru->setPageType('user');
+            $this->hotaru->pageType = 'user';
             
             return true;    
         }
@@ -568,10 +564,10 @@ class Users extends PluginFunctions
 
         // $user contaings the target user's username
         // Make a new instance of UserBase for that user:
-        $member = new UserBase();
+        $member = new UserBase($this->hotaru);
         $member->getUserBasic(0, $user);
 
-        if ($this->hotaru->getPageType() == 'user' && $this->current_user->getPermission('can_access_admin') == 'yes') {
+        if ($this->hotaru->pageType == 'user' && $this->current_user->getPermission('can_access_admin') == 'yes') {
             echo "<div class='special_links_bar'>";
             echo $this->lang["users_account_edit"] . " " . $member->name . ": ";
             echo " <a href='" . url(array('page' => 'account', 'user' => $member->name)) . "'>";
