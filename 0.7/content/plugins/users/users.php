@@ -2,7 +2,7 @@
 /**
  * name: Users
  * description: Manages users within Hotaru.
- * version: 0.4
+ * version: 0.5
  * folder: users
  * class: Users
  * hooks: hotaru_header, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs
@@ -82,21 +82,7 @@ class Users extends PluginFunctions
             $this->hotaru->title = $username;
         }
     }
-    
-    
-     /**
-     * Call the function for displaying Admin settings
-     *
-     * @return true
-     */
-    public function admin_plugin_settings()
-    {
-        require_once(PLUGINS . 'users/users_settings.php');
-        $usersSettings = new UsersSettings($this->folder, $this->hotaru);
-        $usersSettings->settings();
-        return true;
-    }
-    
+
     
     /**
      * Add links to the end of the navigation bar
