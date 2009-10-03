@@ -58,7 +58,7 @@ if (!isset($result) || !is_array($result)) {
                                     if ($admin->current_user->loggedIn) {
                                         $admin->displayAdminTemplate('main', $admin);
                                     } else {
-                                        $admin->adminLoginForm();
+                                        $admin->adminLoginForm($admin);
                                     }
                                 } else {
                                 $admin->displayAdminTemplate($page, $admin);

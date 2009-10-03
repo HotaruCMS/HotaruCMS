@@ -25,8 +25,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-require_once(LIBS . 'BlockedList.php');
-$blocked_items = new BlockedList($admin, true); //string
+$bl_array = $admin->buildBlockedList();
+extract($bl_array); // extracts $output and $pagedResults;
 ?>
 
 <p class="breadcrumbs">

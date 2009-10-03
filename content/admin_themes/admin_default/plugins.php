@@ -26,7 +26,6 @@
  * @link      http://www.hotarucms.org/
  */
 
-require_once(FUNCTIONS . 'funcs.arrays.php');
 $the_plugins = $admin->plugins->getPlugins(); // don't remove
 if($the_plugins) { $the_plugins = sksort($the_plugins, "order", "int", true); }    // sorts plugins by "order"
 ?>

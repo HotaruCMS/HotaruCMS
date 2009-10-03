@@ -25,7 +25,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-require_once(FUNCTIONS . 'funcs.urls.php'); // needed for "url" function
 ?>
 
 <ul id="navigation">
