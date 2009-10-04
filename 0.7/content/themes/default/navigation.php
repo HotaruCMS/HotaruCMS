@@ -40,13 +40,13 @@
             if ($hotaru->current_user->loggedIn == true) { 
             
                 if ($hotaru->title == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
-                echo "<li><a " . $status . " href='" . url(array(), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_admin"] . "</a></li>"; 
+                echo "<li><a " . $status . " href='" . $hotaru->url(array(), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_admin"] . "</a></li>"; 
                 
                 if ($hotaru->title == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
-                echo "<li><a " . $status . " href='" . url(array('page'=>'admin_logout'), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_logout"] . "</a></li>";
+                echo "<li><a " . $status . " href='" . $hotaru->url(array('page'=>'admin_logout'), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_logout"] . "</a></li>";
             } else { 
                 if ($hotaru->title == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
-                echo "<li><a " . $status . " href='" . url(array(), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_login"] . "</a></li>"; 
+                echo "<li><a " . $status . " href='" . $hotaru->url(array(), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_login"] . "</a></li>"; 
             }
         } else {
             $hotaru->plugins->pluginHook('navigation_users', true, 'users'); // ensures login/logout/register are last.
@@ -56,7 +56,7 @@
     <?php     // RSS Link and icon if Submit plugin is active
         if ($hotaru->plugins->getPluginStatus('submit') == 'active') { ?>
         <li>
-        <a href="<?php echo url(array('page'=>'rss')); ?>">RSS 
+        <a href="<?php echo $hotaru->url(array('page'=>'rss')); ?>">RSS 
             <img src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png">
         </a>
         </li>

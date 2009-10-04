@@ -32,7 +32,7 @@ if($the_plugins) { $the_plugins = sksort($the_plugins, "order", "int", true); } 
 
 <p class="breadcrumbs">
     <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
-    &raquo; <a href="<?php echo url(array(), 'admin'); ?>"><?php echo $admin->lang["admin_theme_main_admin_cp"]; ?></a> 
+    &raquo; <a href="<?php echo $admin->hotaru->url(array(), 'admin'); ?>"><?php echo $admin->lang["admin_theme_main_admin_cp"]; ?></a> 
     &raquo; <?php echo $admin->lang["admin_theme_plugins"]; ?>
 </p>
     

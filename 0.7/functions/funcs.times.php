@@ -77,10 +77,8 @@ function timer_stop($precision = 3)
  *
  *  Note: Adapted from Pligg & SWCMS' txt_time_diff() function
  */
-function time_difference($from)
+function time_difference($from, $lang)
 {
-    global $lang;
-    
     $output     = '';
     $now        = time();
     $diff       = $now-$from;
