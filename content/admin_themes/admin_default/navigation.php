@@ -36,10 +36,10 @@
         if (!$admin->plugins->isActive('users')) { 
 
             if ($admin->current_user->loggedIn == true) { 
-                echo "<li><a id='navigation_active' href='" . url(array(), 'admin') . "'>" . $admin->lang["admin_theme_navigation_admin"] . "</a></li>"; 
-                echo "<li><a href='" . url(array('page'=>'admin_logout'), 'admin') . "'>" . $admin->lang["admin_theme_navigation_logout"] . "</a></li>";
+                echo "<li><a id='navigation_active' href='" . $admin->hotaru->url(array(), 'admin') . "'>" . $admin->lang["admin_theme_navigation_admin"] . "</a></li>"; 
+                echo "<li><a href='" . $admin->hotaru->url(array('page'=>'admin_logout'), 'admin') . "'>" . $admin->lang["admin_theme_navigation_logout"] . "</a></li>";
             } else { 
-                echo "<li><a href='" . url(array(), 'admin') . "'>" . $admin->lang["admin_theme_navigation_login"] . "</a></li>"; 
+                echo "<li><a href='" . $admin->hotaru->url(array(), 'admin') . "'>" . $admin->lang["admin_theme_navigation_login"] . "</a></li>"; 
             }
         } else {
             $admin->plugins->pluginHook('navigation_users', true, 'users'); // ensures login/logout/register are last.

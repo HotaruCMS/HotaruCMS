@@ -27,7 +27,7 @@ extract($hotaru->vars['checks']); // extracts $username_check, etc.
 ?>
     
     <div id='breadcrumbs'><a href='<?php echo BASEURL; ?>'><?php echo $hotaru->lang["users_home"]; ?></a> 
-        &raquo; <a href='<?php echo url(array('user' => $username_check)); ?>'><?php echo $username_check; ?></a> 
+        &raquo; <a href='<?php echo $hotaru->url(array('user' => $username_check)); ?>'><?php echo $username_check; ?></a> 
         &raquo; <?php echo $hotaru->lang["users_account_account"]; ?></div>
             
     <h2><?php echo $hotaru->lang["users_account_user_settings"]; ?></h2>

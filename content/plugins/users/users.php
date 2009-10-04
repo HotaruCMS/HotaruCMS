@@ -88,22 +88,22 @@ class Users extends PluginFunctions
         if ($this->current_user->loggedIn) {
             
             if ($this->hotaru->title == 'account') { $status = "id='navigation_active'"; } else { $status = ""; }
-            echo "<li><a  " . $status . " href='" . url(array('page'=>'account')) . "'>" . $this->lang["users_account"] . "</a></li>\n";
+            echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'account')) . "'>" . $this->lang["users_account"] . "</a></li>\n";
             
             if ($this->hotaru->title == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
-            echo "<li><a  " . $status . " href='" . url(array('page'=>'logout')) . "'>" . $this->lang["users_logout"] . "</a></li>\n";
+            echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'logout')) . "'>" . $this->lang["users_logout"] . "</a></li>\n";
             
             if ($this->current_user->getPermission('can_access_admin') == 'yes') {
                 
                 if ($this->hotaru->title == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
-                echo "<li><a  " . $status . " href='" . url(array(), 'admin') . "'>" . $this->lang["users_admin"] . "</a></li>\n";
+                echo "<li><a  " . $status . " href='" . $this->hotaru->url(array(), 'admin') . "'>" . $this->lang["users_admin"] . "</a></li>\n";
             }
         } else {    
             if ($this->hotaru->title == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
-            echo "<li><a  " . $status . " href='" . url(array('page'=>'login')) . "'>" . $this->lang["users_login"] . "</a></li>\n";
+            echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'login')) . "'>" . $this->lang["users_login"] . "</a></li>\n";
             
             if ($this->hotaru->title == 'register') { $status = "id='navigation_active'"; } else { $status = ""; }
-            echo "<li><a  " . $status . " href='" . url(array('page'=>'register')) . "'>" . $this->lang["users_register"] . "</a></li>\n";
+            echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'register')) . "'>" . $this->lang["users_register"] . "</a></li>\n";
         }
     }
     
@@ -217,16 +217,16 @@ class Users extends PluginFunctions
      */
     public function post_list_filter() 
     {
-        global $filter;
-    
         if ($this->cage->get->keyExists('user')) 
         {
-            $filter['post_author = %d'] = $this->current_user->getUserIdFromName($this->cage->get->testUsername('user')); 
-            $rss = " <a href='" . url(array('page'=>'rss', 'user'=>$this->cage->get->testUsername('user'))) . "'>";
+            $this->hotaru->vars['filter']['post_author = %d'] = $this->current_user->getUserIdFromName($this->cage->get->testUsername('user')); 
+            $rss = " <a href='" . $this->hotaru->url(array('page'=>'rss', 'user'=>$this->cage->get->testUsername('user'))) . "'>";
             $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
-            // Undo the filter that limits results to either 'top' or 'new' (See submit.php -> sub_prepare_list())
-            if(isset($filter['post_status = %s'])) { unset($filter['post_status = %s']); }
-            $filter['post_status != %s'] = 'processing';
+            
+            // Undo the filter that limits results to either 'top' or 'new' (See submit/libs/Post.php -> prepareList())
+            if(isset($this->hotaru->vars['filter']['post_status = %s'])) { unset($this->hotaru->vars['filter']['post_status = %s']); }
+            
+            $this->hotaru->vars['filter']['post_status != %s'] = 'processing';
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_user"] . " &raquo; " . $this->hotaru->title . $rss;
             
             $this->hotaru->pageType = 'user';
@@ -341,8 +341,6 @@ class Users extends PluginFunctions
      */
     public function register()
     {
-        global $userbase;
-        
         $current_user = new UserBase($this->hotaru);
         
         if ($this->current_user->vars['useRecaptcha']) {
@@ -546,7 +544,7 @@ class Users extends PluginFunctions
             $sql = "UPDATE " . TABLE_USERS . " SET user_email_valid = %d WHERE user_id = %d";
             $this->db->query($this->db->prepare($sql, 1, $this->current_user->id));
         
-            $success_message = $this->lang['users_register_emailconf_success'] . " <b><a href='" . url(array('page'=>'login')) . "'>" . $this->lang['users_register_emailconf_success_login'] . "</a></b>";
+            $success_message = $this->lang['users_register_emailconf_success'] . " <b><a href='" . $this->hotaru->url(array('page'=>'login')) . "'>" . $this->lang['users_register_emailconf_success_login'] . "</a></b>";
             $this->hotaru->messages[$success_message] = 'green';
         } else {
             $this->hotaru->messages[$this->lang['users_register_emailconf_fail']] = 'red';
@@ -560,19 +558,15 @@ class Users extends PluginFunctions
      */
     public function submit_post_breadcrumbs()
     {
-        global $user;
-
-        // $user contaings the target user's username
-        // Make a new instance of UserBase for that user:
-        $member = new UserBase($this->hotaru);
-        $member->getUserBasic(0, $user);
-
+        // not ideal, but the easiest way to get the target username is from the page title:
+        $username = $this->hotaru->title;
+        
         if ($this->hotaru->pageType == 'user' && $this->current_user->getPermission('can_access_admin') == 'yes') {
             echo "<div class='special_links_bar'>";
-            echo $this->lang["users_account_edit"] . " " . $member->name . ": ";
-            echo " <a href='" . url(array('page' => 'account', 'user' => $member->name)) . "'>";
+            echo $this->lang["users_account_edit"] . " " . $username . ": ";
+            echo " <a href='" . $this->hotaru->url(array('page' => 'account', 'user' => $username)) . "'>";
             echo $this->lang["users_account_account"] . "</a> | ";
-            echo " <a href='" . url(array('page' => 'permissions', 'user' => $member->name)) . "'>";
+            echo " <a href='" . $this->hotaru->url(array('page' => 'permissions', 'user' => $username)) . "'>";
             echo $this->lang["users_account_permissions"] . "</a>";
             echo "</div>";
         }
@@ -584,7 +578,7 @@ class Users extends PluginFunctions
      */
     public function editPermissions()
     {
-        $user = new UserBase();
+        $user = new UserBase($this->hotaru);
 
         // Read this user...
         if ($this->cage->get->keyExists('user')) {
@@ -616,7 +610,7 @@ class Users extends PluginFunctions
                
         // Breadcrumbs:
         echo "<div id='breadcrumbs'><a href='" . BASEURL . "'>" . $this->lang["users_home"] . "</a> "; 
-        echo "&raquo; <a href='" . url(array('user' => $user->name)) . "'>" . $user->name . "</a> "; 
+        echo "&raquo; <a href='" . $this->hotaru->url(array('user' => $user->name)) . "'>" . $user->name . "</a> "; 
         echo "&raquo; " . $this->lang["users_account_permissions"] . "</div>";
             
         echo '<h2>' . $this->lang["users_account_user_permissions"] . ': ' . $user->name . '</h2>';

@@ -228,7 +228,7 @@ class Hotaru
         else 
         {
            // try the default language pack
-            require_once(LANGUAGES . 'language_default/' . $pack . '_language.php'); 
+            include_once(LANGUAGES . 'language_default/' . $pack . '_language.php'); 
         }
         
         // Add new language to our lang property
@@ -735,5 +735,79 @@ class Hotaru
 
      }
 
+
+    /**
+     * Generate either default or friendly urls
+     *
+     * @param array $parameters an array of pairs, e.g. 'page' => 'about' 
+     * @param string $head either 'index' or 'admin'
+     * @return string
+     */
+    function url($parameters = array(), $head = 'index')
+    {
+        if (FRIENDLY_URLS == "false") {
+        
+            if ($head == 'index') {
+                $url = BASEURL . 'index.php?';
+            } elseif ($head == 'admin') {
+                $url = BASEURL . 'admin_index.php?';    
+            } else {
+                // Error. $head must be index or admin
+            }
+            
+            if (empty($parameters)) { 
+                $url = rtrim($url, '?'); 
+                return $url; 
+            } 
+    
+            foreach ($parameters as $key => $value) {
+                $url .= $key . '=' . $value . '&amp;';
+            }
+            return rstrtrim($url, '&amp;');    
+            
+        } 
+        
+        if (FRIENDLY_URLS == "true") {
+        
+            if ($head == 'index') { 
+                $url = BASEURL;
+            } elseif ($head == 'admin') {
+                $url = BASEURL . 'admin/';    
+            } else {
+                $url = BASEURL . $head . '/';
+            }
+            
+            foreach ($parameters as $key => $value) {
+            
+                if ($key == 'page' && is_numeric($value) ) {
+                
+                    // must be a post title, let's get the post_url...
+                    $value = $this->post->url;
+                    
+                    if (isset($this->post->vars['category']) && $this->post->vars['category'] != 1) {
+                        $url .= $this->post->vars['catSafeName'] . '/';
+                    }
+                    
+                    $url .= $value . '/';
+                    
+                } elseif ($key == 'category' && is_numeric($value) ) {
+                    
+                    require_once(PLUGINS . 'categories/libs/Category.php');
+                    $cat = new Category();
+                    $url .= $key . '/' . $cat->getCatSafeName($value) . '/';
+                        
+                } elseif ($key == 'page') {
+                
+                    // don't show "page" in the url, only the value
+                    $url .= $value . '/';    
+                                    
+                } else {
+                    $url .= $key . '/' . $value . '/';
+                }
+            }
+            return $url;
+        }
+        
+    }
 }
 ?>
