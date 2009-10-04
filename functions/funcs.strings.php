@@ -504,6 +504,25 @@ function utf8_uri_encode( $utf8_string, $length = 0 )
     return $unicode;
 }
 
+
+/**
+ * Strip domain from url
+ *
+ * @param string $url
+ * @return string|false $domain - including http://
+ */
+function get_domain($url = '')
+{
+    $parsed = parse_url($url);
+    if (isset($parsed['scheme'])){ 
+        $domain = $parsed['scheme'] . "://" . $parsed['host']; 
+        return $domain;
+    }
+    
+    return false;
+}
+
+
 /**
  * Strip foreign characters from latin1/utf8 database yuckiness
  *

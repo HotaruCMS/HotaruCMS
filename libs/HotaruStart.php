@@ -77,7 +77,6 @@ class HotaruStart
         
         // include functions
         require_once(FUNCTIONS . 'funcs.strings.php');
-        require_once(FUNCTIONS . 'funcs.urls.php');
         require_once(FUNCTIONS . 'funcs.arrays.php');
         require_once(FUNCTIONS . 'funcs.times.php');
         require_once(FUNCTIONS . 'funcs.files.php');
