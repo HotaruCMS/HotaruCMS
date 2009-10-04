@@ -40,9 +40,11 @@ class Hotaru
     protected $title        = '';       // for the broswer's TITLE tags
     protected $pageType     = '';       // what kind of page we're looking at
     
-    protected $cssIncludes  = array();  // a list of css files to include
-    protected $jsIncludes   = array();  // a list of js files to include
-    protected $includeType  = '';       // 'css' or 'js'
+    protected $cssIncludes          = array();  // a list of css files to include
+    protected $cssIncludesAdmin     = array();  // a list of css files to include in Admin
+    protected $jsIncludes           = array();  // a list of js files to include
+    protected $jsIncludesAdmin      = array();  // a list of js files to include in Admin
+    protected $includeType          = '';       // 'css' or 'js'
     
     public $vars            = array();  // multi-purpose
     
@@ -109,18 +111,26 @@ class Hotaru
      *
      * @param string $file - full path to the CSS file
      */
-    public function setCssIncludes($file)
+    public function setCssIncludes($file, $admin = false)
     {
-        array_push($this->cssIncludes, $file);
+        if ($admin) { 
+            array_push($this->cssIncludesAdmin, $file);
+        } else {
+            array_push($this->cssIncludes, $file);
+        }
     }
     
 
     /**
      * getCssIncludes
      */
-    public function getCssIncludes()
+    public function getCssIncludes($admin = false)
     {
-        return $this->cssIncludes;
+        if ($admin) {
+            return $this->cssIncludesAdmin;
+        } else {
+            return $this->cssIncludes;
+        }
     }
     
     
@@ -129,18 +139,27 @@ class Hotaru
      *
      * @param string $file - full path to the JS file
      */
-    public function setJsIncludes($file)
+    public function setJsIncludes($file, $admin = false)
     {
-        array_push($this->jsIncludes, $file);
+        if ($admin) { 
+            array_push($this->jsIncludesAdmin, $file);
+        } else {
+            array_push($this->jsIncludes, $file);
+        }
+        
     }
     
     
     /**
      * getJsIncludes
      */
-    public function getJsIncludes()
+    public function getJsIncludes($admin = false)
     {
-        return $this->jsIncludes;
+        if ($admin) {
+            return $this->jsIncludesAdmin;
+        } else {
+            return $this->jsIncludes;
+        }
     }
     
     
@@ -182,18 +201,17 @@ class Hotaru
      */
     public function hotaruHeader($entrance = 'main')
     {
-
+        if($entrance == 'admin') { $admin = true; } else { $admin = false; } // necessary for including css/js files
+        
         // Include combined css and js files
         if ($this->cage->get->keyExists('combine')) {
             $type = $this->cage->get->testAlpha('type');
             $version = $this->cage->get->testInt('version');
-            $this->combineIncludes($type, $version);
+            $this->combineIncludes($type, $version, $admin);
         }
         
         // Enable plugins to define global settings, etc. 
         $results = $this->plugins->pluginHook('hotaru_header');
-        
-        // NOTE TO SELF - THE FOLLOWING CREATES GLOBALS WHICH ARE TRAPPED IN THIS METHOD
         
         /*  The following extracts the results of pluginHook which is 
             handy for making global objects with plugins */
@@ -488,7 +506,7 @@ class Hotaru
      * @param $folder - the folder name of the plugin
      * @param $filename - optional css file without an extension
      */
-     public function includeCss($filename = '', $folder = '')
+     public function includeCss($filename = '', $folder = '', $admin = false)
      {
         // If no filename provided, the filename is assigned the plugin name.
         if (!$filename) { $filename = $folder; }
@@ -496,7 +514,7 @@ class Hotaru
         $file_location = $this->findCssFile($filename, $folder);
         
         // Add this css file to the global array of css_files
-        $this->setCssIncludes($file_location);
+        $this->setCssIncludes($file_location, $admin);
         
         return $folder; // returned for testing purposes only
      }
@@ -508,7 +526,7 @@ class Hotaru
      * @param $plugin - the folder name of the plugin
      * @param $filename - optional js file without an extension
      */
-     public function includeJs($filename = '', $folder = '')
+     public function includeJs($filename = '', $folder = '', $admin = false)
      {
         // If no filename provided, the filename is assigned the plugin name.
         if (!$filename) { $filename = $folder; }
@@ -516,7 +534,7 @@ class Hotaru
         $file_location = $this->findJsFile($filename, $folder);
         
         // Add this css file to the global array of css_files
-        $this->setJsIncludes($file_location);
+        $this->setJsIncludes($file_location, $admin);
         
         return $folder; // returned for testing purposes only
      }
@@ -600,9 +618,9 @@ class Hotaru
      * @return int version number or echo output to cache file
      * @link http://www.ejeliot.com/blog/72 Based on work by Ed Eliot
      */
-     public function combineIncludes($type = 'css', $version = 0)
+     public function combineIncludes($type = 'css', $version = 0, $admin = false)
      {
-        if ($this->pageType == 'admin') {
+        if ($admin) {
             $this->plugins->pluginHook('admin_header_include');
             $prefix = 'hotaru_admin_';
         } else {
@@ -615,15 +633,17 @@ class Hotaru
         
         if($type == 'css') { 
             $content_type = 'text/css';
-            $includes = $this->getCssIncludes();
+            $includes = $this->getCssIncludes($admin);
         } else { 
             $type = 'js'; 
             $content_type = 'text/javascript';
-            $includes = $this->getJsIncludes();
+            $includes = $this->getJsIncludes($admin);
         }
-
+        
+        $includes = array_unique($includes);    // remove duplicate includes
+        
         if(empty($includes)) { return false; }
-
+        
          /*
             if version parameter is present then the script is being called directly, otherwise we're including it in 
             another script with require or include. If calling directly we return code othewise we return the etag 
@@ -645,12 +665,12 @@ class Hotaru
                 header("{$this->cage->server->getRaw('SERVER_PROTOCOL')} 304 Not Modified");
                 exit;
             }
-        
+            
             // create a directory for storing current and archive versions
             if (!is_dir($cache)) {
                 mkdir($cache);
             }
-               
+        
             // get code from archive folder if it exists, otherwise grab latest files, merge and save in archive folder
             if ((CSS_JS_CACHE_ON == "true") && file_exists($cache . $prefix . $type . '_' . $iETag . '.cache')) {
                 $sCode = file_get_contents($cache . $prefix . $type . '_' . $iETag . '.cache');
@@ -663,9 +683,10 @@ class Hotaru
                     $aLastModifieds[] = filemtime($sFile);
                     $sCode .= file_get_contents($sFile);
                 }
+
                 // sort dates, newest first
                 rsort($aLastModifieds);
-             
+                
                 if ($iETag == $aLastModifieds[0]) { // check for valid etag, we don't want invalid requests to fill up archive folder
                     $oFile = fopen($cache . $prefix . $type . '_' . $iETag . '.cache', 'w');
                     if (flock($oFile, LOCK_EX)) {
@@ -691,6 +712,7 @@ class Hotaru
         
           // output merged code
           echo $sCode;
+          exit; // we don't want to drop out and continue building Hotaru or Admin objects when we're just including a file!
           
         } else {
         
@@ -717,20 +739,16 @@ class Hotaru
      * @param string $page e.g. admin_settings 
      * @param string $plugin e.g. category_manager
      */
-     public function includeCombined($version_js = 0, $version_css = 0, $page = '', $folder = '')
+     public function includeCombined($version_js = 0, $version_css = 0, $admin = false)
      {
-        if ($this->pageType == 'admin') { $index = 'admin_index'; } else { $index = 'index'; }
-        if ($page && $folder) { 
-            $page = 'page=' . $page; 
-            $folder = 'plugin=' . $folder . "&";
-        }
+        if ($admin) { $index = 'admin_index'; } else { $index = 'index'; }
         
         if ($version_js > 0) {
-            echo "<script type='text/javascript' src='" . BASEURL . $index . ".php?" . $page . "&" . $folder . "combine=1&type=js&version=" . $version_js . "'></script>\n";
+            echo "<script type='text/javascript' src='" . BASEURL . $index . ".php?combine=1&type=js&version=" . $version_js . "'></script>\n";
         }
         
         if ($version_css > 0) {
-            echo "<link rel='stylesheet' href='" . BASEURL . $index . ".php?" . $page . "&" . $folder . "combine=1&type=css&version=" . $version_css . "' type='text/css'>\n";
+            echo "<link rel='stylesheet' href='" . BASEURL . $index . ".php?combine=1&type=css&version=" . $version_css . "' type='text/css'>\n";
         }
 
      }

@@ -59,9 +59,9 @@
    
     <!-- Include merged files for all the plugin css and javascript (if any) -->
     <?php 
-        $version_js = $admin->hotaru->combineIncludes('js');
-        $version_css = $admin->hotaru->combineIncludes('css');
-        $admin->hotaru->includeCombined($version_js, $version_css, $admin->hotaru->getPageName(), $admin->plugins->folder);
+        $version_js = $admin->hotaru->combineIncludes('js', 0, true);
+        $version_css = $admin->hotaru->combineIncludes('css', 0, true);
+        $admin->hotaru->includeCombined($version_js, $version_css, true);
     ?>
     <!-- End -->
     
