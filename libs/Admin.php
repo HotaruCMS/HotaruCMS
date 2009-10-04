@@ -53,7 +53,7 @@ class Admin
         if ($folder) { 
             $this->folder = $folder; 
         }
-        
+
         if ($entrance != 'admin') { return false; } 
 
         $this->adminInit($entrance);
@@ -88,16 +88,6 @@ class Admin
      */
     public function adminInit($entrance = '')
     {
-        $this->hotaru->pageType = 'admin';
-        
-        // Include combined css and js files
-        if ($this->cage->get->keyExists('combine')) {
-            $type = $this->cage->get->testAlpha('type');
-            $version = $this->cage->get->testInt('version');
-            $this->hotaru->combineIncludes($type, $version);
-            return true;
-        }
-        
         $page = $this->cage->get->testPage('page');    // check with "get";
         if (!$page) { 
             // check with "post" - used in admin_login_form().

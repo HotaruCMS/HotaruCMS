@@ -137,7 +137,9 @@ class Plugin
      */
     public function admin_header_include()
     {
-        $this->header_include();
+        // include a files that match the name of the plugin folder:
+        $this->hotaru->includeJs('', $this->folder, true); // filename, folder name, admin
+        $this->hotaru->includeCss('', $this->folder, true);
     }
     
     /**
