@@ -134,7 +134,7 @@ class Sidebar
         
         if (!$results) {
             $sql = "INSERT INTO " . DB_PREFIX . "widgets (widget_plugin, widget_function, widget_args, widget_updateby) VALUES(%s, %s, %s, %d)";
-            $this->db->query($this->db->prepare($sql, $plugin, $function, $args, $this->current_user->getId()));
+            $this->db->query($this->db->prepare($sql, $plugin, $function, $args, $this->current_user->id));
         }
         
         $this->db->query("OPTIMIZE TABLE " . DB_PREFIX . "widgets");

@@ -341,13 +341,14 @@ class Post
         //if (!$status) { $status = "top"; }
         if (!$limit) { $limit = 10; }
                     
-        if ($status) { $hotaru->vars['filter']['post_status = %s'] = $status; }
-        if ($user) { $hotaru->vars['filter']['post_author = %d'] = $this->current_user->getUserIdFromName($this->cage->get->testUsername('user'));  }
-        if ($tag) { $hotaru->vars['filter']['post_tags LIKE %s'] = '%' . $tag . '%'; }
-        if ($category && (FRIENDLY_URLS == "true")) { $hotaru->vars['filter']['post_category = %d'] = $cat->getCatId($category); }
-        if ($category && (FRIENDLY_URLS == "false")) { $hotaru->vars['filter']['post_category = %d'] = $category; }
-        if ($search && $this->plugins->plugin_active('search')) { 
-            $prepared_search = prepare_search_filter($search); 
+        if ($status) { $filter['post_status = %s'] = $status; }
+        if ($user) { $filter['post_author = %d'] = $this->current_user->getUserIdFromName($this->cage->get->testUsername('user'));  }
+        if ($tag) { $filter['post_tags LIKE %s'] = '%' . $tag . '%'; }
+        if ($category && (FRIENDLY_URLS == "true")) { $filter['post_category = %d'] = $cat->getCatId($category); }
+        if ($category && (FRIENDLY_URLS == "false")) { $filter['post_category = %d'] = $category; }
+        if ($search && $this->plugins->isActive('search')) { 
+            $search_plugin = new Search('', $this->hotaru);
+            $prepared_search = $search_plugin->prepareSearchFilter($search); 
             extract($prepared_search);
             $orderby = "post_date DESC";    // override "relevance DESC" so the RSS feed updates with the latest related terms. 
         }
@@ -366,8 +367,8 @@ class Post
         elseif ($category && (FRIENDLY_URLS == "false")) { $feed->description = $this->lang["submit_rss_stories_in_category"] . " " . $cat->getCatName($category); }
         elseif ($search) { $feed->description = $this->lang["submit_rss_stories_search"] . " " . stripslashes($search); }
                 
-        if (!isset($hotaru->vars['filter']))  $hotaru->vars['filter'] = array();
-        $prepared_array = $this->filter($hotaru->vars['filter'], $limit, false, $select);
+        if (!isset($filter))  $filter = array();
+        $prepared_array = $this->filter($filter, $limit, false, $select);
         
         $results = $this->getPosts($prepared_array);
 
@@ -536,6 +537,7 @@ class Post
         if (!isset($this->hotaru->vars['orderby'])) { $this->hotaru->vars['orderby'] = 'post_date DESC'; }
         
         $prepared_filter = $this->filter($this->hotaru->vars['filter'], 0, true, $this->hotaru->vars['select'], $this->hotaru->vars['orderby']);
+        
         $stories = $this->getPosts($prepared_filter);
         
         return $stories;
