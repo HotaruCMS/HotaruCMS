@@ -811,7 +811,7 @@ class Hotaru
                 } elseif ($key == 'category' && is_numeric($value) ) {
                     
                     require_once(PLUGINS . 'categories/libs/Category.php');
-                    $cat = new Category();
+                    $cat = new Category($this->db);
                     $url .= $key . '/' . $cat->getCatSafeName($value) . '/';
                         
                 } elseif ($key == 'page') {
