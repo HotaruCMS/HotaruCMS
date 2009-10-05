@@ -111,7 +111,7 @@ class SidebarWidgets extends PluginFunctions
                 elseif ($details['class'] && method_exists($details['class'], $function_name)) 
                 {   
                     // must be a class object with a method that matches!
-                    $class = new $details['class'];
+                    $class = new $details['class']($widget, $this->hotaru);
                     $class->$function_name($details['args']);
                 } 
                 else 
@@ -130,7 +130,7 @@ class SidebarWidgets extends PluginFunctions
                     elseif ($details['class'])
                     {
                         // must be a class object!
-                        $class = new $details['class'];
+                        $class = new $details['class']($widget, $this->hotaru);
                         $class->$function_name($details['args']);
                     }
                 }
