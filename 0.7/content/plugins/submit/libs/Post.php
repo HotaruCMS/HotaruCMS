@@ -150,6 +150,8 @@ class Post
             $this->date = $post_row->post_date;
             $this->subscribe = $post_row->post_subscribe;
             
+            $this->vars['post_row'] = $post_row;    // make available to plugins
+            
             $this->plugins->pluginHook('post_read_post_2');
                         
             return true;
@@ -176,7 +178,7 @@ class Post
         $last_insert_id = $this->db->get_var($this->db->prepare("SELECT LAST_INSERT_ID()"));
         
         $this->id = $last_insert_id;
-        $this->hotaru->vars['last_insert_id'] = $last_insert_id;    // make it available outside this class
+        $this->vars['last_insert_id'] = $last_insert_id;    // make it available outside this class
                 
         $this->plugins->pluginHook('post_add_post');
         
@@ -335,7 +337,7 @@ class Post
         if ($category) { 
             // so we can use a couple of functions from the Category class
             require_once(PLUGINS . 'categories/libs/Category.php');
-            $cat = new Category(); 
+            $cat = new Category($this->db); 
         } 
                 
         //if (!$status) { $status = "top"; }
