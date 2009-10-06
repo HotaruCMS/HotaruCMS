@@ -374,12 +374,33 @@ class Post
         
         $results = $this->getPosts($prepared_array);
 
+        // determine if categories is installed, active and then create a Categories object:
+        if (($this->plugins->getSetting('submit_categories', 'submit') == 'checked') 
+            && ($this->plugins->isActive('categories'))) {
+            $this->vars['useCategories'] = true; 
+            require_once(PLUGINS . 'categories/libs/Category.php');
+            $cat = new Category($this->db);
+        } else { 
+            $this->vars['useCategories'] = false; 
+        }
+            
         if ($results) {
             foreach ($results as $result) 
             {
+                $this->url = $result->post_url; // used in Hotaru's url function
+                
+                //reset defaults:
+                $this->vars['category'] = 1;
+                $this->vars['catSafeName'] = '';
+                
+                if ($this->vars['useCategories'] && ($result->post_category != 1)) {
+                    $this->vars['category'] = $result->post_category;
+                    $this->vars['catSafeName'] =  $cat->getCatSafeName($result->post_category);
+                }
+                
                 $item = new RSSItem();
                 $item->title = stripslashes(urldecode($result->post_title));
-                $item->link  = $this->hotaru->url(array('page'=>$result->post_id)); 
+                $item->link  = $this->hotaru->url(array('page'=>$result->post_id));
                 $item->setPubDate($result->post_date); 
                 $item->description = "<![CDATA[ " . stripslashes(urldecode($result->post_content)) . " ]]>";
                 $feed->addItem($item);
