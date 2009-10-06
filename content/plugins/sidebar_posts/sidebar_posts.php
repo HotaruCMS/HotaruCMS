@@ -74,6 +74,11 @@ class SidebarPosts extends PluginFunctions
             $output .= "<a href='" . $link . "' title='" . $this->lang["sidebar_posts_title_anchor_title"] . "'>" . $title . "</a></h2>"; 
                 
             $output .= "<ul class='sidebar_posts_items'>";
+            
+            if ($this->hotaru->post->vars['useCategories']) {
+                require_once(PLUGINS . 'categories/libs/Category.php');
+                $cat = new Category($this->db);
+            }
                     
             foreach ($posts as $item) {
                 
@@ -84,8 +89,6 @@ class SidebarPosts extends PluginFunctions
                 $this->hotaru->post->vars['catSafeName'] = '';
                 
                 if ($this->hotaru->post->vars['useCategories'] && ($item->post_category != 1)) {
-                    require_once(PLUGINS . 'categories/libs/Category.php');
-                    $cat = new Category($this->db);
                     $this->hotaru->post->vars['category'] = $item->post_category;
                     $this->hotaru->post->vars['catSafeName'] =  $cat->getCatSafeName($item->post_category);
                 }
