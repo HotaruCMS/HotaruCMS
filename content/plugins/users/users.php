@@ -116,7 +116,7 @@ class Users extends PluginFunctions
     public function theme_index_replace()
     {
         // send_email_confirmation set to true in "is_page('register')" if email confirmation is enabled
-        $this->vars['send_email_confirmation'] = false; 
+        $this->hotaru->vars['send_email_confirmation'] = false; 
         
         // Pages you have to be logged in for...
         if ($this->current_user->loggedIn) {
@@ -141,12 +141,12 @@ class Users extends PluginFunctions
             if ($this->hotaru->isPage('register')) {
                 $this->current_user->vars['useRecaptcha'] = $this->getSetting('users_recaptcha_enabled');
                 $this->current_user->vars['useEmailConf'] = $this->getSetting('users_emailconf_enabled');
-                $this->hotaru->vars['userid'] = $this->register();
-                if ($this->hotaru->vars['userid']) { 
+                $userid = $this->register();
+                if ($userid) { 
                     // success!
                     if ($this->current_user->vars['useEmailConf']) {
-                        $this->vars['send_email_confirmation'] = true;
-                        $this->sendConfirmationEmail($this->hotaru->vars['userid']);
+                        $this->hotaru->vars['send_email_confirmation'] = true;
+                        $this->sendConfirmationEmail($userid);
                         // fall through and display "email sent" message
                     } else {
                         // redirect to login page
@@ -188,7 +188,7 @@ class Users extends PluginFunctions
         // Pages you have to be logged out for...
         } else {
             if ($this->hotaru->isPage('register')) {
-                if ($this->vars['send_email_confirmation']) {
+                if ($this->hotaru->vars['send_email_confirmation']) {
                     $this->hotaru->messages[$this->lang['users_register_emailconf_sent']] = 'green';
                     $this->hotaru->showMessages();
                     return true;

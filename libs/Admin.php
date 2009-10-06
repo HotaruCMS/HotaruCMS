@@ -887,64 +887,64 @@ class Admin
             $blocked_items = $this->db->get_results($this->db->prepare($sql));
         }
         
-        if ($blocked_items) {
-            $pg = $this->cage->get->getInt('pg');
-            $items = 20;
-            $output = "";
+        if (!$blocked_items) { return array(); }
+        
+        $pg = $this->cage->get->getInt('pg');
+        $items = 20;
+        $output = "";
+        
+        require_once(EXTENSIONS . 'Paginated/Paginated.php');
+        require_once(EXTENSIONS . 'Paginated/DoubleBarLayout.php');
+        $pagedResults = new Paginated($blocked_items, $items, $pg);
+        
+        $alt = 0;
+        while($block = $pagedResults->fetchPagedRow()) {    //when $story is false loop terminates    
+            $alt++;
+            $output .= "<tr class='table_row_" . $alt % 2 . "'>\n";
+            $output .= "<td>" . $block->blocked_type . "</td>\n";
+            $output .= "<td>" . $block->blocked_value . "</td>\n";
+            $output .= "<td>" . "<a class='table_drop_down' href='#'>\n";
+            $output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/edit.png'>" . "</a></td>\n";
+            $output .= "<td>" . "<a href='" . BASEURL . "admin_index.php?page=blocked_list&amp;action=remove&amp;id=" . $block->blocked_id . "'>\n";
+            $output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/delete.png'>" . "</a></td>\n";
+            $output .= "</tr>\n";
+            $output .= "<tr class='table_tr_details' style='display:none;'>\n";
+            $output .= "<td colspan=3 class='table_description'>\n";
+            $output .= "<form name='blocked_list_edit_form' action='" . BASEURL . "admin_index.php' method='post'>\n";
+            $output .= "<table><tr><td><select name='blocked_type'>\n";
             
-            require_once(EXTENSIONS . 'Paginated/Paginated.php');
-            require_once(EXTENSIONS . 'Paginated/DoubleBarLayout.php');
-            $pagedResults = new Paginated($blocked_items, $items, $pg);
-            
-            $alt = 0;
-            while($block = $pagedResults->fetchPagedRow()) {    //when $story is false loop terminates    
-                $alt++;
-                $output .= "<tr class='table_row_" . $alt % 2 . "'>\n";
-                $output .= "<td>" . $block->blocked_type . "</td>\n";
-                $output .= "<td>" . $block->blocked_value . "</td>\n";
-                $output .= "<td>" . "<a class='table_drop_down' href='#'>\n";
-                $output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/edit.png'>" . "</a></td>\n";
-                $output .= "<td>" . "<a href='" . BASEURL . "admin_index.php?page=blocked_list&amp;action=remove&amp;id=" . $block->blocked_id . "'>\n";
-                $output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/delete.png'>" . "</a></td>\n";
-                $output .= "</tr>\n";
-                $output .= "<tr class='table_tr_details' style='display:none;'>\n";
-                $output .= "<td colspan=3 class='table_description'>\n";
-                $output .= "<form name='blocked_list_edit_form' action='" . BASEURL . "admin_index.php' method='post'>\n";
-                $output .= "<table><tr><td><select name='blocked_type'>\n";
-                
-                switch($block->blocked_type) { 
-                    case 'url':
-                        $text = $this->lang["admin_theme_blocked_url"];
-                        break;
-                    case 'email':
-                        $text = $this->lang["admin_theme_blocked_email"];
-                        break;
-                    default:
-                        $text = $this->lang["admin_theme_blocked_ip"];
-                        break;
-                }
-                
-                $output .= "<option value='" . $block->blocked_type . "'>" . $text . "</option>\n";
-                $output .= "<option value='ip'>" . $this->lang["admin_theme_blocked_ip"] . "</option>\n";
-                $output .= "<option value='url'>" . $this->lang["admin_theme_blocked_url"] . "</option>\n";
-                $output .= "<option value='email'>" . $this->lang["admin_theme_blocked_email"] . "</option>\n";
-                $output .= "<option value='user'>" . $this->lang["admin_theme_blocked_username"] . "</option>\n";
-                $output .= "</select></td>\n";
-                $output .= "<td><input type='text' size=30 name='value' value='" . $block->blocked_value . "' /></td>\n";
-                $output .= "<td><input class='submit' type='submit' value='" . $this->lang['admin_blocked_list_update'] . "' /></td>\n";
-                $output .= "</tr></table>\n";
-                $output .= "<input type='hidden' name='id' value='" . $block->blocked_id . "' />\n";
-                $output .= "<input type='hidden' name='page' value='blocked_list' />\n";
-                $output .= "<input type='hidden' name='type' value='edit' />\n";
-                $output .= "</form>\n";
-                $output .= "</td>";
-                $output .= "<td class='table_description_close'><a class='table_hide_details' href='#'>" . $this->lang["admin_theme_plugins_close"] . "</a></td>";
-                $output .= "</tr>";
+            switch($block->blocked_type) { 
+                case 'url':
+                    $text = $this->lang["admin_theme_blocked_url"];
+                    break;
+                case 'email':
+                    $text = $this->lang["admin_theme_blocked_email"];
+                    break;
+                default:
+                    $text = $this->lang["admin_theme_blocked_ip"];
+                    break;
             }
-
-            $blocked_array = array('blocked_items' => $output, 'pagedResults' => $pagedResults);
-            return $blocked_array;
+            
+            $output .= "<option value='" . $block->blocked_type . "'>" . $text . "</option>\n";
+            $output .= "<option value='ip'>" . $this->lang["admin_theme_blocked_ip"] . "</option>\n";
+            $output .= "<option value='url'>" . $this->lang["admin_theme_blocked_url"] . "</option>\n";
+            $output .= "<option value='email'>" . $this->lang["admin_theme_blocked_email"] . "</option>\n";
+            $output .= "<option value='user'>" . $this->lang["admin_theme_blocked_username"] . "</option>\n";
+            $output .= "</select></td>\n";
+            $output .= "<td><input type='text' size=30 name='value' value='" . $block->blocked_value . "' /></td>\n";
+            $output .= "<td><input class='submit' type='submit' value='" . $this->lang['admin_blocked_list_update'] . "' /></td>\n";
+            $output .= "</tr></table>\n";
+            $output .= "<input type='hidden' name='id' value='" . $block->blocked_id . "' />\n";
+            $output .= "<input type='hidden' name='page' value='blocked_list' />\n";
+            $output .= "<input type='hidden' name='type' value='edit' />\n";
+            $output .= "</form>\n";
+            $output .= "</td>";
+            $output .= "<td class='table_description_close'><a class='table_hide_details' href='#'>" . $this->lang["admin_theme_plugins_close"] . "</a></td>";
+            $output .= "</tr>";
         }
+
+        $blocked_array = array('blocked_items' => $output, 'pagedResults' => $pagedResults);
+        return $blocked_array;
     }
     
     
