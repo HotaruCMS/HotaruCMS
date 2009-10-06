@@ -1,0 +1,9 @@
+/* **************************************
+ *	 GRAVATAR PLUGIN CSS            *
+ ************************************** */
+  
+ /* List and Post pages */
+ .show_post_gravatar {
+ 	padding-right: 0.6em;
+ 	float: left;
+ }
