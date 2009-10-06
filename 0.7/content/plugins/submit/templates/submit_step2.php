@@ -28,6 +28,7 @@ if ($hotaru->cage->post->getAlpha('submit2') == 'true') {
     // Submitted this form...
     $title_check = $hotaru->cage->post->noTags('post_title');    
     $content_check = sanitize($hotaru->cage->post->getHtmLawed('post_content'), 2, $hotaru->post->allowableTags);
+    $content_check = stripslashes($content_check);
     $post_id = $hotaru->cage->post->getInt('post_id');    
     $hotaru->post->id = $post_id;
     

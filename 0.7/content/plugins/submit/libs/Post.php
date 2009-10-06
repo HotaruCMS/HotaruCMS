@@ -399,7 +399,8 @@ class Post
                 }
                 
                 $item = new RSSItem();
-                $item->title = stripslashes(urldecode($result->post_title));
+                $title = html_entity_decode(urldecode($result->post_title), ENT_QUOTES,'UTF-8');
+                $item->title = stripslashes($title);
                 $item->link  = $this->hotaru->url(array('page'=>$result->post_id));
                 $item->setPubDate($result->post_date); 
                 $item->description = "<![CDATA[ " . stripslashes(urldecode($result->post_content)) . " ]]>";
@@ -484,7 +485,7 @@ class Post
     /**
      * Scrapes the title from the page being submitted
      */
-    public function fetch_title($url)
+    public function fetchTitle($url)
     {
         require_once(EXTENSIONS . 'SWCMS/class.httprequest.php');
         
@@ -506,7 +507,6 @@ class Post
                 }
             }
         }
-            
         
         if (preg_match("'<title>([^<]*?)</title>'", $string, $matches)) {
             $title = trim($matches[1]);
@@ -514,7 +514,7 @@ class Post
             $title = $this->lang["submit_form_not_found"];
         }
         
-        return $title;
+        return sanitize($title, 1);
     }
     
 

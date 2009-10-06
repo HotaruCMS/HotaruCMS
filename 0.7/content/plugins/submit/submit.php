@@ -278,7 +278,7 @@ class Submit extends PluginFunctions
                     if (!$this->check_for_errors_1()) { 
                         // No errors found, proceed to step 2
                         $this->hotaru->vars['post_orig_url'] = $this->cage->post->testUri('post_orig_url'); 
-                        $this->hotaru->vars['post_orig_title'] = $this->hotaru->post->fetch_title($this->hotaru->vars['post_orig_url']);
+                        $this->hotaru->vars['post_orig_title'] = $this->hotaru->post->fetchTitle($this->hotaru->vars['post_orig_url']);
                         $this->hotaru->displayTemplate('submit_step2', $this->hotaru, 'submit');
                         return true;
                         
@@ -572,6 +572,7 @@ class Submit extends PluginFunctions
             }
             
             $this->pluginHook('submit_form_2_process_submission');
+            
             $this->hotaru->post->updatePost();
         }
     }
