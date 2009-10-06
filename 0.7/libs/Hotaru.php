@@ -802,7 +802,8 @@ class Hotaru
                     // must be a post title, let's get the post_url...
                     $value = $this->post->url;
                     
-                    if (isset($this->post->vars['category']) && $this->post->vars['category'] != 1) {
+                    // if we're using categories and the category is not "all"...
+                    if (isset($this->post->vars['useCategories']) && $this->post->vars['category'] != 1) {
                         $url .= $this->post->vars['catSafeName'] . '/';
                     }
                     
