@@ -47,7 +47,7 @@ $user->getUserBasic($hotaru->post->author);
         // if buried during that plugin call, the post won't show...
     ?>
     
-        <div class="show_post vote_button_space_<?php echo $hotaru->post->post_vars['vote_type']; ?>">
+        <div class="show_post vote_button_space">
         
             <?php $hotaru->plugins->pluginHook('submit_show_post_pre_title'); ?>
         
