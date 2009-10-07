@@ -223,7 +223,7 @@ class Hotaru
         }
         
         if (!$entrance || $entrance == 'main') {
-            $this->displayTemplate('index', $this);
+            $this->displayTemplate('index');
         }
     }
 
@@ -347,12 +347,21 @@ class Hotaru
      * Includes a template to display
      *
      * @param string $page page name
-     * @param array $args - usually an array of objects
+     * @param array $hotaru - usually the $hotaru object
      * @param string $plugin optional plugin name
      * @param bool $include_once true or false
      */
-    public function displayTemplate($page = '', $hotaru, $plugin = '', $include_once = true)
+    public function displayTemplate($page = '', $hotaru = NULL, $plugin = '', $include_once = true)
     {
+        // Note: This $hotaru isn't necessarily the whole object, some plugins might pass
+        // $db or $lang into this parameter instead. Therefore, we need the $hotaru parameter.
+        
+        // if no $hotaru, provide it:
+        if (!isset($hotaru) || !is_object($hotaru)) { $hotaru = $this; }
+        
+        // if no plugin folder, provide it:
+        if (!$plugin) { $plugin = $this->plugins->folder; }
+        
         $page = $page . '.php';
 
         /* 

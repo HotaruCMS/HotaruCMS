@@ -91,5 +91,5 @@
             <?php $hotaru->plugins->pluginHook('header_post_title'); ?>
         </div>
         <!-- NAVIGATION -->
-        <?php echo $hotaru->displayTemplate('navigation', $hotaru); ?>
+        <?php echo $hotaru->displayTemplate('navigation'); ?>
     </div>

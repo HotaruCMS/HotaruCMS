@@ -61,7 +61,7 @@ class Search extends PluginFunctions
      */
     public function sidebar_widget_search()
     {
-        $this->hotaru->displayTemplate('search_box', $this->hotaru, 'search');
+        $this->hotaru->displayTemplate('search_box');
     }
     
     /**

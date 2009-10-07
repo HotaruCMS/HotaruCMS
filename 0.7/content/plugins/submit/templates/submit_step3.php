@@ -29,7 +29,7 @@
         
     <?php echo $hotaru->lang["submit_form_instructions_3"]; ?> <br /><br />
     
-    <?php $hotaru->displayTemplate('post', $hotaru, 'submit') ?>
+    <?php $hotaru->displayTemplate('post') ?>
     
     <div id="submit_edit_confirm">
     

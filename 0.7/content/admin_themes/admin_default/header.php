@@ -89,5 +89,5 @@
         <?php $admin->plugins->pluginHook('header_post_logo'); ?>
         
         <!-- NAVIGATION -->
-        <?php echo $admin->displayAdminTemplate('navigation', $admin); ?>
+        <?php echo $admin->displayAdminTemplate('navigation'); ?>
     </div>

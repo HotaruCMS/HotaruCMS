@@ -1,7 +1,7 @@
 <?php 
 /**
- * Theme name: admin_default
- * Template name: access_denied.php
+ * Plugin name: Hello Universe
+ * Template name: sidebar.php
  * Template author: Nick Ramsay
  *
  * PHP version 5
@@ -27,20 +27,10 @@
  */
 
 ?>
-        <!-- HEADER-->
-        <?php $admin->displayAdminTemplate('header'); ?>
-    
-        <div id="bd" role="main">
-            <div class='yui-g''>
-                <div class="yui-u" style='width: 100%;'>
 
-                    <!-- MAIN -->
-                    <div id="main">
-                        <?php echo $admin->hotaru->showMessages(); ?>
-                    </div>        
-                </div>
-            </div>
-        </div>
-        
-        <!-- FOOTER -->
-        <?php $admin->displayAdminTemplate('footer'); ?>
+<h2>A New Sidebar</h2>
+
+<p>This is the custom_sidebar.php file in the Hello Universe plugin folder.</p>
+
+<p>We managed to override the regular sidebar by creating a new sidebar in the plugin folder, and writing Function #3 in hello_universe.php.</p>
+

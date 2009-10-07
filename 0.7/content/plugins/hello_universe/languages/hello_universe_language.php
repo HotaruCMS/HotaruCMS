@@ -1,8 +1,6 @@
-<?php 
+<?php
 /**
- * Theme name: admin_default
- * Template name: access_denied.php
- * Template author: Nick Ramsay
+ *  HELLO UNIVERSE LANGUAGE
  *
  * PHP version 5
  *
@@ -26,21 +24,24 @@
  * @link      http://www.hotarucms.org/
  */
 
-?>
-        <!-- HEADER-->
-        <?php $admin->displayAdminTemplate('header'); ?>
-    
-        <div id="bd" role="main">
-            <div class='yui-g''>
-                <div class="yui-u" style='width: 100%;'>
+/* Front page */
+$lang["hello_universe"] = "Hello Universe!";
+$lang["hello_universe_explanation"] = "This text is shown by including the <i>theme_index_main</i> hook. See Functions #1 and #2 in hello_universe.php";
+$lang["hello_universe_see_page"] = "See a theme page made by this plugin";
+$lang["hello_universe_see_form"] = "See an example form made with this plugin";
 
-                    <!-- MAIN -->
-                    <div id="main">
-                        <?php echo $admin->hotaru->showMessages(); ?>
-                    </div>        
-                </div>
-            </div>
-        </div>
-        
-        <!-- FOOTER -->
-        <?php $admin->displayAdminTemplate('footer'); ?>
+/* Example Template */
+$lang["hello_universe_template_example"] = "Example Template";
+
+/* Example Form */
+$lang["hello_universe_form_example"] = "Example Form";
+$lang["hello_universe_question"] = "What's the capital of France?";
+$lang["hello_universe_answer"] = "Answer:";
+$lang["hello_universe_success"] = "Correct!";
+$lang["hello_universe_failure"] = "Wrong answer!";
+$lang["hello_universe_form_submit"] = "Submit";
+
+/* Common language */
+$lang["hello_universe_back_home"] = "Back Home";
+
+?>
