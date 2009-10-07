@@ -5,7 +5,7 @@
  * version: 0.7
  * folder: submit
  * class: Submit
- * hooks: hotaru_header, header_include, header_include_raw, upgrade_plugin, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, userbase_default_permissions
+ * hooks: hotaru_header, header_meta, header_include, header_include_raw, upgrade_plugin, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, userbase_default_permissions
  *
  * PHP version 5
  *
@@ -143,6 +143,18 @@ class Submit extends PluginFunctions
         }
 
         $this->pluginHook('submit_hotaru_header_2');
+    }
+    
+    
+    /**
+     * Match meta tag to a post's description (keywords is done in the Tags plugin)
+     */
+    public function header_meta()
+    {    
+        if ($this->hotaru->pageType == 'post') {
+            echo '<meta name="description" content="' . $this->hotaru->post->content . '">' . "\n";
+            return true;
+        }
     }
     
     

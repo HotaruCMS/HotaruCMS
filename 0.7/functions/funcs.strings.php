@@ -25,6 +25,25 @@
  */
  
 /**
+ * Truncate a string
+ *
+ * @param string $string
+ * @param int truncate to X characters
+ * @para, bool $dot adds ... if true
+ * @return string
+ */
+function truncate($string, $chars=0, $dot=true)
+{
+    $length = strlen($string);
+    $truncated = substr(strip_tags($string), 0, $chars);    // strips tags to prevent broken tags
+    if ($dot && ($length >= $chars)) {
+        $truncated .= '...';
+    }
+    return $truncated;
+}
+
+
+/**
  * Strip a string from the end of a string
  *
  * @param string $string

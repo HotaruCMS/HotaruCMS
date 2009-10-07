@@ -53,7 +53,7 @@ if ($stories) {
 <!-- POST -->
 <?php $hotaru->plugins->pluginHook('submit_pre_show_post'); ?>
 
-    <div class="show_post vote_button_space_<?php echo $hotaru->post->vars['vote_type']; ?>">
+    <div class="show_post vote_button_space">
     
         <?php $hotaru->plugins->pluginHook('submit_show_post_pre_title'); ?>
         
@@ -78,8 +78,7 @@ if ($stories) {
         <?php if ($hotaru->post->useContent) { ?>
             <div class="show_post_content">
                 <?php if ($hotaru->post->useSummary) { ?>
-                    <?php echo substr(strip_tags($hotaru->post->content), 0, $hotaru->post->summaryLength) ?>
-                    <?php if (strlen(strip_tags($hotaru->post->content)) >= $hotaru->post->summaryLength) { echo "..."; } ?>
+                    <?php echo truncate($hotaru->post->content, $hotaru->post->summaryLength); ?>
                 <?php } else { ?>
                     <?php echo $hotaru->post->content; ?>
                 <?php } ?>    
