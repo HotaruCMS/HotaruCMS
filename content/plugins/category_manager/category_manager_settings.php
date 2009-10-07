@@ -39,13 +39,13 @@ class CategoryManagerSettings extends CategoryManager
     
         if ($action == "home") {    
             $this->hotaru->vars['the_cats'] = $this->getCategories();     // Get all the category info                
-            $this->hotaru->displayTemplate('cat_man_main', $this->hotaru, 'category_manager');
+            $this->hotaru->displayTemplate('cat_man_main');
             return true;
         }
         
         if ($action == "order") { 
             $this->hotaru->vars['the_cats'] = $this->getCategories();     // Get all the category info
-            $this->hotaru->displayTemplate('cat_man_order', $this->hotaru, 'category_manager');
+            $this->hotaru->displayTemplate('cat_man_order');
             return true;
         }     
             
@@ -53,7 +53,7 @@ class CategoryManagerSettings extends CategoryManager
             $this->order("category_name");     // ORDER ALPHABETICALLY PERMANENTLY IN THE DATABASE
             $this->hotaru->showMessage($this->lang["cat_man_order_alpha"], 'green');
             $this->hotaru->vars['the_cats'] = $this->getCategories();     // Get all the category info
-            $this->hotaru->displayTemplate('cat_man_order', $this->hotaru, 'category_manager');
+            $this->hotaru->displayTemplate('cat_man_order');
             return true;
         } 
         
@@ -61,7 +61,7 @@ class CategoryManagerSettings extends CategoryManager
             $this->order("length(category_name)");     // ORDER BY LENGTH PERMANENTLY IN THE DATABASE
             $this->hotaru->showMessage($this->lang["cat_man_order_length"], 'green');
             $this->hotaru->vars['the_cats'] = $this->getCategories();     // Get all the category info
-            $this->hotaru->displayTemplate('cat_man_order', $this->hotaru, 'category_manager');
+            $this->hotaru->displayTemplate('cat_man_order');
             return true;
         }
     
@@ -69,7 +69,7 @@ class CategoryManagerSettings extends CategoryManager
             $this->orderByPosts();     // ORDER BY POSTS PERMANENTLY IN THE DATABASE
             $this->hotaru->showMessage($this->lang["cat_man_order_posts"], 'green');
             $this->hotaru->vars['the_cats'] = $this->getCategories();     // Get all the category info
-            $this->hotaru->displayTemplate('cat_man_order', $this->hotaru, 'category_manager');
+            $this->hotaru->displayTemplate('cat_man_order');
             return true;
         }
     
@@ -77,13 +77,13 @@ class CategoryManagerSettings extends CategoryManager
             $this->order("category_id");     // ORDER BY ID PERMANENTLY IN THE DATABASE
             $this->hotaru->showMessage($this->lang["cat_man_order_id"], 'green');
             $this->hotaru->vars['the_cats'] = $this->getCategories();     // Get all the category info
-            $this->hotaru->displayTemplate('cat_man_order', $this->hotaru, 'category_manager');
+            $this->hotaru->displayTemplate('cat_man_order');
             return true;
         }
                     
         if ($action == "edit") { 
             $this->hotaru->vars['the_cats'] = $this->getCategories();     // Get all the category info
-            $this->hotaru->displayTemplate('cat_man_edit', $this->hotaru, 'category_manager');
+            $this->hotaru->displayTemplate('cat_man_edit');
             return true;
         } 
         
@@ -95,13 +95,13 @@ class CategoryManagerSettings extends CategoryManager
                 $this->hotaru->showMessage($this->lang["cat_man_changes_cancelled"], 'green');
             }
             $this->hotaru->vars['the_cats'] = $this->getCategories();     // Get all the category info
-            $this->hotaru->displayTemplate('cat_man_edit', $this->hotaru, 'category_manager');
+            $this->hotaru->displayTemplate('cat_man_edit');
             return true;
         } 
         
         if ($action == "edit_meta") { 
             $this->hotaru->vars['the_cats'] = $this->getCategories();     // Get all the category info
-            $this->hotaru->displayTemplate('cat_man_edit_meta', $this->hotaru, 'category_manager');
+            $this->hotaru->displayTemplate('cat_man_edit_meta');
             return true;
         } 
         
@@ -118,13 +118,13 @@ class CategoryManagerSettings extends CategoryManager
                 $this->hotaru->showMessage($this->lang["cat_man_form_error"], 'red');
             }
             $this->hotaru->vars['the_cats'] = $this->getCategories();     // Get all the category info
-            $this->hotaru->displayTemplate('cat_man_edit_meta', $this->hotaru, 'category_manager');
+            $this->hotaru->displayTemplate('cat_man_edit_meta');
             return true;
         } 
     
         if ($action == "add") { 
             $this->hotaru->vars['the_cats'] = $this->getCategories();     // Get all the category info
-            $this->hotaru->displayTemplate('cat_man_add', $this->hotaru, 'category_manager');
+            $this->hotaru->displayTemplate('cat_man_add');
             return true;
         } 
         
@@ -172,13 +172,13 @@ class CategoryManagerSettings extends CategoryManager
                 $this->hotaru->showMessage($this->lang["cat_man_form_error"], 'red');    
             }
             $this->hotaru->vars['the_cats'] = $this->getCategories();     // Get all the category info
-            $this->hotaru->displayTemplate('cat_man_add', $this->hotaru, 'category_manager');
+            $this->hotaru->displayTemplate('cat_man_add');
             return true;
         }
         
         if ($action == "move") { 
             $this->hotaru->vars['the_cats'] = $this->getCategories();     // Get all the category info
-            $this->hotaru->displayTemplate('cat_man_move', $this->hotaru, 'category_manager');
+            $this->hotaru->displayTemplate('cat_man_move');
             return true;
         } 
         
@@ -212,13 +212,13 @@ class CategoryManagerSettings extends CategoryManager
                 $this->hotaru->showMessage($this->lang["cat_man_category_not_moved"], 'red');
             }
             $this->hotaru->vars['the_cats'] = $this->getCategories();     // Get all the category info
-            $this->hotaru->displayTemplate('cat_man_move', $this->hotaru, 'category_manager');
+            $this->hotaru->displayTemplate('cat_man_move');
             return true;
         }
     
         if ($action == "delete") { 
             $this->hotaru->vars['the_cats'] = $this->getCategories();     // Get all the category info
-            $this->hotaru->displayTemplate('cat_man_delete', $this->hotaru, 'category_manager');
+            $this->hotaru->displayTemplate('cat_man_delete');
             return true;
         } 
         
@@ -233,12 +233,12 @@ class CategoryManagerSettings extends CategoryManager
                     $del_count++;
                 }
                 $this->hotaru->vars['the_cats'] = $this->getCategories();     // Get all the category info
-                $this->hotaru->displayTemplate('cat_man_delete_confirm', $this->hotaru, 'category_manager');
+                $this->hotaru->displayTemplate('cat_man_delete_confirm');
                 return true;
             } else {
                 $this->hotaru->showMessage($this->lang["cat_man_category_not_deleted"], 'red');
                 $this->hotaru->vars['the_cats'] = $this->getCategories();     // Get all the category info
-                $this->hotaru->displayTemplate('cat_man_delete', $this->hotaru, 'category_manager');
+                $this->hotaru->displayTemplate('cat_man_delete');
                 return true;
             }
             
@@ -257,7 +257,7 @@ class CategoryManagerSettings extends CategoryManager
             }
     
             $this->hotaru->vars['the_cats'] = $this->getCategories();     // Get all the category info
-            $this->hotaru->displayTemplate('cat_man_delete', $this->hotaru, 'category_manager');
+            $this->hotaru->displayTemplate('cat_man_delete');
             return true;
         }
                 

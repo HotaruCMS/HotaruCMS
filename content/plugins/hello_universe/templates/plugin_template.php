@@ -1,7 +1,7 @@
 <?php 
 /**
- * Theme name: admin_default
- * Template name: access_denied.php
+ * Plugin name: Hello Universe
+ * Template name: plugin_template.php
  * Template author: Nick Ramsay
  *
  * PHP version 5
@@ -27,20 +27,16 @@
  */
 
 ?>
-        <!-- HEADER-->
-        <?php $admin->displayAdminTemplate('header'); ?>
-    
-        <div id="bd" role="main">
-            <div class='yui-g''>
-                <div class="yui-u" style='width: 100%;'>
 
-                    <!-- MAIN -->
-                    <div id="main">
-                        <?php echo $admin->hotaru->showMessages(); ?>
-                    </div>        
-                </div>
-            </div>
-        </div>
-        
-        <!-- FOOTER -->
-        <?php $admin->displayAdminTemplate('footer'); ?>
+<div id="breadcrumbs">
+    <a href="<?php echo BASEURL; ?>"><?php echo $hotaru->lang['submit_form_home']; ?></a> &raquo; 
+    <?php echo $hotaru->lang["hello_universe_template_example"]; ?>
+</div>
+
+<h2>A new template!</h2>
+
+<p>This is the plugin_template.php file in the Hello Universe plugin folder.</p>
+
+<p>To see how we made this page, look at Function #1 in hello_universe.php.</p>
+
+<p><a href="<?php echo BASEURL; ?>"><?php echo $hotaru->lang["hello_universe_back_home"]; ?></a></p>

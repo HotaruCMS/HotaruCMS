@@ -279,18 +279,18 @@ class Submit extends PluginFunctions
                         // No errors found, proceed to step 2
                         $this->hotaru->vars['post_orig_url'] = $this->cage->post->testUri('post_orig_url'); 
                         $this->hotaru->vars['post_orig_title'] = $this->hotaru->post->fetchTitle($this->hotaru->vars['post_orig_url']);
-                        $this->hotaru->displayTemplate('submit_step2', $this->hotaru, 'submit');
+                        $this->hotaru->displayTemplate('submit_step2');
                         return true;
                         
                     } else {
                         // Errors found, go back to step 1 - use getMixedString because testUri returns false
                         $this->hotaru->vars['post_orig_url'] = $this->cage->post->getMixedString2('post_orig_url');
-                        $this->hotaru->displayTemplate('submit_step1', $this->hotaru, 'submit');
+                        $this->hotaru->displayTemplate('submit_step1');
                         return true;
                     }
                 } else {
                     // First time to step 1...
-                    $this->hotaru->displayTemplate('submit_step1', $this->hotaru, 'submit');
+                    $this->hotaru->displayTemplate('submit_step1');
                     return true;
                 }
             } else {
@@ -312,11 +312,11 @@ class Submit extends PluginFunctions
                     if ($this->hotaru->post->status == 'processing') {     
                         // No errors, go to step 3...    
                         $this->hotaru->post->readPost($this->hotaru->post->id);
-                        $this->hotaru->displayTemplate('submit_step3', $this->hotaru, 'submit');
+                        $this->hotaru->displayTemplate('submit_step3');
                         return true;
                     } else {
                         // Errors found, show step 2 again...
-                        $this->hotaru->displayTemplate('submit_step2', $this->hotaru, 'submit');
+                        $this->hotaru->displayTemplate('submit_step2');
                         return true;
                     }
                 }
@@ -332,7 +332,7 @@ class Submit extends PluginFunctions
                 }
                  
                  if ($this->cage->post->getAlpha('submit3') == 'edit') {             
-                     $this->hotaru->displayTemplate('submit_step2', $this->hotaru, 'submit');
+                     $this->hotaru->displayTemplate('submit_step2');
                      return true;
                 }
             }
@@ -340,7 +340,7 @@ class Submit extends PluginFunctions
         } elseif ($this->hotaru->isPage('edit_post')) {
             if ($this->current_user->loggedIn) {
                 if ($this->cage->get->keyExists('sourceurl') || $this->cage->get->keyExists('post_id')) {
-                    $this->hotaru->displayTemplate('submit_edit_post', $this->hotaru, 'submit');
+                    $this->hotaru->displayTemplate('submit_edit_post');
                     return true;
                 }
             }
@@ -352,7 +352,7 @@ class Submit extends PluginFunctions
             if ($result && is_array($result)) { return true; }
         
             // Show the list of posts
-            $this->hotaru->displayTemplate('list', $this->hotaru, 'submit');
+            $this->hotaru->displayTemplate('list');
             return true;
             
         } elseif ($this->hotaru->isPage('latest')) {
@@ -362,7 +362,7 @@ class Submit extends PluginFunctions
             if ($result && is_array($result)) { return true; }
         
             // Show the list of posts
-            $this->hotaru->displayTemplate('list', $this->hotaru, 'submit');
+            $this->hotaru->displayTemplate('list');
             return true;
             
         } elseif ($this->hotaru->isPage('all')) {
@@ -372,12 +372,12 @@ class Submit extends PluginFunctions
             if ($result && is_array($result)) { return true; }
         
             // Show the list of posts
-            $this->hotaru->displayTemplate('list', $this->hotaru, 'submit');
+            $this->hotaru->displayTemplate('list');
             return true;
             
         } elseif ($this->hotaru->pageType == 'post') {
             // We found out this is a post from the hotaru_header function above.
-            $this->hotaru->displayTemplate('post', $this->hotaru, 'submit');
+            $this->hotaru->displayTemplate('post');
             return true;
             
         } else {        

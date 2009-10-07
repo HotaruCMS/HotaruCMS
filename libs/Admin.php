@@ -118,7 +118,7 @@ class Admin
             {
                 // User doesn't have permission to access Admin
                 $this->hotaru->messages['Access Denied'] = 'red';
-                $this->displayAdminTemplate('access_denied', $this);
+                $this->displayAdminTemplate('access_denied');
                 die(); exit;
             }
         }
@@ -151,15 +151,14 @@ class Admin
                 $this->plugins();
                 break;
             case "plugin_settings":
-                $this->plugins->folder = $this->cage->get->testAlnumLines('plugin');
-                $this->plugins->name = $this->plugins->name = $this->plugins->folder;
+                // Nothing special to do...
                 break;
             default:
                 break;
         }
         
         // Display the main theme's index.php template
-        $this->displayAdminTemplate('index', $this);
+        $this->displayAdminTemplate('index');
     }
     
     
@@ -206,11 +205,22 @@ class Admin
     /**
      * Display admin template
      *
-     * @param string $page - page name (filename without.php)
-     * @param string $plugin - plugin folder name
+     * @param string $page page name
+     * @param array $hotaru - usually the $admin object
+     * @param string $plugin optional plugin name
+     * @param bool $include_once true or false
      */
-    public function displayAdminTemplate($page = '', $admin, $plugin = '', $include_once = true)
+    public function displayAdminTemplate($page = '', $admin = NULL, $plugin = '', $include_once = true)
     {
+        // Note: This $hotaru isn't necessarily the whole object, some plugins might pass
+        // $db or $lang into this parameter instead. Therefore, we need the $hotaru parameter.
+        
+        // if no $hotaru, provide it:
+        if (!isset($admin) || !is_object($admin)) { $admin = $this; }
+        
+        // if no plugin folder, provide it:
+        if (!$plugin) { $plugin = $this->plugins->folder; }
+        
         $page = $page . '.php';
                 
         /* 

@@ -35,7 +35,7 @@ if (!isset($result) || !is_array($result)) {
             // plugin hook
             $result = $admin->plugins->pluginHook('admin_theme_index_header');
             if (!isset($result) || !is_array($result)) {
-                $admin->displayAdminTemplate('header', $admin);
+                $admin->displayAdminTemplate('header');
             }
         ?>
     
@@ -56,13 +56,13 @@ if (!isset($result) || !is_array($result)) {
                                 $page = $admin->hotaru->getPageName();
                                 if ($page == 'admin_login') {
                                     if ($admin->current_user->loggedIn) {
-                                        $admin->displayAdminTemplate('main', $admin);
+                                        $admin->displayAdminTemplate('main');
                                     } else {
                                         $admin->adminLoginForm($admin);
                                     }
                                 } else {
-                                $admin->displayAdminTemplate($page, $admin);
-                            } 
+                                    $admin->displayAdminTemplate($page);
+                                } 
                         }     
                     ?>    
                     </div>        
@@ -74,7 +74,7 @@ if (!isset($result) || !is_array($result)) {
                             // plugin hook
                             $result = $admin->plugins->pluginHook('admin_theme_index_sidebar');
                             if (!isset($result) || !is_array($result)) {
-                                $admin->displayAdminTemplate('sidebar', $admin);
+                                $admin->displayAdminTemplate('sidebar');
                             }
                         ?>
                         </div>
@@ -86,7 +86,7 @@ if (!isset($result) || !is_array($result)) {
             // plugin hook
             $result = $admin->plugins->pluginHook('admin_theme_index_footer');
             if (!isset($result) || !is_array($result)) {
-                $admin->displayAdminTemplate('footer', $admin);
+                $admin->displayAdminTemplate('footer');
             }
         ?>
 <?php    } ?>

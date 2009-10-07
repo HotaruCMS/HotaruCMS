@@ -26,6 +26,8 @@
  * @link      http://www.hotarucms.org/
  */
 
+$this->plugins->folder = $this->cage->get->testAlnumLines('plugin'); // get plugin name from url
+$this->plugins->getPluginName();
 ?>
 
 <p class="breadcrumbs">

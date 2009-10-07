@@ -193,6 +193,7 @@ class PluginFunctions extends Plugin
                                 elseif($plugin->plugin_class)
                                 {
                                     $this_plugin = new $plugin->plugin_class($plugin->plugin_folder, $this->hotaru);
+                                    $this->folder = $plugin->plugin_folder; // give Plugin the folder name (used in displayTemplate, etc.)
                                     $result = $this_plugin->$hook($parameters);
                                     if ($result) {
                                         $return_array[$hook] = $result;

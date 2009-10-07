@@ -35,7 +35,7 @@ if (!isset($result) || !is_array($result)) {
             // plugin hook
             $result = $hotaru->plugins->pluginHook('theme_index_header');
             if (!isset($result) || !is_array($result)) {
-                $hotaru->displayTemplate('header', $hotaru);
+                $hotaru->displayTemplate('header');
             }
         ?>
         
@@ -54,7 +54,7 @@ if (!isset($result) || !is_array($result)) {
                             $result = $hotaru->plugins->pluginHook('theme_index_main');
                             if (!isset($result) || !is_array($result)) {
                                 $page = $hotaru->getPageName();
-                                $hotaru->displayTemplate($page, $hotaru); 
+                                $hotaru->displayTemplate($page); 
                             }
                         ?>
                         </div> <!-- close "yui-u first" -->
@@ -66,7 +66,7 @@ if (!isset($result) || !is_array($result)) {
                                 // plugin hook
                                 $result = $hotaru->plugins->pluginHook('theme_index_sidebar');
                                 if (!isset($result) || !is_array($result)) {
-                                    $hotaru->displayTemplate('sidebar', $hotaru);
+                                    $hotaru->displayTemplate('sidebar');
                                 }                                
                             ?>
                         </div> <!-- close "yui-u" -->
@@ -79,7 +79,7 @@ if (!isset($result) || !is_array($result)) {
             // plugin hook
             $result = $hotaru->plugins->pluginHook('theme_index_footer');
             if (!isset($result) || !is_array($result)) {
-                $hotaru->displayTemplate('footer', $hotaru);
+                $hotaru->displayTemplate('footer');
             }
         ?>
 <?php    } ?>

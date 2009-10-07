@@ -176,7 +176,7 @@ class Users extends PluginFunctions
             if ($this->hotaru->isPage('account')) {
                 // Note: the "account" template calls the functions it needs 
                 // from the UserBase class.
-                $this->hotaru->displayTemplate('account', $this->hotaru, 'users');
+                $this->hotaru->displayTemplate('account');
                 return true;
             } elseif ($this->hotaru->isPage('permissions') && ($this->current_user->getPermission('can_access_admin') == 'yes')) {
                 $this->editPermissions();
@@ -193,10 +193,10 @@ class Users extends PluginFunctions
                     $this->hotaru->showMessages();
                     return true;
                 }
-                $this->hotaru->displayTemplate('register', $this->hotaru, 'users');
+                $this->hotaru->displayTemplate('register');
                 return true;    
             } elseif ($this->hotaru->isPage('login')) {
-                $this->hotaru->displayTemplate('login', $this->hotaru, 'users');
+                $this->hotaru->displayTemplate('login');
                 return true;
             } elseif ($this->hotaru->isPage('emailconf')) {
                 $this->checkEmailConfirmation();
