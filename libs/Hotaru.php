@@ -68,9 +68,6 @@ class Hotaru
             case 'install':
                 $this->includeLanguagePack('install');
                 break;
-            case 'no_template':
-                return true;
-                break;
             default:
                 $this->includeLanguagePack('main');
                 break;
