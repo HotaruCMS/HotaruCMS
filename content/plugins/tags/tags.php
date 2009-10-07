@@ -6,7 +6,7 @@
  * folder: tags
  * class: Tags
  * requires: submit 0.7
- * hooks: install_plugin, header_include, submit_hotaru_header_1, post_read_post_1, post_read_post_2, post_add_post, post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_show_post_extra_fields, submit_settings_get_values, submit_settings_form, submit_save_settings, post_list_filter, post_delete_post
+ * hooks: install_plugin, header_include, submit_hotaru_header_1, header_meta, post_read_post_1, post_read_post_2, post_add_post, post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_show_post_extra_fields, submit_settings_get_values, submit_settings_form, submit_save_settings, post_list_filter, post_delete_post
  *
  * PHP version 5
  *
@@ -99,6 +99,18 @@ class Tags extends PluginFunctions
             $this->hotaru->title = $this->hotaru->pageToTitleCaps(($this->cage->get->noTags('pos2'))); 
         }
         
+    }
+    
+    
+    /**
+     * Match meta tag to a post's keywords (description is done in the Submit plugin)
+     */
+    public function header_meta()
+    {    
+        if ($this->hotaru->pageType == 'post') {
+            echo '<meta name="keywords" content="' . $this->hotaru->post->vars['tags'] . '">' . "\n";
+            return true;
+        }
     }
     
     

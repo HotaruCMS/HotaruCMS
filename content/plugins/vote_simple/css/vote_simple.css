@@ -16,12 +16,14 @@
 	line-height: 2.0em;
 	font-size: 1.5em;
 	width: 50px; 
-	background-color: #F0F0F0;
+	color: #fff;
+	font-weight: bold;
+	background-color: #000;
 }
 
 .vote_button_bottom {
 	width: 50px; 
-	background-color: #98AFC7;
+	color: #000;
 }
 
 /* ***********************************

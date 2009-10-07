@@ -52,6 +52,14 @@
            } 
        ?>
     </title>
+    
+        <?php
+            // plugin hook
+            $result = $hotaru->plugins->pluginHook('header_meta');
+            if (!isset($result) || !is_array($result)) { ?>
+                <meta name="description" content="<?php echo $hotaru->lang['header_meta_description']; ?>">
+                <meta name="keywords" content="<?php echo $hotaru->lang['header_meta_keywords']; ?>">
+        <?php } ?>
    
     <script language="JavaScript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery.min.js'; ?>"></script>
     <script language="JavaScript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery-ui.min.js'; ?>"></script>

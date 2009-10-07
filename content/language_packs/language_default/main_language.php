@@ -71,7 +71,11 @@ $lang['pagination_next'] = "Next";
  * *************               THEME                  ************* 
  * ****************************************************************
  * ************************************************************* */
- 
+
+/* header */
+$lang["header_meta_description"] = "Hotaru CMS is an open source content management system, written in PHP.";
+$lang["header_meta_keywords"] = "hotaru, cms, platform, content, open source";
+
 /* navigation */
 $lang["main_theme_navigation_home"] = "Home";
 $lang["main_theme_navigation_admin"] = "Admin";

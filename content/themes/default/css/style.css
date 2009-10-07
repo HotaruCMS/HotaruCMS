@@ -46,11 +46,11 @@ small     { font-size: 0.8em; }
 
 #hd { margin-bottom: 1.0em; background-color: #222; }
 #hd_title h1 { font-size: 2.2em; font-weight: bold; padding: 0.4em 0.4em 0.4em 0.4em;}    /* Site title */
-#hd_title h1 a { color: #ffffff; }
+#hd_title h1 a { color: #fff; }
 #hd_title h1 a:hover { background-color: #444; text-decoration: none;}
 ul#navigation { list-style: none; padding: 0 0 0.6em 0.95em; margin: 0.2em 0 0.2em 0; }
 #navigation li { display: inline; font-size: 1.2em; font-weight: bold; }
-#navigation li a { color: #fafafa; padding: 0.2em 0.4em 0.2em 0.4em;  }
+#navigation li a { color: #fff; padding: 0.2em 0.4em 0.2em 0.4em;  }
 #navigation li a:hover { background-color: #444; text-decoration: none;}
 #navigation li a img { vertical-align: middle; }
 li #navigation_active { background-color: #444; }
@@ -100,7 +100,8 @@ li #navigation_active { background-color: #444; }
 }
 
 #pagination .current {
-    background-color: #98AFC7;
+    color: #fff;
+    background-color: #000;
     font-weight: bold;
     padding: 0.3em 0.7em 0.3em 0.7em;
     border:solid 1px #444444;
