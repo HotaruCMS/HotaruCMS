@@ -152,9 +152,9 @@ class PluginFunctions extends Plugin
             //echo "Error: Plugin hook name not provided.";
         } else {
             $where = "";
-
+            
             if (!empty($folder)) {
-                $where .= "AND (" . TABLE_PLUGINS . ".plugin_folder = %s)";
+                $where .= "AND (" . TABLE_PLUGINS . ".plugin_folder = %s) ";
             }
 
             $this->db->cache_queries = true;    // start using cache
@@ -504,8 +504,8 @@ class PluginFunctions extends Plugin
         // Force inclusion of a language file (if exists) because the 
         // plugin isn't ready to include it itself yet.
         $this->includeLanguage($this->folder);
-            
-        $result = $this->pluginHook('install_plugin', $this->folder);
+        
+        $result = $this->pluginHook('install_plugin', true, $this->folder);
         
         // For plugins to avoid showing this success message, they need to 
         // return a non-boolean value to $result.
