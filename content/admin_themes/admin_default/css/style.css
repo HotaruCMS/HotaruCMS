@@ -4,7 +4,6 @@
 
 html, body { 
 	min-height: 100%; height: 100%;
-	background-color: #3F749B;
 	font-size: 0.9em;
 }
 
@@ -40,16 +39,12 @@ small {
 }
 
 #hd {
-	-moz-border-radius: 0.5em;
-	-webkit-border-radius: 0.5em;
-	margin: 1.0em 0 1.0em 0;
-	padding: 0.6em;
-	background-color: #ffffff;
-	/*border: 0.1em solid #888;*/
+	margin: 0.4em 0 0.4em 0;
+	padding: 0.2em;
 }
 
 #navigation {
-	padding: 0.8em 0 0 0;
+	padding: 0.4em 0 0 0;
 }
 
 #navigation ul {
@@ -74,24 +69,21 @@ li a#navigation_active { text-decoration: underline; }
 }
 
 #announcement {
-	background-color: #ffffff;
+	background-color: #ffff00;
 	border-bottom: 1px solid #666;
 	padding: 0.4em;
 	text-align: center;
+	font-weight: bold;
 }
 
 .yui-gf {
 	/* container for both the wide and narrow colums. */
-	background-color: #3F749B;
 }
 
 .yui-u, .first {
 	min-height: 100%; height: 100%;
 	margin-bottom: 1.0em;
-	background-color: #FCFCFC;
-	-moz-border-radius: 0.5em;
-	-webkit-border-radius: 0.5em;
-	/*border: 0.1em solid #888;*/
+	border: 1px solid #666;
 }
 
 #main, #sidebar {
@@ -108,10 +100,6 @@ li a#navigation_active { text-decoration: underline; }
 
 #ft {
 	height: auto;
-	background-color: #ffffff;
-	-moz-border-radius: 0.5em;
-	-webkit-border-radius: 0.5em;
-	/*border: 0.1em solid #888;*/
 	padding: 1.0em 0 1.0em 0;
 	text-align: center;
 	font-size: 1.0em;
@@ -119,8 +107,6 @@ li a#navigation_active { text-decoration: underline; }
 
 .gray_box {
 	background-color: #f0f0f0;
-	-moz-border-radius: 0.5em;
-	-webkit-border-radius: 0.5em;
 }
 
 .info_box {
@@ -144,8 +130,6 @@ form {
 	margin: 1.0em auto 0.0em auto;
 	width: 90%;
 	padding: 0.8em;
-	-moz-border-radius: 0.5em;
-	-webkit-border-radius: 0.5em;
 	text-align: center;
 	font-size: 1.2em;
 	font-weight: bold;
@@ -237,7 +221,7 @@ td.table_description_close {
 }
 
 table#settings {
-	width: 100%;
+	width: 96%;
 	margin-left: auto;
 	margin-right: auto;
 }

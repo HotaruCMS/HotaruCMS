@@ -585,7 +585,11 @@ class Post
         $excerpt = strip_tags($this->content);
         $excerpt = (strlen($excerpt) > 200) ? substr($excerpt, 0, 200) . '...' : $excerpt;
 
-        if ($this->ping($trackback, $this->hotaru->url(array('page'=>$this->id)), $title, $excerpt)) {
+        // we don't want friendly urls in case the title or category is edited after submission, thus
+        // changing and therefore breaking the trackback link posted on other sites. So...
+        $url = BASEURL . 'index.php?page=' . $this->id; 
+        
+        if ($this->ping($trackback, $url, $title, $excerpt)) {
             echo "Trackback sent successfully...";
         } else {
             echo "Error sending trackback....";

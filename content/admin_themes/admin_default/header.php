@@ -85,8 +85,8 @@
 <?php } ?>
 <div id="doc2" class="yui-t7">
     <div id="hd" role="banner">
-        <a href="<?php echo BASEURL; ?>"><img src="<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/hotaru_468x60.png"></a>
-        <?php $admin->plugins->pluginHook('header_post_logo'); ?>
+        <h1><a href="<?php echo $admin->hotaru->url(array(), 'admin'); ?>"><?php echo SITE_NAME . " " . $admin->lang["admin"]; ?> </a></h1>
+        <?php $admin->plugins->pluginHook('header_post_admin_title'); ?>
         
         <!-- NAVIGATION -->
         <?php echo $admin->displayAdminTemplate('navigation'); ?>
