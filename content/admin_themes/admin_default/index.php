@@ -25,17 +25,15 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-
-global $hotaru, $admin, $plugins, $current_user, $lang; // don't remove
-
+        
 // plugin hook
-$result = $plugins->pluginHook('admin_theme_index_replace');
+$result = $admin->plugins->pluginHook('admin_theme_index_replace');
 if (!isset($result) || !is_array($result)) {
 ?>
         <!-- HEADER-->
         <?php
             // plugin hook
-            $result = $plugins->pluginHook('admin_theme_index_header');
+            $result = $admin->plugins->pluginHook('admin_theme_index_header');
             if (!isset($result) || !is_array($result)) {
                 $admin->displayAdminTemplate('header');
             }
@@ -53,28 +51,28 @@ if (!isset($result) || !is_array($result)) {
                         <div id="main">
                         <?php
                             // plugin hook
-                        $result = $plugins->pluginHook('admin_theme_index_main');
+                        $result = $admin->plugins->pluginHook('admin_theme_index_main');
                         if (!isset($result) || !is_array($result)) {
-                                $page = $hotaru->getPageName();
+                                $page = $admin->hotaru->getPageName();
                                 if ($page == 'admin_login') {
-                                    if ($current_user->getLoggedIn()) {
+                                    if ($admin->current_user->loggedIn) {
                                         $admin->displayAdminTemplate('main');
                                     } else {
-                                        $admin->adminLoginForm();
+                                        $admin->adminLoginForm($admin);
                                     }
                                 } else {
-                                $admin->displayAdminTemplate($page);
-                            } 
+                                    $admin->displayAdminTemplate($page);
+                                } 
                         }     
                     ?>    
                     </div>        
                     </div>
-                    <?php if ($hotaru->getSidebar()) { ?>
+                    <?php if ($admin->hotaru->sidebar) { ?>
                         <div class="yui-u first">
                         <!-- SIDEBAR -->
                         <?php
                             // plugin hook
-                            $result = $plugins->pluginHook('admin_theme_index_sidebar');
+                            $result = $admin->plugins->pluginHook('admin_theme_index_sidebar');
                             if (!isset($result) || !is_array($result)) {
                                 $admin->displayAdminTemplate('sidebar');
                             }
@@ -86,7 +84,7 @@ if (!isset($result) || !is_array($result)) {
         <!-- FOOTER -->
         <?php
             // plugin hook
-            $result = $plugins->pluginHook('admin_theme_index_footer');
+            $result = $admin->plugins->pluginHook('admin_theme_index_footer');
             if (!isset($result) || !is_array($result)) {
                 $admin->displayAdminTemplate('footer');
             }

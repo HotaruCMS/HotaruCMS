@@ -7,7 +7,7 @@ class DoubleBarLayout implements PageLayout
 
     public function fetchPagedLinks($parent, $queryVars) 
     {
-        global $lang;
+        $hotaru = new Hotaru();
         
         $currentPage = $parent->getPageNumber();
         $str = "";
@@ -19,13 +19,13 @@ class DoubleBarLayout implements PageLayout
            //if it is not the first page then write previous to the screen
         if (!$parent->isFirstPage()) {
             $previousPage = $currentPage - 1;
-            $str .= "<a class='previous' href='" . url(array('pg'=>$previousPage . $queryVars)) . "' title='" . $lang['pagination_previous'] . "'>&laquo; " . $lang['pagination_previous'] . "</a> ";
+            $str .= "<a class='previous' href='" . $hotaru->url(array('pg'=>$previousPage . $queryVars)) . "' title='" . $hotaru->lang['pagination_previous'] . "'>&laquo; " . $hotaru->lang['pagination_previous'] . "</a> ";
         }
         
         // NOT FIRST PAGE
         if (!$parent->isFirstPage() && !($currentPage <= ($before + 1))) {
             if ($currentPage != 1) {
-                $str .= "<a class='first' href='" . url(array('pg'=>'1' . $queryVars)) . "'  title='" . $lang['pagination_first'] . "'>1</a> ";
+                $str .= "<a class='first' href='" . $hotaru->url(array('pg'=>'1' . $queryVars)) . "'  title='" . $hotaru->lang['pagination_first'] . "'>1</a> ";
                 $str .= " <span class='dots'>...</span> ";
             }
         }
@@ -44,7 +44,7 @@ class DoubleBarLayout implements PageLayout
                 $str .= "<span class='current'>$i</span>";
             }
             else {
-                $str .= "<a class='page' href='" . url(array('pg'=>$i . $queryVars)) . "'>$i</a>";
+                $str .= "<a class='page' href='" . $hotaru->url(array('pg'=>$i . $queryVars)) . "'>$i</a>";
             }
             if ($i != $currentPage + $after && $i != $parent->fetchNumberPages()) { $str .= ' '; }
             // ($i == $currentPage + $after || $i == $parent->fetchNumberPages()) ? $str .= " " : $str .= " | ";    // determine if to print bars or not
@@ -56,14 +56,14 @@ class DoubleBarLayout implements PageLayout
             if ($currentPage != $parent->fetchNumberPages() && $currentPage != $parent->fetchNumberPages() -1 && $currentPage != $parent->fetchNumberPages() - $before)
             {
                 if ($currentPage < ($parent->fetchNumberPages() - ($after + 1))) { $str .= " <span class='dots'>...</span> "; }
-                $str .= "<a class='last' href='" . url(array('pg'=>$parent->fetchNumberPages() . $queryVars)) . "'  title='" . $lang['pagination_last'] . "'>".$parent->fetchNumberPages()."</a> ";
+                $str .= "<a class='last' href='" . $hotaru->url(array('pg'=>$parent->fetchNumberPages() . $queryVars)) . "'  title='" . $hotaru->lang['pagination_last'] . "'>".$parent->fetchNumberPages()."</a> ";
             }
         }
         
         // NOT LAST PAGE
         if (!$parent->isLastPage()) {
             $nextPage = $currentPage + 1;
-            $str .= "<a class='next' href='" . url(array('pg'=>$nextPage . $queryVars)) . "' title='" . $lang['pagination_next'] . "'>" . $lang['pagination_next'] . " &raquo;</a> ";
+            $str .= "<a class='next' href='" . $hotaru->url(array('pg'=>$nextPage . $queryVars)) . "' title='" . $hotaru->lang['pagination_next'] . "'>" . $hotaru->lang['pagination_next'] . " &raquo;</a> ";
         }
         
         // Wrap in a div

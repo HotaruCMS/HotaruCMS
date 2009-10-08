@@ -26,7 +26,6 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $admin, $plugins, $lang, $current_user; // don't remove
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
@@ -36,21 +35,21 @@ global $hotaru, $admin, $plugins, $lang, $current_user; // don't remove
    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
    <title>
        <?php 
-           if ($hotaru->getTitle() != "")
+           if ($admin->hotaru->title != "")
            {
-               echo $hotaru->getTitle() . " &laquo; " . $lang["admin"] . " &laquo; " . SITE_NAME;
+               echo $admin->hotaru->title . " &laquo; " . $admin->lang["admin"] . " &laquo; " . SITE_NAME;
            }
-           elseif ($hotaru->getPageName() != "main")
+           elseif ($admin->hotaru->getPageName() != "main")
            {
-               $hotaru->setTitle($hotaru->getPageName());
-               echo $hotaru->pageToTitleCaps($hotaru->getTitle()) . " &laquo; " . $lang["admin"] . " &laquo; " . SITE_NAME;
+               $admin->hotaru->title = $admin->hotaru->getPageName();
+               echo $admin->hotaru->pageToTitleCaps($admin->hotaru->title) . " &laquo; " . $admin->lang["admin"] . " &laquo; " . SITE_NAME;
            }
            else
            { 
-               echo $lang["admin"] . " &laquo; " . SITE_NAME;
+               echo $admin->lang["admin"] . " &laquo; " . SITE_NAME;
            } 
            
-           $hotaru->setTitle('admin');    // highlights "Admin" in the navigation bar, for all pages in Admin
+           $admin->hotaru->title = 'admin';    // highlights "Admin" in the navigation bar, for all pages in Admin
        ?>
    </title>
    <script language="JavaScript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery.min.js'; ?>"></script>
@@ -60,9 +59,9 @@ global $hotaru, $admin, $plugins, $lang, $current_user; // don't remove
    
     <!-- Include merged files for all the plugin css and javascript (if any) -->
     <?php 
-        $version_js = $hotaru->combineIncludes('js');
-        $version_css = $hotaru->combineIncludes('css');
-        $hotaru->includeCombined($version_js, $version_css, $hotaru->getPageName(), $plugins->getFolder());
+        $version_js = $admin->hotaru->combineIncludes('js', 0, true);
+        $version_css = $admin->hotaru->combineIncludes('css', 0, true);
+        $admin->hotaru->includeCombined($version_js, $version_css, true);
     ?>
     <!-- End -->
     
@@ -70,24 +69,24 @@ global $hotaru, $admin, $plugins, $lang, $current_user; // don't remove
    <link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css'; ?>" type="text/css">
    <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico">
    
-   <?php $plugins->pluginHook('admin_header_include_raw'); ?>
+   <?php $admin->plugins->pluginHook('admin_header_include_raw'); ?>
       
 </head>
 <body>
 <?php 
-    if ($admin->checkAdminAnnouncements() && ($current_user->getPermission('can_access_admin') == 'yes')) { 
+    if ($admin->checkAdminAnnouncements() && ($admin->current_user->getPermission('can_access_admin') == 'yes')) { 
         $announcements = $admin->checkAdminAnnouncements();
 ?>
     <div id="announcement">
-        <?php $plugins->pluginHook('admin_announcement_first'); ?>
+        <?php $admin->plugins->pluginHook('admin_announcement_first'); ?>
         <?php foreach ($announcements as $announcement) { echo $announcement . "<br />"; } ?>
-        <?php $plugins->pluginHook('admin_announcement_last'); ?>
+        <?php $admin->plugins->pluginHook('admin_announcement_last'); ?>
     </div>
 <?php } ?>
 <div id="doc2" class="yui-t7">
     <div id="hd" role="banner">
-        <a href="<?php echo BASEURL; ?>"><img src="<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/hotaru_468x60.png"></a>
-        <?php $plugins->pluginHook('header_post_logo'); ?>
+        <h1><a href="<?php echo $admin->hotaru->url(array(), 'admin'); ?>"><?php echo SITE_NAME . " " . $admin->lang["admin"]; ?> </a></h1>
+        <?php $admin->plugins->pluginHook('header_post_admin_title'); ?>
         
         <!-- NAVIGATION -->
         <?php echo $admin->displayAdminTemplate('navigation'); ?>

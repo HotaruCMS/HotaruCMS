@@ -26,40 +26,77 @@
 
 class Admin
 {
+    public $db;                             // database object
+    public $cage;                           // Inspekt object
+    public $hotaru;                         // Hotaru object
+    public $lang            = array();      // stores language file content
+    public $plugins;                        // PluginFunctions object
+    public $current_user;                   // UserBase object
+
+    protected $sidebar = true;
     
-    public $sidebar = true;
+    /**
+     * Constructor - make an Admin object
+     */
+    public function __construct($entrance = '')
+    {
+        require_once(LIBS . 'Hotaru.php');
+        $hotaru = new Hotaru('admin');
+        $this->hotaru       = $hotaru;
+        $this->db           = $hotaru->db;
+        $this->cage         = $hotaru->cage;
+        $this->lang         = &$hotaru->lang;    // reference to main lang array
+        $this->plugins      = $hotaru->plugins;
+        $this->current_user = $hotaru->current_user;
+        
+        // We don't need to fill the object with anything other than the plugin folder name at this time:
+        if ($folder) { 
+            $this->folder = $folder; 
+        }
+
+        if ($entrance != 'admin') { return false; } 
+
+        $this->adminInit($entrance);
+    }
+
+
+    /**
+     * Access modifier to set protected properties
+     */
+    public function __set($var, $val)
+    {
+        $this->$var = $val;  
+    }
     
+    
+    /**
+     * Access modifier to get protected properties
+     */
+    public function __get($var)
+    {
+        return $this->$var;
+    }
+        
+    
+    /* *************************************************************
+     *              REGULAR METHODS
+     * ********************************************************** */
+
 
     /**
      * Admin constructor
      */
-    public function __construct($entrance = '')
+    public function adminInit($entrance = '')
     {
-        global $db, $current_user, $hotaru, $plugins, $admin, $cage;
-        
-        if ($entrance != 'admin') { return false; } // e.g. when called from Install
-        
-        require_once(LIBS . 'Hotaru.php');
-        $hotaru = new Hotaru('admin');
-        $hotaru->setPageType('admin');
-        
-        // Include combined css and js files
-        if ($cage->get->keyExists('combine')) {
-            $type = $cage->get->testAlpha('type');
-            $version = $cage->get->testInt('version');
-            $hotaru->combineIncludes($type, $version);
-            return true;
-        }
-        
-        $page = $cage->get->testPage('page');    // check with "get";
+        $page = $this->cage->get->testPage('page');    // check with "get";
         if (!$page) { 
             // check with "post" - used in admin_login_form().
-            $page = $cage->post->testPage('page'); 
+            $page = $this->cage->post->testPage('page'); 
         }
         
         
         // Authenticate the admin if the Users plugin is INACTIVE:
-        if (!$plugins->isActive('users'))
+        if (!$this->plugins->isActive('users'))
         {
             if (($page != 'admin_login') && !$result = $this->isAdminCookie())
             {
@@ -67,23 +104,20 @@ class Admin
             }
         }
         
-        $admin = $this;    // $admin won't exist until this constructor is finished, 
-                           // but we need it now!
-        
         // Authenticate the admin if the Users plugin is ACTIVE:
-        if (isset($current_user) && $plugins->isActive('users'))
+        if (isset($this->current_user) && $this->plugins->isActive('users'))
         {
             // This first condition happens when the Users plugin is activated 
             // and there's no cookie for the Admin yet.
-            if (($current_user->getName() == "") && $plugins->isActive('users')) 
+            if (($this->current_user->name == "") && $this->plugins->isActive('users')) 
             {
                 header('Location: ' . BASEURL . 'index.php?page=login');
                 die; exit;
             } 
-            elseif ($current_user->getPermission('can_access_admin') != 'yes') 
+            elseif ($this->current_user->getPermission('can_access_admin') != 'yes') 
             {
                 // User doesn't have permission to access Admin
-                $hotaru->messages['Access Denied'] = 'red';
+                $this->hotaru->messages['Access Denied'] = 'red';
                 $this->displayAdminTemplate('access_denied');
                 die(); exit;
             }
@@ -92,7 +126,7 @@ class Admin
         
         // If we get this far, we know that the user is an administrator.
         
-        $plugins->pluginHook('admin_index');
+        $this->plugins->pluginHook('admin_index');
         
         switch ($page) {
             case "admin_login":
@@ -117,8 +151,7 @@ class Admin
                 $this->plugins();
                 break;
             case "plugin_settings":
-                $plugins->setFolder($cage->get->testAlnumLines('plugin'));
-                $plugins->setName($plugins->getName($plugins->getFolder()));
+                // Nothing special to do...
                 break;
             default:
                 break;
@@ -134,13 +167,11 @@ class Admin
      */
     public function plugins()
     {
-        global $lang, $cage, $hotaru, $plugins;
+        $action = $this->cage->get->testAlpha('action');
+        $pfolder = $this->cage->get->testAlnumLines('plugin');
+        $order = $this->cage->get->testAlnumLines('order');
         
-        $action = $cage->get->testAlpha('action');
-        $pfolder = $cage->get->testAlnumLines('plugin');
-        $order = $cage->get->testAlnumLines('order');
-        
-        $this_plugin = new PluginFunctions($pfolder);
+        $this_plugin = new PluginFunctions($pfolder, $this->hotaru);
         
         switch ($action) {
             case "activate":
@@ -174,11 +205,22 @@ class Admin
     /**
      * Display admin template
      *
-     * @param string $page - page name (filename without.php)
-     * @param string $plugin - plugin folder name
+     * @param string $page page name
+     * @param array $hotaru - usually the $admin object
+     * @param string $plugin optional plugin name
+     * @param bool $include_once true or false
      */
-    public function displayAdminTemplate($page = '', $plugin = '')
+    public function displayAdminTemplate($page = '', $admin = NULL, $plugin = '', $include_once = true)
     {
+        // Note: This $hotaru isn't necessarily the whole object, some plugins might pass
+        // $db or $lang into this parameter instead. Therefore, we need the $hotaru parameter.
+        
+        // if no $hotaru, provide it:
+        if (!isset($admin) || !is_object($admin)) { $admin = $this; }
+        
+        // if no plugin folder, provide it:
+        if (!$plugin) { $plugin = $this->plugins->folder; }
+        
         $page = $page . '.php';
                 
         /* 
@@ -197,7 +239,7 @@ class Admin
         }
         elseif ($plugin != '' && file_exists(PLUGINS .  $plugin . '/templates/' . $page))
         {
-                if ($plugin == 'vote') {
+                if (!$include_once) {
                     // Special case, do not restrict to include once.
                     include(PLUGINS . $plugin . '/templates/' . $page);
                 } else {
@@ -222,14 +264,12 @@ class Admin
      *
      *  Notes: This is used in "admin_header_include" so we only include the css, 
      *         javascript etc. for the plugin we're trying to change settings for.
-     *  Usage: $hotaru->is_settings_page('login') returns true if 
+     *  Usage: $this->hotaru->is_settings_page('login') returns true if 
      *         page=plugin_settings and plugin=THIS_PLUGIN in the url.
      */
     public function isSettingsPage($folder = '')
     {
-        global $cage, $hotaru;
-        
-        if ($hotaru->isPage('plugin_settings') && $cage->get->testAlnumLines('plugin') == $folder) {
+        if ($this->hotaru->isPage('plugin_settings') && $this->cage->get->testAlnumLines('plugin') == $folder) {
             return true;
         } else {    
             return false;
@@ -243,8 +283,6 @@ class Admin
      */
     public function checkAdminAnnouncements()
     {
-        global $lang, $plugins;
-        
         // Check if the install file has been deleted:
         
         $announcements = array();
@@ -252,17 +290,17 @@ class Admin
         // 1. Check if install file has been deleted
         $filename = INSTALL . 'install.php';
         if (file_exists($filename)) {
-            array_push($announcements, $lang['admin_announcement_delete_install']);
+            array_push($announcements, $this->lang['admin_announcement_delete_install']);
         } 
         
         // 2. Please enter a site email address
         if (SITE_EMAIL == "admin@mysite.com") {
-            array_push($announcements, $lang['admin_announcement_change_site_email']);    
+            array_push($announcements, $this->lang['admin_announcement_change_site_email']);    
         } 
         
         // 3. "Go to Plugin Management to enable some plugins"
-        if (!$plugins->numActivePlugins()) {
-            array_push($announcements, $lang['admin_announcement_plugins_disabled']);    
+        if (!$this->plugins->numActivePlugins()) {
+            array_push($announcements, $this->lang['admin_announcement_plugins_disabled']);    
         }
         
         if (!is_array($announcements)) {
@@ -281,10 +319,8 @@ class Admin
      */
     public function getAdminSetting($setting = '')
     {
-        global $db;
-        
         $sql = "SELECT settings_value FROM " . TABLE_SETTINGS . " WHERE (settings_name = %s)";
-        $value = $db->get_var($db->prepare($sql, $setting));
+        $value = $this->db->get_var($this->db->prepare($sql, $setting));
         if ($value) { return $value; } else { return false; }
     }
     
@@ -296,10 +332,8 @@ class Admin
      */
     public function getAllAdminSettings()
     {
-        global $db;
-        
         $sql = "SELECT * FROM " . TABLE_SETTINGS;
-        $results = $db->get_results($db->prepare($sql));
+        $results = $this->db->get_results($this->db->prepare($sql));
         if ($results) { return $results; } else { return false; }
     }
     
@@ -314,10 +348,8 @@ class Admin
      */
     public function adminSettingExists($setting = '')
     {
-        global $db;
-        
         $sql = "SELECT settings_name FROM " . TABLE_SETTINGS . " WHERE (settings_name = %s)";
-        $returned_setting = $db->get_var($db->prepare($sql, $setting));
+        $returned_setting = $this->db->get_var($this->db->prepare($sql, $setting));
         if ($returned_setting) { return $returned_setting; } else { return false; }
     }    
     
@@ -329,16 +361,14 @@ class Admin
      */
     public function adminSettingUpdate($setting = '', $value = '')
     {
-        global $db, $current_user;
-        
         $exists = $this->adminSettingExists($setting);
         
         if (!$exists) {
             $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_updateby) VALUES (%s, %s, %d)";
-            $db->query($db->prepare($sql, $setting, $value, $current_user->getId()));
+            $this->db->query($this->db->prepare($sql, $setting, $value, $this->current_user->id));
         } else {
             $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_name = %s, settings_value = %s, settings_updateby = %d WHERE (settings_name = %s)";
-            $db->query($db->prepare($sql, $setting, $value, $current_user->getId(), $setting));
+            $this->db->query($this->db->prepare($sql, $setting, $value, $this->current_user->id, $setting));
         }
     }
 
@@ -350,10 +380,8 @@ class Admin
      */    
     public function adminSettingsRemove($setting = '')
     {
-        global $db;
-        
         $sql = "DELETE FROM " . TABLE_SETTINGS . " WHERE admin_setting = %s";
-        $db->query($db->prepare($sql, $setting));
+        $this->db->query($this->db->prepare($sql, $setting));
     }
     
     
@@ -364,18 +392,16 @@ class Admin
      */
     public function clearCache($folder, $msg = true)
     {
-        global $hotaru, $lang;
-        
         $success = $this->deleteFiles(CACHE . $folder);
         if (!$msg) { return true; }
         if ($success) {
-            $hotaru->message = $lang['admin_maintenance_clear_cache_success'];
-            $hotaru->messageType = 'green';
+            $this->hotaru->message = $this->lang['admin_maintenance_clear_cache_success'];
+            $this->hotaru->messageType = 'green';
         } else {
-            $hotaru->message = $lang['admin_maintenance_clear_cache_failure'];
-            $hotaru->messageType = 'red';    
+            $this->hotaru->message = $this->lang['admin_maintenance_clear_cache_failure'];
+            $this->hotaru->messageType = 'red';    
         }
-        $hotaru->showMessage();
+        $this->hotaru->showMessage();
     }
 
 
@@ -410,16 +436,14 @@ class Admin
     */    
     public function settings()
     {
-        global $hotaru, $cage, $lang;
-        
         $loaded_settings = $this->getAllAdminSettings();    // get all admin settings from the database
         
         $error = 0;
         
-        if ($cage->post->noTags('settings_update')  == 'true') {
+        if ($this->cage->post->noTags('settings_update')  == 'true') {
             foreach ($loaded_settings as $setting_name) {
-                if ($cage->post->keyExists($setting_name->settings_name)) {
-                    $setting_value = $cage->post->noTags($setting_name->settings_name);
+                if ($this->cage->post->keyExists($setting_name->settings_name)) {
+                    $setting_value = $this->cage->post->noTags($setting_name->settings_name);
                     if ($setting_value && $setting_value != $setting_name->settings_value) {
                         $this->adminSettingUpdate($setting_name->settings_name, $setting_value);
     
@@ -439,13 +463,13 @@ class Admin
             }
             
             if ($error == 0) {
-                $hotaru->message = $lang['admin_settings_update_success'];
-                $hotaru->messageType = 'green';
-                $hotaru->showMessage();        
+                $this->hotaru->message = $this->lang['admin_settings_update_success'];
+                $this->hotaru->messageType = 'green';
+                $this->hotaru->showMessage();        
             } else {
-                $hotaru->message = $lang['admin_settings_update_failure'];
-                $hotaru->messageType = 'red';
-                $hotaru->showMessage();
+                $this->hotaru->message = $this->lang['admin_settings_update_failure'];
+                $this->hotaru->messageType = 'red';
+                $this->hotaru->showMessage();
             }
         }    
         
@@ -460,8 +484,6 @@ class Admin
      */
     public function listPluginTables()
     {
-        global $db;
-        
         // These should match the tables created in the install script.
         $core_tables = array(
             'hotaru_settings',
@@ -474,9 +496,9 @@ class Admin
         
         $plugin_tables = array();
             
-        $db->select(DB_NAME);
+        $this->db->select(DB_NAME);
         
-        foreach ( $db->get_col("SHOW TABLES",0) as $table_name )
+        foreach ( $this->db->get_col("SHOW TABLES",0) as $table_name )
         {
             if (!in_array($table_name, $core_tables)) {
                 array_push($plugin_tables, $table_name);
@@ -492,18 +514,16 @@ class Admin
      */
     public function optimizeTables()
     {
-        global $db, $lang, $hotaru;
+        $this->db->select(DB_NAME);
         
-        $db->select(DB_NAME);
-        
-        foreach ( $db->get_col("SHOW TABLES",0) as $table_name )
+        foreach ( $this->db->get_col("SHOW TABLES",0) as $table_name )
         {
-            $db->query("OPTIMIZE TABLE " . $table_name);
+            $this->db->query("OPTIMIZE TABLE " . $table_name);
         }
         
-        $hotaru->message = $lang['admin_maintenance_optimize_success'];
-        $hotaru->messageType = 'green';
-        $hotaru->showMessage();
+        $this->hotaru->message = $this->lang['admin_maintenance_optimize_success'];
+        $this->hotaru->messageType = 'green';
+        $this->hotaru->showMessage();
     }
     
     
@@ -514,14 +534,12 @@ class Admin
      */
     public function emptyTable($table_name, $msg = true)
     {
-        global $db, $lang, $hotaru;
-        
-        $db->query("TRUNCATE TABLE " . $table_name);
+        $this->db->query("TRUNCATE TABLE " . $table_name);
         
         if ($msg) {
-            $hotaru->message = $lang['admin_maintenance_table_emptied'];
-            $hotaru->messageType = 'green';
-            $hotaru->showMessage();
+            $this->hotaru->message = $this->lang['admin_maintenance_table_emptied'];
+            $this->hotaru->messageType = 'green';
+            $this->hotaru->showMessage();
         }
     }
     
@@ -533,14 +551,12 @@ class Admin
      */
     public function dropTable($table_name, $msg = true)
     {
-        global $db, $lang, $hotaru;
-        
-        $db->query("DROP TABLE " . $table_name);
+        $this->db->query("DROP TABLE " . $table_name);
         
         if ($msg) {
-            $hotaru->message = $lang['admin_maintenance_table_deleted'];
-            $hotaru->messageType = 'green';
-            $hotaru->showMessage();
+            $this->hotaru->message = $this->lang['admin_maintenance_table_deleted'];
+            $this->hotaru->messageType = 'green';
+            $this->hotaru->showMessage();
         }
     }
     
@@ -552,61 +568,59 @@ class Admin
      */
     public function adminLogin()
     {
-        global $cage, $lang, $current_user, $hotaru;
-        
         // Check username
-        if (!$username_check = $cage->post->testUsername('username')) { 
+        if (!$username_check = $this->cage->post->testUsername('username')) { 
             $username_check = ''; 
         } 
         
         // Check password
-        if (!$password_check = $cage->post->testPassword('password')) {
+        if (!$password_check = $this->cage->post->testPassword('password')) {
             $password_check = ''; 
         }
                     
         if ($username_check != '' || $password_check != '') 
         {
-            $login_result = $current_user->loginCheck($username_check, $password_check);
+            $login_result = $this->current_user->loginCheck($username_check, $password_check);
             
             if ($login_result) {
                     //success
                     $this->setAdminCookie($username_check);
-                    $current_user->setName($username_check);
-                    $current_user->getUserBasic(0, $username_check);
-                    $current_user->setLoggedIn(true);
-                    $current_user->updateUserLastLogin();
+                    $this->current_user->name = $username_check;
+                    $this->current_user->getUserBasic(0, $username_check);
+                    $this->current_user->loggedIn = true;
+                    $this->current_user->updateUserLastLogin();
                     return true;
             } else {
                     // login failed
-                    $hotaru->message = $lang["admin_login_failed"];
-                    $hotaru->messageType = "red";
+                    $this->hotaru->message = $this->lang["admin_login_failed"];
+                    $this->hotaru->messageType = "red";
             }
         } 
         else 
         {
-            if ($cage->post->keyExists('login_attempted')) {
-                $hotaru->message = $lang["admin_login_failed"];
-                $hotaru->messageType = "red";
+            if ($this->cage->post->keyExists('login_attempted')) {
+                $this->hotaru->message = $this->lang["admin_login_failed"];
+                $this->hotaru->messageType = "red";
             }
             $username_check = '';
             $password_check = '';
             
             // forgotten password request
-            if ($cage->post->keyExists('forgotten_password')) {
+            if ($this->cage->post->keyExists('forgotten_password')) {
                 $this->adminPassword();
             }
             
             // confirming forgotten password email
-            $passconf = $cage->get->getAlnum('passconf');
-            $userid = $cage->get->testInt('userid');
+            $passconf = $this->cage->get->getAlnum('passconf');
+            $userid = $this->cage->get->testInt('userid');
             
             if ($passconf && $userid) {
-                if ($current_user->newRandomPassword($userid, $passconf)) {
-                    $hotaru->message = $lang['admin_email_password_conf_success'];
-                    $hotaru->messageType = "green";
+                if ($this->current_user->newRandomPassword($userid, $passconf)) {
+                    $this->hotaru->message = $this->lang['admin_email_password_conf_success'];
+                    $this->hotaru->messageType = "green";
                 } else {
-                    $hotaru->message = $lang['admin_email_password_conf_fail'];
-                    $hotaru->messageType = "red";
+                    $this->hotaru->message = $this->lang['admin_email_password_conf_fail'];
+                    $this->hotaru->messageType = "red";
                 }
             }
         }
@@ -622,30 +636,28 @@ class Admin
      */
     public function adminPassword()
     {
-        global $cage, $lang, $current_user, $hotaru;
-        
         // Check email
-        if (!$email_check = $cage->post->testEmail('email')) { 
+        if (!$email_check = $this->cage->post->testEmail('email')) { 
             $email_check = ''; 
             // login failed
-            $hotaru->message = $lang["admin_login_email_invalid"];
-            $hotaru->messageType = "red";
+            $this->hotaru->message = $this->lang["admin_login_email_invalid"];
+            $this->hotaru->messageType = "red";
             return false;
         } 
                     
-        $valid_email = $current_user->validEmail($email_check, 'admin');
-        $userid = $current_user->getUserIdFromEmail($valid_email);
+        $valid_email = $this->current_user->validEmail($email_check, 'admin');
+        $userid = $this->current_user->getUserIdFromEmail($valid_email);
         
         if ($valid_email && $userid) {
                 //success
-                $current_user->sendPasswordConf($userid, $valid_email);
-                $hotaru->message = $lang['admin_email_password_conf_sent'];
-                $hotaru->messageType = "green";
+                $this->current_user->sendPasswordConf($userid, $valid_email);
+                $this->hotaru->message = $this->lang['admin_email_password_conf_sent'];
+                $this->hotaru->messageType = "green";
                 return true;
         } else {
                 // login failed
-                $hotaru->message = $lang["admin_login_email_invalid"];
-                $hotaru->messageType = "red";
+                $this->hotaru->message = $this->lang["admin_login_email_invalid"];
+                $this->hotaru->messageType = "red";
                 return false;
         }
     }
@@ -654,22 +666,20 @@ class Admin
      /**
      * Admin login form
      */
-    public function adminLoginForm()
+    public function adminLoginForm($admin)
     {
-        global $cage, $lang, $hotaru;
-    
         // Check username
-        if (!$username_check = $cage->post->testUsername('username')) {
+        if (!$username_check = $this->cage->post->testUsername('username')) {
             $username_check = "";
         } 
     
         // Check password
-        if (!$password_check = $cage->post->testPassword('password')) {
+        if (!$password_check = $this->cage->post->testPassword('password')) {
             $password_check = ""; 
         }
         
         // Check email (for forgotten password form)
-        if (!$email_check = $cage->post->testEmail('email')) {
+        if (!$email_check = $this->cage->post->testEmail('email')) {
             $email_check = ''; 
         }
         
@@ -686,11 +696,9 @@ class Admin
      */
     public function setAdminCookie($username)
     {
-        global $lang;
-    
         if (!$username) 
         { 
-            echo $lang["admin_login_error_cookie"];
+            echo $this->lang["admin_login_error_cookie"];
             return false;
         } 
         else 
@@ -718,10 +726,8 @@ class Admin
      */
     public function isAdminCookie()
     {
-        global $cage, $current_user;
-        
         // Check for a cookie. If present then the user goes through authentication
-        if (!$hotaru_user = $cage->cookie->testUsername('hotaru_user'))
+        if (!$hotaru_user = $this->cage->cookie->testUsername('hotaru_user'))
         {
             return false;
             die();
@@ -729,16 +735,16 @@ class Admin
         else 
         {
             // authenticate...
-            if (($hotaru_user) && ($cage->cookie->keyExists('hotaru_key')))
+            if (($hotaru_user) && ($this->cage->cookie->keyExists('hotaru_key')))
             {
                 $user_info=explode(":", base64_decode(
-                                        $cage->cookie->getRaw('hotaru_key'))
+                                        $this->cage->cookie->getRaw('hotaru_key'))
                 );
                 
                 if (($hotaru_user == $user_info[0]) 
                     && (crypt($user_info[0], 22) == $user_info[1])) 
                 {
-                    if (!$current_user->isAdmin($hotaru_user)) {
+                    if (!$this->current_user->isAdmin($hotaru_user)) {
                         return false;
                         die();
                     } else {
@@ -762,9 +768,7 @@ class Admin
      */
     public function adminLogout()
     {
-        global $current_user;
-        
-        $current_user->destroyCookieAndSession();
+        $this->current_user->destroyCookieAndSession();
         header("Location: " . BASEURL);
         return true;
     }
@@ -777,12 +781,10 @@ class Admin
      */
     public function adminNews()
     {
-        global $hotaru, $plugins, $lang;
-            
         $max_items = 5;
         
         $feedurl = 'http://feeds2.feedburner.com/hotarucms';
-        $feed = $hotaru->newSimplePie($feedurl);
+        $feed = $this->hotaru->newSimplePie($feedurl);
         $feed->init();
             
         $output = "";
@@ -797,7 +799,7 @@ class Admin
                 $output .= "<a href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a><br />";
                 
                 // Posted by
-                $output .= "<small>" . $lang["admin_news_posted_by"] . " ";
+                $output .= "<small>" . $this->lang["admin_news_posted_by"] . " ";
                 
                 foreach ($item->get_authors() as $author) 
                 {
@@ -805,7 +807,7 @@ class Admin
                 }
                 
                 // Date
-                $output .= " " . $lang["admin_news_on"] . " " . $item->get_date('j F Y');
+                $output .= " " . $this->lang["admin_news_on"] . " " . $item->get_date('j F Y');
                 $output .= "</small><br />";
                 
                 // Content
@@ -813,7 +815,7 @@ class Admin
                 $output .= "... ";
                 
                 // Read more
-                $output .= "<small><a href='" . $item->get_permalink() . "' title='" . $item->get_title() . "'>[" . $lang["admin_news_read_more"] . "]</a>";
+                $output .= "<small><a href='" . $item->get_permalink() . "' title='" . $item->get_title() . "'>[" . $this->lang["admin_news_read_more"] . "]</a>";
                 $output .= "</small>";
                 
                 $output .= "</div><br />";
@@ -826,41 +828,46 @@ class Admin
         echo $output;
     }
 
+
+    /* *************************************************************
+     *              BLOCKED LIST
+     * ********************************************************** */
+
+
      /**
-     * Show a list of blocked items o the Admin "Blocked List" page
-     *
-     * @return array|false
+     * Prepare a list of blocked items for the Admin "Blocked List" page
      */
-    public function blockedList()
+    public function buildBlockedList()
     {
-        global $db, $cage, $hotaru, $lang, $plugins, $pagedResults;
-        
         // if new item to block
-        if ($cage->post->getAlpha('type') == 'new') {
-            $type = $cage->post->testAlnumLines('blocked_type');
-            $value = $cage->post->getMixedString2('value');
+        if ($this->cage->post->getAlpha('type') == 'new') {
+            $type = $this->cage->post->testAlnumLines('blocked_type');
+            $value = $this->cage->post->getMixedString2('value');
             
             if (!$value) {
-                $hotaru->showMessage($lang['admin_blocked_list_empty'], 'red');
+                $this->hotaru->message = $this->lang['admin_blocked_list_empty'];
+                $this->hotaru->messageType = 'red';
             } else {
                 $this->addToBlockedList($type, $value);
             }
         }
         
         // if edit item
-        if ($cage->post->getAlpha('type') == 'edit') {
-            $id = $cage->post->testInt('id');
-            $type = $cage->post->testAlnumLines('blocked_type');
-            $value = $cage->post->getMixedString2('value');
+        if ($this->cage->post->getAlpha('type') == 'edit') {
+            $id = $this->cage->post->testInt('id');
+            $type = $this->cage->post->testAlnumLines('blocked_type');
+            $value = $this->cage->post->getMixedString2('value');
             $this->updateBlockedList($id, $type, $value);
-            $hotaru->showMessage($lang['admin_blocked_list_updated'], 'green');
+            $this->hotaru->message = $this->lang['admin_blocked_list_updated'];
+            $this->hotaru->messageType = 'green';
         }
         
         // if remove item
-        if ($cage->get->getAlpha('action') == 'remove') {
-            $id = $cage->get->testInt('id');
+        if ($this->cage->get->getAlpha('action') == 'remove') {
+            $id = $this->cage->get->testInt('id');
             $this->removeFromBlockedList($id);
-            $hotaru->showMessage($lang["admin_blocked_list_removed"], 'green');
+            $this->hotaru->message = $this->lang["admin_blocked_list_removed"];
+            $this->hotaru->messageType = 'green';
         }
         
         // GET CURRENTLY BLOCKED ITEMS...
@@ -868,14 +875,14 @@ class Admin
         $where_clause = '';
         
         // if search
-        if ($cage->post->getAlpha('type') == 'search') {
-            $search_term = $cage->post->getMixedString2('search_value');
-            $where_clause = " WHERE blocked_value LIKE '%" . trim($db->escape($search_term)) . "%'";
+        if ($this->cage->post->getAlpha('type') == 'search') {
+            $search_term = $this->cage->post->getMixedString2('search_value');
+            $where_clause = " WHERE blocked_value LIKE '%" . trim($this->db->escape($search_term)) . "%'";
         }
         
         // if filter
-        if ($cage->post->getAlpha('type') == 'filter') {
-            $filter = $cage->post->testAlnumLines('blocked_type');
+        if ($this->cage->post->getAlpha('type') == 'filter') {
+            $filter = $this->cage->post->testAlnumLines('blocked_type');
             if ($filter == 'all') { $where_clause = ''; } else { $where_clause = " WHERE blocked_type = %s"; }
         }
         
@@ -883,65 +890,71 @@ class Admin
         $sql = "SELECT * FROM " . TABLE_BLOCKED . $where_clause;
 
         if (isset($search_term)) { 
-            $blocked_items = $db->get_results($sql);
+            $blocked_items = $this->db->get_results($sql);
         } elseif (isset($filter)) { 
-            $blocked_items = $db->get_results($db->prepare($sql, $filter));
+            $blocked_items = $this->db->get_results($this->db->prepare($sql, $filter));
         } else {
-            $blocked_items = $db->get_results($db->prepare($sql));
+            $blocked_items = $this->db->get_results($this->db->prepare($sql));
         }
         
-        if ($blocked_items) {
-            $pg = $cage->get->getInt('pg');
-            $items = 20;
-            $output = "";
-            $pagedResults = new Paginated($blocked_items, $items, $pg);
-            $alt = 0;
-            while($block = $pagedResults->fetchPagedRow()) {    //when $story is false loop terminates    
-                $alt++;
-                $output .= "<tr class='table_row_" . $alt % 2 . "'>\n";
-                $output .= "<td>" . $block->blocked_type . "</td>\n";
-                $output .= "<td>" . $block->blocked_value . "</td>\n";
-                $output .= "<td>" . "<a class='table_drop_down' href='#'>\n";
-                $output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/edit.png'>" . "</a></td>\n";
-                $output .= "<td>" . "<a href='" . BASEURL . "admin_index.php?page=blocked_list&amp;action=remove&amp;id=" . $block->blocked_id . "'>\n";
-                $output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/delete.png'>" . "</a></td>\n";
-                $output .= "</tr>\n";
-                $output .= "<tr class='table_tr_details' style='display:none;'>\n";
-                $output .= "<td colspan=3 class='table_description'>\n";
-                $output .= "<form name='blocked_list_edit_form' action='" . BASEURL . "admin_index.php' method='post'>\n";
-                $output .= "<table><tr><td><select name='blocked_type'>\n";
-                
-                switch($block->blocked_type) { 
-                    case 'url':
-                        $text = $lang["admin_theme_blocked_url"];
-                        break;
-                    case 'email':
-                        $text = $lang["admin_theme_blocked_email"];
-                        break;
-                    default:
-                        $text = $lang["admin_theme_blocked_ip"];
-                        break;
-                }
-                
-                $output .= "<option value='" . $block->blocked_type . "'>" . $text . "</option>\n";
-                $output .= "<option value='ip'>" . $lang["admin_theme_blocked_ip"] . "</option>\n";
-                $output .= "<option value='url'>" . $lang["admin_theme_blocked_url"] . "</option>\n";
-                $output .= "<option value='email'>" . $lang["admin_theme_blocked_email"] . "</option>\n";
-                $output .= "<option value='user'>" . $lang["admin_theme_blocked_username"] . "</option>\n";
-                $output .= "</select></td>\n";
-                $output .= "<td><input type='text' size=30 name='value' value='" . $block->blocked_value . "' /></td>\n";
-                $output .= "<td><input class='submit' type='submit' value='" . $lang['admin_blocked_list_update'] . "' /></td>\n";
-                $output .= "</tr></table>\n";
-                $output .= "<input type='hidden' name='id' value='" . $block->blocked_id . "' />\n";
-                $output .= "<input type='hidden' name='page' value='blocked_list' />\n";
-                $output .= "<input type='hidden' name='type' value='edit' />\n";
-                $output .= "</form>\n";
-                $output .= "</td>";
-                $output .= "<td class='table_description_close'><a class='table_hide_details' href='#'>" . $lang["admin_theme_plugins_close"] . "</a></td>";
-                $output .= "</tr>";
+        if (!$blocked_items) { return array(); }
+        
+        $pg = $this->cage->get->getInt('pg');
+        $items = 20;
+        $output = "";
+        
+        require_once(EXTENSIONS . 'Paginated/Paginated.php');
+        require_once(EXTENSIONS . 'Paginated/DoubleBarLayout.php');
+        $pagedResults = new Paginated($blocked_items, $items, $pg);
+        
+        $alt = 0;
+        while($block = $pagedResults->fetchPagedRow()) {    //when $story is false loop terminates    
+            $alt++;
+            $output .= "<tr class='table_row_" . $alt % 2 . "'>\n";
+            $output .= "<td>" . $block->blocked_type . "</td>\n";
+            $output .= "<td>" . $block->blocked_value . "</td>\n";
+            $output .= "<td>" . "<a class='table_drop_down' href='#'>\n";
+            $output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/edit.png'>" . "</a></td>\n";
+            $output .= "<td>" . "<a href='" . BASEURL . "admin_index.php?page=blocked_list&amp;action=remove&amp;id=" . $block->blocked_id . "'>\n";
+            $output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/delete.png'>" . "</a></td>\n";
+            $output .= "</tr>\n";
+            $output .= "<tr class='table_tr_details' style='display:none;'>\n";
+            $output .= "<td colspan=3 class='table_description'>\n";
+            $output .= "<form name='blocked_list_edit_form' action='" . BASEURL . "admin_index.php' method='post'>\n";
+            $output .= "<table><tr><td><select name='blocked_type'>\n";
+            
+            switch($block->blocked_type) { 
+                case 'url':
+                    $text = $this->lang["admin_theme_blocked_url"];
+                    break;
+                case 'email':
+                    $text = $this->lang["admin_theme_blocked_email"];
+                    break;
+                default:
+                    $text = $this->lang["admin_theme_blocked_ip"];
+                    break;
             }
-            return $output;
+            
+            $output .= "<option value='" . $block->blocked_type . "'>" . $text . "</option>\n";
+            $output .= "<option value='ip'>" . $this->lang["admin_theme_blocked_ip"] . "</option>\n";
+            $output .= "<option value='url'>" . $this->lang["admin_theme_blocked_url"] . "</option>\n";
+            $output .= "<option value='email'>" . $this->lang["admin_theme_blocked_email"] . "</option>\n";
+            $output .= "<option value='user'>" . $this->lang["admin_theme_blocked_username"] . "</option>\n";
+            $output .= "</select></td>\n";
+            $output .= "<td><input type='text' size=30 name='value' value='" . $block->blocked_value . "' /></td>\n";
+            $output .= "<td><input class='submit' type='submit' value='" . $this->lang['admin_blocked_list_update'] . "' /></td>\n";
+            $output .= "</tr></table>\n";
+            $output .= "<input type='hidden' name='id' value='" . $block->blocked_id . "' />\n";
+            $output .= "<input type='hidden' name='page' value='blocked_list' />\n";
+            $output .= "<input type='hidden' name='type' value='edit' />\n";
+            $output .= "</form>\n";
+            $output .= "</td>";
+            $output .= "<td class='table_description_close'><a class='table_hide_details' href='#'>" . $this->lang["admin_theme_plugins_close"] . "</a></td>";
+            $output .= "</tr>";
         }
+
+        $blocked_array = array('blocked_items' => $output, 'pagedResults' => $pagedResults);
+        return $blocked_array;
     }
     
     
@@ -952,19 +965,23 @@ class Admin
      */
     public function addToBlockedList($type = '', $value = 0, $msg = true)
     {
-        global $db, $current_user, $hotaru, $lang;
-        
         $sql = "SELECT blocked_id FROM " . TABLE_BLOCKED . " WHERE blocked_type = %s AND blocked_value = %s"; 
-        $id = $db->get_var($db->prepare($sql, $type, $value));
+        $id = $this->db->get_var($this->db->prepare($sql, $type, $value));
         
         if ($id) { // already exists
-            if ($msg) { $hotaru->showMessage($lang['admin_blocked_list_exists'], 'red'); }
+            if ($msg) { 
+                $this->hotaru->message = $this->lang['admin_blocked_list_exists']; 
+                $this->hotaru->messageType = 'red';
+            }
             return false;
         } 
         
         $sql = "INSERT INTO " . TABLE_BLOCKED . " (blocked_type, blocked_value, blocked_updateby) VALUES (%s, %s, %d)"; 
-        $db->query($db->prepare($sql, $type, $value, $current_user->getId()));
-        if ($msg) { $hotaru->showMessage($lang['admin_blocked_list_added'], 'green'); }
+        $this->db->query($this->db->prepare($sql, $type, $value, $this->current_user->id));
+        if ($msg) { 
+            $this->hotaru->message = $this->lang['admin_blocked_list_added']; 
+            $this->hotaru->messageType = 'green';
+        }
         
         return true;
     }
@@ -977,10 +994,8 @@ class Admin
      */
     public function updateBlockedList($id = 0, $type = '', $value = 0)
     {
-        global $db, $current_user;
-        
         $sql = "UPDATE " . TABLE_BLOCKED . " SET blocked_type = %s, blocked_value = %s, blocked_updateby = %d WHERE blocked_id = %d"; 
-        $db->query($db->prepare($sql, $type, $value, $current_user->getId(), $id));
+        $this->db->query($this->db->prepare($sql, $type, $value, $this->current_user->id, $id));
     }
     
     
@@ -989,12 +1004,39 @@ class Admin
      */
     public function removeFromBlockedList($id = 0)
     {
-        global $db;
-        
         $sql = "DELETE FROM " . TABLE_BLOCKED . " WHERE blocked_id = %d"; 
-        $db->get_var($db->prepare($sql, $id));
+        $this->db->get_var($this->db->prepare($sql, $id));
     }
-
+    
+    
+     /**
+     * Check if a value is blocked
+     *
+     * Note: Other methods for the Blocked List can be found in the Admin class
+     *
+     * @param string $type - i.e. ip, url, email, user
+     * @param string $value
+     * @param bool $like - used for LIKE sql if true
+     * @return bool
+     */
+    public function isBlocked($type = '', $value = '', $operator = '=')
+    {
+        $exists = 0;
+        
+        // if both type and value provided...
+        if ($type && $value) {
+            $sql = "SELECT blocked_value FROM " . TABLE_BLOCKED . " WHERE blocked_type = %s AND blocked_value " . $operator . " %s"; 
+            $exists = $this->db->get_var($this->db->prepare($sql, $type, $value));
+        } 
+        // if only value provided...
+        elseif ($value) 
+        {
+            $sql = "SELECT blocked_value FROM " . TABLE_BLOCKED . " WHERE blocked_value " . $operator . " %s"; 
+            $exists = $this->db->get_var($this->db->prepare($sql, $value));
+        }
+        
+        if ($exists) { return true; } else { return false; }
+    }
 }
 
 ?>

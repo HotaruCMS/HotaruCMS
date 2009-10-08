@@ -26,7 +26,6 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $plugins, $lang; // don't remove
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -37,22 +36,30 @@ global $hotaru, $plugins, $lang; // don't remove
 
     <title>
        <?php 
-           if ($hotaru->getTitle() != "")
+           if ($hotaru->title != "")
            {
-               echo $hotaru->getTitle() . " &laquo; " . SITE_NAME;
+               echo $hotaru->title . " &laquo; " . SITE_NAME;
            }
            elseif ($hotaru->getPageName() != "main")
            {
-               $hotaru->setTitle($hotaru->getPageName());
-               echo $hotaru->pageToTitleCaps($hotaru->getTitle()) . " &laquo; " . SITE_NAME;
+               $hotaru->title = $hotaru->getPageName();
+               echo $hotaru->pageToTitleCaps($hotaru->title) . " &laquo; " . SITE_NAME;
            }
            else
            { 
-               $hotaru->setTitle('top'); // don't change this
+               $hotaru->title = 'top'; // don't change this
                echo SITE_NAME; 
            } 
        ?>
     </title>
+    
+        <?php
+            // plugin hook
+            $result = $hotaru->plugins->pluginHook('header_meta');
+            if (!isset($result) || !is_array($result)) { ?>
+                <meta name="description" content="<?php echo $hotaru->lang['header_meta_description']; ?>">
+                <meta name="keywords" content="<?php echo $hotaru->lang['header_meta_keywords']; ?>">
+        <?php } ?>
    
     <script language="JavaScript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery.min.js'; ?>"></script>
     <script language="JavaScript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery-ui.min.js'; ?>"></script>
@@ -71,17 +78,17 @@ global $hotaru, $plugins, $lang; // don't remove
     <link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME . 'css/style.css'; ?>" type="text/css">
     <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico">
    
-    <?php $plugins->pluginHook('header_include_raw'); ?>
+    <?php $hotaru->plugins->pluginHook('header_include_raw'); ?>
    
 </head>
 <body>
-<?php $plugins->pluginHook('post_open_body'); ?>
+<?php $hotaru->plugins->pluginHook('post_open_body'); ?>
 
 <?php if ($announcements = $hotaru->checkAnnouncements()) { ?>
     <div id="announcement">
-        <?php $plugins->pluginHook('announcement_first'); ?>
+        <?php $hotaru->plugins->pluginHook('announcement_first'); ?>
         <?php foreach ($announcements as $announcement) { echo $announcement . "<br />"; } ?>
-        <?php $plugins->pluginHook('announcement_last'); ?>
+        <?php $hotaru->plugins->pluginHook('announcement_last'); ?>
     </div>
 <?php } ?>
 
@@ -89,7 +96,7 @@ global $hotaru, $plugins, $lang; // don't remove
     <div id="hd">
         <div id="hd_title">
             <h1><a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a></h1>
-            <?php $plugins->pluginHook('header_post_title'); ?>
+            <?php $hotaru->plugins->pluginHook('header_post_title'); ?>
         </div>
         <!-- NAVIGATION -->
         <?php echo $hotaru->displayTemplate('navigation'); ?>

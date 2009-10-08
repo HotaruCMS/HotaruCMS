@@ -25,6 +25,25 @@
  */
  
 /**
+ * Truncate a string
+ *
+ * @param string $string
+ * @param int truncate to X characters
+ * @para, bool $dot adds ... if true
+ * @return string
+ */
+function truncate($string, $chars=0, $dot=true)
+{
+    $length = strlen($string);
+    $truncated = substr(strip_tags($string), 0, $chars);    // strips tags to prevent broken tags
+    if ($dot && ($length >= $chars)) {
+        $truncated .= '...';
+    }
+    return $truncated;
+}
+
+
+/**
  * Strip a string from the end of a string
  *
  * @param string $string
@@ -503,6 +522,25 @@ function utf8_uri_encode( $utf8_string, $length = 0 )
 
     return $unicode;
 }
+
+
+/**
+ * Strip domain from url
+ *
+ * @param string $url
+ * @return string|false $domain - including http://
+ */
+function get_domain($url = '')
+{
+    $parsed = parse_url($url);
+    if (isset($parsed['scheme'])){ 
+        $domain = $parsed['scheme'] . "://" . $parsed['host']; 
+        return $domain;
+    }
+    
+    return false;
+}
+
 
 /**
  * Strip foreign characters from latin1/utf8 database yuckiness

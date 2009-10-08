@@ -1,6 +1,6 @@
 HOTARU CMS
-Version: Alpha 0.6
-Released: October 1st 2009
+Version: Alpha 0.7
+Released: October 8th 2009
 
 INSTALLATION
 ------------
@@ -42,7 +42,7 @@ If you want to use friendly urls, rename htaccess_default to .htaccess, and edit
 
 Troubleshooting
 
-If you're having trouble installing Hotaru, please post your questions with as much detail as possible in the Getting Started forum. Thanks.
+If you're having trouble installing Hotaru, please post your questions with as much detail as possible in the forums. Thanks.
 
 
 Report any problems in the forums at http://hotarucms.org

@@ -25,17 +25,17 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-
-global $hotaru, $plugins, $lang; // don't remove
+ 
 ?>
+
 <div id="breadcrumbs">
     <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
-    <?php $plugins->pluginHook('breadcrumbs'); ?> 
-    &raquo; <?php if ($hotaru->title == 'top') { echo $lang['main_theme_home']; } else { echo $hotaru->title; } ?>
+    <?php $hotaru->plugins->pluginHook('breadcrumbs'); ?> 
+    &raquo; <?php if ($hotaru->title == 'top') { echo $hotaru->lang['main_theme_home']; } else { echo $hotaru->title; } ?>
 </div>
 
-<?php $plugins->pluginHook('main_top'); ?>
+<?php $hotaru->plugins->pluginHook('main_top'); ?>
     
-<?php $plugins->pluginHook('main'); ?>
+<?php $hotaru->plugins->pluginHook('main'); ?>
 
-<?php $plugins->pluginHook('main_bottom'); ?>
+<?php $hotaru->plugins->pluginHook('main_bottom'); ?>

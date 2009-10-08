@@ -34,189 +34,49 @@ class UserBase {
     protected $loggedIn     = false;
     protected $perms        = array();    // permissions
     
-    public $vars = array();     // multi-purpose, used by plugins
-
-
+    public $vars            = array();  // multi-purpose, used by plugins
+    public $db;                         // database object
+    public $cage;                       // Inspekt object
+    public $hotaru;                     // Hotaru object
+    public $lang            = array();  // stores language file content
+    public $plugins;                    // PluginFunctions object
+    
     /**
-     * Set additonal member variables
-     *
-     * @param string $name
-     * @param mixed $value
+     * Build a userbase object containing $db and $cage
      */
-    private function __set($name, $value)
+    public function __construct($hotaru)
     {
-        $this->vars[$name] = $value;
+        $this->hotaru           = $hotaru;
+        $this->db               = $hotaru->db;
+        $this->cage             = $hotaru->cage;
+        $this->lang             = &$hotaru->lang;   // reference to main lang array
+        $this->plugins          = $hotaru->plugins;
     }
-
+    
 
     /**
-     * Get additonal member variables
-     *
-     * @param string $name
-     * @return mixed
+     * Access modifier to set protected properties
      */
-    private function __get($name)
+    public function __set($var, $val)
     {
-        if (array_key_exists($name, $this->vars)) {
-            return $this->vars[$name];
-        }
+        $this->$var = $val;  
     }
     
     
     /**
-     * Set user id
-     *
-     * @param int
-     */    
-    public function setId($id)
+     * Access modifier to get protected properties
+     */
+    public function __get($var)
     {
-        $this->id = $id;
+        return $this->$var;
     }
-    
-    
-    /**
-     * Get user id
-     *
-     * @return int
-     */    
-    public function getId()
-    {
-        return $this->id;
-    }
-    
-    
-    /**
-     * Set user name
-     *
-     * @param string
-     */    
-    public function setName($username)
-    {
-        $this->userName = $username;
-    }
-    
-    
-    /**
-     * Get user name
-     *
-     * @return string
-     */    
-    public function getName()
-    {
-        return $this->userName;
-    }
-    
-    
-    /**
-     * Set user role
-     *
-     * @param string
-     */    
-    public function setRole($role)
-    {
-        $this->role = $role;
-    }
-    
-    
-    /**
-     * Get user role
-     *
-     * @return string
-     */    
-    public function getRole()
-    {
-        return $this->role;
-    }
-    
-    
-    /**
-     * Set user password
-     *
-     * @param string
-     */    
-    public function setPassword($pass)
-    {
-        $this->password = $pass;
-    }
-    
-    
-    /**
-     * Get user password
-     *
-     * @return string
-     */    
-    public function getPassword()
-    {
-        return $this->password;
-    }
-    
-    
-    /**
-     * Set user email
-     *
-     * @param string
-     */    
-    public function setEmail($email)
-    {
-        $this->email = $email;
-    }
-    
-    
-    /**
-     * Get user email
-     *
-     * @return string
-     */    
-    public function getEmail()
-    {
-        return $this->email;
-    }
-    
-    
-    /**
-     * Set user emailValid
-     *
-     * @param int
-     */    
-    public function setEmailValid($ev)
-    {
-        $this->emailValid = $ev;
-    }
-    
-    
-    /**
-     * Get user emailValid
-     *
-     * @return int
-     */    
-    public function getEmailValid()
-    {
-        return $this->emailValid;
-    }
-    
-    
-    /**
-     * Set logged in
-     *
-     * @param bool
-     */    
-    public function setLoggedIn($bool)
-    {
-        $this->loggedIn = $bool;
-    }
-    
-    
-    /**
-     * Get logged in
-     *
-     * @return bool
-     */    
-    public function getLoggedIn()
-    {
-        return $this->loggedIn;
-    }
-    
-    
+
+
+    /* *************************************************************
+     *              UNIQUE ACCESS MODIFIERS
+     * ********************************************************** */
+
+
     /**
      * Set permission 
      *
@@ -272,34 +132,42 @@ class UserBase {
     }
     
     
+    /* *************************************************************
+     *              REGULAR METHODS
+     * ********************************************************** */
+    
+    
     /**
      * Add a new user
      */
     public function addUserBasic()
     {
-        global $db;
-        
         // get default permissions
-        $permissions = $this->getDefaultPermissions($this->getRole());
+        $permissions = $this->getDefaultPermissions($this->role);
         unset($permissions['options']);  // don't need this for individual users
         $permissions = serialize($permissions);
 
         // add user to the database
         $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email, user_permissions) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s)";
-        $db->query($db->prepare($sql, $this->getName(), $this->getRole(), $this->getPassword(), $this->getEmail(), $permissions));
+        $this->db->query($this->db->prepare($sql, $this->name, $this->role, $this->password, $this->email, $permissions));
     }
 
 
     /**
      * Update a user
      */
-    public function updateUserBasic()
+    public function updateUserBasic($userid = 0)
     {
-        global $db, $current_user;
+        //determine if the current user is the same as this object's user
+        if($userid != $this->id) {
+            $updatedby = $userid;
+        } else {
+            $updatedby = $this->id;
+        }
         
-        if ($this->getId() != 0) {
+        if ($this->id != 0) {
             $sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s, user_permissions = %s, user_updateby = %d WHERE user_id = %d";
-            $db->query($db->prepare($sql, $this->getName(), $this->getRole(), $this->getPassword(), $this->getEmail(), serialize($this->getAllPermissions()), $current_user->getId(), $this->getId()));
+            $this->db->query($this->db->prepare($sql, $this->name, $this->role, $this->password, $this->email, serialize($this->getAllPermissions()), $userid, $this->id));
             return true;
         } else {
             return false;
@@ -314,11 +182,9 @@ class UserBase {
      */
     public function updateUserLastLogin()
     {
-        global $db;
-        
-        if ($this->getId() != 0) {
+        if ($this->id != 0) {
             $sql = "UPDATE " . TABLE_USERS . " SET user_lastlogin = CURRENT_TIMESTAMP WHERE user_id = %d";
-            $db->query($db->prepare($sql, $this->getId()));
+            $this->db->query($this->db->prepare($sql, $this->id));
             return true;
         } else {
             return false;
@@ -337,8 +203,6 @@ class UserBase {
      */    
     public function getUserBasic($userid = 0, $username = '')
     {
-        global $db, $plugins;
-        
         // Prepare SQL
         if ($userid != 0){              // use userid
             $where = "user_id = %d";
@@ -354,21 +218,21 @@ class UserBase {
         $sql = "SELECT * FROM " . TABLE_USERS . " WHERE " . $where;
         
         // Fetch from database
-        $user_info = $db->get_row($db->prepare($sql, $param));
+        $user_info = $this->db->get_row($this->db->prepare($sql, $param));
         
         if ($user_info) {
-            $this->setId($user_info->user_id);
-            $this->setName($user_info->user_username);
-            $this->setPassword($user_info->user_password);
-            $this->setRole($user_info->user_role);
-            $this->setEmail($user_info->user_email);
-            $this->setEmailValid($user_info->user_email_valid);
+            $this->id = $user_info->user_id;
+            $this->name = $user_info->user_username;
+            $this->password = $user_info->user_password;
+            $this->role = $user_info->user_role;
+            $this->email = $user_info->user_email;
+            $this->emailValid = $user_info->user_email_valid;
             
             // If a new plugin is installed, we need a way of adding any new default permissions
             // that plugin provides. So, we get all defaults, then overwrite with existing perms.
             
             // get default permissions
-            $default_perms = $this->getDefaultPermissions($this->getRole());
+            $default_perms = $this->getDefaultPermissions($this->role);
             unset($default_perms['options']);  // don't need this for individual users
             
             // get existing permissions
@@ -397,25 +261,23 @@ class UserBase {
      */
     public function userExists($id = 0, $username = '', $email = '')
     {
-        global $db;
-        
         // Error 0 - id exists
         if ($id != 0) {
-            if ($db->get_var($db->prepare("SELECT * FROM " . TABLE_USERS . " WHERE user_id = %d", $id))) {
+            if ($this->db->get_var($this->db->prepare("SELECT * FROM " . TABLE_USERS . " WHERE user_id = %d", $id))) {
                 return 0; // id exists
             } 
         } 
         
         // Error 1 - username exists
         if ($username != '') {
-            if ($db->get_var($db->prepare("SELECT * FROM " . TABLE_USERS . " WHERE user_username = %s", $username))) {
+            if ($this->db->get_var($this->db->prepare("SELECT * FROM " . TABLE_USERS . " WHERE user_username = %s", $username))) {
                 return 1; // username exists
             }         
         } 
         
         // Error 2 - email exists
         if ($email != '') {
-            if ($db->get_var($db->prepare("SELECT * FROM " . TABLE_USERS . " WHERE user_email = %s", $email))) {
+            if ($this->db->get_var($this->db->prepare("SELECT * FROM " . TABLE_USERS . " WHERE user_email = %s", $email))) {
                 return 2; // email exists
             }         
         } 
@@ -437,11 +299,9 @@ class UserBase {
      */
     public function adminExists()
     {
-        global $db;
-        
         $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_role = %s";
         
-        if ($admin_name = $db->get_var($db->prepare($sql, 'admin'))) {
+        if ($admin_name = $this->db->get_var($this->db->prepare($sql, 'admin'))) {
             return $admin_name; // admin exists
         } else {
             return false;
@@ -456,11 +316,9 @@ class UserBase {
      */
     public function isAdmin($username)
     {
-        global $db;
-        
         $sql = "SELECT * FROM " . TABLE_USERS . " WHERE user_username = %s AND user_role = %s";
         
-        $role = $db->get_row($db->prepare($sql, $username, 'admin'));
+        $role = $this->db->get_row($this->db->prepare($sql, $username, 'admin'));
         
         if ($role) { return true; } else { return false; }
     }
@@ -475,8 +333,6 @@ class UserBase {
      */
     public function loginCheck($username = '', $password = '')
     {
-        global $db;
-
         // Read the current user's basic details
         $userX = $this->getUserBasic(0, $username);
         
@@ -485,7 +341,7 @@ class UserBase {
         
         $sql = "SELECT user_username, user_password FROM " . TABLE_USERS . " WHERE user_username = %s AND user_password = %s";
         
-        $result = $db->get_row($db->prepare($sql, $username, $password));
+        $result = $this->db->get_row($this->db->prepare($sql, $username, $password));
         
         if (isset($result)) { return true; } else { return false; }
     }
@@ -519,15 +375,13 @@ class UserBase {
      */
     public function setCookie($remember)
     {
-        global $lang;
-
-        if (!$this->getName())
+        if (!$this->name)
         { 
-            echo $lang['main_userbase_cookie_error'];
+            echo $this->lang['main_userbase_cookie_error'];
             return false;
         } else {
             $strCookie=base64_encode(
-                join(':', array($this->getName(), crypt($this->getName(), 22)))
+                join(':', array($this->name, crypt($this->name, 22)))
             );
             
             if ($remember) { 
@@ -537,7 +391,7 @@ class UserBase {
                 $month = 0; 
             }
             
-            setcookie("hotaru_user", $this->getName(), $month, "/");
+            setcookie("hotaru_user", $this->name, $month, "/");
             setcookie("hotaru_key", $strCookie, $month, "/");
             return true;
         }
@@ -555,7 +409,7 @@ class UserBase {
         
         // session_destroy(); There is no session in Hotaru yet
         
-        $this->setLoggedIn(false);
+        $this->loggedIn = false;
     }
         
         
@@ -567,11 +421,9 @@ class UserBase {
      */
     public function getUserNameFromId($id = 0)
     {
-        global $db;
-        
         $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_id = %d";
         
-        $username = $db->get_var($db->prepare($sql, $id));
+        $username = $this->db->get_var($this->db->prepare($sql, $id));
         if ($username) { return $username; } else { return false; }
     }
     
@@ -584,11 +436,9 @@ class UserBase {
      */
     public function getUserIdFromName($username = '')
     {
-        global $db;
-        
         $sql = "SELECT user_id FROM " . TABLE_USERS . " WHERE user_username = %s";
         
-        $userid = $db->get_var($db->prepare($sql, $username));
+        $userid = $this->db->get_var($this->db->prepare($sql, $username));
         if ($userid) { return $userid; } else { return false; }
     }
     
@@ -601,11 +451,9 @@ class UserBase {
      */
     public function getUserIdFromEmail($email = '')
     {
-        global $db;
-        
         $sql = "SELECT user_id FROM " . TABLE_USERS . " WHERE user_email = %s";
         
-        $userid = $db->get_var($db->prepare($sql, $email));
+        $userid = $this->db->get_var($this->db->prepare($sql, $email));
         if ($userid) { return $userid; } else { return false; }
     }
     
@@ -618,11 +466,9 @@ class UserBase {
      */
     public function getEmailFromId($userid = 0)
     {
-        global $db;
-        
         $sql = "SELECT user_email FROM " . TABLE_USERS . " WHERE user_id = %d";
         
-        $email = $db->get_var($db->prepare($sql, $userid));
+        $email = $this->db->get_var($this->db->prepare($sql, $userid));
         if ($email) { return $email; } else { return false; }
     }
     
@@ -635,11 +481,9 @@ class UserBase {
      */
     public function getEmailFromPassConf($passconf = '')
     {
-        global $db;
-        
         $sql = "SELECT user_email FROM " . TABLE_USERS . " WHERE user_password_conf = %s";
         
-        $email = $db->get_var($db->prepare($sql, $passconf));
+        $email = $this->db->get_var($this->db->prepare($sql, $passconf));
         if ($email) { return $email; } else { return false; }
     }
     
@@ -651,16 +495,14 @@ class UserBase {
      */
     public function validEmail($email = '', $role = '')
     {
-        global $db, $user;
-        
         if (!$email) {  return false; }
         
         if ($role) { 
             $sql = "SELECT user_email FROM " . TABLE_USERS . " WHERE user_email = %s AND user_role = %s";
-            $valid_email = $db->get_var($db->prepare($sql, $email, $role));
+            $valid_email = $this->db->get_var($this->db->prepare($sql, $email, $role));
         } else {
             $sql = "SELECT user_email FROM " . TABLE_USERS . " WHERE user_email = %s";
-            $valid_email = $db->get_var($db->prepare($sql, $email));
+            $valid_email = $this->db->get_var($this->db->prepare($sql, $email));
         }
 
         if ($valid_email) { return $valid_email; } else { return false; }
@@ -674,42 +516,40 @@ class UserBase {
      */
     public function sendPasswordConf($userid, $email)
     {
-        global $db, $hotaru, $cage, $lang, $plugins;
-        
         // We need to explicity include the Admin language file 
         // for plugins using this function (e.g. Users).
-        $hotaru->includeLanguagePack('admin');
+        $this->hotaru->includeLanguagePack('admin');
         
         // generate the email confirmation code
         $pass_conf = md5(crypt(md5($email),md5($email)));
         
         // store the hash in the user table
         $sql = "UPDATE " . TABLE_USERS . " SET user_password_conf = %s WHERE user_id = %d";
-        $db->query($db->prepare($sql, $pass_conf, $userid));
+        $this->db->query($this->db->prepare($sql, $pass_conf, $userid));
         
         $line_break = "\r\n\r\n";
         $next_line = "\r\n";
-        
-        if ($plugins->isActive('users')) { 
+
+        if ($this->plugins->isActive('users')) { 
             $url = BASEURL . 'index.php?page=login&plugin=users&userid=' . $userid . '&passconf=' . $pass_conf; 
         } else { 
             $url = BASEURL . 'admin_index.php?page=admin_login&userid=' . $userid . '&passconf=' . $pass_conf; 
         }
         
         // send email
-        $subject = $lang['admin_email_password_conf_subject'];
-        $body = $lang['admin_email_password_conf_body_hello'] . " " . $this->getUserNameFromId($userid);
+        $subject = $this->lang['admin_email_password_conf_subject'];
+        $body = $this->lang['admin_email_password_conf_body_hello'] . " " . $this->getUserNameFromId($userid);
         $body .= $line_break;
-        $body .= $lang['admin_email_password_conf_body_welcome'];
-        $body .= $lang['admin_email_password_conf_body_click'];
+        $body .= $this->lang['admin_email_password_conf_body_welcome'];
+        $body .= $this->lang['admin_email_password_conf_body_click'];
         $body .= $line_break;
         $body .= $url;
         $body .= $line_break;
-        $body .= $lang['admin_email_password_conf_body_no_request'];
+        $body .= $this->lang['admin_email_password_conf_body_no_request'];
         $body .= $line_break;
-        $body .= $lang['admin_email_password_conf_body_regards'];
+        $body .= $this->lang['admin_email_password_conf_body_regards'];
         $body .= $next_line;
-        $body .= $lang['admin_email_password_conf_body_sign'];
+        $body .= $this->lang['admin_email_password_conf_body_sign'];
         $to = $email;
         $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
     
@@ -726,8 +566,6 @@ class UserBase {
      */
     public function newRandomPassword($userid, $passconf)
     {
-        global $db, $hotaru, $cage, $lang, $plugins;
-        
         $email = $this->getEmailFromId($userid);
         
         // check the email and confirmation code are a pair
@@ -738,38 +576,38 @@ class UserBase {
         
         // We need to explicity include the Admin language file 
         // for plugins using this function (e.g. Users).
-        $hotaru->includeLanguagePack('admin');
+        $this->hotaru->includeLanguagePack('admin');
         
         // update the password to something random
         $temp_pass = random_string(8);
         $sql = "UPDATE " . TABLE_USERS . " SET user_password = %s WHERE user_id = %d";
-        $db->query($db->prepare($sql, $this->generateHash($temp_pass), $userid));
+        $this->db->query($this->db->prepare($sql, $this->generateHash($temp_pass), $userid));
         $line_break = "\r\n\r\n";
         $next_line = "\r\n";
         
-        if ($plugins->isActive('users')) { 
+        if ($this->plugins->isActive('users')) { 
             $url = BASEURL . 'index.php?page=login&plugin=users'; 
         } else { 
             $url = BASEURL . 'admin_index.php?page=admin_login'; 
         }
         
         // send email
-        $subject = $lang['admin_email_new_password_subject'];
-        $body = $lang['admin_email_password_conf_body_hello'] . " " . $this->getUserNameFromId($userid);
+        $subject = $this->lang['admin_email_new_password_subject'];
+        $body = $this->lang['admin_email_password_conf_body_hello'] . " " . $this->getUserNameFromId($userid);
         $body .= $line_break;
-        $body .= $lang['admin_email_password_conf_body_requested'];
+        $body .= $this->lang['admin_email_password_conf_body_requested'];
         $body .= $line_break;
         $body .= $temp_pass;
         $body .= $line_break;
-        $body .= $lang['admin_email_password_conf_body_remember'];
+        $body .= $this->lang['admin_email_password_conf_body_remember'];
         $body .= $line_break;
-        $body .= $lang['admin_email_password_conf_body_pass_change'];
+        $body .= $this->lang['admin_email_password_conf_body_pass_change'];
         $body .= $line_break;
         $body .= $url; 
         $body .= $line_break;
-        $body .= $lang['admin_email_password_conf_body_regards'];
+        $body .= $this->lang['admin_email_password_conf_body_regards'];
         $body .= $next_line;
-        $body .= $lang['admin_email_password_conf_body_sign'];
+        $body .= $this->lang['admin_email_password_conf_body_sign'];
         $to = $email;
         $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
     
@@ -787,20 +625,23 @@ class UserBase {
      */
     public function updateAccount($userid = 0)
     {
-        global $hotaru, $cage, $lang, $current_user;
         // current_user is the person looking at the page
         // "this" will represent the person whose account is being modified
                 
         // Get the details of the account to show.
         // If no account is specified, assume it's your own.
-        if (!$userid) { $userid = $current_user->getId(); }
+
+        if (!$userid) {
+            $userid = $this->id;
+        }
+            
         $this->getUserBasic($userid);
 
         $error = 0;
         
         // We need to explicity include the Admin language file 
         // for plugins using this function (e.g. Users).
-        $hotaru->includeLanguagePack('admin');
+        $this->hotaru->includeLanguagePack('admin');
         
         // fill checks
         $checks['username_check'] = '';
@@ -811,56 +652,58 @@ class UserBase {
         $checks['password_check_new2'] = '';
         
         // Updating account info (username and email address)
-        if ($cage->post->testAlnumLines('update_type') == 'update_general') {
-            $username_check = $cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
+        if ($this->cage->post->testAlnumLines('update_type') == 'update_general') {
+            $username_check = $this->cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
             if ($username_check) {
-                $this->setName($username_check); // updates the db record
+                $this->name = $username_check; // updates the db record
             } else {
-                $hotaru->messages[$lang['admin_account_update_username_error']] = 'red';
+                $this->hotaru->messages[$this->lang['admin_account_update_username_error']] = 'red';
                 $error = 1;
             }
                                 
-            $email_check = $cage->post->testEmail('email');    
+            $email_check = $this->cage->post->testEmail('email');    
             if ($email_check) {
-                $this->setEmail($email_check);
+                $this->email = $email_check;
             } else {
-                $hotaru->messages[$lang['admin_account_update_email_error']] = 'red';
+                $this->hotaru->messages[$this->lang['admin_account_update_email_error']] = 'red';
                 $error = 1;
             }
             
-            $role_check = $cage->post->testAlnumLines('user_role');    
-                // compare with current role and update if different
-                if ($role_check != $this->getRole()) {
-                    $this->setRole($role_check);
-                    $new_perms = $this->getDefaultPermissions($role_check);
-                    $this->setAllPermissions($new_perms);
-                    $this->updatePermissions();
-                }
+            $role_check = $this->cage->post->testAlnumLines('user_role'); // from Users plugin account page
+            // compare with current role and update if different
+            if ($role_check && ($role_check != $this->role)) {
+                $this->role = $role_check;
+                $new_perms = $this->getDefaultPermissions($role_check);
+                $this->setAllPermissions($new_perms);
+                $this->updatePermissions();
+            }
         }
         
         if (!isset($username_check) && !isset($email_check)) {
-            $username_check = $this->getName();
-            $email_check = $this->getEmail();
-            $role_check = $this->getRole();
+            $username_check = $this->name;
+            $email_check = $this->email;
+            $role_check = $this->role;
             // do nothing
         } elseif ($error == 0) {
             $result = $this->userExists(0, $username_check, $email_check);
             if ($result != 4) { // 4 is returned when the user does not exist in the database
                 //success
-                $this->updateUserBasic();
+                $this->updateUserBasic($userid);
                 // only update the cookie if it's your own account:
-                if ($current_user->getId() == $this->getId()) { $this->setCookie(0); }
-                $hotaru->messages[$lang['admin_account_update_success']] = 'green';
+                if ($userid == $this->id) { 
+                    $this->setCookie(true); 
+                }
+                $this->hotaru->messages[$this->lang['admin_account_update_success']] = 'green';
             } else {
                 //fail
-                $hotaru->messages[$lang["admin_account_update_unexpected_error"]] = 'red';
+                $this->hotaru->messages[$this->lang["admin_account_update_unexpected_error"]] = 'red';
             }
         } else {
             // error must = 1 so fall through and display the form again
         }
         
         //update checks
-        $this->updatePassword();
+        $this->updatePassword($userid);
         $checks['username_check'] = $username_check;
         $checks['email_check'] = $email_check;
         $checks['role_check'] = $role_check;
@@ -873,43 +716,42 @@ class UserBase {
      *
      * @return bool
      */
-    public function updatePassword()
+    public function updatePassword($userid)
     {
-        global $hotaru, $cage, $lang, $current_user; 
         // current_user is the person looking at the page
         
         // we don't want to edit the password if this isn't our own account.
-        if ($current_user->getId() != $this->getId()) { return false; }
+        if ($userid != $this->id) { return false; }
         
         $error = 0;
         
         // Updating password
-        if ($cage->post->testAlnumLines('update_type') == 'update_password') {
-            $password_check_old = $cage->post->testPassword('password_old');    
+        if ($this->cage->post->testAlnumLines('update_type') == 'update_password') {
+            $password_check_old = $this->cage->post->testPassword('password_old');    
             
-            if ($current_user->loginCheck($current_user->getName(), $password_check_old)) {
+            if ($this->loginCheck($this->name, $password_check_old)) {
                 // safe, the old password matches the password for this user.
             } else {
-                $hotaru->messages[$lang['admin_account_update_password_error_old']] = 'red';
+                $this->hotaru->messages[$this->lang['admin_account_update_password_error_old']] = 'red';
                 $error = 1;
             }
         
-            $password_check_new = $cage->post->testPassword('password_new');    
+            $password_check_new = $this->cage->post->testPassword('password_new');    
             if ($password_check_new) {
-                $password_check_new2 = $cage->post->testPassword('password_new2');    
+                $password_check_new2 = $this->cage->post->testPassword('password_new2');    
                 if ($password_check_new2) { 
                     if ($password_check_new == $password_check_new2) {
                         // safe, the two new password fields match
                     } else {
-                        $hotaru->messages[$lang['admin_account_update_password_error_match']] = 'red';
+                        $this->hotaru->messages[$this->lang['admin_account_update_password_error_match']] = 'red';
                         $error = 1;
                     }
                 } else {
-                    $hotaru->messages[$lang['admin_account_updatee_password_error_new']] = 'red';
+                    $this->hotaru->messages[$this->lang['admin_account_updatee_password_error_new']] = 'red';
                     $error = 1;
                 }
             } else {
-                $hotaru->messages[$lang['admin_account_update_password_error_not_provided']] = 'red';
+                $this->hotaru->messages[$this->lang['admin_account_update_password_error_not_provided']] = 'red';
                 $error = 1;
             }
                         
@@ -922,16 +764,16 @@ class UserBase {
             $password_check_new2 = "";
             // do nothing
         } elseif ($error == 0) {
-            $result = $current_user->userExists(0, $current_user->userName, $current_user->email);
+            $result = $this->userExists(0, $this->userName, $this->email);
             if ($result != 4) { // 4 is returned when the user does not exist in the database
                 //success
-                //$current_user->setPassword($current_user->generateHash($password_check_new));
-                //$current_user->updateUserBasic();
-                //$current_user->setCookie(0);
-                $hotaru->messages[$lang['admin_account_update_password_success']] = 'green';
+                $this->password = $this->generateHash($password_check_new);
+                $this->updateUserBasic();
+                $this->setCookie(0);
+                $this->hotaru->messages[$this->lang['admin_account_update_password_success']] = 'green';
             } else {
                 //fail
-                $hotaru->messages[$lang["admin_account_update_unexpected_error"]] = 'red';
+                $this->hotaru->messages[$this->lang["admin_account_update_unexpected_error"]] = 'red';
             }
         } else {
             // error must = 1 so fall through and display the form again
@@ -948,8 +790,6 @@ class UserBase {
      */
     public function getDefaultPermissions($role = '') 
     {
-        global $plugins, $perms;
-        
         $perms = array();
         
         // Permission Options
@@ -967,10 +807,12 @@ class UserBase {
                 $perms['can_access_admin'] = 'no';
         }
         
-        // plugin hook:
-        $results = $plugins->pluginHook('userbase_default_permissions', true, '', array('role' => $role));
+        $this->hotaru->vars['perms'] = $perms;
         
-        return $perms;
+        // plugin hook:
+        $results = $this->plugins->pluginHook('userbase_default_permissions', true, '', array('role' => $role));
+        
+        return $this->hotaru->vars['perms'];
     }
 
     
@@ -981,10 +823,8 @@ class UserBase {
      */
     public function updatePermissions()
     {
-        global $db;
-        
         $sql = "UPDATE " . TABLE_USERS . " SET user_permissions = %s WHERE user_id = %d";
-        $db->get_var($db->prepare($sql, serialize($this->getAllPermissions()), $this->getId()));
+        $this->db->get_var($this->db->prepare($sql, serialize($this->getAllPermissions()), $this->id));
     }
     
     
@@ -995,14 +835,12 @@ class UserBase {
      */
     public function getUniqueRoles() 
     {
-        global $db;
-        
         /* This function pulls all the different user roles from the database, 
         or adds some defaults if not present.*/
 
         $unique_roles = array();
         $sql = "SELECT DISTINCT user_role FROM " . TABLE_USERS;
-        $roles = $db->get_results($db->prepare($sql));
+        $roles = $this->db->get_results($this->db->prepare($sql));
         if ($roles) {
             foreach ($roles as $role) {
                 array_push($unique_roles, $role->user_role);
@@ -1014,6 +852,7 @@ class UserBase {
         
         if ($unique_roles) { return $unique_roles; } else { return false; }
     }
+    
 }
  
 ?>

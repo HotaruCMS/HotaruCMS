@@ -43,7 +43,12 @@ class Plugin
     protected $requires     = '';         // string of plugin->version pairs
     protected $dependencies = array();    // array of plugin->version pairs
     protected $hooks        = array();    // array of plugin hooks
-    private $settings;                    // instance of PluginSettings object
+    
+    public $db;                             // database object
+    public $cage;                           // Inspekt object
+    public $hotaru;                         // Hotaru object
+    public $lang            = array();      // stores language file content
+    public $current_user;                   // UserBase object
 
      /* ******************************************************************** 
      * 
@@ -51,87 +56,46 @@ class Plugin
      
 
     /**
-     * Constructor - make a PluginAcess object
+     * Constructor - make a Plugin object
      */
-    public function __construct($folder = '')
+    public function __construct($folder = '', $hotaru)
     {
         // We don't need to fill the object with anything other than the plugin folder name at this time:
         if ($folder) { 
-            $this->setFolder($folder); 
+            $this->folder = $folder; 
         }
+
+        $this->hotaru           = $hotaru;
+        $this->db               = $hotaru->db;
+        $this->cage             = $hotaru->cage;
+        $this->lang             = &$hotaru->lang;    // reference to main lang array
+        $this->current_user     = $hotaru->current_user;
+    }
+    
+
+    /**
+     * Access modifier to set protected properties
+     */
+    public function __set($var, $val)
+    {
+        $this->$var = $val;  
     }
     
     
+    /**
+     * Access modifier to get protected properties
+     */
+    public function __get($var)
+    {
+        return $this->$var;
+    }
+
+
     /* *************************************************************
-     *                      ACCESSOR METHODS
+     *              UNIQUE ACCESS MODIFIERS
      * ********************************************************** */
      
-     
-    /**
-     * Set plugin name
-     *
-     * @param string $name
-     */    
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    /**
-     * Get plugin name
-     *
-     * @return string
-     */    
-    public function getName()
-    {
-        return $this->name;
-    }
     
-
-    /**
-     * Set plugin folder
-     *
-     * @param string $folder
-     */    
-    public function setFolder($folder)
-    {
-        $this->folder = $folder;
-    }
-
-
-    /**
-     * Get plugin folder
-     *
-     * @return string
-     */    
-    public function getFolder()
-    {
-        return $this->folder;
-    }
-    
-    
-    /**
-     * Set plugin class
-     *
-     * @param string $class
-     */    
-    public function setClass($class)
-    {
-        $this->class = $class;
-    }
-
-
-    /**
-     * Get plugin class
-     *
-     * @return string
-     */    
-    public function getClass()
-    {
-        return $this->class;
-    }
-        
-        
     /**
      * Get plugin name length
      *
@@ -153,9 +117,7 @@ class Plugin
      */
     public function hotaru_header()
     {
-        global $plugins;
-
-        $plugins->includeLanguage('', $this->getFolder());
+        $this->includeLanguage('', $this->folder);
     }
      
      
@@ -164,11 +126,9 @@ class Plugin
      */
     public function header_include()
     {
-        global $hotaru, $admin, $cage;
-        
         // include a files that match the name of the plugin folder:
-        $hotaru->includeJs('', $this->getFolder()); // filename, folder name
-        $hotaru->includeCss('', $this->getFolder());
+        $this->hotaru->includeJs('', $this->folder); // filename, folder name
+        $this->hotaru->includeCss('', $this->folder);
     }
     
     
@@ -177,9 +137,9 @@ class Plugin
      */
     public function admin_header_include()
     {
-        global $plugins, $admin, $cage;
-
-        $this->header_include();
+        // include a files that match the name of the plugin folder:
+        $this->hotaru->includeJs('', $this->folder, true); // filename, folder name, admin
+        $this->hotaru->includeCss('', $this->folder, true);
     }
     
     /**
@@ -187,9 +147,7 @@ class Plugin
      */
     public function pre_close_body()
     {
-        global $hotaru;
-        
-        $hotaru->displayTemplate($this->getFolder() . '_footer', $this->getFolder());
+        $this->hotaru->displayTemplate($this->folder . '_footer', $this->folder);
     }
     
 
@@ -198,7 +156,7 @@ class Plugin
      */
     public function admin_sidebar_plugin_settings()
     {
-        echo "<li><a href='" . url(array('page'=>'plugin_settings', 'plugin'=>$this->getFolder()), 'admin') . "'>" . make_name($this->getFolder()) . "</a></li>";
+        echo "<li><a href='" . $this->hotaru->url(array('page'=>'plugin_settings', 'plugin'=>$this->folder), 'admin') . "'>" . make_name($this->folder) . "</a></li>";
     }
     
     
@@ -212,13 +170,13 @@ class Plugin
         // This requires there to be a file in the plugin folder called pluginname_settings.php
         // The file must contain a class titled PluginNameSettings
         // The class must have a method called "settings".
-        if (file_exists(PLUGINS . $this->getFolder() . '/' . $this->getFolder() . '_settings.php')) {
-            include_once(PLUGINS . $this->getFolder() . '/' . $this->getFolder() . '_settings.php');
+        if (file_exists(PLUGINS . $this->folder . '/' . $this->folder . '_settings.php')) {
+            include_once(PLUGINS . $this->folder . '/' . $this->folder . '_settings.php');
         }
         
-        $settings_class = make_name($this->getFolder(), '') . 'Settings'; // e.g. CategoriesSettings
-        $settings_object = new $settings_class();
-        $settings_object->settings($this->getFolder());   // call the settings function
+        $settings_class = make_name($this->folder, '') . 'Settings'; // e.g. CategoriesSettings
+        $settings_object = new $settings_class($this->folder, $this->hotaru);
+        $settings_object->settings();   // call the settings function
         return true;
     }
 

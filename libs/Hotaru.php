@@ -25,103 +25,109 @@
  */
 class Hotaru
 {
+    public $db;                         // database object
+    public $cage;                       // Inspekt object
+    public $plugins;                    // Inspekt object
+    public $lang            = array();  // stores language file content
+    public $current_user;               // UserBase object
+    
     public $message         = '';       // message to display
     public $messageType     = 'green';  // green or red, color of message box
     public $messages        = array();  // for multiple messages
-
+    
     protected $isDebug      = false;    // show db queries and page loading time
     protected $sidebar      = true;     // enable or diable the sidebar
     protected $title        = '';       // for the broswer's TITLE tags
     protected $pageType     = '';       // what kind of page we're looking at
     
-    protected $cssIncludes    = array();  // a list of css files to include
-    protected $jsIncludes     = array();  // a list of js files to include
-    protected $includeType   = '';       // 'css' or 'js'
+    protected $cssIncludes          = array();  // a list of css files to include
+    protected $cssIncludesAdmin     = array();  // a list of css files to include in Admin
+    protected $jsIncludes           = array();  // a list of js files to include
+    protected $jsIncludesAdmin      = array();  // a list of js files to include in Admin
+    protected $includeType          = '';       // 'css' or 'js'
+    
+    public $vars            = array();  // multi-purpose
     
     
     /**
-     * Set hotaru sidebar status
-     *
-     * @param bool $bool
-     */    
-    public function setSidebar($bool)
+     * Build a $hotaru object containing $db and $cage
+     */
+    public function __construct($entrance = 'main')
     {
-        $this->sidebar = $bool;
+        // Initialize
+        require_once(LIBS . 'HotaruStart.php');
+        $start = new HotaruStart();
+        $this->isDebug  = $start->isDebug;
+        $this->db       = $start->db;
+        $this->cage     = $start->cage;
+        
+        switch ($entrance) {
+            case 'admin':
+                $this->includeLanguagePack('admin');
+                break;
+            case 'install':
+                $this->includeLanguagePack('install');
+                break;
+            default:
+                $this->includeLanguagePack('main');
+                break;
+        }
+        
+        $this->plugins  = new PluginFunctions('', $this);
+        
+        $this->checkCookie();   // Log in user if cookie
+        $this->hotaruHeader($entrance);  // plugin hook method
+    }
+    
+
+    /**
+     * Access modifier to set protected properties
+     */
+    public function __set($var, $val)
+    {
+        $this->$var = $val;  
     }
     
     
     /**
-     * Get hotaru sidebar status
-     *
-     * @return bool
-     */    
-    public function getSidebar()
+     * Access modifier to get protected properties
+     */
+    public function __get($var)
     {
-        return $this->sidebar;
+        return $this->$var;
     }
-    
-    
-    /**
-     * Set hotaru title
-     *
-     * @param string $title
-     */    
-    public function setTitle($title)
-    {
-        $this->title = $title;
-    }
-    
-    
-    /**
-     * Get hotaru title
-     *
-     * @return string
-     */    
-    public function getTitle()
-    {
-        return $this->title;
-    }
-    
-    
-    /**
-     * Set page type
-     *
-     * @param string $type
-     */    
-    public function setPageType($type)
-    {
-        $this->pageType = $type;
-    }
-    
-    
-    /**
-     * Get page type
-     *
-     * @return string
-     */    
-    public function getPageType()
-    {
-        return $this->pageType;
-    }
-    
+
+
+    /* *************************************************************
+     *              UNIQUE ACCESS MODIFIERS
+     * ********************************************************** */
+
     
     /**
      * setCssIncludes
      *
      * @param string $file - full path to the CSS file
      */
-    public function setCssIncludes($file)
+    public function setCssIncludes($file, $admin = false)
     {
-        array_push($this->cssIncludes, $file);
+        if ($admin) { 
+            array_push($this->cssIncludesAdmin, $file);
+        } else {
+            array_push($this->cssIncludes, $file);
+        }
     }
     
 
     /**
      * getCssIncludes
      */
-    public function getCssIncludes()
+    public function getCssIncludes($admin = false)
     {
-        return $this->cssIncludes;
+        if ($admin) {
+            return $this->cssIncludesAdmin;
+        } else {
+            return $this->cssIncludes;
+        }
     }
     
     
@@ -130,122 +136,82 @@ class Hotaru
      *
      * @param string $file - full path to the JS file
      */
-    public function setJsIncludes($file)
+    public function setJsIncludes($file, $admin = false)
     {
-        array_push($this->jsIncludes, $file);
+        if ($admin) { 
+            array_push($this->jsIncludesAdmin, $file);
+        } else {
+            array_push($this->jsIncludes, $file);
+        }
+        
     }
     
-
+    
     /**
      * getJsIncludes
      */
-    public function getJsIncludes()
+    public function getJsIncludes($admin = false)
     {
-        return $this->jsIncludes;
-    }
-    
-    
-    /**
-     * getIncludeType
-     */
-    public function getIncludeType()
-    {
-        return $this->includeType;
-    }
-    
-    
-    /**
-     * Hotaru Header constructor
-     */
-    public function __construct($entrance = 'index')
-    {
-        global $hotaru, $db, $cage, $plugins, $current_user, $lang;
-        
-        // error reporting
-        ini_set('display_errors',1);
-        ini_set('log_errors',1);
-        error_reporting(E_ALL);
-        
-        // include third party libraries
-        require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
-        require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
-        require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php'); // database
-        
-        // utilities
-        require_once(FUNCTIONS . 'funcs.urls.php');
-        require_once(FUNCTIONS . 'funcs.strings.php');
-        require_once(FUNCTIONS . 'funcs.arrays.php');
-        require_once(FUNCTIONS . 'funcs.times.php');
-        require_once(FUNCTIONS . 'funcs.files.php');
-        
-        // include libraries
-        require_once(LIBS . 'Hotaru.php');          // for environment
-        require_once(LIBS . 'HotaruInspekt.php');   // for custom Inspekt methods
-        require_once(LIBS . 'Plugin.php');          // for plugins
-        require_once(LIBS . 'PluginFunctions.php'); // for plugins
-        require_once(LIBS . 'UserBase.php');        // for users
-        
-        // Initialize database
-        if (!isset($db)) { 
-            $db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST); 
-            $db->query("SET NAMES 'utf8'");
-        }
-        
-        // Read Hotaru settings
-        $settings = $this->readSettings(); // Settings from database
-        foreach ($settings as $setting)
-        {
-            if (!defined($setting->settings_name)) { 
-                define($setting->settings_name, $setting->settings_value);
-            }
-        }
-        
-        // Setup database cache
-        $db->cache_timeout = DB_CACHE_DURATION; // Note: this is hours
-        $db->cache_dir = CACHE . 'db_cache';
-        if (DB_CACHE_ON == "true") {
-            $db->use_disk_cache = true;
+        if ($admin) {
+            return $this->jsIncludesAdmin;
         } else {
-            $db->use_disk_cache = false;
-        }   
-        // Note: Queries are still only cached following $db->cache_queries = true;
-        
-        // Start timer if debugging
-        if (DEBUG == "true") {
-            $this->isDebug = true;
-            timer_start();
+            return $this->jsIncludes;
         }
-        
-        // Initialize Inspekt
-        $this->initializeInspekt();
-                
-        // Create objects
-        $plugins = new PluginFunctions(); 
-        $current_user = new UserBase();
+    }
+    
+    
+    /* *************************************************************
+     *              REGULAR METHODS
+     * ********************************************************** */
+     
+
+    /**
+     * check cookie and log in
+     *
+     * @return bool
+     */
+    public function checkCookie()
+    {
+        $this->current_user = new UserBase($this);
         
         // Check for a cookie. If present then the user is logged in.
-        $hotaru_user = $cage->cookie->testUsername('hotaru_user');
-        if (($hotaru_user) && ($cage->cookie->keyExists('hotaru_key'))) {
+        $hotaru_user = $this->cage->cookie->testUsername('hotaru_user');
         
-            $user_info=explode(":", base64_decode($cage->cookie->getRaw('hotaru_key')));
-            
-            if (    ($hotaru_user == $user_info[0]) 
-                &&  (crypt($user_info[0], 22) == $user_info[1])
-            ) {
-                $current_user->setName($hotaru_user);
-                $current_user->getUserBasic(0, $current_user->getName());
-                $current_user->setLoggedIn(true);
-            }
+        if((!$hotaru_user) || (!$this->cage->cookie->keyExists('hotaru_key'))) { return false; }
+        
+        $user_info=explode(":", base64_decode($this->cage->cookie->getRaw('hotaru_key')));
+        
+        if (($hotaru_user != $user_info[0]) || (crypt($user_info[0], 22) != $user_info[1])) { return false; }
+
+        $this->current_user->name = $hotaru_user;
+        $this->current_user->getUserBasic(0, $this->current_user->name);
+        $this->current_user->loggedIn = true;
+        
+        return true;
+    }
+    
+    
+    /**
+     * check cookie and log in
+     *
+     * @return bool
+     */
+    public function hotaruHeader($entrance = 'main')
+    {
+        if($entrance == 'admin') { $admin = true; } else { $admin = false; } // necessary for including css/js files
+        
+        // Include combined css and js files
+        if ($this->cage->get->keyExists('combine')) {
+            $type = $this->cage->get->testAlpha('type');
+            $version = $this->cage->get->testInt('version');
+            $this->combineIncludes($type, $version, $admin);
         }
         
-        $hotaru = $this;    // $hotaru won't exist until this constructor is finished, 
-                            // but plugins using this hook can't wait that long!
-                            
         // Enable plugins to define global settings, etc. 
-        $results = $plugins->pluginHook('hotaru_header');
+        $results = $this->plugins->pluginHook('hotaru_header');
         
         /*  The following extracts the results of pluginHook which is 
-            handy for making objects from plugins global */
+            handy for making global objects with plugins */
         if (isset($results) && is_array($results)) 
         {
             foreach ($results as $key => $value) {
@@ -253,62 +219,11 @@ class Hotaru
             } 
         }
         
-        if ($entrance == 'admin') {
-            $this->includeLanguagePack('admin');
-        } elseif ($entrance == 'install') {
-            $this->includeLanguagePack('install');      
-        } elseif ($entrance == 'no_template') {
-            return true;
-        } else {
-            $this->includeLanguagePack('main');
-            // Include combined css and js files
-            if ($cage->get->keyExists('combine')) {
-                $type = $cage->get->testAlpha('type');
-                $version = $cage->get->testInt('version');
-                $this->combineIncludes($type, $version);
-            }
+        if (!$entrance || $entrance == 'main') {
             $this->displayTemplate('index');
         }
     }
-    
 
-    /**
-     * Initialize Inspekt
-     *
-     * @return object
-     */
-    public function initializeInspekt()
-    {
-        global $cage;
-        // Global Inspekt SuperCage
-        if (!isset($cage)) { 
-            $cage = Inspekt::makeSuperCage(); 
-        
-            // Add Hotaru custom methods
-            $cage->addAccessor('testAlnumLines');
-            $cage->addAccessor('testPage');
-            $cage->addAccessor('testUsername');
-            $cage->addAccessor('testPassword');
-            $cage->addAccessor('getFriendlyUrl');
-            $cage->addAccessor('getMixedString1');
-            $cage->addAccessor('getMixedString2');
-            $cage->addAccessor('getHtmLawed');
-        }
-    }
-    
-    
-    /**
-     * Returns all site settings
-     */
-    public function readSettings()
-    {
-        global $db;
-        
-        $sql = "SELECT * FROM " . TABLE_SETTINGS;
-        $results = $db->get_results($db->prepare($sql));
-        if ($results) { return $results; } else { return false; }
-    }
-    
     
     /**
      * Include main or admin language pack
@@ -317,8 +232,6 @@ class Hotaru
      */
     public function includeLanguagePack($pack = 'main')
     {
-        global $lang;
-               
         if ($pack == 'install') {
             include_once(INSTALL . 'install_language.php');    // language file for install
         } 
@@ -330,7 +243,14 @@ class Hotaru
         else 
         {
            // try the default language pack
-            require_once(LANGUAGES . 'language_default/' . $pack . '_language.php'); 
+            include_once(LANGUAGES . 'language_default/' . $pack . '_language.php'); 
+        }
+        
+        // Add new language to our lang property
+        if ($lang) {
+            foreach($lang as $l => $text) {
+                $this->lang[$l] = $text;
+            }
         }
     }
     
@@ -343,18 +263,16 @@ class Hotaru
      */
     public function isPage($page = '')
     {
-        global $cage;
-        
-        $real_page = $cage->get->testPage('page');
+        $real_page = $this->cage->get->testPage('page');
         
         if (!$real_page) { 
             /*  Possibly a post with multi-byte characters? 
                 Try getMixedString2... */
-            $real_page = $cage->get->getMixedString2('page');
+            $real_page = $this->cage->get->getMixedString2('page');
         }
         
         // Try POST...
-        if (!$real_page) { $real_page = $cage->post->testPage('page'); }
+        if (!$real_page) { $real_page = $this->cage->post->testPage('page'); }
         
         if (!$real_page) { $real_page = "main"; }
 
@@ -369,18 +287,16 @@ class Hotaru
      */
     public function getPageName()
     {
-        global $cage;
-        
         // Try GET...
-        $page = $cage->get->testPage('page');
+        $page = $this->cage->get->testPage('page');
         if (!$page) {
             /*  Possibly a post with multi-byte characters? 
                 Try getMixedString2... */
-            $page = $cage->get->getMixedString2('page');
+            $page = $this->cage->get->getMixedString2('page');
         }
         
         // Try POST...
-        if (!$page) { $page = $cage->post->testPage('page'); }
+        if (!$page) { $page = $this->cage->post->testPage('page'); }
 
         if ($page) {
             $page = rtrim($page, '/');
@@ -428,13 +344,23 @@ class Hotaru
      * Includes a template to display
      *
      * @param string $page page name
+     * @param array $hotaru - usually the $hotaru object
      * @param string $plugin optional plugin name
      * @param bool $include_once true or false
      */
-    public function displayTemplate($page = '', $plugin = '', $include_once = true)
+    public function displayTemplate($page = '', $hotaru = NULL, $plugin = '', $include_once = true)
     {
+        // Note: This $hotaru isn't necessarily the whole object, some plugins might pass
+        // $db or $lang into this parameter instead. Therefore, we need the $hotaru parameter.
+        
+        // if no $hotaru, provide it:
+        if (!isset($hotaru) || !is_object($hotaru)) { $hotaru = $this; }
+        
+        // if no plugin folder, provide it:
+        if (!$plugin) { $plugin = $this->plugins->folder; }
+        
         $page = $page . '.php';
-                
+
         /* 
             1. Check the custom theme
             2. Check the default theme
@@ -473,15 +399,13 @@ class Hotaru
      */
     public function checkAnnouncements() 
     {
-        global $lang, $plugins;
-        
         $announcements = array();
-
+        
         // 1. "All plugins are currently disabled."
-        if (!$plugins->numActivePlugins()) {
+        if (!$this->plugins->numActivePlugins()) {
             array_push(
                 $announcements, 
-                $lang['main_announcement_plugins_disabled']
+                $this->lang['main_announcement_plugins_disabled']
             );
         }
 
@@ -531,10 +455,9 @@ class Hotaru
      
     public function showQueriesAndTime()
     {
-        global $db;
         if ($this->isDebug) { 
-            echo "<p class='debug'>" . $db->num_queries . " " . $lang['main_hotaru_queries_time'] . " " . timer_stop(1) . " " . 
-            $lang['main_hotaru_seconds'] . "</p>"; 
+            echo "<p class='debug'>" . $this->db->num_queries . " " . $this->lang['main_hotaru_queries_time'] . " " . timer_stop(1) . " " . 
+            $this->lang['main_hotaru_seconds'] . "</p>"; 
         }
     }
     
@@ -547,12 +470,12 @@ class Hotaru
      * 
      *  Usage:
      *    Longhand:
-     *         $hotaru->message = "This is a message";
-     *        $hotaru->messageType = "green";
-     *        $hotaru->showMessage();
+     *        $this->hotaru->message = "This is a message";
+     *        $this->hotaru->messageType = "green";
+     *        $this->hotaru->showMessage();
      *        
      *    Shorthand:
-     *        $hotaru->showMessage("This is a message", "green");
+     *        $this->hotaru->showMessage("This is a message", "green");
      */
     public function showMessage($msg = '', $msg_type = 'green')
     {
@@ -569,8 +492,8 @@ class Hotaru
      * Displays ALL success or failure messages
      *
      *  Usage:
-     *        $hotaru->messages['This is a message'] = "green";
-     *        $hotaru->showMessages();
+     *        $this->hotaru->messages['This is a message'] = "green";
+     *        $this->hotaru->showMessages();
      */
     public function showMessages()
     {
@@ -589,19 +512,15 @@ class Hotaru
      * @param $folder - the folder name of the plugin
      * @param $filename - optional css file without an extension
      */
-     public function includeCss($filename = '', $folder = '')
+     public function includeCss($filename = '', $folder = '', $admin = false)
      {
-        global $plugins;
-        
-        if (!$folder) { $folder = $plugins->getFolder(); }
-
         // If no filename provided, the filename is assigned the plugin name.
         if (!$filename) { $filename = $folder; }
 
         $file_location = $this->findCssFile($filename, $folder);
         
         // Add this css file to the global array of css_files
-        $this->setCssIncludes($file_location);
+        $this->setCssIncludes($file_location, $admin);
         
         return $folder; // returned for testing purposes only
      }
@@ -613,19 +532,15 @@ class Hotaru
      * @param $plugin - the folder name of the plugin
      * @param $filename - optional js file without an extension
      */
-     public function includeJs($filename = '', $folder = '')
+     public function includeJs($filename = '', $folder = '', $admin = false)
      {
-        global $plugins;
-        
-        if (!$folder) { $folder = $plugins->getFolder(); }
-        
         // If no filename provided, the filename is assigned the plugin name.
         if (!$filename) { $filename = $folder; }
         
         $file_location = $this->findJsFile($filename, $folder);
         
         // Add this css file to the global array of css_files
-        $this->setJsIncludes($file_location);
+        $this->setJsIncludes($file_location, $admin);
         
         return $folder; // returned for testing purposes only
      }
@@ -642,10 +557,6 @@ class Hotaru
      */    
     public function findCssFile($filename = '', $folder = '')
     {
-        global $lang, $plugins;
-        
-        if (!$folder) { $folder = $plugins->getFolder(); }
-        
         if ($folder) {
 
             // If filename not given, make the plugin name the file name
@@ -681,10 +592,6 @@ class Hotaru
      */    
     public function findJsFile($filename = '', $folder = '')
     {
-        global $lang, $plugins;
-        
-        if (!$folder) { $folder = $plugins->getFolder(); }
-        
         if ($folder) {
 
             // If filename not given, make the plugin name the file name
@@ -717,15 +624,13 @@ class Hotaru
      * @return int version number or echo output to cache file
      * @link http://www.ejeliot.com/blog/72 Based on work by Ed Eliot
      */
-     public function combineIncludes($type = 'css', $version = 0)
+     public function combineIncludes($type = 'css', $version = 0, $admin = false)
      {
-        global $cage, $plugins;
-        
-        if ($this->pageType == 'admin') {
-            $plugins->pluginHook('admin_header_include');
+        if ($admin) {
+            $this->plugins->pluginHook('admin_header_include');
             $prefix = 'hotaru_admin_';
         } else {
-            $plugins->pluginHook('header_include');
+            $this->plugins->pluginHook('header_include');
             $prefix = 'hotaru_';
         }
 
@@ -734,15 +639,17 @@ class Hotaru
         
         if($type == 'css') { 
             $content_type = 'text/css';
-            $includes = $this->getCssIncludes();
+            $includes = $this->getCssIncludes($admin);
         } else { 
             $type = 'js'; 
             $content_type = 'text/javascript';
-            $includes = $this->getJsIncludes();
+            $includes = $this->getJsIncludes($admin);
         }
-
+        
+        $includes = array_unique($includes);    // remove duplicate includes
+        
         if(empty($includes)) { return false; }
-
+        
          /*
             if version parameter is present then the script is being called directly, otherwise we're including it in 
             another script with require or include. If calling directly we return code othewise we return the etag 
@@ -758,18 +665,18 @@ class Hotaru
             
             // see if the user has an updated copy in browser cache
             if (
-                ($cage->server->keyExists('HTTP_IF_MODIFIED_SINCE') && $cage->server->testDate('HTTP_IF_MODIFIED_SINCE') == $sLastModified) ||
-                ($cage->server->keyExists('HTTP_IF_NONE_MATCH') && $cage->server->testint('HTTP_IF_NONE_MATCH') == $iETag)
+                ($this->cage->server->keyExists('HTTP_IF_MODIFIED_SINCE') && $this->cage->server->testDate('HTTP_IF_MODIFIED_SINCE') == $sLastModified) ||
+                ($this->cage->server->keyExists('HTTP_IF_NONE_MATCH') && $this->cage->server->testint('HTTP_IF_NONE_MATCH') == $iETag)
             ) {
-                header("{$cage->server->getRaw('SERVER_PROTOCOL')} 304 Not Modified");
+                header("{$this->cage->server->getRaw('SERVER_PROTOCOL')} 304 Not Modified");
                 exit;
             }
-        
+            
             // create a directory for storing current and archive versions
             if (!is_dir($cache)) {
                 mkdir($cache);
             }
-               
+        
             // get code from archive folder if it exists, otherwise grab latest files, merge and save in archive folder
             if ((CSS_JS_CACHE_ON == "true") && file_exists($cache . $prefix . $type . '_' . $iETag . '.cache')) {
                 $sCode = file_get_contents($cache . $prefix . $type . '_' . $iETag . '.cache');
@@ -782,9 +689,10 @@ class Hotaru
                     $aLastModifieds[] = filemtime($sFile);
                     $sCode .= file_get_contents($sFile);
                 }
+
                 // sort dates, newest first
                 rsort($aLastModifieds);
-             
+                
                 if ($iETag == $aLastModifieds[0]) { // check for valid etag, we don't want invalid requests to fill up archive folder
                     $oFile = fopen($cache . $prefix . $type . '_' . $iETag . '.cache', 'w');
                     if (flock($oFile, LOCK_EX)) {
@@ -794,7 +702,7 @@ class Hotaru
                     fclose($oFile);
                 } else {
                     // archive file no longer exists or invalid etag specified
-                    header("{$cage->server->getRaw('SERVER_PROTOCOL')} 404 Not Found");
+                    header("{$this->cage->server->getRaw('SERVER_PROTOCOL')} 404 Not Found");
                     exit;
                 }
         
@@ -810,6 +718,7 @@ class Hotaru
         
           // output merged code
           echo $sCode;
+          exit; // we don't want to drop out and continue building Hotaru or Admin objects when we're just including a file!
           
         } else {
         
@@ -836,23 +745,94 @@ class Hotaru
      * @param string $page e.g. admin_settings 
      * @param string $plugin e.g. category_manager
      */
-     public function includeCombined($version_js = 0, $version_css = 0, $page = '', $folder = '')
+     public function includeCombined($version_js = 0, $version_css = 0, $admin = false)
      {
-        if ($this->pageType == 'admin') { $index = 'admin_index'; } else { $index = 'index'; }
-        if ($page && $folder) { 
-            $page = 'page=' . $page; 
-            $folder = 'plugin=' . $folder . "&";
-        }
+        if ($admin) { $index = 'admin_index'; } else { $index = 'index'; }
         
         if ($version_js > 0) {
-            echo "<script type='text/javascript' src='" . BASEURL . $index . ".php?" . $page . "&" . $folder . "combine=1&type=js&version=" . $version_js . "'></script>\n";
+            echo "<script type='text/javascript' src='" . BASEURL . $index . ".php?combine=1&type=js&version=" . $version_js . "'></script>\n";
         }
         
         if ($version_css > 0) {
-            echo "<link rel='stylesheet' href='" . BASEURL . $index . ".php?" . $page . "&" . $folder . "combine=1&type=css&version=" . $version_css . "' type='text/css'>\n";
+            echo "<link rel='stylesheet' href='" . BASEURL . $index . ".php?combine=1&type=css&version=" . $version_css . "' type='text/css'>\n";
         }
 
      }
-     
+
+
+    /**
+     * Generate either default or friendly urls
+     *
+     * @param array $parameters an array of pairs, e.g. 'page' => 'about' 
+     * @param string $head either 'index' or 'admin'
+     * @return string
+     */
+    function url($parameters = array(), $head = 'index')
+    {
+        if (FRIENDLY_URLS == "false") {
+        
+            if ($head == 'index') {
+                $url = BASEURL . 'index.php?';
+            } elseif ($head == 'admin') {
+                $url = BASEURL . 'admin_index.php?';    
+            } else {
+                // Error. $head must be index or admin
+            }
+            
+            if (empty($parameters)) { 
+                $url = rtrim($url, '?'); 
+                return $url; 
+            } 
+    
+            foreach ($parameters as $key => $value) {
+                $url .= $key . '=' . $value . '&amp;';
+            }
+            return rstrtrim($url, '&amp;');    
+            
+        } 
+        
+        if (FRIENDLY_URLS == "true") {
+        
+            if ($head == 'index') { 
+                $url = BASEURL;
+            } elseif ($head == 'admin') {
+                $url = BASEURL . 'admin/';    
+            } else {
+                $url = BASEURL . $head . '/';
+            }
+            
+            foreach ($parameters as $key => $value) {
+            
+                if ($key == 'page' && is_numeric($value) ) {
+                
+                    // must be a post title, let's get the post_url...
+                    $value = $this->post->url;
+                    
+                    // if we're using categories and the category is not "all"...
+                    if (isset($this->post->vars['useCategories']) && $this->post->vars['category'] != 1) {
+                        $url .= $this->post->vars['catSafeName'] . '/';
+                    }
+                    
+                    $url .= $value . '/';
+                    
+                } elseif ($key == 'category' && is_numeric($value) ) {
+                    
+                    require_once(PLUGINS . 'categories/libs/Category.php');
+                    $cat = new Category($this->db);
+                    $url .= $key . '/' . $cat->getCatSafeName($value) . '/';
+                        
+                } elseif ($key == 'page') {
+                
+                    // don't show "page" in the url, only the value
+                    $url .= $value . '/';    
+                                    
+                } else {
+                    $url .= $key . '/' . $value . '/';
+                }
+            }
+            return $url;
+        }
+        
+    }
 }
 ?>

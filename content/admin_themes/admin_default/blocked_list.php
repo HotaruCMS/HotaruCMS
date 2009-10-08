@@ -25,38 +25,35 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-
-global $hotaru, $lang, $admin, $pagedResults; // don't remove
+$bl_array = $admin->buildBlockedList();
+extract($bl_array); // extracts $output and $pagedResults;
 ?>
 
 <p class="breadcrumbs">
     <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
-    &raquo; <a href="<?php echo url(array(), 'admin'); ?>"><?php echo $lang["admin_theme_main_admin_cp"]; ?></a> 
-    &raquo; <?php echo $lang["admin_theme_blocked_list"]; ?>
+    &raquo; <a href="<?php echo $admin->hotaru->url(array(), 'admin'); ?>"><?php echo $admin->lang["admin_theme_main_admin_cp"]; ?></a> 
+    &raquo; <?php echo $admin->lang["admin_theme_blocked_list"]; ?>
 </p>
 
 <!-- TITLE FOR ADMIN NEWS -->
-<h2><?php echo $lang["admin_theme_blocked_list"]; ?></h2>
+<h2><?php echo $admin->lang["admin_theme_blocked_list"]; ?></h2>
 
-<?php echo $lang["admin_theme_blocked_desc"]; ?>
+<?php echo $admin->lang["admin_theme_blocked_desc"]; ?>
 
-<?php 
-    $blocked_items = $admin->blockedList();
-    echo $hotaru->showMessage();
-?>
+<?php echo $admin->hotaru->showMessage(); ?>
 
 <form name='blocked_list_new_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>
-    <h3><?php echo $lang["admin_theme_blocked_new"]; ?></h3>
+    <h3><?php echo $admin->lang["admin_theme_blocked_new"]; ?></h3>
     <table>
         <tr class='table_headers'>
             <td><select name='blocked_type'>
-                <option value='ip'><?php echo $lang["admin_theme_blocked_ip"]; ?></option>
-                <option value='url'><?php echo $lang["admin_theme_blocked_url"]; ?></option>
-                <option value='email'><?php echo $lang["admin_theme_blocked_email"]; ?></option>
-                <option value='user'><?php echo $lang["admin_theme_blocked_username"]; ?></option>
+                <option value='ip'><?php echo $admin->lang["admin_theme_blocked_ip"]; ?></option>
+                <option value='url'><?php echo $admin->lang["admin_theme_blocked_url"]; ?></option>
+                <option value='email'><?php echo $admin->lang["admin_theme_blocked_email"]; ?></option>
+                <option value='user'><?php echo $admin->lang["admin_theme_blocked_username"]; ?></option>
             </select></td>
             <td><input type='text' size=30 name='value' value='' /></td>
-            <td><input class='submit' type='submit' value='<?php echo $lang['admin_theme_blocked_submit_add']; ?>' /></td>
+            <td><input class='submit' type='submit' value='<?php echo $admin->lang['admin_theme_blocked_submit_add']; ?>' /></td>
         </tr>
     </table>
     <input type='hidden' name='page' value='blocked_list' />
@@ -66,11 +63,11 @@ global $hotaru, $lang, $admin, $pagedResults; // don't remove
 <table><tr><td>
 
 <form name='blocked_list_search_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>
-    <h3><?php echo $lang["admin_theme_blocked_search"]; ?></h3>
+    <h3><?php echo $admin->lang["admin_theme_blocked_search"]; ?></h3>
     <table>
         <tr class='table_headers'>
             <td><input type='text' size=30 name='search_value' value='' /></td>
-            <td><input class='submit' type='submit' value='<?php echo $lang['admin_theme_blocked_submit_search']; ?>' /></td>
+            <td><input class='submit' type='submit' value='<?php echo $admin->lang['admin_theme_blocked_submit_search']; ?>' /></td>
         </tr>
     </table>
     <input type='hidden' name='page' value='blocked_list' />
@@ -80,17 +77,17 @@ global $hotaru, $lang, $admin, $pagedResults; // don't remove
 </td><td>
 
 <form name='blocked_list_filter_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>
-    <h3><?php echo $lang["admin_theme_blocked_filter"]; ?></h3>
+    <h3><?php echo $admin->lang["admin_theme_blocked_filter"]; ?></h3>
     <table>
         <tr class='table_headers'>
             <td><select name='blocked_type'>
-                <option value='all'><?php echo $lang["admin_theme_blocked_all"]; ?></option>
-                <option value='ip'><?php echo $lang["admin_theme_blocked_ip"]; ?></option>
-                <option value='url'><?php echo $lang["admin_theme_blocked_url"]; ?></option>
-                <option value='email'><?php echo $lang["admin_theme_blocked_email"]; ?></option>
-                <option value='user'><?php echo $lang["admin_theme_blocked_username"]; ?></option>
+                <option value='all'><?php echo $admin->lang["admin_theme_blocked_all"]; ?></option>
+                <option value='ip'><?php echo $admin->lang["admin_theme_blocked_ip"]; ?></option>
+                <option value='url'><?php echo $admin->lang["admin_theme_blocked_url"]; ?></option>
+                <option value='email'><?php echo $admin->lang["admin_theme_blocked_email"]; ?></option>
+                <option value='user'><?php echo $admin->lang["admin_theme_blocked_username"]; ?></option>
             </select></td>
-            <td><input class='submit' type='submit' value='<?php echo $lang['admin_theme_blocked_submit_filter']; ?>' /></td>
+            <td><input class='submit' type='submit' value='<?php echo $admin->lang['admin_theme_blocked_submit_filter']; ?>' /></td>
         </tr>
     </table>
     <input type='hidden' name='page' value='blocked_list' />
@@ -102,10 +99,10 @@ global $hotaru, $lang, $admin, $pagedResults; // don't remove
 <div id="table_list">
     <table>
     <tr class='table_headers'>
-        <td><?php echo $lang["admin_theme_blocked_type"]; ?></td>
-        <td><?php echo $lang["admin_theme_blocked_value"]; ?></td>
-        <td><?php echo $lang["admin_theme_blocked_edit"]; ?></td>
-        <td><?php echo $lang["admin_theme_blocked_remove"]; ?></td>
+        <td><?php echo $admin->lang["admin_theme_blocked_type"]; ?></td>
+        <td><?php echo $admin->lang["admin_theme_blocked_value"]; ?></td>
+        <td><?php echo $admin->lang["admin_theme_blocked_edit"]; ?></td>
+        <td><?php echo $admin->lang["admin_theme_blocked_remove"]; ?></td>
     </tr>
             <?php echo $blocked_items; ?>
     </table>

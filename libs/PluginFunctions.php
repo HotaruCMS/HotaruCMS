@@ -12,7 +12,6 @@ class PluginFunctions extends Plugin
      */
     public function getPlugins()
     {
-        global $db, $lang;
         $plugins_array = $this->getPluginsMeta();
         $count = 0;
         $allplugins = array();
@@ -22,7 +21,7 @@ class PluginFunctions extends Plugin
             
                 $allplugins[$count] = array();
                 $sql = "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
-                $plugin_row = $db->get_row($db->prepare($sql, $plugin_details['folder']));
+                $plugin_row = $this->db->get_row($this->db->prepare($sql, $plugin_details['folder']));
                 
                 if ($plugin_row) 
                 {
@@ -80,7 +79,7 @@ class PluginFunctions extends Plugin
                 if (isset($plugin_details['requires']) && $plugin_details['requires']) {
                     $this->requires = $plugin_details['requires'];
                     $this->requiresToDependencies();
-
+                    
                     // Converts plugin folder names to well formatted names...
                     foreach ($this->dependencies as $this_plugin => $version)
                     {
@@ -149,8 +148,6 @@ class PluginFunctions extends Plugin
         $hook = '', $perform = true, $folder = '', $parameters = array(), $exclude = array()
     )
     {
-        global $hotaru, $db, $cage, $current_user;
-
         if ($hook == '') {
             //echo "Error: Plugin hook name not provided.";
         } else {
@@ -160,13 +157,13 @@ class PluginFunctions extends Plugin
                 $where .= "AND (" . TABLE_PLUGINS . ".plugin_folder = %s)";
             }
 
-            $db->cache_queries = true;    // start using cache
+            $this->db->cache_queries = true;    // start using cache
 
             $sql = "SELECT " . TABLE_PLUGINS . ".plugin_enabled, " . TABLE_PLUGINS . ".plugin_folder, " . TABLE_PLUGINS . ".plugin_class, " . TABLE_PLUGINS . ".plugin_prefix, " . TABLE_PLUGINHOOKS . ".plugin_hook  FROM " . TABLE_PLUGINHOOKS . ", " . TABLE_PLUGINS . " WHERE (" . TABLE_PLUGINHOOKS . ".plugin_hook = %s) AND (" . TABLE_PLUGINS . ".plugin_folder = " . TABLE_PLUGINHOOKS . ".plugin_folder) " . $where . "ORDER BY " . TABLE_PLUGINHOOKS . ".phook_id";
 
-            $plugins = $db->get_results($db->prepare($sql, $hook, $folder));
+            $plugins = $this->db->get_results($this->db->prepare($sql, $hook, $folder));
 
-            $db->cache_queries = false;    // stop using cache
+            $this->db->cache_queries = false;    // stop using cache
 
             $action_found = false;
             if ($plugins)
@@ -195,7 +192,8 @@ class PluginFunctions extends Plugin
                                 }
                                 elseif($plugin->plugin_class)
                                 {
-                                    $this_plugin = new $plugin->plugin_class($plugin->plugin_folder);
+                                    $this_plugin = new $plugin->plugin_class($plugin->plugin_folder, $this->hotaru);
+                                    $this->folder = $plugin->plugin_folder; // give Plugin the folder name (used in displayTemplate, etc.)
                                     $result = $this_plugin->$hook($parameters);
                                     if ($result) {
                                         $return_array[$hook] = $result;
@@ -203,6 +201,7 @@ class PluginFunctions extends Plugin
                                 }
                             }
                             $action_found = true;
+
                         } else {
                             //echo "Error: Plugin file not found.";
                         }
@@ -248,7 +247,11 @@ class PluginFunctions extends Plugin
      */
     public function requiresToDependencies()
     {
-        unset($this->dependencies);
+        // unset each key from previous time here
+        foreach ($this->dependencies as $k => $v) {
+            unset($this->dependencies[$k]);
+        }
+        
         foreach (explode(',', $this->requires) as $pair) 
         {
             list($k,$v) = explode (' ', trim($pair));
@@ -265,9 +268,8 @@ class PluginFunctions extends Plugin
      */
     public function activePlugins($select = 'plugin_folder')
     {
-        global $db;
         $sql = "SELECT " . $select . " FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d";
-        $active_plugins = $db->get_results($db->prepare($sql, $select, 1));
+        $active_plugins = $this->db->get_results($this->db->prepare($sql, $select, 1));
         if ($active_plugins) { return $active_plugins; } else {return false; }
     }
 
@@ -279,10 +281,8 @@ class PluginFunctions extends Plugin
      */
     public function HookExists($hook = '')
     {
-        global $db;
-        
         $sql = "SELECT plugin_hook FROM " . TABLE_PLUGINHOOKS . " WHERE (plugin_folder = %s) AND (plugin_hook = %s)";
-        $returned_hook = $db->get_var($db->prepare($sql, $this->folder, $hook));
+        $returned_hook = $this->db->get_var($this->db->prepare($sql, $this->folder, $hook));
         if ($returned_hook) { return $returned_hook; } else { return false; }
     }
     
@@ -292,23 +292,21 @@ class PluginFunctions extends Plugin
      */
     public function refreshPluginOrder()
     {    
-        global $db;
-        
         $sql = "SELECT * FROM " . TABLE_PLUGINS . " ORDER BY plugin_order ASC";
-        $rows = $db->get_results($db->prepare($sql));
+        $rows = $this->db->get_results($this->db->prepare($sql));
         
         if ($rows) { 
             $i = 1;
             foreach ($rows as $row) 
             {
                 $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_id = %d";
-                $db->query($db->prepare($sql, $i, $row->plugin_id));
+                $this->db->query($this->db->prepare($sql, $i, $row->plugin_id));
                 $i++; 
             }
         }
         
         // optimize the table
-        $db->query("OPTIMIZE TABLE " . TABLE_PLUGINS);
+        $this->db->query("OPTIMIZE TABLE " . TABLE_PLUGINS);
         
         return true;
     }
@@ -319,23 +317,21 @@ class PluginFunctions extends Plugin
      */
     public function sortPluginHooks()
     {    
-        global $db, $current_user;
-        
         $sql = "SELECT p.plugin_folder, p.plugin_order, p.plugin_id, h.* FROM " . TABLE_PLUGINHOOKS . " h, " . TABLE_PLUGINS . " p WHERE p.plugin_folder = h.plugin_folder ORDER BY p.plugin_order ASC";
-        $rows = $db->get_results($db->prepare($sql));
+        $rows = $this->db->get_results($this->db->prepare($sql));
 
         // Drop and recreate the pluginhooks table, i.e. empty it.
-        $db->query($db->prepare("TRUNCATE TABLE " . TABLE_PLUGINHOOKS));
+        $this->db->query($this->db->prepare("TRUNCATE TABLE " . TABLE_PLUGINHOOKS));
             
         // Add plugin hooks back into the hooks table
         foreach ($rows  as $row)
         {
             $sql = "INSERT INTO " . TABLE_PLUGINHOOKS . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
-            $db->query($db->prepare($sql, $row->plugin_folder, $row->plugin_hook, $current_user->id));
+            $this->db->query($this->db->prepare($sql, $row->plugin_folder, $row->plugin_hook, $this->current_user->id));
         }
         
         // optimize the table
-        $db->query("OPTIMIZE TABLE " . TABLE_PLUGINHOOKS);
+        $this->db->query("OPTIMIZE TABLE " . TABLE_PLUGINHOOKS);
         
     }
     
@@ -347,8 +343,7 @@ class PluginFunctions extends Plugin
      */
     public function numActivePlugins()
     {
-        global $db;
-        $enabled = $db->get_var($db->prepare("SELECT count(*) FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d", 1));
+        $enabled = $this->db->get_var($this->db->prepare("SELECT count(*) FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d", 1));
         if ($enabled > 0) { return $enabled; } else { return false; }
     }
     
@@ -417,12 +412,10 @@ class PluginFunctions extends Plugin
      */
     public function getPluginStatus($folder = '')
     {
-        global $db;
-        
         if (!$folder) { $folder = $this->folder; } 
         
         $sql = "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
-        $plugin_row = $db->get_row($db->prepare($sql, $folder));
+        $plugin_row = $this->db->get_row($this->db->prepare($sql, $folder));
         
         if ($plugin_row && $plugin_row->plugin_enabled == 1) {
             $status = "active";
@@ -443,12 +436,10 @@ class PluginFunctions extends Plugin
      */
     public function isHook($hook = "", $folder = "")
     {
-        global $db;
-        
         if (!$folder) { $folder = $this->folder; }
         
         $sql = "SELECT count(*) FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_folder = %s AND plugin_hook = %s";
-        if ($db->get_var($db->prepare($sql, $folder, $hook))) { return true;} else { return false; }
+        if ($this->db->get_var($this->db->prepare($sql, $folder, $hook))) { return true;} else { return false; }
     }
     
     
@@ -459,7 +450,7 @@ class PluginFunctions extends Plugin
      */
     public function install($upgrade = 0)
     {
-        global $db, $lang, $hotaru, $current_user, $admin;
+        $admin = $this->getAdminFunctions();
         
         // Clear the database cache to ensure stored plugins and hooks 
         // are up-to-date.
@@ -489,23 +480,23 @@ class PluginFunctions extends Plugin
                     if (($this->getPluginStatus($dependency) == 'inactive') 
                         || version_compare($version, $this->getVersion($dependency), '>')) {
                         $dependency = make_name($dependency);
-                        $hotaru->messages[$lang["admin_plugins_install_sorry"] . " " . $this->name . " " . $lang["admin_plugins_install_requires"] . " " . $dependency . " " . $version] = 'red';
+                        $this->hotaru->messages[$this->lang["admin_plugins_install_sorry"] . " " . $this->name . " " . $this->lang["admin_plugins_install_requires"] . " " . $dependency . " " . $version] = 'red';
                     }
             }
             return false;
         }
                     
         $sql = "REPLACE INTO " . TABLE_PLUGINS . " (plugin_enabled, plugin_name, plugin_prefix, plugin_folder, plugin_class, plugin_desc, plugin_requires, plugin_version, plugin_updateby) VALUES (%d, %s, %s, %s, %s, %s, %s, %s, %d)";
-        $db->query($db->prepare($sql, $this->enabled, $this->name, $this->prefix, $this->folder, $this->class, $this->desc, $this->requires, $this->version, $current_user->getId()));
+        $this->db->query($this->db->prepare($sql, $this->enabled, $this->name, $this->prefix, $this->folder, $this->class, $this->desc, $this->requires, $this->version, $this->current_user->id));
 
         // Get the last order number - doing this after REPLACE INTO because 
         // we don't know whether the above will insert or replace.
         $sql = "SELECT plugin_order FROM " . TABLE_PLUGINS . " ORDER BY plugin_order DESC LIMIT 1";
-        $highest_order = $db->get_var($db->prepare($sql));
+        $highest_order = $this->db->get_var($this->db->prepare($sql));
 
         // Give the new plugin the order number + 1
         $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_id = LAST_INSERT_ID()";
-        $db->query($db->prepare($sql, ($highest_order + 1)));
+        $this->db->query($this->db->prepare($sql, ($highest_order + 1)));
         
         // Add any plugin hooks to the hooks table
         $this->addPluginHooks();
@@ -521,9 +512,9 @@ class PluginFunctions extends Plugin
         if (!is_array($result))
         {
             if ($upgrade == 0) {
-                $hotaru->messages[$lang["admin_plugins_install_done"]] = 'green';
+                $this->hotaru->messages[$this->lang["admin_plugins_install_done"]] = 'green';
             } else {
-                $hotaru->messages[$lang["admin_plugins_upgrade_done"]] = 'green';
+                $this->hotaru->messages[$this->lang["admin_plugins_upgrade_done"]] = 'green';
             }
         }
     }
@@ -533,15 +524,13 @@ class PluginFunctions extends Plugin
      */
     public function addPluginHooks()
     {
-        global $db, $current_user;
-        
         foreach ($this->hooks as $hook)
         {
             $exists = $this->isHook(trim($hook));
 
             if (!$exists) {
                 $sql = "INSERT INTO " . TABLE_PLUGINHOOKS . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
-                $db->query($db->prepare($sql, $this->folder, trim($hook), $current_user->getId()));
+                $this->db->query($this->db->prepare($sql, $this->folder, trim($hook), $this->current_user->id));
             }
         }
     }
@@ -557,7 +546,7 @@ class PluginFunctions extends Plugin
      */
     public function upgrade()
     {
-        global $db, $lang, $hotaru, $admin;
+        $admin = $this->getAdminFunctions();
         
         // Read meta from the top of the plugin file
         $plugin_metadata = $this->readPluginMeta($this->folder);
@@ -591,7 +580,7 @@ class PluginFunctions extends Plugin
         // For plugins to avoid showing this success message, they need to
         // return a non-boolean value to $result.
         if (!is_array($result)) {
-            $hotaru->messages[$lang["admin_plugins_upgrade_done"]] = 'green';
+            $this->hotaru->messages[$this->lang["admin_plugins_upgrade_done"]] = 'green';
         }
     }
     
@@ -605,8 +594,8 @@ class PluginFunctions extends Plugin
      */
     public function activateDeactivate($enabled = 0)
     {    // 0 = deactivate, 1 = activate
-        global $db, $hotaru, $lang, $admin, $current_user;
-        
+        $admin = $this->getAdminFunctions();
+
         // Clear the database cache to ensure plugins and hooks are up-to-date.
         $admin->deleteFiles(CACHE . 'db_cache');
         
@@ -614,7 +603,7 @@ class PluginFunctions extends Plugin
         $admin->clearCache('css_js_cache', false);
         
         // Get the enabled status for this plugin...
-        $plugin_row = $db->get_row($db->prepare("SELECT plugin_folder, plugin_enabled FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $this->folder));
+        $plugin_row = $this->db->get_row($this->db->prepare("SELECT plugin_folder, plugin_enabled FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $this->folder));
         
         // If no result, then it's obviously not installed...
         if (!$plugin_row) 
@@ -629,7 +618,7 @@ class PluginFunctions extends Plugin
             // The plugin is already installed. Activate or deactivate according to $enabled (the user's action).
             if ($plugin_row->plugin_enabled != $enabled) {        // only update if we're changing the enabled value.
                 $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_enabled = %d, plugin_updateby = %d WHERE plugin_folder = %s";
-                $db->query($db->prepare($sql, $enabled, $current_user->getId(), $this->folder));
+                $this->db->query($this->db->prepare($sql, $enabled, $this->current_user->id, $this->folder));
                 
                 if ($enabled == 1) { // Activating now...
                 
@@ -645,7 +634,7 @@ class PluginFunctions extends Plugin
                         $this->upgrade();
                     } else {
                         // else simply show an activated message...
-                        $hotaru->messages[$lang["admin_plugins_activated"]] = 'green'; 
+                        $this->hotaru->messages[$this->lang["admin_plugins_activated"]] = 'green'; 
                     }
                     
                     // Force inclusion of a language file (if exists) because the 
@@ -654,7 +643,7 @@ class PluginFunctions extends Plugin
                 }
                 
                 if ($enabled == 0) { 
-                    $hotaru->messages[$lang["admin_plugins_deactivated"]] = 'green'; 
+                    $this->hotaru->messages[$this->lang["admin_plugins_deactivated"]] = 'green'; 
                 }
             }
         }
@@ -668,12 +657,10 @@ class PluginFunctions extends Plugin
      */
     public function getVersion($folder = '')
     {    
-        global $db;
-        
         //set default to current if not specified
         if (!$folder) { $folder = $this->folder; }
 
-        $version = $db->get_var($db->prepare("SELECT plugin_version FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
+        $version = $this->db->get_var($this->db->prepare("SELECT plugin_version FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
         if ($version) { return $version; } else { return false; }
     }
     
@@ -685,7 +672,7 @@ class PluginFunctions extends Plugin
      */
     public function uninstall($upgrade = 0)
     {    
-        global $db, $hotaru, $lang, $admin;
+        $admin = $this->getAdminFunctions();
         
         // Clear the database cache to ensure plugins and hooks are up-to-date.
         $admin->deleteFiles(CACHE . 'db_cache');
@@ -693,12 +680,12 @@ class PluginFunctions extends Plugin
         // Clear the css/js cache to ensure this plugin's files are removed
         $admin->clearCache('css_js_cache', false);
 
-        $db->query($db->prepare("DELETE FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $this->folder));
-        $db->query($db->prepare("DELETE FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_folder = %s", $this->folder));
-        $db->query($db->prepare("DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_folder = %s", $this->folder));
+        $this->db->query($this->db->prepare("DELETE FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $this->folder));
+        $this->db->query($this->db->prepare("DELETE FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_folder = %s", $this->folder));
+        $this->db->query($this->db->prepare("DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_folder = %s", $this->folder));
         
         if ($upgrade == 0) {
-            $hotaru->messages[$lang["admin_plugins_uninstall_done"]] = 'green';
+            $this->hotaru->messages[$this->lang["admin_plugins_uninstall_done"]] = 'green';
         }
         
         $this->refreshPluginOrder();
@@ -715,10 +702,8 @@ class PluginFunctions extends Plugin
      */
     public function pluginOrder($order = 0, $arrow = "up")
     {
-        global $db, $hotaru, $lang;
-            
         if ($order == 0) {
-            $hotaru->messages[$lang['admin_plugins_order_zero']] = 'red';
+            $this->hotaru->messages[$this->lang['admin_plugins_order_zero']] = 'red';
             return false;
         }
                 
@@ -726,52 +711,52 @@ class PluginFunctions extends Plugin
         {
             // get row above
             $sql= "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_order = %d";
-            $row_above = $db->get_row($db->prepare($sql, ($order - 1)));
+            $row_above = $this->db->get_row($this->db->prepare($sql, ($order - 1)));
             
             if (!$row_above) {
-                $hotaru->messages[$this->name . " " . $lang['admin_plugins_order_first']] = 'red';
+                $this->hotaru->messages[$this->name . " " . $this->lang['admin_plugins_order_first']] = 'red';
                 return false;
             }
             
             if ($row_above->plugin_order == $order) {
-                $hotaru->messages[$lang['admin_plugins_order_above']] = 'red';
+                $this->hotaru->messages[$this->lang['admin_plugins_order_above']] = 'red';
                 return false;
             }
             
             // update row above 
             $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_id = %d";
-            $db->query($db->prepare($sql, ($row_above->plugin_order + 1), $row_above->plugin_id)); 
+            $this->db->query($this->db->prepare($sql, ($row_above->plugin_order + 1), $row_above->plugin_id)); 
             
             // update current plugin
             $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_folder = %s";
-            $db->query($db->prepare($sql, ($order - 1), $this->folder)); 
+            $this->db->query($this->db->prepare($sql, ($order - 1), $this->folder)); 
         }
         else
         {
             // get row below
             $sql= "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_order = %d";
-            $row_below = $db->get_row($db->prepare($sql, ($order + 1)));
+            $row_below = $this->db->get_row($this->db->prepare($sql, ($order + 1)));
             
             if (!$row_below) {
-                $hotaru->messages[$this->name . " " . $lang['admin_plugins_order_last']] = 'red';
+                $this->hotaru->messages[$this->name . " " . $this->lang['admin_plugins_order_last']] = 'red';
                 return false;
             }
             
             if ($row_below->plugin_order == $order) {
-                $hotaru->messages[$lang['admin_plugins_order_below']] = 'red';
+                $this->hotaru->messages[$this->lang['admin_plugins_order_below']] = 'red';
                 return false;
             }
             
             // update row above 
             $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_id = %d";
-            $db->query($db->prepare($sql, ($row_below->plugin_order - 1), $row_below->plugin_id)); 
+            $this->db->query($this->db->prepare($sql, ($row_below->plugin_order - 1), $row_below->plugin_id)); 
             
             // update current plugin
             $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_folder = %s";
-            $db->query($db->prepare($sql, ($order + 1), $this->folder)); 
+            $this->db->query($this->db->prepare($sql, ($order + 1), $this->folder)); 
         }
 
-        $hotaru->messages[$lang['admin_plugins_order_updated']] = 'green';
+        $this->hotaru->messages[$this->lang['admin_plugins_order_updated']] = 'green';
 
         // Resort all orders and remove any accidental gaps
         $this->refreshPluginOrder();
@@ -790,11 +775,9 @@ class PluginFunctions extends Plugin
      */
     public function getPluginName($folder = "")
     {    
-        global $db;
-        
         if (!$folder) { $folder = $this->folder; } 
         
-        $this->name = $db->get_var($db->prepare("SELECT plugin_name FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
+        $this->name = $this->db->get_var($this->db->prepare("SELECT plugin_name FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
         return $this->name;
     }
     
@@ -807,11 +790,9 @@ class PluginFunctions extends Plugin
      */
     public function getClassName($folder = "")
     {    
-        global $db;
-        
         if (!$folder) { $folder = $this->folder; } 
         
-        $class = $db->get_var($db->prepare("SELECT plugin_class FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
+        $class = $this->db->get_var($this->db->prepare("SELECT plugin_class FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
         if ($class) {
             $this->class = $class;
             return $this->class;
@@ -829,11 +810,9 @@ class PluginFunctions extends Plugin
      */
     public function isActive($folder = "")
     {
-        global $db;
-        
         if (!$folder) { $folder = $this->folder; } 
         
-        $active= $db->get_row($db->prepare("SELECT plugin_enabled, plugin_version FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
+        $active= $this->db->get_row($this->db->prepare("SELECT plugin_enabled, plugin_version FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
         
         if ($active) {
             if ($active->plugin_enabled == 1) { 
@@ -855,9 +834,7 @@ class PluginFunctions extends Plugin
      */    
     public function includeLanguage($filename = '', $folder = '')
     {
-        global $lang;
-        
-        if (!$folder) { $folder = $this->getFolder(); }
+        if (!$folder) { $folder = $this->folder; }
         
         if ($folder) {
         
@@ -885,6 +862,12 @@ class PluginFunctions extends Plugin
                 include_once(LANGUAGES . 'language_default/main_language.php');
             }
             
+            // Add new language to our lang property
+            if ($lang) {
+                foreach($lang as $l => $text) {
+                    $this->lang[$l] = $text;
+                }
+            }
         }
     }
         
@@ -896,12 +879,10 @@ class PluginFunctions extends Plugin
      */    
     public function includeCss($filename = '', $folder = '')
     {
-        global $hotaru;
-        
-        if (!$folder) { $folder = $this->getFolder(); }
+        if (!$folder) { $folder = $this->folder; }
         if (!$filename) { $filename = $folder; }
         
-        return $hotaru->includeCss($filename, $folder); // returned for testing purposes only
+        return $this->hotaru->includeCss($filename, $folder); // returned for testing purposes only
     }
     
     
@@ -913,12 +894,10 @@ class PluginFunctions extends Plugin
      */    
     public function includeJs($filename = '', $folder = '')
     {
-        global $hotaru;
-        
-        if (!$folder) { $folder = $this->getFolder(); }
+        if (!$folder) { $folder = $this->folder; }
         if (!$filename) { $filename = $folder; }
         
-        return $hotaru->includeJs($filename, $folder); // returned for testing purposes only
+        return $this->hotaru->includeJs($filename, $folder); // returned for testing purposes only
     }
             
             
@@ -934,12 +913,10 @@ class PluginFunctions extends Plugin
      */
     public function getSetting($setting = '', $folder = '')
     {
-        global $db;
-        
-        if (!$folder) { $folder = $this->getFolder(); }
+        if (!$folder) { $folder = $this->folder; }
         
         $sql = "SELECT plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
-        $value = $db->get_var($db->prepare($sql, $folder, $setting));
+        $value = $this->db->get_var($this->db->prepare($sql, $folder, $setting));
 
         if ($value) { return $value; } else { return false; }
     }
@@ -955,12 +932,10 @@ class PluginFunctions extends Plugin
      */
     public function getSettingsArray($folder = '')
     {
-        global $db;
-        
-        if (!$folder) { $folder = $this->getFolder(); }
+        if (!$folder) { $folder = $this->folder; }
         
         $sql = "SELECT plugin_setting, plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s)";
-        $results = $db->get_results($db->prepare($sql, $folder));
+        $results = $this->db->get_results($this->db->prepare($sql, $folder));
         
         if ($results) { return $results; } else { return false; }
     }
@@ -973,7 +948,7 @@ class PluginFunctions extends Plugin
      */
     public function getSerializedSettings($folder = '')
     {
-        if (!$folder) { $folder = $this->getFolder(); }
+        if (!$folder) { $folder = $this->folder; }
     
         // Get settings from the database if they exist...
         $settings = unserialize($this->getSetting($folder . '_settings', $folder));
@@ -990,12 +965,10 @@ class PluginFunctions extends Plugin
      */
     public function isSetting($setting = '', $folder = '')
     {
-        global $db;
-        
-        if (!$folder) { $folder = $this->getFolder(); }
+        if (!$folder) { $folder = $this->folder; }
         
         $sql = "SELECT plugin_setting FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
-        $returned_setting = $db->get_var($db->prepare($sql, $folder, $setting));
+        $returned_setting = $this->db->get_var($this->db->prepare($sql, $folder, $setting));
         if ($returned_setting) { 
             return $returned_setting; 
         } else { 
@@ -1012,23 +985,21 @@ class PluginFunctions extends Plugin
      */
     public function updateSetting($setting = '', $value = '', $folder = '')
     {
-        global $db, $current_user;
-        
-        if (!$folder) { $folder = $this->getFolder(); }
+        if (!$folder) { $folder = $this->folder; }
         
         $exists = $this->isSetting($setting, $folder);
         if (!$exists) 
         {
             $sql = "INSERT INTO " . TABLE_PLUGINSETTINGS . " (plugin_folder, plugin_setting, plugin_value, plugin_updateby) VALUES (%s, %s, %s, %d)";
-            $db->query($db->prepare($sql, $folder, $setting, $value, $current_user->getId()));
+            $this->db->query($this->db->prepare($sql, $folder, $setting, $value, $this->current_user->id));
         } else 
         {
             $sql = "UPDATE " . TABLE_PLUGINSETTINGS . " SET plugin_folder = %s, plugin_setting = %s, plugin_value = %s, plugin_updateby = %d WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
-            $db->query($db->prepare($sql, $folder, $setting, $value, $current_user->getId(), $folder, $setting));
+            $this->db->query($this->db->prepare($sql, $folder, $setting, $value, $this->current_user->id, $folder, $setting));
         }
         
         // optimize the table
-        $db->query("OPTIMIZE TABLE " . TABLE_PLUGINSETTINGS);
+        $this->db->query("OPTIMIZE TABLE " . TABLE_PLUGINSETTINGS);
     }
     
 
@@ -1040,27 +1011,23 @@ class PluginFunctions extends Plugin
      */
     public function deleteSettings($setting = '', $folder = '')
     {
-        global $db;
-        
         if ($setting) {
             $sql = "DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_setting = %s";
-            $db->query($db->prepare($sql, $setting));
+            $this->db->query($this->db->prepare($sql, $setting));
         } 
         elseif ($folder) 
         {
             $sql = "DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_folder = %s";
-            $db->query($db->prepare($sql, $folder));
+            $this->db->query($this->db->prepare($sql, $folder));
         }
         
         // optimize the table
-        $db->query("OPTIMIZE TABLE " . TABLE_PLUGINSETTINGS);
+        $this->db->query("OPTIMIZE TABLE " . TABLE_PLUGINSETTINGS);
     }
     
     
      /**
      * Check if a value is blocked
-     *
-     * Note: Other methods for the Blocked List can be found in the Admin class
      *
      * @param string $type - i.e. ip, url, email, user
      * @param string $value
@@ -1069,24 +1036,24 @@ class PluginFunctions extends Plugin
      */
     public function isBlocked($type = '', $value = '', $operator = '=')
     {
-        global $db;
-        
-        $exists = 0;
-        
-        // if both type and value provided...
-        if ($type && $value) {
-            $sql = "SELECT blocked_value FROM " . TABLE_BLOCKED . " WHERE blocked_type = %s AND blocked_value " . $operator . " %s"; 
-            $exists = $db->get_var($db->prepare($sql, $type, $value));
-        } 
-        // if only value provided...
-        elseif ($value) 
-        {
-            $sql = "SELECT blocked_value FROM " . TABLE_BLOCKED . " WHERE blocked_value " . $operator . " %s"; 
-            $exists = $db->get_var($db->prepare($sql, $value));
-        }
-        
-        if ($exists) { return true; } else { return false; }
+        $admin = $this->getAdminFunctions();
+        return $admin->isBlocked($type, $value, $operator);
     }
+
+
+     /**
+     * get Admin Functions
+     *
+     * @return object $admin
+     */
+    public function getAdminFunctions()
+    {
+        require_once(LIBS . 'Admin.php');
+        $admin = new Admin();
+        return $admin;
+    }
+    
+    
 }
 
 ?>

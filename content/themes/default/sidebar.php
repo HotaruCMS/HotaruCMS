@@ -26,11 +26,10 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $plugins, $lang; // don't remove
 ?>
 
 <div id="sidebar">
 
-    <?php $plugins->pluginHook('sidebar', true, '', array(1)); ?>
+    <?php $hotaru->plugins->pluginHook('sidebar', true, '', array(1)); ?>
 
 </div>

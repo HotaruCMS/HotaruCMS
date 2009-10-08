@@ -25,40 +25,38 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-
-global $hotaru, $plugins, $current_user, $lang; // don't remove
 ?>
 
 <!-- Navigation Bar -->
 <ul id="navigation">
-    <?php $plugins->pluginHook('navigation_first'); ?>
+    <?php $hotaru->plugins->pluginHook('navigation_first'); ?>
     
-    <?php if ($hotaru->getTitle() == 'top') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
-    <li><a <?php echo $status; ?> href="<?php echo BASEURL; ?>"><?php echo $lang["main_theme_navigation_home"]; ?></a></li>
-    <?php $plugins->pluginHook('navigation'); ?>
+    <?php if ($hotaru->title == 'top') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
+    <li><a <?php echo $status; ?> href="<?php echo BASEURL; ?>"><?php echo $hotaru->lang["main_theme_navigation_home"]; ?></a></li>
+    <?php $hotaru->plugins->pluginHook('navigation'); ?>
     <?php 
-        if (!$plugins->isActive('users')) { 
+        if (!$hotaru->plugins->isActive('users')) { 
 
-            if ($current_user->getLoggedIn() == true) { 
+            if ($hotaru->current_user->loggedIn == true) { 
             
-                if ($hotaru->getTitle() == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
-                echo "<li><a " . $status . " href='" . url(array(), 'admin') . "'>" . $lang["main_theme_navigation_admin"] . "</a></li>"; 
+                if ($hotaru->title == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
+                echo "<li><a " . $status . " href='" . $hotaru->url(array(), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_admin"] . "</a></li>"; 
                 
-                if ($hotaru->getTitle() == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
-                echo "<li><a " . $status . " href='" . url(array('page'=>'admin_logout'), 'admin') . "'>" . $lang["main_theme_navigation_logout"] . "</a></li>";
+                if ($hotaru->title == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
+                echo "<li><a " . $status . " href='" . $hotaru->url(array('page'=>'admin_logout'), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_logout"] . "</a></li>";
             } else { 
-                if ($hotaru->getTitle() == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
-                echo "<li><a " . $status . " href='" . url(array(), 'admin') . "'>" . $lang["main_theme_navigation_login"] . "</a></li>"; 
+                if ($hotaru->title == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
+                echo "<li><a " . $status . " href='" . $hotaru->url(array(), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_login"] . "</a></li>"; 
             }
         } else {
-            $plugins->pluginHook('navigation_users', true, 'users'); // ensures login/logout/register are last.
+            $hotaru->plugins->pluginHook('navigation_users', true, 'users'); // ensures login/logout/register are last.
         }
     ?>
     
     <?php     // RSS Link and icon if Submit plugin is active
-        if ($plugins->getPluginStatus('submit') == 'active') { ?>
+        if ($hotaru->plugins->getPluginStatus('submit') == 'active') { ?>
         <li>
-        <a href="<?php echo url(array('page'=>'rss')); ?>">RSS 
+        <a href="<?php echo $hotaru->url(array('page'=>'rss')); ?>">RSS 
             <img src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png">
         </a>
         </li>
@@ -66,4 +64,4 @@ global $hotaru, $plugins, $current_user, $lang; // don't remove
             
 </ul>
 
-<?php $plugins->pluginHook('navigation_last'); ?>
+<?php $hotaru->plugins->pluginHook('navigation_last'); ?>

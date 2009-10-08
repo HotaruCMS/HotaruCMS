@@ -26,22 +26,23 @@
  * @link      http://www.hotarucms.org/
  */
 
-global $hotaru, $plugins, $lang; // don't remove
+$this->plugins->folder = $this->cage->get->testAlnumLines('plugin'); // get plugin name from url
+$this->plugins->getPluginName();
 ?>
 
 <p class="breadcrumbs">
     <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
-    &raquo; <a href="<?php echo url(array(), 'admin'); ?>"><?php echo $lang["admin_theme_main_admin_cp"]; ?></a> 
-    &raquo; <?php echo $lang["admin_theme_plugin_settings"]; ?> 
-    <?php if ($plugins->getName()) { echo "&raquo; " .  $plugins->getName(); } ?>
+    &raquo; <a href="<?php echo $admin->hotaru->url(array(), 'admin'); ?>"><?php echo $admin->lang["admin_theme_main_admin_cp"]; ?></a> 
+    &raquo; <?php echo $admin->lang["admin_theme_plugin_settings"]; ?> 
+    <?php if ($admin->plugins->name) { echo "&raquo; " .  $admin->plugins->name; } ?>
 </p>
 
 <div id="plugin_settings">
     <?php 
-        if ($plugins->getFolder() == "") {
-            $plugins->pluginHook('admin_sidebar_plugin_settings');
+        if ($admin->plugins->folder == "") {
+            $admin->plugins->pluginHook('admin_sidebar_plugin_settings');
         } else {
-            $plugins->pluginHook('admin_plugin_settings', true, $plugins->getFolder()); 
+            $admin->plugins->pluginHook('admin_plugin_settings', true, $admin->plugins->folder); 
         }
     ?>
 </div>
