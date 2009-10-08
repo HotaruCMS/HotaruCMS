@@ -34,7 +34,6 @@ class Plugin
     protected $id           = '';         // plugin id
     protected $enabled      = 0;          // activate (1), inactive (0)
     protected $name         = '';         // plugin proper name
-    protected $prefix       = '';         // plugin prefix
     protected $folder       = '';         // plugin folder name
     protected $class        = '';         // plugin class name
     protected $desc         = '';         // plugin description
