@@ -159,7 +159,7 @@ class PluginFunctions extends Plugin
 
             $this->db->cache_queries = true;    // start using cache
 
-            $sql = "SELECT " . TABLE_PLUGINS . ".plugin_enabled, " . TABLE_PLUGINS . ".plugin_folder, " . TABLE_PLUGINS . ".plugin_class, " . TABLE_PLUGINS . ".plugin_prefix, " . TABLE_PLUGINHOOKS . ".plugin_hook  FROM " . TABLE_PLUGINHOOKS . ", " . TABLE_PLUGINS . " WHERE (" . TABLE_PLUGINHOOKS . ".plugin_hook = %s) AND (" . TABLE_PLUGINS . ".plugin_folder = " . TABLE_PLUGINHOOKS . ".plugin_folder) " . $where . "ORDER BY " . TABLE_PLUGINHOOKS . ".phook_id";
+            $sql = "SELECT " . TABLE_PLUGINS . ".plugin_enabled, " . TABLE_PLUGINS . ".plugin_folder, " . TABLE_PLUGINS . ".plugin_class, " . TABLE_PLUGINHOOKS . ".plugin_hook  FROM " . TABLE_PLUGINHOOKS . ", " . TABLE_PLUGINS . " WHERE (" . TABLE_PLUGINHOOKS . ".plugin_hook = %s) AND (" . TABLE_PLUGINS . ".plugin_folder = " . TABLE_PLUGINHOOKS . ".plugin_folder) " . $where . "ORDER BY " . TABLE_PLUGINHOOKS . ".phook_id";
 
             $plugins = $this->db->get_results($this->db->prepare($sql, $hook, $folder));
 
@@ -181,16 +181,7 @@ class PluginFunctions extends Plugin
                             
                             if ($perform == true)
                             {
-                                $function_name = $plugin->plugin_prefix . "_" . $hook;
-                                
-                                if (function_exists($function_name))
-                                {
-                                    $result = $function_name($parameters);
-                                    if ($result) {
-                                        $return_array[$function_name] = $result;
-                                    }
-                                }
-                                elseif($plugin->plugin_class)
+                                if($plugin->plugin_class)
                                 {
                                     $this_plugin = new $plugin->plugin_class($plugin->plugin_folder, $this->hotaru);
                                     $this->folder = $plugin->plugin_folder; // give Plugin the folder name (used in displayTemplate, etc.)
@@ -385,19 +376,12 @@ class PluginFunctions extends Plugin
         $this->desc     = $plugin_metadata['description'];
         $this->version  = $plugin_metadata['version'];
         $this->folder   = $plugin_metadata['folder'];
+        $this->class    = $plugin_metadata['class'];
         $this->hooks    = explode(',', $plugin_metadata['hooks']);
         
-        if (isset($plugin_metadata['prefix']) && $plugin_metadata['prefix']) {
-            $this->prefix   = $plugin_metadata['prefix'];
-        }
-            
         if (isset($plugin_metadata['requires']) && $plugin_metadata['requires']) {
             $this->requires = $plugin_metadata['requires'];
             $this->requiresToDependencies();
-        }
-    
-        if (isset($plugin_metadata['class']) && $plugin_metadata['class']) {
-            $this->class = $plugin_metadata['class'];
         }
         
         return true;
@@ -486,8 +470,8 @@ class PluginFunctions extends Plugin
             return false;
         }
                     
-        $sql = "REPLACE INTO " . TABLE_PLUGINS . " (plugin_enabled, plugin_name, plugin_prefix, plugin_folder, plugin_class, plugin_desc, plugin_requires, plugin_version, plugin_updateby) VALUES (%d, %s, %s, %s, %s, %s, %s, %s, %d)";
-        $this->db->query($this->db->prepare($sql, $this->enabled, $this->name, $this->prefix, $this->folder, $this->class, $this->desc, $this->requires, $this->version, $this->current_user->id));
+        $sql = "REPLACE INTO " . TABLE_PLUGINS . " (plugin_enabled, plugin_name, plugin_folder, plugin_class, plugin_desc, plugin_requires, plugin_version, plugin_updateby) VALUES (%d, %s, %s, %s, %s, %s, %s, %d)";
+        $this->db->query($this->db->prepare($sql, $this->enabled, $this->name, $this->folder, $this->class, $this->desc, $this->requires, $this->version, $this->current_user->id));
 
         // Get the last order number - doing this after REPLACE INTO because 
         // we don't know whether the above will insert or replace.

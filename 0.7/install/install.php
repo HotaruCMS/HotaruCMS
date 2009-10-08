@@ -498,7 +498,6 @@ function create_table($hotaru, $table_name)
           `plugin_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
           `plugin_enabled` tinyint(1) NOT NULL DEFAULT '0',
           `plugin_name` varchar(64) NOT NULL DEFAULT '',
-          `plugin_prefix` varchar(16) NOT NULL DEFAULT '',
           `plugin_folder` varchar(64) NOT NULL,
           `plugin_class` varchar(64) NOT NULL DEFAULT '',
           `plugin_desc` varchar(255) NOT NULL DEFAULT '',
