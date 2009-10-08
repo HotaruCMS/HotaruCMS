@@ -66,14 +66,12 @@ class SidebarWidgets extends PluginFunctions
     public function hotaru_header()
     {
         $this->includeLanguage();
-        
+
         if (!defined('TABLE_WIDGETS')) { define("TABLE_WIDGETS", DB_PREFIX . 'widgets'); }
-        
         if ($this->hotaru->sidebar) {
             // Create a new global object called "sidebar".
             require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
             $this->hotaru->sidebar = new Sidebar($this->hotaru);
-            
             $this->hotaru->sidebar->initializeSidebarWidgets();
         }
     }
