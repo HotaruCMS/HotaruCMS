@@ -5,7 +5,7 @@
  * version: 0.5
  * folder: category_manager
  * class: CategoryManager
- * requires: submit 0.6
+ * requires: submit 0.7
  * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  * PHP version 5

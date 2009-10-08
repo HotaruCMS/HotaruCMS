@@ -148,6 +148,10 @@ class Sidebar
      */
     public function getWidgets()
     {
+        $exists = $this->db->table_exists('widgets');
+        
+        if (!$exists) { return false; }
+        
         // Get settings from the database if they exist...
         $sql = "SELECT * FROM " . DB_PREFIX . 'widgets';
         $widget_settings = $this->db->get_results($this->db->prepare($sql));

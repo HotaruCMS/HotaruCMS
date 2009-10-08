@@ -5,7 +5,7 @@
  * version: 0.3
  * folder: search
  * class: Search
- * requires: submit 0.4, sidebar_widgets 0.4
+ * requires: submit 0.7, sidebar_widgets 0.4
  * hooks: install_plugin, hotaru_header, header_include, post_list_filter, userbase_default_permissions
  *
  * Usage: Add <?php $plugins->pluginHook('search'); ?> to your theme, wherever you want to the "Search" form.
