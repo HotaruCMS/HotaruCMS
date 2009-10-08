@@ -108,6 +108,7 @@ class Sidebar
                 }
 
                 // Add plugin name, function suffix and arguments to sidebar_settings:
+                $sidebar_settings['sidebar_widgets'][$widget->widget_function]['plugin'] = $widget->widget_plugin;
                 $sidebar_settings['sidebar_widgets'][$widget->widget_function]['class'] = $this->plugins->getClassName($widget->widget_plugin);
                 $sidebar_settings['sidebar_widgets'][$widget->widget_function]['function'] = $widget->widget_function;
                 $sidebar_settings['sidebar_widgets'][$widget->widget_function]['args'] = $widget->widget_args;

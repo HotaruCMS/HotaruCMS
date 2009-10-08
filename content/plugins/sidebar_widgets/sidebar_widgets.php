@@ -99,17 +99,13 @@ class SidebarWidgets extends PluginFunctions
             $function_name = "sidebar_widget_" . $widget;
             
             // Only show widgets intended for this sidebar
-            if (($details['sidebar'] == $sidebar_id) && $details['enabled']) {
-            
-                // Call this widget's function
-                if (function_exists($function_name))
-                {
-                    $function_name($details['args']);    // pass an argument, e.g. a feed ID for the RSS Show plugin
-                } 
-                elseif ($details['class'] && method_exists($details['class'], $function_name)) 
+            if (($details['sidebar'] == $sidebar_id) && $details['enabled'])
+            {
+                if ($details['class'] && method_exists($details['class'], $function_name)) 
                 {   
                     // must be a class object with a method that matches!
                     $class = new $details['class']($widget, $this->hotaru);
+                    $this->hotaru->plugins->folder = $details['plugin']; // set plugin folder to the one we're calling.
                     $class->$function_name($details['args']);
                 } 
                 else 
@@ -121,14 +117,11 @@ class SidebarWidgets extends PluginFunctions
                     $function_name_array = explode('_', $function_name);
                     array_pop($function_name_array); 
                     $function_name = implode('_', $function_name_array);
-                    if (function_exists($function_name))
-                    {
-                        $function_name($details['args']);    // pass an argument, e.g. a feed ID for the RSS Show plugin
-                    } 
-                    elseif ($details['class'])
+                    if ($details['class'])
                     {
                         // must be a class object!
                         $class = new $details['class']($widget, $this->hotaru);
+                        $this->hotaru->plugins->folder = $details['plugin']; // set plugin folder to the one we're calling.
                         $class->$function_name($details['args']);
                     }
                 }
