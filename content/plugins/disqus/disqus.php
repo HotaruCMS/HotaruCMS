@@ -76,7 +76,7 @@ class Disqus extends PluginFunctions
     {
         if (!$this->hotaru->isPage('submit2')) {
             $this->hotaru->vars['shortname'] = $this->getSetting('disqus_shortname');
-            $this->hotaru->displayTemplate('disqus_comments');
+            $this->hotaru->displayTemplate('disqus_comments', 'disqus');
         }
     }
     

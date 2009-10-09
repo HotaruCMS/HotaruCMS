@@ -105,7 +105,6 @@ class SidebarWidgets extends PluginFunctions
                 {   
                     // must be a class object with a method that matches!
                     $class = new $details['class']($widget, $this->hotaru);
-                    $this->hotaru->plugins->folder = $details['plugin']; // set plugin folder to the one we're calling.
                     $class->$function_name($details['args']);
                 } 
                 else 
@@ -121,7 +120,6 @@ class SidebarWidgets extends PluginFunctions
                     {
                         // must be a class object!
                         $class = new $details['class']($widget, $this->hotaru);
-                        $this->hotaru->plugins->folder = $details['plugin']; // set plugin folder to the one we're calling.
                         $class->$function_name($details['args']);
                     }
                 }
@@ -229,7 +227,7 @@ class SidebarWidgets extends PluginFunctions
         }
         
         $this->hotaru->showMessages();
-        $this->hotaru->displayTemplate('sidebar_ordering');
+        $this->hotaru->displayTemplate('sidebar_ordering', 'sidebar_widgets');
     }
 
 }

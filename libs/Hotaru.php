@@ -348,7 +348,7 @@ class Hotaru
      * @param string $plugin optional plugin name
      * @param bool $include_once true or false
      */
-    public function displayTemplate($page = '', $hotaru = NULL, $plugin = '', $include_once = true)
+    public function displayTemplate($page = '', $plugin = '', $hotaru = NULL, $include_once = true)
     {
         // Note: This $hotaru isn't necessarily the whole object, some plugins might pass
         // $db or $lang into this parameter instead. Therefore, we need the $hotaru parameter.
