@@ -37,8 +37,12 @@ class VoteSimple extends PluginFunctions
      */
     public function install_plugin()
     {
+        // Add the postvotes table to the database;
+        require_once(PLUGINS . 'vote_simple/libs/Vote.php');
+        $vote = new Vote($this->db);  // adds Vote object to Hotaru class
+        $vote->databaseVoteTable();
+
         // Default settings
-        
         $vote_settings['vote_submit_vote'] = "checked";
         $vote_settings['vote_submit_vote_value'] = 1;
         $vote_settings['vote_votes_to_promote'] = 5;
