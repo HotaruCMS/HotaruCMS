@@ -281,7 +281,7 @@ class Comments extends pluginFunctions
             // force non-reply form to have parent "0" and depth "0"
             $this->hotaru->comment->id = 0;
             $this->hotaru->comment->depth = 0;
-            $this->hotaru->displayTemplate('comment_form', $this->hotaru, 'comments', false);
+            $this->hotaru->displayTemplate('comment_form', 'comments', $this->hotaru, false);
         }
     }
     
@@ -324,8 +324,8 @@ class Comments extends pluginFunctions
     {
         if (!$this->hotaru->isPage('submit2')) {
             $this->hotaru->comment->readComment($item);
-            $this->hotaru->displayTemplate('show_comments', $this->hotaru, 'comments', false);
-            $this->hotaru->displayTemplate('comment_form', $this->hotaru, 'comments', false);
+            $this->hotaru->displayTemplate('show_comments', 'comments', $this->hotaru, false);
+            $this->hotaru->displayTemplate('comment_form', 'comments', $this->hotaru, false);
         }
     }
     

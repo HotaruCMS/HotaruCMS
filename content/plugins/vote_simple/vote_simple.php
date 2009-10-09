@@ -253,7 +253,7 @@ class VoteSimple extends PluginFunctions
             $this->hotaru->vars['voted'] = $this->db->get_var($this->db->prepare($sql, $this->hotaru->post->id, $this->current_user->id, 'alert'));
         } 
 
-         $this->hotaru->displayTemplate('vote_simple_button', NULL, 'vote_simple', false);
+         $this->hotaru->displayTemplate('vote_simple_button', 'vote_simple', NULL, false);
     }
     
      /**

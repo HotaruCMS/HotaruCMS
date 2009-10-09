@@ -45,12 +45,12 @@ class HelloUniverse extends PluginFunctions
         $page = $this->hotaru->getPageName();
         switch($page) {
             case 'plugin_template':
-                $this->hotaru->displayTemplate('plugin_template'); // Displays the page from this plugin folder
+                $this->hotaru->displayTemplate('plugin_template', 'hello_universe'); // Displays the page from this plugin folder
                 return true;
                 break;
             case 'form_example':
                 $this->check_sent_form();    // Function #5
-                $this->hotaru->displayTemplate('form_example'); // Displays the page from this plugin folder
+                $this->hotaru->displayTemplate('form_example', 'hello_universe'postsPerPage); // Displays the page from this plugin folder
                 return true;
                 break;
             case 'main':
@@ -97,7 +97,7 @@ class HelloUniverse extends PluginFunctions
      */
     public function theme_index_sidebar()
     {
-        $this->hotaru->displayTemplate('custom_sidebar'); // Overrides the current sidebar with a new one.
+        $this->hotaru->displayTemplate('custom_sidebar', 'hello_universe'postsPerPage); // Overrides the current sidebar with a new one.
         return true;
     }
     

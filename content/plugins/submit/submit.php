@@ -213,7 +213,6 @@ class Submit extends PluginFunctions
             if ($this->current_user->loggedIn) {
                          
                 if ($this->cage->post->getAlpha('submit2') == 'true') {             
-        
                     $post_orig_url = $this->cage->post->testUri('post_orig_url'); 
                     if (!$this->check_for_errors_2()) { 
                         $this->process_submission($post_orig_url);
@@ -282,27 +281,25 @@ class Submit extends PluginFunctions
               if ($this->current_user->loggedIn) {
                            
                   if (!$this->hotaru->post->useSubmission) {
-                    echo $this->lang['submit_disabled'];    
                     return true;
                 }
-                  
                   if ($this->cage->post->getAlpha('submit1') == 'true') {
                     if (!$this->check_for_errors_1()) { 
                         // No errors found, proceed to step 2
                         $this->hotaru->vars['post_orig_url'] = $this->cage->post->testUri('post_orig_url'); 
                         $this->hotaru->vars['post_orig_title'] = $this->hotaru->post->fetchTitle($this->hotaru->vars['post_orig_url']);
-                        $this->hotaru->displayTemplate('submit_step2');
+                        $this->hotaru->displayTemplate('submit_step2', 'submit');
                         return true;
                         
                     } else {
                         // Errors found, go back to step 1 - use getMixedString because testUri returns false
                         $this->hotaru->vars['post_orig_url'] = $this->cage->post->getMixedString2('post_orig_url');
-                        $this->hotaru->displayTemplate('submit_step1');
+                        $this->hotaru->displayTemplate('submit_step1', 'submit');
                         return true;
                     }
                 } else {
                     // First time to step 1...
-                    $this->hotaru->displayTemplate('submit_step1');
+                    $this->hotaru->displayTemplate('submit_step1', 'submit');
                     return true;
                 }
             } else {
@@ -317,18 +314,16 @@ class Submit extends PluginFunctions
                     echo $this->lang['submit_disabled'];    
                     return true;
                 }
-                 
                  if ($this->cage->post->getAlpha('submit2') == 'true') {
-                 
                     $this->hotaru->vars['post_orig_url'] = $this->cage->post->testUri('post_orig_url'); 
                     if ($this->hotaru->post->status == 'processing') {     
                         // No errors, go to step 3...    
                         $this->hotaru->post->readPost($this->hotaru->post->id);
-                        $this->hotaru->displayTemplate('submit_step3');
+                        $this->hotaru->displayTemplate('submit_step3', 'submit');
                         return true;
                     } else {
                         // Errors found, show step 2 again...
-                        $this->hotaru->displayTemplate('submit_step2');
+                        $this->hotaru->displayTemplate('submit_step2', 'submit');
                         return true;
                     }
                 }
@@ -344,7 +339,7 @@ class Submit extends PluginFunctions
                 }
                  
                  if ($this->cage->post->getAlpha('submit3') == 'edit') {             
-                     $this->hotaru->displayTemplate('submit_step2');
+                     $this->hotaru->displayTemplate('submit_step2', 'submit');
                      return true;
                 }
             }
@@ -352,7 +347,7 @@ class Submit extends PluginFunctions
         } elseif ($this->hotaru->isPage('edit_post')) {
             if ($this->current_user->loggedIn) {
                 if ($this->cage->get->keyExists('sourceurl') || $this->cage->get->keyExists('post_id')) {
-                    $this->hotaru->displayTemplate('submit_edit_post');
+                    $this->hotaru->displayTemplate('submit_edit_post', 'submit');
                     return true;
                 }
             }
@@ -364,7 +359,7 @@ class Submit extends PluginFunctions
             if ($result && is_array($result)) { return true; }
         
             // Show the list of posts
-            $this->hotaru->displayTemplate('list');
+            $this->hotaru->displayTemplate('list', 'submit');
             return true;
             
         } elseif ($this->hotaru->isPage('latest')) {
@@ -374,7 +369,7 @@ class Submit extends PluginFunctions
             if ($result && is_array($result)) { return true; }
         
             // Show the list of posts
-            $this->hotaru->displayTemplate('list');
+            $this->hotaru->displayTemplate('list', 'submit');
             return true;
             
         } elseif ($this->hotaru->isPage('all')) {
@@ -384,12 +379,12 @@ class Submit extends PluginFunctions
             if ($result && is_array($result)) { return true; }
         
             // Show the list of posts
-            $this->hotaru->displayTemplate('list');
+            $this->hotaru->displayTemplate('list', 'submit');
             return true;
             
         } elseif ($this->hotaru->pageType == 'post') {
             // We found out this is a post from the hotaru_header function above.
-            $this->hotaru->displayTemplate('post');
+            $this->hotaru->displayTemplate('post', 'submit');
             return true;
             
         } else {        

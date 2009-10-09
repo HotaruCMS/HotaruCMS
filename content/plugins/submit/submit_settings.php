@@ -41,6 +41,7 @@ class SubmitSettings extends Submit
         
         echo "<h1>" . $this->lang["submit_settings_header"] . "</h1>\n";
         
+        echo "this plugin: " . $this->folder . "<br />";
         // Get settings from database if they exist...
         $submit_settings = $this->getSerializedSettings();
         
@@ -158,17 +159,17 @@ class SubmitSettings extends Submit
         // Summary length
         if ($this->cage->post->keyExists('summary_length')) { 
             $summary_length = $this->cage->post->getInt('summary_length'); 
-            if (empty($summary_length)) { $summary_length = $this->hotaru->post->getSummaryLength(); }
+            if (empty($summary_length)) { $summary_length = $this->hotaru->post->summaryLength; }
         } else { 
-            $summary_length = $this->hotaru->post->getSummaryLength(); 
+            $summary_length = $this->hotaru->post->summaryLength; 
         } 
         
         // Posts per page
         if ($this->cage->post->keyExists('posts_per_page')) { 
             $posts_per_page = $this->cage->post->testInt('posts_per_page'); 
-            if (empty($posts_per_page) || $posts_per_page == 0) { $posts_per_page = $this->hotaru->post->getPostsPerPage(); }
+            if (empty($posts_per_page) || $posts_per_page == 0) { $posts_per_page = $this->hotaru->post->postsPerPage; }
         } else { 
-            $posts_per_page = $this->hotaru->post->getPostsPerPage(); 
+            $posts_per_page = $this->hotaru->post->postsPerPage; 
         } 
         
         // Allowable tags
