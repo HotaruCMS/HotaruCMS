@@ -71,7 +71,7 @@
     <td class="cat_man_menu_holder">
         <div>
             <h3><?php echo $hotaru->lang["cat_man_menu_title"]; ?></h3>
-            <?php $hotaru->displayTemplate('cat_man_menu'); ?>
+            <?php $hotaru->displayTemplate('cat_man_menu', 'category_manager'); ?>
             
             <h3><?php echo $hotaru->lang["cat_man_category_tree"]; ?></h3>
             <?php

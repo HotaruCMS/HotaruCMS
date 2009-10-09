@@ -323,7 +323,7 @@ class Categories extends PluginFunctions
     public function submit_is_page_main()
     {
         if ($this->hotaru->post->vars['isCategoryPost']) {
-            $this->hotaru->displayTemplate('post', NULL, 'submit');
+            $this->hotaru->displayTemplate('post', 'submit');
             return true;
         } else {
             return false;
