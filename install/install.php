@@ -34,47 +34,33 @@ setcookie("hotaru_key", "", time()-3600, "/");
 // --------------------------------------------------
 
 require_once('../hotaru_settings.php');
-require_once(LIBS . 'Hotaru.php');    // Needed for error and success messages
-require_once(LIBS . 'UserBase.php');  // Needed for login/registration
-require_once(LIBS . 'HotaruInspekt.php');      // for custom Inspekt methods
-$hotaru = new Hotaru('install');
-
-// Clear all the cache folders just in case
 require_once(LIBS . 'Admin.php'); 
 $admin = new Admin('install');
 $admin->deleteFiles(CACHE . 'db_cache');
 $admin->deleteFiles(CACHE . 'css_js_cache');
 $admin->deleteFiles(CACHE . 'rss_cache');
 
-$step = $hotaru->cage->get->getInt('step');        // Installation steps.
-
-if ($step > 2) { 
-    require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php');
-    require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php');
-    if (!isset($db)) { 
-        $db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST); 
-    } 
-}
+$step = $admin->cage->get->getInt('step');        // Installation steps.
 
 switch ($step) {
     case 1:
-        installation_welcome($hotaru);     // "Welcome to Hotaru CMS. 
+        installation_welcome($admin);     // "Welcome to Hotaru CMS. 
         break;
     case 2:
-        database_setup($hotaru);           // DB name, user, password, prefix...
+        database_setup($admin);           // DB name, user, password, prefix...
         break;
     case 3:
-        database_creation($hotaru, $admin);        // Creates the database tables
+        database_creation($admin);        // Creates the database tables
         break;
     case 4:
-        register_admin($hotaru, $admin);           // Username and password for Admin user...
+        register_admin($admin);           // Username and password for Admin user...
         break;
     case 5:
-        installation_complete($hotaru);    // Delete "install" folder. Visit your site"
+        installation_complete($admin);    // Delete "install" folder. Visit your site"
         break;
     default:
         // Anything other than step=2, 3 or 4 will return user to step 1
-        installation_welcome($hotaru);
+        installation_welcome($admin);
         break;        
 }
 
@@ -86,14 +72,14 @@ exit;
  *
  * @return string returns the html output for the page header
  */
-function html_header($hotaru)
+function html_header($admin)
 {
     $header = "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 3.2//EN'>\n";
     $header .= "<HTML><HEAD>\n";
     $header .= "<meta http-equiv=Content-Type content='text/html; charset=UTF-8'>\n";
     
     // Title
-    $header .= "<TITLE>" . $hotaru->lang['install_title'] . "</TITLE>\n";
+    $header .= "<TITLE>" . $admin->lang['install_title'] . "</TITLE>\n";
     $header .= "<META HTTP-EQUIV='Content-Type' CONTENT='text'>\n";
     $header .= "<link rel='stylesheet' href='" . BASEURL . "libs/extensions/YUI-CSS/reset-fonts-grids.css' type='text/css'>\n";
     $header .= "<link rel='stylesheet' type='text/css' href='" . BASEURL . "install/install_style.css'>\n";
@@ -104,7 +90,7 @@ function html_header($hotaru)
     $header .= "<div id='doc' class='yui-t7 install'>\n";
     $header .= "<div id='hd' role='banner'>";
     $header .= "<img align='left' src='" . BASEURL . "content/admin_themes/admin_default/images/hotaru.png' style='height:60px; width:69px;'>";
-    $header .= "<h1>" . $hotaru->lang['install_title'] . "</h1></div>\n"; 
+    $header .= "<h1>" . $admin->lang['install_title'] . "</h1></div>\n"; 
     $header .= "<div id='bd' role='main'>\n";
     $header .= "<div class='yui-g'>\n";
     
@@ -117,13 +103,13 @@ function html_header($hotaru)
  *
  * @return string returns the html output for the page footer
  */
-function html_footer($hotaru)
+function html_footer($admin)
 {
     $footer = "<div class='clear'></div>\n"; // clear floats
     
     // Footer content (a link to the forums)
     $footer .= "<div id='ft' role='contentinfo'>";
-    $footer .= "<p>" . $hotaru->lang['install_trouble'] . "</p>";
+    $footer .= "<p>" . $admin->lang['install_trouble'] . "</p>";
     $footer .= "</div>\n"; // close "ft" div
     
     $footer .= "</div>\n"; // close "yui-g" div
@@ -140,63 +126,63 @@ function html_footer($hotaru)
 /**
  * Step 1 of installation - Welcome message
  */
-function installation_welcome($hotaru)
+function installation_welcome($admin)
 {
-    echo html_header($hotaru);
+    echo html_header($admin);
     
     // Step title
-    echo "<h2>" . $hotaru->lang['install_step1'] . "</h2>\n";
+    echo "<h2>" . $admin->lang['install_step1'] . "</h2>\n";
     
     // Step content
-    echo "<div class='install_content'>" . $hotaru->lang['install_step1_welcome'] . "</div>\n";
+    echo "<div class='install_content'>" . $admin->lang['install_step1_welcome'] . "</div>\n";
     
     // Next button
-    echo "<div class='next'><a href='install.php?step=2'>" . $hotaru->lang['install_next'] . "</a></div>\n";
+    echo "<div class='next'><a href='install.php?step=2'>" . $admin->lang['install_next'] . "</a></div>\n";
     
-    echo html_footer($hotaru);
+    echo html_footer($admin);
 }
 
 
 /**
  * Step 2 of installation - asks to put database info in hotaru_settings.php 
  */
-function database_setup($hotaru)
+function database_setup($admin)
 {
-    echo html_header($hotaru);
+    echo html_header($admin);
     
     // Step title
-    echo "<h2>" . $hotaru->lang['install_step2'] . "</h2>\n";
+    echo "<h2>" . $admin->lang['install_step2'] . "</h2>\n";
     
     // Step content
-    echo "<div class='install_content'>" . $hotaru->lang['install_step2_instructions'] . ":</div>\n";
+    echo "<div class='install_content'>" . $admin->lang['install_step2_instructions'] . ":</div>\n";
     
     echo "<ol class='install_content'>\n";
-    echo "<li>" . $hotaru->lang['install_step2_instructions1'] . "</li>\n";
-    echo "<li>" . $hotaru->lang['install_step2_instructions2'] . "</li>\n";
-    echo "<li>" . $hotaru->lang['install_step2_instructions3'] . "</li>\n";
-    echo "<li>" . $hotaru->lang['install_step2_instructions4'] . "</li>\n";
+    echo "<li>" . $admin->lang['install_step2_instructions1'] . "</li>\n";
+    echo "<li>" . $admin->lang['install_step2_instructions2'] . "</li>\n";
+    echo "<li>" . $admin->lang['install_step2_instructions3'] . "</li>\n";
+    echo "<li>" . $admin->lang['install_step2_instructions4'] . "</li>\n";
     echo "</ol>\n";
 
     // Warning message
-    echo "<div class='install_content'><span style='color: red;'>" . $hotaru->lang['install_step2_warning'] . "</span>: " . $hotaru->lang['install_step2_warning_note'] . "</div>\n";
+    echo "<div class='install_content'><span style='color: red;'>" . $admin->lang['install_step2_warning'] . "</span>: " . $admin->lang['install_step2_warning_note'] . "</div>\n";
 
     // Previous/Next buttons
-    echo "<div class='back'><a href='install.php?step=1'>" . $hotaru->lang['install_back'] . "</a></div>\n";
-    echo "<div class='next'><a href='install.php?step=3'>" . $hotaru->lang['install_next'] . "</a></div>\n";
+    echo "<div class='back'><a href='install.php?step=1'>" . $admin->lang['install_back'] . "</a></div>\n";
+    echo "<div class='next'><a href='install.php?step=3'>" . $admin->lang['install_next'] . "</a></div>\n";
     
-    echo html_footer($hotaru);
+    echo html_footer($admin);
 }
 
 
 /**
  * Step 3 of installation - Creates database tables
  */
-function database_creation($hotaru, $admin)
+function database_creation($admin)
 {
-    echo html_header($hotaru);
+    echo html_header($admin);
     
     // Step title
-    echo "<h2>" . $hotaru->lang['install_step3'] . "</h2>\n";
+    echo "<h2>" . $admin->lang['install_step3'] . "</h2>\n";
     
     // delete *all* plugin tables:
     $plugin_tables = $admin->listPluginTables();
@@ -207,102 +193,102 @@ function database_creation($hotaru, $admin)
     //create tables  - these should match the list in the listPluginTables function in libs/Admin.php
     $tables = array('settings', 'users', 'plugins', 'pluginhooks', 'pluginsettings', 'blocked');
     foreach ($tables as $table_name) {
-        create_table($hotaru, $table_name);
+        create_table($admin, $table_name);
     } 
 
     // Step content
-    echo "<div class='install_content'>" . $hotaru->lang['install_step3_success'] . "</div>\n";
+    echo "<div class='install_content'>" . $admin->lang['install_step3_success'] . "</div>\n";
 
     // Previous/Next buttons
-    echo "<div class='back'><a href='install.php?step=2'>" . $hotaru->lang['install_back'] . "</a></div>\n";
-    echo "<div class='next'><a href='install.php?step=4'>" . $hotaru->lang['install_next'] . "</a></div>\n";
+    echo "<div class='back'><a href='install.php?step=2'>" . $admin->lang['install_back'] . "</a></div>\n";
+    echo "<div class='next'><a href='install.php?step=4'>" . $admin->lang['install_next'] . "</a></div>\n";
     
-    echo html_footer($hotaru);
+    echo html_footer($admin);
 }
 
 
 /**
  * Step 4 of installation - registers the site Admin.
  */
-function register_admin($hotaru)
+function register_admin($admin)
 {
-    echo html_header($hotaru);
+    echo html_header($admin);
     
     // Step title
-    echo "<h2>" . $hotaru->lang['install_step4'] . "</h2>\n";
+    echo "<h2>" . $admin->lang['install_step4'] . "</h2>\n";
 
     // Step content
-    echo "<div class='install_content'>" . $hotaru->lang['install_step4_instructions'] . ":<br />\n";
+    echo "<div class='install_content'>" . $admin->lang['install_step4_instructions'] . ":<br />\n";
     
     $error = 0;
-    if ($hotaru->cage->post->getInt('step') == 4) 
+    if ($admin->cage->post->getInt('step') == 4) 
     {
         // Test username
-        $name_check = $hotaru->cage->post->testUsername('username');
+        $name_check = $admin->cage->post->testUsername('username');
         // alphanumeric, dashes and underscores okay, case insensitive
         if ($name_check) {
             $user_name = $name_check;
         } else {
-            $hotaru->message = $hotaru->lang['install_step4_username_error'];
-            $hotaru->messageType = 'red';
-            $hotaru->showMessage();
+            $admin->hotaru->message = $admin->lang['install_step4_username_error'];
+            $admin->hotaru->messageType = 'red';
+            $admin->hotaru->showMessage();
             $error = 1;
         }
 
         // Test password
-        $password_check = $hotaru->cage->post->testPassword('password');    
+        $password_check = $admin->cage->post->testPassword('password');    
         if ($password_check) {
-            $password2_check = $hotaru->cage->post->testPassword('password2');
+            $password2_check = $admin->cage->post->testPassword('password2');
             if ($password_check == $password2_check) {
                 // success
-                $user_password = $hotaru->current_user->generateHash($password_check);
+                $user_password = $admin->current_user->generateHash($password_check);
             } else {
-                $hotaru->message = $hotaru->lang['install_step4_password_match_error'];
-                $hotaru->messageType = 'red';
-                $hotaru->showMessage();
+                $admin->hotaru->message = $admin->lang['install_step4_password_match_error'];
+                $admin->hotaru->messageType = 'red';
+                $admin->hotaru->showMessage();
                 $error = 1;
             }
         } else {
             $password_check = "";
             $password2_check = "";
-            $hotaru->message = $hotaru->lang['install_step4_password_error'];
-            $hotaru->messageType = 'red';
-            $hotaru->showMessage();
+            $admin->hotaru->message = $admin->lang['install_step4_password_error'];
+            $admin->hotaru->messageType = 'red';
+            $admin->hotaru->showMessage();
             $error = 1;
         }
 
         // Test email
-        $email_check = $hotaru->cage->post->testEmail('email');
+        $email_check = $admin->cage->post->testEmail('email');
         if ($email_check) {
             $user_email = $email_check;
         } else {
-            $hotaru->message = $hotaru->lang['install_step4_email_error'];
-            $hotaru->messageType = 'red';
-            $hotaru->showMessage();
+            $admin->hotaru->message = $admin->lang['install_step4_email_error'];
+            $admin->hotaru->messageType = 'red';
+            $admin->hotaru->showMessage();
             $error = 1;
         }
     }
 
     // Show success message
-    if (($hotaru->cage->post->getInt('step') == 4) && $error == 0) {
-        $hotaru->message = $hotaru->lang['install_step4_update_success'];
-        $hotaru->messageType = 'green';
-        $hotaru->showMessage();
+    if (($admin->cage->post->getInt('step') == 4) && $error == 0) {
+        $admin->hotaru->message = $admin->lang['install_step4_update_success'];
+        $admin->hotaru->messageType = 'green';
+        $admin->hotaru->showMessage();
     }
     
     if ($error == 0) {
-        if (!$admin_name = $hotaru->current_user->adminExists())
+        if (!$admin_name = $admin->current_user->adminExists())
         {
             // Insert default settings
             $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email, user_permissions) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s)";
-            $hotaru->db->query($hotaru->db->prepare($sql, 'admin', 'admin', 'password', 'admin@mysite.com', serialize($hotaru->current_user->getDefaultPermissions('admin'))));
+            $admin->db->query($admin->db->prepare($sql, 'admin', 'admin', 'password', 'admin@mysite.com', serialize($admin->current_user->getDefaultPermissions('admin'))));
             $user_name = 'admin';
             $user_email = 'admin@mysite.com';
             $user_password = 'password';
         } 
         else 
         {
-            $user_info = $hotaru->current_user->getUserBasic(0, $admin_name);
+            $user_info = $admin->current_user->getUserBasic(0, $admin_name);
             // On returning to this page via back or next, the fields are empty at this point, so...
             if (!isset($user_name)) { $user_name = ""; }
             if (!isset($user_email)){ $user_email = ""; } 
@@ -310,7 +296,7 @@ function register_admin($hotaru)
             if (($user_name != "") && ($user_email != "") && ($user_password != "")) {
                 // There's been a change so update...
                 $sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_date = CURRENT_TIMESTAMP, user_password = %s, user_email = %s, user_email_valid = %d WHERE user_role = %s";
-                $hotaru->db->query($hotaru->db->prepare($sql, $user_name, 'admin', $user_password, $user_email, 1, 'admin'));
+                $admin->db->query($admin->db->prepare($sql, $user_name, 'admin', $user_password, $user_email, 1, 'admin'));
             } else {
                 $user_id = $user_info->user_id;
                 $user_name = $user_info->user_username;
@@ -326,63 +312,63 @@ function register_admin($hotaru)
     echo "<table>";
 
     // Username
-    echo "<tr><td>" . $hotaru->lang["install_step4_username"] . "&nbsp; </td><td><input type='text' size=30 name='username' value='" . $user_name . "' /></td></tr>\n";
+    echo "<tr><td>" . $admin->lang["install_step4_username"] . "&nbsp; </td><td><input type='text' size=30 name='username' value='" . $user_name . "' /></td></tr>\n";
 
     // Email
-    echo "<tr><td>" . $hotaru->lang["install_step4_email"] . "&nbsp; </td><td><input type='text' size=30 name='email' value='" . $user_email . "' /></td></tr>\n";
+    echo "<tr><td>" . $admin->lang["install_step4_email"] . "&nbsp; </td><td><input type='text' size=30 name='email' value='" . $user_email . "' /></td></tr>\n";
     
     // Password
-    echo "<tr><td>" . $hotaru->lang["install_step4_password"] . "&nbsp; </td><td><input type='password' size=30 name='password' value='' /></td></tr>\n";
+    echo "<tr><td>" . $admin->lang["install_step4_password"] . "&nbsp; </td><td><input type='password' size=30 name='password' value='' /></td></tr>\n";
 
     // Password verify
-    echo "<tr><td>" . $hotaru->lang["install_step4_password_verify"] . "&nbsp; </td><td><input type='password' size=30 name='password2' value='' /></td></tr>\n";
+    echo "<tr><td>" . $admin->lang["install_step4_password_verify"] . "&nbsp; </td><td><input type='password' size=30 name='password2' value='' /></td></tr>\n";
 
     echo "<input type='hidden' name='step' value='4' />\n";
     echo "<input type='hidden' name='updated' value='true' />\n";
     
     // Update button
-    echo "<tr><td>&nbsp;</td><td style='text-align:right;'><input id='update' type='submit' value='" . $hotaru->lang['install_step4_form_update'] . "' /></td></tr>\n";
+    echo "<tr><td>&nbsp;</td><td style='text-align:right;'><input id='update' type='submit' value='" . $admin->lang['install_step4_form_update'] . "' /></td></tr>\n";
     
     echo "</table>";
     echo "</form>\n";
 
     // Make note of password message
-    echo $hotaru->lang["install_step4_make_note"] . "</div>\n";
+    echo $admin->lang["install_step4_make_note"] . "</div>\n";
 
     // Previous/Next buttons
-    echo "<div class='back'><a href='install.php?step=3'>" . $hotaru->lang['install_back'] . "</a></div>\n";
-    if ($hotaru->cage->post->getAlpha('updated') == 'true') {
+    echo "<div class='back'><a href='install.php?step=3'>" . $admin->lang['install_back'] . "</a></div>\n";
+    if ($admin->cage->post->getAlpha('updated') == 'true') {
         // active "next" link if user has been updated
-        echo "<div class='next'><a href='install.php?step=5'>" . $hotaru->lang['install_next'] . "</a></div>\n";
+        echo "<div class='next'><a href='install.php?step=5'>" . $admin->lang['install_next'] . "</a></div>\n";
     } else {
         // link disbaled until "update" button pressed
-        echo "<div class='next'>" . $hotaru->lang['install_next'] . "</div>\n";
+        echo "<div class='next'>" . $admin->lang['install_next'] . "</div>\n";
     }
     
-    echo html_footer($hotaru);
+    echo html_footer($admin);
 }
     
     
 /**
  * Step 5 of installation - shows completion.
  */
-function installation_complete($hotaru)
+function installation_complete($admin)
 {
-    echo html_header($hotaru);
+    echo html_header($admin);
 
     // Step title
-    echo "<h2>" . $hotaru->lang['install_step5'] . "</h2>\n";
+    echo "<h2>" . $admin->lang['install_step5'] . "</h2>\n";
     
     // Step content
-    echo "<div class='install_content'>" . $hotaru->lang['install_step5_installation_complete'] . "</div>\n";
-    echo "<div class='install_content'>" . $hotaru->lang['install_step5_installation_delete'] . "</div>\n";
-    echo "<div class='install_content'>" . $hotaru->lang['install_step5_installation_go_play'] . "</div>\n";
+    echo "<div class='install_content'>" . $admin->lang['install_step5_installation_complete'] . "</div>\n";
+    echo "<div class='install_content'>" . $admin->lang['install_step5_installation_delete'] . "</div>\n";
+    echo "<div class='install_content'>" . $admin->lang['install_step5_installation_go_play'] . "</div>\n";
 
     // Previous/Next buttons
-    echo "<div class='back'><a href='install.php?step=4'>" . $hotaru->lang['install_back'] . "</a></div>\n";
-    echo "<div class='next'><a href='" . BASEURL . "'>" . $hotaru->lang['install_home'] . "</a></div>\n";
+    echo "<div class='back'><a href='install.php?step=4'>" . $admin->lang['install_back'] . "</a></div>\n";
+    echo "<div class='next'><a href='" . BASEURL . "'>" . $admin->lang['install_home'] . "</a></div>\n";
     
-    echo html_footer($hotaru);    
+    echo html_footer($admin);    
 }
 
 
@@ -393,10 +379,10 @@ function installation_complete($hotaru)
  *
  * Note: Deletes the table if it already exists, then makes it again
  */
-function create_table($hotaru, $table_name)
+function create_table($admin, $table_name)
 {
     $sql = 'DROP TABLE IF EXISTS `' . DB_PREFIX . $table_name . '`;';
-    $hotaru->db->query($sql);
+    $admin->db->query($sql);
 
     // SETTINGS TABLE
     
@@ -411,60 +397,60 @@ function create_table($hotaru, $table_name)
           `settings_updateby` int(20) NOT NULL DEFAULT 0,
           UNIQUE KEY `key` (`settings_name`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Application Settings';";
-        echo $hotaru->lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
-        $hotaru->db->query($sql);
+        echo $admin->lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+        $admin->db->query($sql);
         
         // Default settings:
         
         // Site name
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $hotaru->db->query($hotaru->db->prepare($sql, 'SITE_NAME', 'Hotaru CMS', 'Hotaru CMS', ''));
+        $admin->db->query($admin->db->prepare($sql, 'SITE_NAME', 'Hotaru CMS', 'Hotaru CMS', ''));
         
         // Main theme
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $hotaru->db->query($hotaru->db->prepare($sql, 'THEME', 'default/', 'default/', 'You need the "\/"'));
+        $admin->db->query($admin->db->prepare($sql, 'THEME', 'default/', 'default/', 'You need the "\/"'));
         
         // Admin theme
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $hotaru->db->query($hotaru->db->prepare($sql, 'ADMIN_THEME', 'admin_default/', 'admin_default/', 'You need the "\/"'));
+        $admin->db->query($admin->db->prepare($sql, 'ADMIN_THEME', 'admin_default/', 'admin_default/', 'You need the "\/"'));
         
         // Language_pack 
         /* Defined in hotaru_settings because we need it for this installation script, but here we check it has been defined, just in case.*/
-        if (!isset($hotaru->language_pack)) { $hotaru->language_pack = 'default/'; }
+        if (!isset($admin->language_pack)) { $admin->language_pack = 'default/'; }
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $hotaru->db->query($hotaru->db->prepare($sql, 'LANGUAGE_PACK', $hotaru->language_pack, 'language_default/', 'You need the "\/"'));
+        $admin->db->query($admin->db->prepare($sql, 'LANGUAGE_PACK', $admin->language_pack, 'language_default/', 'You need the "\/"'));
         
         // Friendly urls
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $hotaru->db->query($hotaru->db->prepare($sql, 'FRIENDLY_URLS', 'false', 'false', 'true/false'));
+        $admin->db->query($admin->db->prepare($sql, 'FRIENDLY_URLS', 'false', 'false', 'true/false'));
         
         // Site email
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $hotaru->db->query($hotaru->db->prepare($sql, 'SITE_EMAIL', 'admin@mysite.com', 'admin@mysite.com', 'Must be changed'));
+        $admin->db->query($admin->db->prepare($sql, 'SITE_EMAIL', 'admin@mysite.com', 'admin@mysite.com', 'Must be changed'));
         
         // Database cache
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $hotaru->db->query($hotaru->db->prepare($sql, 'DB_CACHE_ON', 'false', 'true', 'true/false'));
+        $admin->db->query($admin->db->prepare($sql, 'DB_CACHE_ON', 'false', 'true', 'true/false'));
         
         // Database cache duration (hours)
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %d, %d, %s)";
-        $hotaru->db->query($hotaru->db->prepare($sql, 'DB_CACHE_DURATION', 12, 12, 'Hours'));
+        $admin->db->query($admin->db->prepare($sql, 'DB_CACHE_DURATION', 12, 12, 'Hours'));
         
         // RSS cache
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $hotaru->db->query($hotaru->db->prepare($sql, 'RSS_CACHE_ON', 'true', 'true', 'true/false'));
+        $admin->db->query($admin->db->prepare($sql, 'RSS_CACHE_ON', 'true', 'true', 'true/false'));
         
         // RSS cache duration (hours)
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %d, %d, %s)";
-        $hotaru->db->query($hotaru->db->prepare($sql, 'RSS_CACHE_DURATION', 60, 60, 'Minutes'));
+        $admin->db->query($admin->db->prepare($sql, 'RSS_CACHE_DURATION', 60, 60, 'Minutes'));
         
         // CSS/JavaScript cache
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $hotaru->db->query($hotaru->db->prepare($sql, 'CSS_JS_CACHE_ON', 'true', 'true', 'true/false'));
+        $admin->db->query($admin->db->prepare($sql, 'CSS_JS_CACHE_ON', 'true', 'true', 'true/false'));
         
         // Debug
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $hotaru->db->query($hotaru->db->prepare($sql, 'DEBUG', 'false', 'false', 'true/false'));
+        $admin->db->query($admin->db->prepare($sql, 'DEBUG', 'false', 'false', 'true/false'));
     }
     
     // USERS TABLE
@@ -487,8 +473,8 @@ function create_table($hotaru, $table_name)
           UNIQUE KEY `key` (`user_username`),
           KEY `user_email` (`user_email`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Users and Roles';";
-        echo $hotaru->lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
-        $hotaru->db->query($sql); 
+        echo $admin->lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+        $admin->db->query($sql); 
     }
     
     // PLUGINS TABLE
@@ -508,8 +494,8 @@ function create_table($hotaru, $table_name)
           `plugin_updateby` int(20) NOT NULL DEFAULT 0,
           UNIQUE KEY `key` (`plugin_folder`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Application Plugins';";
-        echo $hotaru->lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
-        $hotaru->db->query($sql);
+        echo $admin->lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+        $admin->db->query($sql);
     }
     
     // PLUGIN HOOKS TABLE
@@ -523,8 +509,8 @@ function create_table($hotaru, $table_name)
           `plugin_updateby` int(20) NOT NULL DEFAULT 0,
           INDEX  (`plugin_folder`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Plugins Hooks';";
-        echo $hotaru->lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
-        $hotaru->db->query($sql);
+        echo $admin->lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+        $admin->db->query($sql);
     }
     
     // PLUGIN SETTINGS TABLE
@@ -539,8 +525,8 @@ function create_table($hotaru, $table_name)
           `plugin_updateby` int(20) NOT NULL DEFAULT 0,
           INDEX  (`plugin_folder`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Plugins Settings';";
-        echo $hotaru->lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
-        $hotaru->db->query($sql);
+        echo $admin->lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+        $admin->db->query($sql);
     }
     
     
@@ -555,8 +541,8 @@ function create_table($hotaru, $table_name)
           `blocked_updateby` int(20) NOT NULL DEFAULT 0,
           INDEX  (`blocked_type`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Blocked IPs, users, emails, etc';";
-        echo $hotaru->lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
-        $hotaru->db->query($sql);
+        echo $admin->lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+        $admin->db->query($sql);
     }
 }
 ?>
