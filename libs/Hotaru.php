@@ -56,7 +56,7 @@ class Hotaru
     {
         // Initialize
         require_once(LIBS . 'HotaruStart.php');
-        $start = new HotaruStart();
+        $start = new HotaruStart($entrance);
         $this->isDebug  = $start->isDebug;
         $this->db       = $start->db;
         $this->cage     = $start->cage;
@@ -74,8 +74,11 @@ class Hotaru
         }
         
         $this->plugins  = new PluginFunctions('', $this);
-        
         $this->checkCookie();   // Log in user if cookie
+        
+        // We needn't go any further if this is called from the Install script.
+        if ($entrance == 'install') { return false; }
+        
         $this->hotaruHeader($entrance);  // plugin hook method
     }
     
