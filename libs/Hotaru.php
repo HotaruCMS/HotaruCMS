@@ -187,8 +187,10 @@ class Hotaru
         if (($hotaru_user != $user_info[0]) || (crypt($user_info[0], 22) != $user_info[1])) { return false; }
 
         $this->current_user->name = $hotaru_user;
-        $this->current_user->getUserBasic(0, $this->current_user->name);
-        $this->current_user->loggedIn = true;
+        if ($hotaru_user) {
+            $this->current_user->getUserBasic(0, $this->current_user->name);
+            $this->current_user->loggedIn = true;
+        }
         
         return true;
     }

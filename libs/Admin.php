@@ -503,6 +503,8 @@ class Admin
             
         $this->db->select(DB_NAME);
         
+        if (!$this->db->get_col("SHOW TABLES",0)) { return $plugin_tables; }
+        
         foreach ( $this->db->get_col("SHOW TABLES",0) as $table_name )
         {
             if (!in_array($table_name, $core_tables)) {
