@@ -37,11 +37,16 @@ class Admin
     
     /**
      * Constructor - make an Admin object
+     *
+     * @param string $entrance - usually admin, install or blank
      */
     public function __construct($entrance = '')
     {
+        // always pass 'admin' to Hotaru except during installation
+        $entry = ($entrance == 'install') ? 'install' : 'admin';
+        
         require_once(LIBS . 'Hotaru.php');
-        $hotaru = new Hotaru('admin');
+        $hotaru = new Hotaru($entry);   // passes either 'admin' or 'install' to Hotaru
         $this->hotaru       = $hotaru;
         $this->db           = $hotaru->db;
         $this->cage         = $hotaru->cage;

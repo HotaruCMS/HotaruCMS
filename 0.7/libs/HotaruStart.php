@@ -33,14 +33,17 @@ class HotaruStart
     /**
      * Initialize Hotaru with the essentials
      */
-    public function __construct()
+    public function __construct($entrance)
     {
         // The order here is important!
         $this->getFiles();
         $this->db = $this->initDatabase();
+        $this->cage = $this->initInspektCage();
+        
+        if ($entrance == 'install') { return $this; }
+        
         $this->readSettings();
         $this->setUpDatabaseCache();
-        $this->cage = $this->initInspektCage();
         $this->isDebug = $this->checkDebug();
         
         return $this;
