@@ -531,9 +531,8 @@ class Categories extends PluginFunctions
                 }
                 
                 // Output the category bar
-                echo "<ul id='category_bar'>\n"; 
-                echo $output; 
-                echo "</ul>\n"; 
+                $this->hotaru->vars['output'] = $output;
+                $this->hotaru->displayTemplate('category_bar', 'categories');
             }
         }
     }
