@@ -1,6 +1,6 @@
 HOTARU CMS
-Version: Alpha 0.7.2
-Released: October 10th 2009
+Version: Alpha 0.7.3
+Released: October 12th 2009
 
 INSTALLATION
 ------------
