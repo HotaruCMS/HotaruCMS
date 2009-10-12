@@ -37,9 +37,10 @@ $lang["install_step1_welcome"] = "Welcome to Hotaru CMS. Click \"Next\" to begin
 $lang["install_step2"] = "Step 2/5: Database Setup";
 $lang["install_step2_instructions"] = "To set up a database for Hotaru CMS, you'll need to do the following";
 $lang["install_step2_instructions1"] = "Create a database called <i>hotaru</i> in your web host's control panel. Make a note of your username and password!";
-$lang["install_step2_instructions2"] = "Open <pre>/hotaru_settings.php</pre> and fill in the \"Database Details\" section.";
-$lang["install_step2_instructions3"] = "Fill in the <pre>baseurl</pre>, e.g. <span style='color: #666;'><i>http://www.myhotarusite.com/</i></span>. Don't forget the trailing slash (/)";
-$lang["install_step2_instructions4"] = "Save and upload <pre>hotaru_settings.php</pre> to your server, then click \"Next\"...";
+$lang["install_step2_instructions2"] = "Copy <pre>/hotaru_settings_default.php</pre> and rename it <pre>/hotaru_settings.php</pre>.";
+$lang["install_step2_instructions3"] = "Open <pre>/hotaru_settings.php</pre> and fill in the \"Database Details\" section.";
+$lang["install_step2_instructions4"] = "Fill in the <pre>baseurl</pre>, e.g. <i>http://www.myhotarusite.com/</i>. Don't forget the trailing slash (/)";
+$lang["install_step2_instructions5"] = "Save and upload <pre>hotaru_settings.php</pre> to your server, then click \"Next\"...";
 $lang["install_step2_warning"] = "<b>Warning</b>";
 $lang["install_step2_warning_note"] = "When you click \"Next\", new database tables will be created, deleting any old ones you may have!";
 
