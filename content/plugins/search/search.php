@@ -2,7 +2,7 @@
 /**
  * name: Search
  * description: Displays "Search!"
- * version: 0.3
+ * version: 0.4
  * folder: search
  * class: Search
  * requires: submit 0.7, sidebar_widgets 0.4
@@ -94,20 +94,21 @@ class Search extends PluginFunctions
     {
         if ($this->cage->get->keyExists('search')) 
         {
-            $orig_search_terms = $this->cage->get->getMixedString2('search');
+            $orig_search_terms = stripslashes($this->cage->get->getMixedString2('search'));
             $search_terms = $orig_search_terms;
             
             if ($search_terms)
             {
     
-                // fetch sleect, orderby and filter,,,
+                // fetch sleect, orderby and filter...
                 $prepared_search = $this->prepareSearchFilter($search_terms);
                 extract($prepared_search);
                 
-                $rss = " <a href='" . $this->hotaru->url(array('page'=>'rss', 'search'=>stripslashes($orig_search_terms))) . "'>";
+                $rss = " <a href='" . $this->hotaru->url(array('page'=>'rss', 'search'=>$orig_search_terms)) . "'>";
                 $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
             
-                $this->hotaru->vars['page_title'] = $this->lang["submit_page_breadcrumbs_search"] . " &raquo; " . stripslashes($orig_search_terms) . $rss;
+                $this->hotaru->vars['page_title'] = $this->lang["submit_page_breadcrumbs_search"] . " &raquo; " . $orig_search_terms . $rss;
+                $this->hotaru->vars['orig_search'] = $orig_search_terms; // use this to re-fill the search box after a search
                 
                 return true;    
             }

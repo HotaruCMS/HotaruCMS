@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.0.4 2009/10/12 - Nick - Refills the search box with the term just searched for.
 v.0.3 2009/10/05 - Nick - Updates for compatibility with Hotaru 0.7
 v.0.2 2009/10/01 - Nick - Updates for compatibility with Hotaru 0.6
 v.0.1 2009/08/31 - Nick - Released first version
