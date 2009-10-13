@@ -2,7 +2,7 @@
 /**
  * name: Text Widget
  * description: Paste text or code into a blank widget
- * version: 0.1
+ * version: 0.2
  * folder: text_widget
  * class: TextWidget
  * requires: sidebar_widgets 0.4
@@ -75,13 +75,15 @@ class TextWidget extends PluginFunctions
             
             // Get settings from the database:
             $settings = unserialize($this->getSetting('text_widget_' . $id . '_settings', 'text_widget')); 
-            
-            echo "<h2 class='sidebar_widget_head'>" . $settings['text_widget_title'] . "</h2>\n";
-            
+
+            if ($settings['text_widget_title']) {
+                echo "<h2 class='sidebar_widget_head'>" . $settings['text_widget_title'] . "</h2>\n";
+            }
+
             if ($settings['text_widget_php']) {
-                echo "<div class='sidebar_widget_body'>" . eval($settings['text_widget_content']) . "</div>\n";
+                echo "<div class='sidebar_widget_body'>"; eval($settings['text_widget_content']); echo "</div>\n";
             } else {
-                echo "<div class='sidebar_widget_body'>" . $settings['text_widget_content'] . "</div>\n";
+                echo "<div class='sidebar_widget_body'>"; echo $settings['text_widget_content']; echo "</div>\n";
             }
 
         }
@@ -117,11 +119,19 @@ class TextWidget extends PluginFunctions
                 
             } elseif ($action == 'delete_widget') {
                 $id = $this->cage->get->getInt('id');
+                
+                // delete from pluginsettings table:
                 $this->deleteSettings('text_widget_' . $id . '_settings'); // setting
                 
+                // delete from widgets table:
                 require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
                 $sidebar = new Sidebar($this->hotaru);
                 $sidebar->deleteWidget('text_widget_' . $id); // function suffix
+                
+                // delete from "sidebar_settings" in pluginsettings table;
+                $sidebar_settings = $sidebar->getSidebarSettings();
+                unset($sidebar_settings['sidebar_widgets']['text_widget_' . $id]);
+                $this->updateSetting('sidebar_settings', serialize($sidebar_settings), 'sidebar_widgets');
                 
                 $this->hotaru->message = $this->hotaru->lang["text_widget_removed"];
                 $this->hotaru->messageType = "green";

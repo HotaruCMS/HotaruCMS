@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.0.5 2009/10/13 - Nick - Bug fix for deleting feeds
 v.0.4 2009/10/07 - Nick - Updates for compatibility with Hotaru 0.7
 v.0.3 2009/10/01 - Nick - Updates for compatibility with Hotaru 0.6
 v.0.2 2009/08/28 - Nick - Updates for compatibility with Hotaru 0.5

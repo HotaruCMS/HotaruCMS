@@ -2,7 +2,7 @@
 /**
  * name: Sidebar Posts
  * description: Adds links in the sidebar to the latest posts and top stories on the site.
- * version: 0.4
+ * version: 0.5
  * folder: sidebar_posts
  * class: SidebarPosts
  * requires: sidebar_widgets 0.4, submit 0.7
@@ -68,12 +68,12 @@ class SidebarPosts extends PluginFunctions
         
         if (isset($posts) && !empty($posts)) {
             
-            $output = "<h2 class='sidebar_posts_title'>";
+            $output = "<h2 class='sidebar_widget_head sidebar_posts_title'>";
             $output .= "<a href='" . $this->hotaru->url(array('page'=>'rss', 'status'=>$type)) . "' title='" . $this->lang["sidebar_posts_icon_anchor_title"] . "'><img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'></a>&nbsp;"; // RSS icon
             $link = BASEURL;
             $output .= "<a href='" . $link . "' title='" . $this->lang["sidebar_posts_title_anchor_title"] . "'>" . $title . "</a></h2>"; 
                 
-            $output .= "<ul class='sidebar_posts_items'>";
+            $output .= "<ul class='sidebar_widget_body sidebar_posts_items'>";
             
             if ($this->hotaru->post->vars['useCategories']) {
                 require_once(PLUGINS . 'categories/libs/Category.php');

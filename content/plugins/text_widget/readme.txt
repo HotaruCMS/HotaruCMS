@@ -12,4 +12,5 @@ Instructions
 
 Changelog
 ---------
+v.0.2 2009/10/13 - Nick - Bug fix for deleting text widgets
 v.0.1 2009/10/12 - Nick - Released first version
