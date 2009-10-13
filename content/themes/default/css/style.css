@@ -122,7 +122,6 @@ input.submit {
 /* SIDEBAR */
 
 #sidebar { padding-left: 2.0em; padding-right: 0.95em; }
-#sidebar ul { margin-bottom: 1.2em; }
 #sidebar ul li { padding: 0.1em; border-bottom: solid 1px #eee; }
 
 /* FOOTER */
