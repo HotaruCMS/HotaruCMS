@@ -2,11 +2,11 @@
 /**
  * name: RSS Show
  * description: Adds links in the sidebar to the latest posts from a specified RSS feed.
- * version: 0.4
+ * version: 0.5
  * folder: rss_show
  * class: RssShow
  * requires: sidebar_widgets 0.4
- * hooks: rss_show, install_plugin, hotaru_header, admin_header_include_raw, header_include, admin_sidebar_plugin_settings, admin_plugin_settings
+ * hooks: rss_show, install_plugin, hotaru_header, admin_header_include_raw, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * PHP version 5
  *
@@ -71,14 +71,14 @@ class RssShow extends PluginFunctions
                 
                 // SITE TITLE
                 if ($settings['rss_show_title']) { 
-                    $output .= "<h2 class='rss_show_feed_title'>";
+                    $output .= "<h2 class='sidebar_widget_head rss_show_feed_title'>";
                     $output .= "<a href='" . $feed->subscribe_url() . "' title='" . $this->hotaru->lang["rss_show_icon_anchor_title"] . "'><img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'></a>&nbsp;"; // RSS icon
                     if ($feed->get_link()) { $link = $feed->get_link(); } else { $link = $feed->subscribe_url(); }
                     $output .= "<a href='" . $link . "' title='" . $this->hotaru->lang["rss_show_title_anchor_title"] . "'>" . $settings['rss_show_title'] . "</a></h2>"; 
                 }
                     
                 if ($feed->data) { 
-                    $output .= "<ul class='rss_feed_item'>";
+                    $output .= "<ul class='sidebar_widget_body rss_feed_item'>";
                     foreach ($feed->get_items() as $item) {
                             
                             // POST TITLE
@@ -228,11 +228,19 @@ class RssShow extends PluginFunctions
                 
             } elseif ($action == 'delete_feed') {
                 $id = $this->cage->get->getInt('id');
+                
+                // delete from pluginsettings table:
                 $this->deleteSettings('rss_show_' . $id . '_settings'); // setting
                 
+                // delete from widgets table:
                 require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
                 $sidebar = new Sidebar($this->hotaru);
                 $sidebar->deleteWidget('rss_show_' . $id); // function suffix
+                
+                // delete from "sidebar_settings" in pluginsettings table;
+                $sidebar_settings = $sidebar->getSidebarSettings();
+                unset($sidebar_settings['sidebar_widgets']['rss_show_' . $id]);
+                $this->updateSetting('sidebar_settings', serialize($sidebar_settings), 'sidebar_widgets');
                 
                 $this->hotaru->message = $this->hotaru->lang["rss_show_feed_removed"];
                 $this->hotaru->messageType = "green";
