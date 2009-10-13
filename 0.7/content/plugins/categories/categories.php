@@ -2,7 +2,7 @@
 /**
  * name: Categories
  * description: Enables categories for posts
- * version: 0.5
+ * version: 0.6
  * folder: categories
  * class: Categories
  * requires: submit 0.7, category_manager 0.5
@@ -411,8 +411,8 @@ class Categories extends PluginFunctions
             $sql = "SELECT * FROM " . TABLE_CATEGORIES . " ORDER BY category_order ASC";
             $the_cats = $this->db->get_results($this->db->prepare($sql));
             
-            echo "<h2>" . $this->lang["sidebar_categories"] . "</h2>";
-            echo "<ul class='sidebar_categories'>\n";
+            echo "<h2 class='sidebar_widget_head'>" . $this->lang["sidebar_categories"] . "</h2>";
+            echo "<ul class=' class='sidebar_widget_body sidebar_categories'>\n";
             foreach ($the_cats as $cat) {
                 $cat_level = 1;    // top level category.
                 if ($cat->category_name != "all") {
