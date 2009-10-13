@@ -374,11 +374,21 @@ class Hotaru
         */
         if (file_exists(THEMES . THEME . $page))
         {
-            include_once(THEMES . THEME . $page);
+            if (!$include_once) {
+                // Special case, do not restrict to include once.
+                include(THEMES . THEME . $page);
+            } else {
+                include_once(THEMES . THEME . $page);
+            }
         } 
         elseif (file_exists(THEMES . 'default/' . $page))
         {
-            include_once(THEMES . 'default/' . $page);
+            if (!$include_once) {
+                // Special case, do not restrict to include once.
+                include(THEMES . 'default/' . $page);
+            } else {
+                include_once(THEMES . 'default/' . $page);
+            }
         }
         elseif ($plugin != '' && file_exists(PLUGINS .  $plugin . '/templates/' . $page))
         {

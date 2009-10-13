@@ -233,11 +233,21 @@ class Admin
         */
         if (file_exists(ADMIN_THEMES . ADMIN_THEME . $page))
         {
-            include_once(ADMIN_THEMES . ADMIN_THEME . $page);
+            if (!$include_once) {
+                // Special case, do not restrict to include once.
+                include(ADMIN_THEMES . ADMIN_THEME . $page);
+            } else {
+                include_once(ADMIN_THEMES . ADMIN_THEME . $page);
+            }
         } 
         elseif (file_exists(ADMIN_THEMES . 'admin_default/' . $page))
         {
-            include_once(ADMIN_THEMES . 'admin_default/' . $page);
+            if (!$include_once) {
+                // Special case, do not restrict to include once.
+                include(ADMIN_THEMES . 'admin_default/' . $page);
+            } else {
+                include_once(ADMIN_THEMES . 'admin_default/' . $page);
+            }
         }
         elseif ($plugin != '' && file_exists(PLUGINS .  $plugin . '/templates/' . $page))
         {
