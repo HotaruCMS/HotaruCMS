@@ -57,7 +57,10 @@ if ($stories) {
     
         <?php $hotaru->plugins->pluginHook('submit_show_post_pre_title'); ?>
         
-        <div class="show_post_title"><a href='<?php echo $hotaru->post->origUrl; ?>'><?php echo $hotaru->post->title; ?></a></div>
+        <div class="show_post_title">
+            <a href='<?php echo $hotaru->post->origUrl; ?>'><?php echo $hotaru->post->title; ?></a>
+            <?php $hotaru->plugins->pluginHook('submit_show_post_title'); ?>
+        </div>
     
         <?php if ($hotaru->post->useAuthor || $hotaru->post->useDate) { ?>
             <div class="show_post_author_date">    
@@ -105,7 +108,7 @@ if ($stories) {
     
     //important to set the strategy to be used before a call to fetchPagedNavigation
     $pagedResults->setLayout(new DoubleBarLayout());
-    echo $pagedResults->fetchPagedNavigation();
+    echo $pagedResults->fetchPagedNavigation('', $hotaru);
 }
     
 ?>

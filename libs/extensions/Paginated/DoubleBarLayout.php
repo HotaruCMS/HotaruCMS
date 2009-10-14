@@ -5,10 +5,8 @@ require_once "PageLayout.php";
 class DoubleBarLayout implements PageLayout
 {
 
-    public function fetchPagedLinks($parent, $queryVars) 
+    public function fetchPagedLinks($parent, $queryVars, $hotaru) 
     {
-        $hotaru = new Hotaru();
-        
         $currentPage = $parent->getPageNumber();
         $str = "";
         
@@ -26,7 +24,9 @@ class DoubleBarLayout implements PageLayout
         if (!$parent->isFirstPage() && !($currentPage <= ($before + 1))) {
             if ($currentPage != 1) {
                 $str .= "<a class='first' href='" . $hotaru->url(array('pg'=>'1' . $queryVars)) . "'  title='" . $hotaru->lang['pagination_first'] . "'>1</a> ";
-                $str .= " <span class='dots'>...</span> ";
+                if ($currentPage > ($before+1)) {
+                    $str .= " <span class='dots'>...</span> ";
+                }
             }
         }
 

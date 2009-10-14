@@ -2,7 +2,7 @@
 /**
  * name: Tags
  * description: Enables tags for posts
- * version: 0.6
+ * version: 0.7
  * folder: tags
  * class: Tags
  * requires: submit 0.7
