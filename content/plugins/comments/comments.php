@@ -216,7 +216,7 @@ class Comments extends pluginFunctions
      */
     public function submit_show_post_extra_fields()
     {
-        echo '<li><a class="comments_comments_link" href="' . $this->hotaru->url(array('page'=>$this->hotaru->post->id)) . '">' . $this->hotaru->comment->countComments() . '</a></li>' . "\n";
+        echo '<li><a class="comment_link" href="' . $this->hotaru->url(array('page'=>$this->hotaru->post->id)) . '">' . $this->hotaru->comment->countComments() . '</a></li>' . "\n";
     }
     
     
