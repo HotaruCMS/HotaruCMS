@@ -5,6 +5,6 @@
  */
 
 interface PageLayout {
-	public function fetchPagedLinks($parent, $queryVars);
+	public function fetchPagedLinks($parent, $queryVars, $hotaru);
 }
 ?>

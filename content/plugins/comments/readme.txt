@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.0.4.1 2009/10/14 - Nick - Changed CSS "comments_comments_link" to simply "comment_link"
 v.0.4 2009/10/07 - Nick - Updates for compatibility with Hotaru 0.7
 v.0.3 2009/10/01 - Nick - Updates for compatibility with Hotaru 0.6
 v.0.2 2009/08/30 - Nick - Fixed Reply/Edit bug, newline bug, save settings bug and added email address option

@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.0.7 2009/10/06 - Nick - Changed tags to show in a hidden div
 v.0.6 2009/10/06 - Nick - Updates for compatibility with Hotaru 0.7
 v.0.5 2009/10/01 - Nick - Updates for compatibility with Hotaru 0.6
 v.0.4 2009/08/30 - Nick - Added a function to delete tags when a post is deleted

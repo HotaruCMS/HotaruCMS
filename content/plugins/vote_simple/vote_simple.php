@@ -2,11 +2,11 @@
 /**
  * name: Vote Simple
  * description: Adds voting ability to posted stories.
- * version: 0.4
+ * version: 0.5
  * folder: vote_simple
  * class: VoteSimple
  * requires: submit 0.7, users 0.5
- * hooks: install_plugin, hotaru_header, submit_hotaru_header_1, post_read_post_1, post_read_post_2, header_include, submit_pre_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, post_add_post, navigation, submit_show_post_extra_fields, submit_show_post_extras
+ * hooks: install_plugin, hotaru_header, submit_hotaru_header_1, post_read_post_1, post_read_post_2, header_include, submit_pre_show_post, submit_show_post_title, admin_plugin_settings, admin_sidebar_plugin_settings, post_add_post, navigation, submit_show_post_extra_fields, submit_show_post_extras
  *
  * PHP version 5
  *
@@ -179,10 +179,26 @@ class VoteSimple extends PluginFunctions
         }
     }
     
+    
      /**
      * Displays the vote button.
      */
     public function submit_pre_show_post()
+    {
+        // CHECK TO SEE IF THE CURRENT USER HAS VOTED FOR THIS POST
+         if ($this->current_user->loggedIn) {
+            $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating != %s";
+            $this->hotaru->vars['voted'] = $this->db->get_var($this->db->prepare($sql, $this->hotaru->post->id, $this->current_user->id, 'alert'));
+        } 
+
+         $this->hotaru->displayTemplate('vote_simple_button', 'vote_simple', NULL, false);
+    }
+    
+    
+     /**
+     * Displays the vote button.
+     */
+    public function submit_show_post_title()
     {
         if ($this->hotaru->post->status == 'new' && $this->hotaru->vars['useAlerts'] == "checked") {
             // CHECK TO SEE IF THIS POST IS BEING FLAGGED AND IF SO, ADD IT TO THE DATABASE
@@ -234,30 +250,18 @@ class VoteSimple extends PluginFunctions
                     return true; // This will stop the post from showing    
                 }
                 
-                if ($flag_count > 1) { 
-                    echo "<p class='alert_message'>" . $this->lang["vote_alert_flagged_message_1"] . " " . $flag_count . " " . $this->lang["vote_alert_flagged_message_users"]  . " " . $this->lang["vote_alert_flagged_message_2"] . " <i>";
-                } else {
-                    echo "<p class='alert_message'>" . $this->lang["vote_alert_flagged_message_1"] . " " . $flag_count . " " . $this->lang["vote_alert_flagged_message_user"]  . " " . $this->lang["vote_alert_flagged_message_2"] . " <i>";
-                }
-                
                 $why_list = "";
                 foreach ($reasons as $why) {
                     $alert_lang = "vote_alert_reason_" . $why;
                     $why_list .= $this->lang[$alert_lang] . ", ";
                 }
                 $why_list = rstrtrim($why_list, ", ");    // removes trailing comma
-                echo $why_list . "</i></p>";
+
+                $this->hotaru->vars['flag_count'] = $flag_count;
+                $this->hotaru->vars['flag_why'] = $why_list;
+                $this->hotaru->displayTemplate('vote_simple_alert', 'vote_simple', NULL, false);
             }
         }
-        
-        
-        // CHECK TO SEE IF THE CURRENT USER HAS VOTED FOR THIS POST
-         if ($this->current_user->loggedIn) {
-            $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating != %s";
-            $this->hotaru->vars['voted'] = $this->db->get_var($this->db->prepare($sql, $this->hotaru->post->id, $this->current_user->id, 'alert'));
-        } 
-
-         $this->hotaru->displayTemplate('vote_simple_button', 'vote_simple', NULL, false);
     }
     
      /**
