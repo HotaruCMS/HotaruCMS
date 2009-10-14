@@ -279,14 +279,14 @@ class VoteSimple extends PluginFunctions
     {
         if ($this->hotaru->post->status == "new" && ($this->hotaru->vars['useAlerts'] == "checked")) {
             echo "<div class='alert_choices' style='display: none;'>";
-                echo "<h3>" . $this->lang["vote_alert_reason_title"]  . "</h3>";
+                echo $this->lang["vote_alert_reason_title"] . "<br />";
                 echo "<ul>";
-                echo "<li><a href='" . $this->hotaru->url(array('page'=>$this->hotaru->post->id, 'alert'=>1)) . "'>" . $this->lang["vote_alert_reason_1"]  . "</a></li>";
-                echo "<li><a href='" . $this->hotaru->url(array('page'=>$this->hotaru->post->id, 'alert'=>2)) . "'>" . $this->lang["vote_alert_reason_2"]  . "</a></li>";
-                echo "<li><a href='" . $this->hotaru->url(array('page'=>$this->hotaru->post->id, 'alert'=>3)) . "'>" . $this->lang["vote_alert_reason_3"]  . "</a></li>";
-                echo "<li><a href='" . $this->hotaru->url(array('page'=>$this->hotaru->post->id, 'alert'=>4)) . "'>" . $this->lang["vote_alert_reason_4"]  . "</a></li>";
-                echo "<li><a href='" . $this->hotaru->url(array('page'=>$this->hotaru->post->id, 'alert'=>5)) . "'>" . $this->lang["vote_alert_reason_5"]  . "</a></li>";
-                echo "<li><a href='" . $this->hotaru->url(array('page'=>$this->hotaru->post->id, 'alert'=>6)) . "'>" . $this->lang["vote_alert_reason_6"]  . "</a></li>";
+                echo "<li><a href='" . $this->hotaru->url(array('page'=>$this->hotaru->post->id, 'alert'=>1)) . "'>" . $this->lang["vote_alert_reason_1"]  . "</a></li>\n";
+                echo "<li><a href='" . $this->hotaru->url(array('page'=>$this->hotaru->post->id, 'alert'=>2)) . "'>" . $this->lang["vote_alert_reason_2"]  . "</a></li>\n";
+                echo "<li><a href='" . $this->hotaru->url(array('page'=>$this->hotaru->post->id, 'alert'=>3)) . "'>" . $this->lang["vote_alert_reason_3"]  . "</a></li>\n";
+                echo "<li><a href='" . $this->hotaru->url(array('page'=>$this->hotaru->post->id, 'alert'=>4)) . "'>" . $this->lang["vote_alert_reason_4"]  . "</a></li>\n";
+                echo "<li><a href='" . $this->hotaru->url(array('page'=>$this->hotaru->post->id, 'alert'=>5)) . "'>" . $this->lang["vote_alert_reason_5"]  . "</a></li>\n";
+                echo "<li><a href='" . $this->hotaru->url(array('page'=>$this->hotaru->post->id, 'alert'=>6)) . "'>" . $this->lang["vote_alert_reason_6"]  . "</a></li>\n";
                 echo "</ul>";
             echo "</div>";
         }
