@@ -25,7 +25,7 @@
  */
 
 /* Show Post */
-$lang["submit_show_tags"] = "Tags:";
+$lang["submit_show_tags"] = "Tags";
 
 /* Submit Form */
 $lang["submit_form_tags"] = "Tags:";

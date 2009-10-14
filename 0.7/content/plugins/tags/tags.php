@@ -6,7 +6,7 @@
  * folder: tags
  * class: Tags
  * requires: submit 0.7
- * hooks: install_plugin, header_include, submit_hotaru_header_1, header_meta, post_read_post_1, post_read_post_2, post_add_post, post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_show_post_extra_fields, submit_settings_get_values, submit_settings_form, submit_save_settings, post_list_filter, post_delete_post
+ * hooks: install_plugin, header_include_raw, submit_hotaru_header_1, header_meta, post_read_post_1, post_read_post_2, post_add_post, post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_show_post_extra_fields, submit_show_post_extras, submit_settings_get_values, submit_settings_form, submit_save_settings, post_list_filter, post_delete_post
  *
  * PHP version 5
  *
@@ -111,6 +111,22 @@ class Tags extends PluginFunctions
             echo '<meta name="keywords" content="' . $this->hotaru->post->vars['tags'] . '">' . "\n";
             return true;
         }
+    }
+    
+    
+    /**
+     * JavaScript for dropdown tags list
+     */
+    public function header_include_raw()
+    {    
+            echo "<script type='text/javascript'>\n";
+            echo "$(document).ready(function(){\n";
+                echo "$('.tags_link').click(function () {\n";
+                echo "var target = $(this).parents('div').next('div').children('div.show_tags');\n";
+                echo "target.fadeToggle();\n";
+                echo "});\n";
+            echo "});\n";
+            echo "</script>\n";
     }
     
     
@@ -330,20 +346,28 @@ class Tags extends PluginFunctions
      */
     public function submit_show_post_extra_fields()
     { 
-        if ($this->hotaru->post->vars['useTags'] && $this->hotaru->post->vars['tags']) { 
-            $tags = explode(',', $this->hotaru->post->vars['tags']);
-            
-            echo "<li>" . $this->lang["submit_show_tags"] . " ";
-            
-            echo "<div class='show_post_tags'>";
-            foreach ($tags as $tag) {
-                echo "<a href='" . $this->hotaru->url(array('tag' => str_replace(' ', '_', trim($tag)))) . "'>" . trim($tag) . "</a>&nbsp;";
-            }
-            echo "</div>";
-            echo "</li>";
-        }        
+        if ($this->hotaru->post->vars['useTags'] && $this->hotaru->post->vars['tags'])
+        { 
+            echo '<li><a class="tags_link" href="#">' . $this->lang["submit_show_tags"]  . '</a></li>';
+        }
     }
     
+    
+     /**
+     * List of tags
+     */
+    public function submit_show_post_extras()
+    {
+        $tags = explode(',', $this->hotaru->post->vars['tags']);
+    
+        echo "<div class='show_tags' style='display: none;'>";
+            echo "<ul>" . $this->lang["submit_show_tags"] . ": ";
+                foreach ($tags as $tag) {
+                    echo "<a href='" . $this->hotaru->url(array('tag' => str_replace(' ', '_', trim($tag)))) . "'>" . trim($tag) . "</a>&nbsp;";
+                }
+            echo "</ul>";
+        echo "</div>";
+    }
     
     
      /**
