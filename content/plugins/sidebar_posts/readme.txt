@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.0.6 2009/10/13 - Nick - Added Settings page - choose default or custom box
 v.0.5 2009/10/13 - Nick - Minor CSS update for consistency across all sidebar widgets
 v.0.4 2009/10/06 - Nick - Updates for compatibility with Hotaru 0.7
 v.0.3 2009/10/01 - Nick - Updates for compatibility with Hotaru 0.6
