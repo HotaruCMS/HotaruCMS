@@ -2,11 +2,11 @@
 /**
  * name: Sidebar Posts
  * description: Adds links in the sidebar to the latest posts and top stories on the site.
- * version: 0.5
+ * version: 0.6
  * folder: sidebar_posts
  * class: SidebarPosts
  * requires: sidebar_widgets 0.4, submit 0.7
- * hooks: install_plugin, hotaru_header
+ * hooks: install_plugin, hotaru_header, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * PHP version 5
  *
@@ -40,6 +40,9 @@ class SidebarPosts extends PluginFunctions
     public function install_plugin()
     {
         // Default settings
+        $this->updateSetting('sidebar_posts_box', 'default'); // box style
+        
+        // Default settings
         require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
         $sidebar = new Sidebar($this->hotaru);
         // plugin name, function name, optional arguments
@@ -53,18 +56,30 @@ class SidebarPosts extends PluginFunctions
      *
      * @param $type either 'top' or 'new', matching the post_status in the db.
      */
-    function sidebar_widget_sidebar_posts($type = 'top')
+    public function sidebar_widget_sidebar_posts($type = 'top')
     {
         $this->includeLanguage();
         
-        // FILTER TO NEW POSTS OR TOP POSTS?
-        if ($type == 'new' && $this->hotaru->title != 'latest') { 
-            $posts = $this->hotaru->post->getPosts($this->hotaru->post->filter(array('post_status = %s' => 'new'), 10));    // get latest stories
-            $title = $this->lang['sidebar_posts_latest_posts'];
-        } elseif ($type == 'top' && $this->hotaru->title != 'top') {
-            $posts = $this->hotaru->post->getPosts($this->hotaru->post->filter(array('post_status = %s' => 'top'), 10));    // get top stories
-            $title = $this->lang['sidebar_posts_top_posts'];
+        // Get settings from database if they exist...
+        $box = $this->getSetting('sidebar_posts_box', 'sidebar_posts');
+        
+        if ($box == 'default') { 
+            $this->sidebarPostsDefault($type);
+        } else {
+            $this->sidebarPostsCustom($type);
         }
+    }
+    
+    
+    /**
+     * Display the default sidebar box
+     *
+     * @param $type either 'top' or 'new', matching the post_status in the db.
+     */
+    public function sidebarPostsDefault($type)
+    {
+        $posts = $this->getSidebarPosts($type, false);
+        $title = $this->getSidebarTitle($type);
         
         if (isset($posts) && !empty($posts)) {
             
@@ -74,35 +89,113 @@ class SidebarPosts extends PluginFunctions
             $output .= "<a href='" . $link . "' title='" . $this->lang["sidebar_posts_title_anchor_title"] . "'>" . $title . "</a></h2>"; 
                 
             $output .= "<ul class='sidebar_widget_body sidebar_posts_items'>";
-            
-            if ($this->hotaru->post->vars['useCategories']) {
-                require_once(PLUGINS . 'categories/libs/Category.php');
-                $cat = new Category($this->db);
-            }
-                    
-            foreach ($posts as $item) {
-                
-                $this->hotaru->post->url = $item->post_url; // used in Hotaru's url function
-                
-                //reset defaults:
-                $this->hotaru->post->vars['category'] = 1;
-                $this->hotaru->post->vars['catSafeName'] = '';
-                
-                if ($this->hotaru->post->vars['useCategories'] && ($item->post_category != 1)) {
-                    $this->hotaru->post->vars['category'] = $item->post_category;
-                    $this->hotaru->post->vars['catSafeName'] =  $cat->getCatSafeName($item->post_category);
-                }
-
-                // POST TITLE
-                $output .= "<li class='sidebar_posts_item'>";
-                $output .= "<span class='sidebar_posts_title'>";
-                $output .= "<a href='" . $this->hotaru->url(array('page'=>$item->post_id)) . "'>" . urldecode($item->post_title) . "</a></span>";
-                $output .= '</li>';
-            }
+            $output .= $this->getSidebarPostItems($posts);
+            $output .= "</ul>";
         }
         
         // Display the whole thing:
-        if (isset($output)) { echo $output . "</ul>"; }
+        if (isset($output) && $output != '') { echo $output; }
+    }
+    
+    
+    /**
+     * Display a custom sidebar box
+     *
+     * @param $type either 'top' or 'new', matching the post_status in the db.
+     */
+    public function sidebarPostsCustom($type)
+    {
+        $this->hotaru->vars['sbp_type'] = $type;
+        
+        $this->hotaru->displayTemplate('sbp_custom_box', 'sidebar_posts', NULL, false);
+    }
+    
+    
+    /**
+     * Get sidebar title
+     *
+     * @param $type either 'top' or 'new', matching the post_status in the db.
+     * return array $posts
+     */
+    public function getSidebarTitle($type)
+    {
+        // FILTER TO NEW POSTS OR TOP POSTS?
+        if ($type == 'new' && $this->hotaru->title != 'latest') { 
+            $title = $this->lang['sidebar_posts_latest_posts'];
+        } elseif ($type == 'top' && $this->hotaru->title != 'top') {
+            $title = $this->lang['sidebar_posts_top_posts'];
+        }
+        return $title;
+    }
+    
+
+    /**
+     * Get sidebar posts
+     *
+     * @param $type either 'top' or 'new', matching the post_status in the db.
+     * return array $posts
+     */
+    public function getSidebarPosts($type, $custom = true)
+    {
+        if (!$custom) 
+        {
+            // Show latest on front page, top stories on latest page, or both otherwise
+            if ($type == 'new' && $this->hotaru->title != 'latest') { 
+                $posts = $this->hotaru->post->getPosts($this->hotaru->post->filter(array('post_status = %s' => 'new'), 10));    // get latest stories
+            } elseif ($type == 'top' && $this->hotaru->title != 'top') {
+                $posts = $this->hotaru->post->getPosts($this->hotaru->post->filter(array('post_status = %s' => 'top'), 10));    // get top stories
+            }
+        }
+        else
+        {
+            // Return posts regardless of what page we're viewing
+            if ($type == 'new') { 
+                $posts = $this->hotaru->post->getPosts($this->hotaru->post->filter(array('post_status = %s' => 'new'), 10));    // get latest stories
+            } elseif ($type == 'top') {
+                $posts = $this->hotaru->post->getPosts($this->hotaru->post->filter(array('post_status = %s' => 'top'), 10));    // get top stories
+            }
+        }
+        
+        if ($posts) { return $posts; } else { return false; }
+    }
+    
+    
+    /**
+     * Get sidebar post items
+     *
+     * @param array $posts 
+     * return string $ouput
+     */
+    public function getSidebarPostItems($posts = array())
+    {
+        if ($this->hotaru->post->vars['useCategories']) {
+            require_once(PLUGINS . 'categories/libs/Category.php');
+            $cat = new Category($this->db);
+        }
+                
+        if (!$posts) { return false; }
+        
+        foreach ($posts as $item) {
+            
+            $this->hotaru->post->url = $item->post_url; // used in Hotaru's url function
+            
+            //reset defaults:
+            $this->hotaru->post->vars['category'] = 1;
+            $this->hotaru->post->vars['catSafeName'] = '';
+            
+            if ($this->hotaru->post->vars['useCategories'] && ($item->post_category != 1)) {
+                $this->hotaru->post->vars['category'] = $item->post_category;
+                $this->hotaru->post->vars['catSafeName'] =  $cat->getCatSafeName($item->post_category);
+            }
+
+            // POST TITLE
+            $output .= "<li class='sidebar_posts_item'>";
+            $output .= "<span class='sidebar_posts_title'>";
+            $output .= "<a href='" . $this->hotaru->url(array('page'=>$item->post_id)) . "'>" . urldecode($item->post_title) . "</a></span>";
+            $output .= '</li>';
+        }
+        
+        return $output;
     }
 
 }
