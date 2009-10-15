@@ -345,7 +345,7 @@ class Post
                     
         if ($status) { $filter['post_status = %s'] = $status; }
         if ($user) { $filter['post_author = %d'] = $this->current_user->getUserIdFromName($this->cage->get->testUsername('user'));  }
-        if ($tag) { $filter['post_tags LIKE %s'] = '%' . $tag . '%'; }
+        if ($tag) { $filter['post_tags LIKE %s'] = '%' . urlencode(stripslashes($tag)) . '%'; }
         if ($category && (FRIENDLY_URLS == "true")) { $filter['post_category = %d'] = $cat->getCatId($category); }
         if ($category && (FRIENDLY_URLS == "false")) { $filter['post_category = %d'] = $category; }
         if ($search && $this->plugins->isActive('search')) { 
@@ -361,13 +361,37 @@ class Post
         $feed->title    = SITE_NAME;
         $feed->link     = BASEURL;
         
-        if ($status == 'new') { $feed->description = $this->lang["submit_rss_latest_from"] . " " . SITE_NAME; }
-        elseif ($status == 'top') { $feed->description = $this->lang["submit_rss_top_stories_from"] . " " . SITE_NAME; }
-        elseif ($user) { $feed->description = $this->lang["submit_rss_stories_from_user"] . " " . $user; }
-        elseif ($tag) { $feed->description = $this->lang["submit_rss_stories_tagged"] . " " . $tag; }
-        elseif ($category && (FRIENDLY_URLS == "true")) { $feed->description = $this->lang["submit_rss_stories_in_category"] . " " . $category; }
-        elseif ($category && (FRIENDLY_URLS == "false")) { $feed->description = $this->lang["submit_rss_stories_in_category"] . " " . $cat->getCatName($category); }
-        elseif ($search) { $feed->description = $this->lang["submit_rss_stories_search"] . " " . stripslashes($search); }
+        if ($status == 'new') 
+        { 
+            $feed->description = $this->lang["submit_rss_latest_from"] . " " . SITE_NAME; 
+        }
+        elseif ($status == 'top') 
+        { 
+            $feed->description = $this->lang["submit_rss_top_stories_from"] . " " . SITE_NAME; 
+        }
+        elseif ($user) 
+        { 
+            $feed->description = $this->lang["submit_rss_stories_from_user"] . " " . $user; 
+        }
+        elseif ($tag) 
+        { 
+            $tag = str_replace('_', ' ', stripslashes(html_entity_decode($tag, ENT_QUOTES,'UTF-8'))); 
+            $feed->description = $this->lang["submit_rss_stories_tagged"] . " " . $tag;
+        }
+        elseif ($category && (FRIENDLY_URLS == "true")) 
+        { 
+            $category = str_replace('_', ' ', stripslashes(html_entity_decode($category, ENT_QUOTES,'UTF-8'))); 
+            $feed->description = $this->lang["submit_rss_stories_in_category"] . " " . $category; 
+        }
+        elseif ($category && (FRIENDLY_URLS == "false")) 
+        { 
+            $category = str_replace('_', ' ', stripslashes(html_entity_decode($cat->getCatName($category), ENT_QUOTES,'UTF-8'))); 
+            $feed->description = $this->lang["submit_rss_stories_in_category"] . " " . $category; 
+        }
+        elseif ($search) 
+        { 
+        $feed->description = $this->lang["submit_rss_stories_search"] . " " . stripslashes($search); 
+        }
                 
         if (!isset($filter))  $filter = array();
         $prepared_array = $this->filter($filter, $limit, false, $select);

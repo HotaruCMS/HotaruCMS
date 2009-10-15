@@ -29,6 +29,7 @@ if ($hotaru->cage->post->getAlpha('submit2') == 'true') {
     $title_check = $hotaru->cage->post->noTags('post_title');    
     $content_check = sanitize($hotaru->cage->post->getHtmLawed('post_content'), 2, $hotaru->post->allowableTags);
     $content_check = stripslashes($content_check);
+    $post_orig_url = $hotaru->cage->post->testUri('post_orig_url');
     $post_id = $hotaru->cage->post->getInt('post_id');    
     $hotaru->post->id = $post_id;
     
@@ -66,7 +67,7 @@ $hotaru->plugins->pluginHook('submit_form_2_assign');
     </tr>
     <tr>
         <td><?php echo $hotaru->lang["submit_form_title"]; ?>&nbsp; </td>
-        <td><input type='text' size=50 id='post_title' name='post_title' value='<?php echo $title_check; ?>'></td>
+        <td><input type='text' size=50 id='post_title' name='post_title' value='<?php echo html_entity_decode($title_check); ?>'></td>
         <td id='ajax_loader'>&nbsp;</td>
     </tr>
     

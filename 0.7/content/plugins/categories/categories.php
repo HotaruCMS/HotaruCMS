@@ -2,7 +2,7 @@
 /**
  * name: Categories
  * description: Enables categories for posts
- * version: 0.6
+ * version: 0.7
  * folder: categories
  * class: Categories
  * requires: submit 0.7, category_manager 0.5
@@ -81,6 +81,7 @@ class Categories extends PluginFunctions
             {
                 $this->hotaru->title = $cat->getCatName(0, $this->cage->get->notags('category')); // friendly URLs: TRUE
             } 
+            $this->hotaru->title = stripslashes(htmlentities($this->hotaru->title, ENT_QUOTES,'UTF-8'));
         }
     }
     
@@ -247,11 +248,13 @@ class Categories extends PluginFunctions
                 $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
                 $category_name = $this->db->get_var($this->db->prepare($sql, $this->hotaru->post->vars['category_check']));
                 
+                $category_name = stripslashes(htmlentities(urldecode($category_name), ENT_QUOTES,'UTF-8'));
+                
                 if ($category_name == 'all') { 
                     $category_name = $this->lang['submit_form_category_select']; 
                 }
                 
-                echo "<option value=" . $this->hotaru->post->vars['category_check'] . ">" . urldecode($category_name) . "</option>\n";
+                echo "<option value=" . $this->hotaru->post->vars['category_check'] . ">" . $category_name . "</option>\n";
                 
                 $sql = "SELECT category_id, category_name FROM " . TABLE_CATEGORIES . " ORDER BY category_order ASC";
                 $cats = $this->db->get_results($this->db->prepare($sql));
@@ -259,7 +262,8 @@ class Categories extends PluginFunctions
                 if ($cats) {
                     foreach ($cats as $cat) {
                         if ($cat->category_id != 1) { 
-                            echo "<option value=" . $cat->category_id . ">" . urldecode($cat->category_name) . "</option>\n";
+                            $cat_name = stripslashes(htmlentities(urldecode($cat->category_name), ENT_QUOTES,'UTF-8'));
+                            echo "<option value=" . $cat->category_id . ">" . $cat_name . "</option>\n";
                         }
                     }
                 }
@@ -382,6 +386,7 @@ class Categories extends PluginFunctions
             
             echo " " . $this->lang["submit_show_post_in_category"] . " ";
             
+            $cat_name = stripslashes(html_entity_decode($cat_name, ENT_QUOTES,'UTF-8'));
             echo "<a href='" . $this->hotaru->url(array('category'=>$category)) . "'>" . $cat_name . "</a></li>\n";
         }        
     }
@@ -423,8 +428,9 @@ class Categories extends PluginFunctions
                             echo "--- ";
                         }
                     } 
+                    $category = stripslashes(html_entity_decode(urldecode($cat->category_name), ENT_QUOTES,'UTF-8'));
                     echo "<a href='" . $this->hotaru->url(array('category'=>$cat->category_id)) . "'>";
-                    echo urldecode($cat->category_name) . "</a></li>\n";
+                    echo $category . "</a></li>\n";
                 }
             }
             echo "</ul>\n";
@@ -586,7 +592,8 @@ class Categories extends PluginFunctions
             $link = $category->category_id; 
         } 
     
-        $output .= '<li><a href="' . $this->hotaru->url(array('category'=>$link)) .'">' . urldecode($category->category_name) . "</a>\n"; 
+        $category = stripslashes(html_entity_decode(urldecode($category->category_name), ENT_QUOTES,'UTF-8'));
+        $output .= '<li><a href="' . $this->hotaru->url(array('category'=>$link)) .'">' . $category . "</a>\n"; 
     
         return $output; 
     } 
