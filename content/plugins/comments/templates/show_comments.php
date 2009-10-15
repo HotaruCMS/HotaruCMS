@@ -36,8 +36,12 @@
         ?>
         
         <div class="comment_author">
-            <?php $hotaru->plugins->pluginHook('show_comments_content'); ?> 
-            <?php echo $hotaru->comment->content; ?>
+            <?php 
+                $result = $hotaru->plugins->pluginHook('show_comments_content'); 
+                if (!isset($result) || !is_array($result)) {   
+                    echo $hotaru->comment->content;
+                }
+            ?> 
         </div>
         
         <?php   // Show votes if enabled (requires a comment voting plugin)
