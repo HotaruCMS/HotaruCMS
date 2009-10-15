@@ -36,6 +36,7 @@
         ?>
         
         <div class="comment_author">
+            <?php $hotaru->plugins->pluginHook('show_comments_content'); ?> 
             <?php echo $hotaru->comment->content; ?>
         </div>
         

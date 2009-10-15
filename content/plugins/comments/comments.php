@@ -2,7 +2,7 @@
 /**
  * name: Comments
  * description: Enables logged-in users to comment on posts
- * version: 0.4.1
+ * version: 0.5
  * folder: comments
  * class: Comments
  * requires: submit 0.7, users 0.5
