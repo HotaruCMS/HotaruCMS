@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.0.8 2009/10/15 - Nick - Bug fixes for missing post url and slashed apostrophes
 v.0.7 2009/10/04 - Nick - Updates for compatibility with Hotaru 0.7
 v.0.6 2009/10/01 - Nick - Updates for compatibility with Hotaru 0.6
 v.0.5 2009/08/31 - Nick - Made changes to accomodate the Search plugin 

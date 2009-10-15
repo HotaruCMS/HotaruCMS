@@ -2,7 +2,7 @@
 /**
  * name: Sidebar Posts
  * description: Adds links in the sidebar to the latest posts and top stories on the site.
- * version: 0.6
+ * version: 0.7
  * folder: sidebar_posts
  * class: SidebarPosts
  * requires: sidebar_widgets 0.4, submit 0.7
@@ -191,7 +191,8 @@ class SidebarPosts extends PluginFunctions
             // POST TITLE
             $output .= "<li class='sidebar_posts_item'>";
             $output .= "<span class='sidebar_posts_title'>";
-            $output .= "<a href='" . $this->hotaru->url(array('page'=>$item->post_id)) . "'>" . urldecode($item->post_title) . "</a></span>";
+            $item_title = stripslashes(html_entity_decode(urldecode($item->post_title), ENT_QUOTES,'UTF-8'));
+            $output .= "<a href='" . $this->hotaru->url(array('page'=>$item->post_id)) . "'>" . $item_title . "</a></span>";
             $output .= '</li>';
         }
         

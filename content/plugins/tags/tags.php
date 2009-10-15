@@ -2,7 +2,7 @@
 /**
  * name: Tags
  * description: Enables tags for posts
- * version: 0.7
+ * version: 0.8
  * folder: tags
  * class: Tags
  * requires: submit 0.7
@@ -91,12 +91,12 @@ class Tags extends PluginFunctions
         
         // friendly URLs: FALSE
         if ($this->cage->get->keyExists('tag')) { 
-            $this->hotaru->title = $this->hotaru->pageToTitleCaps(($this->cage->get->noTags('tag'))); 
+            $this->hotaru->title = stripslashes($this->hotaru->pageToTitleCaps(($this->cage->get->noTags('tag')))); 
         } 
         
         // friendly URLs: TRUE
         if (!$this->hotaru->title && $this->cage->get->keyExists('pos2')) { 
-            $this->hotaru->title = $this->hotaru->pageToTitleCaps(($this->cage->get->noTags('pos2'))); 
+            $this->hotaru->title = stripslashes($this->hotaru->pageToTitleCaps(($this->cage->get->noTags('pos2')))); 
         }
         
     }
@@ -108,7 +108,7 @@ class Tags extends PluginFunctions
     public function header_meta()
     {    
         if ($this->hotaru->pageType == 'post') {
-            echo '<meta name="keywords" content="' . $this->hotaru->post->vars['tags'] . '">' . "\n";
+            echo '<meta name="keywords" content="' . stripslashes($this->hotaru->post->vars['tags']) . '">' . "\n";
             return true;
         }
     }
@@ -198,7 +198,7 @@ class Tags extends PluginFunctions
             if ($tags_array) {
                 foreach ($tags_array as $tag) {
                     $sql = "INSERT INTO " . TABLE_TAGS . " SET tags_post_id = %d, tags_date = CURRENT_TIMESTAMP, tags_word = %s, tags_updateby = %d";
-                    $this->db->query($this->db->prepare($sql, $this->hotaru->post->post_id, urlencode(str_replace(' ', '_', trim($tag))), $this->current_user->id));
+                    $this->db->query($this->db->prepare($sql, $this->hotaru->post->id, urlencode(str_replace(' ', '_', trim($tag))), $this->current_user->id));
                 }
             }
         }
@@ -229,7 +229,7 @@ class Tags extends PluginFunctions
     {
         if ($this->cage->post->getAlpha('submit2') == 'true') {
             // Submitted this form...
-            $this->hotaru->post->vars['tags_check'] = $this->cage->post->noTags('post_tags');    
+            $this->hotaru->post->vars['tags_check'] = stripslashes(sanitize($this->cage->post->noTags('post_tags'), 2));
             
         } elseif ($this->cage->post->getAlpha('submit3') == 'edit') {
             // Come back from step 3 to make changes...
@@ -238,7 +238,7 @@ class Tags extends PluginFunctions
         } elseif ($this->hotaru->isPage('edit_post')) {
             // Editing a previously submitted post
             if ($this->cage->post->getAlpha('edit_post') == 'true') {
-                $this->hotaru->post->vars['tags_check'] = $this->cage->post->noTags('post_tags');
+                $this->hotaru->post->vars['tags_check'] = stripslashes(sanitize($this->cage->post->noTags('post_tags'), 2));
             } else {
                 $this->hotaru->post->vars['tags_check'] = $this->hotaru->post->vars['tags'];
             }
@@ -275,7 +275,7 @@ class Tags extends PluginFunctions
         // ******** CHECK TAGS ********
         if ($this->hotaru->post->vars['useTags']) 
         {
-            $this->hotaru->post->vars['tags_check'] = $this->cage->post->noTags('post_tags');
+            $this->hotaru->post->vars['tags_check'] = stripslashes(sanitize($this->cage->post->noTags('post_tags'), 2));
             
             if (!$this->hotaru->post->vars['tags_check']) {
                 // No tags present...
@@ -299,7 +299,7 @@ class Tags extends PluginFunctions
      */
     public function submit_form_2_process_submission()
     {
-        $this->hotaru->post->vars['tags'] = $this->cage->post->noTags('post_tags');
+        $this->hotaru->post->vars['tags'] = stripslashes(sanitize($this->cage->post->noTags('post_tags'), 2));
     }
     
     
@@ -318,7 +318,7 @@ class Tags extends PluginFunctions
         if ($this->cage->get->keyExists('tag')) 
         {
             // friendly URLs: FALSE
-            $tag = $this->cage->get->noTags('tag'); 
+            $tag = stripslashes($this->cage->get->noTags('tag')); 
             
             // friendly URLs: TRUE
             if (!$tag) { $tag = $this->cage->get->noTags('pos2'); } 
@@ -332,7 +332,7 @@ class Tags extends PluginFunctions
             // Undo the filter that limits results to either 'top' or 'new' (See submit.php -> sub_prepare_list())
             if(isset($this->hotaru->vars['filter']['post_status = %s'])) { unset($this->hotaru->vars['filter']['post_status = %s']); }
             $this->hotaru->vars['filter']['post_status != %s'] = 'processing';
-            $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_tag"] . " &raquo; " . $this->hotaru->title . $rss;
+            $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_tag"] . " &raquo; " . stripslashes($this->hotaru->title) . $rss;
             
             return true;    
         }
