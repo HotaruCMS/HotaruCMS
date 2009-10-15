@@ -105,7 +105,9 @@ class Smilies extends PluginFunctions
             $output .= $content;
         }
 
-        $this->hotaru->comment->content = $output;  // the new, smiley-enhanced comment!
+        echo $output;  // the new, smiley-enhanced comment!
+        
+        return true;
     }
 
 }
