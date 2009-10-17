@@ -126,6 +126,12 @@ $lang["admin_blocked_list_removed"] = "Item removed";
 $lang['admin_blocked_list_exists'] = "Item already exists";
 $lang['admin_blocked_list_update'] = "Update"; 
 
+/* Pagination */
+$lang['pagination_first'] = "First";
+$lang['pagination_last'] = "Last";
+$lang['pagination_previous'] = "Previous";
+$lang['pagination_next'] = "Next";
+
 
 /* ***************************************************************** 
 ******************************************************************** 

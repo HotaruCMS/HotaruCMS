@@ -155,7 +155,7 @@ class Plugin
      */
     public function admin_sidebar_plugin_settings()
     {
-        echo "<li><a href='" . $this->hotaru->url(array('page'=>'plugin_settings', 'plugin'=>$this->folder), 'admin') . "'>" . make_name($this->folder) . "</a></li>";
+        echo "<li><a href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $this->folder . "'>" . make_name($this->folder) . "</a></li>";
     }
     
     

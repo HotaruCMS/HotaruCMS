@@ -501,6 +501,7 @@ class Post
         if (!in_array('top', $unique_statuses)) { array_push($unique_statuses, 'top'); }
         if (!in_array('buried', $unique_statuses)) { array_push($unique_statuses, 'buried'); }
         if (!in_array('pending', $unique_statuses)) { array_push($unique_statuses, 'pending'); }
+        if (!in_array('processing', $unique_statuses)) { array_push($unique_statuses, 'processing'); }
         
         if ($unique_statuses) { return $unique_statuses; } else { return false; }
     }

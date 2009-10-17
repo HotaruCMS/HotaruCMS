@@ -34,6 +34,11 @@ if ($hotaru->cage->post->getAlpha('edit_post') == 'true') {
     $post_orig_url = $hotaru->cage->post->testUri('post_orig_url');
     $post_id = $hotaru->cage->post->getInt('post_id');    
     $hotaru->post->id = $post_id;
+    // from post manager...
+    $from = $hotaru->cage->post->testAlnumLines('from');
+    $search_value = $hotaru->cage->post->getMixedString2('search_value'); 
+    $post_status_filter = $hotaru->cage->post->testAlnumLines('post_status_filter');
+    $pg = $hotaru->cage->post->testInt('pg');
     
 } elseif ($hotaru->cage->get->testInt('post_id'))  {
     $post_id = $hotaru->cage->get->testInt('post_id');
@@ -44,6 +49,11 @@ if ($hotaru->cage->post->getAlpha('edit_post') == 'true') {
     $status_check = $hotaru->post->status;
     $post_orig_url = $hotaru->post->origUrl;
     $post_id = $hotaru->post->id;
+    // from post manager...
+    $from = $hotaru->cage->get->testAlnumLines('from');
+    $search_value = $hotaru->cage->get->getMixedString2('search_value'); 
+    $post_status_filter = $hotaru->cage->get->testAlnumLines('post_status_filter');
+    $pg = $hotaru->cage->get->testInt('pg');
 }
 
 $user = new UserBase($hotaru);
@@ -130,6 +140,10 @@ $hotaru->plugins->pluginHook('submit_form_2_assign');
     <?php if ($hotaru->current_user->role != 'admin') { ?>
         <input type='hidden' name='post_orig_url' value='<?php echo $post_orig_url; ?>' />
     <?php } ?>
+    <input type='hidden' name='from' value='<?php echo $from; ?>' />
+    <input type='hidden' name='search_value' value='<?php echo $search_value; ?>' />
+    <input type='hidden' name='post_status_filter' value='<?php echo $post_status_filter; ?>' />
+    <input type='hidden' name='pg' value='<?php echo $pg; ?>' />
     <input type='hidden' name='post_id' value='<?php echo $post_id ?>' />
     <input type='hidden' name='edit_post' value='true' />
     

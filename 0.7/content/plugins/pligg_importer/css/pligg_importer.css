@@ -7,7 +7,7 @@
 #pliggimp td { vertical-align: top; text-align: center; }
 
  /* Next/Continue buttons*/
-.next {
+.pliggimp_next {
 	margin-top: 0.6em;
 	margin-bottom: 2.6em;
 	float: right;
@@ -19,7 +19,7 @@
 	border: 0.1em solid #666;
 }
 
-p.next a {
+p.pliggimp_next a {
 	font-weight: bold;
 }
 

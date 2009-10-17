@@ -901,7 +901,7 @@ class PluginFunctions extends Plugin
         $sql = "SELECT plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
         $value = $this->db->get_var($this->db->prepare($sql, $folder, $setting));
 
-        if ($value) { return $value; } else { return false; }
+        if (isset($value)) { return $value; } else { return false; }
     }
     
     
