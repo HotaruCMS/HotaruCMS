@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.0.8 2009/10/18 - Nick - Bug fix for lost settings when Submit reactivated
 v.0.7 2009/10/15 - Nick - Bug fixes for slashed apostrophes
 v.0.6 2009/10/13 - Nick - CSS and template update
 v.0.5 2009/10/01 - Nick - Updates for compatibility with Hotaru 0.7

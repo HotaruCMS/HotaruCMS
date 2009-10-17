@@ -41,7 +41,6 @@ class SubmitSettings extends Submit
         
         echo "<h1>" . $this->lang["submit_settings_header"] . "</h1>\n";
         
-        echo "this plugin: " . $this->folder . "<br />";
         // Get settings from database if they exist...
         $submit_settings = $this->getSerializedSettings();
         

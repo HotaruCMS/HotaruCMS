@@ -2,7 +2,7 @@
 /**
  * name: Tags
  * description: Enables tags for posts
- * version: 0.8
+ * version: 0.9
  * folder: tags
  * class: Tags
  * requires: submit 0.7
@@ -66,7 +66,7 @@ class Tags extends PluginFunctions
         }
         
         $this->updateSetting('submit_tags', 'checked', 'submit');
-        $this->updateSetting('submit_max_tags', 50, 'submit');
+        $this->updateSetting('submit_max_tags', 60, 'submit');
         
         // Could possibly do with some code here that extracts all existingtags from the posts table and populates the tags table with them.
         // Maybe in a later version.
@@ -386,9 +386,9 @@ class Tags extends PluginFunctions
         $tags = $this->getSetting('submit_tags', 'submit');
         $max_tags = $this->getSetting('submit_max_tags', 'submit');
         
-        // otherwise set to blank...
-        if (!$tags) { $tags = ''; }
-        if (!$max_tags) { $max_tags = ''; }
+        // otherwise set to defaults...
+        if (!isset($tags)) { $tags = 'checked'; }
+        if (!isset($max_tags)) { $max_tags = '60'; }
         
         $this->hotaru->post->vars['tags'] = $tags;
         $this->hotaru->post->vars['max_tags'] = $max_tags;

@@ -2,7 +2,7 @@
 /**
  * name: Pligg Importer
  * description: Imports and converts a Pligg database to Hotaru CMS
- * version: 0.4
+ * version: 0.5
  * folder: pligg_importer
  * class: PliggImporter
  * requires: category_manager 0.4, categories 0.5, comments 0.4, submit 0.7, tags 0.6, users 0.5, vote_simple 0.4
@@ -176,7 +176,7 @@ class PliggImporter extends PluginFunctions
          
         if ($error == 0) {
             echo "<h2 style='color: green;'>All plugins are active! Click \"Import a Pligg Database\" to begin...</b></h2><br />";
-            echo "<a class='next' href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer&amp;step=1'>Import a Pligg Database</a><br /><br />";
+            echo "<a class='pliggimp_next' href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer&amp;step=1'>Import a Pligg Database</a><br /><br />";
         } else {
             echo "<h2>Please fix the following problems:</h2>";
             echo "<ul>";
@@ -187,7 +187,7 @@ class PliggImporter extends PluginFunctions
         echo "";
         echo "<h2>Character Cleaner</h2><br />";
         echo "The Character Cleaner should be used <b><i>after</i></b> importing a Pligg database and <b><i>only</i></b> if you are having trouble with strange characters in posts. What it does is simply strip common problem characters from post titles and content. <b>Note: </b> This script may take some time to run depending on the size of your database.";
-        echo "<br /><a class='next' href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer&amp;cleaner=1'>Run the Character Cleaner</a>";
+        echo "<br /><a class='pliggimp_next' href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer&amp;cleaner=1'>Run the Character Cleaner</a>";
         
         echo "</div> <!-- close pliggimp div -->";
     }
@@ -230,7 +230,7 @@ class PliggImporter extends PluginFunctions
             
             if ($file_name) 
             {
-                echo "<span style='color: green;'><i>" . $file_name . "</i> has been uploaded successfully.</span> <a class='next' href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer&amp;file_name=" . $file_name . "&amp;" . "step=" . $step . "'>Continue</a>";
+                echo "<span style='color: green;'><i>" . $file_name . "</i> has been uploaded successfully.</span> <a class='pliggimp_next' href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer&amp;file_name=" . $file_name . "&amp;" . "step=" . $step . "'>Continue</a>";
             }
             else
             {

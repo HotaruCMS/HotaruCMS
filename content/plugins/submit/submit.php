@@ -2,7 +2,7 @@
 /**
  * name: Submit
  * description: Submit and manage stories.
- * version: 0.8
+ * version: 0.9
  * folder: submit
  * class: Submit
  * hooks: hotaru_header, header_meta, header_include, header_include_raw, upgrade_plugin, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, userbase_default_permissions
@@ -252,7 +252,28 @@ class Submit extends PluginFunctions
                     $post_orig_url = $this->cage->post->testUri('post_orig_url'); 
                     if (!$this->check_for_errors_2()) { 
                         $this->process_submission($post_orig_url);
-                        header("Location: " . $this->hotaru->url(array('page'=>$this->hotaru->post->id)));    // Go to the post
+                        
+                        if ($this->cage->post->testAlnumLines('from') == 'post_man')
+                        {
+                            // Build the redirect link to send us back to Post Manager
+                            
+                            $redirect_link = BASEURL . "admin_index.php?page=plugin_settings&plugin=post_manager";
+                            if ($this->cage->post->testAlnumLines('post_status_filter')) {
+                                $redirect_link .= "&type=filter";
+                                $redirect_link .= "&post_status_filter=" . $this->cage->post->testAlnumLines('post_status_filter');
+                            }
+                            if ($this->cage->post->getMixedString2('search_value')) {
+                                $redirect_link .= "&type=search";
+                                $redirect_link .= "&search_value=" . $this->cage->post->getMixedString2('search_value');
+                            }
+                            $redirect_link .= "&pg=" . $this->cage->post->testInt('pg');
+                            header("Location: " . $redirect_link);    // Go back to where we were in Post Manager
+                        }
+                        else 
+                        {
+                            // Send us back to the post page itself
+                            header("Location: " . $this->hotaru->url(array('page'=>$this->hotaru->post->id)));    // Go to the post
+                        }
                         die();
                     }
                 }

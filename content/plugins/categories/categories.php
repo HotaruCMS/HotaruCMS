@@ -2,7 +2,7 @@
 /**
  * name: Categories
  * description: Enables categories for posts
- * version: 0.7
+ * version: 0.8
  * folder: categories
  * class: Categories
  * requires: submit 0.7, category_manager 0.5
@@ -454,8 +454,10 @@ class Categories extends PluginFunctions
         // Get settings from database if they exist... should return 'checked'
         $this->hotaru->vars['categories'] = $this->getSetting('submit_categories', 'submit');
         
-        // otherwise set to blank...
-        if (!$this->hotaru->vars['categories']) { $this->hotaru->vars['categories'] = ''; }
+        // doesn't exist - use default:
+        if (!isset($this->hotaru->vars['categories'])) {
+            $this->hotaru->vars['categories'] = 'checked';
+        }
     
     }
     
