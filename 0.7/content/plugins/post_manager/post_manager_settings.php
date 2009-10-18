@@ -43,15 +43,38 @@ class PostManagerSettings extends PostManager
         
         $p = new Post($this->hotaru);
         
-        // if checkboxes (delete)
-        if (($this->cage->get->getAlpha('type') == 'checkboxes') && ($this->cage->get->keyExists('post'))) {
+        // if checkboxes
+        if (($this->cage->get->getAlpha('type') == 'checkboxes') && ($this->cage->get->keyExists('post'))) 
+        {
             foreach ($this->cage->get->keyExists('post') as $id => $checked) {
                 $p->id = $id;
-                $p->changeStatus('buried');
+                $this->hotaru->message = $this->lang["post_man_checkboxes_status_changed"]; // default "Changed status" message
+                switch ($this->cage->get->testAlnumLines('checkbox_action')) {
+                    case 'new_selected':
+                        $p->changeStatus('new');
+                        break;
+                    case 'top_selected':
+                        $p->changeStatus('top');
+                        break;
+                    case 'pending_selected':
+                        $p->changeStatus('pending');
+                        break;
+                    case 'bury_selected':
+                        $p->changeStatus('buried');
+                        break;
+                    case 'delete_selected':
+                        $this->hotaru->post->id = $p->id; // used in "post_delete_post" function/hook
+                        $this->hotaru->post->deletePost($p->id); 
+                        $this->hotaru->message = $this->lang["post_man_checkboxes_post_deleted"];
+                        break;
+                    default:
+                        // do nothing
+                        $this->hotaru->message = $this->lang["post_man_checkboxes_no_action"];
+                        $this->hotaru->messageType = 'red';
+                        break;
+                }
+                
             }
-
-            $this->hotaru->message = $this->lang["post_man_checkboxes_executed"];
-            $this->hotaru->messageType = 'green';
         }
         
         
@@ -192,6 +215,5 @@ class PostManagerSettings extends PostManager
         
         return $output;
     }
-
 }
 ?>

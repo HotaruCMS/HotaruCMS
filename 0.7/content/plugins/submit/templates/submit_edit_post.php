@@ -126,7 +126,7 @@ $hotaru->plugins->pluginHook('submit_form_2_assign');
             $statuses = $hotaru->post->getUniqueStatuses(); 
             if ($statuses) {
                 foreach ($statuses as $status) {
-                    if ($status != 'unsaved') { 
+                    if ($status != 'unsaved' && $status != 'processing') { 
                         echo "<option value=" . $status . ">" . $status . "</option>\n";
                     }
                 }

@@ -49,9 +49,11 @@ $lang["post_man_category"] = "Category:";
 $lang["post_man_tags"] = "Tags:";
 $lang["post_man_urls"] = "Urls:";
 $lang["post_man_check"] = "";
-$lang['post_man_delete_selected'] = "Bury selected";
+$lang['post_man_checkbox_action'] = "Go";
 $lang["post_man_checkboxes_empty"] = "No posts selected";
-$lang["post_man_checkboxes_executed"] = "Selected posts buried";
+$lang["post_man_checkboxes_status_changed"] = "Status changed on selected posts";
+$lang["post_man_checkboxes_post_deleted"] = "Selected posts and associated votes and tags permanently deleted";
+$lang["post_man_checkboxes_no_action"] = "No action taken";
 
 
 /* Sidebar */

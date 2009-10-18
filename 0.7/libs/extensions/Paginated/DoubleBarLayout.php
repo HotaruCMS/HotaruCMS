@@ -41,7 +41,7 @@ class DoubleBarLayout implements PageLayout
                 $parsed_query_args['pg'] = $previousPage;
                 $link = $hotaru->url($parsed_query_args);
             }
-            $str .= "<a class='previous' href='" . $link . "' title='" . $hotaru->lang['pagination_previous'] . "'>&laquo; " . $hotaru->lang['pagination_previous'] . "</a> ";
+            $str .= "<a class='pagi_previous' href='" . $link . "' title='" . $hotaru->lang['pagination_previous'] . "'>&laquo; " . $hotaru->lang['pagination_previous'] . "</a> \n";
         }
         
         // NOT FIRST PAGE
@@ -53,9 +53,9 @@ class DoubleBarLayout implements PageLayout
                     $parsed_query_args['pg'] = 1;
                     $link = $hotaru->url($parsed_query_args);
                 }
-                $str .= "<a class='first' href='" . $link . "'  title='" . $hotaru->lang['pagination_first'] . "'>1</a> ";
+                $str .= "<a class='pagi_first' href='" . $link . "'  title='" . $hotaru->lang['pagination_first'] . "'>1</a> \n";
                 if ($currentPage > ($before+1)) {
-                    $str .= " <span class='dots'>...</span> ";
+                    $str .= " <span class='dots'>...</span> \n";
                 }
             }
         }
@@ -71,7 +71,7 @@ class DoubleBarLayout implements PageLayout
             }
     
             if ($i == $currentPage) {
-                $str .= "<span class='current'>$i</span>";
+                $str .= "<span class='pagi_current'>$i</span>\n";
             }
             else {
                 if ($head == 'admin') { 
@@ -80,7 +80,7 @@ class DoubleBarLayout implements PageLayout
                     $parsed_query_args['pg'] = $i;
                     $link = $hotaru->url($parsed_query_args);
                 }
-                $str .= "<a class='page' href='" . $link . "'>$i</a>";
+                $str .= "<a class='pagi_page' href='" . $link . "'>$i</a>\n";
             }
             if ($i != $currentPage + $after && $i != $parent->fetchNumberPages()) { $str .= ' '; }
             // ($i == $currentPage + $after || $i == $parent->fetchNumberPages()) ? $str .= " " : $str .= " | ";    // determine if to print bars or not
@@ -91,14 +91,14 @@ class DoubleBarLayout implements PageLayout
         if (!$parent->isLastPage() && !($currentPage > ($parent->fetchNumberPages() - $after))) {
             if ($currentPage != $parent->fetchNumberPages() && $currentPage != $parent->fetchNumberPages() -1 && $currentPage != $parent->fetchNumberPages() - $before)
             {
-                if ($currentPage < ($parent->fetchNumberPages() - ($after + 1))) { $str .= " <span class='dots'>...</span> "; }
+                if ($currentPage < ($parent->fetchNumberPages() - ($after + 1))) { $str .= " <span class='pagi_dots'>...</span> \n"; }
                 if ($head == 'admin') { 
                     $link = $path . '&pg=' . $parent->fetchNumberPages();
                 } else { 
                     $parsed_query_args['pg'] = $parent->fetchNumberPages();
                     $link = $hotaru->url($parsed_query_args);
                 }
-                $str .= "<a class='last' href='" . $link . "'  title='" . $hotaru->lang['pagination_last'] . "'>".$parent->fetchNumberPages()."</a> ";
+                $str .= "<a class='pagi_last' href='" . $link . "'  title='" . $hotaru->lang['pagination_last'] . "'>".$parent->fetchNumberPages()."</a> \n";
             }
         }
         
@@ -111,13 +111,13 @@ class DoubleBarLayout implements PageLayout
                 $parsed_query_args['pg'] = $nextPage;
                 $link = $hotaru->url($parsed_query_args);
             }
-            $str .= "<a class='next' href='" . $link . "' title='" . $hotaru->lang['pagination_next'] . "'>" . $hotaru->lang['pagination_next'] . " &raquo;</a> ";
+            $str .= "<a class='pagi_next' href='" . $link . "' title='" . $hotaru->lang['pagination_next'] . "'>" . $hotaru->lang['pagination_next'] . " &raquo;</a> \n";
         }
         
         // Wrap in a div
-        $pagination = "<div id='pagination'>";
+        $pagination = "<div id='pagination'>\n";
         $pagination .= $str;
-        $pagination .= "</div>";
+        $pagination .= "</div>\n";
         
         return $pagination;
     }

@@ -89,6 +89,7 @@ li #navigation_active { background-color: #444; }
 /* PAGINATION */
 
 #pagination {
+    font-size: 0.9em;
     margin-top: 2.0em;
     text-align: right;
 }
@@ -99,7 +100,7 @@ li #navigation_active { background-color: #444; }
     border:solid 1px #F0F0F0;
 }
 
-#pagination .current {
+#pagination .pagi_current {
     color: #fff;
     background-color: #000;
     font-weight: bold;
