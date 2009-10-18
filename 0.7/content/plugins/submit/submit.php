@@ -428,15 +428,18 @@ class Submit extends PluginFunctions
         $role = $params['role'];
         
         // Permission Options
-        $perms['options']['can_submit'] = array('yes', 'no');
+        $perms['options']['can_submit'] = array('yes', 'no', 'mod');
         
         // Permissions for $role
         switch ($role) {
             case 'admin':
-                $perms['can_submit'] = 'yes';
-                break;
+            case 'supermod':
+            case 'moderator':
             case 'member':
                 $perms['can_submit'] = 'yes';
+                break;
+            case 'undermod':
+                $perms['can_submit'] = 'mod';
                 break;
             default:
                 $perms['can_submit'] = 'no';

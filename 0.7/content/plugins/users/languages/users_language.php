@@ -112,5 +112,6 @@ $lang["users_account_form_submit"] = "Update";
 $lang["users_account_edit"] = "Edit";
 $lang["users_account_account"] = "Account";
 $lang["users_account_permissions"] = "Permissions";
+$lang["users_account_deleted"] = "User Deleted";
 // Other language is used in content/language_packs/language_default/admin_language
 ?>

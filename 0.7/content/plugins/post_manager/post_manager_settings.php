@@ -83,10 +83,15 @@ class PostManagerSettings extends PostManager
             $search_term = $this->cage->get->getMixedString2('search_value');
             $this->hotaru->vars['search_term'] = $search_term; // used to refill the search box after a search
             if ($this->isActive('search')) {
-                $s = new Search('post_manager', $this->hotaru);
-                $s->prepareSearchFilter(stripslashes(trim($this->db->escape($search_term))));
-                $filtered_search = $p->filter($this->hotaru->vars['filter'], 0, true, $this->hotaru->vars['select'], $this->hotaru->vars['orderby']);
-                $posts = $p->getPosts($filtered_search);
+                if (strlen($search_term) < 3) {
+                    $this->hotaru->message = $this->lang["user_man_search_too_short"];
+                    $this->hotaru->messageType = 'red';
+                } else {
+                    $s = new Search('post_manager', $this->hotaru);
+                    $s->prepareSearchFilter(stripslashes(trim($this->db->escape($search_term))));
+                    $filtered_search = $p->filter($this->hotaru->vars['filter'], 0, true, $this->hotaru->vars['select'], $this->hotaru->vars['orderby']);
+                    $posts = $p->getPosts($filtered_search);
+                }
             } else {
                 $this->hotaru->message = $this->lang["post_man_need_search"];
                 $this->hotaru->messageType = 'red';
@@ -127,7 +132,7 @@ class PostManagerSettings extends PostManager
                     break;
             }
 
-            $posts = $filtered_results;
+            if (isset($filtered_results)) { $posts = $filtered_results; } else {  $posts = array(); }
         }
 
         if(!isset($posts)) {
@@ -198,13 +203,13 @@ class PostManagerSettings extends PostManager
             $output .= "<td colspan=6 class='table_description pm_description'>\n";
             $output .= "<a class='table_hide_details' style='float: right;' href='#'>[" . $this->lang["admin_theme_plugins_close"] . "]</a>";
             $output .= "<b>" . stripslashes(urldecode($post->post_title)) . "</b><br />\n";
-            $output .= "<i>" . $this->hotaru->lang["post_man_posted"] ."</i> " .  date('d M Y H:i:s', strtotime($post->post_date)) . "<br />\n";
-            $output .= "<i>" . $this->hotaru->lang["post_man_author"] ."</i> " . $user->name . " (id:" .  $post->post_author . ")<br />\n";
-            $output .= "<p><i>" . $this->hotaru->lang["post_man_content"] ."</i> " . stripslashes(urldecode($post->post_content)) . "</p> \n";
-            $output .= "<i>" . $this->hotaru->lang["post_man_category"] ."</i> " . $category . "<br /> \n";   // we got $category above
-            $output .= "<i>" . $this->hotaru->lang["post_man_tags"] ."</i> " . (urldecode($post->post_tags)) . "<br /> \n";
-            $output .= "<i>" . $this->hotaru->lang["post_man_urls"] ."</i> <a href='" . $this->hotaru->url(array('page'=>$post->post_id)) . "'>" . SITE_NAME . " Post</a> | \n";
-            $output .= "<a href='" . urldecode($post->post_orig_url) . "'>Original Post</a><br />\n";
+            $output .= "<i>" . $this->lang["post_man_posted"] ."</i> " .  date('d M Y H:i:s', strtotime($post->post_date)) . "<br />\n";
+            $output .= "<i>" . $this->lang["post_man_author"] ."</i> " . $user->name . " (id:" .  $post->post_author . ")<br />\n";
+            $output .= "<p><i>" . $this->lang["post_man_content"] ."</i> " . stripslashes(urldecode($post->post_content)) . "</p> \n";
+            $output .= "<i>" . $this->lang["post_man_category"] ."</i> " . $category . "<br /> \n";   // we got $category above
+            $output .= "<i>" . $this->lang["post_man_tags"] ."</i> " . (urldecode($post->post_tags)) . "<br /> \n";
+            $output .= "<i>" . $this->lang["post_man_urls"] ."</i> <a href='" . $this->hotaru->url(array('page'=>$post->post_id)) . "'>" . SITE_NAME . " " . $this->lang["post_man_post"] ."</a> | \n";
+            $output .= "<a href='" . urldecode($post->post_orig_url) . "'>" . $this->lang["post_man_original_post"] ."</a><br />\n";
             $output .= "</td></tr>";
         }
         

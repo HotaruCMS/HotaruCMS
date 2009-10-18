@@ -246,7 +246,6 @@ class Post
         $this->db->query($this->db->prepare($sql, $this->id));
         
         $this->plugins->pluginHook('post_delete_post');
-        
     }
     
     

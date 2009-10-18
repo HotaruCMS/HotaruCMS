@@ -114,6 +114,15 @@ class Plugin
     /**
      * Include language file if available
      */
+    public function install_plugin()
+    {
+        $this->includeLanguage('', $this->folder);
+    }
+    
+    
+    /**
+     * Include language file if available
+     */
     public function hotaru_header()
     {
         $this->includeLanguage('', $this->folder);
