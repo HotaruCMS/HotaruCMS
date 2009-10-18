@@ -2,10 +2,10 @@
 /**
  * name: Users
  * description: Manages users within Hotaru.
- * version: 0.5
+ * version: 0.6
  * folder: users
  * class: Users
- * hooks: hotaru_header, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs
+ * hooks: hotaru_header, header_include, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs
  *
  * PHP version 5
  *
@@ -123,10 +123,14 @@ class Users extends PluginFunctions
             if ($this->hotaru->isPage('logout')) {
                 $this->current_user->destroyCookieAndSession();
                 header("Location: " . BASEURL);
-            } elseif ($this->hotaru->isPage('account')) {
-                if ($user = $this->cage->get->testUsername('user')) {
+            } 
+            elseif ($this->hotaru->isPage('account')) 
+            {
+                if ($user = $this->cage->get->testUsername('user')) 
+                {
                     $this->hotaru->vars['userid'] = $this->current_user->getUserIdFromName($user);
-                } else {
+                } 
+                else {
                     $this->hotaru->vars['userid'] = $this->cage->post->testInt('userid');
                 }
                 
@@ -613,6 +617,9 @@ class Users extends PluginFunctions
         echo "&raquo; <a href='" . $this->hotaru->url(array('user' => $user->name)) . "'>" . $user->name . "</a> "; 
         echo "&raquo; " . $this->lang["users_account_permissions"] . "</div>";
             
+        $this->hotaru->vars['username'] = $user->name;
+        $this->hotaru->displayTemplate('user_tabs', 'users');
+        
         echo '<h2>' . $this->lang["users_account_user_permissions"] . ': ' . $user->name . '</h2>';
         
         $this->hotaru->showMessages();

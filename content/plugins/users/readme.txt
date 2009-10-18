@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.0.6 2009/10/03 - Nick - Bug fixes and tabs for Account page
 v.0.5 2009/10/03 - Nick - Updates for compatibility with Hotaru 0.7
 v.0.4 2009/10/01 - Nick - Updates for compatibility with Hotaru 0.6
 v.0.3 2009/08/28 - Nick - Updates for compatibility with Hotaru 0.5

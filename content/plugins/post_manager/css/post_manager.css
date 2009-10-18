@@ -8,6 +8,6 @@
 #table_list td.pm_title   { text-align: left;}
 #table_list td.pm_description   { line-height: 1.6em; border-right-width: 0.2em;}
 #table_list td.pm_edit   { width: 8%; }
-#table_list td.pm_check   { }
+#table_list td.pm_check   { width: 5%; }
 
 .post_man_submit_button { padding: 1.0em; float: right;}

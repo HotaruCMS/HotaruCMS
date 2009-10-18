@@ -32,7 +32,7 @@ $lang["post_man_filter"] = "Filter posts:";
 $lang["post_man_id"] = "ID";
 $lang["post_man_status"] = "Status";
 $lang["post_man_date"] = "Date";
-$lang["post_man_title"] = "Title <span style='font-weight: normal;'>(click links for details)</span>";
+$lang["post_man_title"] = "Title <span style='font-weight: normal;'><small>(click for details)</small></span>";
 $lang["post_man_edit"] = "Edit";
 $lang['post_man_search_button'] = "Search";
 $lang['post_man_filter_button'] = "Filter";
@@ -52,8 +52,15 @@ $lang["post_man_check"] = "";
 $lang['post_man_checkbox_action'] = "Go";
 $lang["post_man_checkboxes_empty"] = "No posts selected";
 $lang["post_man_checkboxes_status_changed"] = "Status changed on selected posts";
-$lang["post_man_checkboxes_post_deleted"] = "Selected posts and associated votes and tags permanently deleted";
+$lang["post_man_checkboxes_post_deleted"] = "Selected posts, comments and associated votes and tags permanently deleted";
 $lang["post_man_checkboxes_no_action"] = "No action taken";
+$lang["post_man_set_new"] = "Set Status to 'new'";
+$lang["post_man_set_top"] = "Set Status to 'top'";
+$lang["post_man_set_pending"] = "Set Status to 'pending'";
+$lang["post_man_set_buried"] = "Set Status to 'buried'";
+$lang["post_man_set_delete"] = "Physically Delete";
+$lang["post_man_original_post"] = "Original Post";
+$lang["post_man_post"] = "Post";
 
 
 /* Sidebar */

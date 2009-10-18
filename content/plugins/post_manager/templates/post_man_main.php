@@ -106,12 +106,12 @@
         <table>
             <tr class='table_headers'>
                 <td><select name='checkbox_action'>
-                    <option value='new_selected'>Set Status to 'new'</option>
-                    <option value='top_selected'>Set Status to 'top'</option>
-                    <option value='pending_selected'>Set Status to 'pending'</option>
-                    <option value='bury_selected'>Set Status to 'buried'</option>
+                    <option value='new_selected'><?php echo $hotaru->lang["post_man_set_new"]; ?></option>
+                    <option value='top_selected'><?php echo $hotaru->lang["post_man_set_top"]; ?></option>
+                    <option value='pending_selected'><?php echo $hotaru->lang["post_man_set_pending"]; ?></option>
+                    <option value='bury_selected'><?php echo $hotaru->lang["post_man_set_buried"]; ?></option>
                     <option value='' disabled>-----</option>
-                    <option style='color: red; font-weight: bold;' value='delete_selected'>Physically Delete</option>
+                    <option style='color: red; font-weight: bold;' value='delete_selected'><?php echo $hotaru->lang["post_man_set_delete"]; ?></option>
                     </select>
                 </td>
                 <td><input class='submit' type='submit' value='<?php echo $hotaru->lang['post_man_checkbox_action']; ?>' /></td>

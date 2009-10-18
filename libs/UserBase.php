@@ -219,7 +219,7 @@ class UserBase {
         
         // Fetch from database
         $user_info = $this->db->get_row($this->db->prepare($sql, $param));
-        
+
         if ($user_info) {
             $this->id = $user_info->user_id;
             $this->name = $user_info->user_username;
@@ -335,6 +335,13 @@ class UserBase {
     {
         // Read the current user's basic details
         $userX = $this->getUserBasic(0, $username);
+        
+        // destroy the cookie for the following usergroups:
+        $no_cookie = array('killspammed', 'banned', 'suspended');
+        if (in_array($userX->user_role, $no_cookie)) {
+            $this->destroyCookieAndSession();
+            return false;
+        }
         
         $salt_length = 9;
         $password = $this->generateHash($password, substr($userX->user_password, 0, $salt_length));
@@ -625,17 +632,20 @@ class UserBase {
      */
     public function updateAccount($userid = 0)
     {
-        // current_user is the person looking at the page
-        // "this" will represent the person whose account is being modified
-                
+        // $this is the person looking at the page, i.e. the viewer
+        // $viewee is the person whose account is being modified
+        // if looking at your own account then $this = $viewee.
+        
+        $viewee = new UserBase($this->hotaru);
+        
         // Get the details of the account to show.
         // If no account is specified, assume it's your own.
-
+        
         if (!$userid) {
-            $userid = $this->id;
+            $userid = $this->id; 
         }
-            
-        $this->getUserBasic($userid);
+        
+        $viewee->getUserBasic($userid);
 
         $error = 0;
         
@@ -655,7 +665,7 @@ class UserBase {
         if ($this->cage->post->testAlnumLines('update_type') == 'update_general') {
             $username_check = $this->cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
             if ($username_check) {
-                $this->name = $username_check; // updates the db record
+                $viewee->name = $username_check; // updates the db record
             } else {
                 $this->hotaru->messages[$this->lang['admin_account_update_username_error']] = 'red';
                 $error = 1;
@@ -663,7 +673,7 @@ class UserBase {
                                 
             $email_check = $this->cage->post->testEmail('email');    
             if ($email_check) {
-                $this->email = $email_check;
+                $viewee->email = $email_check;
             } else {
                 $this->hotaru->messages[$this->lang['admin_account_update_email_error']] = 'red';
                 $error = 1;
@@ -671,24 +681,35 @@ class UserBase {
             
             $role_check = $this->cage->post->testAlnumLines('user_role'); // from Users plugin account page
             // compare with current role and update if different
-            if ($role_check && ($role_check != $this->role)) {
-                $this->role = $role_check;
-                $new_perms = $this->getDefaultPermissions($role_check);
-                $this->setAllPermissions($new_perms);
-                $this->updatePermissions();
+            if ($role_check && ($role_check != $viewee->role)) {
+                $viewee->role = $role_check;
+                $new_perms = $viewee->getDefaultPermissions($role_check);
+                $viewee->setAllPermissions($new_perms);
+                $viewee->updatePermissions();
+                if ($role_check == 'killspammed' || $role_check == 'deleted') {
+                    $viewee->deleteComments(); // includes child comments from *other* users
+                    $viewee->deletePosts(); // includes tags and votes for self-submitted posts
+                    if ($role_check == 'deleted') { 
+                        $viewee->deleteUser(); 
+                        $checks['username_check'] = 'deleted';
+                        $this->hotaru->message = $this->hotaru->lang["users_account_deleted"];
+                        $this->hotaru->messageType = 'red';
+                        return $checks; // This will then show a red "deleted" notice
+                    }
+                }
             }
         }
         
         if (!isset($username_check) && !isset($email_check)) {
-            $username_check = $this->name;
-            $email_check = $this->email;
-            $role_check = $this->role;
+            $username_check = $viewee->name;
+            $email_check = $viewee->email;
+            $role_check = $viewee->role;
             // do nothing
         } elseif ($error == 0) {
-            $result = $this->userExists(0, $username_check, $email_check);
+            $result = $viewee->userExists(0, $username_check, $email_check);
             if ($result != 4) { // 4 is returned when the user does not exist in the database
                 //success
-                $this->updateUserBasic($userid);
+                $viewee->updateUserBasic($userid);
                 // only update the cookie if it's your own account:
                 if ($userid == $this->id) { 
                     $this->setCookie(true); 
@@ -707,6 +728,7 @@ class UserBase {
         $checks['username_check'] = $username_check;
         $checks['email_check'] = $email_check;
         $checks['role_check'] = $role_check;
+                
         return $checks;
     }
     
@@ -800,8 +822,8 @@ class UserBase {
             case 'admin':
                 $perms['can_access_admin'] = 'yes';
                 break;
-            case 'member':
-                $perms['can_access_admin'] = 'no';
+            case 'supermod':
+                $perms['can_access_admin'] = 'yes';
                 break;
             default:
                 $perms['can_access_admin'] = 'no';
@@ -839,18 +861,101 @@ class UserBase {
         or adds some defaults if not present.*/
 
         $unique_roles = array();
+
+        // Some essentials:
+        array_push($unique_roles, 'admin');
+        array_push($unique_roles, 'supermod');
+        array_push($unique_roles, 'moderator');
+        array_push($unique_roles, 'member');
+        array_push($unique_roles, 'pending');
+        array_push($unique_roles, 'undermod');
+        array_push($unique_roles, 'suspended');
+        array_push($unique_roles, 'banned');
+        array_push($unique_roles, 'killspammed');
+        
+        // Add any other roles already in use:
         $sql = "SELECT DISTINCT user_role FROM " . TABLE_USERS;
         $roles = $this->db->get_results($this->db->prepare($sql));
         if ($roles) {
             foreach ($roles as $role) {
-                array_push($unique_roles, $role->user_role);
+                if (!in_array($role->user_role, $unique_roles)) { 
+                    array_push($unique_roles, $role->user_role);
+                }
             }
         }
-        // Some essentials if not already included:
-        if (!in_array('admin', $unique_roles)) { array_push($unique_roles, 'admin'); }
-        if (!in_array('member', $unique_roles)) { array_push($unique_roles, 'member'); }
         
         if ($unique_roles) { return $unique_roles; } else { return false; }
+    }
+    
+    
+    /**
+     * Physically delete this user
+     */
+    public function deleteUser() 
+    {
+        $sql = "DELETE FROM " . TABLE_USERS . " WHERE user_id = %d";
+        $this->db->query($this->db->prepare($sql, $this->id));
+    }
+    
+
+    /**
+     * Physically delete posts by this user
+     *
+     * @return bool
+     */
+    public function deletePosts() 
+    {
+        $exists = $this->db->table_exists('posts');
+        if (!$exists) { return false; }
+        
+        $sql = "SELECT post_id FROM " . DB_PREFIX . "posts WHERE post_author = %d";
+        $results = $this->db->get_results($this->db->prepare($sql, $this->id));
+        
+        if (!file_exists(PLUGINS . 'submit/libs/Post.php')) { return false; }
+
+        include_once(PLUGINS . 'submit/libs/Post.php');
+        
+        if ($results) {
+            foreach ($results as $r) {
+                $p = new Post($this->hotaru);
+                $p->id = $r->post_id;
+                $this->hotaru->post->id = $p->id;   // used by other plugins in "post_delete_post" function/hook
+                $p->deletePost();
+            }
+        }
+        
+        return true;
+    }
+    
+    
+    /**
+     * Physically delete comments by this user (and responses)
+     *
+     * @return bool
+     */
+    public function deleteComments() 
+    {
+        $exists = $this->db->table_exists('comments');
+        if (!$exists) { return false; }
+        
+        $sql = "SELECT comment_id FROM " . DB_PREFIX . "comments WHERE comment_user_id = %d";
+        $results = $this->db->get_results($this->db->prepare($sql, $this->id));
+        
+        if (!file_exists(PLUGINS . 'comments/libs/Comment.php')) { return false; }
+
+        include_once(PLUGINS . 'comments/libs/Comment.php');
+
+        if ($results) {
+            foreach ($results as $r) {
+                $c = new Comment($this->hotaru);
+                $c->id = $r->comment_id;
+                $this->hotaru->comment->id = $c->id;   // used by other plugins in "comment_delete_comment" function/hook
+                $c->deleteComment();    // delete parent comment
+                $c->deleteCommentTree($c->id);  // delete all children of that comment regardless of user
+            }
+        }
+        
+        return true;
     }
     
 }

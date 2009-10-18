@@ -24,12 +24,16 @@
  * @link      http://www.hotarucms.org/
  */
 extract($hotaru->vars['checks']); // extracts $username_check, etc.
+$hotaru->vars['username'] = $username_check; // used for user_tabs template
+if ($username_check == 'deleted') { $hotaru->showMessage(); return true; } // shows "User deleted" notice
 ?>
     
     <div id='breadcrumbs'><a href='<?php echo BASEURL; ?>'><?php echo $hotaru->lang["users_home"]; ?></a> 
         &raquo; <a href='<?php echo $hotaru->url(array('user' => $username_check)); ?>'><?php echo $username_check; ?></a> 
         &raquo; <?php echo $hotaru->lang["users_account_account"]; ?></div>
-            
+    
+    <?php $hotaru->displayTemplate('user_tabs', 'users'); ?>
+    
     <h2><?php echo $hotaru->lang["users_account_user_settings"]; ?></h2>
     
     <?php echo $hotaru->showMessages(); ?>
