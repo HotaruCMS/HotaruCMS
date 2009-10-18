@@ -86,7 +86,7 @@
 
 </tr></table>
 
-<form name='post_man_filter_form' style='margin: 0px; padding: 0px;' action='<?php echo BASEURL; ?>admin_index.php?plugin=post_manager' method='get'>
+<form name='post_man_checkbox_form' style='margin: 0px; padding: 0px;' action='<?php echo BASEURL; ?>admin_index.php?plugin=post_manager' method='get'>
     
 <div id="table_list">
     <table>
@@ -103,11 +103,26 @@
 </div>
 
 <div class='post_man_submit_button'>
+        <table>
+            <tr class='table_headers'>
+                <td><select name='checkbox_action'>
+                    <option value='new_selected'>Set Status to 'new'</option>
+                    <option value='top_selected'>Set Status to 'top'</option>
+                    <option value='pending_selected'>Set Status to 'pending'</option>
+                    <option value='bury_selected'>Set Status to 'buried'</option>
+                    <option value='' disabled>-----</option>
+                    <option style='color: red; font-weight: bold;' value='delete_selected'>Physically Delete</option>
+                    </select>
+                </td>
+                <td><input class='submit' type='submit' value='<?php echo $hotaru->lang['post_man_checkbox_action']; ?>' /></td>
+            </tr>
+        </table>
         <input type='hidden' name='plugin' value='post_manager' />
         <input type='hidden' name='page' value='plugin_settings' />
         <input type='hidden' name='type' value='checkboxes' />
-        <input class='submit' type='submit' value='<?php echo $hotaru->lang['post_man_delete_selected']; ?>' />
     </form>
 </div>
+
+<div class='clear'></div>
 
 <?php echo $hotaru->vars['post_man_navi']; // pagination ?>

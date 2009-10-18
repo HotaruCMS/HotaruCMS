@@ -10,4 +10,4 @@
 #table_list td.pm_edit   { width: 8%; }
 #table_list td.pm_check   { }
 
-.post_man_submit_button { float: left; padding: 1.0em; }
+.post_man_submit_button { padding: 1.0em; float: right;}

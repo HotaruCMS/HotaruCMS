@@ -58,7 +58,6 @@ class PostManager extends PluginFunctions
         if (!defined('TABLE_POSTS')) { define("TABLE_POSTS", DB_PREFIX . 'posts'); }
         return true;
     }
-
 }
 
 ?>

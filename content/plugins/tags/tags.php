@@ -205,16 +205,6 @@ class Tags extends PluginFunctions
     }
     
     
-    /**
-     * Delete tags for a deleted post
-     */    
-    public function delete_post()
-    {
-        $sql = "DELETE FROM " . TABLE_TAGS . " WHERE tags_post_id = %d";
-        $this->db->query($this->db->prepare($sql, $this->hotaru->post->post_id));        
-    }
-    
-    
      /**
      * ********************************************************************* 
      * ********************* FUNCTIONS FOR SUBMIT FORM ********************* 
@@ -438,8 +428,6 @@ class Tags extends PluginFunctions
      */
     public function post_delete_post()
     {
-        global $post;
-        
         $sql = "DELETE FROM " . TABLE_TAGS . " WHERE tags_post_id = %d";
         $this->db->query($this->db->prepare($sql, $this->hotaru->post->id));
     }
