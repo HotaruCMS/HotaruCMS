@@ -144,6 +144,11 @@ form {
 	color: #ffffff;
 }
 
+.bold_red {
+	color: red;
+	font-weight: bold;
+}
+
 /* *************************************
 *  Plugin Management & Similar tables *
 ************************************** */

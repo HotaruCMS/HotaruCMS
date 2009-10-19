@@ -60,7 +60,9 @@ $lang["submit_edit_post_title_not_present_error"] = "No title was provided.";
 $lang["submit_edit_post_content_not_present_error"] = "No description entered.";
 $lang["submit_edit_post_status"] = "Post status:";
 $lang['submit_form_url_not_complete_error'] = "Source URL error...";
+$lang["submit_edit_post_delete"] = "Physically delete this post, its votes and comments";
 $lang["submit_edit_post_save"] = "Save";
+$lang["submit_edit_post_deleted"] = "This post and associated tags, votes and comments have been deleted.";
 
 /* Submission Disabled */
 $lang['submit_disabled'] = "Sorry, story submission is disabled at this time.";
@@ -105,6 +107,7 @@ $lang["submit_post_filter_category"] = "stories in";
 $lang["submit_post_posted"] = "Posted";
 $lang["submit_post_by"] = "by";
 $lang["submit_post_ago"] = "ago";
+$lang["submit_post_buried"] = "This post has been buried";
 
 /* Submit RSS Feed */
 $lang["submit_rss_latest_from"] = "Latest from";

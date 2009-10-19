@@ -97,7 +97,7 @@ $user->getUserBasic($hotaru->post->author);
 <?php 
 } else {
     // Show "Post buried" message...
-    $hotaru->message = $hotaru->lang["vote_alert_post_buried"];
+    $hotaru->message = $hotaru->lang["submit_post_buried"];
     $hotaru->messageType = "red";
     $hotaru->showMessage();
 }

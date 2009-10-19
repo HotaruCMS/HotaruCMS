@@ -51,7 +51,9 @@ if ($username_check == 'deleted') { $hotaru->showMessage(); return true; } // sh
                     $roles = $hotaru->current_user->getUniqueRoles(); 
                     if ($roles) {
                         foreach ($roles as $role) {
-                            echo "<option value='" . $role . "'>" . $role . "</option>\n";
+                            if ($role != $role_check) {
+                                echo "<option value='" . $role . "'>" . $role . "</option>\n";
+                            }
                         }
                     }
                 ?>

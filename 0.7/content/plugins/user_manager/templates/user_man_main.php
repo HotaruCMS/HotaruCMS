@@ -69,7 +69,7 @@
                 <?php 
                 if ($hotaru->vars['roles']) {
                     foreach ($hotaru->vars['roles'] as $status) {
-                        if ($status != 'unsaved') { 
+                        if ($status != 'unsaved' && $status != 'deleted') { 
                             echo "<option value=" . $status . ">" . ucfirst($status) . "</option>\n";
                         }
                     }
