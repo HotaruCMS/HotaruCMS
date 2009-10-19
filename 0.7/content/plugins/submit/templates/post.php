@@ -73,7 +73,7 @@ $user->getUserBasic($hotaru->post->author);
             <?php } ?>
                 
             <?php if ($hotaru->post->useContent) { ?>
-                <div class="show_post_content"><?php echo $hotaru->post->content; ?></div>
+                <div class="show_post_content"><?php echo nl2br($hotaru->post->content); ?></div>
             <?php } ?>
             
             <div class="show_post_extra_fields">

@@ -196,7 +196,7 @@ class PostManagerSettings extends PostManager
             $output .= stripslashes(urldecode($post->post_title)) . "</a></td>\n";
             $output .= "<td class='pm_edit'>" . "<a href='" . $edit_link . "'>\n";
             $output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/edit.png'>" . "</a></td>\n";
-            $output .= "<td class='pm_check'><input type='checkbox' name='post[" . $post->post_id . "] value='" . $post->post_id . "'></td>\n";
+            $output .= "<td class='pm_check'><input type='checkbox' name='post[" . $post->post_id . "]' value='" . $post->post_id . "'></td>\n";
             $output .= "</tr>\n";
             
             $output .= "<tr class='table_tr_details' style='display:none;'>\n";

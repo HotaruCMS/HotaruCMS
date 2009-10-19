@@ -209,6 +209,7 @@ class UserManagerSettings extends UserManager
 
             $account_link = BASEURL . "index.php?page=account&amp;user=" . $user->user_username; 
             $perms_link = BASEURL . "index.php?page=permissions&amp;user=" . $user->user_username; 
+            if ($user->user_role == 'admin') { $disable = 'disabled'; } else { $disable = ''; } 
             
             $output .= "<tr class='table_row_" . $alt % 2 . "'>\n";
             $output .= "<td class='um_id'>" . $user->user_id . "</td>\n";
@@ -218,7 +219,7 @@ class UserManagerSettings extends UserManager
             $output .= "<td class='um_joined'>" . date('d M y', strtotime($user->user_date)) . "</a></td>\n";
             $output .= "<td class='um_account'>" . "<a href='" . $account_link . "'>" . $this->lang["user_man_account"] . "</a>\n";
             $output .= "<td class='um_perms'>" . "<a href='" . $perms_link . "'>" . $this->lang["user_man_perms"] . "</a>\n";
-            $output .= "<td class='um_check'><input type='checkbox' name='user_man[" . $user->user_id . "] value='" . $user->user_id . "'></td>\n";
+            $output .= "<td class='um_check'><input type='checkbox' name='user_man[" . $user->user_id . "]' value='" . $user->user_id . "' " . $disable . "></td>\n";
             $output .= "</tr>\n";
 
             $output .= "<tr class='table_tr_details' style='display:none;'>\n";
