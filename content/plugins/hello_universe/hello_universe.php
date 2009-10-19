@@ -2,7 +2,7 @@
 /**
  * name: Hello Universe
  * description: Demonstrates how to make plugins
- * version: 0.4
+ * version: 0.5
  * folder: hello_universe
  * class: HelloUniverse
  * hooks: theme_index_main, theme_index_sidebar, hotaru_header
@@ -50,7 +50,7 @@ class HelloUniverse extends PluginFunctions
                 break;
             case 'form_example':
                 $this->check_sent_form();    // Function #5
-                $this->hotaru->displayTemplate('form_example', 'hello_universe'postsPerPage); // Displays the page from this plugin folder
+                $this->hotaru->displayTemplate('form_example', 'hello_universe'); // Displays the page from this plugin folder
                 return true;
                 break;
             case 'main':
@@ -97,7 +97,7 @@ class HelloUniverse extends PluginFunctions
      */
     public function theme_index_sidebar()
     {
-        $this->hotaru->displayTemplate('custom_sidebar', 'hello_universe'postsPerPage); // Overrides the current sidebar with a new one.
+        $this->hotaru->displayTemplate('custom_sidebar', 'hello_universe'); // Overrides the current sidebar with a new one.
         return true;
     }
     
