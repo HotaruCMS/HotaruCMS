@@ -42,9 +42,9 @@ if (!isset($result) || !is_array($result)) {
         <div id="bd" role="main">              
             <?php if ($admin->sidebar) { ?>
                 <div class='yui-gf'> 
-                <div class="yui-u"'>
+                <div class="yui-u">
             <?php } else { ?>
-                <div class='yui-g''>
+                <div class='yui-g'>
                     <div class="yui-u" style='width: 100%;'>
                 <?php } ?>
                         <!-- MAIN -->

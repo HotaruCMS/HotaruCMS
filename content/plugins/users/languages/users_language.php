@@ -114,6 +114,7 @@ $lang["users_account_edit"] = "Edit";
 $lang["users_account_account"] = "Account";
 $lang["users_account_permissions"] = "Permissions";
 $lang["users_account_deleted"] = "User Deleted";
+$lang["users_account_admin_admin"] = "Sorry, only admins can access admin accounts.";
 // Other language is used in content/language_packs/language_default/admin_language
 
 

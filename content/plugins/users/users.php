@@ -126,11 +126,9 @@ class Users extends PluginFunctions
             } 
             elseif ($this->hotaru->isPage('account')) 
             {
-                if ($user = $this->cage->get->testUsername('user')) 
-                {
+                if ($user = $this->cage->get->testUsername('user')) {
                     $this->hotaru->vars['userid'] = $this->current_user->getUserIdFromName($user);
-                } 
-                else {
+                } else {
                     $this->hotaru->vars['userid'] = $this->cage->post->testInt('userid');
                 }
                 
@@ -180,7 +178,13 @@ class Users extends PluginFunctions
             if ($this->hotaru->isPage('account')) {
                 // Note: the "account" template calls the functions it needs 
                 // from the UserBase class.
-                $this->hotaru->displayTemplate('account', 'users');
+                extract($this->hotaru->vars['checks']);
+                if (($role_check == 'admin') && ($this->current_user->role != 'admin')) {
+                    $this->hotaru->messages[$this->lang["users_account_admin_admin"]] = 'red';
+                    $this->hotaru->showMessages();
+                } else {
+                    $this->hotaru->displayTemplate('account', 'users');
+                }
                 return true;
             } elseif ($this->hotaru->isPage('permissions')) {
                 if ($this->current_user->getPermission('can_access_admin') == 'yes') { 
@@ -596,6 +600,13 @@ class Users extends PluginFunctions
             $user->getUserbasic($this->cage->post->testInt('userid'));        // userid when submitting perms form
         } else {
             return false;
+        }
+        
+        // prevent non-admin user viewing permissions of admin user
+        if (($user->role) == 'admin' && ($this->current_user->role != 'admin')) {
+            $this->hotaru->messages[$this->lang["users_account_admin_admin"]] = 'red';
+            $this->hotaru->showMessages();
+            return true;
         }
         
         $perm_options = $user->getDefaultPermissions();

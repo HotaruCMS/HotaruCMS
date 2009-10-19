@@ -271,7 +271,21 @@ class Post
             $filter = " WHERE ";
             foreach ($vars as $key => $value) {
                 $filter .= $key . " AND ";    // e.g. " post_tags LIKE %s "
-                array_push($prepare_array, $value);
+                
+                // Push the values of %s and %d into the prepare_array
+                
+                // sometimes the filter might contain multiple values, eg.
+                // WHERE post_status = %s OR post_status = %s. In that case,
+                // the values are stored in an array, e.g. array('top', 'new').
+                if (is_array($value)) {
+                    foreach ($value as $v) {
+                        array_push($prepare_array, $v);
+                    }
+                } else {
+                    // otherwise, push the single value into $prepared_array:
+                    array_push($prepare_array, $value);
+                }
+                
             }
             $filter = rstrtrim($filter, "AND ");
         }
@@ -556,6 +570,8 @@ class Post
                 
         if (!$this->hotaru->vars['filter']) { $this->hotaru->vars['filter'] = array(); }
         
+        // Plugins will UNDO the following for categories, search, tags, etc.
+            
         if ($this->cage->get->testPage('page') == 'latest') 
         {
             // Filters page to "new" stories only
@@ -564,9 +580,9 @@ class Post
             $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_latest"] . $rss;
         } 
-        elseif ($this->useLatest)
+        elseif ($this->useLatest && !$this->cage->get->testPage('page'))
         {
-            // Filters page to "top" stories only
+            // Assume 'top' page and filter to 'top' stories.
             $this->hotaru->vars['filter']['post_status = %s'] = 'top';
             $rss = "<a href='" . $this->hotaru->url(array('page'=>'rss')) . "'>";
             $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
@@ -575,6 +591,7 @@ class Post
         else
         {
             // Filters page to "all" stories
+            $this->hotaru->vars['filter']['(post_status = %s OR post_status = %s)'] = array('top', 'new');
             $rss = "<a href='" . $this->hotaru->url(array('page'=>'rss')) . "'>";
             $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_all"] . $rss;

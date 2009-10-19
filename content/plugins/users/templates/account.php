@@ -42,7 +42,11 @@ if ($username_check == 'deleted') { $hotaru->showMessage(); return true; } // sh
     <table>
     <tr><td><?php echo $hotaru->lang["users_account_username"]; ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check; ?>' /></td></tr>
     <tr><td><?php echo $hotaru->lang["users_account_email"]; ?>&nbsp; </td><td><input type='text' size=30 name='email' value='<?php echo $email_check; ?>' /></td></tr>
-    <?php if ($hotaru->current_user->getPermission('can_access_admin') == 'yes') { ?>
+    <?php 
+        // show role picker to anyone who can access admin, but not to yourself!
+        if (($hotaru->current_user->getPermission('can_access_admin') == 'yes') 
+        && ($hotaru->current_user->name != $username_check)) { 
+    ?>
         <tr><td colspan=2><?php echo $hotaru->lang["users_account_role_note"]; ?></td></tr>
         <tr><td><?php echo $hotaru->lang["users_account_role"]; ?>&nbsp; </td>
         <td><select name='user_role'>
