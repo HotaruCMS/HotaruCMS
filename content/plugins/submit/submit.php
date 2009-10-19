@@ -277,6 +277,15 @@ class Submit extends PluginFunctions
                         die();
                     }
                 }
+                
+                if ($this->cage->get->getAlpha('action') == 'delete') {
+                    if ($this->current_user->getPermission('can_delete_posts') == 'yes') { // double-checking
+                        $post_id = $this->cage->get->testInt('post_id');
+                        $this->hotaru->post->id = $post_id; // used in "post_delete_post" function/hook
+                        $this->hotaru->post->deletePost($post_id); 
+                        $this->hotaru->messages[$this->lang["submit_edit_post_deleted"]] = 'red';
+                    }
+                }
             }
         
         } elseif ($this->hotaru->isPage('rss')) {
@@ -405,6 +414,7 @@ class Submit extends PluginFunctions
             
         } elseif ($this->hotaru->pageType == 'post') {
             // We found out this is a post from the hotaru_header function above.
+            
             $this->hotaru->displayTemplate('post', 'submit');
             return true;
             
@@ -429,20 +439,36 @@ class Submit extends PluginFunctions
         
         // Permission Options
         $perms['options']['can_submit'] = array('yes', 'no', 'mod');
+        $perms['options']['can_edit_posts'] = array('yes', 'no', 'own');
+        $perms['options']['can_delete_posts'] = array('yes', 'no');
         
         // Permissions for $role
         switch ($role) {
             case 'admin':
             case 'supermod':
+                $perms['can_submit'] = 'yes';
+                $perms['can_edit_posts'] = 'yes';
+                $perms['can_delete_posts'] = 'yes';
+                break;
             case 'moderator':
+                $perms['can_submit'] = 'yes';
+                $perms['can_edit_posts'] = 'yes';
+                $perms['can_delete_posts'] = 'no';
+                break;
             case 'member':
                 $perms['can_submit'] = 'yes';
+                $perms['can_edit_posts'] = 'own';
+                $perms['can_delete_posts'] = 'no';
                 break;
             case 'undermod':
                 $perms['can_submit'] = 'mod';
+                $perms['can_edit_posts'] = 'own';
+                $perms['can_delete_posts'] = 'no';
                 break;
             default:
                 $perms['can_submit'] = 'no';
+                $perms['can_edit_posts'] = 'no';
+                $perms['can_delete_posts'] = 'no';
         }
         
         $this->hotaru->vars['perms'] = $perms;
@@ -468,7 +494,7 @@ class Submit extends PluginFunctions
             $this->hotaru->messageType = 'red';
             $error = 1;
         } elseif ($this->current_user->getPermission('can_submit') == 'no') {
-            // URL already exists...
+            // No permission to submit posts
             $this->hotaru->message = $this->lang['submit_form_no_permission'];
             $this->hotaru->messageType = 'red';
             $error = 1;

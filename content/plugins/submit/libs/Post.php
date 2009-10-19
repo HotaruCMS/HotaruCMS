@@ -486,21 +486,24 @@ class Post
         or adds some defaults if not present.*/
 
         $unique_statuses = array();
+        
+        // Some essentials:
+        array_push($unique_statuses, 'new');
+        array_push($unique_statuses, 'top');
+        array_push($unique_statuses, 'pending');
+        array_push($unique_statuses, 'buried');
+        array_push($unique_statuses, 'processing');
+        
+        // Add any other statuses already in use:
         $sql = "SELECT DISTINCT post_status FROM " . TABLE_POSTS;
         $statuses = $this->db->get_results($this->db->prepare($sql));
         if ($statuses) {
             foreach ($statuses as $status) {
-                if ($status->post_status) {
+                if ($status->post_status && !in_array($status->post_status, $unique_statuses)) {
                     array_push($unique_statuses, $status->post_status);
                 }
             }
         }
-        // Some essentials if not already included:
-        if (!in_array('new', $unique_statuses)) { array_push($unique_statuses, 'new'); }
-        if (!in_array('top', $unique_statuses)) { array_push($unique_statuses, 'top'); }
-        if (!in_array('buried', $unique_statuses)) { array_push($unique_statuses, 'buried'); }
-        if (!in_array('pending', $unique_statuses)) { array_push($unique_statuses, 'pending'); }
-        if (!in_array('processing', $unique_statuses)) { array_push($unique_statuses, 'processing'); }
         
         if ($unique_statuses) { return $unique_statuses; } else { return false; }
     }

@@ -182,8 +182,13 @@ class Users extends PluginFunctions
                 // from the UserBase class.
                 $this->hotaru->displayTemplate('account', 'users');
                 return true;
-            } elseif ($this->hotaru->isPage('permissions') && ($this->current_user->getPermission('can_access_admin') == 'yes')) {
-                $this->editPermissions();
+            } elseif ($this->hotaru->isPage('permissions')) {
+                if ($this->current_user->getPermission('can_access_admin') == 'yes') { 
+                    $this->editPermissions();
+                } else {
+                    $this->hotaru->messages[$this->lang["access_denied"]] = 'red';
+                    $this->hotaru->showMessages();
+                }
                 return true;
             } else {
                 return false;

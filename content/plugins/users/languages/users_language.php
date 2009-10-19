@@ -43,6 +43,7 @@ $lang["users_login"] = "Login";
 $lang["users_logout"] = "Logout";
 $lang["users_register"] = "Register";
 $lang["users_admin"] = "Admin";
+$lang["access_denied"] = "Sorry, you don't have permission to view this page.";
 
 /* Login */
 $lang["users_login_instructions"] = "Enter your username and password to login:";
@@ -114,4 +115,6 @@ $lang["users_account_account"] = "Account";
 $lang["users_account_permissions"] = "Permissions";
 $lang["users_account_deleted"] = "User Deleted";
 // Other language is used in content/language_packs/language_default/admin_language
+
+
 ?>

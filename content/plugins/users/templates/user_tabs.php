@@ -28,8 +28,8 @@ $username = $hotaru->vars['username'];
 
 <ul class='user_tabs'>
 <li>[<a href='<?php echo $hotaru->url(array('page'=>'account', 'user'=>$username)); ?>'><?php echo $hotaru->lang["users_account_account"]; ?></a>]</li>
-<li>[<a href='<?php echo $hotaru->url(array('page'=>'permissions', 'user'=>$username)); ?>'><?php echo $hotaru->lang["users_account_permissions"]; ?></a>]</li>
 <?php if (($hotaru->current_user->getPermission('can_access_admin') == 'yes') && $hotaru->plugins->isActive('user_manager')) { ?>
+    <li>[<a href='<?php echo $hotaru->url(array('page'=>'permissions', 'user'=>$username)); ?>'><?php echo $hotaru->lang["users_account_permissions"]; ?></a>]</li>
     <li>[<a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&plugin=user_manager"><?php echo $hotaru->lang['user_man_link']; ?></a>]</li>
 <?php } ?>
 </ul>
