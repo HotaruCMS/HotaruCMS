@@ -34,23 +34,25 @@ class TextWidgetSettings extends TextWidget
             
             // Get settings from the database if they exist...
             $php_check = $settings['text_widget_php'];
+            $content = html_entity_decode(stripslashes($settings['text_widget_content']), ENT_QUOTES,'UTF-8');
         
             //...otherwise set to blank:
             if (!$mycheckbox) { $mycheckbox = ''; }
               
             // The form should be submitted to the admin_index.php page:
-            echo "<form name='text_widget_settings_form' action='" . BASEURL . "admin_index.php?plugin=text_widget' method='post'>\n";
+            echo '<form name="text_widget_settings_form" action="' . BASEURL . 'admin_index.php?plugin=text_widget" method="post">' . "\n";
             
-            echo $this->hotaru->lang["text_widget_title"] . " <input type='text' size=30 name='text_widget_title' value='" . $settings['text_widget_title'] . "' /><br /><br />";
-            echo "<input type='checkbox' name='text_widget_php' " . $php_check . " /> " . $this->lang["text_widget_php"] . "<br /><br />";
-            echo "<textarea name='text_widget_content' cols=60 rows = 15>" . $settings['text_widget_content'] . "</textarea>";
+            echo '<input type="hidden" name="submitted" value="true" />' . "\n";
+            echo '<input type="hidden" name="page" value="plugin_settings" />' . "\n";
+            echo '<input type="hidden" name="text_widget_id" value="' . $id . '" />' . "\n";
+            
+            echo $this->hotaru->lang["text_widget_title"] . ' <input type="text" size=30 name="text_widget_title" value="' . $settings['text_widget_title'] . '" /><br /><br />' . "\n";
+            echo '<input type="checkbox" name="text_widget_php" ' . $php_check . ' /> ' . $this->lang['text_widget_php'] . '<br /><br />' . "\n";
+            echo '<textarea name="text_widget_content" cols=60 rows = 15>' . $content . '</textarea>' . "\n";
             
             echo "<br /><br />";
-            echo "<input type='hidden' name='submitted' value='true' />\n";
-            echo "<input type='hidden' name='page' value='plugin_settings' />";
-            echo "<input type='hidden' name='text_widget_id' value='" . $id . "' />";
-            echo "<input type='submit' value='" . $this->lang["text_widget_settings_save"] . "' />\n";
-            echo "</form>\n";
+            echo '<input type="submit" value="' . $this->lang['text_widget_settings_save'] . '" />' . "\n";
+            echo '</form>' . "\n";
             
             $id++;
         }
