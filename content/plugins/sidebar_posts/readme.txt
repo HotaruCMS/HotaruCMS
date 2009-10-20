@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.0.8 2009/10/20 - Nick - Added check for vote setting (set in Vote Simple plugin)
 v.0.7 2009/10/15 - Nick - Bug fixes for slashed apostrophes
 v.0.6 2009/10/15 - Nick - Added Settings page - choose default or custom box
 v.0.5 2009/10/13 - Nick - Minor CSS update for consistency across all sidebar widgets

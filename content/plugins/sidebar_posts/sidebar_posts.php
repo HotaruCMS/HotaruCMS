@@ -2,7 +2,7 @@
 /**
  * name: Sidebar Posts
  * description: Adds links in the sidebar to the latest posts and top stories on the site.
- * version: 0.7
+ * version: 0.8
  * folder: sidebar_posts
  * class: SidebarPosts
  * requires: sidebar_widgets 0.4, submit 0.7
@@ -190,6 +190,15 @@ class SidebarPosts extends PluginFunctions
 
             // POST TITLE
             $output .= "<li class='sidebar_posts_item'>";
+            
+            // show vote if enabled in Sidebar Posts settings
+            $sb_votes = $this->getSetting('sidebar_posts_votes', 'sidebar_posts');
+            if ($sb_votes == 'checked') {
+                $output .= "<span class='sidebar_posts_vote vote_color_" . $item->post_status . "'>";
+                $output .= $item->post_votes_up;
+                $output .= "</span>";
+            }
+            
             $output .= "<span class='sidebar_posts_title'>";
             $item_title = stripslashes(html_entity_decode(urldecode($item->post_title), ENT_QUOTES,'UTF-8'));
             $output .= "<a href='" . $this->hotaru->url(array('page'=>$item->post_id)) . "'>" . $item_title . "</a></span>";
