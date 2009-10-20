@@ -75,15 +75,16 @@ class TextWidget extends PluginFunctions
             
             // Get settings from the database:
             $settings = unserialize($this->getSetting('text_widget_' . $id . '_settings', 'text_widget')); 
+            $content = html_entity_decode(stripslashes($settings['text_widget_content']), ENT_QUOTES,'UTF-8');
 
             if ($settings['text_widget_title']) {
-                echo "<h2 class='sidebar_widget_head'>" . $settings['text_widget_title'] . "</h2>\n";
+                echo "<h2 class='sidebar_widget_head'>" . stripslashes($settings['text_widget_title']) . "</h2>\n";
             }
 
             if ($settings['text_widget_php']) {
-                echo "<div class='sidebar_widget_body'>"; eval($settings['text_widget_content']); echo "</div>\n";
+                echo "<div class='sidebar_widget_body'>"; eval($content); echo "</div>\n";
             } else {
-                echo "<div class='sidebar_widget_body'>"; echo $settings['text_widget_content']; echo "</div>\n";
+                echo "<div class='sidebar_widget_body'>"; echo $content; echo "</div>\n";
             }
 
         }
@@ -144,7 +145,7 @@ class TextWidget extends PluginFunctions
                 $parameters['text_widget_php'] = '';
             }
             $parameters['text_widget_title'] = $this->cage->post->noTags('text_widget_title');
-            $parameters['text_widget_content'] = $this->cage->post->getRaw('text_widget_content');
+            $parameters['text_widget_content'] = htmlentities(stripslashes($this->cage->post->getRaw('text_widget_content')), ENT_QUOTES,'UTF-8');
             $this->save_settings($id, $parameters);
         }
     }
