@@ -42,3 +42,12 @@
 	display:inline; 
 	padding-right: 0.8em;	
  }
+
+
+/* ***********************************
+ * ******* SIDEBAR POST VOTES ********
+ * ********************************* */
+ 
+.sidebar_posts_vote { padding: 0 0.5em 0 0.5em; margin-right: 0.5em; }
+.vote_color_new { background-color: #66CCFF; }
+.vote_color_top { background-color: #FFCC33; }
