@@ -36,6 +36,7 @@ class Hotaru
     public $messages        = array();  // for multiple messages
     
     protected $isDebug      = false;    // show db queries and page loading time
+    protected $isAdmin      = false;    // flag to tell if we are in Admin or not
     protected $sidebar      = true;     // enable or diable the sidebar
     protected $title        = '';       // for the broswer's TITLE tags
     protected $pageType     = '';       // what kind of page we're looking at
@@ -63,6 +64,7 @@ class Hotaru
         
         switch ($entrance) {
             case 'admin':
+                $this->isAdmin = 'true';
                 $this->includeLanguagePack('admin');
                 break;
             case 'install':

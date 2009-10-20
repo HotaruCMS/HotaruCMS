@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
- 
+
 if ($hotaru->cage->post->getAlpha('edit_post') == 'true') {
     // Submitted this form...
     $title_check = $hotaru->cage->post->noTags('post_title');    
@@ -34,8 +34,14 @@ if ($hotaru->cage->post->getAlpha('edit_post') == 'true') {
     $post_orig_url = $hotaru->cage->post->testUri('post_orig_url');
     $post_id = $hotaru->cage->post->getInt('post_id');    
     $hotaru->post->id = $post_id;
+    // from post manager...
+    $from = $hotaru->cage->post->testAlnumLines('from');
+    $search_value = $hotaru->cage->post->getMixedString2('search_value'); 
+    $post_status_filter = $hotaru->cage->post->testAlnumLines('post_status_filter');
+    $pg = $hotaru->cage->post->testInt('pg');
     
 } elseif ($hotaru->cage->get->testInt('post_id'))  {
+    if ($hotaru->cage->get->getAlpha('action') == 'delete') { $hotaru->showMessages(); return true; } // die on deletion
     $post_id = $hotaru->cage->get->testInt('post_id');
     $hotaru->post->readPost($post_id);
     $title_check = $hotaru->post->title;
@@ -44,11 +50,21 @@ if ($hotaru->cage->post->getAlpha('edit_post') == 'true') {
     $status_check = $hotaru->post->status;
     $post_orig_url = $hotaru->post->origUrl;
     $post_id = $hotaru->post->id;
+    // from post manager...
+    $from = $hotaru->cage->get->testAlnumLines('from');
+    $search_value = $hotaru->cage->get->getMixedString2('search_value'); 
+    $post_status_filter = $hotaru->cage->get->testAlnumLines('post_status_filter');
+    $pg = $hotaru->cage->get->testInt('pg');
 }
 
 $user = new UserBase($hotaru);
 $user->getUserBasic($hotaru->post->author);
-if ($hotaru->current_user->role != 'admin' && ($hotaru->current_user->id != $user->id)) { 
+
+$can_edit = false;
+if ($hotaru->current_user->getPermission('can_edit_posts') == 'yes') { $can_edit = true; }
+if (($hotaru->current_user->getPermission('can_edit_posts') == 'own') && ($hotaru->current_user->id == $user->id)) { $can_edit = true; }
+
+if (!$can_edit) {
     $hotaru->message = "You don't have permission to edit this post.";
     $hotaru->messageType = "red";
     $hotaru->showMessage();
@@ -97,8 +113,8 @@ $hotaru->plugins->pluginHook('submit_form_2_assign');
     
     <?php $hotaru->plugins->pluginHook('submit_form_2_fields'); ?>
         
-    <?php if ($hotaru->current_user->role == 'admin') { ?>
-    <!-- Admin only options -->
+    <?php if ($hotaru->current_user->getPermission('can_edit_posts') == 'yes') { ?>
+    <!-- Admin/Mod only options -->
     
     <tr><td colspan=3><u><?php echo $hotaru->lang["submit_edit_post_admin_only"]; ?></u></td></tr>
     
@@ -116,7 +132,7 @@ $hotaru->plugins->pluginHook('submit_form_2_assign');
             $statuses = $hotaru->post->getUniqueStatuses(); 
             if ($statuses) {
                 foreach ($statuses as $status) {
-                    if ($status != 'unsaved') { 
+                    if ($status != 'unsaved' && $status != 'processing' && $status != $status_check) { 
                         echo "<option value=" . $status . ">" . $status . "</option>\n";
                     }
                 }
@@ -127,13 +143,23 @@ $hotaru->plugins->pluginHook('submit_form_2_assign');
     <!-- END Admin only options -->
     <?php } ?>
         
-    <?php if ($hotaru->current_user->role != 'admin') { ?>
+    <?php if ($hotaru->current_user->getPermission('can_edit_posts') != 'yes') { 
+        // prevent post_orig_url clash with above form ?>
         <input type='hidden' name='post_orig_url' value='<?php echo $post_orig_url; ?>' />
     <?php } ?>
+    
+    <input type='hidden' name='from' value='<?php echo $from; ?>' />
+    <input type='hidden' name='search_value' value='<?php echo $search_value; ?>' />
+    <input type='hidden' name='post_status_filter' value='<?php echo $post_status_filter; ?>' />
+    <input type='hidden' name='pg' value='<?php echo $pg; ?>' />
     <input type='hidden' name='post_id' value='<?php echo $post_id ?>' />
     <input type='hidden' name='edit_post' value='true' />
     
-    <tr><td colspan=3>&nbsp;</td></tr>
     <tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' class='submit' name='submit_edit_post' value='<?php echo $hotaru->lang["submit_edit_post_save"]; ?>' /></td></tr>    
     </table>
     </form>
+    
+    <?php if ($hotaru->current_user->getPermission('can_delete_posts') == 'yes') { ?>
+        <a class='bold_red' href="<?php echo $hotaru->url(array('page'=>'edit_post', 'post_id'=>$post_id, 'action'=>'delete')); ?>">
+        <?php echo $hotaru->lang["submit_edit_post_delete"]; } ?>
+        </a>

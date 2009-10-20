@@ -2,7 +2,7 @@
 /**
  * name: Search
  * description: Displays "Search!"
- * version: 0.5
+ * version: 0.6
  * folder: search
  * class: Search
  * requires: submit 0.7, sidebar_widgets 0.4
@@ -143,13 +143,13 @@ class Search extends PluginFunctions
         if($full_index) {
             $this->hotaru->vars['select'] = "*, MATCH(post_title, post_domain, post_url, post_content, post_tags) AGAINST ('" . $search_terms_clean . "') AS relevance";
             $this->hotaru->vars['orderby'] = "relevance DESC";        
-            $this->hotaru->vars['filter']["(post_status = 'top' OR post_status = 'new') AND MATCH (post_title, post_domain, post_url, post_content, post_tags) AGAINST (%s IN BOOLEAN MODE)"] = $search_terms_clean; 
+            $this->hotaru->vars['filter']["MATCH (post_title, post_domain, post_url, post_content, post_tags) AGAINST (%s IN BOOLEAN MODE)"] = $search_terms_clean; 
         } else {
             $this->hotaru->vars['select'] = "*";
             $this->hotaru->vars['orderby'] = "post_date DESC";
-            $where = explode_search('post_title', $search_terms_clean) . " OR ";
-            $where .= explode_search('post_url', $search_terms_clean) . " OR ";
-            $where .= explode_search('post_content', $search_terms_clean);
+            $where = $this->explodeSearch('post_title', $search_terms_clean) . " OR ";
+            $where .= $this->explodeSearch('post_url', $search_terms_clean) . " OR ";
+            $where .= $this->explodeSearch('post_content', $search_terms_clean);
             $this->hotaru->vars['filter'][$where] = "";
         }
         

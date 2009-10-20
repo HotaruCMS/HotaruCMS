@@ -144,6 +144,11 @@ form {
 	color: #ffffff;
 }
 
+.bold_red {
+	color: red;
+	font-weight: bold;
+}
+
 /* *************************************
 *  Plugin Management & Similar tables *
 ************************************** */
@@ -154,7 +159,7 @@ form {
 
 #table_list table {
 	margin: auto;
-	width: 98%;
+	width: 96%;
 }
 
 
@@ -246,6 +251,7 @@ table#settings {
 #pagination {
     margin-top: 2.0em;
     text-align: right;
+    font-size: 0.9em;
 }
 
 #pagination a {
@@ -254,7 +260,7 @@ table#settings {
     border:solid 1px #F0F0F0;
 }
 
-#pagination .current {
+#pagination .pagi_current {
     background-color: #BBB;
     font-weight: bold;
     padding: 0.3em 0.7em 0.3em 0.7em;

@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.0.9 2009/10/18 - Nick - Bug fix for lost settings when Submit reactivated
 v.0.8 2009/10/15 - Nick - Bug fixes for slashed apostrophes
 v.0.7 2009/10/06 - Nick - Changed tags to show in a hidden div
 v.0.6 2009/10/06 - Nick - Updates for compatibility with Hotaru 0.7

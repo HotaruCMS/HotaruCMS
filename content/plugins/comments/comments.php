@@ -6,7 +6,7 @@
  * folder: comments
  * class: Comments
  * requires: submit 0.7, users 0.5
- * hooks: header_include, install_plugin, hotaru_header, theme_index_replace, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_form_2_process_submission, userbase_default_permissions
+ * hooks: header_include, install_plugin, hotaru_header, theme_index_replace, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_form_2_process_submission, userbase_default_permissions, post_delete_post
  *
  * PHP version 5
  *
@@ -381,6 +381,16 @@ class Comments extends pluginFunctions
     
     
     /**
+     * Delete comments when post deleted
+     */
+    public function post_delete_post()
+    {
+        $sql = "DELETE FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d";
+        $this->db->query($this->db->prepare($sql, $this->hotaru->post->id));
+    }
+    
+    
+    /**
      * Default permissions 
      *
      * @param array $params - conatins "role"
@@ -392,12 +402,14 @@ class Comments extends pluginFunctions
         $role = $params['role'];
         
         // Permission Options
-        $perms['options']['can_comment'] = array('yes', 'no');
+        $perms['options']['can_comment'] = array('yes', 'no', 'mod');
         $perms['options']['can_edit_comments'] = array('yes', 'no', 'own');
         
         // Permissions for $role
         switch ($role) {
             case 'admin':
+            case 'supermod':
+            case 'moderator':
                 $perms['can_comment'] = 'yes';
                 $perms['can_edit_comments'] = 'yes';
                 break;
@@ -405,8 +417,12 @@ class Comments extends pluginFunctions
                 $perms['can_comment'] = 'yes';
                 $perms['can_edit_comments'] = 'own';
                 break;
+            case 'undermod':
+                $perms['can_comment'] = 'mod';
+                $perms['can_edit_comments'] = 'own';
+                break;
             default:
-                $perms['can_submit'] = 'no';
+                $perms['can_comment'] = 'no';
                 $perms['can_edit_comments'] = 'no';
         }
         

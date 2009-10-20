@@ -24,12 +24,16 @@
  * @link      http://www.hotarucms.org/
  */
 extract($hotaru->vars['checks']); // extracts $username_check, etc.
+$hotaru->vars['username'] = $username_check; // used for user_tabs template
+if ($username_check == 'deleted') { $hotaru->showMessage(); return true; } // shows "User deleted" notice
 ?>
     
     <div id='breadcrumbs'><a href='<?php echo BASEURL; ?>'><?php echo $hotaru->lang["users_home"]; ?></a> 
         &raquo; <a href='<?php echo $hotaru->url(array('user' => $username_check)); ?>'><?php echo $username_check; ?></a> 
         &raquo; <?php echo $hotaru->lang["users_account_account"]; ?></div>
-            
+    
+    <?php $hotaru->displayTemplate('user_tabs', 'users'); ?>
+    
     <h2><?php echo $hotaru->lang["users_account_user_settings"]; ?></h2>
     
     <?php echo $hotaru->showMessages(); ?>
@@ -38,7 +42,11 @@ extract($hotaru->vars['checks']); // extracts $username_check, etc.
     <table>
     <tr><td><?php echo $hotaru->lang["users_account_username"]; ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check; ?>' /></td></tr>
     <tr><td><?php echo $hotaru->lang["users_account_email"]; ?>&nbsp; </td><td><input type='text' size=30 name='email' value='<?php echo $email_check; ?>' /></td></tr>
-    <?php if ($hotaru->current_user->getPermission('can_access_admin') == 'yes') { ?>
+    <?php 
+        // show role picker to anyone who can access admin, but not to yourself!
+        if (($hotaru->current_user->getPermission('can_access_admin') == 'yes') 
+        && ($hotaru->current_user->name != $username_check)) { 
+    ?>
         <tr><td colspan=2><?php echo $hotaru->lang["users_account_role_note"]; ?></td></tr>
         <tr><td><?php echo $hotaru->lang["users_account_role"]; ?>&nbsp; </td>
         <td><select name='user_role'>
@@ -47,7 +55,9 @@ extract($hotaru->vars['checks']); // extracts $username_check, etc.
                     $roles = $hotaru->current_user->getUniqueRoles(); 
                     if ($roles) {
                         foreach ($roles as $role) {
-                            echo "<option value='" . $role . "'>" . $role . "</option>\n";
+                            if ($role != $role_check) {
+                                echo "<option value='" . $role . "'>" . $role . "</option>\n";
+                            }
                         }
                     }
                 ?>

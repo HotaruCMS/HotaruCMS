@@ -32,7 +32,8 @@ class Admin
     public $lang            = array();      // stores language file content
     public $plugins;                        // PluginFunctions object
     public $current_user;                   // UserBase object
-
+    
+    protected $isAdmin      = true;    // flag to tell if we are in Admin or not
     protected $sidebar = true;
     
     /**

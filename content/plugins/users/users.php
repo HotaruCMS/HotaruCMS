@@ -2,10 +2,10 @@
 /**
  * name: Users
  * description: Manages users within Hotaru.
- * version: 0.5
+ * version: 0.6
  * folder: users
  * class: Users
- * hooks: hotaru_header, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs
+ * hooks: hotaru_header, header_include, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs
  *
  * PHP version 5
  *
@@ -123,7 +123,9 @@ class Users extends PluginFunctions
             if ($this->hotaru->isPage('logout')) {
                 $this->current_user->destroyCookieAndSession();
                 header("Location: " . BASEURL);
-            } elseif ($this->hotaru->isPage('account')) {
+            } 
+            elseif ($this->hotaru->isPage('account')) 
+            {
                 if ($user = $this->cage->get->testUsername('user')) {
                     $this->hotaru->vars['userid'] = $this->current_user->getUserIdFromName($user);
                 } else {
@@ -176,10 +178,21 @@ class Users extends PluginFunctions
             if ($this->hotaru->isPage('account')) {
                 // Note: the "account" template calls the functions it needs 
                 // from the UserBase class.
-                $this->hotaru->displayTemplate('account', 'users');
+                extract($this->hotaru->vars['checks']);
+                if (($role_check == 'admin') && ($this->current_user->role != 'admin')) {
+                    $this->hotaru->messages[$this->lang["users_account_admin_admin"]] = 'red';
+                    $this->hotaru->showMessages();
+                } else {
+                    $this->hotaru->displayTemplate('account', 'users');
+                }
                 return true;
-            } elseif ($this->hotaru->isPage('permissions') && ($this->current_user->getPermission('can_access_admin') == 'yes')) {
-                $this->editPermissions();
+            } elseif ($this->hotaru->isPage('permissions')) {
+                if ($this->current_user->getPermission('can_access_admin') == 'yes') { 
+                    $this->editPermissions();
+                } else {
+                    $this->hotaru->messages[$this->lang["access_denied"]] = 'red';
+                    $this->hotaru->showMessages();
+                }
                 return true;
             } else {
                 return false;
@@ -589,6 +602,13 @@ class Users extends PluginFunctions
             return false;
         }
         
+        // prevent non-admin user viewing permissions of admin user
+        if (($user->role) == 'admin' && ($this->current_user->role != 'admin')) {
+            $this->hotaru->messages[$this->lang["users_account_admin_admin"]] = 'red';
+            $this->hotaru->showMessages();
+            return true;
+        }
+        
         $perm_options = $user->getDefaultPermissions();
         $perms = $user->getAllPermissions();
         
@@ -613,6 +633,9 @@ class Users extends PluginFunctions
         echo "&raquo; <a href='" . $this->hotaru->url(array('user' => $user->name)) . "'>" . $user->name . "</a> "; 
         echo "&raquo; " . $this->lang["users_account_permissions"] . "</div>";
             
+        $this->hotaru->vars['username'] = $user->name;
+        $this->hotaru->displayTemplate('user_tabs', 'users');
+        
         echo '<h2>' . $this->lang["users_account_user_permissions"] . ': ' . $user->name . '</h2>';
         
         $this->hotaru->showMessages();

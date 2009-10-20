@@ -68,8 +68,9 @@ li #navigation_active { background-color: #444; }
     font-weight: bold;
 }
 
-.green     { background-color: #99FF66; }
-.red     { background-color: #FF6A55; color: #ffffff; }
+.green    { background-color: #99FF66; }
+.red      { background-color: #FF6A55; color: #ffffff; }
+.bold_red { color: red; font-weight: bold; }
 
 .special_links_bar {
 	padding: 0.2em 0.6em 0.2em 0.6em;
@@ -89,6 +90,7 @@ li #navigation_active { background-color: #444; }
 /* PAGINATION */
 
 #pagination {
+    font-size: 0.9em;
     margin-top: 2.0em;
     text-align: right;
 }
@@ -99,7 +101,7 @@ li #navigation_active { background-color: #444; }
     border:solid 1px #F0F0F0;
 }
 
-#pagination .current {
+#pagination .pagi_current {
     color: #fff;
     background-color: #000;
     font-weight: bold;

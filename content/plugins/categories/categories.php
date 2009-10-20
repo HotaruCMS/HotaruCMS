@@ -2,7 +2,7 @@
 /**
  * name: Categories
  * description: Enables categories for posts
- * version: 0.7
+ * version: 0.8
  * folder: categories
  * class: Categories
  * requires: submit 0.7, category_manager 0.5
@@ -366,7 +366,6 @@ class Categories extends PluginFunctions
         $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
         // Undo the filter that limits results to either 'top' or 'new' (See submit.php -> sub_prepare_list())
         if(isset($this->hotaru->vars['filter']['post_status = %s'])) { unset($this->hotaru->vars['filter']['post_status = %s']); }
-        $this->hotaru->vars['filter']['post_status != %s'] = 'processing';
         $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_category"] . " &raquo; " . $this->hotaru->title . $rss;
         
         return true;
@@ -454,8 +453,10 @@ class Categories extends PluginFunctions
         // Get settings from database if they exist... should return 'checked'
         $this->hotaru->vars['categories'] = $this->getSetting('submit_categories', 'submit');
         
-        // otherwise set to blank...
-        if (!$this->hotaru->vars['categories']) { $this->hotaru->vars['categories'] = ''; }
+        // doesn't exist - use default:
+        if (!isset($this->hotaru->vars['categories'])) {
+            $this->hotaru->vars['categories'] = 'checked';
+        }
     
     }
     

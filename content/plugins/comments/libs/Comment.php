@@ -188,6 +188,41 @@ class Comment
         return true;
     }
 
+
+    /**
+     * Physically delete a comment from the database 
+     *
+     */    
+    public function deleteComment()
+    {
+        $sql = "DELETE FROM " . TABLE_COMMENTS . " WHERE comment_id = %d";
+        $this->db->query($this->db->prepare($sql, $this->id));
+        
+        $this->plugins->pluginHook('comment_delete_comment');
+    }
+    
+    
+    /**
+     * Recurse through comment tree, deleting all
+     *
+     * @param int $item_id - id of current comment
+     * @return bool
+     */
+    public function deleteCommentTree($comment_id)
+    {
+        while ($children = $this->readAllChildren($this->hotaru->post->id, $comment_id)) {
+            foreach ($children as $child) {
+                $this->deleteComment();
+                if ($this->commentTree($child->comment_id)) {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+    }
+    
+    
     /**
      * Unsubscribe from a thread
      *

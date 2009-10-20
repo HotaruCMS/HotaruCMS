@@ -32,12 +32,12 @@
 <ul id="sidebar">
     <li><a href="<?php echo $admin->hotaru->url(array(), 'admin'); ?>"><?php echo $admin->lang["admin_theme_main_admin_home"]; ?></a></li>
     <?php if ($admin->current_user->loggedIn == true) { ?>
-        <li><a href="<?php echo $admin->hotaru->url(array('page' => 'admin_account'), 'admin'); ?>"><?php echo $admin->lang["admin_theme_account"]; ?></a></li>
+        <li><a href="<?php echo BASEURL; ?>admin_index.php?page=admin_account"><?php echo $admin->lang["admin_theme_account"]; ?></a></li>
     <?php } ?>
-    <li><a href="<?php echo $admin->hotaru->url(array('page' => 'settings'), 'admin'); ?>"><?php echo $admin->lang["admin_theme_settings"]; ?></a></li>
-    <li><a href="<?php echo $admin->hotaru->url(array('page' => 'maintenance'), 'admin'); ?>"><?php echo $admin->lang["admin_theme_maintenance"]; ?></a></li>
-    <li><a href="<?php echo $admin->hotaru->url(array('page' => 'blocked_list'), 'admin'); ?>"><?php echo $admin->lang["admin_theme_blocked_list"]; ?></a></li>
-    <li><a href="<?php echo $admin->hotaru->url(array('page' => 'plugins'), 'admin'); ?>"><?php echo $admin->lang["admin_theme_plugins"]; ?></a></li>
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=settings"><?php echo $admin->lang["admin_theme_settings"]; ?></a></li>
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance"><?php echo $admin->lang["admin_theme_maintenance"]; ?></a></li>
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=blocked_list"><?php echo $admin->lang["admin_theme_blocked_list"]; ?></a></li>
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=plugins"><?php echo $admin->lang["admin_theme_plugins"]; ?></a></li>
     <li><?php echo $admin->lang["admin_theme_plugin_settings"]; ?></li>
     <ul id="plugin_settings_list">
         <?php $admin->plugins->pluginHook('admin_sidebar_plugin_settings'); ?>

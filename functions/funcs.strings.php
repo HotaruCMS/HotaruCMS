@@ -552,6 +552,7 @@ function strip_foreign_characters($str)
 {
     $str = str_replace('Â', '', $str);
     $str = str_replace('â€™', '\'', $str);
+    $str = str_replace('â€“', '-', $str);
     $str = str_replace('â€œ', '"', $str);
     $str = str_replace('â€', '"', $str);
     return $str;

@@ -43,9 +43,9 @@ if (!isset($result) || !is_array($result)) {
             <div id="yui-main"> 
             <?php if ($hotaru->sidebar) { // determines whether to show the sidebar or not ?>
                 <div class='yui-gc'> 
-                    <div class="yui-u first"'>
+                    <div class="yui-u first">
             <?php } else { ?>
-                <div class='yui-g''>
+                <div class='yui-g'>
                         <div class="yui-u first" style='width: 100%;'>
                 <?php } ?>
                             <!-- MAIN -->

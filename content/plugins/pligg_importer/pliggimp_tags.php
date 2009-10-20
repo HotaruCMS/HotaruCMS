@@ -77,7 +77,7 @@ class PliggImp4
         if (!$this->db->table_empty($this_table)) {
             if (!$this->cage->get->getAlpha('overwrite') == 'true') {
                 echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . DB_PREFIX . $this_table . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
-                echo "<a class='next' href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer&amp;file_name=" . $file_name . "&amp;step=4&amp;overwrite=true'>Continue</a>";
+                echo "<a class='pliggimp_next' href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer&amp;file_name=" . $file_name . "&amp;step=4&amp;overwrite=true'>Continue</a>";
                 return false;
             } 
         }
@@ -116,7 +116,7 @@ class PliggImp4
         echo $count . " minus duplicate entries.<br /><br />";
         echo "<span style='color: green;'><b>Tags table imported successfully!</b></span><br /><br />";
         
-        echo "<a class='next' href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer&amp;step=5'>Continue</a>";
+        echo "<a class='pliggimp_next' href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer&amp;step=5'>Continue</a>";
         
         return true;
     }

@@ -2,7 +2,7 @@
 /**
  * name: Tags
  * description: Enables tags for posts
- * version: 0.8
+ * version: 0.9
  * folder: tags
  * class: Tags
  * requires: submit 0.7
@@ -66,7 +66,7 @@ class Tags extends PluginFunctions
         }
         
         $this->updateSetting('submit_tags', 'checked', 'submit');
-        $this->updateSetting('submit_max_tags', 50, 'submit');
+        $this->updateSetting('submit_max_tags', 60, 'submit');
         
         // Could possibly do with some code here that extracts all existingtags from the posts table and populates the tags table with them.
         // Maybe in a later version.
@@ -205,16 +205,6 @@ class Tags extends PluginFunctions
     }
     
     
-    /**
-     * Delete tags for a deleted post
-     */    
-    public function delete_post()
-    {
-        $sql = "DELETE FROM " . TABLE_TAGS . " WHERE tags_post_id = %d";
-        $this->db->query($this->db->prepare($sql, $this->hotaru->post->post_id));        
-    }
-    
-    
      /**
      * ********************************************************************* 
      * ********************* FUNCTIONS FOR SUBMIT FORM ********************* 
@@ -331,7 +321,6 @@ class Tags extends PluginFunctions
             $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
             // Undo the filter that limits results to either 'top' or 'new' (See submit.php -> sub_prepare_list())
             if(isset($this->hotaru->vars['filter']['post_status = %s'])) { unset($this->hotaru->vars['filter']['post_status = %s']); }
-            $this->hotaru->vars['filter']['post_status != %s'] = 'processing';
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_tag"] . " &raquo; " . stripslashes($this->hotaru->title) . $rss;
             
             return true;    
@@ -386,9 +375,9 @@ class Tags extends PluginFunctions
         $tags = $this->getSetting('submit_tags', 'submit');
         $max_tags = $this->getSetting('submit_max_tags', 'submit');
         
-        // otherwise set to blank...
-        if (!$tags) { $tags = ''; }
-        if (!$max_tags) { $max_tags = ''; }
+        // otherwise set to defaults...
+        if (!isset($tags)) { $tags = 'checked'; }
+        if (!isset($max_tags)) { $max_tags = '60'; }
         
         $this->hotaru->post->vars['tags'] = $tags;
         $this->hotaru->post->vars['max_tags'] = $max_tags;
@@ -438,8 +427,6 @@ class Tags extends PluginFunctions
      */
     public function post_delete_post()
     {
-        global $post;
-        
         $sql = "DELETE FROM " . TABLE_TAGS . " WHERE tags_post_id = %d";
         $this->db->query($this->db->prepare($sql, $this->hotaru->post->id));
     }

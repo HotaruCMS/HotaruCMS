@@ -2,11 +2,11 @@
 /**
  * name: Vote Simple
  * description: Adds voting ability to posted stories.
- * version: 0.5
+ * version: 0.6
  * folder: vote_simple
  * class: VoteSimple
  * requires: submit 0.7, users 0.5
- * hooks: install_plugin, hotaru_header, submit_hotaru_header_1, post_read_post_1, post_read_post_2, header_include, submit_pre_show_post, submit_show_post_title, admin_plugin_settings, admin_sidebar_plugin_settings, post_add_post, navigation, submit_show_post_extra_fields, submit_show_post_extras
+ * hooks: install_plugin, hotaru_header, submit_hotaru_header_1, post_read_post_1, post_read_post_2, header_include, submit_pre_show_post, submit_show_post_title, admin_plugin_settings, admin_sidebar_plugin_settings, post_add_post, navigation, submit_show_post_extra_fields, submit_show_post_extras, post_delete_post
  *
  * PHP version 5
  *
@@ -237,8 +237,6 @@ class VoteSimple extends PluginFunctions
                 // Buries or Deletes a post if this new flag sends it over the limit set in Vote Settings
                 if ($this->cage->get->keyExists('alert') && $flag_count >= $vote_settings['vote_alerts_to_bury']) {
                     if ($vote_settings['vote_physical_delete']) { 
-                        $sql = "DELETE FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d";
-                        $this->db->query($this->db->prepare($sql, $this->hotaru->post->id));
                         $this->hotaru->post->deletePost($this->hotaru->post->id); 
                     } else {
                         $this->hotaru->post->changeStatus('buried');
@@ -294,6 +292,16 @@ class VoteSimple extends PluginFunctions
                 echo "</ul>";
             echo "</div>";
         }
+    }
+    
+    
+    /**
+     * Delete votes when post deleted
+     */
+    public function post_delete_post()
+    {
+        $sql = "DELETE FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d";
+        $this->db->query($this->db->prepare($sql, $this->hotaru->post->id));
     }
 }
 
