@@ -35,3 +35,8 @@
 	margin-top: 2.0em;
 	text-align: center;
 }
+
+.comment_status {
+	float: right;
+	text-align: right;
+}

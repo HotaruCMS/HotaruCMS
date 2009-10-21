@@ -44,6 +44,21 @@
         <input type="hidden" name="comment_parent" value="<?php echo $hotaru->comment->id; ?>" />
         <input type="hidden" name="comment_post_id" value="<?php echo $hotaru->post->id; ?>" />
         <input type="hidden" name="comment_user_id" value="<?php echo $hotaru->current_user->id; ?>" />
+        
+        <?php if (($hotaru->comment->id != 0) && ($hotaru->current_user->getPermission('can_set_comments_pending') == 'yes')) { ?>
+            <div class='comment_status' style='display: none;'>
+                <a href="<?php echo BASEURL; ?>index.php?page=comments&action=setpending&cid=<?php echo $hotaru->comment->id; ?>&pid=<?php echo $hotaru->post->id; ?>">
+                    <?php echo $hotaru->lang['comments_form_set_pending']; ?>
+                </a><br />
+                
+                <?php if ($hotaru->current_user->getPermission('can_delete_comments') == 'yes') { ?>
+                <a class="bold_red" href="<?php echo BASEURL; ?>index.php?page=comments&action=delete&cid=<?php echo $hotaru->comment->id; ?>&pid=<?php echo $hotaru->post->id; ?>">
+                    <?php echo $hotaru->lang['comments_form_delete']; ?>
+                </a>
+                <?php } ?>
+            </div>
+        <?php } ?>
+        
     </form>
 </div>
 
