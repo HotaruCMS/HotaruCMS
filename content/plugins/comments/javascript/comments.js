@@ -30,16 +30,22 @@ $(document).ready(function(){
 		var target = $(this).parents(".comment");
 		target = $(target).next("div").next("div");
 		target.fadeToggle();
-                //target.next().fadeToggle();
+		
+		target2 = $(target).find("div.comment_status"); // finds div in form
+		target2.hide();
+
                 return false;
         });  
         
 	// Show/Hide box 
 	$(".comment_edit_link").click(function () {
 		var target = $(this).parents(".comment");
-		target = $(target).next("div").next("div");
+		target = $(target).next("div").next("div"); // finds div surrounding form
 		target.fadeToggle();
-                //target.next().fadeToggle();
+
+		target2 = $(target).find("div.comment_status"); // finds div in form
+		target2.show();
+
                 return false;
         }); 
         

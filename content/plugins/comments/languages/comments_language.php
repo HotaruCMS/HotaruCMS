@@ -45,6 +45,8 @@ $lang['comments_form_edit'] = "Update";
 $lang['comments_form_subscribe'] = "Subscribe to comments";
 $lang['comments_form_unsubscribe'] = "To unsubscribe, uncheck the box and submit an empty comment";
 $lang['comments_form_allowable_tags'] = "Allowed HTML tags:";
+$lang['comments_form_set_pending'] = "Put in moderation queue";
+$lang['comments_form_delete'] = "Delete this and responses";
 
 /* Admin Settings */
 $lang['comments_admin_sidebar'] = "Comments";
@@ -58,6 +60,7 @@ $lang["comments_settings_email"] = "Send comments to:";
 $lang["comments_settings_email_desc"] = "(Subscribers are BCC'd in the email)";
 $lang["comments_settings_allowable_tags"] = "Allowed HTML tags in comments:";
 $lang["comments_settings_allowable_tags_example"] = "<small>(E.g. &lt;b&gt;&lt;u&gt;&lt;i&gt;&lt;blockquote&gt;)</small>";
+$lang["comments_settings_setpending"] = "Set all new comments to \"pending\" (requires the Category Manager plugin to view and approve/delete them";
 $lang["comments_settings_save"] = "Save";
 $lang["comments_settings_saved"] = "Settings saved";
 

@@ -2,11 +2,11 @@
 /**
  * name: Comments
  * description: Enables logged-in users to comment on posts
- * version: 0.5
+ * version: 0.7
  * folder: comments
  * class: Comments
  * requires: submit 0.7, users 0.5
- * hooks: header_include, install_plugin, hotaru_header, theme_index_replace, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_form_2_process_submission, userbase_default_permissions, post_delete_post
+ * hooks: header_include, install_plugin, upgrade_plugin, hotaru_header, theme_index_replace, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_form_2_process_submission, userbase_default_permissions, post_delete_post
  *
  * PHP version 5
  *
@@ -33,6 +33,16 @@
 class Comments extends pluginFunctions
 {
     /**
+     * Upgrade plugin
+     */
+    public function upgrade_plugin()
+    {
+        $sql = "ALTER TABLE " . DB_PREFIX . "comments ADD comment_status varchar(32)  NOT NULL DEFAULT 'approved' AFTER comment_date";
+        $this->db->query($this->db->prepare($sql));
+    }
+
+
+    /**
      * Default settings on install
      */
     public function install_plugin()
@@ -48,6 +58,7 @@ class Comments extends pluginFunctions
               `comment_user_id` int(20) NOT NULL DEFAULT '0',
               `comment_parent` int(20) DEFAULT '0',
               `comment_date` timestamp NOT NULL,
+              `comment_status` varchar(32) NOT NULL DEFAULT 'approved',
               `comment_content` text NOT NULL,
               `comment_votes` int(20) NOT NULL DEFAULT '0',
               `comment_subscribe` tinyint(1) NOT NULL DEFAULT '0',
@@ -76,11 +87,17 @@ class Comments extends pluginFunctions
         
         // Default settings 
         $comments_settings['comment_form'] = "checked";
-        $comments_settings['comment_avatars'] = "";
+        if ($this->isActive('gravatar')) {
+            $comments_settings['comment_avatars'] = "checked";
+        } else {
+            $comments_settings['comment_avatars'] = "";
+        }
         $comments_settings['comment_voting'] = "";
         $comments_settings['comment_levels'] = 5;
         $comments_settings['comment_email'] = SITE_EMAIL;
         $comments_settings['comment_allowable_tags'] = "<b><i><u><a><blockquote><strike>";
+        $comments_settings['comment_set_pending'] = ""; // sets all new comments to pending (needs Comment Manager to view them)
+        
         $this->updateSetting('comments_settings', serialize($comments_settings));
         
         // Include language file. Also included in hotaru_header, but needed here so 
@@ -124,6 +141,7 @@ class Comments extends pluginFunctions
         $this->hotaru->comment->email = $comments_settings['comment_email'];
         $this->hotaru->comment->allowableTags = $comments_settings['comment_allowable_tags'];
         $this->hotaru->comment->levels = $comments_settings['comment_levels'];
+        $this->hotaru->comment->setPending = $comments_settings['comment_set_pending'];
     }
     
     
@@ -170,23 +188,78 @@ class Comments extends pluginFunctions
                     
                     if ($this->cage->post->getAlpha('comment_process') == 'newcomment')
                     {
-                        // A user can unsubscribe by submitting an empty comment, so...
-                        if($this->hotaru->comment->content != '') {
-                            $this->hotaru->comment->addComment();
-                            $this->hotaru->comment->emailCommentSubscribers($this->hotaru->comment->postId);
-                        } else {
-                            //comment empty so just check subscribe box:
-                            $this->hotaru->comment->updateSubscribe($this->hotaru->comment->postId);
+                        // before posting, we need to be certain this user has permission:
+                        $safe = false;
+                        $can_comment = $this->hotaru->current_user->getPermission('can_comment');
+                        if ($can_comment == 'yes') { $safe = true; }
+                        if ($can_comment == 'mod') { $safe = true; $this->hotaru->comment->status = 'pending'; }
+                        
+                        // Okay, safe to add the comment...
+                        if ($safe) {
+                            // A user can unsubscribe by submitting an empty comment, so...
+                            if($this->hotaru->comment->content != '') {
+                                $this->hotaru->comment->addComment();
+                                $this->hotaru->comment->emailCommentSubscribers($this->hotaru->comment->postId);
+                            } else {
+                                //comment empty so just check subscribe box:
+                                $this->hotaru->comment->updateSubscribe($this->hotaru->comment->postId);
+                            }
                         }
                     }
                     elseif($this->cage->post->getAlpha('comment_process') == 'editcomment')
                     {
+                        // before editing, we need to be certain this user has permission:
+                        $safe = false;
+                        $can_edit = $this->hotaru->current_user->getPermission('can_edit_comments');
+                        if ($can_edit == 'yes') { $safe = true; }
+                        if (($can_edit == 'own') && ($this->hotaru->current_user->id == $this->hotaru->comment->author)) { $safe = true; }
+                        if ($safe) {
                             $this->hotaru->comment->editComment();
+                        }
                     }
                     
                     header("Location: " . $this->hotaru->url(array('page'=>$this->hotaru->comment->postId)));    // Go to the post
                     die();
                     
+                }
+                
+                // set current comment and responses to pending:
+                if ($this->cage->get->getAlpha('action') == 'setpending') { 
+                
+                    // before setting pending, we need to be certain this user has permission:
+                    if ($this->hotaru->current_user->getPermission('can_set_comments_pending') == 'yes') {
+                        $cid = $this->cage->get->testInt('cid'); // comment id
+                        $comment = $this->hotaru->comment->getComment($cid);
+                        $this->hotaru->comment->readComment($comment); // read comment
+                        $this->hotaru->comment->status = 'pending'; // set to pending
+                        $this->hotaru->comment->editComment();  // update this comment
+    
+                        $this->hotaru->comment->postId = $this->cage->get->testInt('pid');  // post id
+                        $this->hotaru->comment->setPendingCommentTree($cid);   // set all responses to 'pending', too.
+                        
+                        // redirect back to thread:
+                        header("Location: " . $this->hotaru->url(array('page'=>$this->hotaru->comment->postId)));    // Go to the post
+                        die();
+                    }
+                }
+                
+                // delete current comment and responses:
+                if ($this->cage->get->getAlpha('action') == 'delete') { 
+                
+                    // before deleting a comment, we need to be certain this user has permission:
+                    if ($this->hotaru->current_user->getPermission('can_delete_comments') == 'yes') {
+                        $cid = $this->cage->get->testInt('cid'); // comment id
+                        $comment = $this->hotaru->comment->getComment($cid);
+                        $this->hotaru->comment->readComment($comment); // read comment
+                        $this->hotaru->comment->deleteComment(); // delete this comment
+    
+                        $this->hotaru->comment->postId = $this->cage->get->testInt('pid');  // post id
+                        $this->hotaru->comment->deleteCommentTree($cid);   // set all responses to 'pending', too.
+                        
+                        // redirect back to thread:
+                        header("Location: " . $this->hotaru->url(array('page'=>$this->hotaru->comment->postId)));    // Go to the post
+                        die();
+                    }
                 }
     
             }
@@ -295,7 +368,7 @@ class Comments extends pluginFunctions
      */
     public function commentTree($item_id, $depth)
     {
-        while ($children = $this->hotaru->comment->readAllChildren($this->hotaru->post->id, $item_id)) {
+        while ($children = $this->hotaru->comment->readAllChildren($item_id)) {
             foreach ($children as $child) {
                 $depth++;
                 if ($depth == $this->hotaru->comment->levels) { 
@@ -324,8 +397,10 @@ class Comments extends pluginFunctions
     {
         if (!$this->hotaru->isPage('submit2')) {
             $this->hotaru->comment->readComment($item);
-            $this->hotaru->displayTemplate('show_comments', 'comments', $this->hotaru, false);
-            $this->hotaru->displayTemplate('comment_form', 'comments', $this->hotaru, false);
+            if ($this->hotaru->comment->status == 'approved') {
+                $this->hotaru->displayTemplate('show_comments', 'comments', $this->hotaru, false);
+                $this->hotaru->displayTemplate('comment_form', 'comments', $this->hotaru, false);
+            }
         }
     }
     
@@ -404,26 +479,40 @@ class Comments extends pluginFunctions
         // Permission Options
         $perms['options']['can_comment'] = array('yes', 'no', 'mod');
         $perms['options']['can_edit_comments'] = array('yes', 'no', 'own');
+        $perms['options']['can_set_comments_pending'] = array('yes', 'no');
+        $perms['options']['can_delete_comments'] = array('yes', 'no');
         
         // Permissions for $role
         switch ($role) {
             case 'admin':
             case 'supermod':
+                $perms['can_comment'] = 'yes';
+                $perms['can_edit_comments'] = 'yes';
+                $perms['can_set_comments_pending'] = 'yes';
+                $perms['can_delete_comments'] = 'yes';
             case 'moderator':
                 $perms['can_comment'] = 'yes';
                 $perms['can_edit_comments'] = 'yes';
+                $perms['can_set_comments_pending'] = 'yes';
+                $perms['can_delete_comments'] = 'no';
                 break;
             case 'member':
                 $perms['can_comment'] = 'yes';
                 $perms['can_edit_comments'] = 'own';
+                $perms['can_set_comments_pending'] = 'no';
+                $perms['can_delete_comments'] = 'no';
                 break;
             case 'undermod':
                 $perms['can_comment'] = 'mod';
                 $perms['can_edit_comments'] = 'own';
+                $perms['can_set_comments_pending'] = 'no';
+                $perms['can_delete_comments'] = 'no';
                 break;
             default:
                 $perms['can_comment'] = 'no';
                 $perms['can_edit_comments'] = 'no';
+                $perms['can_set_comments_pending'] = 'no';
+                $perms['can_delete_comments'] = 'no';
         }
         
         $this->hotaru->vars['perms'] = $perms;
