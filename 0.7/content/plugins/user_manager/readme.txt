@@ -13,4 +13,5 @@ Instructions
 
 Changelog
 ---------
+v.0.2 2009/08/24 - Nick - Fix for User filtering
 v.0.1 2009/08/18 - Nick - Released first version
