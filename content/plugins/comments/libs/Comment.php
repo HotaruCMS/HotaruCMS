@@ -38,6 +38,7 @@ class Comment
     protected $postId = 0;
     protected $author = 0;
     protected $date = '';
+    protected $status = 'approved';
     protected $votes = 0;
     protected $content = '';
     protected $type = 'newcomment';   // or "editcomment"
@@ -46,6 +47,7 @@ class Comment
     protected $depth = 0;         // this nesting level
     protected $email = '';
     protected $allowableTags = '';
+    protected $setPending = '';
     protected $form = '';
     protected $avatars = '';
     protected $voting = '';
@@ -93,8 +95,8 @@ class Comment
      */
     function countComments($link = true)
     {
-        $sql = "SELECT COUNT(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d";
-        $num_comments = $this->db->get_var($this->db->prepare($sql, $this->hotaru->post->id));
+        $sql = "SELECT COUNT(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_status = %s";
+        $num_comments = $this->db->get_var($this->db->prepare($sql, $this->hotaru->post->id, 'approved'));
         
         if ($num_comments == 1) {
             return "1 " . $this->lang['comments_singular_link'];
@@ -130,15 +132,30 @@ class Comment
     /**
      * Read all comment children
      *
-     * @param int $post_id - the id of the post this comment is on
+     * @param int $parent - the id of the parent comment
      * @param array|false
      */
-    function readAllChildren($post_id, $parent)
+    function readAllChildren($parent)
     {
-        $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_parent = %d ORDER BY comment_date";
-        $children = $this->db->get_results($this->db->prepare($sql, $post_id, $parent));
+        $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_parent = %d ORDER BY comment_date";
+        $children = $this->db->get_results($this->db->prepare($sql, $parent));
         
         if($children) { return $children; } else { return false; }
+    }
+    
+    
+    /**
+     * Get comment from database
+     *
+     * @param int $comment_id
+     * @return array|false
+     */
+    function getComment($comment_id)
+    {
+        $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_id = %d";
+        $comment = $this->db->get_row($this->db->prepare($sql, $comment_id));
+        
+        if($comment) { return $comment; } else { return false; }
     }
     
     
@@ -154,9 +171,12 @@ class Comment
         $this->postId = $comment->comment_post_id;
         $this->author = $comment->comment_user_id;
         $this->date = $comment->comment_date;
+        $this->status = $comment->comment_status;
         $this->votes = $comment->comment_votes;
         $this->content = urldecode($comment->comment_content);
         $this->subscribe = $comment->comment_subscribe;
+        
+        $this->plugins->pluginHook('comment_read_comment');
     }
     
     
@@ -167,9 +187,20 @@ class Comment
      */
     function addComment()
     {
-        $sql = "INSERT INTO " . TABLE_COMMENTS . " SET comment_post_id = %d, comment_user_id = %d, comment_parent = %d, comment_date = CURRENT_TIMESTAMP, comment_content = %s, comment_subscribe = %d, comment_updateby = %d";
+        $this->plugins->pluginHook('comment_pre_add_comment');  // Akismet uses this to change the status
+        
+        if ($this->setPending == 'checked') { $status = 'pending'; } else { $status = $this->status; } // forces all to 'pending' if setPending enabled
                 
-        $this->db->query($this->db->prepare($sql, $this->postId, $this->author, $this->parent, urlencode(trim(stripslashes($this->content))), $this->subscribe, $this->current_user->id));
+        $sql = "INSERT INTO " . TABLE_COMMENTS . " SET comment_post_id = %d, comment_user_id = %d, comment_parent = %d, comment_date = CURRENT_TIMESTAMP, comment_status = %s, comment_content = %s, comment_subscribe = %d, comment_updateby = %d";
+                
+        $this->db->query($this->db->prepare($sql, $this->postId, $this->author, $this->parent, $status, urlencode(trim(stripslashes($this->content))), $this->subscribe, $this->current_user->id));
+        
+        $last_insert_id = $this->db->get_var($this->db->prepare("SELECT LAST_INSERT_ID()"));
+        
+        $this->id = $last_insert_id;
+        $this->vars['last_insert_id'] = $last_insert_id;    // make it available outside this class
+        
+        $this->plugins->pluginHook('comment_post_add_comment');
         
         return true;
     }
@@ -182,8 +213,10 @@ class Comment
      */
     function editComment()
     {
-        $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_content = %s, comment_subscribe = %d, comment_updateby = %d WHERE comment_id = %d";
-        $this->db->query($this->db->prepare($sql, urlencode(trim(stripslashes($this->content))), $this->subscribe, $this->current_user->id, $this->id));
+        $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_status = %s, comment_content = %s, comment_subscribe = %d, comment_updateby = %d WHERE comment_id = %d";
+        $this->db->query($this->db->prepare($sql, $this->status, urlencode(trim(stripslashes($this->content))), $this->subscribe, $this->current_user->id, $this->id));
+        
+        $this->plugins->pluginHook('comment_update_comment');
         
         return true;
     }
@@ -198,6 +231,10 @@ class Comment
         $sql = "DELETE FROM " . TABLE_COMMENTS . " WHERE comment_id = %d";
         $this->db->query($this->db->prepare($sql, $this->id));
         
+        // delete any votes for this comment
+        $sql = "DELETE FROM " . TABLE_COMMENTVOTES . " WHERE cvote_comment_id = %d";
+        $this->db->query($this->db->prepare($sql, $this->id));
+        
         $this->plugins->pluginHook('comment_delete_comment');
     }
     
@@ -205,15 +242,40 @@ class Comment
     /**
      * Recurse through comment tree, deleting all
      *
-     * @param int $item_id - id of current comment
+     * @param int $comment_id - id of current comment
      * @return bool
      */
     public function deleteCommentTree($comment_id)
     {
-        while ($children = $this->readAllChildren($this->hotaru->post->id, $comment_id)) {
+        while ($children = $this->readAllChildren($comment_id)) {
             foreach ($children as $child) {
+                $this->readComment($child);
                 $this->deleteComment();
-                if ($this->commentTree($child->comment_id)) {
+                if ($this->deletecommentTree($this->id)) {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+    }
+    
+    
+    /**
+     * Recurse through comment tree, setting all to 'pending'
+     *
+     * @param int $comment_id - id of current comment
+     * @return bool
+     */
+    public function setPendingCommentTree($comment_id)
+    {
+        while ($children = $this->readAllChildren($comment_id)) {
+            print_r($children);
+            foreach ($children as $child) {
+                $this->readComment($child);
+                $this->status = 'pending';
+                $this->editComment();
+                if ($this->setPendingCommentTree($this->id)) {
                     return true;
                 }
             }

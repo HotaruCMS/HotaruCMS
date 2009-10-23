@@ -26,7 +26,8 @@
  
 
 ?>
-
+    <a id="c<?php echo $hotaru->comment->id; ?>"></a>
+    
     <div class="comment" style="margin-left: <?php echo $hotaru->comment->depth * 2.0; ?>em;">
 
         <?php   // Show avatars if enabled (requires an avatars plugin)

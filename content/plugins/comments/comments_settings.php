@@ -47,6 +47,7 @@ class CommentsSettings extends Comments
         $this->hotaru->comment->email = $comments_settings['comment_email'];
         $this->hotaru->comment->allowableTags = $comments_settings['comment_allowable_tags'];
         $this->hotaru->comment->levels = $comments_settings['comment_levels'];
+        $this->hotaru->comment->setPending = $comments_settings['comment_set_pending'];
         
         echo "<h1>" . $this->lang["comments_settings_header"] . "</h1>\n";
           
@@ -57,11 +58,13 @@ class CommentsSettings extends Comments
         if (!$this->hotaru->comment->levels) { $this->hotaru->comment->levels = 5; }
         if (!$this->hotaru->comment->email) { $this->hotaru->comment->email = ''; }
         if (!$this->hotaru->comment->allowableTags) { $this->hotaru->comment->allowableTags = ''; }
+        if (!$this->hotaru->comment->setPending) { $this->hotaru->comment->setPending = ''; }
     
         // Determine if checkboxes are checked or not
         if ($this->hotaru->comment->form == 'checked') { $check_form = 'checked'; } else { $check_form = ''; }
         if ($this->hotaru->comment->avatars == 'checked') { $check_avatars = 'checked'; } else { $check_avatars = ''; }
         if ($this->hotaru->comment->voting == 'checked') { $check_votes = 'checked'; } else { $check_votes = ''; }
+        if ($this->hotaru->comment->setPending == 'checked') { $check_pending = 'checked'; } else { $check_pending = ''; }
         
          
         $this->pluginHook('comments_settings_get_values');
@@ -73,6 +76,7 @@ class CommentsSettings extends Comments
         echo "<p><input type='checkbox' name='comment_form' value='comment_form' " . $check_form . " >&nbsp;&nbsp;" . $this->lang["comments_settings_form"] . "</p>\n";    
         echo "<p><input type='checkbox' name='comment_avatars' value='comment_avatars' " . $check_avatars . " >&nbsp;&nbsp;" . $this->lang["comments_settings_avatars"] . "</p>\n"; 
         echo "<p><input type='checkbox' name='comment_voting' value='comment_voting' " . $check_votes . " >&nbsp;&nbsp;" . $this->lang["comments_settings_votes"] . "</p>\n"; 
+        echo "<p><input type='checkbox' name='comment_setpending' value='comment_setpending' " . $check_pending . " >&nbsp;&nbsp;" . $this->lang["comments_settings_setpending"] . "</p>\n"; 
     
         echo "<br />" . $this->lang["comments_settings_levels"] . " <input type='text' size=5 name='levels' value='" . $this->hotaru->comment->levels . "' /><br />";
         echo "<br />" . $this->lang["comments_settings_email"] . " <input type='text' size=30 name='email' value='" . $this->hotaru->comment->email . "' /> ";
@@ -141,11 +145,20 @@ class CommentsSettings extends Comments
             $allowable_tags = $this->hotaru->comment->allowableTags; 
         }
         
+        // Set pending
+        // enable votes on comments
+        if ($this->cage->post->keyExists('comment_setpending')) { 
+            $this->hotaru->comment->setPending = 'checked';
+        } else {
+            $this->hotaru->comment->setPending = '';
+        }
+        
         $this->pluginHook('comments_save_settings');
         
         $comments_settings['comment_form'] = $this->hotaru->comment->form;
         $comments_settings['comment_avatars'] = $this->hotaru->comment->avatars;
         $comments_settings['comment_voting'] = $this->hotaru->comment->voting;
+        $comments_settings['comment_set_pending'] = $this->hotaru->comment->setPending;
         $comments_settings['comment_levels'] = $levels;
         $comments_settings['comment_email'] = $email;
         $comments_settings['comment_allowable_tags'] = $allowable_tags;
