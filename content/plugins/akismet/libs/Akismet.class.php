@@ -166,7 +166,7 @@ class Akismet
 		$query_string = '';
 		
 		foreach($this->comment as $key => $data) {
-			if(!is_array($data)) {
+			if(!is_array($data) && ($key != 'argv') && ($key != 'argc')) {
 				$query_string .= $key . '=' . urlencode(stripslashes($data)) . '&';
 			}
 		}
