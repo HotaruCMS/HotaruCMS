@@ -53,7 +53,7 @@ $lang['comments_form_moderation_on'] = "<b>Note</b>: <span style='color: red;'>A
 $lang['comments_admin_sidebar'] = "Comments";
 $lang["comments_settings_header"] = "Comments Settings";
 $lang["comments_settings_instructions"] = "Options for comments:";
-$lang["comments_settings_form"] = "Enable the comment form on all posts";
+$lang["comments_settings_form"] = "Enable the comment form on all posts <small>(This overrides individual post settings, but <i>doesn't</i> change them)</small>";
 $lang["comments_settings_avatars"] = "Enable avatars on comments (requires an avatar plugin, e.g. <i>Gravatar</i>)";
 $lang["comments_settings_votes"] = "Enable votes on comments (requires a comment voting plugin)";
 $lang["comments_settings_levels"] = "Comment nesting levels:";
