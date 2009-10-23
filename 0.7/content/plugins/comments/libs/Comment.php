@@ -290,6 +290,29 @@ class Comment
     
     
     /**
+     * Determine if the comment form is open or closed
+     *
+     * @param int $post_id
+     * @return string 'open' or 'closed'
+     */
+    function formStatus($type)
+    {
+        if ($type == 'select') {
+            $sql = "SELECT post_comments FROM " . TABLE_POSTS . " WHERE post_id = %d";
+            $form_status = $this->db->get_var($this->db->prepare($sql, $this->hotaru->post->id));
+            
+            if ($form_status) { return $form_status; } else { return 'open'; } // default 'open'
+        }
+        
+        if ($type == 'open' || $type == 'closed') {
+            $this->hotaru->comment->form = $type;
+            $sql = "UPDATE " . TABLE_POSTS . " SET post_comments = %s WHERE post_id = %d";
+            $this->db->query($this->db->prepare($sql, $type, $this->hotaru->post->id));
+        }
+    }
+    
+    
+    /**
      * Unsubscribe from a thread
      *
      * @param int $post_id

@@ -140,6 +140,8 @@ $hotaru->plugins->pluginHook('submit_form_2_assign');
             ?>
         </td>
     </tr>
+    
+    <?php $hotaru->plugins->pluginHook('submit_edit_post_admin_fields'); ?>
     <!-- END Admin only options -->
     <?php } ?>
         

@@ -12,4 +12,5 @@ Instructions
 
 Changelog
 ---------
+v.0.2 2009/10/24 - Nick - Fix for a "Catchable fatal error" when "register_argc_argv = On" in php.ini
 v.0.1 2009/10/22 - Nick - Released first version

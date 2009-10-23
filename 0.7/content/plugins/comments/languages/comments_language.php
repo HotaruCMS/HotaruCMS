@@ -65,4 +65,7 @@ $lang["comments_settings_setpending"] = "Set all new comments to \"pending\" (re
 $lang["comments_settings_save"] = "Save";
 $lang["comments_settings_saved"] = "Settings saved";
 
+/* Edit Post */
+$lang['submit_form_enable_comments'] = "Enable comment form";
+
 ?>

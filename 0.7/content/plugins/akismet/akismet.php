@@ -2,7 +2,7 @@
 /**
  * name: Akismet
  * description: Anti-spam service
- * version: 0.1
+ * version: 0.2
  * folder: akismet
  * class: HotaruAkismet
  * hooks: admin_plugin_settings, admin_sidebar_plugin_settings, install_plugin, comment_pre_add_comment, submit_step_3_pre_trackback, com_man_approve_comment, com_man_delete_comment, comments_delete_comment

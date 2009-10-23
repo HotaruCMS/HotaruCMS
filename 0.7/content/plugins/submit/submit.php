@@ -2,7 +2,7 @@
 /**
  * name: Submit
  * description: Submit and manage stories.
- * version: 1.1
+ * version: 1.2
  * folder: submit
  * class: Submit
  * hooks: hotaru_header, header_meta, header_include, header_include_raw, upgrade_plugin, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, userbase_default_permissions
