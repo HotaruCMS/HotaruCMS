@@ -13,7 +13,8 @@ Instructions
 
 Changelog
 ---------
-v.1.0 2009/10/17 - Nick - New plugin hook for Akismet compatibility
+v.1.1 2009/10/23 - Nick - Users under moderation get their posts sent to 'pending'
+v.1.0 2009/10/22 - Nick - New plugin hook for Akismet compatibility
 v.0.9 2009/10/17 - Nick - Updates for compatibility with Post Manager plugin
 v.0.8 2009/10/15 - Nick - Bug fixes for missing post url and slashed apostrophes
 v.0.7 2009/10/04 - Nick - Updates for compatibility with Hotaru 0.7

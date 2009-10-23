@@ -2,7 +2,7 @@
 /**
  * name: Submit
  * description: Submit and manage stories.
- * version: 1.0
+ * version: 1.1
  * folder: submit
  * class: Submit
  * hooks: hotaru_header, header_meta, header_include, header_include_raw, upgrade_plugin, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, userbase_default_permissions
@@ -238,6 +238,13 @@ class Submit extends PluginFunctions
                     
                     $this->pluginHook('submit_step_3_pre_trackback'); // Akismet uses this to change the status
                     
+                    if ($this->current_user->getPermission('can_submit') == 'mod') {
+                    // Submitted posts given 'pending' for this user
+                        $this->hotaru->post->changeStatus('pending');
+                        $this->hotaru->messages[$this->lang['submit_form_moderation']] = 'green';
+                        return false;
+                    }
+                    
                     $this->hotaru->post->sendTrackback();
                     if ($this->hotaru->post->useLatest) {
                         header("Location: " . $this->hotaru->url(array('page'=>'latest')));    // Go to the Latest page
@@ -367,7 +374,8 @@ class Submit extends PluginFunctions
             if ($this->current_user->loggedIn) {
             
                 if (!$this->hotaru->post->useSubmission) {
-                    echo $this->lang['submit_disabled'];    
+                    $this->hotaru->messages[$this->lang['submit_disabled']] = 'red';
+                    echo $this->hotaru->showMessages();
                     return true;
                 }
                  
@@ -375,6 +383,9 @@ class Submit extends PluginFunctions
                      $this->hotaru->displayTemplate('submit_step2', 'submit');
                      return true;
                 }
+                
+                echo $this->hotaru->showMessages();
+                return true;
             }
             
         } elseif ($this->hotaru->isPage('edit_post')) {
