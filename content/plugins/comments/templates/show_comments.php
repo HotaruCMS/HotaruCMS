@@ -62,7 +62,7 @@
             <?php   // REPLY LINK - (if logged in) AND (can comment) AND (form is turned on)...
                 if ($hotaru->current_user->loggedIn 
                     && ($hotaru->current_user->getPermission('can_comment') != 'no')
-                    && ($hotaru->comment->form == 'checked')) { ?>
+                    && ($hotaru->comment->form == 'open')) { ?>
                         
                 <?php if ($hotaru->comment->depth < $hotaru->comment->levels-1) { // No nesting after X levels (minus 1 because nestings tarts at 0) ?>
                     <a href='#' class='comment_reply_link' onclick="reply_comment(

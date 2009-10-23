@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.0.9 2009/10/24 - Nick - Added ability to open/close the comment thread on individual posts.
 v.0.8 2009/10/21 - Nick - Fix for Akismet overriding the status of comments from "undermod" users
 v.0.7 2009/10/21 - Nick - Adds "status" field and option for setting new comments as "pending"
 v.0.6 2009/10/18 - Nick - Added functions for deleting comments when a post or user is deleted 

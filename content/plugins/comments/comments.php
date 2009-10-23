@@ -2,11 +2,11 @@
 /**
  * name: Comments
  * description: Enables logged-in users to comment on posts
- * version: 0.8
+ * version: 0.9
  * folder: comments
  * class: Comments
  * requires: submit 0.7, users 0.5
- * hooks: header_include, install_plugin, upgrade_plugin, hotaru_header, theme_index_replace, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_form_2_process_submission, userbase_default_permissions, post_delete_post
+ * hooks: header_include, install_plugin, upgrade_plugin, hotaru_header, theme_index_replace, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_edit_post_admin_fields, submit_form_2_process_submission, userbase_default_permissions, post_delete_post
  *
  * PHP version 5
  *
@@ -45,6 +45,12 @@ class Comments extends pluginFunctions
             // make content field fulltext for better searching
             $sql = "ALTER TABLE " . DB_PREFIX . "comments ADD FULLTEXT(comment_content)";
             $this->db->query($this->db->prepare($sql));
+        }
+        
+        if (!$this->db->column_exists('posts', 'post_comments')) {
+            // add new post_comments field
+            $sql = "ALTER TABLE " . DB_PREFIX . "posts ADD post_comments ENUM(%s, %s) NOT NULL DEFAULT %s AFTER post_subscribe";
+            $this->db->query($this->db->prepare($sql, 'open', 'closed', 'open'));
         }
     }
 
@@ -93,6 +99,12 @@ class Comments extends pluginFunctions
               `cvote_updateby` int(20) NOT NULL DEFAULT 0
             ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Comment Votes';";
             $this->db->query($sql); 
+        }
+        
+        // Add post_comments field to the posts table for opening/closing individual comment threads
+        if (!$this->db->column_exists('posts', 'post_comments')) {
+            $sql = "ALTER TABLE " . DB_PREFIX . "posts ADD post_comments ENUM(%s, %s) NOT NULL DEFAULT %s AFTER post_subscribe";
+            $this->db->query($this->db->prepare($sql, 'open', 'closed', 'open'));
         }
         
         // Default settings 
@@ -145,7 +157,6 @@ class Comments extends pluginFunctions
         $comments_settings = $this->getSerializedSettings();
     
         // Assign settings to class member
-        $this->hotaru->comment->form = $comments_settings['comment_form'];
         $this->hotaru->comment->avatars = $comments_settings['comment_avatars'];
         $this->hotaru->comment->voting = $comments_settings['comment_voting'];
         $this->hotaru->comment->email = $comments_settings['comment_email'];
@@ -162,8 +173,10 @@ class Comments extends pluginFunctions
      */
     public function theme_index_replace()
     {
-        if (($this->hotaru->isPage('comments')) && ($this->hotaru->comment->form == 'checked')) {
-        
+        // Is the comment form open on this thread? 
+        $this->hotaru->comment->form = $this->hotaru->comment->formStatus('select'); // returns 'open' or 'closed'
+
+        if (($this->hotaru->isPage('comments')) && ($this->hotaru->comment->form == 'open')) {
             if ($this->current_user->loggedIn) {
 
                 if (($this->cage->post->getAlpha('comment_process') == 'newcomment') || 
@@ -365,7 +378,7 @@ class Comments extends pluginFunctions
             return false;
         }
         
-        if ($this->hotaru->comment->form != 'checked') {
+        if ($this->hotaru->comment->form == 'closed') {
             echo "<div class='comment_form_off'>" . $this->lang['comments_form_closed'] . "</div>";
             return false;
         }
@@ -419,6 +432,13 @@ class Comments extends pluginFunctions
             $this->hotaru->comment->readComment($item);
             if ($this->hotaru->comment->status == 'approved') {
                 $this->hotaru->displayTemplate('show_comments', 'comments', $this->hotaru, false);
+                
+                // don't show the reply form in these cases:
+                if ($this->current_user->getPermission('can_comment') == 'no') { return false; }
+                if (!$this->current_user->loggedIn) { return false; }
+                if ($this->hotaru->comment->form == 'closed') { return false; }
+        
+                // show the reply form:
                 $this->hotaru->displayTemplate('comment_form', 'comments', $this->hotaru, false);
             }
         }
@@ -467,11 +487,35 @@ class Comments extends pluginFunctions
     
     
     /**
+     * Show Enable comment form option in Post Edit
+     */
+    public function submit_edit_post_admin_fields()
+    {
+        $this->hotaru->comment->form = $this->hotaru->comment->formStatus('select'); // returns 'open' or 'closed'
+        if ($this->hotaru->comment->form == 'open') { $form_open = 'checked'; } else { $form_open = ''; }
+
+        echo "<tr><td colspan='3'>\n";
+        echo "<input id='enable_comments' name='enable_comments' type='checkbox' " . $form_open . "> " . $this->lang['submit_form_enable_comments']; 
+        echo "</tr>";
+    }
+    
+    
+    /**
      * Save post_subscribe to the database
      */
     public function submit_form_2_process_submission() 
     {
         if ($this->cage->post->keyExists('post_subscribe')) { $this->hotaru->post->subscribe = 1; } else { $this->hotaru->post->subscribe = 0; } 
+        
+        if ($this->cage->post->keyExists('edit_post'))
+        {
+            // enable/disable comment form for this post
+            if ($this->cage->post->keyExists('enable_comments')) { 
+                $this->hotaru->comment->formStatus('open');
+            } else {
+                $this->hotaru->comment->formStatus('closed');
+            }
+        }
     }
     
     
