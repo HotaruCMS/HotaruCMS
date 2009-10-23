@@ -510,6 +510,7 @@ class Comments extends pluginFunctions
                 $perms['can_edit_comments'] = 'yes';
                 $perms['can_set_comments_pending'] = 'yes';
                 $perms['can_delete_comments'] = 'yes';
+                break;
             case 'moderator':
                 $perms['can_comment'] = 'yes';
                 $perms['can_edit_comments'] = 'yes';
