@@ -37,8 +37,15 @@ class Comments extends pluginFunctions
      */
     public function upgrade_plugin()
     {
-        $sql = "ALTER TABLE " . DB_PREFIX . "comments ADD comment_status varchar(32)  NOT NULL DEFAULT 'approved' AFTER comment_date";
-        $this->db->query($this->db->prepare($sql));
+        if (!$this->db->column_exists('comments', 'comment_status')) {
+            // add new comment_status field
+            $sql = "ALTER TABLE " . DB_PREFIX . "comments ADD comment_status varchar(32)  NOT NULL DEFAULT 'approved' AFTER comment_date";
+            $this->db->query($this->db->prepare($sql));
+     
+            // make content field fulltext for better searching
+            $sql = "ALTER TABLE " . DB_PREFIX . "comments ADD FULLTEXT(comment_content)";
+            $this->db->query($this->db->prepare($sql));
+        }
     }
 
 
@@ -62,9 +69,12 @@ class Comments extends pluginFunctions
               `comment_content` text NOT NULL,
               `comment_votes` int(20) NOT NULL DEFAULT '0',
               `comment_subscribe` tinyint(1) NOT NULL DEFAULT '0',
-              `comment_updateby` int(20) NOT NULL DEFAULT 0
+              `comment_updateby` int(20) NOT NULL DEFAULT 0,
+              FULLTEXT (`comment_content`)
             ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Post Comments';";
             $this->db->query($sql); 
+        } else {
+            $this->upgrade_plugin();
         }
         
         // Create a new empty table called "commentvotes" if it doesn't already exist
@@ -199,7 +209,10 @@ class Comments extends pluginFunctions
                             // A user can unsubscribe by submitting an empty comment, so...
                             if($this->hotaru->comment->content != '') {
                                 $this->hotaru->comment->addComment();
-                                $this->hotaru->comment->emailCommentSubscribers($this->hotaru->comment->postId);
+                                // email comment subscribers if this comment has 'approved' status:
+                                if ($this->hotaru->comment->status == 'approved') {
+                                    $this->hotaru->comment->emailCommentSubscribers($this->hotaru->comment->postId);
+                                }
                             } else {
                                 //comment empty so just check subscribe box:
                                 $this->hotaru->comment->updateSubscribe($this->hotaru->comment->postId);
@@ -238,7 +251,9 @@ class Comments extends pluginFunctions
                         $this->hotaru->comment->setPendingCommentTree($cid);   // set all responses to 'pending', too.
                         
                         // redirect back to thread:
-                        header("Location: " . $this->hotaru->url(array('page'=>$this->hotaru->comment->postId)));    // Go to the post
+                        $this->hotaru->post = new Post($this->hotaru);
+                        $this->hotaru->post->readPost($this->hotaru->comment->postId);
+                        header("Location: " . $this->hotaru->url(array('page'=>$this->hotaru->post->id)));    // Go to the post
                         die();
                     }
                 }
@@ -251,12 +266,17 @@ class Comments extends pluginFunctions
                         $cid = $this->cage->get->testInt('cid'); // comment id
                         $comment = $this->hotaru->comment->getComment($cid);
                         $this->hotaru->comment->readComment($comment); // read comment
+                        
+                        $this->pluginHook('comments_delete_comment');
+                        
                         $this->hotaru->comment->deleteComment(); // delete this comment
     
                         $this->hotaru->comment->postId = $this->cage->get->testInt('pid');  // post id
-                        $this->hotaru->comment->deleteCommentTree($cid);   // set all responses to 'pending', too.
+                        $this->hotaru->comment->deleteCommentTree($cid);   // delete all rsponses, too.
                         
                         // redirect back to thread:
+                        $this->hotaru->post = new Post($this->hotaru);
+                        $this->hotaru->post->readPost($this->hotaru->comment->postId);
                         header("Location: " . $this->hotaru->url(array('page'=>$this->hotaru->comment->postId)));    // Go to the post
                         die();
                     }

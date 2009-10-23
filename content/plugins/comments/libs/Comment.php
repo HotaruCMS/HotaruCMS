@@ -187,8 +187,10 @@ class Comment
      */
     function addComment()
     {
-        if ($this->setPending == 'checked') { $status = 'pending'; } else { $status = $this->status; }
+        $this->plugins->pluginHook('comment_pre_add_comment');  // Akismet uses this to change the status
         
+        if ($this->setPending == 'checked') { $status = 'pending'; } else { $status = $this->status; } // forces all to 'pending' if setPending enabled
+                
         $sql = "INSERT INTO " . TABLE_COMMENTS . " SET comment_post_id = %d, comment_user_id = %d, comment_parent = %d, comment_date = CURRENT_TIMESTAMP, comment_status = %s, comment_content = %s, comment_subscribe = %d, comment_updateby = %d";
                 
         $this->db->query($this->db->prepare($sql, $this->postId, $this->author, $this->parent, $status, urlencode(trim(stripslashes($this->content))), $this->subscribe, $this->current_user->id));
@@ -198,7 +200,7 @@ class Comment
         $this->id = $last_insert_id;
         $this->vars['last_insert_id'] = $last_insert_id;    // make it available outside this class
         
-        $this->plugins->pluginHook('comment_add_comment');
+        $this->plugins->pluginHook('comment_post_add_comment');
         
         return true;
     }

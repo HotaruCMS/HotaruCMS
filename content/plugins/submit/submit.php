@@ -2,7 +2,7 @@
 /**
  * name: Submit
  * description: Submit and manage stories.
- * version: 0.9
+ * version: 1.0
  * folder: submit
  * class: Submit
  * hooks: hotaru_header, header_meta, header_include, header_include_raw, upgrade_plugin, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, userbase_default_permissions
@@ -235,6 +235,9 @@ class Submit extends PluginFunctions
                     $post_id = $this->cage->post->getInt('post_id');
                     $this->hotaru->post->readPost($post_id);
                     $this->hotaru->post->changeStatus('new');
+                    
+                    $this->pluginHook('submit_step_3_pre_trackback'); // Akismet uses this to change the status
+                    
                     $this->hotaru->post->sendTrackback();
                     if ($this->hotaru->post->useLatest) {
                         header("Location: " . $this->hotaru->url(array('page'=>'latest')));    // Go to the Latest page
