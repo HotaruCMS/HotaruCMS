@@ -47,6 +47,7 @@ $lang['comments_form_unsubscribe'] = "To unsubscribe, uncheck the box and submit
 $lang['comments_form_allowable_tags'] = "Allowed HTML tags:";
 $lang['comments_form_set_pending'] = "Put in moderation queue";
 $lang['comments_form_delete'] = "Delete this and responses";
+$lang['comments_form_moderation_on'] = "<b>Note</b>: <span style='color: red;'>All comments are moderated</span>.";
 
 /* Admin Settings */
 $lang['comments_admin_sidebar'] = "Comments";
