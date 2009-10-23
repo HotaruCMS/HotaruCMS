@@ -163,6 +163,7 @@ class Comments extends pluginFunctions
         $this->hotaru->comment->allowableTags = $comments_settings['comment_allowable_tags'];
         $this->hotaru->comment->levels = $comments_settings['comment_levels'];
         $this->hotaru->comment->setPending = $comments_settings['comment_set_pending'];
+        $this->hotaru->comment->allforms = $comments_settings['comment_all_forms'];
     }
     
     
@@ -174,9 +175,12 @@ class Comments extends pluginFunctions
     public function theme_index_replace()
     {
         // Is the comment form open on this thread? 
-        $this->hotaru->comment->form = $this->hotaru->comment->formStatus('select'); // returns 'open' or 'closed'
+        $this->hotaru->comment->thisform = $this->hotaru->comment->formStatus('select'); // returns 'open' or 'closed'
 
-        if (($this->hotaru->isPage('comments')) && ($this->hotaru->comment->form == 'open')) {
+        if (   ($this->hotaru->isPage('comments')) 
+            && ($this->hotaru->comment->thisform == 'open')
+            && ($this->hotaru->comment->allforms == 'checked')) {
+            
             if ($this->current_user->loggedIn) {
 
                 if (($this->cage->post->getAlpha('comment_process') == 'newcomment') || 
@@ -378,7 +382,8 @@ class Comments extends pluginFunctions
             return false;
         }
         
-        if ($this->hotaru->comment->form == 'closed') {
+        if (($this->hotaru->comment->thisform == 'closed') 
+            || ($this->hotaru->comment->allforms != 'checked')) {
             echo "<div class='comment_form_off'>" . $this->lang['comments_form_closed'] . "</div>";
             return false;
         }
@@ -436,7 +441,8 @@ class Comments extends pluginFunctions
                 // don't show the reply form in these cases:
                 if ($this->current_user->getPermission('can_comment') == 'no') { return false; }
                 if (!$this->current_user->loggedIn) { return false; }
-                if ($this->hotaru->comment->form == 'closed') { return false; }
+                if ($this->hotaru->comment->thisform == 'closed') { return false; }
+                if ($this->hotaru->comment->allforms != 'checked') { return false; }
         
                 // show the reply form:
                 $this->hotaru->displayTemplate('comment_form', 'comments', $this->hotaru, false);
@@ -491,8 +497,8 @@ class Comments extends pluginFunctions
      */
     public function submit_edit_post_admin_fields()
     {
-        $this->hotaru->comment->form = $this->hotaru->comment->formStatus('select'); // returns 'open' or 'closed'
-        if ($this->hotaru->comment->form == 'open') { $form_open = 'checked'; } else { $form_open = ''; }
+        $this->hotaru->comment->thisform = $this->hotaru->comment->formStatus('select'); // returns 'open' or 'closed'
+        if ($this->hotaru->comment->thisform == 'open') { $form_open = 'checked'; } else { $form_open = ''; }
 
         echo "<tr><td colspan='3'>\n";
         echo "<input id='enable_comments' name='enable_comments' type='checkbox' " . $form_open . "> " . $this->lang['submit_form_enable_comments']; 

@@ -41,7 +41,7 @@ class CommentsSettings extends Comments
         $comments_settings = $this->getSerializedSettings();
         
         // Assign settings to class member
-        $global_comment_form = $comments_settings['comment_form'];
+        $this->hotaru->comment->allforms = $comments_settings['comment_form'];
         $this->hotaru->comment->avatars = $comments_settings['comment_avatars'];
         $this->hotaru->comment->voting = $comments_settings['comment_voting'];
         $this->hotaru->comment->email = $comments_settings['comment_email'];
@@ -52,7 +52,7 @@ class CommentsSettings extends Comments
         echo "<h1>" . $this->lang["comments_settings_header"] . "</h1>\n";
           
         // Set defaults for empty values:
-        if (!$global_comment_form) { $global_comment_form = ''; }
+        if (!$this->hotaru->comment->allforms) { $this->hotaru->comment->allforms = ''; }
         if (!$this->hotaru->comment->avatars) { $this->hotaru->comment->avatars = ''; }
         if (!$this->hotaru->comment->voting) { $this->hotaru->comment->voting = ''; }
         if (!$this->hotaru->comment->levels) { $this->hotaru->comment->levels = 5; }
@@ -61,7 +61,7 @@ class CommentsSettings extends Comments
         if (!$this->hotaru->comment->setPending) { $this->hotaru->comment->setPending = ''; }
     
         // Determine if checkboxes are checked or not
-        if ($global_comment_form == 'checked') { $check_form = 'checked'; } else { $check_form = ''; }
+        if ($this->hotaru->comment->allforms == 'checked') { $check_form = 'checked'; } else { $check_form = ''; }
         if ($this->hotaru->comment->avatars == 'checked') { $check_avatars = 'checked'; } else { $check_avatars = ''; }
         if ($this->hotaru->comment->voting == 'checked') { $check_votes = 'checked'; } else { $check_votes = ''; }
         if ($this->hotaru->comment->setPending == 'checked') { $check_pending = 'checked'; } else { $check_pending = ''; }
@@ -102,13 +102,9 @@ class CommentsSettings extends Comments
     {
         // enable/disable comment form globally
         if ($this->cage->post->keyExists('comment_form')) { 
-            $global_comment_form = 'checked';
-            $sql = "UPDATE " . TABLE_POSTS . " SET post_comments = %s";
-            $this->db->query($this->db->prepare($sql, 'open'));
+            $this->hotaru->comment->allforms = 'checked';
         } else {
-            $global_comment_form = '';
-            $sql = "UPDATE " . TABLE_POSTS . " SET post_comments = %s";
-            $this->db->query($this->db->prepare($sql, 'closed'));
+            $this->hotaru->comment->allforms = '';
         }
         
         // enable avatars on comments
@@ -159,7 +155,7 @@ class CommentsSettings extends Comments
         
         $this->pluginHook('comments_save_settings');
         
-        $comments_settings['comment_form'] = $global_comment_form;
+        $comments_settings['comment_form'] = $this->hotaru->comment->allforms;
         $comments_settings['comment_avatars'] = $this->hotaru->comment->avatars;
         $comments_settings['comment_voting'] = $this->hotaru->comment->voting;
         $comments_settings['comment_set_pending'] = $this->hotaru->comment->setPending;
