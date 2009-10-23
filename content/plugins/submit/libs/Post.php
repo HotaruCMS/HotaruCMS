@@ -555,7 +555,7 @@ class Post
             $title = $this->lang["submit_form_not_found"];
         }
         
-        return sanitize($title, 1);
+        return sanitize(utf8_encode($title), 1);
     }
     
 
