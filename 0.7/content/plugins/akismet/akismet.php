@@ -78,7 +78,7 @@ class HotaruAkismet extends PluginFunctions
         $akismet->setCommentAuthor($username);
         $akismet->setCommentAuthorEmail($email);
         $akismet->setCommentAuthorURL($website);
-        $akismet->setCommentContent($comment);
+        $akismet->setCommentContent($this->db->escape($comment));
         $akismet->setPermalink($permalink);
         
         if ($type == 'ham')
@@ -152,7 +152,7 @@ class HotaruAkismet extends PluginFunctions
         $user = new UserBase($this->hotaru);
         $username = $user->getUserNameFromId($this->hotaru->post->author);
         $email = $user->getEmailFromId($this->hotaru->post->author);
-        $website = $this->hotaru->post->url;   // the url being submitted
+        $website = $this->hotaru->post->origUrl;   // the url being submitted
         $comment = $this->hotaru->post->content;
         $permalink = '';    // There is no permalink since this post hasn't been submitted yet.
         
