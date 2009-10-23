@@ -135,21 +135,25 @@ class UserManagerSettings extends UserManager
                     $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $this->db->get_results($this->db->prepare($sql, 'pending')); 
+                    break;
                 case 'undermod': 
                     $where_clause = " WHERE user_role = %s"; 
                     $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $this->db->get_results($this->db->prepare($sql, 'undermod')); 
+                    break;
                 case 'suspended': 
                     $where_clause = " WHERE user_role = %s"; 
                     $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $this->db->get_results($this->db->prepare($sql, 'suspended')); 
+                    break;
                 case 'banned': 
                     $where_clause = " WHERE user_role = %s"; 
                     $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $this->db->get_results($this->db->prepare($sql, 'banned')); 
+                    break;
                 case 'killspammed': 
                     $where_clause = " WHERE user_role = %s"; 
                     $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience

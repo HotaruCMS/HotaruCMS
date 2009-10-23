@@ -189,6 +189,10 @@ class Comment
     {
         $this->plugins->pluginHook('comment_pre_add_comment');  // Akismet uses this to change the status
         
+        $can_comment = $this->hotaru->current_user->getPermission('can_comment'); // This was already check, but Akismet undoes it! So we do it again.
+
+        if ($can_comment == 'mod') { $this->status = 'pending'; } // forces all to 'pending' if user's comments are moderated
+        
         if ($this->setPending == 'checked') { $status = 'pending'; } else { $status = $this->status; } // forces all to 'pending' if setPending enabled
                 
         $sql = "INSERT INTO " . TABLE_COMMENTS . " SET comment_post_id = %d, comment_user_id = %d, comment_parent = %d, comment_date = CURRENT_TIMESTAMP, comment_status = %s, comment_content = %s, comment_subscribe = %d, comment_updateby = %d";

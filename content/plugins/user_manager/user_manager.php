@@ -2,7 +2,7 @@
 /**
  * name: User Manager
  * description: Manage users.
- * version: 0.1
+ * version: 0.2
  * folder: user_manager
  * class: UserManager
  * requires: users 0.5
