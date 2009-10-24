@@ -45,7 +45,7 @@ class Categories extends PluginFunctions
     public function install_plugin()
     {
         // Default settings (Note: we can't use $this->hotaru->post->vars because it hasn't been filled yet.)
-        $this->updateSetting('submit_categories', 'checked', 'submit');
+        $this->updateSetting('submit_categories', 'checked');
         $this->updateSetting('categories_bar', 'menu');
         
         if ($this->isActive('sidebar_widgets')) {
@@ -156,7 +156,7 @@ class Categories extends PluginFunctions
     public function post_read_post_1()
     {
         //categories
-        if (($this->getSetting('submit_categories', 'submit') == 'checked') 
+        if (($this->getSetting('submit_categories') == 'checked') 
             && ($this->isActive())) { 
             $this->hotaru->post->vars['useCategories'] = true; 
         } else { 
@@ -451,7 +451,7 @@ class Categories extends PluginFunctions
     public function submit_settings_get_values()
     {
         // Get settings from database if they exist... should return 'checked'
-        $this->hotaru->vars['categories'] = $this->getSetting('submit_categories', 'submit');
+        $this->hotaru->vars['categories'] = $this->getSetting('submit_categories');
         
         // doesn't exist - use default:
         if (!isset($this->hotaru->vars['categories'])) {
@@ -484,7 +484,7 @@ class Categories extends PluginFunctions
             $this->hotaru->post->vars['useCategories'] = false;
         }
             
-        $this->updateSetting('submit_categories', $this->hotaru->vars['categories'], 'submit');
+        $this->updateSetting('submit_categories', $this->hotaru->vars['categories']);
     
     }
     
