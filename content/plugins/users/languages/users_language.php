@@ -34,6 +34,10 @@ $lang["users_settings_recaptcha_public_key"] = "Public Key";
 $lang["users_settings_recaptcha_private_key"] = "Private Key";
 $lang["users_settings_email_conf"] = "Send new users an email with a link to confirm their registration";
 $lang["users_settings_reg_pending"] = "Automatically put all new users into moderation";
+$lang["users_settings_email_notify"] = "Email admin/supermods when a new user registers";
+$lang["users_settings_email_notify_all"] = "All new users";
+$lang["users_settings_email_notify_pending"] = "Pending users only";
+$lang["users_settings_email_notify_none"] = "None";
 $lang["users_settings_no_keys"] = "Settings saved, but reCaptcha won't work without both keys!";
 $lang["users_settings_saved"] = "Settings Saved";
 
@@ -120,5 +124,16 @@ $lang["users_account_deleted"] = "User Deleted";
 $lang["users_account_admin_admin"] = "Sorry, only admins can access admin accounts.";
 // Other language is used in content/language_packs/language_default/admin_language
 
+/* UserFunctions class */
+$lang['userfunctions_notifymods_subject_user'] = "New user registered at " . SITE_NAME;
+$lang['userfunctions_notifymods_subject_post'] = "New post submitted at " . SITE_NAME;
+$lang['userfunctions_notifymods_subject_comment'] = "New comment posted at " . SITE_NAME;
+$lang['userfunctions_notifymods_hello'] = "Hi ";
+$lang['userfunctions_notifymods_body_about_user'] = "A new user has registered at " . SITE_NAME; 
+$lang['userfunctions_notifymods_body_about_post'] = "A new post has been submitted at " . SITE_NAME; 
+$lang['userfunctions_notifymods_body_about_comment'] = "A new comment has been posted at " . SITE_NAME; 
+$lang['userfunctions_notifymods_body_click'] = "More details can be found here: ";
+$lang['userfunctions_notifymods_body_regards'] = "Thank you,";
+$lang['userfunctions_notifymods_body_sign'] = SITE_NAME . " Admin";
 
 ?>

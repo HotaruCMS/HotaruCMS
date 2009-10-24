@@ -31,6 +31,9 @@ class UsersSettings extends Users
      */
     public function settings()
     {
+        require_once(PLUGINS . 'users/libs/UserFunctions.php');
+        $uf = new UserFunctions($this->hotaru);
+        
         // If the form has been submitted, go and save the data...
         if ($this->cage->post->getAlpha('submitted') == 'true') { 
             $this->saveSettings(); 
@@ -46,6 +49,8 @@ class UsersSettings extends Users
         $recaptcha_privkey = $users_settings['users_recaptcha_privkey'];
         $emailconf_enabled = $users_settings['users_emailconf_enabled'];
         $reg_pending = $users_settings['users_registration_pending'];
+        $email_notify = $users_settings['users_email_notify'];
+        $email_mods = $users_settings['users_email_notify_mods'];
     
         $this->pluginHook('users_settings_get_values');
         
@@ -55,6 +60,8 @@ class UsersSettings extends Users
         if (!$recaptcha_privkey) { $recaptcha_privkey = ''; }
         if (!$emailconf_enabled) { $emailconf_enabled = ''; }
         if (!$reg_pending) { $reg_pending = ''; }
+        if (!$email_notify) { $email_notify = ''; }
+        if (!$email_mods) { $email_mods = array(); }
         
         echo "<form name='users_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=users' method='post'>\n";
         
@@ -67,8 +74,50 @@ class UsersSettings extends Users
         echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $this->lang["users_settings_recaptcha_public_key"] . ": <input type='text' name='rc_pubkey' size=50 value='" . $recaptcha_pubkey . "'><br /><br />\n";
         echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $this->lang["users_settings_recaptcha_private_key"] . ": <input type='text' name='rc_privkey' size=50 value='" . $recaptcha_privkey . "'><br /><br />\n";
         echo "<input type='checkbox' name='emailconf' value='emailconf' " . $emailconf_enabled . ">&nbsp;&nbsp;" . $this->lang["users_settings_email_conf"] . "<br /><br />\n";
-        echo "<input type='checkbox' name='reg_pending' value='reg_pending' " . $reg_pending . ">&nbsp;&nbsp;" . $this->lang["users_settings_reg_pending"] . "<br />\n";
+        echo "<input type='checkbox' name='reg_pending' value='reg_pending' " . $reg_pending . ">&nbsp;&nbsp;" . $this->lang["users_settings_reg_pending"] . "<br /><br />\n";
+        echo "<input type='checkbox' name='email_notify' value='email_notify' id='email_notify' " . $email_notify . ">&nbsp;&nbsp;" . $this->lang["users_settings_email_notify"] . "<br /><br />\n";
     
+        $admins = $uf->getAdminAccessUsers();
+        if (!$email_notify) { $show_admins = 'display: none;'; }
+        echo "<div id='email_notify_options' style='margin-left: 2.0em; " . $show_admins . "'>"; 
+        
+        if ($admins) {
+            echo "<table>\n";
+            foreach ($admins as $ad) {
+                if (array_key_exists($ad['id'], $email_mods)) { 
+                    switch ($email_mods[$ad['id']]['type']) {
+                        case 'all':
+                            $checked_all = 'checked'; $checked_pend = ''; $checked_none = '';
+                            break;
+                        case 'pending':
+                            $checked_all = ''; $checked_pend = 'checked'; $checked_none = '';
+                            break;
+                        default:
+                            $checked_all = ''; $checked_pend = ''; $checked_none = 'checked';
+                    }
+                }
+                else
+                {
+                    $checked_all = ''; $checked_pend = ''; $checked_none = 'checked';
+                }
+                
+                echo "<tr>\n";
+                echo "<td><b>" . ucfirst($ad['name']) . "</b></td>\n";
+                
+                echo "<td><input type='radio' name='emailmod[" . $ad['id'] . "][" . $ad['email'] . "]' value='all' " . $checked_all . ">";
+                echo " " . $this->lang["users_settings_email_notify_all"] . "</td>\n";
+                
+                echo "<td><input type='radio' name='emailmod[" . $ad['id'] . "][" . $ad['email'] . "]' value='pending' " . $checked_pend . ">";
+                echo " " . $this->lang["users_settings_email_notify_pending"] . "</td>\n";
+                
+                echo "<td><input type='radio' name='emailmod[" . $ad['id'] . "][" . $ad['email'] . "]' value='none' " . $checked_none . ">";
+                echo " " . $this->lang["users_settings_email_notify_none"] . "</td>\n";
+                echo "</tr>\n";
+            }
+            echo "</table>\n";
+        }
+        echo "</div>";
+                
         $this->pluginHook('users_settings_form');
                 
         echo "<br /><br />\n";    
@@ -86,19 +135,15 @@ class UsersSettings extends Users
         // Recaptcha Enabled
         if ($this->cage->post->keyExists('rc_enabled')) { 
             $recaptcha_enabled = 'checked'; 
-            $this->current_user->vars['useRecaptcha'] = true;
         } else { 
             $recaptcha_enabled = ''; 
-            $this->current_user->vars['useRecaptcha'] = false;
         }
         
         // Email Confirmation Enabled
         if ($this->cage->post->keyExists('emailconf')) { 
             $emailconf_enabled = 'checked'; 
-            $this->current_user->vars['useEmailConf'] = true;
         } else { 
             $emailconf_enabled = ''; 
-            $this->current_user->vars['useEmailConf'] = false;
         }
         
         // ReCaptcha Public Key
@@ -118,12 +163,31 @@ class UsersSettings extends Users
         // Registration auto-pending
         if ($this->cage->post->keyExists('reg_pending')) { 
             $reg_pending = 'checked'; 
-            $this->current_user->vars['useRegPending'] = true;
         } else { 
             $reg_pending = ''; 
-            $this->current_user->vars['useRegPending'] = false;
         }
         
+        
+        // Send email notification about newly registered users
+        if ($this->cage->post->keyExists('email_notify')) { 
+            $email_notify = 'checked'; 
+        } else { 
+            $email_notify = ''; 
+        }
+        
+        
+        // admins to receive above email notification
+        if ($this->cage->post->keyExists('emailmod')) 
+        {
+            $email_mods = array();
+            foreach ($this->cage->post->keyExists('emailmod') as $id => $array) {
+                $email_mods[$id]['id'] = $id;
+                $email_mods[$id]['email'] = key($array);
+                $email_mods[$id]['type'] = $array[$email_mods[$id]['email']];
+            }
+        }
+                
+                
         $this->pluginHook('users_save_settings');
         
         $users_settings['users_recaptcha_enabled'] = $recaptcha_enabled;
@@ -131,6 +195,8 @@ class UsersSettings extends Users
         $users_settings['users_recaptcha_privkey'] = $recaptcha_privkey;
         $users_settings['users_emailconf_enabled'] = $emailconf_enabled;
         $users_settings['users_registration_pending'] = $reg_pending;
+        $users_settings['users_email_notify'] = $email_notify;
+        $users_settings['users_email_notify_mods'] = $email_mods; //array
         
         $this->updateSetting('users_settings', serialize($users_settings));
         

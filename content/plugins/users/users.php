@@ -2,10 +2,10 @@
 /**
  * name: Users
  * description: Manages users within Hotaru.
- * version: 0.6
+ * version: 0.7
  * folder: users
  * class: Users
- * hooks: hotaru_header, header_include, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, userbase_default_permissions
+ * hooks: hotaru_header, header_include, admin_header_include_raw, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, userbase_default_permissions
  *
  * PHP version 5
  *
@@ -59,6 +59,8 @@ class Users extends PluginFunctions
         $users_settings['users_recaptcha_privkey'] = "";
         $users_settings['users_emailconf_enabled'] = "";
         $users_settings['users_registration_pending'] = "";
+        $users_settings['users_email_notify'] = "";
+        $users_settings['users_email_notify_mods'] = array();
         
         $this->updateSetting('users_settings', serialize($users_settings));
         
@@ -149,6 +151,7 @@ class Users extends PluginFunctions
                 $this->current_user->vars['useRecaptcha'] = $users_settings['users_recaptcha_enabled'];
                 $this->current_user->vars['useEmailConf'] = $users_settings['users_emailconf_enabled'];
                 $this->current_user->vars['useRegPending'] = $users_settings['users_registration_pending'];
+                $this->current_user->vars['useEmailNotify'] = $users_settings['users_email_notify'];
 
                 $userid = $this->register();
                 if ($userid) { 
@@ -307,6 +310,8 @@ class Users extends PluginFunctions
                     $this->current_user->setCookie($remember);
                     $this->current_user->loggedIn = true;
                     $this->current_user->updateUserLastLogin();
+                    
+              
                     return true;
             } else {
                     // login failed
@@ -455,10 +460,19 @@ class Users extends PluginFunctions
             $blocked = $this->checkBlocked($username_check, $email_check); // true if blocked, false if safe
             $result = $this->current_user->userExists(0, $username_check, $email_check);
             if (!$blocked && $result == 4) {
-                //success
-                if ($this->current_user->vars['useRegPending'] = "checked") { $this->current_user->role = 'pending'; }
+                
+                // SUCCESS!!!
+                if ($this->current_user->vars['useRegPending'] == "checked") { $this->current_user->role = 'pending'; }
                 $this->current_user->addUserBasic();
                 $last_insert_id = $this->db->get_var($this->db->prepare("SELECT LAST_INSERT_ID()"));
+                
+                // notify chosen mods of new user by email:
+                if ($this->current_user->vars['useEmailNotify'] == 'checked') {
+                    require_once(PLUGINS . 'users/libs/UserFunctions.php');
+                    $uf = new UserFunctions($this->hotaru);
+                    $uf->notifyMods('user', $this->current_user->role);
+                }
+        
                 return $last_insert_id; // so we can retrieve this user's details for the email confirmation step;
             } elseif ($result == 0) {
                 $this->hotaru->messages[$this->lang['users_register_id_exists']] = 'red';
@@ -679,6 +693,25 @@ class Users extends PluginFunctions
         echo "<input type='hidden' name='userid' value='" . $user->id . "' />\n";
         echo "<div style='text-align: right'><input class='submit' type='submit' value='" . $this->lang['users_account_form_submit'] . "' /></div>\n";
         echo "</form>\n";
+    }
+    
+    
+    /**
+     * Include jQuery for hiding and showing email options in plugin settings
+     */
+    public function admin_header_include_raw()
+    {
+        $admin = new Admin();
+        
+        if ($admin->isSettingsPage('users')) {
+            echo "<script type='text/javascript'>\n";
+            echo "$(document).ready(function(){\n";
+                echo "$('#email_notify').click(function () {\n";
+                echo "$('#email_notify_options').slideToggle();\n";
+                echo "});\n";
+            echo "});\n";
+            echo "</script>\n";
+        }
     }
     
     
