@@ -30,6 +30,7 @@ $lang["user_man_user"] = "User";
 $lang["user_man_user_submissions_1"] = "You can see all";
 $lang["user_man_user_submissions_2"] = "'s submissions";
 $lang["user_man_user_last_logged_in"] = "last logged in at";
+$lang["user_man_user_registered_on"] = "registered at";
 $lang['user_man_here'] = "here";
 $lang['user_man_email'] = "Email:";
 $lang["user_man_desc"] = "The User Manager enables you to quickly find and edit users, ordered by last login.";
@@ -73,6 +74,7 @@ $lang["user_man_set_banned"] = "Set role to 'banned'";
 $lang["user_man_set_killspammed"] = "Killspam selected";
 $lang["user_man_set_delete"] = "Physically Delete";
 $lang['user_man_link'] = "User Manager";
+$lang['user_man_no_pending_users'] = "There are no users pending approval";
 
 /* Sidebar */
 $lang["user_man_admin_sidebar"] = "User Manager";

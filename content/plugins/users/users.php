@@ -5,7 +5,7 @@
  * version: 0.6
  * folder: users
  * class: Users
- * hooks: hotaru_header, header_include, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs
+ * hooks: hotaru_header, header_include, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, userbase_default_permissions
  *
  * PHP version 5
  *
@@ -54,10 +54,13 @@ class Users extends PluginFunctions
             $this->db->query($sql); 
         }
         
-        $this->updateSetting('users_recaptcha_enabled', '');    
-        $this->updateSetting('users_recaptcha_pubkey', '');    
-        $this->updateSetting('users_recaptcha_privkey', '');
-        $this->updateSetting('users_emailconf_enabled', '');
+        $users_settings['users_recaptcha_enabled'] = "";
+        $users_settings['users_recaptcha_pubkey'] = "";
+        $users_settings['users_recaptcha_privkey'] = "";
+        $users_settings['users_emailconf_enabled'] = "";
+        $users_settings['users_registration_pending'] = "";
+        
+        $this->updateSetting('users_settings', serialize($users_settings));
         
         // Include language file. Also included in hotaru_header, but needed here  
         // to prevent errors immediately after installation.
@@ -141,8 +144,12 @@ class Users extends PluginFunctions
         // Pages you have to be logged out for...
         } else {
             if ($this->hotaru->isPage('register')) {
-                $this->current_user->vars['useRecaptcha'] = $this->getSetting('users_recaptcha_enabled');
-                $this->current_user->vars['useEmailConf'] = $this->getSetting('users_emailconf_enabled');
+            
+                $users_settings = $this->getSerializedSettings();
+                $this->current_user->vars['useRecaptcha'] = $users_settings['users_recaptcha_enabled'];
+                $this->current_user->vars['useEmailConf'] = $users_settings['users_emailconf_enabled'];
+                $this->current_user->vars['useRegPending'] = $users_settings['users_registration_pending'];
+
                 $userid = $this->register();
                 if ($userid) { 
                     // success!
@@ -276,7 +283,8 @@ class Users extends PluginFunctions
                     $this->current_user->name = $username_check;
                     $this->current_user->getUserBasic(0, $this->current_user->userName);
                     
-                    $this->current_user->vars['useEmailConf'] = $this->getSetting('users_emailconf_enabled');
+                    $users_settings = $this->getSerializedSettings();
+                    $this->current_user->vars['useEmailConf'] = $users_settings['users_emailconf_enabled'];
                     
                     if ($this->current_user->vars['useEmailConf'] && ($this->current_user->emailValid == 0)) {
                         $this->sendConfirmationEmail($this->current_user->id);
@@ -284,6 +292,17 @@ class Users extends PluginFunctions
                         $this->hotaru->messages[$this->lang["users_login_failed_email_request_sent"]] = 'green';
                         return false;
                     }
+                    
+                    
+                    if ($this->current_user->getPermission('can_login') == 'no') {
+                        if ($this->current_user->role == 'pending') {
+                            $this->hotaru->messages[$this->lang["users_login_failed_not_approved"]] = 'red';
+                        } else {
+                            $this->hotaru->messages[$this->lang["users_login_failed_no_permission"]] = 'red';
+                        }
+                        return false;
+                    }
+                    
                     
                     $this->current_user->setCookie($remember);
                     $this->current_user->loggedIn = true;
@@ -397,8 +416,9 @@ class Users extends PluginFunctions
         
             if ($this->current_user->vars['useRecaptcha']) {
                                         
-                $recaptcha_pubkey = $this->getSetting('users_recaptcha_pubkey');
-                $recaptcha_privkey = $this->getSetting('users_recaptcha_privkey');
+                $users_settings = $this->getSerializedSettings();
+                $recaptcha_pubkey = $users_settings['users_recaptcha_pubkey'];
+                $recaptcha_privkey = $users_settings['users_recaptcha_privkey'];
                 
                 $rc_resp = null;
                 $rc_error = null;
@@ -436,6 +456,7 @@ class Users extends PluginFunctions
             $result = $this->current_user->userExists(0, $username_check, $email_check);
             if (!$blocked && $result == 4) {
                 //success
+                if ($this->current_user->vars['useRegPending'] = "checked") { $this->current_user->role = 'pending'; }
                 $this->current_user->addUserBasic();
                 $last_insert_id = $this->db->get_var($this->db->prepare("SELECT LAST_INSERT_ID()"));
                 return $last_insert_id; // so we can retrieve this user's details for the email confirmation step;
@@ -658,6 +679,37 @@ class Users extends PluginFunctions
         echo "<input type='hidden' name='userid' value='" . $user->id . "' />\n";
         echo "<div style='text-align: right'><input class='submit' type='submit' value='" . $this->lang['users_account_form_submit'] . "' /></div>\n";
         echo "</form>\n";
+    }
+    
+    
+    /**
+     * Default permissions 
+     *
+     * @param array $params - conatins "role"
+     */
+    public function userbase_default_permissions($params)
+    {
+        $perms = $this->hotaru->vars['perms'];
+
+        $role = $params['role'];
+        
+        // Permission Options
+        $perms['options']['can_login'] = array('yes', 'no');
+
+        // Permissions for $role
+        switch ($role) {
+            case 'admin':
+            case 'supermod':
+            case 'moderator':
+            case 'member':
+            case 'undermod':
+                $perms['can_login'] = 'yes';
+                break;
+            default:
+                $perms['can_login'] = 'no';
+        }
+        
+        $this->hotaru->vars['perms'] = $perms;
     }
 }
 
