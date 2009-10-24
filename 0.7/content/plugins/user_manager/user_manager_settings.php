@@ -34,9 +34,17 @@ class UserManagerSettings extends UserManager
      */
     public function settings()
     {    
+        // check if all new users are automatically set to pending or not
+        $users_settings = $this->getSerializedSettings('users');
+        $this->current_user->vars['useRegPending'] = $users_settings['users_registration_pending'];
+            
         // clear variables:
         $this->hotaru->vars['search_term'] = '';
-        $this->hotaru->vars['user_filter'] = 'all';
+        if ($this->current_user->vars['useRegPending'] == 'checked') { 
+            $this->hotaru->vars['user_filter'] = 'pending';
+        } else {
+            $this->hotaru->vars['user_filter'] = 'all';
+        }
         
         // Get unique statuses for Filter form:
         $this->hotaru->vars['roles'] = $this->current_user->getUniqueRoles(); 
@@ -182,13 +190,28 @@ class UserManagerSettings extends UserManager
 
         if(!isset($users)) {
             // default list
-            $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered by lastlogin for convenience
-            $sql = "SELECT * FROM " . TABLE_USERS . $sort_clause;
-            $users = $this->db->get_results($this->db->prepare($sql)); 
+            
+            // if all new users are set to 'pending' show pending list as default...
+            if ($this->current_user->vars['useRegPending'] == 'checked') {
+                $where_clause = " WHERE user_role = %s"; 
+                $sort_clause = ' ORDER BY user_lastlogin DESC';
+                $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
+                $users = $this->db->get_results($this->db->prepare($sql, 'pending')); 
+            }
+            // else show all users by last login...
+            else
+            {
+                $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered by lastlogin for convenience
+                $sql = "SELECT * FROM " . TABLE_USERS . $sort_clause;
+                $users = $this->db->get_results($this->db->prepare($sql)); 
+            }
         }
         
         if ($users) { 
             $this->hotaru->vars['user_man_rows'] = $this->drawRows($p, $users, $filter, $search_term);
+        } else {
+            $this->hotaru->message = $this->lang['user_man_no_pending_users'];
+            $this->hotaru->messageType = 'green';
         }
         
         // Show template:
@@ -229,8 +252,16 @@ class UserManagerSettings extends UserManager
             $output .= "<tr class='table_tr_details' style='display:none;'>\n";
             $output .= "<td colspan=7 class='table_description um_description'>\n";
             $output .= "<a class='table_hide_details' style='float: right;' href='#'>[" . $this->lang["admin_theme_plugins_close"] . "]</a>";
-            $output .= $user->user_username . " " . $this->lang["user_man_user_last_logged_in"] ." " . date('H:i:s \o\n l, F jS Y', strtotime($user->user_lastlogin)) . ".<br />\n";
+            
+            if ($user->user_role == 'pending') { 
+                // show register date info:
+                $output .= $user->user_username . " " . $this->lang["user_man_user_registered_on"] ." " . date('H:i:s \o\n l, F jS Y', strtotime($user->user_date)) . ".<br />\n";
+            } else {
+                // show last login amd submissions info:
+                $output .= $user->user_username . " " . $this->lang["user_man_user_last_logged_in"] ." " . date('H:i:s \o\n l, F jS Y', strtotime($user->user_lastlogin)) . ".<br />\n";
             $output .= $this->lang["user_man_user_submissions_1"] . " " . $user->user_username . $this->lang["user_man_user_submissions_2"] . " <a href='" . $this->hotaru->url(array('user'=>$user->user_username)) . "'>" . $this->lang['user_man_here'] . ".</a><br />\n";
+            }
+    
             $output .= "<i>" . $this->lang['user_man_email'] . "</i> <a href='mailto:" . $user->user_email . "'>$user->user_email</a>";
             $output .= "</td></tr>";
         }

@@ -39,11 +39,13 @@ class UsersSettings extends Users
         echo "<h1>" . $this->lang["users_settings_header"] . "</h1>\n";
         
         // Get settings from database if they exist...
-        $recaptcha_enabled = $this->getSetting('users_recaptcha_enabled');
-        $recaptcha_pubkey = $this->getSetting('users_recaptcha_pubkey');
-        $recaptcha_privkey = $this->getSetting('users_recaptcha_privkey');
-        $emailconf_enabled = $this->getSetting('users_emailconf_enabled');
-    
+        $users_settings = $this->getSerializedSettings();
+        
+        $recaptcha_enabled = $users_settings['users_recaptcha_enabled'];
+        $recaptcha_pubkey = $users_settings['users_recaptcha_pubkey'];
+        $recaptcha_privkey = $users_settings['users_recaptcha_privkey'];
+        $emailconf_enabled = $users_settings['users_emailconf_enabled'];
+        $reg_pending = $users_settings['users_registration_pending'];
     
         $this->pluginHook('users_settings_get_values');
         
@@ -52,6 +54,7 @@ class UsersSettings extends Users
         if (!$recaptcha_pubkey) { $recaptcha_pubkey = ''; }
         if (!$recaptcha_privkey) { $recaptcha_privkey = ''; }
         if (!$emailconf_enabled) { $emailconf_enabled = ''; }
+        if (!$reg_pending) { $reg_pending = ''; }
         
         echo "<form name='users_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=users' method='post'>\n";
         
@@ -63,7 +66,8 @@ class UsersSettings extends Users
         echo "<input type='checkbox' name='rc_enabled' value='enabled' " . $recaptcha_enabled . " >&nbsp;&nbsp;" . $this->lang["users_settings_recaptcha_enable"] . " <a href='http://recaptcha.net/api/getkey?domain=" . $thisdomain . "&app=HotaruCMS'>reCAPTCHA.net</a><br /><br />\n";    
         echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $this->lang["users_settings_recaptcha_public_key"] . ": <input type='text' name='rc_pubkey' size=50 value='" . $recaptcha_pubkey . "'><br /><br />\n";
         echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $this->lang["users_settings_recaptcha_private_key"] . ": <input type='text' name='rc_privkey' size=50 value='" . $recaptcha_privkey . "'><br /><br />\n";
-        echo "<input type='checkbox' name='emailconf' value='emailconf' " . $emailconf_enabled . ">&nbsp;&nbsp;" . $this->lang["users_settings_email_conf"] . "<br />\n";
+        echo "<input type='checkbox' name='emailconf' value='emailconf' " . $emailconf_enabled . ">&nbsp;&nbsp;" . $this->lang["users_settings_email_conf"] . "<br /><br />\n";
+        echo "<input type='checkbox' name='reg_pending' value='reg_pending' " . $reg_pending . ">&nbsp;&nbsp;" . $this->lang["users_settings_reg_pending"] . "<br />\n";
     
         $this->pluginHook('users_settings_form');
                 
@@ -79,24 +83,22 @@ class UsersSettings extends Users
      */
     public function saveSettings()
     {
-        global $userbase;
-    
         // Recaptcha Enabled
         if ($this->cage->post->keyExists('rc_enabled')) { 
             $recaptcha_enabled = 'checked'; 
-            $userbase->vars['useRecaptcha'] = true;
+            $this->current_user->vars['useRecaptcha'] = true;
         } else { 
             $recaptcha_enabled = ''; 
-            $userbase->vars['useRecaptcha'] = false;
+            $this->current_user->vars['useRecaptcha'] = false;
         }
         
         // Email Confirmation Enabled
         if ($this->cage->post->keyExists('emailconf')) { 
             $emailconf_enabled = 'checked'; 
-            $userbase->vars['useEmailConf'] = true;
+            $this->current_user->vars['useEmailConf'] = true;
         } else { 
             $emailconf_enabled = ''; 
-            $userbase->vars['useEmailConf'] = false;
+            $this->current_user->vars['useEmailConf'] = false;
         }
         
         // ReCaptcha Public Key
@@ -113,13 +115,24 @@ class UsersSettings extends Users
             $recaptcha_privkey = ""; 
         }
         
+        // Registration auto-pending
+        if ($this->cage->post->keyExists('reg_pending')) { 
+            $reg_pending = 'checked'; 
+            $this->current_user->vars['useRegPending'] = true;
+        } else { 
+            $reg_pending = ''; 
+            $this->current_user->vars['useRegPending'] = false;
+        }
         
         $this->pluginHook('users_save_settings');
         
-        $this->updateSetting('users_recaptcha_enabled', $recaptcha_enabled);    
-        $this->updateSetting('users_recaptcha_pubkey', $recaptcha_pubkey);    
-        $this->updateSetting('users_recaptcha_privkey', $recaptcha_privkey);
-        $this->updateSetting('users_emailconf_enabled', $emailconf_enabled);        
+        $users_settings['users_recaptcha_enabled'] = $recaptcha_enabled;
+        $users_settings['users_recaptcha_pubkey'] = $recaptcha_pubkey;
+        $users_settings['users_recaptcha_privkey'] = $recaptcha_privkey;
+        $users_settings['users_emailconf_enabled'] = $emailconf_enabled;
+        $users_settings['users_registration_pending'] = $reg_pending;
+        
+        $this->updateSetting('users_settings', serialize($users_settings));
         
         if (($recaptcha_enabled == 'checked') && ($recaptcha_pubkey == "" || $recaptcha_privkey == "")) {
             $this->hotaru->message = $this->lang["users_settings_no_keys"];
