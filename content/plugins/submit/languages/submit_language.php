@@ -94,6 +94,7 @@ $lang["submit_settings_posts_per_page"] = "posts per page <small>(default: 10)</
 $lang["submit_settings_allowable_tags"] = "Allowed HTML tags in post description:";
 $lang["submit_settings_allowable_tags_example"] = "<small>(E.g. &lt;b&gt;&lt;u&gt;&lt;i&gt;&lt;blockquote&gt;)</small>";
 $lang["submit_settings_saved"] = "Settings Saved.";
+$lang["submit_settings_setpending"] = "Put all new posts in moderation, awaiting approval";
 
 /* Submit Show Post */
 $lang["submit_page_title_main"] = "top";

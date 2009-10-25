@@ -99,6 +99,7 @@ class Submit extends PluginFunctions
         $submit_settings['post_summary_length'] = 200;
         $submit_settings['post_posts_per_page'] = 10;
         $submit_settings['post_allowable_tags'] = "<b><i><u><a><blockquote><strike>";
+        $submit_settings['post_set_pending'] = ""; // sets all new posts to pending 
         
         $this->updateSetting('submit_settings', serialize($submit_settings));
         
@@ -238,7 +239,13 @@ class Submit extends PluginFunctions
                     
                     $this->pluginHook('submit_step_3_pre_trackback'); // Akismet uses this to change the status
                     
-                    if ($this->current_user->getPermission('can_submit') == 'mod') {
+                    $submit_settings = $this->getSerializedSettings();
+                            
+                    // Set to pending is the user's permissions for "can_submit" are "mod" OR
+                    // if "Put all new posts in moderation" has been checked in Admin->Submit
+                    if (($this->current_user->getPermission('can_submit') == 'mod')
+                        || ($submit_settings['post_set_pending']))
+                    {
                     // Submitted posts given 'pending' for this user
                         $this->hotaru->post->changeStatus('pending');
                         $this->hotaru->messages[$this->lang['submit_form_moderation']] = 'green';
