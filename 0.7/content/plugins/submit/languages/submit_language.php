@@ -98,6 +98,10 @@ $lang["submit_settings_auto_approve"] = "Automatically approve all posts";
 $lang["submit_settings_some_pending_1"] = "Put first";
 $lang["submit_settings_some_pending_2"] = " posts in the moderation queue";
 $lang["submit_settings_all_pending"] = "Put all new posts in the moderation queue";
+$lang["submit_settings_email_notify"] = "When a new post is submitted, email admins, supermods and moderators with \"edit posts\" permissions:";
+$lang["submit_settings_email_notify_all"] = "All new posts";
+$lang["submit_settings_email_notify_pending"] = "Pending posts only";
+$lang["submit_settings_email_notify_none"] = "None";
 
 /* Submit Show Post */
 $lang["submit_page_title_main"] = "top";

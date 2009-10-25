@@ -29,7 +29,7 @@ class UserFunctions extends UserBase
     /**
      * Get all users with permission to access admin
      */
-    public function getAdminAccessUsers()
+    public function getMods($permission = 'can_access_admin', $value = 'yes')
     {
         $sql = "SELECT * FROM " . TABLE_USERS . " WHERE (user_role = %s) || (user_role = %s) || (user_role = %s)";
         $users = $this->db->get_results($this->db->prepare($sql, 'admin', 'supermod', 'moderator'));
@@ -38,7 +38,7 @@ class UserFunctions extends UserBase
         
         foreach ($users as $user) {
             $this->getUserBasic($user->user_id);
-            if ($this->getPermission('can_access_admin') == 'yes') {
+            if ($this->getPermission($permission) == $value) {
                 $admins[$this->id]['id'] = $this->id;
                 $admins[$this->id]['role'] = $this->role;
                 $admins[$this->id]['name'] = $this->name;
@@ -55,7 +55,7 @@ class UserFunctions extends UserBase
      * @param string $type - notification type, e.g. 'post', 'user', 'comment'
      * @param string $status - role or status new user, post or comment
      */
-    public function notifyMods($type, $status)
+    public function notifyMods($type, $status, $id = 0)
     {
         $line_break = "\r\n\r\n";
         $next_line = "\r\n";
@@ -71,10 +71,10 @@ class UserFunctions extends UserBase
                 break;
             case 'post':
                 $submit_settings = $this->plugins->getSerializedSettings('submit');
-                $email_mods = $users_settings['submit_email_notify_mods'];
+                $email_mods = $submit_settings['post_email_notify_mods'];
                 $subject = $this->lang['userfunctions_notifymods_subject_post'];
                 $about = $this->lang['userfunctions_notifymods_body_about_post'];
-                $url = BASEURL . "admin_index.php?post_status_filter=pending&plugin=post_manager&page=plugin_settings&type=filter";
+                $url = BASEURL . "index.php?page=edit_post&post_id=" . $id;
                 break;
             case 'comment':
                 $comments_settings = $this->plugins->getSerializedSettings('comments');

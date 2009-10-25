@@ -91,7 +91,7 @@ $hotaru->plugins->pluginHook('submit_form_2_assign');
     <table>
     <tr>
         <td><?php echo $hotaru->lang["submit_form_url"]; ?>&nbsp; </td>
-        <td><?php echo $post_orig_url; ?></td>
+        <td><?php echo "<a target='_blank' href='" . $post_orig_url . "'>" . $post_orig_url . "</a>"; ?></td>
         <td>&nbsp;</td>
     </tr>
     <tr>

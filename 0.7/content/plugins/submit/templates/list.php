@@ -71,7 +71,7 @@ if ($stories) {
                 <?php if ($hotaru->post->useDate) { echo time_difference(unixtimestamp($hotaru->post->date), $hotaru->lang) . " " . $hotaru->lang["submit_post_ago"]; } ?>
                 <?php $hotaru->plugins->pluginHook('submit_show_post_author_date'); ?>
                 <?php 
-                    if ($hotaru->current_user->role == 'admin' || ($hotaru->current_user->id == $user->id)) { 
+                    if (($hotaru->current_user->getPermission('can_edit_posts') == 'yes') || ($hotaru->current_user->id == $user->id)) { 
                         echo "<a class='show_post_edit' href='" . BASEURL . "index.php?page=edit_post&amp;post_id=" . $hotaru->post->id . "'>" . $hotaru->lang["submit_post_edit"] . "</a>"; 
                     }
                 ?> 
