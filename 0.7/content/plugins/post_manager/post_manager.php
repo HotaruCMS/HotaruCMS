@@ -2,10 +2,10 @@
 /**
  * name: Post Manager
  * description: Manage posts.
- * version: 0.1
+ * version: 0.2
  * folder: post_manager
  * class: PostManager
- * requires: submit 0.9
+ * requires: submit 1.2
  * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  * PHP version 5
