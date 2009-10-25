@@ -36,7 +36,16 @@ class PostManagerSettings extends PostManager
     {    
         // clear variables:
         $this->hotaru->vars['search_term'] = '';
-        $this->hotaru->vars['post_status_filter'] = 'all';
+        
+        // Get settings 
+        $submit_settings = $this->getSerializedSettings('submit');
+        $set_pending = $submit_settings['post_set_pending'];
+
+        if (($set_pending == 'some_pending') || ($set_pending == 'all_pending')) {
+            $this->hotaru->vars['post_status_filter'] = 'pending';
+        } else {
+            $this->hotaru->vars['post_status_filter'] = 'all';
+        }
         
         // Get unique statuses for Filter form:
         $this->hotaru->vars['statuses'] = $this->hotaru->post->getUniqueStatuses(); 
@@ -137,13 +146,23 @@ class PostManagerSettings extends PostManager
 
         if(!isset($posts)) {
             // default list
-            $sort_clause = ' ORDER BY post_date DESC'; // ordered newest first for convenience
-            $sql = "SELECT * FROM " . TABLE_POSTS . $sort_clause;
-            $posts = $this->db->get_results($this->db->prepare($sql)); 
+            if ($this->hotaru->vars['post_status_filter'] == 'pending') {
+                $where_clause = " WHERE post_status = %s";
+                $sort_clause = ' ORDER BY post_date DESC'; // ordered newest first for convenience
+                $sql = "SELECT * FROM " . TABLE_POSTS . $where_clause . $sort_clause;
+                $posts = $this->db->get_results($this->db->prepare($sql, 'pending')); 
+            } else {
+                $sort_clause = ' ORDER BY post_date DESC'; // ordered newest first for convenience
+                $sql = "SELECT * FROM " . TABLE_POSTS . $sort_clause;
+                $posts = $this->db->get_results($this->db->prepare($sql)); 
+            }
         }
         
         if ($posts) { 
             $this->hotaru->vars['post_man_rows'] = $this->drawRows($p, $posts, $filter, $search_term);
+        } else {
+            $this->hotaru->message = $this->lang['post_man_no_pending_posts'];
+            $this->hotaru->messageType = 'green';
         }
         
         // Show template:
