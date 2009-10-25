@@ -58,7 +58,7 @@ class Users extends PluginFunctions
         $users_settings['users_recaptcha_pubkey'] = "";
         $users_settings['users_recaptcha_privkey'] = "";
         $users_settings['users_emailconf_enabled'] = "";
-        $users_settings['users_registration_pending'] = "";
+        $users_settings['users_registration_status'] = "member";
         $users_settings['users_email_notify'] = "";
         $users_settings['users_email_notify_mods'] = array();
         
@@ -150,7 +150,7 @@ class Users extends PluginFunctions
                 $users_settings = $this->getSerializedSettings();
                 $this->current_user->vars['useRecaptcha'] = $users_settings['users_recaptcha_enabled'];
                 $this->current_user->vars['useEmailConf'] = $users_settings['users_emailconf_enabled'];
-                $this->current_user->vars['useRegPending'] = $users_settings['users_registration_pending'];
+                $this->current_user->vars['regStatus'] = $users_settings['users_registration_status'];
                 $this->current_user->vars['useEmailNotify'] = $users_settings['users_email_notify'];
 
                 $userid = $this->register();
@@ -224,7 +224,7 @@ class Users extends PluginFunctions
             } elseif ($this->hotaru->isPage('emailconf')) {
                 $users_settings = $this->getSerializedSettings();
                 $this->current_user->vars['useEmailNotify'] = $users_settings['users_email_notify'];
-                $this->current_user->vars['useRegPending'] = $users_settings['users_registration_pending'];
+                $this->current_user->vars['regStatus'] = $users_settings['users_registration_status'];
                 $this->checkEmailConfirmation();
                 $this->hotaru->showMessages();
                 return true;
@@ -465,7 +465,7 @@ class Users extends PluginFunctions
             if (!$blocked && $result == 4) {
                 
                 // SUCCESS!!!
-                if ($this->current_user->vars['useRegPending']) { $this->current_user->role = 'pending'; }
+                $this->current_user->role = $this->current_user->vars['regStatus'];
                 if ($this->current_user->vars['useEmailConf']) { $this->current_user->role = 'pending'; }
                 $this->current_user->addUserBasic();
                 $last_insert_id = $this->db->get_var($this->db->prepare("SELECT LAST_INSERT_ID()"));
@@ -596,11 +596,8 @@ class Users extends PluginFunctions
         
         if ($conf === $user_email_conf) 
         {
-            if ($this->current_user->vars['useRegPending']) { 
-                $this->current_user->role = 'pending'; } 
-            else { 
-                $this->current_user->role = 'member'; 
-            }
+            // update role:
+            $this->current_user->role = $this->current_user->vars['regStatus'];
 
             // update user with new permissions:
             $new_perms = $this->current_user->getDefaultPermissions($this->current_user->role);

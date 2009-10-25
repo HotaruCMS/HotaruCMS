@@ -48,7 +48,7 @@ class UsersSettings extends Users
         $recaptcha_pubkey = $users_settings['users_recaptcha_pubkey'];
         $recaptcha_privkey = $users_settings['users_recaptcha_privkey'];
         $emailconf_enabled = $users_settings['users_emailconf_enabled'];
-        $reg_pending = $users_settings['users_registration_pending'];
+        $reg_status = $users_settings['users_registration_status'];
         $email_notify = $users_settings['users_email_notify'];
         $email_mods = $users_settings['users_email_notify_mods'];
     
@@ -59,7 +59,7 @@ class UsersSettings extends Users
         if (!$recaptcha_pubkey) { $recaptcha_pubkey = ''; }
         if (!$recaptcha_privkey) { $recaptcha_privkey = ''; }
         if (!$emailconf_enabled) { $emailconf_enabled = ''; }
-        if (!$reg_pending) { $reg_pending = ''; }
+        if (!$reg_status) { $reg_status = 'member'; }
         if (!$email_notify) { $email_notify = ''; }
         if (!$email_mods) { $email_mods = array(); }
         
@@ -74,7 +74,31 @@ class UsersSettings extends Users
         echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $this->lang["users_settings_recaptcha_public_key"] . ": <input type='text' name='rc_pubkey' size=50 value='" . $recaptcha_pubkey . "'><br /><br />\n";
         echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $this->lang["users_settings_recaptcha_private_key"] . ": <input type='text' name='rc_privkey' size=50 value='" . $recaptcha_privkey . "'><br /><br />\n";
         echo "<input type='checkbox' name='emailconf' value='emailconf' " . $emailconf_enabled . ">&nbsp;&nbsp;" . $this->lang["users_settings_email_conf"] . "<br /><br />\n";
-        echo "<input type='checkbox' name='reg_pending' value='reg_pending' " . $reg_pending . ">&nbsp;&nbsp;" . $this->lang["users_settings_reg_pending"] . "<br /><br />\n";
+
+        // reg_status radio buttons:
+        switch ($reg_status) {
+            case 'pending':
+                $checked_rs_pend = 'checked'; $checked_rs_undermod = ''; $checked_rs_member = '';
+                break;
+            case 'undermod':
+                $checked_rs_pend = ''; $checked_rs_undermod = 'checked'; $checked_rs_member = '';
+                break;
+            default: 
+                $checked_rs_pend = ''; $checked_rs_undermod = ''; $checked_rs_member = 'checked';
+        }
+
+            echo $this->lang["users_settings_reg_status"] . "\n";
+            
+            echo "<input type='radio' name='regstatus' value='pending' " . $checked_rs_pend . ">";
+            echo " " . $this->lang["users_settings_reg_status_pending"] . " &nbsp;\n";
+            
+            echo "<input type='radio' name='regstatus' value='undermod' " . $checked_rs_undermod . ">";
+            echo " " . $this->lang["users_settings_reg_status_undermod"] . " &nbsp;\n";
+            
+            echo "<input type='radio' name='regstatus' value='member' " . $checked_rs_member . ">";
+            echo " " . $this->lang["users_settings_reg_status_member"] . " &nbsp;<br /><br />\n";
+                
+        // email_notify:
         echo "<input type='checkbox' name='email_notify' value='email_notify' id='email_notify' " . $email_notify . ">&nbsp;&nbsp;" . $this->lang["users_settings_email_notify"] . "<br /><br />\n";
     
         $admins = $uf->getAdminAccessUsers();
@@ -161,12 +185,9 @@ class UsersSettings extends Users
         }
         
         // Registration auto-pending
-        if ($this->cage->post->keyExists('reg_pending')) { 
-            $reg_pending = 'checked'; 
-        } else { 
-            $reg_pending = ''; 
-        }
-        
+        if ($this->cage->post->keyExists('regstatus')) { 
+            $reg_status = $this->cage->post->getAlpha('regstatus');
+        }         
         
         // Send email notification about newly registered users
         if ($this->cage->post->keyExists('email_notify')) { 
@@ -194,7 +215,7 @@ class UsersSettings extends Users
         $users_settings['users_recaptcha_pubkey'] = $recaptcha_pubkey;
         $users_settings['users_recaptcha_privkey'] = $recaptcha_privkey;
         $users_settings['users_emailconf_enabled'] = $emailconf_enabled;
-        $users_settings['users_registration_pending'] = $reg_pending;
+        $users_settings['users_registration_status'] = $reg_status;
         $users_settings['users_email_notify'] = $email_notify;
         $users_settings['users_email_notify_mods'] = $email_mods; //array
         
