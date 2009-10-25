@@ -94,7 +94,10 @@ $lang["submit_settings_posts_per_page"] = "posts per page <small>(default: 10)</
 $lang["submit_settings_allowable_tags"] = "Allowed HTML tags in post description:";
 $lang["submit_settings_allowable_tags_example"] = "<small>(E.g. &lt;b&gt;&lt;u&gt;&lt;i&gt;&lt;blockquote&gt;)</small>";
 $lang["submit_settings_saved"] = "Settings Saved.";
-$lang["submit_settings_setpending"] = "Put all new posts in moderation, awaiting approval";
+$lang["submit_settings_auto_approve"] = "Automatically approve all posts";
+$lang["submit_settings_some_pending_1"] = "Put first";
+$lang["submit_settings_some_pending_2"] = " posts in the moderation queue";
+$lang["submit_settings_all_pending"] = "Put all new posts in the moderation queue";
 
 /* Submit Show Post */
 $lang["submit_page_title_main"] = "top";

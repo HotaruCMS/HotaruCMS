@@ -100,6 +100,7 @@ class Submit extends PluginFunctions
         $submit_settings['post_posts_per_page'] = 10;
         $submit_settings['post_allowable_tags'] = "<b><i><u><a><blockquote><strike>";
         $submit_settings['post_set_pending'] = ""; // sets all new posts to pending 
+        $submit_settings['post_x_posts'] = 1;
         
         $this->updateSetting('submit_settings', serialize($submit_settings));
         
@@ -225,13 +226,15 @@ class Submit extends PluginFunctions
              
             if ($this->current_user->loggedIn) {
     
-                 if ($this->cage->post->getAlpha('submit3') == 'edit') {             
-        
+                if ($this->cage->post->getAlpha('submit3') == 'edit') {             
+                
                     $post_id = $this->cage->post->getInt('post_id'); 
                     $this->hotaru->post->readPost($post_id);
                 }
                              
-                 if ($this->cage->post->getAlpha('submit3') == 'confirm') {             
+                 
+                // SUCCESS ! Submit the post...
+                if ($this->cage->post->getAlpha('submit3') == 'confirm') {             
         
                     $post_id = $this->cage->post->getInt('post_id');
                     $this->hotaru->post->readPost($post_id);
@@ -239,12 +242,19 @@ class Submit extends PluginFunctions
                     
                     $this->pluginHook('submit_step_3_pre_trackback'); // Akismet uses this to change the status
                     
+                    // Get settings to determine the status of this post
                     $submit_settings = $this->getSerializedSettings();
+                    $set_pending = $submit_settings['post_set_pending'];
+                    if ($set_pending == 'some_pending') {
+                        $posts_approved = $this->hotaru->post->postsApproved($this->current_user->id);
+                        $x_posts_needed = $submit_settings['post_x_posts'];
+                    }
                             
                     // Set to pending is the user's permissions for "can_submit" are "mod" OR
                     // if "Put all new posts in moderation" has been checked in Admin->Submit
-                    if (($this->current_user->getPermission('can_submit') == 'mod')
-                        || ($submit_settings['post_set_pending']))
+                    if (   ($this->current_user->getPermission('can_submit') == 'mod')
+                        || ($set_pending == 'all_pending')
+                        || (($set_pending = 'some_pending') && ($posts_approved <= $x_posts_needed)))
                     {
                     // Submitted posts given 'pending' for this user
                         $this->hotaru->post->changeStatus('pending');

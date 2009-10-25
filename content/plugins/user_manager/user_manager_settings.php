@@ -36,11 +36,12 @@ class UserManagerSettings extends UserManager
     {    
         // check if all new users are automatically set to pending or not
         $users_settings = $this->getSerializedSettings('users');
-        $this->current_user->vars['useRegPending'] = $users_settings['users_registration_pending'];
+        $this->current_user->vars['regStatus'] = $users_settings['users_registration_status'];
+        $this->current_user->vars['useEmailConf'] = $users_settings['users_emailconf_enabled'];
             
         // clear variables:
         $this->hotaru->vars['search_term'] = '';
-        if ($this->current_user->vars['useRegPending'] == 'checked') { 
+        if ($this->current_user->vars['regStatus'] == 'pending') { 
             $this->hotaru->vars['user_filter'] = 'pending';
         } else {
             $this->hotaru->vars['user_filter'] = 'all';
@@ -192,7 +193,7 @@ class UserManagerSettings extends UserManager
             // default list
             
             // if all new users are set to 'pending' show pending list as default...
-            if ($this->current_user->vars['useRegPending'] == 'checked') {
+            if ($this->current_user->vars['regStatus'] == 'pending') {
                 $where_clause = " WHERE user_role = %s"; 
                 $sort_clause = ' ORDER BY user_lastlogin DESC';
                 $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
@@ -255,7 +256,14 @@ class UserManagerSettings extends UserManager
             
             if ($user->user_role == 'pending') { 
                 // show register date info:
-                $output .= $user->user_username . " " . $this->lang["user_man_user_registered_on"] ." " . date('H:i:s \o\n l, F jS Y', strtotime($user->user_date)) . ".<br />\n";
+                $output .= $user->user_username . " " . $this->lang["user_man_user_registered_on"] ." " . date('H:i:s \o\n l, F jS Y', strtotime($user->user_date));
+                if ($this->current_user->vars['useEmailConf']) {
+                    if ($user->user_email_valid == 0) {
+                        $output .= $this->lang["user_man_user_email_not_validated"] . "<br />\n";
+                    } else {
+                        $output .= $this->lang["user_man_user_email_validated"] . "<br />\n";
+                    }
+                }
             } else {
                 // show last login amd submissions info:
                 $output .= $user->user_username . " " . $this->lang["user_man_user_last_logged_in"] ." " . date('H:i:s \o\n l, F jS Y', strtotime($user->user_lastlogin)) . ".<br />\n";
