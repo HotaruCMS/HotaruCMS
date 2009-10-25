@@ -53,6 +53,7 @@ class SubmitSettings extends Submit
         $summary_length = $submit_settings['post_summary_length'];
         $posts_per_page = $submit_settings['post_posts_per_page'];
         $allowable_tags = $submit_settings['post_allowable_tags'];
+        $set_pending = $submit_settings['post_set_pending'];
     
         $this->pluginHook('submit_settings_get_values');
         
@@ -64,6 +65,7 @@ class SubmitSettings extends Submit
         if (!$content_length) { $content_length = ''; }
         if (!$summary) { $summary = ''; }
         if (!$summary_length) { $summary_length = ''; }
+        if (!$set_pending) { $set_pending = ''; }
         
         echo "<form name='submit_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=submit' method='post'>\n";
         
@@ -90,7 +92,12 @@ class SubmitSettings extends Submit
         echo $this->lang["submit_settings_allowable_tags"] . " <input type='text' size=40 name='allowable_tags' value='" . $allowable_tags . "' /><br />";
         echo $this->lang["submit_settings_allowable_tags_example"] . "\n";
     
-        echo "<br /><br />\n";    
+        echo "<br /><br />\n";
+        
+        echo "<input type='checkbox' name='set_pending' value='set_pending' " . $set_pending . " >&nbsp;&nbsp;" . $this->lang["submit_settings_setpending"] . "\n"; 
+                
+        echo "<br /><br />\n";
+        
         echo "<input type='hidden' name='submitted' value='true' />\n";
         echo "<input type='submit' value='" . $this->lang["submit_settings_save"] . "' />\n";
         echo "</form>\n";
@@ -179,6 +186,13 @@ class SubmitSettings extends Submit
             $allowable_tags = $this->hotaru->post->allowableTags; 
         }
         
+        // Set pending
+        if ($this->cage->post->keyExists('set_pending')) { 
+            $set_pending = 'checked';
+        } else {
+            $set_pending = '';
+        }
+        
         $this->pluginHook('submit_save_settings');
         
         $submit_settings['post_enabled'] = $enabled;
@@ -190,6 +204,7 @@ class SubmitSettings extends Submit
         $submit_settings['post_summary_length'] = $summary_length;
         $submit_settings['post_posts_per_page'] = $posts_per_page;
         $submit_settings['post_allowable_tags'] = $allowable_tags;
+        $submit_settings['post_set_pending'] = $set_pending;
         // necessary to force all posts onto the main page. Plugins such as "Vote" can override this:
         $submit_settings['post_latest'] = false;
     

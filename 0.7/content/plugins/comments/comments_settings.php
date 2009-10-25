@@ -146,7 +146,6 @@ class CommentsSettings extends Comments
         }
         
         // Set pending
-        // enable votes on comments
         if ($this->cage->post->keyExists('comment_setpending')) { 
             $this->hotaru->comment->setPending = 'checked';
         } else {
