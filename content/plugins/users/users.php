@@ -222,6 +222,9 @@ class Users extends PluginFunctions
                 $this->hotaru->displayTemplate('login', 'users');
                 return true;
             } elseif ($this->hotaru->isPage('emailconf')) {
+                $users_settings = $this->getSerializedSettings();
+                $this->current_user->vars['useEmailNotify'] = $users_settings['users_email_notify'];
+                $this->current_user->vars['useRegPending'] = $users_settings['users_registration_pending'];
                 $this->checkEmailConfirmation();
                 $this->hotaru->showMessages();
                 return true;
@@ -462,12 +465,15 @@ class Users extends PluginFunctions
             if (!$blocked && $result == 4) {
                 
                 // SUCCESS!!!
-                if ($this->current_user->vars['useRegPending'] == "checked") { $this->current_user->role = 'pending'; }
+                if ($this->current_user->vars['useRegPending']) { $this->current_user->role = 'pending'; }
+                if ($this->current_user->vars['useEmailConf']) { $this->current_user->role = 'pending'; }
                 $this->current_user->addUserBasic();
                 $last_insert_id = $this->db->get_var($this->db->prepare("SELECT LAST_INSERT_ID()"));
                 
-                // notify chosen mods of new user by email:
-                if ($this->current_user->vars['useEmailNotify'] == 'checked') {
+                // notify chosen mods of new user by email IF email confirmation is DISABLED:
+                // If email confirmation is ENABLED, the email gets sent in checkEmailConfirmation().
+                if (($this->current_user->vars['useEmailNotify']) && (!$this->current_user->vars['useEmailConf']))
+                {
                     require_once(PLUGINS . 'users/libs/UserFunctions.php');
                     $uf = new UserFunctions($this->hotaru);
                     $uf->notifyMods('user', $this->current_user->role);
@@ -588,9 +594,32 @@ class Users extends PluginFunctions
         $sql = "SELECT user_email_conf FROM " . TABLE_USERS . " WHERE user_id = %d";
         $user_email_conf = $this->db->get_var($this->db->prepare($sql, $user_id));
         
-        if ($conf === $user_email_conf) {
+        if ($conf === $user_email_conf) 
+        {
+            if ($this->current_user->vars['useRegPending']) { 
+                $this->current_user->role = 'pending'; } 
+            else { 
+                $this->current_user->role = 'member'; 
+            }
+
+            // update user with new permissions:
+            $new_perms = $this->current_user->getDefaultPermissions($this->current_user->role);
+            unset($new_perms['options']);  // don't need this for individual users
+            $this->current_user->setAllPermissions($new_perms);
+            $this->current_user->updatePermissions();
+            $this->current_user->updateUserBasic();
+        
+            // set email valid to 1:
             $sql = "UPDATE " . TABLE_USERS . " SET user_email_valid = %d WHERE user_id = %d";
             $this->db->query($this->db->prepare($sql, 1, $this->current_user->id));
+            
+            // notify chosen mods of new user by email:
+            if ($this->current_user->vars['useEmailNotify'] == 'checked') {
+                require_once(PLUGINS . 'users/libs/UserFunctions.php');
+                $uf = new UserFunctions($this->hotaru);
+                $uf->notifyMods('user', $this->current_user->role);
+            }
+                
         
             $success_message = $this->lang['users_register_emailconf_success'] . " <b><a href='" . $this->hotaru->url(array('page'=>'login')) . "'>" . $this->lang['users_register_emailconf_success_login'] . "</a></b>";
             $this->hotaru->messages[$success_message] = 'green';
