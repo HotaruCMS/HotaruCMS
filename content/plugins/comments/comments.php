@@ -108,7 +108,7 @@ class Comments extends pluginFunctions
         }
         
         // Default settings 
-        $comments_settings['comment_form'] = "checked";
+        $comments_settings['comment_all_forms'] = "checked";
         if ($this->isActive('gravatar')) {
             $comments_settings['comment_avatars'] = "checked";
         } else {

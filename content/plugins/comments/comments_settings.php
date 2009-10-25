@@ -41,7 +41,7 @@ class CommentsSettings extends Comments
         $comments_settings = $this->getSerializedSettings();
         
         // Assign settings to class member
-        $this->hotaru->comment->allforms = $comments_settings['comment_form'];
+        $this->hotaru->comment->allforms = $comments_settings['comment_all_forms'];
         $this->hotaru->comment->avatars = $comments_settings['comment_avatars'];
         $this->hotaru->comment->voting = $comments_settings['comment_voting'];
         $this->hotaru->comment->email = $comments_settings['comment_email'];
@@ -155,7 +155,7 @@ class CommentsSettings extends Comments
         
         $this->pluginHook('comments_save_settings');
         
-        $comments_settings['comment_form'] = $this->hotaru->comment->allforms;
+        $comments_settings['comment_all_forms'] = $this->hotaru->comment->allforms;
         $comments_settings['comment_avatars'] = $this->hotaru->comment->avatars;
         $comments_settings['comment_voting'] = $this->hotaru->comment->voting;
         $comments_settings['comment_set_pending'] = $this->hotaru->comment->setPending;
