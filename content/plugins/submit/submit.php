@@ -5,7 +5,7 @@
  * version: 1.2
  * folder: submit
  * class: Submit
- * hooks: hotaru_header, header_meta, header_include, header_include_raw, upgrade_plugin, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, userbase_default_permissions
+ * hooks: hotaru_header, header_meta, header_include, header_include_raw, admin_header_include_raw, upgrade_plugin, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, userbase_default_permissions
  *
  * PHP version 5
  *
@@ -33,17 +33,6 @@ return false; die(); // die on direct access.
 
 class Submit extends PluginFunctions
 {
-    /**
-     * Upgrade plugin
-     */
-    public function upgrade_plugin()
-    {
-        /* Having this here makes hotaru ignore the install function. For this version, 
-           we don't need to make any database changes and don't want to reset our settings, 
-           so we'll just do nothing and let the "upgrade" simply be the updated files. */
-    }
-    
-    
     /**
      * If they don't already exist, create "posts" and "postmeta" tables
      */
@@ -101,6 +90,8 @@ class Submit extends PluginFunctions
         $submit_settings['post_allowable_tags'] = "<b><i><u><a><blockquote><strike>";
         $submit_settings['post_set_pending'] = ""; // sets all new posts to pending 
         $submit_settings['post_x_posts'] = 1;
+        $submit_settings['post_email_notify'] = "";
+        $submit_settings['post_email_notify_mods'] = array();
         
         $this->updateSetting('submit_settings', serialize($submit_settings));
         
@@ -156,6 +147,25 @@ class Submit extends PluginFunctions
         if ($this->hotaru->pageType == 'post') {
             echo '<meta name="description" content="' . $this->hotaru->post->content . '">' . "\n";
             return true;
+        }
+    }
+    
+    
+    /**
+     * Include jQuery for hiding and showing email options in plugin settings
+     */
+    public function admin_header_include_raw()
+    {
+        $admin = new Admin();
+        
+        if ($admin->isSettingsPage('submit')) {
+            echo "<script type='text/javascript'>\n";
+            echo "$(document).ready(function(){\n";
+                echo "$('#email_notify').click(function () {\n";
+                echo "$('#email_notify_options').slideToggle();\n";
+                echo "});\n";
+            echo "});\n";
+            echo "</script>\n";
         }
     }
     
@@ -240,27 +250,44 @@ class Submit extends PluginFunctions
                     $this->hotaru->post->readPost($post_id);
                     $this->hotaru->post->changeStatus('new');
                     
+                    $return = 0; // will return false later if set to 1.
+                    
                     $this->pluginHook('submit_step_3_pre_trackback'); // Akismet uses this to change the status
                     
                     // Get settings to determine the status of this post
                     $submit_settings = $this->getSerializedSettings();
                     $set_pending = $submit_settings['post_set_pending'];
+
                     if ($set_pending == 'some_pending') {
                         $posts_approved = $this->hotaru->post->postsApproved($this->current_user->id);
                         $x_posts_needed = $submit_settings['post_x_posts'];
                     }
-                            
+
+                    
                     // Set to pending is the user's permissions for "can_submit" are "mod" OR
                     // if "Put all new posts in moderation" has been checked in Admin->Submit
                     if (   ($this->current_user->getPermission('can_submit') == 'mod')
                         || ($set_pending == 'all_pending')
-                        || (($set_pending = 'some_pending') && ($posts_approved <= $x_posts_needed)))
+                        || (($set_pending == 'some_pending') && ($posts_approved <= $x_posts_needed)))
                     {
                     // Submitted posts given 'pending' for this user
                         $this->hotaru->post->changeStatus('pending');
                         $this->hotaru->messages[$this->lang['submit_form_moderation']] = 'green';
-                        return false;
+                        $return = 1; // will return false just after we notify admins of the post (see about 10 lines down)
                     }
+                    
+                    // get settings
+                    $submit_settings = $this->getSerializedSettings();
+
+                    // notify chosen mods of new user by email if enabled and UserFunctions file exists
+                    if (($submit_settings['post_email_notify']) && (file_exists(PLUGINS . 'users/libs/UserFunctions.php')))
+                    {
+                        require_once(PLUGINS . 'users/libs/UserFunctions.php');
+                        $uf = new UserFunctions($this->hotaru);
+                        $uf->notifyMods('post', $this->hotaru->post->status, $this->hotaru->post->id);
+                    }
+                    
+                    if ($return == 1) { return false; } // post is pending so we don't want to send a trackback. Return now.
                     
                     $this->hotaru->post->sendTrackback();
                     if ($this->hotaru->post->useLatest) {

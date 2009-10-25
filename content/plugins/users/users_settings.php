@@ -101,7 +101,7 @@ class UsersSettings extends Users
         // email_notify:
         echo "<input type='checkbox' name='email_notify' value='email_notify' id='email_notify' " . $email_notify . ">&nbsp;&nbsp;" . $this->lang["users_settings_email_notify"] . "<br /><br />\n";
     
-        $admins = $uf->getAdminAccessUsers();
+        $admins = $uf->getMods('can_access_admin', 'yes');
         if (!$email_notify) { $show_admins = 'display: none;'; }
         echo "<div id='email_notify_options' style='margin-left: 2.0em; " . $show_admins . "'>"; 
         
