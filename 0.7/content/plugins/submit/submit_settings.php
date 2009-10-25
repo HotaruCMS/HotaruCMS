@@ -54,6 +54,7 @@ class SubmitSettings extends Submit
         $posts_per_page = $submit_settings['post_posts_per_page'];
         $allowable_tags = $submit_settings['post_allowable_tags'];
         $set_pending = $submit_settings['post_set_pending'];
+        $x_posts = $submit_settings['post_x_posts'];
     
         $this->pluginHook('submit_settings_get_values');
         
@@ -65,7 +66,8 @@ class SubmitSettings extends Submit
         if (!$content_length) { $content_length = ''; }
         if (!$summary) { $summary = ''; }
         if (!$summary_length) { $summary_length = ''; }
-        if (!$set_pending) { $set_pending = ''; }
+        if (!$set_pending) { $set_pending = 'auto_approve'; }
+        if (!$x_posts) { $x_posts = 1; }
         
         echo "<form name='submit_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=submit' method='post'>\n";
         
@@ -94,7 +96,34 @@ class SubmitSettings extends Submit
     
         echo "<br /><br />\n";
         
-        echo "<input type='checkbox' name='set_pending' value='set_pending' " . $set_pending . " >&nbsp;&nbsp;" . $this->lang["submit_settings_setpending"] . "\n"; 
+        echo "<b>Submission Settings</b> (for users with 'member' roles)<br /><br />";
+        
+        switch ($set_pending) {
+            case 'some_pending':
+                $auto_approve = ''; $some_pending = 'checked'; $all_pending = '';
+                break;
+            case 'all_pending':
+                $auto_approve = ''; $some_pending = ''; $all_pending = 'checked';
+                break;
+            default:
+                $auto_approve = 'checked'; $some_pending = ''; $all_pending = '';
+        }
+        
+        echo "<input type='radio' name='set_pending' value='auto_approve' " . $auto_approve . " >&nbsp;&nbsp;" . $this->lang["submit_settings_auto_approve"] . "<br />\n"; 
+        echo "<input type='radio' name='set_pending' value='some_pending' " . $some_pending . " >&nbsp;&nbsp;" . $this->lang["submit_settings_some_pending_1"] . "\n"; 
+        echo "<select name='first_x_posts'>\n";
+            echo "<option>" . $x_posts . "</option>\n";
+            echo '<option disabled>-----</option>';
+            echo "<option>1</option>\n";
+            echo "<option>2</option>\n";
+            echo "<option>3</option>\n";
+            echo "<option>4</option>\n";
+            echo "<option>5</option>\n";
+            echo "<option>10</option>\n";
+            echo "<option>20</option>\n";
+        echo "</select>\n";
+        echo $this->lang["submit_settings_some_pending_2"] . "<br />\n"; 
+        echo "<input type='radio' name='set_pending' value='all_pending' " . $all_pending . " >&nbsp;&nbsp;" . $this->lang["submit_settings_all_pending"] . "<br />\n"; 
                 
         echo "<br /><br />\n";
         
@@ -112,37 +141,29 @@ class SubmitSettings extends Submit
         // Enabled
         if ($this->cage->post->keyExists('enabled')) { 
             $enabled = 'checked'; 
-            $this->hotaru->post->useSubmission = true;
         } else { 
             $enabled = ''; 
-            $this->hotaru->post->useSubmission = false;
         }
         
         // Author
         if ($this->cage->post->keyExists('author')) { 
             $author = 'checked'; 
-            $this->hotaru->post->useAuthor = true;
         } else { 
             $author = ''; 
-            $this->hotaru->post->useAuthor = false;
         }
         
         // Date
         if ($this->cage->post->keyExists('date')) { 
             $date = 'checked'; 
-            $this->hotaru->post->useDate = true;
         } else { 
             $date = ''; 
-            $this->hotaru->post->useDate = false;
         }
         
         // Description
         if ($this->cage->post->keyExists('content')) { 
             $content = 'checked'; 
-            $this->hotaru->post->useContent = true;
         } else { 
             $content = ''; 
-            $this->hotaru->post->useContent = false;
         }
         
         // Description length
@@ -156,10 +177,8 @@ class SubmitSettings extends Submit
         // Summary
         if ($this->cage->post->keyExists('summary')) { 
             $summary = 'checked'; 
-            $this->hotaru->post->useSummary = true;
         } else { 
             $summary = ''; 
-            $this->hotaru->post->useSummary = false;
         }
         
         // Summary length
@@ -188,9 +207,16 @@ class SubmitSettings extends Submit
         
         // Set pending
         if ($this->cage->post->keyExists('set_pending')) { 
-            $set_pending = 'checked';
+            $set_pending = $this->cage->post->testAlnumLines('set_pending');
         } else {
-            $set_pending = '';
+            $set_pending = 'auto_approve';
+        }
+        
+        // First X posts
+        if ($this->cage->post->keyExists('first_x_posts')) { 
+            $x_posts = $this->cage->post->testInt('first_x_posts');
+        } else {
+            $x_posts = 1; //default
         }
         
         $this->pluginHook('submit_save_settings');
@@ -205,6 +231,8 @@ class SubmitSettings extends Submit
         $submit_settings['post_posts_per_page'] = $posts_per_page;
         $submit_settings['post_allowable_tags'] = $allowable_tags;
         $submit_settings['post_set_pending'] = $set_pending;
+        $submit_settings['post_x_posts'] = $x_posts;
+        
         // necessary to force all posts onto the main page. Plugins such as "Vote" can override this:
         $submit_settings['post_latest'] = false;
     
