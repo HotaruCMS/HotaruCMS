@@ -107,10 +107,10 @@
         <table>
             <tr class='table_headers'>
                 <td><select name='checkbox_action'>
-                    <option value='admin'><?php echo $hotaru->lang["user_man_set_admin"]; ?></option>
-                    <option value='supermod'><?php echo $hotaru->lang["user_man_set_supermod"]; ?></option>
-                    <option value='moderator'><?php echo $hotaru->lang["user_man_set_moderator"]; ?></option>
                     <option value='member'><?php echo $hotaru->lang["user_man_set_member"]; ?></option>
+                    <option value='moderator'><?php echo $hotaru->lang["user_man_set_moderator"]; ?></option>
+                    <option value='supermod'><?php echo $hotaru->lang["user_man_set_supermod"]; ?></option>
+                    <option value='admin'><?php echo $hotaru->lang["user_man_set_admin"]; ?></option>
                     <option value='' disabled>-----</option>
                     <option value='pending'><?php echo $hotaru->lang["user_man_set_pending"]; ?></option>
                     <option value='undermod'><?php echo $hotaru->lang["user_man_set_undermod"]; ?></option>

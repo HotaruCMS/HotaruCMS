@@ -2,11 +2,11 @@
 /**
  * name: Gravatar
  * description: Enables Gravatar avatars for users
- * version: 0.4
+ * version: 0.5
  * folder: gravatar
  * class: Gravatar
  * requires: users 0.5, submit 0.7
- * hooks: header_include, submit_show_post_pre_title, show_comments_avatar
+ * hooks: install_plugin, hotaru_header, header_include, submit_show_post_pre_title, show_comments_avatar
  *
  * PHP version 5
  *
@@ -33,6 +33,35 @@
 class Gravatar extends PluginFunctions
 {
     /**
+     * Default settings on install
+     */
+    public function install_plugin()
+    {
+        // !!! EDIT HERE !!!
+        
+        $size = 32;     // 1 ~ 512px;
+        $rating = "g";  // g, pg, r or x
+        
+        // !!! STOP EDITING HERE !!!
+        
+        $this->updateSetting('gravatar_size', $size);
+        $this->updateSetting('gravatar_rating', $rating);
+    }
+    
+    
+    /**
+     * Default settings on install
+     */
+    public function hotaru_header()
+    {
+        // Get settings from database if they exist...
+        $this->hotaru->vars['gravatar_size'] = $this->getSetting('gravatar_size');
+        $this->hotaru->vars['gravatar_rating'] = $this->getSetting('gravatar_rating');
+        
+    }
+    
+    
+    /**
      * Show gravatar in posts
      */
     public function submit_show_post_pre_title()
@@ -41,9 +70,10 @@ class Gravatar extends PluginFunctions
         $user = new UserBase($this->hotaru);
         $user->getUserBasic($this->hotaru->post->author);
         $email = $user->email;
-        $size = 32;
+        $size = $this->hotaru->vars['gravatar_size'];
+        $rating = $this->hotaru->vars['gravatar_rating'];
         
-        $this->showGravatarLink($user->name, $email, $size);
+        $this->showGravatarLink($user->name, $email, $size, $rating);
     }
     
     
@@ -54,9 +84,10 @@ class Gravatar extends PluginFunctions
     {
         $sql = "SELECT user_username, user_email FROM " . TABLE_USERS . " WHERE user_id = %d";
         $commenter = $this->db->get_row($this->db->prepare($sql, $this->hotaru->comment->author));
-        $size = 32;
+        $size = $this->hotaru->vars['gravatar_size'];
+        $rating = $this->hotaru->vars['gravatar_rating'];
         
-        $this->showGravatarLink($commenter->user_username, $commenter->user_email, $size);
+        $this->showGravatarLink($commenter->user_username, $commenter->user_email, $size, $rating);
     }
     
     
@@ -64,12 +95,15 @@ class Gravatar extends PluginFunctions
      * Show Gravatar link
      *
      * @param string $username - user to link to
+     * @param string $email - email of avatar user
+     * @param int $size - size (1 ~ 512 pixels)
+     * @param string $rating - g, pg, r or x
      */
-    public function showGravatarLink($username, $email, $size)
+    public function showGravatarLink($username, $email, $size, $rating)
     {
         echo "<div class='show_post_gravatar'>";
         echo "<a href='" . $this->hotaru->url(array('user' => $username)) . "'>";
-        echo $this->buildGravatarImage($email, $size);
+        echo $this->buildGravatarImage($email, $size, $rating);
         echo "</a></div>";
     }
     
@@ -78,15 +112,18 @@ class Gravatar extends PluginFunctions
      * Build Gravatar image
      *
      * @param string $email - email of avatar user
+     * @param int $size - size (1 ~ 512 pixels)
+     * @param string $rating - g, pg, r or x
      * @return string - html for image
      */
-    public function buildGravatarImage($email, $size)
+    public function buildGravatarImage($email, $size, $rating)
     {
         $default = BASEURL . "content/plugins/gravatar/images/default_32.png";
         
         $grav_url = "http://www.gravatar.com/avatar.php?gravatar_id=".md5( strtolower($email) ).
             "&default=".urlencode($default).
-            "&size=".$size; 
+            "&size=".$size. 
+            "&r=".$rating;
             
         $img_url = "<img class='gravatar' src='" . $grav_url . "'>";
         

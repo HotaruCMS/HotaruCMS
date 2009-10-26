@@ -65,8 +65,8 @@ class Tags extends PluginFunctions
             $this->db->query($sql); 
         }
         
-        $this->updateSetting('submit_tags', 'checked', 'submit');
-        $this->updateSetting('submit_max_tags', 60, 'submit');
+        $this->updateSetting('submit_tags', 'checked');
+        $this->updateSetting('submit_max_tags', 100);
         
         // Could possibly do with some code here that extracts all existingtags from the posts table and populates the tags table with them.
         // Maybe in a later version.
@@ -136,13 +136,13 @@ class Tags extends PluginFunctions
     public function post_read_post_1()
     {
         //tags
-        if (($this->getSetting('submit_tags', 'submit') == 'checked') && ($this->isActive())) { 
+        if (($this->getSetting('submit_tags', 'tags') == 'checked') && ($this->isActive())) { 
             $this->hotaru->post->vars['useTags'] = true; 
         } else { 
             $this->hotaru->post->vars['useTags'] = false; 
         }
         
-        $max_tags = $this->getSetting('submit_max_tags', 'submit');
+        $max_tags = $this->getSetting('submit_max_tags', 'tags');
         if (!empty($max_tags)) { $this->hotaru->post->vars['maxTags'] = $max_tags; }
     }
     
@@ -372,12 +372,12 @@ class Tags extends PluginFunctions
     public function submit_settings_get_values()
     {
         // Get settings from database if they exist...
-        $tags = $this->getSetting('submit_tags', 'submit');
-        $max_tags = $this->getSetting('submit_max_tags', 'submit');
+        $tags = $this->getSetting('submit_tags', 'tags');
+        $max_tags = $this->getSetting('submit_max_tags', 'tags');
         
         // otherwise set to defaults...
         if (!isset($tags)) { $tags = 'checked'; }
-        if (!isset($max_tags)) { $max_tags = '60'; }
+        if (!isset($max_tags)) { $max_tags = '100'; }
         
         $this->hotaru->post->vars['tags'] = $tags;
         $this->hotaru->post->vars['max_tags'] = $max_tags;
@@ -417,8 +417,8 @@ class Tags extends PluginFunctions
             $max_tags = $this->hotaru->post->vars['maxTags']; 
         } 
         
-        $this->updateSetting('submit_tags', $tags, 'submit');
-        $this->updateSetting('submit_max_tags', $max_tags, 'submit');
+        $this->updateSetting('submit_tags', $tags);
+        $this->updateSetting('submit_max_tags', $max_tags);
     }
     
     

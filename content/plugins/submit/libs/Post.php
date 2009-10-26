@@ -555,7 +555,7 @@ class Post
             $title = $this->lang["submit_form_not_found"];
         }
         
-        return sanitize($title, 1);
+        return sanitize(utf8_encode($title), 1);
     }
     
 
@@ -758,6 +758,22 @@ class Post
         
         return $return;
     } 
+    
+
+    /**
+     * Count how many approved posts a user has had
+     *
+     * @param int $userid 
+     * @return int 
+     */
+    public function postsApproved($userid)
+    {
+        $sql = "SELECT COUNT(*) FROM " . TABLE_POSTS . " WHERE (post_status = %s || post_status = %s) AND post_author = %d";
+        $count = $this->db->get_var($this->db->prepare($sql, 'top', 'new', $userid));
+        
+        return $count;
+        
+    }
 }
 
 ?>

@@ -2,10 +2,10 @@
 /**
  * name: Users
  * description: Manages users within Hotaru.
- * version: 0.6
+ * version: 0.7
  * folder: users
  * class: Users
- * hooks: hotaru_header, header_include, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs
+ * hooks: hotaru_header, header_include, admin_header_include_raw, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, userbase_default_permissions
  *
  * PHP version 5
  *
@@ -54,10 +54,15 @@ class Users extends PluginFunctions
             $this->db->query($sql); 
         }
         
-        $this->updateSetting('users_recaptcha_enabled', '');    
-        $this->updateSetting('users_recaptcha_pubkey', '');    
-        $this->updateSetting('users_recaptcha_privkey', '');
-        $this->updateSetting('users_emailconf_enabled', '');
+        $users_settings['users_recaptcha_enabled'] = "";
+        $users_settings['users_recaptcha_pubkey'] = "";
+        $users_settings['users_recaptcha_privkey'] = "";
+        $users_settings['users_emailconf_enabled'] = "";
+        $users_settings['users_registration_status'] = "member";
+        $users_settings['users_email_notify'] = "";
+        $users_settings['users_email_notify_mods'] = array();
+        
+        $this->updateSetting('users_settings', serialize($users_settings));
         
         // Include language file. Also included in hotaru_header, but needed here  
         // to prevent errors immediately after installation.
@@ -141,8 +146,13 @@ class Users extends PluginFunctions
         // Pages you have to be logged out for...
         } else {
             if ($this->hotaru->isPage('register')) {
-                $this->current_user->vars['useRecaptcha'] = $this->getSetting('users_recaptcha_enabled');
-                $this->current_user->vars['useEmailConf'] = $this->getSetting('users_emailconf_enabled');
+            
+                $users_settings = $this->getSerializedSettings();
+                $this->current_user->vars['useRecaptcha'] = $users_settings['users_recaptcha_enabled'];
+                $this->current_user->vars['useEmailConf'] = $users_settings['users_emailconf_enabled'];
+                $this->current_user->vars['regStatus'] = $users_settings['users_registration_status'];
+                $this->current_user->vars['useEmailNotify'] = $users_settings['users_email_notify'];
+
                 $userid = $this->register();
                 if ($userid) { 
                     // success!
@@ -212,6 +222,9 @@ class Users extends PluginFunctions
                 $this->hotaru->displayTemplate('login', 'users');
                 return true;
             } elseif ($this->hotaru->isPage('emailconf')) {
+                $users_settings = $this->getSerializedSettings();
+                $this->current_user->vars['useEmailNotify'] = $users_settings['users_email_notify'];
+                $this->current_user->vars['regStatus'] = $users_settings['users_registration_status'];
                 $this->checkEmailConfirmation();
                 $this->hotaru->showMessages();
                 return true;
@@ -276,7 +289,8 @@ class Users extends PluginFunctions
                     $this->current_user->name = $username_check;
                     $this->current_user->getUserBasic(0, $this->current_user->userName);
                     
-                    $this->current_user->vars['useEmailConf'] = $this->getSetting('users_emailconf_enabled');
+                    $users_settings = $this->getSerializedSettings();
+                    $this->current_user->vars['useEmailConf'] = $users_settings['users_emailconf_enabled'];
                     
                     if ($this->current_user->vars['useEmailConf'] && ($this->current_user->emailValid == 0)) {
                         $this->sendConfirmationEmail($this->current_user->id);
@@ -285,9 +299,22 @@ class Users extends PluginFunctions
                         return false;
                     }
                     
+                    
+                    if ($this->current_user->getPermission('can_login') == 'no') {
+                        if ($this->current_user->role == 'pending') {
+                            $this->hotaru->messages[$this->lang["users_login_failed_not_approved"]] = 'red';
+                        } else {
+                            $this->hotaru->messages[$this->lang["users_login_failed_no_permission"]] = 'red';
+                        }
+                        return false;
+                    }
+                    
+                    
                     $this->current_user->setCookie($remember);
                     $this->current_user->loggedIn = true;
                     $this->current_user->updateUserLastLogin();
+                    
+              
                     return true;
             } else {
                     // login failed
@@ -397,8 +424,9 @@ class Users extends PluginFunctions
         
             if ($this->current_user->vars['useRecaptcha']) {
                                         
-                $recaptcha_pubkey = $this->getSetting('users_recaptcha_pubkey');
-                $recaptcha_privkey = $this->getSetting('users_recaptcha_privkey');
+                $users_settings = $this->getSerializedSettings();
+                $recaptcha_pubkey = $users_settings['users_recaptcha_pubkey'];
+                $recaptcha_privkey = $users_settings['users_recaptcha_privkey'];
                 
                 $rc_resp = null;
                 $rc_error = null;
@@ -435,9 +463,22 @@ class Users extends PluginFunctions
             $blocked = $this->checkBlocked($username_check, $email_check); // true if blocked, false if safe
             $result = $this->current_user->userExists(0, $username_check, $email_check);
             if (!$blocked && $result == 4) {
-                //success
+                
+                // SUCCESS!!!
+                $this->current_user->role = $this->current_user->vars['regStatus'];
+                if ($this->current_user->vars['useEmailConf']) { $this->current_user->role = 'pending'; }
                 $this->current_user->addUserBasic();
                 $last_insert_id = $this->db->get_var($this->db->prepare("SELECT LAST_INSERT_ID()"));
+                
+                // notify chosen mods of new user by email IF email confirmation is DISABLED:
+                // If email confirmation is ENABLED, the email gets sent in checkEmailConfirmation().
+                if (($this->current_user->vars['useEmailNotify']) && (!$this->current_user->vars['useEmailConf']))
+                {
+                    require_once(PLUGINS . 'users/libs/UserFunctions.php');
+                    $uf = new UserFunctions($this->hotaru);
+                    $uf->notifyMods('user', $this->current_user->role);
+                }
+        
                 return $last_insert_id; // so we can retrieve this user's details for the email confirmation step;
             } elseif ($result == 0) {
                 $this->hotaru->messages[$this->lang['users_register_id_exists']] = 'red';
@@ -553,9 +594,29 @@ class Users extends PluginFunctions
         $sql = "SELECT user_email_conf FROM " . TABLE_USERS . " WHERE user_id = %d";
         $user_email_conf = $this->db->get_var($this->db->prepare($sql, $user_id));
         
-        if ($conf === $user_email_conf) {
+        if ($conf === $user_email_conf) 
+        {
+            // update role:
+            $this->current_user->role = $this->current_user->vars['regStatus'];
+
+            // update user with new permissions:
+            $new_perms = $this->current_user->getDefaultPermissions($this->current_user->role);
+            unset($new_perms['options']);  // don't need this for individual users
+            $this->current_user->setAllPermissions($new_perms);
+            $this->current_user->updatePermissions();
+            $this->current_user->updateUserBasic();
+        
+            // set email valid to 1:
             $sql = "UPDATE " . TABLE_USERS . " SET user_email_valid = %d WHERE user_id = %d";
             $this->db->query($this->db->prepare($sql, 1, $this->current_user->id));
+            
+            // notify chosen mods of new user by email:
+            if ($this->current_user->vars['useEmailNotify'] == 'checked') {
+                require_once(PLUGINS . 'users/libs/UserFunctions.php');
+                $uf = new UserFunctions($this->hotaru);
+                $uf->notifyMods('user', $this->current_user->role);
+            }
+                
         
             $success_message = $this->lang['users_register_emailconf_success'] . " <b><a href='" . $this->hotaru->url(array('page'=>'login')) . "'>" . $this->lang['users_register_emailconf_success_login'] . "</a></b>";
             $this->hotaru->messages[$success_message] = 'green';
@@ -658,6 +719,56 @@ class Users extends PluginFunctions
         echo "<input type='hidden' name='userid' value='" . $user->id . "' />\n";
         echo "<div style='text-align: right'><input class='submit' type='submit' value='" . $this->lang['users_account_form_submit'] . "' /></div>\n";
         echo "</form>\n";
+    }
+    
+    
+    /**
+     * Include jQuery for hiding and showing email options in plugin settings
+     */
+    public function admin_header_include_raw()
+    {
+        $admin = new Admin();
+        
+        if ($admin->isSettingsPage('users')) {
+            echo "<script type='text/javascript'>\n";
+            echo "$(document).ready(function(){\n";
+                echo "$('#email_notify').click(function () {\n";
+                echo "$('#email_notify_options').slideToggle();\n";
+                echo "});\n";
+            echo "});\n";
+            echo "</script>\n";
+        }
+    }
+    
+    
+    /**
+     * Default permissions 
+     *
+     * @param array $params - conatins "role"
+     */
+    public function userbase_default_permissions($params)
+    {
+        $perms = $this->hotaru->vars['perms'];
+
+        $role = $params['role'];
+        
+        // Permission Options
+        $perms['options']['can_login'] = array('yes', 'no');
+
+        // Permissions for $role
+        switch ($role) {
+            case 'admin':
+            case 'supermod':
+            case 'moderator':
+            case 'member':
+            case 'undermod':
+                $perms['can_login'] = 'yes';
+                break;
+            default:
+                $perms['can_login'] = 'no';
+        }
+        
+        $this->hotaru->vars['perms'] = $perms;
     }
 }
 

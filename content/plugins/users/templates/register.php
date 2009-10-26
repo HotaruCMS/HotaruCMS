@@ -56,7 +56,8 @@ if ($hotaru->cage->post->getAlpha('users_type') == 'register') {
             
             <?php 
                 if ($hotaru->current_user->vars['useRecaptcha']) { 
-                    $recaptcha_pubkey = $hotaru->plugins->getSetting('users_recaptcha_pubkey', 'users');
+                    $users_settings = $hotaru->plugins->getSerializedSettings('users');
+                    $recaptcha_pubkey = $users_settings['users_recaptcha_pubkey'];
                     echo "<tr><td colspan=2>" . recaptcha_get_html($recaptcha_pubkey) . "</td></tr>";
                 }
             ?>

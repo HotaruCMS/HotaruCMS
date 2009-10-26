@@ -32,7 +32,15 @@ $lang["users_settings_save"] = "Save";
 $lang["users_settings_recaptcha_enable"] = "Enable reCaptcha - Get keys from";
 $lang["users_settings_recaptcha_public_key"] = "Public Key";
 $lang["users_settings_recaptcha_private_key"] = "Private Key";
-$lang["users_settings_email_conf"] = "Enable email confirmation";
+$lang["users_settings_email_conf"] = "Send new users an email with a link to confirm their registration";
+$lang["users_settings_reg_status"] = "Role for new users:";
+$lang["users_settings_reg_status_member"] = "Regular Member";
+$lang["users_settings_reg_status_undermod"] = "Under Moderation";
+$lang["users_settings_reg_status_pending"] = "Pending Approval";
+$lang["users_settings_email_notify"] = "When a new user registers, email admins, supermods and moderators with \"access admin\" permissions:";
+$lang["users_settings_email_notify_all"] = "All new users";
+$lang["users_settings_email_notify_pending"] = "Pending users only";
+$lang["users_settings_email_notify_none"] = "None";
 $lang["users_settings_no_keys"] = "Settings saved, but reCaptcha won't work without both keys!";
 $lang["users_settings_saved"] = "Settings Saved";
 
@@ -50,6 +58,8 @@ $lang["users_login_instructions"] = "Enter your username and password to login:"
 $lang["users_login_failed"] = "Login failed";
 $lang["users_login_failed_email_not_validated"] = "Sorry, you haven't validated your email yet."; 
 $lang["users_login_failed_email_request_sent"] = "Email confirmation request sent!";
+$lang["users_login_failed_no_permission"] = "Sorry, you don't have permission to login.";
+$lang["users_login_failed_not_approved"] = "Sorry, you can't login until a moderator has approved your account.";
 $lang["users_login_form_submit"] = "Login";
 $lang["users_login_form_submit_username"] = "Username:";
 $lang["users_login_form_submit_password"] = "Password:";
@@ -117,5 +127,16 @@ $lang["users_account_deleted"] = "User Deleted";
 $lang["users_account_admin_admin"] = "Sorry, only admins can access admin accounts.";
 // Other language is used in content/language_packs/language_default/admin_language
 
+/* UserFunctions class */
+$lang['userfunctions_notifymods_subject_user'] = "New user registered at " . SITE_NAME;
+$lang['userfunctions_notifymods_subject_post'] = "New post submitted at " . SITE_NAME;
+$lang['userfunctions_notifymods_subject_comment'] = "New comment posted at " . SITE_NAME;
+$lang['userfunctions_notifymods_hello'] = "Hi ";
+$lang['userfunctions_notifymods_body_about_user'] = "A new user has registered at " . SITE_NAME; 
+$lang['userfunctions_notifymods_body_about_post'] = "A new post has been submitted at " . SITE_NAME; 
+$lang['userfunctions_notifymods_body_about_comment'] = "A new comment has been posted at " . SITE_NAME; 
+$lang['userfunctions_notifymods_body_click'] = "More details can be found here: ";
+$lang['userfunctions_notifymods_body_regards'] = "Thank you,";
+$lang['userfunctions_notifymods_body_sign'] = SITE_NAME . " Admin";
 
 ?>

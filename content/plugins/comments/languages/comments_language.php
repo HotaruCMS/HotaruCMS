@@ -53,7 +53,7 @@ $lang['comments_form_moderation_on'] = "<b>Note</b>: <span style='color: red;'>A
 $lang['comments_admin_sidebar'] = "Comments";
 $lang["comments_settings_header"] = "Comments Settings";
 $lang["comments_settings_instructions"] = "Options for comments:";
-$lang["comments_settings_form"] = "Enable the comment form on all posts";
+$lang["comments_settings_form"] = "Enable the comment form <small>(Unchecked closes all forms. Checked opens all forms unless individually closed)</small>";
 $lang["comments_settings_avatars"] = "Enable avatars on comments (requires an avatar plugin, e.g. <i>Gravatar</i>)";
 $lang["comments_settings_votes"] = "Enable votes on comments (requires a comment voting plugin)";
 $lang["comments_settings_levels"] = "Comment nesting levels:";
@@ -64,5 +64,8 @@ $lang["comments_settings_allowable_tags_example"] = "<small>(E.g. &lt;b&gt;&lt;u
 $lang["comments_settings_setpending"] = "Set all new comments to \"pending\" (requires the Category Manager plugin to view and approve/delete them";
 $lang["comments_settings_save"] = "Save";
 $lang["comments_settings_saved"] = "Settings saved";
+
+/* Edit Post */
+$lang['submit_form_enable_comments'] = "Enable comment form";
 
 ?>

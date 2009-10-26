@@ -53,6 +53,11 @@ class SubmitSettings extends Submit
         $summary_length = $submit_settings['post_summary_length'];
         $posts_per_page = $submit_settings['post_posts_per_page'];
         $allowable_tags = $submit_settings['post_allowable_tags'];
+        $set_pending = $submit_settings['post_set_pending'];
+        $x_posts = $submit_settings['post_x_posts'];
+        $email_notify = $submit_settings['post_email_notify'];
+        $email_mods = $submit_settings['post_email_notify_mods'];
+
     
         $this->pluginHook('submit_settings_get_values');
         
@@ -64,6 +69,8 @@ class SubmitSettings extends Submit
         if (!$content_length) { $content_length = ''; }
         if (!$summary) { $summary = ''; }
         if (!$summary_length) { $summary_length = ''; }
+        if (!$set_pending) { $set_pending = 'auto_approve'; }
+        if (!$x_posts) { $x_posts = 1; }
         
         echo "<form name='submit_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=submit' method='post'>\n";
         
@@ -90,7 +97,89 @@ class SubmitSettings extends Submit
         echo $this->lang["submit_settings_allowable_tags"] . " <input type='text' size=40 name='allowable_tags' value='" . $allowable_tags . "' /><br />";
         echo $this->lang["submit_settings_allowable_tags_example"] . "\n";
     
-        echo "<br /><br />\n";    
+        echo "<br /><br />\n";
+        
+        echo "<b>Submission Settings</b> (for users with 'member' roles)<br /><br />";
+        
+        switch ($set_pending) {
+            case 'some_pending':
+                $auto_approve = ''; $some_pending = 'checked'; $all_pending = '';
+                break;
+            case 'all_pending':
+                $auto_approve = ''; $some_pending = ''; $all_pending = 'checked';
+                break;
+            default:
+                $auto_approve = 'checked'; $some_pending = ''; $all_pending = '';
+        }
+        
+        echo "<input type='radio' name='set_pending' value='auto_approve' " . $auto_approve . " >&nbsp;&nbsp;" . $this->lang["submit_settings_auto_approve"] . "<br />\n"; 
+        echo "<input type='radio' name='set_pending' value='some_pending' " . $some_pending . " >&nbsp;&nbsp;" . $this->lang["submit_settings_some_pending_1"] . "\n"; 
+        echo "<select name='first_x_posts'>\n";
+            echo "<option>" . $x_posts . "</option>\n";
+            echo '<option disabled>-----</option>';
+            echo "<option>1</option>\n";
+            echo "<option>2</option>\n";
+            echo "<option>3</option>\n";
+            echo "<option>4</option>\n";
+            echo "<option>5</option>\n";
+            echo "<option>10</option>\n";
+            echo "<option>20</option>\n";
+        echo "</select>\n";
+        echo $this->lang["submit_settings_some_pending_2"] . "<br />\n"; 
+        echo "<input type='radio' name='set_pending' value='all_pending' " . $all_pending . " >&nbsp;&nbsp;" . $this->lang["submit_settings_all_pending"] . "\n"; 
+                
+        echo "<br /><br />\n";
+
+        // email notify options - only show if the UserFunctions file exists
+        if (file_exists(PLUGINS . 'users/libs/UserFunctions.php')) {
+            require_once(PLUGINS . 'users/libs/UserFunctions.php');
+            $uf = new UserFunctions($this->hotaru);
+            
+            echo "<input type='checkbox' name='email_notify' value='email_notify' id='email_notify' " . $email_notify . ">&nbsp;&nbsp;" ;
+            echo $this->lang["submit_settings_email_notify"] . "<br /><br />\n";
+        
+            $admins = $uf->getMods('can_edit_posts', 'yes');
+            if (!$email_notify) { $show_admins = 'display: none;'; }
+            echo "<div id='email_notify_options' style='margin-left: 2.0em; " . $show_admins . "'>"; 
+            
+            if ($admins) {
+                echo "<table>\n";
+                foreach ($admins as $ad) {
+                    if (array_key_exists($ad['id'], $email_mods)) { 
+                        switch ($email_mods[$ad['id']]['type']) {
+                            case 'all':
+                                $checked_all = 'checked'; $checked_pend = ''; $checked_none = '';
+                                break;
+                            case 'pending':
+                                $checked_all = ''; $checked_pend = 'checked'; $checked_none = '';
+                                break;
+                            default:
+                                $checked_all = ''; $checked_pend = ''; $checked_none = 'checked';
+                        }
+                    }
+                    else
+                    {
+                        $checked_all = ''; $checked_pend = ''; $checked_none = 'checked';
+                    }
+                    
+                    echo "<tr>\n";
+                    echo "<td><b>" . ucfirst($ad['name']) . "</b></td>\n";
+                    
+                    echo "<td><input type='radio' name='emailmod[" . $ad['id'] . "][" . $ad['email'] . "]' value='all' " . $checked_all . ">";
+                    echo " " . $this->lang["submit_settings_email_notify_all"] . "</td>\n";
+                    
+                    echo "<td><input type='radio' name='emailmod[" . $ad['id'] . "][" . $ad['email'] . "]' value='pending' " . $checked_pend . ">";
+                    echo " " . $this->lang["submit_settings_email_notify_pending"] . "</td>\n";
+                    
+                    echo "<td><input type='radio' name='emailmod[" . $ad['id'] . "][" . $ad['email'] . "]' value='none' " . $checked_none . ">";
+                    echo " " . $this->lang["submit_settings_email_notify_none"] . "</td>\n";
+                    echo "</tr>\n";
+                }
+                echo "</table>\n";
+            }
+            echo "</div><br />";
+        }
+        
         echo "<input type='hidden' name='submitted' value='true' />\n";
         echo "<input type='submit' value='" . $this->lang["submit_settings_save"] . "' />\n";
         echo "</form>\n";
@@ -105,37 +194,29 @@ class SubmitSettings extends Submit
         // Enabled
         if ($this->cage->post->keyExists('enabled')) { 
             $enabled = 'checked'; 
-            $this->hotaru->post->useSubmission = true;
         } else { 
             $enabled = ''; 
-            $this->hotaru->post->useSubmission = false;
         }
         
         // Author
         if ($this->cage->post->keyExists('author')) { 
             $author = 'checked'; 
-            $this->hotaru->post->useAuthor = true;
         } else { 
             $author = ''; 
-            $this->hotaru->post->useAuthor = false;
         }
         
         // Date
         if ($this->cage->post->keyExists('date')) { 
             $date = 'checked'; 
-            $this->hotaru->post->useDate = true;
         } else { 
             $date = ''; 
-            $this->hotaru->post->useDate = false;
         }
         
         // Description
         if ($this->cage->post->keyExists('content')) { 
             $content = 'checked'; 
-            $this->hotaru->post->useContent = true;
         } else { 
             $content = ''; 
-            $this->hotaru->post->useContent = false;
         }
         
         // Description length
@@ -149,10 +230,8 @@ class SubmitSettings extends Submit
         // Summary
         if ($this->cage->post->keyExists('summary')) { 
             $summary = 'checked'; 
-            $this->hotaru->post->useSummary = true;
         } else { 
             $summary = ''; 
-            $this->hotaru->post->useSummary = false;
         }
         
         // Summary length
@@ -179,6 +258,38 @@ class SubmitSettings extends Submit
             $allowable_tags = $this->hotaru->post->allowableTags; 
         }
         
+        // Set pending
+        if ($this->cage->post->keyExists('set_pending')) { 
+            $set_pending = $this->cage->post->testAlnumLines('set_pending');
+        } else {
+            $set_pending = 'auto_approve';
+        }
+        
+        // First X posts
+        if ($this->cage->post->keyExists('first_x_posts')) { 
+            $x_posts = $this->cage->post->testInt('first_x_posts');
+        } else {
+            $x_posts = 1; //default
+        }
+        
+        // Send email notification about new posts
+        if ($this->cage->post->keyExists('email_notify')) { 
+            $email_notify = 'checked'; 
+        } else { 
+            $email_notify = ''; 
+        }
+        
+        // admins to receive above email notification
+        if ($this->cage->post->keyExists('emailmod')) 
+        {
+            $email_mods = array();
+            foreach ($this->cage->post->keyExists('emailmod') as $id => $array) {
+                $email_mods[$id]['id'] = $id;
+                $email_mods[$id]['email'] = key($array);
+                $email_mods[$id]['type'] = $array[$email_mods[$id]['email']];
+            }
+        }
+        
         $this->pluginHook('submit_save_settings');
         
         $submit_settings['post_enabled'] = $enabled;
@@ -190,6 +301,11 @@ class SubmitSettings extends Submit
         $submit_settings['post_summary_length'] = $summary_length;
         $submit_settings['post_posts_per_page'] = $posts_per_page;
         $submit_settings['post_allowable_tags'] = $allowable_tags;
+        $submit_settings['post_set_pending'] = $set_pending;
+        $submit_settings['post_x_posts'] = $x_posts;
+        $submit_settings['post_email_notify'] = $email_notify;
+        $submit_settings['post_email_notify_mods'] = $email_mods; //array
+        
         // necessary to force all posts onto the main page. Plugins such as "Vote" can override this:
         $submit_settings['post_latest'] = false;
     

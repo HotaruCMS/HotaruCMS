@@ -13,4 +13,5 @@ Instructions
 
 Changelog
 ---------
+v.0.2 2009/08/25 - Nick - Made list default to pending if submission moderation enabled
 v.0.1 2009/08/17 - Nick - Released first version
