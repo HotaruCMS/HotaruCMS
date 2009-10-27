@@ -624,8 +624,8 @@ class Post
         if (!$trackback) { return false; } // No trackback url found
         
         // Clean up the title and description...
-        $title = htmlspecialchars(strip_tags($post->getTitle()));
-        $title = (strlen($this->title) > 150) ? substr($this->title, 0, 150) . '...' : $this->title;
+        $title = htmlspecialchars(strip_tags($this->title));
+        $title = (strlen($title) > 150) ? substr($title, 0, 150) . '...' : $title;
         $excerpt = strip_tags($this->content);
         $excerpt = (strlen($excerpt) > 200) ? substr($excerpt, 0, 200) . '...' : $excerpt;
 

@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.1.3 2009/10/28 - Nick - Bug fix for a sending trackbacks
 v.1.2 2009/10/24 - Nick - Bug fix for strange symbols in fetched titles in Submit step 2
 v.1.1 2009/10/23 - Nick - Users under moderation get their posts sent to 'pending'
 v.1.0 2009/10/22 - Nick - New plugin hook for Akismet compatibility
