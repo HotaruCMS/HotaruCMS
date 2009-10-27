@@ -36,4 +36,23 @@ $lang['submit_form_tags_length_error'] = "Sorry, you've entered too many tags.";
 $lang["submit_settings_tags"] = "Tags";
 $lang["submit_settings_max_tags"] = "Maximum characters";
 
+/* Tag Cloud */
+$lang["tags_tag_cloud"] = "Tag Cloud";
+
+/* Tag Cloud Widget Title */
+$lang["tags_tag_cloud_widget_title"] = "Tag Cloud";
+$lang["tags_tag_cloud_widget_more"] = "[More]";
+
+/* Tags Settings */
+$lang["tags_settings_header"] = "Tag Cloud Settings";
+$lang["tags_settings_note"] = "<i>Note:</i> Post tags can be edited on the Submit settings page.";
+$lang["tags_settings_main_cloud"] = "Tag Cloud Page";
+$lang["tags_settings_widget_cloud"] = "Tag Cloud Widget";
+$lang["tags_settings_num_tags_page"] = "Number of tags to show <small>(Default: 100)</small>";
+$lang["tags_settings_num_tags_widget"] = "Number of tags to show <small>(Default: 25)</small>";
+$lang["tags_settings_show_widget_title"] = "Show widget title <small>(Default: \"Tag Cloud\". You can edit it in tags_language.php)</small>";
+$lang["tags_settings_save"] = "Save";
+$lang["tags_settings_saved"] = "Tag cloud settings updated";
+$lang["tags_settings_not_saved"] = "Error! Settings not saved";
+
 ?>

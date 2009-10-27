@@ -4,15 +4,26 @@ Created by: Nick Ramsay
 
 Description
 -----------
-Add tags to posts. Uses the Submit plugin.
+With this plugin you can add and edit tags on posts, filter posts by tag, view an RSS feed for each tag, view a tag cloud and put a tag cloud widget in your sidebar.
 
 Instructions
 ------------
 1. Upload the "tags" folder to your plugins folder. Install it from Plugin Management in Admin.
-2. Edit settings from "Tags" in the Admin sidebar. 
+
+Usage
+-----
+- Enable tags for posts in Admin -> Submit
+- Edit the tag cloud settings in Admin -> Tag Cloud
+- There are CSS and language files in the plugin folder that you can customize
+
+How to access the tag cloud page:
+* Friendly urls OFF: /index.php?page=tag-cloud  
+* Friendly urls ON:  /tag-cloud/
+
 
 Changelog
 ---------
+v.1.0 2009/10/27 - Nick - Added tag cloud page and tag cloud widget
 v.0.9 2009/10/18 - Nick - Bug fix for lost settings when Submit reactivated
 v.0.8 2009/10/15 - Nick - Bug fixes for slashed apostrophes
 v.0.7 2009/10/06 - Nick - Changed tags to show in a hidden div

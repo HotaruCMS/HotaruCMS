@@ -2,11 +2,11 @@
 /**
  * name: Tags
  * description: Enables tags for posts
- * version: 0.9
+ * version: 1.0
  * folder: tags
  * class: Tags
- * requires: submit 0.7
- * hooks: install_plugin, header_include_raw, submit_hotaru_header_1, header_meta, post_read_post_1, post_read_post_2, post_add_post, post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_show_post_extra_fields, submit_show_post_extras, submit_settings_get_values, submit_settings_form, submit_save_settings, post_list_filter, post_delete_post
+ * requires: submit 0.7, sidebar_widgets 0.4
+ * hooks: install_plugin, header_include, header_include_raw, submit_hotaru_header_1, header_meta, theme_index_main, post_read_post_1, post_read_post_2, post_add_post, post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_show_post_extra_fields, submit_show_post_extras, submit_settings_get_values, submit_settings_form, submit_save_settings, post_list_filter, post_delete_post, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  * PHP version 5
  *
@@ -67,9 +67,14 @@ class Tags extends PluginFunctions
         
         $this->updateSetting('submit_tags', 'checked');
         $this->updateSetting('submit_max_tags', 100);
+        $this->updateSetting('tags_num_tags_page', 100);
+        $this->updateSetting('tags_num_tags_widget', 25);
+        $this->updateSetting('tags_widget_title', 'checked');
         
-        // Could possibly do with some code here that extracts all existingtags from the posts table and populates the tags table with them.
-        // Maybe in a later version.
+        require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
+        $sidebar = new Sidebar($this->hotaru);
+        $sidebar->addWidget('tags', 'tag_cloud', '');  // plugin name, function name, optional arguments
+
     }
     
     
@@ -113,20 +118,122 @@ class Tags extends PluginFunctions
         }
     }
     
+    public function header_include()
+    {
+        // Include the css file only when viewing the tag cloud:
+            $this->includeCss('tag_cloud');
+    }
+    
     
     /**
      * JavaScript for dropdown tags list
      */
     public function header_include_raw()
     {    
-            echo "<script type='text/javascript'>\n";
-            echo "$(document).ready(function(){\n";
-                echo "$('.tags_link').click(function () {\n";
-                echo "var target = $(this).parents('div').next('div').children('div.show_tags');\n";
-                echo "target.fadeToggle();\n";
-                echo "});\n";
+        echo "<script type='text/javascript'>\n";
+        echo "$(document).ready(function(){\n";
+            echo "$('.tags_link').click(function () {\n";
+            echo "var target = $(this).parents('div').next('div').children('div.show_tags');\n";
+            echo "target.fadeToggle();\n";
             echo "});\n";
-            echo "</script>\n";
+        echo "});\n";
+        echo "</script>\n";
+    }
+    
+    
+    /**
+     * Display various forms within the body of the page.
+     *
+     * @return bool
+     */
+    public function theme_index_main()
+    {
+        if ($this->hotaru->isPage('tag-cloud')) 
+        {
+            // get the number of tags to show:
+            $tag_count = $this->getSetting('tags_num_tags_page');
+            
+            // build the tag cloud:
+            $this->hotaru->vars['tagCloud'] = $this->buildTagCloud($tag_count);
+            
+            // display the tag cloud:
+            $this->hotaru->displayTemplate('tag_cloud', 'tags');
+            return true;
+        } 
+        
+        return false;
+    }
+            
+            
+    /**
+     * Sidebar Widget Tag Cloud
+     */
+    public function sidebar_widget_tag_cloud()
+    {
+        $tag_count = $this->getSetting('tags_num_tags_widget', 'tags');
+        $show_title = $this->getSetting('tags_widget_title', 'tags');
+        
+        // build the tag cloud:
+        $cloud = $this->buildTagCloud($tag_count);
+        
+        if ($show_title) {
+            echo "<h2 class='sidebar_widget_head widget_tag_cloud_title'>" . $this->hotaru->lang["tags_tag_cloud_widget_title"] . "</h2>";
+        }
+        
+        echo "<div class='widget_tag_cloud'>";
+        foreach ($cloud as $tag) {
+            echo "<a href='" . $this->hotaru->url(array('tag' => $tag['link_word'])) . "' ";
+            echo "class='widget_tag_group" . $tag['class'] . "'>" . $tag["show_word"] . "</a>\n";
+        }
+        echo "<a href='" . $this->hotaru->url(array('page' => 'tag-cloud')) . "' ";
+        echo "class='widget_more_tags'>" . $this->hotaru->lang["tags_tag_cloud_widget_more"] . "</a>\n";
+        echo "</div>";
+    }
+    
+    
+    /**
+     * Build Tag Cloud
+     *
+     * @param int $count number of tags to show
+     * @return array
+     */
+    public function buildTagCloud($count)
+    {
+        // get tags from the database:
+        $sql = "SELECT tags_word FROM " . TABLE_TAGS;
+        $tags = $this->db->get_results($this->db->prepare($sql));
+        
+        // Put the tags in an array:
+        $tags_array = array();
+        if ($tags) {
+            foreach ($tags as $tag) {
+                array_push($tags_array, $tag->tags_word);
+            }
+        }
+        
+        // Find the most popular X tags from withing $tags_array:
+        $sorted_tags = array_count_values($tags_array);
+        arsort($sorted_tags);
+        $popular_tags = array_chunk($sorted_tags, $count, TRUE);
+        
+        // convert first chunk from associative to ordinary array:
+        $popular_tags = array_keys($popular_tags[0]); 
+        
+        // Divide into 10 groups and assign a class number (0 ~ 9) to each group:
+        $grouped_tags = array_chunk($popular_tags, ($count/10), TRUE);
+        foreach ($grouped_tags as $groupid => $group) {
+            foreach ($group as $rank => $tag) {
+                $tag = trim(urldecode($tag));
+                $classed_tags[$rank]['link_word'] = $tag;
+                $classed_tags[$rank]['show_word'] = $tag = stripslashes(str_replace('_', ' ', $tag));
+                $classed_tags[$rank]['class'] = $groupid;
+            }
+        }
+        
+        // Shuffle the order of the classed tags:
+        shuffle($classed_tags);
+        
+        return $classed_tags;
     }
     
     
@@ -431,5 +538,14 @@ class Tags extends PluginFunctions
         $this->db->query($this->db->prepare($sql, $this->hotaru->post->id));
     }
     
+    
+    /**
+     * Show link in the Admin sidebar
+     */
+    public function admin_sidebar_plugin_settings()
+    {
+        echo "<li><a href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=tags'>" . $this->hotaru->lang["tags_tag_cloud"] . "</a></li>";
+    }
+        
 }
 ?>
