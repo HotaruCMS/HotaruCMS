@@ -215,9 +215,12 @@ $lang["admin_theme_plugins_description"] = "Description";
 $lang["admin_theme_plugins_close"] = "Close";
 $lang["admin_theme_plugins_no_plugins"] = "No additional plugins needed.";
 $lang["admin_theme_plugins_guide"] = "Plugin Management Guide";
-$lang["admin_theme_plugins_guide1"] = "The order column is used to determine which plugins are checked for hooks first.";
-$lang["admin_theme_plugins_guide2"] = "Uninstalling a plugin will delete it from the <i>plugins</i>, <i>pluginhooks</i> and <i>pluginsettings</i> tables.";
-$lang["admin_theme_plugins_guide3"] = "Any other database entries created by the plugin will not be removed.";
+$lang["admin_theme_plugins_guide1"] = "To upgrade a plugin, simply turn it off, overwrite the plugin files and turn it back on.";
+$lang["admin_theme_plugins_guide2"] = "The order column is used to determine which plugins are checked for hooks first.";
+$lang["admin_theme_plugins_guide3"] = "Uninstalling a plugin will delete it from the <i>plugins</i>, <i>pluginhooks</i> and <i>pluginsettings</i> tables.";
+$lang["admin_theme_plugins_guide4"] = "Any other database entries created by the plugin will not be removed.";
+$lang["admin_theme_plugins_deactivate_all"] = "Turn OFF all plugins";
+$lang["admin_theme_plugins_activate_all"] = "Turn ON (upgrade) all plugins";
 
 /* settings */
 $lang["admin_theme_settings"] = "Settings";

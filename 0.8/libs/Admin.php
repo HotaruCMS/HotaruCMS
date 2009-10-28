@@ -170,7 +170,7 @@ class Admin
      */
     public function plugins()
     {
-        $action = $this->cage->get->testAlpha('action');
+        $action = $this->cage->get->testAlnumLines('action');
         $pfolder = $this->cage->get->testAlnumLines('plugin');
         $order = $this->cage->get->testAlnumLines('order');
         
@@ -182,6 +182,12 @@ class Admin
                 break;
             case "deactivate":
                 $this_plugin->activateDeactivate(0);
+                break;    
+            case "activate_all":
+                $this_plugin->activateDeactivateAll(1);
+                break;
+            case "deactivate_all":
+                $this_plugin->activateDeactivateAll(0);
                 break;    
             case "install":
                 $this_plugin->install();
