@@ -251,15 +251,17 @@ class PluginFunctions extends Plugin
     
     
     /**
-     * Get a list of active plugins (or their descriptions, etc.)
+     * Get a list of active or inactive plugins (or their descriptions, etc.)
      *
      * @param string $select the table column to return
+     * @param int $enabled 0 for inactive, 1 for active
      * @return array
      */
-    public function activePlugins($select = 'plugin_folder')
+    public function activePlugins($select = 'plugin_folder', $enabled = 1)
     {
-        $sql = "SELECT " . $select . " FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d";
-        $active_plugins = $this->db->get_results($this->db->prepare($sql, $select, 1));
+        $sql = "SELECT $select FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d";
+        $active_plugins = $this->db->get_results($this->db->prepare($sql, $enabled));
+        
         if ($active_plugins) { return $active_plugins; } else {return false; }
     }
 
@@ -571,7 +573,6 @@ class PluginFunctions extends Plugin
     /**
      * Enables or disables a plugin, installing if necessary
      *
-     * @param string $folder plugin folder name
      * @param int $enabled 
      * Note: This function does not uninstall/delete a plugin.
      */
@@ -592,47 +593,80 @@ class PluginFunctions extends Plugin
         if (!$plugin_row) 
         {
             // If the user is activating the plugin, go and install it...
-            if ($enabled == 1) {    
-                $this->install();
-            }
+            if ($enabled == 1) { $this->install(); }
         } 
         else 
         {
-            // The plugin is already installed. Activate or deactivate according to $enabled (the user's action).
-            if ($plugin_row->plugin_enabled != $enabled) {        // only update if we're changing the enabled value.
-                $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_enabled = %d, plugin_updateby = %d WHERE plugin_folder = %s";
-                $this->db->query($this->db->prepare($sql, $enabled, $this->current_user->id, $this->folder));
-                
-                if ($enabled == 1) { // Activating now...
-                
-                    // Get plugin version from the database...
-                    $db_version = $this->getVersion();
-                    
-                    // Get plugin version from the file....
-                    $plugin_metadata = $this->readPluginMeta($this->folder);
-                    $file_version = $plugin_metadata['version'];
-                    
-                    // If file version is newer the the current plugin version, then upgrade...
-                    if (version_compare($file_version, $db_version, '>')) {
-                        $this->upgrade();
-                    } else {
-                        // else simply show an activated message...
-                        $this->hotaru->messages[$this->lang["admin_plugins_activated"]] = 'green'; 
-                    }
-                    
-                    // Force inclusion of a language file (if exists) because the 
-                    // plugin isn't ready to include it itself yet.
-                    $this->includeLanguage($this->folder);
-                }
-                
-                if ($enabled == 0) { 
-                    $this->hotaru->messages[$this->lang["admin_plugins_deactivated"]] = 'green'; 
-                }
-            }
+            $this->activateDeactivateDo($plugin_row, $enabled);
         }
     }
     
 
+    /**
+     * Enables or disables all plugins, installing if necessary
+     *
+     * @param int $enabled 
+     * Note: This function does not uninstall/delete a plugin.
+     */
+    public function activateDeactivateAll($enabled = 0)
+    {    // 0 = deactivate, 1 = activate
+        
+        // if you want to activate, find all the inactive plugins and vice-versa:
+        if ($enabled == 0) { $active_plugins = $this->activePlugins('*', 1); }
+        if ($enabled == 1) { $active_plugins = $this->activePlugins('*', 0); }
+
+        if (!$active_plugins) { return false; }
+        
+        foreach ($active_plugins as $active) {
+            $this->folder = $active->plugin_folder;
+            $this->activateDeactivateDo($active, $enabled);
+        }
+    }
+    
+    
+    /**
+     * Enables or disables all plugins, installing if necessary
+     *
+     * @param int $enabled 
+     * Note: This function does not uninstall/delete a plugin.
+     */
+    public function activateDeactivateDo($plugin, $enabled = 0)
+    {    // 0 = deactivate, 1 = activate
+        // The plugin is already installed. Activate or deactivate according to $enabled (the user's action).
+        if ($plugin->plugin_enabled == $enabled) { return false; }  // only update if we're changing the enabled value.
+        
+        $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_enabled = %d, plugin_updateby = %d WHERE plugin_folder = %s";
+        $this->db->query($this->db->prepare($sql, $enabled, $this->current_user->id, $this->folder));
+        
+        if ($enabled == 1) { // Activating now...
+        
+            // Get plugin version from the database...
+            $db_version = $this->getVersion();
+            
+            // Get plugin version from the file....
+            $plugin_metadata = $this->readPluginMeta($this->folder);
+            $file_version = $plugin_metadata['version'];
+            
+            // If file version is newer the the current plugin version, then upgrade...
+            if (version_compare($file_version, $db_version, '>')) {
+                $this->upgrade();
+            } else {
+                // else simply show an activated message...
+                $this->hotaru->messages[$this->lang["admin_plugins_activated"]] = 'green'; 
+            }
+            
+            // Force inclusion of a language file (if exists) because the 
+            // plugin isn't ready to include it itself yet.
+            $this->includeLanguage($this->folder);
+        }
+        
+        if ($enabled == 0) { 
+            $this->hotaru->messages[$this->lang["admin_plugins_deactivated"]] = 'green'; 
+        }
+    }
+    
+    
+    
     /**
      * Get plugin version number from the database
      *

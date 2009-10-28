@@ -25,6 +25,8 @@
  */
 class Hotaru
 {
+    public $version         = 0.8;      // Hotaru CMS version
+
     public $db;                         // database object
     public $cage;                       // Inspekt object
     public $plugins;                    // Inspekt object
