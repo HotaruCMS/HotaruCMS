@@ -1,0 +1,273 @@
+/* **************************************
+ *	ADMIN DEFAULT THEME CSS         *
+ ************************************** */
+
+html, body { 
+	min-height: 100%; height: 100%;
+	font-size: 0.9em;
+}
+
+.clear {
+	clear: both;
+}
+
+h1, h2, h3 { padding: 0.5em 0 0.5em 0; }
+h1	{ font-size: 1.6em; }
+h2	{ font-size: 1.4em; }
+h3	{ font-weight: bold; }
+p { padding: 0.5em 0 0.5em 0; }
+
+a { 
+	text-decoration: none; 
+	color: #0000ff;	
+}
+
+a:hover	{ 
+	text-decoration: underline; 
+}
+
+td {	
+	padding: 0.5em;
+}
+
+small {
+	font-size: 0.8em;
+}
+
+.yui-t7 {
+	min-height: 100%; height: 100%;
+}
+
+#hd {
+	margin: 0.4em 0 0.4em 0;
+	padding: 0.2em;
+}
+
+#navigation {
+	padding: 0.4em 0 0 0;
+}
+
+#navigation ul {
+	list-style: none;
+}
+
+#navigation li {
+	display: inline;
+	padding-right: 1em;
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+#navigation li a {
+	color: #666666;
+}
+
+li a#navigation_active { text-decoration: underline; }
+
+#bd {
+
+}
+
+#announcement {
+	background-color: #ffff00;
+	border-bottom: 1px solid #666;
+	padding: 0.4em;
+	text-align: center;
+	font-weight: bold;
+}
+
+.yui-gf {
+	/* container for both the wide and narrow colums. */
+}
+
+.yui-u, .first {
+	min-height: 100%; height: 100%;
+	margin-bottom: 1.0em;
+	border: 1px solid #666;
+}
+
+#main, #sidebar {
+	padding: 1.2em;
+}
+
+.main_inner {
+	padding: 1.0em;	
+}
+
+#sidebar ul li {
+	padding-left: 1.0em;
+}
+
+#ft {
+	height: auto;
+	padding: 1.0em 0 1.0em 0;
+	text-align: center;
+	font-size: 1.0em;
+}
+
+.gray_box {
+	background-color: #f0f0f0;
+}
+
+.info_box {
+	font-size: 1.1em;
+	line-height: 1.5em;
+	padding: 0.8em;
+}
+
+.info_header {
+	font-size: 1.0em;
+	font-weight: bold;
+	text-transform: uppercase;
+	text-decoration: underline;
+}
+
+form {
+	padding: 0.8em;
+}
+
+.message {
+	margin: 1.0em auto 0.0em auto;
+	width: 90%;
+	padding: 0.8em;
+	text-align: center;
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+.green {
+	background-color: #99FF66;
+}
+
+.red {
+	background-color: #FF6A55;
+	color: #ffffff;
+}
+
+.bold_red {
+	color: red;
+	font-weight: bold;
+}
+
+/* *************************************
+*  Plugin Management & Similar tables *
+************************************** */
+
+#table_list {
+	margin-top: 1.0em;
+}
+
+#table_list table {
+	margin: auto;
+	width: 96%;
+}
+
+
+tr.table_a td, tr.table_b td {
+	font-size: 1.2em;
+	font-weight: bold;
+	padding: 0.4em 0.5em 0.4em 0.5em; 
+	text-align: left;
+
+}
+
+tr.table_a td {	background-color: #D4FFBF; }
+tr.table_b td {	background-color: #CBE2FF; }
+
+tr.table_headers td {
+	font-weight: bold;
+	padding: 0.4em 0.5em 0.4em 0.5em; 
+	background-color: #e0e0e0;
+	text-align: center;
+	border-right: 1px solid #d0d0d0;
+}
+
+tr.table_row_0 td {
+	background-color: #f0f0f0;
+	padding: 0.4em 1.0em 0.4em 1.0em; 
+	text-align: center;
+	border-right: 1px solid #e0e0e0;
+}
+
+tr.table_row_1 td {
+	background-color: #f6f6f6;
+	padding: 0.4em 1.0em 0.4em 1.0em; 
+	text-align: center;
+	border-right: 1px solid #e0e0e0;
+}
+
+.table_text {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+td.table_description {
+	background-color: #fefefe;
+	border-style:solid;
+	border-width: 0.2em 0 0.2em 0.2em;
+	border-color: #e0e0e0;
+}
+
+td.table_description_close {
+	background-color: #fefefe;
+	border-style:solid;
+	border-width: 0.2em 0.2em 0.2em 0;
+	border-color: #e0e0e0;
+	text-align: center;
+}
+
+
+/* *************************************
+*  Site Settings  *
+************************************** */
+
+#settings_form {
+	padding: 0em;
+}
+
+table#settings {
+	width: 96%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#settings td {
+	padding: 1.0em;
+	border: 0.1em solid #ddd;
+	background-color: #f6f6f6;
+}
+
+#settings_submit {
+	float: right;
+	font-size: 1.2em;
+	margin: 0.4em;
+	padding: 0 0.4em 0 0.4em;
+}
+
+/* *************************************
+*  Pagination  *
+************************************** */
+
+#pagination {
+    margin-top: 2.0em;
+    text-align: right;
+    font-size: 0.9em;
+}
+
+#pagination a {
+    display: inline;
+    padding: 0.3em 0.7em 0.3em 0.7em;
+    border:solid 1px #F0F0F0;
+}
+
+#pagination .pagi_current {
+    background-color: #BBB;
+    font-weight: bold;
+    padding: 0.3em 0.7em 0.3em 0.7em;
+    border:solid 1px #444444;
+}
+
+#pagination a:hover {
+    border:solid 1px #444444;
+    text-decoration: none;
+}
