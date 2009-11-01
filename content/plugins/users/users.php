@@ -2,7 +2,7 @@
 /**
  * name: Users
  * description: Manages users within Hotaru.
- * version: 0.7
+ * version: 0.8
  * folder: users
  * class: Users
  * hooks: hotaru_header, header_include, admin_header_include_raw, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, userbase_default_permissions
@@ -287,7 +287,7 @@ class Users extends PluginFunctions
                                 
                     if ($this->cage->post->getInt('remember') == 1){ $remember = 1; } else { $remember = 0; }
                     $this->current_user->name = $username_check;
-                    $this->current_user->getUserBasic(0, $this->current_user->userName);
+                    $this->current_user->getUserBasic(0, $this->current_user->name);
                     
                     $users_settings = $this->getSerializedSettings();
                     $this->current_user->vars['useEmailConf'] = $users_settings['users_emailconf_enabled'];

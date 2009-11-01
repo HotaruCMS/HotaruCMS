@@ -48,6 +48,9 @@ class CommentsSettings extends Comments
         $this->hotaru->comment->allowableTags = $comments_settings['comment_allowable_tags'];
         $this->hotaru->comment->levels = $comments_settings['comment_levels'];
         $this->hotaru->comment->setPending = $comments_settings['comment_set_pending'];
+        $this->hotaru->comment->itemsPerPage = $comments_settings['comment_items_per_page'];
+        $this->hotaru->comment->order = $comments_settings['comment_order'];
+        $this->hotaru->comment->pagination = $comments_settings['comment_pagination'];
         
         echo "<h1>" . $this->lang["comments_settings_header"] . "</h1>\n";
           
@@ -59,12 +62,21 @@ class CommentsSettings extends Comments
         if (!$this->hotaru->comment->email) { $this->hotaru->comment->email = ''; }
         if (!$this->hotaru->comment->allowableTags) { $this->hotaru->comment->allowableTags = ''; }
         if (!$this->hotaru->comment->setPending) { $this->hotaru->comment->setPending = ''; }
+        if (!$this->hotaru->comment->itemsPerPage) { $this->hotaru->comment->itemsPerPage = 20; }
+        if (!$this->hotaru->comment->order) { $this->hotaru->comment->order = 'asc'; }
+        if (!$this->hotaru->comment->pagination) { $this->hotaru->comment->pagination = ''; }
     
         // Determine if checkboxes are checked or not
         if ($this->hotaru->comment->allforms == 'checked') { $check_form = 'checked'; } else { $check_form = ''; }
         if ($this->hotaru->comment->avatars == 'checked') { $check_avatars = 'checked'; } else { $check_avatars = ''; }
         if ($this->hotaru->comment->voting == 'checked') { $check_votes = 'checked'; } else { $check_votes = ''; }
         if ($this->hotaru->comment->setPending == 'checked') { $check_pending = 'checked'; } else { $check_pending = ''; }
+        if ($this->hotaru->comment->pagination == 'checked') { $check_pagination = 'checked'; } else { $check_pagination = ''; }
+        if ($this->hotaru->comment->order == 'asc') { 
+            $ascending = 'checked'; $descending = ''; 
+        } else { 
+            $ascending = ''; $descending = 'checked'; 
+        }
         
          
         $this->pluginHook('comments_settings_get_values');
@@ -78,11 +90,18 @@ class CommentsSettings extends Comments
         echo "<p><input type='checkbox' name='comment_voting' value='comment_voting' " . $check_votes . " >&nbsp;&nbsp;" . $this->lang["comments_settings_votes"] . "</p>\n"; 
         echo "<p><input type='checkbox' name='comment_setpending' value='comment_setpending' " . $check_pending . " >&nbsp;&nbsp;" . $this->lang["comments_settings_setpending"] . "</p>\n"; 
     
-        echo "<br />" . $this->lang["comments_settings_levels"] . " <input type='text' size=5 name='levels' value='" . $this->hotaru->comment->levels . "' /><br />";
-        echo "<br />" . $this->lang["comments_settings_email"] . " <input type='text' size=30 name='email' value='" . $this->hotaru->comment->email . "' /> ";
-        echo $this->lang["comments_settings_email_desc"] . "<br />";
-        echo "<br />" . $this->lang["comments_settings_allowable_tags"] . " <input type='text' size=40 name='allowabletags' value='" . $this->hotaru->comment->allowableTags . "' /><br />";
-        echo $this->lang["comments_settings_allowable_tags_example"] . "\n";
+        echo "<p>" . " <input type='text' size=5 name='levels' value='" . $this->hotaru->comment->levels . "' /> " . $this->lang["comments_settings_levels"] . "</p>";
+        echo "<p><input type='checkbox' name='comment_pagination' value='comment_pagination' " . $check_pagination . " >&nbsp;&nbsp;" . $this->lang["comments_settings_pagination"] . "</p>\n"; 
+        echo "<p>" . " <input type='text' size=5 name='itemsperpage' value='" . $this->hotaru->comment->itemsPerPage . "' /> " . $this->lang["comments_settings_per_page"] . "</p>";
+        echo "<p>" . $this->lang["comments_settings_per_page_note"] . "</p>";
+        
+        echo "<p><input type='radio' name='comment_order' value='asc' " . $ascending . " >&nbsp;" . $this->lang["comments_settings_ascending"] . "&nbsp;&nbsp;\n"; 
+        echo "<input type='radio' name='comment_order' value='desc' " . $descending . " >&nbsp;" . $this->lang["comments_settings_descending"] . "</p>\n"; 
+        
+        echo "<p>" . $this->lang["comments_settings_email"] . " <input type='text' size=30 name='email' value='" . $this->hotaru->comment->email . "' /> ";
+        echo $this->lang["comments_settings_email_desc"] . "</p>";
+        echo "<p>" . $this->lang["comments_settings_allowable_tags"] . " <input type='text' size=40 name='allowabletags' value='" . $this->hotaru->comment->allowableTags . "' /><br />";
+        echo $this->lang["comments_settings_allowable_tags_example"] . "</p>\n";
         
         $this->pluginHook('comments_settings_form');
                 
@@ -152,6 +171,29 @@ class CommentsSettings extends Comments
             $this->hotaru->comment->setPending = '';
         }
         
+        // Items per page
+        if ($this->cage->post->keyExists('itemsperpage')) { 
+            $items_per_page = $this->cage->post->testInt('itemsperpage'); 
+            if (!$items_per_page) { $items_per_page = $this->hotaru->comment->itemsPerPage; }
+        } else { 
+            $items_per_page = $this->hotaru->comment->itemsPerPage; 
+        }
+        
+        // Pagination
+        if ($this->cage->post->keyExists('comment_pagination')) { 
+            $this->hotaru->comment->pagination = 'checked';
+        } else {
+            $this->hotaru->comment->pagination = '';
+        }
+        
+        
+        // Pagination
+        if ($this->cage->post->keyExists('comment_order')) { 
+            $this->hotaru->comment->order = $this->cage->post->testAlpha('comment_order');
+        } else {
+            $this->hotaru->comment->order = 'asc'; // default
+        }
+        
         $this->pluginHook('comments_save_settings');
         
         $comments_settings['comment_all_forms'] = $this->hotaru->comment->allforms;
@@ -160,7 +202,10 @@ class CommentsSettings extends Comments
         $comments_settings['comment_set_pending'] = $this->hotaru->comment->setPending;
         $comments_settings['comment_levels'] = $levels;
         $comments_settings['comment_email'] = $email;
+        $comments_settings['comment_pagination'] = $this->hotaru->comment->pagination;
+        $comments_settings['comment_order'] = $this->hotaru->comment->order;
         $comments_settings['comment_allowable_tags'] = $allowable_tags;
+        $comments_settings['comment_items_per_page'] = $items_per_page;
         $this->updateSetting('comments_settings', serialize($comments_settings));
         
         $this->hotaru->message = $this->lang["comments_settings_saved"];

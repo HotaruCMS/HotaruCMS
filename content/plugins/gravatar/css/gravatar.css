@@ -3,7 +3,5 @@
  ************************************** */
   
  /* List and Post pages */
- .show_post_gravatar {
- 	padding-right: 0.6em;
- 	float: left;
- }
+ .show_post_gravatar { padding-right: 0.6em; float: left; }
+ .show_comments_gravatar { padding-right: 0.6em; float: left; }

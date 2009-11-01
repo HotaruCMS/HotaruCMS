@@ -2,7 +2,7 @@
 /**
  * name: Category Manager
  * description: Manage categories.
- * version: 0.5
+ * version: 0.6
  * folder: category_manager
  * class: CategoryManager
  * requires: submit 0.7

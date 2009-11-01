@@ -1,0 +1,7 @@
+/* **************************************
+ *        SIDEBAR COMMENTS PLUGIN CSS       *
+ ************************************** */
+
+.sidebar_comments_item { margin: 0.3em 0 0.3em 0; }
+.sidebar_comments_avatar { display: inline; padding: 0.2em; }
+.sidebar_comments_content { display: inline; }
