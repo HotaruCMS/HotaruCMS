@@ -126,6 +126,7 @@ function create_table($table_name)
           `user_email_valid` tinyint(3) NOT NULL DEFAULT 0,
           `user_email_conf` varchar(128) NULL,
           `user_permissions` text NOT NULL DEFAULT '',
+          `user_ip` varchar(32) NOT NULL DEFAULT '0',
           `user_lastlogin` timestamp NULL,
           `user_updateby` int(20) NOT NULL DEFAULT 0,
           UNIQUE KEY `key` (`user_username`),

@@ -120,14 +120,46 @@ class Gravatar extends PluginFunctions
      */
     public function buildGravatarImage($email)
     {
-        $default = BASEURL . "content/plugins/gravatar/images/default_32.png";
+        if (!$this->hotaru->vars['gravatar_size']) { 
+            $this->hotaru->vars['gravatar_size'] = $this->getSetting('gravatar_size'); 
+        }
+        
+        if (!$this->hotaru->vars['gravatar_rating']) { 
+            $this->hotaru->vars['gravatar_rating'] = $this->getSetting('gravatar_rating'); 
+        }
+        
+        $resized = '';  // we only use this if there isn't a default image that matches the size requested.
+        
+        switch ($this->hotaru->vars['gravatar_size']) {
+            case 16:
+                $default = BASEURL . "content/plugins/gravatar/images/default_16.png";
+                break;
+            case 32:
+                $default = BASEURL . "content/plugins/gravatar/images/default_32.png";
+                break;
+            case 48:
+                $default = BASEURL . "content/plugins/gravatar/images/default_48.png";
+                break;
+            case 64:
+                $default = BASEURL . "content/plugins/gravatar/images/default_64.png";
+                break;
+            case 80:
+                $default = BASEURL . "content/plugins/gravatar/images/default_80.png";
+                break;
+            case 128:
+                $default = BASEURL . "content/plugins/gravatar/images/default_128.png";
+                break;
+            default:
+                $default = BASEURL . "content/plugins/gravatar/images/default_80.png";
+                $resized = "style='height: " . $this->hotaru->vars['gravatar_size'] . "px; width: " . $this->hotaru->vars['gravatar_size'] . "px'";
+        }
         
         $grav_url = "http://www.gravatar.com/avatar.php?gravatar_id=".md5( strtolower($email) ).
             "&default=".urlencode($default).
             "&size=" . $this->hotaru->vars['gravatar_size'] . 
             "&r=" . $this->hotaru->vars['gravatar_rating'];
             
-        $img_url = "<img class='gravatar' src='" . $grav_url . "'>";
+        $img_url = "<img class='gravatar' src='" . $grav_url . "' " . $resized  .">";
         
         return $img_url;
     }

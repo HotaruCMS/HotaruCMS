@@ -137,13 +137,9 @@ class SidebarComments extends PluginFunctions
             // get author details
             $author->getUserBasic($item->comment_user_id);
             
-            //reset defaults:
-            $this->hotaru->post->vars['category'] = 1;
-            $this->hotaru->post->vars['catSafeName'] = '';
-            
-            if ($this->hotaru->post->vars['useCategories'] && ($this->hotaru->post->category != 1)) {
-                $this->hotaru->post->vars['category'] = $this->hotaru->post->category;
-                $this->hotaru->post->vars['catSafeName'] =  $cat->getCatSafeName($this->hotaru->post->category);
+            if ($this->hotaru->post->vars['useCategories'] && ($this->hotaru->post->vars['category'] != 1)) {
+                $this->hotaru->post->vars['category'] = $this->hotaru->post->vars['category'];
+                $this->hotaru->post->vars['catSafeName'] =  $cat->getCatSafeName($this->hotaru->post->vars['category']);
             }
 
             // OUTPUT COMMENT

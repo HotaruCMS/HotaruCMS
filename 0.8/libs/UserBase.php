@@ -33,6 +33,7 @@ class UserBase {
     protected $emailValid   = 0;
     protected $loggedIn     = false;
     protected $perms        = array();    // permissions
+    protected $ip           = 0;
     
     public $vars            = array();  // multi-purpose, used by plugins
     public $db;                         // database object
@@ -147,9 +148,12 @@ class UserBase {
         unset($permissions['options']);  // don't need this for individual users
         $permissions = serialize($permissions);
 
+        // get user ip
+        $userip = $this->cage->server->testIp('REMOTE_ADDR');
+        
         // add user to the database
-        $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email, user_permissions) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s)";
-        $this->db->query($this->db->prepare($sql, $this->name, $this->role, $this->password, $this->email, $permissions));
+        $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email, user_permissions, user_ip) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s, %s)";
+        $this->db->query($this->db->prepare($sql, $this->name, $this->role, $this->password, $this->email, $permissions, $userip));
     }
 
 
@@ -165,9 +169,12 @@ class UserBase {
             $updatedby = $this->id;
         }
         
+        // get latest user ip
+        $userip = $this->cage->server->testIp('REMOTE_ADDR');
+        
         if ($this->id != 0) {
-            $sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s, user_permissions = %s, user_updateby = %d WHERE user_id = %d";
-            $this->db->query($this->db->prepare($sql, $this->name, $this->role, $this->password, $this->email, serialize($this->getAllPermissions()), $userid, $this->id));
+            $sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s, user_permissions = %s, user_ip = %s, user_updateby = %d WHERE user_id = %d";
+            $this->db->query($this->db->prepare($sql, $this->name, $this->role, $this->password, $this->email, serialize($this->getAllPermissions()), $userip, $userid, $this->id));
             return true;
         } else {
             return false;
@@ -227,6 +234,7 @@ class UserBase {
             $this->role = $user_info->user_role;
             $this->email = $user_info->user_email;
             $this->emailValid = $user_info->user_email_valid;
+            $this->ip = $user_info->user_ip;
             
             // If a new plugin is installed, we need a way of adding any new default permissions
             // that plugin provides. So, we get all defaults, then overwrite with existing perms.

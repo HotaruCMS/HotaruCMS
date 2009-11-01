@@ -47,10 +47,10 @@ class Comment
     protected $depth        = 0;         // this nesting level
     protected $email        = '';
     protected $allowableTags = '';
-    protected $setPending   = '';
     protected $itemsPerPage = 20;
     protected $pagination   = '';
-    protected $form         = '';
+    protected $thisForm     = '';
+    protected $allForms     = 'checked';
     protected $avatars      = '';
     protected $voting       = '';
     protected $order        = 'asc';   // oldest comments first
@@ -223,7 +223,22 @@ class Comment
 
         if ($can_comment == 'mod') { $this->status = 'pending'; } // forces all to 'pending' if user's comments are moderated
         
-        if ($this->setPending == 'checked') { $status = 'pending'; } else { $status = $this->status; } // forces all to 'pending' if setPending enabled
+        // Get settings from database...
+        $comments_settings = $this->plugins->getSerializedSettings();
+        $set_pending = $comments_settings['comment_set_pending'];
+        
+        if ($set_pending == 'some_pending') {
+            $comments_approved = $this->hotaru->comment->commentsApproved($this->current_user->id);
+            $x_comments_needed = $comments_settings['comment_x_comments'];
+        }
+                    
+        if ($set_pending == 'all_pending') {
+            $status = 'pending'; 
+        } elseif (($set_pending == 'some_pending') && ($comments_approved <= $x_comments_needed)) {
+            $status = 'pending'; 
+        } else { 
+            $status = $this->status;
+        } 
                 
         $sql = "INSERT INTO " . TABLE_COMMENTS . " SET comment_post_id = %d, comment_user_id = %d, comment_parent = %d, comment_date = CURRENT_TIMESTAMP, comment_status = %s, comment_content = %s, comment_subscribe = %d, comment_updateby = %d";
                 
@@ -523,5 +538,19 @@ class Comment
         echo $feed->serve();
     }
     
+    
+    /**
+     * Count how many approved comments a user has had
+     *
+     * @param int $userid 
+     * @return int 
+     */
+    public function commentsApproved($userid)
+    {
+        $sql = "SELECT COUNT(*) FROM " . TABLE_COMMENTS . " WHERE comment_status = %s AND comment_user_id = %d";
+        $count = $this->db->get_var($this->db->prepare($sql, 'approved', $userid));
+        
+        return $count;
+    }
 }
 ?>
