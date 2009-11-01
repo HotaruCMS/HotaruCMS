@@ -26,7 +26,7 @@
 class UserBase {
  
     protected $id           = 0;
-    protected $userName     = '';
+    protected $name         = '';
     protected $role         = 'member';
     protected $password     = 'password';
     protected $email        = '';
@@ -786,7 +786,7 @@ class UserBase {
             $password_check_new2 = "";
             // do nothing
         } elseif ($error == 0) {
-            $result = $this->userExists(0, $this->userName, $this->email);
+            $result = $this->userExists(0, $this->name, $this->email);
             if ($result != 4) { // 4 is returned when the user does not exist in the database
                 //success
                 $this->password = $this->generateHash($password_check_new);

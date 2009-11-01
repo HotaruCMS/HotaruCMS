@@ -143,7 +143,7 @@ class getMixedString2 extends AccessorAbstract {
 class getHtmLawed extends AccessorAbstract {
 
    /**
-    * a function to sanitize a string without htmlentities
+    * a function to filter HTML
     *
     * @return string
     */

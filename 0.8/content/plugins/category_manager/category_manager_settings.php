@@ -279,11 +279,11 @@ class CategoryManagerSettings extends CategoryManager
         $categories = $this->db->get_results($this->db->prepare($sql));
         $count = 0;
         foreach ($categories as $category) {
-            $all_cats[$count]['category_name'] = urldecode($category->category_name);
+            $all_cats[$count]['category_name'] = stripslashes(urldecode($category->category_name));
             $all_cats[$count]['category_id'] = $category->category_id;
             $all_cats[$count]['category_parent'] = $category->category_parent;
-            $all_cats[$count]['category_description'] = urldecode($category->category_desc);
-            $all_cats[$count]['category_keywords'] = urldecode($category->category_keywords);
+            $all_cats[$count]['category_description'] = stripslashes(urldecode($category->category_desc));
+            $all_cats[$count]['category_keywords'] = stripslashes(urldecode($category->category_keywords));
             $level = 1; 
             if ($category->category_parent == 1) { 
                 $all_cats[$count]['category_level'] = $level;

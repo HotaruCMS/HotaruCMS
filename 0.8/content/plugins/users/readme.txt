@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.0.8 2009/11/01 - Nick - Bug fix for naming convention change (userName -> name)
 v.0.7 2009/10/25 - Nick - Options for moderating and notifying admin of new users
 v.0.6 2009/10/19 - Nick - Bug fixes and tabs for Account page
 v.0.5 2009/10/03 - Nick - Updates for compatibility with Hotaru 0.7

@@ -2,11 +2,11 @@
 /**
  * name: Comments
  * description: Enables logged-in users to comment on posts
- * version: 0.9
+ * version: 1.0
  * folder: comments
  * class: Comments
  * requires: submit 0.7, users 0.5
- * hooks: header_include, install_plugin, upgrade_plugin, hotaru_header, theme_index_replace, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_edit_post_admin_fields, submit_form_2_process_submission, userbase_default_permissions, post_delete_post
+ * hooks: header_include, install_plugin, upgrade_plugin, hotaru_header, theme_index_replace, theme_index_main, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_edit_post_admin_fields, submit_form_2_process_submission, userbase_default_permissions, post_delete_post
  *
  * PHP version 5
  *
@@ -119,6 +119,9 @@ class Comments extends pluginFunctions
         $comments_settings['comment_email'] = SITE_EMAIL;
         $comments_settings['comment_allowable_tags'] = "<b><i><u><a><blockquote><strike>";
         $comments_settings['comment_set_pending'] = ""; // sets all new comments to pending (needs Comment Manager to view them)
+        $comments_settings['comment_order'] = 'asc';
+        $comments_settings['comment_pagination'] = '';
+        $comments_settings['comment_items_per_page'] = 20;
         
         $this->updateSetting('comments_settings', serialize($comments_settings));
         
@@ -174,6 +177,11 @@ class Comments extends pluginFunctions
      */
     public function theme_index_replace()
     {
+        if ($this->hotaru->isPage('rss_comments')) {
+            $this->hotaru->comment->rssFeed();
+            return true;
+        }
+
         // Is the comment form open on this thread? 
         $this->hotaru->comment->thisform = $this->hotaru->comment->formStatus('select'); // returns 'open' or 'closed'
 
@@ -194,7 +202,7 @@ class Comments extends pluginFunctions
                     if ($this->cage->post->keyExists('comment_post_id')) {
                         $this->hotaru->comment->postId = $this->cage->post->testInt('comment_post_id');
                     }
-                    
+
                     if ($this->cage->post->keyExists('comment_user_id')) {
                         $this->hotaru->comment->author = $this->cage->post->testInt('comment_user_id');
                     }
@@ -353,23 +361,58 @@ class Comments extends pluginFunctions
         if ($subscribe_result > 0) { 
             $this->hotaru->vars['subscribe_check'] = 'checked';
         } 
-        
-        $parents = $this->hotaru->comment->readAllParents($this->hotaru->post->id);
-            
+
         if (!$this->hotaru->isPage('submit2')) {
+        
+            $comments_settings = $this->getSerializedSettings();
+            $this->hotaru->comment->pagination = $comments_settings['comment_pagination'];
+            $this->hotaru->comment->order = $comments_settings['comment_order'];
+            $this->hotaru->comment->itemsPerPage = $comments_settings['comment_items_per_page'];
+            
+            // GET ALL PARENT COMMENTS
+            $parents = $this->hotaru->comment->readAllParents($this->hotaru->post->id, $this->hotaru->comment->order);
+                    
             echo "<!--  START COMMENTS_WRAPPER -->\n";
             echo "<div id='comments_wrapper'>\n";
             echo "<h2>" . $this->hotaru->comment->countComments(false) . "</h2>\n";
-            
-            if ($parents) { 
-                foreach ($parents as $parent) {
-                    $this->displayComment($parent);
-                    $this->commentTree($parent->comment_id, 0);
-                    $this->hotaru->comment->depth = 0;
+                
+            // IF PAGINATING COMMENTS:
+            if ($this->hotaru->comment->pagination)
+            {
+                require_once(PLUGINS . 'submit/libs/Post.php');
+                require_once(EXTENSIONS . 'Paginated/Paginated.php');
+                require_once(EXTENSIONS . 'Paginated/DoubleBarLayout.php');
+                
+                $pg = $this->hotaru->cage->get->getInt('pg');
+                $pagedResults = new Paginated($parents, $this->hotaru->comment->itemsPerPage, $pg);
+                
+                // cycle through the parents, and go get their children
+                while ($parent = $pagedResults->fetchPagedRow()) {
+                        $this->displayComment($parent);
+                        $this->commentTree($parent->comment_id, 0);
+                        $this->hotaru->comment->depth = 0;
                 }
             }
+            // IF NO PAGINATION:
+            else
+            {
+                if ($parents) { 
+                    // cycle through the parents, and go get their children
+                    foreach ($parents as $parent) {
+                        $this->displayComment($parent);
+                        $this->commentTree($parent->comment_id, 0);
+                        $this->hotaru->comment->depth = 0;
+                    }
+                }
+            }
+
             echo "</div><!-- close comments_wrapper -->\n";
             echo "<!--  END COMMENTS -->\n";
+        }
+        
+        if ($this->hotaru->comment->pagination) {
+            $pagedResults->setLayout(new DoubleBarLayout());
+            echo $pagedResults->fetchPagedNavigation('', $this->hotaru);
         }
         
         if ($this->current_user->getPermission('can_comment') == 'no') {
@@ -431,23 +474,68 @@ class Comments extends pluginFunctions
      *
      * @param array $item - current comment
      */
-    public function displayComment($item)
+    public function displayComment($item, $all = false)
     {
-        if (!$this->hotaru->isPage('submit2')) {
-            $this->hotaru->comment->readComment($item);
-            if ($this->hotaru->comment->status == 'approved') {
+        if ($this->hotaru->isPage('submit2')) { return false; }
+       
+        $this->hotaru->comment->readComment($item);
+        if ($this->hotaru->comment->status == 'approved') {
+            if ($all) {
+                $this->hotaru->displayTemplate('all_comments', 'comments', $this->hotaru, false);
+            } else {
                 $this->hotaru->displayTemplate('show_comments', 'comments', $this->hotaru, false);
-                
-                // don't show the reply form in these cases:
-                if ($this->current_user->getPermission('can_comment') == 'no') { return false; }
-                if (!$this->current_user->loggedIn) { return false; }
-                if ($this->hotaru->comment->thisform == 'closed') { return false; }
-                if ($this->hotaru->comment->allforms != 'checked') { return false; }
-        
-                // show the reply form:
-                $this->hotaru->displayTemplate('comment_form', 'comments', $this->hotaru, false);
             }
+            
+            // don't show the reply form in these cases:
+            //if ($all) { return false; } // we're looking at the main comments page
+            if ($this->current_user->getPermission('can_comment') == 'no') { return false; }
+            if (!$this->current_user->loggedIn) { return false; }
+            if ($this->hotaru->comment->thisform == 'closed') { return false; }
+            if ($this->hotaru->comment->allforms != 'checked') { return false; }
+    
+            // show the reply form:
+            $this->hotaru->displayTemplate('comment_form', 'comments', $this->hotaru, false);
         }
+    }
+    
+    
+    /**
+     * Show all comments list on a main "Comments" page
+     */
+    public function theme_index_main()
+    {
+        if (!$this->hotaru->isPage('comments')) { return false; }
+
+        $comments = $this->hotaru->comment->getAllComments();
+        if (!$comments) { return false; }
+        
+        /* BREADCRUMBS */
+        echo "<div id='breadcrumbs'>";
+        echo "<a href='" . BASEURL . "'>" .  $this->hotaru->lang['main_theme_home'] . "</a> &raquo; ";
+        $this->hotaru->plugins->pluginHook('breadcrumbs');
+        echo $this->hotaru->lang['comments_all'];
+        echo "<a href='" . $this->hotaru->url(array('page'=>'rss_comments')) . "'> ";
+        echo "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
+        echo "</div>";
+
+        $comments_settings = $this->getSerializedSettings();
+        $this->hotaru->comment->itemsPerPage = $comments_settings['comment_items_per_page'];
+        
+        // for pagination:
+        require_once(PLUGINS . 'submit/libs/Post.php');
+        require_once(EXTENSIONS . 'Paginated/Paginated.php');
+        require_once(EXTENSIONS . 'Paginated/DoubleBarLayout.php');
+        
+        $pg = $this->hotaru->cage->get->getInt('pg');
+        $pagedResults = new Paginated($comments, $this->hotaru->comment->itemsPerPage, $pg);
+        
+        while($comment = $pagedResults->fetchPagedRow()) {    //when $story is false loop terminates    
+            $this->hotaru->post->readPost($comment->comment_post_id);
+            $this->displayComment($comment, true);
+        }
+        
+        $pagedResults->setLayout(new DoubleBarLayout());
+        echo $pagedResults->fetchPagedNavigation('', $this->hotaru);
     }
     
     

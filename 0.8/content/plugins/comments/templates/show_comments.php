@@ -1,6 +1,6 @@
 <?php
 /**
- * Disqus Comments
+ * Show Comments on an individual post
  *
  * PHP version 5
  *
@@ -57,7 +57,7 @@
                 echo $hotaru->lang['comments_written_by'] . " ";
                 echo "<a href='" . $hotaru->url(array('user' => $username)) . "'>" . $username . "</a>, ";
                 echo time_difference(unixtimestamp($hotaru->comment->date), $hotaru->lang) . " ";
-                echo $hotaru->lang['comments_time_ago']; 
+                echo $hotaru->lang['comments_time_ago'] . "."; 
             ?>
             <?php   // REPLY LINK - (if logged in) AND (can comment) AND (form is turned on)...
                 if ($hotaru->current_user->loggedIn 
