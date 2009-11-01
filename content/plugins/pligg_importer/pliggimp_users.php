@@ -113,9 +113,9 @@ class PliggImp5
                         break;
                 }
                 
-                $columns    = "user_username, user_role, user_date, user_password, user_email, user_email_valid, user_email_conf, user_permissions, user_lastlogin, user_updateby";
+                $columns    = "user_username, user_role, user_date, user_password, user_email, user_email_valid, user_email_conf, user_permissions, user_ip, user_lastlogin, user_updateby";
                 
-                $sql        = "INSERT INTO " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%s, %s, %s, %s, %s, %d, %s, %s, %s, %d)";
+                $sql        = "INSERT INTO " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%s, %s, %s, %s, %s, %d, %s, %s, %s, %s, %d)";
                 
                 //if not using SWCMS' email registration module, set to zero:
                 if (!$child->valid_email) { $child->valid_email = 0;}
@@ -136,6 +136,7 @@ class PliggImp5
                     $child->valid_email,
                     $child->email_conf,
                     serialize($perms),
+                    $child->user_ip,
                     $child->user_lastlogin,
                     $this->current_user->id));
                     

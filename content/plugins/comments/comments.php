@@ -6,7 +6,7 @@
  * folder: comments
  * class: Comments
  * requires: submit 0.7, users 0.5
- * hooks: header_include, install_plugin, upgrade_plugin, hotaru_header, theme_index_replace, theme_index_main, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_edit_post_admin_fields, submit_form_2_process_submission, userbase_default_permissions, post_delete_post
+ * hooks: header_include, admin_header_include_raw, install_plugin, upgrade_plugin, hotaru_header, theme_index_replace, theme_index_main, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_edit_post_admin_fields, submit_form_2_process_submission, userbase_default_permissions, post_delete_post
  *
  * PHP version 5
  *
@@ -52,6 +52,19 @@ class Comments extends pluginFunctions
             $sql = "ALTER TABLE " . DB_PREFIX . "posts ADD post_comments ENUM(%s, %s) NOT NULL DEFAULT %s AFTER post_subscribe";
             $this->db->query($this->db->prepare($sql, 'open', 'closed', 'open'));
         }
+        
+        // Get settings from database if they exist...
+        $comments_settings = $this->getSerializedSettings();
+        
+        // Add new settings
+        $comments_settings['comment_order'] = 'asc';
+        $comments_settings['comment_pagination'] = '';
+        $comments_settings['comment_items_per_page'] = 20;
+        $comments_settings['comment_x_comments'] = 1;
+        $comments_settings['comment_email_notify'] = "";
+        $comments_settings['comment_email_notify_mods'] = array();
+        
+        $this->updateSetting('comments_settings', serialize($comments_settings));
     }
 
 
@@ -122,6 +135,9 @@ class Comments extends pluginFunctions
         $comments_settings['comment_order'] = 'asc';
         $comments_settings['comment_pagination'] = '';
         $comments_settings['comment_items_per_page'] = 20;
+        $comments_settings['comment_x_comments'] = 1;
+        $comments_settings['comment_email_notify'] = "";
+        $comments_settings['comment_email_notify_mods'] = array();
         
         $this->updateSetting('comments_settings', serialize($comments_settings));
         
@@ -142,6 +158,25 @@ class Comments extends pluginFunctions
     }
     
     
+    /**
+     * Include jQuery for hiding and showing email options in plugin settings
+     */
+    public function admin_header_include_raw()
+    {
+        $admin = new Admin();
+        
+        if ($admin->isSettingsPage('comments')) {
+            echo "<script type='text/javascript'>\n";
+            echo "$(document).ready(function(){\n";
+                echo "$('#email_notify').click(function () {\n";
+                echo "$('#email_notify_options').slideToggle();\n";
+                echo "});\n";
+            echo "});\n";
+            echo "</script>\n";
+        }
+    }
+    
+
     /**
      * Define table name, include language file and creat global Comments object
      */
@@ -166,7 +201,7 @@ class Comments extends pluginFunctions
         $this->hotaru->comment->allowableTags = $comments_settings['comment_allowable_tags'];
         $this->hotaru->comment->levels = $comments_settings['comment_levels'];
         $this->hotaru->comment->setPending = $comments_settings['comment_set_pending'];
-        $this->hotaru->comment->allforms = $comments_settings['comment_all_forms'];
+        $this->hotaru->comment->allForms = $comments_settings['comment_all_forms'];
     }
     
     
@@ -183,11 +218,11 @@ class Comments extends pluginFunctions
         }
 
         // Is the comment form open on this thread? 
-        $this->hotaru->comment->thisform = $this->hotaru->comment->formStatus('select'); // returns 'open' or 'closed'
+        $this->hotaru->comment->thisForm = $this->hotaru->comment->formStatus('select'); // returns 'open' or 'closed'
 
         if (   ($this->hotaru->isPage('comments')) 
-            && ($this->hotaru->comment->thisform == 'open')
-            && ($this->hotaru->comment->allforms == 'checked')) {
+            && ($this->hotaru->comment->thisForm == 'open')
+            && ($this->hotaru->comment->allForms == 'checked')) {
             
             if ($this->current_user->loggedIn) {
 
@@ -232,8 +267,20 @@ class Comments extends pluginFunctions
                         // Okay, safe to add the comment...
                         if ($safe) {
                             // A user can unsubscribe by submitting an empty comment, so...
-                            if($this->hotaru->comment->content != '') {
+                            if ($this->hotaru->comment->content != '') {
                                 $this->hotaru->comment->addComment();
+                                
+                                // get settings
+                                $comments_settings = $this->getSerializedSettings();
+            
+                                // notify chosen mods of new comment by email if enabled and UserFunctions file exists
+                                if (($comments_settings['comment_email_notify']) && (file_exists(PLUGINS . 'users/libs/UserFunctions.php')))
+                                {
+                                    require_once(PLUGINS . 'users/libs/UserFunctions.php');
+                                    $uf = new UserFunctions($this->hotaru);
+                                    $uf->notifyMods('comment', $this->hotaru->comment->status, $this->hotaru->post->id, $this->hotaru->comment->id);
+                                }
+                    
                                 // email comment subscribers if this comment has 'approved' status:
                                 if ($this->hotaru->comment->status == 'approved') {
                                     $this->hotaru->comment->emailCommentSubscribers($this->hotaru->comment->postId);
@@ -425,8 +472,8 @@ class Comments extends pluginFunctions
             return false;
         }
         
-        if (($this->hotaru->comment->thisform == 'closed') 
-            || ($this->hotaru->comment->allforms != 'checked')) {
+        if (($this->hotaru->comment->thisForm == 'closed') 
+            || ($this->hotaru->comment->allForms != 'checked')) {
             echo "<div class='comment_form_off'>" . $this->lang['comments_form_closed'] . "</div>";
             return false;
         }
@@ -490,8 +537,8 @@ class Comments extends pluginFunctions
             //if ($all) { return false; } // we're looking at the main comments page
             if ($this->current_user->getPermission('can_comment') == 'no') { return false; }
             if (!$this->current_user->loggedIn) { return false; }
-            if ($this->hotaru->comment->thisform == 'closed') { return false; }
-            if ($this->hotaru->comment->allforms != 'checked') { return false; }
+            if ($this->hotaru->comment->thisForm == 'closed') { return false; }
+            if ($this->hotaru->comment->allForms != 'checked') { return false; }
     
             // show the reply form:
             $this->hotaru->displayTemplate('comment_form', 'comments', $this->hotaru, false);
@@ -585,8 +632,8 @@ class Comments extends pluginFunctions
      */
     public function submit_edit_post_admin_fields()
     {
-        $this->hotaru->comment->thisform = $this->hotaru->comment->formStatus('select'); // returns 'open' or 'closed'
-        if ($this->hotaru->comment->thisform == 'open') { $form_open = 'checked'; } else { $form_open = ''; }
+        $this->hotaru->comment->thisForm = $this->hotaru->comment->formStatus('select'); // returns 'open' or 'closed'
+        if ($this->hotaru->comment->thisForm == 'open') { $form_open = 'checked'; } else { $form_open = ''; }
 
         echo "<tr><td colspan='3'>\n";
         echo "<input id='enable_comments' name='enable_comments' type='checkbox' " . $form_open . "> " . $this->lang['submit_form_enable_comments']; 

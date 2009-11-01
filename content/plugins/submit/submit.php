@@ -279,7 +279,7 @@ class Submit extends PluginFunctions
                     // get settings
                     $submit_settings = $this->getSerializedSettings();
 
-                    // notify chosen mods of new user by email if enabled and UserFunctions file exists
+                    // notify chosen mods of new post by email if enabled and UserFunctions file exists
                     if (($submit_settings['post_email_notify']) && (file_exists(PLUGINS . 'users/libs/UserFunctions.php')))
                     {
                         require_once(PLUGINS . 'users/libs/UserFunctions.php');

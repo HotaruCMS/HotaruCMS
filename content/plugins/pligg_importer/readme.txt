@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.0.6 2009/11/01 - Nick - Small change to copy a user's IP address from Pligg to Hotaru
 v.0.5 2009/10/17 - Nick - Renamed CSS 'next' as 'pliggimp_next' to avoid clashes
 v.0.4 2009/10/01 - Nick - Updates for compatibility with Hotaru 0.7
 v.0.3 2009/10/01 - Nick - Updates for compatibility with Hotaru 0.6

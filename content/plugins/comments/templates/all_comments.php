@@ -1,6 +1,6 @@
 <?php
 /**
- * Show Comments on an individual post
+ * All comments
  *
  * PHP version 5
  *
@@ -28,7 +28,7 @@
 ?>
     <a id="c<?php echo $hotaru->comment->id; ?>"></a>
     
-    <div class="comment" style="margin-left: <?php echo $hotaru->comment->depth * 2.0; ?>em;">
+    <div class="comment">
 
         <?php   // Show avatars if enabled (requires an avatars plugin)
                 if ($hotaru->comment->avatars == 'checked') {
@@ -56,22 +56,9 @@
                 $username = $hotaru->current_user->getUserNameFromId($hotaru->comment->author);
                 echo $hotaru->lang['comments_written_by'] . " ";
                 echo "<a href='" . $hotaru->url(array('user' => $username)) . "'>" . $username . "</a>, ";
-                echo time_difference(unixtimestamp($hotaru->comment->date), $hotaru->lang) . " ";
-                echo $hotaru->lang['comments_time_ago'] . "."; 
+                echo time_difference(unixtimestamp($hotaru->comment->date), $hotaru->lang) . " " . $hotaru->lang['comments_time_ago'];
+                echo $hotaru->lang['comments_posted_on'] . "<a href='" . $hotaru->url(array('page'=>$hotaru->post->id)) . "'>" . $hotaru->post->title . "</a>";
             ?>
-            <?php   // REPLY LINK - (if logged in) AND (can comment) AND (form is turned on)...
-                if ($hotaru->current_user->loggedIn 
-                    && ($hotaru->current_user->getPermission('can_comment') != 'no')
-                    && ($hotaru->comment->thisForm == 'open')) { ?>
-                        
-                <?php if ($hotaru->comment->depth < $hotaru->comment->levels-1) { // No nesting after X levels (minus 1 because nestings tarts at 0) ?>
-                    <a href='#' class='comment_reply_link' onclick="reply_comment(
-                        '<?php echo BASEURL; ?>', 
-                        '<?php echo $hotaru->comment->id; ?>', 
-                        '<?php echo $hotaru->lang['comments_form_submit']; ?>'); 
-                        return false;" ><?php echo $hotaru->lang['comments_reply_link']; ?></a>
-                <?php } ?>
-            <?php } ?>
             
             <?php   // EDIT LINK - (if comment owner AND permission to edit own comments) OR (permission to edit ALL comments)...
                 if (($hotaru->current_user->id == $hotaru->comment->author && ($hotaru->current_user->getPermission('can_edit_comments') == 'own'))
