@@ -553,7 +553,7 @@ class Comments extends pluginFunctions
     {
         if (!$this->hotaru->isPage('comments')) { return false; }
 
-        $comments = $this->hotaru->comment->getAllComments();
+        $comments = $this->hotaru->comment->getAllComments(0, 'DESC');
         if (!$comments) { return false; }
         
         /* BREADCRUMBS */

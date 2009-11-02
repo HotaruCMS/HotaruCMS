@@ -57,7 +57,7 @@
                 echo $hotaru->lang['comments_written_by'] . " ";
                 echo "<a href='" . $hotaru->url(array('user' => $username)) . "'>" . $username . "</a>, ";
                 echo time_difference(unixtimestamp($hotaru->comment->date), $hotaru->lang) . " " . $hotaru->lang['comments_time_ago'];
-                echo $hotaru->lang['comments_posted_on'] . "<a href='" . $hotaru->url(array('page'=>$hotaru->post->id)) . "'>" . $hotaru->post->title . "</a>";
+                echo $hotaru->lang['comments_posted_on'] . "<a href='" . $hotaru->url(array('page'=>$hotaru->post->id)) . "#c" . $hotaru->comment->id . "'>" . $hotaru->post->title . "</a>";
             ?>
             
             <?php   // EDIT LINK - (if comment owner AND permission to edit own comments) OR (permission to edit ALL comments)...

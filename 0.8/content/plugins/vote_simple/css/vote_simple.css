@@ -51,3 +51,12 @@
 .sidebar_posts_vote { padding: 0 0.5em 0 0.5em; margin-right: 0.5em; }
 .vote_color_new { background-color: #66CCFF; }
 .vote_color_top { background-color: #FFCC33; }
+
+/* ***********************************
+ * ******* SORT LINKS ********
+ * ********************************* */
+ 
+#sort_box { font-size: 0.9em; margin-bottom: 1.0em;}
+.sort_menu li { display: inline; margin: 0 0.3em 0 0.3em; padding: 0.2em;}
+.sort_menu li.active { background-color: #444; }
+.sort_menu li.active a { color: #fff; }

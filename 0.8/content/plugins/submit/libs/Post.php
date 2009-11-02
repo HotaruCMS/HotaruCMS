@@ -359,8 +359,27 @@ class Post
         if ($status) { $filter['post_status = %s'] = $status; }
         if ($user) { $filter['post_author = %d'] = $this->current_user->getUserIdFromName($this->cage->get->testUsername('user'));  }
         if ($tag) { $filter['post_tags LIKE %s'] = '%' . urlencode(stripslashes($tag)) . '%'; }
-        if ($category && (FRIENDLY_URLS == "true")) { $filter['post_category = %d'] = $cat->getCatId($category); }
-        if ($category && (FRIENDLY_URLS == "false")) { $filter['post_category = %d'] = $category; }
+        if ($category && (FRIENDLY_URLS == "true")) { $cat_id = $cat->getCatId($category); }
+        if ($category && (FRIENDLY_URLS == "false")) { $cat_id = $category; }
+        
+        // When a user clicks a parent category, we need to show posts from all child categories, too.
+        // This only works for onle level of sub-categories.
+        $filter_string = '(post_category = %d';
+        $values = array($cat_id);
+        $parent = $cat->getCatParent($cat_id);
+        if ($parent == 1) {
+            $children = $cat->getCatChildren($cat_id);
+            if ($children) {
+                foreach ($children as $child_id) {
+                    $filter_string .= ' || post_category = %d';
+                    array_push($values, $child_id->category_id); 
+                }
+            }
+        }
+        $filter_string .= ')';
+        $filter[$filter_string] = $values; 
+        // end categories
+        
         if ($search && $this->plugins->isActive('search')) { 
             $search_plugin = new Search('', $this->hotaru);
             $prepared_search = $search_plugin->prepareSearchFilter($search); 
@@ -391,15 +410,10 @@ class Post
             $tag = str_replace('_', ' ', stripslashes(html_entity_decode($tag, ENT_QUOTES,'UTF-8'))); 
             $feed->description = $this->lang["submit_rss_stories_tagged"] . " " . $tag;
         }
-        elseif ($category && (FRIENDLY_URLS == "true")) 
+        elseif ($cat_id) 
         { 
-            $category = str_replace('_', ' ', stripslashes(html_entity_decode($category, ENT_QUOTES,'UTF-8'))); 
-            $feed->description = $this->lang["submit_rss_stories_in_category"] . " " . $category; 
-        }
-        elseif ($category && (FRIENDLY_URLS == "false")) 
-        { 
-            $category = str_replace('_', ' ', stripslashes(html_entity_decode($cat->getCatName($category), ENT_QUOTES,'UTF-8'))); 
-            $feed->description = $this->lang["submit_rss_stories_in_category"] . " " . $category; 
+            $category = str_replace('_', ' ', stripslashes(html_entity_decode($cat_id, ENT_QUOTES,'UTF-8'))); 
+            $feed->description = $this->lang["submit_rss_stories_in_category"] . " " . $cat->getCatName($cat_id); 
         }
         elseif ($search) 
         { 
@@ -570,8 +584,6 @@ class Post
                 
         if (!$this->hotaru->vars['filter']) { $this->hotaru->vars['filter'] = array(); }
         
-        // Plugins will UNDO the following for categories, search, tags, etc.
-            
         if ($this->cage->get->testPage('page') == 'latest') 
         {
             // Filters page to "new" stories only
@@ -579,6 +591,76 @@ class Post
             $rss = "<a href='" . $this->hotaru->url(array('page'=>'rss', 'status'=>'new')) . "'>";
             $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_latest"] . $rss;
+        } 
+        elseif ($this->cage->get->testPage('page') == 'upcoming') 
+        {
+            // Filters page to "new" stories by most votes, but only stories from the last X days!
+            $vote_settings = unserialize($this->plugins->getSetting('vote_settings', 'vote_simple')); 
+            $upcoming_duration = "-" . $vote_settings['vote_upcoming_duration'] . " days"; // default: -5 days
+            
+            $this->hotaru->vars['filter']['post_status = %s'] = 'new'; 
+            $start = date('YmdHis', strtotime("now"));
+            $end = date('YmdHis', strtotime($upcoming_duration)); // should be negative
+            $this->hotaru->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
+            $this->hotaru->vars['orderby'] = "post_votes_up DESC";
+            $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_upcoming"];
+        } 
+        elseif ($this->cage->get->testPage('sort') == 'top-24-hours') 
+        {
+            // Filters page to "top" stories from the last 24 hours only
+            $this->hotaru->vars['filter']['post_status = %s'] = 'top'; 
+            $start = date('YmdHis', strtotime("now"));
+            $end = date('YmdHis', strtotime("-1 day"));
+            $this->hotaru->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
+            $this->hotaru->vars['orderby'] = "post_votes_up DESC";
+            $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_top_24_hours"];
+        } 
+        elseif ($this->cage->get->testPage('sort') == 'top-48-hours') 
+        {
+            // Filters page to "top" stories from the last 48 hours only
+            $this->hotaru->vars['filter']['post_status = %s'] = 'top'; 
+            $start = date('YmdHis', strtotime("now"));
+            $end = date('YmdHis', strtotime("-2 days"));
+            $this->hotaru->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
+            $this->hotaru->vars['orderby'] = "post_votes_up DESC";
+            $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_top_48_hours"];
+        } 
+        elseif ($this->cage->get->testPage('sort') == 'top-7-days') 
+        {
+            // Filters page to "top" stories from the last 7 days only
+            $this->hotaru->vars['filter']['post_status = %s'] = 'top'; 
+            $start = date('YmdHis', strtotime("now"));
+            $end = date('YmdHis', strtotime("-7 days"));
+            $this->hotaru->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
+            $this->hotaru->vars['orderby'] = "post_votes_up DESC";
+            $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_top_7_days"];
+        } 
+        elseif ($this->cage->get->testPage('sort') == 'top-30-days') 
+        {
+            // Filters page to "top" stories from the last 30 days only
+            $this->hotaru->vars['filter']['post_status = %s'] = 'top'; 
+            $start = date('YmdHis', strtotime("now"));
+            $end = date('YmdHis', strtotime("-30 days"));
+            $this->hotaru->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
+            $this->hotaru->vars['orderby'] = "post_votes_up DESC";
+            $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_top_30_days"];
+        } 
+        elseif ($this->cage->get->testPage('sort') == 'top-365-days') 
+        {
+            // Filters page to "top" stories from the last 365 days only
+            $this->hotaru->vars['filter']['post_status = %s'] = 'top'; 
+            $start = date('YmdHis', strtotime("now"));
+            $end = date('YmdHis', strtotime("-365 days"));
+            $this->hotaru->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
+            $this->hotaru->vars['orderby'] = "post_votes_up DESC";
+            $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_top_365_days"];
+        } 
+        elseif ($this->cage->get->testPage('sort') == 'top-all-time') 
+        {
+            // Filters page to "top" stories in order of votes
+            $this->hotaru->vars['filter']['post_status = %s'] = 'top'; 
+            $this->hotaru->vars['orderby'] = "post_votes_up DESC";
+            $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_top_all_time"];
         } 
         elseif ($this->useLatest && !$this->cage->get->testPage('page'))
         {

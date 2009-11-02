@@ -48,6 +48,8 @@ class VoteSimpleSettings extends VoteSimple
         $use_alerts = $vote_settings['vote_use_alerts'];
         $alerts_to_bury = $vote_settings['vote_alerts_to_bury'];
         $physical_delete = $vote_settings['vote_physical_delete'];
+        $upcoming_duration = $vote_settings['vote_upcoming_duration'];
+        $no_front_page = $vote_settings['vote_no_front_page'];
         
         //...otherwise set to blank or default:
         if (!$submit_vote) { $submit_vote = ''; }
@@ -56,6 +58,8 @@ class VoteSimpleSettings extends VoteSimple
         if (!isset($use_alerts)) { $use_alerts = 'checked'; }
         if (!$alerts_to_bury) { $alerts_to_bury = 5; }
         if (!$physical_delete) { $physical_delete = ''; }
+        if (!$upcoming_duration) { $upcoming_duration = 5; }
+        if (!$no_front_page) { $no_front_page = 5; }
         
         // A plugin hook so other plugin developers can add settings
         $this->pluginHook('vote_settings_get_values');
@@ -74,6 +78,8 @@ class VoteSimpleSettings extends VoteSimple
         echo "<br /><p><b>" . $this->lang["vote_settings_vote_promote_bury"] . "</b></p>";
         
         echo "<p>" . $this->lang["vote_settings_votes_to_promote"] . " <input type='text' size=5 name='vote_votes_to_promote' value='" . $votes_to_promote . "' /> <small> (Default: 5)</small></p>\n";
+        echo "<p>" . $this->lang["vote_settings_upcoming_duration"] . " <input type='text' size=5 name='vote_upcoming_duration' value='" . $upcoming_duration . "' /> <small> (Default: 5)</small></p>\n";
+        echo "<p>" . $this->lang["vote_settings_no_front_page"] . " <input type='text' size=5 name='vote_no_front_page' value='" . $no_front_page . "' /> <small> (Default: 5)</small></p>\n";
         echo "<p><input type='checkbox' name='vote_use_alerts' value='vote_use_alerts' " . $use_alerts . " > " . $this->lang["vote_settings_use_alerts"] . "</p>\n";
         echo "<p>" . $this->lang["vote_settings_alerts_to_bury"] . " <input type='text' size=5 name='vote_alerts_to_bury' value='" . $alerts_to_bury . "' /> <small> (Default: 5)</small></p>\n";
         
@@ -107,7 +113,7 @@ class VoteSimpleSettings extends VoteSimple
         }
         
         
-        // Check the content for submit_vote_value
+        // Check submit_vote_value
         if ($this->cage->post->keyExists('vote_submit_vote_value')) {
             $submit_vote_value = $this->cage->post->testInt('vote_submit_vote_value'); 
             if ($submit_vote_value < 1) {
@@ -122,7 +128,7 @@ class VoteSimpleSettings extends VoteSimple
         }
     
     
-        // Check the content for votes_to_promote
+        // Check votes_to_promote
         if ($this->cage->post->keyExists('vote_votes_to_promote')) {
             $votes_to_promote = $this->cage->post->testInt('vote_votes_to_promote'); 
             if ($votes_to_promote < 1) {
@@ -136,6 +142,33 @@ class VoteSimpleSettings extends VoteSimple
             $votes_to_promote = $vote_settings['vote_votes_to_promote'];
         }
         
+        // Check upcoming duration
+        if ($this->cage->post->keyExists('vote_upcoming_duration')) {
+            $upcoming_duration = $this->cage->post->testInt('vote_upcoming_duration'); 
+            if ($upcoming_duration < 1) {
+                $this->hotaru->messages[$this->lang["vote_settings_upcoming_duration_invalid"]] = "red";
+                $error = 1;
+                $upcoming_duration = $vote_settings['vote_upcoming_duration'];
+            }
+        } else { 
+            $this->hotaru->messages[$this->lang["vote_settings_upcoming_duration_invalid"]] = "red";
+            $error = 1;
+            $upcoming_duration = $vote_settings['vote_upcoming_duration'];
+        }
+        
+        // Check no_front_page (deadline for front page)
+        if ($this->cage->post->keyExists('vote_no_front_page')) {
+            $no_front_page = $this->cage->post->testInt('vote_no_front_page'); 
+            if ($no_front_page < 1) {
+                $this->hotaru->messages[$this->lang["vote_settings_no_front_page_invalid"]] = "red";
+                $error = 1;
+                $no_front_page = $vote_settings['vote_no_front_page'];
+            }
+        } else { 
+            $this->hotaru->messages[$this->lang["vote_settings_no_front_page_invalid"]] = "red";
+            $error = 1;
+            $no_front_page = $vote_settings['vote_no_front_page'];
+        }
         
         // Use alerts
         if ($this->cage->post->keyExists('vote_use_alerts')) { 
@@ -145,7 +178,7 @@ class VoteSimpleSettings extends VoteSimple
         }
         
         
-        // Check the content for alerts_to_bury
+        // Check alerts_to_bury
         if ($this->cage->post->keyExists('vote_alerts_to_bury')) { 
             $alerts_to_bury = $this->cage->post->testInt('vote_alerts_to_bury'); 
             if ($alerts_to_bury < 1) {
@@ -177,6 +210,8 @@ class VoteSimpleSettings extends VoteSimple
         $vote_settings['vote_use_alerts'] = $use_alerts;
         $vote_settings['vote_alerts_to_bury'] = $alerts_to_bury;
         $vote_settings['vote_physical_delete'] = $physical_delete;
+        $vote_settings['vote_upcoming_duration'] = $upcoming_duration;
+        $vote_settings['vote_no_front_page'] = $no_front_page;
         
         // parameters: plugin folder name, setting name, setting value
         $this->updateSetting('vote_settings', serialize($vote_settings));
