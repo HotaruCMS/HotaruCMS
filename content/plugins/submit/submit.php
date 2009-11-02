@@ -102,7 +102,7 @@ class Submit extends PluginFunctions
      * Define global "table_posts" and "table_postmeta" constants for referring to the db tables
      */
     public function hotaru_header()
-    {
+    {    
         require_once(PLUGINS . 'submit/libs/Post.php');
         $this->hotaru->post = new Post($this->hotaru);  // adds Post object to Hotaru class
         
@@ -118,13 +118,15 @@ class Submit extends PluginFunctions
         
         $this->pluginHook('submit_hotaru_header_1');
         
-        if (is_numeric($this->hotaru->getPageName())) {
+        $pagename = $this->hotaru->getPageName();
+        
+        if (is_numeric($pagename)) {
             // Page name is a number so it must be a post with non-friendly urls
-            $this->hotaru->post->readPost($this->hotaru->getPageName());    // read current post
+            $this->hotaru->post->readPost($pagename);    // read current post
             $this->hotaru->pageType = 'post';
             $this->hotaru->title = $this->hotaru->post->title;
             
-        } elseif ($post_id = $this->hotaru->post->isPostUrl($this->hotaru->getPageName())) {
+        } elseif ($post_id = $this->hotaru->post->isPostUrl($pagename)) {
             // Page name belongs to a story
             $this->hotaru->post->readPost($post_id);    // read current post
             $this->hotaru->pageType = 'post';
@@ -132,9 +134,37 @@ class Submit extends PluginFunctions
             
         } else {
             $this->hotaru->post->readPost();    // read current post settings only
-            $this->hotaru->pageType = '';
+            $this->hotaru->pageType = 'list';
+            
+            // NOTE: The links for sorting are only shown when using the Vote Simple plugin or equivalent
+            // Only show these "sort" titles if there's no category or tag in the url.
+            if ($sort = $this->cage->get->testPage('sort')
+                && !$this->cage->get->keyExists('category')
+                && !$this->cage->get->keyExists('tag')
+                && !$this->cage->get->keyExists('user')) {
+                // Determine TITLE tags for a page of sorted posts:
+                switch ($sort) {
+                    case 'top-24-hours':
+                        $this->hotaru->title = $this->lang["post_breadcrumbs_top_24_hours"];
+                        break;
+                    case 'top-48-hours':
+                        $this->hotaru->title = $this->lang["post_breadcrumbs_top_48_hours"];
+                        break;
+                    case 'top-7-days':
+                        $this->hotaru->title = $this->lang["post_breadcrumbs_top_7_days"];
+                        break;
+                    case 'top-30-days':
+                        $this->hotaru->title = $this->lang["post_breadcrumbs_top_30_days"];
+                        break;
+                    case 'top-365-days':
+                        $this->hotaru->title = $this->lang["post_breadcrumbs_top_365_days"];
+                        break;
+                    case 'top-all-time':
+                        $this->hotaru->title = $this->lang["post_breadcrumbs_top_all_time"];
+                        break;
+                }
+            }
         }
-
         $this->pluginHook('submit_hotaru_header_2');
     }
     
@@ -445,7 +475,7 @@ class Submit extends PluginFunctions
             // Plugin hook
             $result = $this->pluginHook('submit_is_page_main');
             if ($result && is_array($result)) { return true; }
-        
+
             // Show the list of posts
             $this->hotaru->displayTemplate('list', 'submit');
             return true;
@@ -454,6 +484,16 @@ class Submit extends PluginFunctions
         
             // Plugin hook
             $result = $this->pluginHook('submit_is_page_latest');
+            if ($result && is_array($result)) { return true; }
+        
+            // Show the list of posts
+            $this->hotaru->displayTemplate('list', 'submit');
+            return true;
+            
+        } elseif ($this->hotaru->isPage('upcoming')) {
+        
+            // Plugin hook
+            $result = $this->pluginHook('submit_is_page_upcoming');
             if ($result && is_array($result)) { return true; }
         
             // Show the list of posts

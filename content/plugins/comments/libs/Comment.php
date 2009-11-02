@@ -168,8 +168,11 @@ class Comment
      * @param int $post_id - you can limit comments to a single post
      * @return array|false
      */
-    function getAllComments($post_id = 0, $order = "ASC", $limit = 10, $userid = 0)
+    function getAllComments($post_id = 0, $order = "ASC", $limit = 0, $userid = 0)
     {
+        // limiting is used in the rssFeed function. Other than that, pagination does limiting for us.
+        if(!$limit) { $limit = ''; } else { $limit = " LIMIT "  .$limit; }
+        
         if ($post_id) {
             // get all comments from specified post
             $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_status = %s ORDER BY comment_date " . $order;
@@ -177,10 +180,10 @@ class Comment
         } else {
             // get all comments
             if ($userid) { 
-                $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_status = %s AND comment_user_id = %d ORDER BY comment_date " . $order . " LIMIT " . $limit;
+                $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_status = %s AND comment_user_id = %d ORDER BY comment_date " . $order . $limit;
                 $comments = $this->db->get_results($this->db->prepare($sql, 'approved', $userid));
             } else {
-                $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_status = %s ORDER BY comment_date " . $order . " LIMIT " . $limit;
+                $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_status = %s ORDER BY comment_date " . $order . $limit;
                 $comments = $this->db->get_results($this->db->prepare($sql, 'approved'));
             }
         }

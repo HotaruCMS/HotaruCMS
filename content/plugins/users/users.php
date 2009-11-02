@@ -81,6 +81,7 @@ class Users extends PluginFunctions
         
         if ($username = $this->cage->get->testUsername('user')) {
             $this->hotaru->title = $username;
+            $this->hotaru->pageType = 'user';
         }
     }
 
@@ -249,10 +250,6 @@ class Users extends PluginFunctions
             $rss = " <a href='" . $this->hotaru->url(array('page'=>'rss', 'user'=>$this->cage->get->testUsername('user'))) . "'>";
             $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
             
-            // Undo the filter that limits results to either 'top' or 'new' (See submit/libs/Post.php -> prepareList())
-            if(isset($this->hotaru->vars['filter']['post_status = %s'])) { unset($this->hotaru->vars['filter']['post_status = %s']); }
-            
-            $this->hotaru->vars['filter']['post_status != %s'] = 'processing';
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_user"] . " &raquo; " . $this->hotaru->title . $rss;
             
             $this->hotaru->pageType = 'user';

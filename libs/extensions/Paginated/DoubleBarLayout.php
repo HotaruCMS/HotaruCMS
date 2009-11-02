@@ -7,8 +7,8 @@ class DoubleBarLayout implements PageLayout
 
     public function fetchPagedLinks($parent, $queryVars, $hotaru) 
     {
-        // NOTE: FRIENDLY URLS ARE NOT USED IN PAGINATION IN ADMIN (coz it makes things really difficult!)
-        if ($hotaru->isAdmin == true) { $head = 'admin'; } else { $head = 'index'; }
+        // NOTE: FRIENDLY URLS ARE NOT USED IN PAGINATION (I tried, but there's always *something* that screws up. Nick)
+        if ($hotaru->isAdmin == true) { $head = 'admin_index.php?'; } else { $head = 'index.php?'; }
         
         // In Hotaru, $queryVars is always empty. We grab the whole path instead:
         $host = $hotaru->cage->server->getMixedString2('HTTP_HOST');
@@ -25,6 +25,32 @@ class DoubleBarLayout implements PageLayout
             $path = "http://" . $host  . $uri . http_build_query($parsed_query_args); // rebuild url without page variable
         }
         
+        // CONVERT FRIENDLY URLS INTO STANDARD URLS
+        if ((FRIENDLY_URLS == 'true') && (!strrpos($path, '?'))) {
+            $extras = str_replace(BASEURL, '', $path);
+            $extras = rstrtrim($extras, '/');
+            $bits = explode('/', $extras);
+            $num_bits = count($bits);
+            $path = BASEURL . $head;
+
+            // if odd number of bits, the first must be a page, so...
+            if ($num_bits % 2 == 1) {
+                $path .= 'page=' . $bits[0];
+                $finished_bit = array_shift($bits); // drop the first bit because we've just used it
+                if ($bits) { $path .= '&'; }    // there are more bits so add &
+            }
+                        
+            // now we're left with an even number of bits, so:
+            $i = 0; // used for determining whether we need a ? or an =
+            if ($bits) {
+                foreach ($bits as $bit) {
+                    if ($i % 2 == 0) { $path .= $bit . '='; } else { $path .= $bit . '&'; }
+                    $i++;
+                }
+            }
+            $path = rstrtrim($path, '&');
+        }
+        
         $currentPage = $parent->getPageNumber();
         $str = "";
         
@@ -35,24 +61,14 @@ class DoubleBarLayout implements PageLayout
            //if it is not the first page then write previous to the screen
         if (!$parent->isFirstPage()) {
             $previousPage = $currentPage - 1;
-            if ($head == 'admin') { 
-                $link = $path . '&pg=' . $previousPage;
-            } else { 
-                $parsed_query_args['pg'] = $previousPage;
-                $link = $hotaru->url($parsed_query_args);
-            }
+            $link = $path . '&pg=' . $previousPage;
             $str .= "<a class='pagi_previous' href='" . $link . "' title='" . $hotaru->lang['pagination_previous'] . "'>&laquo; " . $hotaru->lang['pagination_previous'] . "</a> \n";
         }
         
         // NOT FIRST PAGE
         if (!$parent->isFirstPage() && !($currentPage <= ($before + 1))) {
             if ($currentPage != 1) {
-                if ($head == 'admin') { 
-                    $link = $path . '&pg=1';
-                } else { 
-                    $parsed_query_args['pg'] = 1;
-                    $link = $hotaru->url($parsed_query_args);
-                }
+                $link = $path . '&pg=1';
                 $str .= "<a class='pagi_first' href='" . $link . "'  title='" . $hotaru->lang['pagination_first'] . "'>1</a> \n";
                 if ($currentPage > ($before+1)) {
                     $str .= " <span class='dots'>...</span> \n";
@@ -74,12 +90,7 @@ class DoubleBarLayout implements PageLayout
                 $str .= "<span class='pagi_current'>$i</span>\n";
             }
             else {
-                if ($head == 'admin') { 
-                    $link = $path . '&pg=' . $i;
-                } else { 
-                    $parsed_query_args['pg'] = $i;
-                    $link = $hotaru->url($parsed_query_args);
-                }
+                $link = $path . '&pg=' . $i;
                 $str .= "<a class='pagi_page' href='" . $link . "'>$i</a>\n";
             }
             if ($i != $currentPage + $after && $i != $parent->fetchNumberPages()) { $str .= ' '; }
@@ -105,12 +116,7 @@ class DoubleBarLayout implements PageLayout
         // NOT LAST PAGE
         if (!$parent->isLastPage()) {
             $nextPage = $currentPage + 1;
-            if ($head == 'admin') { 
-                $link = $path . '&pg=' . $nextPage;
-            } else { 
-                $parsed_query_args['pg'] = $nextPage;
-                $link = $hotaru->url($parsed_query_args);
-            }
+            $link = $path . '&pg=' . $nextPage;
             $str .= "<a class='pagi_next' href='" . $link . "' title='" . $hotaru->lang['pagination_next'] . "'>" . $hotaru->lang['pagination_next'] . " &raquo;</a> \n";
         }
         

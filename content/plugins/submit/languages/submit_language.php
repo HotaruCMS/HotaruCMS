@@ -103,16 +103,27 @@ $lang["submit_settings_email_notify_all"] = "All new posts";
 $lang["submit_settings_email_notify_pending"] = "Pending posts only";
 $lang["submit_settings_email_notify_none"] = "None";
 
-/* Submit Show Post */
+/* Submit Breadcrumbs */
+$lang["post_breadcrumbs_all"] = "All Posts";
+$lang["post_breadcrumbs_top"] = "Top Posts";
+$lang["post_breadcrumbs_latest"] = "Latest Posts";
+$lang["post_breadcrumbs_tag"] = "Tag";
+$lang["post_breadcrumbs_category"] = "Category";
+$lang["post_breadcrumbs_user"] = "User";
+$lang["post_breadcrumbs_upcoming"] = "Upcoming Posts";
+$lang["post_breadcrumbs_top_24_hours"] = "Top Posts (last 24 Hours)";
+$lang["post_breadcrumbs_top_48_hours"] = "Top Posts (last 48 Hours)";
+$lang["post_breadcrumbs_top_7_days"] = "Top Posts (last 7 Days)";
+$lang["post_breadcrumbs_top_30_days"] = "Top Posts (last 30 Days)";
+$lang["post_breadcrumbs_top_365_days"] = "Top Posts (last 365 Days)";
+$lang["post_breadcrumbs_top_all_time"] = "Top Posts (All-Time)";
+
+/* Submit Post */
 $lang["submit_page_title_main"] = "top";
 $lang["submit_page_title_latest"] = "latest";
 $lang["submit_page_title_all"] = "all";
 $lang["submit_post_edit"] = "EDIT";
 $lang["submit_post_read_more"] = "[Read More]";
-$lang["submit_post_filtered_to"] = "Filtered to";
-$lang["submit_post_filter_user"] = "stories submitted by";
-$lang["submit_post_filter_tag"] = "stories tagged";
-$lang["submit_post_filter_category"] = "stories in";
 $lang["submit_post_posted"] = "Posted";
 $lang["submit_post_by"] = "by";
 $lang["submit_post_ago"] = "ago";
@@ -125,5 +136,6 @@ $lang["submit_rss_stories_from_user"] = "Stories submitted by";
 $lang["submit_rss_stories_tagged"] = "Stories tagged"; 
 $lang["submit_rss_stories_in_category"] = "Stories posted in";
 $lang["submit_rss_stories_search"] = "Search results for";
+$lang["submit_rss_stories_upcoming"] = "Upcoming stories";
 
 ?>

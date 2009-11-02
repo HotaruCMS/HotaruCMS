@@ -6,7 +6,7 @@
  * folder: vote_simple
  * class: VoteSimple
  * requires: submit 0.7, users 0.5
- * hooks: install_plugin, hotaru_header, submit_hotaru_header_1, post_read_post_1, post_read_post_2, header_include, submit_pre_show_post, submit_show_post_title, admin_plugin_settings, admin_sidebar_plugin_settings, post_add_post, navigation, submit_show_post_extra_fields, submit_show_post_extras, post_delete_post, sidebar_posts_settings_get_values, sidebar_posts_settings_form, sidebar_posts_save_settings
+ * hooks: install_plugin, hotaru_header, submit_hotaru_header_1, post_read_post_1, post_read_post_2, header_include, submit_pre_show_post, submit_show_post_title, admin_plugin_settings, admin_sidebar_plugin_settings, post_add_post, navigation, submit_show_post_extra_fields, submit_show_post_extras, post_delete_post, sidebar_posts_settings_get_values, sidebar_posts_settings_form, sidebar_posts_save_settings, submit_post_breadcrumbs
  *
  * PHP version 5
  *
@@ -49,6 +49,8 @@ class VoteSimple extends PluginFunctions
         $vote_settings['vote_use_alerts'] = "checked";
         $vote_settings['vote_alerts_to_bury'] = 5;
         $vote_settings['vote_physical_delete'] = "";
+        $vote_settings['vote_upcoming_duration'] = 5;
+        $vote_settings['vote_no_front_page'] = 5;
         
         // parameters: plugin folder name, setting name, setting value
         $this->updateSetting('vote_settings', serialize($vote_settings));
@@ -345,6 +347,18 @@ class VoteSimple extends PluginFunctions
         }
         
         $this->updateSetting('sidebar_posts_votes', $this->hotaru->post->vars['sb_votes'], 'sidebar_posts');
+    }
+    
+    
+    /** 
+     * Add sorting options
+     */
+    public function submit_post_breadcrumbs()
+    {
+        $page_type = $this->hotaru->pageType;
+        if ($page_type == 'list' || $page_type == 'user') {
+            $this->hotaru->displayTemplate('vote_simple_sorting', 'vote_simple');
+        }
     }
 }
 

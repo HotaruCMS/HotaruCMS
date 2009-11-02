@@ -88,7 +88,7 @@ function create_table($table_name)
         
         // Database cache
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'DB_CACHE_ON', 'false', 'true', 'true/false'));
+        $db->query($db->prepare($sql, 'DB_CACHE_ON', 'false', 'false', 'true/false'));
         
         // Database cache duration (hours)
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %d, %d, %s)";
