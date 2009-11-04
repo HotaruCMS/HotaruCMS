@@ -71,20 +71,21 @@ class RssShow extends PluginFunctions
                 
                 // SITE TITLE
                 if ($settings['rss_show_title']) { 
-                    $output .= "<h2 class='sidebar_widget_head rss_show_feed_title'>";
-                    $output .= "<a href='" . $feed->subscribe_url() . "' title='" . $this->hotaru->lang["rss_show_icon_anchor_title"] . "'><img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'></a>&nbsp;"; // RSS icon
+                    $output .= "<h2 class='sidebar_widget_head rss_show_feed_title'>\n";
+                    $output .= "<a href='" . $feed->subscribe_url() . "' title='" . $this->hotaru->lang["rss_show_icon_anchor_title"] . "'>\n";
+                    $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'></a>&nbsp;\n"; // RSS icon
                     if ($feed->get_link()) { $link = $feed->get_link(); } else { $link = $feed->subscribe_url(); }
-                    $output .= "<a href='" . $link . "' title='" . $this->hotaru->lang["rss_show_title_anchor_title"] . "'>" . $settings['rss_show_title'] . "</a></h2>"; 
+                    $output .= "<a href='" . $link . "' title='" . $this->hotaru->lang["rss_show_title_anchor_title"] . "'>" . $settings['rss_show_title'] . "</a></h2>\n"; 
                 }
                     
                 if ($feed->data) { 
-                    $output .= "<ul class='sidebar_widget_body rss_feed_item'>";
+                    $output .= "<ul class='sidebar_widget_body rss_feed_item'>\n";
                     foreach ($feed->get_items() as $item) {
                             
                             // POST TITLE
                             $output .= "<li class='rss_show_feed_item'>";
                             $output .= "<span class='rss_show_title'>";
-                            $output .= "<a href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a></span>";
+                            $output .= "<a href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a></span>\n";
                             
                             // AUTHOR / DATE
                         if (($settings['rss_show_author'] == 'yesauthor') || ($settings['rss_show_date'] == 'yesdate')) {
@@ -113,7 +114,7 @@ class RssShow extends PluginFunctions
                         if ($settings['rss_show_content'] == 'full') {
                             $output .= "<p class='rss_show_content'>" . $item->get_content() . "</p>";
                         }
-                        $output .= '</li>';
+                        $output .= "</li>\n";
                         
                         $item_count++;
                         if ($item_count >= $max_items) { break;}
@@ -122,7 +123,7 @@ class RssShow extends PluginFunctions
             }
             
             // Display the whole thing:
-            if (isset($output)) { echo $output . "</ul>"; }
+            if (isset($output)) { echo $output . "</ul>\n"; }
         }
     }
     

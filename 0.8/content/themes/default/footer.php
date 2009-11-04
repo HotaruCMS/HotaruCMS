@@ -1,6 +1,8 @@
-<?php
+<?php 
 /**
- * Tag Cloud
+ * Theme name: default
+ * Template name: footer.php
+ * Template author: Nick Ramsay
  *
  * PHP version 5
  *
@@ -23,21 +25,23 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
- 
+
 ?>
-    
-    <div id='main'>
-        <div id='breadcrumbs'><a href='<?php echo BASEURL; ?>'><?php echo $hotaru->lang["main_theme_home"]; ?></a> &raquo; <?php echo $hotaru->lang["tags_tag_cloud"]; ?></div>
+
+    <div id="ft">
+        <?php 
+            $hotaru->plugins->pluginHook('footer');
         
-        <?php echo $hotaru->showMessages(); ?>
+            // Link to forums...
+            echo "<p><a href='http://hotarucms.org'<img src='" . BASEURL . "content/themes/" . THEME . "images/hotarucms.png' ";
+            echo "title='" . $hotaru->lang["main_theme_footer_hotaru_link"] . "'></a></p>";
         
-        <div class="tag_cloud">
-        <?php
-            foreach ($hotaru->vars['tagCloud'] as $tag) {
-              echo "<a href='" . $hotaru->url(array('tag' => $tag['link_word'])) . "' ";
-              echo "class='tag_group" . $tag['class'] . "'>" . $tag["show_word"] . "</a>\n";
-            }
+            $hotaru->showQueriesAndTime();
         ?>
-        </div>
-    
-    </div>    
+    </div> <!-- close "ft" -->
+</div> <!-- close "yui-t7 first" -->
+
+<?php $hotaru->plugins->pluginHook('pre_close_body'); ?>
+
+</body>
+</html>
