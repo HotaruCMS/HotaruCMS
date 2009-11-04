@@ -32,7 +32,10 @@ $this->plugins->getPluginName();
 
 <p class="breadcrumbs">
     <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
-    &raquo; <a href="<?php echo $admin->hotaru->url(array(), 'admin'); ?>"><?php echo $admin->lang["admin_theme_main_admin_cp"]; ?></a> 
+    <?php // only show Admin CP link to users with can_admin_acesss permissions, not can_[plugin]_settings permissions... 
+        if ($this->current_user->getPermission('can_access_admin') == 'yes') { ?>
+        &raquo; <a href="<?php echo $admin->hotaru->url(array(), 'admin'); ?>"><?php echo $admin->lang["admin_theme_main_admin_cp"]; ?></a> 
+    <?php } ?>
     &raquo; <?php echo $admin->lang["admin_theme_plugin_settings"]; ?> 
     <?php if ($admin->plugins->name) { echo "&raquo; " .  $admin->plugins->name; } ?>
 </p>
@@ -42,8 +45,12 @@ $this->plugins->getPluginName();
         if ($admin->plugins->folder == "") {
             $admin->plugins->pluginHook('admin_sidebar_plugin_settings');
         } else {
-            $admin->plugins->pluginHook('admin_plugin_settings', true, $admin->plugins->folder); 
+            $result = $admin->plugins->pluginHook('admin_plugin_settings', true, $admin->plugins->folder); 
+            if (!isset($result) || !is_array($result)) {
+                $admin->hotaru->message = $admin->lang['admin_plugin_settings_inactive'];
+                $admin->hotaru->messageType = 'red';    
+                $admin->hotaru->showMessage();
+            }
         }
     ?>
 </div>
-

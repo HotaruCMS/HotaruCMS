@@ -119,6 +119,17 @@ class Admin
             } 
             elseif ($this->current_user->getPermission('can_access_admin') != 'yes') 
             {
+                // maybe the user has permission to access a specific plugin settings page?
+                $plugin = $this->cage->get->testAlnumLines('plugin');
+                if ($plugin && ($page == "plugin_settings")) {
+                    $permission = "can_" . $plugin . "_settings";
+                    if ($this->current_user->getPermission($permission) == 'yes') {
+                        $this->sidebar = false; // hide sidebar
+                        $this->displayAdminTemplate('index');
+                        die(); exit;
+                    }
+                }
+                
                 // User doesn't have permission to access Admin
                 $this->hotaru->messages['Access Denied'] = 'red';
                 $this->displayAdminTemplate('access_denied');
@@ -127,7 +138,7 @@ class Admin
         }
         
         
-        // If we get this far, we know that the user is an administrator.
+        // If we get this far, we know that the user has admin access.
         
         $this->plugins->pluginHook('admin_index');
         

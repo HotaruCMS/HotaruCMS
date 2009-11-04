@@ -487,6 +487,13 @@ class Comments extends pluginFunctions
             $this->hotaru->comment->id = 0;
             $this->hotaru->comment->depth = 0;
             $this->hotaru->displayTemplate('comment_form', 'comments', $this->hotaru, false);
+            
+            $this->pluginHook('comments_post_last_form');
+            
+            if ($this->current_user->getPermission('can_comment_manager_settings') == 'yes') {
+                echo "<a id='comment_manager_link' href='" . $this->hotaru->url(array('page'=>'plugin_settings', 'plugin'=>'comment_manager'), 'admin') . "'>";
+                echo $this->hotaru->lang['comments_access_comment_manager'] . "</a>";
+            }
         }
     }
     
@@ -690,6 +697,7 @@ class Comments extends pluginFunctions
         $perms['options']['can_edit_comments'] = array('yes', 'no', 'own');
         $perms['options']['can_set_comments_pending'] = array('yes', 'no');
         $perms['options']['can_delete_comments'] = array('yes', 'no');
+        $perms['options']['can_comment_manager_settings'] = array('yes', 'no');
         
         // Permissions for $role
         switch ($role) {
@@ -699,30 +707,35 @@ class Comments extends pluginFunctions
                 $perms['can_edit_comments'] = 'yes';
                 $perms['can_set_comments_pending'] = 'yes';
                 $perms['can_delete_comments'] = 'yes';
+                $perms['can_comment_manager_settings'] = 'yes';
                 break;
             case 'moderator':
                 $perms['can_comment'] = 'yes';
                 $perms['can_edit_comments'] = 'yes';
                 $perms['can_set_comments_pending'] = 'yes';
                 $perms['can_delete_comments'] = 'no';
+                $perms['can_comment_manager_settings'] = 'yes';
                 break;
             case 'member':
                 $perms['can_comment'] = 'yes';
                 $perms['can_edit_comments'] = 'own';
                 $perms['can_set_comments_pending'] = 'no';
                 $perms['can_delete_comments'] = 'no';
+                $perms['can_comment_manager_settings'] = 'no';
                 break;
             case 'undermod':
                 $perms['can_comment'] = 'mod';
                 $perms['can_edit_comments'] = 'own';
                 $perms['can_set_comments_pending'] = 'no';
                 $perms['can_delete_comments'] = 'no';
+                $perms['can_comment_manager_settings'] = 'no';
                 break;
             default:
                 $perms['can_comment'] = 'no';
                 $perms['can_edit_comments'] = 'no';
                 $perms['can_set_comments_pending'] = 'no';
                 $perms['can_delete_comments'] = 'no';
+                $perms['can_comment_manager_settings'] = 'no';
         }
         
         $this->hotaru->vars['perms'] = $perms;

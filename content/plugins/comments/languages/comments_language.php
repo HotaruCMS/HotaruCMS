@@ -29,6 +29,7 @@ $lang['comments_singular_link'] = "comment";
 $lang['comments_plural_link'] = "comments";
 $lang['comments_none_link'] = "No comments";
 $lang['comments_leave_comment'] = "Leave a comment";
+$lang['comments_access_comment_manager'] = "Access Comment Manager";
 
 /* Comment */
 $lang['comments_written_by'] = "Written by";
@@ -75,7 +76,7 @@ $lang["comments_settings_auto_approve"] = "Automatically approve all comments";
 $lang["comments_settings_some_pending_1"] = "Put first";
 $lang["comments_settings_some_pending_2"] = " comments in the moderation queue";
 $lang["comments_settings_all_pending"] = "Put all new comments in the moderation queue";
-$lang["comments_settings_email_notify"] = "When a new comment is posted, email admins, supermods and moderators with \"access admin\" permissions:";
+$lang["comments_settings_email_notify"] = "When a new comment is posted, send an email to admins, supermods and moderators who have permission to access the Comment Manager:";
 $lang["comments_settings_email_notify_all"] = "All new comments";
 $lang["comments_settings_email_notify_pending"] = "Pending comments only";
 $lang["comments_settings_email_notify_none"] = "None";
