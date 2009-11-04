@@ -24,7 +24,7 @@
 	color: #000;
 }
 
-.vote_button_top_story { background-color: #000; color: #fff; }
+.vote_button_top_story { border: 1px solid #666; background-color: #c0c0c0; color: #fff; }
 .vote_button_new_story { border: 1px solid #666; color: #000; }
 
 
