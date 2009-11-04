@@ -2,10 +2,10 @@
 /**
  * name: Vote Simple
  * description: Adds voting ability to posted stories.
- * version: 0.7
+ * version: 0.8
  * folder: vote_simple
  * class: VoteSimple
- * requires: submit 0.7, users 0.5
+ * requires: submit 1.4, users 0.8
  * hooks: install_plugin, hotaru_header, submit_hotaru_header_1, post_read_post_1, post_read_post_2, header_include, submit_pre_show_post, submit_show_post_title, admin_plugin_settings, admin_sidebar_plugin_settings, post_add_post, navigation, submit_show_post_extra_fields, submit_show_post_extras, post_delete_post, sidebar_posts_settings_get_values, sidebar_posts_settings_form, sidebar_posts_save_settings, submit_post_breadcrumbs
  *
  * PHP version 5
@@ -43,16 +43,16 @@ class VoteSimple extends PluginFunctions
         $vote->databaseVoteTable();
 
         // Default settings
-        $vote_settings['vote_submit_vote'] = "checked";
-        $vote_settings['vote_submit_vote_value'] = 1;
-        $vote_settings['vote_votes_to_promote'] = 5;
-        $vote_settings['vote_use_alerts'] = "checked";
-        $vote_settings['vote_alerts_to_bury'] = 5;
-        $vote_settings['vote_physical_delete'] = "";
-        $vote_settings['vote_upcoming_duration'] = 5;
-        $vote_settings['vote_no_front_page'] = 5;
+        $vote_settings = $this->getSerializedSettings();
+        if (!isset($vote_settings['vote_submit_vote'])) { $vote_settings['vote_submit_vote'] = "checked"; }
+        if (!isset($vote_settings['vote_submit_vote_value'])) { $vote_settings['vote_submit_vote_value'] = 1; }
+        if (!isset($vote_settings['vote_votes_to_promote'])) { $vote_settings['vote_votes_to_promote'] = 5; }
+        if (!isset($vote_settings['vote_use_alerts'])) { $vote_settings['vote_use_alerts'] = "checked"; }
+        if (!isset($vote_settings['vote_alerts_to_bury'])) { $vote_settings['vote_alerts_to_bury'] = 5; }
+        if (!isset($vote_settings['vote_physical_delete'])) { $vote_settings['vote_physical_delete'] = ""; }
+        if (!isset($vote_settings['vote_upcoming_duration'])) { $vote_settings['vote_upcoming_duration'] = 5; }
+        if (!isset($vote_settings['vote_no_front_page'])) { $vote_settings['vote_no_front_page'] = 5; }
         
-        // parameters: plugin folder name, setting name, setting value
         $this->updateSetting('vote_settings', serialize($vote_settings));
         
         // For the Sidebar Posts plugin settings:
@@ -355,6 +355,7 @@ class VoteSimple extends PluginFunctions
      */
     public function submit_post_breadcrumbs()
     {
+        if ($this->hotaru->isPage('submit2')) { return false; } // don't show sorting on Submit Confirm
         $page_type = $this->hotaru->pageType;
         if ($page_type == 'list' || $page_type == 'user') {
             $this->hotaru->displayTemplate('vote_simple_sorting', 'vote_simple');

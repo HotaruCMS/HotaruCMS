@@ -90,6 +90,7 @@ $lang["admin_plugins_install_done"] = "Plugin successfully installed and activat
 $lang["admin_plugins_install_sorry"] = "Sorry,";
 $lang["admin_plugins_install_requires"] = "requires";
 $lang["admin_plugins_uninstall_done"] = "Plugin uninstalled";
+$lang["admin_plugins_uninstall_all_done"] = "All plugins uninstalled";
 $lang["admin_plugins_upgrade_done"] = "Plugin upgraded and activated";
 $lang["admin_plugins_page_refresh"] = "Refresh this page";
 $lang["admin_plugins_activated"] = "Plugin activated";
@@ -117,6 +118,7 @@ $lang['admin_maintenance_clear_cache_failure'] = "No cache files were found";
 $lang['admin_maintenance_optimize_success'] = "All database tables optimized";
 $lang['admin_maintenance_table_emptied'] = "Table emptied";
 $lang['admin_maintenance_table_deleted'] = "Table deleted";
+$lang['admin_maintenance_settings_removed'] = "Settings removed";
 
 /* Blocked List */
 $lang['admin_blocked_list_empty'] = "No value entered";
@@ -179,7 +181,9 @@ $lang["admin_theme_maintenance"] = "Maintenance";
 $lang["admin_theme_maintenance_title"] = "Hotaru Maintenance";
 $lang["admin_theme_maintenance_cache"] = "Cache:";
 $lang["admin_theme_maintenance_database"] = "Database:";
+$lang["admin_theme_maintenance_plugin_settings"] = "Plugin settings:";
 $lang["admin_theme_maintenance_plugin_tables"] = "Plugin tables:";
+$lang["admin_theme_maintenance_settings"] = "settings";
 $lang["admin_theme_maintenance_db_cache"] = "Clear database cache";
 $lang["admin_theme_maintenance_db_cache_desc"] = "deletes cached database queries.";
 $lang["admin_theme_maintenance_css_js_cache"] = "Clear css/js cache";
@@ -189,14 +193,17 @@ $lang["admin_theme_maintenance_rss_cache_desc"] = "deletes cached RSS feeds.";
 $lang["admin_theme_maintenance_optimize"] = "Optimize database";
 $lang["admin_theme_maintenance_optimize_desc"] = "Optimize all the database tables.";
 $lang["admin_theme_maintenance_empty"] = "Empty";
+$lang["admin_theme_maintenance_remove"] = "Remove";
 $lang["admin_theme_maintenance_drop"] = "Delete";
 $lang["admin_theme_maintenance_plugin_table_warning"] = "<b>Warning: Use these with extreme caution!</b>";
 $lang["admin_theme_maintenance_plugin_table_warning2"] = "Note: Uninstall the plugins before emptying or deleting their tables.";
+$lang["admin_theme_maintenance_plugin_settings_explanation"] = "Some Hotaru CMS plugins add settings to the database. To save you from having to reconfigure your plugins every time you upgrade, those settings are not removed, even when uninstalling the plugins. If for any reason, you want to delete those settings, you can do it here. It's highly recommended to uninstall each plugin first.";
 $lang["admin_theme_maintenance_plugin_table_explanation"] = "Some Hotaru CMS plugins create their own database tables. These options allow you to easily clear or remove them <b>if absolutely necessary</b>.";
 $lang["admin_theme_maintenance_empty_explanation"] = "Emptying tables will remove any data, but retain the structure. Remember, other plugins may rely on the data in these tables so removing them may cause problems with your site.";
 $lang["admin_theme_maintenance_drop_explanation"] = "Deleting tables can <b>really mess up your site!</b> Only do it if you are starting your site completely from scratch, or if required by a plugin's instructions or developer.";
 $lang["admin_theme_maintenance_no_plugin_tables_to_empty"] = "No plugin tables to empty.";
 $lang["admin_theme_maintenance_no_plugin_tables_to_drop"] = "No plugin tables to delete.";
+$lang["admin_theme_maintenance_no_plugin_settings_to_delete"] = "No plugin settings to delete.";
 
 /* plugins */
 $lang["admin_theme_plugins"] = "Plugin Management";
@@ -217,10 +224,11 @@ $lang["admin_theme_plugins_no_plugins"] = "No additional plugins needed.";
 $lang["admin_theme_plugins_guide"] = "Plugin Management Guide";
 $lang["admin_theme_plugins_guide1"] = "To upgrade a plugin, simply turn it off, overwrite the plugin files and turn it back on.";
 $lang["admin_theme_plugins_guide2"] = "The order column is used to determine which plugins are checked for hooks first.";
-$lang["admin_theme_plugins_guide3"] = "Uninstalling a plugin will delete it from the <i>plugins</i>, <i>pluginhooks</i> and <i>pluginsettings</i> tables.";
+$lang["admin_theme_plugins_guide3"] = "Uninstalling a plugin will delete it from the <i>plugins</i> and <i>pluginhooks</i> tables, but not <i>pluginsettings</i>.";
 $lang["admin_theme_plugins_guide4"] = "Any other database entries created by the plugin will not be removed.";
 $lang["admin_theme_plugins_deactivate_all"] = "Turn OFF all plugins";
 $lang["admin_theme_plugins_activate_all"] = "Turn ON (upgrade) all plugins";
+$lang["admin_theme_plugins_uninstall_all"] = "Uninstall all plugins";
 
 /* settings */
 $lang["admin_theme_settings"] = "Settings";

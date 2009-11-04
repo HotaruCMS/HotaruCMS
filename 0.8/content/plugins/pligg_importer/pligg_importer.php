@@ -5,7 +5,7 @@
  * version: 0.6
  * folder: pligg_importer
  * class: PliggImporter
- * requires: category_manager 0.4, categories 0.5, comments 0.4, submit 0.7, tags 0.6, users 0.5, vote_simple 0.4
+ * requires: category_manager 0.6, categories 0.9, comments 1.0, submit 1.4, tags 1.1, users 0.8, vote_simple 0.8
  * hooks: admin_plugin_settings, admin_sidebar_plugin_settings, admin_header_include
  *
  * PHP version 5

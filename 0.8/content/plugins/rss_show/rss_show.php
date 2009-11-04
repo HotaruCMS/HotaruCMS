@@ -2,10 +2,10 @@
 /**
  * name: RSS Show
  * description: Adds links in the sidebar to the latest posts from a specified RSS feed.
- * version: 0.5
+ * version: 0.6
  * folder: rss_show
  * class: RssShow
- * requires: sidebar_widgets 0.4
+ * requires: sidebar_widgets 0.5
  * hooks: rss_show, install_plugin, hotaru_header, admin_header_include_raw, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * PHP version 5
@@ -178,17 +178,19 @@ class RssShow extends PluginFunctions
     {
         if (!$id || !is_int($id)) { $id = 1; }
         
-        $settings['rss_show_feed'] = 'http://feeds2.feedburner.com/hotarucms';
-        $settings['rss_show_title'] = 'Hotaru CMS Forums';
-        $settings['rss_show_cache'] = 'on';
-        $settings['rss_show_cache_duration'] = 10;
-        $settings['rss_show_max_items'] = 10;
-        $settings['rss_show_author'] = "noauthor";
-        $settings['rss_show_date'] = "nodate";
-        $settings['rss_show_content'] = "none";
+        $rss_show_settings['rss_show_feed'] = 'http://feeds2.feedburner.com/hotarucms';
+        $rss_show_settings['rss_show_title'] = 'Hotaru CMS Forums';
+        $rss_show_settings['rss_show_cache'] = 'on';
+        $rss_show_settings['rss_show_cache_duration'] = 10;
+        $rss_show_settings['rss_show_max_items'] = 10;
+        $rss_show_settings['rss_show_author'] = "noauthor";
+        $rss_show_settings['rss_show_date'] = "nodate";
+        $rss_show_settings['rss_show_content'] = "none";
         
-        // parameters: plugin folder name, setting name, setting value
-        $this->updateSetting('rss_show_' . $id . '_settings', serialize($settings), 'rss_show');
+        // Add settinsg if they don't already exist:
+        if (!$this->getSetting('rss_show_' . $id . '_settings')) { 
+            $this->updateSetting('rss_show_' . $id . '_settings', serialize($rss_show_settings), 'rss_show');
+        }
         
         require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
         $sidebar = new Sidebar($this->hotaru);

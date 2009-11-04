@@ -13,7 +13,7 @@ Instructions
 
 Changelog
 ---------
-v.0.6 2009/10/31 - Nick - Fix for unwanted slashes before apostrophes
+v.0.6 2009/11/04 - Nick - Apostrophe fix and updated install function for easier upgrading
 v.0.5 2009/10/04 - Nick - Updates for compatibility with Hotaru 0.7
 v.0.4 2009/10/01 - Nick - Updates for compatibility with Hotaru 0.6
 v.0.3 2009/9/09 - JonH - Bug fix for moving categories

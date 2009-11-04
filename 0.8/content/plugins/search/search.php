@@ -2,10 +2,10 @@
 /**
  * name: Search
  * description: Displays "Search!"
- * version: 0.6
+ * version: 0.7
  * folder: search
  * class: Search
- * requires: submit 0.7, sidebar_widgets 0.4
+ * requires: submit 1.4, sidebar_widgets 0.5
  * hooks: install_plugin, hotaru_header, post_list_filter, userbase_default_permissions
  *
  * Usage: Add <?php $plugins->pluginHook('search'); ?> to your theme, wherever you want to the "Search" form.
@@ -215,12 +215,6 @@ class Search extends PluginFunctions
         
         // Permissions for $role
         switch ($role) {
-            case 'admin':
-                $perms['can_search'] = 'yes';
-                break;
-            case 'member':
-                $perms['can_search'] = 'yes';
-                break;
             default:
                 $perms['can_search'] = 'yes';
         }

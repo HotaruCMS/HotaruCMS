@@ -2,11 +2,11 @@
 /**
  * name: Akismet
  * description: Anti-spam service
- * version: 0.2
+ * version: 0.3
  * folder: akismet
  * class: HotaruAkismet
+ * requires: submit 1.4, comments 1.0
  * hooks: admin_plugin_settings, admin_sidebar_plugin_settings, install_plugin, comment_pre_add_comment, submit_step_3_pre_trackback, com_man_approve_comment, com_man_delete_comment, comments_delete_comment
- * requires: submit 1.0, comments 0.7
  *
  * PHP version 5
  *
@@ -39,9 +39,10 @@ class HotaruAkismet extends PluginFunctions
     public function install_plugin()
     {
         // Default settings 
-        $akismet_settings['akismet_use_posts'] = "";
-        $akismet_settings['akismet_use_comments'] = "";
-        $akismet_settings['akismet_key'] = "";
+        $akismet_settings = $this->getSerializedSettings();
+        if (!isset($akismet_settings['akismet_use_posts'])) { $akismet_settings['akismet_use_posts'] = ""; }
+        if (!isset($akismet_settings['akismet_use_comments'])) { $akismet_settings['akismet_use_comments'] = ""; }
+        if (!isset($akismet_settings['akismet_key'])) { $akismet_settings['akismet_key'] = ""; }
         
         $this->updateSetting('akismet_settings', serialize($akismet_settings));
         

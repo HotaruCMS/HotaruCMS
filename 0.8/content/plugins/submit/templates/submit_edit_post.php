@@ -101,6 +101,7 @@ $hotaru->plugins->pluginHook('submit_form_2_assign');
     </tr>
     
     <?php if ($hotaru->post->useContent) { ?>
+    
     <tr>
         <td style='vertical-align: top;'><?php echo $hotaru->lang["submit_form_content"]; ?>&nbsp; </td>
         <td colspan=2><textarea id='post_content' name='post_content' rows='6' maxlength='<?php $hotaru->post->contentLength; ?>' style='width: 32em;'><?php echo $content_check; ?></textarea></td>

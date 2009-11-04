@@ -2,10 +2,10 @@
 /**
  * name: User Manager
  * description: Manage users.
- * version: 0.2
+ * version: 0.3
  * folder: user_manager
  * class: UserManager
- * requires: users 0.5
+ * requires: users 0.8
  * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  * PHP version 5

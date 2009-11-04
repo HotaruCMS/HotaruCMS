@@ -2,7 +2,7 @@
 /**
  * name: Sidebar Widgets
  * description: Manages the contents of the sidebar
- * version: 0.4
+ * version: 0.5
  * folder: sidebar_widgets
  * class: SidebarWidgets
  * hooks: install_plugin, hotaru_header, header_include, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, sidebar

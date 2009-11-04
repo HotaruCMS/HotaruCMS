@@ -46,6 +46,7 @@
         if ($action == 'optimize') { $admin->optimizeTables(); }
         if ($action == 'empty') { $admin->emptyTable($admin->cage->get->testAlnumLines('table')); }
         if ($action == 'drop') { $admin->dropTable($admin->cage->get->testAlnumLines('table')); }
+        if ($action == 'remove_settings') { $admin->removeSettings($admin->cage->get->testAlnumLines('settings')); }
     }
 ?>
 
@@ -66,6 +67,21 @@
 <ul>
     <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=optimize">
         <?php echo $admin->lang["admin_theme_maintenance_optimize"]; ?></a> - <?php echo $admin->lang["admin_theme_maintenance_optimize_desc"]; ?></li>
+</ul>
+
+<?php $plugin_settings = $admin->listPluginSettings(); ?>
+<br />
+<h2><?php echo $admin->lang["admin_theme_maintenance_plugin_settings"]; ?></h2>
+<?php echo $admin->lang["admin_theme_maintenance_plugin_settings_explanation"]; ?><br /><br />
+<ul>
+<?php if ($plugin_settings) { ?>
+    <?php foreach ($plugin_settings as $settings) { ?>
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=remove_settings&amp;settings=<?php echo $settings; ?>">
+        <?php echo $admin->lang["admin_theme_maintenance_remove"] . " " . make_name($settings) . " " . $admin->lang["admin_theme_maintenance_settings"]; ?> </a></li>
+    <?php } ?>
+<?php } else { ?>
+    <i><?php echo $admin->lang["admin_theme_maintenance_no_settings_to_delete"]; ?></i>
+<?php } ?>
 </ul>
 
 <?php $plugin_tables = $admin->listPluginTables(); ?>
