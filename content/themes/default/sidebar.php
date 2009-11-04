@@ -1,6 +1,8 @@
-<?php
+<?php 
 /**
- * Tag Cloud
+ * Theme name: default
+ * Template name: sidebar.php
+ * Template author: Nick Ramsay
  *
  * PHP version 5
  *
@@ -23,21 +25,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
- 
+
 ?>
-    
-    <div id='main'>
-        <div id='breadcrumbs'><a href='<?php echo BASEURL; ?>'><?php echo $hotaru->lang["main_theme_home"]; ?></a> &raquo; <?php echo $hotaru->lang["tags_tag_cloud"]; ?></div>
-        
-        <?php echo $hotaru->showMessages(); ?>
-        
-        <div class="tag_cloud">
-        <?php
-            foreach ($hotaru->vars['tagCloud'] as $tag) {
-              echo "<a href='" . $hotaru->url(array('tag' => $tag['link_word'])) . "' ";
-              echo "class='tag_group" . $tag['class'] . "'>" . $tag["show_word"] . "</a>\n";
-            }
-        ?>
-        </div>
-    
-    </div>    
+
+<div id="sidebar">
+
+    <?php $hotaru->plugins->pluginHook('sidebar', true, '', array(1)); ?>
+
+</div>

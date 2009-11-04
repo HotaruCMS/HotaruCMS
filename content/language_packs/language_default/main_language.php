@@ -77,8 +77,7 @@ $lang["main_theme_navigation_logout"] = "Logout";
 $lang['main_theme_home'] = "Home";
 
 /* footer */
-$lang["main_theme_footer_brought_by"] = "Brought to you by the";
-$lang["main_theme_footer_open_source"] = "open source community.";
+$lang["main_theme_footer_hotaru_link"] = "HotaruCMS.org";
 
 /* Times */
 $lang['main_times_days'] = "days";

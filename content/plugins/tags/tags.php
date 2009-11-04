@@ -129,12 +129,6 @@ class Tags extends PluginFunctions
         }
     }
     
-    public function header_include()
-    {
-        // Include the css file only when viewing the tag cloud:
-            $this->includeCss('tag_cloud');
-    }
-    
     
     /**
      * JavaScript for dropdown tags list
@@ -191,7 +185,10 @@ class Tags extends PluginFunctions
         $cloud = $this->buildTagCloud($tag_count);
         
         if ($show_title) {
-            echo "<h2 class='sidebar_widget_head widget_tag_cloud_title'>" . $this->hotaru->lang["tags_tag_cloud_widget_title"] . "</h2>";
+            echo "<h2 class='sidebar_widget_head widget_tag_cloud_title'>";
+            echo "<a href='" . $this->hotaru->url(array('page' => 'tag-cloud')) . "'>";
+            echo $this->hotaru->lang["tags_tag_cloud_widget_title"] . "</a>\n";
+            echo "</h2>\n";
         }
         
         echo "<div class='widget_tag_cloud'>";
@@ -458,7 +455,7 @@ class Tags extends PluginFunctions
     { 
         if ($this->hotaru->post->vars['useTags'] && $this->hotaru->post->vars['tags'])
         { 
-            echo '<li><a class="tags_link" href="#">' . $this->lang["submit_show_tags"]  . '</a></li>';
+            echo "<li><a class='tags_link' href='#'>" . $this->lang["submit_show_tags"]  . "</a></li>\n";
         }
     }
     
@@ -470,13 +467,13 @@ class Tags extends PluginFunctions
     {
         $tags = explode(',', $this->hotaru->post->vars['tags']);
     
-        echo "<div class='show_tags' style='display: none;'>";
-            echo "<ul>" . $this->lang["submit_show_tags"] . ": ";
+        echo "<div class='show_tags' style='display: none;'>\n";
+            echo "<ul>" . $this->lang["submit_show_tags"] . ": \n";
                 foreach ($tags as $tag) {
-                    echo "<a href='" . $this->hotaru->url(array('tag' => str_replace(' ', '_', trim($tag)))) . "'>" . trim($tag) . "</a>&nbsp;";
+                    echo "<a href='" . $this->hotaru->url(array('tag' => str_replace(' ', '_', trim($tag)))) . "'>" . trim($tag) . "</a>&nbsp;\n";
                 }
-            echo "</ul>";
-        echo "</div>";
+            echo "</ul>\n";
+        echo "</div>\n";
     }
     
     

@@ -634,7 +634,7 @@ class Users extends PluginFunctions
         $username = $this->hotaru->title;
         
         if ($this->hotaru->pageType == 'user' && $this->current_user->getPermission('can_access_admin') == 'yes') {
-            echo "<div class='special_links_bar'>";
+            echo "<div class='post_breadcrumbs_links_bar'>";
             echo $this->lang["users_account_edit"] . " " . $username . ": ";
             echo " <a href='" . $this->hotaru->url(array('page' => 'account', 'user' => $username)) . "'>";
             echo $this->lang["users_account_account"] . "</a> | ";

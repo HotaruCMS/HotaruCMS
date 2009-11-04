@@ -27,13 +27,18 @@ The following code looks pretty ugly, but it's not quite as confusing as it firs
 */
 
 $user_ip = $hotaru->cage->server->testIp('REMOTE_ADDR');
+
+// Determine the status of the post so we can apply different css to top and new vote buttons:
+$status = $hotaru->post->status;
+if ($status != 'top' && $status != 'new') { $status = 'new'; }  // used on next line to default to a blue button
+$vote_button_type = 'vote_button_' . $status . '_story';  // for css difference between top and new stories
 ?>
  
 <!-- Vote Button -->
 <div class='vote_button'>
 
 <!-- VOTE COUNT -->
-<div id='votes_<?php echo $hotaru->post->id; ?>' class='vote_button_top'><?php echo $hotaru->vars['votesUp']; ?></div>
+<div id='votes_<?php echo $hotaru->post->id; ?>' class='vote_button_top  <?php echo $vote_button_type; ?>'><?php echo $hotaru->vars['votesUp']; ?></div>
 
 <!-- VOTE OR UN-VOTE LINK -->
 <?php if ($hotaru->current_user->loggedIn && !$hotaru->vars['voted']) { ?>

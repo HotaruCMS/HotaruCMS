@@ -363,23 +363,25 @@ class Post
         if ($category && (FRIENDLY_URLS == "false")) { $cat_id = $category; }
         
         // When a user clicks a parent category, we need to show posts from all child categories, too.
-        // This only works for onle level of sub-categories.
-        $filter_string = '(post_category = %d';
-        $values = array($cat_id);
-        $parent = $cat->getCatParent($cat_id);
-        if ($parent == 1) {
-            $children = $cat->getCatChildren($cat_id);
-            if ($children) {
-                foreach ($children as $child_id) {
-                    $filter_string .= ' || post_category = %d';
-                    array_push($values, $child_id->category_id); 
+        // This only works for one level of sub-categories.
+        if ($category) {
+            $filter_string = '(post_category = %d';
+            $values = array($cat_id);
+            $parent = $cat->getCatParent($cat_id);
+            if ($parent == 1) {
+                $children = $cat->getCatChildren($cat_id);
+                if ($children) {
+                    foreach ($children as $child_id) {
+                        $filter_string .= ' || post_category = %d';
+                        array_push($values, $child_id->category_id); 
+                    }
                 }
             }
+            $filter_string .= ')';
+            $filter[$filter_string] = $values; 
         }
-        $filter_string .= ')';
-        $filter[$filter_string] = $values; 
         // end categories
-        
+                
         if ($search && $this->plugins->isActive('search')) { 
             $search_plugin = new Search('', $this->hotaru);
             $prepared_search = $search_plugin->prepareSearchFilter($search); 
@@ -419,8 +421,12 @@ class Post
         { 
         $feed->description = $this->lang["submit_rss_stories_search"] . " " . stripslashes($search); 
         }
+        else
+        {
+        
+        }
                 
-        if (!isset($filter))  $filter = array();
+        if (!isset($filter))  $filter['post_status = %s || post_status = %s'] = array('top', 'new'); // default to all posts
         $prepared_array = $this->filter($filter, $limit, false, $select);
         
         $results = $this->getPosts($prepared_array);
@@ -669,7 +675,7 @@ class Post
             // Assume 'top' page and filter to 'top' stories.
             $this->hotaru->vars['filter']['post_archived = %s'] = 'N'; 
             $this->hotaru->vars['filter']['post_status = %s'] = 'top';
-            $rss = "<a href='" . $this->hotaru->url(array('page'=>'rss')) . "'>";
+            $rss = "<a href='" . $this->hotaru->url(array('page'=>'rss', 'status'=>'top')) . "'>";
             $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_top"] . $rss;
         }

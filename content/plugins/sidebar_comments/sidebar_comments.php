@@ -77,20 +77,23 @@ class SidebarComments extends PluginFunctions
         $comments = $this->getSidebarComments($sb_comments_settings);
         
         // build link that will link the widget title to all comments...
-        $title = "<a href='" . $this->hotaru->url(array('page'=>'comments')) . "' title='" . $this->lang["sidebar_comments_title_anchor_title"] . "'>";
+        
+        $anchor_title = htmlentities($this->lang["sidebar_comments_title_anchor_title"], ENT_QUOTES, 'UTF-8');
+        $title = "<a href='" . $this->hotaru->url(array('page'=>'comments')) . "' title='" . $anchor_title . "'>";
         $title .= $this->lang['sidebar_comments_title'] . "</a>";
         
         if (isset($comments) && !empty($comments)) {
             
-            $output = "<h2 class='sidebar_widget_head sidebar_comments_title'>";
-            $output .= "<a href='" . $this->hotaru->url(array('page'=>'rss_comments')) . "' title='" . $this->lang["sidebar_comments_icon_anchor_title"] . "'><img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'></a>&nbsp;"; // RSS icon
+            $output = "<h2 class='sidebar_widget_head sidebar_comments_title'>\n";
+            $output .= "<a href='" . $this->hotaru->url(array('page'=>'rss_comments')) . "' title='" . $anchor_title . "'>\n";
+            $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'>\n</a>&nbsp;"; // RSS icon
             $link = BASEURL;
             $output .= $title . "</h2>\n"; 
                 
             $output .= "<ul class='sidebar_widget_body sidebar_comments_items'>\n";
             
             $output .= $this->getSidebarCommentsItems($comments, $sb_comments_settings);
-            $output .= "</ul>\n";
+            $output .= "</ul>\n\n";
         }
         
         // Display the whole thing:
@@ -145,25 +148,26 @@ class SidebarComments extends PluginFunctions
             }
 
             // OUTPUT COMMENT
-            $output .= "<li class='sidebar_comments_item'>";
+            $output .= "<li class='sidebar_comments_item'>\n";
             
             if ($sb_comments_settings['sidebar_comments_avatar'] && $this->isActive('gravatar')) {
                 $this->hotaru->vars['gravatar_size'] = $sb_comments_settings['sidebar_comments_avatar_size'];
                 $grav = new Gravatar('', $this->hotaru);
-                $output .= "<div class='sidebar_comments_avatar'>" . $grav->showGravatarLink($author->name, $author->email, true) . "</div> ";
+                $output .= "<div class='sidebar_comments_avatar'>\n" . $grav->showGravatarLink($author->name, $author->email, true) . "</div> \n";
             }
             
             if ($sb_comments_settings['sidebar_comments_author']) {
-                $output .= "<a class='sidebar_comments_author' href='" . $this->hotaru->url(array('user' => $author->name)) . "'>" . $author->name . "</a>: ";
+                $output .= "<a class='sidebar_comments_author' href='" . $this->hotaru->url(array('user' => $author->name)) . "'>" . $author->name . "</a>: \n";
             }
             
-            $output .= "<div class='sidebar_comments_content'>";
+            $output .= "<div class='sidebar_comments_content'>\n";
             $item_content = stripslashes(html_entity_decode(urldecode($item->comment_content), ENT_QUOTES,'UTF-8'));
             $item_content = truncate($item_content, $sb_comments_settings['sidebar_comments_length'], true);
             $comment_link = $this->hotaru->url(array('page'=>$item->comment_post_id)) . "#c" . $item->comment_id;
             $comment_tooltip = $this->hotaru->lang["sidebar_comments_title_tooltip"] . $this->hotaru->post->title;
-            $output .= "<a href='" . $comment_link . "' title='" . $comment_tooltip . "'>" . $item_content . "</a></div>";
-            $output .= "</li>\n";
+            $anchor_title = htmlentities($comment_tooltip, ENT_QUOTES, 'UTF-8');
+            $output .= "<a href='" . $comment_link . "' title='" . $comment_tooltip . "'>" . $item_content . "</a>\n</div>\n";
+            $output .= "</li>\n\n";
         }
         
         return $output;

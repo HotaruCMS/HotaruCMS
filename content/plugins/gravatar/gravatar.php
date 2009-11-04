@@ -102,9 +102,9 @@ class Gravatar extends PluginFunctions
      */
     public function showGravatarLink($username, $email, $return = false)
     {
-        $output = "<a href='" . $this->hotaru->url(array('user' => $username)) . "' title='" . $username . "'>";
+        $output = "<a href='" . $this->hotaru->url(array('user' => $username)) . "' title='" . $username . "'>\n";
         $output .= $this->buildGravatarImage($email);
-        $output .= "</a>";
+        $output .= "</a>\n";
         
         if ($return == true) { return $output; } else { echo $output; }
     }
@@ -159,7 +159,7 @@ class Gravatar extends PluginFunctions
             "&size=" . $this->hotaru->vars['gravatar_size'] . 
             "&r=" . $this->hotaru->vars['gravatar_rating'];
             
-        $img_url = "<img class='gravatar' src='" . $grav_url . "' " . $resized  .">";
+        $img_url = "<img class='gravatar' src='" . $grav_url . "' " . $resized  .">\n";
         
         return $img_url;
     }
