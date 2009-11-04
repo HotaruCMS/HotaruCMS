@@ -5,7 +5,7 @@
  * version: 0.1
  * folder: smilies
  * class: Smilies
- * requires: Comments 0.5
+ * requires: Comments 1.0
  * hooks: show_comments_content
  *
  * PHP version 5

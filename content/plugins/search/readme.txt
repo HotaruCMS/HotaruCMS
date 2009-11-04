@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.0.7 2009/11/04 - Nick - Updates for compatibility with Hotaru 0.8
 v.0.6 2009/10/18 - Nick - Bug fix for search terms less than 4 characters.
 v.0.5 2009/10/13 - Nick - CSS and template update.
 v.0.4 2009/10/12 - Nick - Refills the search box with the term just searched for.

@@ -2,10 +2,10 @@
 /**
  * name: Post Manager
  * description: Manage posts.
- * version: 0.2
+ * version: 0.3
  * folder: post_manager
  * class: PostManager
- * requires: submit 1.2
+ * requires: submit 1.4
  * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  * PHP version 5
@@ -34,18 +34,6 @@ return false; die(); // die on direct access.
 
 class PostManager extends PluginFunctions
 {
-    /**
-     * Install and create a "categories" table if not already there
-     */
-    public function install_plugin()
-    {
-        // Include language file. Also included in hotaru_header, but needed here so 
-        // that the link in the Admin sidebar shows immediately after installation.
-        $this->includeLanguage();
-        
-    }
-    
-    
     /**
      * Define a global "table_categories" and include language
      *

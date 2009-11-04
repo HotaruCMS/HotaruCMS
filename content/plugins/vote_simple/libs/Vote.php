@@ -58,6 +58,7 @@ class Vote
             //echo "table doesn't exist. Stopping before creation."; exit;
             $sql = "CREATE TABLE `" . DB_PREFIX . "postvotes` (
               `vote_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+              `vote_archived` enum('Y','N') NOT NULL DEFAULT 'N',
               `vote_post_id` int(11) NOT NULL DEFAULT '0',
               `vote_user_id` int(11) NOT NULL DEFAULT '0',
               `vote_user_ip` varchar(32) NOT NULL DEFAULT '0',
@@ -70,6 +71,13 @@ class Vote
             ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Post Votes';";
             $this->db->query($sql); 
         }   
+        
+        if (!$this->db->column_exists('postvotes', 'vote_archived')) {
+            // add new post_archived field
+            $sql = "ALTER TABLE " . DB_PREFIX . "postvotes ADD vote_archived ENUM(%s, %s) NOT NULL DEFAULT %s FIRST";
+            $this->db->query($this->db->prepare($sql, 'Y', 'N', 'N'));
+        }
+        
     }
 }
 

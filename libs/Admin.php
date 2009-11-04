@@ -189,6 +189,9 @@ class Admin
             case "deactivate_all":
                 $this_plugin->activateDeactivateAll(0);
                 break;    
+            case "uninstall_all":
+                $this_plugin->uninstallAll();
+                break;    
             case "install":
                 $this_plugin->install();
                 break;
@@ -499,6 +502,26 @@ class Admin
     
     
     /**
+     * List all plugins with settings
+     *
+     * @return array|false
+     */
+    public function listPluginSettings()
+    {
+        $plugin_settings = array();
+        $sql = "SELECT DISTINCT plugin_folder FROM " . DB_PREFIX . "pluginsettings";
+        $results = $this->db->get_results($this->db->prepare($sql));
+    
+        if (!$results) { return false; } 
+        
+        foreach ($results as $item) {
+            array_push($plugin_settings, $item->plugin_folder);
+        }
+        return $plugin_settings; 
+    }
+    
+    
+    /**
      * List all plugin created tables
      */
     public function listPluginTables()
@@ -576,6 +599,24 @@ class Admin
         
         if ($msg) {
             $this->hotaru->message = $this->lang['admin_maintenance_table_deleted'];
+            $this->hotaru->messageType = 'green';
+            $this->hotaru->showMessage();
+        }
+    }
+    
+    
+    /**
+     * Remove plugin settings
+     *
+     * @param string $plugin_name - settings to remove
+     */
+    public function removeSettings($plugin_name, $msg = true)
+    {
+        $sql = "DELETE FROM " . DB_PREFIX . "pluginsettings WHERE plugin_folder = %s";
+        $this->db->get_results($this->db->prepare($sql, $plugin_name));
+    
+        if ($msg) {
+            $this->hotaru->message = $this->lang['admin_maintenance_settings_removed'];
             $this->hotaru->messageType = 'green';
             $this->hotaru->showMessage();
         }

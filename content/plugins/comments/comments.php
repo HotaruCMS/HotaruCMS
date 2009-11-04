@@ -5,8 +5,8 @@
  * version: 1.0
  * folder: comments
  * class: Comments
- * requires: submit 0.7, users 0.5
- * hooks: header_include, admin_header_include_raw, install_plugin, upgrade_plugin, hotaru_header, theme_index_replace, theme_index_main, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_edit_post_admin_fields, submit_form_2_process_submission, userbase_default_permissions, post_delete_post
+ * requires: submit 1.4, users 0.8
+ * hooks: header_include, admin_header_include_raw, install_plugin, hotaru_header, theme_index_replace, theme_index_main, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_edit_post_admin_fields, submit_form_2_process_submission, userbase_default_permissions, post_delete_post
  *
  * PHP version 5
  *
@@ -33,52 +33,21 @@
 class Comments extends pluginFunctions
 {
     /**
-     * Upgrade plugin
-     */
-    public function upgrade_plugin()
-    {
-        if (!$this->db->column_exists('comments', 'comment_status')) {
-            // add new comment_status field
-            $sql = "ALTER TABLE " . DB_PREFIX . "comments ADD comment_status varchar(32)  NOT NULL DEFAULT 'approved' AFTER comment_date";
-            $this->db->query($this->db->prepare($sql));
-     
-            // make content field fulltext for better searching
-            $sql = "ALTER TABLE " . DB_PREFIX . "comments ADD FULLTEXT(comment_content)";
-            $this->db->query($this->db->prepare($sql));
-        }
-        
-        if (!$this->db->column_exists('posts', 'post_comments')) {
-            // add new post_comments field
-            $sql = "ALTER TABLE " . DB_PREFIX . "posts ADD post_comments ENUM(%s, %s) NOT NULL DEFAULT %s AFTER post_subscribe";
-            $this->db->query($this->db->prepare($sql, 'open', 'closed', 'open'));
-        }
-        
-        // Get settings from database if they exist...
-        $comments_settings = $this->getSerializedSettings();
-        
-        // Add new settings
-        $comments_settings['comment_order'] = 'asc';
-        $comments_settings['comment_pagination'] = '';
-        $comments_settings['comment_items_per_page'] = 20;
-        $comments_settings['comment_x_comments'] = 1;
-        $comments_settings['comment_email_notify'] = "";
-        $comments_settings['comment_email_notify_mods'] = array();
-        
-        $this->updateSetting('comments_settings', serialize($comments_settings));
-    }
-
-
-    /**
-     * Default settings on install
+     * Install or Upgrade
      */
     public function install_plugin()
     {
+        // ************
+        // DATABASE 
+        // ************
+        
         // Create a new empty table called "comments"
         $exists = $this->db->table_exists('comments');
         if (!$exists) {
             //echo "table doesn't exist. Stopping before creation."; exit;
             $sql = "CREATE TABLE `" . DB_PREFIX . "comments` (
               `comment_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+              `comment_archived` enum('Y','N') NOT NULL DEFAULT 'N',
               `comment_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
               `comment_post_id` int(20) NOT NULL DEFAULT '0',
               `comment_user_id` int(20) NOT NULL DEFAULT '0',
@@ -92,15 +61,14 @@ class Comments extends pluginFunctions
               FULLTEXT (`comment_content`)
             ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Post Comments';";
             $this->db->query($sql); 
-        } else {
-            $this->upgrade_plugin();
-        }
+        } 
         
         // Create a new empty table called "commentvotes" if it doesn't already exist
         $exists = $this->db->table_exists('commentvotes');
         if (!$exists) {
             //echo "table doesn't exist. Stopping before creation."; exit;
             $sql = "CREATE TABLE `" . DB_PREFIX . "commentvotes` (
+              `cvote_archived` enum('Y','N') NOT NULL DEFAULT 'N',
               `cvote_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
               `cvote_post_id` int(11) NOT NULL DEFAULT '0',
               `cvote_comment_id` int(11) NOT NULL DEFAULT '0',
@@ -114,30 +82,66 @@ class Comments extends pluginFunctions
             $this->db->query($sql); 
         }
         
-        // Add post_comments field to the posts table for opening/closing individual comment threads
+        if (!$this->db->column_exists('comments', 'comment_status')) {
+            // add new comment_status field
+            $sql = "ALTER TABLE " . DB_PREFIX . "comments ADD comment_status varchar(32)  NOT NULL DEFAULT 'approved' AFTER comment_date";
+            $this->db->query($this->db->prepare($sql));
+     
+            // make content field fulltext for better searching
+            $sql = "ALTER TABLE " . DB_PREFIX . "comments ADD FULLTEXT(comment_content)";
+            $this->db->query($this->db->prepare($sql));
+        }
+        
+        if (!$this->db->column_exists('comments', 'comment_status')) {
+            // add new comment_status field
+            $sql = "ALTER TABLE " . DB_PREFIX . "comments ADD comment_status varchar(32)  NOT NULL DEFAULT 'approved' AFTER comment_date";
+            $this->db->query($this->db->prepare($sql));
+        }
+        
         if (!$this->db->column_exists('posts', 'post_comments')) {
+            // add new post_comments field
             $sql = "ALTER TABLE " . DB_PREFIX . "posts ADD post_comments ENUM(%s, %s) NOT NULL DEFAULT %s AFTER post_subscribe";
             $this->db->query($this->db->prepare($sql, 'open', 'closed', 'open'));
         }
         
-        // Default settings 
-        $comments_settings['comment_all_forms'] = "checked";
-        if ($this->isActive('gravatar')) {
-            $comments_settings['comment_avatars'] = "checked";
-        } else {
-            $comments_settings['comment_avatars'] = "";
+        if (!$this->db->column_exists('comments', 'comment_archived')) {
+            // add new comment_archived field
+            $sql = "ALTER TABLE " . DB_PREFIX . "comments ADD comment_archived ENUM(%s, %s) NOT NULL DEFAULT %s AFTER comment_id";
+            $this->db->query($this->db->prepare($sql, 'Y', 'N', 'N'));
         }
-        $comments_settings['comment_voting'] = "";
-        $comments_settings['comment_levels'] = 5;
-        $comments_settings['comment_email'] = SITE_EMAIL;
-        $comments_settings['comment_allowable_tags'] = "<b><i><u><a><blockquote><strike>";
-        $comments_settings['comment_set_pending'] = ""; // sets all new comments to pending (needs Comment Manager to view them)
-        $comments_settings['comment_order'] = 'asc';
-        $comments_settings['comment_pagination'] = '';
-        $comments_settings['comment_items_per_page'] = 20;
-        $comments_settings['comment_x_comments'] = 1;
-        $comments_settings['comment_email_notify'] = "";
-        $comments_settings['comment_email_notify_mods'] = array();
+        
+        if (!$this->db->column_exists('commentvotes', 'cvote_archived')) {
+            // add new comment_archived field
+            $sql = "ALTER TABLE " . DB_PREFIX . "commentvotes ADD cvote_archived ENUM(%s, %s) NOT NULL DEFAULT %s FIRST";
+            $this->db->query($this->db->prepare($sql, 'Y', 'N', 'N'));
+        }
+
+        // ************
+        // SETTINGS 
+        // ************
+        
+        // Get settings from database if they exist...
+        $comments_settings = $this->getSerializedSettings();
+        
+        // Default settings 
+        if (!isset($comments_settings['comment_all_forms'])) { $comments_settings['comment_all_forms'] = "checked"; }
+        if (!isset($comments_settings['comment_voting'])) { $comments_settings['comment_voting'] = ""; }
+        if (!isset($comments_settings['comment_levels'])) { $comments_settings['comment_levels'] = 5; }
+        if (!isset($comments_settings['comment_email'])) { $comments_settings['comment_email'] = SITE_EMAIL; }
+        if (!isset($comments_settings['comment_allowable_tags'])) { $comments_settings['comment_allowable_tags'] = "<b><i><u><a><blockquote><strike>"; }
+        if (!isset($comments_settings['comment_set_pending'])) { $comments_settings['comment_set_pending'] = ""; }
+        if (!isset($comments_settings['comment_order'])) { $comments_settings['comment_order'] = 'asc'; }
+        if (!isset($comments_settings['comment_pagination'])) { $comments_settings['comment_pagination'] = ''; }
+        if (!isset($comments_settings['comment_items_per_page'])) { $comments_settings['comment_items_per_page'] = 20; }
+        if (!isset($comments_settings['comment_x_comments'])) { $comments_settings['comment_x_comments'] = 1; }
+        if (!isset($comments_settings['comment_email_notify'])) { $comments_settings['comment_email_notify'] = ""; }
+        if (!isset($comments_settings['comment_email_notify_mods'])) { $comments_settings['comment_email_notify_mods'] = array(); }
+        
+        if ($this->isActive('gravatar')) {
+            if (!isset($comments_settings['comment_avatars'])) { $comments_settings['comment_avatars'] = "checked"; }
+        } else {
+            if (!isset($comments_settings['comment_avatars'])) { $comments_settings['comment_avatars'] = ""; }
+        }
         
         $this->updateSetting('comments_settings', serialize($comments_settings));
         

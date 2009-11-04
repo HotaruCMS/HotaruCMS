@@ -2,7 +2,7 @@
 /**
  * name: Submit
  * description: Submit and manage stories.
- * version: 1.3
+ * version: 1.4
  * folder: submit
  * class: Submit
  * hooks: hotaru_header, header_meta, header_include, header_include_raw, admin_header_include_raw, install_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, userbase_default_permissions
@@ -44,6 +44,7 @@ class Submit extends PluginFunctions
             //echo "table doesn't exist. Stopping before creation."; exit;
             $sql = "CREATE TABLE `" . DB_PREFIX . "posts` (
               `post_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+              `post_archived` enum('Y','N') NOT NULL DEFAULT 'N',
               `post_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
               `post_author` int(20) NOT NULL DEFAULT 0,
               `post_category` int(20) NOT NULL DEFAULT 1,
@@ -68,6 +69,7 @@ class Submit extends PluginFunctions
             //echo "table doesn't exist. Stopping before creation."; exit;
             $sql = "CREATE TABLE `" . DB_PREFIX . "postmeta` (
               `postmeta_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+              `postmeta_archived` enum('Y','N') NOT NULL DEFAULT 'N',
               `postmeta_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
               `postmeta_postid` int(20) NOT NULL DEFAULT 0,
               `postmeta_key` varchar(255) NULL,
@@ -78,23 +80,37 @@ class Submit extends PluginFunctions
             $this->db->query($sql); 
         }
         
+        if (!$this->db->column_exists('posts', 'post_archived')) {
+            // add new post_archived field
+            $sql = "ALTER TABLE " . DB_PREFIX . "posts ADD post_archived ENUM(%s, %s) NOT NULL DEFAULT %s AFTER post_id";
+            $this->db->query($this->db->prepare($sql, 'Y', 'N', 'N'));
+        }
+        
+        if (!$this->db->column_exists('postmeta', 'postmeta_archived')) {
+            // add new post_archived field
+            $sql = "ALTER TABLE " . DB_PREFIX . "postmeta ADD postmeta_archived ENUM(%s, %s) NOT NULL DEFAULT %s AFTER postmeta_id";
+            $this->db->query($this->db->prepare($sql, 'Y', 'N', 'N'));
+        }
+        
+        
         // Default settings 
-        $submit_settings['post_enabled'] = "checked";
-        $submit_settings['post_author'] = "checked";
-        $submit_settings['post_date'] = "checked";
-        $submit_settings['post_content'] = "checked";
-        $submit_settings['post_content_length'] = 50;
-        $submit_settings['post_summary'] = "checked";
-        $submit_settings['post_summary_length'] = 200;
-        $submit_settings['post_posts_per_page'] = 10;
-        $submit_settings['post_allowable_tags'] = "<b><i><u><a><blockquote><strike>";
-        $submit_settings['post_set_pending'] = ""; // sets all new posts to pending 
-        $submit_settings['post_x_posts'] = 1;
-        $submit_settings['post_email_notify'] = "";
-        $submit_settings['post_email_notify_mods'] = array();
+        $submit_settings = $this->getSerializedSettings();
+        
+        if (!isset($submit_settings['post_enabled'])) { $submit_settings['post_enabled'] = "checked"; }
+        if (!isset($submit_settings['post_author'])) { $submit_settings['post_author'] = "checked"; }
+        if (!isset($submit_settings['post_date'])) { $submit_settings['post_date'] = "checked"; }
+        if (!isset($submit_settings['post_content'])) { $submit_settings['post_content'] = "checked"; }
+        if (!isset($submit_settings['post_content_length'])) { $submit_settings['post_content_length'] = 50; }
+        if (!isset($submit_settings['post_summary'])) { $submit_settings['post_summary'] = "checked"; }
+        if (!isset($submit_settings['post_summary_length'])) { $submit_settings['post_summary_length'] = 200; }
+        if (!isset($submit_settings['post_posts_per_page'])) { $submit_settings['post_posts_per_page'] = 10; }
+        if (!isset($submit_settings['post_allowable_tags'])) { $submit_settings['post_allowable_tags'] = "<b><i><u><a><blockquote><strike>"; }
+        if (!isset($submit_settings['post_set_pending'])) { $submit_settings['post_set_pending'] = ""; } // sets all new posts to pending 
+        if (!isset($submit_settings['post_x_posts'])) { $submit_settings['post_x_posts'] = 1; }
+        if (!isset($submit_settings['post_email_notify'])) { $submit_settings['post_email_notify'] = ""; }
+        if (!isset($submit_settings['post_email_notify_mods'])) { $submit_settings['post_email_notify_mods'] = array(); }
         
         $this->updateSetting('submit_settings', serialize($submit_settings));
-        
     }
     
     
@@ -175,7 +191,8 @@ class Submit extends PluginFunctions
     public function header_meta()
     {    
         if ($this->hotaru->pageType == 'post') {
-            echo '<meta name="description" content="' . $this->hotaru->post->content . '">' . "\n";
+            $meta_content = truncate(stripslashes(htmlentities($this->hotaru->post->content,ENT_QUOTES,'UTF-8')), 200);
+            echo '<meta name="description" content="' . $meta_content . '">' . "\n";
             return true;
         }
     }
@@ -512,7 +529,7 @@ class Submit extends PluginFunctions
             
         } elseif ($this->hotaru->pageType == 'post') {
             // We found out this is a post from the hotaru_header function above.
-            
+           
             $this->hotaru->displayTemplate('post', 'submit');
             return true;
             

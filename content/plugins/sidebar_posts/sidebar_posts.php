@@ -5,7 +5,7 @@
  * version: 0.8
  * folder: sidebar_posts
  * class: SidebarPosts
- * requires: sidebar_widgets 0.4, submit 0.7
+ * requires: sidebar_widgets 0.5, submit 1.4
  * hooks: install_plugin, hotaru_header, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * PHP version 5
@@ -40,7 +40,7 @@ class SidebarPosts extends PluginFunctions
     public function install_plugin()
     {
         // Default settings
-        $this->updateSetting('sidebar_posts_box', 'default'); // box style
+        if (!$this->getSetting('sidebar_posts_box')) { $this->updateSetting('sidebar_posts_box', 'default'); } // box style
         
         // Default settings
         require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');

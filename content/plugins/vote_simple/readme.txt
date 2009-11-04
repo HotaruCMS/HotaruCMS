@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.0.8 2009/11/04 - Nick - Bug fixes and updated install function for easier upgrading
 v.0.7 2009/10/20 - Nick - Added option to show vote count before links in the Sidebar Posts plugin
 v.0.6 2009/10/18 - Nick - Made vote deletion hook into the Post class' delete function
 v.0.5 2009/10/14 - Nick - Improvements for flagging - new hook, image and template.

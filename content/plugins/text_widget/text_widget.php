@@ -2,10 +2,10 @@
 /**
  * name: Text Widget
  * description: Paste text or code into a blank widget
- * version: 0.2
+ * version: 0.3
  * folder: text_widget
  * class: TextWidget
- * requires: sidebar_widgets 0.4
+ * requires: sidebar_widgets 0.5
  * hooks: install_plugin, hotaru_header, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * PHP version 5
@@ -39,12 +39,14 @@ class TextWidget extends PluginFunctions
     {
         if (!$id || !is_int($id)) { $id = 1; }
         
-        $settings['text_widget_title'] = 'New Text Widget';
-        $settings['text_widget_php'] = '';
-        $settings['text_widget_content'] = '';
+        $text_widget_settings['text_widget_title'] = 'New Text Widget';
+        $text_widget_settings['text_widget_php'] = '';
+        $text_widget_settings['text_widget_content'] = '';
         
         // parameters: plugin folder name, setting name, setting value
-        $this->updateSetting('text_widget_' . $id . '_settings', serialize($settings), 'text_widget');
+        if (!$this->getSetting('text_widget_' . $id . '_settings')) { 
+            $this->updateSetting('text_widget_' . $id . '_settings', serialize($text_widget_settings), 'text_widget');
+        }
         
         require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
         $sidebar = new Sidebar($this->hotaru);

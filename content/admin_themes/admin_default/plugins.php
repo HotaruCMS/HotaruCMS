@@ -79,13 +79,19 @@ if($the_plugins) { $the_plugins = sksort($the_plugins, "order", "int", true); } 
         }
     }
 ?>
-<tr><td colspan=5><small>
+<tr>
+<td colspan=3><small>
     <a href="<?php echo BASEURL; ?>admin_index.php?page=plugins&amp;action=deactivate_all">
         <?php echo $admin->lang["admin_theme_plugins_deactivate_all"]; ?></a>
          | 
     <a href="<?php echo BASEURL; ?>admin_index.php?page=plugins&amp;action=activate_all">
         <?php echo $admin->lang["admin_theme_plugins_activate_all"]; ?></a>
-</small></td></tr>
+</small></td>
+<td colspan=2 style='text-align: right;'><small>
+    <a href="<?php echo BASEURL; ?>admin_index.php?page=plugins&amp;action=uninstall_all">
+        <?php echo $admin->lang["admin_theme_plugins_uninstall_all"]; ?></a>
+</small></td>
+</tr>
 </table>
 
 <table>    

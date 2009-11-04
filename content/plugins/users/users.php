@@ -54,13 +54,14 @@ class Users extends PluginFunctions
             $this->db->query($sql); 
         }
         
-        $users_settings['users_recaptcha_enabled'] = "";
-        $users_settings['users_recaptcha_pubkey'] = "";
-        $users_settings['users_recaptcha_privkey'] = "";
-        $users_settings['users_emailconf_enabled'] = "";
-        $users_settings['users_registration_status'] = "member";
-        $users_settings['users_email_notify'] = "";
-        $users_settings['users_email_notify_mods'] = array();
+        $users_settings = $this->getSerializedSettings();
+        if (!isset($users_settings['users_recaptcha_enabled'])) { $users_settings['users_recaptcha_enabled'] = ""; }
+        if (!isset($users_settings['users_recaptcha_pubkey'])) { $users_settings['users_recaptcha_pubkey'] = ""; }
+        if (!isset($users_settings['users_recaptcha_privkey'])) { $users_settings['users_recaptcha_privkey'] = ""; }
+        if (!isset($users_settings['users_emailconf_enabled'])) { $users_settings['users_emailconf_enabled'] = ""; }
+        if (!isset($users_settings['users_registration_status'])) { $users_settings['users_registration_status'] = "member"; }
+        if (!isset($users_settings['users_email_notify'])) { $users_settings['users_email_notify'] = ""; }
+        if (!isset($users_settings['users_email_notify_mods'])) { $users_settings['users_email_notify_mods'] = array(); }
         
         $this->updateSetting('users_settings', serialize($users_settings));
         

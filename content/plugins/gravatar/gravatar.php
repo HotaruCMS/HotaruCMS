@@ -5,7 +5,7 @@
  * version: 0.6
  * folder: gravatar
  * class: Gravatar
- * requires: users 0.5, submit 0.7
+ * requires: users 0.8, submit 1.4
  * hooks: install_plugin, hotaru_header, header_include, submit_show_post_pre_title, show_comments_avatar
  *
  * PHP version 5
@@ -44,8 +44,8 @@ class Gravatar extends PluginFunctions
         
         // !!! STOP EDITING HERE !!!
         
-        $this->updateSetting('gravatar_size', $size);
-        $this->updateSetting('gravatar_rating', $rating);
+        if (!$this->getSetting('gravatar_size')) { $this->updateSetting('gravatar_size', $size); }
+        if (!$this->getSetting('gravatar_rating')) { $this->updateSetting('gravatar_rating', $rating); }
     }
     
     

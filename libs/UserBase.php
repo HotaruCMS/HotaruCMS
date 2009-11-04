@@ -840,7 +840,7 @@ class UserBase {
         $this->hotaru->vars['perms'] = $perms;
         
         // plugin hook:
-        $results = $this->plugins->pluginHook('userbase_default_permissions', true, '', array('role' => $role));
+        $this->plugins->pluginHook('userbase_default_permissions', true, '', array('role' => $role));
         
         return $this->hotaru->vars['perms'];
     }

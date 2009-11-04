@@ -5,7 +5,7 @@
  * version: 0.1
  * folder: sidebar_comments
  * class: SidebarComments
- * requires: sidebar_widgets 0.4, comments 0.9
+ * requires: sidebar_widgets 0.5, comments 1.0
  * hooks: install_plugin, hotaru_header, header_include, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * PHP version 5
@@ -40,15 +40,17 @@ class SidebarComments extends PluginFunctions
     public function install_plugin()
     {
         // Default settings
+        $sb_comments_settings = $this->getSerializedSettings();
+        
         if ($this->isActive('gravatar')) {
-            $sb_comments_settings['sidebar_comments_avatar'] = "checked";
+            if (!isset($sb_comments_settings['sidebar_comments_avatar'])) { $sb_comments_settings['sidebar_comments_avatar'] = "checked"; }
         } else {
-            $sb_comments_settings['sidebar_comments_avatar'] = "";
+            if (!isset($sb_comments_settings['sidebar_comments_avatar'])) { $sb_comments_settings['sidebar_comments_avatar'] = ""; }
         }
-        $sb_comments_settings['sidebar_comments_avatar_size'] = 16;
-        $sb_comments_settings['sidebar_comments_author'] = '';
-        $sb_comments_settings['sidebar_comments_length'] = 100;
-        $sb_comments_settings['sidebar_comments_number'] = 10;
+        if (!isset($sb_comments_settings['sidebar_comments_avatar_size'])) { $sb_comments_settings['sidebar_comments_avatar_size'] = 16; }
+        if (!isset($sb_comments_settings['sidebar_comments_author'])) { $sb_comments_settings['sidebar_comments_author'] = ''; }
+        if (!isset($sb_comments_settings['sidebar_comments_length'])) { $sb_comments_settings['sidebar_comments_length'] = 100; }
+        if (!isset($sb_comments_settings['sidebar_comments_number'])) { $sb_comments_settings['sidebar_comments_number'] = 10; }
         
         $this->updateSetting('sidebar_comments_settings', serialize($sb_comments_settings));
         
