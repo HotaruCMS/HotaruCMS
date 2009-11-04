@@ -368,6 +368,7 @@ class Categories extends PluginFunctions
         }
         $filter_string .= ')';
         $this->hotaru->vars['filter'][$filter_string] = $values; 
+        $this->hotaru->vars['filter']['post_archived = %s'] = 'N'; // don't include archived posts
         $rss = " <a href='" . $this->hotaru->url(array('page'=>'rss', 'category'=>$cat_id)) . "'>";
         $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
         

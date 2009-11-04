@@ -103,12 +103,7 @@ class DoubleBarLayout implements PageLayout
             if ($currentPage != $parent->fetchNumberPages() && $currentPage != $parent->fetchNumberPages() -1 && $currentPage != $parent->fetchNumberPages() - $before)
             {
                 if ($currentPage < ($parent->fetchNumberPages() - ($after + 1))) { $str .= " <span class='pagi_dots'>...</span> \n"; }
-                if ($head == 'admin') { 
-                    $link = $path . '&pg=' . $parent->fetchNumberPages();
-                } else { 
-                    $parsed_query_args['pg'] = $parent->fetchNumberPages();
-                    $link = $hotaru->url($parsed_query_args);
-                }
+                $link = $path . '&pg=' . $parent->fetchNumberPages();
                 $str .= "<a class='pagi_last' href='" . $link . "'  title='" . $hotaru->lang['pagination_last'] . "'>".$parent->fetchNumberPages()."</a> \n";
             }
         }

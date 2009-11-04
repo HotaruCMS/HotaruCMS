@@ -57,7 +57,7 @@ class SubmitSettings extends Submit
         $x_posts = $submit_settings['post_x_posts'];
         $email_notify = $submit_settings['post_email_notify'];
         $email_mods = $submit_settings['post_email_notify_mods'];
-
+        $archive = $submit_settings['post_archive'];
     
         $this->pluginHook('submit_settings_get_values');
         
@@ -71,12 +71,14 @@ class SubmitSettings extends Submit
         if (!$summary_length) { $summary_length = ''; }
         if (!$set_pending) { $set_pending = 'auto_approve'; }
         if (!$x_posts) { $x_posts = 1; }
+        if (!$archive) { $archive = 'no_archive'; }
         
         echo "<form name='submit_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=submit' method='post'>\n";
-        
-        echo "<p>" . $this->lang["submit_settings_instructions"] . "</p><br />";
-        
-        echo "<input type='checkbox' name='enabled' value='enabled' " . $enabled . " >&nbsp;&nbsp;" . $this->lang["submit_settings_enable"] . "<br />\n";    
+
+        echo "<input type='checkbox' name='enabled' value='enabled' " . $enabled . " >&nbsp;&nbsp;" . $this->lang["submit_settings_enable"] . "<br /><br />\n"; 
+
+        echo $this->lang["submit_settings_post_components"] . "<br /><br />\n";
+           
         echo "<input type='checkbox' name='title' value='title' checked disabled>&nbsp;&nbsp;" . $this->lang["submit_settings_title"] . "<br />\n";
         echo "<input type='checkbox' name='author' value='author' " . $author . ">&nbsp;&nbsp;" . $this->lang["submit_settings_author"] . "<br />\n";
         echo "<input type='checkbox' name='date' value='date' " . $date . ">&nbsp;&nbsp;" . $this->lang["submit_settings_date"] . "<br />\n";
@@ -175,11 +177,24 @@ class SubmitSettings extends Submit
                     echo " " . $this->lang["submit_settings_email_notify_none"] . "</td>\n";
                     echo "</tr>\n";
                 }
-                echo "</table>\n";
+                echo "</table><br />\n";
             }
-            echo "</div><br />";
+            echo "</div>";
         }
         
+        echo $this->lang["submit_settings_post_archiving"] . "<br /><br />\n";
+        echo $this->lang["submit_settings_post_archive_desc"] . "<br /><br />\n";
+        echo "<select name='post_archive'>\n";
+            echo "<option value='" . $archive . "'>" . $this->lang["submit_settings_post_archive_$archive"] . "</option>\n";
+            echo '<option disabled>-----</option>';
+            echo "<option value='no_archive'>" . $this->lang["submit_settings_post_archive_no_archive"] . "</option>\n";
+            echo "<option value='180'>" . $this->lang["submit_settings_post_archive_180"] . "</option>\n";
+            echo "<option value='365'>" . $this->lang["submit_settings_post_archive_365"] . "</option>\n";
+            echo "<option value='730'>" . $this->lang["submit_settings_post_archive_730"] . "</option>\n";
+            echo "<option value='1095'>" . $this->lang["submit_settings_post_archive_1095"] . "</option>\n";
+        echo "</select>\n";
+        echo $this->lang["submit_settings_post_archive"] . "<br /><br />\n";
+                
         echo "<input type='hidden' name='submitted' value='true' />\n";
         echo "<input type='submit' value='" . $this->lang["submit_settings_save"] . "' />\n";
         echo "</form>\n";
@@ -290,6 +305,11 @@ class SubmitSettings extends Submit
             }
         }
         
+        // Post Archiving
+        if ($this->cage->post->keyExists('post_archive')) { 
+            $archive = $this->cage->post->testAlnumLines('post_archive'); 
+        } 
+        
         $this->pluginHook('submit_save_settings');
         
         $submit_settings['post_enabled'] = $enabled;
@@ -305,6 +325,7 @@ class SubmitSettings extends Submit
         $submit_settings['post_x_posts'] = $x_posts;
         $submit_settings['post_email_notify'] = $email_notify;
         $submit_settings['post_email_notify_mods'] = $email_mods; //array
+        $submit_settings['post_archive'] = $archive;
         
         // necessary to force all posts onto the main page. Plugins such as "Vote" can override this:
         $submit_settings['post_latest'] = false;

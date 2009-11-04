@@ -587,6 +587,7 @@ class Post
         if ($this->cage->get->testPage('page') == 'latest') 
         {
             // Filters page to "new" stories only
+            $this->hotaru->vars['filter']['post_archived = %s'] = 'N'; 
             $this->hotaru->vars['filter']['post_status = %s'] = 'new'; 
             $rss = "<a href='" . $this->hotaru->url(array('page'=>'rss', 'status'=>'new')) . "'>";
             $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
@@ -598,6 +599,7 @@ class Post
             $vote_settings = unserialize($this->plugins->getSetting('vote_settings', 'vote_simple')); 
             $upcoming_duration = "-" . $vote_settings['vote_upcoming_duration'] . " days"; // default: -5 days
             
+            $this->hotaru->vars['filter']['post_archived = %s'] = 'N'; 
             $this->hotaru->vars['filter']['post_status = %s'] = 'new'; 
             $start = date('YmdHis', strtotime("now"));
             $end = date('YmdHis', strtotime($upcoming_duration)); // should be negative
@@ -665,6 +667,7 @@ class Post
         elseif ($this->useLatest && !$this->cage->get->testPage('page'))
         {
             // Assume 'top' page and filter to 'top' stories.
+            $this->hotaru->vars['filter']['post_archived = %s'] = 'N'; 
             $this->hotaru->vars['filter']['post_status = %s'] = 'top';
             $rss = "<a href='" . $this->hotaru->url(array('page'=>'rss')) . "'>";
             $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
@@ -673,6 +676,7 @@ class Post
         else
         {
             // Filters page to "all" stories
+            $this->hotaru->vars['filter']['post_archived = %s'] = 'N'; 
             $this->hotaru->vars['filter']['(post_status = %s OR post_status = %s)'] = array('top', 'new');
             $rss = "<a href='" . $this->hotaru->url(array('page'=>'rss')) . "'>";
             $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";

@@ -76,6 +76,10 @@ $lang['submit_submit_a_story'] = "Submit a Story";
 
 /* Submit Settings */
 $lang["submit_settings_header"] = "Submit Configuration";
+$lang["submit_settings_post_components"] = "<b>Post Components</b>";
+$lang["submit_settings_submission_settings"] = "<b>Submission Settings</b> (for users with 'member' roles)";
+$lang["submit_settings_post_archiving"] = "<b>Post Archiving</b>";
+$lang["submit_settings_content"] = "Description";
 $lang["submit_settings_instructions"] = "Check the components you want submissions to have:";
 $lang["submit_settings_save"] = "Save";
 $lang["submit_settings_enable"] = "Enable story submission";
@@ -102,6 +106,21 @@ $lang["submit_settings_email_notify"] = "When a new post is submitted, email adm
 $lang["submit_settings_email_notify_all"] = "All new posts";
 $lang["submit_settings_email_notify_pending"] = "Pending posts only";
 $lang["submit_settings_email_notify_none"] = "None";
+$lang["submit_settings_post_archive_desc"] = "On the Maintenance page, there's a link you can use to archive old posts (or remove an existing archive). Archiving speeds up your site by excluding old posts and their comments, votes and tags from most database usage. Old posts can still be accessed via the search box or when loaded directly (e.g. from Google). <i>Note: Archiving is not automatic. You will need to update the archive periodically from the Maintenance page.</i>";
+$lang["submit_settings_post_archive"] = "Posts older than this will be archived. <small>(Default: No archive)</small>";
+$lang["submit_settings_post_archive_no_archive"] = "No archive";
+$lang["submit_settings_post_archive_180"] = "6 months";
+$lang["submit_settings_post_archive_365"] = "1 year";
+$lang["submit_settings_post_archive_730"] = "2 years";
+$lang["submit_settings_post_archive_1095"] = "3 years";
+
+/* Maintenance page */
+$lang["submit_maintenance_update_archive"] = "Update the post archive";
+$lang["submit_maintenance_update_archive_remove"] = "Move any archived posts out of the archive. <small>(See Submit Settings)</small>";
+$lang["submit_maintenance_update_archive_desc_1"] = "Posts older than ";
+$lang["submit_maintenance_update_archive_desc_2"] = " will be moved into the archive. <small>(See Submit Settings)</small>";
+$lang["submit_maintenance_archive_removed"] = "Done. There are currently no archived posts.";
+$lang["submit_maintenance_archive_updated"] = "Archive Updated";
 
 /* Submit Breadcrumbs */
 $lang["post_breadcrumbs_all"] = "All Posts";
