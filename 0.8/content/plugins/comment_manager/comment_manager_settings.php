@@ -258,6 +258,12 @@ class CommentManagerSettings extends CommentManager
             if ($search_term) { $delete_link .= "&amp;type=search&amp;search_value=" . $search_term; }
             if ($pg) { $delete_link .= "&amp;pg=" . $pg; }
             
+            if ($this->current_user->getPermission('can_delete_comments') == 'yes') {
+                $colspan = 7;
+            } else {
+                $colspan = 6;
+            }
+            
             $output .= "<tr class='table_row_" . $alt % 2 . " cm_details_" . $alt % 2 . "'>\n";
             $output .= "<td class='cm_id'>" . $c->id . "</td>\n";
             $output .= "<td class='cm_status'><b>" . ucfirst($c->status) . "</b></td>\n";
@@ -266,29 +272,42 @@ class CommentManagerSettings extends CommentManager
             $output .= "<td class='cm_post'><a href='" . $post_link . "'>" . $post->title . "</a></td>\n";
             $output .= "<td class='cm_approve'>" . "<a href='" . $approve_link . "'>\n";
             $output .= "<img src='" . BASEURL . "content/plugins/comment_manager/images/approve.png'>" . "</a></td>\n";
-            $output .= "<td class='cm_delete'>" . "<a href='" . $delete_link . "'>\n";
-            $output .= "<img src='" . BASEURL . "content/plugins/comment_manager/images/delete.png'>" . "</a></td>\n";
+            if ($this->current_user->getPermission('can_delete_comments') == 'yes') {
+                $output .= "<td class='cm_delete'>" . "<a href='" . $delete_link . "'>\n";
+                $output .= "<img src='" . BASEURL . "content/plugins/comment_manager/images/delete.png'>" . "</a></td>\n";
+            }
             $output .= "</tr>\n";
             
             $output .= "<tr class='table_tr_details table_row_" . $alt % 2 . "'>\n";
-            $output .= "<td class='table_description cm_summary_" . $alt % 2 . "' colspan=7>";
-            $output .= "<blockquote>" . truncate(stripslashes(urldecode($c->content)), 140) . "</blockquote>";
-            $output .= " <small>[<a class='table_drop_down' href='#' title='" . $this->lang["com_man_show_content"] . "'>" . $this->hotaru->lang["com_man_show_form"] . "</a>]</small></td>\n";
+            $output .= "<td class='table_description cm_summary_" . $alt % 2 . "' colspan=" . $colspan . ">";
+            
+            if ($this->current_user->getPermission('can_edit_comments') == 'yes') {
+                $output .= "<blockquote>" . truncate(stripslashes(urldecode($c->content)), 140) . "</blockquote>";
+            } else {
+                // if you don'thave permission to view the edit box, we need to show the whole comment here:
+                $output .= "<blockquote>" . stripslashes(urldecode($c->content)) . "</blockquote>";
+            }
+            if ($this->current_user->getPermission('can_delete_comments') == 'yes') {
+                $output .= " <small>[<a class='table_drop_down' href='#' title='" . $this->lang["com_man_show_content"] . "'>" . $this->hotaru->lang["com_man_show_form"] . "</a>]</small>\n";
+            }
+            $output .= "</td>\n";
             $output .= "</tr>\n";
             
-            $output .= "<tr class='table_tr_details' style='display:none;'>\n";
-            $output .= "<td colspan=7 class='table_description cm_description_" . $alt % 2 . "'>\n";
-            $output .= "<form name='com_man_edit_form' action='" . BASEURL . "admin_index.php?plugin=comment_manager' method='post'>\n";
-            $output .= "<table><tr>\n";
-            $output .= "<td><textarea name='com_man_edit_content' cols=80 rows=7>" . $c->content . "</textarea></td>\n";
-            $output .= "</tr>\n";
-            $output .= "<td><input class='submit' type='submit' value='" . $this->lang['com_man_edit_form_update'] . "' /></td>\n";
-            $output .= "</tr></table>\n";
-            $output .= "<input type='hidden' name='cid' value='" . $c->id . "' />\n";
-            $output .= "<input type='hidden' name='page' value='plugin_settings' />\n";
-            $output .= "<input type='hidden' name='type' value='edit' />\n";
-            $output .= "</form>\n";
-            $output .= "</tr>";
+            if ($this->current_user->getPermission('can_edit_comments') == 'yes') {
+                $output .= "<tr class='table_tr_details' style='display:none;'>\n";
+                $output .= "<td colspan=" . $colspan . " class='table_description cm_description_" . $alt % 2 . "'>\n";
+                $output .= "<form name='com_man_edit_form' action='" . BASEURL . "admin_index.php?plugin=comment_manager' method='post'>\n";
+                $output .= "<table><tr>\n";
+                $output .= "<td><textarea name='com_man_edit_content' cols=80 rows=7>" . $c->content . "</textarea></td>\n";
+                $output .= "</tr>\n";
+                $output .= "<td><input class='submit' type='submit' value='" . $this->lang['com_man_edit_form_update'] . "' /></td>\n";
+                $output .= "</tr></table>\n";
+                $output .= "<input type='hidden' name='cid' value='" . $c->id . "' />\n";
+                $output .= "<input type='hidden' name='page' value='plugin_settings' />\n";
+                $output .= "<input type='hidden' name='type' value='edit' />\n";
+                $output .= "</form>\n";
+                $output .= "</tr>";
+            }
         }
         
         if ($pagedResults) {

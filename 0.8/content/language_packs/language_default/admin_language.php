@@ -237,6 +237,7 @@ $lang["admin_theme_settings_setting"] = "Setting";
 $lang["admin_theme_settings_value"] = "Value";
 $lang["admin_theme_settings_default"] = "Default";
 $lang["admin_theme_settings_notes"] = "Notes";
+$lang["admin_plugin_settings_inactive"] = "This plugin is currently inactive.";
 
 /* plugin settings */
 $lang["admin_theme_plugin_settings"] = "Plugin Settings";
