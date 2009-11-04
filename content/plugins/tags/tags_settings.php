@@ -45,8 +45,8 @@ class tagsSettings extends tags
         // Get settings from database if they exist...
         $tags_settings = $this->getSerializedSettings();
         $num_tags_page = $tags_settings['tags_num_tags_page'];
-        $num_tags_widget = $tags_settings'tags_num_tags_widget'];
-        $show_widget_title = $tags_settings'tags_widget_title'];
+        $num_tags_widget = $tags_settings['tags_num_tags_widget'];
+        $show_widget_title = $tags_settings['tags_widget_title'];
         
         if (!$num_tags_page) { $num_tags_page = 100; }
         if (!$num_tags_widget) { $num_tags_widget = 25; }
@@ -113,9 +113,9 @@ class tagsSettings extends tags
         if (is_numeric($num_tags_page) && is_numeric($num_tags_widget))
         { 
             $tags_settings = $this->getSerializedSettings();
-            $tags_settings'tags_num_tags_page'] = $num_tags_page;
-            $tags_settings'tags_num_tags_widget'] = $num_tags_widget;
-            $tags_settings'tags_widget_title'] = $show_widget_title;
+            $tags_settings['tags_num_tags_page'] = $num_tags_page;
+            $tags_settings['tags_num_tags_widget'] = $num_tags_widget;
+            $tags_settings['tags_widget_title'] = $show_widget_title;
             $this->updateSetting('tags_settings', serialize($tags_settings));
             
             $this->hotaru->message = $this->lang["tags_settings_saved"];

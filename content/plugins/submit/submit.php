@@ -5,7 +5,7 @@
  * version: 1.4
  * folder: submit
  * class: Submit
- * hooks: hotaru_header, header_meta, header_include, header_include_raw, admin_header_include_raw, install_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, userbase_default_permissions
+ * hooks: hotaru_header, header_meta, header_include, header_include_raw, admin_header_include_raw, install_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, userbase_default_permissions, admin_maintenance_database, admin_maintenance_top
  *
  * PHP version 5
  *
@@ -109,6 +109,7 @@ class Submit extends PluginFunctions
         if (!isset($submit_settings['post_x_posts'])) { $submit_settings['post_x_posts'] = 1; }
         if (!isset($submit_settings['post_email_notify'])) { $submit_settings['post_email_notify'] = ""; }
         if (!isset($submit_settings['post_email_notify_mods'])) { $submit_settings['post_email_notify_mods'] = array(); }
+        if (!isset($submit_settings['post_archive'])) { $submit_settings['post_archive'] = "no_archive"; }
         
         $this->updateSetting('submit_settings', serialize($submit_settings));
     }
@@ -770,6 +771,125 @@ class Submit extends PluginFunctions
         }
                         
         return false;   // not blocked
+    }
+    
+    
+    /**
+     * Archive option on Maintenance page
+     */
+    public function admin_maintenance_database()
+    {
+        $submit_settings = $this->getSerializedSettings();
+        $archive = $submit_settings['post_archive'];
+        echo "<li><a href='" . BASEURL . "admin_index.php?page=maintenance&amp;action=update_archive'>";
+        echo $this->hotaru->lang["submit_maintenance_update_archive"] . "</a> - ";
+        if ($archive == 'no_archive') {
+            echo $this->hotaru->lang["submit_maintenance_update_archive_remove"];
+        } else {
+            echo $this->hotaru->lang["submit_maintenance_update_archive_desc_1"];
+            echo $this->lang["submit_settings_post_archive_$archive"];
+            echo $this->hotaru->lang["submit_maintenance_update_archive_desc_2"];
+        }
+        echo "</li>";
+    }
+    
+    
+    /**
+     * Perform archiving tasks
+     */
+    public function admin_maintenance_top()
+    {
+        if ($this->cage->get->testAlnumLines('action') != 'update_archive') { return false; }
+        
+        $submit_settings = $this->getSerializedSettings();
+        $archive = $submit_settings['post_archive'];
+        
+        // FIRST, WE NEED TO RESET THE ARCHIVE, setting all archive fields to "N":
+        
+        // posts
+        if ($this->db->table_exists('posts')) {
+            $sql = "UPDATE " . DB_PREFIX . "posts SET post_archived = %s";
+            $this->db->query($this->db->prepare($sql, 'N'));
+        }
+        
+        // postmeta
+        if ($this->db->table_exists('postmeta')) {
+            $sql = "UPDATE " . DB_PREFIX . "postmeta SET postmeta_archived = %s";
+            $this->db->query($this->db->prepare($sql, 'N'));
+        }
+        
+        // postvotes
+        if ($this->db->table_exists('postvotes')) {
+            $sql = "UPDATE " . DB_PREFIX . "postvotes SET vote_archived = %s";
+            $this->db->query($this->db->prepare($sql, 'N'));
+        }
+        
+        // comments
+        if ($this->db->table_exists('comments')) {
+            $sql = "UPDATE " . DB_PREFIX . "comments SET comment_archived = %s";
+            $this->db->query($this->db->prepare($sql, 'N'));
+        }
+        
+        // commentvotes
+        if ($this->db->table_exists('commentvotes')) {
+            $sql = "UPDATE " . DB_PREFIX . "commentvotes SET cvote_archived = %s";
+            $this->db->query($this->db->prepare($sql, 'N'));
+        }
+        
+        // tags
+        if ($this->db->table_exists('tags')) {
+            $sql = "UPDATE " . DB_PREFIX . "tags SET tags_archived = %s";
+            $this->db->query($this->db->prepare($sql, 'N'));
+        }
+        
+        // RETURN NOW IF NO_ARCHIVE IS SET
+        if ($archive == 'no_archive') { 
+            $this->hotaru->message = $this->lang['submit_maintenance_archive_removed'];
+            $this->hotaru->messageType = 'green';
+            $this->hotaru->showMessage();
+            return true;
+        }
+        
+        // NEXT, START ARCHIVING!
+        $archive_text = "-" . $archive . " days"; // e.g. "-365 days"
+        $archive_date = date('YmdHis', strtotime($archive_text));
+        
+        if ($this->db->table_exists('posts')) {
+            $sql = "UPDATE " . DB_PREFIX . "posts SET post_archived = %s WHERE post_date <= %s";
+            $this->db->query($this->db->prepare($sql, 'Y', $archive_date));
+        }
+        
+        if ($this->db->table_exists('postmeta')) {
+            // No date field in postmeta table so join with posts table...
+            $sql = "UPDATE " . DB_PREFIX . "postmeta, " . DB_PREFIX . "posts  SET " . DB_PREFIX . "postmeta.postmeta_archived = %s WHERE (" . DB_PREFIX . "posts.post_date <= %s) AND (" . DB_PREFIX . "posts.post_id = " . DB_PREFIX . "postmeta.postmeta_postid)";
+            $this->db->query($this->db->prepare($sql, 'Y', $archive_date));
+        }
+        
+        if ($this->db->table_exists('postvotes')) {
+            $sql = "UPDATE " . DB_PREFIX . "postvotes SET vote_archived = %s WHERE vote_date <= %s";
+            $this->db->query($this->db->prepare($sql, 'Y', $archive_date));
+        }
+        
+        if ($this->db->table_exists('comments')) {
+            $sql = "UPDATE " . DB_PREFIX . "comments SET comment_archived = %s WHERE comment_date <= %s";
+            $this->db->query($this->db->prepare($sql, 'Y', $archive_date));
+        }
+        
+        if ($this->db->table_exists('commentvotes')) {
+            $sql = "UPDATE " . DB_PREFIX . "commentvotes SET cvote_archived = %s WHERE cvote_date <= %s";
+            $this->db->query($this->db->prepare($sql, 'Y', $archive_date));
+        }
+        
+        if ($this->db->table_exists('tags')) {
+            $sql = "UPDATE " . DB_PREFIX . "tags SET tags_archived = %s WHERE tags_date <= %s";
+            $this->db->query($this->db->prepare($sql, 'Y', $archive_date));
+        }
+        
+        $this->hotaru->message = $this->lang['submit_maintenance_archive_updated'];
+        $this->hotaru->messageType = 'green';
+        $this->hotaru->showMessage();
+        return true;
+
     }
     
 }

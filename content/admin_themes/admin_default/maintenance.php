@@ -36,8 +36,6 @@
     
 <h2><?php echo $admin->lang["admin_theme_maintenance_title"]; ?></h2>
     
-<?php $admin->plugins->pluginHook('admin_maintenance_top'); ?>
-
 <?php
     if ($action = $admin->cage->get->testAlnumLines('action')) {
         if ($action == 'clear_db_cache') { $admin->clearCache('db_cache'); }
@@ -50,6 +48,7 @@
     }
 ?>
 
+<?php $admin->plugins->pluginHook('admin_maintenance_top'); ?>
 
 <br />
 <h2><?php echo $admin->lang["admin_theme_maintenance_cache"]; ?></h2>
@@ -67,6 +66,7 @@
 <ul>
     <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=optimize">
         <?php echo $admin->lang["admin_theme_maintenance_optimize"]; ?></a> - <?php echo $admin->lang["admin_theme_maintenance_optimize_desc"]; ?></li>
+    <?php $admin->plugins->pluginHook('admin_maintenance_database'); ?>
 </ul>
 
 <?php $plugin_settings = $admin->listPluginSettings(); ?>

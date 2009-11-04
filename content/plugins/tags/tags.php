@@ -214,8 +214,8 @@ class Tags extends PluginFunctions
     public function buildTagCloud($count)
     {
         // get tags from the database:
-        $sql = "SELECT tags_word FROM " . TABLE_TAGS;
-        $tags = $this->db->get_results($this->db->prepare($sql));
+        $sql = "SELECT tags_word FROM " . TABLE_TAGS . " WHERE tags_archived = %s";
+        $tags = $this->db->get_results($this->db->prepare($sql, 'N'));
         
         // Put the tags in an array:
         $tags_array = array();
@@ -437,6 +437,7 @@ class Tags extends PluginFunctions
             
             if ($tag) {
                 $this->hotaru->vars['filter']['post_tags LIKE %s'] = '%' . urlencode($tag) . '%'; 
+                $this->hotaru->vars['filter']['post_archived = %s'] = 'N'; // don't include archived posts
                 $rss = " <a href='" . $this->hotaru->url(array('page'=>'rss', 'tag'=>$tag)) . "'>";
             }
             
