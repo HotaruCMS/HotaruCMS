@@ -29,5 +29,4 @@
 <ul id='category_bar'>
 <?php echo $hotaru->vars['output']; ?>
 </ul> 
-
-
+<div class="clear"></div>

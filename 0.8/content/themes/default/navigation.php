@@ -64,7 +64,3 @@
         </li>
     <?php } ?>
 </ul>
-
-<div class="clear"></div>
-
-<?php $hotaru->plugins->pluginHook('navigation_last'); ?>

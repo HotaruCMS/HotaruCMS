@@ -93,11 +93,23 @@
 <?php } ?>
 
 <div id="doc2" class="yui-t7">
-    <div id="hd">
-        <div id="hd_title">
-            <h1><a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a></h1>
-            <?php $hotaru->plugins->pluginHook('header_post_title'); ?>
-        </div>
+    <div id="nav">
         <!-- NAVIGATION -->
         <?php echo $hotaru->displayTemplate('navigation'); ?>
+    </div>
+    <div class="clear">&nbsp;</div>
+    
+    <div id="hd">
+        <!-- TITLE & AD BLOCKS -->
+        <div id="hd_title">
+            <h1><a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a></h1>
+        </div>
+        <div id="hd_block2">
+        </div>
+    </div>
+    <div class="clear">&nbsp;</div>
+    
+    <div id="post_header">
+        <!-- CATEGORIES, ETC -->
+        <?php $hotaru->plugins->pluginHook('post_header'); ?>
     </div>
