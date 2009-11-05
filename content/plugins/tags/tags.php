@@ -191,7 +191,7 @@ class Tags extends PluginFunctions
             echo "</h2>\n";
         }
         
-        echo "<div class='widget_tag_cloud'>";
+        echo "<div class='sidebar_widget_body widget_tag_cloud'>";
         foreach ($cloud as $tag) {
             echo "<a href='" . $this->hotaru->url(array('tag' => $tag['link_word'])) . "' ";
             echo "class='widget_tag_group" . $tag['class'] . "'>" . $tag["show_word"] . "</a>\n";

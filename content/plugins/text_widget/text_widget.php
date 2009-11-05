@@ -105,6 +105,7 @@ class TextWidget extends PluginFunctions
         require_once(PLUGINS . 'text_widget/text_widget_settings.php');
         $tw = new TextWidgetSettings($this->folder, $this->hotaru);
         $tw->settings();
+        return true;
     }
 
 

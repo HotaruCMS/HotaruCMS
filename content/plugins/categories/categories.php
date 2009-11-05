@@ -6,7 +6,7 @@
  * folder: categories
  * class: Categories
  * requires: submit 1.4, category_manager 0.6
- * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, post_read_post_1, post_read_post_2, post_add_post, post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, post_list_filter, submit_show_post_author_date, submit_is_page_main, navigation_last, admin_sidebar_plugin_settings, admin_plugin_settings
+ * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, post_read_post_1, post_read_post_2, post_add_post, post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, post_list_filter, submit_show_post_author_date, submit_is_page_main, post_header, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * PHP version 5
  *
@@ -440,7 +440,8 @@ class Categories extends PluginFunctions
             $the_cats = $this->db->get_results($this->db->prepare($sql));
             
             echo "<h2 class='sidebar_widget_head'>" . $this->lang["sidebar_categories"] . "</h2>";
-            echo "<ul class=' class='sidebar_widget_body sidebar_categories'>\n";
+            echo "<div class='sidebar_widget_body'>\n";
+            echo "<ul class='sidebar_categories'>\n";
             foreach ($the_cats as $cat) {
                 $cat_level = 1;    // top level category.
                 if ($cat->category_name != "all") {
@@ -456,7 +457,7 @@ class Categories extends PluginFunctions
                     echo $category . "</a></li>\n";
                 }
             }
-            echo "</ul>\n";
+            echo "</ul></div>\n";
         
         }
     }
@@ -526,7 +527,7 @@ class Categories extends PluginFunctions
      * Adapted from:
      * @link http://www.cssnewbie.com/easy-css-dropdown-menus/
      */
-    public function navigation_last()
+    public function post_header()
     {
         // Get settings from database if they exist...
         $bar = $this->getSetting('categories_bar');

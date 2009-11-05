@@ -228,6 +228,7 @@ class SidebarWidgets extends PluginFunctions
         
         $this->hotaru->showMessages();
         $this->hotaru->displayTemplate('sidebar_ordering', 'sidebar_widgets');
+        return true;
     }
 
 }

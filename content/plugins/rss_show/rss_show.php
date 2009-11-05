@@ -214,6 +214,7 @@ class RssShow extends PluginFunctions
         require_once(PLUGINS . 'rss_show/rss_show_settings.php');
         $rs = new RssShowSettings($this->folder, $this->hotaru);
         $rs->settings();
+        return true;
     }
     
     

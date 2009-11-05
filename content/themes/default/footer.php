@@ -33,7 +33,7 @@
             $hotaru->plugins->pluginHook('footer');
         
             // Link to forums...
-            echo "<p><a href='http://hotarucms.org'<img src='" . BASEURL . "content/themes/" . THEME . "images/hotarucms.png' ";
+            echo "<p><a href='http://hotarucms.org'><img src='" . BASEURL . "content/themes/" . THEME . "images/hotarucms.png' ";
             echo "title='" . $hotaru->lang["main_theme_footer_hotaru_link"] . "'></a></p>";
         
             $hotaru->showQueriesAndTime();
