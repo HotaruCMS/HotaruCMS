@@ -842,7 +842,13 @@ class Submit extends PluginFunctions
             $this->db->query($this->db->prepare($sql, 'N'));
         }
         
-        // RETURN NOW IF NO_ARCHIVE IS SET
+        // useractivity
+        if ($this->db->table_exists('useractivity')) {
+            $sql = "UPDATE " . DB_PREFIX . "useractivity SET useract_archived = %s";
+            $this->db->query($this->db->prepare($sql, 'N'));
+        }
+        
+        // RETURN NOW IF NO_ARCHIVE IS SET ***************************** 
         if ($archive == 'no_archive') { 
             $this->hotaru->message = $this->lang['submit_maintenance_archive_removed'];
             $this->hotaru->messageType = 'green';
@@ -850,39 +856,51 @@ class Submit extends PluginFunctions
             return true;
         }
         
-        // NEXT, START ARCHIVING!
+        // NEXT, START ARCHIVING! ***************************** 
         $archive_text = "-" . $archive . " days"; // e.g. "-365 days"
         $archive_date = date('YmdHis', strtotime($archive_text));
         
+        // posts
         if ($this->db->table_exists('posts')) {
             $sql = "UPDATE " . DB_PREFIX . "posts SET post_archived = %s WHERE post_date <= %s";
             $this->db->query($this->db->prepare($sql, 'Y', $archive_date));
         }
         
+        // postmeta
         if ($this->db->table_exists('postmeta')) {
             // No date field in postmeta table so join with posts table...
             $sql = "UPDATE " . DB_PREFIX . "postmeta, " . DB_PREFIX . "posts  SET " . DB_PREFIX . "postmeta.postmeta_archived = %s WHERE (" . DB_PREFIX . "posts.post_date <= %s) AND (" . DB_PREFIX . "posts.post_id = " . DB_PREFIX . "postmeta.postmeta_postid)";
             $this->db->query($this->db->prepare($sql, 'Y', $archive_date));
         }
         
+        // postvotes
         if ($this->db->table_exists('postvotes')) {
             $sql = "UPDATE " . DB_PREFIX . "postvotes SET vote_archived = %s WHERE vote_date <= %s";
             $this->db->query($this->db->prepare($sql, 'Y', $archive_date));
         }
         
+        // comments
         if ($this->db->table_exists('comments')) {
             $sql = "UPDATE " . DB_PREFIX . "comments SET comment_archived = %s WHERE comment_date <= %s";
             $this->db->query($this->db->prepare($sql, 'Y', $archive_date));
         }
         
+        // commentvotes
         if ($this->db->table_exists('commentvotes')) {
             $sql = "UPDATE " . DB_PREFIX . "commentvotes SET cvote_archived = %s WHERE cvote_date <= %s";
             $this->db->query($this->db->prepare($sql, 'Y', $archive_date));
         }
         
+        // tags
         if ($this->db->table_exists('tags')) {
             $sql = "UPDATE " . DB_PREFIX . "tags SET tags_archived = %s WHERE tags_date <= %s";
             $this->db->query($this->db->prepare($sql, 'Y', $archive_date));
+        }
+        
+        // useractivity
+        if ($this->db->table_exists('useractivity')) {
+            $sql = "UPDATE " . DB_PREFIX . "useractivity SET useract_archived = %s WHERE useract_date <= %s";
+            $this->db->query($this->db->prepare($sql, 'Y'));
         }
         
         $this->hotaru->message = $this->lang['submit_maintenance_archive_updated'];

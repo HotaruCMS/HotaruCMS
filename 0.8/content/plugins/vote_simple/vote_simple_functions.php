@@ -79,6 +79,8 @@ if ($hotaru->cage->post->keyExists('post_id')) {
             // Update Postvotes table
             $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d)";
             $hotaru->db->query($hotaru->db->prepare($sql, $post_id, $user_id, $user_ip, 'vote_simple', $vote_rating, $user_id));
+            
+            $hotaru->plugins->pluginHook('vote_positive_vote', true, '', array('user' => $user_id, 'post'=>$post_id));
         } 
         else // negative vote
         {
@@ -92,6 +94,8 @@ if ($hotaru->cage->post->keyExists('post_id')) {
                 // Update Postvotes table
                 $sql = "DELETE FROM  " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating = %s";
                 $hotaru->db->query($hotaru->db->prepare($sql, $post_id, $user_id, $voted));
+                
+                $hotaru->plugins->pluginHook('vote_negative_vote', true, '', array('user' => $user_id, 'post'=>$post_id));
             }
         }
         

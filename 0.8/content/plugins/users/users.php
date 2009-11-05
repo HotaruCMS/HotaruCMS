@@ -54,6 +54,27 @@ class Users extends PluginFunctions
             $this->db->query($sql); 
         }
         
+        // Create a new empty table called "useractivity"
+        $exists = $this->db->table_exists('useractivity');
+        if (!$exists) {
+            //echo "table doesn't exist. Stopping before creation."; exit;
+            $sql = "CREATE TABLE `" . DB_PREFIX . "useractivity` (
+              `useract_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+              `useract_archived` enum('Y','N') NOT NULL DEFAULT 'N',
+              `useract_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+              `useract_userid` int(20) NOT NULL DEFAULT 0,
+              `useract_status` varchar(32) NOT NULL DEFAULT 'show',
+              `useract_key` varchar(255) NULL,
+              `useract_value` text NULL,
+              `useract_key2` varchar(255) NULL,
+              `useract_value2` text NULL,
+              `useract_date` timestamp NOT NULL,
+              `useract_updateby` int(20) NOT NULL DEFAULT 0, 
+              INDEX  (`useract_userid`)
+            ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='User Activity';";
+            $this->db->query($sql); 
+        }
+        
         $users_settings = $this->getSerializedSettings();
         if (!isset($users_settings['users_recaptcha_enabled'])) { $users_settings['users_recaptcha_enabled'] = ""; }
         if (!isset($users_settings['users_recaptcha_pubkey'])) { $users_settings['users_recaptcha_pubkey'] = ""; }
@@ -76,6 +97,7 @@ class Users extends PluginFunctions
      */
     public function hotaru_header() {
         if (!defined('TABLE_USERMETA')) { define("TABLE_USERMETA", DB_PREFIX . 'usermeta'); }
+        if (!defined('TABLE_USERACTIVITY')) { define("TABLE_USERACTIVITY", DB_PREFIX . 'useractivity'); }
         
         // include language file
         $this->includeLanguage();
