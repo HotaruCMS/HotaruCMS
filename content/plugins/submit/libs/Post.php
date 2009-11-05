@@ -200,6 +200,7 @@ class Post
         
         $this->db->query($this->db->prepare($sql, urlencode($this->origUrl), urlencode($this->domain), urlencode(trim($this->title)), urlencode(trim($this->url)), urlencode(trim($this->content)), $this->status, $this->author, $this->subscribe, $this->current_user->id, $this->id));
         
+        $this->hotaru->post->id = $this->id; // a small hack to get the id for use in plugins.
         $this->plugins->pluginHook('post_update_post');
         
         return true;
@@ -216,7 +217,11 @@ class Post
         $this->status = $status;
             
         $sql = "UPDATE " . TABLE_POSTS . " SET post_status = %s WHERE post_id = %d";
-        $this->db->query($this->db->prepare($sql, $this->status, $this->id));        
+        $this->db->query($this->db->prepare($sql, $this->status, $this->id));
+        
+        $this->hotaru->post->id = $this->id; // a small hack to get the id for use in plugins.
+        $this->plugins->pluginHook('post_change_status');
+                
         return true;
     }
 
@@ -245,6 +250,7 @@ class Post
         $sql = "DELETE FROM " . TABLE_POSTS . " WHERE post_id = %d";
         $this->db->query($this->db->prepare($sql, $this->id));
         
+        $this->hotaru->post->id = $this->id; // a small hack to get the id for use in plugins.
         $this->plugins->pluginHook('post_delete_post');
     }
     

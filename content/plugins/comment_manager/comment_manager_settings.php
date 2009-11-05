@@ -72,6 +72,8 @@ class CommentManagerSettings extends CommentManager
             $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_status = %s WHERE comment_status = %s";
             $this->db->query($this->db->prepare($sql, 'approved', 'pending'));
             
+            $this->pluginHook('com_man_approve_all_comments');
+            
             // No need for a message because the "There are no comments pending message (see further down) shows anyway.
         }
         

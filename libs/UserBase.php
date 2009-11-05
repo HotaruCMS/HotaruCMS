@@ -697,6 +697,9 @@ class UserBase {
                 if ($role_check == 'killspammed' || $role_check == 'deleted') {
                     $viewee->deleteComments(); // includes child comments from *other* users
                     $viewee->deletePosts(); // includes tags and votes for self-submitted posts
+                    
+                    $this->plugins->pluginHook('userbase_killspam', true, '', array('target_user' => $viewee->id));
+                    
                     if ($role_check == 'deleted') { 
                         $viewee->deleteUser(); 
                         $checks['username_check'] = 'deleted';

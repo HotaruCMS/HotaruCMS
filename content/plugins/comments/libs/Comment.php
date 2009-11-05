@@ -236,16 +236,14 @@ class Comment
         }
                     
         if ($set_pending == 'all_pending') {
-            $status = 'pending'; 
+            $this->status = 'pending'; 
         } elseif (($set_pending == 'some_pending') && ($comments_approved <= $x_comments_needed)) {
-            $status = 'pending'; 
-        } else { 
-            $status = $this->status;
+            $this->status = 'pending'; 
         } 
                 
         $sql = "INSERT INTO " . TABLE_COMMENTS . " SET comment_post_id = %d, comment_user_id = %d, comment_parent = %d, comment_date = CURRENT_TIMESTAMP, comment_status = %s, comment_content = %s, comment_subscribe = %d, comment_updateby = %d";
                 
-        $this->db->query($this->db->prepare($sql, $this->postId, $this->author, $this->parent, $status, urlencode(trim(stripslashes($this->content))), $this->subscribe, $this->current_user->id));
+        $this->db->query($this->db->prepare($sql, $this->postId, $this->author, $this->parent, $this->status, urlencode(trim(stripslashes($this->content))), $this->subscribe, $this->current_user->id));
         
         $last_insert_id = $this->db->get_var($this->db->prepare("SELECT LAST_INSERT_ID()"));
         
@@ -268,6 +266,7 @@ class Comment
         $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_status = %s, comment_content = %s, comment_subscribe = %d, comment_updateby = %d WHERE comment_id = %d";
         $this->db->query($this->db->prepare($sql, $this->status, urlencode(trim(stripslashes($this->content))), $this->subscribe, $this->current_user->id, $this->id));
         
+        $this->hotaru->comment->id = $this->id; // a small hack to get the id for use in plugins.
         $this->plugins->pluginHook('comment_update_comment');
         
         return true;
@@ -287,6 +286,7 @@ class Comment
         $sql = "DELETE FROM " . TABLE_COMMENTVOTES . " WHERE cvote_comment_id = %d";
         $this->db->query($this->db->prepare($sql, $this->id));
         
+        $this->hotaru->comment->id = $this->id; // a small hack to get the id for use in plugins.
         $this->plugins->pluginHook('comment_delete_comment');
     }
     

@@ -152,7 +152,7 @@ class VoteSimple extends PluginFunctions
             for ($i=0; $i<$submit_vote_value; $i++) {
                 $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d)";
                 $this->db->query($this->db->prepare($sql, $this->hotaru->post->id, $this->current_user->id, $this->cage->server->testIp('REMOTE_ADDR'), 'vote_simple', 'positive', $this->current_user->id));
-            }    
+            }
         }            
                     
     }
@@ -214,6 +214,8 @@ class VoteSimple extends PluginFunctions
                 if (!$flagged) {
                     $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_reason, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d, %d)";
                     $this->db->query($this->db->prepare($sql, $this->hotaru->post->id, $this->current_user->id, $this->cage->server->testIp('REMOTE_ADDR'), 'vote_simple', 'alert', $this->cage->get->testInt('alert'), $this->current_user->id));
+                    
+                    $this->pluginHook('vote_flag_insert');
                 }
                 else
                 {
