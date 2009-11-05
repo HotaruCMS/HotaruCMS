@@ -24,11 +24,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
- 
-class ActivitySettings extends Activity
+
+class ActivitySettings extends SidebarComments
 {
      /**
-     * Admin settings for activity
+     * Admin settings for Sidebar Comments
      */
     public function settings()
     {
@@ -40,21 +40,39 @@ class ActivitySettings extends Activity
         echo "<h1>" . $this->lang["activity_settings_header"] . "</h1>\n";
           
         // Get settings from database if they exist...
-        $shortname = $this->getSetting('activity_shortname');
+        $activity_settings = $this->getSerializedSettings('activity');
+                            
+        $avatar = $activity_settings['activity_sidebar_avatar'];
+        $avatar_size = $activity_settings['activity_sidebar_avatar_size'];
+        $user = $activity_settings['activity_sidebar_user'];
+        $number = $activity_settings['activity_sidebar_number'];
     
         $this->pluginHook('activity_settings_get_values');
         
         //...otherwise set to blank:
-        if (!$shortname) { $shortname = 'subconcious'; }  // This is the default in Activity' generic code
-            
+        if (!$avatar) { $avatar = ''; }
+        if (!$avatar_size) { $avatar_size = 0; }
+        if (!$user) { $user = ''; }
+        if (!$number) { $number = 0; }
+        
         echo "<form name='activity_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=activity' method='post'>\n";
         
         echo "<p>" . $this->lang["activity_settings_instructions"] . "</p><br />";
-            
-        echo "<p>" . $this->lang["activity_settings_shortname"] . " <input type='text' size=30 name='shortname' value='" . $shortname . "'><br />" . $this->lang["activity_settings_shortname_note"] . "</p>\n";    
+        
+        // show avatars?
+        echo "<p><input type='checkbox' name='avatar' value='avatar' " . $avatar . " >&nbsp;&nbsp;" . $this->lang["activity_settings_sidebar_avatar"] . "</p>\n"; 
     
+        // avatar size
+        echo "<p><input type='text' size=5 name='avatar_size' value='" . $avatar_size . "' /> " . $this->lang["activity_settings_sidebar_avatar_size"] . "</p>\n";
+        
+        // show users?
+        echo "<p><input type='checkbox' name='user' value='user' " . $user . " >&nbsp;&nbsp;" . $this->lang["activity_settings_sidebar_user"] . "</p>\n"; 
+        
+        // number of comments
+        echo "<p><input type='text' size=5 name='number' value='" . $number . "' /> " . $this->lang["activity_settings_sidebar_number"] . "</p>\n";
+        
         $this->pluginHook('activity_settings_form');
-                
+                        
         echo "<br /><br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
         echo "<input type='submit' value='" . $this->lang["activity_settings_save"] . "' />\n";
@@ -63,29 +81,73 @@ class ActivitySettings extends Activity
     
     
      /**
-     * Save admin settings for activity
+     * Save admin settings for activity_sidebar
      *
      * @return true
      */
     public function saveSettings()
     {
-        // short name
-        if ($this->cage->post->keyExists('shortname')) { 
-            $shortname = $this->cage->post->testAlnumLines('shortname');
-        } else {
-            $shortname = 'subconcious'; // This is the default in Activity' generic code
+        $error = 0;
+        
+        // show avatars?
+        if ($this->cage->post->keyExists('avatar')) { 
+            $avatar = 'checked'; 
+        } else { 
+            $avatar = ''; 
         }
         
-        $this->pluginHook('activity_save_settings');
+        // avatar size
+        if ($this->cage->post->keyExists('avatar_size')) { 
+            if ($this->cage->post->testInt('avatar_size')) { 
+                $avatar_size = $this->cage->post->testInt('avatar_size');
+            } else { 
+                $avatar_size = 16; 
+                $error = 1;
+            }
+        }
         
-        $this->updateSetting('activity_shortname', $shortname);
+        // show users?
+        if ($this->cage->post->keyExists('user')) { 
+            $user = 'checked'; 
+        } else { 
+            $user = ''; 
+        }
+
+        // number of comments
+        if ($this->cage->post->keyExists('number')) { 
+            if ($this->cage->post->testInt('number')) { 
+                $number = $this->cage->post->testInt('number');
+            } else { 
+                $number = 10; 
+                $error = 1;
+            }
+        }
         
-        $this->hotaru->message = $this->lang["activity_settings_saved"];
-        $this->hotaru->messageType = "green";
-        $this->hotaru->showMessage();
+        $this->pluginHook('activity_sidebar_save_settings');
+                
+        if ($error == 1)
+        {
+            $this->hotaru->message = $this->lang["activity_settings_not_saved"];
+            $this->hotaru->messageType = "red";
+            $this->hotaru->showMessage();
+            
+            return false;
+        } 
+        else 
+        {
+            $activity_settings['activity_sidebar_avatar'] = $avatar;
+            $activity_settings['activity_sidebar_avatar_size'] = $avatar_size;
+            $activity_settings['activity_sidebar_user'] = $user;
+            $activity_settings['activity_sidebar_number'] = $number;
         
-        return true;    
+            $this->updateSetting('activity_settings', serialize($activity_settings));
+            
+            $this->hotaru->message = $this->lang["activity_settings_saved"];
+            $this->hotaru->messageType = "green";
+            $this->hotaru->showMessage();
+        
+            return true;    
+        }
     }
-    
 }
 ?>

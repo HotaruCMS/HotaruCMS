@@ -27,8 +27,9 @@
 /* Activity language */
 $lang['activity_submitted'] = "submitted";
 $lang['activity_commented'] = "commented on";
-$lang['activity_voted'] = "voted for";
-$lang['activity_flagged'] = "flagged";
+$lang['activity_voted_up'] = "voted for";
+$lang['activity_voted_down'] = "voted down";
+$lang['activity_voted_flagged'] = "flagged";
 $lang['activity_friended'] = "became friends with";
 
 /* Activity Feed */
@@ -43,7 +44,7 @@ $lang["activity_settings_instructions"] = "Choose how you would like activity di
 
 $lang["activity_settings_sidebar_avatar"] = "Show user's avatar <small>(requires the Gravatar plugin)</small>";
 $lang["activity_settings_sidebar_avatar_size"] = "Avatar size in pixels <small>(default: 16)</small>";
-$lang["activity_settings_sidebar_author"] = "Show user's name";
+$lang["activity_settings_sidebar_user"] = "Show user's name";
 $lang["activity_settings_sidebar_length"] = "Max. characters for each item";
 $lang["activity_settings_sidebar_number"] = "Number of items to show";
 
