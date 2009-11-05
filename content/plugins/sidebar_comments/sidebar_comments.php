@@ -63,9 +63,7 @@ class SidebarComments extends PluginFunctions
     
     
     /**
-     * Display the top or latest posts in the sidebar
-     *
-     * @param $type either 'top' or 'new', matching the post_status in the db.
+     * Display comments in the sidebar
      */
     public function sidebar_widget_sidebar_comments()
     {
@@ -102,7 +100,7 @@ class SidebarComments extends PluginFunctions
 
 
     /**
-     * Get sidebar posts
+     * Get sidebar comments
      *
      * return array $comments
      */
@@ -116,10 +114,10 @@ class SidebarComments extends PluginFunctions
     
     
     /**
-     * Get sidebar post items
+     * Get sidebar comment items
      *
      * @param array $comments 
-     * return string $ouput
+     * return string $output
      */
     public function getSidebarCommentsItems($comments = array(), $sb_comments_settings)
     {
