@@ -587,7 +587,7 @@ class Comments extends pluginFunctions
         $pg = $this->hotaru->cage->get->getInt('pg');
         $pagedResults = new Paginated($comments, $this->hotaru->comment->itemsPerPage, $pg);
         
-        while($comment = $pagedResults->fetchPagedRow()) {    //when $story is false loop terminates    
+        while($comment = $pagedResults->fetchPagedRow()) {
             $this->hotaru->post->readPost($comment->comment_post_id);
             $this->displayComment($comment, true);
         }

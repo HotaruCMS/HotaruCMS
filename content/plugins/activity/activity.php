@@ -6,7 +6,7 @@
  * folder: activity
  * class: Activity
  * requires: users 0.8
- * hooks: install_plugin, hotaru_header, header_include, comment_post_add_comment, comment_update_comment, com_man_approve_all_comments, comment_delete_comment, post_add_post, post_update_post, post_change_status, post_delete_post, userbase_killspam, vote_positive_vote, vote_negative_vote, vote_flag_insert, admin_sidebar_plugin_settings, admin_plugin_settings
+ * hooks: install_plugin, hotaru_header, header_include, comment_post_add_comment, comment_update_comment, com_man_approve_all_comments, comment_delete_comment, post_add_post, post_update_post, post_change_status, post_delete_post, userbase_killspam, vote_positive_vote, vote_negative_vote, vote_flag_insert, admin_sidebar_plugin_settings, admin_plugin_settings, theme_index_main
  *
  * PHP version 5
  *
@@ -48,6 +48,8 @@ class Activity extends PluginFunctions
         if (!isset($activity_settings['activity_sidebar_avatar_size'])) { $activity_settings['activity_sidebar_avatar_size'] = 16; }
         if (!isset($activity_settings['activity_sidebar_user'])) { $activity_settings['activity_sidebar_user'] = ''; }
         if (!isset($activity_settings['activity_sidebar_number'])) { $activity_settings['activity_sidebar_number'] = 10; }
+        if (!isset($activity_settings['activity_number'])) { $activity_settings['activity_number'] = 20; }
+        if (!isset($activity_settings['activity_time'])) { $activity_settings['activity_time'] = "checked"; }
         
         $this->updateSetting('activity_settings', serialize($activity_settings));
         
@@ -241,7 +243,7 @@ class Activity extends PluginFunctions
                 
             $output .= "<ul class='sidebar_widget_body activity_sidebar_items'>\n";
             
-            $output .= $this->getActivityItems($activity, $activity_settings);
+            $output .= $this->getSidebarActivityItems($activity, $activity_settings);
             $output .= "</ul>\n\n";
         }
         
@@ -255,9 +257,10 @@ class Activity extends PluginFunctions
      *
      * return array $activity
      */
-    public function getLatestActivity($activity_settings)
+    public function getLatestActivity($activity_settings, $all = false)
     {
-        $sql = "SELECT * FROM " . TABLE_USERACTIVITY . " WHERE useract_status = %s ORDER BY useract_date DESC LIMIT " . $activity_settings['activity_sidebar_number'];
+        if ($all) { $limit = ""; } else { $limit = "LIMIT " . $activity_settings['activity_sidebar_number']; }
+        $sql = "SELECT * FROM " . TABLE_USERACTIVITY . " WHERE useract_status = %s ORDER BY useract_date DESC " . $limit;
         $activity = $this->db->get_results($this->db->prepare($sql, 'show'));
         
         if ($activity) { return $activity; } else { return false; }
@@ -265,21 +268,26 @@ class Activity extends PluginFunctions
     
     
     /**
-     * Get activity items
+     * Get sidebar activity items
      *
      * @param array $activity 
      * return string $output
      */
-    public function getActivityItems($activity = array(), $activity_settings)
+    public function getSidebarActivityItems($activity = array(), $activity_settings)
     {
-        // we need categories for the url
-        if ($this->hotaru->post->vars['useCategories']) {
-            require_once(PLUGINS . 'categories/libs/Category.php');
-            $cat = new Category($this->db);
+        if (!isset($cat)) {
+            // we need categories for the url
+            if ($this->hotaru->post->vars['useCategories']) {
+                require_once(PLUGINS . 'categories/libs/Category.php');
+                $cat = new Category($this->db);
+            }
         }
         
-        $this->hotaru->post = new Post($this->hotaru); // used to get post information
-        $user = new UserBase($this->hotaru);
+        if (!isset($this->hotaru->post)) { 
+            $this->hotaru->post = new Post($this->hotaru); // used to get post information
+        }
+        
+        if (!isset($user)) { $user = new UserBase($this->hotaru); }
                 
         if (!$activity) { return false; }
         
@@ -339,14 +347,25 @@ class Activity extends PluginFunctions
                             $output .= $this->hotaru->lang["activity_voted_flagged"] . " ";
                             break;
                         default:
-                            $output .= "Error: Invaild activity vote value.";
+                            break;
                     }
                     break;
                 default:
-                    $output .= "Error: Invaild activity key.";
+                    break;
             }
-                
-            $output .= "&quot;<a href='" . $title_link . $cid . "' >" . $post_title . "</a>&quot;\n";
+            
+            // for plugins to add their own activity:
+            $this->hotaru->vars['activity_output'] = array($output, $title_link, $cid, $post_title);
+            $this->pluginHook('activity_output');
+            list($output, $title_link, $cid, $post_title) = $this->hotaru->vars['activity_output'];
+            
+            $output .= "&quot;<a href='" . $title_link . $cid . "' >" . $post_title . "</a>&quot; \n";
+            
+            if ($activity_settings['activity_time']) { 
+                $output .= "<small>[" . time_difference(unixtimestamp($item->useract_date), $this->hotaru->lang);
+                $output .= " " . $this->hotaru->lang["submit_post_ago"] . "]</small>";
+            }
+            
             $output .= "<div>\n";
             $output .= "</li>\n\n";
         }
@@ -354,5 +373,50 @@ class Activity extends PluginFunctions
         return $output;
     }
 
+
+    /**
+     * Display All Activity page
+     */
+    public function theme_index_main()
+    {
+        if ($this->hotaru->isPage('activity')) {
+        
+            // Get settings from database if they exist...
+            $activity_settings = $this->getSerializedSettings('activity');
+            $activity = $this->getLatestActivity($activity_settings, true); // true gets ALL activity
+        
+            /* BREADCRUMBS */
+            echo "<div id='breadcrumbs'>";
+            echo "<a href='" . BASEURL . "'>" .  $this->hotaru->lang['main_theme_home'] . "</a> &raquo; ";
+            $this->hotaru->plugins->pluginHook('breadcrumbs');
+            echo $this->hotaru->lang['activity_all'];
+            echo "<a href='" . $this->hotaru->url(array('page'=>'rss_activity')) . "'> ";
+            echo "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
+            echo "</div>";
+            
+            // for pagination:
+            require_once(PLUGINS . 'submit/libs/Post.php');
+            require_once(EXTENSIONS . 'Paginated/Paginated.php');
+            require_once(EXTENSIONS . 'Paginated/DoubleBarLayout.php');
+            
+            $pg = $this->hotaru->cage->get->getInt('pg');
+            $pagedResults = new Paginated($activity, $activity_settings['activity_number'], $pg);
+                        
+            $output = "<div id='activity'>";
+            $output .= "<ul class='sidebar_widget_body activity_sidebar_items'>\n";
+            
+            while($action = $pagedResults->fetchPagedRow()) {
+                $output .= $this->getSidebarActivityItems(array($action), $activity_settings);
+            }
+            
+            $output .= "</ul>\n\n";
+            $output .= "</div>";
+            
+            echo $output;
+            
+            $pagedResults->setLayout(new DoubleBarLayout());
+            echo $pagedResults->fetchPagedNavigation('', $this->hotaru);
+        }
+    }
 }
 ?>
