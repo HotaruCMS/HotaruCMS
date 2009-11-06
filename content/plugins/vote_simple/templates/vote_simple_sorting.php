@@ -58,10 +58,10 @@ if ($hotaru->cage->get->keyExists('sort')) {
         <?php // POPULAR
             if ($category) { $url = $hotaru->url(array('category'=>$category));
              } elseif ($tag) { $url = $hotaru->url(array('tag'=>$tag));
-             } elseif ($user) { $url = $hotaru->url(array('user'=>$user));
+             } elseif ($user) { $url = $hotaru->url(array('page'=>'top', 'user'=>$user));
              } else { $url = $hotaru->url(array()); } 
         ?>
-        <li <?php if ($hotaru->getPageName() == 'main' && !$sort) { echo "class='active'"; } ?>>
+        <li <?php if ($hotaru->getPageName() == 'main' && !$sort && $hotaru->pageType != 'profile') { echo "class='active'"; } ?>>
         <a href="<?php echo $url; ?>"><?php echo $hotaru->lang["vote_sort_recently_popular"]; ?></a></li>
         
         <?php // UPCOMING
