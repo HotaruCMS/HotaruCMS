@@ -2,11 +2,11 @@
 /**
  * name: Categories
  * description: Enables categories for posts
- * version: 0.8
+ * version: 0.9
  * folder: categories
  * class: Categories
- * requires: submit 0.7, category_manager 0.5
- * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, post_read_post_1, post_read_post_2, post_add_post, post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, post_list_filter, submit_show_post_author_date, submit_is_page_main, navigation_last, admin_sidebar_plugin_settings, admin_plugin_settings
+ * requires: submit 1.4, category_manager 0.6
+ * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, post_read_post_1, post_read_post_2, post_add_post, post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, post_list_filter, submit_show_post_author_date, submit_is_page_main, post_header, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * PHP version 5
  *
@@ -44,9 +44,9 @@ class Categories extends PluginFunctions
      */
     public function install_plugin()
     {
-        // Default settings (Note: we can't use $this->hotaru->post->vars because it hasn't been filled yet.)
-        $this->updateSetting('submit_categories', 'checked');
-        $this->updateSetting('categories_bar', 'menu');
+        // Default settings
+        if (!$this->getSetting('submit_categories')) { $this->updateSetting('submit_categories', 'checked'); }
+        if (!$this->getSetting('categories_bar')) { $this->updateSetting('categories_bar', 'menu'); }
         
         if ($this->isActive('sidebar_widgets')) {
             require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
@@ -110,8 +110,8 @@ class Categories extends PluginFunctions
      *
      * @return bool
      *
-     * Only used for friendly urls. This is necessary because if a url is 
-     * /people/top-10-longest-beards/ there's no actual mention of "category" there!
+     * Only used for friendly urls. This is necessary because if a url 
+     * is /people/top-10-longest-beards/ there's no actual mention of "category" there!
      */
     public function submit_hotaru_header_2()
     {
@@ -346,26 +346,50 @@ class Categories extends PluginFunctions
         require_once(PLUGINS . 'categories/libs/Category.php');
         $cat = new Category($this->db);
         
-        if (FRIENDLY_URLS == "true") 
-        {
-            $category = $this->cage->get->noTags('category'); 
-            if ($category) { 
-                $this->hotaru->vars['filter']['post_category = %d'] = $cat->getCatId($category); 
-                $rss = " <a href='" . $this->hotaru->url(array('page'=>'rss', 'category'=>$cat->getCatId($category))) . "'>";
-            } 
-        } 
-        else 
-        {
-            $category = $this->cage->get->getInt('category'); 
-            if ($category) {
-                $this->hotaru->vars['filter']['post_category = %d'] = $category; 
-                $rss = " <a href='" . $this->hotaru->url(array('page'=>'rss', 'category'=>$category)) . "'>";
-            }
+        if (FRIENDLY_URLS == "true") {
+            $cat_id = $cat->getCatId($this->cage->get->noTags('category')); 
+        } else {
+            $cat_id = $this->cage->get->getInt('category'); 
         }
         
+        // When a user clicks a parent category, we need to show posts from all child categories, too.
+        // This only works for onle level of sub-categories.
+        $filter_string = '(post_category = %d';
+        $values = array($cat_id);
+        $parent = $cat->getCatParent($cat_id);
+        if ($parent == 1) {
+            $children = $cat->getCatChildren($cat_id);
+            if ($children) {
+                foreach ($children as $child_id) {
+                    $filter_string .= ' || post_category = %d';
+                    array_push($values, $child_id->category_id); 
+                }
+            }
+        }
+        $filter_string .= ')';
+        $this->hotaru->vars['filter'][$filter_string] = $values; 
+        $this->hotaru->vars['filter']['post_archived = %s'] = 'N'; // don't include archived posts
+        $rss = " <a href='" . $this->hotaru->url(array('page'=>'rss', 'category'=>$cat_id)) . "'>";
         $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
-        // Undo the filter that limits results to either 'top' or 'new' (See submit.php -> sub_prepare_list())
-        if(isset($this->hotaru->vars['filter']['post_status = %s'])) { unset($this->hotaru->vars['filter']['post_status = %s']); }
+        
+        /* check if we're looking at a category to determine correct breadcrumbs. 
+        This is necessary because when sorting, we have to override whatever is already there. */
+        
+        if ($this->hotaru->cage->get->keyExists('category')) { 
+            $category = $this->hotaru->cage->get->noTags('category');
+            require_once(PLUGINS . 'categories/libs/Category.php');
+            $cat = new Category($this->db);
+            if (is_numeric($category)) { 
+                $category = $cat->getCatName($category);
+            } else {
+                $category = $cat->getCatName('', $category);
+            }
+
+            $category = stripslashes(htmlentities($category, ENT_QUOTES,'UTF-8'));
+
+            $this->hotaru->title = $category; // used in title tags
+        }
+        
         $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_category"] . " &raquo; " . $this->hotaru->title . $rss;
         
         return true;
@@ -416,7 +440,8 @@ class Categories extends PluginFunctions
             $the_cats = $this->db->get_results($this->db->prepare($sql));
             
             echo "<h2 class='sidebar_widget_head'>" . $this->lang["sidebar_categories"] . "</h2>";
-            echo "<ul class=' class='sidebar_widget_body sidebar_categories'>\n";
+            echo "<div class='sidebar_widget_body'>\n";
+            echo "<ul class='sidebar_categories'>\n";
             foreach ($the_cats as $cat) {
                 $cat_level = 1;    // top level category.
                 if ($cat->category_name != "all") {
@@ -432,7 +457,7 @@ class Categories extends PluginFunctions
                     echo $category . "</a></li>\n";
                 }
             }
-            echo "</ul>\n";
+            echo "</ul></div>\n";
         
         }
     }
@@ -502,7 +527,7 @@ class Categories extends PluginFunctions
      * Adapted from:
      * @link http://www.cssnewbie.com/easy-css-dropdown-menus/
      */
-    public function navigation_last()
+    public function post_header()
     {
         // Get settings from database if they exist...
         $bar = $this->getSetting('categories_bar');

@@ -119,6 +119,17 @@ class Admin
             } 
             elseif ($this->current_user->getPermission('can_access_admin') != 'yes') 
             {
+                // maybe the user has permission to access a specific plugin settings page?
+                $plugin = $this->cage->get->testAlnumLines('plugin');
+                if ($plugin && ($page == "plugin_settings")) {
+                    $permission = "can_" . $plugin . "_settings";
+                    if ($this->current_user->getPermission($permission) == 'yes') {
+                        $this->sidebar = false; // hide sidebar
+                        $this->displayAdminTemplate('index');
+                        die(); exit;
+                    }
+                }
+                
                 // User doesn't have permission to access Admin
                 $this->hotaru->messages['Access Denied'] = 'red';
                 $this->displayAdminTemplate('access_denied');
@@ -127,7 +138,7 @@ class Admin
         }
         
         
-        // If we get this far, we know that the user is an administrator.
+        // If we get this far, we know that the user has admin access.
         
         $this->plugins->pluginHook('admin_index');
         
@@ -170,7 +181,7 @@ class Admin
      */
     public function plugins()
     {
-        $action = $this->cage->get->testAlpha('action');
+        $action = $this->cage->get->testAlnumLines('action');
         $pfolder = $this->cage->get->testAlnumLines('plugin');
         $order = $this->cage->get->testAlnumLines('order');
         
@@ -182,6 +193,15 @@ class Admin
                 break;
             case "deactivate":
                 $this_plugin->activateDeactivate(0);
+                break;    
+            case "activate_all":
+                $this_plugin->activateDeactivateAll(1);
+                break;
+            case "deactivate_all":
+                $this_plugin->activateDeactivateAll(0);
+                break;    
+            case "uninstall_all":
+                $this_plugin->uninstallAll();
                 break;    
             case "install":
                 $this_plugin->install();
@@ -493,6 +513,26 @@ class Admin
     
     
     /**
+     * List all plugins with settings
+     *
+     * @return array|false
+     */
+    public function listPluginSettings()
+    {
+        $plugin_settings = array();
+        $sql = "SELECT DISTINCT plugin_folder FROM " . DB_PREFIX . "pluginsettings";
+        $results = $this->db->get_results($this->db->prepare($sql));
+    
+        if (!$results) { return false; } 
+        
+        foreach ($results as $item) {
+            array_push($plugin_settings, $item->plugin_folder);
+        }
+        return $plugin_settings; 
+    }
+    
+    
+    /**
      * List all plugin created tables
      */
     public function listPluginTables()
@@ -570,6 +610,24 @@ class Admin
         
         if ($msg) {
             $this->hotaru->message = $this->lang['admin_maintenance_table_deleted'];
+            $this->hotaru->messageType = 'green';
+            $this->hotaru->showMessage();
+        }
+    }
+    
+    
+    /**
+     * Remove plugin settings
+     *
+     * @param string $plugin_name - settings to remove
+     */
+    public function removeSettings($plugin_name, $msg = true)
+    {
+        $sql = "DELETE FROM " . DB_PREFIX . "pluginsettings WHERE plugin_folder = %s";
+        $this->db->get_results($this->db->prepare($sql, $plugin_name));
+    
+        if ($msg) {
+            $this->hotaru->message = $this->lang['admin_maintenance_settings_removed'];
             $this->hotaru->messageType = 'green';
             $this->hotaru->showMessage();
         }

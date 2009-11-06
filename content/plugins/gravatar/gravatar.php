@@ -2,10 +2,10 @@
 /**
  * name: Gravatar
  * description: Enables Gravatar avatars for users
- * version: 0.5
+ * version: 0.6
  * folder: gravatar
  * class: Gravatar
- * requires: users 0.5, submit 0.7
+ * requires: users 0.8, submit 1.4
  * hooks: install_plugin, hotaru_header, header_include, submit_show_post_pre_title, show_comments_avatar
  *
  * PHP version 5
@@ -44,8 +44,8 @@ class Gravatar extends PluginFunctions
         
         // !!! STOP EDITING HERE !!!
         
-        $this->updateSetting('gravatar_size', $size);
-        $this->updateSetting('gravatar_rating', $rating);
+        if (!$this->getSetting('gravatar_size')) { $this->updateSetting('gravatar_size', $size); }
+        if (!$this->getSetting('gravatar_rating')) { $this->updateSetting('gravatar_rating', $rating); }
     }
     
     
@@ -70,10 +70,10 @@ class Gravatar extends PluginFunctions
         $user = new UserBase($this->hotaru);
         $user->getUserBasic($this->hotaru->post->author);
         $email = $user->email;
-        $size = $this->hotaru->vars['gravatar_size'];
-        $rating = $this->hotaru->vars['gravatar_rating'];
         
-        $this->showGravatarLink($user->name, $email, $size, $rating);
+        echo "<div class='show_post_gravatar'>";
+        $this->showGravatarLink($user->name, $email);
+        echo "</div>";
     }
     
     
@@ -87,7 +87,9 @@ class Gravatar extends PluginFunctions
         $size = $this->hotaru->vars['gravatar_size'];
         $rating = $this->hotaru->vars['gravatar_rating'];
         
-        $this->showGravatarLink($commenter->user_username, $commenter->user_email, $size, $rating);
+        echo "<div class='show_comments_gravatar'>";
+        $this->showGravatarLink($commenter->user_username, $commenter->user_email);
+        echo "</div>";
     }
     
     
@@ -96,15 +98,15 @@ class Gravatar extends PluginFunctions
      *
      * @param string $username - user to link to
      * @param string $email - email of avatar user
-     * @param int $size - size (1 ~ 512 pixels)
-     * @param string $rating - g, pg, r or x
+     * @return string $output optional
      */
-    public function showGravatarLink($username, $email, $size, $rating)
+    public function showGravatarLink($username, $email, $return = false)
     {
-        echo "<div class='show_post_gravatar'>";
-        echo "<a href='" . $this->hotaru->url(array('user' => $username)) . "'>";
-        echo $this->buildGravatarImage($email, $size, $rating);
-        echo "</a></div>";
+        $output = "<a href='" . $this->hotaru->url(array('user' => $username)) . "' title='" . $username . "'>\n";
+        $output .= $this->buildGravatarImage($email);
+        $output .= "</a>\n";
+        
+        if ($return == true) { return $output; } else { echo $output; }
     }
     
     
@@ -116,16 +118,48 @@ class Gravatar extends PluginFunctions
      * @param string $rating - g, pg, r or x
      * @return string - html for image
      */
-    public function buildGravatarImage($email, $size, $rating)
+    public function buildGravatarImage($email)
     {
-        $default = BASEURL . "content/plugins/gravatar/images/default_32.png";
+        if (!$this->hotaru->vars['gravatar_size']) { 
+            $this->hotaru->vars['gravatar_size'] = $this->getSetting('gravatar_size'); 
+        }
+        
+        if (!$this->hotaru->vars['gravatar_rating']) { 
+            $this->hotaru->vars['gravatar_rating'] = $this->getSetting('gravatar_rating'); 
+        }
+        
+        $resized = '';  // we only use this if there isn't a default image that matches the size requested.
+        
+        switch ($this->hotaru->vars['gravatar_size']) {
+            case 16:
+                $default = BASEURL . "content/plugins/gravatar/images/default_16.png";
+                break;
+            case 32:
+                $default = BASEURL . "content/plugins/gravatar/images/default_32.png";
+                break;
+            case 48:
+                $default = BASEURL . "content/plugins/gravatar/images/default_48.png";
+                break;
+            case 64:
+                $default = BASEURL . "content/plugins/gravatar/images/default_64.png";
+                break;
+            case 80:
+                $default = BASEURL . "content/plugins/gravatar/images/default_80.png";
+                break;
+            case 128:
+                $default = BASEURL . "content/plugins/gravatar/images/default_128.png";
+                break;
+            default:
+                $default = BASEURL . "content/plugins/gravatar/images/default_80.png";
+                $resized = "style='height: " . $this->hotaru->vars['gravatar_size'] . "px; width: " . $this->hotaru->vars['gravatar_size'] . "px'";
+        }
         
         $grav_url = "http://www.gravatar.com/avatar.php?gravatar_id=".md5( strtolower($email) ).
             "&default=".urlencode($default).
-            "&size=".$size. 
-            "&r=".$rating;
+            "&size=" . $this->hotaru->vars['gravatar_size'] . 
+            "&r=" . $this->hotaru->vars['gravatar_rating'];
             
-        $img_url = "<img class='gravatar' src='" . $grav_url . "'>";
+        $img_url = "<img class='gravatar' src='" . $grav_url . "' " . $resized  .">\n";
         
         return $img_url;
     }

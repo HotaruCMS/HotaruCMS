@@ -2,10 +2,10 @@
 /**
  * name: Category Manager
  * description: Manage categories.
- * version: 0.5
+ * version: 0.6
  * folder: category_manager
  * class: CategoryManager
- * requires: submit 0.7
+ * requires: submit 1.4
  * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  * PHP version 5
@@ -67,7 +67,7 @@ class CategoryManager extends PluginFunctions
         }
             
         // 'checked' means that categories are enabled by the Submit plugin.
-        $this->updateSetting('submit_categories', 'checked', 'submit');    
+        if (!$this->getSetting('submit_categories', 'categories')) { $this->updateSetting('submit_categories', 'checked', 'categories'); }
     
         // Include language file. Also included in hotaru_header, but needed here so 
         // that the link in the Admin sidebar shows immediately after installation.

@@ -2,16 +2,22 @@
  *	    TAGS PLUGIN CSS           *
  ************************************** */
 
+.tags_link	{ padding-left: 1.5em; background-image: url(content/themes/default/images/tags.png); }
+
+.tag_cloud { text-align: center; }
+
 .tag_cloud a {
 	font-family: Verdana, Tahoma, Arial;
-	padding: 4px 4px 4px 4px;
+	line-height: 26px;
+	padding: 0 4px 0 4px;
 	letter-spacing: 3px;
 	text-decoration: none;
 	font-weight: normal;
 }
 
 .widget_tag_cloud a {
-	padding: 4px 4px 4px 4px;
+	line-height: 20px;
+	padding: 0 4px 0 4px;
 	letter-spacing: 3px;
 	text-decoration: none;
 	font-weight: normal;

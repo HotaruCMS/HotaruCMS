@@ -2,10 +2,10 @@
 /**
  * name: Submit
  * description: Submit and manage stories.
- * version: 1.3
+ * version: 1.4
  * folder: submit
  * class: Submit
- * hooks: hotaru_header, header_meta, header_include, header_include_raw, admin_header_include_raw, install_plugin, upgrade_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, userbase_default_permissions
+ * hooks: hotaru_header, header_meta, header_include, header_include_raw, admin_header_include_raw, install_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, userbase_default_permissions, admin_maintenance_database, admin_maintenance_top
  *
  * PHP version 5
  *
@@ -44,6 +44,7 @@ class Submit extends PluginFunctions
             //echo "table doesn't exist. Stopping before creation."; exit;
             $sql = "CREATE TABLE `" . DB_PREFIX . "posts` (
               `post_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+              `post_archived` enum('Y','N') NOT NULL DEFAULT 'N',
               `post_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
               `post_author` int(20) NOT NULL DEFAULT 0,
               `post_category` int(20) NOT NULL DEFAULT 1,
@@ -68,6 +69,7 @@ class Submit extends PluginFunctions
             //echo "table doesn't exist. Stopping before creation."; exit;
             $sql = "CREATE TABLE `" . DB_PREFIX . "postmeta` (
               `postmeta_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+              `postmeta_archived` enum('Y','N') NOT NULL DEFAULT 'N',
               `postmeta_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
               `postmeta_postid` int(20) NOT NULL DEFAULT 0,
               `postmeta_key` varchar(255) NULL,
@@ -78,23 +80,38 @@ class Submit extends PluginFunctions
             $this->db->query($sql); 
         }
         
+        if (!$this->db->column_exists('posts', 'post_archived')) {
+            // add new post_archived field
+            $sql = "ALTER TABLE " . DB_PREFIX . "posts ADD post_archived ENUM(%s, %s) NOT NULL DEFAULT %s AFTER post_id";
+            $this->db->query($this->db->prepare($sql, 'Y', 'N', 'N'));
+        }
+        
+        if (!$this->db->column_exists('postmeta', 'postmeta_archived')) {
+            // add new post_archived field
+            $sql = "ALTER TABLE " . DB_PREFIX . "postmeta ADD postmeta_archived ENUM(%s, %s) NOT NULL DEFAULT %s AFTER postmeta_id";
+            $this->db->query($this->db->prepare($sql, 'Y', 'N', 'N'));
+        }
+        
+        
         // Default settings 
-        $submit_settings['post_enabled'] = "checked";
-        $submit_settings['post_author'] = "checked";
-        $submit_settings['post_date'] = "checked";
-        $submit_settings['post_content'] = "checked";
-        $submit_settings['post_content_length'] = 50;
-        $submit_settings['post_summary'] = "checked";
-        $submit_settings['post_summary_length'] = 200;
-        $submit_settings['post_posts_per_page'] = 10;
-        $submit_settings['post_allowable_tags'] = "<b><i><u><a><blockquote><strike>";
-        $submit_settings['post_set_pending'] = ""; // sets all new posts to pending 
-        $submit_settings['post_x_posts'] = 1;
-        $submit_settings['post_email_notify'] = "";
-        $submit_settings['post_email_notify_mods'] = array();
+        $submit_settings = $this->getSerializedSettings();
+        
+        if (!isset($submit_settings['post_enabled'])) { $submit_settings['post_enabled'] = "checked"; }
+        if (!isset($submit_settings['post_author'])) { $submit_settings['post_author'] = "checked"; }
+        if (!isset($submit_settings['post_date'])) { $submit_settings['post_date'] = "checked"; }
+        if (!isset($submit_settings['post_content'])) { $submit_settings['post_content'] = "checked"; }
+        if (!isset($submit_settings['post_content_length'])) { $submit_settings['post_content_length'] = 50; }
+        if (!isset($submit_settings['post_summary'])) { $submit_settings['post_summary'] = "checked"; }
+        if (!isset($submit_settings['post_summary_length'])) { $submit_settings['post_summary_length'] = 200; }
+        if (!isset($submit_settings['post_posts_per_page'])) { $submit_settings['post_posts_per_page'] = 10; }
+        if (!isset($submit_settings['post_allowable_tags'])) { $submit_settings['post_allowable_tags'] = "<b><i><u><a><blockquote><strike>"; }
+        if (!isset($submit_settings['post_set_pending'])) { $submit_settings['post_set_pending'] = ""; } // sets all new posts to pending 
+        if (!isset($submit_settings['post_x_posts'])) { $submit_settings['post_x_posts'] = 1; }
+        if (!isset($submit_settings['post_email_notify'])) { $submit_settings['post_email_notify'] = ""; }
+        if (!isset($submit_settings['post_email_notify_mods'])) { $submit_settings['post_email_notify_mods'] = array(); }
+        if (!isset($submit_settings['post_archive'])) { $submit_settings['post_archive'] = "no_archive"; }
         
         $this->updateSetting('submit_settings', serialize($submit_settings));
-        
     }
     
     
@@ -102,7 +119,7 @@ class Submit extends PluginFunctions
      * Define global "table_posts" and "table_postmeta" constants for referring to the db tables
      */
     public function hotaru_header()
-    {
+    {    
         require_once(PLUGINS . 'submit/libs/Post.php');
         $this->hotaru->post = new Post($this->hotaru);  // adds Post object to Hotaru class
         
@@ -118,13 +135,15 @@ class Submit extends PluginFunctions
         
         $this->pluginHook('submit_hotaru_header_1');
         
-        if (is_numeric($this->hotaru->getPageName())) {
+        $pagename = $this->hotaru->getPageName();
+        
+        if (is_numeric($pagename)) {
             // Page name is a number so it must be a post with non-friendly urls
-            $this->hotaru->post->readPost($this->hotaru->getPageName());    // read current post
+            $this->hotaru->post->readPost($pagename);    // read current post
             $this->hotaru->pageType = 'post';
             $this->hotaru->title = $this->hotaru->post->title;
             
-        } elseif ($post_id = $this->hotaru->post->isPostUrl($this->hotaru->getPageName())) {
+        } elseif ($post_id = $this->hotaru->post->isPostUrl($pagename)) {
             // Page name belongs to a story
             $this->hotaru->post->readPost($post_id);    // read current post
             $this->hotaru->pageType = 'post';
@@ -132,9 +151,37 @@ class Submit extends PluginFunctions
             
         } else {
             $this->hotaru->post->readPost();    // read current post settings only
-            $this->hotaru->pageType = '';
+            $this->hotaru->pageType = 'list';
+            
+            // NOTE: The links for sorting are only shown when using the Vote Simple plugin or equivalent
+            // Only show these "sort" titles if there's no category or tag in the url.
+            if ($sort = $this->cage->get->testPage('sort')
+                && !$this->cage->get->keyExists('category')
+                && !$this->cage->get->keyExists('tag')
+                && !$this->cage->get->keyExists('user')) {
+                // Determine TITLE tags for a page of sorted posts:
+                switch ($sort) {
+                    case 'top-24-hours':
+                        $this->hotaru->title = $this->lang["post_breadcrumbs_top_24_hours"];
+                        break;
+                    case 'top-48-hours':
+                        $this->hotaru->title = $this->lang["post_breadcrumbs_top_48_hours"];
+                        break;
+                    case 'top-7-days':
+                        $this->hotaru->title = $this->lang["post_breadcrumbs_top_7_days"];
+                        break;
+                    case 'top-30-days':
+                        $this->hotaru->title = $this->lang["post_breadcrumbs_top_30_days"];
+                        break;
+                    case 'top-365-days':
+                        $this->hotaru->title = $this->lang["post_breadcrumbs_top_365_days"];
+                        break;
+                    case 'top-all-time':
+                        $this->hotaru->title = $this->lang["post_breadcrumbs_top_all_time"];
+                        break;
+                }
+            }
         }
-
         $this->pluginHook('submit_hotaru_header_2');
     }
     
@@ -145,7 +192,8 @@ class Submit extends PluginFunctions
     public function header_meta()
     {    
         if ($this->hotaru->pageType == 'post') {
-            echo '<meta name="description" content="' . $this->hotaru->post->content . '">' . "\n";
+            $meta_content = truncate(stripslashes(htmlentities($this->hotaru->post->content,ENT_QUOTES,'UTF-8')), 200);
+            echo '<meta name="description" content="' . $meta_content . '">' . "\n";
             return true;
         }
     }
@@ -279,7 +327,7 @@ class Submit extends PluginFunctions
                     // get settings
                     $submit_settings = $this->getSerializedSettings();
 
-                    // notify chosen mods of new user by email if enabled and UserFunctions file exists
+                    // notify chosen mods of new post by email if enabled and UserFunctions file exists
                     if (($submit_settings['post_email_notify']) && (file_exists(PLUGINS . 'users/libs/UserFunctions.php')))
                     {
                         require_once(PLUGINS . 'users/libs/UserFunctions.php');
@@ -445,15 +493,41 @@ class Submit extends PluginFunctions
             // Plugin hook
             $result = $this->pluginHook('submit_is_page_main');
             if ($result && is_array($result)) { return true; }
-        
+
             // Show the list of posts
             $this->hotaru->displayTemplate('list', 'submit');
+            return true;
+            
+        } elseif ($this->hotaru->pageType == 'post') {
+            // We found out this is a post from the hotaru_header function above.
+           
+            $this->hotaru->displayTemplate('post', 'submit');
             return true;
             
         } elseif ($this->hotaru->isPage('latest')) {
         
             // Plugin hook
             $result = $this->pluginHook('submit_is_page_latest');
+            if ($result && is_array($result)) { return true; }
+        
+            // Show the list of posts
+            $this->hotaru->displayTemplate('list', 'submit');
+            return true;
+            
+        } elseif ($this->hotaru->isPage('upcoming')) {
+        
+            // Plugin hook
+            $result = $this->pluginHook('submit_is_page_upcoming');
+            if ($result && is_array($result)) { return true; }
+        
+            // Show the list of posts
+            $this->hotaru->displayTemplate('list', 'submit');
+            return true;
+            
+        } elseif ($this->hotaru->isPage('top')) {   // used only for filtering users
+        
+            // Plugin hook
+            $result = $this->pluginHook('submit_is_page_top');
             if ($result && is_array($result)) { return true; }
         
             // Show the list of posts
@@ -468,12 +542,6 @@ class Submit extends PluginFunctions
         
             // Show the list of posts
             $this->hotaru->displayTemplate('list', 'submit');
-            return true;
-            
-        } elseif ($this->hotaru->pageType == 'post') {
-            // We found out this is a post from the hotaru_header function above.
-            
-            $this->hotaru->displayTemplate('post', 'submit');
             return true;
             
         } else {        
@@ -713,6 +781,143 @@ class Submit extends PluginFunctions
         }
                         
         return false;   // not blocked
+    }
+    
+    
+    /**
+     * Archive option on Maintenance page
+     */
+    public function admin_maintenance_database()
+    {
+        $submit_settings = $this->getSerializedSettings();
+        $archive = $submit_settings['post_archive'];
+        echo "<li><a href='" . BASEURL . "admin_index.php?page=maintenance&amp;action=update_archive'>";
+        echo $this->hotaru->lang["submit_maintenance_update_archive"] . "</a> - ";
+        if ($archive == 'no_archive') {
+            echo $this->hotaru->lang["submit_maintenance_update_archive_remove"];
+        } else {
+            echo $this->hotaru->lang["submit_maintenance_update_archive_desc_1"];
+            echo $this->lang["submit_settings_post_archive_$archive"];
+            echo $this->hotaru->lang["submit_maintenance_update_archive_desc_2"];
+        }
+        echo "</li>";
+    }
+    
+    
+    /**
+     * Perform archiving tasks
+     */
+    public function admin_maintenance_top()
+    {
+        if ($this->cage->get->testAlnumLines('action') != 'update_archive') { return false; }
+        
+        $submit_settings = $this->getSerializedSettings();
+        $archive = $submit_settings['post_archive'];
+        
+        // FIRST, WE NEED TO RESET THE ARCHIVE, setting all archive fields to "N":
+        
+        // posts
+        if ($this->db->table_exists('posts')) {
+            $sql = "UPDATE " . DB_PREFIX . "posts SET post_archived = %s";
+            $this->db->query($this->db->prepare($sql, 'N'));
+        }
+        
+        // postmeta
+        if ($this->db->table_exists('postmeta')) {
+            $sql = "UPDATE " . DB_PREFIX . "postmeta SET postmeta_archived = %s";
+            $this->db->query($this->db->prepare($sql, 'N'));
+        }
+        
+        // postvotes
+        if ($this->db->table_exists('postvotes')) {
+            $sql = "UPDATE " . DB_PREFIX . "postvotes SET vote_archived = %s";
+            $this->db->query($this->db->prepare($sql, 'N'));
+        }
+        
+        // comments
+        if ($this->db->table_exists('comments')) {
+            $sql = "UPDATE " . DB_PREFIX . "comments SET comment_archived = %s";
+            $this->db->query($this->db->prepare($sql, 'N'));
+        }
+        
+        // commentvotes
+        if ($this->db->table_exists('commentvotes')) {
+            $sql = "UPDATE " . DB_PREFIX . "commentvotes SET cvote_archived = %s";
+            $this->db->query($this->db->prepare($sql, 'N'));
+        }
+        
+        // tags
+        if ($this->db->table_exists('tags')) {
+            $sql = "UPDATE " . DB_PREFIX . "tags SET tags_archived = %s";
+            $this->db->query($this->db->prepare($sql, 'N'));
+        }
+        
+        // useractivity
+        if ($this->db->table_exists('useractivity')) {
+            $sql = "UPDATE " . DB_PREFIX . "useractivity SET useract_archived = %s";
+            $this->db->query($this->db->prepare($sql, 'N'));
+        }
+        
+        // RETURN NOW IF NO_ARCHIVE IS SET ***************************** 
+        if ($archive == 'no_archive') { 
+            $this->hotaru->message = $this->lang['submit_maintenance_archive_removed'];
+            $this->hotaru->messageType = 'green';
+            $this->hotaru->showMessage();
+            return true;
+        }
+        
+        // NEXT, START ARCHIVING! ***************************** 
+        $archive_text = "-" . $archive . " days"; // e.g. "-365 days"
+        $archive_date = date('YmdHis', strtotime($archive_text));
+        
+        // posts
+        if ($this->db->table_exists('posts')) {
+            $sql = "UPDATE " . DB_PREFIX . "posts SET post_archived = %s WHERE post_date <= %s";
+            $this->db->query($this->db->prepare($sql, 'Y', $archive_date));
+        }
+        
+        // postmeta
+        if ($this->db->table_exists('postmeta')) {
+            // No date field in postmeta table so join with posts table...
+            $sql = "UPDATE " . DB_PREFIX . "postmeta, " . DB_PREFIX . "posts  SET " . DB_PREFIX . "postmeta.postmeta_archived = %s WHERE (" . DB_PREFIX . "posts.post_date <= %s) AND (" . DB_PREFIX . "posts.post_id = " . DB_PREFIX . "postmeta.postmeta_postid)";
+            $this->db->query($this->db->prepare($sql, 'Y', $archive_date));
+        }
+        
+        // postvotes
+        if ($this->db->table_exists('postvotes')) {
+            $sql = "UPDATE " . DB_PREFIX . "postvotes SET vote_archived = %s WHERE vote_date <= %s";
+            $this->db->query($this->db->prepare($sql, 'Y', $archive_date));
+        }
+        
+        // comments
+        if ($this->db->table_exists('comments')) {
+            $sql = "UPDATE " . DB_PREFIX . "comments SET comment_archived = %s WHERE comment_date <= %s";
+            $this->db->query($this->db->prepare($sql, 'Y', $archive_date));
+        }
+        
+        // commentvotes
+        if ($this->db->table_exists('commentvotes')) {
+            $sql = "UPDATE " . DB_PREFIX . "commentvotes SET cvote_archived = %s WHERE cvote_date <= %s";
+            $this->db->query($this->db->prepare($sql, 'Y', $archive_date));
+        }
+        
+        // tags
+        if ($this->db->table_exists('tags')) {
+            $sql = "UPDATE " . DB_PREFIX . "tags SET tags_archived = %s WHERE tags_date <= %s";
+            $this->db->query($this->db->prepare($sql, 'Y', $archive_date));
+        }
+        
+        // useractivity
+        if ($this->db->table_exists('useractivity')) {
+            $sql = "UPDATE " . DB_PREFIX . "useractivity SET useract_archived = %s WHERE useract_date <= %s";
+            $this->db->query($this->db->prepare($sql, 'Y'));
+        }
+        
+        $this->hotaru->message = $this->lang['submit_maintenance_archive_updated'];
+        $this->hotaru->messageType = 'green';
+        $this->hotaru->showMessage();
+        return true;
+
     }
     
 }

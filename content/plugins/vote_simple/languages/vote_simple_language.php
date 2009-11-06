@@ -78,11 +78,29 @@ $lang["vote_settings_submit_vote_value_invalid"] = "The automatic vote must be a
 $lang["vote_settings_vote_promote_bury"] = "Promoting and burying posts:";
 $lang["vote_settings_votes_to_promote"] = "Number of votes needed to get on the front page:";
 $lang["vote_settings_votes_to_promote_invalid"] = "The number of votes needed must be a positive integer";
+$lang["vote_settings_upcoming_duration"] = "Number of days a new post can sit on the Upcoming page:";
+$lang["vote_settings_upcoming_duration_invalid"] = "The number of days must be a positive integer";
+$lang["vote_settings_no_front_page"] = "Deadline for new posts to hit the front page (days):";
+$lang["vote_settings_no_front_page_invalid"] = "The number of days must be a positive integer";
 $lang["vote_settings_use_alerts"] = "Enable Alerts (i.e. flag / bury). Alerts are only used on \"new\" posts";
 $lang["vote_settings_alerts_to_bury"] = "Number of alerts to automatically bury a post:";
 $lang["vote_settings_alerts_to_bury_invalid"] = "The number of alerts needed must be a positive integer";
 $lang["vote_settings_physical_delete"] = "Physically delete a post from the database when buried";
 $lang["vote_settings_save"] = "Save";
 $lang["vote_settings_saved"] = "Settings Saved.";
+
+/* Sorting */
+$lang["vote_sort_by"] = "Sort by:";
+$lang["vote_sort_recently_popular"] = "Popular";
+$lang["vote_sort_upcoming"] = "Upcoming";
+$lang["vote_sort_latest"] = "Latest";
+$lang["vote_sort_all"] = "All";
+$lang["vote_sort_best_from"] = "Best from:";
+$lang["vote_sort_top_1_day"] = "24 Hrs";
+$lang["vote_sort_top_2_days"] = "48 Hrs";
+$lang["vote_sort_top_7_days"] = "7 Days";
+$lang["vote_sort_top_30_days"] = "30 Days";
+$lang["vote_sort_top_365_days"] = "365 Days";
+$lang["vote_sort_top_all_time"] = "All Time";
 
 ?>

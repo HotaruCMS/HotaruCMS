@@ -2,10 +2,10 @@
 /**
  * name: RSS Show
  * description: Adds links in the sidebar to the latest posts from a specified RSS feed.
- * version: 0.5
+ * version: 0.6
  * folder: rss_show
  * class: RssShow
- * requires: sidebar_widgets 0.4
+ * requires: sidebar_widgets 0.5
  * hooks: rss_show, install_plugin, hotaru_header, admin_header_include_raw, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * PHP version 5
@@ -71,20 +71,21 @@ class RssShow extends PluginFunctions
                 
                 // SITE TITLE
                 if ($settings['rss_show_title']) { 
-                    $output .= "<h2 class='sidebar_widget_head rss_show_feed_title'>";
-                    $output .= "<a href='" . $feed->subscribe_url() . "' title='" . $this->hotaru->lang["rss_show_icon_anchor_title"] . "'><img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'></a>&nbsp;"; // RSS icon
+                    $output .= "<h2 class='sidebar_widget_head rss_show_feed_title'>\n";
+                    $output .= "<a href='" . $feed->subscribe_url() . "' title='" . $this->hotaru->lang["rss_show_icon_anchor_title"] . "'>\n";
+                    $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'></a>&nbsp;\n"; // RSS icon
                     if ($feed->get_link()) { $link = $feed->get_link(); } else { $link = $feed->subscribe_url(); }
-                    $output .= "<a href='" . $link . "' title='" . $this->hotaru->lang["rss_show_title_anchor_title"] . "'>" . $settings['rss_show_title'] . "</a></h2>"; 
+                    $output .= "<a href='" . $link . "' title='" . $this->hotaru->lang["rss_show_title_anchor_title"] . "'>" . $settings['rss_show_title'] . "</a></h2>\n"; 
                 }
                     
                 if ($feed->data) { 
-                    $output .= "<ul class='sidebar_widget_body rss_feed_item'>";
+                    $output .= "<ul class='sidebar_widget_body rss_feed_item'>\n";
                     foreach ($feed->get_items() as $item) {
                             
                             // POST TITLE
                             $output .= "<li class='rss_show_feed_item'>";
                             $output .= "<span class='rss_show_title'>";
-                            $output .= "<a href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a></span>";
+                            $output .= "<a href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a></span>\n";
                             
                             // AUTHOR / DATE
                         if (($settings['rss_show_author'] == 'yesauthor') || ($settings['rss_show_date'] == 'yesdate')) {
@@ -113,7 +114,7 @@ class RssShow extends PluginFunctions
                         if ($settings['rss_show_content'] == 'full') {
                             $output .= "<p class='rss_show_content'>" . $item->get_content() . "</p>";
                         }
-                        $output .= '</li>';
+                        $output .= "</li>\n";
                         
                         $item_count++;
                         if ($item_count >= $max_items) { break;}
@@ -122,7 +123,7 @@ class RssShow extends PluginFunctions
             }
             
             // Display the whole thing:
-            if (isset($output)) { echo $output . "</ul>"; }
+            if (isset($output)) { echo $output . "</ul>\n"; }
         }
     }
     
@@ -178,17 +179,19 @@ class RssShow extends PluginFunctions
     {
         if (!$id || !is_int($id)) { $id = 1; }
         
-        $settings['rss_show_feed'] = 'http://feeds2.feedburner.com/hotarucms';
-        $settings['rss_show_title'] = 'Hotaru CMS Forums';
-        $settings['rss_show_cache'] = 'on';
-        $settings['rss_show_cache_duration'] = 10;
-        $settings['rss_show_max_items'] = 10;
-        $settings['rss_show_author'] = "noauthor";
-        $settings['rss_show_date'] = "nodate";
-        $settings['rss_show_content'] = "none";
+        $rss_show_settings['rss_show_feed'] = 'http://feeds2.feedburner.com/hotarucms';
+        $rss_show_settings['rss_show_title'] = 'Hotaru CMS Forums';
+        $rss_show_settings['rss_show_cache'] = 'on';
+        $rss_show_settings['rss_show_cache_duration'] = 10;
+        $rss_show_settings['rss_show_max_items'] = 10;
+        $rss_show_settings['rss_show_author'] = "noauthor";
+        $rss_show_settings['rss_show_date'] = "nodate";
+        $rss_show_settings['rss_show_content'] = "none";
         
-        // parameters: plugin folder name, setting name, setting value
-        $this->updateSetting('rss_show_' . $id . '_settings', serialize($settings), 'rss_show');
+        // Add settinsg if they don't already exist:
+        if (!$this->getSetting('rss_show_' . $id . '_settings')) { 
+            $this->updateSetting('rss_show_' . $id . '_settings', serialize($rss_show_settings), 'rss_show');
+        }
         
         require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
         $sidebar = new Sidebar($this->hotaru);
@@ -211,6 +214,7 @@ class RssShow extends PluginFunctions
         require_once(PLUGINS . 'rss_show/rss_show_settings.php');
         $rs = new RssShowSettings($this->folder, $this->hotaru);
         $rs->settings();
+        return true;
     }
     
     

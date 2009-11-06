@@ -43,9 +43,10 @@ class tagsSettings extends tags
         echo "<p>" . $this->lang["tags_settings_note"] . "</p>";
           
         // Get settings from database if they exist...
-        $num_tags_page = $this->getSetting('tags_num_tags_page');
-        $num_tags_widget = $this->getSetting('tags_num_tags_widget');
-        $show_widget_title = $this->getSetting('tags_widget_title');
+        $tags_settings = $this->getSerializedSettings();
+        $num_tags_page = $tags_settings['tags_num_tags_page'];
+        $num_tags_widget = $tags_settings['tags_num_tags_widget'];
+        $show_widget_title = $tags_settings['tags_widget_title'];
         
         if (!$num_tags_page) { $num_tags_page = 100; }
         if (!$num_tags_widget) { $num_tags_widget = 25; }
@@ -111,9 +112,12 @@ class tagsSettings extends tags
         
         if (is_numeric($num_tags_page) && is_numeric($num_tags_widget))
         { 
-            $this->updateSetting('tags_num_tags_page', $num_tags_page);
-            $this->updateSetting('tags_num_tags_widget', $num_tags_widget);
-            $this->updateSetting('tags_widget_title', $show_widget_title);
+            $tags_settings = $this->getSerializedSettings();
+            $tags_settings['tags_num_tags_page'] = $num_tags_page;
+            $tags_settings['tags_num_tags_widget'] = $num_tags_widget;
+            $tags_settings['tags_widget_title'] = $show_widget_title;
+            $this->updateSetting('tags_settings', serialize($tags_settings));
+            
             $this->hotaru->message = $this->lang["tags_settings_saved"];
             $this->hotaru->messageType = "green";
         } else {

@@ -23,6 +23,16 @@
  *
  **************************************************************************************************** */
 
+/* Upgrade Step 1 */
+$lang["upgrade_title"] = "Hotaru CMS Upgrade";
+$lang["upgrade_step1"] = "Step 1/2: Welcome Back";
+$lang["upgrade_step1_details"] = "To upgrade Hotaru to version 0.8, click 'Next'...";
+
+/* Upgrade Step 1 */
+$lang["upgrade_step2"] = "Step 2/2: Upgrade Complete";
+$lang["upgrade_step2_details"] = "Congratulations! You have successfully upgraded Hotaru CMS.";
+$lang["upgrade_home"] = "Finish";
+
 /* Install Common */
 $lang["install_title"] = "Hotaru CMS Setup";
 $lang["install_next"] = "Next";

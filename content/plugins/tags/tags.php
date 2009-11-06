@@ -2,10 +2,10 @@
 /**
  * name: Tags
  * description: Enables tags for posts
- * version: 1.0
+ * version: 1.1
  * folder: tags
  * class: Tags
- * requires: submit 0.7, sidebar_widgets 0.4
+ * requires: submit 1.4, sidebar_widgets 0.5
  * hooks: install_plugin, header_include, header_include_raw, submit_hotaru_header_1, header_meta, theme_index_main, post_read_post_1, post_read_post_2, post_add_post, post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_show_post_extra_fields, submit_show_post_extras, submit_settings_get_values, submit_settings_form, submit_save_settings, post_list_filter, post_delete_post, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  * PHP version 5
@@ -56,6 +56,7 @@ class Tags extends PluginFunctions
             //echo "table doesn't exist. Stopping before creation."; exit;
             $sql = "CREATE TABLE `" . DB_PREFIX . "tags` (
               `tags_post_id` int(11) NOT NULL DEFAULT '0',
+              `tags_archived` enum('Y','N') NOT NULL DEFAULT 'N',
               `tags_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
               `tags_date` timestamp NOT NULL,
               `tags_word` varchar(64) NOT NULL DEFAULT '',
@@ -65,11 +66,21 @@ class Tags extends PluginFunctions
             $this->db->query($sql); 
         }
         
-        $this->updateSetting('submit_tags', 'checked');
-        $this->updateSetting('submit_max_tags', 100);
-        $this->updateSetting('tags_num_tags_page', 100);
-        $this->updateSetting('tags_num_tags_widget', 25);
-        $this->updateSetting('tags_widget_title', 'checked');
+        if (!$this->db->column_exists('tags', 'tags_archived')) {
+            // add new tags_archived field
+            $sql = "ALTER TABLE " . DB_PREFIX . "tags ADD tags_archived ENUM(%s, %s) NOT NULL DEFAULT %s AFTER tags_post_id";
+            $this->db->query($this->db->prepare($sql, 'Y', 'N', 'N'));
+        }
+        
+        $tags_settings = $this->getSerializedSettings();
+        
+        if (!isset($tags_settings['submit_tags'])) { $tags_settings['submit_tags'] = 'checked'; }
+        if (!isset($tags_settings['submit_max_tags'])) { $tags_settings['submit_max_tags'] = 100; }
+        if (!isset($tags_settings['tags_num_tags_page'])) { $tags_settings['tags_num_tags_page'] = 100; }
+        if (!isset($tags_settings['tags_num_tags_widget'])) { $tags_settings['tags_num_tags_widget'] = 25; }
+        if (!isset($tags_settings['tags_widget_title'])) { $tags_settings['tags_widget_title'] = 'checked'; }
+        
+        $this->updateSetting('tags_settings', serialize($tags_settings));
         
         require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
         $sidebar = new Sidebar($this->hotaru);
@@ -118,12 +129,6 @@ class Tags extends PluginFunctions
         }
     }
     
-    public function header_include()
-    {
-        // Include the css file only when viewing the tag cloud:
-            $this->includeCss('tag_cloud');
-    }
-    
     
     /**
      * JavaScript for dropdown tags list
@@ -135,6 +140,7 @@ class Tags extends PluginFunctions
             echo "$('.tags_link').click(function () {\n";
             echo "var target = $(this).parents('div').next('div').children('div.show_tags');\n";
             echo "target.fadeToggle();\n";
+            echo "return false;\n";
             echo "});\n";
         echo "});\n";
         echo "</script>\n";
@@ -151,7 +157,8 @@ class Tags extends PluginFunctions
         if ($this->hotaru->isPage('tag-cloud')) 
         {
             // get the number of tags to show:
-            $tag_count = $this->getSetting('tags_num_tags_page');
+            $tags_settings = $this->getSerializedSettings();
+            $tag_count = $tags_settings['tags_num_tags_page'];
             
             // build the tag cloud:
             $this->hotaru->vars['tagCloud'] = $this->buildTagCloud($tag_count);
@@ -170,17 +177,21 @@ class Tags extends PluginFunctions
      */
     public function sidebar_widget_tag_cloud()
     {
-        $tag_count = $this->getSetting('tags_num_tags_widget', 'tags');
-        $show_title = $this->getSetting('tags_widget_title', 'tags');
+        $tags_settings = $this->getSerializedSettings('tags');
+        $tag_count = $tags_settings['tags_num_tags_widget'];
+        $show_title = $tags_settings['tags_widget_title'];
         
         // build the tag cloud:
         $cloud = $this->buildTagCloud($tag_count);
         
         if ($show_title) {
-            echo "<h2 class='sidebar_widget_head widget_tag_cloud_title'>" . $this->hotaru->lang["tags_tag_cloud_widget_title"] . "</h2>";
+            echo "<h2 class='sidebar_widget_head widget_tag_cloud_title'>";
+            echo "<a href='" . $this->hotaru->url(array('page' => 'tag-cloud')) . "'>";
+            echo $this->hotaru->lang["tags_tag_cloud_widget_title"] . "</a>\n";
+            echo "</h2>\n";
         }
         
-        echo "<div class='widget_tag_cloud'>";
+        echo "<div class='sidebar_widget_body widget_tag_cloud'>";
         foreach ($cloud as $tag) {
             echo "<a href='" . $this->hotaru->url(array('tag' => $tag['link_word'])) . "' ";
             echo "class='widget_tag_group" . $tag['class'] . "'>" . $tag["show_word"] . "</a>\n";
@@ -200,8 +211,8 @@ class Tags extends PluginFunctions
     public function buildTagCloud($count)
     {
         // get tags from the database:
-        $sql = "SELECT tags_word FROM " . TABLE_TAGS;
-        $tags = $this->db->get_results($this->db->prepare($sql));
+        $sql = "SELECT tags_word FROM " . TABLE_TAGS . " WHERE tags_archived = %s";
+        $tags = $this->db->get_results($this->db->prepare($sql, 'N'));
         
         // Put the tags in an array:
         $tags_array = array();
@@ -242,14 +253,15 @@ class Tags extends PluginFunctions
      */
     public function post_read_post_1()
     {
-        //tags
-        if (($this->getSetting('submit_tags', 'tags') == 'checked') && ($this->isActive())) { 
+        $tags_settings = $this->getSerializedSettings();
+        
+        if (($tags_settings['submit_tags'] == 'checked') && ($this->isActive())) { 
             $this->hotaru->post->vars['useTags'] = true; 
         } else { 
             $this->hotaru->post->vars['useTags'] = false; 
         }
         
-        $max_tags = $this->getSetting('submit_max_tags', 'tags');
+        $max_tags = $tags_settings['submit_max_tags'];
         if (!empty($max_tags)) { $this->hotaru->post->vars['maxTags'] = $max_tags; }
     }
     
@@ -422,12 +434,11 @@ class Tags extends PluginFunctions
             
             if ($tag) {
                 $this->hotaru->vars['filter']['post_tags LIKE %s'] = '%' . urlencode($tag) . '%'; 
+                $this->hotaru->vars['filter']['post_archived = %s'] = 'N'; // don't include archived posts
                 $rss = " <a href='" . $this->hotaru->url(array('page'=>'rss', 'tag'=>$tag)) . "'>";
             }
             
-            $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
-            // Undo the filter that limits results to either 'top' or 'new' (See submit.php -> sub_prepare_list())
-            if(isset($this->hotaru->vars['filter']['post_status = %s'])) { unset($this->hotaru->vars['filter']['post_status = %s']); }
+            $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";       
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_tag"] . " &raquo; " . stripslashes($this->hotaru->title) . $rss;
             
             return true;    
@@ -444,7 +455,7 @@ class Tags extends PluginFunctions
     { 
         if ($this->hotaru->post->vars['useTags'] && $this->hotaru->post->vars['tags'])
         { 
-            echo '<li><a class="tags_link" href="#">' . $this->lang["submit_show_tags"]  . '</a></li>';
+            echo "<li><a class='tags_link' href='#'>" . $this->lang["submit_show_tags"]  . "</a></li>\n";
         }
     }
     
@@ -456,13 +467,13 @@ class Tags extends PluginFunctions
     {
         $tags = explode(',', $this->hotaru->post->vars['tags']);
     
-        echo "<div class='show_tags' style='display: none;'>";
-            echo "<ul>" . $this->lang["submit_show_tags"] . ": ";
+        echo "<div class='show_tags' style='display: none;'>\n";
+            echo "<ul>" . $this->lang["submit_show_tags"] . ": \n";
                 foreach ($tags as $tag) {
-                    echo "<a href='" . $this->hotaru->url(array('tag' => str_replace(' ', '_', trim($tag)))) . "'>" . trim($tag) . "</a>&nbsp;";
+                    echo "<a href='" . $this->hotaru->url(array('tag' => str_replace(' ', '_', trim($tag)))) . "'>" . trim($tag) . "</a>&nbsp;\n";
                 }
-            echo "</ul>";
-        echo "</div>";
+            echo "</ul>\n";
+        echo "</div>\n";
     }
     
     
@@ -479,8 +490,9 @@ class Tags extends PluginFunctions
     public function submit_settings_get_values()
     {
         // Get settings from database if they exist...
-        $tags = $this->getSetting('submit_tags', 'tags');
-        $max_tags = $this->getSetting('submit_max_tags', 'tags');
+        $tags_settings = $this->getSerializedSettings();
+        $tags = $tags_settings['submit_tags'];
+        $max_tags = $tags_settings['submit_max_tags'];
         
         // otherwise set to defaults...
         if (!isset($tags)) { $tags = 'checked'; }
@@ -524,8 +536,10 @@ class Tags extends PluginFunctions
             $max_tags = $this->hotaru->post->vars['maxTags']; 
         } 
         
-        $this->updateSetting('submit_tags', $tags);
-        $this->updateSetting('submit_max_tags', $max_tags);
+        $tags_settings = $this->getSerializedSettings();
+        $tags_settings['submit_tags'] = $tags;
+        $tags_settings['submit_max_tags'] = $max_tags;
+        $this->updateSetting('tags_settings', serialize($tags_settings));
     }
     
     

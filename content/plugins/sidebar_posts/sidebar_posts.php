@@ -5,8 +5,8 @@
  * version: 0.8
  * folder: sidebar_posts
  * class: SidebarPosts
- * requires: sidebar_widgets 0.4, submit 0.7
- * hooks: install_plugin, hotaru_header, admin_sidebar_plugin_settings, admin_plugin_settings
+ * requires: sidebar_widgets 0.5, submit 1.4
+ * hooks: install_plugin, hotaru_header, header_include, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * PHP version 5
  *
@@ -40,7 +40,7 @@ class SidebarPosts extends PluginFunctions
     public function install_plugin()
     {
         // Default settings
-        $this->updateSetting('sidebar_posts_box', 'default'); // box style
+        if (!$this->getSetting('sidebar_posts_box')) { $this->updateSetting('sidebar_posts_box', 'default'); } // box style
         
         // Default settings
         require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
@@ -83,14 +83,15 @@ class SidebarPosts extends PluginFunctions
         
         if (isset($posts) && !empty($posts)) {
             
-            $output = "<h2 class='sidebar_widget_head sidebar_posts_title'>";
-            $output .= "<a href='" . $this->hotaru->url(array('page'=>'rss', 'status'=>$type)) . "' title='" . $this->lang["sidebar_posts_icon_anchor_title"] . "'><img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'></a>&nbsp;"; // RSS icon
+            $output = "<h2 class='sidebar_widget_head sidebar_posts_title'>\n";
+            $output .= "<a href='" . $this->hotaru->url(array('page'=>'rss', 'status'=>$type)) . "' title='" . $this->lang["sidebar_posts_icon_anchor_title"] . "'>\n";
+            $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'></a>&nbsp;\n"; // RSS icon
             $link = BASEURL;
-            $output .= "<a href='" . $link . "' title='" . $this->lang["sidebar_posts_title_anchor_title"] . "'>" . $title . "</a></h2>"; 
+            $output .= "<a href='" . $link . "' title='" . $this->lang["sidebar_posts_title_anchor_title"] . "'>" . $title . "</a></h2>\n"; 
                 
-            $output .= "<ul class='sidebar_widget_body sidebar_posts_items'>";
+            $output .= "<ul class='sidebar_widget_body sidebar_posts_items'>\n";
             $output .= $this->getSidebarPostItems($posts);
-            $output .= "</ul>";
+            $output .= "</ul>\n";
         }
         
         // Display the whole thing:
@@ -189,20 +190,22 @@ class SidebarPosts extends PluginFunctions
             }
 
             // POST TITLE
-            $output .= "<li class='sidebar_posts_item'>";
+            $output .= "<li class='sidebar_posts_item'>\n";
             
             // show vote if enabled in Sidebar Posts settings
             $sb_votes = $this->getSetting('sidebar_posts_votes', 'sidebar_posts');
             if ($sb_votes == 'checked') {
-                $output .= "<span class='sidebar_posts_vote vote_color_" . $item->post_status . "'>";
+                $output .= "<div class='sidebar_posts_vote vote_color_" . $item->post_status . "'>";
                 $output .= $item->post_votes_up;
-                $output .= "</span>";
+                $output .= "</div>\n";
+                
+                $output .= "<div class='sidebar_posts_link sidebar_posts_indent'>\n";
+            } else {
+                $output .= "<div class='sidebar_posts_link'>\n";
             }
-            
-            $output .= "<span class='sidebar_posts_title'>";
             $item_title = stripslashes(html_entity_decode(urldecode($item->post_title), ENT_QUOTES,'UTF-8'));
-            $output .= "<a href='" . $this->hotaru->url(array('page'=>$item->post_id)) . "'>" . $item_title . "</a></span>";
-            $output .= '</li>';
+            $output .= "<a href='" . $this->hotaru->url(array('page'=>$item->post_id)) . "'>\n" . $item_title . "\n</a></div>\n";
+            $output .= "</li>\n";
         }
         
         return $output;

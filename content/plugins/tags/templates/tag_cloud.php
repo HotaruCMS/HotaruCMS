@@ -29,8 +29,6 @@
     <div id='main'>
         <div id='breadcrumbs'><a href='<?php echo BASEURL; ?>'><?php echo $hotaru->lang["main_theme_home"]; ?></a> &raquo; <?php echo $hotaru->lang["tags_tag_cloud"]; ?></div>
         
-        <h2><?php echo $hotaru->lang["tags_tag_cloud"]; ?></h2>
-        
         <?php echo $hotaru->showMessages(); ?>
         
         <div class="tag_cloud">

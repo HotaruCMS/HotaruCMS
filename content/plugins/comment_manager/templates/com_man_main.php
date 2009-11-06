@@ -86,7 +86,9 @@
         <td><?php echo $hotaru->lang["com_man_author"]; ?></td>
         <td><?php echo $hotaru->lang["com_man_post"]; ?></td>
         <td><?php echo $hotaru->lang["com_man_approve"]; ?></td>
-        <td><?php echo $hotaru->lang["com_man_delete"]; ?></td>
+        <?php if ($hotaru->current_user->getPermission('can_delete_comments') == 'yes') { ?>
+            <td><?php echo $hotaru->lang["com_man_delete"]; ?></td>
+        <?php } ?>
     </tr>
             <?php echo $hotaru->vars['com_man_rows']; ?>
     </table>
@@ -96,10 +98,12 @@
     <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=comment_manager&amp;action=approve_all">
         <?php echo $hotaru->lang["com_man_approve_all"]; ?>
     </a>
+    <?php if ($hotaru->current_user->getPermission('can_delete_comments') == 'yes') { ?>
     &nbsp; | &nbsp;
     <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=comment_manager&amp;action=delete_all">
         <span class="bold_red"><?php echo $hotaru->lang["com_man_delete_all"]; ?></span>
     </a>
+    <?php } ?>
     <br />
     <small><?php echo $hotaru->lang["com_man_all_note"]; ?></small>
 </div>

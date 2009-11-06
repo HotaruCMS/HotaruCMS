@@ -107,6 +107,34 @@ class Category
     
         return $cat_level;
     }
+    
+
+    /**
+     * Returns parent id
+     *
+     * @param int $cat_id
+     * @return int
+     */
+    public function getCatParent($cat_id)
+    {
+        $sql = "SELECT category_parent FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
+        $cat_id = $this->db->get_var($this->db->prepare($sql, $cat_id));
+        if ($cat_id) { return $cat_id; } else { return false; }
+    }
+    
+    
+    /**
+     * Returns child ids
+     *
+     * @param int $cat_parent_id
+     * @return int
+     */
+    public function getCatChildren($cat_parent_id)
+    {
+        $sql = "SELECT category_id FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d";
+        $cat_children_ids = $this->db->get_results($this->db->prepare($sql, $cat_parent_id));
+        if ($cat_children_ids) { return $cat_children_ids; } else { return false; }
+    }
 }
 
 ?>

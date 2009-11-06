@@ -143,13 +143,24 @@ class getMixedString2 extends AccessorAbstract {
 class getHtmLawed extends AccessorAbstract {
 
    /**
-    * a function to sanitize a string without htmlentities
+    * a function to filter HTML
     *
     * @return string
     */
     protected function inspekt($text)
     {
         $config = array('safe' => 1);
+        
+        // Allow plugins to alter the value of $config/
+        // Plugins should return an array, e.g. array('safe' => 1); 
+        require_once(LIBS . 'Hotaru.php');
+        $hotaru = new Hotaru('install'); // install prevents us getting more than the basics from Hotaru
+        $results = $hotaru->plugins->pluginHook('hotaru_inspekt_htmlawed_config', true, '', array('role' => $role));
+        if (is_array($results)) {
+            foreach ($results as $res) {
+                $config = $res; // $config takes on the value returned from the last plugin using this hook.
+            }
+        }
         
         require_once(EXTENSIONS . 'htmLawed/htmLawed.php');
         

@@ -1,6 +1,6 @@
 <?php
 /**
- * Disqus Footer
+ * Comment Form
  *
  * PHP version 5
  *

@@ -2,10 +2,10 @@
 /**
  * name: Pligg Importer
  * description: Imports and converts a Pligg database to Hotaru CMS
- * version: 0.5
+ * version: 0.6
  * folder: pligg_importer
  * class: PliggImporter
- * requires: category_manager 0.4, categories 0.5, comments 0.4, submit 0.7, tags 0.6, users 0.5, vote_simple 0.4
+ * requires: category_manager 0.6, categories 0.9, comments 1.0, submit 1.4, tags 1.1, users 0.8, vote_simple 0.8
  * hooks: admin_plugin_settings, admin_sidebar_plugin_settings, admin_header_include
  *
  * PHP version 5
@@ -100,7 +100,8 @@ class PliggImporter extends PluginFunctions
         
         echo "<table><tr>";
         echo "<td colspan=3 id='before_begin'>Before you begin, you'll need to...</td></tr>";
-    
+        echo "<td colspan=3>...make sure your Pligg username is at least 4 characters. Learn more about that <a href='http://hotarucms.org/showpost.php?p=472&postcount=9'>here in the forums</a>.</td></tr>";
+        echo "<td colspan=3><b>Then...</b></td></tr>";
         echo "<tr><td>";
         
         echo "<ul id='table_list'>";

@@ -6,5 +6,5 @@ td.sidebar_active, td.sidebar_order {
 	width: 6.0em;
 }
 
-.sidebar_widget_head { margin-top: 1.2em; }
-.sidebar_widget_body { margin: 0 0 2.0em 0; }
+.sidebar_widget_head { margin-top: 0.4em; }
+.sidebar_widget_body { margin-bottom: 2.5em;}

@@ -33,24 +33,27 @@ class Comment
     public $plugins;                    // PluginFunctions object
     public $current_user;               // UserBase object
 
-    protected $id = 0;
-    protected $parent = 0;
-    protected $postId = 0;
-    protected $author = 0;
-    protected $date = '';
-    protected $status = 'approved';
-    protected $votes = 0;
-    protected $content = '';
-    protected $type = 'newcomment';   // or "editcomment"
-    protected $subscribe = 0;
-    protected $levels = 0;         // max nesting levels
-    protected $depth = 0;         // this nesting level
-    protected $email = '';
+    protected $id           = 0;
+    protected $parent       = 0;
+    protected $postId       = 0;
+    protected $author       = 0;
+    protected $date         = '';
+    protected $status       = 'approved';
+    protected $votes        = 0;
+    protected $content      = '';
+    protected $type         = 'newcomment';   // or "editcomment"
+    protected $subscribe    = 0;
+    protected $levels       = 0;         // max nesting levels
+    protected $depth        = 0;         // this nesting level
+    protected $email        = '';
     protected $allowableTags = '';
-    protected $setPending = '';
-    protected $form = '';
-    protected $avatars = '';
-    protected $voting = '';
+    protected $itemsPerPage = 20;
+    protected $pagination   = '';
+    protected $thisForm     = '';
+    protected $allForms     = 'checked';
+    protected $avatars      = '';
+    protected $voting       = '';
+    protected $order        = 'asc';   // oldest comments first
     
     public $vars = array();
 
@@ -120,9 +123,9 @@ class Comment
      * @param int $post_id - the id of the post this comment is on
      * @param array|false
      */
-    function readAllParents($post_id)
+    function readAllParents($post_id, $order = "ASC")
     {
-        $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_parent = %d ORDER BY comment_date";
+        $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_parent = %d ORDER BY comment_date " . $order;
         $parents = $this->db->get_results($this->db->prepare($sql, $post_id, 0));
         
         if($parents) { return $parents; } else { return false; }
@@ -160,6 +163,36 @@ class Comment
     
     
     /**
+     * Get all comments from database
+     *
+     * @param int $post_id - you can limit comments to a single post
+     * @return array|false
+     */
+    function getAllComments($post_id = 0, $order = "ASC", $limit = 0, $userid = 0)
+    {
+        // limiting is used in the rssFeed function. Other than that, pagination does limiting for us.
+        if(!$limit) { $limit = ''; } else { $limit = " LIMIT "  .$limit; }
+        
+        if ($post_id) {
+            // get all comments from specified post
+            $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_status = %s ORDER BY comment_date " . $order;
+            $comments = $this->db->get_results($this->db->prepare($sql, $post_id, 'approved'));
+        } else {
+            // get all comments
+            if ($userid) { 
+                $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_status = %s AND comment_user_id = %d ORDER BY comment_date " . $order . $limit;
+                $comments = $this->db->get_results($this->db->prepare($sql, 'approved', $userid));
+            } else {
+                $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_status = %s ORDER BY comment_date " . $order . $limit;
+                $comments = $this->db->get_results($this->db->prepare($sql, 'approved'));
+            }
+        }
+        
+        if($comments) { return $comments; } else { return false; }
+    }
+    
+    
+    /**
      * Read comment
      *
      * @param array $comment
@@ -193,11 +226,24 @@ class Comment
 
         if ($can_comment == 'mod') { $this->status = 'pending'; } // forces all to 'pending' if user's comments are moderated
         
-        if ($this->setPending == 'checked') { $status = 'pending'; } else { $status = $this->status; } // forces all to 'pending' if setPending enabled
+        // Get settings from database...
+        $comments_settings = $this->plugins->getSerializedSettings();
+        $set_pending = $comments_settings['comment_set_pending'];
+        
+        if ($set_pending == 'some_pending') {
+            $comments_approved = $this->hotaru->comment->commentsApproved($this->current_user->id);
+            $x_comments_needed = $comments_settings['comment_x_comments'];
+        }
+                    
+        if ($set_pending == 'all_pending') {
+            $this->status = 'pending'; 
+        } elseif (($set_pending == 'some_pending') && ($comments_approved <= $x_comments_needed)) {
+            $this->status = 'pending'; 
+        } 
                 
         $sql = "INSERT INTO " . TABLE_COMMENTS . " SET comment_post_id = %d, comment_user_id = %d, comment_parent = %d, comment_date = CURRENT_TIMESTAMP, comment_status = %s, comment_content = %s, comment_subscribe = %d, comment_updateby = %d";
                 
-        $this->db->query($this->db->prepare($sql, $this->postId, $this->author, $this->parent, $status, urlencode(trim(stripslashes($this->content))), $this->subscribe, $this->current_user->id));
+        $this->db->query($this->db->prepare($sql, $this->postId, $this->author, $this->parent, $this->status, urlencode(trim(stripslashes($this->content))), $this->subscribe, $this->current_user->id));
         
         $last_insert_id = $this->db->get_var($this->db->prepare("SELECT LAST_INSERT_ID()"));
         
@@ -220,6 +266,7 @@ class Comment
         $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_status = %s, comment_content = %s, comment_subscribe = %d, comment_updateby = %d WHERE comment_id = %d";
         $this->db->query($this->db->prepare($sql, $this->status, urlencode(trim(stripslashes($this->content))), $this->subscribe, $this->current_user->id, $this->id));
         
+        $this->hotaru->comment->id = $this->id; // a small hack to get the id for use in plugins.
         $this->plugins->pluginHook('comment_update_comment');
         
         return true;
@@ -239,6 +286,7 @@ class Comment
         $sql = "DELETE FROM " . TABLE_COMMENTVOTES . " WHERE cvote_comment_id = %d";
         $this->db->query($this->db->prepare($sql, $this->id));
         
+        $this->hotaru->comment->id = $this->id; // a small hack to get the id for use in plugins.
         $this->plugins->pluginHook('comment_delete_comment');
     }
     
@@ -433,5 +481,79 @@ class Comment
         @mail($to, $subject, $message, $headers);
     }
     
+    
+    /**
+     * Publish content as an RSS feed
+     * Uses the 3rd party RSS Writer class.
+     */    
+    public function rssFeed()
+    {
+        require_once(EXTENSIONS . 'RSSWriterClass/rsswriter.php');
+        
+        $select = '*';
+
+        $limit = $this->cage->get->getInt('limit');
+        $user = $this->cage->get->testUsername('user');
+
+        if (!$limit) { $limit = 10; }
+        if ($user) { 
+            $userid = $this->current_user->getUserIdFromName($user);
+        } else {
+            $userid = 0;
+        }
+        
+        $this->plugins->pluginHook('comment_rss_feed');
+        
+        $feed           = new RSS();
+        $feed->title    = SITE_NAME;
+        $feed->link     = BASEURL;
+        
+        if ($user) { 
+            $feed->description = $this->lang["comment_rss_comments_from_user"] . " " . $user; 
+        } else {
+            $feed->description = $this->lang["comment_rss_latest_comments"] . SITE_NAME;
+        }
+        
+        // fetch comments from the database        
+        $comments = $this->getAllComments(0, "desc", $limit, $userid);
+        $this->hotaru->post = new Post($this->hotaru);
+        
+        if ($comments) {
+            foreach ($comments as $comment) 
+            {
+                $this->hotaru->post->readPost($comment->comment_post_id);
+                
+                $author = $this->current_user->getUserNameFromId($comment->comment_user_id);
+                
+                $item = new RSSItem();
+                if ($user) { 
+                    $title = $this->lang["comment_rss_comment_on"] . html_entity_decode(urldecode($this->hotaru->post->title), ENT_QUOTES,'UTF-8');
+                } else {
+                    $title = $author . $this->lang["comment_rss_commented_on"] . html_entity_decode(urldecode($this->hotaru->post->title), ENT_QUOTES,'UTF-8');
+                }
+                $item->title = stripslashes($title);
+                $item->link  = $this->hotaru->url(array('page'=>$comment->comment_post_id)) . "#c" . $comment->comment_id;
+                $item->setPubDate($comment->comment_date); 
+                $item->description = "<![CDATA[ " . stripslashes(urldecode($comment->comment_content)) . " ]]>";
+                $feed->addItem($item);
+            }
+        }
+        echo $feed->serve();
+    }
+    
+    
+    /**
+     * Count how many approved comments a user has had
+     *
+     * @param int $userid 
+     * @return int 
+     */
+    public function commentsApproved($userid)
+    {
+        $sql = "SELECT COUNT(*) FROM " . TABLE_COMMENTS . " WHERE comment_status = %s AND comment_user_id = %d";
+        $count = $this->db->get_var($this->db->prepare($sql, 'approved', $userid));
+        
+        return $count;
+    }
 }
 ?>

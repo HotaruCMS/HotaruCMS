@@ -54,8 +54,10 @@ class UserFunctions extends UserBase
      *
      * @param string $type - notification type, e.g. 'post', 'user', 'comment'
      * @param string $status - role or status new user, post or comment
+     * @param string $id - post or user id
+     * @param string $commentid - comment id
      */
-    public function notifyMods($type, $status, $id = 0)
+    public function notifyMods($type, $status, $id = 0, $commentid = 0)
     {
         $line_break = "\r\n\r\n";
         $next_line = "\r\n";
@@ -78,10 +80,10 @@ class UserFunctions extends UserBase
                 break;
             case 'comment':
                 $comments_settings = $this->plugins->getSerializedSettings('comments');
-                $email_mods = $comments_settings['comments_email_notify_mods'];
+                $email_mods = $comments_settings['comment_email_notify_mods'];
                 $subject = $this->lang['userfunctions_notifymods_subject_comment'];
                 $about = $this->lang['userfunctions_notifymods_body_about_comment'];
-                $url = BASEURL . "admin_index.php?comment_status_filter=pending&plugin=comment_manager&page=plugin_settings&type=filter";
+                $url = BASEURL . "admin_index.php?page=plugin_settings&plugin=comment_manager&page=plugin_settings&type=filter&comment_filter=pending";
                 break;
             default:
         }

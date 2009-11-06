@@ -25,6 +25,8 @@
  */
 class Hotaru
 {
+    public $version         = 0.8;      // Hotaru CMS version
+
     public $db;                         // database object
     public $cage;                       // Inspekt object
     public $plugins;                    // Inspekt object
@@ -728,7 +730,7 @@ class Hotaru
             // send HTTP headers to ensure aggressive caching
             header('Expires: '.gmdate('D, d M Y H:i:s', time() + $cache_length).' GMT'); // 1 year from now
             header('Content-Type: ' . $content_type);
-            header('Content-Length: '.strlen($sCode));
+            //header('Content-Length: '.strlen($sCode)); // causes site loading delays: http://hotarucms.org/showthread.php?t=197
             header("Last-Modified: $sLastModified");
             header("ETag: $iETag");
             header('Cache-Control: max-age=' . $cache_length);

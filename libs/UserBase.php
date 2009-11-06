@@ -26,13 +26,14 @@
 class UserBase {
  
     protected $id           = 0;
-    protected $userName     = '';
+    protected $name         = '';
     protected $role         = 'member';
     protected $password     = 'password';
     protected $email        = '';
     protected $emailValid   = 0;
     protected $loggedIn     = false;
     protected $perms        = array();    // permissions
+    protected $ip           = 0;
     
     public $vars            = array();  // multi-purpose, used by plugins
     public $db;                         // database object
@@ -147,9 +148,12 @@ class UserBase {
         unset($permissions['options']);  // don't need this for individual users
         $permissions = serialize($permissions);
 
+        // get user ip
+        $userip = $this->cage->server->testIp('REMOTE_ADDR');
+        
         // add user to the database
-        $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email, user_permissions) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s)";
-        $this->db->query($this->db->prepare($sql, $this->name, $this->role, $this->password, $this->email, $permissions));
+        $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email, user_permissions, user_ip) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s, %s)";
+        $this->db->query($this->db->prepare($sql, $this->name, $this->role, $this->password, $this->email, $permissions, $userip));
     }
 
 
@@ -165,9 +169,12 @@ class UserBase {
             $updatedby = $this->id;
         }
         
+        // get latest user ip
+        $userip = $this->cage->server->testIp('REMOTE_ADDR');
+        
         if ($this->id != 0) {
-            $sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s, user_permissions = %s, user_updateby = %d WHERE user_id = %d";
-            $this->db->query($this->db->prepare($sql, $this->name, $this->role, $this->password, $this->email, serialize($this->getAllPermissions()), $userid, $this->id));
+            $sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s, user_permissions = %s, user_ip = %s, user_updateby = %d WHERE user_id = %d";
+            $this->db->query($this->db->prepare($sql, $this->name, $this->role, $this->password, $this->email, serialize($this->getAllPermissions()), $userip, $userid, $this->id));
             return true;
         } else {
             return false;
@@ -227,6 +234,7 @@ class UserBase {
             $this->role = $user_info->user_role;
             $this->email = $user_info->user_email;
             $this->emailValid = $user_info->user_email_valid;
+            $this->ip = $user_info->user_ip;
             
             // If a new plugin is installed, we need a way of adding any new default permissions
             // that plugin provides. So, we get all defaults, then overwrite with existing perms.
@@ -689,6 +697,9 @@ class UserBase {
                 if ($role_check == 'killspammed' || $role_check == 'deleted') {
                     $viewee->deleteComments(); // includes child comments from *other* users
                     $viewee->deletePosts(); // includes tags and votes for self-submitted posts
+                    
+                    $this->plugins->pluginHook('userbase_killspam', true, '', array('target_user' => $viewee->id));
+                    
                     if ($role_check == 'deleted') { 
                         $viewee->deleteUser(); 
                         $checks['username_check'] = 'deleted';
@@ -786,7 +797,7 @@ class UserBase {
             $password_check_new2 = "";
             // do nothing
         } elseif ($error == 0) {
-            $result = $this->userExists(0, $this->userName, $this->email);
+            $result = $this->userExists(0, $this->name, $this->email);
             if ($result != 4) { // 4 is returned when the user does not exist in the database
                 //success
                 $this->password = $this->generateHash($password_check_new);
@@ -832,7 +843,7 @@ class UserBase {
         $this->hotaru->vars['perms'] = $perms;
         
         // plugin hook:
-        $results = $this->plugins->pluginHook('userbase_default_permissions', true, '', array('role' => $role));
+        $this->plugins->pluginHook('userbase_default_permissions', true, '', array('role' => $role));
         
         return $this->hotaru->vars['perms'];
     }

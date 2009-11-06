@@ -2,10 +2,10 @@
 /**
  * name: Users
  * description: Manages users within Hotaru.
- * version: 0.7
+ * version: 0.8
  * folder: users
  * class: Users
- * hooks: hotaru_header, header_include, admin_header_include_raw, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, userbase_default_permissions
+ * hooks: hotaru_header, header_include, admin_header_include_raw, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, userbase_default_permissions, submit_pre_list
  *
  * PHP version 5
  *
@@ -54,13 +54,35 @@ class Users extends PluginFunctions
             $this->db->query($sql); 
         }
         
-        $users_settings['users_recaptcha_enabled'] = "";
-        $users_settings['users_recaptcha_pubkey'] = "";
-        $users_settings['users_recaptcha_privkey'] = "";
-        $users_settings['users_emailconf_enabled'] = "";
-        $users_settings['users_registration_status'] = "member";
-        $users_settings['users_email_notify'] = "";
-        $users_settings['users_email_notify_mods'] = array();
+        // Create a new empty table called "useractivity"
+        $exists = $this->db->table_exists('useractivity');
+        if (!$exists) {
+            //echo "table doesn't exist. Stopping before creation."; exit;
+            $sql = "CREATE TABLE `" . DB_PREFIX . "useractivity` (
+              `useract_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+              `useract_archived` enum('Y','N') NOT NULL DEFAULT 'N',
+              `useract_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+              `useract_userid` int(20) NOT NULL DEFAULT 0,
+              `useract_status` varchar(32) NOT NULL DEFAULT 'show',
+              `useract_key` varchar(255) NULL,
+              `useract_value` text NULL,
+              `useract_key2` varchar(255) NULL,
+              `useract_value2` text NULL,
+              `useract_date` timestamp NOT NULL,
+              `useract_updateby` int(20) NOT NULL DEFAULT 0, 
+              INDEX  (`useract_userid`)
+            ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='User Activity';";
+            $this->db->query($sql); 
+        }
+        
+        $users_settings = $this->getSerializedSettings();
+        if (!isset($users_settings['users_recaptcha_enabled'])) { $users_settings['users_recaptcha_enabled'] = ""; }
+        if (!isset($users_settings['users_recaptcha_pubkey'])) { $users_settings['users_recaptcha_pubkey'] = ""; }
+        if (!isset($users_settings['users_recaptcha_privkey'])) { $users_settings['users_recaptcha_privkey'] = ""; }
+        if (!isset($users_settings['users_emailconf_enabled'])) { $users_settings['users_emailconf_enabled'] = ""; }
+        if (!isset($users_settings['users_registration_status'])) { $users_settings['users_registration_status'] = "member"; }
+        if (!isset($users_settings['users_email_notify'])) { $users_settings['users_email_notify'] = ""; }
+        if (!isset($users_settings['users_email_notify_mods'])) { $users_settings['users_email_notify_mods'] = array(); }
         
         $this->updateSetting('users_settings', serialize($users_settings));
         
@@ -75,12 +97,20 @@ class Users extends PluginFunctions
      */
     public function hotaru_header() {
         if (!defined('TABLE_USERMETA')) { define("TABLE_USERMETA", DB_PREFIX . 'usermeta'); }
+        if (!defined('TABLE_USERACTIVITY')) { define("TABLE_USERACTIVITY", DB_PREFIX . 'useractivity'); }
         
         // include language file
         $this->includeLanguage();
         
+        // Under these conditions, we're looking at a user page - i.e. user posts filtered to popular, latest, etc.
         if ($username = $this->cage->get->testUsername('user')) {
             $this->hotaru->title = $username;
+            $this->hotaru->pageType = 'user';
+        }
+        
+        // Under these conditions, we're looking at the user's main page - the profile.
+        if ($this->hotaru->isPage('main') && $this->cage->get->keyExists('user') && !$this->cage->get->keyExists('sort')) {
+            $this->hotaru->pageType = 'profile';
         }
     }
 
@@ -177,6 +207,21 @@ class Users extends PluginFunctions
     
     
     /**
+     * Display the main user profile page.
+     *
+     * @return bool
+     */
+    public function submit_pre_list()
+    {
+        if ($this->hotaru->pageType == 'profile') {
+            $this->hotaru->user = new UserBase($this->hotaru);
+            $this->hotaru->user->getUserBasic(0, $this->cage->get->testUsername('user'));
+            $this->hotaru->displayTemplate('profile', 'users');
+        }
+    }
+    
+    
+    /**
      * Display various forms within the body of the page.
      *
      * @return bool
@@ -245,17 +290,17 @@ class Users extends PluginFunctions
     {
         if ($this->cage->get->keyExists('user')) 
         {
-            $this->hotaru->vars['filter']['post_author = %d'] = $this->current_user->getUserIdFromName($this->cage->get->testUsername('user')); 
-            $rss = " <a href='" . $this->hotaru->url(array('page'=>'rss', 'user'=>$this->cage->get->testUsername('user'))) . "'>";
+            $username = $this->cage->get->testUsername('user');
+            $this->hotaru->vars['filter']['post_author = %d'] = $this->current_user->getUserIdFromName($username); 
+            $rss = " <a href='" . $this->hotaru->url(array('page'=>'rss', 'user'=>$username)) . "'>";
             $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
             
-            // Undo the filter that limits results to either 'top' or 'new' (See submit/libs/Post.php -> prepareList())
-            if(isset($this->hotaru->vars['filter']['post_status = %s'])) { unset($this->hotaru->vars['filter']['post_status = %s']); }
+            $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_user"] . " &raquo; ";
+            $this->hotaru->vars['page_title'] .= "<a href='" . $this->hotaru->url(array('user'=>$username)) . "'>";
+            $this->hotaru->vars['page_title'] .= $username . "</a>";
+            $this->hotaru->vars['page_title'] .= $rss;
             
-            $this->hotaru->vars['filter']['post_status != %s'] = 'processing';
-            $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_user"] . " &raquo; " . $this->hotaru->title . $rss;
-            
-            $this->hotaru->pageType = 'user';
+            //$this->hotaru->pageType = 'user'; - this was changing "profile" to "user" so for now it's commented out.
             
             return true;    
         }
@@ -287,7 +332,7 @@ class Users extends PluginFunctions
                                 
                     if ($this->cage->post->getInt('remember') == 1){ $remember = 1; } else { $remember = 0; }
                     $this->current_user->name = $username_check;
-                    $this->current_user->getUserBasic(0, $this->current_user->userName);
+                    $this->current_user->getUserBasic(0, $this->current_user->name);
                     
                     $users_settings = $this->getSerializedSettings();
                     $this->current_user->vars['useEmailConf'] = $users_settings['users_emailconf_enabled'];
@@ -634,9 +679,10 @@ class Users extends PluginFunctions
     {
         // not ideal, but the easiest way to get the target username is from the page title:
         $username = $this->hotaru->title;
+        $page_type = $this->hotaru->pageType;
         
-        if ($this->hotaru->pageType == 'user' && $this->current_user->getPermission('can_access_admin') == 'yes') {
-            echo "<div class='special_links_bar'>";
+        if (($page_type == 'user' || $page_type == 'profile' ) && $this->current_user->getPermission('can_access_admin') == 'yes') {
+            echo "<div class='post_breadcrumbs_links_bar'>";
             echo $this->lang["users_account_edit"] . " " . $username . ": ";
             echo " <a href='" . $this->hotaru->url(array('page' => 'account', 'user' => $username)) . "'>";
             echo $this->lang["users_account_account"] . "</a> | ";

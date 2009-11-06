@@ -5,33 +5,38 @@
 /* DROP-DOWN CATEGORY MENU BAR */
 
 #category_bar { 
-	border-top: 1px solid #F0F0F0; 
 	margin: 0; 
 	padding: 0 0 0 0.8em; } 
 #category_bar li { 
+	line-height: 1.0em;
 	list-style: none; 
 	float: left; 
 	margin: 0.4em 0em 0.4em 0em; 
-	padding: 0.2em 0.8em 0.2em 0.8em; } 
+	padding: 0em; } 
 #category_bar li a { 
 	display: block; 
-	color: #fff; 
-	text-decoration: none; } 
+	color: #666; 
+	text-decoration: none; 
+	padding: 0.2em 0.8em 0.2em 0.8em; } 
+#category_bar li a:hover { 
+	background-color: #f0f0f0; }
 #category_bar li ul { 
 	display: none;  
+	border: 1px solid #d0d0d0;
 	width: 10em; /* Width to help Opera out */ } 
  
 /* HOVER */      
-#category_bar li:hover { 
-	background-color: #444;  } 
+#category_bar li:hover, #category_bar li:hover a { 
+	color: #000; } 
 #category_bar li:hover ul, #category_bar li.hover ul { 
 	display: block; 
-	background-color: #F0F0F0; 
+	background-color: #f8f8f8; 
 	position: absolute; } 
 #category_bar li:hover li, #category_bar li.hover li { 
 	float: none; } 
 #category_bar li:hover li a, #category_bar li.hover li a { 
-	color: #000; 
-	padding: 0.2em; } 
+	color: #666; 
+	padding: 0.2em;
+	padding-left: 0.6em; } 
 #category_bar li li a:hover { 
-	color: #fff;} 
+	background-color: #f0f0f0; color: #000;} 

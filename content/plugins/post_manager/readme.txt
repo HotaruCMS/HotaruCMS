@@ -13,5 +13,6 @@ Instructions
 
 Changelog
 ---------
-v.0.2 2009/08/25 - Nick - Made list default to pending if submission moderation enabled
-v.0.1 2009/08/17 - Nick - Released first version
+v.0.3 2009/11/04 - Nick - Updated install function for easier upgrading
+v.0.2 2009/10/25 - Nick - Made list default to pending if submission moderation enabled
+v.0.1 2009/10/17 - Nick - Released first version

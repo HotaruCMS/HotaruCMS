@@ -76,6 +76,10 @@ $lang['submit_submit_a_story'] = "Submit a Story";
 
 /* Submit Settings */
 $lang["submit_settings_header"] = "Submit Configuration";
+$lang["submit_settings_post_components"] = "<b>Post Components</b>";
+$lang["submit_settings_submission_settings"] = "<b>Submission Settings</b> (for users with 'member' roles)";
+$lang["submit_settings_post_archiving"] = "<b>Post Archiving</b>";
+$lang["submit_settings_content"] = "Description";
 $lang["submit_settings_instructions"] = "Check the components you want submissions to have:";
 $lang["submit_settings_save"] = "Save";
 $lang["submit_settings_enable"] = "Enable story submission";
@@ -102,17 +106,43 @@ $lang["submit_settings_email_notify"] = "When a new post is submitted, email adm
 $lang["submit_settings_email_notify_all"] = "All new posts";
 $lang["submit_settings_email_notify_pending"] = "Pending posts only";
 $lang["submit_settings_email_notify_none"] = "None";
+$lang["submit_settings_post_archive_desc"] = "On the Maintenance page, there's a link you can use to archive old posts (or remove an existing archive). Archiving speeds up your site by excluding old posts and their comments, votes and tags from most database usage. Old posts can still be accessed via the search box or when loaded directly (e.g. from Google). <i>Note: Archiving is not automatic. You will need to update the archive periodically from the Maintenance page.</i>";
+$lang["submit_settings_post_archive"] = "Posts older than this will be archived. <small>(Default: No archive)</small>";
+$lang["submit_settings_post_archive_no_archive"] = "No archive";
+$lang["submit_settings_post_archive_180"] = "6 months";
+$lang["submit_settings_post_archive_365"] = "1 year";
+$lang["submit_settings_post_archive_730"] = "2 years";
+$lang["submit_settings_post_archive_1095"] = "3 years";
 
-/* Submit Show Post */
+/* Maintenance page */
+$lang["submit_maintenance_update_archive"] = "Update the post archive";
+$lang["submit_maintenance_update_archive_remove"] = "Move any archived posts out of the archive. <small>(See Submit Settings)</small>";
+$lang["submit_maintenance_update_archive_desc_1"] = "Posts older than ";
+$lang["submit_maintenance_update_archive_desc_2"] = " will be moved into the archive. <small>(See Submit Settings)</small>";
+$lang["submit_maintenance_archive_removed"] = "Done. There are currently no archived posts.";
+$lang["submit_maintenance_archive_updated"] = "Archive Updated";
+
+/* Submit Breadcrumbs */
+$lang["post_breadcrumbs_all"] = "All Posts";
+$lang["post_breadcrumbs_top"] = "Top Posts";
+$lang["post_breadcrumbs_latest"] = "Latest Posts";
+$lang["post_breadcrumbs_tag"] = "Tag";
+$lang["post_breadcrumbs_category"] = "Category";
+$lang["post_breadcrumbs_user"] = "User";
+$lang["post_breadcrumbs_upcoming"] = "Upcoming Posts";
+$lang["post_breadcrumbs_top_24_hours"] = "Top Posts (last 24 Hours)";
+$lang["post_breadcrumbs_top_48_hours"] = "Top Posts (last 48 Hours)";
+$lang["post_breadcrumbs_top_7_days"] = "Top Posts (last 7 Days)";
+$lang["post_breadcrumbs_top_30_days"] = "Top Posts (last 30 Days)";
+$lang["post_breadcrumbs_top_365_days"] = "Top Posts (last 365 Days)";
+$lang["post_breadcrumbs_top_all_time"] = "Top Posts (All-Time)";
+
+/* Submit Post */
 $lang["submit_page_title_main"] = "top";
 $lang["submit_page_title_latest"] = "latest";
 $lang["submit_page_title_all"] = "all";
-$lang["submit_post_edit"] = "EDIT";
+$lang["submit_post_edit"] = "Edit";
 $lang["submit_post_read_more"] = "[Read More]";
-$lang["submit_post_filtered_to"] = "Filtered to";
-$lang["submit_post_filter_user"] = "stories submitted by";
-$lang["submit_post_filter_tag"] = "stories tagged";
-$lang["submit_post_filter_category"] = "stories in";
 $lang["submit_post_posted"] = "Posted";
 $lang["submit_post_by"] = "by";
 $lang["submit_post_ago"] = "ago";
@@ -125,5 +155,6 @@ $lang["submit_rss_stories_from_user"] = "Stories submitted by";
 $lang["submit_rss_stories_tagged"] = "Stories tagged"; 
 $lang["submit_rss_stories_in_category"] = "Stories posted in";
 $lang["submit_rss_stories_search"] = "Search results for";
+$lang["submit_rss_stories_upcoming"] = "Upcoming stories";
 
 ?>

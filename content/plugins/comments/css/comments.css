@@ -1,7 +1,9 @@
 /* **************************************
  *	 COMMENTS PLUGIN CSS            *
  ************************************** */
- 
+
+.comment_link	{ padding-left: 1.5em; background-image: url(content/themes/default/images/comment.png); }
+
 #comments_wrapper h2 {
 	padding-bottom: 0em;
 }
@@ -39,4 +41,9 @@
 .comment_status {
 	float: right;
 	text-align: right;
+}
+
+#comment_manager_link {
+	float: right;
+	text-align: right;	
 }

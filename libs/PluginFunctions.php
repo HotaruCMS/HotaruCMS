@@ -186,7 +186,7 @@ class PluginFunctions extends Plugin
                                     $this_plugin = new $plugin->plugin_class($plugin->plugin_folder, $this->hotaru);
                                     $result = $this_plugin->$hook($parameters);
                                     if ($result) {
-                                        $return_array[$hook] = $result;
+                                        $return_array[$plugin->plugin_class . "_" . $hook] = $result; // name the result Class + hook name
                                     }
                                 }
                             }
@@ -251,15 +251,17 @@ class PluginFunctions extends Plugin
     
     
     /**
-     * Get a list of active plugins (or their descriptions, etc.)
+     * Get a list of active or inactive plugins (or their descriptions, etc.)
      *
      * @param string $select the table column to return
+     * @param int $enabled 0 for inactive, 1 for active
      * @return array
      */
-    public function activePlugins($select = 'plugin_folder')
+    public function activePlugins($select = 'plugin_folder', $enabled = 1)
     {
-        $sql = "SELECT " . $select . " FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d";
-        $active_plugins = $this->db->get_results($this->db->prepare($sql, $select, 1));
+        $sql = "SELECT $select FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d";
+        $active_plugins = $this->db->get_results($this->db->prepare($sql, $enabled));
+        
         if ($active_plugins) { return $active_plugins; } else {return false; }
     }
 
@@ -429,7 +431,7 @@ class PluginFunctions extends Plugin
     /**
      * Add a plugin to the plugins table
      *
-     * @param int $upgrade flag to indicate upgrade script available
+     * @param int $upgrade flag to indicate we need to show "Upgraded!" instead of "Installed!" message
      */
     public function install($upgrade = 0)
     {
@@ -537,41 +539,14 @@ class PluginFunctions extends Plugin
         $this->enabled  = 1;    // Enable it when we add it to the database.
         $this->assignPluginMeta($plugin_metadata);
         
-        if (in_array('upgrade_plugin', $this->hooks)) 
-        {
-            // Clear the database cache to ensure stored plugins and hooks 
-            // are up-to-date.
-            $admin->delete_files(CACHE . 'db_cache');
-            
-            // Clear the css/js cache to ensure any new ones get included
-            $admin->clearCache('css_js_cache', false);
-            
-            // Force inclusion of a language file (if exists) because the 
-            // plugin isn't ready to include it itself yet.
-            $this->includeLanguage($folder);
-            
-            // Add any new hooks to the hooks table before proceeding.
-            $this->addPluginHooks(); 
-        } else {
-            // Uninstall and then re-install because there's no upgrade function
-            $this->uninstall(1);    // 1 indicates that "upgrade" is true. 
-            $this->install(1);      // 1 indicates that "upgrade" is true. 
-        }
-                
-        $result = $this->pluginHook('upgrade_plugin', $this->folder);
-                
-        // For plugins to avoid showing this success message, they need to
-        // return a non-boolean value to $result.
-        if (!is_array($result)) {
-            $this->hotaru->messages[$this->lang["admin_plugins_upgrade_done"]] = 'green';
-        }
+        $this->uninstall(1);    // 1 indicates that "upgrade" is true, used to disable the "Uninstalled" message
+        $this->install(1);      // 1 indicates that "upgrade" is true. 
     }
     
     
     /**
      * Enables or disables a plugin, installing if necessary
      *
-     * @param string $folder plugin folder name
      * @param int $enabled 
      * Note: This function does not uninstall/delete a plugin.
      */
@@ -592,47 +567,101 @@ class PluginFunctions extends Plugin
         if (!$plugin_row) 
         {
             // If the user is activating the plugin, go and install it...
-            if ($enabled == 1) {    
-                $this->install();
-            }
+            if ($enabled == 1) { $this->install(); }
         } 
         else 
         {
-            // The plugin is already installed. Activate or deactivate according to $enabled (the user's action).
-            if ($plugin_row->plugin_enabled != $enabled) {        // only update if we're changing the enabled value.
-                $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_enabled = %d, plugin_updateby = %d WHERE plugin_folder = %s";
-                $this->db->query($this->db->prepare($sql, $enabled, $this->current_user->id, $this->folder));
-                
-                if ($enabled == 1) { // Activating now...
-                
-                    // Get plugin version from the database...
-                    $db_version = $this->getVersion();
-                    
-                    // Get plugin version from the file....
-                    $plugin_metadata = $this->readPluginMeta($this->folder);
-                    $file_version = $plugin_metadata['version'];
-                    
-                    // If file version is newer the the current plugin version, then upgrade...
-                    if (version_compare($file_version, $db_version, '>')) {
-                        $this->upgrade();
-                    } else {
-                        // else simply show an activated message...
-                        $this->hotaru->messages[$this->lang["admin_plugins_activated"]] = 'green'; 
-                    }
-                    
-                    // Force inclusion of a language file (if exists) because the 
-                    // plugin isn't ready to include it itself yet.
-                    $this->includeLanguage($this->folder);
-                }
-                
-                if ($enabled == 0) { 
-                    $this->hotaru->messages[$this->lang["admin_plugins_deactivated"]] = 'green'; 
-                }
-            }
+            $this->activateDeactivateDo($plugin_row, $enabled);
         }
     }
     
 
+    /**
+     * Enables or disables all plugins, installing if necessary
+     *
+     * @param int $enabled 
+     * Note: This function does not uninstall/delete a plugin.
+     */
+    public function activateDeactivateAll($enabled = 0)
+    {    // 0 = deactivate, 1 = activate
+        
+        // if you want to activate, find all the inactive plugins and vice-versa:
+        if ($enabled == 0) { $active_plugins = $this->activePlugins('*', 1); }
+        if ($enabled == 1) { $active_plugins = $this->activePlugins('*', 0); }
+
+        if (!$active_plugins) { return false; }
+                
+        /*  The problem with upgrading plugins is many of them require other plugins to work, 
+            therefore half the plugins can't be upgraded if the upgrade is attempted in a 
+            random order. So let's minimize the problem by sorting the plugins by number of 
+            requirements, i.e. plugins that have no requirements (Users, Submit, Sidebar Widgets)
+            are upgraded first, then plugins with one requirement... and finally Pligg Importer,
+            which has about 7 requirements. */ 
+        $i = 0;
+        foreach ($active_plugins as $active) {
+            $this->folder = $active->plugin_folder;
+            $ordered[$i]['name'] = $active->plugin_folder;
+            if (!$active->plugin_requires) { 
+                $ordered[$i]['req_count'] = 0; 
+            } else {
+                $requires = explode(', ', $active->plugin_requires);
+                $ordered[$i]['req_count'] = count($requires);
+            }
+            $i++;
+        }
+        
+        $ordered = sksort($ordered, 'req_count', 'int', true);
+        foreach ($ordered as $ord) {
+            $plugin_row = $this->db->get_row($this->db->prepare("SELECT plugin_folder, plugin_enabled FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $ord['name']));
+            $this->folder = $plugin_row->plugin_folder;
+            $this->activateDeactivateDo($plugin_row, $enabled);
+        }
+    }
+    
+    
+    /**
+     * Enables or disables all plugins, installing if necessary
+     *
+     * @param int $enabled 
+     * Note: This function does not uninstall/delete a plugin.
+     */
+    public function activateDeactivateDo($plugin, $enabled = 0)
+    {    // 0 = deactivate, 1 = activate
+        // The plugin is already installed. Activate or deactivate according to $enabled (the user's action).
+        if ($plugin->plugin_enabled == $enabled) { return false; }  // only update if we're changing the enabled value.
+        
+        $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_enabled = %d, plugin_updateby = %d WHERE plugin_folder = %s";
+        $this->db->query($this->db->prepare($sql, $enabled, $this->current_user->id, $this->folder));
+        
+        if ($enabled == 1) { // Activating now...
+        
+            // Get plugin version from the database...
+            $db_version = $this->getVersion();
+            
+            // Get plugin version from the file....
+            $plugin_metadata = $this->readPluginMeta($this->folder);
+            $file_version = $plugin_metadata['version'];
+            
+            // If file version is newer the the current plugin version, then upgrade...
+            if (version_compare($file_version, $db_version, '>')) {
+                $this->upgrade(); // runs the install function ans hows "upgraded!" message instead of "installed".
+            } else {
+                // else simply show an activated message...
+                $this->hotaru->messages[$this->lang["admin_plugins_activated"]] = 'green'; 
+            }
+            
+            // Force inclusion of a language file (if exists) because the 
+            // plugin isn't ready to include it itself yet.
+            $this->includeLanguage($this->folder);
+        }
+        
+        if ($enabled == 0) { 
+            $this->hotaru->messages[$this->lang["admin_plugins_deactivated"]] = 'green'; 
+        }
+    }
+    
+    
+    
     /**
      * Get plugin version number from the database
      *
@@ -645,6 +674,26 @@ class PluginFunctions extends Plugin
 
         $version = $this->db->get_var($this->db->prepare("SELECT plugin_version FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
         if ($version) { return $version; } else { return false; }
+    }
+    
+    
+    /**
+     * Uninstall all plugins
+     */
+    public function uninstallAll()
+    {            
+        $admin = $this->getAdminFunctions();
+        
+        // Clear the database cache to ensure plugins and hooks are up-to-date.
+        $admin->deleteFiles(CACHE . 'db_cache');
+        
+        // Clear the css/js cache to ensure this plugin's files are removed
+        $admin->clearCache('css_js_cache', false);
+
+        $admin->emptyTable(TABLE_PLUGINS, $msg = false);
+        $admin->emptyTable(TABLE_PLUGINHOOKS, $msg = false);
+        
+        $this->hotaru->messages[$this->lang["admin_plugins_uninstall_all_done"]] = 'green';
     }
     
     
@@ -665,7 +714,9 @@ class PluginFunctions extends Plugin
 
         $this->db->query($this->db->prepare("DELETE FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $this->folder));
         $this->db->query($this->db->prepare("DELETE FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_folder = %s", $this->folder));
-        $this->db->query($this->db->prepare("DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_folder = %s", $this->folder));
+        
+        // Settings aren't deleted anymore, but a user can do so manually from Admin->Maintenance
+        //$this->db->query($this->db->prepare("DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_folder = %s", $this->folder));
         
         if ($upgrade == 0) {
             $this->hotaru->messages[$this->lang["admin_plugins_uninstall_done"]] = 'green';
