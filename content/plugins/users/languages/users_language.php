@@ -139,4 +139,7 @@ $lang['userfunctions_notifymods_body_click'] = "More details can be found here: 
 $lang['userfunctions_notifymods_body_regards'] = "Thank you,";
 $lang['userfunctions_notifymods_body_sign'] = SITE_NAME . " Admin";
 
+/* User Profile */
+$lang['users_profile_usage'] = "Use the links above to see all the stories I've submitted";
+
 ?>

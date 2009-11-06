@@ -6,7 +6,7 @@
  * folder: comments
  * class: Comments
  * requires: submit 1.4, users 0.8
- * hooks: header_include, admin_header_include_raw, install_plugin, hotaru_header, theme_index_replace, theme_index_main, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_edit_post_admin_fields, submit_form_2_process_submission, userbase_default_permissions, post_delete_post
+ * hooks: header_include, admin_header_include_raw, install_plugin, hotaru_header, theme_index_replace, theme_index_main, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_edit_post_admin_fields, submit_form_2_process_submission, userbase_default_permissions, post_delete_post, profile_usage
  *
  * PHP version 5
  *
@@ -563,16 +563,30 @@ class Comments extends pluginFunctions
     public function theme_index_main()
     {
         if (!$this->hotaru->isPage('comments')) { return false; }
+        
+        if ($this->cage->get->keyExists('user')) {
+            $user = $this->cage->get->testUsername('user');
+            $userid = $this->current_user->getUserIdFromName($user);
+        } else {
+            $userid = 0;
+        }
 
-        $comments = $this->hotaru->comment->getAllComments(0, 'DESC');
+        $comments = $this->hotaru->comment->getAllComments(0, 'DESC', 0, $userid);
         if (!$comments) { return false; }
         
         /* BREADCRUMBS */
         echo "<div id='breadcrumbs'>";
         echo "<a href='" . BASEURL . "'>" .  $this->hotaru->lang['main_theme_home'] . "</a> &raquo; ";
+        if ($this->cage->get->keyExists('user')) {
+            echo "<a href='" . $this->hotaru->url(array('user' => $user)) . "'>" . $user . "</a> &raquo; "; 
+        }
         $this->hotaru->plugins->pluginHook('breadcrumbs');
         echo $this->hotaru->lang['comments_all'];
-        echo "<a href='" . $this->hotaru->url(array('page'=>'rss_comments')) . "'> ";
+        if ($this->cage->get->keyExists('user')) {
+            echo "<a href='" . $this->hotaru->url(array('page'=>'rss_comments', 'user'=>$user)) . "'> ";
+        } else {
+            echo "<a href='" . $this->hotaru->url(array('page'=>'rss_comments')) . "'> ";
+        }
         echo "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
         echo "</div>";
 
@@ -678,6 +692,18 @@ class Comments extends pluginFunctions
     {
         $sql = "DELETE FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d";
         $this->db->query($this->db->prepare($sql, $this->hotaru->post->id));
+    }
+    
+    
+    /**
+     * Add all comments link to Profile
+     */
+    public function profile_usage()
+    {
+        echo "<a id='profile_see_comments' href='" . $this->hotaru->url(array('page'=>'comments', 'user'=>$this->hotaru->user->name)) . "'>";
+        echo $this->hotaru->lang['comments_profile_see_comments'] . ".";
+        echo "</a>";
+        
     }
     
     
