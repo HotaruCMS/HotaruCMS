@@ -6,7 +6,7 @@
  * folder: activity
  * class: Activity
  * requires: users 0.8
- * hooks: install_plugin, hotaru_header, header_include, comment_post_add_comment, comment_update_comment, com_man_approve_all_comments, comment_delete_comment, post_add_post, post_update_post, post_change_status, post_delete_post, userbase_killspam, vote_positive_vote, vote_negative_vote, vote_flag_insert, admin_sidebar_plugin_settings, admin_plugin_settings, theme_index_main
+ * hooks: install_plugin, hotaru_header, header_include, comment_post_add_comment, comment_update_comment, com_man_approve_all_comments, comment_delete_comment, post_add_post, post_update_post, post_change_status, post_delete_post, userbase_killspam, vote_positive_vote, vote_negative_vote, vote_flag_insert, admin_sidebar_plugin_settings, admin_plugin_settings, theme_index_replace, theme_index_main
  *
  * PHP version 5
  *
@@ -225,7 +225,7 @@ class Activity extends PluginFunctions
         // Get settings from database if they exist...
         $activity_settings = $this->getSerializedSettings('activity');
         
-        $activity = $this->getLatestActivity($activity_settings);
+        $activity = $this->getLatestActivity($activity_settings, $activity_settings['activity_sidebar_number']);
         
         // build link that will link the widget title to all activity...
         
@@ -257,11 +257,17 @@ class Activity extends PluginFunctions
      *
      * return array $activity
      */
-    public function getLatestActivity($activity_settings, $all = false)
+    public function getLatestActivity($activity_settings, $limit = 0, $userid = 0)
     {
-        if ($all) { $limit = ""; } else { $limit = "LIMIT " . $activity_settings['activity_sidebar_number']; }
-        $sql = "SELECT * FROM " . TABLE_USERACTIVITY . " WHERE useract_status = %s ORDER BY useract_date DESC " . $limit;
-        $activity = $this->db->get_results($this->db->prepare($sql, 'show'));
+        if (!$limit) { $limit = ""; } else { $limit = "LIMIT " . $limit; }
+        
+        if (!$userid) {
+            $sql = "SELECT * FROM " . TABLE_USERACTIVITY . " WHERE useract_status = %s ORDER BY useract_date DESC " . $limit;
+            $activity = $this->db->get_results($this->db->prepare($sql, 'show'));
+        } else {
+            $sql = "SELECT * FROM " . TABLE_USERACTIVITY . " WHERE useract_status = %s AND useract_userid = %d ORDER BY useract_date DESC " . $limit;
+            $activity = $this->db->get_results($this->db->prepare($sql, 'show', $userid));
+        }
         
         if ($activity) { return $activity; } else { return false; }
     }
@@ -375,6 +381,19 @@ class Activity extends PluginFunctions
 
 
     /**
+     * Redirect to Activity RSS
+     *
+     * @return bool
+     */
+    public function theme_index_replace()
+    {
+        if (!$this->hotaru->isPage('rss_activity')) { return false; }
+        $this->rssFeed();
+        return true;
+    }
+    
+    
+    /**
      * Display All Activity page
      */
     public function theme_index_main()
@@ -383,7 +402,8 @@ class Activity extends PluginFunctions
         
             // Get settings from database if they exist...
             $activity_settings = $this->getSerializedSettings('activity');
-            $activity = $this->getLatestActivity($activity_settings, true); // true gets ALL activity
+            // gets however many are items shown per page on activity pages:
+            $activity = $this->getLatestActivity($activity_settings, 0); // 0 means no limit, ALL activity 
         
             /* BREADCRUMBS */
             echo "<div id='breadcrumbs'>";
@@ -417,6 +437,118 @@ class Activity extends PluginFunctions
             $pagedResults->setLayout(new DoubleBarLayout());
             echo $pagedResults->fetchPagedNavigation('', $this->hotaru);
         }
+    }
+    
+    
+    /**
+     * Publish content as an RSS feed
+     * Uses the 3rd party RSS Writer class.
+     */    
+    public function rssFeed()
+    {
+        require_once(EXTENSIONS . 'RSSWriterClass/rsswriter.php');
+        
+        $select = '*';
+
+        $limit = $this->cage->get->getInt('limit');
+        $user = $this->cage->get->testUsername('user');
+
+        if (!$limit) { $limit = 10; }
+        
+        if ($user) { 
+            $userid = $this->current_user->getUserIdFromName($user);
+        } else {
+            $userid = 0;
+        }
+        
+        $this->pluginHook('activity_rss_feed');
+        
+        $feed           = new RSS();
+        $feed->title    = SITE_NAME;
+        $feed->link     = BASEURL;
+        
+        if ($user) { 
+            $feed->description = $this->lang["activity_rss_latest_from_user"] . " " . $user; 
+        } else {
+            $feed->description = $this->lang["activity_rss_latest"] . SITE_NAME;
+        }
+        
+        $this->hotaru->post = new Post($this->hotaru); // used to get post information
+        $userBase = new UserBase($this->hotaru);
+
+        // Get settings from database if they exist...
+        $activity_settings = $this->getSerializedSettings('activity');
+        $activity = $this->getLatestActivity($activity_settings, $activity_settings['activity_sidebar_number'], $userid);
+        
+        if (!$activity) { echo $feed->serve(); return false; } // displays empty RSS feed
+                
+        foreach ($activity as $act) 
+        {
+            // Post used in Hotaru's url function
+            if ($act->useract_key == 'post') {
+                $this->hotaru->post->readPost($act->useract_value);
+            } elseif  ($act->useract_key2 == 'post') {
+                $this->hotaru->post->readPost($act->useract_value2);
+            }
+            
+            $userBase->getUserBasic($act->useract_userid);
+            
+            $name = $userBase->name;
+            $post_title = stripslashes(html_entity_decode(urldecode($this->hotaru->post->title), ENT_QUOTES,'UTF-8'));
+            $title_link = $this->hotaru->url(array('page'=>$this->hotaru->post->id));
+            $cid = ''; // comment id string
+            
+            // make category object
+            if (!isset($cat)) {
+                // we need categories for the url
+                if ($this->hotaru->post->vars['useCategories']) {
+                    require_once(PLUGINS . 'categories/libs/Category.php');
+                    $cat = new Category($this->db);
+                }
+            }
+            
+            // category for url
+            if ($this->hotaru->post->vars['useCategories'] && ($this->hotaru->post->vars['category'] != 1)) {
+                $this->hotaru->post->vars['category'] = $this->hotaru->post->vars['category'];
+                $this->hotaru->post->vars['catSafeName'] =  $cat->getCatSafeName($this->hotaru->post->vars['category']);
+            }
+            
+            switch ($act->useract_key) {
+                case 'comment':
+                    $action = $this->hotaru->lang["activity_commented"] . " ";
+                    $cid = "#c" . $act->useract_value; // comment id to be put on the end of the url
+                    break;
+                case 'post':
+                    $action = $this->hotaru->lang["activity_submitted"] . " ";
+                    break;
+                case 'vote':
+                    switch ($act->useract_value) {
+                        case 'up':
+                            $action = $this->hotaru->lang["activity_voted_up"] . " ";
+                            break;
+                        case 'down':
+                            $action = $this->hotaru->lang["activity_voted_down"] . " ";
+                            break;
+                        case 'flag':
+                            $action = $this->hotaru->lang["activity_voted_flagged"] . " ";
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            
+            $item = new RSSItem();
+
+            $item->title = $name . " " . $action . " \"" . $post_title . "\"";
+            $item->link  = $this->hotaru->url(array('page'=>$this->hotaru->post->id)) . $cid;
+            $item->setPubDate($act->useract_date); 
+            $feed->addItem($item);
+        }
+        
+        echo $feed->serve();
     }
 }
 ?>

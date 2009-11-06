@@ -47,7 +47,7 @@ $lang["activity_settings_avatar_size"] = "Avatar size in pixels <small>(default:
 $lang["activity_settings_user"] = "Show user's name";
 $lang["activity_settings_time"] = "Show time since activity";
 $lang["activity_settings_sidebar_number"] = "Number of items to show in the sidebar <small>(default: 10)</small>";
-$lang["activity_settings_number"] = "Number of items per page to show on activity pages <small>(default: 20)</small>";
+$lang["activity_settings_number"] = "Number of items per page to show on activity pages and RSS feed <small>(default: 20)</small>";
 
 $lang["activity_settings_save"] = "Save";
 $lang["activity_settings_saved"] = "Settings saved";
@@ -55,5 +55,10 @@ $lang["activity_settings_not_saved"] = "Error: Settings NOT saved";
 
 /* All Activity page */
 $lang["activity_all"] = "Latest Activity";
+
+/* RSS */
+/* RSS */
+$lang["activity_rss_latest"] = "Latest activity on ";
+$lang["activity_rss_latest_from_user"] = "Latest activity by ";
 
 ?>
