@@ -359,7 +359,7 @@ class VoteSimple extends PluginFunctions
     {
         if ($this->hotaru->isPage('submit2')) { return false; } // don't show sorting on Submit Confirm
         $page_type = $this->hotaru->pageType;
-        if ($page_type == 'list' || $page_type == 'user') {
+        if ($page_type == 'list' || $page_type == 'user' || $page_type == 'profile') {
             $this->hotaru->displayTemplate('vote_simple_sorting', 'vote_simple');
         }
     }

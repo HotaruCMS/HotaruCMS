@@ -498,6 +498,12 @@ class Submit extends PluginFunctions
             $this->hotaru->displayTemplate('list', 'submit');
             return true;
             
+        } elseif ($this->hotaru->pageType == 'post') {
+            // We found out this is a post from the hotaru_header function above.
+           
+            $this->hotaru->displayTemplate('post', 'submit');
+            return true;
+            
         } elseif ($this->hotaru->isPage('latest')) {
         
             // Plugin hook
@@ -518,6 +524,16 @@ class Submit extends PluginFunctions
             $this->hotaru->displayTemplate('list', 'submit');
             return true;
             
+        } elseif ($this->hotaru->isPage('top')) {   // used only for filtering users
+        
+            // Plugin hook
+            $result = $this->pluginHook('submit_is_page_top');
+            if ($result && is_array($result)) { return true; }
+        
+            // Show the list of posts
+            $this->hotaru->displayTemplate('list', 'submit');
+            return true;
+            
         } elseif ($this->hotaru->isPage('all')) {
         
             // Plugin hook
@@ -526,12 +542,6 @@ class Submit extends PluginFunctions
         
             // Show the list of posts
             $this->hotaru->displayTemplate('list', 'submit');
-            return true;
-            
-        } elseif ($this->hotaru->pageType == 'post') {
-            // We found out this is a post from the hotaru_header function above.
-           
-            $this->hotaru->displayTemplate('post', 'submit');
             return true;
             
         } else {        
