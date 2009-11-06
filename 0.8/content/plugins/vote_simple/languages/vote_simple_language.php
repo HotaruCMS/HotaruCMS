@@ -94,6 +94,7 @@ $lang["vote_sort_by"] = "Sort by:";
 $lang["vote_sort_recently_popular"] = "Popular";
 $lang["vote_sort_upcoming"] = "Upcoming";
 $lang["vote_sort_latest"] = "Latest";
+$lang["vote_sort_all"] = "All";
 $lang["vote_sort_best_from"] = "Best from:";
 $lang["vote_sort_top_1_day"] = "24 Hrs";
 $lang["vote_sort_top_2_days"] = "48 Hrs";

@@ -92,4 +92,7 @@ $lang["comment_rss_comments_from_user"] = "Latest comments by ";
 $lang["comment_rss_comment_on"] = "Comment on: ";
 $lang["comment_rss_commented_on"] = " commented on ";
 
+/* User Profile */
+$lang["comments_profile_see_comments"] = " or click here to see my comments";
+
 ?>

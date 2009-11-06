@@ -214,7 +214,9 @@ class Users extends PluginFunctions
     public function submit_pre_list()
     {
         if ($this->hotaru->pageType == 'profile') {
-            echo "PROFILE PAGE";
+            $this->hotaru->user = new UserBase($this->hotaru);
+            $this->hotaru->user->getUserBasic(0, $this->cage->get->testUsername('user'));
+            $this->hotaru->displayTemplate('profile', 'users');
         }
     }
     
@@ -288,11 +290,15 @@ class Users extends PluginFunctions
     {
         if ($this->cage->get->keyExists('user')) 
         {
-            $this->hotaru->vars['filter']['post_author = %d'] = $this->current_user->getUserIdFromName($this->cage->get->testUsername('user')); 
-            $rss = " <a href='" . $this->hotaru->url(array('page'=>'rss', 'user'=>$this->cage->get->testUsername('user'))) . "'>";
+            $username = $this->cage->get->testUsername('user');
+            $this->hotaru->vars['filter']['post_author = %d'] = $this->current_user->getUserIdFromName($username); 
+            $rss = " <a href='" . $this->hotaru->url(array('page'=>'rss', 'user'=>$username)) . "'>";
             $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
             
-            $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_user"] . " &raquo; " . $this->hotaru->title . $rss;
+            $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_user"] . " &raquo; ";
+            $this->hotaru->vars['page_title'] .= "<a href='" . $this->hotaru->url(array('user'=>$username)) . "'>";
+            $this->hotaru->vars['page_title'] .= $username . "</a>";
+            $this->hotaru->vars['page_title'] .= $rss;
             
             //$this->hotaru->pageType = 'user'; - this was changing "profile" to "user" so for now it's commented out.
             
@@ -675,7 +681,7 @@ class Users extends PluginFunctions
         $username = $this->hotaru->title;
         $page_type = $this->hotaru->pageType;
         
-        if (($page_type == 'user' || $page_type == 'profile' )&& $this->current_user->getPermission('can_access_admin') == 'yes') {
+        if (($page_type == 'user' || $page_type == 'profile' ) && $this->current_user->getPermission('can_access_admin') == 'yes') {
             echo "<div class='post_breadcrumbs_links_bar'>";
             echo $this->lang["users_account_edit"] . " " . $username . ": ";
             echo " <a href='" . $this->hotaru->url(array('page' => 'account', 'user' => $username)) . "'>";

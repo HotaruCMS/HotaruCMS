@@ -6,7 +6,7 @@
  * folder: activity
  * class: Activity
  * requires: users 0.8
- * hooks: install_plugin, hotaru_header, header_include, comment_post_add_comment, comment_update_comment, com_man_approve_all_comments, comment_delete_comment, post_add_post, post_update_post, post_change_status, post_delete_post, userbase_killspam, vote_positive_vote, vote_negative_vote, vote_flag_insert, admin_sidebar_plugin_settings, admin_plugin_settings, theme_index_replace, theme_index_main
+ * hooks: install_plugin, hotaru_header, header_include, comment_post_add_comment, comment_update_comment, com_man_approve_all_comments, comment_delete_comment, post_add_post, post_update_post, post_change_status, post_delete_post, userbase_killspam, vote_positive_vote, vote_negative_vote, vote_flag_insert, admin_sidebar_plugin_settings, admin_plugin_settings, theme_index_replace, theme_index_main, profile
  *
  * PHP version 5
  *
@@ -396,23 +396,39 @@ class Activity extends PluginFunctions
     /**
      * Display All Activity page
      */
-    public function theme_index_main()
+    public function theme_index_main($profile = false)
     {
-        if ($this->hotaru->isPage('activity')) {
+        if ($this->hotaru->isPage('activity') || $profile == true) {
         
+            if ($this->hotaru->pageType == 'profile') {
+                $user = $this->cage->get->testUsername('user');
+                $userid = $this->current_user->getUserIdFromName($user);
+            } else {
+                $userid = 0;
+            }
+                
             // Get settings from database if they exist...
             $activity_settings = $this->getSerializedSettings('activity');
             // gets however many are items shown per page on activity pages:
-            $activity = $this->getLatestActivity($activity_settings, 0); // 0 means no limit, ALL activity 
+            $activity = $this->getLatestActivity($activity_settings, 0, $userid); // 0 means no limit, ALL activity 
         
-            /* BREADCRUMBS */
-            echo "<div id='breadcrumbs'>";
-            echo "<a href='" . BASEURL . "'>" .  $this->hotaru->lang['main_theme_home'] . "</a> &raquo; ";
-            $this->hotaru->plugins->pluginHook('breadcrumbs');
-            echo $this->hotaru->lang['activity_all'];
-            echo "<a href='" . $this->hotaru->url(array('page'=>'rss_activity')) . "'> ";
-            echo "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
-            echo "</div>";
+            
+            if ($this->hotaru->pageType == 'profile') {
+                $anchor_title = htmlentities($this->lang["activity_title_anchor_title"], ENT_QUOTES, 'UTF-8');
+                echo "<h2>\n";
+                echo "<a href='" . $this->hotaru->url(array('page'=>'rss_activity', 'user'=>$user)) . "' title='" . $anchor_title . "'>\n";
+                echo "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'>\n</a>&nbsp;"; // RSS icon
+                echo $this->lang['activity_title'] . "</h2>\n"; 
+            } else {
+                /* BREADCRUMBS */
+                echo "<div id='breadcrumbs'>";
+                echo "<a href='" . BASEURL . "'>" .  $this->hotaru->lang['main_theme_home'] . "</a> &raquo; ";
+                $this->hotaru->plugins->pluginHook('breadcrumbs');
+                echo $this->hotaru->lang['activity_all'];
+                echo "<a href='" . $this->hotaru->url(array('page'=>'rss_activity')) . "'> ";
+                echo "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
+                echo "</div>";
+            }
             
             // for pagination:
             require_once(PLUGINS . 'submit/libs/Post.php');
@@ -437,6 +453,15 @@ class Activity extends PluginFunctions
             $pagedResults->setLayout(new DoubleBarLayout());
             echo $pagedResults->fetchPagedNavigation('', $this->hotaru);
         }
+    }
+    
+    
+    /**
+     * Show activity on a user's profile
+     */    
+    public function profile()
+    {
+        $this->theme_index_main(true);
     }
     
     

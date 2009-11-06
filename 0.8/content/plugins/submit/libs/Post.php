@@ -676,7 +676,8 @@ class Post
             $this->hotaru->vars['orderby'] = "post_votes_up DESC";
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_top_all_time"];
         } 
-        elseif ($this->useLatest && !$this->cage->get->testPage('page'))
+        elseif (($this->cage->get->testPage('page') == 'top') ||
+                $this->useLatest && !$this->cage->get->testPage('page'))
         {
             // Assume 'top' page and filter to 'top' stories.
             $this->hotaru->vars['filter']['post_archived = %s'] = 'N'; 
