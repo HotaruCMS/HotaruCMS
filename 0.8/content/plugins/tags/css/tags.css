@@ -4,6 +4,8 @@
 
 .tags_link	{ padding-left: 1.5em; background-image: url(content/themes/default/images/tags.png); }
 
+.tag_cloud { text-align: center; }
+
 .tag_cloud a {
 	font-family: Verdana, Tahoma, Arial;
 	line-height: 26px;

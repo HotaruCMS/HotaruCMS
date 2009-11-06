@@ -45,7 +45,9 @@ class ActivitySettings extends SidebarComments
         $avatar = $activity_settings['activity_sidebar_avatar'];
         $avatar_size = $activity_settings['activity_sidebar_avatar_size'];
         $user = $activity_settings['activity_sidebar_user'];
-        $number = $activity_settings['activity_sidebar_number'];
+        $sb_number = $activity_settings['activity_sidebar_number'];
+        $pg_number = $activity_settings['activity_number'];
+        $time = $activity_settings['activity_time'];
     
         $this->pluginHook('activity_settings_get_values');
         
@@ -53,23 +55,31 @@ class ActivitySettings extends SidebarComments
         if (!$avatar) { $avatar = ''; }
         if (!$avatar_size) { $avatar_size = 0; }
         if (!$user) { $user = ''; }
-        if (!$number) { $number = 0; }
+        if (!$sb_number) { $sb_number = 5; }
+        if (!$pg_number) { $pg_number = 20; }
+        if (!$time) { $time = ''; }
         
         echo "<form name='activity_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=activity' method='post'>\n";
         
         echo "<p>" . $this->lang["activity_settings_instructions"] . "</p><br />";
         
         // show avatars?
-        echo "<p><input type='checkbox' name='avatar' value='avatar' " . $avatar . " >&nbsp;&nbsp;" . $this->lang["activity_settings_sidebar_avatar"] . "</p>\n"; 
+        echo "<p><input type='checkbox' name='avatar' value='avatar' " . $avatar . " >&nbsp;&nbsp;" . $this->lang["activity_settings_avatar"] . "</p>\n"; 
     
         // avatar size
-        echo "<p><input type='text' size=5 name='avatar_size' value='" . $avatar_size . "' /> " . $this->lang["activity_settings_sidebar_avatar_size"] . "</p>\n";
+        echo "<p><input type='text' size=5 name='avatar_size' value='" . $avatar_size . "' /> " . $this->lang["activity_settings_avatar_size"] . "</p>\n";
         
         // show users?
-        echo "<p><input type='checkbox' name='user' value='user' " . $user . " >&nbsp;&nbsp;" . $this->lang["activity_settings_sidebar_user"] . "</p>\n"; 
+        echo "<p><input type='checkbox' name='user' value='user' " . $user . " >&nbsp;&nbsp;" . $this->lang["activity_settings_user"] . "</p>\n"; 
         
-        // number of comments
-        echo "<p><input type='text' size=5 name='number' value='" . $number . "' /> " . $this->lang["activity_settings_sidebar_number"] . "</p>\n";
+        // show time?
+        echo "<p><input type='checkbox' name='time' value='time' " . $time . " >&nbsp;&nbsp;" . $this->lang["activity_settings_time"] . "</p>\n"; 
+        
+        // number of items in the sidebar
+        echo "<p><input type='text' size=5 name='sb_number' value='" . $sb_number . "' /> " . $this->lang["activity_settings_sidebar_number"] . "</p>\n";
+        
+        // number of items on the activity page
+        echo "<p><input type='text' size=5 name='pg_number' value='" . $pg_number . "' /> " . $this->lang["activity_settings_number"] . "</p>\n";
         
         $this->pluginHook('activity_settings_form');
                         
@@ -112,18 +122,37 @@ class ActivitySettings extends SidebarComments
         } else { 
             $user = ''; 
         }
+        
+        // show time?
+        if ($this->cage->post->keyExists('time')) { 
+            $time = 'checked'; 
+        } else { 
+            $time = ''; 
+        }
 
-        // number of comments
-        if ($this->cage->post->keyExists('number')) { 
-            if ($this->cage->post->testInt('number')) { 
-                $number = $this->cage->post->testInt('number');
+        // number of items in the sidebar
+        if ($this->cage->post->keyExists('sb_number')) { 
+            if ($this->cage->post->testInt('sb_number')) { 
+                $sb_number = $this->cage->post->testInt('sb_number');
             } else { 
-                $number = 10; 
-                $error = 1;
+                $sb_number = 10; $error = 1;
             }
+        } else { 
+            $sb_number = 10; $error = 1;
         }
         
-        $this->pluginHook('activity_sidebar_save_settings');
+        // number of items on the activity page
+        if ($this->cage->post->keyExists('pg_number')) { 
+            if ($this->cage->post->testInt('pg_number')) { 
+                $pg_number = $this->cage->post->testInt('pg_number');
+            } else { 
+                $pg_number = 10; $error = 1;
+            }
+        } else { 
+            $pg_number = 10; $error = 1;
+        }
+        
+        $this->pluginHook('activity_save_settings');
                 
         if ($error == 1)
         {
@@ -138,7 +167,9 @@ class ActivitySettings extends SidebarComments
             $activity_settings['activity_sidebar_avatar'] = $avatar;
             $activity_settings['activity_sidebar_avatar_size'] = $avatar_size;
             $activity_settings['activity_sidebar_user'] = $user;
-            $activity_settings['activity_sidebar_number'] = $number;
+            $activity_settings['activity_sidebar_number'] = $sb_number;
+            $activity_settings['activity_number'] = $pg_number;
+            $activity_settings['activity_time'] = $time;
         
             $this->updateSetting('activity_settings', serialize($activity_settings));
             
