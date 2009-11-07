@@ -36,6 +36,11 @@ require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
 require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
 require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php'); // database
 
+// delete existing cache
+delete_files(CACHE . 'db_cache');
+delete_files(CACHE . 'css_js_cache');
+delete_files(CACHE . 'rss_cache');
+    
 $db = init_database();
 $cage = init_inspekt_cage();
 
