@@ -105,7 +105,7 @@ class Smilies extends PluginFunctions
             $output .= $content;
         }
 
-        echo $output;  // the new, smiley-enhanced comment!
+        echo nl2br($output);  // the new, smiley-enhanced comment!
         
         return true;
     }
