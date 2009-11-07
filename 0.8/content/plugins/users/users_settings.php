@@ -166,6 +166,9 @@ class UsersSettings extends Users
         // Email Confirmation Enabled
         if ($this->cage->post->keyExists('emailconf')) { 
             $emailconf_enabled = 'checked'; 
+            // update all users who have previously logged in:
+            $sql = "UPDATE " . TABLE_USERS . " SET user_email_valid = %d WHERE user_lastlogin > %d";
+            $this->db->query($this->db->prepare($sql, 1, 0));
         } else { 
             $emailconf_enabled = ''; 
         }
