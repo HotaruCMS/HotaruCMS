@@ -6,7 +6,7 @@
  * folder: akismet
  * class: HotaruAkismet
  * requires: submit 1.4, comments 1.0
- * hooks: admin_plugin_settings, admin_sidebar_plugin_settings, install_plugin, comment_pre_add_comment, submit_step_3_pre_trackback, com_man_approve_comment, com_man_delete_comment, comments_delete_comment
+ * hooks: admin_plugin_settings, admin_sidebar_plugin_settings, install_plugin, comment_pre_add_comment, submit_step_3_pre_trackback, com_man_approve_comment, com_man_delete_comment, comments_delete_comment, post_man_status_new, post_man_status_top, post_man_status_buried, post_man_delete, submit_edit_post_change_status, submit_edit_post_delete, vote_post_status_buried
  *
  * PHP version 5
  *
@@ -144,10 +144,9 @@ class HotaruAkismet extends PluginFunctions
 
 
     /**
-     * Tell Akismet this is HAM
+     * Tell Akismet this comment is HAM
      *
      * @param object $comment
-     * @return object $c
      *
      * This hook is in Comment Manager Settings, just before individual comments are approved.
      */
@@ -169,10 +168,9 @@ class HotaruAkismet extends PluginFunctions
     
     
     /**
-     * Tell Akismet this is SPAM
+     * Tell Akismet this comment is SPAM
      *
      * @param object $comment
-     * @return object $c
      *
      * This hook is in Comment Manager Settings, just before individual comments are deleted.
      */
@@ -194,10 +192,7 @@ class HotaruAkismet extends PluginFunctions
     
     
     /**
-     * Tell Akismet this is SPAM
-     *
-     * @param object $comment
-     * @return object $c
+     * Tell Akismet this comment is SPAM
      *
      * This hook is in Comments, just before individual comments are deleted.
      */
@@ -214,7 +209,63 @@ class HotaruAkismet extends PluginFunctions
         $permalink = $this->hotaru->url(array('page'=>$this->hotaru->post->id));
         $this->akismet($username, $email, $website, $comment, $permalink, 'spam');
     }
+
+
+    /**
+     * Tell Akismet this post is HAM or SPAM
+     */
+    public function reportPostHamSpam($type = 'ham')
+    {
+        $akismet_settings = $this->getSerializedSettings();
+        if (!$akismet_settings['akismet_use_posts']) { return false; }
+        
+        $user = new UserBase($this->hotaru);
+        $username = $user->getUserNameFromId($this->hotaru->post->author);
+        $email = $user->getEmailFromId($this->hotaru->post->author);
+        $website = $this->hotaru->post->origUrl;
+        $post_content = $this->hotaru->post->content;
+        $permalink = $this->hotaru->url(array('page'=>$this->hotaru->post->id));
+        
+        /* for testing:
+        echo "username: " . $username . "<br />";
+        echo "email: " . $email . "<br />";
+        echo "website: " . $website . "<br />";
+        echo "content: " . $post_content . "<br />";
+        echo "permalink: " . $permalink . "<br />";
+        echo "type: " . $type . "<br />";
+        exit;
+        */
+        
+        $this->akismet($username, $email, $website, $post_content, $permalink, $type);
+    }
+
+    public function post_man_status_new() { $this->reportPostHamSpam('ham'); } // HAM
+    public function post_man_status_top() { $this->reportPostHamSpam('ham'); } // HAM
+    public function post_man_status_buried() { $this->reportPostHamSpam('spam'); } // SPAM
+    public function post_man_delete() { $this->reportPostHamSpam('spam'); } // SPAM
+    public function submit_edit_post_delete() { $this->reportPostHamSpam('spam'); } // SPAM
+    public function vote_post_status_buried() { $this->reportPostHamSpam('spam'); } // SPAM
     
+    
+    /**
+     * Tell Akismet this post is HAM or SPAM when editing a post
+     */
+    public function submit_edit_post_change_status()
+    { 
+        switch($this->hotaru->post->status) {
+            case 'top':
+                $this->reportPostHamSpam('ham');
+                break;
+            case 'new':
+                $this->reportPostHamSpam('ham');
+                break;
+            case 'buried':
+                $this->reportPostHamSpam('spam');
+                break;
+            default:
+                // do nothing
+        }
+    } 
 }
 
 ?>
