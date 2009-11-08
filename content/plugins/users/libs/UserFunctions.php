@@ -83,7 +83,7 @@ class UserFunctions extends UserBase
                 $email_mods = $comments_settings['comment_email_notify_mods'];
                 $subject = $this->lang['userfunctions_notifymods_subject_comment'];
                 $about = $this->lang['userfunctions_notifymods_body_about_comment'];
-                $url = BASEURL . "admin_index.php?page=plugin_settings&plugin=comment_manager&page=plugin_settings&type=filter&comment_filter=pending";
+                $url = BASEURL . "admin_index.php?page=plugin_settings&plugin=comment_manager&page=plugin_settings&type=filter&comment_status_filter=pending";
                 break;
             default:
         }

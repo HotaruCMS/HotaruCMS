@@ -59,9 +59,11 @@ class HotaruAkismet extends PluginFunctions
      */
     public function prepareAkismet()
     {
-        $this->getAkismetSettings();
-        $WordPressAPIKey = $this->hotaru->vars['akismetKey'];
-        $MySiteURL = BASEURL;
+        $akismet_settings = $this->getSerializedSettings();
+        
+        $WordPressAPIKey    = $akismet_settings['akismet_key'];
+        $MySiteURL          = BASEURL;
+        
         require_once(PLUGINS . 'akismet/libs/Akismet.class.php');
         $akismet = new Akismet($this->cage, $MySiteURL ,$WordPressAPIKey);
         
@@ -104,36 +106,13 @@ class HotaruAkismet extends PluginFunctions
     
 
     /**
-     * Read in settings
-     */
-    public function getAkismetSettings()
-    {
-        // Get settings from database if they exist...
-        $akismet_settings = $this->getSerializedSettings();
-        
-        // Use Akismet for posts
-        if ($akismet_settings['akismet_use_posts'] == "checked") {
-            $this->hotaru->vars['useAkismetPosts'] = true;
-        } else {
-            $this->hotaru->vars['useAkismetPosts'] = false;
-        }
-        
-        // Use Akismet for comments
-        if ($akismet_settings['akismet_use_comments'] == "checked") {
-            $this->hotaru->vars['useAkismetComments'] = true;
-        } else {
-            $this->hotaru->vars['useAkismetComments'] = false;
-        }
-        
-        // Wordpress API Key
-        $this->hotaru->vars['akismetKey'] = $akismet_settings['akismet_key'];
-    }
-    
-    /**
      * Call to Akimset before adding a comment
      */
     public function comment_pre_add_comment()
     {
+        $akismet_settings = $this->getSerializedSettings();
+        if (!$akismet_settings['akismet_use_comments']) { return false; }
+        
         $user = new UserBase($this->hotaru);
         $username = $user->getUserNameFromId($this->hotaru->comment->author);
         $email = $user->getEmailFromId($this->hotaru->comment->author);
@@ -150,6 +129,9 @@ class HotaruAkismet extends PluginFunctions
      */
     public function submit_step_3_pre_trackback()
     {
+        $akismet_settings = $this->getSerializedSettings();
+        if (!$akismet_settings['akismet_use_posts']) { return false; }
+        
         $user = new UserBase($this->hotaru);
         $username = $user->getUserNameFromId($this->hotaru->post->author);
         $email = $user->getEmailFromId($this->hotaru->post->author);
@@ -159,7 +141,6 @@ class HotaruAkismet extends PluginFunctions
         
         $this->akismet($username, $email, $website, $comment, $permalink, 'post');
     }
-
 
 
     /**
@@ -172,6 +153,9 @@ class HotaruAkismet extends PluginFunctions
      */
     public function com_man_approve_comment($comment)
     {
+        $akismet_settings = $this->getSerializedSettings();
+        if (!$akismet_settings['akismet_use_comments']) { return false; }
+        
         $c = $comment[0]; 
         
         $user = new UserBase($this->hotaru);
@@ -194,6 +178,9 @@ class HotaruAkismet extends PluginFunctions
      */
     public function com_man_delete_comment($comment)
     {
+        $akismet_settings = $this->getSerializedSettings();
+        if (!$akismet_settings['akismet_use_comments']) { return false; }
+        
         $c = $comment[0]; 
         
         $user = new UserBase($this->hotaru);
@@ -216,6 +203,9 @@ class HotaruAkismet extends PluginFunctions
      */
     public function comments_delete_comment()
     {
+        $akismet_settings = $this->getSerializedSettings();
+        if (!$akismet_settings['akismet_use_comments']) { return false; }
+        
         $user = new UserBase($this->hotaru);
         $username = $user->getUserNameFromId($this->hotaru->post->author);
         $email = $user->getEmailFromId($this->hotaru->post->author);

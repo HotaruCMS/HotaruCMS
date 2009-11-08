@@ -250,6 +250,19 @@ class CommentManagerSettings extends CommentManager
             $post->readPost($c->postId);
             $post_link = $this->hotaru->url(array('page'=>$post->id)) . "#c" . $c->id;
             
+            // COMMENT CONTENT
+            $original_content = stripslashes(urldecode($c->content)); // clean comment
+            // since the whole comment can be seen in the edit box, we'll just use a summary in the main comment area:
+            if ($this->current_user->getPermission('can_edit_comments') == 'yes') { 
+                $content = truncate($original_content, 140); // truncating strips tags, so we have to do this before we use Smilies, etc.
+            } else {
+                $content = $original_content;
+            } 
+            $this->hotaru->comment->content = $content ; // make it available to other plugins
+            $this->pluginHook('comment_manager_comment_content'); // hook for other plugins to edit the comment
+            $content = $this->hotaru->comment->content; // assign edited or unedited comment back to $content.
+            
+            
             $approve_link = BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=comment_manager&amp;action=approve&amp;comment_id=" . $c->id; 
             if ($filter) { $approve_link .= "&amp;type=filter&amp;comment_status_filter=" . $filter; }
             if ($search_term) { $approve_link .= "&amp;type=search&amp;search_value=" . $search_term; }
@@ -269,7 +282,7 @@ class CommentManagerSettings extends CommentManager
             $output .= "<tr class='table_row_" . $alt % 2 . " cm_details_" . $alt % 2 . "'>\n";
             $output .= "<td class='cm_id'>" . $c->id . "</td>\n";
             $output .= "<td class='cm_status'><b>" . ucfirst($c->status) . "</b></td>\n";
-            $output .= "<td class='cm_date'>" . date('d M y', strtotime($c->date)) . "</a></td>\n";
+            $output .= "<td class='cm_date'>" . date('d M \'y H:i:s', strtotime($c->date))  . "</a></td>\n";
             $output .= "<td class='cm_author'>" . $user->name . "</td>\n";
             $output .= "<td class='cm_post'><a href='" . $post_link . "'>" . $post->title . "</a></td>\n";
             $output .= "<td class='cm_approve'>" . "<a href='" . $approve_link . "'>\n";
@@ -282,13 +295,8 @@ class CommentManagerSettings extends CommentManager
             
             $output .= "<tr class='table_tr_details table_row_" . $alt % 2 . "'>\n";
             $output .= "<td class='table_description cm_summary_" . $alt % 2 . "' colspan=" . $colspan . ">";
+            $output .= "<blockquote>" . $content . "</blockquote>";
             
-            if ($this->current_user->getPermission('can_edit_comments') == 'yes') {
-                $output .= "<blockquote>" . truncate(stripslashes(urldecode($c->content)), 140) . "</blockquote>";
-            } else {
-                // if you don'thave permission to view the edit box, we need to show the whole comment here:
-                $output .= "<blockquote>" . stripslashes(urldecode($c->content)) . "</blockquote>";
-            }
             if ($this->current_user->getPermission('can_delete_comments') == 'yes') {
                 $output .= " <small>[<a class='table_drop_down' href='#' title='" . $this->lang["com_man_show_content"] . "'>" . $this->hotaru->lang["com_man_show_form"] . "</a>]</small>\n";
             }
@@ -300,7 +308,7 @@ class CommentManagerSettings extends CommentManager
                 $output .= "<td colspan=" . $colspan . " class='table_description cm_description_" . $alt % 2 . "'>\n";
                 $output .= "<form name='com_man_edit_form' action='" . BASEURL . "admin_index.php?plugin=comment_manager' method='post'>\n";
                 $output .= "<table><tr>\n";
-                $output .= "<td><textarea name='com_man_edit_content' cols=80 rows=7>" . $c->content . "</textarea></td>\n";
+                $output .= "<td><textarea name='com_man_edit_content' cols=80 rows=7>" . $original_content . "</textarea></td>\n";
                 $output .= "</tr>\n";
                 $output .= "<td><input class='submit' type='submit' value='" . $this->lang['com_man_edit_form_update'] . "' /></td>\n";
                 $output .= "</tr></table>\n";

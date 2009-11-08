@@ -2,11 +2,11 @@
 /**
  * name: Smilies
  * description: Use smilies in comments
- * version: 0.1
+ * version: 0.2
  * folder: smilies
  * class: Smilies
  * requires: Comments 1.0
- * hooks: show_comments_content
+ * hooks: show_comments_content, comment_manager_comment_content, sidebar_comments_comment_content
  *
  * PHP version 5
  *
@@ -35,7 +35,7 @@ class Smilies extends PluginFunctions
     /**
      * Displays "Hello World!" wherever the plugin hook is.
      */
-    public function show_comments_content()
+    public function show_comments_content($return = false)
     {
         $text = $this->hotaru->comment->content;
         $path_to_smilies = BASEURL . 'content/plugins/smilies/images/';
@@ -105,9 +105,32 @@ class Smilies extends PluginFunctions
             $output .= $content;
         }
 
-        echo nl2br($output);  // the new, smiley-enhanced comment!
-        
-        return true;
+        if ($return) {
+            return nl2br($output);  // the new, smiley-enhanced comment!
+        } else {
+            echo nl2br($output);  
+            return true;
+        }
+    }
+    
+    
+    /**
+     * Show smilies in Comment Manager
+     */
+    public function comment_manager_comment_content()
+    {
+        $comment = $this->show_comments_content(true);
+        $this->hotaru->comment->content = $comment;
+    }
+    
+    
+    /**
+     * Show smilies in Sidebar Comments
+     */
+    public function sidebar_comments_comment_content()
+    {
+        $comment = $this->show_comments_content(true);
+        $this->hotaru->comment->content = $comment;
     }
 
 }
