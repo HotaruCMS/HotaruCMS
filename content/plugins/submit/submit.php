@@ -383,8 +383,9 @@ class Submit extends PluginFunctions
                 if ($this->cage->get->getAlpha('action') == 'delete') {
                     if ($this->current_user->getPermission('can_delete_posts') == 'yes') { // double-checking
                         $post_id = $this->cage->get->testInt('post_id');
-                        $this->hotaru->post->id = $post_id; // used in "post_delete_post" function/hook
-                        $this->hotaru->post->deletePost($post_id); 
+                        $this->hotaru->post->readPost($post_id); 
+                        $this->pluginHook('submit_edit_post_delete'); // Akismet uses this to report the post as spam
+                        $this->hotaru->post->deletePost(); 
                         $this->hotaru->messages[$this->lang["submit_edit_post_deleted"]] = 'red';
                     }
                 }
@@ -752,6 +753,7 @@ class Submit extends PluginFunctions
             // only update if option available (i.e. when an admin is editing the post):
             if ($this->cage->post->keyExists('post_status')) {
                 $this->hotaru->post->status = $this->cage->post->testAlnumLines('post_status');
+                $this->pluginHook('submit_edit_post_change_status');
             }
             
             $this->pluginHook('submit_form_2_process_submission');

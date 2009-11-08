@@ -242,11 +242,15 @@ class VoteSimple extends PluginFunctions
                 }
                 
                 // Buries or Deletes a post if this new flag sends it over the limit set in Vote Settings
-                if ($this->cage->get->keyExists('alert') && $flag_count >= $vote_settings['vote_alerts_to_bury']) {
+                if ($this->cage->get->keyExists('alert') && $flag_count >= $vote_settings['vote_alerts_to_bury'])
+                {
+                    $this->hotaru->post->readPost($this->hotaru->post->id); //make sure we've got all post details
+                    
                     if ($vote_settings['vote_physical_delete']) { 
-                        $this->hotaru->post->deletePost($this->hotaru->post->id); 
+                        $this->hotaru->post->deletePost(); // Akismet uses those details to report the post as spam
                     } else {
                         $this->hotaru->post->changeStatus('buried');
+                        $this->pluginHook('vote_post_status_buried'); // Akismet hooks in here to report the post as spam
                     }
                     
                     $this->hotaru->message = $this->lang["vote_alert_post_buried"];

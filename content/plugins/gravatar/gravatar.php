@@ -58,6 +58,13 @@ class Gravatar extends PluginFunctions
         $this->hotaru->vars['gravatar_size'] = $this->getSetting('gravatar_size');
         $this->hotaru->vars['gravatar_rating'] = $this->getSetting('gravatar_rating');
         
+        // Look in the theme's images folder for a default avatar before using the one in the Gravatar images folder
+        if (file_exists(THEMES . THEME . "images/default_80.png")) {
+            $this->hotaru->vars['default'] = BASEURL . "content/themes/"  . THEME . "images/default_80.png";
+        } else { 
+            $this->hotaru->vars['default'] = BASEURL . "content/plugins/gravatar/images/default_80.png"; 
+        }
+        
     }
     
     
@@ -128,31 +135,9 @@ class Gravatar extends PluginFunctions
             $this->hotaru->vars['gravatar_rating'] = $this->getSetting('gravatar_rating'); 
         }
         
-        $resized = '';  // we only use this if there isn't a default image that matches the size requested.
+        $default = $this->hotaru->vars['default'];
         
-        switch ($this->hotaru->vars['gravatar_size']) {
-            case 16:
-                $default = BASEURL . "content/plugins/gravatar/images/default_16.png";
-                break;
-            case 32:
-                $default = BASEURL . "content/plugins/gravatar/images/default_32.png";
-                break;
-            case 48:
-                $default = BASEURL . "content/plugins/gravatar/images/default_48.png";
-                break;
-            case 64:
-                $default = BASEURL . "content/plugins/gravatar/images/default_64.png";
-                break;
-            case 80:
-                $default = BASEURL . "content/plugins/gravatar/images/default_80.png";
-                break;
-            case 128:
-                $default = BASEURL . "content/plugins/gravatar/images/default_128.png";
-                break;
-            default:
-                $default = BASEURL . "content/plugins/gravatar/images/default_80.png";
-                $resized = "style='height: " . $this->hotaru->vars['gravatar_size'] . "px; width: " . $this->hotaru->vars['gravatar_size'] . "px'";
-        }
+        $resized = "style='height: " . $this->hotaru->vars['gravatar_size'] . "px; width: " . $this->hotaru->vars['gravatar_size'] . "px'";
         
         $grav_url = "http://www.gravatar.com/avatar.php?gravatar_id=".md5( strtolower($email) ).
             "&default=".urlencode($default).
