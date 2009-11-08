@@ -161,6 +161,11 @@ class SidebarComments extends PluginFunctions
             $output .= "<div class='sidebar_comments_content'>\n";
             $item_content = stripslashes(html_entity_decode(urldecode($item->comment_content), ENT_QUOTES,'UTF-8'));
             $item_content = truncate($item_content, $sb_comments_settings['sidebar_comments_length'], true);
+            
+            $this->hotaru->comment->content = $item_content ; // make it available to other plugins
+            $this->pluginHook('sidebar_comments_comment_content'); // hook for other plugins to edit the comment
+            $item_content = $this->hotaru->comment->content; // assign edited or unedited comment back to $content.
+            
             $comment_link = $this->hotaru->url(array('page'=>$item->comment_post_id)) . "#c" . $item->comment_id;
             $comment_tooltip = $this->hotaru->lang["sidebar_comments_title_tooltip"] . $this->hotaru->post->title;
             $anchor_title = htmlentities($comment_tooltip, ENT_QUOTES, 'UTF-8');
