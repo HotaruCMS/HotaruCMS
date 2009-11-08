@@ -36,7 +36,7 @@
                 }
         ?>
         
-        <div class="comment_author">
+        <div class="comment_content">
             <?php 
                 $result = $hotaru->plugins->pluginHook('show_comments_content'); 
                 if (!isset($result) || !is_array($result)) {   
