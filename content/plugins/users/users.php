@@ -524,6 +524,7 @@ class Users extends PluginFunctions
                 
                 // SUCCESS!!!
                 $this->current_user->role = $this->current_user->vars['regStatus'];
+                $this->pluginHook('users_register_pre_add_user');
                 if ($this->current_user->vars['useEmailConf']) { $this->current_user->role = 'pending'; }
                 $this->current_user->addUserBasic();
                 $last_insert_id = $this->db->get_var($this->db->prepare("SELECT LAST_INSERT_ID()"));
