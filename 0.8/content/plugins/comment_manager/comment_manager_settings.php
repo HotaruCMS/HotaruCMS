@@ -295,7 +295,7 @@ class CommentManagerSettings extends CommentManager
             
             $output .= "<tr class='table_tr_details table_row_" . $alt % 2 . "'>\n";
             $output .= "<td class='table_description cm_summary_" . $alt % 2 . "' colspan=" . $colspan . ">";
-            $output .= "<blockquote>" . $content . "</blockquote>";
+            $output .= "<blockquote>" . nl2br($content) . "</blockquote>";
             
             if ($this->current_user->getPermission('can_delete_comments') == 'yes') {
                 $output .= " <small>[<a class='table_drop_down' href='#' title='" . $this->lang["com_man_show_content"] . "'>" . $this->hotaru->lang["com_man_show_form"] . "</a>]</small>\n";

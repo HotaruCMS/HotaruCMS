@@ -28,6 +28,7 @@
 ?>
 
 <ul id="navigation">
+    <?php $admin->hotaru->vars['gravatar_size'] = 16; ?>
     <?php $admin->plugins->pluginHook('navigation_first'); ?>
     <li><a href="<?php echo BASEURL; ?>"><?php echo $admin->lang["admin_theme_navigation_home"]; ?></a></li>
     <?php $admin->plugins->pluginHook('navigation'); ?>

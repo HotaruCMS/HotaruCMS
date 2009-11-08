@@ -5,3 +5,6 @@
  /* List and Post pages */
  .show_post_gravatar { padding-right: 0.6em; float: left; }
  .show_comments_gravatar { padding-right: 0.6em; float: left; }
+ 
+ /* navigation */
+ a.users_navigation_name img.gravatar { margin-top: -0.2em; }

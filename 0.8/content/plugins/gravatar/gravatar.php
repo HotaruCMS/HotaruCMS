@@ -6,7 +6,7 @@
  * folder: gravatar
  * class: Gravatar
  * requires: users 0.8, submit 1.4
- * hooks: install_plugin, hotaru_header, header_include, submit_show_post_pre_title, show_comments_avatar
+ * hooks: install_plugin, hotaru_header, header_include, submit_show_post_pre_title, show_comments_avatar, users_pre_navigation_first
  *
  * PHP version 5
  *
@@ -55,7 +55,7 @@ class Gravatar extends PluginFunctions
     public function hotaru_header()
     {
         // Get settings from database if they exist...
-        $this->hotaru->vars['gravatar_size'] = $this->getSetting('gravatar_size');
+        // $this->hotaru->vars['gravatar_size'] = $this->getSetting('gravatar_size'); gets overridden so unnecessary here
         $this->hotaru->vars['gravatar_rating'] = $this->getSetting('gravatar_rating');
         
         // Look in the theme's images folder for a default avatar before using the one in the Gravatar images folder
@@ -97,6 +97,20 @@ class Gravatar extends PluginFunctions
         echo "<div class='show_comments_gravatar'>";
         $this->showGravatarLink($commenter->user_username, $commenter->user_email);
         echo "</div>";
+    }
+    
+    
+    /**
+     * Show gravatar in navigation bar
+     */
+    public function users_pre_navigation_first()
+    {
+        $size = $this->hotaru->vars['gravatar_size'];
+        $rating = $this->hotaru->vars['gravatar_rating'];
+
+        echo $this->buildGravatarImage($this->current_user->email) . "\n";
+        
+        unset($this->hotaru->vars['gravatar_size']); 
     }
     
     
