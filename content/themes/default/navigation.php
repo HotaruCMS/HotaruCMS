@@ -29,6 +29,7 @@
 
 <!-- Navigation Bar -->
 <ul class="navigation">
+    <?php $hotaru->vars['gravatar_size'] = 16; ?>
     <?php $hotaru->plugins->pluginHook('navigation_first'); ?>
     
     <?php if ($hotaru->title == 'top') { $status = "id='navigation_active'"; } else { $status = ""; } ?>

@@ -5,7 +5,7 @@
  * version: 0.8
  * folder: users
  * class: Users
- * hooks: hotaru_header, header_include, admin_header_include_raw, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, userbase_default_permissions, submit_pre_list
+ * hooks: hotaru_header, header_include, admin_header_include_raw, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_first, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, userbase_default_permissions, submit_pre_list
  *
  * PHP version 5
  *
@@ -116,14 +116,27 @@ class Users extends PluginFunctions
 
     
     /**
+     * Add the account link at the front of the navigation bar
+     */
+    public function navigation_first()
+    {
+        if (!$this->current_user->loggedIn) { return false; }
+            
+        if ($this->hotaru->title == 'account') { $status = "id='navigation_active'"; } else { $status = ""; }
+        echo "<li>";
+        echo "<a class='users_navigation_name' " . $status . " href='" . $this->hotaru->url(array('page'=>'account')) . "' ";
+        echo "title='" . $this->lang["users_account"] . "'>";
+        $this->pluginHook('users_pre_navigation_first'); // gravatar
+        echo $this->current_user->name . "</a></li>\n";
+    }
+    
+    
+    /**
      * Add links to the end of the navigation bar
      */
     public function navigation_users()
     {
         if ($this->current_user->loggedIn) {
-            
-            if ($this->hotaru->title == 'account') { $status = "id='navigation_active'"; } else { $status = ""; }
-            echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'account')) . "'>" . $this->lang["users_account"] . "</a></li>\n";
             
             if ($this->hotaru->title == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
             echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'logout')) . "'>" . $this->lang["users_logout"] . "</a></li>\n";

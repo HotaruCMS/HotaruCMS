@@ -173,6 +173,8 @@ class SidebarComments extends PluginFunctions
             $output .= "</li>\n\n";
         }
         
+        unset($this->hotaru->vars['gravatar_size']);  // returns us to teh default size
+        
         return $output;
     }
 
