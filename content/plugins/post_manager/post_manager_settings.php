@@ -49,31 +49,33 @@ class PostManagerSettings extends PostManager
         
         // Get unique statuses for Filter form:
         $this->hotaru->vars['statuses'] = $this->hotaru->post->getUniqueStatuses(); 
-        
-        $p = new Post($this->hotaru);
-        
+       
         // if checkboxes
         if (($this->cage->get->getAlpha('type') == 'checkboxes') && ($this->cage->get->keyExists('post'))) 
         {
             foreach ($this->cage->get->keyExists('post') as $id => $checked) {
-                $p->id = $id;
+                $this->hotaru->post->readPost($id);
                 $this->hotaru->message = $this->lang["post_man_checkboxes_status_changed"]; // default "Changed status" message
                 switch ($this->cage->get->testAlnumLines('checkbox_action')) {
                     case 'new_selected':
-                        $p->changeStatus('new');
+                        $this->hotaru->post->changeStatus('new');
+                        $this->pluginHook('post_man_status_new');
                         break;
                     case 'top_selected':
-                        $p->changeStatus('top');
+                        $this->hotaru->post->changeStatus('top');
+                        $this->pluginHook('post_man_status_top');
                         break;
                     case 'pending_selected':
-                        $p->changeStatus('pending');
+                        $this->hotaru->post->changeStatus('pending');
+                        $this->pluginHook('post_man_status_pending');
                         break;
                     case 'bury_selected':
-                        $p->changeStatus('buried');
+                        $this->hotaru->post->changeStatus('buried');
+                        $this->pluginHook('post_man_status_buried');
                         break;
                     case 'delete_selected':
-                        $this->hotaru->post->id = $p->id; // used in "post_delete_post" function/hook
-                        $this->hotaru->post->deletePost($p->id); 
+                        $this->hotaru->post->deletePost(); 
+                        $this->pluginHook('post_man_delete');
                         $this->hotaru->message = $this->lang["post_man_checkboxes_post_deleted"];
                         break;
                     default:
@@ -86,6 +88,7 @@ class PostManagerSettings extends PostManager
             }
         }
         
+        $p = new Post($this->hotaru);
         
         // if search
         if ($this->cage->get->getAlpha('type') == 'search') {
