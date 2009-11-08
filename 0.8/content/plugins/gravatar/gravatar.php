@@ -55,7 +55,7 @@ class Gravatar extends PluginFunctions
     public function hotaru_header()
     {
         // Get settings from database if they exist...
-        // $this->hotaru->vars['gravatar_size'] = $this->getSetting('gravatar_size'); gets overridden so unnecessary here
+        $this->hotaru->vars['gravatar_size'] = $this->getSetting('gravatar_size'); 
         $this->hotaru->vars['gravatar_rating'] = $this->getSetting('gravatar_rating');
         
         // Look in the theme's images folder for a default avatar before using the one in the Gravatar images folder
@@ -105,12 +105,10 @@ class Gravatar extends PluginFunctions
      */
     public function users_pre_navigation_first()
     {
-        $size = $this->hotaru->vars['gravatar_size'];
+        $size = 16;
         $rating = $this->hotaru->vars['gravatar_rating'];
 
         echo $this->buildGravatarImage($this->current_user->email) . "\n";
-        
-        unset($this->hotaru->vars['gravatar_size']); 
     }
     
     
