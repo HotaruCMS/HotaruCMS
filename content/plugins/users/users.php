@@ -529,6 +529,8 @@ class Users extends PluginFunctions
                 $this->current_user->addUserBasic();
                 $last_insert_id = $this->db->get_var($this->db->prepare("SELECT LAST_INSERT_ID()"));
                 
+                $this->pluginHook('users_register_post_add_user', true, '', array($last_insert_id));
+                
                 // notify chosen mods of new user by email IF email confirmation is DISABLED:
                 // If email confirmation is ENABLED, the email gets sent in checkEmailConfirmation().
                 if (($this->current_user->vars['useEmailNotify']) && (!$this->current_user->vars['useEmailConf']))
@@ -657,6 +659,8 @@ class Users extends PluginFunctions
         {
             // update role:
             $this->current_user->role = $this->current_user->vars['regStatus'];
+            
+            $this->pluginHook('users_email_conf_post_role');
 
             // update user with new permissions:
             $new_perms = $this->current_user->getDefaultPermissions($this->current_user->role);
@@ -677,7 +681,7 @@ class Users extends PluginFunctions
             }
                 
         
-            $success_message = $this->lang['users_register_emailconf_success'] . " <b><a href='" . $this->hotaru->url(array('page'=>'login')) . "'>" . $this->lang['users_register_emailconf_success_login'] . "</a></b>";
+            $success_message = $this->lang['users_register_emailconf_success'] . " <br /><b><a href='" . $this->hotaru->url(array('page'=>'login')) . "'>" . $this->lang['users_register_emailconf_success_login'] . "</a></b>";
             $this->hotaru->messages[$success_message] = 'green';
         } else {
             $this->hotaru->messages[$this->lang['users_register_emailconf_fail']] = 'red';

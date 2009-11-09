@@ -42,6 +42,8 @@ class Hotaru
     protected $sidebar      = true;     // enable or diable the sidebar
     protected $title        = '';       // for the broswer's TITLE tags
     protected $pageType     = '';       // what kind of page we're looking at
+    protected $plugin_settings      = array();  // contains all plugin settings
+    protected $plugin_basics        = array();  // contains basic plugin details
     
     protected $cssIncludes          = array();  // a list of css files to include
     protected $cssIncludesAdmin     = array();  // a list of css files to include in Admin
@@ -476,7 +478,7 @@ class Hotaru
     {
         if ($this->isDebug) { 
             echo "<p class='debug'>" . $this->db->num_queries . " " . $this->lang['main_hotaru_queries_time'] . " " . timer_stop(1) . " " . 
-            $this->lang['main_hotaru_seconds'] . "</p>"; 
+            $this->lang['main_hotaru_seconds'] . $this->lang['main_hotaru_memory_usage1'] . display_filesize(memory_get_usage()) . $this->lang['main_hotaru_memory_usage2'] . "</p>"; 
         }
     }
     
@@ -786,7 +788,7 @@ class Hotaru
      * @param string $head either 'index' or 'admin'
      * @return string
      */
-    function url($parameters = array(), $head = 'index')
+    public function url($parameters = array(), $head = 'index')
     {
         if (FRIENDLY_URLS == "false") {
         
@@ -853,5 +855,161 @@ class Hotaru
         }
         
     }
+    
+    
+    /**
+     * Hotaru CMS Smart Caching
+     *
+     * This function does one query on the database to get the last updated time for a 
+     * specified table. If that time is more recent than the $timeout length (e.g. 10 minutes),
+     * the database will be used. If there hasn't been an update, any cached results from the 
+     * last 10 minutes will be used.
+     *
+     * @param string $switch either "on", "off" or "html"
+     * @param string $table DB table name
+     * @param int $timeout timeout for these queries
+     * @return bool
+     */
+    public function smartCache($switch = 'off', $table = '', $timeout = 0, $html = '')
+    {
+        if ($switch == 'html') { 
+            $result = $this->smartCacheHTML($table, $timeout, $html); 
+        } else {
+            $result = $this->smartCacheDB($switch, $table, $timeout);
+        }
+        
+        return $result;
+    }
+    
+    
+    /**
+     * Hotaru CMS Smart Caching HTML output
+     *
+     * This function caches blocks of HTML code
+     *
+     * @param string $table DB table name
+     * @param int $timeout timeout in minutes
+     * @return bool
+     */
+    public function smartCacheHTML($table = '', $timeout = 0, $html = '')
+    {
+        if (!$table || !$timeout) { return false; }
+        
+        $last_update = $this->smartCacheSQL($table);
+        
+        // compare times
+        if ($last_update >= (time() - $timeout*60)) { return false; } // there's been a recent update so don't use the cache.
+        
+        $cache_length = $timeout*60;   // seconds
+        $cache = CACHE . 'html_cache/';
+        $file = $cache . $table . ".cache";
+        
+        if (!$html) {
+            // we only want to read the cache if it exists, hence no $html passed to this function
+            if (file_exists($file)) {
+                $content = file_get_contents($file);
+                return $content;    // return the HTML to display
+            } else {
+                return false;
+            }
+        }
+
+        // if we're here, we need to make or rewrite the cache
+        
+        $fp = fopen($file, "w");
+
+        if (flock($fp, LOCK_EX)) { // do an exclusive lock
+            ftruncate($fp, 0);  // truncate file
+            fwrite($fp, $html); // write HTML
+            flock($fp, LOCK_UN); // release the lock
+        } else {
+            echo "Couldn't get the lock for the HTML cache!";
+        }
+        
+        fclose($fp);
+        
+        return true; // the calling function already has the HTML to output
+    }
+    
+    
+    /**
+     * Hotaru CMS Smart Caching Database Queries
+     *
+     * This function uses the ezSQL database cache
+     *
+     * @param string $switch either "on" or "off"
+     * @param string $table DB table name
+     * @param int $timeout timeout in minutes
+     * @return bool
+     */
+    public function smartCacheDB($switch = 'off', $table = '', $timeout = 0)
+    {
+        // Stop caching?
+        if ($switch != 'on') {
+            $this->db->cache_queries = false;               // stop using cache
+            $this->db->cache_timeout = DB_CACHE_DURATION;   // return to our default cache duration
+            return false;
+        }
+        
+        $last_update = $this->smartCacheSQL($table);
+
+        // compare times
+        if ($last_update >= (time() - $timeout*60)) { return false; } // there's been a recent update so don't use the cache.
+        
+        /* ezSQL uses hours for its timeout. We'll use minutes and divide
+           by 60 to get the hours. */
+           
+        if ($timeout) { 
+            $this->db->cache_timeout = $timeout/60; // mins/60 = hours
+        } else {
+            $this->db->cache_timeout = DB_CACHE_DURATION;
+        }
+        
+        $this->db->cache_queries = true;    // start using cache
+        
+        return true;
+    }
+    
+    
+
+    /**
+     * Picks the right SQL and gets the last_update time in seconds
+     *
+     * @param string $table DB table name
+     * @return int $last_update
+     */
+    public function smartCacheSQL($table = '')
+    {
+        /* Get the last time the table was updated */
+        switch ($table) {
+            case 'categories':
+                $sql = "SELECT category_updatedts FROM " . DB_PREFIX . "categories ORDER BY category_updatedts DESC";
+                break;
+            case 'tags':
+                $sql = "SELECT tags_updatedts FROM " . DB_PREFIX . "tags ORDER BY tags_updatedts DESC";
+                break;
+            case 'posts':
+                $sql = "SELECT post_updatedts FROM " . DB_PREFIX . "posts ORDER BY post_updatedts DESC";
+                break;
+            case 'postvotes':
+                $sql = "SELECT vote_updatedts FROM " . DB_PREFIX . "postvotes ORDER BY vote_updatedts DESC";
+                break;
+            case 'comments':
+                $sql = "SELECT comment_updatedts FROM " . DB_PREFIX . "comments ORDER BY comment_updatedts DESC";
+                break;
+            case 'commentvote':
+                $sql = "SELECT cvote_updatedts FROM " . DB_PREFIX . "commentvotes ORDER BY cvote_updatedts DESC";
+                break;
+            case 'useractivity':
+                $sql = "SELECT useract_updatedts FROM " . DB_PREFIX . "useractivity ORDER BY useract_updatedts DESC";
+                break;
+            default:
+                return false;
+        }
+        
+        // run DB query:
+        $last_update = unixtimestamp($this->db->get_var($sql));
+    }
+    
 }
 ?>

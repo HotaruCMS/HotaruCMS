@@ -32,6 +32,7 @@
     <table class="cat_man_table">
     <tr><td class="cat_man_body">
         <?php echo $hotaru->lang["cat_man_home_intro1"]; ?><br /><br />
+        <?php echo $hotaru->lang["cat_man_home_clear_cache"]; ?><br /><br />
         <?php echo $hotaru->lang["cat_man_home_intro2"]; ?><br />
 
         <h3>1. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order"><?php echo $hotaru->lang["cat_man_home_order_categories"]; ?></a></h3>

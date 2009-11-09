@@ -117,6 +117,17 @@ class PluginFunctions extends Plugin
         return $allplugins;
     }
     
+
+    /**
+     * Store basic plugin info in memory. We use the hotaru 
+     * object because it's persistent during a page load
+     */
+    public function getPluginBasics()
+    {
+        $sql = "SELECT plugin_enabled, plugin_name, plugin_folder, plugin_class, plugin_version FROM " . TABLE_PLUGINS;
+        $this->hotaru->plugin_basics = $this->db->get_results($this->db->prepare($sql));
+    }
+    
     
     /**
      * Read and return plugin info directly from plugin files.
@@ -826,13 +837,21 @@ class PluginFunctions extends Plugin
     {    
         if (!$folder) { $folder = $this->folder; } 
         
-        $class = $this->db->get_var($this->db->prepare("SELECT plugin_class FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
-        if ($class) {
-            $this->class = $class;
-            return $this->class;
-        } else {
-            return false;
+        if (!$this->hotaru->plugin_basics) { $this->getPluginBasics(); }
+        
+        // get plugin basics from memory
+        foreach ($this->hotaru->plugin_basics as $item => $key) {
+            if ($key->plugin_folder == $folder) {
+                $this->class = $key->plugin_class;
+                return $this->class;
+            }
         }
+        
+        /* old code to get plugin class directly from the database:
+        $class = $this->db->get_var($this->db->prepare("SELECT plugin_class FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
+        */
+        
+        return false;
     }
     
     
@@ -846,13 +865,19 @@ class PluginFunctions extends Plugin
     {
         if (!$folder) { $folder = $this->folder; } 
         
-        $active= $this->db->get_row($this->db->prepare("SELECT plugin_enabled, plugin_version FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
+        if (!$this->hotaru->plugin_basics) { $this->getPluginBasics(); }
         
-        if ($active) {
-            if ($active->plugin_enabled == 1) { 
-                return $active->plugin_version; 
-            } 
-        } 
+        // get plugin basics from memory
+        foreach ($this->hotaru->plugin_basics as $item => $key) {
+            if (($key->plugin_folder == $folder) && ($key->plugin_enabled == 1)) {
+                return $key->plugin_version;
+            }
+        }
+        
+        /* old code to get plugin version directly from the database:
+        $active= $this->db->get_row($this->db->prepare("SELECT plugin_enabled, plugin_version FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
+        */
+
         return false;
     }
        
@@ -949,8 +974,18 @@ class PluginFunctions extends Plugin
     {
         if (!$folder) { $folder = $this->folder; }
         
+        if (!$this->hotaru->settings) { $this->getAllPluginSettings(); }
+        
+        // get settings from memory
+        foreach ($this->hotaru->settings as $item => $key) {
+            if (($key->plugin_folder == $folder) && ($key->plugin_setting == $setting)) {
+                    $value = $key->plugin_value;
+            }
+        }
+
+        /* old code to get setting directly from the database:
         $sql = "SELECT plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
-        $value = $this->db->get_var($this->db->prepare($sql, $folder, $setting));
+        $value = $this->db->get_var($this->db->prepare($sql, $folder, $setting)); */
 
         if (isset($value)) { return $value; } else { return false; }
     }
@@ -987,6 +1022,20 @@ class PluginFunctions extends Plugin
         // Get settings from the database if they exist...
         $settings = unserialize($this->getSetting($folder . '_settings', $folder));
         return $settings;
+    }
+    
+    
+    /**
+     * Get and store all plugin settings in $this->hotaru->settings
+     * We use the Hotaru object because it's persistent during a page load
+     *
+     * @return array - all settings
+     */
+    public function getAllPluginSettings()
+    {
+        $sql = "SELECT plugin_folder, plugin_setting, plugin_value FROM " . TABLE_PLUGINSETTINGS;
+        $results = $this->db->get_results($this->db->prepare($sql));
+        $this->hotaru->settings = $results;
     }
     
     

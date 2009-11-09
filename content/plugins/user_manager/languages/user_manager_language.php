@@ -77,6 +77,7 @@ $lang["user_man_set_killspammed"] = "Killspam selected";
 $lang["user_man_set_delete"] = "Physically Delete";
 $lang['user_man_link'] = "User Manager";
 $lang['user_man_no_pending_users'] = "There are no users pending approval";
+$lang["user_man_num_pending"] = "<span style='color: red;'>Pending users: </span>";
 
 /* Sidebar */
 $lang["user_man_admin_sidebar"] = "User Manager";
