@@ -121,6 +121,16 @@ class SidebarComments extends PluginFunctions
      */
     public function getSidebarCommentsItems($comments = array(), $sb_comments_settings)
     {
+        $need_cache = false;
+        
+        // check for a cached version and use it if no recent update:
+        $output = $this->hotaru->smartCache('html', 'comments', 10);
+        if ($output) {
+            return $output;
+        } else {
+            $need_cache = true;
+        }
+        
         // we need categories for the url
         if ($this->hotaru->post->vars['useCategories']) {
             require_once(PLUGINS . 'categories/libs/Category.php');
@@ -174,6 +184,10 @@ class SidebarComments extends PluginFunctions
         }
         
         unset($this->hotaru->vars['gravatar_size']);  // returns us to teh default size
+        
+        if ($need_cache) {
+            $this->hotaru->smartCache('html', 'comments', 10, $output); // make or rewrite the cache file
+        }
         
         return $output;
     }

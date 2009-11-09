@@ -30,9 +30,6 @@
     <div id="ft" role="contentinfo">
         <?php
             $admin->plugins->pluginHook('footer_top');
-            $admin->plugins->pluginHook('footer');
-            $admin->plugins->pluginHook('admin_footer');
-            $admin->hotaru->showQueriesAndTime();
             
             // Link to forums...
             echo "<p>" . $admin->lang["admin_theme_footer_having_trouble_vist_forums"];

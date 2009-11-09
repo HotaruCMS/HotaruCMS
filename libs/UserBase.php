@@ -257,6 +257,25 @@ class UserBase {
         }
     }
 
+
+    /**
+     * Get UserMeta for a specified user
+     *
+     * @param int $userid 
+     * @return array|false
+     *
+     * Notes: Returns 4 if a user exists, otherwise 0-3 for errors
+     */
+    public function getUserMeta($userid = 0)
+    {
+        if ($userid != 0) { $userid = $this->current_user->id; }
+        
+        $sql = "SELECT * FROM " . TABLE_USERMETA . " WHERE usermeta_userid = %d";
+        $result = $this->db->get_var($this->db->prepare($sql, $userid));
+        
+        if ($result) { return $result; } else { return false; }
+    }
+    
     
     /**
      * Check if a user exists
@@ -905,6 +924,9 @@ class UserBase {
     public function deleteUser() 
     {
         $sql = "DELETE FROM " . TABLE_USERS . " WHERE user_id = %d";
+        $this->db->query($this->db->prepare($sql, $this->id));
+        
+        $sql = "DELETE FROM " . TABLE_USERMETA . " WHERE usermeta_userid = %d";
         $this->db->query($this->db->prepare($sql, $this->id));
     }
     

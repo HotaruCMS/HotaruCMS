@@ -64,6 +64,8 @@ class Categories extends PluginFunctions
         // The categories table is defined 
         if (!defined('TABLE_CATEGORIES')) { define("TABLE_CATEGORIES", DB_PREFIX . "categories"); }
         
+        $this->hotaru->vars['categories_smart_cache'] = 10; // 10 minutes
+        
         // include language file
         $this->includeLanguage();
         
@@ -129,8 +131,10 @@ class Categories extends PluginFunctions
                     list($key, $value) = explode('=', $pairs[0]);
                     if ($key) {
                         // Using db_prefix because table_categories might not be defined yet (depends on plugin install order)
+                        
                         $sql = "SELECT category_id FROM " . DB_PREFIX . "categories WHERE category_safe_name = %s LIMIT 1";
-                        $exists = $this->db->get_var($this->db->prepare($sql, $key));        
+                        $exists = $this->db->get_var($this->db->prepare($sql, $key));
+                        
                         if ($exists && $value) {
                             // Now we know that $key is a category so $value must be the post name. Go get the post_id...
                             $this->hotaru->post->id = $this->hotaru->post->isPostUrl($value);
@@ -174,6 +178,7 @@ class Categories extends PluginFunctions
         
         $sql = "SELECT category_name, category_safe_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
         $cat = $this->db->get_row($this->db->prepare($sql, $this->hotaru->post->vars['category']));
+        
         $this->hotaru->post->vars['catName'] = urldecode($cat->category_name);
         $this->hotaru->post->vars['catSafeName'] = urldecode($cat->category_safe_name);
     }
@@ -536,8 +541,9 @@ class Categories extends PluginFunctions
         if ($bar == 'menu') {
         
             $output = '';
-        
+            
             // get all top-level categories
+            $this->hotaru->smartCache('on', 'categories', $this->hotaru->vars['categories_smart_cache']); // start using cache
             $sql    = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_id != %d AND category_parent = %d ORDER BY category_order ASC";
             $categories = $this->db->get_results($this->db->prepare($sql, 1, 1));
            
@@ -566,6 +572,8 @@ class Categories extends PluginFunctions
                 $this->hotaru->vars['output'] = $output;
                 $this->hotaru->displayTemplate('category_bar', 'categories');
             }
+            
+            $this->hotaru->smartCache('off'); // stop using cache
         }
     }
     
@@ -587,8 +595,10 @@ class Categories extends PluginFunctions
 
         if ($countchildren) { 
             $output .=  "<ul>\n"; 
+            
             $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d ORDER BY category_order ASC"; 
             $children = $this->db->get_results($this->db->prepare($sql, $category->category_id)); 
+            
             $depth++;
             foreach ($children as $child) { 
                 if ($depth < 3) { 

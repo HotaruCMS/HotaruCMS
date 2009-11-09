@@ -34,6 +34,8 @@
 
 <?php echo $hotaru->lang["user_man_desc"]; ?>
 
+<?php echo " [<a href='" . BASEURL . "admin_index.php?user_filter=pending&plugin=user_manager&page=plugin_settings&type=filter'>" . $hotaru->lang["user_man_num_pending"] . $hotaru->vars['num_pending'] . "</a>]"; ?>
+
 <?php echo $hotaru->showMessage(); ?>
 
 <table><tr><td>
