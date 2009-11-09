@@ -33,7 +33,14 @@ class UserManagerSettings extends UserManager
      * @return bool
      */
     public function settings()
-    {    
+    {   
+        // grab the number of pending users:
+        $sql = "SELECT COUNT(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+        $num_pending = $this->db->get_var($this->db->prepare($sql, 'pending'));
+        if (!$num_pending) { $num_pending = "0"; } 
+        $this->hotaru->vars['num_pending'] = $num_pending; 
+        
+        
         // check if all new users are automatically set to pending or not
         $users_settings = $this->getSerializedSettings('users');
         $this->current_user->vars['regStatus'] = $users_settings['users_registration_status'];
@@ -259,11 +266,18 @@ class UserManagerSettings extends UserManager
                 $output .= $user->user_username . " " . $this->lang["user_man_user_registered_on"] ." " . date('H:i:s \o\n l, F jS Y', strtotime($user->user_date));
                 if ($this->current_user->vars['useEmailConf']) {
                     if ($user->user_email_valid == 0) {
-                        $output .= $this->lang["user_man_user_email_not_validated"] . "<br />\n";
+                        $output .= $this->lang["user_man_user_email_not_validated"] . "\n";
                     } else {
-                        $output .= $this->lang["user_man_user_email_validated"] . "<br />\n";
+                        $output .= $this->lang["user_man_user_email_validated"] . "\n";
                     }
                 }
+                
+                // plugin hook (StopSpam plugin adds a note about whya user is pending)
+                $this->hotaru->vars['user_manager_pending'] = array($output, $user);
+                $this->pluginHook('user_manager_details_pending');
+                $output = $this->hotaru->vars['user_manager_pending'][0]; // $output
+                $output .= "<br />";
+                
             } else {
                 // show last login amd submissions info:
                 $output .= $user->user_username . " " . $this->lang["user_man_user_last_logged_in"] ." " . date('H:i:s \o\n l, F jS Y', strtotime($user->user_lastlogin)) . ".<br />\n";

@@ -281,6 +281,16 @@ class Activity extends PluginFunctions
      */
     public function getSidebarActivityItems($activity = array(), $activity_settings)
     {
+        $need_cache = false;
+        
+        // check for a cached version and use it if no recent update:
+        $output = $this->hotaru->smartCache('html', 'useractivity', 10);
+        if ($output) {
+            return $output;
+        } else {
+            $need_cache = true;
+        }
+        
         if (!isset($cat)) {
             // we need categories for the url
             if ($this->hotaru->post->vars['useCategories']) {
@@ -376,7 +386,11 @@ class Activity extends PluginFunctions
             $output .= "</li>\n\n";
         }
         
-        unset($this->hotaru->vars['gravatar_size']);  // returns us to teh default size
+        unset($this->hotaru->vars['gravatar_size']);  // returns us to the default size
+        
+        if ($need_cache) {
+            $this->hotaru->smartCache('html', 'useractivity', 10, $output); // make or rewrite the cache file
+        }
         
         return $output;
     }

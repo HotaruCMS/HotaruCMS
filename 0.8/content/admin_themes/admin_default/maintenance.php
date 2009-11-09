@@ -41,6 +41,7 @@
         if ($action == 'clear_db_cache') { $admin->clearCache('db_cache'); }
         if ($action == 'clear_css_js_cache') { $admin->clearCache('css_js_cache'); }
         if ($action == 'clear_rss_cache') { $admin->clearCache('rss_cache'); }
+        if ($action == 'clear_html_cache') { $admin->clearCache('html_cache'); }
         if ($action == 'optimize') { $admin->optimizeTables(); }
         if ($action == 'empty') { $admin->emptyTable($admin->cage->get->testAlnumLines('table')); }
         if ($action == 'drop') { $admin->dropTable($admin->cage->get->testAlnumLines('table')); }
@@ -57,6 +58,8 @@
         <?php echo $admin->lang["admin_theme_maintenance_db_cache"]; ?></a> - <?php echo $admin->lang["admin_theme_maintenance_db_cache_desc"]; ?></li>
     <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=clear_css_js_cache">
         <?php echo $admin->lang["admin_theme_maintenance_css_js_cache"]; ?></a> - <?php echo $admin->lang["admin_theme_maintenance_css_js_cache_desc"]; ?></li>
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=clear_html_cache">
+        <?php echo $admin->lang["admin_theme_maintenance_html_cache"]; ?></a> - <?php echo $admin->lang["admin_theme_maintenance_html_cache_desc"]; ?></li>
     <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=clear_rss_cache">
         <?php echo $admin->lang["admin_theme_maintenance_rss_cache"]; ?></a> - <?php echo $admin->lang["admin_theme_maintenance_rss_cache_desc"]; ?></li>
 </ul>

@@ -36,6 +36,8 @@ $lang['main_userbase_cookie_error'] = "Error setting cookie. Username not provid
 /* Hotaru Class */
 $lang['main_hotaru_queries_time'] = "database queries and a page load time of";
 $lang['main_hotaru_seconds'] = "seconds.";
+$lang['main_hotaru_memory_usage1'] = "This page used ";
+$lang['main_hotaru_memory_usage2'] = " bytes of memory.";
 
 /* Announcements */
 $lang['main_announcement_users_disabled'] = "Login and registration is currently disabled.";

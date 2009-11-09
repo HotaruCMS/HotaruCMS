@@ -105,10 +105,13 @@ class Gravatar extends PluginFunctions
      */
     public function users_pre_navigation_first()
     {
-        $size = 16;
+        $this->hotaru->vars['gravatar_size'] = 16;
         $rating = $this->hotaru->vars['gravatar_rating'];
 
         echo $this->buildGravatarImage($this->current_user->email) . "\n";
+        
+        // reset the sise:
+        $this->hotaru->vars['gravatar_size'] = $this->getSetting('gravatar_size'); 
     }
     
     

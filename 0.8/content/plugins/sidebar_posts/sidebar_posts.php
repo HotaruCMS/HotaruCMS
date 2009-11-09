@@ -169,6 +169,16 @@ class SidebarPosts extends PluginFunctions
      */
     public function getSidebarPostItems($posts = array())
     {
+        $need_cache = false;
+        
+        // check for a cached version and use it if no recent update:
+        $output = $this->hotaru->smartCache('html', 'posts', 10);
+        if ($output) {
+            return $output;
+        } else {
+            $need_cache = true;
+        }
+        
         if ($this->hotaru->post->vars['useCategories']) {
             require_once(PLUGINS . 'categories/libs/Category.php');
             $cat = new Category($this->db);
@@ -206,6 +216,10 @@ class SidebarPosts extends PluginFunctions
             $item_title = stripslashes(html_entity_decode(urldecode($item->post_title), ENT_QUOTES,'UTF-8'));
             $output .= "<a href='" . $this->hotaru->url(array('page'=>$item->post_id)) . "'>\n" . $item_title . "\n</a></div>\n";
             $output .= "</li>\n";
+        }
+        
+        if ($need_cache) {
+            $this->hotaru->smartCache('html', 'posts', 10, $output); // make or rewrite the cache file
         }
         
         return $output;
