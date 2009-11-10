@@ -897,8 +897,8 @@ class Hotaru
         
         $last_update = $this->smartCacheSQL($table);
         
-        // compare times
-        if ($last_update >= (time() - $timeout*60)) { return false; } // there's been a recent update so don't use the cache.
+        // compare times (if there's $html, we don't want to return because we need to update the cache.
+        if (($last_update >= (time() - $timeout*60)) && !$html) { return false; } // there's been a recent update so don't use the cache.
         
         $cache_length = $timeout*60;   // seconds
         $cache = CACHE . 'html_cache/';

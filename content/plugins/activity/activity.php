@@ -378,8 +378,10 @@ class Activity extends PluginFunctions
             $output .= "&quot;<a href='" . $title_link . $cid . "' >" . $post_title . "</a>&quot; \n";
             
             if ($activity_settings['activity_time']) { 
-                $output .= "<small>[" . time_difference(unixtimestamp($item->useract_date), $this->hotaru->lang);
-                $output .= " " . $this->hotaru->lang["submit_post_ago"] . "]</small>";
+                // Commented this out because "8 mins ago" will never change when cached!
+                //$output .= "<small>[" . time_difference(unixtimestamp($item->useract_date), $this->hotaru->lang);
+                //$output .= " " . $this->hotaru->lang["submit_post_ago"] . "]</small>";
+                $output .= "<small>[" . date('g:ia, M jS', strtotime($item->useract_date)) . "]</small>";
             }
             
             $output .= "<div>\n";
