@@ -11,4 +11,6 @@
 #table_list td.um_perms   { width: 8%; }
 #table_list td.um_check   { width: 5%; }
 
+.user_man_pre_submit	{ padding: 1.0em; float: left; }
+.user_man_pre_submit_instruct	{ padding-top: 0; font-size: 0.8em;}
 .user_man_submit_button { padding: 1.0em; float: right;}

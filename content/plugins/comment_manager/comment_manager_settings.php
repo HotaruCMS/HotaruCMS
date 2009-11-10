@@ -34,6 +34,12 @@ class CommentManagerSettings extends CommentManager
      */
     public function settings()
     {    
+        // grab the number of pending comments:
+        $sql = "SELECT COUNT(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_status = %s";
+        $num_pending = $this->db->get_var($this->db->prepare($sql, 'pending'));
+        if (!$num_pending) { $num_pending = "0"; } 
+        $this->hotaru->vars['num_pending'] = $num_pending; 
+        
         // clear variables:
         $this->hotaru->vars['search_term'] = '';
         $this->hotaru->vars['comment_status_filter'] = 'pending';

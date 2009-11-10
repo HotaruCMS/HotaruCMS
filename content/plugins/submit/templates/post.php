@@ -40,7 +40,9 @@ $user->getUserBasic($hotaru->post->author);
 <?php $hotaru->plugins->pluginHook('submit_post_breadcrumbs'); ?> 
 
 <!-- POST -->
-<?php if ($hotaru->post->status != 'buried') { ?>
+<?php   // This post is visible if it's not buried/pending OR if the viewer has edit post permissions...
+        if ((($hotaru->post->status != 'buried') && ($hotaru->post->status != 'pending')) 
+            || ($hotaru->current_user->getPermission('can_edit_posts') == 'yes')) { ?>
 
     <?php $result = $hotaru->plugins->pluginHook('submit_pre_show_post'); 
         if (!isset($result) || !is_array($result)) {
@@ -96,8 +98,13 @@ $user->getUserBasic($hotaru->post->author);
     
 <?php 
 } else {
-    // Show "Post buried" message...
-    $hotaru->message = $hotaru->lang["submit_post_buried"];
+    if ($hotaru->post->status == 'pending') { 
+        // Show "Post pending" message...
+        $hotaru->message = $hotaru->lang["submit_post_pending"];
+    } else {
+        // Show "Post buried" message...
+        $hotaru->message = $hotaru->lang["submit_post_buried"];
+    }
     $hotaru->messageType = "red";
     $hotaru->showMessage();
 }

@@ -62,6 +62,7 @@ $lang['com_man_edit_form_update'] = "Update";
 $lang["com_man_edit_form_denied"] = "Sorry, you do not have permission to edit comments";
 $lang["com_man_show_form"] = "Edit comment";
 $lang['com_man_no_pending_comments'] = "There are no comments pending.";
+$lang["com_man_num_pending"] = "<span style='color: red;'>Pending comments: </span>";
 $lang['com_man_comment_delete'] = "Comment (and replies) deleted";
 $lang['com_man_comment_approved'] = "Comment approved";
 $lang['com_man_comment_delete_denied'] = "Sorry, you do not have permission to delete comments";
