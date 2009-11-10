@@ -82,8 +82,23 @@ class Category
      */
     public function getCatSafeName($cat_id = 0)
     {
-        $sql = "SELECT category_safe_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
-        $cat_safe_name = $this->db->get_var($this->db->prepare($sql, $cat_id));
+        // Build SQL
+        $query = "SELECT category_safe_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
+        $sql = $this->db->prepare($sql, $cat_id);
+        
+        // Create temp cache array
+        if (!isset($this->hotaru->vars['tempCategoryCache'])) { $this->hotaru->vars['tempCategoryCache'] = array(); }
+
+        // If this query has already been read once this page load, we should have it in memory...
+        if (array_key_exists($sql, $this->hotaru->vars['tempCategoryCache'])) {
+            // Fetch from memory
+            $cat_safe_name = $this->hotaru->vars['tempCategoryCache'][$sql];
+        } else {
+            // Fetch from database
+            $cat_safe_name = $this->db->get_var($sql);
+            $this->hotaru->vars['tempCategoryCache'][$sql] = $cat;
+        }
+        
         return urldecode($cat_safe_name);
     }
     
