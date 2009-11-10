@@ -219,10 +219,20 @@ class UserBase {
         }
         
         // Build SQL
-        $sql = "SELECT * FROM " . TABLE_USERS . " WHERE " . $where;
+        $query = "SELECT * FROM " . TABLE_USERS . " WHERE " . $where;
+        $sql = $this->db->prepare($query, $param);
         
-        // Fetch from database
-        $user_info = $this->db->get_row($this->db->prepare($sql, $param));
+        if (!isset($this->hotaru->vars['tempUserCache'])) { $this->hotaru->vars['tempUserCache'] = array(); }
+
+        // If this query has already been read once this page load, we should have it in memory...
+        if (array_key_exists($sql, $this->hotaru->vars['tempUserCache'])) {
+            // Fetch from memory
+            $user_info = $this->hotaru->vars['tempUserCache'][$sql];
+        } else {
+            // Fetch from database
+            $user_info = $this->db->get_row($sql);
+            $this->hotaru->vars['tempUserCache'][$sql] = $user_info;
+        }
 
         if ($user_info) {
             $this->id = $user_info->user_id;

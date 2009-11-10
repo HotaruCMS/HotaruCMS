@@ -176,8 +176,22 @@ class Categories extends PluginFunctions
     {
         $this->hotaru->post->vars['category'] = $this->hotaru->post->vars['post_row']->post_category;
         
-        $sql = "SELECT category_name, category_safe_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
-        $cat = $this->db->get_row($this->db->prepare($sql, $this->hotaru->post->vars['category']));
+        // Build SQL
+        $query = "SELECT category_name, category_safe_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
+        $sql = $this->db->prepare($query, $this->hotaru->post->vars['category']);
+        
+        // Create temp cache array
+        if (!isset($this->hotaru->vars['tempCategoryCache'])) { $this->hotaru->vars['tempCategoryCache'] = array(); }
+
+        // If this query has already been read once this page load, we should have it in memory...
+        if (array_key_exists($sql, $this->hotaru->vars['tempCategoryCache'])) {
+            // Fetch from memory
+            $cat = $this->hotaru->vars['tempCategoryCache'][$sql];
+        } else {
+            // Fetch from database
+            $cat = $this->db->get_row($sql);
+            $this->hotaru->vars['tempCategoryCache'][$sql] = $cat;
+        }
         
         $this->hotaru->post->vars['catName'] = urldecode($cat->category_name);
         $this->hotaru->post->vars['catSafeName'] = urldecode($cat->category_safe_name);
