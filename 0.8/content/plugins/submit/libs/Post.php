@@ -233,9 +233,23 @@ class Post
      */    
     public function getPost($post_id = 0)
     {
+        // Build SQL
+        $query = "SELECT * FROM " . TABLE_POSTS . " WHERE post_id = %d ORDER BY post_date DESC";
+        $sql = $this->db->prepare($query, $post_id);
+        
+        // Create temp cache array
+        if (!isset($this->hotaru->vars['tempPostCache'])) { $this->hotaru->vars['tempPostCache'] = array(); }
 
-        $sql = "SELECT * FROM " . TABLE_POSTS . " WHERE post_id = %d ORDER BY post_date DESC";
-        $post = $this->db->get_row($this->db->prepare($sql, $post_id));
+        // If this query has already been read once this page load, we should have it in memory...
+        if (array_key_exists($sql, $this->hotaru->vars['tempPostCache'])) {
+            // Fetch from memory
+            $post = $this->hotaru->vars['tempPostCache'][$sql];
+        } else {
+            // Fetch from database
+            $post = $this->db->get_row($sql);
+            $this->hotaru->vars['tempPostCache'][$sql] = $post;
+        }
+
         if ($post) { return $post; } else { return false; }
     }
     
