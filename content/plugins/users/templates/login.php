@@ -38,7 +38,7 @@ if ($hotaru->cage->post->getInt('remember') == 1){ $remember_check = "checked"; 
         
         <?php echo $hotaru->showMessages(); ?>
         
-        <div class='main_inner'>
+        <div class='user_login_reg'>
         <?php echo $hotaru->lang["users_login_instructions"]; ?>
         
             <form name='login_form' action='<?php echo BASEURL; ?>index.php' method='post'>
