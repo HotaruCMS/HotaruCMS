@@ -183,7 +183,7 @@ class SidebarPosts extends PluginFunctions
             require_once(PLUGINS . 'categories/libs/Category.php');
             $cat = new Category($this->db);
         }
-                
+        
         if (!$posts) { return false; }
         
         foreach ($posts as $item) {

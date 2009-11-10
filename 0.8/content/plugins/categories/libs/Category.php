@@ -84,7 +84,7 @@ class Category
     {
         // Build SQL
         $query = "SELECT category_safe_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
-        $sql = $this->db->prepare($sql, $cat_id);
+        $sql = $this->db->prepare($query, $cat_id);
         
         // Create temp cache array
         if (!isset($this->hotaru->vars['tempCategoryCache'])) { $this->hotaru->vars['tempCategoryCache'] = array(); }
