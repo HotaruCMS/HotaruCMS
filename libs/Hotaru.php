@@ -83,7 +83,7 @@ class Hotaru
         $this->checkCookie();   // Log in user if cookie
         
         // We needn't go any further if this is called from the Install script.
-        if ($entrance == 'install') { return false; }
+        if ($entrance == 'install' || $entrance == 'basic') { return false; }
         
         $this->hotaruHeader($entrance);  // plugin hook method
     }
@@ -1009,6 +1009,8 @@ class Hotaru
         
         // run DB query:
         $last_update = unixtimestamp($this->db->get_var($sql));
+        
+        return $last_update;
     }
     
 }
