@@ -147,6 +147,7 @@ $lang["submit_post_posted"] = "Posted";
 $lang["submit_post_by"] = "by";
 $lang["submit_post_ago"] = "ago";
 $lang["submit_post_buried"] = "This post has been buried";
+$lang["submit_post_pending"] = "This post is pending approval by a moderator";
 
 /* Submit RSS Feed */
 $lang["submit_rss_latest_from"] = "Latest from";

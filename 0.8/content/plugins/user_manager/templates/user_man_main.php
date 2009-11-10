@@ -105,6 +105,13 @@
     </table>
 </div>
 
+<div class='user_man_pre_submit'>
+    <p class="user_man_pre_submit_instruct"><?php echo $hotaru->lang['user_man_when_killspam_delete']; ?></p>
+    <input type='checkbox' name='addblockedlist'> 
+    <?php echo $hotaru->lang['user_man_add_blocked_list']; ?>
+    <?php $hotaru->plugins->pluginHook('user_manager_pre_submit_button'); ?>
+</div>
+
 <div class='user_man_submit_button'>
         <table>
             <tr class='table_headers'>

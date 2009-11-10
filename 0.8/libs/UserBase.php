@@ -169,12 +169,9 @@ class UserBase {
             $updatedby = $this->id;
         }
         
-        // get latest user ip
-        $userip = $this->cage->server->testIp('REMOTE_ADDR');
-        
         if ($this->id != 0) {
             $sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s, user_permissions = %s, user_ip = %s, user_updateby = %d WHERE user_id = %d";
-            $this->db->query($this->db->prepare($sql, $this->name, $this->role, $this->password, $this->email, serialize($this->getAllPermissions()), $userip, $userid, $this->id));
+            $this->db->query($this->db->prepare($sql, $this->name, $this->role, $this->password, $this->email, serialize($this->getAllPermissions()), $this->ip, $updatedby, $this->id));
             return true;
         } else {
             return false;

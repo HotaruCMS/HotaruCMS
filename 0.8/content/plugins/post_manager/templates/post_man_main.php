@@ -34,6 +34,8 @@
 
 <?php echo $hotaru->lang["post_man_desc"]; ?>
 
+<?php echo " [<a href='" . BASEURL . "admin_index.php?post_status_filter=pending&plugin=post_manager&page=plugin_settings&type=filter'>" . $hotaru->lang["post_man_num_pending"] . $hotaru->vars['num_pending'] . "</a>]"; ?>
+
 <?php echo $hotaru->showMessage(); ?>
 
 <table><tr><td>

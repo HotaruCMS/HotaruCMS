@@ -34,6 +34,12 @@ class PostManagerSettings extends PostManager
      */
     public function settings()
     {    
+        // grab the number of pending posts:
+        $sql = "SELECT COUNT(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s";
+        $num_pending = $this->db->get_var($this->db->prepare($sql, 'pending'));
+        if (!$num_pending) { $num_pending = "0"; } 
+        $this->hotaru->vars['num_pending'] = $num_pending; 
+        
         // clear variables:
         $this->hotaru->vars['search_term'] = '';
         
