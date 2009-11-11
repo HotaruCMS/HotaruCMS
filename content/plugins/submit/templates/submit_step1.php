@@ -39,6 +39,12 @@
         <td><input type='text' size=50 id='post_orig_url' name='post_orig_url' value='<?php echo $hotaru->vars['post_orig_url']; ?>' /></td>
         <td>&nbsp;</td>
     </tr>
+    <?php if (!$this->hotaru->post->useLink) { ?>
+    <tr>
+        <td colspan = 3><input type='checkbox' name='use_link'>&nbsp;
+            <?php echo $this->lang["submit_form_post_without_link"]; ?></td>
+    </tr>
+    <?php } ?>
 
     <input type='hidden' name='submit1' value='true' />
 

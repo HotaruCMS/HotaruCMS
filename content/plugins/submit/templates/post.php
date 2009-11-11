@@ -26,6 +26,7 @@
 
 $user = new UserBase($hotaru);
 $user->getUserBasic($hotaru->post->author);
+if (strstr($hotaru->post->origUrl, BASEURL)) { $editorial = true; } // editorial (story with an internal link)
 ?>
 
 <!-- BREADCRUMBS -->
@@ -54,7 +55,11 @@ $user->getUserBasic($hotaru->post->author);
             <?php $hotaru->plugins->pluginHook('submit_show_post_pre_title'); ?>
         
             <div class="show_post_title">
-                <a href='<?php echo $hotaru->post->origUrl; ?>'><?php echo $hotaru->post->title; ?></a>
+                <?php if (!$editorial) { ?> 
+                    <a href='<?php echo $hotaru->post->origUrl; ?>'><?php echo $hotaru->post->title; ?></a>
+                <?php } else { ?>
+                    <?php echo $hotaru->post->title; ?>
+                <?php } ?>
                 <?php $hotaru->plugins->pluginHook('submit_show_post_title'); ?>
             </div>
         

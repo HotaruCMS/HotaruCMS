@@ -64,6 +64,8 @@ $can_edit = false;
 if ($hotaru->current_user->getPermission('can_edit_posts') == 'yes') { $can_edit = true; }
 if (($hotaru->current_user->getPermission('can_edit_posts') == 'own') && ($hotaru->current_user->id == $user->id)) { $can_edit = true; }
 
+if (strstr($post_orig_url, BASEURL)) { $editorial = true; } // is this an editorial (story with an internal link?)
+
 if (!$can_edit) {
     $hotaru->message = "You don't have permission to edit this post.";
     $hotaru->messageType = "red";
@@ -119,11 +121,13 @@ $hotaru->plugins->pluginHook('submit_form_2_assign');
     
     <tr><td colspan=3><u><?php echo $hotaru->lang["submit_edit_post_admin_only"]; ?></u></td></tr>
     
-    <tr>
-        <td><?php echo $hotaru->lang["submit_form_url"]; ?>&nbsp; </td>
-        <td><input type='text' size=50 id='post_orig_url' name='post_orig_url' value='<?php echo $post_orig_url; ?>'></td>
-        <td>&nbsp;</td>
-    </tr>
+    <?php   if (!$editorial) { // if not editorial, allow source url to be changed: ?>
+        <tr>
+            <td><?php echo $hotaru->lang["submit_form_url"]; ?>&nbsp; </td>
+            <td><input type='text' size=50 id='post_orig_url' name='post_orig_url' value='<?php echo $post_orig_url; ?>'></td>
+            <td>&nbsp;</td>
+        </tr>
+    <?php } ?>
     
     <tr>
         <td style='vertical-align: top;'><?php echo $hotaru->lang["submit_edit_post_status"]; ?>&nbsp; </td>
@@ -146,8 +150,9 @@ $hotaru->plugins->pluginHook('submit_form_2_assign');
     <!-- END Admin only options -->
     <?php } ?>
         
-    <?php if ($hotaru->current_user->getPermission('can_edit_posts') != 'yes') { 
-        // prevent post_orig_url clash with above form ?>
+    <?php if (($hotaru->current_user->getPermission('can_edit_posts') != 'yes')
+                || $editorial) { 
+        // use this hidden input to send back the original url when the above form is not used ?>
         <input type='hidden' name='post_orig_url' value='<?php echo $post_orig_url; ?>' />
     <?php } ?>
     

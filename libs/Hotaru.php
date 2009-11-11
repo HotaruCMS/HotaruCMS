@@ -867,13 +867,15 @@ class Hotaru
      *
      * @param string $switch either "on", "off" or "html"
      * @param string $table DB table name
-     * @param int $timeout timeout for these queries
+     * @param int $timeout time before DB cache expires
+     * @param string $html output as HTML
+     * @param string $label optional label to append to filename
      * @return bool
      */
-    public function smartCache($switch = 'off', $table = '', $timeout = 0, $html = '')
+    public function smartCache($switch = 'off', $table = '', $timeout = 0, $html = '', $label = '')
     {
         if ($switch == 'html') { 
-            $result = $this->smartCacheHTML($table, $timeout, $html); 
+            $result = $this->smartCacheHTML($table, $timeout, $html, $label); 
         } else {
             $result = $this->smartCacheDB($switch, $table, $timeout);
         }
@@ -891,7 +893,7 @@ class Hotaru
      * @param int $timeout timeout in minutes
      * @return bool
      */
-    public function smartCacheHTML($table = '', $timeout = 0, $html = '')
+    public function smartCacheHTML($table = '', $timeout = 0, $html = '', $label = '')
     {
         if (!$table || !$timeout) { return false; }
         
@@ -902,7 +904,8 @@ class Hotaru
         
         $cache_length = $timeout*60;   // seconds
         $cache = CACHE . 'html_cache/';
-        $file = $cache . $table . ".cache";
+        if ($label) { $label = '_' . $label; } 
+        $file = $cache . $table . $label . ".cache";
         
         if (!$html) {
             // we only want to read the cache if it exists, hence no $html passed to this function
