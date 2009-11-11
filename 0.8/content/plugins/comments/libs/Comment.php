@@ -222,17 +222,25 @@ class Comment
     {
         $this->plugins->pluginHook('comment_pre_add_comment');  // Akismet uses this to change the status
         
-        $can_comment = $this->hotaru->current_user->getPermission('can_comment'); // This was already check, but Akismet undoes it! So we do it again.
+        $can_comment = $this->hotaru->current_user->getPermission('can_comment'); // This was already checked, but Akismet sometimes reverts the status, so we do it again.
 
         if ($can_comment == 'mod') { $this->status = 'pending'; } // forces all to 'pending' if user's comments are moderated
         
         // Get settings from database...
-        $comments_settings = $this->plugins->getSerializedSettings();
+        $comments_settings = $this->plugins->getSerializedSettings('comments');
+
         $set_pending = $comments_settings['comment_set_pending'];
+        $daily_limit = $comments_settings['comment_daily_limit'];
+        $url_limit = $comments_settings['comment_url_limit'];
         
         if ($set_pending == 'some_pending') {
             $comments_approved = $this->hotaru->comment->commentsApproved($this->current_user->id);
             $x_comments_needed = $comments_settings['comment_x_comments'];
+        }
+        
+        if ($this->hotaru->current_user->role == 'member') {
+            if ($daily_limit && ($daily_limit < $this->countDailyComments())) { $this->status = 'pending'; } // exceeded daily limit, set to pending
+            if ($url_limit && ($url_limit < $this->countUrls())) { $this->status = 'pending'; } // exceeded url limit, set to pending
         }
                     
         if ($set_pending == 'all_pending') {
@@ -555,5 +563,42 @@ class Comment
         
         return $count;
     }
+    
+    
+    /**
+     * Count daily comments for this commenter
+     *
+     * @return int 
+     */
+    public function countDailyComments()
+    {
+        $start = date('YmdHis', strtotime("now"));
+        $end = date('YmdHis', strtotime("-1 day"));
+        $sql = "SELECT COUNT(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s AND comment_user_id = %d AND (comment_date >= %s AND comment_date <= %s)";
+        $count = $this->db->get_var($this->db->prepare($sql, 'N', $this->author, $end, $start));
+        
+        return $count;
+    }
+    
+    
+    /**
+     * Count urls in comment
+     *
+     * @return int 
+     * @link http://www.liamdelahunty.com/tips/php_url_count_check_for_comment_spam.php
+     */
+    public function countUrls()
+    {
+        $text = $this->content;
+        
+        echo "<br />" . $text . "</br >";
+        
+        //$http = substr_count($text, "http");
+        $href = substr_count($text, "href");
+        $url = substr_count($text, "[url");
+        
+        return $href + $url;
+    }
+      
 }
 ?>

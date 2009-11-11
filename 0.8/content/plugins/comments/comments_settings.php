@@ -54,6 +54,8 @@ class CommentsSettings extends Comments
         $x_comments = $comments_settings['comment_x_comments'];
         $email_notify = $comments_settings['comment_email_notify'];
         $email_mods = $comments_settings['comment_email_notify_mods'];
+        $url_limit = $comments_settings['comment_url_limit'];
+        $daily_limit = $comments_settings['comment_daily_limit'];
         
         echo "<h1>" . $this->lang["comments_settings_header"] . "</h1>\n";
           
@@ -99,12 +101,18 @@ class CommentsSettings extends Comments
         echo "<p><input type='radio' name='comment_order' value='asc' " . $ascending . " >&nbsp;" . $this->lang["comments_settings_ascending"] . "&nbsp;&nbsp;\n"; 
         echo "<input type='radio' name='comment_order' value='desc' " . $descending . " >&nbsp;" . $this->lang["comments_settings_descending"] . "</p>\n"; 
         
-        echo "<p>" . $this->lang["comments_settings_email"] . " <input type='text' size=30 name='email' value='" . $this->hotaru->comment->email . "' /> ";
-        echo $this->lang["comments_settings_email_desc"] . "</p>";
         echo "<p>" . $this->lang["comments_settings_allowable_tags"] . " <input type='text' size=40 name='allowabletags' value='" . $this->hotaru->comment->allowableTags . "' /><br />";
         echo $this->lang["comments_settings_allowable_tags_example"] . "</p>\n";
         
+        echo "<p>" . " <input type='text' size=5 name='url_limit' value='" . $url_limit . "' /> " . $this->lang["comments_settings_url_limit"] . "</p>";
+        echo "<p>" . " <input type='text' size=5 name='daily_limit' value='" . $daily_limit . "' /> " . $this->lang["comments_settings_daily_limit"] . "</p>";
+        
+        echo "<p>" . $this->lang["comments_settings_limit_note"] . "</p>";
+        
         $this->pluginHook('comments_settings_form');
+        
+        echo "<p>" . $this->lang["comments_settings_email"] . " <input type='text' size=30 name='email' value='" . $this->hotaru->comment->email . "' /> ";
+        echo $this->lang["comments_settings_email_desc"] . "</p>";
         
         switch ($set_pending) {
             case 'some_pending':
@@ -268,6 +276,22 @@ class CommentsSettings extends Comments
             $this->hotaru->comment->order = 'asc'; // default
         }
         
+        // Url limit
+        if ($this->cage->post->keyExists('url_limit')) { 
+            $url_limit = strtoupper($this->cage->post->testInt('url_limit')); 
+            if (!is_numeric($url_limit)) { $url_limit = 0; }
+        } else { 
+            $url_limit = 0; 
+        }
+        
+        // Daily limit
+        if ($this->cage->post->keyExists('daily_limit')) { 
+            $daily_limit = strtoupper($this->cage->post->testInt('daily_limit')); 
+            if (!is_numeric($daily_limit)) { $daily_limit = 0; }
+        } else { 
+            $daily_limit = 0; 
+        }
+        
         // Set pending
         if ($this->cage->post->keyExists('set_pending')) { 
             $set_pending = $this->cage->post->testAlnumLines('set_pending');
@@ -311,6 +335,8 @@ class CommentsSettings extends Comments
         $comments_settings['comment_order'] = $this->hotaru->comment->order;
         $comments_settings['comment_allowable_tags'] = $allowable_tags;
         $comments_settings['comment_items_per_page'] = $items_per_page;
+        $comments_settings['comment_url_limit'] = $url_limit;
+        $comments_settings['comment_daily_limit'] = $daily_limit;
         $comments_settings['comment_set_pending'] = $set_pending;
         $comments_settings['comment_x_comments'] = $x_comments;
         $comments_settings['comment_email_notify'] = $email_notify;
