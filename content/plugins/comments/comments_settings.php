@@ -70,6 +70,8 @@ class CommentsSettings extends Comments
         if (!$this->hotaru->comment->order) { $this->hotaru->comment->order = 'asc'; }
         if (!$this->hotaru->comment->pagination) { $this->hotaru->comment->pagination = ''; }
         if (!$set_pending) { $set_pending = 'auto_approve'; }
+        if (!$url_limit) { $url_limit = 0; }
+        if (!$daily_limit) { $daily_limit = 0; }
         if (!$x_comments) { $x_comments = 1; }
     
         // Determine if checkboxes are checked or not
@@ -278,7 +280,7 @@ class CommentsSettings extends Comments
         
         // Url limit
         if ($this->cage->post->keyExists('url_limit')) { 
-            $url_limit = strtoupper($this->cage->post->testInt('url_limit')); 
+            $url_limit = $this->cage->post->testInt('url_limit'); 
             if (!is_numeric($url_limit)) { $url_limit = 0; }
         } else { 
             $url_limit = 0; 
@@ -286,7 +288,7 @@ class CommentsSettings extends Comments
         
         // Daily limit
         if ($this->cage->post->keyExists('daily_limit')) { 
-            $daily_limit = strtoupper($this->cage->post->testInt('daily_limit')); 
+            $daily_limit = $this->cage->post->testInt('daily_limit'); 
             if (!is_numeric($daily_limit)) { $daily_limit = 0; }
         } else { 
             $daily_limit = 0; 

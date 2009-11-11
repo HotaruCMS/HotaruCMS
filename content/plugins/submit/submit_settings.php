@@ -58,6 +58,9 @@ class SubmitSettings extends Submit
         $email_notify = $submit_settings['post_email_notify'];
         $email_mods = $submit_settings['post_email_notify_mods'];
         $archive = $submit_settings['post_archive'];
+        $url_limit = $submit_settings['post_url_limit'];
+        $daily_limit = $submit_settings['post_daily_limit'];
+        $freq_limit = $submit_settings['post_freq_limit'];
     
         $this->pluginHook('submit_settings_get_values');
         
@@ -72,6 +75,9 @@ class SubmitSettings extends Submit
         if (!$set_pending) { $set_pending = 'auto_approve'; }
         if (!$x_posts) { $x_posts = 1; }
         if (!$archive) { $archive = 'no_archive'; }
+        if (!$url_limit) { $url_limit = 0; }
+        if (!$daily_limit) { $daily_limit = 0; }
+        if (!$freq_limit) { $freq_limit = 0; }
         
         echo "<form name='submit_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=submit' method='post'>\n";
 
@@ -103,6 +109,12 @@ class SubmitSettings extends Submit
         
         echo "<b>Submission Settings</b> (for users with 'member' roles)<br /><br />";
         
+        echo "<p>" . " <input type='text' size=5 name='url_limit' value='" . $url_limit . "' /> " . $this->lang["submit_settings_url_limit"] . "</p>";
+        echo "<p>" . " <input type='text' size=5 name='daily_limit' value='" . $daily_limit . "' /> " . $this->lang["submit_settings_daily_limit"] . "</p>";
+        echo "<p>" . " <input type='text' size=5 name='freq_limit' value='" . $freq_limit . "' /> " . $this->lang["submit_settings_frequency_limit"] . "</p>";
+        
+        echo "<p>" . $this->lang["submit_settings_limit_note"] . "</p>";
+        
         switch ($set_pending) {
             case 'some_pending':
                 $auto_approve = ''; $some_pending = 'checked'; $all_pending = '';
@@ -114,6 +126,7 @@ class SubmitSettings extends Submit
                 $auto_approve = 'checked'; $some_pending = ''; $all_pending = '';
         }
         
+        echo "<br />";
         echo "<input type='radio' name='set_pending' value='auto_approve' " . $auto_approve . " >&nbsp;&nbsp;" . $this->lang["submit_settings_auto_approve"] . "<br />\n"; 
         echo "<input type='radio' name='set_pending' value='some_pending' " . $some_pending . " >&nbsp;&nbsp;" . $this->lang["submit_settings_some_pending_1"] . "\n"; 
         echo "<select name='first_x_posts'>\n";
@@ -273,6 +286,30 @@ class SubmitSettings extends Submit
             $allowable_tags = $this->hotaru->post->allowableTags; 
         }
         
+        // Url limit
+        if ($this->cage->post->keyExists('url_limit')) { 
+            $url_limit = $this->cage->post->testInt('url_limit'); 
+            if (!is_numeric($url_limit)) { $url_limit = 0; }
+        } else { 
+            $url_limit = 0; 
+        }
+        
+        // Daily limit
+        if ($this->cage->post->keyExists('daily_limit')) { 
+            $daily_limit = $this->cage->post->testInt('daily_limit'); 
+            if (!is_numeric($daily_limit)) { $daily_limit = 0; }
+        } else { 
+            $daily_limit = 0; 
+        }
+        
+        // Frequency limit
+        if ($this->cage->post->keyExists('freq_limit')) { 
+            $freq_limit = $this->cage->post->testInt('freq_limit'); 
+            if (!is_numeric($freq_limit)) { $freq_limit = 0; }
+        } else { 
+            $freq_limit = 0; 
+        }
+        
         // Set pending
         if ($this->cage->post->keyExists('set_pending')) { 
             $set_pending = $this->cage->post->testAlnumLines('set_pending');
@@ -321,6 +358,9 @@ class SubmitSettings extends Submit
         $submit_settings['post_summary_length'] = $summary_length;
         $submit_settings['post_posts_per_page'] = $posts_per_page;
         $submit_settings['post_allowable_tags'] = $allowable_tags;
+        $submit_settings['post_url_limit'] = $url_limit;
+        $submit_settings['post_daily_limit'] = $daily_limit;
+        $submit_settings['post_freq_limit'] = $freq_limit;
         $submit_settings['post_set_pending'] = $set_pending;
         $submit_settings['post_x_posts'] = $x_posts;
         $submit_settings['post_email_notify'] = $email_notify;
