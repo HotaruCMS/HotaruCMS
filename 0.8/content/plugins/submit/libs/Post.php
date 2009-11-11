@@ -887,6 +887,46 @@ class Post
         return $count;
         
     }
+    
+    
+    /**
+     * Count posts in the last X hours/minutes for this user
+     *
+     * @return int 
+     */
+    public function countPosts($hours = 0, $minutes = 0)
+    {
+        if ($hours) { 
+            $time_ago = "-" . $hours . " Hours";
+        } else {
+            $time_ago = "-" . $minutes . " minutes";
+        } 
+        
+        $start = date('YmdHis', strtotime("now"));
+        $end = date('YmdHis', strtotime($time_ago));
+        $sql = "SELECT COUNT(post_id) FROM " . TABLE_POSTS . " WHERE post_archived = %s AND post_author = %d AND (post_date >= %s AND post_date <= %s)";
+        $count = $this->db->get_var($this->db->prepare($sql, 'N', $this->current_user->id, $end, $start));
+        
+        return $count;
+    }
+    
+    
+    /**
+     * Count urls within the post description
+     *
+     * @return int 
+     * @link http://www.liamdelahunty.com/tips/php_url_count_check_for_comment_spam.php
+     */
+    public function countUrls()
+    {
+        $text = $this->content;
+        
+        //$http = substr_count($text, "http");
+        $href = substr_count($text, "href");
+        $url = substr_count($text, "[url");
+        
+        return $href + $url;
+    }
 }
 
 ?>
