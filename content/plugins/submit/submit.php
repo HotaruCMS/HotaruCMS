@@ -105,6 +105,9 @@ class Submit extends PluginFunctions
         if (!isset($submit_settings['post_summary_length'])) { $submit_settings['post_summary_length'] = 200; }
         if (!isset($submit_settings['post_posts_per_page'])) { $submit_settings['post_posts_per_page'] = 10; }
         if (!isset($submit_settings['post_allowable_tags'])) { $submit_settings['post_allowable_tags'] = "<b><i><u><a><blockquote><strike>"; }
+        if (!isset($submit_settings['post_url_limit'])) { $submit_settings['post_url_limit'] = 0; }
+        if (!isset($submit_settings['post_daily_limit'])) { $submit_settings['post_daily_limit'] = 0; }
+        if (!isset($submit_settings['post_freq_limit'])) { $submit_settings['post_freq_limit'] = 0; }
         if (!isset($submit_settings['post_set_pending'])) { $submit_settings['post_set_pending'] = ""; } // sets all new posts to pending 
         if (!isset($submit_settings['post_x_posts'])) { $submit_settings['post_x_posts'] = 1; }
         if (!isset($submit_settings['post_email_notify'])) { $submit_settings['post_email_notify'] = ""; }
@@ -609,6 +612,11 @@ class Submit extends PluginFunctions
     {
         // ******** CHECK URL ********
         
+        // get the settings we need:
+        $submit_settings = $this->getSerializedSettings();
+        $daily_limit = $submit_settings['post_daily_limit'];
+        $freq_limit = $submit_settings['post_freq_limit'];
+        
         $post_orig_url_check = $this->cage->post->testUri('post_orig_url');
         if (!$post_orig_url_check) {
             // No url present...
@@ -626,8 +634,20 @@ class Submit extends PluginFunctions
             $this->hotaru->messageType = 'red';
             $error = 1;
         } elseif ($this->checkBlocked($post_orig_url_check)) {
-            // URL already exists...
+            // URL is blocked
             $this->hotaru->message = $this->lang['submit_form_url_blocked'];
+            $this->hotaru->messageType = 'red';
+            $error = 1;
+        } elseif (($this->hotaru->current_user->role == 'member' || $this->hotaru->current_user->role == 'undermod')
+                   && $daily_limit && ($daily_limit < $this->hotaru->post->countPosts(24))) { 
+            // exceeded daily limit
+            $this->hotaru->message = $this->lang['submit_form_daily_limit_exceeded'];
+            $this->hotaru->messageType = 'red';
+            $error = 1;
+        } elseif (($this->hotaru->current_user->role == 'member' || $this->hotaru->current_user->role == 'undermod')
+                   && $freq_limit && ($this->hotaru->post->countPosts(0, $freq_limit) > 0)) { 
+            // already submitted a post in the last X minutes. Needs to wait before submitting again
+            $this->hotaru->message = $this->lang['submit_form_freq_limit_error'];
             $this->hotaru->messageType = 'red';
             $error = 1;
         } else {
@@ -650,10 +670,15 @@ class Submit extends PluginFunctions
         $post_id = $this->cage->post->getInt('post_id'); // 0 unless come back from step 3.
         
         if ($this->cage->post->keyExists('edit_post')) { $edit = true; } else {$edit = false; }
+        
+        // get the settings we need:
+        $submit_settings = $this->getSerializedSettings();
+        $url_limit = $submit_settings['post_url_limit'];
+        
     
         // ******** CHECK URL ********
         $error_url = 0;
-        // Only for Admin user
+        // Only for user with Edit Post permissions
         if ($edit) {
             $orig_url_check = $this->cage->post->testUri('post_orig_url');    
             
@@ -689,6 +714,7 @@ class Submit extends PluginFunctions
         // ******** CHECK DESCRIPTION ********
         if ($this->hotaru->post->useContent) {
             $content_check = sanitize($this->cage->post->getHtmLawed('post_content'), 2, $this->hotaru->post->allowableTags);
+            $this->hotaru->post->content = $content_check;
                     
             if (!$content_check) {
                 // No content present...
@@ -697,6 +723,11 @@ class Submit extends PluginFunctions
             } elseif (strlen($content_check) < $this->hotaru->post->post_content_length) {
                 // content is too short
                 $this->hotaru->messages[$this->lang['submit_form_content_too_short_error']] = "red";
+                $error_content = 1;
+            } elseif (($this->hotaru->current_user->role == 'member' || $this->hotaru->current_user->role == 'undermod')
+                        && $url_limit && ($url_limit < $this->hotaru->post->countUrls())) { 
+                // content contains too many links
+                $this->hotaru->messages[$this->lang['submit_form_content_too_many_links']] = "red";
                 $error_content = 1;
             } else {
                 // content is okay.

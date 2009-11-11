@@ -136,6 +136,8 @@ class Comments extends pluginFunctions
         if (!isset($comments_settings['comment_x_comments'])) { $comments_settings['comment_x_comments'] = 1; }
         if (!isset($comments_settings['comment_email_notify'])) { $comments_settings['comment_email_notify'] = ""; }
         if (!isset($comments_settings['comment_email_notify_mods'])) { $comments_settings['comment_email_notify_mods'] = array(); }
+        if (!isset($comments_settings['comment_url_limit'])) { $comments_settings['comment_url_limit'] = 0; }
+        if (!isset($comments_settings['comment_daily_limit'])) { $comments_settings['comment_daily_limit'] = 0; }
         
         if ($this->isActive('gravatar')) {
             if (!isset($comments_settings['comment_avatars'])) { $comments_settings['comment_avatars'] = "checked"; }
