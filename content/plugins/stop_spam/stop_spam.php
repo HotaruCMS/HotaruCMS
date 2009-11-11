@@ -5,6 +5,7 @@
  * version: 0.1
  * folder: stop_spam
  * class: StopSpam
+ * requires: users 0.8
  * hooks: install_plugin, users_register_pre_add_user, users_register_post_add_user, users_email_conf_post_role, user_manager_details_pending, user_manager_pre_submit_button, user_man_killspam_delete, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * PHP version 5

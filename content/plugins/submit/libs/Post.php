@@ -307,20 +307,20 @@ class Post
                 }
                 
             }
-            $filter = rstrtrim($filter, "AND ");
+            $filter = rstrtrim($filter, " AND ");
         }
         
         if ($all == true) {
             $limit = '';
         } elseif ($limit == 0) { 
-            $limit = "LIMIT 20"; 
+            $limit = " LIMIT 20"; 
         } else { 
-            $limit = "LIMIT " . $limit; 
+            $limit = " LIMIT " . $limit; 
         }
         
         if ($orderby) { $orderby = "ORDER BY " . $orderby; }
         
-        $sql = "SELECT " . $select . " FROM " . TABLE_POSTS . $filter . " " . $orderby . " " . $limit;
+        $sql = "SELECT " . $select . " FROM " . TABLE_POSTS . $filter . " " . $orderby . $limit;
         
         $prepare_array[0] = $sql;
         
