@@ -277,18 +277,22 @@ class Activity extends PluginFunctions
      * Get sidebar activity items
      *
      * @param array $activity 
+     * @param array $activity_settings
+     * @param string $label for cache file
      * return string $output
      */
-    public function getSidebarActivityItems($activity = array(), $activity_settings)
+    public function getSidebarActivityItems($activity = array(), $activity_settings, $cache = true)
     {
         $need_cache = false;
         
-        // check for a cached version and use it if no recent update:
-        $output = $this->hotaru->smartCache('html', 'useractivity', 10);
-        if ($output) {
-            return $output;
-        } else {
-            $need_cache = true;
+        if ($cache) {
+            // check for a cached version and use it if no recent update:
+            $output = $this->hotaru->smartCache('html', 'useractivity', 10, '', $label);
+            if ($output) {
+                return $output;
+            } else {
+                $need_cache = true;
+            }
         }
         
         if (!isset($cat)) {
@@ -391,7 +395,7 @@ class Activity extends PluginFunctions
         unset($this->hotaru->vars['gravatar_size']);  // returns us to the default size
         
         if ($need_cache) {
-            $this->hotaru->smartCache('html', 'useractivity', 10, $output); // make or rewrite the cache file
+            $this->hotaru->smartCache('html', 'useractivity', 10, $output, $label); // make or rewrite the cache file
         }
         
         return $output;
@@ -437,6 +441,7 @@ class Activity extends PluginFunctions
                 echo "<a href='" . $this->hotaru->url(array('page'=>'rss_activity', 'user'=>$user)) . "' title='" . $anchor_title . "'>\n";
                 echo "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'>\n</a>&nbsp;"; // RSS icon
                 echo $this->lang['activity_title'] . "</h2>\n"; 
+                $label = $user; // used in cache filename
             } else {
                 /* BREADCRUMBS */
                 echo "<div id='breadcrumbs'>";
@@ -446,6 +451,7 @@ class Activity extends PluginFunctions
                 echo "<a href='" . $this->hotaru->url(array('page'=>'rss_activity')) . "'> ";
                 echo "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
                 echo "</div>";
+                $label = 'site'; // used in cache filename
             }
             
             // for pagination:
@@ -460,7 +466,7 @@ class Activity extends PluginFunctions
             $output .= "<ul class='sidebar_widget_body activity_sidebar_items'>\n";
             
             while($action = $pagedResults->fetchPagedRow()) {
-                $output .= $this->getSidebarActivityItems(array($action), $activity_settings);
+                $output .= $this->getSidebarActivityItems(array($action), $activity_settings, false);
             }
             
             $output .= "</ul>\n\n";

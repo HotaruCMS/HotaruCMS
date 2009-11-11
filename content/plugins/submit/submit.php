@@ -277,6 +277,9 @@ class Submit extends PluginFunctions
                          
                 if ($this->cage->post->getAlpha('submit2') == 'true') {             
                     $post_orig_url = $this->cage->post->testUri('post_orig_url'); 
+                    if ((!$post_orig_url) && ($this->current_user->getPermission('can_post_without_link') == 'yes')) { 
+                        $this->hotaru->post->useLink = false;
+                    }
                     if (!$this->check_for_errors_2()) { 
                         $this->process_submission($post_orig_url);
                     }
@@ -422,8 +425,13 @@ class Submit extends PluginFunctions
                   if ($this->cage->post->getAlpha('submit1') == 'true') {
                     if (!$this->check_for_errors_1()) { 
                         // No errors found, proceed to step 2
-                        $this->hotaru->vars['post_orig_url'] = $this->cage->post->testUri('post_orig_url'); 
-                        $this->hotaru->vars['post_orig_title'] = $this->hotaru->post->fetchTitle($this->hotaru->vars['post_orig_url']);
+                        if (!$this->hotaru->post->useLink) { 
+                            $this->hotaru->vars['post_orig_url'] = "";
+                            $this->hotaru->vars['post_orig_title'] = "";
+                        } else {
+                            $this->hotaru->vars['post_orig_url'] = $this->cage->post->testUri('post_orig_url'); 
+                            $this->hotaru->vars['post_orig_title'] = $this->hotaru->post->fetchTitle($this->hotaru->vars['post_orig_url']);
+                        }
                         $this->hotaru->displayTemplate('submit_step2', 'submit');
                         return true;
                         
@@ -435,6 +443,9 @@ class Submit extends PluginFunctions
                     }
                 } else {
                     // First time to step 1...
+                    if ($this->current_user->getPermission('can_post_without_link') == 'yes') { 
+                        $this->hotaru->post->useLink = false;
+                    }
                     $this->hotaru->displayTemplate('submit_step1', 'submit');
                     return true;
                 }
@@ -571,6 +582,7 @@ class Submit extends PluginFunctions
         $perms['options']['can_submit'] = array('yes', 'no', 'mod');
         $perms['options']['can_edit_posts'] = array('yes', 'no', 'own');
         $perms['options']['can_delete_posts'] = array('yes', 'no');
+        $perms['options']['can_post_without_link'] = array('yes', 'no');
         
         // Permissions for $role
         switch ($role) {
@@ -579,26 +591,31 @@ class Submit extends PluginFunctions
                 $perms['can_submit'] = 'yes';
                 $perms['can_edit_posts'] = 'yes';
                 $perms['can_delete_posts'] = 'yes';
+                $perms['can_post_without_link'] = 'yes';
                 break;
             case 'moderator':
                 $perms['can_submit'] = 'yes';
                 $perms['can_edit_posts'] = 'yes';
                 $perms['can_delete_posts'] = 'no';
+                $perms['can_post_without_link'] = 'yes';
                 break;
             case 'member':
                 $perms['can_submit'] = 'yes';
                 $perms['can_edit_posts'] = 'own';
                 $perms['can_delete_posts'] = 'no';
+                $perms['can_post_without_link'] = 'no';
                 break;
             case 'undermod':
                 $perms['can_submit'] = 'mod';
                 $perms['can_edit_posts'] = 'own';
                 $perms['can_delete_posts'] = 'no';
+                $perms['can_post_without_link'] = 'no';
                 break;
             default:
                 $perms['can_submit'] = 'no';
                 $perms['can_edit_posts'] = 'no';
                 $perms['can_delete_posts'] = 'no';
+                $perms['can_post_without_link'] = 'no';
         }
         
         $this->hotaru->vars['perms'] = $perms;
@@ -616,6 +633,13 @@ class Submit extends PluginFunctions
         $submit_settings = $this->getSerializedSettings();
         $daily_limit = $submit_settings['post_daily_limit'];
         $freq_limit = $submit_settings['post_freq_limit'];
+        
+        // allow submission to continue without a link
+        if ($this->cage->post->keyExists('use_link') 
+            && ($this->current_user->getPermission('can_post_without_link') == 'yes')) { 
+            $this->hotaru->post->useLink = false; 
+            return false; //no error
+        }
         
         $post_orig_url_check = $this->cage->post->testUri('post_orig_url');
         if (!$post_orig_url_check) {
@@ -680,7 +704,7 @@ class Submit extends PluginFunctions
         $error_url = 0;
         // Only for user with Edit Post permissions
         if ($edit) {
-            $orig_url_check = $this->cage->post->testUri('post_orig_url');    
+            $orig_url_check = $this->cage->post->getMixedString2('post_orig_url'); // testUri would fail if source url is from localhost
             
             if (!$orig_url_check) {
                 // No url present...
@@ -756,7 +780,13 @@ class Submit extends PluginFunctions
         if ($this->cage->post->getAlpha('submit2') == 'true') {    
         
             $this->hotaru->post->id = $this->cage->post->getInt('post_id');
-            $this->hotaru->post->origUrl = $this->cage->post->testUri('post_orig_url');
+            
+            if ($this->hotaru->post->useLink || ($this->hotaru->post->id != 0)) {
+                $this->hotaru->post->origUrl = $this->cage->post->getMixedString2('post_orig_url');  // testUri would fail if url from localhost
+            } else {
+                $this->hotaru->post->origUrl = "self";
+            }
+            
             $this->hotaru->post->title = $this->cage->post->noTags('post_title');
             $this->hotaru->post->url = $this->cage->post->getFriendlyUrl('post_title');
             $this->hotaru->post->content = sanitize($this->cage->post->getHtmLawed('post_content'), 2, $this->hotaru->post->allowableTags);
@@ -776,7 +806,7 @@ class Submit extends PluginFunctions
             // Editing an existing post.
             $this->hotaru->post->id = $this->cage->post->getInt('post_id');
             $this->hotaru->post->readPost($this->hotaru->post->id);
-            $this->hotaru->post->origUrl = $this->cage->post->testUri('post_orig_url');
+            $this->hotaru->post->origUrl = $this->cage->post->getMixedString2('post_orig_url'); // testUri would fail if url from localhost
             $this->hotaru->post->title = $this->cage->post->noTags('post_title');
             $this->hotaru->post->url = $this->cage->post->getFriendlyUrl('post_title');
             $this->hotaru->post->content = sanitize($this->cage->post->getHtmLawed('post_content'), 2, $this->hotaru->post->allowableTags);
