@@ -2,6 +2,8 @@
  *        USERS PLUGIN CSS       *
  ************************************** */
 
+.user_login_reg td { vertical-align: top; }
+
 ul.user_tabs { margin-bottom: 1.0em; }
 ul.user_tabs li { display: inline; }
 

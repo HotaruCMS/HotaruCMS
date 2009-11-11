@@ -44,15 +44,28 @@ if ($hotaru->cage->post->getAlpha('users_type') == 'register') {
         
         <?php echo $hotaru->showMessages(); ?>
             
-        <div class='main_inner'>
+        <div class='user_login_reg'>
         <?php echo $hotaru->lang["users_register_instructions"]; ?>
                 
             <form name='register_form' action='<?php echo BASEURL; ?>index.php?page=register' method='post'>    
             <table>
-            <tr><td><?php echo $hotaru->lang["users_register_username"]; ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check; ?>' /></td></tr>
-            <tr><td><?php echo $hotaru->lang["users_register_email"]; ?>&nbsp; </td><td><input type='text' size=30 name='email' value='<?php echo $email_check; ?>' /></td></tr>
-            <tr><td><?php echo $hotaru->lang["users_register_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password' value='<?php echo $password_check; ?>' /></td></tr>
-            <tr><td><?php echo $hotaru->lang["users_register_password_verify"]; ?>&nbsp; </td><td><input type='password' size=30 name='password2' value='<?php echo $password2_check; ?>' /></td></tr>
+            <tr><td>
+                <?php echo $hotaru->lang["users_register_username"]; ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check; ?>' />
+                <br /><small><?php echo $hotaru->lang["users_register_username_error_short"]; ?></small>
+            </td></tr>
+            
+            <tr><td>
+                <?php echo $hotaru->lang["users_register_email"]; ?>&nbsp; </td><td><input type='text' size=30 name='email' value='<?php echo $email_check; ?>' />
+            </td></tr>
+            
+            <tr><td>
+                <?php echo $hotaru->lang["users_register_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password' value='<?php echo $password_check; ?>' />
+                <br /><small><?php echo $hotaru->lang["users_register_password_error_short"]; ?></small>
+            </td></tr>
+            
+            <tr><td>
+                <?php echo $hotaru->lang["users_register_password_verify"]; ?>&nbsp; </td><td><input type='password' size=30 name='password2' value='<?php echo $password2_check; ?>' />
+            </td></tr>
             
             <?php 
                 if ($hotaru->current_user->vars['useRecaptcha']) { 

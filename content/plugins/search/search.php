@@ -100,7 +100,7 @@ class Search extends PluginFunctions
             if ($search_terms)
             {
     
-                // fetch sleect, orderby and filter...
+                // fetch select, orderby and filter...
                 $prepared_search = $this->prepareSearchFilter($search_terms);
                 extract($prepared_search);
                 
@@ -137,20 +137,26 @@ class Search extends PluginFunctions
             }
         }
         
-        // Undo the filter that limits results to either 'top' or 'new' (See submit.php -> sub_prepare_list())
-        if(isset($this->hotaru->filter['post_status = %s'])) { unset($this->hotaru->filter['post_status = %s']); }
+        // Undo the filter that limits results to either 'top', 'new' or archived (See submit.php -> sub_prepare_list())
+        if (isset($this->hotaru->vars['filter']['post_status = %s'])) { unset($this->hotaru->vars['filter']['post_status = %s']); }
+        if (isset($this->hotaru->vars['filter']['post_archived = %s'])) { unset($this->hotaru->vars['filter']['post_archived = %s']); }
         
-        if($full_index) {
+        // filter to top or new stories only:
+        $this->hotaru->vars['filter']['(post_status = %s OR post_status = %s)'] = array('top', 'new');
+        
+        if ($full_index) {
             $this->hotaru->vars['select'] = "*, MATCH(post_title, post_domain, post_url, post_content, post_tags) AGAINST ('" . $search_terms_clean . "') AS relevance";
             $this->hotaru->vars['orderby'] = "relevance DESC";        
             $this->hotaru->vars['filter']["MATCH (post_title, post_domain, post_url, post_content, post_tags) AGAINST (%s IN BOOLEAN MODE)"] = $search_terms_clean; 
         } else {
             $this->hotaru->vars['select'] = "*";
             $this->hotaru->vars['orderby'] = "post_date DESC";
-            $where = $this->explodeSearch('post_title', $search_terms_clean) . " OR ";
+            $this->hotaru->vars['filter_vars'] = array();
+            $where = $this->explodeSearch('post_title', $search_terms_clean, $values) . " OR ";
             $where .= $this->explodeSearch('post_url', $search_terms_clean) . " OR ";
             $where .= $this->explodeSearch('post_content', $search_terms_clean);
-            $this->hotaru->vars['filter'][$where] = "";
+            $where = '(' . $where . ')';
+            $this->hotaru->vars['filter'][$where] = $this->hotaru->vars['filter_vars'];
         }
         
         $prepared_search = array('select' => $this->hotaru->vars['select'], 'orderby' => $this->hotaru->vars['orderby'], 'filter' => $this->hotaru->vars['filter']);
@@ -170,7 +176,8 @@ class Search extends PluginFunctions
         $query = '';
         
         foreach(explode(' ', trim($search_terms)) as $word){
-            $query .= $column . " LIKE '%" . urlencode(" " . trim($this->db->escape($word)) . " ") . "%' OR ";
+            $query .= $column . " LIKE %s OR ";
+            array_push($this->hotaru->vars['filter_vars'], "%" . urlencode(" " . trim($this->db->escape($word)) . " ") . "%");
         }
         
         return substr($query, 0, -4);

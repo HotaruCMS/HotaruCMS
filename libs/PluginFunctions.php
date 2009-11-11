@@ -974,18 +974,24 @@ class PluginFunctions extends Plugin
     {
         if (!$folder) { $folder = $this->folder; }
         
-        if (!$this->hotaru->settings) { $this->getAllPluginSettings(); }
-        
-        // get settings from memory
-        foreach ($this->hotaru->settings as $item => $key) {
-            if (($key->plugin_folder == $folder) && ($key->plugin_setting == $setting)) {
-                    $value = $key->plugin_value;
+        if ($this->hotaru->isAdmin)
+        {
+            // In Admin. Let's pull settings from the database to avoid problems when saving in Plugin Settings:
+            $sql = "SELECT plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
+            $value = $this->db->get_var($this->db->prepare($sql, $folder, $setting));
+        }
+        else
+        {
+            // get all settings fro the database if we haven't already:
+            if (!$this->hotaru->settings) { $this->getAllPluginSettings(); }
+            
+            // get the settings we need from memory
+            foreach ($this->hotaru->settings as $item => $key) {
+                if (($key->plugin_folder == $folder) && ($key->plugin_setting == $setting)) {
+                        $value = $key->plugin_value;
+                }
             }
         }
-
-        /* old code to get setting directly from the database:
-        $sql = "SELECT plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
-        $value = $this->db->get_var($this->db->prepare($sql, $folder, $setting)); */
 
         if (isset($value)) { return $value; } else { return false; }
     }
