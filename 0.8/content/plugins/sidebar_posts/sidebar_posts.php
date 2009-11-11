@@ -90,7 +90,7 @@ class SidebarPosts extends PluginFunctions
             $output .= "<a href='" . $link . "' title='" . $this->lang["sidebar_posts_title_anchor_title"] . "'>" . $title . "</a></h2>\n"; 
                 
             $output .= "<ul class='sidebar_widget_body sidebar_posts_items'>\n";
-            $output .= $this->getSidebarPostItems($posts);
+            $output .= $this->getSidebarPostItems($posts, $type);
             $output .= "</ul>\n";
         }
         
@@ -167,12 +167,12 @@ class SidebarPosts extends PluginFunctions
      * @param array $posts 
      * return string $ouput
      */
-    public function getSidebarPostItems($posts = array())
+    public function getSidebarPostItems($posts = array(), $type = 'new')
     {
         $need_cache = false;
         
         // check for a cached version and use it if no recent update:
-        $output = $this->hotaru->smartCache('html', 'posts', 10);
+        $output = $this->hotaru->smartCache('html', 'posts', 10, '', $type);
         if ($output) {
             return $output;
         } else {
@@ -219,7 +219,7 @@ class SidebarPosts extends PluginFunctions
         }
         
         if ($need_cache) {
-            $this->hotaru->smartCache('html', 'posts', 10, $output); // make or rewrite the cache file
+            $this->hotaru->smartCache('html', 'posts', 10, $output, $type); // make or rewrite the cache file
         }
         
         return $output;

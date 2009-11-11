@@ -33,6 +33,7 @@ $lang["submit_form_url"] = "Source URL:";
 $lang["submit_form_title"] = "Title:";
 $lang["submit_form_content"] = "Description:";
 $lang["submit_form_instructions_1"] = "Enter a url to submit:";
+$lang["submit_form_post_without_link"] = "Post without a URL"; 
 $lang["submit_form_not_found"] = "No title found";
 $lang["submit_form_instructions_2"] = "Complete the fields below.";
 $lang['submit_form_subscribe'] = "Subscribe to comments";

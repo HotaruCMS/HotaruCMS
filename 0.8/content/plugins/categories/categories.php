@@ -339,7 +339,7 @@ class Categories extends PluginFunctions
      
     
     /**
-     * Checks is the url is a category->post name pair and displays the post
+     * Checks if the url is a category->post name pair and displays the post
      *
      * @return bool
      */

@@ -5,7 +5,7 @@
  * version: 0.8
  * folder: users
  * class: Users
- * hooks: hotaru_header, header_include, admin_header_include_raw, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_first, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, userbase_default_permissions, submit_pre_list
+ * hooks: hotaru_header, submit_hotaru_header_2, header_include, admin_header_include_raw, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_first, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, userbase_default_permissions, submit_pre_list
  *
  * PHP version 5
  *
@@ -101,7 +101,14 @@ class Users extends PluginFunctions
         
         // include language file
         $this->includeLanguage();
-        
+    }
+    
+
+    /**
+     * Set the pageType. Done here so it doesn't get overriden during Submit's hotaru_header function
+     */
+    public function submit_hotaru_header_2()
+    {
         // Under these conditions, we're looking at a user page - i.e. user posts filtered to popular, latest, etc.
         if ($username = $this->cage->get->testUsername('user')) {
             $this->hotaru->title = $username;

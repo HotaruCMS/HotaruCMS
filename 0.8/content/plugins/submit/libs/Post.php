@@ -34,29 +34,30 @@ class Post
     public $current_user;               // UserBase object
     
     protected $id = 0;
-    protected $origUrl = '';
-    protected $domain = '';              // the domain of the submitted url
-    protected $title = '';
-    protected $content = '';
-    protected $contentLength = 50;      // default min characters for content
-    protected $summary = '';
-    protected $summaryLength = 200;     // default max characters for summary
-    protected $status = 'unsaved';
-    protected $author = 0;
-    protected $url = '';
-    protected $date = '';
-    protected $subscribe = 0;
-    protected $postsPerPage = 10;
-    protected $allowableTags = '';
+    protected $origUrl          = '';
+    protected $domain           = '';       // the domain of the submitted url
+    protected $title            = '';
+    protected $content          = '';
+    protected $contentLength    = 50;      // default min characters for content
+    protected $summary          = '';
+    protected $summaryLength    = 200;     // default max characters for summary
+    protected $status           = 'unsaved';
+    protected $author           = 0;
+    protected $url              = '';
+    protected $date             = '';
+    protected $subscribe        = 0;
+    protected $postsPerPage     = 10;
+    protected $allowableTags    = '';
 
-    protected $templateName = '';
+    protected $templateName     = '';
             
-    protected $useLatest = false;       // Split posts into "Top" and "Latest" pages
-    protected $useSubmission = true;
-    protected $useAuthor = true;
-    protected $useDate = true;
-    protected $useContent = true;
-    protected $useSummary = true;
+    protected $useLatest        = false;    // Split posts into "Top" and "Latest" pages
+    protected $useSubmission    = true;
+    protected $useAuthor        = true;
+    protected $useDate          = true;
+    protected $useContent       = true;
+    protected $useSummary       = true;
+    protected $useLink          = true;    // users with permission can post without a link when false
 
     public $vars = array();
 
@@ -169,6 +170,8 @@ class Post
      */    
     public function addPost()
     {
+
+                
         $this->domain = get_domain($this->origUrl); // returns domain including http:// 
             
         $sql = "INSERT INTO " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_date = CURRENT_TIMESTAMP, post_subscribe = %d, post_updateby = %d";
@@ -182,6 +185,14 @@ class Post
                 
         $this->plugins->pluginHook('post_add_post');
         
+        // Now that the post is in the database with an ID and category assigned, we can get its url and update that field: 
+        if ($this->hotaru->post->origUrl == "self") {
+            $this->origUrl = $this->hotaru->url(array('page'=>$this->id)); // update the url with the real one
+            $this->domain = BASEURL; 
+            $sql = "UPDATE " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s WHERE post_id = %d";
+            $this->db->query($this->db->prepare($sql, urlencode($this->origUrl), urlencode($this->domain), $this->id));
+        }
+        
         return true;
     }
     
@@ -193,6 +204,12 @@ class Post
      */    
     public function updatePost()
     {
+        if (strstr($this->origUrl, BASEURL)) {
+            // original url contains our base url, so it must be an "editorial" post.
+            // Therefore, it's essential we rebuild this source url to match the updated post title to avoid errors:
+            $this->origUrl = $this->hotaru->url(array('page'=>$this->id)); // update the url with the real one
+        }
+        
         $parsed = parse_url($this->origUrl);
         if (isset($parsed['scheme'])){ $this->domain = $parsed['scheme'] . "://" . $parsed['host']; }
         
