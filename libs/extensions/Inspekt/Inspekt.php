@@ -1104,6 +1104,8 @@ class Inspekt
 
 		if ($result === 1) {
 			return true;
+		} elseif (strstr($value, "http://localhost")) { // allow urls from localhost
+		    return true;
 		} else {
 			return false;
 		}
