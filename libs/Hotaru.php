@@ -70,6 +70,7 @@ class Hotaru
             case 'admin':
                 $this->isAdmin = 'true';
                 $this->includeLanguagePack('admin');
+                $this->includeLanguagePack('main');
                 break;
             case 'install':
                 $this->includeLanguagePack('install');
@@ -84,6 +85,16 @@ class Hotaru
         
         // We needn't go any further if this is called from the Install script.
         if ($entrance == 'install' || $entrance == 'basic') { return false; }
+        
+        if ((SITE_OPEN == "false") && (!$this->current_user->loggedIn || $this->current_user->getPermission('can_access_admin') == 'no')) {
+            echo "<HTML>\n<HEAD>\n";
+            echo "<link rel='stylesheet' href='" . BASEURL . "content/themes/" . THEME . "css/style.css' type='text/css'>\n";
+            echo "</HEAD>\n<BODY>\n";
+            echo "<div id='site_closed'>\n";
+            echo $this->lang['main_hotaru_site_closed'];
+            echo "\n</div>\n</BODY>\n</HTML>\n";
+            die(); exit;
+        }
         
         $this->hotaruHeader($entrance);  // plugin hook method
     }
@@ -422,7 +433,14 @@ class Hotaru
     {
         $announcements = array();
         
-        // 1. "All plugins are currently disabled."
+        if (SITE_OPEN == "false") {
+            array_push(
+                $announcements, 
+                $this->lang['main_announcement_site_closed']
+            );
+        }
+        
+        // "All plugins are currently disabled."
         if (!$this->plugins->numActivePlugins()) {
             array_push(
                 $announcements, 
@@ -430,7 +448,6 @@ class Hotaru
             );
         }
 
-        // 2. User login and registration currently disabled.
         if (!is_array($announcements)) {
             return false;
         } else {

@@ -80,10 +80,11 @@ $lang["admin_news_on"] = "on";
 $lang["admin_news_read_more"] = "Read more";
 
 /* Announcements /class.hotaru.php */
-$lang['admin_announcement_delete_install'] = "<span style='color: #ff0000;'>Please delete the install folder before someone deletes your database!</span>";
-$lang['admin_announcement_plugins_disabled'] = "<span style='color: #ff0000;'>Go to Plugin Management to enable some plugins.</span>";
-$lang['admin_announcement_users_disabled'] = "<span style='color: #ff0000;'>Please enable the Users plugin in Plugin Management.</span>";
-$lang['admin_announcement_change_site_email'] = "<span style='color: #ff0000;'>Please change the site email address in the Settings page.</span>";
+$lang['admin_announcement_delete_install'] = "Please delete the install folder before someone deletes your database!";
+$lang['admin_announcement_plugins_disabled'] = "Go to Plugin Management to enable some plugins.";
+$lang['admin_announcement_users_disabled'] = "Please enable the Users plugin in Plugin Management.";
+$lang['admin_announcement_change_site_email'] = "Please change the site email address in the Settings page.";
+$lang['admin_announcement_site_closed'] = SITE_NAME . " is currently closed!";
 
 /* Plugins /class.plugins.php */
 $lang["admin_plugins_install_done"] = "Plugin successfully installed and activated";
@@ -119,6 +120,8 @@ $lang['admin_maintenance_optimize_success'] = "All database tables optimized";
 $lang['admin_maintenance_table_emptied'] = "Table emptied";
 $lang['admin_maintenance_table_deleted'] = "Table deleted";
 $lang['admin_maintenance_settings_removed'] = "Settings removed";
+$lang["admin_maintenance_site_closed"] = SITE_NAME . " will be closed next page view";
+$lang["admin_maintenance_site_opened"] = SITE_NAME . " will be opened next page view";
 
 /* Blocked List */
 $lang['admin_blocked_list_empty'] = "No value entered";
@@ -179,6 +182,11 @@ $lang["admin_theme_main_latest"] = "Latest from Hotaru CMS";
 /* maintenance */
 $lang["admin_theme_maintenance"] = "Maintenance";
 $lang["admin_theme_maintenance_title"] = "Hotaru Maintenance";
+$lang["admin_theme_maintenance_site"] = "Site:";
+$lang["admin_theme_maintenance_close_site"] = "Close " . SITE_NAME . " for maintenance";
+$lang["admin_theme_maintenance_open_site"] = "Open " . SITE_NAME . " to the public";
+$lang["admin_theme_maintenance_close_site_desc"] = "Only users with \"access admin\" permissions will be able to view the site.";
+$lang["admin_theme_maintenance_open_site_desc"] = "Finished maintenance? Allow everyone back in.";
 $lang["admin_theme_maintenance_cache"] = "Cache:";
 $lang["admin_theme_maintenance_database"] = "Database:";
 $lang["admin_theme_maintenance_plugin_settings"] = "Plugin settings:";

@@ -171,6 +171,14 @@ function upgrade_complete()
  */
 function do_upgrade($db)
 {
+    // add new SITE_OPEN setting
+    $sql = "SELECT settings_id FROM " . DB_PREFIX . "settings WHERE settings_name = %s";
+    $exists = $db->query($db->prepare($sql, 'SITE_OPEN'));
+    if (!$exists) {
+        $sql = "INSERT INTO " . DB_PREFIX . "settings (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $db->query($db->prepare($sql, 'SITE_OPEN', 'true', 'true', 'true/false'));
+    }
+        
     if (!$db->column_exists('users', 'user_ip')) {
         // add new user_ip field to Users table
         $sql = "ALTER TABLE " . DB_PREFIX . "users ADD user_ip varchar(32)  NOT NULL DEFAULT %d AFTER user_permissions";
