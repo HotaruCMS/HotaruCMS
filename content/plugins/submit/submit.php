@@ -418,11 +418,13 @@ class Submit extends PluginFunctions
         if ($this->hotaru->isPage('submit')) {
               
               if ($this->current_user->loggedIn) {
-                           
+
                   if (!$this->hotaru->post->useSubmission) {
                     return true;
                 }
-                  if ($this->cage->post->getAlpha('submit1') == 'true') {
+                    // getAlpha for Submit page, keyExists for EVB
+                  if (($this->cage->post->getAlpha('submit1') == 'true')
+                        || $this->cage->get->keyExists('url')) {
                     if (!$this->check_for_errors_1()) { 
                         // No errors found, proceed to step 2
                         if (!$this->hotaru->post->useLink) { 
@@ -430,14 +432,17 @@ class Submit extends PluginFunctions
                             $this->hotaru->vars['post_orig_title'] = "";
                         } else {
                             $this->hotaru->vars['post_orig_url'] = $this->cage->post->testUri('post_orig_url'); 
+                            if (!$this->hotaru->vars['post_orig_url']) {
+                                $this->hotaru->vars['post_orig_url'] = $this->cage->get->testUri('url'); // if EVB
+                            }
                             $this->hotaru->vars['post_orig_title'] = $this->hotaru->post->fetchTitle($this->hotaru->vars['post_orig_url']);
                         }
                         $this->hotaru->displayTemplate('submit_step2', 'submit');
                         return true;
                         
                     } else {
-                        // Errors found, go back to step 1 - use getMixedString because testUri returns false
-                        $this->hotaru->vars['post_orig_url'] = $this->cage->post->getMixedString2('post_orig_url');
+                        // Errors found, go back to step 1 
+                        $this->hotaru->vars['post_orig_url'] = $this->cage->post->testUri('post_orig_url');
                         $this->hotaru->displayTemplate('submit_step1', 'submit');
                         return true;
                     }
@@ -642,6 +647,11 @@ class Submit extends PluginFunctions
         }
         
         $post_orig_url_check = $this->cage->post->testUri('post_orig_url');
+        
+        if (!$post_orig_url_check) {
+            $post_orig_url_check = $this->cage->get->testUri('url'); // try to get a url from GET (in case of EVB)
+        }
+        
         if (!$post_orig_url_check) {
             // No url present...
             $this->hotaru->message = $this->lang['submit_form_url_not_present_error'];
@@ -704,7 +714,7 @@ class Submit extends PluginFunctions
         $error_url = 0;
         // Only for user with Edit Post permissions
         if ($edit) {
-            $orig_url_check = $this->cage->post->getMixedString2('post_orig_url'); // testUri would fail if source url is from localhost
+            $orig_url_check = $this->cage->post->testUri('post_orig_url'); 
             
             if (!$orig_url_check) {
                 // No url present...
@@ -782,7 +792,7 @@ class Submit extends PluginFunctions
             $this->hotaru->post->id = $this->cage->post->getInt('post_id');
             
             if ($this->hotaru->post->useLink || ($this->hotaru->post->id != 0)) {
-                $this->hotaru->post->origUrl = $this->cage->post->getMixedString2('post_orig_url');  // testUri would fail if url from localhost
+                $this->hotaru->post->origUrl = $this->cage->post->testUri('post_orig_url'); 
             } else {
                 $this->hotaru->post->origUrl = "self";
             }
@@ -806,7 +816,7 @@ class Submit extends PluginFunctions
             // Editing an existing post.
             $this->hotaru->post->id = $this->cage->post->getInt('post_id');
             $this->hotaru->post->readPost($this->hotaru->post->id);
-            $this->hotaru->post->origUrl = $this->cage->post->getMixedString2('post_orig_url'); // testUri would fail if url from localhost
+            $this->hotaru->post->origUrl = $this->cage->post->testUri('post_orig_url'); 
             $this->hotaru->post->title = $this->cage->post->noTags('post_title');
             $this->hotaru->post->url = $this->cage->post->getFriendlyUrl('post_title');
             $this->hotaru->post->content = sanitize($this->cage->post->getHtmLawed('post_content'), 2, $this->hotaru->post->allowableTags);
