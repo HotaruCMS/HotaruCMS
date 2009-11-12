@@ -320,18 +320,23 @@ class Admin
         
         $announcements = array();
         
-        // 1. Check if install file has been deleted
+        // Check if install file has been deleted
         $filename = INSTALL . 'install.php';
         if (file_exists($filename)) {
             array_push($announcements, $this->lang['admin_announcement_delete_install']);
         } 
         
-        // 2. Please enter a site email address
+        // Site is currently undergoing maintenance
+        if (SITE_OPEN == "false") {
+            array_push($announcements, $this->lang['admin_announcement_site_closed']);
+        }
+        
+        // Please enter a site email address
         if (SITE_EMAIL == "admin@mysite.com") {
             array_push($announcements, $this->lang['admin_announcement_change_site_email']);    
         } 
         
-        // 3. "Go to Plugin Management to enable some plugins"
+        // "Go to Plugin Management to enable some plugins"
         if (!$this->plugins->numActivePlugins()) {
             array_push($announcements, $this->lang['admin_announcement_plugins_disabled']);    
         }
@@ -415,6 +420,31 @@ class Admin
     {
         $sql = "DELETE FROM " . TABLE_SETTINGS . " WHERE admin_setting = %s";
         $this->db->query($this->db->prepare($sql, $setting));
+    }
+    
+    
+    /**
+     * Open or close the site for maintenance
+     *
+     * @param string $switch - 'open' or 'close'
+     */
+    public function openCloseSite($switch = 'open')
+    {
+        if ($switch == 'open') { 
+            // open
+            $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_value = %s WHERE settings_name = %s";
+            $this->db->query($this->db->prepare($sql, 'true', 'SITE_OPEN'));
+            $this->hotaru->message = $this->lang['admin_maintenance_site_opened'];
+            $this->hotaru->messageType = 'green';
+        } else {
+            //close
+            $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_value = %s WHERE settings_name = %s";
+            $this->db->query($this->db->prepare($sql, 'false', 'SITE_OPEN'));
+            $this->hotaru->message = $this->lang['admin_maintenance_site_closed'];
+            $this->hotaru->messageType = 'green';
+        }
+        
+        $this->hotaru->showMessage();
     }
     
     

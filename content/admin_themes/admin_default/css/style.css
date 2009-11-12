@@ -69,11 +69,10 @@ li a#navigation_active { text-decoration: underline; }
 }
 
 #announcement {
-	background-color: #ffff00;
+	background-color: #f8f8f8;
 	border-bottom: 1px solid #666;
 	padding: 0.4em;
 	text-align: center;
-	font-weight: bold;
 }
 
 .yui-gf {

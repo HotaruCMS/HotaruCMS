@@ -38,6 +38,8 @@
     
 <?php
     if ($action = $admin->cage->get->testAlnumLines('action')) {
+        if ($action == 'open') { $admin->openCloseSite('open'); }
+        if ($action == 'close') { $admin->openCloseSite('close'); }
         if ($action == 'clear_db_cache') { $admin->clearCache('db_cache'); }
         if ($action == 'clear_css_js_cache') { $admin->clearCache('css_js_cache'); }
         if ($action == 'clear_rss_cache') { $admin->clearCache('rss_cache'); }
@@ -50,6 +52,17 @@
 ?>
 
 <?php $admin->plugins->pluginHook('admin_maintenance_top'); ?>
+
+<h2><?php echo $admin->lang["admin_theme_maintenance_site"]; ?></h2>
+<ul>
+    <?php if (SITE_OPEN == "true") { ?>
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=close">
+        <?php echo $admin->lang["admin_theme_maintenance_close_site"]; ?></a> - <?php echo $admin->lang["admin_theme_maintenance_close_site_desc"]; ?></li>
+    <?php } else { ?>
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=open">
+        <?php echo $admin->lang["admin_theme_maintenance_open_site"]; ?></a> - <?php echo $admin->lang["admin_theme_maintenance_open_site_desc"]; ?></li>
+    <?php } ?>
+</ul>
 
 <br />
 <h2><?php echo $admin->lang["admin_theme_maintenance_cache"]; ?></h2>

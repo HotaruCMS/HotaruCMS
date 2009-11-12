@@ -60,6 +60,10 @@ function create_table($table_name)
         
         // Default settings:
         
+        // Friendly urls
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $db->query($db->prepare($sql, 'SITE_OPEN', 'true', 'true', 'true/false'));
+        
         // Site name
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
         $db->query($db->prepare($sql, 'SITE_NAME', 'Hotaru CMS', 'Hotaru CMS', ''));
