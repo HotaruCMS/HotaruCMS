@@ -96,7 +96,7 @@ class Category
         } else {
             // Fetch from database
             $cat_safe_name = $this->db->get_var($sql);
-            $this->hotaru->vars['tempCategoryCache'][$sql] = $cat;
+            $this->hotaru->vars['tempCategoryCache'][$sql] = $cat_safe_name;
         }
         
         return urldecode($cat_safe_name);
