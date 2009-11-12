@@ -38,10 +38,12 @@ $lang['main_hotaru_queries_time'] = "database queries and a page load time of";
 $lang['main_hotaru_seconds'] = "seconds.";
 $lang['main_hotaru_memory_usage1'] = "This page used ";
 $lang['main_hotaru_memory_usage2'] = " bytes of memory.";
+$lang['main_hotaru_site_closed'] = SITE_NAME . " is undergoing maintenance.<br />Please come back later.";
 
 /* Announcements */
 $lang['main_announcement_users_disabled'] = "Login and registration is currently disabled.";
 $lang['main_announcement_plugins_disabled'] = "All plugins are currently disabled.";
+$lang['main_announcement_site_closed'] = SITE_NAME . " is currently closed!";
 
 /* Times */
 $lang['main_times_days'] = "days";
