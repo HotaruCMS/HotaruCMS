@@ -195,6 +195,16 @@ class UserBase {
         }
     }
     
+    /**
+     * Give logged out user default permissions
+     */    
+    public function setLoggedOutUser()
+    {
+            $default_perms = $this->getDefaultPermissions();
+            unset($default_perms['options']);  // don't need this for individual users
+            $this->setAllPermissions($default_perms);
+    }
+    
     
     /**
      * Get basic user details

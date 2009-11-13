@@ -24,7 +24,7 @@
  * @link      http://www.hotarucms.org/
  */
 
-if ($hotaru->current_user->getPermission('can_search') == 'yes') { $disabled = ''; } else { $disabled = 'disabled'; }
+if ($hotaru->current_user->getPermission('can_search') == 'yes') { $disabled = ''; } else { $disabled = "onkeypress='return handleEnter(this, event)' disabled"; }
 if ($hotaru->cage->get->keyExists('search')) { $current_search = $hotaru->vars['orig_search']; } else { $current_search = $hotaru->lang['search_text']; }
 ?>
 

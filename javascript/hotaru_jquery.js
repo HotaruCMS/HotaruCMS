@@ -60,3 +60,30 @@ $(document).ready(function(){
         });  
  
 });
+
+
+// Not jQuery, but anyway... 
+
+/***********************************************
+* Disable "Enter" key in Form script- By Nurul Fadilah(nurul@REMOVETHISvolmedia.com)
+* This notice must stay intact for use
+* Visit http://www.dynamicdrive.com/ for full source code
+* Usage: <input type="text" onkeypress="return handleEnter(this, event)" id="" name="" value="" />
+***********************************************/
+
+function handleEnter (field, event) {
+	var keyCode = event.keyCode ? event.keyCode : event.which ? event.which : event.charCode;
+	if (keyCode == 13) {
+		/* The following lines move the cursor to the next form field which works but we don't need it and it throws 2 Firebug errors.
+		var i;
+		for (i = 0; i < field.form.elements.length; i++)
+			if (field == field.form.elements[i])
+				break;
+		i = (i + 1) % field.form.elements.length;
+		field.form.elements[i].focus();
+		*/
+		return false;
+	} 
+	else
+	return true;
+}
