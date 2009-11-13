@@ -103,9 +103,10 @@ class Post
      * Get all the settings for the current post
      *
      * @param int $post_id - Optional row from the posts table in the database
+     * @param array $post_row - a post already fetched from teh db, just needs reading
      * @return bool
      */    
-    public function readPost($post_id = 0)
+    public function readPost($post_id = 0, $post_row = NULL)
     {
         // Get settings from database if they exist...
         $submit_settings = $this->plugins->getSerializedSettings('submit');
@@ -141,6 +142,9 @@ class Post
         
         if ($post_id != 0) {
             $post_row = $this->getPost($post_id);
+        }
+        
+        if ($post_row) {
             $this->title = stripslashes(urldecode($post_row->post_title));
             $this->content = stripslashes(urldecode($post_row->post_content));
             $this->id = $post_row->post_id;

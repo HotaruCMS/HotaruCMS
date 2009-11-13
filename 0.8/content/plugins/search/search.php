@@ -129,6 +129,9 @@ class Search extends PluginFunctions
         $search_terms_clean = '';
         $full_index = true; // Do a full index (better) search if all terms are longer than 3 characters
         foreach($search_terms as $search_term) {
+            if ($this->isStopword($search_term)) {
+                continue; // don't include this in $search_terms_clean
+            }
             if (strlen(trim($search_term)) < 4) {
                 $full_index = false;
             }
@@ -176,8 +179,10 @@ class Search extends PluginFunctions
         $query = '';
         
         foreach(explode(' ', trim($search_terms)) as $word){
-            $query .= $column . " LIKE %s OR ";
-            array_push($this->hotaru->vars['filter_vars'], "%" . urlencode(" " . trim($this->db->escape($word)) . " ") . "%");
+            if ($word) {
+                $query .= $column . " LIKE %s OR ";
+                array_push($this->hotaru->vars['filter_vars'], "%" . urlencode(" " . trim($this->db->escape($word)) . " ") . "%");
+            }
         }
         
         return substr($query, 0, -4);

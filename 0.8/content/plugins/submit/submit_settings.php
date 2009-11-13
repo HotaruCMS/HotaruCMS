@@ -103,9 +103,11 @@ class SubmitSettings extends Submit
         echo $this->lang["submit_settings_posts_per_page"] . "<br /><br />\n";
         
         echo $this->lang["submit_settings_allowable_tags"] . " <input type='text' size=40 name='allowable_tags' value='" . $allowable_tags . "' /><br />";
-        echo $this->lang["submit_settings_allowable_tags_example"] . "\n";
+        echo $this->lang["submit_settings_allowable_tags_example"] . "<br />\n";
+        
+        $this->pluginHook('submit_settings_form2');
     
-        echo "<br /><br />\n";
+        echo "<br />\n";
         
         echo "<b>Submission Settings</b> (for users with 'member' roles)<br /><br />";
         

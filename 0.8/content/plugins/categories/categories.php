@@ -490,7 +490,7 @@ class Categories extends PluginFunctions
      
     
     /**
-     * Gets current tag settings from the database
+     * Gets current category settings from the database
      */
     public function submit_settings_get_values()
     {
@@ -506,7 +506,7 @@ class Categories extends PluginFunctions
     
     
     /**
-     * Add tags field to the submit settings form
+     * Add categories field to the submit settings form
      */
     public function submit_settings_form()
     {
@@ -515,7 +515,7 @@ class Categories extends PluginFunctions
     
     
     /**
-     * Save tag settings.
+     * Save category settings.
      */
     public function submit_save_settings()
     {

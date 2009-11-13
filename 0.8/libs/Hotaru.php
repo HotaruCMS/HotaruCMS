@@ -197,21 +197,30 @@ class Hotaru
         // Check for a cookie. If present then the user is logged in.
         $hotaru_user = $this->cage->cookie->testUsername('hotaru_user');
         
-        if((!$hotaru_user) || (!$this->cage->cookie->keyExists('hotaru_key'))) { return false; }
+        if((!$hotaru_user) || (!$this->cage->cookie->keyExists('hotaru_key'))) { 
+            $this->current_user->setLoggedOutUser();
+            return false; 
+        }
         
         $user_info=explode(":", base64_decode($this->cage->cookie->getRaw('hotaru_key')));
         
-        if (($hotaru_user != $user_info[0]) || (crypt($user_info[0], 22) != $user_info[1])) { return false; }
+        if (($hotaru_user != $user_info[0]) || (crypt($user_info[0], 22) != $user_info[1])) { 
+            $this->current_user->setLoggedOutUser();
+            return false; 
+        }
 
         $this->current_user->name = $hotaru_user;
         if ($hotaru_user) {
             $this->current_user->getUserBasic(0, $this->current_user->name);
             $this->current_user->loggedIn = true;
+        } else {
+            $this->current_user->setLoggedOutUser();
+            return false; 
         }
-        
+                
         return true;
     }
-    
+
     
     /**
      * check cookie and log in
@@ -919,7 +928,7 @@ class Hotaru
         // compare times (if there's $html, we don't want to return because we need to update the cache.
         if (($last_update >= (time() - $timeout*60)) && !$html) { return false; } // there's been a recent update so don't use the cache.
         
-        $cache_length = $timeout*60;   // seconds
+        $cache_length = $timeout*60;   // seconds - NOT USING THIS IN HTML CACHE
         $cache = CACHE . 'html_cache/';
         if ($label) { $label = '_' . $label; } 
         $file = $cache . $table . $label . ".cache";

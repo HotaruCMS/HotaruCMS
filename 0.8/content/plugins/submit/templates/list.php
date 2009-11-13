@@ -48,7 +48,7 @@ if ($stories && ($hotaru->pageType != "profile")) {
     $pg = $hotaru->cage->get->getInt('pg');
     $pagedResults = new Paginated($stories, $hotaru->post->postsPerPage, $pg);
     while($story = $pagedResults->fetchPagedRow()) {    //when $story is false loop terminates    
-        $hotaru->post->readPost($story->post_id);
+        $hotaru->post->readPost(0, $story);
         $user->getUserBasic($hotaru->post->author);
 ?>
 
