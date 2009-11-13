@@ -31,6 +31,8 @@
     
     <?php $hotaru->displayTemplate('post', 'submit') ?>
     
+    <?php $hotaru->plugins->pluginHook('submit_step3_pre_buttons'); ?>
+    
     <div id="submit_edit_confirm">
     
         <!-- EDIT BUTTON -->
@@ -47,4 +49,6 @@
         <input type='submit' name='submit' onclick="javascript:safeExit=true;" class='submit' value='<?php echo $hotaru->lang['submit_form_submit_confirm_button']; ?>' />
         </form>
     </div>
+    
+    <?php $hotaru->plugins->pluginHook('submit_step3_post_buttons'); ?>
     

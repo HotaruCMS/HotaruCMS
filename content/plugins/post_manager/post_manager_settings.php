@@ -208,7 +208,7 @@ class PostManagerSettings extends PostManager
             }
 
             // need to read the post into the Post object and store it in Hotaru (the url function needs it for friendly urls).
-            $p->readPost($post->post_id);
+            $p->readPost(0, $post);
             $this->hotaru->post = $p;
 
             $edit_link = BASEURL . "index.php?from=post_man&amp;page=edit_post&amp;post_id=" . $post->post_id; 
