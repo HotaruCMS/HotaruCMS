@@ -38,7 +38,7 @@ if (!isset($result) || !is_array($result)) {
                 $hotaru->displayTemplate('header');
             }
         ?>
-        <div id="ads160x600"><img src="<?php echo BASEURL . 'content/themes/default/images/ads160x600.jpg'; ?>" /></div>
+        <div id="ads160x600"><img src="<?php echo BASEURL . 'content/themes/' . THEME . '/images/ads160x600.jpg'; ?>" /></div>
         <div id="bd">
             <div id="yui-main"> 
             <?php if ($hotaru->sidebar) { // determines whether to show the sidebar or not ?>

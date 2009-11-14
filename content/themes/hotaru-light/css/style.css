@@ -174,14 +174,14 @@ input.submit {
 
 /* SIDEBAR */
 
-#sidebar { padding-left: 2.0em; padding-right: 0.95em; border-left:solid 1px #F0F0F0; border-top:solid 1px #F0F0F0;}
+#sidebar { padding-left: 0.95em; padding-right: 0.95em; border-left:solid 1px #F0F0F0; border-top:solid 1px #F0F0F0;}
 #sidebar ul { margin-bottom: 1.2em; }
 #sidebar ul li { padding: 0.1em; border-bottom: solid 1px #eee; }
 .sidebar_widget_head {font-style:italic; margin-top:1.2em; }
 
 /* SEARCH BOX */
 
-#search_form { padding: 0; text-align: right;}
+#search_form { margin-top: 1.0em; padding: 0; text-align: right;}
 #search_form input#search_input { padding: 0.2em; width: 12em; }
 
 /* FOOTER */
