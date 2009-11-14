@@ -24,122 +24,66 @@
  * @link      http://www.hotarucms.org/
  */
 
-// check if we're looking at a category
-if ($hotaru->cage->get->keyExists('category')) { 
-    $category = $hotaru->cage->get->noTags('category');
-    if (!is_numeric($category)) { 
-        require_once(PLUGINS . 'categories/libs/Category.php');
-        $cat = new Category($this->db);
-        $category = $cat->getCatId($category);
-    }
-} 
-
-// check if we're looking at a tag
-if ($hotaru->cage->get->keyExists('tag')) { 
-    $tag = $hotaru->cage->get->noTags('tag');
-} 
-
-// check if we're looking at a user
-if ($hotaru->cage->get->keyExists('user')) { 
-    $user = $hotaru->cage->get->testUsername('user');
-} 
-
-// check if we're looking at a sorted page
-if ($hotaru->cage->get->keyExists('sort')) { 
-    $sort = $hotaru->cage->get->testAlnumLines('sort');
-} 
-
-$pagename = $hotaru->getPageName();
 ?>
 
 <!-- SORT -->
 <div id="sort_box">
     <ul class="sort_menu">
     
-        <?php // POPULAR
-            if ($category) { $url = $hotaru->url(array('category'=>$category));
-             } elseif ($tag) { $url = $hotaru->url(array('tag'=>$tag));
-             } elseif ($user) { $url = $hotaru->url(array('page'=>'top', 'user'=>$user));
-             } else { $url = $hotaru->url(array()); } 
-        ?>
-        <li <?php if (($pagename == 'main' || $pagename == 'top') && !$sort && $hotaru->pageType != 'profile') { echo "class='active'"; } ?>>
-        <a href="<?php echo $url; ?>"><?php echo $hotaru->lang["vote_sort_recently_popular"]; ?></a></li>
+        <li <?php echo $hotaru->vars['popular_active']; ?>>
+            <a href="<?php echo $hotaru->vars['popular_link']; ?>">
+            <?php echo $hotaru->lang["vote_sort_recently_popular"]; ?></a>
+        </li>
+
+        <li <?php echo $hotaru->vars['upcoming_active']; ?>>
+            <a href="<?php echo $hotaru->vars['upcoming_link']; ?>">
+            <?php echo $hotaru->lang["vote_sort_upcoming"]; ?></a>
+        </li>
         
-        <?php // UPCOMING
-            if ($category) { $url = $hotaru->url(array('page'=>'upcoming', 'category'=>$category));
-             } elseif ($tag) { $url = $hotaru->url(array('page'=>'upcoming', 'tag'=>$tag));
-             } elseif ($user) { $url = $hotaru->url(array('page'=>'upcoming', 'user'=>$user));
-             } else { $url = $hotaru->url(array('page'=>'upcoming')); } ?>
-        <li <?php if ($pagename == 'upcoming' && !$sort) { echo "class='active'"; } ?>>
-        <a href="<?php echo $url; ?>"><?php echo $hotaru->lang["vote_sort_upcoming"]; ?></a></li>
+        <li <?php echo $hotaru->vars['latest_active']; ?>>
+            <a href="<?php echo $hotaru->vars['latest_link']; ?>">
+            <?php echo $hotaru->lang["vote_sort_latest"]; ?></a>
+        </li>
         
-        <?php // NEWEST
-            if ($category) { $url = $hotaru->url(array('page'=>'latest', 'category'=>$category));
-             } elseif ($tag) { $url = $hotaru->url(array('page'=>'latest', 'tag'=>$tag));
-             } elseif ($user) { $url = $hotaru->url(array('page'=>'latest', 'user'=>$user));
-             } else { $url = $hotaru->url(array('page'=>'latest')); } ?>
-        <li <?php if ($pagename == 'latest' && !$sort) { echo "class='active'"; } ?>>
-        <a href="<?php echo $url; ?>"><?php echo $hotaru->lang["vote_sort_latest"]; ?></a></li>
+        <li <?php echo $hotaru->vars['all_active']; ?>>
+            <a href="<?php echo $hotaru->vars['all_link']; ?>">
+            <?php echo $hotaru->lang["vote_sort_all"]; ?></a>
+        </li>
         
-        <?php // ALL
-            if ($category) { $url = $hotaru->url(array('page'=>'all', 'category'=>$category));
-             } elseif ($tag) { $url = $hotaru->url(array('page'=>'all', 'tag'=>$tag));
-             } elseif ($user) { $url = $hotaru->url(array('page'=>'all', 'user'=>$user));
-             } else { $url = $hotaru->url(array('page'=>'all')); } ?>
-        <li <?php if ($pagename == 'all' && !$sort) { echo "class='active'"; } ?>>
-        <a href="<?php echo $url; ?>"><?php echo $hotaru->lang["vote_sort_all"]; ?></a></li>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <?php echo $hotaru->lang["vote_sort_best_from"]; ?>
         
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <?php echo $hotaru->lang["vote_sort_best_from"]; ?>
+        <li <?php echo $hotaru->vars['top_24_hours__active']; ?>>
+            <a href="<?php echo $hotaru->vars['24_hours_link']; ?>">
+            <?php echo $hotaru->lang["vote_sort_top_1_day"]; ?></a>
+        </li>
         
-        <?php // 24 HOURS
-            if ($category) { $url = $hotaru->url(array('sort'=>'top-24-hours', 'category'=>$category));
-             } elseif ($tag) { $url = $hotaru->url(array('sort'=>'top-24-hours', 'tag'=>$tag));
-             } elseif ($user) { $url = $hotaru->url(array('sort'=>'top-24-hours', 'user'=>$user));
-             } else { $url = $hotaru->url(array('sort'=>'top-24-hours')); } ?>
-        <li <?php if ($sort == 'top-24-hours') { echo "class='active'"; } ?>>
-        <a href="<?php echo $url; ?>"><?php echo $hotaru->lang["vote_sort_top_1_day"]; ?></a></li>
-        
-        <!--
-        <?php // 48 HOURS
-            if ($category) { $url = $hotaru->url(array('sort'=>'top-48-hours', 'category'=>$category));
-             } elseif ($tag) { $url = $hotaru->url(array('sort'=>'top-48-hours', 'tag'=>$tag));
-             } elseif ($user) { $url = $hotaru->url(array('sort'=>'top-48-hours', 'user'=>$user));
-             } else { $url = $hotaru->url(array('sort'=>'top-48-hours')); } ?>
-        <li <?php if ($sort == 'top-48-hours') { echo "class='active'"; } ?>>
-        <a href="<?php echo $url; ?>"><?php echo $hotaru->lang["vote_sort_top_2_days"]; ?></a></li>
+        <!-- Doesn't fit in the default theme
+        <li <?php echo $hotaru->vars['top_48_hours_active']; ?>>
+            <a href="<?php echo $hotaru->vars['48_hours_link']; ?>">
+            <?php echo $hotaru->lang["vote_sort_top_2_days"]; ?></a>
+        </li>
         -->
         
-        <?php // 7 DAYS
-            if ($category) { $url = $hotaru->url(array('sort'=>'top-7-days', 'category'=>$category));
-             } elseif ($tag) { $url = $hotaru->url(array('sort'=>'top-7-days', 'tag'=>$tag));
-             } elseif ($user) { $url = $hotaru->url(array('sort'=>'top-7-days', 'user'=>$user));
-             } else { $url = $hotaru->url(array('sort'=>'top-7-days')); } ?>
-        <li <?php if ($sort == 'top-7-days') { echo "class='active'"; } ?>>
-        <a href="<?php echo $url; ?>"><?php echo $hotaru->lang["vote_sort_top_7_days"]; ?></a></li>
+        <li <?php echo $hotaru->vars['top_7_days_active']; ?>>
+            <a href="<?php echo $hotaru->vars['7_days_link']; ?>">
+            <?php echo $hotaru->lang["vote_sort_top_7_days"]; ?></a>
+        </li>
         
-        <?php // 30 DAYS
-            if ($category) { $url = $hotaru->url(array('sort'=>'top-30-days', 'category'=>$category));
-             } elseif ($tag) { $url = $hotaru->url(array('sort'=>'top-30-days', 'tag'=>$tag));
-             } elseif ($user) { $url = $hotaru->url(array('sort'=>'top-30-days', 'user'=>$user));
-             } else { $url = $hotaru->url(array('sort'=>'top-30-days')); } ?>
-        <li <?php if ($sort == 'top-30-days') { echo "class='active'"; } ?>>
-        <a href="<?php echo $url; ?>"><?php echo $hotaru->lang["vote_sort_top_30_days"]; ?></a></li>
+        <li <?php echo $hotaru->vars['top_30_days_active']; ?>>
+            <a href="<?php echo $hotaru->vars['30_days_link']; ?>">
+            <?php echo $hotaru->lang["vote_sort_top_30_days"]; ?></a>
+        </li>
         
-        <?php // 365 DAYS
-            if ($category) { $url = $hotaru->url(array('sort'=>'top-365-days', 'category'=>$category));
-             } elseif ($tag) { $url = $hotaru->url(array('sort'=>'top-365-days', 'tag'=>$tag));
-             } elseif ($user) { $url = $hotaru->url(array('sort'=>'top-365-days', 'user'=>$user));
-             } else { $url = $hotaru->url(array('sort'=>'top-365-days')); } ?>
-        <li <?php if ($sort == 'top-365-days') { echo "class='active'"; } ?>>
-        <a href="<?php echo $url; ?>"><?php echo $hotaru->lang["vote_sort_top_365_days"]; ?></a></li>
+        <li <?php echo $hotaru->vars['top_365_days_active']; ?>>
+            <a href="<?php echo $hotaru->vars['365_days_link']; ?>">
+            <?php echo $hotaru->lang["vote_sort_top_365_days"]; ?></a>
+        </li>
         
-        <?php // ALL TIME
-            if ($category) { $url = $hotaru->url(array('sort'=>'top-all-time', 'category'=>$category));
-             } elseif ($tag) { $url = $hotaru->url(array('sort'=>'top-all-time', 'tag'=>$tag));
-             } elseif ($user) { $url = $hotaru->url(array('sort'=>'top-all-time', 'user'=>$user));
-             } else { $url = $hotaru->url(array('sort'=>'top-all-time')); } ?>
-        <li <?php if ($sort == 'top-all-time') { echo "class='active'"; } ?>>
-        <a href="<?php echo $url; ?>"><?php echo $hotaru->lang["vote_sort_top_all_time"]; ?></a></li>
+        <li <?php echo $hotaru->vars['top_all_time_active']; ?>>
+            <a href="<?php echo $hotaru->vars['all_time_link']; ?>">
+            <?php echo $hotaru->lang["vote_sort_top_all_time"]; ?></a>
+        </li>
         
     </ul>
 </div>
