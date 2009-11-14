@@ -1,8 +1,8 @@
 <?php 
 /**
- * Theme name: default
+ * Theme name: hotaru-light
  * Template name: 404.php
- * Template author: Nick Ramsay
+ * Template author: carlo75
  *
  * PHP version 5
  *
