@@ -186,6 +186,7 @@ class Submit extends PluginFunctions
             }
         }
         $this->pluginHook('submit_hotaru_header_2');
+        $this->hotaru->title = stripslashes($this->hotaru->title);
     }
     
     
