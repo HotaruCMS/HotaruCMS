@@ -52,7 +52,10 @@ class Search extends PluginFunctions
         $this->includeLanguage();
         
         // Get page title
-        if ($this->cage->get->keyExists('search')) { $this->hotaru->title = $this->hotaru->pageToTitleCaps($this->cage->get->getMixedString2('search')); }
+        if ($this->cage->get->keyExists('search')) { 
+            $this->hotaru->title = stripslashes(htmlentities($this->cage->get->getMixedString2('search'),ENT_QUOTES,'UTF-8'));
+            $this->hotaru->title = $this->hotaru->pageToTitleCaps($this->hotaru->title);
+        }
     } 
     
     

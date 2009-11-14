@@ -50,8 +50,8 @@
             <?php echo $hotaru->lang["vote_sort_all"]; ?></a>
         </li>
         
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <?php echo $hotaru->lang["vote_sort_best_from"]; ?>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <?php // echo $hotaru->lang["vote_sort_best_from"]; // DOESN'T FIT IN HOTARU-LIGHT THEME ?>
         
         <li <?php echo $hotaru->vars['top_24_hours__active']; ?>>
             <a href="<?php echo $hotaru->vars['24_hours_link']; ?>">

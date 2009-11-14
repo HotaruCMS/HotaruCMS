@@ -362,10 +362,171 @@ class VoteSimple extends PluginFunctions
     public function submit_post_breadcrumbs()
     {
         if ($this->hotaru->isPage('submit2')) { return false; } // don't show sorting on Submit Confirm
+        
+        // exit if this isn't a page of type list, user or profile
         $page_type = $this->hotaru->pageType;
-        if ($page_type == 'list' || $page_type == 'user' || $page_type == 'profile') {
-            $this->hotaru->displayTemplate('vote_simple_sorting', 'vote_simple');
-        }
+        if ($page_type != 'list' && $page_type != 'user' && $page_type != 'profile') { return false; }
+        
+        // go set up the links
+        $this->setUpSortLinks();
+        
+        // display the sort links
+        $this->hotaru->displayTemplate('vote_simple_sorting', 'vote_simple');
+    }
+    
+    
+    /** 
+     * Prepare sort links
+     */
+    public function setUpSortLinks()
+    {
+        // check if we're looking at a category
+        if ($this->hotaru->cage->get->keyExists('category')) { 
+            $category = $this->hotaru->cage->get->noTags('category');
+            if (!is_numeric($category)) { 
+                require_once(PLUGINS . 'categories/libs/Category.php');
+                $cat = new Category($this->db);
+                $category = $cat->getCatId($category);
+            }
+        } 
+        
+        // check if we're looking at a tag
+        if ($this->hotaru->cage->get->keyExists('tag')) { 
+            $tag = $this->hotaru->cage->get->noTags('tag');
+        } 
+        
+        // check if we're looking at a user
+        if ($this->hotaru->cage->get->keyExists('user')) { 
+            $user = $this->hotaru->cage->get->testUsername('user');
+        } 
+        
+        // check if we're looking at a sorted page
+        if ($this->hotaru->cage->get->keyExists('sort')) { 
+            $sort = $this->hotaru->cage->get->testAlnumLines('sort');
+        } 
+        
+        $pagename = $this->hotaru->getPageName();
+        
+        // POPULAR LINK
+        if ($category) { $url = $this->hotaru->url(array('category'=>$category));
+         } elseif ($tag) { $url = $this->hotaru->url(array('tag'=>$tag));
+         } elseif ($user) { $url = $this->hotaru->url(array('page'=>'top', 'user'=>$user));
+         } else { $url = $this->hotaru->url(array()); } 
+        $this->hotaru->vars['popular_link'] = $url;
+         
+        // POPULAR ACTIVE OR INACTIVE
+        if (($pagename == 'main' || $pagename == 'top') && !$sort && $this->hotaru->pageType != 'profile') { 
+            $this->hotaru->vars['popular_active'] = "class='active'";
+        } else { $this->hotaru->vars['popular_active'] = ""; }
+        
+        // UPCOMING LINK
+        if ($category) { $url = $this->hotaru->url(array('page'=>'upcoming', 'category'=>$category));
+         } elseif ($tag) { $url = $this->hotaru->url(array('page'=>'upcoming', 'tag'=>$tag));
+         } elseif ($user) { $url = $this->hotaru->url(array('page'=>'upcoming', 'user'=>$user));
+         } else { $url = $this->hotaru->url(array('page'=>'upcoming')); }
+        $this->hotaru->vars['upcoming_link'] = $url;
+        
+        // UPCOMING ACTIVE OR INACTIVE
+        if ($pagename == 'upcoming' && !$sort) { 
+            $this->hotaru->vars['upcoming_active'] = "class='active'";
+        } else { $this->hotaru->vars['upcoming_active'] = ""; }
+        
+        // LATEST LINK
+        if ($category) { $url = $this->hotaru->url(array('page'=>'latest', 'category'=>$category));
+         } elseif ($tag) { $url = $this->hotaru->url(array('page'=>'latest', 'tag'=>$tag));
+         } elseif ($user) { $url = $this->hotaru->url(array('page'=>'latest', 'user'=>$user));
+         } else { $url = $this->hotaru->url(array('page'=>'latest')); }
+        $this->hotaru->vars['latest_link'] = $url;
+
+        // LATEST ACTIVE OR INACTIVE
+        if ($pagename == 'latest' && !$sort) { 
+            $this->hotaru->vars['latest_active'] = "class='active'";
+        } else { $this->hotaru->vars['latest_active'] = ""; }
+        
+        // ALL LINK
+        if ($category) { $url = $this->hotaru->url(array('page'=>'all', 'category'=>$category));
+         } elseif ($tag) { $url = $this->hotaru->url(array('page'=>'all', 'tag'=>$tag));
+         } elseif ($user) { $url = $this->hotaru->url(array('page'=>'all', 'user'=>$user));
+         } else { $url = $this->hotaru->url(array('page'=>'all')); }
+        $this->hotaru->vars['all_link'] = $url;
+
+        // ALL ACTIVE OR INACTIVE
+        if ($pagename == 'all' && !$sort) { 
+            $this->hotaru->vars['all_active'] = "class='active'";
+        } else { $this->hotaru->vars['all_active'] = ""; }
+        
+        // 24 HOURS LINK
+        if ($category) { $url = $this->hotaru->url(array('sort'=>'top-24-hours', 'category'=>$category));
+         } elseif ($tag) { $url = $this->hotaru->url(array('sort'=>'top-24-hours', 'tag'=>$tag));
+         } elseif ($user) { $url = $this->hotaru->url(array('sort'=>'top-24-hours', 'user'=>$user));
+         } else { $url = $this->hotaru->url(array('sort'=>'top-24-hours')); }
+        $this->hotaru->vars['24_hours_link'] = $url;
+
+        // 24 HOURS ACTIVE OR INACTIVE
+        if ($sort == 'top-24-hours') { 
+            $this->hotaru->vars['top_24_hours_active'] = "class='active'";
+        } else { $this->hotaru->vars['top_24_hours_active'] = ""; }
+        
+        // 48 HOURS LINK
+        if ($category) { $url = $this->hotaru->url(array('sort'=>'top-48-hours', 'category'=>$category));
+         } elseif ($tag) { $url = $this->hotaru->url(array('sort'=>'top-48-hours', 'tag'=>$tag));
+         } elseif ($user) { $url = $this->hotaru->url(array('sort'=>'top-48-hours', 'user'=>$user));
+         } else { $url = $this->hotaru->url(array('sort'=>'top-48-hours')); }
+        $this->hotaru->vars['48_hours_link'] = $url;
+
+        // 48 HOURS ACTIVE OR INACTIVE
+        if ($sort == 'top-48-hours') { 
+            $this->hotaru->vars['top_48_hours_active'] = "class='active'";
+        } else { $this->hotaru->vars['top_48_hours_active'] = ""; }
+        
+        // 7 DAYS LINK
+        if ($category) { $url = $this->hotaru->url(array('sort'=>'top-7-days', 'category'=>$category));
+         } elseif ($tag) { $url = $this->hotaru->url(array('sort'=>'top-7-days', 'tag'=>$tag));
+         } elseif ($user) { $url = $this->hotaru->url(array('sort'=>'top-7-days', 'user'=>$user));
+         } else { $url = $this->hotaru->url(array('sort'=>'top-7-days')); }
+        $this->hotaru->vars['7_days_link'] = $url;
+
+        // 7 DAYS ACTIVE OR INACTIVE
+        if ($sort == 'top-7-days') { 
+            $this->hotaru->vars['top_7_days_active'] = "class='active'";
+        } else { $this->hotaru->vars['top_7_days_active'] = ""; }
+        
+        // 30 DAYS LINK
+        if ($category) { $url = $this->hotaru->url(array('sort'=>'top-30-days', 'category'=>$category));
+         } elseif ($tag) { $url = $this->hotaru->url(array('sort'=>'top-30-days', 'tag'=>$tag));
+         } elseif ($user) { $url = $this->hotaru->url(array('sort'=>'top-30-days', 'user'=>$user));
+         } else { $url = $this->hotaru->url(array('sort'=>'top-30-days')); }
+        $this->hotaru->vars['30_days_link'] = $url;
+
+        // 30 DAYS ACTIVE OR INACTIVE
+        if ($sort == 'top-30-days') { 
+            $this->hotaru->vars['top_30_days_active'] = "class='active'";
+        } else { $this->hotaru->vars['top_30_days_active'] = ""; }
+        
+        // 365 DAYS LINK
+        if ($category) { $url = $this->hotaru->url(array('sort'=>'top-365-days', 'category'=>$category));
+         } elseif ($tag) { $url = $this->hotaru->url(array('sort'=>'top-365-days', 'tag'=>$tag));
+         } elseif ($user) { $url = $this->hotaru->url(array('sort'=>'top-365-days', 'user'=>$user));
+         } else { $url = $this->hotaru->url(array('sort'=>'top-365-days')); }
+        $this->hotaru->vars['365_days_link'] = $url;
+
+        // 365 DAYS ACTIVE OR INACTIVE
+        if ($sort == 'top-365-days') { 
+            $this->hotaru->vars['top_365_days_active'] = "class='active'";
+        } else { $this->hotaru->vars['top_365_days_active'] = ""; }
+        
+        // ALL TIME LINK
+        if ($category) { $url = $this->hotaru->url(array('sort'=>'top-all-time', 'category'=>$category));
+         } elseif ($tag) { $url = $this->hotaru->url(array('sort'=>'top-all-time', 'tag'=>$tag));
+         } elseif ($user) { $url = $this->hotaru->url(array('sort'=>'top-all-time', 'user'=>$user));
+         } else { $url = $this->hotaru->url(array('sort'=>'top-all-time')); }
+        $this->hotaru->vars['all_time_link'] = $url;
+        
+        // ALL TIME ACTIVE OR INACTIVE
+        if ($sort == 'top-all-time') { 
+            $this->hotaru->vars['top_all_time_active'] = "class='active'";
+        } else { $this->hotaru->vars['top_all_time_active'] = ""; }
+        
     }
 }
 
