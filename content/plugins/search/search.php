@@ -136,7 +136,7 @@ class Search extends PluginFunctions
                 $full_index = false;
             }
             if ($this->isStopword($search_term) == false) {
-                $search_terms_clean .= $search_term . " ";
+                $search_terms_clean .= trim($this->db->escape($search_term)) . " ";
             }
         }
         
