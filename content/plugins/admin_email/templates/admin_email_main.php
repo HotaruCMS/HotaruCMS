@@ -1,8 +1,6 @@
-<?php 
+<?php
 /**
- * Theme name: hotaru-light
- * Template name: footer.php
- * Template author: carlo75
+ * Disqus Footer
  *
  * PHP version 5
  *
@@ -28,21 +26,17 @@
 
 ?>
 
-    <div id="ft">
-        <?php 
-            $hotaru->plugins->pluginHook('footer');
-        
-            // Link to forums...
-            echo "<p>" . $hotaru->lang["main_theme_footer_brought_by"];
-            echo " <a href='http://hotarucms.org'>Hotaru CMS</a> ";
-            echo $hotaru->lang["main_theme_footer_open_source"] . "</p>";
-        
-            $hotaru->showQueriesAndTime();
-        ?>
-    </div> <!-- close "ft" -->
-</div> <!-- close "yui-t7 first" -->
-
-<?php $hotaru->plugins->pluginHook('pre_close_body'); ?>
-
-</body>
-</html>
+    <script type="text/javascript">
+    // <![CDATA[
+        (function() {
+            var links = document.getElementsByTagName('a');
+            var query = '?';
+            for (var i = 0; i < links.length; i++) {
+                if (links[i].href.indexOf('#disqus_thread') >= 0) {
+                    query += 'url' + i + '=' + encodeURIComponent(links[i].href) + '&';
+                }
+            }
+            document.write('<script type="text/javascript" src="http://disqus.com/forums/<?php echo $hotaru->vars['shortname']; ?>/get_num_replies.js' + query + '"></' + 'script>');
+        })();
+    //]]>
+    </script>

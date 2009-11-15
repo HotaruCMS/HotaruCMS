@@ -1,6 +1,6 @@
 <?php
 /**
- * The UserFunctions class contains some useful methods when using a UserFunctions
+ * The UserFunctions class contains some more useful methods for working with users
  *
  * PHP version 5
  *
@@ -113,6 +113,54 @@ class UserFunctions extends UserBase
         }
         
         return true;
+    }
+    
+
+    /**
+     * Get the ids and names of all users or those with a specified role, sorted alphabetically
+     *
+     * @return array
+     */
+    public function userIdNameList($role = '')
+    {
+        if ($role) { 
+            $sql = "SELECT user_id, user_username FROM " . TABLE_USERS . " WHERE user_role = %s ORDER BY user_username ASC";
+            $results = $this->db->get_results($this->db->prepare($sql, $role));
+        } else {
+            $sql = "SELECT user_id, user_username FROM " . TABLE_USERS . $where . " ORDER BY user_username ASC";
+            $results = $this->db->get_results($sql);
+        }
+        
+        return $results;
+    }
+  
+    
+    /**
+     * Get full details of all users or batches of users, sorted alphabetically
+     *
+     * @return array
+     */
+    public function userListFull($id_array = array(), $start = 0, $range = 0)
+    {
+        if (!$id_array) {
+            // get all users
+            $sql = "SELECT * FROM " . TABLE_USERS . " ORDER BY user_username ASC";
+            $results = $this->db->get_results($sql);
+        } else {
+            // for grabbing 
+            if ($range) { $limit = " LIMIT " . $start . ", " . $range; }
+            $sql = "SELECT * FROM " . TABLE_USERS . " WHERE ";
+            for ($i=0; $i < count($id_array); $i++) {
+                $sql .= "user_id = %d OR ";
+            }
+            $sql = rstrtrim($sql, "OR "); // strip trailing OR
+            $sql .= " ORDER BY user_username ASC" . $limit;
+
+            $prepare_array[0] = $sql;
+            $prepare_array = array_merge($prepare_array, $id_array);
+            $results = $this->db->get_results($this->db->prepare($prepare_array));
+        }
+        return $results;
     }
 }
 
