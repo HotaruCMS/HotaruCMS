@@ -6,9 +6,9 @@
  * folder: search
  * class: Search
  * requires: submit 1.4, sidebar_widgets 0.5
- * hooks: install_plugin, hotaru_header, header_include, post_list_filter, userbase_default_permissions
+ * hooks: install_plugin, hotaru_header, header_include, post_list_filter, userbase_default_permissions, search_box
  *
- * Usage: Add <?php $hotaru->plugins->pluginHook('sidebar_widget_search'); ?> to your theme, wherever you want to the "Search" form.
+ * Usage: Add <?php $hotaru->plugins->pluginHook('search_box'); ?> to your theme, wherever you want the search box.
  *
  * PHP version 5
  *
@@ -57,6 +57,15 @@ class Search extends PluginFunctions
             $this->hotaru->title = $this->hotaru->pageToTitleCaps($this->hotaru->title);
         }
     } 
+    
+
+    /**
+     * Displays "Search!" wherever the plugin hook is.
+     */
+    public function search_box()
+    {
+        $this->hotaru->displayTemplate('search_box', 'search');
+    }
     
     
     /**
