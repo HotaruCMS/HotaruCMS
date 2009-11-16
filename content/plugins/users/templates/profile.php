@@ -25,6 +25,10 @@
  */
 
 $profile = $hotaru->vars['profile'];
+
+//defaults:
+    if (!isset($profile['bio'])) { $profile['bio'] = $hotaru->lang['users_profile_default_bio']; }
+    $hotaru->plugins->pluginHook('user_profile_defaults'); 
 ?>
 
 <div id="profile">

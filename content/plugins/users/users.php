@@ -5,7 +5,7 @@
  * version: 0.8
  * folder: users
  * class: Users
- * hooks: hotaru_header, submit_hotaru_header_2, header_include, admin_header_include_raw, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_first, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, userbase_default_permissions, submit_pre_list, users_edit_profile_save
+ * hooks: hotaru_header, submit_hotaru_header_2, header_include, admin_header_include_raw, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_first, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, userbase_default_permissions, submit_pre_list, users_edit_profile_save, user_settings_save
  *
  * PHP version 5
  *
@@ -119,6 +119,10 @@ class Users extends PluginFunctions
         if ($this->hotaru->isPage('main') && $this->cage->get->keyExists('user') && !$this->cage->get->keyExists('sort')) {
             $this->hotaru->pageType = 'profile';
         }
+        
+        require_once(PLUGINS . 'users/libs/UserFunctions.php');
+        $uf = new UserFunctions($this->hotaru);
+        $this->current_user->vars['settings'] = $uf->getProfileSettingsData('user_settings', $this->current_user->id);
     }
 
     
@@ -239,7 +243,7 @@ class Users extends PluginFunctions
             
             require_once(PLUGINS . 'users/libs/UserFunctions.php');
             $uf = new UserFunctions($this->hotaru);
-            $this->hotaru->vars['profile'] = $uf->getProfileData($this->hotaru->user->id);
+            $this->hotaru->vars['profile'] = $uf->getProfileSettingsData('user_profile', $this->hotaru->user->id);
             
             $this->hotaru->displayTemplate('profile', 'users');
         }
@@ -281,7 +285,7 @@ class Users extends PluginFunctions
                     require_once(PLUGINS . 'users/libs/UserFunctions.php');
                     $uf = new UserFunctions($this->hotaru);
                     $userid = $this->current_user->getUserIdFromName($this->hotaru->vars['username']);
-                    $this->hotaru->vars['profile'] = $uf->getProfileData($userid);
+                    $this->hotaru->vars['profile'] = $uf->getProfileSettingsData('user_profile', $userid);
                     $this->hotaru->displayTemplate('edit_profile', 'users');
                 } else {
                     $this->hotaru->messages[$this->lang["access_denied"]] = 'red';
@@ -291,7 +295,11 @@ class Users extends PluginFunctions
             } elseif ($this->hotaru->isPage('user-settings')) {
                 $this->hotaru->vars['username'] = $this->cage->get->testUsername('user');
                 if (($this->current_user->name == $this->hotaru->vars['username'])
-                    || ($this->current_user->getPermission('can_access_admin') == 'yes')) { 
+                    || ($this->current_user->getPermission('can_access_admin') == 'yes')) {
+                    require_once(PLUGINS . 'users/libs/UserFunctions.php');
+                    $uf = new UserFunctions($this->hotaru);
+                    $userid = $this->current_user->getUserIdFromName($this->hotaru->vars['username']);
+                    $this->hotaru->vars['settings'] = $uf->getProfileSettingsData('user_settings', $userid);
                     $this->hotaru->displayTemplate('user_settings', 'users');
                 } else {
                     $this->hotaru->messages[$this->lang["access_denied"]] = 'red';
@@ -331,6 +339,9 @@ class Users extends PluginFunctions
                 $this->hotaru->showMessages();
                 return true;
             } else {
+                $this->hotaru->message = $this->lang['users_please_log_in'];
+                $this->hotaru->messageType = "red";
+                $this->hotaru->showMessage();
                 return false;
             }    
         }
@@ -861,11 +872,30 @@ class Users extends PluginFunctions
         require_once(PLUGINS . 'users/libs/UserFunctions.php');
         $uf = new UserFunctions($this->hotaru);
         
-        $uf->saveProfileData($profile, $userid);
+        $uf->saveProfileSettingsData($profile, 'user_profile', $userid);
         
         $this->hotaru->message = $this->lang["users_profile_edit_saved"] . "<br />\n";
         $this->hotaru->message .= "<a href='" . $this->hotaru->url(array('user'=>$username)) . "'>";
         $this->hotaru->message .= $this->lang["users_profile_edit_view_profile"] . "</a>\n";
+        $this->hotaru->messageType = "green";
+    }
+    
+    
+    /**
+     * Save settings data (from hook in user_settings.php)
+     */
+    public function user_settings_save($vars)
+    {
+        $username = $vars[0];
+        $settings = $vars[1];
+        $userid = $this->current_user->getUserIdFromName($this->hotaru->vars['username']);
+        
+        require_once(PLUGINS . 'users/libs/UserFunctions.php');
+        $uf = new UserFunctions($this->hotaru);
+        
+        $uf->saveProfileSettingsData($settings, 'user_settings', $userid);
+        
+        $this->hotaru->message = $this->lang["users_settings_saved"] . "<br />\n";
         $this->hotaru->messageType = "green";
     }
     

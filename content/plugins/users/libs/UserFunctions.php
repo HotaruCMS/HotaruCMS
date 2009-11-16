@@ -133,6 +133,25 @@ class UserFunctions extends UserBase
         
         return $results;
     }
+    
+    
+    /**
+     * Get the ids and names of all users or those with a specified role, sorted alphabetically
+     *
+     * @return array
+     */
+    public function userSettingsList($userid = 0)
+    {
+        if ($userid) { 
+            $settings = $this->getProfileSettingsData($type = 'user_settings', $userid);
+            return $settings;
+        } else {
+            $sql = "SELECT usermeta_userid, usermeta_value FROM " . DB_PREFIX . "usermeta WHERE usermeta_key = %s";
+            $results = $this->db->get_results($this->db->prepare($sql, 'user_settings'));
+        }
+        
+        return $results;
+    }
   
     
     /**
@@ -165,17 +184,17 @@ class UserFunctions extends UserBase
     
     
     /**
-     * Get a user's profile data
+     * Get a user's profile or settings data
      *
      * @return array|false
      */
-    public function getProfileData($userid = 0)
+    public function getProfileSettingsData($type = 'user_profile', $userid = 0, $save = false)
     {
         if (!$userid) { $userid = $this->current_user->id; }
 
-        $query = "SELECT usermeta_value FROM " . TABLE_USERMETA . " WHERE usermeta_userid = %d AND usermeta_key = %s";
-        $sql = $this->db->prepare($query, $userid, 'profile_data');
-        
+        $query = "SELECT usermeta_value FROM " . DB_PREFIX . "usermeta WHERE usermeta_userid = %d AND usermeta_key = %s";
+        $sql = $this->db->prepare($query, $userid, $type);
+
         if (isset($this->hotaru->vars[$sql])) { 
             $result = $this->hotaru->vars[$sql]; 
         } else {
@@ -183,30 +202,60 @@ class UserFunctions extends UserBase
             $this->hotaru->vars[$sql] = $result;    // cache result
         }
         
-        if ($result) { $result = unserialize($result); return $result; } else { return false; }
+        /* when saving, we just want to test if settings already exist. 
+           Returning the defaults, looks like they exist when they don't,
+           so we don't return the defaults when saving. */
+           
+        if ($result) { 
+            $result = unserialize($result);
+        } elseif (($type == 'user_settings') && !$save) { 
+            $result = $this->getDefaultSettings();
+        } else {
+            return false;
+        }
+        
+        return $result; 
     }
     
     /**
-     * Save a user's profile data
+     * Save a user's profile or settings data
      *
      * @return array|false
      */
-    public function saveProfileData($profile = array(), $userid = 0)
+    public function saveProfileSettingsData($data = array(), $type = 'user_profile', $userid = 0)
     {
-        if (!$profile) { return false; }
+        if (!$data) { return false; }
         if (!$userid) { $userid = $this->current_user->id; }
 
-        $result = $this->getProfileData($userid);
+        $result = $this->getProfileSettingsData($type, $userid, true);
         
         if (!$result) {
             $sql = "INSERT INTO " . TABLE_USERMETA . " (usermeta_userid, usermeta_key, usermeta_value, usermeta_updateby) VALUES(%d, %s, %s, %d)";
-            $this->db->get_row($this->db->prepare($sql, $userid, 'profile_data', serialize($profile), $this->current_user->id));
+            $this->db->get_row($this->db->prepare($sql, $userid, $type, serialize($data), $this->current_user->id));
         } else {
             $sql = "UPDATE " . TABLE_USERMETA . " SET usermeta_value = %s, usermeta_updateby = %d WHERE usermeta_userid = %d AND usermeta_key = %s";
-            $this->db->get_row($this->db->prepare($sql, serialize($profile), $this->current_user->id, $userid, 'profile_data'));
+            $this->db->get_row($this->db->prepare($sql, serialize($data), $this->current_user->id, $userid, $type));
         }
         
         return true;
+    }
+    
+
+    /**
+     * Get the default user settings
+     *
+     * @return array
+     */
+    public function getDefaultSettings()
+    {
+        $settings['admin_notify']   = "checked"; 
+        $settings['new_tab']        = "";
+        
+        $this->vars['user_default_settings'] = $settings;
+        $this->hotaru->plugins->pluginHook('user_default_settings');
+        $settings = $this->vars['user_default_settings'];
+        
+        return $settings;
     }
 }
 

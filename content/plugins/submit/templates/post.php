@@ -26,6 +26,7 @@
 
 $user = new UserBase($hotaru);
 $user->getUserBasic($hotaru->post->author);
+if ($hotaru->current_user->vars['settings']['new_tab']) { $target = 'target="_blank"'; }
 if (strstr($hotaru->post->origUrl, BASEURL)) { $editorial = true; } // editorial (story with an internal link)
 ?>
 
@@ -56,7 +57,7 @@ if (strstr($hotaru->post->origUrl, BASEURL)) { $editorial = true; } // editorial
         
             <div class="show_post_title">
                 <?php if (!$editorial) { ?> 
-                    <a href='<?php echo $hotaru->post->origUrl; ?>'><?php echo $hotaru->post->title; ?></a>
+                    <a href='<?php echo $hotaru->post->origUrl; ?>' <?php echo $target; ?>><?php echo $hotaru->post->title; ?></a>
                 <?php } else { ?>
                     <?php echo $hotaru->post->title; ?>
                 <?php } ?>

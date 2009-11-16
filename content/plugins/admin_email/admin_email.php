@@ -47,6 +47,7 @@ class adminEmail extends PluginFunctions
         if (!isset($admin_email_settings['admin_email_subject'])) { $admin_email_settings['admin_email_subject'] = ''; }
         if (!isset($admin_email_settings['admin_email_body'])) { $admin_email_settings['admin_email_body'] = ''; }
         if (!isset($admin_email_settings['admin_email_send_self'])) { $admin_email_settings['admin_email_send_self'] = ''; }
+        if (!isset($admin_email_settings['admin_email_send_opted_out'])) { $admin_email_settings['admin_email_send_opted_out'] = ''; }
         if (!isset($admin_email_settings['admin_email_simulation'])) { $admin_email_settings['admin_email_simulation'] = ''; }
         if (!isset($admin_email_settings['admin_email_id_list'])) { $admin_email_settings['admin_email_id_list'] = serialize(array()); }
         
@@ -79,6 +80,7 @@ class adminEmail extends PluginFunctions
 
         $recipients = unserialize($admin_email_settings['admin_email_recipients']);
         $send_self = $admin_email_settings['admin_email_send_self'];
+        $send_opted_out = $admin_email_settings['admin_email_send_opted_out'];
         
         // make recipients an array:
         if (is_object($recipients)) { 
@@ -107,6 +109,27 @@ class adminEmail extends PluginFunctions
         
         // complete list of user ids for each recipient
         $id_list = array_merge($id_list, $recipients);
+        
+        // if not force sending to users who have opted out of getting admin emails, remove them now:
+        if (!$send_opted_out) {
+            // we need to remove anyone who has opted out of emails from admin.
+            // First get the user_settings for every user on the site with SAVED settings:
+            $all_settings = $uf->userSettingsList();
+            
+            // Next, make a list of opted out users (by id)
+            $opted_out = array();
+            if ($all_settings) {
+                foreach ($all_settings as $set) {
+                    $u_settings = unserialize($set->usermeta_value);
+                    if (!$u_settings['admin_notify']) {
+                        array_push($opted_out, $set->usermeta_userid);
+                    }
+                }
+            }
+            
+            // strip opted out users from $recipients
+            $id_list = array_diff($id_list, $opted_out);
+        }
         
         // if sending a copy to yourself, add your id to the list
         if ($send_self) { array_push($id_list, $this->current_user->id); }
@@ -159,13 +182,18 @@ class adminEmail extends PluginFunctions
             $batches = ceil(count($id_list) / $batch_size);
             $users = $uf->userListFull($id_list, $start, $batch_size); // batches returned alphabetically
         }
-        
-        if(!$users) { echo "FINISHED!"; exit; }
-        
+                
         if ($simulation) { 
             echo "<p style='color: red;'><b>" . $this->lang["admin_email_simulation_mode"] . "</b></p>\n";
         } else {
             echo "<p style='color: blue;'><b>" . $this->lang["admin_email_real_mode"] . "</b></p>\n";
+        }
+        
+        if(!$users) { 
+            echo "<p>" . $this->lang["admin_email_no_recipients"] . "</p>\n"; 
+            echo "<p><a href='" . BASEURL . "admin_index.php?page=plugin_settings&plugin=admin_email&status=done'>";
+            echo $this->lang['admin_email'] . "</a></p>\n"; 
+            exit; 
         }
         
         echo "<p><b>" . $this->lang["admin_email_email_batch"] . $batch . "/" . $batches . "</b></p>\n";
@@ -177,7 +205,8 @@ class adminEmail extends PluginFunctions
             $message = preg_replace("#(\r\n|\r|\n)#s", $delimiter, $body);
             $message .= " \r\n\r\n";
             $message .= $this->lang['admin_email_pre_remove'] . "\r\n";
-            $message .= $this->lang['admin_email_remove'];
+            $message .= $this->lang['admin_email_remove'] . "\r\n";
+            $message .= BASEURL . "index.php?page=user-settings&user=" . $recipient->user_username;
             $from = SITE_EMAIL; // Send_From_Email is admin
             $to = $recipient->user_email;  
             $headers = "From: " . $from . "\r\nReply-To: " . $from . "\r\nX-Priority: 3\r\n";

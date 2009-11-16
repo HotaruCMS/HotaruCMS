@@ -25,6 +25,42 @@
  */
 
 $username = $hotaru->vars['username']; // username
+$settings = $hotaru->vars['settings']; // saved settings data
+
+// get updated fields. 
+if ($hotaru->cage->post->getAlpha('updated_settings') == 'true') {
+
+    // Emails from Admins:
+    if ($hotaru->cage->post->getAlpha('admin_notify') == 'yes') { 
+        $settings['admin_notify'] = "checked"; 
+    } else { 
+        $settings['admin_notify'] = "";
+    }
+    
+    // Open posts in a new tab:
+    if ($hotaru->cage->post->keyExists('new_tab') == 'yes') { 
+        $settings['new_tab'] = "checked";
+    } else { 
+        $settings['new_tab'] = "";
+    }
+    
+    // Add your own $profile['something'] stuff here. Use Inspekt: http://hotarucms.org/showpost.php?p=20&postcount=2
+    
+    $hotaru->vars['settings'] = $settings;
+    $hotaru->plugins->pluginHook('user_settings_pre_save'); 
+    $settings = $hotaru->vars['settings'];
+        
+    // this hook does the actual saving. It can onlbe used by the Users plugin
+    $hotaru->plugins->pluginHook('user_settings_save', true, 'users', array($username, $settings)); 
+} 
+
+// set radio buttons:
+if ($settings['admin_notify']) { $an_yes = "checked"; $an_no = ""; } else { $an_yes = ""; $an_no = "checked"; }
+if ($settings['new_tab']) { $nt_yes = "checked"; $nt_no = ""; } else { $nt_yes = ""; $nt_no = "checked"; }
+
+$hotaru->vars['settings'] = $settings;
+$hotaru->plugins->pluginHook('user_settings_fill_form'); 
+
 ?>
     
     <div id='breadcrumbs'><a href='<?php echo BASEURL; ?>'><?php echo $hotaru->lang["users_home"]; ?></a> 
@@ -35,11 +71,27 @@ $username = $hotaru->vars['username']; // username
     
     <h2><?php echo $hotaru->lang["users_settings"]; ?>: <?php echo $username; ?></h2>
     
-    <?php echo $hotaru->showMessages(); ?>
+    <?php echo $hotaru->showMessage(); ?>
 
     <form name='user_settings_form' action='<?php echo $hotaru->url(array('page'=>'user-settings', 'user'=>$username)); ?>' method='post'>    
     <table>
+        <tr>
+            <!-- ACCEPT EMAIL FROM ADMINS? -->
+            <td><?php echo $hotaru->lang['users_settings_email_from_admin']; ?></td>
+            <td><input type="radio" name="admin_notify" value="yes" <?php echo $an_yes; ?>> <?php echo $hotaru->lang['users_settings_yes']; ?> &nbsp;&nbsp;
+            <input type="radio" name="admin_notify" value="no" <?php echo $an_no; ?>> <?php echo $hotaru->lang['users_settings_no']; ?></td>
+        </tr>
 
+        <tr>
+            <!-- OPEN POSTS IN A NEW TAB? -->
+            <td><?php echo $hotaru->lang['users_settings_open_new_tab']; ?></td>
+            <td><input type="radio" name="new_tab" value="yes" <?php echo $nt_yes; ?>> <?php echo $hotaru->lang['users_settings_yes']; ?> &nbsp;&nbsp;
+            <input type="radio" name="new_tab" value="no" <?php echo $nt_no; ?>> <?php echo $hotaru->lang['users_settings_no']; ?></td>
+        </tr>
+
+        <?php $hotaru->plugins->pluginHook('user_settings_extra_settings'); ?>
+        
     <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $hotaru->lang['users_settings_update']; ?>' /></td></tr>
-    </table>    
+    </table>
+    <input type='hidden' name='updated_settings' value='true' />
     </form>

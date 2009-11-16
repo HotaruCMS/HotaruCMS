@@ -30,6 +30,7 @@ $lang["admin_email_choose_recipients"] = "Select the recipients from the list bo
 $lang["admin_email_batch_size"] = "Size of each batch of emails <small>(default: 20)</small>";
 $lang["admin_email_pause"] = "Seconds delay between sending batches <small>(default: 10)</small>";
 $lang["admin_email_send_to_self"] = "Send a copy to yourself";
+$lang["admin_email_send_to_opted_out"] = "Include users who have opted out of receiving admin emails";
 $lang["admin_email_send"] = "Send";
 $lang["admin_email_sent"] = "Emails sent!";
 $lang["admin_email_simulated"] = "Simulation completed";
@@ -43,7 +44,7 @@ $lang["admin_email_error_subject"] = "Error: No email subject.";
 $lang["admin_email_error_body"] = "Error: No email body.";
 $lang["admin_email_error_recipients"] = "Error: No recipients selected.";
 $lang["admin_email_pre_remove"] = "-----------------------";
-$lang["admin_email_remove"] = "You have received this email because you are registered at " . SITE_NAME .".";
+$lang["admin_email_remove"] = "You have received this email because you are registered at " . SITE_NAME .". You can opt out of receiving these emails from your settings page: ";
 $lang["admin_email_simulation_mode"] = "Simulation Mode";
 $lang["admin_email_real_mode"] = "Real Mode";
 $lang["admin_email_sent_to"] = "Email sent to ";
@@ -58,5 +59,6 @@ $lang["admin_email_after_real"] = "All emails have been sent. Return to ";
 $lang["admin_email_after_real2"] = ". Your settings and message were saved so you can use them next time.";
 $lang["admin_email_redirecting"] = "Running the first batch and redirecting to the results...";
 $lang["admin_email_abort"] = "Abort";
+$lang["admin_email_no_recipients"] = "Complete. If no emails were sent, it's possible the selected users have opted out of recieving emails from admins.";
 
 ?>
