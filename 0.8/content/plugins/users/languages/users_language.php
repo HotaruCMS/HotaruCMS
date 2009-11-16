@@ -52,6 +52,7 @@ $lang["users_logout"] = "Logout";
 $lang["users_register"] = "Register";
 $lang["users_admin"] = "Admin";
 $lang["access_denied"] = "Sorry, you don't have permission to view this page.";
+$lang['users_please_log_in'] = "Please log in and try again";
 
 /* Login */
 $lang["users_login_instructions"] = "Enter your username and password to login:";
@@ -131,13 +132,19 @@ $lang["users_account_admin_admin"] = "Sorry, only admins can access admin accoun
 $lang["users_profile"] = "Profile";
 $lang["users_profile_edit"] = "Edit Profile";
 $lang["users_profile_edit_update"] = "Update";
-$lang["users_profile_edit_bio"] = "About you:";
+$lang["users_profile_edit_bio"] = "Bio:";
 $lang["users_profile_edit_saved"] = "Profile updates saved.";
 $lang["users_profile_edit_view_profile"] = "Click here to view your profile.";
+$lang['users_profile_default_bio'] = "No introduction yet.";
 
 /* User Settings */
 $lang["users_settings"] = "Settings";
 $lang["users_settings_update"] = "Update";
+$lang['users_settings_email_from_admin'] = "Allow email from site admins?";
+$lang['users_settings_open_new_tab'] = "Open posts in a new tab?";
+$lang['users_settings_yes'] = "Yes";
+$lang['users_settings_no'] = "No";
+$lang["users_settings_saved"] = "User settings saved.";
 
 /* User Permissions */
 $lang["users_permissions"] = "Permissions";

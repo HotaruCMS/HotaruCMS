@@ -71,6 +71,7 @@ class adminEmailSettings extends adminEmail
         $subject = $admin_email_settings['admin_email_subject'];
         $body = $admin_email_settings['admin_email_body'];
         $send_self = $admin_email_settings['admin_email_send_self'];
+        $send_opted_out = $admin_email_settings['admin_email_send_opted_out'];
         $simulation = $admin_email_settings['admin_email_simulation'];
         
         if (!$batch_size) { $batch_size = 20; }
@@ -79,6 +80,7 @@ class adminEmailSettings extends adminEmail
         if (!$subject) { $subject = ''; }
         if (!$body) { $body = ''; }
         if (!$send_self) { $send_self = ''; }
+        if (!$send_opted_out) { $send_opted_out = ''; }
         if (!$simulation) { $simulation = ''; }
         
         // make recipients an array:
@@ -135,6 +137,7 @@ class adminEmailSettings extends adminEmail
         echo "</table>";
         
         echo "<p><input type='checkbox' name='send_self' value='send_self' " . $send_self . " >&nbsp;&nbsp;" . $this->lang["admin_email_send_to_self"] . "</p>\n";    
+        echo "<p><input type='checkbox' name='send_opted_out' value='send_opted_out' " . $send_opted_out . " >&nbsp;&nbsp;" . $this->lang["admin_email_send_to_opted_out"] . "</p>\n";    
         echo "<p><input type='checkbox' name='simulation' value='simulation' " . $simulation . " >&nbsp;&nbsp;" . $this->lang["admin_email_simulation"] . "</p>\n";
                             
         $this->pluginHook('admin_email_settings_form');
@@ -183,6 +186,13 @@ class adminEmailSettings extends adminEmail
             $admin_email_settings['admin_email_send_self'] = 'checked';
         } else {
             $admin_email_settings['admin_email_send_self'] = '';
+        }
+        
+        // save send self
+        if ($this->cage->post->keyExists('send_opted_out')) { 
+            $admin_email_settings['admin_email_send_opted_out'] = 'checked';
+        } else {
+            $admin_email_settings['admin_email_send_opted_out'] = '';
         }
         
         // save simulation

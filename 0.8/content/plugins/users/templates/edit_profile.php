@@ -33,8 +33,19 @@ if ($hotaru->cage->post->getAlpha('edited_profile') == 'true') {
     
     // Add your own $profile['something'] stuff here. Use Inspekt: http://hotarucms.org/showpost.php?p=20&postcount=2
     
-    $hotaru->plugins->pluginHook('users_edit_profile_save', true, 'users', array($username, $profile)); // only the Users plugin can use this hook
-}
+    $hotaru->vars['profile'] = $profile;
+    $hotaru->plugins->pluginHook('user_edit_profile_pre_save'); 
+    $settings = $hotaru->vars['profile'];
+        
+    // this hook does the actual saving. It can onlbe used by the Users plugin
+    $hotaru->plugins->pluginHook('users_edit_profile_save', true, 'users', array($username, $profile));
+} 
+
+if (!isset($profile['bio'])) { $profile['bio'] = $hotaru->lang['users_profile_default_bio']; }
+
+$hotaru->vars['profile'] = $profile;
+$hotaru->plugins->pluginHook('user_settings_fill_form'); 
+
 ?>
     
     <div id='breadcrumbs'><a href='<?php echo BASEURL; ?>'><?php echo $hotaru->lang["users_home"]; ?></a> 
@@ -55,6 +66,8 @@ if ($hotaru->cage->post->getAlpha('edited_profile') == 'true') {
     </tr>
     
     <?php // Add your own profile fields here. Use tr and td tags. ?>
+    
+    <?php $hotaru->plugins->pluginHook('user_edit_profile_extras'); ?>
     
     <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $hotaru->lang['users_profile_edit_update']; ?>' /></td></tr>
     </table>
