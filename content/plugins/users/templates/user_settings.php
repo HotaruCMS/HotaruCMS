@@ -1,6 +1,6 @@
 <?php
 /**
- * User Profile
+ * Users Settings
  *
  * PHP version 5
  *
@@ -24,33 +24,22 @@
  * @link      http://www.hotarucms.org/
  */
 
-$profile = $hotaru->vars['profile'];
+$username = $hotaru->vars['username']; // username
 ?>
+    
+    <div id='breadcrumbs'><a href='<?php echo BASEURL; ?>'><?php echo $hotaru->lang["users_home"]; ?></a> 
+        &raquo; <a href='<?php echo $hotaru->url(array('user' => $username)); ?>'><?php echo $username; ?></a> 
+        &raquo; <?php echo $hotaru->lang["users_settings"]; ?></div>
+    
+    <?php $hotaru->displayTemplate('user_tabs', 'users'); ?>
+    
+    <h2><?php echo $hotaru->lang["users_settings"]; ?>: <?php echo $username; ?></h2>
+    
+    <?php echo $hotaru->showMessages(); ?>
 
-<div id="profile">
+    <form name='user_settings_form' action='<?php echo $hotaru->url(array('page'=>'user-settings', 'user'=>$username)); ?>' method='post'>    
+    <table>
 
-    <?php 
-        if ($hotaru->plugins->isActive('gravatar')) { 
-            echo "<div id='profile_avatar'>";
-            $avatar = new Gravatar('', $hotaru);
-            $hotaru->vars['gravatar_size'] = 80;
-            $avatar->showGravatarLink($hotaru->user->name, $hotaru->user->email);
-            echo "</div>";
-        }
-    ?>
-    
-    <div id="profile_bio">
-        <?php echo $profile['bio']; ?>
-    </div>
-    
-    <div class="clear"></div>
-    
-    <div id="profile_usage">
-        <?php echo $hotaru->lang['users_profile_usage']; ?>
-        <?php $hotaru->plugins->pluginHook('profile_usage'); ?>
-    </div>
-    
-    <?php $hotaru->plugins->pluginHook('profile'); ?>
-    
-</div>
-
+    <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $hotaru->lang['users_settings_update']; ?>' /></td></tr>
+    </table>    
+    </form>

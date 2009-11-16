@@ -95,9 +95,8 @@ ul.nav_right { display: inline; float: right; }
 
 .post_breadcrumbs_links_bar {
 	padding: 0.2em 0.6em 0.2em 0.6em;
-	margin-bottom: 0.8em;
+	margin-bottom: 1.0em;
 	background-color: #f0f0f0;
-	border: 1px solid #fff;
 }
 
 /* PAGINATION */

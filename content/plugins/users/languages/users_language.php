@@ -107,10 +107,11 @@ $lang['users_register_emailconf_success'] = "Your email address has been success
 $lang['users_register_emailconf_success_login'] = "Click here to log in.";
 $lang['users_register_emailconf_fail'] = "Unable to confirm your email address. Please try the link again.";
 
+/* User Tabs */
+$lang["users_account_edit"] = "Edit";
+
 /* User Account Update */
-$lang["users_account_user_settings"] = "User Account";
-$lang["users_account_user_permissions"] = "User Permissions";
-$lang['users_account_permissions_updated'] = "Permissions Updated";
+$lang["users_account"] = "Account";
 $lang["users_account_user_role"] = "Role";
 $lang["users_account_username"] = "Username:";
 $lang["users_account_email"] = "Email:";
@@ -121,13 +122,27 @@ $lang["users_account_old_password"] = "Old password:";
 $lang["users_account_new_password"] = "New password:";
 $lang["users_account_new_password_verify"] = "New password (again):";
 $lang["users_account_success"] = "Updated successfully.";
-$lang["users_account_form_submit"] = "Update";
-$lang["users_account_edit"] = "Edit";
-$lang["users_account_account"] = "Account";
-$lang["users_account_permissions"] = "Permissions";
+$lang["users_account_update"] = "Update";
 $lang["users_account_deleted"] = "User Deleted";
 $lang["users_account_admin_admin"] = "Sorry, only admins can access admin accounts.";
 // Other language is used in content/language_packs/language_default/admin_language
+
+/* User Edit Profile */
+$lang["users_profile"] = "Profile";
+$lang["users_profile_edit"] = "Edit Profile";
+$lang["users_profile_edit_update"] = "Update";
+$lang["users_profile_edit_bio"] = "About you:";
+$lang["users_profile_edit_saved"] = "Profile updates saved.";
+$lang["users_profile_edit_view_profile"] = "Click here to view your profile.";
+
+/* User Settings */
+$lang["users_settings"] = "Settings";
+$lang["users_settings_update"] = "Update";
+
+/* User Permissions */
+$lang["users_permissions"] = "Permissions";
+$lang["users_permissions_update"] = "Update";
+$lang['users_permissions_updated'] = "Permissions Updated";
 
 /* UserFunctions class */
 $lang['userfunctions_notifymods_subject_user'] = "New user registered at " . SITE_NAME;
