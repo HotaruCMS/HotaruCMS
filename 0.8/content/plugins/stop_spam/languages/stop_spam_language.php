@@ -1,6 +1,6 @@
 <?php
 /**
- * User Profile
+ * STOP SPAM LANGUAGE
  *
  * PHP version 5
  *
@@ -24,33 +24,17 @@
  * @link      http://www.hotarucms.org/
  */
 
-$profile = $hotaru->vars['profile'];
+/* User Manager */
+$lang["stop_spam_flagged_reasons"] = "This user is blacklisted on StopForumSpam.com! Flagged: ";
+$lang["stop_spam_add_database"] = "Add to StopForumSpam.com";
+
+/* Admin Settings */
+$lang['stop_spam_admin_sidebar'] = "Stop Forum Spam";
+$lang["stop_spam_settings_header"] = "Stop Forum Spam Settings";
+$lang["stop_spam_settings_instructions"] = "To use this plugin, you must have a <a href='http://www.stopforumspam.com/signup'>Stop Forum Spam API key</a>.";
+$lang["stop_spam_settings_no_key"] = "Please enter your Stop Forum Spam API key";
+$lang["stop_spam_settings_key"] = "Enter your Stop Forum Spam API key:";
+$lang["stop_spam_settings_save"] = "Save";
+$lang["stop_spam_settings_saved"] = "Settings saved";
+
 ?>
-
-<div id="profile">
-
-    <?php 
-        if ($hotaru->plugins->isActive('gravatar')) { 
-            echo "<div id='profile_avatar'>";
-            $avatar = new Gravatar('', $hotaru);
-            $hotaru->vars['gravatar_size'] = 80;
-            $avatar->showGravatarLink($hotaru->user->name, $hotaru->user->email);
-            echo "</div>";
-        }
-    ?>
-    
-    <div id="profile_bio">
-        <?php echo $profile['bio']; ?>
-    </div>
-    
-    <div class="clear"></div>
-    
-    <div id="profile_usage">
-        <?php echo $hotaru->lang['users_profile_usage']; ?>
-        <?php $hotaru->plugins->pluginHook('profile_usage'); ?>
-    </div>
-    
-    <?php $hotaru->plugins->pluginHook('profile'); ?>
-    
-</div>
-

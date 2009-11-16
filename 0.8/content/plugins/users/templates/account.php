@@ -24,28 +24,28 @@
  * @link      http://www.hotarucms.org/
  */
 extract($hotaru->vars['checks']); // extracts $username_check, etc.
-$hotaru->vars['username'] = $username_check; // used for user_tabs template
+$username = $hotaru->vars['username'] = $username_check; // used for user_tabs template
 if ($username_check == 'deleted') { $hotaru->showMessage(); return true; } // shows "User deleted" notice
 ?>
     
     <div id='breadcrumbs'><a href='<?php echo BASEURL; ?>'><?php echo $hotaru->lang["users_home"]; ?></a> 
-        &raquo; <a href='<?php echo $hotaru->url(array('user' => $username_check)); ?>'><?php echo $username_check; ?></a> 
-        &raquo; <?php echo $hotaru->lang["users_account_account"]; ?></div>
+        &raquo; <a href='<?php echo $hotaru->url(array('user' => $username)); ?>'><?php echo $username; ?></a> 
+        &raquo; <?php echo $hotaru->lang["users_account"]; ?></div>
     
     <?php $hotaru->displayTemplate('user_tabs', 'users'); ?>
     
-    <h2><?php echo $hotaru->lang["users_account_user_settings"]; ?></h2>
+    <h2><?php echo $hotaru->lang["users_account"]; ?>: <?php echo $username; ?></h2>
     
     <?php echo $hotaru->showMessages(); ?>
 
-    <form name='update_form' action='<?php echo BASEURL; ?>index.php' method='post'>    
+    <form name='update_form' class='users_form' action='<?php echo BASEURL; ?>index.php' method='post'>    
     <table>
-    <tr><td><?php echo $hotaru->lang["users_account_username"]; ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check; ?>' /></td></tr>
+    <tr><td><?php echo $hotaru->lang["users_account_username"]; ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username; ?>' /></td></tr>
     <tr><td><?php echo $hotaru->lang["users_account_email"]; ?>&nbsp; </td><td><input type='text' size=30 name='email' value='<?php echo $email_check; ?>' /></td></tr>
     <?php 
         // show role picker to anyone who can access admin, but not to yourself!
         if (($hotaru->current_user->getPermission('can_access_admin') == 'yes') 
-        && ($hotaru->current_user->name != $username_check)) { 
+        && ($hotaru->current_user->name != $username)) { 
     ?>
         <tr><td colspan=2><?php echo $hotaru->lang["users_account_role_note"]; ?></td></tr>
         <tr><td><?php echo $hotaru->lang["users_account_role"]; ?>&nbsp; </td>
@@ -67,13 +67,13 @@ if ($username_check == 'deleted') { $hotaru->showMessage(); return true; } // sh
     <input type='hidden' name='userid' value='<?php echo $hotaru->vars['userid']; ?>' />
     <input type='hidden' name='page' value='account' />
     <input type='hidden' name='update_type' value='update_general' />
-    <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $hotaru->lang['users_account_form_submit']; ?>' /></td></tr>
+    <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $hotaru->lang['users_account_update']; ?>' /></td></tr>
     </table>    
     </form>
     
     <?php if ($hotaru->vars['userid'] == $hotaru->current_user->id) { // must be looking at own account so show password change form: ?>
         <?php echo $hotaru->lang["users_account_password_instruct"]; ?>
-        <form name='update_form' action='<?php echo BASEURL; ?>index.php' method='post'>
+        <form name='update_form' class='users_form' action='<?php echo BASEURL; ?>index.php' method='post'>
         <table>
         <tr><td><?php echo $hotaru->lang["users_account_old_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_old' value='<?php echo $password_check_old; ?>' /></td></tr>
         <tr><td><?php echo $hotaru->lang["users_account_new_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_new' value='<?php echo $password_check_new; ?>' /></td></tr>
@@ -81,7 +81,7 @@ if ($username_check == 'deleted') { $hotaru->showMessage(); return true; } // sh
         <input type='hidden' name='userid' value='<?php echo $hotaru->vars['userid']; ?>' />
         <input type='hidden' name='page' value='account' />
         <input type='hidden' name='update_type' value='update_password' />
-        <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $hotaru->lang['users_account_form_submit']; ?>' /></td></tr>            
+        <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $hotaru->lang['users_account_update']; ?>' /></td></tr>            
         </table>
         </form>
     <?php } ?>

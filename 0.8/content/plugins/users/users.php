@@ -5,7 +5,7 @@
  * version: 0.8
  * folder: users
  * class: Users
- * hooks: hotaru_header, submit_hotaru_header_2, header_include, admin_header_include_raw, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_first, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, userbase_default_permissions, submit_pre_list
+ * hooks: hotaru_header, submit_hotaru_header_2, header_include, admin_header_include_raw, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_first, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, userbase_default_permissions, submit_pre_list, users_edit_profile_save
  *
  * PHP version 5
  *
@@ -236,6 +236,11 @@ class Users extends PluginFunctions
         if ($this->hotaru->pageType == 'profile') {
             $this->hotaru->user = new UserBase($this->hotaru);
             $this->hotaru->user->getUserBasic(0, $this->cage->get->testUsername('user'));
+            
+            require_once(PLUGINS . 'users/libs/UserFunctions.php');
+            $uf = new UserFunctions($this->hotaru);
+            $this->hotaru->vars['profile'] = $uf->getProfileData($this->hotaru->user->id);
+            
             $this->hotaru->displayTemplate('profile', 'users');
         }
     }
@@ -259,6 +264,38 @@ class Users extends PluginFunctions
                     $this->hotaru->showMessages();
                 } else {
                     $this->hotaru->displayTemplate('account', 'users');
+                }
+                return true;
+            } elseif ($this->hotaru->isPage('permissions')) {
+                if ($this->current_user->getPermission('can_access_admin') == 'yes') { 
+                    $this->editPermissions();
+                } else {
+                    $this->hotaru->messages[$this->lang["access_denied"]] = 'red';
+                    $this->hotaru->showMessages();
+                }
+                return true;
+            } elseif ($this->hotaru->isPage('edit-profile')) {
+                $this->hotaru->vars['username'] = $this->cage->get->testUsername('user');
+                if (($this->current_user->name == $this->hotaru->vars['username'])
+                    || ($this->current_user->getPermission('can_access_admin') == 'yes')) { 
+                    require_once(PLUGINS . 'users/libs/UserFunctions.php');
+                    $uf = new UserFunctions($this->hotaru);
+                    $userid = $this->current_user->getUserIdFromName($this->hotaru->vars['username']);
+                    $this->hotaru->vars['profile'] = $uf->getProfileData($userid);
+                    $this->hotaru->displayTemplate('edit_profile', 'users');
+                } else {
+                    $this->hotaru->messages[$this->lang["access_denied"]] = 'red';
+                    $this->hotaru->showMessages();
+                }
+                return true;
+            } elseif ($this->hotaru->isPage('user-settings')) {
+                $this->hotaru->vars['username'] = $this->cage->get->testUsername('user');
+                if (($this->current_user->name == $this->hotaru->vars['username'])
+                    || ($this->current_user->getPermission('can_access_admin') == 'yes')) { 
+                    $this->hotaru->displayTemplate('user_settings', 'users');
+                } else {
+                    $this->hotaru->messages[$this->lang["access_denied"]] = 'red';
+                    $this->hotaru->showMessages();
                 }
                 return true;
             } elseif ($this->hotaru->isPage('permissions')) {
@@ -706,15 +743,16 @@ class Users extends PluginFunctions
         $username = $this->hotaru->title;
         $page_type = $this->hotaru->pageType;
         
-        if (($page_type == 'user' || $page_type == 'profile' ) && $this->current_user->getPermission('can_access_admin') == 'yes') {
-            echo "<div class='post_breadcrumbs_links_bar'>";
-            echo $this->lang["users_account_edit"] . " " . $username . ": ";
-            echo " <a href='" . $this->hotaru->url(array('page' => 'account', 'user' => $username)) . "'>";
-            echo $this->lang["users_account_account"] . "</a> | ";
-            echo " <a href='" . $this->hotaru->url(array('page' => 'permissions', 'user' => $username)) . "'>";
-            echo $this->lang["users_account_permissions"] . "</a>";
-            echo "</div>";
+        // return if not a user or profile page
+        if (($page_type != 'user') && ($page_type != 'profile' )) { return false; }
+        
+        // return if not your own profile/account or you don't have admin access 
+        if (($this->current_user->name != $username) && ($this->current_user->getPermission('can_access_admin') != 'yes')) {
+            return false;
         }
+         
+        $this->hotaru->vars['username'] = $username;
+        $this->hotaru->displayTemplate('user_tabs', 'users');
     }
     
     
@@ -757,7 +795,7 @@ class Users extends PluginFunctions
             // get the newly updated latest permissions:
             $perm_options = $user->getDefaultPermissions();
             $perms = $user->getAllPermissions();
-            $this->hotaru->messages[$this->lang['users_account_permissions_updated']] = 'green';
+            $this->hotaru->messages[$this->lang['users_permissions_updated']] = 'green';
         }
                
         // Breadcrumbs:
@@ -768,7 +806,7 @@ class Users extends PluginFunctions
         $this->hotaru->vars['username'] = $user->name;
         $this->hotaru->displayTemplate('user_tabs', 'users');
         
-        echo '<h2>' . $this->lang["users_account_user_permissions"] . ': ' . $user->name . '</h2>';
+        echo '<h2>' . $this->lang["users_permissions"] . ': ' . $user->name . '</h2>';
         
         $this->hotaru->showMessages();
             
@@ -788,7 +826,7 @@ class Users extends PluginFunctions
         echo "<input type='hidden' name='page' value='permissions' />\n";
         echo "<input type='hidden' name='permissions' value='updated' />\n";
         echo "<input type='hidden' name='userid' value='" . $user->id . "' />\n";
-        echo "<div style='text-align: right'><input class='submit' type='submit' value='" . $this->lang['users_account_form_submit'] . "' /></div>\n";
+        echo "<div style='text-align: right'><input class='submit' type='submit' value='" . $this->lang['users_permissions_update'] . "' /></div>\n";
         echo "</form>\n";
     }
     
@@ -809,6 +847,26 @@ class Users extends PluginFunctions
             echo "});\n";
             echo "</script>\n";
         }
+    }
+    
+    /**
+     * Save profile data (from hook in edit_profile.php)
+     */
+    public function users_edit_profile_save($vars)
+    {
+        $username = $vars[0];
+        $profile = $vars[1];
+        $userid = $this->current_user->getUserIdFromName($this->hotaru->vars['username']);
+        
+        require_once(PLUGINS . 'users/libs/UserFunctions.php');
+        $uf = new UserFunctions($this->hotaru);
+        
+        $uf->saveProfileData($profile, $userid);
+        
+        $this->hotaru->message = $this->lang["users_profile_edit_saved"] . "<br />\n";
+        $this->hotaru->message .= "<a href='" . $this->hotaru->url(array('user'=>$username)) . "'>";
+        $this->hotaru->message .= $this->lang["users_profile_edit_view_profile"] . "</a>\n";
+        $this->hotaru->messageType = "green";
     }
     
     

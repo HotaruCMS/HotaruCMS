@@ -162,6 +162,52 @@ class UserFunctions extends UserBase
         }
         return $results;
     }
+    
+    
+    /**
+     * Get a user's profile data
+     *
+     * @return array|false
+     */
+    public function getProfileData($userid = 0)
+    {
+        if (!$userid) { $userid = $this->current_user->id; }
+
+        $query = "SELECT usermeta_value FROM " . TABLE_USERMETA . " WHERE usermeta_userid = %d AND usermeta_key = %s";
+        $sql = $this->db->prepare($query, $userid, 'profile_data');
+        
+        if (isset($this->hotaru->vars[$sql])) { 
+            $result = $this->hotaru->vars[$sql]; 
+        } else {
+            $result = $this->db->get_var($sql);
+            $this->hotaru->vars[$sql] = $result;    // cache result
+        }
+        
+        if ($result) { $result = unserialize($result); return $result; } else { return false; }
+    }
+    
+    /**
+     * Save a user's profile data
+     *
+     * @return array|false
+     */
+    public function saveProfileData($profile = array(), $userid = 0)
+    {
+        if (!$profile) { return false; }
+        if (!$userid) { $userid = $this->current_user->id; }
+
+        $result = $this->getProfileData($userid);
+        
+        if (!$result) {
+            $sql = "INSERT INTO " . TABLE_USERMETA . " (usermeta_userid, usermeta_key, usermeta_value, usermeta_updateby) VALUES(%d, %s, %s, %d)";
+            $this->db->get_row($this->db->prepare($sql, $userid, 'profile_data', serialize($profile), $this->current_user->id));
+        } else {
+            $sql = "UPDATE " . TABLE_USERMETA . " SET usermeta_value = %s, usermeta_updateby = %d WHERE usermeta_userid = %d AND usermeta_key = %s";
+            $this->db->get_row($this->db->prepare($sql, serialize($profile), $this->current_user->id, $userid, 'profile_data'));
+        }
+        
+        return true;
+    }
 }
 
 ?>
