@@ -23,6 +23,12 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
+
+$profile = $hotaru->vars['profile'];
+
+//defaults:
+    if (!isset($profile['bio'])) { $profile['bio'] = $hotaru->lang['users_profile_default_bio']; }
+    $hotaru->plugins->pluginHook('user_profile_defaults'); 
 ?>
 
 <div id="profile">
@@ -38,7 +44,7 @@
     ?>
     
     <div id="profile_bio">
-        Users aren't able to add a bio to their profiles yet, but they will soon!
+        <?php echo $profile['bio']; ?>
     </div>
     
     <div class="clear"></div>
