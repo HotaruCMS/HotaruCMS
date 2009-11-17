@@ -132,9 +132,9 @@ function create_table($table_name)
 
         // Default permissions
         $perms['options']['can_access_admin'] = array('yes', 'no');
-        $perms['admin']['can_access_admin'] = 'yes';
-        $perms['supermod']['can_access_admin'] = 'yes';
-        $perms['default']['can_access_admin'] = 'no';
+        $perms['can_access_admin']['admin'] = 'yes';
+        $perms['can_access_admin']['supermod'] = 'yes';
+        $perms['can_access_admin']['default'] = 'no';
         $perms = serialize($perms);
         
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (miscdata_key, miscdata_value, miscdata_default) VALUES (%s, %s, %s)";

@@ -859,29 +859,26 @@ class UserBase {
      */
     public function getDefaultPermissions($role = '') 
     {
-        $perms = array();
+        $perms = array(); // to be filled with default permissions for this user
         
-        // Permission Options
-        $perms['options']['can_access_admin'] = array('yes', 'no');
-            
-        // Permissions for $role
-        switch ($role) {
-            case 'admin':
-                $perms['can_access_admin'] = 'yes';
-                break;
-            case 'supermod':
-                $perms['can_access_admin'] = 'yes';
-                break;
-            default:
-                $perms['can_access_admin'] = 'no';
+        // get default permissions from the database:
+        $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+        $db_perms = $this->db->get_var($this->db->prepare($sql, 'permissions'));
+        $permissions = unserialize($db_perms);
+        
+        if (!$permissions) { return false; }
+        
+        unset($permissions['options']); // don't need the options here
+        
+        foreach ($permissions as $perm => $roles) { 
+            if (isset($roles[$role])) {
+                $perms[$perm] = $roles[$role];  // perm for this role
+            } else {
+                $perms[$perm] = $roles['default']; // default perm because nothing specified for this role
+            }
         }
         
-        $this->hotaru->vars['perms'] = $perms;
-        
-        // plugin hook:
-        $this->plugins->pluginHook('userbase_default_permissions', true, '', array('role' => $role));
-        
-        return $this->hotaru->vars['perms'];
+        return $perms;
     }
 
     
