@@ -5,7 +5,7 @@
  * version: 0.8
  * folder: users
  * class: Users
- * hooks: hotaru_header, submit_hotaru_header_2, header_include, admin_header_include_raw, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_first, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, userbase_default_permissions, submit_pre_list, users_edit_profile_save, user_settings_save
+ * hooks: hotaru_header, submit_hotaru_header_2, header_include, admin_header_include_raw, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_first, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, submit_pre_list, users_edit_profile_save, user_settings_save
  *
  * PHP version 5
  *
@@ -75,6 +75,20 @@ class Users extends PluginFunctions
             $this->db->query($sql); 
         }
         
+        // Permissions
+        $site_perms = $this->current_user->getDefaultPermissions('all');
+        if (!isset($site_perms['can_login'])) { 
+            $perms['options']['can_login'] = array('yes', 'no'); 
+            $perms['can_login']['admin'] = 'yes';
+            $perms['can_login']['supermod'] = 'yes';
+            $perms['can_login']['moderator'] = 'yes';
+            $perms['can_login']['member'] = 'yes';
+            $perms['can_login']['undermod'] = 'yes';
+            $perms['can_login']['default'] = 'no';
+        }
+        $this->current_user->updateDefaultPermissions($perms);
+
+        // Plugin settings
         $users_settings = $this->getSerializedSettings();
         if (!isset($users_settings['users_recaptcha_enabled'])) { $users_settings['users_recaptcha_enabled'] = ""; }
         if (!isset($users_settings['users_recaptcha_pubkey'])) { $users_settings['users_recaptcha_pubkey'] = ""; }
@@ -790,12 +804,12 @@ class Users extends PluginFunctions
             return true;
         }
         
-        $perm_options = $user->getDefaultPermissions();
+        $perm_options = $user->getDefaultPermissions('', 'site', true);
         $perms = $user->getAllPermissions();
         
         // If the form has been submitted...
         if ($this->cage->post->keyExists('permissions')) {
-           foreach ($perm_options['options'] as $key => $options) {
+           foreach ($perm_options as $key => $options) {
                 if ($value = $this->cage->post->testAlnumLines($key)) {
                     $user->setPermission($key, $value);
                 }
@@ -804,7 +818,7 @@ class Users extends PluginFunctions
             $user->updatePermissions();   // physically store changes in the database
             
             // get the newly updated latest permissions:
-            $perm_options = $user->getDefaultPermissions();
+            $perm_options = $user->getDefaultPermissions('', 'site', true);
             $perms = $user->getAllPermissions();
             $this->hotaru->messages[$this->lang['users_permissions_updated']] = 'green';
         }
@@ -823,7 +837,7 @@ class Users extends PluginFunctions
             
         echo "<form name='permissions_form' action='" . BASEURL . "index.php' method='post'>\n";
         echo "<table class='permissions'>\n";
-        foreach ($perm_options['options'] as $key => $options) {
+        foreach ($perm_options as $key => $options) {
             echo "<tr><td>" . make_name($key) . ": </td>\n";
             foreach($options as $value) {
                 if (isset($perms[$key]) && ($perms[$key] == $value)) { $checked = 'checked'; } else { $checked = ''; } 
@@ -897,37 +911,6 @@ class Users extends PluginFunctions
         
         $this->hotaru->message = $this->lang["users_settings_saved"] . "<br />\n";
         $this->hotaru->messageType = "green";
-    }
-    
-    
-    /**
-     * Default permissions 
-     *
-     * @param array $params - conatins "role"
-     */
-    public function userbase_default_permissions($params)
-    {
-        $perms = $this->hotaru->vars['perms'];
-
-        $role = $params['role'];
-        
-        // Permission Options
-        $perms['options']['can_login'] = array('yes', 'no');
-
-        // Permissions for $role
-        switch ($role) {
-            case 'admin':
-            case 'supermod':
-            case 'moderator':
-            case 'member':
-            case 'undermod':
-                $perms['can_login'] = 'yes';
-                break;
-            default:
-                $perms['can_login'] = 'no';
-        }
-        
-        $this->hotaru->vars['perms'] = $perms;
     }
 }
 

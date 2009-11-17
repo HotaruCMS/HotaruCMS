@@ -6,7 +6,7 @@
  * folder: comments
  * class: Comments
  * requires: submit 1.4, users 0.8
- * hooks: header_include, admin_header_include_raw, install_plugin, hotaru_header, theme_index_replace, theme_index_main, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_edit_post_admin_fields, submit_form_2_process_submission, userbase_default_permissions, post_delete_post, profile_usage
+ * hooks: header_include, admin_header_include_raw, install_plugin, hotaru_header, theme_index_replace, theme_index_main, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_edit_post_admin_fields, submit_form_2_process_submission, post_delete_post, profile_usage
  *
  * PHP version 5
  *
@@ -115,6 +115,50 @@ class Comments extends pluginFunctions
             $sql = "ALTER TABLE " . DB_PREFIX . "commentvotes ADD cvote_archived ENUM(%s, %s) NOT NULL DEFAULT %s FIRST";
             $this->db->query($this->db->prepare($sql, 'Y', 'N', 'N'));
         }
+
+
+        // ************
+        // PERMISSIONS
+        // ************
+        
+        $site_perms = $this->current_user->getDefaultPermissions('all');
+        if (!isset($site_perms['can_comment'])) { 
+            $perms['options']['can_comment'] = array('yes', 'no', 'mod');
+            $perms['options']['can_edit_comments'] = array('yes', 'no', 'own');
+            $perms['options']['can_set_comments_pending'] = array('yes', 'no');
+            $perms['options']['can_delete_comments'] = array('yes', 'no');
+            $perms['options']['can_comment_manager_settings'] = array('yes', 'no');
+            
+            $perms['can_comment']['admin'] = 'yes';
+            $perms['can_comment']['supermod'] = 'yes';
+            $perms['can_comment']['moderator'] = 'yes';
+            $perms['can_comment']['member'] = 'yes';
+            $perms['can_comment']['undermod'] = 'mod';
+            $perms['can_comment']['default'] = 'no';
+            
+            $perms['can_edit_comments']['admin'] = 'yes';
+            $perms['can_edit_comments']['supermod'] = 'yes';
+            $perms['can_edit_comments']['moderator'] = 'yes';
+            $perms['can_edit_comments']['member'] = 'own';
+            $perms['can_edit_comments']['undermod'] = 'own';
+            $perms['can_edit_comments']['default'] = 'no';
+            
+            $perms['can_set_comments_pending']['admin'] = 'yes';
+            $perms['can_set_comments_pending']['supermod'] = 'yes';
+            $perms['can_set_comments_pending']['moderator'] = 'yes';
+            $perms['can_set_comments_pending']['default'] = 'no';
+            
+            $perms['can_delete_comments']['admin'] = 'yes';
+            $perms['can_delete_comments']['supermod'] = 'yes';
+            $perms['can_delete_comments']['default'] = 'no';
+            
+            $perms['can_comment_manager_settings']['admin'] = 'yes';
+            $perms['can_comment_manager_settings']['supermod'] = 'yes';
+            $perms['can_comment_manager_settings']['moderator'] = 'yes';
+            $perms['can_comment_manager_settings']['default'] = 'no';
+        }
+        $this->current_user->updateDefaultPermissions($perms);
+
 
         // ************
         // SETTINGS 
@@ -707,68 +751,6 @@ class Comments extends pluginFunctions
         echo "</a>";
         
     }
-    
-    
-    /**
-     * Default permissions 
-     *
-     * @param array $params - conatins "role"
-     */
-    public function userbase_default_permissions($params)
-    {
-        $perms = $this->hotaru->vars['perms'];
-
-        $role = $params['role'];
-        
-        // Permission Options
-        $perms['options']['can_comment'] = array('yes', 'no', 'mod');
-        $perms['options']['can_edit_comments'] = array('yes', 'no', 'own');
-        $perms['options']['can_set_comments_pending'] = array('yes', 'no');
-        $perms['options']['can_delete_comments'] = array('yes', 'no');
-        $perms['options']['can_comment_manager_settings'] = array('yes', 'no');
-        
-        // Permissions for $role
-        switch ($role) {
-            case 'admin':
-            case 'supermod':
-                $perms['can_comment'] = 'yes';
-                $perms['can_edit_comments'] = 'yes';
-                $perms['can_set_comments_pending'] = 'yes';
-                $perms['can_delete_comments'] = 'yes';
-                $perms['can_comment_manager_settings'] = 'yes';
-                break;
-            case 'moderator':
-                $perms['can_comment'] = 'yes';
-                $perms['can_edit_comments'] = 'yes';
-                $perms['can_set_comments_pending'] = 'yes';
-                $perms['can_delete_comments'] = 'no';
-                $perms['can_comment_manager_settings'] = 'yes';
-                break;
-            case 'member':
-                $perms['can_comment'] = 'yes';
-                $perms['can_edit_comments'] = 'own';
-                $perms['can_set_comments_pending'] = 'no';
-                $perms['can_delete_comments'] = 'no';
-                $perms['can_comment_manager_settings'] = 'no';
-                break;
-            case 'undermod':
-                $perms['can_comment'] = 'mod';
-                $perms['can_edit_comments'] = 'own';
-                $perms['can_set_comments_pending'] = 'no';
-                $perms['can_delete_comments'] = 'no';
-                $perms['can_comment_manager_settings'] = 'no';
-                break;
-            default:
-                $perms['can_comment'] = 'no';
-                $perms['can_edit_comments'] = 'no';
-                $perms['can_set_comments_pending'] = 'no';
-                $perms['can_delete_comments'] = 'no';
-                $perms['can_comment_manager_settings'] = 'no';
-        }
-        
-        $this->hotaru->vars['perms'] = $perms;
-    }
-    
 }
 
 ?>
