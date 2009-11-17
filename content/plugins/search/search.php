@@ -6,7 +6,7 @@
  * folder: search
  * class: Search
  * requires: submit 1.4, sidebar_widgets 0.5
- * hooks: install_plugin, hotaru_header, header_include, post_list_filter, userbase_default_permissions, search_box
+ * hooks: install_plugin, hotaru_header, header_include, post_list_filter, search_box
  *
  * Usage: Add <?php $hotaru->plugins->pluginHook('search_box'); ?> to your theme, wherever you want the search box.
  *
@@ -39,6 +39,15 @@ class Search extends PluginFunctions
      */
     public function install_plugin()
     {
+        // Permissions
+        $site_perms = $this->current_user->getDefaultPermissions('all');
+        if (!isset($site_perms['can_search'])) { 
+            $perms['options']['can_search'] = array('yes', 'no');
+            $perms['can_search']['default'] = 'yes';
+        }
+        $this->current_user->updateDefaultPermissions($perms);
+
+        // sidebar widget
         require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
         $sidebar = new Sidebar($this->hotaru);
         $sidebar->addWidget('search', 'search', '');  // plugin name, function name, optional arguments
@@ -220,31 +229,6 @@ class Search extends PluginFunctions
         } else {
             return false;
         }
-    }
-    
-    
-    /**
-     * Default permissions 
-     *
-     * @param array $params - conatins "role"
-     */
-    public function userbase_default_permissions($params)
-    {
-        $perms = $this->hotaru->vars['perms'];
-        
-        $role = $params['role'];
-
-        // Permission Options
-        $perms['options']['can_search'] = array('yes', 'no');
-        
-        // Permissions for $role
-        switch ($role) {
-            default:
-                $perms['can_search'] = 'yes';
-        }
-        
-        $this->hotaru->vars['perms'] = $perms;
-    }
-    
+    }    
 }
 ?>

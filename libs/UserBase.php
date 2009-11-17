@@ -256,15 +256,15 @@ class UserBase {
             // If a new plugin is installed, we need a way of adding any new default permissions
             // that plugin provides. So, we get all defaults, then overwrite with existing perms.
             
-            // get default permissions
+            // get default permissions for the site
             $default_perms = $this->getDefaultPermissions($this->role);
-            unset($default_perms['options']);  // don't need this for individual users
             
-            // get existing permissions
+            // get existing permissions for the user
             $existing_perms = unserialize($user_info->user_permissions);
             
             // merge permissions
             $updated_perms = array_merge($default_perms, $existing_perms);
+            
             $this->setAllPermissions($updated_perms);
             $user_info->user_permissions = serialize($updated_perms);   // update user_info
             
@@ -854,21 +854,49 @@ class UserBase {
     /**
      * Default permissions
      *
-     * @param string $role
-     * @return string $permissions - serialized
+     * @param string $role or 'all'
+     * @param string $field 'site' for site defaults and 'base' for base defaults
+     * @param book $options_only returns just the options if true
+     * @return array $perms
      */
-    public function getDefaultPermissions($role = '') 
+    public function getDefaultPermissions($role = '', $defaults = 'site', $options_only = false) 
     {
         $perms = array(); // to be filled with default permissions for this user
         
+        if ($defaults == 'site') { 
+            $field = 'miscdata_value';  // get site permissions
+        } else {
+            $field = 'miscdata_default'; // get base permissions (i.e. the originals)
+        }
+        
         // get default permissions from the database:
-        $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
-        $db_perms = $this->db->get_var($this->db->prepare($sql, 'permissions'));
+        $query = "SELECT " . $field . " FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+        $sql = $this->db->prepare($query, 'permissions');
+        
+        // Create temp cache array
+        if (!isset($this->hotaru->vars['tempPermissionsCache'])) { $this->hotaru->vars['tempPermissionsCache'] = array(); }
+        
+        // If this query has already been read once this page load, we should have it in memory...
+        if (array_key_exists($sql, $this->hotaru->vars['tempPermissionsCache'])) {
+            // Fetch from memory
+            $db_perms = $this->hotaru->vars['tempPermissionsCache'][$sql];
+        } else {
+            // Fetch from database
+            $db_perms = $this->db->get_var($sql);
+            $this->hotaru->vars['tempPermissionsCache'][$sql] = $db_perms;
+        }
+
         $permissions = unserialize($db_perms);
         
         if (!$permissions) { return false; }
         
-        unset($permissions['options']); // don't need the options here
+        if ($options_only) {
+            return $permissions['options']; // the editPermissions function in the Users plugin needs these 
+        }
+        
+        if ($role == 'all') { return $permissions; } // plugins need all permissions and options when installed
+                
+        unset($permissions['options']); // don't need the options anymore
         
         foreach ($permissions as $perm => $roles) { 
             if (isset($roles[$role])) {
@@ -879,6 +907,43 @@ class UserBase {
         }
         
         return $perms;
+    }
+    
+    
+    /**
+     * Update Default permissions
+     *
+     * @param array $new_perms from a plugin's install function
+     * @param string $defaults - either "site", "base" or "both" 
+     */
+    public function updateDefaultPermissions($new_perms = array(), $defaults = 'both') 
+    {
+        if (!$new_perms) { return false; }
+        
+        // get and merge permissions
+        if ($defaults == 'site')
+        {
+            $site_perms = $this->getDefaultPermissions('all', 'site'); //get site defaults
+            $site_perms = array_merge_recursive($site_perms, $new_perms); // merge
+            $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s WHERE miscdata_key = %s";
+            $this->db->query($this->db->prepare($sql, serialize($site_perms), 'permissions'));
+        } 
+        elseif ($defaults == 'base')
+        {
+            $base_perms = $this->getDefaultPermissions('all', 'base'); // get base defaults
+            $base_perms = array_merge_recursive($site_perms, $new_perms); // merge
+            $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_default = %s WHERE miscdata_key = %s";
+            $this->db->query($this->db->prepare($sql, serialize($base_perms), 'permissions'));
+        }
+        else 
+        {
+            $site_perms = $this->getDefaultPermissions('all', 'site'); //get site defaults
+            $site_perms = array_merge_recursive($site_perms, $new_perms); // merge
+            $base_perms = $this->getDefaultPermissions('all', 'base'); // get base defaults
+            $base_perms = array_merge_recursive($site_perms, $new_perms); // merge
+            $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";
+            $this->db->query($this->db->prepare($sql, serialize($site_perms), serialize($base_perms), 'permissions'));
+        }
     }
 
     
