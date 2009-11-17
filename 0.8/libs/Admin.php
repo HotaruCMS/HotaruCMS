@@ -570,6 +570,7 @@ class Admin
         // These should match the tables created in the install script.
         $core_tables = array(
             'hotaru_settings',
+            'hotaru_miscdata',
             'hotaru_users',
             'hotaru_plugins',
             'hotaru_pluginsettings',
