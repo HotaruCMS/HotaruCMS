@@ -115,6 +115,32 @@ function create_table($table_name)
         $db->query($db->prepare($sql, 'DEBUG', 'false', 'false', 'true/false'));
     }
     
+    
+    // MISCDATA TABLE - for storing default permissions, etc.
+    
+    if ($table_name == "miscdata") {
+        $sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
+          `miscdata_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          `miscdata_key` varchar(64) NOT NULL,
+          `miscdata_value` text NOT NULL DEFAULT '',
+          `miscdata_default` text NOT NULL DEFAULT '',
+          `miscdata_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          `miscdata_updateby` int(20) NOT NULL DEFAULT 0
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Miscellaneous Data';";
+        echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+        $db->query($sql);
+
+        // Default permissions
+        $perms['options']['can_access_admin'] = array('yes', 'no');
+        $perms['admin']['can_access_admin'] = 'yes';
+        $perms['supermod']['can_access_admin'] = 'yes';
+        $perms['default']['can_access_admin'] = 'no';
+        $perms = serialize($perms);
+        
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (miscdata_key, miscdata_value, miscdata_default) VALUES (%s, %s, %s)";
+        $db->query($db->prepare($sql, 'permissions', $perms, $perms));
+    }
+    
     // USERS TABLE
     
     if ($table_name == "users") {    
