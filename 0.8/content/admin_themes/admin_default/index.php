@@ -40,7 +40,7 @@ if (!isset($result) || !is_array($result)) {
         ?>
     
         <div id="bd" role="main">              
-            <?php if ($admin->sidebar) { ?>
+            <?php if ($admin->sidebars) { ?>
                 <div class='yui-gf'> 
                 <div class="yui-u">
             <?php } else { ?>
@@ -67,7 +67,7 @@ if (!isset($result) || !is_array($result)) {
                     ?>    
                     </div>        
                     </div>
-                    <?php if ($admin->sidebar) { ?>
+                    <?php if ($admin->sidebars) { ?>
                         <div class="yui-u first">
                         <!-- SIDEBAR -->
                         <?php
