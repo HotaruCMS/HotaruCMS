@@ -86,6 +86,8 @@ $lang["vote_settings_use_alerts"] = "Enable Alerts (i.e. flag / bury). Alerts ar
 $lang["vote_settings_alerts_to_bury"] = "Number of alerts to automatically bury a post:";
 $lang["vote_settings_alerts_to_bury_invalid"] = "The number of alerts needed must be a positive integer";
 $lang["vote_settings_physical_delete"] = "Physically delete a post from the database when buried";
+$lang["vote_settings_other"] = "Other";
+$lang["vote_settings_sidebar_posts"] = "Show vote count before sidebar post links <small>(requires Sidebar Posts plugin)</small>";
 $lang["vote_settings_save"] = "Save";
 $lang["vote_settings_saved"] = "Settings Saved.";
 

@@ -622,16 +622,68 @@ class Post
 
     /**
      * Prepare filter and breadcrumbs for Posts List
+     * Two main types: one for list pages and the other for 
+     * miscelleneous stuff like Sidebar Posts
      *
+     * @param string $type e.g. latest, upcoming, top-24-hours
      * @return array
      */
-    public function prepareList()
+    public function prepareList($type = '')
     {
-        $this->templateName = "list";
-                
         if (!$this->hotaru->vars['filter']) { $this->hotaru->vars['filter'] = array(); }
         
-        if ($this->cage->get->testPage('page') == 'latest') 
+        if ($type) {
+            // For sidebar posts or other non-pages... 
+            $this->hotaru->vars['filter'] = array(); // flush filter
+            $this->prepareListFilters($type);
+            
+        } else {
+            // for pages, i.e. lists of stories with pagination
+            $this->templateName = "list";
+            
+            if ($this->cage->get->testPage('page') == 'top') { 
+                $this->prepareListFilters('top');
+            } elseif ($this->cage->get->testPage('page') == 'latest') { 
+                $this->prepareListFilters('new');
+            } elseif ($this->cage->get->testPage('page') == 'upcoming') { 
+                $this->prepareListFilters('upcoming');
+            } elseif ($this->cage->get->testPage('sort')) { 
+                $this->prepareListFilters($this->cage->get->testPage('sort'));
+            } elseif ($this->useLatest && !$this->cage->get->testPage('page')) {
+                $this->prepareListFilters('top');
+            } else { 
+                $this->prepareListFilters();
+            }
+            $this->plugins->pluginHook('post_list_filter');
+        }
+        
+        // defaults
+        if (!isset($this->hotaru->vars['select'])) { $this->hotaru->vars['select'] = '*'; }
+        if (!isset($this->hotaru->vars['orderby'])) { $this->hotaru->vars['orderby'] = 'post_date DESC'; }
+        $limit = 0; $all = true;
+        
+        // $type is used in sidebar posts, etc so we need to specify a limit, e.g. 10.
+        if ($type) { 
+            if ($this->hotaru->vars['limit']) { $limit = $this->hotaru->vars['limit']; } else { $limit = 0; }
+            $all = false;
+        }
+        
+        $prepared_filter = $this->filter($this->hotaru->vars['filter'], $limit, $all, $this->hotaru->vars['select'], $this->hotaru->vars['orderby']);
+        
+        $stories = $this->getPosts($prepared_filter);
+        
+        return $stories;
+    }
+    
+    
+    /**
+     * Prepare list filters
+     *
+     * @param string $type e.g. latest, upcoming, top-24-hours
+     */
+    public function prepareListFilters($type = '')
+    {
+        if ($type == 'new')
         {
             // Filters page to "new" stories only
             $this->hotaru->vars['filter']['post_archived = %s'] = 'N'; 
@@ -640,7 +692,7 @@ class Post
             $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_latest"] . $rss;
         } 
-        elseif ($this->cage->get->testPage('page') == 'upcoming') 
+        elseif ($type == 'upcoming') 
         {
             // Filters page to "new" stories by most votes, but only stories from the last X days!
             $vote_settings = unserialize($this->plugins->getSetting('vote_settings', 'vote_simple')); 
@@ -654,7 +706,7 @@ class Post
             $this->hotaru->vars['orderby'] = "post_votes_up DESC";
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_upcoming"];
         } 
-        elseif ($this->cage->get->testPage('sort') == 'top-24-hours') 
+        elseif ($type == 'top-24-hours')
         {
             // Filters page to "top" stories from the last 24 hours only
             $this->hotaru->vars['filter']['post_status = %s'] = 'top'; 
@@ -664,7 +716,7 @@ class Post
             $this->hotaru->vars['orderby'] = "post_votes_up DESC";
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_top_24_hours"];
         } 
-        elseif ($this->cage->get->testPage('sort') == 'top-48-hours') 
+        elseif ($type == 'top-48-hours') 
         {
             // Filters page to "top" stories from the last 48 hours only
             $this->hotaru->vars['filter']['post_status = %s'] = 'top'; 
@@ -674,7 +726,7 @@ class Post
             $this->hotaru->vars['orderby'] = "post_votes_up DESC";
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_top_48_hours"];
         } 
-        elseif ($this->cage->get->testPage('sort') == 'top-7-days') 
+        elseif ($type == 'top-7-days')
         {
             // Filters page to "top" stories from the last 7 days only
             $this->hotaru->vars['filter']['post_status = %s'] = 'top'; 
@@ -684,7 +736,7 @@ class Post
             $this->hotaru->vars['orderby'] = "post_votes_up DESC";
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_top_7_days"];
         } 
-        elseif ($this->cage->get->testPage('sort') == 'top-30-days') 
+        elseif ($type == 'top-30-days')
         {
             // Filters page to "top" stories from the last 30 days only
             $this->hotaru->vars['filter']['post_status = %s'] = 'top'; 
@@ -694,7 +746,7 @@ class Post
             $this->hotaru->vars['orderby'] = "post_votes_up DESC";
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_top_30_days"];
         } 
-        elseif ($this->cage->get->testPage('sort') == 'top-365-days') 
+        elseif ($type == 'top-365-days')
         {
             // Filters page to "top" stories from the last 365 days only
             $this->hotaru->vars['filter']['post_status = %s'] = 'top'; 
@@ -704,15 +756,14 @@ class Post
             $this->hotaru->vars['orderby'] = "post_votes_up DESC";
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_top_365_days"];
         } 
-        elseif ($this->cage->get->testPage('sort') == 'top-all-time') 
+        elseif ($type == 'top-all-time')
         {
             // Filters page to "top" stories in order of votes
             $this->hotaru->vars['filter']['post_status = %s'] = 'top'; 
             $this->hotaru->vars['orderby'] = "post_votes_up DESC";
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_top_all_time"];
         } 
-        elseif (($this->cage->get->testPage('page') == 'top') ||
-                $this->useLatest && !$this->cage->get->testPage('page'))
+        elseif ($type == 'top')
         {
             // Assume 'top' page and filter to 'top' stories.
             $this->hotaru->vars['filter']['post_archived = %s'] = 'N'; 
@@ -730,18 +781,6 @@ class Post
             $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_all"] . $rss;
         }
-        
-        $this->plugins->pluginHook('post_list_filter');
-        
-        // defaults
-        if (!isset($this->hotaru->vars['select'])) { $this->hotaru->vars['select'] = '*'; }
-        if (!isset($this->hotaru->vars['orderby'])) { $this->hotaru->vars['orderby'] = 'post_date DESC'; }
-        
-        $prepared_filter = $this->filter($this->hotaru->vars['filter'], 0, true, $this->hotaru->vars['select'], $this->hotaru->vars['orderby']);
-        
-        $stories = $this->getPosts($prepared_filter);
-        
-        return $stories;
     }
     
     

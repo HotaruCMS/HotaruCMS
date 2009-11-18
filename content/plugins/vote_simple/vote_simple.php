@@ -6,7 +6,7 @@
  * folder: vote_simple
  * class: VoteSimple
  * requires: submit 1.4, users 0.8
- * hooks: install_plugin, hotaru_header, submit_hotaru_header_1, post_read_post_1, post_read_post_2, header_include, submit_pre_show_post, submit_show_post_title, admin_plugin_settings, admin_sidebar_plugin_settings, post_add_post, navigation, submit_show_post_extra_fields, submit_show_post_extras, post_delete_post, sidebar_posts_settings_get_values, sidebar_posts_settings_form, sidebar_posts_save_settings, submit_post_breadcrumbs
+ * hooks: install_plugin, hotaru_header, submit_hotaru_header_1, post_read_post_1, post_read_post_2, header_include, submit_pre_show_post, submit_show_post_title, admin_plugin_settings, admin_sidebar_plugin_settings, post_add_post, navigation, submit_show_post_extra_fields, submit_show_post_extras, post_delete_post, submit_post_breadcrumbs
  *
  * PHP version 5
  *
@@ -52,11 +52,9 @@ class VoteSimple extends PluginFunctions
         if (!isset($vote_settings['vote_physical_delete'])) { $vote_settings['vote_physical_delete'] = ""; }
         if (!isset($vote_settings['vote_upcoming_duration'])) { $vote_settings['vote_upcoming_duration'] = 5; }
         if (!isset($vote_settings['vote_no_front_page'])) { $vote_settings['vote_no_front_page'] = 5; }
+        if (!isset($vote_settings['vote_sidebar_posts'])) { $vote_settings['vote_sidebar_posts'] = 'checked'; }
         
         $this->updateSetting('vote_settings', serialize($vote_settings));
-        
-        // For the Sidebar Posts plugin settings:
-        $this->updateSetting('sidebar_posts_votes', 'checked', 'sidebar_posts');
         
         // Include language file. Also included in hotaru_header, but needed here so 
         // that the link in the Admin sidebar shows immediately after installation.
@@ -313,46 +311,6 @@ class VoteSimple extends PluginFunctions
     {
         $sql = "DELETE FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d";
         $this->db->query($this->db->prepare($sql, $this->hotaru->post->id));
-    }
-    
-    
-    /**
-     * Adds option for votes in Sidebar Posts plugin settings
-     */
-    public function sidebar_posts_settings_get_values()
-    {
-        // Get settings from database if they exist...
-        $sb_votes = $this->getSetting('sidebar_posts_votes', 'sidebar_posts');
-        
-        // otherwise set to defaults...
-        if (!isset($sb_votes)) { $sb_votes = 'checked'; }
-        
-        $this->hotaru->post->vars['sb_votes'] = $sb_votes;
-    }
-    
-    
-    /**
-     * Add votes field to the sidebar posts settings form
-     */
-    public function sidebar_posts_settings_form()
-    {
-        echo "<p><input type='checkbox' name='sb_votes' value='sb_votes' " . $this->hotaru->post->vars['sb_votes'] . ">&nbsp;&nbsp;" . $this->lang["sidebar_posts_votes"] . "</p>\n"; 
-    }
-    
-    
-    /**
-     * Save Sidebar Posts Vote settings.
-     */
-    public function sidebar_posts_save_settings()
-    {
-        // Votes in Sidebar Posts
-        if ($this->cage->post->keyExists('sb_votes')) { 
-            $this->hotaru->post->vars['sb_votes'] = 'checked';
-        } else { 
-            $this->hotaru->post->vars['sb_votes'] = '';
-        }
-        
-        $this->updateSetting('sidebar_posts_votes', $this->hotaru->post->vars['sb_votes'], 'sidebar_posts');
     }
     
     
