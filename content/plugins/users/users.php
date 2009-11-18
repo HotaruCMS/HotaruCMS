@@ -320,14 +320,6 @@ class Users extends PluginFunctions
                     $this->hotaru->showMessages();
                 }
                 return true;
-            } elseif ($this->hotaru->isPage('permissions')) {
-                if ($this->current_user->getPermission('can_access_admin') == 'yes') { 
-                    $this->editPermissions();
-                } else {
-                    $this->hotaru->messages[$this->lang["access_denied"]] = 'red';
-                    $this->hotaru->showMessages();
-                }
-                return true;
             } else {
                 return false;
             }
@@ -352,13 +344,25 @@ class Users extends PluginFunctions
                 $this->checkEmailConfirmation();
                 $this->hotaru->showMessages();
                 return true;
-            } else {
+            } 
+        }
+        
+        
+        if (!$this->current_user->loggedIn) {
+            if (
+                $this->hotaru->isPage('edit-profile') || 
+                $this->hotaru->isPage('account') ||
+                $this->hotaru->isPage('permissions') || 
+                $this->hotaru->isPage('user-settings')
+                ) 
+            {
                 $this->hotaru->message = $this->lang['users_please_log_in'];
                 $this->hotaru->messageType = "red";
                 $this->hotaru->showMessage();
                 return false;
-            }    
+            }
         }
+        
         return false;
     }
     
