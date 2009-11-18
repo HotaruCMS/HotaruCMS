@@ -5,7 +5,7 @@
  * version: 1.4
  * folder: submit
  * class: Submit
- * hooks: hotaru_header, header_meta, header_include, header_include_raw, admin_header_include_raw, install_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, userbase_default_permissions, admin_maintenance_database, admin_maintenance_top
+ * hooks: hotaru_header, header_meta, header_include, header_include_raw, admin_header_include_raw, install_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, admin_maintenance_database, admin_maintenance_top
  *
  * PHP version 5
  *
@@ -93,6 +93,39 @@ class Submit extends PluginFunctions
         }
         
         
+        // Permissions
+        $site_perms = $this->current_user->getDefaultPermissions('all');
+        if (!isset($site_perms['can_submit'])) { 
+            $perms['options']['can_submit'] = array('yes', 'no', 'mod');
+            $perms['options']['can_edit_posts'] = array('yes', 'no', 'own');
+            $perms['options']['can_delete_posts'] = array('yes', 'no');
+            $perms['options']['can_post_without_link'] = array('yes', 'no');
+            
+            $perms['can_submit']['admin'] = 'yes';
+            $perms['can_submit']['supermod'] = 'yes';
+            $perms['can_submit']['moderator'] = 'yes';
+            $perms['can_submit']['member'] = 'yes';
+            $perms['can_submit']['undermod'] = 'mod';
+            $perms['can_submit']['default'] = 'no';
+            
+            $perms['can_edit_posts']['admin'] = 'yes';
+            $perms['can_edit_posts']['supermod'] = 'yes';
+            $perms['can_edit_posts']['moderator'] = 'yes';
+            $perms['can_edit_posts']['member'] = 'own';
+            $perms['can_edit_posts']['undermod'] = 'own';
+            $perms['can_edit_posts']['default'] = 'no';
+            
+            $perms['can_delete_posts']['admin'] = 'yes';
+            $perms['can_delete_posts']['supermod'] = 'yes';
+            $perms['can_delete_posts']['default'] = 'no';
+            
+            $perms['can_post_without_link']['admin'] = 'yes';
+            $perms['can_post_without_link']['supermod'] = 'yes';
+            $perms['can_post_without_link']['default'] = 'no';
+        }
+        $this->current_user->updateDefaultPermissions($perms);
+        
+
         // Default settings 
         $submit_settings = $this->getSerializedSettings();
         
@@ -570,61 +603,6 @@ class Submit extends PluginFunctions
         }
         
         return false;
-    }
-
-    
-    /**
-     * Default permissions 
-     *
-     * @param array $params - conatins "role"
-     */
-    public function userbase_default_permissions($params)
-    {
-        $perms = $this->hotaru->vars['perms'];
-
-        $role = $params['role'];
-        
-        // Permission Options
-        $perms['options']['can_submit'] = array('yes', 'no', 'mod');
-        $perms['options']['can_edit_posts'] = array('yes', 'no', 'own');
-        $perms['options']['can_delete_posts'] = array('yes', 'no');
-        $perms['options']['can_post_without_link'] = array('yes', 'no');
-        
-        // Permissions for $role
-        switch ($role) {
-            case 'admin':
-            case 'supermod':
-                $perms['can_submit'] = 'yes';
-                $perms['can_edit_posts'] = 'yes';
-                $perms['can_delete_posts'] = 'yes';
-                $perms['can_post_without_link'] = 'yes';
-                break;
-            case 'moderator':
-                $perms['can_submit'] = 'yes';
-                $perms['can_edit_posts'] = 'yes';
-                $perms['can_delete_posts'] = 'no';
-                $perms['can_post_without_link'] = 'yes';
-                break;
-            case 'member':
-                $perms['can_submit'] = 'yes';
-                $perms['can_edit_posts'] = 'own';
-                $perms['can_delete_posts'] = 'no';
-                $perms['can_post_without_link'] = 'no';
-                break;
-            case 'undermod':
-                $perms['can_submit'] = 'mod';
-                $perms['can_edit_posts'] = 'own';
-                $perms['can_delete_posts'] = 'no';
-                $perms['can_post_without_link'] = 'no';
-                break;
-            default:
-                $perms['can_submit'] = 'no';
-                $perms['can_edit_posts'] = 'no';
-                $perms['can_delete_posts'] = 'no';
-                $perms['can_post_without_link'] = 'no';
-        }
-        
-        $this->hotaru->vars['perms'] = $perms;
     }
     
     

@@ -171,6 +171,32 @@ function upgrade_complete()
  */
 function do_upgrade($db)
 {
+    // add new MISCDATA table for storing default permissions, etc.
+    
+    $table_name = "miscdata";
+    $exists = $db->table_exists($table_name);
+    if (!$exists) {
+        $sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
+          `miscdata_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          `miscdata_key` varchar(64) NOT NULL,
+          `miscdata_value` text NOT NULL DEFAULT '',
+          `miscdata_default` text NOT NULL DEFAULT '',
+          `miscdata_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          `miscdata_updateby` int(20) NOT NULL DEFAULT 0
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Miscellaneous Data';";
+        $db->query($sql);
+
+        // Default permissions
+        $perms['options']['can_access_admin'] = array('yes', 'no');
+        $perms['can_access_admin']['admin'] = 'yes';
+        $perms['can_access_admin']['supermod'] = 'yes';
+        $perms['can_access_admin']['default'] = 'no';
+        $perms = serialize($perms);
+        
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (miscdata_key, miscdata_value, miscdata_default) VALUES (%s, %s, %s)";
+        $db->query($db->prepare($sql, 'permissions', $perms, $perms));
+    }
+    
     // add new SITE_OPEN setting
     $sql = "SELECT settings_id FROM " . DB_PREFIX . "settings WHERE settings_name = %s";
     $exists = $db->query($db->prepare($sql, 'SITE_OPEN'));
@@ -179,8 +205,8 @@ function do_upgrade($db)
         $db->query($db->prepare($sql, 'SITE_OPEN', 'true', 'true', 'true/false'));
     }
         
+    // add new user_ip field to Users table
     if (!$db->column_exists('users', 'user_ip')) {
-        // add new user_ip field to Users table
         $sql = "ALTER TABLE " . DB_PREFIX . "users ADD user_ip varchar(32)  NOT NULL DEFAULT %d AFTER user_permissions";
         $db->query($db->prepare($sql, 0));
     }

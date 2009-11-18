@@ -34,7 +34,7 @@ class Admin
     public $current_user;                   // UserBase object
     
     protected $isAdmin      = true;    // flag to tell if we are in Admin or not
-    protected $sidebar = true;
+    protected $sidebars = true;
     
     /**
      * Constructor - make an Admin object
@@ -124,7 +124,7 @@ class Admin
                 if ($plugin && ($page == "plugin_settings")) {
                     $permission = "can_" . $plugin . "_settings";
                     if ($this->current_user->getPermission($permission) == 'yes') {
-                        $this->sidebar = false; // hide sidebar
+                        $this->sidebars = false; // hide sidebars
                         $this->displayAdminTemplate('index');
                         die(); exit;
                     }
@@ -570,6 +570,7 @@ class Admin
         // These should match the tables created in the install script.
         $core_tables = array(
             'hotaru_settings',
+            'hotaru_miscdata',
             'hotaru_users',
             'hotaru_plugins',
             'hotaru_pluginsettings',

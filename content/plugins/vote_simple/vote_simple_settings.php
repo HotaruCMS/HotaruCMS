@@ -50,6 +50,7 @@ class VoteSimpleSettings extends VoteSimple
         $physical_delete = $vote_settings['vote_physical_delete'];
         $upcoming_duration = $vote_settings['vote_upcoming_duration'];
         $no_front_page = $vote_settings['vote_no_front_page'];
+        $sidebar_votes = $vote_settings['vote_sidebar_posts'];
         
         //...otherwise set to blank or default:
         if (!$submit_vote) { $submit_vote = ''; }
@@ -60,6 +61,7 @@ class VoteSimpleSettings extends VoteSimple
         if (!$physical_delete) { $physical_delete = ''; }
         if (!$upcoming_duration) { $upcoming_duration = 5; }
         if (!$no_front_page) { $no_front_page = 5; }
+        if (!$sidebar_votes) { $sidebar_votes = 'checked'; }
         
         // A plugin hook so other plugin developers can add settings
         $this->pluginHook('vote_settings_get_values');
@@ -84,6 +86,9 @@ class VoteSimpleSettings extends VoteSimple
         echo "<p>" . $this->lang["vote_settings_alerts_to_bury"] . " <input type='text' size=5 name='vote_alerts_to_bury' value='" . $alerts_to_bury . "' /> <small> (Default: 5)</small></p>\n";
         
         echo "<p><input type='checkbox' id='vote_physical_delete' name='vote_physical_delete' " . $physical_delete . " /> " . $this->lang["vote_settings_physical_delete"] . "</p>";
+        
+        echo "<br /><p><b>" . $this->lang["vote_settings_other"] . "</b></p>";
+echo "<p><input type='checkbox' name='sb_votes' value='sb_votes' " . $sidebar_votes . ">&nbsp;&nbsp;" . $this->lang["vote_settings_sidebar_posts"] . "</p>\n"; 
             
         // A plugin hook so other plugin developers can show settings
         $this->pluginHook('vote_settings_form_2');
@@ -200,6 +205,14 @@ class VoteSimpleSettings extends VoteSimple
             $physical_delete = ''; 
         }
         
+        
+        // Votes in Sidebar Posts
+        if ($this->cage->post->keyExists('sb_votes')) { 
+            $sidebar_votes = 'checked';
+        } else { 
+            $sidebar_votes = '';
+        }
+        
         // A plugin hook so other plugin developers can save settings   
         $this->pluginHook('vote_save_settings');
         
@@ -212,6 +225,7 @@ class VoteSimpleSettings extends VoteSimple
         $vote_settings['vote_physical_delete'] = $physical_delete;
         $vote_settings['vote_upcoming_duration'] = $upcoming_duration;
         $vote_settings['vote_no_front_page'] = $no_front_page;
+        $vote_settings['vote_sidebar_posts'] = $sidebar_votes;
         
         // parameters: plugin folder name, setting name, setting value
         $this->updateSetting('vote_settings', serialize($vote_settings));

@@ -50,7 +50,7 @@ if ($hotaru->cage->post->getAlpha('updated_settings') == 'true') {
     $hotaru->plugins->pluginHook('user_settings_pre_save'); 
     $settings = $hotaru->vars['settings'];
         
-    // this hook does the actual saving. It can onlbe used by the Users plugin
+    // this hook does the actual saving. It can only be used by the Users plugin
     $hotaru->plugins->pluginHook('user_settings_save', true, 'users', array($username, $settings)); 
 } 
 
