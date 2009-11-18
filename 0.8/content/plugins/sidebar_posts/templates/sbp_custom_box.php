@@ -46,14 +46,15 @@ $new_title = $hotaru->lang['sidebar_posts_latest_posts']; // "Latest Stories"
 
     <h2><?php echo $top_title; ?></h2>
     
+    GOOLIES!
     <ul class='sidebar_widget_body sidebar_posts_items'>
-        <?php echo $sbp->getSidebarPostItems($top_posts); ?>
+        <?php echo $sbp->getSidebarPostItems($top_posts, 'top'); ?>
     </ul>
     
     <h2><?php echo $new_title; ?></h2>
     
     <ul class='sidebar_widget_body sidebar_posts_items'>
-        <?php echo $sbp->getSidebarPostItems($new_posts); ?>
+        <?php echo $sbp->getSidebarPostItems($new_posts, 'new'); ?>
     </ul>
     
 </div>

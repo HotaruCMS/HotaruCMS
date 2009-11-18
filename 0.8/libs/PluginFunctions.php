@@ -1019,14 +1019,21 @@ class PluginFunctions extends Plugin
     /**
      * Get and unserialize serialized settings
      *
+     * @param string $folder plugin folder name
+     * @param string $settings_name optional settings name if different from folder
      * @return array - of submit settings
      */
-    public function getSerializedSettings($folder = '')
+    public function getSerializedSettings($folder = '', $settings_name = '')
     {
+        if($folder == 'vote') { echo "getting vote ettings"; }
         if (!$folder) { $folder = $this->folder; }
-    
+
         // Get settings from the database if they exist...
-        $settings = unserialize($this->getSetting($folder . '_settings', $folder));
+        if (!$settings_name) {
+            $settings = unserialize($this->getSetting($folder . '_settings', $folder));
+        } else {
+            $settings = unserialize($this->getSetting($settings_name, $folder));
+        }
         return $settings;
     }
     
