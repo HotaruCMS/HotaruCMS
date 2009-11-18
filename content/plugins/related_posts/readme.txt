@@ -14,4 +14,4 @@ Instructions
 
 Changelog
 ---------
-v.0.1 2009/11/13 - Nick - Released first version
+v.0.1 2009/11/23 - Nick - Released first version

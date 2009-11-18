@@ -5,7 +5,7 @@
  * version: 0.1
  * folder: activity
  * class: Activity
- * requires: users 0.8
+ * requires: users 0.8, sidebar_widgets 0.5
  * hooks: install_plugin, hotaru_header, header_include, comment_post_add_comment, comment_update_comment, com_man_approve_all_comments, comment_delete_comment, post_add_post, post_update_post, post_change_status, post_delete_post, userbase_killspam, vote_positive_vote, vote_negative_vote, vote_flag_insert, admin_sidebar_plugin_settings, admin_plugin_settings, theme_index_replace, theme_index_main, profile
  *
  * PHP version 5
