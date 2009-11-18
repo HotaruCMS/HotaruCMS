@@ -244,18 +244,63 @@ class UserFunctions extends UserBase
     /**
      * Get the default user settings
      *
+     * @param string $type either 'site' or 'base' (base for the originals)
      * @return array
      */
-    public function getDefaultSettings()
+    public function getDefaultSettings($type = 'site')
     {
-        $settings['admin_notify']   = "checked"; 
-        $settings['new_tab']        = "";
+        if ($type == 'site') { 
+            $field = 'miscdata_value'; 
+        } elseif ($type == 'base') { 
+            $field = 'miscdata_default';
+        } else { 
+            return false;
+        }
         
-        $this->vars['user_default_settings'] = $settings;
-        $this->hotaru->plugins->pluginHook('user_default_settings');
-        $settings = $this->vars['user_default_settings'];
+        $query = "SELECT " . $field . " FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+        $sql = $this->db->prepare($query, 'user_settings');
+
+        if (isset($this->hotaru->vars[$sql])) { 
+            $result = $this->hotaru->vars[$sql]; 
+        } else {
+            $result = $this->db->get_var($sql);
+            $this->hotaru->vars[$sql] = $result;    // cache result
+        }
         
-        return $settings;
+        if ($result) {
+            return unserialize($result);
+        } else {
+            return false;
+        }
+    }
+    
+    
+    /**
+     * Update the default user settings
+     *
+     * @param array $settings 
+     * @param string $type either 'site' or 'base' (base for the originals)
+     * @return array
+     */
+    public function updateDefaultSettings($settings, $type = 'site')
+    {
+        if (!$settings) { return false; } else { $settings = serialize($settings); }
+        
+        $result = $this->getDefaultSettings($type);
+        
+        if (!$result) {
+            // insert settings for the first time
+            $sql = "INSERT INTO " . TABLE_MISCDATA . " (miscdata_key, miscdata_value, miscdata_default, miscdata_updateby) VALUES (%s, %s, %s, %d)";
+            $this->db->query($this->db->prepare($sql, 'user_settings', $settings, $settings, $this->id));
+        } elseif ($type == 'site') {
+            // update the site defaults
+            $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
+            $this->db->query($this->db->prepare($sql, $settings, $this->id, 'user_settings'));
+        } elseif ($type == 'base') {
+            // update the base defaults
+            $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_default = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
+            $this->db->query($this->db->prepare($sql, $settings, $this->id, 'user_settings'));
+        }
     }
 }
 

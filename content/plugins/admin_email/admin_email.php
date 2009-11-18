@@ -5,7 +5,7 @@
  * version: 0.1
  * folder: admin_email
  * class: adminEmail
- * requires: submit 1.4, users 0.8
+ * requires: users 0.8
  * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, admin_theme_index_replace
  *
  * PHP version 5
@@ -52,6 +52,18 @@ class adminEmail extends PluginFunctions
         if (!isset($admin_email_settings['admin_email_id_list'])) { $admin_email_settings['admin_email_id_list'] = serialize(array()); }
         
         $this->updateSetting('admin_email_settings', serialize($admin_email_settings));
+        
+        // Add "admin notify" option to the default user settings
+        require_once(PLUGINS . 'users/libs/UserFunctions.php');
+        $uf = new UserFunctions($this->hotaru);
+        $base_settings = $uf->getDefaultSettings('base'); // originals from plugins
+        $site_settings = $uf->getDefaultSettings('site'); // site defaults updated by admin
+        if (!isset($base_settings['admin_notify'])) { 
+            $base_settings['admin_notify'] = "checked";
+            $site_settings['admin_notify'] = "checked";
+            $uf->updateDefaultSettings($site_settings, 'base');
+            $uf->updateDefaultSettings($site_settings, 'site');
+        }
     }
     
     

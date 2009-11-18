@@ -204,6 +204,14 @@ function do_upgrade($db)
         $sql = "INSERT INTO " . DB_PREFIX . "settings (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
         $db->query($db->prepare($sql, 'SITE_OPEN', 'true', 'true', 'true/false'));
     }
+    
+    // add new HTML_CACHE_ON setting
+    $sql = "SELECT settings_id FROM " . DB_PREFIX . "settings WHERE settings_name = %s";
+    $exists = $db->query($db->prepare($sql, 'HTML_CACHE_ON'));
+    if (!$exists) {
+        $sql = "INSERT INTO " . DB_PREFIX . "settings (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $db->query($db->prepare($sql, 'HTML_CACHE_ON', 'true', 'true', 'true/false'));
+    }
         
     // add new user_ip field to Users table
     if (!$db->column_exists('users', 'user_ip')) {
