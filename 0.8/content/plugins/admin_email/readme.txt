@@ -19,10 +19,8 @@ Usage
 3. By default, the following text is attached to the bottom of each email. You can change it in admin_email/languages/admin_email_languages.php
 
 -----------------------
-You have received this email because you are registered at (NAME OF YOUR SITE).
-
-Note: In the near future, Hotaru will have user-defined settings so users can opt out of receiving emails, etc. 
+You have received this email because you are registered at YOUR SITE. You can opt out of receiving these emails from your settings page: [link to user's settings page]
 
 Changelog
 ---------
-v.0.1 2009/11/15 - Nick - Released first version
+v.0.1 2009/11/23 - Nick - Released first version

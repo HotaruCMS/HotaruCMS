@@ -921,7 +921,7 @@ class Hotaru
      */
     public function smartCacheHTML($table = '', $timeout = 0, $html = '', $label = '')
     {
-        if (!$table || !$timeout) { return false; }
+        if (!$table || !$timeout || (HTML_CACHE_ON != 'true')) { return false; }
         
         $last_update = $this->smartCacheSQL($table);
         

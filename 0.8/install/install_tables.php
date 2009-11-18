@@ -110,6 +110,10 @@ function create_table($table_name)
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
         $db->query($db->prepare($sql, 'CSS_JS_CACHE_ON', 'true', 'true', 'true/false'));
         
+        // HTML cache
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $db->query($db->prepare($sql, 'HTML_CACHE_ON', 'true', 'true', 'true/false'));
+        
         // Debug
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
         $db->query($db->prepare($sql, 'DEBUG', 'false', 'false', 'true/false'));

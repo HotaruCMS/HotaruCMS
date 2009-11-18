@@ -34,4 +34,4 @@ If you aren't using friendly urls, you'll need to put an evb folder in you root 
 
 Changelog
 ---------
-v.0.1 2009/11/12 - Nick - Released first version
+v.0.1 2009/11/23 - Nick - Released first version

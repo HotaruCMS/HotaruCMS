@@ -5,7 +5,7 @@
  * version: 0.1
  * folder: admin_email
  * class: adminEmail
- * requires: submit 1.4, users 0.8
+ * requires: users 0.8
  * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, admin_theme_index_replace
  *
  * PHP version 5
