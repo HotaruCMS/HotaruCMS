@@ -52,6 +52,18 @@ class adminEmail extends PluginFunctions
         if (!isset($admin_email_settings['admin_email_id_list'])) { $admin_email_settings['admin_email_id_list'] = serialize(array()); }
         
         $this->updateSetting('admin_email_settings', serialize($admin_email_settings));
+        
+        // Add "admin notify" option to the default user settings
+        require_once(PLUGINS . 'users/libs/UserFunctions.php');
+        $uf = new UserFunctions($this->hotaru);
+        $base_settings = $uf->getDefaultSettings('base'); // originals from plugins
+        $site_settings = $uf->getDefaultSettings('site'); // site defaults updated by admin
+        if (!isset($base_settings['admin_notify'])) { 
+            $base_settings['admin_notify'] = "checked";
+            $site_settings['admin_notify'] = "checked";
+            $uf->updateDefaultSettings($site_settings, 'base');
+            $uf->updateDefaultSettings($site_settings, 'site');
+        }
     }
     
     

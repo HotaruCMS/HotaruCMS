@@ -148,6 +148,18 @@ class Submit extends PluginFunctions
         if (!isset($submit_settings['post_archive'])) { $submit_settings['post_archive'] = "no_archive"; }
         
         $this->updateSetting('submit_settings', serialize($submit_settings));
+        
+        // Add "open in new tab" option to the default user settings
+        require_once(PLUGINS . 'users/libs/UserFunctions.php');
+        $uf = new UserFunctions($this->hotaru);
+        $base_settings = $uf->getDefaultSettings('base'); // originals from plugins
+        $site_settings = $uf->getDefaultSettings('site'); // site defaults updated by admin
+        if (!isset($base_settings['new_tab'])) { 
+            $base_settings['new_tab'] = "";
+            $site_settings['new_tab'] = "";
+            $uf->updateDefaultSettings($site_settings, 'base');
+            $uf->updateDefaultSettings($site_settings, 'site');
+        }
     }
     
     
