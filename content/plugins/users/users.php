@@ -665,7 +665,10 @@ class Users extends PluginFunctions
         if ($this->isBlocked('user', $username)) {
             return true;
         }
-                        
+        
+        $this->pluginHook('users_register_check_blocked');  // Stop Spam is one plugin that uses this
+        if ($this->current_user->vars['block']) { return true; }
+
         return false;   // not blocked
     }
     

@@ -6,7 +6,7 @@
  * folder: stop_spam
  * class: StopSpam
  * requires: users 0.8
- * hooks: install_plugin, users_register_pre_add_user, users_register_post_add_user, users_email_conf_post_role, user_manager_details_pending, user_manager_pre_submit_button, user_man_killspam_delete, admin_sidebar_plugin_settings, admin_plugin_settings
+ * hooks: install_plugin, users_register_check_blocked, users_register_pre_add_user, users_register_post_add_user, users_email_conf_post_role, user_manager_details_pending, user_manager_pre_submit_button, user_man_killspam_delete, admin_sidebar_plugin_settings, admin_plugin_settings
  *
  * PHP version 5
  *
@@ -32,6 +32,7 @@
 
 class StopSpam extends PluginFunctions
 {
+    protected $ssType   =   'go_pending';   // otherwise 'block_reg'
     /**
      * Default settings on install
      */
@@ -39,6 +40,7 @@ class StopSpam extends PluginFunctions
     {
         // Default settings 
         if (!$this->getSetting('stop_spam_key')) { $this->updateSetting('stop_spam_key', ''); }
+        if (!$this->getSetting('stop_spam_type')) { $this->updateSetting('stop_spam_type', 'go_pending'); }
         
         // Include language file. Also included in hotaru_header, but needed here so 
         // that the link in the Admin sidebar shows immediately after installation.
@@ -49,8 +51,10 @@ class StopSpam extends PluginFunctions
     /**
      * Checks user against the StopForumSpam.com blacklist
      */
-    public function users_register_pre_add_user()
+    public function users_register_check_blocked()
     {
+        $this->ssType = $this->getSetting('stop_spam_type');
+        
         // get user info:
         $username = $this->current_user->name;
         $email = $this->current_user->email;
@@ -84,13 +88,32 @@ class StopSpam extends PluginFunctions
             $spammer = true;
         }
         
-        if ($spammer) { 
-            $this->current_user->role = 'pending';
+        if ($spammer)
+        { 
+            // store flags - used when type is "go_pending"
             $this->current_user->vars['reg_flags'] = $flags;
-        } else {
+            
+            // if type is "block_reg", provide a way to tell the Users plugin:
+            if ($this->ssType == 'block_reg') {
+                $this->current_user->vars['block'] = true;
+            }
+        } 
+        else 
+        {
             // safe user, do nothing...
         }
 
+    }
+    
+    
+    /**
+     * Set a spammer's role to "pending"
+     */
+    public function users_register_pre_add_user()
+    {
+        if ($this->current_user->vars['reg_flags']) {
+            $this->current_user->role = 'pending';
+        }
     }
     
     
