@@ -131,6 +131,8 @@ class relatedPosts extends PluginFunctions
      */
     public function submit_show_post_middle()
     { 
+        if ($this->hotaru->isPage('submit2')) { return false; }
+        
         // Get settings from database if they exist... should return 'checked'
         $num_posts = $this->getSetting('submit_related_posts_post');
         $this->prepareSearchTerms($num_posts);
