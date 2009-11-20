@@ -43,7 +43,7 @@ class Hotaru
     protected $title        = '';       // for the broswer's TITLE tags
     protected $pageType     = '';       // what kind of page we're looking at
     protected $plugin_settings      = array();  // contains all plugin settings
-    protected $plugin_basics        = array();  // contains basic plugin details
+    protected $pluginBasics        = array();  // contains basic plugin details
     
     protected $cssIncludes          = array();  // a list of css files to include
     protected $cssIncludesAdmin     = array();  // a list of css files to include in Admin

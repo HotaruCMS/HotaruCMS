@@ -125,7 +125,7 @@ class PluginFunctions extends Plugin
     public function getPluginBasics()
     {
         $sql = "SELECT plugin_enabled, plugin_name, plugin_folder, plugin_class, plugin_version FROM " . TABLE_PLUGINS;
-        $this->hotaru->plugin_basics = $this->db->get_results($this->db->prepare($sql));
+        $this->hotaru->pluginBasics = $this->db->get_results($this->db->prepare($sql));
     }
     
     
@@ -837,10 +837,16 @@ class PluginFunctions extends Plugin
     {    
         if (!$folder) { $folder = $this->folder; } 
         
-        if (!$this->hotaru->plugin_basics) { $this->getPluginBasics(); }
+        if (!$this->hotaru->pluginBasics) { //not in memory
+            $this->getPluginBasics(); // get from database
+        }
+        
+        if (!$this->hotaru->pluginBasics) { 
+            return false; // no plugin basics for this plugin found anywhere
+        }
         
         // get plugin basics from memory
-        foreach ($this->hotaru->plugin_basics as $item => $key) {
+        foreach ($this->hotaru->pluginBasics as $item => $key) {
             if ($key->plugin_folder == $folder) {
                 $this->class = $key->plugin_class;
                 return $this->class;
@@ -865,10 +871,16 @@ class PluginFunctions extends Plugin
     {
         if (!$folder) { $folder = $this->folder; } 
         
-        if (!$this->hotaru->plugin_basics) { $this->getPluginBasics(); }
+        if (!$this->hotaru->pluginBasics) { //not in memory
+            $this->getPluginBasics(); // get from database
+        }
+        
+        if (!$this->hotaru->pluginBasics) { 
+            return false; // no plugin basics for this plugin found anywhere
+        }
         
         // get plugin basics from memory
-        foreach ($this->hotaru->plugin_basics as $item => $key) {
+        foreach ($this->hotaru->pluginBasics as $item => $key) {
             if (($key->plugin_folder == $folder) && ($key->plugin_enabled == 1)) {
                 return $key->plugin_version;
             }

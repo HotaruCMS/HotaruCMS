@@ -42,6 +42,7 @@ class Plugin
     protected $requires     = '';         // string of plugin->version pairs
     protected $dependencies = array();    // array of plugin->version pairs
     protected $hooks        = array();    // array of plugin hooks
+    protected $pluginBasics = array();    // holds basic plugin details
     
     public $db;                             // database object
     public $cage;                           // Inspekt object
