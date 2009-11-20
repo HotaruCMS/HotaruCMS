@@ -148,6 +148,15 @@ form {
 	font-weight: bold;
 }
 
+
+/* *************************************
+*  Admin Home page *
+************************************** */
+
+#admin-home td { vertical-align: top; }
+#admin-home #left { width: 70%; padding-right: 1.0em; }
+#admin-home #right { border-left: 1px solid #e0e0e0; padding-left: 1.0em; }
+
 /* *************************************
 *  Plugin Management & Similar tables *
 ************************************** */

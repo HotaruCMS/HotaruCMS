@@ -6,7 +6,7 @@
  * folder: comments
  * class: Comments
  * requires: submit 1.4, users 0.8
- * hooks: header_include, admin_header_include_raw, install_plugin, hotaru_header, theme_index_replace, theme_index_main, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_edit_post_admin_fields, submit_form_2_process_submission, post_delete_post, profile_usage
+ * hooks: header_include, admin_header_include_raw, install_plugin, hotaru_header, theme_index_replace, theme_index_main, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_edit_post_admin_fields, submit_form_2_process_submission, post_delete_post, profile_usage, , admin_theme_main_stats
  *
  * PHP version 5
  *
@@ -750,6 +750,22 @@ class Comments extends pluginFunctions
         echo $this->hotaru->lang['comments_profile_see_comments'] . ".";
         echo "</a>";
         
+    }
+    
+    
+    /**
+     * Show stats on Admin home page
+     */
+    public function admin_theme_main_stats($vars)
+    {
+        echo "<li>&nbsp;</li>";
+    
+        foreach ($vars as $stat_type) {
+            $comments = $this->hotaru->comment->stats($stat_type);
+            if (!$comments) { $comments = 0; }
+            $lang_name = 'comments_admin_stats_' . $stat_type;
+            echo "<li>" . $this->lang[$lang_name] . ": " . $comments . "</li>";
+        }
     }
 }
 

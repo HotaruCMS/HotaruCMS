@@ -4,15 +4,23 @@ Created by: Nick Ramsay
 
 Description
 -----------
-Displays latest and top posts in the sidebar.
+Displays lists of posts in the sidebar with these widgets: Sidebar Posts Top, New, Upcoming, Top 7 Days, Top 30 Days, Top 365 Days and All-Time Best.
 
 Instructions
 ------------
 1. Upload the "sidebar_posts" folder to your plugins folder. Install it from Plugin Management in Admin.
+2. Activate widgets from Admin -> Sidebar Widgets
+3. Enable votes from Admin -> Vote Simple
+
+Customization
+-------------
+Making Custom Sidebar Widgets: 
+Making a Tabbed Sidebar Posts Box
 
 Changelog
 ---------
-v.0.8 2009/10/20 - Nick - Removed settings and custom box. Added show vote option to Vote Simple
+v.0.9 2009/11/23 - Nick - Removed settings and custom box.
+v.0.8 2009/10/20 - Nick - Added check for vote setting (set in Vote Simple plugin)
 v.0.7 2009/10/15 - Nick - Bug fixes for slashed apostrophes
 v.0.6 2009/10/15 - Nick - Added Settings page - choose default or custom box
 v.0.5 2009/10/13 - Nick - Minor CSS update for consistency across all sidebar widgets

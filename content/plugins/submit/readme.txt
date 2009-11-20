@@ -4,7 +4,7 @@ Created by: Nick Ramsay
 
 Description
 -----------
-Enable users to submit and display stories to your site. 
+Post and view stories, automatically fetch the title, preview and modify your submission, edit posts, enable which components to show (e.g. description, author, date), filter posts to selected users and if the plugins are activated, tags and categories, too. Option to disable the submit form without disabling the plugin. Includes submission moderation options with email notification for moderators. Recent additions include post archiving and editorials, i.e. posts without a link.
 
 Instructions
 ------------
