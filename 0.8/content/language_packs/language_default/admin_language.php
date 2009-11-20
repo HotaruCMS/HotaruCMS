@@ -78,6 +78,7 @@ $lang["admin_account_update_email_error"] = "That doesn't parse as a valid email
 $lang["admin_news_posted_by"] = "Posted by";
 $lang["admin_news_on"] = "on";
 $lang["admin_news_read_more"] = "Read more";
+$lang["admin_news_more_threads"] = "More recent threads...";
 
 /* Announcements /class.hotaru.php */
 $lang['admin_announcement_delete_install'] = "Please delete the install folder before someone deletes your database!";
@@ -178,6 +179,7 @@ $lang["admin_theme_navigation_logout"] = "Logout";
 $lang["admin_theme_main_admin_cp"] = "Admin Control Panel";
 $lang["admin_theme_main_admin_home"] = "Admin Home";
 $lang["admin_theme_main_latest"] = "Latest from Hotaru CMS";
+$lang["admin_theme_main_stats"] = "Stats";
 
 /* maintenance */
 $lang["admin_theme_maintenance"] = "Maintenance";

@@ -9,6 +9,13 @@ Give your users the ability to search yor site.
 Instructions
 ------------
 1. Upload the "search" folder to your plugins folder. Install it from Plugin Management in Admin.
+2. Activate the Search widget in Admin -> Sidebar Widgets
+
+Note
+----
+If you'd like to show the search box without using it in a widget, paste this PHP into your template:
+
+<?php $hotaru->plugins->pluginHook('search_box'); ?>
 
 Changelog
 ---------

@@ -883,10 +883,8 @@ class Admin
      *
      * @return string Returns the html output for the feed 
      */
-    public function adminNews()
+    public function adminNews($max_items = 10, $items_with_content = 3, $max_chars = 300)
     {
-        $max_items = 5;
-        
         $feedurl = 'http://feeds2.feedburner.com/hotarucms';
         $feed = $this->hotaru->newSimplePie($feedurl);
         $feed->init();
@@ -902,27 +900,32 @@ class Admin
                 // Title
                 $output .= "<a href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a><br />";
                 
-                // Posted by
-                $output .= "<small>" . $this->lang["admin_news_posted_by"] . " ";
-                
-                foreach ($item->get_authors() as $author) 
+                if ($item_count < $items_with_content)
                 {
-                    $output .= $author->get_name(); 
+                    // Posted by
+                    $output .= "<small>" . $this->lang["admin_news_posted_by"] . " ";
+                    
+                    foreach ($item->get_authors() as $author) 
+                    {
+                        $output .= $author->get_name(); 
+                    }
+                    
+                    // Date
+                    $output .= " " . $this->lang["admin_news_on"] . " " . $item->get_date('j F Y');
+                    $output .= "</small><br />";
+                    
+                    // Content
+                    $output .= substr(strip_tags($item->get_content()), 0, $max_chars);
+                    $output .= "... ";
+                    
+                    // Read more
+                    $output .= "<small><a href='" . $item->get_permalink() . "' title='" . $item->get_title() . "'>[" . $this->lang["admin_news_read_more"] . "]</a>";
+                    $output .= "</small>";
                 }
                 
-                // Date
-                $output .= " " . $this->lang["admin_news_on"] . " " . $item->get_date('j F Y');
-                $output .= "</small><br />";
-                
-                // Content
-                $output .= substr(strip_tags($item->get_content()), 0, 300);
-                $output .= "... ";
-                
-                // Read more
-                $output .= "<small><a href='" . $item->get_permalink() . "' title='" . $item->get_title() . "'>[" . $this->lang["admin_news_read_more"] . "]</a>";
-                $output .= "</small>";
-                
-                $output .= "</div><br />";
+                $output .= "</div>";
+                if ($item_count < $items_with_content) { $output .="<br />"; }
+                if ($item_count == ($items_with_content - 1)) { $output .= "<h3>" . $this->lang["admin_news_more_threads"] . "</h3>"; }
                 
                 $item_count++;
                 if ($item_count >= $max_items) { break;}

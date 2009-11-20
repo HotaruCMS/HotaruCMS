@@ -2,7 +2,7 @@
 /**
  * name: Sidebar Posts
  * description: Adds links in the sidebar to the latest posts and top stories on the site.
- * version: 0.8
+ * version: 0.9
  * folder: sidebar_posts
  * class: SidebarPosts
  * requires: sidebar_widgets 0.5, submit 1.4

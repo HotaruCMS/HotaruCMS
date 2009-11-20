@@ -166,4 +166,15 @@ $lang['userfunctions_notifymods_body_sign'] = SITE_NAME . " Admin";
 /* User Profile */
 $lang['users_profile_usage'] = "Use the links above to see all the stories I've submitted";
 
+/* Admin Stats */
+$lang["users_admin_stats_total_users"] = "Total users";
+$lang["users_admin_stats_admins"] = "Admins";
+$lang["users_admin_stats_supermods"] = "Super Mods";
+$lang["users_admin_stats_moderators"] = "Moderators";
+$lang["users_admin_stats_approved_users"] = "Approved users";
+$lang["users_admin_stats_pending_users"] = "Pending users";
+$lang["users_admin_stats_undermod_users"] = "Under moderation";
+$lang["users_admin_stats_banned_users"] = "Banned users";
+$lang["users_admin_stats_killspammed_users"] = "Killspammed users";
+
 ?>
