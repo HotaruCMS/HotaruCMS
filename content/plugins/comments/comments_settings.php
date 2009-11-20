@@ -271,7 +271,7 @@ class CommentsSettings extends Comments
         }
         
         
-        // Pagination
+        // Comment order
         if ($this->cage->post->keyExists('comment_order')) { 
             $this->hotaru->comment->order = $this->cage->post->testAlpha('comment_order');
         } else {

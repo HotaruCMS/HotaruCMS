@@ -4,7 +4,7 @@ Created by: Nick Ramsay
 
 Description
 -----------
-Let users vote for posts with a Digg-style button. Adds latest and top story pages.
+Let users vote for posts. Adds pages for top, latest and upcoming stories as well as links for filtering top posts by time frame.
 
 Instructions
 ------------

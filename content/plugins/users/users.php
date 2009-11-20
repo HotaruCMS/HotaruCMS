@@ -5,7 +5,7 @@
  * version: 0.8
  * folder: users
  * class: Users
- * hooks: hotaru_header, submit_hotaru_header_2, header_include, admin_header_include_raw, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_first, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, submit_pre_list, users_edit_profile_save, user_settings_save
+ * hooks: hotaru_header, submit_hotaru_header_2, header_include, admin_header_include_raw, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_first, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, submit_pre_list, users_edit_profile_save, user_settings_save, admin_theme_main_stats
  *
  * PHP version 5
  *
@@ -665,7 +665,10 @@ class Users extends PluginFunctions
         if ($this->isBlocked('user', $username)) {
             return true;
         }
-                        
+        
+        $this->pluginHook('users_register_check_blocked');  // Stop Spam is one plugin that uses this
+        if ($this->current_user->vars['block']) { return true; }
+
         return false;   // not blocked
     }
     
@@ -915,6 +918,25 @@ class Users extends PluginFunctions
         
         $this->hotaru->message = $this->lang["users_settings_saved"] . "<br />\n";
         $this->hotaru->messageType = "green";
+    }
+    
+    
+    /**
+     * Show stats on Admin home page
+     */
+    public function admin_theme_main_stats($vars)
+    {
+        require_once(PLUGINS . 'users/libs/UserFunctions.php');
+        $uf = new UserFunctions($this->hotaru);
+        
+        echo "<li>&nbsp;</li>";
+
+        foreach ($vars as $stat_type) {
+            $users = $uf->stats($stat_type);
+            if (!$users) { $users = 0; }
+            $lang_name = 'users_admin_stats_' . $stat_type;
+            echo "<li>" . $this->lang[$lang_name] . ": " . $users . "</li>";
+        }
     }
 }
 

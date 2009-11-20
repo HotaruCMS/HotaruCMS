@@ -302,6 +302,59 @@ class UserFunctions extends UserBase
             $this->db->query($this->db->prepare($sql, $settings, $this->id, 'user_settings'));
         }
     }
+    
+    
+    /**
+     * Stats for Admin homepage
+     *
+     * @param string $stat_type
+     * @return int
+     */
+    public function stats($stat_type = '')
+    {
+        switch ($stat_type) {
+            case 'admins':
+                $sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+                $users = $this->db->get_var($this->db->prepare($sql, 'admin'));
+                break;
+            case 'supermods':
+                $sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+                $users = $this->db->get_var($this->db->prepare($sql, 'supermod'));
+                break;
+            case 'moderators':
+                $sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+                $users = $this->db->get_var($this->db->prepare($sql, 'moderator'));
+                break;
+            case 'members':
+                $sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+                $users = $this->db->get_var($this->db->prepare($sql, 'member'));
+                break;
+            case 'total_users':
+                $sql = "SELECT count(user_id) FROM " . TABLE_USERS;
+                $users = $this->db->get_var($sql);
+                break;
+            case 'approved_users':
+                $sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s OR user_role = %s OR user_role = %s OR  user_role = %s";
+                $users = $this->db->get_var($this->db->prepare($sql, 'admin', 'supermod', 'moderator', 'member'));
+                break;
+            case 'undermod_users':
+                $sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+                $users = $this->db->get_var($this->db->prepare($sql, 'undermod'));
+                break;
+            case 'banned_users':
+                $sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+                $users = $this->db->get_var($this->db->prepare($sql, 'banned'));
+                break;
+            case 'killspammed_users':
+                $sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+                $users = $this->db->get_var($this->db->prepare($sql, 'killspammed'));
+                break;
+            default:
+                $users = 0;
+        }
+        
+        return $users;
+    }
 }
 
 ?>

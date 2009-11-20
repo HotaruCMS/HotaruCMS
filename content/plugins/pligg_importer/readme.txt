@@ -8,9 +8,20 @@ Import a Pligg database into Hotaru CMS. Imports the following tables: Links, Co
 
 Instructions
 ------------
-1. Upload the "pligg_importer" folder to your plugins folder. Install it from Plugin Management in Admin and follow the instructions.
-2. Set permissions on the Uploads folder to 777.
-3. Go to Pligg Importer in the Admin Sidebar and follow the instructions and steps.
+1. Export these tables as non-zipped XML files from your Pligg database: categories, comments, links, users, tags and votes.
+2. If you have access to php.ini, check that upload_max_filesize is greater than the largest XML file you exported. Contact your webhost for help.
+3. Install the following plugins in Hotaru: Category Manager, Categories, Submit, Comments, Tags, Users, Vote and this Pligg Importer.
+4. Give the Uploads folder in /content/plugins/pligg_importer/ is writable (chmod 777 in FTP).
+5. Create an account with the same login, email and password your god or admin user had on your Pligg site. This ensures you are still logged in as an administrator even after you overwrite the current users table during the import. See this comment about changing the username "god" to a four character name: http://hotarucms.org/showpost.php?p=473&postcount=10
+6. Click Pligg Importer in the Admin sidebar and when ready, click "Import a Pligg Database" and follow the steps.
+
+Note
+----
+Depending on the size of your Pligg database, importing each file can take a long time. This isn't a straight import. Almost every aspect of your Pligg database is changed. For example, all users will get a new id number, so every table that has a user_id field needs updating with this new id. The same goes for link ids, category ids etc. Your server's CPU/database will be pushed to its limits! If you are coming from SWCMS, consider using the SWCMS DB Cleanup module before importing your site.
+
+Help Needed
+-----------
+This plugin has been developed using a Social Web CMS database, which is almost identical to Pligg 0.9.9.5. If you have a non-empty Pligg 1.0 database and can test it with this plugin, that would be greatly appreciated.
 
 Changelog
 ---------

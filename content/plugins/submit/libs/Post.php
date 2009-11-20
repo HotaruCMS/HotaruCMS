@@ -987,6 +987,43 @@ class Post
         
         return $href + $url;
     }
+    
+    
+    /**
+     * Stats for Admin homepage
+     *
+     * @param string $stat_type
+     * @return int
+     */
+    public function stats($stat_type = '')
+    {
+        switch ($stat_type) {
+            case 'total_posts':
+                $sql = "SELECT count(post_id) FROM " . TABLE_POSTS;
+                $posts = $this->db->get_var($sql);
+                break;
+            case 'approved_posts':
+                $sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s OR post_status = %s";
+                $posts = $this->db->get_var($this->db->prepare($sql, 'top', 'new'));
+                break;
+            case 'pending_posts':
+                $sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s";
+                $posts = $this->db->get_var($this->db->prepare($sql, 'pending'));
+                break;
+            case 'buried_posts':
+                $sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s";
+                $posts = $this->db->get_var($this->db->prepare($sql, 'buried'));
+                break;
+            case 'archived_posts':
+                $sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_archived = %s";
+                $posts = $this->db->get_var($this->db->prepare($sql, 'Y'));
+                break;
+            default:
+                $posts = 0;
+        }
+        
+        return $posts;
+    }
 }
 
 ?>

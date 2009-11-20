@@ -5,7 +5,7 @@
  * version: 1.4
  * folder: submit
  * class: Submit
- * hooks: hotaru_header, header_meta, header_include, header_include_raw, admin_header_include_raw, install_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, admin_maintenance_database, admin_maintenance_top
+ * hooks: hotaru_header, header_meta, header_include, header_include_raw, admin_header_include_raw, install_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, admin_maintenance_database, admin_maintenance_top, admin_theme_main_stats
  *
  * PHP version 5
  *
@@ -984,6 +984,21 @@ class Submit extends PluginFunctions
 
     }
     
+    
+    /**
+     * Show stats on Admin home page
+     */
+    public function admin_theme_main_stats($vars)
+    {
+        echo "<li>&nbsp;</li>";
+    
+        foreach ($vars as $stat_type) {
+            $posts = $this->hotaru->post->stats($stat_type);
+            if (!$posts) { $posts = 0; }
+            $lang_name = 'submit_admin_stats_' . $stat_type;
+            echo "<li>" . $this->lang[$lang_name] . ": " . $posts . "</li>";
+        }
+    }
 }
 
 ?>

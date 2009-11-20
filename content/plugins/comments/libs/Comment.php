@@ -599,6 +599,34 @@ class Comment
         
         return $href + $url;
     }
-      
+    
+    
+    /**
+     * Stats for Admin homepage
+     *
+     * @param string $stat_type
+     * @return int
+     */
+    public function stats($stat_type = '')
+    {
+        switch ($stat_type) {
+            case 'total_comments':
+                $sql = "SELECT count(comment_id) FROM " . TABLE_COMMENTS;
+                $comments = $this->db->get_var($sql);
+                break;
+            case 'approved_comments':
+                $sql = "SELECT count(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_status = %s";
+                $comments = $this->db->get_var($this->db->prepare($sql, 'approved'));
+                break;
+            case 'pending_comments':
+                $sql = "SELECT count(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_status = %s";
+                $comments = $this->db->get_var($this->db->prepare($sql, 'pending'));
+                break;
+            default:
+                $comments = '';
+        }
+        
+        return $comments;
+    }
 }
 ?>

@@ -43,17 +43,31 @@ class StopSpamSettings extends StopSpam
           
         // Get settings from database if they exist...
         $stop_spam_key = $this->getSetting('stop_spam_key');
+        $stop_spam_type = $this->getSetting('stop_spam_type');
     
         $this->pluginHook('stop_spam_settings_get_values');
         
         //...otherwise set to blank:
         if (!$stop_spam_key) { $stop_spam_key = ''; } 
+        if (!$stop_spam_type) { $stop_spam_type = 'go_pending'; }
+        
+        // determine which radio button is checked
+        if ($stop_spam_type == 'go_pending') { 
+            $go_pending = 'checked'; 
+            $block_reg = ''; 
+        } else {
+            $go_pending = ''; 
+            $block_reg = 'checked'; 
+        }
             
         echo "<form name='stop_spam_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=stop_spam' method='post'>\n";
         
         echo "<p>" . $this->lang["stop_spam_settings_instructions"] . "</p><br />";
             
         echo "<p>" . $this->lang["stop_spam_settings_key"] . " <input type='text' size=30 name='stop_spam_key' value='" . $stop_spam_key . "'></p>\n";    
+        
+        echo "<p><input type='radio' name='ss_type' value='go_pending' " . $go_pending . "> " . $this->lang["stop_spam_settings_go_pending"] . "</p>\n";    
+        echo "<p><input type='radio' name='ss_type' value='block_reg' " . $block_reg . "> " . $this->lang["stop_spam_settings_block_reg"] . "</p>\n";    
     
         $this->pluginHook('stop_spam_settings_form');
                 
@@ -84,11 +98,21 @@ class StopSpamSettings extends StopSpam
             $this->hotaru->messageType = "red";
         }
         
+    
+        // stop forum spam type
+        if ($this->cage->post->keyExists('ss_type')) { 
+            $stop_spam_type = $this->cage->post->testAlnumLines('ss_type');
+        } else {
+            $stop_spam_type = ''; 
+        }
+        
+        
         $this->pluginHook('stop_spam_save_settings');
         
         if ($error == 0) {
             // save settings
             $this->updateSetting('stop_spam_key', $stop_spam_key);
+            $this->updateSetting('stop_spam_type', $stop_spam_type);
             
             $this->hotaru->message = $this->lang["stop_spam_settings_saved"];
             $this->hotaru->messageType = "green";

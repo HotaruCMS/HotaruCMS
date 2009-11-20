@@ -166,4 +166,11 @@ $lang["submit_rss_stories_in_category"] = "Stories posted in";
 $lang["submit_rss_stories_search"] = "Search results for";
 $lang["submit_rss_stories_upcoming"] = "Upcoming stories";
 
+/* Admin Stats */
+$lang["submit_admin_stats_total_posts"] = "Total posts";
+$lang["submit_admin_stats_approved_posts"] = "Approved posts";
+$lang["submit_admin_stats_pending_posts"] = "Pending posts";
+$lang["submit_admin_stats_buried_posts"] = "Buried posts";
+$lang["submit_admin_stats_archived_posts"] = "Archived posts";
+
 ?>
