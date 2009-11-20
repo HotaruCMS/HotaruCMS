@@ -223,7 +223,7 @@ class UserManagerSettings extends UserManager
         
         if ($users) { 
             $this->hotaru->vars['user_man_rows'] = $this->drawRows($p, $users, $filter, $search_term);
-        } else {
+        } elseif ($this->hotaru->vars['user_filter'] == 'pending') {
             $this->hotaru->message = $this->lang['user_man_no_pending_users'];
             $this->hotaru->messageType = 'green';
         }

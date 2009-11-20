@@ -69,7 +69,7 @@ class UserFunctions extends UserBase
                 $email_mods = $users_settings['users_email_notify_mods'];
                 $subject = $this->lang['userfunctions_notifymods_subject_user'];
                 $about = $this->lang['userfunctions_notifymods_body_about_user'];
-                $url = BASEURL . "admin_index.php?page=plugin_settings&plugin=user_manager&page=plugin_settings&type=filter&user_filter=pending";
+                $url = BASEURL . "admin_index.php?page=plugin_settings&plugin=user_manager&page=plugin_settings";
                 break;
             case 'post':
                 $submit_settings = $this->plugins->getSerializedSettings('submit');
@@ -83,7 +83,7 @@ class UserFunctions extends UserBase
                 $email_mods = $comments_settings['comment_email_notify_mods'];
                 $subject = $this->lang['userfunctions_notifymods_subject_comment'];
                 $about = $this->lang['userfunctions_notifymods_body_about_comment'];
-                $url = BASEURL . "admin_index.php?page=plugin_settings&plugin=comment_manager&page=plugin_settings&type=filter&comment_status_filter=pending";
+                $url = BASEURL . "admin_index.php?page=plugin_settings&plugin=comment_manager&page=plugin_settings";
                 break;
             default:
         }
