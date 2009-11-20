@@ -169,7 +169,7 @@ class PostManagerSettings extends PostManager
         
         if ($posts) { 
             $this->hotaru->vars['post_man_rows'] = $this->drawRows($p, $posts, $filter, $search_term);
-        } else {
+        } elseif ($this->hotaru->vars['post_status_filter'] == 'pending') {
             $this->hotaru->message = $this->lang['post_man_no_pending_posts'];
             $this->hotaru->messageType = 'green';
         }

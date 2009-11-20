@@ -42,7 +42,7 @@ class CommentManagerSettings extends CommentManager
         
         // clear variables:
         $this->hotaru->vars['search_term'] = '';
-        $this->hotaru->vars['comment_status_filter'] = 'pending';
+        $this->hotaru->vars['comment_status_filter'] = 'all';
         
         // Get unique statuses for Filter form:
         $this->hotaru->vars['statuses'] = $this->hotaru->post->getUniqueStatuses(); 
@@ -209,16 +209,23 @@ class CommentManagerSettings extends CommentManager
         }
 
         if(!isset($comments)) {
-            // default list (pending only)
-            $where_clause = " WHERE comment_status = %s"; 
-            $sort_clause = ' ORDER BY comment_date DESC';  // same as "all"
-            $sql = "SELECT * FROM " . TABLE_COMMENTS . $where_clause . $sort_clause;
-            $comments = $this->db->get_results($this->db->prepare($sql, 'pending')); 
+            // default list
+            if ($this->hotaru->vars['comment_status_filter'] == 'pending') {
+                $where_clause = " WHERE comment_status = %s";
+                $sort_clause = ' ORDER BY comment_date DESC'; 
+                $sql = "SELECT * FROM " . TABLE_COMMENTS . $where_clause . $sort_clause;
+                $posts = $this->db->get_results($this->db->prepare($sql, 'pending')); 
+            } else {
+                $where_clause = " WHERE comment_status = %s"; 
+                $sort_clause = ' ORDER BY comment_date DESC';  // same as "all"
+                $sql = "SELECT * FROM " . TABLE_COMMENTS . $where_clause . $sort_clause;
+                $comments = $this->db->get_results($this->db->prepare($sql, 'pending'));
+            }
         }
         
         if ($comments) { 
             $this->hotaru->vars['com_man_rows'] = $this->drawRows($c, $comments, $filter, $search_term);
-        } else {
+        } elseif ($this->hotaru->vars['comment_status_filter'] == 'pending') {
             $this->hotaru->message = $this->lang['com_man_no_pending_comments'];
             $this->hotaru->messageType = 'green';
         }
