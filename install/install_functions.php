@@ -133,5 +133,7 @@ function list_plugin_tables()
  */
 function drop_table($table_name)
 {
-    $this->db->query("DROP TABLE " . $table_name);
+    global $db;
+    
+    $db->query("DROP TABLE " . $table_name);
 }
