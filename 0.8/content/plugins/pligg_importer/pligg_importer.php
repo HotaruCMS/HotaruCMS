@@ -2,7 +2,7 @@
 /**
  * name: Pligg Importer
  * description: Imports and converts a Pligg database to Hotaru CMS
- * version: 0.6
+ * version: 0.7
  * folder: pligg_importer
  * class: PliggImporter
  * requires: category_manager 0.6, categories 0.9, comments 1.0, submit 1.4, tags 1.1, users 0.8, vote_simple 0.8
@@ -84,7 +84,8 @@ class PliggImporter extends PluginFunctions
         {
             $this->page_welcome();    // Page One - welcome and instructions
         }
-    
+        
+        return true;
     }
     
     
