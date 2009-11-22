@@ -60,12 +60,12 @@ if ($hotaru->cage->post->keyExists('post_id')) {
             return false;
         }
         
+        // get current vote count and status
+        $sql = "SELECT post_votes_up, post_status, post_date FROM " . TABLE_POSTS . " WHERE post_id = %d";
+        $result = $hotaru->db->get_row($hotaru->db->prepare($sql, $post_id));
+            
         if ($vote_rating == 'positive')
         {
-            // get current vote count and status
-            $sql = "SELECT post_votes_up, post_status, post_date FROM " . TABLE_POSTS . " WHERE post_id = %d";
-            $result = $hotaru->db->get_row($hotaru->db->prepare($sql, $post_id));
-            
             // Change the status to 'top' if we have enough votes and are within the time limit to hit the front page:
             $front_page_deadline = "-" . $vote_settings['vote_no_front_page'] . " days"; // default: -5 days
             $sql_deadline = date('YmdHis', strtotime($front_page_deadline)); // should be negative
@@ -90,6 +90,12 @@ if ($hotaru->cage->post->keyExists('post_id')) {
                 // Update Posts table
                 $sql = "UPDATE " . TABLE_POSTS . " SET post_votes_up=post_votes_up-1 WHERE post_id = %d";
                 $hotaru->db->query($hotaru->db->prepare($sql, $post_id));
+                
+                // Change status to "new" if demoting a post
+                if ($vote_settings['vote_use_demote'] && (($result->post_votes_up - 1) < $vote_settings['vote_votes_to_promote'])) {
+                    $sql = "UPDATE " . TABLE_POSTS . " SET post_status = %s WHERE post_id = %d";
+                    $hotaru->db->query($hotaru->db->prepare($sql, 'new', $post_id));
+                }
 
                 // Update Postvotes table
                 $sql = "DELETE FROM  " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating = %s";

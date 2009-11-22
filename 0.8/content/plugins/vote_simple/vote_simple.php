@@ -2,7 +2,7 @@
 /**
  * name: Vote Simple
  * description: Adds voting ability to posted stories.
- * version: 0.8
+ * version: 0.9
  * folder: vote_simple
  * class: VoteSimple
  * requires: submit 1.4, users 0.8
@@ -47,6 +47,7 @@ class VoteSimple extends PluginFunctions
         if (!isset($vote_settings['vote_submit_vote'])) { $vote_settings['vote_submit_vote'] = "checked"; }
         if (!isset($vote_settings['vote_submit_vote_value'])) { $vote_settings['vote_submit_vote_value'] = 1; }
         if (!isset($vote_settings['vote_votes_to_promote'])) { $vote_settings['vote_votes_to_promote'] = 5; }
+        if (!isset($vote_settings['vote_use_demote'])) { $vote_settings['vote_use_demote'] = ""; }
         if (!isset($vote_settings['vote_use_alerts'])) { $vote_settings['vote_use_alerts'] = "checked"; }
         if (!isset($vote_settings['vote_alerts_to_bury'])) { $vote_settings['vote_alerts_to_bury'] = 5; }
         if (!isset($vote_settings['vote_physical_delete'])) { $vote_settings['vote_physical_delete'] = ""; }

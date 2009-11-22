@@ -81,6 +81,7 @@ $lang["vote_settings_votes_to_promote_invalid"] = "The number of votes needed mu
 $lang["vote_settings_upcoming_duration"] = "Number of days a new post can sit on the Upcoming page:";
 $lang["vote_settings_upcoming_duration_invalid"] = "The number of days must be a positive integer";
 $lang["vote_settings_no_front_page"] = "Deadline for new posts to hit the front page (days):";
+$lang["vote_settings_back_to_latest"] = "Send posts back to the \"Latest\" page if <i>unvoted</i> back below the Top Posts threshold.";
 $lang["vote_settings_no_front_page_invalid"] = "The number of days must be a positive integer";
 $lang["vote_settings_use_alerts"] = "Enable Alerts (i.e. flag / bury). Alerts are only used on \"new\" posts";
 $lang["vote_settings_alerts_to_bury"] = "Number of alerts to automatically bury a post:";
