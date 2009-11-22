@@ -109,7 +109,7 @@ class PliggImp5
                         $child->user_level = 'admin';
                         break;
                     case 'normal':
-                        $role = 'admin';
+                        $role = 'member';
                         $child->user_level = 'member';
                         break;
                     default:
