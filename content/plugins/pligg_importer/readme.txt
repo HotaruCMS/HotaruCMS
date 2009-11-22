@@ -25,6 +25,7 @@ This plugin has been developed using a Social Web CMS database, which is almost 
 
 Changelog
 ---------
+v.0.7 2009/11/22 - Nick - Bug fixes for illegal offset warnings
 v.0.6 2009/11/01 - Nick - Updated to copy a user's IP address from Pligg to Hotaru
 v.0.5 2009/10/17 - Nick - Renamed CSS 'next' as 'pliggimp_next' to avoid clashes
 v.0.4 2009/10/01 - Nick - Updates for compatibility with Hotaru 0.7

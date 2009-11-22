@@ -101,12 +101,15 @@ class PliggImp5
                 // Rename user levels
                 switch ($child->user_level) {
                     case 'god':
+                        $role = 'admin';
                         $child->user_level = 'admin';
                         break;
                     case 'admin':
+                        $role = 'admin';
                         $child->user_level = 'admin';
                         break;
                     case 'normal':
+                        $role = 'member';
                         $child->user_level = 'member';
                         break;
                     default:
@@ -121,8 +124,24 @@ class PliggImp5
                 if (!$child->valid_email) { $child->valid_email = 0;}
                 if (!$child->email_conf) { $child->email_conf = 0; }
                 
+                        /*
+                        echo "ROLE: " . $role . "<br />";
+                        if (is_string($role)) {  echo "role is a string<br />"; }
+                        if (is_array($role)) {  echo "role is an array<br />"; }
+                        if (is_object($role)) {  echo "role is a object<br />"; }
+                        
+                        echo "<br />";
+                        
+                        echo "ROLE: " . $role . "<br />";
+                        if (is_string($child->user_level)) {  echo "child->user_level is a string<br />"; }
+                        if (is_array($child->user_level)) {  echo "child->user_level is an array<br />"; }
+                        if (is_object($child->user_level)) {  echo "child->user_level is a object<br />"; }
+                        
+                        echo "<br />Using role<br /><br />";
+                        */
+        
                 // get permissions
-                $perms = $this->current_user->getDefaultPermissions($child->user_level);
+                $perms = $this->current_user->getDefaultPermissions($role);
                 unset($perms['options']); // don't need options.
                 
                 // Insert into users table
