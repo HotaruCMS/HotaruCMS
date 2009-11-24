@@ -2,11 +2,11 @@
 /**
  * name: Comments
  * description: Enables logged-in users to comment on posts
- * version: 1.0
+ * version: 1.1
  * folder: comments
  * class: Comments
- * requires: submit 1.4, users 0.8
- * hooks: header_include, admin_header_include_raw, install_plugin, hotaru_header, theme_index_replace, theme_index_main, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_edit_post_admin_fields, submit_form_2_process_submission, post_delete_post, profile_usage, , admin_theme_main_stats
+ * requires: submit 1.5, users 0.8
+ * hooks: header_include, admin_header_include_raw, install_plugin, hotaru_header, theme_index_replace, theme_index_main, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_edit_post_admin_fields, submit_edit_post_non_admin_hidden_fields, submit_form_2_process_submission, post_delete_post, profile_usage, , admin_theme_main_stats
  *
  * PHP version 5
  *
@@ -709,6 +709,19 @@ class Comments extends pluginFunctions
         echo "<tr><td colspan='3'>\n";
         echo "<input id='enable_comments' name='enable_comments' type='checkbox' " . $form_open . "> " . $this->lang['submit_form_enable_comments']; 
         echo "</tr>";
+    }
+    
+    
+    /**
+     * Add hidden value for "enable comment form" in Post Edit
+     * This is used when a non-admin is editing the post, e.g. the post submitter
+     */
+    public function submit_edit_post_non_admin_hidden_fields()
+    {
+        $this->hotaru->comment->thisForm = $this->hotaru->comment->formStatus('select'); // returns 'open' or 'closed'
+        if ($this->hotaru->comment->thisForm == 'open') { $form_open = 'checked'; } else { $form_open = ''; }
+
+        echo "<input type='hidden' name='enable_comments' value='" . $form_open . "'>";
     }
     
     
