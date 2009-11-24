@@ -2,7 +2,7 @@
 /**
  * name: Tags
  * description: Enables tags for posts
- * version: 1.1
+ * version: 1.2
  * folder: tags
  * class: Tags
  * requires: submit 1.4, sidebar_widgets 0.5
@@ -463,17 +463,29 @@ class Tags extends PluginFunctions
      /**
      * List of tags
      */
-    public function submit_show_post_extras()
+    public function submit_show_post_extras($vars)
     {
         $tags = explode(',', $this->hotaru->post->vars['tags']);
     
-        echo "<div class='show_tags' style='display: none;'>\n";
+        if (($vars[0] == "tags") && ($vars[1] == "raw")) {
+            $raw = true;
+        } else {
+            $raw = false;
+        }
+        
+        if (!$raw) {
+            echo "<div class='show_tags' style='display: none;'>\n";
             echo "<ul>" . $this->lang["submit_show_tags"] . ": \n";
-                foreach ($tags as $tag) {
-                    echo "<a href='" . $this->hotaru->url(array('tag' => str_replace(' ', '_', trim($tag)))) . "'>" . trim($tag) . "</a>&nbsp;\n";
-                }
+        }
+        
+        foreach ($tags as $tag) {
+            echo "<a href='" . $this->hotaru->url(array('tag' => str_replace(' ', '_', trim($tag)))) . "'>" . trim($tag) . "</a>&nbsp;\n";
+        }
+        
+        if (!$raw) {
             echo "</ul>\n";
-        echo "</div>\n";
+            echo "</div>\n";
+        }
     }
     
     

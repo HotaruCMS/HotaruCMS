@@ -23,6 +23,7 @@ How to access the tag cloud page:
 
 Changelog
 ---------
+v.1.2 2009/11/25 - Nick - Changes so you can get tags without a wrapper div and ul.
 v.1.1 2009/11/04 - Nick - Updated install function for easier upgrading
 v.1.0 2009/10/27 - Nick - Added tag cloud page and tag cloud widget
 v.0.9 2009/10/18 - Nick - Bug fix for lost settings when Submit reactivated

@@ -154,6 +154,7 @@ $hotaru->plugins->pluginHook('submit_form_2_assign');
                 || $editorial) { 
         // use this hidden input to send back the original url when the above form is not used ?>
         <input type='hidden' name='post_orig_url' value='<?php echo $post_orig_url; ?>' />
+        <?php $hotaru->plugins->pluginHook('submit_edit_post_non_admin_hidden_fields'); ?>
     <?php } ?>
     
     <input type='hidden' name='from' value='<?php echo $from; ?>' />
