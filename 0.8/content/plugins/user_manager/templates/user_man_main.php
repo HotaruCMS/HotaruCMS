@@ -121,8 +121,8 @@
                     <option value='supermod'><?php echo $hotaru->lang["user_man_set_supermod"]; ?></option>
                     <option value='admin'><?php echo $hotaru->lang["user_man_set_admin"]; ?></option>
                     <option value='' disabled>-----</option>
-                    <option value='pending'><?php echo $hotaru->lang["user_man_set_pending"]; ?></option>
                     <option value='undermod'><?php echo $hotaru->lang["user_man_set_undermod"]; ?></option>
+                    <option value='pending'><?php echo $hotaru->lang["user_man_set_pending"]; ?></option>
                     <option value='suspended'><?php echo $hotaru->lang["user_man_set_suspended"]; ?></option>
                     <option value='banned'><?php echo $hotaru->lang["user_man_set_banned"]; ?></option>
                     <option value='' disabled>-----</option>

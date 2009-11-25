@@ -69,7 +69,7 @@ class UserManagerSettings extends UserManager
                 $new_role = $this->cage->get->testAlnumLines('checkbox_action');
                 if ($new_role != $u->role) { 
                     // change role:
-                    //$u->role = $new_role;
+                    $u->role = $new_role;
                     $new_perms = $u->getDefaultPermissions($new_role);
                     $u->setAllPermissions($new_perms);
                     $u->updatePermissions();
@@ -77,15 +77,15 @@ class UserManagerSettings extends UserManager
                     $this->hotaru->message = $this->lang["user_man_checkboxes_role_changed"];
                     
                     if ($new_role == 'killspammed' || $new_role == 'deleted') {
-                        //$u->deleteComments(); // includes child comments from *other* users
-                        //$u->deletePosts(); // includes tags and votes for self-submitted posts
-                        /*if ($this->cage->get->keyExists('addblockedlist')) { 
+                        $u->deleteComments(); // includes child comments from *other* users
+                        $u->deletePosts(); // includes tags and votes for self-submitted posts
+                        if ($this->cage->get->keyExists('addblockedlist')) { 
                             $admin = new Admin();
                             $admin->addToBlockedList($type = 'user', $value = $u->name, false);
                             $admin->addToBlockedList($type = 'email', $value = $u->email, false);
-                        } */
+                        }
                         $this->pluginHook('user_man_killspam_delete', true, '', array($u));
-                        //if ($new_role == 'deleted') { $u->deleteUser(); }
+                        if ($new_role == 'deleted') { $u->deleteUser(); }
                     }
                 }
                 
