@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.0.4 2009/11/26 - Nick - Bug fixes for changing user roles
 v.0.3 2009/11/04 - Nick - Updated install function for easier upgrading
 v.0.2 2009/10/24 - Nick - Fix for User filtering. Defaults to pending list if all new users require approval.
 v.0.1 2009/10/18 - Nick - Released first version
