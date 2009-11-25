@@ -12,7 +12,7 @@ Instructions
 
 Changelog
 ---------
-v.0.9 2009/11/22 - Nick - Added an option to send posts back to the Latest page if unvoted below the Top Posts threshold 
+v.0.9 2009/11/22 - Nick - Option to allow unvoting back to latet page. Bug fix for post promotion error 
 v.0.8 2009/11/04 - Nick - Bug fixes and updated install function for easier upgrading
 v.0.7 2009/10/20 - Nick - Added option to show vote count before links in the Sidebar Posts plugin
 v.0.6 2009/10/18 - Nick - Made vote deletion hook into the Post class' delete function

@@ -68,9 +68,13 @@ if ($hotaru->cage->post->keyExists('post_id')) {
         {
             // Change the status to 'top' if we have enough votes and are within the time limit to hit the front page:
             $front_page_deadline = "-" . $vote_settings['vote_no_front_page'] . " days"; // default: -5 days
-            $sql_deadline = date('YmdHis', strtotime($front_page_deadline)); // should be negative
+            $sql_deadline = date('Y-m-d H:i:s', strtotime($front_page_deadline)); // should be negative
             if ((($result->post_votes_up + 1) >= $vote_settings['vote_votes_to_promote'])
                 && ($result->post_date >= $sql_deadline)) { $post_status = 'top'; } else { $post_status = $result->post_status; }
+                
+            //if ($result->post_date >= $sql_deadline) { $test = "ok"; }
+            //$json_array = array('result'=>$test);
+            //echo json_encode($json_array); exit;
             
             // Update Posts table
             $sql = "UPDATE " . TABLE_POSTS . " SET post_status = %s, post_votes_up = post_votes_up + 1 WHERE post_id = %d";
