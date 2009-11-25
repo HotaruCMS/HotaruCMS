@@ -6,7 +6,7 @@
  * folder: rpx
  * class: RPX
  * hooks: install_plugin, hotaru_header, header_include, pre_close_body, users_login_pre_login_form, userbase_logincheck, users_register_pre_display_register_form, users_register_pre_register_form, users_register_password_check, users_register_post_add_user, admin_sidebar_plugin_settings, admin_plugin_settings, users_account_pre_password_user_only, userbase_delete_user, users_register_error_check, users_navigation_logged_out
- * requires: users 0.8
+ * requires: users 0.9
  *
  * PHP version 5
  *
