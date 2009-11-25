@@ -45,6 +45,7 @@ class VoteSimpleSettings extends VoteSimple
         $submit_vote = $vote_settings['vote_submit_vote'];
         $submit_vote_value = $vote_settings['vote_submit_vote_value'];
         $votes_to_promote = $vote_settings['vote_votes_to_promote'];
+        $use_demote = $vote_settings['vote_use_demote'];
         $use_alerts = $vote_settings['vote_use_alerts'];
         $alerts_to_bury = $vote_settings['vote_alerts_to_bury'];
         $physical_delete = $vote_settings['vote_physical_delete'];
@@ -56,6 +57,7 @@ class VoteSimpleSettings extends VoteSimple
         if (!$submit_vote) { $submit_vote = ''; }
         if (!$submit_vote_value) { $submit_vote_value = 1; }
         if (!$votes_to_promote) { $votes_to_promote = 5; }
+        if (!isset($use_demote)) { $use_demote = ''; }
         if (!isset($use_alerts)) { $use_alerts = 'checked'; }
         if (!$alerts_to_bury) { $alerts_to_bury = 5; }
         if (!$physical_delete) { $physical_delete = ''; }
@@ -82,6 +84,7 @@ class VoteSimpleSettings extends VoteSimple
         echo "<p>" . $this->lang["vote_settings_votes_to_promote"] . " <input type='text' size=5 name='vote_votes_to_promote' value='" . $votes_to_promote . "' /> <small> (Default: 5)</small></p>\n";
         echo "<p>" . $this->lang["vote_settings_upcoming_duration"] . " <input type='text' size=5 name='vote_upcoming_duration' value='" . $upcoming_duration . "' /> <small> (Default: 5)</small></p>\n";
         echo "<p>" . $this->lang["vote_settings_no_front_page"] . " <input type='text' size=5 name='vote_no_front_page' value='" . $no_front_page . "' /> <small> (Default: 5)</small></p>\n";
+        echo "<p><input type='checkbox' name='vote_use_demote' value='vote_use_demote' " . $use_demote . " > " . $this->lang["vote_settings_back_to_latest"] . "</p>\n";
         echo "<p><input type='checkbox' name='vote_use_alerts' value='vote_use_alerts' " . $use_alerts . " > " . $this->lang["vote_settings_use_alerts"] . "</p>\n";
         echo "<p>" . $this->lang["vote_settings_alerts_to_bury"] . " <input type='text' size=5 name='vote_alerts_to_bury' value='" . $alerts_to_bury . "' /> <small> (Default: 5)</small></p>\n";
         
@@ -175,6 +178,13 @@ echo "<p><input type='checkbox' name='sb_votes' value='sb_votes' " . $sidebar_vo
             $no_front_page = $vote_settings['vote_no_front_page'];
         }
         
+        // Use demote (back to Latest page)
+        if ($this->cage->post->keyExists('vote_use_demote')) { 
+            $use_demote = 'checked'; 
+        } else { 
+            $use_demote = ''; 
+        }
+        
         // Use alerts
         if ($this->cage->post->keyExists('vote_use_alerts')) { 
             $use_alerts = 'checked'; 
@@ -220,6 +230,7 @@ echo "<p><input type='checkbox' name='sb_votes' value='sb_votes' " . $sidebar_vo
         $vote_settings['vote_submit_vote'] = $submit_vote;
         $vote_settings['vote_submit_vote_value'] = $submit_vote_value;
         $vote_settings['vote_votes_to_promote'] = $votes_to_promote;
+        $vote_settings['vote_use_demote'] = $use_demote;
         $vote_settings['vote_use_alerts'] = $use_alerts;
         $vote_settings['vote_alerts_to_bury'] = $alerts_to_bury;
         $vote_settings['vote_physical_delete'] = $physical_delete;

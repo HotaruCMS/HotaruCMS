@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.1.5 2009/11/25 - Nick - New hook in submit_edit_post.php (used by Comments 1.1)
 v.1.4 2009/11/03 - Nick - Changes to allow post sorting
 v.1.3 2009/10/28 - Nick - Bug fix for sending trackbacks
 v.1.2 2009/10/24 - Nick - Bug fix for strange symbols in fetched titles in Submit step 2

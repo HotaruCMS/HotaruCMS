@@ -16,6 +16,7 @@ Known bugs
 
 Changelog
 ---------
+v.0.9 2009/11/23 - Nick - Added new plugin hooks for the RPX plugin to use
 v.0.8 2009/11/19 - Nick - User profiles, settings, permissions, improved filtering of user submisions
 v.0.7 2009/10/25 - Nick - Options for moderating and notifying admin of new users
 v.0.6 2009/10/19 - Nick - Bug fixes and tabs for Account page

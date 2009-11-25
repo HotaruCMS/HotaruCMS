@@ -38,6 +38,8 @@ if ($hotaru->cage->post->getInt('remember') == 1){ $remember_check = "checked"; 
         
         <?php echo $hotaru->showMessages(); ?>
         
+        <?php $hotaru->plugins->pluginHook('users_login_pre_login_form'); ?>
+        
         <div class='user_login_reg'>
         <?php echo $hotaru->lang["users_login_instructions"]; ?>
         

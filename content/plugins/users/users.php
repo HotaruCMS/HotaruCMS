@@ -2,7 +2,7 @@
 /**
  * name: Users
  * description: Manages users within Hotaru.
- * version: 0.8
+ * version: 0.9
  * folder: users
  * class: Users
  * hooks: hotaru_header, submit_hotaru_header_2, header_include, admin_header_include_raw, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_first, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, submit_pre_list, users_edit_profile_save, user_settings_save, admin_theme_main_stats
@@ -172,11 +172,18 @@ class Users extends PluginFunctions
                 echo "<li><a  " . $status . " href='" . $this->hotaru->url(array(), 'admin') . "'>" . $this->lang["users_admin"] . "</a></li>\n";
             }
         } else {    
-            if ($this->hotaru->title == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
-            echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'login')) . "'>" . $this->lang["users_login"] . "</a></li>\n";
             
-            if ($this->hotaru->title == 'register') { $status = "id='navigation_active'"; } else { $status = ""; }
-            echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'register')) . "'>" . $this->lang["users_register"] . "</a></li>\n";
+            // Allow other plugins to override the Login / Register links
+            $result = $this->hotaru->plugins->pluginHook('users_navigation_logged_out');
+            if (!isset($result) || !is_array($result))
+            { 
+                // No plugin results, show the regular Login / Register links:
+                if ($this->hotaru->title == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
+                echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'login')) . "'>" . $this->lang["users_login"] . "</a></li>\n";
+                
+                if ($this->hotaru->title == 'register') { $status = "id='navigation_active'"; } else { $status = ""; }
+                echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'register')) . "'>" . $this->lang["users_register"] . "</a></li>\n";
+            }
         }
     }
     
@@ -332,7 +339,11 @@ class Users extends PluginFunctions
                     $this->hotaru->showMessages();
                     return true;
                 }
-                $this->hotaru->displayTemplate('register', 'users');
+                $result = $this->pluginHook('users_register_pre_display_register_form');
+                if (!isset($result) || !is_array($result)) {
+                    // show this form if not overridden by a plugin
+                    $this->hotaru->displayTemplate('register', 'users');
+                }
                 return true;    
             } elseif ($this->hotaru->isPage('login')) {
                 $this->hotaru->displayTemplate('login', 'users');
@@ -404,53 +415,22 @@ class Users extends PluginFunctions
     {
         $current_user = new UserBase($this->hotaru);
         
-        if (!$username_check = $this->cage->post->testUsername('username')) {
-            $username_check = "";
-        } 
-        if (!$password_check = $this->cage->post->testPassword('password')) {
-            $password_check = "";
-        }
+        if (!$username_check = $this->cage->post->testUsername('username')) { $username_check = ""; } 
+        if (!$password_check = $this->cage->post->testPassword('password')) { $password_check = ""; }
+        if ($this->cage->post->getInt('remember') == 1) { $remember = 1; } else { $remember = 0; }
         
         if ($username_check != "" || $password_check != "") {
             $login_result = $this->current_user->loginCheck($username_check, $password_check);
             if ($login_result) {
                     //success
-                                
-                    if ($this->cage->post->getInt('remember') == 1){ $remember = 1; } else { $remember = 0; }
                     $this->current_user->name = $username_check;
-                    $this->current_user->getUserBasic(0, $this->current_user->name);
-                    
-                    $users_settings = $this->getSerializedSettings();
-                    $this->current_user->vars['useEmailConf'] = $users_settings['users_emailconf_enabled'];
-                    
-                    if ($this->current_user->vars['useEmailConf'] && ($this->current_user->emailValid == 0)) {
-                        $this->sendConfirmationEmail($this->current_user->id);
-                        $this->hotaru->messages[$this->lang["users_login_failed_email_not_validated"]] = 'red';
-                        $this->hotaru->messages[$this->lang["users_login_failed_email_request_sent"]] = 'green';
-                        return false;
-                    }
-                    
-                    
-                    if ($this->current_user->getPermission('can_login') == 'no') {
-                        if ($this->current_user->role == 'pending') {
-                            $this->hotaru->messages[$this->lang["users_login_failed_not_approved"]] = 'red';
-                        } else {
-                            $this->hotaru->messages[$this->lang["users_login_failed_no_permission"]] = 'red';
-                        }
-                        return false;
-                    }
-                    
-                    
-                    $this->current_user->setCookie($remember);
-                    $this->current_user->loggedIn = true;
-                    $this->current_user->updateUserLastLogin();
-                    
-              
-                    return true;
+                    $result = $this->loginSuccess($remember);
+                    return $result;
             } else {
                     // login failed
                     $this->hotaru->messages[$this->lang["users_login_failed"]] = 'red';
             }
+            
         } else {
         
             // forgotten password request
@@ -471,6 +451,42 @@ class Users extends PluginFunctions
             }
         }
         return false;
+    }
+    
+
+     /**
+     * Login Success
+     *
+     * @return bool
+     */
+    public function loginSuccess($remember = 0)
+    {
+        $this->current_user->getUserBasic(0, $this->current_user->name);
+        
+        $users_settings = $this->getSerializedSettings();
+        $this->current_user->vars['useEmailConf'] = $users_settings['users_emailconf_enabled'];
+        
+        if ($this->current_user->vars['useEmailConf'] && ($this->current_user->emailValid == 0)) {
+            $this->sendConfirmationEmail($this->current_user->id);
+            $this->hotaru->messages[$this->lang["users_login_failed_email_not_validated"]] = 'red';
+            $this->hotaru->messages[$this->lang["users_login_failed_email_request_sent"]] = 'green';
+            return false;
+        }
+        
+        if ($this->current_user->getPermission('can_login') == 'no') {
+            if ($this->current_user->role == 'pending') {
+                $this->hotaru->messages[$this->lang["users_login_failed_not_approved"]] = 'red';
+            } else {
+                $this->hotaru->messages[$this->lang["users_login_failed_no_permission"]] = 'red';
+            }
+            return false;
+        }
+        
+        $this->current_user->setCookie($remember);
+        $this->current_user->loggedIn = true;
+        $this->current_user->updateUserLastLogin();
+        
+        return true;
     }
     
     
@@ -529,9 +545,21 @@ class Users extends PluginFunctions
                 $error = 1;
             }
                     
-            $password_check = $this->cage->post->testPassword('password');    
+            $password_check = $this->cage->post->testPassword('password');
+            $password2_check = $this->cage->post->testPassword('password2');
+            
+            // plugins like RPX can override the password values:
+            $result = $this->pluginHook('users_register_password_check');
+            if ($result) { 
+                reset($result); // make sure the array is ordered
+                $passwords = $result[key($result)]; // get the value from the first array position - should be an array
+                if (is_array($passwords)) {
+                    $password_check = $passwords['password'];
+                    $password2_check = $passwords['password2'];
+                }
+            }
+            
             if ($password_check) {
-                $password2_check = $this->cage->post->testPassword('password2');
                 if ($password_check == $password2_check) {
                     // safe, the two new password fields match
                     $this->current_user->password = $this->current_user->generateHash($password_check);
@@ -582,6 +610,11 @@ class Users extends PluginFunctions
                         $error = 1;
                 }
             }
+            
+            // let plugins run their own registration checks:
+            $this->hotau->vars['reg_error'] = $error;
+            $this->pluginHook('users_register_error_check');
+            $error = $this->hotau->vars['reg_error'];
         }    
         
         if (!isset($username_check) && !isset($password_check) && !isset($password2_check) && !isset($email_check)) {
@@ -625,7 +658,11 @@ class Users extends PluginFunctions
             } elseif ($blocked) {
                 $this->hotaru->messages[$this->lang['users_register_user_blocked']] = 'red';
             } else {
-                $this->hotaru->messages[$this->lang["users_register_unexpected_error"]] = 'red';
+                // allow plugin to override the default "unexpected error" message:
+                $result = $this->pluginHook('users_register_error_message');
+                if (!isset($result) || !is_array($result)) {
+                    $this->hotaru->messages[$this->lang["users_register_unexpected_error"]] = 'red';
+                }
             }
         } else {
             // error must = 1 so fall through and display the form again

@@ -71,8 +71,13 @@ if ($username_check == 'deleted') { $hotaru->showMessage(); return true; } // sh
     </table>    
     </form>
     
+    <?php $hotaru->plugins->pluginHook('users_account_pre_password'); ?>
+    
     <?php if ($hotaru->vars['userid'] == $hotaru->current_user->id) { // must be looking at own account so show password change form: ?>
-        <?php echo $hotaru->lang["users_account_password_instruct"]; ?>
+    
+        <?php $hotaru->plugins->pluginHook('users_account_pre_password_user_only'); ?>
+            
+        <b><?php echo $hotaru->lang["users_account_password_instruct"]; ?></b>
         <form name='update_form' class='users_form' action='<?php echo BASEURL; ?>index.php' method='post'>
         <table>
         <tr><td><?php echo $hotaru->lang["users_account_old_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_old' value='<?php echo $password_check_old; ?>' /></td></tr>
