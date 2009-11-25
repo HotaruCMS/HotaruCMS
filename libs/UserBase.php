@@ -388,11 +388,29 @@ class UserBase {
         }
         
         $salt_length = 9;
-        $password = $this->generateHash($password, substr($userX->user_password, 0, $salt_length));
+        $result = '';
         
-        $sql = "SELECT user_username, user_password FROM " . TABLE_USERS . " WHERE user_username = %s AND user_password = %s";
+        // Allow plugin to bypass the password check with their own methods, e.g. RPX
+        $plugin_result = $this->plugins->pluginHook('userbase_logincheck', true, '', array($username, $password));
         
-        $result = $this->db->get_row($this->db->prepare($sql, $username, $password));
+        if (!isset($plugin_result))
+        {
+            // nothing was returned from the plugins, not even "false", so confirm the username and password match:
+            $password = $this->generateHash($password, substr($userX->user_password, 0, $salt_length));
+            $sql = "SELECT user_username, user_password FROM " . TABLE_USERS . " WHERE user_username = %s AND user_password = %s";
+            $result = $this->db->get_row($this->db->prepare($sql, $username, $password));
+        } 
+        elseif ($plugin_result)
+        {
+            // a non-false result was returned from the plugin(s)
+            // let's hope the plugin did its own authentication because we've skipped the usual username/passowrd check!
+            $result = true;
+        } 
+        else 
+        {
+            // a false result was returned from the plugin(s), so the user won't be able to login.
+            $result = false;
+        }
         
         if (isset($result)) { return true; } else { return false; }
     }
@@ -1002,6 +1020,8 @@ class UserBase {
      */
     public function deleteUser() 
     {
+        $this->plugins->pluginHook('userbase_delete_user', true, '', array('user_id'=>$this->id));
+        
         $sql = "DELETE FROM " . TABLE_USERS . " WHERE user_id = %d";
         $this->db->query($this->db->prepare($sql, $this->id));
         

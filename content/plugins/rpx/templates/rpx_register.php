@@ -25,61 +25,53 @@
  */
  
 if ($hotaru->cage->post->getAlpha('users_type') == 'register') {
-    $username_check = $hotaru->cage->post->testUsername('username');
-    $password_check = "";
-    $password2_check = "";
-    $email_check = $hotaru->cage->post->testEmail('email');    
-} else {
-    $username_check = "";
-    $password_check = "";
-    $password2_check = "";
-    $email_check = "";
+    $hotaru->vars['rpx_profile']['preferredUsername'] = $hotaru->cage->post->testUsername('username');
+    $hotaru->vars['rpx_profile']['email'] = $hotaru->cage->post->testEmail('email');
+    $hotaru->vars['rpx_profile']['identifier'] = $hotaru->cage->post->testUri('identifier');
 }
 ?>
 
-    <div id='main'>
-        <div id='breadcrumbs'><a href='<?php echo BASEURL; ?>'><?php echo $hotaru->lang["users_home"]; ?></a> &raquo; <?php echo $hotaru->lang["users_register"]; ?></div>
-            
-        <h2><?php echo $hotaru->lang["users_register"]; ?></h2>
+<div id='main'>
+    <div id='breadcrumbs'><a href='<?php echo BASEURL; ?>'><?php echo $hotaru->lang["users_home"]; ?></a> &raquo; <?php echo $hotaru->lang["users_register"]; ?></div>
+        
+    <h2><?php echo $hotaru->lang["users_register"]; ?></h2>
+    
+    <?php if (!$hotaru->vars['rpx_already_exists']) { ?>
         
         <?php echo $hotaru->showMessages(); ?>
-        
-        <?php $hotaru->plugins->pluginHook('users_register_pre_register_form'); ?>
             
         <div class='user_login_reg'>
-        <?php echo $hotaru->lang["users_register_instructions"]; ?>
+        <?php echo $hotaru->lang["rpx_register_instructions"]; ?>
                 
             <form name='register_form' action='<?php echo BASEURL; ?>index.php?page=register' method='post'>    
             <table>
             <tr><td>
-                <?php echo $hotaru->lang["users_register_username"]; ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check; ?>' />
+                <?php echo $hotaru->lang["users_register_username"]; ?>&nbsp; </td>
+                <td><input type='text' size=30 name='username' value='<?php echo $hotaru->vars['rpx_profile']['preferredUsername']; ?>' />
                 <br /><small><?php echo $hotaru->lang["users_register_username_error_short"]; ?></small>
             </td></tr>
             
             <tr><td>
-                <?php echo $hotaru->lang["users_register_email"]; ?>&nbsp; </td><td><input type='text' size=30 name='email' value='<?php echo $email_check; ?>' />
-            </td></tr>
-            
-            <tr><td>
-                <?php echo $hotaru->lang["users_register_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password' value='<?php echo $password_check; ?>' />
-                <br /><small><?php echo $hotaru->lang["users_register_password_error_short"]; ?></small>
-            </td></tr>
-            
-            <tr><td>
-                <?php echo $hotaru->lang["users_register_password_verify"]; ?>&nbsp; </td><td><input type='password' size=30 name='password2' value='<?php echo $password2_check; ?>' />
+                <?php echo $hotaru->lang["users_register_email"]; ?>&nbsp; </td>
+                <td><input type='text' size=30 name='email' value='<?php echo $hotaru->vars['rpx_profile']['email']; ?>' />
             </td></tr>
             
             <?php 
                 if ($hotaru->current_user->vars['useRecaptcha']) { 
                     $users_settings = $hotaru->plugins->getSerializedSettings('users');
                     $recaptcha_pubkey = $users_settings['users_recaptcha_pubkey'];
+                    echo "<tr><td colspan=2>" . $hotaru->lang["rpx_register_captcha"] . "</td></tr>";
                     echo "<tr><td colspan=2>" . recaptcha_get_html($recaptcha_pubkey) . "</td></tr>";
                 }
             ?>
             
             <input type='hidden' name='users_type' value='register' />
+            <input type='hidden' name='rpx' value='true' />
+            <input type='hidden' name='identifier' value='<?php echo $hotaru->vars['rpx_profile']['identifier']; ?>' />
             <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $hotaru->lang['users_register_form_submit']; ?>' /></td></tr>            
             </table>
             </form>
         </div>
-    </div>    
+        
+        <?php } else { $hotaru->showMessage(); } ?> 
+</div>    

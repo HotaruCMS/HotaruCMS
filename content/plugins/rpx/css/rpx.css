@@ -1,0 +1,9 @@
+/* **************************************
+ *	 RPX PLUGIN CSS            *
+ ************************************** */
+ 
+.rpx_login_reg_text { margin-bottom: 1.0em; }
+.users_account_rpx { margin-bottom: 1.4em; }
+#rpx_providers_header { font-weight: bold; }
+#rpx_user_ids li { margin-left: 2.0em; line-height: 1.0em; }
+#rpx_embed { width: 400px; height:240px; }
