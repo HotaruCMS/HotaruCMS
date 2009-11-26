@@ -26,6 +26,7 @@
 
 $user = new UserBase($hotaru);
 if ($hotaru->current_user->vars['settings']['new_tab']) { $target = 'target="_blank"'; }
+if ($hotaru->current_user->vars['settings']['link_action']) { $open = 'source'; }
 // Prepare filter and breadcrumbs
 $stories = $hotaru->post->prepareList();
 
@@ -60,7 +61,11 @@ if ($stories && ($hotaru->pageType != "profile")) {
         <?php $hotaru->plugins->pluginHook('submit_show_post_pre_title'); ?>
         
         <div class="show_post_title">
-            <a href='<?php echo $hotaru->post->origUrl; ?>' <?php echo $target; ?>><?php echo $hotaru->post->title; ?></a>
+            <?php if ($open == 'source') { ?>
+                <a href='<?php echo $hotaru->post->origUrl; ?>' <?php echo $target; ?>><?php echo $hotaru->post->title; ?></a>
+            <?php } else { ?>
+                <a href='<?php echo $hotaru->url(array('page'=>$hotaru->post->id)); ?>' <?php echo $target; ?>><?php echo $hotaru->post->title; ?></a>
+            <?php } ?>
             <?php $hotaru->plugins->pluginHook('submit_show_post_title'); ?>
         </div>
     
