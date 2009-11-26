@@ -158,8 +158,8 @@ class Submit extends PluginFunctions
             $base_settings['new_tab'] = ""; $site_settings['new_tab'] = "";
             $uf->updateDefaultSettings($base_settings, 'base'); $uf->updateDefaultSettings($site_settings, 'site');
         }
-        if (!isset($base_settings['post_link'])) { 
-            $base_settings['post_link'] = ""; $site_settings['post_link'] = "";
+        if (!isset($base_settings['link_action'])) { 
+            $base_settings['link_action'] = ""; $site_settings['link_action'] = "";
             $uf->updateDefaultSettings($base_settings, 'base'); $uf->updateDefaultSettings($site_settings, 'site');
         }
     }
