@@ -140,8 +140,6 @@ $lang['users_profile_default_bio'] = "No introduction yet.";
 /* User Settings */
 $lang["users_settings"] = "Settings";
 $lang["users_settings_update"] = "Update";
-$lang['users_settings_email_from_admin'] = "Allow email from site admins?";
-$lang['users_settings_open_new_tab'] = "Open posts in a new tab?";
 $lang['users_settings_yes'] = "Yes";
 $lang['users_settings_no'] = "No";
 $lang["users_settings_saved"] = "User settings saved.";

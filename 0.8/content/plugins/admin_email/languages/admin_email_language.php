@@ -61,4 +61,7 @@ $lang["admin_email_redirecting"] = "Running the first batch and redirecting to t
 $lang["admin_email_abort"] = "Abort";
 $lang["admin_email_no_recipients"] = "Complete. If no emails were sent, it's possible the selected users have opted out of recieving emails from admins.";
 
+/* User Settings */
+$lang['users_settings_email_from_admin'] = "Allow email from site admins?";
+
 ?>

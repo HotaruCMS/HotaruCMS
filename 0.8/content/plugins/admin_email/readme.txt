@@ -23,4 +23,5 @@ You have received this email because you are registered at YOUR SITE. You can op
 
 Changelog
 ---------
+v.0.2 2009/11/26 - Nick - Bug fix for default user settings
 v.0.1 2009/11/23 - Nick - Released first version

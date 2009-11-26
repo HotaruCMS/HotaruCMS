@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.1.6 2009/11/26 - Nick - Bug fix for default user settings plus user option for links opening source or post urls
 v.1.5 2009/11/25 - Nick - New hook in submit_edit_post.php (used by Comments 1.1)
 v.1.4 2009/11/03 - Nick - Changes to allow post sorting
 v.1.3 2009/10/28 - Nick - Bug fix for sending trackbacks

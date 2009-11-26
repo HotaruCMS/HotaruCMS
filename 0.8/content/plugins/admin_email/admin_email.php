@@ -2,11 +2,11 @@
 /**
  * name: Admin Email
  * description: Send email to all members, groups or users
- * version: 0.1
+ * version: 0.2
  * folder: admin_email
  * class: adminEmail
- * requires: users 0.8
- * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, admin_theme_index_replace
+ * requires: users 1.0
+ * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, admin_theme_index_replace, user_settings_pre_save, user_settings_fill_form, user_settings_extra_settings
  *
  * PHP version 5
  *
@@ -32,7 +32,6 @@
 
 class adminEmail extends PluginFunctions
 {
-
     /**
      * Default settings on install
      */
@@ -61,7 +60,7 @@ class adminEmail extends PluginFunctions
         if (!isset($base_settings['admin_notify'])) { 
             $base_settings['admin_notify'] = "checked";
             $site_settings['admin_notify'] = "checked";
-            $uf->updateDefaultSettings($site_settings, 'base');
+            $uf->updateDefaultSettings($base_settings, 'base');
             $uf->updateDefaultSettings($site_settings, 'site');
         }
     }
@@ -261,6 +260,50 @@ class adminEmail extends PluginFunctions
         }
         
         exit;
+    }
+
+    
+    /**
+     * User Settings - before saving
+     */
+    public function user_settings_pre_save()
+    {
+        // Emails from Admins:
+        if ($this->cage->post->getAlpha('admin_notify') == 'yes') { 
+            $this->hotaru->vars['settings']['admin_notify'] = "checked"; 
+        } else { 
+            $this->hotaru->vars['settings']['admin_notify'] = "";
+        }
+    }
+    
+    
+    /**
+     * User Settings - fill the form
+     */
+    public function user_settings_fill_form()
+    {
+        if ($this->hotaru->vars['settings']['admin_notify']) { 
+            $this->hotaru->vars['admin_notify_yes'] = "checked"; 
+            $this->hotaru->vars['admin_notify_no'] = ""; 
+        } else { 
+            $this->hotaru->vars['admin_notify_yes'] = ""; 
+            $this->hotaru->vars['admin_notify_no'] = "checked"; 
+        }
+    }
+    
+    
+    /**
+     * User Settings - html for form
+     */
+    public function user_settings_extra_settings()
+    {
+        $this->includeLanguage();
+        echo "<tr>\n";
+            // ACCEPT EMAIL FROM ADMINS?
+        echo "<td>" . $this->lang['users_settings_email_from_admin'] . "</td>\n";
+        echo "<td><input type='radio' name='admin_notify' value='yes' " . $this->hotaru->vars['admin_notify_yes'] . "> " . $this->lang['users_settings_yes'] . " &nbsp;&nbsp;\n";
+        echo "<input type='radio' name='admin_notify' value='no' " . $this->hotaru->vars['admin_notify_no'] . "> " . $this->lang['users_settings_no'] . "</td>\n";
+        echo "</tr>\n";
     }
 }
 ?>
