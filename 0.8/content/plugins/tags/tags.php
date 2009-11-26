@@ -2,7 +2,7 @@
 /**
  * name: Tags
  * description: Enables tags for posts
- * version: 1.2
+ * version: 1.3
  * folder: tags
  * class: Tags
  * requires: submit 1.4, sidebar_widgets 0.5
