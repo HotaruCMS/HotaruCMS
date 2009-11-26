@@ -45,9 +45,12 @@ $lang['rpx_account_add_provider_instruct'] = "<small><i>Note:</i> You may need t
 $lang["rpx_registration_nearly_complete"] = "Nearly done, just a couple more things...";
 $lang["rpx_register_instructions"] = "You can change these later...";
 $lang["rpx_register_captcha"] = "Please complete this captcha:";
-$lang['rpx_users_register_exists_error_1'] = "It looks like you may have registered with";
-$lang['rpx_users_register_exists_error_2'] = "Try logging in with that!";
-$lang['rpx_users_register_exists_error_3'] = "You can add more providers from your \"Account\" page.";
+$lang['rpx_users_register_exists_error_1_rpx'] = "It looks like you may have registered with";
+$lang['rpx_users_register_exists_error_2_rpx'] = "Try logging in with that!";
+$lang['rpx_users_register_exists_error_3_rpx'] = "You can add more providers from your \"Account\" page.";
+$lang['rpx_users_register_exists_error_1_password'] = "It looks like you may have already registered.";
+$lang['rpx_users_register_exists_error_2_password'] = "Click here to login with your username and password.";
+$lang['rpx_users_register_exists_error_3_password'] = "You can change to a 3rd party provider from your \"Account\" page.";
 
 /* RPX Admin Settings */
 $lang["rpx_settings_header"] = "RPX Configuration";

@@ -17,4 +17,5 @@ Instructions
 
 Changelog
 ---------
+v.0.2 2009/11/26 - Nick - Bug fixes for RPX Basic login
 v.0.1 2009/11/25 - Nick - Released first version
