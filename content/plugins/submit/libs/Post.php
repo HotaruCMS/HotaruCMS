@@ -687,7 +687,8 @@ class Post
         {
             // Filters page to "new" stories only
             $this->hotaru->vars['filter']['post_archived = %s'] = 'N'; 
-            $this->hotaru->vars['filter']['post_status = %s'] = 'new'; 
+            $this->hotaru->vars['filter']['post_status = %s'] = 'new';
+            $this->hotaru->vars['orderby'] = "post_date DESC";
             $rss = "<a href='" . $this->hotaru->url(array('page'=>'rss', 'status'=>'new')) . "'>";
             $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_latest"] . $rss;
@@ -768,6 +769,7 @@ class Post
             // Assume 'top' page and filter to 'top' stories.
             $this->hotaru->vars['filter']['post_archived = %s'] = 'N'; 
             $this->hotaru->vars['filter']['post_status = %s'] = 'top';
+            $this->hotaru->vars['orderby'] = "post_date DESC";
             $rss = "<a href='" . $this->hotaru->url(array('page'=>'rss', 'status'=>'top')) . "'>";
             $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_top"] . $rss;
@@ -777,6 +779,7 @@ class Post
             // Filters page to "all" stories
             $this->hotaru->vars['filter']['post_archived = %s'] = 'N'; 
             $this->hotaru->vars['filter']['(post_status = %s OR post_status = %s)'] = array('top', 'new');
+            $this->hotaru->vars['orderby'] = "post_date DESC";
             $rss = "<a href='" . $this->hotaru->url(array('page'=>'rss')) . "'>";
             $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_all"] . $rss;
