@@ -2,10 +2,10 @@
 /**
  * name: Submit
  * description: Submit and manage stories.
- * version: 1.4
+ * version: 1.6
  * folder: submit
  * class: Submit
- * hooks: hotaru_header, header_meta, header_include, header_include_raw, admin_header_include_raw, install_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, admin_maintenance_database, admin_maintenance_top, admin_theme_main_stats
+ * hooks: hotaru_header, header_meta, header_include, header_include_raw, admin_header_include_raw, install_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, admin_maintenance_database, admin_maintenance_top, admin_theme_main_stats, user_settings_pre_save, user_settings_fill_form, user_settings_extra_settings
  *
  * PHP version 5
  *
@@ -155,10 +155,12 @@ class Submit extends PluginFunctions
         $base_settings = $uf->getDefaultSettings('base'); // originals from plugins
         $site_settings = $uf->getDefaultSettings('site'); // site defaults updated by admin
         if (!isset($base_settings['new_tab'])) { 
-            $base_settings['new_tab'] = "";
-            $site_settings['new_tab'] = "";
-            $uf->updateDefaultSettings($site_settings, 'base');
-            $uf->updateDefaultSettings($site_settings, 'site');
+            $base_settings['new_tab'] = ""; $site_settings['new_tab'] = "";
+            $uf->updateDefaultSettings($base_settings, 'base'); $uf->updateDefaultSettings($site_settings, 'site');
+        }
+        if (!isset($base_settings['post_link'])) { 
+            $base_settings['post_link'] = ""; $site_settings['post_link'] = "";
+            $uf->updateDefaultSettings($base_settings, 'base'); $uf->updateDefaultSettings($site_settings, 'site');
         }
     }
     
@@ -998,6 +1000,73 @@ class Submit extends PluginFunctions
             $lang_name = 'submit_admin_stats_' . $stat_type;
             echo "<li>" . $this->lang[$lang_name] . ": " . $posts . "</li>";
         }
+    }
+    
+    
+    /**
+     * User Settings - before saving
+     */
+    public function user_settings_pre_save()
+    {
+        // Open posts in a new tab?
+        if ($this->cage->post->getAlpha('new_tab') == 'yes') { 
+            $this->hotaru->vars['settings']['new_tab'] = "checked"; 
+        } else { 
+            $this->hotaru->vars['settings']['new_tab'] = "";
+        }
+        
+        // List links open source url or post page?
+        if ($this->cage->post->getAlpha('link_action') == 'source') { 
+            $this->hotaru->vars['settings']['link_action'] = "checked"; 
+        } else { 
+            $this->hotaru->vars['settings']['link_action'] = "";
+        }
+    }
+    
+    
+    /**
+     * User Settings - fill the form
+     */
+    public function user_settings_fill_form()
+    {
+        if ($this->hotaru->vars['settings']['new_tab']) { 
+            $this->hotaru->vars['new_tab_yes'] = "checked"; 
+            $this->hotaru->vars['new_tab_no'] = ""; 
+        } else { 
+            $this->hotaru->vars['new_tab_yes'] = ""; 
+            $this->hotaru->vars['new_tab_no'] = "checked"; 
+        }
+        
+        if ($this->hotaru->vars['settings']['link_action']) { 
+            $this->hotaru->vars['link_action_source'] = "checked"; 
+            $this->hotaru->vars['link_action_post'] = ""; 
+        } else { 
+            $this->hotaru->vars['link_action_source'] = ""; 
+            $this->hotaru->vars['link_action_post'] = "checked"; 
+        }
+    }
+    
+    
+    /**
+     * User Settings - html for form
+     */
+    public function user_settings_extra_settings()
+    {
+        $this->includeLanguage();
+
+        echo "<tr>\n";
+            // OPEN POSTS IN A NEW TAB?
+        echo "<td>" . $this->lang['users_settings_open_new_tab'] . "</td>\n";
+        echo "<td><input type='radio' name='new_tab' value='yes' " . $this->hotaru->vars['new_tab_yes'] . "> " . $this->lang['users_settings_yes'] . " &nbsp;&nbsp;\n";
+        echo "<input type='radio' name='new_tab' value='no' " . $this->hotaru->vars['new_tab_no'] . "> " . $this->lang['users_settings_no'] . "</td>\n";
+        echo "</tr>\n";
+        
+        echo "<tr>\n";
+            // OPEN POSTS IN A NEW TAB?
+        echo "<td>" . $this->lang['users_settings_link_action'] . "</td>\n";
+        echo "<td><input type='radio' name='link_action' value='source' " . $this->hotaru->vars['link_action_source'] . "> " . $this->lang['users_settings_source'] . " &nbsp;&nbsp;\n";
+        echo "<input type='radio' name='link_action' value='post' " . $this->hotaru->vars['link_action_post'] . "> " . $this->lang['users_settings_post'] . "</td>\n";
+        echo "</tr>\n";
     }
 }
 

@@ -173,4 +173,9 @@ $lang["submit_admin_stats_pending_posts"] = "Pending posts";
 $lang["submit_admin_stats_buried_posts"] = "Buried posts";
 $lang["submit_admin_stats_archived_posts"] = "Archived posts";
 
+/* User Settings */
+$lang['users_settings_open_new_tab'] = "Open posts in a new tab?";
+$lang['users_settings_link_action'] = "Front page links open:";
+$lang['users_settings_source'] = "Original post";
+$lang['users_settings_post'] = SITE_NAME . " post";
 ?>

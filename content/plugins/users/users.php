@@ -2,7 +2,7 @@
 /**
  * name: Users
  * description: Manages users within Hotaru.
- * version: 0.9
+ * version: 1.0
  * folder: users
  * class: Users
  * hooks: hotaru_header, submit_hotaru_header_2, header_include, admin_header_include_raw, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_first, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, submit_pre_list, users_edit_profile_save, user_settings_save, admin_theme_main_stats
