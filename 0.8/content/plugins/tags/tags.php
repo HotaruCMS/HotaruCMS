@@ -211,8 +211,17 @@ class Tags extends PluginFunctions
     public function buildTagCloud($count)
     {
         // get tags from the database:
-        $sql = "SELECT tags_word FROM " . TABLE_TAGS . " WHERE tags_archived = %s";
-        $tags = $this->db->get_results($this->db->prepare($sql, 'N'));
+        //$sql = "SELECT tags_word FROM " . TABLE_TAGS . " WHERE tags_archived = %s";
+        //$tags = $this->db->get_results($this->db->prepare($sql, 'N'));
+        
+        $this->hotaru->smartCache('on', 'tags', 10); // start using cache (lasts 10 mins if no update to tags table)
+        
+        $sql = "SELECT tags_word FROM " . TABLE_TAGS . ", " . TABLE_POSTS;
+        $sql .= " WHERE tags_archived = %s AND (tags_post_id = post_id) AND";
+        $sql .= " (post_status = %s || post_status = %s)";
+        $tags = $this->db->get_results($this->db->prepare($sql, 'N', 'new', 'top'));
+        
+        $this->hotaru->smartCache('off'); // stop using cache
         
         // Put the tags in an array:
         $tags_array = array();
