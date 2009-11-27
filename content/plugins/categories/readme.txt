@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.1.0 2009/11/27 - Nick - Added clickable parent category to category breadcrumbs
 v.0.9 2009/11/04 - Nick - Updated install function for easier upgrading
 v.0.8 2009/10/18 - Nick - Bug fix for lost settings when Submit reactivated
 v.0.7 2009/10/15 - Nick - Bug fixes for slashed apostrophes

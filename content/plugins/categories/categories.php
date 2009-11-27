@@ -2,7 +2,7 @@
 /**
  * name: Categories
  * description: Enables categories for posts
- * version: 0.9
+ * version: 1.0
  * folder: categories
  * class: Categories
  * requires: submit 1.4, category_manager 0.6
@@ -399,9 +399,17 @@ class Categories extends PluginFunctions
             require_once(PLUGINS . 'categories/libs/Category.php');
             $cat = new Category($this->db);
             if (is_numeric($category)) { 
+                $parent_id = $cat->getCatParent($category);
                 $category = $cat->getCatName($category);
             } else {
+                $category_id = $cat->getCatId($category);
+                $parent_id = $cat->getCatParent($category_id);
                 $category = $cat->getCatName('', $category);
+            }
+            
+            if ($parent_id) { 
+                $parent = $cat->getCatName($parent_id);
+                $parent = stripslashes(htmlentities($parent, ENT_QUOTES,'UTF-8'));
             }
 
             $category = stripslashes(htmlentities($category, ENT_QUOTES,'UTF-8'));
@@ -409,7 +417,11 @@ class Categories extends PluginFunctions
             $this->hotaru->title = $category; // used in title tags
         }
         
-        $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_category"] . " &raquo; " . $this->hotaru->title . $rss;
+        if ($parent_id > 1) {
+            $this->hotaru->vars['page_title'] = "<a href='" . $this->hotaru->url(array('category'=>$parent_id)) . "'>" . $parent . "</a> &raquo; " . $this->hotaru->title . $rss;
+        } else {
+            $this->hotaru->vars['page_title'] = $this->hotaru->title . $rss;
+        }
         
         return true;
 
