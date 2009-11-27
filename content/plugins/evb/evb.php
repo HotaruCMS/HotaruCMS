@@ -2,7 +2,7 @@
 /**
  * name: EVB
  * description: External Vote Button
- * version: 0.1
+ * version: 0.2
  * folder: evb
  * class: Evb
  * hooks: hotaru_header
@@ -69,6 +69,9 @@ class Evb extends PluginFunctions
         $query = "SELECT post_id, post_votes_up FROM " . TABLE_POSTS . " WHERE (post_orig_url = %s OR post_orig_url = %s) AND (post_status = %s OR post_status = %s) LIMIT 1";
         $sql = $this->db->prepare($query, urlencode($url1), urlencode($url2), 'top', 'new');
         $result = $this->db->get_row($sql);
+        
+        include_once(PLUGINS . 'submit/libs/Post.php');
+        $this->hotaru->post = new Post($this->hotaru); // used to get post information
 
         $this->hotaru->vars['url'] = $url;
         
