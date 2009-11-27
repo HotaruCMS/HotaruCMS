@@ -34,4 +34,5 @@ If you aren't using friendly urls, you'll need to put an evb folder in you root 
 
 Changelog
 ---------
+v.0.2 2009/11/27 - Nick - Fix for non-object error
 v.0.1 2009/11/23 - Nick - Released first version
