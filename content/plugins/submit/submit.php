@@ -827,10 +827,9 @@ class Submit extends PluginFunctions
     }
 
     /**
-     * Check if user is on the blocked list
+     * Check if url or domain is on the blocked list
      *
-     * @param string $username
-     * @param string $email
+     * @param string $url
      * @return bool - true if blocked
      */
     public function checkBlocked($url)
@@ -845,6 +844,13 @@ class Submit extends PluginFunctions
         if ($this->isBlocked('url', $domain)) {
             return true;
         }
+        
+        // Is domain extension blocked?
+        $host = parse_url($url, PHP_URL_HOST); // returns www.google.com
+        $ext = substr(strrchr($host, '.'), 1); 
+        if ($this->isBlocked('url', '.' . $ext)) { // dot added here
+            return true;
+        } 
                         
         return false;   // not blocked
     }

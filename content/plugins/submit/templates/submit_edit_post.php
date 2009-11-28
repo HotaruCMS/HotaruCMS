@@ -89,7 +89,7 @@ $hotaru->plugins->pluginHook('submit_form_2_assign');
     
     <?php echo $hotaru->lang["submit_edit_post_instructions"]; ?>
 
-    <form name='submit_edit_post' action='<?php BASEURL; ?>index.php?page=edit_post&sourceurl=<?php echo $post_orig_url; ?>' method='post'>
+    <form name='submit_edit_post' action='<?php BASEURL; ?>index.php?page=edit_post&sourceurl=<?php echo urlencode($post_orig_url); ?>' method='post'>
     <table>
     <tr>
         <td><?php echo $hotaru->lang["submit_form_url"]; ?>&nbsp; </td>
