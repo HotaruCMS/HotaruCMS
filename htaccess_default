@@ -1,32 +1,3 @@
-# ####################################################################################################
-#  File: /.htaccess
-#  Purpose: Rewrite rules for directing users to the right page.
-#  Notes: ---
-#  License:
-#
-#   This file is part of Hotaru CMS (http://www.hotarucms.org/).
-#
-#   Hotaru CMS is free software: you can redistribute it and/or modify it under the terms of the 
-#   GNU General Public License as published by the Free Software Foundation, either version 3 of 
-#   the License, or (at your option) any later version.
-#
-#   Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
-#   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License along with Hotaru CMS. If not, 
-#   see http://www.gnu.org/licenses/.
-#   
-#   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
-#
-#   Note: Part of the source code in this file is from open source projects, copyright as follows:
-#
-#   Portions are Copyright (C) 2005 by Ricardo Galli <gallir at uib dot es>.
-#   Portions are Copyright (C) 2005 - 2008 by Pligg <www.pligg.com>.
-#   Portions are Copyright (C) 2008 - 2009 by the Social Web CMS Team <swcms@socialwebcms.com>.
-#
-# ####################################################################################################
-
 #############################
 ##### EDIT THIS SECTION #####
 #############################
@@ -57,22 +28,25 @@ RewriteRule ^admin/([a-zA-Z0-9_-]+)/?$ admin_index.php?page=$1 [L]
 RewriteRule ^admin/plugins/?$ admin_index.php?page=plugins [L]
 RewriteRule ^admin/settings/?$ admin_index.php?page=settings [L]
 RewriteRule ^admin/maintenance/?$ admin_index.php?page=maintenance [L]
-RewriteRule ^admin/plugin_settings/([a-zA-Z0-9_-]+)/?$ admin_index.php?page=plugin_settings&plugin=$1 [L]
+RewriteRule ^admin/plugin_settings/plugin/([a-zA-Z0-9_-]+)/?$ admin_index.php?page=plugin_settings&plugin=$1 [L]
 
 ##### GENERIC RULES #####
 RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
-RewriteRule ^(.*)/?$ index.php?page=$1 [L]
+RewriteRule ^([^/]*)/?$ index.php?page=$1 [L]
 
 RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
-RewriteRule ^(.*)/(.*)/?$ index.php?page=$1&pos2=$2 [L]
+RewriteRule ^([^/]*)/([^/]*)/?$ index.php?$1=$2 [L]
 
 RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
-RewriteRule ^(.*)/(.*)/(.*)/?$ index.php?page=$1&pos2=$2&pos3=$3 [L]
+RewriteRule ^([^/]*)/([^/]*)/([^/]*)/?$ index.php?page=$1&$2=$3 [L]
 
 RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
-RewriteRule ^(.*)/(.*)/(.*)/(.*)/?$ index.php?page=$1&pos2=$2&pos3=$3&pos4=$4 [L]
+RewriteRule ^([^/]*)/([^/]*)/([^/]*)/([^/]*)/?$ index.php?$1=$2&$3=$4 [L]
 
 RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
-RewriteRule ^(.*)/(.*)/(.*)/(.*)/(.*)/?$ index.php?page=$1&pos2=$2&pos3=$3&pos4=$4&pos5=$5 [L]
+RewriteRule ^([^/]*)/([^/]*)/([^/]*)/([^/]*)/([^/]*)/?$ index.php?page=$1&$2=$3&$4=$5 [L]
+
+RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc)$
+RewriteRule ^([^/]*)/([^/]*)/([^/]*)/([^/]*)/([^/]*)/([^/]*)/?$ index.php?$1=$2&$3=$4&$5=$6 [L]
 
 ##### URL Rewriting End #####
