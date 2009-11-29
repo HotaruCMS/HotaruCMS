@@ -472,7 +472,7 @@ class Submit extends PluginFunctions
                     echo $this->hotaru->showMessages();
                     return true;
                 }
-                    // getAlpha for Submit page, keyExists for EVB
+                    // getAlpha for Submit page, keyExists for EVB & Bookmarklet
                   if (($this->cage->post->getAlpha('submit1') == 'true')
                         || $this->cage->get->keyExists('url')) {
                     if (!$this->check_for_errors_1()) { 
@@ -483,7 +483,7 @@ class Submit extends PluginFunctions
                         } else {
                             $this->hotaru->vars['post_orig_url'] = $this->cage->post->testUri('post_orig_url'); 
                             if (!$this->hotaru->vars['post_orig_url']) {
-                                $this->hotaru->vars['post_orig_url'] = $this->cage->get->testUri('url'); // if EVB
+                                $this->hotaru->vars['post_orig_url'] = $this->cage->get->testUri('url'); // if EVB & Bookmarklet
                             }
                             $this->hotaru->vars['post_orig_title'] = $this->hotaru->post->fetchTitle($this->hotaru->vars['post_orig_url']);
                         }
