@@ -456,6 +456,11 @@ class Hotaru
                 $this->lang['main_announcement_plugins_disabled']
             );
         }
+        
+        // Plugins can add announcements with this:
+        $this->vars['hotaru_announcements'] = $announcements;
+        $this->plugins->pluginHook('hotaru_announcements');
+        $announcements = $this->vars['hotaru_announcements'];
 
         if (!is_array($announcements)) {
             return false;

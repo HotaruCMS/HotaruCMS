@@ -81,7 +81,10 @@ if (strstr($hotaru->post->origUrl, BASEURL)) { $editorial = true; } // editorial
             <?php } ?>
                 
             <?php if ($hotaru->post->useContent) { ?>
-                <div class="show_post_content"><?php echo nl2br($hotaru->post->content); ?></div>
+                <div class="show_post_content">
+                    <?php echo nl2br($hotaru->post->content); ?>
+                    <?php $hotaru->plugins->pluginHook('submit_show_post_content_post'); ?>
+                </div>
             <?php } ?>
             
             <div class="show_post_extra_fields">
