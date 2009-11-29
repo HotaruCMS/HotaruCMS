@@ -274,7 +274,7 @@ class Submit extends PluginFunctions
      */
     public function navigation()
     {    
-        if ($this->current_user->loggedIn) {
+        if ($this->current_user->loggedIn && $this->hotaru->post->useSubmission) {
             if ($this->hotaru->title == 'submit') { $status = "id='navigation_active'"; } else { $status = ""; }
             echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'submit')) . "'>" . $this->lang['submit_submit_a_story'] . "</a></li>\n";
         }
@@ -465,9 +465,11 @@ class Submit extends PluginFunctions
     {
         if ($this->hotaru->isPage('submit')) {
               
-              if ($this->current_user->loggedIn) {
+            if ($this->current_user->loggedIn) {
 
-                  if (!$this->hotaru->post->useSubmission) {
+                if (!$this->hotaru->post->useSubmission) {
+                    $this->hotaru->messages[$this->lang['submit_disabled']] = 'red';
+                    echo $this->hotaru->showMessages();
                     return true;
                 }
                     // getAlpha for Submit page, keyExists for EVB
@@ -511,7 +513,8 @@ class Submit extends PluginFunctions
             if ($this->current_user->loggedIn) {
             
                 if (!$this->hotaru->post->useSubmission) {
-                    echo $this->lang['submit_disabled'];    
+                    $this->hotaru->messages[$this->lang['submit_disabled']] = 'red';
+                    echo $this->hotaru->showMessages();
                     return true;
                 }
                  if ($this->cage->post->getAlpha('submit2') == 'true') {
