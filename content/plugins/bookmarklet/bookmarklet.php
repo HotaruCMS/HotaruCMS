@@ -6,7 +6,7 @@
  * folder: bookmarklet
  * class: Bookmarklet
  * hooks: hotaru_bookmarklet
- * requires: submit: 1.7
+ * requires: submit 1.7
  *
  * Usage: Put <?php $hotaru->plugins->pluginHook('hotaru_bookmarklet'); ?> 
  *        in your template where you want the bookmarklet link to show.
