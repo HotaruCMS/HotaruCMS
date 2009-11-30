@@ -1,13 +1,13 @@
 HOTARU CMS
-Version: 0.8.1 Beta
-Released: November 25th 2009
+Version: 0.8.2 Beta
+Released: December 1st 2009
 
 INSTALLATION
 ------------
 
 Please visit http://hotarucms.org/showthread.php?t=14 for the most up-to-date version of these instructions.
 
-Instructions last updated: November 25th 2009
+Instructions last updated: November 30th 2009
 
 Requirements
 
@@ -21,6 +21,7 @@ Upgrading
    4. When finished, delete the install folder.
 
 Note: If upgrading from Hotaru 0.7.5 to 0.8.X, you will also need to update your hotaru_settings.php file with changes in the new hotaru_settings_default.php file.
+Note2: If upgrading from Hotaru 0.8.X to 0.8.2, you will need to update your .htaccess file to match htaccess_default if you use friendly urls.
 
 First-time Installation
 
