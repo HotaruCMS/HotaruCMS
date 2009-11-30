@@ -43,7 +43,7 @@ class VideoInc extends PluginFunctions
         $embed = $this->getCode($url);
 
         if (!$embed) { return false; }
-        echo "<div style='width: 100%; background-color: #000; text-align: center;'>" . $embed . "</div>";
+        echo "\n<div style='width: 100%; background-color: #000; text-align: center;'>\n" . $embed . "</div>\n";
         exit;
     }
     
@@ -65,14 +65,14 @@ class VideoInc extends PluginFunctions
         
         // echo the image
         if ($imageURL) {
-            echo "<div class='video_inc_list'>";
+            echo "<div class='video_inc_list'>\n";
             if ($this->isActive('thickbox')) {
-                echo "<a href='" . $video_inc_url . "&height=320&width=560' class='thickbox'>"; 
-                echo "<img src='" . $imageURL . "'></a>";
+                echo "<a href='" . $video_inc_url . "&height=320&width=560' class='thickbox'>\n"; 
+                echo "<img src='" . $imageURL . "'></a>\n";
             } else {
-                echo "<img src='" . $imageURL . "'>";
+                echo "<img src='" . $imageURL . "'>\n";
             }
-            echo "</div>";
+            echo "</div>\n";
         }
 
     }
@@ -86,7 +86,7 @@ class VideoInc extends PluginFunctions
         if (!$embed) { return false; }
         
         // embed the video
-        echo "<div class='video_inc_post'>" . $embed . "</div>";
+        echo "\n<div class='video_inc_post'>\n" . $embed . "</div>\n";
     }
     
     public function getCode($url)
