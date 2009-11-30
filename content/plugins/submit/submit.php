@@ -208,6 +208,7 @@ class Submit extends PluginFunctions
             if ($sort = $this->cage->get->testPage('sort')
                 && !$this->cage->get->keyExists('category')
                 && !$this->cage->get->keyExists('tag')
+                && !$this->cage->get->keyExists('type')
                 && !$this->cage->get->keyExists('user')) {
                 // Determine TITLE tags for a page of sorted posts:
                 switch ($sort) {
