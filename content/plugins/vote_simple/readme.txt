@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.1.0 2009/11/30 - Nick - Ability to filter to media type (requires Media Select plugin)
 v.0.9 2009/11/22 - Nick - Option to allow unvoting back to latet page. Bug fix for post promotion error 
 v.0.8 2009/11/04 - Nick - Bug fixes and updated install function for easier upgrading
 v.0.7 2009/10/20 - Nick - Added option to show vote count before links in the Sidebar Posts plugin

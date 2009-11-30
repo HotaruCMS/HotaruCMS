@@ -2,7 +2,7 @@
 /**
  * name: Submit
  * description: Submit and manage stories.
- * version: 1.7
+ * version: 1.8
  * folder: submit
  * class: Submit
  * hooks: hotaru_header, header_meta, header_include, header_include_raw, admin_header_include_raw, install_plugin, navigation, theme_index_replace, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, admin_maintenance_database, admin_maintenance_top, admin_theme_main_stats, user_settings_pre_save, user_settings_fill_form, user_settings_extra_settings
@@ -208,6 +208,7 @@ class Submit extends PluginFunctions
             if ($sort = $this->cage->get->testPage('sort')
                 && !$this->cage->get->keyExists('category')
                 && !$this->cage->get->keyExists('tag')
+                && !$this->cage->get->keyExists('type')
                 && !$this->cage->get->keyExists('user')) {
                 // Determine TITLE tags for a page of sorted posts:
                 switch ($sort) {
@@ -274,7 +275,7 @@ class Submit extends PluginFunctions
      */
     public function navigation()
     {    
-        if ($this->current_user->loggedIn) {
+        if ($this->current_user->loggedIn && $this->hotaru->post->useSubmission) {
             if ($this->hotaru->title == 'submit') { $status = "id='navigation_active'"; } else { $status = ""; }
             echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'submit')) . "'>" . $this->lang['submit_submit_a_story'] . "</a></li>\n";
         }
@@ -465,12 +466,14 @@ class Submit extends PluginFunctions
     {
         if ($this->hotaru->isPage('submit')) {
               
-              if ($this->current_user->loggedIn) {
+            if ($this->current_user->loggedIn) {
 
-                  if (!$this->hotaru->post->useSubmission) {
+                if (!$this->hotaru->post->useSubmission) {
+                    $this->hotaru->messages[$this->lang['submit_disabled']] = 'red';
+                    echo $this->hotaru->showMessages();
                     return true;
                 }
-                    // getAlpha for Submit page, keyExists for EVB
+                    // getAlpha for Submit page, keyExists for EVB & Bookmarklet
                   if (($this->cage->post->getAlpha('submit1') == 'true')
                         || $this->cage->get->keyExists('url')) {
                     if (!$this->check_for_errors_1()) { 
@@ -481,7 +484,7 @@ class Submit extends PluginFunctions
                         } else {
                             $this->hotaru->vars['post_orig_url'] = $this->cage->post->testUri('post_orig_url'); 
                             if (!$this->hotaru->vars['post_orig_url']) {
-                                $this->hotaru->vars['post_orig_url'] = $this->cage->get->testUri('url'); // if EVB
+                                $this->hotaru->vars['post_orig_url'] = $this->cage->get->testUri('url'); // if EVB & Bookmarklet
                             }
                             $this->hotaru->vars['post_orig_title'] = $this->hotaru->post->fetchTitle($this->hotaru->vars['post_orig_url']);
                         }
@@ -511,7 +514,8 @@ class Submit extends PluginFunctions
             if ($this->current_user->loggedIn) {
             
                 if (!$this->hotaru->post->useSubmission) {
-                    echo $this->lang['submit_disabled'];    
+                    $this->hotaru->messages[$this->lang['submit_disabled']] = 'red';
+                    echo $this->hotaru->showMessages();
                     return true;
                 }
                  if ($this->cage->post->getAlpha('submit2') == 'true') {

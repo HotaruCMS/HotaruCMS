@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.1.8 2009/11/29 - Nick - Added plugin hooks in post descriptions
 v.1.7 2009/11/27 - Nick - Bug fix for wrong order of sidebar posts. Ability to block domain extensions, e.g. .ru
 v.1.6 2009/11/26 - Nick - Bug fix for default user settings plus user option for links opening source or post urls
 v.1.5 2009/11/25 - Nick - New hook in submit_edit_post.php (used by Comments 1.1)

@@ -25,7 +25,7 @@
  */
 class Hotaru
 {
-    public $version         = "0.8.1";  // Hotaru CMS version
+    public $version         = "0.8.2";  // Hotaru CMS version
 
     public $db;                         // database object
     public $cage;                       // Inspekt object
@@ -456,6 +456,11 @@ class Hotaru
                 $this->lang['main_announcement_plugins_disabled']
             );
         }
+        
+        // Plugins can add announcements with this:
+        $this->vars['hotaru_announcements'] = $announcements;
+        $this->plugins->pluginHook('hotaru_announcements');
+        $announcements = $this->vars['hotaru_announcements'];
 
         if (!is_array($announcements)) {
             return false;

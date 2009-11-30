@@ -44,10 +44,10 @@ class Category
      * @param string $cat_name
      * @return int
      */
-    public function getCatId($cat_name)
+    public function getCatId($cat_safe_name)
     {
         $sql = "SELECT category_id FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s";
-        $cat_id = $this->db->get_var($this->db->prepare($sql, urlencode($cat_name)));
+        $cat_id = $this->db->get_var($this->db->prepare($sql, urlencode($cat_safe_name)));
         return $cat_id;
     }
     

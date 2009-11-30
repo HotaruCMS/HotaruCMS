@@ -1,6 +1,6 @@
 /* **************************************************************************************************** 
- *  File: /javascript/jQuery/hotaru_jquery.js
- *  Purpose: Provides common cosmetic functions, e.g. drop-down boxes
+ *  File: /javascript/hotaru.js
+ *  Purpose: A mixed bag of Ajax, JQuery and other JavaScript functions
  *  Notes: ---
  *  License:
  *
@@ -21,7 +21,51 @@
  *
  **************************************************************************************************** */
 
-// Custom functions:
+var xmlhttp=false;
+/*@cc_on @*/
+/*@if (@_jscript_version >= 5)
+  try {
+  xmlhttp=new ActiveXObject("Msxml2.XMLHTTP")
+ } catch (e) {
+  try {
+	xmlhttp=new ActiveXObject("Microsoft.XMLHTTP")
+  } catch (E) {
+   xmlhttp=false
+  }
+ }
+@else
+ xmlhttp=false
+@end @*/
+
+
+if (!xmlhttp && typeof XMLHttpRequest != 'undefined')
+{
+  try {
+	xmlhttp = new XMLHttpRequest ();
+  }
+  catch (e) {
+  	xmlhttp = false}
+}
+
+function myXMLHttpRequest ()
+{
+  var xmlhttplocal;
+
+  if (!xmlhttplocal && typeof XMLHttpRequest != 'undefined') {
+	try {
+	  var xmlhttplocal = new XMLHttpRequest ();
+	}
+	catch (e) {
+	  var xmlhttplocal = false;
+	}
+  }
+  return (xmlhttplocal);
+}
+
+var ajax = Array ();
+var returnvalue = Array ();
+
+// Custom JQuery functions:
 
 // FADE TOGGLE
 jQuery.fn.fadeToggle = function(speed, easing, callback) {
@@ -31,7 +75,7 @@ jQuery.fn.fadeToggle = function(speed, easing, callback) {
 
 /* ************************************* */
 
-// Function calls:
+// JQuery Function calls:
 
 $(document).ready(function(){
 
@@ -61,8 +105,6 @@ $(document).ready(function(){
  
 });
 
-
-// Not jQuery, but anyway... 
 
 /***********************************************
 * Disable "Enter" key in Form script- By Nurul Fadilah(nurul@REMOVETHISvolmedia.com)

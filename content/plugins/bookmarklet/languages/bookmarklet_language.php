@@ -1,6 +1,6 @@
 <?php
 /**
- * Template for Categories (Menu Bar)
+ * BOOKMARKLET LANGUAGE
  *
  * PHP version 5
  *
@@ -24,11 +24,7 @@
  * @link      http://www.hotarucms.org/
  */
 
-?>
+/* Bookmarklet link */
+$lang['bookmarklet_submit'] = "Submit to " . SITE_NAME;
 
-<ul id='category_bar'>
-<?php $hotaru->plugins->pluginHook('category_bar_start'); ?>
-<?php echo $hotaru->vars['output']; ?>
-<?php $hotaru->plugins->pluginHook('category_bar_end'); ?>
-</ul> 
-<div class="clear"></div>
+?>

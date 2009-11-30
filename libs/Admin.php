@@ -341,6 +341,11 @@ class Admin
             array_push($announcements, $this->lang['admin_announcement_plugins_disabled']);    
         }
         
+        // Plugins can add announcements with this:
+        $this->hotaru->vars['admin_announcements'] = $announcements;
+        $this->plugins->pluginHook('admin_announcements');
+        $announcements = $this->hotaru->vars['admin_announcements'];
+        
         if (!is_array($announcements)) {
             return false;
         } else {

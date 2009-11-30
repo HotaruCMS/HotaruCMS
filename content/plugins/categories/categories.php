@@ -2,11 +2,11 @@
 /**
  * name: Categories
  * description: Enables categories for posts
- * version: 1.0
+ * version: 1.1
  * folder: categories
  * class: Categories
  * requires: submit 1.4, category_manager 0.6
- * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, post_read_post_1, post_read_post_2, post_add_post, post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, post_list_filter, submit_show_post_author_date, submit_is_page_main, post_header, admin_sidebar_plugin_settings, admin_plugin_settings
+ * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, post_read_post_1, post_read_post_2, post_add_post, post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, post_list_filter, submit_show_post_author_date, submit_is_page_main, post_header, admin_sidebar_plugin_settings, admin_plugin_settings, breadcrumbs
  *
  * PHP version 5
  *
@@ -303,16 +303,15 @@ class Categories extends PluginFunctions
         // ******** CHECK CATEGORY ********
         if ($this->hotaru->post->vars['useCategories']) {
             $this->hotaru->post->vars['category_check'] = $this->cage->post->getInt('post_category');    
-            if (!$this->hotaru->post->vars['category_check']) {
+            if ($this->hotaru->post->vars['category_check'] > 1) {
+                // category is okay.
+                $error_category = 0;
+            } else {
                 // No category present...
                 $this->hotaru->messages[$this->lang['submit_form_category_error']] = "red";
                 $error_category = 1;
-            } else {
-                // category is okay.
-                $error_category = 0;
             }
         }
-        
         return $error_category;
     }
     
@@ -400,7 +399,8 @@ class Categories extends PluginFunctions
             $cat = new Category($this->db);
             if (is_numeric($category)) { 
                 $parent_id = $cat->getCatParent($category);
-                $category = $cat->getCatName($category);
+                $category_id = $category;
+                $category = $cat->getCatName($category_id);
             } else {
                 $category_id = $cat->getCatId($category);
                 $parent_id = $cat->getCatParent($category_id);
@@ -423,8 +423,42 @@ class Categories extends PluginFunctions
             $this->hotaru->vars['page_title'] = $this->hotaru->title . $rss;
         }
         
+        // use these in post page breadcrumbs:
+        $this->hotaru->vars['cat_id'] = $category_id;
+        $this->hotaru->vars['cat_name'] = $category;
+        $this->hotaru->vars['parent_cat_id'] = $parent_id;
+        $this->hotaru->vars['parent_cat_name'] = $parent;
+        
         return true;
 
+    }
+    
+    
+    /**
+     * Shows categories before post title in breadcrumbs
+     */
+    public function breadcrumbs()
+    { 
+        if ($this->hotaru->pageType != 'post') { return false; }
+        if (!$this->hotaru->post->vars['useCategories']) { return false; }
+        
+        require_once(PLUGINS . 'categories/libs/Category.php');
+        $cat = new Category($this->db);
+        $cat_id = $cat->getCatId($this->hotaru->post->vars['catSafeName']);
+        $cat_name = $cat->getCatName($cat_id);
+        $parent_id = $cat->getCatParent($cat_id);
+
+        
+        if ($parent_id > 1) {
+            $parent_name = $cat->getCatName($parent_id);
+            echo "<a href='" . $this->hotaru->url(array('category'=>$parent_id)) . "'>";
+            echo $parent_name . "</a> &raquo; ";
+        }
+        
+        if ($cat_id) {
+            echo "<a href='" . $this->hotaru->url(array('category'=>$cat_id)) . "'>";
+            echo $cat_name . "</a> &raquo; ";
+        }
     }
     
     

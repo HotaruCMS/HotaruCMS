@@ -87,6 +87,7 @@ if ($stories && ($hotaru->pageType != "profile")) {
             
         <?php if ($hotaru->post->useContent) { ?>
             <div class="show_post_content">
+                <?php $hotaru->plugins->pluginHook('submit_show_post_content_list'); ?>
                 <?php if ($hotaru->post->useSummary) { ?>
                     <?php echo truncate($hotaru->post->content, $hotaru->post->summaryLength); ?>
                 <?php } else { ?>

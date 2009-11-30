@@ -1,6 +1,11 @@
 <?php
 /**
- * Template for Categories (Menu Bar)
+ * name: Thick Box
+ * description: Used for display video and images over a page
+ * version: 0.1
+ * folder: thickbox
+ * class: ThickBox
+ * hooks: header_include
  *
  * PHP version 5
  *
@@ -24,11 +29,8 @@
  * @link      http://www.hotarucms.org/
  */
 
-?>
 
-<ul id='category_bar'>
-<?php $hotaru->plugins->pluginHook('category_bar_start'); ?>
-<?php echo $hotaru->vars['output']; ?>
-<?php $hotaru->plugins->pluginHook('category_bar_end'); ?>
-</ul> 
-<div class="clear"></div>
+class ThickBox extends PluginFunctions
+{
+    // nothing to do. We just fall back on Hotaru's header_include function to include the CSS and JavaScript
+}

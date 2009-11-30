@@ -1,6 +1,15 @@
 <?php
 /**
- * Template for Categories (Menu Bar)
+ * name: Bookmarklet
+ * description: A way for users to submit posts on the fly
+ * version: 0.1
+ * folder: bookmarklet
+ * class: Bookmarklet
+ * hooks: hotaru_bookmarklet
+ * requires: submit 1.7
+ *
+ * Usage: Put <?php $hotaru->plugins->pluginHook('hotaru_bookmarklet'); ?> 
+ *        in your template where you want the bookmarklet link to show.
  *
  * PHP version 5
  *
@@ -24,11 +33,13 @@
  * @link      http://www.hotarucms.org/
  */
 
-?>
 
-<ul id='category_bar'>
-<?php $hotaru->plugins->pluginHook('category_bar_start'); ?>
-<?php echo $hotaru->vars['output']; ?>
-<?php $hotaru->plugins->pluginHook('category_bar_end'); ?>
-</ul> 
-<div class="clear"></div>
+class Bookmarklet extends PluginFunctions
+{
+    public function hotaru_bookmarklet()
+    {
+        $this->includeLanguage();
+        $this->hotaru->displayTemplate('bookmarklet', 'bookmarklet');
+    }
+
+}
