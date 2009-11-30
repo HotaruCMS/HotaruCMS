@@ -27,6 +27,8 @@
 ?>
 
 <ul id='category_bar'>
+<?php $hotaru->plugins->pluginHook('category_bar_start'); ?>
 <?php echo $hotaru->vars['output']; ?>
+<?php $hotaru->plugins->pluginHook('category_bar_end'); ?>
 </ul> 
 <div class="clear"></div>
