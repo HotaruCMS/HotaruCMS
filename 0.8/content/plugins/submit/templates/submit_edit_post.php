@@ -98,7 +98,7 @@ $hotaru->plugins->pluginHook('submit_form_2_assign');
     </tr>
     <tr>
         <td><?php echo $hotaru->lang["submit_form_title"]; ?>&nbsp; </td>
-        <td><input type='text' size=50 id='post_title' name='post_title' value='<?php echo $title_check; ?>'></td>
+        <td><input type='text' size=50 id='post_title' name='post_title' value='<?php echo htmlentities($title_check,ENT_QUOTES,'UTF-8'); ?>'></td>
         <td>&nbsp;</td>
     </tr>
     
@@ -106,7 +106,7 @@ $hotaru->plugins->pluginHook('submit_form_2_assign');
     
     <tr>
         <td style='vertical-align: top;'><?php echo $hotaru->lang["submit_form_content"]; ?>&nbsp; </td>
-        <td colspan=2><textarea id='post_content' name='post_content' rows='6' maxlength='<?php $hotaru->post->contentLength; ?>' style='width: 32em;'><?php echo $content_check; ?></textarea></td>
+        <td colspan=2><textarea id='post_content' name='post_content' rows='6' maxlength='<?php $hotaru->post->contentLength; ?>' style='width: 32em;'><?php echo htmlentities($content_check,ENT_QUOTES,'UTF-8');; ?></textarea></td>
     </tr>
     <tr>
         <td>&nbsp;</td>

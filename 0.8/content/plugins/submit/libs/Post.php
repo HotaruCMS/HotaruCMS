@@ -386,6 +386,7 @@ class Post
         $limit = $this->cage->get->getInt('limit');
         $user = $this->cage->get->testUsername('user');
         $tag = $this->cage->get->noTags('tag');
+        $type = $this->cage->get->testAlnumLines('type');
         $search = $this->cage->get->getMixedString2('search');
         $category = $this->cage->get->noTags('category');
         if ($category) { 
@@ -400,6 +401,7 @@ class Post
         if ($status) { $filter['post_status = %s'] = $status; }
         if ($user) { $filter['post_author = %d'] = $this->current_user->getUserIdFromName($this->cage->get->testUsername('user'));  }
         if ($tag) { $filter['post_tags LIKE %s'] = '%' . urlencode(stripslashes($tag)) . '%'; }
+        if ($type) { $filter['post_type = %s'] = $type; }
         if ($category && (FRIENDLY_URLS == "true")) { $cat_id = $cat->getCatId($category); }
         if ($category && (FRIENDLY_URLS == "false")) { $cat_id = $category; }
         
@@ -436,7 +438,14 @@ class Post
         $feed->title    = SITE_NAME;
         $feed->link     = BASEURL;
         
-        if ($status == 'new') 
+        if ($type) 
+        { 
+            $this->plugins->includeLanguage('media_select', 'media_select');
+            if (isset($status)) { $status .= "_"; } else { $status = ""; }
+            $media_word = "submit_rss_stories_media_" . $status . $type;
+            $feed->description = $this->lang[$media_word];
+        }
+        elseif ($status == 'new') 
         { 
             $feed->description = $this->lang["submit_rss_latest_from"] . " " . SITE_NAME; 
         }
