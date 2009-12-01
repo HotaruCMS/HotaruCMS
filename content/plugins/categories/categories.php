@@ -629,7 +629,7 @@ class Categories extends PluginFunctions
                 }
                 
                 // Output the category bar
-                $this->hotaru->vars['output'] = $output; 
+                $this->hotaru->vars['output'] = $output;   
                 $this->hotaru->displayTemplate('category_bar', 'categories');
             }
             
