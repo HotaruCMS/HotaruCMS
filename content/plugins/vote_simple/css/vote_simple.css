@@ -1,7 +1,3 @@
-/* **************************************
- *	VOTE SIMPLE PLUGIN CSS          *
- ************************************** */
-
 /* ************************************
  * *********** VOTE BUTTON ************
  * ********************************* */
@@ -20,8 +16,21 @@
 }
 
 .vote_button_bottom {
+  margin-top:5px;
+  padding: 2px 0 2px 0;
+  background: #f2f2f2;
+  border: 1px solid #d0d0d0;
 	width: 50px; 
-	color: #000;
+}
+
+.vote_button_bottom a { 
+	color: #454545;
+	background:transparent;
+}
+
+.vote_button_bottom a:hover { 
+	color: #454545;
+	background:transparent;
 }
 
 .vote_button_top_story { border: 1px solid #d0d0d0; background-color: #f4f4f4; color: #000; }
