@@ -802,11 +802,11 @@ class Hotaru
         if ($admin) { $index = 'admin_index'; } else { $index = 'index'; }
         
         if ($version_js > 0) {
-            echo "<script type='text/javascript' src='" . BASEURL . $index . ".php?combine=1&type=js&version=" . $version_js . "'></script>\n";
+            echo "<script type='text/javascript' src='" . BASEURL . $index . ".php?combine=1&amp;type=js&amp;version=" . $version_js . "'></script>\n";
         }
         
         if ($version_css > 0) {
-            echo "<link rel='stylesheet' href='" . BASEURL . $index . ".php?combine=1&type=css&version=" . $version_css . "' type='text/css'>\n";
+            echo "<link rel='stylesheet' href='" . BASEURL . $index . ".php?combine=1&amp;type=css&amp;version=" . $version_css . "' type='text/css' />\n";
         }
 
      }

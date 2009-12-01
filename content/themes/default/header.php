@@ -29,10 +29,9 @@
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
-    <meta name="Language" content="en-us" />
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
+<head profile="http://gmpg.org/xfn/11">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <title>
        <?php 
@@ -57,13 +56,13 @@
             // plugin hook
             $result = $hotaru->plugins->pluginHook('header_meta');
             if (!isset($result) || !is_array($result)) { ?>
-                <meta name="description" content="<?php echo $hotaru->lang['header_meta_description']; ?>">
-                <meta name="keywords" content="<?php echo $hotaru->lang['header_meta_keywords']; ?>">
+                <meta name="description" content="<?php echo $hotaru->lang['header_meta_description']; ?>" />
+                <meta name="keywords" content="<?php echo $hotaru->lang['header_meta_keywords']; ?>" />
         <?php } ?>
    
-    <script language="JavaScript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery.min.js'; ?>"></script>
-    <script language="JavaScript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery-ui.min.js'; ?>"></script>
-    <script language="JavaScript" src="<?php echo BASEURL . 'javascript/hotaru.js'; ?>"></script>
+    <script type="text/javascript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery.min.js'; ?>"></script>
+    <script type="text/javascript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery-ui.min.js'; ?>"></script>
+    <script type="text/javascript" src="<?php echo BASEURL . 'javascript/hotaru.js'; ?>"></script>
 
     <!-- Include merged files for all the plugin css and javascript (if any) -->
     <?php 
@@ -73,9 +72,9 @@
     ?>
     <!-- End -->
        
-    <link rel="stylesheet" href="<?php echo BASEURL . 'libs/extensions/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
-    <link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME . 'css/style.css'; ?>" type="text/css">
-    <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico">
+    <link rel="stylesheet" href="<?php echo BASEURL . 'libs/extensions/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css" />
+    <link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME . 'css/style.css'; ?>" type="text/css" />
+    <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico" />
    
     <?php $hotaru->plugins->pluginHook('header_include_raw'); ?>
    
