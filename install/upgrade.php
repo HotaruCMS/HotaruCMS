@@ -87,7 +87,7 @@ function html_header()
     $header .= "<BODY>\n";
     $header .= "<div id='doc' class='yui-t7 install'>\n";
     $header .= "<div id='hd' role='banner'>";
-    $header .= "<img align='left' src='" . BASEURL . "content/admin_themes/admin_default/images/hotaru.png' style='height:60px; width:69px;'>";
+    $header .= "<img align='left' src='" . BASEURL . "content/admin_themes/admin_default/images/hotaru.png' style='height:60px; width:60px;'>";
     $header .= "<h1>" . $lang['upgrade_title'] . "</h1></div>\n"; 
     $header .= "<div id='bd' role='main'>\n";
     $header .= "<div class='yui-g'>\n";

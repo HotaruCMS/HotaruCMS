@@ -85,8 +85,8 @@ class Users extends PluginFunctions
             $perms['can_login']['member'] = 'yes';
             $perms['can_login']['undermod'] = 'yes';
             $perms['can_login']['default'] = 'no';
+            $this->current_user->updateDefaultPermissions($perms);
         }
-        $this->current_user->updateDefaultPermissions($perms);
 
         // Plugin settings
         $users_settings = $this->getSerializedSettings();
@@ -870,7 +870,7 @@ class Users extends PluginFunctions
         // Breadcrumbs:
         echo "<div id='breadcrumbs'><a href='" . BASEURL . "'>" . $this->lang["users_home"] . "</a> "; 
         echo "&raquo; <a href='" . $this->hotaru->url(array('user' => $user->name)) . "'>" . $user->name . "</a> "; 
-        echo "&raquo; " . $this->lang["users_account_permissions"] . "</div>";
+        echo "&raquo; " . $this->lang["users_permissions"] . "</div>";
             
         $this->hotaru->vars['username'] = $user->name;
         $this->hotaru->displayTemplate('user_tabs', 'users');

@@ -122,8 +122,9 @@ class Submit extends PluginFunctions
             $perms['can_post_without_link']['admin'] = 'yes';
             $perms['can_post_without_link']['supermod'] = 'yes';
             $perms['can_post_without_link']['default'] = 'no';
+            
+            $this->current_user->updateDefaultPermissions($perms);
         }
-        $this->current_user->updateDefaultPermissions($perms);
         
 
         // Default settings 
@@ -162,6 +163,10 @@ class Submit extends PluginFunctions
             $base_settings['link_action'] = ""; $site_settings['link_action'] = "";
             $uf->updateDefaultSettings($base_settings, 'base'); $uf->updateDefaultSettings($site_settings, 'site');
         }
+        
+        // fixes PHP 2.3 errors on installation:
+        require_once(PLUGINS . 'submit/libs/Post.php');
+        $this->hotaru->post = new Post($this->hotaru);  // adds Post object to Hotaru class
     }
     
     
@@ -274,8 +279,8 @@ class Submit extends PluginFunctions
      * Add a "submit a story" link to the navigation bar
      */
     public function navigation()
-    {    
-        if ($this->current_user->loggedIn && $this->hotaru->post->useSubmission) {
+    {   
+        if ($this->current_user->loggedIn && isset($this->hotaru->post->useSubmission)) {
             if ($this->hotaru->title == 'submit') { $status = "id='navigation_active'"; } else { $status = ""; }
             echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'submit')) . "'>" . $this->lang['submit_submit_a_story'] . "</a></li>\n";
         }

@@ -31,11 +31,12 @@ html, body {
 
 h1	{ 
 	font-size: 1.5em;
+	margin-left: 1.0em;
 	padding-top: 0.6em;
 }
 
-h1 img {
-	padding: 0em;
+img {
+    padding-right: 1.0em;
 }
 
 h2 { 
