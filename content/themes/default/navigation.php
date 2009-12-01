@@ -59,7 +59,7 @@
         if ($hotaru->plugins->getPluginStatus('submit') == 'active') { ?>
         <li>
         <a href="<?php echo $hotaru->url(array('page'=>'rss')); ?>">RSS 
-            <img id="rss_icon" src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png">
+            <img id="rss_icon" src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png" alt="RSS" />
         </a>
         </li>
     <?php } ?>
