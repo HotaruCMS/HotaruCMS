@@ -63,6 +63,7 @@
     <script type="text/javascript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery.min.js'; ?>"></script>
     <script type="text/javascript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery-ui.min.js'; ?>"></script>
     <script type="text/javascript" src="<?php echo BASEURL . 'javascript/hotaru.js'; ?>"></script>
+    <script type="text/javascript" src="<?php echo BASEURL . 'content/themes/' . THEME . 'javascript/suckerfish.js'; ?>"></script>
 
     <!-- Include merged files for all the plugin css and javascript (if any) -->
     <?php 
