@@ -388,7 +388,7 @@ class Activity extends PluginFunctions
                 $output .= "<small>[" . date('g:ia, M jS', strtotime($item->useract_date)) . "]</small>";
             }
             
-            $output .= "<div>\n";
+            $output .= "</div>\n";
             $output .= "</li>\n\n";
         }
         
