@@ -621,7 +621,7 @@ class Categories extends PluginFunctions
                     if ($countchildren) { 
                         $depth = 1;
                         $output = $this->buildMenuBar($category, $output, $parent, $depth); 
-                    } else {
+                    } else {  
                         $output = $this->categoryLink($category, $output); 
                     }
                     
@@ -629,7 +629,7 @@ class Categories extends PluginFunctions
                 }
                 
                 // Output the category bar
-                $this->hotaru->vars['output'] = $output;
+                $this->hotaru->vars['output'] = $output; 
                 $this->hotaru->displayTemplate('category_bar', 'categories');
             }
             
@@ -654,7 +654,7 @@ class Categories extends PluginFunctions
         $countchildren = $this->db->get_var($this->db->prepare($sql, $category->category_id)); 
 
         if ($countchildren) { 
-            $output .=  "<ul>\n"; 
+            $output .=  "<ul class='children'>\n"; 
             
             $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d ORDER BY category_order ASC"; 
             $children = $this->db->get_results($this->db->prepare($sql, $category->category_id)); 
@@ -690,7 +690,7 @@ class Categories extends PluginFunctions
     
         $category = stripslashes(html_entity_decode(urldecode($category->category_name), ENT_QUOTES,'UTF-8'));
         $output .= '<li><a href="' . $this->hotaru->url(array('category'=>$link)) .'">' . $category . "</a>\n"; 
-    
+        
         return $output; 
     } 
 
