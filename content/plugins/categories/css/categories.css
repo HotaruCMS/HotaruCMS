@@ -10,8 +10,8 @@
 	background: #f4f4f4;
 	border-left: 1px solid #e4e4e4;
   border-bottom: 1px solid #e4e4e4; 
-	width: 950px;
-	height: 35px;
+	width: 100%;
+	height: 2.7em;
 	margin: 0px 0 0px;
 	padding: 0px;
 	}
@@ -29,7 +29,7 @@
 	display: block;
     font-weight: bold;
     margin: 0px 0px 0px 0px;
-	padding: 8px 10px 8px 10px;
+	padding: 0.63em 0.7em 0.63em 0.7em;
 	border-bottom: 1px solid #e4e4e4;
 	border-right: 1px solid #e4e4e4;
 	}
@@ -40,7 +40,7 @@
 	display: block;
 	text-decoration: none;
     margin: 0px 0px 0px 0px;
-	padding: 8px 10px 8px 10px;
+	padding: 0.63em 0.7em 0.63em 0.7em;
 	}
 
 #category_bar li {
@@ -63,7 +63,7 @@
 	width: 160px;
 	float: none;
 	margin: 0 0 0 -1px;
-	padding: 8px 10px 8px 10px;
+	padding: 0.63em 0.7em 0.63em 0.7em;
 	border-bottom: 1px solid #e4e4e4;
 	border-left: 1px solid #e4e4e4;
 	border-right: 1px solid #e4e4e4;
