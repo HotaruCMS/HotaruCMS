@@ -699,7 +699,7 @@ class Post
             $this->hotaru->vars['filter']['post_status = %s'] = 'new';
             $this->hotaru->vars['orderby'] = "post_date DESC";
             $rss = "<a href='" . $this->hotaru->url(array('page'=>'rss', 'status'=>'new')) . "'>";
-            $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
+            $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png' alt='RSS' /></a>";
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_latest"] . $rss;
         } 
         elseif ($type == 'upcoming') 
@@ -780,7 +780,7 @@ class Post
             $this->hotaru->vars['filter']['post_status = %s'] = 'top';
             $this->hotaru->vars['orderby'] = "post_date DESC";
             $rss = "<a href='" . $this->hotaru->url(array('page'=>'rss', 'status'=>'top')) . "'>";
-            $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
+            $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png' alt='RSS' /></a>";
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_top"] . $rss;
         }
         else
@@ -790,7 +790,7 @@ class Post
             $this->hotaru->vars['filter']['(post_status = %s OR post_status = %s)'] = array('top', 'new');
             $this->hotaru->vars['orderby'] = "post_date DESC";
             $rss = "<a href='" . $this->hotaru->url(array('page'=>'rss')) . "'>";
-            $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
+            $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png' alt='RSS' /></a>";
             $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_all"] . $rss;
         }
     }
