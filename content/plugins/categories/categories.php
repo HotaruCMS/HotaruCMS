@@ -665,7 +665,7 @@ class Categories extends PluginFunctions
                     $output = $this->buildMenuBar($child, $output, $child->category_id, $depth);
                 }
             } 
-            $output .= "</ul>"; 
+            $output .= "</li></ul>"; 
             return $output; 
         }  
 
