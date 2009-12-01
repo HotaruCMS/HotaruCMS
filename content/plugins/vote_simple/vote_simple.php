@@ -372,10 +372,10 @@ class VoteSimple extends PluginFunctions
         $pagename = $this->hotaru->getPageName();
         
         // POPULAR LINK
-        if ($category) { $url = $this->hotaru->url(array('category'=>$category));
-         } elseif ($tag) { $url = $this->hotaru->url(array('tag'=>$tag));
-         } elseif ($type) { $url = $this->hotaru->url(array('type'=>$type));
-         } elseif ($user) { $url = $this->hotaru->url(array('page'=>'top', 'user'=>$user));
+        if (isset($category)) { $url = $this->hotaru->url(array('category'=>$category));
+         } elseif (isset($tag)) { $url = $this->hotaru->url(array('tag'=>$tag));
+         } elseif (isset($type)) { $url = $this->hotaru->url(array('type'=>$type));
+         } elseif (isset($user)) { $url = $this->hotaru->url(array('page'=>'top', 'user'=>$user));
          } else { $url = $this->hotaru->url(array()); } 
         $this->hotaru->vars['popular_link'] = $url;
          
@@ -385,10 +385,10 @@ class VoteSimple extends PluginFunctions
         } else { $this->hotaru->vars['popular_active'] = ""; }
         
         // UPCOMING LINK
-        if ($category) { $url = $this->hotaru->url(array('page'=>'upcoming', 'category'=>$category));
-         } elseif ($tag) { $url = $this->hotaru->url(array('page'=>'upcoming', 'tag'=>$tag));
-         } elseif ($type) { $url = $this->hotaru->url(array('page'=>'upcoming', 'type'=>$type));
-         } elseif ($user) { $url = $this->hotaru->url(array('page'=>'upcoming', 'user'=>$user));
+        if (isset($category)) { $url = $this->hotaru->url(array('page'=>'upcoming', 'category'=>$category));
+         } elseif (isset($tag)) { $url = $this->hotaru->url(array('page'=>'upcoming', 'tag'=>$tag));
+         } elseif (isset($type)) { $url = $this->hotaru->url(array('page'=>'upcoming', 'type'=>$type));
+         } elseif (isset($user)) { $url = $this->hotaru->url(array('page'=>'upcoming', 'user'=>$user));
          } else { $url = $this->hotaru->url(array('page'=>'upcoming')); }
         $this->hotaru->vars['upcoming_link'] = $url;
         
@@ -398,10 +398,10 @@ class VoteSimple extends PluginFunctions
         } else { $this->hotaru->vars['upcoming_active'] = ""; }
         
         // LATEST LINK
-        if ($category) { $url = $this->hotaru->url(array('page'=>'latest', 'category'=>$category));
-         } elseif ($tag) { $url = $this->hotaru->url(array('page'=>'latest', 'tag'=>$tag));
-         } elseif ($type) { $url = $this->hotaru->url(array('page'=>'latest', 'type'=>$type));
-         } elseif ($user) { $url = $this->hotaru->url(array('page'=>'latest', 'user'=>$user));
+        if (isset($category)) { $url = $this->hotaru->url(array('page'=>'latest', 'category'=>$category));
+         } elseif (isset($tag)) { $url = $this->hotaru->url(array('page'=>'latest', 'tag'=>$tag));
+         } elseif (isset($type)) { $url = $this->hotaru->url(array('page'=>'latest', 'type'=>$type));
+         } elseif (isset($user)) { $url = $this->hotaru->url(array('page'=>'latest', 'user'=>$user));
          } else { $url = $this->hotaru->url(array('page'=>'latest')); }
         $this->hotaru->vars['latest_link'] = $url;
 
@@ -411,10 +411,10 @@ class VoteSimple extends PluginFunctions
         } else { $this->hotaru->vars['latest_active'] = ""; }
         
         // ALL LINK
-        if ($category) { $url = $this->hotaru->url(array('page'=>'all', 'category'=>$category));
-         } elseif ($tag) { $url = $this->hotaru->url(array('page'=>'all', 'tag'=>$tag));
-         } elseif ($type) { $url = $this->hotaru->url(array('page'=>'all', 'type'=>$type));
-         } elseif ($user) { $url = $this->hotaru->url(array('page'=>'all', 'user'=>$user));
+        if (isset($category)) { $url = $this->hotaru->url(array('page'=>'all', 'category'=>$category));
+         } elseif (isset($tag)) { $url = $this->hotaru->url(array('page'=>'all', 'tag'=>$tag));
+         } elseif (isset($type)) { $url = $this->hotaru->url(array('page'=>'all', 'type'=>$type));
+         } elseif (isset($user)) { $url = $this->hotaru->url(array('page'=>'all', 'user'=>$user));
          } else { $url = $this->hotaru->url(array('page'=>'all')); }
         $this->hotaru->vars['all_link'] = $url;
 
@@ -424,10 +424,10 @@ class VoteSimple extends PluginFunctions
         } else { $this->hotaru->vars['all_active'] = ""; }
         
         // 24 HOURS LINK
-        if ($category) { $url = $this->hotaru->url(array('sort'=>'top-24-hours', 'category'=>$category));
-         } elseif ($tag) { $url = $this->hotaru->url(array('sort'=>'top-24-hours', 'tag'=>$tag));
-         } elseif ($type) { $url = $this->hotaru->url(array('sort'=>'top-24-hours', 'type'=>$type));
-         } elseif ($user) { $url = $this->hotaru->url(array('sort'=>'top-24-hours', 'user'=>$user));
+        if (isset($category)) { $url = $this->hotaru->url(array('sort'=>'top-24-hours', 'category'=>$category));
+         } elseif (isset($tag)) { $url = $this->hotaru->url(array('sort'=>'top-24-hours', 'tag'=>$tag));
+         } elseif (isset($type)) { $url = $this->hotaru->url(array('sort'=>'top-24-hours', 'type'=>$type));
+         } elseif (isset($user)) { $url = $this->hotaru->url(array('sort'=>'top-24-hours', 'user'=>$user));
          } else { $url = $this->hotaru->url(array('sort'=>'top-24-hours')); }
         $this->hotaru->vars['24_hours_link'] = $url;
 
@@ -437,10 +437,10 @@ class VoteSimple extends PluginFunctions
         } else { $this->hotaru->vars['top_24_hours_active'] = ""; }
         
         // 48 HOURS LINK
-        if ($category) { $url = $this->hotaru->url(array('sort'=>'top-48-hours', 'category'=>$category));
-         } elseif ($tag) { $url = $this->hotaru->url(array('sort'=>'top-48-hours', 'tag'=>$tag));
-         } elseif ($type) { $url = $this->hotaru->url(array('sort'=>'top-48-hours', 'type'=>$type));
-         } elseif ($user) { $url = $this->hotaru->url(array('sort'=>'top-48-hours', 'user'=>$user));
+        if (isset($category)) { $url = $this->hotaru->url(array('sort'=>'top-48-hours', 'category'=>$category));
+         } elseif (isset($tag)) { $url = $this->hotaru->url(array('sort'=>'top-48-hours', 'tag'=>$tag));
+         } elseif (isset($type)) { $url = $this->hotaru->url(array('sort'=>'top-48-hours', 'type'=>$type));
+         } elseif (isset($user)) { $url = $this->hotaru->url(array('sort'=>'top-48-hours', 'user'=>$user));
          } else { $url = $this->hotaru->url(array('sort'=>'top-48-hours')); }
         $this->hotaru->vars['48_hours_link'] = $url;
 
@@ -450,10 +450,10 @@ class VoteSimple extends PluginFunctions
         } else { $this->hotaru->vars['top_48_hours_active'] = ""; }
         
         // 7 DAYS LINK
-        if ($category) { $url = $this->hotaru->url(array('sort'=>'top-7-days', 'category'=>$category));
-         } elseif ($tag) { $url = $this->hotaru->url(array('sort'=>'top-7-days', 'tag'=>$tag));
-         } elseif ($type) { $url = $this->hotaru->url(array('sort'=>'top-7-days', 'type'=>$type));
-         } elseif ($user) { $url = $this->hotaru->url(array('sort'=>'top-7-days', 'user'=>$user));
+        if (isset($category)) { $url = $this->hotaru->url(array('sort'=>'top-7-days', 'category'=>$category));
+         } elseif (isset($tag)) { $url = $this->hotaru->url(array('sort'=>'top-7-days', 'tag'=>$tag));
+         } elseif (isset($type)) { $url = $this->hotaru->url(array('sort'=>'top-7-days', 'type'=>$type));
+         } elseif (isset($user)) { $url = $this->hotaru->url(array('sort'=>'top-7-days', 'user'=>$user));
          } else { $url = $this->hotaru->url(array('sort'=>'top-7-days')); }
         $this->hotaru->vars['7_days_link'] = $url;
 
@@ -463,10 +463,10 @@ class VoteSimple extends PluginFunctions
         } else { $this->hotaru->vars['top_7_days_active'] = ""; }
         
         // 30 DAYS LINK
-        if ($category) { $url = $this->hotaru->url(array('sort'=>'top-30-days', 'category'=>$category));
-         } elseif ($tag) { $url = $this->hotaru->url(array('sort'=>'top-30-days', 'tag'=>$tag));
-         } elseif ($type) { $url = $this->hotaru->url(array('sort'=>'top-30-days', 'type'=>$type));
-         } elseif ($user) { $url = $this->hotaru->url(array('sort'=>'top-30-days', 'user'=>$user));
+        if (isset($category)) { $url = $this->hotaru->url(array('sort'=>'top-30-days', 'category'=>$category));
+         } elseif (isset($tag)) { $url = $this->hotaru->url(array('sort'=>'top-30-days', 'tag'=>$tag));
+         } elseif (isset($type)) { $url = $this->hotaru->url(array('sort'=>'top-30-days', 'type'=>$type));
+         } elseif (isset($user)) { $url = $this->hotaru->url(array('sort'=>'top-30-days', 'user'=>$user));
          } else { $url = $this->hotaru->url(array('sort'=>'top-30-days')); }
         $this->hotaru->vars['30_days_link'] = $url;
 
@@ -476,10 +476,10 @@ class VoteSimple extends PluginFunctions
         } else { $this->hotaru->vars['top_30_days_active'] = ""; }
         
         // 365 DAYS LINK
-        if ($category) { $url = $this->hotaru->url(array('sort'=>'top-365-days', 'category'=>$category));
-         } elseif ($tag) { $url = $this->hotaru->url(array('sort'=>'top-365-days', 'tag'=>$tag));
-         } elseif ($type) { $url = $this->hotaru->url(array('sort'=>'top-365-days', 'type'=>$type));
-         } elseif ($user) { $url = $this->hotaru->url(array('sort'=>'top-365-days', 'user'=>$user));
+        if (isset($category)) { $url = $this->hotaru->url(array('sort'=>'top-365-days', 'category'=>$category));
+         } elseif (isset($tag)) { $url = $this->hotaru->url(array('sort'=>'top-365-days', 'tag'=>$tag));
+         } elseif (isset($type)) { $url = $this->hotaru->url(array('sort'=>'top-365-days', 'type'=>$type));
+         } elseif (isset($user)) { $url = $this->hotaru->url(array('sort'=>'top-365-days', 'user'=>$user));
          } else { $url = $this->hotaru->url(array('sort'=>'top-365-days')); }
         $this->hotaru->vars['365_days_link'] = $url;
 
@@ -489,10 +489,10 @@ class VoteSimple extends PluginFunctions
         } else { $this->hotaru->vars['top_365_days_active'] = ""; }
         
         // ALL TIME LINK
-        if ($category) { $url = $this->hotaru->url(array('sort'=>'top-all-time', 'category'=>$category));
-         } elseif ($tag) { $url = $this->hotaru->url(array('sort'=>'top-all-time', 'tag'=>$tag));
-         } elseif ($type) { $url = $this->hotaru->url(array('sort'=>'top-all-time', 'type'=>$type));
-         } elseif ($user) { $url = $this->hotaru->url(array('sort'=>'top-all-time', 'user'=>$user));
+        if (isset($category)) { $url = $this->hotaru->url(array('sort'=>'top-all-time', 'category'=>$category));
+         } elseif (isset($tag)) { $url = $this->hotaru->url(array('sort'=>'top-all-time', 'tag'=>$tag));
+         } elseif (isset($type)) { $url = $this->hotaru->url(array('sort'=>'top-all-time', 'type'=>$type));
+         } elseif (isset($user)) { $url = $this->hotaru->url(array('sort'=>'top-all-time', 'user'=>$user));
          } else { $url = $this->hotaru->url(array('sort'=>'top-all-time')); }
         $this->hotaru->vars['all_time_link'] = $url;
         

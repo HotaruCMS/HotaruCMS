@@ -874,7 +874,7 @@ class PluginFunctions extends Plugin
         if (!$this->hotaru->pluginBasics) { //not in memory
             $this->getPluginBasics(); // get from database
         }
-        
+
         if (!$this->hotaru->pluginBasics) { 
             return false; // no plugin basics for this plugin found anywhere
         }
@@ -934,7 +934,7 @@ class PluginFunctions extends Plugin
             }
             
             // Add new language to our lang property
-            if ($lang) {
+            if (isset($lang)) {
                 foreach($lang as $l => $text) {
                     $this->lang[$l] = $text;
                 }
@@ -995,10 +995,10 @@ class PluginFunctions extends Plugin
         else
         {
             // get all settings fro the database if we haven't already:
-            if (!$this->hotaru->settings) { $this->getAllPluginSettings(); }
+            if (!$this->hotaru->pluginSettings) { $this->getAllPluginSettings(); }
             
             // get the settings we need from memory
-            foreach ($this->hotaru->settings as $item => $key) {
+            foreach ($this->hotaru->pluginSettings as $item => $key) {
                 if (($key->plugin_folder == $folder) && ($key->plugin_setting == $setting)) {
                         $value = $key->plugin_value;
                 }
@@ -1051,7 +1051,7 @@ class PluginFunctions extends Plugin
     
     
     /**
-     * Get and store all plugin settings in $this->hotaru->settings
+     * Get and store all plugin settings in $this->hotaru->pluginSettings
      * We use the Hotaru object because it's persistent during a page load
      *
      * @return array - all settings
@@ -1060,7 +1060,7 @@ class PluginFunctions extends Plugin
     {
         $sql = "SELECT plugin_folder, plugin_setting, plugin_value FROM " . TABLE_PLUGINSETTINGS;
         $results = $this->db->get_results($this->db->prepare($sql));
-        $this->hotaru->settings = $results;
+        $this->hotaru->pluginSettings = $results;
     }
     
     
@@ -1103,7 +1103,8 @@ class PluginFunctions extends Plugin
         } else 
         {
             $sql = "UPDATE " . TABLE_PLUGINSETTINGS . " SET plugin_folder = %s, plugin_setting = %s, plugin_value = %s, plugin_updateby = %d WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
-            $this->db->query($this->db->prepare($sql, $folder, $setting, $value, $this->current_user->id, $folder, $setting));
+            if (isset($this->current_user->id)) { $updateby = $this->current_user->id; } else { $updateby = 1; }
+            $this->db->query($this->db->prepare($sql, $folder, $setting, $value, $updateby, $folder, $setting));
         }
         
         // optimize the table

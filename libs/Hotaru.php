@@ -42,7 +42,7 @@ class Hotaru
     protected $sidebars      = true;    // enable or disable the sidebars
     protected $title        = '';       // for the broswer's TITLE tags
     protected $pageType     = '';       // what kind of page we're looking at
-    protected $plugin_settings      = array();  // contains all plugin settings
+    protected $pluginSettings      = array();  // contains all plugin settings
     protected $pluginBasics        = array();  // contains basic plugin details
     
     protected $cssIncludes          = array();  // a list of css files to include
@@ -278,7 +278,7 @@ class Hotaru
         }
         
         // Add new language to our lang property
-        if ($lang) {
+        if (isset($lang)) {
             foreach($lang as $l => $text) {
                 $this->lang[$l] = $text;
             }

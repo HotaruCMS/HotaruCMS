@@ -104,12 +104,12 @@ extract($bl_array); // extracts $output and $pagedResults;
         <td><?php echo $admin->lang["admin_theme_blocked_edit"]; ?></td>
         <td><?php echo $admin->lang["admin_theme_blocked_remove"]; ?></td>
     </tr>
-            <?php echo $blocked_items; ?>
+            <?php if (isset($blocked_items)) { echo $blocked_items; } ?>
     </table>
 </div>
 
 <?php 
-    if ($pagedResults) {
+    if (isset($pagedResults)) {
         $pagedResults->setLayout(new DoubleBarLayout());
         echo $pagedResults->fetchPagedNavigation('', $admin);
     }

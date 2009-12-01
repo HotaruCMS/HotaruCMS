@@ -639,7 +639,7 @@ class Post
      */
     public function prepareList($type = '')
     {
-        if (!$this->hotaru->vars['filter']) { $this->hotaru->vars['filter'] = array(); }
+        if (!isset($this->hotaru->vars['filter'])) { $this->hotaru->vars['filter'] = array(); }
         
         if ($type) {
             // For sidebar posts or other non-pages... 

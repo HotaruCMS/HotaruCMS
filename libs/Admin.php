@@ -53,7 +53,7 @@ class Admin
         $this->current_user = $hotaru->current_user;
         
         // We don't need to fill the object with anything other than the plugin folder name at this time:
-        if ($folder) { 
+        if (isset($folder)) { 
             $this->folder = $folder; 
         }
 
@@ -101,11 +101,12 @@ class Admin
         // Authenticate the admin if the Users plugin is INACTIVE:
         if (!$this->plugins->isActive('users'))
         {
-            if (($page != 'admin_login') && !$result = $this->isAdminCookie())
+            if (($page != 'admin_login') && !$this->isAdminCookie())
             {
                 header('Location: ' . BASEURL . 'admin_index.php?page=admin_login');
             }
         }
+        
         
         // Authenticate the admin if the Users plugin is ACTIVE:
         if (isset($this->current_user) && $this->plugins->isActive('users'))
@@ -686,11 +687,11 @@ class Admin
         if (!$password_check = $this->cage->post->testPassword('password')) {
             $password_check = ''; 
         }
-                    
+
         if ($username_check != '' || $password_check != '') 
         {
             $login_result = $this->current_user->loginCheck($username_check, $password_check);
-            
+
             if ($login_result) {
                     //success
                     $this->setAdminCookie($username_check);
@@ -834,7 +835,7 @@ class Admin
      * Note: This is only used if the Users plugin is inactive.
      */
     public function isAdminCookie()
-    {
+    {   
         // Check for a cookie. If present then the user goes through authentication
         if (!$hotaru_user = $this->cage->cookie->testUsername('hotaru_user'))
         {

@@ -25,7 +25,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-        
+
 // plugin hook
 $result = $admin->plugins->pluginHook('admin_theme_index_replace');
 if (!isset($result) || !is_array($result)) {
@@ -63,7 +63,7 @@ if (!isset($result) || !is_array($result)) {
                                 } else {
                                     $admin->displayAdminTemplate($page);
                                 } 
-                        }     
+                        }
                     ?>    
                     </div>        
                     </div>

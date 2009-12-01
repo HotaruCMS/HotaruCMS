@@ -96,7 +96,7 @@
         <?php echo $admin->lang["admin_theme_maintenance_remove"] . " " . make_name($settings) . " " . $admin->lang["admin_theme_maintenance_settings"]; ?> </a></li>
     <?php } ?>
 <?php } else { ?>
-    <i><?php echo $admin->lang["admin_theme_maintenance_no_settings_to_delete"]; ?></i>
+    <i><?php echo $admin->lang["admin_theme_maintenance_no_plugin_settings_to_delete"]; ?></i>
 <?php } ?>
 </ul>
 
