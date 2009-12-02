@@ -64,7 +64,7 @@ $can_edit = false;
 if ($hotaru->current_user->getPermission('can_edit_posts') == 'yes') { $can_edit = true; }
 if (($hotaru->current_user->getPermission('can_edit_posts') == 'own') && ($hotaru->current_user->id == $user->id)) { $can_edit = true; }
 
-if (strstr($post_orig_url, BASEURL)) { $editorial = true; } // is this an editorial (story with an internal link?)
+if (strstr($post_orig_url, BASEURL)) { $editorial = true; } else { $editorial = false; } // is this an editorial (story with an internal link?)
 
 if (!$can_edit) {
     $hotaru->message = "You don't have permission to edit this post.";
