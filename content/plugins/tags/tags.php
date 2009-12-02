@@ -183,6 +183,7 @@ class Tags extends PluginFunctions
         
         // build the tag cloud:
         $cloud = $this->buildTagCloud($tag_count);
+        if (!$cloud) { return false; }
         
         if ($show_title) {
             echo "<h2 class='sidebar_widget_head widget_tag_cloud_title'>";
@@ -220,6 +221,8 @@ class Tags extends PluginFunctions
         $sql .= " WHERE tags_archived = %s AND (tags_post_id = post_id) AND";
         $sql .= " (post_status = %s || post_status = %s)";
         $tags = $this->db->get_results($this->db->prepare($sql, 'N', 'new', 'top'));
+        
+        if (!$tags) { return false; }
         
         $this->hotaru->smartCache('off'); // stop using cache
         
@@ -472,11 +475,14 @@ class Tags extends PluginFunctions
      /**
      * List of tags
      */
-    public function submit_show_post_extras($vars)
+    public function submit_show_post_extras($vars = array())
     {
+        if (!$this->hotaru->post->vars['tags']) { return false; }
+        
         $tags = explode(',', $this->hotaru->post->vars['tags']);
-    
-        if (($vars[0] == "tags") && ($vars[1] == "raw")) {
+        
+        // lots of nice issets for php 5.3 compatibility
+        if (isset($vars[0]) && isset($vars[1]) && ($vars[0] == "tags") && ($vars[1] == "raw")) {
             $raw = true;
         } else {
             $raw = false;

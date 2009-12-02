@@ -451,11 +451,13 @@ class Categories extends PluginFunctions
         
         if ($parent_id > 1) {
             $parent_name = $cat->getCatName($parent_id);
+            $parent_name = stripslashes(htmlentities($parent_name, ENT_QUOTES, 'UTF-8'));
             echo "<a href='" . $this->hotaru->url(array('category'=>$parent_id)) . "'>";
             echo $parent_name . "</a> &raquo; ";
         }
         
         if ($cat_id) {
+            $cat_name = stripslashes(htmlentities($cat_name, ENT_QUOTES, 'UTF-8'));
             echo "<a href='" . $this->hotaru->url(array('category'=>$cat_id)) . "'>";
             echo $cat_name . "</a> &raquo; ";
         }
