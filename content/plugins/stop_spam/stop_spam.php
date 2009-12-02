@@ -201,6 +201,9 @@ class StopSpam extends PluginFunctions
         $spam = new StopSpamFunctions();
         $user = $vars[0];
         $spam->addSpammer($user->ip, $user->name, $user->email, $key);
+        
+        // known spammer, already in database, use for testing:
+        //$spam->addSpammer('188.92.76.35', 'Priesseap', 'turkish.zashek.an@gmail.com', $key);
     }
 
 }
