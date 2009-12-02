@@ -738,8 +738,10 @@ class Hotaru
                 $aLastModifieds = array();
         
                 foreach ($includes as $sFile) {
-                    $aLastModifieds[] = filemtime($sFile);
-                    $sCode .= file_get_contents($sFile);
+                    if ($sFile) {
+                        $aLastModifieds[] = filemtime($sFile);
+                        $sCode .= file_get_contents($sFile);
+                    }
                 }
 
                 // sort dates, newest first

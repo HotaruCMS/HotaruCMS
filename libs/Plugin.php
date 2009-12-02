@@ -136,7 +136,7 @@ class Plugin
     public function header_include()
     {
         // include a files that match the name of the plugin folder:
-        $this->hotaru->includeJs('', $this->folder); // filename, folder name
+        $this->hotaru->includeJs('suckerfish', $this->folder); // filename, folder name
         $this->hotaru->includeCss('', $this->folder);
     }
     

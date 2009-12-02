@@ -336,7 +336,7 @@ class CategoryManagerSettings extends CategoryManager
         if ($categories) {
             foreach ( $categories as $category ) {
                 $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
-                $this->db->query($this->db->prepare($sql, $order, $current_user->id, $category->category_id));
+                $this->db->query($this->db->prepare($sql, $order, $this->current_user->id, $category->category_id));
                 // get and update children of this category
                 $order = $this->orderChildren($category, $order, $order_type);
                 $order++;
@@ -362,7 +362,7 @@ class CategoryManagerSettings extends CategoryManager
             foreach ( $children as $child ) {
                 $order++;
                 $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
-                $this->db->query($this->db->prepare($sql, $order, $current_user->id, $child->category_id));
+                $this->db->query($this->db->prepare($sql, $order, $this->current_user->id, $child->category_id));
                 $order = $this->orderChildren($child, $order, $order_type);
             }
         }
@@ -383,7 +383,7 @@ class CategoryManagerSettings extends CategoryManager
             foreach ( $categories as $category ) {
             
                 $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
-                $this->db->query($this->db->prepare($sql, $order, $current_user->id, $category->category_id));
+                $this->db->query($this->db->prepare($sql, $order, $this->current_user->id, $category->category_id));
                 // get and update children of this category
                 $order = $this->orderChildrenByPosts($category, $order);
                 $order++;
@@ -402,7 +402,7 @@ class CategoryManagerSettings extends CategoryManager
                 } else {
                     $order++;
                     $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
-                    $this->db->query($this->db->prepare($sql, $order, $current_user->id, $category->category_id));
+                    $this->db->query($this->db->prepare($sql, $order, $this->current_user->id, $category->category_id));
                 }
             }
         }
@@ -424,7 +424,7 @@ class CategoryManagerSettings extends CategoryManager
             foreach ( $children as $child ) {
                 $order++;
                 $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
-                $this->db->query($this->db->prepare($sql, $order, $current_user->id, $child->category_id));
+                $this->db->query($this->db->prepare($sql, $order, $this->current_user->id, $child->category_id));
                 $order = $this->orderChildrenByPosts($child, $order);
             }
         } 
@@ -441,7 +441,7 @@ class CategoryManagerSettings extends CategoryManager
                     } else {
                         $order++;
                         $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
-                        $this->db->query($this->db->prepare($sql, $order, $current_user->id, $child->category_id));
+                        $this->db->query($this->db->prepare($sql, $order, $this->current_user->id, $child->category_id));
                     }
                 }
             }
@@ -460,7 +460,7 @@ class CategoryManagerSettings extends CategoryManager
             $new_name = $this->cage->post->getMixedString2($category->category_id);
             if ($new_name != "") {
                 $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_name = %s, category_safe_name = %s, category_updateby = %d WHERE category_id = %d";
-                $this->db->query($this->db->prepare($sql, urlencode($new_name), urlencode(make_url_friendly($new_name)), $current_user->id, $category->category_id));
+                $this->db->query($this->db->prepare($sql, urlencode($new_name), urlencode(make_url_friendly($new_name)), $this->current_user->id, $category->category_id));
             }
         }
     }
@@ -491,13 +491,13 @@ class CategoryManagerSettings extends CategoryManager
         if ($categories) {
             foreach ( $categories as $category ) {
                 $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = category_order+1, category_updateby = %d WHERE category_id = %d";
-                $this->db->query($this->db->prepare($sql, $current_user->id, $category->category_id));
+                $this->db->query($this->db->prepare($sql, $this->current_user->id, $category->category_id));
             }
         }
         
         //insert new category after parent category:
         $sql = "INSERT INTO " . TABLE_CATEGORIES . " (category_parent, category_name, category_safe_name, category_order, category_updateby) VALUES (%d, %s, %s, %d, %d)";
-        $this->db->query($this->db->prepare($sql, $parent, urlencode($new_cat_name), urlencode(make_url_friendly($new_cat_name)), $position, $current_user->id));
+        $this->db->query($this->db->prepare($sql, $parent, urlencode($new_cat_name), urlencode(make_url_friendly($new_cat_name)), $position, $this->current_user->id));
             
         $this->rebuildTree(1, 0);
         
@@ -538,7 +538,7 @@ class CategoryManagerSettings extends CategoryManager
             $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
             $target = $this->db->get_row($this->db->prepare($sql, $target));
             if ($placement == "after") { // need to find the last child and assign that as the target.
-                $skip_children = move_count($target->category_id, 0);
+                $skip_children = $this->moveCount($target->category_id, 0);
                 $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_order = %d";
                   $target = $this->db->get_row($this->db->prepare($sql, ($target->category_order+$skip_children)));
             }
@@ -566,20 +566,20 @@ class CategoryManagerSettings extends CategoryManager
                 foreach ( $categories as $category ) {
                     if ($this->descendant($category, $cat_to_move, "no") == "no") { //if not cat_to_move or one of its descendants...
                         $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = category_order + %d, category_updateby = %d WHERE category_id = %d";
-                        $this->db->query($this->db->prepare($sql, $number, $current_user->id, $category->category_id));
+                        $this->db->query($this->db->prepare($sql, $number, $this->current_user->id, $category->category_id));
                     }
                     //echo "Update " . $category->category_id . ", " . $category->category_name . ", with parent " . $category->category_parent . ". Assign order " . ($category->category_order+1) . "<br />";
                 }
             }
             if ($placement == "before") {
                 $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
-                $this->db->query($this->db->prepare($sql, $target_order, $current_user->id, $cat_to_move));
+                $this->db->query($this->db->prepare($sql, $target_order, $this->current_user->id, $cat_to_move));
             } elseif ($placement == "after") {
                 $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
-                $this->db->query($this->db->prepare($sql, ($target_order+1), $current_user->id, $cat_to_move));
+                $this->db->query($this->db->prepare($sql, ($target_order+1), $this->current_user->id, $cat_to_move));
             } elseif (($placement == "aschild") || ($placement == "none")) {
                 $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_parent = %d, category_updateby = %d WHERE category_id = %d";
-                $this->db->query($this->db->prepare($sql, ($target_order+1), $target_id, $current_user->id, $cat_to_move));
+                $this->db->query($this->db->prepare($sql, ($target_order+1), $target_id, $this->current_user->id, $cat_to_move));
             }
             
             $target_order = $target_order+1;
@@ -660,7 +660,7 @@ class CategoryManagerSettings extends CategoryManager
             foreach ( $children as $child ) {
                 $order++;
                 $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_parent = %d, category_updateby = %d WHERE category_id != %d AND category_id = %d";
-                $this->db->query($this->db->prepare($sql, $order, $target_parent, $current_user->id, 1, $child->category_id));
+                $this->db->query($this->db->prepare($sql, $order, $target_parent, $this->current_user->id, 1, $child->category_id));
                 //echo "Update " . $child->category_parent . " with order " . $order . "<br />";
                 
                 $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d";
@@ -707,7 +707,7 @@ class CategoryManagerSettings extends CategoryManager
         if ($children) {
             foreach ($children as $child) {
                 $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_parent = %d, category_updateby = %d WHERE category_id = %d";
-                 $this->db->query($this->db->prepare($sql, $grandparent, $current_user->id, $child->category_id));
+                 $this->db->query($this->db->prepare($sql, $grandparent, $this->current_user->id, $child->category_id));
             }
         }    
         // Third, delete the category
@@ -726,7 +726,7 @@ class CategoryManagerSettings extends CategoryManager
     function saveMeta($id, $desc, $words)
     {
         $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_desc = %s, category_keywords = %s, category_updateby = %d WHERE category_id = %d";
-        $this->db->query($this->db->prepare($sql, urlencode($desc), urlencode($words), $current_user->id, $id)); 
+        $this->db->query($this->db->prepare($sql, urlencode($desc), urlencode($words), $this->current_user->id, $id)); 
     }
     
     
@@ -741,7 +741,7 @@ class CategoryManagerSettings extends CategoryManager
             $count = 1;
             foreach ( $categories as $category ) {
             $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = %d, category_updateby = %d WHERE category_id = %d";
-            $this->db->query($this->db->prepare($sql, $count, $current_user->id, $category->category_id));
+            $this->db->query($this->db->prepare($sql, $count, $this->current_user->id, $category->category_id));
             $count++;
             }
         }
@@ -770,7 +770,7 @@ class CategoryManagerSettings extends CategoryManager
         // we've got the left value, and now that we've processed
         // the children of this node we also know the right value
         $sql = "UPDATE " . TABLE_CATEGORIES . " SET lft = %d, rgt = %d, category_updateby = %d WHERE category_id = %d";
-        $this->db->query($this->db->prepare($sql, $left, $right, $current_user->id, $parent_id));
+        $this->db->query($this->db->prepare($sql, $left, $right, $this->current_user->id, $parent_id));
         
         // return the right value of this node + 1
         return $right+1;
