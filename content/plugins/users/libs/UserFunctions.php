@@ -190,7 +190,7 @@ class UserFunctions extends UserBase
      */
     public function getProfileSettingsData($type = 'user_profile', $userid = 0, $save = false)
     {
-        if (!$userid) { $userid = $this->current_user->id; }
+        if (!$userid) { $userid = $this->id; }
 
         $query = "SELECT usermeta_value FROM " . DB_PREFIX . "usermeta WHERE usermeta_userid = %d AND usermeta_key = %s";
         $sql = $this->db->prepare($query, $userid, $type);
@@ -225,16 +225,16 @@ class UserFunctions extends UserBase
     public function saveProfileSettingsData($data = array(), $type = 'user_profile', $userid = 0)
     {
         if (!$data) { return false; }
-        if (!$userid) { $userid = $this->current_user->id; }
+        if (!$userid) { $userid = $this->id; }
 
         $result = $this->getProfileSettingsData($type, $userid, true);
         
         if (!$result) {
             $sql = "INSERT INTO " . TABLE_USERMETA . " (usermeta_userid, usermeta_key, usermeta_value, usermeta_updateby) VALUES(%d, %s, %s, %d)";
-            $this->db->get_row($this->db->prepare($sql, $userid, $type, serialize($data), $this->current_user->id));
+            $this->db->get_row($this->db->prepare($sql, $userid, $type, serialize($data), $this->id));
         } else {
             $sql = "UPDATE " . TABLE_USERMETA . " SET usermeta_value = %s, usermeta_updateby = %d WHERE usermeta_userid = %d AND usermeta_key = %s";
-            $this->db->get_row($this->db->prepare($sql, serialize($data), $this->current_user->id, $userid, $type));
+            $this->db->get_row($this->db->prepare($sql, serialize($data), $this->id, $userid, $type));
         }
         
         return true;

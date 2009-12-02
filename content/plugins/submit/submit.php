@@ -1045,7 +1045,7 @@ class Submit extends PluginFunctions
      */
     public function user_settings_fill_form()
     {
-        if ($this->hotaru->vars['settings']['new_tab']) { 
+        if (isset($this->hotaru->vars['settings']['new_tab'])) { 
             $this->hotaru->vars['new_tab_yes'] = "checked"; 
             $this->hotaru->vars['new_tab_no'] = ""; 
         } else { 
@@ -1053,7 +1053,7 @@ class Submit extends PluginFunctions
             $this->hotaru->vars['new_tab_no'] = "checked"; 
         }
         
-        if ($this->hotaru->vars['settings']['link_action']) { 
+        if (isset($this->hotaru->vars['settings']['link_action'])) { 
             $this->hotaru->vars['link_action_source'] = "checked"; 
             $this->hotaru->vars['link_action_post'] = ""; 
         } else { 
