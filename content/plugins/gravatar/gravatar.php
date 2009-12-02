@@ -46,6 +46,16 @@ class Gravatar extends PluginFunctions
         
         if (!$this->getSetting('gravatar_size')) { $this->updateSetting('gravatar_size', $size); }
         if (!$this->getSetting('gravatar_rating')) { $this->updateSetting('gravatar_rating', $rating); }
+        
+        $this->hotaru->vars['gravatar_size'] = $this->getSetting('gravatar_size'); 
+        $this->hotaru->vars['gravatar_rating'] = $this->getSetting('gravatar_rating');
+        
+        // Look in the theme's images folder for a default avatar before using the one in the Gravatar images folder
+        if (file_exists(THEMES . THEME . "images/default_80.png")) {
+            $this->hotaru->vars['default'] = BASEURL . "content/themes/"  . THEME . "images/default_80.png";
+        } else { 
+            $this->hotaru->vars['default'] = BASEURL . "content/plugins/gravatar/images/default_80.png"; 
+        }
     }
     
     

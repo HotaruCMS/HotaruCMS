@@ -94,6 +94,7 @@ class UserManagerSettings extends UserManager
         
         
         // if search
+        $search_term = '';
         if ($this->cage->get->getAlpha('type') == 'search') {
             $search_term = $this->cage->get->getMixedString2('search_value');        
             if (strlen($search_term) < 3) {
@@ -113,6 +114,7 @@ class UserManagerSettings extends UserManager
         
         
         // if filter
+        $filter = '';
         if ($this->cage->get->getAlpha('type') == 'filter') {
             $filter = $this->cage->get->testAlnumLines('user_filter');
             $this->hotaru->vars['user_filter'] = $filter;  // used to refill the filter box after use
@@ -222,7 +224,7 @@ class UserManagerSettings extends UserManager
         }
         
         if ($users) { 
-            $this->hotaru->vars['user_man_rows'] = $this->drawRows($p, $users, $filter, $search_term);
+            $this->hotaru->vars['user_man_rows'] = $this->drawRows($users, $filter, $search_term);
         } elseif ($this->hotaru->vars['user_filter'] == 'pending') {
             $this->hotaru->message = $this->lang['user_man_no_pending_users'];
             $this->hotaru->messageType = 'green';
@@ -233,7 +235,7 @@ class UserManagerSettings extends UserManager
     }
     
     
-    public function drawRows($p, $users, $filter = '', $search_term = '')
+    public function drawRows($users, $filter = '', $search_term = '')
     {
         // prepare for showing posts, 20 per page
         $pg = $this->cage->get->getInt('pg');
