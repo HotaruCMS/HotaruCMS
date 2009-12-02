@@ -213,9 +213,7 @@ class Comments extends pluginFunctions
      */
     public function admin_header_include_raw()
     {
-        $admin = new Admin();
-        
-        if ($admin->isSettingsPage('comments')) {
+        if ($this->isSettingsPage('comments')) {
             echo "<script type='text/javascript'>\n";
             echo "$(document).ready(function(){\n";
                 echo "$('#email_notify').click(function () {\n";

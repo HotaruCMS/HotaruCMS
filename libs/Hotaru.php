@@ -193,7 +193,7 @@ class Hotaru
     public function checkCookie()
     {
         $this->current_user = new UserBase($this);
-        
+
         // Check for a cookie. If present then the user is logged in.
         $hotaru_user = $this->cage->cookie->testUsername('hotaru_user');
         

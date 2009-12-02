@@ -288,27 +288,6 @@ class Admin
         }
     }
     
-    
-    /**
-     * Check to see if the Admin settings page we are looking at  
-     * matches the plugin passed to this function.
-     *
-     * @param string $folder - plugin folder
-     * @return bool
-     *
-     *  Notes: This is used in "admin_header_include" so we only include the css, 
-     *         javascript etc. for the plugin we're trying to change settings for.
-     *  Usage: $this->hotaru->is_settings_page('login') returns true if 
-     *         page=plugin_settings and plugin=THIS_PLUGIN in the url.
-     */
-    public function isSettingsPage($folder = '')
-    {
-        if ($this->hotaru->isPage('plugin_settings') && $this->cage->get->testAlnumLines('plugin') == $folder) {
-            return true;
-        } else {    
-            return false;
-        }
-    }
         
     /**
      * Returns an announcement for display at the top of Admin

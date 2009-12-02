@@ -149,9 +149,7 @@ class RssShow extends PluginFunctions
      */
     public function admin_header_include_raw()
     {
-        $admin = new Admin();
-        
-        if ($admin->isSettingsPage('rss_show')) {
+        if ($this->isSettingsPage('rss_show')) {
             echo "<script type='text/javascript'>\n";
             echo "$(document).ready(function(){\n";
                 echo "$('#rs_cache').click(function () {\n";

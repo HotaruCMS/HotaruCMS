@@ -446,14 +446,12 @@ class PluginFunctions extends Plugin
      */
     public function install($upgrade = 0)
     {
-        $admin = $this->getAdminFunctions();
-        
         // Clear the database cache to ensure stored plugins and hooks 
         // are up-to-date.
-        $admin->deleteFiles(CACHE . 'db_cache');
+        $this->deleteFiles(CACHE . 'db_cache');
         
         // Clear the css/js cache to ensure any new ones get included
-        $admin->clearCache('css_js_cache', false);
+        $this->deleteFiles(CACHE . 'css_js_cache');
         
         // Read meta from the top of the plugin file
         $plugin_metadata = $this->readPluginMeta($this->folder);
@@ -542,8 +540,6 @@ class PluginFunctions extends Plugin
      */
     public function upgrade()
     {
-        $admin = $this->getAdminFunctions();
-        
         // Read meta from the top of the plugin file
         $plugin_metadata = $this->readPluginMeta($this->folder);
         
@@ -563,13 +559,12 @@ class PluginFunctions extends Plugin
      */
     public function activateDeactivate($enabled = 0)
     {    // 0 = deactivate, 1 = activate
-        $admin = $this->getAdminFunctions();
 
         // Clear the database cache to ensure plugins and hooks are up-to-date.
-        $admin->deleteFiles(CACHE . 'db_cache');
+        $this->deleteFiles(CACHE . 'db_cache');
         
         // Clear the css/js cache to ensure any new ones get included
-        $admin->clearCache('css_js_cache', false);
+        $this->deleteFiles(CACHE . 'css_js_cache');
         
         // Get the enabled status for this plugin...
         $plugin_row = $this->db->get_row($this->db->prepare("SELECT plugin_folder, plugin_enabled FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $this->folder));
@@ -693,17 +688,15 @@ class PluginFunctions extends Plugin
      */
     public function uninstallAll()
     {            
-        $admin = $this->getAdminFunctions();
-        
         // Clear the database cache to ensure plugins and hooks are up-to-date.
-        $admin->deleteFiles(CACHE . 'db_cache');
+        $this->deleteFiles(CACHE . 'db_cache');
         
-        // Clear the css/js cache to ensure this plugin's files are removed
-        $admin->clearCache('css_js_cache', false);
+        // Clear the css/js cache to ensure any new ones get included
+        $this->deleteFiles(CACHE . 'css_js_cache');
 
-        $admin->emptyTable(TABLE_PLUGINS, $msg = false);
-        $admin->emptyTable(TABLE_PLUGINHOOKS, $msg = false);
-        
+        $this->db->query("TRUNCATE TABLE " . TABLE_PLUGINS);
+        $this->db->query("TRUNCATE TABLE " . TABLE_PLUGINHOOKS);
+
         $this->hotaru->messages[$this->lang["admin_plugins_uninstall_all_done"]] = 'green';
     }
     
@@ -718,10 +711,10 @@ class PluginFunctions extends Plugin
         $admin = $this->getAdminFunctions();
         
         // Clear the database cache to ensure plugins and hooks are up-to-date.
-        $admin->deleteFiles(CACHE . 'db_cache');
+        $this->deleteFiles(CACHE . 'db_cache');
         
         // Clear the css/js cache to ensure this plugin's files are removed
-        $admin->clearCache('css_js_cache', false);
+        $this->deleteFiles(CACHE . 'css_js_cache');
 
         $this->db->query($this->db->prepare("DELETE FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $this->folder));
         $this->db->query($this->db->prepare("DELETE FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_folder = %s", $this->folder));
@@ -1132,6 +1125,56 @@ class PluginFunctions extends Plugin
         
         // optimize the table
         $this->db->query("OPTIMIZE TABLE " . TABLE_PLUGINSETTINGS);
+    }
+    
+    
+    /**
+     * Delete all files in the specified directory except placeholder.txt
+     *
+     * Copied from Admin to save rebuilding the Admin object just for this.
+     *
+     * @param string $dir - path to the cache folder
+     * @return bool
+     */    
+    public function deleteFiles($dir)
+    {
+        $handle=opendir($dir);
+    
+        while (($file = readdir($handle))!==false) {
+            if ($file != 'placeholder.txt') {
+                if (@unlink($dir.'/'.$file)) {
+                    $success = true;
+                } else {
+                    $success = false;
+                }
+            }
+        }
+        
+        closedir($handle);
+        
+        return $success;
+    }
+    
+    
+    /**
+     * Check to see if the Admin settings page we are looking at  
+     * matches the plugin passed to this function.
+     *
+     * @param string $folder - plugin folder
+     * @return bool
+     *
+     *  Notes: This is used in "admin_header_include" so we only include the css, 
+     *         javascript etc. for the plugin we're trying to change settings for.
+     *  Usage: $this->hotaru->is_settings_page('login') returns true if 
+     *         page=plugin_settings and plugin=THIS_PLUGIN in the url.
+     */
+    public function isSettingsPage($folder = '')
+    {
+        if ($this->hotaru->isPage('plugin_settings') && $this->cage->get->testAlnumLines('plugin') == $folder) {
+            return true;
+        } else {    
+            return false;
+        }
     }
     
     

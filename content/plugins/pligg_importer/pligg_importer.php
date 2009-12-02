@@ -390,8 +390,7 @@ class PliggImporter extends PluginFunctions
         $this->db->query($sql);
         
         // Delete the uploaded XML files
-        $admin = new Admin();
-        $admin->deleteFiles(PLUGINS . 'pligg_importer/uploads/');
+        $this->deleteFiles(PLUGINS . 'pligg_importer/uploads/');
         
         // Import Complete
         

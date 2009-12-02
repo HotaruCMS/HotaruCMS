@@ -261,9 +261,7 @@ class Submit extends PluginFunctions
      */
     public function admin_header_include_raw()
     {
-        $admin = new Admin();
-        
-        if ($admin->isSettingsPage('submit')) {
+        if ($this->isSettingsPage('submit')) {
             echo "<script type='text/javascript'>\n";
             echo "$(document).ready(function(){\n";
                 echo "$('#email_notify').click(function () {\n";
