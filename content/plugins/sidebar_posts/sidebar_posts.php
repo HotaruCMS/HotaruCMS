@@ -80,7 +80,7 @@ class SidebarPosts extends PluginFunctions
             
             $output = "<h2 class='sidebar_widget_head sidebar_posts_title'>\n";
             $output .= "<a href='" . $this->hotaru->url(array('page'=>'rss', 'status'=>$type)) . "' title='" . $this->lang["sidebar_posts_icon_anchor_title"] . "'>\n";
-            $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'></a>&nbsp;\n"; // RSS icon
+            $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png' alt='RSS' /></a>&nbsp;\n"; // RSS icon
             if ($type == 'new') {
                 $link = $this->hotaru->url(array('page'=>'latest'));
             } else {
