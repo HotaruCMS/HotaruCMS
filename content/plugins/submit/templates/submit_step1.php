@@ -23,6 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
+ 
+ // php 5.3 fix:
+ if (!isset($hotaru->vars['post_orig_url'])) { $hotaru->vars['post_orig_url'] = ''; }
 ?>
 
     <div id="breadcrumbs"><a href='<?php echo BASEURL; ?>'><?php echo $hotaru->lang['submit_form_home']; ?></a> &raquo; <?php echo $hotaru->lang["submit_form_step1"]; ?></div>
@@ -39,7 +42,7 @@
         <td><input type='text' size=50 id='post_orig_url' name='post_orig_url' value='<?php echo $hotaru->vars['post_orig_url']; ?>' /></td>
         <td>&nbsp;</td>
     </tr>
-    <?php if (!$this->hotaru->post->useLink) { ?>
+    <?php if (!isset($hotaru->post->useLink)) { ?>
     <tr>
         <td colspan = 3><input type='checkbox' name='use_link'>&nbsp;
             <?php echo $this->lang["submit_form_post_without_link"]; ?></td>

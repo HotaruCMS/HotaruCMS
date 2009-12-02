@@ -280,7 +280,7 @@ class Submit extends PluginFunctions
      */
     public function navigation()
     {   
-        if ($this->current_user->loggedIn && isset($this->hotaru->post->useSubmission)) {
+        if ($this->current_user->loggedIn && $this->hotaru->post->useSubmission) {
             if ($this->hotaru->title == 'submit') { $status = "id='navigation_active'"; } else { $status = ""; }
             echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'submit')) . "'>" . $this->lang['submit_submit_a_story'] . "</a></li>\n";
         }
@@ -397,7 +397,9 @@ class Submit extends PluginFunctions
                     
                     if ($return == 1) { return false; } // post is pending so we don't want to send a trackback. Return now.
                     
-                    $this->hotaru->post->sendTrackback();
+                    // TEMPORARILY EDITED THIS OUT - DON'T LET ME FORGET TO PUT IT BACK IN!
+                    //$this->hotaru->post->sendTrackback();
+                    
                     if ($this->hotaru->post->useLatest) {
                         header("Location: " . $this->hotaru->url(array('page'=>'latest')));    // Go to the Latest page
                     } else {
@@ -751,12 +753,11 @@ class Submit extends PluginFunctions
         if ($this->hotaru->post->useContent) {
             $content_check = sanitize($this->cage->post->getHtmLawed('post_content'), 2, $this->hotaru->post->allowableTags);
             $this->hotaru->post->content = $content_check;
-                    
             if (!$content_check) {
                 // No content present...
                 $this->hotaru->messages[$this->lang['submit_form_content_not_present_error']] = "red";
                 $error_content = 1;
-            } elseif (strlen($content_check) < $this->hotaru->post->post_content_length) {
+            } elseif (isset($this->hotaru->post->post_content_length) && (strlen($content_check) < $this->hotaru->post->post_content_length)) {
                 // content is too short
                 $this->hotaru->messages[$this->lang['submit_form_content_too_short_error']] = "red";
                 $error_content = 1;

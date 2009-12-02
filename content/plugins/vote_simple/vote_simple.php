@@ -393,7 +393,7 @@ class VoteSimple extends PluginFunctions
         $this->hotaru->vars['upcoming_link'] = $url;
         
         // UPCOMING ACTIVE OR INACTIVE
-        if ($pagename == 'upcoming' && !$sort) { 
+        if ($pagename == 'upcoming' && !isset($sort)) { 
             $this->hotaru->vars['upcoming_active'] = "class='active'";
         } else { $this->hotaru->vars['upcoming_active'] = ""; }
         
@@ -406,7 +406,7 @@ class VoteSimple extends PluginFunctions
         $this->hotaru->vars['latest_link'] = $url;
 
         // LATEST ACTIVE OR INACTIVE
-        if ($pagename == 'latest' && !$sort) { 
+        if ($pagename == 'latest' && !isset($sort)) { 
             $this->hotaru->vars['latest_active'] = "class='active'";
         } else { $this->hotaru->vars['latest_active'] = ""; }
         
@@ -419,7 +419,7 @@ class VoteSimple extends PluginFunctions
         $this->hotaru->vars['all_link'] = $url;
 
         // ALL ACTIVE OR INACTIVE
-        if ($pagename == 'all' && !$sort) { 
+        if ($pagename == 'all' && !isset($sort)) { 
             $this->hotaru->vars['all_active'] = "class='active'";
         } else { $this->hotaru->vars['all_active'] = ""; }
         

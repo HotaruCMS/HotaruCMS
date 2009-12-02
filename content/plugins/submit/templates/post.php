@@ -26,7 +26,7 @@
 
 $user = new UserBase($hotaru);
 $user->getUserBasic($hotaru->post->author);
-if ($hotaru->current_user->vars['settings']['new_tab']) { $target = 'target="_blank"'; }
+if (isset($hotaru->current_user->vars['settings']['new_tab'])) { $target = 'target="_blank"'; }
 if (strstr($hotaru->post->origUrl, BASEURL)) { $editorial = true; } // editorial (story with an internal link)
 ?>
 

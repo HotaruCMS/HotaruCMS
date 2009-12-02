@@ -155,7 +155,7 @@ class getHtmLawed extends AccessorAbstract {
         // Plugins should return an array, e.g. array('safe' => 1); 
         require_once(LIBS . 'Hotaru.php');
         $hotaru = new Hotaru('basic'); // "basic" prevents us getting more than the basics from Hotaru
-        $results = $hotaru->plugins->pluginHook('hotaru_inspekt_htmlawed_config', true, '', array('role' => $role));
+        $results = $hotaru->plugins->pluginHook('hotaru_inspekt_htmlawed_config');
         if (is_array($results)) {
             foreach ($results as $res) {
                 $config = $res; // $config takes on the value returned from the last plugin using this hook.

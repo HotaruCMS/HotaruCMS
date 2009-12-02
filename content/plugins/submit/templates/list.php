@@ -25,8 +25,8 @@
  */
 
 $user = new UserBase($hotaru);
-if ($hotaru->current_user->vars['settings']['new_tab']) { $target = 'target="_blank"'; }
-if ($hotaru->current_user->vars['settings']['link_action']) { $open = 'source'; }
+if (isset($hotaru->current_user->vars['settings']['new_tab'])) { $target = 'target="_blank"'; } else { $target = ''; }
+if (isset($hotaru->current_user->vars['settings']['link_action'])) { $open = 'source'; } else { $open = ''; }
 // Prepare filter and breadcrumbs
 $stories = $hotaru->post->prepareList();
 
