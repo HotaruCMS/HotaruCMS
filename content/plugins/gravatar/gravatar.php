@@ -155,11 +155,11 @@ class Gravatar extends PluginFunctions
         $resized = "style='height: " . $this->hotaru->vars['gravatar_size'] . "px; width: " . $this->hotaru->vars['gravatar_size'] . "px'";
         
         $grav_url = "http://www.gravatar.com/avatar.php?gravatar_id=".md5( strtolower($email) ).
-            "&default=".urlencode($default).
-            "&size=" . $this->hotaru->vars['gravatar_size'] . 
-            "&r=" . $this->hotaru->vars['gravatar_rating'];
+            "&amp;default=".urlencode($default).
+            "&amp;size=" . $this->hotaru->vars['gravatar_size'] . 
+            "&amp;r=" . $this->hotaru->vars['gravatar_rating'];
             
-        $img_url = "<img class='gravatar' src='" . $grav_url . "' " . $resized  .">\n";
+        $img_url = "<img class='gravatar' src='" . $grav_url . "' " . $resized  ." alt='' />\n";
         
         return $img_url;
     }
