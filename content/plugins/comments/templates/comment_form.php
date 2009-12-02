@@ -35,9 +35,9 @@
 <?php } // JavaScript changes this form! See comments.js ?>
 
     <form name='comment_form' action='<?php echo BASEURL; ?>index.php?page=comments' method='post'>
-        <textarea name="comment_content" id="comment_content_<?php echo $hotaru->comment->id; ?>" rows="6" cols="50"/></textarea><br />
+        <textarea name="comment_content" id="comment_content_<?php echo $hotaru->comment->id; ?>" rows="6" cols="50"></textarea><br />
         <div class="comment_instructions"><?php echo $hotaru->lang['comments_form_allowable_tags']; ?><?php echo htmlentities($hotaru->comment->allowableTags); ?></div>
-        <div class="comment_subscribe"><input id="comment_subscribe" name="comment_subscribe" type="checkbox" <?php echo $hotaru->vars['subscribe_check']; ?>> <?php echo $hotaru->lang['comments_form_subscribe']; ?><?php if ($hotaru->vars['subscribe_check']) { echo " <small>(" . $hotaru->lang['comments_form_unsubscribe'] . ")</small>"; } ?></div>
+        <div class="comment_subscribe"><input id="comment_subscribe" name="comment_subscribe" type="checkbox" <?php echo $hotaru->vars['subscribe_check']; ?> /> <?php echo $hotaru->lang['comments_form_subscribe']; ?><?php if ($hotaru->vars['subscribe_check']) { echo " <small>(" . $hotaru->lang['comments_form_unsubscribe'] . ")</small>"; } ?></div>
         <div class="comment_extras"><?php echo $hotaru->plugins->pluginHook('comment_form_extras'); ?>
             <?php if (($hotaru->comment->setPending == "checked") || 
                     ($hotaru->current_user->getPermission('can_comment') == 'mod')) {
