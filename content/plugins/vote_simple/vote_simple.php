@@ -380,7 +380,7 @@ class VoteSimple extends PluginFunctions
         $this->hotaru->vars['popular_link'] = $url;
          
         // POPULAR ACTIVE OR INACTIVE
-        if (($pagename == 'main' || $pagename == 'top') && !$sort && $this->hotaru->pageType != 'profile') { 
+        if (($pagename == 'main' || $pagename == 'top') && (!isset($sort)) && $this->hotaru->pageType != 'profile') { 
             $this->hotaru->vars['popular_active'] = "class='active'";
         } else { $this->hotaru->vars['popular_active'] = ""; }
         
@@ -432,7 +432,7 @@ class VoteSimple extends PluginFunctions
         $this->hotaru->vars['24_hours_link'] = $url;
 
         // 24 HOURS ACTIVE OR INACTIVE
-        if ($sort == 'top-24-hours') { 
+        if (isset($sort) && $sort == 'top-24-hours') { 
             $this->hotaru->vars['top_24_hours_active'] = "class='active'";
         } else { $this->hotaru->vars['top_24_hours_active'] = ""; }
         
@@ -445,7 +445,7 @@ class VoteSimple extends PluginFunctions
         $this->hotaru->vars['48_hours_link'] = $url;
 
         // 48 HOURS ACTIVE OR INACTIVE
-        if ($sort == 'top-48-hours') { 
+        if (isset($sort) && $sort == 'top-48-hours') { 
             $this->hotaru->vars['top_48_hours_active'] = "class='active'";
         } else { $this->hotaru->vars['top_48_hours_active'] = ""; }
         
@@ -458,7 +458,7 @@ class VoteSimple extends PluginFunctions
         $this->hotaru->vars['7_days_link'] = $url;
 
         // 7 DAYS ACTIVE OR INACTIVE
-        if ($sort == 'top-7-days') { 
+        if (isset($sort) && $sort == 'top-7-days') { 
             $this->hotaru->vars['top_7_days_active'] = "class='active'";
         } else { $this->hotaru->vars['top_7_days_active'] = ""; }
         
@@ -471,7 +471,7 @@ class VoteSimple extends PluginFunctions
         $this->hotaru->vars['30_days_link'] = $url;
 
         // 30 DAYS ACTIVE OR INACTIVE
-        if ($sort == 'top-30-days') { 
+        if (isset($sort) && $sort == 'top-30-days') { 
             $this->hotaru->vars['top_30_days_active'] = "class='active'";
         } else { $this->hotaru->vars['top_30_days_active'] = ""; }
         
@@ -484,7 +484,7 @@ class VoteSimple extends PluginFunctions
         $this->hotaru->vars['365_days_link'] = $url;
 
         // 365 DAYS ACTIVE OR INACTIVE
-        if ($sort == 'top-365-days') { 
+        if (isset($sort) && $sort == 'top-365-days') { 
             $this->hotaru->vars['top_365_days_active'] = "class='active'";
         } else { $this->hotaru->vars['top_365_days_active'] = ""; }
         
@@ -497,7 +497,7 @@ class VoteSimple extends PluginFunctions
         $this->hotaru->vars['all_time_link'] = $url;
         
         // ALL TIME ACTIVE OR INACTIVE
-        if ($sort == 'top-all-time') { 
+        if (isset($sort) && $sort == 'top-all-time') { 
             $this->hotaru->vars['top_all_time_active'] = "class='active'";
         } else { $this->hotaru->vars['top_all_time_active'] = ""; }
         

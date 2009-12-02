@@ -36,6 +36,7 @@ class HotaruStart
     public function __construct($entrance)
     {
         // The order here is important!
+        $this->errorReporting();
         $this->getFiles();
         $this->db = $this->initDatabase();
         $this->cage = $this->initInspektCage();
