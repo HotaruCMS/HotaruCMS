@@ -278,12 +278,12 @@ class Activity extends PluginFunctions
      *
      * @param array $activity 
      * @param array $activity_settings
-     * @param string $label for cache file
      * return string $output
      */
     public function getSidebarActivityItems($activity = array(), $activity_settings, $cache = true)
     {
         $need_cache = false;
+        $label = 'sb_act';
         
         if ($cache) {
             // check for a cached version and use it if no recent update:
@@ -310,6 +310,8 @@ class Activity extends PluginFunctions
         if (!isset($user)) { $user = new UserBase($this->hotaru); }
                 
         if (!$activity) { return false; }
+        
+        $output = '';
         
         foreach ($activity as $item)
         {
@@ -476,6 +478,7 @@ class Activity extends PluginFunctions
             
             $pagedResults->setLayout(new DoubleBarLayout());
             echo $pagedResults->fetchPagedNavigation('', $this->hotaru);
+            return true;
         }
     }
     

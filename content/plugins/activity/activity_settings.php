@@ -25,7 +25,7 @@
  * @link      http://www.hotarucms.org/
  */
 
-class ActivitySettings extends SidebarComments
+class ActivitySettings extends Activity
 {
      /**
      * Admin settings for Sidebar Comments
