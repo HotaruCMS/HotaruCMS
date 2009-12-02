@@ -52,12 +52,12 @@
         
         <?php if (($hotaru->comment->id != 0) && ($hotaru->current_user->getPermission('can_set_comments_pending') == 'yes')) { ?>
             <div class='comment_status' style='display: none;'>
-                <a href="<?php echo BASEURL; ?>index.php?page=comments&action=setpending&cid=<?php echo $hotaru->comment->id; ?>&pid=<?php echo $hotaru->post->id; ?>">
+                <a href="<?php echo BASEURL; ?>index.php?page=comments&amp;action=setpending&amp;cid=<?php echo $hotaru->comment->id; ?>&amp;pid=<?php echo $hotaru->post->id; ?>">
                     <?php echo $hotaru->lang['comments_form_set_pending']; ?>
                 </a><br />
                 
                 <?php if ($hotaru->current_user->getPermission('can_delete_comments') == 'yes') { ?>
-                <a class="bold_red" href="<?php echo BASEURL; ?>index.php?page=comments&action=delete&cid=<?php echo $hotaru->comment->id; ?>&pid=<?php echo $hotaru->post->id; ?>">
+                <a class="bold_red" href="<?php echo BASEURL; ?>index.php?page=comments&amp;action=delete&amp;cid=<?php echo $hotaru->comment->id; ?>&amp;pid=<?php echo $hotaru->post->id; ?>">
                     <?php echo $hotaru->lang['comments_form_delete']; ?>
                 </a>
                 <?php } ?>
