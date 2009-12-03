@@ -525,8 +525,23 @@ class Post
      */    
     public function urlExists($url = '')
     {
+        $sql = "SELECT post_id, post_status FROM " . TABLE_POSTS . " WHERE post_orig_url = %s";
+        $posts = $this->db->get_results($this->db->prepare($sql, urlencode($url)));
+
+        if (!$posts) { return false; }
+        
+        // we know there's at least one post with the same url, so if it's processing, let's delete it:
+        foreach ($posts as $post) {
+            if ($post->post_status == 'processing') {
+                $this->id = $post->post_id;
+                $this->deletePost();
+            }
+        }
+
+        // One last check to see if a post is present:
         $sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_orig_url = %s";
         $posts = $this->db->get_var($this->db->prepare($sql, urlencode($url)));
+        
         if ($posts > 0) { return $posts; } else { return false; }
     }
     

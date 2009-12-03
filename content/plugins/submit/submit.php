@@ -241,7 +241,7 @@ class Submit extends PluginFunctions
         
         // Title on Submit pages
         if ($this->hotaru->isPage('submit') || $this->hotaru->isPage('submit2') || $this->hotaru->isPage('submit3')) {
-            $this->hotaru->title = $this->lang["submit_submit_a_story"];
+            if (isset($this->lang["submit_submit_a_story"])) { $this->hotaru->title = $this->lang["submit_submit_a_story"]; }
         }
 
         $this->pluginHook('submit_hotaru_header_2');
