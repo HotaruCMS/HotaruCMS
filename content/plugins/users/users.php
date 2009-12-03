@@ -180,9 +180,24 @@ class Users extends PluginFunctions
             $result = $this->hotaru->plugins->pluginHook('users_navigation_logged_out');
             if (!isset($result) || !is_array($result))
             { 
+                // determine where to return the user to after logging in:
+                if (!$this->cage->get->keyExists('return')) {
+                    $host = $this->cage->server->getMixedString2('HTTP_HOST');
+                    $uri = $this->cage->server->getMixedString2('REQUEST_URI');
+                    $return = 'http://' . $host . $uri;
+                    $return = urlencode(htmlentities($return,ENT_QUOTES,'UTF-8'));
+                } else {
+                    $return = $this->cage->get->testUri('return'); // use existing return parameter
+                }
+                
                 // No plugin results, show the regular Login / Register links:
                 if ($this->hotaru->title == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
-                echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'login')) . "'>" . $this->lang["users_login"] . "</a></li>\n";
+                
+                if (!$this->hotaru->isPage('login')) {
+                    echo "<li><a  " . $status . " href='" . BASEURL . "index.php?page=login&return=" . $return . "'>" . $this->lang["users_login"] . "</a></li>\n";
+                } else {
+                    echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'login')) . "'>" . $this->lang["users_login"] . "</a></li>\n";
+                }
                 
                 if ($this->hotaru->title == 'register') { $status = "id='navigation_active'"; } else { $status = ""; }
                 echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'register')) . "'>" . $this->lang["users_register"] . "</a></li>\n";
@@ -246,7 +261,12 @@ class Users extends PluginFunctions
             } elseif ($this->hotaru->isPage('login')) {
                 if ($this->login()) { 
                     // success, return to front page, logged IN.
-                    header("Location: " . BASEURL);
+                    $return = $this->cage->post->testPage('return');
+                    if ($return) {
+                        header("Location: " . $return);
+                    } else {
+                        header("Location: " . BASEURL);
+                    }
                 } 
             }     
         }

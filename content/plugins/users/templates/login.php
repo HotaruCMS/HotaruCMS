@@ -26,6 +26,9 @@
  
 if (!$username_check = $hotaru->cage->post->testUsername('username')) { $username_check = ""; } 
 if (!$password_check = $hotaru->cage->post->testPassword('password')) { $password_check = ""; }
+if (!$return_check = $hotaru->cage->get->testPage('return')) {
+    $return_check = $hotaru->cage->post->testPage('return');
+}
 if (!$email_check = $hotaru->cage->post->testEmail('email')) { $email_check = ""; }
 if ($hotaru->cage->post->getInt('remember') == 1){ $remember_check = "checked"; } else { $remember_check = ""; }
 
@@ -51,6 +54,7 @@ if ($hotaru->cage->post->getInt('remember') == 1){ $remember_check = "checked"; 
                 <tr><td>&nbsp; </td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $hotaru->lang['users_login_form_submit']; ?>' /></td></tr>
             </table>
             <input type='hidden' name='page' value='login'>
+            <input type='hidden' name='return' value='<?php echo $return_check; ?>'>
             </form>
         </div>
         
