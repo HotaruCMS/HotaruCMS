@@ -39,7 +39,7 @@
     <table>
     <tr>
         <td><?php echo $hotaru->lang["submit_form_url"]; ?>&nbsp; </td>
-        <td><input type='text' size=50 id='post_orig_url' name='post_orig_url' value='<?php echo $hotaru->vars['post_orig_url']; ?>' /></td>
+        <td><input type='text' id='post_orig_url' name='post_orig_url' value='<?php echo $hotaru->vars['post_orig_url']; ?>' /></td>
         <td>&nbsp;</td>
     </tr>
     <?php if (!isset($hotaru->post->useLink)) { ?>
