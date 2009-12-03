@@ -261,7 +261,7 @@ class Users extends PluginFunctions
             } elseif ($this->hotaru->isPage('login')) {
                 if ($this->login()) { 
                     // success, return to front page, logged IN.
-                    $return = $this->cage->post->testPage('return');
+                    $return = $this->cage->post->testUri('return');
                     if ($return) {
                         header("Location: " . $return);
                     } else {

@@ -26,9 +26,8 @@
  
 if (!$username_check = $hotaru->cage->post->testUsername('username')) { $username_check = ""; } 
 if (!$password_check = $hotaru->cage->post->testPassword('password')) { $password_check = ""; }
-if (!$return_check = $hotaru->cage->get->testPage('return')) {
-    $return_check = $hotaru->cage->post->testPage('return');
-}
+$return_check = $hotaru->cage->get->testUri('return');
+if (!$return_check) { $return_check = $hotaru->cage->post->testUri('return'); }
 if (!$email_check = $hotaru->cage->post->testEmail('email')) { $email_check = ""; }
 if ($hotaru->cage->post->getInt('remember') == 1){ $remember_check = "checked"; } else { $remember_check = ""; }
 

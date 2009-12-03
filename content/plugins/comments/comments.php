@@ -510,13 +510,25 @@ class Comments extends pluginFunctions
             echo $pagedResults->fetchPagedNavigation('', $this->hotaru);
         }
         
-        if ($this->current_user->getPermission('can_comment') == 'no') {
-            echo "<div class='comment_form_off'>" . $this->lang['comments_no_permission'] . "</div>";
+        // determine where to return the user to after logging in:
+        if (!$this->cage->get->keyExists('return')) {
+            $host = $this->cage->server->getMixedString2('HTTP_HOST');
+            $uri = $this->cage->server->getMixedString2('REQUEST_URI');
+            $return = 'http://' . $host . $uri;
+            $return = urlencode(htmlentities($return,ENT_QUOTES,'UTF-8'));
+        } else {
+            $return = $this->cage->get->testUri('return'); // use existing return parameter
+        }
+                
+        if (!$this->current_user->loggedIn) {
+            echo "<div class='comment_form_off'>";
+            echo "<a href='" . BASEURL . "index.php?page=login&return=" . $return . "'>";
+            echo $this->lang['comments_please_login'] . "</a></div>";
             return false;
         }
         
-        if (!$this->current_user->loggedIn) {
-            echo "<div class='comment_form_off'>" . $this->lang['comments_please_login'] . "</div>";
+        if ($this->current_user->getPermission('can_comment') == 'no') {
+            echo "<div class='comment_form_off'>" . $this->lang['comments_no_permission'] . "</div>";
             return false;
         }
         
