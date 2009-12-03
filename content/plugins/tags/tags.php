@@ -283,6 +283,8 @@ class Tags extends PluginFunctions
      */
     public function post_read_post_2()
     {
+        if (!isset($this->hotaru->post->vars['post_row']->post_tags)) { return false; }
+
         $this->hotaru->post->vars['tags'] = urldecode($this->hotaru->post->vars['post_row']->post_tags);
     }
     

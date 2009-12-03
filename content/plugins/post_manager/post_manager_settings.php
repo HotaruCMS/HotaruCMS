@@ -97,6 +97,7 @@ class PostManagerSettings extends PostManager
         $p = new Post($this->hotaru);
         
         // if search
+        $search_term = '';
         if ($this->cage->get->getAlpha('type') == 'search') {
             $search_term = $this->cage->get->getMixedString2('search_value');
             $this->hotaru->vars['search_term'] = $search_term; // used to refill the search box after a search
@@ -118,6 +119,7 @@ class PostManagerSettings extends PostManager
         
         
         // if filter
+        $filter = '';
         if ($this->cage->get->getAlpha('type') == 'filter') {
             $filter = $this->cage->get->testAlnumLines('post_status_filter');
             $this->hotaru->vars['post_status_filter'] = $filter;  // used to refill the filter box after use

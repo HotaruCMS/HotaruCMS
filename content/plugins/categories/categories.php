@@ -174,6 +174,8 @@ class Categories extends PluginFunctions
      */
     public function post_read_post_2()
     {
+        if (!isset($this->hotaru->post->vars['post_row']->post_category)) { return false; }
+        
         $this->hotaru->post->vars['category'] = $this->hotaru->post->vars['post_row']->post_category;
         
         // Build SQL

@@ -107,6 +107,8 @@ class VoteSimple extends PluginFunctions
      */
     public function post_read_post_2()
     {
+        if (!isset($this->hotaru->post->vars['post_row'])) { return false; }
+        
         $post_row = $this->hotaru->post->vars['post_row'];
         $this->hotaru->vars['votesUp'] = $post_row->post_votes_up;
     }
