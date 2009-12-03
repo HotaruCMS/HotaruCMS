@@ -224,10 +224,10 @@ class relatedPosts extends PluginFunctions
         }
         else 
         {
-                // Show "No other posts found with matching tags"
-                $output .= "<div id='related_posts_none'>\n";
-                $output .= $this->lang['related_links_no_results'];
-                $output .= "</div>\n";
+            // Show "No other posts found with matching tags"
+            $output = "<div id='related_posts_none'>\n";
+            $output .= $this->lang['related_links_no_results'];
+            $output .= "</div>\n";
         }
 
         return $output;
