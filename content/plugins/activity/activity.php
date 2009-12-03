@@ -326,7 +326,6 @@ class Activity extends PluginFunctions
             $user->getUserBasic($item->useract_userid);
             
             if ($this->hotaru->post->vars['useCategories'] && ($this->hotaru->post->vars['category'] != 1)) {
-                $this->hotaru->post->vars['category'] = $this->hotaru->post->vars['category'];
                 $this->hotaru->post->vars['catSafeName'] =  $cat->getCatSafeName($this->hotaru->post->vars['category']);
             }
 

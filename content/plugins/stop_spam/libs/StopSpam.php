@@ -93,30 +93,26 @@ class StopSpamFunctions
     {
         if (!$ip || !$username || !$email || !$apikey || $ip == '127.0.0.1') { return false; }
         
-        require_once(EXTENSIONS . 'SWCMS/class.httprequest.php');
-        
         $url = "http://www.stopforumspam.com/post.php?";
         $url .= "username=" . $username;
         $url .= "&ip_addr=" . $ip;
         $url .= "email=" . $email;
         $url .= "api_key=" . $apikey;
         
+        /*
+        Old method:
+        require_once(EXTENSIONS . 'SWCMS/class.httprequest.php');
         $r = new HTTPRequest($url);
         $error = $r->DownloadToString();
         if (!$error) { 
             // success! 
-        }
+        }*/
         
-        /*
-        Was testing this with new class, but suffering PHP 5.3 issues:
-        http://www.phpfour.com/blog/2008/01/php-http-class/
-        
+        // http://www.phpfour.com/blog/2008/01/php-http-class/
         require_once(EXTENSIONS . 'http/class.http.php');
         $http = new Http();
         $http->execute($url);
-        if (!$http->error) { echo "Success"; } else { echo $http->error; }
-        exit;
-        */
+        if (!$http->error) { echo "Success"; } else { echo // $http->error; }
     }
 }
 
