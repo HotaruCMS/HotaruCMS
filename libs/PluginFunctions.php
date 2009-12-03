@@ -142,7 +142,7 @@ class PluginFunctions extends Plugin
                 array_push($plugins_array, $plugin_metadata);
             }
         }    
-        return $plugins_array;
+        return sksort($plugins_array, 'name', 'char'); // return plugins in alphabetical order
     }
     
     
