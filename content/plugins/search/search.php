@@ -176,7 +176,7 @@ class Search extends PluginFunctions
             $this->hotaru->vars['select'] = "*";
             $this->hotaru->vars['orderby'] = "post_date DESC";
             $this->hotaru->vars['filter_vars'] = array();
-            $where = $this->explodeSearch('post_title', $search_terms_clean, $values) . " OR ";
+            $where = $this->explodeSearch('post_title', $search_terms_clean) . " OR ";
             $where .= $this->explodeSearch('post_url', $search_terms_clean) . " OR ";
             $where .= $this->explodeSearch('post_content', $search_terms_clean);
             $where = '(' . $where . ')';
