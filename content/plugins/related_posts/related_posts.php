@@ -245,7 +245,7 @@ class relatedPosts extends PluginFunctions
         if (!$this->isActive('search')) { return false; }
         
         require_once(PLUGINS . 'search/search.php');
-        $search = new Search('related_links', $this->hotaru);
+        $search = new Search($this->hotaru);
         $this->hotaru->vars['filter']['post_archived != %s'] = 'Y';
         $this->hotaru->vars['filter']['post_id != %d'] = $this->hotaru->post->id;
         $prepared_search = $search->prepareSearchFilter($search_terms);
