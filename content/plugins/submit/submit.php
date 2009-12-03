@@ -238,11 +238,6 @@ class Submit extends PluginFunctions
                 }
             }
         }
-        
-        // Title on Submit pages
-        if ($this->hotaru->isPage('submit') || $this->hotaru->isPage('submit2') || $this->hotaru->isPage('submit3')) {
-            if (isset($this->lang["submit_submit_a_story"])) { $this->hotaru->title = $this->lang["submit_submit_a_story"]; }
-        }
 
         $this->pluginHook('submit_hotaru_header_2');
         $this->hotaru->title = stripslashes($this->hotaru->title);
@@ -330,10 +325,24 @@ class Submit extends PluginFunctions
      */
     public function theme_index_replace()
     {
+        // find out if we're on step 1:
+        if ($this->hotaru->isPage('submit')) {
+            $this->hotaru->templateName = "submit_step1";
+        }
+        
+        // find out if we're on step2 (overrides above)
+        if ($this->hotaru->isPage('submit') && 
+            (($this->cage->post->getAlpha('submit1') == 'true') || $this->cage->get->keyExists('url'))) {
+            $this->hotaru->templateName = "submit_step2";
+        }
+        
         if ($this->hotaru->isPage('submit2') && $this->hotaru->post->useSubmission) {
             if ($this->current_user->loggedIn) {
-                         
-                if ($this->cage->post->getAlpha('submit2') == 'true') {             
+                
+                // this is step 3:
+                $this->hotaru->templateName = "submit_step3";
+                
+                if ($this->cage->post->getAlpha('submit2') == 'true') {
                     $post_orig_url = $this->cage->post->testUri('post_orig_url'); 
                     if ((!$post_orig_url) && ($this->current_user->getPermission('can_post_without_link') == 'yes')) { 
                         $this->hotaru->post->useLink = false;
@@ -348,7 +357,10 @@ class Submit extends PluginFunctions
              
             if ($this->current_user->loggedIn) {
     
-                if ($this->cage->post->getAlpha('submit3') == 'edit') {             
+                if ($this->cage->post->getAlpha('submit3') == 'edit') {
+                
+                    // this is step 2:
+                    $this->hotaru->templateName = "submit_step2";
                 
                     $post_id = $this->cage->post->getInt('post_id'); 
                     $this->hotaru->post->readPost($post_id);
@@ -356,8 +368,12 @@ class Submit extends PluginFunctions
                              
                  
                 // SUCCESS ! Submit the post...
-                if ($this->cage->post->getAlpha('submit3') == 'confirm') {             
+                if ($this->cage->post->getAlpha('submit3') == 'confirm') {
         
+                    // this is step 3
+                    $this->hotaru->templateName = "submit_step3";
+                    echo $this->hotaru->templateName;
+                
                     $post_id = $this->cage->post->getInt('post_id');
                     $this->hotaru->post->readPost($post_id);
                     $this->hotaru->post->changeStatus('new');
@@ -401,8 +417,7 @@ class Submit extends PluginFunctions
                     
                     if ($return == 1) { return false; } // post is pending so we don't want to send a trackback. Return now.
                     
-                    // TEMPORARILY EDITED THIS OUT - DON'T LET ME FORGET TO PUT IT BACK IN!
-                    //$this->hotaru->post->sendTrackback();
+                    $this->hotaru->post->sendTrackback();
                     
                     if ($this->hotaru->post->useLatest) {
                         header("Location: " . $this->hotaru->url(array('page'=>'latest')));    // Go to the Latest page
@@ -462,6 +477,15 @@ class Submit extends PluginFunctions
             // Display RSS Feed - index.php?page=rss&status=new&limit=10
             $this->hotaru->post->rssFeed();
             return true;
+        }
+        
+        // Title on Submit pages
+        if ($this->hotaru->templateName == 'submit_step1') {
+            $this->hotaru->title = $this->lang["submit_form_step1"];
+        } elseif ($this->hotaru->templateName == 'submit_step2') {
+            $this->hotaru->title = $this->lang["submit_form_step2"];
+        } elseif ($this->hotaru->templateName == 'submit_step3') {
+            $this->hotaru->title = $this->lang["submit_form_step3"];
         }
     
         return false;

@@ -48,8 +48,6 @@ class Post
     protected $subscribe        = 0;
     protected $postsPerPage     = 10;
     protected $allowableTags    = '';
-
-    protected $templateName     = '';
             
     protected $useLatest        = false;    // Split posts into "Top" and "Latest" pages
     protected $useSubmission    = true;
@@ -663,7 +661,6 @@ class Post
             
         } else {
             // for pages, i.e. lists of stories with pagination
-            $this->templateName = "list";
             
             if ($this->cage->get->testPage('page') == 'top') { 
                 $this->prepareListFilters('top');

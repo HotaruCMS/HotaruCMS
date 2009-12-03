@@ -25,25 +25,26 @@
  */
 class Hotaru
 {
-    public $version         = "0.8.2";  // Hotaru CMS version
+    public $version                 = "0.8.2";  // Hotaru CMS version
 
     public $db;                         // database object
     public $cage;                       // Inspekt object
     public $plugins;                    // Inspekt object
-    public $lang            = array();  // stores language file content
+    public $lang                    = array();  // stores language file content
     public $current_user;               // UserBase object
     
-    public $message         = '';       // message to display
-    public $messageType     = 'green';  // green or red, color of message box
-    public $messages        = array();  // for multiple messages
+    public $message                 = '';       // message to display
+    public $messageType             = 'green';  // green or red, color of message box
+    public $messages                = array();  // for multiple messages
     
-    protected $isDebug      = false;    // show db queries and page loading time
-    protected $isAdmin      = false;    // flag to tell if we are in Admin or not
-    protected $sidebars      = true;    // enable or disable the sidebars
-    protected $title        = '';       // for the broswer's TITLE tags
-    protected $pageType     = '';       // what kind of page we're looking at
-    protected $pluginSettings      = array();  // contains all plugin settings
-    protected $pluginBasics        = array();  // contains basic plugin details
+    protected $isDebug              = false;    // show db queries and page loading time
+    protected $isAdmin              = false;    // flag to tell if we are in Admin or not
+    protected $sidebars             = true;    // enable or disable the sidebars
+    protected $title                = '';       // for the broswer's TITLE tags
+    protected $pageType             = '';       // what kind of page we're looking at
+    protected $templateName         = '';       // not required, but maybe useful for plugins
+    protected $pluginSettings       = array();  // contains all plugin settings
+    protected $pluginBasics         = array();  // contains basic plugin details
     
     protected $cssIncludes          = array();  // a list of css files to include
     protected $cssIncludesAdmin     = array();  // a list of css files to include in Admin
