@@ -197,7 +197,17 @@ class VoteSimple extends PluginFunctions
             $this->hotaru->vars['voted'] = $this->db->get_var($this->db->prepare($sql, $this->hotaru->post->id, $this->current_user->id, 'alert'));
         } 
 
-         $this->hotaru->displayTemplate('vote_simple_button', 'vote_simple', NULL, false);
+        // determine where to return the user to after logging in:
+        if (!$this->cage->get->keyExists('return')) {
+            $host = $this->cage->server->getMixedString2('HTTP_HOST');
+            $uri = $this->cage->server->getMixedString2('REQUEST_URI');
+            $return = 'http://' . $host . $uri;
+            $return = urlencode(htmlentities($return,ENT_QUOTES,'UTF-8'));
+        } else {
+            $return = $this->cage->get->testUri('return'); // use existing return parameter
+        }
+        $this->hotaru->vars['vote_login_url'] = BASEURL . "index.php?page=login&return=" . $return;
+        $this->hotaru->displayTemplate('vote_simple_button', 'vote_simple', NULL, false);
     }
     
     

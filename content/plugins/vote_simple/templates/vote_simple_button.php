@@ -71,7 +71,7 @@ $vote_button_type = 'vote_button_' . $status . '_story';  // for css difference 
     <!-- Need to login -->
     
     <div id='text_login_<?php echo $hotaru->post->id; ?>' class='vote_button_bottom'>
-        <a href="<?php echo $hotaru->url(array('page'=>'login')); ?>"><?php echo $hotaru->lang["vote_button_vote"]; ?></a>
+        <a href="<?php echo $hotaru->vars['vote_login_url']; ?>"><?php echo $hotaru->lang["vote_button_vote"]; ?></a>
     </div>
 <?php } ?>
 
