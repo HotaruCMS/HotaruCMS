@@ -68,7 +68,18 @@ class RPX extends PluginFunctions
         $this->language         = $rpx_settings['rpx_language'];
         $this->account          = $rpx_settings['rpx_account'];
         $this->display          = $rpx_settings['rpx_display'];
-        $this->tokenUrl         = urlencode(BASEURL . "index.php?page=register");
+        
+                // determine where to return the user to after logging in:
+        if (!$this->cage->get->keyExists('return')) {
+            $host = $this->cage->server->getMixedString2('HTTP_HOST');
+            $uri = $this->cage->server->getMixedString2('REQUEST_URI');
+            $return = 'http://' . $host . $uri;
+            $return = urlencode(htmlentities($return,ENT_QUOTES,'UTF-8'));
+        } else {
+            $return = urlencode($this->cage->get->testUri('return')); // use existing return parameter
+        }
+  
+        $this->tokenUrl         = urlencode(BASEURL . "index.php?page=register&amp;return=" . $return);
         //$this->tokenUrl     = $this->hotaru->url(array('page'=>'register')); // doesn't seem to work :(
     }
     
@@ -179,7 +190,7 @@ class RPX extends PluginFunctions
             echo "<a class='rpxnow' onclick='return false;' ";
             echo "href='https://" . $this->application . ".rpxnow.com/openid/v2/signin?token_url=" . $this->tokenUrl . "'>";
             echo $this->lang['rpx_login_sign_in_2'] . "</a></p>";
-        } elseif ($this->display == 'embed') {
+        } elseif (($this->display == 'embed') || ($this->display == 'replace')) {
             echo "<iframe id='rpx_embed' src='https://" . $this->application . ".rpxnow.com/openid/embed?token_url=" . $this->tokenUrl . "' ";
             echo "scrolling='no' frameBorder='no'></iframe>";
         }
@@ -249,13 +260,12 @@ class RPX extends PluginFunctions
             } 
         }
         
-        
         if($rpx_profile['primaryKey']) // PLUS & PRO ACCOUNTS ONLY
         {
             //get username from database for this primarykey
             $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_id = %d";
             $username = $this->db->get_var($this->db->prepare($sql, $rpx_profile['primaryKey']));
-            
+                    
             $login_result = $this->current_user->loginCheck($username, ''); // no password necessary
             if ($login_result) {
                 //success
@@ -263,7 +273,14 @@ class RPX extends PluginFunctions
                 $remember = 1; // keep them logged in for 30 days (not optional)
                 $users = new Users('', $this->hotaru);
                 $users->loginSuccess($remember);
-                header("Location: " . BASEURL);
+                $return = $this->cage->get->testUri('return');
+                if ($return) {
+                    header("Location: " . $return);
+                    exit;
+                } else {
+                    header("Location: " . BASEURL);
+                    exit;
+                }
             } 
         } 
         
@@ -283,7 +300,14 @@ class RPX extends PluginFunctions
                 $remember = 1; // keep them logged in for 30 days (not optional)
                 $users = new Users('', $this->hotaru);
                 $users->loginSuccess($remember);
-                header("Location: " . BASEURL);
+                $return = $this->cage->get->testUri('return');
+                if ($return) {
+                    header("Location: " . $return);
+                    exit;
+                } else {
+                    header("Location: " . BASEURL);
+                    exit;
+                }
             } 
         } 
 
@@ -423,7 +447,7 @@ class RPX extends PluginFunctions
     public function users_account_pre_password_user_only()
     {
         $this->includeLanguage();
-        $output .= "<div class='users_account_rpx'>\n";
+        $output = "<div class='users_account_rpx'>\n";
         $output .= "<p id='rpx_providers_header'>" . $this->lang['rpx_account_providers'] . "</p>\n";
         $output .= "<p id='rpx_providers_desc'>" . $this->lang['rpx_account_providers_list'] . "</p>\n";
         $output .= "<ul id='rpx_user_ids'>\n";
@@ -545,7 +569,7 @@ class RPX extends PluginFunctions
     
     
     /**
-     * Check if a user already exists under a different provider
+     * Show sign in link if mode is "replace"
      *
      * @param return bool
      */
