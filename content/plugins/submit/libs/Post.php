@@ -426,7 +426,7 @@ class Post
         // end categories
                 
         if ($search && $this->plugins->isActive('search')) { 
-            $search_plugin = new Search('', $this->hotaru);
+            $search_plugin = new Search($this->hotaru);
             $prepared_search = $search_plugin->prepareSearchFilter($search); 
             extract($prepared_search);
             $orderby = "post_date DESC";    // override "relevance DESC" so the RSS feed updates with the latest related terms. 

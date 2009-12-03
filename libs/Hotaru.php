@@ -80,7 +80,7 @@ class Hotaru
                 break;
         }
         
-        $this->plugins  = new PluginFunctions('', $this);
+        $this->plugins  = new PluginFunctions($this);
         $this->checkCookie();   // Log in user if cookie
         
         // We needn't go any further if this is called from the Install script.

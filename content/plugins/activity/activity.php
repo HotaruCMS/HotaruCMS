@@ -334,7 +334,7 @@ class Activity extends PluginFunctions
             
             if ($activity_settings['activity_sidebar_avatar'] && $this->isActive('gravatar')) {
                 $this->hotaru->vars['gravatar_size'] = $activity_settings['activity_sidebar_avatar_size'];
-                $grav = new Gravatar('', $this->hotaru);
+                $grav = new Gravatar($this->hotaru);
                 $output .= "<div class='activity_sidebar_avatar'>\n" . $grav->showGravatarLink($user->name, $user->email, true) . "</div> \n";
             }
             

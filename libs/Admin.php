@@ -186,7 +186,7 @@ class Admin
         $pfolder = $this->cage->get->testAlnumLines('plugin');
         $order = $this->cage->get->testAlnumLines('order');
         
-        $this_plugin = new PluginFunctions($pfolder, $this->hotaru);
+        $this_plugin = new PluginFunctions($this->hotaru, $pfolder);
         
         switch ($action) {
             case "activate":

@@ -78,7 +78,7 @@
             
             <h3><?php echo $hotaru->lang["cat_man_category_tree"]; ?></h3>
             <?php
-                $tree = new CategoryManagerSettings('', $hotaru); 
+                $tree = new CategoryManagerSettings($hotaru); 
                 $tree->tree($hotaru->vars['the_cats']);
             ?>
 

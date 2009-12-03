@@ -50,6 +50,11 @@ extract($checks); // extracts $username_check, etc.
     </table>    
     </form>
     
+    <?php $admin->plugins->pluginHook('users_account_pre_password'); ?>
+    <?php $admin->plugins->pluginHook('users_account_pre_password_user_only'); ?>
+    
+    <br />
+    
     <?php echo $admin->lang["admin_theme_update_password_instruct"]; ?>
     <form name='update_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>
     <table>

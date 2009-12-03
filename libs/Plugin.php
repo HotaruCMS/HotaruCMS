@@ -58,7 +58,7 @@ class Plugin
     /**
      * Constructor - make a Plugin object
      */
-    public function __construct($folder = '', $hotaru)
+    public function __construct($hotaru, $folder = '')
     {
         // We don't need to fill the object with anything other than the plugin folder name at this time:
         if ($folder) { 
@@ -184,7 +184,7 @@ class Plugin
         }
         
         $settings_class = make_name($this->folder, '') . 'Settings'; // e.g. CategoriesSettings
-        $settings_object = new $settings_class($this->folder, $this->hotaru);
+        $settings_object = new $settings_class($this->hotaru, $this->folder);
         $settings_object->settings();   // call the settings function
         return true;
     }

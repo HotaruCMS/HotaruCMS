@@ -36,7 +36,7 @@ $profile = $hotaru->vars['profile'];
     <?php 
         if ($hotaru->plugins->isActive('gravatar')) { 
             echo "<div id='profile_avatar'>";
-            $avatar = new Gravatar('', $hotaru);
+            $avatar = new Gravatar($hotaru);
             $hotaru->vars['gravatar_size'] = 80;
             $avatar->showGravatarLink($hotaru->user->name, $hotaru->user->email);
             echo "</div>";

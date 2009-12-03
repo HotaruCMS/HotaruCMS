@@ -194,7 +194,7 @@ class PluginFunctions extends Plugin
                             {
                                 if($plugin->plugin_class)
                                 {
-                                    $this_plugin = new $plugin->plugin_class($plugin->plugin_folder, $this->hotaru);
+                                    $this_plugin = new $plugin->plugin_class($this->hotaru, $plugin->plugin_folder);
                                     $result = $this_plugin->$hook($parameters);
                                     if ($result) {
                                         $return_array[$plugin->plugin_class . "_" . $hook] = $result; // name the result Class + hook name

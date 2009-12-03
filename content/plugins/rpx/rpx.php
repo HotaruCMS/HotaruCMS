@@ -47,7 +47,7 @@ class RPX extends PluginFunctions
     /**
      * Build a $plugins object containing $db and $cage
      */
-    public function __construct($folder, $hotaru)
+    public function __construct($hotaru, $folder)
     {
         // COPIED FROM /libs/Plugin.php constructor:
         
@@ -271,7 +271,7 @@ class RPX extends PluginFunctions
                 //success
                 $this->current_user->name = $username;
                 $remember = 1; // keep them logged in for 30 days (not optional)
-                $users = new Users('', $this->hotaru);
+                $users = new Users($this->hotaru);
                 $users->loginSuccess($remember);
                 $return = $this->cage->get->testUri('return');
                 if ($return) {
@@ -298,7 +298,7 @@ class RPX extends PluginFunctions
                 //success
                 $this->current_user->name = $username;
                 $remember = 1; // keep them logged in for 30 days (not optional)
-                $users = new Users('', $this->hotaru);
+                $users = new Users($this->hotaru);
                 $users->loginSuccess($remember);
                 $return = $this->cage->get->testUri('return');
                 if ($return) {

@@ -160,7 +160,7 @@ class SidebarComments extends PluginFunctions
             
             if ($sb_comments_settings['sidebar_comments_avatar'] && $this->isActive('gravatar')) {
                 $this->hotaru->vars['gravatar_size'] = $sb_comments_settings['sidebar_comments_avatar_size'];
-                $grav = new Gravatar('', $this->hotaru);
+                $grav = new Gravatar($this->hotaru);
                 $output .= "<div class='sidebar_comments_avatar'>\n" . $grav->showGravatarLink($author->name, $author->email, true) . "</div> \n";
             }
             
