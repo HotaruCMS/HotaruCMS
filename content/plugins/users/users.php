@@ -290,6 +290,7 @@ class Users extends PluginFunctions
             $this->hotaru->vars['profile'] = $uf->getProfileSettingsData('user_profile', $this->hotaru->user->id);
             
             $this->hotaru->displayTemplate('profile', 'users');
+            return true;
         }
     }
     
@@ -312,6 +313,7 @@ class Users extends PluginFunctions
                     $this->hotaru->showMessages();
                 } else {
                     $this->hotaru->displayTemplate('account', 'users');
+                    return true;
                 }
                 return true;
             } elseif ($this->hotaru->isPage('permissions')) {
@@ -331,6 +333,7 @@ class Users extends PluginFunctions
                     $userid = $this->current_user->getUserIdFromName($this->hotaru->vars['username']);
                     $this->hotaru->vars['profile'] = $uf->getProfileSettingsData('user_profile', $userid);
                     $this->hotaru->displayTemplate('edit_profile', 'users');
+                    return true;
                 } else {
                     $this->hotaru->messages[$this->lang["access_denied"]] = 'red';
                     $this->hotaru->showMessages();
@@ -345,6 +348,7 @@ class Users extends PluginFunctions
                     $userid = $this->current_user->getUserIdFromName($this->hotaru->vars['username']);
                     $this->hotaru->vars['settings'] = $uf->getProfileSettingsData('user_settings', $userid);
                     $this->hotaru->displayTemplate('user_settings', 'users');
+                    return true;
                 } else {
                     $this->hotaru->messages[$this->lang["access_denied"]] = 'red';
                     $this->hotaru->showMessages();
@@ -366,6 +370,7 @@ class Users extends PluginFunctions
                 if (!isset($result) || !is_array($result)) {
                     // show this form if not overridden by a plugin
                     $this->hotaru->displayTemplate('register', 'users');
+                    return true;
                 }
                 return true;    
             } elseif ($this->hotaru->isPage('login')) {

@@ -6,7 +6,7 @@
  * folder: categories
  * class: Categories
  * requires: submit 1.4, category_manager 0.6
- * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, post_read_post_1, post_read_post_2, post_add_post, post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, post_list_filter, submit_show_post_author_date, submit_is_page_main, post_header, admin_sidebar_plugin_settings, admin_plugin_settings, breadcrumbs
+ * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, post_read_post_1, post_read_post_2, post_add_post, post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, post_list_filter, submit_show_post_author_date, post_header, admin_sidebar_plugin_settings, admin_plugin_settings, breadcrumbs
  *
  * PHP version 5
  *
@@ -138,17 +138,20 @@ class Categories extends PluginFunctions
                         if ($exists && $value) {
                             // Now we know that $key is a category so $value must be the post name. Go get the post_id...
                             $this->hotaru->post->id = $this->hotaru->post->isPostUrl($value);
-                            $this->hotaru->post->readPost($this->hotaru->post->id);
-                            $this->hotaru->post->vars['isCategoryPost'] = true; 
-                            $this->hotaru->pageType = 'post';
-                            $this->hotaru->title = $this->hotaru->post->title;
-                            return true;
+                            if ($this->hotaru->post->id) {
+                                $this->hotaru->post->readPost($this->hotaru->post->id);
+                                $this->hotaru->post->vars['isCategoryPost'] = true; 
+                                $this->hotaru->pageType = 'post';
+                                $this->hotaru->title = $this->hotaru->post->title;
+                                return true;
+                            } else {
+                                $this->hotaru->post->vars['isCategoryPost'] = 'error';
+                            }
                         } 
                     }
                 }
             }
         }
-            
         $this->hotaru->post->vars['isCategoryPost'] = false;
         return false;
     }
@@ -337,22 +340,6 @@ class Categories extends PluginFunctions
      * ******************* FUNCTIONS FOR SHOWING POSTS ********************* 
      * *********************************************************************
      * ****************************************************************** */
-     
-    
-    /**
-     * Checks if the url is a category->post name pair and displays the post
-     *
-     * @return bool
-     */
-    public function submit_is_page_main()
-    {
-        if ($this->hotaru->post->vars['isCategoryPost']) {
-            $this->hotaru->displayTemplate('post', 'submit');
-            return true;
-        } else {
-            return false;
-        }
-    }
     
     /**
      * Gets a category from the url and sets the filter for get_posts

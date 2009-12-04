@@ -594,20 +594,9 @@ class Submit extends PluginFunctions
                     return true;
                 }
             }
-    
-        } elseif ($this->hotaru->isPage('main')) {
-        
-            // Plugin hook
-            $result = $this->pluginHook('submit_is_page_main');
-            if ($result && is_array($result)) { return true; }
-
-            // Show the list of posts
-            $this->hotaru->displayTemplate('list', 'submit');
-            return true;
-            
+                        
         } elseif ($this->hotaru->pageType == 'post') {
             // We found out this is a post from the hotaru_header function above.
-           
             $this->hotaru->displayTemplate('post', 'submit');
             return true;
             
@@ -651,11 +640,19 @@ class Submit extends PluginFunctions
             $this->hotaru->displayTemplate('list', 'submit');
             return true;
             
-        } else {        
-            return false;
         }
         
-        return false;
+        if ($this->hotaru->isPage('main') && !$this->hotaru->post->vars['isCategoryPost']) {
+            // Show the list of posts
+            $this->hotaru->displayTemplate('list', 'submit');
+            return true;
+        }
+
+        // page not found
+        if ($this->hotaru->post->vars['isCategoryPost'] == 'error') {
+            $this->hotaru->displayTemplate('404');
+            return true;
+        }
     }
     
     

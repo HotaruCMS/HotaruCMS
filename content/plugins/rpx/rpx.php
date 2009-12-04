@@ -225,7 +225,7 @@ class RPX extends PluginFunctions
         
         // get the functions file:
         require_once(PLUGINS . 'rpx/libs/RpxFunctions.php');
-        $rpxFuncs = new RpxFunctions($this->folder, $this->hotaru);
+        $rpxFuncs = new RpxFunctions($this->hotaru, $this->folder);
         
         // get the profile:
         $rpx_profile = $rpxFuncs->getProfile($token, $this->apiKey);
@@ -431,7 +431,7 @@ class RPX extends PluginFunctions
         
         // get the functions file:
         require_once(PLUGINS . 'rpx/libs/RpxFunctions.php');
-        $rpxFuncs = new RpxFunctions($this->folder, $this->hotaru);
+        $rpxFuncs = new RpxFunctions($this->hotaru, $this->folder);
         
         // map the user:
         if ($this->account != 'basic') {
@@ -454,7 +454,7 @@ class RPX extends PluginFunctions
                     
         // get the functions file:
         require_once(PLUGINS . 'rpx/libs/RpxFunctions.php');
-        $rpxFuncs = new RpxFunctions($this->folder, $this->hotaru);
+        $rpxFuncs = new RpxFunctions($this->hotaru, $this->folder);
         
         $no_providers = false; // a simple flag for Basic accounts
         
@@ -517,7 +517,7 @@ class RPX extends PluginFunctions
         
         // get the functions file:
         require_once(PLUGINS . 'rpx/libs/RpxFunctions.php');
-        $rpxFuncs = new RpxFunctions($this->folder, $this->hotaru);
+        $rpxFuncs = new RpxFunctions($this->hotaru, $this->folder);
         $rpxFuncs->unmap($vars['user_id'], $rpx_profile['identifier'], $this->apiKey);
     }
 
