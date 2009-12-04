@@ -116,7 +116,11 @@ class Gravatar extends PluginFunctions
     public function users_pre_navigation_first()
     {
         $this->hotaru->vars['gravatar_size'] = 16;
-        $rating = $this->hotaru->vars['gravatar_rating'];
+        
+        // fix for undefined gravatar_rating on install
+        if (isset($this->hotaru->vars['gravatar_rating'])) {
+            $rating = $this->hotaru->vars['gravatar_rating'];
+        }
 
         echo $this->buildGravatarImage($this->current_user->email) . "\n";
         
@@ -152,12 +156,22 @@ class Gravatar extends PluginFunctions
      */
     public function buildGravatarImage($email)
     {
-        if (!$this->hotaru->vars['gravatar_size']) { 
+        if (!isset($this->hotaru->vars['gravatar_size'])) { 
             $this->hotaru->vars['gravatar_size'] = $this->getSetting('gravatar_size'); 
         }
         
-        if (!$this->hotaru->vars['gravatar_rating']) { 
+        if (!isset($this->hotaru->vars['gravatar_rating'])) { 
             $this->hotaru->vars['gravatar_rating'] = $this->getSetting('gravatar_rating'); 
+        }
+        
+        // fix for undefined default on insatll:
+        if (!isset($this->hotaru->vars['default'])) {
+            // Look in the theme's images folder for a default avatar before using the one in the Gravatar images folder
+            if (file_exists(THEMES . THEME . "images/default_80.png")) {
+                $this->hotaru->vars['default'] = BASEURL . "content/themes/"  . THEME . "images/default_80.png";
+            } else { 
+                $this->hotaru->vars['default'] = BASEURL . "content/plugins/gravatar/images/default_80.png"; 
+            }
         }
         
         $default = $this->hotaru->vars['default'];
