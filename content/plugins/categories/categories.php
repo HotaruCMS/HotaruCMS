@@ -89,6 +89,17 @@ class Categories extends PluginFunctions
     
     
     /**
+     * Include All CSS and JavaScript files for this plugin
+     */
+    public function header_include()
+    {
+        // include a files that match the name of the plugin folder:
+        $this->hotaru->includeJs('suckerfish', $this->folder); // filename, folder name
+        $this->hotaru->includeCss('', $this->folder);
+    }
+    
+    
+    /**
      * Adds additional member variables when the $post object is read in the Submit plugin.
      */
     public function submit_hotaru_header_1()
