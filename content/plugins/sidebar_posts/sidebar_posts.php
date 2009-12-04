@@ -147,6 +147,7 @@ class SidebarPosts extends PluginFunctions
     public function getSidebarPosts($type, $custom = true, $limit = 10)
     {
         $this->hotaru->vars['limit'] = $limit;
+        $posts = '';
         
         if (!$custom) 
         {
