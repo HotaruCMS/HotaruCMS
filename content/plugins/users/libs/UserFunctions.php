@@ -127,7 +127,7 @@ class UserFunctions extends UserBase
             $sql = "SELECT user_id, user_username FROM " . TABLE_USERS . " WHERE user_role = %s ORDER BY user_username ASC";
             $results = $this->db->get_results($this->db->prepare($sql, $role));
         } else {
-            $sql = "SELECT user_id, user_username FROM " . TABLE_USERS . $where . " ORDER BY user_username ASC";
+            $sql = "SELECT user_id, user_username FROM " . TABLE_USERS . " ORDER BY user_username ASC";
             $results = $this->db->get_results($sql);
         }
         
@@ -188,7 +188,7 @@ class UserFunctions extends UserBase
      *
      * @return array|false
      */
-    public function getProfileSettingsData($type = 'user_profile', $userid = 0, $save = false)
+    public function getProfileSettingsData($type = 'user_profile', $userid = 0)
     {
         if (!$userid) { $userid = $this->id; }
 
@@ -201,15 +201,13 @@ class UserFunctions extends UserBase
             $result = $this->db->get_var($sql);
             $this->hotaru->vars[$sql] = $result;    // cache result
         }
-        
-        /* when saving, we just want to test if settings already exist. 
-           Returning the defaults, looks like they exist when they don't,
-           so we don't return the defaults when saving. */
            
         if ($result) { 
             $result = unserialize($result);
-        } elseif (($type == 'user_settings') && !$save) { 
-            $result = $this->getDefaultSettings();
+            if ($type == 'user_settings') {
+                $defaults = $this->getDefaultSettings();
+                $result = array_merge($defaults, $result);
+            }
         } else {
             return false;
         }
@@ -227,7 +225,7 @@ class UserFunctions extends UserBase
         if (!$data) { return false; }
         if (!$userid) { $userid = $this->id; }
 
-        $result = $this->getProfileSettingsData($type, $userid, true);
+        $result = $this->getProfileSettingsData($type, $userid);
         
         if (!$result) {
             $sql = "INSERT INTO " . TABLE_USERMETA . " (usermeta_userid, usermeta_key, usermeta_value, usermeta_updateby) VALUES(%d, %s, %s, %d)";

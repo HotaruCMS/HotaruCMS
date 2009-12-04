@@ -44,7 +44,7 @@ if ($hotaru->cage->post->getAlpha('edited_profile') == 'true') {
 if (!isset($profile['bio'])) { $profile['bio'] = $hotaru->lang['users_profile_default_bio']; }
 
 $hotaru->vars['profile'] = $profile;
-$hotaru->plugins->pluginHook('user_settings_fill_form'); 
+$hotaru->plugins->pluginHook('user_edit_profile_fill_form'); 
 
 ?>
     

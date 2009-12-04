@@ -126,13 +126,15 @@ class adminEmail extends PluginFunctions
             // we need to remove anyone who has opted out of emails from admin.
             // First get the user_settings for every user on the site with SAVED settings:
             $all_settings = $uf->userSettingsList();
+            $default_settings = $uf->getDefaultSettings();
             
             // Next, make a list of opted out users (by id)
             $opted_out = array();
             if ($all_settings) {
                 foreach ($all_settings as $set) {
                     $u_settings = unserialize($set->usermeta_value);
-                    if (!$u_settings['admin_notify']) {
+                    $merged_settings = array_merge($default_settings, $u_settings);
+                    if (!$merged_settings['admin_notify']) {
                         array_push($opted_out, $set->usermeta_userid);
                     }
                 }

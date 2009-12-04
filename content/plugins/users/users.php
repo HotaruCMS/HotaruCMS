@@ -138,6 +138,7 @@ class Users extends PluginFunctions
         if (isset($this->current_user->id)) {
             require_once(PLUGINS . 'users/libs/UserFunctions.php');
             $uf = new UserFunctions($this->hotaru);
+            $this->current_user->vars['profile'] = $uf->getProfileSettingsData('user_profile', $this->current_user->id);
             $this->current_user->vars['settings'] = $uf->getProfileSettingsData('user_settings', $this->current_user->id);
         }
     }
