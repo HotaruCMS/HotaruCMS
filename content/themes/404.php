@@ -27,5 +27,5 @@
 
 ?>
 
-<?php echo $lang['main_theme_page_not_found']; ?>
+<?php echo $hotaru->lang['main_theme_page_not_found']; ?>
 

@@ -397,7 +397,8 @@ class Hotaru
             1. Check the custom theme
             2. Check the default theme
             3. Check the plugin folder
-            4. Show the 404 Not Found page
+            4. Show the 404 Not Found page from the theme
+            5. Show the 404 Not Found page from "themes" folder
         */
         if (file_exists(THEMES . THEME . $page))
         {
@@ -428,7 +429,11 @@ class Hotaru
                 return true;
                 die();
         }
-        else 
+        elseif (file_exists(THEMES . THEME . '404.php')) 
+        {
+            include_once(THEMES . THEME . '404.php');
+        }
+        else
         {
             include_once(THEMES . '404.php');
         }

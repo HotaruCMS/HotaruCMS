@@ -251,7 +251,8 @@ class Admin
             1. Check the custom admin theme
             2. Check the default admin theme
             3. Check the plugin folder
-            4. Show the 404 Not Found page
+            4. Show the 404 Not Found page from the admin theme
+            5. Show the 404 Not Found page from "admin_themes" folder
         */
         if (file_exists(ADMIN_THEMES . ADMIN_THEME . $page))
         {
@@ -282,7 +283,11 @@ class Admin
                 return true;
                 die();
         }
-        else 
+        elseif (file_exists(ADMIN_THEMES . ADMIN_THEME . '404.php')) 
+        {
+            include_once(ADMIN_THEMES . ADMIN_THEME . '404.php');
+        }
+        else
         {
             include_once(ADMIN_THEMES . '404.php');
         }
