@@ -126,9 +126,8 @@ class Paginated {
 	}
 
 	//returns a string with the base navigation for the page
-	//if queryVars are to be added then the first parameter should be preceeded by a ampersand
-	public function fetchPagedNavigation($queryVars = "", $hotaru = NULL) {
-		return $this->getLayout()->fetchPagedLinks($this, $queryVars, $hotaru);
+	public function fetchPagedNavigation($hotaru = NULL) {
+		return $this->getLayout()->fetchPagedLinks($this, $hotaru);
 	}//end writeNavigation
 }//end Paginated
 ?>

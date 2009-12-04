@@ -507,7 +507,7 @@ class Comments extends pluginFunctions
         
         if ($this->hotaru->comment->pagination) {
             $pagedResults->setLayout(new DoubleBarLayout());
-            echo $pagedResults->fetchPagedNavigation('', $this->hotaru);
+            echo $pagedResults->fetchPagedNavigation($this->hotaru);
         }
         
         // determine where to return the user to after logging in:
@@ -663,7 +663,7 @@ class Comments extends pluginFunctions
         }
         
         $pagedResults->setLayout(new DoubleBarLayout());
-        echo $pagedResults->fetchPagedNavigation('', $this->hotaru);
+        echo $pagedResults->fetchPagedNavigation($this->hotaru);
         return true;
     }
     

@@ -298,7 +298,7 @@ class UserManagerSettings extends UserManager
         
         if ($pagedResults) {
             $pagedResults->setLayout(new DoubleBarLayout());
-            $this->hotaru->vars['user_man_navi'] = $pagedResults->fetchPagedNavigation('', $this->hotaru);
+            $this->hotaru->vars['user_man_navi'] = $pagedResults->fetchPagedNavigation($this->hotaru);
         }
         
         return $output;

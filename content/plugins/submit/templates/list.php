@@ -116,7 +116,7 @@ if ($stories && ($hotaru->pageType != "profile")) {
     
     //important to set the strategy to be used before a call to fetchPagedNavigation
     $pagedResults->setLayout(new DoubleBarLayout());
-    echo $pagedResults->fetchPagedNavigation('', $hotaru);
+    echo $pagedResults->fetchPagedNavigation($hotaru);
 }
     
 ?>

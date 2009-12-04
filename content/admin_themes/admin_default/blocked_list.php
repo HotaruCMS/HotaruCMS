@@ -111,6 +111,6 @@ extract($bl_array); // extracts $output and $pagedResults;
 <?php 
     if (isset($pagedResults)) {
         $pagedResults->setLayout(new DoubleBarLayout());
-        echo $pagedResults->fetchPagedNavigation('', $admin);
+        echo $pagedResults->fetchPagedNavigation($admin);
     }
 ?>

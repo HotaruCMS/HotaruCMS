@@ -476,7 +476,7 @@ class Activity extends PluginFunctions
             echo $output;
             
             $pagedResults->setLayout(new DoubleBarLayout());
-            echo $pagedResults->fetchPagedNavigation('', $this->hotaru);
+            echo $pagedResults->fetchPagedNavigation($this->hotaru);
             return true;
         }
     }

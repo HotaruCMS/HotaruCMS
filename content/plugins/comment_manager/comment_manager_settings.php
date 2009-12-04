@@ -335,7 +335,7 @@ class CommentManagerSettings extends CommentManager
         
         if ($pagedResults) {
             $pagedResults->setLayout(new DoubleBarLayout());
-            $this->hotaru->vars['com_man_navi'] = $pagedResults->fetchPagedNavigation('', $this->hotaru);
+            $this->hotaru->vars['com_man_navi'] = $pagedResults->fetchPagedNavigation($this->hotaru);
         }
         
         return $output;
