@@ -537,7 +537,7 @@ class Comments extends pluginFunctions
             echo "<div class='comment_form_off'>" . $this->lang['comments_form_closed'] . "</div>";
             return false;
         }
- 
+
         if (!$this->hotaru->isPage('submit2')) {
             // force non-reply form to have parent "0" and depth "0"
             $this->hotaru->comment->id = 0;
@@ -664,6 +664,7 @@ class Comments extends pluginFunctions
         
         $pagedResults->setLayout(new DoubleBarLayout());
         echo $pagedResults->fetchPagedNavigation('', $this->hotaru);
+        return true;
     }
     
     
