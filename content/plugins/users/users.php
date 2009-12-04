@@ -188,8 +188,10 @@ class Users extends PluginFunctions
                     $return = 'http://' . $host . $uri;
                     $return = urlencode(htmlentities($return,ENT_QUOTES,'UTF-8'));
                 } else {
-                    $return = $this->cage->get->testUri('return'); // use existing return parameter
+                    $return = urlencode($this->cage->get->testUri('return')); // use existing return parameter
                 }
+                
+                if (strpos($return, urlencode(BASEURL)) === false) { $return = urlencode(BASEURL); }
                 
                 // No plugin results, show the regular Login / Register links:
                 if ($this->hotaru->title == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }

@@ -78,6 +78,8 @@ class RPX extends PluginFunctions
         } else {
             $return = urlencode($this->cage->get->testUri('return')); // use existing return parameter
         }
+        
+        if (strpos($return, urlencode(BASEURL)) === false) { $return = urlencode(BASEURL); }
   
         $this->tokenUrl         = urlencode(BASEURL . "index.php?page=register&amp;return=" . $return);
         //$this->tokenUrl     = $this->hotaru->url(array('page'=>'register')); // doesn't seem to work :(
