@@ -50,6 +50,7 @@ class Disqus extends PluginFunctions
      */
     public function header_include_raw()
     {
+        if (!$this->hotaru->pageType == 'post') { return false; }
         echo '
         <script type="text/javascript">
             var disqus_developer = true; 
@@ -78,6 +79,17 @@ class Disqus extends PluginFunctions
             $this->hotaru->vars['shortname'] = $this->getSetting('disqus_shortname');
             $this->hotaru->displayTemplate('disqus_comments', 'disqus');
         }
+    }
+    
+    /**
+     * Include footer code on list pages
+     */
+    public function pre_close_body()
+    {
+        if (!$this->hotaru->pageType == 'list') { return false; }
+    
+        $this->hotaru->vars['shortname'] = $this->getSetting('disqus_shortname');
+        $this->hotaru->displayTemplate('disqus_footer', 'disqus');
     }
     
 }
