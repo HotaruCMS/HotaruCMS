@@ -75,7 +75,7 @@
     <!-- End -->
        
     <link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME . 'css/screen.css'; ?>" type="text/css" />
-    <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico" />
+    <!-- <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico" /> -->
    
     <?php $hotaru->plugins->pluginHook('header_include_raw'); ?>
    
