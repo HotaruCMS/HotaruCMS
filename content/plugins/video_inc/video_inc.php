@@ -67,7 +67,7 @@ class VideoInc extends PluginFunctions
         if ($imageURL) {
             echo "<div class='video_inc_list'>\n";
             if ($this->isActive('thickbox')) {
-                echo "<a href='" . $video_inc_url . "&height=320&width=560' class='thickbox'>\n"; 
+                echo "<a href='" . $video_inc_url . "&height=336&width=588' class='thickbox'>\n"; 
                 echo "<img src='" . $imageURL . "'></a>\n";
             } else {
                 echo "<img src='" . $imageURL . "'>\n";

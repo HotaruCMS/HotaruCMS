@@ -25,8 +25,9 @@
  * @link      http://www.hotarucms.org/
  */
 
-//$bl_array = $hotaru->buildBlockedList();
-//extract($bl_array); // extracts $output and $pagedResults;
+// fixes for undefined index errors:
+if (!isset($hotaru->vars['post_man_rows'])) { $hotaru->vars['post_man_rows'] = ''; }
+if (!isset($hotaru->vars['post_man_navi'])) { $hotaru->vars['post_man_navi'] = ''; }
 ?>
 
 <!-- TITLE FOR ADMIN NEWS -->
