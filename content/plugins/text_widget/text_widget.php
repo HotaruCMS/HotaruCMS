@@ -8,6 +8,11 @@
  * requires: sidebar_widgets 0.5
  * hooks: install_plugin, hotaru_header, admin_sidebar_plugin_settings, admin_plugin_settings
  *
+ * EXAMPLE OF USING A TEMPLATE:
+ * To use the example template, create a new text widget, check the PHP box and add this code:
+ * $this->hotaru->displayTemplate('example', 'text_widget');
+ * Activate "Text Widget" in Sidebar Widgets and you should see a new search box widget in your sidebar
+ *
  * PHP version 5
  *
  * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
@@ -103,7 +108,7 @@ class TextWidget extends PluginFunctions
         $this->hotaru->showMessage();    // display any success or failure messages
 
         require_once(PLUGINS . 'text_widget/text_widget_settings.php');
-        $tw = new TextWidgetSettings($this->folder, $this->hotaru);
+        $tw = new TextWidgetSettings($this->hotaru, $this->folder);
         $tw->settings();
         return true;
     }

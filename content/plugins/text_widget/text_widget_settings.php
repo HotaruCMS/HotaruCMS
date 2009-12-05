@@ -37,7 +37,7 @@ class TextWidgetSettings extends TextWidget
             $content = html_entity_decode(stripslashes($settings['text_widget_content']), ENT_QUOTES,'UTF-8');
         
             //...otherwise set to blank:
-            if (!$mycheckbox) { $mycheckbox = ''; }
+            if (!$php_check) { $php_check = ''; }
               
             // The form should be submitted to the admin_index.php page:
             echo '<form name="text_widget_settings_form" action="' . BASEURL . 'admin_index.php?plugin=text_widget" method="post">' . "\n";
