@@ -381,7 +381,7 @@ class Tags extends PluginFunctions
         if ($this->hotaru->post->vars['useTags']) { 
             echo "<tr>";
                 echo "<td>" . $this->lang["submit_form_tags"] . "&nbsp; </td>";
-                echo "<td><input type='text' size=50 name='post_tags' value='" . $this->hotaru->post->vars['tags_check'] . "'></td>";
+                echo "<td><input type='text' id='post_tags' name='post_tags' value='" . $this->hotaru->post->vars['tags_check'] . "'></td>";
                 echo "<td>&nbsp;</td>";
             echo "</tr>";
         }

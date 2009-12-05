@@ -46,11 +46,6 @@ if (!isset($result) || !is_array($result)) {
 <div id="content-outer">
 <div id="content-wrapper" class="container_16">
     
-            <?php if ($hotaru->sidebars) { // determines whether to show the sidebar or not ?>
-
-            <?php } else { ?>
-
-                <?php } ?>
                             <!-- MAIN -->
 							
 <?php if ($hotaru->title == "submit") {  "<div id=\"submission\">"; }
@@ -96,7 +91,7 @@ else {
 							<div class=\"sidemenu\">";
                             
                                 // plugin hook
-                                $result = $hotaru->plugins->pluginHook('theme_index_sidebar');
+                                $result = $hotaru->plugins->pluginHook('theme_index_sidebar_2');
                                 if (!isset($result) || !is_array($result)) {
                                     $hotaru->displayTemplate('sidebar_right');
                                 }                                

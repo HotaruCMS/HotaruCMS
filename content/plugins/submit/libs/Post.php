@@ -618,9 +618,9 @@ class Post
         //require_once(EXTENSIONS . 'http/class.http.php');
         
         if ($url != 'http://' && $url != ''){
-            $http = new Http();
             $r = new HTTPRequest($url);
             $string = $r->DownloadToString();
+            //$http = new Http();
             //$http->execute($url);
             //$string = $http->result;
         } else {
