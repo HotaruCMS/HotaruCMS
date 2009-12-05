@@ -460,7 +460,7 @@ class Post
             $tag = str_replace('_', ' ', stripslashes(html_entity_decode($tag, ENT_QUOTES,'UTF-8'))); 
             $feed->description = $this->lang["submit_rss_stories_tagged"] . " " . $tag;
         }
-        elseif ($cat_id) 
+        elseif (isset($cat_id)) 
         { 
             $category = str_replace('_', ' ', stripslashes(html_entity_decode($cat_id, ENT_QUOTES,'UTF-8'))); 
             $feed->description = $this->lang["submit_rss_stories_in_category"] . " " . $cat->getCatName($cat_id); 
@@ -608,14 +608,21 @@ class Post
     
     /**
      * Scrapes the title from the page being submitted
+     *
+     * @param string $url
+     * @link http://www.phpfour.com/blog/2008/01/php-http-class/
      */
     public function fetchTitle($url)
     {
         require_once(EXTENSIONS . 'SWCMS/class.httprequest.php');
+        //require_once(EXTENSIONS . 'http/class.http.php');
         
         if ($url != 'http://' && $url != ''){
+            $http = new Http();
             $r = new HTTPRequest($url);
             $string = $r->DownloadToString();
+            //$http->execute($url);
+            //$string = $http->result;
         } else {
             $string = '';
         }

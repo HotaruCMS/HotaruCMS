@@ -210,7 +210,7 @@ class RssShow extends PluginFunctions
         $this->hotaru->showMessage();    // display any success or failure messages
 
         require_once(PLUGINS . 'rss_show/rss_show_settings.php');
-        $rs = new RssShowSettings($this->folder, $this->hotaru);
+        $rs = new RssShowSettings($this->hotaru, $this->folder);
         $rs->settings();
         return true;
     }

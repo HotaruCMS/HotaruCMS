@@ -411,20 +411,6 @@ class Comments extends pluginFunctions
     
     
     /**
-     * Display Admin settings page
-     *
-     * @return true
-     */
-    public function admin_plugin_settings()
-    {
-        require_once(PLUGINS . 'comments/comments_settings.php');
-        $comSettings = new CommentsSettings($this->folder, $this->hotaru);
-        $comSettings->settings();
-        return true;
-    }
-    
-    
-    /**
      * Link to comments
      */
     public function submit_show_post_extra_fields()

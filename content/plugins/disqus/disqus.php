@@ -80,19 +80,5 @@ class Disqus extends PluginFunctions
         }
     }
     
-    
-    /**
-     * Display Admin settings page
-     *
-     * @return true
-     */
-    public function admin_plugin_settings()
-    {
-        require_once(PLUGINS . 'disqus/disqus_settings.php');
-        $disqSettings = new DisqusSettings($this->folder, $this->hotaru);
-        $disqSettings->settings();
-        return true;
-    }
-
 }
 ?>

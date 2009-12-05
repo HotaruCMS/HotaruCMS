@@ -50,8 +50,8 @@ class AkismetSettings extends HotaruAkismet
         $this->pluginHook('akismet_settings_get_values');
         
         //...otherwise set to blank:
-        if (!$akismetuse) { $akismetuse = ''; } else { $akismetuse = 'checked'; }
-        if (!$akismetkey) { $akismetkey = ''; } 
+        if (!isset($akismetuse)) { $akismetuse = ''; } else { $akismetuse = 'checked'; }
+        if (!isset($akismetkey)) { $akismetkey = ''; } 
             
         echo "<form name='akismet_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=akismet' method='post'>\n";
         
