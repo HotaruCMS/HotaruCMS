@@ -40,7 +40,16 @@
     <li><a href="<?php echo BASEURL; ?>admin_index.php?page=plugins"><?php echo $admin->lang["admin_theme_plugins"]; ?></a></li>
     <li><?php echo $admin->lang["admin_theme_plugin_settings"]; ?></li>
     <ul id="plugin_settings_list">
-        <?php $admin->plugins->pluginHook('admin_sidebar_plugin_settings'); ?>
+        <?php 
+            $sb_links = $admin->plugins->pluginHook('admin_sidebar_plugin_settings');
+            if ($sb_links) {
+                $sb_links = sksort($sb_links, $subkey="name", $type="char", true);
+                foreach ($sb_links as $plugin => $details) { 
+                    echo "<li><a href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $details['plugin'] . "'>" . $details['name'] . "</a></li>";
+                }
+            }
+            
+        ?>
     </ul>
     
     <?php $admin->plugins->pluginHook('admin_sidebar'); ?>

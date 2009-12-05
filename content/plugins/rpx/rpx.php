@@ -177,7 +177,9 @@ class RPX extends PluginFunctions
      */
     public function admin_sidebar_plugin_settings()
     {
-        echo "<li><a href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $this->folder . "'>RPX</a></li>";
+        $vars['plugin'] = $this->folder;
+        $vars['name'] = "RPX";
+        return $vars;
     }
     
     

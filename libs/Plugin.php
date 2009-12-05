@@ -165,7 +165,9 @@ class Plugin
      */
     public function admin_sidebar_plugin_settings()
     {
-        echo "<li><a href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $this->folder . "'>" . make_name($this->folder) . "</a></li>";
+        $vars['plugin'] = $this->folder;
+        $vars['name'] = make_name($this->folder);
+        return $vars;
     }
     
     

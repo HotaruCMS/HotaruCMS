@@ -587,7 +587,9 @@ class Tags extends PluginFunctions
      */
     public function admin_sidebar_plugin_settings()
     {
-        echo "<li><a href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=tags'>" . $this->hotaru->lang["tags_tag_cloud"] . "</a></li>";
+        $vars['plugin'] = $this->folder;
+        $vars['name'] = $this->hotaru->lang["tags_tag_cloud"];
+        return $vars;
     }
         
 }

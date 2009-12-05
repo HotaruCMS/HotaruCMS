@@ -66,7 +66,7 @@
     
    <link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/reset-fonts-grids.css'; ?>" type="text/css">
    <link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css'; ?>" type="text/css">
-   <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico">
+   <!-- <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico"> -->
    
    <?php $admin->plugins->pluginHook('admin_header_include_raw'); ?>
       

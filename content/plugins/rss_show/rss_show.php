@@ -166,7 +166,9 @@ class RssShow extends PluginFunctions
      */
     public function admin_sidebar_plugin_settings()
     {
-        echo "<li><a href='" . $this->hotaru->url(array('page'=>'plugin_settings', 'plugin'=>'rss_show'), 'admin') . "'>" . $this->hotaru->lang["rss_show"] . "</a></li>";
+        $vars['plugin'] = $this->folder;
+        $vars['name'] = $this->hotaru->lang["rss_show"];
+        return $vars;
     }
     
     
