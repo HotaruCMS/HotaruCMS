@@ -64,7 +64,7 @@
     ?>
     <!-- End -->
     
-   <link rel="stylesheet" href="<?php echo BASEURL . 'libs/extensions/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
+   <link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/reset-fonts-grids.css'; ?>" type="text/css">
    <link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css'; ?>" type="text/css">
    <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico">
    
