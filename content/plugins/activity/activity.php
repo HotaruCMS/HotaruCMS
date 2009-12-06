@@ -225,7 +225,7 @@ class Activity extends PluginFunctions
         // Get settings from database if they exist...
         $activity_settings = $this->getSerializedSettings('activity');
         
-        $activity = $this->getLatestActivity($activity_settings, $activity_settings['activity_sidebar_number']);
+        $activity = $this->getLatestActivity($activity_settings['activity_sidebar_number']);
         
         // build link that will link the widget title to all activity...
         
@@ -257,7 +257,7 @@ class Activity extends PluginFunctions
      *
      * return array $activity
      */
-    public function getLatestActivity($activity_settings, $limit = 0, $userid = 0)
+    public function getLatestActivity($limit = 0, $userid = 0)
     {
         if (!$limit) { $limit = ""; } else { $limit = "LIMIT " . $limit; }
         
