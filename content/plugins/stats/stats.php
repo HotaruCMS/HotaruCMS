@@ -69,17 +69,19 @@
 		$sql = "SELECT post_id, post_title FROM " . TABLE_POSTS . " ORDER BY post_votes_up DESC";
 		$popPost= $this->db->get_row($this->db->prepare($sql)); // use get_row to grab more than one var
 		
-		// access each var like this
-		$popPostId = $popPost->post_id;
-		$popPostTitle = $popPost->post_title;
-		
-		// do we already have the post object available, if not make it
-        if (!isset($this->hotaru->post)) { 
-            $this->hotaru->post = new Post($this->hotaru); // used to get post information
+		if ($popPost) {
+    		// access each var like this
+    		$popPostId = $popPost->post_id;
+    		$popPostTitle = $popPost->post_title;
+    		
+    		// do we already have the post object available, if not make it
+            if (!isset($this->hotaru->post)) { 
+                $this->hotaru->post = new Post($this->hotaru); // used to get post information
+            }
+            
+            // read the post using its ID
+            $this->hotaru->post->readPost($popPostId); 
         }
-        
-        // read the post using its ID
-        $this->hotaru->post->readPost($popPostId); 
 	    
 		//Display the stats
 	    $this->includeLanguage();
