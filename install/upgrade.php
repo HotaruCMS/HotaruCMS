@@ -79,7 +79,7 @@ function html_header()
     // Title
     $header .= "<TITLE>" . $lang['upgrade_title'] . "</TITLE>\n";
     $header .= "<META HTTP-EQUIV='Content-Type' CONTENT='text'>\n";
-    $header .= "<link rel='stylesheet' href='" . BASEURL . "libs/extensions/YUI-CSS/reset-fonts-grids.css' type='text/css'>\n";
+    $header .= "<link rel='stylesheet' type='text/css' href='" . BASEURL . "install/reset-fonts-grids.css' type='text/css'>\n";
     $header .= "<link rel='stylesheet' type='text/css' href='" . BASEURL . "install/install_style.css'>\n";
     $header .= "</HEAD>\n";
     
