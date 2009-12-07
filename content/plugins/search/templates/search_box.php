@@ -31,11 +31,11 @@ if ($hotaru->cage->get->keyExists('search')) { $current_search = $hotaru->vars['
 <!-- <h2 class="sidebar_widget_head"><?php echo $hotaru->lang['search_title']; ?></h2> -->
 <div class="sidebar_widget_body search_box">
     <form name='search_form' id='search_form' action='<?php echo BASEURL; ?>index.php?page=search' method='get'> 
-        <input id="search_input" type="text" value="<?php echo $current_search;  ?>" name="search" id="searchsite"  
+        <input id="search_input" type="text" value="<?php echo $current_search;  ?>" name="search" 
             onfocus="if (this.value == '<?php echo $hotaru->lang['search_text']; ?>') {this.value = '';}"
         />
         <input type="hidden" id="dosearch" />
-        <input id="search_button" type="submit" id="search-submit" value="<?php echo $hotaru->lang['search_submit']; ?>" <?php echo $disabled; ?> />
+        <input id="search_button" type="submit" value="<?php echo $hotaru->lang['search_submit']; ?>" <?php echo $disabled; ?> />
     </form>
 </div>
 
