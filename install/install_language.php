@@ -71,6 +71,7 @@ $lang["install_step4_username"] = "Username:";
 $lang["install_step4_email"] = "Email:";
 $lang["install_step4_password"] = "Password:";
 $lang["install_step4_password_verify"] = "Password (again):";
+$lang["install_step4_csrf_error"] = "Ah! You've triggered a CSRF error. That's only supposed to happen when someone tries hacking into the site...";
 $lang["install_step4_username_error"] = "Your username must be at least 4 characters and can contain letters, dashes and underscores only";
 $lang["install_step4_password_error"] = "The password must be at least 8 characters and can only contain letters, numbers and these symbols: @ * # - _";
 $lang["install_step4_password_match_error"] = "The password fields don't match";

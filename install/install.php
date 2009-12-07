@@ -28,6 +28,9 @@
  * @link      http://www.hotarucms.org/
  */
 
+// start session:
+session_start();
+
 // Remove any cookies set in a previous installation:
 setcookie("hotaru_user", "", time()-3600, "/");
 setcookie("hotaru_key", "", time()-3600, "/");
@@ -38,6 +41,7 @@ require_once('install_tables.php');
 require_once('install_functions.php');
 require_once(LIBS . 'Hotaru.php');
 require_once(INSTALL . 'install_language.php');    // language file for install
+require_once(EXTENSIONS . 'csrf/csrf_class.php'); // protection against CSRF attacks
 require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
 require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
 require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php'); // database
@@ -212,7 +216,7 @@ function database_creation()
     }
     
     //create tables  - these should match the list in the listPluginTables function in libs/Admin.php
-    $tables = array('settings', 'miscdata', 'users', 'plugins', 'pluginhooks', 'pluginsettings', 'blocked');
+    $tables = array('settings', 'miscdata', 'users', 'plugins', 'pluginhooks', 'pluginsettings', 'blocked', 'tokens');
     foreach ($tables as $table_name) {
         create_table($table_name);
     } 
@@ -234,9 +238,22 @@ function database_creation()
 function register_admin()
 {
     global $lang;   //already included so Hotaru can't re-include it
+    global $db;
+    $safe = '';
+    $token = '';
+    $csrf = new csrf($db);  // for setting and checking tokens
     
     $hotaru  = new Hotaru('install');
     
+    // session to be used by CSRF
+    if (!isset($_SESSION['install_admin_reg'])) {
+        $_SESSION['install_admin_reg'] = time();
+    }
+    
+    // check CSRF key
+    $csrf->action = "install register admin";
+    $safe =  $csrf->checkcsrf($hotaru->cage->post->testAlnum('token'));
+
     echo html_header();
     
     // Step title
@@ -248,6 +265,14 @@ function register_admin()
     $error = 0;
     if ($hotaru->cage->post->getInt('step') == 4) 
     {
+        // Test CSRF
+        if (!$safe) {
+            $hotaru->message = $lang['install_step4_csrf_error'];
+            $hotaru->messageType = 'red';
+            $hotaru->showMessage();
+            $error = 1;
+        }
+        
         // Test username
         $name_check = $hotaru->cage->post->testUsername('username');
         // alphanumeric, dashes and underscores okay, case insensitive
@@ -293,9 +318,9 @@ function register_admin()
             $error = 1;
         }
     }
-
+    
     // Show success message
-    if (($hotaru->cage->post->getInt('step') == 4) && $error == 0) {
+    if (($hotaru->cage->post->getInt('step') == 4) && $error == 0 && $safe) {
         $hotaru->message = $lang['install_step4_update_success'];
         $hotaru->messageType = 'green';
         $hotaru->showMessage();
@@ -318,10 +343,11 @@ function register_admin()
             if (!isset($user_name)) { $user_name = ""; }
             if (!isset($user_email)){ $user_email = ""; } 
             if (!isset($user_password)) { $user_password = ""; }
-            if (($user_name != "") && ($user_email != "") && ($user_password != "")) {
+            if (($user_name != "") && ($user_email != "") && ($user_password != "") && $safe) {
                 // There's been a change so update...
                 $sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_date = CURRENT_TIMESTAMP, user_password = %s, user_email = %s, user_email_valid = %d WHERE user_role = %s";
                 $hotaru->db->query($hotaru->db->prepare($sql, $user_name, 'admin', $user_password, $user_email, 1, 'admin'));
+                $next_button = true;
             } else {
                 $user_id = $user_info->user_id;
                 $user_name = $user_info->user_username;
@@ -330,6 +356,14 @@ function register_admin()
             }
         }
     }
+    
+    // CSRF token
+    if (!$hotaru->cage->post->testAlnum('token') || ($error != 0)) {
+        // no token found so create one
+        $csrf->action = "install register admin";
+        $csrf->life = 10;
+        $token = $csrf->csrfkey();
+    } 
 
     // Registration form
     echo "<form name='install_admin_reg_form' action='" . BASEURL . "install/install.php?step=4' method='post'>\n";
@@ -348,6 +382,7 @@ function register_admin()
     // Password verify
     echo "<tr><td>" . $lang["install_step4_password_verify"] . "&nbsp; </td><td><input type='password' size=30 name='password2' value='' /></td></tr>\n";
 
+    echo "<input type='hidden' name='token' value='" . $token . "' />\n";
     echo "<input type='hidden' name='step' value='4' />\n";
     echo "<input type='hidden' name='updated' value='true' />\n";
     
@@ -362,7 +397,7 @@ function register_admin()
 
     // Previous/Next buttons
     echo "<div class='back'><a href='install.php?step=3'>" . $lang['install_back'] . "</a></div>\n";
-    if ($hotaru->cage->post->getAlpha('updated') == 'true') {
+    if ($hotaru->cage->post->getAlpha('updated') == 'true' && isset($next_button)) {
         // active "next" link if user has been updated
         echo "<div class='next'><a href='install.php?step=5'>" . $lang['install_next'] . "</a></div>\n";
     } else {

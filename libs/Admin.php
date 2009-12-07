@@ -565,7 +565,8 @@ class Admin
             'hotaru_plugins',
             'hotaru_pluginsettings',
             'hotaru_pluginhooks',
-            'hotaru_blocked'
+            'hotaru_blocked',
+            'hotaru_tokens'
         );
         
         $plugin_tables = array();

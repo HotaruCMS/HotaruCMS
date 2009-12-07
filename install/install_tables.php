@@ -237,5 +237,21 @@ function create_table($table_name)
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql);
     }
+    
+    
+    // TOKENS TABLE - used to prevent against CSRF attacks
+    
+    if ($table_name == "tokens") {
+        $sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
+          `token_id` MEDIUMINT unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          `token_sid` varchar(32) NOT NULL,
+          `token_key` CHAR(32) NOT NULL,
+          `token_stamp` INT(11) NOT NULL default '0',
+          `token_action` varchar(64),
+          INDEX  (`token_key`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Tokens for CSRF protection';";
+        echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+        $db->query($sql);
+    }
 }
 ?>

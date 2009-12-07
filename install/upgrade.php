@@ -197,6 +197,20 @@ function do_upgrade($db)
         $db->query($db->prepare($sql, 'permissions', $perms, $perms));
     }
     
+    $table_name = "tokens";
+    $exists = $db->table_exists($table_name);
+    if (!$exists) {
+        $sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
+          `token_id` MEDIUMINT unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          `token_sid` varchar(32) NOT NULL,
+          `token_key` CHAR(32) NOT NULL,
+          `token_stamp` INT(11) NOT NULL default '0',
+          `token_action` varchar(64),
+          INDEX  (`token_key`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Tokens for CSRF protection';";
+        $db->query($sql);
+    }
+    
     // add new SITE_OPEN setting
     $sql = "SELECT settings_id FROM " . DB_PREFIX . "settings WHERE settings_name = %s";
     $exists = $db->query($db->prepare($sql, 'SITE_OPEN'));
