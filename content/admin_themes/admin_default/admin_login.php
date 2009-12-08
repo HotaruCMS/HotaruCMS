@@ -56,6 +56,7 @@
     </table>
     <input type='hidden' name='login_attempted' value='true'>
     <input type='hidden' name='page' value='admin_login'>
+    <input type='hidden' name='token' value='<?php echo $admin->hotaru->token; ?>' />
     </form>
     
     <a href="#" class="forgot_password"><?php echo $admin->lang["admin_theme_login_forgot_password"]; ?></a>
@@ -71,6 +72,7 @@
     </table>
     <input type='hidden' name='forgotten_password' value='true'>
     <input type='hidden' name='page' value='admin_login'>
+    <input type='hidden' name='token' value='<?php echo $admin->hotaru->token; ?>' />
         <?php echo $admin->lang['admin_theme_login_forgot_password_submit_instruct_2']; ?>
     </form>
 

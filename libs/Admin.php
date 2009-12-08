@@ -145,6 +145,7 @@ class Admin
         
         switch ($page) {
             case "admin_login":
+                $this->sidebars = false;
                 $this->adminLogin();
                 break;
             case "admin_logout":
@@ -672,6 +673,17 @@ class Admin
         if (!$password_check = $this->cage->post->testPassword('password')) {
             $password_check = ''; 
         }
+        
+        if ($this->cage->post->keyExists('login_attempted') || $this->cage->post->keyExists('forgotten_password')) {
+            // if either the login or forgot password form is submitted, check the CSRF key
+            $csrf = new csrf($this->db);
+            $csrf->action = $this->hotaru->getPagename();
+            $safe =  $csrf->checkcsrf($this->cage->post->testAlnum('token'));
+            if (!$safe) {
+                $this->hotaru->messages[$this->lang['error_csrf']] = 'red';
+                return false;
+            }
+        }
 
         if ($username_check != '' || $password_check != '') 
         {
@@ -684,6 +696,7 @@ class Admin
                     $this->current_user->getUserBasic(0, $username_check);
                     $this->current_user->loggedIn = true;
                     $this->current_user->updateUserLastLogin();
+                    $this->sidebars = true;
                     return true;
             } else {
                     // login failed
@@ -719,6 +732,13 @@ class Admin
                 }
             }
         }
+        
+        // the above CSRF check clears the existing token if valid, so we need to generate a new one
+        // for the form that is still on the page:
+        $csrf = new csrf($this->db);  
+        $csrf->action = $this->hotaru->getPagename();
+        $csrf->life = 10; 
+        $this->hotaru->token = $csrf->csrfkey();
         
         return false;
     }

@@ -480,7 +480,14 @@ class Users extends PluginFunctions
             }
             
         } else {
-        
+
+            if ($this->cage->post->testPage('page') == 'login') {
+                // login failed
+                $this->hotaru->messages[$this->lang["users_login_failed"]] = 'red';
+            }
+            $username_check = '';
+            $password_check = '';
+            
             // forgotten password request
             if ($this->cage->post->keyExists('forgotten_password')) {
                 $this->password();
