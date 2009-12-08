@@ -138,7 +138,6 @@ class Admin
             }
         }
         
-        
         // If we get this far, we know that the user has admin access.
         
         $this->plugins->pluginHook('admin_index');
@@ -495,10 +494,17 @@ class Admin
         $error = 0;
         
         if ($this->cage->post->noTags('settings_update')  == 'true') {
+        
+            // if either the login or forgot password form is submitted, check the CSRF key
+            $csrf = new csrf($this->db);
+            $csrf->action = $this->hotaru->getPagename();
+            $safe =  $csrf->checkcsrf($this->cage->post->testAlnum('token'));
+            if (!$safe) { $error = 1; }
+        
             foreach ($loaded_settings as $setting_name) {
                 if ($this->cage->post->keyExists($setting_name->settings_name)) {
                     $setting_value = $this->cage->post->noTags($setting_name->settings_name);
-                    if ($setting_value && $setting_value != $setting_name->settings_value) {
+                    if ($safe && $setting_value && $setting_value != $setting_name->settings_value) {
                         $this->adminSettingUpdate($setting_name->settings_name, $setting_value);
     
                     } else {
@@ -528,6 +534,13 @@ class Admin
         }    
         
         $loaded_settings = $this->getAllAdminSettings();
+        
+        // the above CSRF check clears the existing token if valid, so we need to generate a new one
+        // for the form that is still on the page:
+        $csrf = new csrf($this->db);  
+        $csrf->action = $this->hotaru->getPagename();
+        $csrf->life = 10; 
+        $this->hotaru->token = $csrf->csrfkey();
         
         return $loaded_settings;
     }
@@ -733,6 +746,8 @@ class Admin
             }
         }
         
+        // the above CSRF check clears the existing token if valid, so we need to generate a new one
+        // for the form that is still on the page:
         // the above CSRF check clears the existing token if valid, so we need to generate a new one
         // for the form that is still on the page:
         $csrf = new csrf($this->db);  

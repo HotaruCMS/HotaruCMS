@@ -69,6 +69,7 @@
     
     <br />
     <input type='hidden' name='settings_update' value='true' />
+    <input type='hidden' name='token' value='<?php echo $admin->hotaru->token; ?>' />
     </table>
     <input id='settings_submit' type='submit' value='Save' />
     </form>
