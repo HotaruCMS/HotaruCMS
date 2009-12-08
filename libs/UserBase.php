@@ -32,7 +32,7 @@ class UserBase {
     protected $email        = '';
     protected $emailValid   = 0;
     protected $loggedIn     = false;
-    protected $perms        = array();    // permissions
+    protected $perms        = array();  // permissions
     protected $ip           = 0;
     
     public $vars            = array();  // multi-purpose, used by plugins
@@ -725,6 +725,16 @@ class UserBase {
         
         // Updating account info (username and email address)
         if ($this->cage->post->testAlnumLines('update_type') == 'update_general') {
+        
+            // check CSRF key
+            $csrf = new csrf($this->db);
+            $csrf->action = $this->hotaru->getPagename();
+            $safe =  $csrf->checkcsrf($this->cage->post->testAlnum('token'));
+            if (!$safe) {
+                $this->hotaru->messages[$this->lang['error_csrf']] = 'red';
+                $error = 1;
+            }
+    
             $username_check = $this->cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
             if ($username_check) {
                 $viewee->name = $username_check; // updates the db record
@@ -793,6 +803,12 @@ class UserBase {
         $checks['username_check'] = $username_check;
         $checks['email_check'] = $email_check;
         $checks['role_check'] = $role_check;
+        
+        // CSRF protection
+        $csrf = new csrf($this->db);  
+        $csrf->action = $this->hotaru->getPagename();
+        $csrf->life = 10; 
+        $this->hotaru->token = $csrf->csrfkey();
                 
         return $checks;
     }

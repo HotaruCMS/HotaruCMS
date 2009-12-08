@@ -210,7 +210,7 @@ class SidebarPosts extends PluginFunctions
             $need_cache = true;
         }
         
-        if ($this->hotaru->post->vars['useCategories']) {
+        if (isset($this->hotaru->post->vars['useCategories']) && $this->hotaru->post->vars['useCategories']) {
             require_once(PLUGINS . 'categories/libs/Category.php');
             $cat = new Category($this->db);
         }
@@ -227,7 +227,8 @@ class SidebarPosts extends PluginFunctions
             $this->hotaru->post->vars['category'] = 1;
             $this->hotaru->post->vars['catSafeName'] = '';
             
-            if ($this->hotaru->post->vars['useCategories'] && ($item->post_category != 1)) {
+            if (isset($this->hotaru->post->vars['useCategories']) && 
+                $this->hotaru->post->vars['useCategories'] && ($item->post_category != 1)) {
                 $this->hotaru->post->vars['category'] = $item->post_category;
                 $this->hotaru->post->vars['catSafeName'] =  $cat->getCatSafeName($item->post_category);
             }

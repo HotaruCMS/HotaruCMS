@@ -35,6 +35,12 @@ class HotaruStart
      */
     public function __construct($entrance)
     {
+        // session to be used by CSRF
+        if (!isset($_SESSION['HotaruCMS'])) {
+            session_start();
+            $_SESSION['HotaruCMS'] = time();
+        }
+    
         // The order here is important!
         $this->errorReporting();
         $this->getFiles();
@@ -68,6 +74,7 @@ class HotaruStart
     public function getFiles()
     {
         // include third party libraries
+        require_once(EXTENSIONS . 'csrf/csrf_class.php'); // protection against CSRF attacks
         require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
         require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
         require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php'); // database

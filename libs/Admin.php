@@ -33,8 +33,8 @@ class Admin
     public $plugins;                        // PluginFunctions object
     public $current_user;                   // UserBase object
     
-    protected $isAdmin      = true;    // flag to tell if we are in Admin or not
-    protected $sidebars = true;
+    protected $isAdmin      = true;         // flag to tell if we are in Admin or not
+    protected $sidebars     = true;         // flag to determine whther to show sidebars or not
     
     /**
      * Constructor - make an Admin object

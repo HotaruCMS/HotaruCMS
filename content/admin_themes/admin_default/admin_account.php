@@ -25,6 +25,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
+
 $checks = $admin->current_user->updateAccount();
 extract($checks); // extracts $username_check, etc.
 ?>
@@ -46,6 +47,7 @@ extract($checks); // extracts $username_check, etc.
     <tr><td><?php echo $admin->lang["admin_theme_update_email"]; ?>&nbsp; </td><td><input type='text' size=30 name='email' value='<?php echo $email_check; ?>' /></td></tr>
     <input type='hidden' name='update_type' value='update_general' />
     <input type='hidden' name='page' value='admin_account'>
+    <input type='hidden' name='token' value='<?php echo $admin->hotaru->token; ?>' />
     <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $admin->lang['admin_theme_update_form_submit']; ?>' /></td></tr>
     </table>    
     </form>
@@ -63,6 +65,7 @@ extract($checks); // extracts $username_check, etc.
     <tr><td><?php echo $admin->lang["admin_theme_update_new_password_verify"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_new2' value='<?php echo $password_check_new2; ?>' /></td></tr>
     <input type='hidden' name='update_type' value='update_password' />
     <input type='hidden' name='page' value='admin_account'>
+    <input type='hidden' name='token' value='<?php echo $admin->hotaru->token; ?>' />
     <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $admin->lang['admin_theme_update_form_submit']; ?>' /></td></tr>            
     </table>
     </form>

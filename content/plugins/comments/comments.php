@@ -156,8 +156,9 @@ class Comments extends pluginFunctions
             $perms['can_comment_manager_settings']['supermod'] = 'yes';
             $perms['can_comment_manager_settings']['moderator'] = 'yes';
             $perms['can_comment_manager_settings']['default'] = 'no';
+            
+            $this->current_user->updateDefaultPermissions($perms);
         }
-        $this->current_user->updateDefaultPermissions($perms);
 
 
         // ************

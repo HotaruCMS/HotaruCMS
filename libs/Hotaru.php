@@ -45,6 +45,7 @@ class Hotaru
     protected $templateName         = '';       // not required, but maybe useful for plugins
     protected $pluginSettings       = array();  // contains all plugin settings
     protected $pluginBasics         = array();  // contains basic plugin details
+    protected $token                = '';       // token for CSRF   
     
     protected $cssIncludes          = array();  // a list of css files to include
     protected $cssIncludesAdmin     = array();  // a list of css files to include in Admin

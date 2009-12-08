@@ -60,6 +60,9 @@ $lang['pagination_last'] = "Last";
 $lang['pagination_previous'] = "Previous";
 $lang['pagination_next'] = "Next";
 
+/* Errors */
+$lang['error_csrf'] = "Ah! You've triggered a CSRF error. That's only supposed to happen when someone tries hacking into the site...";
+
 
 /* ****************************************************************
  * ****************************************************************
