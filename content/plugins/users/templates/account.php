@@ -67,6 +67,7 @@ if ($username_check == 'deleted') { $hotaru->showMessage(); return true; } // sh
     <input type='hidden' name='userid' value='<?php echo $hotaru->vars['userid']; ?>' />
     <input type='hidden' name='page' value='account' />
     <input type='hidden' name='update_type' value='update_general' />
+    <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
     <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $hotaru->lang['users_account_update']; ?>' /></td></tr>
     </table>    
     </form>
@@ -86,6 +87,7 @@ if ($username_check == 'deleted') { $hotaru->showMessage(); return true; } // sh
         <input type='hidden' name='userid' value='<?php echo $hotaru->vars['userid']; ?>' />
         <input type='hidden' name='page' value='account' />
         <input type='hidden' name='update_type' value='update_password' />
+        <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
         <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $hotaru->lang['users_account_update']; ?>' /></td></tr>            
         </table>
         </form>

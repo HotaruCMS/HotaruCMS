@@ -830,6 +830,17 @@ class UserBase {
         
         // Updating password
         if ($this->cage->post->testAlnumLines('update_type') == 'update_password') {
+        
+            // check CSRF key
+            $csrf = new csrf($this->db);
+            $csrf->action = $this->hotaru->getPagename();
+            $safe =  $csrf->checkcsrf($this->cage->post->testAlnum('token'));
+            if (!$safe) {
+                $this->hotaru->messages[$this->lang['error_csrf']] = 'red';
+                $error = 1;
+            }
+            
+            
             $password_check_old = $this->cage->post->testPassword('password_old');    
             
             if ($this->loginCheck($this->name, $password_check_old)) {
