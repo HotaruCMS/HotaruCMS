@@ -456,6 +456,17 @@ class Users extends PluginFunctions
         if (!$password_check = $this->cage->post->testPassword('password')) { $password_check = ""; }
         if ($this->cage->post->getInt('remember') == 1) { $remember = 1; } else { $remember = 0; }
         
+        if (($this->cage->post->testPage('page') == 'login') || $this->cage->post->keyExists('forgotten_password')) {
+            // if either the login or forgot password form is submitted, check the CSRF key
+            $csrf = new csrf($this->db);
+            $csrf->action = $this->hotaru->getPagename();
+            $safe =  $csrf->checkcsrf($this->cage->post->testAlnum('token'));
+            if (!$safe) {
+                $this->hotaru->messages[$this->lang['error_csrf']] = 'red';
+                return false;
+            }
+        }
+        
         if ($username_check != "" || $password_check != "") {
             $login_result = $this->current_user->loginCheck($username_check, $password_check);
             if ($login_result) {
@@ -487,6 +498,14 @@ class Users extends PluginFunctions
                 }
             }
         }
+        
+        // the above CSRF check clears the existing token if valid, so we need to generate a new one
+        // for the form that is still on the page:
+        $csrf = new csrf($this->db);  
+        $csrf->action = $this->hotaru->getPagename();
+        $csrf->life = 10; 
+        $this->hotaru->token = $csrf->csrfkey();
+            
         return false;
     }
     
@@ -541,7 +560,7 @@ class Users extends PluginFunctions
             $this->hotaru->messages[$this->lang["users_email_invalid"]] = 'red';
             return false;
         } 
-                    
+        
         $valid_email = $this->current_user->validEmail($email_check);
         $userid = $this->current_user->getUserIdFromEmail($valid_email);
         
@@ -573,6 +592,15 @@ class Users extends PluginFunctions
         
         $error = 0;
         if ($this->cage->post->getAlpha('users_type') == 'register') {
+        
+            // check CSRF key
+            $csrf = new csrf($this->db);
+            $csrf->action = $this->hotaru->getPagename();
+            $safe =  $csrf->checkcsrf($this->cage->post->testAlnum('token'));
+            if (!$safe) {
+                $this->hotaru->messages[$this->lang['error_csrf']] = 'red';
+                $error = 1;
+            }
         
             $username_check = $this->cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
             if ($username_check) {
@@ -649,9 +677,9 @@ class Users extends PluginFunctions
             }
             
             // let plugins run their own registration checks:
-            $this->hotau->vars['reg_error'] = $error;
+            $this->hotaru->vars['reg_error'] = $error;
             $this->pluginHook('users_register_error_check');
-            $error = $this->hotau->vars['reg_error'];
+            $error = $this->hotaru->vars['reg_error'];
         }    
         
         if (!isset($username_check) && !isset($password_check) && !isset($password2_check) && !isset($email_check)) {
@@ -703,6 +731,14 @@ class Users extends PluginFunctions
             }
         } else {
             // error must = 1 so fall through and display the form again
+            
+            // the above CSRF check clears the existing token if valid, so we need to generate a new one
+            // for the form that is still on the page:
+            $csrf = new csrf($this->db);  
+            $csrf->action = $this->hotaru->getPagename();
+            $csrf->life = 10; 
+            $this->hotaru->token = $csrf->csrfkey();
+        
         }
         return false;
     }

@@ -78,6 +78,7 @@ if ($hotaru->cage->post->getAlpha('users_type') == 'register') {
             ?>
             
             <input type='hidden' name='users_type' value='register' />
+            <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
             <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $hotaru->lang['users_register_form_submit']; ?>' /></td></tr>            
             </table>
             </form>

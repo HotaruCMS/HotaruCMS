@@ -379,6 +379,7 @@ class UserBase {
     {
         // Read the current user's basic details
         $userX = $this->getUserBasic(0, $username);
+        if (!$userX) { return false; }
         
         // destroy the cookie for the following usergroups:
         $no_cookie = array('killspammed', 'banned', 'suspended');

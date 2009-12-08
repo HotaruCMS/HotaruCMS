@@ -54,6 +54,7 @@ if ($hotaru->cage->post->getInt('remember') == 1){ $remember_check = "checked"; 
             </table>
             <input type='hidden' name='page' value='login'>
             <input type='hidden' name='return' value='<?php echo $return_check; ?>'>
+            <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
             </form>
         </div>
         
@@ -70,6 +71,7 @@ if ($hotaru->cage->post->getInt('remember') == 1){ $remember_check = "checked"; 
         </table>
         <input type='hidden' name='forgotten_password' value='true'>
         <input type='hidden' name='page' value='login'>
+        <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
             <?php echo $hotaru->lang['users_login_forgot_password_submit_instruct_2']; ?>
         </form>
     
