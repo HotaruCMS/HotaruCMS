@@ -59,4 +59,5 @@ $hotaru->plugins->pluginHook('user_settings_fill_form');
     <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $hotaru->lang['users_settings_update']; ?>' /></td></tr>
     </table>
     <input type='hidden' name='updated_settings' value='true' />
+    <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
     </form>

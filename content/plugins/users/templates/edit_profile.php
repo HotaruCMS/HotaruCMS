@@ -37,7 +37,7 @@ if ($hotaru->cage->post->getAlpha('edited_profile') == 'true') {
     $hotaru->plugins->pluginHook('user_edit_profile_pre_save'); 
     $settings = $hotaru->vars['profile'];
         
-    // this hook does the actual saving. It can onlbe used by the Users plugin
+    // this hook does the actual saving. It can only be used by the Users plugin
     $hotaru->plugins->pluginHook('users_edit_profile_save', true, 'users', array($username, $profile));
 } 
 
@@ -72,4 +72,5 @@ $hotaru->plugins->pluginHook('user_edit_profile_fill_form');
     <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $hotaru->lang['users_profile_edit_update']; ?>' /></td></tr>
     </table>
     <input type='hidden' name='edited_profile' value='true' />
+    <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
     </form>

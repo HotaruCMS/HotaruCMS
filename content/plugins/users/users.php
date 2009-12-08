@@ -219,6 +219,12 @@ class Users extends PluginFunctions
         // send_email_confirmation set to true in "is_page('register')" if email confirmation is enabled
         $this->hotaru->vars['send_email_confirmation'] = false; 
         
+        // CSRF protection
+        $csrf = new csrf($this->db);  
+        $csrf->action = $this->hotaru->getPagename();
+        $csrf->life = 10; 
+        $this->hotaru->token = $csrf->csrfkey();
+        
         // Pages you have to be logged in for...
         if ($this->current_user->loggedIn) {
             if ($this->hotaru->isPage('logout')) {
@@ -884,6 +890,16 @@ class Users extends PluginFunctions
         
         // If the form has been submitted...
         if ($this->cage->post->keyExists('permissions')) {
+        
+            // check CSRF key
+            $csrf = new csrf($this->db);
+            $csrf->action = $this->hotaru->getPagename();
+            $safe =  $csrf->checkcsrf($this->cage->post->testAlnum('token'));
+            if (!$safe) {
+                $this->hotaru->messages[$this->lang['error_csrf']] = 'green';
+                return false;
+            }
+        
            foreach ($perm_options as $key => $options) {
                 if ($value = $this->cage->post->testAlnumLines($key)) {
                     $user->setPermission($key, $value);
@@ -896,6 +912,13 @@ class Users extends PluginFunctions
             $perm_options = $user->getDefaultPermissions('', 'site', true);
             $perms = $user->getAllPermissions();
             $this->hotaru->messages[$this->lang['users_permissions_updated']] = 'green';
+            
+            // the above CSRF check clears the existing token if valid, so we need to generate a new one
+            // for the form that is still on the page:
+            $csrf = new csrf($this->db);  
+            $csrf->action = $this->hotaru->getPagename();
+            $csrf->life = 10; 
+            $this->hotaru->token = $csrf->csrfkey();
         }
                
         // Breadcrumbs:
@@ -926,6 +949,7 @@ class Users extends PluginFunctions
         echo "<input type='hidden' name='page' value='permissions' />\n";
         echo "<input type='hidden' name='permissions' value='updated' />\n";
         echo "<input type='hidden' name='userid' value='" . $user->id . "' />\n";
+        echo "<input type='hidden' name='token' value='" . $this->hotaru->token . "' />\n";
         echo "<div style='text-align: right'><input class='submit' type='submit' value='" . $this->lang['users_permissions_update'] . "' /></div>\n";
         echo "</form>\n";
     }
@@ -959,12 +983,29 @@ class Users extends PluginFunctions
         require_once(PLUGINS . 'users/libs/UserFunctions.php');
         $uf = new UserFunctions($this->hotaru);
         
+        // check CSRF key
+        $csrf = new csrf($this->db);
+        $csrf->action = $this->hotaru->getPagename();
+        $safe =  $csrf->checkcsrf($this->cage->post->testAlnum('token'));
+        if (!$safe) {
+            $this->hotaru->message = $this->lang['error_csrf'];
+            $this->hotaru->messageType = "red";
+            return false;
+        }
+        
         $uf->saveProfileSettingsData($profile, 'user_profile', $userid);
         
         $this->hotaru->message = $this->lang["users_profile_edit_saved"] . "<br />\n";
         $this->hotaru->message .= "<a href='" . $this->hotaru->url(array('user'=>$username)) . "'>";
         $this->hotaru->message .= $this->lang["users_profile_edit_view_profile"] . "</a>\n";
         $this->hotaru->messageType = "green";
+        
+        // the above CSRF check clears the existing token if valid, so we need to generate a new one
+        // for the form that is still on the page:
+        $csrf = new csrf($this->db);  
+        $csrf->action = $this->hotaru->getPagename();
+        $csrf->life = 10; 
+        $this->hotaru->token = $csrf->csrfkey();
     }
     
     
@@ -980,10 +1021,27 @@ class Users extends PluginFunctions
         require_once(PLUGINS . 'users/libs/UserFunctions.php');
         $uf = new UserFunctions($this->hotaru);
         
+        // check CSRF key
+        $csrf = new csrf($this->db);
+        $csrf->action = $this->hotaru->getPagename();
+        $safe =  $csrf->checkcsrf($this->cage->post->testAlnum('token'));
+        if (!$safe) {
+            $this->hotaru->message = $this->lang['error_csrf'];
+            $this->hotaru->messageType = "red";
+            return false;
+        }
+        
         $uf->saveProfileSettingsData($settings, 'user_settings', $userid);
         
         $this->hotaru->message = $this->lang["users_settings_saved"] . "<br />\n";
         $this->hotaru->messageType = "green";
+    
+        // the above CSRF check clears the existing token if valid, so we need to generate a new one
+        // for the form that is still on the page:
+        $csrf = new csrf($this->db);  
+        $csrf->action = $this->hotaru->getPagename();
+        $csrf->life = 10; 
+        $this->hotaru->token = $csrf->csrfkey();
     }
     
     
