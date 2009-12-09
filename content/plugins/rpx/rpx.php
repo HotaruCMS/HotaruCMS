@@ -55,7 +55,6 @@ class RPX extends PluginFunctions
         if ($folder) { 
             $this->folder = $folder; 
         }
-
         $this->hotaru           = $hotaru;
         $this->db               = $hotaru->db;
         $this->cage             = $hotaru->cage;
@@ -224,8 +223,9 @@ class RPX extends PluginFunctions
     public function hotaru_header()
     {
         // get the token if available. If not, stop executing this function
+        // also stop here if there's no apiKey
         $token = $this->cage->get->getMixedString1('token');
-        if (!$token) { return false; }
+        if (!$token || !$this->apiKey) { return false; }
         
         // get the functions file:
         require_once(PLUGINS . 'rpx/libs/RpxFunctions.php');

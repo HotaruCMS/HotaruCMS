@@ -46,6 +46,7 @@
         <div style="float: right;">
             <input style='padding: 2px;' type='submit' name='delete_confirm_no' value='<?php echo $hotaru->lang["cat_man_delete_no_cancel"]; ?>'>&nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='delete_confirm_yes' value='<?php echo $hotaru->lang["cat_man_delete_yes_delete"]; ?>'>
         </div>
+        <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
         </form>
     </td>
     </tr></table>

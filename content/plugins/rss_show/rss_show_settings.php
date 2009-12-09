@@ -109,6 +109,7 @@ class RssShowSettings extends RssShow
         echo "<input type='hidden' name='plugin' value='rss_show' />";
         echo "<input type='hidden' name='rss_show_id' value='$id' />";
         echo "<input type='submit' value='" . $this->hotaru->lang["rss_show_save"] . "' />";
+        echo "<input type='hidden' name='token' value='" . $this->hotaru->token . "' />\n";
         echo "</form>";
         
         $id++;

@@ -328,6 +328,7 @@ class CommentManagerSettings extends CommentManager
                 $output .= "<input type='hidden' name='cid' value='" . $c->id . "' />\n";
                 $output .= "<input type='hidden' name='page' value='plugin_settings' />\n";
                 $output .= "<input type='hidden' name='type' value='edit' />\n";
+                $output .= "<input type='hidden' name='token' value='" . $this->hotaru->token . "' />\n";
                 $output .= "</form>\n";
                 $output .= "</tr>";
             }

@@ -537,10 +537,12 @@ class Admin
         
         // the above CSRF check clears the existing token if valid, so we need to generate a new one
         // for the form that is still on the page:
-        $csrf = new csrf($this->db);  
-        $csrf->action = $this->hotaru->getPagename();
-        $csrf->life = 10; 
-        $this->hotaru->token = $csrf->csrfkey();
+        if (!$this->hotaru->token) {
+            $csrf = new csrf($this->db);  
+            $csrf->action = $this->hotaru->getPagename();
+            $csrf->life = 10; 
+            $this->hotaru->token = $csrf->csrfkey();
+        }
         
         return $loaded_settings;
     }
@@ -748,10 +750,12 @@ class Admin
         
         // the above CSRF check clears the existing token if valid, so we need to generate a new one
         // for the form that is still on the page:
-        $csrf = new csrf($this->db);  
-        $csrf->action = $this->hotaru->getPagename();
-        $csrf->life = 10; 
-        $this->hotaru->token = $csrf->csrfkey();
+        if (!$this->hotaru->token) {
+            $csrf = new csrf($this->db);  
+            $csrf->action = $this->hotaru->getPagename();
+            $csrf->life = 10; 
+            $this->hotaru->token = $csrf->csrfkey();
+        }
         
         return false;
     }
@@ -984,10 +988,12 @@ class Admin
         
         // the above CSRF check clears the existing token if valid, so we need to generate a new one
         // for the form that is still on the page:
-        $csrf = new csrf($this->db);  
-        $csrf->action = $this->hotaru->getPagename();
-        $csrf->life = 10; 
-        $this->hotaru->token = $csrf->csrfkey();
+        if (!$this->hotaru->token) {
+            $csrf = new csrf($this->db);  
+            $csrf->action = $this->hotaru->getPagename();
+            $csrf->life = 10; 
+            $this->hotaru->token = $csrf->csrfkey();
+        }
         
         // if new item to block
         if ($safe && $this->cage->post->getAlpha('type') == 'new') {

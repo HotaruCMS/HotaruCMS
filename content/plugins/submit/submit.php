@@ -638,21 +638,11 @@ class Submit extends PluginFunctions
             // Show the list of posts
             $this->hotaru->displayTemplate('list', 'submit');
             return true;
-            
         }
         
-        if ($this->hotaru->isPage('main') && 
-            (!isset($this->hotaru->post->vars['isCategoryPost']) || 
-            $this->hotaru->post->vars['isCategoryPost'])) {
+        if ($this->hotaru->isPage('main')) {
             // Show the list of posts
             $this->hotaru->displayTemplate('list', 'submit');
-            return true;
-        }
-
-        // page not found
-        if (isset($this->hotaru->post->vars['isCategoryPost']) && 
-            $this->hotaru->post->vars['isCategoryPost'] == 'error') {
-            $this->hotaru->displayTemplate('404');
             return true;
         }
     }

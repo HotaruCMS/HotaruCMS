@@ -52,6 +52,7 @@ class TextWidgetSettings extends TextWidget
             
             echo "<br /><br />";
             echo '<input type="submit" value="' . $this->lang['text_widget_settings_save'] . '" />' . "\n";
+            echo "<input type='hidden' name='token' value='" . $this->hotaru->token . "' />\n";
             echo '</form>' . "\n";
             
             $id++;

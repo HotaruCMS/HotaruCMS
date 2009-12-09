@@ -85,28 +85,6 @@ class Search extends PluginFunctions
         $this->hotaru->displayTemplate('search_box', 'search');
     }
     
-    /**
-     * Request the search results
-     *
-     * @return bool
-     */
-    public function theme_index_replace()
-    {
-        if ($this->hotaru->isPage('search')) {
-        
-            $search_terms = $this->cage->get->getMixedString2('search');
-            
-            $this->search($search_terms);
-    
-            return true;
-            
-        } else {
-            return false;
-        }
-        
-        return false;
-    }
-    
     
     /**
      * Use the search terms to build a filter
@@ -117,10 +95,9 @@ class Search extends PluginFunctions
         {
             $orig_search_terms = stripslashes($this->cage->get->getMixedString2('search'));
             $search_terms = $orig_search_terms;
-            
+        
             if ($search_terms)
             {
-    
                 // fetch select, orderby and filter...
                 $prepared_search = $this->prepareSearchFilter($search_terms);
                 extract($prepared_search);

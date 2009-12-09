@@ -219,11 +219,13 @@ class Users extends PluginFunctions
         // send_email_confirmation set to true in "is_page('register')" if email confirmation is enabled
         $this->hotaru->vars['send_email_confirmation'] = false; 
         
-        // CSRF protection
-        $csrf = new csrf($this->db);  
-        $csrf->action = $this->hotaru->getPagename();
-        $csrf->life = 10; 
-        $this->hotaru->token = $csrf->csrfkey();
+        if (!$this->hotaru->token) {
+            // CSRF protection
+            $csrf = new csrf($this->db);  
+            $csrf->action = $this->hotaru->getPagename();
+            $csrf->life = 10; 
+            $this->hotaru->token = $csrf->csrfkey();
+        }
         
         // Pages you have to be logged in for...
         if ($this->current_user->loggedIn) {
@@ -508,10 +510,12 @@ class Users extends PluginFunctions
         
         // the above CSRF check clears the existing token if valid, so we need to generate a new one
         // for the form that is still on the page:
-        $csrf = new csrf($this->db);  
-        $csrf->action = $this->hotaru->getPagename();
-        $csrf->life = 10; 
-        $this->hotaru->token = $csrf->csrfkey();
+        if (!$this->hotaru->token) {
+            $csrf = new csrf($this->db);  
+            $csrf->action = $this->hotaru->getPagename();
+            $csrf->life = 10; 
+            $this->hotaru->token = $csrf->csrfkey();
+        }
             
         return false;
     }
@@ -741,10 +745,12 @@ class Users extends PluginFunctions
             
             // the above CSRF check clears the existing token if valid, so we need to generate a new one
             // for the form that is still on the page:
-            $csrf = new csrf($this->db);  
-            $csrf->action = $this->hotaru->getPagename();
-            $csrf->life = 10; 
-            $this->hotaru->token = $csrf->csrfkey();
+            if (!$this->hotaru->token) {
+                $csrf = new csrf($this->db);  
+                $csrf->action = $this->hotaru->getPagename();
+                $csrf->life = 10; 
+                $this->hotaru->token = $csrf->csrfkey();
+            }
         
         }
         return false;
@@ -958,10 +964,12 @@ class Users extends PluginFunctions
             
             // the above CSRF check clears the existing token if valid, so we need to generate a new one
             // for the form that is still on the page:
-            $csrf = new csrf($this->db);  
-            $csrf->action = $this->hotaru->getPagename();
-            $csrf->life = 10; 
-            $this->hotaru->token = $csrf->csrfkey();
+            if (!$this->hotaru->token) {
+                $csrf = new csrf($this->db);  
+                $csrf->action = $this->hotaru->getPagename();
+                $csrf->life = 10; 
+                $this->hotaru->token = $csrf->csrfkey();
+            }
         }
                
         // Breadcrumbs:
@@ -1045,10 +1053,12 @@ class Users extends PluginFunctions
         
         // the above CSRF check clears the existing token if valid, so we need to generate a new one
         // for the form that is still on the page:
-        $csrf = new csrf($this->db);  
-        $csrf->action = $this->hotaru->getPagename();
-        $csrf->life = 10; 
-        $this->hotaru->token = $csrf->csrfkey();
+        if (!$this->hotaru->token) {
+            $csrf = new csrf($this->db);  
+            $csrf->action = $this->hotaru->getPagename();
+            $csrf->life = 10; 
+            $this->hotaru->token = $csrf->csrfkey();
+        }
     }
     
     
@@ -1081,10 +1091,12 @@ class Users extends PluginFunctions
     
         // the above CSRF check clears the existing token if valid, so we need to generate a new one
         // for the form that is still on the page:
-        $csrf = new csrf($this->db);  
-        $csrf->action = $this->hotaru->getPagename();
-        $csrf->life = 10; 
-        $this->hotaru->token = $csrf->csrfkey();
+        if (!$this->hotaru->token) {
+            $csrf = new csrf($this->db);  
+            $csrf->action = $this->hotaru->getPagename();
+            $csrf->life = 10; 
+            $this->hotaru->token = $csrf->csrfkey();
+        }
     }
     
     

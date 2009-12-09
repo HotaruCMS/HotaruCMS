@@ -806,10 +806,12 @@ class UserBase {
         $checks['role_check'] = $role_check;
         
         // CSRF protection
-        $csrf = new csrf($this->db);  
-        $csrf->action = $this->hotaru->getPagename();
-        $csrf->life = 10; 
-        $this->hotaru->token = $csrf->csrfkey();
+        if (!$this->hotaru->token) {
+            $csrf = new csrf($this->db);  
+            $csrf->action = $this->hotaru->getPagename();
+            $csrf->life = 10; 
+            $this->hotaru->token = $csrf->csrfkey();
+        }
                 
         return $checks;
     }

@@ -33,7 +33,7 @@ class UserManagerSettings extends UserManager
      * @return bool
      */
     public function settings()
-    {   
+    {
         // grab the number of pending users:
         $sql = "SELECT COUNT(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
         $num_pending = $this->db->get_var($this->db->prepare($sql, 'pending'));

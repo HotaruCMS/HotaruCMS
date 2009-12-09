@@ -181,6 +181,9 @@ class Plugin
         // This requires there to be a file in the plugin folder called pluginname_settings.php
         // The file must contain a class titled PluginNameSettings
         // The class must have a method called "settings".
+        
+        if ($this->cage->get->testAlnumLines('plugin') != $this->folder) { return false; }
+        
         if (file_exists(PLUGINS . $this->folder . '/' . $this->folder . '_settings.php')) {
             include_once(PLUGINS . $this->folder . '/' . $this->folder . '_settings.php');
         }

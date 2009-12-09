@@ -68,6 +68,7 @@ class AkismetSettings extends HotaruAkismet
         echo "<br /><br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
         echo "<input type='submit' value='" . $this->lang["akismet_settings_save"] . "' />\n";
+        echo "<input type='hidden' name='token' value='" . $this->hotaru->token . "' />\n";
         echo "</form>\n";
     }
     

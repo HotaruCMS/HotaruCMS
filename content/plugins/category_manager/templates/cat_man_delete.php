@@ -65,6 +65,7 @@
         <div style="text-align: center;">
             <input type='submit' name='cancel_all' value='<?php echo $hotaru->lang["cat_man_cancel"]; ?>'>&nbsp;&nbsp;<input type='submit' name='delete' value='<?php echo $hotaru->lang["cat_man_delete_selected"]; ?>'>
         </div>
+        <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
         </form>
     </td>
     

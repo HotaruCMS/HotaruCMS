@@ -69,6 +69,7 @@
                               ?>
                               </select>
                         <input type='submit' name='save_form1' value='<?php echo $hotaru->lang["cat_man_go"]; ?>'>
+                        <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
                     </form>
                     <?php if ($cat['category_parent'] > 1) { ?>
                         <?php echo $hotaru->lang["cat_man_move_or"]; ?> 
@@ -88,6 +89,7 @@
                               ?>
                               </select>
                             <input type='submit' name='save_form2' value='<?php echo $hotaru->lang["cat_man_go"]; ?>'>
+                            <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
                         </form>
                     <?php } ?>
                 </div>

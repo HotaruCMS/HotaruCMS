@@ -52,6 +52,7 @@ if (!isset($hotaru->vars['com_man_navi'])) { $hotaru->vars['com_man_navi'] = '';
     <input type='hidden' name='plugin' value='comment_manager' />
     <input type='hidden' name='page' value='plugin_settings' />
     <input type='hidden' name='type' value='search' />
+    <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
 </form>
 
 </td><td>
@@ -76,6 +77,7 @@ if (!isset($hotaru->vars['com_man_navi'])) { $hotaru->vars['com_man_navi'] = '';
     <input type='hidden' name='plugin' value='comment_manager' />
     <input type='hidden' name='page' value='plugin_settings' />
     <input type='hidden' name='type' value='filter' />
+    <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
 </form>
 
 </tr></table>

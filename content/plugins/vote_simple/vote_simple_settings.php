@@ -99,6 +99,7 @@ echo "<p><input type='checkbox' name='sb_votes' value='sb_votes' " . $sidebar_vo
         echo "<br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
         echo "<input type='submit' value='" . $this->lang["vote_settings_save"] . "' />\n";
+        echo "<input type='hidden' name='token' value='" . $this->hotaru->token . "' />\n";
         echo "</form>\n";
     }
     

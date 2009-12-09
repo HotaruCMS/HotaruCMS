@@ -58,6 +58,7 @@ class PliggImp3
         echo "<input type='hidden' name='submitted' value='true' />\n";
         echo "<input type='hidden' name='table' value='Comments' />\n";
         echo "<input type='submit' name='submit' value='Upload' />\n";
+        echo "<input type='hidden' name='token' value='" . $this->hotaru->token . "' />\n";
         echo "</form>\n";
     }
     
