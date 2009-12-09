@@ -372,7 +372,6 @@ class Submit extends PluginFunctions
         
                     // this is step 3
                     $this->hotaru->templateName = "submit_step3";
-                    echo $this->hotaru->templateName;
                 
                     $post_id = $this->cage->post->getInt('post_id');
                     $this->hotaru->post->readPost($post_id);
