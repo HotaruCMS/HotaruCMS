@@ -748,8 +748,6 @@ class Admin
         
         // the above CSRF check clears the existing token if valid, so we need to generate a new one
         // for the form that is still on the page:
-        // the above CSRF check clears the existing token if valid, so we need to generate a new one
-        // for the form that is still on the page:
         $csrf = new csrf($this->db);  
         $csrf->action = $this->hotaru->getPagename();
         $csrf->life = 10; 
@@ -972,8 +970,27 @@ class Admin
      */
     public function buildBlockedList()
     {
+        $safe = ''; // CSRF flag
+        
+        if ($this->cage->post->keyExists('type')) {
+            $csrf = new csrf($this->db);
+            $csrf->action = $this->hotaru->getPagename();
+            $safe =  $csrf->checkcsrf($this->cage->post->testAlnum('token'));
+            if (!$safe) {
+                $this->hotaru->message = $this->lang['error_csrf'];
+                $this->hotaru->messageType = 'red';
+            }
+        }
+        
+        // the above CSRF check clears the existing token if valid, so we need to generate a new one
+        // for the form that is still on the page:
+        $csrf = new csrf($this->db);  
+        $csrf->action = $this->hotaru->getPagename();
+        $csrf->life = 10; 
+        $this->hotaru->token = $csrf->csrfkey();
+        
         // if new item to block
-        if ($this->cage->post->getAlpha('type') == 'new') {
+        if ($safe && $this->cage->post->getAlpha('type') == 'new') {
             $type = $this->cage->post->testAlnumLines('blocked_type');
             $value = $this->cage->post->getMixedString2('value');
             
@@ -986,7 +1003,7 @@ class Admin
         }
         
         // if edit item
-        if ($this->cage->post->getAlpha('type') == 'edit') {
+        if ($safe && $this->cage->post->getAlpha('type') == 'edit') {
             $id = $this->cage->post->testInt('id');
             $type = $this->cage->post->testAlnumLines('blocked_type');
             $value = $this->cage->post->getMixedString2('value');
@@ -996,7 +1013,7 @@ class Admin
         }
         
         // if remove item
-        if ($this->cage->get->getAlpha('action') == 'remove') {
+        if ($safe && $this->cage->get->getAlpha('action') == 'remove') {
             $id = $this->cage->get->testInt('id');
             $this->removeFromBlockedList($id);
             $this->hotaru->message = $this->lang["admin_blocked_list_removed"];
@@ -1008,13 +1025,13 @@ class Admin
         $where_clause = '';
         
         // if search
-        if ($this->cage->post->getAlpha('type') == 'search') {
+        if ($safe && $this->cage->post->getAlpha('type') == 'search') {
             $search_term = $this->cage->post->getMixedString2('search_value');
             $where_clause = " WHERE blocked_value LIKE '%" . trim($this->db->escape($search_term)) . "%'";
         }
         
         // if filter
-        if ($this->cage->post->getAlpha('type') == 'filter') {
+        if ($safe && $this->cage->post->getAlpha('type') == 'filter') {
             $filter = $this->cage->post->testAlnumLines('blocked_type');
             if ($filter == 'all') { $where_clause = ''; } else { $where_clause = " WHERE blocked_type = %s"; }
         }
@@ -1080,6 +1097,7 @@ class Admin
             $output .= "<input type='hidden' name='id' value='" . $block->blocked_id . "' />\n";
             $output .= "<input type='hidden' name='page' value='blocked_list' />\n";
             $output .= "<input type='hidden' name='type' value='edit' />\n";
+            $output .= "<input type='hidden' name='token' value='" . $this->hotaru->token . "' />";
             $output .= "</form>\n";
             $output .= "</td>";
             $output .= "<td class='table_description_close'><a class='table_hide_details' href='#'>" . $this->lang["admin_theme_plugins_close"] . "</a></td>";
@@ -1087,6 +1105,7 @@ class Admin
         }
 
         $blocked_array = array('blocked_items' => $output, 'pagedResults' => $pagedResults);
+        
         return $blocked_array;
     }
     

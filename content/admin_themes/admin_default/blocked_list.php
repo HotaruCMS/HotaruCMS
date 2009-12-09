@@ -58,6 +58,7 @@ extract($bl_array); // extracts $output and $pagedResults;
     </table>
     <input type='hidden' name='page' value='blocked_list' />
     <input type='hidden' name='type' value='new' />
+    <input type='hidden' name='token' value='<?php echo $admin->hotaru->token; ?>' />
 </form>
 
 <table><tr><td>
@@ -72,6 +73,7 @@ extract($bl_array); // extracts $output and $pagedResults;
     </table>
     <input type='hidden' name='page' value='blocked_list' />
     <input type='hidden' name='type' value='search' />
+    <input type='hidden' name='token' value='<?php echo $admin->hotaru->token; ?>' />
 </form>
 
 </td><td>
@@ -92,6 +94,7 @@ extract($bl_array); // extracts $output and $pagedResults;
     </table>
     <input type='hidden' name='page' value='blocked_list' />
     <input type='hidden' name='type' value='filter' />
+    <input type='hidden' name='token' value='<?php echo $admin->hotaru->token; ?>' />
 </form>
 
 </tr></table>
