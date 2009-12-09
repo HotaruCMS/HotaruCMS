@@ -1,8 +1,8 @@
 <?php 
 /**
- * Theme name: hotaru-light
+ * Theme name: default
  * Template name: sidebar.php
- * Template author: carlo75
+ * Template author: Nick Ramsay
  *
  * PHP version 5
  *

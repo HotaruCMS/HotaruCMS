@@ -33,9 +33,8 @@
             $hotaru->plugins->pluginHook('footer');
         
             // Link to forums...
-            echo "<p>" . $hotaru->lang["main_theme_footer_brought_by"];
-            echo " <a href='http://hotarucms.org'>Hotaru CMS</a> ";
-            echo $hotaru->lang["main_theme_footer_open_source"] . "</p>";
+            echo "<p><a href='http://hotarucms.org' title='" . $hotaru->lang["main_theme_footer_hotaru_link"] . "'><img src='" . BASEURL . "content/themes/" . THEME . "images/hotarucms.png' ";
+            echo "alt='" . $hotaru->lang["main_theme_footer_hotaru_link"] . "' /></a></p>";
         
             $hotaru->showQueriesAndTime();
         ?>
