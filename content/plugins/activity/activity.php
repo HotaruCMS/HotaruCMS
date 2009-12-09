@@ -432,9 +432,9 @@ class Activity extends PluginFunctions
                 
             // Get settings from database if they exist...
             $activity_settings = $this->getSerializedSettings('activity');
+
             // gets however many are items shown per page on activity pages:
-            $activity = $this->getLatestActivity($activity_settings, 0, $userid); // 0 means no limit, ALL activity 
-        
+            $activity = $this->getLatestActivity(0, $userid); // 0 means no limit, ALL activity 
             
             if ($this->hotaru->pageType == 'profile') {
                 $anchor_title = htmlentities($this->lang["activity_title_anchor_title"], ENT_QUOTES, 'UTF-8');
@@ -529,7 +529,7 @@ class Activity extends PluginFunctions
 
         // Get settings from database if they exist...
         $activity_settings = $this->getSerializedSettings('activity');
-        $activity = $this->getLatestActivity($activity_settings, $activity_settings['activity_sidebar_number'], $userid);
+        $activity = $this->getLatestActivity($activity_settings['activity_sidebar_number'], $userid);
         
         if (!$activity) { echo $feed->serve(); return false; } // displays empty RSS feed
                 
