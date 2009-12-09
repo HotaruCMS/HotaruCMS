@@ -698,3 +698,4 @@ textarea#post_content {
 
 #search_form { padding: 0; text-align: right;}
 #search_form input#search_input { padding: 0.2em; width: 145px; }
+#search_form input#search_button {margin-right: 5px; color: #fff; background: #9CCF5F; border-width: 1px; border-style: solid; border-color: #B6DE8F #8DB836 #8DB836 #B6DE8F;}
