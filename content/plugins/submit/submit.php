@@ -279,7 +279,7 @@ class Submit extends PluginFunctions
      */
     public function navigation()
     {   
-        if ($this->current_user->loggedIn && $this->hotaru->post->useSubmission) {
+        if ($this->current_user->loggedIn && isset($this->hotaru->post) && $this->hotaru->post->useSubmission) {
             if ($this->hotaru->title == 'submit') { $status = "id='navigation_active'"; } else { $status = ""; }
             echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'submit')) . "'>" . $this->lang['submit_submit_a_story'] . "</a></li>\n";
         }
