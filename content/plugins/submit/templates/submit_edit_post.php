@@ -163,6 +163,7 @@ $hotaru->plugins->pluginHook('submit_form_2_assign');
     <input type='hidden' name='pg' value='<?php echo $pg; ?>' />
     <input type='hidden' name='post_id' value='<?php echo $post_id ?>' />
     <input type='hidden' name='edit_post' value='true' />
+    <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
     
     <tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' class='submit' name='submit_edit_post' value='<?php echo $hotaru->lang["submit_edit_post_save"]; ?>' /></td></tr>    
     </table>

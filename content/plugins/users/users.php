@@ -945,7 +945,7 @@ class Users extends PluginFunctions
             $csrf->action = $this->hotaru->getPagename();
             $safe =  $csrf->checkcsrf($this->cage->post->testAlnum('token'));
             if (!$safe) {
-                $this->hotaru->messages[$this->lang['error_csrf']] = 'green';
+                $this->hotaru->messages[$this->lang['error_csrf']] = 'red';
                 return false;
             }
         

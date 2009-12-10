@@ -91,6 +91,7 @@ $hotaru->plugins->pluginHook('submit_form_2_assign');
     <input type='hidden' name='post_orig_url' value='<?php echo $post_orig_url; ?>' />
     <input type='hidden' name='post_id' value='<?php echo $post_id; ?>' />
     <input type='hidden' name='submit2' value='true' />
+    <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
     
     <tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' onclick="javascript:safeExit=true;" class='submit' name='submit' value='<?php echo $hotaru->lang['submit_form_submit_next_button']; ?>' /></td></tr>    
     </table>

@@ -510,6 +510,12 @@ class Submit extends PluginFunctions
      */
     public function theme_index_main()
     {
+        // CSRF protection
+        $csrf = new csrf($this->db);  
+        $csrf->action = 'submit';
+        $csrf->life = 10; 
+        $this->hotaru->token = $csrf->csrfkey();
+        
         if ($this->hotaru->isPage('submit')) {
               
             if ($this->current_user->loggedIn) {
@@ -607,7 +613,6 @@ class Submit extends PluginFunctions
             }
                         
         } elseif ($this->hotaru->pageType == 'post') {
-            echo "HERE";
             // We found out this is a post from the hotaru_header function above.
             $this->hotaru->displayTemplate('post', 'submit');
             return true;
@@ -743,6 +748,15 @@ class Submit extends PluginFunctions
         $submit_settings = $this->getSerializedSettings();
         $url_limit = $submit_settings['post_url_limit'];
         
+        // ******** CHECK CSRF *******
+        $error_csrf = 0;
+        $csrf = new csrf($this->db);
+        $csrf->action = 'submit';
+        $safe =  $csrf->checkcsrf($this->cage->post->testAlnum('token'));
+        if (!$safe) {
+            $this->hotaru->messages[$this->lang['error_csrf']] = "red";
+            $error_csrf = 1;
+        }
     
         // ******** CHECK URL ********
         $error_url = 0;
@@ -811,7 +825,7 @@ class Submit extends PluginFunctions
         }
         
         // Return true if error is found
-        if ($error_url == 1 || $error_title == 1 || $error_content == 1 || $error_hooks == 1) { return true; } else { return false; }
+        if ($error_csrf == 1 || $error_url == 1 || $error_title == 1 || $error_content == 1 || $error_hooks == 1) { return true; } else { return false; }
     }
     
     
