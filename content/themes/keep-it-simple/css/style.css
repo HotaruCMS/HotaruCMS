@@ -617,6 +617,17 @@ ol.commentlist {
 	text-transform:uppercase;
 }
 
+#category_bar li li a:hover, #category_bar li li a:active {
+background:#7BA857 none repeat scroll 0 0;
+color:#FFFFFF;
+}
+
+#category_bar li li {
+float:left;
+margin:0;
+padding:0;
+width:160px;
+}
 
 /* breadcrumb */
 
