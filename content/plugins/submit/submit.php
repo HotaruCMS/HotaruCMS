@@ -203,7 +203,7 @@ class Submit extends PluginFunctions
             $this->hotaru->post->readPost($post_id);    // read current post
             $this->hotaru->pageType = 'post';
             $this->hotaru->title = $this->hotaru->post->title;
-            
+
         } else {
             $this->hotaru->post->readPost();    // read current post settings only
             $this->hotaru->pageType = 'list';
@@ -239,8 +239,20 @@ class Submit extends PluginFunctions
             }
         }
 
+        // Plugin Hook
         $this->pluginHook('submit_hotaru_header_2');
         $this->hotaru->title = stripslashes($this->hotaru->title);
+        
+        // Redirect to error page on post_error (post_error is set in Post readPost function)
+        if ($this->hotaru->post->vars['post_error']) { 
+            header("Location: " . $this->hotaru->url(array('page'=>'404error')));    // Page not found
+        }
+        
+        // Clean the title if looking at the 404 Error page:
+        if ($this->hotaru->getPagename() == '404error') {
+            $this->hotaru->title = $this->lang['main_theme_page_not_found'];
+            $this->hotaru->templateName = '404error';
+        }
     }
     
     
@@ -595,6 +607,7 @@ class Submit extends PluginFunctions
             }
                         
         } elseif ($this->hotaru->pageType == 'post') {
+            echo "HERE";
             // We found out this is a post from the hotaru_header function above.
             $this->hotaru->displayTemplate('post', 'submit');
             return true;

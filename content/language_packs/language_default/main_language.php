@@ -96,6 +96,6 @@ $lang['main_times_minute'] = "min";
 $lang['main_times_seconds'] = "a few seconds";
 
 /* 404 */
-$lang["main_theme_page_not_found"] = "Page not found.";
+$lang["main_theme_page_not_found"] = "Page not found";
 
 ?>

@@ -283,13 +283,13 @@ class Admin
                 return true;
                 die();
         }
-        elseif (file_exists(ADMIN_THEMES . ADMIN_THEME . '404.php')) 
+        elseif (file_exists(ADMIN_THEMES . ADMIN_THEME . '404error.php')) 
         {
-            include_once(ADMIN_THEMES . ADMIN_THEME . '404.php');
+            include_once(ADMIN_THEMES . ADMIN_THEME . '404error.php');
         }
         else
         {
-            include_once(ADMIN_THEMES . '404.php');
+            include_once(ADMIN_THEMES . '404error.php');
         }
     }
     

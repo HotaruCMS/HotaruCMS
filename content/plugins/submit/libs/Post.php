@@ -106,6 +106,8 @@ class Post
      */    
     public function readPost($post_id = 0, $post_row = NULL)
     {
+        $this->vars['post_error'] = false; 
+        
         // Get settings from database if they exist...
         $submit_settings = $this->plugins->getSerializedSettings('submit');
         
@@ -140,6 +142,7 @@ class Post
         
         if ($post_id != 0) {
             $post_row = $this->getPost($post_id);
+            if (!$post_row) { $this->vars['post_error'] = true; return false; }
         }
         
         if ($post_row) {

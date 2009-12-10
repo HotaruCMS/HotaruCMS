@@ -430,13 +430,13 @@ class Hotaru
                 return true;
                 die();
         }
-        elseif (file_exists(THEMES . THEME . '404.php')) 
+        elseif (file_exists(THEMES . THEME . '404error.php')) 
         {
-            include_once(THEMES . THEME . '404.php');
+            include_once(THEMES . THEME . '404error.php');
         }
         else
         {
-            include_once(THEMES . '404.php');
+            include_once(THEMES . '404error.php');
         }
     }
     
