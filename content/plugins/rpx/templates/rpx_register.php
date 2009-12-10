@@ -29,6 +29,7 @@ if ($hotaru->cage->post->getAlpha('users_type') == 'register') {
     $hotaru->vars['rpx_profile']['email'] = $hotaru->cage->post->testEmail('email');
     $hotaru->vars['rpx_profile']['identifier'] = $hotaru->cage->post->testUri('identifier');
 }
+
 ?>
 
 <div id='main'>
@@ -36,7 +37,7 @@ if ($hotaru->cage->post->getAlpha('users_type') == 'register') {
         
     <h2><?php echo $hotaru->lang["users_register"]; ?></h2>
     
-    <?php if (!$hotaru->vars['rpx_already_exists']) { ?>
+    <?php if (!isset($hotaru->vars['rpx_already_exists'])) { ?>
         
         <?php echo $hotaru->showMessages(); ?>
             
@@ -68,6 +69,7 @@ if ($hotaru->cage->post->getAlpha('users_type') == 'register') {
             <input type='hidden' name='users_type' value='register' />
             <input type='hidden' name='rpx' value='true' />
             <input type='hidden' name='identifier' value='<?php echo $hotaru->vars['rpx_profile']['identifier']; ?>' />
+            <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
             <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $hotaru->lang['users_register_form_submit']; ?>' /></td></tr>            
             </table>
             </form>

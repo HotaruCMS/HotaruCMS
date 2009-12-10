@@ -73,6 +73,8 @@ class RPX extends PluginFunctions
             $host = $this->cage->server->getMixedString2('HTTP_HOST');
             $uri = $this->cage->server->getMixedString2('REQUEST_URI');
             $return = 'http://' . $host . $uri;
+            // so we don't return to the login page...
+            if (strpos($return, urlencode('login')) === true) { $return = BASEURL; }
             $return = urlencode(htmlentities($return,ENT_QUOTES,'UTF-8'));
         } else {
             $return = urlencode($this->cage->get->testUri('return')); // use existing return parameter
@@ -264,7 +266,7 @@ class RPX extends PluginFunctions
             } 
         }
         
-        if($rpx_profile['primaryKey']) // PLUS & PRO ACCOUNTS ONLY
+        if(isset($rpx_profile['primaryKey'])) // PLUS & PRO ACCOUNTS ONLY
         {
             //get username from database for this primarykey
             $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_id = %d";
@@ -298,7 +300,7 @@ class RPX extends PluginFunctions
                 $login_result = $this->current_user->loginCheck($username, ''); // no password necessary
             }
             
-            if ($login_result) {
+            if (isset($login_result) && $login_result != false) {
                 //success
                 $this->current_user->name = $username;
                 $remember = 1; // keep them logged in for 30 days (not optional)
@@ -336,6 +338,14 @@ class RPX extends PluginFunctions
 
         $this->hotaru->vars['rpx_profile'] = $rpx_profile; 
         
+        // set blank if not present:
+        if (!isset($this->hotaru->vars['rpx_profile']['email'])) {
+            $this->hotaru->vars['rpx_profile']['email'] = '';
+        }
+        if (!isset($this->hotaru->vars['rpx_profile']['preferredUsername'])) {
+            $this->hotaru->vars['rpx_profile']['preferredUsername'] = '';
+        }
+        
         /*  falls through to theme_main_index in Users plugin, where we hook in with the function 
             "users_register_pre_display_register_form" below */
     }
@@ -353,6 +363,27 @@ class RPX extends PluginFunctions
             && ($this->cage->post->testAlpha('rpx') != 'true')) { return false; }
         
         $this->includeLanguage();
+        
+        if ($this->cage->post->testAlpha('rpx') == 'true') {
+            // check CSRF key
+            $csrf = new csrf($this->db);
+            $csrf->action = $this->hotaru->getPagename();
+            $safe =  $csrf->checkcsrf($this->cage->post->testAlnum('token'));
+            if (!$safe) {
+                $this->hotaru->messages[$this->lang["error_csrf"]] = 'red';
+                return false;
+            }
+            
+            // the above CSRF check clears the existing token if valid, so we need to generate a new one
+            // for the form that is still on the page:
+            if (!$this->hotaru->token) {
+                $csrf = new csrf($this->db);  
+                $csrf->action = $this->hotaru->getPagename();
+                $csrf->life = 10; 
+                $this->hotaru->token = $csrf->csrfkey();
+            }
+        }
+        
         $this->hotaru->messages[$this->lang["rpx_registration_nearly_complete"]] = 'green';
         $this->hotaru->displayTemplate('rpx_register', 'rpx'); // display the *RPX* register form
         return true;
@@ -374,14 +405,6 @@ class RPX extends PluginFunctions
     
         if (!$results) { return false; }
             
-        /* Basic RPC accounts don't return a primary key because they're not mapped on RPX.
-           So checking the primary key fails for basic users. Therefore, let's just assume that 
-           if there exists a non-empty id and rpx field for this username, the user mustbe registered */
-            
-        // check if stored rpx primary key matches the user's id for this username:
-        //$rpx_profile = unserialize($results->user_rpx);
-        //if ($rpx_profile['primaryKey'] == $results->user_id) { return true; } else { return false; }
-        
         if ($results->user_id && $results->user_rpx) { 
             return true;
         } else {
