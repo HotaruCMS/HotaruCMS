@@ -1,0 +1,187 @@
+<?php
+/**
+ * Cache functions
+ *
+ * PHP version 5
+ *
+ * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation, either version 3 of 
+ * the License, or (at your option) any later version. 
+ *
+ * Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE. 
+ *
+ * You should have received a copy of the GNU General Public License along 
+ * with Hotaru CMS. If not, see http://www.gnu.org/licenses/.
+ * 
+ * @category  Content Management System
+ * @package   HotaruCMS
+ * @author    Nick Ramsay <admin@hotarucms.org>
+ * @copyright Copyright (c) 2009, Hotaru CMS
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * @link      http://www.hotarucms.org/
+ */
+class Caching
+{
+    /**
+     * Hotaru CMS Smart Caching
+     *
+     * This function does one query on the database to get the last updated time for a 
+     * specified table. If that time is more recent than the $timeout length (e.g. 10 minutes),
+     * the database will be used. If there hasn't been an update, any cached results from the 
+     * last 10 minutes will be used.
+     *
+     * @param string $switch either "on", "off" or "html"
+     * @param string $table DB table name
+     * @param int $timeout time before DB cache expires
+     * @param string $html output as HTML
+     * @param string $label optional label to append to filename
+     * @return bool
+     */
+    public function smartCache($switch = 'off', $table = '', $timeout = 0, $html = '', $label = '')
+    {
+        if ($switch == 'html') { 
+            $result = $this->smartCacheHTML($table, $timeout, $html, $label); 
+        } else {
+            $result = $this->smartCacheDB($switch, $table, $timeout);
+        }
+        
+        return $result;
+    }
+    
+    
+    /**
+     * Hotaru CMS Smart Caching HTML output
+     *
+     * This function caches blocks of HTML code
+     *
+     * @param string $table DB table name
+     * @param int $timeout timeout in minutes
+     * @return bool
+     */
+    public function smartCacheHTML($table = '', $timeout = 0, $html = '', $label = '')
+    {
+        if (!$table || !$timeout || (HTML_CACHE_ON != 'true')) { return false; }
+        
+        $last_update = $this->smartCacheSQL($table);
+        
+        // compare times (if there's $html, we don't want to return because we need to update the cache.
+        if (($last_update >= (time() - $timeout*60)) && !$html) { return false; } // there's been a recent update so don't use the cache.
+        
+        $cache_length = $timeout*60;   // seconds - NOT USING THIS IN HTML CACHE
+        $cache = CACHE . 'html_cache/';
+        if ($label) { $label = '_' . $label; } 
+        $file = $cache . $table . $label . ".cache";
+        
+        if (!$html) {
+            // we only want to read the cache if it exists, hence no $html passed to this function
+            if (file_exists($file)) {
+                $content = file_get_contents($file);
+                return $content;    // return the HTML to display
+            } else {
+                return false;
+            }
+        }
+
+        // if we're here, we need to make or rewrite the cache
+        
+        $fp = fopen($file, "w");
+
+        if (flock($fp, LOCK_EX)) { // do an exclusive lock
+            ftruncate($fp, 0);  // truncate file
+            fwrite($fp, $html); // write HTML
+            flock($fp, LOCK_UN); // release the lock
+        } else {
+            echo "Couldn't get the lock for the HTML cache!";
+        }
+        
+        fclose($fp);
+        
+        return true; // the calling function already has the HTML to output
+    }
+    
+    
+    /**
+     * Hotaru CMS Smart Caching Database Queries
+     *
+     * This function uses the ezSQL database cache
+     *
+     * @param string $switch either "on" or "off"
+     * @param string $table DB table name
+     * @param int $timeout timeout in minutes
+     * @return bool
+     */
+    public function smartCacheDB($switch = 'off', $table = '', $timeout = 0)
+    {
+        // Stop caching?
+        if ($switch != 'on') {
+            $this->db->cache_queries = false;               // stop using cache
+            $this->db->cache_timeout = DB_CACHE_DURATION;   // return to our default cache duration
+            return false;
+        }
+        
+        $last_update = $this->smartCacheSQL($table);
+
+        // compare times
+        if ($last_update >= (time() - $timeout*60)) { return false; } // there's been a recent update so don't use the cache.
+        
+        /* ezSQL uses hours for its timeout. We'll use minutes and divide
+           by 60 to get the hours. */
+           
+        if ($timeout) { 
+            $this->db->cache_timeout = $timeout/60; // mins/60 = hours
+        } else {
+            $this->db->cache_timeout = DB_CACHE_DURATION;
+        }
+        
+        $this->db->cache_queries = true;    // start using cache
+        
+        return true;
+    }
+    
+    
+
+    /**
+     * Picks the right SQL and gets the last_update time in seconds
+     *
+     * @param string $table DB table name
+     * @return int $last_update
+     */
+    public function smartCacheSQL($table = '')
+    {
+        /* Get the last time the table was updated */
+        switch ($table) {
+            case 'categories':
+                $sql = "SELECT category_updatedts FROM " . DB_PREFIX . "categories ORDER BY category_updatedts DESC";
+                break;
+            case 'tags':
+                $sql = "SELECT tags_updatedts FROM " . DB_PREFIX . "tags ORDER BY tags_updatedts DESC";
+                break;
+            case 'posts':
+                $sql = "SELECT post_updatedts FROM " . DB_PREFIX . "posts ORDER BY post_updatedts DESC";
+                break;
+            case 'postvotes':
+                $sql = "SELECT vote_updatedts FROM " . DB_PREFIX . "postvotes ORDER BY vote_updatedts DESC";
+                break;
+            case 'comments':
+                $sql = "SELECT comment_updatedts FROM " . DB_PREFIX . "comments ORDER BY comment_updatedts DESC";
+                break;
+            case 'commentvote':
+                $sql = "SELECT cvote_updatedts FROM " . DB_PREFIX . "commentvotes ORDER BY cvote_updatedts DESC";
+                break;
+            case 'useractivity':
+                $sql = "SELECT useract_updatedts FROM " . DB_PREFIX . "useractivity ORDER BY useract_updatedts DESC";
+                break;
+            default:
+                return false;
+        }
+        
+        // run DB query:
+        $last_update = unixtimestamp($this->db->get_var($sql));
+        
+        return $last_update;
+    }
+}
+?>
