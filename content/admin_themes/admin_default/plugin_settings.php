@@ -32,39 +32,8 @@ $this->getPluginName();
 /* CSRF protection for all plugin settings pages. We don'T know if plugin developers will 
    use GET or POST in their settings form so we have to check for both... */
 
-$safe = true; // CSRF flag
-
-// check if CSRF key exists - GET METHOD
-if ($this->cage->get->keyExists('token')) {
-    $csrf = new csrf($hotaru->db);
-    $csrf->action = $hotaru->getPagename();
-    $safe =  $csrf->checkcsrf($hotaru->cage->get->testAlnum('token'));
-}
-
-// check if CSRF key exists - POST METHOD
-if ($this->cage->post->keyExists('token')) {
-    $csrf = new csrf($hotaru->db);
-    $csrf->action = $hotaru->getPagename();
-    $safe =  $csrf->checkcsrf($hotaru->cage->post->testAlnum('token'));
-}
-
-// set a new CSRF key
-$csrf = new csrf($hotaru->db);  
-$csrf->action = $hotaru->getPagename();
-$csrf->life = 10; 
-$hotaru->token = $csrf->csrfkey();
-
+$safe = $hotaru->csrf(); // CSRF flag
 ?>
-
-<p class="breadcrumbs">
-    <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
-    <?php // only show Admin CP link to users with can_admin_acesss permissions, not can_[plugin]_settings permissions... 
-        if ($this->currentUser->getPermission('can_access_admin') == 'yes') { ?>
-        &raquo; <a href="<?php echo $hotaru->url(array(), 'admin'); ?>"><?php echo $hotaru->lang["admin_theme_main_admin_cp"]; ?></a> 
-    <?php } ?>
-    &raquo; <?php echo $hotaru->lang["admin_theme_plugin_settings"]; ?> 
-    <?php if ($hotaru->name) { echo "&raquo; " .  $hotaru->name; } ?>
-</p>
 
 <div id="plugin_settings">
     <?php 

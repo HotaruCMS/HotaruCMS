@@ -122,6 +122,7 @@ class AdminAuth
                     $hotaru->currentUser->loggedIn = true;
                     $hotaru->currentUser->updateUserLastLogin($hotaru);
                     $hotaru->sidebars = true;
+                    $hotaru->pageName = 'admin_home'; // a wee hack
                     return true;
             } else {
                     // login failed

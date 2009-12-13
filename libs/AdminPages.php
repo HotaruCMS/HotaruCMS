@@ -65,6 +65,8 @@ class AdminPages
                 // Nothing special to do...
                 break;
             default:
+                // we need this because it's not specified in the url:
+                $hotaru->pageName = 'admin_home';
                 break;
         }
         

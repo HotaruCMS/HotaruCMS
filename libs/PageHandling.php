@@ -26,6 +26,66 @@
 class PageHandling
 {
     /**
+     * Determine the title tags for the header
+     *
+     * @return string - the title
+     */
+    public function getTitle($hotaru)
+    {
+        if ($hotaru->pageTitle != "")
+        {
+            return $hotaru->pageTitle . " &laquo; " . SITE_NAME;
+        }
+        elseif ($name = $hotaru->getPageName())
+        {
+            $hotaru->pageName = $hotaru->getPageName();
+           
+            if ($hotaru->pageName == '404error') {
+                $hotaru->pageTitle = $hotaru->lang['main_theme_page_not_found'];
+                return $hotaru->pageTitle  . " &laquo; " . SITE_NAME;
+            } else {
+                $hotaru->pageTitle = make_name($hotaru->pageName);
+                return $hotaru->pageTitle . " &laquo; " . SITE_NAME;
+            }
+        }
+        else
+        { 
+            $hotaru->pageName = 'top'; // don't change this
+            return SITE_NAME; 
+        } 
+    }
+    
+    
+    /**
+     * Gets the current page name
+     *
+     * @return string|false $page
+     */
+    public function getPageName($hotaru)
+    {
+        if ($hotaru->pageName) { return $hotaru->pageName; }
+        
+        // Try GET...
+        $page = $hotaru->cage->get->testPage('page');
+        if (!$page) {
+            /*  Possibly a post with multi-byte characters? 
+                Try getMixedString2... */
+            $page = $hotaru->cage->get->getMixedString2('page');
+        }
+        
+        // Try POST...
+        if (!$page) { $page = $hotaru->cage->post->testPage('page'); }
+
+        if ($page) {
+            $page = rtrim($page, '/');
+            return $page;
+        } else {
+            return '404error';
+        }
+    }
+    
+    
+    /**
      * Includes a template to display
      *
      * @param string $page page name
@@ -34,6 +94,8 @@ class PageHandling
      */
     public function displayTemplate($hotaru, $page = '', $plugin = '', $include_once = true)
     {
+        $hotaru->pageTemplate = $page;
+        
         // if no plugin folder, provide it:
         if (!$plugin) { $plugin = $hotaru->pluginFolder; }
         
@@ -88,33 +150,6 @@ class PageHandling
         else
         {
             include_once($themes . '404error.php');
-        }
-    }
-    
-    
-    /**
-     * Gets the current page name
-     *
-     * @return string|false $page
-     */
-    public function getPageName($cage)
-    {
-        // Try GET...
-        $page = $cage->get->testPage('page');
-        if (!$page) {
-            /*  Possibly a post with multi-byte characters? 
-                Try getMixedString2... */
-            $page = $cage->get->getMixedString2('page');
-        }
-        
-        // Try POST...
-        if (!$page) { $page = $cage->post->testPage('page'); }
-
-        if ($page) {
-            $page = rtrim($page, '/');
-            return $page;
-        } else {
-            return 'main';
         }
     }
     

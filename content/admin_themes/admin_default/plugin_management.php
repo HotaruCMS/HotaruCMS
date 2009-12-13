@@ -29,12 +29,6 @@
 
 <?php $hotaru->displayTemplate('sidebar'); ?>
 
-<p class="breadcrumbs">
-    <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
-    &raquo; <a href="<?php echo $hotaru->url(array(), 'admin'); ?>"><?php echo $hotaru->lang["admin_theme_main_admin_cp"]; ?></a> 
-    &raquo; <?php echo $hotaru->lang["admin_theme_plugins"]; ?>
-</p>
-    
 <?php $hotaru->showMessages(); ?>
 
 <div id="plugin_management">

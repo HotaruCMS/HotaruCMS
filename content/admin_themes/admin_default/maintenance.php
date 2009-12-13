@@ -29,12 +29,6 @@
 $plugin_settings = $hotaru->vars['admin_plugin_settings'];
 $plugin_tables = $hotaru->vars['admin_plugin_tables'];
 ?>
-
-<p class="breadcrumbs">
-    <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
-    &raquo; <a href="<?php echo $hotaru->url(array(), 'admin'); ?>"><?php echo $hotaru->lang["admin_theme_main_admin_cp"]; ?></a> 
-    &raquo; <?php echo $hotaru->lang["admin_theme_maintenance"]; ?>
-</p>
     
 <h2><?php echo $hotaru->lang["admin_theme_maintenance_title"]; ?></h2>
 

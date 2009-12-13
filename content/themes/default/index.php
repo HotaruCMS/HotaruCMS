@@ -27,7 +27,7 @@
  */
 
 // plugin hook
-$result = $hotaru->pluginHook('theme_index_replace');
+$result = $hotaru->pluginHook('theme_index_top');
 if (!isset($result)) {
 ?>
         <!-- HEADER-->
@@ -48,6 +48,11 @@ if (!isset($result)) {
                 <div class='yui-g'>
                         <div class="yui-u first" style='width: 100%;'>
                 <?php } ?>
+                            <!-- BREADCRUMBS -->
+                            <div id='breadcrumbs'>
+                                <?php echo $hotaru->breadcrumbs(); ?>
+                            </div>
+                            
                             <!-- MAIN -->
                             <?php     
                                 // plugin hook

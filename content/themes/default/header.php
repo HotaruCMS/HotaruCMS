@@ -33,24 +33,7 @@
 <head profile="http://gmpg.org/xfn/11">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-    <title>
-       <?php 
-           if ($hotaru->title != "")
-           {
-               echo $hotaru->title . " &laquo; " . SITE_NAME;
-           }
-           elseif ($hotaru->getPageName() != "main")
-           {
-               $hotaru->title = $hotaru->getPageName();
-               echo make_name($hotaru->title) . " &laquo; " . SITE_NAME;
-           }
-           else
-           { 
-               $hotaru->title = 'top'; // don't change this
-               echo SITE_NAME; 
-           } 
-       ?>
-    </title>
+    <title><?php echo $hotaru->getTitle(); ?></title>
     
         <?php
             // plugin hook

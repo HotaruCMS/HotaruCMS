@@ -31,10 +31,15 @@ class Hotaru
     protected $currentUser;                     // UserBase object
     protected $isDebug              = false;    // show db queries and page loading time
     protected $isAdmin              = false;    // flag to tell if we are in Admin or not
-    protected $title                = '';       // the page title
     protected $sidebars             = true;     // enable or disable the sidebars
     protected $csrfToken            = '';       // token for CSRF
     public $lang                    = array();  // stores language file content
+    
+    // page info
+    protected $pageName             = '';       // e.g. top
+    protected $pageTitle            = '';       // e.g. Top Stories
+    protected $pageType             = '';       // e.g. list
+    protected $pageTemplate         = '';       // e.g. list, tag_cloud
     
     // individual plugin
     protected $pluginId             = '';       // plugin id
@@ -150,7 +155,18 @@ class Hotaru
  *
  * *********************************************************** */
  
- 
+    /**
+     * Determine the title tags for the header
+     *
+     * @return string - the title
+     */
+    public function getTitle()
+    {
+        $pageHandling = new PageHandling();
+        return $pageHandling->getTitle($this);
+    }
+    
+    
     /**
      * Includes a template to display
      *
@@ -171,7 +187,7 @@ class Hotaru
     public function getPageName()
     {
         $pageHandling = new PageHandling();
-        return $pageHandling->getPageName($this->cage);
+        return $pageHandling->getPageName($this);
     }
     
     
@@ -217,6 +233,24 @@ class Hotaru
     }
     
 
+/* *************************************************************
+ *
+ *  BREADCRUMB FUNCTIONS
+ *
+ * *********************************************************** */
+ 
+ 
+    /**
+     * Build breadcrumbs
+     */
+    public function breadcrumbs()
+    {
+        require_once(LIBS . 'Breadcrumbs.php');
+        $breadcrumbs = new Breadcrumbs();
+        return $breadcrumbs->buildBreadcrumbs($this);
+    }
+    
+ 
  /* *************************************************************
  *
  *  USERAUTH FUNCTIONS

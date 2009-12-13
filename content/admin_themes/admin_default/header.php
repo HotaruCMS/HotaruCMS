@@ -33,25 +33,9 @@
 <html>
 <head>
    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
-   <title>
-       <?php 
-           if ($hotaru->title != "")
-           {
-               echo $hotaru->title . " &laquo; " . $hotaru->lang["admin"] . " &laquo; " . SITE_NAME;
-           }
-           elseif ($hotaru->getPageName() != "main")
-           {
-               $hotaru->title = $hotaru->getPageName();
-               echo make_name($hotaru->title) . " &laquo; " . $hotaru->lang["admin"] . " &laquo; " . SITE_NAME;
-           }
-           else
-           { 
-               echo $hotaru->lang["admin"] . " &laquo; " . SITE_NAME;
-           } 
-           
-           $hotaru->title = 'admin';    // highlights "Admin" in the navigation bar, for all pages in Admin
-       ?>
-   </title>
+   
+   <title><?php echo $hotaru->getTitle(); ?></title>
+   
    <script language="JavaScript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery-ui.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo BASEURL . 'javascript/hotaru.js'; ?>"></script>

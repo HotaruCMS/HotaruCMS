@@ -29,15 +29,7 @@
 extract($hotaru->vars['admin_account']); // extracts $username_check, etc.
 ?>
 
-<p class="breadcrumbs">
-    <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
-    &raquo; <a href="<?php echo $hotaru->url(array(), 'admin'); ?>"><?php echo $hotaru->lang["admin_theme_main_admin_cp"]; ?></a> 
-    &raquo; <?php echo $hotaru->lang["main_user_theme_account"]; ?>
-</p>
-        
 <?php $hotaru->showMessages(); ?>
-        
-<div class='main_inner'>
 
     <?php echo $hotaru->lang["main_user_theme_account_instructions"]; ?>
     <form name='admin_theme_update_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>    
@@ -69,4 +61,3 @@ extract($hotaru->vars['admin_account']); // extracts $username_check, etc.
     </table>
     </form>
 
-</div>

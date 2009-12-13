@@ -89,8 +89,8 @@ li a#navigation_active { text-decoration: underline; }
 	padding: 1.2em;
 }
 
-.main_inner {
-	padding: 1.0em;	
+#breadcrumbs {
+	padding: 1.0em 0 0 1.0em;	
 }
 
 #sidebar ul li {

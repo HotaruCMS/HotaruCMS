@@ -28,12 +28,6 @@
 extract($hotaru->vars['admin_blocked_list']); // extracts $output and $pagedResults;
 ?>
 
-<p class="breadcrumbs">
-    <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
-    &raquo; <a href="<?php echo $hotaru->url(array(), 'admin'); ?>"><?php echo $hotaru->lang["admin_theme_main_admin_cp"]; ?></a> 
-    &raquo; <?php echo $hotaru->lang["admin_theme_blocked_list"]; ?>
-</p>
-
 <!-- TITLE FOR ADMIN NEWS -->
 <h2><?php echo $hotaru->lang["admin_theme_blocked_list"]; ?></h2>
 

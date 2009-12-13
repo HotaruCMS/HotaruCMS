@@ -47,6 +47,11 @@ if (!isset($result) || !is_array($result)) {
                 <div class='yui-g'>
                     <div class="yui-u" style='width: 100%;'>
             <?php } ?>
+                        <!-- BREADCRUMBS -->
+                        <div id='breadcrumbs'>
+                            <?php echo $hotaru->breadcrumbs(); ?>
+                        </div>
+                            
                         <!-- MAIN -->
                         <div id="main">
                         <?php
@@ -56,7 +61,7 @@ if (!isset($result) || !is_array($result)) {
                                 $page = $hotaru->getPageName();
                                 if ($page == 'admin_login') {
                                     if ($hotaru->currentUser->loggedIn) {
-                                        $hotaru->displayTemplate('main');
+                                        $hotaru->displayTemplate('admin_home');
                                     } else {
                                         $hotaru->adminLoginForm();
                                     }
