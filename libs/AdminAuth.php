@@ -102,10 +102,8 @@ class AdminAuth
         
         if ($hotaru->cage->post->keyExists('login_attempted') || $hotaru->cage->post->keyExists('forgotten_password')) {
             // if either the login or forgot password form is submitted, check the CSRF key
-            $csrf = new csrf($hotaru->db);
-            $csrf->action = $hotaru->getPagename();
-            $safe =  $csrf->checkcsrf($hotaru->cage->post->testAlnum('token'));
-            if (!$safe) {
+            
+            if (!$hotaru->csrf()) {
                 $hotaru->message = $hotaru->lang["error_csrf"];
                 $hotaru->messageType = "red";
                 return false;
@@ -158,15 +156,6 @@ class AdminAuth
                     $hotaru->messageType = "red";
                 }
             }
-        }
-        
-        // the above CSRF check clears the existing token if valid, so we need to generate a new one
-        // for the form that is still on the page:
-        if (!$hotaru->token) {
-            $csrf = new csrf($hotaru->db);  
-            $csrf->action = $hotaru->getPagename();
-            $csrf->life = 10; 
-            $hotaru->token = $csrf->csrfkey();
         }
         
         return false;

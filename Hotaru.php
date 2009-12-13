@@ -33,7 +33,7 @@ class Hotaru
     protected $isAdmin              = false;    // flag to tell if we are in Admin or not
     protected $title                = '';       // the page title
     protected $sidebars             = true;     // enable or disable the sidebars
-    protected $token                = '';       // token for CSRF
+    protected $csrfToken            = '';       // token for CSRF
     public $lang                    = array();  // stores language file content
     
     // individual plugin
@@ -70,10 +70,11 @@ class Hotaru
         if (!isset($start)) { 
             require_once(LIBS . 'Initialize.php');
             $init = new Initialize();
-            $this->db       = $init->db;
-            $this->cage     = $init->cage;
-            $this->isDebug  = $init->isDebug;
-            $this->currentUser = new UserAuth();
+            $this->db       = $init->db;            // database object
+            $this->cage     = $init->cage;          // Inspekt cage
+            $this->isDebug  = $init->isDebug;       // set debug
+            $this->currentUser = new UserAuth();    // the current user
+            $this->csrf('set');                     // set a csrfToken
         }
     }
     
@@ -732,6 +733,28 @@ class Hotaru
         require_once(LIBS . 'Language.php');
         $language = new Language();
         $language->includeLanguage($this, $filename, $folder);
+    }
+    
+    
+/* *************************************************************
+ *
+ *  CSRF FUNCTIONS
+ *
+ * *********************************************************** */
+ 
+ 
+    /**
+     * Shortcut for CSRF functions
+     *
+     * @param string $type - either "set" or "check" CSRF key
+     * @param string $script - optional name of page using the key
+     * @param int $life - minutes before the token expires
+     * @return string $key (if using $type "fetch")
+     */
+    public function csrf($type = 'check', $script = '', $life = 10)
+    {
+        $csrf = new csrf();
+        return $csrf->csrfInit($this, $type, $script, $life);
     }
 }
 ?>

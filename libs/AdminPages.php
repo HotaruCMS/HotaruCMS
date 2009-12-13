@@ -108,15 +108,12 @@ class AdminPages
         if ($hotaru->cage->post->noTags('settings_update')  == 'true') {
         
             // if either the login or forgot password form is submitted, check the CSRF key
-            $csrf = new csrf($hotaru->db);
-            $csrf->action = $hotaru->getPagename();
-            $safe =  $csrf->checkcsrf($hotaru->cage->post->testAlnum('token'));
-            if (!$safe) { $error = 1; }
+            if (!$hotaru->csrf()) { $error = 1; }
         
             foreach ($loaded_settings as $setting_name) {
                 if ($hotaru->cage->post->keyExists($setting_name->settings_name)) {
                     $setting_value = $hotaru->cage->post->noTags($setting_name->settings_name);
-                    if ($safe && $setting_value && $setting_value != $setting_name->settings_value) {
+                    if (!$error && $setting_value && $setting_value != $setting_name->settings_value) {
                         $this->adminSettingUpdate($hotaru, $setting_name->settings_name, $setting_value);
     
                     } else {
@@ -144,15 +141,6 @@ class AdminPages
         }    
         
         $loaded_settings = $this->getAllAdminSettings($hotaru->db);
-        
-        // the above CSRF check clears the existing token if valid, so we need to generate a new one
-        // for the form that is still on the page:
-        if (!$hotaru->token) {
-            $csrf = new csrf($hotaru->db);  
-            $csrf->action = $hotaru->getPagename();
-            $csrf->life = 10; 
-            $hotaru->token = $csrf->csrfkey();
-        }
         
         return $loaded_settings;
     }

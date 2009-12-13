@@ -240,10 +240,7 @@ class UserAuth extends UserBase
         if ($hotaru->cage->post->testAlnumLines('update_type') == 'update_general') {
         
             // check CSRF key
-            $csrf = new csrf($hotaru->db);
-            $csrf->action = $hotaru->getPagename();
-            $safe =  $csrf->checkcsrf($hotaru->cage->post->testAlnum('token'));
-            if (!$safe) {
+            if (!$hotaru->csrf()) {
                 $hotaru->messages[$hotaru->lang['error_csrf']] = 'red';
                 $error = 1;
             }
@@ -318,14 +315,6 @@ class UserAuth extends UserBase
         $checks['username_check'] = $username_check;
         $checks['email_check'] = $email_check;
         $checks['role_check'] = $role_check;
-        
-        // CSRF protection
-        if (!$hotaru->token) {
-            $csrf = new csrf($hotaru->db);  
-            $csrf->action = $hotaru->getPagename();
-            $csrf->life = 10; 
-            $hotaru->token = $csrf->csrfkey();
-        }
                 
         return $checks;
     }
@@ -347,10 +336,7 @@ class UserAuth extends UserBase
         if ($hotaru->cage->post->testAlnumLines('update_type') == 'update_password') {
         
             // check CSRF key
-            $csrf = new csrf($hotaru->db);
-            $csrf->action = $hotaru->getPagename();
-            $safe =  $csrf->checkcsrf($hotaru->cage->post->testAlnum('token'));
-            if (!$safe) {
+            if (!$hotaru->csrf()) {
                 $hotaru->messages[$hotaru->lang['error_csrf']] = 'red';
                 $error = 1;
             }

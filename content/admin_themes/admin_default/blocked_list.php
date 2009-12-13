@@ -57,7 +57,7 @@ extract($hotaru->vars['admin_blocked_list']); // extracts $output and $pagedResu
     </table>
     <input type='hidden' name='page' value='blocked_list' />
     <input type='hidden' name='type' value='new' />
-    <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
+    <input type='hidden' name='csrf' value='<?php echo $hotaru->csrfToken; ?>' />
 </form>
 
 <table><tr><td>
@@ -72,7 +72,7 @@ extract($hotaru->vars['admin_blocked_list']); // extracts $output and $pagedResu
     </table>
     <input type='hidden' name='page' value='blocked_list' />
     <input type='hidden' name='type' value='search' />
-    <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
+    <input type='hidden' name='csrf' value='<?php echo $hotaru->csrfToken; ?>' />
 </form>
 
 </td><td>
@@ -93,7 +93,7 @@ extract($hotaru->vars['admin_blocked_list']); // extracts $output and $pagedResu
     </table>
     <input type='hidden' name='page' value='blocked_list' />
     <input type='hidden' name='type' value='filter' />
-    <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
+    <input type='hidden' name='csrf' value='<?php echo $hotaru->csrfToken; ?>' />
 </form>
 
 </tr></table>

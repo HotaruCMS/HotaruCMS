@@ -33,22 +33,11 @@ class Blocked
         $safe = true; // CSRF flag
         
         if ($hotaru->cage->post->keyExists('type')) {
-            $csrf = new csrf($hotaru->db);
-            $csrf->action = $hotaru->getPagename();
-            $safe =  $csrf->checkcsrf($hotaru->cage->post->testAlnum('token'));
+            $safe = $hotaru->csrf();
             if (!$safe) {
                 $hotaru->message = $hotaru->lang['error_csrf'];
                 $hotaru->messageType = 'red';
             }
-        }
-        
-        // the above CSRF check clears the existing token if valid, so we need to generate a new one
-        // for the form that is still on the page:
-        if (!$hotaru->token) {
-            $csrf = new csrf($hotaru->db);  
-            $csrf->action = $hotaru->getPagename();
-            $csrf->life = 10; 
-            $hotaru->token = $csrf->csrfkey();
         }
         
         // if new item to block
@@ -162,7 +151,7 @@ class Blocked
             $output .= "<input type='hidden' name='id' value='" . $block->blocked_id . "' />\n";
             $output .= "<input type='hidden' name='page' value='blocked_list' />\n";
             $output .= "<input type='hidden' name='type' value='edit' />\n";
-            $output .= "<input type='hidden' name='token' value='" . $hotaru->token . "' />";
+            $output .= "<input type='hidden' name='csrf' value='" . $hotaru->csrfToken . "' />";
             $output .= "</form>\n";
             $output .= "</td>";
             $output .= "<td class='table_description_close'><a class='table_hide_details' href='#'>" . $hotaru->lang["admin_theme_plugins_close"] . "</a></td>";
