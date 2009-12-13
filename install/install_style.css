@@ -1,0 +1,147 @@
+/* ******* INSTALL CSS STYLE ************************************************************************** 
+ * Stylesheet: install_style.css
+ * Stylesheet author: Nick Ramsay
+ * Version: 0.1
+ * License:
+ *
+ *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
+ *
+ *   Hotaru CMS is free software: you can redistribute it and/or modify it under the terms of the 
+ *   GNU General Public License as published by the Free Software Foundation, either version 3 of 
+ *   the License, or (at your option) any later version.
+ *
+ *   Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
+ *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License along with Hotaru CMS. If not, 
+ *   see http://www.gnu.org/licenses/.
+ *   
+ *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
+ *
+ **************************************************************************************************** */
+
+html, body { 
+	margin-top: 2.0em;
+	min-height: 100%; height: 100%;
+	background-color: #f0f0f0;
+	text-align: center;
+	font-size: 1.0em;
+}
+
+h1	{ 
+	font-size: 1.5em;
+	margin-left: 1.0em;
+	padding-top: 0.6em;
+}
+
+img {
+    padding-right: 1.0em;
+}
+
+h2 { 
+	font-size: 1.2em; 
+	padding-bottom: 0.4em;
+}
+
+a { 
+	text-decoration: none; 
+	color: #0000ff;	
+}
+
+a:hover	{ 
+	text-decoration: underline; 
+}
+
+pre {
+	display: inline;
+}
+
+li {
+	list-style: decimal outside;
+	margin-left: 2em;
+	padding: 0.2em;
+}
+
+div, p { 
+	padding: 0.4em; 
+}
+
+form {
+	padding: 1.0em;
+}
+
+td {	padding: 0.5em;
+
+}
+
+small {
+	font-size: 0.8em;
+}
+
+.install {
+	padding: 1.0em;
+	-moz-border-radius: 0.5em;
+	-webkit-border-radius: 0.5em;
+	background-color: #ffffff;
+	border: 0.1em solid #333333;
+}
+
+.install_content {
+	padding: 0.4em 0.8em 0.4em 0.8em; 
+}
+
+.message {
+	margin: 1.0em auto 0.0em auto;
+	width: 90%;
+	padding: 0.8em;
+	-moz-border-radius: 0.5em;
+	-webkit-border-radius: 0.5em;
+	text-align: center;
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+.green {
+	background-color: #99FF66;
+}
+
+.red {
+	background-color: #FF6A55;
+	color: #ffffff;
+}
+
+#update {
+	padding: 0.3em 0.5em 0.3em 0.5em;
+	background-color: #f6f6f6;
+	-moz-border-radius: 0.5em;
+	-webkit-border-radius: 0.5em;
+	border: 0.1em solid #666;
+	font-weight: bold;
+	color: #00f;
+}
+
+.next, .back	{
+	margin-top: 0.8em;
+	float: right;
+	font-size: 1.2em;
+	padding: 0.3em 0.5em 0.3em 0.5em;
+	background-color: #f6f6f6;
+	-moz-border-radius: 0.5em;
+	-webkit-border-radius: 0.5em;
+	border: 0.1em solid #666;
+}
+
+.next	{ float: right; }
+.back	{ float: left; }
+
+.next a, .back a {
+	font-weight: bold;
+}
+
+#ft {
+	margin-top: 3.0em;
+	padding-bottom: 0em;
+	text-align: center;
+	font-size: 0.8em;
+}
