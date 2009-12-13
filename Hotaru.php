@@ -188,6 +188,34 @@ class Hotaru
         return $pageHandling->url($this, $parameters, $head);
     }
     
+    
+    /**
+     * Prepare pagination
+     *
+     * @param array $items - array of all items to show
+     * @param int $items_per_page
+     * @param int $pg - current page number
+     * @return object - object of type Paginated
+     */
+    public function pagination($items = array(), $items_per_page = 10, $pg = 0)
+    {
+        $pageHandling = new PageHandling();
+        return $pageHandling->pagination($hotaru, $items, $items_per_page, $pg);
+    }
+    
+ 
+    /**
+     * Return page numbers bar
+     *
+     * @param object $pageObject - current object of type Paginated
+     * @return string - HTML for page number bar
+     */
+    public function pageBar($pageObject = NULL)
+    {
+        $pageHandling = new PageHandling();
+        return $pageHandling->pageBar($hotaru, $pageObject);
+    }
+    
 
  /* *************************************************************
  *

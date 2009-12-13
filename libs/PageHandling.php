@@ -193,5 +193,42 @@ class PageHandling
         }
         
     }
+    
+    
+    /**
+     * Prepare pagination and display page numbers bar
+     *
+     * @param array $items - array of all items to show
+     * @param int $items_per_page
+     * @param int $pg - current page number
+     * @return object - object of type Paginated
+     */
+    public function pagination($hotaru, $items = array(), $items_per_page = 10, $pg = 0)
+    {
+        if (!$items) { return false; }
+        
+        require_once(EXTENSIONS . 'Paginated/Paginated.php');
+        require_once(EXTENSIONS . 'Paginated/DoubleBarLayout.php');
+
+        $pg = $hotaru->cage->get->getInt('pg');
+        return new Paginated($items, $items_per_page, $pg);
+    }
+    
+    
+    /**
+     * Return page numbers bar
+     *
+     * @param object $pageObject - current object of type Paginated
+     * @return string - HTML for page number bar
+     */
+    public function pageBar($pageObject = array())
+    {
+        require_once(EXTENSIONS . 'Paginated/Paginated.php');
+        require_once(EXTENSIONS . 'Paginated/DoubleBarLayout.php');
+        
+        $pageObject->setLayout(new DoubleBarLayout());
+        return $pageObject->fetchPagedNavigation($hotaru);
+    }
+    
 }
 ?>
