@@ -30,6 +30,8 @@ class AdminPages
      */
     public function pages($hotaru, $page = 'admin_login')
     {
+        $hotaru->vars['admin_sidebar_layout'] = 'vertical';
+        
         $hotaru->pluginHook('admin_pages');
         
         switch ($page) {
@@ -54,8 +56,10 @@ class AdminPages
             case "blocked_list":
                 $hotaru->vars['admin_blocked_list'] = $this->blocked($hotaru);
                 break;
-            case "plugins":
-                $this->plugins();
+            case "plugin_management":
+                $hotaru->sidebars = false;
+                $hotaru->vars['admin_sidebar_layout'] = 'horizontal';
+                $this->adminPlugins($hotaru);
                 break;
             case "plugin_settings":
                 // Nothing special to do...
@@ -302,6 +306,73 @@ class AdminPages
         $blocked_items = $blocked->buildBlockedList($hotaru);
 
         return $blocked_items;
+    }
+    
+    
+ /* *************************************************************
+ *
+ *  PLUGIN MANAGEMENT PAGE
+ *
+ * *********************************************************** */
+ 
+ 
+     /**
+     * Call functions based on user actions in Plugin Management
+     */
+    public function adminPlugins($hotaru)
+    {
+        $pfolder = $hotaru->cage->get->testAlnumLines('plugin');
+        $hotaru->pluginFolder = $pfolder;   // assign this plugin to Hotaru
+        
+        $action = $hotaru->cage->get->testAlnumLines('action');
+        $order = $hotaru->cage->get->testAlnumLines('order');
+        
+        require_once(LIBS . 'PluginManagement.php');
+        $plugman = new PluginManagement();
+        
+        switch ($action) {
+            case "activate":
+                $plugman->activateDeactivate($hotaru, 1);
+                break;
+            case "deactivate":
+                $plugman->activateDeactivate($hotaru, 0);
+                break;    
+            case "activate_all":
+                $plugman->activateDeactivateAll($hotaru, 1);
+                break;
+            case "deactivate_all":
+                $plugman->activateDeactivateAll($hotaru, 0);
+                break;    
+            case "uninstall_all":
+                $plugman->uninstallAll($hotaru);
+                break;    
+            case "install":
+                $plugman->install($hotaru);
+                break;
+            case "uninstall":
+                $plugman->uninstall($hotaru);
+                break;    
+            case "orderup":
+                $plugman->pluginOrder($hotaru, $order, "up");
+                break;    
+            case "orderdown":
+                $plugman->pluginOrder($hotaru, $order, "down");
+                break;    
+            default:
+                // nothing to do here...
+                break;
+        }
+        
+        // get and sort all the plugins ready for display:
+        $allplugins = $plugman->getPlugins($hotaru);  // get plugins
+        
+        $installed_plugins = array_filter($allplugins, array($plugman, 'getInstalledPlugins'));
+        $hotaru->vars['installed_plugins'] = sksort($installed_plugins, "order", "int", true);
+        
+        $uninstalled_plugins = array_filter($allplugins, array($plugman, 'getUninstalledPlugins'));
+        $hotaru->vars['uninstalled_plugins'] = sksort($uninstalled_plugins, 'name', 'char', true);
+    
+        return true;
     }
 }
 ?>

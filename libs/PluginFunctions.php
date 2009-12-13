@@ -66,7 +66,7 @@ class PluginFunctions
                 // create a temporary object of the plugin class
                 $this_plugin = new $plugin->plugin_class($this->hotaru, $plugin->plugin_folder);
                 
-                $hotaru->folder = $plugin->plugin_folder; // so we know the current plugin
+                $hotaru->pluginFolder = $plugin->plugin_folder; // so we know the current plugin
                 
                 // call the method that matches this hook
                 $result = $this_plugin->$hook($parameters);
@@ -105,9 +105,9 @@ class PluginFunctions
      * @param string $folder plugin folder name
      * @return string|false
      */
-    public function isActive($hotaru, $folder = "")
+    public function getPluginVersion($hotaru, $folder = "")
     {
-        if (!$folder) { $folder = $hotaru->folder; } 
+        if (!$folder) { $folder = $hotaru->pluginFolder; } 
         
         if (!$hotaru->pluginBasics) { //not in memory
             $hotaru->getPluginBasics(); // get from database
@@ -133,8 +133,23 @@ class PluginFunctions
     
     
     /**
-     * Store basic plugin info in memory. We use the hotaru 
-     * object because it's persistent during a page load
+     * Get a plugin's actual name from its folder name
+     *
+     * @param string $folder plugin folder name
+     * @return string
+     */
+    public function getPluginName($hotaru, $folder = '')
+    {    
+        if (!$folder) { $folder = $hotaru->pluginFolder; } 
+        
+        $name = $hotaru->db->get_var($hotaru->db->prepare("SELECT plugin_name FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
+        if ($name) { return $name; } else { return false; };
+    }
+    
+    
+    /**
+     * Store basic plugin for ALL PLUGINS info in memory. This is for CACHING.
+     * We use the hotaru object because it's persistent during a page load
      */
     public function getPluginBasics($db)
     {
@@ -150,20 +165,14 @@ class PluginFunctions
      * @param string $folder plugin folder name
      * @return string
      */
-    public function getPluginStatus($hotaru, $folder = '')
+    public function isActive($hotaru, $folder = '')
     {
-        if (!$folder) { $folder = $hotaru->folder; } 
+        if (!$folder) { $folder = $hotaru->pluginFolder; } 
         
-        $sql = "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
-        $plugin_row = $hotaru->db->get_row($hotaru->db->prepare($sql, $folder));
+        $sql = "SELECT plugin_enabled FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
+        $status = $hotaru->db->get_var($hotaru->db->prepare($sql, $folder));
         
-        if ($plugin_row && $plugin_row->plugin_enabled == 1) {
-            $status = "active";
-        } else {
-            $status = "inactive";
-        } 
-
-        return $status;
+        if ($status) { return true; } else { return false; }
     }
 }
 ?>

@@ -32,18 +32,34 @@ class Hotaru
     protected $isDebug              = false;    // show db queries and page loading time
     protected $isAdmin              = false;    // flag to tell if we are in Admin or not
     protected $title                = '';       // the page title
-    protected $lang                 = array();  // stores language file content
-    protected $folder               = '';       // plugin folder name
-    protected $pluginSettings       = array();  // contains all plugin settings
-    protected $pluginBasics         = array();  // contains basic plugin details
-    protected $sidebars             = true;    // enable or disable the sidebars
+    protected $sidebars             = true;     // enable or disable the sidebars
     protected $token                = '';       // token for CSRF
+    public $lang                    = array();  // stores language file content
     
+    // individual plugin
+    protected $pluginId             = '';       // plugin id
+    protected $pluginEnabled        = 0;        // activate (1), inactive (0)
+    protected $pluginName           = '';       // plugin proper name
+    protected $pluginFolder         = '';       // plugin folder name
+    protected $pluginClass          = '';       // plugin class name
+    protected $pluginDesc           = '';       // plugin description
+    protected $pluginVersion        = 0;        // plugin version number
+    protected $pluginOrder          = 0;        // plugin order number
+    protected $pluginHooks          = array();  // array of plugin hooks
+    protected $pluginRequires       = '';       // string of plugin->version pairs
+    public $pluginDependencies      = array();  // array of plugin->version pairs
+    
+    // all plugins
+    protected $pluginSettings       = array();  // contains all settings for all plugins
+    protected $pluginBasics         = array();  // contains basic details for all plugins
+    
+    // messages
     public $message                 = '';       // message to display
     public $messageType             = 'green';  // green or red, color of message box
     public $messages                = array();  // for multiple messages
     
-    public $vars            = array();  // multi-purpose
+    // miscellaneous
+    public $vars                    = array();  // multi-purpose
     
     /**
      * CONSTRUCTOR - Initialize
@@ -276,16 +292,29 @@ class Hotaru
      * @param string $folder plugin folder name
      * @return string|false
      */
-    public function isActive($folder = '')
+    public function getPluginVersion($folder = '')
     {
         $plugins = new PluginFunctions();
-        return $plugins->isActive($this, $folder);
+        return $plugins->getPluginVersion($this, $folder);
     }
     
     
     /**
-     * Store basic plugin info in memory. We use the hotaru 
-     * object because it's persistent during a page load
+     * Get a plugin's actual name from its folder name
+     *
+     * @param string $folder plugin folder name
+     * @return string
+     */
+    public function getPluginName($folder = '')
+    {
+        $plugins = new PluginFunctions();
+        $this->pluginName = $plugins->getPluginName($this, $folder);
+    }
+    
+    
+    /**
+     * Store basic plugin for ALL PLUGINS info in memory. This is for CACHING.
+     * We use the hotaru object because it's persistent during a page load
      */
     public function getPluginBasics()
     {
@@ -298,12 +327,12 @@ class Hotaru
      * Determines if a plugin is enabled or not
      *
      * @param string $folder plugin folder name
-     * @return string
+     * @return bool
      */
-    public function getPluginStatus($folder = '')
+    public function isActive($folder = '')
     {
         $plugins = new PluginFunctions();
-        return $plugins->getPluginStatus($this, $folder);
+        return $plugins->isActive($this, $folder);
     }
     
  
@@ -390,7 +419,7 @@ class Hotaru
     
  /* *************************************************************
  *
- *  INCLUDE ANNOUNCEMENT FUNCTIONS
+ *  ANNOUNCEMENT FUNCTIONS
  *
  * *********************************************************** */
  
@@ -412,7 +441,7 @@ class Hotaru
     
  /* *************************************************************
  *
- *  INCLUDE DEBUG FUNCTIONS
+ *  DEBUG FUNCTIONS
  *
  * *********************************************************** */
  
@@ -679,6 +708,30 @@ class Hotaru
         require_once(LIBS . 'Blocked.php');
         $blocked = new Blocked();
         return $blocked->isBlocked($this->db, $type, $value, $operator);
+    }
+    
+    
+ /* *************************************************************
+ *
+ *  LANGUAGE FUNCTIONS
+ *
+ * *********************************************************** */
+
+
+    /**
+     * Include a language file in a plugin
+     *
+     * @param string $folder name of plugin folder
+     * @param string $filename optional filename without file extension
+     *
+     * Note: the language file should be in a plugin folder named 'languages'.
+     * '_language.php' is appended automatically to the folder of file name.
+     */    
+    public function includeLanguage($filename = '', $folder = '')
+    {
+        require_once(LIBS . 'Language.php');
+        $language = new Language();
+        $language->includeLanguage($this, $filename, $folder);
     }
 }
 ?>

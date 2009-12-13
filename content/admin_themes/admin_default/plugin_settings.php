@@ -26,7 +26,7 @@
  * @link      http://www.hotarucms.org/
  */
 
-$this->folder = $this->cage->get->testAlnumLines('plugin'); // get plugin name from url
+$this->pluginFolder = $this->cage->get->testAlnumLines('plugin'); // get plugin name from url
 $this->getPluginName();
 
 /* CSRF protection for all plugin settings pages. We don'T know if plugin developers will 
@@ -68,10 +68,10 @@ $hotaru->token = $csrf->csrfkey();
 
 <div id="plugin_settings">
     <?php 
-        if ($safe && $hotaru->folder == "") {
+        if ($safe && $hotaru->pluginFolder == "") {
             $hotaru->pluginHook('admin_sidebar_plugin_settings');
         } elseif ($safe) {
-            $result = $hotaru->pluginHook('admin_plugin_settings', true, $hotaru->folder); 
+            $result = $hotaru->pluginHook('admin_plugin_settings', true, $hotaru->pluginFolder); 
             if (!isset($result) || !is_array($result)) {
                 $hotaru->message = $hotaru->lang['admin_plugin_settings_inactive'];
                 $hotaru->messageType = 'red';    

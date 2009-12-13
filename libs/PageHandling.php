@@ -35,7 +35,7 @@ class PageHandling
     public function displayTemplate($hotaru, $page = '', $plugin = '', $include_once = true)
     {
         // if no plugin folder, provide it:
-        if (!$plugin) { $plugin = $hotaru->folder; }
+        if (!$plugin) { $plugin = $hotaru->pluginFolder; }
         
         if ($hotaru->isAdmin) { 
             $themes = ADMIN_THEMES; $theme = ADMIN_THEME; 

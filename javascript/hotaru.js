@@ -92,7 +92,7 @@ $(document).ready(function(){
         
 	// Hide table details (Plugin Management page and similar tables)
 	$(".table_hide_details").click(function () {
-                $(this).parents("tr").fadeOut();
+                $(this).parents("tr.table_tr_details").fadeOut();
                 return false;
         });  
         

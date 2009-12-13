@@ -56,5 +56,54 @@ class Language
         
         return $lang_array;
     }
+    
+    
+    /**
+     * Include a language file in a plugin
+     *
+     * @param string $folder name of plugin folder
+     * @param string $filename optional filename without file extension
+     *
+     * Note: the language file should be in a plugin folder named 'languages'.
+     * '_language.php' is appended automatically to the folder of file name.
+     */    
+    public function includeLanguage($hotaru, $filename = '', $folder = '')
+    {
+        if (!$folder) { $folder = $hotaru->pluginFolder; }
+        
+        if ($folder) {
+        
+            // If not filename given, make the plugin name the file name
+            if (!$filename) { $filename = $folder; }
+            
+            // First, look in the user's language_pack folder for a language file...
+            if (file_exists(LANGUAGES . LANGUAGE_PACK . $filename . '_language.php')) {
+                include_once(LANGUAGES . LANGUAGE_PACK . $filename . '_language.php');
+                
+            // If not there, look in the default language_pack folder for a language file...
+            } elseif (file_exists(LANGUAGES . 'language_default/' . $filename . '_language.php')) {
+                include_once(LANGUAGES . 'language_default/' . $filename . '_language.php');
+    
+            // If still not found, look in the plugin folder for a language file... 
+            } elseif (file_exists(PLUGINS . $folder . '/languages/' . $filename . '_language.php')) {
+                include_once(PLUGINS . $folder . '/languages/' . $filename . '_language.php');
+            
+            // If STILL not found, include the user's main language file...
+            } elseif (file_exists(LANGUAGES . LANGUAGE_PACK . 'main_language.php')) {
+                include_once(LANGUAGES . LANGUAGE_PACK . 'main_language.php');
+    
+            // Finally, give up and include the main default language file...
+            } else {
+                include_once(LANGUAGES . 'language_default/main_language.php');
+            }
+            
+            // Add new language to our lang property
+            if (isset($lang)) {
+                foreach($lang as $l => $text) {
+                    $hotaru->lang[$l] = $text;
+                }
+            }
+        }
+    }
 }
 ?>
