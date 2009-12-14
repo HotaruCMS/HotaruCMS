@@ -41,7 +41,7 @@ class Breadcrumbs
         
         // plugin hook:
         $crumbs = $hotaru->pluginHook('breadcrumbs');
-        if (isset($crumbs)) {
+        if ($crumbs) {
             $output .= $crumbs['breadcrumbs']; // I KNOW THIS WON'T WORK.
             return $output;
         } 

@@ -51,7 +51,7 @@ if (!$result) {
 		</div>
                             <!-- MAIN -->
 							
-<?php if (range2title == "submit") {  "<div id=\"submission\">"; }
+<?php if ($hotaru->pageName == "submit") {  "<div id=\"submission\">"; }
 else {
 echo "<div id=\"main\" class=\"grid_8\">"; 
 } ?>
@@ -65,9 +65,9 @@ echo "<div id=\"main\" class=\"grid_8\">";
                         ?>	
 		</div>
 
-                    <?php if (range2sidebars) { ?>
+                    <?php if ($hotaru->sidebars) { ?>
 
-<?php if (range2templateName == "submit_step1" || range2templateName == "submit_step2")
+<?php if ($hotaru->pageName == "submit_step1" || $hotaru->pageName == "submit_step2")
 { // DO NOTHING Submission in progress 
 	echo "<style type=\"text/css\">
 	<!-- #main form {

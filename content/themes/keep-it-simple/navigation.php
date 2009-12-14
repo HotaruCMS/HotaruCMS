@@ -33,7 +33,7 @@
 <!-- Navigation Bar -->
     <div id="nav">
 	<ul>
-    <?php if ($hotaru->title == 'top') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
+    <?php if ($hotaru->pageName == 'top') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
 	
 	<?php $hotaru->pluginHook('navigation_first'); ?>
 	<li <?php echo $status; ?>><a <?php echo $status; ?> href="<?php echo BASEURL; ?>"><?php echo $hotaru->lang["main_theme_navigation_home"]; ?></a></li>
@@ -43,15 +43,15 @@
 	<?php 
         if (!$hotaru->isActive('users')) { 
 
-            if ($hotaru->current_user->loggedIn == true) { 
+            if ($hotaru->currentUser->loggedIn == true) { 
             
-                if ($hotaru->title == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
+                if ($hotaru->pageName == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
                 echo "<li " . $status . "><a " . $status . " href='" . $hotaru->url(array(), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_admin"] . "</a></li>"; 
                 
-                if ($hotaru->title == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
+                if ($hotaru->pageName == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
                 echo "<li " . $status . "><a " . $status . " href='" . $hotaru->url(array('page'=>'admin_logout'), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_logout"] . "</a></li>";
             } else { 
-                if ($hotaru->title == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
+                if ($hotaru->pageName == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
                 echo "<li " . $status . "><a " . $status . " href='" . $hotaru->url(array(), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_login"] . "</a></li>"; 
             }
         } else {

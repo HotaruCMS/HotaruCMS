@@ -40,7 +40,7 @@
         <?php
             // plugin hook
             $result = $hotaru->pluginHook('header_meta');
-            if (!isset($result) || !is_array($result)) { ?>
+            if (!$result) { ?>
                 <meta name="description" content="<?php echo $hotaru->lang['header_meta_description']; ?>" />
                 <meta name="keywords" content="<?php echo $hotaru->lang['header_meta_keywords']; ?>" />
         <?php } ?>
