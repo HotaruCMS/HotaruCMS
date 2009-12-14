@@ -62,7 +62,8 @@ class AdminPages
                 $this->adminPlugins($hotaru);
                 break;
             case "plugin_settings":
-                // Nothing special to do...
+                $hotaru->pluginFolder = $hotaru->cage->get->testAlnumLines('plugin'); // get plugin name from url
+                $hotaru->getPluginName();
                 break;
             default:
                 // we need this because it's not specified in the url:

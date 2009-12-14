@@ -26,34 +26,19 @@
  * @link      http://www.hotarucms.org/
  */
 
-$this->pluginFolder = $this->cage->get->testAlnumLines('plugin'); // get plugin name from url
-$this->getPluginName();
-
-/* CSRF protection for all plugin settings pages. We don'T know if plugin developers will 
-   use GET or POST in their settings form so we have to check for both... */
-
-$safe = $hotaru->csrf(); // CSRF flag
 ?>
 
 <div id="plugin_settings">
     <?php 
-        if ($safe && $hotaru->pluginFolder == "") {
+        if ($hotaru->pluginFolder == "") {
             $hotaru->pluginHook('admin_sidebar_plugin_settings');
-        } elseif ($safe) {
+        } else {
             $result = $hotaru->pluginHook('admin_plugin_settings', true, $hotaru->pluginFolder); 
             if (!isset($result) || !is_array($result)) {
                 $hotaru->message = $hotaru->lang['admin_plugin_settings_inactive'];
                 $hotaru->messageType = 'red';    
                 $hotaru->showMessage();
             }
-        } elseif (!$safe) {
-            $hotaru->message = $this->lang['error_csrf'];
-            $hotaru->messageType = 'red';
-            $hotaru->showMessage();
         }
     ?>
 </div>
-
-<?php 
-
-?>
