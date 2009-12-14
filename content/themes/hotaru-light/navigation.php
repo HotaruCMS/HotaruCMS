@@ -29,13 +29,13 @@
 
 <!-- Navigation Bar -->
 <ul id="navigation">
-    <?php $hotaru->plugins->pluginHook('navigation_first'); ?>
+    <?php $hotaru->pluginHook('navigation_first'); ?>
     
     <?php if ($hotaru->title == 'top') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
     <li><a <?php echo $status; ?> href="<?php echo BASEURL; ?>"><?php echo $hotaru->lang["main_theme_navigation_home"]; ?></a></li>
-    <?php $hotaru->plugins->pluginHook('navigation'); ?>
+    <?php $hotaru->pluginHook('navigation'); ?>
     <?php 
-        if (!$hotaru->plugins->isActive('users')) { 
+        if (!$hotaru->isActive('users')) { 
 
             if ($hotaru->current_user->loggedIn == true) { 
             
@@ -49,12 +49,12 @@
                 echo "<li><a " . $status . " href='" . $hotaru->url(array(), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_login"] . "</a></li>"; 
             }
         } else {
-            $hotaru->plugins->pluginHook('navigation_users', true, 'users'); // ensures login/logout/register are last.
+            $hotaru->pluginHook('navigation_users', true, 'users'); // ensures login/logout/register are last.
         }
     ?>
     
     <?php     // RSS Link and icon if Submit plugin is active
-        if ($hotaru->plugins->getPluginStatus('submit') == 'active') { ?>
+        if ($hotaru->isActive('submit')) { ?>
         <li>
         <div id="rss"><a href="<?php echo $hotaru->url(array('page'=>'rss')); ?>">RSS 
             <img src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png">
@@ -64,4 +64,4 @@
             
 </ul>
 
-<?php $hotaru->plugins->pluginHook('navigation_last'); ?>
+<?php $hotaru->pluginHook('navigation_last'); ?>
