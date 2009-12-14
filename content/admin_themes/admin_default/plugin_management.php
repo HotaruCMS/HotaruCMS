@@ -163,7 +163,7 @@
         echo "<a class='table_drop_down' href='#'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/info_16.png'></a>\n";
         echo "&nbsp;" . $plug['install'] . "</td>\n";
         echo "</tr>\n";
-        echo "<tr id='tr_details' style='display:none;'><td class='table_description'>";
+        echo "<tr class='table_tr_details' style='display:none;'><td class='table_description'>";
         echo $plug['description'] . "</td>";
         echo "<td class='table_description_close'><a class='table_hide_details' href='#'>";
         echo $hotaru->lang["admin_theme_plugins_close"] . "</a></td></tr>\n";
