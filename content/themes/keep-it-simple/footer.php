@@ -110,7 +110,7 @@
 		</div>	
 			
         <?php 
-            $hotaru->plugins->pluginHook('footer');
+            $hotaru->pluginHook('footer');
         
             // Link to forums...
             echo "<p><a href='http://hotarucms.org'><img src='" . BASEURL . "content/themes/" . THEME . "images/hotarucms.png' ";
@@ -120,7 +120,7 @@
         ?>
 	</div>
 	<!-- footer ends here -->
-<?php $hotaru->plugins->pluginHook('pre_close_body'); ?>
+<?php $hotaru->pluginHook('pre_close_body'); ?>
 
 </body>
 </html>

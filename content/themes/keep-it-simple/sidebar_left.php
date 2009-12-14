@@ -29,7 +29,7 @@
 
 ?>
 
-    <?php $hotaru->plugins->pluginHook('sidebar', true, '', array(1)); ?>
+    <?php $hotaru->pluginHook('sidebar', true, '', array(1)); ?>
 	
 
 

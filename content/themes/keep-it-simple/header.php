@@ -35,28 +35,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
 <head profile="http://gmpg.org/xfn/11">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>
-       <?php 
-           if ($hotaru->title != "")
-           {
-               echo $hotaru->title . " &laquo; " . SITE_NAME;
-           }
-           elseif ($hotaru->getPageName() != "main")
-           {
-               $hotaru->title = $hotaru->getPageName();
-               echo $hotaru->pageToTitleCaps($hotaru->title) . " &laquo; " . SITE_NAME;
-           }
-           else
-           { 
-               $hotaru->title = 'top'; // don't change this
-               echo SITE_NAME; 
-           } 
-       ?>
-    </title>
+    <title><?php echo $hotaru->getTitle(); ?></title>
     
         <?php
             // plugin hook
-            $result = $hotaru->plugins->pluginHook('header_meta');
+            $result = $hotaru->pluginHook('header_meta');
             if (!isset($result) || !is_array($result)) { ?>
                 <meta name="description" content="<?php echo $hotaru->lang['header_meta_description']; ?>" />
                 <meta name="keywords" content="<?php echo $hotaru->lang['header_meta_keywords']; ?>" />
@@ -77,20 +60,20 @@
     <link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME . 'css/screen.css'; ?>" type="text/css" />
     <!-- <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico" /> -->
    
-    <?php $hotaru->plugins->pluginHook('header_include_raw'); ?>
+    <?php $hotaru->pluginHook('header_include_raw'); ?>
    
 </head>
 <body>
 <div id="header-wrap">
 <div id="header" class="container_16">
 
-<?php $hotaru->plugins->pluginHook('post_open_body'); ?>
+<?php $hotaru->pluginHook('post_open_body'); ?>
 
 <?php if ($announcements = $hotaru->checkAnnouncements()) { ?>
     <div id="announcement">
-        <?php $hotaru->plugins->pluginHook('announcement_first'); ?>
+        <?php $hotaru->pluginHook('announcement_first'); ?>
         <?php foreach ($announcements as $announcement) { echo $announcement . "<br />"; } ?>
-        <?php $hotaru->plugins->pluginHook('announcement_last'); ?>
+        <?php $hotaru->pluginHook('announcement_last'); ?>
     </div>
 <?php } ?>
 
@@ -103,7 +86,7 @@
 		<p id="intro" style="margin-top: -20px;">Put your favorite slogan here...</p>			
 
         <!-- CATEGORIES, ETC -->
-		<div id="categories_kisp"><?php $hotaru->plugins->pluginHook('post_header'); ?></div>	 
+		<div id="categories_kisp"><?php $hotaru->pluginHook('post_header'); ?></div>	 
 
 </div> <!-- Fine div header --> 
 </div> <!-- Fine div header-wrap -->

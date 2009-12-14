@@ -30,41 +30,44 @@
  */
 
 // plugin hook
-$result = $hotaru->plugins->pluginHook('theme_index_replace');
+$result = range2plugins->pluginHook('theme_index_top');
 if (!isset($result) || !is_array($result)) {
 ?>
         <!-- HEADER-->
 
         <?php
             // plugin hook
-            $result = $hotaru->plugins->pluginHook('theme_index_header');
+            $result = range2plugins->pluginHook('theme_index_header');
             if (!isset($result) || !is_array($result)) {
-                $hotaru->displayTemplate('header');
+                range2displayTemplate('header');
             }
         ?>
 <!-- div content starts -->
 <div id="content-outer">
 <div id="content-wrapper" class="container_16">
-    
+    <!-- BREADCRUMBS -->
+		<div id='breadcrumbs'>
+		<?php echo $hotaru->breadcrumbs(); ?>
+		</div>
                             <!-- MAIN -->
 							
-<?php if ($hotaru->title == "submit") {  "<div id=\"submission\">"; }
+<?php if (range2title == "submit") {  "<div id=\"submission\">"; }
 else {
 echo "<div id=\"main\" class=\"grid_8\">"; 
 } ?>
                             <?php     
                                 // plugin hook
-                            $result = $hotaru->plugins->pluginHook('theme_index_main');
+                            $result = range2plugins->pluginHook('theme_index_main');
                             if (!isset($result) || !is_array($result)) {
-                                $page = $hotaru->getPageName();
-                                $hotaru->displayTemplate($page); 
+                                $page = range2getPageName();
+                                range2displayTemplate($page); 
                             }
                         ?>	
 		</div>
 
-                    <?php if ($hotaru->sidebars) { ?>
+                    <?php if (range2sidebars) { ?>
 
-<?php if ($hotaru->templateName == "submit_step1" || $hotaru->templateName == "submit_step2")
+<?php if (range2templateName == "submit_step1" || range2templateName == "submit_step2")
 { // DO NOTHING Submission in progress 
 	echo "<style type=\"text/css\">
 	<!-- #main form {
@@ -80,9 +83,9 @@ else {
 							<div class=\"sidemenu\">";	
                             
                                 // plugin hook
-                                $result = $hotaru->plugins->pluginHook('theme_index_sidebar');
+                                $result = range2plugins->pluginHook('theme_index_sidebar');
                                 if (!isset($result) || !is_array($result)) {
-                                    $hotaru->displayTemplate('sidebar_left');
+                                    range2displayTemplate('sidebar_left');
                                 }                                
                             
 					  echo "</div>
@@ -91,9 +94,9 @@ else {
 							<div class=\"sidemenu\">";
                             
                                 // plugin hook
-                                $result = $hotaru->plugins->pluginHook('theme_index_sidebar_2');
+                                $result = range2plugins->pluginHook('theme_index_sidebar_2');
                                 if (!isset($result) || !is_array($result)) {
-                                    $hotaru->displayTemplate('sidebar_right');
+                                    range2displayTemplate('sidebar_right');
                                 }                                
                             
 					  echo "</div>
@@ -106,9 +109,9 @@ else {
         <!-- FOOTER -->
         <?php
             // plugin hook
-            $result = $hotaru->plugins->pluginHook('theme_index_footer');
+            $result = range2plugins->pluginHook('theme_index_footer');
             if (!isset($result) || !is_array($result)) {
-                $hotaru->displayTemplate('footer');
+                range2displayTemplate('footer');
             }
         ?>
 <?php    } ?>
