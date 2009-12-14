@@ -44,7 +44,7 @@ require_once(EXTENSIONS . 'csrf/csrf_class.php'); // protection against CSRF att
 require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
 require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
 require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php'); // database
-$hotaru  = new Hotaru(); // must come before language inclusion
+$hotaru  = new Hotaru('install'); // must come before language inclusion
 require_once(INSTALL . 'install_language.php');    // language file for install
     
 $db = init_database();

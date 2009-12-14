@@ -95,12 +95,14 @@ class IncludeCssJs
      * @param $folder - the folder name of the plugin
      * @param $filename - optional css file without an extension
      */
-     public function includeCss($filename = '', $folder = '', $admin = false)
+     public function includeCss($hotaru, $folder = '', $filename = '', $admin = false)
      {
+        if (!$folder) { $folder = $hotaru->pluginFolder; }
+        
         // If no filename provided, the filename is assigned the plugin name.
         if (!$filename) { $filename = $folder; }
 
-        $file_location = $this->findCssFile($filename, $folder);
+        $file_location = $this->findCssFile($folder, $filename);
         
         // Add this css file to the global array of css_files
         $this->setCssIncludes($file_location, $admin);
@@ -112,15 +114,17 @@ class IncludeCssJs
     /**
      * Build an array of JavaScript files to combine
      *
-     * @param $plugin - the folder name of the plugin
+     * @param $folder - the folder name of the plugin
      * @param $filename - optional js file without an extension
      */
-     public function includeJs($filename = '', $folder = '', $admin = false)
+     public function includeJs($hotaru, $folder = '', $filename = '', $admin = false)
      {
+        if (!$folder) { $folder = $hotaru->pluginFolder; }
+                
         // If no filename provided, the filename is assigned the plugin name.
         if (!$filename) { $filename = $folder; }
         
-        $file_location = $this->findJsFile($filename, $folder);
+        $file_location = $this->findJsFile($folder, $filename);
         
         // Add this css file to the global array of css_files
         $this->setJsIncludes($file_location, $admin);
@@ -138,29 +142,28 @@ class IncludeCssJs
      * Note: the css file should be in a folder named 'css' and a file of 
      * the format plugin_name.css, e.g. rss_show.css
      */    
-    public function findCssFile($filename = '', $folder = '')
+    public function findCssFile($folder = '', $filename = '')
     {
-        if ($folder) {
+        if (!$folder) { return false; }
 
-            // If filename not given, make the plugin name the file name
-            if (!$filename) { $filename = $folder; }
-            
-            // First look in the theme folder for a css file...     
-            if (file_exists(THEMES . THEME . 'css/' . $filename . '.css')) {    
-                $file_location = THEMES . THEME . 'css/' . $filename . '.css';
-            
-            // If not found, look in the default theme folder for a css file...     
-            } elseif (file_exists(THEMES . 'default/css/' . $filename . '.css')) {    
-                $file_location = THEMES . 'default/css/' . $filename . '.css';
-            
-            // If still not found, look in the plugin folder for a css file... 
-            } elseif (file_exists(PLUGINS . $folder . '/css/' . $filename . '.css')) {
-                $file_location = PLUGINS . $folder . '/css/' . $filename . '.css';
-            }
-             
-            if (isset($file_location)) {
-                return $file_location;
-            }
+        // If filename not given, make the plugin name the file name
+        if (!$filename) { $filename = $folder; }
+        
+        // First look in the theme folder for a css file...     
+        if (file_exists(THEMES . THEME . 'css/' . $filename . '.css')) {    
+            $file_location = THEMES . THEME . 'css/' . $filename . '.css';
+        
+        // If not found, look in the default theme folder for a css file...     
+        } elseif (file_exists(THEMES . 'default/css/' . $filename . '.css')) {    
+            $file_location = THEMES . 'default/css/' . $filename . '.css';
+        
+        // If still not found, look in the plugin folder for a css file... 
+        } elseif (file_exists(PLUGINS . $folder . '/css/' . $filename . '.css')) {
+            $file_location = PLUGINS . $folder . '/css/' . $filename . '.css';
+        }
+         
+        if (isset($file_location)) {
+            return $file_location;
         }
     }
 
@@ -173,29 +176,28 @@ class IncludeCssJs
      *
      * Note: the js file should be in a folder named 'javascript' and a file of the format plugin_name.js, e.g. category_manager.js
      */    
-    public function findJsFile($filename = '', $folder = '')
+    public function findJsFile($folder = '', $filename = '')
     {
-        if ($folder) {
+        if (!$folder) { return false; }
 
-            // If filename not given, make the plugin name the file name
-            if (!$filename) { $filename = $folder; }
+        // If filename not given, make the plugin name the file name
+        if (!$filename) { $filename = $folder; }
+        
+        // First look in the theme folder for a js file...     
+        if (file_exists(THEMES . THEME . 'javascript/' . $filename . '.js')) {    
+            $file_location = THEMES . THEME . 'javascript/' . $filename . '.js';
             
-            // First look in the theme folder for a js file...     
-            if (file_exists(THEMES . THEME . 'javascript/' . $filename . '.js')) {    
-                $file_location = THEMES . THEME . 'javascript/' . $filename . '.js';
-                
-            // If not found, look in the default theme folder for a js file...     
-            } elseif (file_exists(THEMES . 'default/javascript/' . $filename . '.js')) {    
-                $file_location = THEMES . 'default/javascript/' . $filename . '.js';
-                
-            // If still not found, look in the plugin folder for a js file... 
-            } elseif (file_exists(PLUGINS . $folder . '/javascript/' . $filename . '.js')) {
-                $file_location = PLUGINS . $folder . '/javascript/' . $filename . '.js';
-            }
-             
-            if (isset($file_location)) {
-                return $file_location;
-            }
+        // If not found, look in the default theme folder for a js file...     
+        } elseif (file_exists(THEMES . 'default/javascript/' . $filename . '.js')) {    
+            $file_location = THEMES . 'default/javascript/' . $filename . '.js';
+            
+        // If still not found, look in the plugin folder for a js file... 
+        } elseif (file_exists(PLUGINS . $folder . '/javascript/' . $filename . '.js')) {
+            $file_location = PLUGINS . $folder . '/javascript/' . $filename . '.js';
+        }
+         
+        if (isset($file_location)) {
+            return $file_location;
         }
     }
     

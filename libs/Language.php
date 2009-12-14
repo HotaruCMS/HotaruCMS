@@ -67,7 +67,7 @@ class Language
      * Note: the language file should be in a plugin folder named 'languages'.
      * '_language.php' is appended automatically to the folder of file name.
      */    
-    public function includeLanguage($hotaru, $filename = '', $folder = '')
+    public function includeLanguage($hotaru, $folder = '', $filename = '')
     {
         if (!$folder) { $folder = $hotaru->pluginFolder; }
         
@@ -96,6 +96,7 @@ class Language
             } else {
                 include_once(LANGUAGES . 'language_default/main_language.php');
             }
+            
             
             // Add new language to our lang property
             if (isset($lang)) {

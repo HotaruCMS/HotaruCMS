@@ -16,7 +16,7 @@ class csrf
         $this->action = (!$action ) ? $this->action = $hotaru->getPagename() : $this->action = $action;
         $this->table = DB_PREFIX . 'tokens';
         $this->life = $life;
-        
+
         if ($type == 'set') { 
             $hotaru->csrfToken = $this->csrfkey($hotaru);   // set a new token
         } else {

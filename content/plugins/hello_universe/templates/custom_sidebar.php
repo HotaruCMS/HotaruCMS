@@ -1,14 +1,9 @@
-<?php
+<?php 
 /**
- * name: Hello World
- * description: Displays "Hello World!"
- * version: 0.5
- * folder: hello_world
- * class: HelloWorld
- * hooks: hello_world
+ * Plugin name: Hello Universe
+ * Template name: sidebar.php
+ * Template author: Nick Ramsay
  *
- * Usage: Add <?php $hotaru->pluginHook('hello_world'); ?> to your theme, wherever you want to show "Hello World".
-*
  * PHP version 5
  *
  * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
@@ -31,16 +26,11 @@
  * @link      http://www.hotarucms.org/
  */
 
-class HelloWorld
-{
-    /**
-     * Displays "Hello World!" wherever the plugin hook is.
-     */
-    public function hello_world()
-    {
-        echo "Hello World!";
-    }
-
-}
-
 ?>
+
+<h2>A New Sidebar</h2>
+
+<p>This is the custom_sidebar.php file in the Hello Universe plugin folder.</p>
+
+<p>We managed to override the regular sidebar by creating a new sidebar in the plugin folder, and writing Function #4 in hello_universe.php.</p>
+

@@ -28,13 +28,13 @@
 
 // plugin hook
 $result = $hotaru->pluginHook('theme_index_top');
-if (!isset($result)) {
+if (!$result) {
 ?>
         <!-- HEADER-->
         <?php
             // plugin hook
             $result = $hotaru->pluginHook('theme_index_header');
-            if (!isset($result)) {
+            if (!$result) {
                 $hotaru->displayTemplate('header');
             }
         ?>
@@ -57,7 +57,7 @@ if (!isset($result)) {
                             <?php     
                                 // plugin hook
                             $result = $hotaru->pluginHook('theme_index_main');
-                            if (!isset($result)) {
+                            if (!$result) {
                                 $page = $hotaru->getPageName();
                                 $hotaru->displayTemplate($page); 
                             }
@@ -70,7 +70,7 @@ if (!isset($result)) {
                             <?php
                                 // plugin hook
                                 $result = $hotaru->pluginHook('theme_index_sidebar');
-                                if (!isset($result)) {
+                                if (!$result) {
                                     $hotaru->displayTemplate('sidebar');
                                 }                                
                             ?>
@@ -83,7 +83,7 @@ if (!isset($result)) {
         <?php
             // plugin hook
             $result = $hotaru->pluginHook('theme_index_footer');
-            if (!isset($result)) {
+            if (!$result) {
                 $hotaru->displayTemplate('footer');
             }
         ?>

@@ -94,8 +94,11 @@ class Hotaru
     /**
      * START - the top of "Hotaru", i.e. the page-building process
      */
-    public function start($entrance = 'main')
+    public function start($entrance = '')
     {
+        // To avoid an infinite loop, plugins that fall back on the default 'start' hook need redirecting...
+        if (!$entrance) { return $this->hotaru_start(); }
+        
         // include "main" language pack
         $lang = new Language();
         $this->lang = $lang->includeLanguagePack($this->lang, 'main');
@@ -110,6 +113,7 @@ class Hotaru
                 $this->checkCookie();                   // check cookie reads user details
                 $this->checkAccess();                   // site closed if no access permitted
                 $this->checkCssJs();                    // check if we need to merge css/js
+                $this->pluginHook('start');             // used to do stuff before output
                 $this->adminPages($page);               // Direct to desired Admin page
                 break;
             default:
@@ -119,7 +123,7 @@ class Hotaru
                 $this->pluginHook('start');             // used to do stuff before output
                 $this->displayTemplate('index');        // displays the index page
         }
-        
+
         exit;
     }
     
@@ -149,6 +153,97 @@ class Hotaru
     }
 
 
+/* *************************************************************
+ *
+ *  DEFAULT PLUGIN HOOK ACTIONS
+ *
+ * *********************************************************** */
+ 
+     
+    /**
+     * Include language file if available
+     */
+    public function install_plugin()
+    {
+        $this->includeLanguage($this->pluginFolder);
+    }
+    
+    
+    /**
+     * Include language file if available
+     * This is named with a "hotaru_" prefix to prevent looping in start();
+     */
+    public function hotaru_start()
+    {
+        $this->includeLanguage($this->pluginFolder);
+    }
+     
+     
+    /**
+     * Include All CSS and JavaScript files for this plugin
+     */
+    public function header_include()
+    {
+        // include a files that match the name of the plugin folder:
+        $this->includeJs($this->pluginFolder); // filename, folder name
+        $this->includeCss($this->pluginFolder);
+    }
+    
+    
+    /**
+     * Include All CSS and JavaScript files for this plugin in Admin
+     */
+    public function admin_header_include()
+    {
+        // include a files that match the name of the plugin folder:
+        $this->includeJs($this->pluginFolder, true); // filename, folder name, admin
+        $this->includeCss($this->pluginFolder, true);
+    }
+    
+    /**
+     * Include code as a template before the closing </body> tag
+     */
+    public function pre_close_body()
+    {
+        $this->displayTemplate($this->pluginFolder . '_footer', $this->pluginFolder);
+    }
+    
+
+    /**
+     * Display Admin sidebar link
+     */
+    public function admin_sidebar_plugin_settings()
+    {
+        $vars['plugin'] = $this->pluginFolder;
+        $vars['name'] = make_name($this->pluginFolder);
+        return $vars;
+    }
+    
+    
+    /**
+     * Display Admin settings page
+     *
+     * @return true
+     */
+    public function admin_plugin_settings()
+    {
+        // This requires there to be a file in the plugin folder called pluginname_settings.php
+        // The file must contain a class titled PluginNameSettings
+        // The class must have a method called "settings".
+        
+        if ($this->cage->get->testAlnumLines('plugin') != $this->pluginFolder) { return false; }
+        
+        if (file_exists(PLUGINS . $this->pluginFolder . '/' . $this->pluginFolder . '_settings.php')) {
+            include_once(PLUGINS . $this->pluginFolder . '/' . $this->pluginFolder . '_settings.php');
+        }
+        
+        $settings_class = make_name($this->pluginFolder, '') . 'Settings'; // e.g. CategoriesSettings
+        $settings_object = new $settings_class($this->hotaru, $this->pluginFolder);
+        $settings_object->settings();   // call the settings function
+        return true;
+    }
+    
+    
 /* *************************************************************
  *
  *  PAGE HANDLING FUNCTIONS
@@ -333,7 +428,7 @@ class Hotaru
     public function pluginHook($hook = '', $folder = '', $parameters = array(), $exclude = array())
     {
         $plugins = new PluginFunctions();
-        $plugins->pluginHook($this, $hook, $folder, $parameters, $exclude);
+        return $plugins->pluginHook($this, $hook, $folder, $parameters, $exclude);
     }
     
     
@@ -445,6 +540,34 @@ class Hotaru
      {
         $includes = new IncludeCssJs();         // test and merge css and javascript files
         $includes->includeCombined($version_js, $version_css, $admin);
+     }
+     
+     
+    /**
+     * Build an array of css files to combine
+     *
+     * @param $folder - the folder name of the plugin
+     * @param $filename - optional css file without an extension
+     * @param $admin - optional flag to indicate whether this is for admin or not
+     */
+     public function includeCss($hotaru, $folder = '', $filename = '', $admin = false)
+     {
+        $includes = new IncludeCssJs();         // test and merge css and javascript files
+        return $includes->includeCss($folder, $filename, $admin);
+     }
+
+
+    /**
+     * Build an array of JavaScript files to combine
+     *
+     * @param $folder - the folder name of the plugin
+     * @param $filename - optional js file without an extension
+     * @param $admin - optional flag to indicate whether this is for admin or not
+     */
+     public function includeJs($hotaru, $folder = '', $filename = '', $admin = false)
+     {
+        $includes = new IncludeCssJs();         // test and merge css and javascript files
+        return $includes->includeJs($folder, $filename, $admin);
      }
      
      
@@ -790,11 +913,11 @@ class Hotaru
      * Note: the language file should be in a plugin folder named 'languages'.
      * '_language.php' is appended automatically to the folder of file name.
      */    
-    public function includeLanguage($filename = '', $folder = '')
+    public function includeLanguage($folder = '', $filename = '')
     {
         require_once(LIBS . 'Language.php');
         $language = new Language();
-        $language->includeLanguage($this, $filename, $folder);
+        $language->includeLanguage($this, $folder, $filename);
     }
     
     

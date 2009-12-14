@@ -64,19 +64,24 @@ class PluginFunctions
                 include_once(PLUGINS . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php");
                 
                 // create a temporary object of the plugin class
-                $this_plugin = new $plugin->plugin_class($this->hotaru, $plugin->plugin_folder);
+                $this_plugin = new $plugin->plugin_class($hotaru);
                 
                 $hotaru->pluginFolder = $plugin->plugin_folder; // so we know the current plugin
                 
                 // call the method that matches this hook
-                $result = $this_plugin->$hook($parameters);
+                if (method_exists($this_plugin, $hook)) {
+                    $result = $this_plugin->$hook($parameters);
+                } else {
+                    $result = $hotaru->$hook($parameters);
+                }
+                
                 if ($result) {
                     $return_array[$plugin->plugin_class . "_" . $hook] = $result; // name the result Class + hook name
                 }
             }
         }
 
-        if (!empty($return_array))
+        if (isset($return_array))
         {
             // return an array of return values from each function, 
             // e.g. $return_array['usr_users'] = something

@@ -1,14 +1,9 @@
-<?php
+<?php 
 /**
- * name: Hello World
- * description: Displays "Hello World!"
- * version: 0.5
- * folder: hello_world
- * class: HelloWorld
- * hooks: hello_world
+ * Plugin name: Hello Universe
+ * Template name: plugin_template.php
+ * Template author: Nick Ramsay
  *
- * Usage: Add <?php $hotaru->pluginHook('hello_world'); ?> to your theme, wherever you want to show "Hello World".
-*
  * PHP version 5
  *
  * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
@@ -31,16 +26,12 @@
  * @link      http://www.hotarucms.org/
  */
 
-class HelloWorld
-{
-    /**
-     * Displays "Hello World!" wherever the plugin hook is.
-     */
-    public function hello_world()
-    {
-        echo "Hello World!";
-    }
-
-}
-
 ?>
+
+<h2>A new template!</h2>
+
+<p>This is the plugin_template.php file in the Hello Universe plugin folder.</p>
+
+<p>To see how we made this page, look at Function #2 in hello_universe.php.</p>
+
+<p><a href="<?php echo BASEURL; ?>"><?php echo $hotaru->lang["hello_universe_back_home"]; ?></a></p>
