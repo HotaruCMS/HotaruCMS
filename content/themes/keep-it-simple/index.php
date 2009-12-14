@@ -30,16 +30,16 @@
  */
 
 // plugin hook
-$result = range2plugins->pluginHook('theme_index_top');
-if (!isset($result) || !is_array($result)) {
+$result = $hotaru->pluginHook('theme_index_top');
+if (!$result) {
 ?>
         <!-- HEADER-->
 
         <?php
             // plugin hook
-            $result = range2plugins->pluginHook('theme_index_header');
-            if (!isset($result) || !is_array($result)) {
-                range2displayTemplate('header');
+            $result = $hotaru->pluginHook('theme_index_header');
+            if (!$result) {
+                $hotaru->displayTemplate('header');
             }
         ?>
 <!-- div content starts -->
@@ -57,10 +57,10 @@ echo "<div id=\"main\" class=\"grid_8\">";
 } ?>
                             <?php     
                                 // plugin hook
-                            $result = range2plugins->pluginHook('theme_index_main');
-                            if (!isset($result) || !is_array($result)) {
-                                $page = range2getPageName();
-                                range2displayTemplate($page); 
+                            $result = $hotaru->pluginHook('theme_index_main');
+                            if (!$result) {
+                                $page = $hotaru->getPageName();
+                                $hotaru->displayTemplate($page); 
                             }
                         ?>	
 		</div>
@@ -83,9 +83,9 @@ else {
 							<div class=\"sidemenu\">";	
                             
                                 // plugin hook
-                                $result = range2plugins->pluginHook('theme_index_sidebar');
-                                if (!isset($result) || !is_array($result)) {
-                                    range2displayTemplate('sidebar_left');
+                                $result = $hotaru->pluginHook('theme_index_sidebar');
+                                if (!$result) {
+                                    $hotaru->displayTemplate('sidebar');
                                 }                                
                             
 					  echo "</div>
@@ -94,9 +94,9 @@ else {
 							<div class=\"sidemenu\">";
                             
                                 // plugin hook
-                                $result = range2plugins->pluginHook('theme_index_sidebar_2');
-                                if (!isset($result) || !is_array($result)) {
-                                    range2displayTemplate('sidebar_right');
+                                $result = $hotaru->pluginHook('theme_index_sidebar_2');
+                                if (!$result) {
+                                    $hotaru->displayTemplate('sidebar');
                                 }                                
                             
 					  echo "</div>
@@ -109,9 +109,9 @@ else {
         <!-- FOOTER -->
         <?php
             // plugin hook
-            $result = range2plugins->pluginHook('theme_index_footer');
-            if (!isset($result) || !is_array($result)) {
-                range2displayTemplate('footer');
+            $result = $hotaru->pluginHook('theme_index_footer');
+            if (!$result) {
+                $hotaru->displayTemplate('footer');
             }
         ?>
 <?php    } ?>

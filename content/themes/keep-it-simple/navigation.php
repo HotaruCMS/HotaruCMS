@@ -64,7 +64,7 @@
 
 
     <?php     // RSS Link and icon if Submit plugin is active
-        if ($hotaru->getPluginStatus('submit') == 'active') { ?>
+        if ($hotaru->isActive('submit')) { ?>
 		<div id="iconrss">
 		<a href="<?php echo $hotaru->url(array('page'=>'rss')); ?>">
                     <img src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/new-rss.png">
