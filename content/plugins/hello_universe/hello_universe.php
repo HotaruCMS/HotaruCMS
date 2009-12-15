@@ -29,12 +29,9 @@
  * @link      http://www.hotarucms.org/
  */
 
-
 class HelloUniverse
 {
-    private $hotaru = '';   // access Hotaru functions using $this->hotaru
-    public function __construct($hotaru) { $this->hotaru = $hotaru; } // don't touch this
-
+    public $hotaru = '';   // access Hotaru functions using $this->hotaru
 
     // NOTE: We've included "start" in the plugin hook list. That includes the language file for us.
     
@@ -42,7 +39,7 @@ class HelloUniverse
      * FUNCTION #1
      *
      * Function: theme_index_top
-     * Purpose: Setthe page title on the default page (which is otherwise "page not found")
+     * Purpose: Set the page title on the default page (which is otherwise "page not found")
      * Notes: Uses theme_index_top in the hooks list at the top of this file.
     */
     public function theme_index_top()

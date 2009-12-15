@@ -96,6 +96,7 @@ $lang["admin_theme_plugins_order_down"] = "Move down";
 $lang["admin_theme_plugins_details"] = "Details";
 $lang["admin_theme_plugins_requires"] = "Requires";
 $lang["admin_theme_plugins_description"] = "Description";
+$lang["admin_theme_plugins_author"] = "Author";
 $lang["admin_theme_plugins_close"] = "Close";
 $lang["admin_theme_plugins_no_plugins"] = "No additional plugins needed.";
 $lang["admin_theme_plugins_guide"] = "Plugin Management Guide";

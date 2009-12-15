@@ -234,6 +234,18 @@ function do_upgrade()
         $hotaru->db->query($hotaru->db->prepare($sql, 0));
     }
     
+    // add new user_ip field to Users table
+    if (!$hotaru->db->column_exists('plugins', 'plugin_extends')) {
+        $sql = "ALTER TABLE " . DB_PREFIX . "plugins ADD plugin_author varchar(32) NOT NULL DEFAULT %s AFTER plugin_order";
+        $hotaru->db->query($hotaru->db->prepare($sql, ''));
+        $sql = "ALTER TABLE " . DB_PREFIX . "plugins ADD plugin_authorurl varchar(128) NOT NULL DEFAULT %s AFTER plugin_author";
+        $hotaru->db->query($hotaru->db->prepare($sql, ''));
+        $sql = "ALTER TABLE " . DB_PREFIX . "plugins ADD plugin_extends varchar(64) NOT NULL DEFAULT %s AFTER plugin_class";
+        $hotaru->db->query($hotaru->db->prepare($sql, ''));
+        $sql = "ALTER TABLE " . DB_PREFIX . "plugins ADD plugin_type varchar(32) NOT NULL DEFAULT %s AFTER plugin_extends";
+        $hotaru->db->query($hotaru->db->prepare($sql, ''));
+    }
+    
     //correct default for db cache
     $sql = "UPDATE " . DB_PREFIX . "settings SET settings_default = %s WHERE settings_name = %s";
     $hotaru->db->query($hotaru->db->prepare($sql, 'false', 'DB_CACHE_ON'));

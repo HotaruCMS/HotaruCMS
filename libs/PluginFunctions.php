@@ -45,7 +45,7 @@ class PluginFunctions
 
         $hotaru->db->cache_queries = true;    // start using cache
 
-        $sql = "SELECT " . TABLE_PLUGINS . ".plugin_enabled, " . TABLE_PLUGINS . ".plugin_folder, " . TABLE_PLUGINS . ".plugin_class, " . TABLE_PLUGINHOOKS . ".plugin_hook  FROM " . TABLE_PLUGINHOOKS . ", " . TABLE_PLUGINS . " WHERE (" . TABLE_PLUGINHOOKS . ".plugin_hook = %s) AND (" . TABLE_PLUGINS . ".plugin_folder = " . TABLE_PLUGINHOOKS . ".plugin_folder) " . $where . "ORDER BY " . TABLE_PLUGINHOOKS . ".phook_id";
+        $sql = "SELECT " . TABLE_PLUGINS . ".plugin_enabled, " . TABLE_PLUGINS . ".plugin_folder, " . TABLE_PLUGINS . ".plugin_class, " . TABLE_PLUGINS . ".plugin_extends, " . TABLE_PLUGINS . ".plugin_type, " . TABLE_PLUGINHOOKS . ".plugin_hook  FROM " . TABLE_PLUGINHOOKS . ", " . TABLE_PLUGINS . " WHERE (" . TABLE_PLUGINHOOKS . ".plugin_hook = %s) AND (" . TABLE_PLUGINS . ".plugin_folder = " . TABLE_PLUGINHOOKS . ".plugin_folder) " . $where . "ORDER BY " . TABLE_PLUGINHOOKS . ".phook_id";
 
         $plugins = $hotaru->db->get_results($hotaru->db->prepare($sql, $hook, $folder));
 
@@ -55,24 +55,48 @@ class PluginFunctions
 
         foreach ($plugins as $plugin)
         {
-            if ($plugin->plugin_folder &&  $plugin->plugin_hook &&  ($plugin->plugin_enabled == 1)
+            if (!$plugin->plugin_enabled) { continue; } // if the plugin isn't active, skip this iteration
+            
+            if ($plugin->plugin_folder &&  $plugin->plugin_hook && ($plugin->plugin_enabled == 1)
                 && !in_array($plugin->plugin_folder, $exclude)) 
             {
 
                 if (!file_exists(PLUGINS . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php"))  { continue; }
-
+                
+                /*  loop through all the plugins that use this hook. Include any necessary parent classes
+                    and skip to th enext iteration if this class has children. */
+                    
+                foreach ($plugins as $key => $value) {
+                    // If this plugin class is a child, include the parent class
+                    if ($value->plugin_enabled && $value->plugin_class == $plugin->plugin_extends) {
+                        include_once(PLUGINS . $value->plugin_folder . "/" . $value->plugin_folder . ".php");
+                    }
+                    
+                    // If this plugin class has children, skip it because we will use the children instead
+                    if ($value->plugin_enabled && $value->plugin_extends == $plugin->plugin_class) { 
+                        continue 2; // skip to next iteration of outer foreach loop
+                    }
+                }
+                
+                // include this plugin's file (even child classes need the parent class)
                 include_once(PLUGINS . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php");
                 
-                // create a temporary object of the plugin class
-                $this_plugin = new $plugin->plugin_class($hotaru);
-                
-                $hotaru->pluginFolder = $plugin->plugin_folder; // so we know the current plugin
+                $tempPluginObject = new $plugin->plugin_class();        // create a temporary object of the plugin class
+                $tempPluginObject->hotaru = $hotaru;                    // assign $hotaru to the object
+                $hotaru->pluginFolder = $plugin->plugin_folder;         // assign plugin folder to $hotaru
                 
                 // call the method that matches this hook
-                if (method_exists($this_plugin, $hook)) {
-                    $result = $this_plugin->$hook($parameters);
+                if (method_exists($tempPluginObject, $hook)) {
+                    $rClass = new ReflectionClass($plugin->plugin_class);
+                    $rMethod = $rClass->getMethod($hook);
+                    // echo $rMethod->class;                            // the method's class
+                    // echo get_class($tempPluginObject);               // the object's class
+                    $hotaru->getPluginFolderFromClass($rMethod->class); // give Hotaru the right plugin folder name
+                    $hotaru->readPlugin();                              // fill Hotaru's plugin properties
+                    $result = $tempPluginObject->$hook($parameters);
                 } else {
-                    $result = $hotaru->$hook($parameters);
+                    $hotaru->readPlugin();                              // fill Hotaru's plugin properties
+                    $result = $hotaru->$hook($parameters);              // fall back on default function in Hotaru.php
                 }
                 
                 if ($result) {
@@ -105,61 +129,83 @@ class PluginFunctions
     
     
     /**
-     * Get version number of plugin if active
+     * Get a plugin's folder from its class name
      *
-     * @param string $folder plugin folder name
+     * This is called from the pluginHook function. It looks like overkill, but all the details
+     * get stored in memory and are used by other functions via readPost() below.
+     *
+     * @param string $class plugin class name
      * @return string|false
      */
-    public function getPluginVersion($hotaru, $folder = "")
-    {
-        if (!$folder) { $folder = $hotaru->pluginFolder; } 
-        
-        if (!$hotaru->pluginBasics) { //not in memory
-            $hotaru->getPluginBasics(); // get from database
-        }
-
-        if (!$hotaru->pluginBasics) { 
-            return false; // no plugin basics for this plugin found anywhere
+    public function getPluginFolderFromClass($hotaru, $class = "")
+    {    
+        if (!$hotaru->allPluginDetails) { //not in memory
+            $this->getAllPluginDetails($hotaru->db); // get from database
         }
         
-        // get plugin basics from memory
-        foreach ($hotaru->pluginBasics as $item => $key) {
-            if (($key->plugin_folder == $folder) && ($key->plugin_enabled == 1)) {
-                return $key->plugin_version;
+        if (!$hotaru->allPluginDetails) { 
+            return false; // no plugin deatils for this plugin found anywhere
+        }
+        
+        // get plugin details from memory
+        foreach ($hotaru->allPluginDetails as $item => $key) {
+            if ($key->plugin_class == $class) {
+                return $key->plugin_folder;
             }
         }
         
-        /* old code to get plugin version directly from the database:
-        $active= $this->db->get_row($this->db->prepare("SELECT plugin_enabled, plugin_version FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
-        */
-
         return false;
     }
     
     
     /**
-     * Get a plugin's actual name from its folder name
+     * Get a single plugin's details for Hotaru
      *
-     * @param string $folder plugin folder name
-     * @return string
+     * @param string $folder - plugin folder name, else $hotaru->pluginFolder is used
      */
-    public function getPluginName($hotaru, $folder = '')
-    {    
+    public function readPlugin($hotaru, $folder = '')
+    {
         if (!$folder) { $folder = $hotaru->pluginFolder; } 
         
-        $name = $hotaru->db->get_var($hotaru->db->prepare("SELECT plugin_name FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $folder));
-        if ($name) { return $name; } else { return false; };
+        if (!$hotaru->allPluginDetails) { //not in memory
+            $this->getAllPluginDetails($hotaru->db); // get from database
+        }
+        
+        if (!$hotaru->allPluginDetails) { 
+            return false; // no plugin basics for this plugin found anywhere
+        }
+        
+        // get plugin basics from memory
+        foreach ($hotaru->allPluginDetails as $item => $key) {
+            if ($key->plugin_folder == $hotaru->pluginFolder) {
+                $hotaru->pluginId             = $key->plugin_id;        // plugin id
+                $hotaru->pluginEnabled        = $key->plugin_enabled;   // activate (1), inactive (0)
+                $hotaru->pluginName           = $key->plugin_name;      // plugin proper name
+                $hotaru->pluginClass          = $key->plugin_class;     // plugin class name
+                $hotaru->pluginExtends        = $key->plugin_extends;   // plugin class parent
+                $hotaru->pluginType           = $key->plugin_type;      // plugin class type e.g. "avatar"
+                $hotaru->pluginDesc           = $key->plugin_desc;      // plugin description
+                $hotaru->pluginVersion        = $key->plugin_version;   // plugin version number
+                $hotaru->pluginOrder          = $key->plugin_order;     // plugin order number
+                $hotaru->pluginAuthor         = $key->plugin_author;    // plugin author
+                $hotaru->pluginAuthorUrl      = $key->plugin_authorurl; // plugin author's website
+                
+                break;  // done what we need to do so break out of the loop...
+            }
+        }
+        
+        return true;
     }
     
     
     /**
-     * Store basic plugin for ALL PLUGINS info in memory. This is for CACHING.
-     * We use the hotaru object because it's persistent during a page load
+     * Store all plugin details for ALL PLUGINS info in memory. This is a single query
+     * per page load. Every thing else then draws what it needs from memory.
      */
-    public function getPluginBasics($db)
+    public function getAllPluginDetails($db)
     {
-        $sql = "SELECT plugin_enabled, plugin_name, plugin_folder, plugin_class, plugin_version FROM " . TABLE_PLUGINS;
-        return $db->get_results($db->prepare($sql));
+        $sql = "SELECT * FROM " . TABLE_PLUGINS;
+        $hotaru->allPluginDetails = $db->get_results($db->prepare($sql));
     }
     
     

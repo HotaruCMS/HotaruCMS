@@ -83,13 +83,17 @@
         echo "<a class='table_drop_down' href='#'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/info_16.png'></a>\n";
         echo "&nbsp;" . $plug['install'] . "</td>\n";
         echo "</tr>\n";
-        echo "<tr class='table_tr_details' style='display:none;'><td colspan=3 class='table_description'>";
+        echo "<tr class='table_tr_details' style='display:none;'><td colspan=3 class='table_description'>\n";
         echo $plug['description'] . "<br />";
         $requires = "";
         foreach ($plug['requires'] as $key=>$value) {
             $requires .= $key . " " . $value . ", ";
         }
-        if ($requires != "") { echo $hotaru->lang["admin_theme_plugins_requires"] . rstrtrim($requires, ", "); } else { echo $hotaru->lang["admin_theme_plugins_no_plugins"]; }
+        if ($requires != "") { echo $hotaru->lang["admin_theme_plugins_requires"] . " " . rstrtrim($requires, ", "); } else { echo $hotaru->lang["admin_theme_plugins_no_plugins"]; }
+        if ($plug['author']) { echo "<br />" . $hotaru->lang["admin_theme_plugins_author"] . ": \n"; }
+        if ($plug['authorurl']) { echo "<a href='" . $plug['authorurl'] . "' title='" . $plug['authorurl'] . "'>"; }
+        if ($plug['author']) { echo $plug['author']; }
+        if ($plug['authorurl']) { echo "</a>\n"; }
         echo "</td>";
         echo "<td class='table_description_close'><a class='table_hide_details' href='#'>";
         echo $hotaru->lang["admin_theme_plugins_close"] . "</a></td></tr>\n";
@@ -163,8 +167,13 @@
         echo "<a class='table_drop_down' href='#'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/info_16.png'></a>\n";
         echo "&nbsp;" . $plug['install'] . "</td>\n";
         echo "</tr>\n";
-        echo "<tr class='table_tr_details' style='display:none;'><td class='table_description'>";
-        echo $plug['description'] . "</td>";
+        echo "<tr class='table_tr_details' style='display:none;'><td class='table_description'>\n";
+        echo $plug['description'];
+        if ($plug['author']) { echo "<br />" . $hotaru->lang["admin_theme_plugins_author"] . ": \n"; }
+        if ($plug['authorurl']) { echo "<a href='" . $plug['authorurl'] . "' title='" . $plug['authorurl'] . "'>"; }
+        if ($plug['author']) { echo $plug['author']; }
+        if ($plug['authorurl']) { echo "</a>\n"; }
+        echo "</td>\n";
         echo "<td class='table_description_close'><a class='table_hide_details' href='#'>";
         echo $hotaru->lang["admin_theme_plugins_close"] . "</a></td></tr>\n";
         array_shift($the_plugins);

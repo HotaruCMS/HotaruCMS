@@ -47,16 +47,20 @@ class Hotaru
     protected $pluginName           = '';       // plugin proper name
     protected $pluginFolder         = '';       // plugin folder name
     protected $pluginClass          = '';       // plugin class name
+    protected $pluginExtends        = '';       // plugin class parent
+    protected $pluginType           = '';       // plugin class type e.g. "avatar"
     protected $pluginDesc           = '';       // plugin description
     protected $pluginVersion        = 0;        // plugin version number
     protected $pluginOrder          = 0;        // plugin order number
+    protected $pluginAuthor         = '';       // plugin author
+    protected $pluginAuthorUrl      = '';       // plugin author's website
     protected $pluginHooks          = array();  // array of plugin hooks
     protected $pluginRequires       = '';       // string of plugin->version pairs
     public $pluginDependencies      = array();  // array of plugin->version pairs
     
     // all plugins
     protected $pluginSettings       = array();  // contains all settings for all plugins
-    protected $pluginBasics         = array();  // contains basic details for all plugins
+    protected $allPluginDetails         = array();  // contains details of all plugins
     
     // messages
     public $message                 = '';       // message to display
@@ -433,6 +437,18 @@ class Hotaru
     
     
     /**
+     * Get a single plugin's details for Hotaru
+     *
+     * @param string $folder - plugin folder name, else $hotaru->pluginFolder is used
+     */
+    public function readPlugin($folder = '')
+    {
+        $plugins = new PluginFunctions();
+        $this->readPlugin = $plugins->readPlugin($this, $folder);
+    }
+    
+    
+    /**
      * Get number of active plugins
      *
      * @return int|false
@@ -452,8 +468,8 @@ class Hotaru
      */
     public function getPluginVersion($folder = '')
     {
-        $plugins = new PluginFunctions();
-        return $plugins->getPluginVersion($this, $folder);
+        $this->readPlugin($folder);
+        return $hotaru->pluginVersion;
     }
     
     
@@ -465,22 +481,37 @@ class Hotaru
      */
     public function getPluginName($folder = '')
     {
+        $this->readPlugin($folder);
+        return $hotaru->pluginName;
+    }
+    
+
+    /**
+     * Get a plugin's folder from its class name
+     *
+     * @param string $class plugin class name
+     * @return string|false
+     */
+    public function getPluginFolderFromClass($class = '')
+    {
         $plugins = new PluginFunctions();
-        $this->pluginName = $plugins->getPluginName($this, $folder);
+        $this->pluginFolder = $plugins->getPluginFolderFromClass($this, $class);
     }
     
     
     /**
-     * Store basic plugin for ALL PLUGINS info in memory. This is for CACHING.
-     * We use the hotaru object because it's persistent during a page load
+     * Get a plugin's class from its folder name
+     *
+     * @param string $folder plugin folder name
+     * @return string|false
      */
-    public function getPluginBasics()
+    public function getPluginClass($folder = '')
     {
-        $plugins = new PluginFunctions();
-        $this->pluginBasics = $plugins->getPluginBasics($this->db);
+        $this->readPlugin($folder);
+        return $hotaru->pluginClass;
     }
     
-    
+
     /**
      * Determines if a plugin is enabled or not
      *

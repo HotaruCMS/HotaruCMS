@@ -50,10 +50,12 @@ class PluginManagement
                 
                 if ($plugin_row) 
                 {
-                    // if plugin in folder is older or equal to plugin in database...
+                    // if plugin is in the database...
                     $allplugins[$count]['name'] = $plugin_row->plugin_name;
                     $allplugins[$count]['description'] = $plugin_row->plugin_desc;
                     $allplugins[$count]['folder'] = $plugin_row->plugin_folder;
+                    $allplugins[$count]['author'] = $plugin_row->plugin_author;
+                    $allplugins[$count]['authorurl'] = urldecode($plugin_row->plugin_authorurl);
                     
                     if ($plugin_row->plugin_enabled) {
                         $allplugins[$count]['status'] = 'active';
@@ -72,6 +74,15 @@ class PluginManagement
                     $allplugins[$count]['name'] = $plugin_details['name'];
                     $allplugins[$count]['description'] = $plugin_details['description'];
                     $allplugins[$count]['folder'] = $plugin_details['folder'];
+                    
+                    if (isset($plugin_details['author'])) {
+                        $allplugins[$count]['author'] = $plugin_details['author'];
+                    }
+                    
+                    if (isset($plugin_details['authorurl'])) {
+                        $allplugins[$count]['authorurl'] = urldecode($plugin_details['authorurl']);
+                    }
+                    
                     $allplugins[$count]['status'] = "inactive";
                     $allplugins[$count]['version'] = $plugin_details['version'];
                     $allplugins[$count]['install'] = "install";
@@ -245,7 +256,7 @@ class PluginManagement
         $dependency_error = 0;
         foreach ($hotaru->pluginDependencies as $dependency => $version)
         {
-            if (version_compare($version, $this->getPluginVersion($dependency), '>')) {
+            if (version_compare($version, $hotaru->getPluginVersion($dependency), '>')) {
                 $dependency_error = 1;
             }
         }
@@ -255,7 +266,7 @@ class PluginManagement
             foreach ($hotaru->pluginDependencies as $dependency => $version)
             {
                     if (($hotaru->isActive($dependency) == 'inactive') 
-                        || version_compare($version, $this->getPluginVersion($dependency), '>')) {
+                        || version_compare($version, $hotaru->getPluginVersion($dependency), '>')) {
                         $dependency = make_name($dependency);
                         $hotaru->messages[$hotaru->lang["admin_plugins_install_sorry"] . " " . $hotaru->pluginName . " " . $hotaru->lang["admin_plugins_install_requires"] . " " . $dependency . " " . $version] = 'red';
                     }
@@ -263,8 +274,8 @@ class PluginManagement
             return false;
         }
                     
-        $sql = "REPLACE INTO " . TABLE_PLUGINS . " (plugin_enabled, plugin_name, plugin_folder, plugin_class, plugin_desc, plugin_requires, plugin_version, plugin_updateby) VALUES (%d, %s, %s, %s, %s, %s, %s, %d)";
-        $hotaru->db->query($hotaru->db->prepare($sql, $hotaru->pluginEnabled, $hotaru->pluginName, $hotaru->pluginFolder, $hotaru->pluginClass, $hotaru->pluginDesc, $hotaru->pluginRequires, $hotaru->pluginVersion, $hotaru->currentUser->id));
+        $sql = "REPLACE INTO " . TABLE_PLUGINS . " (plugin_enabled, plugin_name, plugin_folder, plugin_class, plugin_extends, plugin_type, plugin_desc, plugin_requires, plugin_version, plugin_author, plugin_authorurl, plugin_updateby) VALUES (%d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d)";
+        $hotaru->db->query($hotaru->db->prepare($sql, $hotaru->pluginEnabled, $hotaru->pluginName, $hotaru->pluginFolder, $hotaru->pluginClass, $hotaru->pluginExtends, $hotaru->pluginType, $hotaru->pluginDesc, $hotaru->pluginRequires, $hotaru->pluginVersion, $hotaru->pluginAuthor, urlencode($hotaru->pluginAuthorUrl), $hotaru->currentUser->id));
 
         // Get the last order number - doing this after REPLACE INTO because 
         // we don't know whether the above will insert or replace.
@@ -307,12 +318,16 @@ class PluginManagement
     {
         if (!$plugin_metadata) { return false; }
         
-        $hotaru->pluginName     = $plugin_metadata['name'];
-        $hotaru->pluginDesc     = $plugin_metadata['description'];
-        $hotaru->pluginVersion  = $plugin_metadata['version'];
-        $hotaru->pluginFolder   = $plugin_metadata['folder'];
-        $hotaru->pluginClass    = $plugin_metadata['class'];
-        $hotaru->pluginHooks    = explode(',', $plugin_metadata['hooks']);
+        $hotaru->pluginName         = $plugin_metadata['name'];
+        $hotaru->pluginDesc         = $plugin_metadata['description'];
+        $hotaru->pluginVersion      = $plugin_metadata['version'];
+        $hotaru->pluginFolder       = $plugin_metadata['folder'];
+        $hotaru->pluginClass        = $plugin_metadata['class'];
+        $hotaru->pluginHooks        = explode(',', $plugin_metadata['hooks']);
+        if (isset($plugin_metadata['extends'])) {   $hotaru->pluginExtends      = $plugin_metadata['extends']; }
+        if (isset($plugin_metadata['type'])) {      $hotaru->pluginType         = $plugin_metadata['type'];    }
+        if (isset($plugin_metadata['author'])) {    $hotaru->pluginAuthor       = $plugin_metadata['author'];  }
+        if (isset($plugin_metadata['authorurl'])) { $hotaru->pluginAuthorUrl    = $plugin_metadata['authorurl']; }
         
         if (isset($plugin_metadata['requires']) && $plugin_metadata['requires']) {
             $hotaru->pluginRequires = $plugin_metadata['requires'];
