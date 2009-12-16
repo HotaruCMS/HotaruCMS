@@ -36,22 +36,15 @@ class PageHandling
         {
             return $hotaru->pageTitle . " &laquo; " . SITE_NAME;
         }
-        elseif ($name = $hotaru->getPageName())
+        elseif ($hotaru->getPageName())
         {
-            $hotaru->pageName = $hotaru->getPageName();
-           
-            if ($hotaru->pageName == '404error') {
-                $hotaru->pageTitle = $hotaru->lang['main_theme_page_not_found'];
-                return $hotaru->pageTitle  . " &laquo; " . SITE_NAME;
-            } else {
-                $hotaru->pageTitle = make_name($hotaru->pageName);
-                return $hotaru->pageTitle . " &laquo; " . SITE_NAME;
-            }
+            $hotaru->pageTitle = make_name($hotaru->pageName);
+            return $hotaru->pageTitle . " &laquo; " . SITE_NAME;
         }
         else
         { 
-            $hotaru->pageName = 'top'; // don't change this
-            return SITE_NAME; 
+            $hotaru->pageTitle = $hotaru->lang['main_theme_page_not_found'];
+            return $hotaru->pageTitle  . " &laquo; " . SITE_NAME;
         } 
     }
     
@@ -80,7 +73,7 @@ class PageHandling
             $page = rtrim($page, '/');
             return $page;
         } else {
-            return '404error';
+            return false;
         }
     }
     

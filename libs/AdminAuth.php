@@ -30,17 +30,10 @@ class AdminAuth
      */
     public function adminInit($hotaru)
     {
-        $page = $hotaru->cage->get->testPage('page');    // check with "get";
-        if (!$page) { 
-            // check with "post" - used in admin_login_form().
-            $page = $hotaru->cage->post->testPage('page'); 
-        }
-        
-        
         // Authenticate the admin if the Users plugin is INACTIVE:
         if (!$hotaru->isActive('users'))
         {
-            if (($page != 'admin_login') && !$this->isAdminCookie($hotaru))
+            if (($hotaru->pageName != 'admin_login') && !$this->isAdminCookie($hotaru))
             {
                 header('Location: ' . BASEURL . 'admin_index.php?page=admin_login');
             }
@@ -61,7 +54,7 @@ class AdminAuth
             {
                 // maybe the user has permission to access a specific plugin settings page?
                 $plugin = $hotaru->cage->get->testAlnumLines('plugin');
-                if ($plugin && ($page == "plugin_settings")) {
+                if ($plugin && ($hotaru->pageName == "plugin_settings")) {
                     $permission = "can_" . $plugin . "_settings";
                     if ($hotaru->currentUser->getPermission($permission) == 'yes') {
                         $hotaru->sidebars = false; // hide sidebars
@@ -79,7 +72,7 @@ class AdminAuth
         
         // If we get this far, we know that the user has admin access.
         
-        return $page;
+        return $hotaru->pageName;
     }
     
     

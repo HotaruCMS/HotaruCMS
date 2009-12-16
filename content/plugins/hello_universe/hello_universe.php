@@ -5,7 +5,7 @@
  * version: 0.6
  * folder: hello_universe
  * class: HelloUniverse
- * hooks: start, theme_index_top, theme_index_main, theme_index_sidebar
+ * hooks: theme_index_top, theme_index_main, theme_index_sidebar
  *
  * PHP version 5
  *
@@ -32,8 +32,6 @@
 class HelloUniverse
 {
     public $hotaru = '';   // access Hotaru functions using $this->hotaru
-
-    // NOTE: We've included "start" in the plugin hook list. That includes the language file for us.
     
     /**
      * FUNCTION #1
@@ -44,7 +42,7 @@ class HelloUniverse
     */
     public function theme_index_top()
     {
-        if ($this->hotaru->getPageName() == '404error') { 
+        if (!$this->hotaru->pageName) { 
             $this->hotaru->pageTitle = $this->hotaru->lang["hello_universe"];
         }
     }
@@ -59,9 +57,7 @@ class HelloUniverse
     */
     public function theme_index_main()
     {
-        // These lines get the current page and display any matches...
-        $page = $this->hotaru->getPageName();
-        switch ($page) {
+        switch ($this->hotaru->pageName) {
             case 'plugin_template':
                 $this->hotaru->displayTemplate('plugin_template'); // Displays the page from this plugin folder
                 return true;
@@ -88,7 +84,7 @@ class HelloUniverse
      */
     public function main_page()
     {
-        // If the current page is "404error" (which it is by default)...
+        // Display output
         echo "<div id='hello_universe' style='margin: 1.0em; background-color: #eee;'>";
         echo "<h2>" . $this->hotaru->lang["hello_universe"] . "</h2>";
         echo "<p>" . $this->hotaru->lang["hello_universe_explanation"] . "</p>";  

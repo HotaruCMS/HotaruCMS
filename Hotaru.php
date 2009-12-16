@@ -100,12 +100,11 @@ class Hotaru
      */
     public function start($entrance = '')
     {
-        // To avoid an infinite loop, plugins that fall back on the default 'start' hook need redirecting...
-        if (!$entrance) { return $this->hotaru_start(); }
-        
         // include "main" language pack
         $lang = new Language();
         $this->lang = $lang->includeLanguagePack($this->lang, 'main');
+        
+        $this->getPageName();   // fills $hotaru->pageName
 
         switch ($entrance) {
             case 'admin':
@@ -117,14 +116,12 @@ class Hotaru
                 $this->checkCookie();                   // check cookie reads user details
                 $this->checkAccess();                   // site closed if no access permitted
                 $this->checkCssJs();                    // check if we need to merge css/js
-                $this->pluginHook('start');             // used to do stuff before output
                 $this->adminPages($page);               // Direct to desired Admin page
                 break;
             default:
                 $this->checkCookie();                   // log in user if cookie
                 $this->checkAccess();                   // site closed if no access permitted
                 $this->checkCssJs();                    // check if we need to merge css/js
-                $this->pluginHook('start');             // used to do stuff before output
                 $this->displayTemplate('index');        // displays the index page
         }
 
@@ -168,16 +165,6 @@ class Hotaru
      * Include language file if available
      */
     public function install_plugin()
-    {
-        $this->includeLanguage($this->pluginFolder);
-    }
-    
-    
-    /**
-     * Include language file if available
-     * This is named with a "hotaru_" prefix to prevent looping in start();
-     */
-    public function hotaru_start()
     {
         $this->includeLanguage($this->pluginFolder);
     }
@@ -286,7 +273,8 @@ class Hotaru
     public function getPageName()
     {
         $pageHandling = new PageHandling();
-        return $pageHandling->getPageName($this);
+        $this->pageName = $pageHandling->getPageName($this);
+        return $this->pageName;
     }
     
     

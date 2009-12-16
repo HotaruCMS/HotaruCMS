@@ -64,7 +64,7 @@ class PluginFunctions
                 if (!file_exists(PLUGINS . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php"))  { continue; }
                 
                 /*  loop through all the plugins that use this hook. Include any necessary parent classes
-                    and skip to th enext iteration if this class has children. */
+                    and skip to the next iteration if this class has children. */
                     
                 foreach ($plugins as $key => $value) {
                     // If this plugin class is a child, include the parent class
@@ -93,9 +93,11 @@ class PluginFunctions
                     // echo get_class($tempPluginObject);               // the object's class
                     $hotaru->getPluginFolderFromClass($rMethod->class); // give Hotaru the right plugin folder name
                     $hotaru->readPlugin();                              // fill Hotaru's plugin properties
+                    $hotaru->includeLanguage();                         // if a language file exists, include it
                     $result = $tempPluginObject->$hook($parameters);
                 } else {
                     $hotaru->readPlugin();                              // fill Hotaru's plugin properties
+                    $hotaru->includeLanguage();                         // if a language file exists, include it
                     $result = $hotaru->$hook($parameters);              // fall back on default function in Hotaru.php
                 }
                 
@@ -108,7 +110,7 @@ class PluginFunctions
         if (isset($return_array))
         {
             // return an array of return values from each function, 
-            // e.g. $return_array['usr_users'] = something
+            // e.g. $return_array['ClassName_method_name'] = something
             return $return_array;
         } 
 
@@ -140,13 +142,13 @@ class PluginFunctions
     public function getPluginFolderFromClass($hotaru, $class = "")
     {    
         if (!$hotaru->allPluginDetails) { //not in memory
-            $this->getAllPluginDetails($hotaru->db); // get from database
+            $this->getAllPluginDetails($hotaru); // get from database
         }
-        
+
         if (!$hotaru->allPluginDetails) { 
             return false; // no plugin deatils for this plugin found anywhere
         }
-        
+
         // get plugin details from memory
         foreach ($hotaru->allPluginDetails as $item => $key) {
             if ($key->plugin_class == $class) {
@@ -168,7 +170,8 @@ class PluginFunctions
         if (!$folder) { $folder = $hotaru->pluginFolder; } 
         
         if (!$hotaru->allPluginDetails) { //not in memory
-            $this->getAllPluginDetails($hotaru->db); // get from database
+            $this->getAllPluginDetails($hotaru); // get from database
+            print_r($hotaru->allPluginDetails);
         }
         
         if (!$hotaru->allPluginDetails) { 
@@ -202,10 +205,10 @@ class PluginFunctions
      * Store all plugin details for ALL PLUGINS info in memory. This is a single query
      * per page load. Every thing else then draws what it needs from memory.
      */
-    public function getAllPluginDetails($db)
+    public function getAllPluginDetails($hotaru)
     {
         $sql = "SELECT * FROM " . TABLE_PLUGINS;
-        $hotaru->allPluginDetails = $db->get_results($db->prepare($sql));
+        $hotaru->allPluginDetails = $hotaru->db->get_results($hotaru->db->prepare($sql));
     }
     
     
