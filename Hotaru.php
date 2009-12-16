@@ -26,49 +26,36 @@
 class Hotaru
 {
     protected $version              = "1.0";    // Hotaru CMS version
-    protected $db;                              // database object
-    protected $cage;                            // Inspekt object
-    protected $currentUser;                     // UserBase object
     protected $isDebug              = false;    // show db queries and page loading time
     protected $isAdmin              = false;    // flag to tell if we are in Admin or not
     protected $sidebars             = true;     // enable or disable the sidebars
     protected $csrfToken            = '';       // token for CSRF
-    public $lang                    = array();  // stores language file content
+    protected $lang                 = array();  // stores language file content
+    
+    // objects
+    protected $db;                              // database object
+    protected $cage;                            // Inspekt object
+    protected $currentUser;                     // UserBase object
+    protected $plugin;                          // Plugin object
+    protected $post;                            // Post object
     
     // page info
     protected $pageName             = '';       // e.g. top
     protected $pageTitle            = '';       // e.g. Top Stories
     protected $pageType             = '';       // e.g. list
     protected $pageTemplate         = '';       // e.g. list, tag_cloud
-    
-    // individual plugin
-    protected $pluginId             = '';       // plugin id
-    protected $pluginEnabled        = 0;        // activate (1), inactive (0)
-    protected $pluginName           = '';       // plugin proper name
-    protected $pluginFolder         = '';       // plugin folder name
-    protected $pluginClass          = '';       // plugin class name
-    protected $pluginExtends        = '';       // plugin class parent
-    protected $pluginType           = '';       // plugin class type e.g. "avatar"
-    protected $pluginDesc           = '';       // plugin description
-    protected $pluginVersion        = 0;        // plugin version number
-    protected $pluginOrder          = 0;        // plugin order number
-    protected $pluginAuthor         = '';       // plugin author
-    protected $pluginAuthorUrl      = '';       // plugin author's website
-    protected $pluginHooks          = array();  // array of plugin hooks
-    protected $pluginRequires       = '';       // string of plugin->version pairs
-    public $pluginDependencies      = array();  // array of plugin->version pairs
-    
-    // all plugins
+
+    // ALL plugins
     protected $pluginSettings       = array();  // contains all settings for all plugins
-    protected $allPluginDetails         = array();  // contains details of all plugins
+    protected $allPluginDetails     = array();  // contains details of all plugins
     
     // messages
-    public $message                 = '';       // message to display
-    public $messageType             = 'green';  // green or red, color of message box
-    public $messages                = array();  // for multiple messages
+    protected $message              = '';       // message to display
+    protected $messageType          = 'green';  // green or red, color of message box
+    protected $messages             = array();  // for multiple messages
     
     // miscellaneous
-    public $vars                    = array();  // multi-purpose
+    protected $vars                 = array();  // multi-purpose
     
     /**
      * CONSTRUCTOR - Initialize
@@ -78,12 +65,13 @@ class Hotaru
         // initialize Hotaru
         if (!isset($start)) { 
             require_once(LIBS . 'Initialize.php');
-            $init = new Initialize();
-            $this->db       = $init->db;            // database object
-            $this->cage     = $init->cage;          // Inspekt cage
-            $this->isDebug  = $init->isDebug;       // set debug
-            $this->currentUser = new UserAuth();    // the current user
-            $this->csrf('set');                     // set a csrfToken
+            $init = new Initialize($this);
+            $this->db           = $init->db;            // database object
+            $this->cage         = $init->cage;          // Inspekt cage
+            $this->isDebug      = $init->isDebug;       // set debug
+            $this->currentUser  = new UserAuth();       // the current user
+            $this->plugin       = new Plugin();         // instantiate Plugin object
+            $this->csrf('set');                         // set a csrfToken
         }
     }
     
@@ -141,14 +129,15 @@ class Hotaru
      */
     public function __set($var, $val)
     {
-        $this->$var = $val;  
+        $this->$var = $val;
     }
     
     
     /**
      * Access modifier to get protected properties
+     * The & is necessary (http://bugs.php.net/bug.php?id=39449)
      */
-    public function __get($var)
+    public function &__get($var)
     {
         return $this->$var;
     }
@@ -166,7 +155,7 @@ class Hotaru
      */
     public function install_plugin()
     {
-        $this->includeLanguage($this->pluginFolder);
+        $this->includeLanguage($this->plugin->folder);
     }
      
      
@@ -176,8 +165,8 @@ class Hotaru
     public function header_include()
     {
         // include a files that match the name of the plugin folder:
-        $this->includeJs($this->pluginFolder); // filename, folder name
-        $this->includeCss($this->pluginFolder);
+        $this->includeJs($this->plugin->folder); // filename, folder name
+        $this->includeCss($this->plugin->folder);
     }
     
     
@@ -187,8 +176,8 @@ class Hotaru
     public function admin_header_include()
     {
         // include a files that match the name of the plugin folder:
-        $this->includeJs($this->pluginFolder, true); // filename, folder name, admin
-        $this->includeCss($this->pluginFolder, true);
+        $this->includeJs($this->plugin->folder, true); // filename, folder name, admin
+        $this->includeCss($this->plugin->folder, true);
     }
     
     /**
@@ -196,7 +185,7 @@ class Hotaru
      */
     public function pre_close_body()
     {
-        $this->displayTemplate($this->pluginFolder . '_footer', $this->pluginFolder);
+        $this->displayTemplate($this->plugin->folder . '_footer', $this->plugin->folder);
     }
     
 
@@ -205,8 +194,8 @@ class Hotaru
      */
     public function admin_sidebar_plugin_settings()
     {
-        $vars['plugin'] = $this->pluginFolder;
-        $vars['name'] = make_name($this->pluginFolder);
+        $vars['plugin'] = $this->plugin->folder;
+        $vars['name'] = make_name($this->plugin->folder);
         return $vars;
     }
     
@@ -222,14 +211,14 @@ class Hotaru
         // The file must contain a class titled PluginNameSettings
         // The class must have a method called "settings".
         
-        if ($this->cage->get->testAlnumLines('plugin') != $this->pluginFolder) { return false; }
+        if ($this->cage->get->testAlnumLines('plugin') != $this->plugin->folder) { return false; }
         
-        if (file_exists(PLUGINS . $this->pluginFolder . '/' . $this->pluginFolder . '_settings.php')) {
-            include_once(PLUGINS . $this->pluginFolder . '/' . $this->pluginFolder . '_settings.php');
+        if (file_exists(PLUGINS . $this->plugin->folder . '/' . $this->plugin->folder . '_settings.php')) {
+            include_once(PLUGINS . $this->plugin->folder . '/' . $this->plugin->folder . '_settings.php');
         }
         
-        $settings_class = make_name($this->pluginFolder, '') . 'Settings'; // e.g. CategoriesSettings
-        $settings_object = new $settings_class($this->hotaru, $this->pluginFolder);
+        $settings_class = make_name($this->plugin->folder, '') . 'Settings'; // e.g. CategoriesSettings
+        $settings_object = new $settings_class($this->hotaru, $this->plugin->folder);
         $settings_object->settings();   // call the settings function
         return true;
     }
@@ -275,6 +264,19 @@ class Hotaru
         $pageHandling = new PageHandling();
         $this->pageName = $pageHandling->getPageName($this);
         return $this->pageName;
+    }
+    
+    
+    /**
+     * Converts a friendly url into a standard one
+     *
+     * @param string $friendly_url
+     * return string $standard_url
+     */
+    public function friendlyToStandardUrl($friendly_url) 
+    {
+        $pageHandling = new PageHandling();
+        return $pageHandling->friendlyToStandardUrl($this, $friendly_url);
     }
     
     
@@ -427,7 +429,7 @@ class Hotaru
     /**
      * Get a single plugin's details for Hotaru
      *
-     * @param string $folder - plugin folder name, else $hotaru->pluginFolder is used
+     * @param string $folder - plugin folder name, else $hotaru->plugin->folder is used
      */
     public function readPlugin($folder = '')
     {
@@ -457,7 +459,7 @@ class Hotaru
     public function getPluginVersion($folder = '')
     {
         $this->readPlugin($folder);
-        return $hotaru->pluginVersion;
+        return $hotaru->plugin->version;
     }
     
     
@@ -470,7 +472,7 @@ class Hotaru
     public function getPluginName($folder = '')
     {
         $this->readPlugin($folder);
-        return $hotaru->pluginName;
+        return $hotaru->plugin->name;
     }
     
 
@@ -483,7 +485,7 @@ class Hotaru
     public function getPluginFolderFromClass($class = '')
     {
         $plugins = new PluginFunctions();
-        $this->pluginFolder = $plugins->getPluginFolderFromClass($this, $class);
+        $this->plugin->folder = $plugins->getPluginFolderFromClass($this, $class);
     }
     
     
@@ -496,7 +498,7 @@ class Hotaru
     public function getPluginClass($folder = '')
     {
         $this->readPlugin($folder);
-        return $hotaru->pluginClass;
+        return $this->plugin->class;
     }
     
 

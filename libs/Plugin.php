@@ -1,16 +1,7 @@
 <?php
 /**
- * name: Hello World
- * description: Displays "Hello World!"
- * version: 0.5
- * folder: hello_world
- * class: HelloWorld
- * hooks: hello_world
- * author: Nick Ramsay
- * authorurl: http://hotarucms.org/member.php?1-Nick
+ * Plugin Class
  *
- * Usage: Add <?php $hotaru->pluginHook('hello_world'); ?> to your theme, wherever you want to show "Hello World".
-*
  * PHP version 5
  *
  * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
@@ -32,17 +23,40 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-
-class HelloWorld
+class Plugin
 {
+    protected $id               = 0;
+    protected $folder           = '';
+    protected $enabled          = 0;
+    protected $name             = '';
+    protected $class            = '';
+    protected $extends          = '';
+    protected $type             = '';
+    protected $desc             = '';
+    protected $version          = 0;
+    protected $order            = 0;
+    protected $author           = '';
+    protected $authorurl        = '';
+    protected $requires         = '';
+    protected $dependencies     = array();
+    protected $hooks            = array();
+    
     /**
-     * Displays "Hello World!" wherever the plugin hook is.
+     * Access modifier to set protected properties
      */
-    public function hello_world()
+    public function __set($var, $val)
     {
-        echo "Hello World!";
+        $this->$var = $val;
     }
-
+    
+    
+    /**
+     * Access modifier to get protected properties
+     * The & is necessary (http://bugs.php.net/bug.php?id=39449)
+     */
+    public function &__get($var)
+    {
+        return $this->$var;
+    }
 }
-
 ?>

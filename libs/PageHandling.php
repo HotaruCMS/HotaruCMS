@@ -26,30 +26,6 @@
 class PageHandling
 {
     /**
-     * Determine the title tags for the header
-     *
-     * @return string - the title
-     */
-    public function getTitle($hotaru)
-    {
-        if ($hotaru->pageTitle != "")
-        {
-            return $hotaru->pageTitle . " &laquo; " . SITE_NAME;
-        }
-        elseif ($hotaru->getPageName())
-        {
-            $hotaru->pageTitle = make_name($hotaru->pageName);
-            return $hotaru->pageTitle . " &laquo; " . SITE_NAME;
-        }
-        else
-        { 
-            $hotaru->pageTitle = $hotaru->lang['main_theme_page_not_found'];
-            return $hotaru->pageTitle  . " &laquo; " . SITE_NAME;
-        } 
-    }
-    
-    
-    /**
      * Gets the current page name
      *
      * @return string|false $page
@@ -57,7 +33,7 @@ class PageHandling
     public function getPageName($hotaru)
     {
         if ($hotaru->pageName) { return $hotaru->pageName; }
-        
+
         // Try GET...
         $page = $hotaru->cage->get->testPage('page');
         if (!$page) {
@@ -68,13 +44,70 @@ class PageHandling
         
         // Try POST...
         if (!$page) { $page = $hotaru->cage->post->testPage('page'); }
+        
+        // Analyze the URL:
+        if (!$page) {
+            $host = $hotaru->cage->server->getMixedString2('HTTP_HOST');
+            $uri = $hotaru->cage->server->getMixedString2('REQUEST_URI');
+            $path = "http://" . $host  . $uri;
+            
+            if (FRIENDLY_URLS == 'true') {
+                $path = $hotaru->friendlyToStandardUrl($path);
+            }
+            
+            $query_args = parse_url($path, PHP_URL_QUERY);  // get all query vars
+            
+            if (!$query_args) { // no query vars - must be the home page
+                return ($hotaru->isAdmin) ? 'admin_index' : 'index';
+            }
 
+            parse_str($query_args, $parsed_query_args); // split query vars into key->value pairs
+            
+            // we'll need a plugin hook here so we can parse the query vars to plugins and let them 
+            // determine and return the page name.
+        } 
+        
         if ($page) {
             $page = rtrim($page, '/');
             return $page;
         } else {
             return false;
         }
+    }
+    
+    
+    /**
+     * Determine the title tags for the header
+     *
+     * @return string - the title
+     */
+    public function getTitle($hotaru)
+    {
+        // if the title is already set...
+        if ($hotaru->pageTitle != "")
+        {
+            // if this is the index page...
+            if($hotaru->pageName == 'index') {
+                // title only (set by plugins, e.g. sb_base)
+                return $hotaru->pageTitle;
+            } else {
+                // title followed by site name
+                return $hotaru->pageTitle . " &laquo; " . SITE_NAME;
+            }
+        }
+        // fetch the page name...
+        elseif ($hotaru->getPageName())
+        {
+            // make a title from it...
+            $hotaru->pageTitle = make_name($hotaru->pageName);
+            return $hotaru->pageTitle . " &laquo; " . SITE_NAME;
+        }
+        else
+        { 
+            // there's no title and no page name - assume "page not found"
+            $hotaru->pageTitle = $hotaru->lang['main_theme_page_not_found'];
+            return $hotaru->pageTitle  . " &laquo; " . SITE_NAME;
+        } 
     }
     
     
@@ -90,7 +123,7 @@ class PageHandling
         $hotaru->pageTemplate = $page;
         
         // if no plugin folder, provide it:
-        if (!$plugin) { $plugin = $hotaru->pluginFolder; }
+        if (!$plugin) { $plugin = $hotaru->plugin->folder; }
         
         if ($hotaru->isAdmin) { 
             $themes = ADMIN_THEMES; $theme = ADMIN_THEME; 
@@ -256,6 +289,60 @@ class PageHandling
         
         $pageObject->setLayout(new DoubleBarLayout());
         return $pageObject->fetchPagedNavigation($hotaru);
+    }
+    
+    
+    /**
+     * Converts a friendly url into a standard one
+     *
+     * @param object $hotaru
+     * @param string $friendly_url
+     * return string $standard_url
+     */
+    public function friendlyToStandardUrl($hotaru, $friendly_url = '') 
+    {
+        $path = $friendly_url;
+        
+        if ($hotaru->isAdmin) { 
+            $head = 'admin_index.php?';
+        } else {
+            $head = 'index.php?';
+        }
+        
+        /* Many pages use standard urls even if friendly urls is enabled. For example,
+           admin pages, pagination or other complex urls. Therefore, we have to do an
+           extra test to make sure this is a truly friendly url, and if not, send back
+           the one we have because it's already standard. */
+           
+        if ($path == BASEURL || strrpos($path, $head)) { return $path; }
+        
+        // strip off BASEURL and trailing slash
+        $url = str_replace(BASEURL, '', $friendly_url);
+        $url = rtrim($url, '/');
+
+        // start the standard url
+        $standard_url = BASEURL . $head;
+        
+        // parts will hold the query vars
+        $parts = array();
+        $parts = explode('/', $url);
+        
+        // if odd number of query vars, the first is the page
+        if (count($parts) % 2 == 1) {
+             $page = array_shift($parts);
+             $standard_url .= 'page=' . $page;
+             if (!empty($parts)) { $standard_url .= '&'; }
+        }
+        
+        // if query vars still in array, add them
+        while (!empty($parts)) {
+            $key = array_shift($parts);
+            $value = array_shift($parts);
+            $standard_url .= $key . '=' . $value;
+            if (!empty($parts)) { $standard_url .= '&'; }
+        }
+        
+        return $standard_url;
     }
     
 }

@@ -119,14 +119,14 @@ class PluginManagement
 
                 // Conditions for "requires"...
                 if (isset($plugin_details['requires']) && $plugin_details['requires']) {
-                    $hotaru->pluginRequires = $plugin_details['requires'];
+                    $hotaru->plugin->requires = $plugin_details['requires'];
                     $this->requiresToDependencies($hotaru);
                     
                     // Converts plugin folder names to well formatted names...
-                    foreach ($hotaru->pluginDependencies as $this_plugin => $version)
+                    foreach ($hotaru->plugin->dependencies as $this_plugin => $version)
                     {
-                        $hotaru->pluginDependencies[$this_plugin] = $version;
-                        $allplugins[$count]['requires'][$this_plugin] = $hotaru->pluginDependencies[$this_plugin];
+                        $hotaru->plugin->dependencies[$this_plugin] = $version;
+                        $allplugins[$count]['requires'][$this_plugin] = $hotaru->plugin->dependencies[$this_plugin];
                     }
 
                 } else {
@@ -215,20 +215,20 @@ class PluginManagement
     
     
     /**
-     * Converts $hotaru->pluginRequires into $hotaru->pluginDependencies array.
+     * Converts $hotaru->plugin->requires into $hotaru->plugin->dependencies array.
      * Result is an array containing 'plugin' -> 'version' pairs
      */
     public function requiresToDependencies($hotaru)
     {
         // unset each key from previous time here
-        foreach ($hotaru->pluginDependencies as $k => $v) {
-            unset($hotaru->pluginDependencies[$k]);
+        foreach ($hotaru->plugin->dependencies as $k => $v) {
+            unset($hotaru->plugin->dependencies[$k]);
         }
         
-        foreach (explode(',', $hotaru->pluginRequires) as $pair) 
+        foreach (explode(',', $hotaru->plugin->requires) as $pair) 
         {
             list($k,$v) = explode (' ', trim($pair));
-            $hotaru->pluginDependencies[$k] = $v;
+            $hotaru->plugin->dependencies[$k] = $v;
         }
     }
     
@@ -248,13 +248,13 @@ class PluginManagement
         $hotaru->deleteFiles(CACHE . 'css_js_cache');
         
         // Read meta from the top of the plugin file
-        $plugin_metadata = $this->readPluginMeta($hotaru->pluginFolder);
+        $plugin_metadata = $this->readPluginMeta($hotaru->plugin->folder);
         
-        $hotaru->pluginEnabled  = 1;    // Enable it when we add it to the database.
+        $hotaru->plugin->enabled  = 1;    // Enable it when we add it to the database.
         $this->assignPluginMeta($hotaru, $plugin_metadata);
 
         $dependency_error = 0;
-        foreach ($hotaru->pluginDependencies as $dependency => $version)
+        foreach ($hotaru->plugin->dependencies as $dependency => $version)
         {
             if (version_compare($version, $hotaru->getPluginVersion($dependency), '>')) {
                 $dependency_error = 1;
@@ -263,19 +263,19 @@ class PluginManagement
         
         if ($dependency_error == 1)
         {
-            foreach ($hotaru->pluginDependencies as $dependency => $version)
+            foreach ($hotaru->plugin->dependencies as $dependency => $version)
             {
                     if (($hotaru->isActive($dependency) == 'inactive') 
                         || version_compare($version, $hotaru->getPluginVersion($dependency), '>')) {
                         $dependency = make_name($dependency);
-                        $hotaru->messages[$hotaru->lang["admin_plugins_install_sorry"] . " " . $hotaru->pluginName . " " . $hotaru->lang["admin_plugins_install_requires"] . " " . $dependency . " " . $version] = 'red';
+                        $hotaru->messages[$hotaru->lang["admin_plugins_install_sorry"] . " " . $hotaru->plugin->name . " " . $hotaru->lang["admin_plugins_install_requires"] . " " . $dependency . " " . $version] = 'red';
                     }
             }
             return false;
         }
                     
         $sql = "REPLACE INTO " . TABLE_PLUGINS . " (plugin_enabled, plugin_name, plugin_folder, plugin_class, plugin_extends, plugin_type, plugin_desc, plugin_requires, plugin_version, plugin_author, plugin_authorurl, plugin_updateby) VALUES (%d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d)";
-        $hotaru->db->query($hotaru->db->prepare($sql, $hotaru->pluginEnabled, $hotaru->pluginName, $hotaru->pluginFolder, $hotaru->pluginClass, $hotaru->pluginExtends, $hotaru->pluginType, $hotaru->pluginDesc, $hotaru->pluginRequires, $hotaru->pluginVersion, $hotaru->pluginAuthor, urlencode($hotaru->pluginAuthorUrl), $hotaru->currentUser->id));
+        $hotaru->db->query($hotaru->db->prepare($sql, $hotaru->plugin->enabled, $hotaru->plugin->name, $hotaru->plugin->folder, $hotaru->plugin->class, $hotaru->plugin->extends, $hotaru->plugin->type, $hotaru->plugin->desc, $hotaru->plugin->requires, $hotaru->plugin->version, $hotaru->plugin->author, urlencode($hotaru->plugin->authorurl), $hotaru->currentUser->id));
 
         // Get the last order number - doing this after REPLACE INTO because 
         // we don't know whether the above will insert or replace.
@@ -293,7 +293,7 @@ class PluginManagement
         // plugin isn't ready to include it itself yet.
         $hotaru->includeLanguage();
         
-        $result = $hotaru->pluginHook('install_plugin', true, $hotaru->pluginFolder);
+        $result = $hotaru->pluginHook('install_plugin', true, $hotaru->plugin->folder);
         
         // For plugins to avoid showing this success message, they need to 
         // return a non-boolean value to $result.
@@ -318,19 +318,20 @@ class PluginManagement
     {
         if (!$plugin_metadata) { return false; }
         
-        $hotaru->pluginName         = $plugin_metadata['name'];
-        $hotaru->pluginDesc         = $plugin_metadata['description'];
-        $hotaru->pluginVersion      = $plugin_metadata['version'];
-        $hotaru->pluginFolder       = $plugin_metadata['folder'];
-        $hotaru->pluginClass        = $plugin_metadata['class'];
-        $hotaru->pluginHooks        = explode(',', $plugin_metadata['hooks']);
-        if (isset($plugin_metadata['extends'])) {   $hotaru->pluginExtends      = $plugin_metadata['extends']; }
-        if (isset($plugin_metadata['type'])) {      $hotaru->pluginType         = $plugin_metadata['type'];    }
-        if (isset($plugin_metadata['author'])) {    $hotaru->pluginAuthor       = $plugin_metadata['author'];  }
-        if (isset($plugin_metadata['authorurl'])) { $hotaru->pluginAuthorUrl    = $plugin_metadata['authorurl']; }
+        $hotaru->plugin->name         = $plugin_metadata['name'];
+        $hotaru->plugin->desc         = $plugin_metadata['description'];
+        $hotaru->plugin->version      = $plugin_metadata['version'];
+        $hotaru->plugin->folder       = $plugin_metadata['folder'];
+        $hotaru->plugin->class        = $plugin_metadata['class'];
+        $hotaru->plugin->hooks        = explode(',', $plugin_metadata['hooks']);
+        
+        if (isset($plugin_metadata['extends'])) {   $hotaru->plugin->extends      = $plugin_metadata['extends']; }
+        if (isset($plugin_metadata['type'])) {      $hotaru->plugin->type         = $plugin_metadata['type'];    }
+        if (isset($plugin_metadata['author'])) {    $hotaru->plugin->author       = $plugin_metadata['author'];  }
+        if (isset($plugin_metadata['authorurl'])) { $hotaru->plugin->authorurl    = $plugin_metadata['authorurl']; }
         
         if (isset($plugin_metadata['requires']) && $plugin_metadata['requires']) {
-            $hotaru->pluginRequires = $plugin_metadata['requires'];
+            $hotaru->plugin->requires = $plugin_metadata['requires'];
             $this->requiresToDependencies($hotaru);
         }
         
@@ -343,13 +344,13 @@ class PluginManagement
      */
     public function addPluginHooks($hotaru)
     {
-        foreach ($hotaru->pluginHooks as $hook)
+        foreach ($hotaru->plugin->hooks as $hook)
         {
             $exists = $this->isHook($hotaru, trim($hook));
 
             if (!$exists) {
                 $sql = "INSERT INTO " . TABLE_PLUGINHOOKS . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
-                $hotaru->db->query($hotaru->db->prepare($sql, $hotaru->pluginFolder, trim($hook), $hotaru->currentUser->id));
+                $hotaru->db->query($hotaru->db->prepare($sql, $hotaru->plugin->folder, trim($hook), $hotaru->currentUser->id));
             }
         }
     }
@@ -364,7 +365,7 @@ class PluginManagement
      */
     public function isHook($hotaru, $hook = "", $folder = "")
     {
-        if (!$folder) { $folder = $hotaru->pluginFolder; }
+        if (!$folder) { $folder = $hotaru->plugin->folder; }
         
         $sql = "SELECT count(*) FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_folder = %s AND plugin_hook = %s";
         if ($hotaru->db->get_var($hotaru->db->prepare($sql, $folder, $hook))) { return true;} else { return false; }
@@ -402,11 +403,11 @@ class PluginManagement
         // Clear the css/js cache to ensure this plugin's files are removed
         $hotaru->deleteFiles(CACHE . 'css_js_cache');
 
-        $hotaru->db->query($hotaru->db->prepare("DELETE FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $hotaru->pluginFolder));
-        $hotaru->db->query($hotaru->db->prepare("DELETE FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_folder = %s", $hotaru->pluginFolder));
+        $hotaru->db->query($hotaru->db->prepare("DELETE FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $hotaru->plugin->folder));
+        $hotaru->db->query($hotaru->db->prepare("DELETE FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_folder = %s", $hotaru->plugin->folder));
         
         // Settings aren't deleted anymore, but a user can do so manually from Admin->Maintenance
-        //$hotaru->db->query($hotaru->db->prepare("DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_folder = %s", $hotaru->pluginFolder));
+        //$hotaru->db->query($hotaru->db->prepare("DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_folder = %s", $hotaru->plugin->folder));
         
         if ($upgrade == 0) {
             $hotaru->messages[$hotaru->lang["admin_plugins_uninstall_done"]] = 'green';
@@ -476,9 +477,9 @@ class PluginManagement
     public function upgrade($hotaru)
     {
         // Read meta from the top of the plugin file
-        $plugin_metadata = $this->readPluginMeta($hotaru->pluginFolder);
+        $plugin_metadata = $this->readPluginMeta($hotaru->plugin->folder);
         
-        $hotaru->pluginEnabled  = 1;    // Enable it when we add it to the database.
+        $hotaru->plugin->enabled  = 1;    // Enable it when we add it to the database.
         $this->assignPluginMeta($plugin_metadata);
         
         $this->uninstall($hotaru, 1);    // 1 indicates that "upgrade" is true, used to disable the "Uninstalled" message
@@ -502,7 +503,7 @@ class PluginManagement
         $hotaru->deleteFiles(CACHE . 'css_js_cache');
         
         // Get the enabled status for this plugin...
-        $plugin_row = $hotaru->db->get_row($hotaru->db->prepare("SELECT plugin_folder, plugin_enabled FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $hotaru->pluginFolder));
+        $plugin_row = $hotaru->db->get_row($hotaru->db->prepare("SELECT plugin_folder, plugin_enabled FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $hotaru->plugin->folder));
         
         // If no result, then it's obviously not installed...
         if (!$plugin_row) 
@@ -540,7 +541,7 @@ class PluginManagement
             which has about 7 requirements. */ 
         $i = 0;
         foreach ($active_plugins as $active) {
-            $hotaru->pluginFolder = $active->plugin_folder;
+            $hotaru->plugin->folder = $active->plugin_folder;
             $ordered[$i]['name'] = $active->plugin_folder;
             if (!$active->plugin_requires) { 
                 $ordered[$i]['req_count'] = 0; 
@@ -554,7 +555,7 @@ class PluginManagement
         $ordered = sksort($ordered, 'req_count', 'int', true);
         foreach ($ordered as $ord) {
             $plugin_row = $hotaru->db->get_row($hotaru->db->prepare("SELECT plugin_folder, plugin_enabled FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $ord['name']));
-            $hotaru->pluginFolder = $plugin_row->plugin_folder;
+            $hotaru->plugin->folder = $plugin_row->plugin_folder;
             $this->activateDeactivateDo($hotaru, $plugin_row, $enabled);
         }
     }
@@ -572,15 +573,15 @@ class PluginManagement
         if ($plugin->plugin_enabled == $enabled) { return false; }  // only update if we're changing the enabled value.
         
         $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_enabled = %d, plugin_updateby = %d WHERE plugin_folder = %s";
-        $hotaru->db->query($hotaru->db->prepare($sql, $enabled, $hotaru->currentUser->id, $hotaru->pluginFolder));
+        $hotaru->db->query($hotaru->db->prepare($sql, $enabled, $hotaru->currentUser->id, $hotaru->plugin->folder));
         
         if ($enabled == 1) { // Activating now...
         
             // Get plugin version from the database...
-            $db_version = $hotaru->isActive($hotaru->pluginFolder);
+            $db_version = $hotaru->isActive($hotaru->plugin->folder);
             
             // Get plugin version from the file....
-            $plugin_metadata = $this->readPluginMeta($hotaru->pluginFolder);
+            $plugin_metadata = $this->readPluginMeta($hotaru->plugin->folder);
             $file_version = $plugin_metadata['version'];
             
             // If file version is newer the the current plugin version, then upgrade...
@@ -642,7 +643,7 @@ class PluginManagement
             $row_above = $hotaru->db->get_row($hotaru->db->prepare($sql, ($order - 1)));
             
             if (!$row_above) {
-                $hotaru->messages[$hotaru->pluginName . " " . $hotaru->lang['admin_plugins_order_first']] = 'red';
+                $hotaru->messages[$hotaru->plugin->name . " " . $hotaru->lang['admin_plugins_order_first']] = 'red';
                 return false;
             }
             
@@ -657,7 +658,7 @@ class PluginManagement
             
             // update current plugin
             $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_folder = %s";
-            $hotaru->db->query($hotaru->db->prepare($sql, ($order - 1), $hotaru->pluginFolder)); 
+            $hotaru->db->query($hotaru->db->prepare($sql, ($order - 1), $hotaru->plugin->folder)); 
         }
         else
         {
@@ -666,7 +667,7 @@ class PluginManagement
             $row_below = $hotaru->db->get_row($hotaru->db->prepare($sql, ($order + 1)));
             
             if (!$row_below) {
-                $hotaru->messages[$hotaru->pluginName . " " . $hotaru->lang['admin_plugins_order_last']] = 'red';
+                $hotaru->messages[$hotaru->plugin->name . " " . $hotaru->lang['admin_plugins_order_last']] = 'red';
                 return false;
             }
             
@@ -681,7 +682,7 @@ class PluginManagement
             
             // update current plugin
             $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_folder = %s";
-            $hotaru->db->query($hotaru->db->prepare($sql, ($order + 1), $hotaru->pluginFolder)); 
+            $hotaru->db->query($hotaru->db->prepare($sql, ($order + 1), $hotaru->plugin->folder)); 
         }
 
         $hotaru->messages[$hotaru->lang['admin_plugins_order_updated']] = 'green';

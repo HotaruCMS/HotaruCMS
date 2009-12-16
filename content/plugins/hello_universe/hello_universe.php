@@ -6,6 +6,8 @@
  * folder: hello_universe
  * class: HelloUniverse
  * hooks: theme_index_top, theme_index_main, theme_index_sidebar
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *

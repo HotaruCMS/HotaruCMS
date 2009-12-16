@@ -1,8 +1,6 @@
-<?php 
+<?php
 /**
- * Theme name: admin_default
- * Template name: plugin_settings.php
- * Template author: Nick Ramsay
+ * SB BASE LANGUAGE
  *
  * PHP version 5
  *
@@ -26,19 +24,8 @@
  * @link      http://www.hotarucms.org/
  */
 
-?>
+/* Index */
+$lang["sb_base_site_name"] = SITE_NAME;
+$lang["sb_base_top"] = "Top Posts";
 
-<div id="plugin_settings">
-    <?php 
-        if ($hotaru->plugin['folder'] == "") {
-            $hotaru->pluginHook('admin_sidebar_plugin_settings');
-        } else {
-            $result = $hotaru->pluginHook('admin_plugin_settings', true, $hotaru->plugin['folder']); 
-            if (!isset($result) || !is_array($result)) {
-                $hotaru->message = $hotaru->lang['admin_plugin_settings_inactive'];
-                $hotaru->messageType = 'red';    
-                $hotaru->showMessage();
-            }
-        }
-    ?>
-</div>
+?>

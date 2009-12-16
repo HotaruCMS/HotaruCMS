@@ -33,7 +33,7 @@ class Initialize
     /**
      * Initialize Hotaru with the essentials
      */
-    public function __construct()
+    public function __construct($hotaru)
     {
         // session to be used by CSRF
         if (!isset($_SESSION['HotaruCMS'])) {
@@ -50,6 +50,8 @@ class Initialize
         $this->readSettings();
         $this->setUpDatabaseCache();
         $this->isDebug = $this->checkDebug();
+        
+        
 
         return $this;
     }
@@ -102,12 +104,11 @@ class Initialize
         require_once(LIBS . 'InspektExtras.php');   // for custom Inspekt methods
         require_once(LIBS . 'PageHandling.php');    // for page handling
         require_once(LIBS . 'IncludeCssJs.php');    // for including and mergeing css and javascript
+        require_once(LIBS . 'Plugin.php');          // for plugin properties
         require_once(LIBS . 'PluginFunctions.php'); // for plugin functions
         require_once(LIBS . 'UserBase.php');        // for users, settings and permissions
         require_once(LIBS . 'UserAuth.php');        // for user authentication, login and registering
-        /*
-        require_once(LIBS . 'Plugin.php');          // for plugins
-        */
+        require_once(LIBS . 'Post.php');            // for posts
         
         // include functions
         require_once(FUNCTIONS . 'funcs.strings.php');
@@ -213,6 +214,6 @@ class Initialize
         }
         return false;
     }
-    
+        
 }
 ?>

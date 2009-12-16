@@ -69,7 +69,7 @@ class Language
      */    
     public function includeLanguage($hotaru, $folder = '', $filename = '')
     {
-        if (!$folder) { $folder = $hotaru->pluginFolder; }
+        if (!$folder) { $folder = $hotaru->plugin->folder; }
         
         if ($folder) {
         

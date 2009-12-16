@@ -62,7 +62,7 @@ class AdminPages
                 $this->adminPlugins($hotaru);
                 break;
             case "plugin_settings":
-                $hotaru->pluginFolder = $hotaru->cage->get->testAlnumLines('plugin'); // get plugin name from url
+                $hotaru->plugin->folder = $hotaru->cage->get->testAlnumLines('plugin'); // get plugin name from url
                 $hotaru->getPluginName();
                 break;
             default:
@@ -313,7 +313,7 @@ class AdminPages
     public function adminPlugins($hotaru)
     {
         $pfolder = $hotaru->cage->get->testAlnumLines('plugin');
-        $hotaru->pluginFolder = $pfolder;   // assign this plugin to Hotaru
+        $hotaru->plugin->folder = $pfolder;   // assign this plugin to Hotaru
         
         $action = $hotaru->cage->get->testAlnumLines('action');
         $order = $hotaru->cage->get->testAlnumLines('order');

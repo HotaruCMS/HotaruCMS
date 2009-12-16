@@ -97,7 +97,7 @@ class IncludeCssJs
      */
      public function includeCss($hotaru, $folder = '', $filename = '', $admin = false)
      {
-        if (!$folder) { $folder = $hotaru->pluginFolder; }
+        if (!$folder) { $folder = $hotaru->plugin['folder']; }
         
         // If no filename provided, the filename is assigned the plugin name.
         if (!$filename) { $filename = $folder; }
@@ -119,7 +119,7 @@ class IncludeCssJs
      */
      public function includeJs($hotaru, $folder = '', $filename = '', $admin = false)
      {
-        if (!$folder) { $folder = $hotaru->pluginFolder; }
+        if (!$folder) { $folder = $hotaru->plugin['folder']; }
                 
         // If no filename provided, the filename is assigned the plugin name.
         if (!$filename) { $filename = $folder; }

@@ -48,7 +48,7 @@ class UserBase
     /**
      * Access modifier to get protected properties
      */
-    public function __get($var)
+    public function &__get($var)
     {
         return $this->$var;
     }
