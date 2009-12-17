@@ -49,7 +49,10 @@ class PluginSettings
         {
             // get all settings from the database if we haven't already:
             if (!$hotaru->pluginSettings) { $hotaru->getAllPluginSettings(); }
-            
+
+            // return false if no plugin settings found in the database
+            if (!$hotaru->pluginSettings) { return false; }
+
             // get the settings we need from memory
             foreach ($hotaru->pluginSettings as $item => $key) {
                 if (($key->plugin_folder == $folder) && ($key->plugin_setting == $setting)) {
@@ -112,7 +115,7 @@ class PluginSettings
     {
         $sql = "SELECT plugin_folder, plugin_setting, plugin_value FROM " . TABLE_PLUGINSETTINGS;
         $results = $hotaru->db->get_results($hotaru->db->prepare($sql));
-        $hotaru->pluginSettings = $results;
+        if ($results) { return $results; } else { return false; }
     }
     
     
