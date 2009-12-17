@@ -37,10 +37,10 @@ if (isset($hotaru->currentUser->vars['settings']['link_action'])) { $open = 'sou
 
 <?php 
 
-if ($posts && ($hotaru->pageType != "profile")) {
+if ($hotaru->vars['posts']) {
     $pg = $hotaru->cage->get->getInt('pg');
     
-    $pagedResults = $hotaru->pagination($posts, $hotaru->post->postsPerPage, $pg);
+    $pagedResults = $hotaru->pagination($hotaru->vars['posts'], $hotaru->post->postsPerPage, $pg);
     while($post = $pagedResults->fetchPagedRow()) {
         $hotaru->post->readPost(0, $post);
         $user->getUserBasic($hotaru->post->author);
@@ -107,7 +107,7 @@ if ($posts && ($hotaru->pageType != "profile")) {
 <?php    
     }
     
-    echo $hotaru->pageBar($pagedResults);  
+    echo $hotaru->pageBar($pagedResults);
 }
     
 ?>

@@ -48,7 +48,6 @@ class Breadcrumbs
         
         // in case of no plugins:
         $output .= " &raquo; " . $hotaru->pageTitle;
-
         return $output;
     }
 }

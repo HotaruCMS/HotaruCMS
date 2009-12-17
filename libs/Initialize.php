@@ -106,6 +106,7 @@ class Initialize
         require_once(LIBS . 'IncludeCssJs.php');    // for including and mergeing css and javascript
         require_once(LIBS . 'Plugin.php');          // for plugin properties
         require_once(LIBS . 'PluginFunctions.php'); // for plugin functions
+        require_once(LIBS . 'PluginSettings.php');  // for plugin settings
         require_once(LIBS . 'UserBase.php');        // for users, settings and permissions
         require_once(LIBS . 'UserAuth.php');        // for user authentication, login and registering
         require_once(LIBS . 'Post.php');            // for posts

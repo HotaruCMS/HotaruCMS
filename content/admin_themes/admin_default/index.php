@@ -25,7 +25,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-
 // plugin hook
 $result = $hotaru->pluginHook('admin_theme_index_top');
 if (!$result) {

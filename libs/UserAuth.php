@@ -84,7 +84,7 @@ class UserAuth extends UserBase
         $result = '';
         
         // Allow plugin to bypass the password check with their own methods, e.g. RPX
-        $plugin_result = $hotaru->pluginHook('userbase_logincheck', true, '', array($username, $password));
+        $plugin_result = $hotaru->pluginHook('userbase_logincheck', '', array($username, $password));
         
         if (!isset($plugin_result))
         {

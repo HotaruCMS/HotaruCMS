@@ -289,7 +289,7 @@ class UserBase
             $base_perms = $this->getDefaultPermissions($hotaru,'all', 'base'); // get base defaults
             $base_perms = array_merge_recursive($site_perms, $new_perms); // merge
             $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";
-            $hotaru->db->query($this->db->prepare($sql, serialize($site_perms), serialize($base_perms), 'permissions'));
+            $hotaru->db->query($hotaru->db->prepare($sql, serialize($site_perms), serialize($base_perms), 'permissions'));
         }
     }
 
@@ -303,5 +303,125 @@ class UserBase
     {
         $sql = "UPDATE " . TABLE_USERS . " SET user_permissions = %s WHERE user_id = %d";
         $hotaru->db->get_var($hotaru->db->prepare($sql, serialize($this->getAllPermissions()), $this->id));
+    }
+    
+    
+    /**
+     * Get a user's profile or settings data
+     *
+     * @return array|false
+     */
+    public function getProfileSettingsData($hotaru, $type = 'user_profile', $userid = 0)
+    {
+        if (!$userid) { $userid = $this->id; }
+
+        $query = "SELECT usermeta_value FROM " . DB_PREFIX . "usermeta WHERE usermeta_userid = %d AND usermeta_key = %s";
+        $sql = $this->db->prepare($query, $userid, $type);
+
+        if (isset($this->hotaru->vars[$sql])) { 
+            $result = $this->hotaru->vars[$sql]; 
+        } else {
+            $result = $this->db->get_var($sql);
+            $this->hotaru->vars[$sql] = $result;    // cache result
+        }
+           
+        if ($result) { 
+            $result = unserialize($result);
+            if ($type == 'user_settings') {
+                $defaults = $this->getDefaultSettings();
+                $result = array_merge($defaults, $result);
+            }
+        } else {
+            return false;
+        }
+        
+        return $result; 
+    }
+
+
+    /**
+     * Save a user's profile or settings data
+     *
+     * @return array|false
+     */
+    public function saveProfileSettingsData($hotaru, $data = array(), $type = 'user_profile', $userid = 0)
+    {
+        if (!$data) { return false; }
+        if (!$userid) { $userid = $hotaru->currentUser->id; }
+
+        $result = $hotaru->getProfileSettingsData($type, $userid);
+        
+        if (!$result) {
+            $sql = "INSERT INTO " . TABLE_USERMETA . " (usermeta_userid, usermeta_key, usermeta_value, usermeta_updateby) VALUES(%d, %s, %s, %d)";
+            $hotaru->db->get_row($hotaru->db->prepare($sql, $userid, $type, serialize($data), $hotaru->currentUser->id));
+        } else {
+            $sql = "UPDATE " . TABLE_USERMETA . " SET usermeta_value = %s, usermeta_updateby = %d WHERE usermeta_userid = %d AND usermeta_key = %s";
+            $hotaru->db->get_row($hotaru->db->prepare($sql, serialize($data), $hotaru->currentUser->id, $userid, $type));
+        }
+        
+        return true;
+    }
+    
+
+    /**
+     * Get the default user settings
+     *
+     * @param string $type either 'site' or 'base' (base for the originals)
+     * @return array
+     */
+    public function getDefaultSettings($hotaru, $type = 'site')
+    {
+        if ($type == 'site') { 
+            $field = 'miscdata_value'; 
+        } elseif ($type == 'base') { 
+            $field = 'miscdata_default';
+        } else { 
+            return false;
+        }
+        
+        $query = "SELECT " . $field . " FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+        $sql = $hotaru->db->prepare($query, 'user_settings');
+
+        if (isset($hotaru->vars[$sql])) { 
+            $result = $hotaru->vars[$sql]; 
+        } else {
+            $result = $hotaru->db->get_var($sql);
+            $hotaru->vars[$sql] = $result;    // cache result
+        }
+        
+        if ($result) {
+            return unserialize($result);
+        } else {
+            return false;
+        }
+    }
+    
+    
+    /**
+     * Update the default user settings
+     *
+     * @param array $settings 
+     * @param string $type either 'site' or 'base' (base for the originals)
+     * @return array
+     */
+    public function updateDefaultSettings($hotaru, $settings, $type = 'site')
+    {
+        if (!$settings) { return false; } else { $settings = serialize($settings); }
+        
+        $result = $hotaru->getDefaultSettings($type);
+        
+        if (!$result) {
+            // insert settings for the first time
+            $sql = "INSERT INTO " . TABLE_MISCDATA . " (miscdata_key, miscdata_value, miscdata_default, miscdata_updateby) VALUES (%s, %s, %s, %d)";
+            $hotaru->db->query($hotaru->db->prepare($sql, 'user_settings', $settings, $settings, $this->id));
+        } elseif ($type == 'site') {
+            // update the site defaults
+            $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
+            $hotaru->db->query($hotaru->db->prepare($sql, $settings, $hotaru->currentUser->id, 'user_settings'));
+        } elseif ($type == 'base') {
+            // update the base defaults
+            $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_default = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
+            $hotaru->db->query($hotaru->db->prepare($sql, $settings, $hotaru->currentUser->id, 'user_settings'));
+        }
     }
 }

@@ -26,6 +26,30 @@
 class PageHandling
 {
     /**
+     * Checks if current page (in url or form) matches the page parameter
+     *
+     * @param string $page page name
+     */
+    public function isPage($hotaru, $page = '')
+    {
+        $real_page = $hotaru->cage->get->testPage('page');
+        
+        if (!$real_page) { 
+            /*  Possibly a post with multi-byte characters? 
+                Try getMixedString2... */
+            $real_page = $hotaru->cage->get->getMixedString2('page');
+        }
+        
+        // Try POST...
+        if (!$real_page) { $real_page = $hotaru->cage->post->testPage('page'); }
+        
+        if (!$real_page) { return false; }
+
+        if ($real_page == $page) { return true; } else { return false; }
+    }
+    
+    
+    /**
      * Gets the current page name
      *
      * @return string|false $page
@@ -343,6 +367,30 @@ class PageHandling
         }
         
         return $standard_url;
+    }
+
+
+    /**
+     * Check to see if the Admin settings page we are looking at  
+     * matches the plugin passed to this function.
+     *
+     * @param string $folder - plugin folder
+     * @return bool
+     *
+     *  Notes: This is used in "admin_header_include" so we only include the css, 
+     *         javascript etc. for the plugin we're trying to change settings for.
+     *  Usage: $hotaru->isSettingsPage('sb_submit') returns true if 
+     *         page=plugin_settings and plugin=sb_submit in the url.
+     */
+    public function isSettingsPage($hotaru, $folder = '')
+    {
+        if (!$folder) { $folder = $hotaru->plugin->folder; }
+        
+        if ($hotaru->isPage('plugin_settings') && $hotaru->cage->get->testAlnumLines('plugin') == $folder) {
+            return true;
+        } else {    
+            return false;
+        }
     }
     
 }

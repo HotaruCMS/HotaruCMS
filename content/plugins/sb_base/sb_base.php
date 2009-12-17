@@ -37,18 +37,27 @@ class SbBase
     public $hotaru = '';   // access Hotaru functions using $this->hotaru
     
     /**
-     *
+     * Determine the pageType
      */
     public function theme_index_top()
     {
-        if ($this->hotaru->pageName == 'index') { 
-            $this->hotaru->pageTitle = $this->hotaru->lang["sb_base_site_name"];
+        switch ($this->hotaru->pageName)
+        {
+            case 'index':
+                $this->hotaru->pageType = 'list';
+                $this->hotaru->pageTitle = $this->hotaru->lang["sb_base_site_name"];
+                break;
+            case 'post':
+                $this->hotaru->pageType = 'post';
+                break;
+            default:
+                $this->hotaru->pageType = 'list';
         }
     }
     
     
     /**
-     *
+     * Replace the default breadcrumbs in specific circumstances
      */
     public function breadcrumbs()
     {
@@ -58,23 +67,19 @@ class SbBase
     }
     
     /**
-     *
+     * Determine which template to show and do preparation of variables, etc.
      */
     public function theme_index_main()
     {
         if (!$this->hotaru->pageName) { return false; }
         
-        switch ($this->hotaru->pageName)
+        switch ($this->hotaru->pageType)
         {
-            case 'index':
-            case 'upcoming':
-            case 'latest':
-                $this->hotaru->pageType = 'list';
-                $this->hotaru->vars['posts'] = $this->hotaru->post->prepareList();
+            case 'post':
                 $this->hotaru->displayTemplate('sb_list');
                 break;
             default:
-                $this->hotaru->pageType = 'list';
+                $this->hotaru->vars['posts'] = array(); // = $this->hotaru->post->prepareList();
                 $this->hotaru->displayTemplate('sb_list');
         }
     }

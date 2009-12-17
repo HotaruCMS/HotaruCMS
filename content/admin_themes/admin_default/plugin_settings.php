@@ -30,14 +30,14 @@
 
 <div id="plugin_settings">
     <?php 
-        if ($hotaru->plugin['folder'] == "") {
-            $hotaru->pluginHook('admin_sidebar_plugin_settings');
-        } else {
-            $result = $hotaru->pluginHook('admin_plugin_settings', true, $hotaru->plugin['folder']); 
-            if (!isset($result) || !is_array($result)) {
-                $hotaru->message = $hotaru->lang['admin_plugin_settings_inactive'];
-                $hotaru->messageType = 'red';    
-                $hotaru->showMessage();
+        $result = $hotaru->pluginHook('admin_plugin_settings', $hotaru->vars['settings_plugin']);
+        if (!$result) {
+            $sb_links = $hotaru->pluginHook('admin_sidebar_plugin_settings');
+            if ($sb_links) {
+                $sb_links = sksort($sb_links, $subkey="name", $type="char", true);
+                foreach ($sb_links as $plugin => $details) { 
+                    echo "<li><a href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $details['plugin'] . "'>" . $details['name'] . "</a></li>";
+                }
             }
         }
     ?>

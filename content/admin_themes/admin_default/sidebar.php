@@ -51,7 +51,6 @@
                         echo "<li><a href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $details['plugin'] . "'>" . $details['name'] . "</a></li>";
                     }
                 }
-                
             ?>
         </ul>
     <?php } ?>

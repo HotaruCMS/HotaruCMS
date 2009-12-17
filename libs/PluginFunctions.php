@@ -84,14 +84,15 @@ class PluginFunctions
                 $tempPluginObject = new $plugin->plugin_class();        // create a temporary object of the plugin class
                 $tempPluginObject->hotaru = $hotaru;                    // assign $hotaru to the object
                 $hotaru->plugin->folder = $plugin->plugin_folder;     // assign plugin folder to $hotaru
-                
+
                 // call the method that matches this hook
                 if (method_exists($tempPluginObject, $hook)) {
                     $rClass = new ReflectionClass($plugin->plugin_class);
                     $rMethod = $rClass->getMethod($hook);
                     // echo $rMethod->class;                            // the method's class
                     // echo get_class($tempPluginObject);               // the object's class
-                    $hotaru->getPluginFolderFromClass($rMethod->class); // give Hotaru the right plugin folder name
+                    // give Hotaru the right plugin folder name (unless installing because data not yet avaialble)
+                    if ($hook != 'install_plugin') { $hotaru->getPluginFolderFromClass($rMethod->class); } 
                     $hotaru->readPlugin();                              // fill Hotaru's plugin properties
                     $hotaru->includeLanguage();                         // if a language file exists, include it
                     $result = $tempPluginObject->$hook($parameters);
@@ -171,7 +172,6 @@ class PluginFunctions
         
         if (!$hotaru->allPluginDetails) { //not in memory
             $this->getAllPluginDetails($hotaru); // get from database
-            print_r($hotaru->allPluginDetails);
         }
         
         if (!$hotaru->allPluginDetails) { 

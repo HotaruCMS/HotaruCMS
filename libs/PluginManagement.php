@@ -293,7 +293,7 @@ class PluginManagement
         // plugin isn't ready to include it itself yet.
         $hotaru->includeLanguage();
         
-        $result = $hotaru->pluginHook('install_plugin', true, $hotaru->plugin->folder);
+        $result = $hotaru->pluginHook('install_plugin', $hotaru->plugin->folder);
         
         // For plugins to avoid showing this success message, they need to 
         // return a non-boolean value to $result.

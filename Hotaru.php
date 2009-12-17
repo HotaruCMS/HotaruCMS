@@ -71,6 +71,7 @@ class Hotaru
             $this->isDebug      = $init->isDebug;       // set debug
             $this->currentUser  = new UserAuth();       // the current user
             $this->plugin       = new Plugin();         // instantiate Plugin object
+            $this->post         = new Post();           // instantiate Post object
             $this->csrf('set');                         // set a csrfToken
         }
     }
@@ -210,16 +211,15 @@ class Hotaru
         // This requires there to be a file in the plugin folder called pluginname_settings.php
         // The file must contain a class titled PluginNameSettings
         // The class must have a method called "settings".
-        
         if ($this->cage->get->testAlnumLines('plugin') != $this->plugin->folder) { return false; }
         
         if (file_exists(PLUGINS . $this->plugin->folder . '/' . $this->plugin->folder . '_settings.php')) {
             include_once(PLUGINS . $this->plugin->folder . '/' . $this->plugin->folder . '_settings.php');
         }
-        
-        $settings_class = make_name($this->plugin->folder, '') . 'Settings'; // e.g. CategoriesSettings
-        $settings_object = new $settings_class($this->hotaru, $this->plugin->folder);
-        $settings_object->settings();   // call the settings function
+        $settings_class = make_name($this->plugin->folder, '_') . 'Settings'; // e.g. CategoriesSettings
+        $settings_class = str_replace(' ', '', $settings_class); // strip spaces
+        $settings_object = new $settings_class();
+        $settings_object->settings($this);   // call the settings function
         return true;
     }
     
@@ -255,6 +255,37 @@ class Hotaru
         $pageHandling->displayTemplate($this, $page, $plugin, $include_once);
     }
     
+    
+    /**
+     * Checks if current page (in url or form) matches the page parameter
+     *
+     * @param string $page page name
+     */
+    public function isPage($page = '')
+    {
+        $pageHandling = new PageHandling();
+        return $pageHandling->getPageName($this, $page);
+    }
+    
+    
+    /**
+     * Check to see if the Admin settings page we are looking at  
+     * matches the plugin passed to this function.
+     *
+     * @param string $folder - plugin folder
+     * @return bool
+     *
+     *  Notes: This is used in "admin_header_include" so we only include the css, 
+     *         javascript etc. for the plugin we're trying to change settings for.
+     *  Usage: $hotaru->isSettingsPage('sb_submit') returns true if 
+     *         page=plugin_settings and plugin=sb_submit in the url.
+     */
+    public function isSettingsPage($folder = '')
+    {
+        $pageHandling = new PageHandling();
+        return $pageHandling->isSettingsPage($this, $folder);
+    }
+
     
     /**
      * Gets the current page name
@@ -342,11 +373,19 @@ class Hotaru
  
  /* *************************************************************
  *
- *  USERAUTH FUNCTIONS
+ *  USERAUTH FUNCTIONS / USERBASE FUNCTIONS
  *
  * *********************************************************** */
  
- 
+    /* UserBase & UserAuth functions should be called directly if you want to 
+       retain the user object being used. E.g.
+       
+       $user = new UserAuth();
+       $user->getUserBasic($hotaru);
+       $user->updateUserBasic($hotaru);
+    */
+    
+    
     /**
      * check cookie and log in
      *
@@ -356,14 +395,78 @@ class Hotaru
     {
         $this->currentUser->checkCookie($this);
     }
-
-    /* With the exception of above, user functions need to be called 
-       directly in order to retain the user object being used. E.g.
-       
-       $user = new UserAuth();
-       $user->getUserBasic($hotaru);
-       $user->updateUserBasic($hotaru);
-    */
+    
+    
+    /**
+     * Get basic user details
+     *
+     * @param int $userid 
+     * @param string $username
+     * @param bool $no_cache - set true to disable caching of SQl results
+     * @return array|false
+     *
+     * Note: Needs either userid or username, not both
+     */    
+    public function getUserBasic($userid = 0, $username = '', $no_cache = false)
+    {
+        $userbase = new UserBase();
+        return $userbase->getUserBasic($this, $userid, $username, $no_cache);
+    }
+    
+    
+    /**
+     * Default permissions
+     *
+     * @param string $role or 'all'
+     * @param string $field 'site' for site defaults and 'base' for base defaults
+     * @param book $options_only returns just the options if true
+     * @return array $perms
+     */
+    public function getDefaultPermissions($role = '', $defaults = 'site', $options_only = false) 
+    {
+        $userbase = new UserBase();
+        return $userbase->getDefaultPermissions($this, $role, $defaults, $options_only);
+    }
+    
+    
+    /**
+     * Update Default permissions
+     *
+     * @param array $new_perms from a plugin's install function
+     * @param string $defaults - either "site", "base" or "both" 
+     */
+    public function updateDefaultPermissions($new_perms = array(), $defaults = 'both') 
+    {
+        $userbase = new UserBase();
+        return $userbase->updateDefaultPermissions($this, $new_perms, $defaults);
+    }
+    
+    
+    /**
+     * Get the default user settings
+     *
+     * @param string $type either 'site' or 'base' (base for the originals)
+     * @return array
+     */
+    public function getDefaultSettings($type = 'site')
+    {
+        $userbase = new UserBase();
+        return $userbase->getDefaultSettings($this, $type);
+    }
+    
+    
+    /**
+     * Update the default user settings
+     *
+     * @param array $settings 
+     * @param string $type either 'site' or 'base' (base for the originals)
+     * @return array
+     */
+    public function updateDefaultSettings($settings, $type = 'site')
+    {
+        $userbase = new UserBase();
+        return $userbase->updateDefaultSettings($this, $settings, $type);
+    }
 
 
  /* *************************************************************
@@ -403,6 +506,21 @@ class Hotaru
     }
     
     
+    /**
+     * Get all users with permission to (access admin)
+     *
+     * @param string $permission
+     * @param string $value - value for the permission, usually yes, no, own or mod
+     * @return array
+     */
+    public function getMods($permission = 'can_access_admin', $value = 'yes')
+    {
+        require_once(LIBS . 'UserInfo.php');
+        $userInfo = new UserInfo();
+        return $userInfo->getMods($this, $permission, $value);
+    }
+
+    
  /* *************************************************************
  *
  *  PLUGIN FUNCTIONS
@@ -421,8 +539,8 @@ class Hotaru
      */
     public function pluginHook($hook = '', $folder = '', $parameters = array(), $exclude = array())
     {
-        $plugins = new PluginFunctions();
-        return $plugins->pluginHook($this, $hook, $folder, $parameters, $exclude);
+        $pluginFunctions = new PluginFunctions();
+        return $pluginFunctions->pluginHook($this, $hook, $folder, $parameters, $exclude);
     }
     
     
@@ -433,8 +551,8 @@ class Hotaru
      */
     public function readPlugin($folder = '')
     {
-        $plugins = new PluginFunctions();
-        $this->readPlugin = $plugins->readPlugin($this, $folder);
+        $pluginFunctions = new PluginFunctions();
+        $this->readPlugin = $pluginFunctions->readPlugin($this, $folder);
     }
     
     
@@ -445,8 +563,8 @@ class Hotaru
      */
     public function numActivePlugins()
     {
-        $plugins = new PluginFunctions();
-        return $plugins->numActivePlugins($this->db);
+        $pluginFunctions = new PluginFunctions();
+        return $pluginFunctions->numActivePlugins($this->db);
     }
     
     
@@ -459,7 +577,7 @@ class Hotaru
     public function getPluginVersion($folder = '')
     {
         $this->readPlugin($folder);
-        return $hotaru->plugin->version;
+        return $this->plugin->version;
     }
     
     
@@ -472,7 +590,7 @@ class Hotaru
     public function getPluginName($folder = '')
     {
         $this->readPlugin($folder);
-        return $hotaru->plugin->name;
+        return $this->plugin->name;
     }
     
 
@@ -484,8 +602,8 @@ class Hotaru
      */
     public function getPluginFolderFromClass($class = '')
     {
-        $plugins = new PluginFunctions();
-        $this->plugin->folder = $plugins->getPluginFolderFromClass($this, $class);
+        $pluginFunctions = new PluginFunctions();
+        $this->plugin->folder = $pluginFunctions->getPluginFolderFromClass($this, $class);
     }
     
     
@@ -510,11 +628,105 @@ class Hotaru
      */
     public function isActive($folder = '')
     {
-        $plugins = new PluginFunctions();
-        return $plugins->isActive($this, $folder);
+        $pluginFunctions = new PluginFunctions();
+        return $pluginFunctions->isActive($this, $folder);
     }
     
  
+ /* *************************************************************
+ *
+ *  PLUGIN SETTINGS FUNCTIONS
+ *
+ * *********************************************************** */
+ 
+ 
+    /**
+     * Get the value for a given plugin and setting
+     *
+     * @param string $folder name of plugin folder
+     * @param string $setting name of the setting to retrieve
+     * @return string|false
+     *
+     * Notes: If there are multiple settings with the same name,
+     * this will only get the first.
+     */
+    public function getSetting($setting = '', $folder = '')
+    {
+        $pluginSettings = new PluginSettings();
+        return $pluginSettings->getSetting($this, $setting, $folder);
+    }
+    
+    
+    /**
+     * Get an array of settings for a given plugin
+     *
+     * @param string $folder name of plugin folder
+     * @return array|false
+     *
+     * Note: Unlike "getSetting", this will get ALL settings with the same name.
+     */
+    public function getSettingsArray($folder = '')
+    {
+        $pluginSettings = new PluginSettings();
+        return $pluginSettings->getSettingsArray($this, $folder);
+    }
+    
+    
+    /**
+     * Get and unserialize serialized settings
+     *
+     * @param string $folder plugin folder name
+     * @param string $settings_name optional settings name if different from folder
+     * @return array - of submit settings
+     */
+    public function getSerializedSettings($settings_name = '', $folder = '')
+    {
+        $pluginSettings = new PluginSettings();
+        return $pluginSettings->getSerializedSettings($this, $settings_name, $folder);
+    }
+    
+    
+    /**
+     * Get and store all plugin settings in $hotaru->pluginSettings
+     *
+     * @return array - all settings
+     */
+    public function getAllPluginSettings()
+    {
+        $pluginSettings = new PluginSettings();
+        $this->pluginSettings = $pluginSettings->getAllPluginSettings($this);
+        return $this->pluginSettings;
+    }
+    
+    
+    /**
+     * Determine if a plugin setting already exists
+     *
+     * @param string $folder name of plugin folder
+     * @param string $setting name of the setting to retrieve
+     * @return string|false
+     */
+    public function isSetting($setting = '', $folder = '')
+    {
+        $pluginSettings = new PluginSettings();
+        return $pluginSettings->isSetting($this, $setting, $folder);
+    }
+
+
+    /**
+     * Update a plugin setting
+     *
+     * @param string $folder name of plugin folder
+     * @param string $setting name of the setting
+     * @param string $setting stting value
+     */
+    public function updateSetting($setting = '', $value = '', $folder = '')
+    {
+        $pluginSettings = new PluginSettings();
+        return $pluginSettings->updateSetting($this, $setting, $value, $folder);
+    }
+
+
  /* *************************************************************
  *
  *  INCLUDE CSS & JAVASCRIPT FUNCTIONS
