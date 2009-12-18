@@ -41,11 +41,7 @@
    <script language="JavaScript" src="<?php echo BASEURL . 'javascript/hotaru.js'; ?>"></script>
    
     <!-- Include merged files for all the plugin css and javascript (if any) -->
-    <?php 
-        $version_js = $hotaru->combineIncludes('js', 0, true);
-        $version_css = $hotaru->combineIncludes('css', 0, true);
-        $hotaru->includeCombined($version_js, $version_css, true);
-    ?>
+    <?php $hotaru->doIncludes(); ?>
     <!-- End -->
     
    <link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/reset-fonts-grids.css'; ?>" type="text/css">
