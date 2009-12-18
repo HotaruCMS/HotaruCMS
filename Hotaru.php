@@ -38,6 +38,7 @@ class Hotaru
     protected $currentUser;                     // UserBase object
     protected $plugin;                          // Plugin object
     protected $post;                            // Post object
+    protected $includes;                        // for CSS/JavaScript includes
     
     // page info
     protected $pageName             = '';       // e.g. top
@@ -72,6 +73,7 @@ class Hotaru
             $this->currentUser  = new UserAuth();       // the current user
             $this->plugin       = new Plugin();         // instantiate Plugin object
             $this->post         = new Post();           // instantiate Post object
+            $this->includes     = new IncludeCssJs();   // instantiate Includes object
             $this->csrf('set');                         // set a csrfToken
         }
     }
@@ -733,46 +735,28 @@ class Hotaru
  *
  * *********************************************************** */
  
- 
+
     /**
-     * Check if we need to combine CSS and JavaScript files
+     * Check if we need to combine CSS and JavaScript files (from start function )
      */
      public function checkCssJs()
      {
         if (!$this->cage->get->keyExists('combine')) { return false; }
- 
+
         $type = $this->cage->get->testAlpha('type');
         $version = $this->cage->get->testInt('version');
-        $this->combineIncludes($type, $version, $admin);
+        $this->includes->combineIncludes($this, $type, $version);
      }
      
      
     /**
-     * Combine Included CSS & JSS files
-     *
-     * @param string $type either 'css' or 'js'
-     * @param int version number or echo output to cache file
-     * @param bool $admin
-     * @link http://www.ejeliot.com/blog/72 Based on work by Ed Eliot
+     * Do Includes (called from template header.php)
      */
-     public function combineIncludes($type = 'css', $version = 0, $admin = false)
+     public function doIncludes()
      {
-        $includes = new IncludeCssJs();         // test and merge css and javascript files
-        $includes->combineIncludes($this, $type, $version, $admin);
-     }
-     
-     
-     /**
-     * Included combined files
-     *
-     * @param int $version_js 
-     * @param int $version_css 
-     * @param bool $admin
-     */
-     public function includeCombined($version_js = 0, $version_css = 0, $admin = false)
-     {
-        $includes = new IncludeCssJs();         // test and merge css and javascript files
-        $includes->includeCombined($version_js, $version_css, $admin);
+        $version_js = $this->includes->combineIncludes($this, 'js');
+        $version_css = $this->includes->combineIncludes($this, 'css');
+        $this->includes->includeCombined($version_js, $version_css, $this->isAdmin);
      }
      
      
@@ -781,12 +765,10 @@ class Hotaru
      *
      * @param $folder - the folder name of the plugin
      * @param $filename - optional css file without an extension
-     * @param $admin - optional flag to indicate whether this is for admin or not
      */
-     public function includeCss($hotaru, $folder = '', $filename = '', $admin = false)
+     public function includeCss($folder = '', $filename = '')
      {
-        $includes = new IncludeCssJs();         // test and merge css and javascript files
-        return $includes->includeCss($folder, $filename, $admin);
+        return $this->includes->includeCss($this, $folder, $filename);
      }
 
 
@@ -795,12 +777,10 @@ class Hotaru
      *
      * @param $folder - the folder name of the plugin
      * @param $filename - optional js file without an extension
-     * @param $admin - optional flag to indicate whether this is for admin or not
      */
-     public function includeJs($hotaru, $folder = '', $filename = '', $admin = false)
+     public function includeJs($folder = '', $filename = '')
      {
-        $includes = new IncludeCssJs();         // test and merge css and javascript files
-        return $includes->includeJs($folder, $filename, $admin);
+        return $this->includes->includeJs($this, $folder, $filename);
      }
      
      

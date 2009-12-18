@@ -6,7 +6,7 @@
  * folder: sb_submit
  * class: SbSubmit
  * type: addpost
- * hooks: install_plugin, theme_index_top, navigation, admin_header_include_raw, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: install_plugin, theme_index_top, header_include, navigation, admin_header_include_raw, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
  * requires: sb_base 0.1
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
@@ -81,6 +81,7 @@ class SbSubmit
         // Default settings 
         $submit_settings = $this->hotaru->getSerializedSettings();
         
+        //if (!isset($submit_settings['enabled'])) { $submit_settings['enabled'] = "checked"; }
         if (!isset($submit_settings['content_length'])) { $submit_settings['content_length'] = 50; }
         if (!isset($submit_settings['summary'])) { $submit_settings['summary'] = "checked"; }
         if (!isset($submit_settings['summary_length'])) { $submit_settings['summary_length'] = 200; }
@@ -121,19 +122,28 @@ class SbSubmit
         switch ($this->hotaru->pageName)
         {
             // Submit Step 1
+            case 'submit':
             case 'submit1':
+                $this->hotaru->pageName = 'submit1';
                 $this->hotaru->pageType = 'submit';
-                $this->hotaru->pageTitle = $this->hotaru->lang["sb_base_site_name"];
+                $this->hotaru->pageTitle = $this->hotaru->lang["submit_step1"];
                 break;
                 
             // Submit Step 2
             case 'submit2':
                 $this->hotaru->pageType = 'submit';
+                $this->hotaru->pageTitle = $this->hotaru->lang["submit_step2"];
                 break;
                 
             // Submit Step 3
             case 'submit3':
                 $this->hotaru->pageType = 'submit';
+                $this->hotaru->pageTitle = $this->hotaru->lang["submit_step3"];
+                break;
+                
+            // Submit Confirm
+            case 'submit_confirm':
+                // redirect to Latest page
                 break;
         }
     }
@@ -163,7 +173,7 @@ class SbSubmit
     {
         // return false if not logged in or submission disabled
         if (!$this->hotaru->currentUser->loggedIn) { return false; }
-        // if (!$this->hotaru->post->useSubmission) { return false; }
+        //if (!$this->hotaru->post->useSubmission) { return false; }
         
         // highlight "Submit" as active tab
         if ($this->hotaru->pageType == 'submit') { $status = "id='navigation_active'"; } else { $status = ""; }
@@ -178,7 +188,29 @@ class SbSubmit
      */
     public function theme_index_main()
     {
-
+        switch ($this->hotaru->pageName)
+        {
+            // Submit Step 1
+            case 'submit1':
+                $this->hotaru->vars['post_orig_url'] = '';
+                $this->hotaru->displayTemplate('submit_step1');
+                return true;
+                break;
+                
+            // Submit Step 2
+            case 'submit2':
+                $this->hotaru->vars['post_orig_url'] = '';
+                $this->hotaru->vars['post_orig_title'] = '';
+                $this->hotaru->displayTemplate('submit_step2');
+                return true;
+                break;
+                
+            // Submit Step 3
+            case 'submit3':
+                $this->hotaru->displayTemplate('submit_step3');
+                return true;
+                break;
+        }
     }
 
 

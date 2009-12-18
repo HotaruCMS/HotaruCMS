@@ -25,30 +25,27 @@
  */
 
 ?>
-    <div id="breadcrumbs"><a href='<?php echo BASEURL; ?>'><?php echo $hotaru->lang['submit_form_home']; ?></a> &raquo; <?php echo $hotaru->lang["submit_form_step3"]; ?></div>
-        
-    <?php echo $hotaru->lang["submit_form_instructions_3"]; ?> <br /><br />
+    <?php echo $hotaru->lang["submit_instructions_3"]; ?> <br /><br />
     
-    <?php $hotaru->displayTemplate('post', 'submit') ?>
+    <?php $hotaru->displayTemplate('sb_post', 'sb_base') ?>
     
-    <?php $hotaru->plugins->pluginHook('submit_step3_pre_buttons'); ?>
+    <?php $hotaru->pluginHook('submit_step3_pre_buttons'); ?>
     
     <div id="submit_edit_confirm">
     
         <!-- EDIT BUTTON -->
-        <form name='submit_form_3' action='<?php BASEURL; ?>index.php?page=submit3' method='post'>
+        <form name='submit_3' action='<?php BASEURL; ?>index.php?page=submit2' method='post'>
         <input type='hidden' name='post_id' value='<?php echo $hotaru->post->id; ?>' />
-        <input type='hidden' name='submit3' value='edit' />
-        <input type='submit' name='submit' onclick="javascript:safeExit=true;" class='submit' value='<?php echo $hotaru->lang['submit_form_submit_edit_button']; ?>' />
+        <input type='hidden' name='edit' value='true' />
+        <input type='submit' name='submit' onclick="javascript:safeExit=true;" class='submit' value='<?php echo $hotaru->lang['main_form_edit']; ?>' />
         </form>    
 
         <!-- CONFIRM BUTTON -->
-        <form name='submit_form_3' action='<?php BASEURL; ?>index.php?page=submit3' method='post'>
+        <form name='submit_3' action='<?php BASEURL; ?>index.php?page=submit_confirm' method='post'>
         <input type='hidden' name='post_id' value='<?php echo $hotaru->post->id; ?>' />
-        <input type='hidden' name='submit3' value='confirm' />
-        <input type='submit' name='submit' onclick="javascript:safeExit=true;" class='submit' value='<?php echo $hotaru->lang['submit_form_submit_confirm_button']; ?>' />
+        <input type='submit' name='submit' onclick="javascript:safeExit=true;" class='submit' value='<?php echo $hotaru->lang['main_form_confirm']; ?>' />
         </form>
     </div>
     
-    <?php $hotaru->plugins->pluginHook('submit_step3_post_buttons'); ?>
+    <?php $hotaru->pluginHook('submit_step3_post_buttons'); ?>
     

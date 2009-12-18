@@ -45,6 +45,7 @@ class SbSubmitSettings
         // Get settings from database if they exist...
         $submit_settings = $hotaru->getSerializedSettings();
         
+        //$enabled = $submit_settings['enabled'];
         $content_length = $submit_settings['content_length'];
         $summary = $submit_settings['summary'];
         $summary_length = $submit_settings['summary_length'];
@@ -74,6 +75,8 @@ class SbSubmitSettings
         
         echo "<form name='submit_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=sb_submit' method='post'>\n";
 
+        //echo "<input type='checkbox' name='enabled' value='enabled' " . $enabled . " >&nbsp;&nbsp;" . $this->lang["submit_settings_enable"] . "<br /><br />\n"; 
+        
         echo $hotaru->lang["submit_settings_post_components"] . "<br /><br />\n";
            
         echo $hotaru->lang["submit_settings_content_min_length"] . ": <input type='text' size=5 name='content_length' value='" . $content_length . "' /><br /><br />\n";
@@ -208,6 +211,15 @@ class SbSubmitSettings
      */
     public function saveSettings($hotaru) 
     {
+        // Enabled
+        /*
+        if ($hotaru->cage->post->keyExists('enabled')) { 
+            $enabled = 'checked'; 
+        } else { 
+            $enabled = ''; 
+        }
+        */
+        
         // Content length
         if ($hotaru->cage->post->keyExists('content_length')) { 
             $content_length = $hotaru->cage->post->getInt('content_length'); 
@@ -316,6 +328,7 @@ class SbSubmitSettings
         
         $hotaru->pluginHook('submit_save_settings');
         
+        //$submit_settings['enabled'] = $enabled;
         $submit_settings['content_length'] = $content_length;
         $submit_settings['summary'] = $summary;
         $submit_settings['summary_length'] = $summary_length;

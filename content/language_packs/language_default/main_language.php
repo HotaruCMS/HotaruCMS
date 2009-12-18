@@ -24,6 +24,15 @@
  * @link      http://www.hotarucms.org/
  */
 
+/* Forms */
+$lang['main_form_submit'] = "Submit";
+$lang['main_form_update'] = "Update";
+$lang['main_form_save'] = "Save";
+$lang['main_form_confirm'] = "Confirm";
+$lang['main_form_ok'] = "OK";
+$lang['main_form_next'] = "Next";
+$lang['main_form_edit'] = "Edit";
+
 /* Users */
 $lang['main_userbase_cookie_error'] = "Error setting cookie. Username not provided.";
 

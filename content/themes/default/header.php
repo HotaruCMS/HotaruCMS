@@ -48,11 +48,7 @@
     <script type="text/javascript" src="<?php echo BASEURL . 'javascript/hotaru.js'; ?>"></script>
 
     <!-- Include merged files for all the plugin css and javascript (if any) -->
-    <?php 
-        $version_js = $hotaru->combineIncludes('js');
-        $version_css = $hotaru->combineIncludes('css');
-        $hotaru->includeCombined($version_js, $version_css);
-    ?>
+    <?php $hotaru->doIncludes(); ?>
     <!-- End -->
        
     <link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME . 'css/reset-fonts-grids.css'; ?>" type="text/css" />

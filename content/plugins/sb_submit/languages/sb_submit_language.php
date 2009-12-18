@@ -86,6 +86,7 @@ $lang["submit_settings_post_archiving"] = "<b>Post Archiving</b>";
 $lang["submit_settings_content"] = "Description";
 $lang["submit_settings_instructions"] = "Check the components you want submissions to have:";
 $lang["submit_settings_save"] = "Save";
+//$lang["submit_settings_enable"] = "Enable post submission";
 $lang["submit_settings_content_min_length"] = "Minimum characters for description";
 $lang["submit_settings_summary"] = "Summary";
 $lang["submit_settings_summary_max_length"] = "Maximum characters";

@@ -23,36 +23,31 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
- 
- // php 5.3 fix:
- if (!isset($hotaru->vars['post_orig_url'])) { $hotaru->vars['post_orig_url'] = ''; }
 ?>
 
-    <div id="breadcrumbs"><a href='<?php echo BASEURL; ?>'><?php echo $hotaru->lang['submit_form_home']; ?></a> &raquo; <?php echo $hotaru->lang["submit_form_step1"]; ?></div>
-        
     <?php echo $hotaru->showMessage(); ?>
             
 
-    <?php echo $hotaru->lang["submit_form_instructions_1"]; ?>
+    <?php echo $hotaru->lang["submit_instructions_1"]; ?>
     
-    <form name='submit_form_1' action='<?php echo BASEURL; ?>index.php?page=submit' method='post'>
+    <form name='submit_1' action='<?php echo BASEURL; ?>index.php?page=submit2' method='post'>
     <table>
     <tr>
-        <td><?php echo $hotaru->lang["submit_form_url"]; ?>&nbsp; </td>
+        <td><?php echo $hotaru->lang["submit_url"]; ?>&nbsp; </td>
         <td><input type='text' id='post_orig_url' name='post_orig_url' value='<?php echo $hotaru->vars['post_orig_url']; ?>' /></td>
         <td>&nbsp;</td>
     </tr>
     <?php if (!isset($hotaru->post->useLink)) { ?>
     <tr>
         <td colspan = 3><input type='checkbox' name='use_link'>&nbsp;
-            <?php echo $this->lang["submit_form_post_without_link"]; ?></td>
+            <?php echo $hotaru->lang["submit_post_without_link"]; ?></td>
     </tr>
     <?php } ?>
 
     <input type='hidden' name='submit1' value='true' />
 
     <tr><td colspan=3>&nbsp;</td></tr>
-    <tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' class='submit' name='submit' value='<?php echo $hotaru->lang['submit_form_submit_button']; ?>' /></td></tr>    
+    <tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' class='submit' name='submit' value='<?php echo $hotaru->lang['main_form_submit']; ?>' /></td></tr>    
     </table>
     </form>
 

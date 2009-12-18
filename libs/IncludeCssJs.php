@@ -95,9 +95,9 @@ class IncludeCssJs
      * @param $folder - the folder name of the plugin
      * @param $filename - optional css file without an extension
      */
-     public function includeCss($hotaru, $folder = '', $filename = '', $admin = false)
+     public function includeCss($hotaru, $folder = '', $filename = '')
      {
-        if (!$folder) { $folder = $hotaru->plugin['folder']; }
+        if (!$folder) { $folder = $hotaru->plugin->folder; }
         
         // If no filename provided, the filename is assigned the plugin name.
         if (!$filename) { $filename = $folder; }
@@ -105,7 +105,7 @@ class IncludeCssJs
         $file_location = $this->findCssFile($folder, $filename);
         
         // Add this css file to the global array of css_files
-        $this->setCssIncludes($file_location, $admin);
+        $this->setCssIncludes($file_location, $hotaru->isAdmin);
         
         return $folder; // returned for testing purposes only
      }
@@ -117,9 +117,9 @@ class IncludeCssJs
      * @param $folder - the folder name of the plugin
      * @param $filename - optional js file without an extension
      */
-     public function includeJs($hotaru, $folder = '', $filename = '', $admin = false)
+     public function includeJs($hotaru, $folder = '', $filename = '')
      {
-        if (!$folder) { $folder = $hotaru->plugin['folder']; }
+        if (!$folder) { $folder = $hotaru->plugin->folder; }
                 
         // If no filename provided, the filename is assigned the plugin name.
         if (!$filename) { $filename = $folder; }
@@ -127,7 +127,7 @@ class IncludeCssJs
         $file_location = $this->findJsFile($folder, $filename);
         
         // Add this css file to the global array of css_files
-        $this->setJsIncludes($file_location, $admin);
+        $this->setJsIncludes($file_location, $hotaru->isAdmin);
         
         return $folder; // returned for testing purposes only
      }
@@ -210,9 +210,9 @@ class IncludeCssJs
      * @return int version number or echo output to cache file
      * @link http://www.ejeliot.com/blog/72 Based on work by Ed Eliot
      */
-     public function combineIncludes($hotaru, $type = 'css', $version = 0, $admin = false)
+     public function combineIncludes($hotaru, $type = 'css', $version = 0)
      {
-        if ($admin) {
+        if ($hotaru->isAdmin) {
             $hotaru->pluginHook('admin_header_include');
             $prefix = 'hotaru_admin_';
         } else {
@@ -225,11 +225,11 @@ class IncludeCssJs
         
         if($type == 'css') { 
             $content_type = 'text/css';
-            $includes = $this->getCssIncludes($admin);
+            $includes = $this->getCssIncludes($hotaru->isAdmin);
         } else { 
             $type = 'js'; 
             $content_type = 'text/javascript';
-            $includes = $this->getJsIncludes($admin);
+            $includes = $this->getJsIncludes($hotaru->isAdmin);
         }
         
         $includes = array_unique($includes);    // remove duplicate includes
@@ -330,8 +330,7 @@ class IncludeCssJs
      *
      * @param int $version_js 
      * @param int $version_css 
-     * @param string $page e.g. admin_settings 
-     * @param string $plugin e.g. category_manager
+     * @param bool $admin 
      */
      public function includeCombined($version_js = 0, $version_css = 0, $admin = false)
      {
