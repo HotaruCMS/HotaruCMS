@@ -57,7 +57,7 @@ $hotaru->pluginHook('submit_2_assign');
     <form name='submit_2' action='<?php BASEURL; ?>index.php?page=submit3&sourceurl=<?php echo urlencode($post_orig_url); ?>' method='post'>
     <table>
     
-    <?php if ($hotaru->post->useLink) { // only show if posting a link ?>
+    <?php if ($hotaru->vars['submit_use_link']) { // only show if posting a link ?>
         <tr>
             <td><?php echo $hotaru->lang["submit_url"]; ?>&nbsp; </td>
             <td><?php echo $post_orig_url; ?></td>

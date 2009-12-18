@@ -6,7 +6,7 @@
  * folder: sb_base
  * class: SbBase
  * type: index
- * hooks: theme_index_top, breadcrumbs, theme_index_main
+ * hooks: theme_index_top, header_meta, breadcrumbs, theme_index_main
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -53,6 +53,19 @@ class SbBase
             default:
                 $this->hotaru->pageType = 'list';
         }
+    }
+    
+    
+    /**
+     * Match meta tag to a post's description (keywords is done in the Tags plugin)
+     */
+    public function header_meta()
+    {    
+        if ($this->hotaru->pageType != 'post') { return false; }
+        $meta_content = sanitize($this->hotaru->post->content, 1);
+        $meta_content = truncate($meta_content, 200);
+        echo '<meta name="description" content="' . $meta_content . '">' . "\n";
+        return true;
     }
     
     

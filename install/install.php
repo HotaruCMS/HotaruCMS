@@ -217,7 +217,7 @@ function database_creation()
     }
     
     //create tables  - these should match the list in the listPluginTables function in libs/Admin.php
-    $tables = array('blocked', 'categories', 'comments', 'miscdata', 'plugins', 'pluginhooks', 'pluginsettings', 'posts', 'postmeta', 'postvotes', 'settings', 'tags', 'tokens', 'users', 'usermeta', 'useractivity', 'widgets');
+    $tables = array('blocked', 'categories', 'comments', 'miscdata', 'plugins', 'pluginhooks', 'pluginsettings', 'posts', 'postmeta', 'postvotes', 'settings', 'tags', 'tempdata', 'tokens', 'users', 'usermeta', 'useractivity', 'widgets');
     foreach ($tables as $table_name) {
         create_table($table_name);
     } 

@@ -363,6 +363,22 @@ function create_table($table_name)
     }
     
     
+    // TEMPDATA TABLE - temporary data
+    
+    if ($table_name == "tempdata") {
+        //echo "table doesn't exist. Stopping before creation."; exit;
+        $sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
+          `tempdata_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          `tempdata_key` varchar(255) NULL,
+          `tempdata_value` text NULL,
+          `tempdata_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+          `tempdata_updateby` int(20) NOT NULL DEFAULT 0
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Temporary Data';";
+        echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+        $db->query($sql); 
+    }
+    
+    
     // TOKENS TABLE - used to prevent against CSRF attacks
     
     if ($table_name == "tokens") {

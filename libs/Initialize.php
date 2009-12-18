@@ -50,8 +50,6 @@ class Initialize
         $this->readSettings();
         $this->setUpDatabaseCache();
         $this->isDebug = $this->checkDebug();
-        
-        
 
         return $this;
     }

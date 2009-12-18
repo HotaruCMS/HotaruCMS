@@ -58,9 +58,13 @@ define("ADMIN_THEMES", dirname(__FILE__).'/content/admin_themes/');
 define("TABLE_SETTINGS", DB_PREFIX . "settings");
 define("TABLE_MISCDATA", DB_PREFIX . "miscdata");
 define("TABLE_USERS", DB_PREFIX . "users");
+define("TABLE_USERMETA", DB_PREFIX . "usermeta");
 define("TABLE_PLUGINS", DB_PREFIX . "plugins");
 define("TABLE_PLUGINHOOKS", DB_PREFIX . "pluginhooks");
 define("TABLE_PLUGINSETTINGS", DB_PREFIX . "pluginsettings");
 define("TABLE_BLOCKED", DB_PREFIX . "blocked");
+define("TABLE_POSTS", DB_PREFIX . 'posts');
+define("TABLE_POSTMETA", DB_PREFIX . 'postmeta');
+define("TABLE_TEMPDATA", DB_PREFIX . 'tempdata');
 
 ?>

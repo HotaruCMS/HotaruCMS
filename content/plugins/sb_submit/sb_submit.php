@@ -6,7 +6,7 @@
  * folder: sb_submit
  * class: SbSubmit
  * type: addpost
- * hooks: install_plugin, theme_index_top, header_include, navigation, admin_header_include_raw, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: install_plugin, theme_index_top, header_include, header_include_raw, navigation, admin_header_include_raw, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
  * requires: sb_base 0.1
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
@@ -119,6 +119,11 @@ class SbSubmit
      */
     public function theme_index_top()
     {
+        // Include SbSubmitFunctions if this is page name contains 'submit' 
+        if (strpos($this->hotaru->pageName, 'submit') !== false) {
+            include_once(PLUGINS . 'sb_submit/libs/SbSubmitFunctions.php'); // used for submit functions
+        }
+        
         switch ($this->hotaru->pageName)
         {
             // Submit Step 1
@@ -127,9 +132,19 @@ class SbSubmit
                 $this->hotaru->pageName = 'submit1';
                 $this->hotaru->pageType = 'submit';
                 $this->hotaru->pageTitle = $this->hotaru->lang["submit_step1"];
+                $funcs = new SbSubmitFunctions();
+                $submitted = $funcs->checkSubmitted($this->hotaru, 'submit1');
+                if ($submitted) {
+                    $key = $funcs->saveSubmitted($this->hotaru, 'submit1');
+                    $errors = $funcs->checkErrors($this->hotaru, 'submit1', $key);
+                    if (!$errors) {
+                        header("Location: " . $this->hotaru->url(array('page'=>'submit2', 'key'=>$key)));
+                        exit;
+                    }
+                }
                 break;
                 
-            // Submit Step 2
+            // Submit Step 2 - checks the results of step 1 and prepares the step 2 form:
             case 'submit2':
                 $this->hotaru->pageType = 'submit';
                 $this->hotaru->pageTitle = $this->hotaru->lang["submit_step2"];
@@ -145,6 +160,14 @@ class SbSubmit
             case 'submit_confirm':
                 // redirect to Latest page
                 break;
+        }
+        
+        if ($this->hotaru->pageType != 'submit') { return false; }
+        
+        // If the user is not logged in...
+        if (!$this->hotaru->currentUser->loggedIn) {
+            $return = urlencode($this->hotaru->url(array('page'=>'submit'))); // return user here after login
+            header("Location: " . $this->hotaru->url(array('page'=>'login', 'return'=>$return)));
         }
     }
 
@@ -162,6 +185,38 @@ class SbSubmit
                 echo "});\n";
             echo "});\n";
             echo "</script>\n";
+        }
+    }
+    
+    
+    /**
+     * Output raw javascript directly to the header (instead of caching a .js file)
+     */
+    public function header_include_raw()
+    {
+        /* This code (courtesy of Pligg.com and SocialWebCMS.com) pops up a 
+           box asking the user of they are sure they want to leave the page
+           without submitting their post. */
+           
+        if ($this->hotaru->pageName == 'submit2' || $this->hotaru->pageName == 'submit3') {
+            echo '
+                <script type="text/javascript">
+        
+                var safeExit = false;
+            
+                window.onbeforeunload = function (event) 
+                {
+                    if (safeExit)
+                        return;
+        
+                    if (!event && window.event) 
+                              event = window.event;
+                              
+                       event.returnValue = "' . $this->hotaru->lang['submit_accidental_click'] . '";
+                }
+                
+                </script>
+            ';
         }
     }
     
@@ -192,15 +247,12 @@ class SbSubmit
         {
             // Submit Step 1
             case 'submit1':
-                $this->hotaru->vars['post_orig_url'] = '';
                 $this->hotaru->displayTemplate('submit_step1');
                 return true;
                 break;
                 
             // Submit Step 2
             case 'submit2':
-                $this->hotaru->vars['post_orig_url'] = '';
-                $this->hotaru->vars['post_orig_title'] = '';
                 $this->hotaru->displayTemplate('submit_step2');
                 return true;
                 break;

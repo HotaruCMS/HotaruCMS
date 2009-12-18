@@ -38,6 +38,7 @@ $lang["submit_not_found"] = "No title found";
 $lang["submit_instructions_2"] = "Complete the fields below.";
 $lang['submit_subscribe'] = "Subscribe to comments";
 $lang["submit_instructions_3"] = "Your submission will look like this. Use the buttons below to modify or confirm it.";
+$lang["submit_nothing_submitted"] = "Nothing submitted...";
 $lang["submit_url_not_present_error"] = "Invalid url";
 $lang["submit_url_already_exists_error"] = "Sorry, that url has already been submitted.";
 $lang["submit_no_permission"] = "Sorry, you don't have permission to post links.";
@@ -53,7 +54,7 @@ $lang["submit_submit_button"] = "Submit";
 $lang['submit_submit_edit_button'] = "Edit";
 $lang['submit_submit_confirm_button'] = "Confirm";
 $lang['submit_submit_next_button'] = "Next";
-$lang['submit_submit_accidental_click'] = "Wait, you have not submitted your story yet!";
+$lang['submit_accidental_click'] = "Wait, you have not submitted your story yet!";
 $lang['submit_allowable_tags'] = "Allowed HTML tags:";
 $lang['submit_moderation'] = "Thank you, your post has been placed in the moderation queue.";
 

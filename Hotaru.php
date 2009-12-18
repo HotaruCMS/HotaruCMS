@@ -1154,5 +1154,23 @@ class Hotaru
         $csrf = new csrf();
         return $csrf->csrfInit($this, $type, $script, $life);
     }
+    
+    
+/* *************************************************************
+ *
+ *  POST FUNCTIONS
+ *
+ * *********************************************************** */
+ 
+ 
+    /**
+     * Checks for existence of a url
+     *
+     * @return array|false - array of posts
+     */    
+    public function urlExists($hotaru, $url = '')
+    {
+        $this->post->urlExists($this, $url);
+    }
 }
 ?>

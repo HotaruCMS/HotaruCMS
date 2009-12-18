@@ -62,5 +62,33 @@ class Post
     {
         return $this->$var;
     }
+    
+    
+    /**
+     * Checks for existence of a url
+     *
+     * @return array|false - array of posts
+     */    
+    public function urlExists($hotaru, $url = '')
+    {
+        $sql = "SELECT post_id, post_status FROM " . TABLE_POSTS . " WHERE post_orig_url = %s";
+        $posts = $hotaru->db->get_results($hotaru->db->prepare($sql, urlencode($url)));
+
+        if (!$posts) { return false; }
+        
+        // we know there's at least one post with the same url, so if it's processing, let's delete it:
+        foreach ($posts as $post) {
+            if ($post->post_status == 'processing') {
+                $hotaru->id = $post->post_id;
+                $hotaru->deletePost();
+            }
+        }
+
+        // One last check to see if a post is present:
+        $sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_orig_url = %s";
+        $posts = $hotaru->db->get_var($hotaru->db->prepare($sql, urlencode($url)));
+        
+        if ($posts > 0) { return $posts; } else { return false; }
+    }
 }
 ?>
