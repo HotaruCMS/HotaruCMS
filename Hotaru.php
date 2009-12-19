@@ -1162,7 +1162,32 @@ class Hotaru
  *
  * *********************************************************** */
  
- 
+
+    /**
+     * Get all the parameters for the current post
+     *
+     * @param int $post_id - Optional row from the posts table in the database
+     * @param array $post_row - a post already fetched from the db, just needs reading
+     * @return bool
+     */    
+    public function readPost($post_id = 0, $post_row = NULL)
+    {
+        return $this->post->readPost($this, $post_id, $post_row);
+    }
+    
+    
+    /**
+     * Gets a single post from the database
+     *
+     * @param int $post_id - post id of the post to get
+     * @return array|false
+     */    
+    public function getPost($post_id = 0)
+    {
+        return $this->post->getPost($this, $post_id);
+    }
+    
+    
     /**
      * Add a post to the database
      *

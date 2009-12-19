@@ -179,7 +179,9 @@ class SbSubmit
                     $errors = $funcs->checkErrors($this->hotaru, 'submit2', $key);
                     if (!$errors) {
                         $funcs->processSubmission($this->hotaru, $key);
-                        $redirect = htmlspecialchars_decode($this->hotaru->url(array('page'=>'submit3', 'key'=>$key)));
+                        $postid = $this->hotaru->post->id; // got this from addPost in Post.php
+                        $link = $this->hotaru->url(array('page'=>'submit3', 'postid'=>$postid,'key'=>$key));
+                        $redirect = htmlspecialchars_decode($link);
                         header("Location: " . $redirect);
                         exit;
                     }
@@ -192,12 +194,12 @@ class SbSubmit
             
                 $this->hotaru->pageType = 'submit';
                 $this->hotaru->pageTitle = $this->hotaru->lang["submit_step3"];
-                /*
-                // get settings, functions and check if data has been submitted
-                $this->hotaru->vars['submit_settings'] = $this->hotaru->getSerializedSettings('sb_submit');
-                $funcs = new SbSubmitFunctions();
-                $submitted = $funcs->checkSubmitted($this->hotaru, 'submit2');
                 
+                // get post id from url and read the post for the preview
+                $this->hotaru->post->id = $this->hotaru->cage->get->testInt('postid');
+                $this->hotaru->readPost();
+
+                /*
                 // not submitted so reload data from step 1
                 if (!$submitted) {
                     $key = $this->hotaru->cage->get->getRaw('key');

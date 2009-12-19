@@ -39,11 +39,6 @@ class Post
     protected $url              = '';           // post slug (needs BASEURL and category attached)
     protected $date             = '';           // post submission date
     protected $subscribe        = 0;            // is the post author subscribed to comments?
-    
-    // general
-    protected $postsPerPage     = 10;           // Number of posts to show on list pages
-    protected $allowableTags    = '';           // allowable HTML tags
-    protected $useSummary       = true;         // truncate the post description on list pages
 
 
     /**
@@ -61,6 +56,78 @@ class Post
     public function &__get($var)
     {
         return $this->$var;
+    }
+    
+    
+    /**
+     * Get all the settings for the current post
+     *
+     * @param int $post_id - Optional row from the posts table in the database
+     * @param array $post_row - a post already fetched from the db, just needs reading
+     * @return bool
+     */    
+    public function readPost($hotaru, $post_id = 0, $post_row = NULL)
+    {
+        $hotaru->vars['post_error'] = false; 
+        
+        if (!$post_id && !$post_row) {
+            $post_id = $this->id;   // use the id already assigned to $hotaru->post
+        }
+        
+        if ($post_id != 0) {
+            $post_row = $hotaru->getPost($post_id);
+            if (!$post_row) { $hotaru->vars['post_error'] = true; return false; }
+        }
+        
+        if ($post_row) {
+            $this->id = $post_row->post_id;
+            $this->title = stripslashes(urldecode($post_row->post_title));
+            $this->content = stripslashes(urldecode($post_row->post_content));
+            $this->origUrl = urldecode($post_row->post_orig_url);            
+            $this->status = $post_row->post_status;
+            $this->author = $post_row->post_author;
+            $this->url = urldecode($post_row->post_url);
+            $this->date = $post_row->post_date;
+            $this->subscribe = $post_row->post_subscribe;
+            
+            $this->vars['post_row'] = $post_row;    // make available to plugins
+            
+            $hotaru->pluginHook('post_read_post');
+                        
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
+    
+    
+    /**
+     * Gets a single post from the database
+     *
+     * @param int $post_id - post id of the post to get
+     * @return array|false
+     */    
+    public function getPost($hotaru, $post_id = 0)
+    {
+        // Build SQL
+        $query = "SELECT * FROM " . TABLE_POSTS . " WHERE post_id = %d ORDER BY post_date DESC";
+        $sql = $hotaru->db->prepare($query, $post_id);
+        
+        // Create temp cache array
+        if (!isset($this->hotaru->vars['tempPostCache'])) { $hotaru->vars['tempPostCache'] = array(); }
+
+        // If this query has already been read once this page load, we should have it in memory...
+        if (array_key_exists($sql, $hotaru->vars['tempPostCache'])) {
+            // Fetch from memory
+            $post = $hotaru->vars['tempPostCache'][$sql];
+        } else {
+            // Fetch from database
+            $post = $hotaru->db->get_row($sql);
+            $hotaru->vars['tempPostCache'][$sql] = $post;
+        }
+
+        if ($post) { return $post; } else { return false; }
     }
     
     

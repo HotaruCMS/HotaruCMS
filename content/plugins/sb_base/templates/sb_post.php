@@ -30,8 +30,6 @@ if (isset($hotaru->currentUser->vars['settings']['new_tab'])) { $target = 'targe
 if (strstr($hotaru->post->origUrl, BASEURL)) { $editorial = true; } else { $editorial = false; } // editorial (story with an internal link)
 ?>
 
-<?php $hotaru->pluginHook('submit_post_breadcrumbs'); ?> 
-
 <!-- POST -->
 <?php   // This post is visible if it's not buried/pending OR if the viewer has edit post permissions...
         if ((($hotaru->post->status != 'buried') && ($hotaru->post->status != 'pending')) 
@@ -71,12 +69,12 @@ if (strstr($hotaru->post->origUrl, BASEURL)) { $editorial = true; } else { $edit
                 </div>
             <?php } ?>
                 
-            <?php if ($hotaru->post->useContent) { ?>
+            <?php //if ($hotaru->post->useContent) { ?>
                 <div class="show_post_content">
                     <?php echo nl2br($hotaru->post->content); ?>
                     <?php $hotaru->pluginHook('submit_show_post_content_post'); ?>
                 </div>
-            <?php } ?>
+            <?php //} ?>
             
             <div class="show_post_extra_fields">
                 <ul>
