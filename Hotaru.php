@@ -1222,6 +1222,45 @@ class Hotaru
     
     
     /**
+     * Update a post's status
+     *
+     * @param string $status
+     * @param int $post_id (optional)
+     * @return true
+     */    
+    public function changePostStatus($status = "processing", $post_id = 0)
+    {
+        return $this->post->changePostStatus($this, $status, $post_id);
+    }
+    
+    
+    /**
+     * Count how many approved posts a user has had
+     *
+     * @param int $userid (optional)
+     * @return int 
+     */
+    public function postsApproved($userid)
+    {
+        return $this->post->postsApproved($this, $userid);
+    }
+    
+    
+    /**
+     * Count posts in the last X hours/minutes for this user
+     *
+     * @param int $hours
+     * @param int $minutes
+     * @param int $user_id (optional)
+     * @return int 
+     */
+    public function countPosts($hours = 0, $minutes = 0, $user_id = 0)
+    {
+        return $this->post->countPosts($hours, $minutes, $user_id);
+    }
+
+
+    /**
      * Checks for existence of a url
      *
      * @return array|false - array of posts
@@ -1242,6 +1281,17 @@ class Hotaru
     {
         return $this->post->titleExists($this, $title);
     }
-
+    
+    
+    /**
+     * Prepares and calls functions to send a trackback
+     * Uses $hotaru->post->id
+     */
+    public function sendTrackback()
+    {
+        require_once(LIBS . 'Trackback.php');
+        $trackback = new Trackback();
+        return $trackback->sendTrackback($this);
+    }
 }
 ?>

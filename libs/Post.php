@@ -204,6 +204,28 @@ class Post
     
     
     /**
+     * Update a post's status
+     *
+     * @param string $status
+     * @param int $post_id (optional)
+     * @return true
+     */    
+    public function changePostStatus($hotaru, $status = "processing", $post_id = 0)
+    {
+        $this->status = $status;
+        if (!$post_id) { $post_id = $this->id; }
+            
+        $sql = "UPDATE " . TABLE_POSTS . " SET post_status = %s WHERE post_id = %d";
+        $hotaru->db->query($hotaru->db->prepare($sql, $this->status, $post_id));
+        
+        $hotaru->post->id = $post_id; // a small hack to get the id for use in plugins.
+        $hotaru->pluginHook('post_change_status');
+                
+        return true;
+    }
+    
+    
+    /**
      * Checks for existence of a url
      *
      * @return array|false - array of posts
@@ -243,6 +265,50 @@ class Post
         $sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_title = %s";
         $post_id = $hotaru->db->get_var($hotaru->db->prepare($sql, urlencode($title)));
         if ($post_id) { return $post_id; } else { return false; }
+    }
+    
+    
+    /**
+     * Count how many approved posts a user has had
+     *
+     * @param int $userid (optional)
+     * @return int 
+     */
+    public function postsApproved($hotaru, $user_id = 0)
+    {
+        if (!$user_id) { $user_id = $hotaru->currentUser->id; }
+        
+        $sql = "SELECT COUNT(*) FROM " . TABLE_POSTS . " WHERE (post_status = %s || post_status = %s) AND post_author = %d";
+        $count = $hotaru->db->get_var($hotaru->db->prepare($sql, 'top', 'new', $user_id));
+        
+        return $count;
+        
+    }
+    
+    
+    /**
+     * Count posts in the last X hours/minutes for this user
+     *
+     * @param int $hours
+     * @param int $minutes
+     * @param int $user_id (optional)
+     * @return int 
+     */
+    public function countPosts($hotaru, $hours = 0, $minutes = 0, $user_id = 0)
+    {
+        if (!$user_id) { $user_id = $hotaru->currentUser->id; }
+        if ($hours) { 
+            $time_ago = "-" . $hours . " Hours";
+        } else {
+            $time_ago = "-" . $minutes . " minutes";
+        } 
+        
+        $start = date('YmdHis', strtotime("now"));
+        $end = date('YmdHis', strtotime($time_ago));
+        $sql = "SELECT COUNT(post_id) FROM " . TABLE_POSTS . " WHERE post_archived = %s AND post_author = %d AND (post_date >= %s AND post_date <= %s)";
+        $count = $hotaru->db->get_var($hotaru->db->prepare($sql, 'N', $user_id, $end, $start));
+        
+        return $count;
     }
 }
 ?>

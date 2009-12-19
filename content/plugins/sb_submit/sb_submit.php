@@ -227,7 +227,53 @@ class SbSubmit
                 
             // Submit Confirm
             case 'submit_confirm':
-                // redirect to Latest page
+            
+                $post_id = $this->hotaru->cage->post->testInt('submit_post_id');
+                $this->hotaru->readPost($post_id);
+                $this->hotaru->changePostStatus('new');
+                
+                $return = 0; // will return false later if set to 1.
+                
+                $this->hotaru->pluginHook('submit_step_3_pre_trackback'); // Akismet uses this to change the status
+                
+                // Get settings
+                $submit_settings = $this->hotaru->getSerializedSettings();
+                $set_pending = $submit_settings['set_pending'];
+
+                if ($set_pending == 'some_pending') {
+                    $posts_approved = $this->hotaru->postsApproved();
+                    $x_posts_needed = $submit_settings['x_posts'];
+                }
+
+                
+                // Set to pending is the user's permissions for "can_submit" are "mod" OR
+                // if "Put all new posts in moderation" has been checked in Admin->Submit
+                if (   ($this->hotaru->currentUser->getPermission('can_submit') == 'mod')
+                    || ($set_pending == 'all_pending')
+                    || (($set_pending == 'some_pending') && ($posts_approved <= $x_posts_needed)))
+                {
+                // Submitted posts given 'pending' for this user
+                    $this->hotaru->changePostStatus('pending');
+                    $this->hotaru->messages[$this->hotaru->lang['submit_form_moderation']] = 'green';
+                    $return = 1; // will return false just after we notify admins of the post (see about 10 lines down)
+                }
+
+                // notify chosen mods of new post by email if enabled and UserFunctions file exists
+                /*
+                if (($submit_settings['email_notify']) && (file_exists(PLUGINS . 'users/libs/UserFunctions.php')))
+                {
+                    require_once(PLUGINS . 'users/libs/UserFunctions.php');
+                    $uf = new UserFunctions($this->hotaru);
+                    $uf->notifyMods('post', $this->hotaru->post->status, $this->hotaru->post->id);
+                }
+                */
+                
+                if ($return == 1) { return false; } // post is pending so we don't want to send a trackback. Return now.
+                
+                $this->hotaru->sendTrackback();
+                
+                header("Location: " . $this->hotaru->url(array('page'=>'latest')));    // Go to the Latest page
+                die();
                 break;
         }
         
