@@ -1172,5 +1172,18 @@ class Hotaru
     {
         $this->post->urlExists($this, $url);
     }
+    
+    
+    /**
+     * Checks for existence of a title
+     *
+     * @param str $title
+     * @return int - id of post with matching title
+     */
+    public function titleExists($title = '')
+    {
+        $this->post->titleExists($this, $title);
+    }
+
 }
 ?>

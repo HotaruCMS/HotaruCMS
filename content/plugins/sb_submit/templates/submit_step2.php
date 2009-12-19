@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
- 
+/*
 if ($hotaru->cage->post->getAlpha('submit2') == 'true') {
     // Submitted this form...
     $title_check = $hotaru->cage->post->noTags('post_title');    
@@ -41,50 +41,62 @@ if ($hotaru->cage->post->getAlpha('submit2') == 'true') {
     $post_id = $hotaru->post->id;
 } else {
     // First time here...
-    $post_orig_url = $hotaru->vars['post_orig_url'];
+*/
+    $orig_url = urldecode($hotaru->vars['submitted_data']['submit_orig_url']);
+    $title = sanitize($hotaru->vars['submitted_data']['submit_title'], 1);
+    $content = sanitize($hotaru->vars['submitted_data']['submit_content'], 1);
+    $use_link = $hotaru->vars['submitted_data']['submit_use_link'];
+/*
     $title_check = $hotaru->vars['post_orig_title'];
     $content_check = "";
     $post_id = 0;
 }
+*/
 
 $hotaru->pluginHook('submit_2_assign');
 
 ?>
-    <?php echo $hotaru->showMessages(); ?>
+    <?php $hotaru->showMessages(); ?>
     
     <?php echo $hotaru->lang["submit_instructions_2"]; ?>
 
-    <form name='submit_2' action='<?php BASEURL; ?>index.php?page=submit3&sourceurl=<?php echo urlencode($post_orig_url); ?>' method='post'>
+    <form name='submit_2' action='<?php BASEURL; ?>index.php?page=submit2' method='post'>
     <table>
     
-    <?php if ($hotaru->vars['submit_use_link']) { // only show if posting a link ?>
+    <?php if ($use_link) { // only show if posting a link ?>
         <tr>
             <td><?php echo $hotaru->lang["submit_url"]; ?>&nbsp; </td>
-            <td><?php echo $post_orig_url; ?></td>
+            <td><?php echo $orig_url; ?></td>
             <td>&nbsp;</td>
         </tr>
     <?php } ?>
     
     <tr>
         <td><?php echo $hotaru->lang["submit_title"]; ?>&nbsp; </td>
-        <td><input type='text' id='post_title' name='post_title' value='<?php echo html_entity_decode($title_check); ?>'></td>
+        <td><input type='text' id='post_title' name='post_title' value='<?php echo $title; ?>'></td>
         <td id='ajax_loader'>&nbsp;</td>
     </tr>
     
     <tr>
         <td style='vertical-align: top;'><?php echo $hotaru->lang["submit_content"]; ?>&nbsp; </td>
-        <td colspan='2'><textarea id='post_content' name='post_content' rows='6' maxlength='<?php $hotaru->post->contentLength; ?>'><?php echo $content_check; ?></textarea></td>
+        <td colspan='2'>
+            <textarea id='post_content' name='post_content' rows='6' maxlength='<?php $hotaru->post->contentLength; ?>'><?php echo $content; ?></textarea>
+        </td>
     </tr>
     <tr>
         <td>&nbsp;</td>
-        <td colspan=2 style='vertical-align: top;' class="submit_instructions"><?php echo $hotaru->lang['submit_allowable_tags']; ?><?php echo htmlentities($hotaru->post->allowableTags); ?></td>
+        <td colspan=2 style='vertical-align: top;' class="submit_instructions">
+            <?php echo $hotaru->lang['submit_allowable_tags']; ?>
+            <?php echo $hotaru->vars['submit_allowable_tags']; ?>
+        </td>
     </tr>
     
     <?php $hotaru->pluginHook('submit_2_fields'); ?>
             
-    <input type='hidden' name='post_orig_url' value='<?php echo $post_orig_url; ?>' />
-    <input type='hidden' name='post_id' value='<?php echo $post_id; ?>' />
+    <input type='hidden' name='submit_orig_url' value='<?php echo $orig_url; ?>' />
+    <input type='hidden' name='submit_post_id' value='<?php echo $post_id; ?>' />
     <input type='hidden' name='submit2' value='true' />
+    <input type='hidden' name='submit_key' value='<?php echo $hotaru->vars['submit_key']; ?>' />
     <input type='hidden' name='csrf' value='<?php echo $hotaru->csrfToken; ?>' />
     
     <tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' onclick="javascript:safeExit=true;" class='submit' name='submit' value='<?php echo $hotaru->lang['main_form_next']; ?>' /></td></tr>    

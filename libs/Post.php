@@ -90,5 +90,20 @@ class Post
         
         if ($posts > 0) { return $posts; } else { return false; }
     }
+    
+    
+    /**
+     * Checks for existence of a post title
+     *
+     * @param str $title
+     * @return int - id of post with matching title
+     */
+    public function titleExists($hotaru, $title = '')
+    {
+        $title = trim($title);
+        $sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_title = %s";
+        $post_id = $hotaru->db->get_var($hotaru->db->prepare($sql, urlencode($title)));
+        if ($post_id) { return $post_id; } else { return false; }
+    }
 }
 ?>

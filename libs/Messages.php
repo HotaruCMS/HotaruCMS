@@ -63,7 +63,7 @@ class Messages
      */
     public function showMessages($hotaru)
     {
-        if (!empty($hotaru->messages)) {
+        if ($hotaru->messages) {
             foreach ($hotaru->messages as $msg => $msg_type) {
                 echo "<div class='message " . $msg_type . "'>" . 
                 $msg . "</div>";

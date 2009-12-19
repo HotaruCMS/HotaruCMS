@@ -561,4 +561,20 @@ function strip_foreign_characters($str)
     $str = str_replace('â€', '"', $str);
     return $str;
 }
+
+
+/**
+ * Count urls within a block of text
+ *
+ * @return int 
+ * @link http://www.liamdelahunty.com/tips/php_url_count_check_for_comment_spam.php
+ */
+function countUrls($text = '')
+{
+    //$http = substr_count($text, "http");
+    $href = substr_count($text, "href");
+    $url = substr_count($text, "[url");
+    
+    return $href + $url;
+}
 ?>

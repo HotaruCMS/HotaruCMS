@@ -36,16 +36,39 @@ class SbSubmitFunctions
     public function checkSubmitted($hotaru, $step = 'submit1')
     {
         switch ($step) {
+        
             case 'submit1':
+            
                 // set defaults:
+                $hotaru->vars['submitted_data']['submit_use_link'] = true;
                 $hotaru->vars['submitted_data']['submit_orig_url'] = '';
-                // Uses getAlpha for Submit page, keyExists for EVB & Bookmarklet
-                // Also checks if the "Submit without a URL" box is checked instead
+                
+                // no link necessary?
                 if ($hotaru->cage->post->keyExists('no_link')) { return true; }
+                
+                // form 1 submitted?
                 if ($hotaru->cage->post->getAlpha('submit1') == 'true') { return true; }
+                
+                // EVB / Bookmarklet, etc?
                 if ($hotaru->cage->get->keyExists('url')) { return true; }
+                
                 return false;
                 break;
+                
+            case 'submit2':
+
+                // set defaults:
+                $hotaru->vars['submitted_data']['submit_use_link'] = true;
+                $hotaru->vars['submitted_data']['submit_orig_url'] = '';
+                $hotaru->vars['submitted_data']['submit_title'] = '';
+                $hotaru->vars['submitted_data']['submit_content'] = '';
+                
+                // form submitted?
+                if ($hotaru->cage->post->getAlpha('submit2') == 'true') { return true; }
+                
+                return false;
+                break;
+                
             default:
                 return false;
         }
@@ -58,15 +81,12 @@ class SbSubmitFunctions
      * @param $step - submit step
      * @return bool
      */
-    public function saveSubmitted($hotaru, $step = 'submit1')
+    public function processSubmitted($hotaru, $step = 'submit1')
     {
         switch ($step) {
+        
             case 'submit1':
-                // defaults:
-                $hotaru->vars['submitted_data'] = array();
-                $hotaru->vars['submitted_data']['submit_orig_url'] = '';
-                $hotaru->vars['submitted_data']['submit_use_link'] = true;
-                
+            
                 // is "Post without URL" checked?
                 if ($hotaru->cage->post->keyExists('no_link')) {
                     $hotaru->vars['submitted_data']['submit_orig_url'] = '';
@@ -78,6 +98,9 @@ class SbSubmitFunctions
                     if (!$url) { break; }
                     $hotaru->vars['submitted_data']['submit_orig_url'] = urlencode($url);
                     $hotaru->vars['submitted_data']['submit_use_link'] = true;
+                    $title = $this->fetchTitle($url);
+                    if (!$title) { $title = $hotaru->lang["submit_not_found"]; }
+                    $hotaru->vars['submitted_data']['submit_title'] = $title;
                     
                 // is a url submitted via the url? (i.e. EVB or Bookmarklet)
                 } elseif ($hotaru->cage->get->keyExists('url')) { 
@@ -85,49 +108,91 @@ class SbSubmitFunctions
                     if (!$url) { break; }
                     $hotaru->vars['submitted_data']['submit_orig_url'] = urlencode($url);
                     $hotaru->vars['submitted_data']['submit_use_link'] = true;
+                    $title = $this->fetchTitle($url);
+                    if (!$title) { $title = $hotaru->lang["submit_not_found"]; }
+                    $hotaru->vars['submitted_data']['submit_title'] = $title;
                 }
-                
-                // save submitted data...
-                $key = $this->saveSubmitStep($hotaru);
-                return $key;
                 break;
+                
+            case 'submit2':
+                
+                if ($hotaru->cage->post->getAlpha('submit2') == 'true') { 
+                    // get orig_url and use_link from previously submitted_data:
+                    $key = $hotaru->cage->post->testAlnum('submit_key'); // from the form
+                    $hotaru->vars['submitted_data'] = $this->loadSubmitData($hotaru, $key);
+                    // get new (edited) title:
+                    $title = $hotaru->cage->post->getMixedString2('post_title');
+                    $hotaru->vars['submitted_data']['submit_title'] = $title;
+                    // get content:
+                    $allowable_tags = $hotaru->vars['submit_settings']['allowable_tags'];
+                    $content = sanitize($hotaru->cage->post->getHtmLawed('post_content'), 2, $allowable_tags);
+                    $hotaru->vars['submitted_data']['submit_content'] = $content;
+                }
+                break;
+
             default:
                 return false;
+        }
+        
+        // save submitted data...
+        $key = $this->saveSubmitData($hotaru);
+        return $key;
+        break;
+    }
+    
+    
+     /**
+     * Save submission step data
+     *
+     * @return bool
+     */
+    public function saveSubmitData($hotaru)
+    {
+        // delete everything in this table older than 30 minutes:
+        $this->deleteTempData($hotaru->db);
+        
+        $sid = preg_replace('/[^a-z0-9]+/i', '', session_id());
+        $key = md5(microtime() . $sid . rand());
+        $sql = "INSERT INTO " . TABLE_TEMPDATA . " (tempdata_key, tempdata_value, tempdata_updateby) VALUES (%s,%s, %d)";
+        $hotaru->db->query($hotaru->db->prepare($sql, $key, serialize($hotaru->vars['submitted_data']), $hotaru->currentUser->id));
+        return $key;
+    }
+    
+    
+     /**
+     * Retrieve submission step data
+     *
+     * @param $key - empty when setting
+     * @return bool
+     */
+    public function loadSubmitData($hotaru, $key = '')
+    {
+        // delete everything in this table older than 30 minutes:
+        $this->deleteTempData($hotaru->db);
+        
+        if (!$key) { return false; }
+        
+        $cleanKey = preg_replace('/[^a-z0-9]+/','',$key);
+        if (strcmp($key,$cleanKey) != 0) {
+            return false;
+        } else {
+            $sql = "SELECT tempdata_value FROM " . TABLE_TEMPDATA . " WHERE tempdata_key = %s ORDER BY tempdata_updatedts DESC LIMIT 1";
+            $submitted_data = $hotaru->db->get_var($hotaru->db->prepare($sql, $key));
+            if ($submitted_data) { return unserialize($submitted_data); } else { return false; } 
         }
     }
     
     
      /**
-     * Save or retrieve submission step data
+     * Delete temporary data older than 30 minutes
      *
-     * @param $key - empty when setting
      * @return bool
      */
-    public function saveSubmitStep($hotaru, $key = '')
+    public function deleteTempData($db)
     {
-        // delete everything in this table older than 30 minutes:
         $exp = date('YmdHis', strtotime("-30 mins"));
         $sql = "DELETE FROM " . TABLE_TEMPDATA . " WHERE tempdata_updatedts < %s";
-        $hotaru->db->query($hotaru->db->prepare($sql, $exp));
-        
-        if (!$key) {
-            $sid = preg_replace('/[^a-z0-9]+/i', '', session_id());
-            $key = md5(microtime() . $sid . rand());
-            $sql = "INSERT INTO " . TABLE_TEMPDATA . " (tempdata_key, tempdata_value, tempdata_updateby) VALUES (%s,%s, %d)";
-            $hotaru->db->query($hotaru->db->prepare($sql, $key, serialize($hotaru->vars['submitted_data']), $hotaru->currentUser->id));
-            return $key;
-        }
-        
-        if ($key) {
-            $cleanKey = preg_replace('/[^a-z0-9]+/','',$key);
-            if (strcmp($key,$cleanKey) != 0) {
-                return false;
-            } else {
-                $sql = "SELECT tempdata_value FROM " . TABLE_TEMPDATA . " WHERE tempdata_key = %s ORDER BY tempdata_updatedts DESC LIMIT 1";
-                $submitted_data = $hotaru->db->get_var($hotaru->db->prepare($sql, $key));
-                if ($submitted_data) { return unserialize($submitted_data); } else { return false; } 
-            }
-        }
+        $db->query($db->prepare($sql, $exp));
     }
     
     
@@ -142,6 +207,9 @@ class SbSubmitFunctions
         switch ($step) {
             case 'submit1':
                 return $this->checkErrors1($hotaru, $key);
+                break;
+            case 'submit2':
+                return $this->checkErrors2($hotaru, $key);
                 break;
             default:
                 return false;
@@ -162,16 +230,13 @@ class SbSubmitFunctions
             return true; // error found
         }
         
-        // ******** CHECK URL ********
-        
         // get the settings we need:
         $submit_settings = $hotaru->getSerializedSettings('sb_submit');
         $daily_limit = $submit_settings['daily_limit'];
         $freq_limit = $submit_settings['freq_limit'];
         
         // get the last submitted data by this user:
-        $submitted_data = $this->saveSubmitStep($hotaru, $key);
-        print_r($submitted_data);
+        $submitted_data = $this->loadSubmitData($hotaru, $key);
         $url = urldecode($submitted_data['submit_orig_url']);
         $use_link = $submitted_data['submit_use_link'];
         
@@ -185,8 +250,12 @@ class SbSubmitFunctions
             // Nothing submitted
             $hotaru->message = $hotaru->lang['submit_nothing_submitted'];
             $hotaru->messageType = 'red';
-            $error = 1;
-        } elseif (!$url) {
+            return true; // error found
+        }
+        
+        // ******** CHECK URL ********
+        
+        if (!$url) {
             // No url present...
             $hotaru->message = $hotaru->lang['submit_url_not_present_error'];
             $hotaru->messageType = 'red';
@@ -229,6 +298,98 @@ class SbSubmitFunctions
     
     
     /**
+     * Check for errors in submit 2
+     *
+     * @return bool
+     */
+    public function checkErrors2($hotaru, $key = '')
+    {
+        $post_id = $hotaru->cage->post->getInt('post_id'); // 0 unless come back from step 3.
+        
+        // get the settings we need:
+        $submit_settings = $hotaru->getSerializedSettings('sb_submit');
+        $min_content_length = $submit_settings['content_length'];
+        $url_limit = $submit_settings['url_limit'];
+        
+        // get the last submitted data by this user:
+        $submitted_data = $this->loadSubmitData($hotaru, $key);
+        $title = $submitted_data['submit_title'];
+        $content = $submitted_data['submit_content'];
+    
+        if (!$submitted_data) {
+            // Nothing submitted
+            $hotaru->messages[$hotaru->lang['submit_nothing_submitted']] = "red";
+            return true; // error found
+        }
+        
+        // defaults:
+        $error_csrf = 0;
+        $error_title = 0;
+        $error_content = 0;
+        $error_hooks = 0;
+        
+        // ******** CHECK CSRF *******
+        
+        if (!$hotaru->csrf()) {
+            $hotaru->messages[$hotaru->lang['error_csrf']] = "red";
+            $error_csrf = 1;
+        }
+        
+        // ******** CHECK TITLE ********
+            
+        if (!$title) {
+            // No title present...
+            $hotaru->messages[$hotaru->lang['submit_title_not_present_error']] = "red";
+            $error_title= 1;
+        } elseif ($hotaru->titleExists($title)) {
+            // title already exists...
+            if ($post_id != $hotaru->titleExists($title)) {
+                $hotaru->messages[$hotaru->lang['submit_title_already_exists_error']] = "red";
+                $error_title = 1;
+            } else {
+                // the matching title is for the post we're currently modifying so no error...
+                $error_title = 0;
+            }
+        } else {
+            // title is okay.
+            $error_title = 0;
+        }
+            
+        // ******** CHECK DESCRIPTION ********
+        //if ($hotaru->post->useContent) {
+            if (!$content) {
+                // No content present...
+                $hotaru->messages[$hotaru->lang['submit_content_not_present_error']] = "red";
+                $error_content = 1;
+            } elseif (isset($min_content_length) && (strlen($content) < $min_content_length)) {
+                // content is too short
+                $hotaru->messages[$hotaru->lang['submit_content_too_short_error']] = "red";
+                $error_content = 1;
+            } elseif (($hotaru->currentUser->role == 'member' || $hotaru->currentUser->role == 'undermod')
+                        && $url_limit && ($url_limit < countUrls($content))) { 
+                // content contains too many links
+                $hotaru->messages[$hotaru->lang['submit_content_too_many_links']] = "red";
+                $error_content = 1;
+            } else {
+                // content is okay.
+                $error_content = 0;
+            }
+        //}
+        
+        
+        // Check for errors from plugin fields, e.g. Tags
+        $error_hooks = 0;
+        $error_array = $hotaru->pluginHook('submit_2_check_errors');
+        if (is_array($error_array)) {
+            foreach ($error_array as $err) { if ($err == 1) { $error_hooks = 1; } }
+        }
+        
+        // Return true if error is found
+        if ($error_csrf == 1 || $error_title == 1 || $error_content == 1 || $error_hooks == 1) { return true; } else { return false; }
+    }
+    
+    
+    /**
      * Check if url or domain is on the blocked list
      *
      * @param string $url
@@ -255,6 +416,49 @@ class SbSubmitFunctions
         } 
                         
         return false;   // not blocked
+    }
+    
+    
+    /**
+     * Scrapes the title from the page being submitted
+     *
+     * @param string $url
+     * @link http://www.phpfour.com/blog/2008/01/php-http-class/
+     */
+    public function fetchTitle($url)
+    {
+        require_once(EXTENSIONS . 'SWCMS/class.httprequest.php');
+        //require_once(EXTENSIONS . 'http/class.http.php');
+        
+        if ($url != 'http://' && $url != ''){
+            $r = new HTTPRequest($url);
+            $string = $r->DownloadToString();
+            //$http = new Http();
+            //$http->execute($url);
+            //$string = $http->result;
+        } else {
+            $string = '';
+        }
+        
+        if (preg_match('/charset=([a-zA-Z0-9-_]+)/i', $string , $matches)) {
+            $encoding=trim($matches[1]);
+            //you need iconv to encode to utf-8
+            if (function_exists("iconv"))
+            {
+                if (strcasecmp($encoding, 'utf-8') != 0) {
+                    //convert the html code into utf-8 whatever encoding it is using
+                    $string=iconv($encoding, 'UTF-8//IGNORE', $string);
+                }
+            }
+        }
+        
+        if (preg_match("'<title>([^<]*?)</title>'", $string, $matches)) {
+            $title = trim($matches[1]);
+        } else {
+            $title = '';
+        }
+        
+        return sanitize(utf8_encode($title), 1);
     }
     
 }
