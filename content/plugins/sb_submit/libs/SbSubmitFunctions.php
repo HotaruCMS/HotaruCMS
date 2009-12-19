@@ -28,7 +28,7 @@
 class SbSubmitFunctions
 {
      /**
-     * Check if a post has been submitted
+     * Check if a form has been submitted
      *
      * @param $step - submit step
      * @return bool
@@ -62,9 +62,25 @@ class SbSubmitFunctions
                 $hotaru->vars['submitted_data']['submit_orig_url'] = '';
                 $hotaru->vars['submitted_data']['submit_title'] = '';
                 $hotaru->vars['submitted_data']['submit_content'] = '';
+                $hotaru->vars['submitted_data']['submit_id'] = 0;
                 
-                // form submitted?
+                // submit 2 form submitted?
                 if ($hotaru->cage->post->getAlpha('submit2') == 'true') { return true; }
+                
+                return false;
+                break;
+                
+            case 'submit3': // for step 3 EDIT
+
+                // set defaults:
+                $hotaru->vars['submitted_data']['submit_use_link'] = true;
+                $hotaru->vars['submitted_data']['submit_orig_url'] = '';
+                $hotaru->vars['submitted_data']['submit_title'] = '';
+                $hotaru->vars['submitted_data']['submit_content'] = '';
+                $hotaru->vars['submitted_data']['submit_id'] = 0;
+                
+                // submit 3 edit form submitted? If so, return false so we don't process the data
+                if ($hotaru->cage->post->getAlpha('submit3edit') == 'true') { return true; }
                 
                 return false;
                 break;
@@ -114,10 +130,11 @@ class SbSubmitFunctions
                 }
                 break;
                 
-            case 'submit2':
+            case 'submit2': // also used for coming back from Step 3 to edit the post
                 
-                if ($hotaru->cage->post->getAlpha('submit2') == 'true') { 
-                    // get orig_url and use_link from previously submitted_data:
+                if (($hotaru->cage->post->getAlpha('submit2') == 'true') 
+                    || ($hotaru->cage->post->getAlpha('submit3edit') == 'true')) { 
+                    // get previously submitted_data:
                     $key = $hotaru->cage->post->testAlnum('submit_key'); // from the form
                     $hotaru->vars['submitted_data'] = $this->loadSubmitData($hotaru, $key);
                     // get new (edited) title:
@@ -127,6 +144,21 @@ class SbSubmitFunctions
                     $allowable_tags = $hotaru->vars['submit_settings']['allowable_tags'];
                     $content = sanitize($hotaru->cage->post->getHtmLawed('post_content'), 2, $allowable_tags);
                     $hotaru->vars['submitted_data']['submit_content'] = $content;
+                    // get post id (if editing)
+                    $post_id = $hotaru->cage->post->testInt('submit_post_id');
+                    $hotaru->vars['submitted_data']['submit_id'] = $post_id;
+                }
+                break;
+                
+            case 'submit3': // when EDIT is clicked 
+                
+                if ($hotaru->cage->post->getAlpha('submit3edit') == 'true') { 
+                    // get previously submitted_data:
+                    $key = $hotaru->cage->post->testAlnum('submit_key'); // from the form
+                    $hotaru->vars['submitted_data'] = $this->loadSubmitData($hotaru, $key);
+                    // get post id (if editing)
+                    $post_id = $hotaru->cage->post->testInt('submit_post_id');
+                    $hotaru->vars['submitted_data']['submit_id'] = $post_id;
                 }
                 break;
 
@@ -304,7 +336,7 @@ class SbSubmitFunctions
      */
     public function checkErrors2($hotaru, $key = '')
     {
-        $post_id = $hotaru->cage->post->getInt('post_id'); // 0 unless come back from step 3.
+        $post_id = $hotaru->cage->post->testInt('submit_post_id'); // 0 unless come back from step 3.
         
         // get the settings we need:
         $submit_settings = $hotaru->getSerializedSettings('sb_submit');
@@ -330,7 +362,7 @@ class SbSubmitFunctions
         
         // ******** CHECK CSRF *******
         
-        if (!$hotaru->csrf()) {
+        if (!$hotaru->csrf('check', 'submit2') && !$hotaru->csrf('check', 'submit3')) {
             $hotaru->messages[$hotaru->lang['error_csrf']] = "red";
             $error_csrf = 1;
         }
@@ -341,7 +373,7 @@ class SbSubmitFunctions
             // No title present...
             $hotaru->messages[$hotaru->lang['submit_title_not_present_error']] = "red";
             $error_title= 1;
-        } elseif ($hotaru->titleExists($title)) {
+        } elseif (!$post_id && $hotaru->titleExists($title)) {
             // title already exists...
             if ($post_id != $hotaru->titleExists($title)) {
                 $hotaru->messages[$hotaru->lang['submit_title_already_exists_error']] = "red";
@@ -394,7 +426,7 @@ class SbSubmitFunctions
      */
     public function processSubmission($hotaru, $key)
     {
-        $hotaru->post->id = $hotaru->cage->post->getInt('post_id');
+        $hotaru->post->id = $hotaru->cage->post->getInt('submit_post_id');
         
         // get the last submitted data by this user:
         $submitted_data = $this->loadSubmitData($hotaru, $key);

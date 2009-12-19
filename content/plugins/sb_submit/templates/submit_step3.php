@@ -34,15 +34,18 @@
     <div id="submit_edit_confirm">
     
         <!-- EDIT BUTTON -->
-        <form name='submit_3' action='<?php BASEURL; ?>index.php?page=submit2' method='post'>
-        <input type='hidden' name='post_id' value='<?php echo $hotaru->post->id; ?>' />
-        <input type='hidden' name='edit' value='true' />
+        <form name='submit_3' action='<?php BASEURL; ?>index.php?page=submit3' method='post'>
+        <input type='hidden' name='submit_post_id' value='<?php echo $hotaru->post->id; ?>' />
+        <input type='hidden' name='submit3edit' value='true' />
+        <input type='hidden' name='submit_key' value='<?php echo $hotaru->vars['submit_key']; ?>' />
+        <input type='hidden' name='csrf' value='<?php echo $hotaru->csrfToken; ?>' />
         <input type='submit' name='submit' onclick="javascript:safeExit=true;" class='submit' value='<?php echo $hotaru->lang['main_form_edit']; ?>' />
         </form>    
 
         <!-- CONFIRM BUTTON -->
         <form name='submit_3' action='<?php BASEURL; ?>index.php?page=submit_confirm' method='post'>
-        <input type='hidden' name='post_id' value='<?php echo $hotaru->post->id; ?>' />
+        <input type='hidden' name='submit_post_id' value='<?php echo $hotaru->post->id; ?>' />
+        <input type='hidden' name='csrf' value='<?php echo $hotaru->csrfToken; ?>' />
         <input type='submit' name='submit' onclick="javascript:safeExit=true;" class='submit' value='<?php echo $hotaru->lang['main_form_confirm']; ?>' />
         </form>
     </div>

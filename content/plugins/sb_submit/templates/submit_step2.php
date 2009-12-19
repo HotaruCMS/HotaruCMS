@@ -46,6 +46,7 @@ if ($hotaru->cage->post->getAlpha('submit2') == 'true') {
     $title = sanitize($hotaru->vars['submitted_data']['submit_title'], 1);
     $content = sanitize($hotaru->vars['submitted_data']['submit_content'], 1);
     $use_link = $hotaru->vars['submitted_data']['submit_use_link'];
+    $post_id = $hotaru->vars['submitted_data']['submit_id'];
 /*
     $title_check = $hotaru->vars['post_orig_title'];
     $content_check = "";
