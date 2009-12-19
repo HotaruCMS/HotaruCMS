@@ -1164,13 +1164,46 @@ class Hotaru
  
  
     /**
+     * Add a post to the database
+     *
+     * @return true
+     */    
+    public function addPost()
+    {
+        $this->post->addPost($this);
+    }
+    
+    
+    /**
+     * Update a post in the database
+     *
+     * @return true
+     */    
+    public function updatePost()
+    {
+        $this->post->updatePost($this);
+    }
+    
+    
+    /**
+     * Physically delete a post from the database 
+     *
+     * There's a plugin hook in here to delete their parts, e.g. votes, coments, tags, etc.
+     */    
+    public function deletePost()
+    {
+        $this->post->deletePost($this);
+    }
+    
+    
+    /**
      * Checks for existence of a url
      *
      * @return array|false - array of posts
      */    
-    public function urlExists($hotaru, $url = '')
+    public function urlExists($url = '')
     {
-        $this->post->urlExists($this, $url);
+        return $this->post->urlExists($this, $url);
     }
     
     
@@ -1182,7 +1215,7 @@ class Hotaru
      */
     public function titleExists($title = '')
     {
-        $this->post->titleExists($this, $title);
+        return $this->post->titleExists($this, $title);
     }
 
 }

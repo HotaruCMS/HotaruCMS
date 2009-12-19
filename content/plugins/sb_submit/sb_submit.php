@@ -178,6 +178,7 @@ class SbSubmit
                     $key = $funcs->processSubmitted($this->hotaru, 'submit2');
                     $errors = $funcs->checkErrors($this->hotaru, 'submit2', $key);
                     if (!$errors) {
+                        $funcs->processSubmission($this->hotaru, $key);
                         $redirect = htmlspecialchars_decode($this->hotaru->url(array('page'=>'submit3', 'key'=>$key)));
                         header("Location: " . $redirect);
                         exit;
@@ -188,8 +189,37 @@ class SbSubmit
                 
             // Submit Step 3
             case 'submit3':
+            
                 $this->hotaru->pageType = 'submit';
                 $this->hotaru->pageTitle = $this->hotaru->lang["submit_step3"];
+                /*
+                // get settings, functions and check if data has been submitted
+                $this->hotaru->vars['submit_settings'] = $this->hotaru->getSerializedSettings('sb_submit');
+                $funcs = new SbSubmitFunctions();
+                $submitted = $funcs->checkSubmitted($this->hotaru, 'submit2');
+                
+                // not submitted so reload data from step 1
+                if (!$submitted) {
+                    $key = $this->hotaru->cage->get->getRaw('key');
+                    $this->hotaru->vars['submit_key'] = $key; // used in the step 2 form
+                    $submitted_data = $funcs->loadSubmitData($this->hotaru, $key);
+                    // merge defaults from "checkSubmitted" with $submitted_data...
+                    $merged_data = array_merge($this->hotaru->vars['submitted_data'], $submitted_data);
+                    $this->hotaru->vars['submitted_data'] = $merged_data;
+                }
+                
+                // submitted so save data and proceed to step 3 when no more errors
+                if ($submitted) {
+                    $key = $funcs->processSubmitted($this->hotaru, 'submit2');
+                    $errors = $funcs->checkErrors($this->hotaru, 'submit2', $key);
+                    if (!$errors) {
+                        $redirect = htmlspecialchars_decode($this->hotaru->url(array('page'=>'submit3', 'key'=>$key)));
+                        header("Location: " . $redirect);
+                        exit;
+                    }
+                    $this->hotaru->vars['submit_key'] = $key; // used in the step 2 form
+                }
+                */
                 break;
                 
             // Submit Confirm

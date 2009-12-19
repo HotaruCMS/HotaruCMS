@@ -254,13 +254,13 @@ class SbSubmitFunctions
         }
         
         // ******** CHECK URL ********
-        
+
         if (!$url) {
             // No url present...
             $hotaru->message = $hotaru->lang['submit_url_not_present_error'];
             $hotaru->messageType = 'red';
             $error = 1;
-        } elseif ($hotaru->urlExists($url)) {
+        } elseif ($hotaru->urlExists(urlencode($url))) {
             // URL already exists...
             $hotaru->message = $hotaru->lang['submit_url_already_exists_error'];
             $hotaru->messageType = 'red';
@@ -386,6 +386,40 @@ class SbSubmitFunctions
         
         // Return true if error is found
         if ($error_csrf == 1 || $error_title == 1 || $error_content == 1 || $error_hooks == 1) { return true; } else { return false; }
+    }
+    
+    
+    /**
+     * Saves the submitted story to the database
+     */
+    public function processSubmission($hotaru, $key)
+    {
+        $hotaru->post->id = $hotaru->cage->post->getInt('post_id');
+        
+        // get the last submitted data by this user:
+        $submitted_data = $this->loadSubmitData($hotaru, $key);
+        $use_link = $submitted_data['submit_use_link'];
+
+        if ($use_link || ($hotaru->post->id != 0)) {
+            $hotaru->post->origUrl = $submitted_data['submit_orig_url'];
+        } else {
+            $hotaru->post->origUrl = "self";
+        }
+        
+        $hotaru->post->title = $submitted_data['submit_title'];
+        $hotaru->post->url = make_url_friendly($hotaru->post->title);
+        $hotaru->post->domain = get_domain(urldecode($hotaru->post->origUrl)); // returns domain including http:// 
+        $hotaru->post->content = $submitted_data['submit_content'];
+        $hotaru->post->status = 'processing';
+        $hotaru->post->author = $hotaru->currentUser->id;
+        
+        $hotaru->pluginHook('submit_2_process_submission');
+        
+        if ($hotaru->post->id != 0) {
+            $hotaru->updatePost();    // Updates an existing post (e.g. returning to step 2 from step 3 to modify it)
+        } else {
+            $hotaru->addPost();    // Adds a new post
+        }
     }
     
     
