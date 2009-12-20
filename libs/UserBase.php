@@ -33,6 +33,8 @@ class UserBase
     protected $emailValid   = 0;
     protected $loggedIn     = false;
     protected $perms        = array();  // permissions
+    protected $settings     = array();  // settings
+    protected $profile      = array();  // profile
     protected $ip           = 0;
     
 
@@ -170,7 +172,11 @@ class UserBase
         $updated_perms = array_merge($default_perms, $existing_perms);
         
         $this->setAllPermissions($updated_perms);
-        $user_info->user_permissions = serialize($updated_perms);   // update user_info
+        $user_info->user_permissions = serialize($updated_perms);   // update $user_info
+        
+        // get user settings:
+        $this->settings = $this->getProfileSettingsData($hotaru, 'user_settings', $this->id);
+        $user_info->user_settings = $this->settings;   // update $user_info
         
         return $user_info;
     }
@@ -316,21 +322,23 @@ class UserBase
         if (!$userid) { $userid = $this->id; }
 
         $query = "SELECT usermeta_value FROM " . DB_PREFIX . "usermeta WHERE usermeta_userid = %d AND usermeta_key = %s";
-        $sql = $this->db->prepare($query, $userid, $type);
+        $sql = $hotaru->db->prepare($query, $userid, $type);
 
-        if (isset($this->hotaru->vars[$sql])) { 
-            $result = $this->hotaru->vars[$sql]; 
+        if (isset($hotaru->vars[$sql])) { 
+            $result = $hotaru->vars[$sql]; 
         } else {
-            $result = $this->db->get_var($sql);
-            $this->hotaru->vars[$sql] = $result;    // cache result
+            $result = $hotaru->db->get_var($sql);
+            $hotaru->vars[$sql] = $result;    // cache result
         }
            
         if ($result) { 
             $result = unserialize($result);
             if ($type == 'user_settings') {
-                $defaults = $this->getDefaultSettings();
+                $defaults = $this->getDefaultSettings($hotaru);
                 $result = array_merge($defaults, $result);
             }
+        } elseif ($type == 'user_settings') {
+            return $this->getDefaultSettings($hotaru);
         } else {
             return false;
         }

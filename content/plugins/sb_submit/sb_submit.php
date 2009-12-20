@@ -46,8 +46,6 @@ class SbSubmit
         $site_perms = $this->hotaru->getDefaultPermissions('all');
         if (!isset($site_perms['can_submit'])) { 
             $perms['options']['can_submit'] = array('yes', 'no', 'mod');
-            //$perms['options']['can_edit_posts'] = array('yes', 'no', 'own');
-            //$perms['options']['can_delete_posts'] = array('yes', 'no');
             $perms['options']['can_post_without_link'] = array('yes', 'no');
             
             $perms['can_submit']['admin'] = 'yes';
@@ -56,19 +54,6 @@ class SbSubmit
             $perms['can_submit']['member'] = 'yes';
             $perms['can_submit']['undermod'] = 'mod';
             $perms['can_submit']['default'] = 'no';
-            
-            /*
-            $perms['can_edit_posts']['admin'] = 'yes';
-            $perms['can_edit_posts']['supermod'] = 'yes';
-            $perms['can_edit_posts']['moderator'] = 'yes';
-            $perms['can_edit_posts']['member'] = 'own';
-            $perms['can_edit_posts']['undermod'] = 'own';
-            $perms['can_edit_posts']['default'] = 'no';
-            
-            $perms['can_delete_posts']['admin'] = 'yes';
-            $perms['can_delete_posts']['supermod'] = 'yes';
-            $perms['can_delete_posts']['default'] = 'no';
-            */
             
             $perms['can_post_without_link']['admin'] = 'yes';
             $perms['can_post_without_link']['supermod'] = 'yes';
@@ -82,10 +67,10 @@ class SbSubmit
         $submit_settings = $this->hotaru->getSerializedSettings();
         
         //if (!isset($submit_settings['enabled'])) { $submit_settings['enabled'] = "checked"; }
+        if (!isset($submit_settings['content'])) { $submit_settings['content'] = "checked"; }
         if (!isset($submit_settings['content_length'])) { $submit_settings['content_length'] = 50; }
         if (!isset($submit_settings['summary'])) { $submit_settings['summary'] = "checked"; }
         if (!isset($submit_settings['summary_length'])) { $submit_settings['summary_length'] = 200; }
-        //if (!isset($submit_settings['posts_per_page'])) { $submit_settings['posts_per_page'] = 10; }
         if (!isset($submit_settings['allowable_tags'])) { $submit_settings['allowable_tags'] = "<b><i><u><a><blockquote><strike>"; }
         if (!isset($submit_settings['url_limit'])) { $submit_settings['url_limit'] = 0; }
         if (!isset($submit_settings['daily_limit'])) { $submit_settings['daily_limit'] = 0; }
@@ -94,23 +79,8 @@ class SbSubmit
         if (!isset($submit_settings['x_posts'])) { $submit_settings['x_posts'] = 1; }
         if (!isset($submit_settings['email_notify'])) { $submit_settings['email_notify'] = ""; }
         if (!isset($submit_settings['email_notify_mods'])) { $submit_settings['email_notify_mods'] = array(); }
-        //if (!isset($submit_settings['archive'])) { $submit_settings['archive'] = "no_archive"; }
         
         $this->hotaru->updateSetting('sb_submit_settings', serialize($submit_settings));
-        
-        // Add "open in new tab" option to the default user settings
-        $base_settings = $this->hotaru->getDefaultSettings('base'); // originals from plugins
-        $site_settings = $this->hotaru->getDefaultSettings('site'); // site defaults updated by admin
-        if (!isset($base_settings['new_tab'])) { 
-            $base_settings['new_tab'] = ""; $site_settings['new_tab'] = "";
-            $this->hotaru->updateDefaultSettings($base_settings, 'base'); 
-            $this->hotaru->updateDefaultSettings($site_settings, 'site');
-        }
-        if (!isset($base_settings['link_action'])) { 
-            $base_settings['link_action'] = ""; $site_settings['link_action'] = "";
-            $this->hotaru->updateDefaultSettings($base_settings, 'base'); 
-            $this->hotaru->updateDefaultSettings($site_settings, 'site');
-        }
     }
     
     
@@ -368,8 +338,20 @@ class SbSubmit
                 
             // Submit Step 2
             case 'submit2':
+            
+                // settings
+                $this->hotaru->vars['submit_use_content'] = $this->hotaru->vars['submit_settings']['content'];
+                $this->hotaru->vars['submit_content_length'] = $this->hotaru->vars['submit_settings']['content_length'];
                 $allowable_tags = $this->hotaru->vars['submit_settings']['allowable_tags'];
                 $this->hotaru->vars['submit_allowable_tags'] = htmlentities($allowable_tags);
+                
+                // submitted data
+                $this->hotaru->vars['submit_use_link'] = $this->hotaru->vars['submitted_data']['submit_use_link'];
+                $this->hotaru->vars['submit_orig_url'] = urldecode($this->hotaru->vars['submitted_data']['submit_orig_url']);
+                $this->hotaru->vars['submit_title'] = sanitize($this->hotaru->vars['submitted_data']['submit_title'], 1);
+                $this->hotaru->vars['submit_content'] = sanitize($this->hotaru->vars['submitted_data']['submit_content'], 1);
+                $this->hotaru->vars['submit_post_id'] = $this->hotaru->vars['submitted_data']['submit_id'];
+    
                 $this->hotaru->displayTemplate('submit_step2');
                 return true;
                 break;

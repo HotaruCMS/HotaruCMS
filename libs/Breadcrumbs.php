@@ -31,7 +31,7 @@ class Breadcrumbs
     public function buildBreadcrumbs($hotaru)
     {
         $output = '';
-        $output .= "<a href='" . BASEURL . "'>" . SITE_NAME . "</a>\n"; 
+        $output .= "<a href='" . BASEURL . "'>" . $hotaru->lang['main_theme_breadcrumbs_home'] . "</a>\n"; 
         
         // Admin only:
         if ($hotaru->isAdmin) {

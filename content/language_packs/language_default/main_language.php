@@ -33,6 +33,9 @@ $lang['main_form_ok'] = "OK";
 $lang['main_form_next'] = "Next";
 $lang['main_form_edit'] = "Edit";
 
+/* Settings */
+$lang["main_settings_saved"] = "Settings Saved.";
+
 /* Users */
 $lang['main_userbase_cookie_error'] = "Error setting cookie. Username not provided.";
 
@@ -78,7 +81,7 @@ $lang["main_theme_navigation_login"] = "Login";
 $lang["main_theme_navigation_logout"] = "Logout";
 
 /* breadcrumbs */
-$lang['main_theme_home'] = "Home";
+$lang['main_theme_breadcrumbs_home'] = "Home";
 
 /* footer */
 $lang["main_theme_footer_hotaru_link"] = "HotaruCMS.org";

@@ -306,7 +306,7 @@ class PageHandling
      * @param object $pageObject - current object of type Paginated
      * @return string - HTML for page number bar
      */
-    public function pageBar($pageObject = array())
+    public function pageBar($hotaru, $pageObject = NULL)
     {
         require_once(EXTENSIONS . 'Paginated/Paginated.php');
         require_once(EXTENSIONS . 'Paginated/DoubleBarLayout.php');

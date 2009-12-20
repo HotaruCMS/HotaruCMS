@@ -338,7 +338,7 @@ class Hotaru
     public function pagination($items = array(), $items_per_page = 10, $pg = 0)
     {
         $pageHandling = new PageHandling();
-        return $pageHandling->pagination($hotaru, $items, $items_per_page, $pg);
+        return $pageHandling->pagination($this, $items, $items_per_page, $pg);
     }
     
  
@@ -351,7 +351,7 @@ class Hotaru
     public function pageBar($pageObject = NULL)
     {
         $pageHandling = new PageHandling();
-        return $pageHandling->pageBar($hotaru, $pageObject);
+        return $pageHandling->pageBar($this, $pageObject);
     }
     
 

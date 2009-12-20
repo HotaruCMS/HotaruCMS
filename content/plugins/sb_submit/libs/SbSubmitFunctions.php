@@ -388,7 +388,7 @@ class SbSubmitFunctions
         }
             
         // ******** CHECK DESCRIPTION ********
-        //if ($hotaru->post->useContent) {
+        if ($submit_settings['content']) { // if using the content field
             if (!$content) {
                 // No content present...
                 $hotaru->messages[$hotaru->lang['submit_content_not_present_error']] = "red";
@@ -406,7 +406,7 @@ class SbSubmitFunctions
                 // content is okay.
                 $error_content = 0;
             }
-        //}
+        }
         
         
         // Check for errors from plugin fields, e.g. Tags

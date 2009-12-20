@@ -1,8 +1,6 @@
 <?php
 /**
- *  File: /plugins/submit/submit_settings.php
- * Admin settings for the Submit plugin
- *  Notes: This file is part of the Submit plugin. The main file is /plugins/submit/submit.php
+ *  SB Submit Settings
  *
  * PHP version 5
  *
@@ -46,6 +44,7 @@ class SbSubmitSettings
         $submit_settings = $hotaru->getSerializedSettings();
         
         //$enabled = $submit_settings['enabled'];
+        $content = $submit_settings['content'];
         $content_length = $submit_settings['content_length'];
         $summary = $submit_settings['summary'];
         $summary_length = $submit_settings['summary_length'];
@@ -63,6 +62,7 @@ class SbSubmitSettings
         $hotaru->pluginHook('submit_settings_get_values');
         
         //...otherwise set to blank:
+        if (!$content) { $content = ''; }
         if (!$content_length) { $content_length = ''; }
         if (!$summary) { $summary = ''; }
         if (!$summary_length) { $summary_length = ''; }
@@ -75,26 +75,25 @@ class SbSubmitSettings
         
         echo "<form name='submit_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=sb_submit' method='post'>\n";
 
-        //echo "<input type='checkbox' name='enabled' value='enabled' " . $enabled . " >&nbsp;&nbsp;" . $this->lang["submit_settings_enable"] . "<br /><br />\n"; 
+        //echo "<p><input type='checkbox' name='enabled' value='enabled' " . $enabled . " >&nbsp;&nbsp;" . $this->lang["submit_settings_enable"] . "</p><br />\n"; 
         
         echo $hotaru->lang["submit_settings_post_components"] . "<br /><br />\n";
            
-        echo $hotaru->lang["submit_settings_content_min_length"] . ": <input type='text' size=5 name='content_length' value='" . $content_length . "' /><br /><br />\n";
-        echo "<input type='checkbox' name='summary' value='summary' " . $summary . ">&nbsp;&nbsp;" . $hotaru->lang["submit_settings_summary"];
+        echo "<p><input type='checkbox' name='content' value='content' " . $content . ">&nbsp;&nbsp;" . $hotaru->lang["submit_settings_content"];
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;";
+        echo $hotaru->lang["submit_settings_content_min_length"] . ": <input type='text' size=5 name='content_length' value='" . $content_length . "' /></p>\n";
+        
+        echo "<p><input type='checkbox' name='summary' value='summary' " . $summary . ">&nbsp;&nbsp;" . $hotaru->lang["submit_settings_summary"];
         echo "&nbsp;&nbsp;&nbsp;&nbsp;";
         echo $hotaru->lang["submit_settings_summary_max_length"] . ": <input type='text' size=5 name='summary_length' value='" . $summary_length . "' />\n";
         echo "&nbsp;&nbsp;&nbsp;&nbsp;";
-        echo $hotaru->lang["submit_settings_summary_instruct"] . "<br />\n";
+        
+        echo "<small>" . $hotaru->lang["submit_settings_summary_instruct"] . "</small></p>\n";
     
         $hotaru->pluginHook('submit_settings_form');
         
-        /*
-        echo "<br /><input type='text' size=5 name='posts_per_page' value='" . $posts_per_page . "' /> ";
-        echo $hotaru->lang["submit_settings_posts_per_page"] . "<br /><br />\n";
-        */
-        
-        echo $hotaru->lang["submit_settings_allowable_tags"] . " <input type='text' size=40 name='allowable_tags' value='" . $allowable_tags . "' /><br />";
-        echo $hotaru->lang["submit_settings_allowable_tags_example"] . "<br />\n";
+        echo "<p>" . $hotaru->lang["submit_settings_allowable_tags"] . " <input type='text' size=40 name='allowable_tags' value='" . $allowable_tags . "' /><br />";
+        echo $hotaru->lang["submit_settings_allowable_tags_example"] . "</p>\n";
         
         $hotaru->pluginHook('submit_settings_form2');
     
@@ -184,23 +183,8 @@ class SbSubmitSettings
         }
         echo "</div>";
         
-        /*
-        echo $hotaru->lang["submit_settings_post_archiving"] . "<br /><br />\n";
-        echo $hotaru->lang["submit_settings_post_archive_desc"] . "<br /><br />\n";
-        echo "<select name='post_archive'>\n";
-            echo "<option value='" . $archive . "'>" . $hotaru->lang["submit_settings_post_archive_$archive"] . "</option>\n";
-            echo '<option disabled>-----</option>';
-            echo "<option value='no_archive'>" . $hotaru->lang["submit_settings_post_archive_no_archive"] . "</option>\n";
-            echo "<option value='180'>" . $hotaru->lang["submit_settings_post_archive_180"] . "</option>\n";
-            echo "<option value='365'>" . $hotaru->lang["submit_settings_post_archive_365"] . "</option>\n";
-            echo "<option value='730'>" . $hotaru->lang["submit_settings_post_archive_730"] . "</option>\n";
-            echo "<option value='1095'>" . $hotaru->lang["submit_settings_post_archive_1095"] . "</option>\n";
-        echo "</select>\n";
-        echo $hotaru->lang["submit_settings_post_archive"] . "<br /><br />\n";
-        */
-                
         echo "<input type='hidden' name='submitted' value='true' />\n";
-        echo "<input type='submit' value='" . $hotaru->lang["submit_settings_save"] . "' />\n";
+        echo "<input type='submit' value='" . $hotaru->lang["main_form_save"] . "' />\n";
         echo "<input type='hidden' name='token' value='" . $hotaru->token . "' />\n";
         echo "</form>\n";
     }
@@ -211,6 +195,9 @@ class SbSubmitSettings
      */
     public function saveSettings($hotaru) 
     {
+        // Get current settings 
+        $submit_settings = $hotaru->getSerializedSettings();
+        
         // Enabled
         /*
         if ($hotaru->cage->post->keyExists('enabled')) { 
@@ -219,13 +206,18 @@ class SbSubmitSettings
             $enabled = ''; 
         }
         */
+    
+        // Content
+        if ($hotaru->cage->post->keyExists('content')) { 
+            $content = 'checked'; 
+        } else { 
+            $content = ''; 
+        }
         
         // Content length
-        if ($hotaru->cage->post->keyExists('content_length')) { 
-            $content_length = $hotaru->cage->post->getInt('content_length'); 
-            if (empty($content_length)) { $content_length = $hotaru->post->contentLength; }
-        } else { 
-            $content_length = $hotaru->post->contentLength; 
+        $content_length = $hotaru->cage->post->getInt('content_length'); 
+        if (!$content_length) { 
+            $content_length = $submit_settings['content_length'];
         } 
         
         // Summary
@@ -236,67 +228,45 @@ class SbSubmitSettings
         }
         
         // Summary length
-        if ($hotaru->cage->post->keyExists('summary_length')) { 
-            $summary_length = $hotaru->cage->post->getInt('summary_length'); 
-            if (empty($summary_length)) { $summary_length = $hotaru->post->summaryLength; }
-        } else { 
-            $summary_length = $hotaru->post->summaryLength; 
+        $summary_length = $hotaru->cage->post->getInt('summary_length'); 
+        if (!$summary_length) { 
+            $summary_length = $submit_settings['summary_length'];
         } 
-        
-        // Posts per page
-        /*
-        if ($hotaru->cage->post->keyExists('posts_per_page')) { 
-            $posts_per_page = $hotaru->cage->post->testInt('posts_per_page'); 
-            if (empty($posts_per_page) || $posts_per_page == 0) { $posts_per_page = $hotaru->post->postsPerPage; }
-        } else { 
-            $posts_per_page = $hotaru->post->postsPerPage; 
-        } 
-        */
         
         // Allowable tags
-        if ($hotaru->cage->post->keyExists('allowable_tags')) { 
-            $allowable_tags = $hotaru->cage->post->getRaw('allowable_tags'); 
-            if (empty($allowable_tags)) { $allowable_tags = $hotaru->post->allowableTags; }
-        } else { 
-            $allowable_tags = $hotaru->post->allowableTags; 
-        }
+        $allowable_tags = $hotaru->cage->post->getRaw('allowable_tags'); 
+        if (!$allowable_tags) { 
+            $allowable_tags = $submit_settings['allowable_tags'];
+        } 
         
         // Url limit
-        if ($hotaru->cage->post->keyExists('url_limit')) { 
-            $url_limit = $hotaru->cage->post->testInt('url_limit'); 
-            if (!is_numeric($url_limit)) { $url_limit = 0; }
-        } else { 
-            $url_limit = 0; 
+        $url_limit = $hotaru->cage->post->testInt('url_limit'); 
+        if (!is_numeric($url_limit)) { 
+            $url_limit = $submit_settings['url_limit'];
         }
         
         // Daily limit
-        if ($hotaru->cage->post->keyExists('daily_limit')) { 
-            $daily_limit = $hotaru->cage->post->testInt('daily_limit'); 
-            if (!is_numeric($daily_limit)) { $daily_limit = 0; }
-        } else { 
-            $daily_limit = 0; 
+        $daily_limit = $hotaru->cage->post->testInt('daily_limit'); 
+        if (!is_numeric($daily_limit)) { 
+            $daily_limit = $submit_settings['daily_limit'];
         }
         
         // Frequency limit
-        if ($hotaru->cage->post->keyExists('freq_limit')) { 
-            $freq_limit = $hotaru->cage->post->testInt('freq_limit'); 
-            if (!is_numeric($freq_limit)) { $freq_limit = 0; }
-        } else { 
-            $freq_limit = 0; 
+        $freq_limit = $hotaru->cage->post->testInt('freq_limit'); 
+        if (!is_numeric($freq_limit)) { 
+            $freq_limit = $submit_settings['freq_limit'];
         }
         
         // Set pending
-        if ($hotaru->cage->post->keyExists('set_pending')) { 
-            $set_pending = $hotaru->cage->post->testAlnumLines('set_pending');
-        } else {
-            $set_pending = 'auto_approve';
+        $set_pending = $hotaru->cage->post->testAlnumLines('set_pending');
+        if (!$set_pending) {
+            $set_pending = $submit_settings['set_pending'];
         }
         
         // First X posts
-        if ($hotaru->cage->post->keyExists('first_x_posts')) { 
-            $x_posts = $hotaru->cage->post->testInt('first_x_posts');
-        } else {
-            $x_posts = 1; //default
+        $x_posts = $hotaru->cage->post->testInt('first_x_posts');
+        if (!$x_posts) {
+            $x_posts = $submit_settings['x_posts'];
         }
         
         // Send email notification about new posts
@@ -316,23 +286,16 @@ class SbSubmitSettings
                 $email_mods[$id]['type'] = $array[$email_mods[$id]['email']];
             }
         } else {
-            $email_mods = array();
+            $email_mods = $submit_settings['email_notify_mods'];
         }
-        
-        // Post Archiving
-        /*
-        if ($hotaru->cage->post->keyExists('post_archive')) { 
-            $archive = $hotaru->cage->post->testAlnumLines('post_archive'); 
-        } 
-        */
         
         $hotaru->pluginHook('submit_save_settings');
         
         //$submit_settings['enabled'] = $enabled;
+        $submit_settings['content'] = $content;
         $submit_settings['content_length'] = $content_length;
         $submit_settings['summary'] = $summary;
         $submit_settings['summary_length'] = $summary_length;
-        //$submit_settings['posts_per_page'] = $posts_per_page;
         $submit_settings['allowable_tags'] = $allowable_tags;
         $submit_settings['url_limit'] = $url_limit;
         $submit_settings['daily_limit'] = $daily_limit;
@@ -341,11 +304,10 @@ class SbSubmitSettings
         $submit_settings['x_posts'] = $x_posts;
         $submit_settings['email_notify'] = $email_notify;
         $submit_settings['email_notify_mods'] = $email_mods; //array
-        //$submit_settings['archive'] = $archive;
     
         $hotaru->updateSetting('sb_submit_settings', serialize($submit_settings));
         
-        $hotaru->message = $hotaru->lang["submit_settings_saved"];
+        $hotaru->message = $hotaru->lang["main_settings_saved"];
         $hotaru->messageType = "green";
         
         return true;    
