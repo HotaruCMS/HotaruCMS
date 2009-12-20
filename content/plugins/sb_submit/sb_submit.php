@@ -352,6 +352,10 @@ class SbSubmit
                 $this->hotaru->vars['submit_title'] = sanitize($this->hotaru->vars['submitted_data']['submit_title'], 1);
                 $this->hotaru->vars['submit_content'] = sanitize($this->hotaru->vars['submitted_data']['submit_content'], 1);
                 $this->hotaru->vars['submit_post_id'] = $this->hotaru->vars['submitted_data']['submit_id'];
+                
+                // strip htmlentities before showing in the form:
+                $this->hotaru->vars['submit_title'] = html_entity_decode($this->hotaru->vars['submit_title']);
+                $this->hotaru->vars['submit_content'] = html_entity_decode($this->hotaru->vars['submit_content']);
     
                 $this->hotaru->displayTemplate('submit_step2');
                 return true;

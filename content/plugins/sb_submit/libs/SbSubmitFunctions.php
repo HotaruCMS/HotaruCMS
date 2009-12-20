@@ -138,11 +138,11 @@ class SbSubmitFunctions
                     $key = $hotaru->cage->post->testAlnum('submit_key'); // from the form
                     $hotaru->vars['submitted_data'] = $this->loadSubmitData($hotaru, $key);
                     // get new (edited) title:
-                    $title = $hotaru->cage->post->getMixedString2('post_title');
+                    $title = $hotaru->cage->post->getMixedString1('post_title');
                     $hotaru->vars['submitted_data']['submit_title'] = $title;
                     // get content:
                     $allowable_tags = $hotaru->vars['submit_settings']['allowable_tags'];
-                    $content = sanitize($hotaru->cage->post->getHtmLawed('post_content'), 2, $allowable_tags);
+                    $content = sanitize($hotaru->cage->post->getHtmLawed('post_content'), 1, $allowable_tags);
                     $hotaru->vars['submitted_data']['submit_content'] = $content;
                     // get post id (if editing)
                     $post_id = $hotaru->cage->post->testInt('submit_post_id');

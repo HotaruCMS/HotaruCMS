@@ -6,7 +6,7 @@
  * folder: sb_base
  * class: SbBase
  * type: base
- * hooks: install_plugin, theme_index_top, header_meta, navigation, breadcrumbs, theme_index_main
+ * hooks: install_plugin, theme_index_top, header_meta, header_include, navigation, breadcrumbs, theme_index_main
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
