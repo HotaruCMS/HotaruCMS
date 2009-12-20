@@ -112,7 +112,7 @@ class SbSubmitFunctions
                 } elseif ($hotaru->cage->post->getAlpha('submit1') == 'true') { 
                     $url = $hotaru->cage->post->testUri('submit_orig_url');
                     if (!$url) { break; }
-                    $hotaru->vars['submitted_data']['submit_orig_url'] = urlencode($url);
+                    $hotaru->vars['submitted_data']['submit_orig_url'] = $url;
                     $hotaru->vars['submitted_data']['submit_use_link'] = true;
                     $title = $this->fetchTitle($url);
                     if (!$title) { $title = $hotaru->lang["submit_not_found"]; }
@@ -122,7 +122,7 @@ class SbSubmitFunctions
                 } elseif ($hotaru->cage->get->keyExists('url')) { 
                     $url = $hotaru->cage->get->testUri('url');
                     if (!$url) { break; }
-                    $hotaru->vars['submitted_data']['submit_orig_url'] = urlencode($url);
+                    $hotaru->vars['submitted_data']['submit_orig_url'] = $url;
                     $hotaru->vars['submitted_data']['submit_use_link'] = true;
                     $title = $this->fetchTitle($url);
                     if (!$title) { $title = $hotaru->lang["submit_not_found"]; }

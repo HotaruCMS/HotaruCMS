@@ -83,7 +83,7 @@ class Post
             $this->id = $post_row->post_id;
             $this->title = stripslashes(urldecode($post_row->post_title));
             $this->content = stripslashes(urldecode($post_row->post_content));
-            $this->origUrl = urldecode($post_row->post_orig_url);            
+            $this->origUrl = urldecode($post_row->post_orig_url);
             $this->status = $post_row->post_status;
             $this->author = $post_row->post_author;
             $this->url = urldecode($post_row->post_url);

@@ -86,10 +86,12 @@ class SbBase
                 $sort_lang = 'sb_base_' . str_replace('-', '_', $sort);
                 $hotaru->pageTitle = $hotaru->lang[$sort_lang];
                 break;
+            default:
+                // no default or we'd mess up anything set by other plugins
         }
         
-        // stop here if not a list of post page:
-        if (($hotaru->pageType != 'list') && ($hotaru->pageType != 'post')) {
+        // stop here if not a list or the pageType has been set elsewhere:
+        if ($hotaru->pageType && ($hotaru->pageType != 'list')) {
             return false; 
         }
         
@@ -102,24 +104,24 @@ class SbBase
             $hotaru->vars['posts'] = $funcs->prepareList($hotaru);
         }
         
-        // if a post, find it:
-        if ($hotaru->pageType == 'post')
-        {
-            $pagename = $hotaru->pageName;
-            
-            if (is_numeric($pagename)) {
-                // Page name is a number so it must be a post with non-friendly urls
-                $hotaru->readPost($pagename);    // read current post
-                $hotaru->pageTitle = $hotaru->post->title;
-            
-            } elseif ($post_id = $hotaru->isPostUrl($pagename)) {
-                // Page name belongs to a story
-                $hotaru->readPost($post_id);    // read current post
-                $hotaru->pageTitle = $hotaru->post->title;
-            
-            } else {
-                // don't know what kind of post this is. Maybe return a page not found?
-            }
+        // Probably a post, let's check:
+
+        $pagename = $hotaru->pageName;
+        
+        if (is_numeric($pagename)) {
+            // Page name is a number so it must be a post with non-friendly urls
+            $hotaru->readPost($pagename);    // read current post
+            $hotaru->pageTitle = $hotaru->post->title;
+            $hotaru->pageType = 'post';
+        
+        } elseif ($post_id = $hotaru->isPostUrl($pagename)) {
+            // Page name belongs to a story
+            $hotaru->readPost($post_id);    // read current post
+            $hotaru->pageTitle = $hotaru->post->title;
+            $hotaru->pageType = 'post';
+        
+        } else {
+            // don't know what kind of post this is. Maybe return a page not found?
         }
         
         // user defined settings:
