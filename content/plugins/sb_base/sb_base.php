@@ -194,8 +194,6 @@ class SbBase
             case 'latest':
                 $this->hotaru->pageTitle .= $this->hotaru->rssBreadcrumbsLink('new');
                 break;
-            default:
-                $this->hotaru->pageTitle .= $this->hotaru->rssBreadcrumbsLink('all');
         }
     }
     
