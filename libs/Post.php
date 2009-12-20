@@ -269,6 +269,20 @@ class Post
     
     
     /**
+     * Checks for existence of a post with given post_url
+     *
+     * @param str $post_url (slug)
+     * @return int - id of post with matching url
+     */
+    public function isPostUrl($hotaru, $post_url = '')
+    {
+        $sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_url = %s";
+        $post_id = $hotaru->db->get_var($hotaru->db->prepare($sql, urlencode($post_url)));
+        if ($post_id) { return $post_id; } else { return false; }
+    }
+    
+    
+    /**
      * Count how many approved posts a user has had
      *
      * @param int $userid (optional)

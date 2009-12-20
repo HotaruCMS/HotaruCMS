@@ -213,18 +213,21 @@ class PluginFunctions
     
     
     /**
-     * Determines if a plugin is enabled or not
+     * Determines if a plugin type or specific plugin is enabled or not
      *
      * @param object $hotaru
-     * @param string $folder plugin folder name
+     * @param string $folder plugin type or folder name
      * @return string
      */
-    public function isActive($hotaru, $folder = '')
+    public function isActive($hotaru, $type = '')
     {
-        if (!$folder) { $folder = $hotaru->plugin->folder; } 
-        
-        $sql = "SELECT plugin_enabled FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
-        $status = $hotaru->db->get_var($hotaru->db->prepare($sql, $folder));
+        if ($type) { 
+            $sql = "SELECT plugin_enabled FROM " . TABLE_PLUGINS . " WHERE plugin_type = %s";
+            $status = $hotaru->db->get_var($hotaru->db->prepare($sql, $type));
+        } else {
+            $sql = "SELECT plugin_enabled FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
+            $status = $hotaru->db->get_var($hotaru->db->prepare($sql, $hotaru->plugin->folder));
+        }
         
         if ($status) { return true; } else { return false; }
     }

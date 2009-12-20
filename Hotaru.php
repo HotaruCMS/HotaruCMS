@@ -372,6 +372,20 @@ class Hotaru
         return $breadcrumbs->buildBreadcrumbs($this);
     }
     
+    
+    /**
+     * prepares the RSS link found in breadcrumbs
+     *
+     * @param string $type - post status, e.g. new, top, etc.
+     * @return string
+     */    
+    public function rssBreadcrumbsLink($type = 'all')
+    {
+        require_once(LIBS . 'Breadcrumbs.php');
+        $breadcrumbs = new Breadcrumbs();
+        return $breadcrumbs->rssBreadcrumbsLink($this, $type);
+    }
+    
  
  /* *************************************************************
  *
@@ -628,10 +642,10 @@ class Hotaru
      * @param string $folder plugin folder name
      * @return bool
      */
-    public function isActive($folder = '')
+    public function isActive($type = '')
     {
         $pluginFunctions = new PluginFunctions();
-        return $pluginFunctions->isActive($this, $folder);
+        return $pluginFunctions->isActive($this, $type);
     }
     
  
@@ -1280,6 +1294,18 @@ class Hotaru
     public function titleExists($title = '')
     {
         return $this->post->titleExists($this, $title);
+    }
+    
+    
+    /**
+     * Checks for existence of a post with given post_url
+     *
+     * @param str $post_url (slug)
+     * @return int - id of post with matching url
+     */
+    public function isPostUrl($hotaru, $post_url = '')
+    {
+        return $this->post->isPostUrl($this, $post_url);
     }
     
     

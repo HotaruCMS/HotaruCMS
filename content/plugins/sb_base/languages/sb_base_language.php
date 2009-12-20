@@ -57,8 +57,7 @@ $lang["sb_base_sort_top_all_time"] = "All Time";
 /* Post */
 $lang["sb_base_post_edit"] = "Edit";
 $lang["sb_base_post_read_more"] = "[Read More]";
-$lang["sb_base_post_posted"] = "Posted";
-$lang["sb_base_post_by"] = "by";
+$lang["sb_base_post_posted_by"] = "Posted by";
 $lang["sb_base_post_ago"] = "ago";
 $lang["sb_base_post_buried"] = "This post has been buried";
 $lang["sb_base_post_pending"] = "This post is pending approval by a moderator";

@@ -26,8 +26,6 @@
 
 ?>
 
-<?php $hotaru->pluginHook('sb_base_pre_list'); ?> 
-
 <?php 
 
 if ($hotaru->vars['posts']) {
@@ -36,7 +34,7 @@ if ($hotaru->vars['posts']) {
     $pagedResults = $hotaru->pagination($hotaru->vars['posts'], 10, $pg);
     while($post = $pagedResults->fetchPagedRow()) {
         $hotaru->readPost(0, $post);
-        $user = new UserAuth();
+        $user = new UserBase();
         $user->getUserBasic($hotaru, $hotaru->post->author);
 ?>
 
@@ -57,8 +55,7 @@ if ($hotaru->vars['posts']) {
         </div>
     
         <div class="show_post_author_date">    
-            <?php echo $hotaru->lang["sb_base_post_posted"]; ?>
-            <?php echo " " . $hotaru->lang["sb_base_post_by"] . " <a href='" . $hotaru->url(array('user' => $user->name)) . "'>" . $user->name . "</a>"; ?>
+            <?php echo " " . $hotaru->lang["sb_base_post_posted_by"] . " <a href='" . $hotaru->url(array('user' => $user->name)) . "'>" . $user->name . "</a>"; ?>
             <?php echo time_difference(unixtimestamp($hotaru->post->date), $hotaru->lang) . " " . $hotaru->lang["sb_base_post_ago"]; ?>
             <?php $hotaru->pluginHook('sb_base_post_author_date'); ?>
             <?php 
@@ -71,7 +68,7 @@ if ($hotaru->vars['posts']) {
         <?php if ($hotaru->vars['use_content']) { ?>
             <div class="show_post_content">
                 <?php $hotaru->pluginHook('sb_base_show_post_content_list'); ?>
-                <?php if ($hotaru->post->useSummary) { ?>
+                <?php if ($hotaru->vars['use_summary']) { ?>
                     <?php echo truncate($hotaru->post->content, $hotaru->vars['summary_length']); ?>
                 <?php } else { ?>
                     <?php echo $hotaru->post->content; ?>

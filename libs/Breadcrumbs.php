@@ -50,5 +50,19 @@ class Breadcrumbs
         $output .= " &raquo; " . $hotaru->pageTitle;
         return $output;
     }
+    
+    
+    /**
+     * prepares the RSS breadcrumbs link
+     *
+     * @param string $type - post status, e.g. new, top, etc.
+     * @return string
+     */    
+    public function rssBreadcrumbsLink($hotaru, $type = 'all')
+    {
+        $rss = "<a href='" . $hotaru->url(array('page'=>'rss', 'status'=>$type)) . "'>";
+        $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png' alt='" . $hotaru->pageTitle . " RSS' /></a>";
+        return $rss;
+    }
 }
 ?>

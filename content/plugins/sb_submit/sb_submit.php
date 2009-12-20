@@ -5,7 +5,7 @@
  * version: 0.1
  * folder: sb_submit
  * class: SbSubmit
- * type: addpost
+ * type: post
  * hooks: install_plugin, theme_index_top, header_include, header_include_raw, navigation, admin_header_include_raw, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
  * requires: sb_base 0.1
  * author: Nick Ramsay
@@ -171,7 +171,8 @@ class SbSubmit
                 $this->hotaru->pageType = 'submit';
                 $this->hotaru->pageTitle = $this->hotaru->lang["submit_step3"];
                 
-                // Check if the Edit button has been clicked
+                // Get settings and check if the Edit button has been clicked
+                $this->hotaru->vars['submit_settings'] = $this->hotaru->getSerializedSettings('sb_submit');
                 $funcs = new SbSubmitFunctions();
                 $submitted = $funcs->checkSubmitted($this->hotaru, 'submit3');
                 
@@ -358,6 +359,10 @@ class SbSubmit
                 
             // Submit Step 3
             case 'submit3':
+                // need these for the post preview (which uses SB Base's sb_post.php template)
+                $this->hotaru->vars['use_content'] = $this->hotaru->vars['submit_settings']['content'];
+                $this->hotaru->vars['summary_length'] = $this->hotaru->vars['submit_settings']['summary_length'];
+                $this->hotaru->vars['editorial'] = true; // this makes the link unclickable
                 $this->hotaru->displayTemplate('submit_step3');
                 return true;
                 break;

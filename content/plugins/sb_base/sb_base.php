@@ -5,7 +5,7 @@
  * version: 0.1
  * folder: sb_base
  * class: SbBase
- * type: index
+ * type: base
  * hooks: install_plugin, theme_index_top, header_meta, navigation, breadcrumbs, theme_index_main
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
@@ -88,19 +88,41 @@ class SbBase
                 $sort_lang = 'sb_base_' . str_replace('-', '_', $sort);
                 $this->hotaru->pageTitle = $this->hotaru->lang[$sort_lang];
                 break;
-            default:
-                $this->hotaru->pageType = 'post';
         }
         
         // stop here if not a list of post page:
         if (($this->hotaru->pageType != 'list') && ($this->hotaru->pageType != 'post')) {
             return false; 
         }
-
+        
         // include sb_base_functions class:
         include_once(PLUGINS . 'sb_base/libs/SbBaseFunctions.php');
         $funcs = new SbBaseFunctions();
-        $this->hotaru->vars['posts'] = $funcs->prepareList($this->hotaru);
+        
+        // if a list, get the posts:
+        if ($this->hotaru->pageType == 'list') {
+            $this->hotaru->vars['posts'] = $funcs->prepareList($this->hotaru);
+        }
+        
+        // if a post, find it:
+        if ($this->hotaru->pageType == 'post')
+        {
+            $pagename = $this->hotaru->pageName;
+            
+            if (is_numeric($pagename)) {
+                // Page name is a number so it must be a post with non-friendly urls
+                $this->hotaru->readPost($pagename);    // read current post
+                $this->hotaru->pageTitle = $this->hotaru->post->title;
+            
+            } elseif ($post_id = $this->hotaru->isPostUrl($pagename)) {
+                // Page name belongs to a story
+                $this->hotaru->readPost($post_id);    // read current post
+                $this->hotaru->pageTitle = $this->hotaru->post->title;
+            
+            } else {
+                // don't know what kind of post this is. Maybe return a page not found?
+            }
+        }
         
         // user defined settings:
         
@@ -117,6 +139,11 @@ class SbBase
         } else { 
             $this->hotaru->vars['link_action'] = ''; 
         }
+        
+        // editorial (story with an internal link)
+        if (strstr($this->hotaru->post->origUrl, BASEURL)) { 
+            $this->hotaru->vars['editorial'] = true;
+        } else { $this->hotaru->vars['editorial'] = false; } 
         
         // get settings from SB_Submit 
         if (!isset($this->hotaru->vars['submit_settings'])) {
@@ -159,6 +186,17 @@ class SbBase
         if ($this->hotaru->pageName == 'index') { 
             $this->hotaru->pageTitle = $this->hotaru->lang["sb_base_top"];
         }
+        
+        switch ($this->hotaru->pageName) {
+            case 'index':
+                $this->hotaru->pageTitle .= $this->hotaru->rssBreadcrumbsLink('top');
+                break;
+            case 'latest':
+                $this->hotaru->pageTitle .= $this->hotaru->rssBreadcrumbsLink('new');
+                break;
+            default:
+                $this->hotaru->pageTitle .= $this->hotaru->rssBreadcrumbsLink('all');
+        }
     }
     
     /**
@@ -166,16 +204,49 @@ class SbBase
      */
     public function theme_index_main()
     {
-        // determine whether to show post content or not
+        // stop here if not a list of a post
+        if (($this->hotaru->pageType != 'list') && ($this->hotaru->pageType != 'post')) { return false; }
+        
+        // necessary settings:
         $this->hotaru->vars['use_content'] = $this->hotaru->vars['submit_settings']['content'];
+        $this->hotaru->vars['use_summary'] = $this->hotaru->vars['submit_settings']['summary'];
         $this->hotaru->vars['summary_length'] = $this->hotaru->vars['submit_settings']['summary_length'];
         
         switch ($this->hotaru->pageType)
         {
             case 'post':
-                $this->hotaru->displayTemplate('sb_list');
+                // This post is visible if it's not buried/pending OR if the viewer has edit post permissions...
+                
+                // defaults:
+                $buried = false; $pending = false; $can_edit = false;
+                
+                // check if buried:
+                if ($this->hotaru->post->status == 'buried') { 
+                    $buried = true;
+                    $hotaru->message = $this->hotaru->lang["sb_base_post_buried"];
+                } 
+                
+                // check if pending:
+                if ($this->hotaru->post->status == 'pending') { 
+                    $pending = true;
+                    $hotaru->message = $this->hotaru->lang["sb_base_post_pending"];
+                }
+                
+                // check if global edit permissions
+                if ($this->hotaru->currentUser->getPermission('can_edit_posts') == 'yes') { $can_edit = true; }
+                
+                // display post or show error message
+                if ((!$buried && !$pending) || $can_edit){
+                    $this->hotaru->displayTemplate('sb_post');
+                } else {
+                    $this->hotaru->messageType = "red";
+                    $this->hotaru->showMessage();
+                }
+                
+                return true;
                 break;
-            default:
+                
+            case 'list':
                 $this->hotaru->displayTemplate('sb_list');
                 return true;
         }

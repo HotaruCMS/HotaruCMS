@@ -55,8 +55,8 @@
 </ul>
 
 <ul class="navigation nav_right">
-    <?php     // RSS Link and icon if Submit plugin is active
-        if ($hotaru->isActive('submit')) { ?>
+    <?php     // RSS Link and icon if a type "base" plugin is active
+        if ($hotaru->isActive('base')) { ?>
         <li>
         <a href="<?php echo $hotaru->url(array('page'=>'rss')); ?>">RSS 
             <img id="rss_icon" src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png" alt="RSS" />
