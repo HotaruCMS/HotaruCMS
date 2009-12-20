@@ -143,7 +143,9 @@ class SbBase
         // editorial (story with an internal link)
         if (strstr($hotaru->post->origUrl, BASEURL)) { 
             $hotaru->vars['editorial'] = true;
-        } else { $hotaru->vars['editorial'] = false; } 
+        } else { 
+            $hotaru->vars['editorial'] = false; 
+        } 
         
         // get settings from SB_Submit 
         if (!isset($hotaru->vars['submit_settings'])) {

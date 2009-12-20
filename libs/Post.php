@@ -149,14 +149,6 @@ class Post
                 
         $hotaru->pluginHook('post_add_post');
         
-        // Now that the post is in the database with an ID and category assigned, we can get its url and update that field: 
-        if ($this->hotaru->post->origUrl == "self") {
-            $this->origUrl = $hotaru->url(array('page'=>$this->id)); // update the url with the real one
-            $this->domain = BASEURL; 
-            $sql = "UPDATE " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s WHERE post_id = %d";
-            $hotaru->db->query($hotaru->db->prepare($sql, urlencode($this->origUrl), urlencode($this->domain), $this->id));
-        }
-        
         return true;
     }
     

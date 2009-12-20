@@ -147,6 +147,13 @@ class SbSubmitFunctions
                     // get post id (if editing)
                     $post_id = $hotaru->cage->post->testInt('submit_post_id');
                     $hotaru->vars['submitted_data']['submit_id'] = $post_id;
+                    
+                    /* if submitting an editorial, the "self" used instead of a url got changed to the 
+                       real url after the addPost function. BUT! When editing, we load the previously saved 
+                       temp data, which wipes that url! So, we get it again with its post id */ 
+                    if (!$hotaru->vars['submitted_data']['submit_orig_url']) {
+                        $hotaru->vars['submitted_data']['submit_orig_url'] = $hotaru->url(array('page'=>$post_id));
+                    }
                 }
                 break;
                 
@@ -451,6 +458,14 @@ class SbSubmitFunctions
             $hotaru->updatePost();    // Updates an existing post (e.g. returning to step 2 from step 3 to modify it)
         } else {
             $hotaru->addPost();    // Adds a new post
+            // Now that the post is in the database with an ID and category assigned, we can get its url and update that field: 
+            if ($hotaru->post->origUrl == "self") {
+                $post_id = $hotaru->post->vars['last_insert_id'];
+                $hotaru->post->origUrl = $hotaru->url(array('page'=>$post_id)); // update the url with the real one
+                $sql = "UPDATE " . TABLE_POSTS . " SET post_orig_url = %s WHERE post_id = %d";
+                $query = $hotaru->db->prepare($sql, urlencode($hotaru->post->origUrl), $post_id);
+                $hotaru->db->query($query);
+            }
         }
     }
     
