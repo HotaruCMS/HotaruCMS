@@ -82,7 +82,6 @@ class PluginFunctions
                 include_once(PLUGINS . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php");
                 
                 $tempPluginObject = new $plugin->plugin_class();        // create a temporary object of the plugin class
-                $tempPluginObject->hotaru = $hotaru;                    // assign $hotaru to the object
                 $hotaru->plugin->folder = $plugin->plugin_folder;     // assign plugin folder to $hotaru
 
                 // call the method that matches this hook
@@ -95,7 +94,7 @@ class PluginFunctions
                     if ($hook != 'install_plugin') { $hotaru->getPluginFolderFromClass($rMethod->class); } 
                     $hotaru->readPlugin();                              // fill Hotaru's plugin properties
                     $hotaru->includeLanguage();                         // if a language file exists, include it
-                    $result = $tempPluginObject->$hook($parameters);
+                    $result = $tempPluginObject->$hook($hotaru, $parameters);
                 } else {
                     $hotaru->readPlugin();                              // fill Hotaru's plugin properties
                     $hotaru->includeLanguage();                         // if a language file exists, include it

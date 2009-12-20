@@ -34,31 +34,29 @@
 
 class SbBase
 {
-    public $hotaru = '';   // access Hotaru functions using $this->hotaru
-    
     /**
      * Install Submit settings if they don't already exist
      */
-    public function install_plugin()
+    public function install_plugin($hotaru)
     {
         // Default settings 
-        $sb_base_settings = $this->hotaru->getSerializedSettings();
+        $sb_base_settings = $hotaru->getSerializedSettings();
         if (!isset($sb_base_settings['posts_per_page'])) { $sb_base_settings['posts_per_page'] = 10; }
         if (!isset($sb_base_settings['archive'])) { $sb_base_settings['archive'] = "no_archive"; }
-        $this->hotaru->updateSetting('sb_base_settings', serialize($sb_base_settings));
+        $hotaru->updateSetting('sb_base_settings', serialize($sb_base_settings));
         
         // Add "open in new tab" option to the default user settings
-        $base_settings = $this->hotaru->getDefaultSettings('base'); // originals from plugins
-        $site_settings = $this->hotaru->getDefaultSettings('site'); // site defaults updated by admin
+        $base_settings = $hotaru->getDefaultSettings('base'); // originals from plugins
+        $site_settings = $hotaru->getDefaultSettings('site'); // site defaults updated by admin
         if (!isset($base_settings['new_tab'])) { 
             $base_settings['new_tab'] = ""; $site_settings['new_tab'] = "";
-            $this->hotaru->updateDefaultSettings($base_settings, 'base'); 
-            $this->hotaru->updateDefaultSettings($site_settings, 'site');
+            $hotaru->updateDefaultSettings($base_settings, 'base'); 
+            $hotaru->updateDefaultSettings($site_settings, 'site');
         }
         if (!isset($base_settings['link_action'])) { 
             $base_settings['link_action'] = ""; $site_settings['link_action'] = "";
-            $this->hotaru->updateDefaultSettings($base_settings, 'base'); 
-            $this->hotaru->updateDefaultSettings($site_settings, 'site');
+            $hotaru->updateDefaultSettings($base_settings, 'base'); 
+            $hotaru->updateDefaultSettings($site_settings, 'site');
         }
     }
     
@@ -66,32 +64,32 @@ class SbBase
     /**
      * Determine the pageType
      */
-    public function theme_index_top()
+    public function theme_index_top($hotaru)
     {
-        switch ($this->hotaru->pageName)
+        switch ($hotaru->pageName)
         {
             case 'index':
-                $this->hotaru->pageType = 'list';
-                $this->hotaru->pageTitle = $this->hotaru->lang["sb_base_site_name"];
+                $hotaru->pageType = 'list';
+                $hotaru->pageTitle = $hotaru->lang["sb_base_site_name"];
                 break;
             case 'latest':
-                $this->hotaru->pageType = 'list';
-                $this->hotaru->pageTitle = $this->hotaru->lang["sb_base_latest"];
+                $hotaru->pageType = 'list';
+                $hotaru->pageTitle = $hotaru->lang["sb_base_latest"];
                 break;
             case 'upcoming':
-                $this->hotaru->pageType = 'list';
-                $this->hotaru->pageTitle = $this->hotaru->lang["sb_base_latest"];
+                $hotaru->pageType = 'list';
+                $hotaru->pageTitle = $hotaru->lang["sb_base_latest"];
                 break;
             case 'sort':
-                $this->hotaru->pageType = 'list';
+                $hotaru->pageType = 'list';
                 $sort = $hotaru->cage->get->testPage('sort');
                 $sort_lang = 'sb_base_' . str_replace('-', '_', $sort);
-                $this->hotaru->pageTitle = $this->hotaru->lang[$sort_lang];
+                $hotaru->pageTitle = $hotaru->lang[$sort_lang];
                 break;
         }
         
         // stop here if not a list of post page:
-        if (($this->hotaru->pageType != 'list') && ($this->hotaru->pageType != 'post')) {
+        if (($hotaru->pageType != 'list') && ($hotaru->pageType != 'post')) {
             return false; 
         }
         
@@ -100,24 +98,24 @@ class SbBase
         $funcs = new SbBaseFunctions();
         
         // if a list, get the posts:
-        if ($this->hotaru->pageType == 'list') {
-            $this->hotaru->vars['posts'] = $funcs->prepareList($this->hotaru);
+        if ($hotaru->pageType == 'list') {
+            $hotaru->vars['posts'] = $funcs->prepareList($hotaru);
         }
         
         // if a post, find it:
-        if ($this->hotaru->pageType == 'post')
+        if ($hotaru->pageType == 'post')
         {
-            $pagename = $this->hotaru->pageName;
+            $pagename = $hotaru->pageName;
             
             if (is_numeric($pagename)) {
                 // Page name is a number so it must be a post with non-friendly urls
-                $this->hotaru->readPost($pagename);    // read current post
-                $this->hotaru->pageTitle = $this->hotaru->post->title;
+                $hotaru->readPost($pagename);    // read current post
+                $hotaru->pageTitle = $hotaru->post->title;
             
-            } elseif ($post_id = $this->hotaru->isPostUrl($pagename)) {
+            } elseif ($post_id = $hotaru->isPostUrl($pagename)) {
                 // Page name belongs to a story
-                $this->hotaru->readPost($post_id);    // read current post
-                $this->hotaru->pageTitle = $this->hotaru->post->title;
+                $hotaru->readPost($post_id);    // read current post
+                $hotaru->pageTitle = $hotaru->post->title;
             
             } else {
                 // don't know what kind of post this is. Maybe return a page not found?
@@ -128,26 +126,26 @@ class SbBase
         
         // open links in a new tab?
         if (isset($hotaru->currentUser->settings['new_tab'])) { 
-            $this->hotaru->vars['target'] = 'target="_blank"'; 
+            $hotaru->vars['target'] = 'target="_blank"'; 
         } else { 
-            $this->hotaru->vars['target'] = ''; 
+            $hotaru->vars['target'] = ''; 
         }
         
         // open link to the source or the site post?
         if (isset($hotaru->currentUser->settings['link_action'])) { 
-            $this->hotaru->vars['link_action'] = 'source'; 
+            $hotaru->vars['link_action'] = 'source'; 
         } else { 
-            $this->hotaru->vars['link_action'] = ''; 
+            $hotaru->vars['link_action'] = ''; 
         }
         
         // editorial (story with an internal link)
-        if (strstr($this->hotaru->post->origUrl, BASEURL)) { 
-            $this->hotaru->vars['editorial'] = true;
-        } else { $this->hotaru->vars['editorial'] = false; } 
+        if (strstr($hotaru->post->origUrl, BASEURL)) { 
+            $hotaru->vars['editorial'] = true;
+        } else { $hotaru->vars['editorial'] = false; } 
         
         // get settings from SB_Submit 
-        if (!isset($this->hotaru->vars['submit_settings'])) {
-            $this->hotaru->vars['submit_settings'] = $this->hotaru->getSerializedSettings('sb_submit');
+        if (!isset($hotaru->vars['submit_settings'])) {
+            $hotaru->vars['submit_settings'] = $hotaru->getSerializedSettings('sb_submit');
         }
     }
     
@@ -155,10 +153,10 @@ class SbBase
     /**
      * Match meta tag to a post's description (keywords is done in the Tags plugin)
      */
-    public function header_meta()
+    public function header_meta($hotaru)
     {    
-        if ($this->hotaru->pageType != 'post') { return false; }
-        $meta_content = sanitize($this->hotaru->post->content, 1);
+        if ($hotaru->pageType != 'post') { return false; }
+        $meta_content = sanitize($hotaru->post->content, 1);
         $meta_content = truncate($meta_content, 200);
         echo '<meta name="description" content="' . $meta_content . '">' . "\n";
         return true;
@@ -168,31 +166,31 @@ class SbBase
     /**
      * Add "Latest" to the navigation bar
      */
-    public function navigation()
+    public function navigation($hotaru)
     {
         // highlight "Latest" as active tab
-        if ($this->hotaru->pageName == 'latest') { $status = "id='navigation_active'"; } else { $status = ""; }
+        if ($hotaru->pageName == 'latest') { $status = "id='navigation_active'"; } else { $status = ""; }
         
         // display the link in the navigation bar
-        echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'latest')) . "'>" . $this->hotaru->lang["sb_base_latest"] . "</a></li>\n";
+        echo "<li><a  " . $status . " href='" . $hotaru->url(array('page'=>'latest')) . "'>" . $hotaru->lang["sb_base_latest"] . "</a></li>\n";
     }
     
     
     /**
      * Replace the default breadcrumbs in specific circumstances
      */
-    public function breadcrumbs()
+    public function breadcrumbs($hotaru)
     {
-        if ($this->hotaru->pageName == 'index') { 
-            $this->hotaru->pageTitle = $this->hotaru->lang["sb_base_top"];
+        if ($hotaru->pageName == 'index') { 
+            $hotaru->pageTitle = $hotaru->lang["sb_base_top"];
         }
         
-        switch ($this->hotaru->pageName) {
+        switch ($hotaru->pageName) {
             case 'index':
-                $this->hotaru->pageTitle .= $this->hotaru->rssBreadcrumbsLink('top');
+                $hotaru->pageTitle .= $hotaru->rssBreadcrumbsLink('top');
                 break;
             case 'latest':
-                $this->hotaru->pageTitle .= $this->hotaru->rssBreadcrumbsLink('new');
+                $hotaru->pageTitle .= $hotaru->rssBreadcrumbsLink('new');
                 break;
         }
     }
@@ -200,17 +198,17 @@ class SbBase
     /**
      * Determine which template to show and do preparation of variables, etc.
      */
-    public function theme_index_main()
+    public function theme_index_main($hotaru)
     {
         // stop here if not a list of a post
-        if (($this->hotaru->pageType != 'list') && ($this->hotaru->pageType != 'post')) { return false; }
+        if (($hotaru->pageType != 'list') && ($hotaru->pageType != 'post')) { return false; }
         
         // necessary settings:
-        $this->hotaru->vars['use_content'] = $this->hotaru->vars['submit_settings']['content'];
-        $this->hotaru->vars['use_summary'] = $this->hotaru->vars['submit_settings']['summary'];
-        $this->hotaru->vars['summary_length'] = $this->hotaru->vars['submit_settings']['summary_length'];
+        $hotaru->vars['use_content'] = $hotaru->vars['submit_settings']['content'];
+        $hotaru->vars['use_summary'] = $hotaru->vars['submit_settings']['summary'];
+        $hotaru->vars['summary_length'] = $hotaru->vars['submit_settings']['summary_length'];
         
-        switch ($this->hotaru->pageType)
+        switch ($hotaru->pageType)
         {
             case 'post':
                 // This post is visible if it's not buried/pending OR if the viewer has edit post permissions...
@@ -219,33 +217,33 @@ class SbBase
                 $buried = false; $pending = false; $can_edit = false;
                 
                 // check if buried:
-                if ($this->hotaru->post->status == 'buried') { 
+                if ($hotaru->post->status == 'buried') { 
                     $buried = true;
-                    $hotaru->message = $this->hotaru->lang["sb_base_post_buried"];
+                    $hotaru->message = $hotaru->lang["sb_base_post_buried"];
                 } 
                 
                 // check if pending:
-                if ($this->hotaru->post->status == 'pending') { 
+                if ($hotaru->post->status == 'pending') { 
                     $pending = true;
-                    $hotaru->message = $this->hotaru->lang["sb_base_post_pending"];
+                    $hotaru->message = $hotaru->lang["sb_base_post_pending"];
                 }
                 
                 // check if global edit permissions
-                if ($this->hotaru->currentUser->getPermission('can_edit_posts') == 'yes') { $can_edit = true; }
+                if ($hotaru->currentUser->getPermission('can_edit_posts') == 'yes') { $can_edit = true; }
                 
                 // display post or show error message
                 if ((!$buried && !$pending) || $can_edit){
-                    $this->hotaru->displayTemplate('sb_post');
+                    $hotaru->displayTemplate('sb_post');
                 } else {
-                    $this->hotaru->messageType = "red";
-                    $this->hotaru->showMessage();
+                    $hotaru->messageType = "red";
+                    $hotaru->showMessage();
                 }
                 
                 return true;
                 break;
                 
             case 'list':
-                $this->hotaru->displayTemplate('sb_list');
+                $hotaru->displayTemplate('sb_list');
                 return true;
         }
     }

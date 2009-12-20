@@ -47,7 +47,7 @@ if ($hotaru->vars['posts']) {
         
         <div class="show_post_title">
             <?php if ($hotaru->vars['link_action'] == 'source') { ?>
-                <a href='<?php echo $hotaru->post->origUrl; ?>' <?php echo $target; ?>><?php echo $hotaru->post->title; ?></a>
+                <a href='<?php echo $hotaru->post->origUrl; ?>' <?php echo $hotaru->vars['target']; ?>><?php echo $hotaru->post->title; ?></a>
             <?php } else { ?>
                 <a href='<?php echo $hotaru->url(array('page'=>$hotaru->post->id)); ?>' <?php echo $hotaru->vars['target']; ?>><?php echo $hotaru->post->title; ?></a>
             <?php } ?>

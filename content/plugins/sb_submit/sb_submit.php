@@ -35,15 +35,13 @@
 
 class SbSubmit
 {
-    public $hotaru = '';   // access Hotaru functions using $this->hotaru
-    
     /**
      * Install Submit settings if they don't already exist
      */
-    public function install_plugin()
+    public function install_plugin($hotaru)
     {
         // Permissions
-        $site_perms = $this->hotaru->getDefaultPermissions('all');
+        $site_perms = $hotaru->getDefaultPermissions('all');
         if (!isset($site_perms['can_submit'])) { 
             $perms['options']['can_submit'] = array('yes', 'no', 'mod');
             $perms['options']['can_post_without_link'] = array('yes', 'no');
@@ -59,12 +57,12 @@ class SbSubmit
             $perms['can_post_without_link']['supermod'] = 'yes';
             $perms['can_post_without_link']['default'] = 'no';
             
-            $this->hotaru->updateDefaultPermissions($perms);
+            $hotaru->updateDefaultPermissions($perms);
         }
         
 
         // Default settings 
-        $submit_settings = $this->hotaru->getSerializedSettings();
+        $submit_settings = $hotaru->getSerializedSettings();
         
         //if (!isset($submit_settings['enabled'])) { $submit_settings['enabled'] = "checked"; }
         if (!isset($submit_settings['content'])) { $submit_settings['content'] = "checked"; }
@@ -80,41 +78,41 @@ class SbSubmit
         if (!isset($submit_settings['email_notify'])) { $submit_settings['email_notify'] = ""; }
         if (!isset($submit_settings['email_notify_mods'])) { $submit_settings['email_notify_mods'] = array(); }
         
-        $this->hotaru->updateSetting('sb_submit_settings', serialize($submit_settings));
+        $hotaru->updateSetting('sb_submit_settings', serialize($submit_settings));
     }
     
     
     /**
      * Determine the pageType
      */
-    public function theme_index_top()
+    public function theme_index_top($hotaru)
     {
         // Include SbSubmitFunctions if this is page name contains 'submit' 
-        if (strpos($this->hotaru->pageName, 'submit') !== false) {
+        if (strpos($hotaru->pageName, 'submit') !== false) {
             include_once(PLUGINS . 'sb_submit/libs/SbSubmitFunctions.php'); // used for submit functions
         }
         
-        switch ($this->hotaru->pageName)
+        switch ($hotaru->pageName)
         {
             // SUBMIT STEP 1
             case 'submit':
             case 'submit1':
             
                 // set properties
-                $this->hotaru->pageName = 'submit1';
-                $this->hotaru->pageType = 'submit';
-                $this->hotaru->pageTitle = $this->hotaru->lang["submit_step1"];
+                $hotaru->pageName = 'submit1';
+                $hotaru->pageType = 'submit';
+                $hotaru->pageTitle = $hotaru->lang["submit_step1"];
                 
                 // get functions and check if data has been submitted
                 $funcs = new SbSubmitFunctions();
-                $submitted = $funcs->checkSubmitted($this->hotaru, 'submit1');
+                $submitted = $funcs->checkSubmitted($hotaru, 'submit1');
                 
                 // save/reload data, then go to step 2 when no more errors
                 if ($submitted) {
-                    $key = $funcs->processSubmitted($this->hotaru, 'submit1');
-                    $errors = $funcs->checkErrors($this->hotaru, 'submit1', $key);
+                    $key = $funcs->processSubmitted($hotaru, 'submit1');
+                    $errors = $funcs->checkErrors($hotaru, 'submit1', $key);
                     if (!$errors) {
-                        $redirect = htmlspecialchars_decode($this->hotaru->url(array('page'=>'submit2', 'key'=>$key)));
+                        $redirect = htmlspecialchars_decode($hotaru->url(array('page'=>'submit2', 'key'=>$key)));
                         header("Location: " . $redirect);
                         exit;
                     }
@@ -125,107 +123,107 @@ class SbSubmit
             case 'submit2':
             
                 // set properties
-                $this->hotaru->pageType = 'submit';
-                $this->hotaru->pageTitle = $this->hotaru->lang["submit_step2"];
+                $hotaru->pageType = 'submit';
+                $hotaru->pageTitle = $hotaru->lang["submit_step2"];
                 
                 // get settings, functions and check if data has been submitted
-                $this->hotaru->vars['submit_settings'] = $this->hotaru->getSerializedSettings('sb_submit');
+                $hotaru->vars['submit_settings'] = $hotaru->getSerializedSettings('sb_submit');
                 $funcs = new SbSubmitFunctions();
-                $submitted = $funcs->checkSubmitted($this->hotaru, 'submit2');
+                $submitted = $funcs->checkSubmitted($hotaru, 'submit2');
                 
                 // not submitted so reload data from step 1 (or step 2 if editing)
                 if (!$submitted) {
                     // if coming from step 1, get the key from the url
-                    $key = $this->hotaru->cage->get->testAlnum('key');
+                    $key = $hotaru->cage->get->testAlnum('key');
                     
                     // use the key in the step 2 form
-                    $this->hotaru->vars['submit_key'] = $key; 
+                    $hotaru->vars['submit_key'] = $key; 
                     
                     // load submitted data:
-                    $submitted_data = $funcs->loadSubmitData($this->hotaru, $key);
+                    $submitted_data = $funcs->loadSubmitData($hotaru, $key);
                     
                     // merge defaults from "checkSubmitted" with $submitted_data...
-                    $merged_data = array_merge($this->hotaru->vars['submitted_data'], $submitted_data);
-                    $this->hotaru->vars['submitted_data'] = $merged_data;
+                    $merged_data = array_merge($hotaru->vars['submitted_data'], $submitted_data);
+                    $hotaru->vars['submitted_data'] = $merged_data;
                 }
                 
                 // submitted so save data and proceed to step 3 when no more errors
                 if ($submitted) {
-                    $key = $funcs->processSubmitted($this->hotaru, 'submit2');
-                    $errors = $funcs->checkErrors($this->hotaru, 'submit2', $key);
+                    $key = $funcs->processSubmitted($hotaru, 'submit2');
+                    $errors = $funcs->checkErrors($hotaru, 'submit2', $key);
                     if (!$errors) {
-                        $funcs->processSubmission($this->hotaru, $key);
-                        $postid = $this->hotaru->post->id; // got this from addPost in Post.php
-                        $link = $this->hotaru->url(array('page'=>'submit3', 'postid'=>$postid,'key'=>$key));
+                        $funcs->processSubmission($hotaru, $key);
+                        $postid = $hotaru->post->id; // got this from addPost in Post.php
+                        $link = $hotaru->url(array('page'=>'submit3', 'postid'=>$postid,'key'=>$key));
                         $redirect = htmlspecialchars_decode($link);
                         header("Location: " . $redirect);
                         exit;
                     }
-                    $this->hotaru->vars['submit_key'] = $key; // used in the step 2 form
+                    $hotaru->vars['submit_key'] = $key; // used in the step 2 form
                 }
                 break;
                 
             // SUBMIT STEP 3
             case 'submit3':
             
-                $this->hotaru->pageType = 'submit';
-                $this->hotaru->pageTitle = $this->hotaru->lang["submit_step3"];
+                $hotaru->pageType = 'submit';
+                $hotaru->pageTitle = $hotaru->lang["submit_step3"];
                 
                 // Get settings and check if the Edit button has been clicked
-                $this->hotaru->vars['submit_settings'] = $this->hotaru->getSerializedSettings('sb_submit');
+                $hotaru->vars['submit_settings'] = $hotaru->getSerializedSettings('sb_submit');
                 $funcs = new SbSubmitFunctions();
-                $submitted = $funcs->checkSubmitted($this->hotaru, 'submit3');
+                $submitted = $funcs->checkSubmitted($hotaru, 'submit3');
                 
                 // Edit button pressed so save data with newly assigned post id and go back to step 2
                 if ($submitted) {
-                    $key = $funcs->processSubmitted($this->hotaru, 'submit3');
-                    $funcs->processSubmission($this->hotaru, $key);
-                    $link = $this->hotaru->url(array('page'=>'submit2', 'key'=>$key));
+                    $key = $funcs->processSubmitted($hotaru, 'submit3');
+                    $funcs->processSubmission($hotaru, $key);
+                    $link = $hotaru->url(array('page'=>'submit2', 'key'=>$key));
                     $redirect = htmlspecialchars_decode($link);
                     header("Location: " . $redirect);
                     exit;
                 }
                 
                 // get key from the url for the submit 3 form
-                $key = $this->hotaru->cage->get->testAlnum('key');
-                $this->hotaru->vars['submit_key'] = $key; 
+                $key = $hotaru->cage->get->testAlnum('key');
+                $hotaru->vars['submit_key'] = $key; 
                 
                 // get post id from the url and read the post for the preview
-                $this->hotaru->post->id = $this->hotaru->cage->get->testInt('postid');
-                $this->hotaru->readPost();
+                $hotaru->post->id = $hotaru->cage->get->testInt('postid');
+                $hotaru->readPost();
 
                 break;
                 
             // Submit Confirm
             case 'submit_confirm':
             
-                $post_id = $this->hotaru->cage->post->testInt('submit_post_id');
-                $this->hotaru->readPost($post_id);
-                $this->hotaru->changePostStatus('new');
+                $post_id = $hotaru->cage->post->testInt('submit_post_id');
+                $hotaru->readPost($post_id);
+                $hotaru->changePostStatus('new');
                 
                 $return = 0; // will return false later if set to 1.
                 
-                $this->hotaru->pluginHook('submit_step_3_pre_trackback'); // Akismet uses this to change the status
+                $hotaru->pluginHook('submit_step_3_pre_trackback'); // Akismet uses this to change the status
                 
                 // Get settings
-                $submit_settings = $this->hotaru->getSerializedSettings();
+                $submit_settings = $hotaru->getSerializedSettings();
                 $set_pending = $submit_settings['set_pending'];
 
                 if ($set_pending == 'some_pending') {
-                    $posts_approved = $this->hotaru->postsApproved();
+                    $posts_approved = $hotaru->postsApproved();
                     $x_posts_needed = $submit_settings['x_posts'];
                 }
 
                 
                 // Set to pending is the user's permissions for "can_submit" are "mod" OR
                 // if "Put all new posts in moderation" has been checked in Admin->Submit
-                if (   ($this->hotaru->currentUser->getPermission('can_submit') == 'mod')
+                if (   ($hotaru->currentUser->getPermission('can_submit') == 'mod')
                     || ($set_pending == 'all_pending')
                     || (($set_pending == 'some_pending') && ($posts_approved <= $x_posts_needed)))
                 {
                 // Submitted posts given 'pending' for this user
-                    $this->hotaru->changePostStatus('pending');
-                    $this->hotaru->messages[$this->hotaru->lang['submit_form_moderation']] = 'green';
+                    $hotaru->changePostStatus('pending');
+                    $hotaru->messages[$hotaru->lang['submit_form_moderation']] = 'green';
                     $return = 1; // will return false just after we notify admins of the post (see about 10 lines down)
                 }
 
@@ -234,26 +232,26 @@ class SbSubmit
                 if (($submit_settings['email_notify']) && (file_exists(PLUGINS . 'users/libs/UserFunctions.php')))
                 {
                     require_once(PLUGINS . 'users/libs/UserFunctions.php');
-                    $uf = new UserFunctions($this->hotaru);
-                    $uf->notifyMods('post', $this->hotaru->post->status, $this->hotaru->post->id);
+                    $uf = new UserFunctions($hotaru);
+                    $uf->notifyMods('post', $hotaru->post->status, $hotaru->post->id);
                 }
                 */
                 
                 if ($return == 1) { return false; } // post is pending so we don't want to send a trackback. Return now.
                 
-                $this->hotaru->sendTrackback();
+                $hotaru->sendTrackback();
                 
-                header("Location: " . $this->hotaru->url(array('page'=>'latest')));    // Go to the Latest page
+                header("Location: " . $hotaru->url(array('page'=>'latest')));    // Go to the Latest page
                 die();
                 break;
         }
         
-        if ($this->hotaru->pageType != 'submit') { return false; }
+        if ($hotaru->pageType != 'submit') { return false; }
         
         // If the user is not logged in...
-        if (!$this->hotaru->currentUser->loggedIn) {
-            $return = urlencode($this->hotaru->url(array('page'=>'submit'))); // return user here after login
-            header("Location: " . $this->hotaru->url(array('page'=>'login', 'return'=>$return)));
+        if (!$hotaru->currentUser->loggedIn) {
+            $return = urlencode($hotaru->url(array('page'=>'submit'))); // return user here after login
+            header("Location: " . $hotaru->url(array('page'=>'login', 'return'=>$return)));
         }
     }
 
@@ -261,9 +259,9 @@ class SbSubmit
     /**
      * Include jQuery for hiding and showing email options in plugin settings
      */
-    public function admin_header_include_raw()
+    public function admin_header_include_raw($hotaru)
     {
-        if ($this->hotaru->isSettingsPage('submit')) {
+        if ($hotaru->isSettingsPage('submit')) {
             echo "<script type='text/javascript'>\n";
             echo "$(document).ready(function(){\n";
                 echo "$('#email_notify').click(function () {\n";
@@ -278,13 +276,13 @@ class SbSubmit
     /**
      * Output raw javascript directly to the header (instead of caching a .js file)
      */
-    public function header_include_raw()
+    public function header_include_raw($hotaru)
     {
         /* This code (courtesy of Pligg.com and SocialWebCMS.com) pops up a 
            box asking the user of they are sure they want to leave the page
            without submitting their post. */
            
-        if ($this->hotaru->pageName == 'submit2' || $this->hotaru->pageName == 'submit3') {
+        if ($hotaru->pageName == 'submit2' || $hotaru->pageName == 'submit3') {
             echo '
                 <script type="text/javascript">
         
@@ -298,7 +296,7 @@ class SbSubmit
                     if (!event && window.event) 
                               event = window.event;
                               
-                       event.returnValue = "' . $this->hotaru->lang['submit_accidental_click'] . '";
+                       event.returnValue = "' . $hotaru->lang['submit_accidental_click'] . '";
                 }
                 
                 </script>
@@ -310,30 +308,30 @@ class SbSubmit
     /**
      * Add "Submit" to the navigation bar
      */
-    public function navigation()
+    public function navigation($hotaru)
     {
         // return false if not logged in or submission disabled
-        if (!$this->hotaru->currentUser->loggedIn) { return false; }
-        //if (!$this->hotaru->post->useSubmission) { return false; }
+        if (!$hotaru->currentUser->loggedIn) { return false; }
+        //if (!$hotaru->post->useSubmission) { return false; }
         
         // highlight "Submit" as active tab
-        if ($this->hotaru->pageType == 'submit') { $status = "id='navigation_active'"; } else { $status = ""; }
+        if ($hotaru->pageType == 'submit') { $status = "id='navigation_active'"; } else { $status = ""; }
         
         // display the link in the navigation bar
-        echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'submit')) . "'>" . $this->hotaru->lang['submit_submit_a_story'] . "</a></li>\n";
+        echo "<li><a  " . $status . " href='" . $hotaru->url(array('page'=>'submit')) . "'>" . $hotaru->lang['submit_submit_a_story'] . "</a></li>\n";
     }
     
     
     /**
      * Determine which template to show and do preparation of variables, etc.
      */
-    public function theme_index_main()
+    public function theme_index_main($hotaru)
     {
-        switch ($this->hotaru->pageName)
+        switch ($hotaru->pageName)
         {
             // Submit Step 1
             case 'submit1':
-                $this->hotaru->displayTemplate('submit_step1');
+                $hotaru->displayTemplate('submit_step1');
                 return true;
                 break;
                 
@@ -341,38 +339,36 @@ class SbSubmit
             case 'submit2':
             
                 // settings
-                $this->hotaru->vars['submit_use_content'] = $this->hotaru->vars['submit_settings']['content'];
-                $this->hotaru->vars['submit_content_length'] = $this->hotaru->vars['submit_settings']['content_length'];
-                $allowable_tags = $this->hotaru->vars['submit_settings']['allowable_tags'];
-                $this->hotaru->vars['submit_allowable_tags'] = htmlentities($allowable_tags);
+                $hotaru->vars['submit_use_content'] = $hotaru->vars['submit_settings']['content'];
+                $hotaru->vars['submit_content_length'] = $hotaru->vars['submit_settings']['content_length'];
+                $allowable_tags = $hotaru->vars['submit_settings']['allowable_tags'];
+                $hotaru->vars['submit_allowable_tags'] = htmlentities($allowable_tags);
                 
                 // submitted data
-                $this->hotaru->vars['submit_use_link'] = $this->hotaru->vars['submitted_data']['submit_use_link'];
-                $this->hotaru->vars['submit_orig_url'] = urldecode($this->hotaru->vars['submitted_data']['submit_orig_url']);
-                $this->hotaru->vars['submit_title'] = sanitize($this->hotaru->vars['submitted_data']['submit_title'], 1);
-                $this->hotaru->vars['submit_content'] = sanitize($this->hotaru->vars['submitted_data']['submit_content'], 1);
-                $this->hotaru->vars['submit_post_id'] = $this->hotaru->vars['submitted_data']['submit_id'];
+                $hotaru->vars['submit_use_link'] = $hotaru->vars['submitted_data']['submit_use_link'];
+                $hotaru->vars['submit_orig_url'] = urldecode($hotaru->vars['submitted_data']['submit_orig_url']);
+                $hotaru->vars['submit_title'] = sanitize($hotaru->vars['submitted_data']['submit_title'], 1);
+                $hotaru->vars['submit_content'] = sanitize($hotaru->vars['submitted_data']['submit_content'], 1);
+                $hotaru->vars['submit_post_id'] = $hotaru->vars['submitted_data']['submit_id'];
                 
                 // strip htmlentities before showing in the form:
-                $this->hotaru->vars['submit_title'] = html_entity_decode($this->hotaru->vars['submit_title']);
-                $this->hotaru->vars['submit_content'] = html_entity_decode($this->hotaru->vars['submit_content']);
+                $hotaru->vars['submit_title'] = html_entity_decode($hotaru->vars['submit_title']);
+                $hotaru->vars['submit_content'] = html_entity_decode($hotaru->vars['submit_content']);
     
-                $this->hotaru->displayTemplate('submit_step2');
+                $hotaru->displayTemplate('submit_step2');
                 return true;
                 break;
                 
             // Submit Step 3
             case 'submit3':
                 // need these for the post preview (which uses SB Base's sb_post.php template)
-                $this->hotaru->vars['use_content'] = $this->hotaru->vars['submit_settings']['content'];
-                $this->hotaru->vars['summary_length'] = $this->hotaru->vars['submit_settings']['summary_length'];
-                $this->hotaru->vars['editorial'] = true; // this makes the link unclickable
-                $this->hotaru->displayTemplate('submit_step3');
+                $hotaru->vars['use_content'] = $hotaru->vars['submit_settings']['content'];
+                $hotaru->vars['summary_length'] = $hotaru->vars['submit_settings']['summary_length'];
+                $hotaru->vars['editorial'] = true; // this makes the link unclickable
+                $hotaru->displayTemplate('submit_step3');
                 return true;
                 break;
         }
     }
-
-
 }
 ?>

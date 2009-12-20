@@ -33,20 +33,18 @@
 
 class GoogleAnalytics
 {
-    public $hotaru = '';   // access Hotaru functions using $this->hotaru->hotaru
-    
     /**
      * Default settings on install
      */
-    public function install_plugin()
+    public function install_plugin($hotaru)
     {
         // Default settings 
-        if (!$this->hotaru->getSetting('google_analytics_key')) { $this->hotaru->updateSetting('google_analytics_key', ''); }
+        if (!$hotaru->getSetting('google_analytics_key')) { $hotaru->updateSetting('google_analytics_key', ''); }
     }
 		 
-    public function pre_close_body()
+    public function pre_close_body($hotaru)
     {
-	$google_analytics_key = $this->hotaru->getSetting('google_analytics_key');
+	$google_analytics_key = $hotaru->getSetting('google_analytics_key');
     echo "<script type=\"text/javascript\">
 		 var gaJsHost = ((\"https:\" == document.location.protocol) ? \"https://ssl.\" : \"http://www.\");
 		 document.write(unescape(\"%3Cscript src='\" + gaJsHost + \"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E\"));
