@@ -43,7 +43,7 @@ class SbSubmitSettings
         // Get settings from database if they exist...
         $submit_settings = $hotaru->getSerializedSettings();
         
-        //$enabled = $submit_settings['enabled'];
+        $enabled = $submit_settings['enabled'];
         $content = $submit_settings['content'];
         $content_length = $submit_settings['content_length'];
         $summary = $submit_settings['summary'];
@@ -75,7 +75,8 @@ class SbSubmitSettings
         
         echo "<form name='submit_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=sb_submit' method='post'>\n";
 
-        //echo "<p><input type='checkbox' name='enabled' value='enabled' " . $enabled . " >&nbsp;&nbsp;" . $this->lang["submit_settings_enable"] . "</p><br />\n"; 
+        echo "<p><input type='checkbox' name='enabled' value='enabled' " . $enabled . " >&nbsp;&nbsp;" . $hotaru->lang["submit_settings_enable"] . "<br />\n"; 
+        echo $hotaru->lang["submit_settings_enable_instruct"] . "</p><br />";
         
         echo $hotaru->lang["submit_settings_post_components"] . "<br /><br />\n";
            
@@ -199,13 +200,11 @@ class SbSubmitSettings
         $submit_settings = $hotaru->getSerializedSettings();
         
         // Enabled
-        /*
         if ($hotaru->cage->post->keyExists('enabled')) { 
             $enabled = 'checked'; 
         } else { 
             $enabled = ''; 
         }
-        */
     
         // Content
         if ($hotaru->cage->post->keyExists('content')) { 
@@ -291,7 +290,7 @@ class SbSubmitSettings
         
         $hotaru->pluginHook('submit_save_settings');
         
-        //$submit_settings['enabled'] = $enabled;
+        $submit_settings['enabled'] = $enabled;
         $submit_settings['content'] = $content;
         $submit_settings['content_length'] = $content_length;
         $submit_settings['summary'] = $summary;

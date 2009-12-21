@@ -295,6 +295,9 @@ class SbSubmitFunctions
             case 'submit2':
                 return $this->checkErrors2($hotaru, $key);
                 break;
+            case 'edit_post':
+                return $this->checkErrors2($hotaru, $key);
+                break;
             default:
                 return false;
         }

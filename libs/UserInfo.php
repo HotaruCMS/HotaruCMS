@@ -96,10 +96,10 @@ class UserInfo extends UserBase
             $details = new UserBase();
             $details->getUserBasic($hotaru, $user->user_id);
             if ($details->getPermission($permission) == $value) {
-                $mods[$user->id]['id'] = $details->id;
-                $mods[$user->id]['role'] = $details->role;
-                $mods[$user->id]['name'] = $details->name;
-                $mods[$user->id]['email'] = $details->email;
+                $mods[$details->id]['id'] = $details->id;
+                $mods[$details->id]['role'] = $details->role;
+                $mods[$details->id]['name'] = $details->name;
+                $mods[$details->id]['email'] = $details->email;
             }
         }
         return $mods;

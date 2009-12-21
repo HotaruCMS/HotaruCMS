@@ -31,7 +31,6 @@
     <?php $hotaru->pluginHook('navigation_first'); ?>
     <li><a href="<?php echo BASEURL; ?>"><?php echo $hotaru->lang["admin_theme_navigation_home"]; ?></a></li>
     <?php $hotaru->pluginHook('navigation'); ?>
-    <?php $hotaru->pluginHook('admin_navigation'); ?>
     <?php 
         if (!$hotaru->isActive('users')) { 
 

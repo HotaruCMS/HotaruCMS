@@ -6,7 +6,7 @@
  * folder: sb_submit
  * class: SbSubmit
  * type: post
- * hooks: install_plugin, theme_index_top, header_include, header_include_raw, navigation, admin_header_include_raw, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: install_plugin, admin_theme_index_top, theme_index_top, header_include, header_include_raw, navigation, admin_header_include_raw, breadcrumbs, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
  * requires: sb_base 0.1
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
@@ -77,7 +77,7 @@ class SbSubmit
         // Default settings 
         $submit_settings = $hotaru->getSerializedSettings();
         
-        //if (!isset($submit_settings['enabled'])) { $submit_settings['enabled'] = "checked"; }
+        if (!isset($submit_settings['enabled'])) { $submit_settings['enabled'] = "checked"; }
         if (!isset($submit_settings['content'])) { $submit_settings['content'] = "checked"; }
         if (!isset($submit_settings['content_length'])) { $submit_settings['content_length'] = 50; }
         if (!isset($submit_settings['summary'])) { $submit_settings['summary'] = "checked"; }
@@ -96,10 +96,28 @@ class SbSubmit
     
     
     /**
-     * Determine the pageType
+     * Determine whether or not to show "Submit" in the admin navigation bar
+     */
+    public function admin_theme_index_top($hotaru)
+    {
+        /* get submit settings - so we can show or hide "Submit" in the Admin navigation bar. */
+        $hotaru->vars['submit_settings'] = $hotaru->getSerializedSettings('sb_submit');
+        $hotaru->vars['submission_closed'] = false;
+        if (!$hotaru->vars['submit_settings']['enabled']) { $hotaru->vars['submission_closed'] = true; }
+    }
+    
+    
+    /**
+     * Determine the submission step and perform necessary actions
      */
     public function theme_index_top($hotaru)
     {
+        /* get submit settings - available to all because we need to know if submission is 
+           open or closed so we can show or hide the navigation bar "Submit" link. */
+        $hotaru->vars['submit_settings'] = $hotaru->getSerializedSettings('sb_submit');
+        $hotaru->vars['submission_closed'] = false;
+        if (!$hotaru->vars['submit_settings']['enabled']) { $hotaru->vars['submission_closed'] = true; }
+        
         // Exit if this page name does not contain 'submit' and isn't edit_post
         if ((strpos($hotaru->pageName, 'submit') === false) && ($hotaru->pageName != 'edit_post'))
         {
@@ -110,20 +128,31 @@ class SbSubmit
         $hotaru->vars['posting_denied'] = false;
         if ($hotaru->currentUser->getPermission('can_submit') == 'no') {
             // No permission to submit
-            $hotaru->messages[$hotaru->lang['submit_no_permission']] = "red";
+            $hotaru->messages[$hotaru->lang['submit_no_post_permission']] = "red";
             $hotaru->vars['posting_denied'] = true;
             return false;
         }
         
+        // redirect to log in page if not logged in
         if (!$hotaru->currentUser->loggedIn) { 
             $return = urlencode($hotaru->url(array('page'=>'submit'))); // return user here after login
             header("Location: " . $hotaru->url(array('page'=>'login', 'return'=>$return)));
             return false; 
         }
         
+        // return false if submission is closed
+        if ($hotaru->vars['submission_closed']) {
+            // Submission is closed
+            $hotaru->messages[$hotaru->lang["submit_posting_closed"]] = "red";
+            return false;
+        }
+        
         // Include SbSubmitFunctions
         include_once(PLUGINS . 'sb_submit/libs/SbSubmitFunctions.php'); // used for submit functions
-        
+
+        // get functions
+        $funcs = new SbSubmitFunctions();
+
         switch ($hotaru->pageName)
         {
             // SUBMIT STEP 1
@@ -135,8 +164,7 @@ class SbSubmit
                 $hotaru->pageType = 'submit';
                 $hotaru->pageTitle = $hotaru->lang["submit_step1"];
                 
-                // get functions and check if data has been submitted
-                $funcs = new SbSubmitFunctions();
+                // check if data has been submitted
                 $submitted = $funcs->checkSubmitted($hotaru, 'submit1');
                 
                 // save/reload data, then go to step 2 when no more errors
@@ -158,9 +186,7 @@ class SbSubmit
                 $hotaru->pageType = 'submit';
                 $hotaru->pageTitle = $hotaru->lang["submit_step2"];
                 
-                // get settings, functions and check if data has been submitted
-                $hotaru->vars['submit_settings'] = $hotaru->getSerializedSettings('sb_submit');
-                $funcs = new SbSubmitFunctions();
+                // check if data has been submitted
                 $submitted = $funcs->checkSubmitted($hotaru, 'submit2');
                 
                 // not submitted so reload data from step 1 (or step 2 if editing)
@@ -201,8 +227,7 @@ class SbSubmit
                 $hotaru->pageType = 'submit';
                 $hotaru->pageTitle = $hotaru->lang["submit_step3"];
                 
-                // Get settings and check if the Edit button has been clicked
-                $hotaru->vars['submit_settings'] = $hotaru->getSerializedSettings('sb_submit');
+                // Check if the Edit button has been clicked
                 $funcs = new SbSubmitFunctions();
                 $submitted = $funcs->checkSubmitted($hotaru, 'submit3');
                 
@@ -237,8 +262,7 @@ class SbSubmit
                 
                 $hotaru->pluginHook('submit_step_3_pre_trackback'); // Akismet uses this to change the status
                 
-                // Get settings
-                $submit_settings = $hotaru->getSerializedSettings();
+                // set to pending?
                 $set_pending = $submit_settings['set_pending'];
 
                 if ($set_pending == 'some_pending') {
@@ -274,12 +298,11 @@ class SbSubmit
                 $hotaru->sendTrackback();
                 
                 header("Location: " . $hotaru->url(array('page'=>'latest')));    // Go to the Latest page
-                die();
                 break;
                 
             // EDIT POST (after submission)
             case 'edit_post':
-            
+
                 $hotaru->pageType = 'submit';
                 $hotaru->pageTitle = $hotaru->lang["submit_edit_title"];
                 
@@ -287,11 +310,21 @@ class SbSubmit
                 if ($hotaru->cage->get->keyExists('post_id')) {
                     $hotaru->post->id = $hotaru->cage->get->testInt('post_id');
                     $hotaru->readPost();
+
+                    // authenticate...
+                    $can_edit = false;
+                    if ($hotaru->currentUser->getPermission('can_edit_posts') == 'yes') { $can_edit = true; }
+                    if (($hotaru->currentUser->getPermission('can_edit_posts') == 'own') && ($hotaru->currentUser->id == $hotaru->post->author)) { $can_edit = true; }
+                    $hotaru->vars['can_edit'] = $can_edit; // used in theme_index_main()
+                    
+                    if (!$can_edit) {
+                        $hotaru->messages[$hotaru->lang["submit_no_edit_permission"]] = "red";
+                        return false;
+                        exit;
+                    }
                 }
                 
-                // get settings, functions and check if data has been submitted
-                $hotaru->vars['submit_settings'] = $hotaru->getSerializedSettings('sb_submit');
-                $funcs = new SbSubmitFunctions();
+                // check if data has been submitted
                 $submitted = $funcs->checkSubmitted($hotaru, 'edit_post');
                 
                 // if being deleted...
@@ -311,38 +344,37 @@ class SbSubmit
                 // if form has been submitted...
                 if ($submitted) {
                     $key = $funcs->processSubmitted($hotaru, 'edit_post');
-                    $funcs->processSubmission($hotaru, $key);
+                    $errors = $funcs->checkErrors($hotaru, 'edit_post', $key);
+                    if (!$errors) {
+                        $funcs->processSubmission($hotaru, $key);
+                        if ($hotaru->cage->post->testAlnumLines('from') == 'post_man')
+                        {
+                            // Build the redirect link to send us back to Post Manager
+                            
+                            $redirect = BASEURL . "admin_index.php?page=plugin_settings&plugin=post_manager";
+                            if ($hotaru->cage->post->testAlnumLines('post_status_filter')) {
+                                $redirect .= "&type=filter";
+                                $redirect .= "&post_status_filter=" . $hotaru->cage->post->testAlnumLines('post_status_filter');
+                            }
+                            if ($hotaru->cage->post->getMixedString2('search_value')) {
+                                $redirect .= "&type=search";
+                                $redirect .= "&search_value=" . $hotaru->cage->post->getMixedString2('search_value');
+                            }
+                            $redirect .= "&pg=" . $hotaru->cage->post->testInt('pg');
+                            header("Location: " . $redirect);    // Go back to where we were in Post Manager
+                            exit;
+                        }
+                        else 
+                        {
+                            $redirect = htmlspecialchars_decode($hotaru->url(array('page'=>$hotaru->post->id)));
+                            header("Location: " . $redirect);
+                            exit;
+                        }
+                    }
                     
                     // load submitted data:
                     $submitted_data = $funcs->loadSubmitData($hotaru, $key);
-                
                 }
-                
-                
-                
-                // OLD CODE:
-                
-                /*
-                
-                $can_edit = false;
-                if ($hotaru->current_user->getPermission('can_edit_posts') == 'yes') { $can_edit = true; }
-                if (($hotaru->current_user->getPermission('can_edit_posts') == 'own') && ($hotaru->current_user->id == $user->id)) { $can_edit = true; }
-                
-                if (strstr($post_orig_url, BASEURL)) { $editorial = true; } else { $editorial = false; } // is this an editorial (story with an internal link?)
-                
-                if (!$can_edit) {
-                    $hotaru->message = "You don't have permission to edit this post.";
-                    $hotaru->messageType = "red";
-                    $hotaru->showMessage();
-                    return false;
-                    die();
-                }
-
-                */
-
-
-
-
                 
             break;
         }
@@ -354,7 +386,7 @@ class SbSubmit
      */
     public function admin_header_include_raw($hotaru)
     {
-        if ($hotaru->isSettingsPage('submit')) {
+        if ($hotaru->isSettingsPage('sb_submit')) {
             echo "<script type='text/javascript'>\n";
             echo "$(document).ready(function(){\n";
                 echo "$('#email_notify').click(function () {\n";
@@ -405,13 +437,26 @@ class SbSubmit
     {
         // return false if not logged in or submission disabled
         if (!$hotaru->currentUser->loggedIn) { return false; }
-        //if (!$hotaru->post->useSubmission) { return false; }
+        if (isset($hotaru->vars['submission_closed']) && $hotaru->vars['submission_closed'] == true) { return false; }
         
         // highlight "Submit" as active tab
         if ($hotaru->pageType == 'submit') { $status = "id='navigation_active'"; } else { $status = ""; }
         
         // display the link in the navigation bar
         echo "<li><a  " . $status . " href='" . $hotaru->url(array('page'=>'submit')) . "'>" . $hotaru->lang['submit_submit_a_story'] . "</a></li>\n";
+    }
+    
+    
+    /**
+     * Replace the default breadcrumbs in Edit Post
+     */
+    public function breadcrumbs($hotaru)
+    {
+        if ($hotaru->pageName == 'edit_post') {
+            $post_link = "<a href='" . $hotaru->url(array('page'=>$hotaru->post->id)) . "'>";
+            $post_link .= $hotaru->post->title . "</a>";
+            $hotaru->pageTitle = $hotaru->pageTitle . " &raquo; " . $post_link;
+        }
     }
     
     
@@ -429,7 +474,13 @@ class SbSubmit
         switch ($hotaru->pageName)
         {
             // Submit Step 1
+            case 'submit':
             case 'submit1':
+            
+                if ($hotaru->vars['submission_closed'] || $hotaru->vars['posting_denied']) {
+                    $hotaru->showMessages();
+                    return true;
+                }
             
                 // display template
                 $hotaru->displayTemplate('sb_submit1');
@@ -438,6 +489,11 @@ class SbSubmit
                 
             // Submit Step 2
             case 'submit2':
+            
+                if ($hotaru->vars['submission_closed'] || $hotaru->vars['posting_denied']) {
+                    $hotaru->showMessages();
+                    return true;
+                }
             
                 // settings
                 $hotaru->vars['submit_use_content'] = $hotaru->vars['submit_settings']['content'];
@@ -464,6 +520,11 @@ class SbSubmit
             // Submit Step 3
             case 'submit3':
             
+                if ($hotaru->vars['submission_closed'] || $hotaru->vars['posting_denied']) {
+                    $hotaru->showMessages();
+                    return true;
+                }
+            
                 // need these for the post preview (which uses SB Base's sb_post.php template)
                 $hotaru->vars['use_content'] = $hotaru->vars['submit_settings']['content'];
                 $hotaru->vars['summary_length'] = $hotaru->vars['submit_settings']['summary_length'];
@@ -477,7 +538,7 @@ class SbSubmit
             // Edit Post
             case 'edit_post':
             
-                if ($hotaru->vars['post_deleted']) {
+                if ($hotaru->vars['post_deleted'] || !$hotaru->vars['can_edit']) {
                     $hotaru->showMessages();
                     return true;
                 }
