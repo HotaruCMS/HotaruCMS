@@ -283,6 +283,12 @@ class SbSubmit
                 $hotaru->pageType = 'submit';
                 $hotaru->pageTitle = $hotaru->lang["submit_edit_title"];
                 
+                // get the post id and read in the data
+                if ($hotaru->cage->get->keyExists('post_id')) {
+                    $hotaru->post->id = $hotaru->cage->get->testInt('post_id');
+                    $hotaru->readPost();
+                }
+                
                 // get settings, functions and check if data has been submitted
                 $hotaru->vars['submit_settings'] = $hotaru->getSerializedSettings('sb_submit');
                 $funcs = new SbSubmitFunctions();
@@ -300,12 +306,6 @@ class SbSubmit
                         $hotaru->vars['post_deleted'] = true;
                         break;
                     }
-                }
-                
-                // get the post id and read in the data
-                if (!$submitted) {
-                    $hotaru->post->id = $hotaru->cage->get->testInt('post_id');
-                    $hotaru->readPost();
                 }
                 
                 // if form has been submitted...
