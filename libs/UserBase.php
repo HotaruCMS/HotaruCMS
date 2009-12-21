@@ -241,7 +241,7 @@ class UserBase
 
         $permissions = unserialize($db_perms);
         
-        if (!$permissions) { return false; }
+        if (!$permissions) { return array(); } // must return an empty array for array_merge, not false.
         
         if ($options_only) {
             return $permissions['options']; // the editPermissions function in the Users plugin needs these 

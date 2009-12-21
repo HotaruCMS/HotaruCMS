@@ -23,32 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-/*
-if ($hotaru->cage->post->getAlpha('submit2') == 'true') {
-    // Submitted this form...
-    $title_check = $hotaru->cage->post->noTags('post_title');    
-    $content_check = sanitize($hotaru->cage->post->getHtmLawed('post_content'), 2, $hotaru->post->allowableTags);
-    $content_check = stripslashes($content_check);
-    $post_orig_url = $hotaru->cage->post->testUri('post_orig_url');
-    $post_id = $hotaru->cage->post->getInt('post_id');    
-    $hotaru->post->id = $post_id;
-    
-} elseif ($hotaru->cage->post->getAlpha('submit3') == 'edit') {
-    // Come back from step 3 to make changes...
-    $title_check = $hotaru->post->title;
-    $content_check = $hotaru->post->content;
-    $post_orig_url = $hotaru->post->origUrl;
-    $post_id = $hotaru->post->id;
-} else {
-    // First time here...
-*/
-
-/*
-    $title_check = $hotaru->vars['post_orig_title'];
-    $content_check = "";
-    $post_id = 0;
-}
-*/
 
 $hotaru->pluginHook('submit_2_assign');
 
@@ -60,7 +34,7 @@ $hotaru->pluginHook('submit_2_assign');
     <form name='submit_2' action='<?php BASEURL; ?>index.php?page=submit2' method='post'>
     <table>
     
-    <?php if ($hotaru->vars['submit_use_link']) { // only show if posting a link ?>
+    <?php if (!$hotaru->vars['submit_editorial']) { // only show if posting a link ?>
         <tr>
             <td><?php echo $hotaru->lang["submit_url"]; ?>&nbsp; </td>
             <td><?php echo $hotaru->vars['submit_orig_url']; ?></td>

@@ -40,7 +40,7 @@ class SbSubmitFunctions
             case 'submit1':
             
                 // set defaults:
-                $hotaru->vars['submitted_data']['submit_use_link'] = true;
+                $hotaru->vars['submitted_data']['submit_editorial'] = false;
                 $hotaru->vars['submitted_data']['submit_orig_url'] = '';
                 
                 // no link necessary?
@@ -58,7 +58,7 @@ class SbSubmitFunctions
             case 'submit2':
 
                 // set defaults:
-                $hotaru->vars['submitted_data']['submit_use_link'] = true;
+                $hotaru->vars['submitted_data']['submit_editorial'] = false;
                 $hotaru->vars['submitted_data']['submit_orig_url'] = '';
                 $hotaru->vars['submitted_data']['submit_title'] = '';
                 $hotaru->vars['submitted_data']['submit_content'] = '';
@@ -73,7 +73,7 @@ class SbSubmitFunctions
             case 'submit3': // for step 3 EDIT
 
                 // set defaults:
-                $hotaru->vars['submitted_data']['submit_use_link'] = true;
+                $hotaru->vars['submitted_data']['submit_editorial'] = false;
                 $hotaru->vars['submitted_data']['submit_orig_url'] = '';
                 $hotaru->vars['submitted_data']['submit_title'] = '';
                 $hotaru->vars['submitted_data']['submit_content'] = '';
@@ -81,6 +81,24 @@ class SbSubmitFunctions
                 
                 // submit 3 edit form submitted? If so, return false so we don't process the data
                 if ($hotaru->cage->post->getAlpha('submit3edit') == 'true') { return true; }
+                
+                return false;
+                break;
+                
+            case 'edit_post':
+            
+                // set defaults:
+                $editorial = (strpos($hotaru->post->origUrl, BASEURL) !== false) ? true : false;
+                $hotaru->vars['submitted_data']['submit_editorial'] = $editorial;
+                
+                // for Post Manager...
+                $hotaru->vars['submitted_data']['submit_pm_from'] = '';
+                $hotaru->vars['submitted_data']['submit_pm_search'] = ''; 
+                $hotaru->vars['submitted_data']['submit_pm_filter'] = '';
+                $hotaru->vars['submitted_data']['submit_pm_page'] =  0;
+            
+                // edit_post form submitted?
+                if ($hotaru->cage->post->getAlpha('edit_post') == 'true') { return true; }
                 
                 return false;
                 break;
@@ -106,14 +124,14 @@ class SbSubmitFunctions
                 // is "Post without URL" checked?
                 if ($hotaru->cage->post->keyExists('no_link')) {
                     $hotaru->vars['submitted_data']['submit_orig_url'] = '';
-                    $hotaru->vars['submitted_data']['submit_use_link'] = false;
+                    $hotaru->vars['submitted_data']['submit_editorial'] = true;
                     
                 // is a url submitted via the form?
                 } elseif ($hotaru->cage->post->getAlpha('submit1') == 'true') { 
                     $url = $hotaru->cage->post->testUri('submit_orig_url');
                     if (!$url) { break; }
                     $hotaru->vars['submitted_data']['submit_orig_url'] = $url;
-                    $hotaru->vars['submitted_data']['submit_use_link'] = true;
+                    $hotaru->vars['submitted_data']['submit_editorial'] = false;
                     $title = $this->fetchTitle($url);
                     if (!$title) { $title = $hotaru->lang["submit_not_found"]; }
                     $hotaru->vars['submitted_data']['submit_title'] = $title;
@@ -123,7 +141,7 @@ class SbSubmitFunctions
                     $url = $hotaru->cage->get->testUri('url');
                     if (!$url) { break; }
                     $hotaru->vars['submitted_data']['submit_orig_url'] = $url;
-                    $hotaru->vars['submitted_data']['submit_use_link'] = true;
+                    $hotaru->vars['submitted_data']['submit_editorial'] = false;
                     $title = $this->fetchTitle($url);
                     if (!$title) { $title = $hotaru->lang["submit_not_found"]; }
                     $hotaru->vars['submitted_data']['submit_title'] = $title;
@@ -166,6 +184,33 @@ class SbSubmitFunctions
                     // get post id (if editing)
                     $post_id = $hotaru->cage->post->testInt('submit_post_id');
                     $hotaru->vars['submitted_data']['submit_id'] = $post_id;
+                }
+                break;
+                
+                
+            case 'edit_post': // from Edit post page
+                
+                if ($hotaru->cage->post->getAlpha('edit_post') == 'true') { 
+                    // get new (edited) title:
+                    $title = $hotaru->cage->post->getMixedString1('post_title');
+                    $hotaru->vars['submitted_data']['submit_title'] = $title;
+                    // get content:
+                    $allowable_tags = $hotaru->vars['submit_settings']['allowable_tags'];
+                    $content = sanitize($hotaru->cage->post->getHtmLawed('post_content'), 1, $allowable_tags);
+                    $hotaru->vars['submitted_data']['submit_content'] = $content;
+                    // get status
+                    $hotaru->vars['submitted_data']['submit_status'] = $hotaru->cage->post->testAlnumLines('post_status');
+                    $hotaru->vars['submitted_data']['submit_id'] = $hotaru->cage->post->getInt('post_id');
+                    $url = $hotaru->cage->post->testUri('post_orig_url');
+                    $hotaru->vars['submitted_data']['submit_orig_url'] = $url;
+                    // editorial (story with an internal link)
+                    $hotaru->vars['submitted_data']['submit_editorial'] = (strpos($url, BASEURL) !== false) ? true : false; 
+
+                    // from Post Manager...
+                    $hotaru->vars['submitted_data']['submit_pm_from'] = $hotaru->cage->post->testAlnumLines('from');
+                    $hotaru->vars['submitted_data']['submit_pm_search'] = $hotaru->cage->post->getMixedString2('search_value'); 
+                    $hotaru->vars['submitted_data']['submit_pm_filter'] = $hotaru->cage->post->testAlnumLines('post_status_filter');
+                    $hotaru->vars['submitted_data']['submit_pm_page'] =  $hotaru->cage->post->testInt('pg');
                 }
                 break;
 
@@ -269,6 +314,14 @@ class SbSubmitFunctions
             return true; // error found
         }
         
+        // check user has permission to post
+        if ($hotaru->currentUser->getPermission('can_submit') == 'no') {
+            // No permission to submit
+            $hotaru->message = $hotaru->lang["submit_no_permission"];
+            $hotaru->messageType = 'red';
+            return true; //error found
+        }
+        
         // get the settings we need:
         $submit_settings = $hotaru->getSerializedSettings('sb_submit');
         $daily_limit = $submit_settings['daily_limit'];
@@ -277,13 +330,15 @@ class SbSubmitFunctions
         // get the last submitted data by this user:
         $submitted_data = $this->loadSubmitData($hotaru, $key);
         $url = urldecode($submitted_data['submit_orig_url']);
-        $use_link = $submitted_data['submit_use_link'];
-        
+        $editorial = $submitted_data['submit_editorial'];
+
         // allow submission to continue without a link
-        if (!$use_link && ($hotaru->currentUser->getPermission('can_post_without_link') == 'yes')) { 
-            $hotaru->vars['submit_use_link'] = false; 
+        if ($editorial && ($hotaru->currentUser->getPermission('can_post_without_link') == 'yes')) { 
+            $hotaru->vars['submit_editorial'] = true; 
             return false; //no error
         }
+        
+        echo "<pre>"; print_r($hotaru->currentUser); echo "</pre>";
         
         if (!$submitted_data) {
             // Nothing submitted
@@ -291,7 +346,7 @@ class SbSubmitFunctions
             $hotaru->messageType = 'red';
             return true; // error found
         }
-        
+                    
         // ******** CHECK URL ********
 
         if (!$url) {
@@ -343,7 +398,17 @@ class SbSubmitFunctions
      */
     public function checkErrors2($hotaru, $key = '')
     {
+        // check user has permission to post
+        if ($hotaru->currentUser->getPermission('can_submit') == 'no') {
+            // No permission to submit
+            $hotaru->messages[$hotaru->lang['submit_no_permission']] = "red";
+            return true; //error found
+        }
+        
         $post_id = $hotaru->cage->post->testInt('submit_post_id'); // 0 unless come back from step 3.
+        
+        // for editing posts only (not from step 3)
+        if ($hotaru->cage->post->keyExists('edit_post')) { $edit = true; } else {$edit = false; }
         
         // get the settings we need:
         $submit_settings = $hotaru->getSerializedSettings('sb_submit');
@@ -354,6 +419,10 @@ class SbSubmitFunctions
         $submitted_data = $this->loadSubmitData($hotaru, $key);
         $title = $submitted_data['submit_title'];
         $content = $submitted_data['submit_content'];
+        
+        if ($edit) {
+            $orig_url = $submitted_data['submit_orig_url'];
+        }
     
         if (!$submitted_data) {
             // Nothing submitted
@@ -363,15 +432,26 @@ class SbSubmitFunctions
         
         // defaults:
         $error_csrf = 0;
+        $error_url = 0;
         $error_title = 0;
         $error_content = 0;
         $error_hooks = 0;
         
         // ******** CHECK CSRF *******
         
-        if (!$hotaru->csrf('check', 'submit2') && !$hotaru->csrf('check', 'submit3')) {
+        if (!$hotaru->csrf('check', 'submit2') 
+            && !$hotaru->csrf('check', 'submit3')
+            && !$hotaru->csrf('check', 'edit_post')) {
             $hotaru->messages[$hotaru->lang['error_csrf']] = "red";
             $error_csrf = 1;
+        }
+        
+        // ******** CHECK URL ********
+        $error_url = 0;
+        if ($edit && !$orig_url) {
+            // No url present...
+            $hotaru->messages[$hotaru->lang['submit_url_not_complete_error']] = "red";
+            $error_url = 1;
         }
         
         // ******** CHECK TITLE ********
@@ -424,7 +504,7 @@ class SbSubmitFunctions
         }
         
         // Return true if error is found
-        if ($error_csrf == 1 || $error_title == 1 || $error_content == 1 || $error_hooks == 1) { return true; } else { return false; }
+        if ($error_csrf == 1 || $error_url == 1 || $error_title == 1 || $error_content == 1 || $error_hooks == 1) { return true; } else { return false; }
     }
     
     
@@ -437,9 +517,9 @@ class SbSubmitFunctions
         
         // get the last submitted data by this user:
         $submitted_data = $this->loadSubmitData($hotaru, $key);
-        $use_link = $submitted_data['submit_use_link'];
+        $editorial = $submitted_data['submit_editorial'];
 
-        if ($use_link || ($hotaru->post->id != 0)) {
+        if (!$editorial || ($hotaru->post->id != 0)) {
             $hotaru->post->origUrl = $submitted_data['submit_orig_url'];
         } else {
             $hotaru->post->origUrl = "self";
@@ -449,9 +529,13 @@ class SbSubmitFunctions
         $hotaru->post->url = make_url_friendly($hotaru->post->title);
         $hotaru->post->domain = get_domain(urldecode($hotaru->post->origUrl)); // returns domain including http:// 
         $hotaru->post->content = $submitted_data['submit_content'];
-        $hotaru->post->status = 'processing';
         $hotaru->post->author = $hotaru->currentUser->id;
-        
+        if (isset($submitted_data['submit_status'])) {
+            $hotaru->post->status = $submitted_data['submit_status'];
+        } else {
+            $hotaru->post->status = 'processing';
+        }
+                
         $hotaru->pluginHook('submit_2_process_submission');
         
         if ($hotaru->post->id != 0) {

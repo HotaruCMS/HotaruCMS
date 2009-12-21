@@ -316,5 +316,39 @@ class Post
         
         return $count;
     }
+    
+    
+    /**
+     * Get Unique Post Statuses
+     *
+     * @return array|false
+     */
+    public function getUniqueStatuses($hotaru) 
+    {
+        /* This function pulls all the different statuses from current links, 
+        or adds some defaults if not present.*/
+
+        $unique_statuses = array();
+        
+        // Some essentials:
+        array_push($unique_statuses, 'new');
+        array_push($unique_statuses, 'top');
+        array_push($unique_statuses, 'pending');
+        array_push($unique_statuses, 'buried');
+        array_push($unique_statuses, 'processing');
+        
+        // Add any other statuses already in use:
+        $sql = "SELECT DISTINCT post_status FROM " . TABLE_POSTS;
+        $statuses = $hotaru->db->get_results($hotaru->db->prepare($sql));
+        if ($statuses) {
+            foreach ($statuses as $status) {
+                if ($status->post_status && !in_array($status->post_status, $unique_statuses)) {
+                    array_push($unique_statuses, $status->post_status);
+                }
+            }
+        }
+        
+        if ($unique_statuses) { return $unique_statuses; } else { return false; }
+    }
 }
 ?>
