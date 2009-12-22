@@ -31,7 +31,7 @@
 if ($hotaru->vars['posts']) {
     $pg = $hotaru->cage->get->getInt('pg');
     
-    $pagedResults = $hotaru->pagination($hotaru->vars['posts'], 10, $pg);
+    $pagedResults = $hotaru->pagination($hotaru->vars['posts'], $hotaru->vars['posts_per_page'], $pg);
     while($post = $pagedResults->fetchPagedRow()) {
         $hotaru->readPost(0, $post);
         $user = new UserBase();

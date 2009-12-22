@@ -30,6 +30,4 @@ $lang["google_analytics_settings_header"] = "Google Analytics Settings";
 $lang["google_analytics_settings_instructions"] = "To use this plugin, you must have the <b>Web property ID</b> provided by Google Analytics: e.g. <b>UA-00000000-00</b><br />To find Web property ID, login to your Google Analytics Account: in overview you can see near <i>Website Profile</i> name, your code.";
 $lang["google_analytics_settings_key"] = "Enter your Google Analytics Web property ID";
 $lang["google_analytics_settings_no_key"] = "Please enter Web property ID";
-$lang["google_analytics_settings_save"] = "Save";
-$lang["google_analytics_settings_saved"] = "Settings saved";
 ?>

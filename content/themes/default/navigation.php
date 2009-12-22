@@ -49,7 +49,7 @@
                 echo "<li><a " . $status . " href='" . $hotaru->url(array(), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_login"] . "</a></li>"; 
             }
         } else {
-            $hotaru->pluginHook('navigation_users', true, 'users'); // ensures login/logout/register are last.
+            $hotaru->pluginHook('navigation_users'); // ensures login/logout/register are last.
         }
     ?>
 </ul>

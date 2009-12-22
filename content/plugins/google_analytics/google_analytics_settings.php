@@ -63,7 +63,7 @@ class GoogleAnalyticsSettings
                 
         echo "<br /><br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
-        echo "<input type='submit' value='" . $hotaru->lang["google_analytics_settings_save"] . "' />\n";
+        echo "<input type='submit' value='" . $hotaru->lang["main_form_save"] . "' />\n";
         echo "<input type='hidden' name='csrf' value='" . $hotaru->csrfToken . "' />\n";
         echo "</form>\n";
 	
@@ -90,7 +90,7 @@ public function saveSettings($hotaru)
             // save settings
             $hotaru->updateSetting('google_analytics_key', $google_analytics_key);
 
-            $hotaru->message = $hotaru->lang["google_analytics_settings_saved"];
+            $hotaru->message = $hotaru->lang["main_settings_saved"];
             $hotaru->messageType = "green";
         }
         

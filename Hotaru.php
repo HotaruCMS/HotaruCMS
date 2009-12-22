@@ -266,7 +266,7 @@ class Hotaru
     public function isPage($page = '')
     {
         $pageHandling = new PageHandling();
-        return $pageHandling->getPageName($this, $page);
+        return $pageHandling->isPage($this, $page);
     }
     
     

@@ -6,7 +6,7 @@
  * folder: sb_base
  * class: SbBase
  * type: base
- * hooks: install_plugin, theme_index_top, header_meta, header_include, navigation, breadcrumbs, theme_index_main
+ * hooks: install_plugin, theme_index_top, header_meta, header_include, navigation, breadcrumbs, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -94,6 +94,10 @@ class SbBase
         if ($hotaru->pageType && ($hotaru->pageType != 'list')) {
             return false; 
         }
+        
+        // get settings
+        $hotaru->vars['sb_base_settings'] = $hotaru->getSerializedSettings('sb_base');
+        $hotaru->vars['posts_per_page'] = $hotaru->vars['sb_base_settings']['posts_per_page'];
         
         // include sb_base_functions class:
         include_once(PLUGINS . 'sb_base/libs/SbBaseFunctions.php');

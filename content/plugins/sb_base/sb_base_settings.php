@@ -58,11 +58,6 @@ class SbBaseSettings
         echo $hotaru->lang["sb_base_settings_posts_per_page"] . "</p>\n";
     
         $hotaru->pluginHook('sb_base_settings_form');
-        
-        echo "<p>" . $hotaru->lang["submit_settings_allowable_tags"] . " <input type='text' size=40 name='allowable_tags' value='" . $allowable_tags . "' /><br />";
-        echo $hotaru->lang["submit_settings_allowable_tags_example"] . "</p>\n";
-        
-        $hotaru->pluginHook('submit_settings_form2');
     
         echo "<br />\n";
 
