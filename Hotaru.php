@@ -1236,6 +1236,16 @@ class Hotaru
     
     
     /**
+     * Delete posts with "processing" status that are older than 30 minutes
+     * This is called automatically when a new post is submitted
+     */
+    public function deleteProcessingPosts()
+    {
+        $this->post->deleteProcessingPosts($this);
+    }
+    
+    
+    /**
      * Update a post's status
      *
      * @param string $status

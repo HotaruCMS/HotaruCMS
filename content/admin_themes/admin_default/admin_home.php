@@ -46,10 +46,10 @@
     <h2><?php echo SITE_NAME . " " . $hotaru->lang["admin_theme_main_stats"]; ?></h2>
     <ul id="site-stats">
     <li>Hotaru CMS v.<?php echo $hotaru->version; ?></li>
-    <?php $hotaru->pluginHook('admin_theme_main_stats', true, 'users', array('total_users', 'admins', 'supermods', 'moderators')); ?>
-    <?php $hotaru->pluginHook('admin_theme_main_stats', true, 'users', array('approved_users', 'pending_users', 'undermod_users', 'banned_users', 'killspammed_users')); ?>
-    <?php $hotaru->pluginHook('admin_theme_main_stats', true, 'submit', array('total_posts', 'approved_posts', 'pending_posts', 'buried_posts', 'archived_posts')); ?>
-    <?php $hotaru->pluginHook('admin_theme_main_stats', true, 'comments', array('total_comments', 'approved_comments', 'pending_comments')); ?>
+    <?php $hotaru->pluginHook('admin_theme_main_stats', 'sb_users', array('total_users', 'admins', 'supermods', 'moderators')); ?>
+    <?php $hotaru->pluginHook('admin_theme_main_stats', 'sb_users', array('approved_users', 'pending_users', 'undermod_users', 'banned_users', 'killspammed_users')); ?>
+    <?php $hotaru->pluginHook('admin_theme_main_stats', 'sb_base', array('total_posts', 'approved_posts', 'pending_posts', 'buried_posts', 'archived_posts')); ?>
+    <?php $hotaru->pluginHook('admin_theme_main_stats', 'sb_comments', array('total_comments', 'approved_comments', 'pending_comments')); ?>
     </ul>
 </td>
 

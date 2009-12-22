@@ -269,8 +269,6 @@ class SbSubmitFunctions
     
      /**
      * Delete temporary data older than 30 minutes
-     *
-     * @return bool
      */
     public function deleteTempData($db)
     {
@@ -340,8 +338,6 @@ class SbSubmitFunctions
             $hotaru->vars['submit_editorial'] = true; 
             return false; //no error
         }
-        
-        echo "<pre>"; print_r($hotaru->currentUser); echo "</pre>";
         
         if (!$submitted_data) {
             // Nothing submitted
@@ -553,6 +549,9 @@ class SbSubmitFunctions
                 $query = $hotaru->db->prepare($sql, urlencode($hotaru->post->origUrl), $post_id);
                 $hotaru->db->query($query);
             }
+            
+            // tidy up by deleting all processing posts older than 30 minutes:
+            $hotaru->deleteProcessingPosts();
         }
     }
     

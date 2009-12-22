@@ -6,7 +6,7 @@
  * folder: sb_base
  * class: SbBase
  * type: base
- * hooks: install_plugin, theme_index_top, header_meta, header_include, navigation, breadcrumbs, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: install_plugin, theme_index_top, header_meta, header_include, navigation, breadcrumbs, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, admin_maintenance_database, admin_maintenance_top, admin_theme_main_stats
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -203,6 +203,7 @@ class SbBase
         }
     }
     
+    
     /**
      * Determine which template to show and do preparation of variables, etc.
      */
@@ -253,6 +254,159 @@ class SbBase
             case 'list':
                 $hotaru->displayTemplate('sb_list');
                 return true;
+        }
+    }
+    
+    
+    /**
+     * Archive option on Maintenance page
+     */
+    public function admin_maintenance_database($hotaru)
+    {
+        $sb_base_settings = $hotaru->getSerializedSettings();
+        $archive = $sb_base_settings['archive'];
+        echo "<li><a href='" . BASEURL . "admin_index.php?page=maintenance&amp;action=update_archive'>";
+        echo $hotaru->lang["sb_base_maintenance_update_archive"] . "</a> - ";
+        if ($archive == 'no_archive') {
+            echo $hotaru->lang["sb_base_maintenance_update_archive_remove"];
+        } else {
+            echo $hotaru->lang["sb_base_maintenance_update_archive_desc_1"];
+            echo $hotaru->lang["sb_base_settings_post_archive_$archive"];
+            echo $hotaru->lang["sb_base_maintenance_update_archive_desc_2"];
+        }
+        echo "</li>";
+    }
+    
+    
+    /**
+     * Perform archiving tasks
+     */
+    public function admin_maintenance_top($hotaru)
+    {
+        if ($hotaru->cage->get->testAlnumLines('action') != 'update_archive') { return false; }
+        
+        $sb_base_settings = $hotaru->getSerializedSettings();
+        $archive = $sb_base_settings['archive'];
+        
+        // FIRST, WE NEED TO RESET THE ARCHIVE, setting all archive fields to "N":
+        
+        // posts
+        if ($hotaru->db->table_exists('posts')) {
+            $sql = "UPDATE " . DB_PREFIX . "posts SET post_archived = %s";
+            $hotaru->db->query($hotaru->db->prepare($sql, 'N'));
+        }
+        
+        // postmeta
+        if ($hotaru->db->table_exists('postmeta')) {
+            $sql = "UPDATE " . DB_PREFIX . "postmeta SET postmeta_archived = %s";
+            $hotaru->db->query($hotaru->db->prepare($sql, 'N'));
+        }
+        
+        // postvotes
+        if ($hotaru->db->table_exists('postvotes')) {
+            $sql = "UPDATE " . DB_PREFIX . "postvotes SET vote_archived = %s";
+            $hotaru->db->query($hotaru->db->prepare($sql, 'N'));
+        }
+        
+        // comments
+        if ($hotaru->db->table_exists('comments')) {
+            $sql = "UPDATE " . DB_PREFIX . "comments SET comment_archived = %s";
+            $hotaru->db->query($hotaru->db->prepare($sql, 'N'));
+        }
+        
+        // commentvotes
+        if ($hotaru->db->table_exists('commentvotes')) {
+            $sql = "UPDATE " . DB_PREFIX . "commentvotes SET cvote_archived = %s";
+            $hotaru->db->query($hotaru->db->prepare($sql, 'N'));
+        }
+        
+        // tags
+        if ($hotaru->db->table_exists('tags')) {
+            $sql = "UPDATE " . DB_PREFIX . "tags SET tags_archived = %s";
+            $hotaru->db->query($hotaru->db->prepare($sql, 'N'));
+        }
+        
+        // useractivity
+        if ($hotaru->db->table_exists('useractivity')) {
+            $sql = "UPDATE " . DB_PREFIX . "useractivity SET useract_archived = %s";
+            $hotaru->db->query($hotaru->db->prepare($sql, 'N'));
+        }
+        
+        // RETURN NOW IF NO_ARCHIVE IS SET ***************************** 
+        if ($archive == 'no_archive') { 
+            $hotaru->message = $hotaru->lang['sb_base_maintenance_archive_removed'];
+            $hotaru->messageType = 'green';
+            $hotaru->showMessage();
+            return true;
+        }
+        
+        // NEXT, START ARCHIVING! ***************************** 
+        $archive_text = "-" . $archive . " days"; // e.g. "-365 days"
+        $archive_date = date('YmdHis', strtotime($archive_text));
+        
+        // posts
+        if ($hotaru->db->table_exists('posts')) {
+            $sql = "UPDATE " . DB_PREFIX . "posts SET post_archived = %s WHERE post_date <= %s";
+            $hotaru->db->query($hotaru->db->prepare($sql, 'Y', $archive_date));
+        }
+        
+        // postmeta
+        if ($hotaru->db->table_exists('postmeta')) {
+            // No date field in postmeta table so join with posts table...
+            $sql = "UPDATE " . DB_PREFIX . "postmeta, " . DB_PREFIX . "posts  SET " . DB_PREFIX . "postmeta.postmeta_archived = %s WHERE (" . DB_PREFIX . "posts.post_date <= %s) AND (" . DB_PREFIX . "posts.post_id = " . DB_PREFIX . "postmeta.postmeta_postid)";
+            $hotaru->db->query($hotaru->db->prepare($sql, 'Y', $archive_date));
+        }
+        
+        // postvotes
+        if ($hotaru->db->table_exists('postvotes')) {
+            $sql = "UPDATE " . DB_PREFIX . "postvotes SET vote_archived = %s WHERE vote_date <= %s";
+            $hotaru->db->query($hotaru->db->prepare($sql, 'Y', $archive_date));
+        }
+        
+        // comments
+        if ($hotaru->db->table_exists('comments')) {
+            $sql = "UPDATE " . DB_PREFIX . "comments SET comment_archived = %s WHERE comment_date <= %s";
+            $hotaru->db->query($hotaru->db->prepare($sql, 'Y', $archive_date));
+        }
+        
+        // commentvotes
+        if ($hotaru->db->table_exists('commentvotes')) {
+            $sql = "UPDATE " . DB_PREFIX . "commentvotes SET cvote_archived = %s WHERE cvote_date <= %s";
+            $hotaru->db->query($hotaru->db->prepare($sql, 'Y', $archive_date));
+        }
+        
+        // tags
+        if ($hotaru->db->table_exists('tags')) {
+            $sql = "UPDATE " . DB_PREFIX . "tags SET tags_archived = %s WHERE tags_date <= %s";
+            $hotaru->db->query($hotaru->db->prepare($sql, 'Y', $archive_date));
+        }
+
+        // useractivity
+        if ($hotaru->db->table_exists('useractivity')) {
+            $sql = "UPDATE " . DB_PREFIX . "useractivity SET useract_archived = %s WHERE useract_date <= %s";
+            $hotaru->db->query($hotaru->db->prepare($sql, 'Y', $archive_date));
+        }
+
+        $hotaru->message = $hotaru->lang['sb_base_maintenance_archive_updated'];
+        $hotaru->messageType = 'green';
+        $hotaru->showMessage();
+        return true;
+
+    }
+    
+    
+    /**
+     * Show stats on Admin home page
+     */
+    public function admin_theme_main_stats($hotaru, $vars)
+    {
+        echo "<li>&nbsp;</li>";
+    
+        foreach ($vars as $stat_type) {
+            $posts = $hotaru->post->stats($hotaru, $stat_type);
+            if (!$posts) { $posts = 0; }
+            $lang_name = 'sb_base_admin_stats_' . $stat_type;
+            echo "<li>" . $hotaru->lang[$lang_name] . ": " . $posts . "</li>";
         }
     }
 

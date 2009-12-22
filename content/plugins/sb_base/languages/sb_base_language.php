@@ -74,4 +74,18 @@ $lang["sb_base_settings_post_archive_365"] = "1 year";
 $lang["sb_base_settings_post_archive_730"] = "2 years";
 $lang["sb_base_settings_post_archive_1095"] = "3 years";
 
+/* Maintenance page */
+$lang["sb_base_maintenance_update_archive"] = "Update the post archive";
+$lang["sb_base_maintenance_update_archive_remove"] = "Move any archived posts out of the archive. <small>(See Submit Settings)</small>";
+$lang["sb_base_maintenance_update_archive_desc_1"] = "Posts older than ";
+$lang["sb_base_maintenance_update_archive_desc_2"] = " will be moved into the archive. <small>(See SB Base Settings)</small>";
+$lang["sb_base_maintenance_archive_removed"] = "Done. There are currently no archived posts.";
+$lang["sb_base_maintenance_archive_updated"] = "Archive Updated";
+
+/* Admin Stats */
+$lang["sb_base_admin_stats_total_posts"] = "Total posts";
+$lang["sb_base_admin_stats_approved_posts"] = "Approved posts";
+$lang["sb_base_admin_stats_pending_posts"] = "Pending posts";
+$lang["sb_base_admin_stats_buried_posts"] = "Buried posts";
+$lang["sb_base_admin_stats_archived_posts"] = "Archived posts";
 ?>

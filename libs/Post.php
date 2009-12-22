@@ -293,6 +293,17 @@ class Post
     
     
     /**
+     * Delete posts with "processing" status that are older than 30 minutes
+     */
+    public function deleteProcessingPosts($hotaru)
+    {
+        $exp = date('YmdHis', strtotime("-30 mins"));
+        $sql = "DELETE FROM " . TABLE_POSTS . " WHERE post_status = %s AND post_date < %s";
+        $hotaru->db->query($hotaru->db->prepare($sql, 'processing', $exp));
+    }
+    
+
+    /**
      * Count posts in the last X hours/minutes for this user
      *
      * @param int $hours
@@ -349,6 +360,43 @@ class Post
         }
         
         if ($unique_statuses) { return $unique_statuses; } else { return false; }
+    }
+    
+    
+    /**
+     * Post stats
+     *
+     * @param string $stat_type
+     * @return int
+     */
+    public function stats($hotaru, $stat_type = '')
+    {
+        switch ($stat_type) {
+            case 'total_posts':
+                $sql = "SELECT count(post_id) FROM " . TABLE_POSTS;
+                $posts = $hotaru->db->get_var($sql);
+                break;
+            case 'approved_posts':
+                $sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s OR post_status = %s";
+                $posts = $hotaru->db->get_var($hotaru->db->prepare($sql, 'top', 'new'));
+                break;
+            case 'pending_posts':
+                $sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s";
+                $posts = $hotaru->db->get_var($hotaru->db->prepare($sql, 'pending'));
+                break;
+            case 'buried_posts':
+                $sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s";
+                $posts = $hotaru->db->get_var($hotaru->db->prepare($sql, 'buried'));
+                break;
+            case 'archived_posts':
+                $sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_archived = %s";
+                $posts = $hotaru->db->get_var($hotaru->db->prepare($sql, 'Y'));
+                break;
+            default:
+                $posts = 0;
+        }
+        
+        return $posts;
     }
 }
 ?>
