@@ -79,6 +79,9 @@ function create_table($table_name)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Categories';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql);
+        
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (category_name, category_safe_name) VALUES (%s, %s)";
+        $db->query($db->prepare($sql, urlencode('All'), urlencode('all')));
     }
         
         

@@ -66,5 +66,6 @@ define("TABLE_BLOCKED", DB_PREFIX . "blocked");
 define("TABLE_POSTS", DB_PREFIX . 'posts');
 define("TABLE_POSTMETA", DB_PREFIX . 'postmeta');
 define("TABLE_TEMPDATA", DB_PREFIX . 'tempdata');
+define("TABLE_CATEGORIES", DB_PREFIX . 'categories');
 
 ?>
