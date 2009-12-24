@@ -28,11 +28,11 @@ class Debug
     /**
      * Shows number of database queries and the time it takes for a page to load
      */
-    public function showQueriesAndTime($hotaru)
+    public function showQueriesAndTime($h)
     {
-        if ($hotaru->isDebug) { 
-            echo "<p class='debug'>" . $hotaru->db->num_queries . " " . $hotaru->lang['main_hotaru_queries_time'] . " " . timer_stop(1) . " " . 
-            $hotaru->lang['main_hotaru_seconds'] . $hotaru->lang['main_hotaru_memory_usage1'] . display_filesize(memory_get_usage()) . $hotaru->lang['main_hotaru_memory_usage2'] . "</p>"; 
+        if ($h->isDebug) { 
+            echo "<p class='debug'>" . $h->db->num_queries . " " . $h->lang['main_hotaru_queries_time'] . " " . timer_stop(1) . " " . 
+            $h->lang['main_hotaru_seconds'] . $h->lang['main_hotaru_memory_usage1'] . display_filesize(memory_get_usage()) . $h->lang['main_hotaru_memory_usage2'] . "</p>"; 
         }
     }
 }

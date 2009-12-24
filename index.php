@@ -27,7 +27,7 @@
 // includes
 require_once('hotaru_settings.php');
 require_once('Hotaru.php');
-$hotaru = new Hotaru();
-$hotaru->start('main');
+$h = new Hotaru();
+$h->start('main');
 
 ?>

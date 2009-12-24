@@ -36,15 +36,15 @@ class GoogleAnalytics
     /**
      * Default settings on install
      */
-    public function install_plugin($hotaru)
+    public function install_plugin($h)
     {
         // Default settings 
-        if (!$hotaru->getSetting('google_analytics_key')) { $hotaru->updateSetting('google_analytics_key', ''); }
+        if (!$h->getSetting('google_analytics_key')) { $h->updateSetting('google_analytics_key', ''); }
     }
 		 
-    public function pre_close_body($hotaru)
+    public function pre_close_body($h)
     {
-	$google_analytics_key = $hotaru->getSetting('google_analytics_key');
+	$google_analytics_key = $h->getSetting('google_analytics_key');
     echo "<script type=\"text/javascript\">
 		 var gaJsHost = ((\"https:\" == document.location.protocol) ? \"https://ssl.\" : \"http://www.\");
 		 document.write(unescape(\"%3Cscript src='\" + gaJsHost + \"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E\"));

@@ -26,20 +26,20 @@
  * @link      http://www.hotarucms.org/
  */
 // plugin hook
-$result = $hotaru->pluginHook('admin_theme_index_top');
+$result = $h->pluginHook('admin_theme_index_top');
 if (!$result) {
 ?>
         <!-- HEADER-->
         <?php
             // plugin hook
-            $result = $hotaru->pluginHook('admin_theme_index_header');
+            $result = $h->pluginHook('admin_theme_index_header');
             if (!$result) {
-                $hotaru->displayTemplate('header');
+                $h->displayTemplate('header');
             }
         ?>
     
         <div id="bd" role="main">              
-            <?php if ($hotaru->sidebars) { ?>
+            <?php if ($h->sidebars) { ?>
                 <div class='yui-gf'> 
                 <div class="yui-u">
             <?php } else { ?>
@@ -48,37 +48,37 @@ if (!$result) {
             <?php } ?>
                         <!-- BREADCRUMBS -->
                         <div id='breadcrumbs'>
-                            <?php echo $hotaru->breadcrumbs(); ?>
+                            <?php echo $h->breadcrumbs(); ?>
                         </div>
                             
                         <!-- MAIN -->
                         <div id="main">
                         <?php
                             // plugin hook
-                        $result = $hotaru->pluginHook('admin_theme_index_main');
+                        $result = $h->pluginHook('admin_theme_index_main');
                         if (!$result) {
-                                $page = $hotaru->getPageName();
+                                $page = $h->getPageName();
                                 if ($page == 'admin_login') {
-                                    if ($hotaru->currentUser->loggedIn) {
-                                        $hotaru->displayTemplate('admin_home');
+                                    if ($h->currentUser->loggedIn) {
+                                        $h->displayTemplate('admin_home');
                                     } else {
-                                        $hotaru->adminLoginForm();
+                                        $h->adminLoginForm();
                                     }
                                 } else {
-                                    $hotaru->displayTemplate($page);
+                                    $h->displayTemplate($page);
                                 } 
                         }
                     ?>    
                     </div>        
                     </div>
-                    <?php if ($hotaru->sidebars) { ?>
+                    <?php if ($h->sidebars) { ?>
                         <div class="yui-u first">
                         <!-- SIDEBAR -->
                         <?php
                             // plugin hook
-                            $result = $hotaru->pluginHook('admin_theme_index_sidebar');
+                            $result = $h->pluginHook('admin_theme_index_sidebar');
                             if (!$result) {
-                                $hotaru->displayTemplate('sidebar');
+                                $h->displayTemplate('sidebar');
                             }
                         ?>
                         </div>
@@ -88,9 +88,9 @@ if (!$result) {
         <!-- FOOTER -->
         <?php
             // plugin hook
-            $result = $hotaru->pluginHook('admin_theme_index_footer');
+            $result = $h->pluginHook('admin_theme_index_footer');
             if (!$result) {
-                $hotaru->displayTemplate('footer');
+                $h->displayTemplate('footer');
             }
         ?>
 <?php    } ?>

@@ -25,30 +25,30 @@
  */
 
 ?>
-    <?php echo $hotaru->lang["submit_instructions_3"]; ?> <br /><br />
+    <?php echo $h->lang["submit_instructions_3"]; ?> <br /><br />
     
-    <?php $hotaru->displayTemplate('sb_post', 'sb_base') ?>
+    <?php $h->displayTemplate('sb_post', 'sb_base') ?>
     
-    <?php $hotaru->pluginHook('submit_step3_pre_buttons'); ?>
+    <?php $h->pluginHook('submit_step3_pre_buttons'); ?>
     
     <div id="submit_edit_confirm">
     
         <!-- EDIT BUTTON -->
         <form name='submit_3' action='<?php BASEURL; ?>index.php?page=submit3' method='post'>
-        <input type='hidden' name='submit_post_id' value='<?php echo $hotaru->post->id; ?>' />
+        <input type='hidden' name='submit_post_id' value='<?php echo $h->post->id; ?>' />
         <input type='hidden' name='submit3edit' value='true' />
-        <input type='hidden' name='submit_key' value='<?php echo $hotaru->vars['submit_key']; ?>' />
-        <input type='hidden' name='csrf' value='<?php echo $hotaru->csrfToken; ?>' />
-        <input type='submit' name='submit' onclick="javascript:safeExit=true;" class='submit' value='<?php echo $hotaru->lang['main_form_edit']; ?>' />
+        <input type='hidden' name='submit_key' value='<?php echo $h->vars['submit_key']; ?>' />
+        <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
+        <input type='submit' name='submit' onclick="javascript:safeExit=true;" class='submit' value='<?php echo $h->lang['main_form_edit']; ?>' />
         </form>    
 
         <!-- CONFIRM BUTTON -->
         <form name='submit_3' action='<?php BASEURL; ?>index.php?page=submit_confirm' method='post'>
-        <input type='hidden' name='submit_post_id' value='<?php echo $hotaru->post->id; ?>' />
-        <input type='hidden' name='csrf' value='<?php echo $hotaru->csrfToken; ?>' />
-        <input type='submit' name='submit' onclick="javascript:safeExit=true;" class='submit' value='<?php echo $hotaru->lang['main_form_confirm']; ?>' />
+        <input type='hidden' name='submit_post_id' value='<?php echo $h->post->id; ?>' />
+        <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
+        <input type='submit' name='submit' onclick="javascript:safeExit=true;" class='submit' value='<?php echo $h->lang['main_form_confirm']; ?>' />
         </form>
     </div>
     
-    <?php $hotaru->pluginHook('submit_step3_post_buttons'); ?>
+    <?php $h->pluginHook('submit_step3_post_buttons'); ?>
     

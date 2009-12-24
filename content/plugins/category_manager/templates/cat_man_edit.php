@@ -27,15 +27,15 @@
 
 ?>
  
-    <h2><?php echo $hotaru->lang["cat_man_edit"]; ?></h2>
+    <h2><?php echo $h->lang["cat_man_edit"]; ?></h2>
 
     <table class="cat_man_table">
     <tr><td class="cat_man_body">
-        <?php echo $hotaru->lang["cat_man_edit_instruct"]; ?> <br /><br />
+        <?php echo $h->lang["cat_man_edit_instruct"]; ?> <br /><br />
     
         <form name='category_manager_edit_form' action='<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit_save' method='post'>
         <?php
-        foreach ($hotaru->vars['the_cats'] as $cat) {
+        foreach ($h->vars['the_cats'] as $cat) {
             if ($cat['category_safe_name'] != "all") {
                 if ($cat['category_parent']  > 1) {
                     for($i=1; $i<$cat['category_level']; $i++) {
@@ -50,21 +50,21 @@
         ?>
         <br />
         <div style="text-align: center;">
-            <input type='submit' name='cancel_all' value='<?php echo $hotaru->lang["cat_man_cancel"]; ?>'>&nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='save_all' value='<?php echo $hotaru->lang["cat_man_save_all"]; ?>'>
+            <input type='submit' name='cancel_all' value='<?php echo $h->lang["cat_man_cancel"]; ?>'>&nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='save_all' value='<?php echo $h->lang["cat_man_save_all"]; ?>'>
         </div>
-        <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
+        <input type='hidden' name='token' value='<?php echo $h->token; ?>' />
         </form>
     </td>
     
     <td class="cat_man_menu_holder">
         <div>
-            <h3><?php echo $hotaru->lang["cat_man_menu_title"]; ?></h3>
-            <?php $hotaru->displayTemplate('cat_man_menu', 'category_manager'); ?>
+            <h3><?php echo $h->lang["cat_man_menu_title"]; ?></h3>
+            <?php $h->displayTemplate('cat_man_menu', 'category_manager'); ?>
             
-            <h3><?php echo $hotaru->lang["cat_man_category_tree"]; ?></h3>
+            <h3><?php echo $h->lang["cat_man_category_tree"]; ?></h3>
             <?php
-                $tree = new CategoryManagerSettings($hotaru); 
-                $tree->tree($hotaru, $hotaru->vars['the_cats']);
+                $tree = new CategoryManagerSettings($h); 
+                $tree->tree($h, $h->vars['the_cats']);
             ?>
 
         </div>

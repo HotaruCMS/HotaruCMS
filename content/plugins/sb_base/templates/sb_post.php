@@ -25,58 +25,58 @@
  */
 
 // get the user for this post:
-$user = new UserBase($hotaru);
-$user->getUserBasic($hotaru, $hotaru->post->author);
+$user = new UserBase($h);
+$user->getUserBasic($h, $h->post->author);
 ?>
 
-<?php $hotaru->pluginHook('sb_base_pre_show_post'); ?>
+<?php $h->pluginHook('sb_base_pre_show_post'); ?>
 
 <!-- POST -->
 <div class="show_post vote_button_space">
 
-    <?php $hotaru->pluginHook('sb_base_show_post_pre_title'); ?>
+    <?php $h->pluginHook('sb_base_show_post_pre_title'); ?>
 
     <div class="show_post_title">
-        <?php if (!$hotaru->vars['editorial']) { ?> 
-            <a href='<?php echo $hotaru->post->origUrl; ?>' <?php echo $hotaru->vars['target']; ?>><?php echo $hotaru->post->title; ?></a>
+        <?php if (!$h->vars['editorial']) { ?> 
+            <a href='<?php echo $h->post->origUrl; ?>' <?php echo $h->vars['target']; ?>><?php echo $h->post->title; ?></a>
         <?php } else { ?>
-            <?php echo $hotaru->post->title; ?>
+            <?php echo $h->post->title; ?>
         <?php } ?>
-        <?php $hotaru->pluginHook('sb_base_show_post_title'); ?>
+        <?php $h->pluginHook('sb_base_show_post_title'); ?>
     </div>
 
     <div class="show_post_author_date">    
-        <?php echo " " . $hotaru->lang["sb_base_post_posted_by"] . " <a href='" . $hotaru->url(array('user' => $user->name)) . "'>" . $user->name . "</a>"; ?>
-        <?php echo time_difference(unixtimestamp($hotaru->post->date), $hotaru->lang) . " " . $hotaru->lang["sb_base_post_ago"]; ?>
-        <?php $hotaru->pluginHook('sb_base_show_post_author_date'); ?>
+        <?php echo " " . $h->lang["sb_base_post_posted_by"] . " <a href='" . $h->url(array('user' => $user->name)) . "'>" . $user->name . "</a>"; ?>
+        <?php echo time_difference(unixtimestamp($h->post->date), $h->lang) . " " . $h->lang["sb_base_post_ago"]; ?>
+        <?php $h->pluginHook('sb_base_show_post_author_date'); ?>
         <?php
-            if (($hotaru->pageName != 'submit3') && (($hotaru->currentUser->getPermission('can_edit_posts') == 'yes') || ($hotaru->currentUser->id == $user->id))) { 
-                echo "<a class='show_post_edit' href='" . BASEURL . "index.php?page=edit_post&amp;post_id=" . $hotaru->post->id . "'>" . $hotaru->lang["sb_base_post_edit"] . "</a>"; 
+            if (($h->pageName != 'submit3') && (($h->currentUser->getPermission('can_edit_posts') == 'yes') || ($h->currentUser->id == $user->id))) { 
+                echo "<a class='show_post_edit' href='" . BASEURL . "index.php?page=edit_post&amp;post_id=" . $h->post->id . "'>" . $h->lang["sb_base_post_edit"] . "</a>"; 
             }
         ?> 
     </div>
         
-    <?php if ($hotaru->vars['use_content']) { ?>
+    <?php if ($h->vars['use_content']) { ?>
         <div class="show_post_content">
-            <?php echo nl2br($hotaru->post->content); ?>
-            <?php $hotaru->pluginHook('sb_base_show_post_content'); ?>
+            <?php echo nl2br($h->post->content); ?>
+            <?php $h->pluginHook('sb_base_show_post_content'); ?>
         </div>
     <?php } ?>
     
     <div class="show_post_extra_fields">
         <ul>
-            <?php $hotaru->pluginHook('sb_base_show_post_extra_fields'); ?>
+            <?php $h->pluginHook('sb_base_show_post_extra_fields'); ?>
         </ul>
     </div>
         
     <div class="show_post_extras">
-        <?php $hotaru->pluginHook('sb_base_show_post_extras'); ?>
+        <?php $h->pluginHook('sb_base_show_post_extras'); ?>
     </div>
     
 </div>
 
-<?php $hotaru->pluginHook('sb_base_show_post_middle'); ?>
+<?php $h->pluginHook('sb_base_show_post_middle'); ?>
 
-<?php $hotaru->pluginHook('sb_base_post_show_post'); ?>
+<?php $h->pluginHook('sb_base_post_show_post'); ?>
 
 <!-- END POST --> 

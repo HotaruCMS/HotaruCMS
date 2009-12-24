@@ -24,55 +24,55 @@
  * @link      http://www.hotarucms.org/
  */
 
-$hotaru->pluginHook('submit_2_assign');
+$h->pluginHook('submit_2_assign');
 
 ?>
-    <?php $hotaru->showMessages(); ?>
+    <?php $h->showMessages(); ?>
     
-    <?php echo $hotaru->lang["submit_instructions_2"]; ?>
+    <?php echo $h->lang["submit_instructions_2"]; ?>
 
     <form name='submit_2' action='<?php BASEURL; ?>index.php?page=submit2' method='post'>
     <table>
     
-    <?php if (!$hotaru->vars['submit_editorial']) { // only show if posting a link ?>
+    <?php if (!$h->vars['submit_editorial']) { // only show if posting a link ?>
         <tr>
-            <td><?php echo $hotaru->lang["submit_url"]; ?>&nbsp; </td>
-            <td><?php echo $hotaru->vars['submit_orig_url']; ?></td>
+            <td><?php echo $h->lang["submit_url"]; ?>&nbsp; </td>
+            <td><?php echo $h->vars['submit_orig_url']; ?></td>
             <td>&nbsp;</td>
         </tr>
     <?php } ?>
     
     <tr>
-        <td><?php echo $hotaru->lang["submit_title"]; ?>&nbsp; </td>
-        <td><input type='text' id='post_title' name='post_title' value='<?php echo $hotaru->vars['submit_title']; ?>'></td>
+        <td><?php echo $h->lang["submit_title"]; ?>&nbsp; </td>
+        <td><input type='text' id='post_title' name='post_title' value='<?php echo $h->vars['submit_title']; ?>'></td>
         <td id='ajax_loader'>&nbsp;</td>
     </tr>
     
-    <?php if ($hotaru->vars['submit_use_content']) { ?>
+    <?php if ($h->vars['submit_use_content']) { ?>
     <tr>
-        <td style='vertical-align: top;'><?php echo $hotaru->lang["submit_content"]; ?>&nbsp; </td>
+        <td style='vertical-align: top;'><?php echo $h->lang["submit_content"]; ?>&nbsp; </td>
         <td colspan='2'>
-            <textarea id='post_content' name='post_content' rows='6' maxlength='<?php echo $hotaru->vars['submit_content_length']; ?>'><?php echo $hotaru->vars['submit_content']; ?></textarea>
+            <textarea id='post_content' name='post_content' rows='6' maxlength='<?php echo $h->vars['submit_content_length']; ?>'><?php echo $h->vars['submit_content']; ?></textarea>
         </td>
     </tr>
     
     <tr>
         <td>&nbsp;</td>
         <td colspan=2 style='vertical-align: top;' class="submit_instructions">
-            <?php echo $hotaru->lang['submit_allowable_tags']; ?>
-            <?php echo $hotaru->vars['submit_allowable_tags']; ?>
+            <?php echo $h->lang['submit_allowable_tags']; ?>
+            <?php echo $h->vars['submit_allowable_tags']; ?>
         </td>
     </tr>
     <?php } ?>
     
-    <?php $hotaru->pluginHook('submit_2_fields'); ?>
+    <?php $h->pluginHook('submit_2_fields'); ?>
             
-    <input type='hidden' name='submit_orig_url' value='<?php echo $hotaru->vars['submit_orig_url']; ?>' />
-    <input type='hidden' name='submit_post_id' value='<?php echo $hotaru->vars['submit_post_id']; ?>' />
+    <input type='hidden' name='submit_orig_url' value='<?php echo $h->vars['submit_orig_url']; ?>' />
+    <input type='hidden' name='submit_post_id' value='<?php echo $h->vars['submit_post_id']; ?>' />
     <input type='hidden' name='submit2' value='true' />
-    <input type='hidden' name='submit_key' value='<?php echo $hotaru->vars['submit_key']; ?>' />
-    <input type='hidden' name='csrf' value='<?php echo $hotaru->csrfToken; ?>' />
+    <input type='hidden' name='submit_key' value='<?php echo $h->vars['submit_key']; ?>' />
+    <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
     
-    <tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' onclick="javascript:safeExit=true;" class='submit' name='submit' value='<?php echo $hotaru->lang['main_form_next']; ?>' /></td></tr>    
+    <tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' onclick="javascript:safeExit=true;" class='submit' name='submit' value='<?php echo $h->lang['main_form_next']; ?>' /></td></tr>    
     </table>
     </form>

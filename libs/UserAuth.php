@@ -30,29 +30,29 @@ class UserAuth extends UserBase
      *
      * @return bool
      */
-    public function checkCookie($hotaru)
+    public function checkCookie($h)
     {
         // Check for a cookie. If present then the user is logged in.
-        $hotaru_user = $hotaru->cage->cookie->testUsername('hotaru_user');
+        $h_user = $h->cage->cookie->testUsername('hotaru_user');
         
-        if((!$hotaru_user) || (!$hotaru->cage->cookie->keyExists('hotaru_key'))) { 
-            $this->setLoggedOutUser($hotaru);
+        if((!$h_user) || (!$h->cage->cookie->keyExists('hotaru_key'))) { 
+            $this->setLoggedOutUser($h);
             return false; 
         }
         
-        $user_info=explode(":", base64_decode($hotaru->cage->cookie->getRaw('hotaru_key')));
+        $user_info=explode(":", base64_decode($h->cage->cookie->getRaw('hotaru_key')));
         
-        if (($hotaru_user != $user_info[0]) || (crypt($user_info[0], 22) != $user_info[1])) { 
-            $this->setLoggedOutUser($hotaru);
+        if (($h_user != $user_info[0]) || (crypt($user_info[0], 22) != $user_info[1])) { 
+            $this->setLoggedOutUser($h);
             return false; 
         }
 
-        $this->name = $hotaru_user;
-        if ($hotaru_user) {
-            $this->getUserBasic($hotaru, 0, $this->name);
+        $this->name = $h_user;
+        if ($h_user) {
+            $this->getUserBasic($h, 0, $this->name);
             $this->loggedIn = true;
         } else {
-            $this->setLoggedOutUser($hotaru);
+            $this->setLoggedOutUser($h);
             return false; 
         }
                 
@@ -67,10 +67,10 @@ class UserAuth extends UserBase
      * @param string $password
      * @return bool
      */
-    public function loginCheck($hotaru, $username = '', $password = '')
+    public function loginCheck($h, $username = '', $password = '')
     {
         // Read the current user's basic details
-        $userX = $this->getUserBasic($hotaru, 0, $username);
+        $userX = $this->getUserBasic($h, 0, $username);
         if (!$userX) { return false; }
         
         // destroy the cookie for the following usergroups:
@@ -84,14 +84,14 @@ class UserAuth extends UserBase
         $result = '';
         
         // Allow plugin to bypass the password check with their own methods, e.g. RPX
-        $plugin_result = $hotaru->pluginHook('userbase_logincheck', '', array($username, $password));
+        $plugin_result = $h->pluginHook('userbase_logincheck', '', array($username, $password));
         
         if (!isset($plugin_result))
         {
             // nothing was returned from the plugins, not even "false", so confirm the username and password match:
             $password = $this->generateHash($password, substr($userX->user_password, 0, $salt_length));
             $sql = "SELECT user_username, user_password FROM " . TABLE_USERS . " WHERE user_username = %s AND user_password = %s";
-            $result = $hotaru->db->get_row($hotaru->db->prepare($sql, $username, $password));
+            $result = $h->db->get_row($h->db->prepare($sql, $username, $password));
         } 
         elseif ($plugin_result)
         {
@@ -132,9 +132,9 @@ class UserAuth extends UserBase
     /**
      * Give logged out user default permissions
      */    
-    public function setLoggedOutUser($hotaru)
+    public function setLoggedOutUser($h)
     {
-        $default_perms = $this->getDefaultPermissions($hotaru);
+        $default_perms = $this->getDefaultPermissions($h);
         unset($default_perms['options']);  // don't need this for individual users
         $this->setAllPermissions($default_perms);
     }
@@ -145,11 +145,11 @@ class UserAuth extends UserBase
      *
      * @return bool
      */
-    public function updateUserLastLogin($hotaru)
+    public function updateUserLastLogin($h)
     {
         if ($this->id != 0) {
             $sql = "UPDATE " . TABLE_USERS . " SET user_lastlogin = CURRENT_TIMESTAMP WHERE user_id = %d";
-            $hotaru->db->query($hotaru->db->prepare($sql, $this->id));
+            $h->db->query($h->db->prepare($sql, $this->id));
             return true;
         } else {
             return false;
@@ -163,11 +163,11 @@ class UserAuth extends UserBase
      * @param string $remember checkbox with value "checked" or empty
      * @return bool
      */
-    public function setCookie($hotaru, $remember)
+    public function setCookie($h, $remember)
     {
         if (!$this->name)
         { 
-            echo $hotaru->lang['main_userbase_cookie_error'];
+            echo $h->lang['main_userbase_cookie_error'];
             return false;
         } else {
             $strCookie=base64_encode(
@@ -209,13 +209,13 @@ class UserAuth extends UserBase
      * @param int $userid
      * @return bool
      */
-    public function updateAccount($hotaru, $userid = 0)
+    public function updateAccount($h, $userid = 0)
     {
         // $this is the person looking at the page, i.e. the viewer
         // $viewee is the person whose account is being modified
         // if looking at your own account then $this = $viewee.
         
-        $viewee = new UserBase($hotaru);
+        $viewee = new UserBase($h);
         
         // Get the details of the account to show.
         // If no account is specified, assume it's your own.
@@ -224,7 +224,7 @@ class UserAuth extends UserBase
             $userid = $this->id; 
         }
         
-        $viewee->getUserBasic($hotaru, $userid);
+        $viewee->getUserBasic($h, $userid);
 
         $error = 0;
         
@@ -237,37 +237,37 @@ class UserAuth extends UserBase
         $checks['password_check_new2'] = '';
         
         // Updating account info (username and email address)
-        if ($hotaru->cage->post->testAlnumLines('update_type') == 'update_general') {
+        if ($h->cage->post->testAlnumLines('update_type') == 'update_general') {
         
             // check CSRF key
-            if (!$hotaru->csrf()) {
-                $hotaru->messages[$hotaru->lang['error_csrf']] = 'red';
+            if (!$h->csrf()) {
+                $h->messages[$h->lang['error_csrf']] = 'red';
                 $error = 1;
             }
     
-            $username_check = $hotaru->cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
+            $username_check = $h->cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
             if ($username_check) {
                 $viewee->name = $username_check; // updates the db record
             } else {
-                $hotaru->messages[$hotaru->lang['main_user_account_update_username_error']] = 'red';
+                $h->messages[$h->lang['main_user_account_update_username_error']] = 'red';
                 $error = 1;
             }
                                 
-            $email_check = $hotaru->cage->post->testEmail('email');    
+            $email_check = $h->cage->post->testEmail('email');    
             if ($email_check) {
                 $viewee->email = $email_check;
             } else {
-                $hotaru->messages[$hotaru->lang['main_user_account_update_email_error']] = 'red';
+                $h->messages[$h->lang['main_user_account_update_email_error']] = 'red';
                 $error = 1;
             }
             
-            $role_check = $hotaru->cage->post->testAlnumLines('user_role'); // from Users plugin account page
+            $role_check = $h->cage->post->testAlnumLines('user_role'); // from Users plugin account page
             // compare with current role and update if different
             if ($role_check && ($role_check != $viewee->role)) {
                 $viewee->role = $role_check;
                 $new_perms = $viewee->getDefaultPermissions($role_check);
                 $viewee->setAllPermissions($new_perms);
-                $viewee->updatePermissions($hotaru);
+                $viewee->updatePermissions($h);
                 if ($role_check == 'killspammed' || $role_check == 'deleted') {
                     $viewee->deleteComments(); // includes child comments from *other* users
                     $viewee->deletePosts(); // includes tags and votes for self-submitted posts
@@ -277,8 +277,8 @@ class UserAuth extends UserBase
                     if ($role_check == 'deleted') { 
                         $viewee->deleteUser(); 
                         $checks['username_check'] = 'deleted';
-                        $hotaru->message = $hotaru->lang["users_account_deleted"];
-                        $hotaru->messageType = 'red';
+                        $h->message = $h->lang["users_account_deleted"];
+                        $h->messageType = 'red';
                         return $checks; // This will then show a red "deleted" notice
                     }
                 }
@@ -291,27 +291,27 @@ class UserAuth extends UserBase
             $role_check = $viewee->role;
             // do nothing
         } elseif ($error == 0) {
-            $exists = $hotaru->userExists(0, $username_check, $email_check);
+            $exists = $h->userExists(0, $username_check, $email_check);
             if (($exists != 'no') && ($exists != 'error')) { // user exists
                 //success
-                $viewee->updateUserBasic($hotaru, $userid);
+                $viewee->updateUserBasic($h, $userid);
                 // only update the cookie if it's your own account:
                 if ($userid == $this->id) { 
-                $this->setCookie($hotaru, false);           // delete the cookie
-                $this->getUserBasic($hotaru, $this->id, '', true);    // re-read the database record to get updated info
-                $this->setCookie($hotaru, true);            // create a new, updated cookie
+                $this->setCookie($h, false);           // delete the cookie
+                $this->getUserBasic($h, $this->id, '', true);    // re-read the database record to get updated info
+                $this->setCookie($h, true);            // create a new, updated cookie
                 }
-                $hotaru->messages[$hotaru->lang['main_user_account_update_success']] = 'green';
+                $h->messages[$h->lang['main_user_account_update_success']] = 'green';
             } else {
                 //fail
-                $hotaru->messages[$hotaru->lang["main_user_account_update_unexpected_error"]] = 'red';
+                $h->messages[$h->lang["main_user_account_update_unexpected_error"]] = 'red';
             }
         } else {
             // error must = 1 so fall through and display the form again
         }
         
         //update checks
-        $this->updatePassword($hotaru, $userid);
+        $this->updatePassword($h, $userid);
         $checks['username_check'] = $username_check;
         $checks['email_check'] = $email_check;
         $checks['role_check'] = $role_check;
@@ -325,7 +325,7 @@ class UserAuth extends UserBase
      *
      * @return bool
      */
-    public function updatePassword($hotaru, $userid)
+    public function updatePassword($h, $userid)
     {
         // we don't want to edit the password if this isn't our own account.
         if ($userid != $this->id) { return false; }
@@ -333,40 +333,40 @@ class UserAuth extends UserBase
         $error = 0;
         
         // Updating password
-        if ($hotaru->cage->post->testAlnumLines('update_type') == 'update_password') {
+        if ($h->cage->post->testAlnumLines('update_type') == 'update_password') {
         
             // check CSRF key
-            if (!$hotaru->csrf()) {
-                $hotaru->messages[$hotaru->lang['error_csrf']] = 'red';
+            if (!$h->csrf()) {
+                $h->messages[$h->lang['error_csrf']] = 'red';
                 $error = 1;
             }
             
             
-            $password_check_old = $hotaru->cage->post->testPassword('password_old');    
+            $password_check_old = $h->cage->post->testPassword('password_old');    
             
-            if ($this->loginCheck($hotaru, $this->name, $password_check_old)) {
+            if ($this->loginCheck($h, $this->name, $password_check_old)) {
                 // safe, the old password matches the password for this user.
             } else {
-                $hotaru->messages[$hotaru->lang['main_user_account_update_password_error_old']] = 'red';
+                $h->messages[$h->lang['main_user_account_update_password_error_old']] = 'red';
                 $error = 1;
             }
         
-            $password_check_new = $hotaru->cage->post->testPassword('password_new');    
+            $password_check_new = $h->cage->post->testPassword('password_new');    
             if ($password_check_new) {
-                $password_check_new2 = $hotaru->cage->post->testPassword('password_new2');    
+                $password_check_new2 = $h->cage->post->testPassword('password_new2');    
                 if ($password_check_new2) { 
                     if ($password_check_new == $password_check_new2) {
                         // safe, the two new password fields match
                     } else {
-                        $hotaru->messages[$hotaru->lang['main_user_account_update_password_error_match']] = 'red';
+                        $h->messages[$h->lang['main_user_account_update_password_error_match']] = 'red';
                         $error = 1;
                     }
                 } else {
-                    $hotaru->messages[$hotaru->lang['main_user_account_update_password_error_new']] = 'red';
+                    $h->messages[$h->lang['main_user_account_update_password_error_new']] = 'red';
                     $error = 1;
                 }
             } else {
-                $hotaru->messages[$hotaru->lang['main_user_account_update_password_error_not_provided']] = 'red';
+                $h->messages[$h->lang['main_user_account_update_password_error_not_provided']] = 'red';
                 $error = 1;
             }
                         
@@ -378,18 +378,18 @@ class UserAuth extends UserBase
             $password_check_new2 = "";
             // do nothing
         } elseif ($error == 0) {
-            $exists = $hotaru->userExists(0, $this->name, $this->email);
+            $exists = $h->userExists(0, $this->name, $this->email);
             if (($exists != 'no') && ($exists != 'error')) { // user exists
                 //success
                 $this->password = $this->generateHash($password_check_new);
-                $this->updateUserBasic($hotaru, $this->id); // update the database record for this user
-                $this->setCookie($hotaru, false);           // delete the cookie
-                $this->getUserBasic($hotaru, $this->id, '', true);    // re-read the database record to get updated info
-                $this->setCookie($hotaru, true);            // create a new, updated cookie
-                $hotaru->messages[$hotaru->lang['main_user_account_update_password_success']] = 'green';
+                $this->updateUserBasic($h, $this->id); // update the database record for this user
+                $this->setCookie($h, false);           // delete the cookie
+                $this->getUserBasic($h, $this->id, '', true);    // re-read the database record to get updated info
+                $this->setCookie($h, true);            // create a new, updated cookie
+                $h->messages[$h->lang['main_user_account_update_password_success']] = 'green';
             } else {
                 //fail
-                $hotaru->messages[$hotaru->lang["main_user_account_update_unexpected_error"]] = 'red';
+                $h->messages[$h->lang["main_user_account_update_unexpected_error"]] = 'red';
             }
         } else {
             // error must = 1 so fall through and display the form again

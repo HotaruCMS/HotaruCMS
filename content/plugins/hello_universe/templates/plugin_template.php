@@ -34,4 +34,4 @@
 
 <p>To see how we made this page, look at Function #2 in hello_universe.php.</p>
 
-<p><a href="<?php echo BASEURL; ?>"><?php echo $hotaru->lang["hello_universe_back_home"]; ?></a></p>
+<p><a href="<?php echo BASEURL; ?>"><?php echo $h->lang["hello_universe_back_home"]; ?></a></p>

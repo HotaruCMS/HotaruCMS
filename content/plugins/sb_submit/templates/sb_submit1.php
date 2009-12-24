@@ -24,32 +24,32 @@
  * @link      http://www.hotarucms.org/
  */
  
-$submitted_url = urldecode($hotaru->vars['submitted_data']['submit_orig_url']);
+$submitted_url = urldecode($h->vars['submitted_data']['submit_orig_url']);
 ?>
 
-    <?php echo $hotaru->showMessage(); ?>
+    <?php echo $h->showMessage(); ?>
             
 
-    <?php echo $hotaru->lang["submit_instructions_1"]; ?>
+    <?php echo $h->lang["submit_instructions_1"]; ?>
     
     <form name='submit_1' action='<?php echo BASEURL; ?>index.php?page=submit1' method='post'>
     <table>
     <tr>
-        <td><?php echo $hotaru->lang["submit_url"]; ?>&nbsp; </td>
+        <td><?php echo $h->lang["submit_url"]; ?>&nbsp; </td>
         <td><input type='text' id='submit_orig_url' name='submit_orig_url' value='<?php echo $submitted_url; ?>' /></td>
         <td>&nbsp;</td>
     </tr>
-    <?php if (!isset($hotaru->post->useLink)) { ?>
+    <?php if (!isset($h->post->useLink)) { ?>
     <tr>
         <td colspan = 3><input type='checkbox' name='no_link'>&nbsp;
-            <?php echo $hotaru->lang["submit_post_without_link"]; ?></td>
+            <?php echo $h->lang["submit_post_without_link"]; ?></td>
     </tr>
     <?php } ?>
 
     <input type='hidden' name='submit1' value='true' />
 
     <tr><td colspan=3>&nbsp;</td></tr>
-    <tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' class='submit' name='submit' value='<?php echo $hotaru->lang['main_form_next']; ?>' /></td></tr>    
+    <tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' class='submit' name='submit' value='<?php echo $h->lang['main_form_next']; ?>' /></td></tr>    
     </table>
     </form>
 

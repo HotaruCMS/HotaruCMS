@@ -28,50 +28,50 @@ class Blocked
      /**
      * Prepare a list of blocked items for the Admin "Blocked List" page
      */
-    public function buildBlockedList($hotaru)
+    public function buildBlockedList($h)
     {
         $safe = true; // CSRF flag
         
-        if ($hotaru->cage->post->keyExists('type')) {
-            $safe = $hotaru->csrf();
+        if ($h->cage->post->keyExists('type')) {
+            $safe = $h->csrf();
             if (!$safe) {
-                $hotaru->message = $hotaru->lang['error_csrf'];
-                $hotaru->messageType = 'red';
+                $h->message = $h->lang['error_csrf'];
+                $h->messageType = 'red';
             }
         }
         
         // if new item to block
-        if ($safe && $hotaru->cage->post->getAlpha('type') == 'new')
+        if ($safe && $h->cage->post->getAlpha('type') == 'new')
         {
-            $type = $hotaru->cage->post->testAlnumLines('blocked_type');
-            $value = $hotaru->cage->post->getMixedString2('value');
+            $type = $h->cage->post->testAlnumLines('blocked_type');
+            $value = $h->cage->post->getMixedString2('value');
             
             if (!$value) {
-                $hotaru->message = $hotaru->lang['admin_blocked_list_empty'];
-                $hotaru->messageType = 'red';
+                $h->message = $h->lang['admin_blocked_list_empty'];
+                $h->messageType = 'red';
             } else {
-                $this->addToBlockedList($hotaru, $type, $value);
+                $this->addToBlockedList($h, $type, $value);
             }
         }
         
         // if edit item
-        if ($safe && $hotaru->cage->post->getAlpha('type') == 'edit')
+        if ($safe && $h->cage->post->getAlpha('type') == 'edit')
         {
-            $id = $hotaru->cage->post->testInt('id');
-            $type = $hotaru->cage->post->testAlnumLines('blocked_type');
-            $value = $hotaru->cage->post->getMixedString2('value');
-            $this->updateBlockedList($hotaru, $id, $type, $value);
-            $hotaru->message = $hotaru->lang['admin_blocked_list_updated'];
-            $hotaru->messageType = 'green';
+            $id = $h->cage->post->testInt('id');
+            $type = $h->cage->post->testAlnumLines('blocked_type');
+            $value = $h->cage->post->getMixedString2('value');
+            $this->updateBlockedList($h, $id, $type, $value);
+            $h->message = $h->lang['admin_blocked_list_updated'];
+            $h->messageType = 'green';
         }
         
         // if remove item
-        if ($safe && ($hotaru->cage->get->getAlpha('action') == 'remove'))
+        if ($safe && ($h->cage->get->getAlpha('action') == 'remove'))
         {
-            $id = $hotaru->cage->get->testInt('id');
-            $this->removeFromBlockedList($hotaru->db, $id);
-            $hotaru->message = $hotaru->lang["admin_blocked_list_removed"];
-            $hotaru->messageType = 'green';
+            $id = $h->cage->get->testInt('id');
+            $this->removeFromBlockedList($h->db, $id);
+            $h->message = $h->lang["admin_blocked_list_removed"];
+            $h->messageType = 'green';
         }
         
         // GET CURRENTLY BLOCKED ITEMS...
@@ -79,14 +79,14 @@ class Blocked
         $where_clause = '';
         
         // if search
-        if ($safe && $hotaru->cage->post->getAlpha('type') == 'search') {
-            $search_term = $hotaru->cage->post->getMixedString2('search_value');
-            $where_clause = " WHERE blocked_value LIKE '%" . trim($hotaru->db->escape($search_term)) . "%'";
+        if ($safe && $h->cage->post->getAlpha('type') == 'search') {
+            $search_term = $h->cage->post->getMixedString2('search_value');
+            $where_clause = " WHERE blocked_value LIKE '%" . trim($h->db->escape($search_term)) . "%'";
         }
         
         // if filter
-        if ($safe && $hotaru->cage->post->getAlpha('type') == 'filter') {
-            $filter = $hotaru->cage->post->testAlnumLines('blocked_type');
+        if ($safe && $h->cage->post->getAlpha('type') == 'filter') {
+            $filter = $h->cage->post->testAlnumLines('blocked_type');
             if ($filter == 'all') { $where_clause = ''; } else { $where_clause = " WHERE blocked_type = %s"; }
         }
         
@@ -94,16 +94,16 @@ class Blocked
         $sql = "SELECT * FROM " . TABLE_BLOCKED . $where_clause;
 
         if (isset($search_term)) { 
-            $blocked_items = $hotaru->db->get_results($sql);
+            $blocked_items = $h->db->get_results($sql);
         } elseif (isset($filter)) { 
-            $blocked_items = $hotaru->db->get_results($hotaru->db->prepare($sql, $filter));
+            $blocked_items = $h->db->get_results($h->db->prepare($sql, $filter));
         } else {
-            $blocked_items = $hotaru->db->get_results($hotaru->db->prepare($sql));
+            $blocked_items = $h->db->get_results($h->db->prepare($sql));
         }
         
         if (!$blocked_items) { return array(); }
         
-        $pg = $hotaru->cage->get->getInt('pg');
+        $pg = $h->cage->get->getInt('pg');
         $items = 20;
         $output = "";
         
@@ -129,32 +129,32 @@ class Blocked
             
             switch($block->blocked_type) { 
                 case 'url':
-                    $text = $hotaru->lang["admin_theme_blocked_url"];
+                    $text = $h->lang["admin_theme_blocked_url"];
                     break;
                 case 'email':
-                    $text = $hotaru->lang["admin_theme_blocked_email"];
+                    $text = $h->lang["admin_theme_blocked_email"];
                     break;
                 default:
-                    $text = $hotaru->lang["admin_theme_blocked_ip"];
+                    $text = $h->lang["admin_theme_blocked_ip"];
                     break;
             }
             
             $output .= "<option value='" . $block->blocked_type . "'>" . $text . "</option>\n";
-            $output .= "<option value='ip'>" . $hotaru->lang["admin_theme_blocked_ip"] . "</option>\n";
-            $output .= "<option value='url'>" . $hotaru->lang["admin_theme_blocked_url"] . "</option>\n";
-            $output .= "<option value='email'>" . $hotaru->lang["admin_theme_blocked_email"] . "</option>\n";
-            $output .= "<option value='user'>" . $hotaru->lang["admin_theme_blocked_username"] . "</option>\n";
+            $output .= "<option value='ip'>" . $h->lang["admin_theme_blocked_ip"] . "</option>\n";
+            $output .= "<option value='url'>" . $h->lang["admin_theme_blocked_url"] . "</option>\n";
+            $output .= "<option value='email'>" . $h->lang["admin_theme_blocked_email"] . "</option>\n";
+            $output .= "<option value='user'>" . $h->lang["admin_theme_blocked_username"] . "</option>\n";
             $output .= "</select></td>\n";
             $output .= "<td><input type='text' size=30 name='value' value='" . $block->blocked_value . "' /></td>\n";
-            $output .= "<td><input class='submit' type='submit' value='" . $hotaru->lang['admin_blocked_list_update'] . "' /></td>\n";
+            $output .= "<td><input class='submit' type='submit' value='" . $h->lang['admin_blocked_list_update'] . "' /></td>\n";
             $output .= "</tr></table>\n";
             $output .= "<input type='hidden' name='id' value='" . $block->blocked_id . "' />\n";
             $output .= "<input type='hidden' name='page' value='blocked_list' />\n";
             $output .= "<input type='hidden' name='type' value='edit' />\n";
-            $output .= "<input type='hidden' name='csrf' value='" . $hotaru->csrfToken . "' />";
+            $output .= "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />";
             $output .= "</form>\n";
             $output .= "</td>";
-            $output .= "<td class='table_description_close'><a class='table_hide_details' href='#'>" . $hotaru->lang["admin_theme_plugins_close"] . "</a></td>";
+            $output .= "<td class='table_description_close'><a class='table_hide_details' href='#'>" . $h->lang["admin_theme_plugins_close"] . "</a></td>";
             $output .= "</tr>";
         }
 
@@ -169,24 +169,24 @@ class Blocked
      *
      * @return array|false
      */
-    public function addToBlockedList($hotaru, $type = '', $value = 0, $msg = true)
+    public function addToBlockedList($h, $type = '', $value = 0, $msg = true)
     {
         $sql = "SELECT blocked_id FROM " . TABLE_BLOCKED . " WHERE blocked_type = %s AND blocked_value = %s"; 
-        $id = $hotaru->db->get_var($hotaru->db->prepare($sql, $type, $value));
+        $id = $h->db->get_var($h->db->prepare($sql, $type, $value));
         
         if ($id) { // already exists
             if ($msg) { 
-                $hotaru->message = $hotaru->lang['admin_blocked_list_exists']; 
-                $hotaru->messageType = 'red';
+                $h->message = $h->lang['admin_blocked_list_exists']; 
+                $h->messageType = 'red';
             }
             return false;
         } 
         
         $sql = "INSERT INTO " . TABLE_BLOCKED . " (blocked_type, blocked_value, blocked_updateby) VALUES (%s, %s, %d)"; 
-        $hotaru->db->query($hotaru->db->prepare($sql, $type, $value, $hotaru->currentUser->id));
+        $h->db->query($h->db->prepare($sql, $type, $value, $h->currentUser->id));
         if ($msg) { 
-            $hotaru->message = $hotaru->lang['admin_blocked_list_added']; 
-            $hotaru->messageType = 'green';
+            $h->message = $h->lang['admin_blocked_list_added']; 
+            $h->messageType = 'green';
         }
         
         return true;
@@ -198,10 +198,10 @@ class Blocked
      *
      * @return array|false
      */
-    public function updateBlockedList($hotaru, $id = 0, $type = '', $value = 0)
+    public function updateBlockedList($h, $id = 0, $type = '', $value = 0)
     {
         $sql = "UPDATE " . TABLE_BLOCKED . " SET blocked_type = %s, blocked_value = %s, blocked_updateby = %d WHERE blocked_id = %d"; 
-        $hotaru->db->query($hotaru->db->prepare($sql, $type, $value, $hotaru->currentUser->id, $id));
+        $h->db->query($h->db->prepare($sql, $type, $value, $h->currentUser->id, $id));
     }
     
     

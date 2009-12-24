@@ -126,8 +126,8 @@ class Paginated {
 	}
 
 	//returns a string with the base navigation for the page
-	public function fetchPagedNavigation($hotaru = NULL) {
-		return $this->getLayout()->fetchPagedLinks($this, $hotaru);
+	public function fetchPagedNavigation($h = NULL) {
+		return $this->getLayout()->fetchPagedLinks($this, $h);
 	}//end writeNavigation
 }//end Paginated
 ?>

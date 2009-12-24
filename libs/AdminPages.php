@@ -28,50 +28,50 @@ class AdminPages
      /**
      * Admin Pages
      */
-    public function pages($hotaru, $page = 'admin_login')
+    public function pages($h, $page = 'admin_login')
     {
-        $hotaru->vars['admin_sidebar_layout'] = 'vertical';
+        $h->vars['admin_sidebar_layout'] = 'vertical';
         
-        $hotaru->pluginHook('admin_pages');
+        $h->pluginHook('admin_pages');
         
         switch ($page) {
             case "admin_login":
-                $hotaru->sidebars = false;
-                $hotaru->adminLoginLogout('login');
+                $h->sidebars = false;
+                $h->adminLoginLogout('login');
                 break;
             case "admin_logout":
-                $hotaru->adminLoginLogout('logout');
+                $h->adminLoginLogout('logout');
                 break;
             case "admin_account":
-                $hotaru->vars['admin_account'] = $this->adminAccount($hotaru);
+                $h->vars['admin_account'] = $this->adminAccount($h);
                 break;
             case "settings":
-                $hotaru->vars['admin_settings'] = $this->settings($hotaru);
+                $h->vars['admin_settings'] = $this->settings($h);
                 break;
             case "maintenance":
-                $this->maintenanceAction($hotaru);
-                $hotaru->vars['admin_plugin_settings'] = $this->listPluginSettings($hotaru);
-                $hotaru->vars['admin_plugin_tables'] = $this->listPluginTables($hotaru);
+                $this->maintenanceAction($h);
+                $h->vars['admin_plugin_settings'] = $this->listPluginSettings($h);
+                $h->vars['admin_plugin_tables'] = $this->listPluginTables($h);
                 break;
             case "blocked_list":
-                $hotaru->vars['admin_blocked_list'] = $this->blocked($hotaru);
+                $h->vars['admin_blocked_list'] = $this->blocked($h);
                 break;
             case "plugin_management":
-                $hotaru->sidebars = false;
-                $hotaru->vars['admin_sidebar_layout'] = 'horizontal';
-                $this->adminPlugins($hotaru);
+                $h->sidebars = false;
+                $h->vars['admin_sidebar_layout'] = 'horizontal';
+                $this->adminPlugins($h);
                 break;
             case "plugin_settings":
-                $hotaru->vars['settings_plugin'] = $hotaru->cage->get->testAlnumLines('plugin'); // get plugin name from url
+                $h->vars['settings_plugin'] = $h->cage->get->testAlnumLines('plugin'); // get plugin name from url
                 break;
             default:
                 // we need this because it's not specified in the url:
-                $hotaru->pageName = 'admin_home';
+                $h->pageName = 'admin_home';
                 break;
         }
         
         // Display the main theme's index.php template
-        $hotaru->displayTemplate('index');
+        $h->displayTemplate('index');
     }
     
     
@@ -85,9 +85,9 @@ class AdminPages
     /**
      * Call the updateAccount method in UserAuth
      */    
-    public function adminAccount($hotaru)
+    public function adminAccount($h)
     {
-        return $hotaru->currentUser->updateAccount($hotaru);
+        return $h->currentUser->updateAccount($h);
     }
     
     
@@ -101,22 +101,22 @@ class AdminPages
     /**
      * Process the settings form
      */    
-    public function settings($hotaru)
+    public function settings($h)
     {
-        $loaded_settings = $this->getAllAdminSettings($hotaru->db);    // get all admin settings from the database
+        $loaded_settings = $this->getAllAdminSettings($h->db);    // get all admin settings from the database
         
         $error = 0;
         
-        if ($hotaru->cage->post->noTags('settings_update')  == 'true') {
+        if ($h->cage->post->noTags('settings_update')  == 'true') {
         
             // if either the login or forgot password form is submitted, check the CSRF key
-            if (!$hotaru->csrf()) { $error = 1; }
+            if (!$h->csrf()) { $error = 1; }
         
             foreach ($loaded_settings as $setting_name) {
-                if ($hotaru->cage->post->keyExists($setting_name->settings_name)) {
-                    $setting_value = $hotaru->cage->post->noTags($setting_name->settings_name);
+                if ($h->cage->post->keyExists($setting_name->settings_name)) {
+                    $setting_value = $h->cage->post->noTags($setting_name->settings_name);
                     if (!$error && $setting_value && $setting_value != $setting_name->settings_value) {
-                        $this->adminSettingUpdate($hotaru, $setting_name->settings_name, $setting_value);
+                        $this->adminSettingUpdate($h, $setting_name->settings_name, $setting_value);
     
                     } else {
                         if (!$setting_value) {
@@ -134,15 +134,15 @@ class AdminPages
             }
             
             if ($error == 0) {
-                $hotaru->message = $hotaru->lang['admin_settings_update_success'];
-                $hotaru->messageType = 'green';
+                $h->message = $h->lang['admin_settings_update_success'];
+                $h->messageType = 'green';
             } else {
-                $hotaru->message = $hotaru->lang['admin_settings_update_failure'];
-                $hotaru->messageType = 'red';
+                $h->message = $h->lang['admin_settings_update_failure'];
+                $h->messageType = 'red';
             }
         }    
         
-        $loaded_settings = $this->getAllAdminSettings($hotaru->db);
+        $loaded_settings = $this->getAllAdminSettings($h->db);
         
         return $loaded_settings;
     }
@@ -167,16 +167,16 @@ class AdminPages
      * @param string $setting
      * @param string $value
      */
-    public function adminSettingUpdate($hotaru, $setting = '', $value = '')
+    public function adminSettingUpdate($h, $setting = '', $value = '')
     {
-        $exists = $this->adminSettingExists($hotaru->db, $setting);
+        $exists = $this->adminSettingExists($h->db, $setting);
         
         if (!$exists) {
             $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_updateby) VALUES (%s, %s, %d)";
-            $hotaru->db->query($hotaru->db->prepare($sql, $setting, $value, $hotaru->currentUser->id));
+            $h->db->query($h->db->prepare($sql, $setting, $value, $h->currentUser->id));
         } else {
             $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_name = %s, settings_value = %s, settings_updateby = %d WHERE (settings_name = %s)";
-            $hotaru->db->query($hotaru->db->prepare($sql, $setting, $value, $hotaru->currentUser->id, $setting));
+            $h->db->query($h->db->prepare($sql, $setting, $value, $h->currentUser->id, $setting));
         }
     }
     
@@ -207,20 +207,20 @@ class AdminPages
     /**
      * Check action called in Maintenance template
      */
-    public function maintenanceAction($hotaru)
+    public function maintenanceAction($h)
     {
-        if (!$action = $hotaru->cage->get->testAlnumLines('action')) { return false; }
+        if (!$action = $h->cage->get->testAlnumLines('action')) { return false; }
         
-        if ($action == 'open') { $hotaru->openCloseSite('open'); }
-        if ($action == 'close') { $hotaru->openCloseSite('close'); }
-        if ($action == 'clear_db_cache') { $hotaru->clearCache('db_cache'); }
-        if ($action == 'clear_css_js_cache') { $hotaru->clearCache('css_js_cache'); }
-        if ($action == 'clear_rss_cache') { $hotaru->clearCache('rss_cache'); }
-        if ($action == 'clear_html_cache') { $hotaru->clearCache('html_cache'); }
-        if ($action == 'optimize') { $hotaru->optimizeTables(); }
-        if ($action == 'empty') { $hotaru->emptyTable($hotaru->cage->get->testAlnumLines('table')); }
-        if ($action == 'drop') { $hotaru->dropTable($hotaru->cage->get->testAlnumLines('table')); }
-        if ($action == 'remove_settings') { $hotaru->removeSettings($hotaru->cage->get->testAlnumLines('settings')); }
+        if ($action == 'open') { $h->openCloseSite('open'); }
+        if ($action == 'close') { $h->openCloseSite('close'); }
+        if ($action == 'clear_db_cache') { $h->clearCache('db_cache'); }
+        if ($action == 'clear_css_js_cache') { $h->clearCache('css_js_cache'); }
+        if ($action == 'clear_rss_cache') { $h->clearCache('rss_cache'); }
+        if ($action == 'clear_html_cache') { $h->clearCache('html_cache'); }
+        if ($action == 'optimize') { $h->optimizeTables(); }
+        if ($action == 'empty') { $h->emptyTable($h->cage->get->testAlnumLines('table')); }
+        if ($action == 'drop') { $h->dropTable($h->cage->get->testAlnumLines('table')); }
+        if ($action == 'remove_settings') { $h->removeSettings($h->cage->get->testAlnumLines('settings')); }
     }
     
     
@@ -229,11 +229,11 @@ class AdminPages
      *
      * @return array|false
      */
-    public function listPluginSettings($hotaru)
+    public function listPluginSettings($h)
     {
         $plugin_settings = array();
         $sql = "SELECT DISTINCT plugin_folder FROM " . DB_PREFIX . "pluginsettings";
-        $results = $hotaru->db->get_results($hotaru->db->prepare($sql));
+        $results = $h->db->get_results($h->db->prepare($sql));
     
         if (!$results) { return false; } 
         
@@ -248,7 +248,7 @@ class AdminPages
     /**
      * List all plugin created tables
      */
-    public function listPluginTables($hotaru)
+    public function listPluginTables($h)
     {
         // These should match the tables created in the install script.
         $core_tables = array(
@@ -264,11 +264,11 @@ class AdminPages
         
         $plugin_tables = array();
             
-        $hotaru->db->select(DB_NAME);
+        $h->db->select(DB_NAME);
         
-        if (!$hotaru->db->get_col("SHOW TABLES",0)) { return $plugin_tables; }
+        if (!$h->db->get_col("SHOW TABLES",0)) { return $plugin_tables; }
         
-        foreach ( $hotaru->db->get_col("SHOW TABLES",0) as $table_name )
+        foreach ( $h->db->get_col("SHOW TABLES",0) as $table_name )
         {
             if (!in_array($table_name, $core_tables)) {
                 array_push($plugin_tables, $table_name);
@@ -289,11 +289,11 @@ class AdminPages
     /**
      * Determine and respond to actions from the Blocked list
      */
-    public function blocked($hotaru)
+    public function blocked($h)
     {
         require_once(LIBS . 'Blocked.php');
         $blocked = new Blocked();
-        $blocked_items = $blocked->buildBlockedList($hotaru);
+        $blocked_items = $blocked->buildBlockedList($h);
 
         return $blocked_items;
     }
@@ -309,44 +309,44 @@ class AdminPages
      /**
      * Call functions based on user actions in Plugin Management
      */
-    public function adminPlugins($hotaru)
+    public function adminPlugins($h)
     {
-        $pfolder = $hotaru->cage->get->testAlnumLines('plugin');
-        $hotaru->plugin->folder = $pfolder;   // assign this plugin to Hotaru
+        $pfolder = $h->cage->get->testAlnumLines('plugin');
+        $h->plugin->folder = $pfolder;   // assign this plugin to Hotaru
         
-        $action = $hotaru->cage->get->testAlnumLines('action');
-        $order = $hotaru->cage->get->testAlnumLines('order');
+        $action = $h->cage->get->testAlnumLines('action');
+        $order = $h->cage->get->testAlnumLines('order');
         
         require_once(LIBS . 'PluginManagement.php');
         $plugman = new PluginManagement();
         
         switch ($action) {
             case "activate":
-                $plugman->activateDeactivate($hotaru, 1);
+                $plugman->activateDeactivate($h, 1);
                 break;
             case "deactivate":
-                $plugman->activateDeactivate($hotaru, 0);
+                $plugman->activateDeactivate($h, 0);
                 break;    
             case "activate_all":
-                $plugman->activateDeactivateAll($hotaru, 1);
+                $plugman->activateDeactivateAll($h, 1);
                 break;
             case "deactivate_all":
-                $plugman->activateDeactivateAll($hotaru, 0);
+                $plugman->activateDeactivateAll($h, 0);
                 break;    
             case "uninstall_all":
-                $plugman->uninstallAll($hotaru);
+                $plugman->uninstallAll($h);
                 break;    
             case "install":
-                $plugman->install($hotaru);
+                $plugman->install($h);
                 break;
             case "uninstall":
-                $plugman->uninstall($hotaru);
+                $plugman->uninstall($h);
                 break;    
             case "orderup":
-                $plugman->pluginOrder($hotaru, $order, "up");
+                $plugman->pluginOrder($h, $order, "up");
                 break;    
             case "orderdown":
-                $plugman->pluginOrder($hotaru, $order, "down");
+                $plugman->pluginOrder($h, $order, "down");
                 break;    
             default:
                 // nothing to do here...
@@ -354,13 +354,13 @@ class AdminPages
         }
         
         // get and sort all the plugins ready for display:
-        $allplugins = $plugman->getPlugins($hotaru);  // get plugins
+        $allplugins = $plugman->getPlugins($h);  // get plugins
         
         $installed_plugins = array_filter($allplugins, array($plugman, 'getInstalledPlugins'));
-        $hotaru->vars['installed_plugins'] = sksort($installed_plugins, "order", "int", true);
+        $h->vars['installed_plugins'] = sksort($installed_plugins, "order", "int", true);
         
         $uninstalled_plugins = array_filter($allplugins, array($plugman, 'getUninstalledPlugins'));
-        $hotaru->vars['uninstalled_plugins'] = sksort($uninstalled_plugins, 'name', 'char', true);
+        $h->vars['uninstalled_plugins'] = sksort($uninstalled_plugins, 'name', 'char', true);
     
         return true;
     }

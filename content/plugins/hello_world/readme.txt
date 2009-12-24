@@ -9,7 +9,7 @@ An example plugin that displays "Hello World" in a template.
 Instructions
 ------------
 1. Upload the "hello_world" folder to your plugins folder. Install it from Plugin Management in Admin.
-2. Add <?php $hotaru->pluginHook('hello_world'); ?> to your theme, wherever you want to show "Hello World".
+2. Add <?php $h->pluginHook('hello_world'); ?> to your theme, wherever you want to show "Hello World".
 
 Changelog
 ---------

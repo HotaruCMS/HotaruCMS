@@ -33,7 +33,7 @@
 
 class HelloUniverse
 {
-    public $hotaru = '';   // access Hotaru functions using $this->hotaru
+    public $h = '';   // access Hotaru functions using $this->hotaru
     
     /**
      * FUNCTION #1

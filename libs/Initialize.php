@@ -33,7 +33,7 @@ class Initialize
     /**
      * Initialize Hotaru with the essentials
      */
-    public function __construct($hotaru)
+    public function __construct($h)
     {
         // session to be used by CSRF
         if (!isset($_SESSION['HotaruCMS'])) {

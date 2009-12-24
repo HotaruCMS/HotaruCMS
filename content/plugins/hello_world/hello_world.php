@@ -9,7 +9,7 @@
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
- * Usage: Add <?php $hotaru->pluginHook('hello_world'); ?> to your theme, wherever you want to show "Hello World".
+ * Usage: Add <?php $h->pluginHook('hello_world'); ?> to your theme, wherever you want to show "Hello World".
 *
  * PHP version 5
  *

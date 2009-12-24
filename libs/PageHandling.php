@@ -30,18 +30,18 @@ class PageHandling
      *
      * @param string $page page name
      */
-    public function isPage($hotaru, $page = '')
+    public function isPage($h, $page = '')
     {
-        $real_page = $hotaru->cage->get->testPage('page');
+        $real_page = $h->cage->get->testPage('page');
         
         if (!$real_page) { 
             /*  Possibly a post with multi-byte characters? 
                 Try getMixedString2... */
-            $real_page = $hotaru->cage->get->getMixedString2('page');
+            $real_page = $h->cage->get->getMixedString2('page');
         }
         
         // Try POST...
-        if (!$real_page) { $real_page = $hotaru->cage->post->testPage('page'); }
+        if (!$real_page) { $real_page = $h->cage->post->testPage('page'); }
         
         if (!$real_page) { return false; }
 
@@ -54,41 +54,45 @@ class PageHandling
      *
      * @return string|false $page
      */
-    public function getPageName($hotaru)
+    public function getPageName($h)
     {
-        if ($hotaru->pageName) { return $hotaru->pageName; }
+        if ($h->pageName) { return $h->pageName; }
 
         // Try GET...
-        $page = $hotaru->cage->get->testPage('page');
+        $page = $h->cage->get->testPage('page');
         if (!$page) {
             /*  Possibly a post with multi-byte characters? 
                 Try getMixedString2... */
-            $page = $hotaru->cage->get->getMixedString2('page');
+            $page = $h->cage->get->getMixedString2('page');
         }
         
         // Try POST...
-        if (!$page) { $page = $hotaru->cage->post->testPage('page'); }
+        if (!$page) { $page = $h->cage->post->testPage('page'); }
         
         // Analyze the URL:
         if (!$page) {
-            $host = $hotaru->cage->server->getMixedString2('HTTP_HOST');
-            $uri = $hotaru->cage->server->getMixedString2('REQUEST_URI');
+            $host = $h->cage->server->getMixedString2('HTTP_HOST');
+            $uri = $h->cage->server->getMixedString2('REQUEST_URI');
             $path = "http://" . $host  . $uri;
             
             if (FRIENDLY_URLS == 'true') {
-                $path = $hotaru->friendlyToStandardUrl($path);
+                $path = $h->friendlyToStandardUrl($path);
             }
             
             $query_args = parse_url($path, PHP_URL_QUERY);  // get all query vars
             
             if (!$query_args) { // no query vars - must be the home page
-                return ($hotaru->isAdmin) ? 'admin_index' : 'index';
+                return ($h->isAdmin) ? 'admin_index' : 'index';
             }
 
             parse_str($query_args, $parsed_query_args); // split query vars into key->value pairs
             
-            // we'll need a plugin hook here so we can parse the query vars to plugins and let them 
-            // determine and return the page name.
+            $results = $h->pluginHook('pagehandling_getpagename', '', $parsed_query_args);
+            if ($results) {
+                foreach ($results as $key => $value) {
+                    if ($value) { $page = $value; } // assigns the LAST value returned to this hook
+                }
+            }
         } 
         
         if ($page) {
@@ -105,32 +109,32 @@ class PageHandling
      *
      * @return string - the title
      */
-    public function getTitle($hotaru)
+    public function getTitle($h)
     {
         // if the title is already set...
-        if ($hotaru->pageTitle != "")
+        if ($h->pageTitle != "")
         {
             // if this is the index page...
-            if($hotaru->pageName == 'index') {
+            if($h->pageName == 'index') {
                 // title only (set by plugins, e.g. sb_base)
-                return $hotaru->pageTitle;
+                return $h->pageTitle;
             } else {
                 // title followed by site name
-                return $hotaru->pageTitle . " &laquo; " . SITE_NAME;
+                return $h->pageTitle . " &laquo; " . SITE_NAME;
             }
         }
         // fetch the page name...
-        elseif ($hotaru->getPageName())
+        elseif ($h->getPageName())
         {
             // make a title from it...
-            $hotaru->pageTitle = make_name($hotaru->pageName);
-            return $hotaru->pageTitle . " &laquo; " . SITE_NAME;
+            $h->pageTitle = make_name($h->pageName);
+            return $h->pageTitle . " &laquo; " . SITE_NAME;
         }
         else
         { 
             // there's no title and no page name - assume "page not found"
-            $hotaru->pageTitle = $hotaru->lang['main_theme_page_not_found'];
-            return $hotaru->pageTitle  . " &laquo; " . SITE_NAME;
+            $h->pageTitle = $h->lang['main_theme_page_not_found'];
+            return $h->pageTitle  . " &laquo; " . SITE_NAME;
         } 
     }
     
@@ -142,14 +146,14 @@ class PageHandling
      * @param string $plugin optional plugin name
      * @param bool $include_once true or false
      */
-    public function displayTemplate($hotaru, $page = '', $plugin = '', $include_once = true)
+    public function displayTemplate($h, $page = '', $plugin = '', $include_once = true)
     {
-        $hotaru->pageTemplate = $page;
+        $h->pageTemplate = $page;
         
         // if no plugin folder, provide it:
-        if (!$plugin) { $plugin = $hotaru->plugin->folder; }
+        if (!$plugin) { $plugin = $h->plugin->folder; }
         
-        if ($hotaru->isAdmin) { 
+        if ($h->isAdmin) { 
             $themes = ADMIN_THEMES; $theme = ADMIN_THEME; 
         } else {
             $themes = THEMES; $theme = THEME; 
@@ -211,7 +215,7 @@ class PageHandling
      * @param string $head either 'index' or 'admin'
      * @return string
      */
-    public function url($hotaru, $parameters = array(), $head = 'index')
+    public function url($h, $parameters = array(), $head = 'index')
     {
         if (FRIENDLY_URLS == "false") {
         
@@ -288,14 +292,14 @@ class PageHandling
      * @param int $pg - current page number
      * @return object - object of type Paginated
      */
-    public function pagination($hotaru, $items = array(), $items_per_page = 10, $pg = 0)
+    public function pagination($h, $items = array(), $items_per_page = 10, $pg = 0)
     {
         if (!$items) { return false; }
         
         require_once(EXTENSIONS . 'Paginated/Paginated.php');
         require_once(EXTENSIONS . 'Paginated/DoubleBarLayout.php');
 
-        $pg = $hotaru->cage->get->getInt('pg');
+        $pg = $h->cage->get->getInt('pg');
         return new Paginated($items, $items_per_page, $pg);
     }
     
@@ -306,28 +310,28 @@ class PageHandling
      * @param object $pageObject - current object of type Paginated
      * @return string - HTML for page number bar
      */
-    public function pageBar($hotaru, $pageObject = NULL)
+    public function pageBar($h, $pageObject = NULL)
     {
         require_once(EXTENSIONS . 'Paginated/Paginated.php');
         require_once(EXTENSIONS . 'Paginated/DoubleBarLayout.php');
         
         $pageObject->setLayout(new DoubleBarLayout());
-        return $pageObject->fetchPagedNavigation($hotaru);
+        return $pageObject->fetchPagedNavigation($h);
     }
     
     
     /**
      * Converts a friendly url into a standard one
      *
-     * @param object $hotaru
+     * @param object $h
      * @param string $friendly_url
      * return string $standard_url
      */
-    public function friendlyToStandardUrl($hotaru, $friendly_url = '') 
+    public function friendlyToStandardUrl($h, $friendly_url = '') 
     {
         $path = $friendly_url;
         
-        if ($hotaru->isAdmin) { 
+        if ($h->isAdmin) { 
             $head = 'admin_index.php?';
         } else {
             $head = 'index.php?';
@@ -379,14 +383,14 @@ class PageHandling
      *
      *  Notes: This is used in "admin_header_include" so we only include the css, 
      *         javascript etc. for the plugin we're trying to change settings for.
-     *  Usage: $hotaru->isSettingsPage('sb_submit') returns true if 
+     *  Usage: $h->isSettingsPage('sb_submit') returns true if 
      *         page=plugin_settings and plugin=sb_submit in the url.
      */
-    public function isSettingsPage($hotaru, $folder = '')
+    public function isSettingsPage($h, $folder = '')
     {
-        if (!$folder) { $folder = $hotaru->plugin->folder; }
+        if (!$folder) { $folder = $h->plugin->folder; }
         
-        if ($hotaru->isPage('plugin_settings') && $hotaru->cage->get->testAlnumLines('plugin') == $folder) {
+        if ($h->isPage('plugin_settings') && $h->cage->get->testAlnumLines('plugin') == $folder) {
             return true;
         } else {    
             return false;

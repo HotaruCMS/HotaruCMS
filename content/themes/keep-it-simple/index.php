@@ -30,16 +30,16 @@
  */
 
 // plugin hook
-$result = $hotaru->pluginHook('theme_index_top');
+$result = $h->pluginHook('theme_index_top');
 if (!$result) {
 ?>
         <!-- HEADER-->
 
         <?php
             // plugin hook
-            $result = $hotaru->pluginHook('theme_index_header');
+            $result = $h->pluginHook('theme_index_header');
             if (!$result) {
-                $hotaru->displayTemplate('header');
+                $h->displayTemplate('header');
             }
         ?>
 <!-- div content starts -->
@@ -47,27 +47,27 @@ if (!$result) {
 <div id="content-wrapper" class="container_16">
     <!-- BREADCRUMBS -->
 		<div id='breadcrumbs'>
-		<?php echo $hotaru->breadcrumbs(); ?>
+		<?php echo $h->breadcrumbs(); ?>
 		</div>
                             <!-- MAIN -->
 							
-<?php if ($hotaru->pageName == "submit") {  "<div id=\"submission\">"; }
+<?php if ($h->pageName == "submit") {  "<div id=\"submission\">"; }
 else {
 echo "<div id=\"main\" class=\"grid_8\">"; 
 } ?>
                             <?php     
                                 // plugin hook
-                            $result = $hotaru->pluginHook('theme_index_main');
+                            $result = $h->pluginHook('theme_index_main');
                             if (!$result) {
-                                $page = $hotaru->getPageName();
-                                $hotaru->displayTemplate($page); 
+                                $page = $h->getPageName();
+                                $h->displayTemplate($page); 
                             }
                         ?>	
 		</div>
 
-                    <?php if ($hotaru->sidebars) { ?>
+                    <?php if ($h->sidebars) { ?>
 
-<?php if ($hotaru->pageName == "submit_step1" || $hotaru->pageName == "submit_step2")
+<?php if ($h->pageName == "submit_step1" || $h->pageName == "submit_step2")
 { // DO NOTHING Submission in progress 
 	echo "<style type=\"text/css\">
 	<!-- #main form {
@@ -83,9 +83,9 @@ else {
 							<div class=\"sidemenu\">";	
                             
                                 // plugin hook
-                                $result = $hotaru->pluginHook('theme_index_sidebar');
+                                $result = $h->pluginHook('theme_index_sidebar');
                                 if (!$result) {
-                                    $hotaru->displayTemplate('sidebar');
+                                    $h->displayTemplate('sidebar');
                                 }                                
                             
 					  echo "</div>
@@ -94,9 +94,9 @@ else {
 							<div class=\"sidemenu\">";
                             
                                 // plugin hook
-                                $result = $hotaru->pluginHook('theme_index_sidebar_2');
+                                $result = $h->pluginHook('theme_index_sidebar_2');
                                 if (!$result) {
-                                    $hotaru->displayTemplate('sidebar');
+                                    $h->displayTemplate('sidebar');
                                 }                                
                             
 					  echo "</div>
@@ -109,9 +109,9 @@ else {
         <!-- FOOTER -->
         <?php
             // plugin hook
-            $result = $hotaru->pluginHook('theme_index_footer');
+            $result = $h->pluginHook('theme_index_footer');
             if (!$result) {
-                $hotaru->displayTemplate('footer');
+                $h->displayTemplate('footer');
             }
         ?>
 <?php    } ?>

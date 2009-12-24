@@ -95,9 +95,9 @@ class IncludeCssJs
      * @param $folder - the folder name of the plugin
      * @param $filename - optional css file without an extension
      */
-     public function includeCss($hotaru, $folder = '', $filename = '')
+     public function includeCss($h, $folder = '', $filename = '')
      {
-        if (!$folder) { $folder = $hotaru->plugin->folder; }
+        if (!$folder) { $folder = $h->plugin->folder; }
         
         // If no filename provided, the filename is assigned the plugin name.
         if (!$filename) { $filename = $folder; }
@@ -105,7 +105,7 @@ class IncludeCssJs
         $file_location = $this->findCssFile($folder, $filename);
         
         // Add this css file to the global array of css_files
-        $this->setCssIncludes($file_location, $hotaru->isAdmin);
+        $this->setCssIncludes($file_location, $h->isAdmin);
         
         return $folder; // returned for testing purposes only
      }
@@ -117,9 +117,9 @@ class IncludeCssJs
      * @param $folder - the folder name of the plugin
      * @param $filename - optional js file without an extension
      */
-     public function includeJs($hotaru, $folder = '', $filename = '')
+     public function includeJs($h, $folder = '', $filename = '')
      {
-        if (!$folder) { $folder = $hotaru->plugin->folder; }
+        if (!$folder) { $folder = $h->plugin->folder; }
                 
         // If no filename provided, the filename is assigned the plugin name.
         if (!$filename) { $filename = $folder; }
@@ -127,7 +127,7 @@ class IncludeCssJs
         $file_location = $this->findJsFile($folder, $filename);
         
         // Add this css file to the global array of css_files
-        $this->setJsIncludes($file_location, $hotaru->isAdmin);
+        $this->setJsIncludes($file_location, $h->isAdmin);
         
         return $folder; // returned for testing purposes only
      }
@@ -210,13 +210,13 @@ class IncludeCssJs
      * @return int version number or echo output to cache file
      * @link http://www.ejeliot.com/blog/72 Based on work by Ed Eliot
      */
-     public function combineIncludes($hotaru, $type = 'css', $version = 0)
+     public function combineIncludes($h, $type = 'css', $version = 0)
      {
-        if ($hotaru->isAdmin) {
-            $hotaru->pluginHook('admin_header_include');
+        if ($h->isAdmin) {
+            $h->pluginHook('admin_header_include');
             $prefix = 'hotaru_admin_';
         } else {
-            $hotaru->pluginHook('header_include');
+            $h->pluginHook('header_include');
             $prefix = 'hotaru_';
         }
 
@@ -225,11 +225,11 @@ class IncludeCssJs
         
         if($type == 'css') { 
             $content_type = 'text/css';
-            $includes = $this->getCssIncludes($hotaru->isAdmin);
+            $includes = $this->getCssIncludes($h->isAdmin);
         } else { 
             $type = 'js'; 
             $content_type = 'text/javascript';
-            $includes = $this->getJsIncludes($hotaru->isAdmin);
+            $includes = $this->getJsIncludes($h->isAdmin);
         }
         
         $includes = array_unique($includes);    // remove duplicate includes
@@ -251,10 +251,10 @@ class IncludeCssJs
             
             // see if the user has an updated copy in browser cache
             if (
-                ($hotaru->cage->server->keyExists('HTTP_IF_MODIFIED_SINCE') && $hotaru->cage->server->testDate('HTTP_IF_MODIFIED_SINCE') == $sLastModified) ||
-                ($hotaru->cage->server->keyExists('HTTP_IF_NONE_MATCH') && $hotaru->cage->server->testint('HTTP_IF_NONE_MATCH') == $iETag)
+                ($h->cage->server->keyExists('HTTP_IF_MODIFIED_SINCE') && $h->cage->server->testDate('HTTP_IF_MODIFIED_SINCE') == $sLastModified) ||
+                ($h->cage->server->keyExists('HTTP_IF_NONE_MATCH') && $h->cage->server->testint('HTTP_IF_NONE_MATCH') == $iETag)
             ) {
-                header("{$hotaru->cage->server->getRaw('SERVER_PROTOCOL')} 304 Not Modified");
+                header("{$h->cage->server->getRaw('SERVER_PROTOCOL')} 304 Not Modified");
                 exit;
             }
             
@@ -290,7 +290,7 @@ class IncludeCssJs
                     fclose($oFile);
                 } else {
                     // archive file no longer exists or invalid etag specified
-                    header("{$hotaru->cage->server->getRaw('SERVER_PROTOCOL')} 404 Not Found");
+                    header("{$h->cage->server->getRaw('SERVER_PROTOCOL')} 404 Not Found");
                     exit;
                 }
         

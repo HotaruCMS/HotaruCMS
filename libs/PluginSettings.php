@@ -35,26 +35,26 @@ class PluginSettings
      * Notes: If there are multiple settings with the same name,
      * this will only get the first.
      */
-    public function getSetting($hotaru, $setting = '', $folder = '')
+    public function getSetting($h, $setting = '', $folder = '')
     {
-        if (!$folder) { $folder = $hotaru->plugin->folder; }
+        if (!$folder) { $folder = $h->plugin->folder; }
         
-        if ($hotaru->isAdmin)
+        if ($h->isAdmin)
         {
             // In Admin. Let's pull settings from the database to avoid problems when saving in Plugin Settings:
             $sql = "SELECT plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
-            $value = $hotaru->db->get_var($hotaru->db->prepare($sql, $folder, $setting));
+            $value = $h->db->get_var($h->db->prepare($sql, $folder, $setting));
         }
         else
         {
             // get all settings from the database if we haven't already:
-            if (!$hotaru->pluginSettings) { $hotaru->getAllPluginSettings(); }
+            if (!$h->pluginSettings) { $h->getAllPluginSettings(); }
 
             // return false if no plugin settings found in the database
-            if (!$hotaru->pluginSettings) { return false; }
+            if (!$h->pluginSettings) { return false; }
 
             // get the settings we need from memory
-            foreach ($hotaru->pluginSettings as $item => $key) {
+            foreach ($h->pluginSettings as $item => $key) {
                 if (($key->plugin_folder == $folder) && ($key->plugin_setting == $setting)) {
                         $value = $key->plugin_value;
                 }
@@ -73,12 +73,12 @@ class PluginSettings
      *
      * Note: Unlike "getSetting", this will get ALL settings with the same name.
      */
-    public function getSettingsArray($hotaru, $folder = '')
+    public function getSettingsArray($h, $folder = '')
     {
-        if (!$folder) { $folder = $hotaru->plugin->folder; }
+        if (!$folder) { $folder = $h->plugin->folder; }
         
         $sql = "SELECT plugin_setting, plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s)";
-        $results = $hotaru->db->get_results($hotaru->db->prepare($sql, $folder));
+        $results = $h->db->get_results($h->db->prepare($sql, $folder));
         
         if ($results) { return $results; } else { return false; }
     }
@@ -91,30 +91,30 @@ class PluginSettings
      * @param string $settings_name optional settings name if different from folder
      * @return array - of submit settings
      */
-    public function getSerializedSettings($hotaru, $folder = '', $settings_name = '')
+    public function getSerializedSettings($h, $folder = '', $settings_name = '')
     {
-        if (!$folder) { $folder = $hotaru->plugin->folder; }
+        if (!$folder) { $folder = $h->plugin->folder; }
 
         // Get settings from the database if they exist...
         if (!$settings_name) {
-            $settings = unserialize($hotaru->getSetting($folder . '_settings', $folder));
+            $settings = unserialize($h->getSetting($folder . '_settings', $folder));
         } else {
-            $settings = unserialize($hotaru->getSetting($settings_name, $folder));
+            $settings = unserialize($h->getSetting($settings_name, $folder));
         }
         return $settings;
     }
     
     
     /**
-     * Get and store all plugin settings in $hotaru->pluginSettings
+     * Get and store all plugin settings in $h->pluginSettings
      * We use the Hotaru object because it's persistent during a page load
      *
      * @return array - all settings
      */
-    public function getAllPluginSettings($hotaru)
+    public function getAllPluginSettings($h)
     {
         $sql = "SELECT plugin_folder, plugin_setting, plugin_value FROM " . TABLE_PLUGINSETTINGS;
-        $results = $hotaru->db->get_results($hotaru->db->prepare($sql));
+        $results = $h->db->get_results($h->db->prepare($sql));
         if ($results) { return $results; } else { return false; }
     }
     
@@ -126,12 +126,12 @@ class PluginSettings
      * @param string $setting name of the setting to retrieve
      * @return string|false
      */
-    public function isSetting($hotaru, $setting = '', $folder = '')
+    public function isSetting($h, $setting = '', $folder = '')
     {
-        if (!$folder) { $folder = $hotaru->plugin->folder; }
+        if (!$folder) { $folder = $h->plugin->folder; }
         
         $sql = "SELECT plugin_setting FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
-        $returned_setting = $hotaru->db->get_var($hotaru->db->prepare($sql, $folder, $setting));
+        $returned_setting = $h->db->get_var($h->db->prepare($sql, $folder, $setting));
         if ($returned_setting) { 
             return $returned_setting; 
         } else { 
@@ -147,24 +147,24 @@ class PluginSettings
      * @param string $setting name of the setting
      * @param string $setting stting value
      */
-    public function updateSetting($hotaru, $setting = '', $value = '', $folder = '')
+    public function updateSetting($h, $setting = '', $value = '', $folder = '')
     {
-        if (!$folder) { $folder = $hotaru->plugin->folder; }
+        if (!$folder) { $folder = $h->plugin->folder; }
         
-        $exists = $hotaru->isSetting($setting, $folder);
+        $exists = $h->isSetting($setting, $folder);
         if (!$exists) 
         {
             $sql = "INSERT INTO " . TABLE_PLUGINSETTINGS . " (plugin_folder, plugin_setting, plugin_value, plugin_updateby) VALUES (%s, %s, %s, %d)";
-            $hotaru->db->query($hotaru->db->prepare($sql, $folder, $setting, $value, $hotaru->currentUser->id));
+            $h->db->query($h->db->prepare($sql, $folder, $setting, $value, $h->currentUser->id));
         } else 
         {
             $sql = "UPDATE " . TABLE_PLUGINSETTINGS . " SET plugin_folder = %s, plugin_setting = %s, plugin_value = %s, plugin_updateby = %d WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
-            if (isset($hotaru->currentUser->id)) { $updateby = $hotaru->currentUser->id; } else { $updateby = 1; }
-            $hotaru->db->query($hotaru->db->prepare($sql, $folder, $setting, $value, $updateby, $folder, $setting));
+            if (isset($h->currentUser->id)) { $updateby = $h->currentUser->id; } else { $updateby = 1; }
+            $h->db->query($h->db->prepare($sql, $folder, $setting, $value, $updateby, $folder, $setting));
         }
         
         // optimize the table
-        $hotaru->db->query("OPTIMIZE TABLE " . TABLE_PLUGINSETTINGS);
+        $h->db->query("OPTIMIZE TABLE " . TABLE_PLUGINSETTINGS);
     }
 }
 ?>

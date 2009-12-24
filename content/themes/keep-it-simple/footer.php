@@ -102,7 +102,7 @@
 			<p class="bottom-right" >
 				<a href="<?php echo BASEURL;?>">Home</a> |
 				<a href="<?php echo BASEURL;?>">Sitemap</a> |
-				<a href="<?php echo $hotaru->url(array('page'=>'rss')); ?>">RSS Feed</a> |						
+				<a href="<?php echo $h->url(array('page'=>'rss')); ?>">RSS Feed</a> |						
 				<a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a> | 
 		   	<a href="http://validator.w3.org/check/referer">XHTML</a>
 			</p>
@@ -110,17 +110,17 @@
 		</div>	
 			
         <?php 
-            $hotaru->pluginHook('footer');
+            $h->pluginHook('footer');
         
             // Link to forums...
             echo "<p><a href='http://hotarucms.org'><img src='" . BASEURL . "content/themes/" . THEME . "images/hotarucms.png' ";
-            echo "title='" . $hotaru->lang["main_theme_footer_hotaru_link"] . "'></a></p>";
+            echo "title='" . $h->lang["main_theme_footer_hotaru_link"] . "'></a></p>";
         
-            $hotaru->showQueriesAndTime();
+            $h->showQueriesAndTime();
         ?>
 	</div>
 	<!-- footer ends here -->
-<?php $hotaru->pluginHook('pre_close_body'); ?>
+<?php $h->pluginHook('pre_close_body'); ?>
 
 </body>
 </html>

@@ -29,24 +29,24 @@ class SbBaseSettings
      /**
      * Admin settings for the Submit plugin
      */
-    public function settings($hotaru)
+    public function settings($h)
     {
         // If the form has been submitted, go and save the data...
-        if ($hotaru->cage->post->getAlpha('submitted') == 'true') { 
-            $this->saveSettings($hotaru); 
+        if ($h->cage->post->getAlpha('submitted') == 'true') { 
+            $this->saveSettings($h); 
         }    
         
-        echo "<h1>" . $hotaru->lang["sb_base_settings_header"] . "</h1>\n";
+        echo "<h1>" . $h->lang["sb_base_settings_header"] . "</h1>\n";
         
-        $hotaru->showMessage(); // Saved / Error message
+        $h->showMessage(); // Saved / Error message
         
         // Get settings from database if they exist...
-        $sb_base_settings = $hotaru->getSerializedSettings();
+        $sb_base_settings = $h->getSerializedSettings();
         
         $posts_per_page = $sb_base_settings['posts_per_page'];
         $archive = $sb_base_settings['archive'];
     
-        $hotaru->pluginHook('sb_base_settings_get_values');
+        $h->pluginHook('sb_base_settings_get_values');
         
         //...otherwise set to blank:
         if (!$posts_per_page) { $posts_per_page = 10; }
@@ -55,28 +55,28 @@ class SbBaseSettings
         echo "<form name='sb_base_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=sb_base' method='post'>\n";
 
         echo "<p><input type='text' size=5 name='posts_per_page' value='" . $posts_per_page . "' /> ";
-        echo $hotaru->lang["sb_base_settings_posts_per_page"] . "</p>\n";
+        echo $h->lang["sb_base_settings_posts_per_page"] . "</p>\n";
     
-        $hotaru->pluginHook('sb_base_settings_form');
+        $h->pluginHook('sb_base_settings_form');
     
         echo "<br />\n";
 
-        echo $hotaru->lang["sb_base_settings_post_archiving"] . "<br /><br />\n";
-        echo $hotaru->lang["sb_base_settings_post_archive_desc"] . "<br /><br />\n";
+        echo $h->lang["sb_base_settings_post_archiving"] . "<br /><br />\n";
+        echo $h->lang["sb_base_settings_post_archive_desc"] . "<br /><br />\n";
         echo "<select name='post_archive'>\n";
-            echo "<option value='" . $archive . "'>" . $hotaru->lang["sb_base_settings_post_archive_$archive"] . "</option>\n";
+            echo "<option value='" . $archive . "'>" . $h->lang["sb_base_settings_post_archive_$archive"] . "</option>\n";
             echo '<option disabled>-----</option>';
-            echo "<option value='no_archive'>" . $hotaru->lang["sb_base_settings_post_archive_no_archive"] . "</option>\n";
-            echo "<option value='180'>" . $hotaru->lang["sb_base_settings_post_archive_180"] . "</option>\n";
-            echo "<option value='365'>" . $hotaru->lang["sb_base_settings_post_archive_365"] . "</option>\n";
-            echo "<option value='730'>" . $hotaru->lang["sb_base_settings_post_archive_730"] . "</option>\n";
-            echo "<option value='1095'>" . $hotaru->lang["sb_base_settings_post_archive_1095"] . "</option>\n";
+            echo "<option value='no_archive'>" . $h->lang["sb_base_settings_post_archive_no_archive"] . "</option>\n";
+            echo "<option value='180'>" . $h->lang["sb_base_settings_post_archive_180"] . "</option>\n";
+            echo "<option value='365'>" . $h->lang["sb_base_settings_post_archive_365"] . "</option>\n";
+            echo "<option value='730'>" . $h->lang["sb_base_settings_post_archive_730"] . "</option>\n";
+            echo "<option value='1095'>" . $h->lang["sb_base_settings_post_archive_1095"] . "</option>\n";
         echo "</select>\n";
-        echo $hotaru->lang["sb_base_settings_post_archive"] . "<br /><br />\n";
+        echo $h->lang["sb_base_settings_post_archive"] . "<br /><br />\n";
 
         echo "<input type='hidden' name='submitted' value='true' />\n";
-        echo "<input type='submit' value='" . $hotaru->lang["main_form_save"] . "' />\n";
-        echo "<input type='hidden' name='token' value='" . $hotaru->token . "' />\n";
+        echo "<input type='submit' value='" . $h->lang["main_form_save"] . "' />\n";
+        echo "<input type='hidden' name='token' value='" . $h->token . "' />\n";
         echo "</form>\n";
     }
     
@@ -84,32 +84,32 @@ class SbBaseSettings
     /**
      * Save Submit Settings
      */
-    public function saveSettings($hotaru) 
+    public function saveSettings($h) 
     {
         // Get current settings 
-        $sb_base_settings = $hotaru->getSerializedSettings();
+        $sb_base_settings = $h->getSerializedSettings();
         
         // Posts per page
-        $posts_per_page = $hotaru->cage->post->testInt('posts_per_page'); 
+        $posts_per_page = $h->cage->post->testInt('posts_per_page'); 
         if (!$posts_per_page) { 
             $posts_per_page = $sb_base_settings['posts_per_page']; 
         }
     
         // Post Archiving
-        $archive = $hotaru->cage->post->testAlnumLines('post_archive'); 
+        $archive = $h->cage->post->testAlnumLines('post_archive'); 
         if (!$archive) { 
             $archive = $sb_base_settings['archive']; 
         } 
         
-        $hotaru->pluginHook('sb_base_save_settings');
+        $h->pluginHook('sb_base_save_settings');
         
         $sb_base_settings['posts_per_page'] = $posts_per_page;
         $sb_base_settings['archive'] = $archive;
     
-        $hotaru->updateSetting('sb_base_settings', serialize($sb_base_settings));
+        $h->updateSetting('sb_base_settings', serialize($sb_base_settings));
         
-        $hotaru->message = $hotaru->lang["main_settings_saved"];
-        $hotaru->messageType = "green";
+        $h->message = $h->lang["main_settings_saved"];
+        $h->messageType = "green";
         
         return true;    
     }

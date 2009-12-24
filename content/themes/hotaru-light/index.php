@@ -27,21 +27,21 @@
  */
 
 // plugin hook
-$result = $hotaru->pluginHook('theme_index_top');
+$result = $h->pluginHook('theme_index_top');
 if (!$result) {
 ?>
         <!-- HEADER-->
         <?php
             // plugin hook
-            $result = $hotaru->pluginHook('theme_index_header');
+            $result = $h->pluginHook('theme_index_header');
             if (!$result) {
-                $hotaru->displayTemplate('header');
+                $h->displayTemplate('header');
             }
         ?>
         <div id="ads160x600"><img src="<?php echo BASEURL . 'content/themes/' . THEME . '/images/ads160x600.jpg'; ?>" /></div>
         <div id="bd">
             <div id="yui-main"> 
-            <?php if ($hotaru->sidebars) { // determines whether to show the sidebar or not ?>
+            <?php if ($h->sidebars) { // determines whether to show the sidebar or not ?>
                 <div class='yui-gc'> 
                     <div class="yui-u first">
             <?php } else { ?>
@@ -50,28 +50,28 @@ if (!$result) {
                 <?php } ?>
                             <!-- BREADCRUMBS -->
                             <div id='breadcrumbs'>
-                                <?php echo $hotaru->breadcrumbs(); ?>
+                                <?php echo $h->breadcrumbs(); ?>
                             </div>
                             
                             <!-- MAIN -->
                             <?php     
                                 // plugin hook
-                            $result = $hotaru->pluginHook('theme_index_main');
+                            $result = $h->pluginHook('theme_index_main');
                             if (!$result) {
-                                $page = $hotaru->getPageName();
-                                $hotaru->displayTemplate($page); 
+                                $page = $h->getPageName();
+                                $h->displayTemplate($page); 
                             }
                         ?>
                         </div> <!-- close "yui-u first" -->
-                    <?php if ($hotaru->sidebars) { ?>
+                    <?php if ($h->sidebars) { ?>
                         <div class="yui-u">
                             
                             <!-- SIDEBAR -->
                             <?php
                                 // plugin hook
-                                $result = $hotaru->pluginHook('theme_index_sidebar');
+                                $result = $h->pluginHook('theme_index_sidebar');
                                 if (!$result) {
-                                    $hotaru->displayTemplate('sidebar');
+                                    $h->displayTemplate('sidebar');
                                 }                               
                             ?>
                         </div> <!-- close "yui-u" -->
@@ -82,9 +82,9 @@ if (!$result) {
         <!-- FOOTER -->
         <?php
             // plugin hook
-            $result = $hotaru->pluginHook('theme_index_footer');
+            $result = $h->pluginHook('theme_index_footer');
             if (!$result) {
-                $hotaru->displayTemplate('footer');
+                $h->displayTemplate('footer');
             }
         ?>
 <?php    } ?>

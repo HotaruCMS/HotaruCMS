@@ -66,17 +66,17 @@ class Post
      * @param array $post_row - a post already fetched from the db, just needs reading
      * @return bool
      */    
-    public function readPost($hotaru, $post_id = 0, $post_row = NULL)
+    public function readPost($h, $post_id = 0, $post_row = NULL)
     {
-        $hotaru->vars['post_error'] = false; 
+        $h->vars['post_error'] = false; 
         
         if (!$post_id && !$post_row) {
-            $post_id = $this->id;   // use the id already assigned to $hotaru->post
+            $post_id = $this->id;   // use the id already assigned to $h->post
         }
         
         if ($post_id != 0) {
-            $post_row = $hotaru->getPost($post_id);
-            if (!$post_row) { $hotaru->vars['post_error'] = true; return false; }
+            $post_row = $h->getPost($post_id);
+            if (!$post_row) { $h->vars['post_error'] = true; return false; }
         }
         
         if ($post_row) {
@@ -92,7 +92,7 @@ class Post
             
             $this->vars['post_row'] = $post_row;    // make available to plugins
             
-            $hotaru->pluginHook('post_read_post');
+            $h->pluginHook('post_read_post');
                         
             return true;
         } else {
@@ -108,23 +108,23 @@ class Post
      * @param int $post_id - post id of the post to get
      * @return array|false
      */    
-    public function getPost($hotaru, $post_id = 0)
+    public function getPost($h, $post_id = 0)
     {
         // Build SQL
         $query = "SELECT * FROM " . TABLE_POSTS . " WHERE post_id = %d ORDER BY post_date DESC";
-        $sql = $hotaru->db->prepare($query, $post_id);
+        $sql = $h->db->prepare($query, $post_id);
         
         // Create temp cache array
-        if (!isset($this->hotaru->vars['tempPostCache'])) { $hotaru->vars['tempPostCache'] = array(); }
+        if (!isset($this->hotaru->vars['tempPostCache'])) { $h->vars['tempPostCache'] = array(); }
 
         // If this query has already been read once this page load, we should have it in memory...
-        if (array_key_exists($sql, $hotaru->vars['tempPostCache'])) {
+        if (array_key_exists($sql, $h->vars['tempPostCache'])) {
             // Fetch from memory
-            $post = $hotaru->vars['tempPostCache'][$sql];
+            $post = $h->vars['tempPostCache'][$sql];
         } else {
             // Fetch from database
-            $post = $hotaru->db->get_row($sql);
-            $hotaru->vars['tempPostCache'][$sql] = $post;
+            $post = $h->db->get_row($sql);
+            $h->vars['tempPostCache'][$sql] = $post;
         }
 
         if ($post) { return $post; } else { return false; }
@@ -136,18 +136,18 @@ class Post
      *
      * @return true
      */    
-    public function addPost($hotaru)
+    public function addPost($h)
     {
         $sql = "INSERT INTO " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_date = CURRENT_TIMESTAMP, post_subscribe = %d, post_updateby = %d";
         
-        $hotaru->db->query($hotaru->db->prepare($sql, urlencode($this->origUrl), urlencode($this->domain), urlencode(trim($this->title)), urlencode(trim($this->url)), urlencode(trim($this->content)), $this->status, $this->author, $this->subscribe, $hotaru->currentUser->id));
+        $h->db->query($h->db->prepare($sql, urlencode($this->origUrl), urlencode($this->domain), urlencode(trim($this->title)), urlencode(trim($this->url)), urlencode(trim($this->content)), $this->status, $this->author, $this->subscribe, $h->currentUser->id));
         
-        $last_insert_id = $hotaru->db->get_var($hotaru->db->prepare("SELECT LAST_INSERT_ID()"));
+        $last_insert_id = $h->db->get_var($h->db->prepare("SELECT LAST_INSERT_ID()"));
         
         $this->id = $last_insert_id;
         $this->vars['last_insert_id'] = $last_insert_id;    // make it available outside this class
                 
-        $hotaru->pluginHook('post_add_post');
+        $h->pluginHook('post_add_post');
         
         return true;
     }
@@ -158,12 +158,12 @@ class Post
      *
      * @return true
      */    
-    public function updatePost($hotaru)
+    public function updatePost($h)
     {
         if (strstr($this->origUrl, BASEURL)) {
             // original url contains our base url, so it must be an "editorial" post.
             // Therefore, it's essential we rebuild this source url to match the updated post title to avoid errors:
-            $this->origUrl = $hotaru->url(array('page'=>$this->id)); // update the url with the real one
+            $this->origUrl = $h->url(array('page'=>$this->id)); // update the url with the real one
         }
         
         $parsed = parse_url($this->origUrl);
@@ -171,10 +171,10 @@ class Post
         
         $sql = "UPDATE " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_subscribe = %d, post_updateby = %d WHERE post_id = %d";
         
-        $hotaru->db->query($hotaru->db->prepare($sql, urlencode($this->origUrl), urlencode($this->domain), urlencode(trim($this->title)), urlencode(trim($this->url)), urlencode(trim($this->content)), $this->status, $this->author, $this->subscribe, $hotaru->currentUser->id, $this->id));
+        $h->db->query($h->db->prepare($sql, urlencode($this->origUrl), urlencode($this->domain), urlencode(trim($this->title)), urlencode(trim($this->url)), urlencode(trim($this->content)), $this->status, $this->author, $this->subscribe, $h->currentUser->id, $this->id));
         
-        $hotaru->post->id = $this->id; // a small hack to get the id for use in plugins.
-        $hotaru->pluginHook('post_update_post');
+        $h->post->id = $this->id; // a small hack to get the id for use in plugins.
+        $h->pluginHook('post_update_post');
         
         return true;
     }
@@ -185,13 +185,13 @@ class Post
      *
      * There's a plugin hook in here to delete their parts, e.g. votes, coments, tags, etc.
      */    
-    public function deletePost($hotaru)
+    public function deletePost($h)
     {
         $sql = "DELETE FROM " . TABLE_POSTS . " WHERE post_id = %d";
-        $hotaru->db->query($hotaru->db->prepare($sql, $this->id));
+        $h->db->query($h->db->prepare($sql, $this->id));
         
-        $hotaru->post->id = $this->id; // a small hack to get the id for use in plugins.
-        $hotaru->pluginHook('post_delete_post');
+        $h->post->id = $this->id; // a small hack to get the id for use in plugins.
+        $h->pluginHook('post_delete_post');
     }
     
     
@@ -202,16 +202,16 @@ class Post
      * @param int $post_id (optional)
      * @return true
      */    
-    public function changePostStatus($hotaru, $status = "processing", $post_id = 0)
+    public function changePostStatus($h, $status = "processing", $post_id = 0)
     {
         $this->status = $status;
         if (!$post_id) { $post_id = $this->id; }
             
         $sql = "UPDATE " . TABLE_POSTS . " SET post_status = %s WHERE post_id = %d";
-        $hotaru->db->query($hotaru->db->prepare($sql, $this->status, $post_id));
+        $h->db->query($h->db->prepare($sql, $this->status, $post_id));
         
-        $hotaru->post->id = $post_id; // a small hack to get the id for use in plugins.
-        $hotaru->pluginHook('post_change_status');
+        $h->post->id = $post_id; // a small hack to get the id for use in plugins.
+        $h->pluginHook('post_change_status');
                 
         return true;
     }
@@ -222,24 +222,24 @@ class Post
      *
      * @return array|false - array of posts
      */    
-    public function urlExists($hotaru, $url = '')
+    public function urlExists($h, $url = '')
     {
         $sql = "SELECT post_id, post_status FROM " . TABLE_POSTS . " WHERE post_orig_url = %s";
-        $posts = $hotaru->db->get_results($hotaru->db->prepare($sql, urlencode($url)));
+        $posts = $h->db->get_results($h->db->prepare($sql, urlencode($url)));
 
         if (!$posts) { return false; }
         
         // we know there's at least one post with the same url, so if it's processing, let's delete it:
         foreach ($posts as $post) {
             if ($post->post_status == 'processing') {
-                $hotaru->post->id = $post->post_id;
-                $hotaru->deletePost($hotaru);
+                $h->post->id = $post->post_id;
+                $h->deletePost($h);
             }
         }
 
         // One last check to see if a post is present:
         $sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_orig_url = %s";
-        $posts = $hotaru->db->get_var($hotaru->db->prepare($sql, urlencode($url)));
+        $posts = $h->db->get_var($h->db->prepare($sql, urlencode($url)));
         
         if ($posts > 0) { return $posts; } else { return false; }
     }
@@ -251,11 +251,11 @@ class Post
      * @param str $title
      * @return int - id of post with matching title
      */
-    public function titleExists($hotaru, $title = '')
+    public function titleExists($h, $title = '')
     {
         $title = trim($title);
         $sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_title = %s";
-        $post_id = $hotaru->db->get_var($hotaru->db->prepare($sql, urlencode($title)));
+        $post_id = $h->db->get_var($h->db->prepare($sql, urlencode($title)));
         if ($post_id) { return $post_id; } else { return false; }
     }
     
@@ -266,10 +266,10 @@ class Post
      * @param str $post_url (slug)
      * @return int - id of post with matching url
      */
-    public function isPostUrl($hotaru, $post_url = '')
+    public function isPostUrl($h, $post_url = '')
     {
         $sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_url = %s";
-        $post_id = $hotaru->db->get_var($hotaru->db->prepare($sql, urlencode($post_url)));
+        $post_id = $h->db->get_var($h->db->prepare($sql, urlencode($post_url)));
         if ($post_id) { return $post_id; } else { return false; }
     }
     
@@ -280,12 +280,12 @@ class Post
      * @param int $userid (optional)
      * @return int 
      */
-    public function postsApproved($hotaru, $user_id = 0)
+    public function postsApproved($h, $user_id = 0)
     {
-        if (!$user_id) { $user_id = $hotaru->currentUser->id; }
+        if (!$user_id) { $user_id = $h->currentUser->id; }
         
         $sql = "SELECT COUNT(*) FROM " . TABLE_POSTS . " WHERE (post_status = %s || post_status = %s) AND post_author = %d";
-        $count = $hotaru->db->get_var($hotaru->db->prepare($sql, 'top', 'new', $user_id));
+        $count = $h->db->get_var($h->db->prepare($sql, 'top', 'new', $user_id));
         
         return $count;
         
@@ -295,11 +295,11 @@ class Post
     /**
      * Delete posts with "processing" status that are older than 30 minutes
      */
-    public function deleteProcessingPosts($hotaru)
+    public function deleteProcessingPosts($h)
     {
         $exp = date('YmdHis', strtotime("-30 mins"));
         $sql = "DELETE FROM " . TABLE_POSTS . " WHERE post_status = %s AND post_date < %s";
-        $hotaru->db->query($hotaru->db->prepare($sql, 'processing', $exp));
+        $h->db->query($h->db->prepare($sql, 'processing', $exp));
     }
     
 
@@ -311,9 +311,9 @@ class Post
      * @param int $user_id (optional)
      * @return int 
      */
-    public function countPosts($hotaru, $hours = 0, $minutes = 0, $user_id = 0)
+    public function countPosts($h, $hours = 0, $minutes = 0, $user_id = 0)
     {
-        if (!$user_id) { $user_id = $hotaru->currentUser->id; }
+        if (!$user_id) { $user_id = $h->currentUser->id; }
         if ($hours) { 
             $time_ago = "-" . $hours . " Hours";
         } else {
@@ -323,7 +323,7 @@ class Post
         $start = date('YmdHis', strtotime("now"));
         $end = date('YmdHis', strtotime($time_ago));
         $sql = "SELECT COUNT(post_id) FROM " . TABLE_POSTS . " WHERE post_archived = %s AND post_author = %d AND (post_date >= %s AND post_date <= %s)";
-        $count = $hotaru->db->get_var($hotaru->db->prepare($sql, 'N', $user_id, $end, $start));
+        $count = $h->db->get_var($h->db->prepare($sql, 'N', $user_id, $end, $start));
         
         return $count;
     }
@@ -334,7 +334,7 @@ class Post
      *
      * @return array|false
      */
-    public function getUniqueStatuses($hotaru) 
+    public function getUniqueStatuses($h) 
     {
         /* This function pulls all the different statuses from current links, 
         or adds some defaults if not present.*/
@@ -350,7 +350,7 @@ class Post
         
         // Add any other statuses already in use:
         $sql = "SELECT DISTINCT post_status FROM " . TABLE_POSTS;
-        $statuses = $hotaru->db->get_results($hotaru->db->prepare($sql));
+        $statuses = $h->db->get_results($h->db->prepare($sql));
         if ($statuses) {
             foreach ($statuses as $status) {
                 if ($status->post_status && !in_array($status->post_status, $unique_statuses)) {
@@ -369,28 +369,28 @@ class Post
      * @param string $stat_type
      * @return int
      */
-    public function stats($hotaru, $stat_type = '')
+    public function stats($h, $stat_type = '')
     {
         switch ($stat_type) {
             case 'total_posts':
                 $sql = "SELECT count(post_id) FROM " . TABLE_POSTS;
-                $posts = $hotaru->db->get_var($sql);
+                $posts = $h->db->get_var($sql);
                 break;
             case 'approved_posts':
                 $sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s OR post_status = %s";
-                $posts = $hotaru->db->get_var($hotaru->db->prepare($sql, 'top', 'new'));
+                $posts = $h->db->get_var($h->db->prepare($sql, 'top', 'new'));
                 break;
             case 'pending_posts':
                 $sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s";
-                $posts = $hotaru->db->get_var($hotaru->db->prepare($sql, 'pending'));
+                $posts = $h->db->get_var($h->db->prepare($sql, 'pending'));
                 break;
             case 'buried_posts':
                 $sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s";
-                $posts = $hotaru->db->get_var($hotaru->db->prepare($sql, 'buried'));
+                $posts = $h->db->get_var($h->db->prepare($sql, 'buried'));
                 break;
             case 'archived_posts':
                 $sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_archived = %s";
-                $posts = $hotaru->db->get_var($hotaru->db->prepare($sql, 'Y'));
+                $posts = $h->db->get_var($h->db->prepare($sql, 'Y'));
                 break;
             default:
                 $posts = 0;

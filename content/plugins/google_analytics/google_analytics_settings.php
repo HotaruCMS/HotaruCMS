@@ -30,68 +30,68 @@ class GoogleAnalyticsSettings
 	/**
      * Admin settings for google_analytics
      */
-	public function settings($hotaru)
+	public function settings($h)
 	{
 		
 		// If the form has been submitted, go and save the data...
-		if ($hotaru->cage->post->getAlpha('submitted') == 'true') { 
-			$this->saveSettings($hotaru); 
+		if ($h->cage->post->getAlpha('submitted') == 'true') { 
+			$this->saveSettings($h); 
 		}    
 		
-		echo "<h1>" . $hotaru->lang["google_analytics_settings_header"] . "</h1>\n";
+		echo "<h1>" . $h->lang["google_analytics_settings_header"] . "</h1>\n";
 		
-		$hotaru->showMessage(); // Saved / Error message
+		$h->showMessage(); // Saved / Error message
 		
 		// Get settings from the database if they exist...
-		$google_analytics_key = $hotaru->getSetting('google_analytics_key');
+		$google_analytics_key = $h->getSetting('google_analytics_key');
 
 		//...otherwise set to blank:
 		if (!$google_analytics_key) { $google_analytics_key = ''; } 
 		
 		// A plugin hook so other plugin developers can add settings
-		$hotaru->pluginHook('google_analytics_settings_get_values');
+		$h->pluginHook('google_analytics_settings_get_values');
 
 		// The form should be submitted to the admin_index.php page:
 		echo "<form name='google_analytics_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=google_analytics' method='post'>\n";
         
-        echo "<p>" . $hotaru->lang["google_analytics_settings_instructions"] . "</p><br />";
+        echo "<p>" . $h->lang["google_analytics_settings_instructions"] . "</p><br />";
        
-        echo "<p>" . $hotaru->lang["google_analytics_settings_key"] . " <input type='text' size=25 name='google_analytics_key' value='" . $google_analytics_key . "'></p>\n";    
+        echo "<p>" . $h->lang["google_analytics_settings_key"] . " <input type='text' size=25 name='google_analytics_key' value='" . $google_analytics_key . "'></p>\n";    
 
 		// A plugin hook so other plugin developers can show settings		
-		$hotaru->pluginHook('google_analytics_settings_form');
+		$h->pluginHook('google_analytics_settings_form');
                 
         echo "<br /><br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
-        echo "<input type='submit' value='" . $hotaru->lang["main_form_save"] . "' />\n";
-        echo "<input type='hidden' name='csrf' value='" . $hotaru->csrfToken . "' />\n";
+        echo "<input type='submit' value='" . $h->lang["main_form_save"] . "' />\n";
+        echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
 	
 }  
 
-public function saveSettings($hotaru)
+public function saveSettings($h)
 {
         $error = 0;
         
         // Google Analytics key
-        if ($hotaru->cage->post->keyExists('google_analytics_key')) { 
-            $google_analytics_key = $hotaru->cage->post->testAlnumLines('google_analytics_key');
+        if ($h->cage->post->keyExists('google_analytics_key')) { 
+            $google_analytics_key = $h->cage->post->testAlnumLines('google_analytics_key');
             $error = 0;
         } else {
             $google_analytics_key = ''; 
             $error = 1;
-            $hotaru->message = $hotaru->lang["google_analytics_settings_no_key"];
-            $hotaru->messageType = "red";
+            $h->message = $h->lang["google_analytics_settings_no_key"];
+            $h->messageType = "red";
         }
        
-        $hotaru->pluginHook('google_analytics_save_settings');
+        $h->pluginHook('google_analytics_save_settings');
         
         if ($error == 0) {
             // save settings
-            $hotaru->updateSetting('google_analytics_key', $google_analytics_key);
+            $h->updateSetting('google_analytics_key', $google_analytics_key);
 
-            $hotaru->message = $hotaru->lang["main_settings_saved"];
-            $hotaru->messageType = "green";
+            $h->message = $h->lang["main_settings_saved"];
+            $h->messageType = "green";
         }
         
     return true;    

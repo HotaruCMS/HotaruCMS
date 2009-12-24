@@ -28,20 +28,20 @@
 ?>
 
 <ul id="navigation">
-    <?php $hotaru->pluginHook('navigation_first'); ?>
-    <li><a href="<?php echo BASEURL; ?>"><?php echo $hotaru->lang["admin_theme_navigation_home"]; ?></a></li>
-    <?php $hotaru->pluginHook('navigation'); ?>
+    <?php $h->pluginHook('navigation_first'); ?>
+    <li><a href="<?php echo BASEURL; ?>"><?php echo $h->lang["admin_theme_navigation_home"]; ?></a></li>
+    <?php $h->pluginHook('navigation'); ?>
     <?php 
-        if (!$hotaru->isActive('users')) { 
+        if (!$h->isActive('users')) { 
 
-            if ($hotaru->currentUser->loggedIn == true) { 
-                echo "<li><a id='navigation_active' href='" . $hotaru->url(array(), 'admin') . "'>" . $hotaru->lang["admin_theme_navigation_admin"] . "</a></li>"; 
-                echo "<li><a href='" . $hotaru->url(array('page'=>'admin_logout'), 'admin') . "'>" . $hotaru->lang["admin_theme_navigation_logout"] . "</a></li>";
+            if ($h->currentUser->loggedIn == true) { 
+                echo "<li><a id='navigation_active' href='" . $h->url(array(), 'admin') . "'>" . $h->lang["admin_theme_navigation_admin"] . "</a></li>"; 
+                echo "<li><a href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang["admin_theme_navigation_logout"] . "</a></li>";
             } else { 
-                echo "<li><a href='" . $hotaru->url(array(), 'admin') . "'>" . $hotaru->lang["admin_theme_navigation_login"] . "</a></li>"; 
+                echo "<li><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["admin_theme_navigation_login"] . "</a></li>"; 
             }
         } else {
-            $hotaru->pluginHook('navigation_users'); // ensures login/logout/register are last.
+            $h->pluginHook('navigation_users'); // ensures login/logout/register are last.
         }
     ?>
 </ul>

@@ -95,7 +95,7 @@ class Hotaru
         $lang = new Language();
         $this->lang = $lang->includeLanguagePack($this->lang, 'main');
         
-        $this->getPageName();   // fills $hotaru->pageName
+        $this->getPageName();   // fills $h->pageName
 
         switch ($entrance) {
             case 'admin':
@@ -279,7 +279,7 @@ class Hotaru
      *
      *  Notes: This is used in "admin_header_include" so we only include the css, 
      *         javascript etc. for the plugin we're trying to change settings for.
-     *  Usage: $hotaru->isSettingsPage('sb_submit') returns true if 
+     *  Usage: $h->isSettingsPage('sb_submit') returns true if 
      *         page=plugin_settings and plugin=sb_submit in the url.
      */
     public function isSettingsPage($folder = '')
@@ -397,8 +397,8 @@ class Hotaru
        retain the user object being used. E.g.
        
        $user = new UserAuth();
-       $user->getUserBasic($hotaru);
-       $user->updateUserBasic($hotaru);
+       $user->getUserBasic($h);
+       $user->updateUserBasic($h);
     */
     
     
@@ -563,7 +563,7 @@ class Hotaru
     /**
      * Get a single plugin's details for Hotaru
      *
-     * @param string $folder - plugin folder name, else $hotaru->plugin->folder is used
+     * @param string $folder - plugin folder name, else $h->plugin->folder is used
      */
     public function readPlugin($folder = '')
     {
@@ -703,7 +703,7 @@ class Hotaru
     
     
     /**
-     * Get and store all plugin settings in $hotaru->pluginSettings
+     * Get and store all plugin settings in $h->pluginSettings
      *
      * @return array - all settings
      */
@@ -963,7 +963,7 @@ class Hotaru
     /**
      * Check if site is open or closed. Exit if closed
      *
-     * @param object $hotaru
+     * @param object $h
      */
     public function checkAccess()
     {
@@ -1098,7 +1098,7 @@ class Hotaru
     {
         require_once(LIBS . 'Caching.php');
         $caching = new Caching();
-        $caching->smartCache($hotaru, $switch, $table, $timeout, $html, $label);
+        $caching->smartCache($h, $switch, $table, $timeout, $html, $label);
     }
     
     
@@ -1313,7 +1313,7 @@ class Hotaru
      * @param str $post_url (slug)
      * @return int - id of post with matching url
      */
-    public function isPostUrl($hotaru, $post_url = '')
+    public function isPostUrl($h, $post_url = '')
     {
         return $this->post->isPostUrl($this, $post_url);
     }
@@ -1321,7 +1321,7 @@ class Hotaru
     
     /**
      * Prepares and calls functions to send a trackback
-     * Uses $hotaru->post->id
+     * Uses $h->post->id
      */
     public function sendTrackback()
     {

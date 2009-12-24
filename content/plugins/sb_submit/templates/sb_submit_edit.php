@@ -24,89 +24,89 @@
  * @link      http://www.hotarucms.org/
  */
 
-$hotaru->pluginHook('submit_2_assign');
+$h->pluginHook('submit_2_assign');
 
 ?>
 
-    <?php echo $hotaru->showMessages(); ?>
+    <?php echo $h->showMessages(); ?>
     
-    <?php echo $hotaru->lang["submit_edit_instructions"]; ?>
+    <?php echo $h->lang["submit_edit_instructions"]; ?>
 
     <form name='submit_edit_post' action='<?php BASEURL; ?>index.php?page=edit_post' method='post'>
     <table>
     <tr>
-        <td><?php echo $hotaru->lang["submit_url"]; ?>&nbsp; </td>
-        <td><?php echo "<a target='_blank' href='" . $hotaru->vars['submit_orig_url'] . "'>" . $hotaru->vars['submit_orig_url'] . "</a>"; ?></td>
+        <td><?php echo $h->lang["submit_url"]; ?>&nbsp; </td>
+        <td><?php echo "<a target='_blank' href='" . $h->vars['submit_orig_url'] . "'>" . $h->vars['submit_orig_url'] . "</a>"; ?></td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td><?php echo $hotaru->lang["submit_title"]; ?>&nbsp; </td>
-        <td><input type='text' id='post_title' name='post_title' value='<?php echo $hotaru->vars['submit_title']; ?>'></td>
+        <td><?php echo $h->lang["submit_title"]; ?>&nbsp; </td>
+        <td><input type='text' id='post_title' name='post_title' value='<?php echo $h->vars['submit_title']; ?>'></td>
         <td>&nbsp;</td>
     </tr>
     
-    <?php if ($hotaru->vars['submit_use_content']) { ?>
+    <?php if ($h->vars['submit_use_content']) { ?>
     
     <tr>
-        <td style='vertical-align: top;'><?php echo $hotaru->lang["submit_content"]; ?>&nbsp; </td>
+        <td style='vertical-align: top;'><?php echo $h->lang["submit_content"]; ?>&nbsp; </td>
         <td colspan=2>
-            <textarea id='post_content' name='post_content' rows='6' maxlength='<?php echo $hotaru->vars["submit_content_length"]; ?>'><?php echo $hotaru->vars['submit_content']; ?></textarea>
+            <textarea id='post_content' name='post_content' rows='6' maxlength='<?php echo $h->vars["submit_content_length"]; ?>'><?php echo $h->vars['submit_content']; ?></textarea>
         </td>
     </tr>
     <tr>
         <td>&nbsp;</td>
-        <td colspan=2 style='vertical-align: top;' class="submit_instructions"><?php echo $hotaru->lang['submit_allowable_tags']; ?>
-            <?php echo $hotaru->vars['submit_allowable_tags']; ?>
+        <td colspan=2 style='vertical-align: top;' class="submit_instructions"><?php echo $h->lang['submit_allowable_tags']; ?>
+            <?php echo $h->vars['submit_allowable_tags']; ?>
         </td>
     </tr>
     <?php } ?>
     
-    <?php $hotaru->pluginHook('submit_2_fields'); ?>
+    <?php $h->pluginHook('submit_2_fields'); ?>
         
-    <?php if ($hotaru->currentUser->getPermission('can_edit_posts') == 'yes') { ?>
+    <?php if ($h->currentUser->getPermission('can_edit_posts') == 'yes') { ?>
         <!-- Admin/Mod only options -->
         
-        <tr><td colspan=3><u><?php echo $hotaru->lang["submit_edit_admin_only"]; ?></u></td></tr>
+        <tr><td colspan=3><u><?php echo $h->lang["submit_edit_admin_only"]; ?></u></td></tr>
         
-        <?php if (!$hotaru->vars['submit_editorial']) { // if not editorial, allow source url to be changed: ?>
+        <?php if (!$h->vars['submit_editorial']) { // if not editorial, allow source url to be changed: ?>
             <tr>
-                <td><?php echo $hotaru->lang["submit_url"]; ?>&nbsp; </td>
-                <td><input type='text' id='post_orig_url' name='post_orig_url' value='<?php echo $hotaru->vars['submit_orig_url']; ?>'></td>
+                <td><?php echo $h->lang["submit_url"]; ?>&nbsp; </td>
+                <td><input type='text' id='post_orig_url' name='post_orig_url' value='<?php echo $h->vars['submit_orig_url']; ?>'></td>
                 <td>&nbsp;</td>
             </tr>
         <?php } ?>
         
         <tr>
-            <td style='vertical-align: top;'><?php echo $hotaru->lang["submit_edit_status"]; ?>&nbsp; </td>
+            <td style='vertical-align: top;'><?php echo $h->lang["submit_edit_status"]; ?>&nbsp; </td>
             <td><select name='post_status'>
-                <option value="<?php echo $hotaru->vars['submit_status']; ?>"><?php echo $hotaru->vars['submit_status']; ?></option>
-                <?php echo $hotaru->vars['submit_status_options']; ?>
+                <option value="<?php echo $h->vars['submit_status']; ?>"><?php echo $h->vars['submit_status']; ?></option>
+                <?php echo $h->vars['submit_status_options']; ?>
             </td>
         </tr>
         
-        <?php $hotaru->pluginHook('submit_edit_admin_fields'); ?>
+        <?php $h->pluginHook('submit_edit_admin_fields'); ?>
         <!-- END Admin only options -->
     <?php } ?>
         
-    <?php if (($hotaru->currentUser->getPermission('can_edit_posts') != 'yes') || $hotaru->vars['submit_editorial']) { 
+    <?php if (($h->currentUser->getPermission('can_edit_posts') != 'yes') || $h->vars['submit_editorial']) { 
         // use this hidden input to send back the original url when the above form is not used ?>
-        <input type='hidden' name='post_orig_url' value='<?php echo $hotaru->vars['submit_orig_url']; ?>' />
-        <?php $hotaru->pluginHook('submit_edit_non_admin_hidden_fields'); ?>
+        <input type='hidden' name='post_orig_url' value='<?php echo $h->vars['submit_orig_url']; ?>' />
+        <?php $h->pluginHook('submit_edit_non_admin_hidden_fields'); ?>
     <?php } ?>
     
-    <input type='hidden' name='from' value='<?php echo $hotaru->vars['submit_pm_from']; ?>' />
-    <input type='hidden' name='search_value' value='<?php echo $hotaru->vars['submit_pm_search']; ?>' />
-    <input type='hidden' name='post_status_filter' value='<?php echo $hotaru->vars['submit_pm_filter']; ?>' />
-    <input type='hidden' name='pg' value='<?php echo $hotaru->vars['submit_pm_page']; ?>' />
-    <input type='hidden' name='submit_post_id' value='<?php echo $hotaru->post->id; ?>' />
+    <input type='hidden' name='from' value='<?php echo $h->vars['submit_pm_from']; ?>' />
+    <input type='hidden' name='search_value' value='<?php echo $h->vars['submit_pm_search']; ?>' />
+    <input type='hidden' name='post_status_filter' value='<?php echo $h->vars['submit_pm_filter']; ?>' />
+    <input type='hidden' name='pg' value='<?php echo $h->vars['submit_pm_page']; ?>' />
+    <input type='hidden' name='submit_post_id' value='<?php echo $h->post->id; ?>' />
     <input type='hidden' name='edit_post' value='true' />
-    <input type='hidden' name='csrf' value='<?php echo $hotaru->csrfToken; ?>' />
+    <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
     
-    <tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' class='submit' name='submit_edit_post' value='<?php echo $hotaru->lang["main_form_update"]; ?>' /></td></tr>    
+    <tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' class='submit' name='submit_edit_post' value='<?php echo $h->lang["main_form_update"]; ?>' /></td></tr>    
     </table>
     </form>
     
-    <?php if ($hotaru->currentUser->getPermission('can_delete_posts') == 'yes') { ?>
-        <a class='bold_red' href="<?php echo $hotaru->url(array('page'=>'edit_post', 'post_id'=>$hotaru->post->id, 'action'=>'delete')); ?>">
-        <?php echo $hotaru->lang["submit_edit_delete"]; } ?>
+    <?php if ($h->currentUser->getPermission('can_delete_posts') == 'yes') { ?>
+        <a class='bold_red' href="<?php echo $h->url(array('page'=>'edit_post', 'post_id'=>$h->post->id, 'action'=>'delete')); ?>">
+        <?php echo $h->lang["submit_edit_delete"]; } ?>
         </a>

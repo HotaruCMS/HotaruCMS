@@ -120,7 +120,7 @@ class UserBase
      *
      * Note: Needs either userid or username, not both
      */    
-    public function getUserBasic($hotaru, $userid = 0, $username = '', $no_cache = false)
+    public function getUserBasic($h, $userid = 0, $username = '', $no_cache = false)
     {
         // Prepare SQL
         if ($userid != 0){              // use userid
@@ -135,18 +135,18 @@ class UserBase
         
         // Build SQL
         $query = "SELECT * FROM " . TABLE_USERS . " WHERE " . $where;
-        $sql = $hotaru->db->prepare($query, $param);
+        $sql = $h->db->prepare($query, $param);
         
-        if (!isset($hotaru->vars['tempUserCache'])) { $hotaru->vars['tempUserCache'] = array(); }
+        if (!isset($h->vars['tempUserCache'])) { $h->vars['tempUserCache'] = array(); }
 
         // If this query has already been read once this page load, we should have it in memory...
-        if (!$no_cache && array_key_exists($sql, $hotaru->vars['tempUserCache'])) {
+        if (!$no_cache && array_key_exists($sql, $h->vars['tempUserCache'])) {
             // Fetch from memory
-            $user_info = $hotaru->vars['tempUserCache'][$sql];
+            $user_info = $h->vars['tempUserCache'][$sql];
         } else {
             // Fetch from database
-            $user_info = $hotaru->db->get_row($sql);
-            $hotaru->vars['tempUserCache'][$sql] = $user_info;
+            $user_info = $h->db->get_row($sql);
+            $h->vars['tempUserCache'][$sql] = $user_info;
         }
 
         if (!$user_info) { return false; }
@@ -163,7 +163,7 @@ class UserBase
         // that plugin provides. So, we get all defaults, then overwrite with existing perms.
         
         // get default permissions for the site
-        $default_perms = $this->getDefaultPermissions($hotaru, $this->role);
+        $default_perms = $this->getDefaultPermissions($h, $this->role);
         
         // get existing permissions for the user
         $existing_perms = unserialize($user_info->user_permissions);
@@ -175,7 +175,7 @@ class UserBase
         $user_info->user_permissions = serialize($updated_perms);   // update $user_info
         
         // get user settings:
-        $this->settings = $this->getProfileSettingsData($hotaru, 'user_settings', $this->id);
+        $this->settings = $this->getProfileSettingsData($h, 'user_settings', $this->id);
         $user_info->user_settings = $this->settings;   // update $user_info
         
         return $user_info;
@@ -185,7 +185,7 @@ class UserBase
     /**
      * Update a user
      */
-    public function updateUserBasic($hotaru, $userid = 0)
+    public function updateUserBasic($h, $userid = 0)
     {
         //determine if the current user is the same as this object's user
         if($userid != $this->id) {
@@ -196,7 +196,7 @@ class UserBase
         
         if ($this->id != 0) {
             $sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s, user_permissions = %s, user_ip = %s, user_updateby = %d WHERE user_id = %d";
-            $hotaru->db->query($hotaru->db->prepare($sql, $this->name, $this->role, $this->password, $this->email, serialize($this->getAllPermissions()), $this->ip, $updatedby, $this->id));
+            $h->db->query($h->db->prepare($sql, $this->name, $this->role, $this->password, $this->email, serialize($this->getAllPermissions()), $this->ip, $updatedby, $this->id));
             return true;
         } else {
             return false;
@@ -212,7 +212,7 @@ class UserBase
      * @param book $options_only returns just the options if true
      * @return array $perms
      */
-    public function getDefaultPermissions($hotaru, $role = '', $defaults = 'site', $options_only = false) 
+    public function getDefaultPermissions($h, $role = '', $defaults = 'site', $options_only = false) 
     {
         $perms = array(); // to be filled with default permissions for this user
         
@@ -224,19 +224,19 @@ class UserBase
         
         // get default permissions from the database:
         $query = "SELECT " . $field . " FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
-        $sql = $hotaru->db->prepare($query, 'permissions');
+        $sql = $h->db->prepare($query, 'permissions');
         
         // Create temp cache array
-        if (!isset($hotaru->vars['tempPermissionsCache'])) { $hotaru->vars['tempPermissionsCache'] = array(); }
+        if (!isset($h->vars['tempPermissionsCache'])) { $h->vars['tempPermissionsCache'] = array(); }
         
         // If this query has already been read once this page load, we should have it in memory...
-        if (array_key_exists($sql, $hotaru->vars['tempPermissionsCache'])) {
+        if (array_key_exists($sql, $h->vars['tempPermissionsCache'])) {
             // Fetch from memory
-            $db_perms = $hotaru->vars['tempPermissionsCache'][$sql];
+            $db_perms = $h->vars['tempPermissionsCache'][$sql];
         } else {
             // Fetch from database
-            $db_perms = $hotaru->db->get_var($sql);
-            $hotaru->vars['tempPermissionsCache'][$sql] = $db_perms;
+            $db_perms = $h->db->get_var($sql);
+            $h->vars['tempPermissionsCache'][$sql] = $db_perms;
         }
 
         $permissions = unserialize($db_perms);
@@ -269,33 +269,33 @@ class UserBase
      * @param array $new_perms from a plugin's install function
      * @param string $defaults - either "site", "base" or "both" 
      */
-    public function updateDefaultPermissions($hotaru, $new_perms = array(), $defaults = 'both') 
+    public function updateDefaultPermissions($h, $new_perms = array(), $defaults = 'both') 
     {
         if (!$new_perms) { return false; }
         
         // get and merge permissions
         if ($defaults == 'site')
         {
-            $site_perms = $this->getDefaultPermissions($hotaru,'all', 'site'); //get site defaults
+            $site_perms = $this->getDefaultPermissions($h,'all', 'site'); //get site defaults
             $site_perms = array_merge_recursive($site_perms, $new_perms); // merge
             $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s WHERE miscdata_key = %s";
-            $hotaru->db->query($this->db->prepare($sql, serialize($site_perms), 'permissions'));
+            $h->db->query($this->db->prepare($sql, serialize($site_perms), 'permissions'));
         } 
         elseif ($defaults == 'base')
         {
-            $base_perms = $this->getDefaultPermissions($hotaru,'all', 'base'); // get base defaults
+            $base_perms = $this->getDefaultPermissions($h,'all', 'base'); // get base defaults
             $base_perms = array_merge_recursive($site_perms, $new_perms); // merge
             $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_default = %s WHERE miscdata_key = %s";
-            $hotaru->db->query($this->db->prepare($sql, serialize($base_perms), 'permissions'));
+            $h->db->query($this->db->prepare($sql, serialize($base_perms), 'permissions'));
         }
         else 
         {
-            $site_perms = $this->getDefaultPermissions($hotaru,'all', 'site'); //get site defaults
+            $site_perms = $this->getDefaultPermissions($h,'all', 'site'); //get site defaults
             $site_perms = array_merge_recursive($site_perms, $new_perms); // merge
-            $base_perms = $this->getDefaultPermissions($hotaru,'all', 'base'); // get base defaults
+            $base_perms = $this->getDefaultPermissions($h,'all', 'base'); // get base defaults
             $base_perms = array_merge_recursive($site_perms, $new_perms); // merge
             $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";
-            $hotaru->db->query($hotaru->db->prepare($sql, serialize($site_perms), serialize($base_perms), 'permissions'));
+            $h->db->query($h->db->prepare($sql, serialize($site_perms), serialize($base_perms), 'permissions'));
         }
     }
 
@@ -305,10 +305,10 @@ class UserBase
      *
      * @param int $userid
      */
-    public function updatePermissions($hotaru)
+    public function updatePermissions($h)
     {
         $sql = "UPDATE " . TABLE_USERS . " SET user_permissions = %s WHERE user_id = %d";
-        $hotaru->db->get_var($hotaru->db->prepare($sql, serialize($this->getAllPermissions()), $this->id));
+        $h->db->get_var($h->db->prepare($sql, serialize($this->getAllPermissions()), $this->id));
     }
     
     
@@ -317,28 +317,28 @@ class UserBase
      *
      * @return array|false
      */
-    public function getProfileSettingsData($hotaru, $type = 'user_profile', $userid = 0)
+    public function getProfileSettingsData($h, $type = 'user_profile', $userid = 0)
     {
         if (!$userid) { $userid = $this->id; }
 
         $query = "SELECT usermeta_value FROM " . DB_PREFIX . "usermeta WHERE usermeta_userid = %d AND usermeta_key = %s";
-        $sql = $hotaru->db->prepare($query, $userid, $type);
+        $sql = $h->db->prepare($query, $userid, $type);
 
-        if (isset($hotaru->vars[$sql])) { 
-            $result = $hotaru->vars[$sql]; 
+        if (isset($h->vars[$sql])) { 
+            $result = $h->vars[$sql]; 
         } else {
-            $result = $hotaru->db->get_var($sql);
-            $hotaru->vars[$sql] = $result;    // cache result
+            $result = $h->db->get_var($sql);
+            $h->vars[$sql] = $result;    // cache result
         }
            
         if ($result) { 
             $result = unserialize($result);
             if ($type == 'user_settings') {
-                $defaults = $this->getDefaultSettings($hotaru);
+                $defaults = $this->getDefaultSettings($h);
                 $result = array_merge($defaults, $result);
             }
         } elseif ($type == 'user_settings') {
-            return $this->getDefaultSettings($hotaru);
+            return $this->getDefaultSettings($h);
         } else {
             return false;
         }
@@ -352,19 +352,19 @@ class UserBase
      *
      * @return array|false
      */
-    public function saveProfileSettingsData($hotaru, $data = array(), $type = 'user_profile', $userid = 0)
+    public function saveProfileSettingsData($h, $data = array(), $type = 'user_profile', $userid = 0)
     {
         if (!$data) { return false; }
-        if (!$userid) { $userid = $hotaru->currentUser->id; }
+        if (!$userid) { $userid = $h->currentUser->id; }
 
-        $result = $hotaru->getProfileSettingsData($type, $userid);
+        $result = $h->getProfileSettingsData($type, $userid);
         
         if (!$result) {
             $sql = "INSERT INTO " . TABLE_USERMETA . " (usermeta_userid, usermeta_key, usermeta_value, usermeta_updateby) VALUES(%d, %s, %s, %d)";
-            $hotaru->db->get_row($hotaru->db->prepare($sql, $userid, $type, serialize($data), $hotaru->currentUser->id));
+            $h->db->get_row($h->db->prepare($sql, $userid, $type, serialize($data), $h->currentUser->id));
         } else {
             $sql = "UPDATE " . TABLE_USERMETA . " SET usermeta_value = %s, usermeta_updateby = %d WHERE usermeta_userid = %d AND usermeta_key = %s";
-            $hotaru->db->get_row($hotaru->db->prepare($sql, serialize($data), $hotaru->currentUser->id, $userid, $type));
+            $h->db->get_row($h->db->prepare($sql, serialize($data), $h->currentUser->id, $userid, $type));
         }
         
         return true;
@@ -377,7 +377,7 @@ class UserBase
      * @param string $type either 'site' or 'base' (base for the originals)
      * @return array
      */
-    public function getDefaultSettings($hotaru, $type = 'site')
+    public function getDefaultSettings($h, $type = 'site')
     {
         if ($type == 'site') { 
             $field = 'miscdata_value'; 
@@ -388,13 +388,13 @@ class UserBase
         }
         
         $query = "SELECT " . $field . " FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
-        $sql = $hotaru->db->prepare($query, 'user_settings');
+        $sql = $h->db->prepare($query, 'user_settings');
 
-        if (isset($hotaru->vars[$sql])) { 
-            $result = $hotaru->vars[$sql]; 
+        if (isset($h->vars[$sql])) { 
+            $result = $h->vars[$sql]; 
         } else {
-            $result = $hotaru->db->get_var($sql);
-            $hotaru->vars[$sql] = $result;    // cache result
+            $result = $h->db->get_var($sql);
+            $h->vars[$sql] = $result;    // cache result
         }
         
         if ($result) {
@@ -412,24 +412,24 @@ class UserBase
      * @param string $type either 'site' or 'base' (base for the originals)
      * @return array
      */
-    public function updateDefaultSettings($hotaru, $settings, $type = 'site')
+    public function updateDefaultSettings($h, $settings, $type = 'site')
     {
         if (!$settings) { return false; } else { $settings = serialize($settings); }
         
-        $result = $hotaru->getDefaultSettings($type);
+        $result = $h->getDefaultSettings($type);
         
         if (!$result) {
             // insert settings for the first time
             $sql = "INSERT INTO " . TABLE_MISCDATA . " (miscdata_key, miscdata_value, miscdata_default, miscdata_updateby) VALUES (%s, %s, %s, %d)";
-            $hotaru->db->query($hotaru->db->prepare($sql, 'user_settings', $settings, $settings, $this->id));
+            $h->db->query($h->db->prepare($sql, 'user_settings', $settings, $settings, $this->id));
         } elseif ($type == 'site') {
             // update the site defaults
             $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
-            $hotaru->db->query($hotaru->db->prepare($sql, $settings, $hotaru->currentUser->id, 'user_settings'));
+            $h->db->query($h->db->prepare($sql, $settings, $h->currentUser->id, 'user_settings'));
         } elseif ($type == 'base') {
             // update the base defaults
             $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_default = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
-            $hotaru->db->query($hotaru->db->prepare($sql, $settings, $hotaru->currentUser->id, 'user_settings'));
+            $h->db->query($h->db->prepare($sql, $settings, $h->currentUser->id, 'user_settings'));
         }
     }
 }

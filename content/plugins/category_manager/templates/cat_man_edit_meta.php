@@ -27,32 +27,32 @@
 
 ?>
  
-    <h2><?php echo $hotaru->lang["cat_man_edit"]; ?></h2>
+    <h2><?php echo $h->lang["cat_man_edit"]; ?></h2>
 
     <table class="cat_man_table">
     <tr><td class="cat_man_body">
-        <?php echo $hotaru->lang["cat_man_edit_meta_instruct"]; ?> <br /><br />
+        <?php echo $h->lang["cat_man_edit_meta_instruct"]; ?> <br /><br />
     
         <?php
-        foreach ($hotaru->vars['the_cats'] as $cat) {
+        foreach ($h->vars['the_cats'] as $cat) {
             if ($cat['category_safe_name'] != "all") {
                 if ($cat['category_parent'] > 1) {
                     for($i=1; $i<$cat['category_level']; $i++) {
                         echo "--- ";
                     }
-                    echo "<a href='#' class='cat_man_drop_down' title='" . $hotaru->lang["cat_man_edit_meta_anchor_title"] . "'>" . $cat['category_name'] . "</a><br />";
+                    echo "<a href='#' class='cat_man_drop_down' title='" . $h->lang["cat_man_edit_meta_anchor_title"] . "'>" . $cat['category_name'] . "</a><br />";
                 } else {
-                    echo "<a href='#' class='cat_man_drop_down' title='" . $hotaru->lang["cat_man_edit_meta_anchor_title"] . "'>" . $cat['category_name'] . "</a><br />";
+                    echo "<a href='#' class='cat_man_drop_down' title='" . $h->lang["cat_man_edit_meta_anchor_title"] . "'>" . $cat['category_name'] . "</a><br />";
                 }
                 ?>
                 
                 <div id='<?php echo $cat['category_id']; ?>' style='display: none;'>
                     <form class='cat_man_edit_meta_form' style='margin-bottom: 0px;' name='category_manager_edit_meta_form' action='<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit_meta_save&amp;id=<?php echo $cat['category_id']; ?>' method='post'>
-                    <?php echo $hotaru->lang["cat_man_edit_meta_description"]; ?> <input size='40' name='description' type='text' value='<?php echo $cat['category_description']; ?>'>
+                    <?php echo $h->lang["cat_man_edit_meta_description"]; ?> <input size='40' name='description' type='text' value='<?php echo $cat['category_description']; ?>'>
                     <br />
-                    <?php echo $hotaru->lang["cat_man_edit_meta_keywords"]; ?> &nbsp;&nbsp;<input size='40' name='keywords' type='text' value='<?php echo $cat['category_keywords']; ?>'>
-                    &nbsp;&nbsp;<input type='submit' name='save_edit_meta' value='<?php echo $hotaru->lang["cat_man_save"]; ?>'>
-                    <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
+                    <?php echo $h->lang["cat_man_edit_meta_keywords"]; ?> &nbsp;&nbsp;<input size='40' name='keywords' type='text' value='<?php echo $cat['category_keywords']; ?>'>
+                    &nbsp;&nbsp;<input type='submit' name='save_edit_meta' value='<?php echo $h->lang["cat_man_save"]; ?>'>
+                    <input type='hidden' name='token' value='<?php echo $h->token; ?>' />
                     </form>
                 </div>
             <?php } ?>
@@ -62,13 +62,13 @@
     
     <td class="cat_man_menu_holder">
         <div>
-            <h3><?php echo $hotaru->lang["cat_man_menu_title"]; ?></h3>
-            <?php $hotaru->displayTemplate('cat_man_menu', 'category_manager'); ?>
+            <h3><?php echo $h->lang["cat_man_menu_title"]; ?></h3>
+            <?php $h->displayTemplate('cat_man_menu', 'category_manager'); ?>
             
-            <h3><?php echo $hotaru->lang["cat_man_category_tree"]; ?></h3>
+            <h3><?php echo $h->lang["cat_man_category_tree"]; ?></h3>
             <?php
-                $tree = new CategoryManagerSettings($hotaru); 
-                $tree->tree($hotaru, $hotaru->vars['the_cats']);
+                $tree = new CategoryManagerSettings($h); 
+                $tree->tree($h, $h->vars['the_cats']);
             ?>
 
         </div>

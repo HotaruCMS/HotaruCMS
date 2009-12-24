@@ -34,39 +34,39 @@
 <head>
    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
    
-   <title><?php echo $hotaru->getTitle(); ?></title>
+   <title><?php echo $h->getTitle(); ?></title>
    
    <script language="JavaScript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery-ui.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo BASEURL . 'javascript/hotaru.js'; ?>"></script>
    
     <!-- Include merged files for all the plugin css and javascript (if any) -->
-    <?php $hotaru->doIncludes(); ?>
+    <?php $h->doIncludes(); ?>
     <!-- End -->
     
    <link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/reset-fonts-grids.css'; ?>" type="text/css">
    <link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css'; ?>" type="text/css">
    <!-- <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico"> -->
    
-   <?php $hotaru->pluginHook('admin_header_include_raw'); ?>
+   <?php $h->pluginHook('admin_header_include_raw'); ?>
       
 </head>
 <body>
 <?php 
-    if ($hotaru->checkAnnouncements() && ($hotaru->currentUser->getPermission('can_access_admin') == 'yes')) { 
-        $announcements = $hotaru->checkAnnouncements();
+    if ($h->checkAnnouncements() && ($h->currentUser->getPermission('can_access_admin') == 'yes')) { 
+        $announcements = $h->checkAnnouncements();
 ?>
     <div id="announcement">
-        <?php $hotaru->pluginHook('admin_announcement_first'); ?>
+        <?php $h->pluginHook('admin_announcement_first'); ?>
         <?php foreach ($announcements as $announcement) { echo $announcement . "<br />"; } ?>
-        <?php $hotaru->pluginHook('admin_announcement_last'); ?>
+        <?php $h->pluginHook('admin_announcement_last'); ?>
     </div>
 <?php } ?>
 <div id="doc2" class="yui-t7">
     <div id="hd" role="banner">
-        <h1><a href="<?php echo $hotaru->url(array(), 'admin'); ?>"><?php echo SITE_NAME . " " . $hotaru->lang["admin"]; ?> </a></h1>
-        <?php $hotaru->pluginHook('header_post_admin_title'); ?>
+        <h1><a href="<?php echo $h->url(array(), 'admin'); ?>"><?php echo SITE_NAME . " " . $h->lang["admin"]; ?> </a></h1>
+        <?php $h->pluginHook('header_post_admin_title'); ?>
         
         <!-- NAVIGATION -->
-        <?php echo $hotaru->displayTemplate('navigation'); ?>
+        <?php echo $h->displayTemplate('navigation'); ?>
     </div>

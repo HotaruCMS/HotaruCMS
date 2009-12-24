@@ -30,17 +30,17 @@
 
 require_once('../hotaru_settings.php');
 require_once(BASE . 'Hotaru.php');
-$hotaru = new Hotaru('install'); // must come before language inclusion
+$h = new Hotaru('install'); // must come before language inclusion
 $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
-$old_version = $hotaru->db->get_var($hotaru->db->prepare($sql, "hotaru_version"));
+$old_version = $h->db->get_var($h->db->prepare($sql, "hotaru_version"));
 require_once(INSTALL . 'install_language.php');    // language file for install
 
 // delete existing cache
-$hotaru->deleteFiles(CACHE . 'db_cache');
-$hotaru->deleteFiles(CACHE . 'css_js_cache');
-$hotaru->deleteFiles(CACHE . 'rss_cache');
+$h->deleteFiles(CACHE . 'db_cache');
+$h->deleteFiles(CACHE . 'css_js_cache');
+$h->deleteFiles(CACHE . 'rss_cache');
 
-$step = $hotaru->cage->get->getInt('step');        // Installation steps.
+$step = $h->cage->get->getInt('step');        // Installation steps.
 
 switch ($step) {
     case 1:
@@ -167,11 +167,11 @@ function upgrade_complete()
  */
 function do_upgrade()
 {
-    global $hotaru;
+    global $h;
     // add new MISCDATA table for storing default permissions, etc.
     
     $table_name = "miscdata";
-    $exists = $hotaru->db->table_exists($table_name);
+    $exists = $h->db->table_exists($table_name);
     if (!$exists) {
         $sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
           `miscdata_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -181,7 +181,7 @@ function do_upgrade()
           `miscdata_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
           `miscdata_updateby` int(20) NOT NULL DEFAULT 0
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Miscellaneous Data';";
-        $hotaru->db->query($sql);
+        $h->db->query($sql);
 
         // Default permissions
         $perms['options']['can_access_admin'] = array('yes', 'no');
@@ -191,15 +191,15 @@ function do_upgrade()
         $perms = serialize($perms);
         
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (miscdata_key, miscdata_value, miscdata_default) VALUES (%s, %s, %s)";
-        $hotaru->db->query($hotaru->db->prepare($sql, 'permissions', $perms, $perms));
+        $h->db->query($h->db->prepare($sql, 'permissions', $perms, $perms));
     }
     
     // Update Hotaru version number in the database 
     $sql = "UPDATE " . DB_PREFIX . $table_name . " SET miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";
-    $hotaru->db->query($hotaru->db->prepare($sql, $hotaru->version, $hotaru->version, 'hotaru_version'));
+    $h->db->query($h->db->prepare($sql, $h->version, $h->version, 'hotaru_version'));
     
     $table_name = "tokens";
-    $exists = $hotaru->db->table_exists($table_name);
+    $exists = $h->db->table_exists($table_name);
     if (!$exists) {
         $sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
           `token_id` MEDIUMINT unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -209,46 +209,46 @@ function do_upgrade()
           `token_action` varchar(64),
           INDEX  (`token_key`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Tokens for CSRF protection';";
-        $hotaru->db->query($sql);
+        $h->db->query($sql);
     }
     
     // add SITE_OPEN setting
     $sql = "SELECT settings_id FROM " . DB_PREFIX . "settings WHERE settings_name = %s";
-    $exists = $hotaru->db->query($hotaru->db->prepare($sql, 'SITE_OPEN'));
+    $exists = $h->db->query($h->db->prepare($sql, 'SITE_OPEN'));
     if (!$exists) {
         $sql = "INSERT INTO " . DB_PREFIX . "settings (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $hotaru->db->query($hotaru->db->prepare($sql, 'SITE_OPEN', 'true', 'true', 'true/false'));
+        $h->db->query($h->db->prepare($sql, 'SITE_OPEN', 'true', 'true', 'true/false'));
     }
     
     // add new HTML_CACHE_ON setting
     $sql = "SELECT settings_id FROM " . DB_PREFIX . "settings WHERE settings_name = %s";
-    $exists = $hotaru->db->query($hotaru->db->prepare($sql, 'HTML_CACHE_ON'));
+    $exists = $h->db->query($h->db->prepare($sql, 'HTML_CACHE_ON'));
     if (!$exists) {
         $sql = "INSERT INTO " . DB_PREFIX . "settings (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $hotaru->db->query($hotaru->db->prepare($sql, 'HTML_CACHE_ON', 'true', 'true', 'true/false'));
+        $h->db->query($h->db->prepare($sql, 'HTML_CACHE_ON', 'true', 'true', 'true/false'));
     }
         
     // add new user_ip field to Users table
-    if (!$hotaru->db->column_exists('users', 'user_ip')) {
+    if (!$h->db->column_exists('users', 'user_ip')) {
         $sql = "ALTER TABLE " . DB_PREFIX . "users ADD user_ip varchar(32)  NOT NULL DEFAULT %d AFTER user_permissions";
-        $hotaru->db->query($hotaru->db->prepare($sql, 0));
+        $h->db->query($h->db->prepare($sql, 0));
     }
     
     // add new user_ip field to Users table
-    if (!$hotaru->db->column_exists('plugins', 'plugin_extends')) {
+    if (!$h->db->column_exists('plugins', 'plugin_extends')) {
         $sql = "ALTER TABLE " . DB_PREFIX . "plugins ADD plugin_author varchar(32) NOT NULL DEFAULT %s AFTER plugin_order";
-        $hotaru->db->query($hotaru->db->prepare($sql, ''));
+        $h->db->query($h->db->prepare($sql, ''));
         $sql = "ALTER TABLE " . DB_PREFIX . "plugins ADD plugin_authorurl varchar(128) NOT NULL DEFAULT %s AFTER plugin_author";
-        $hotaru->db->query($hotaru->db->prepare($sql, ''));
+        $h->db->query($h->db->prepare($sql, ''));
         $sql = "ALTER TABLE " . DB_PREFIX . "plugins ADD plugin_extends varchar(64) NOT NULL DEFAULT %s AFTER plugin_class";
-        $hotaru->db->query($hotaru->db->prepare($sql, ''));
+        $h->db->query($h->db->prepare($sql, ''));
         $sql = "ALTER TABLE " . DB_PREFIX . "plugins ADD plugin_type varchar(32) NOT NULL DEFAULT %s AFTER plugin_extends";
-        $hotaru->db->query($hotaru->db->prepare($sql, ''));
+        $h->db->query($h->db->prepare($sql, ''));
     }
     
     //correct default for db cache
     $sql = "UPDATE " . DB_PREFIX . "settings SET settings_default = %s WHERE settings_name = %s";
-    $hotaru->db->query($hotaru->db->prepare($sql, 'false', 'DB_CACHE_ON'));
+    $h->db->query($h->db->prepare($sql, 'false', 'DB_CACHE_ON'));
 }
 
 ?>

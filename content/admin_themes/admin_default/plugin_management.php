@@ -27,41 +27,41 @@
  */
 ?>
 
-<?php $hotaru->displayTemplate('sidebar'); ?>
+<?php $h->displayTemplate('sidebar'); ?>
 
-<?php $hotaru->showMessages(); ?>
+<?php $h->showMessages(); ?>
 
 <div id="plugin_management">
 
-<?php $hotaru->pluginHook('plugins_top'); ?>
+<?php $h->pluginHook('plugins_top'); ?>
 
 <table>
 <tr class='table_a'><td colspan=3>
-    <?php echo $hotaru->lang["admin_theme_plugins_installed"]; ?>
+    <?php echo $h->lang["admin_theme_plugins_installed"]; ?>
     <span class='table_key'>
     &nbsp;&nbsp;
     <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/active_16.png'>
-    <?php echo $hotaru->lang["admin_theme_plugins_active"]; ?>
+    <?php echo $h->lang["admin_theme_plugins_active"]; ?>
     &nbsp;&nbsp;
     <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/inactive_16.png'>
-    <?php echo $hotaru->lang["admin_theme_plugins_inactive"]; ?>
+    <?php echo $h->lang["admin_theme_plugins_inactive"]; ?>
     &nbsp;&nbsp;
     <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/up_12.png'>
-    <?php echo $hotaru->lang["admin_theme_plugins_order_up"]; ?>
+    <?php echo $h->lang["admin_theme_plugins_order_up"]; ?>
     &nbsp;&nbsp;
     <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/down_12.png'>
-    <?php echo $hotaru->lang["admin_theme_plugins_order_down"]; ?>
+    <?php echo $h->lang["admin_theme_plugins_order_down"]; ?>
     &nbsp;&nbsp;
     <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/info_16.png'>
-    <?php echo $hotaru->lang["admin_theme_plugins_details"]; ?>
+    <?php echo $h->lang["admin_theme_plugins_details"]; ?>
     &nbsp;&nbsp;
     <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/uninstall_16.png'>
-    <?php echo $hotaru->lang["admin_theme_plugins_uninstall"]; ?>
+    <?php echo $h->lang["admin_theme_plugins_uninstall"]; ?>
     </span>
 </td></tr>
 
 <?php
-    $the_plugins = $hotaru->vars['installed_plugins']; 
+    $the_plugins = $h->vars['installed_plugins']; 
     $per_column = count($the_plugins)/3;
     for($i=0; $i<3; $i++) { 
 ?>
@@ -89,14 +89,14 @@
         foreach ($plug['requires'] as $key=>$value) {
             $requires .= $key . " " . $value . ", ";
         }
-        if ($requires != "") { echo $hotaru->lang["admin_theme_plugins_requires"] . " " . rstrtrim($requires, ", "); } else { echo $hotaru->lang["admin_theme_plugins_no_plugins"]; }
-        if ($plug['author']) { echo "<br />" . $hotaru->lang["admin_theme_plugins_author"] . ": \n"; }
+        if ($requires != "") { echo $h->lang["admin_theme_plugins_requires"] . " " . rstrtrim($requires, ", "); } else { echo $h->lang["admin_theme_plugins_no_plugins"]; }
+        if ($plug['author']) { echo "<br />" . $h->lang["admin_theme_plugins_author"] . ": \n"; }
         if ($plug['authorurl']) { echo "<a href='" . $plug['authorurl'] . "' title='" . $plug['authorurl'] . "'>"; }
         if ($plug['author']) { echo $plug['author']; }
         if ($plug['authorurl']) { echo "</a>\n"; }
         echo "</td>";
         echo "<td class='table_description_close'><a class='table_hide_details' href='#'>";
-        echo $hotaru->lang["admin_theme_plugins_close"] . "</a></td></tr>\n";
+        echo $h->lang["admin_theme_plugins_close"] . "</a></td></tr>\n";
         array_shift($the_plugins);
         if ($alt >= $per_column) { break; }
     }
@@ -113,14 +113,14 @@
 <tr>
 <td colspan=3><small>
     <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_management&amp;action=deactivate_all">
-        <?php echo $hotaru->lang["admin_theme_plugins_deactivate_all"]; ?></a>
+        <?php echo $h->lang["admin_theme_plugins_deactivate_all"]; ?></a>
          | 
     <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_management&amp;action=activate_all">
-        <?php echo $hotaru->lang["admin_theme_plugins_activate_all"]; ?></a>
+        <?php echo $h->lang["admin_theme_plugins_activate_all"]; ?></a>
 </small></td>
 <td colspan=2 style='text-align: right;'><small>
     <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_management&amp;action=uninstall_all">
-        <?php echo $hotaru->lang["admin_theme_plugins_uninstall_all"]; ?></a>
+        <?php echo $h->lang["admin_theme_plugins_uninstall_all"]; ?></a>
 </small></td>
 </tr>
 </table>
@@ -128,20 +128,20 @@
 <table><tr>
 <tr><td colspan=3>&nbsp;</td></tr>
 <tr class='table_b'><td colspan=3>
-    <?php echo $hotaru->lang["admin_theme_plugins_not_installed"]; ?>
+    <?php echo $h->lang["admin_theme_plugins_not_installed"]; ?>
     <span class='table_key'>
     &nbsp;&nbsp;
     <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/info_16.png'>
-    <?php echo $hotaru->lang["admin_theme_plugins_details"]; ?>
+    <?php echo $h->lang["admin_theme_plugins_details"]; ?>
     &nbsp;&nbsp;
     <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/install_16.png'>
-    <?php echo $hotaru->lang["admin_theme_plugins_install"]; ?>
+    <?php echo $h->lang["admin_theme_plugins_install"]; ?>
     </span>
 </td></tr>
 
 
 <?php
-    $the_plugins = $hotaru->vars['uninstalled_plugins']; // don't remove
+    $the_plugins = $h->vars['uninstalled_plugins']; // don't remove
     $per_column = count($the_plugins)/3;
     for($i=0; $i<3; $i++) {
 ?>
@@ -169,13 +169,13 @@
         echo "</tr>\n";
         echo "<tr class='table_tr_details' style='display:none;'><td class='table_description'>\n";
         echo $plug['description'];
-        if ($plug['author']) { echo "<br />" . $hotaru->lang["admin_theme_plugins_author"] . ": \n"; }
+        if ($plug['author']) { echo "<br />" . $h->lang["admin_theme_plugins_author"] . ": \n"; }
         if ($plug['authorurl']) { echo "<a href='" . $plug['authorurl'] . "' title='" . $plug['authorurl'] . "'>"; }
         if ($plug['author']) { echo $plug['author']; }
         if ($plug['authorurl']) { echo "</a>\n"; }
         echo "</td>\n";
         echo "<td class='table_description_close'><a class='table_hide_details' href='#'>";
-        echo $hotaru->lang["admin_theme_plugins_close"] . "</a></td></tr>\n";
+        echo $h->lang["admin_theme_plugins_close"] . "</a></td></tr>\n";
         array_shift($the_plugins);
         if ($alt >= $per_column) { break; }
     }
@@ -192,14 +192,14 @@
 </div>
 <div class="clear"></div>
 <div id="plugin_management_notice" class="info_box gray_box" style="margin-top: 2.0em";>
-    <p class="info_header"><?php echo $hotaru->lang["admin_theme_plugins_guide"]; ?></p>
-    <?php $hotaru->pluginHook('plugins_guide_top'); ?>
-    &raquo; <?php echo $hotaru->lang["admin_theme_plugins_guide1"]; ?><br />
-    &raquo; <?php echo $hotaru->lang["admin_theme_plugins_guide2"]; ?><br />
-    &raquo; <?php echo $hotaru->lang["admin_theme_plugins_guide3"]; ?><br />
-    &raquo; <?php echo $hotaru->lang["admin_theme_plugins_guide4"]; ?><br />
-    <?php $hotaru->pluginHook('plugins_guide_bottom'); ?>
+    <p class="info_header"><?php echo $h->lang["admin_theme_plugins_guide"]; ?></p>
+    <?php $h->pluginHook('plugins_guide_top'); ?>
+    &raquo; <?php echo $h->lang["admin_theme_plugins_guide1"]; ?><br />
+    &raquo; <?php echo $h->lang["admin_theme_plugins_guide2"]; ?><br />
+    &raquo; <?php echo $h->lang["admin_theme_plugins_guide3"]; ?><br />
+    &raquo; <?php echo $h->lang["admin_theme_plugins_guide4"]; ?><br />
+    <?php $h->pluginHook('plugins_guide_bottom'); ?>
 </div>
 
 
-<?php $hotaru->pluginHook('plugins_bottom'); ?>
+<?php $h->pluginHook('plugins_bottom'); ?>

@@ -31,16 +31,16 @@ class Maintenance
      * @param string $folder - path to the cache folder
      * @param string $msg - show "cleared" message or not
      */
-    public function clearCache($hotaru, $folder, $msg = true)
+    public function clearCache($h, $folder, $msg = true)
     {
         $success = $this->deleteFiles(CACHE . $folder);
         if (!$msg) { return true; }
         if ($success) {
-            $hotaru->message = $hotaru->lang['admin_maintenance_clear_cache_success'];
-            $hotaru->messageType = 'green';
+            $h->message = $h->lang['admin_maintenance_clear_cache_success'];
+            $h->messageType = 'green';
         } else {
-            $hotaru->message = $hotaru->lang['admin_maintenance_clear_cache_failure'];
-            $hotaru->messageType = 'red';    
+            $h->message = $h->lang['admin_maintenance_clear_cache_failure'];
+            $h->messageType = 'red';    
         }
     }
 
@@ -72,17 +72,17 @@ class Maintenance
     /**
      * Optimize all database tables
      */
-    public function optimizeTables($hotaru)
+    public function optimizeTables($h)
     {
-        $hotaru->db->select(DB_NAME);
+        $h->db->select(DB_NAME);
         
-        foreach ( $hotaru->db->get_col("SHOW TABLES",0) as $table_name )
+        foreach ( $h->db->get_col("SHOW TABLES",0) as $table_name )
         {
-            $hotaru->db->query("OPTIMIZE TABLE " . $table_name);
+            $h->db->query("OPTIMIZE TABLE " . $table_name);
         }
         
-        $hotaru->message = $hotaru->lang['admin_maintenance_optimize_success'];
-        $hotaru->messageType = 'green';
+        $h->message = $h->lang['admin_maintenance_optimize_success'];
+        $h->messageType = 'green';
 ;
     }
     
@@ -93,13 +93,13 @@ class Maintenance
      * @param string $table_name - table to empty
      * @param string $msg - show "emptied" message or not
      */
-    public function emptyTable($hotaru, $table_name, $msg = true)
+    public function emptyTable($h, $table_name, $msg = true)
     {
-        $hotaru->db->query("TRUNCATE TABLE " . $table_name);
+        $h->db->query("TRUNCATE TABLE " . $table_name);
         
         if ($msg) {
-            $hotaru->message = $hotaru->lang['admin_maintenance_table_emptied'];
-            $hotaru->messageType = 'green';
+            $h->message = $h->lang['admin_maintenance_table_emptied'];
+            $h->messageType = 'green';
         }
     }
     
@@ -109,13 +109,13 @@ class Maintenance
      *
      * @param string $table_name - table to drop
      */
-    public function dropTable($hotaru, $table_name, $msg = true)
+    public function dropTable($h, $table_name, $msg = true)
     {
-        $hotaru->db->query("DROP TABLE " . $table_name);
+        $h->db->query("DROP TABLE " . $table_name);
         
         if ($msg) {
-            $hotaru->message = $hotaru->lang['admin_maintenance_table_deleted'];
-            $hotaru->messageType = 'green';
+            $h->message = $h->lang['admin_maintenance_table_deleted'];
+            $h->messageType = 'green';
         }
     }
     
@@ -125,14 +125,14 @@ class Maintenance
      *
      * @param string $plugin_name - settings to remove
      */
-    public function removeSettings($hotaru, $plugin_name, $msg = true)
+    public function removeSettings($h, $plugin_name, $msg = true)
     {
         $sql = "DELETE FROM " . DB_PREFIX . "pluginsettings WHERE plugin_folder = %s";
-        $hotaru->db->get_results($hotaru->db->prepare($sql, $plugin_name));
+        $h->db->get_results($h->db->prepare($sql, $plugin_name));
     
         if ($msg) {
-            $hotaru->message = $hotaru->lang['admin_maintenance_settings_removed'];
-            $hotaru->messageType = 'green';
+            $h->message = $h->lang['admin_maintenance_settings_removed'];
+            $h->messageType = 'green';
         }
     }
     
@@ -140,23 +140,23 @@ class Maintenance
     /**
      * Open or close the site for maintenance
      *
-     * @param object $hotaru
+     * @param object $h
      * @param string $switch - 'open' or 'close'
      */
-    public function openCloseSite($hotaru, $switch = 'open')
+    public function openCloseSite($h, $switch = 'open')
     {
         if ($switch == 'open') { 
             // open
             $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_value = %s WHERE settings_name = %s";
-            $hotaru->db->query($hotaru->db->prepare($sql, 'true', 'SITE_OPEN'));
-            $hotaru->message = $hotaru->lang['admin_maintenance_site_opened'];
-            $hotaru->messageType = 'green';
+            $h->db->query($h->db->prepare($sql, 'true', 'SITE_OPEN'));
+            $h->message = $h->lang['admin_maintenance_site_opened'];
+            $h->messageType = 'green';
         } else {
             //close
             $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_value = %s WHERE settings_name = %s";
-            $hotaru->db->query($hotaru->db->prepare($sql, 'false', 'SITE_OPEN'));
-            $hotaru->message = $hotaru->lang['admin_maintenance_site_closed'];
-            $hotaru->messageType = 'green';
+            $h->db->query($h->db->prepare($sql, 'false', 'SITE_OPEN'));
+            $h->message = $h->lang['admin_maintenance_site_closed'];
+            $h->messageType = 'green';
         }
     }
     
@@ -164,7 +164,7 @@ class Maintenance
     /**
      * Site closed: Exit
      *
-     * @param object $hotaru
+     * @param object $h
      */
     public function siteClosed($lang)
     {

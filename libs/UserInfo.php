@@ -83,10 +83,10 @@ class UserInfo extends UserBase
     /**
      * Get all users with permission to access admin
      */
-    public function getMods($hotaru, $permission = 'can_access_admin', $value = 'yes')
+    public function getMods($h, $permission = 'can_access_admin', $value = 'yes')
     {
         $sql = "SELECT user_id FROM " . TABLE_USERS . " WHERE (user_role = %s) || (user_role = %s) || (user_role = %s)";
-        $users = $hotaru->db->get_results($hotaru->db->prepare($sql, 'admin', 'supermod', 'moderator'));
+        $users = $h->db->get_results($h->db->prepare($sql, 'admin', 'supermod', 'moderator'));
         
         if (!$users) { return false; }
         
@@ -94,7 +94,7 @@ class UserInfo extends UserBase
         
         foreach ($users as $user) {
             $details = new UserBase();
-            $details->getUserBasic($hotaru, $user->user_id);
+            $details->getUserBasic($h, $user->user_id);
             if ($details->getPermission($permission) == $value) {
                 $mods[$details->id]['id'] = $details->id;
                 $mods[$details->id]['role'] = $details->role;
@@ -111,14 +111,14 @@ class UserInfo extends UserBase
      *
      * @return array
      */
-    public function userIdNameList($hotaru, $role = '')
+    public function userIdNameList($h, $role = '')
     {
         if ($role) { 
             $sql = "SELECT user_id, user_username FROM " . TABLE_USERS . " WHERE user_role = %s ORDER BY user_username ASC";
-            $results = $hotaru->db->get_results($hotaru->db->prepare($sql, $role));
+            $results = $h->db->get_results($h->db->prepare($sql, $role));
         } else {
             $sql = "SELECT user_id, user_username FROM " . TABLE_USERS . " ORDER BY user_username ASC";
-            $results = $hotaru->db->get_results($sql);
+            $results = $h->db->get_results($sql);
         }
         
         return $results;
@@ -130,14 +130,14 @@ class UserInfo extends UserBase
      *
      * @return array
      */
-    public function userSettingsList($hotaru, $userid = 0)
+    public function userSettingsList($h, $userid = 0)
     {
         if ($userid) { 
-            $settings = $hotaru->getProfileSettingsData($type = 'user_settings', $userid);
+            $settings = $h->getProfileSettingsData($type = 'user_settings', $userid);
             return $settings;
         } else {
             $sql = "SELECT usermeta_userid, usermeta_value FROM " . DB_PREFIX . "usermeta WHERE usermeta_key = %s";
-            $results = $hotaru->db->get_results($hotaru->db->prepare($sql, 'user_settings'));
+            $results = $h->db->get_results($h->db->prepare($sql, 'user_settings'));
         }
         
         return $results;
@@ -149,12 +149,12 @@ class UserInfo extends UserBase
      *
      * @return array
      */
-    public function userListFull($hotaru, $id_array = array(), $start = 0, $range = 0)
+    public function userListFull($h, $id_array = array(), $start = 0, $range = 0)
     {
         if (!$id_array) {
             // get all users
             $sql = "SELECT * FROM " . TABLE_USERS . " ORDER BY user_username ASC";
-            $results = $hotaru->db->get_results($sql);
+            $results = $h->db->get_results($sql);
         } else {
             // for grabbing 
             if ($range) { $limit = " LIMIT " . $start . ", " . $range; }
@@ -167,7 +167,7 @@ class UserInfo extends UserBase
 
             $prepare_array[0] = $sql;
             $prepare_array = array_merge($prepare_array, $id_array);
-            $results = $hotaru->db->get_results($hotaru->db->prepare($prepare_array));
+            $results = $h->db->get_results($h->db->prepare($prepare_array));
         }
         return $results;
     }
@@ -179,44 +179,44 @@ class UserInfo extends UserBase
      * @param string $stat_type
      * @return int
      */
-    public function stats($hotaru, $stat_type = '')
+    public function stats($h, $stat_type = '')
     {
         switch ($stat_type) {
             case 'admins':
                 $sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
-                $users = $hotaru->db->get_var($hotaru->db->prepare($sql, 'admin'));
+                $users = $h->db->get_var($h->db->prepare($sql, 'admin'));
                 break;
             case 'supermods':
                 $sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
-                $users = $hotaru->db->get_var($hotaru->db->prepare($sql, 'supermod'));
+                $users = $h->db->get_var($h->db->prepare($sql, 'supermod'));
                 break;
             case 'moderators':
                 $sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
-                $users = $hotaru->db->get_var($hotaru->db->prepare($sql, 'moderator'));
+                $users = $h->db->get_var($h->db->prepare($sql, 'moderator'));
                 break;
             case 'members':
                 $sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
-                $users = $hotaru->db->get_var($hotaru->db->prepare($sql, 'member'));
+                $users = $h->db->get_var($h->db->prepare($sql, 'member'));
                 break;
             case 'total_users':
                 $sql = "SELECT count(user_id) FROM " . TABLE_USERS;
-                $users = $hotaru->db->get_var($sql);
+                $users = $h->db->get_var($sql);
                 break;
             case 'approved_users':
                 $sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s OR user_role = %s OR user_role = %s OR  user_role = %s";
-                $users = $hotaru->db->get_var($hotaru->db->prepare($sql, 'admin', 'supermod', 'moderator', 'member'));
+                $users = $h->db->get_var($h->db->prepare($sql, 'admin', 'supermod', 'moderator', 'member'));
                 break;
             case 'undermod_users':
                 $sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
-                $users = $hotaru->db->get_var($hotaru->db->prepare($sql, 'undermod'));
+                $users = $h->db->get_var($h->db->prepare($sql, 'undermod'));
                 break;
             case 'banned_users':
                 $sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
-                $users = $hotaru->db->get_var($hotaru->db->prepare($sql, 'banned'));
+                $users = $h->db->get_var($h->db->prepare($sql, 'banned'));
                 break;
             case 'killspammed_users':
                 $sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
-                $users = $hotaru->db->get_var($hotaru->db->prepare($sql, 'killspammed'));
+                $users = $h->db->get_var($h->db->prepare($sql, 'killspammed'));
                 break;
             default:
                 $users = 0;

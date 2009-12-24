@@ -27,39 +27,39 @@
 
  ?>
  
-    <h2><?php echo $hotaru->lang["cat_man_home"]; ?></h2>
+    <h2><?php echo $h->lang["cat_man_home"]; ?></h2>
 
     <table class="cat_man_table">
     <tr><td class="cat_man_body">
-        <?php echo $hotaru->lang["cat_man_home_intro1"]; ?><br /><br />
-        <?php echo $hotaru->lang["cat_man_home_clear_cache"]; ?> 
+        <?php echo $h->lang["cat_man_home_intro1"]; ?><br /><br />
+        <?php echo $h->lang["cat_man_home_clear_cache"]; ?> 
         <a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&action=clear_db_cache">
-        <?php echo $hotaru->lang["cat_man_home_clear_cache2"]; ?></a>.<br /><br />
-        <?php echo $hotaru->lang["cat_man_home_intro2"]; ?><br />
+        <?php echo $h->lang["cat_man_home_clear_cache2"]; ?></a>.<br /><br />
+        <?php echo $h->lang["cat_man_home_intro2"]; ?><br />
 
-        <h3>1. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order"><?php echo $hotaru->lang["cat_man_home_order_categories"]; ?></a></h3>
-        <?php echo $hotaru->lang["cat_man_home_order_categories_desc"]; ?> <br />
-        <h3>2. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=add"><?php echo $hotaru->lang["cat_man_home_add_categories"]; ?></a></h3>
-        <?php echo $hotaru->lang["cat_man_home_add_categories_desc"]; ?> <br />
-        <h3>3. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit"><?php echo $hotaru->lang["cat_man_home_edit_categories"]; ?></a></h3>
-        <?php echo $hotaru->lang["cat_man_home_edit_categories_desc"]; ?> <br />
-        <h3>4. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit_meta"><?php echo $hotaru->lang["cat_man_home_edit_categories_meta"]; ?></a></h3>
-        <?php echo $hotaru->lang["cat_man_home_edit_categories_meta_desc"]; ?><br />
-        <h3>5. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=move"><?php echo $hotaru->lang["cat_man_home_move_categories"]; ?></a></h3>
-        <?php echo $hotaru->lang["cat_man_home_move_categories_desc"]; ?> <br />
-        <h3>6. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=delete"><?php echo $hotaru->lang["cat_man_home_delete_categories"]; ?></a></h3>
-        <?php echo $hotaru->lang["cat_man_home_delete_categories_desc"]; ?>
+        <h3>1. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order"><?php echo $h->lang["cat_man_home_order_categories"]; ?></a></h3>
+        <?php echo $h->lang["cat_man_home_order_categories_desc"]; ?> <br />
+        <h3>2. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=add"><?php echo $h->lang["cat_man_home_add_categories"]; ?></a></h3>
+        <?php echo $h->lang["cat_man_home_add_categories_desc"]; ?> <br />
+        <h3>3. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit"><?php echo $h->lang["cat_man_home_edit_categories"]; ?></a></h3>
+        <?php echo $h->lang["cat_man_home_edit_categories_desc"]; ?> <br />
+        <h3>4. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit_meta"><?php echo $h->lang["cat_man_home_edit_categories_meta"]; ?></a></h3>
+        <?php echo $h->lang["cat_man_home_edit_categories_meta_desc"]; ?><br />
+        <h3>5. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=move"><?php echo $h->lang["cat_man_home_move_categories"]; ?></a></h3>
+        <?php echo $h->lang["cat_man_home_move_categories_desc"]; ?> <br />
+        <h3>6. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=delete"><?php echo $h->lang["cat_man_home_delete_categories"]; ?></a></h3>
+        <?php echo $h->lang["cat_man_home_delete_categories_desc"]; ?>
     </td>
     
     <td class="cat_man_menu_holder">
         <div>
-            <h3><?php echo $hotaru->lang["cat_man_menu_title"]; ?></h3>
-            <?php $hotaru->displayTemplate('cat_man_menu', 'category_manager'); ?>
+            <h3><?php echo $h->lang["cat_man_menu_title"]; ?></h3>
+            <?php $h->displayTemplate('cat_man_menu', 'category_manager'); ?>
             
-            <h3><?php echo $hotaru->lang["cat_man_category_tree"]; ?></h3>
+            <h3><?php echo $h->lang["cat_man_category_tree"]; ?></h3>
             <?php
-                $tree = new CategoryManagerSettings($hotaru); 
-                $tree->tree($hotaru, $hotaru->vars['the_cats']);
+                $tree = new CategoryManagerSettings($h); 
+                $tree->tree($h, $h->vars['the_cats']);
             ?>
 
         </div>

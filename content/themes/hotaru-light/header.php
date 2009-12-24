@@ -33,14 +33,14 @@
 <head profile="http://gmpg.org/xfn/11">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-    <title><?php echo $hotaru->getTitle(); ?></title>
+    <title><?php echo $h->getTitle(); ?></title>
     
         <?php
             // plugin hook
-            $result = $hotaru->pluginHook('header_meta');
+            $result = $h->pluginHook('header_meta');
             if (!$result) { ?>
-                <meta name="description" content="<?php echo $hotaru->lang['header_meta_description']; ?>" />
-                <meta name="keywords" content="<?php echo $hotaru->lang['header_meta_keywords']; ?>" />
+                <meta name="description" content="<?php echo $h->lang['header_meta_description']; ?>" />
+                <meta name="keywords" content="<?php echo $h->lang['header_meta_keywords']; ?>" />
         <?php } ?>
    
     <script type="text/javascript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery.min.js'; ?>"></script>
@@ -48,24 +48,24 @@
     <script type="text/javascript" src="<?php echo BASEURL . 'javascript/hotaru.js'; ?>"></script>
 
     <!-- Include merged files for all the plugin css and javascript (if any) -->
-    <?php $hotaru->doIncludes(); ?>
+    <?php $h->doIncludes(); ?>
     <!-- End -->
        
     <link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME . 'css/reset-fonts-grids.css'; ?>" type="text/css" />
     <link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME . 'css/style.css'; ?>" type="text/css" />
     <!-- <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico" /> -->
    
-    <?php $hotaru->pluginHook('header_include_raw'); ?>
+    <?php $h->pluginHook('header_include_raw'); ?>
    
 </head>
 <body>
-<?php $hotaru->pluginHook('post_open_body'); ?>
+<?php $h->pluginHook('post_open_body'); ?>
 
-<?php if ($announcements = $hotaru->checkAnnouncements()) { ?>
+<?php if ($announcements = $h->checkAnnouncements()) { ?>
     <div id="announcement">
-        <?php $hotaru->pluginHook('announcement_first'); ?>
+        <?php $h->pluginHook('announcement_first'); ?>
         <?php foreach ($announcements as $announcement) { echo $announcement . "<br />"; } ?>
-        <?php $hotaru->pluginHook('announcement_last'); ?>
+        <?php $h->pluginHook('announcement_last'); ?>
     </div>
 <?php } ?>
 
@@ -73,8 +73,8 @@
     <div id="hd">
         <div id="hd_title">
             <h1><a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a></h1>
-            <?php $hotaru->pluginHook('header_post_title'); ?>
+            <?php $h->pluginHook('header_post_title'); ?>
         </div>
         <!-- NAVIGATION -->
-        <?php echo $hotaru->displayTemplate('navigation'); ?>
+        <?php echo $h->displayTemplate('navigation'); ?>
     </div>

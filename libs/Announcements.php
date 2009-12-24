@@ -29,29 +29,29 @@ class Announcements
      * Displays an announcement at the top of the screen
      * @return array
      */
-    public function checkAnnouncements($hotaru) 
+    public function checkAnnouncements($h) 
     {
         $announcements = array();
         
         if (SITE_OPEN == "false") {
             array_push(
                 $announcements, 
-                $hotaru->lang['main_announcement_site_closed']
+                $h->lang['main_announcement_site_closed']
             );
         }
         
         // "All plugins are currently disabled."
-        if (!$hotaru->numActivePlugins()) {
+        if (!$h->numActivePlugins()) {
             array_push(
                 $announcements, 
-                $hotaru->lang['main_announcement_plugins_disabled']
+                $h->lang['main_announcement_plugins_disabled']
             );
         }
         
         // Plugins can add announcements with this:
-        $hotaru->vars['hotaru_announcements'] = $announcements;
-        $hotaru->pluginHook('hotaru_announcements');
-        $announcements = $hotaru->vars['hotaru_announcements'];
+        $h->vars['hotaru_announcements'] = $announcements;
+        $h->pluginHook('hotaru_announcements');
+        $announcements = $h->vars['hotaru_announcements'];
 
         if (!is_array($announcements)) {
             return false;
@@ -66,7 +66,7 @@ class Announcements
      *
      * @return array|false - array of announcements
      */
-    public function checkAdminAnnouncements($hotaru)
+    public function checkAdminAnnouncements($h)
     {
         // Check if the install file has been deleted:
         
@@ -75,28 +75,28 @@ class Announcements
         // Check if install file has been deleted
         $filename = INSTALL . 'install.php';
         if (file_exists($filename)) {
-            array_push($announcements, $hotaru->lang['admin_announcement_delete_install']);
+            array_push($announcements, $h->lang['admin_announcement_delete_install']);
         } 
         
         // Site is currently undergoing maintenance
         if (SITE_OPEN == "false") {
-            array_push($announcements, $hotaru->lang['admin_announcement_site_closed']);
+            array_push($announcements, $h->lang['admin_announcement_site_closed']);
         }
         
         // Please enter a site email address
         if (SITE_EMAIL == "admin@mysite.com") {
-            array_push($announcements, $hotaru->lang['admin_announcement_change_site_email']);    
+            array_push($announcements, $h->lang['admin_announcement_change_site_email']);    
         } 
         
         // "Go to Plugin Management to enable some plugins"
-        if (!$hotaru->numActivePlugins()) {
-            array_push($announcements, $hotaru->lang['admin_announcement_plugins_disabled']);    
+        if (!$h->numActivePlugins()) {
+            array_push($announcements, $h->lang['admin_announcement_plugins_disabled']);    
         }
         
         // Plugins can add announcements with this:
-        $hotaru->vars['admin_announcements'] = $announcements;
-        $hotaru->pluginHook('admin_announcements');
-        $announcements = $hotaru->vars['admin_announcements'];
+        $h->vars['admin_announcements'] = $announcements;
+        $h->pluginHook('admin_announcements');
+        $announcements = $h->vars['admin_announcements'];
         
         if (!is_array($announcements)) {
             return false;

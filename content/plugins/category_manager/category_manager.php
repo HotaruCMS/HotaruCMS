@@ -35,14 +35,14 @@ class CategoryManager
     /**
      * Install and add a default "all" catgeory if not already there.
      */
-    public function install_plugin($hotaru)
+    public function install_plugin($h)
     {
         // Insert default category if not already there...
         $sql = "SELECT category_id FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s";
-        $exists = $hotaru->db->get_var($hotaru->db->prepare($sql, 'all'));
+        $exists = $h->db->get_var($h->db->prepare($sql, 'all'));
         if (!$exists) {
             $sql = "INSERT INTO " . DB_PREFIX . "categories (category_name, category_safe_name) VALUES (%s, %s)";
-            $hotaru->db->query($hotaru->db->prepare($sql, urlencode('All'), urlencode('all')));
+            $h->db->query($h->db->prepare($sql, urlencode('All'), urlencode('all')));
         }
     }
     

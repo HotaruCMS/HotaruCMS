@@ -30,9 +30,9 @@
 
 <div id="plugin_settings">
     <?php 
-        $result = $hotaru->pluginHook('admin_plugin_settings', $hotaru->vars['settings_plugin']);
+        $result = $h->pluginHook('admin_plugin_settings', $h->vars['settings_plugin']);
         if (!$result) {
-            $sb_links = $hotaru->pluginHook('admin_sidebar_plugin_settings');
+            $sb_links = $h->pluginHook('admin_sidebar_plugin_settings');
             if ($sb_links) {
                 $sb_links = sksort($sb_links, $subkey="name", $type="char", true);
                 foreach ($sb_links as $plugin => $details) { 

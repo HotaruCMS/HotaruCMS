@@ -37,26 +37,26 @@ class SbBase
     /**
      * Install Submit settings if they don't already exist
      */
-    public function install_plugin($hotaru)
+    public function install_plugin($h)
     {
         // Default settings 
-        $sb_base_settings = $hotaru->getSerializedSettings();
+        $sb_base_settings = $h->getSerializedSettings();
         if (!isset($sb_base_settings['posts_per_page'])) { $sb_base_settings['posts_per_page'] = 10; }
         if (!isset($sb_base_settings['archive'])) { $sb_base_settings['archive'] = "no_archive"; }
-        $hotaru->updateSetting('sb_base_settings', serialize($sb_base_settings));
+        $h->updateSetting('sb_base_settings', serialize($sb_base_settings));
         
         // Add "open in new tab" option to the default user settings
-        $base_settings = $hotaru->getDefaultSettings('base'); // originals from plugins
-        $site_settings = $hotaru->getDefaultSettings('site'); // site defaults updated by admin
+        $base_settings = $h->getDefaultSettings('base'); // originals from plugins
+        $site_settings = $h->getDefaultSettings('site'); // site defaults updated by admin
         if (!isset($base_settings['new_tab'])) { 
             $base_settings['new_tab'] = ""; $site_settings['new_tab'] = "";
-            $hotaru->updateDefaultSettings($base_settings, 'base'); 
-            $hotaru->updateDefaultSettings($site_settings, 'site');
+            $h->updateDefaultSettings($base_settings, 'base'); 
+            $h->updateDefaultSettings($site_settings, 'site');
         }
         if (!isset($base_settings['link_action'])) { 
             $base_settings['link_action'] = ""; $site_settings['link_action'] = "";
-            $hotaru->updateDefaultSettings($base_settings, 'base'); 
-            $hotaru->updateDefaultSettings($site_settings, 'site');
+            $h->updateDefaultSettings($base_settings, 'base'); 
+            $h->updateDefaultSettings($site_settings, 'site');
         }
     }
     
@@ -64,65 +64,65 @@ class SbBase
     /**
      * Determine the pageType
      */
-    public function theme_index_top($hotaru)
+    public function theme_index_top($h)
     {
-        switch ($hotaru->pageName)
+        switch ($h->pageName)
         {
             case 'index':
-                $hotaru->pageType = 'list';
-                $hotaru->pageTitle = $hotaru->lang["sb_base_site_name"];
+                $h->pageType = 'list';
+                $h->pageTitle = $h->lang["sb_base_site_name"];
                 break;
             case 'latest':
-                $hotaru->pageType = 'list';
-                $hotaru->pageTitle = $hotaru->lang["sb_base_latest"];
+                $h->pageType = 'list';
+                $h->pageTitle = $h->lang["sb_base_latest"];
                 break;
             case 'upcoming':
-                $hotaru->pageType = 'list';
-                $hotaru->pageTitle = $hotaru->lang["sb_base_latest"];
+                $h->pageType = 'list';
+                $h->pageTitle = $h->lang["sb_base_latest"];
                 break;
             case 'sort':
-                $hotaru->pageType = 'list';
-                $sort = $hotaru->cage->get->testPage('sort');
+                $h->pageType = 'list';
+                $sort = $h->cage->get->testPage('sort');
                 $sort_lang = 'sb_base_' . str_replace('-', '_', $sort);
-                $hotaru->pageTitle = $hotaru->lang[$sort_lang];
+                $h->pageTitle = $h->lang[$sort_lang];
                 break;
             default:
                 // no default or we'd mess up anything set by other plugins
         }
         
         // stop here if not a list or the pageType has been set elsewhere:
-        if ($hotaru->pageType && ($hotaru->pageType != 'list')) {
+        if ($h->pageType && ($h->pageType != 'list')) {
             return false; 
         }
         
         // get settings
-        $hotaru->vars['sb_base_settings'] = $hotaru->getSerializedSettings('sb_base');
-        $hotaru->vars['posts_per_page'] = $hotaru->vars['sb_base_settings']['posts_per_page'];
+        $h->vars['sb_base_settings'] = $h->getSerializedSettings('sb_base');
+        $h->vars['posts_per_page'] = $h->vars['sb_base_settings']['posts_per_page'];
         
         // include sb_base_functions class:
         include_once(PLUGINS . 'sb_base/libs/SbBaseFunctions.php');
         $funcs = new SbBaseFunctions();
         
         // if a list, get the posts:
-        if ($hotaru->pageType == 'list') {
-            $hotaru->vars['posts'] = $funcs->prepareList($hotaru);
+        if ($h->pageType == 'list') {
+            $h->vars['posts'] = $funcs->prepareList($h);
         }
         
         // Probably a post, let's check:
 
-        $pagename = $hotaru->pageName;
+        $pagename = $h->pageName;
         
         if (is_numeric($pagename)) {
             // Page name is a number so it must be a post with non-friendly urls
-            $hotaru->readPost($pagename);    // read current post
-            $hotaru->pageTitle = $hotaru->post->title;
-            $hotaru->pageType = 'post';
+            $h->readPost($pagename);    // read current post
+            $h->pageTitle = $h->post->title;
+            $h->pageType = 'post';
         
-        } elseif ($post_id = $hotaru->isPostUrl($pagename)) {
+        } elseif ($post_id = $h->isPostUrl($pagename)) {
             // Page name belongs to a story
-            $hotaru->readPost($post_id);    // read current post
-            $hotaru->pageTitle = $hotaru->post->title;
-            $hotaru->pageType = 'post';
+            $h->readPost($post_id);    // read current post
+            $h->pageTitle = $h->post->title;
+            $h->pageType = 'post';
         
         } else {
             // don't know what kind of post this is. Maybe return a page not found?
@@ -131,29 +131,29 @@ class SbBase
         // user defined settings:
         
         // open links in a new tab?
-        if (isset($hotaru->currentUser->settings['new_tab'])) { 
-            $hotaru->vars['target'] = 'target="_blank"'; 
+        if (isset($h->currentUser->settings['new_tab'])) { 
+            $h->vars['target'] = 'target="_blank"'; 
         } else { 
-            $hotaru->vars['target'] = ''; 
+            $h->vars['target'] = ''; 
         }
         
         // open link to the source or the site post?
-        if (isset($hotaru->currentUser->settings['link_action'])) { 
-            $hotaru->vars['link_action'] = 'source'; 
+        if (isset($h->currentUser->settings['link_action'])) { 
+            $h->vars['link_action'] = 'source'; 
         } else { 
-            $hotaru->vars['link_action'] = ''; 
+            $h->vars['link_action'] = ''; 
         }
         
         // editorial (story with an internal link)
-        if (strstr($hotaru->post->origUrl, BASEURL)) { 
-            $hotaru->vars['editorial'] = true;
+        if (strstr($h->post->origUrl, BASEURL)) { 
+            $h->vars['editorial'] = true;
         } else { 
-            $hotaru->vars['editorial'] = false; 
+            $h->vars['editorial'] = false; 
         } 
         
         // get settings from SB_Submit 
-        if (!isset($hotaru->vars['submit_settings'])) {
-            $hotaru->vars['submit_settings'] = $hotaru->getSerializedSettings('sb_submit');
+        if (!isset($h->vars['submit_settings'])) {
+            $h->vars['submit_settings'] = $h->getSerializedSettings('sb_submit');
         }
     }
     
@@ -161,10 +161,10 @@ class SbBase
     /**
      * Match meta tag to a post's description (keywords is done in the Tags plugin)
      */
-    public function header_meta($hotaru)
+    public function header_meta($h)
     {    
-        if ($hotaru->pageType != 'post') { return false; }
-        $meta_content = sanitize($hotaru->post->content, 1);
+        if ($h->pageType != 'post') { return false; }
+        $meta_content = sanitize($h->post->content, 1);
         $meta_content = truncate($meta_content, 200);
         echo '<meta name="description" content="' . $meta_content . '">' . "\n";
         return true;
@@ -174,31 +174,31 @@ class SbBase
     /**
      * Add "Latest" to the navigation bar
      */
-    public function navigation($hotaru)
+    public function navigation($h)
     {
         // highlight "Latest" as active tab
-        if ($hotaru->pageName == 'latest') { $status = "id='navigation_active'"; } else { $status = ""; }
+        if ($h->pageName == 'latest') { $status = "id='navigation_active'"; } else { $status = ""; }
         
         // display the link in the navigation bar
-        echo "<li><a  " . $status . " href='" . $hotaru->url(array('page'=>'latest')) . "'>" . $hotaru->lang["sb_base_latest"] . "</a></li>\n";
+        echo "<li><a  " . $status . " href='" . $h->url(array('page'=>'latest')) . "'>" . $h->lang["sb_base_latest"] . "</a></li>\n";
     }
     
     
     /**
      * Replace the default breadcrumbs in specific circumstances
      */
-    public function breadcrumbs($hotaru)
+    public function breadcrumbs($h)
     {
-        if ($hotaru->pageName == 'index') { 
-            $hotaru->pageTitle = $hotaru->lang["sb_base_top"];
+        if ($h->pageName == 'index') { 
+            $h->pageTitle = $h->lang["sb_base_top"];
         }
         
-        switch ($hotaru->pageName) {
+        switch ($h->pageName) {
             case 'index':
-                $hotaru->pageTitle .= $hotaru->rssBreadcrumbsLink('top');
+                $h->pageTitle .= $h->rssBreadcrumbsLink('top');
                 break;
             case 'latest':
-                $hotaru->pageTitle .= $hotaru->rssBreadcrumbsLink('new');
+                $h->pageTitle .= $h->rssBreadcrumbsLink('new');
                 break;
         }
     }
@@ -207,17 +207,17 @@ class SbBase
     /**
      * Determine which template to show and do preparation of variables, etc.
      */
-    public function theme_index_main($hotaru)
+    public function theme_index_main($h)
     {
         // stop here if not a list of a post
-        if (($hotaru->pageType != 'list') && ($hotaru->pageType != 'post')) { return false; }
+        if (($h->pageType != 'list') && ($h->pageType != 'post')) { return false; }
         
         // necessary settings:
-        $hotaru->vars['use_content'] = $hotaru->vars['submit_settings']['content'];
-        $hotaru->vars['use_summary'] = $hotaru->vars['submit_settings']['summary'];
-        $hotaru->vars['summary_length'] = $hotaru->vars['submit_settings']['summary_length'];
+        $h->vars['use_content'] = $h->vars['submit_settings']['content'];
+        $h->vars['use_summary'] = $h->vars['submit_settings']['summary'];
+        $h->vars['summary_length'] = $h->vars['submit_settings']['summary_length'];
         
-        switch ($hotaru->pageType)
+        switch ($h->pageType)
         {
             case 'post':
                 // This post is visible if it's not buried/pending OR if the viewer has edit post permissions...
@@ -226,33 +226,33 @@ class SbBase
                 $buried = false; $pending = false; $can_edit = false;
                 
                 // check if buried:
-                if ($hotaru->post->status == 'buried') { 
+                if ($h->post->status == 'buried') { 
                     $buried = true;
-                    $hotaru->message = $hotaru->lang["sb_base_post_buried"];
+                    $h->message = $h->lang["sb_base_post_buried"];
                 } 
                 
                 // check if pending:
-                if ($hotaru->post->status == 'pending') { 
+                if ($h->post->status == 'pending') { 
                     $pending = true;
-                    $hotaru->message = $hotaru->lang["sb_base_post_pending"];
+                    $h->message = $h->lang["sb_base_post_pending"];
                 }
                 
                 // check if global edit permissions
-                if ($hotaru->currentUser->getPermission('can_edit_posts') == 'yes') { $can_edit = true; }
+                if ($h->currentUser->getPermission('can_edit_posts') == 'yes') { $can_edit = true; }
                 
                 // display post or show error message
                 if ((!$buried && !$pending) || $can_edit){
-                    $hotaru->displayTemplate('sb_post');
+                    $h->displayTemplate('sb_post');
                 } else {
-                    $hotaru->messageType = "red";
-                    $hotaru->showMessage();
+                    $h->messageType = "red";
+                    $h->showMessage();
                 }
                 
                 return true;
                 break;
                 
             case 'list':
-                $hotaru->displayTemplate('sb_list');
+                $h->displayTemplate('sb_list');
                 return true;
         }
     }
@@ -261,18 +261,18 @@ class SbBase
     /**
      * Archive option on Maintenance page
      */
-    public function admin_maintenance_database($hotaru)
+    public function admin_maintenance_database($h)
     {
-        $sb_base_settings = $hotaru->getSerializedSettings();
+        $sb_base_settings = $h->getSerializedSettings();
         $archive = $sb_base_settings['archive'];
         echo "<li><a href='" . BASEURL . "admin_index.php?page=maintenance&amp;action=update_archive'>";
-        echo $hotaru->lang["sb_base_maintenance_update_archive"] . "</a> - ";
+        echo $h->lang["sb_base_maintenance_update_archive"] . "</a> - ";
         if ($archive == 'no_archive') {
-            echo $hotaru->lang["sb_base_maintenance_update_archive_remove"];
+            echo $h->lang["sb_base_maintenance_update_archive_remove"];
         } else {
-            echo $hotaru->lang["sb_base_maintenance_update_archive_desc_1"];
-            echo $hotaru->lang["sb_base_settings_post_archive_$archive"];
-            echo $hotaru->lang["sb_base_maintenance_update_archive_desc_2"];
+            echo $h->lang["sb_base_maintenance_update_archive_desc_1"];
+            echo $h->lang["sb_base_settings_post_archive_$archive"];
+            echo $h->lang["sb_base_maintenance_update_archive_desc_2"];
         }
         echo "</li>";
     }
@@ -281,62 +281,62 @@ class SbBase
     /**
      * Perform archiving tasks
      */
-    public function admin_maintenance_top($hotaru)
+    public function admin_maintenance_top($h)
     {
-        if ($hotaru->cage->get->testAlnumLines('action') != 'update_archive') { return false; }
+        if ($h->cage->get->testAlnumLines('action') != 'update_archive') { return false; }
         
-        $sb_base_settings = $hotaru->getSerializedSettings();
+        $sb_base_settings = $h->getSerializedSettings();
         $archive = $sb_base_settings['archive'];
         
         // FIRST, WE NEED TO RESET THE ARCHIVE, setting all archive fields to "N":
         
         // posts
-        if ($hotaru->db->table_exists('posts')) {
+        if ($h->db->table_exists('posts')) {
             $sql = "UPDATE " . DB_PREFIX . "posts SET post_archived = %s";
-            $hotaru->db->query($hotaru->db->prepare($sql, 'N'));
+            $h->db->query($h->db->prepare($sql, 'N'));
         }
         
         // postmeta
-        if ($hotaru->db->table_exists('postmeta')) {
+        if ($h->db->table_exists('postmeta')) {
             $sql = "UPDATE " . DB_PREFIX . "postmeta SET postmeta_archived = %s";
-            $hotaru->db->query($hotaru->db->prepare($sql, 'N'));
+            $h->db->query($h->db->prepare($sql, 'N'));
         }
         
         // postvotes
-        if ($hotaru->db->table_exists('postvotes')) {
+        if ($h->db->table_exists('postvotes')) {
             $sql = "UPDATE " . DB_PREFIX . "postvotes SET vote_archived = %s";
-            $hotaru->db->query($hotaru->db->prepare($sql, 'N'));
+            $h->db->query($h->db->prepare($sql, 'N'));
         }
         
         // comments
-        if ($hotaru->db->table_exists('comments')) {
+        if ($h->db->table_exists('comments')) {
             $sql = "UPDATE " . DB_PREFIX . "comments SET comment_archived = %s";
-            $hotaru->db->query($hotaru->db->prepare($sql, 'N'));
+            $h->db->query($h->db->prepare($sql, 'N'));
         }
         
         // commentvotes
-        if ($hotaru->db->table_exists('commentvotes')) {
+        if ($h->db->table_exists('commentvotes')) {
             $sql = "UPDATE " . DB_PREFIX . "commentvotes SET cvote_archived = %s";
-            $hotaru->db->query($hotaru->db->prepare($sql, 'N'));
+            $h->db->query($h->db->prepare($sql, 'N'));
         }
         
         // tags
-        if ($hotaru->db->table_exists('tags')) {
+        if ($h->db->table_exists('tags')) {
             $sql = "UPDATE " . DB_PREFIX . "tags SET tags_archived = %s";
-            $hotaru->db->query($hotaru->db->prepare($sql, 'N'));
+            $h->db->query($h->db->prepare($sql, 'N'));
         }
         
         // useractivity
-        if ($hotaru->db->table_exists('useractivity')) {
+        if ($h->db->table_exists('useractivity')) {
             $sql = "UPDATE " . DB_PREFIX . "useractivity SET useract_archived = %s";
-            $hotaru->db->query($hotaru->db->prepare($sql, 'N'));
+            $h->db->query($h->db->prepare($sql, 'N'));
         }
         
         // RETURN NOW IF NO_ARCHIVE IS SET ***************************** 
         if ($archive == 'no_archive') { 
-            $hotaru->message = $hotaru->lang['sb_base_maintenance_archive_removed'];
-            $hotaru->messageType = 'green';
-            $hotaru->showMessage();
+            $h->message = $h->lang['sb_base_maintenance_archive_removed'];
+            $h->messageType = 'green';
+            $h->showMessage();
             return true;
         }
         
@@ -345,51 +345,51 @@ class SbBase
         $archive_date = date('YmdHis', strtotime($archive_text));
         
         // posts
-        if ($hotaru->db->table_exists('posts')) {
+        if ($h->db->table_exists('posts')) {
             $sql = "UPDATE " . DB_PREFIX . "posts SET post_archived = %s WHERE post_date <= %s";
-            $hotaru->db->query($hotaru->db->prepare($sql, 'Y', $archive_date));
+            $h->db->query($h->db->prepare($sql, 'Y', $archive_date));
         }
         
         // postmeta
-        if ($hotaru->db->table_exists('postmeta')) {
+        if ($h->db->table_exists('postmeta')) {
             // No date field in postmeta table so join with posts table...
             $sql = "UPDATE " . DB_PREFIX . "postmeta, " . DB_PREFIX . "posts  SET " . DB_PREFIX . "postmeta.postmeta_archived = %s WHERE (" . DB_PREFIX . "posts.post_date <= %s) AND (" . DB_PREFIX . "posts.post_id = " . DB_PREFIX . "postmeta.postmeta_postid)";
-            $hotaru->db->query($hotaru->db->prepare($sql, 'Y', $archive_date));
+            $h->db->query($h->db->prepare($sql, 'Y', $archive_date));
         }
         
         // postvotes
-        if ($hotaru->db->table_exists('postvotes')) {
+        if ($h->db->table_exists('postvotes')) {
             $sql = "UPDATE " . DB_PREFIX . "postvotes SET vote_archived = %s WHERE vote_date <= %s";
-            $hotaru->db->query($hotaru->db->prepare($sql, 'Y', $archive_date));
+            $h->db->query($h->db->prepare($sql, 'Y', $archive_date));
         }
         
         // comments
-        if ($hotaru->db->table_exists('comments')) {
+        if ($h->db->table_exists('comments')) {
             $sql = "UPDATE " . DB_PREFIX . "comments SET comment_archived = %s WHERE comment_date <= %s";
-            $hotaru->db->query($hotaru->db->prepare($sql, 'Y', $archive_date));
+            $h->db->query($h->db->prepare($sql, 'Y', $archive_date));
         }
         
         // commentvotes
-        if ($hotaru->db->table_exists('commentvotes')) {
+        if ($h->db->table_exists('commentvotes')) {
             $sql = "UPDATE " . DB_PREFIX . "commentvotes SET cvote_archived = %s WHERE cvote_date <= %s";
-            $hotaru->db->query($hotaru->db->prepare($sql, 'Y', $archive_date));
+            $h->db->query($h->db->prepare($sql, 'Y', $archive_date));
         }
         
         // tags
-        if ($hotaru->db->table_exists('tags')) {
+        if ($h->db->table_exists('tags')) {
             $sql = "UPDATE " . DB_PREFIX . "tags SET tags_archived = %s WHERE tags_date <= %s";
-            $hotaru->db->query($hotaru->db->prepare($sql, 'Y', $archive_date));
+            $h->db->query($h->db->prepare($sql, 'Y', $archive_date));
         }
 
         // useractivity
-        if ($hotaru->db->table_exists('useractivity')) {
+        if ($h->db->table_exists('useractivity')) {
             $sql = "UPDATE " . DB_PREFIX . "useractivity SET useract_archived = %s WHERE useract_date <= %s";
-            $hotaru->db->query($hotaru->db->prepare($sql, 'Y', $archive_date));
+            $h->db->query($h->db->prepare($sql, 'Y', $archive_date));
         }
 
-        $hotaru->message = $hotaru->lang['sb_base_maintenance_archive_updated'];
-        $hotaru->messageType = 'green';
-        $hotaru->showMessage();
+        $h->message = $h->lang['sb_base_maintenance_archive_updated'];
+        $h->messageType = 'green';
+        $h->showMessage();
         return true;
 
     }
@@ -398,15 +398,15 @@ class SbBase
     /**
      * Show stats on Admin home page
      */
-    public function admin_theme_main_stats($hotaru, $vars)
+    public function admin_theme_main_stats($h, $vars)
     {
         echo "<li>&nbsp;</li>";
     
         foreach ($vars as $stat_type) {
-            $posts = $hotaru->post->stats($hotaru, $stat_type);
+            $posts = $h->post->stats($h, $stat_type);
             if (!$posts) { $posts = 0; }
             $lang_name = 'sb_base_admin_stats_' . $stat_type;
-            echo "<li>" . $hotaru->lang[$lang_name] . ": " . $posts . "</li>";
+            echo "<li>" . $h->lang[$lang_name] . ": " . $posts . "</li>";
         }
     }
 

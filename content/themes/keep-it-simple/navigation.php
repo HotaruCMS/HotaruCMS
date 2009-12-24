@@ -33,29 +33,29 @@
 <!-- Navigation Bar -->
     <div id="nav">
 	<ul>
-    <?php if ($hotaru->pageName == 'top') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
+    <?php if ($h->pageName == 'top') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
 	
-	<?php $hotaru->pluginHook('navigation_first'); ?>
-	<li <?php echo $status; ?>><a <?php echo $status; ?> href="<?php echo BASEURL; ?>"><?php echo $hotaru->lang["main_theme_navigation_home"]; ?></a></li>
+	<?php $h->pluginHook('navigation_first'); ?>
+	<li <?php echo $status; ?>><a <?php echo $status; ?> href="<?php echo BASEURL; ?>"><?php echo $h->lang["main_theme_navigation_home"]; ?></a></li>
     
-	<?php $hotaru->pluginHook('navigation'); ?>
+	<?php $h->pluginHook('navigation'); ?>
 	
 	<?php 
-        if (!$hotaru->isActive('users')) { 
+        if (!$h->isActive('users')) { 
 
-            if ($hotaru->currentUser->loggedIn == true) { 
+            if ($h->currentUser->loggedIn == true) { 
             
-                if ($hotaru->pageName == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
-                echo "<li " . $status . "><a " . $status . " href='" . $hotaru->url(array(), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_admin"] . "</a></li>"; 
+                if ($h->pageName == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
+                echo "<li " . $status . "><a " . $status . " href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_admin"] . "</a></li>"; 
                 
-                if ($hotaru->pageName == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
-                echo "<li " . $status . "><a " . $status . " href='" . $hotaru->url(array('page'=>'admin_logout'), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_logout"] . "</a></li>";
+                if ($h->pageName == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
+                echo "<li " . $status . "><a " . $status . " href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang["main_theme_navigation_logout"] . "</a></li>";
             } else { 
-                if ($hotaru->pageName == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
-                echo "<li " . $status . "><a " . $status . " href='" . $hotaru->url(array(), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_login"] . "</a></li>"; 
+                if ($h->pageName == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
+                echo "<li " . $status . "><a " . $status . " href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_login"] . "</a></li>"; 
             }
         } else {
-            $hotaru->pluginHook('navigation_users', true, 'users'); // ensures login/logout/register are last.
+            $h->pluginHook('navigation_users', true, 'users'); // ensures login/logout/register are last.
         }
 			
     ?>
@@ -64,9 +64,9 @@
 
 
     <?php     // RSS Link and icon if Submit plugin is active
-        if ($hotaru->isActive('submit')) { ?>
+        if ($h->isActive('submit')) { ?>
 		<div id="iconrss">
-		<a href="<?php echo $hotaru->url(array('page'=>'rss')); ?>">
+		<a href="<?php echo $h->url(array('page'=>'rss')); ?>">
                     <img src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/new-rss.png">
         </a>
 		</div>
@@ -74,7 +74,7 @@
 				<form name='search_form' id="quick-search" action="<?php echo BASEURL; ?>index.php?page=search" method="get" >
 				<p>
 				<label for="qsearch">Search:</label>
-				<input class="tbox" id="qsearch" type="text" name="search" value="<?php echo $hotaru->lang['search_text']; ?>" title="Start typing and hit ENTER" onfocus="if (this.value == '<?php echo $hotaru->lang['search_text']; ?>') {this.value = '';}" />
+				<input class="tbox" id="qsearch" type="text" name="search" value="<?php echo $h->lang['search_text']; ?>" title="Start typing and hit ENTER" onfocus="if (this.value == '<?php echo $h->lang['search_text']; ?>') {this.value = '';}" />
 				<input class="btn" alt="Search" type="image" name="searchsubmit" title="Search" src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/search.gif" />
 				</p>
 				</form>

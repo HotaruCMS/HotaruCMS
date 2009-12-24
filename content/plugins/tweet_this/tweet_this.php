@@ -38,48 +38,48 @@ class TweetThis
     /**
      * Install Tweet This
      */
-    public function install_plugin($hotaru)
+    public function install_plugin($h)
     {
         // Plugin settings
-        $tweet_this_settings = $hotaru->getSerializedSettings();
+        $tweet_this_settings = $h->getSerializedSettings();
         if (!isset($tweet_this_settings['tt_shortener'])) { $tweet_this_settings['tt_shortener'] = "isgd"; }
         if (!isset($tweet_this_settings['tt_bitly_login'])) { $tweet_this_settings['tt_bitly_login'] = ""; }
         if (!isset($tweet_this_settings['tt_bitly_api_key'])) { $tweet_this_settings['tt_bitly_api_key'] = ""; }
-        $hotaru->updateSetting('tweet_this_settings', serialize($tweet_this_settings));
+        $h->updateSetting('tweet_this_settings', serialize($tweet_this_settings));
     }
     
     /**
      * Display Twitter link
      */
-    public function sb_base_show_post_extra_fields($hotaru)
+    public function sb_base_show_post_extra_fields($h)
     {
-        echo "<li><a class='tweet_this_link' href='" . $hotaru->url(array('page'=>'tweet_this', 'id'=>$hotaru->post->id)) . "' target='_blank'>";
-        echo $hotaru->lang['tweet_this'] . "</a></li>\n";
+        echo "<li><a class='tweet_this_link' href='" . $h->url(array('page'=>'tweet_this', 'id'=>$h->post->id)) . "' target='_blank'>";
+        echo $h->lang['tweet_this'] . "</a></li>\n";
     }
     
     /**
      * Determine if the user has clicked Tweet This
      */
-    public function theme_index_top($hotaru)
+    public function theme_index_top($h)
     {
-        if ($hotaru->isPage('tweet_this')) {
-            $this->tweetThisPost($hotaru);
+        if ($h->isPage('tweet_this')) {
+            $this->tweetThisPost($h);
         }
     }
     
     /**
      * Build the link 
      */
-    public function tweetThisPost($hotaru)
+    public function tweetThisPost($h)
     {
         // get the post's id from the url
-        $post_id = $hotaru->cage->get->testInt('id');
+        $post_id = $h->cage->get->testInt('id');
         
         // get the compressed url for this link
-        $shortened_url = $this->getShortUrl($hotaru, $post_id);
+        $shortened_url = $this->getShortUrl($h, $post_id);
         
         // add the compressed link to the Twitter status update url
-        $twitter_url = $this->getTwitterUrl($hotaru, $post_id, $shortened_url); 
+        $twitter_url = $this->getTwitterUrl($h, $post_id, $shortened_url); 
 
         // redirect to Twitter
         header("Location: " . $twitter_url);
@@ -93,28 +93,28 @@ class TweetThis
      * @param int $post_id
      * @return string $url
      */
-    public function getShortUrl($hotaru, $post_id)
+    public function getShortUrl($h, $post_id)
     {
         // Check the database to see if there's already a short link there.
         $query = "SELECT postmeta_value FROM " . TABLE_POSTMETA . " where postmeta_postid = %d AND postmeta_key = %s";
-        $sql = $hotaru->db->prepare($query, $post_id, 'compressed_url');
-        $stored_short_link = $hotaru->db->get_var($sql);
+        $sql = $h->db->prepare($query, $post_id, 'compressed_url');
+        $stored_short_link = $h->db->get_var($sql);
         
         if(!$stored_short_link) {
             // no short link in db. We need to create one:
             
             // get the post's url and encode it:
-            $post_url = urlencode($hotaru->url(array('page'=>$post_id)));
+            $post_url = urlencode($h->url(array('page'=>$post_id)));
             
             // get settings so we know which shortener to use:
-            $tweet_this_settings = $hotaru->getSerializedSettings();
+            $tweet_this_settings = $h->getSerializedSettings();
             
             switch($tweet_this_settings['tt_shortener']) {
                 case 'tinyurl':
                     $url = file_get_contents('http://tinyurl.com/api-create.php?url=' . $post_url);
                     break;
                 case 'bitly':
-                    $url = $this->getBitlyLink($hotaru, $post_url, $tweet_this_settings);
+                    $url = $this->getBitlyLink($h, $post_url, $tweet_this_settings);
                     break;
                 default:
                     $url = file_get_contents('http://is.gd/api.php?longurl=' . $post_url);
@@ -122,8 +122,8 @@ class TweetThis
 
             // then store it in the database:
             $query = "INSERT INTO " . TABLE_POSTMETA . " (postmeta_postid, postmeta_key, postmeta_value, postmeta_updateby) VALUES(%d, %s, %s, %d)";
-            $sql = $hotaru->db->prepare($query, $post_id, 'compressed_url', urlencode(trim($url)), $hotaru->currentUser->id);
-            $hotaru->db->query($sql);
+            $sql = $h->db->prepare($query, $post_id, 'compressed_url', urlencode(trim($url)), $h->currentUser->id);
+            $h->db->query($sql);
 
         } else {
             // we can use the existing one.
@@ -140,7 +140,7 @@ class TweetThis
      * @param array $tweet_this_settings
      * @return string $url
      */
-    public function getBitlyLink($hotaru, $post_url, $tweet_this_settings)
+    public function getBitlyLink($h, $post_url, $tweet_this_settings)
     {
         // get our login and api key from the saved settings
         $bitly_login = $tweet_this_settings['tt_bitly_login'];
@@ -168,10 +168,10 @@ class TweetThis
      * @param string $shortened_url
      * @return string $url
      */
-    public function getTwitterUrl($hotaru, $post_id, $shortened_url)
+    public function getTwitterUrl($h, $post_id, $shortened_url)
     {
-        $hotaru->readPost($post_id);
-        $title = html_entity_decode($hotaru->post->title, ENT_QUOTES, "UTF-8");
+        $h->readPost($post_id);
+        $title = html_entity_decode($h->post->title, ENT_QUOTES, "UTF-8");
         
         $orig_length = strlen($title); // get original title length
         if ($orig_length > 110) {

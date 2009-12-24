@@ -28,26 +28,26 @@ class Trackback
     /**
      * Prepares and calls functions to send a trackback
      */
-    public function sendTrackback($hotaru)
+    public function sendTrackback($h)
     {
         // Scan content for trackback urls
         $tb_array = array();
         
-        $trackback = $this->detectTrackback($hotaru);
+        $trackback = $this->detectTrackback($h);
         
         if (!$trackback) { return false; } // No trackback url found
         
         // Clean up the title and description...
-        $title = htmlspecialchars(strip_tags($hotaru->post->title));
+        $title = htmlspecialchars(strip_tags($h->post->title));
         $title = (strlen($title) > 150) ? substr($title, 0, 150) . '...' : $title;
-        $excerpt = strip_tags($hotaru->post->content);
+        $excerpt = strip_tags($h->post->content);
         $excerpt = (strlen($excerpt) > 200) ? substr($excerpt, 0, 200) . '...' : $excerpt;
 
         // we don't want friendly urls in case the title or category is edited after submission, thus
         // changing and therefore breaking the trackback link posted on other sites. So...
-        $url = BASEURL . 'index.php?page=' . $hotaru->post->id; 
+        $url = BASEURL . 'index.php?page=' . $h->post->id; 
         
-        if ($this->ping($hotaru, $trackback, $url, $title, $excerpt)) {
+        if ($this->ping($h, $trackback, $url, $title, $excerpt)) {
             echo "Trackback sent successfully...";
         } else {
             echo "Error sending trackback....";
@@ -63,12 +63,12 @@ class Trackback
      *
      * Adapted from Pligg.com and SocialWebCMS.com
      */
-    public function detectTrackback($hotaru)
+    public function detectTrackback($h)
     {
         include_once(EXTENSIONS . 'SWCMS/class.httprequest.php');
         
         // Fetch the content of the original url...
-        $url = $hotaru->post->origUrl;
+        $url = $h->post->origUrl;
         
         if ($url != 'http://' && $url != ''){
         $r = new HTTPRequest($url);
@@ -114,7 +114,7 @@ class Trackback
      * @param str $excerpt
      * @link http://phptrackback.sourceforge.net/docs/
      */
-    public function ping($hotaru, $trackback, $url, $title = "", $excerpt = "")
+    public function ping($h, $trackback, $url, $title = "", $excerpt = "")
     {
         $response = "";
         $reason = ""; 
@@ -126,7 +126,7 @@ class Trackback
 
         if (empty($excerpt)) {
             // If no excerpt show "This article has been featured on Site Name".
-            $excerpt = $hotaru->lang['submit_trackback_excerpt'] . " " . SITE_NAME;
+            $excerpt = $h->lang['submit_trackback_excerpt'] . " " . SITE_NAME;
         } 
         
         // Parse the target

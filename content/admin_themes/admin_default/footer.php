@@ -29,20 +29,20 @@
 ?>
     <div id="ft" role="contentinfo">
         <?php
-            $hotaru->pluginHook('admin_footer');
+            $h->pluginHook('admin_footer');
             
             // Link to forums...
-            echo "<p>" . $hotaru->lang["admin_theme_footer_having_trouble_vist_forums"];
+            echo "<p>" . $h->lang["admin_theme_footer_having_trouble_vist_forums"];
             echo " <a href='http://hotarucms.org'>HotaruCMS.org</a> ";
-            echo $hotaru->lang["admin_theme_footer_for_help"] . "</p>";
+            echo $h->lang["admin_theme_footer_for_help"] . "</p>";
             
-            $hotaru->showQueriesAndTime();
+            $h->showQueriesAndTime();
 
         ?>
     </div>
 </div>
 
-<?php $hotaru->pluginHook('pre_close_body'); ?>
+<?php $h->pluginHook('pre_close_body'); ?>
 
 </body>
 </html>

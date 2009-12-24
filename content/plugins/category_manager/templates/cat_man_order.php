@@ -27,32 +27,32 @@
 
  ?>
  
-    <h2><?php echo $hotaru->lang["cat_man_order"]; ?></h2>
+    <h2><?php echo $h->lang["cat_man_order"]; ?></h2>
 
     <table class="cat_man_table">
     <tr><td class="cat_man_body">
-        <?php echo $hotaru->lang["cat_man_order_instruct"]; ?><br />
+        <?php echo $h->lang["cat_man_order_instruct"]; ?><br />
 
-        <h3>1. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order_alpha"><?php echo $hotaru->lang["cat_man_order_alpha"]; ?></a></h3>
-        <?php echo $hotaru->lang["cat_man_order_alpha_desc"]; ?> <br />
-        <h3>2. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order_length"><?php echo $hotaru->lang["cat_man_order_length"]; ?></a></h3>
-        <?php echo $hotaru->lang["cat_man_order_length_desc"]; ?>  <br />
-        <h3>3. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order_id"><?php echo $hotaru->lang["cat_man_order_id"]; ?></a></h3>
-        <?php echo $hotaru->lang["cat_man_order_id_desc"]; ?> <br />
-        <h3>4. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order_posts"><?php echo $hotaru->lang["cat_man_order_posts"]; ?></a></h3>
-        <?php echo $hotaru->lang["cat_man_order_posts_desc"]; ?>
+        <h3>1. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order_alpha"><?php echo $h->lang["cat_man_order_alpha"]; ?></a></h3>
+        <?php echo $h->lang["cat_man_order_alpha_desc"]; ?> <br />
+        <h3>2. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order_length"><?php echo $h->lang["cat_man_order_length"]; ?></a></h3>
+        <?php echo $h->lang["cat_man_order_length_desc"]; ?>  <br />
+        <h3>3. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order_id"><?php echo $h->lang["cat_man_order_id"]; ?></a></h3>
+        <?php echo $h->lang["cat_man_order_id_desc"]; ?> <br />
+        <h3>4. <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=order_posts"><?php echo $h->lang["cat_man_order_posts"]; ?></a></h3>
+        <?php echo $h->lang["cat_man_order_posts_desc"]; ?>
 
     </td>
     
     <td class="cat_man_menu_holder">
         <div>
-            <h3><?php echo $hotaru->lang["cat_man_menu_title"]; ?></h3>
-            <?php $hotaru->displayTemplate('cat_man_menu', 'category_manager'); ?>
+            <h3><?php echo $h->lang["cat_man_menu_title"]; ?></h3>
+            <?php $h->displayTemplate('cat_man_menu', 'category_manager'); ?>
             
-            <h3><?php echo $hotaru->lang["cat_man_category_tree"]; ?></h3>
+            <h3><?php echo $h->lang["cat_man_category_tree"]; ?></h3>
             <?php
-                $tree = new CategoryManagerSettings($hotaru); 
-                $tree->tree($hotaru, $hotaru->vars['the_cats']);
+                $tree = new CategoryManagerSettings($h); 
+                $tree->tree($h, $h->vars['the_cats']);
             ?>
 
         </div>

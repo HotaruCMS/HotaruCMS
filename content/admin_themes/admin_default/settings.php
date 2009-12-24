@@ -25,23 +25,23 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-$loaded_settings = $hotaru->vars['admin_settings'];
+$loaded_settings = $h->vars['admin_settings'];
 ?>
 
-<?php $hotaru->pluginHook('admin_settings_top'); ?>
+<?php $h->pluginHook('admin_settings_top'); ?>
     
-    <h2><?php echo $hotaru->lang["admin_theme_settings_title"]; ?></h2>
+    <h2><?php echo $h->lang["admin_theme_settings_title"]; ?></h2>
     
-    <?php $hotaru->showMessage(); ?>
+    <?php $h->showMessage(); ?>
     
     <form id='settings_form' name='settings_form' action='<?php echo BASEURL; ?>admin_index.php?page=settings' method='post'>
     
     <table id="settings">    
     <tr>
-        <td><b><u><?php echo $hotaru->lang["admin_theme_settings_setting"]; ?></u></b></td>
-        <td><b><u><?php echo $hotaru->lang["admin_theme_settings_value"]; ?></u></b></td>
-        <td><b><u><?php echo $hotaru->lang["admin_theme_settings_default"]; ?></u></b></td>
-        <td><b><u><?php echo $hotaru->lang["admin_theme_settings_notes"]; ?></u></b></td>
+        <td><b><u><?php echo $h->lang["admin_theme_settings_setting"]; ?></u></b></td>
+        <td><b><u><?php echo $h->lang["admin_theme_settings_value"]; ?></u></b></td>
+        <td><b><u><?php echo $h->lang["admin_theme_settings_default"]; ?></u></b></td>
+        <td><b><u><?php echo $h->lang["admin_theme_settings_notes"]; ?></u></b></td>
     </tr>
     
     <?php     // **********************************************************
@@ -63,11 +63,11 @@ $loaded_settings = $hotaru->vars['admin_settings'];
     
     <br />
     <input type='hidden' name='settings_update' value='true' />
-    <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
+    <input type='hidden' name='token' value='<?php echo $h->token; ?>' />
     </table>
     <input id='settings_submit' type='submit' value='Save' />
     </form>
     
     
     
-<?php $hotaru->pluginHook('admin_settings_bottom'); ?>
+<?php $h->pluginHook('admin_settings_bottom'); ?>

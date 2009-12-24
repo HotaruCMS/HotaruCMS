@@ -28,26 +28,26 @@ class Breadcrumbs
     /**
      * Build breadcrumbs
      */
-    public function buildBreadcrumbs($hotaru)
+    public function buildBreadcrumbs($h)
     {
         $output = '';
-        $output .= "<a href='" . BASEURL . "'>" . $hotaru->lang['main_theme_breadcrumbs_home'] . "</a>\n"; 
+        $output .= "<a href='" . BASEURL . "'>" . $h->lang['main_theme_breadcrumbs_home'] . "</a>\n"; 
         
         // Admin only:
-        if ($hotaru->isAdmin) {
-            $output .= " &raquo; <a href='" . $hotaru->url(array(), 'admin') . "'>";
-            $output .= $hotaru->lang['admin_theme_main_admin_cp'] . "</a>\n";
+        if ($h->isAdmin) {
+            $output .= " &raquo; <a href='" . $h->url(array(), 'admin') . "'>";
+            $output .= $h->lang['admin_theme_main_admin_cp'] . "</a>\n";
         }
         
         // plugin hook:
-        $crumbs = $hotaru->pluginHook('breadcrumbs');
+        $crumbs = $h->pluginHook('breadcrumbs');
         if ($crumbs) {
             $output .= $crumbs['breadcrumbs']; // I KNOW THIS WON'T WORK.
             return $output;
         } 
         
         // in case of no plugins:
-        $output .= " &raquo; " . $hotaru->pageTitle;
+        $output .= " &raquo; " . $h->pageTitle;
         return $output;
     }
     
@@ -58,10 +58,10 @@ class Breadcrumbs
      * @param string $type - post status, e.g. new, top, etc.
      * @return string
      */    
-    public function rssBreadcrumbsLink($hotaru, $type = 'all')
+    public function rssBreadcrumbsLink($h, $type = 'all')
     {
-        $rss = "<a href='" . $hotaru->url(array('page'=>'rss', 'status'=>$type)) . "'>";
-        $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png' alt='" . $hotaru->pageTitle . " RSS' /></a>";
+        $rss = "<a href='" . $h->url(array('page'=>'rss', 'status'=>$type)) . "'>";
+        $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png' alt='" . $h->pageTitle . " RSS' /></a>";
         return $rss;
     }
 }

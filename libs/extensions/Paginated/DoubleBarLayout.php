@@ -5,19 +5,19 @@ require_once "PageLayout.php";
 class DoubleBarLayout implements PageLayout
 {
 
-    public function fetchPagedLinks($parent, $hotaru) 
+    public function fetchPagedLinks($parent, $h) 
     {
         // NOTE: FRIENDLY URLS ARE NOT USED IN PAGINATION (I tried, but there's always *something* that screws up. Nick)
-        if ($hotaru->isAdmin == true) { $head = 'admin_index.php?'; } else { $head = 'index.php?'; }
+        if ($h->isAdmin == true) { $head = 'admin_index.php?'; } else { $head = 'index.php?'; }
         
         // get full url from address bar
-        $host = $hotaru->cage->server->getMixedString2('HTTP_HOST');
-        $uri = $hotaru->cage->server->getMixedString2('REQUEST_URI');
+        $host = $h->cage->server->getMixedString2('HTTP_HOST');
+        $uri = $h->cage->server->getMixedString2('REQUEST_URI');
         $path = "http://" . $host  . $uri;
         
         // if it doesn't contain $head, then it must be a friendly url 
         if ($path != BASEURL && !strrpos($path, $head)) {
-            $path = $this->friendlyToStandardUrl($path, $head, $hotaru);
+            $path = $this->friendlyToStandardUrl($path, $head, $h);
         } 
         
         // add the head if we're on the top page (which doesn't have index.php attached) 
@@ -47,7 +47,7 @@ class DoubleBarLayout implements PageLayout
             $previousPage = $currentPage - 1;
             $link = $path . '&pg=' . $previousPage;
             $link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark
-            $str .= "<a class='pagi_previous' href='" . $link . "' title='" . $hotaru->lang['pagination_previous'] . "'>&laquo; " . $hotaru->lang['pagination_previous'] . "</a> \n";
+            $str .= "<a class='pagi_previous' href='" . $link . "' title='" . $h->lang['pagination_previous'] . "'>&laquo; " . $h->lang['pagination_previous'] . "</a> \n";
         }
         
         // NOT FIRST PAGE
@@ -55,7 +55,7 @@ class DoubleBarLayout implements PageLayout
             if ($currentPage != 1) {
                 $link = $path . '&pg=1';
                 $link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark
-                $str .= "<a class='pagi_first' href='" . $link . "'  title='" . $hotaru->lang['pagination_first'] . "'>1</a> \n";
+                $str .= "<a class='pagi_first' href='" . $link . "'  title='" . $h->lang['pagination_first'] . "'>1</a> \n";
                 if ($currentPage > ($before+1)) {
                     $str .= " <span class='dots'>...</span> \n";
                 }
@@ -92,7 +92,7 @@ class DoubleBarLayout implements PageLayout
                 if ($currentPage < ($parent->fetchNumberPages() - ($after + 1))) { $str .= " <span class='pagi_dots'>...</span> \n"; }
                 $link = $path . '&pg=' . $parent->fetchNumberPages();
                 $link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark
-                $str .= "<a class='pagi_last' href='" . $link . "'  title='" . $hotaru->lang['pagination_last'] . "'>".$parent->fetchNumberPages()."</a> \n";
+                $str .= "<a class='pagi_last' href='" . $link . "'  title='" . $h->lang['pagination_last'] . "'>".$parent->fetchNumberPages()."</a> \n";
             }
         }
         
@@ -101,7 +101,7 @@ class DoubleBarLayout implements PageLayout
             $nextPage = $currentPage + 1;
             $link = $path . '&pg=' . $nextPage;
             $link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark
-            $str .= "<a class='pagi_next' href='" . $link . "' title='" . $hotaru->lang['pagination_next'] . "'>" . $hotaru->lang['pagination_next'] . " &raquo;</a> \n";
+            $str .= "<a class='pagi_next' href='" . $link . "' title='" . $h->lang['pagination_next'] . "'>" . $h->lang['pagination_next'] . " &raquo;</a> \n";
         }
         
         // Wrap in a div
@@ -118,9 +118,9 @@ class DoubleBarLayout implements PageLayout
      *
      * @param string $url
      * @param string $head - "index.php?" or "admin_index.php?"
-     * @param object $hotaru
+     * @param object $h
      */
-    public function friendlyToStandardUrl($url, $head, $hotaru) 
+    public function friendlyToStandardUrl($url, $head, $h) 
     {
         // strip off BASEURL and trailing slash
         $url = str_replace(BASEURL, '', $url);

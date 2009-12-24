@@ -37,7 +37,7 @@
  */
 function create_table($table_name)
 {
-    global $db, $lang, $hotaru;
+    global $db, $lang, $h;
     
     $sql = 'DROP TABLE IF EXISTS `' . DB_PREFIX . $table_name . '`;';
     $db->query($sql);
@@ -128,7 +128,7 @@ function create_table($table_name)
         
         // Add Hotaru version number to the database (referred to when upgrading)
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (miscdata_key, miscdata_value, miscdata_default) VALUES (%s, %s, %s)";
-        $db->query($db->prepare($sql, 'hotaru_version', $hotaru->version, $hotaru->version));
+        $db->query($db->prepare($sql, 'hotaru_version', $h->version, $h->version));
 
         // Default permissions
         $perms['options']['can_access_admin'] = array('yes', 'no');

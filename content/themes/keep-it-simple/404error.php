@@ -28,4 +28,4 @@
 
 ?>
 
-<?php echo $hotaru->lang['main_theme_page_not_found']; ?>
+<?php echo $h->lang['main_theme_page_not_found']; ?>
