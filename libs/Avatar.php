@@ -25,46 +25,49 @@
  *
  * USAGE:
  * $avatar = new Avatar($h);
- * $avatar->setAvatar($size, $user_id, $user_email, $rating);
+ * $avatar->setAvatar($user_id, $size, $rating);
  * $avatar->getAvatar(); // returns the avatar for custom display... OR...
  * $avatar->showAvatar(); // displays the avatar using default HTML
  *
  */
 class Avatar
 {
-    private $h;                 // Hotaru object
-    public $size        = 32;
     public $user_id     = 0;
+    public $user_name   = '';
     public $user_email  = '';
+    public $size        = 32;
     public $rating      = 'g';  // "global" used by Gravatar
     
     
     /**
      * constructor
-     */
-    public function  __construct($h)
-    {
-        $this->h = $h;
-    }
-    
-    
-    /**
-     * prepare the iAvatar
      *
-     * @param $size avatar size in pixels
+     * @param $h Hotaru object
      * @param $user_id
-     * @param $user_email
-     *
-     * @return return the avatar
+     * @param $size avatar size in pixels
+     * @param $rating avatar rating (g, pg, r or x in Gravatar)
      */
-    public function setAvatar($size = 32, $user_id = 0, $user_email = '', $rating = 'g')
+    public function  __construct($h, $user_id = 0, $size = 32, $rating = 'g')
     {
-        $this->size = $size;
         $this->user_id = $user_id;
-        $this->user_email = $user_email;
+        
+        $user = new UserBase();
+        $user->getUserBasic($h, $this->user_id);
+        $this->user_email = $user->email;
+        $this->user_name = $user->name;
+        
+        $this->size = $size;
         $this->rating = $rating;
         
-        $this->h->pluginHook('avatar_set_avatar', '', array('size'=>$this->size, 'user_id'=>$this->user_id, 'user_email'=>$this->user_email, 'rating'=>$this->rating));
+        $vars = array(
+            'user_id'=>$this->user_id,
+            'user_name'=>$this->user_name,
+            'user_email'=>$this->user_email,
+            'size'=>$this->size,
+            'rating'=>$this->rating
+            );
+        
+        $h->pluginHook('avatar_set_avatar', '', $vars);
     }
     
     
@@ -73,9 +76,9 @@ class Avatar
      *
      * @return return the avatar
      */
-    public function getAvatar()
+    public function getAvatar($h)
     {
-        $result = $this->h->pluginHook('avatar_get_avatar');
+        $result = $h->pluginHook('avatar_get_avatar');
         if ($result) {
             foreach ($result as $key => $value) {
                 $avatar = $value;
@@ -86,21 +89,41 @@ class Avatar
         return false;
     }
 
-    
+
     /**
-     * option to display the avatar wrapped in default HTML
+     * option to display the avatar linked to ther user's profile
      */
-    public function showAvatar()
+    public function linkAvatar($h)
     {
-        echo "<div class='avatar_wrapper'>";
-        $this->h->pluginHook('avatar_show_avatar');
+        $output = "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>\n";
+        $result = $h->pluginHook('avatar_get_avatar');
         if ($result) {
             foreach ($result as $key => $value) {
                 $avatar = $value;
             }
-            echo $avatar; // echos the last avatar sent to this hook
+            $output .=  $avatar; // uses the last avatar sent to this hook
         }
-        echo "</div>";
+        $output .= "</a>\n";
+        return $output;
+    }
+
+
+    /**
+     * option to display the profile-linked avatar wrapped in a div
+     */
+    public function wrapAvatar($h)
+    {
+        $output = "<div class='avatar_wrapper'>";
+        $output = "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>\n";
+        $result = $h->pluginHook('avatar_get_avatar');
+        if ($result) {
+            foreach ($result as $key => $value) {
+                $avatar = $value;
+            }
+            $output .= $avatar; // uses the last avatar sent to this hook
+        }
+        $output .= "</a>\n";
+        $output .= "</div>\n";
     }
 }
 ?>

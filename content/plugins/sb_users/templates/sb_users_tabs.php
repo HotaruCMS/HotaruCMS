@@ -23,29 +23,29 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-$username = $hotaru->vars['username'];
+$username = $h->vars['user']->name;
 ?>
 
-<ul class='post_breadcrumbs_links_bar'>
+<ul class='user_tabs'>
 
-<li><?php echo $this->lang["users_account_edit"]; ?> 
-    <a href='<?php echo $hotaru->url(array('user'=>$username)); ?>'><?php echo $username; ?></a>:
+<li><?php echo $h->lang["users_account_edit"]; ?> 
+    <a href='<?php echo $h->url(array('user'=>$username)); ?>'><?php echo $username; ?></a>:
 </li>
 
 <?php // show account and profile links to owner or admin access users: 
-    if (($hotaru->current_user->name == $username) || ($hotaru->current_user->getPermission('can_access_admin') == 'yes')) { ?>
-    <li><a href='<?php echo $hotaru->url(array('page'=>'account', 'user'=>$username)); ?>'><?php echo $hotaru->lang["users_account"]; ?></a></li>
-    <li><a href='<?php echo $hotaru->url(array('page'=>'edit-profile', 'user'=>$username)); ?>'><?php echo $hotaru->lang["users_profile"]; ?></a></li>
-    <li><a href='<?php echo $hotaru->url(array('page'=>'user-settings', 'user'=>$username)); ?>'><?php echo $hotaru->lang["users_settings"]; ?></a></li>
+    if (($h->currentUser->name == $username) || ($h->currentUser->getPermission('can_access_admin') == 'yes')) { ?>
+    <li><a href='<?php echo $h->url(array('page'=>'account', 'user'=>$username)); ?>'><?php echo $h->lang["users_account"]; ?></a></li>
+    <li><a href='<?php echo $h->url(array('page'=>'edit-profile', 'user'=>$username)); ?>'><?php echo $h->lang["users_profile"]; ?></a></li>
+    <li><a href='<?php echo $h->url(array('page'=>'user-settings', 'user'=>$username)); ?>'><?php echo $h->lang["users_settings"]; ?></a></li>
 <?php } ?>
 
 <?php // show permissions and User Manager links admin access users only: 
-    if ($hotaru->current_user->getPermission('can_access_admin') == 'yes') { ?>
-    <li><a href='<?php echo $hotaru->url(array('page'=>'permissions', 'user'=>$username)); ?>'><?php echo $hotaru->lang["users_permissions"]; ?></a></li>
+    if ($h->currentUser->getPermission('can_access_admin') == 'yes') { ?>
+    <li><a href='<?php echo $h->url(array('page'=>'permissions', 'user'=>$username)); ?>'><?php echo $h->lang["users_permissions"]; ?></a></li>
 
     <?php // show User Manager link only if theplugin is active
-        if ($hotaru->plugins->isActive('user_manager')) { ?>
-        <li><a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&plugin=user_manager"><?php echo $hotaru->lang['user_man_link']; ?></a></li>
+        if ($h->isActive('user_manager')) { ?>
+        <li><a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&plugin=user_manager"><?php echo $h->lang['user_man_link']; ?></a></li>
     <?php } ?>
     
 <?php } ?>

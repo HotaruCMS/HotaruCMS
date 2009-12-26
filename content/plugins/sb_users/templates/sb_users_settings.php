@@ -24,40 +24,33 @@
  * @link      http://www.hotarucms.org/
  */
 
-$username = $hotaru->vars['username']; // username
+$username = $h->vars['username']; // username
 
 // get updated fields. 
-if ($hotaru->cage->post->getAlpha('updated_settings') == 'true') {
+if ($h->cage->post->getAlpha('updated_settings') == 'true') {
     
     // plugin hook
-    $hotaru->plugins->pluginHook('user_settings_pre_save'); 
+    $h->pluginHook('user_settings_pre_save'); 
         
     // this hook does the actual saving. It can only be used by the Users plugin
-    $hotaru->plugins->pluginHook('user_settings_save', true, 'users', array($username, $hotaru->vars['settings'])); 
+    $h->pluginHook('user_settings_save', true, 'users', array($username, $h->vars['settings'])); 
 } 
 
 // set radio buttons plugin hook
-$hotaru->plugins->pluginHook('user_settings_fill_form'); 
+$h->pluginHook('user_settings_fill_form'); 
 
 ?>
+    <h2><?php echo $h->lang["users_settings"]; ?>: <?php echo $username; ?></h2>
     
-    <div id='breadcrumbs'><a href='<?php echo BASEURL; ?>'><?php echo $hotaru->lang["users_home"]; ?></a> 
-        &raquo; <a href='<?php echo $hotaru->url(array('user' => $username)); ?>'><?php echo $username; ?></a> 
-        &raquo; <?php echo $hotaru->lang["users_settings"]; ?></div>
-    
-    <?php $hotaru->displayTemplate('user_tabs', 'users'); ?>
-    
-    <h2><?php echo $hotaru->lang["users_settings"]; ?>: <?php echo $username; ?></h2>
-    
-    <?php echo $hotaru->showMessage(); ?>
+    <?php echo $h->showMessage(); ?>
 
-    <form name='user_settings_form' action='<?php echo $hotaru->url(array('page'=>'user-settings', 'user'=>$username)); ?>' method='post'>    
+    <form name='user_settings_form' action='<?php echo $h->url(array('page'=>'user-settings', 'user'=>$username)); ?>' method='post'>    
     <table>
 
-        <?php $hotaru->plugins->pluginHook('user_settings_extra_settings'); ?>
+        <?php $h->pluginHook('user_settings_extra_settings'); ?>
         
-    <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $hotaru->lang['users_settings_update']; ?>' /></td></tr>
+    <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $h->lang['users_settings_update']; ?>' /></td></tr>
     </table>
     <input type='hidden' name='updated_settings' value='true' />
-    <input type='hidden' name='token' value='<?php echo $hotaru->token; ?>' />
+    <input type='hidden' name='token' value='<?php echo $h->token; ?>' />
     </form>

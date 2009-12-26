@@ -34,7 +34,7 @@
  * USAGE: This class hooks into the Avatar class, so is used like this:
  * 
  * $avatar = new Avatar($h);
- * $avatar->setAvatar($size, $user_id, $user_email, $rating);
+ * $avatar->setAvatar($size, $user_id, $rating);
  * $avatar->getAvatar(); // returns the avatar for custom display... OR...
  * $avatar->showAvatar(); // displays the avatar using default HTML
  */
@@ -50,15 +50,9 @@ class Gravatar
     {
         $h->vars['avatar_size'] = $vars['size'];
         $h->vars['avatar_rating'] = $vars['rating'];
-        
-        // get and set the user's email:
-        if ($vars['user_email']) {
-            $h->vars['avatar_user_email'] = $vars['user_email'];
-        } else {
-            $user = new UserBase();
-            $user->getUserBasic($h, $vars['user_id']);
-            $h->vars['avatar_user_email'] = $user->email;
-        }
+        $h->vars['avatar_user_id'] = $vars['user_id'];
+        $h->vars['avatar_user_name'] = $vars['user_name'];
+        $h->vars['avatar_user_email'] = $vars['user_email'];
     }
     
     
@@ -69,20 +63,7 @@ class Gravatar
      */
     public function avatar_get_avatar($h)
     {
-        return $this->buildGravatarImage($h->vars['avatar_size'], $h->vars['avatar_user_email'], $h->vars['avatar_rating']);
-    }
-
-
-    /**
-     * option to display the avatar wrapped in default HTML
-     */
-    public function avatar_show_avatar($h)
-    {
-        $output = "<a href='" . $h->url(array('user' => $username)) . "' title='" . $username . "'>\n";
-        $output .= $this->buildGravatarImage($h->vars['avatar_size'], $h->vars['avatar_user_email'], $h->vars['avatar_rating']);
-        $output .= "</a>\n";
-        
-        return $output;
+        return $this->buildGravatarImage($h->vars['avatar_user_email'], $h->vars['avatar_size'], $h->vars['avatar_rating']);
     }
     
     
@@ -94,7 +75,7 @@ class Gravatar
      * @param string $rating - g, pg, r or x
      * @return string - html for image
      */
-    public function buildGravatarImage($size = 32, $email = '', $rating = 'g')
+    public function buildGravatarImage($email = '', $size = 32, $rating = 'g')
     {
         // Look in the theme's images folder for a default avatar before using the one in the Gravatar images folder
         if (file_exists(THEMES . THEME . "images/default_80.png")) {

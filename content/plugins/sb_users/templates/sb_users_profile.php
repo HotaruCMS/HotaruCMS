@@ -36,9 +36,8 @@ $profile = $h->vars['profile'];
     <?php 
         if ($h->isActive('avatar')) { 
             echo "<div id='profile_avatar'>";
-            $avatar = new Avatar($h);
-            $avatar->setAvatar(80, $h->vars['user']->id, $h->vars['user']->email);
-            echo $avatar->getAvatar();
+            $h->setAvatar($h->vars['user']->id, 80);
+            echo $h->getAvatar();
             echo "</div>";
         }
     ?>

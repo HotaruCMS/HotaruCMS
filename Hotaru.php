@@ -38,6 +38,7 @@ class Hotaru
     protected $currentUser;                     // UserBase object
     protected $plugin;                          // Plugin object
     protected $post;                            // Post object
+    protected $avatar;                          // Avatar object
     protected $includes;                        // for CSS/JavaScript includes
     
     // page info
@@ -1328,6 +1329,59 @@ class Hotaru
         require_once(LIBS . 'Trackback.php');
         $trackback = new Trackback();
         return $trackback->sendTrackback($this);
+    }
+    
+    
+/* *************************************************************
+ *
+ *  AVATAR FUNCTIONS
+ *
+ * *********************************************************** */
+ 
+
+    /**
+     * setAvatar
+     *
+     * @param $user_id
+     * @param $size avatar size in pixels
+     * @param $rating avatar rating (g, pg, r or x in Gravatar)
+     */
+    public function setAvatar($user_id = 0, $size = 32, $rating = 'g')
+    {
+        $this->avatar = new Avatar($this, $user_id, $size, $rating);
+    }
+    
+    
+    /**
+     * get the plain avatar with no surrounding HTML div
+     *
+     * @return return the avatar
+     */
+    public function getAvatar()
+    {
+        return $this->avatar->getAvatar($this);
+    }
+    
+    
+    /**
+     * option to display the avatar linked to ther user's profile
+     *
+     * @return return the avatar
+     */
+    public function linkAvatar()
+    {
+        return $this->avatar->linkAvatar($this);
+    }
+    
+    
+    /**
+     * option to display the profile-linked avatar wrapped in a div
+     *
+     * @return return the avatar
+     */
+    public function wrapAvatar()
+    {
+        return $this->avatar->wrapAvatar($this);
     }
 }
 ?>
