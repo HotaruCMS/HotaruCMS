@@ -24,7 +24,6 @@
  * @link      http://www.hotarucms.org/
  */
 
-$username = $h->vars['username']; // username
 $profile = $h->vars['profile']; // saved profile data
 
 // get updated fields. 
@@ -37,8 +36,8 @@ if ($h->cage->post->getAlpha('edited_profile') == 'true') {
     $h->pluginHook('user_edit_profile_pre_save'); 
     $settings = $h->vars['profile'];
         
-    // this hook does the actual saving. It can only be used by the Users plugin
-    $h->pluginHook('users_edit_profile_save', true, 'users', array($username, $profile));
+    // this hook does the actual saving. It can only be used by the SB Users plugin
+    $h->pluginHook('users_edit_profile_save', 'sb_users', array($h->vars['user']->name, $profile));
 } 
 
 if (!isset($profile['bio'])) { $profile['bio'] = $h->lang['users_profile_default_bio']; }
@@ -47,11 +46,11 @@ $h->vars['profile'] = $profile;
 $h->pluginHook('user_edit_profile_fill_form'); 
 
 ?>
-    <h2><?php echo $h->lang["users_profile_edit"]; ?>: <?php echo $username; ?></h2>
+    <h2><?php echo $h->lang["users_profile_edit"]; ?>: <?php echo $h->vars['user']->name; ?></h2>
     
     <?php echo $h->showMessage(); ?>
 
-    <form name='edit_profile_form' class='users_form' action='<?php echo $h->url(array('page'=>'edit-profile', 'user'=>$username)); ?>' method='post'>    
+    <form name='edit_profile_form' class='users_form' action='<?php echo $h->url(array('page'=>'edit-profile', 'user'=>$h->vars['user']->name)); ?>' method='post'>    
     <table>
     
     <tr><td><?php echo $h->lang["users_profile_edit_bio"]; ?>&nbsp; </td>
@@ -65,5 +64,5 @@ $h->pluginHook('user_edit_profile_fill_form');
     <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $h->lang['users_profile_edit_update']; ?>' /></td></tr>
     </table>
     <input type='hidden' name='edited_profile' value='true' />
-    <input type='hidden' name='token' value='<?php echo $h->token; ?>' />
+    <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
     </form>

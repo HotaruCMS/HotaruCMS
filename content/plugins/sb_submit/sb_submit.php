@@ -537,7 +537,6 @@ class SbSubmit
                 
             // Edit Post
             case 'edit_post':
-            
                 if ($h->vars['post_deleted'] || !$h->vars['can_edit']) {
                     $h->showMessages();
                     return true;

@@ -317,7 +317,7 @@ class UserBase
      *
      * @return array|false
      */
-    public function getProfileSettingsData($h, $type = 'user_profile', $userid = 0)
+    public function getProfileSettingsData($h, $type = 'user_profile', $userid = 0, $check_exists_only = false)
     {
         if (!$userid) { $userid = $this->id; }
 
@@ -330,6 +330,10 @@ class UserBase
             $result = $h->db->get_var($sql);
             $h->vars[$sql] = $result;    // cache result
         }
+        
+        // if we're only testing to see if the settings exist, return here:
+        if($check_exists_only && $result) { return true; }
+        if($check_exists_only && !$result) { return false; }
            
         if ($result) { 
             $result = unserialize($result);
@@ -355,9 +359,9 @@ class UserBase
     public function saveProfileSettingsData($h, $data = array(), $type = 'user_profile', $userid = 0)
     {
         if (!$data) { return false; }
-        if (!$userid) { $userid = $h->currentUser->id; }
+        if (!$userid) { $userid = $this->id; }
 
-        $result = $h->getProfileSettingsData($type, $userid);
+        $result = $h->getProfileSettingsData($type, $userid, true);
         
         if (!$result) {
             $sql = "INSERT INTO " . TABLE_USERMETA . " (usermeta_userid, usermeta_key, usermeta_value, usermeta_updateby) VALUES(%d, %s, %s, %d)";

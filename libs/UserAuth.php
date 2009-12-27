@@ -211,9 +211,7 @@ class UserAuth extends UserBase
      */
     public function updateAccount($h, $userid = 0)
     {
-        // $this is the person looking at the page, i.e. the viewer
         // $viewee is the person whose account is being modified
-        // if looking at your own account then $this = $viewee.
         
         $viewee = new UserBase($h);
         
@@ -229,6 +227,7 @@ class UserAuth extends UserBase
         $error = 0;
         
         // fill checks
+        $checks['userid_check'] = '';
         $checks['username_check'] = '';
         $checks['email_check'] = '';
         $checks['role_check'] = '';
@@ -283,6 +282,16 @@ class UserAuth extends UserBase
                     }
                 }
             }
+            
+            // If we've just edited our own account, let's refresh the cookie so it uses our latest username:
+            if ($this->id == $h->cage->post->testInt('userid')) {
+                $this->setCookie($h, false);           // delete the cookie
+                $this->getUserBasic($h, $this->id, '', true);    // re-read the database record to get updated info
+                $this->setCookie($h, true);            // create a new, updated cookie
+                /* but we're currently at the top of a new page and the cookie has already been read with the old data!
+                   so let's force a name change just for this pageview: */
+                $h->currentUser->name = $viewee->name; // not sure why $this->name doesn't work. Only changes the navbar user name with currentUser
+            }
         }
         
         if (!isset($username_check) && !isset($email_check)) {
@@ -312,6 +321,8 @@ class UserAuth extends UserBase
         
         //update checks
         $this->updatePassword($h, $userid);
+        $userid_check = $viewee->id; 
+        $checks['userid_check'] = $userid_check;
         $checks['username_check'] = $username_check;
         $checks['email_check'] = $email_check;
         $checks['role_check'] = $role_check;

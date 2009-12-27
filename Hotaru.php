@@ -484,6 +484,18 @@ class Hotaru
         $userbase = new UserBase();
         return $userbase->updateDefaultSettings($this, $settings, $type);
     }
+    
+    
+    /**
+     * Get a user's profile or settings data
+     *
+     * @return array|false
+     */
+    public function getProfileSettingsData($type = 'user_profile', $userid = 0, $check_exists_only = false)
+    {
+        $userbase = new UserBase();
+        return $userbase->getProfileSettingsData($this, $type, $userid, $check_exists_only);
+    }
 
 
  /* *************************************************************
@@ -491,6 +503,34 @@ class Hotaru
  *  USERINFO FUNCTIONS
  *
  * *********************************************************** */
+    
+    
+    /**
+     * Get the username for a given user id
+     *
+     * @param int $id user id
+     * @return string|false
+     */
+    public function getUserNameFromId($id = 0)
+    {
+        require_once(LIBS . 'UserInfo.php');
+        $userInfo = new UserInfo();
+        return $userInfo->getUserNameFromId($this, $id);
+    }
+    
+    
+    /**
+     * Get the user id for a given username
+     *
+     * @param string $username
+     * @return int|false
+     */
+    public function getUserIdFromName($username = '')
+    {
+        require_once(LIBS . 'UserInfo.php');
+        $userInfo = new UserInfo();
+        return $userInfo->getUserIdFromName($this, $username);
+    }
     
     
      /**
@@ -535,6 +575,19 @@ class Hotaru
         require_once(LIBS . 'UserInfo.php');
         $userInfo = new UserInfo();
         return $userInfo->getMods($this, $permission, $value);
+    }
+    
+    
+    /**
+     * Get Unique Roles
+     *
+     * @return array|false
+     */
+    public function getUniqueRoles($h) 
+    {
+        require_once(LIBS . 'UserInfo.php');
+        $userInfo = new UserInfo();
+        return $userInfo->getUniqueRoles($this);
     }
 
     

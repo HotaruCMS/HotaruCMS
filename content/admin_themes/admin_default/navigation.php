@@ -28,7 +28,17 @@
 ?>
 
 <ul id="navigation">
-    <?php $h->pluginHook('navigation_first'); ?>
+    <?php   if ($h->currentUser->loggedIn) {
+                if($h->isActive('avatar')) {
+                    $h->setAvatar($h->currentUser->id, 16);
+                    echo $h->linkAvatar();
+                }
+    ?> 
+                <li><a href='<?php echo $h->url(array('user' => $h->currentUser->name)); ?>' title='<?php echo $h->lang["users_profile"]; ?>'>
+                    <?php echo $h->currentUser->name; ?>
+                </a></li>
+    <?php  } ?>
+    
     <li><a href="<?php echo BASEURL; ?>"><?php echo $h->lang["admin_theme_navigation_home"]; ?></a></li>
     <?php $h->pluginHook('navigation'); ?>
     <?php 

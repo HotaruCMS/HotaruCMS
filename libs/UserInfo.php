@@ -25,6 +25,36 @@
  */
 class UserInfo extends UserBase
 {
+    /**
+     * Get the username for a given user id
+     *
+     * @param int $id user id
+     * @return string|false
+     */
+    public function getUserNameFromId($h, $id = 0)
+    {
+        $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_id = %d";
+        
+        $username = $h->db->get_var($h->db->prepare($sql, $id));
+        if ($username) { return $username; } else { return false; }
+    }
+    
+    
+    /**
+     * Get the user id for a given username
+     *
+     * @param string $username
+     * @return int|false
+     */
+    public function getUserIdFromName($h, $username = '')
+    {
+        $sql = "SELECT user_id FROM " . TABLE_USERS . " WHERE user_username = %s";
+        
+        $userid = $h->db->get_var($h->db->prepare($sql, $username));
+        if ($userid) { return $userid; } else { return false; }
+    }
+    
+    
      /**
      * Checks if the user has an 'admin' role
      *
@@ -223,5 +253,43 @@ class UserInfo extends UserBase
         }
         
         return $users;
+    }
+    
+    
+    /**
+     * Get Unique Roles
+     *
+     * @return array|false
+     */
+    public function getUniqueRoles($h) 
+    {
+        /* This function pulls all the different user roles from the database, 
+        or adds some defaults if not present.*/
+
+        $unique_roles = array();
+
+        // Some essentials:
+        array_push($unique_roles, 'admin');
+        array_push($unique_roles, 'supermod');
+        array_push($unique_roles, 'moderator');
+        array_push($unique_roles, 'member');
+        array_push($unique_roles, 'pending');
+        array_push($unique_roles, 'undermod');
+        array_push($unique_roles, 'suspended');
+        array_push($unique_roles, 'banned');
+        array_push($unique_roles, 'killspammed');
+        
+        // Add any other roles already in use:
+        $sql = "SELECT DISTINCT user_role FROM " . TABLE_USERS;
+        $roles = $h->db->get_results($h->db->prepare($sql));
+        if ($roles) {
+            foreach ($roles as $role) {
+                if (!in_array($role->user_role, $unique_roles)) { 
+                    array_push($unique_roles, $role->user_role);
+                }
+            }
+        }
+        
+        if ($unique_roles) { return $unique_roles; } else { return false; }
     }
 }

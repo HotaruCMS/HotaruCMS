@@ -31,6 +31,7 @@ extract($h->vars['admin_account']); // extracts $username_check, etc.
 
 <?php $h->showMessages(); ?>
 
+    <br />
     <?php echo $h->lang["main_user_theme_account_instructions"]; ?>
     <form name='admin_theme_update_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>    
     <table>

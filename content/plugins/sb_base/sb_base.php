@@ -6,7 +6,7 @@
  * folder: sb_base
  * class: SbBase
  * type: base
- * hooks: install_plugin, theme_index_top, header_meta, header_include, navigation, breadcrumbs, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, admin_maintenance_database, admin_maintenance_top, admin_theme_main_stats
+ * hooks: install_plugin, theme_index_top, header_meta, header_include, navigation, breadcrumbs, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, admin_maintenance_database, admin_maintenance_top, admin_theme_main_stats, user_settings_pre_save, user_settings_fill_form, user_settings_extra_settings
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -409,7 +409,70 @@ class SbBase
             echo "<li>" . $h->lang[$lang_name] . ": " . $posts . "</li>";
         }
     }
-
-
+    
+    
+    /**
+     * User Settings - before saving
+     */
+    public function user_settings_pre_save($h)
+    {
+        // Open posts in a new tab?
+        if ($h->cage->post->getAlpha('new_tab') == 'yes') { 
+            $h->vars['settings']['new_tab'] = "checked"; 
+        } else { 
+            $h->vars['settings']['new_tab'] = "";
+        }
+        
+        // List links open source url or post page?
+        if ($h->cage->post->getAlpha('link_action') == 'source') { 
+            $h->vars['settings']['link_action'] = "checked"; 
+        } else { 
+            $h->vars['settings']['link_action'] = "";
+        }
+    }
+    
+    
+    /**
+     * User Settings - fill the form
+     */
+    public function user_settings_fill_form($h)
+    {
+        if ($h->vars['settings']['new_tab']) { 
+            $h->vars['new_tab_yes'] = "checked"; 
+            $h->vars['new_tab_no'] = ""; 
+        } else { 
+            $h->vars['new_tab_yes'] = ""; 
+            $h->vars['new_tab_no'] = "checked"; 
+        }
+        
+        if ($h->vars['settings']['link_action']) { 
+            $h->vars['link_action_source'] = "checked"; 
+            $h->vars['link_action_post'] = ""; 
+        } else { 
+            $h->vars['link_action_source'] = ""; 
+            $h->vars['link_action_post'] = "checked"; 
+        }
+    }
+    
+    
+    /**
+     * User Settings - html for form
+     */
+    public function user_settings_extra_settings($h)
+    {
+        echo "<tr>\n";
+            // OPEN POSTS IN A NEW TAB?
+        echo "<td>" . $h->lang['sb_base_users_settings_open_new_tab'] . "</td>\n";
+        echo "<td><input type='radio' name='new_tab' value='yes' " . $h->vars['new_tab_yes'] . "> " . $h->lang['users_settings_yes'] . " &nbsp;&nbsp;\n";
+        echo "<input type='radio' name='new_tab' value='no' " . $h->vars['new_tab_no'] . "> " . $h->lang['users_settings_no'] . "</td>\n";
+        echo "</tr>\n";
+        
+        echo "<tr>\n";
+            // OPEN POSTS IN A NEW TAB?
+        echo "<td>" . $h->lang['sb_base_users_settings_link_action'] . "</td>\n";
+        echo "<td><input type='radio' name='link_action' value='source' " . $h->vars['link_action_source'] . "> " . $h->lang['sb_base_users_settings_source'] . " &nbsp;&nbsp;\n";
+        echo "<input type='radio' name='link_action' value='post' " . $h->vars['link_action_post'] . "> " . $h->lang['sb_base_users_settings_post'] . "</td>\n";
+        echo "</tr>\n";
+    }
 }
 ?>

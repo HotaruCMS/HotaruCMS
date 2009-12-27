@@ -23,32 +23,20 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-
-// get updated fields. 
-if ($h->cage->post->getAlpha('updated_settings') == 'true') {
-    
-    // plugin hook
-    $h->pluginHook('user_settings_pre_save'); 
-        
-    // this hook does the actual saving. It can only be used by the Users plugin
-    $h->pluginHook('user_settings_save', 'sb_users', array($h->vars['user']->name, $h->vars['settings'])); 
-} 
-
-// set radio buttons plugin hook
-$h->pluginHook('user_settings_fill_form'); 
-
 ?>
-    <h2><?php echo $h->lang["users_settings"]; ?>: <?php echo $h->vars['user']->name; ?></h2>
+    <h2><?php echo $h->lang["users_permissions"]; ?>: <?php echo $h->vars['user']->name; ?></h2>
     
-    <?php echo $h->showMessage(); ?>
-
-    <form name='user_settings_form' action='<?php echo $h->url(array('page'=>'user-settings', 'user'=>$h->vars['user']->name)); ?>' method='post'>    
-    <table>
-
-        <?php $h->pluginHook('user_settings_extra_settings'); ?>
+    <?php $h->showMessages(); ?>
         
-    <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $h->lang['users_settings_update']; ?>' /></td></tr>
+    <form name='permissions_form' action='<?php echo BASEURL; ?>index.php' method='post'>
+    <table class='permissions'>
+    <?php echo $h->vars['perm_options']; ?>
+
+    
     </table>
-    <input type='hidden' name='updated_settings' value='true' />
+    <input type='hidden' name='page' value='permissions' />
+    <input type='hidden' name='permissions' value='updated' />
+    <input type='hidden' name='userid' value='<?php echo $h->vars['user']->id; ?>' />
     <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
+    <div style='text-align: right'><input class='submit' type='submit' value='<?php echo  $h->lang['users_permissions_update']; ?>' /></div>
     </form>

@@ -6,7 +6,7 @@
  * folder: sb_users
  * type: users
  * class: SbUsers
- * hooks: pagehandling_getpagename, theme_index_top, header_include, breadcrumbs, theme_index_post_breadcrumbs, theme_index_main
+ * hooks: pagehandling_getpagename, theme_index_top, header_include, breadcrumbs, theme_index_post_breadcrumbs, theme_index_main, users_edit_profile_save, user_settings_save
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -83,14 +83,31 @@ class SbUsers
         // read this user into the global hotaru object for later use on this page
         if ($h->pageType == 'user') {
             $h->vars['user'] = new UserAuth();
-            $result = $h->vars['user']->getUserBasic($h, 0, $user);
-            if ($result) {
+            if ($user) {
+                $result = $h->vars['user']->getUserBasic($h, 0, $user);
+            } else {
+                // when the account page has been submitted (get id in case username has changed)
+                $userid = $h->cage->post->testInt('userid');
+                if ($userid) { $result = $h->vars['user']->getUserBasic($h, $userid); }
+            }
+            
+            if (isset($result)) {
                 $h->vars['profile'] = $h->vars['user']->getProfileSettingsData($h, 'user_profile');
+                $h->vars['settings'] = $h->vars['user']->getProfileSettingsData($h, 'user_settings');
             } else {
                 $h->pageTitle = $h->lang["main_theme_page_not_found"];
                 $h->pageType = '';
                 $h->vars['user'] = false;
             }
+        }
+        
+        /* tidy up thetitle and breadcrumbs with the latest account data
+          (i.e. if the username has been changed) */
+        if ($h->pageName == 'account') {
+            $h->vars['checks'] = $h->vars['user']->updateAccount($h);
+            $user = $h->vars['user']->name;
+            $h->pageTitle = $h->lang["users_account"] . ' &laquo; ' . $user;
+            $h->pageType = 'user';
         }
     }
     
@@ -153,7 +170,6 @@ class SbUsers
                 break;
             case 'account':
                 if (!$admin && !$own) { $denied = true; break; }
-                $h->vars['checks'] = $h->vars['user']->updateAccount($h);
                 $h->displayTemplate('sb_users_account');
                 return true;
                 break;
@@ -169,14 +185,112 @@ class SbUsers
                 break;
             case 'permissions':
                 if (!$admin) { $denied = true; break; }
+                $this->editPermissions($h);
                 $h->displayTemplate('sb_users_permissions');
                 return true;
                 break;
         }
         
         if ($denied) {
-            $h->messages[$this->lang["access_denied"]] = 'red';
+            $h->messages[$h->lang["access_denied"]] = 'red';
             $h->showMessages();
+        }
+    }
+    
+    
+    /**
+     * Save profile data (from hook in edit_profile.php)
+     */
+    public function users_edit_profile_save($h, $vars)
+    {
+        $username = $vars[0];
+        $profile = $vars[1];
+        
+        // check CSRF key
+        if (!$h->csrf()) {
+            $h->message = $h->lang['error_csrf'];
+            $h->messageType = "red";
+            return false;
+        }
+        
+        $h->vars['user']->saveProfileSettingsData($h, $profile, 'user_profile', $h->vars['user']->id);
+        
+        $h->message = $h->lang["users_profile_edit_saved"] . "<br />\n";
+        $h->message .= "<a href='" . $h->url(array('user'=>$h->vars['user']->name)) . "'>";
+        $h->message .= $h->lang["users_profile_edit_view_profile"] . "</a>\n";
+        $h->messageType = "green";
+    }
+    
+    
+    /**
+     * Save settings data (from hook in user_settings.php)
+     */
+    public function user_settings_save($h, $vars)
+    {
+        $username = $vars[0];
+        $settings = $vars[1];
+        
+        // check CSRF key
+        if (!$h->csrf()) {
+            $h->message = $h->lang['error_csrf'];
+            $h->messageType = "red";
+            return false;
+        }
+        
+        $h->vars['user']->saveProfileSettingsData($h, $settings, 'user_settings', $h->vars['user']->id);
+        
+        $h->message = $h->lang["users_settings_saved"] . "<br />\n";
+        $h->messageType = "green";
+    }
+    
+    
+    /** 
+     * Enable admins to edit a user
+     */
+    public function editPermissions($h)
+    {
+        // prevent non-admin user viewing permissions of admin user
+        if (($h->vars['user']->role) == 'admin' && ($h->currentUser->role != 'admin')) {
+            $h->messages[$h->lang["users_account_admin_admin"]] = 'red';
+            $h->showMessages();
+            return true;
+        }
+        
+        $perm_options = $h->getDefaultPermissions('', 'site', true);
+        $perms = $h->vars['user']->getAllPermissions();
+        
+        // If the form has been submitted...
+        if ($h->cage->post->keyExists('permissions')) {
+        
+            // check CSRF key
+            if (!$h->csrf()) {
+                $h->messages[$h->lang['error_csrf']] = 'red';
+                return false;
+            }
+        
+           foreach ($perm_options as $key => $options) {
+                if ($value = $h->cage->post->testAlnumLines($key)) {
+                    $h->vars['user']->setPermission($key, $value);
+                }
+            }
+
+            $h->vars['user']->updatePermissions($h);   // physically store changes in the database
+            
+            // get the newly updated latest permissions:
+            $perm_options = $h->getDefaultPermissions('', 'site', true);
+            $perms = $h->vars['user']->getAllPermissions();
+            $h->messages[$h->lang['users_permissions_updated']] = 'green';
+        }
+        
+        $h->vars['perm_options'] = '';
+        foreach ($perm_options as $key => $options) {
+            $h->vars['perm_options'] .= "<tr><td>" . make_name($key) . ": </td>\n";
+            foreach($options as $value) {
+                if (isset($perms[$key]) && ($perms[$key] == $value)) { $checked = 'checked'; } else { $checked = ''; } 
+                if ($key == 'can_access_admin' && $h->vars['user']->role == 'admin') { $disabled = 'disabled'; } else { $disabled = ''; }
+                $h->vars['perm_options'] .= "<td><input type='radio' name='" . $key . "' value='" . $value . "' " . $checked . " " . $disabled . "> " . $value . " &nbsp;</td>\n";
+            }
+            $h->vars['perm_options'] .= "</tr>";
         }
     }
 }

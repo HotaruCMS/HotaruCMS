@@ -88,4 +88,10 @@ $lang["sb_base_admin_stats_approved_posts"] = "Approved posts";
 $lang["sb_base_admin_stats_pending_posts"] = "Pending posts";
 $lang["sb_base_admin_stats_buried_posts"] = "Buried posts";
 $lang["sb_base_admin_stats_archived_posts"] = "Archived posts";
+
+/* User Settings */
+$lang['sb_base_users_settings_open_new_tab'] = "Open posts in a new tab?";
+$lang['sb_base_users_settings_link_action'] = "List page links open:";
+$lang['sb_base_users_settings_source'] = "Original post";
+$lang['sb_base_users_settings_post'] = SITE_NAME . " post";
 ?>
