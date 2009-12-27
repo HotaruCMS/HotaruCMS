@@ -81,27 +81,27 @@ class SbUsers
         }
         
         // read this user into the global hotaru object for later use on this page
-        if ($h->pageType == 'user') {
-            $h->vars['user'] = new UserAuth();
-            if ($user) {
-                $result = $h->vars['user']->getUserBasic($h, 0, $user);
-            } else {
-                // when the account page has been submitted (get id in case username has changed)
-                $userid = $h->cage->post->testInt('userid');
-                if ($userid) { $result = $h->vars['user']->getUserBasic($h, $userid); }
-            }
-            
-            if (isset($result)) {
-                $h->vars['profile'] = $h->vars['user']->getProfileSettingsData($h, 'user_profile');
-                $h->vars['settings'] = $h->vars['user']->getProfileSettingsData($h, 'user_settings');
-            } else {
-                $h->pageTitle = $h->lang["main_theme_page_not_found"];
-                $h->pageType = '';
-                $h->vars['user'] = false;
-            }
+        if ($h->pageType != 'user') { return false; }
+        
+        $h->vars['user'] = new UserAuth();
+        if ($user) {
+            $result = $h->vars['user']->getUserBasic($h, 0, $user);
+        } else {
+            // when the account page has been submitted (get id in case username has changed)
+            $userid = $h->cage->post->testInt('userid');
+            if ($userid) { $result = $h->vars['user']->getUserBasic($h, $userid); }
         }
         
-        /* tidy up thetitle and breadcrumbs with the latest account data
+        if (isset($result)) {
+            $h->vars['profile'] = $h->vars['user']->getProfileSettingsData($h, 'user_profile');
+            $h->vars['settings'] = $h->vars['user']->getProfileSettingsData($h, 'user_settings');
+        } else {
+            $h->pageTitle = $h->lang["main_theme_page_not_found"];
+            $h->pageType = '';
+            $h->vars['user'] = false;
+        }
+        
+        /* tidy up the title and breadcrumbs with the latest account data
           (i.e. if the username has been changed) */
         if ($h->pageName == 'account') {
             $h->vars['checks'] = $h->vars['user']->updateAccount($h);

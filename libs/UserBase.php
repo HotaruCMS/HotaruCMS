@@ -183,6 +183,23 @@ class UserBase
     
     
     /**
+     * Add a new user
+     */
+    public function addUserBasic($h)
+    {
+        // get default permissions
+        $permissions = $this->getDefaultPermissions($h, $this->role);
+
+        // get user ip
+        $userip = $h->cage->server->testIp('REMOTE_ADDR');
+        
+        // add user to the database
+        $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email, user_permissions, user_ip) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s, %s)";
+        $h->db->query($h->db->prepare($sql, $this->name, $this->role, $this->password, $this->email, serialize($permissions), $userip));
+    }
+    
+    
+    /**
      * Update a user
      */
     public function updateUserBasic($h, $userid = 0)

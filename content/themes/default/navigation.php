@@ -44,7 +44,7 @@
     <li><a <?php echo $status; ?> href="<?php echo BASEURL; ?>"><?php echo $h->lang["main_theme_navigation_home"]; ?></a></li>
     <?php $h->pluginHook('navigation'); ?>
     <?php 
-        if (!$h->isActive('blhablhabalbausers')) { 
+        if (!$h->isActive('signin')) { 
 
             if ($h->currentUser->loggedIn == true) { 
             

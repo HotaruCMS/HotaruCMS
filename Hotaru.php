@@ -104,9 +104,9 @@ class Hotaru
                 $this->lang = $lang->includeLanguagePack($this->lang, 'admin');
                 require_once(LIBS . 'AdminAuth.php');       // include Admin class
                 $admin = new AdminAuth();                   // new Admin object
-                $page = $admin->adminInit($this);       // initialize Admin & get desired page
                 $this->checkCookie();                   // check cookie reads user details
                 $this->checkAccess();                   // site closed if no access permitted
+                $page = $admin->adminInit($this);       // initialize Admin & get desired page
                 $this->checkCssJs();                    // check if we need to merge css/js
                 $this->adminPages($page);               // Direct to desired Admin page
                 break;

@@ -42,7 +42,7 @@
     <li><a href="<?php echo BASEURL; ?>"><?php echo $h->lang["admin_theme_navigation_home"]; ?></a></li>
     <?php $h->pluginHook('navigation'); ?>
     <?php 
-        if (!$h->isActive('users')) { 
+        if (!$h->isActive('signin')) { 
 
             if ($h->currentUser->loggedIn == true) { 
                 echo "<li><a id='navigation_active' href='" . $h->url(array(), 'admin') . "'>" . $h->lang["admin_theme_navigation_admin"] . "</a></li>"; 

@@ -31,21 +31,20 @@ class AdminAuth
     public function adminInit($h)
     {
         // Authenticate the admin if the Users plugin is INACTIVE:
-        if (!$h->isActive('users'))
+        if (!$h->isActive('signin'))
         {
             if (($h->pageName != 'admin_login') && !$this->isAdminCookie($h))
             {
                 header('Location: ' . BASEURL . 'admin_index.php?page=admin_login');
             }
         }
-        
 
-        // Authenticate the admin if the Users plugin is ACTIVE:
-        if (isset($h->currentUser) && $h->isActive('users'))
+        // Authenticate the admin if a Signin plugin is ACTIVE:
+        if (is_object($h->currentUser) && $h->isActive('signin'))
         {
             // This first condition happens when the Users plugin is activated 
             // and there's no cookie for the Admin yet.
-            if (($h->currentUser->name == "") && $h->isActive('users')) 
+            if (($h->currentUser->name == "") && $h->isActive('signin')) 
             {
                 header('Location: ' . BASEURL . 'index.php?page=login');
                 die; exit;
