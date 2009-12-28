@@ -53,6 +53,18 @@ if (!$result) {
                                 <?php echo $h->breadcrumbs(); ?>
                             </div>
                             
+                            <!-- USER TABS -->
+                            <?php 
+                                // plugin hook
+                                $result = $h->pluginHook('theme_index_post_breadcrumbs');
+                            ?>
+                            
+                            <!-- FILTER TABS -->
+                            <?php 
+                                // plugin hook
+                                $result = $h->pluginHook('theme_index_pre_main');
+                            ?>
+                            
                             <!-- MAIN -->
                             <?php     
                                 // plugin hook

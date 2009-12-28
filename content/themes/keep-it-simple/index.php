@@ -49,9 +49,22 @@ if (!$result) {
 		<div id='breadcrumbs'>
 		<?php echo $h->breadcrumbs(); ?>
 		</div>
+		
+                            <!-- USER TABS -->
+                            <?php 
+                                // plugin hook
+                                $result = $h->pluginHook('theme_index_post_breadcrumbs');
+                            ?>
+                            
+                            <!-- FILTER TABS -->
+                            <?php 
+                                // plugin hook
+                                $result = $h->pluginHook('theme_index_pre_main');
+                            ?>
+                            
                             <!-- MAIN -->
 							
-<?php if ($h->pageName == "submit") {  "<div id=\"submission\">"; }
+<?php if ($h->pageName == "submit1" || $h->pageName == "submit2") {  "<div id=\"submission\">"; }
 else {
 echo "<div id=\"main\" class=\"grid_8\">"; 
 } ?>
@@ -67,7 +80,7 @@ echo "<div id=\"main\" class=\"grid_8\">";
 
                     <?php if ($h->sidebars) { ?>
 
-<?php if ($h->pageName == "submit_step1" || $h->pageName == "submit_step2")
+<?php if ($h->pageName == "submit1" || $h->pageName == "submit2")
 { // DO NOTHING Submission in progress 
 	echo "<style type=\"text/css\">
 	<!-- #main form {
