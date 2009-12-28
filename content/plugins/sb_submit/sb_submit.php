@@ -284,14 +284,12 @@ class SbSubmit
                 }
 
                 // notify chosen mods of new post by email if enabled and UserFunctions file exists
-                /*
-                if (($submit_settings['email_notify']) && (file_exists(PLUGINS . 'users/libs/UserFunctions.php')))
+                if (($submit_settings['email_notify']) && (file_exists(PLUGINS . 'sb_users/libs/SbUserFunctions.php')))
                 {
-                    require_once(PLUGINS . 'users/libs/UserFunctions.php');
-                    $uf = new UserFunctions($h);
-                    $uf->notifyMods('post', $h->post->status, $h->post->id);
+                    require_once(PLUGINS . 'sb_users/libs/SbUserFunctions.php');
+                    $uf = new SbUserFunctions();
+                    $uf->notifyMods($h, 'post', $h->post->status, $h->post->id);
                 }
-                */
                 
                 if ($return == 1) { return false; } // post is pending so we don't want to send a trackback. Return now.
                 

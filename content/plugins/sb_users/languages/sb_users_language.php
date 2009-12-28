@@ -98,4 +98,16 @@ $lang["users_admin_stats_pending_users"] = "Pending users";
 $lang["users_admin_stats_undermod_users"] = "Under moderation";
 $lang["users_admin_stats_banned_users"] = "Banned users";
 $lang["users_admin_stats_killspammed_users"] = "Killspammed users";
+
+/* SbUserFunctions class */
+$lang['userfunctions_notifymods_subject_user'] = "New user registered at " . SITE_NAME;
+$lang['userfunctions_notifymods_subject_post'] = "New post submitted at " . SITE_NAME;
+$lang['userfunctions_notifymods_subject_comment'] = "New comment posted at " . SITE_NAME;
+$lang['userfunctions_notifymods_hello'] = "Hi ";
+$lang['userfunctions_notifymods_body_about_user'] = "A new user has registered at " . SITE_NAME; 
+$lang['userfunctions_notifymods_body_about_post'] = "A new post has been submitted at " . SITE_NAME; 
+$lang['userfunctions_notifymods_body_about_comment'] = "A new comment has been posted at " . SITE_NAME; 
+$lang['userfunctions_notifymods_body_click'] = "More details can be found here: ";
+$lang['userfunctions_notifymods_body_regards'] = "Thank you,";
+$lang['userfunctions_notifymods_body_sign'] = SITE_NAME . " Admin";
 ?>

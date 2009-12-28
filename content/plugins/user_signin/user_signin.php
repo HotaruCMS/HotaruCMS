@@ -476,11 +476,11 @@ class UserSignin
                 
                 // notify chosen mods of new user by email IF email confirmation is DISABLED:
                 // If email confirmation is ENABLED, the email gets sent in checkEmailConfirmation().
-                if (($h->vars['useEmailNotify']) && (!$h->vars['useEmailConf']))
+                if (($h->vars['useEmailNotify']) && (!$h->vars['useEmailConf']) && (file_exists(PLUGINS . 'sb_users/libs/SbUserFunctions.php')))
                 {
-                    require_once(PLUGINS . 'users/libs/UserFunctions.php');
-                    $uf = new UserFunctions($this->hotaru);
-                    $uf->notifyMods('user', $h->currentUser->role);
+                    require_once(PLUGINS . 'sb_users/libs/SBUserFunctions.php');
+                    $uf = new SbUserFunctions();
+                    $uf->notifyMods($h, 'user', $h->currentUser->role);
                 }
         
                 return $last_insert_id; // so we can retrieve this user's details for the email confirmation step;
@@ -633,14 +633,11 @@ class UserSignin
             $h->db->query($h->db->prepare($sql, 1, $user->id));
             
             // notify chosen mods of new user by email:
-            /*
-            if ($h->vars['useEmailNotify'] == 'checked') {
-                require_once(PLUGINS . 'users/libs/UserFunctions.php');
-                $uf = new UserFunctions($this->hotaru);
-                $uf->notifyMods('user', $user->role);
+            if (($h->vars['useEmailNotify'] == 'checked') && (file_exists(PLUGINS . 'sb_users/libs/SbUserFunctions.php'))) {
+                require_once(PLUGINS . 'sb_users/libs/SbUserFunctions.php');
+                $uf = new SbUserFunctions();
+                $uf->notifyMods($h, 'user', $user->role);
             }
-            */
-                
         
             $success_message = $h->lang['user_signin_register_emailconf_success'] . " <br /><b><a href='" . $h->url(array('page'=>'login')) . "'>" . $h->lang['user_signin_register_emailconf_success_login'] . "</a></b>";
             $h->messages[$success_message] = 'green';

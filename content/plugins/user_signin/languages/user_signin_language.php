@@ -109,4 +109,5 @@ $lang['user_signin_register_emailconf_body_sign'] = SITE_NAME . " Admin";
 $lang['user_signin_register_emailconf_success'] = "Your email address has been successfully confirmed.";
 $lang['user_signin_register_emailconf_success_login'] = "Click here to log in.";
 $lang['user_signin_register_emailconf_fail'] = "Unable to confirm your email address. Please try the link again.";
+
 ?>
