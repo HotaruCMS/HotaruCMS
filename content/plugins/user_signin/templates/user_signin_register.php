@@ -67,8 +67,8 @@ if ($h->cage->post->getAlpha('users_type') == 'register') {
         
         <?php 
             if ($h->vars['useRecaptcha']) { 
-                $user_signin_settings = $h->getSerializedSettings('users');
-                $recaptcha_pubkey = $user_signin_settings['users_recaptcha_pubkey'];
+                $user_signin_settings = $h->getSerializedSettings('user_signin');
+                $recaptcha_pubkey = $user_signin_settings['recaptcha_pubkey'];
                 echo "<tr><td colspan=2>" . recaptcha_get_html($recaptcha_pubkey) . "</td></tr>";
             }
         ?>

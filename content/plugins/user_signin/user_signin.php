@@ -6,7 +6,7 @@
  * folder: user_signin
  * type: signin
  * class: UserSignin
- * hooks: install_plugin, theme_index_top, navigation_users, theme_index_main
+ * hooks: install_plugin, theme_index_top, admin_header_include_raw, navigation_users, theme_index_main, admin_sidebar_plugin_settings, admin_plugin_settings
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -113,6 +113,27 @@ class UserSignin
                     }
                 }
                 break;
+            case 'emailconf':
+                $h->pageTitle = $h->lang['user_signin_register_emailconf'];
+                $h->pageType = 'register';
+                break;
+        }
+    }
+    
+    
+    /**
+     * Include jQuery for hiding and showing email options in plugin settings
+     */
+    public function admin_header_include_raw($h)
+    {
+        if ($h->isSettingsPage('user_signin')) {
+            echo "<script type='text/javascript'>\n";
+            echo "$(document).ready(function(){\n";
+                echo "$('#email_notify').click(function () {\n";
+                echo "$('#email_notify_options').slideToggle();\n";
+                echo "});\n";
+            echo "});\n";
+            echo "</script>\n";
         }
     }
     
@@ -179,7 +200,20 @@ class UserSignin
                 return true;
                 break;
             case 'register':
+                if (isset($h->vars['send_email_confirmation'])) {
+                    $h->messages[$h->lang['user_signin_register_emailconf_sent']] = 'green';
+                    $h->showMessages();
+                    return true;
+                }
                 $h->displayTemplate('user_signin_register');
+                return true;
+                break;
+            case 'emailconf':
+                $user_signin_settings = $h->getSerializedSettings();
+                $h->vars['useEmailNotify'] = $user_signin_settings['email_notify'];
+                $h->vars['regStatus'] = $user_signin_settings['registration_status'];
+                $this->checkEmailConfirmation($h);
+                $h->showMessages();
                 return true;
                 break;
         }
@@ -328,7 +362,7 @@ class UserSignin
     public function register($h)
     {
         if ($h->vars['useRecaptcha']) {
-            require_once(PLUGINS . 'users/recaptcha/recaptchalib.php');
+            require_once(PLUGINS . 'user_signin/recaptcha/recaptchalib.php');
         }
         
         $error = 0;
@@ -386,7 +420,7 @@ class UserSignin
         
             if ($h->vars['useRecaptcha']) {
                                         
-                $user_signin_settings = $this->getSerializedSettings();
+                $user_signin_settings = $h->getSerializedSettings();
                 $recaptcha_pubkey = $user_signin_settings['recaptcha_pubkey'];
                 $recaptcha_privkey = $user_signin_settings['recaptcha_privkey'];
                 
@@ -520,33 +554,41 @@ class UserSignin
      */
     public function sendConfirmationEmail($h, $user_id)
     {
-        $h->currentUser->getUserBasic($user_id);
+        $user = new UserAuth();
+        $user->getUserBasic($h, $user_id);
         
         // generate the email confirmation code
-        $email_conf = md5(crypt(md5($h->currentUser->email),md5($h->currentUser->email)));
+        $email_conf = md5(crypt(md5($user->email),md5($user->email)));
         
         // store the hash in the user table
         $sql = "UPDATE " . TABLE_USERS . " SET user_email_conf = %s WHERE user_id = %d";
-        $h->db->query($h->db->prepare($sql, $email_conf, $h->currentUser->id));
+        $h->db->query($h->db->prepare($sql, $email_conf, $user->id));
         
         $line_break = "\r\n\r\n";
         $next_line = "\r\n";
         
         // send email
         $subject = $h->lang['user_signin_register_emailconf_subject'];
-        $body = $h->lang['user_signin_register_emailconf_body_hello'] . " " . $h->currentUser->name;
+        $body = $h->lang['user_signin_register_emailconf_body_hello'] . " " . $user->name;
         $body .= $line_break;
         $body .= $h->lang['user_signin_register_emailconf_body_welcome'];
         $body .= $line_break;
         $body .= $h->lang['user_signin_register_emailconf_body_click'];
         $body .= $line_break;
-        $body .= BASEURL . "index.php?page=emailconf&plugin=users&id=" . $h->currentUser->id . "&conf=" . $email_conf;
+        $body .= BASEURL . "index.php?page=emailconf&plugin=users&id=" . $user->id . "&conf=" . $email_conf;
         $body .= $line_break;
         $body .= $h->lang['user_signin_register_emailconf_body_regards'];
         $body .= $next_line;
         $body .= $h->lang['user_signin_register_emailconf_body_sign'];
-        $to = $h->currentUser->email;
+        $to = $user->email;
         $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
+        
+        /*
+        echo "To: " . $to . "<br />";
+        echo "Subject: " . $subject . "<br />";
+        echo "Body: " . $body . "<br />";
+        echo "Headers: " . $headers . "<br />";
+        */
 
         mail($to, $subject, $body, $headers);    
     }
@@ -562,7 +604,8 @@ class UserSignin
         $user_id = $h->cage->get->getInt('id');
         $conf = $h->cage->get->getAlnum('conf');
         
-        $h->currentUser->getUserBasic($user_id);
+        $user = new UserAuth();
+        $user->getUserBasic($h, $user_id);
         
         if (!$user_id || !$conf) {
             $h->messages[$h->lang['user_signin_register_emailconf_fail']] = 'red';
@@ -574,27 +617,29 @@ class UserSignin
         if ($conf === $user_email_conf) 
         {
             // update role:
-            $h->currentUser->role = $h->vars['regStatus'];
+            $user->role = $h->vars['regStatus'];
             
             $h->pluginHook('user_signin_email_conf_post_role');
 
             // update user with new permissions:
-            $new_perms = $h->currentUser->getDefaultPermissions($h->currentUser->role);
+            $new_perms = $user->getDefaultPermissions($h, $user->role);
             unset($new_perms['options']);  // don't need this for individual users
-            $h->currentUser->setAllPermissions($new_perms);
-            $h->currentUser->updatePermissions();
-            $h->currentUser->updateUserBasic();
+            $user->setAllPermissions($new_perms);
+            $user->updatePermissions($h);
+            $user->updateUserBasic($h);
         
             // set email valid to 1:
             $sql = "UPDATE " . TABLE_USERS . " SET user_email_valid = %d WHERE user_id = %d";
-            $h->db->query($h->db->prepare($sql, 1, $h->currentUser->id));
+            $h->db->query($h->db->prepare($sql, 1, $user->id));
             
             // notify chosen mods of new user by email:
+            /*
             if ($h->vars['useEmailNotify'] == 'checked') {
                 require_once(PLUGINS . 'users/libs/UserFunctions.php');
                 $uf = new UserFunctions($this->hotaru);
-                $uf->notifyMods('user', $h->currentUser->role);
+                $uf->notifyMods('user', $user->role);
             }
+            */
                 
         
             $success_message = $h->lang['user_signin_register_emailconf_success'] . " <br /><b><a href='" . $h->url(array('page'=>'login')) . "'>" . $h->lang['user_signin_register_emailconf_success_login'] . "</a></b>";

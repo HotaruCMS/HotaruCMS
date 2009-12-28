@@ -98,6 +98,7 @@ $lang['user_signin_register_recaptcha_empty'] = "Please confirm your password an
 $lang["user_signin_register_unexpected_error"] = "Sorry, there's been an unexpected error";
 $lang["user_signin_register_make_note"] = "Make a note of your new username, email and password before clicking \"Next\"...";
 $lang["user_signin_register_form_submit"] = "Register";
+$lang['user_signin_register_emailconf'] = "Email Confirmation";
 $lang['user_signin_register_emailconf_sent'] = "An email has been sent to the address provided. <br />Please confirm it to complete registration. <br />Thank you!";
 $lang['user_signin_register_emailconf_subject'] = SITE_NAME . " Registration"; 
 $lang['user_signin_register_emailconf_body_hello'] = "Hi";

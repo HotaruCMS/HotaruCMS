@@ -1,6 +1,6 @@
 <?php
 /**
- * Users Settings
+ * User Signin Settings
  *
  * PHP version 5
  *
@@ -24,25 +24,22 @@
  * @link      http://www.hotarucms.org/
  */
  
-class UsersSettings extends Users
+class UserSigninSettings
 {
      /**
      * Admin settings for the Users plugin
      */
     public function settings($h)
     {
-        require_once(PLUGINS . 'users/libs/UserFunctions.php');
-        $uf = new UserFunctions($h);
-        
         // If the form has been submitted, go and save the data...
         if ($h->cage->post->getAlpha('submitted') == 'true') { 
-            $this->saveSettings(); 
+            $this->saveSettings($h); 
         }    
         
         echo "<h1>" . $h->lang["user_signin_settings_header"] . "</h1>\n";
         
         // Get settings from database if they exist...
-        $user_signin_settings = $this->getSerializedSettings();
+        $user_signin_settings = $h->getSerializedSettings();
         
         $recaptcha_enabled = $user_signin_settings['recaptcha_enabled'];
         $recaptcha_pubkey = $user_signin_settings['recaptcha_pubkey'];
@@ -52,7 +49,7 @@ class UsersSettings extends Users
         $email_notify = $user_signin_settings['email_notify'];
         $email_mods = $user_signin_settings['email_notify_mods'];
     
-        $this->pluginHook('user_signin_settings_get_values');
+        $h->pluginHook('user_signin_settings_get_values');
         
         //...otherwise set to blank:
         if (!$recaptcha_enabled) { $recaptcha_enabled = ''; }
@@ -63,7 +60,7 @@ class UsersSettings extends Users
         if (!$email_notify) { $email_notify = ''; }
         if (!$email_mods) { $email_mods = array(); }
         
-        echo "<form name='user_signin_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=users' method='post'>\n";
+        echo "<form name='user_signin_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=user_signin' method='post'>\n";
         
         echo "<p>" . $h->lang["user_signin_settings_instructions"] . "</p><br />";
         
@@ -101,8 +98,8 @@ class UsersSettings extends Users
         // email_notify:
         echo "<input type='checkbox' name='email_notify' value='email_notify' id='email_notify' " . $email_notify . ">&nbsp;&nbsp;" . $h->lang["user_signin_settings_email_notify"] . "<br /><br />\n";
     
-        $admins = $uf->getMods('can_access_admin', 'yes');
-        if (!$email_notify) { $show_admins = 'display: none;'; }
+        $admins = $h->getMods('can_access_admin', 'yes');
+        if (!$email_notify) { $show_admins = 'display: none;'; } else { $show_admins = ''; }
         echo "<div id='email_notify_options' style='margin-left: 2.0em; " . $show_admins . "'>"; 
         
         if ($admins) {
@@ -142,7 +139,7 @@ class UsersSettings extends Users
         }
         echo "</div>";
                 
-        $this->pluginHook('user_signin_settings_form');
+        $h->pluginHook('user_signin_settings_form');
                 
         echo "<br /><br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
@@ -169,7 +166,7 @@ class UsersSettings extends Users
             $emailconf_enabled = 'checked'; 
             // update all users who have previously logged in:
             $sql = "UPDATE " . TABLE_USERS . " SET user_email_valid = %d WHERE user_lastlogin > %d";
-            $this->db->query($this->db->prepare($sql, 1, 0));
+            $h->db->query($h->db->prepare($sql, 1, 0));
         } else { 
             $emailconf_enabled = ''; 
         }
@@ -213,7 +210,7 @@ class UsersSettings extends Users
         }
                 
                 
-        $this->pluginHook('users_save_settings');
+        $h->pluginHook('users_save_settings');
         
         $user_signin_settings['recaptcha_enabled'] = $recaptcha_enabled;
         $user_signin_settings['recaptcha_pubkey'] = $recaptcha_pubkey;
@@ -223,7 +220,7 @@ class UsersSettings extends Users
         $user_signin_settings['email_notify'] = $email_notify;
         $user_signin_settings['email_notify_mods'] = $email_mods; //array
         
-        $this->updateSetting('user_signin_settings', serialize($user_signin_settings));
+        $h->updateSetting('user_signin_settings', serialize($user_signin_settings));
         
         if (($recaptcha_enabled == 'checked') && ($recaptcha_pubkey == "" || $recaptcha_privkey == "")) {
             $h->message = $h->lang["user_signin_settings_no_keys"];
