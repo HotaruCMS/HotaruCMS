@@ -25,7 +25,6 @@
  */
 
 ?>
-<?php $h->pluginHook('hotaru_bookmarklet'); ?>
 <?php 
 
 if ($h->vars['posts']) {
