@@ -63,8 +63,8 @@
         }
     ?>
     
-    <?php     // RSS Link and icon if Submit plugin is active
-        if ($h->isActive('sb_submit')) { ?>
+    <?php     // RSS Link and icon if a "post" type plugin is active
+        if ($h->isActive('post')) { ?>
         <li>
         <div id="rss"><a href="<?php echo $h->url(array('page'=>'rss')); ?>">RSS 
             <img src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png">

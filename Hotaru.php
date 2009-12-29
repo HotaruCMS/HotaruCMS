@@ -280,8 +280,8 @@ class Hotaru
      *
      *  Notes: This is used in "admin_header_include" so we only include the css, 
      *         javascript etc. for the plugin we're trying to change settings for.
-     *  Usage: $h->isSettingsPage('sb_submit') returns true if 
-     *         page=plugin_settings and plugin=sb_submit in the url.
+     *  Usage: $h->isSettingsPage('submit') returns true if 
+     *         page=plugin_settings and plugin=submit in the url.
      */
     public function isSettingsPage($folder = '')
     {

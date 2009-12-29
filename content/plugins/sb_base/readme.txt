@@ -1,0 +1,15 @@
+Social Bookmarking Base Plugin for Hotaru CMS
+---------------------------------------------
+Created by: Nick Ramsay
+
+Description
+-----------
+This plugin provides the "list" and "post" templates to display news summaries and individual news articles. 
+
+Instructions
+------------
+1. Upload the "sb_base" folder to your plugins folder. Install it from Plugin Management in Admin.
+
+Changelog
+---------
+v.0.1 2009/12/16 - Nick - Released first version
