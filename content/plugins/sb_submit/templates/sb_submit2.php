@@ -31,7 +31,7 @@ $h->pluginHook('submit_2_assign');
     
     <?php echo $h->lang["submit_instructions_2"]; ?>
 
-    <form name='submit_2' action='<?php BASEURL; ?>index.php?page=submit2' method='post'>
+    <form name='submit_2' action='<?php echo BASEURL; ?>index.php?page=submit2' method='post'>
     <table>
     
     <?php if (!$h->vars['submit_editorial']) { // only show if posting a link ?>

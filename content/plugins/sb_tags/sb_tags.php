@@ -38,19 +38,12 @@ class SbTags
      */
     public function sb_base_theme_index_top($h)
     {
-        // friendly URLs: FALSE
         if ($h->cage->get->keyExists('tag')) { 
             $h->pageTitle = stripslashes(make_name($h->cage->get->noTags('tag')));
             $h->pageName = 'tags';
             $h->pageType = 'list';
+            $h->vars['tag'] = $h->cage->get->noTags('tag');
         } 
-        
-        // friendly URLs: TRUE
-        if (!$h->pageTitle && $h->cage->get->keyExists('pos2')) { 
-            $h->pageTitle = stripslashes(make_name($h->cage->get->noTags('pos2')));
-            $h->pageName = 'tags';
-            $h->pageType = 'list';
-        }
     }
     
     
@@ -90,21 +83,12 @@ class SbTags
     {
         if ($h->pageName == 'tags') 
         {
-            // friendly URLs: FALSE
-            $tag = stripslashes($h->cage->get->noTags('tag')); 
-            
-            // friendly URLs: TRUE
-            if (!$tag) { $tag = $h->cage->get->noTags('pos2'); } 
+            $tag = stripslashes($h->vars['tag']); 
             
             if ($tag) {
                 $h->vars['filter']['post_tags LIKE %s'] = '%' . urlencode($tag) . '%'; 
                 $h->vars['filter']['post_archived = %s'] = 'N'; // don't include archived posts
-                //$rss = " <a href='" . $h->url(array('page'=>'rss', 'tag'=>$tag)) . "'>";
             }
-            
-            //$rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";       
-            //$h->vars['page_title'] = $h->lang["post_breadcrumbs_tag"] . " &raquo; " . stripslashes($h->title) . $rss;
-            
             return true;    
         }
         
@@ -117,9 +101,12 @@ class SbTags
      */
     public function breadcrumbs($h)
     {
-        if ($h->pageName == 'tags') {
-                $h->pageTitle .= $h->rssBreadcrumbsLink('all');
-        }
+        if ($h->pageName != 'tags') { return false; }
+        
+        $crumbs = "<a href='" . $h->url(array('tag'=>$h->vars['tag'])) . "'>\n";
+        $crumbs .= $h->pageTitle . "</a>\n ";
+        
+        return $crumbs . $h->rssBreadcrumbsLink('all', array('tag'=>$h->vars['tag']));
     }
     
     

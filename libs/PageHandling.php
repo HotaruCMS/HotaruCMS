@@ -240,7 +240,7 @@ class PageHandling
         } 
         
         if (FRIENDLY_URLS == "true") {
-        
+
             if ($head == 'index') { 
                 $url = BASEURL;
             } elseif ($head == 'admin') {
@@ -254,20 +254,18 @@ class PageHandling
                 if ($key == 'page' && is_numeric($value) ) {
                 
                     // must be a post title, let's get the post_url...
-                    $value = $this->post->url;
+                    $value = $h->post->url;
                     
                     // if we're using categories and the category is not "all"...
-                    if (isset($this->post->vars['useCategories']) && $this->post->vars['category'] != 1) {
-                        $url .= $this->post->vars['catSafeName'] . '/';
+                    if ($h->post->category != 1) {
+                        $url .= $h->getCatSafeName($h->post->category) . '/';
                     }
                     
                     $url .= $value . '/';
                     
                 } elseif ($key == 'category' && is_numeric($value) ) {
                     
-                    require_once(PLUGINS . 'categories/libs/Category.php');
-                    $cat = new Category($this->db);
-                    $url .= $key . '/' . $cat->getCatSafeName($value) . '/';
+                    $url .= $key . '/' . $h->getCatSafeName($value) . '/';
                         
                 } elseif ($key == 'page') {
                 

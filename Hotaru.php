@@ -377,14 +377,15 @@ class Hotaru
     /**
      * prepares the RSS link found in breadcrumbs
      *
-     * @param string $type - post status, e.g. new, top, etc.
+     * @param string $status - post status, e.g. new, top, etc.
+     * @param array $vars - array of key -> value pairs
      * @return string
      */    
-    public function rssBreadcrumbsLink($type = 'all')
+    public function rssBreadcrumbsLink($status = 'all', $vars = array())
     {
         require_once(LIBS . 'Breadcrumbs.php');
         $breadcrumbs = new Breadcrumbs();
-        return $breadcrumbs->rssBreadcrumbsLink($this, $type);
+        return $breadcrumbs->rssBreadcrumbsLink($this, $status, $vars);
     }
     
  
@@ -1152,7 +1153,7 @@ class Hotaru
     {
         require_once(LIBS . 'Caching.php');
         $caching = new Caching();
-        $caching->smartCache($h, $switch, $table, $timeout, $html, $label);
+        $caching->smartCache($this, $switch, $table, $timeout, $html, $label);
     }
     
     
@@ -1436,5 +1437,83 @@ class Hotaru
     {
         return $this->avatar->wrapAvatar($this);
     }
+    
+    
+/* *************************************************************
+ *
+ *  CATEGORY FUNCTIONS
+ *
+ * *********************************************************** */
+
+    /**
+     * Returns the category id for a given category safe name.
+     *
+     * @param string $cat_name
+     * @return int
+     */
+    public function getCatId($cat_safe_name)
+    {
+        require_once(LIBS . 'Category.php');
+        $category = new Category();
+        return $category->getCatId($this, $cat_safe_name);
+    }
+    
+
+    /**
+     * Returns the category name for a given category id or safe name.
+     *
+     * @param int $cat_id
+     * @param string $cat_safe_name
+     * @return string
+     */
+    public function getCatName($cat_id = 0, $cat_safe_name = '')
+    {
+        require_once(LIBS . 'Category.php');
+        $category = new Category();
+        return $category->getCatName($this, $cat_id, $cat_safe_name);
+    }
+    
+
+    /**
+     * Returns the category safe name for a given category id 
+     *
+     * @param int $cat_id
+     * @return string
+     */
+    public function getCatSafeName($cat_id = 0)
+    {
+        require_once(LIBS . 'Category.php');
+        $category = new Category();
+        return $category->getCatSafeName($this, $cat_id);
+    }
+    
+    
+    /**
+     * Returns parent id
+     *
+     * @param int $cat_id
+     * @return int
+     */
+    public function getCatParent($cat_id)
+    {
+        require_once(LIBS . 'Category.php');
+        $category = new Category();
+        return $category->getCatParent($this, $cat_id);
+    }
+    
+    
+    /**
+     * Returns child ids
+     *
+     * @param int $cat_parent_id
+     * @return int
+     */
+    public function getCatChildren($cat_parent_id)
+    {
+        require_once(LIBS . 'Category.php');
+        $category = new Category();
+        return $category->getCatChildren($this, $cat_parent_id);
+    }
+
 }
 ?>

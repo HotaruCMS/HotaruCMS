@@ -86,7 +86,7 @@
     </div>
     <div class="clear">&nbsp;</div>
     
-    <div id="post_header">
+    <div id="header_end">
         <!-- CATEGORIES, ETC -->
-        <?php $h->pluginHook('post_header'); ?>
+        <?php $h->pluginHook('header_end'); ?>
     </div>

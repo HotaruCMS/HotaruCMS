@@ -199,10 +199,10 @@ class SbBase
         
         switch ($h->pageName) {
             case 'index':
-                $h->pageTitle .= $h->rssBreadcrumbsLink('top');
+                return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink('top');
                 break;
             case 'latest':
-                $h->pageTitle .= $h->rssBreadcrumbsLink('new');
+                return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink('new');
                 break;
         }
     }

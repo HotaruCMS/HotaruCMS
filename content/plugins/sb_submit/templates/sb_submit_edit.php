@@ -32,7 +32,7 @@ $h->pluginHook('submit_2_assign');
     
     <?php echo $h->lang["submit_edit_instructions"]; ?>
 
-    <form name='submit_edit_post' action='<?php BASEURL; ?>index.php?page=edit_post' method='post'>
+    <form name='submit_edit_post' action='<?php echo BASEURL; ?>index.php?page=edit_post' method='post'>
     <table>
     <tr>
         <td><?php echo $h->lang["submit_url"]; ?>&nbsp; </td>

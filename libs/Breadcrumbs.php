@@ -42,8 +42,10 @@ class Breadcrumbs
         // plugin hook:
         $crumbs = $h->pluginHook('breadcrumbs');
         if ($crumbs) {
-            $output .= $crumbs['breadcrumbs']; // I KNOW THIS WON'T WORK.
-            return $output;
+            foreach ($crumbs as $key => $value) {
+                $output .= " &raquo; " . $value;
+                return $output; // we only want the first result so return now.
+            }
         } 
         
         // in case of no plugins:
@@ -55,12 +57,17 @@ class Breadcrumbs
     /**
      * prepares the RSS breadcrumbs link
      *
-     * @param string $type - post status, e.g. new, top, etc.
+     * @param string $status - post status, e.g. new, top, etc.
+     * @param array $vars - array of key -> value pairs
      * @return string
      */    
-    public function rssBreadcrumbsLink($h, $type = 'all')
+    public function rssBreadcrumbsLink($h, $status = 'all', $vars)
     {
-        $rss = "<a href='" . $h->url(array('page'=>'rss', 'status'=>$type)) . "'>";
+        $url_array = array('page'=>'rss', 'status'=>$status);
+        foreach ($vars as $k => $v) {
+            $url_array[$k] = $v;
+        }
+        $rss = "<a href='" . $h->url($url_array) . "'>";
         $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png' alt='" . $h->pageTitle . " RSS' /></a>";
         return $rss;
     }

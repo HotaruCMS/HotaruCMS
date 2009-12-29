@@ -57,7 +57,7 @@ if ($h->vars['posts']) {
         <div class="show_post_author_date">    
             <?php echo " " . $h->lang["sb_base_post_posted_by"] . " <a href='" . $h->url(array('user' => $user->name)) . "'>" . $user->name . "</a>"; ?>
             <?php echo time_difference(unixtimestamp($h->post->date), $h->lang) . " " . $h->lang["sb_base_post_ago"]; ?>
-            <?php $h->pluginHook('sb_base_post_author_date'); ?>
+            <?php $h->pluginHook('sb_base_show_post_author_date'); ?>
             <?php 
                 if (($h->currentUser->getPermission('can_edit_posts') == 'yes') 
                     || (($h->currentUser->getPermission('can_edit_posts') == 'own') && ($h->currentUser->id == $user->id))) { 
