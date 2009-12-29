@@ -63,6 +63,8 @@ class SbSubmitFunctions
                 $h->vars['submitted_data']['submit_title'] = '';
                 $h->vars['submitted_data']['submit_content'] = '';
                 $h->vars['submitted_data']['submit_id'] = 0;
+                $h->vars['submitted_data']['submit_category'] = 1;
+                $h->vars['submitted_data']['submit_tags'] = '';
                 
                 // submit 2 form submitted?
                 if ($h->cage->post->getAlpha('submit2') == 'true') { return true; }
@@ -78,6 +80,8 @@ class SbSubmitFunctions
                 $h->vars['submitted_data']['submit_title'] = '';
                 $h->vars['submitted_data']['submit_content'] = '';
                 $h->vars['submitted_data']['submit_id'] = 0;
+                $h->vars['submitted_data']['submit_category'] = 1;
+                $h->vars['submitted_data']['submit_tags'] = '';
                 
                 // submit 3 edit form submitted? If so, return false so we don't process the data
                 if ($h->cage->post->getAlpha('submit3edit') == 'true') { return true; }
@@ -162,6 +166,12 @@ class SbSubmitFunctions
                     $allowable_tags = $h->vars['submit_settings']['allowable_tags'];
                     $content = sanitize($h->cage->post->getHtmLawed('post_content'), 1, $allowable_tags);
                     $h->vars['submitted_data']['submit_content'] = $content;
+                    // get category:
+                    $category = $h->cage->post->getInt('post_category');
+                    $h->vars['submitted_data']['submit_category'] = $category;
+                    // get tags:
+                    $tags = stripslashes(sanitize($h->cage->post->noTags('post_tags'), 2));
+                    $h->vars['submitted_data']['submit_tags'] = $tags;
                     // get post id (if editing)
                     $post_id = $h->cage->post->testInt('submit_post_id');
                     $h->vars['submitted_data']['submit_id'] = $post_id;
@@ -434,6 +444,8 @@ class SbSubmitFunctions
         $error_url = 0;
         $error_title = 0;
         $error_content = 0;
+        $error_category = 0;
+        $error_tags = 0;
         $error_hooks = 0;
         
         // ******** CHECK CSRF *******
@@ -494,8 +506,39 @@ class SbSubmitFunctions
             }
         }
         
+        // ******** CHECK CATEGORY ********
+        if ($submit_settings['categories']) {
+            $category = $h->cage->post->getInt('post_category');    
+            if ($category > 1) {
+                // category is okay.
+                $error_category = 0;
+            } else {
+                // No category present...
+                $h->messages[$h->lang['submit_category_error']] = "red";
+                $error_category = 1;
+            }
+        }
         
-        // Check for errors from plugin fields, e.g. Tags
+        // ******** CHECK TAGS ********
+        if ($submit_settings['tags']) {
+            $tags = stripslashes(sanitize($h->cage->post->noTags('post_tags'), 2));
+            
+            if (!$tags) {
+                // No tags present...
+                $h->messages[$h->lang['submit_tags_not_present_error']] = "red";
+                $error_tags = 1;
+            } elseif (strlen($tags) > $submit_settings['max_tags']) {
+                // total tag length is too long
+                $h->messages[$h->lang['submit_tags_length_error']] = "red";
+                $error_tags = 1;
+            } else {
+                // tags are okay.
+                $error_tags = 0;
+            }
+        }
+        
+        
+        // Check for errors from plugin fields
         $error_hooks = 0;
         $error_array = $h->pluginHook('submit_2_check_errors');
         if (is_array($error_array)) {
@@ -503,7 +546,13 @@ class SbSubmitFunctions
         }
         
         // Return true if error is found
-        if ($error_csrf == 1 || $error_url == 1 || $error_title == 1 || $error_content == 1 || $error_hooks == 1) { return true; } else { return false; }
+        if ($error_csrf == 1 || $error_url == 1 || $error_title == 1 || $error_content == 1 
+            || $error_category == 1 || $error_tags == 1 || $error_hooks == 1)
+        { 
+            return true; 
+        } else { 
+            return false; 
+        }
     }
     
     
@@ -524,16 +573,30 @@ class SbSubmitFunctions
             $h->post->origUrl = "self";
         }
         
+        if ($h->post->origUrl == "self") {
+            $h->post->domain = get_domain(urldecode(BASEURL)); // returns domain including http:// 
+        } else {
+            $h->post->domain = get_domain(urldecode($h->post->origUrl)); // returns domain including http:// 
+        }
+        
         $h->post->title = $submitted_data['submit_title'];
         $h->post->url = make_url_friendly($h->post->title);
-        $h->post->domain = get_domain(urldecode($h->post->origUrl)); // returns domain including http:// 
         $h->post->content = $submitted_data['submit_content'];
         $h->post->author = $h->currentUser->id;
+
         if (isset($submitted_data['submit_status'])) {
             $h->post->status = $submitted_data['submit_status'];
         } else {
             $h->post->status = 'processing';
         }
+        
+        if (isset($submitted_data['submit_category'])) {
+            $h->post->category = $submitted_data['submit_category'];
+        }
+        
+        if (isset($submitted_data['submit_tags'])) {
+            $h->post->tags = $submitted_data['submit_tags'];
+        } 
                 
         $h->pluginHook('submit_2_process_submission');
         

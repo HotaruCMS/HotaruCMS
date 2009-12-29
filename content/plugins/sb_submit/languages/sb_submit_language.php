@@ -59,6 +59,12 @@ $lang['submit_submit_next_button'] = "Next";
 $lang['submit_accidental_click'] = "Wait, you have not submitted your story yet!";
 $lang['submit_allowable_tags'] = "Allowed HTML tags:";
 $lang['submit_moderation'] = "Thank you, your post has been placed in the moderation queue.";
+$lang["submit_category"] = "Category";
+$lang['submit_category_select'] = "Select a category";
+$lang['submit_category_error'] = "Please choose a category.";
+$lang["submit_tags"] = "Tags:";
+$lang['submit_tags_not_present_error'] = "No tags entered.";
+$lang['submit_tags_length_error'] = "Sorry, you've entered too many tags.";
 
 /* Edit Post */
 $lang["submit_edit_admin_only"] = "Admin Only...";
@@ -93,8 +99,6 @@ $lang["submit_settings_content_min_length"] = "Minimum characters";
 $lang["submit_settings_summary"] = "Summary";
 $lang["submit_settings_summary_max_length"] = "Maximum characters";
 $lang["submit_settings_summary_instruct"] = "(Description truncated on list pages)";
-$lang["submit_settings_tags"] = "Tags";
-$lang["submit_settings_max_tags"] = "Maximum characters";
 $lang["submit_settings_latest"] = "Split posts into 'Top' and 'Latest'";
 $lang["submit_settings_allowable_tags"] = "Allowed HTML tags in post description:";
 $lang["submit_settings_allowable_tags_example"] = "<small>(E.g. &lt;b&gt;&lt;u&gt;&lt;i&gt;&lt;blockquote&gt;)</small>";
@@ -110,5 +114,8 @@ $lang["submit_settings_email_notify"] = "When a new post is submitted, email adm
 $lang["submit_settings_email_notify_all"] = "All new posts";
 $lang["submit_settings_email_notify_pending"] = "Pending posts only";
 $lang["submit_settings_email_notify_none"] = "None";
+$lang["submit_settings_categories"] = "Categories";
+$lang["submit_settings_tags"] = "Tags";
+$lang["submit_settings_max_tags"] = "Maximum characters";
 
 ?>

@@ -90,6 +90,9 @@ class SbSubmit
         if (!isset($submit_settings['x_posts'])) { $submit_settings['x_posts'] = 1; }
         if (!isset($submit_settings['email_notify'])) { $submit_settings['email_notify'] = ""; }
         if (!isset($submit_settings['email_notify_mods'])) { $submit_settings['email_notify_mods'] = array(); }
+        if (!isset($submit_settings['categories'])) { $submit_settings['categories'] = 'checked'; }
+        if (!isset($submit_settings['tags'])) { $submit_settings['tags'] = 'checked'; }
+        if (!isset($submit_settings['max_tags'])) { $submit_settings['max_tags'] = 100; } // total length in characters
         
         $h->updateSetting('sb_submit_settings', serialize($submit_settings));
     }
@@ -496,6 +499,8 @@ class SbSubmit
                 // settings
                 $h->vars['submit_use_content'] = $h->vars['submit_settings']['content'];
                 $h->vars['submit_content_length'] = $h->vars['submit_settings']['content_length'];
+                $h->vars['submit_use_categories'] = $h->vars['submit_settings']['categories'];
+                $h->vars['submit_use_tags'] = $h->vars['submit_settings']['tags'];
                 $allowable_tags = $h->vars['submit_settings']['allowable_tags'];
                 $h->vars['submit_allowable_tags'] = htmlentities($allowable_tags);
                 
@@ -505,10 +510,13 @@ class SbSubmit
                 $h->vars['submit_title'] = sanitize($h->vars['submitted_data']['submit_title'], 1);
                 $h->vars['submit_content'] = sanitize($h->vars['submitted_data']['submit_content'], 1);
                 $h->vars['submit_post_id'] = $h->vars['submitted_data']['submit_id'];
+                $h->vars['submit_category'] = $h->vars['submitted_data']['submit_category'];
+                $h->vars['submit_tags'] = sanitize($h->vars['submitted_data']['submit_tags'], 1);
                 
                 // strip htmlentities before showing in the form:
                 $h->vars['submit_title'] = html_entity_decode($h->vars['submit_title']);
                 $h->vars['submit_content'] = html_entity_decode($h->vars['submit_content']);
+                $h->vars['submit_tags'] = html_entity_decode($h->vars['submit_tags']);
                 
                 // display template
                 $h->displayTemplate('sb_submit2');

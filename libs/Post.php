@@ -81,13 +81,17 @@ class Post
         
         if ($post_row) {
             $this->id = $post_row->post_id;
-            $this->title = stripslashes(urldecode($post_row->post_title));
-            $this->content = stripslashes(urldecode($post_row->post_content));
-            $this->origUrl = urldecode($post_row->post_orig_url);
-            $this->status = $post_row->post_status;
+            $this->archived = $post_row->post_archived;
             $this->author = $post_row->post_author;
-            $this->url = urldecode($post_row->post_url);
+            $this->category = $post_row->post_category;
+            $this->status = $post_row->post_status;
             $this->date = $post_row->post_date;
+            $this->title = stripslashes(urldecode($post_row->post_title));
+            $this->origUrl = urldecode($post_row->post_orig_url);
+            $this->domain = urldecode($post_row->post_domain);
+            $this->url = urldecode($post_row->post_url);
+            $this->content = stripslashes(urldecode($post_row->post_content));
+            $this->tags = stripslashes(urldecode($post_row->post_tags));
             $this->subscribe = $post_row->post_subscribe;
             
             $this->vars['post_row'] = $post_row;    // make available to plugins
@@ -138,15 +142,20 @@ class Post
      */    
     public function addPost($h)
     {
-        $sql = "INSERT INTO " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_date = CURRENT_TIMESTAMP, post_subscribe = %d, post_updateby = %d";
+        $sql = "INSERT INTO " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_category = %d, post_tags = %s, post_status = %s, post_author = %d, post_date = CURRENT_TIMESTAMP, post_subscribe = %d, post_updateby = %d";
         
-        $h->db->query($h->db->prepare($sql, urlencode($this->origUrl), urlencode($this->domain), urlencode(trim($this->title)), urlencode(trim($this->url)), urlencode(trim($this->content)), $this->status, $this->author, $this->subscribe, $h->currentUser->id));
+        $h->db->query($h->db->prepare($sql, urlencode($this->origUrl), urlencode($this->domain), urlencode(trim($this->title)), urlencode(trim($this->url)), urlencode(trim($this->content)), $this->category, urlencode(trim($this->tags)), $this->status, $this->author, $this->subscribe, $h->currentUser->id));
         
         $last_insert_id = $h->db->get_var($h->db->prepare("SELECT LAST_INSERT_ID()"));
         
         $this->id = $last_insert_id;
         $this->vars['last_insert_id'] = $last_insert_id;    // make it available outside this class
-                
+        
+        // Add tags to the Tags table:
+        require_once(LIBS . 'Tags.php');
+        $tags = new Tags();
+        $tags->addTags($h, $this->id, $this->tags);
+        
         $h->pluginHook('post_add_post');
         
         return true;
@@ -169,11 +178,18 @@ class Post
         $parsed = parse_url($this->origUrl);
         if (isset($parsed['scheme'])){ $this->domain = $parsed['scheme'] . "://" . $parsed['host']; }
         
-        $sql = "UPDATE " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_status = %s, post_author = %d, post_subscribe = %d, post_updateby = %d WHERE post_id = %d";
+        $sql = "UPDATE " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_category = %d, post_tags = %s, post_status = %s, post_author = %d, post_subscribe = %d, post_updateby = %d WHERE post_id = %d";
         
-        $h->db->query($h->db->prepare($sql, urlencode($this->origUrl), urlencode($this->domain), urlencode(trim($this->title)), urlencode(trim($this->url)), urlencode(trim($this->content)), $this->status, $this->author, $this->subscribe, $h->currentUser->id, $this->id));
+        $h->db->query($h->db->prepare($sql, urlencode($this->origUrl), urlencode($this->domain), urlencode(trim($this->title)), urlencode(trim($this->url)), urlencode(trim($this->content)), $this->category, urlencode(trim($this->tags)), $this->status, $this->author, $this->subscribe, $h->currentUser->id, $this->id));
         
         $h->post->id = $this->id; // a small hack to get the id for use in plugins.
+        
+        // Update tags in the Tags table:
+        require_once(LIBS . 'Tags.php');
+        $tags = new Tags();
+        $tags->deleteTags($h, $this->id); // delete existing tags
+        $tags->addTags($h, $this->id, $this->tags); // insert new or updated tags
+        
         $h->pluginHook('post_update_post');
         
         return true;
@@ -191,6 +207,12 @@ class Post
         $h->db->query($h->db->prepare($sql, $this->id));
         
         $h->post->id = $this->id; // a small hack to get the id for use in plugins.
+        
+        // Delete tags from the Tags table:
+        require_once(LIBS . 'Tags.php');
+        $tags = new Tags();
+        $tags->deleteTags($h, $this->id); // delete existing tags
+        
         $h->pluginHook('post_delete_post');
     }
     

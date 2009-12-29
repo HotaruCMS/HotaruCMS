@@ -90,6 +90,8 @@ class SbBase
                 // no default or we'd mess up anything set by other plugins
         }
         
+        $h->pluginHook('sb_base_theme_index_top');
+        
         // stop here if not a list or the pageType has been set elsewhere:
         if ($h->pageType && ($h->pageType != 'list')) {
             return false; 
@@ -100,32 +102,34 @@ class SbBase
         $h->vars['posts_per_page'] = $h->vars['sb_base_settings']['posts_per_page'];
         
         // include sb_base_functions class:
-        include_once(PLUGINS . 'sb_base/libs/SbBaseFunctions.php');
+        require_once(PLUGINS . 'sb_base/libs/SbBaseFunctions.php');
         $funcs = new SbBaseFunctions();
         
         // if a list, get the posts:
         if ($h->pageType == 'list') {
             $h->vars['posts'] = $funcs->prepareList($h);
         }
-        
-        // Probably a post, let's check:
-
-        $pagename = $h->pageName;
-        
-        if (is_numeric($pagename)) {
-            // Page name is a number so it must be a post with non-friendly urls
-            $h->readPost($pagename);    // read current post
-            $h->pageTitle = $h->post->title;
-            $h->pageType = 'post';
-        
-        } elseif ($post_id = $h->isPostUrl($pagename)) {
-            // Page name belongs to a story
-            $h->readPost($post_id);    // read current post
-            $h->pageTitle = $h->post->title;
-            $h->pageType = 'post';
-        
-        } else {
-            // don't know what kind of post this is. Maybe return a page not found?
+        else
+        {
+            // Probably a post, let's check:
+    
+            $pagename = $h->pageName;
+            
+            if (is_numeric($pagename)) {
+                // Page name is a number so it must be a post with non-friendly urls
+                $h->readPost($pagename);    // read current post
+                $h->pageTitle = $h->post->title;
+                $h->pageType = 'post';
+            
+            } elseif ($post_id = $h->isPostUrl($pagename)) {
+                // Page name belongs to a story
+                $h->readPost($post_id);    // read current post
+                $h->pageTitle = $h->post->title;
+                $h->pageType = 'post';
+            
+            } else {
+                // don't know what kind of post this is. Maybe return a page not found?
+            }
         }
         
         // user defined settings:

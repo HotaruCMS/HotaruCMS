@@ -65,6 +65,49 @@ $h->pluginHook('submit_2_assign');
     </tr>
     <?php } ?>
     
+    
+    <?php if ($h->vars['submit_use_categories']) { ?>
+    <tr>
+        <td style='vertical-align: top;'><?php echo $h->lang["submit_category"]; ?>&nbsp; </td>
+        <td><select name='post_category'>
+            <?php
+                $sql = "SELECT category_name, category_safe_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
+                $result = $h->db->get_row($h->db->prepare($sql, $h->vars['submit_category']));
+                
+                $category_safe_name = stripslashes(htmlentities(urldecode($result->category_safe_name), ENT_QUOTES,'UTF-8'));
+                
+                if ($category_safe_name == 'all') { 
+                    echo "<option value='1' selected>" . $h->lang['submit_category_select'] . "</option>\n";
+                } else {
+                    echo "<option value=" . $h->vars['submit_category'] . " selected>" . $result->category_name . "</option>\n";
+                }
+                
+                $sql = "SELECT category_id, category_name FROM " . TABLE_CATEGORIES . " ORDER BY category_order ASC";
+                $cats = $h->db->get_results($h->db->prepare($sql));
+                
+                if ($cats) {
+                    foreach ($cats as $cat) {
+                        if ($cat->category_id != 1) { 
+                            $cat_name = stripslashes(htmlentities(urldecode($cat->category_name), ENT_QUOTES,'UTF-8'));
+                            echo "<option value=" . $cat->category_id . ">" . $cat_name . "</option>\n";
+                        }
+                    }
+                }
+            ?>
+        </select></td>
+    </tr>
+    <?php } ?>
+    
+    <?php
+        if ($h->vars['submit_use_tags']) { 
+            echo "<tr>";
+                echo "<td>" . $h->lang["submit_tags"] . "&nbsp; </td>";
+                echo "<td><input type='text' id='post_tags' name='post_tags' value='" . $h->vars['submit_tags'] . "'></td>";
+                echo "<td>&nbsp;</td>";
+            echo "</tr>";
+        }
+    ?>
+    
     <?php $h->pluginHook('submit_2_fields'); ?>
             
     <input type='hidden' name='submit_orig_url' value='<?php echo $h->vars['submit_orig_url']; ?>' />

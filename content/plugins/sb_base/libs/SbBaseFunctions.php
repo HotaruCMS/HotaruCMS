@@ -101,9 +101,6 @@ class SbBaseFunctions
             $h->vars['filter']['post_archived = %s'] = 'N'; 
             $h->vars['filter']['post_status = %s'] = 'new';
             $h->vars['orderby'] = "post_date DESC";
-            //$rss = "<a href='" . $h->url(array('page'=>'rss', 'status'=>'new')) . "'>";
-            //$rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png' alt='RSS' /></a>";
-            //$h->vars['page_title'] = $this->lang["post_breadcrumbs_latest"] . $rss;
         } 
         elseif ($type == 'upcoming') 
         {
@@ -117,7 +114,6 @@ class SbBaseFunctions
             $end = date('YmdHis', strtotime($upcoming_duration)); // should be negative
             $h->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
             $h->vars['orderby'] = "post_votes_up DESC";
-            //$h->vars['page_title'] = $this->lang["post_breadcrumbs_upcoming"];
         } 
         elseif ($type == 'top-24-hours')
         {
@@ -127,7 +123,6 @@ class SbBaseFunctions
             $end = date('YmdHis', strtotime("-1 day"));
             $h->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
             $h->vars['orderby'] = "post_votes_up DESC";
-            //$h->vars['page_title'] = $this->lang["post_breadcrumbs_top_24_hours"];
         } 
         elseif ($type == 'top-48-hours') 
         {
@@ -137,7 +132,6 @@ class SbBaseFunctions
             $end = date('YmdHis', strtotime("-2 days"));
             $h->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
             $h->vars['orderby'] = "post_votes_up DESC";
-            //$h->vars['page_title'] = $this->lang["post_breadcrumbs_top_48_hours"];
         } 
         elseif ($type == 'top-7-days')
         {
@@ -147,7 +141,6 @@ class SbBaseFunctions
             $end = date('YmdHis', strtotime("-7 days"));
             $h->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
             $h->vars['orderby'] = "post_votes_up DESC";
-            //$h->vars['page_title'] = $this->lang["post_breadcrumbs_top_7_days"];
         } 
         elseif ($type == 'top-30-days')
         {
@@ -157,7 +150,6 @@ class SbBaseFunctions
             $end = date('YmdHis', strtotime("-30 days"));
             $h->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
             $h->vars['orderby'] = "post_votes_up DESC";
-            //$h->vars['page_title'] = $this->lang["post_breadcrumbs_top_30_days"];
         } 
         elseif ($type == 'top-365-days')
         {
@@ -167,14 +159,12 @@ class SbBaseFunctions
             $end = date('YmdHis', strtotime("-365 days"));
             $h->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
             $h->vars['orderby'] = "post_votes_up DESC";
-            //$h->vars['page_title'] = $this->lang["post_breadcrumbs_top_365_days"];
         } 
         elseif ($type == 'top-all-time')
         {
             // Filters page to "top" stories in order of votes
             $h->vars['filter']['post_status = %s'] = 'top'; 
             $h->vars['orderby'] = "post_votes_up DESC";
-            //$h->vars['page_title'] = $this->lang["post_breadcrumbs_top_all_time"];
         } 
         elseif ($type == 'top')
         {
@@ -182,9 +172,6 @@ class SbBaseFunctions
             $h->vars['filter']['post_archived = %s'] = 'N'; 
             $h->vars['filter']['post_status = %s'] = 'top';
             $h->vars['orderby'] = "post_date DESC";
-            //$rss = "<a href='" . $h->url(array('page'=>'rss', 'status'=>'top')) . "'>";
-            //$rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png' alt='RSS' /></a>";
-            //$h->vars['page_title'] = $this->lang["post_breadcrumbs_top"] . $rss;
         }
         else
         {
@@ -192,9 +179,6 @@ class SbBaseFunctions
             $h->vars['filter']['post_archived = %s'] = 'N'; 
             $h->vars['filter']['(post_status = %s OR post_status = %s)'] = array('top', 'new');
             $h->vars['orderby'] = "post_date DESC";
-            //$rss = "<a href='" . $h->url(array('page'=>'rss')) . "'>";
-            //$rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png' alt='RSS' /></a>";
-            //$h->vars['page_title'] = $this->lang["post_breadcrumbs_all"] . $rss;
         }
     }
     

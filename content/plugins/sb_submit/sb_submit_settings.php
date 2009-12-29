@@ -48,16 +48,17 @@ class SbSubmitSettings
         $content_length = $submit_settings['content_length'];
         $summary = $submit_settings['summary'];
         $summary_length = $submit_settings['summary_length'];
-        //$posts_per_page = $submit_settings['posts_per_page'];
         $allowable_tags = $submit_settings['allowable_tags'];
         $set_pending = $submit_settings['set_pending'];
         $x_posts = $submit_settings['x_posts'];
         $email_notify = $submit_settings['email_notify'];
         $email_mods = $submit_settings['email_notify_mods'];
-        //$archive = $submit_settings['archive'];
         $url_limit = $submit_settings['url_limit'];
         $daily_limit = $submit_settings['daily_limit'];
         $freq_limit = $submit_settings['freq_limit'];
+        $categories = $submit_settings['categories'];
+        $tags = $submit_settings['tags'];
+        $max_tags = $submit_settings['max_tags'];
     
         $h->pluginHook('submit_settings_get_values');
         
@@ -68,10 +69,12 @@ class SbSubmitSettings
         if (!$summary_length) { $summary_length = ''; }
         if (!$set_pending) { $set_pending = 'auto_approve'; }
         if (!$x_posts) { $x_posts = 1; }
-        //if (!$archive) { $archive = 'no_archive'; }
         if (!$url_limit) { $url_limit = 0; }
         if (!$daily_limit) { $daily_limit = 0; }
         if (!$freq_limit) { $freq_limit = 0; }
+        if (!$categories) { $categories = ''; }
+        if (!$tags) { $tags = ''; }
+        if (!$max_tags) { $max_tags = 100; }
         
         echo "<form name='submit_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=sb_submit' method='post'>\n";
 
@@ -95,6 +98,11 @@ class SbSubmitSettings
         
         echo "<p>" . $h->lang["submit_settings_allowable_tags"] . " <input type='text' size=40 name='allowable_tags' value='" . $allowable_tags . "' /><br />";
         echo $h->lang["submit_settings_allowable_tags_example"] . "</p>\n";
+        
+        echo "<p><input type='checkbox' name='categories' value='categories' " . $categories . ">&nbsp;&nbsp;" . $h->lang["submit_settings_categories"] . "</p>";
+        echo "<p><input type='checkbox' name='tags' value='tags' " . $tags . ">&nbsp;&nbsp;" . $h->lang["submit_settings_tags"];
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;";
+        echo $h->lang["submit_settings_max_tags"] . ": <input type='text' size=5 name='max_tags' value='" . $max_tags . "' /></p>\n";
         
         $h->pluginHook('submit_settings_form2');
     
@@ -288,6 +296,28 @@ class SbSubmitSettings
             $email_mods = $submit_settings['email_notify_mods'];
         }
         
+        // Categories
+        if ($h->cage->post->keyExists('categories')) { 
+            $categories = 'checked'; 
+        } else { 
+            $categories = ''; 
+        }
+        
+        // Tags
+        if ($h->cage->post->keyExists('tags')) { 
+            $tags = 'checked'; 
+        } else { 
+            $tags = ''; 
+        }
+        
+        // Max Tags
+        $max_tags = $h->cage->post->testInt('max_tags'); 
+        if (!is_numeric($max_tags)) { 
+            $max_tags = $submit_settings['max_tags'];
+        }
+        
+        
+        
         $h->pluginHook('submit_save_settings');
         
         $submit_settings['enabled'] = $enabled;
@@ -303,6 +333,9 @@ class SbSubmitSettings
         $submit_settings['x_posts'] = $x_posts;
         $submit_settings['email_notify'] = $email_notify;
         $submit_settings['email_notify_mods'] = $email_mods; //array
+        $submit_settings['categories'] = $categories;
+        $submit_settings['tags'] = $tags;
+        $submit_settings['max_tags'] = $max_tags;
     
         $h->updateSetting('sb_submit_settings', serialize($submit_settings));
         
