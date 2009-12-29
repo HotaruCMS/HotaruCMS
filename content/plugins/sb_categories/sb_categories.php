@@ -103,38 +103,38 @@ class SbCategories
         // Can't get keys from the url with Inspekt, so must get the whole query string instead.
         $query_string = $h->cage->server->getMixedString2('QUERY_STRING');
 
-        /*
-        if ($query_string) {
-            // we actually only need the first pair, so won't bother looping.
-            $query_string = preg_replace('/&amp;/', '&', $query_string);
-            $pairs = explode('&', $query_string); 
-            if ($pairs[0] && strpos($pairs[0], '=')) {
-                list($key, $value) = explode('=', $pairs[0]);
-                if ($key)
-                {
-                    $sql = "SELECT category_id FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s LIMIT 1";
-                    $exists = $h->db->get_var($h->db->prepare($sql, $key));
-                    
-                    if ($exists && $value) {
-                        // Now we know that $key is a category so $value must be the post name. Go get the post_id...
-                        $h->post->id = $h->post->isPostUrl($value);
-                        if ($h->post->id) {
-                            $h->post->readPost($h->post->id);
-                            $h->post->vars['isCategoryPost'] = true; 
-                            $h->pageType = 'post';
-                            $h->title = $h->post->title;
-                            return true;
-                        } else {
-                            $h->post->vars['isCategoryPost'] = 'error';
-                        }
-                    } 
-                }
-            }
-        }
+        // no query string? exit...
+        if (!$query_string) { return false; }
+        
+        // we actually only need the first pair, so won't bother looping.
+        $query_string = preg_replace('/&amp;/', '&', $query_string);
+        $pairs = explode('&', $query_string); 
+        
+        // no pairs or equal sign? exit...
+        if (!$pairs[0] || !strpos($pairs[0], '=')) { return false; }
+        
+        list($key, $value) = explode('=', $pairs[0]);
+        
+        // no key or no value? exit...
+        if (!$key || !$value) { return false; }
 
-        $h->post->vars['isCategoryPost'] = false;
-        return false;
-        */
+        $sql = "SELECT category_id FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s LIMIT 1";
+        $exists = $h->db->get_var($h->db->prepare($sql, $key));
+        
+        // no category? exit...
+        if (!$exists) { return false; }
+        
+        // Now we know that $key is a category so $value must be the post name. Go get the post_id...
+        $h->post->id = $h->post->isPostUrl($h, $value);
+        
+        // no post? exit...
+        if (!$h->post->id) { return false; }
+        
+        $h->post->readPost($h, $h->post->id);
+        $h->pageName = $h->post->url;
+        $h->pageTitle = $h->post->title;
+        $h->pageType = 'post';
+        return true;
     }
     
     
@@ -193,23 +193,38 @@ class SbCategories
      */
     public function breadcrumbs($h)
     { 
-        if ($h->pageName != 'category') { return false; }
-
         $crumbs = '';
-        
-        $parent_id = $h->getCatParent($h->vars['category_id']);
-        if ($parent_id > 1) {
-            $parent_name = $h->getCatName($parent_id);
-            $parent_name = stripslashes(htmlentities($parent_name, ENT_QUOTES, 'UTF-8'));
-            $crumbs .= "<a href='" . $h->url(array('category'=>$parent_id)) . "'>";
-            $crumbs .= $parent_name . "</a> &raquo; \n";
+                
+        if ($h->pageName == 'category') // the pageType is "list"
+        {
+            $parent_id = $h->getCatParent($h->vars['category_id']);
+            if ($parent_id > 1) {
+                $parent_name = $h->getCatName($parent_id);
+                $parent_name = stripslashes(htmlentities($parent_name, ENT_QUOTES, 'UTF-8'));
+                $crumbs .= "<a href='" . $h->url(array('category'=>$parent_id)) . "'>";
+                $crumbs .= $parent_name . "</a> &raquo; \n";
+            }
+    
+            $crumbs .= "<a href='" . $h->url(array('category'=>$h->vars['category_id'])) . "'>\n";
+            $crumbs .= $h->vars['category_name'] . "</a>\n ";
+            $crumbs .= $h->rssBreadcrumbsLink('all', array('category'=>$h->vars['category_id']));
         }
-
-        $crumbs .= "<a href='" . $h->url(array('category'=>$h->vars['category_id'])) . "'>\n";
-        $crumbs .= $h->vars['category_name'] . "</a>\n ";
-        $crumbs .= $h->rssBreadcrumbsLink('all', array('category'=>$h->vars['category_id']));
+        elseif ($h->pageType == 'post') // the pageName is the post slug
+        {
+            $parent_id = $h->getCatParent($h->post->category);
+            if ($parent_id > 1) {
+                $parent_name = $h->getCatName($parent_id);
+                $parent_name = stripslashes(htmlentities($parent_name, ENT_QUOTES, 'UTF-8'));
+                $crumbs .= "<a href='" . $h->url(array('category'=>$parent_id)) . "'>";
+                $crumbs .= $parent_name . "</a> &raquo; \n";
+            }
+    
+            $crumbs .= "<a href='" . $h->url(array('category'=>$h->post->category)) . "'>\n";
+            $crumbs .= $h->getCatName($h->post->category) . "</a> &raquo; \n";
+            $crumbs .= $h->post->title . "</a>\n";
+        }
         
-        return $crumbs;
+        if ($crumbs) { return $crumbs; } else { return false; }
     }
     
     

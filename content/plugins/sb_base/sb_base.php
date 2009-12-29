@@ -93,7 +93,7 @@ class SbBase
         $h->pluginHook('sb_base_theme_index_top');
         
         // stop here if not a list or the pageType has been set elsewhere:
-        if ($h->pageType && ($h->pageType != 'list')) {
+        if (!empty($h->pageType) && ($h->pageType != 'list') && ($h->pageType != 'post')) {
             return false; 
         }
         
@@ -106,31 +106,29 @@ class SbBase
         $funcs = new SbBaseFunctions();
         
         // if a list, get the posts:
-        if ($h->pageType == 'list') {
-            $h->vars['posts'] = $funcs->prepareList($h);
-        }
-        else
+        switch ($h->pageType)
         {
-            // Probably a post, let's check:
-    
-            $pagename = $h->pageName;
-            
-            if (is_numeric($pagename)) {
-                // Page name is a number so it must be a post with non-friendly urls
-                $h->readPost($pagename);    // read current post
-                $h->pageTitle = $h->post->title;
-                $h->pageType = 'post';
-            
-            } elseif ($post_id = $h->isPostUrl($pagename)) {
-                // Page name belongs to a story
-                $h->readPost($post_id);    // read current post
-                $h->pageTitle = $h->post->title;
-                $h->pageType = 'post';
-            
-            } else {
-                // don't know what kind of post this is. Maybe return a page not found?
-            }
-        }
+            case 'list':
+                $h->vars['posts'] = $funcs->prepareList($h);
+                break;
+            case 'post':
+                // if a post is already set (e.g. from the sb_categories plugin), we don't want to
+                // do the default stuff below. We do, however, need the "target", "editorial" stuff after it, though...
+                break;
+            default:
+                // Probably a post, let's check:
+                if (is_numeric($h->pageName)) {
+                    // Page name is a number so it must be a post with non-friendly urls
+                    $h->readPost($h->pageName);    // read current post
+                    $h->pageTitle = $h->post->title;
+                    $h->pageType = 'post';
+                } elseif ($post_id = $h->isPostUrl($h->pageName)) {
+                    // Page name belongs to a story
+                    $h->readPost($post_id);    // read current post
+                    $h->pageTitle = $h->post->title;
+                    $h->pageType = 'post';
+                }
+        } // close switch
         
         // user defined settings:
         
