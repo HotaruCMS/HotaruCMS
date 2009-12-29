@@ -61,6 +61,25 @@ $h->pluginHook('submit_2_assign');
     </tr>
     <?php } ?>
     
+    <?php if ($h->vars['submit_use_categories']) { ?>
+    <tr>
+        <td style='vertical-align: top;'><?php echo $h->lang["submit_category"]; ?>&nbsp; </td>
+        <td><select name='post_category'>
+            <?php echo $h->vars['submit_category_picker']; ?>
+        </select></td>
+    </tr>
+    <?php } ?>
+    
+    <?php
+        if ($h->vars['submit_use_tags']) { 
+            echo "<tr>";
+                echo "<td>" . $h->lang["submit_tags"] . "&nbsp; </td>";
+                echo "<td><input type='text' id='post_tags' name='post_tags' value='" . $h->vars['submit_tags'] . "'></td>";
+                echo "<td>&nbsp;</td>";
+            echo "</tr>";
+        }
+    ?>
+    
     <?php $h->pluginHook('submit_2_fields'); ?>
         
     <?php if ($h->currentUser->getPermission('can_edit_posts') == 'yes') { ?>

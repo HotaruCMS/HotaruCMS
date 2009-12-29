@@ -208,9 +208,15 @@ class SbSubmitFunctions
                     $allowable_tags = $h->vars['submit_settings']['allowable_tags'];
                     $content = sanitize($h->cage->post->getHtmLawed('post_content'), 1, $allowable_tags);
                     $h->vars['submitted_data']['submit_content'] = $content;
+                    // get category:
+                    $category = $h->cage->post->testInt('post_category');
+                    $h->vars['submitted_data']['submit_category'] = $category;
+                    // get tags:
+                    $tags = stripslashes(sanitize($h->cage->post->noTags('post_tags'), 2));
+                    $h->vars['submitted_data']['submit_tags'] = $tags;
                     // get status
                     $h->vars['submitted_data']['submit_status'] = $h->cage->post->testAlnumLines('post_status');
-                    $h->vars['submitted_data']['submit_id'] = $h->cage->post->getInt('post_id');
+                    $h->vars['submitted_data']['submit_id'] = $h->cage->post->testInt('submit_post_id');
                     $url = $h->cage->post->testUri('post_orig_url');
                     $h->vars['submitted_data']['submit_orig_url'] = $url;
                     // editorial (story with an internal link)

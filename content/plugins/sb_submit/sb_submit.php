@@ -308,21 +308,24 @@ class SbSubmit
                 $h->pageTitle = $h->lang["submit_edit_title"];
                 
                 // get the post id and read in the data
-                if ($h->cage->get->keyExists('post_id')) {
+                if ($h->cage->get->keyExists('post_id')) { // first time from url
                     $h->post->id = $h->cage->get->testInt('post_id');
                     $h->readPost();
-
-                    // authenticate...
-                    $can_edit = false;
-                    if ($h->currentUser->getPermission('can_edit_posts') == 'yes') { $can_edit = true; }
-                    if (($h->currentUser->getPermission('can_edit_posts') == 'own') && ($h->currentUser->id == $h->post->author)) { $can_edit = true; }
-                    $h->vars['can_edit'] = $can_edit; // used in theme_index_main()
-                    
-                    if (!$can_edit) {
-                        $h->messages[$h->lang["submit_no_edit_permission"]] = "red";
-                        return false;
-                        exit;
-                    }
+                } elseif($h->cage->post->keyExists('submit_post_id')) { // from submit form (used when errors)
+                    $h->post->id = $h->cage->post->testInt('submit_post_id');
+                    $h->readPost();
+                }
+                
+                // authenticate...
+                $can_edit = false;
+                if ($h->currentUser->getPermission('can_edit_posts') == 'yes') { $can_edit = true; }
+                if (($h->currentUser->getPermission('can_edit_posts') == 'own') && ($h->currentUser->id == $h->post->author)) { $can_edit = true; }
+                $h->vars['can_edit'] = $can_edit; // used in theme_index_main()
+                
+                if (!$can_edit) {
+                    $h->messages[$h->lang["submit_no_edit_permission"]] = "red";
+                    return false;
+                    exit;
                 }
                 
                 // check if data has been submitted
@@ -536,6 +539,11 @@ class SbSubmit
                 $h->vars['summary_length'] = $h->vars['submit_settings']['summary_length'];
                 $h->vars['editorial'] = true; // this makes the link unclickable
                 
+                // build category picker code
+                if ($h->vars['submit_use_categories']) {
+                    $h->vars['submit_category_picker'] = $this->categoryPicker($h);
+                }
+                
                 // display template
                 $h->displayTemplate('sb_submit3');
                 return true;
@@ -551,6 +559,8 @@ class SbSubmit
                 // settings
                 $h->vars['submit_use_content'] = $h->vars['submit_settings']['content'];
                 $h->vars['submit_content_length'] = $h->vars['submit_settings']['content_length'];
+                $h->vars['submit_use_categories'] = $h->vars['submit_settings']['categories'];
+                $h->vars['submit_use_tags'] = $h->vars['submit_settings']['tags'];
                 $allowable_tags = $h->vars['submit_settings']['allowable_tags'];
                 $h->vars['submit_allowable_tags'] = htmlentities($allowable_tags);
                 
@@ -559,6 +569,8 @@ class SbSubmit
                 $h->vars['submit_content'] = $h->post->content;
                 $h->vars['submit_post_id'] = $h->post->id;
                 $h->vars['submit_status'] = $h->post->status;
+                $h->vars['submit_category'] = $h->post->category;
+                $h->vars['submit_tags'] = $h->post->tags;
                 
                 $h->vars['submit_editorial'] = $h->vars['submitted_data']['submit_editorial'];
                 $h->vars['submit_pm_from'] = $h->vars['submitted_data']['submit_pm_from'];
@@ -569,6 +581,7 @@ class SbSubmit
                 // strip htmlentities before showing in the form:
                 $h->vars['submit_title'] = html_entity_decode($h->vars['submit_title']);
                 $h->vars['submit_content'] = html_entity_decode($h->vars['submit_content']);
+                $h->vars['submit_tags'] = html_entity_decode($h->vars['submit_tags']);
                 
                 // get status options for admin section
                 $h->vars['submit_status_options'] = '';
@@ -583,11 +596,53 @@ class SbSubmit
                     }
                 }
                 
+                // build category picker code
+                if ($h->vars['submit_use_categories']) {
+                    $h->vars['submit_category_picker'] = $this->categoryPicker($h);
+                }
+                
                 // display template
                 $h->displayTemplate('sb_submit_edit');
                 return true;
                 break;
         }
+    }
+
+    /**
+     * Build code for category picker in submit step 2 and edit post
+     */
+    public function categoryPicker($h)
+    {
+        $output = '';
+        
+        $sql = "SELECT category_name, category_safe_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
+        $result = $h->db->get_row($h->db->prepare($sql, $h->vars['submit_category']));
+        
+        if($result) { 
+            $category_safe_name = stripslashes(htmlentities(urldecode($result->category_safe_name), ENT_QUOTES,'UTF-8'));
+            
+            if ($category_safe_name == 'all') { 
+                $output .= "<option value='1' selected>" . $h->lang['submit_category_select'] . "</option>\n";
+            } else {
+                $output .= "<option value=" . $h->vars['submit_category'] . " selected>" . $result->category_name . "</option>\n";
+            }
+        } else {
+            $output .= "<option value='1' selected>" . $h->lang['submit_category_select'] . "</option>\n";
+        }
+        
+        $sql = "SELECT category_id, category_name FROM " . TABLE_CATEGORIES . " ORDER BY category_order ASC";
+        $cats = $h->db->get_results($h->db->prepare($sql));
+        
+        if ($cats) {
+            foreach ($cats as $cat) {
+                if ($cat->category_id != 1) { 
+                    $cat_name = stripslashes(htmlentities(urldecode($cat->category_name), ENT_QUOTES,'UTF-8'));
+                    $output .= "<option value=" . $cat->category_id . ">" . $cat_name . "</option>\n";
+                }
+            }
+        }
+        
+        return $output;
     }
 }
 ?>

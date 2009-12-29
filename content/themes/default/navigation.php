@@ -34,12 +34,7 @@
                     $h->setAvatar($h->currentUser->id, 16);
                     echo $h->linkAvatar();
                 }
-    ?> 
-                <?php if (($h->pageType == 'user') && ($h->vars['user']->id == $h->currentUser->id)) { $status = "id='navigation_active'"; } else { $status = ""; } ?>
-                <li><a <?php echo $status; ?> href='<?php echo $h->url(array('user' => $h->currentUser->name)); ?>' title='<?php echo $h->lang["users_profile"]; ?>'>
-                    <?php echo $h->currentUser->name; ?>
-                </a></li>
-    <?php  } ?>
+            } ?>
     
     <?php if ($h->pageName == 'index') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
     <li><a <?php echo $status; ?> href="<?php echo BASEURL; ?>"><?php echo $h->lang["main_theme_navigation_home"]; ?></a></li>

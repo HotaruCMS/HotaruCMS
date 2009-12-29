@@ -5,6 +5,7 @@
  * version: 0.1
  * folder: sb_categories
  * class: SbCategories
+ * type: categories
  * requires: sb_base 0.1
  * hooks: sb_base_theme_index_top, header_include, pagehandling_getpagename, sb_base_functions_preparelist, sb_base_show_post_author_date, header_end, breadcrumbs
  *
@@ -209,7 +210,7 @@ class SbCategories
             $crumbs .= $h->vars['category_name'] . "</a>\n ";
             $crumbs .= $h->rssBreadcrumbsLink('all', array('category'=>$h->vars['category_id']));
         }
-        elseif ($h->pageType == 'post') // the pageName is the post slug
+        elseif ($h->pageType == 'post') // the pageName is the post slug (post_url)
         {
             $parent_id = $h->getCatParent($h->post->category);
             if ($parent_id > 1) {

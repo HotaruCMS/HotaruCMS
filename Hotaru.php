@@ -1368,7 +1368,7 @@ class Hotaru
      * @param str $post_url (slug)
      * @return int - id of post with matching url
      */
-    public function isPostUrl($h, $post_url = '')
+    public function isPostUrl($post_url = '')
     {
         return $this->post->isPostUrl($this, $post_url);
     }

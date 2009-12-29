@@ -133,14 +133,14 @@ class SbBase
         // user defined settings:
         
         // open links in a new tab?
-        if (isset($h->currentUser->settings['new_tab'])) { 
+        if ($h->currentUser->settings['new_tab']) { 
             $h->vars['target'] = 'target="_blank"'; 
         } else { 
             $h->vars['target'] = ''; 
         }
         
         // open link to the source or the site post?
-        if (isset($h->currentUser->settings['link_action'])) { 
+        if ($h->currentUser->settings['link_action']) { 
             $h->vars['link_action'] = 'source'; 
         } else { 
             $h->vars['link_action'] = ''; 
