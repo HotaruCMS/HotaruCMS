@@ -52,7 +52,7 @@
                     <br />
                     <?php echo $h->lang["cat_man_edit_meta_keywords"]; ?> &nbsp;&nbsp;<input size='40' name='keywords' type='text' value='<?php echo $cat['category_keywords']; ?>'>
                     &nbsp;&nbsp;<input type='submit' name='save_edit_meta' value='<?php echo $h->lang["cat_man_save"]; ?>'>
-                    <input type='hidden' name='token' value='<?php echo $h->token; ?>' />
+                    <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
                     </form>
                 </div>
             <?php } ?>

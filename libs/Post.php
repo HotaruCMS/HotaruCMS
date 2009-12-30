@@ -39,6 +39,7 @@ class Post
     protected $url              = '';           // post slug (needs BASEURL and category attached)
     protected $date             = '';           // post submission date
     protected $subscribe        = 0;            // is the post author subscribed to comments?
+    protected $comments         ='open';        // is the comment form open or closed?
 
 
     /**
@@ -93,6 +94,7 @@ class Post
             $this->content = stripslashes(urldecode($post_row->post_content));
             $this->tags = stripslashes(urldecode($post_row->post_tags));
             $this->subscribe = $post_row->post_subscribe;
+            $this->comments = $post_row->post_comments;
             
             $this->vars['post_row'] = $post_row;    // make available to plugins
             
@@ -119,7 +121,7 @@ class Post
         $sql = $h->db->prepare($query, $post_id);
         
         // Create temp cache array
-        if (!isset($this->hotaru->vars['tempPostCache'])) { $h->vars['tempPostCache'] = array(); }
+        if (!isset($h->vars['tempPostCache'])) { $h->vars['tempPostCache'] = array(); }
 
         // If this query has already been read once this page load, we should have it in memory...
         if (array_key_exists($sql, $h->vars['tempPostCache'])) {
@@ -153,7 +155,7 @@ class Post
         
         // Add tags to the Tags table:
         require_once(LIBS . 'Tags.php');
-        $tags = new Tags();
+        $tags = new TagFunctions();
         $tags->addTags($h, $this->id, $this->tags);
         
         $h->pluginHook('post_add_post');
@@ -178,15 +180,15 @@ class Post
         $parsed = parse_url($this->origUrl);
         if (isset($parsed['scheme'])){ $this->domain = $parsed['scheme'] . "://" . $parsed['host']; }
         
-        $sql = "UPDATE " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_category = %d, post_tags = %s, post_status = %s, post_author = %d, post_subscribe = %d, post_updateby = %d WHERE post_id = %d";
+        $sql = "UPDATE " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_category = %d, post_tags = %s, post_status = %s, post_author = %d, post_subscribe = %d, post_comments = %s, post_updateby = %d WHERE post_id = %d";
         
-        $h->db->query($h->db->prepare($sql, urlencode($this->origUrl), urlencode($this->domain), urlencode(trim($this->title)), urlencode(trim($this->url)), urlencode(trim($this->content)), $this->category, urlencode(trim($this->tags)), $this->status, $this->author, $this->subscribe, $h->currentUser->id, $this->id));
+        $h->db->query($h->db->prepare($sql, urlencode($this->origUrl), urlencode($this->domain), urlencode(trim($this->title)), urlencode(trim($this->url)), urlencode(trim($this->content)), $this->category, urlencode(trim($this->tags)), $this->status, $this->author, $this->subscribe, $this->comments, $h->currentUser->id, $this->id));
         
         $h->post->id = $this->id; // a small hack to get the id for use in plugins.
         
         // Update tags in the Tags table:
         require_once(LIBS . 'Tags.php');
-        $tags = new Tags();
+        $tags = new TagFunctions();
         $tags->deleteTags($h, $this->id); // delete existing tags
         $tags->addTags($h, $this->id, $this->tags); // insert new or updated tags
         
@@ -210,7 +212,7 @@ class Post
         
         // Delete tags from the Tags table:
         require_once(LIBS . 'Tags.php');
-        $tags = new Tags();
+        $tags = new TagFunctions();
         $tags->deleteTags($h, $this->id); // delete existing tags
         
         $h->pluginHook('post_delete_post');

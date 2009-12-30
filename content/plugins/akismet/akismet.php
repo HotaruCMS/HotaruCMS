@@ -7,6 +7,8 @@
  * class: HotaruAkismet
  * requires: submit 1.4, comments 1.0
  * hooks: admin_plugin_settings, admin_sidebar_plugin_settings, install_plugin, comment_pre_add_comment, submit_step_3_pre_trackback, com_man_approve_comment, com_man_delete_comment, comments_delete_comment, post_man_status_new, post_man_status_top, post_man_status_buried, post_man_delete, submit_edit_post_change_status, submit_edit_post_delete, vote_post_status_buried
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *

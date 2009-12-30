@@ -65,7 +65,7 @@
         <div style="text-align: center;">
             <input type='submit' name='cancel_all' value='<?php echo $h->lang["cat_man_cancel"]; ?>'>&nbsp;&nbsp;<input type='submit' name='delete' value='<?php echo $h->lang["cat_man_delete_selected"]; ?>'>
         </div>
-        <input type='hidden' name='token' value='<?php echo $h->token; ?>' />
+        <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
         </form>
     </td>
     

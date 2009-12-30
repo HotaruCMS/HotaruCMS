@@ -217,11 +217,12 @@ class SubmitFunctions
                     // get status
                     $h->vars['submitted_data']['submit_status'] = $h->cage->post->testAlnumLines('post_status');
                     $h->vars['submitted_data']['submit_id'] = $h->cage->post->testInt('submit_post_id');
-                    $url = $h->cage->post->testUri('post_orig_url');
-                    $h->vars['submitted_data']['submit_orig_url'] = $url;
-                    // editorial (story with an internal link)
-                    $h->vars['submitted_data']['submit_editorial'] = (strpos($url, BASEURL) !== false) ? true : false; 
-
+                    // get url if present:
+                    if( $url = $h->cage->post->testUri('post_orig_url')) {
+                        $h->vars['submitted_data']['submit_orig_url'] = $url;
+                    } else {
+                        $h->vars['submitted_data']['submit_orig_url'] = $h->post->origUrl;
+                    }
                     // from Post Manager...
                     $h->vars['submitted_data']['submit_pm_from'] = $h->cage->post->testAlnumLines('from');
                     $h->vars['submitted_data']['submit_pm_search'] = $h->cage->post->getMixedString2('search_value'); 
@@ -233,6 +234,8 @@ class SubmitFunctions
             default:
                 return false;
         }
+        
+        $h->pluginHook('submit_functions_process_submitted');
         
         // save submitted data...
         $key = $this->saveSubmitData($h);
@@ -432,6 +435,8 @@ class SubmitFunctions
         
         // get the last submitted data by this user:
         $submitted_data = $this->loadSubmitData($h, $key);
+        
+        $editorial = $submitted_data['submit_editorial'];
         $title = $submitted_data['submit_title'];
         $content = $submitted_data['submit_content'];
         
@@ -465,9 +470,9 @@ class SubmitFunctions
         
         // ******** CHECK URL ********
         $error_url = 0;
-        if ($edit && !$orig_url) {
+        if ($edit && !$editorial && !$orig_url) {
             // No url present...
-            $h->messages[$h->lang['submit_url_not_complete_error']] = "red";
+            $h->messages[$h->lang['submit_url_not_present_error']] = "red";
             $error_url = 1;
         }
         
@@ -572,11 +577,13 @@ class SubmitFunctions
         // get the last submitted data by this user:
         $submitted_data = $this->loadSubmitData($h, $key);
         $editorial = $submitted_data['submit_editorial'];
-
-        if (!$editorial || ($h->post->id != 0)) {
-            $h->post->origUrl = $submitted_data['submit_orig_url'];
-        } else {
+        
+        if ($editorial && ($h->post->id != 0)) {
             $h->post->origUrl = "self";
+        }
+        
+        if ($submitted_data['submit_orig_url']) {
+            $h->post->origUrl = $submitted_data['submit_orig_url'];
         }
         
         if ($h->post->origUrl == "self") {
@@ -603,7 +610,8 @@ class SubmitFunctions
         if (isset($submitted_data['submit_tags'])) {
             $h->post->tags = $submitted_data['submit_tags'];
         } 
-                
+
+        $h->vars['submitted_data'] = $submitted_data;
         $h->pluginHook('submit_2_process_submission');
         
         if ($h->post->id != 0) {

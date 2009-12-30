@@ -1,14 +1,17 @@
 <?php
 /**
- * name: Category Manager
- * description: Manage categories.
- * version: 0.7
- * folder: category_manager
- * class: CategoryManager
- * requires: sb_base 0.1
- * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings
+ * name: Goodbye World
+ * description: Displays "Goodbye World!"
+ * version: 0.1
+ * folder: goodbye_world
+ * class: GoodbyeWorld
+ * extends: HelloWorld
+ * hooks: hello_world
+ * requires: hello_world 0.1
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
+ *
+ * Usage: Add <?php $h->pluginHook('goodbye_world'); ?> to your theme, wherever you want to show "Goodbye World".
  *
  * PHP version 5
  *
@@ -31,25 +34,16 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
- 
-class CategoryManager
+
+class GoodbyeWorld extends HelloWorld
 {
     /**
-     * Install and add a default "all" catgeory if not already there.
+     * Displays "Goodbye World!" wherever the plugin hook is.
      */
-    public function install_plugin($h)
+    public function hello_world()
     {
-        // Insert default category if not already there...
-        $sql = "SELECT category_id FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s";
-        $exists = $h->db->get_var($h->db->prepare($sql, 'all'));
-        if (!$exists) {
-            $sql = "INSERT INTO " . DB_PREFIX . "categories (category_name, category_safe_name) VALUES (%s, %s)";
-            $h->db->query($h->db->prepare($sql, urlencode('All'), urlencode('all')));
-        }
+        echo "Goodbye World!";
     }
-    
-    // no other methods necessary because we fall back on the defaults.
-    // See category_manager_settings for all the real code.
 }
 
 ?>

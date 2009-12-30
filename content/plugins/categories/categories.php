@@ -8,6 +8,8 @@
  * type: categories
  * requires: sb_base 0.1
  * hooks: sb_base_theme_index_top, header_include, pagehandling_getpagename, sb_base_functions_preparelist, sb_base_show_post_author_date, header_end, breadcrumbs
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *

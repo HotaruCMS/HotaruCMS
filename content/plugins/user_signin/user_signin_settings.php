@@ -144,7 +144,7 @@ class UserSigninSettings
         echo "<br /><br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
         echo "<input type='submit' value='" . $h->lang["user_signin_settings_save"] . "' />\n";
-        echo "<input type='hidden' name='token' value='" . $h->token . "' />\n";
+        echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }
     

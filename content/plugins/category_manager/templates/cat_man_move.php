@@ -69,7 +69,7 @@
                               ?>
                               </select>
                         <input type='submit' name='save_form1' value='<?php echo $h->lang["cat_man_go"]; ?>'>
-                        <input type='hidden' name='token' value='<?php echo $h->token; ?>' />
+                        <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
                     </form>
                     <?php if ($cat['category_parent'] > 1) { ?>
                         <?php echo $h->lang["cat_man_move_or"]; ?> 
@@ -89,7 +89,7 @@
                               ?>
                               </select>
                             <input type='submit' name='save_form2' value='<?php echo $h->lang["cat_man_go"]; ?>'>
-                            <input type='hidden' name='token' value='<?php echo $h->token; ?>' />
+                            <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
                         </form>
                     <?php } ?>
                 </div>

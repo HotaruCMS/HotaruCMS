@@ -206,6 +206,12 @@ class Submit
                     // merge defaults from "checkSubmitted" with $submitted_data...
                     $merged_data = array_merge($h->vars['submitted_data'], $submitted_data);
                     $h->vars['submitted_data'] = $merged_data;
+                    
+                    // not sure if this is completely necessary, but it's worth having...
+                    if ($h->vars['submitted_data']['submit_id']) {
+                        $h->post->id = $h->vars['submitted_data']['submit_id'];
+                        $h->post->readPost($h);
+                    }
                 }
                 
                 // submitted so save data and proceed to step 3 when no more errors
@@ -303,7 +309,6 @@ class Submit
                 
             // EDIT POST (after submission)
             case 'edit_post':
-
                 $h->pageType = 'submit';
                 $h->pageTitle = $h->lang["submit_edit_title"];
                 
@@ -327,7 +332,7 @@ class Submit
                     return false;
                     exit;
                 }
-                
+
                 // check if data has been submitted
                 $submitted = $funcs->checkSubmitted($h, 'edit_post');
                 
@@ -375,7 +380,6 @@ class Submit
                             exit;
                         }
                     }
-                    
                     // load submitted data:
                     $submitted_data = $funcs->loadSubmitData($h, $key);
                 }

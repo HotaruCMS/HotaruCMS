@@ -34,7 +34,7 @@
     <h3>1. <?php echo $h->lang["cat_man_add_main"]; ?></h3>
     <form name='category_manager_add_parent_form' action='<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=add_save' method='post'>
     <?php echo $h->lang["cat_man_add_top_level"]; ?> <input name="new_category" type="text" value=""> &nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='save_new_category1' value='<?php echo $h->lang["cat_man_save"]; ?>'>
-    <input type='hidden' name='token' value='<?php echo $h->token; ?>' />
+    <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
     </form>
 
     <h3>2. <?php echo $h->lang["cat_man_add_child_to_main"]; ?></h3>
@@ -52,7 +52,7 @@
           ?>
           </select>
     <?php echo $h->lang["cat_man_add_name_it"]; ?> <input name="new_category" type="text" value=""> &nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='save_new_category2' value='<?php echo $h->lang["cat_man_save"]; ?>'>
-    <input type='hidden' name='token' value='<?php echo $h->token; ?>' />
+    <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
     </form>
 
     <h3>3. <?php echo $h->lang["cat_man_add_child_to_child"]; ?></h3>
@@ -70,7 +70,7 @@
           ?>
           </select>
     <?php echo $h->lang["cat_man_add_name_it"]; ?> <input name="new_category" type="text" value=""> &nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='save_new_category3' value='<?php echo $h->lang["cat_man_save"]; ?>'>
-    <input type='hidden' name='token' value='<?php echo $h->token; ?>' />
+    <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
     </form>
     </td>
     

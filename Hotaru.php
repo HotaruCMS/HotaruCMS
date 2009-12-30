@@ -39,6 +39,7 @@ class Hotaru
     protected $plugin;                          // Plugin object
     protected $post;                            // Post object
     protected $avatar;                          // Avatar object
+    protected $comment;                         // Comment object
     protected $includes;                        // for CSS/JavaScript includes
     
     // page info
@@ -1514,6 +1515,24 @@ class Hotaru
         $category = new Category();
         return $category->getCatChildren($this, $cat_parent_id);
     }
+    
+    
+/* *************************************************************
+ *
+ *  COMMENT FUNCTIONS
+ *
+ * *********************************************************** */
 
+
+    /**
+     * Count comments
+     *
+     * @param bool $link - true used for "comments" link, false for top of actual comments
+     * @return string - text to show in the link, e.g. "3 comments"
+     */
+    function countComments($link = true)
+    {
+        return $this->comment->countComments($this, $link);
+    }
 }
 ?>

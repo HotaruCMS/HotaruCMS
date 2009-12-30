@@ -8,6 +8,8 @@
  * type: avatar
  * requires: users 0.1
  * hooks: avatar_set_avatar, avatar_get_avatar, avatar_show_avatar
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *

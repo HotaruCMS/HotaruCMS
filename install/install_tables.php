@@ -220,6 +220,7 @@ function create_table($table_name)
           `post_url` varchar(255) NULL, 
           `post_content` text NULL,
           `post_tags` text NULL,
+          `post_comments` enum('open', 'closed') NOT NULL DEFAULT 'open',
           `post_subscribe` tinyint(1) NOT NULL DEFAULT '0',
           `post_updateby` int(20) NOT NULL DEFAULT 0, 
           FULLTEXT (`post_title`, `post_domain`, `post_url`, `post_content`, `post_tags`)

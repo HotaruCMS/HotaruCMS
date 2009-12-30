@@ -114,7 +114,7 @@ class Avatar
     public function wrapAvatar($h)
     {
         $output = "<div class='avatar_wrapper'>";
-        $output = "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>\n";
+        $output .= "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>\n";
         $result = $h->pluginHook('avatar_get_avatar');
         if ($result) {
             foreach ($result as $key => $value) {
@@ -124,6 +124,7 @@ class Avatar
         }
         $output .= "</a>\n";
         $output .= "</div>\n";
+        return $output;
     }
 }
 ?>

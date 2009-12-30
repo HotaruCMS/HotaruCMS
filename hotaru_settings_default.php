@@ -68,5 +68,6 @@ define("TABLE_POSTMETA", DB_PREFIX . 'postmeta');
 define("TABLE_TEMPDATA", DB_PREFIX . 'tempdata');
 define("TABLE_CATEGORIES", DB_PREFIX . 'categories');
 define("TABLE_TAGS", DB_PREFIX . 'tags');
+define("TABLE_COMMENTS", DB_PREFIX . 'comments');
 
 ?>

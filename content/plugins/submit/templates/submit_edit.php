@@ -106,12 +106,6 @@ $h->pluginHook('submit_2_assign');
         <?php $h->pluginHook('submit_edit_admin_fields'); ?>
         <!-- END Admin only options -->
     <?php } ?>
-        
-    <?php if (($h->currentUser->getPermission('can_edit_posts') != 'yes') || $h->vars['submit_editorial']) { 
-        // use this hidden input to send back the original url when the above form is not used ?>
-        <input type='hidden' name='post_orig_url' value='<?php echo $h->vars['submit_orig_url']; ?>' />
-        <?php $h->pluginHook('submit_edit_non_admin_hidden_fields'); ?>
-    <?php } ?>
     
     <input type='hidden' name='from' value='<?php echo $h->vars['submit_pm_from']; ?>' />
     <input type='hidden' name='search_value' value='<?php echo $h->vars['submit_pm_search']; ?>' />

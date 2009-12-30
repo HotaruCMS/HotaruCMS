@@ -8,6 +8,8 @@
  * type: tags
  * requires: sb_base 0.1, submit 0.1
  * hooks: sb_base_theme_index_top, header_include, header_include_raw, header_meta, sb_base_show_post_extra_fields, sb_base_show_post_extras, sb_base_functions_preparelist, breadcrumbs
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *
