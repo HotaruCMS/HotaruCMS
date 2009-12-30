@@ -3,6 +3,9 @@
  ************************************** */
 
 .show_post { margin-bottom: 1.0em; }
+
+.avatar_wrapper a { float: left; padding: 0 0.6em 0.2em 0; }
+
 .show_post_title { font-size: 1.2em; font-weight: bold; }
 .show_post_author_date { font-size: 0.825em; font-style: italic; }
 .show_post_content { margin: 0.4em 0 0.4em 0; }

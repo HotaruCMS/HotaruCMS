@@ -36,6 +36,13 @@ $user->getUserBasic($h, $h->post->author);
 
     <?php $h->pluginHook('sb_base_show_post_pre_title'); ?>
 
+    <?php   // Show avatars if enabled (requires an avatars plugin)
+        if($h->isActive('avatar')) {
+            $h->setAvatar($h->currentUser->id, 32);
+            echo $h->wrapAvatar();
+        }
+    ?>
+        
     <div class="show_post_title">
         <?php if (!$h->vars['editorial']) { ?> 
             <a href='<?php echo $h->post->origUrl; ?>' <?php echo $h->vars['target']; ?>><?php echo $h->post->title; ?></a>
