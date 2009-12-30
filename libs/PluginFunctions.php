@@ -161,6 +161,35 @@ class PluginFunctions
     
     
     /**
+     * Get a single property from a specified plugin
+     *
+     * @param string $folder - plugin folder name, else $h->plugin->folder is used
+     * @param string $property - plugin property, e.g. "plugin_version"
+     */
+    public function getPluginProperty($h, $property = '', $folder = '')
+    {
+        if (!$folder) { $folder = $h->plugin->folder; } 
+        
+        if (!$h->allPluginDetails) { //not in memory
+            $this->getAllPluginDetails($h); // get from database
+        }
+        
+        if (!$h->allPluginDetails) { 
+            return false; // no plugin basics for this plugin found anywhere
+        }
+        
+        // get plugin basics from memory
+        foreach ($h->allPluginDetails as $item => $key) {
+            if ($key->plugin_folder == $folder) {
+                return $key->$property;        // plugin property, e.g. "plugin_version"
+            }
+        }
+        
+        return false;
+    }
+    
+    
+    /**
      * Get a single plugin's details for Hotaru
      *
      * @param string $folder - plugin folder name, else $h->plugin->folder is used
@@ -179,7 +208,7 @@ class PluginFunctions
         
         // get plugin basics from memory
         foreach ($h->allPluginDetails as $item => $key) {
-            if ($key->plugin_folder == $h->plugin->folder) {
+            if ($key->plugin_folder == $folder) {
                 $h->plugin->id             = $key->plugin_id;        // plugin id
                 $h->plugin->enabled        = $key->plugin_enabled;   // activate (1), inactive (0)
                 $h->plugin->name           = $key->plugin_name;      // plugin proper name

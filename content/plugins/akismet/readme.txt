@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.0.4 2009/12/30 - Nick - Updated for compatibility with Hotaru 1.0
 v.0.3 2009/11/04 - Nick - Updated install function for easier upgrading
 v.0.2 2009/10/24 - Nick - Fix for a "Catchable fatal error" when "register_argc_argv = On" in php.ini
 v.0.1 2009/10/22 - Nick - Released first version

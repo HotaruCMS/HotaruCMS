@@ -2,11 +2,11 @@
 /**
  * name: Tags
  * description: Show tags, filter tags and RSS for tags
- * version: 0.1
+ * version: 1.4
  * folder: tags
  * class: Tags
  * type: tags
- * requires: sb_base 0.1, submit 0.1
+ * requires: sb_base 0.1, submit 1.9
  * hooks: sb_base_theme_index_top, header_include, header_include_raw, header_meta, sb_base_show_post_extra_fields, sb_base_show_post_extras, sb_base_functions_preparelist, breadcrumbs
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick

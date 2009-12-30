@@ -6,7 +6,7 @@
  * folder: comments
  * class: Comments
  * type: comments
- * requires: submit 0.1, users 0.1
+ * requires: submit 1.9, users 1.1
  * hooks: install_plugin, theme_index_top, header_include, admin_header_include_raw, theme_index_main, sb_base_show_post_extra_fields, sb_base_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_2_fields, submit_edit_admin_fields, post_delete_post, profile_usage, , admin_theme_main_stats, breadcrumbs, submit_functions_process_submitted, submit_2_process_submission
  *
  * PHP version 5

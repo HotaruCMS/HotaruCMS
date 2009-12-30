@@ -55,6 +55,21 @@ class UserInfo extends UserBase
     }
     
     
+    /**
+     * Get the email from user id
+     *
+     * @param int $userid
+     * @return string|false
+     */
+    public function getEmailFromId($h, $userid = 0)
+    {
+        $sql = "SELECT user_email FROM " . TABLE_USERS . " WHERE user_id = %d";
+        
+        $email = $h->db->get_var($h->db->prepare($sql, $userid));
+        if ($email) { return $email; } else { return false; }
+    }
+    
+
      /**
      * Checks if the user has an 'admin' role
      *

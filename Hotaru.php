@@ -535,6 +535,20 @@ class Hotaru
     }
     
     
+    /**
+     * Get the email from user id
+     *
+     * @param int $userid
+     * @return string|false
+     */
+    public function getEmailFromId($userid = 0)
+    {
+        require_once(LIBS . 'UserInfo.php');
+        $userInfo = new UserInfo();
+        return $userInfo->getEmailFromId($this, $userid);
+    }
+    
+    
      /**
      * Checks if the user has an 'admin' role
      *
@@ -624,7 +638,20 @@ class Hotaru
     public function readPlugin($folder = '')
     {
         $pluginFunctions = new PluginFunctions();
-        $this->readPlugin = $pluginFunctions->readPlugin($this, $folder);
+        $pluginFunctions->readPlugin($this, $folder);
+    }
+    
+    
+    /**
+     * Get a single property from a specified plugin
+     *
+     * @param string $folder - plugin folder name, else $h->plugin->folder is used
+     * @param string $property - plugin property, e.g. "plugin_version"
+     */
+    public function getPluginProperty($property = '', $folder = '')
+    {
+        $pluginFunctions = new PluginFunctions();
+        return $pluginFunctions->getPluginProperty($this, $property, $folder);
     }
     
     
@@ -648,8 +675,7 @@ class Hotaru
      */
     public function getPluginVersion($folder = '')
     {
-        $this->readPlugin($folder);
-        return $this->plugin->version;
+        return $this->getPluginProperty('plugin_version', $folder);
     }
     
     
@@ -661,8 +687,7 @@ class Hotaru
      */
     public function getPluginName($folder = '')
     {
-        $this->readPlugin($folder);
-        return $this->plugin->name;
+        return $this->getPluginProperty('plugin_name', $folder);
     }
     
 
@@ -687,8 +712,7 @@ class Hotaru
      */
     public function getPluginClass($folder = '')
     {
-        $this->readPlugin($folder);
-        return $this->plugin->class;
+        return $this->getPluginProperty('plugin_class', $folder);
     }
     
 
