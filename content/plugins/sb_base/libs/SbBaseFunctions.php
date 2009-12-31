@@ -256,7 +256,7 @@ class SbBaseFunctions
             if (empty($prepared_array[1])) {
                 $posts = $h->db->get_results($prepared_array[0]); // ignoring the prepare function.
             } else {
-                $posts = $h->db->get_results($h->db->prepare($prepared_array)); 
+                $posts = $h->db->get_results($h->db->prepare($prepared_array));
             }
             if ($posts) { return $posts; }
         }
