@@ -91,7 +91,7 @@ class PluginSettings
      * @param string $settings_name optional settings name if different from folder
      * @return array - of submit settings
      */
-    public function getSerializedSettings($h, $settings_name = '', $folder = '')
+    public function getSerializedSettings($h, $folder = '', $settings_name = '')
     {
         if (!$folder) { $folder = $h->plugin->folder; }
 

@@ -32,7 +32,7 @@ class Widget
     public function initializeWidgets($h)
     {
         // Get settings from the database if they exist...
-        $widget_settings = $h->getSerializedSettings('widgets_settings'); 
+        $widget_settings = $h->getSerializedSettings('widgets'); 
             
         $widgets = $this->getWidgets($h);
         
@@ -124,7 +124,7 @@ class Widget
     public function getArrayWidgets($h)
     {
         // Get settings from the database if they exist...
-        $widget_settings = $h->getSerializedSettings('widgets_settings'); 
+        $widget_settings = $h->getSerializedSettings('widgets'); 
         
         if ($widget_settings['widgets']) {
             $widgets = $widget_settings['widgets'];    // associative array

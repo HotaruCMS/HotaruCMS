@@ -819,10 +819,10 @@ class Hotaru
      * @param string $settings_name optional settings name if different from folder
      * @return array - of submit settings
      */
-    public function getSerializedSettings($settings_name = '', $folder = '')
+    public function getSerializedSettings($folder = '', $settings_name = '')
     {
         $pluginSettings = new PluginSettings();
-        return $pluginSettings->getSerializedSettings($this, $settings_name, $folder);
+        return $pluginSettings->getSerializedSettings($this, $folder, $settings_name);
     }
     
     

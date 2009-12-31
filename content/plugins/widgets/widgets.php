@@ -105,7 +105,7 @@ class Widgets
         if ($h->cage->get->testAlpha('action')) {
         
             // Get widget settings from the database...
-            $widget_settings = $h->getSerializedSettings('widgets_settings'); 
+            $widget_settings = $h->getSerializedSettings('widgets'); 
             
             // Get the list of widgets...
             $widgets = $h->vars['widgets']->getArrayWidgets($h);
