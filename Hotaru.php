@@ -605,6 +605,50 @@ class Hotaru
         $userInfo = new UserInfo();
         return $userInfo->getUniqueRoles($this);
     }
+    
+    
+    /**
+     * Get the ids and names of all users or those with a specified role, sorted alphabetically
+     *
+     * @param string $role - optional user role to filter to
+     * @return array
+     */
+    public function userIdNameList($role = '')
+    {
+        require_once(LIBS . 'UserInfo.php');
+        $userInfo = new UserInfo();
+        return $userInfo->userIdNameList($this, $role);
+    }
+    
+    
+    /**
+     * Get full details of all users or batches of users, sorted alphabetically
+     *
+     * @param array $id_array - optional array of user ids
+     * @param int $start - LIMIT $start $range (optional)
+     * @param int $range - LIMIT $start $range (optional)
+     * @return array
+     */
+    public function userListFull($id_array = array(), $start = 0, $range = 0)
+    {
+        require_once(LIBS . 'UserInfo.php');
+        $userInfo = new UserInfo();
+        return $userInfo->userListFull($this, $id_array, $start, $range);
+    }
+    
+    
+    /**
+     * Get settings for all users
+     *
+     * @param int $userid - optional user id 
+     * @return array
+     */
+    public function userSettingsList($userid = 0)
+    {
+        require_once(LIBS . 'UserInfo.php');
+        $userInfo = new UserInfo();
+        return $userInfo->userSettingsList($this, $userid);
+    }
 
     
  /* *************************************************************

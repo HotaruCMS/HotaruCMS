@@ -154,6 +154,7 @@ class UserInfo extends UserBase
     /**
      * Get the ids and names of all users or those with a specified role, sorted alphabetically
      *
+     * @param string $role - optional user role to filter to
      * @return array
      */
     public function userIdNameList($h, $role = '')
@@ -192,6 +193,9 @@ class UserInfo extends UserBase
     /**
      * Get full details of all users or batches of users, sorted alphabetically
      *
+     * @param array $id_array - optional array of user ids
+     * @param int $start - LIMIT $start $range (optional)
+     * @param int $range - LIMIT $start $range (optional)
      * @return array
      */
     public function userListFull($h, $id_array = array(), $start = 0, $range = 0)
