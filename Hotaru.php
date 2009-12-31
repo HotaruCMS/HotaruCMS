@@ -1602,5 +1602,26 @@ class Hotaru
     {
         return $this->comment->countComments($this, $link);
     }
+    
+    
+/* *************************************************************
+ *
+ *  WIDGET FUNCTIONS
+ *
+ * *********************************************************** */
+
+    /**
+     * Add widget
+     *
+     * @param string $plugin
+     * @param string $function
+     * @param string $value
+     */
+    public function addWidget($plugin = '', $function = '', $args = '')
+    {
+        require_once(LIBS . 'Widget.php');
+        $widget = new Widget();
+        $widget->addWidget($this, $plugin, $function, $args);
+    }
 }
 ?>

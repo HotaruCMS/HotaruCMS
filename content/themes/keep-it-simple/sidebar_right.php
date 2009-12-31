@@ -29,7 +29,7 @@
 
 ?>
 
-    <?php $h->pluginHook('sidebar', true, '', array(2)); ?>
+    <?php $h->pluginHook('widget_block', '', array(2)); ?>
 	
 
 
