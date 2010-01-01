@@ -179,7 +179,7 @@ class SubmitFunctions
                     /* if submitting an editorial, the "self" used instead of a url got changed to the 
                        real url after the addPost function. BUT! When editing, we load the previously saved 
                        temp data, which wipes that url! So, we get it again with its post id */ 
-                    if (!$h->vars['submitted_data']['submit_orig_url']) {
+                    if ($post_id && !$h->vars['submitted_data']['submit_orig_url']) {
                         $h->vars['submitted_data']['submit_orig_url'] = $h->url(array('page'=>$post_id));
                     }
                 }
@@ -578,13 +578,17 @@ class SubmitFunctions
         $submitted_data = $this->loadSubmitData($h, $key);
         $editorial = $submitted_data['submit_editorial'];
         
-        if ($editorial && ($h->post->id != 0)) {
+        /*  MOST PROBLEMS ARE CAUSED BY THESE LINES: BE VERY CAREFUL HERE BECAUSE WHAT MIGHT 
+            WORK FOR POST SUBMISSION COULD SCREW UP EDIT POST OR WHAT MIGHT WORK FOR EDITORIALS 
+            MIGHT SCREW UP NON-EDITORIALS AND VICE-VERSA. THE FOLLOWING WORKS FOR ALL (I think) */
+        if ($editorial) {
             $h->post->origUrl = "self";
         }
         
         if ($submitted_data['submit_orig_url']) {
             $h->post->origUrl = $submitted_data['submit_orig_url'];
         }
+        /* MOST PROBLEMS ARE CAUSED BY THE ABOVE LINES: */
         
         if ($h->post->origUrl == "self") {
             $h->post->domain = get_domain(urldecode(BASEURL)); // returns domain including http:// 
