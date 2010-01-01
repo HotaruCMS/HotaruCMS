@@ -77,7 +77,13 @@
         $alt++;
         echo "<tr class='table_tr table_row_" . $alt % 2 . "'>\n";
         echo "<td class='table_active'>" . $plug['active'] . "</td>\n";
-        echo "<td class='table_installed_plugin'>" . $plug['name'] . " " . $plug['version'] . "</td>\n";
+        echo "<td class='table_installed_plugin'>";
+        if ($plug['settings']) {
+            echo "<a href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $plug['folder'] . "' title='" . $h->lang["admin_theme_plugins_settings"] . "'>";
+            echo $plug['name'] . " " . $plug['version'] . "</a></td>\n";
+        } else {
+            echo $plug['name'] . " " . $plug['version'] . "</td>\n";
+        }
         echo "<td class='table_order'>" . $plug['order_output'] . "</td>\n";
         echo "<td class='table_uninstall'>\n";
         echo "<a class='table_drop_down' href='#'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/info_16.png'></a>\n";
@@ -90,10 +96,15 @@
             $requires .= $key . " " . $value . ", ";
         }
         if ($requires != "") { echo $h->lang["admin_theme_plugins_requires"] . " " . rstrtrim($requires, ", "); } else { echo $h->lang["admin_theme_plugins_no_plugins"]; }
-        if ($plug['author']) { echo "<br />" . $h->lang["admin_theme_plugins_author"] . ": \n"; }
-        if ($plug['authorurl']) { echo "<a href='" . $plug['authorurl'] . "' title='" . $plug['authorurl'] . "'>"; }
-        if ($plug['author']) { echo $plug['author']; }
-        if ($plug['authorurl']) { echo "</a>\n"; }
+        if (isset($plug['author'])) { echo "<br />" . $h->lang["admin_theme_plugins_author"] . ": \n"; }
+        if (isset($plug['authorurl'])) { echo "<a href='" . $plug['authorurl'] . "' title='" . $plug['authorurl'] . "'>"; }
+        if (isset($plug['author'])) { echo $plug['author']; }
+        if (isset($plug['authorurl'])) { echo "</a>\n"; }
+        if (file_exists(PLUGINS . $plug['folder'] . "/readme.txt")) {
+            echo "<br />" . $h->lang["admin_theme_plugins_more_info"];
+            echo ": <a href='" . BASEURL . "content/plugins/" . $plug['folder'] . "/readme.txt' title='" . $h->lang["admin_theme_plugins_readme"] . "'>";
+            echo $h->lang["admin_theme_plugins_readmetxt"] . "</a>";
+        }
         echo "</td>";
         echo "<td class='table_description_close'><a class='table_hide_details' href='#'>";
         echo $h->lang["admin_theme_plugins_close"] . "</a></td></tr>\n";
@@ -169,10 +180,15 @@
         echo "</tr>\n";
         echo "<tr class='table_tr_details' style='display:none;'><td class='table_description'>\n";
         echo $plug['description'];
-        if ($plug['author']) { echo "<br />" . $h->lang["admin_theme_plugins_author"] . ": \n"; }
-        if ($plug['authorurl']) { echo "<a href='" . $plug['authorurl'] . "' title='" . $plug['authorurl'] . "'>"; }
-        if ($plug['author']) { echo $plug['author']; }
-        if ($plug['authorurl']) { echo "</a>\n"; }
+        if (isset($plug['author'])) { echo "<br />" . $h->lang["admin_theme_plugins_author"] . ": \n"; }
+        if (isset($plug['authorurl'])) { echo "<a href='" . $plug['authorurl'] . "' title='" . $plug['authorurl'] . "'>"; }
+        if (isset($plug['author'])) { echo $plug['author']; }
+        if (isset($plug['authorurl'])) { echo "</a>\n"; }
+        if (file_exists(PLUGINS . $plug['folder'] . "/readme.txt")) {
+            echo "<br />" . $h->lang["admin_theme_plugins_more_info"];
+            echo ": <a href='" . BASEURL . "content/plugins/" . $plug['folder'] . "/readme.txt' title='" . $h->lang["admin_theme_plugins_readme"] . "'>";
+            echo $h->lang["admin_theme_plugins_readmetxt"] . "</a>";
+        }
         echo "</td>\n";
         echo "<td class='table_description_close'><a class='table_hide_details' href='#'>";
         echo $h->lang["admin_theme_plugins_close"] . "</a></td></tr>\n";

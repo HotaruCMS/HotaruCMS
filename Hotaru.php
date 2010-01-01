@@ -772,6 +772,20 @@ class Hotaru
         return $pluginFunctions->isActive($this, $type);
     }
     
+    
+    /**
+     * Determines if a plugin has a settings page or not
+     *
+     * @param object $h
+     * @param string $folder plugin folder name (optional)
+     * @return bool
+     */
+    public function hasSettings($folder = '')
+    {
+        $pluginFunctions = new PluginFunctions();
+        return $pluginFunctions->hasSettings($this, $folder);
+    }
+    
  
  /* *************************************************************
  *

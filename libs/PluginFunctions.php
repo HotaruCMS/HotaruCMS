@@ -269,5 +269,32 @@ class PluginFunctions
         
         if ($status) { return true; } else { return false; }
     }
+    
+    
+    /**
+     * Determines if a plugin has a settings page or not
+     *
+     * @param object $h
+     * @param string $folder plugin folder name (optional)
+     * @return bool
+     */
+    public function hasSettings($h, $folder = '')
+    {
+        if (!$folder) { $folder = $h->plugin->folder; }
+        
+        if (!isset($h->vars['all_plugin_hooks'])) {
+            $sql = "SELECT plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS;
+            $h->vars['all_plugin_hooks'] = $h->db->get_results($h->db->prepare($sql));
+        } 
+
+        foreach ($h->vars['all_plugin_hooks'] as $item => $key) {
+        if (($key->plugin_folder == $folder) 
+            && $key->plugin_hook == 'admin_plugin_settings') {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 }
 ?>

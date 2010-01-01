@@ -107,6 +107,10 @@ $lang["admin_theme_plugins_guide4"] = "Any other database entries created by the
 $lang["admin_theme_plugins_deactivate_all"] = "Turn OFF all plugins";
 $lang["admin_theme_plugins_activate_all"] = "Turn ON (upgrade) all plugins";
 $lang["admin_theme_plugins_uninstall_all"] = "Uninstall all plugins";
+$lang["admin_theme_plugins_settings"] = "Settings";
+$lang["admin_theme_plugins_readme"] = "Read Me";
+$lang["admin_theme_plugins_more_info"] = "More Info";
+$lang["admin_theme_plugins_readmetxt"] = "readme.txt";
 
 /* Settings */
 $lang['admin_settings_update_success'] = "Updated successfully.";

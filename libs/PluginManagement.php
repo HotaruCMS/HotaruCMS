@@ -66,6 +66,7 @@ class PluginManagement
                     $allplugins[$count]['version'] = $plugin_row->plugin_version;
                     $allplugins[$count]['install'] = "installed";
                     $allplugins[$count]['location'] = "database";
+                    $allplugins[$count]['settings'] = $h->hasSettings($allplugins[$count]['folder']); // true or false
                     $allplugins[$count]['order'] = $plugin_row->plugin_order;
                 } 
                 else 
