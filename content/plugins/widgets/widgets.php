@@ -69,6 +69,7 @@ class Widgets
                 /*  include the plugin class if not already. This is usually done in the pluginHook
                     function, but if no other functions are used, we need to include it here: */
                 require_once(PLUGINS . $details['plugin'] . "/" . $details['plugin'] . ".php");
+                $h->includeLanguage($details['plugin']);  // same for language
                 
                 if ($details['class'] && method_exists($details['class'], $function_name)) 
                 {   
