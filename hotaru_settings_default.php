@@ -64,6 +64,7 @@ define("TABLE_PLUGINHOOKS", DB_PREFIX . "pluginhooks");
 define("TABLE_PLUGINSETTINGS", DB_PREFIX . "pluginsettings");
 define("TABLE_POSTS", DB_PREFIX . 'posts');
 define("TABLE_POSTMETA", DB_PREFIX . 'postmeta');
+define("TABLE_POSTVOTES", DB_PREFIX . 'postvotes');
 define("TABLE_SETTINGS", DB_PREFIX . "settings");
 define("TABLE_TAGS", DB_PREFIX . 'tags');
 define("TABLE_TEMPDATA", DB_PREFIX . 'tempdata');

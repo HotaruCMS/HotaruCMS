@@ -66,6 +66,10 @@ class Widgets
             // Only show widgets intended for this block
             if (($details['block'] == $block_id) && $details['enabled'])
             {
+                /*  include the plugin class if not already. This is usually done in the pluginHook
+                    function, but if no other functions are used, we need to include it here: */
+                require_once(PLUGINS . $details['plugin'] . "/" . $details['plugin'] . ".php");
+                
                 if ($details['class'] && method_exists($details['class'], $function_name)) 
                 {   
                     // must be a class object with a method that matches!
@@ -129,7 +133,7 @@ class Widgets
                             
                                 $widgets_settings['widgets'][$widget]['order'] = $details['order'] + 1;
                                 $widgets_settings['widgets'][$this_widget_function]['order'] = $this_widget_order - 1;
-                                $h->messages[$h->lang['widgetsblock_order_updated']] = 'green';
+                                $h->messages[$h->lang['widgets_order_updated']] = 'green';
                                 break;
                             } else {
                                 // In different blocks so don't change the order, just the block value
