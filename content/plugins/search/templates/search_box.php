@@ -28,8 +28,8 @@ if ($h->currentUser->getPermission('can_search') == 'yes') { $disabled = ''; } e
 if ($h->cage->get->keyExists('search')) { $current_search = $h->vars['orig_search']; } else { $current_search = $h->lang['search_text']; }
 ?>
 
-<!-- <h2 class="sidebar_widget_head"><?php echo $h->lang['search_title']; ?></h2> -->
-<div class="sidebar_widget_body search_box">
+<!-- <h2 class="widget_head"><?php echo $h->lang['search_title']; ?></h2> -->
+<div class="widget_body search_box">
     <form name='search_form' id='search_form' action='<?php echo BASEURL; ?>index.php?page=search' method='get'> 
         <input id="search_input" type="text" value="<?php echo $current_search;  ?>" name="search" 
             onfocus="if (this.value == '<?php echo $h->lang['search_text']; ?>') {this.value = '';}"

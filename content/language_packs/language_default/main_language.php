@@ -35,6 +35,7 @@ $lang['main_form_edit'] = "Edit";
 
 /* Settings */
 $lang["main_settings_saved"] = "Settings Saved.";
+$lang["main_settings_not_saved"] = "Error! Settings not saved";
 
 /* Users */
 $lang['main_userbase_cookie_error'] = "Error setting cookie. Username not provided.";

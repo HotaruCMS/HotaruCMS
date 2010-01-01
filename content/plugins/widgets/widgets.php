@@ -105,7 +105,7 @@ class Widgets
         if ($h->cage->get->testAlpha('action')) {
         
             // Get widget settings from the database...
-            $widget_settings = $h->getSerializedSettings('widgets'); 
+            $widgets_settings = $h->getSerializedSettings('widgets'); 
             
             // Get the list of widgets...
             $widgets = $h->vars['widgets']->getArrayWidgets($h);
@@ -125,23 +125,23 @@ class Widgets
                         if ($details['order'] == ($this_widget_order - 1)) {
                         
                             //Check if this widget and the target are in the same block
-                            if ($widget_settings['widgets'][$widget]['block'] == $widget_settings['widgets'][$this_widget_function]['block']) {
+                            if ($widgets_settings['widgets'][$widget]['block'] == $widgets_settings['widgets'][$this_widget_function]['block']) {
                             
-                                $widget_settings['widgets'][$widget]['order'] = $details['order'] + 1;
-                                $widget_settings['widgets'][$this_widget_function]['order'] = $this_widget_order - 1;
+                                $widgets_settings['widgets'][$widget]['order'] = $details['order'] + 1;
+                                $widgets_settings['widgets'][$this_widget_function]['order'] = $this_widget_order - 1;
                                 $h->messages[$h->lang['widgetsblock_order_updated']] = 'green';
                                 break;
                             } else {
                                 // In different blocks so don't change the order, just the block value
-                                $widget_settings['widgets'][$this_widget_function]['block']--;
+                                $widgets_settings['widgets'][$this_widget_function]['block']--;
                             }
                         }
                     }
                             
                 } else {
                     // prevent moving into block 0:
-                    if (($h->vars['widgets']->getLastWidgetBlock($widgets) > 1) && ($widget_settings['widgets'][$this_widget_function]['block'] > 1)) {
-                        $widget_settings['widgets'][$this_widget_function]['block']--;
+                    if (($h->vars['widgets']->getLastWidgetBlock($widgets) > 1) && ($widgets_settings['widgets'][$this_widget_function]['block'] > 1)) {
+                        $widgets_settings['widgets'][$this_widget_function]['block']--;
                     } else {
                         $h->messages[$h->lang['widgets_order_already_first']] = 'red';
                     }
@@ -152,14 +152,14 @@ class Widgets
                     // find widget in the target spot...
                     foreach ($widgets as $widget => $details) {
                         if ($details['order'] == ($this_widget_order + 1)) {
-                            $widget_settings['widgets'][$widget]['order'] = $details['order'] - 1;
-                            $widget_settings['widgets'][$this_widget_function]['order'] = $this_widget_order + 1;
+                            $widgets_settings['widgets'][$widget]['order'] = $details['order'] - 1;
+                            $widgets_settings['widgets'][$this_widget_function]['order'] = $this_widget_order + 1;
                             $h->messages[$h->lang['widgets_order_updated']] = 'green';
                             break;
                         }
                     }
                 } else {
-                    $widget_settings['widgets'][$this_widget_function]['block']++;
+                    $widgets_settings['widgets'][$this_widget_function]['block']++;
                     //$h->messages[$h->lang['widgets_order_already_last']] = 'red';
                 }        
             } 
@@ -167,7 +167,7 @@ class Widgets
             {
                 // enable a widget
                 if ($h->isActive($this_widget_name)) {
-                    $widget_settings['widgets'][$this_widget_function]['enabled'] = true;
+                    $widgets_settings['widgets'][$this_widget_function]['enabled'] = true;
                     $h->messages[$h->lang['widgets_order_enabled']] = 'green';
                 } else {
                     // don't enable it if the plugin is inactive
@@ -176,12 +176,12 @@ class Widgets
             } 
             elseif ($h->cage->get->testAlpha('action') == 'disable') 
             {
-                $widget_settings['widgets'][$this_widget_function]['enabled'] = false;
+                $widgets_settings['widgets'][$this_widget_function]['enabled'] = false;
                 $h->messages[$h->lang['widgets_order_disabled']] = 'green';
             }
             
-            // Save updated sidebar settings
-            $h->updateSetting('widgets_settings', serialize($widget_settings));
+            // Save updated widgets settings
+            $h->updateSetting('widgets_settings', serialize($widgets_settings));
             
         }
         

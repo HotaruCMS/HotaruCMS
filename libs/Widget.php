@@ -32,7 +32,7 @@ class Widget
     public function initializeWidgets($h)
     {
         // Get settings from the database if they exist...
-        $widget_settings = $h->getSerializedSettings('widgets'); 
+        $widgets_settings = $h->getSerializedSettings('widgets'); 
             
         $widgets = $this->getWidgets($h);
         
@@ -41,34 +41,34 @@ class Widget
             foreach ($widgets as $widget) {
             
                 // Assign order number if not already assigned one.
-                if (!isset($widget_settings['widgets'][$widget->widget_function]['order'])) {
-                    $widget_settings['widgets'][$widget->widget_function]['order'] = $count;
+                if (!isset($widgets_settings['widgets'][$widget->widget_function]['order'])) {
+                    $widgets_settings['widgets'][$widget->widget_function]['order'] = $count;
                 }
                 
                 // Assign widget number if not already assigned one.
-                if (!isset($widget_settings['widgets'][$widget->widget_function]['block'])) {
-                    $widget_settings['widgets'][$widget->widget_function]['block'] = 1;
+                if (!isset($widgets_settings['widgets'][$widget->widget_function]['block'])) {
+                    $widgets_settings['widgets'][$widget->widget_function]['block'] = 1;
                 }
                 
                 // Enable the widget if enabled status is not currently set...
-                if (!isset($widget_settings['widgets'][$widget->widget_function]['enabled'])) {
-                    $widget_settings['widgets'][$widget->widget_function]['enabled'] = true;
+                if (!isset($widgets_settings['widgets'][$widget->widget_function]['enabled'])) {
+                    $widgets_settings['widgets'][$widget->widget_function]['enabled'] = true;
                 }
                 
                 // But! Disable it if the plugin for that widget is not currently active.
                 if (!$h->isActive($widget->widget_plugin) ) {
-                    $widget_settings['widgets'][$widget->widget_function]['enabled'] = false;
+                    $widgets_settings['widgets'][$widget->widget_function]['enabled'] = false;
                 }
 
                 // Add plugin name, function suffix and arguments to widget_settings:
-                $widget_settings['widgets'][$widget->widget_function]['plugin'] = $widget->widget_plugin;
-                $widget_settings['widgets'][$widget->widget_function]['class'] = $h->getPluginClass($widget->widget_plugin);
-                $widget_settings['widgets'][$widget->widget_function]['function'] = $widget->widget_function;
-                $widget_settings['widgets'][$widget->widget_function]['args'] = $widget->widget_args;
+                $widgets_settings['widgets'][$widget->widget_function]['plugin'] = $widget->widget_plugin;
+                $widgets_settings['widgets'][$widget->widget_function]['class'] = $h->getPluginClass($widget->widget_plugin);
+                $widgets_settings['widgets'][$widget->widget_function]['function'] = $widget->widget_function;
+                $widgets_settings['widgets'][$widget->widget_function]['args'] = $widget->widget_args;
 
                 $count++;
             }
-            $h->updateSetting('widget_settings', serialize($widget_settings), 'widgets');
+            $h->updateSetting('widgets_settings', serialize($widgets_settings), 'widgets');
         }
     }
 
@@ -108,13 +108,13 @@ class Widget
         
         // Get settings from the database if they exist...
         $sql = "SELECT * FROM " . DB_PREFIX . 'widgets';
-        $widget_settings = $h->db->get_results($h->db->prepare($sql));
-        return $widget_settings;
+        $widgets_settings = $h->db->get_results($h->db->prepare($sql));
+        return $widgets_settings;
     }
     
 
     /**
-     * Get widgets from widget_settings array
+     * Get widgets from widgets_settings array
      *
      * USAGE: foreach ($widgets as $widget=>$details) 
      * { echo "Name: " . $widget; echo $details['order']; echo $details['args']; } 
@@ -124,10 +124,10 @@ class Widget
     public function getArrayWidgets($h)
     {
         // Get settings from the database if they exist...
-        $widget_settings = $h->getSerializedSettings('widgets'); 
+        $widgets_settings = $h->getSerializedSettings('widgets'); 
         
-        if ($widget_settings['widgets']) {
-            $widgets = $widget_settings['widgets'];    // associative array
+        if ($widgets_settings['widgets']) {
+            $widgets = $widgets_settings['widgets'];    // associative array
                     
             $widgets = $this->orderWidgets($widgets);    // sorts plugins by "order"
     
