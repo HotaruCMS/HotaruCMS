@@ -68,7 +68,7 @@ $user->getUserBasic($h, $h->post->author);
     <?php if ($h->vars['use_content']) { ?>
         <div class="show_post_content">
             <?php echo nl2br($h->post->content); ?>
-            <?php $h->pluginHook('sb_base_show_post_content'); ?>
+            <?php $h->pluginHook('sb_base_show_post_content_post'); ?>
         </div>
     <?php } ?>
     

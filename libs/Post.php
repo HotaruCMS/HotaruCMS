@@ -41,6 +41,7 @@ class Post
     protected $subscribe        = 0;            // is the post author subscribed to comments?
     protected $comments         ='open';        // is the comment form open or closed?
 
+    public $vars                = array();      // for additional fields
 
     /**
      * Access modifier to set protected properties
