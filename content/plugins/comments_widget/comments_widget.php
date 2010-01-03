@@ -170,8 +170,6 @@ class CommentsWidget
             $output .= "</li>\n\n";
         }
         
-        unset($h->vars['gravatar_size']);  // returns us to teh default size
-        
         if ($need_cache) {
             $h->smartCache('html', 'comments', 10, $output); // make or rewrite the cache file
         }

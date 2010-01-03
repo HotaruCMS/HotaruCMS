@@ -70,6 +70,7 @@ define("TABLE_TAGS", DB_PREFIX . 'tags');
 define("TABLE_TEMPDATA", DB_PREFIX . 'tempdata');
 define("TABLE_USERS", DB_PREFIX . "users");
 define("TABLE_USERMETA", DB_PREFIX . "usermeta");
+define("TABLE_USERACTIVITY", DB_PREFIX . "useractivity");
 define("TABLE_WIDGETS", DB_PREFIX . 'widgets');
 
 ?>

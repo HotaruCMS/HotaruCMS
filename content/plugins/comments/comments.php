@@ -230,7 +230,7 @@ class Comments
                         if ($can_edit == 'yes') { $safe = true; }
                         if (($can_edit == 'own') && ($h->currentUser->id == $h->comment->author)) { $safe = true; }
                         if ($safe) {
-                            $h->comment->editComment();
+                            $h->comment->editComment($h);
                         }
                     }
                    

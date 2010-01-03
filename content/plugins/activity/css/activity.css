@@ -1,0 +1,7 @@
+/* **************************************
+ *        ACTIVITY PLUGIN CSS       *
+ ************************************** */
+
+.activity_widget_item { margin: 0.3em 0 0.3em 0; }
+.activity_widget_avatar { display: inline; padding: 0.2em; }
+.activity_widget_content { display: inline; }

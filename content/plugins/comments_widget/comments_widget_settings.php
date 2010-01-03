@@ -81,7 +81,7 @@ class CommentsWidgetSettings
         echo "<br /><br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
         echo "<input type='submit' value='" . $h->lang["main_form_save"] . "' />\n";
-        echo "<input type='hidden' name='token' value='" . $h->token . "' />\n";
+        echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }
     
