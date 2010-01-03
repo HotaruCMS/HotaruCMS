@@ -51,7 +51,7 @@ class AdminPages
             case "maintenance":
                 $this->maintenanceAction($h);
                 $h->vars['admin_plugin_settings'] = $this->listPluginSettings($h);
-                $h->vars['admin_plugin_tables'] = $this->listPluginTables($h);
+                $h->vars['admin_plugin_tables'] = $this->listDbTables($h);
                 break;
             case "blocked_list":
                 $h->vars['admin_blocked_list'] = $this->blocked($h);
@@ -246,39 +246,33 @@ class AdminPages
     
     
     /**
-     * List all plugin created tables
+     * List all created tables
      */
-    public function listPluginTables($h)
+    public function listDbTables($h)
     {
-        // These should match the tables created in the install script.
+        $db_tables = array();
+        
         $core_tables = array(
             'hotaru_settings',
-            'hotaru_miscdata',
             'hotaru_users',
-            'hotaru_plugins',
-            'hotaru_pluginsettings',
-            'hotaru_pluginhooks',
-            'hotaru_blocked',
-            'hotaru_tokens'
+            'hotaru_usermeta',
         );
-        
-        $plugin_tables = array();
             
         $h->db->select(DB_NAME);
         
-        if (!$h->db->get_col("SHOW TABLES",0)) { return $plugin_tables; }
+        if (!$h->db->get_col("SHOW TABLES",0)) { return $db_tables; }
         
         foreach ( $h->db->get_col("SHOW TABLES",0) as $table_name )
         {
             if (!in_array($table_name, $core_tables)) {
-                array_push($plugin_tables, $table_name);
+                array_push($db_tables, $table_name);
             }
         }
         
-        return $plugin_tables;
+        return $db_tables;
     }
     
-    
+  
  /* *************************************************************
  *
  *  BLOCKED PAGE

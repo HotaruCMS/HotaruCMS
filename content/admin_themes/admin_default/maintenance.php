@@ -27,7 +27,7 @@
  */
 
 $plugin_settings = $h->vars['admin_plugin_settings'];
-$plugin_tables = $h->vars['admin_plugin_tables'];
+$db_tables = $h->vars['admin_plugin_tables'];
 ?>
     
 <h2><?php echo $h->lang["admin_theme_maintenance_title"]; ?></h2>
@@ -61,10 +61,10 @@ $plugin_tables = $h->vars['admin_plugin_tables'];
 </ul>
 
 <br />
-<h2><?php echo $h->lang["admin_theme_maintenance_database"]; ?></h2>
+<h2><?php echo $h->lang["admin_theme_maintenance_optimize"]; ?></h2>
 <ul>
     <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=optimize">
-        <?php echo $h->lang["admin_theme_maintenance_optimize"]; ?></a> - <?php echo $h->lang["admin_theme_maintenance_optimize_desc"]; ?></li>
+        <?php echo $h->lang["admin_theme_maintenance_optimize_database"]; ?></a> - <?php echo $h->lang["admin_theme_maintenance_optimize_desc"]; ?></li>
     <?php $h->pluginHook('admin_maintenance_database'); ?>
 </ul>
 
@@ -83,31 +83,17 @@ $plugin_tables = $h->vars['admin_plugin_tables'];
 </ul>
 
 <br />
-<h2><?php echo $h->lang["admin_theme_maintenance_plugin_tables"]; ?></h2>
-<?php echo $h->lang["admin_theme_maintenance_plugin_table_explanation"]; ?><br /><br />
-<span style='color: red;'><?php echo $h->lang["admin_theme_maintenance_plugin_table_warning"]; ?></span><br /><br />
-<span style='color: red;'><?php echo $h->lang["admin_theme_maintenance_plugin_table_warning2"]; ?></span><br /><br />
+<h2><?php echo $h->lang["admin_theme_maintenance_db_tables"]; ?></h2>
+<span style='color: red;'><?php echo $h->lang["admin_theme_maintenance_db_table_warning"]; ?></span><br /><br />
 <?php echo $h->lang["admin_theme_maintenance_empty_explanation"]; ?><br /><br />
 <ul>
-<?php if($plugin_tables) { ?>
-    <?php foreach ($plugin_tables as $table) { ?>
+<?php if($db_tables) { ?>
+    <?php foreach ($db_tables as $table) { ?>
     <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=empty&amp;table=<?php echo $table; ?>">
         <?php echo $h->lang["admin_theme_maintenance_empty"] . " " . $table; ?> </a></li>
     <?php } ?>
 <?php } else { ?>
-    <i><?php echo $h->lang["admin_theme_maintenance_no_plugin_tables_to_empty"]; ?></i>
-<?php } ?>
-</ul>
-<br />
-<?php echo $h->lang["admin_theme_maintenance_drop_explanation"]; ?><br /><br />
-<ul>
-<?php if($plugin_tables) { ?>
-    <?php foreach ($plugin_tables as $table) { ?>
-    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=drop&amp;table=<?php echo $table; ?>">
-        <?php echo $h->lang["admin_theme_maintenance_drop"] . " " . $table; ?> </a></li>
-    <?php } ?>
-<?php } else { ?>
-    <i><?php echo $h->lang["admin_theme_maintenance_no_plugin_tables_to_drop"]; ?></i>
+    <i><?php echo $h->lang["admin_theme_maintenance_no_db_tables_to_empty"]; ?></i>
 <?php } ?>
 </ul>
     

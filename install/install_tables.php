@@ -109,7 +109,25 @@ function create_table($table_name)
     }
     
     
-
+    // COMMENT VOTES TABLE - comment votes
+    
+    if ($table_name == "commentvotes") {
+        //echo "table doesn't exist. Stopping before creation."; exit;
+        $sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
+              `cvote_archived` enum('Y','N') NOT NULL DEFAULT 'N',
+              `cvote_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+              `cvote_post_id` int(11) NOT NULL DEFAULT '0',
+              `cvote_comment_id` int(11) NOT NULL DEFAULT '0',
+              `cvote_user_id` int(11) NOT NULL DEFAULT '0',
+              `cvote_user_ip` varchar(32) NOT NULL DEFAULT '0',
+              `cvote_date` timestamp NOT NULL,
+              `cvote_rating` enum('positive','negative','alert') NULL,
+              `cvote_reason` tinyint(3) NOT NULL DEFAULT 0,
+              `cvote_updateby` int(20) NOT NULL DEFAULT 0
+            ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Comment Votes';";
+        echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+        $db->query($sql); 
+    }
     
     
     // MISCDATA TABLE - for storing default permissions, etc.

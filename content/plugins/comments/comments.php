@@ -516,7 +516,7 @@ class Comments
         
         if ($h->cage->get->keyExists('user')) {
             $user = $h->cage->get->testUsername('user');
-            $userid = $h->currentUser->getUserIdFromName($user);
+            $userid = $h->getUserIdFromName($user);
         } else {
             $userid = 0;
         }
@@ -652,7 +652,7 @@ class Comments
      */
     public function profile_usage($h)
     {
-        echo "<a id='profile_see_comments' href='" . $h->url(array('page'=>'comments', 'user'=>$h->user->name)) . "'>";
+        echo "<a id='profile_see_comments' href='" . $h->url(array('page'=>'comments', 'user'=>$h->vars['user']->name)) . "'>";
         echo $h->lang['comments_profile_see_comments'] . ".";
         echo "</a>";
         

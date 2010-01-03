@@ -216,8 +216,8 @@ function database_creation()
         drop_table($pt); // table name
     }
     
-    //create tables  - these should match the list in the listPluginTables function in libs/Admin.php
-    $tables = array('blocked', 'categories', 'comments', 'miscdata', 'plugins', 'pluginhooks', 'pluginsettings', 'posts', 'postmeta', 'postvotes', 'settings', 'tags', 'tempdata', 'tokens', 'users', 'usermeta', 'useractivity', 'widgets');
+    //create tables
+    $tables = array('blocked', 'categories', 'comments', 'commentvotes', 'miscdata', 'plugins', 'pluginhooks', 'pluginsettings', 'posts', 'postmeta', 'postvotes', 'settings', 'tags', 'tempdata', 'tokens', 'users', 'usermeta', 'useractivity', 'widgets');
     foreach ($tables as $table_name) {
         create_table($table_name);
     } 
