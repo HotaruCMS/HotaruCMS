@@ -6,6 +6,8 @@
  * folder: pligg_importer
  * class: PliggImporter
  * hooks: admin_plugin_settings, admin_sidebar_plugin_settings, admin_header_include
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *

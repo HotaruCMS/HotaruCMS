@@ -1172,14 +1172,28 @@ class Hotaru
     /**
      * Remove plugin settings
      *
-     * @param string $plugin_name - settings to remove
-     * @param string $msg - show "removed" message or not
+     * @param string $folder - plugin folder name
+     * @param bool $msg - show "Removed" message or not
      */
-    public function removeSettings($plugin_name, $msg = true)
+    public function removeSettings($folder, $msg = true)
     {
         require_once(LIBS . 'Maintenance.php');
         $maintenance = new Maintenance();
-        $maintenance->removeSettings($this, $plugin_name, $msg);
+        $maintenance->removeSettings($this, $folder, $msg);
+    }
+    
+    
+    /**
+     * Deletes rows from pluginsettings that match a given setting or plugin
+     *
+     * @param string $setting name of the setting to remove
+     * @param string $folder name of plugin folder
+     */
+    public function deleteSettings($setting = '', $folder = '')
+    {
+        require_once(LIBS . 'Maintenance.php');
+        $maintenance = new Maintenance();
+        $maintenance->deleteSettings($this, $setting, $folder);
     }
     
     
@@ -1637,6 +1651,19 @@ class Hotaru
         require_once(LIBS . 'Widget.php');
         $widget = new Widget();
         $widget->addWidget($this, $plugin, $function, $args);
+    }
+    
+    
+    /**
+     * Delete a widget from the widget db table
+     *
+     * @param string $function 
+     */
+    public function deleteWidget($function)
+    {
+        require_once(LIBS . 'Widget.php');
+        $widget = new Widget();
+        $widget->deleteWidget($this, $function);
     }
 }
 ?>

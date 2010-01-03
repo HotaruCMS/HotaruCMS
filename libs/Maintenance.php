@@ -46,6 +46,48 @@ class Maintenance
 
 
     /**
+     * Remove plugin settings
+     *
+     * @param string $folder - plugin folder name
+     * @param bool $msg - show "Removed" message or not
+     */
+    public function removeSettings($h, $folder, $msg = true)
+    {
+        if (!$folder) { $folder = $h->plugin->folder; }
+        $sql = "DELETE FROM " . DB_PREFIX . "pluginsettings WHERE plugin_folder = %s";
+        $h->db->get_results($h->db->prepare($sql, $folder));
+    
+        if ($msg) {
+            $h->message = $h->lang['admin_maintenance_settings_removed'];
+            $h->messageType = 'green';
+        }
+    }
+    
+    
+    /**
+     * Deletes rows from pluginsettings that match a given setting or plugin
+     *
+     * @param string $setting name of the setting to remove
+     * @param string $folder name of plugin folder
+     */
+    public function deleteSettings($h, $setting = '', $folder = '')
+    {
+        if ($setting) {
+            $sql = "DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_setting = %s";
+            $h->db->query($h->db->prepare($sql, $setting));
+        } 
+        elseif ($folder) 
+        {
+            $sql = "DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_folder = %s";
+            $h->db->query($h->db->prepare($sql, $folder));
+        }
+        
+        // optimize the table
+        $h->db->query("OPTIMIZE TABLE " . TABLE_PLUGINSETTINGS);
+    }
+    
+    
+    /**
      * Delete all files in the specified directory except placeholder.txt
      *
      * @param string $dir - path to the cache folder
@@ -115,23 +157,6 @@ class Maintenance
         
         if ($msg) {
             $h->message = $h->lang['admin_maintenance_table_deleted'];
-            $h->messageType = 'green';
-        }
-    }
-    
-    
-    /**
-     * Remove plugin settings
-     *
-     * @param string $plugin_name - settings to remove
-     */
-    public function removeSettings($h, $plugin_name, $msg = true)
-    {
-        $sql = "DELETE FROM " . DB_PREFIX . "pluginsettings WHERE plugin_folder = %s";
-        $h->db->get_results($h->db->prepare($sql, $plugin_name));
-    
-        if ($msg) {
-            $h->message = $h->lang['admin_maintenance_settings_removed'];
             $h->messageType = 'green';
         }
     }
