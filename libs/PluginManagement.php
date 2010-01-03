@@ -587,7 +587,7 @@ class PluginManagement
             
             // If file version is newer the the current plugin version, then upgrade...
             if (version_compare($file_version, $db_version, '>')) {
-                $this->upgrade(); // runs the install function ans hows "upgraded!" message instead of "installed".
+                $this->upgrade($h); // runs the install function ans hows "upgraded!" message instead of "installed".
             } else {
                 // else simply show an activated message...
                 $h->messages[$h->lang["admin_plugins_activated"]] = 'green'; 
