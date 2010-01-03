@@ -5,7 +5,7 @@
  * version: 0.2
  * folder: media_select
  * class: MediaSelect
- * hooks: install_plugin, post_read_post, post_add_post, post_update_post, submit_2_fields, submit_functions_process_submitted, sb_base_functions_preparelist, category_bar_end
+ * hooks: install_plugin, sb_base_theme_index_top, post_read_post, post_add_post, post_update_post, submit_2_fields, submit_functions_process_submitted, sb_base_functions_preparelist, category_bar_end
  * requires: submit 1.9
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
@@ -43,6 +43,32 @@ class MediaSelect
         $exists = $h->db->column_exists('posts', 'post_media');
         if (!$exists) {
             $h->db->query("ALTER TABLE " . TABLE_POSTS . " ADD post_media VARCHAR(20) NOT NULL DEFAULT 'news' AFTER post_updatedts");
+        } 
+    }
+    
+    
+    /**
+     * Determine if we are filtering to a media type
+     */
+    public function sb_base_theme_index_top($h)
+    {
+        if ($h->cage->get->keyExists('media')) { 
+            $h->vars['media'] = $h->cage->get->testAlpha('media');
+            
+            switch ($h->vars['media']) {
+                case 'video':
+                    $h->pageTitle = $h->lang['media_select_videos'];
+                    break;
+                case 'image':
+                    $h->pageTitle = $h->lang['media_select_images'];
+                    break;
+                default:
+                    $h->pageTitle = $h->lang['media_select_news'];
+                    break;
+            }
+            
+            $h->pageName = 'media';
+            $h->pageType = 'list';
         } 
     }
     

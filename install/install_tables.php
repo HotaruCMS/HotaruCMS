@@ -219,6 +219,8 @@ function create_table($table_name)
           `post_domain` varchar(255) NULL, 
           `post_url` varchar(255) NULL, 
           `post_content` text NULL,
+          `post_votes_up` smallint(11) NOT NULL DEFAULT '0',
+          `post_votes_down` smallint(11) NOT NULL DEFAULT '0',
           `post_tags` text NULL,
           `post_comments` enum('open', 'closed') NOT NULL DEFAULT 'open',
           `post_subscribe` tinyint(1) NOT NULL DEFAULT '0',

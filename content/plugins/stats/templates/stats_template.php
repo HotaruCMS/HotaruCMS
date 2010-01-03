@@ -54,12 +54,10 @@
     </div>
 
     <!-- Highest rated post -->
-    <?php if ($h->post->id) { ?>
-        <div id="statBlock">
-        	<?php echo $h->lang['highest_voted_post']; ?>: <span id="emphasizeStat">
-        		<a href="<?php echo $h->url(array('page'=>$h->post->id)); ?>"> <span id="emphasizeStat"><?php echo $h->post->title; ?></span></a><br />
-        </div>
-    <?php } ?>
+    <div id="statBlock">
+    	<?php echo $h->lang['highest_voted_post']; ?>: <span id="emphasizeStat">
+    		<a href="<?php echo $h->url(array('page'=>$h->post->id)); ?>"> <span id="emphasizeStat"><?php echo $h->post->title; ?></span></a><br />
+    </div>
 
 <!-- soon-to-be link to the main stats page
     <div id="statBlock" class="makeCentered">

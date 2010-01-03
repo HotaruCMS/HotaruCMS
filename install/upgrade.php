@@ -30,7 +30,7 @@
 
 require_once('../hotaru_settings.php');
 require_once(BASE . 'Hotaru.php');
-$h = new Hotaru('install'); // must come before language inclusion
+$h = new Hotaru(); // must come before language inclusion
 $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
 $old_version = $h->db->get_var($h->db->prepare($sql, "hotaru_version"));
 require_once(INSTALL . 'install_language.php');    // language file for install

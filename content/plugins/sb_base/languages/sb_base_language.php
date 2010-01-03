@@ -95,4 +95,18 @@ $lang['sb_base_users_settings_open_new_tab'] = "Open posts in a new tab?";
 $lang['sb_base_users_settings_link_action'] = "List page links open:";
 $lang['sb_base_users_settings_source'] = "Original post";
 $lang['sb_base_users_settings_post'] = SITE_NAME . " post";
+
+/* Sort & Filter */
+$lang["sb_base_sort_by"] = "Sort by:";
+$lang["sb_base_sort_recently_popular"] = "Popular";
+$lang["sb_base_sort_upcoming"] = "Upcoming";
+$lang["sb_base_sort_latest"] = "Latest";
+$lang["sb_base_sort_all"] = "All";
+$lang["sb_base_sort_best_from"] = "Best from:";
+$lang["sb_base_sort_top_1_day"] = "24 Hrs";
+$lang["sb_base_sort_top_2_days"] = "48 Hrs";
+$lang["sb_base_sort_top_7_days"] = "7 Days";
+$lang["sb_base_sort_top_30_days"] = "30 Days";
+$lang["sb_base_sort_top_365_days"] = "365 Days";
+$lang["sb_base_sort_top_all_time"] = "All Time";
 ?>

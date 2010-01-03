@@ -6,7 +6,7 @@
  * folder: sb_base
  * class: SbBase
  * type: base
- * hooks: install_plugin, theme_index_top, header_meta, header_include, navigation, breadcrumbs, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, admin_maintenance_database, admin_maintenance_top, admin_theme_main_stats, user_settings_pre_save, user_settings_fill_form, user_settings_extra_settings
+ * hooks: install_plugin, theme_index_top, header_meta, header_include, navigation, breadcrumbs, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, admin_maintenance_database, admin_maintenance_top, admin_theme_main_stats, user_settings_pre_save, user_settings_fill_form, user_settings_extra_settings, theme_index_pre_main
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -66,6 +66,11 @@ class SbBase
      */
     public function theme_index_top($h)
     {
+        // check if we're using the sort/filter links
+        if ($h->cage->get->keyExists('sort')) {
+            $h->pageName = 'sort';
+        }
+        
         switch ($h->pageName)
         {
             case 'index':
@@ -475,6 +480,191 @@ class SbBase
         echo "<td><input type='radio' name='link_action' value='source' " . $h->vars['link_action_source'] . "> " . $h->lang['sb_base_users_settings_source'] . " &nbsp;&nbsp;\n";
         echo "<input type='radio' name='link_action' value='post' " . $h->vars['link_action_post'] . "> " . $h->lang['sb_base_users_settings_post'] . "</td>\n";
         echo "</tr>\n";
+    }
+    
+    
+    /** 
+     * Add sorting options
+     */
+    public function submit_post_breadcrumbs($h)
+    {
+        if ($h->isPage('submit2')) { return false; } // don't show sorting on Submit Confirm
+        
+        // exit if this isn't a page of type list, user or profile
+        $page_type = $h->pageType;
+        if ($page_type != 'list' && $page_type != 'user' && $page_type != 'profile') { return false; }
+        
+        // go set up the links
+        $this->setUpSortLinks($h);
+        
+
+    }
+    
+    
+    /** 
+     * Prepare sort links
+     */
+    public function theme_index_pre_main($h)
+    {
+        $pagename = $h->pageName;
+
+        // check if we're looking at a category
+        if ($pagename == 'category') { 
+            $category = $h->vars['category_id'];
+        } 
+        
+        // check if we're looking at a tag
+        if ($pagename == 'tags') { 
+            $tag = $h->vars['tag'];
+        } 
+        
+        // check if we're looking at a media type
+        if ($h->cage->get->keyExists('media')) { 
+            $media = $h->cage->get->testAlnumLines('media');
+        } 
+        
+        // check if we're looking at a user
+        if ($h->pageType == 'user') { 
+            $user = $h->vars['user']->name;
+        } 
+        
+        // check if we're looking at a sorted page
+        if ($h->cage->get->keyExists('sort')) { 
+            $sort = $h->cage->get->testAlnumLines('sort');
+        } 
+        
+        // POPULAR LINK
+        if (isset($category)) { $url = $h->url(array('category'=>$category));
+         } elseif (isset($tag)) { $url = $h->url(array('tag'=>$tag));
+         } elseif (isset($media)) { $url = $h->url(array('type'=>$media));
+         } elseif (isset($user)) { $url = $h->url(array('page'=>'top', 'user'=>$user));
+         } else { $url = $h->url(array()); } 
+        $h->vars['popular_link'] = $url;
+         
+        // POPULAR ACTIVE OR INACTIVE
+        if (($pagename == 'main' || $pagename == 'top') && (!isset($sort)) && $h->pageType != 'profile') { 
+            $h->vars['popular_active'] = "class='active'";
+        } else { $h->vars['popular_active'] = ""; }
+        
+        // UPCOMING LINK
+        if (isset($category)) { $url = $h->url(array('page'=>'upcoming', 'category'=>$category));
+         } elseif (isset($tag)) { $url = $h->url(array('page'=>'upcoming', 'tag'=>$tag));
+         } elseif (isset($media)) { $url = $h->url(array('page'=>'upcoming', 'type'=>$media));
+         } elseif (isset($user)) { $url = $h->url(array('page'=>'upcoming', 'user'=>$user));
+         } else { $url = $h->url(array('page'=>'upcoming')); }
+        $h->vars['upcoming_link'] = $url;
+        
+        // UPCOMING ACTIVE OR INACTIVE
+        if ($pagename == 'upcoming' && !isset($sort)) { 
+            $h->vars['upcoming_active'] = "class='active'";
+        } else { $h->vars['upcoming_active'] = ""; }
+        
+        // LATEST LINK
+        if (isset($category)) { $url = $h->url(array('page'=>'latest', 'category'=>$category));
+         } elseif (isset($tag)) { $url = $h->url(array('page'=>'latest', 'tag'=>$tag));
+         } elseif (isset($media)) { $url = $h->url(array('page'=>'latest', 'type'=>$media));
+         } elseif (isset($user)) { $url = $h->url(array('page'=>'latest', 'user'=>$user));
+         } else { $url = $h->url(array('page'=>'latest')); }
+        $h->vars['latest_link'] = $url;
+
+        // LATEST ACTIVE OR INACTIVE
+        if ($pagename == 'latest' && !isset($sort)) { 
+            $h->vars['latest_active'] = "class='active'";
+        } else { $h->vars['latest_active'] = ""; }
+        
+        // ALL LINK
+        if (isset($category)) { $url = $h->url(array('page'=>'all', 'category'=>$category));
+         } elseif (isset($tag)) { $url = $h->url(array('page'=>'all', 'tag'=>$tag));
+         } elseif (isset($media)) { $url = $h->url(array('page'=>'all', 'type'=>$media));
+         } elseif (isset($user)) { $url = $h->url(array('page'=>'all', 'user'=>$user));
+         } else { $url = $h->url(array('page'=>'all')); }
+        $h->vars['all_link'] = $url;
+
+        // ALL ACTIVE OR INACTIVE
+        if ($pagename == 'all' && !isset($sort)) { 
+            $h->vars['all_active'] = "class='active'";
+        } else { $h->vars['all_active'] = ""; }
+        
+        // 24 HOURS LINK
+        if (isset($category)) { $url = $h->url(array('sort'=>'top-24-hours', 'category'=>$category));
+         } elseif (isset($tag)) { $url = $h->url(array('sort'=>'top-24-hours', 'tag'=>$tag));
+         } elseif (isset($media)) { $url = $h->url(array('sort'=>'top-24-hours', 'type'=>$media));
+         } elseif (isset($user)) { $url = $h->url(array('sort'=>'top-24-hours', 'user'=>$user));
+         } else { $url = $h->url(array('sort'=>'top-24-hours')); }
+        $h->vars['24_hours_link'] = $url;
+
+        // 24 HOURS ACTIVE OR INACTIVE
+        if (isset($sort) && $sort == 'top-24-hours') { 
+            $h->vars['top_24_hours_active'] = "class='active'";
+        } else { $h->vars['top_24_hours_active'] = ""; }
+        
+        // 48 HOURS LINK
+        if (isset($category)) { $url = $h->url(array('sort'=>'top-48-hours', 'category'=>$category));
+         } elseif (isset($tag)) { $url = $h->url(array('sort'=>'top-48-hours', 'tag'=>$tag));
+         } elseif (isset($media)) { $url = $h->url(array('sort'=>'top-48-hours', 'type'=>$media));
+         } elseif (isset($user)) { $url = $h->url(array('sort'=>'top-48-hours', 'user'=>$user));
+         } else { $url = $h->url(array('sort'=>'top-48-hours')); }
+        $h->vars['48_hours_link'] = $url;
+
+        // 48 HOURS ACTIVE OR INACTIVE
+        if (isset($sort) && $sort == 'top-48-hours') { 
+            $h->vars['top_48_hours_active'] = "class='active'";
+        } else { $h->vars['top_48_hours_active'] = ""; }
+        
+        // 7 DAYS LINK
+        if (isset($category)) { $url = $h->url(array('sort'=>'top-7-days', 'category'=>$category));
+         } elseif (isset($tag)) { $url = $h->url(array('sort'=>'top-7-days', 'tag'=>$tag));
+         } elseif (isset($media)) { $url = $h->url(array('sort'=>'top-7-days', 'type'=>$media));
+         } elseif (isset($user)) { $url = $h->url(array('sort'=>'top-7-days', 'user'=>$user));
+         } else { $url = $h->url(array('sort'=>'top-7-days')); }
+        $h->vars['7_days_link'] = $url;
+
+        // 7 DAYS ACTIVE OR INACTIVE
+        if (isset($sort) && $sort == 'top-7-days') { 
+            $h->vars['top_7_days_active'] = "class='active'";
+        } else { $h->vars['top_7_days_active'] = ""; }
+        
+        // 30 DAYS LINK
+        if (isset($category)) { $url = $h->url(array('sort'=>'top-30-days', 'category'=>$category));
+         } elseif (isset($tag)) { $url = $h->url(array('sort'=>'top-30-days', 'tag'=>$tag));
+         } elseif (isset($media)) { $url = $h->url(array('sort'=>'top-30-days', 'type'=>$media));
+         } elseif (isset($user)) { $url = $h->url(array('sort'=>'top-30-days', 'user'=>$user));
+         } else { $url = $h->url(array('sort'=>'top-30-days')); }
+        $h->vars['30_days_link'] = $url;
+
+        // 30 DAYS ACTIVE OR INACTIVE
+        if (isset($sort) && $sort == 'top-30-days') { 
+            $h->vars['top_30_days_active'] = "class='active'";
+        } else { $h->vars['top_30_days_active'] = ""; }
+        
+        // 365 DAYS LINK
+        if (isset($category)) { $url = $h->url(array('sort'=>'top-365-days', 'category'=>$category));
+         } elseif (isset($tag)) { $url = $h->url(array('sort'=>'top-365-days', 'tag'=>$tag));
+         } elseif (isset($media)) { $url = $h->url(array('sort'=>'top-365-days', 'type'=>$media));
+         } elseif (isset($user)) { $url = $h->url(array('sort'=>'top-365-days', 'user'=>$user));
+         } else { $url = $h->url(array('sort'=>'top-365-days')); }
+        $h->vars['365_days_link'] = $url;
+
+        // 365 DAYS ACTIVE OR INACTIVE
+        if (isset($sort) && $sort == 'top-365-days') { 
+            $h->vars['top_365_days_active'] = "class='active'";
+        } else { $h->vars['top_365_days_active'] = ""; }
+        
+        // ALL TIME LINK
+        if (isset($category)) { $url = $h->url(array('sort'=>'top-all-time', 'category'=>$category));
+         } elseif (isset($tag)) { $url = $h->url(array('sort'=>'top-all-time', 'tag'=>$tag));
+         } elseif (isset($media)) { $url = $h->url(array('sort'=>'top-all-time', 'type'=>$media));
+         } elseif (isset($user)) { $url = $h->url(array('sort'=>'top-all-time', 'user'=>$user));
+         } else { $url = $h->url(array('sort'=>'top-all-time')); }
+        $h->vars['all_time_link'] = $url;
+        
+        // ALL TIME ACTIVE OR INACTIVE
+        if (isset($sort) && $sort == 'top-all-time') { 
+            $h->vars['top_all_time_active'] = "class='active'";
+        } else { $h->vars['top_all_time_active'] = ""; }
+        
+        // display the sort links
+        $h->displayTemplate('sb_sort_filter');
     }
 }
 ?>

@@ -115,6 +115,7 @@ class Hotaru
                 $this->checkCookie();                   // log in user if cookie
                 $this->checkAccess();                   // site closed if no access permitted
                 $this->checkCssJs();                    // check if we need to merge css/js
+                if (!$entrance) { return false; }       // stop here if entrance not defined
                 $this->displayTemplate('index');        // displays the index page
         }
 

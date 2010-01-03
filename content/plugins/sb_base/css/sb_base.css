@@ -2,6 +2,15 @@
  *	    SB BASE PLUGIN CSS           *
  ************************************** */
 
+/* ******* SORT LINKS ******** */
+ 
+#sort_box { font-size: 0.9em; margin-bottom: 1.0em;}
+.sort_menu li { display: inline; margin: 0 0.3em 0 0.3em; padding: 0.2em;}
+.sort_menu li.active { background-color: #f8f8f8; }
+.sort_menu li.active a { color: #000; font-weight: bold; }
+
+/* ******* POST CSS ******** */
+
 .show_post { margin-bottom: 1.0em; }
 
 .avatar_wrapper a { float: left; padding: 0 0.6em 0.2em 0; }

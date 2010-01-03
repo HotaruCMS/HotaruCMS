@@ -68,18 +68,16 @@ class Stats
 	    //most popular (votes + comments algorithm)
 	    //most comments
 	    //most votes
-	    if ($h->db->column_exists('posts', 'post_votes_up')) {
-    		$sql = "SELECT post_id, post_title FROM " . TABLE_POSTS . " ORDER BY post_votes_up DESC";
-    		$popPost= $h->db->get_row($h->db->prepare($sql)); // use get_row to grab more than one var
-    		
-    		if ($popPost) {
-        		// access each var like this
-        		$popPostId = $popPost->post_id;
-        		$popPostTitle = $popPost->post_title;
-                
-                // read the post using its ID
-                $h->readPost($popPostId); 
-            }
+		$sql = "SELECT post_id, post_title FROM " . TABLE_POSTS . " ORDER BY post_votes_up DESC";
+		$popPost= $h->db->get_row($h->db->prepare($sql)); // use get_row to grab more than one var
+		
+		if ($popPost) {
+    		// access each var like this
+    		$popPostId = $popPost->post_id;
+    		$popPostTitle = $popPost->post_title;
+            
+            // read the post using its ID
+            $h->readPost($popPostId); 
         }
 	    
 		//Display the stats
