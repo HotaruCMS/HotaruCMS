@@ -154,9 +154,9 @@ class Search
             $h->vars['select'] = "*";
             $h->vars['orderby'] = "post_date DESC";
             $h->vars['filter_vars'] = array();
-            $where = $this->explodeSearch('post_title', $search_terms_clean) . " OR ";
-            $where .= $this->explodeSearch('post_url', $search_terms_clean) . " OR ";
-            $where .= $this->explodeSearch('post_content', $search_terms_clean);
+            $where = $this->explodeSearch($h, 'post_title', $search_terms_clean) . " OR ";
+            $where .= $this->explodeSearch($h, 'post_url', $search_terms_clean) . " OR ";
+            $where .= $this->explodeSearch($h, 'post_content', $search_terms_clean);
             $where = '(' . $where . ')';
             $h->vars['filter'][$where] = $h->vars['filter_vars'];
         }
