@@ -28,7 +28,7 @@ $username = $h->vars['user']->name;
 
 <ul class='user_tabs'>
 
-<li><?php echo $h->lang["users_account_edit"]; ?> 
+<li><?php echo $h->lang["users_edit"]; ?> 
     <a href='<?php echo $h->url(array('user'=>$username)); ?>'><?php echo $username; ?></a>:
 </li>
 

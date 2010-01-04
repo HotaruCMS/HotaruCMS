@@ -146,7 +146,7 @@ class Activity
      */
     public function post_change_status($h)
     {
-        $this->post_update_post();
+        $this->post_update_post($h);
     }
     
     
@@ -436,8 +436,10 @@ class Activity
             $output = "<div id='activity'>";
             $output .= "<ul class='sidebar_widget_body activity_widget_items'>\n";
             
-            while($action = $pagedResults->fetchPagedRow()) {
-                $output .= $this->getWidgetActivityItems($h, array($action), $activity_settings, false);
+            if ($pagedResults) {
+                while($action = $pagedResults->fetchPagedRow()) {
+                    $output .= $this->getWidgetActivityItems($h, array($action), $activity_settings, false);
+                }
             }
             
             $output .= "</ul>\n\n";
@@ -445,7 +447,9 @@ class Activity
             
             echo $output;
             
-            echo $h->pageBar($pagedResults);
+            if ($pagedResults) {
+                echo $h->pageBar($pagedResults);
+            }
             return true;
         }
     }

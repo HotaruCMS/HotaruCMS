@@ -221,6 +221,28 @@ class Post
     
     
     /**
+     * Physically delete all posts by a specified user
+     *
+     * @param array $user_id
+     * @return bool
+     */
+    public function deletePosts($h, $user_id = 0) 
+    {
+        $sql = "SELECT post_id FROM " . TABLE_POSTS. "s WHERE post_author = %d";
+        $results = $h->db->get_results($h->db->prepare($sql, $user_id));
+        
+        if ($results) {
+            foreach ($results as $r) {
+                $h->post->id = $r->post_id; // used by other plugins in "post_delete_post" function/hook
+                $this->deletePost($h);
+            }
+        }
+        
+        return true;
+    }
+    
+    
+    /**
      * Update a post's status
      *
      * @param string $status

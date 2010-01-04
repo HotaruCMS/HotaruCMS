@@ -44,12 +44,8 @@ class CommentManagerSettings
         $h->vars['search_term'] = '';
         $h->vars['comment_status_filter'] = 'all';
         
-        // Get unique statuses for Filter form:
-        $h->vars['statuses'] = $h->post->getUniqueStatuses($h); 
-        
         require_once(LIBS . 'Comment.php');
         $c = new Comment();
-        
         
         // approve comment
         if ($h->cage->get->getAlpha('action') == 'approve') 

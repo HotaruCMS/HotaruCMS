@@ -193,12 +193,12 @@ class Vote
                 // Buries or Deletes a post if this new flag sends it over the limit set in Vote Settings
                 if ($h->cage->get->keyExists('alert') && $flag_count >= $vote_settings['alerts_to_bury'])
                 {
-                    $h->post->readPost($h->post->id); //make sure we've got all post details
+                    $h->readPost($h->post->id); //make sure we've got all post details
                     
                     if ($vote_settings['physical_delete']) { 
-                        $h->post->deletePost(); // Akismet uses those details to report the post as spam
+                        $h->deletePost(); // Akismet uses those details to report the post as spam
                     } else {
-                        $h->post->changeStatus('buried');
+                        $h->changePostStatus('buried');
                         $h->pluginHook('vote_post_status_buried'); // Akismet hooks in here to report the post as spam
                     }
                     

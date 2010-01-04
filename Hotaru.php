@@ -499,6 +499,19 @@ class Hotaru
         $userbase = new UserBase();
         return $userbase->getProfileSettingsData($this, $type, $userid, $check_exists_only);
     }
+    
+    
+    /**
+     * Physically delete a user
+     * Note: You should delete all their posts, comments, etc. first
+     *
+     * @param array $user_id (optional)
+     */
+    public function deleteUser($user_id = 0) 
+    {
+        $userbase = new UserBase();
+        return $userbase->deleteUser($this, $user_id);
+    }
 
 
  /* *************************************************************
@@ -600,7 +613,7 @@ class Hotaru
      *
      * @return array|false
      */
-    public function getUniqueRoles($h) 
+    public function getUniqueRoles() 
     {
         require_once(LIBS . 'UserInfo.php');
         $userInfo = new UserInfo();
@@ -1277,6 +1290,22 @@ class Hotaru
     }
     
     
+     /**
+     * Add or update blocked items 
+     *
+     * @param string $type - e.g. url, email, ip
+     * @param string $value - item to block
+     * @param bool $msg - show a success/failure message on Maintenance page
+     * @return bool
+     */
+    public function addToBlockedList($type = '', $value = 0, $msg = false)
+    {
+        require_once(LIBS . 'Blocked.php');
+        $blocked = new Blocked();
+        return $blocked->addToBlockedList($this, $type, $value, $msg);
+    }
+
+
  /* *************************************************************
  *
  *  LANGUAGE FUNCTIONS
@@ -1389,6 +1418,18 @@ class Hotaru
     
     
     /**
+     * Physically delete all posts by a specified user
+     *
+     * @param array $user_id
+     * @return bool
+     */
+    public function deletePosts($user_id = 0) 
+    {
+        return $this->post->deletePost($this, $user_id);
+    }
+    
+    
+    /**
      * Delete posts with "processing" status that are older than 30 minutes
      * This is called automatically when a new post is submitted
      */
@@ -1469,6 +1510,17 @@ class Hotaru
     public function isPostUrl($post_url = '')
     {
         return $this->post->isPostUrl($this, $post_url);
+    }
+    
+    
+    /**
+     * Get Unique Post Statuses
+     *
+     * @return array|false
+     */
+    public function getUniqueStatuses() 
+    {
+        return $this->post->getUniqueStatuses($this);
     }
     
     
@@ -1630,6 +1682,18 @@ class Hotaru
     function countComments($link = true)
     {
         return $this->comment->countComments($this, $link);
+    }
+    
+    
+    /**
+     * Physically delete all comments by a specified user (and responses)
+     *
+     * @param array $user_id
+     * @return bool
+     */
+    public function deleteComments($user_id) 
+    {
+        return $this->comment->deleteComments($this, $user_id);
     }
     
     

@@ -165,9 +165,12 @@ class Blocked
     
     
      /**
-     * Add to or update items 
+     * Add or update blocked items 
      *
-     * @return array|false
+     * @param string $type - e.g. url, email, ip
+     * @param string $value - item to block
+     * @param bool $msg - show a success/failure message on Maintenance page
+     * @return bool
      */
     public function addToBlockedList($h, $type = '', $value = 0, $msg = true)
     {

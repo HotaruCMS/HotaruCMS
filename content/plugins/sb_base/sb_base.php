@@ -137,6 +137,11 @@ class SbBase
         
         // user defined settings:
         
+        if (!$h->currentUser->settings) { 
+            // logged out users get the default settings:
+            $h->currentUser->settings = $h->getDefaultSettings('site');
+        }
+        
         // open links in a new tab?
         if ($h->currentUser->settings['new_tab']) { 
             $h->vars['target'] = 'target="_blank"'; 

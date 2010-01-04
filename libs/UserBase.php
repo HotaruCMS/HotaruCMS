@@ -453,4 +453,24 @@ class UserBase
             $h->db->query($h->db->prepare($sql, $settings, $h->currentUser->id, 'user_settings'));
         }
     }
+    
+    
+    /**
+     * Physically delete this user
+     * Note: You should delete all their posts, comments, etc. first
+     *
+     * @param array $user_id (optional)
+     */
+    public function deleteUser($h, $user_id = 0) 
+    {
+        if (!$user_id) { $user_id = $this->id; }
+        
+        $h->pluginHook('userbase_delete_user', '', array('user_id'=>$user_id));
+        
+        $sql = "DELETE FROM " . TABLE_USERS . " WHERE user_id = %d";
+        $h->db->query($h->db->prepare($sql, $user_id));
+        
+        $sql = "DELETE FROM " . TABLE_USERMETA . " WHERE usermeta_userid = %d";
+        $h->db->query($h->db->prepare($sql, $user_id));
+    }
 }

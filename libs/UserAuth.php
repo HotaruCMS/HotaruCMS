@@ -264,8 +264,8 @@ class UserAuth extends UserBase
             // compare with current role and update if different
             if ($role_check && ($role_check != $viewee->role)) {
                 $viewee->role = $role_check;
-                $new_perms = $viewee->getDefaultPermissions($role_check);
-                $viewee->setAllPermissions($new_perms);
+                $new_perms = $viewee->getDefaultPermissions($h, $role_check);
+                $viewee->setAllPermissions($h, $new_perms);
                 $viewee->updatePermissions($h);
                 if ($role_check == 'killspammed' || $role_check == 'deleted') {
                     $viewee->deleteComments(); // includes child comments from *other* users

@@ -277,6 +277,29 @@ class Comment
     
     
     /**
+     * Physically delete all comments by a specified user (and responses)
+     *
+     * @param array $user_id
+     * @return bool
+     */
+    public function deleteComments($h, $user_id) 
+    {
+        $sql = "SELECT comment_id FROM " . DB_PREFIX . "comments WHERE comment_user_id = %d";
+        $results = $h->db->get_results($h->db->prepare($sql, $user_id));
+
+        if ($results) {
+            foreach ($results as $r) {
+                $h->comment->id = $r->comment_id;   // used by other plugins in "comment_delete_comment" function/hook
+                $this->deleteComment($h);    // delete parent comment
+                $this->deleteCommentTree($h, $h->comment->id);  // delete all children of that comment regardless of user
+            }
+        }
+        
+        return true;
+    }
+    
+    
+    /**
      * Recurse through comment tree, deleting all
      *
      * @param int $comment_id - id of current comment
