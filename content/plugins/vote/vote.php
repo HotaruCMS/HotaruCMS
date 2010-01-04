@@ -51,7 +51,7 @@ class Vote
         if (!isset($vote_settings['physical_delete'])) { $vote_settings['physical_delete'] = ""; }
         if (!isset($vote_settings['upcoming_duration'])) { $vote_settings['upcoming_duration'] = 5; }
         if (!isset($vote_settings['no_front_page'])) { $vote_settings['no_front_page'] = 5; }
-        if (!isset($vote_settings['widget_posts'])) { $vote_settings['widget_posts'] = 'checked'; }
+        if (!isset($vote_settings['posts_widget'])) { $vote_settings['posts_widget'] = 'checked'; }
         
         $h->updateSetting('vote_settings', serialize($vote_settings));
     }  

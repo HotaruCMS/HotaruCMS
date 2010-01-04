@@ -51,7 +51,7 @@ class VoteSettings
         $physical_delete = $vote_settings['physical_delete'];
         $upcoming_duration = $vote_settings['upcoming_duration'];
         $no_front_page = $vote_settings['no_front_page'];
-        $sidebar_votes = $vote_settings['widget_posts'];
+        $posts_widget = $vote_settings['posts_widget'];
         
         //...otherwise set to blank or default:
         if (!$submit_vote) { $submit_vote = ''; }
@@ -63,7 +63,7 @@ class VoteSettings
         if (!$physical_delete) { $physical_delete = ''; }
         if (!$upcoming_duration) { $upcoming_duration = 5; }
         if (!$no_front_page) { $no_front_page = 5; }
-        if (!$sidebar_votes) { $sidebar_votes = 'checked'; }
+        if (!$posts_widget) { $posts_widget = 'checked'; }
         
         // A plugin hook so other plugin developers can add settings
         $h->pluginHook('vote_settings_get_values');
@@ -91,7 +91,7 @@ class VoteSettings
         echo "<p><input type='checkbox' id='vote_physical_delete' name='vote_physical_delete' " . $physical_delete . " /> " . $h->lang["vote_settings_physical_delete"] . "</p>";
         
         echo "<br /><p><b>" . $h->lang["vote_settings_other"] . "</b></p>";
-echo "<p><input type='checkbox' name='sb_votes' value='sb_votes' " . $sidebar_votes . ">&nbsp;&nbsp;" . $h->lang["vote_settings_widget_posts"] . "</p>\n"; 
+echo "<p><input type='checkbox' name='widget_votes' value='widget_votes' " . $posts_widget . ">&nbsp;&nbsp;" . $h->lang["vote_settings_posts_widget"] . "</p>\n"; 
             
         // A plugin hook so other plugin developers can show settings
         $h->pluginHook('vote_settings_form_2');
@@ -218,10 +218,10 @@ echo "<p><input type='checkbox' name='sb_votes' value='sb_votes' " . $sidebar_vo
         
         
         // Votes in Sidebar Posts
-        if ($h->cage->post->keyExists('sb_votes')) { 
-            $sidebar_votes = 'checked';
+        if ($h->cage->post->keyExists('widget_votes')) { 
+            $posts_widget = 'checked';
         } else { 
-            $sidebar_votes = '';
+            $posts_widget = '';
         }
         
         // A plugin hook so other plugin developers can save settings   
@@ -237,7 +237,7 @@ echo "<p><input type='checkbox' name='sb_votes' value='sb_votes' " . $sidebar_vo
         $vote_settings['physical_delete'] = $physical_delete;
         $vote_settings['upcoming_duration'] = $upcoming_duration;
         $vote_settings['no_front_page'] = $no_front_page;
-        $vote_settings['widget_posts'] = $sidebar_votes;
+        $vote_settings['posts_widget'] = $posts_widget;
         
         // parameters: plugin folder name, setting name, setting value
         $h->updateSetting('vote_settings', serialize($vote_settings));

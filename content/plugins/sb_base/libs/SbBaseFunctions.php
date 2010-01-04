@@ -42,7 +42,7 @@ class SbBaseFunctions
         if ($type) {
             // For sidebar posts or other non-pages... 
             $h->vars['filter'] = array(); // flush filter
-            $this->prepareListFilters($type);
+            $this->prepareListFilters($h, $type);
             
         } else {
             // for pages, i.e. lists of stories with pagination
