@@ -65,6 +65,8 @@ class Categories
         }
         elseif (!$h->pageType)  // only do this if we don't know the pageType yet... 
         {
+            if ($h->pageName == 'all') { return false; } // when sorting to "all", we don't want to filter to the "all" category!
+
             /*  if $h->pageName is set, then there must be an odd number of query vars where
                 the first one is the page name. Let's see if it's a category safe name... */
             $sql = "SELECT category_id, category_name FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s LIMIT 1";

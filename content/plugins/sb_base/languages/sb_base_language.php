@@ -40,20 +40,6 @@ $lang["sb_base_top_30_days"] = "Top Posts (last 30 Days)";
 $lang["sb_base_top_365_days"] = "Top Posts (last 365 Days)";
 $lang["sb_base_top_all_time"] = "Top Posts (All-Time)";
 
-/* Sorting */
-$lang["sb_base_sort_by"] = "Sort by:";
-$lang["sb_base_sort_recently_popular"] = "Popular";
-$lang["sb_base_sort_upcoming"] = "Upcoming";
-$lang["sb_base_sort_latest"] = "Latest";
-$lang["sb_base_sort_all"] = "All";
-$lang["sb_base_sort_best_from"] = "Best from:";
-$lang["sb_base_sort_top_1_day"] = "24 Hrs";
-$lang["sb_base_sort_top_2_days"] = "48 Hrs";
-$lang["sb_base_sort_top_7_days"] = "7 Days";
-$lang["sb_base_sort_top_30_days"] = "30 Days";
-$lang["sb_base_sort_top_365_days"] = "365 Days";
-$lang["sb_base_sort_top_all_time"] = "All Time";
-
 /* Post */
 $lang["sb_base_post_edit"] = "Edit";
 $lang["sb_base_post_read_more"] = "[Read More]";

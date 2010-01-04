@@ -83,7 +83,11 @@ class SbBase
                 break;
             case 'upcoming':
                 $h->pageType = 'list';
-                $h->pageTitle = $h->lang["sb_base_latest"];
+                $h->pageTitle = $h->lang["sb_base_upcoming"];
+                break;
+            case 'all':
+                $h->pageType = 'list';
+                $h->pageTitle = $h->lang["sb_base_all"];
                 break;
             case 'sort':
                 $h->pageType = 'list';
@@ -512,7 +516,7 @@ class SbBase
     public function theme_index_pre_main($h)
     {
         $pagename = $h->pageName;
-
+        
         // check if we're looking at a category
         if ($pagename == 'category') { 
             $category = $h->vars['category_id'];
@@ -529,8 +533,8 @@ class SbBase
         } 
         
         // check if we're looking at a user
-        if ($h->pageType == 'user') { 
-            $user = $h->vars['user']->name;
+        if ($h->cage->get->keyExists('user')) { 
+            $user = $h->cage->get->testUsername('user');
         } 
         
         // check if we're looking at a sorted page
@@ -542,7 +546,7 @@ class SbBase
         if (isset($category)) { $url = $h->url(array('category'=>$category));
          } elseif (isset($tag)) { $url = $h->url(array('tag'=>$tag));
          } elseif (isset($media)) { $url = $h->url(array('type'=>$media));
-         } elseif (isset($user)) { $url = $h->url(array('page'=>'top', 'user'=>$user));
+         } elseif (isset($user)) { $url = $h->url(array('page'=>'index', 'user'=>$user));
          } else { $url = $h->url(array()); } 
         $h->vars['popular_link'] = $url;
          

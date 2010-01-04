@@ -106,7 +106,7 @@ class SbBaseFunctions
         {
             // Filters page to "new" stories by most votes, but only stories from the last X days!
             $vote_settings = unserialize($h->getSetting('vote_settings', 'vote')); 
-            $upcoming_duration = "-" . $vote_settings['vote_upcoming_duration'] . " days"; // default: -5 days
+            $upcoming_duration = "-" . $vote_settings['upcoming_duration'] . " days"; // default: -5 days
             
             $h->vars['filter']['post_archived = %s'] = 'N'; 
             $h->vars['filter']['post_status = %s'] = 'new'; 
