@@ -13,7 +13,7 @@
  * EXAMPLE OF USING A TEMPLATE:
  * To use the example template, create a new text widget, check the PHP box and add this code:
  * $h->displayTemplate('example', 'text_widget');
- * Activate "Text Widget" in Widgets and you should see a new search box widget in your sidebar
+ * Activate "Text Widget" in Widgets and you should see a new search box widget in your widget block
  *
  * PHP version 5
  *
