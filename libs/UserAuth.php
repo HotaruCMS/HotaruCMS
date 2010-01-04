@@ -262,19 +262,19 @@ class UserAuth extends UserBase
             
             $role_check = $h->cage->post->testAlnumLines('user_role'); // from Users plugin account page
             // compare with current role and update if different
-            if ($role_check && ($role_check != $viewee->role)) {
+            if (!$error && $role_check && ($role_check != $viewee->role)) {
                 $viewee->role = $role_check;
                 $new_perms = $viewee->getDefaultPermissions($h, $role_check);
                 $viewee->setAllPermissions($h, $new_perms);
                 $viewee->updatePermissions($h);
                 if ($role_check == 'killspammed' || $role_check == 'deleted') {
-                    $viewee->deleteComments(); // includes child comments from *other* users
-                    $viewee->deletePosts(); // includes tags and votes for self-submitted posts
+                    $h->deleteComments($viewee->id); // includes child comments from *other* users
+                    $h->deletePosts($viewee->id); // includes tags and votes for self-submitted posts
                     
-                    $this->plugins->pluginHook('userbase_killspam', true, '', array('target_user' => $viewee->id));
+                    $h->pluginHook('userbase_killspam', '', array('target_user' => $viewee->id));
                     
                     if ($role_check == 'deleted') { 
-                        $viewee->deleteUser(); 
+                        $h->deleteUser($viewee->id); 
                         $checks['username_check'] = 'deleted';
                         $h->message = $h->lang["users_account_deleted"];
                         $h->messageType = 'red';
@@ -284,13 +284,10 @@ class UserAuth extends UserBase
             }
             
             // If we've just edited our own account, let's refresh the cookie so it uses our latest username:
-            if ($this->id == $h->cage->post->testInt('userid')) {
-                $this->setCookie($h, false);           // delete the cookie
-                $this->getUserBasic($h, $this->id, '', true);    // re-read the database record to get updated info
-                $this->setCookie($h, true);            // create a new, updated cookie
-                /* but we're currently at the top of a new page and the cookie has already been read with the old data!
-                   so let's force a name change just for this pageview: */
-                $h->currentUser->name = $viewee->name; // not sure why $this->name doesn't work. Only changes the navbar user name with currentUser
+            if ($h->currentUser->id == $h->cage->post->testInt('userid')) {
+                $h->currentUser->setCookie($h, false);           // delete the cookie
+                $h->currentUser->getUserBasic($h, $h->currentUser->id, '', true);    // re-read the database record to get updated info
+                $h->currentUser->setCookie($h, true);            // create a new, updated cookie
             }
         }
         
@@ -306,9 +303,9 @@ class UserAuth extends UserBase
                 $viewee->updateUserBasic($h, $userid);
                 // only update the cookie if it's your own account:
                 if ($userid == $this->id) { 
-                $this->setCookie($h, false);           // delete the cookie
-                $this->getUserBasic($h, $this->id, '', true);    // re-read the database record to get updated info
-                $this->setCookie($h, true);            // create a new, updated cookie
+                $h->currentUser->setCookie($h, false);           // delete the cookie
+                $h->currentUser->getUserBasic($h, $h->currentUser->id, '', true);    // re-read the database record to get updated info
+                $h->currentUser->setCookie($h, true);            // create a new, updated cookie
                 }
                 $h->messages[$h->lang['main_user_account_update_success']] = 'green';
             } else {

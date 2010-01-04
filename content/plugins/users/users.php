@@ -105,8 +105,8 @@ class Users
           (i.e. if the username has been changed) */
         if ($h->pageName == 'account') {
             $h->vars['checks'] = $h->vars['user']->updateAccount($h);
-            $user = $h->vars['user']->name;
-            $h->pageTitle = $h->lang["users_account"] . ' &laquo; ' . $user;
+            $h->vars['user']->name = $h->vars['checks']['username_check'];
+            $h->pageTitle = $h->lang["users_account"] . ' &laquo; ' . $h->vars['user']->name;
             $h->pageType = 'user';
         }
     }
