@@ -40,12 +40,12 @@ class Caching
      * @param string $label optional label to append to filename
      * @return bool
      */
-    public function smartCache($switch = 'off', $table = '', $timeout = 0, $html = '', $label = '')
+    public function smartCache($h, $switch = 'off', $table = '', $timeout = 0, $html = '', $label = '')
     {
         if ($switch == 'html') { 
-            $result = $this->smartCacheHTML($table, $timeout, $html, $label); 
+            $result = $this->smartCacheHTML($h, $table, $timeout, $html, $label); 
         } else {
-            $result = $this->smartCacheDB($switch, $table, $timeout);
+            $result = $this->smartCacheDB($h, $switch, $table, $timeout);
         }
         
         return $result;
@@ -61,11 +61,16 @@ class Caching
      * @param int $timeout timeout in minutes
      * @return bool
      */
-    public function smartCacheHTML($table = '', $timeout = 0, $html = '', $label = '')
+    public function smartCacheHTML($h, $table = '', $timeout = 0, $html = '', $label = '')
     {
         if (!$table || !$timeout || (HTML_CACHE_ON != 'true')) { return false; }
         
-        $last_update = $this->smartCacheSQL($table);
+        if(isset($h->vars['last_updates'][$table])) {
+            $last_update = $h->vars['last_updates'][$table]; // cached
+        } else {
+            $last_update = $this->smartCacheSQL($h, $table);
+            $last_update = $h->vars['last_updates'][$table] = $last_update;
+        }
         
         // compare times (if there's $html, we don't want to return because we need to update the cache.
         if (($last_update >= (time() - $timeout*60)) && !$html) { return false; } // there's been a recent update so don't use the cache.
@@ -113,16 +118,21 @@ class Caching
      * @param int $timeout timeout in minutes
      * @return bool
      */
-    public function smartCacheDB($switch = 'off', $table = '', $timeout = 0)
+    public function smartCacheDB($h, $switch = 'off', $table = '', $timeout = 0)
     {
         // Stop caching?
         if ($switch != 'on') {
-            $this->db->cache_queries = false;               // stop using cache
-            $this->db->cache_timeout = DB_CACHE_DURATION;   // return to our default cache duration
+            $h->db->cache_queries = false;               // stop using cache
+            $h->db->cache_timeout = DB_CACHE_DURATION;   // return to our default cache duration
             return false;
         }
         
-        $last_update = $this->smartCacheSQL($table);
+        if(isset($h->vars['last_updates'][$table])) {
+            $last_update = $h->vars['last_updates'][$table]; // cached
+        } else {
+            $last_update = $this->smartCacheSQL($h, $table);
+            $last_update = $h->vars['last_updates'][$table] = $last_update;
+        }
 
         // compare times
         if ($last_update >= (time() - $timeout*60)) { return false; } // there's been a recent update so don't use the cache.
@@ -131,12 +141,12 @@ class Caching
            by 60 to get the hours. */
            
         if ($timeout) { 
-            $this->db->cache_timeout = $timeout/60; // mins/60 = hours
+            $h->db->cache_timeout = $timeout/60; // mins/60 = hours
         } else {
-            $this->db->cache_timeout = DB_CACHE_DURATION;
+            $h->db->cache_timeout = DB_CACHE_DURATION;
         }
         
-        $this->db->cache_queries = true;    // start using cache
+        $h->db->cache_queries = true;    // start using cache
         
         return true;
     }
@@ -149,7 +159,7 @@ class Caching
      * @param string $table DB table name
      * @return int $last_update
      */
-    public function smartCacheSQL($table = '')
+    public function smartCacheSQL($h, $table = '')
     {
         /* Get the last time the table was updated */
         switch ($table) {
@@ -168,18 +178,24 @@ class Caching
             case 'comments':
                 $sql = "SELECT comment_updatedts FROM " . DB_PREFIX . "comments ORDER BY comment_updatedts DESC";
                 break;
-            case 'commentvote':
+            case 'commentvotes':
                 $sql = "SELECT cvote_updatedts FROM " . DB_PREFIX . "commentvotes ORDER BY cvote_updatedts DESC";
                 break;
             case 'useractivity':
                 $sql = "SELECT useract_updatedts FROM " . DB_PREFIX . "useractivity ORDER BY useract_updatedts DESC";
+                break;
+            case 'usermeta':
+                $sql = "SELECT usermeta_updatedts FROM " . DB_PREFIX . "usermeta ORDER BY usermeta_updatedts DESC";
+                break;
+            case 'miscdata':
+                $sql = "SELECT miscdata_updatedts FROM " . DB_PREFIX . "miscdata ORDER BY miscdata_updatedts DESC";
                 break;
             default:
                 return false;
         }
         
         // run DB query:
-        $last_update = unixtimestamp($this->db->get_var($sql));
+        $last_update = unixtimestamp($h->db->get_var($sql));
         
         return $last_update;
     }

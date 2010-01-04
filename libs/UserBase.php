@@ -344,8 +344,10 @@ class UserBase
         if (isset($h->vars[$sql])) { 
             $result = $h->vars[$sql]; 
         } else {
+            $h->smartCache('on', 'usermeta', 10); // start using database cache (saves for 10 minutes unless updated)
             $result = $h->db->get_var($sql);
-            $h->vars[$sql] = $result;    // cache result
+            $h->vars[$sql] = $result;    // cache result in memory (saves for just this page load)
+            $h->smartCache('off'); // stop using database cache
         }
         
         // if we're only testing to see if the settings exist, return here:
@@ -414,8 +416,10 @@ class UserBase
         if (isset($h->vars[$sql])) { 
             $result = $h->vars[$sql]; 
         } else {
+            $h->smartCache('on', 'miscdata', 10); // start using database cache (saves for 10 minutes unless updated)
             $result = $h->db->get_var($sql);
             $h->vars[$sql] = $result;    // cache result
+            $h->smartCache('off'); // stop using database cache
         }
         
         if ($result) {

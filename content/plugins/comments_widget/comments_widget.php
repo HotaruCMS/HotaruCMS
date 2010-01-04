@@ -84,7 +84,6 @@ class CommentsWidget
             $output .= $title . "</h2>\n"; 
                 
             $output .= "<ul class='widget_body comments_widget_items'>\n";
-            
             $output .= $this->getCommentsWidgetItems($h, $comments, $comments_widget_settings);
             $output .= "</ul>\n\n";
         }
@@ -134,7 +133,7 @@ class CommentsWidget
         {
             // Post used in Hotaru's url function
             $h->readPost($item->comment_post_id);
-            
+
             // get author details
             $author->getUserBasic($h, $item->comment_user_id);
 
@@ -149,7 +148,6 @@ class CommentsWidget
                 $output .= $h->linkAvatar();
                 $output .= "</div> \n";
             }
-                
             
             if ($comments_widget_settings['author']) {
                 $output .= "<a class='comments_widget_author' href='" . $h->url(array('user' => $author->name)) . "'>" . $author->name . "</a>: \n";

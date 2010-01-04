@@ -75,16 +75,16 @@ class Category
         $sql = $h->db->prepare($query, $cat_id);
         
         // Create temp cache array
-        if (!isset($this->hotaru->vars['tempCategoryCache'])) { $this->hotaru->vars['tempCategoryCache'] = array(); }
+        if (!isset($h->vars['tempCategoryCache'])) { $h->vars['tempCategoryCache'] = array(); }
 
         // If this query has already been read once this page load, we should have it in memory...
-        if (array_key_exists($sql, $this->hotaru->vars['tempCategoryCache'])) {
+        if (array_key_exists($sql, $h->vars['tempCategoryCache'])) {
             // Fetch from memory
-            $cat_safe_name = $this->hotaru->vars['tempCategoryCache'][$sql];
+            $cat_safe_name = $h->vars['tempCategoryCache'][$sql];
         } else {
             // Fetch from database
             $cat_safe_name = $h->db->get_var($sql);
-            $this->hotaru->vars['tempCategoryCache'][$sql] = $cat_safe_name;
+            $h->vars['tempCategoryCache'][$sql] = $cat_safe_name;
         }
         
         return urldecode($cat_safe_name);

@@ -33,7 +33,7 @@ class Widget
     {
         // Get settings from the database if they exist...
         $widgets_settings = $h->getSerializedSettings('widgets'); 
-            
+        
         $widgets = $this->getWidgets($h);
         
         if ($widgets) {
@@ -68,6 +68,7 @@ class Widget
 
                 $count++;
             }
+            
             $h->updateSetting('widgets_settings', serialize($widgets_settings), 'widgets');
         }
     }

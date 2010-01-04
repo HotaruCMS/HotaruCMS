@@ -703,13 +703,14 @@ class Hotaru
     /**
      * Get a single property from a specified plugin
      *
-     * @param string $folder - plugin folder name, else $h->plugin->folder is used
      * @param string $property - plugin property, e.g. "plugin_version"
+     * @param string $folder - plugin folder name, else $h->plugin->folder is used
+     * @param string $field - an alternative field to use instead of $folder
      */
-    public function getPluginProperty($property = '', $folder = '')
+    public function getPluginProperty($property = '', $folder = '', $field = '')
     {
         $pluginFunctions = new PluginFunctions();
-        return $pluginFunctions->getPluginProperty($this, $property, $folder);
+        return $pluginFunctions->getPluginProperty($this, $property, $folder, $field);
     }
     
     
@@ -775,7 +776,7 @@ class Hotaru
     
 
     /**
-     * Determines if a plugin is enabled or not
+     * Determines if a plugin "type" is enabled, if not, plugin "folder"
      *
      * @param string $folder plugin folder name
      * @return bool
@@ -783,7 +784,10 @@ class Hotaru
     public function isActive($type = '')
     {
         $pluginFunctions = new PluginFunctions();
-        return $pluginFunctions->isActive($this, $type);
+        //return $pluginFunctions->isActive($this, $type); // dropped in favor of cache:
+        $result = $this->getPluginProperty('plugin_enabled', '', 'type');
+        if (!$result) { $result = $this->getPluginProperty('plugin_enabled'); }
+        return $result;
     }
     
     

@@ -163,10 +163,11 @@ class PluginFunctions
     /**
      * Get a single property from a specified plugin
      *
-     * @param string $folder - plugin folder name, else $h->plugin->folder is used
      * @param string $property - plugin property, e.g. "plugin_version"
+     * @param string $folder - plugin folder name, else $h->plugin->folder is used
+     * @param string $field - an alternative field to use instead of $folder
      */
-    public function getPluginProperty($h, $property = '', $folder = '')
+    public function getPluginProperty($h, $property = '', $folder = '', $field = '')
     {
         if (!$folder) { $folder = $h->plugin->folder; } 
         
@@ -178,10 +179,24 @@ class PluginFunctions
             return false; // no plugin basics for this plugin found anywhere
         }
         
-        // get plugin basics from memory
-        foreach ($h->allPluginDetails as $item => $key) {
-            if ($key->plugin_folder == $folder) {
-                return $key->$property;        // plugin property, e.g. "plugin_version"
+        if (!$field)
+        {
+            // get plugin basics from memory
+            foreach ($h->allPluginDetails as $item => $key) {
+                if ($key->plugin_folder == $folder) {
+                    return $key->$property;        // plugin property, e.g. "plugin_version"
+                }
+            }
+        }
+        else
+        {
+            $field = 'plugin_' . $field;
+            
+            // get plugin basics from memory
+            foreach ($h->allPluginDetails as $item => $key) {
+                if ($key->$field == $field) {
+                    return $key->$property;        // plugin property, e.g. "plugin_version"
+                }
             }
         }
         
