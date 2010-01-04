@@ -316,7 +316,7 @@ class Activity
             $output .= "<li class='activity_widget_item'>\n";
             
             if($h->isActive('avatar') && $activity_settings['widget_avatar']) {
-                $h->setAvatar($h->currentUser->id, $activity_settings['widget_avatar_size']);
+                $h->setAvatar($user->id, $activity_settings['widget_avatar_size']);
                 $output .= "<div class='activity_widget_avatar'>\n";
                 $output .= $h->linkAvatar();
                 $output .= "</div> \n";

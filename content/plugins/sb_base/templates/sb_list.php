@@ -46,7 +46,7 @@ if ($h->vars['posts']) {
         
         <?php   // Show avatars if enabled (requires an avatars plugin)
             if($h->isActive('avatar')) {
-                $h->setAvatar($h->currentUser->id, 32);
+                $h->setAvatar($user->id, 32);
                 echo $h->wrapAvatar();
             }
         ?>

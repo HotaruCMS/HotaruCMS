@@ -6,7 +6,7 @@
  * folder: users
  * type: users
  * class: Users
- * hooks: pagehandling_getpagename, theme_index_top, header_include, breadcrumbs, theme_index_post_breadcrumbs, theme_index_main, users_edit_profile_save, user_settings_save
+ * hooks: pagehandling_getpagename, theme_index_top, header_include, sb_base_functions_preparelist, breadcrumbs, theme_index_post_breadcrumbs, theme_index_main, users_edit_profile_save, user_settings_save
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -108,6 +108,17 @@ class Users
             $user = $h->vars['user']->name;
             $h->pageTitle = $h->lang["users_account"] . ' &laquo; ' . $user;
             $h->pageType = 'user';
+        }
+    }
+    
+    /**
+     * Filter posts to this user
+     */
+    public function sb_base_functions_preparelist($h)
+    {
+        $username = $h->cage->get->testUsername('user');
+        if ($username) {
+            $h->vars['filter']['post_author = %d'] = $h->getUserIdFromName($username); 
         }
     }
     

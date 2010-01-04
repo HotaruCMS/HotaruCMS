@@ -144,7 +144,7 @@ class CommentsWidget
             $output .= "<li class='comments_widget_item'>\n";
             
             if($h->isActive('avatar') && $comments_widget_settings['avatar']) {
-                $h->setAvatar($h->currentUser->id, $comments_widget_settings['avatar_size']);
+                $h->setAvatar($author->id, $comments_widget_settings['avatar_size']);
                 $output .= "<div class='comments_widget_avatar'>\n";
                 $output .= $h->linkAvatar();
                 $output .= "</div> \n";
