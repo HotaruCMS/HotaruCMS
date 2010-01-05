@@ -86,26 +86,21 @@ class UserAuth extends UserBase
         // Allow plugin to bypass the password check with their own methods, e.g. RPX
         $plugin_result = $h->pluginHook('userbase_logincheck', '', array($username, $password));
         
-        if (!isset($plugin_result))
+        if (!$plugin_result)
         {
-            // nothing was returned from the plugins, not even "false", so confirm the username and password match:
+            // nothing or (false) was returned from the plugins, so confirm the username and password match:
             $password = $this->generateHash($password, substr($userX->user_password, 0, $salt_length));
             $sql = "SELECT user_username, user_password FROM " . TABLE_USERS . " WHERE user_username = %s AND user_password = %s";
             $result = $h->db->get_row($h->db->prepare($sql, $username, $password));
         } 
         elseif ($plugin_result)
         {
-            // a non-false result was returned from the plugin(s)
+            // a positive result was returned from the plugin(s)
             // let's hope the plugin did its own authentication because we've skipped the usual username/passowrd check!
             $result = true;
         } 
-        else 
-        {
-            // a false result was returned from the plugin(s), so the user won't be able to login.
-            $result = false;
-        }
         
-        if (isset($result)) { return true; } else { return false; }
+        if ($result) { return true; } else { return false; }
     }
     
     

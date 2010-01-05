@@ -41,6 +41,7 @@ class csrf
         $this->cleanOld($h);
         
         $key = $h->cage->post->testAlnum('csrf');                  // try to get csrf token from POST
+        
         if (!$key) { $key = $h->cage->get->testAlnum('csrf'); }    // try to get csrf token from GET
         if (!$key) { return false; }
 

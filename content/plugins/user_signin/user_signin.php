@@ -94,7 +94,7 @@ class UserSignin
             case 'register':
                 $h->pageTitle = $h->lang["user_signin_register"];
                 $h->pageType = 'register';
-                $user_signin_settings = $h->getSerializedSettings();
+                $user_signin_settings = $h->getSerializedSettings('user_signin');
                 $h->vars['useRecaptcha'] = $user_signin_settings['recaptcha_enabled'];
                 $h->vars['useEmailConf'] = $user_signin_settings['emailconf_enabled'];
                 $h->vars['regStatus'] = $user_signin_settings['registration_status'];
@@ -205,7 +205,12 @@ class UserSignin
                     $h->showMessages();
                     return true;
                 }
-                $h->displayTemplate('user_signin_register');
+                $result = $h->pluginHook('user_signin_pre_display_register_template');
+                if (!$result) {
+                    // show this form if not overridden by a plugin
+                    $h->displayTemplate('user_signin_register', 'user_signin');
+                    return true;
+                }
                 return true;
                 break;
             case 'emailconf':
@@ -253,14 +258,14 @@ class UserSignin
                     return $result;
             } else {
                     // login failed
-                    $h->messages[$h->lang["users_login_failed"]] = 'red';
+                    $h->messages[$h->lang["user_signin_login_failed"]] = 'red';
             }
             
         } else {
 
             if ($h->cage->post->testPage('page') == 'login') {
                 // login failed
-                $h->messages[$h->lang["users_login_failed"]] = 'red';
+                $h->messages[$h->lang["user_signin_login_failed"]] = 'red';
             }
             $username_check = '';
             $password_check = '';
@@ -301,16 +306,16 @@ class UserSignin
         
         if ($h->vars['useEmailConf'] && ($h->currentUser->emailValid == 0)) {
             $this->sendConfirmationEmail($h->currentUser->id);
-            $h->messages[$h->lang["users_login_failed_email_not_validated"]] = 'red';
-            $h->messages[$h->lang["users_login_failed_email_request_sent"]] = 'green';
+            $h->messages[$h->lang["user_signin_login_failed_email_not_validated"]] = 'red';
+            $h->messages[$h->lang["user_signin_login_failed_email_request_sent"]] = 'green';
             return false;
         }
         
         if ($h->currentUser->getPermission('can_login') == 'no') {
             if ($h->currentUser->role == 'pending') {
-                $h->messages[$h->lang["users_login_failed_not_approved"]] = 'red';
+                $h->messages[$h->lang["user_signin_login_failed_not_approved"]] = 'red';
             } else {
-                $h->messages[$h->lang["users_login_failed_no_permission"]] = 'red';
+                $h->messages[$h->lang["user_signin_login_failed_no_permission"]] = 'red';
             }
             return false;
         }
@@ -334,7 +339,7 @@ class UserSignin
         if (!$email_check = $h->cage->post->testEmail('email')) { 
             $email_check = ''; 
             // login failed
-            $h->messages[$h->lang["users_email_invalid"]] = 'red';
+            $h->messages[$h->lang["user_signin_email_invalid"]] = 'red';
             return false;
         } 
         
@@ -348,7 +353,7 @@ class UserSignin
                 return true;
         } else {
                 // login failed
-                $h->messages[$h->lang["users_email_invalid"]] = 'red';
+                $h->messages[$h->lang["user_signin_email_invalid"]] = 'red';
                 return false;
         }
     }
@@ -472,7 +477,7 @@ class UserSignin
                 $h->currentUser->addUserBasic($h);
                 $last_insert_id = $h->db->get_var($h->db->prepare("SELECT LAST_INSERT_ID()"));
                 
-                $h->pluginHook('user_signin_register_post_add_user', true, '', array($last_insert_id));
+                $h->pluginHook('user_signin_register_post_add_user', '', array($last_insert_id));
                 
                 // notify chosen mods of new user by email IF email confirmation is DISABLED:
                 // If email confirmation is ENABLED, the email gets sent in checkEmailConfirmation().
@@ -498,7 +503,7 @@ class UserSignin
                 // allow plugin to override the default "unexpected error" message:
                 $result = $h->pluginHook('user_signin_register_error_message');
                 if (!isset($result) || !is_array($result)) {
-                    $h->messages[$h->lang["users_register_unexpected_error"]] = 'red';
+                    $h->messages[$h->lang["user_signin_register_unexpected_error"]] = 'red';
                 }
             }
         } else {

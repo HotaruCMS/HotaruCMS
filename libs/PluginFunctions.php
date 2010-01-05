@@ -81,7 +81,7 @@ class PluginFunctions
                 // include this plugin's file (even child classes need the parent class)
                 include_once(PLUGINS . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php");
                 
-                $tempPluginObject = new $plugin->plugin_class();        // create a temporary object of the plugin class
+                $tempPluginObject = new $plugin->plugin_class($h);        // create a temporary object of the plugin class
                 $h->plugin->folder = $plugin->plugin_folder;     // assign plugin folder to $h
 
                 // call the method that matches this hook
