@@ -63,6 +63,10 @@ class AdminPages
                 break;
             case "plugin_settings":
                 $h->vars['settings_plugin'] = $h->cage->get->testAlnumLines('plugin'); // get plugin name from url
+                $h->vars['plugin_settings_csrf_error'] = '';
+                if ($h->cage->post->testAlpha('submitted') == 'true') { 
+                    $h->vars['plugin_settings_csrf_error'] = (!$h->csrf()) ? true : false;
+                }
                 break;
             default:
                 // we need this because it's not specified in the url:

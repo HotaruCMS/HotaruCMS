@@ -26,6 +26,9 @@
  * @link      http://www.hotarucms.org/
  */
 
+if ($h->vars['plugin_settings_csrf_error']) { 
+    $h->showMessage($h->lang['error_csrf'], 'red'); return false;
+}
 ?>
 
 <div id="plugin_settings">

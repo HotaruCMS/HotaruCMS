@@ -201,7 +201,8 @@ class Hotaru
     public function admin_sidebar_plugin_settings()
     {
         $vars['plugin'] = $this->plugin->folder;
-        $vars['name'] = make_name($this->plugin->folder);
+        $vars['name'] = $this->plugin->name;
+        //$vars['name'] = make_name($this->plugin->folder);
         return $vars;
     }
     
