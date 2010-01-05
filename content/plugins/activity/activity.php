@@ -6,7 +6,7 @@
  * folder: activity
  * class: Activity
  * requires: users 1.1, widgets 0.6
- * hooks: install_plugin, header_include, comment_post_add_comment, comment_update_comment, com_man_approve_all_comments, comment_delete_comment, post_add_post, post_update_post, post_change_status, post_delete_post, userbase_killspam, vote_positive_vote, vote_negative_vote, vote_flag_insert, admin_sidebar_plugin_settings, admin_plugin_settings, theme_index_top, theme_index_main, profile
+ * hooks: install_plugin, header_include, comment_post_add_comment, comment_update_comment, com_man_approve_all_comments, comment_delete_comment, post_add_post, post_update_post, post_change_status, post_delete_post, userbase_killspam, vote_positive_vote, vote_negative_vote, vote_flag_insert, admin_sidebar_plugin_settings, admin_plugin_settings, theme_index_top, theme_index_main, profile, breadcrumbs
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -393,7 +393,7 @@ class Activity
     public function theme_index_top($h)
     {
         if (!$h->isPage('rss_activity')) { return false; }
-        $this->rssFeed();
+        $this->rssFeed($h);
         return true;
     }
     
@@ -465,6 +465,26 @@ class Activity
     
     
     /**
+     * Add Activity RSS link to breadcrumbs
+     */
+    public function breadcrumbs($h)
+    {
+        if (($h->pageName != 'activity') && ($h->pageName != 'profile')) { return false; }
+        
+        if ($h->cage->get->keyExists('user')) {
+            $rss = "<a href='" . $h->url(array('page'=>'rss_activity', 'user'=>$h->cage->get->testUsername('user'))) . "'> ";
+        } else {
+            $rss = "<a href='" . $h->url(array('page'=>'rss_activity')) . "'> ";
+        }
+        $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png' alt='" . $h->pageTitle . " RSS' />";
+
+        $crumbs = $h->pageTitle . $rss . "</a>\n ";
+        
+        return $crumbs;
+    }
+    
+    
+    /**
      * Publish content as an RSS feed
      * Uses the 3rd party RSS Writer class.
      */    
@@ -480,7 +500,7 @@ class Activity
         if (!$limit) { $limit = 10; }
         
         if ($user) { 
-            $userid = $h->currentUser->getUserIdFromName($user);
+            $userid = $h->getUserIdFromName($user);
         } else {
             $userid = 0;
         }
@@ -497,12 +517,11 @@ class Activity
             $feed->description = $h->lang["activity_rss_latest"] . SITE_NAME;
         }
         
-        $h->post = new Post($this->hotaru); // used to get post information
         $user = new UserBase($this->hotaru);
 
         // Get settings from database if they exist...
         $activity_settings = $h->getSerializedSettings('activity');
-        $activity = $this->getLatestActivity($activity_settings['widget_number'], $userid);
+        $activity = $this->getLatestActivity($h, $activity_settings['widget_number'], $userid);
         
         if (!$activity) { echo $feed->serve(); return false; } // displays empty RSS feed
                 
@@ -521,21 +540,6 @@ class Activity
             $post_title = stripslashes(html_entity_decode(urldecode($h->post->title), ENT_QUOTES,'UTF-8'));
             $title_link = $h->url(array('page'=>$h->post->id));
             $cid = ''; // comment id string
-            
-            // make category object
-            if (!isset($cat)) {
-                // we need categories for the url
-                if ($h->post->vars['useCategories']) {
-                    require_once(PLUGINS . 'categories/libs/Category.php');
-                    $cat = new Category($this->db);
-                }
-            }
-            
-            // category for url
-            if ($h->post->vars['useCategories'] && ($h->post->vars['category'] != 1)) {
-                $h->post->vars['category'] = $h->post->vars['category'];
-                $h->post->vars['catSafeName'] =  $cat->getCatSafeName($h->post->vars['category']);
-            }
             
             switch ($act->useract_key) {
                 case 'comment':

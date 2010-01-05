@@ -144,7 +144,7 @@ class Comments
         
         
         if ($h->pageName == 'rss_comments') {
-            $h->comment->rssFeed();
+            $this->rssFeed($h);
             return true;
         }
 
@@ -656,6 +656,65 @@ class Comments
         echo $h->lang['comments_profile_see_comments'] . ".";
         echo "</a>";
         
+    }
+    
+    
+    /**
+     * Publish content as an RSS feed
+     * Uses the 3rd party RSS Writer class.
+     */    
+    public function rssFeed($h)
+    {
+        require_once(EXTENSIONS . 'RSSWriterClass/rsswriter.php');
+        
+        $select = '*';
+
+        $limit = $h->cage->get->getInt('limit');
+        $user = $h->cage->get->testUsername('user');
+
+        if (!$limit) { $limit = 10; }
+        if ($user) { 
+            $userid = $h->getUserIdFromName($user);
+        } else {
+            $userid = 0;
+        }
+        
+        $h->pluginHook('comments_rss_feed');
+        
+        $feed           = new RSS();
+        $feed->title    = SITE_NAME;
+        $feed->link     = BASEURL;
+        
+        if ($user) { 
+            $feed->description = $h->lang["comment_rss_comments_from_user"] . " " . $user; 
+        } else {
+            $feed->description = $h->lang["comment_rss_latest_comments"] . SITE_NAME;
+        }
+        
+        // fetch comments from the database        
+        $comments = $h->comment->getAllComments($h, 0, "desc", $limit, $userid);
+        
+        if ($comments) {
+            foreach ($comments as $comment) 
+            {
+                $h->readPost($comment->comment_post_id);
+                
+                $author = $h->getUserNameFromId($comment->comment_user_id);
+                
+                $item = new RSSItem();
+                if ($user) { 
+                    $title = $h->lang["comment_rss_comment_on"] . html_entity_decode(urldecode($h->post->title), ENT_QUOTES,'UTF-8');
+                } else {
+                    $title = $author . $h->lang["comment_rss_commented_on"] . html_entity_decode(urldecode($h->post->title), ENT_QUOTES,'UTF-8');
+                }
+                $item->title = stripslashes($title);
+                $item->link  = $h->url(array('page'=>$comment->comment_post_id)) . "#c" . $comment->comment_id;
+                $item->setPubDate($comment->comment_date); 
+                $item->description = "<![CDATA[ " . stripslashes(urldecode($comment->comment_content)) . " ]]>";
+                $feed->addItem($item);
+            }
+        }
+        echo $feed->serve();
     }
     
     

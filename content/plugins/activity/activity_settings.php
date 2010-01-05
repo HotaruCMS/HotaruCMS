@@ -96,7 +96,7 @@ class ActivitySettings
      *
      * @return true
      */
-    public function saveSettings()
+    public function saveSettings($h)
     {
         $error = 0;
         
