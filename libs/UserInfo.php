@@ -255,6 +255,10 @@ class UserInfo extends UserBase
                 $sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s OR user_role = %s OR user_role = %s OR  user_role = %s";
                 $users = $h->db->get_var($h->db->prepare($sql, 'admin', 'supermod', 'moderator', 'member'));
                 break;
+            case 'pending_users':
+                $sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+                $users = $h->db->get_var($h->db->prepare($sql, 'pending'));
+                break;
             case 'undermod_users':
                 $sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
                 $users = $h->db->get_var($h->db->prepare($sql, 'undermod'));

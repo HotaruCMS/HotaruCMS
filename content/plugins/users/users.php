@@ -6,7 +6,7 @@
  * folder: users
  * type: users
  * class: Users
- * hooks: pagehandling_getpagename, theme_index_top, header_include, sb_base_functions_preparelist, breadcrumbs, theme_index_post_breadcrumbs, theme_index_main, users_edit_profile_save, user_settings_save
+ * hooks: pagehandling_getpagename, theme_index_top, header_include, sb_base_functions_preparelist, breadcrumbs, theme_index_post_breadcrumbs, theme_index_main, users_edit_profile_save, user_settings_save, admin_theme_main_stats
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -302,6 +302,25 @@ class Users
                 $h->vars['perm_options'] .= "<td><input type='radio' name='" . $key . "' value='" . $value . "' " . $checked . " " . $disabled . "> " . $value . " &nbsp;</td>\n";
             }
             $h->vars['perm_options'] .= "</tr>";
+        }
+    }
+    
+
+    /**
+     * Show stats on Admin home page
+     */
+    public function admin_theme_main_stats($h, $vars)
+    {
+        require_once(LIBS . 'UserInfo.php');
+        $ui = new UserInfo();
+        
+        echo "<li>&nbsp;</li>";
+
+        foreach ($vars as $stat_type) {
+            $users = $ui->stats($h, $stat_type);
+            if (!$users) { $users = 0; }
+            $lang_name = 'users_admin_stats_' . $stat_type;
+            echo "<li>" . $h->lang[$lang_name] . ": " . $users . "</li>";
         }
     }
 }

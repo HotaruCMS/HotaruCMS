@@ -46,8 +46,8 @@
     <h2><?php echo SITE_NAME . " " . $h->lang["admin_theme_main_stats"]; ?></h2>
     <ul id="site-stats">
     <li>Hotaru CMS v.<?php echo $h->version; ?></li>
-    <?php $h->pluginHook('admin_theme_main_stats', 'susers', array('total_users', 'admins', 'supermods', 'moderators')); ?>
-    <?php $h->pluginHook('admin_theme_main_stats', 'susers', array('approved_users', 'pending_users', 'undermod_users', 'banned_users', 'killspammed_users')); ?>
+    <?php $h->pluginHook('admin_theme_main_stats', 'users', array('total_users', 'admins', 'supermods', 'moderators')); ?>
+    <?php $h->pluginHook('admin_theme_main_stats', 'users', array('approved_users', 'undermod_users', 'pending_users', 'banned_users', 'killspammed_users')); ?>
     <?php $h->pluginHook('admin_theme_main_stats', 'sb_base', array('total_posts', 'approved_posts', 'pending_posts', 'buried_posts', 'archived_posts')); ?>
     <?php $h->pluginHook('admin_theme_main_stats', 'comments', array('total_comments', 'approved_comments', 'pending_comments')); ?>
     </ul>
