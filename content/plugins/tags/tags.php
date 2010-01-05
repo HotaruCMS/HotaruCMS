@@ -42,7 +42,8 @@ class Tags
     {
         if ($h->cage->get->keyExists('tag')) { 
             $h->pageTitle = stripslashes(make_name($h->cage->get->noTags('tag')));
-            $h->pageName = 'tags';
+            if (!$h->pageName) { $h->pageName = 'index'; }
+            $h->subPage = 'tags';
             $h->pageType = 'list';
             $h->vars['tag'] = $h->cage->get->noTags('tag');
         } 
@@ -83,7 +84,7 @@ class Tags
      */
     public function sb_base_functions_preparelist($h)
     {
-        if ($h->pageName == 'tags') 
+        if ($h->subPage == 'tags') 
         {
             $tag = stripslashes($h->vars['tag']); 
             
@@ -103,12 +104,12 @@ class Tags
      */
     public function breadcrumbs($h)
     {
-        if ($h->pageName != 'tags') { return false; }
+        if ($h->subPage != 'tags') { return false; }
         
         $crumbs = "<a href='" . $h->url(array('tag'=>$h->vars['tag'])) . "'>\n";
-        $crumbs .= $h->pageTitle . "</a>\n ";
+        $crumbs .= $h->vars['tag'] . "</a>\n ";
         
-        return $crumbs . $h->rssBreadcrumbsLink('all', array('tag'=>$h->vars['tag']));
+        return $crumbs . $h->rssBreadcrumbsLink('', array('tag'=>$h->vars['tag']));
     }
     
     

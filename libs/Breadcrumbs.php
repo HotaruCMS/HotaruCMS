@@ -42,6 +42,7 @@ class Breadcrumbs
         // plugin hook:
         $crumbs = $h->pluginHook('breadcrumbs');
         if ($crumbs) {
+            $crumbs = array_reverse($crumbs); // so the last one gets used.
             foreach ($crumbs as $key => $value) {
                 $output .= " &raquo; " . $value;
                 return $output; // we only want the first result so return now.
@@ -61,9 +62,14 @@ class Breadcrumbs
      * @param array $vars - array of key -> value pairs
      * @return string
      */    
-    public function rssBreadcrumbsLink($h, $status = 'all', $vars)
+    public function rssBreadcrumbsLink($h, $status = '', $vars)
     {
-        $url_array = array('page'=>'rss', 'status'=>$status);
+        if ($status) {
+            $url_array = array('page'=>'rss', 'status'=>$status);
+        } else {
+            $url_array = array('page'=>'rss'); // defaults to all
+        }
+        
         foreach ($vars as $k => $v) {
             $url_array[$k] = $v;
         }

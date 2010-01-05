@@ -24,6 +24,8 @@
  * @link      http://www.hotarucms.org/
  */
 
+$lang['comments'] = "Comments";
+
 /* Comment Link - see libs/Comment.php -> count_comments function */
 $lang['comments_singular_link'] = "comment";
 $lang['comments_plural_link'] = "comments";

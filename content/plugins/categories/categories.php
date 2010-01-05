@@ -60,7 +60,8 @@ class Categories
                 $h->vars['category_safe_name'] = $category;
                 $h->pageTitle = $h->vars['category_name'];
             }
-            $h->pageName = 'category';
+            if (!$h->pageName) { $h->pageName = 'index'; }
+            $h->subPage = 'category';
             $h->pageType = 'list';
         }
         elseif (!$h->pageType)  // only do this if we don't know the pageType yet... 
@@ -76,7 +77,7 @@ class Categories
                 $h->vars['category_name'] = $exists->category_name;
                 $h->vars['category_safe_name'] = $h->pageName;
                 $h->pageTitle = $h->vars['category_name'];
-                $h->pageName = 'category';  // overwrite the current pageName which is the category name
+                $h->subPage = 'category';  // overwrite the current pageName which is the category name
                 $h->pageType = 'list';
             }
         }
@@ -136,7 +137,7 @@ class Categories
         if (!$h->post->id) { return false; }
         
         $h->post->readPost($h, $h->post->id);
-        $h->pageName = $h->post->url;
+        $h->pageName = $h->post->url; // slug for page title
         $h->pageTitle = $h->post->title;
         $h->pageType = 'post';
         return true;
@@ -170,10 +171,10 @@ class Categories
      */
     public function sb_base_functions_preparelist($h)
     {
-        if ($h->pageName == 'category') 
+        if ($h->subPage == 'category') 
         {
             // When a user clicks a parent category, we need to show posts from all child categories, too.
-            // This only works for onle level of sub-categories.
+            // This only works for one level of sub-categories.
             $filter_string = '(post_category = %d';
             $values = array($h->vars['category_id']);
             $parent = $h->getCatParent($h->vars['category_id']);
@@ -200,7 +201,7 @@ class Categories
     { 
         $crumbs = '';
                 
-        if ($h->pageName == 'category') // the pageType is "list"
+        if ($h->subPage == 'category') // the pageType is "list"
         {
             $parent_id = $h->getCatParent($h->vars['category_id']);
             if ($parent_id > 1) {
@@ -212,7 +213,8 @@ class Categories
     
             $crumbs .= "<a href='" . $h->url(array('category'=>$h->vars['category_id'])) . "'>\n";
             $crumbs .= $h->vars['category_name'] . "</a>\n ";
-            $crumbs .= $h->rssBreadcrumbsLink('all', array('category'=>$h->vars['category_id']));
+
+            $crumbs .= $h->rssBreadcrumbsLink('', array('category'=>$h->vars['category_id']));
         }
         elseif ($h->pageType == 'post') // the pageName is the post slug (post_url)
         {

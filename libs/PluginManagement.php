@@ -481,7 +481,7 @@ class PluginManagement
         $plugin_metadata = $this->readPluginMeta($h->plugin->folder);
         
         $h->plugin->enabled  = 1;    // Enable it when we add it to the database.
-        $this->assignPluginMeta($plugin_metadata);
+        $this->assignPluginMeta($h, $plugin_metadata);
         
         $this->uninstall($h, 1);    // 1 indicates that "upgrade" is true, used to disable the "Uninstalled" message
         $this->install($h, 1);      // 1 indicates that "upgrade" is true. 

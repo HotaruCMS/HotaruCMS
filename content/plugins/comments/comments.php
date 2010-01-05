@@ -147,6 +147,13 @@ class Comments
             $this->rssFeed($h);
             return true;
         }
+        
+        if ($h->pageName == 'comments') {
+            $h->pageTitle = $h->lang['comments'];
+            if ($h->cage->get->keyExists('user')) {
+                $h->pageTitle .= " &laquo; " . $h->cage->get->testUsername('user');
+            }
+        }
 
         // Is the comment form open on this thread? 
         $h->comment->thisForm = $h->comment->formStatus($h, 'select'); // returns 'open' or 'closed'
@@ -436,6 +443,7 @@ class Comments
             // force non-reply form to have parent "0" and depth "0"
             $h->comment->id = 0;
             $h->comment->depth = 0;
+            $h->vars['subscribe'] = ($h->comment->subscribe) ? 'checked' : '';
             $h->displayTemplate('comment_form', 'comments', false);
             
             $h->pluginHook('comments_post_last_form');
@@ -502,6 +510,7 @@ class Comments
             if ($h->comment->allForms != 'checked') { return false; }
     
             // show the reply form:
+            $h->vars['subscribe'] = ($h->comment->subscribe) ? 'checked' : '';
             $h->displayTemplate('comment_form', 'comments', false);
         }
     }
@@ -549,14 +558,16 @@ class Comments
     {
         if ($h->pageName != 'comments') { return false; }
         
-        if ($h->cage->get->keyExists('user')) {
+        if ($h->subPage == 'user') {
+            $user = $h->cage->get->testUsername('user');
+            $userlink = "<a href='" . $h->url(array('user'=>$user)) . "'>";
+            $userlink .= $user . "</a> &raquo ";
             $rss = "<a href='" . $h->url(array('page'=>'rss_comments', 'user'=>$h->cage->get->testUsername('user'))) . "'> ";
+            $crumbs = $userlink . $h->lang['comments'] . $rss;
         } else {
-            $rss = "<a href='" . $h->url(array('page'=>'rss_comments')) . "'> ";
+            $crumbs = $h->lang ['comments'] . "<a href='" . $h->url(array('page'=>'rss_comments')) . "'> ";
         }
-        $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png' alt='" . $h->pageTitle . " RSS' />";
-
-        $crumbs = $h->pageTitle . $rss . "</a>\n ";
+        $crumbs .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png' alt='" . $h->pageTitle . " RSS' /></a>\n ";
         
         return $crumbs;
     }

@@ -43,10 +43,11 @@ class Hotaru
     protected $includes;                        // for CSS/JavaScript includes
     
     // page info
-    protected $pageName             = '';       // e.g. top
+    protected $pageName             = '';       // e.g. index, category
     protected $pageTitle            = '';       // e.g. Top Stories
-    protected $pageType             = '';       // e.g. list
-    protected $pageTemplate         = '';       // e.g. list, tag_cloud
+    protected $pageType             = '';       // e.g. post, list
+    protected $pageTemplate         = '';       // e.g. sb_list, tag_cloud
+    protected $subPage              = '';       // e.g. category (if pageName is "index")
 
     // ALL plugins
     protected $pluginSettings       = array();  // contains all settings for all plugins
@@ -384,7 +385,7 @@ class Hotaru
      * @param array $vars - array of key -> value pairs
      * @return string
      */    
-    public function rssBreadcrumbsLink($status = 'all', $vars = array())
+    public function rssBreadcrumbsLink($status = '', $vars = array())
     {
         require_once(LIBS . 'Breadcrumbs.php');
         $breadcrumbs = new Breadcrumbs();

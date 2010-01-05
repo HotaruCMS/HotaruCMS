@@ -71,8 +71,16 @@ class SbBase
             $h->pageName = 'sort';
         }
         
+        // include sb_base_functions class:
+        require_once(PLUGINS . 'sb_base/libs/SbBaseFunctions.php');
+        $sb_funcs = new SbBaseFunctions();
+        
         switch ($h->pageName)
         {
+            case 'rss':
+                $sb_funcs->rssFeed($h);
+                exit;
+                break;
             case 'index':
                 $h->pageType = 'list';
                 $h->pageTitle = $h->lang["sb_base_site_name"];
@@ -110,15 +118,11 @@ class SbBase
         $h->vars['sb_base_settings'] = $h->getSerializedSettings('sb_base');
         $h->vars['posts_per_page'] = $h->vars['sb_base_settings']['posts_per_page'];
         
-        // include sb_base_functions class:
-        require_once(PLUGINS . 'sb_base/libs/SbBaseFunctions.php');
-        $funcs = new SbBaseFunctions();
-        
         // if a list, get the posts:
         switch ($h->pageType)
         {
             case 'list':
-                $h->vars['posts'] = $funcs->prepareList($h);
+                $h->vars['posts'] = $sb_funcs->prepareList($h);
                 break;
             case 'post':
                 // if a post is already set (e.g. from the sb_categories plugin), we don't want to
@@ -215,6 +219,9 @@ class SbBase
                 break;
             case 'latest':
                 return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink('new');
+                break;
+            case 'all':
+                return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink();
                 break;
         }
     }
@@ -518,12 +525,12 @@ class SbBase
         $pagename = $h->pageName;
         
         // check if we're looking at a category
-        if ($pagename == 'category') { 
+        if ($h->subPage == 'category') { 
             $category = $h->vars['category_id'];
         } 
         
         // check if we're looking at a tag
-        if ($pagename == 'tags') { 
+        if ($h->subPage == 'tags') { 
             $tag = $h->vars['tag'];
         } 
         
@@ -545,20 +552,20 @@ class SbBase
         // POPULAR LINK
         if (isset($category)) { $url = $h->url(array('category'=>$category));
          } elseif (isset($tag)) { $url = $h->url(array('tag'=>$tag));
-         } elseif (isset($media)) { $url = $h->url(array('type'=>$media));
+         } elseif (isset($media)) { $url = $h->url(array('media'=>$media));
          } elseif (isset($user)) { $url = $h->url(array('page'=>'index', 'user'=>$user));
          } else { $url = $h->url(array()); } 
         $h->vars['popular_link'] = $url;
          
         // POPULAR ACTIVE OR INACTIVE
-        if (($pagename == 'main' || $pagename == 'top') && (!isset($sort)) && $h->pageType != 'profile') { 
+        if (($pagename == 'index') && (!isset($sort)) && $h->pageType != 'profile') { 
             $h->vars['popular_active'] = "class='active'";
         } else { $h->vars['popular_active'] = ""; }
         
         // UPCOMING LINK
         if (isset($category)) { $url = $h->url(array('page'=>'upcoming', 'category'=>$category));
          } elseif (isset($tag)) { $url = $h->url(array('page'=>'upcoming', 'tag'=>$tag));
-         } elseif (isset($media)) { $url = $h->url(array('page'=>'upcoming', 'type'=>$media));
+         } elseif (isset($media)) { $url = $h->url(array('page'=>'upcoming', 'media'=>$media));
          } elseif (isset($user)) { $url = $h->url(array('page'=>'upcoming', 'user'=>$user));
          } else { $url = $h->url(array('page'=>'upcoming')); }
         $h->vars['upcoming_link'] = $url;
@@ -571,7 +578,7 @@ class SbBase
         // LATEST LINK
         if (isset($category)) { $url = $h->url(array('page'=>'latest', 'category'=>$category));
          } elseif (isset($tag)) { $url = $h->url(array('page'=>'latest', 'tag'=>$tag));
-         } elseif (isset($media)) { $url = $h->url(array('page'=>'latest', 'type'=>$media));
+         } elseif (isset($media)) { $url = $h->url(array('page'=>'latest', 'media'=>$media));
          } elseif (isset($user)) { $url = $h->url(array('page'=>'latest', 'user'=>$user));
          } else { $url = $h->url(array('page'=>'latest')); }
         $h->vars['latest_link'] = $url;
@@ -584,7 +591,7 @@ class SbBase
         // ALL LINK
         if (isset($category)) { $url = $h->url(array('page'=>'all', 'category'=>$category));
          } elseif (isset($tag)) { $url = $h->url(array('page'=>'all', 'tag'=>$tag));
-         } elseif (isset($media)) { $url = $h->url(array('page'=>'all', 'type'=>$media));
+         } elseif (isset($media)) { $url = $h->url(array('page'=>'all', 'media'=>$media));
          } elseif (isset($user)) { $url = $h->url(array('page'=>'all', 'user'=>$user));
          } else { $url = $h->url(array('page'=>'all')); }
         $h->vars['all_link'] = $url;
@@ -597,7 +604,7 @@ class SbBase
         // 24 HOURS LINK
         if (isset($category)) { $url = $h->url(array('sort'=>'top-24-hours', 'category'=>$category));
          } elseif (isset($tag)) { $url = $h->url(array('sort'=>'top-24-hours', 'tag'=>$tag));
-         } elseif (isset($media)) { $url = $h->url(array('sort'=>'top-24-hours', 'type'=>$media));
+         } elseif (isset($media)) { $url = $h->url(array('sort'=>'top-24-hours', 'media'=>$media));
          } elseif (isset($user)) { $url = $h->url(array('sort'=>'top-24-hours', 'user'=>$user));
          } else { $url = $h->url(array('sort'=>'top-24-hours')); }
         $h->vars['24_hours_link'] = $url;
@@ -610,7 +617,7 @@ class SbBase
         // 48 HOURS LINK
         if (isset($category)) { $url = $h->url(array('sort'=>'top-48-hours', 'category'=>$category));
          } elseif (isset($tag)) { $url = $h->url(array('sort'=>'top-48-hours', 'tag'=>$tag));
-         } elseif (isset($media)) { $url = $h->url(array('sort'=>'top-48-hours', 'type'=>$media));
+         } elseif (isset($media)) { $url = $h->url(array('sort'=>'top-48-hours', 'media'=>$media));
          } elseif (isset($user)) { $url = $h->url(array('sort'=>'top-48-hours', 'user'=>$user));
          } else { $url = $h->url(array('sort'=>'top-48-hours')); }
         $h->vars['48_hours_link'] = $url;
@@ -623,7 +630,7 @@ class SbBase
         // 7 DAYS LINK
         if (isset($category)) { $url = $h->url(array('sort'=>'top-7-days', 'category'=>$category));
          } elseif (isset($tag)) { $url = $h->url(array('sort'=>'top-7-days', 'tag'=>$tag));
-         } elseif (isset($media)) { $url = $h->url(array('sort'=>'top-7-days', 'type'=>$media));
+         } elseif (isset($media)) { $url = $h->url(array('sort'=>'top-7-days', 'media'=>$media));
          } elseif (isset($user)) { $url = $h->url(array('sort'=>'top-7-days', 'user'=>$user));
          } else { $url = $h->url(array('sort'=>'top-7-days')); }
         $h->vars['7_days_link'] = $url;
@@ -636,7 +643,7 @@ class SbBase
         // 30 DAYS LINK
         if (isset($category)) { $url = $h->url(array('sort'=>'top-30-days', 'category'=>$category));
          } elseif (isset($tag)) { $url = $h->url(array('sort'=>'top-30-days', 'tag'=>$tag));
-         } elseif (isset($media)) { $url = $h->url(array('sort'=>'top-30-days', 'type'=>$media));
+         } elseif (isset($media)) { $url = $h->url(array('sort'=>'top-30-days', 'media'=>$media));
          } elseif (isset($user)) { $url = $h->url(array('sort'=>'top-30-days', 'user'=>$user));
          } else { $url = $h->url(array('sort'=>'top-30-days')); }
         $h->vars['30_days_link'] = $url;
@@ -649,7 +656,7 @@ class SbBase
         // 365 DAYS LINK
         if (isset($category)) { $url = $h->url(array('sort'=>'top-365-days', 'category'=>$category));
          } elseif (isset($tag)) { $url = $h->url(array('sort'=>'top-365-days', 'tag'=>$tag));
-         } elseif (isset($media)) { $url = $h->url(array('sort'=>'top-365-days', 'type'=>$media));
+         } elseif (isset($media)) { $url = $h->url(array('sort'=>'top-365-days', 'media'=>$media));
          } elseif (isset($user)) { $url = $h->url(array('sort'=>'top-365-days', 'user'=>$user));
          } else { $url = $h->url(array('sort'=>'top-365-days')); }
         $h->vars['365_days_link'] = $url;
@@ -662,7 +669,7 @@ class SbBase
         // ALL TIME LINK
         if (isset($category)) { $url = $h->url(array('sort'=>'top-all-time', 'category'=>$category));
          } elseif (isset($tag)) { $url = $h->url(array('sort'=>'top-all-time', 'tag'=>$tag));
-         } elseif (isset($media)) { $url = $h->url(array('sort'=>'top-all-time', 'type'=>$media));
+         } elseif (isset($media)) { $url = $h->url(array('sort'=>'top-all-time', 'media'=>$media));
          } elseif (isset($user)) { $url = $h->url(array('sort'=>'top-all-time', 'user'=>$user));
          } else { $url = $h->url(array('sort'=>'top-all-time')); }
         $h->vars['all_time_link'] = $url;

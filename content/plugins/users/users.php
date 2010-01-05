@@ -51,6 +51,10 @@ class Users
      */
     public function theme_index_top($h)
     {
+        if ($h->cage->get->keyExists('user')) {
+            $h->subPage = 'user';
+        }
+        
         switch ($h->pageName)
         {
             case 'profile':
@@ -128,25 +132,44 @@ class Users
      */
     public function breadcrumbs($h)
     {
-        if ($h->pageType != 'user') { return false; }
+        if (isset($h->vars['user'])) {
+            $userlink = "<a href='" . $h->url(array('user'=>$h->vars['user']->name)) . "'>";
+            $userlink .= $h->vars['user']->name . "</a>";
+        }
         
+        // This is for user pages, e.g. account, edit profile, etc:
         switch ($h->pageName)
         {
             case 'profile':
-                $h->pageTitle = $h->lang["users_profile"] . ' &raquo; ' . $h->vars['user']->name;
+                $crumbs = $userlink . ' &raquo; ' . $h->lang["users_profile"];
+                return $crumbs;
                 break;
             case 'account':
-                $h->pageTitle = $h->lang["users_account"] . ' &raquo; ' . $h->vars['user']->name;
+                $crumbs = $userlink . ' &raquo; ' . $h->lang["users_account"];
+                return $crumbs;
                 break;
             case 'edit-profile':
-                $h->pageTitle = $h->lang["users_profile_edit"] . ' &raquo; ' . $h->vars['user']->name;
+                $crumbs = $userlink . ' &raquo; ' . $h->lang["users_profile_edit"];
+                return $crumbs;
                 break;
             case 'user-settings':
-                $h->pageTitle = $h->lang["users_settings"] . ' &raquo; ' . $h->vars['user']->name;
+                $crumbs = $userlink . ' &raquo; ' . $h->lang["users_settings"];
+                return $crumbs;
                 break;
             case 'permissions':
-                $h->pageTitle = $h->lang["users_permissions"] . ' &raquo; ' . $h->vars['user']->name;
+                $crumbs = $userlink . ' &raquo; ' . $h->lang["users_permissions"];
+                return $crumbs;
                 break;
+        }
+        
+        // This is used for filtered story pages, e.g. popular, latest, etc:
+        if ($h->subPage == 'user' && $h->pageType == 'list') {
+            $user = $h->cage->get->testUsername('user');
+            $crumbs = "<a href='" . $h->url(array('user'=>$user)) . "'>\n";
+            $crumbs .= $user . "</a>\n ";
+            $crumbs .= " &raquo; " . $h->pageTitle;
+            
+            return $crumbs . $h->rssBreadcrumbsLink('', array('user'=>$user));
         }
     }
     

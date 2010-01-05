@@ -471,14 +471,15 @@ class Activity
     {
         if (($h->pageName != 'activity') && ($h->pageName != 'profile')) { return false; }
         
-        if ($h->cage->get->keyExists('user')) {
-            $rss = "<a href='" . $h->url(array('page'=>'rss_activity', 'user'=>$h->cage->get->testUsername('user'))) . "'> ";
+        if ($h->pageName == 'profile') {
+            $user = $h->cage->get->testUsername('user');
+            $crumbs = "<a href='" . $h->url(array('user'=>$user)) . "'>" . $user . "</a> ";
+            $crumbs .= "<a href='" . $h->url(array('page'=>'rss_activity', 'user'=>$user)) . "'> ";
         } else {
-            $rss = "<a href='" . $h->url(array('page'=>'rss_activity')) . "'> ";
+            $crumbs = $h->pageTitle;
+            $crumbs .= "<a href='" . $h->url(array('page'=>'rss_activity')) . "'>";
         }
-        $rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png' alt='" . $h->pageTitle . " RSS' />";
-
-        $crumbs = $h->pageTitle . $rss . "</a>\n ";
+        $crumbs .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png' alt='" . $h->pageTitle . " RSS' /></a>\n";
         
         return $crumbs;
     }
