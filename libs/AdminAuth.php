@@ -141,7 +141,7 @@ class AdminAuth
             $userid = $h->cage->get->testInt('userid');
             
             if ($passconf && $userid) {
-                if ($h->currentUser->newRandomPassword($userid, $passconf)) {
+                if ($h->currentUser->newRandomPassword($h, $userid, $passconf)) {
                     $h->message = $h->lang['admin_email_password_conf_success'];
                     $h->messageType = "green";
                 } else {
@@ -171,12 +171,12 @@ class AdminAuth
             return false;
         } 
                     
-        $valid_email = $h->currentUser->validEmail($email_check, 'admin');
-        $userid = $h->currentUser->getUserIdFromEmail($valid_email);
+        $valid_email = $h->emailExists($email_check, 'admin');
+        $userid = $h->getUserIdFromEmail($valid_email);
         
         if ($valid_email && $userid) {
                 //success
-                $h->currentUser->sendPasswordConf($userid, $valid_email);
+                $h->currentUser->sendPasswordConf($h, $userid, $valid_email);
                 $h->message = $h->lang['admin_email_password_conf_sent'];
                 $h->messageType = "green";
                 return true;

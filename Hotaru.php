@@ -565,6 +565,20 @@ class Hotaru
     }
     
     
+    /**
+     * Get the user id from email
+     *
+     * @param string $email
+     * @return string|false
+     */
+    public function getUserIdFromEmail($email = '')
+    {
+        require_once(LIBS . 'UserInfo.php');
+        $userInfo = new UserInfo();
+        return $userInfo->getUserIdFromEmail($this, $email);
+    }
+    
+    
      /**
      * Checks if the user has an 'admin' role
      *
@@ -592,6 +606,21 @@ class Hotaru
         require_once(LIBS . 'UserInfo.php');
         $userInfo = new UserInfo();
         return $userInfo->userExists($this->db, $id, $username, $email);
+    }
+    
+    
+    /**
+     * Check if an email exists in the database (used in forgotten password)
+     *
+     * @param string $email user email
+     * @param string $role user role (optional)
+     * @return string|false
+     */
+    public function emailExists($email = '', $role = '')
+    {
+        require_once(LIBS . 'UserInfo.php');
+        $userInfo = new UserInfo();
+        return $userInfo->emailExists($this, $email, $role);
     }
     
     
@@ -780,7 +809,7 @@ class Hotaru
     /**
      * Determines if a plugin "type" is enabled, if not, plugin "folder"
      *
-     * @param string $folder plugin folder name
+     * @param string $type plugin type or folder name
      * @return bool
      */
     public function isActive($type = '')
@@ -788,8 +817,8 @@ class Hotaru
         $pluginFunctions = new PluginFunctions();
         //return $pluginFunctions->isActive($this, $type); // dropped in favor of cache:
         $result = $this->getPluginProperty('plugin_enabled', '', 'type');
-        if (!$result) { $result = $this->getPluginProperty('plugin_enabled'); }
-        return $result;
+        if (!$result) { $result = $this->getPluginProperty('plugin_enabled', $type); }
+        if ($result) { return true; } else { return false; }
     }
     
     

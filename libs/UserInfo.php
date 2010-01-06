@@ -69,6 +69,21 @@ class UserInfo extends UserBase
         if ($email) { return $email; } else { return false; }
     }
     
+    
+    /**
+     * Get the user id from email
+     *
+     * @param string $email
+     * @return string|false
+     */
+    public function getUserIdFromEmail($h, $email = '')
+    {
+        $sql = "SELECT user_id FROM " . TABLE_USERS . " WHERE user_email = %s";
+        
+        $userid = $h->db->get_var($h->db->prepare($sql, $email));
+        if ($userid) { return $userid; } else { return false; }
+    }
+    
 
      /**
      * Checks if the user has an 'admin' role
@@ -122,6 +137,29 @@ class UserInfo extends UserBase
         } 
         
         return 'no'; // User doesn't exist
+    }
+    
+    
+    /**
+     * Check if an email exists in the database (used in forgotten password)
+     *
+     * @param string $email user email
+     * @param string $role user role (optional)
+     * @return string|false
+     */
+    public function emailExists($h, $email = '', $role = '')
+    {
+        if (!$email) {  return false; }
+        
+        if ($role) { 
+            $sql = "SELECT user_email FROM " . TABLE_USERS . " WHERE user_email = %s AND user_role = %s";
+            $valid_email = $h->db->get_var($h->db->prepare($sql, $email, $role));
+        } else {
+            $sql = "SELECT user_email FROM " . TABLE_USERS . " WHERE user_email = %s";
+            $valid_email = $h->db->get_var($h->db->prepare($sql, $email));
+        }
+
+        if ($valid_email) { return $valid_email; } else { return false; }
     }
     
     

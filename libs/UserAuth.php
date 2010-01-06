@@ -397,6 +397,105 @@ class UserAuth extends UserBase
         } else {
             // error must = 1 so fall through and display the form again
         }
+    }
+    
+    
+     /**
+     * Send a confirmation code to a user who has forgotten his/her password
+     *
+     * @param string $email - already validated above
+     */
+    public function sendPasswordConf($h, $userid, $email)
+    {
+        // generate the email confirmation code
+        $pass_conf = md5(crypt(md5($email),md5($email)));
+        
+        // store the hash in the user table
+        $sql = "UPDATE " . TABLE_USERS . " SET user_password_conf = %s WHERE user_id = %d";
+        $h->db->query($h->db->prepare($sql, $pass_conf, $userid));
+        
+        $line_break = "\r\n\r\n";
+        $next_line = "\r\n";
 
+        if ($h->isActive('signin')) { 
+            $url = BASEURL . 'index.php?page=login&plugin=user_signin&userid=' . $userid . '&passconf=' . $pass_conf; 
+        } else { 
+            $url = BASEURL . 'admin_index.php?page=admin_login&userid=' . $userid . '&passconf=' . $pass_conf; 
+        }
+        
+        // send email
+        $subject = $h->lang['main_user_email_password_conf_subject'];
+        $body = $h->lang['main_user_email_password_conf_body_hello'] . " " . $h->getUserNameFromId($userid);
+        $body .= $line_break;
+        $body .= $h->lang['main_user_email_password_conf_body_welcome'];
+        $body .= $h->lang['main_user_email_password_conf_body_click'];
+        $body .= $line_break;
+        $body .= $url;
+        $body .= $line_break;
+        $body .= $h->lang['main_user_email_password_conf_body_no_request'];
+        $body .= $line_break;
+        $body .= $h->lang['main_user_email_password_conf_body_regards'];
+        $body .= $next_line;
+        $body .= $h->lang['main_user_email_password_conf_body_sign'];
+        $to = $email;
+        $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
+    
+        mail($to, $subject, $body, $headers);    
+        
+        return true;
+    }
+    
+    
+     /**
+     * Reset the user's password to soemthing random and email it.
+     *
+     * @param string $passconf - confirmation code clicked in email
+     */
+    public function newRandomPassword($h, $userid, $passconf)
+    {
+        $email = $h->getEmailFromId($userid);
+        
+        // check the email and confirmation code are a pair
+        $pass_conf_check = md5(crypt(md5($email),md5($email)));
+        if ($pass_conf_check != $passconf) {
+            return false;
+        }
+        
+        // update the password to something random
+        $temp_pass = random_string(10);
+        $sql = "UPDATE " . TABLE_USERS . " SET user_password = %s WHERE user_id = %d";
+        $h->db->query($h->db->prepare($sql, $this->generateHash($temp_pass), $userid));
+        $line_break = "\r\n\r\n";
+        $next_line = "\r\n";
+        
+        if ($h->isActive('signin')) { 
+            $url = BASEURL . 'index.php?page=login&plugin=user_signin'; 
+        } else { 
+            $url = BASEURL . 'admin_index.php?page=admin_login'; 
+        }
+        
+        // send email
+        $subject = $h->lang['main_user_email_new_password_subject'];
+        $body = $h->lang['main_user_email_password_conf_body_hello'] . " " . $h->getUserNameFromId($userid);
+        $body .= $line_break;
+        $body .= $h->lang['main_user_email_password_conf_body_requested'];
+        $body .= $line_break;
+        $body .= $temp_pass;
+        $body .= $line_break;
+        $body .= $h->lang['main_user_email_password_conf_body_remember'];
+        $body .= $line_break;
+        $body .= $h->lang['main_user_email_password_conf_body_pass_change'];
+        $body .= $line_break;
+        $body .= $url; 
+        $body .= $line_break;
+        $body .= $h->lang['main_user_email_password_conf_body_regards'];
+        $body .= $next_line;
+        $body .= $h->lang['main_user_email_password_conf_body_sign'];
+        $to = $email;
+        $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
+    
+        mail($to, $subject, $body, $headers);    
+        
+        return true;
     }
 }

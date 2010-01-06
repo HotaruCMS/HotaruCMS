@@ -272,7 +272,8 @@ class UserSignin
             
             // forgotten password request
             if ($h->cage->post->keyExists('forgotten_password')) {
-                $this->password();
+                $this->password($h);
+                unset($h->messages[$h->lang["user_signin_login_failed"]]);
             }
             
             // confirming forgotten password email
@@ -280,7 +281,7 @@ class UserSignin
             $userid = $h->cage->get->testInt('userid');
             
             if ($passconf && $userid) {
-                if ($h->currentUser->newRandomPassword($userid, $passconf)) {
+                if ($h->currentUser->newRandomPassword($h, $userid, $passconf)) {
                     $h->messages[$h->lang['user_signin_email_password_conf_success']] = 'green';
                 } else {
                     $h->messages[$h->lang['user_signin_email_password_conf_fail']] = 'red';
@@ -343,12 +344,12 @@ class UserSignin
             return false;
         } 
         
-        $valid_email = $h->currentUser->validEmail($email_check);
-        $userid = $h->currentUser->getUserIdFromEmail($valid_email);
+        $valid_email = $h->emailExists($email_check);
+        $userid = $h->getUserIdFromEmail($valid_email);
         
         if ($valid_email && $userid) {
                 //success
-                $h->currentUser->sendPasswordConf($userid, $valid_email);
+                $h->currentUser->sendPasswordConf($h, $userid, $valid_email);
                 $h->messages[$h->lang['user_signin_email_password_conf_sent']] = 'green';
                 return true;
         } else {

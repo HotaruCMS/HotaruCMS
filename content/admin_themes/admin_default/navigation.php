@@ -43,7 +43,6 @@
     <?php $h->pluginHook('navigation'); ?>
     <?php 
         if (!$h->isActive('signin')) { 
-
             if ($h->currentUser->loggedIn == true) { 
                 echo "<li><a id='navigation_active' href='" . $h->url(array(), 'admin') . "'>" . $h->lang["admin_theme_navigation_admin"] . "</a></li>"; 
                 echo "<li><a href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang["admin_theme_navigation_logout"] . "</a></li>";
