@@ -816,9 +816,9 @@ class Hotaru
     {
         $pluginFunctions = new PluginFunctions();
         //return $pluginFunctions->isActive($this, $type); // dropped in favor of cache:
-        $result = $this->getPluginProperty('plugin_enabled', '', 'type');
+        $result = $this->getPluginProperty('plugin_enabled', $type, 'type');
         if (!$result) { $result = $this->getPluginProperty('plugin_enabled', $type); }
-        if ($result) { return true; } else { return false; }
+        return $result;
     }
     
     

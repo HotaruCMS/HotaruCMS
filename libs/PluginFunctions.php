@@ -194,7 +194,7 @@ class PluginFunctions
             
             // get plugin basics from memory
             foreach ($h->allPluginDetails as $item => $key) {
-                if ($key->$field == $field) {
+                if ($key->$field == $folder) {
                     return $key->$property;        // plugin property, e.g. "plugin_version"
                 }
             }
