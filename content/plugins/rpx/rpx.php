@@ -362,6 +362,10 @@ class RPX
      */
     public function userbase_logincheck($h, $vars)
     {
+        // if the traditional form has been submitted, return false and 
+        // use the traditional login/password authentication:
+        if ($h->cage->post->testPage('page') == 'login') { return false; }
+        
         $username = $vars[0];
         
         $sql = "SELECT user_id, user_rpx FROM " . TABLE_USERS . " WHERE user_username = %s";
@@ -385,6 +389,10 @@ class RPX
      */
     public function user_signin_register_password_check($h)
     {
+        // if the traditional form has been submitted, return false and 
+        // use the traditional registration method:
+        if ($h->cage->post->testPage('page') == 'register') { return false; }
+        
         $password = random_string(16); // generate a random 16 char password
         $passwords = array('password'=>$password, 'password2'=>$password);
         return $passwords;
