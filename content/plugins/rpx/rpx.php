@@ -254,6 +254,7 @@ class RPX
                 //success
                 $h->currentUser->name = $username;
                 $remember = 1; // keep them logged in for 30 days (not optional)
+                require_once(PLUGINS . 'user_signin/user_signin.php');
                 $user_signin = new UserSignin();
                 $user_signin->loginSuccess($h, $remember);
                 $return = $h->cage->get->testUri('return');

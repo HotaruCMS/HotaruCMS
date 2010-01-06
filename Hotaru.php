@@ -1716,7 +1716,9 @@ class Hotaru
      */
     function countComments($link = true)
     {
-        return $this->comment->countComments($this, $link);
+        require_once(LIBS . 'Comment.php');
+        $comment = new Comment();
+        return $comment->countComments($this, $link);
     }
     
     
@@ -1728,7 +1730,9 @@ class Hotaru
      */
     public function deleteComments($user_id) 
     {
-        return $this->comment->deleteComments($this, $user_id);
+        require_once(LIBS . 'Comment.php');
+        $comment = new Comment();
+        return $comment->deleteComments($this, $user_id);
     }
     
     
