@@ -105,8 +105,7 @@ class Users
             $h->vars['user'] = false;
         }
         
-        /* tidy up the title and breadcrumbs with the latest account data
-          (i.e. if the username has been changed) */
+        /* check for account updates */
         if ($h->pageName == 'account') {
             $h->vars['checks'] = $h->vars['user']->updateAccount($h);
             $h->vars['user']->name = $h->vars['checks']['username_check'];

@@ -787,7 +787,7 @@ class CategoryManagerSettings
     {
         echo "<div class='tree'>";
         foreach ($the_cats as $cat) {
-            if ($cat['category_name'] != "all") {
+            if ($cat['category_safe_name'] != "all") {
                 if ($cat['category_parent'] > 1) {
                     for($i=1; $i<$cat['category_level']; $i++) {
                         echo "--- ";
