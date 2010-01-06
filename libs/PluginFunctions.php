@@ -52,6 +52,9 @@ class PluginFunctions
         $h->db->cache_queries = false;    // stop using cache
 
         if (!$plugins) { return false; }
+        
+        // chain of plugin folder names so we can revert to the parent one when plugins hook into other plugins.
+        if (!isset($h->vars['plugin_chain'])) { $h->vars['plugin_chain'] = array(); }
 
         foreach ($plugins as $plugin)
         {
@@ -83,6 +86,9 @@ class PluginFunctions
                 
                 $tempPluginObject = new $plugin->plugin_class($h);        // create a temporary object of the plugin class
                 $h->plugin->folder = $plugin->plugin_folder;     // assign plugin folder to $h
+                
+                // add this plugin to the chain...
+                array_push($h->vars['plugin_chain'], $h->plugin->folder);
 
                 // call the method that matches this hook
                 if (method_exists($tempPluginObject, $hook)) {
@@ -105,8 +111,12 @@ class PluginFunctions
                     $return_array[$plugin->plugin_class . "_" . $hook] = $result; // name the result Class + hook name
                 }
             }
+            
+            // finished with this hook so remove this plugin from the chain and revert $h->plugin->folder to the previous one:
+            array_pop($h->vars['plugin_chain']);
+            $h->plugin->folder = end($h->vars['plugin_chain']);
         }
-
+        
         if (isset($return_array))
         {
             // return an array of return values from each function, 

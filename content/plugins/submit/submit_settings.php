@@ -41,7 +41,7 @@ class SubmitSettings
         $h->showMessage(); // Saved / Error message
         
         // Get settings from database if they exist...
-        $submit_settings = $h->getSerializedSettings('submit');
+        $submit_settings = $h->getSerializedSettings();
         
         $enabled = $submit_settings['enabled'];
         $content = $submit_settings['content'];
@@ -338,7 +338,7 @@ class SubmitSettings
         $submit_settings['tags'] = $tags;
         $submit_settings['max_tags'] = $max_tags;
     
-        $h->updateSetting('submit_settings', serialize($submit_settings), 'submit');
+        $h->updateSetting('submit_settings', serialize($submit_settings));
         
         $h->message = $h->lang["main_settings_saved"];
         $h->messageType = "green";
