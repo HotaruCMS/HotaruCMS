@@ -207,9 +207,6 @@ class Comments
                             // A user can unsubscribe by submitting an empty comment, so...
                             if ($h->comment->content != '') {
                                 $h->comment->addComment($h);
-                                
-                                // get settings
-                                $comments_settings = $h->getSerializedSettings();
             
                                 // notify chosen mods of new comment by email if enabled and UserFunctions file exists
                                 if (($comments_settings['comment_email_notify']) && (file_exists(PLUGINS . 'users/libs/UserFunctions.php')))
@@ -221,7 +218,7 @@ class Comments
                     
                                 // email comment subscribers if this comment has 'approved' status:
                                 if ($h->comment->status == 'approved') {
-                                    $h->comment->emailCommentSubscribers($h, $h->comment->postId);
+                                    $this->emailCommentSubscribers($h, $h->comment->postId);
                                 }
                             } else {
                                 //comment empty so just check subscribe box:
@@ -744,6 +741,83 @@ class Comments
             $lang_name = 'comments_admin_stats_' . $stat_type;
             echo "<li>" . $h->lang[$lang_name] . ": " . $comments . "</li>";
         }
+    }
+    
+    
+    /**
+    * Send an email to thread subscribers
+    *
+    * @param int $post_id
+    */
+    function emailCommentSubscribers($h, $post_id)
+    {
+        $h->readPost($post_id);
+    
+        // build a list of subscribers
+        $subscriber_ids = array();
+        
+        // Get id of post author if subscribed
+        if ($h->post->subscribe == 1) {
+            array_push($subscriber_ids, $h->post->author);
+        }
+        
+        // Get ids of comment authors if subscribed
+        $sql = "SELECT comment_user_id FROM " . TABLE_COMMENTS . " WHERE comment_subscribe = %d AND comment_post_id = %d";
+        $comment_subscribers = $h->db->get_results($h->db->prepare($sql, 1, $h->post->id));
+        if ($comment_subscribers) {
+            foreach ($comment_subscribers as $comment_subscriber) {
+                array_push($subscriber_ids, $comment_subscriber->comment_user_id); 
+            }
+        }
+        
+        // Use the ids to make an array of unique email addresses
+        $subscribers = array();
+        $subscriber_ids = array_unique($subscriber_ids);
+        foreach ($subscriber_ids as $subscriber_id) {
+            // remove the current comment author so he/she doesn't get emailed his own comment
+            if ($subscriber_id != $h->comment->author) {
+                $email = $h->db->get_var($h->db->prepare("SELECT user_email FROM " . TABLE_USERS . " WHERE user_id = %d", $subscriber_id));
+                array_push($subscribers, $email);
+            }
+        }
+        
+        $send_to = trim(implode(",", $subscribers),",");
+        
+        $comment_author = $h->getUserNameFromId($h->comment->author);
+        
+        //clean up content:
+        $story_title = stripslashes(html_entity_decode(urldecode($h->post->title), ENT_QUOTES,'UTF-8'));
+        $comment_content = stripslashes($h->comment->content);
+        
+        $subject = $comment_author . ' ' . $h->lang["comment_email_subject"]  . ' ' . $story_title;
+        
+        $message =  $comment_author . $h->lang["comment_email_intro"] . SITE_NAME . ": \r\n\r\n";
+        $message .= $h->lang["comment_email_story_title"] . $story_title . "\r\n"; 
+        $message .= $h->lang["comment_email_story_link"] . $h->url(array('page'=>$h->post->id)) . "\r\n\r\n";
+        $message .= $h->lang["comment_email_comment"] . $comment_content . "\r\n\r\n";
+        $message .= "************************ \r\n";
+        $message .= $h->lang["comment_email_do_not_reply"] . " \r\n";
+        $message .= $h->lang["comment_email_unsubscribe"];
+        
+        $from = SITE_EMAIL;
+        $to = $h->comment->email;  // send email to address specified in Comment Settings; 
+        if($send_to != "") {
+            $bcc = "\r\nBCC: " . $send_to;    // BCC individual addresses;
+        } else {
+            $bcc = "";
+        }
+        $headers = "From: " . $from . $bcc . "\r\nReply-To: " . $from . "\r\nX-Priority: 3\r\n";
+    
+        /*
+        echo "to: " . $to . "<br />";
+        echo "bcc: " . $bcc . "<br />";
+        echo "subject: " . $subject . "<br />";
+        echo "message: " . $message . "<br />";
+        echo "headers: " . $headers . "<br />";
+        exit;
+        */
+    
+        @mail($to, $subject, $message, $headers);
     }
 }
 
