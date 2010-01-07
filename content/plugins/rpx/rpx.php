@@ -64,7 +64,7 @@ class RPX
             $uri = $h->cage->server->getMixedString2('REQUEST_URI');
             $return = 'http://' . $host . $uri;
             // so we don't return to the login page...
-            if (strpos($return, urlencode('login')) === true) { $return = BASEURL; }
+            if (strpos($return, urlencode('login')) !== false) { $return = BASEURL; }
             $return = urlencode(htmlentities($return,ENT_QUOTES,'UTF-8'));
         } else {
             $return = urlencode($h->cage->get->testUri('return')); // use existing return parameter
@@ -258,6 +258,8 @@ class RPX
                 $user_signin = new UserSignin();
                 $user_signin->loginSuccess($h, $remember);
                 $return = $h->cage->get->testUri('return');
+                // so that we don't return to the register page:
+                if (strpos($return, urlencode('register')) !== false) { $return = BASEURL; }
                 if ($return) {
                     header("Location: " . $return);
                     exit;
@@ -286,6 +288,8 @@ class RPX
                 $user_signin = new UserSignin();
                 $user_signin->loginSuccess($h, $remember);
                 $return = $h->cage->get->testUri('return');
+                // so that we don't return to the register page:
+                if (strpos($return, urlencode('register')) !== false) { $return = BASEURL; }
                 if ($return) {
                     header("Location: " . $return);
                     exit;
