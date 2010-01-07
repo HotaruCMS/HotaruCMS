@@ -405,9 +405,9 @@ class Activity
     {
         if ($h->isPage('activity') || $profile == true) {
         
-            if ($h->pageType == 'profile') {
+            if ($h->pageName == 'profile') {
                 $user = $h->cage->get->testUsername('user');
-                $userid = $h->currentUser->getUserIdFromName($user);
+                $userid = $h->getUserIdFromName($user);
             } else {
                 $userid = 0;
             }
