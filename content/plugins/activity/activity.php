@@ -418,7 +418,7 @@ class Activity
             // gets however many are items shown per page on activity pages:
             $activity = $this->getLatestActivity($h, 0, $userid); // 0 means no limit, ALL activity 
             
-            if ($h->pageType == 'profile') {
+            if ($h->pageName == 'profile') {
                 $anchor_title = htmlentities($h->lang["activity_title_anchor_title"], ENT_QUOTES, 'UTF-8');
                 echo "<h2>\n";
                 echo "<a href='" . $h->url(array('page'=>'rss_activity', 'user'=>$user)) . "' title='" . $anchor_title . "'>\n";
