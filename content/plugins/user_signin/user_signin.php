@@ -302,7 +302,7 @@ class UserSignin
     {
         $h->currentUser->getUserBasic(0, $h->currentUser->name);
         
-        $user_signin_settings = $h->getSerializedSettings();
+        $user_signin_settings = $h->getSerializedSettings('user_signin');
         $h->vars['useEmailConf'] = $user_signin_settings['emailconf_enabled'];
         
         if ($h->vars['useEmailConf'] && ($h->currentUser->emailValid == 0)) {
