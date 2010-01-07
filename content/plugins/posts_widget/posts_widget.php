@@ -86,7 +86,7 @@ class PostsWidget
             $output .= "<a href='" . $link . "' title='" . $h->lang["posts_widget_title_anchor_title"] . "'>" . $title . "</a></h2>\n"; 
             
             $output .= "<ul class='widget_body posts_widget_items'>\n";
-            $output .= $this->getPostWidgetItems($h, $posts, $type);
+            $output .= $this->getPostsWidgetItems($h, $posts, $type);
             $output .= "</ul>\n";
         }
         
@@ -199,7 +199,7 @@ class PostsWidget
      * @param array $posts 
      * return string $ouput
      */
-    public function getPostWidgetItems($h, $posts = array(), $type = 'new')
+    public function getPostsWidgetItems($h, $posts = array(), $type = 'new')
     {
         if (!$posts) { return false; }
         
