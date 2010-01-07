@@ -225,7 +225,7 @@ class Users
         }
         
         if ($denied) {
-            $h->messages[$h->lang["access_denied"]] = 'red';
+            $h->messages[$h->lang["main_access_denied"]] = 'red';
             $h->showMessages();
         }
     }

@@ -39,7 +39,7 @@ $submitted_url = urldecode($h->vars['submitted_data']['submit_orig_url']);
         <td><input type='text' id='submit_orig_url' name='submit_orig_url' value='<?php echo $submitted_url; ?>' /></td>
         <td>&nbsp;</td>
     </tr>
-    <?php if (!isset($h->post->useLink)) { ?>
+    <?php if ($h->currentUser->getPermission('can_post_without_link') == 'yes') { ?>
     <tr>
         <td colspan = 3><input type='checkbox' name='no_link'>&nbsp;
             <?php echo $h->lang["submit_post_without_link"]; ?></td>

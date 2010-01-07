@@ -224,7 +224,7 @@ class UserSignin
         }
         
         if ($denied) {
-            $h->messages[$h->lang["access_denied"]] = 'red';
+            $h->messages[$h->lang["user_signin_access_denied"]] = 'red';
             $h->showMessages();
         }
     }

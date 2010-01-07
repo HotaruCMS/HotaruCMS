@@ -52,7 +52,7 @@ class RPX
     public function __construct($h)
     {
         $rpx_settings = $h->getSerializedSettings('rpx');
-        $this->application      = $rpx_settings['application'];
+        $this->application      = strtolower($rpx_settings['application']);
         $this->apiKey           = $rpx_settings['api_key'];
         $this->language         = $rpx_settings['language'];
         $this->account          = $rpx_settings['account'];
