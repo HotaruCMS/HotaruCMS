@@ -59,27 +59,27 @@ class Users
         {
             case 'profile':
                 $user = $h->cage->get->testUsername('user');
-                $h->pageTitle = $h->lang["users_profile"] . ' &laquo; ' . $user;
+                $h->pageTitle = $h->lang["users_profile"] . '[delimiter]' . $user;
                 $h->pageType = 'user';
                 break;
             case 'account':
                 $user = $h->cage->get->testUsername('user');
-                $h->pageTitle = $h->lang["users_account"] . ' &laquo; ' . $user;
+                $h->pageTitle = $h->lang["users_account"] . '[delimiter]' . $user;
                 $h->pageType = 'user';
                 break;
             case 'edit-profile':
                 $user = $h->cage->get->testUsername('user');
-                $h->pageTitle = $h->lang["users_profile_edit"] . ' &laquo; ' . $user;
+                $h->pageTitle = $h->lang["users_profile_edit"] . '[delimiter]' . $user;
                 $h->pageType = 'user';
                 break;
             case 'user-settings':
                 $user = $h->cage->get->testUsername('user');
-                $h->pageTitle = $h->lang["users_settings"] . ' &laquo; ' . $user;
+                $h->pageTitle = $h->lang["users_settings"] . '[delimiter]' . $user;
                 $h->pageType = 'user';
                 break;
             case 'permissions':
                 $user = $h->cage->get->testUsername('user');
-                $h->pageTitle = $h->lang["users_permissions"] . ' &laquo; ' . $user;
+                $h->pageTitle = $h->lang["users_permissions"] . '[delimiter]' . $user;
                 $h->pageType = 'user';
                 break;
         }
@@ -109,7 +109,7 @@ class Users
         if ($h->pageName == 'account') {
             $h->vars['checks'] = $h->vars['user']->updateAccount($h);
             $h->vars['user']->name = $h->vars['checks']['username_check'];
-            $h->pageTitle = $h->lang["users_account"] . ' &laquo; ' . $h->vars['user']->name;
+            $h->pageTitle = $h->lang["users_account"] . '[delimiter]' . $h->vars['user']->name;
             $h->pageType = 'user';
         }
     }

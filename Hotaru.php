@@ -240,12 +240,13 @@ class Hotaru
     /**
      * Determine the title tags for the header
      *
+     * @param bool $raw -return the title only
      * @return string - the title
      */
-    public function getTitle()
+    public function getTitle($delimiter = ' &laquo; ', $raw = false)
     {
         $pageHandling = new PageHandling();
-        return $pageHandling->getTitle($this);
+        return $pageHandling->getTitle($this, $delimiter, $raw);
     }
     
     

@@ -151,7 +151,7 @@ class Comments
         if ($h->pageName == 'comments') {
             $h->pageTitle = $h->lang['comments'];
             if ($h->cage->get->keyExists('user')) {
-                $h->pageTitle .= " &laquo; " . $h->cage->get->testUsername('user');
+                $h->pageTitle .= '[delimiter]' . $h->cage->get->testUsername('user');
             }
         }
 

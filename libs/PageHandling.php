@@ -107,20 +107,27 @@ class PageHandling
     /**
      * Determine the title tags for the header
      *
+     * @param bool $raw -return the title only
      * @return string - the title
      */
-    public function getTitle($h)
+    public function getTitle($h, $delimiter = ' &laquo; ', $raw = false)
     {
         // if the title is already set...
         if ($h->pageTitle != "")
         {
+            // replace [delimiter] text with the specified delimiter:
+            $h->pageTitle = str_replace('[delimiter]', $delimiter, $h->pageTitle);
+            
+            // return the title only
+            if ($raw) { return $h->pageTitle; }
+            
             // if this is the index page...
-            if($h->pageName == 'index') {
+            if ($h->pageName == 'index') {
                 // title only (set by plugins, e.g. sb_base)
                 return $h->pageTitle;
             } else {
                 // title followed by site name
-                return $h->pageTitle . " &laquo; " . SITE_NAME;
+                return $h->pageTitle . $delimiter . SITE_NAME;
             }
         }
         // fetch the page name...
@@ -128,13 +135,22 @@ class PageHandling
         {
             // make a title from it...
             $h->pageTitle = make_name($h->pageName);
-            return $h->pageTitle . " &laquo; " . SITE_NAME;
+            
+            // return the title only
+            if ($raw) { return $h->pageTitle; }
+            
+            // return with site name
+            return $h->pageTitle . $delimiter . SITE_NAME;
         }
         else
         { 
             // there's no title and no page name - assume "page not found"
             $h->pageTitle = $h->lang['main_theme_page_not_found'];
-            return $h->pageTitle  . " &laquo; " . SITE_NAME;
+            
+            // return the title only
+            if ($raw) { return $h->pageTitle; }
+            
+            return $h->pageTitle  . $delimiter . SITE_NAME;
         } 
     }
     
