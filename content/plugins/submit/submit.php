@@ -133,6 +133,8 @@ class Submit
             // No permission to submit
             $h->messages[$h->lang['submit_no_post_permission']] = "red";
             $h->vars['posting_denied'] = true;
+            $h->vars['can_edit'] = false;
+            $h->vars['post_deleted'] = false;
             return false;
         }
         
@@ -272,7 +274,7 @@ class Submit
                 $h->pluginHook('submit_step_3_pre_trackback'); // Akismet uses this to change the status
                 
                 // set to pending?
-                $set_pending = $submit_settings['set_pending'];
+                $set_pending = $h->vars['submit_settings']['set_pending'];
 
                 if ($set_pending == 'some_pending') {
                     $posts_approved = $h->postsApproved();
@@ -293,7 +295,7 @@ class Submit
                 }
 
                 // notify chosen mods of new post by email if enabled and UserFunctions file exists
-                if (($submit_settings['email_notify']) && (file_exists(PLUGINS . 'users/libs/UserFunctions.php')))
+                if (($h->vars['submit_settings']['email_notify']) && (file_exists(PLUGINS . 'users/libs/UserFunctions.php')))
                 {
                     require_once(PLUGINS . 'users/libs/UserFunctions.php');
                     $uf = new UserFunctions();

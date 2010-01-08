@@ -599,7 +599,7 @@ class SubmitFunctions
         $h->post->title = $submitted_data['submit_title'];
         $h->post->url = make_url_friendly($h->post->title);
         $h->post->content = $submitted_data['submit_content'];
-        $h->post->author = $h->currentUser->id;
+        if (!$h->post->id) { $h->post->author = $h->currentUser->id; } // no author yet
 
         if (isset($submitted_data['submit_status'])) {
             $h->post->status = $submitted_data['submit_status'];
