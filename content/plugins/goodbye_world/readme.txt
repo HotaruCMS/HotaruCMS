@@ -9,7 +9,7 @@ An example plugin that displays "Goodbye World, overriding the Hello World plugi
 Instructions
 ------------
 1. Upload the "Goodbye_world" folder to your plugins folder. Install it from Plugin Management in Admin.
-2. Add <?php $h->pluginHook('Goodbye_world'); ?> to your theme, wherever you want to show "Goodbye World".
+2. Add <?php $h->pluginHook('goodbye_world'); ?> to your theme, wherever you want to show "Goodbye World".
 
 Changelog
 ---------

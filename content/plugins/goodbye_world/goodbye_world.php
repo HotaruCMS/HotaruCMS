@@ -7,11 +7,11 @@
  * class: GoodbyeWorld
  * extends: HelloWorld
  * hooks: hello_world
- * requires: hello_world 0.1
+ * requires: hello_world 0.5
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
- * Usage: Add <?php $h->pluginHook('goodbye_world'); ?> to your theme, wherever you want to show "Goodbye World".
+ * Usage: Add <?php $h->pluginHook('hello_world'); ?> to your theme, wherever you want to show "Goodbye World".
  *
  * PHP version 5
  *

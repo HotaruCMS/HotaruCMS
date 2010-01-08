@@ -312,7 +312,8 @@ class SbBaseFunctions
         }
         // end categories
                 
-        if ($search && $h->isActive('search')) { 
+        if ($search && $h->isActive('search')) {
+            require_once(PLUGINS . 'search/search.php');
             $search_plugin = new Search();
             $prepared_search = $search_plugin->prepareSearchFilter($h, $search); 
             extract($prepared_search);

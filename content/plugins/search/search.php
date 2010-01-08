@@ -7,7 +7,7 @@
  * class: Search
  * type: search
  * requires: submit 1.9, widgets 0.6
- * hooks: install_plugin, sb_base_theme_index_top, header_include, sb_base_functions_preparelist, search_box
+ * hooks: install_plugin, sb_base_theme_index_top, header_include, sb_base_functions_preparelist, search_box, breadcrumbs
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -63,7 +63,7 @@ class Search
         if ($h->cage->get->keyExists('search')) { 
             $title = stripslashes(htmlentities($h->cage->get->getMixedString2('search'),ENT_QUOTES,'UTF-8'));
             $h->pageTitle = make_name($title);
-            $h->pageName = 'search';
+            $h->subPage = 'search';
             $h->pageType = 'list';
         }
     } 
@@ -103,11 +103,9 @@ class Search
                 $prepared_search = $this->prepareSearchFilter($h, $search_terms);
                 extract($prepared_search);
                 
-                $rss = " <a href='" . $h->url(array('page'=>'rss', 'search'=>$orig_search_terms)) . "'>";
-                $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
-            
-                $h->vars['page_title'] = $h->lang["submit_page_breadcrumbs_search"] . " &raquo; " . $orig_search_terms . $rss;
                 $h->vars['orig_search'] = $orig_search_terms; // use this to re-fill the search box after a search
+                
+                $h->vars['orig_search_terms'] = $orig_search_terms; // used in the breadcrumbs function
                 
                 return true;    
             }
@@ -207,6 +205,20 @@ class Search
         } else {
             return false;
         }
-    }    
+    }
+    
+    
+    /**
+     * Add RSS link to breadcrumbs
+     */
+    public function breadcrumbs($h)
+    {
+        if ($h->subPage != 'search') { return false; }
+        
+        $crumbs = "<a href='" . $h->url(array('search'=>urlencode($h->vars['orig_search_terms']))) . "'>\n";
+        $crumbs .= $h->vars['orig_search_terms'] . "</a>\n ";
+        
+        return $crumbs . $h->rssBreadcrumbsLink('', array('search'=>urlencode($h->vars['orig_search_terms'])));
+    }
 }
 ?>
