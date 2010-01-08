@@ -57,15 +57,14 @@ if (!$result) {
                             // plugin hook
                         $result = $h->pluginHook('admin_theme_index_main');
                         if (!$result) {
-                                $page = $h->getPageName();
-                                if ($page == 'admin_login') {
+                                if ($h->pageName == 'admin_login') {
                                     if ($h->currentUser->loggedIn) {
                                         $h->displayTemplate('admin_home');
                                     } else {
                                         $h->adminLoginForm();
                                     }
                                 } else {
-                                    $h->displayTemplate($page);
+                                    $h->displayTemplate($h->pageName);
                                 } 
                         }
                     ?>    

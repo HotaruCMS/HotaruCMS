@@ -72,8 +72,7 @@ echo "<div id=\"main\" class=\"grid_8\">";
                                 // plugin hook
                             $result = $h->pluginHook('theme_index_main');
                             if (!$result) {
-                                $page = $h->getPageName();
-                                $h->displayTemplate($page); 
+                                $h->displayTemplate($h->pageName); 
                             }
                         ?>	
 		</div>

@@ -70,8 +70,7 @@ if (!$result) {
                                 // plugin hook
                             $result = $h->pluginHook('theme_index_main');
                             if (!$result) {
-                                $page = $h->getPageName();
-                                $h->displayTemplate($page); 
+                                $h->displayTemplate($h->pageName); 
                             }
                             ?>
                         </div> <!-- close "yui-u first" -->
