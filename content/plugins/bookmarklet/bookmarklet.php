@@ -7,11 +7,11 @@
  * class: Bookmarklet
  * type: bookmarklet
  * hooks: hotaru_bookmarklet
- * requires: submit 0.1
+ * requires: submit 1.9
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
- * Usage: Put <?php $h->plugins->pluginHook('hotaru_bookmarklet'); ?> 
+ * Usage: Put <?php $h->pluginHook('hotaru_bookmarklet'); ?> 
  *        in your template where you want the bookmarklet link to show.
  *
  * PHP version 5

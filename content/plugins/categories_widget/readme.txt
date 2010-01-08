@@ -4,7 +4,7 @@ Created by: Nick Ramsay
 
 Description
 -----------
-Widget with a list of categories.
+A widget that shows a list of categories.
 
 Instructions
 ------------

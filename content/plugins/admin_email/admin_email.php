@@ -2,10 +2,10 @@
 /**
  * name: Admin Email
  * description: Send email to all members, groups or users
- * version: 0.2
+ * version: 0.3
  * folder: admin_email
  * class: adminEmail
- * requires: users 1.0
+ * requires: users 1.1
  * hooks: install_plugin, admin_theme_index_top, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, user_settings_pre_save, user_settings_fill_form, user_settings_extra_settings
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick

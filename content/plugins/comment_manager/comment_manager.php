@@ -5,7 +5,7 @@
  * version: 0.3
  * folder: comment_manager
  * class: CommentManager
- * requires: comments 1.0
+ * requires: comments 1.2
  * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick

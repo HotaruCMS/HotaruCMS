@@ -6,7 +6,7 @@
  * folder: categories
  * class: Categories
  * type: categories
- * requires: sb_base 0.1
+ * requires: sb_base 0.1, submit 1.9, category_manager 0.7
  * hooks: sb_base_theme_index_top, header_include, pagehandling_getpagename, sb_base_functions_preparelist, sb_base_show_post_author_date, header_end, breadcrumbs
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick

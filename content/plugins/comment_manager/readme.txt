@@ -13,6 +13,6 @@ Instructions
 
 Changelog
 ---------
-v.0.4 2010/01/03 - Nick - Updated for compatibility with Hotaru 1.0
+v.0.3 2010/01/03 - Nick - Updated for compatibility with Hotaru 1.0
 v.0.2 2009/11/04 - Nick - Updated install function for easier upgrading
 v.0.1 2009/10/22 - Nick - Released first version
