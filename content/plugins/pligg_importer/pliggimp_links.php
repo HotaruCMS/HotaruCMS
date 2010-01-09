@@ -40,7 +40,7 @@ class PliggImp2
         echo "<input type='hidden' name='submitted' value='true' />\n";
         echo "<input type='hidden' name='table' value='Links' />\n";
         echo "<input type='submit' name='submit' value='Upload' />\n";
-        echo "<input type='hidden' name='csrf' value='" . $h->token . "' />\n";
+        echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }
     
@@ -105,9 +105,9 @@ class PliggImp2
                 $parsed = parse_url($child->link_url); 
                 $domain = $parsed['scheme'] . "://" . $parsed['host'];
                 
-                $columns    = "post_author, post_category, post_status, post_date, post_title, post_orig_url, post_domain, post_url, post_content, post_votes_up, post_votes_down, post_tags, post_updateby";
+                $columns    = "post_author, post_category, post_status, post_type, post_date, post_title, post_orig_url, post_domain, post_url, post_content, post_votes_up, post_votes_down, post_tags, post_updateby";
                 
-                $sql        = "INSERT INTO " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%d, %d, %s, %s, %s, %s, %s, %s, %s, %d, %d, %s, %d)";
+                $sql        = "INSERT INTO " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %d, %d, %s, %d)";
                 
                 $cts = new PliggImp1();
                 
@@ -117,6 +117,7 @@ class PliggImp2
                     $child->link_author,
                     $cts->get_new_cat_id($h, $child->link_category),
                     $child->link_status,
+                    urlencode('news'),
                     $child->link_date,
                     urlencode(trim($child->link_title)),
                     urlencode($child->link_url),

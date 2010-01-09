@@ -40,7 +40,7 @@ class PliggImp6
         echo "<input type='hidden' name='submitted' value='true' />\n";
         echo "<input type='hidden' name='table' value='Votes' />\n";
         echo "<input type='submit' name='submit' value='Upload' />\n";
-        echo "<input type='hidden' name='csrf' value='" . $h->token . "' />\n";
+        echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }
     

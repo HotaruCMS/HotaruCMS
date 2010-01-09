@@ -29,21 +29,21 @@ $lang["media_select"] = "Media";
 
 /* SUBMIT STEP 2 & EDIT POST */
 $lang["submit_form_media"] = "Media:"; 
-$lang['media_select_news'] = "News";
+$lang['media_select_text'] = "News";
 $lang['media_select_image'] = "Image";
 $lang['media_select_images'] = "Images";
 $lang['media_select_video'] = "Video";
 $lang['media_select_videos'] = "Videos";
 
 /* RSS */
-$lang["submit_rss_stories_media_news"] = "Posts submitted in News";
-$lang["submit_rss_stories_media_image"] = "Posts submitted in Images";
-$lang["submit_rss_stories_media_video"] = "Posts submitted in Videos";
-$lang["submit_rss_stories_media_new_news"] = "Latest news from " . SITE_NAME;
-$lang["submit_rss_stories_media_new_image"] = "Latest images from " . SITE_NAME;
-$lang["submit_rss_stories_media_new_video"] = "Latest videos from " . SITE_NAME;
-$lang["submit_rss_stories_media_top_news"] = "Top news from " . SITE_NAME;
-$lang["submit_rss_stories_media_top_image"] = "Top images from " . SITE_NAME;
-$lang["submit_rss_stories_media_top_video"] = "Top videos from " . SITE_NAME;
+$lang["sb_base_rss_stories_media_text"] = "Posts submitted in News";
+$lang["sb_base_rss_stories_media_image"] = "Posts submitted in Images";
+$lang["sb_base_rss_stories_media_video"] = "Posts submitted in Videos";
+$lang["sb_base_rss_stories_media_new_news"] = "Latest news from " . SITE_NAME;
+$lang["sb_base_rss_stories_media_new_image"] = "Latest images from " . SITE_NAME;
+$lang["sb_base_rss_stories_media_new_video"] = "Latest videos from " . SITE_NAME;
+$lang["sb_base_rss_stories_media_top_news"] = "Top news from " . SITE_NAME;
+$lang["sb_base_rss_stories_media_top_image"] = "Top images from " . SITE_NAME;
+$lang["sb_base_rss_stories_media_top_video"] = "Top videos from " . SITE_NAME;
 
 ?>

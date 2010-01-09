@@ -5,7 +5,7 @@
  * version: 0.2
  * folder: media_select
  * class: MediaSelect
- * hooks: install_plugin, sb_base_theme_index_top, post_read_post, post_add_post, post_update_post, submit_2_fields, submit_functions_process_submitted, sb_base_functions_preparelist, category_bar_end
+ * hooks: install_plugin, sb_base_theme_index_top, post_read_post, post_add_post, post_update_post, submit_2_fields, submit_functions_process_submitted, sb_base_functions_preparelist, category_bar_end, breadcrumbs
  * requires: submit 1.9
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
@@ -42,7 +42,7 @@ class MediaSelect
         // Create a new table column called "post_media" if it doesn't already exist
         $exists = $h->db->column_exists('posts', 'post_media');
         if (!$exists) {
-            $h->db->query("ALTER TABLE " . TABLE_POSTS . " ADD post_media VARCHAR(20) NOT NULL DEFAULT 'news' AFTER post_updatedts");
+            $h->db->query("ALTER TABLE " . TABLE_POSTS . " ADD post_media VARCHAR(20) NOT NULL DEFAULT 'text' AFTER post_comments");
         } 
     }
     
@@ -63,11 +63,11 @@ class MediaSelect
                     $h->pageTitle = $h->lang['media_select_images'];
                     break;
                 default:
-                    $h->pageTitle = $h->lang['media_select_news'];
+                    $h->pageTitle = $h->lang['media_select_text'];
                     break;
             }
             
-            $h->pageName = 'media';
+            $h->subPage = 'media';
             $h->pageType = 'list';
         } 
     }
@@ -117,19 +117,19 @@ class MediaSelect
             if (isset($h->vars['submitted_data']['submit_media'])) { 
                 $h->post->vars['media'] = $h->vars['submitted_data']['submit_media'];
             } else {
-                $h->post->vars['media'] = 'news';
+                $h->post->vars['media'] = 'text';
             }
         }
         
         switch ($h->post->vars['media']) {
             case 'video':
-                $video = "checked"; $image = ""; $news = "";
+                $video = "checked"; $image = ""; $text = "";
                 break;
             case 'image':
-                $video = ""; $image = "checked"; $news = "";
+                $video = ""; $image = "checked"; $text = "";
                 break;
             default:
-                $video = ""; $image = ""; $news = "checked";
+                $video = ""; $image = ""; $text = "checked";
         }
 
         // radio buttons
@@ -140,8 +140,8 @@ class MediaSelect
             echo "<td colspan=2>\n";
         
             // news
-            echo "<input type='radio' name='post_media' value='news' " . $news . " >";
-            echo "&nbsp;&nbsp;" . $h->lang['media_select_news'] . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n"; 
+            echo "<input type='radio' name='post_media' value='text' " . $text . " >";
+            echo "&nbsp;&nbsp;" . $h->lang['media_select_text'] . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n"; 
             
             // video
             echo "<input type='radio' name='post_media' value='video' " . $video . " >";
@@ -165,7 +165,7 @@ class MediaSelect
         if ($h->cage->post->keyExists('post_media')) {
             $h->post->vars['media'] = $h->cage->post->getAlpha('post_media');
         } else {
-            $h->post->vars['media'] = 'news'; // default
+            $h->post->vars['media'] = 'text'; // default
         }
 
         $h->vars['submitted_data']['submit_media'] = $h->post->vars['media'];
@@ -198,10 +198,24 @@ class MediaSelect
     {
         echo "<li><a href='#'>" . $h->lang['media_select'] . "\n";
         echo "<ul>";
-        echo "<li><a href='" . $h->url(array('media'=>'news')) . "'>" . $h->lang['media_select_news'] . "</a>\n";
+        echo "<li><a href='" . $h->url(array('media'=>'text')) . "'>" . $h->lang['media_select_text'] . "</a>\n";
         echo "<li><a href='" . $h->url(array('media'=>'video')) . "'>" . $h->lang['media_select_videos'] . "</a>\n";
         echo "<li><a href='" . $h->url(array('media'=>'image')) . "'>" . $h->lang['media_select_images'] . "</a>\n";
         echo "</ul></li>";
+    }
+    
+    
+    /**
+     * Add RSS link to breadcrumbs
+     */
+    public function breadcrumbs($h)
+    {
+        if ($h->subPage != 'media') { return false; }
+        
+        $crumbs = "<a href='" . $h->url(array('media'=>$h->vars['media'])) . "'>\n";
+        $crumbs .= $h->pageTitle . "</a>\n ";
+        
+        return $crumbs . $h->rssBreadcrumbsLink('', array('media'=>$h->vars['media']));
     }
      
 }

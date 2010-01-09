@@ -278,7 +278,7 @@ class SbBaseFunctions
         $limit = $h->cage->get->getInt('limit');
         $user = $h->cage->get->testUsername('user');
         $tag = $h->cage->get->noTags('tag');
-        $type = $h->cage->get->testAlnumLines('type');
+        $media = $h->cage->get->testAlnumLines('media');
         $search = $h->cage->get->getMixedString2('search');
         $category = $h->cage->get->noTags('category');
                 
@@ -288,7 +288,7 @@ class SbBaseFunctions
         if ($status) { $filter['post_status = %s'] = $status; }
         if ($user) { $filter['post_author = %d'] = $h->getUserIdFromName($h->cage->get->testUsername('user'));  }
         if ($tag) { $filter['post_tags LIKE %s'] = '%' . urlencode(stripslashes($tag)) . '%'; }
-        if ($type) { $filter['post_type = %s'] = $type; }
+        if ($media) { $filter['post_media = %s'] = $media; }
         if ($category && (FRIENDLY_URLS == "true")) { $cat_id = $h->getCatId($category); }
         if ($category && (FRIENDLY_URLS == "false")) { $cat_id = $category; }
         
@@ -326,11 +326,11 @@ class SbBaseFunctions
         $feed->title    = SITE_NAME;
         $feed->link     = BASEURL;
         
-        if ($type) 
+        if ($media) 
         { 
             $h->includeLanguage('media_select', 'media_select');
-            if (isset($status)) { $status .= "_"; } else { $status = ""; }
-            $media_word = "sb_base_rss_stories_media_" . $status . $type;
+            if (isset($status) && ($status != '')) { $status .= "_"; } else { $status = ""; }
+            $media_word = "sb_base_rss_stories_media_" . $status . $media;
             $feed->description = $h->lang[$media_word];
         }
         elseif ($status == 'new') 

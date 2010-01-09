@@ -107,7 +107,8 @@ class Tags
         if ($h->subPage != 'tags') { return false; }
         
         $crumbs = "<a href='" . $h->url(array('tag'=>$h->vars['tag'])) . "'>\n";
-        $crumbs .= $h->vars['tag'] . "</a>\n ";
+        $crumb_title = stripslashes(make_name($h->cage->get->noTags('tag')));
+        $crumbs .= $crumb_title . "</a>\n ";
         
         return $crumbs . $h->rssBreadcrumbsLink('', array('tag'=>$h->vars['tag']));
     }

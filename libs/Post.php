@@ -27,19 +27,23 @@ class Post
 {
     // individual posts
     protected $id = 0;
+    protected $archived         = 'N';            // archived Yes or No (Y/N)
+    protected $author           = 0;            // post author
+    protected $date             = '';           // post submission date
+    protected $status           = 'unsaved';    // initial status before database entry
+    protected $type             = '';           // post type, e.g. news, blog, forum
+    protected $category         = 1;            // default category 'all'
+    protected $tags             = '';           // tags
+    protected $title            = '';           // post title
     protected $origUrl          = '';           // original url for the submitted post
     protected $domain           = '';           // the domain of the submitted url
-    protected $title            = '';           // post title
+    protected $url              = '';           // post slug (needs BASEURL and category attached)
     protected $content          = '';           // post description
     protected $contentLength    = 50;           // default min characters for content
     protected $summary          = '';           // truncated post description
     protected $summaryLength    = 200;          // default max characters for summary
-    protected $status           = 'unsaved';    // initial status before database entry
-    protected $author           = 0;            // post author
-    protected $url              = '';           // post slug (needs BASEURL and category attached)
-    protected $date             = '';           // post submission date
-    protected $subscribe        = 0;            // is the post author subscribed to comments?
     protected $comments         ='open';        // is the comment form open or closed?
+    protected $subscribe        = 0;            // is the post author subscribed to comments?
 
     public $vars                = array();      // for additional fields
 
@@ -85,17 +89,18 @@ class Post
             $this->id = $post_row->post_id;
             $this->archived = $post_row->post_archived;
             $this->author = $post_row->post_author;
-            $this->category = $post_row->post_category;
-            $this->status = $post_row->post_status;
             $this->date = $post_row->post_date;
+            $this->status = $post_row->post_status;
+            $this->type = urldecode($post_row->post_type);
+            $this->category = $post_row->post_category;
+            $this->tags = stripslashes(urldecode($post_row->post_tags));
             $this->title = stripslashes(urldecode($post_row->post_title));
             $this->origUrl = urldecode($post_row->post_orig_url);
             $this->domain = urldecode($post_row->post_domain);
             $this->url = urldecode($post_row->post_url);
             $this->content = stripslashes(urldecode($post_row->post_content));
-            $this->tags = stripslashes(urldecode($post_row->post_tags));
-            $this->subscribe = $post_row->post_subscribe;
             $this->comments = $post_row->post_comments;
+            $this->subscribe = $post_row->post_subscribe;
             
             $this->vars['post_row'] = $post_row;    // make available to plugins
             
@@ -145,9 +150,9 @@ class Post
      */    
     public function addPost($h)
     {
-        $sql = "INSERT INTO " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_category = %d, post_tags = %s, post_status = %s, post_author = %d, post_date = CURRENT_TIMESTAMP, post_subscribe = %d, post_updateby = %d";
+        $sql = "INSERT INTO " . TABLE_POSTS . " SET post_author = %d, post_date = CURRENT_TIMESTAMP, post_status = %s, post_type = %s, post_category = %d, post_tags = %s, post_title = %s, post_orig_url = %s, post_domain = %s, post_url = %s, post_content = %s, post_subscribe = %d, post_updateby = %d";
         
-        $h->db->query($h->db->prepare($sql, urlencode($this->origUrl), urlencode($this->domain), urlencode(trim($this->title)), urlencode(trim($this->url)), urlencode(trim($this->content)), $this->category, urlencode(trim($this->tags)), $this->status, $this->author, $this->subscribe, $h->currentUser->id));
+        $h->db->query($h->db->prepare($sql, $this->author, $this->status, urlencode($this->type), $this->category, urlencode(trim($this->tags)), urlencode(trim($this->title)), urlencode($this->origUrl), urlencode($this->domain), urlencode(trim($this->url)), urlencode(trim($this->content)), $this->subscribe, $h->currentUser->id));
         
         $last_insert_id = $h->db->get_var($h->db->prepare("SELECT LAST_INSERT_ID()"));
         
@@ -181,9 +186,9 @@ class Post
         $parsed = parse_url($this->origUrl);
         if (isset($parsed['scheme'])){ $this->domain = $parsed['scheme'] . "://" . $parsed['host']; }
         
-        $sql = "UPDATE " . TABLE_POSTS . " SET post_orig_url = %s, post_domain = %s, post_title = %s, post_url = %s, post_content = %s, post_category = %d, post_tags = %s, post_status = %s, post_author = %d, post_subscribe = %d, post_comments = %s, post_updateby = %d WHERE post_id = %d";
+        $sql = "UPDATE " . TABLE_POSTS . " SET post_author = %d, post_status = %s, post_type = %s, post_category = %d, post_tags = %s, post_title = %s, post_orig_url = %s, post_domain = %s, post_url = %s, post_content = %s, post_subscribe = %d, post_comments = %s, post_updateby = %d WHERE post_id = %d";
         
-        $h->db->query($h->db->prepare($sql, urlencode($this->origUrl), urlencode($this->domain), urlencode(trim($this->title)), urlencode(trim($this->url)), urlencode(trim($this->content)), $this->category, urlencode(trim($this->tags)), $this->status, $this->author, $this->subscribe, $this->comments, $h->currentUser->id, $this->id));
+        $h->db->query($h->db->prepare($sql, $this->author, $this->status, urlencode($this->type), $this->category, urlencode(trim($this->tags)), urlencode(trim($this->title)), urlencode($this->origUrl), urlencode($this->domain), urlencode(trim($this->url)), urlencode(trim($this->content)), $this->subscribe, $this->comments, $h->currentUser->id, $this->id));
         
         $h->post->id = $this->id; // a small hack to get the id for use in plugins.
         
