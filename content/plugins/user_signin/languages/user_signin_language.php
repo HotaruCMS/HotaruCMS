@@ -25,7 +25,7 @@
  */
 
 /* Users Admin Settings */
-$lang["user_signin_settings_header"] = "Users Configuration";
+$lang["user_signin_settings_header"] = "User Signin Configuration";
 $lang["user_signin_settings_instructions"] = "Configure the users plugin with these options:";
 $lang["user_signin_settings_registration"] = "Registration Options";
 $lang["user_signin_settings_save"] = "Save";

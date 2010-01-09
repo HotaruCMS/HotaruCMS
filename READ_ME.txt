@@ -1,6 +1,6 @@
 HOTARU CMS
-Version: 0.8.2 Beta
-Released: December 1st 2009
+Version: 1.0
+Released: January 10th 2010
 
 INSTALLATION
 ------------
@@ -13,15 +13,12 @@ Requirements
 
 Hotaru CMS has been developed with PHP 5.2.6, MySQL 5.0.51a and phpMyAdmin 2.11.6. If you find it works on older versions of PHP, MySQL and phpMyAdmin, please let us know so we can update these requirements accordingly.
 
-Upgrading
+Upgrading Note: There is no upgrade path from pre-1.0 versions of Hotaru. Sorry!
 
    1. Download the latest version of Hotaru CMS.
    2. Overwrite ALL the old files. If you've made any customizations, read this first: http://hotarucms.org/showthread.php?t=46
    3. Go to /install/upgrade.php
    4. When finished, delete the install folder.
-
-Note: If upgrading from Hotaru 0.7.5 to 0.8.X, you will also need to update your hotaru_settings.php file with changes in the new hotaru_settings_default.php file.
-Note2: If upgrading from Hotaru 0.8.X to 0.8.2, you will need to update your .htaccess file to match htaccess_default if you use friendly urls.
 
 First-time Installation
 
@@ -52,7 +49,4 @@ If you want to use friendly urls, rename htaccess_default to .htaccess, and edit
 
 Troubleshooting
 
-If you're having trouble installing Hotaru, please post your questions with as much detail as possible in the forums. Thanks.
-
-
-Report any problems in the forums at http://hotarucms.org
+If you're having trouble installing Hotaru, please post your questions with as much detail as possible in the forums at http://hotarucms.org. Thanks.
