@@ -8,7 +8,26 @@ Add multiple RSS feeds to your templates. Show titles, summaries or full content
 
 Instructions
 ------------
-1. Upload the "rss_show" folder to your plugins folder. Install it from Plugin Management in Admin.
+1. Upload the "rss_show" folder to your plugins folder.
+2. Install it from Plugin Management in Admin.
+3. Add new feeds from the RSS Show settings page.
+4. Enable them as widgets in the Widgets settings page.
+
+Alternatively, instead of widgets, you could add yor plugin hooks like this:
+
+To show the first feed, paste this into your template:
+
+<?php $h->pluginHook('rss_show'); ?>
+
+To show another feed, use this with the feed id in the array:
+
+<?php $h->pluginHook('rss_show', '', array(2)); ?>
+
+To show two feeds back to back, paste this into your template with the ids in the array:
+
+<?php $h->pluginHook('rss_show', '', array(1, 2)); ?>
+
+
 
 Changelog
 ---------

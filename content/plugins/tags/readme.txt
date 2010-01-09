@@ -4,7 +4,7 @@ Created by: Nick Ramsay
 
 Description
 -----------
-With this plugin you can see tags on posts, filter posts by tag, and view an RSS feed for each tag.
+With this plugin you can add tags, see them on posts, filter posts by tag, and view an RSS feed for each tag.
 
 Instructions
 ------------

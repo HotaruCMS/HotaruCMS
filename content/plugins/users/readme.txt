@@ -8,7 +8,8 @@ Provides user profile, settings and permission pages. Note: This does not includ
 
 Instructions
 ------------
-1. Upload the "users" folder to your plugins folder. Install it from Plugin Management in Admin.
+1. Upload the "users" folder to your plugins folder.
+2. Install it from Plugin Management in Admin.
 
 Changelog
 ---------

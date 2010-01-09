@@ -8,7 +8,9 @@ Let users vote for posts.
 
 Instructions
 ------------
-1. Upload the "vote" folder to your plugins folder. Install it from Plugin Management in Admin.
+1. Upload the "vote" folder to your plugins folder.
+2. Install it from Plugin Management in Admin.
+3. Edit settings in Admin -> Vote
 
 Changelog
 ---------

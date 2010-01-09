@@ -8,10 +8,11 @@ This plugin adds a "Tweet This!" link below a post description, which when click
 
 Instructions
 ------------
-1. Upload the "tweet_this" folder to your plugins folder. Install it from Plugin Management in Admin.
-2. Access it from the Admin sidebar
-3. Choose your preferred url shortening service and enter your login and API key if you choose bit.ly.
-4. Save and view your site. A new "Tweet This!" link should be visible below each post.
+1. Upload the "tweet_this" folder to your plugins folder.
+2. Install it from Plugin Management in Admin.
+3. Access it from the Admin sidebar
+4. Choose your preferred url shortening service and enter your login and API key if you choose bit.ly.
+5. Save and view your site. A new "Tweet This!" link should be visible below each post.
 
 Changelog
 ---------

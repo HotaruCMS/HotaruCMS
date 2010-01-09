@@ -8,8 +8,9 @@ Give your users the ability to search yor site.
 
 Instructions
 ------------
-1. Upload the "search" folder to your plugins folder. Install it from Plugin Management in Admin.
-2. Activate the Search widget in Admin -> Sidebar Widgets
+1. Upload the "search" folder to your plugins folder.
+2. Install it from Plugin Management in Admin.
+3. Activate the Search widget in Admin -> Widgets
 
 Note
 ----

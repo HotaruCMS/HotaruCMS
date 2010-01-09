@@ -8,7 +8,9 @@ Add multiple custom widgets to your sidebar. Paste text, HTML, PHP, etc into eac
 
 Instructions
 ------------
-1. Upload the "text_widget" folder to your plugins folder. Install it from Plugin Management in Admin.
+1. Upload the "text_widget" folder to your plugins folder. 
+2. Install it from Plugin Management in Admin.
+3. Add new text widgets from Admin -> Text Widget
 
 Changelog
 ---------

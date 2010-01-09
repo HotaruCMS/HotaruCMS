@@ -6,7 +6,7 @@
  * folder: video_inc
  * class: VideoInc
  * hooks: header_include, theme_index_top, sb_base_show_post_content_list, sb_base_show_post_content_post
- * requires: submit 1.9, media_select 0.2
+ * requires: sb_base 0.1, media_select 0.2
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *

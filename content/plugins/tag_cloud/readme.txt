@@ -8,13 +8,13 @@ With this plugin you can view a tag cloud and put a tag cloud widget in your sid
 
 Instructions
 ------------
-1. Upload the "tag_cloud" folder to your plugins folder. Install it from Plugin Management in Admin.
+1. Upload the "tag_cloud" folder to your plugins folder.
+2. Install it from Plugin Management in Admin.
+3. Edit the tag cloud settings in Admin -> Tag Cloud
+4. There are CSS and language files in the plugin folder that you can customize if you want to.
 
 Usage
 -----
-- Edit the tag cloud settings in Admin -> Tag Cloud
-- There are CSS and language files in the plugin folder that you can customize if you want to.
-
 How to access the tag cloud page:
 * Friendly urls OFF: /index.php?page=tag-cloud  
 * Friendly urls ON:  /tag-cloud/

@@ -8,8 +8,9 @@ Manage users.
 
 Instructions
 ------------
-1. Upload the "user_manager" folder to your plugins folder. Install it from Plugin Management in Admin.
-2. Access it from the Admin sidebar under Plugin Settings.
+1. Upload the "user_manager" folder to your plugins folder. 
+2. Install it from Plugin Management in Admin.
+3. Access it from the Admin sidebar under Plugin Settings.
 
 Changelog
 ---------

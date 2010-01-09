@@ -8,7 +8,8 @@ This plugin provides the "list" and "post" templates to display news summaries a
 
 Instructions
 ------------
-1. Upload the "sb_base" folder to your plugins folder. Install it from Plugin Management in Admin.
+1. Upload the "sb_base" folder to your plugins folder. 
+2. Install it from Plugin Management in Admin.
 
 Changelog
 ---------
