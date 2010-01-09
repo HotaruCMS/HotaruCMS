@@ -2,10 +2,12 @@
 /**
  * name: Thick Box
  * description: Used for display video and images over a page
- * version: 0.1
+ * version: 0.2
  * folder: thickbox
  * class: ThickBox
  * hooks: header_include
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *
@@ -30,7 +32,7 @@
  */
 
 
-class ThickBox extends PluginFunctions
+class ThickBox
 {
     // nothing to do. We just fall back on Hotaru's header_include function to include the CSS and JavaScript
 }

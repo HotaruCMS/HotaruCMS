@@ -25,7 +25,7 @@
  */
 
 $lang['related_posts'] = "Related Posts";
-$lang['related_posts_instruct'] = "Please check the releated posts below to make sure you're not submitting a duplicate story.";
+$lang['related_posts_instruct'] = "Please check the related posts below to make sure you're not submitting a duplicate story.";
 $lang['related_links_new_tab'] = "Opens in a new tab or window";
 $lang['related_links_no_results'] = "Related: No other posts found with matching tags.";
 

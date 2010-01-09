@@ -25,39 +25,40 @@
  * @link      http://www.hotarucms.org/
  */
  
-class DisqusSettings extends Disqus
+class DisqusSettings
 {
      /**
      * Admin settings for disqus
      */
-    public function settings()
+    public function settings($h)
     {
         // If the form has been submitted, go and save the data...
-        if ($this->cage->post->getAlpha('submitted') == 'true') { 
-            $this->saveSettings(); 
+        if ($h->cage->post->getAlpha('submitted') == 'true') { 
+            $this->saveSettings($h); 
         }
         
-        echo "<h1>" . $this->lang["disqus_settings_header"] . "</h1>\n";
+        echo "<h1>" . $h->lang["disqus_settings_header"] . "</h1>\n";
           
         // Get settings from database if they exist...
-        $shortname = $this->getSetting('disqus_shortname');
+        $shortname = $h->getSetting('disqus_shortname');
     
-        $this->pluginHook('disqus_settings_get_values');
+        $h->pluginHook('disqus_settings_get_values');
         
         //...otherwise set to blank:
         if (!$shortname) { $shortname = 'subconcious'; }  // This is the default in Disqus' generic code
             
         echo "<form name='disqus_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=disqus' method='post'>\n";
         
-        echo "<p>" . $this->lang["disqus_settings_instructions"] . "</p><br />";
+        echo "<p>" . $h->lang["disqus_settings_instructions"] . "</p><br />";
             
-        echo "<p>" . $this->lang["disqus_settings_shortname"] . " <input type='text' size=30 name='shortname' value='" . $shortname . "'><br />" . $this->lang["disqus_settings_shortname_note"] . "</p>\n";    
+        echo "<p>" . $h->lang["disqus_settings_shortname"] . " <input type='text' size=30 name='shortname' value='" . $shortname . "'><br />" . $h->lang["disqus_settings_shortname_note"] . "</p>\n";    
     
-        $this->pluginHook('disqus_settings_form');
+        $h->pluginHook('disqus_settings_form');
                 
         echo "<br /><br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
-        echo "<input type='submit' value='" . $this->lang["disqus_settings_save"] . "' />\n";
+        echo "<input type='submit' value='" . $h->lang["disqus_settings_save"] . "' />\n";
+        echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }
     
@@ -67,22 +68,22 @@ class DisqusSettings extends Disqus
      *
      * @return true
      */
-    public function saveSettings()
+    public function saveSettings($h)
     {
         // short name
-        if ($this->cage->post->keyExists('shortname')) { 
-            $shortname = $this->cage->post->testAlnumLines('shortname');
+        if ($h->cage->post->keyExists('shortname')) { 
+            $shortname = $h->cage->post->testAlnumLines('shortname');
         } else {
             $shortname = 'subconcious'; // This is the default in Disqus' generic code
         }
         
-        $this->pluginHook('disqus_save_settings');
+        $h->pluginHook('disqus_save_settings');
         
-        $this->updateSetting('disqus_shortname', $shortname);
+        $h->updateSetting('disqus_shortname', $shortname);
         
-        $this->hotaru->message = $this->lang["disqus_settings_saved"];
-        $this->hotaru->messageType = "green";
-        $this->hotaru->showMessage();
+        $h->message = $h->lang["disqus_settings_saved"];
+        $h->messageType = "green";
+        $h->showMessage();
         
         return true;    
     }

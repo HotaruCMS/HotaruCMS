@@ -1,13 +1,13 @@
 <?php
 /**
  * name: Google Analytics
- * description: Displays "Google Analyitics Code"
- * version: 0.1
+ * description: Displays "Google Analytics Code"
+ * version: 0.2
  * folder: google_analytics
  * class: GoogleAnalytics
- * hooks: pre_close_body, admin_plugin_settings, admin_sidebar_plugin_settings 
- *
- * Usage: Add <?php $hotaru->plugins->pluginHook('google_analytics'); ?> to footer.php before </body> tag.
+ * hooks: install_plugin, pre_close_body, admin_plugin_settings, admin_sidebar_plugin_settings
+ * author: Carlo Armanni
+ * authorurl: http://www.tr3ndy.com/
  *
  * PHP version 5
  *
@@ -31,21 +31,20 @@
  * @link      http://www.tr3ndy.com/
  */
 
-class GoogleAnalytics extends PluginFunctions
+class GoogleAnalytics
 {
-
     /**
      * Default settings on install
      */
-    public function install_plugin()
+    public function install_plugin($h)
     {
         // Default settings 
-        if (!$this->getSetting('google_analytics_key')) { $this->updateSetting('google_analytics_key', ''); }
+        if (!$h->getSetting('google_analytics_key')) { $h->updateSetting('google_analytics_key', ''); }
     }
 		 
-    public function pre_close_body()
+    public function pre_close_body($h)
     {
-	$google_analytics_key = $this->getSetting('google_analytics_key');
+	$google_analytics_key = $h->getSetting('google_analytics_key');
     echo "<script type=\"text/javascript\">
 		 var gaJsHost = ((\"https:\" == document.location.protocol) ? \"https://ssl.\" : \"http://www.\");
 		 document.write(unescape(\"%3Cscript src='\" + gaJsHost + \"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E\"));

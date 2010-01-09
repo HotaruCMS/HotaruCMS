@@ -28,21 +28,25 @@
 ?>
 
 <ul id="navigation">
-    <?php $admin->plugins->pluginHook('navigation_first'); ?>
-    <li><a href="<?php echo BASEURL; ?>"><?php echo $admin->lang["admin_theme_navigation_home"]; ?></a></li>
-    <?php $admin->plugins->pluginHook('navigation'); ?>
-    <?php $admin->plugins->pluginHook('admin_navigation'); ?>
+    <?php   if ($h->currentUser->loggedIn) {
+                if($h->isActive('avatar')) {
+                    $h->setAvatar($h->currentUser->id, 16);
+                    echo $h->linkAvatar();
+                }
+            } ?>
+    
+    <li><a href="<?php echo BASEURL; ?>"><?php echo $h->lang["admin_theme_navigation_home"]; ?></a></li>
+    <?php $h->pluginHook('navigation'); ?>
     <?php 
-        if (!$admin->plugins->isActive('users')) { 
-
-            if ($admin->current_user->loggedIn == true) { 
-                echo "<li><a id='navigation_active' href='" . $admin->hotaru->url(array(), 'admin') . "'>" . $admin->lang["admin_theme_navigation_admin"] . "</a></li>"; 
-                echo "<li><a href='" . $admin->hotaru->url(array('page'=>'admin_logout'), 'admin') . "'>" . $admin->lang["admin_theme_navigation_logout"] . "</a></li>";
+        if (!$h->isActive('signin')) { 
+            if ($h->currentUser->loggedIn == true) { 
+                echo "<li><a id='navigation_active' href='" . $h->url(array(), 'admin') . "'>" . $h->lang["admin_theme_navigation_admin"] . "</a></li>"; 
+                echo "<li><a href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang["admin_theme_navigation_logout"] . "</a></li>";
             } else { 
-                echo "<li><a href='" . $admin->hotaru->url(array(), 'admin') . "'>" . $admin->lang["admin_theme_navigation_login"] . "</a></li>"; 
+                echo "<li><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["admin_theme_navigation_login"] . "</a></li>"; 
             }
         } else {
-            $admin->plugins->pluginHook('navigation_users', true, 'users'); // ensures login/logout/register are last.
+            $h->pluginHook('navigation_users'); // ensures login/logout/register are last.
         }
     ?>
 </ul>

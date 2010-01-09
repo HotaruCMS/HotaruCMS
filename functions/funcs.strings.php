@@ -79,12 +79,16 @@ function rstrtrim($str, $remove=null)
  * @param string $delim - the character to replace underscores with
  * @return string
  */
-function make_name($string, $delim = ' ')
+function make_name($string, $delim = '_', $caps = true)
 {
     $dep_array  = array();
-    $dep_array  = explode('_', trim($string));
-    $dep_array  = array_map('ucfirst', $dep_array);
-    $string     = implode($delim, $dep_array);
+    $dep_array  = explode($delim, trim($string));
+    if ($caps) {
+        $dep_array  = array_map('ucfirst', $dep_array);
+        $string     = implode(' ', $dep_array);
+    } else {
+        $string     = ucfirst(implode(' ', $dep_array));
+    }
 
     return $string;
 }
@@ -556,5 +560,21 @@ function strip_foreign_characters($str)
     $str = str_replace('â€œ', '"', $str);
     $str = str_replace('â€', '"', $str);
     return $str;
+}
+
+
+/**
+ * Count urls within a block of text
+ *
+ * @return int 
+ * @link http://www.liamdelahunty.com/tips/php_url_count_check_for_comment_spam.php
+ */
+function countUrls($text = '')
+{
+    //$http = substr_count($text, "http");
+    $href = substr_count($text, "href");
+    $url = substr_count($text, "[url");
+    
+    return $href + $url;
 }
 ?>

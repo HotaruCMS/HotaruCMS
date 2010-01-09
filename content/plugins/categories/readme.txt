@@ -1,10 +1,10 @@
 Categories Plugin for Hotaru CMS
 --------------------------------
-Created by: Nick Ramsay
+Created by: Nick Ramsay & Stuart Duff
 
 Description
 -----------
-Add categories to posts, urls and the sidebar. Uses the Submit and Sidebar Widgets plugins.
+Adds categories to posts and displays a drop-down category bar.
 
 Instructions
 ------------
@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.1.2 2009/12/28 - Nick - Updated for compatibility with Hotaru 1.0
 v.1.1 2009/11/30 - Nick - Categories before post title in breadcrumbs, 
 			  plugin hooks in the category bar, and various big fixes
 v.1.0 2009/11/27 - Nick - Added clickable parent category to category breadcrumbs

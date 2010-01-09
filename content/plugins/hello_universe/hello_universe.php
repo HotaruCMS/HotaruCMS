@@ -2,10 +2,12 @@
 /**
  * name: Hello Universe
  * description: Demonstrates how to make plugins
- * version: 0.5
+ * version: 0.6
  * folder: hello_universe
  * class: HelloUniverse
- * hooks: theme_index_main, theme_index_sidebar, hotaru_header
+ * hooks: theme_index_top, theme_index_main, theme_index_sidebar
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *
@@ -29,36 +31,19 @@
  * @link      http://www.hotarucms.org/
  */
 
-
-class HelloUniverse extends PluginFunctions
+class HelloUniverse
 {
     /**
      * FUNCTION #1
      *
-     * Function: theme_index_main
-     * Purpose: Plugin welcome page with various options.
-     * Notes: Uses theme_index_main in the hooks list at the top of this file.
+     * Function: theme_index_top
+     * Purpose: Set the page title on the default page (which is otherwise "page not found")
+     * Notes: Uses theme_index_top in the hooks list at the top of this file.
     */
-    public function theme_index_main()
+    public function theme_index_top($h)
     {
-        // These lines get the current page and display any matches...
-        $page = $this->hotaru->getPageName();
-        switch($page) {
-            case 'plugin_template':
-                $this->hotaru->displayTemplate('plugin_template', 'hello_universe'); // Displays the page from this plugin folder
-                return true;
-                break;
-            case 'form_example':
-                $this->check_sent_form();    // Function #5
-                $this->hotaru->displayTemplate('form_example', 'hello_universe'); // Displays the page from this plugin folder
-                return true;
-                break;
-            case 'main':
-                $this->main_page();
-                return true;
-                break;
-            default:
-                break;
+        if (!$h->pageName) { 
+            $h->pageTitle = $h->lang["hello_universe"];
         }
     }
     
@@ -66,54 +51,61 @@ class HelloUniverse extends PluginFunctions
     /**
      * FUNCTION #2
      *
-     * Function: main_page
+     * Function: theme_index_main
+     * Purpose: Plugin welcome page with various options.
+     * Notes: Uses theme_index_main in the hooks list at the top of this file.
+    */
+    public function theme_index_main($h)
+    {
+        switch ($h->pageName) {
+            case 'plugin_template':
+                $h->displayTemplate('plugin_template'); // Displays the page from this plugin folder
+                return true;
+                break;
+            case 'form_example':
+                $this->checkSentForm($h);    // Function #5
+                $h->displayTemplate('form_example'); // Displays the page from this plugin folder
+                return true;
+                break;
+            default:
+                $this->mainPage($h);
+                return true;
+                break;
+        }
+    }
+    
+    
+    /**
+     * FUNCTION #3
+     *
+     * Function: mainPage
      * Purpose: Output text for the main page.
      * Notes: No hooks. Called by Function #1
-     * IMPORTANT:     Since we're echo'ing text to the main page, there's a very good chance it will appear 
-     *       above or below content from *another* plugin using the same page. The way around that, 
-     *        which we're not doing here, is to create another template along with plugin_template.php 
-     *       and form_example.php and echo the text from there. Any other pages we make could use the 
-     *       same template instead of making new ones for every page.
      */
-    public function main_page()
+    public function mainPage($h)
     {
-        // If the current page is "main" (which it is by default)...
+        // Display output
         echo "<div id='hello_universe' style='margin: 1.0em; background-color: #eee;'>";
-        echo "<h2>" . $this->lang["hello_universe"] . "</h2>";
-        echo "<p>" . $this->lang["hello_universe_explanation"] . "</p>";  
+        echo "<h2>" . $h->lang["hello_universe"] . "</h2>";
+        echo "<p>" . $h->lang["hello_universe_explanation"] . "</p>";  
         echo "<ul>";
         // Note these links allow for either friendly or unfriendly urls...
-        echo "<li><a href='" . $this->hotaru->url(array('page'=>'plugin_template')) . "'>" . $this->lang["hello_universe_see_page"] . "</a></li>";
-        echo "<li><a href='" . $this->hotaru->url(array('page'=>'form_example')) . "'>" . $this->lang["hello_universe_see_form"] . "</a></li>";
+        echo "<li><a href='" . $h->url(array('page'=>'plugin_template')) . "'>" . $h->lang["hello_universe_see_page"] . "</a></li>";
+        echo "<li><a href='" . $h->url(array('page'=>'form_example')) . "'>" . $h->lang["hello_universe_see_form"] . "</a></li>";
         echo "</ul></div>";
     }
     
     /**
-     * FUNCTION #3
+     * FUNCTION #4
      *
      * Function: theme_index_sidebar
      * Purpose: A sidebar that overrides the real sidebar!
      * Notes: Uses theme_index_sidebar in the hooks list at the top of this file.
      */
-    public function theme_index_sidebar()
+    public function theme_index_sidebar($h)
     {
-        $this->hotaru->displayTemplate('custom_sidebar', 'hello_universe'); // Overrides the current sidebar with a new one.
+        $h->displayTemplate('custom_sidebar'); // Overrides the current sidebar with a new one.
         return true;
-    }
-    
-    
-    /**
-     * FUNCTION #4
-     *
-     * Function: hotaru_header
-     * Purpose: Includes the Hello Universe language file
-     * Notes: This is used in the example form.
-     */
-    public function hotaru_header()
-    {
-        // include hello_universe language file
-        $this->includeLanguage();
-    
     }
     
     
@@ -124,17 +116,26 @@ class HelloUniverse extends PluginFunctions
      * Purpose: Checks the response from the form and prepares a message
      * Notes: This is used for the example form.
      */
-    public function check_sent_form()
+    public function checkSentForm($h)
     {
-        if ($this->cage->post->getAlpha('submit_example') == 'true') {
-            $answer = $this->cage->post->getMixedString2('answer');
+        if ($h->cage->post->getAlpha('submit_example') == 'true') {
+            
+            // This checks to see if someone is submitting this form from an external site, 
+            // which is something hackers do. This stops them.
+            if (!$h->csrf()) { 
+                $h->message = $h->lang['error_csrf'];
+                $h->messageType = 'red';
+                return false;
+            };
+            
+            $answer = $h->cage->post->getMixedString2('answer');
             if ($answer && $answer == 'Paris') {
-                $this->hotaru->message = $this->lang['hello_universe_success'];
-                $this->hotaru->messageType = 'green';
+                $h->message = $h->lang['hello_universe_success'];
+                $h->messageType = 'green';
                 return true;
             } else {
-                $this->hotaru->message = $this->lang['hello_universe_failure'];
-                $this->hotaru->messageType = 'red';    
+                $h->message = $h->lang['hello_universe_failure'];
+                $h->messageType = 'red';    
             }
         } 
         

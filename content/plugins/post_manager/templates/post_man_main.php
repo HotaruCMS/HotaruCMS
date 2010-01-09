@@ -25,52 +25,54 @@
  * @link      http://www.hotarucms.org/
  */
 
-//$bl_array = $hotaru->buildBlockedList();
-//extract($bl_array); // extracts $output and $pagedResults;
+// fixes for undefined index errors:
+if (!isset($h->vars['post_man_rows'])) { $h->vars['post_man_rows'] = ''; }
+if (!isset($h->vars['post_man_navi'])) { $h->vars['post_man_navi'] = ''; }
 ?>
 
 <!-- TITLE FOR ADMIN NEWS -->
-<h2><?php echo $hotaru->lang["post_man"]; ?></h2>
+<h2><?php echo $h->lang["post_man"]; ?></h2>
 
-<?php echo $hotaru->lang["post_man_desc"]; ?>
+<?php echo $h->lang["post_man_desc"]; ?>
 
-<?php echo " [<a href='" . BASEURL . "admin_index.php?post_status_filter=pending&plugin=post_manager&page=plugin_settings&type=filter'>" . $hotaru->lang["post_man_num_pending"] . $hotaru->vars['num_pending'] . "</a>]"; ?>
+<?php echo " [<a href='" . BASEURL . "admin_index.php?post_status_filter=pending&plugin=post_manager&page=plugin_settings&type=filter'>" . $h->lang["post_man_num_pending"] . $h->vars['num_pending'] . "</a>]"; ?>
 
-<?php echo $hotaru->showMessage(); ?>
+<?php echo $h->showMessage(); ?>
 
 <table><tr><td>
 
 <form name='post_man_search_form' action='<?php echo BASEURL; ?>admin_index.php' method='get'>
-    <h3><?php echo $hotaru->lang["post_man_search"]; ?></h3>
+    <h3><?php echo $h->lang["post_man_search"]; ?></h3>
     <table>
         <tr class='table_headers'>
-            <td><input type='text' size=30 name='search_value' value='<?php echo $hotaru->vars['search_term']; ?>' /></td>
-            <td><input class='submit' type='submit' value='<?php echo $hotaru->lang['post_man_search_button']; ?>' /></td>
+            <td><input type='text' size=30 name='search_value' value='<?php echo $h->vars['search_term']; ?>' /></td>
+            <td><input class='submit' type='submit' value='<?php echo $h->lang['post_man_search_button']; ?>' /></td>
         </tr>
     </table>
     <input type='hidden' name='plugin' value='post_manager' />
     <input type='hidden' name='page' value='plugin_settings' />
     <input type='hidden' name='type' value='search' />
+    <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
 </form>
 
 </td><td>
 
 <form name='post_man_filter_form' action='<?php echo BASEURL; ?>admin_index.php?plugin=post_manager' method='get'>
-    <h3><?php echo $hotaru->lang["post_man_filter"]; ?></h3>
+    <h3><?php echo $h->lang["post_man_filter"]; ?></h3>
     <table>
         <tr class='table_headers'>
             <td><select name='post_status_filter'>
-                <option style='font-weight: bold;' value='<?php echo $hotaru->vars['post_status_filter']; ?>'><?php echo ucfirst($hotaru->vars['post_status_filter']); ?></option>
+                <option style='font-weight: bold;' value='<?php echo $h->vars['post_status_filter']; ?>'><?php echo ucfirst($h->vars['post_status_filter']); ?></option>
                 <option value='' disabled>-----</option>
-                <option value='all'><?php echo $hotaru->lang['post_man_filter_all']; ?></option>
-                <option value='not_buried'><?php echo $hotaru->lang['post_man_filter_not_buried']; ?></option>
+                <option value='all'><?php echo $h->lang['post_man_filter_all']; ?></option>
+                <option value='not_buried'><?php echo $h->lang['post_man_filter_not_buried']; ?></option>
                 <option value='' disabled>-----</option>
-                <option value='newest'><?php echo $hotaru->lang['post_man_filter_newest']; ?></option>
-                <option value='oldest'><?php echo $hotaru->lang['post_man_filter_oldest']; ?></option>
+                <option value='newest'><?php echo $h->lang['post_man_filter_newest']; ?></option>
+                <option value='oldest'><?php echo $h->lang['post_man_filter_oldest']; ?></option>
                 <option value='' disabled>-----</option>
                 <?php 
-                if ($hotaru->vars['statuses']) {
-                    foreach ($hotaru->vars['statuses'] as $status) {
+                if ($h->vars['statuses']) {
+                    foreach ($h->vars['statuses'] as $status) {
                         if ($status != 'unsaved') { 
                             echo "<option value=" . $status . ">" . ucfirst($status) . "</option>\n";
                         }
@@ -78,12 +80,13 @@
                 }
                 ?>
             </select></td>
-            <td><input class='submit' type='submit' value='<?php echo $hotaru->lang['post_man_filter_button']; ?>' /></td>
+            <td><input class='submit' type='submit' value='<?php echo $h->lang['post_man_filter_button']; ?>' /></td>
         </tr>
     </table>
     <input type='hidden' name='plugin' value='post_manager' />
     <input type='hidden' name='page' value='plugin_settings' />
     <input type='hidden' name='type' value='filter' />
+    <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
 </form>
 
 </tr></table>
@@ -93,14 +96,14 @@
 <div id="table_list">
     <table>
     <tr class='table_headers'>
-        <td><?php echo $hotaru->lang["post_man_id"]; ?></td>
-        <td><?php echo $hotaru->lang["post_man_status"]; ?></td>
-        <td><?php echo $hotaru->lang["post_man_date"]; ?></td>
-        <td><?php echo $hotaru->lang["post_man_title"]; ?></td>
-        <td><?php echo $hotaru->lang["post_man_edit"]; ?></td>
-        <td><?php echo $hotaru->lang["post_man_check"]; ?></td>
+        <td><?php echo $h->lang["post_man_id"]; ?></td>
+        <td><?php echo $h->lang["post_man_status"]; ?></td>
+        <td><?php echo $h->lang["post_man_date"]; ?></td>
+        <td><?php echo $h->lang["post_man_title"]; ?></td>
+        <td><?php echo $h->lang["post_man_edit"]; ?></td>
+        <td><?php echo $h->lang["post_man_check"]; ?></td>
     </tr>
-            <?php echo $hotaru->vars['post_man_rows']; ?>
+            <?php echo $h->vars['post_man_rows']; ?>
     </table>
 </div>
 
@@ -108,23 +111,24 @@
         <table>
             <tr class='table_headers'>
                 <td><select name='checkbox_action'>
-                    <option value='new_selected'><?php echo $hotaru->lang["post_man_set_new"]; ?></option>
-                    <option value='top_selected'><?php echo $hotaru->lang["post_man_set_top"]; ?></option>
-                    <option value='pending_selected'><?php echo $hotaru->lang["post_man_set_pending"]; ?></option>
-                    <option value='bury_selected'><?php echo $hotaru->lang["post_man_set_buried"]; ?></option>
+                    <option value='new_selected'><?php echo $h->lang["post_man_set_new"]; ?></option>
+                    <option value='top_selected'><?php echo $h->lang["post_man_set_top"]; ?></option>
+                    <option value='pending_selected'><?php echo $h->lang["post_man_set_pending"]; ?></option>
+                    <option value='bury_selected'><?php echo $h->lang["post_man_set_buried"]; ?></option>
                     <option value='' disabled>-----</option>
-                    <option style='color: red; font-weight: bold;' value='delete_selected'><?php echo $hotaru->lang["post_man_set_delete"]; ?></option>
+                    <option style='color: red; font-weight: bold;' value='delete_selected'><?php echo $h->lang["post_man_set_delete"]; ?></option>
                     </select>
                 </td>
-                <td><input class='submit' type='submit' value='<?php echo $hotaru->lang['post_man_checkbox_action']; ?>' /></td>
+                <td><input class='submit' type='submit' value='<?php echo $h->lang['post_man_checkbox_action']; ?>' /></td>
             </tr>
         </table>
         <input type='hidden' name='plugin' value='post_manager' />
         <input type='hidden' name='page' value='plugin_settings' />
         <input type='hidden' name='type' value='checkboxes' />
+        <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
     </form>
 </div>
 
 <div class='clear'></div>
 
-<?php echo $hotaru->vars['post_man_navi']; // pagination ?>
+<?php echo $h->vars['post_man_navi']; // pagination ?>

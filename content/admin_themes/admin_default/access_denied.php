@@ -28,7 +28,7 @@
 
 ?>
         <!-- HEADER-->
-        <?php $admin->displayAdminTemplate('header'); ?>
+        <?php $h->displayAdminTemplate('header'); ?>
     
         <div id="bd" role="main">
             <div class='yui-g''>
@@ -36,11 +36,11 @@
 
                     <!-- MAIN -->
                     <div id="main">
-                        <?php echo $admin->hotaru->showMessages(); ?>
+                        <?php echo $h->showMessages(); ?>
                     </div>        
                 </div>
             </div>
         </div>
         
         <!-- FOOTER -->
-        <?php $admin->displayAdminTemplate('footer'); ?>
+        <?php $h->displayAdminTemplate('footer'); ?>

@@ -27,28 +27,10 @@
 
 class PliggImp3
 {
-    public $db;                         // database object
-    public $cage;                       // Inspekt object
-    public $hotaru;                     // Hotaru object
-    public $current_user;               // UserBase object
-    
-    
-    /**
-     * Build a $plugins object containing $db and $cage
-     */
-    public function __construct($hotaru)
-    {
-        $this->hotaru           = $hotaru;
-        $this->db               = $hotaru->db;
-        $this->cage             = $hotaru->cage;
-        $this->current_user     = $hotaru->current_user;
-    }
-    
-    
     /**
      * Page 3 - Request Comments file
      */
-    public function page_3()
+    public function page_3($h)
     {
         echo "<h2>Step 3/6 - Comments</h2>";
         echo "Please upload your <b>comments</b> XML file:<br />";
@@ -58,6 +40,7 @@ class PliggImp3
         echo "<input type='hidden' name='submitted' value='true' />\n";
         echo "<input type='hidden' name='table' value='Comments' />\n";
         echo "<input type='submit' name='submit' value='Upload' />\n";
+        echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }
     
@@ -69,20 +52,13 @@ class PliggImp3
      * @param string $file_name
      * @return bool
      */
-    function step3($xml, $file_name)
+    function step3($h, $xml, $file_name)
     {
         echo "<b>Table:</b> Comments...<br /><br />";
         
         $this_table = "comments";
-        if (!$this->db->table_empty($this_table)) {
-            if (!$this->cage->get->getAlpha('overwrite') == 'true') {
-                echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . DB_PREFIX . $this_table . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
-                echo "<a class='pliggimp_next' href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer&amp;file_name=" . $file_name . "&amp;step=3&amp;overwrite=true'>Continue</a>";
-                return false;
-            } 
-        }
         
-        $this->db->query($this->db->prepare("TRUNCATE " . DB_PREFIX . $this_table));
+        $h->db->query($h->db->prepare("TRUNCATE " . DB_PREFIX . $this_table));
         
         echo "<i>Number of records added:</i> ";
         
@@ -108,29 +84,29 @@ class PliggImp3
                 $columns    = "comment_post_id, comment_user_id, comment_parent, comment_date, comment_content, comment_votes, comment_subscribe, comment_updateby";
                 
                 $sql        = "INSERT INTO " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%d, %d, %d, %s, %s, %d, %d, %d)";
-                $lks = new PliggImp2($this->hotaru);
+                $lks = new PliggImp2();
                 
                 // Insert into Comments table
-                $this->db->query($this->db->prepare(
+                $h->db->query($h->db->prepare(
                     $sql,
-                    $lks->get_new_link_id($child->comment_link_id),
+                    $lks->get_new_link_id($h, $child->comment_link_id),
                     $child->comment_user_id,
                     $child->comment_parent,
                     $child->comment_date,
                     urlencode(trim($child->comment_content)),
                     $child->comment_votes,
                     $child->comment_subscribe,
-                    $this->current_user->id));
+                    $h->currentUser->id));
                     
                 // Grab the ID of the last insert. 
-                $comment[$count]['old_id']['new_id'] = $this->db->get_var($this->db->prepare("SELECT LAST_INSERT_ID()"));
+                $comment[$count]['old_id']['new_id'] = $h->db->get_var($h->db->prepare("SELECT LAST_INSERT_ID()"));
                 
                 $sql = "REPLACE INTO " . DB_PREFIX . "pliggimp_temp (pliggimp_setting, pliggimp_old_value, pliggimp_new_value) VALUES(%s, %d, %d)";
-                $this->db->query($this->db->prepare($sql, 'comment_id', $comment[$count]['old_id'], $comment[$count]['old_id']['new_id']));
+                $h->db->query($h->db->prepare($sql, 'comment_id', $comment[$count]['old_id'], $comment[$count]['old_id']['new_id']));
             }
         }
     
-        $this->update_comment_parent_ids($this_table);
+        $this->update_comment_parent_ids($h, $this_table);
         
         //Output the number of records added
         echo $count . "<br /><br />";
@@ -147,19 +123,19 @@ class PliggImp3
      *
      * @param string $this_table
      */
-    function update_comment_parent_ids($this_table)
+    function update_comment_parent_ids($h, $this_table)
     {
         $sql = "SELECT comment_id, comment_parent FROM " . DB_PREFIX . $this_table;
-        $comments = $this->db->get_results($this->db->prepare($sql));
+        $comments = $h->db->get_results($h->db->prepare($sql));
         
         if ($comments) {
             foreach ($comments as $comment) {
                 $sql = "SELECT pliggimp_new_value FROM " . DB_PREFIX . "pliggimp_temp WHERE pliggimp_setting = %s AND pliggimp_old_value = %d";
-                $new_parent_id = $this->db->get_var($this->db->prepare($sql, 'comment_id', $comment->comment_parent));
+                $new_parent_id = $h->db->get_var($h->db->prepare($sql, 'comment_id', $comment->comment_parent));
                 
                 if($new_parent_id) {
                     $sql = "UPDATE " . DB_PREFIX . $this_table . " SET comment_parent = %d WHERE comment_id = %d";
-                    $this->db->query($this->db->prepare($sql, $new_parent_id, $comment->comment_id));
+                    $h->db->query($h->db->prepare($sql, $new_parent_id, $comment->comment_id));
                 }
             }
         }

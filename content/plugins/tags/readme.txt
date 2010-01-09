@@ -4,25 +4,15 @@ Created by: Nick Ramsay
 
 Description
 -----------
-With this plugin you can add and edit tags on posts, filter posts by tag, view an RSS feed for each tag, view a tag cloud and put a tag cloud widget in your sidebar.
+With this plugin you can add tags, see them on posts, filter posts by tag, and view an RSS feed for each tag.
 
 Instructions
 ------------
 1. Upload the "tags" folder to your plugins folder. Install it from Plugin Management in Admin.
 
-Usage
------
-- Enable tags for posts in Admin -> Submit
-- Edit the tag cloud settings in Admin -> Tag Cloud
-- There are CSS and language files in the plugin folder that you can customize
-
-How to access the tag cloud page:
-* Friendly urls OFF: /index.php?page=tag-cloud  
-* Friendly urls ON:  /tag-cloud/
-
-
 Changelog
 ---------
+v.1.4 2009/12/28 - Nick - Updated for compatibility with Hotaru 1.0
 v.1.3 2009/11/26 - Nick - Filter tag cloud to tags from "top" and "new" posts only. Added a cache.
 v.1.2 2009/11/25 - Nick - Changes so you can get tags without a wrapper div and ul.
 v.1.1 2009/11/04 - Nick - Updated install function for easier upgrading

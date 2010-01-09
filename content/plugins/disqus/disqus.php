@@ -2,11 +2,12 @@
 /**
  * name: Disqus
  * description: Enables comments using Disqus
- * version: 0.5
+ * version: 0.6
  * folder: disqus
  * class: Disqus
- * requires: submit 1.4
- * hooks: header_include, header_include_raw, install_plugin, hotaru_header, submit_show_post_extra_fields, submit_post_show_post, pre_close_body, admin_plugin_settings, admin_sidebar_plugin_settings
+ * type: comments
+ * requires: sb_base 0.1
+ * hooks: header_include, header_include_raw, install_plugin, hotaru_header, sb_base_show_post_extra_fields, sb_base_post_show_post, pre_close_body, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  * PHP version 5
  *
@@ -30,16 +31,16 @@
  * @link      http://www.hotarucms.org/
  */
 
-class Disqus extends PluginFunctions
+class Disqus
 {
 
     /**
      * Default settings on install
      */
-    public function install_plugin()
+    public function install_plugin($h)
     {
         // Default settings 
-        if (!$this->getSetting('disqus_shortname')) { $this->updateSetting('disqus_shortname', 'subconcious'); } // This is the default in Disqus' generic code
+        if (!$h->getSetting('disqus_shortname')) { $h->updateSetting('disqus_shortname', 'subconcious'); } // This is the default in Disqus' generic code
     }
     
     
@@ -48,12 +49,13 @@ class Disqus extends PluginFunctions
      *
      * @link http://wiki.disqus.net/JSEmbed/
      */
-    public function header_include_raw()
+    public function header_include_raw($h)
     {
+        if (!$h->pageType == 'post') { return false; }
         echo '
         <script type="text/javascript">
             var disqus_developer = true; 
-            var disqus_identifier = ' . $this->hotaru->post->id . 
+            var disqus_identifier = ' . $h->post->id . 
         '</script>';
         echo "\n";
     }
@@ -62,37 +64,34 @@ class Disqus extends PluginFunctions
     /**
      * Link to comments
      */
-    public function submit_show_post_extra_fields()
+    public function sb_base_show_post_extra_fields($h)
     {
-        $url = $this->hotaru->url(array('page'=>$this->hotaru->post->id));
-        echo '<li><a class="disqus_comments_link" href="' . $url . '#disqus_thread">' . $this->lang['disqus_comments_link'] . '</a></li>' . "\n";
+        $url = $h->url(array('page'=>$h->post->id));
+        echo '<li><a class="disqus_comments_link" href="' . $url . '#disqus_thread">' . $h->lang['disqus_comments_link'] . '</a></li>' . "\n";
     }
     
     
     /**
      * Display Disqus comments and form
      */
-    public function submit_post_show_post()
+    public function sb_base_post_show_post($h)
     {
-        if (!$this->hotaru->isPage('submit2')) {
-            $this->hotaru->vars['shortname'] = $this->getSetting('disqus_shortname');
-            $this->hotaru->displayTemplate('disqus_comments', 'disqus');
+        if (!$h->isPage('submit2')) {
+            $h->vars['shortname'] = $h->getSetting('disqus_shortname');
+            $h->displayTemplate('disqus_comments', 'disqus');
         }
     }
     
-    
     /**
-     * Display Admin settings page
-     *
-     * @return true
+     * Include footer code on list pages
      */
-    public function admin_plugin_settings()
+    public function pre_close_body($h)
     {
-        require_once(PLUGINS . 'disqus/disqus_settings.php');
-        $disqSettings = new DisqusSettings($this->folder, $this->hotaru);
-        $disqSettings->settings();
-        return true;
+        if (!$h->pageType == 'list') { return false; }
+    
+        $h->vars['shortname'] = $h->getSetting('disqus_shortname');
+        $h->displayTemplate('disqus_footer', 'disqus');
     }
-
+    
 }
 ?>

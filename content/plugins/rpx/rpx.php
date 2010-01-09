@@ -2,11 +2,13 @@
 /**
  * name: RPX
  * description: Enables registration and login with Twitter, Facebook ,Google, etc.
- * version: 0.2
+ * version: 0.3
  * folder: rpx
  * class: RPX
- * hooks: install_plugin, hotaru_header, header_include, pre_close_body, users_login_pre_login_form, userbase_logincheck, users_register_pre_display_register_form, users_register_pre_register_form, users_register_password_check, users_register_post_add_user, admin_sidebar_plugin_settings, admin_plugin_settings, users_account_pre_password_user_only, userbase_delete_user, users_register_error_check, users_navigation_logged_out
- * requires: users 0.9
+ * hooks: install_plugin, theme_index_top, header_include, pre_close_body, user_signin_login_pre_login_form, userbase_logincheck, user_signin_pre_display_register_template, user_signin_register_pre_register_form, user_signin_register_password_check, user_signin_register_post_add_user, admin_sidebar_plugin_settings, admin_plugin_settings, users_account_pre_password_user_only, userbase_delete_user, user_signin_register_error_check, users_navigation_logged_out
+ * requires: users 1.1, user_signin 0.1
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *
@@ -31,10 +33,10 @@
  */
 
 
-class RPX extends PluginFunctions
+class RPX
 {
     /* Note: Plugin classes are recreated every time a plugin hook is triggered. So if you want 
-       persistent class properties, assign them to the $hotaru object and reassign them to their
+       persistent class properties, assign them to the $h object and reassign them to their
        properties in the constructor. */
     
     protected $apiKey       = "";
@@ -45,31 +47,33 @@ class RPX extends PluginFunctions
     protected $display       = "embed";
 
     /**
-     * Build a $plugins object containing $db and $cage
+     * Build an object containing $db and $cage
      */
-    public function __construct($folder, $hotaru)
+    public function __construct($h)
     {
-        // COPIED FROM /libs/Plugin.php constructor:
+        $rpx_settings = $h->getSerializedSettings('rpx');
+        $this->application      = strtolower($rpx_settings['application']);
+        $this->apiKey           = $rpx_settings['api_key'];
+        $this->language         = $rpx_settings['language'];
+        $this->account          = $rpx_settings['account'];
+        $this->display          = $rpx_settings['display'];
         
-        // We don't need to fill the object with anything other than the plugin folder name at this time:
-        if ($folder) { 
-            $this->folder = $folder; 
+        // determine where to return the user to after logging in:
+        if (!$h->cage->get->keyExists('return')) {
+            $host = $h->cage->server->getMixedString2('HTTP_HOST');
+            $uri = $h->cage->server->getMixedString2('REQUEST_URI');
+            $return = 'http://' . $host . $uri;
+            // so we don't return to the login page...
+            if (strpos($return, urlencode('login')) !== false) { $return = BASEURL; }
+            $return = urlencode(htmlentities($return,ENT_QUOTES,'UTF-8'));
+        } else {
+            $return = urlencode($h->cage->get->testUri('return')); // use existing return parameter
         }
-
-        $this->hotaru           = $hotaru;
-        $this->db               = $hotaru->db;
-        $this->cage             = $hotaru->cage;
-        $this->lang             = &$hotaru->lang;    // reference to main lang array
-        $this->current_user     = $hotaru->current_user;
         
-        $rpx_settings = $this->getSerializedSettings();
-        $this->application      = $rpx_settings['rpx_application'];
-        $this->apiKey           = $rpx_settings['rpx_api_key'];
-        $this->language         = $rpx_settings['rpx_language'];
-        $this->account          = $rpx_settings['rpx_account'];
-        $this->display          = $rpx_settings['rpx_display'];
-        $this->tokenUrl         = urlencode(BASEURL . "index.php?page=register");
-        //$this->tokenUrl     = $this->hotaru->url(array('page'=>'register')); // doesn't seem to work :(
+        if (strpos($return, urlencode(BASEURL)) === false) { $return = urlencode(BASEURL); }
+  
+        $this->tokenUrl         = urlencode(BASEURL . "index.php?page=register&amp;return=" . $return);
+        //$this->tokenUrl     = $h->url(array('page'=>'register')); // doesn't seem to work :(
     }
     
     /**
@@ -93,39 +97,39 @@ class RPX extends PluginFunctions
     /**
      * Install RPX
      */
-    public function install_plugin()
+    public function install_plugin($h)
     {
-        if (!$this->db->column_exists('users', 'user_rpx_id')) {
+        if (!$h->db->column_exists('users', 'user_rpx_id')) {
             // add new user_rpx field
             $sql = "ALTER TABLE " . TABLE_USERS . " ADD user_rpx_id VARCHAR(255) NULL AFTER user_date";
-            $this->db->query($this->db->prepare($sql));
+            $h->db->query($h->db->prepare($sql));
         }
         
-        if (!$this->db->column_exists('users', 'user_rpx')) {
+        if (!$h->db->column_exists('users', 'user_rpx')) {
             // add new user_rpx field
             $sql = "ALTER TABLE " . TABLE_USERS . " ADD user_rpx TEXT NULL AFTER user_rpx_id";
-            $this->db->query($this->db->prepare($sql));
+            $h->db->query($h->db->prepare($sql));
         }
         
         // Plugin settings
-        $rpx_settings = $this->getSerializedSettings();
-        if (!isset($rpx_settings['rpx_application'])) { $rpx_settings['rpx_application'] = ""; }
-        if (!isset($rpx_settings['rpx_api_key'])) { $rpx_settings['rpx_api_key'] = ""; }
-        if (!isset($rpx_settings['rpx_language'])) { $rpx_settings['rpx_language'] = "en"; }
-        if (!isset($rpx_settings['rpx_account'])) { $rpx_settings['rpx_account'] = "basic"; }
-        if (!isset($rpx_settings['rpx_display'])) { $rpx_settings['rpx_display'] = "embed"; }
-        $this->updateSetting('rpx_settings', serialize($rpx_settings));
+        $rpx_settings = $h->getSerializedSettings();
+        if (!isset($rpx_settings['application'])) { $rpx_settings['application'] = ""; }
+        if (!isset($rpx_settings['api_key'])) { $rpx_settings['api_key'] = ""; }
+        if (!isset($rpx_settings['language'])) { $rpx_settings['language'] = "en"; }
+        if (!isset($rpx_settings['account'])) { $rpx_settings['account'] = "basic"; }
+        if (!isset($rpx_settings['display'])) { $rpx_settings['display'] = "embed"; }
+        $h->updateSetting('rpx_settings', serialize($rpx_settings));
         
         // Clean up any leftover temp data from incomplete registrations in previous versions of this plugin:
         $sql = "DELETE FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
-        $this->db->query($this->db->prepare($sql, 'rpx_identifier'));
+        $h->db->query($h->db->prepare($sql, 'rpx_identifier'));
     }
     
     
     /**
      * The JavaScript for the RPX pop up
      */
-    public function pre_close_body()
+    public function pre_close_body($h)
     {
         $rpx_script = "\n<script src='https://rpxnow.com/openid/v2/widget' type='text/javascript'></script>
             <script type='text/javascript'>
@@ -139,7 +143,7 @@ class RPX extends PluginFunctions
             return true;
         }
         
-        $this_page = $this->hotaru->getPageName();
+        $this_page = $h->pageName;
         
         // if display mode is "embed" use this script only on the account page
         if ($this->display == 'embed' && $this_page == 'account') {
@@ -160,26 +164,16 @@ class RPX extends PluginFunctions
     
     
     /**
-     * Display Admin sidebar link
-     */
-    public function admin_sidebar_plugin_settings()
-    {
-        echo "<li><a href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $this->folder . "'>RPX</a></li>";
-    }
-    
-    
-    /**
      * Show a login with RPX link
      */
-    public function users_login_pre_login_form()
+    public function user_signin_login_pre_login_form($h)
     {
         if ($this->display == 'overlay') {
-            $this->includeLanguage();
-            echo "<p class='rpx_login_reg_text'>" . $this->lang['rpx_login_sign_in_1'] . " ";
+            echo "<p class='rpx_login_reg_text'>" . $h->lang['rpx_login_sign_in_1'] . " ";
             echo "<a class='rpxnow' onclick='return false;' ";
             echo "href='https://" . $this->application . ".rpxnow.com/openid/v2/signin?token_url=" . $this->tokenUrl . "'>";
-            echo $this->lang['rpx_login_sign_in_2'] . "</a></p>";
-        } elseif ($this->display == 'embed') {
+            echo $h->lang['rpx_login_sign_in_2'] . "</a></p>";
+        } elseif (($this->display == 'embed') || ($this->display == 'replace')) {
             echo "<iframe id='rpx_embed' src='https://" . $this->application . ".rpxnow.com/openid/embed?token_url=" . $this->tokenUrl . "' ";
             echo "scrolling='no' frameBorder='no'></iframe>";
         }
@@ -189,13 +183,12 @@ class RPX extends PluginFunctions
     /**
      * Show a register with RPX link
      */
-    public function users_register_pre_register_form()
+    public function user_signin_register_pre_register_form($h)
     {
         if ($this->display == 'overlay') {
-            $this->includeLanguage();
             echo "<p class='rpx_login_reg_text'><a class='rpxnow rpx_link' onclick='return false;' ";
             echo "href='https://" . $this->application . ".rpxnow.com/openid/v2/signin?token_url=" . $this->tokenUrl . "'>";
-            echo $this->lang['rpx_register_sign_up'] . "</a></p>";
+            echo $h->lang['rpx_register_sign_up'] . "</a></p>";
         } elseif ($this->display == 'embed') {
             echo "<iframe id='rpx_embed' src='https://" . $this->application . ".rpxnow.com/openid/embed?token_url=" . $this->tokenUrl . "' ";
             echo "scrolling='no' frameBorder='no'></iframe>";
@@ -206,64 +199,74 @@ class RPX extends PluginFunctions
     /**
      * Show a login with RPX link
      */
-    public function hotaru_header()
+    public function theme_index_top($h)
     {
         // get the token if available. If not, stop executing this function
-        $token = $this->cage->get->getMixedString1('token');
-        if (!$token) { return false; }
+        // also stop here if there's no apiKey
+        $token = $h->cage->get->getMixedString1('token');
+        if (!$token || !$this->apiKey) { return false; }
         
         // get the functions file:
         require_once(PLUGINS . 'rpx/libs/RpxFunctions.php');
-        $rpxFuncs = new RpxFunctions($this->folder, $this->hotaru);
+        $rpxFuncs = new RpxFunctions();
         
         // get the profile:
         $rpx_profile = $rpxFuncs->getProfile($token, $this->apiKey);
         
         // If adding a provider to an existing non-RPX user...
-        if ($this->hotaru->isPage('account') && ($this->account == 'basic'))
+        if ($h->isPage('account') && ($this->account == 'basic'))
         {
             // add the rpx ID and profile info (serialized) into the users table
             $sql = "UPDATE " . TABLE_USERS . " SET user_rpx_id = %s, user_rpx = %s WHERE user_id = %d";
-            $this->db->query($this->db->prepare($sql, $rpx_profile['identifier'], serialize($rpx_profile), $this->current_user->id));
-            return true;
+            $h->db->query($h->db->prepare($sql, $rpx_profile['identifier'], serialize($rpx_profile), $h->currentUser->id));
+            return false; // gets us out of here and loads the rest of the page.
         }
         
         // If adding another provider, map it then get out of here.
-        if ($this->hotaru->isPage('account') && ($this->account != 'basic'))
+        if ($h->isPage('account') && ($this->account != 'basic'))
         {
             // update the database with this user's RPX identifier IF EMPTY:
             $sql = "UPDATE " . TABLE_USERS . " SET user_rpx_id = %s WHERE user_id = %d AND user_rpx_id IS NULL";
-            $this->db->query($this->db->prepare($sql, $rpx_profile['identifier'], $this->current_user->id));
+            $h->db->query($h->db->prepare($sql, $rpx_profile['identifier'], $h->currentUser->id));
             
             // update the database with this user's RPX profile IF EMPTY:
             $sql = "UPDATE " . TABLE_USERS . " SET user_rpx = %s WHERE user_id = %d AND user_rpx IS NULL";
-            $this->db->query($this->db->prepare($sql, serialize($rpx_profile), $this->current_user->id));
+            $h->db->query($h->db->prepare($sql, serialize($rpx_profile), $h->currentUser->id));
             
             // map this provider with the user's existing account:
-            $status = $rpxFuncs->map($this->current_user->id, $rpx_profile['identifier'], $this->apiKey);
+            $status = $rpxFuncs->map($h->currentUser->id, $rpx_profile['identifier'], $this->apiKey);
             if($status == 'ok') {
-                return true; 
+                return false; // gets us out of here and loads the rest of the page.
             } else { 
                 die("Error: Unable to map with RPX. Please contact a site administrator"); 
                 exit; 
             } 
         }
         
-        
-        if($rpx_profile['primaryKey']) // PLUS & PRO ACCOUNTS ONLY
+        if(isset($rpx_profile['primaryKey']) && ($this->account != 'basic')) // PLUS & PRO ACCOUNTS ONLY
         {
             //get username from database for this primarykey
             $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_id = %d";
-            $username = $this->db->get_var($this->db->prepare($sql, $rpx_profile['primaryKey']));
-            
-            $login_result = $this->current_user->loginCheck($username, ''); // no password necessary
+            $username = $h->db->get_var($h->db->prepare($sql, $rpx_profile['primaryKey']));
+                    
+            $login_result = $h->currentUser->loginCheck($h, $username, ''); // no password necessary
             if ($login_result) {
                 //success
-                $this->current_user->name = $username;
+                $h->currentUser->name = $username;
                 $remember = 1; // keep them logged in for 30 days (not optional)
-                $users = new Users('', $this->hotaru);
-                $users->loginSuccess($remember);
-                header("Location: " . BASEURL);
+                require_once(PLUGINS . 'user_signin/user_signin.php');
+                $user_signin = new UserSignin();
+                $user_signin->loginSuccess($h, $remember);
+                $return = $h->cage->get->testUri('return');
+                // so that we don't return to the register page:
+                if (strpos($return, urlencode('register')) !== false) { $return = BASEURL; }
+                if ($return) {
+                    header("Location: " . $return);
+                    exit;
+                } else {
+                    header("Location: " . BASEURL);
+                    exit;
+                }
             } 
         } 
         
@@ -271,19 +274,29 @@ class RPX extends PluginFunctions
         {
             //get username from database for this identifier
             $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_rpx_id = %s";
-            $username = $this->db->get_var($this->db->prepare($sql, $rpx_profile['identifier']));
+            $username = $h->db->get_var($h->db->prepare($sql, $rpx_profile['identifier']));
 
             if ($username) {
-                $login_result = $this->current_user->loginCheck($username, ''); // no password necessary
+                $login_result = $h->currentUser->loginCheck($h, $username, ''); // no password necessary
             }
             
-            if ($login_result) {
+            if (isset($login_result) && $login_result != false) {
                 //success
-                $this->current_user->name = $username;
+                $h->currentUser->name = $username;
                 $remember = 1; // keep them logged in for 30 days (not optional)
-                $users = new Users('', $this->hotaru);
-                $users->loginSuccess($remember);
-                header("Location: " . BASEURL);
+                require_once(PLUGINS . 'user_signin/user_signin.php');
+                $user_signin = new UserSignin();
+                $user_signin->loginSuccess($h, $remember);
+                $return = $h->cage->get->testUri('return');
+                // so that we don't return to the register page:
+                if (strpos($return, urlencode('register')) !== false) { $return = BASEURL; }
+                if ($return) {
+                    header("Location: " . $return);
+                    exit;
+                } else {
+                    header("Location: " . BASEURL);
+                    exit;
+                }
             } 
         } 
 
@@ -293,23 +306,31 @@ class RPX extends PluginFunctions
         
         // first find out if it already exists:
         $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_value = %s";
-        $ident_exists = $this->db->get_var($this->db->prepare($sql, $rpx_profile['identifier']));
+        $ident_exists = $h->db->get_var($h->db->prepare($sql, $rpx_profile['identifier']));
         
         // insert it if it doesn't exist, update it if it does.
         if (!$ident_exists) {
             $sql = "INSERT INTO " . TABLE_MISCDATA . " SET miscdata_key = %s, miscdata_value = %s, miscdata_default = %s";
-            $this->db->query($this->db->prepare($sql, 'rpx_identifier', $rpx_profile['identifier'], serialize($rpx_profile))); 
+            $h->db->query($h->db->prepare($sql, 'rpx_identifier', $rpx_profile['identifier'], serialize($rpx_profile))); 
         } else {
             $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_key = %s, miscdata_value = %s, miscdata_default = %s WHERE  miscdata_value = %s";
-            $this->db->query($this->db->prepare($sql, 'rpx_identifier', $rpx_profile['identifier'], serialize($rpx_profile), $rpx_profile['identifier'])); 
+            $h->db->query($h->db->prepare($sql, 'rpx_identifier', $rpx_profile['identifier'], serialize($rpx_profile), $rpx_profile['identifier'])); 
         }
         
-        // Assign $prx_profile to $hotaru to be used in the registration form, 
+        // Assign $prx_profile to $h to be used in the registration form, 
 
-        $this->hotaru->vars['rpx_profile'] = $rpx_profile; 
+        $h->vars['rpx_profile'] = $rpx_profile; 
+        
+        // set blank if not present:
+        if (!isset($h->vars['rpx_profile']['email'])) {
+            $h->vars['rpx_profile']['email'] = '';
+        }
+        if (!isset($h->vars['rpx_profile']['preferredUsername'])) {
+            $h->vars['rpx_profile']['preferredUsername'] = '';
+        }
         
         /*  falls through to theme_main_index in Users plugin, where we hook in with the function 
-            "users_register_pre_display_register_form" below */
+            "user_signin_pre_display_register_template" below */
     }
      
     
@@ -318,15 +339,22 @@ class RPX extends PluginFunctions
      *
      * @return bool
      */
-    public function users_register_pre_display_register_form()
+    public function user_signin_pre_display_register_template($h)
     {
         // don't show this register form if there's no token in the url OR the register form from RPX's register template was not submitted
-        if (!$this->cage->get->keyExists('token')
-            && ($this->cage->post->testAlpha('rpx') != 'true')) { return false; }
+        if (!$h->cage->get->keyExists('token')
+            && ($h->cage->post->testAlpha('rpx') != 'true')) { return false; }
         
-        $this->includeLanguage();
-        $this->hotaru->messages[$this->lang["rpx_registration_nearly_complete"]] = 'green';
-        $this->hotaru->displayTemplate('rpx_register', 'rpx'); // display the *RPX* register form
+        /* Removed this because the user sigin plugin already does a CSRF check, therefore removing this very token!
+        if ($h->cage->post->testAlpha('rpx') == 'true') {
+            if (!$h->csrf()) {
+                $h->showMessage($h->lang["error_csrf"], 'red');
+                return true; // need to return true so the plugin hook knows it's been triggered
+            }
+        } */
+        
+        $h->messages[$h->lang["rpx_registration_nearly_complete"]] = 'green';
+        $h->displayTemplate('rpx_register', 'rpx'); // display the *RPX* register form
         return true;
     }
 
@@ -337,23 +365,19 @@ class RPX extends PluginFunctions
      * @param array $vars - first element is a username
      * @return bool
      */
-    public function userbase_logincheck($vars)
+    public function userbase_logincheck($h, $vars)
     {
+        // if the traditional form has been submitted, return false and 
+        // use the traditional login/password authentication:
+        if ($h->cage->post->testPage('page') == 'login') { return false; }
+        
         $username = $vars[0];
         
         $sql = "SELECT user_id, user_rpx FROM " . TABLE_USERS . " WHERE user_username = %s";
-        $results = $this->db->get_row($this->db->prepare($this->db->prepare($sql, $username)));
-    
+        $results = $h->db->get_row($h->db->prepare($h->db->prepare($sql, $username)));
+        
         if (!$results) { return false; }
             
-        /* Basic RPC accounts don't return a primary key because they're not mapped on RPX.
-           So checking the primary key fails for basic users. Therefore, let's just assume that 
-           if there exists a non-empty id and rpx field for this username, the user mustbe registered */
-            
-        // check if stored rpx primary key matches the user's id for this username:
-        //$rpx_profile = unserialize($results->user_rpx);
-        //if ($rpx_profile['primaryKey'] == $results->user_id) { return true; } else { return false; }
-        
         if ($results->user_id && $results->user_rpx) { 
             return true;
         } else {
@@ -368,8 +392,12 @@ class RPX extends PluginFunctions
      *
      * @return array
      */
-    public function users_register_password_check()
+    public function user_signin_register_password_check($h)
     {
+        // if the traditional form has been submitted, return false and 
+        // use the traditional registration method:
+        if ($h->cage->post->testPage('page') == 'register') { return false; }
+        
         $password = random_string(16); // generate a random 16 char password
         $passwords = array('password'=>$password, 'password2'=>$password);
         return $passwords;
@@ -381,14 +409,14 @@ class RPX extends PluginFunctions
      *
      * @param array $vars - first element is the last insert id
      */
-    public function users_register_post_add_user($vars)
+    public function user_signin_register_post_add_user($h, $vars)
     {
-        $identifier = $this->cage->post->testUri('identifier');
+        $identifier = $h->cage->post->testUri('identifier');
         if (!$identifier) { return false; }
         
         // get the rpx_profile data which we temporarily stored in the miscdata table
         $sql = "SELECT miscdata_default FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s AND miscdata_value = %s";
-        $rpx_profile = $this->db->get_var($this->db->prepare($sql, 'rpx_identifier', $identifier));
+        $rpx_profile = $h->db->get_var($h->db->prepare($sql, 'rpx_identifier', $identifier));
         
         if (!$rpx_profile) { echo "Error: No rpx profile information in RPX userbase_add_user"; exit; }
         
@@ -396,18 +424,18 @@ class RPX extends PluginFunctions
         
         // add the rpx profile info (serialized) into the users table
         $sql = "UPDATE " . TABLE_USERS . " SET user_rpx = %s, user_rpx_id = %s WHERE user_id = %d";
-        $this->db->query($this->db->prepare($sql, $rpx_profile, $identifier, $last_insert_id));
+        $h->db->query($h->db->prepare($sql, $rpx_profile, $identifier, $last_insert_id));
         
         // remove the data we stored temporarily in the misc_data:
         $sql = "DELETE FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s AND miscdata_value = %s";
-        $this->db->query($this->db->prepare($sql, 'rpx_identifier', $identifier));
+        $h->db->query($h->db->prepare($sql, 'rpx_identifier', $identifier));
         
         // extract the info we need to map this user on RPX:
         $rpx_profile = unserialize($rpx_profile);
         
         // get the functions file:
         require_once(PLUGINS . 'rpx/libs/RpxFunctions.php');
-        $rpxFuncs = new RpxFunctions($this->folder, $this->hotaru);
+        $rpxFuncs = new RpxFunctions($this->hotaru, $this->folder);
         
         // map the user:
         if ($this->account != 'basic') {
@@ -420,54 +448,53 @@ class RPX extends PluginFunctions
     /**
      * Show associated providers on user's Account page
      */
-    public function users_account_pre_password_user_only()
+    public function users_account_pre_password_user_only($h)
     {
-        $this->includeLanguage();
-        $output .= "<div class='users_account_rpx'>\n";
-        $output .= "<p id='rpx_providers_header'>" . $this->lang['rpx_account_providers'] . "</p>\n";
-        $output .= "<p id='rpx_providers_desc'>" . $this->lang['rpx_account_providers_list'] . "</p>\n";
+        $output = "<div class='users_account_rpx'>\n";
+        $output .= "<p id='rpx_providers_header'>" . $h->lang['rpx_account_providers'] . "</p>\n";
+        $output .= "<p id='rpx_providers_desc'>" . $h->lang['rpx_account_providers_list'] . "</p>\n";
         $output .= "<ul id='rpx_user_ids'>\n";
                     
         // get the functions file:
         require_once(PLUGINS . 'rpx/libs/RpxFunctions.php');
-        $rpxFuncs = new RpxFunctions($this->folder, $this->hotaru);
+        $rpxFuncs = new RpxFunctions($this->hotaru, $this->folder);
         
         $no_providers = false; // a simple flag for Basic accounts
         
         if ($this->account == 'basic') { 
             // see if there's an existing rpx identifier
             $sql = "SELECT user_id, user_rpx FROM " . TABLE_USERS . " WHERE user_id = %s";
-            $result = $this->db->get_row($this->db->prepare($sql, $this->current_user->id));
+            $result = $h->db->get_row($h->db->prepare($sql, $h->currentUser->id));
             if ($result->user_rpx) {
                 // turn the RPX profile back into an array:
                 $rpx_profile = unserialize($result->user_rpx);
                 $output .= "<li>&raquo " . get_domain($rpx_profile['identifier']) . "</li>";
             } else {
-                $output .= "<li>" . $this->lang['rpx_account_no_providers'] . "</li>";
+                $output .= "<li>" . $h->lang['rpx_account_no_providers'] . "</li>";
                 $no_providers = true;
             }
         }
                 
         if ($this->account != 'basic') { 
-            $data = $rpxFuncs->get_user_mappings($this->current_user->id, $this->apiKey);
+            $data = $rpxFuncs->get_user_mappings($h->currentUser->id, $this->apiKey);
             if ($data['identifiers']) {
                 foreach ($data['identifiers'] as $id) {
                     $output .= "<li>&raquo " . get_domain($id) . "</li>";
                 }
             } else {
-                $output .= "<li>" . $this->lang['rpx_account_no_providers'] . "</li>";
+                $output .= "<li>" . $h->lang['rpx_account_no_providers'] . "</li>";
             }
         }
         
         $output .= "</ul>\n";
         
         if (($this->account != 'basic') || $no_providers) {
-            $this->tokenUrl = urlencode(BASEURL . "index.php?page=account&user=" . $this->current_user->name);
+            $this->tokenUrl = urlencode(BASEURL . "index.php?page=account&user=" . $h->currentUser->name);
             
             $output .= "<p id='rpx_providers_add'><a class='rpxnow' onclick='return false;' ";
             $output .= "href='https://" . $this->application . ".rpxnow.com/openid/v2/signin?token_url=" . $this->tokenUrl . "'>";
-            $output .= $this->lang['rpx_account_add_provider'] . "</a><br />\n";
-            $output .= $this->lang['rpx_account_add_provider_instruct'] . "</p>\n";
+            $output .= $h->lang['rpx_account_add_provider'] . "</a><br />\n";
+            $output .= $h->lang['rpx_account_add_provider_instruct'] . "</p>\n";
         }
         
         $output .= "</div>";
@@ -481,10 +508,10 @@ class RPX extends PluginFunctions
      *
      * @param array $vars assoc. array containing "user_id"
      */
-    public function userbase_delete_user($vars)
+    public function userbase_delete_user($h, $vars)
     {
         $sql = "SELECT user_rpx FROM " . TABLE_USERS . " WHERE user_id = %d";
-        $rpx_profile = $this->db->get_var($this->db->prepare($sql, $vars['user_id']));
+        $rpx_profile = $h->db->get_var($h->db->prepare($sql, $vars['user_id']));
         
         if (!$rpx_profile) { return false; }
         
@@ -493,7 +520,7 @@ class RPX extends PluginFunctions
         
         // get the functions file:
         require_once(PLUGINS . 'rpx/libs/RpxFunctions.php');
-        $rpxFuncs = new RpxFunctions($this->folder, $this->hotaru);
+        $rpxFuncs = new RpxFunctions($this->hotaru, $this->folder);
         $rpxFuncs->unmap($vars['user_id'], $rpx_profile['identifier'], $this->apiKey);
     }
 
@@ -501,62 +528,57 @@ class RPX extends PluginFunctions
     /**
      * Check if a user already exists under a different provider
      */
-    public function users_register_error_check()
+    public function user_signin_register_error_check($h)
     {
-        $email = $this->current_user->email;
+        $email = $h->currentUser->email;
         
         // see if there's an existing rpx identifier
         $sql = "SELECT user_id, user_rpx FROM " . TABLE_USERS . " WHERE user_email = %s";
-        $result = $this->db->get_row($this->db->prepare($sql, $email));
+        $result = $h->db->get_row($h->db->prepare($sql, $email));
+        
+        if (!$result) { return false; }
         
         if ($result->user_rpx) // THIS USER HAS PREVIOUSLY REGISTERED WITH A DIFFERENT PROVIDER
         {
-            $this->includeLanguage();
             $rpx_profile = unserialize($result->user_rpx);
-            $error_msg = $this->lang['rpx_users_register_exists_error_1_rpx'] . " " . $rpx_profile['providerName'] . ".<br/>";
-            $error_msg .= $this->lang['rpx_users_register_exists_error_2_rpx'];
+            $error_msg = $h->lang['rpx_users_register_exists_error_1_rpx'] . " " . $rpx_profile['providerName'] . ".<br/>";
+            $error_msg .= $h->lang['rpx_users_register_exists_error_2_rpx'];
             
             if ($this->account != 'basic') {
-                $error_msg .= "<br /> <br/>" . $this->lang['rpx_users_register_exists_error_3_rpx'];
+                $error_msg .= "<br /> <br/>" . $h->lang['rpx_users_register_exists_error_3_rpx'];
             }
             
-            $this->hotaru->message = $error_msg; 
-            $this->hotaru->messageType = 'green'; // green because it's a useful prompt rather than an error
-            $this->hotaru->vars['rpx_already_exists'] = true; // this will prevent us seeing other error messages and the form
+            $h->message = $error_msg; 
+            $h->messageType = 'green'; // green because it's a useful prompt rather than an error
+            $h->vars['rpx_already_exists'] = true; // this will prevent us seeing other error messages and the form
             return true;
         }
         elseif ($result->user_id) // THIS USER HAS PREVIOUSLY REGISTERED WITH A LOGIN/PASSWORD COMBO
         {
-            $this->includeLanguage();
-            $error_msg = $this->lang['rpx_users_register_exists_error_1_password'] . "<br/><br />";
-            $error_msg .= "<a href='" . $this->hotaru->url(array('page'=>'login')) . "'>" . $this->lang['rpx_users_register_exists_error_2_password'] . "</a>";
-            $error_msg .= "<br /> <br/>" . $this->lang['rpx_users_register_exists_error_3_password'];
+            $error_msg = $h->lang['rpx_users_register_exists_error_1_password'] . "<br/><br />";
+            $error_msg .= "<a href='" . $h->url(array('page'=>'login')) . "'>" . $h->lang['rpx_users_register_exists_error_2_password'] . "</a>";
+            $error_msg .= "<br /> <br/>" . $h->lang['rpx_users_register_exists_error_3_password'];
             
-            $this->hotaru->message = $error_msg; 
-            $this->hotaru->messageType = 'green'; // green because it's a useful prompt rather than an error
-            $this->hotaru->vars['rpx_already_exists'] = true; // this will prevent us seeing other error messages and the form
+            $h->message = $error_msg; 
+            $h->messageType = 'green'; // green because it's a useful prompt rather than an error
+            $h->vars['rpx_already_exists'] = true; // this will prevent us seeing other error messages and the form
             return true;
         } 
-        else 
-        {
-            // do nothing
-        }
     }
     
     
     /**
-     * Check if a user already exists under a different provider
+     * Show sign in link if mode is "replace"
      *
      * @param return bool
      */
-    public function users_navigation_logged_out()
+    public function users_navigation_logged_out($h)
     {
         if ($this->display != 'replace') { return false; }
         
-        $this->includeLanguage();
         echo "<li><a class='rpxnow' onclick='return false;' ";
         echo "href='https://" . $this->application . ".rpxnow.com/openid/v2/signin?token_url=" . $this->tokenUrl . "'>";
-        echo $this->lang["rpx_navigation_signin"] . "</a></li>\n";
+        echo $h->lang["rpx_navigation_signin"] . "</a></li>\n";
         
         return true;
     }

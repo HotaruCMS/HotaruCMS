@@ -24,7 +24,7 @@
  * @link      http://www.hotarucms.org/
  */
     
-class RpxFunctions extends RPX
+class RpxFunctions
 {
     /**
      * Make api call to RPX to get profile data

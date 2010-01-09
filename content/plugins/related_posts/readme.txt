@@ -14,4 +14,5 @@ Instructions
 
 Changelog
 ---------
+v.0.2 2009/12/31 - Nick - Compatibility with Hotaru 1.0
 v.0.1 2009/11/23 - Nick - Released first version

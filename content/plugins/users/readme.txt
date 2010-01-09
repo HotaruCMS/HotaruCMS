@@ -4,18 +4,16 @@ Created by: Nick Ramsay
 
 Description
 -----------
-Allow users to register, with ReCaptcha and email confirmation anti-spam methods included. Users also provides user profile, settings and permission pages.
+Provides user profile, settings and permission pages. Note: This does not include login and registration. You'll need the "User Sign in" plugin for that.
 
 Instructions
 ------------
-1. Upload the "users" folder to your plugins folder. Install it from Plugin Management in Admin.
-
-Known bugs
-----------
-[Minor] When installing the plugin, you might be thrown out of the Plugin Management page and land on the Admin Home page. That happens because the Users plugin manages your permissions and while it installs itself, it doesn't know you have permission to view the Plugin Management page.
+1. Upload the "users" folder to your plugins folder.
+2. Install it from Plugin Management in Admin.
 
 Changelog
 ---------
+v.1.1 2009/12/22 - Nick - Updated for compatibility with Hotaru 1.0
 v.1.0 2009/11/25 - Nick - Cleaned up user_settings.php for better plugin integration
 v.0.9 2009/11/23 - Nick - Added new plugin hooks for the RPX plugin to use
 v.0.8 2009/11/19 - Nick - User profiles, settings, permissions, improved filtering of user submisions

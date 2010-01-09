@@ -2,11 +2,12 @@
 /**
  * name: Pligg Importer
  * description: Imports and converts a Pligg database to Hotaru CMS
- * version: 0.7
+ * version: 0.8
  * folder: pligg_importer
  * class: PliggImporter
- * requires: category_manager 0.6, categories 0.9, comments 1.0, submit 1.4, tags 1.1, users 0.8, vote_simple 0.8
  * hooks: admin_plugin_settings, admin_sidebar_plugin_settings, admin_header_include
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *
@@ -31,13 +32,13 @@
  */
 
 
-class PliggImporter extends PluginFunctions
+class PliggImporter
 {
     
     /**
      * Pligg Importer page in Admin Settings
      */
-    public function admin_plugin_settings()
+    public function admin_plugin_settings($h)
     {
         $pliggimp_path = PLUGINS . "/pligg_importer/";
         
@@ -48,41 +49,41 @@ class PliggImporter extends PluginFunctions
         include_once($pliggimp_path . "pliggimp_users.php");
         include_once($pliggimp_path . "pliggimp_votes.php");
     
-        if ($this->cage->post->testAlpha('submitted'))
+        if ($h->cage->post->testAlpha('submitted'))
         {
             // Save uploaded file and show the result
-            $file_name = $this->save_uploaded_file();
-            $table = $this->cage->post->testAlpha('table');
-            $this->upload_result($file_name, $table);
+            $file_name = $this->save_uploaded_file($h);
+            $table = $h->cage->post->testAlpha('table');
+            $this->upload_result($h, $file_name, $table);
         } 
-        elseif ($this->cage->get->keyExists('cleaner'))
+        elseif ($h->cage->get->keyExists('cleaner'))
         {
-            $this->character_cleaner();
+            $this->character_cleaner($h);
         }
-        elseif ($this->cage->get->keyExists('step'))
+        elseif ($h->cage->get->keyExists('step'))
         {
-            $step = $this->cage->get->testInt('step');
-            $file_name = $this->cage->get->getMixedString2('file_name');
+            $step = $h->cage->get->testInt('step');
+            $file_name = $h->cage->get->getMixedString2('file_name');
             
             if (!isset($file_name) || !$file_name) { 
                 // Go to page 
                 $function_name = "page_" . $step;
                 
                 if ($step == 7) { 
-                    $this->$function_name();
+                    $this->$function_name($h);
                 } else {
                     $class_name = "PliggImp" . $step; 
-                    $classStep = new $class_name($this->hotaru);
-                    $classStep->$function_name();
+                    $classStep = new $class_name();
+                    $classStep->$function_name($h);
                 }
             } else {
                 // Upload file
-                $this->process_file($step, $file_name);
+                $this->process_file($h, $step, $file_name);
             }
         } 
         else
         {
-            $this->page_welcome();    // Page One - welcome and instructions
+            $this->page_welcome($h);    // Page One - welcome and instructions
         }
         
         return true;
@@ -92,101 +93,29 @@ class PliggImporter extends PluginFunctions
     /**
      * Page 1 - welcome message, instructions and checks plugins are active
      */
-    public function page_welcome()
+    public function page_welcome($h)
     {
         // FIRST PAGE WITH UPLOAD FORM
         echo "<div id='pliggimp'>";
         echo "<h2>Welcome to the Pligg Importer</h2>";
-        echo "<p>Before starting, you'll need to complete three steps. First make sure the Hotaru plugins below are installed and active. Second, export the Pligg database tables listed below as <b>XML files</b>. If using phpMyAdmin, go to each table and click the \"Export\" tab. Then select \"XML\" and save with no compression. Third, change your Hotaru username and password to match the 'god' account from your Pligg site.</p>";
+        echo "<p>This plugin will attempt to import a Pligg or SWCMS site into Hotaru CMS. <b>Be warned, if you have a large website, it can take a long time to do the import and you may exceed various time and size limits on your server</b>. Please read through the <a href='http://hotarucms.org/showpost.php?p=472'>Pligg Importer forum thread</a> for suggestions.</p>";
         
-        echo "<table><tr>";
-        echo "<td colspan=3 id='before_begin'>Before you begin, you'll need to...</td></tr>";
-        echo "<td colspan=3>...make sure your Pligg username is at least 4 characters. Learn more about that <a href='http://hotarucms.org/showpost.php?p=472&postcount=9'>here in the forums</a>.</td></tr>";
-        echo "<td colspan=3><b>Then...</b></td></tr>";
-        echo "<tr><td>";
+        echo "<table>";
+        echo "<tr><td id='before_begin'>Before you begin, you'll need to...</td></tr>";
         
-        echo "<ul id='table_list'>";
-        echo "<li class='list_header_red'>ACTIVATE</li>";
-        echo "<li class='list_header'>Hotaru plugins</li>";
-        echo "<li>Category Manager</li>";
-        echo "<li>Categories</li>";
-        echo "<li>Submit</li>";
-        echo "<li>Comments</li>";
-        echo "<li>Tags</li>";
-        echo "<li>Users</li>";
-        echo "<li>Vote Simple</li>";
-        echo "</ul>";
+        echo "<tr><td><span class='bold_red'>1.</span> Export the following Pligg database tables as <b>XML files</b>. If using phpMyAdmin, go to each table and click the \"Export\" tab. Then select \"XML\" and save with no compression.: <i>categories, links, comments, tags, users</i> and <i>votes</i></td></tr>";
         
-        echo "</td><td>";
+        echo "<tr><td><span class='bold_red'>3.</span> Make sure your Pligg username is at least 4 characters. Learn more about that <a href='http://hotarucms.org/showpost.php?p=472&postcount=9'>here in the forums</a>.</td></tr>";
         
-        echo "<ul id='table_list'>";
-        echo "<li class='list_header_red'>EXPORT</li>";
-        echo "<li class='list_header'>XML files from Pligg</li>";
-        echo "<li>categories</li>";
-        echo "<li>links</li>";
-        echo "<li>comments</li>";
-        echo "<li>tags</li>";
-        echo "<li>users</li>";
-        echo "<li>votes</li>";
-        echo "</ul>";
-        
-        echo "</td><td>";
-    
-        echo "<ul id='table_list'>";
-        echo "<li class='list_header_red'>CHANGE</li>";
-        echo "<li class='list_header'>your Hotaru profile</li>";
-        echo "<li>So you don't delete yourself when importing the Users data, make sure your Hotaru username and password match your old 'god' account from Pligg.</li>";
-        echo "</ul>";
-    
-        echo "</td>";
-        echo "</tr>";
-        
-        echo "<tr><td colspan=3><span style='color: red'><b>IMPORTANT:</b></span> Make sure that the \"uploads\" folder in the <i>pligg_importer</i> folder is writable (chmod 777).</td></tr>";
+        echo "<tr><td><span class='bold_red'>2.</span> Change your Hotaru profile. So you don't delete yourself when importing the Users data, make sure your Hotaru username and password match your old 'god' account from Pligg. </td></tr>";
+
+        echo "<tr><td><span class='bold_red'>4.</span> Make sure that the \"uploads\" folder in the <i>pligg_importer</i> folder is writable (chmod 777)</td></tr>";
+
         echo "</table>";
-        
-        $error = 0;
-        $inactive = "";
-        
-        if (!$this->isActive('submit')) {
-            $inactive .= "<li style='color: red;'><b>Submit plugin is inactive</b></li>"; 
-            $error = 1;
-        }
-        if (!$this->isActive('comments')) {
-            $inactive .= "<li style='color: red;'><b>Comments plugin is inactive</b></li>"; 
-            $error = 1;
-        }
-        if (!$this->isActive('category_manager')) {
-            $inactive .= "<li style='color: red;'><b>Category Manager plugin is inactive</b></li>"; 
-            $error = 1;
-        }
-        if (!$this->isActive('categories')) {
-            $inactive .= "<li style='color: red;'><b>Categories plugin is inactive</b></li>"; 
-            $error = 1;
-        }
-        if (!$this->isActive('tags')) {
-            $inactive .= "<li style='color: red;'><b>Tags plugin is inactive</b></li>"; 
-            $error = 1;
-        }
-        if (!$this->isActive('users')) {
-            $inactive .= "<li style='color: red;'><b>Users plugin is inactive</b></li>"; 
-            $error = 1;
-        }
-        if (!$this->isActive('vote_simple')) {
-            $inactive .= "<li style='color: red;'><b>Vote Simple plugin is inactive</b></li>"; 
-            $error = 1;
-        }
          
-        if ($error == 0) {
-            echo "<h2 style='color: green;'>All plugins are active! Click \"Import a Pligg Database\" to begin...</b></h2><br />";
-            echo "<a class='pliggimp_next' href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer&amp;step=1'>Import a Pligg Database</a><br /><br />";
-        } else {
-            echo "<h2>Please fix the following problems:</h2>";
-            echo "<ul>";
-            echo $inactive;
-            echo "</ul>";
-        }
+        echo "<h2 style='color: green;'>Click \"Import a Pligg Database\" to begin...</b></h2><br />";
+        echo "<a class='pliggimp_next' href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer&amp;step=1'>Import a Pligg Database</a><br /><br />";
         
-        echo "";
         echo "<h2>Character Cleaner</h2><br />";
         echo "The Character Cleaner should be used <b><i>after</i></b> importing a Pligg database and <b><i>only</i></b> if you are having trouble with strange characters in posts. What it does is simply strip common problem characters from post titles and content. <b>Note: </b> This script may take some time to run depending on the size of your database.";
         echo "<br /><a class='pliggimp_next' href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer&amp;cleaner=1'>Run the Character Cleaner</a>";
@@ -201,7 +130,7 @@ class PliggImporter extends PluginFunctions
      * @param str $file_name
      * @param str $table table name
      */
-    public function upload_result($file_name, $table)
+    public function upload_result($h, $file_name, $table)
     {
             echo "<h2>Upload Results</h2>";
             echo "<div>";
@@ -233,15 +162,15 @@ class PliggImporter extends PluginFunctions
             if ($file_name) 
             {
                 echo "<span style='color: green;'><i>" . $file_name . "</i> has been uploaded successfully.</span> <a class='pliggimp_next' href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer&amp;file_name=" . $file_name . "&amp;" . "step=" . $step . "'>Continue</a>";
+                
+                echo "<h2>Click \"Continue\" to start the import</h2>";
+                echo "Please note that large tables with thousands of records may take some time to import, and <b>any existing data will be overwritten.</b>";
             }
             else
             {
                 echo "<span style='color: red;'>Import aborted.</span> <a href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer'>Click here</a> to return to the start.";
             }
             echo "</div>";
-            
-            echo "<h2>Click \"Continue\" to start the import</h2>";
-            echo "Please note that large tables with thousands of records make take some time to import.";
     }
     
     
@@ -250,46 +179,46 @@ class PliggImporter extends PluginFunctions
      *
      * @return string|false
      */
-    public function save_uploaded_file()
+    public function save_uploaded_file($h)
     {
         /* *****************************
          * ****************************/
          
          // EDIT THIS TO INCREASE FILE SIZE LIMIT
-        $size_limit = 31457280; // 30MB
+        $size_limit = 104857600; // 100MB
         
         /* *****************************
          * ****************************/
          
-        $tmp_filepath = $this->cage->files->getRaw('/file/tmp_name');
-        $file_name = basename($this->cage->files->getMixedString2('/file/name'));
-        $file_type = $this->cage->files->testPage('/file/type');
-        $file_size = $this->cage->files->testInt('/file/size');
-        $file_error = $this->cage->files->testInt('/file/error');
+        $tmp_filepath = $h->cage->files->getRaw('/file/tmp_name');
+        $file_name = basename($h->cage->files->getMixedString2('/file/name'));
+        $file_type = $h->cage->files->testPage('/file/type');
+        $file_size = $h->cage->files->testInt('/file/size');
+        $file_error = $h->cage->files->testInt('/file/error');
         $destination = PLUGINS . "pligg_importer/uploads/";
         
         if ($file_type == "text/xml" && $file_size < $size_limit)
         {
             if ($file_error > 0)
             {
-                $this->hotaru->message = "Error: code " . $file_error;
-                $this->hotaru->messageType = "red";
-                $this->hotaru->showMessage();
+                $h->message = "Error: code " . $file_error;
+                $h->messageType = "red";
+                $h->showMessage();
                 return false;
             }
             else
             {
                 if (!move_uploaded_file($tmp_filepath, $destination . $file_name)) {
-                    $this->hotaru->message = "Failed to move the file to the pligg_importer uploads folder.";
-                    $this->hotaru->messageType = "red";
-                    $this->hotaru->showMessage();
+                    $h->message = "Failed to move the file to the pligg_importer uploads folder.";
+                    $h->messageType = "red";
+                    $h->showMessage();
                     return false;
                 }
                 
-                $this->hotaru->message = "Uploaded succesfully!";
-                $this->hotaru->messageType = "green";
-                $this->hotaru->showMessage();
-                $this->hotaru->vars['status'] = "uploaded";
+                $h->message = "Uploaded succesfully!";
+                $h->messageType = "green";
+                $h->showMessage();
+                $h->vars['status'] = "uploaded";
                             
                 return $file_name;
             }
@@ -297,14 +226,14 @@ class PliggImporter extends PluginFunctions
         else
         {    
             if ($file_type != "text/xml") {
-                $this->hotaru->message = "Invalid file: Must be <i>text/xml</i>";
+                $h->message = "Invalid file: Must be <i>text/xml</i>";
             } elseif ($file_size >= $size_limit) {
-                $this->hotaru->message = "Invalid file: Exceeded " . 
+                $h->message = "Invalid file: Exceeded " . 
                     display_filesize($file_size);
             }
             
-            $this->hotaru->messageType = "red";
-            $this->hotaru->showMessage();
+            $h->messageType = "red";
+            $h->showMessage();
             return false;
         }
     }
@@ -315,7 +244,7 @@ class PliggImporter extends PluginFunctions
      * @param int $step
      * @param str $file_name
      */
-    public function process_file($step = 0, $file_name = '')
+    public function process_file($h, $step = 0, $file_name = '')
     {
         $uploads_folder = PLUGINS . "pligg_importer/uploads/";
         $xml = simplexml_load_file($uploads_folder . $file_name);
@@ -324,29 +253,29 @@ class PliggImporter extends PluginFunctions
             
         switch($step) {
             case 1:
-                $this->create_temp_table();
-                $cats = new PliggImp1($this->hotaru);
-                $cats->step1($xml, $file_name);
+                $this->create_temp_table($h);
+                $cats = new PliggImp1();
+                $cats->step1($h, $xml, $file_name);
                 break;
             case 2:
-                $links = new PliggImp2($this->hotaru);
-                $links->step2($xml, $file_name);
+                $links = new PliggImp2();
+                $links->step2($h, $xml, $file_name);
                 break;
             case 3:
-                $comms = new PliggImp3($this->hotaru);
-                $comms->step3($xml, $file_name);
+                $comms = new PliggImp3();
+                $comms->step3($h, $xml, $file_name);
                 break;
             case 4:
-                $tags = new PliggImp4($this->hotaru);
-                $tags->step4($xml, $file_name);
+                $tags = new PliggImp4();
+                $tags->step4($h, $xml, $file_name);
                 break;
             case 5:
-                $users = new PliggImp5($this->hotaru);
-                $users->step5($xml, $file_name);
+                $users = new PliggImp5();
+                $users->step5($h, $xml, $file_name);
                 break;
             case 6:
-                $votes = new PliggImp6($this->hotaru);
-                $votes->step6($xml, $file_name);
+                $votes = new PliggImp6();
+                $votes->step6($h, $xml, $file_name);
                 break;
             default:
                 break;
@@ -360,13 +289,13 @@ class PliggImporter extends PluginFunctions
     /**
      * Create a temporary table
      */
-    function create_temp_table()
+    function create_temp_table($h)
     {
         // PLIGGIMP_TEMP TABLE - stores mappings between old and new data.
         
         // Drop and rebuild the table if it already exists
         $sql = 'DROP TABLE IF EXISTS `' . DB_PREFIX . 'pliggimp_temp`;';
-        $this->db->query($sql);
+        $h->db->query($sql);
         
         $sql = "CREATE TABLE `" . DB_PREFIX . "pliggimp_temp` (
           `pliggimp_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -377,27 +306,26 @@ class PliggImporter extends PluginFunctions
           `pliggimp_updateby` int(20) NOT NULL DEFAULT 0
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Pligg Importer Temporary Data';";
     
-        $this->db->query($sql);
+        $h->db->query($sql);
     }
         
     /**
      * Import complete
      */
-    public function page_7()
+    public function page_7($h)
     {
         // Drop the pliggimp_temp table...
         $sql = 'DROP TABLE IF EXISTS `' . DB_PREFIX . 'pliggimp_temp`;';
-        $this->db->query($sql);
+        $h->db->query($sql);
         
         // Delete the uploaded XML files
-        $admin = new Admin();
-        $admin->deleteFiles(PLUGINS . 'pligg_importer/uploads/');
+        $h->deleteFiles(PLUGINS . 'pligg_importer/uploads/');
         
         // Import Complete
         
-        $this->hotaru->message = "Congratulations! You have completed the import.";
-        $this->hotaru->messageType = 'green';
-        $this->hotaru->showMessage();
+        $h->message = "Congratulations! You have completed the import.";
+        $h->messageType = 'green';
+        $h->showMessage();
         
         echo "<div id='pliggimp'>";
         echo "<h2>Pligg Import Complete</h2>";
@@ -409,10 +337,10 @@ class PliggImporter extends PluginFunctions
     /**
      * Corrects botched utf-8 content
      */
-    function character_cleaner()
+    function character_cleaner($h)
     {
         $sql = "SELECT post_id, post_title, post_content FROM " . TABLE_POSTS;
-        $content = $this->db->get_results($this->db->prepare($sql));
+        $content = $h->db->get_results($h->db->prepare($sql));
                
         if ($content) {
             foreach ($content as $item) {
@@ -420,25 +348,25 @@ class PliggImporter extends PluginFunctions
                 $item->post_content = strip_foreign_characters(urldecode($item->post_content));
                             
                 $sql = "UPDATE " . TABLE_POSTS . " SET post_title = %s, post_content = %s WHERE post_id = %d";
-                $this->db->query($this->db->prepare($sql, urlencode($item->post_title), urlencode($item->post_content), $item->post_id));
+                $h->db->query($h->db->prepare($sql, urlencode($item->post_title), urlencode($item->post_content), $item->post_id));
             }
         }
         
         $sql = "SELECT comment_id, comment_content FROM " . TABLE_COMMENTS;
-        $content = $this->db->get_results($this->db->prepare($sql));
+        $content = $h->db->get_results($h->db->prepare($sql));
                
         if ($content) {
             foreach ($content as $item) {
                 $item->comment_content = strip_foreign_characters(urldecode($item->comment_content));
                             
                 $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_content = %s WHERE comment_id = %d";
-                $this->db->query($this->db->prepare($sql, urlencode($item->comment_content), $item->comment_id));
+                $h->db->query($h->db->prepare($sql, urlencode($item->comment_content), $item->comment_id));
             }
         }
         
-        $this->hotaru->message = "Post titles and descriptions updated";
-        $this->hotaru->messageType = "green";
-        $this->hotaru->showMessage();
+        $h->message = "Post titles and descriptions updated";
+        $h->messageType = "green";
+        $h->showMessage();
     }
 }
 

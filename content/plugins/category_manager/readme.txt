@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.0.7 2009/12/23 - Nick - Updated for use with Hotaru 1.0
 v.0.6 2009/11/04 - Nick - Apostrophe fix and updated install function for easier upgrading
 v.0.5 2009/10/04 - Nick - Updates for compatibility with Hotaru 0.7
 v.0.4 2009/10/01 - Nick - Updates for compatibility with Hotaru 0.6

@@ -2,11 +2,13 @@
 /**
  * name: Comment Manager
  * description: Manage comments.
- * version: 0.2
+ * version: 0.3
  * folder: comment_manager
  * class: CommentManager
- * requires: comments 1.0
- * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings
+ * requires: comments 1.2
+ * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *
@@ -30,22 +32,9 @@
  * @link      http://www.hotarucms.org/
  */
  
-return false; die(); // die on direct access.
-
-class CommentManager extends PluginFunctions
+class CommentManager
 {
-    /**
-     * Define a global "table_categories" and include language
-     *
-     *@return true
-     */
-    public function hotaru_header()
-    {
-        $this->includeLanguage();
-        
-        if (!defined('TABLE_COMMENTS')) { define("TABLE_COMMENTS", DB_PREFIX . 'comments'); }
-        return true;
-    }
+    // no functions needed. This plugin uses default functions in the Hotaru class...
 }
 
 ?>

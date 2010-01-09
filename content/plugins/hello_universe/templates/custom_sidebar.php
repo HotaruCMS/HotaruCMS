@@ -32,5 +32,5 @@
 
 <p>This is the custom_sidebar.php file in the Hello Universe plugin folder.</p>
 
-<p>We managed to override the regular sidebar by creating a new sidebar in the plugin folder, and writing Function #3 in hello_universe.php.</p>
+<p>We managed to override the regular sidebar by creating a new sidebar in the plugin folder, and writing Function #4 in hello_universe.php.</p>
 

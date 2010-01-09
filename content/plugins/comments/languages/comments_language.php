@@ -24,6 +24,8 @@
  * @link      http://www.hotarucms.org/
  */
 
+$lang['comments'] = "Comments";
+
 /* Comment Link - see libs/Comment.php -> count_comments function */
 $lang['comments_singular_link'] = "comment";
 $lang['comments_plural_link'] = "comments";
@@ -103,4 +105,13 @@ $lang["comments_profile_see_comments"] = " or click here to see my comments";
 $lang["comments_admin_stats_total_comments"] = "Total comments";
 $lang["comments_admin_stats_approved_comments"] = "Approved comments";
 $lang["comments_admin_stats_pending_comments"] = "Pending comments";
+
+/* Email to comment subscribers */
+$lang["comment_email_subject"] = " has commented on ";
+$lang["comment_email_intro"] = " has commented on a story you are subscribed to at ";
+$lang["comment_email_story_title"] = "Story Title: ";
+$lang["comment_email_story_link"] = "Story Link: ";
+$lang["comment_email_comment"] = "Comment: ";
+$lang["comment_email_do_not_reply"] = "Do not reply to this email. Please visit the above link and comment there.";
+$lang["comment_email_unsubscribe"] = "To unsubscribe, uncheck the \"Subscribe to comments\" box and submit an empty comment.";
 ?>

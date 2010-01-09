@@ -25,29 +25,23 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-
+$loaded_settings = $h->vars['admin_settings'];
 ?>
 
-<p class="breadcrumbs">
-    <a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a> 
-    &raquo; <a href="<?php echo $admin->hotaru->url(array(), 'admin'); ?>"><?php echo $admin->lang["admin_theme_main_admin_cp"]; ?></a> 
-    &raquo; <?php echo $admin->lang["admin_theme_settings"]; ?>
-</p>
-
-<?php $admin->plugins->pluginHook('admin_settings_top'); ?>
+<?php $h->pluginHook('admin_settings_top'); ?>
     
-    <h2><?php echo $admin->lang["admin_theme_settings_title"]; ?></h2>
+    <h2><?php echo $h->lang["admin_theme_settings_title"]; ?></h2>
     
-    <?php $loaded_settings = $admin->settings();    // Prepare or process the form ?>
+    <?php $h->showMessage(); ?>
     
     <form id='settings_form' name='settings_form' action='<?php echo BASEURL; ?>admin_index.php?page=settings' method='post'>
     
     <table id="settings">    
     <tr>
-        <td><b><u><?php echo $admin->lang["admin_theme_settings_setting"]; ?></u></b></td>
-        <td><b><u><?php echo $admin->lang["admin_theme_settings_value"]; ?></u></b></td>
-        <td><b><u><?php echo $admin->lang["admin_theme_settings_default"]; ?></u></b></td>
-        <td><b><u><?php echo $admin->lang["admin_theme_settings_notes"]; ?></u></b></td>
+        <td><b><u><?php echo $h->lang["admin_theme_settings_setting"]; ?></u></b></td>
+        <td><b><u><?php echo $h->lang["admin_theme_settings_value"]; ?></u></b></td>
+        <td><b><u><?php echo $h->lang["admin_theme_settings_default"]; ?></u></b></td>
+        <td><b><u><?php echo $h->lang["admin_theme_settings_notes"]; ?></u></b></td>
     </tr>
     
     <?php     // **********************************************************
@@ -69,10 +63,11 @@
     
     <br />
     <input type='hidden' name='settings_update' value='true' />
+    <input type='hidden' name='token' value='<?php echo $h->token; ?>' />
     </table>
     <input id='settings_submit' type='submit' value='Save' />
     </form>
     
     
     
-<?php $admin->plugins->pluginHook('admin_settings_bottom'); ?>
+<?php $h->pluginHook('admin_settings_bottom'); ?>

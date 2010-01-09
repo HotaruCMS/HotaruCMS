@@ -18,6 +18,7 @@ The comment count link, e.g. "3 comments" will show zero if the url doesn't matc
 
 Changelog
 ---------
+v.0.6 2010/01/03 - Nick - Updated for compatibility with Hotaru 1.0
 v.0.5 2009/11/04 - Nick - Updated install function for easier upgrading
 v.0.4 2009/10/06 - Nick - Updates for compatibility with Hotaru 0.7
 v.0.3 2009/10/01 - Nick - Updates for compatibility with Hotaru 0.6

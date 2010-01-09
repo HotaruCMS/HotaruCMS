@@ -2,11 +2,18 @@
 /**
  * name: Text Widget
  * description: Paste text or code into a blank widget
- * version: 0.3
+ * version: 0.4
  * folder: text_widget
  * class: TextWidget
- * requires: sidebar_widgets 0.5
+ * requires: widgets 0.6
  * hooks: install_plugin, hotaru_header, admin_sidebar_plugin_settings, admin_plugin_settings
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
+ *
+ * EXAMPLE OF USING A TEMPLATE:
+ * To use the example template, create a new text widget, check the PHP box and add this code:
+ * $h->displayTemplate('example', 'text_widget');
+ * Activate "Text Widget" in Widgets and you should see a new search box widget in your widget block
  *
  * PHP version 5
  *
@@ -30,12 +37,12 @@
  * @link      http://www.hotarucms.org/
  */
 
-class TextWidget extends PluginFunctions
+class TextWidget
 {
     /**
      * Register text widget
      */
-    public function install_plugin($id)
+    public function install_plugin($h, $id)
     {
         if (!$id || !is_int($id)) { $id = 1; }
         
@@ -44,22 +51,21 @@ class TextWidget extends PluginFunctions
         $text_widget_settings['text_widget_content'] = '';
         
         // parameters: plugin folder name, setting name, setting value
-        if (!$this->getSetting('text_widget_' . $id . '_settings')) { 
-            $this->updateSetting('text_widget_' . $id . '_settings', serialize($text_widget_settings), 'text_widget');
+        if (!$h->getSetting('text_widget_' . $id . '_settings')) { 
+            $h->updateSetting('text_widget_' . $id . '_settings', serialize($text_widget_settings), 'text_widget');
         }
-        
-        require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
-        $sidebar = new Sidebar($this->hotaru);
-        $sidebar->addWidget('text_widget', 'text_widget_' . $id, $id); // plugin name, function name, optional arguments
+
+        // widget
+        $h->addWidget('text_widget', 'text_widget_' . $id, $id);  // plugin name, function name, optional arguments
     } 
     
     
     /**
      * Redirects to the main TextWidget function
      */
-    public function sidebar_widget_text_widget($args)
+    public function widget_text_widget($h, $args)
     {
-        $this->text_widget(array($args));
+        $this->text_widget($h, array($args));
     }
     
     
@@ -68,7 +74,7 @@ class TextWidget extends PluginFunctions
      *
      * @param array $ids
      */
-    public function text_widget($ids)
+    public function text_widget($h, $ids)
     {
         // if no widget id is specified, we default to 1.
         if (empty($ids)) { $ids[0] = 1; }
@@ -76,17 +82,17 @@ class TextWidget extends PluginFunctions
         foreach ($ids as $id) { 
             
             // Get settings from the database:
-            $settings = unserialize($this->getSetting('text_widget_' . $id . '_settings', 'text_widget')); 
+            $settings = unserialize($h->getSetting('text_widget_' . $id . '_settings', 'text_widget')); 
             $content = html_entity_decode(stripslashes($settings['text_widget_content']), ENT_QUOTES,'UTF-8');
 
             if ($settings['text_widget_title']) {
-                echo "<h2 class='sidebar_widget_head'>" . stripslashes($settings['text_widget_title']) . "</h2>\n";
+                echo "<h2 class='widget_head'>" . stripslashes($settings['text_widget_title']) . "</h2>\n";
             }
 
             if ($settings['text_widget_php']) {
-                echo "<div class='sidebar_widget_body'>"; eval($content); echo "</div>\n";
+                echo "<div class='widget_body'>"; eval($content); echo "</div>\n";
             } else {
-                echo "<div class='sidebar_widget_body'>"; echo $content; echo "</div>\n";
+                echo "<div class='widget_body'>"; echo $content; echo "</div>\n";
             }
 
         }
@@ -97,14 +103,14 @@ class TextWidget extends PluginFunctions
     /**
      * Display the contents of the plugin settings page.
      */
-    public function admin_plugin_settings()
+    public function admin_plugin_settings($h)
     {
-        $this->get_params();    // get any arguments passed from the form
-        $this->hotaru->showMessage();    // display any success or failure messages
+        $this->get_params($h);    // get any arguments passed from the form
+        $h->showMessage();    // display any success or failure messages
 
         require_once(PLUGINS . 'text_widget/text_widget_settings.php');
-        $tw = new TextWidgetSettings($this->folder, $this->hotaru);
-        $tw->settings();
+        $tw = new TextWidgetSettings();
+        $tw->settings($h);
         return true;
     }
 
@@ -112,44 +118,42 @@ class TextWidget extends PluginFunctions
     /**
      * Get parameters passed by URL, e.g. a saved feed url. then save
      */
-    public function get_params()
+    public function get_params($h)
     {
-        if ($action = $this->cage->get->testAlnumLines('action')) {
+        if ($action = $h->cage->get->testAlnumLines('action')) {
             if ($action == 'new_widget') {
-                $id = $this->cage->get->getInt('id');
-                $this->install_plugin($id);
-                $this->hotaru->message = $this->hotaru->lang["text_widget_added"];
-                $this->hotaru->messageType = "green";
+                $id = $h->cage->get->getInt('id');
+                $this->install_plugin($h, $id);
+                $h->message = $h->lang["text_widget_added"];
+                $h->messageType = "green";
                 
             } elseif ($action == 'delete_widget') {
-                $id = $this->cage->get->getInt('id');
+                $id = $h->cage->get->getInt('id');
                 
                 // delete from pluginsettings table:
-                $this->deleteSettings('text_widget_' . $id . '_settings'); // setting
+                $h->deleteSettings('text_widget_' . $id . '_settings'); // setting
                 
                 // delete from widgets table:
-                require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
-                $sidebar = new Sidebar($this->hotaru);
-                $sidebar->deleteWidget('text_widget_' . $id); // function suffix
+                $h->deleteWidget('text_widget_' . $id); // function suffix
                 
-                // delete from "sidebar_settings" in pluginsettings table;
-                $sidebar_settings = $sidebar->getSidebarSettings();
-                unset($sidebar_settings['sidebar_widgets']['text_widget_' . $id]);
-                $this->updateSetting('sidebar_settings', serialize($sidebar_settings), 'sidebar_widgets');
+                // delete from "widgets_settings" in pluginsettings table;
+                $widgets_settings = $h->getSerializedSettings('widgets'); 
+                unset($widgets_settings['widgets']['text_widget_' . $id]);
+                $h->updateSetting('widgets_settings', serialize($widgets_settings), 'widgets');
                 
-                $this->hotaru->message = $this->hotaru->lang["text_widget_removed"];
-                $this->hotaru->messageType = "green";
+                $h->message = $h->lang["text_widget_removed"];
+                $h->messageType = "green";
             }
-        } elseif ($id = $this->cage->post->getInt('text_widget_id')) {
+        } elseif ($id = $h->cage->post->getInt('text_widget_id')) {
             $parameters = array();
-            if ($this->cage->post->keyExists('text_widget_php')) { 
+            if ($h->cage->post->keyExists('text_widget_php')) { 
                 $parameters['text_widget_php'] = 'checked';
             } else {
                 $parameters['text_widget_php'] = '';
             }
-            $parameters['text_widget_title'] = $this->cage->post->noTags('text_widget_title');
-            $parameters['text_widget_content'] = htmlentities(stripslashes($this->cage->post->getRaw('text_widget_content')), ENT_QUOTES,'UTF-8');
-            $this->save_settings($id, $parameters);
+            $parameters['text_widget_title'] = $h->cage->post->noTags('text_widget_title');
+            $parameters['text_widget_content'] = htmlentities(stripslashes($h->cage->post->getRaw('text_widget_content')), ENT_QUOTES,'UTF-8');
+            $this->save_settings($h, $id, $parameters);
         }
     }
     
@@ -160,15 +164,15 @@ class TextWidget extends PluginFunctions
      * @param int $id
      * @param array $parameters - an array of key-value pairs
      */
-    public function save_settings($id, &$parameters)
+    public function save_settings($h, $id, &$parameters)
     {
-        $this->hotaru->message = "";
+        $h->message = "";
         if ($parameters) {
-            if ($this->hotaru->message == "") {
+            if ($h->message == "") {
                 $values = serialize($parameters);
-                $this->hotaru->message = $this->hotaru->lang["text_widget_updated"];
-                $this->hotaru->messageType = "green";
-                $this->updateSetting('text_widget_' . $id . '_settings', $values, 'text_widget');    
+                $h->message = $h->lang["text_widget_updated"];
+                $h->messageType = "green";
+                $h->updateSetting('text_widget_' . $id . '_settings', $values, 'text_widget');    
             }
         }
         

@@ -25,91 +25,92 @@
  * @link      http://www.hotarucms.org/
  */
 
-class ActivitySettings extends SidebarComments
+class ActivitySettings
 {
      /**
-     * Admin settings for Sidebar Comments
+     * Admin settings for Activity
      */
-    public function settings()
+    public function settings($h)
     {
         // If the form has been submitted, go and save the data...
-        if ($this->cage->post->getAlpha('submitted') == 'true') { 
-            $this->saveSettings(); 
+        if ($h->cage->post->getAlpha('submitted') == 'true') { 
+            $this->saveSettings($h); 
         }
         
-        echo "<h1>" . $this->lang["activity_settings_header"] . "</h1>\n";
+        echo "<h1>" . $h->lang["activity_settings_header"] . "</h1>\n";
           
         // Get settings from database if they exist...
-        $activity_settings = $this->getSerializedSettings('activity');
+        $activity_settings = $h->getSerializedSettings('activity');
                             
-        $avatar = $activity_settings['activity_sidebar_avatar'];
-        $avatar_size = $activity_settings['activity_sidebar_avatar_size'];
-        $user = $activity_settings['activity_sidebar_user'];
-        $sb_number = $activity_settings['activity_sidebar_number'];
-        $pg_number = $activity_settings['activity_number'];
-        $time = $activity_settings['activity_time'];
+        $avatar = $activity_settings['widget_avatar'];
+        $avatar_size = $activity_settings['widget_avatar_size'];
+        $user = $activity_settings['widget_user'];
+        $widget_number = $activity_settings['widget_number'];
+        $pg_number = $activity_settings['number'];
+        $time = $activity_settings['time'];
     
-        $this->pluginHook('activity_settings_get_values');
+        $h->pluginHook('activity_settings_get_values');
         
         //...otherwise set to blank:
         if (!$avatar) { $avatar = ''; }
         if (!$avatar_size) { $avatar_size = 0; }
         if (!$user) { $user = ''; }
-        if (!$sb_number) { $sb_number = 5; }
+        if (!$widget_number) { $widget_number = 5; }
         if (!$pg_number) { $pg_number = 20; }
         if (!$time) { $time = ''; }
         
         echo "<form name='activity_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=activity' method='post'>\n";
         
-        echo "<p>" . $this->lang["activity_settings_instructions"] . "</p><br />";
+        echo "<p>" . $h->lang["activity_settings_instructions"] . "</p><br />";
         
         // show avatars?
-        echo "<p><input type='checkbox' name='avatar' value='avatar' " . $avatar . " >&nbsp;&nbsp;" . $this->lang["activity_settings_avatar"] . "</p>\n"; 
+        echo "<p><input type='checkbox' name='avatar' value='avatar' " . $avatar . " >&nbsp;&nbsp;" . $h->lang["activity_settings_avatar"] . "</p>\n"; 
     
         // avatar size
-        echo "<p><input type='text' size=5 name='avatar_size' value='" . $avatar_size . "' /> " . $this->lang["activity_settings_avatar_size"] . "</p>\n";
+        echo "<p><input type='text' size=5 name='avatar_size' value='" . $avatar_size . "' /> " . $h->lang["activity_settings_avatar_size"] . "</p>\n";
         
         // show users?
-        echo "<p><input type='checkbox' name='user' value='user' " . $user . " >&nbsp;&nbsp;" . $this->lang["activity_settings_user"] . "</p>\n"; 
+        echo "<p><input type='checkbox' name='user' value='user' " . $user . " >&nbsp;&nbsp;" . $h->lang["activity_settings_user"] . "</p>\n"; 
         
         // show time?
-        echo "<p><input type='checkbox' name='time' value='time' " . $time . " >&nbsp;&nbsp;" . $this->lang["activity_settings_time"] . "</p>\n"; 
+        echo "<p><input type='checkbox' name='time' value='time' " . $time . " >&nbsp;&nbsp;" . $h->lang["activity_settings_time"] . "</p>\n"; 
         
-        // number of items in the sidebar
-        echo "<p><input type='text' size=5 name='sb_number' value='" . $sb_number . "' /> " . $this->lang["activity_settings_sidebar_number"] . "</p>\n";
+        // number of items in the widget
+        echo "<p><input type='text' size=5 name='widget_number' value='" . $widget_number . "' /> " . $h->lang["activity_settings_widget_number"] . "</p>\n";
         
         // number of items on the activity page
-        echo "<p><input type='text' size=5 name='pg_number' value='" . $pg_number . "' /> " . $this->lang["activity_settings_number"] . "</p>\n";
+        echo "<p><input type='text' size=5 name='pg_number' value='" . $pg_number . "' /> " . $h->lang["activity_settings_number"] . "</p>\n";
         
-        $this->pluginHook('activity_settings_form');
+        $h->pluginHook('activity_settings_form');
                         
         echo "<br /><br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
-        echo "<input type='submit' value='" . $this->lang["activity_settings_save"] . "' />\n";
+        echo "<input type='submit' value='" . $h->lang["main_form_save"] . "' />\n";
+        echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }
     
     
      /**
-     * Save admin settings for activity_sidebar
+     * Save admin settings for activity_widget
      *
      * @return true
      */
-    public function saveSettings()
+    public function saveSettings($h)
     {
         $error = 0;
         
         // show avatars?
-        if ($this->cage->post->keyExists('avatar')) { 
+        if ($h->cage->post->keyExists('avatar')) { 
             $avatar = 'checked'; 
         } else { 
             $avatar = ''; 
         }
         
         // avatar size
-        if ($this->cage->post->keyExists('avatar_size')) { 
-            if ($this->cage->post->testInt('avatar_size')) { 
-                $avatar_size = $this->cage->post->testInt('avatar_size');
+        if ($h->cage->post->keyExists('avatar_size')) { 
+            if ($h->cage->post->testInt('avatar_size')) { 
+                $avatar_size = $h->cage->post->testInt('avatar_size');
             } else { 
                 $avatar_size = 16; 
                 $error = 1;
@@ -117,34 +118,34 @@ class ActivitySettings extends SidebarComments
         }
         
         // show users?
-        if ($this->cage->post->keyExists('user')) { 
+        if ($h->cage->post->keyExists('user')) { 
             $user = 'checked'; 
         } else { 
             $user = ''; 
         }
         
         // show time?
-        if ($this->cage->post->keyExists('time')) { 
+        if ($h->cage->post->keyExists('time')) { 
             $time = 'checked'; 
         } else { 
             $time = ''; 
         }
 
-        // number of items in the sidebar
-        if ($this->cage->post->keyExists('sb_number')) { 
-            if ($this->cage->post->testInt('sb_number')) { 
-                $sb_number = $this->cage->post->testInt('sb_number');
+        // number of items in the widget
+        if ($h->cage->post->keyExists('widget_number')) { 
+            if ($h->cage->post->testInt('widget_number')) { 
+                $widget_number = $h->cage->post->testInt('widget_number');
             } else { 
-                $sb_number = 10; $error = 1;
+                $widget_number = 10; $error = 1;
             }
         } else { 
-            $sb_number = 10; $error = 1;
+            $widget_number = 10; $error = 1;
         }
         
         // number of items on the activity page
-        if ($this->cage->post->keyExists('pg_number')) { 
-            if ($this->cage->post->testInt('pg_number')) { 
-                $pg_number = $this->cage->post->testInt('pg_number');
+        if ($h->cage->post->keyExists('pg_number')) { 
+            if ($h->cage->post->testInt('pg_number')) { 
+                $pg_number = $h->cage->post->testInt('pg_number');
             } else { 
                 $pg_number = 10; $error = 1;
             }
@@ -152,30 +153,30 @@ class ActivitySettings extends SidebarComments
             $pg_number = 10; $error = 1;
         }
         
-        $this->pluginHook('activity_save_settings');
+        $h->pluginHook('activity_save_settings');
                 
         if ($error == 1)
         {
-            $this->hotaru->message = $this->lang["activity_settings_not_saved"];
-            $this->hotaru->messageType = "red";
-            $this->hotaru->showMessage();
+            $h->message = $h->lang["activity_settings_not_saved"];
+            $h->messageType = "red";
+            $h->showMessage();
             
             return false;
         } 
         else 
         {
-            $activity_settings['activity_sidebar_avatar'] = $avatar;
-            $activity_settings['activity_sidebar_avatar_size'] = $avatar_size;
-            $activity_settings['activity_sidebar_user'] = $user;
-            $activity_settings['activity_sidebar_number'] = $sb_number;
-            $activity_settings['activity_number'] = $pg_number;
-            $activity_settings['activity_time'] = $time;
+            $activity_settings['widget_avatar'] = $avatar;
+            $activity_settings['widget_avatar_size'] = $avatar_size;
+            $activity_settings['widget_user'] = $user;
+            $activity_settings['widget_number'] = $widget_number;
+            $activity_settings['number'] = $pg_number;
+            $activity_settings['time'] = $time;
         
-            $this->updateSetting('activity_settings', serialize($activity_settings));
+            $h->updateSetting('activity_settings', serialize($activity_settings));
             
-            $this->hotaru->message = $this->lang["activity_settings_saved"];
-            $this->hotaru->messageType = "green";
-            $this->hotaru->showMessage();
+            $h->message = $h->lang["main_settings_saved"];
+            $h->messageType = "green";
+            $h->showMessage();
         
             return true;    
         }

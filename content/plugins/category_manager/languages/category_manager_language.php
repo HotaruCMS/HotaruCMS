@@ -69,7 +69,8 @@ $lang["cat_man_category_tree"] = "Category Tree";
 /* Category Manager Home */
 $lang["cat_man_home"] = "Category Manager: Home";
 $lang["cat_man_home_intro1"] = "Use the links on the right to organize your categories.";
-$lang["cat_man_home_clear_cache"] = "<span style='color: red;'><i>Note:</i> After editing categories, clear the database cache.</span>";
+$lang["cat_man_home_clear_cache"] = "<i>Note:</i> After editing categories, ";
+$lang["cat_man_home_clear_cache2"] = "clear the database cache";
 $lang["cat_man_home_intro2"] = "These are the things you can do with this plugin:";
 $lang["cat_man_home_order_categories"] = "Order your categories";
 $lang["cat_man_home_order_categories_desc"] = "Sort your main and sub-categories alphabetically, by ID, by the length of their names, or in order of most posts - all with just one click.";

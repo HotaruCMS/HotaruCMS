@@ -3,10 +3,7 @@
  ************************************** */
 
 /* BODY */
-html, body {    line-height: 1.5em; color: #666;
-        	font-family: Helvetica, Arial, 'Liberation Sans', FreeSans, sans-serif; 
-        	background: #000000 url("../images/background.png") repeat-x top;
-}
+html, body { color: #666; font-family: Helvetica, Arial, 'Liberation Sans', FreeSans, sans-serif; }
 
 /* DEFAULTS */
 
@@ -48,7 +45,7 @@ small     { font-size: 0.8em; }
 
 #hd_title { float: left;  height: 60px; width:468px; background-color: #f4f4f4; border: 1px solid #d0d0d0; }
 #hd_title h1 { font-size: 2.2em; font-weight: bold; padding: 0.5em 0.4em 0.4em 0.4em;}    /* Site title */
-#hd_title h1 a { color: #666; line-height: 1.0em; }
+#hd_title h1 a { color: #666; }
 #hd_title h1 a:hover { color: #000; }
 
 #hd_block2 { float: right; height: 60px; width:468px; background-color: #f4f4f4; border: 1px solid #d0d0d0; }
@@ -56,7 +53,7 @@ small     { font-size: 0.8em; }
 #nav { margin: 0.4em 0 0.4em 0; } /* wraps the navigation bar */
 ul.navigation { float: left; list-style: none; }
 ul.navigation li { display: inline; font-size: 1.2em; font-weight: bold; }
-ul.navigation li a { color: #666; padding: 0.2em 0.4em 0.2em 0.4em; line-height: 1.0em; }
+ul.navigation li a { color: #666; padding: 0.2em 0.4em 0.2em 0.4em; }
 ul.navigation li a:hover { color: #000; }
 ul.navigation li a img { vertical-align: middle; }
 li a#navigation_active { background-color: #f8f8f8; color: #000; }
@@ -91,12 +88,6 @@ ul.nav_right { display: inline; float: right; }
 
 #breadcrumbs {
     margin-bottom: 1.0em;
-}
-
-.post_breadcrumbs_links_bar {
-	padding: 0.2em 0.6em 0.2em 0.6em;
-	margin-bottom: 1.0em;
-	background-color: #f0f0f0;
 }
 
 /* PAGINATION */

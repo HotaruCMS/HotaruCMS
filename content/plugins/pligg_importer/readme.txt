@@ -10,10 +10,9 @@ Instructions
 ------------
 1. Export these tables as non-zipped XML files from your Pligg database: categories, comments, links, users, tags and votes.
 2. If you have access to php.ini, check that upload_max_filesize is greater than the largest XML file you exported. Contact your webhost for help.
-3. Install the following plugins in Hotaru: Category Manager, Categories, Submit, Comments, Tags, Users, Vote and this Pligg Importer.
-4. Give the Uploads folder in /content/plugins/pligg_importer/ is writable (chmod 777 in FTP).
-5. Create an account with the same login, email and password your god or admin user had on your Pligg site. This ensures you are still logged in as an administrator even after you overwrite the current users table during the import. See this comment about changing the username "god" to a four character name: http://hotarucms.org/showpost.php?p=473&postcount=10
-6. Click Pligg Importer in the Admin sidebar and when ready, click "Import a Pligg Database" and follow the steps.
+3. Give the Uploads folder in /content/plugins/pligg_importer/ is writable (chmod 777 in FTP).
+4. Create an account with the same login, email and password your god or admin user had on your Pligg site. This ensures you are still logged in as an administrator even after you overwrite the current users table during the import. See this comment about changing the username "god" to a four character name: http://hotarucms.org/showpost.php?p=473&postcount=10
+5. Click Pligg Importer in the Admin sidebar and when ready, click "Import a Pligg Database" and follow the steps.
 
 Note
 ----
@@ -25,6 +24,7 @@ This plugin has been developed using a Social Web CMS database, which is almost 
 
 Changelog
 ---------
+v.0.8 2010/01/03 - Nick - Updates for compatibility with Hotaru 1.0
 v.0.7 2009/11/22 - Nick - Bug fixes for illegal offset warnings
 v.0.6 2009/11/01 - Nick - Updated to copy a user's IP address from Pligg to Hotaru
 v.0.5 2009/10/17 - Nick - Renamed CSS 'next' as 'pliggimp_next' to avoid clashes

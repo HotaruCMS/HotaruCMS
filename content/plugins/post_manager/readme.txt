@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.0.4 2010/01/04 - Nick - Updates for compatibility with Hotaru 1.0
 v.0.3 2009/11/04 - Nick - Updated install function for easier upgrading
 v.0.2 2009/10/25 - Nick - Made list default to pending if submission moderation enabled
 v.0.1 2009/10/17 - Nick - Released first version

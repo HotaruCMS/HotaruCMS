@@ -2,11 +2,14 @@
 /**
  * name: Smilies
  * description: Use smilies in comments
- * version: 0.2
+ * version: 0.3
  * folder: smilies
  * class: Smilies
- * requires: Comments 1.0
+ * type: smilies
+ * requires: comments 1.2
  * hooks: show_comments_content, comment_manager_comment_content, sidebar_comments_comment_content
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *
@@ -30,14 +33,14 @@
  * @link      http://www.hotarucms.org/
  */
 
-class Smilies extends PluginFunctions
+class Smilies
 {
     /**
      * Displays "Hello World!" wherever the plugin hook is.
      */
-    public function show_comments_content($return = false)
+    public function show_comments_content($h, $return = false)
     {
-        $text = $this->hotaru->comment->content;
+        $text = $h->comment->content;
         $path_to_smilies = BASEURL . 'content/plugins/smilies/images/';
 
         $smilies = array(
@@ -117,20 +120,20 @@ class Smilies extends PluginFunctions
     /**
      * Show smilies in Comment Manager
      */
-    public function comment_manager_comment_content()
+    public function comment_manager_comment_content($h)
     {
-        $comment = $this->show_comments_content(true);
-        $this->hotaru->comment->content = $comment;
+        $comment = $this->show_comments_content($h, true);
+        $h->comment->content = $comment;
     }
     
     
     /**
      * Show smilies in Sidebar Comments
      */
-    public function sidebar_comments_comment_content()
+    public function sidebar_comments_comment_content($h)
     {
-        $comment = $this->show_comments_content(true);
-        $this->hotaru->comment->content = $comment;
+        $comment = $this->show_comments_content($h, true);
+        $h->comment->content = $comment;
     }
 
 }

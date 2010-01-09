@@ -26,8 +26,8 @@
 
 ?>
 
-<?php if ($hotaru->comment->id != 0) { // IF COMMENT REPLY ?>
-<div class="comment_form comment_reply" id="<?php echo "comment_" . $hotaru->comment->id; ?>" style="margin-left: <?php echo $hotaru->comment->depth * 2.0; ?>em; display: none;">
+<?php if ($h->comment->id != 0) { // IF COMMENT REPLY ?>
+<div class="comment_form comment_reply" id="<?php echo "comment_" . $h->comment->id; ?>" style="margin-left: <?php echo $h->comment->depth * 2.0; ?>em; display: none;">
 
 <?php } else { // STANDARD COMMENT FORM ?>
 <div class="comment_form">
@@ -35,30 +35,30 @@
 <?php } // JavaScript changes this form! See comments.js ?>
 
     <form name='comment_form' action='<?php echo BASEURL; ?>index.php?page=comments' method='post'>
-        <textarea name="comment_content" id="comment_content_<?php echo $hotaru->comment->id; ?>" rows="6" cols="50"/></textarea><br />
-        <div class="comment_instructions"><?php echo $hotaru->lang['comments_form_allowable_tags']; ?><?php echo htmlentities($hotaru->comment->allowableTags); ?></div>
-        <div class="comment_subscribe"><input id="comment_subscribe" name="comment_subscribe" type="checkbox" <?php echo $hotaru->vars['subscribe_check']; ?>> <?php echo $hotaru->lang['comments_form_subscribe']; ?><?php if ($hotaru->vars['subscribe_check']) { echo " <small>(" . $hotaru->lang['comments_form_unsubscribe'] . ")</small>"; } ?></div>
-        <div class="comment_extras"><?php echo $hotaru->plugins->pluginHook('comment_form_extras'); ?>
-            <?php if (($hotaru->comment->setPending == "checked") || 
-                    ($hotaru->current_user->getPermission('can_comment') == 'mod')) {
-                    echo $hotaru->lang['comments_form_moderation_on']; } ?>
+        <textarea name="comment_content" id="comment_content_<?php echo $h->comment->id; ?>" rows="6" cols="50"></textarea><br />
+        <div class="comment_instructions"><?php echo $h->lang['comments_form_allowable_tags']; ?><?php echo htmlentities($h->comment->allowableTags); ?></div>
+        <div class="comment_subscribe"><input id="comment_subscribe" name="comment_subscribe" type="checkbox" <?php echo $h->vars['subscribe']; ?> /> <?php echo $h->lang['comments_form_subscribe']; ?><?php if ($h->vars['subscribe']) { echo " <small>(" . $h->lang['comments_form_unsubscribe'] . ")</small>"; } ?></div>
+        <div class="comment_extras"><?php echo $h->pluginHook('comment_form_extras'); ?>
+            <?php if (($h->comment->setPending == "checked") || 
+                    ($h->currentUser->getPermission('can_comment') == 'mod')) {
+                    echo $h->lang['comments_form_moderation_on']; } ?>
         </div>
         
-        <input type="submit" name="submit" id="comment_submit_<?php echo $hotaru->comment->id; ?>" value="<?php echo $hotaru->lang['comments_form_submit']; ?>" class="submit" />
-        <input type="hidden" name="comment_process" id="comment_process_<?php echo $hotaru->comment->id; ?>" value="newcomment" />
-        <input type="hidden" name="comment_parent" value="<?php echo $hotaru->comment->id; ?>" />
-        <input type="hidden" name="comment_post_id" value="<?php echo $hotaru->post->id; ?>" />
-        <input type="hidden" name="comment_user_id" value="<?php echo $hotaru->current_user->id; ?>" />
+        <input type="submit" name="submit" id="comment_submit_<?php echo $h->comment->id; ?>" value="<?php echo $h->lang['comments_form_submit']; ?>" class="submit" />
+        <input type="hidden" name="comment_process" id="comment_process_<?php echo $h->comment->id; ?>" value="newcomment" />
+        <input type="hidden" name="comment_parent" value="<?php echo $h->comment->id; ?>" />
+        <input type="hidden" name="comment_post_id" value="<?php echo $h->post->id; ?>" />
+        <input type="hidden" name="comment_user_id" value="<?php echo $h->currentUser->id; ?>" />
         
-        <?php if (($hotaru->comment->id != 0) && ($hotaru->current_user->getPermission('can_set_comments_pending') == 'yes')) { ?>
+        <?php if (($h->comment->id != 0) && ($h->currentUser->getPermission('can_set_comments_pending') == 'yes')) { ?>
             <div class='comment_status' style='display: none;'>
-                <a href="<?php echo BASEURL; ?>index.php?page=comments&action=setpending&cid=<?php echo $hotaru->comment->id; ?>&pid=<?php echo $hotaru->post->id; ?>">
-                    <?php echo $hotaru->lang['comments_form_set_pending']; ?>
+                <a href="<?php echo BASEURL; ?>index.php?page=comments&amp;action=setpending&amp;cid=<?php echo $h->comment->id; ?>&amp;pid=<?php echo $h->post->id; ?>">
+                    <?php echo $h->lang['comments_form_set_pending']; ?>
                 </a><br />
                 
-                <?php if ($hotaru->current_user->getPermission('can_delete_comments') == 'yes') { ?>
-                <a class="bold_red" href="<?php echo BASEURL; ?>index.php?page=comments&action=delete&cid=<?php echo $hotaru->comment->id; ?>&pid=<?php echo $hotaru->post->id; ?>">
-                    <?php echo $hotaru->lang['comments_form_delete']; ?>
+                <?php if ($h->currentUser->getPermission('can_delete_comments') == 'yes') { ?>
+                <a class="bold_red" href="<?php echo BASEURL; ?>index.php?page=comments&amp;action=delete&amp;cid=<?php echo $h->comment->id; ?>&amp;pid=<?php echo $h->post->id; ?>">
+                    <?php echo $h->lang['comments_form_delete']; ?>
                 </a>
                 <?php } ?>
             </div>

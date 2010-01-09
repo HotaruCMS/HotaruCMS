@@ -29,29 +29,25 @@
  */
 
 require_once('../hotaru_settings.php');
-require_once('install_functions.php');
-require_once(LIBS . 'Hotaru.php');
+require_once(BASE . 'Hotaru.php');
+$h = new Hotaru(); // must come before language inclusion
+$sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+$old_version = $h->db->get_var($h->db->prepare($sql, "hotaru_version"));
 require_once(INSTALL . 'install_language.php');    // language file for install
-require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
-require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
-require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php'); // database
 
 // delete existing cache
-delete_files(CACHE . 'db_cache');
-delete_files(CACHE . 'css_js_cache');
-delete_files(CACHE . 'rss_cache');
-    
-$db = init_database();
-$cage = init_inspekt_cage();
+$h->deleteFiles(CACHE . 'db_cache');
+$h->deleteFiles(CACHE . 'css_js_cache');
+$h->deleteFiles(CACHE . 'rss_cache');
 
-$step = $cage->get->getInt('step');        // Installation steps.
+$step = $h->cage->get->getInt('step');        // Installation steps.
 
 switch ($step) {
     case 1:
         upgrade_welcome();     // "Welcome to Hotaru CMS. 
         break;
     case 2:
-        do_upgrade($db);
+        do_upgrade();
         upgrade_complete();    // Delete "install" folder. Visit your site"
         break;
     default:
@@ -79,7 +75,7 @@ function html_header()
     // Title
     $header .= "<TITLE>" . $lang['upgrade_title'] . "</TITLE>\n";
     $header .= "<META HTTP-EQUIV='Content-Type' CONTENT='text'>\n";
-    $header .= "<link rel='stylesheet' href='" . BASEURL . "libs/extensions/YUI-CSS/reset-fonts-grids.css' type='text/css'>\n";
+    $header .= "<link rel='stylesheet' type='text/css' href='" . BASEURL . "install/reset-fonts-grids.css' type='text/css'>\n";
     $header .= "<link rel='stylesheet' type='text/css' href='" . BASEURL . "install/install_style.css'>\n";
     $header .= "</HEAD>\n";
     
@@ -87,7 +83,7 @@ function html_header()
     $header .= "<BODY>\n";
     $header .= "<div id='doc' class='yui-t7 install'>\n";
     $header .= "<div id='hd' role='banner'>";
-    $header .= "<img align='left' src='" . BASEURL . "content/admin_themes/admin_default/images/hotaru.png' style='height:60px; width:69px;'>";
+    $header .= "<img align='left' src='" . BASEURL . "content/admin_themes/admin_default/images/hotaru.png' style='height:60px; width:60px;'>";
     $header .= "<h1>" . $lang['upgrade_title'] . "</h1></div>\n"; 
     $header .= "<div id='bd' role='main'>\n";
     $header .= "<div class='yui-g'>\n";
@@ -169,59 +165,11 @@ function upgrade_complete()
 /**
  * Do Upgrade
  */
-function do_upgrade($db)
+function do_upgrade()
 {
-    // add new MISCDATA table for storing default permissions, etc.
-    
-    $table_name = "miscdata";
-    $exists = $db->table_exists($table_name);
-    if (!$exists) {
-        $sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
-          `miscdata_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-          `miscdata_key` varchar(64) NOT NULL,
-          `miscdata_value` text NOT NULL DEFAULT '',
-          `miscdata_default` text NOT NULL DEFAULT '',
-          `miscdata_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-          `miscdata_updateby` int(20) NOT NULL DEFAULT 0
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Miscellaneous Data';";
-        $db->query($sql);
+    global $h;
 
-        // Default permissions
-        $perms['options']['can_access_admin'] = array('yes', 'no');
-        $perms['can_access_admin']['admin'] = 'yes';
-        $perms['can_access_admin']['supermod'] = 'yes';
-        $perms['can_access_admin']['default'] = 'no';
-        $perms = serialize($perms);
-        
-        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (miscdata_key, miscdata_value, miscdata_default) VALUES (%s, %s, %s)";
-        $db->query($db->prepare($sql, 'permissions', $perms, $perms));
-    }
-    
-    // add new SITE_OPEN setting
-    $sql = "SELECT settings_id FROM " . DB_PREFIX . "settings WHERE settings_name = %s";
-    $exists = $db->query($db->prepare($sql, 'SITE_OPEN'));
-    if (!$exists) {
-        $sql = "INSERT INTO " . DB_PREFIX . "settings (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'SITE_OPEN', 'true', 'true', 'true/false'));
-    }
-    
-    // add new HTML_CACHE_ON setting
-    $sql = "SELECT settings_id FROM " . DB_PREFIX . "settings WHERE settings_name = %s";
-    $exists = $db->query($db->prepare($sql, 'HTML_CACHE_ON'));
-    if (!$exists) {
-        $sql = "INSERT INTO " . DB_PREFIX . "settings (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'HTML_CACHE_ON', 'true', 'true', 'true/false'));
-    }
-        
-    // add new user_ip field to Users table
-    if (!$db->column_exists('users', 'user_ip')) {
-        $sql = "ALTER TABLE " . DB_PREFIX . "users ADD user_ip varchar(32)  NOT NULL DEFAULT %d AFTER user_permissions";
-        $db->query($db->prepare($sql, 0));
-    }
-    
-    //correct default for db cache
-    $sql = "UPDATE " . DB_PREFIX . "settings SET settings_default = %s WHERE settings_name = %s";
-    $db->query($db->prepare($sql, 'false', 'DB_CACHE_ON'));
+    // can't upgrade from pre-1.0 versions of Hotaru.
 }
 
 ?>

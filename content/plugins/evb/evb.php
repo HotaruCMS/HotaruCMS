@@ -2,11 +2,14 @@
 /**
  * name: EVB
  * description: External Vote Button
- * version: 0.2
+ * version: 0.3
  * folder: evb
  * class: Evb
- * hooks: hotaru_header
- * requires: submit 1.4
+ * type: evb
+ * hooks: theme_index_top
+ * requires: submit 1.9
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *
@@ -30,28 +33,26 @@
  * @link      http://www.hotarucms.org/
  */
 
-class Evb extends PluginFunctions
+class Evb
 {
-    public function hotaru_header()
+    public function theme_index_top($h)
     {
-        if ($this->hotaru->isPage('evb') && !$this->cage->get->keyExists('url'))
+        if (($h->pageName == 'evb') && !$h->cage->get->keyExists('url'))
         {
             header("Location:" . BASEURL . "content/plugins/evb/get_url.php");
             die(); exit;
         }
-        elseif ($this->hotaru->isPage('evb') && $this->cage->get->keyExists('url')) 
+        elseif (($h->pageName == 'evb') && $h->cage->get->keyExists('url')) 
         {
-            $this->hotaruEVB();
+            $this->hotaruEVB($h);
             die(); exit;
         }
     }
     
     
-    public function hotaruEVB()
+    public function hotaruEVB($h)
     {
-        $this->includeLanguage();
-        
-        $url = $this->cage->get->testuri('url');
+        $url = $h->cage->get->testuri('url');
         $server = BASEURL; //enter the url to your Hotaru CMS installation (with trailing slash)
         
         $url = htmlspecialchars(strip_tags($url));
@@ -67,17 +68,14 @@ class Evb extends PluginFunctions
         }
         
         $query = "SELECT post_id, post_votes_up FROM " . TABLE_POSTS . " WHERE (post_orig_url = %s OR post_orig_url = %s) AND (post_status = %s OR post_status = %s) LIMIT 1";
-        $sql = $this->db->prepare($query, urlencode($url1), urlencode($url2), 'top', 'new');
-        $result = $this->db->get_row($sql);
-        
-        include_once(PLUGINS . 'submit/libs/Post.php');
-        $this->hotaru->post = new Post($this->hotaru); // used to get post information
+        $sql = $h->db->prepare($query, urlencode($url1), urlencode($url2), 'top', 'new');
+        $result = $h->db->get_row($sql);
 
-        $this->hotaru->vars['url'] = $url;
+        $h->vars['url'] = $url;
         
         if ($result) {
-            $this->hotaru->vars['id'] = $result->post_id;
-            $this->hotaru->vars['votes'] = $result->post_votes_up;
+            $h->vars['id'] = $result->post_id;
+            $h->vars['votes'] = $result->post_votes_up;
         }
 
         $output = "<link rel='stylesheet' type='text/css' href='" . BASEURL . "content/plugins/evb/css/evb.css' />";
@@ -100,25 +98,25 @@ class Evb extends PluginFunctions
         $output .= "<ul class='evb_wrap'>";
         
         if ($result) { 
-            $this->hotaru->post->readPost($this->hotaru->vars['id']); // need to read the post to get the proper url
+            $h->readPost($h->vars['id']); // need to read the post to get the proper url
             $output .= "<li class='evb_top'>";
-            $output .= "<a href='" . $this->hotaru->url(array('page'=>$this->hotaru->vars['id'])) . "' title='Vote for this story on " . SITE_NAME . "' target='_blank'>";
-            $output .= "<b>" . $this->hotaru->vars['votes'] . "</b></a>";
+            $output .= "<a href='" . $h->url(array('page'=>$h->vars['id'])) . "' title='Vote for this story on " . SITE_NAME . "' target='_blank'>";
+            $output .= "<b>" . $h->vars['votes'] . "</b></a>";
             $output .= "</li>";
             
             $output .= "<li class='evb_bottom'>";
-            $output .= "<a href='" . $this->hotaru->url(array('page'=>$this->hotaru->vars['id'])) . "' target='_blank'>";
-            $output .= $this->lang['evb_vote'] . "</a>";
+            $output .= "<a href='" . $h->url(array('page'=>$h->vars['id'])) . "' target='_blank'>";
+            $output .= $h->lang['evb_vote'] . "</a>";
             $output .= "</li>";
         } else {
             $output .= "<li class='evb_top'>";
-            $output .= "<a href='" . BASEURL . "index.php?page=submit&url=" . $this->hotaru->vars['url']  . "' title='Submit this story to " . SITE_NAME . "' target='_blank'>";
-            $output .= $this->lang['evb_go'] . "</a>";
+            $output .= "<a href='" . BASEURL . "index.php?page=submit&url=" . $h->vars['url']  . "' title='Submit this story to " . SITE_NAME . "' target='_blank'>";
+            $output .= $h->lang['evb_go'] . "</a>";
             $output .= "</li>";
             
             $output .= "<li class='evb_bottom'>"; 
-            $output .= "<a href='" . BASEURL . "index.php?page=submit&url=" . $this->hotaru->vars['url'] . "' title='Submit this story to " . SITE_NAME . "' target='_blank'>";
-            $output .= $this->lang['evb_submit'] . "</a>";
+            $output .= "<a href='" . BASEURL . "index.php?page=submit&url=" . $h->vars['url'] . "' title='Submit this story to " . SITE_NAME . "' target='_blank'>";
+            $output .= $h->lang['evb_submit'] . "</a>";
             $output .= "</li>";
         }
             

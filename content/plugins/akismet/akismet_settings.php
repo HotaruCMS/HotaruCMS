@@ -25,49 +25,48 @@
  * @link      http://www.hotarucms.org/
  */
  
-class AkismetSettings extends HotaruAkismet
+class AkismetSettings
 {
      /**
      * Admin settings for akismet
      */
-    public function settings()
+    public function settings($h)
     {
-        $this->includeLanguage(); // include it here because it's only used for the settings page
-        
         // If the form has been submitted, go and save the data...
-        if ($this->cage->post->getAlpha('submitted') == 'true') { 
-            $this->saveSettings(); 
+        if ($h->cage->post->getAlpha('submitted') == 'true') { 
+            $this->saveSettings($h); 
         }
         
-        echo "<h1>" . $this->lang["akismet_settings_header"] . "</h1>\n";
+        echo "<h1>" . $h->lang["akismet_settings_header"] . "</h1>\n";
           
         // Get settings from database if they exist...
-        $akismet_settings = $this->getSerializedSettings();
+        $akismet_settings = $h->getSerializedSettings();
         $akismetposts = $akismet_settings['akismet_use_posts'];
         $akismetcomments = $akismet_settings['akismet_use_comments'];
         $akismetkey = $akismet_settings['akismet_key'];
     
-        $this->pluginHook('akismet_settings_get_values');
+        $h->pluginHook('akismet_settings_get_values');
         
         //...otherwise set to blank:
-        if (!$akismetuse) { $akismetuse = ''; } else { $akismetuse = 'checked'; }
-        if (!$akismetkey) { $akismetkey = ''; } 
+        if (!isset($akismetuse)) { $akismetuse = ''; } else { $akismetuse = 'checked'; }
+        if (!isset($akismetkey)) { $akismetkey = ''; } 
             
         echo "<form name='akismet_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=akismet' method='post'>\n";
         
-        echo "<p>" . $this->lang["akismet_settings_instructions"] . "</p><br />";
+        echo "<p>" . $h->lang["akismet_settings_instructions"] . "</p><br />";
             
         echo "<p><input type='checkbox' name='akismet_use_posts' value='akismet_use_posts' " . $akismetposts . " >&nbsp;&nbsp;";
-        echo $this->lang["akismet_settings_use_posts"] . "</p>\n"; 
+        echo $h->lang["akismet_settings_use_posts"] . "</p>\n"; 
         echo "<p><input type='checkbox' name='akismet_use_comments' value='akismet_use_comments' " . $akismetcomments . " >&nbsp;&nbsp;";
-        echo $this->lang["akismet_settings_use_comments"] . "</p>\n"; 
-        echo "<p>" . $this->lang["akismet_settings_key"] . " <input type='text' size=30 name='akismet_key' value='" . $akismetkey . "'></p>\n";    
+        echo $h->lang["akismet_settings_use_comments"] . "</p>\n"; 
+        echo "<p>" . $h->lang["akismet_settings_key"] . " <input type='text' size=30 name='akismet_key' value='" . $akismetkey . "'></p>\n";    
     
-        $this->pluginHook('akismet_settings_form');
+        $h->pluginHook('akismet_settings_form');
                 
         echo "<br /><br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
-        echo "<input type='submit' value='" . $this->lang["akismet_settings_save"] . "' />\n";
+        echo "<input type='submit' value='" . $h->lang["akismet_settings_save"] . "' />\n";
+        echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }
     
@@ -77,48 +76,48 @@ class AkismetSettings extends HotaruAkismet
      *
      * @return true
      */
-    public function saveSettings()
+    public function saveSettings($h)
     {
         $error = 0;
             
         // use akismet for posts
-        if ($this->cage->post->keyExists('akismet_use_posts')) { 
+        if ($h->cage->post->keyExists('akismet_use_posts')) { 
             $akismetposts = "checked";
         } else {
             $akismetposts = "";
         }
         
         // use akismet for comments
-        if ($this->cage->post->keyExists('akismet_use_comments')) { 
+        if ($h->cage->post->keyExists('akismet_use_comments')) { 
             $akismetcomments = "checked";
         } else {
             $akismetcomments = "";
         }
         
         // akismet key
-        if ($this->cage->post->keyExists('akismet_key')) { 
-            $akismetkey = $this->cage->post->testAlnumLines('akismet_key');
+        if ($h->cage->post->keyExists('akismet_key')) { 
+            $akismetkey = $h->cage->post->testAlnumLines('akismet_key');
             $error = 0;
         } else {
             $akismetkey = ''; 
             $error = 1;
-            $this->hotaru->message = $this->lang["akismet_settings_no_key"];
-            $this->hotaru->messageType = "red";
+            $h->message = $h->lang["akismet_settings_no_key"];
+            $h->messageType = "red";
         }
         
-        $this->pluginHook('akismet_save_settings');
+        $h->pluginHook('akismet_save_settings');
         
         if ($error == 0) {
             // save settings
             $akismet_settings['akismet_use_posts'] = $akismetposts;
             $akismet_settings['akismet_use_comments'] = $akismetcomments;
             $akismet_settings['akismet_key'] = $akismetkey;
-            $this->updateSetting('akismet_settings', serialize($akismet_settings));
+            $h->updateSetting('akismet_settings', serialize($akismet_settings));
             
-            $this->hotaru->message = $this->lang["akismet_settings_saved"];
-            $this->hotaru->messageType = "green";
+            $h->message = $h->lang["akismet_settings_saved"];
+            $h->messageType = "green";
         }
-        $this->hotaru->showMessage();
+        $h->showMessage();
         
         return true;    
     }

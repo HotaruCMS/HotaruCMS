@@ -27,6 +27,6 @@
 ?>
 
 <div id="disqus_thread"></div>
-<script type="text/javascript" src="http://disqus.com/forums/<?php echo $hotaru->vars['shortname']; ?>/embed.js"></script>
-<noscript><a href="http://<?php echo $hotaru->vars['shortname']; ?>.disqus.com/?url=ref">View the discussion thread.</a></noscript>
+<script type="text/javascript" src="http://disqus.com/forums/<?php echo $h->vars['shortname']; ?>/embed.js"></script>
+<noscript><a href="http://<?php echo $h->vars['shortname']; ?>.disqus.com/?url=ref">View the discussion thread.</a></noscript>
 <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a> 

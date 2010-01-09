@@ -2,11 +2,13 @@
 /**
  * name: Activity
  * description: Show recent activity
- * version: 0.1
+ * version: 0.2
  * folder: activity
  * class: Activity
- * requires: users 0.8, sidebar_widgets 0.5
- * hooks: install_plugin, hotaru_header, header_include, comment_post_add_comment, comment_update_comment, com_man_approve_all_comments, comment_delete_comment, post_add_post, post_update_post, post_change_status, post_delete_post, userbase_killspam, vote_positive_vote, vote_negative_vote, vote_flag_insert, admin_sidebar_plugin_settings, admin_plugin_settings, theme_index_replace, theme_index_main, profile
+ * requires: users 1.1, widgets 0.6
+ * hooks: install_plugin, header_include, comment_post_add_comment, comment_update_comment, com_man_approve_all_comments, comment_delete_comment, post_add_post, post_update_post, post_change_status, post_delete_post, userbase_killspam, vote_positive_vote, vote_negative_vote, vote_flag_insert, admin_sidebar_plugin_settings, admin_plugin_settings, theme_index_top, theme_index_main, profile, breadcrumbs
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *
@@ -30,153 +32,150 @@
  * @link      http://www.hotarucms.org/
  */
 
-class Activity extends PluginFunctions
+class Activity
 {
     /**
      *  Add default settings for Sidebar Comments plugin on installation
      */
-    public function install_plugin()
+    public function install_plugin($h)
     {
         // Default settings
-        $activity_settings = $this->getSerializedSettings();
+        $activity_settings = $h->getSerializedSettings();
         
-        if ($this->isActive('gravatar')) {
-            if (!isset($activity_settings['activity_sidebar_avatar'])) { $activity_settings['activity_sidebar_avatar'] = "checked"; }
+        if ($h->isActive('avatar')) {
+            if (!isset($activity_settings['widget_avatar'])) { $activity_settings['widget_avatar'] = "checked"; }
         } else {
-            if (!isset($activity_settings['activity_sidebar_avatar'])) { $activity_settings['activity_sidebar_avatar'] = ""; }
+            if (!isset($activity_settings['widget_avatar'])) { $activity_settings['widget_avatar'] = ""; }
         }
-        if (!isset($activity_settings['activity_sidebar_avatar_size'])) { $activity_settings['activity_sidebar_avatar_size'] = 16; }
-        if (!isset($activity_settings['activity_sidebar_user'])) { $activity_settings['activity_sidebar_user'] = ''; }
-        if (!isset($activity_settings['activity_sidebar_number'])) { $activity_settings['activity_sidebar_number'] = 10; }
-        if (!isset($activity_settings['activity_number'])) { $activity_settings['activity_number'] = 20; }
-        if (!isset($activity_settings['activity_time'])) { $activity_settings['activity_time'] = "checked"; }
+        if (!isset($activity_settings['widget_avatar_size'])) { $activity_settings['widget_avatar_size'] = 16; }
+        if (!isset($activity_settings['widget_user'])) { $activity_settings['widget_user'] = ''; }
+        if (!isset($activity_settings['widget_number'])) { $activity_settings['widget_number'] = 10; }
+        if (!isset($activity_settings['number'])) { $activity_settings['number'] = 20; }
+        if (!isset($activity_settings['time'])) { $activity_settings['time'] = "checked"; }
         
-        $this->updateSetting('activity_settings', serialize($activity_settings));
+        $h->updateSetting('activity_settings', serialize($activity_settings));
         
-        // Default settings
-        require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
-        $sidebar = new Sidebar($this->hotaru);
-        // plugin name, function name, optional arguments
-        $sidebar->addWidget('activity', 'activity', '');
+        // widget
+        $h->addWidget('activity', 'activity', '');  // plugin name, function name, optional arguments
     }
     
     
     /**
      * Add activity when new comment posted
      */
-    public function comment_post_add_comment()
+    public function comment_post_add_comment($h)
     {
-        $comment_id = $this->hotaru->comment->vars['last_insert_id'];
-        $comment_user_id = $this->hotaru->comment->author;
-        $comment_post_id = $this->hotaru->comment->postId;
-        $comment_status = $this->hotaru->comment->status;
+        $comment_id = $h->vars['last_insert_id'];
+        $comment_user_id = $h->comment->author;
+        $comment_post_id = $h->comment->postId;
+        $comment_status = $h->comment->status;
         
         if ($comment_status != "approved") { $status = "hide"; } else { $status = "show"; }
         
         $sql = "INSERT INTO " . TABLE_USERACTIVITY . " SET useract_archived = %s, useract_userid = %d, useract_status = %s, useract_key = %s, useract_value = %s, useract_key2 = %s, useract_value2 = %s, useract_date = CURRENT_TIMESTAMP, useract_updateby = %d";
-        $this->db->query($this->db->prepare($sql, 'N', $comment_user_id, $status, 'comment', $comment_id, 'post', $comment_post_id, $this->current_user->id));
+        $h->db->query($h->db->prepare($sql, 'N', $comment_user_id, $status, 'comment', $comment_id, 'post', $comment_post_id, $h->currentUser->id));
     }
     
     
     /**
      * Update show/hide status when a comment is edited
      */
-    public function comment_update_comment()
+    public function comment_update_comment($h)
     {
-        $comment_status = $this->hotaru->comment->status;
+        $comment_status = $h->comment->status;
         
         if ($comment_status != "approved") { $status = "hide"; } else { $status = "show"; }
         
         $sql = "UPDATE " . TABLE_USERACTIVITY . " SET useract_status = %s, useract_updateby = %d WHERE useract_key = %s AND useract_value = %d";
-        $this->db->query($this->db->prepare($sql, $status, $this->current_user->id, 'comment', $this->hotaru->comment->id));
+        $h->db->query($h->db->prepare($sql, $status, $h->currentUser->id, 'comment', $h->comment->id));
     }
     
     
     /**
      * Make all comments "show" when mass-approved in comment manager
      */
-    public function com_man_approve_all_comments()
+    public function com_man_approve_all_comments($h)
     {
         $sql = "UPDATE " . TABLE_USERACTIVITY . " SET useract_status = %s, useract_updateby = %d WHERE useract_key = %s AND useract_status = %d";
-        $this->db->query($this->db->prepare($sql, 'show', $this->current_user->id, 'comment', 'hide'));
+        $h->db->query($h->db->prepare($sql, 'show', $h->currentUser->id, 'comment', 'hide'));
     }
     
     
     /**
      * Delete comment from activity table
      */
-    public function comment_delete_comment()
+    public function comment_delete_comment($h)
     {
         $sql = "DELETE FROM " . TABLE_USERACTIVITY . " WHERE useract_key = %s AND useract_value = %d";
-        $this->db->query($this->db->prepare($sql, 'comment', $this->hotaru->comment->id));
+        $h->db->query($h->db->prepare($sql, 'comment', $h->comment->id));
     }
 
 
     /**
      * Add activity when new post submitted
      */
-    public function post_add_post()
+    public function post_add_post($h)
     {
-        $post_id = $this->hotaru->post->vars['last_insert_id'];
-        $post_author = $this->hotaru->post->author;
-        $post_status = $this->hotaru->post->status;
+        $post_id = $h->post->vars['last_insert_id'];
+        $post_author = $h->post->author;
+        $post_status = $h->post->status;
         
         if ($post_status != 'new' && $post_status != 'top') { $status = "hide"; } else { $status = "show"; }
         
         $sql = "INSERT INTO " . TABLE_USERACTIVITY . " SET useract_archived = %s, useract_userid = %d, useract_status = %s, useract_key = %s, useract_value = %s, useract_date = CURRENT_TIMESTAMP, useract_updateby = %d";
-        $this->db->query($this->db->prepare($sql, 'N', $post_author, $status, 'post', $post_id, $this->current_user->id));
+        $h->db->query($h->db->prepare($sql, 'N', $post_author, $status, 'post', $post_id, $h->currentUser->id));
     }
     
     
     /**
      * Update activity when post is updated
      */
-    public function post_update_post()
+    public function post_update_post($h)
     {
-        $post_status = $this->hotaru->post->status;
+        $post_status = $h->post->status;
         
         if ($post_status != 'new' && $post_status != 'top') { $status = "hide"; } else { $status = "show"; }
         
         $sql = "UPDATE " . TABLE_USERACTIVITY . " SET useract_status = %s, useract_updateby = %d WHERE useract_key = %s AND useract_value = %d";
-        $this->db->query($this->db->prepare($sql, $status, $this->current_user->id, 'post', $this->hotaru->post->id));
+        $h->db->query($h->db->prepare($sql, $status, $h->currentUser->id, 'post', $h->post->id));
     }
     
     
     /**
      * Update activity when post status is changed
      */
-    public function post_change_status()
+    public function post_change_status($h)
     {
-        $this->post_update_post();
+        $this->post_update_post($h);
     }
     
     
     /**
      * Delete post from activity table
      */
-    public function post_delete_post()
+    public function post_delete_post($h)
     {
         $sql = "DELETE FROM " . TABLE_USERACTIVITY . " WHERE useract_key = %s AND useract_value = %d";
-        $this->db->query($this->db->prepare($sql, 'post', $this->hotaru->post->id));
+        $h->db->query($h->db->prepare($sql, 'post', $h->post->id));
     }
     
     
     /**
      * Delete votes from activity table
      */
-    public function userbase_killspam($vars = array())
+    public function userbase_killspam($h, $vars = array())
     {
         $user_id = $vars['target_user'];
         
         $sql = "DELETE FROM " . TABLE_USERACTIVITY . " WHERE useract_userid = %d AND useract_key = %s";
-        $this->db->query($this->db->prepare($sql, 'vote', $user_id));
+        $h->db->query($h->db->prepare($sql, 'vote', $user_id));
     }
     
     
     /**
      * Add activity when voting on a post
      */
-    public function vote_positive_vote($vars)
+    public function vote_positive_vote($h, $vars)
     {
         $user_id = $vars['user'];
         $post_id = $vars['post'];
@@ -184,14 +183,14 @@ class Activity extends PluginFunctions
         // we don't need the status because if the post wasn't visible, it couldn't be voted for.
         
         $sql = "INSERT INTO " . TABLE_USERACTIVITY . " SET useract_archived = %s, useract_userid = %d, useract_status = %s, useract_key = %s, useract_value = %s, useract_key2 = %s, useract_value2 = %s, useract_date = CURRENT_TIMESTAMP, useract_updateby = %d";
-        $this->db->query($this->db->prepare($sql, 'N', $user_id, 'show', 'vote', 'up', 'post', $post_id, $this->current_user->id));
+        $h->db->query($h->db->prepare($sql, 'N', $user_id, 'show', 'vote', 'up', 'post', $post_id, $h->currentUser->id));
     }
     
     
     /**
      * Add activity when voting down or removing a vote from a post
      */
-    public function vote_negative_vote($vars)
+    public function vote_negative_vote($h, $vars)
     {
         $user_id = $vars['user'];
         $post_id = $vars['post'];
@@ -199,51 +198,49 @@ class Activity extends PluginFunctions
         // we don't need the status because if the post wasn't visible, it couldn't be voted for.
         
         $sql = "INSERT INTO " . TABLE_USERACTIVITY . " SET useract_archived = %s, useract_userid = %d, useract_status = %s, useract_key = %s, useract_value = %s, useract_key2 = %s, useract_value2 = %s, useract_date = CURRENT_TIMESTAMP, useract_updateby = %d";
-        $this->db->query($this->db->prepare($sql, 'N', $user_id, 'show', 'vote', 'down', 'post', $post_id, $this->current_user->id));
+        $h->db->query($h->db->prepare($sql, 'N', $user_id, 'show', 'vote', 'down', 'post', $post_id, $h->currentUser->id));
     }
     
     
     /**
      * Add activity when flagging a post
      */
-    public function vote_flag_insert()
+    public function vote_flag_insert($h)
     {
         // we don't need the status because if the post wasn't visible, it couldn't be voted for.
         
         $sql = "INSERT INTO " . TABLE_USERACTIVITY . " SET useract_archived = %s, useract_userid = %d, useract_status = %s, useract_key = %s, useract_value = %s, useract_key2 = %s, useract_value2 = %s, useract_date = CURRENT_TIMESTAMP, useract_updateby = %d";
-        $this->db->query($this->db->prepare($sql, 'N', $this->current_user->id, 'show', 'vote', 'flag', 'post', $this->hotaru->post->id, $this->current_user->id));
+        $h->db->query($h->db->prepare($sql, 'N', $h->currentUser->id, 'show', 'vote', 'flag', 'post', $h->post->id, $h->currentUser->id));
     }
     
     
     /**
-     * Display the latest activity in the sidebar
+     * Display the latest activity in a widget block
      */
-    public function sidebar_widget_activity()
+    public function widget_activity($h)
     {
-        $this->includeLanguage();
-        
         // Get settings from database if they exist...
-        $activity_settings = $this->getSerializedSettings('activity');
+        $activity_settings = $h->getSerializedSettings('activity');
         
-        $activity = $this->getLatestActivity($activity_settings, $activity_settings['activity_sidebar_number']);
+        $activity = $this->getLatestActivity($h, $activity_settings['widget_number']);
         
         // build link that will link the widget title to all activity...
         
-        $anchor_title = htmlentities($this->lang["activity_title_anchor_title"], ENT_QUOTES, 'UTF-8');
-        $title = "<a href='" . $this->hotaru->url(array('page'=>'activity')) . "' title='" . $anchor_title . "'>";
-        $title .= $this->lang['activity_title'] . "</a>";
+        $anchor_title = htmlentities($h->lang["activity_title_anchor_title"], ENT_QUOTES, 'UTF-8');
+        $title = "<a href='" . $h->url(array('page'=>'activity')) . "' title='" . $anchor_title . "'>";
+        $title .= $h->lang['activity_title'] . "</a>";
         
         if (isset($activity) && !empty($activity)) {
             
-            $output = "<h2 class='sidebar_widget_head activity_sidebar_title'>\n";
-            $output .= "<a href='" . $this->hotaru->url(array('page'=>'rss_activity')) . "' title='" . $anchor_title . "'>\n";
+            $output = "<h2 class='widget_head activity_widget_title'>\n";
+            $output .= "<a href='" . $h->url(array('page'=>'rss_activity')) . "' title='" . $anchor_title . "'>\n";
             $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'>\n</a>&nbsp;"; // RSS icon
             $link = BASEURL;
             $output .= $title . "</h2>\n"; 
                 
-            $output .= "<ul class='sidebar_widget_body activity_sidebar_items'>\n";
+            $output .= "<ul class='widget_body activity_widget_items'>\n";
             
-            $output .= $this->getSidebarActivityItems($activity, $activity_settings);
+            $output .= $this->getWidgetActivityItems($h, $activity, $activity_settings);
             $output .= "</ul>\n\n";
         }
         
@@ -257,16 +254,16 @@ class Activity extends PluginFunctions
      *
      * return array $activity
      */
-    public function getLatestActivity($activity_settings, $limit = 0, $userid = 0)
+    public function getLatestActivity($h, $limit = 0, $userid = 0)
     {
         if (!$limit) { $limit = ""; } else { $limit = "LIMIT " . $limit; }
         
         if (!$userid) {
             $sql = "SELECT * FROM " . TABLE_USERACTIVITY . " WHERE useract_status = %s ORDER BY useract_date DESC " . $limit;
-            $activity = $this->db->get_results($this->db->prepare($sql, 'show'));
+            $activity = $h->db->get_results($h->db->prepare($sql, 'show'));
         } else {
             $sql = "SELECT * FROM " . TABLE_USERACTIVITY . " WHERE useract_status = %s AND useract_userid = %d ORDER BY useract_date DESC " . $limit;
-            $activity = $this->db->get_results($this->db->prepare($sql, 'show', $userid));
+            $activity = $h->db->get_results($h->db->prepare($sql, 'show', $userid));
         }
         
         if ($activity) { return $activity; } else { return false; }
@@ -278,16 +275,16 @@ class Activity extends PluginFunctions
      *
      * @param array $activity 
      * @param array $activity_settings
-     * @param string $label for cache file
      * return string $output
      */
-    public function getSidebarActivityItems($activity = array(), $activity_settings, $cache = true)
+    public function getWidgetActivityItems($h, $activity = array(), $activity_settings, $cache = true)
     {
         $need_cache = false;
+        $label = 'sb_act';
         
         if ($cache) {
             // check for a cached version and use it if no recent update:
-            $output = $this->hotaru->smartCache('html', 'useractivity', 10, '', $label);
+            $output = $h->smartCache('html', 'useractivity', 10, '', $label);
             if ($output) {
                 return $output;
             } else {
@@ -295,76 +292,64 @@ class Activity extends PluginFunctions
             }
         }
         
-        if (!isset($cat)) {
-            // we need categories for the url
-            if ($this->hotaru->post->vars['useCategories']) {
-                require_once(PLUGINS . 'categories/libs/Category.php');
-                $cat = new Category($this->db);
-            }
-        }
-        
-        if (!isset($this->hotaru->post)) { 
-            $this->hotaru->post = new Post($this->hotaru); // used to get post information
-        }
-        
-        if (!isset($user)) { $user = new UserBase($this->hotaru); }
+        if (!isset($user)) { $user = new UserBase(); }
                 
         if (!$activity) { return false; }
+        
+        $output = '';
         
         foreach ($activity as $item)
         {
             // Post used in Hotaru's url function
             if ($item->useract_key == 'post') {
-                $this->hotaru->post->readPost($item->useract_value);
+                $h->readPost($item->useract_value);
             } elseif  ($item->useract_key2 == 'post') {
-                $this->hotaru->post->readPost($item->useract_value2);
+                $h->readPost($item->useract_value2);
             }
                        
             // get user details
-            $user->getUserBasic($item->useract_userid);
+            $user->getUserBasic($h, $item->useract_userid);
             
-            if ($this->hotaru->post->vars['useCategories'] && ($this->hotaru->post->vars['category'] != 1)) {
-                $this->hotaru->post->vars['category'] = $this->hotaru->post->vars['category'];
-                $this->hotaru->post->vars['catSafeName'] =  $cat->getCatSafeName($this->hotaru->post->vars['category']);
-            }
+            $h->post->vars['catSafeName'] =  $h->getCatSafeName($h->post->category);
 
             // OUTPUT ITEM
-            $output .= "<li class='activity_sidebar_item'>\n";
+            $output .= "<li class='activity_widget_item'>\n";
             
-            if ($activity_settings['activity_sidebar_avatar'] && $this->isActive('gravatar')) {
-                $this->hotaru->vars['gravatar_size'] = $activity_settings['activity_sidebar_avatar_size'];
-                $grav = new Gravatar('', $this->hotaru);
-                $output .= "<div class='activity_sidebar_avatar'>\n" . $grav->showGravatarLink($user->name, $user->email, true) . "</div> \n";
+            if($h->isActive('avatar') && $activity_settings['widget_avatar']) {
+                $h->setAvatar($user->id, $activity_settings['widget_avatar_size']);
+                $output .= "<div class='activity_widget_avatar'>\n";
+                $output .= $h->linkAvatar();
+                $output .= "</div> \n";
             }
             
-            if ($activity_settings['activity_sidebar_user']) {
-                $output .= "<a class='activity_sidebar_user' href='" . $this->hotaru->url(array('user' => $user->name)) . "'>" . $user->name . "</a> \n";
+            if ($activity_settings['widget_user']) {
+                $output .= "<a class='activity_widget_user' href='" . $h->url(array('user' => $user->name)) . "'>" . $user->name . "</a> \n";
             }
             
-            $output .= "<div class='activity_sidebar_content'>\n";
+            $output .= "<div class='activity_widget_content'>\n";
             
-            $post_title = stripslashes(html_entity_decode(urldecode($this->hotaru->post->title), ENT_QUOTES,'UTF-8'));
-            $title_link = $this->hotaru->url(array('page'=>$this->hotaru->post->id));
+            $post_title = stripslashes(html_entity_decode(urldecode($h->post->title), ENT_QUOTES,'UTF-8'));
+            $title_link = $h->url(array('page'=>$h->post->id));
             $cid = ''; // comment id string
             
             switch ($item->useract_key) {
                 case 'comment':
-                    $output .= $this->hotaru->lang["activity_commented"] . " ";
+                    $output .= $h->lang["activity_commented"] . " ";
                     $cid = "#c" . $item->useract_value; // comment id to be put on the end of the url
                     break;
                 case 'post':
-                    $output .= $this->hotaru->lang["activity_submitted"] . " ";
+                    $output .= $h->lang["activity_submitted"] . " ";
                     break;
                 case 'vote':
                     switch ($item->useract_value) {
                         case 'up':
-                            $output .= $this->hotaru->lang["activity_voted_up"] . " ";
+                            $output .= $h->lang["activity_voted_up"] . " ";
                             break;
                         case 'down':
-                            $output .= $this->hotaru->lang["activity_voted_down"] . " ";
+                            $output .= $h->lang["activity_voted_down"] . " ";
                             break;
                         case 'flag':
-                            $output .= $this->hotaru->lang["activity_voted_flagged"] . " ";
+                            $output .= $h->lang["activity_voted_flagged"] . " ";
                             break;
                         default:
                             break;
@@ -375,27 +360,25 @@ class Activity extends PluginFunctions
             }
             
             // for plugins to add their own activity:
-            $this->hotaru->vars['activity_output'] = array($output, $title_link, $cid, $post_title);
-            $this->pluginHook('activity_output');
-            list($output, $title_link, $cid, $post_title) = $this->hotaru->vars['activity_output'];
+            $h->vars['activity_output'] = array($output, $title_link, $cid, $post_title);
+            $h->pluginHook('activity_output');
+            list($output, $title_link, $cid, $post_title) = $h->vars['activity_output'];
             
             $output .= "&quot;<a href='" . $title_link . $cid . "' >" . $post_title . "</a>&quot; \n";
             
-            if ($activity_settings['activity_time']) { 
+            if ($activity_settings['time']) { 
                 // Commented this out because "8 mins ago" will never change when cached!
-                //$output .= "<small>[" . time_difference(unixtimestamp($item->useract_date), $this->hotaru->lang);
-                //$output .= " " . $this->hotaru->lang["submit_post_ago"] . "]</small>";
+                //$output .= "<small>[" . time_difference(unixtimestamp($item->useract_date), $h->lang);
+                //$output .= " " . $h->lang["submit_post_ago"] . "]</small>";
                 $output .= "<small>[" . date('g:ia, M jS', strtotime($item->useract_date)) . "]</small>";
             }
             
-            $output .= "<div>\n";
+            $output .= "</div>\n";
             $output .= "</li>\n\n";
         }
         
-        unset($this->hotaru->vars['gravatar_size']);  // returns us to the default size
-        
         if ($need_cache) {
-            $this->hotaru->smartCache('html', 'useractivity', 10, $output, $label); // make or rewrite the cache file
+            $h->smartCache('html', 'useractivity', 10, $output, $label); // make or rewrite the cache file
         }
         
         return $output;
@@ -407,10 +390,10 @@ class Activity extends PluginFunctions
      *
      * @return bool
      */
-    public function theme_index_replace()
+    public function theme_index_top($h)
     {
-        if (!$this->hotaru->isPage('rss_activity')) { return false; }
-        $this->rssFeed();
+        if (!$h->isPage('rss_activity')) { return false; }
+        $this->rssFeed($h);
         return true;
     }
     
@@ -418,55 +401,45 @@ class Activity extends PluginFunctions
     /**
      * Display All Activity page
      */
-    public function theme_index_main($profile = false)
+    public function theme_index_main($h, $profile = false)
     {
-        if ($this->hotaru->isPage('activity') || $profile == true) {
+        if ($h->isPage('activity') || $profile == true) {
         
-            if ($this->hotaru->pageType == 'profile') {
-                $user = $this->cage->get->testUsername('user');
-                $userid = $this->current_user->getUserIdFromName($user);
+            if ($h->pageName == 'profile') {
+                $user = $h->cage->get->testUsername('user');
+                $userid = $h->getUserIdFromName($user);
             } else {
                 $userid = 0;
             }
                 
             // Get settings from database if they exist...
-            $activity_settings = $this->getSerializedSettings('activity');
+            $activity_settings = $h->getSerializedSettings('activity');
+
             // gets however many are items shown per page on activity pages:
-            $activity = $this->getLatestActivity($activity_settings, 0, $userid); // 0 means no limit, ALL activity 
-        
+            $activity = $this->getLatestActivity($h, 0, $userid); // 0 means no limit, ALL activity 
             
-            if ($this->hotaru->pageType == 'profile') {
-                $anchor_title = htmlentities($this->lang["activity_title_anchor_title"], ENT_QUOTES, 'UTF-8');
+            if ($h->pageName == 'profile') {
+                $anchor_title = htmlentities($h->lang["activity_title_anchor_title"], ENT_QUOTES, 'UTF-8');
                 echo "<h2>\n";
-                echo "<a href='" . $this->hotaru->url(array('page'=>'rss_activity', 'user'=>$user)) . "' title='" . $anchor_title . "'>\n";
+                echo "<a href='" . $h->url(array('page'=>'rss_activity', 'user'=>$user)) . "' title='" . $anchor_title . "'>\n";
                 echo "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'>\n</a>&nbsp;"; // RSS icon
-                echo $this->lang['activity_title'] . "</h2>\n"; 
+                echo $h->lang['activity_title'] . "</h2>\n"; 
                 $label = $user; // used in cache filename
             } else {
                 /* BREADCRUMBS */
-                echo "<div id='breadcrumbs'>";
-                echo "<a href='" . BASEURL . "'>" .  $this->hotaru->lang['main_theme_home'] . "</a> &raquo; ";
-                $this->hotaru->plugins->pluginHook('breadcrumbs');
-                echo $this->hotaru->lang['activity_all'];
-                echo "<a href='" . $this->hotaru->url(array('page'=>'rss_activity')) . "'> ";
-                echo "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
-                echo "</div>";
                 $label = 'site'; // used in cache filename
             }
             
-            // for pagination:
-            require_once(PLUGINS . 'submit/libs/Post.php');
-            require_once(EXTENSIONS . 'Paginated/Paginated.php');
-            require_once(EXTENSIONS . 'Paginated/DoubleBarLayout.php');
-            
-            $pg = $this->hotaru->cage->get->getInt('pg');
-            $pagedResults = new Paginated($activity, $activity_settings['activity_number'], $pg);
+             $pg = $h->cage->get->testInt('pg');
+            $pagedResults = $h->pagination($activity, $activity_settings['number'], $pg);
                         
             $output = "<div id='activity'>";
-            $output .= "<ul class='sidebar_widget_body activity_sidebar_items'>\n";
+            $output .= "<ul class='sidebar_widget_body activity_widget_items'>\n";
             
-            while($action = $pagedResults->fetchPagedRow()) {
-                $output .= $this->getSidebarActivityItems(array($action), $activity_settings, false);
+            if ($pagedResults) {
+                while($action = $pagedResults->fetchPagedRow()) {
+                    $output .= $this->getWidgetActivityItems($h, array($action), $activity_settings, false);
+                }
             }
             
             $output .= "</ul>\n\n";
@@ -474,8 +447,10 @@ class Activity extends PluginFunctions
             
             echo $output;
             
-            $pagedResults->setLayout(new DoubleBarLayout());
-            echo $pagedResults->fetchPagedNavigation('', $this->hotaru);
+            if ($pagedResults) {
+                echo $h->pageBar($pagedResults);
+            }
+            return true;
         }
     }
     
@@ -483,9 +458,30 @@ class Activity extends PluginFunctions
     /**
      * Show activity on a user's profile
      */    
-    public function profile()
+    public function profile($h)
     {
-        $this->theme_index_main(true);
+        $this->theme_index_main($h, true);
+    }
+    
+    
+    /**
+     * Add Activity RSS link to breadcrumbs
+     */
+    public function breadcrumbs($h)
+    {
+        if (($h->pageName != 'activity') && ($h->pageName != 'profile')) { return false; }
+        
+        if ($h->pageName == 'profile') {
+            $user = $h->cage->get->testUsername('user');
+            $crumbs = "<a href='" . $h->url(array('user'=>$user)) . "'>" . $user . "</a> ";
+            $crumbs .= "<a href='" . $h->url(array('page'=>'rss_activity', 'user'=>$user)) . "'> ";
+        } else {
+            $crumbs = $h->pageTitle;
+            $crumbs .= "<a href='" . $h->url(array('page'=>'rss_activity')) . "'>";
+        }
+        $crumbs .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png' alt='" . $h->pageTitle . " RSS' /></a>\n";
+        
+        return $crumbs;
     }
     
     
@@ -493,41 +489,40 @@ class Activity extends PluginFunctions
      * Publish content as an RSS feed
      * Uses the 3rd party RSS Writer class.
      */    
-    public function rssFeed()
+    public function rssFeed($h)
     {
         require_once(EXTENSIONS . 'RSSWriterClass/rsswriter.php');
         
         $select = '*';
 
-        $limit = $this->cage->get->getInt('limit');
-        $user = $this->cage->get->testUsername('user');
+        $limit = $h->cage->get->getInt('limit');
+        $user = $h->cage->get->testUsername('user');
 
         if (!$limit) { $limit = 10; }
         
         if ($user) { 
-            $userid = $this->current_user->getUserIdFromName($user);
+            $userid = $h->getUserIdFromName($user);
         } else {
             $userid = 0;
         }
         
-        $this->pluginHook('activity_rss_feed');
+        $h->pluginHook('activity_rss_feed');
         
         $feed           = new RSS();
         $feed->title    = SITE_NAME;
         $feed->link     = BASEURL;
         
         if ($user) { 
-            $feed->description = $this->lang["activity_rss_latest_from_user"] . " " . $user; 
+            $feed->description = $h->lang["activity_rss_latest_from_user"] . " " . $user; 
         } else {
-            $feed->description = $this->lang["activity_rss_latest"] . SITE_NAME;
+            $feed->description = $h->lang["activity_rss_latest"] . SITE_NAME;
         }
         
-        $this->hotaru->post = new Post($this->hotaru); // used to get post information
-        $userBase = new UserBase($this->hotaru);
+        $user = new UserBase($this->hotaru);
 
         // Get settings from database if they exist...
-        $activity_settings = $this->getSerializedSettings('activity');
-        $activity = $this->getLatestActivity($activity_settings, $activity_settings['activity_sidebar_number'], $userid);
+        $activity_settings = $h->getSerializedSettings('activity');
+        $activity = $this->getLatestActivity($h, $activity_settings['widget_number'], $userid);
         
         if (!$activity) { echo $feed->serve(); return false; } // displays empty RSS feed
                 
@@ -535,51 +530,36 @@ class Activity extends PluginFunctions
         {
             // Post used in Hotaru's url function
             if ($act->useract_key == 'post') {
-                $this->hotaru->post->readPost($act->useract_value);
+                $h->readPost($act->useract_value);
             } elseif  ($act->useract_key2 == 'post') {
-                $this->hotaru->post->readPost($act->useract_value2);
+                $h->readPost($act->useract_value2);
             }
             
-            $userBase->getUserBasic($act->useract_userid);
+            $user->getUserBasic($h, $act->useract_userid);
             
-            $name = $userBase->name;
-            $post_title = stripslashes(html_entity_decode(urldecode($this->hotaru->post->title), ENT_QUOTES,'UTF-8'));
-            $title_link = $this->hotaru->url(array('page'=>$this->hotaru->post->id));
+            $name = $user->name;
+            $post_title = stripslashes(html_entity_decode(urldecode($h->post->title), ENT_QUOTES,'UTF-8'));
+            $title_link = $h->url(array('page'=>$h->post->id));
             $cid = ''; // comment id string
-            
-            // make category object
-            if (!isset($cat)) {
-                // we need categories for the url
-                if ($this->hotaru->post->vars['useCategories']) {
-                    require_once(PLUGINS . 'categories/libs/Category.php');
-                    $cat = new Category($this->db);
-                }
-            }
-            
-            // category for url
-            if ($this->hotaru->post->vars['useCategories'] && ($this->hotaru->post->vars['category'] != 1)) {
-                $this->hotaru->post->vars['category'] = $this->hotaru->post->vars['category'];
-                $this->hotaru->post->vars['catSafeName'] =  $cat->getCatSafeName($this->hotaru->post->vars['category']);
-            }
             
             switch ($act->useract_key) {
                 case 'comment':
-                    $action = $this->hotaru->lang["activity_commented"] . " ";
+                    $action = $h->lang["activity_commented"] . " ";
                     $cid = "#c" . $act->useract_value; // comment id to be put on the end of the url
                     break;
                 case 'post':
-                    $action = $this->hotaru->lang["activity_submitted"] . " ";
+                    $action = $h->lang["activity_submitted"] . " ";
                     break;
                 case 'vote':
                     switch ($act->useract_value) {
                         case 'up':
-                            $action = $this->hotaru->lang["activity_voted_up"] . " ";
+                            $action = $h->lang["activity_voted_up"] . " ";
                             break;
                         case 'down':
-                            $action = $this->hotaru->lang["activity_voted_down"] . " ";
+                            $action = $h->lang["activity_voted_down"] . " ";
                             break;
                         case 'flag':
-                            $action = $this->hotaru->lang["activity_voted_flagged"] . " ";
+                            $action = $h->lang["activity_voted_flagged"] . " ";
                             break;
                         default:
                             break;
@@ -592,7 +572,7 @@ class Activity extends PluginFunctions
             $item = new RSSItem();
 
             $item->title = $name . " " . $action . " \"" . $post_title . "\"";
-            $item->link  = $this->hotaru->url(array('page'=>$this->hotaru->post->id)) . $cid;
+            $item->link  = $h->url(array('page'=>$h->post->id)) . $cid;
             $item->setPubDate($act->useract_date); 
             $feed->addItem($item);
         }

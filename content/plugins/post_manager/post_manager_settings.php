@@ -25,128 +25,130 @@
  * @link      http://www.hotarucms.org/
  */
     
-class PostManagerSettings extends PostManager
+class PostManagerSettings
 {
     /**
      * Main function that calls others
      *
      * @return bool
      */
-    public function settings()
+    public function settings($h)
     {    
         // grab the number of pending posts:
         $sql = "SELECT COUNT(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s";
-        $num_pending = $this->db->get_var($this->db->prepare($sql, 'pending'));
+        $num_pending = $h->db->get_var($h->db->prepare($sql, 'pending'));
         if (!$num_pending) { $num_pending = "0"; } 
-        $this->hotaru->vars['num_pending'] = $num_pending; 
+        $h->vars['num_pending'] = $num_pending; 
         
         // clear variables:
-        $this->hotaru->vars['search_term'] = '';
+        $h->vars['search_term'] = '';
         
         // Get settings 
-        $submit_settings = $this->getSerializedSettings('submit');
-        $set_pending = $submit_settings['post_set_pending'];
+        $submit_settings = $h->getSerializedSettings('submit');
+        $set_pending = $submit_settings['set_pending'];
 
         if (($set_pending == 'some_pending') || ($set_pending == 'all_pending')) {
-            $this->hotaru->vars['post_status_filter'] = 'pending';
+            $h->vars['post_status_filter'] = 'pending';
         } else {
-            $this->hotaru->vars['post_status_filter'] = 'all';
+            $h->vars['post_status_filter'] = 'all';
         }
         
         // Get unique statuses for Filter form:
-        $this->hotaru->vars['statuses'] = $this->hotaru->post->getUniqueStatuses(); 
+        $h->vars['statuses'] = $h->getUniqueStatuses(); 
        
         // if checkboxes
-        if (($this->cage->get->getAlpha('type') == 'checkboxes') && ($this->cage->get->keyExists('post'))) 
+        if (($h->cage->get->getAlpha('type') == 'checkboxes') && ($h->cage->get->keyExists('post'))) 
         {
-            foreach ($this->cage->get->keyExists('post') as $id => $checked) {
-                $this->hotaru->post->readPost($id);
-                $this->hotaru->message = $this->lang["post_man_checkboxes_status_changed"]; // default "Changed status" message
-                switch ($this->cage->get->testAlnumLines('checkbox_action')) {
+            foreach ($h->cage->get->keyExists('post') as $id => $checked) {
+                $h->readPost($id);
+                $h->message = $h->lang["post_man_checkboxes_status_changed"]; // default "Changed status" message
+                switch ($h->cage->get->testAlnumLines('checkbox_action')) {
                     case 'new_selected':
-                        $this->hotaru->post->changeStatus('new');
-                        $this->pluginHook('post_man_status_new');
+                        $h->changePostStatus('new');
+                        $h->pluginHook('post_man_status_new');
                         break;
                     case 'top_selected':
-                        $this->hotaru->post->changeStatus('top');
-                        $this->pluginHook('post_man_status_top');
+                        $h->changePostStatus('top');
+                        $h->pluginHook('post_man_status_top');
                         break;
                     case 'pending_selected':
-                        $this->hotaru->post->changeStatus('pending');
-                        $this->pluginHook('post_man_status_pending');
+                        $h->changePostStatus('pending');
+                        $h->pluginHook('post_man_status_pending');
                         break;
                     case 'bury_selected':
-                        $this->hotaru->post->changeStatus('buried');
-                        $this->pluginHook('post_man_status_buried');
+                        $h->changePostStatus('buried');
+                        $h->pluginHook('post_man_status_buried');
                         break;
                     case 'delete_selected':
-                        $this->hotaru->post->deletePost(); 
-                        $this->pluginHook('post_man_delete');
-                        $this->hotaru->message = $this->lang["post_man_checkboxes_post_deleted"];
+                        $h->deletePost(); 
+                        $h->pluginHook('post_man_delete');
+                        $h->message = $h->lang["post_man_checkboxes_post_deleted"];
                         break;
                     default:
                         // do nothing
-                        $this->hotaru->message = $this->lang["post_man_checkboxes_no_action"];
-                        $this->hotaru->messageType = 'red';
+                        $h->message = $h->lang["post_man_checkboxes_no_action"];
+                        $h->messageType = 'red';
                         break;
                 }
                 
             }
         }
         
-        $p = new Post($this->hotaru);
+        $p = new Post();
         
         // if search
-        if ($this->cage->get->getAlpha('type') == 'search') {
-            $search_term = $this->cage->get->getMixedString2('search_value');
-            $this->hotaru->vars['search_term'] = $search_term; // used to refill the search box after a search
-            if ($this->isActive('search')) {
+        $search_term = '';
+        if ($h->cage->get->getAlpha('type') == 'search') {
+            $search_term = $h->cage->get->getMixedString2('search_value');
+            $h->vars['search_term'] = $search_term; // used to refill the search box after a search
+            if ($h->isActive('search')) {
                 if (strlen($search_term) < 3) {
-                    $this->hotaru->message = $this->lang["user_man_search_too_short"];
-                    $this->hotaru->messageType = 'red';
+                    $h->message = $h->lang["user_man_search_too_short"];
+                    $h->messageType = 'red';
                 } else {
-                    $s = new Search('post_manager', $this->hotaru);
-                    $s->prepareSearchFilter(stripslashes(trim($this->db->escape($search_term))));
-                    $filtered_search = $p->filter($this->hotaru->vars['filter'], 0, true, $this->hotaru->vars['select'], $this->hotaru->vars['orderby']);
-                    $posts = $p->getPosts($filtered_search);
+                    $s = new Search();
+                    $s->prepareSearchFilter($h, stripslashes(trim($h->db->escape($search_term))));
+                    $filtered_search = $p->filter($h, $h->vars['filter'], 0, true, $h->vars['select'], $h->vars['orderby']);
+                    $posts = $p->getPosts($h, $filtered_search);
                 }
             } else {
-                $this->hotaru->message = $this->lang["post_man_need_search"];
-                $this->hotaru->messageType = 'red';
+                $h->message = $h->lang["post_man_need_search"];
+                $h->messageType = 'red';
             }
         }
         
         
         // if filter
-        if ($this->cage->get->getAlpha('type') == 'filter') {
-            $filter = $this->cage->get->testAlnumLines('post_status_filter');
-            $this->hotaru->vars['post_status_filter'] = $filter;  // used to refill the filter box after use
+        $filter = '';
+        if ($h->cage->get->getAlpha('type') == 'filter') {
+            $filter = $h->cage->get->testAlnumLines('post_status_filter');
+            $h->vars['post_status_filter'] = $filter;  // used to refill the filter box after use
             switch ($filter) {
                 case 'all': 
                     $sort_clause = ' ORDER BY post_date DESC'; // ordered newest first for convenience
                     $sql = "SELECT * FROM " . TABLE_POSTS . $sort_clause;
-                    $filtered_results = $this->db->get_results($this->db->prepare($sql)); 
+                    $filtered_results = $h->db->get_results($h->db->prepare($sql)); 
                     break;
                 case 'not_buried': 
                     $where_clause = " WHERE post_status != %s"; 
                     $sort_clause = ' ORDER BY post_date DESC'; // ordered newest first for convenience
                     $sql = "SELECT * FROM " . TABLE_POSTS . $where_clause . $sort_clause;
-                    $filtered_results = $this->db->get_results($this->db->prepare($sql, 'buried')); 
+                    $filtered_results = $h->db->get_results($h->db->prepare($sql, 'buried')); 
                     break;
                 case 'newest':
                     $sort_clause = ' ORDER BY post_date DESC';  // same as "all"
                     $sql = "SELECT * FROM " . TABLE_POSTS . $sort_clause;
-                    $filtered_results = $this->db->get_results($this->db->prepare($sql)); 
+                    $filtered_results = $h->db->get_results($h->db->prepare($sql)); 
                     break;
                 case 'oldest':
                     $sort_clause = ' ORDER BY post_date ASC';
                     $sql = "SELECT * FROM " . TABLE_POSTS . $sort_clause;
-                    $filtered_results = $this->db->get_results($this->db->prepare($sql)); 
+                    $filtered_results = $h->db->get_results($h->db->prepare($sql)); 
                     break;
                 default:
                     $where_clause = " WHERE post_status = %s"; $sort_clause = ' ORDER BY post_date DESC'; // ordered newest first for convenience
                     $sql = "SELECT * FROM " . TABLE_POSTS . $where_clause . $sort_clause;
-                    $filtered_results = $this->db->get_results($this->db->prepare($sql, $filter)); // filter = new, top, or other post status
+                    $filtered_results = $h->db->get_results($h->db->prepare($sql, $filter)); // filter = new, top, or other post status
                     break;
             }
 
@@ -155,61 +157,49 @@ class PostManagerSettings extends PostManager
 
         if(!isset($posts)) {
             // default list
-            if ($this->hotaru->vars['post_status_filter'] == 'pending') {
+            if ($h->vars['post_status_filter'] == 'pending') {
                 $where_clause = " WHERE post_status = %s";
                 $sort_clause = ' ORDER BY post_date DESC'; // ordered newest first for convenience
                 $sql = "SELECT * FROM " . TABLE_POSTS . $where_clause . $sort_clause;
-                $posts = $this->db->get_results($this->db->prepare($sql, 'pending')); 
+                $posts = $h->db->get_results($h->db->prepare($sql, 'pending')); 
             } else {
                 $sort_clause = ' ORDER BY post_date DESC'; // ordered newest first for convenience
                 $sql = "SELECT * FROM " . TABLE_POSTS . $sort_clause;
-                $posts = $this->db->get_results($this->db->prepare($sql)); 
+                $posts = $h->db->get_results($h->db->prepare($sql)); 
             }
         }
         
         if ($posts) { 
-            $this->hotaru->vars['post_man_rows'] = $this->drawRows($p, $posts, $filter, $search_term);
-        } elseif ($this->hotaru->vars['post_status_filter'] == 'pending') {
-            $this->hotaru->message = $this->lang['post_man_no_pending_posts'];
-            $this->hotaru->messageType = 'green';
+            $h->vars['post_man_rows'] = $this->drawRows($h, $p, $posts, $filter, $search_term);
+        } elseif ($h->vars['post_status_filter'] == 'pending') {
+            $h->message = $h->lang['post_man_no_pending_posts'];
+            $h->messageType = 'green';
         }
         
         // Show template:
-        $this->hotaru->displayTemplate('post_man_main', 'post_manager');
+        $h->displayTemplate('post_man_main', 'post_manager');
     }
     
     
-    public function drawRows($p, $posts, $filter = '', $search_term = '')
+    public function drawRows($h, $p, $posts, $filter = '', $search_term = '')
     {
         // prepare for showing posts, 20 per page
-        $pg = $this->cage->get->getInt('pg');
+        $pg = $h->cage->get->getInt('pg');
         $items = 20;
         
-        require_once(EXTENSIONS . 'Paginated/Paginated.php');
-        require_once(EXTENSIONS . 'Paginated/DoubleBarLayout.php');
-        $pagedResults = new Paginated($posts, $items, $pg);
+        $pagedResults = $h->pagination($posts, $items, $pg);
         
         $output = "";
         $alt = 0;
         while($post = $pagedResults->fetchPagedRow()) {    //when $story is false loop terminates    
             $alt++;
             
-            // We need user for the post author's name:
-            $user = new UserBase($this->hotaru);
-            $user->getUserBasic($post->post_author);
-            
-            // If the Category class is available we can show the post's category name instead of just the id
-            if (file_exists(PLUGINS . 'categories/libs/Category.php')) {
-                include_once(PLUGINS . 'categories/libs/Category.php');
-                $cat = new Category($this->db);
-                $category = stripslashes($cat->getCatName($post->post_category)); // shows cat name
-            } else {
-                $category = $post->post_category;   // shows cat id
-            }
+            $username = $h->getUserNameFromId($post->post_author);
+            $category = $h->getCatName($post->post_category); // shows cat name
 
             // need to read the post into the Post object and store it in Hotaru (the url function needs it for friendly urls).
-            $p->readPost(0, $post);
-            $this->hotaru->post = $p;
+            $p->readPost($h, 0, $post);
+            $h->post = $p;
 
             $edit_link = BASEURL . "index.php?from=post_man&amp;page=edit_post&amp;post_id=" . $post->post_id; 
             if ($filter) { $edit_link .= "&amp;post_status_filter=" . $filter; }
@@ -220,7 +210,7 @@ class PostManagerSettings extends PostManager
             $output .= "<td class='pm_id'>" . $post->post_id . "</td>\n";
             $output .= "<td class='pm_status'>" . $post->post_status . "</td>\n";
             $output .= "<td class='pm_date'>" . date('d M y', strtotime($post->post_date)) . "</a></td>\n";
-            $output .= "<td class='pm_title'><a class='table_drop_down' href='#' title='" . $this->lang["post_man_show_content"] . "'>";
+            $output .= "<td class='pm_title'><a class='table_drop_down' href='#' title='" . $h->lang["post_man_show_content"] . "'>";
             $output .= stripslashes(urldecode($post->post_title)) . "</a></td>\n";
             $output .= "<td class='pm_edit'>" . "<a href='" . $edit_link . "'>\n";
             $output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/edit.png'>" . "</a></td>\n";
@@ -229,21 +219,20 @@ class PostManagerSettings extends PostManager
             
             $output .= "<tr class='table_tr_details' style='display:none;'>\n";
             $output .= "<td colspan=6 class='table_description pm_description'>\n";
-            $output .= "<a class='table_hide_details' style='float: right;' href='#'>[" . $this->lang["admin_theme_plugins_close"] . "]</a>";
+            $output .= "<a class='table_hide_details' style='float: right;' href='#'>[" . $h->lang["admin_theme_plugins_close"] . "]</a>";
             $output .= "<b>" . stripslashes(urldecode($post->post_title)) . "</b><br />\n";
-            $output .= "<i>" . $this->lang["post_man_posted"] ."</i> " .  date('d M Y H:i:s', strtotime($post->post_date)) . "<br />\n";
-            $output .= "<i>" . $this->lang["post_man_author"] ."</i> " . $user->name . " (id:" .  $post->post_author . ")<br />\n";
-            $output .= "<p><i>" . $this->lang["post_man_content"] ."</i> " . stripslashes(urldecode($post->post_content)) . "</p> \n";
-            $output .= "<i>" . $this->lang["post_man_category"] ."</i> " . $category . "<br /> \n";   // we got $category above
-            $output .= "<i>" . $this->lang["post_man_tags"] ."</i> " . (urldecode($post->post_tags)) . "<br /> \n";
-            $output .= "<i>" . $this->lang["post_man_urls"] ."</i> <a href='" . $this->hotaru->url(array('page'=>$post->post_id)) . "'>" . SITE_NAME . " " . $this->lang["post_man_post"] ."</a> | \n";
-            $output .= "<a href='" . urldecode($post->post_orig_url) . "'>" . $this->lang["post_man_original_post"] ."</a><br />\n";
+            $output .= "<i>" . $h->lang["post_man_posted"] ."</i> " .  date('d M Y H:i:s', strtotime($post->post_date)) . "<br />\n";
+            $output .= "<i>" . $h->lang["post_man_author"] ."</i> " . $username . " (id:" .  $post->post_author . ")<br />\n";
+            $output .= "<p><i>" . $h->lang["post_man_content"] ."</i> " . stripslashes(urldecode($post->post_content)) . "</p> \n";
+            $output .= "<i>" . $h->lang["post_man_category"] ."</i> " . $category . "<br /> \n";   // we got $category above
+            $output .= "<i>" . $h->lang["post_man_tags"] ."</i> " . (urldecode($post->post_tags)) . "<br /> \n";
+            $output .= "<i>" . $h->lang["post_man_urls"] ."</i> <a href='" . $h->url(array('page'=>$post->post_id)) . "'>" . SITE_NAME . " " . $h->lang["post_man_post"] ."</a> | \n";
+            $output .= "<a href='" . urldecode($post->post_orig_url) . "'>" . $h->lang["post_man_original_post"] ."</a><br />\n";
             $output .= "</td></tr>";
         }
         
         if ($pagedResults) {
-            $pagedResults->setLayout(new DoubleBarLayout());
-            $this->hotaru->vars['post_man_navi'] = $pagedResults->fetchPagedNavigation('', $this->hotaru);
+            $h->vars['post_man_navi'] = $h->pageBar($pagedResults);
         }
         
         return $output;

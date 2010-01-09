@@ -36,7 +36,5 @@ $lang['tweet_this_settings_bitly'] = "bit.ly";
 $lang['tweet_this_settings_bitly_login'] = "bit.ly login";
 $lang['tweet_this_settings_bitly_api_key'] = "bit.ly API key";
 $lang['tweet_this_settings_error'] = "You must enter your bitly login and API key to use bitly";
-$lang['tweet_this_settings_save'] = "Save";
-$lang['tweet_this_settings_saved'] = "Settings saved";
 
 ?>

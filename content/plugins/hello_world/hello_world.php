@@ -2,12 +2,14 @@
 /**
  * name: Hello World
  * description: Displays "Hello World!"
- * version: 0.4
+ * version: 0.5
  * folder: hello_world
  * class: HelloWorld
  * hooks: hello_world
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
- * Usage: Add <?php $hotaru->plugins->pluginHook('hello_world'); ?> to your theme, wherever you want to show "Hello World".
+ * Usage: Add <?php $h->pluginHook('hello_world'); ?> to your theme, wherever you want to show "Hello World".
 *
  * PHP version 5
  *
@@ -31,7 +33,7 @@
  * @link      http://www.hotarucms.org/
  */
 
-class HelloWorld extends PluginFunctions
+class HelloWorld
 {
     /**
      * Displays "Hello World!" wherever the plugin hook is.

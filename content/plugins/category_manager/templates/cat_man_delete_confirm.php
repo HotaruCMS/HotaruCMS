@@ -27,25 +27,26 @@
 
 ?>
  
-    <h2><?php echo $hotaru->lang["cat_man_delete"]; ?></h2>
+    <h2><?php echo $h->lang["cat_man_delete"]; ?></h2>
 
     <table class="cat_man_table">
     <tr><td class="cat_man_body">
         <form name='category_manager_delete_confirm_form' action='<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=delete_confirm' method='post'>
-        <?php echo $hotaru->lang["cat_man_delete_following"]; ?><br /><br />
+        <?php echo $h->lang["cat_man_delete_following"]; ?><br /><br />
         <?php
         $counter = 0; 
-        foreach ($hotaru->vars['delete_list'] as $del) {
+        foreach ($h->vars['delete_list'] as $del) {
             echo "<input type='hidden' name='delete_list[" . $counter . "]' value='" . $del['del_id'] . "'>";
             echo $del['del_name'] . " <span style='font-size: 0.8em; color: #888;'>(" . $del['del_id'] . ")</span><br />";
             $counter++;
         }
         ?>
         <br />
-        <h3><?php echo $hotaru->lang["cat_man_delete_are_you_sure"]; ?></h3>
+        <h3><?php echo $h->lang["cat_man_delete_are_you_sure"]; ?></h3>
         <div style="float: right;">
-            <input style='padding: 2px;' type='submit' name='delete_confirm_no' value='<?php echo $hotaru->lang["cat_man_delete_no_cancel"]; ?>'>&nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='delete_confirm_yes' value='<?php echo $hotaru->lang["cat_man_delete_yes_delete"]; ?>'>
+            <input style='padding: 2px;' type='submit' name='delete_confirm_no' value='<?php echo $h->lang["cat_man_delete_no_cancel"]; ?>'>&nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='delete_confirm_yes' value='<?php echo $h->lang["cat_man_delete_yes_delete"]; ?>'>
         </div>
+        <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
         </form>
     </td>
     </tr></table>

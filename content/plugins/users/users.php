@@ -1,11 +1,14 @@
 <?php
 /**
  * name: Users
- * description: Manages users within Hotaru.
- * version: 1.0
+ * description: Provides profile, settings and permission pages
+ * version: 1.1
  * folder: users
+ * type: users
  * class: Users
- * hooks: hotaru_header, submit_hotaru_header_2, header_include, admin_header_include_raw, install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, navigation_first, navigation_users, theme_index_replace, theme_index_main, post_list_filter, submit_post_breadcrumbs, submit_pre_list, users_edit_profile_save, user_settings_save, admin_theme_main_stats
+ * hooks: pagehandling_getpagename, theme_index_top, header_include, sb_base_functions_preparelist, breadcrumbs, theme_index_post_breadcrumbs, theme_index_main, users_edit_profile_save, user_settings_save, admin_theme_main_stats
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *
@@ -28,951 +31,318 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
- 
-return false; die(); // die on direct access.
 
-class Users extends PluginFunctions
+class Users
 {
     /**
-     * Create a "usermeta" table when on installation, if it doesn't already exist
+     * Check if we're looking at a user page
      */
-    public function install_plugin()
+    public function pagehandling_getpagename($h, $query_vars)
     {
-        // Create a new empty table called "usermeta"
-        $exists = $this->db->table_exists('usermeta');
-        if (!$exists) {
-            //echo "table doesn't exist. Stopping before creation."; exit;
-            $sql = "CREATE TABLE `" . DB_PREFIX . "usermeta` (
-              `usermeta_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-              `usermeta_userid` int(20) NOT NULL DEFAULT 0,
-              `usermeta_key` varchar(255) NULL,
-              `usermeta_value` text NULL,
-              `usermeta_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-              `usermeta_updateby` int(20) NOT NULL DEFAULT 0, 
-              INDEX  (`usermeta_userid`)
-            ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='User Meta';";
-            $this->db->query($sql); 
-        }
-        
-        // Create a new empty table called "useractivity"
-        $exists = $this->db->table_exists('useractivity');
-        if (!$exists) {
-            //echo "table doesn't exist. Stopping before creation."; exit;
-            $sql = "CREATE TABLE `" . DB_PREFIX . "useractivity` (
-              `useract_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-              `useract_archived` enum('Y','N') NOT NULL DEFAULT 'N',
-              `useract_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-              `useract_userid` int(20) NOT NULL DEFAULT 0,
-              `useract_status` varchar(32) NOT NULL DEFAULT 'show',
-              `useract_key` varchar(255) NULL,
-              `useract_value` text NULL,
-              `useract_key2` varchar(255) NULL,
-              `useract_value2` text NULL,
-              `useract_date` timestamp NOT NULL,
-              `useract_updateby` int(20) NOT NULL DEFAULT 0, 
-              INDEX  (`useract_userid`)
-            ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='User Activity';";
-            $this->db->query($sql); 
-        }
-        
-        // Permissions
-        $site_perms = $this->current_user->getDefaultPermissions('all');
-        if (!isset($site_perms['can_login'])) { 
-            $perms['options']['can_login'] = array('yes', 'no'); 
-            $perms['can_login']['admin'] = 'yes';
-            $perms['can_login']['supermod'] = 'yes';
-            $perms['can_login']['moderator'] = 'yes';
-            $perms['can_login']['member'] = 'yes';
-            $perms['can_login']['undermod'] = 'yes';
-            $perms['can_login']['default'] = 'no';
-        }
-        $this->current_user->updateDefaultPermissions($perms);
-
-        // Plugin settings
-        $users_settings = $this->getSerializedSettings();
-        if (!isset($users_settings['users_recaptcha_enabled'])) { $users_settings['users_recaptcha_enabled'] = ""; }
-        if (!isset($users_settings['users_recaptcha_pubkey'])) { $users_settings['users_recaptcha_pubkey'] = ""; }
-        if (!isset($users_settings['users_recaptcha_privkey'])) { $users_settings['users_recaptcha_privkey'] = ""; }
-        if (!isset($users_settings['users_emailconf_enabled'])) { $users_settings['users_emailconf_enabled'] = ""; }
-        if (!isset($users_settings['users_registration_status'])) { $users_settings['users_registration_status'] = "member"; }
-        if (!isset($users_settings['users_email_notify'])) { $users_settings['users_email_notify'] = ""; }
-        if (!isset($users_settings['users_email_notify_mods'])) { $users_settings['users_email_notify_mods'] = array(); }
-        
-        $this->updateSetting('users_settings', serialize($users_settings));
-        
-        // Include language file. Also included in hotaru_header, but needed here  
-        // to prevent errors immediately after installation.
-        $this->includeLanguage();    
-    }
-    
-    
-    /**
-     * Define a constant "TABLE_USERMETA" constant for referring to the db table
-     */
-    public function hotaru_header() {
-        if (!defined('TABLE_USERMETA')) { define("TABLE_USERMETA", DB_PREFIX . 'usermeta'); }
-        if (!defined('TABLE_USERACTIVITY')) { define("TABLE_USERACTIVITY", DB_PREFIX . 'useractivity'); }
-        
-        // include language file
-        $this->includeLanguage();
-    }
-    
-
-    /**
-     * Set the pageType. Done here so it doesn't get overriden during Submit's hotaru_header function
-     */
-    public function submit_hotaru_header_2()
-    {
-        // Under these conditions, we're looking at a user page - i.e. user posts filtered to popular, latest, etc.
-        if ($username = $this->cage->get->testUsername('user')) {
-            $this->hotaru->title = $username;
-            $this->hotaru->pageType = 'user';
-        }
-        
-        // Under these conditions, we're looking at the user's main page - the profile.
-        if ($this->hotaru->isPage('main') && $this->cage->get->keyExists('user') && !$this->cage->get->keyExists('sort')) {
-            $this->hotaru->pageType = 'profile';
-        }
-        
-        require_once(PLUGINS . 'users/libs/UserFunctions.php');
-        $uf = new UserFunctions($this->hotaru);
-        $this->current_user->vars['settings'] = $uf->getProfileSettingsData('user_settings', $this->current_user->id);
-    }
-
-    
-    /**
-     * Add the account link at the front of the navigation bar
-     */
-    public function navigation_first()
-    {
-        if (!$this->current_user->loggedIn) { return false; }
-            
-        if ($this->hotaru->title == 'account') { $status = "id='navigation_active'"; } else { $status = ""; }
-        echo "<li>";
-        echo "<a class='users_navigation_name' " . $status . " href='" . $this->hotaru->url(array('page'=>'account')) . "' ";
-        echo "title='" . $this->lang["users_account"] . "'>";
-        $this->pluginHook('users_pre_navigation_first'); // gravatar
-        echo $this->current_user->name . "</a></li>\n";
-    }
-    
-    
-    /**
-     * Add links to the end of the navigation bar
-     */
-    public function navigation_users()
-    {
-        if ($this->current_user->loggedIn) {
-            
-            if ($this->hotaru->title == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
-            echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'logout')) . "'>" . $this->lang["users_logout"] . "</a></li>\n";
-            
-            if ($this->current_user->getPermission('can_access_admin') == 'yes') {
-                
-                if ($this->hotaru->title == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
-                echo "<li><a  " . $status . " href='" . $this->hotaru->url(array(), 'admin') . "'>" . $this->lang["users_admin"] . "</a></li>\n";
-            }
-        } else {    
-            
-            // Allow other plugins to override the Login / Register links
-            $result = $this->hotaru->plugins->pluginHook('users_navigation_logged_out');
-            if (!isset($result) || !is_array($result))
-            { 
-                // No plugin results, show the regular Login / Register links:
-                if ($this->hotaru->title == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
-                echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'login')) . "'>" . $this->lang["users_login"] . "</a></li>\n";
-                
-                if ($this->hotaru->title == 'register') { $status = "id='navigation_active'"; } else { $status = ""; }
-                echo "<li><a  " . $status . " href='" . $this->hotaru->url(array('page'=>'register')) . "'>" . $this->lang["users_register"] . "</a></li>\n";
-            }
+        // we already know that there's no "page" parameter, so...
+        if ($h->cage->get->keyExists('user')) {
+            return 'profile'; // sets $h->pageName to "profile"
         }
     }
     
     
     /**
-     * This function does work *before* output is sent to the page.
-     *
-     * @return false
+     * Determine what page we're looking at
      */
-    public function theme_index_replace()
+    public function theme_index_top($h)
     {
-        // send_email_confirmation set to true in "is_page('register')" if email confirmation is enabled
-        $this->hotaru->vars['send_email_confirmation'] = false; 
-        
-        // Pages you have to be logged in for...
-        if ($this->current_user->loggedIn) {
-            if ($this->hotaru->isPage('logout')) {
-                $this->current_user->destroyCookieAndSession();
-                header("Location: " . BASEURL);
-            } 
-            elseif ($this->hotaru->isPage('account')) 
-            {
-                if ($user = $this->cage->get->testUsername('user')) {
-                    $this->hotaru->vars['userid'] = $this->current_user->getUserIdFromName($user);
-                } else {
-                    $this->hotaru->vars['userid'] = $this->cage->post->testInt('userid');
-                }
-                
-                // if userid is blank, assume current user's id.
-                if (!$this->hotaru->vars['userid']) { $this->hotaru->vars['userid'] = $this->current_user->id; }
-
-                $this->hotaru->vars['checks'] = $this->current_user->updateAccount($this->hotaru->vars['userid']);
-            } 
-                    
-        // Pages you have to be logged out for...
-        } else {
-            if ($this->hotaru->isPage('register')) {
-            
-                $users_settings = $this->getSerializedSettings();
-                $this->current_user->vars['useRecaptcha'] = $users_settings['users_recaptcha_enabled'];
-                $this->current_user->vars['useEmailConf'] = $users_settings['users_emailconf_enabled'];
-                $this->current_user->vars['regStatus'] = $users_settings['users_registration_status'];
-                $this->current_user->vars['useEmailNotify'] = $users_settings['users_email_notify'];
-
-                $userid = $this->register();
-                if ($userid) { 
-                    // success!
-                    if ($this->current_user->vars['useEmailConf']) {
-                        $this->hotaru->vars['send_email_confirmation'] = true;
-                        $this->sendConfirmationEmail($userid);
-                        // fall through and display "email sent" message
-                    } else {
-                        // redirect to login page
-                        header("Location: " . BASEURL . "index.php?page=login");
-                    }
-                }
-            } elseif ($this->hotaru->isPage('login')) {
-                if ($this->login()) { 
-                    // success, return to front page, logged IN.
-                    header("Location: " . BASEURL);
-                } 
-            }     
-        }
-        return false;
-    }
-    
-    
-    /**
-     * Display the main user profile page.
-     *
-     * @return bool
-     */
-    public function submit_pre_list()
-    {
-        if ($this->hotaru->pageType == 'profile') {
-            $this->hotaru->user = new UserBase($this->hotaru);
-            $this->hotaru->user->getUserBasic(0, $this->cage->get->testUsername('user'));
-            
-            require_once(PLUGINS . 'users/libs/UserFunctions.php');
-            $uf = new UserFunctions($this->hotaru);
-            $this->hotaru->vars['profile'] = $uf->getProfileSettingsData('user_profile', $this->hotaru->user->id);
-            
-            $this->hotaru->displayTemplate('profile', 'users');
-        }
-    }
-    
-    
-    /**
-     * Display various forms within the body of the page.
-     *
-     * @return bool
-     */
-    public function theme_index_main()
-    {
-        // Pages you have to be logged in for...
-        if ($this->current_user->loggedIn) {
-            if ($this->hotaru->isPage('account')) {
-                // Note: the "account" template calls the functions it needs 
-                // from the UserBase class.
-                extract($this->hotaru->vars['checks']);
-                if (($role_check == 'admin') && ($this->current_user->role != 'admin')) {
-                    $this->hotaru->messages[$this->lang["users_account_admin_admin"]] = 'red';
-                    $this->hotaru->showMessages();
-                } else {
-                    $this->hotaru->displayTemplate('account', 'users');
-                }
-                return true;
-            } elseif ($this->hotaru->isPage('permissions')) {
-                if ($this->current_user->getPermission('can_access_admin') == 'yes') { 
-                    $this->editPermissions();
-                } else {
-                    $this->hotaru->messages[$this->lang["access_denied"]] = 'red';
-                    $this->hotaru->showMessages();
-                }
-                return true;
-            } elseif ($this->hotaru->isPage('edit-profile')) {
-                $this->hotaru->vars['username'] = $this->cage->get->testUsername('user');
-                if (($this->current_user->name == $this->hotaru->vars['username'])
-                    || ($this->current_user->getPermission('can_access_admin') == 'yes')) { 
-                    require_once(PLUGINS . 'users/libs/UserFunctions.php');
-                    $uf = new UserFunctions($this->hotaru);
-                    $userid = $this->current_user->getUserIdFromName($this->hotaru->vars['username']);
-                    $this->hotaru->vars['profile'] = $uf->getProfileSettingsData('user_profile', $userid);
-                    $this->hotaru->displayTemplate('edit_profile', 'users');
-                } else {
-                    $this->hotaru->messages[$this->lang["access_denied"]] = 'red';
-                    $this->hotaru->showMessages();
-                }
-                return true;
-            } elseif ($this->hotaru->isPage('user-settings')) {
-                $this->hotaru->vars['username'] = $this->cage->get->testUsername('user');
-                if (($this->current_user->name == $this->hotaru->vars['username'])
-                    || ($this->current_user->getPermission('can_access_admin') == 'yes')) {
-                    require_once(PLUGINS . 'users/libs/UserFunctions.php');
-                    $uf = new UserFunctions($this->hotaru);
-                    $userid = $this->current_user->getUserIdFromName($this->hotaru->vars['username']);
-                    $this->hotaru->vars['settings'] = $uf->getProfileSettingsData('user_settings', $userid);
-                    $this->hotaru->displayTemplate('user_settings', 'users');
-                } else {
-                    $this->hotaru->messages[$this->lang["access_denied"]] = 'red';
-                    $this->hotaru->showMessages();
-                }
-                return true;
-            } else {
-                return false;
-            }
-            
-        // Pages you have to be logged out for...
-        } else {
-            if ($this->hotaru->isPage('register')) {
-                if ($this->hotaru->vars['send_email_confirmation']) {
-                    $this->hotaru->messages[$this->lang['users_register_emailconf_sent']] = 'green';
-                    $this->hotaru->showMessages();
-                    return true;
-                }
-                $result = $this->pluginHook('users_register_pre_display_register_form');
-                if (!isset($result) || !is_array($result)) {
-                    // show this form if not overridden by a plugin
-                    $this->hotaru->displayTemplate('register', 'users');
-                }
-                return true;    
-            } elseif ($this->hotaru->isPage('login')) {
-                $this->hotaru->displayTemplate('login', 'users');
-                return true;
-            } elseif ($this->hotaru->isPage('emailconf')) {
-                $users_settings = $this->getSerializedSettings();
-                $this->current_user->vars['useEmailNotify'] = $users_settings['users_email_notify'];
-                $this->current_user->vars['regStatus'] = $users_settings['users_registration_status'];
-                $this->checkEmailConfirmation();
-                $this->hotaru->showMessages();
-                return true;
-            } 
+        if ($h->cage->get->keyExists('user')) {
+            $h->subPage = 'user';
         }
         
-        
-        if (!$this->current_user->loggedIn) {
-            if (
-                $this->hotaru->isPage('edit-profile') || 
-                $this->hotaru->isPage('account') ||
-                $this->hotaru->isPage('permissions') || 
-                $this->hotaru->isPage('user-settings')
-                ) 
-            {
-                $this->hotaru->message = $this->lang['users_please_log_in'];
-                $this->hotaru->messageType = "red";
-                $this->hotaru->showMessage();
-                return false;
-            }
-        }
-        
-        return false;
-    }
-    
-    
-    /**
-     * Filter and breadcrumbs for users
-     *
-     * @return bool
-     */
-    public function post_list_filter() 
-    {
-        if ($this->cage->get->keyExists('user')) 
+        switch ($h->pageName)
         {
-            $username = $this->cage->get->testUsername('user');
-            $this->hotaru->vars['filter']['post_author = %d'] = $this->current_user->getUserIdFromName($username); 
-            $rss = " <a href='" . $this->hotaru->url(array('page'=>'rss', 'user'=>$username)) . "'>";
-            $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
-            
-            $this->hotaru->vars['page_title'] = $this->lang["post_breadcrumbs_user"] . " &raquo; ";
-            $this->hotaru->vars['page_title'] .= "<a href='" . $this->hotaru->url(array('user'=>$username)) . "'>";
-            $this->hotaru->vars['page_title'] .= $username . "</a>";
-            $this->hotaru->vars['page_title'] .= $rss;
-            
-            //$this->hotaru->pageType = 'user'; - this was changing "profile" to "user" so for now it's commented out.
-            
-            return true;    
+            case 'profile':
+                $user = $h->cage->get->testUsername('user');
+                $h->pageTitle = $h->lang["users_profile"] . '[delimiter]' . $user;
+                $h->pageType = 'user';
+                break;
+            case 'account':
+                $user = $h->cage->get->testUsername('user');
+                $h->pageTitle = $h->lang["users_account"] . '[delimiter]' . $user;
+                $h->pageType = 'user';
+                break;
+            case 'edit-profile':
+                $user = $h->cage->get->testUsername('user');
+                $h->pageTitle = $h->lang["users_profile_edit"] . '[delimiter]' . $user;
+                $h->pageType = 'user';
+                break;
+            case 'user-settings':
+                $user = $h->cage->get->testUsername('user');
+                $h->pageTitle = $h->lang["users_settings"] . '[delimiter]' . $user;
+                $h->pageType = 'user';
+                break;
+            case 'permissions':
+                $user = $h->cage->get->testUsername('user');
+                $h->pageTitle = $h->lang["users_permissions"] . '[delimiter]' . $user;
+                $h->pageType = 'user';
+                break;
         }
         
-        return false;    
-    }
-    
-    
-     /**
-     * User Login
-     *
-     * @return bool
-     */
-    public function login()
-    {
-        $current_user = new UserBase($this->hotaru);
+        // read this user into the global hotaru object for later use on this page
+        if ($h->pageType != 'user') { return false; }
         
-        if (!$username_check = $this->cage->post->testUsername('username')) { $username_check = ""; } 
-        if (!$password_check = $this->cage->post->testPassword('password')) { $password_check = ""; }
-        if ($this->cage->post->getInt('remember') == 1) { $remember = 1; } else { $remember = 0; }
-        
-        if ($username_check != "" || $password_check != "") {
-            $login_result = $this->current_user->loginCheck($username_check, $password_check);
-            if ($login_result) {
-                    //success
-                    $this->current_user->name = $username_check;
-                    $result = $this->loginSuccess($remember);
-                    return $result;
-            } else {
-                    // login failed
-                    $this->hotaru->messages[$this->lang["users_login_failed"]] = 'red';
-            }
-            
+        $h->vars['user'] = new UserAuth();
+        if ($user) {
+            $result = $h->vars['user']->getUserBasic($h, 0, $user);
         } else {
-        
-            // forgotten password request
-            if ($this->cage->post->keyExists('forgotten_password')) {
-                $this->password();
-            }
-            
-            // confirming forgotten password email
-            $passconf = $this->cage->get->getAlnum('passconf');
-            $userid = $this->cage->get->testInt('userid');
-            
-            if ($passconf && $userid) {
-                if ($this->current_user->newRandomPassword($userid, $passconf)) {
-                    $this->hotaru->messages[$this->lang['users_email_password_conf_success']] = 'green';
-                } else {
-                    $this->hotaru->messages[$this->lang['users_email_password_conf_fail']] = 'red';
-                }
-            }
+            // when the account page has been submitted (get id in case username has changed)
+            $userid = $h->cage->post->testInt('userid');
+            if ($userid) { $result = $h->vars['user']->getUserBasic($h, $userid); }
         }
-        return false;
+        
+        if (isset($result)) {
+            $h->vars['profile'] = $h->vars['user']->getProfileSettingsData($h, 'user_profile');
+            $h->vars['settings'] = $h->vars['user']->getProfileSettingsData($h, 'user_settings');
+        } else {
+            $h->pageTitle = $h->lang["main_theme_page_not_found"];
+            $h->pageType = '';
+            $h->vars['user'] = false;
+        }
+        
+        /* check for account updates */
+        if ($h->pageName == 'account') {
+            $h->vars['checks'] = $h->vars['user']->updateAccount($h);
+            $h->vars['user']->name = $h->vars['checks']['username_check'];
+            $h->pageTitle = $h->lang["users_account"] . '[delimiter]' . $h->vars['user']->name;
+            $h->pageType = 'user';
+        }
     }
     
-
-     /**
-     * Login Success
-     *
-     * @return bool
+    /**
+     * Filter posts to this user
      */
-    public function loginSuccess($remember = 0)
+    public function sb_base_functions_preparelist($h)
     {
-        $this->current_user->getUserBasic(0, $this->current_user->name);
-        
-        $users_settings = $this->getSerializedSettings();
-        $this->current_user->vars['useEmailConf'] = $users_settings['users_emailconf_enabled'];
-        
-        if ($this->current_user->vars['useEmailConf'] && ($this->current_user->emailValid == 0)) {
-            $this->sendConfirmationEmail($this->current_user->id);
-            $this->hotaru->messages[$this->lang["users_login_failed_email_not_validated"]] = 'red';
-            $this->hotaru->messages[$this->lang["users_login_failed_email_request_sent"]] = 'green';
-            return false;
+        $username = $h->cage->get->testUsername('user');
+        if ($username) {
+            $h->vars['filter']['post_author = %d'] = $h->getUserIdFromName($username); 
+        }
+    }
+    
+    
+    /**
+     * Replace the default breadcrumbs in specific circumstances
+     */
+    public function breadcrumbs($h)
+    {
+        if (isset($h->vars['user'])) {
+            $userlink = "<a href='" . $h->url(array('user'=>$h->vars['user']->name)) . "'>";
+            $userlink .= $h->vars['user']->name . "</a>";
         }
         
-        if ($this->current_user->getPermission('can_login') == 'no') {
-            if ($this->current_user->role == 'pending') {
-                $this->hotaru->messages[$this->lang["users_login_failed_not_approved"]] = 'red';
-            } else {
-                $this->hotaru->messages[$this->lang["users_login_failed_no_permission"]] = 'red';
-            }
-            return false;
+        // This is for user pages, e.g. account, edit profile, etc:
+        switch ($h->pageName)
+        {
+            case 'profile':
+                $crumbs = $userlink . ' &raquo; ' . $h->lang["users_profile"];
+                return $crumbs;
+                break;
+            case 'account':
+                $crumbs = $userlink . ' &raquo; ' . $h->lang["users_account"];
+                return $crumbs;
+                break;
+            case 'edit-profile':
+                $crumbs = $userlink . ' &raquo; ' . $h->lang["users_profile_edit"];
+                return $crumbs;
+                break;
+            case 'user-settings':
+                $crumbs = $userlink . ' &raquo; ' . $h->lang["users_settings"];
+                return $crumbs;
+                break;
+            case 'permissions':
+                $crumbs = $userlink . ' &raquo; ' . $h->lang["users_permissions"];
+                return $crumbs;
+                break;
         }
         
-        $this->current_user->setCookie($remember);
-        $this->current_user->loggedIn = true;
-        $this->current_user->updateUserLastLogin();
+        // This is used for filtered story pages, e.g. popular, latest, etc:
+        if ($h->subPage == 'user' && $h->pageType == 'list') {
+            $user = $h->cage->get->testUsername('user');
+            $crumbs = "<a href='" . $h->url(array('user'=>$user)) . "'>\n";
+            $crumbs .= $user . "</a>\n ";
+            $crumbs .= " &raquo; " . $h->pageTitle;
+            
+            return $crumbs . $h->rssBreadcrumbsLink('', array('user'=>$user));
+        }
+    }
+    
+    /**
+     * Display the user tabs
+     */
+    public function theme_index_post_breadcrumbs($h)
+    {
+        if ($h->pageType != 'user') { return false; }
         
+        $h->displayTemplate('users_tabs');
         return true;
     }
     
     
-     /**
-     * Password forgotten
-     * 
-     * @return bool
+    /**
+     * Display the right page
      */
-    public function password()
+    public function theme_index_main($h)
     {
-        // Check email
-        if (!$email_check = $this->cage->post->testEmail('email')) { 
-            $email_check = ''; 
-            // login failed
-            $this->hotaru->messages[$this->lang["users_email_invalid"]] = 'red';
-            return false;
-        } 
-                    
-        $valid_email = $this->current_user->validEmail($email_check);
-        $userid = $this->current_user->getUserIdFromEmail($valid_email);
+        if ($h->pageType != 'user') { return false; }
         
-        if ($valid_email && $userid) {
-                //success
-                $this->current_user->sendPasswordConf($userid, $valid_email);
-                $this->hotaru->messages[$this->lang['users_email_password_conf_sent']] = 'green';
+        // determine permissions
+        $admin = false; $own = false; $denied = false;
+        if ($h->currentUser->getPermission('can_access_admin') == 'yes') { $admin = true; }
+        if ($h->currentUser->id == $h->vars['user']->id) { $own = true; }
+        
+        switch($h->pageName) {
+            case 'profile':
+                $h->displayTemplate('users_profile');
                 return true;
-        } else {
-                // login failed
-                $this->hotaru->messages[$this->lang["users_email_invalid"]] = 'red';
-                return false;
+                break;
+            case 'account':
+                if (!$admin && !$own) { $denied = true; break; }
+                $h->displayTemplate('users_account');
+                return true;
+                break;
+            case 'edit-profile':
+                if (!$admin && !$own) { $denied = true; break; }
+                $h->displayTemplate('users_edit_profile');
+                return true;
+                break;
+            case 'user-settings':
+                if (!$admin && !$own) { $denied = true; break; }
+                $h->displayTemplate('users_settings');
+                return true;
+                break;
+            case 'permissions':
+                if (!$admin) { $denied = true; break; }
+                $this->editPermissions($h);
+                $h->displayTemplate('users_permissions');
+                return true;
+                break;
+        }
+        
+        if ($denied) {
+            $h->messages[$h->lang["main_access_denied"]] = 'red';
+            $h->showMessages();
         }
     }
     
-    
-     /**
-     * Register a new user
-     *
-     * @return false
-     */
-    public function register()
-    {
-        $current_user = new UserBase($this->hotaru);
-        
-        if ($this->current_user->vars['useRecaptcha']) {
-            require_once(PLUGINS . 'users/recaptcha/recaptchalib.php');
-        }
-        
-        $error = 0;
-        if ($this->cage->post->getAlpha('users_type') == 'register') {
-        
-            $username_check = $this->cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
-            if ($username_check) {
-                $this->current_user->name = $username_check;
-            } else {
-                $this->hotaru->messages[$this->lang['users_register_username_error']] = 'red';
-                $error = 1;
-            }
-                    
-            $password_check = $this->cage->post->testPassword('password');
-            $password2_check = $this->cage->post->testPassword('password2');
-            
-            // plugins like RPX can override the password values:
-            $result = $this->pluginHook('users_register_password_check');
-            if ($result) { 
-                reset($result); // make sure the array is ordered
-                $passwords = $result[key($result)]; // get the value from the first array position - should be an array
-                if (is_array($passwords)) {
-                    $password_check = $passwords['password'];
-                    $password2_check = $passwords['password2'];
-                }
-            }
-            
-            if ($password_check) {
-                if ($password_check == $password2_check) {
-                    // safe, the two new password fields match
-                    $this->current_user->password = $this->current_user->generateHash($password_check);
-                } else {
-                    $this->hotaru->messages[$this->lang['users_register_password_match_error']] = 'red';
-                    $error = 1;
-                }
-                
-            } else {
-                $this->hotaru->messages[$this->lang['users_register_password_error']] = 'red';
-                $error = 1;
-            }
-                        
-            $email_check = $this->cage->post->testEmail('email');    
-            if ($email_check) {
-                $this->current_user->email = $email_check;
-            } else {
-                $this->hotaru->messages[$this->lang['users_register_email_error']] = 'red';
-                $error = 1;
-            }
-        
-            if ($this->current_user->vars['useRecaptcha']) {
-                                        
-                $users_settings = $this->getSerializedSettings();
-                $recaptcha_pubkey = $users_settings['users_recaptcha_pubkey'];
-                $recaptcha_privkey = $users_settings['users_recaptcha_privkey'];
-                
-                $rc_resp = null;
-                $rc_error = null;
-                
-                // was there a reCAPTCHA response?
-                if ($this->cage->post->keyExists('recaptcha_response_field')) {
-                        $rc_resp = recaptcha_check_answer($recaptcha_privkey,
-                                                        $this->cage->server->getRaw('REMOTE_ADDR'),
-                                                        $this->cage->post->getRaw('recaptcha_challenge_field'),
-                                                        $this->cage->post->getRaw('recaptcha_response_field'));
-                                                        
-                        if ($rc_resp->is_valid) {
-                                // success, do nothing.
-                        } else {
-                                # set the error code so that we can display it
-                                $rc_error = $rc_resp->error;
-                                $this->hotaru->messages[$this->lang['users_register_recaptcha_error']] = 'red';
-                        $error = 1;
-                        }
-                } else {
-                    $this->hotaru->messages[$this->lang['users_register_recaptcha_empty']] = 'red';
-                        $error = 1;
-                }
-            }
-            
-            // let plugins run their own registration checks:
-            $this->hotau->vars['reg_error'] = $error;
-            $this->pluginHook('users_register_error_check');
-            $error = $this->hotau->vars['reg_error'];
-        }    
-        
-        if (!isset($username_check) && !isset($password_check) && !isset($password2_check) && !isset($email_check)) {
-            $username_check = "";
-            $password_check = "";
-            $password2_check = "";
-            $email_check = "";
-            // do nothing
-        } elseif ($error == 0) {
-            $blocked = $this->checkBlocked($username_check, $email_check); // true if blocked, false if safe
-            $result = $this->current_user->userExists(0, $username_check, $email_check);
-            if (!$blocked && $result == 4) {
-                
-                // SUCCESS!!!
-                $this->current_user->role = $this->current_user->vars['regStatus'];
-                $this->pluginHook('users_register_pre_add_user');
-                if ($this->current_user->vars['useEmailConf']) { $this->current_user->role = 'pending'; }
-                $this->current_user->addUserBasic();
-                $last_insert_id = $this->db->get_var($this->db->prepare("SELECT LAST_INSERT_ID()"));
-                
-                $this->pluginHook('users_register_post_add_user', true, '', array($last_insert_id));
-                
-                // notify chosen mods of new user by email IF email confirmation is DISABLED:
-                // If email confirmation is ENABLED, the email gets sent in checkEmailConfirmation().
-                if (($this->current_user->vars['useEmailNotify']) && (!$this->current_user->vars['useEmailConf']))
-                {
-                    require_once(PLUGINS . 'users/libs/UserFunctions.php');
-                    $uf = new UserFunctions($this->hotaru);
-                    $uf->notifyMods('user', $this->current_user->role);
-                }
-        
-                return $last_insert_id; // so we can retrieve this user's details for the email confirmation step;
-            } elseif ($result == 0) {
-                $this->hotaru->messages[$this->lang['users_register_id_exists']] = 'red';
-    
-            } elseif ($result == 1) {
-                $this->hotaru->messages[$this->lang['users_register_username_exists']] = 'red';
-    
-            } elseif ($result == 2) {
-                $this->hotaru->messages[$this->lang['users_register_email_exists']] = 'red';
-            } elseif ($blocked) {
-                $this->hotaru->messages[$this->lang['users_register_user_blocked']] = 'red';
-            } else {
-                // allow plugin to override the default "unexpected error" message:
-                $result = $this->pluginHook('users_register_error_message');
-                if (!isset($result) || !is_array($result)) {
-                    $this->hotaru->messages[$this->lang["users_register_unexpected_error"]] = 'red';
-                }
-            }
-        } else {
-            // error must = 1 so fall through and display the form again
-        }
-        return false;
-    }
-    
-    
-    /**
-     * Check if user is on the blocked list
-     *
-     * @param string $username
-     * @param string $email
-     * @return bool - true if blocked
-     */
-    public function checkBlocked($username, $email)
-    {
-        // Is user IP address blocked?
-        $ip = $this->cage->server->testIp('REMOTE_ADDR');
-        if ($this->isBlocked('ip', $ip)) {
-            return true;
-        }
-        
-        // Is email domain blocked?
-        $email_bits = split('@', $email);
-        $email_domain = $email_bits[1];
-        if ($this->isBlocked('email', $email_domain)) {
-            return true;
-        }
-        
-        // Is email blocked?
-        if ($this->isBlocked('email', $email)) {
-            return true;
-        }
-        
-        // Is username blocked?
-        if ($this->isBlocked('user', $username)) {
-            return true;
-        }
-        
-        $this->pluginHook('users_register_check_blocked');  // Stop Spam is one plugin that uses this
-        if ($this->current_user->vars['block']) { return true; }
-
-        return false;   // not blocked
-    }
-    
-    
-     /**
-     * Send an email to the newly registered user
-     *
-     * @param int $user_id
-     */
-    public function sendConfirmationEmail($user_id)
-    {
-        $this->current_user->getUserBasic($user_id);
-        
-        // generate the email confirmation code
-        $email_conf = md5(crypt(md5($this->current_user->email),md5($this->current_user->email)));
-        
-        // store the hash in the user table
-        $sql = "UPDATE " . TABLE_USERS . " SET user_email_conf = %s WHERE user_id = %d";
-        $this->db->query($this->db->prepare($sql, $email_conf, $this->current_user->id));
-        
-        $line_break = "\r\n\r\n";
-        $next_line = "\r\n";
-        
-        // send email
-        $subject = $this->lang['users_register_emailconf_subject'];
-        $body = $this->lang['users_register_emailconf_body_hello'] . " " . $this->current_user->name;
-        $body .= $line_break;
-        $body .= $this->lang['users_register_emailconf_body_welcome'];
-        $body .= $line_break;
-        $body .= $this->lang['users_register_emailconf_body_click'];
-        $body .= $line_break;
-        $body .= BASEURL . "index.php?page=emailconf&plugin=users&id=" . $this->current_user->id . "&conf=" . $email_conf;
-        $body .= $line_break;
-        $body .= $this->lang['users_register_emailconf_body_regards'];
-        $body .= $next_line;
-        $body .= $this->lang['users_register_emailconf_body_sign'];
-        $to = $this->current_user->email;
-        $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
-
-        mail($to, $subject, $body, $headers);    
-    }
-    
-    
-     /**
-     * Check email confirmation code
-     *
-     * @return true;
-     */
-    public function checkEmailConfirmation()
-    {
-        $user_id = $this->cage->get->getInt('id');
-        $conf = $this->cage->get->getAlnum('conf');
-        
-        $this->current_user->getUserBasic($user_id);
-        
-        if (!$user_id || !$conf) {
-            $this->hotaru->messages[$this->lang['users_register_emailconf_fail']] = 'red';
-        }
-        
-        $sql = "SELECT user_email_conf FROM " . TABLE_USERS . " WHERE user_id = %d";
-        $user_email_conf = $this->db->get_var($this->db->prepare($sql, $user_id));
-        
-        if ($conf === $user_email_conf) 
-        {
-            // update role:
-            $this->current_user->role = $this->current_user->vars['regStatus'];
-            
-            $this->pluginHook('users_email_conf_post_role');
-
-            // update user with new permissions:
-            $new_perms = $this->current_user->getDefaultPermissions($this->current_user->role);
-            unset($new_perms['options']);  // don't need this for individual users
-            $this->current_user->setAllPermissions($new_perms);
-            $this->current_user->updatePermissions();
-            $this->current_user->updateUserBasic();
-        
-            // set email valid to 1:
-            $sql = "UPDATE " . TABLE_USERS . " SET user_email_valid = %d WHERE user_id = %d";
-            $this->db->query($this->db->prepare($sql, 1, $this->current_user->id));
-            
-            // notify chosen mods of new user by email:
-            if ($this->current_user->vars['useEmailNotify'] == 'checked') {
-                require_once(PLUGINS . 'users/libs/UserFunctions.php');
-                $uf = new UserFunctions($this->hotaru);
-                $uf->notifyMods('user', $this->current_user->role);
-            }
-                
-        
-            $success_message = $this->lang['users_register_emailconf_success'] . " <br /><b><a href='" . $this->hotaru->url(array('page'=>'login')) . "'>" . $this->lang['users_register_emailconf_success_login'] . "</a></b>";
-            $this->hotaru->messages[$success_message] = 'green';
-        } else {
-            $this->hotaru->messages[$this->lang['users_register_emailconf_fail']] = 'red';
-        }
-            
-        return true;
-    }
-    
-    /** 
-     * Enable admins to edit a user
-     */
-    public function submit_post_breadcrumbs()
-    {
-        // not ideal, but the easiest way to get the target username is from the page title:
-        $username = $this->hotaru->title;
-        $page_type = $this->hotaru->pageType;
-        
-        // return if not a user or profile page
-        if (($page_type != 'user') && ($page_type != 'profile' )) { return false; }
-        
-        // return if not your own profile/account or you don't have admin access 
-        if (($this->current_user->name != $username) && ($this->current_user->getPermission('can_access_admin') != 'yes')) {
-            return false;
-        }
-         
-        $this->hotaru->vars['username'] = $username;
-        $this->hotaru->displayTemplate('user_tabs', 'users');
-    }
-    
-    
-    /** 
-     * Enable admins to edit a user
-     */
-    public function editPermissions()
-    {
-        $user = new UserBase($this->hotaru);
-
-        // Read this user...
-        if ($this->cage->get->keyExists('user')) {
-            $user->getUserbasic(0, $this->cage->get->testUsername('user'));   // username when viewing perms page
-        } elseif ($this->cage->post->keyExists('userid')) {
-            $user->getUserbasic($this->cage->post->testInt('userid'));        // userid when submitting perms form
-        } else {
-            return false;
-        }
-        
-        // prevent non-admin user viewing permissions of admin user
-        if (($user->role) == 'admin' && ($this->current_user->role != 'admin')) {
-            $this->hotaru->messages[$this->lang["users_account_admin_admin"]] = 'red';
-            $this->hotaru->showMessages();
-            return true;
-        }
-        
-        $perm_options = $user->getDefaultPermissions('', 'site', true);
-        $perms = $user->getAllPermissions();
-        
-        // If the form has been submitted...
-        if ($this->cage->post->keyExists('permissions')) {
-           foreach ($perm_options as $key => $options) {
-                if ($value = $this->cage->post->testAlnumLines($key)) {
-                    $user->setPermission($key, $value);
-                }
-            }
-
-            $user->updatePermissions();   // physically store changes in the database
-            
-            // get the newly updated latest permissions:
-            $perm_options = $user->getDefaultPermissions('', 'site', true);
-            $perms = $user->getAllPermissions();
-            $this->hotaru->messages[$this->lang['users_permissions_updated']] = 'green';
-        }
-               
-        // Breadcrumbs:
-        echo "<div id='breadcrumbs'><a href='" . BASEURL . "'>" . $this->lang["users_home"] . "</a> "; 
-        echo "&raquo; <a href='" . $this->hotaru->url(array('user' => $user->name)) . "'>" . $user->name . "</a> "; 
-        echo "&raquo; " . $this->lang["users_account_permissions"] . "</div>";
-            
-        $this->hotaru->vars['username'] = $user->name;
-        $this->hotaru->displayTemplate('user_tabs', 'users');
-        
-        echo '<h2>' . $this->lang["users_permissions"] . ': ' . $user->name . '</h2>';
-        
-        $this->hotaru->showMessages();
-            
-        echo "<form name='permissions_form' action='" . BASEURL . "index.php' method='post'>\n";
-        echo "<table class='permissions'>\n";
-        foreach ($perm_options as $key => $options) {
-            echo "<tr><td>" . make_name($key) . ": </td>\n";
-            foreach($options as $value) {
-                if (isset($perms[$key]) && ($perms[$key] == $value)) { $checked = 'checked'; } else { $checked = ''; } 
-                if ($key == 'can_access_admin' && $user->role == 'admin') { $disabled = 'disabled'; } else { $disabled = ''; }
-                echo "<td><input type='radio' name='" . $key . "' value='" . $value . "' " . $checked . " " . $disabled . "> " . $value . " &nbsp;</td>\n";
-            }
-            echo "</tr>";
-        }
-        
-        echo "</table>\n";
-        echo "<input type='hidden' name='page' value='permissions' />\n";
-        echo "<input type='hidden' name='permissions' value='updated' />\n";
-        echo "<input type='hidden' name='userid' value='" . $user->id . "' />\n";
-        echo "<div style='text-align: right'><input class='submit' type='submit' value='" . $this->lang['users_permissions_update'] . "' /></div>\n";
-        echo "</form>\n";
-    }
-    
-    
-    /**
-     * Include jQuery for hiding and showing email options in plugin settings
-     */
-    public function admin_header_include_raw()
-    {
-        $admin = new Admin();
-        
-        if ($admin->isSettingsPage('users')) {
-            echo "<script type='text/javascript'>\n";
-            echo "$(document).ready(function(){\n";
-                echo "$('#email_notify').click(function () {\n";
-                echo "$('#email_notify_options').slideToggle();\n";
-                echo "});\n";
-            echo "});\n";
-            echo "</script>\n";
-        }
-    }
     
     /**
      * Save profile data (from hook in edit_profile.php)
      */
-    public function users_edit_profile_save($vars)
+    public function users_edit_profile_save($h, $vars)
     {
         $username = $vars[0];
         $profile = $vars[1];
-        $userid = $this->current_user->getUserIdFromName($this->hotaru->vars['username']);
         
-        require_once(PLUGINS . 'users/libs/UserFunctions.php');
-        $uf = new UserFunctions($this->hotaru);
+        // check CSRF key
+        if (!$h->csrf()) {
+            $h->message = $h->lang['error_csrf'];
+            $h->messageType = "red";
+            return false;
+        }
         
-        $uf->saveProfileSettingsData($profile, 'user_profile', $userid);
+        $h->vars['user']->saveProfileSettingsData($h, $profile, 'user_profile', $h->vars['user']->id);
         
-        $this->hotaru->message = $this->lang["users_profile_edit_saved"] . "<br />\n";
-        $this->hotaru->message .= "<a href='" . $this->hotaru->url(array('user'=>$username)) . "'>";
-        $this->hotaru->message .= $this->lang["users_profile_edit_view_profile"] . "</a>\n";
-        $this->hotaru->messageType = "green";
+        $h->message = $h->lang["users_profile_edit_saved"] . "<br />\n";
+        $h->message .= "<a href='" . $h->url(array('user'=>$h->vars['user']->name)) . "'>";
+        $h->message .= $h->lang["users_profile_edit_view_profile"] . "</a>\n";
+        $h->messageType = "green";
     }
     
     
     /**
      * Save settings data (from hook in user_settings.php)
      */
-    public function user_settings_save($vars)
+    public function user_settings_save($h, $vars)
     {
         $username = $vars[0];
         $settings = $vars[1];
-        $userid = $this->current_user->getUserIdFromName($this->hotaru->vars['username']);
         
-        require_once(PLUGINS . 'users/libs/UserFunctions.php');
-        $uf = new UserFunctions($this->hotaru);
+        // check CSRF key
+        if (!$h->csrf()) {
+            $h->message = $h->lang['error_csrf'];
+            $h->messageType = "red";
+            return false;
+        }
         
-        $uf->saveProfileSettingsData($settings, 'user_settings', $userid);
+        $h->vars['user']->saveProfileSettingsData($h, $settings, 'user_settings', $h->vars['user']->id);
         
-        $this->hotaru->message = $this->lang["users_settings_saved"] . "<br />\n";
-        $this->hotaru->messageType = "green";
+        $h->message = $h->lang["users_settings_saved"] . "<br />\n";
+        $h->messageType = "green";
     }
     
     
+    /** 
+     * Enable admins to edit a user
+     */
+    public function editPermissions($h)
+    {
+        // prevent non-admin user viewing permissions of admin user
+        if (($h->vars['user']->role) == 'admin' && ($h->currentUser->role != 'admin')) {
+            $h->messages[$h->lang["users_account_admin_admin"]] = 'red';
+            $h->showMessages();
+            return true;
+        }
+        
+        $perm_options = $h->getDefaultPermissions('', 'site', true);
+        $perms = $h->vars['user']->getAllPermissions();
+        
+        // If the form has been submitted...
+        if ($h->cage->post->keyExists('permissions')) {
+        
+            // check CSRF key
+            if (!$h->csrf()) {
+                $h->messages[$h->lang['error_csrf']] = 'red';
+                return false;
+            }
+        
+           foreach ($perm_options as $key => $options) {
+                if ($value = $h->cage->post->testAlnumLines($key)) {
+                    $h->vars['user']->setPermission($key, $value);
+                }
+            }
+
+            $h->vars['user']->updatePermissions($h);   // physically store changes in the database
+            
+            // get the newly updated latest permissions:
+            $perm_options = $h->getDefaultPermissions('', 'site', true);
+            $perms = $h->vars['user']->getAllPermissions();
+            $h->messages[$h->lang['users_permissions_updated']] = 'green';
+        }
+        
+        $h->vars['perm_options'] = '';
+        foreach ($perm_options as $key => $options) {
+            $h->vars['perm_options'] .= "<tr><td>" . make_name($key) . ": </td>\n";
+            foreach($options as $value) {
+                if (isset($perms[$key]) && ($perms[$key] == $value)) { $checked = 'checked'; } else { $checked = ''; } 
+                if ($key == 'can_access_admin' && $h->vars['user']->role == 'admin') { $disabled = 'disabled'; } else { $disabled = ''; }
+                $h->vars['perm_options'] .= "<td><input type='radio' name='" . $key . "' value='" . $value . "' " . $checked . " " . $disabled . "> " . $value . " &nbsp;</td>\n";
+            }
+            $h->vars['perm_options'] .= "</tr>";
+        }
+    }
+    
+
     /**
      * Show stats on Admin home page
      */
-    public function admin_theme_main_stats($vars)
+    public function admin_theme_main_stats($h, $vars)
     {
-        require_once(PLUGINS . 'users/libs/UserFunctions.php');
-        $uf = new UserFunctions($this->hotaru);
+        require_once(LIBS . 'UserInfo.php');
+        $ui = new UserInfo();
         
         echo "<li>&nbsp;</li>";
 
         foreach ($vars as $stat_type) {
-            $users = $uf->stats($stat_type);
+            $users = $ui->stats($h, $stat_type);
             if (!$users) { $users = 0; }
             $lang_name = 'users_admin_stats_' . $stat_type;
-            echo "<li>" . $this->lang[$lang_name] . ": " . $users . "</li>";
+            echo "<li>" . $h->lang[$lang_name] . ": " . $users . "</li>";
         }
     }
 }

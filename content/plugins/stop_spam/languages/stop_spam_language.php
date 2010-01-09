@@ -36,7 +36,5 @@ $lang["stop_spam_settings_no_key"] = "Please enter your Stop Forum Spam API key"
 $lang["stop_spam_settings_key"] = "Enter your Stop Forum Spam API key:";
 $lang["stop_spam_settings_go_pending"] = "Put blacklisted users into moderation";
 $lang["stop_spam_settings_block_reg"] = "Stop blacklisted users from registering";
-$lang["stop_spam_settings_save"] = "Save";
-$lang["stop_spam_settings_saved"] = "Settings saved";
 
 ?>

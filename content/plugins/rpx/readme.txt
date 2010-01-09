@@ -17,5 +17,6 @@ Instructions
 
 Changelog
 ---------
+v.0.3 2010/01/04 - Nick - Updates for compatibility with Hotaru 1.0
 v.0.2 2009/11/26 - Nick - Bug fixes for RPX Basic login
 v.0.1 2009/11/25 - Nick - Released first version

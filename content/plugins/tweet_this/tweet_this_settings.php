@@ -24,26 +24,26 @@
  * @link      http://www.hotarucms.org/
  */
  
-class TweetThisSettings extends TweetThis
+class TweetThisSettings
 {
      /**
      * Admin settings for the Tweet This plugin
      */
-    public function settings()
+    public function settings($h)
     {
         // include language file
-        $this->includeLanguage();
+        $h->includeLanguage();
         
         // show header
-        echo "<h1>" . $this->lang["tweet_this_settings_header"] . "</h1>\n";
+        echo "<h1>" . $h->lang["tweet_this_settings_header"] . "</h1>\n";
         
         // If the form has been submitted, go and save the data...
-        if ($this->cage->post->getAlpha('submitted') == 'true') { 
-            $this->saveSettings(); 
+        if ($h->cage->post->getAlpha('submitted') == 'true') { 
+            $this->saveSettings($h); 
         }
         
         // Get settings from database if they exist...
-        $tweet_this_settings = $this->getSerializedSettings();
+        $tweet_this_settings = $h->getSerializedSettings();
 
         // set choices to blank
         $tinyurl = "";
@@ -67,36 +67,37 @@ class TweetThisSettings extends TweetThis
         echo "action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=tweet_this' method='post'>\n";
         
         // instructions
-        echo "<p>" . $this->lang['tweet_this_settings_shortener'] . "</p>\n";
+        echo "<p>" . $h->lang['tweet_this_settings_shortener'] . "</p>\n";
         
         // radio buttons
         
         // is.gd
         echo "<p><input type='radio' name='tt_shortener' value='isgd' " . $isgd . " >";
-        echo "&nbsp;&nbsp;" . $this->lang["tweet_this_settings_isgd"] . "</p>\n"; 
+        echo "&nbsp;&nbsp;" . $h->lang["tweet_this_settings_isgd"] . "</p>\n"; 
         
         // tinyurl
         echo "<p><input type='radio' name='tt_shortener' value='tinyurl' " . $tinyurl . " >";
-        echo "&nbsp;&nbsp;" . $this->lang["tweet_this_settings_tinyurl"] . "</p>\n"; 
+        echo "&nbsp;&nbsp;" . $h->lang["tweet_this_settings_tinyurl"] . "</p>\n"; 
         
         // bit.ly
         echo "<p><input type='radio' name='tt_shortener' value='bitly' " . $bitly . " >";
-        echo "&nbsp;&nbsp;" . $this->lang["tweet_this_settings_bitly"] . "</p>\n"; 
+        echo "&nbsp;&nbsp;" . $h->lang["tweet_this_settings_bitly"] . "</p>\n"; 
         
         // input fields
         
         // bitly login
-        echo "<p>" . $this->lang['tweet_this_settings_bitly_login'];
+        echo "<p>" . $h->lang['tweet_this_settings_bitly_login'];
         echo ": <input type='text' size=30 name='tt_bitly_login' value='" . $tweet_this_settings['tt_bitly_login'] . "' /></p>\n";
         
         // bit.ly api key
-        echo "<p>" . $this->lang['tweet_this_settings_bitly_api_key'];
+        echo "<p>" . $h->lang['tweet_this_settings_bitly_api_key'];
         echo ": <input type='text' size=30 name='tt_bitly_api_key' value='" . $tweet_this_settings['tt_bitly_api_key'] . "' /></p>\n";
         
         // end form
         echo "<br />";
         echo "<input type='hidden' name='submitted' value='true' />\n";
-        echo "<input type='submit' value='" . $this->lang["tweet_this_settings_save"] . "' />\n";
+        echo "<input type='submit' value='" . $h->lang["main_form_save"] . "' />\n";
+        echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }
     
@@ -104,37 +105,37 @@ class TweetThisSettings extends TweetThis
     /**
      * Save Tweet This Settings
      */
-    public function saveSettings()
+    public function saveSettings($h)
     {
         // Include language file
-        $this->includeLanguage();
+        $h->includeLanguage();
                 
         // Get settings from database if they exist...
-        $tweet_this_settings = $this->getSerializedSettings();
+        $tweet_this_settings = $h->getSerializedSettings();
         
         // get result of radio buttons and bitly fields
-        $tweet_this_settings['tt_shortener'] = $this->cage->post->testAlpha('tt_shortener');
-        $tweet_this_settings['tt_bitly_login'] = $this->cage->post->testAlnumLines('tt_bitly_login');
-        $tweet_this_settings['tt_bitly_api_key'] = $this->cage->post->testAlnumLines('tt_bitly_api_key');
+        $tweet_this_settings['tt_shortener'] = $h->cage->post->testAlpha('tt_shortener');
+        $tweet_this_settings['tt_bitly_login'] = $h->cage->post->testAlnumLines('tt_bitly_login');
+        $tweet_this_settings['tt_bitly_api_key'] = $h->cage->post->testAlnumLines('tt_bitly_api_key');
         
         // if bitly is chosen but either of the login or api key fields are empty, set error, don't save
         if ($tweet_this_settings['tt_shortener'] == 'bitly' &&
             (!$tweet_this_settings['tt_bitly_login'] || !$tweet_this_settings['tt_bitly_api_key']))
         {
             // error message
-            $this->hotaru->message = $this->lang["tweet_this_settings_error"];
-            $this->hotaru->messageType = "red";
+            $h->message = $h->lang["tweet_this_settings_error"];
+            $h->messageType = "red";
         } 
         else 
         {
             // update settings and set message
-            $this->updateSetting('tweet_this_settings', serialize($tweet_this_settings));
-            $this->hotaru->message = $this->lang["submit_settings_saved"];
-            $this->hotaru->messageType = "green";
+            $h->updateSetting('tweet_this_settings', serialize($tweet_this_settings));
+            $h->message = $h->lang["main_settings_saved"];
+            $h->messageType = "green";
         }
         
         // show message
-        $this->hotaru->showMessage();
+        $h->showMessage();
         
         return true;
     }

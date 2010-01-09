@@ -192,6 +192,8 @@
                 // I did this because the pluginHook function ramps up the query counts 
                 // but rarely returns anything!
                 return $cache;
+            } else {
+                //echo $query . "<br />"; // for testing purposes
             }
 
             // Count how many queries there have been
@@ -206,7 +208,6 @@
 
             // Perform the query via std mysql_query function..
             $this->result = @mysql_query($query,$this->dbh);
-            //echo $query . "<BR /><BR />";
             
             if ( defined('SAVEQUERIES') && SAVEQUERIES )    // Borrowed from Wordpress
             $this->queries[] = array( $query, $this->timer_stop(), $this->get_caller() );

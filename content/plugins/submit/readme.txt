@@ -1,18 +1,18 @@
-Submit Plugin for Hotaru CMS
-----------------------------
+Social Bookmarking Submit Plugin for Hotaru CMS
+---------------------------------------------
 Created by: Nick Ramsay
 
 Description
 -----------
-Post and view stories, automatically fetch the title, preview and modify your submission, edit posts, enable which components to show (e.g. description, author, date), filter posts to selected users and if the plugins are activated, tags and categories, too. Option to disable the submit form without disabling the plugin. Includes submission moderation options with email notification for moderators. Recent additions include post archiving and editorials, i.e. posts without a link.
+This plugin provides the submission steps for entering a new post. It also includes the "edit_post" template. 
 
 Instructions
 ------------
 1. Upload the "submit" folder to your plugins folder. Install it from Plugin Management in Admin.
-2. Edit settings by clicking "Submit" in the Admin sidebar.
 
 Changelog
 ---------
+v.1.9 2009/12/16 - Nick - Updated for compatibility with Hotaru 1.0
 v.1.8 2009/11/29 - Nick - Added plugin hooks in post descriptions
 v.1.7 2009/11/27 - Nick - Bug fix for wrong order of sidebar posts. Ability to block domain extensions, e.g. .ru
 v.1.6 2009/11/26 - Nick - Bug fix for default user settings plus user option for links opening source or post urls

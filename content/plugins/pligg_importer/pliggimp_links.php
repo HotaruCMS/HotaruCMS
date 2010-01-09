@@ -27,28 +27,10 @@
 
 class PliggImp2
 {
-    public $db;                         // database object
-    public $cage;                       // Inspekt object
-    public $hotaru;                     // Hotaru object
-    public $current_user;               // UserBase object
-    
-    
-    /**
-     * Build a $plugins object containing $db and $cage
-     */
-    public function __construct($hotaru)
-    {
-        $this->hotaru           = $hotaru;
-        $this->db               = $hotaru->db;
-        $this->cage             = $hotaru->cage;
-        $this->current_user     = $hotaru->current_user;
-    }
-    
-    
     /**
      * Page 2 - Request links file
      */
-    public function page_2()
+    public function page_2($h)
     {
         echo "<h2>Step 2/6 - Links</h2>";
         echo "Please upload your <b>links</b> XML file:<br />";
@@ -58,6 +40,7 @@ class PliggImp2
         echo "<input type='hidden' name='submitted' value='true' />\n";
         echo "<input type='hidden' name='table' value='Links' />\n";
         echo "<input type='submit' name='submit' value='Upload' />\n";
+        echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }
     
@@ -69,20 +52,13 @@ class PliggImp2
      * @param string $file_name
      * @return bool
      */
-    function step2($xml, $file_name)
+    function step2($h, $xml, $file_name)
     {
         echo "<b>Table:</b> Links...<br /><br />";
         
         $this_table = "posts";
-        if (!$this->db->table_empty($this_table)) {
-            if (!$this->cage->get->getAlpha('overwrite') == 'true') {
-                echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . DB_PREFIX . $this_table . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
-                echo "<a class='pliggimp_next' href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer&amp;file_name=" . $file_name . "&amp;step=2&amp;overwrite=true'>Continue</a>";
-                return false;
-            } 
-        }
         
-        $this->db->query($this->db->prepare("TRUNCATE " . DB_PREFIX . $this_table));
+        $h->db->query($h->db->prepare("TRUNCATE " . DB_PREFIX . $this_table));
         
         echo "<i>Number of records added:</i> ";
         
@@ -129,18 +105,19 @@ class PliggImp2
                 $parsed = parse_url($child->link_url); 
                 $domain = $parsed['scheme'] . "://" . $parsed['host'];
                 
-                $columns    = "post_author, post_category, post_status, post_date, post_title, post_orig_url, post_domain, post_url, post_content, post_votes_up, post_votes_down, post_tags, post_updateby";
+                $columns    = "post_author, post_category, post_status, post_type, post_date, post_title, post_orig_url, post_domain, post_url, post_content, post_votes_up, post_votes_down, post_tags, post_updateby";
                 
-                $sql        = "INSERT INTO " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%d, %d, %s, %s, %s, %s, %s, %s, %s, %d, %d, %s, %d)";
+                $sql        = "INSERT INTO " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %d, %d, %s, %d)";
                 
-                $cts = new PliggImp1($this->hotaru);
+                $cts = new PliggImp1();
                 
                 // Insert into links table
-                $this->db->query($this->db->prepare(
+                $h->db->query($h->db->prepare(
                     $sql,
                     $child->link_author,
-                    $cts->get_new_cat_id($child->link_category),
+                    $cts->get_new_cat_id($h, $child->link_category),
                     $child->link_status,
+                    urlencode('news'),
                     $child->link_date,
                     urlencode(trim($child->link_title)),
                     urlencode($child->link_url),
@@ -150,14 +127,14 @@ class PliggImp2
                     $child->link_votes,
                     $child->link_reports,
                     urlencode($child->link_tags),
-                    $this->current_user->id));
+                    $h->currentUser->id));
                     
                 // Grab the ID of the last insert. 
-                $link[$count]['old_id']['new_id'] = $this->db->get_var($this->db->prepare("SELECT LAST_INSERT_ID()"));
+                $link[$count]['old_id']['new_id'] = $h->db->get_var($h->db->prepare("SELECT LAST_INSERT_ID()"));
                 
                 $sql = "REPLACE INTO " . DB_PREFIX . "pliggimp_temp (pliggimp_setting, pliggimp_old_value, pliggimp_new_value) VALUES(%s, %d, %d)";
                 
-                $this->db->query($this->db->prepare($sql, 'link_id', $link[$count]['old_id'], $link[$count]['old_id']['new_id']));
+                $h->db->query($h->db->prepare($sql, 'link_id', $link[$count]['old_id'], $link[$count]['old_id']['new_id']));
             }
         }
     
@@ -177,11 +154,11 @@ class PliggImp2
      * @param int $old_link_id
      * @return int|false
      */
-    function get_new_link_id($old_link_id)
+    function get_new_link_id($h, $old_link_id)
     {
         $sql = "SELECT pliggimp_new_value FROM " . DB_PREFIX . "pliggimp_temp WHERE pliggimp_setting = %s AND pliggimp_old_value = %d";
         
-        $new_link_id = $this->db->get_var($this->db->prepare($sql, 'link_id', $old_link_id));
+        $new_link_id = $h->db->get_var($h->db->prepare($sql, 'link_id', $old_link_id));
         
         if ($new_link_id) { return $new_link_id; } else { return false; }
     }

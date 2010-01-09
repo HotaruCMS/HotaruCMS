@@ -34,5 +34,6 @@ If you aren't using friendly urls, you'll need to put an evb folder in you root 
 
 Changelog
 ---------
+v.0.3 2010/01/03 - Nick - Updated for compatibility with Hotaru 1.0
 v.0.2 2009/11/27 - Nick - Fix for non-object error
 v.0.1 2009/11/23 - Nick - Released first version

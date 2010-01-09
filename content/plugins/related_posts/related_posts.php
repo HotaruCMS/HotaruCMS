@@ -2,11 +2,13 @@
 /**
  * name: Related Posts
  * description: Show a list of related posts
- * version: 0.1
+ * version: 0.2
  * folder: related_posts
  * class: relatedPosts
- * requires: submit 1.4, search 0.7
- * hooks: install_plugin, header_include, submit_settings_get_values, submit_settings_form2, submit_save_settings, submit_step3_pre_buttons, submit_step3_post_buttons, submit_show_post_middle
+ * requires: submit 1.9, search 0.8
+ * hooks: install_plugin, header_include, submit_settings_get_values, submit_settings_form2, submit_save_settings, submit_step3_pre_buttons, submit_step3_post_buttons, sb_base_show_post_middle
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *
@@ -30,36 +32,36 @@
  * @link      http://www.hotarucms.org/
  */
 
-class relatedPosts extends PluginFunctions
+class relatedPosts
 {
 
     /**
      * Default settings on install
      */
-    public function install_plugin()
+    public function install_plugin($h)
     {
         // Default settings
-        if (!$this->getSetting('submit_related_posts_submit')) { $this->updateSetting('submit_related_posts_submit', 10); }
-        if (!$this->getSetting('submit_related_posts_post')) { $this->updateSetting('submit_related_posts_post', 5); }
+        if (!$h->getSetting('submit_related_posts_submit')) { $h->updateSetting('submit_related_posts_submit', 10); }
+        if (!$h->getSetting('submit_related_posts_post')) { $h->updateSetting('submit_related_posts_post', 5); }
     }
     
     
     /**
      * Gets current settings from the database
      */
-    public function submit_settings_get_values()
+    public function submit_settings_get_values($h)
     {
         // Get settings from database if they exist... should return 'checked'
-        $this->hotaru->vars['related_posts_submit'] = $this->getSetting('submit_related_posts_submit');
-        $this->hotaru->vars['related_posts_post'] = $this->getSetting('submit_related_posts_post');
+        $h->vars['related_posts_submit'] = $h->getSetting('submit_related_posts_submit');
+        $h->vars['related_posts_post'] = $h->getSetting('submit_related_posts_post');
         
         // doesn't exist - use default:
-        if (!isset($this->hotaru->vars['related_posts_submit'])) {
-            $this->hotaru->vars['related_posts_submit'] = 10;
+        if (!isset($h->vars['related_posts_submit'])) {
+            $h->vars['related_posts_submit'] = 10;
         }
         // doesn't exist - use default:
-        if (!isset($this->hotaru->vars['related_posts_post'])) {
-            $this->hotaru->vars['related_posts_post'] = 5;
+        if (!isset($h->vars['related_posts_post'])) {
+            $h->vars['related_posts_post'] = 5;
         }
     
     }
@@ -68,39 +70,38 @@ class relatedPosts extends PluginFunctions
     /**
      * Add related posts field to the submit settings form
      */
-    public function submit_settings_form2()
+    public function submit_settings_form2($h)
     {
-        $this->includeLanguage('related_posts');
-        echo "<br /><input type='text' size=5 name='related_posts_submit' value='" . $this->hotaru->vars['related_posts_submit'] . "' /> ";
-        echo $this->lang["submit_settings_related_posts_submit"] . "<br />\n";
-        echo "<br /><input type='text' size=5 name='related_posts_post' value='" . $this->hotaru->vars['related_posts_post'] . "' /> ";
-        echo $this->lang["submit_settings_related_posts_post"] . "<br />\n";
+        echo "<br /><input type='text' size=5 name='related_posts_submit' value='" . $h->vars['related_posts_submit'] . "' /> ";
+        echo $h->lang["submit_settings_related_posts_submit"] . "<br />\n";
+        echo "<br /><input type='text' size=5 name='related_posts_post' value='" . $h->vars['related_posts_post'] . "' /> ";
+        echo $h->lang["submit_settings_related_posts_post"] . "<br />\n";
     }
     
     
     /**
      * Save related posts settings.
      */
-    public function submit_save_settings()
+    public function submit_save_settings($h)
     {
         // Related posts on submit page
-        if ($this->cage->post->keyExists('related_posts_submit')) { 
-            if (is_numeric($this->cage->post->testInt('related_posts_submit'))) {
-                $this->hotaru->vars['related_posts_submit'] = $this->cage->post->testInt('related_posts_submit'); 
+        if ($h->cage->post->keyExists('related_posts_submit')) { 
+            if (is_numeric($h->cage->post->testInt('related_posts_submit'))) {
+                $h->vars['related_posts_submit'] = $h->cage->post->testInt('related_posts_submit'); 
             }
         } 
         
         // Related posts on post page
-        if ($this->cage->post->keyExists('related_posts_post')) { 
-            if (is_numeric($this->cage->post->testInt('related_posts_post'))) {
-                $this->hotaru->vars['related_posts_post'] = $this->cage->post->testInt('related_posts_post'); 
+        if ($h->cage->post->keyExists('related_posts_post')) { 
+            if (is_numeric($h->cage->post->testInt('related_posts_post'))) {
+                $h->vars['related_posts_post'] = $h->cage->post->testInt('related_posts_post'); 
             }
         } 
     
         // if empty or not numeric, the existing value will be saved
             
-        $this->updateSetting('submit_related_posts_submit', $this->hotaru->vars['related_posts_submit']);
-        $this->updateSetting('submit_related_posts_post', $this->hotaru->vars['related_posts_post']);
+        $h->updateSetting('submit_related_posts_submit', $h->vars['related_posts_submit']);
+        $h->updateSetting('submit_related_posts_post', $h->vars['related_posts_post']);
     
     }
     
@@ -108,34 +109,33 @@ class relatedPosts extends PluginFunctions
     /**
      * Show message to check related posts
      */
-    public function submit_step3_pre_buttons()
+    public function submit_step3_pre_buttons($h)
     {
-        $this->includeLanguage('related_posts');
-        echo $this->lang["related_posts_instruct"];
+        echo $h->lang["related_posts_instruct"];
     }
     
     
     /**
      * Show message to check related posts
      */
-    public function submit_step3_post_buttons()
+    public function submit_step3_post_buttons($h)
     {
         // Get settings from database if they exist... should return 'checked'
-        $num_posts = $this->getSetting('submit_related_posts_submit');
-        $this->prepareSearchTerms($num_posts);
+        $num_posts = $h->getSetting('submit_related_posts_submit');
+        $this->prepareSearchTerms($h, $num_posts);
     }
     
     
     /**
      * Show related posts on a post page
      */
-    public function submit_show_post_middle()
+    public function sb_base_show_post_middle($h)
     { 
-        if ($this->hotaru->isPage('submit2')) { return false; }
+        if ($h->isPage('submit3')) { return false; }
         
         // Get settings from database if they exist... should return 'checked'
-        $num_posts = $this->getSetting('submit_related_posts_post');
-        $this->prepareSearchTerms($num_posts);
+        $num_posts = $h->getSetting('submit_related_posts_post');
+        $this->prepareSearchTerms($h, $num_posts);
     }
     
     
@@ -148,17 +148,15 @@ class relatedPosts extends PluginFunctions
      * 4 characters returns latest first instead of relevance first Using 
      * the title increases the chance of 3 character words. Nick.
      */
-    public function prepareSearchTerms($num_posts = 10)
+    public function prepareSearchTerms($h, $num_posts = 10)
     {
-        $this->includeLanguage('related_posts');
-        
         /* when we start reading other posts, we'll lose this original one
            which we need later to show comments and whatnot. */
-        $original_id = $this->hotaru->post->id;
+        $original_id = $h->post->id;
 
         /* strip all words less than 4 chars from the title
            and make a space separated string: 
-        $title = $this->hotaru->post->title;
+        $title = $h->post->title;
         $title_array = explode(' ', $title);
         $new_title = "";
         foreach($title_array as $title_word) {
@@ -169,15 +167,15 @@ class relatedPosts extends PluginFunctions
         
         // remove hyphens from category safe name
         /*
-        if ($this->hotaru->post->vars['useCategories']) {
+        if ($h->post->vars['useCategories']) {
             require_once(PLUGINS . 'categories/libs/Category.php');
             $cat = new Category($this->db);
-            $cat_safe_name = $cat->getCatSafeName($this->hotaru->post->vars['category']);
+            $cat_safe_name = $cat->getCatSafeName($h->post->vars['category']);
             $category = str_replace("-"," ", $cat_safe_name); 
         }*/
         
         // make the tags a space separated string
-        $tags = str_replace(', ', ' ', $this->hotaru->post->vars['tags']);
+        $tags = str_replace(', ', ' ', $h->post->tags);
         $tags = str_replace(',', ' ', $tags); // if no space after commas
         
         // search terms in a space separated string
@@ -185,10 +183,10 @@ class relatedPosts extends PluginFunctions
         
         $search_terms = $tags;
         
-        $output = $this->showRelatedPosts($search_terms, $num_posts);
+        $output = $this->showRelatedPosts($h, $search_terms, $num_posts);
         echo $output;
         
-        $this->hotaru->post->readPost($original_id); // fill the object with the original post details.
+        $h->readPost($original_id); // fill the object with the original post details.
     }
     
     
@@ -198,23 +196,24 @@ class relatedPosts extends PluginFunctions
      * @param int $num_posts - max number of posts to show
      *
      */
-    public function showRelatedPosts($search_terms = '', $num_posts = 10)
+    public function showRelatedPosts($h, $search_terms = '', $num_posts = 10)
     {
-        $results = $this->getRelatedPosts($search_terms, $num_posts);
+        $results = $this->getRelatedPosts($h, $search_terms, $num_posts);
         if ($results) 
         {
-            $output = "<h2 id='related_posts_title'>" . $this->lang['related_posts'] . "</h2>";
+            $output = "<h2 id='related_posts_title'>" . $h->lang['related_posts'] . "</h2>";
         
             $output .= "<ul class='related_posts'>\n";
             foreach ($results as $item) {
-                $this->hotaru->post->readPost(0, $item); // needed for the url function
+                $h->readPost(0, $item); // needed for the url function
                 $output .= "<li class='related_posts_item'>\n";
+                if (!isset($item->post_votes_up)) { $item->post_votes_up = '&nbsp;'; }
                 $output .= "<div class='related_posts_vote vote_color_" . $item->post_status . "'>";
                 $output .= $item->post_votes_up;
                 $output .= "</div>\n";
                 $output .= "<div class='related_posts_link related_posts_indent'>\n";
-                $output .= "<a href='" . $this->hotaru->url(array('page'=>$item->post_id)) . "' ";
-                $output .= "title='" . $this->lang['related_links_new_tab'] . "'>\n";
+                $output .= "<a href='" . $h->url(array('page'=>$item->post_id)) . "' ";
+                $output .= "title='" . $h->lang['related_links_new_tab'] . "'>\n";
                 $output .= stripslashes(urldecode($item->post_title)); 
                 $output .= "</a>";
                 $output .= "</div>";
@@ -224,10 +223,10 @@ class relatedPosts extends PluginFunctions
         }
         else 
         {
-                // Show "No other posts found with matching tags"
-                $output .= "<div id='related_posts_none'>\n";
-                $output .= $this->lang['related_links_no_results'];
-                $output .= "</div>\n";
+            // Show "No other posts found with matching tags"
+            $output = "<div id='related_posts_none'>\n";
+            $output .= $h->lang['related_links_no_results'];
+            $output .= "</div>\n";
         }
 
         return $output;
@@ -240,24 +239,29 @@ class relatedPosts extends PluginFunctions
      * @param int $num_posts - the max number of posts to return
      * return array|false
      */
-    public function getRelatedPosts($search_terms = '', $num_posts = 10)
+    public function getRelatedPosts($h, $search_terms = '', $num_posts = 10)
     {
-        if (!$this->isActive('search')) { return false; }
+        if (!$h->isActive('search')) { return false; }
         
         require_once(PLUGINS . 'search/search.php');
-        $search = new Search('related_links', $this->hotaru);
-        $this->hotaru->vars['filter']['post_archived != %s'] = 'Y';
-        $this->hotaru->vars['filter']['post_id != %d'] = $this->hotaru->post->id;
-        $prepared_search = $search->prepareSearchFilter($search_terms);
-        $prepared_filter = $this->hotaru->post->filter(
-            $this->hotaru->vars['filter'], 
+        $search = new Search();
+        $h->vars['filter']['post_archived != %s'] = 'Y';
+        $h->vars['filter']['post_id != %d'] = $h->post->id;
+        $prepared_search = $search->prepareSearchFilter($h, $search_terms);
+        extract($prepared_search);
+        
+        // include sb_base_functions class:
+        require_once(PLUGINS . 'sb_base/libs/SbBaseFunctions.php');
+        $funcs = new SbBaseFunctions();
+        $prepared_filter = $funcs->filter(
+            $h->vars['filter'], 
             $num_posts, 
             false, 
-            $this->hotaru->vars['select'], 
-            $this->hotaru->vars['orderby']
+            $h->vars['select'], 
+            $h->vars['orderby']
         );
 
-        $results = $this->hotaru->post->getPosts($prepared_filter);
+        $results = $funcs->getPosts($h, $prepared_filter);
         return $results;
     }
 

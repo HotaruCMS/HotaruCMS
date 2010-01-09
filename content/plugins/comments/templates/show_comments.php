@@ -26,62 +26,65 @@
  
 
 ?>
-    <a id="c<?php echo $hotaru->comment->id; ?>"></a>
+    <a id="c<?php echo $h->comment->id; ?>"></a>
     
-    <div class="comment" style="margin-left: <?php echo $hotaru->comment->depth * 2.0; ?>em;">
+    <div class="comment" style="margin-left: <?php echo $h->comment->depth * 2.0; ?>em;">
 
         <?php   // Show avatars if enabled (requires an avatars plugin)
-                if ($hotaru->comment->avatars == 'checked') {
-                    $hotaru->plugins->pluginHook('show_comments_avatar'); 
+                if ($h->comment->avatars == 'checked') {
+                    if($h->isActive('avatar')) {
+                        $h->setAvatar($h->currentUser->id, 16);
+                        echo $h->wrapAvatar();
+                    }
                 }
         ?>
         
         <div class="comment_content">
             <?php 
-                $result = $hotaru->plugins->pluginHook('show_comments_content'); 
+                $result = $h->pluginHook('show_comments_content'); 
                 if (!isset($result) || !is_array($result)) {   
-                    echo nl2br($hotaru->comment->content);
+                    echo nl2br($h->comment->content);
                 }
             ?> 
         </div>
         
         <?php   // Show votes if enabled (requires a comment voting plugin)
-                if ($hotaru->comment->voting == 'checked') {
-                    $hotaru->plugins->pluginHook('show_comments_votes'); 
+                if ($h->comment->voting == 'checked') {
+                    $h->pluginHook('show_comments_votes'); 
                 }
         ?>
         
         <div class="comment_author_date">
             <?php 
-                $username = $hotaru->current_user->getUserNameFromId($hotaru->comment->author);
-                echo $hotaru->lang['comments_written_by'] . " ";
-                echo "<a href='" . $hotaru->url(array('user' => $username)) . "'>" . $username . "</a>, ";
-                echo time_difference(unixtimestamp($hotaru->comment->date), $hotaru->lang) . " ";
-                echo $hotaru->lang['comments_time_ago'] . "."; 
+                $username = $h->getUserNameFromId($h->comment->author);
+                echo $h->lang['comments_written_by'] . " ";
+                echo "<a href='" . $h->url(array('user' => $username)) . "'>" . $username . "</a>, ";
+                echo time_difference(unixtimestamp($h->comment->date), $h->lang) . " ";
+                echo $h->lang['comments_time_ago'] . "."; 
             ?>
             <?php   // REPLY LINK - (if logged in) AND (can comment) AND (form is turned on)...
-                if ($hotaru->current_user->loggedIn 
-                    && ($hotaru->current_user->getPermission('can_comment') != 'no')
-                    && ($hotaru->comment->thisForm == 'open')) { ?>
+                if ($h->currentUser->loggedIn 
+                    && ($h->currentUser->getPermission('can_comment') != 'no')
+                    && ($h->comment->thisForm == 'open')) { ?>
                         
-                <?php if ($hotaru->comment->depth < $hotaru->comment->levels-1) { // No nesting after X levels (minus 1 because nestings tarts at 0) ?>
+                <?php if ($h->comment->depth < $h->comment->levels-1) { // No nesting after X levels (minus 1 because nestings tarts at 0) ?>
                     <a href='#' class='comment_reply_link' onclick="reply_comment(
                         '<?php echo BASEURL; ?>', 
-                        '<?php echo $hotaru->comment->id; ?>', 
-                        '<?php echo $hotaru->lang['comments_form_submit']; ?>'); 
-                        return false;" ><?php echo $hotaru->lang['comments_reply_link']; ?></a>
+                        '<?php echo $h->comment->id; ?>', 
+                        '<?php echo $h->lang['comments_form_submit']; ?>'); 
+                        return false;" ><?php echo $h->lang['comments_reply_link']; ?></a>
                 <?php } ?>
             <?php } ?>
             
             <?php   // EDIT LINK - (if comment owner AND permission to edit own comments) OR (permission to edit ALL comments)...
-                if (($hotaru->current_user->id == $hotaru->comment->author && ($hotaru->current_user->getPermission('can_edit_comments') == 'own'))
-                    || ($hotaru->current_user->getPermission('can_edit_comments') == 'yes')) { ?>
+                if (($h->currentUser->id == $h->comment->author && ($h->currentUser->getPermission('can_edit_comments') == 'own'))
+                    || ($h->currentUser->getPermission('can_edit_comments') == 'yes')) { ?>
                     <a href='#' class='comment_edit_link' onclick="edit_comment(
                         '<?php echo BASEURL; ?>', 
-                        '<?php echo $hotaru->comment->id; ?>', 
-                        '<?php echo urlencode($hotaru->comment->content); ?>', 
-                        '<?php echo $hotaru->lang['comments_form_edit']; ?>'); 
-                        return false;" ><?php echo $hotaru->lang['comments_edit_link']; ?></a>
+                        '<?php echo $h->comment->id; ?>', 
+                        '<?php echo urlencode($h->comment->content); ?>', 
+                        '<?php echo $h->lang['comments_form_edit']; ?>'); 
+                        return false;" ><?php echo $h->lang['comments_edit_link']; ?></a>
             <?php } ?>
         </div>
         

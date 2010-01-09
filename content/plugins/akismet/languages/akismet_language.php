@@ -1,6 +1,6 @@
 <?php
 /**
- * DISQUS LANGUAGE
+ * AKISMET LANGUAGE
  *
  * PHP version 5
  *

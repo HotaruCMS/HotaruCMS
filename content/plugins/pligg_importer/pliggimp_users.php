@@ -27,28 +27,10 @@
 
 class PliggImp5
 {
-    public $db;                         // database object
-    public $cage;                       // Inspekt object
-    public $hotaru;                     // Hotaru object
-    public $current_user;               // UserBase object
-    
-    
     /**
-     * Build a $plugins object containing $db and $cage
+     * Page 5 - Request users file
      */
-    public function __construct($hotaru)
-    {
-        $this->hotaru           = $hotaru;
-        $this->db               = $hotaru->db;
-        $this->cage             = $hotaru->cage;
-        $this->current_user     = $hotaru->current_user;
-    }
-    
-    
-    /**
-     * Page 5 - Request votes file
-     */
-    public function page_5()
+    public function page_5($h)
     {
         echo "<h2>Step 5/6 - Users</h2>";
         echo "Please upload your <b>users</b> XML file:<br />";
@@ -58,6 +40,7 @@ class PliggImp5
         echo "<input type='hidden' name='submitted' value='true' />\n";
         echo "<input type='hidden' name='table' value='Users' />\n";
         echo "<input type='submit' name='submit' value='Upload' />\n";
+        echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }
     
@@ -69,20 +52,13 @@ class PliggImp5
      * @param string $file_name
      * @return bool
      */
-    function step5($xml, $file_name)
+    function step5($h, $xml, $file_name)
     {
         echo "<b>Table:</b> Users...<br /><br />";
         
         $this_table = "users";
-        if (!$this->db->table_empty($this_table)) {
-            if (!$this->cage->get->getAlpha('overwrite') == 'true') {
-                echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . DB_PREFIX . $this_table . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
-                echo "<a class='pliggimp_next' href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer&amp;file_name=" . $file_name . "&amp;step=5&amp;overwrite=true'>Continue</a>";
-                return false;
-            } 
-        }
         
-        $this->db->query($this->db->prepare("TRUNCATE " . DB_PREFIX . $this_table));
+        $h->db->query($h->db->prepare("TRUNCATE " . DB_PREFIX . $this_table));
         
         echo "<i>Number of records added:</i> ";
         
@@ -141,11 +117,11 @@ class PliggImp5
                         */
         
                 // get permissions
-                $perms = $this->current_user->getDefaultPermissions($role);
+                $perms = $h->getDefaultPermissions($role);
                 unset($perms['options']); // don't need options.
                 
                 // Insert into users table
-                $this->db->query($this->db->prepare(
+                $h->db->query($h->db->prepare(
                     $sql,
                     $child->user_login,
                     $child->user_level,
@@ -157,31 +133,31 @@ class PliggImp5
                     serialize($perms),
                     $child->user_ip,
                     $child->user_lastlogin,
-                    $this->current_user->id));
+                    $h->currentUser->id));
                     
                 // Grab the ID of the last insert. 
-                $users[$count]['old_id']['new_id'] = $this->db->get_var($this->db->prepare("SELECT LAST_INSERT_ID()"));
+                $users[$count]['old_id']['new_id'] = $h->db->get_var($h->db->prepare("SELECT LAST_INSERT_ID()"));
                 
                 $sql = "REPLACE INTO " . DB_PREFIX . "pliggimp_temp (pliggimp_setting, pliggimp_old_value, pliggimp_new_value) VALUES(%s, %d, %d)";
                 
-                $this->db->query($this->db->prepare($sql, 'user_id', $users[$count]['old_id'], $users[$count]['old_id']['new_id']));
+                $h->db->query($h->db->prepare($sql, 'user_id', $users[$count]['old_id'], $users[$count]['old_id']['new_id']));
             }
         }
         
         // Update post and comment authors with new user ids
         $sql = "SELECT * FROM " . DB_PREFIX . "pliggimp_temp WHERE pliggimp_setting = %s";
-        $user_ids = $this->db->get_results($this->db->prepare($sql, 'user_id'));
+        $user_ids = $h->db->get_results($h->db->prepare($sql, 'user_id'));
         
         foreach ($user_ids as $author)
         {
             $sql = "UPDATE " . TABLE_POSTS . " SET post_author = %d WHERE post_author = %d";
-            $this->db->query($this->db->prepare(
+            $h->db->query($h->db->prepare(
                 $sql, 
                 $author->pliggimp_new_value, 
                 $author->pliggimp_old_value));
                 
             $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_user_id = %d WHERE comment_user_id = %d";
-            $this->db->query($this->db->prepare(
+            $h->db->query($h->db->prepare(
                 $sql, 
                 $author->pliggimp_new_value, 
                 $author->pliggimp_old_value));
@@ -205,11 +181,11 @@ class PliggImp5
      * @param int $old_user_id
      * @return int|false
      */
-    function get_new_user_id($old_user_id)
+    function get_new_user_id($h, $old_user_id)
     {
         $sql = "SELECT pliggimp_new_value FROM " . DB_PREFIX . "pliggimp_temp WHERE pliggimp_setting = %s AND pliggimp_old_value = %d";
         
-        $new_user_id = $this->db->get_var($this->db->prepare($sql, 'user_id', $old_user_id));
+        $new_user_id = $h->db->get_var($h->db->prepare($sql, 'user_id', $old_user_id));
         
         if ($new_user_id) { return $new_user_id; } else { return false; }
     }

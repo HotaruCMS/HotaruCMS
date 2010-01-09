@@ -2,11 +2,12 @@
 /**
  * name: Comments
  * description: Enables logged-in users to comment on posts
- * version: 1.1
+ * version: 1.2
  * folder: comments
  * class: Comments
- * requires: submit 1.5, users 0.8
- * hooks: header_include, admin_header_include_raw, install_plugin, hotaru_header, theme_index_replace, theme_index_main, submit_show_post_extra_fields, submit_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_form_2_assign, submit_form_2_fields, submit_edit_post_admin_fields, submit_edit_post_non_admin_hidden_fields, submit_form_2_process_submission, post_delete_post, profile_usage, , admin_theme_main_stats
+ * type: comments
+ * requires: sb_base 0.1, users 1.1
+ * hooks: install_plugin, theme_index_top, header_include, admin_header_include_raw, theme_index_main, sb_base_show_post_extra_fields, sb_base_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_2_fields, submit_edit_admin_fields, post_delete_post, profile_usage, , admin_theme_main_stats, breadcrumbs, submit_functions_process_submitted, submit_2_process_submission
  *
  * PHP version 5
  *
@@ -30,98 +31,18 @@
  * @link      http://www.hotarucms.org/
  */
 
-class Comments extends pluginFunctions
+class Comments
 {
     /**
      * Install or Upgrade
      */
-    public function install_plugin()
+    public function install_plugin($h)
     {
-        // ************
-        // DATABASE 
-        // ************
-        
-        // Create a new empty table called "comments"
-        $exists = $this->db->table_exists('comments');
-        if (!$exists) {
-            //echo "table doesn't exist. Stopping before creation."; exit;
-            $sql = "CREATE TABLE `" . DB_PREFIX . "comments` (
-              `comment_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-              `comment_archived` enum('Y','N') NOT NULL DEFAULT 'N',
-              `comment_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-              `comment_post_id` int(20) NOT NULL DEFAULT '0',
-              `comment_user_id` int(20) NOT NULL DEFAULT '0',
-              `comment_parent` int(20) DEFAULT '0',
-              `comment_date` timestamp NOT NULL,
-              `comment_status` varchar(32) NOT NULL DEFAULT 'approved',
-              `comment_content` text NOT NULL,
-              `comment_votes` int(20) NOT NULL DEFAULT '0',
-              `comment_subscribe` tinyint(1) NOT NULL DEFAULT '0',
-              `comment_updateby` int(20) NOT NULL DEFAULT 0,
-              FULLTEXT (`comment_content`)
-            ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Post Comments';";
-            $this->db->query($sql); 
-        } 
-        
-        // Create a new empty table called "commentvotes" if it doesn't already exist
-        $exists = $this->db->table_exists('commentvotes');
-        if (!$exists) {
-            //echo "table doesn't exist. Stopping before creation."; exit;
-            $sql = "CREATE TABLE `" . DB_PREFIX . "commentvotes` (
-              `cvote_archived` enum('Y','N') NOT NULL DEFAULT 'N',
-              `cvote_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-              `cvote_post_id` int(11) NOT NULL DEFAULT '0',
-              `cvote_comment_id` int(11) NOT NULL DEFAULT '0',
-              `cvote_user_id` int(11) NOT NULL DEFAULT '0',
-              `cvote_user_ip` varchar(32) NOT NULL DEFAULT '0',
-              `cvote_date` timestamp NOT NULL,
-              `cvote_rating` enum('positive','negative','alert') NULL,
-              `cvote_reason` tinyint(3) NOT NULL DEFAULT 0,
-              `cvote_updateby` int(20) NOT NULL DEFAULT 0
-            ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Comment Votes';";
-            $this->db->query($sql); 
-        }
-        
-        if (!$this->db->column_exists('comments', 'comment_status')) {
-            // add new comment_status field
-            $sql = "ALTER TABLE " . DB_PREFIX . "comments ADD comment_status varchar(32)  NOT NULL DEFAULT 'approved' AFTER comment_date";
-            $this->db->query($this->db->prepare($sql));
-     
-            // make content field fulltext for better searching
-            $sql = "ALTER TABLE " . DB_PREFIX . "comments ADD FULLTEXT(comment_content)";
-            $this->db->query($this->db->prepare($sql));
-        }
-        
-        if (!$this->db->column_exists('comments', 'comment_status')) {
-            // add new comment_status field
-            $sql = "ALTER TABLE " . DB_PREFIX . "comments ADD comment_status varchar(32)  NOT NULL DEFAULT 'approved' AFTER comment_date";
-            $this->db->query($this->db->prepare($sql));
-        }
-        
-        if (!$this->db->column_exists('posts', 'post_comments')) {
-            // add new post_comments field
-            $sql = "ALTER TABLE " . DB_PREFIX . "posts ADD post_comments ENUM(%s, %s) NOT NULL DEFAULT %s AFTER post_subscribe";
-            $this->db->query($this->db->prepare($sql, 'open', 'closed', 'open'));
-        }
-        
-        if (!$this->db->column_exists('comments', 'comment_archived')) {
-            // add new comment_archived field
-            $sql = "ALTER TABLE " . DB_PREFIX . "comments ADD comment_archived ENUM(%s, %s) NOT NULL DEFAULT %s AFTER comment_id";
-            $this->db->query($this->db->prepare($sql, 'Y', 'N', 'N'));
-        }
-        
-        if (!$this->db->column_exists('commentvotes', 'cvote_archived')) {
-            // add new comment_archived field
-            $sql = "ALTER TABLE " . DB_PREFIX . "commentvotes ADD cvote_archived ENUM(%s, %s) NOT NULL DEFAULT %s FIRST";
-            $this->db->query($this->db->prepare($sql, 'Y', 'N', 'N'));
-        }
-
-
         // ************
         // PERMISSIONS
         // ************
         
-        $site_perms = $this->current_user->getDefaultPermissions('all');
+        $site_perms = $h->getDefaultPermissions('all');
         if (!isset($site_perms['can_comment'])) { 
             $perms['options']['can_comment'] = array('yes', 'no', 'mod');
             $perms['options']['can_edit_comments'] = array('yes', 'no', 'own');
@@ -156,8 +77,9 @@ class Comments extends pluginFunctions
             $perms['can_comment_manager_settings']['supermod'] = 'yes';
             $perms['can_comment_manager_settings']['moderator'] = 'yes';
             $perms['can_comment_manager_settings']['default'] = 'no';
+            
+            $h->updateDefaultPermissions($perms);
         }
-        $this->current_user->updateDefaultPermissions($perms);
 
 
         // ************
@@ -165,7 +87,7 @@ class Comments extends pluginFunctions
         // ************
         
         // Get settings from database if they exist...
-        $comments_settings = $this->getSerializedSettings();
+        $comments_settings = $h->getSerializedSettings();
         
         // Default settings 
         if (!isset($comments_settings['comment_all_forms'])) { $comments_settings['comment_all_forms'] = "checked"; }
@@ -183,223 +105,179 @@ class Comments extends pluginFunctions
         if (!isset($comments_settings['comment_url_limit'])) { $comments_settings['comment_url_limit'] = 0; }
         if (!isset($comments_settings['comment_daily_limit'])) { $comments_settings['comment_daily_limit'] = 0; }
         
-        if ($this->isActive('gravatar')) {
+        if ($h->isActive('avatar')) {
             if (!isset($comments_settings['comment_avatars'])) { $comments_settings['comment_avatars'] = "checked"; }
         } else {
             if (!isset($comments_settings['comment_avatars'])) { $comments_settings['comment_avatars'] = ""; }
         }
         
-        $this->updateSetting('comments_settings', serialize($comments_settings));
-        
-        // Include language file. Also included in hotaru_header, but needed here so 
-        // that the link in the Admin sidebar shows immediately after installation.
-        $this->includeLanguage();
+        $h->updateSetting('comments_settings', serialize($comments_settings));
     }
     
     
-    /**
-     * Include css and JavaScript
-     */
-    public function header_include()
-    { 
-        $this->hotaru->includeCss('comments', 'comments');
-        $this->hotaru->includeJs('comments', 'comments');
-        $this->hotaru->includeJs('urldecode.min', 'comments');
-    }
-    
-    
-    /**
-     * Include jQuery for hiding and showing email options in plugin settings
-     */
-    public function admin_header_include_raw()
-    {
-        $admin = new Admin();
-        
-        if ($admin->isSettingsPage('comments')) {
-            echo "<script type='text/javascript'>\n";
-            echo "$(document).ready(function(){\n";
-                echo "$('#email_notify').click(function () {\n";
-                echo "$('#email_notify_options').slideToggle();\n";
-                echo "});\n";
-            echo "});\n";
-            echo "</script>\n";
-        }
-    }
-    
-
     /**
      * Define table name, include language file and creat global Comments object
      */
-    public function hotaru_header()
+    public function theme_index_top($h)
     {
-        if (!defined('TABLE_COMMENTS')) { define("TABLE_COMMENTS", DB_PREFIX . 'comments'); }
-        if (!defined('TABLE_COMMENTVOTES')) { define("TABLE_COMMENTVOTES", DB_PREFIX . 'commentvotes'); }
-        
-        $this->includeLanguage();
-        
         // Create a new global object called "comments".
-        require_once(PLUGINS . 'comments/libs/Comment.php');
-        $this->hotaru->comment = new Comment($this->hotaru);
+        require_once(LIBS . 'Comment.php');
+        $h->comment = new Comment($this->hotaru);
         
         // Get settings from database if they exist...
-        $comments_settings = $this->getSerializedSettings();
+        $comments_settings = $h->getSerializedSettings();
     
         // Assign settings to class member
-        $this->hotaru->comment->avatars = $comments_settings['comment_avatars'];
-        $this->hotaru->comment->voting = $comments_settings['comment_voting'];
-        $this->hotaru->comment->email = $comments_settings['comment_email'];
-        $this->hotaru->comment->allowableTags = $comments_settings['comment_allowable_tags'];
-        $this->hotaru->comment->levels = $comments_settings['comment_levels'];
-        $this->hotaru->comment->setPending = $comments_settings['comment_set_pending'];
-        $this->hotaru->comment->allForms = $comments_settings['comment_all_forms'];
-    }
-    
-    
-    /**
-     * Process a new comment
-     *
-     * @return bool
-     */
-    public function theme_index_replace()
-    {
-        if ($this->hotaru->isPage('rss_comments')) {
-            $this->hotaru->comment->rssFeed();
+        $h->comment->avatars = $comments_settings['comment_avatars'];
+        $h->comment->voting = $comments_settings['comment_voting'];
+        $h->comment->email = $comments_settings['comment_email'];
+        $h->comment->allowableTags = $comments_settings['comment_allowable_tags'];
+        $h->comment->levels = $comments_settings['comment_levels'];
+        $h->comment->setPending = $comments_settings['comment_set_pending'];
+        $h->comment->allForms = $comments_settings['comment_all_forms'];
+        
+        
+        if ($h->pageName == 'rss_comments') {
+            $this->rssFeed($h);
             return true;
+        }
+        
+        if ($h->pageName == 'comments') {
+            $h->pageTitle = $h->lang['comments'];
+            if ($h->cage->get->keyExists('user')) {
+                $h->pageTitle .= '[delimiter]' . $h->cage->get->testUsername('user');
+            }
         }
 
         // Is the comment form open on this thread? 
-        $this->hotaru->comment->thisForm = $this->hotaru->comment->formStatus('select'); // returns 'open' or 'closed'
+        $h->comment->thisForm = $h->comment->formStatus($h, 'select'); // returns 'open' or 'closed'
 
-        if (   ($this->hotaru->isPage('comments')) 
-            && ($this->hotaru->comment->thisForm == 'open')
-            && ($this->hotaru->comment->allForms == 'checked')) {
+        if (   ($h->pageName == 'comments') 
+            && ($h->comment->thisForm == 'open')
+            && ($h->comment->allForms == 'checked')) {
             
-            if ($this->current_user->loggedIn) {
+            if ($h->currentUser->loggedIn) {
 
-                if (($this->cage->post->getAlpha('comment_process') == 'newcomment') || 
-                    ($this->cage->post->getAlpha('comment_process') == 'editcomment'))
+                if (($h->cage->post->getAlpha('comment_process') == 'newcomment') || 
+                    ($h->cage->post->getAlpha('comment_process') == 'editcomment'))
                 {
         
-                    if ($this->cage->post->keyExists('comment_content')) {
-                        $this->hotaru->comment->content = sanitize($this->cage->post->getHtmLawed('comment_content'), 2, $this->hotaru->comment->allowableTags);
+                    if ($h->cage->post->keyExists('comment_content')) {
+                        $h->comment->content = sanitize($h->cage->post->getHtmLawed('comment_content'), 2, $h->comment->allowableTags);
                     }
                     
-                    if ($this->cage->post->keyExists('comment_post_id')) {
-                        $this->hotaru->comment->postId = $this->cage->post->testInt('comment_post_id');
+                    if ($h->cage->post->keyExists('comment_post_id')) {
+                        $h->comment->postId = $h->cage->post->testInt('comment_post_id');
                     }
 
-                    if ($this->cage->post->keyExists('comment_user_id')) {
-                        $this->hotaru->comment->author = $this->cage->post->testInt('comment_user_id');
+                    if ($h->cage->post->keyExists('comment_user_id')) {
+                        $h->comment->author = $h->cage->post->testInt('comment_user_id');
                     }
                 
-                    if ($this->cage->post->keyExists('comment_parent')) {
-                        $this->hotaru->comment->parent = $this->cage->post->testInt('comment_parent');
-                        if ($this->cage->post->getAlpha('comment_process') == 'editcomment') {
-                            $this->hotaru->comment->id = $this->cage->post->testInt('comment_parent');
+                    if ($h->cage->post->keyExists('comment_parent')) {
+                        $h->comment->parent = $h->cage->post->testInt('comment_parent');
+                        if ($h->cage->post->getAlpha('comment_process') == 'editcomment') {
+                            $h->comment->id = $h->cage->post->testInt('comment_parent');
                         }
                     }
                     
-                    if ($this->cage->post->keyExists('comment_subscribe')) {
-                        $this->hotaru->comment->subscribe = 1;
+                    if ($h->cage->post->keyExists('comment_subscribe')) {
+                        $h->comment->subscribe = 1;
                     } else {
-                        $this->hotaru->comment->subscribe = 0;
-                        $this->hotaru->comment->unsubscribe($this->hotaru->comment->postId);
+                        $h->comment->subscribe = 0;
+                        $h->comment->unsubscribe($h, $h->comment->postId);
                     }
                     
-                    if ($this->cage->post->getAlpha('comment_process') == 'newcomment')
+                    if ($h->cage->post->getAlpha('comment_process') == 'newcomment')
                     {
                         // before posting, we need to be certain this user has permission:
                         $safe = false;
-                        $can_comment = $this->hotaru->current_user->getPermission('can_comment');
+                        $can_comment = $h->currentUser->getPermission('can_comment');
                         if ($can_comment == 'yes') { $safe = true; }
-                        if ($can_comment == 'mod') { $safe = true; $this->hotaru->comment->status = 'pending'; }
+                        if ($can_comment == 'mod') { $safe = true; $h->comment->status = 'pending'; }
                         
                         // Okay, safe to add the comment...
                         if ($safe) {
                             // A user can unsubscribe by submitting an empty comment, so...
-                            if ($this->hotaru->comment->content != '') {
-                                $this->hotaru->comment->addComment();
-                                
-                                // get settings
-                                $comments_settings = $this->getSerializedSettings();
+                            if ($h->comment->content != '') {
+                                $h->comment->addComment($h);
             
                                 // notify chosen mods of new comment by email if enabled and UserFunctions file exists
                                 if (($comments_settings['comment_email_notify']) && (file_exists(PLUGINS . 'users/libs/UserFunctions.php')))
                                 {
                                     require_once(PLUGINS . 'users/libs/UserFunctions.php');
-                                    $uf = new UserFunctions($this->hotaru);
-                                    $uf->notifyMods('comment', $this->hotaru->comment->status, $this->hotaru->post->id, $this->hotaru->comment->id);
+                                    $uf = new UserFunctions();
+                                    $uf->notifyMods($h, 'comment', $h->comment->status, $h->post->id, $h->comment->id);
                                 }
                     
                                 // email comment subscribers if this comment has 'approved' status:
-                                if ($this->hotaru->comment->status == 'approved') {
-                                    $this->hotaru->comment->emailCommentSubscribers($this->hotaru->comment->postId);
+                                if ($h->comment->status == 'approved') {
+                                    $this->emailCommentSubscribers($h, $h->comment->postId);
                                 }
                             } else {
                                 //comment empty so just check subscribe box:
-                                $this->hotaru->comment->updateSubscribe($this->hotaru->comment->postId);
+                                $h->comment->updateSubscribe($h, $h->comment->postId);
                             }
                         }
                     }
-                    elseif($this->cage->post->getAlpha('comment_process') == 'editcomment')
+                    elseif($h->cage->post->getAlpha('comment_process') == 'editcomment')
                     {
                         // before editing, we need to be certain this user has permission:
                         $safe = false;
-                        $can_edit = $this->hotaru->current_user->getPermission('can_edit_comments');
+                        $can_edit = $h->currentUser->getPermission('can_edit_comments');
                         if ($can_edit == 'yes') { $safe = true; }
-                        if (($can_edit == 'own') && ($this->hotaru->current_user->id == $this->hotaru->comment->author)) { $safe = true; }
+                        if (($can_edit == 'own') && ($h->currentUser->id == $h->comment->author)) { $safe = true; }
                         if ($safe) {
-                            $this->hotaru->comment->editComment();
+                            $h->comment->editComment($h);
                         }
                     }
-                    
-                    header("Location: " . $this->hotaru->url(array('page'=>$this->hotaru->comment->postId)));    // Go to the post
+                   
+                    header("Location: " . $h->url(array('page'=>$h->comment->postId)));    // Go to the post
                     die();
                     
                 }
                 
                 // set current comment and responses to pending:
-                if ($this->cage->get->getAlpha('action') == 'setpending') { 
+                if ($h->cage->get->getAlpha('action') == 'setpending') { 
                 
                     // before setting pending, we need to be certain this user has permission:
-                    if ($this->hotaru->current_user->getPermission('can_set_comments_pending') == 'yes') {
-                        $cid = $this->cage->get->testInt('cid'); // comment id
-                        $comment = $this->hotaru->comment->getComment($cid);
-                        $this->hotaru->comment->readComment($comment); // read comment
-                        $this->hotaru->comment->status = 'pending'; // set to pending
-                        $this->hotaru->comment->editComment();  // update this comment
+                    if ($h->currentUser->getPermission('can_set_comments_pending') == 'yes') {
+                        $cid = $h->cage->get->testInt('cid'); // comment id
+                        $comment = $h->comment->getComment($cid);
+                        $h->comment->readComment($comment); // read comment
+                        $h->comment->status = 'pending'; // set to pending
+                        $h->comment->editComment();  // update this comment
     
-                        $this->hotaru->comment->postId = $this->cage->get->testInt('pid');  // post id
-                        $this->hotaru->comment->setPendingCommentTree($cid);   // set all responses to 'pending', too.
+                        $h->comment->postId = $h->cage->get->testInt('pid');  // post id
+                        $h->comment->setPendingCommentTree($cid);   // set all responses to 'pending', too.
                         
                         // redirect back to thread:
-                        $this->hotaru->post = new Post($this->hotaru);
-                        $this->hotaru->post->readPost($this->hotaru->comment->postId);
-                        header("Location: " . $this->hotaru->url(array('page'=>$this->hotaru->post->id)));    // Go to the post
+                        $h->post = new Post($this->hotaru);
+                        $h->post->readPost($h->comment->postId);
+                        header("Location: " . $h->url(array('page'=>$h->post->id)));    // Go to the post
                         die();
                     }
                 }
                 
                 // delete current comment and responses:
-                if ($this->cage->get->getAlpha('action') == 'delete') { 
+                if ($h->cage->get->getAlpha('action') == 'delete') { 
                 
                     // before deleting a comment, we need to be certain this user has permission:
-                    if ($this->hotaru->current_user->getPermission('can_delete_comments') == 'yes') {
-                        $cid = $this->cage->get->testInt('cid'); // comment id
-                        $comment = $this->hotaru->comment->getComment($cid);
-                        $this->hotaru->comment->readComment($comment); // read comment
+                    if ($h->currentUser->getPermission('can_delete_comments') == 'yes') {
+                        $cid = $h->cage->get->testInt('cid'); // comment id
+                        $comment = $h->comment->getComment($h, $cid);
+                        $h->comment->readComment($h, $comment); // read comment
                         
-                        $this->pluginHook('comments_delete_comment');
+                        $h->pluginHook('comments_delete_comment');
                         
-                        $this->hotaru->comment->deleteComment(); // delete this comment
+                        $h->comment->deleteComment($h); // delete this comment
     
-                        $this->hotaru->comment->postId = $this->cage->get->testInt('pid');  // post id
-                        $this->hotaru->comment->deleteCommentTree($cid);   // delete all rsponses, too.
+                        $h->comment->postId = $h->cage->get->testInt('pid');  // post id
+                        $h->comment->deleteCommentTree($h, $cid);   // delete all rsponses, too.
                         
                         // redirect back to thread:
-                        $this->hotaru->post = new Post($this->hotaru);
-                        $this->hotaru->post->readPost($this->hotaru->comment->postId);
-                        header("Location: " . $this->hotaru->url(array('page'=>$this->hotaru->comment->postId)));    // Go to the post
+                        $h->readPost($h->comment->postId);
+                        header("Location: " . $h->url(array('page'=>$h->comment->postId)));    // Go to the post
                         die();
                     }
                 }
@@ -413,81 +291,94 @@ class Comments extends pluginFunctions
     
     
     /**
-     * Display Admin settings page
-     *
-     * @return true
+     * Include css and JavaScript
      */
-    public function admin_plugin_settings()
+    public function header_include($h)
+    { 
+        $h->includeCss('comments', 'comments');
+        $h->includeJs('comments', 'urldecode.min');
+        $h->includeJs('comments', 'comments');
+    }
+    
+    
+    /**
+     * Include jQuery for hiding and showing email options in plugin settings
+     */
+    public function admin_header_include_raw($h)
     {
-        require_once(PLUGINS . 'comments/comments_settings.php');
-        $comSettings = new CommentsSettings($this->folder, $this->hotaru);
-        $comSettings->settings();
-        return true;
+        if ($h->isSettingsPage('comments')) {
+            echo "<script type='text/javascript'>\n";
+            echo "$(document).ready(function(){\n";
+                echo "$('#email_notify').click(function () {\n";
+                echo "$('#email_notify_options').slideToggle();\n";
+                echo "});\n";
+            echo "});\n";
+            echo "</script>\n";
+        }
     }
     
     
     /**
      * Link to comments
      */
-    public function submit_show_post_extra_fields()
+    public function sb_base_show_post_extra_fields($h)
     {
-        echo '<li><a class="comment_link" href="' . $this->hotaru->url(array('page'=>$this->hotaru->post->id)) . '">' . $this->hotaru->comment->countComments() . '</a></li>' . "\n";
+        echo '<li><a class="comment_link" href="' . $h->url(array('page'=>$h->post->id)) . '">' . $h->countComments() . '</a></li>' . "\n";
     }
     
     
     /**
      * Prepare and display comments wrapper and form
      */
-    public function submit_post_show_post()
+    public function sb_base_post_show_post($h)
     {
         // set default
-        $this->hotaru->vars['subscribe_check'] = ''; 
+        $h->vars['subscribe_check'] = ''; 
         
-        // Check if the current_user is the post author
-        if ($this->hotaru->post->author == $this->current_user->id) {
+        // Check if the currentUser is the post author
+        if ($h->post->author == $h->currentUser->id) {
             // Check if the user subscribed to comments as a submitter
-            if ($this->hotaru->post->subscribe == 1) { 
-                $this->hotaru->vars['subscribe_check'] = 'checked';
+            if ($h->post->subscribe == 1) { 
+                $h->vars['subscribe_check'] = 'checked';
             } 
         } 
         
         // Check if the user subscribed to comments as a commenter
         $sql = "SELECT COUNT(comment_subscribe) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_user_id = %d AND comment_subscribe = %d";
-        $subscribe_result = $this->db->get_var($this->db->prepare($sql, $this->hotaru->post->id, $this->current_user->id, 1));
+        $subscribe_result = $h->db->get_var($h->db->prepare($sql, $h->post->id, $h->currentUser->id, 1));
         
         if ($subscribe_result > 0) { 
-            $this->hotaru->vars['subscribe_check'] = 'checked';
+            $h->vars['subscribe_check'] = 'checked';
         } 
 
-        if (!$this->hotaru->isPage('submit2')) {
+        if (!$h->isPage('submit3')) {
         
-            $comments_settings = $this->getSerializedSettings();
-            $this->hotaru->comment->pagination = $comments_settings['comment_pagination'];
-            $this->hotaru->comment->order = $comments_settings['comment_order'];
-            $this->hotaru->comment->itemsPerPage = $comments_settings['comment_items_per_page'];
+            $comments_settings = $h->getSerializedSettings();
+            $h->comment->pagination = $comments_settings['comment_pagination'];
+            $h->comment->order = $comments_settings['comment_order'];
+            $h->comment->itemsPerPage = $comments_settings['comment_items_per_page'];
             
             // GET ALL PARENT COMMENTS
-            $parents = $this->hotaru->comment->readAllParents($this->hotaru->post->id, $this->hotaru->comment->order);
+            $parents = $h->comment->readAllParents($h, $h->post->id, $h->comment->order);
                     
             echo "<!--  START COMMENTS_WRAPPER -->\n";
             echo "<div id='comments_wrapper'>\n";
-            echo "<h2>" . $this->hotaru->comment->countComments(false) . "</h2>\n";
+            echo "<h2>" . $h->countComments(false) . "</h2>\n";
                 
             // IF PAGINATING COMMENTS:
-            if ($this->hotaru->comment->pagination)
+            if ($h->comment->pagination)
             {
-                require_once(PLUGINS . 'submit/libs/Post.php');
-                require_once(EXTENSIONS . 'Paginated/Paginated.php');
-                require_once(EXTENSIONS . 'Paginated/DoubleBarLayout.php');
-                
-                $pg = $this->hotaru->cage->get->getInt('pg');
-                $pagedResults = new Paginated($parents, $this->hotaru->comment->itemsPerPage, $pg);
-                
+                $pg = $h->cage->get->getInt('pg');
+                $pagedResults = $h->pagination($parents, $h->comment->itemsPerPage, $pg);
+
+                if ($pagedResults) {
                 // cycle through the parents, and go get their children
-                while ($parent = $pagedResults->fetchPagedRow()) {
-                        $this->displayComment($parent);
-                        $this->commentTree($parent->comment_id, 0);
-                        $this->hotaru->comment->depth = 0;
+                    while($parent = $pagedResults->fetchPagedRow()) {
+        
+                            $this->displayComment($h, $parent);
+                            $this->commentTree($h, $parent->comment_id, 0);
+                            $h->comment->depth = 0;
+                    }
                 }
             }
             // IF NO PAGINATION:
@@ -496,9 +387,9 @@ class Comments extends pluginFunctions
                 if ($parents) { 
                     // cycle through the parents, and go get their children
                     foreach ($parents as $parent) {
-                        $this->displayComment($parent);
-                        $this->commentTree($parent->comment_id, 0);
-                        $this->hotaru->comment->depth = 0;
+                        $this->displayComment($h, $parent);
+                        $this->commentTree($h, $parent->comment_id, 0);
+                        $h->comment->depth = 0;
                     }
                 }
             }
@@ -507,38 +398,50 @@ class Comments extends pluginFunctions
             echo "<!--  END COMMENTS -->\n";
         }
         
-        if ($this->hotaru->comment->pagination) {
-            $pagedResults->setLayout(new DoubleBarLayout());
-            echo $pagedResults->fetchPagedNavigation('', $this->hotaru);
+        if ($h->comment->pagination && $pagedResults) {
+            echo $h->pageBar($pagedResults);
         }
         
-        if ($this->current_user->getPermission('can_comment') == 'no') {
-            echo "<div class='comment_form_off'>" . $this->lang['comments_no_permission'] . "</div>";
+        // determine where to return the user to after logging in:
+        if (!$h->cage->get->keyExists('return')) {
+            $host = $h->cage->server->getMixedString2('HTTP_HOST');
+            $uri = $h->cage->server->getMixedString2('REQUEST_URI');
+            $return = 'http://' . $host . $uri;
+            $return = urlencode(htmlentities($return,ENT_QUOTES,'UTF-8'));
+        } else {
+            $return = $h->cage->get->testUri('return'); // use existing return parameter
+        }
+                
+        if (!$h->currentUser->loggedIn) {
+            echo "<div class='comment_form_off'>";
+            echo "<a href='" . BASEURL . "index.php?page=login&return=" . $return . "'>";
+            echo $h->lang['comments_please_login'] . "</a></div>";
             return false;
         }
         
-        if (!$this->current_user->loggedIn) {
-            echo "<div class='comment_form_off'>" . $this->lang['comments_please_login'] . "</div>";
+        if ($h->currentUser->getPermission('can_comment') == 'no') {
+            echo "<div class='comment_form_off'>" . $h->lang['comments_no_permission'] . "</div>";
             return false;
         }
         
-        if (($this->hotaru->comment->thisForm == 'closed') 
-            || ($this->hotaru->comment->allForms != 'checked')) {
-            echo "<div class='comment_form_off'>" . $this->lang['comments_form_closed'] . "</div>";
+        if (!$h->isPage('submit3') && ($h->comment->thisForm == 'closed') 
+            || ($h->comment->allForms != 'checked')) {
+            echo "<div class='comment_form_off'>" . $h->lang['comments_form_closed'] . "</div>";
             return false;
         }
- 
-        if (!$this->hotaru->isPage('submit2')) {
+
+        if (!$h->isPage('submit3')) {
             // force non-reply form to have parent "0" and depth "0"
-            $this->hotaru->comment->id = 0;
-            $this->hotaru->comment->depth = 0;
-            $this->hotaru->displayTemplate('comment_form', 'comments', $this->hotaru, false);
+            $h->comment->id = 0;
+            $h->comment->depth = 0;
+            $h->vars['subscribe'] = ($h->comment->subscribe) ? 'checked' : '';
+            $h->displayTemplate('comment_form', 'comments', false);
             
-            $this->pluginHook('comments_post_last_form');
+            $h->pluginHook('comments_post_last_form');
             
-            if ($this->current_user->getPermission('can_comment_manager_settings') == 'yes') {
-                echo "<a id='comment_manager_link' href='" . $this->hotaru->url(array('page'=>'plugin_settings', 'plugin'=>'comment_manager'), 'admin') . "'>";
-                echo $this->hotaru->lang['comments_access_comment_manager'] . "</a>";
+            if ($h->currentUser->getPermission('can_comment_manager_settings') == 'yes') {
+                echo "<a id='comment_manager_link' href='" . $h->url(array('page'=>'plugin_settings', 'plugin'=>'comment_manager'), 'admin') . "'>";
+                echo $h->lang['comments_access_comment_manager'] . "</a>";
             }
         }
     }
@@ -551,19 +454,19 @@ class Comments extends pluginFunctions
      * @param int $depth - for comment nesting
      * @return bool
      */
-    public function commentTree($item_id, $depth)
+    public function commentTree($h, $item_id, $depth)
     {
-        while ($children = $this->hotaru->comment->readAllChildren($item_id)) {
+        while ($children = $h->comment->readAllChildren($h, $item_id)) {
             foreach ($children as $child) {
                 $depth++;
-                if ($depth == $this->hotaru->comment->levels) { 
+                if ($depth == $h->comment->levels) { 
                     // Prevent depth exceeding nesting levels
                     // levels start at 0 so we're using -1.
-                    $depth = $this->hotaru->comment->levels - 1;
+                    $depth = $h->comment->levels - 1;
                 }
-                $this->hotaru->comment->depth = $depth;
-                $this->displayComment($child);
-                if ($this->commentTree($child->comment_id, $depth)) {
+                $h->comment->depth = $depth;
+                $this->displayComment($h, $child);
+                if ($this->commentTree($h, $child->comment_id, $depth)) {
                     return true;
                 }
             }
@@ -578,27 +481,28 @@ class Comments extends pluginFunctions
      *
      * @param array $item - current comment
      */
-    public function displayComment($item, $all = false)
+    public function displayComment($h, $item, $all = false)
     {
-        if ($this->hotaru->isPage('submit2')) { return false; }
+        if ($h->isPage('submit2')) { return false; }
        
-        $this->hotaru->comment->readComment($item);
-        if ($this->hotaru->comment->status == 'approved') {
+        $h->comment->readComment($h, $item);
+        if ($h->comment->status == 'approved') {
             if ($all) {
-                $this->hotaru->displayTemplate('all_comments', 'comments', $this->hotaru, false);
+                $h->displayTemplate('all_comments', 'comments', false);
             } else {
-                $this->hotaru->displayTemplate('show_comments', 'comments', $this->hotaru, false);
+                $h->displayTemplate('show_comments', 'comments', false);
             }
             
             // don't show the reply form in these cases:
             //if ($all) { return false; } // we're looking at the main comments page
-            if ($this->current_user->getPermission('can_comment') == 'no') { return false; }
-            if (!$this->current_user->loggedIn) { return false; }
-            if ($this->hotaru->comment->thisForm == 'closed') { return false; }
-            if ($this->hotaru->comment->allForms != 'checked') { return false; }
+            if ($h->currentUser->getPermission('can_comment') == 'no') { return false; }
+            if (!$h->currentUser->loggedIn) { return false; }
+            if ($h->comment->thisForm == 'closed') { return false; }
+            if ($h->comment->allForms != 'checked') { return false; }
     
             // show the reply form:
-            $this->hotaru->displayTemplate('comment_form', 'comments', $this->hotaru, false);
+            $h->vars['subscribe'] = ($h->comment->subscribe) ? 'checked' : '';
+            $h->displayTemplate('comment_form', 'comments', false);
         }
     }
     
@@ -606,94 +510,68 @@ class Comments extends pluginFunctions
     /**
      * Show all comments list on a main "Comments" page
      */
-    public function theme_index_main()
+    public function theme_index_main($h)
     {
-        if (!$this->hotaru->isPage('comments')) { return false; }
+        if (!$h->isPage('comments')) { return false; }
         
-        if ($this->cage->get->keyExists('user')) {
-            $user = $this->cage->get->testUsername('user');
-            $userid = $this->current_user->getUserIdFromName($user);
+        if ($h->cage->get->keyExists('user')) {
+            $user = $h->cage->get->testUsername('user');
+            $userid = $h->getUserIdFromName($user);
         } else {
             $userid = 0;
         }
 
-        $comments = $this->hotaru->comment->getAllComments(0, 'DESC', 0, $userid);
+        $comments = $h->comment->getAllComments($h, 0, 'DESC', 0, $userid);
         if (!$comments) { return false; }
         
-        /* BREADCRUMBS */
-        echo "<div id='breadcrumbs'>";
-        echo "<a href='" . BASEURL . "'>" .  $this->hotaru->lang['main_theme_home'] . "</a> &raquo; ";
-        if ($this->cage->get->keyExists('user')) {
-            echo "<a href='" . $this->hotaru->url(array('user' => $user)) . "'>" . $user . "</a> &raquo; "; 
+        $comments_settings = $h->getSerializedSettings();
+        $h->comment->itemsPerPage = $comments_settings['comment_items_per_page'];
+        
+        $pg = $h->cage->get->getInt('pg');
+        $pagedResults = $h->pagination($comments, $h->comment->itemsPerPage, $pg);
+        
+        if ($pagedResults) {
+            while($comment = $pagedResults->fetchPagedRow()) {
+                $h->readPost($comment->comment_post_id);
+                $this->displayComment($h, $comment, true);
+            }
+            
+            echo $h->pageBar($pagedResults);
         }
-        $this->hotaru->plugins->pluginHook('breadcrumbs');
-        echo $this->hotaru->lang['comments_all'];
-        if ($this->cage->get->keyExists('user')) {
-            echo "<a href='" . $this->hotaru->url(array('page'=>'rss_comments', 'user'=>$user)) . "'> ";
-        } else {
-            echo "<a href='" . $this->hotaru->url(array('page'=>'rss_comments')) . "'> ";
-        }
-        echo "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
-        echo "</div>";
-
-        $comments_settings = $this->getSerializedSettings();
-        $this->hotaru->comment->itemsPerPage = $comments_settings['comment_items_per_page'];
-        
-        // for pagination:
-        require_once(PLUGINS . 'submit/libs/Post.php');
-        require_once(EXTENSIONS . 'Paginated/Paginated.php');
-        require_once(EXTENSIONS . 'Paginated/DoubleBarLayout.php');
-        
-        $pg = $this->hotaru->cage->get->getInt('pg');
-        $pagedResults = new Paginated($comments, $this->hotaru->comment->itemsPerPage, $pg);
-        
-        while($comment = $pagedResults->fetchPagedRow()) {
-            $this->hotaru->post->readPost($comment->comment_post_id);
-            $this->displayComment($comment, true);
-        }
-        
-        $pagedResults->setLayout(new DoubleBarLayout());
-        echo $pagedResults->fetchPagedNavigation('', $this->hotaru);
+        return true;
     }
     
     
     /**
-     * Check and update post_submit in Submit step 2 and Post Edit pages
+     * Add Comments RSS link to breadcrumbs
      */
-    public function submit_form_2_assign()
+    public function breadcrumbs($h)
     {
-        if ($this->cage->post->getAlpha('submit2') == 'true') 
-        {
-            if ($this->cage->post->keyExists('post_subscribe')) { $subscribe_check = 'checked'; } else { $subscribe_check = ''; }
-        } 
-        elseif ($this->cage->post->getAlpha('submit3') == 'edit')
-        {
-            if ($this->hotaru->post->subscribe == 1) { $subscribe_check = 'checked'; } else { $subscribe_check = ''; }
-        }
-        elseif ($this->hotaru->isPage('edit_post')) 
-        {
-            if ($this->cage->post->getAlpha('edit_post') == 'true') {
-                if ($this->cage->post->keyExists('post_subscribe')) { $subscribe_check = 'checked'; } else { $subscribe_check = ''; }
-            } else {
-                if ($this->hotaru->post->subscribe == 1) { $subscribe_check = 'checked'; } else { $subscribe_check = ''; }
-            }
-        }
-        else 
-        {
-            $subscribe_check = "";
-        }
+        if ($h->pageName != 'comments') { return false; }
         
-        $this->hotaru->vars['subscribe_check'] = $subscribe_check;
+        if ($h->subPage == 'user') {
+            $user = $h->cage->get->testUsername('user');
+            $userlink = "<a href='" . $h->url(array('user'=>$user)) . "'>";
+            $userlink .= $user . "</a> &raquo ";
+            $rss = "<a href='" . $h->url(array('page'=>'rss_comments', 'user'=>$h->cage->get->testUsername('user'))) . "'> ";
+            $crumbs = $userlink . $h->lang['comments'] . $rss;
+        } else {
+            $crumbs = $h->lang ['comments'] . "<a href='" . $h->url(array('page'=>'rss_comments')) . "'> ";
+        }
+        $crumbs .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png' alt='" . $h->pageTitle . " RSS' /></a>\n ";
+        
+        return $crumbs;
     }
     
     
     /**
      * Show post_subscribe option in Submit step 2 and Post Edit
      */
-    public function submit_form_2_fields()
+    public function submit_2_fields($h)
     {
+        if ($h->post->subscribe) { $subscribe = 'checked'; } else { $subscribe = ''; } 
         echo "<tr><td colspan='3'>\n";
-        echo "<input id='post_subscribe' name='post_subscribe' type='checkbox' " . $this->hotaru->vars['subscribe_check'] . "> " . $this->lang['submit_form_subscribe']; 
+        echo "<input id='post_subscribe' name='post_subscribe' type='checkbox' " . $subscribe . "> " . $h->lang['submit_subscribe']; 
         echo "</tr>";
     }
     
@@ -701,84 +579,239 @@ class Comments extends pluginFunctions
     /**
      * Show Enable comment form option in Post Edit
      */
-    public function submit_edit_post_admin_fields()
+    public function submit_edit_admin_fields($h)
     {
-        $this->hotaru->comment->thisForm = $this->hotaru->comment->formStatus('select'); // returns 'open' or 'closed'
-        if ($this->hotaru->comment->thisForm == 'open') { $form_open = 'checked'; } else { $form_open = ''; }
+        if ($h->post->comments == 'open') { $form_open = 'checked'; } else { $form_open = ''; }
 
         echo "<tr><td colspan='3'>\n";
-        echo "<input id='enable_comments' name='enable_comments' type='checkbox' " . $form_open . "> " . $this->lang['submit_form_enable_comments']; 
+        echo "<input id='enable_comments' name='enable_comments' type='checkbox' " . $form_open . "> " . $h->lang['submit_form_enable_comments']; 
         echo "</tr>";
     }
     
     
     /**
-     * Add hidden value for "enable comment form" in Post Edit
-     * This is used when a non-admin is editing the post, e.g. the post submitter
+     * Check and update post_submit in Submit step 2 and Post Edit pages
      */
-    public function submit_edit_post_non_admin_hidden_fields()
+    public function submit_functions_process_submitted($h)
     {
-        $this->hotaru->comment->thisForm = $this->hotaru->comment->formStatus('select'); // returns 'open' or 'closed'
-        if ($this->hotaru->comment->thisForm == 'open') { $form_open = 'checked'; } else { $form_open = ''; }
+        if (($h->pageName != 'submit2') && ($h->pageName != 'edit_post')) { return false; }
 
-        echo "<input type='hidden' name='enable_comments' value='" . $form_open . "'>";
+        // SUBSCRIBE TO COMMENTS
+        
+        if ($h->cage->post->keyExists('post_subscribe')) {
+            $h->post->subscribe = 1; 
+            $subscribe = 'checked'; 
+        } else {
+            $h->post->subscribe = 0;
+            $subscribe = '';
+        }
+
+        $h->vars['submitted_data']['submit_subscribe'] = $h->post->subscribe;
+        
+        // ENABLE / DISABLE COMMENT FORM
+        
+        // check on edit post
+        if ($h->pageName == 'edit_post') {
+            if ($h->cage->post->keyExists('enable_comments')) { 
+                $h->post->comments = 'open'; 
+                $comments = 'open';
+            } else { 
+                $h->post->comments = 'closed'; 
+                $comments = 'closed';
+            }
+        } else {
+            // open for submit 2
+            $h->post->comments = 'open'; 
+            $comments = 'open';
+        }
+        
+        $h->vars['submitted_data']['submit_comments'] = $h->post->comments;
     }
     
     
     /**
-     * Save post_subscribe to the database
+     * Save subscribe to the database during post update
      */
-    public function submit_form_2_process_submission() 
+    public function submit_2_process_submission($h)
     {
-        if ($this->cage->post->keyExists('post_subscribe')) { $this->hotaru->post->subscribe = 1; } else { $this->hotaru->post->subscribe = 0; } 
-        
-        if ($this->cage->post->keyExists('edit_post'))
-        {
-            // enable/disable comment form for this post
-            if ($this->cage->post->keyExists('enable_comments')) { 
-                $this->hotaru->comment->formStatus('open');
-            } else {
-                $this->hotaru->comment->formStatus('closed');
-            }
-        }
+        $h->post->subscribe = $h->vars['submitted_data']['submit_subscribe'];
+        $h->post->comments = $h->vars['submitted_data']['submit_comments'];
     }
     
     
     /**
      * Delete comments when post deleted
      */
-    public function post_delete_post()
+    public function post_delete_post($h)
     {
         $sql = "DELETE FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d";
-        $this->db->query($this->db->prepare($sql, $this->hotaru->post->id));
+        $h->db->query($h->db->prepare($sql, $h->post->id));
     }
     
     
     /**
      * Add all comments link to Profile
      */
-    public function profile_usage()
+    public function profile_usage($h)
     {
-        echo "<a id='profile_see_comments' href='" . $this->hotaru->url(array('page'=>'comments', 'user'=>$this->hotaru->user->name)) . "'>";
-        echo $this->hotaru->lang['comments_profile_see_comments'] . ".";
+        echo "<a id='profile_see_comments' href='" . $h->url(array('page'=>'comments', 'user'=>$h->vars['user']->name)) . "'>";
+        echo $h->lang['comments_profile_see_comments'] . ".";
         echo "</a>";
         
     }
     
     
     /**
+     * Publish content as an RSS feed
+     * Uses the 3rd party RSS Writer class.
+     */    
+    public function rssFeed($h)
+    {
+        require_once(EXTENSIONS . 'RSSWriterClass/rsswriter.php');
+        
+        $select = '*';
+
+        $limit = $h->cage->get->getInt('limit');
+        $user = $h->cage->get->testUsername('user');
+
+        if (!$limit) { $limit = 10; }
+        if ($user) { 
+            $userid = $h->getUserIdFromName($user);
+        } else {
+            $userid = 0;
+        }
+        
+        $h->pluginHook('comments_rss_feed');
+        
+        $feed           = new RSS();
+        $feed->title    = SITE_NAME;
+        $feed->link     = BASEURL;
+        
+        if ($user) { 
+            $feed->description = $h->lang["comment_rss_comments_from_user"] . " " . $user; 
+        } else {
+            $feed->description = $h->lang["comment_rss_latest_comments"] . SITE_NAME;
+        }
+        
+        // fetch comments from the database        
+        $comments = $h->comment->getAllComments($h, 0, "desc", $limit, $userid);
+        
+        if ($comments) {
+            foreach ($comments as $comment) 
+            {
+                $h->readPost($comment->comment_post_id);
+                
+                $author = $h->getUserNameFromId($comment->comment_user_id);
+                
+                $item = new RSSItem();
+                if ($user) { 
+                    $title = $h->lang["comment_rss_comment_on"] . html_entity_decode(urldecode($h->post->title), ENT_QUOTES,'UTF-8');
+                } else {
+                    $title = $author . $h->lang["comment_rss_commented_on"] . html_entity_decode(urldecode($h->post->title), ENT_QUOTES,'UTF-8');
+                }
+                $item->title = stripslashes($title);
+                $item->link  = $h->url(array('page'=>$comment->comment_post_id)) . "#c" . $comment->comment_id;
+                $item->setPubDate($comment->comment_date); 
+                $item->description = "<![CDATA[ " . stripslashes(urldecode($comment->comment_content)) . " ]]>";
+                $feed->addItem($item);
+            }
+        }
+        echo $feed->serve();
+    }
+    
+    
+    /**
      * Show stats on Admin home page
      */
-    public function admin_theme_main_stats($vars)
+    public function admin_theme_main_stats($h, $vars)
     {
         echo "<li>&nbsp;</li>";
     
         foreach ($vars as $stat_type) {
-            $comments = $this->hotaru->comment->stats($stat_type);
+            require_once(LIBS . 'Comment.php');
+            $c = new Comment();
+            $comments = $c->stats($h, $stat_type);
             if (!$comments) { $comments = 0; }
             $lang_name = 'comments_admin_stats_' . $stat_type;
-            echo "<li>" . $this->lang[$lang_name] . ": " . $comments . "</li>";
+            echo "<li>" . $h->lang[$lang_name] . ": " . $comments . "</li>";
         }
+    }
+    
+    
+    /**
+    * Send an email to thread subscribers
+    *
+    * @param int $post_id
+    */
+    function emailCommentSubscribers($h, $post_id)
+    {
+        $h->readPost($post_id);
+    
+        // build a list of subscribers
+        $subscriber_ids = array();
+        
+        // Get id of post author if subscribed
+        if ($h->post->subscribe == 1) {
+            array_push($subscriber_ids, $h->post->author);
+        }
+        
+        // Get ids of comment authors if subscribed
+        $sql = "SELECT comment_user_id FROM " . TABLE_COMMENTS . " WHERE comment_subscribe = %d AND comment_post_id = %d";
+        $comment_subscribers = $h->db->get_results($h->db->prepare($sql, 1, $h->post->id));
+        if ($comment_subscribers) {
+            foreach ($comment_subscribers as $comment_subscriber) {
+                array_push($subscriber_ids, $comment_subscriber->comment_user_id); 
+            }
+        }
+        
+        // Use the ids to make an array of unique email addresses
+        $subscribers = array();
+        $subscriber_ids = array_unique($subscriber_ids);
+        foreach ($subscriber_ids as $subscriber_id) {
+            // remove the current comment author so he/she doesn't get emailed his own comment
+            if ($subscriber_id != $h->comment->author) {
+                $email = $h->db->get_var($h->db->prepare("SELECT user_email FROM " . TABLE_USERS . " WHERE user_id = %d", $subscriber_id));
+                array_push($subscribers, $email);
+            }
+        }
+        
+        $send_to = trim(implode(",", $subscribers),",");
+        
+        $comment_author = $h->getUserNameFromId($h->comment->author);
+        
+        //clean up content:
+        $story_title = stripslashes(html_entity_decode(urldecode($h->post->title), ENT_QUOTES,'UTF-8'));
+        $comment_content = stripslashes($h->comment->content);
+        
+        $subject = $comment_author . ' ' . $h->lang["comment_email_subject"]  . ' ' . $story_title;
+        
+        $message =  $comment_author . $h->lang["comment_email_intro"] . SITE_NAME . ": \r\n\r\n";
+        $message .= $h->lang["comment_email_story_title"] . $story_title . "\r\n"; 
+        $message .= $h->lang["comment_email_story_link"] . $h->url(array('page'=>$h->post->id)) . "\r\n\r\n";
+        $message .= $h->lang["comment_email_comment"] . $comment_content . "\r\n\r\n";
+        $message .= "************************ \r\n";
+        $message .= $h->lang["comment_email_do_not_reply"] . " \r\n";
+        $message .= $h->lang["comment_email_unsubscribe"];
+        
+        $from = SITE_EMAIL;
+        $to = $h->comment->email;  // send email to address specified in Comment Settings; 
+        if($send_to != "") {
+            $bcc = "\r\nBCC: " . $send_to;    // BCC individual addresses;
+        } else {
+            $bcc = "";
+        }
+        $headers = "From: " . $from . $bcc . "\r\nReply-To: " . $from . "\r\nX-Priority: 3\r\n";
+    
+        /*
+        echo "to: " . $to . "<br />";
+        echo "bcc: " . $bcc . "<br />";
+        echo "subject: " . $subject . "<br />";
+        echo "message: " . $message . "<br />";
+        echo "headers: " . $headers . "<br />";
+        exit;
+        */
+    
+        @mail($to, $subject, $message, $headers);
     }
 }
 

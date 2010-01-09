@@ -2,13 +2,16 @@
 /**
  * name: Search
  * description: Displays "Search!"
- * version: 0.7
+ * version: 0.8
  * folder: search
  * class: Search
- * requires: submit 1.4, sidebar_widgets 0.5
- * hooks: install_plugin, hotaru_header, header_include, post_list_filter, search_box
+ * type: search
+ * requires: submit 1.9, widgets 0.6
+ * hooks: install_plugin, sb_base_theme_index_top, header_include, sb_base_functions_preparelist, search_box, breadcrumbs
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
- * Usage: Add <?php $hotaru->plugins->pluginHook('search_box'); ?> to your theme, wherever you want the search box.
+ * Usage: Add <?php $h->pluginHook('search_box'); ?> to your theme, wherever you want the search box.
  *
  * PHP version 5
  *
@@ -32,38 +35,36 @@
  * @link      http://www.hotarucms.org/
  */
 
-class Search extends PluginFunctions
+class Search
 {
     /**
-     * Register search widget
+     * Add permissions and register search widget
      */
-    public function install_plugin()
+    public function install_plugin($h)
     {
         // Permissions
-        $site_perms = $this->current_user->getDefaultPermissions('all');
+        $site_perms = $h->getDefaultPermissions('all');
         if (!isset($site_perms['can_search'])) { 
             $perms['options']['can_search'] = array('yes', 'no');
             $perms['can_search']['default'] = 'yes';
+            $h->updateDefaultPermissions($perms);
         }
-        $this->current_user->updateDefaultPermissions($perms);
 
-        // sidebar widget
-        require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
-        $sidebar = new Sidebar($this->hotaru);
-        $sidebar->addWidget('search', 'search', '');  // plugin name, function name, optional arguments
+        // widget
+        $h->addWidget('search', 'search', '');  // plugin name, function name, optional arguments
     } 
     
     /**
-     * Include language
+     * Get search results
      */
-    public function hotaru_header()
+    public function sb_base_theme_index_top($h)
     {
-        $this->includeLanguage();
-        
         // Get page title
-        if ($this->cage->get->keyExists('search')) { 
-            $this->hotaru->title = stripslashes(htmlentities($this->cage->get->getMixedString2('search'),ENT_QUOTES,'UTF-8'));
-            $this->hotaru->title = $this->hotaru->pageToTitleCaps($this->hotaru->title);
+        if ($h->cage->get->keyExists('search')) { 
+            $title = stripslashes(htmlentities($h->cage->get->getMixedString2('search'),ENT_QUOTES,'UTF-8'));
+            $h->pageTitle = make_name($title);
+            $h->subPage = 'search';
+            $h->pageType = 'list';
         }
     } 
     
@@ -71,65 +72,40 @@ class Search extends PluginFunctions
     /**
      * Displays "Search!" wherever the plugin hook is.
      */
-    public function search_box()
+    public function search_box($h)
     {
-        $this->hotaru->displayTemplate('search_box', 'search');
+        $h->displayTemplate('search_box', 'search');
     }
     
     
     /**
      * Displays "Search!" wherever the plugin hook is.
      */
-    public function sidebar_widget_search()
+    public function widget_search($h)
     {
-        $this->hotaru->displayTemplate('search_box', 'search');
-    }
-    
-    /**
-     * Request the search results
-     *
-     * @return bool
-     */
-    public function theme_index_replace()
-    {
-        if ($this->hotaru->isPage('search')) {
-        
-            $search_terms = $this->cage->get->getMixedString2('search');
-            
-            $this->search($search_terms);
-    
-            return true;
-            
-        } else {
-            return false;
-        }
-        
-        return false;
+        $h->displayTemplate('search_box', 'search');
     }
     
     
     /**
      * Use the search terms to build a filter
      */
-    public function post_list_filter()
+    public function sb_base_functions_preparelist($h)
     {
-        if ($this->cage->get->keyExists('search')) 
+        if ($h->cage->get->keyExists('search')) 
         {
-            $orig_search_terms = stripslashes($this->cage->get->getMixedString2('search'));
+            $orig_search_terms = stripslashes($h->cage->get->getMixedString2('search'));
             $search_terms = $orig_search_terms;
-            
+        
             if ($search_terms)
             {
-    
                 // fetch select, orderby and filter...
-                $prepared_search = $this->prepareSearchFilter($search_terms);
+                $prepared_search = $this->prepareSearchFilter($h, $search_terms);
                 extract($prepared_search);
                 
-                $rss = " <a href='" . $this->hotaru->url(array('page'=>'rss', 'search'=>$orig_search_terms)) . "'>";
-                $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
-            
-                $this->hotaru->vars['page_title'] = $this->lang["submit_page_breadcrumbs_search"] . " &raquo; " . $orig_search_terms . $rss;
-                $this->hotaru->vars['orig_search'] = $orig_search_terms; // use this to re-fill the search box after a search
+                $h->vars['orig_search'] = $orig_search_terms; // use this to re-fill the search box after a search
+                
+                $h->vars['orig_search_terms'] = $orig_search_terms; // used in the breadcrumbs function
                 
                 return true;    
             }
@@ -141,7 +117,7 @@ class Search extends PluginFunctions
     /**
      * Prepare search filter
      */
-    public function prepareSearchFilter($search)
+    public function prepareSearchFilter($h, $search)
     {
         $search_terms = strtolower($search);
         $search_terms = explode(" ", $search_terms);
@@ -157,33 +133,33 @@ class Search extends PluginFunctions
                 $full_index = false;
             }
             if ($this->isStopword($search_term) == false) {
-                $search_terms_clean .= trim($this->db->escape($search_term)) . " ";
+                $search_terms_clean .= trim($h->db->escape($search_term)) . " ";
             }
         }
         
         // Undo the filter that limits results to either 'top', 'new' or archived (See submit.php -> sub_prepare_list())
-        if (isset($this->hotaru->vars['filter']['post_status = %s'])) { unset($this->hotaru->vars['filter']['post_status = %s']); }
-        if (isset($this->hotaru->vars['filter']['post_archived = %s'])) { unset($this->hotaru->vars['filter']['post_archived = %s']); }
+        if (isset($h->vars['filter']['post_status = %s'])) { unset($h->vars['filter']['post_status = %s']); }
+        if (isset($h->vars['filter']['post_archived = %s'])) { unset($h->vars['filter']['post_archived = %s']); }
         
         // filter to top or new stories only:
-        $this->hotaru->vars['filter']['(post_status = %s OR post_status = %s)'] = array('top', 'new');
+        $h->vars['filter']['(post_status = %s OR post_status = %s)'] = array('top', 'new');
         
         if ($full_index) {
-            $this->hotaru->vars['select'] = "*, MATCH(post_title, post_domain, post_url, post_content, post_tags) AGAINST ('" . $search_terms_clean . "') AS relevance";
-            $this->hotaru->vars['orderby'] = "relevance DESC";        
-            $this->hotaru->vars['filter']["MATCH (post_title, post_domain, post_url, post_content, post_tags) AGAINST (%s IN BOOLEAN MODE)"] = $search_terms_clean; 
+            $h->vars['select'] = "*, MATCH(post_title, post_domain, post_url, post_content, post_tags) AGAINST ('" . $search_terms_clean . "') AS relevance";
+            $h->vars['orderby'] = "relevance DESC";        
+            $h->vars['filter']["MATCH (post_title, post_domain, post_url, post_content, post_tags) AGAINST (%s IN BOOLEAN MODE)"] = $search_terms_clean; 
         } else {
-            $this->hotaru->vars['select'] = "*";
-            $this->hotaru->vars['orderby'] = "post_date DESC";
-            $this->hotaru->vars['filter_vars'] = array();
-            $where = $this->explodeSearch('post_title', $search_terms_clean, $values) . " OR ";
-            $where .= $this->explodeSearch('post_url', $search_terms_clean) . " OR ";
-            $where .= $this->explodeSearch('post_content', $search_terms_clean);
+            $h->vars['select'] = "*";
+            $h->vars['orderby'] = "post_date DESC";
+            $h->vars['filter_vars'] = array();
+            $where = $this->explodeSearch($h, 'post_title', $search_terms_clean) . " OR ";
+            $where .= $this->explodeSearch($h, 'post_url', $search_terms_clean) . " OR ";
+            $where .= $this->explodeSearch($h, 'post_content', $search_terms_clean);
             $where = '(' . $where . ')';
-            $this->hotaru->vars['filter'][$where] = $this->hotaru->vars['filter_vars'];
+            $h->vars['filter'][$where] = $h->vars['filter_vars'];
         }
         
-        $prepared_search = array('select' => $this->hotaru->vars['select'], 'orderby' => $this->hotaru->vars['orderby'], 'filter' => $this->hotaru->vars['filter']);
+        $prepared_search = array('select' => $h->vars['select'], 'orderby' => $h->vars['orderby'], 'filter' => $h->vars['filter']);
         
         return $prepared_search;
     }
@@ -195,14 +171,14 @@ class Search extends PluginFunctions
      * @param string $search_terms
      * @return string (with " OR " stripped off the end)
      */
-    public function explodeSearch($column, $search_terms)
+    public function explodeSearch($h, $column, $search_terms)
     {
         $query = '';
         
         foreach(explode(' ', trim($search_terms)) as $word){
             if ($word) {
                 $query .= $column . " LIKE %s OR ";
-                array_push($this->hotaru->vars['filter_vars'], "%" . urlencode(" " . trim($this->db->escape($word)) . " ") . "%");
+                array_push($h->vars['filter_vars'], "%" . urlencode(" " . trim($h->db->escape($word)) . " ") . "%");
             }
         }
         
@@ -229,6 +205,20 @@ class Search extends PluginFunctions
         } else {
             return false;
         }
-    }    
+    }
+    
+    
+    /**
+     * Add RSS link to breadcrumbs
+     */
+    public function breadcrumbs($h)
+    {
+        if ($h->subPage != 'search') { return false; }
+        
+        $crumbs = "<a href='" . $h->url(array('search'=>urlencode($h->vars['orig_search_terms']))) . "'>\n";
+        $crumbs .= $h->vars['orig_search_terms'] . "</a>\n ";
+        
+        return $crumbs . $h->rssBreadcrumbsLink('', array('search'=>urlencode($h->vars['orig_search_terms'])));
+    }
 }
 ?>

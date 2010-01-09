@@ -2,13 +2,16 @@
 /**
  * name: Bookmarklet
  * description: A way for users to submit posts on the fly
- * version: 0.1
+ * version: 0.2
  * folder: bookmarklet
  * class: Bookmarklet
+ * type: bookmarklet
  * hooks: hotaru_bookmarklet
- * requires: submit 1.7
+ * requires: submit 1.9
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
- * Usage: Put <?php $hotaru->plugins->pluginHook('hotaru_bookmarklet'); ?> 
+ * Usage: Put <?php $h->pluginHook('hotaru_bookmarklet'); ?> 
  *        in your template where you want the bookmarklet link to show.
  *
  * PHP version 5
@@ -34,12 +37,11 @@
  */
 
 
-class Bookmarklet extends PluginFunctions
+class Bookmarklet
 {
-    public function hotaru_bookmarklet()
+    public function hotaru_bookmarklet($h)
     {
-        $this->includeLanguage();
-        $this->hotaru->displayTemplate('bookmarklet', 'bookmarklet');
+        $h->displayTemplate('bookmarklet');
     }
 
 }

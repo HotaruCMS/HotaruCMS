@@ -25,27 +25,25 @@
  * @link      http://www.hotarucms.org/
  */
  
-class StopSpamSettings extends StopSpam
+class StopSpamSettings
 {
      /**
      * Admin settings for stop_spam
      */
-    public function settings()
+    public function settings($h)
     {
-        $this->includeLanguage(); 
-        
         // If the form has been submitted, go and save the data...
-        if ($this->cage->post->getAlpha('submitted') == 'true') { 
-            $this->saveSettings(); 
+        if ($h->cage->post->getAlpha('submitted') == 'true') { 
+            $this->saveSettings($h); 
         }
         
-        echo "<h1>" . $this->lang["stop_spam_settings_header"] . "</h1>\n";
+        echo "<h1>" . $h->lang["stop_spam_settings_header"] . "</h1>\n";
           
         // Get settings from database if they exist...
-        $stop_spam_key = $this->getSetting('stop_spam_key');
-        $stop_spam_type = $this->getSetting('stop_spam_type');
+        $stop_spam_key = $h->getSetting('stop_spam_key');
+        $stop_spam_type = $h->getSetting('stop_spam_type');
     
-        $this->pluginHook('stop_spam_settings_get_values');
+        $h->pluginHook('stop_spam_settings_get_values');
         
         //...otherwise set to blank:
         if (!$stop_spam_key) { $stop_spam_key = ''; } 
@@ -62,18 +60,19 @@ class StopSpamSettings extends StopSpam
             
         echo "<form name='stop_spam_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=stop_spam' method='post'>\n";
         
-        echo "<p>" . $this->lang["stop_spam_settings_instructions"] . "</p><br />";
+        echo "<p>" . $h->lang["stop_spam_settings_instructions"] . "</p><br />";
             
-        echo "<p>" . $this->lang["stop_spam_settings_key"] . " <input type='text' size=30 name='stop_spam_key' value='" . $stop_spam_key . "'></p>\n";    
+        echo "<p>" . $h->lang["stop_spam_settings_key"] . " <input type='text' size=30 name='stop_spam_key' value='" . $stop_spam_key . "'></p>\n";    
         
-        echo "<p><input type='radio' name='ss_type' value='go_pending' " . $go_pending . "> " . $this->lang["stop_spam_settings_go_pending"] . "</p>\n";    
-        echo "<p><input type='radio' name='ss_type' value='block_reg' " . $block_reg . "> " . $this->lang["stop_spam_settings_block_reg"] . "</p>\n";    
+        echo "<p><input type='radio' name='ss_type' value='go_pending' " . $go_pending . "> " . $h->lang["stop_spam_settings_go_pending"] . "</p>\n";    
+        echo "<p><input type='radio' name='ss_type' value='block_reg' " . $block_reg . "> " . $h->lang["stop_spam_settings_block_reg"] . "</p>\n";    
     
-        $this->pluginHook('stop_spam_settings_form');
+        $h->pluginHook('stop_spam_settings_form');
                 
         echo "<br /><br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
-        echo "<input type='submit' value='" . $this->lang["stop_spam_settings_save"] . "' />\n";
+        echo "<input type='submit' value='" . $h->lang["main_form_save"] . "' />\n";
+        echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }
     
@@ -83,41 +82,41 @@ class StopSpamSettings extends StopSpam
      *
      * @return true
      */
-    public function saveSettings()
+    public function saveSettings($h)
     {
         $error = 0;
         
         // stop forum spam key
-        if ($this->cage->post->keyExists('stop_spam_key')) { 
-            $stop_spam_key = $this->cage->post->testAlnumLines('stop_spam_key');
+        if ($h->cage->post->keyExists('stop_spam_key')) { 
+            $stop_spam_key = $h->cage->post->testAlnumLines('stop_spam_key');
             $error = 0;
         } else {
             $stop_spam_key = ''; 
             $error = 1;
-            $this->hotaru->message = $this->lang["stop_spam_settings_no_key"];
-            $this->hotaru->messageType = "red";
+            $h->message = $h->lang["stop_spam_settings_no_key"];
+            $h->messageType = "red";
         }
         
     
         // stop forum spam type
-        if ($this->cage->post->keyExists('ss_type')) { 
-            $stop_spam_type = $this->cage->post->testAlnumLines('ss_type');
+        if ($h->cage->post->keyExists('ss_type')) { 
+            $stop_spam_type = $h->cage->post->testAlnumLines('ss_type');
         } else {
             $stop_spam_type = ''; 
         }
         
         
-        $this->pluginHook('stop_spam_save_settings');
+        $h->pluginHook('stop_spam_save_settings');
         
         if ($error == 0) {
             // save settings
-            $this->updateSetting('stop_spam_key', $stop_spam_key);
-            $this->updateSetting('stop_spam_type', $stop_spam_type);
+            $h->updateSetting('stop_spam_key', $stop_spam_key);
+            $h->updateSetting('stop_spam_type', $stop_spam_type);
             
-            $this->hotaru->message = $this->lang["stop_spam_settings_saved"];
-            $this->hotaru->messageType = "green";
+            $h->message = $h->lang["main_settings_saved"];
+            $h->messageType = "green";
         }
-        $this->hotaru->showMessage();
+        $h->showMessage();
         
         return true;    
     }

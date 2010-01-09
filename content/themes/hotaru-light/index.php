@@ -27,47 +27,63 @@
  */
 
 // plugin hook
-$result = $hotaru->plugins->pluginHook('theme_index_replace');
-if (!isset($result) || !is_array($result)) {
+$result = $h->pluginHook('theme_index_top');
+if (!$result) {
 ?>
         <!-- HEADER-->
         <?php
             // plugin hook
-            $result = $hotaru->plugins->pluginHook('theme_index_header');
-            if (!isset($result) || !is_array($result)) {
-                $hotaru->displayTemplate('header');
+            $result = $h->pluginHook('theme_index_header');
+            if (!$result) {
+                $h->displayTemplate('header');
             }
         ?>
         <div id="ads160x600"><img src="<?php echo BASEURL . 'content/themes/' . THEME . '/images/ads160x600.jpg'; ?>" /></div>
         <div id="bd">
             <div id="yui-main"> 
-            <?php if ($hotaru->sidebars) { // determines whether to show the sidebar or not ?>
+            <?php if ($h->sidebars) { // determines whether to show the sidebar or not ?>
                 <div class='yui-gc'> 
                     <div class="yui-u first">
             <?php } else { ?>
                 <div class='yui-g'>
                         <div class="yui-u first" style='width: 100%;'>
                 <?php } ?>
+                            <!-- BREADCRUMBS -->
+                            <div id='breadcrumbs'>
+                                <?php echo $h->breadcrumbs(); ?>
+                            </div>
+                            
+                            <!-- USER TABS -->
+                            <?php 
+                                // plugin hook
+                                $result = $h->pluginHook('theme_index_post_breadcrumbs');
+                            ?>
+                            
+                            <!-- FILTER TABS -->
+                            <?php 
+                                // plugin hook
+                                $result = $h->pluginHook('theme_index_pre_main');
+                            ?>
+                            
                             <!-- MAIN -->
                             <?php     
                                 // plugin hook
-                            $result = $hotaru->plugins->pluginHook('theme_index_main');
-                            if (!isset($result) || !is_array($result)) {
-                                $page = $hotaru->getPageName();
-                                $hotaru->displayTemplate($page); 
+                            $result = $h->pluginHook('theme_index_main');
+                            if (!$result) {
+                                $h->displayTemplate($h->pageName); 
                             }
                         ?>
                         </div> <!-- close "yui-u first" -->
-                    <?php if ($hotaru->sidebars) { ?>
+                    <?php if ($h->sidebars) { ?>
                         <div class="yui-u">
                             
                             <!-- SIDEBAR -->
                             <?php
                                 // plugin hook
-                                $result = $hotaru->plugins->pluginHook('theme_index_sidebar');
-                                if (!isset($result) || !is_array($result)) {
-                                    $hotaru->displayTemplate('sidebar');
-                                }                                
+                                $result = $h->pluginHook('theme_index_sidebar');
+                                if (!$result) {
+                                    $h->displayTemplate('sidebar');
+                                }                               
                             ?>
                         </div> <!-- close "yui-u" -->
                     <?php } ?>
@@ -77,9 +93,9 @@ if (!isset($result) || !is_array($result)) {
         <!-- FOOTER -->
         <?php
             // plugin hook
-            $result = $hotaru->plugins->pluginHook('theme_index_footer');
-            if (!isset($result) || !is_array($result)) {
-                $hotaru->displayTemplate('footer');
+            $result = $h->pluginHook('theme_index_footer');
+            if (!$result) {
+                $h->displayTemplate('footer');
             }
         ?>
 <?php    } ?>

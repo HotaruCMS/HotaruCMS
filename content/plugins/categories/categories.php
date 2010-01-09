@@ -2,11 +2,14 @@
 /**
  * name: Categories
  * description: Enables categories for posts
- * version: 1.1
+ * version: 1.2
  * folder: categories
  * class: Categories
- * requires: submit 1.4, category_manager 0.6
- * hooks: install_plugin, hotaru_header, header_include, submit_hotaru_header_1, submit_hotaru_header_2, post_read_post_1, post_read_post_2, post_add_post, post_update_post, submit_form_2_assign, submit_form_2_fields, submit_form_2_check_for_errors, submit_form_2_process_submission, submit_settings_get_values, submit_settings_form, submit_save_settings, post_list_filter, submit_show_post_author_date, submit_is_page_main, post_header, admin_sidebar_plugin_settings, admin_plugin_settings, breadcrumbs
+ * type: categories
+ * requires: sb_base 0.1, submit 1.9, category_manager 0.7
+ * hooks: sb_base_theme_index_top, header_include, pagehandling_getpagename, sb_base_functions_preparelist, sb_base_show_post_author_date, header_end, breadcrumbs
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *
@@ -30,81 +33,67 @@
  * @link      http://www.hotarucms.org/
  */
 
-class Categories extends PluginFunctions
+class Categories
 {
-
-     /* ******************************************************************** 
-     * ********************************************************************* 
-     * ********************* FUNCTIONS FOR POST CLASS ********************** 
-     * *********************************************************************
-     * ****************************************************************** */
-    
     /**
-     * Adds default settings for Submit plugin
+     * Determine if we are filtering to a category
+     * Categories might be numeric, e.g. category=3 or safe names, e.g. category=news_and_business
+     * We also test for urls like domain.com/News/ where "News" is a category 
      */
-    public function install_plugin()
+    public function sb_base_theme_index_top($h)
     {
-        // Default settings
-        if (!$this->getSetting('submit_categories')) { $this->updateSetting('submit_categories', 'checked'); }
-        if (!$this->getSetting('categories_bar')) { $this->updateSetting('categories_bar', 'menu'); }
+        // if there's a "category" key in the url...
         
-        if ($this->isActive('sidebar_widgets')) {
-            require_once(PLUGINS . 'sidebar_widgets/libs/Sidebar.php');
-            $sidebar = new Sidebar($this->hotaru);
-            $sidebar->addWidget('categories', 'categories', ''); // plugin name, function name, optional arguments
+        if ($h->cage->get->keyExists('category'))
+        { 
+            $category = $h->cage->get->noTags('category');
+            if (is_numeric($category)) {
+                // category is numeric
+                $h->vars['category_id'] = $category;
+                $h->vars['category_name'] = $h->getCatName($category);
+                $h->vars['category_safe_name'] = $h->getCatSafeName($category);
+                $h->pageTitle = $h->vars['category_name'];
+            } else {
+                // category should be a safe name
+                $h->vars['category_id'] = $h->getCatId($category);
+                $h->vars['category_name'] = $h->getCatName(0, $category);
+                $h->vars['category_safe_name'] = $category;
+                $h->pageTitle = $h->vars['category_name'];
+            }
+            if (!$h->pageName) { $h->pageName = 'index'; }
+            $h->subPage = 'category';
+            $h->pageType = 'list';
         }
-    }
-    
-    
-    /**
-     * Defines db table and includes language file
-     */
-    public function hotaru_header()
-    {
-        // The categories table is defined 
-        if (!defined('TABLE_CATEGORIES')) { define("TABLE_CATEGORIES", DB_PREFIX . "categories"); }
-        
-        $this->hotaru->vars['categories_smart_cache'] = 10; // 10 minutes
-        
-        // include language file
-        $this->includeLanguage();
-        
-        // Get page title    
-        if ($this->cage->get->keyExists('category'))
+        elseif (!$h->pageType)  // only do this if we don't know the pageType yet... 
         {
-            require_once(PLUGINS . 'categories/libs/Category.php');
-            $cat = new Category($this->db);
-            
-            if (is_numeric($this->cage->get->notags('category'))) 
-            { 
-                $this->hotaru->title = $cat->getCatName($this->cage->get->getInt('category')); // friendly URLs: FALSE
-            } 
-            else 
-            {
-                $this->hotaru->title = $cat->getCatName(0, $this->cage->get->notags('category')); // friendly URLs: TRUE
-            } 
-            $this->hotaru->title = stripslashes(htmlentities($this->hotaru->title, ENT_QUOTES,'UTF-8'));
+            if ($h->pageName == 'all') { return false; } // when sorting to "all", we don't want to filter to the "all" category!
+
+            /*  if $h->pageName is set, then there must be an odd number of query vars where
+                the first one is the page name. Let's see if it's a category safe name... */
+            $sql = "SELECT category_id, category_name FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s LIMIT 1";
+            $exists = $h->db->get_row($h->db->prepare($sql, $h->pageName));
+            if ($exists) {
+                $h->vars['category_id'] = $exists->category_id;
+                $h->vars['category_name'] = $exists->category_name;
+                $h->vars['category_safe_name'] = $h->pageName;
+                $h->pageTitle = $h->vars['category_name'];
+                $h->subPage = 'category';  // overwrite the current pageName which is the category name
+                $h->pageType = 'list';
+            }
         }
     }
     
     
     /**
-     * Adds additional member variables when the $post object is read in the Submit plugin.
+     * Include CSS and JavaScript files for this plugin
      */
-    public function submit_hotaru_header_1()
+    public function header_include($h)
     {
-        // The categories table is defined 
-        if (!defined('TABLE_CATEGORIES')) { define("TABLE_CATEGORIES", DB_PREFIX . "categories"); }
-        
-        // include language file
-        $this->includeLanguage('categories');
-        
-        $this->hotaru->post->vars['category'] = 1;    // default category ('all').
-        $this->hotaru->post->vars['catName'] = '';
-        $this->hotaru->post->vars['catSafeName'] = '';
-        $this->hotaru->post->vars['useCategories'] = true;
-        
+        // include a files that match the name of the plugin folder:
+        $h->includeJs('categories', 'suckerfish');
+        $h->includeCss();
     }
+    
     
     
     /**
@@ -115,42 +104,43 @@ class Categories extends PluginFunctions
      * Only used for friendly urls. This is necessary because if a url 
      * is /people/top-10-longest-beards/ there's no actual mention of "category" there!
      */
-    public function submit_hotaru_header_2()
+    public function pagehandling_getpagename($h)
     {
-        if (FRIENDLY_URLS == "true" && $this->hotaru->post->id == 0) {
-            // No post stored in post object, nothing was succesfully read by the Submit plugin        
-                    
-            // Can't get keys from the url with Inspekt, so must get the whole query string instead.
-            $query_string = $this->cage->server->getMixedString2('QUERY_STRING');
-            
-            if ($query_string) {
-                // we actually only need the first pair, so won't bother looping.
-                $query_string = preg_replace('/&amp;/', '&', $query_string);
-                $pairs = explode('&', $query_string); 
-                if ($pairs[0] && strpos($pairs[0], '=')) {
-                    list($key, $value) = explode('=', $pairs[0]);
-                    if ($key) {
-                        // Using db_prefix because table_categories might not be defined yet (depends on plugin install order)
-                        
-                        $sql = "SELECT category_id FROM " . DB_PREFIX . "categories WHERE category_safe_name = %s LIMIT 1";
-                        $exists = $this->db->get_var($this->db->prepare($sql, $key));
-                        
-                        if ($exists && $value) {
-                            // Now we know that $key is a category so $value must be the post name. Go get the post_id...
-                            $this->hotaru->post->id = $this->hotaru->post->isPostUrl($value);
-                            $this->hotaru->post->readPost($this->hotaru->post->id);
-                            $this->hotaru->post->vars['isCategoryPost'] = true; 
-                            $this->hotaru->pageType = 'post';
-                            $this->hotaru->title = $this->hotaru->post->title;
-                            return true;
-                        } 
-                    }
-                }
-            }
-        }
-            
-        $this->hotaru->post->vars['isCategoryPost'] = false;
-        return false;
+        // Can't get keys from the url with Inspekt, so must get the whole query string instead.
+        $query_string = $h->cage->server->getMixedString2('QUERY_STRING');
+
+        // no query string? exit...
+        if (!$query_string) { return false; }
+        
+        // we actually only need the first pair, so won't bother looping.
+        $query_string = preg_replace('/&amp;/', '&', $query_string);
+        $pairs = explode('&', $query_string); 
+        
+        // no pairs or equal sign? exit...
+        if (!$pairs[0] || !strpos($pairs[0], '=')) { return false; }
+        
+        list($key, $value) = explode('=', $pairs[0]);
+        
+        // no key or no value? exit...
+        if (!$key || !$value) { return false; }
+
+        $sql = "SELECT category_id FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s LIMIT 1";
+        $exists = $h->db->get_var($h->db->prepare($sql, $key));
+        
+        // no category? exit...
+        if (!$exists) { return false; }
+        
+        // Now we know that $key is a category so $value must be the post name. Go get the post_id...
+        $h->post->id = $h->post->isPostUrl($h, $value);
+        
+        // no post? exit...
+        if (!$h->post->id) { return false; }
+        
+        $h->post->readPost($h, $h->post->id);
+        $h->pageName = $h->post->url; // slug for page title
+        $h->pageTitle = $h->post->title;
+        $h->pageType = 'post';
+        return true;
     }
     
     
@@ -162,422 +152,103 @@ class Categories extends PluginFunctions
         //categories
         if (($this->getSetting('submit_categories') == 'checked') 
             && ($this->isActive())) { 
-            $this->hotaru->post->vars['useCategories'] = true; 
+            $h->post->vars['useCategories'] = true; 
         } else { 
-            $this->hotaru->post->vars['useCategories'] = false; 
+            $h->post->vars['useCategories'] = false; 
         }
     }
-    
-    
-    /**
-     * Read category from the post in the database.
-     */
-    public function post_read_post_2()
-    {
-        $this->hotaru->post->vars['category'] = $this->hotaru->post->vars['post_row']->post_category;
-        
-        // Build SQL
-        $query = "SELECT category_name, category_safe_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
-        $sql = $this->db->prepare($query, $this->hotaru->post->vars['category']);
-        
-        // Create temp cache array
-        if (!isset($this->hotaru->vars['tempCategoryCache'])) { $this->hotaru->vars['tempCategoryCache'] = array(); }
 
-        // If this query has already been read once this page load, we should have it in memory...
-        if (array_key_exists($sql, $this->hotaru->vars['tempCategoryCache'])) {
-            // Fetch from memory
-            $cat = $this->hotaru->vars['tempCategoryCache'][$sql];
-        } else {
-            // Fetch from database
-            $cat = $this->db->get_row($sql);
-            $this->hotaru->vars['tempCategoryCache'][$sql] = $cat;
-        }
-        
-        $this->hotaru->post->vars['catName'] = urldecode($cat->category_name);
-        $this->hotaru->post->vars['catSafeName'] = urldecode($cat->category_safe_name);
-    }
-    
-    
-    /**
-     * Adds category to the posts table
-     */
-    public function post_add_post()
-    {
-        $sql = "UPDATE " . TABLE_POSTS . " SET post_category = %d WHERE post_id = %d";
-        $this->db->query($this->db->prepare($sql, $this->hotaru->post->vars['category'], $this->hotaru->post->vars['last_insert_id']));
-    }
-    
-    
-    /**
-     * Updates category in the posts table
-     */
-    public function post_update_post()
-    {
-        $sql = "UPDATE " . TABLE_POSTS . " SET post_category = %d WHERE post_id = %d";
-        $this->db->query($this->db->prepare($sql, $this->hotaru->post->vars['category'], $this->hotaru->post->id));
-    }
-    
-    
-     /* ******************************************************************** 
-     * ********************************************************************* 
-     * ********************* FUNCTIONS FOR SUBMIT FORM ********************* 
-     * *********************************************************************
-     * ****************************************************************** */
-     
-    
-    /**
-     * Sets $this->hotaru->post->vars['category_check'] to the value of the chosen category
-     */
-    public function submit_form_2_assign()
-    {
-        if ($this->cage->post->getAlpha('submit2') == 'true') {
-            // Submitted this form...
-            $this->hotaru->post->vars['category_check'] = $this->cage->post->getInt('post_category');
-            
-        } elseif ($this->cage->post->getAlpha('submit3') == 'edit') {
-            // Come back from step 3 to make changes...
-            $this->hotaru->post->vars['category_check'] = $this->hotaru->post->vars['category'];
-            
-        } elseif ($this->hotaru->isPage('edit_post')) {
-            // Editing a previously submitted post
-            if ($this->cage->post->getAlpha('edit_post') == 'true') {
-                $this->hotaru->post->vars['category_check'] = $this->cage->post->getInt('post_category');
-            } else {
-                $this->hotaru->post->vars['category_check'] = $this->hotaru->post->vars['category'];
-            }
-        
-        } else {
-            // First time here...
-            $this->hotaru->post->vars['category_check'] = 1;
-        }
-    
-    }
-    
-    
-    /**
-     * Adds a category drop-down box to submit form 2
-     */
-    public function submit_form_2_fields()
-    {
-        if ($this->hotaru->post->vars['useCategories']) { 
-            echo "<tr>\n";
-                echo "<td>" . $this->lang["submit_form_category"] . ":&nbsp; </td>\n";
-                echo "<td><select name='post_category'>\n";
-                
-                $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
-                $category_name = $this->db->get_var($this->db->prepare($sql, $this->hotaru->post->vars['category_check']));
-                
-                $category_name = stripslashes(htmlentities(urldecode($category_name), ENT_QUOTES,'UTF-8'));
-                
-                if ($category_name == 'all') { 
-                    $category_name = $this->lang['submit_form_category_select']; 
-                }
-                
-                echo "<option value=" . $this->hotaru->post->vars['category_check'] . ">" . $category_name . "</option>\n";
-                
-                $sql = "SELECT category_id, category_name FROM " . TABLE_CATEGORIES . " ORDER BY category_order ASC";
-                $cats = $this->db->get_results($this->db->prepare($sql));
-                
-                if ($cats) {
-                    foreach ($cats as $cat) {
-                        if ($cat->category_id != 1) { 
-                            $cat_name = stripslashes(htmlentities(urldecode($cat->category_name), ENT_QUOTES,'UTF-8'));
-                            echo "<option value=" . $cat->category_id . ">" . $cat_name . "</option>\n";
-                        }
-                    }
-                }
-                echo "</select></td>\n";
-                echo "<td>&nbsp;</td>\n";
-            echo "</tr>";
-        }
-    }
-    
-    
-    /**
-     * Checks for category error from submit form 2
-     *
-     * @return int
-     */
-    public function submit_form_2_check_for_errors()
-    {
-        // ******** CHECK CATEGORY ********
-        if ($this->hotaru->post->vars['useCategories']) {
-            $this->hotaru->post->vars['category_check'] = $this->cage->post->getInt('post_category');    
-            if ($this->hotaru->post->vars['category_check'] > 1) {
-                // category is okay.
-                $error_category = 0;
-            } else {
-                // No category present...
-                $this->hotaru->messages[$this->lang['submit_form_category_error']] = "red";
-                $error_category = 1;
-            }
-        }
-        return $error_category;
-    }
-    
-    
-    /**
-     * Sets $this->hotaru->post->post_category to submitted category id
-     */
-    public function submit_form_2_process_submission()
-    {
-        $this->hotaru->post->vars['category'] = $this->cage->post->getInt('post_category');
-        
-        $sql = "SELECT category_name, category_safe_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
-        $cat = $this->db->get_row($this->db->prepare($sql, $this->hotaru->post->vars['category']));
-        $this->hotaru->post->vars['catName'] = urldecode($cat->category_name);
-        $this->hotaru->post->vars['catSafeName'] = urldecode($cat->category_safe_name);
-    }
-    
-    
      /* ******************************************************************** 
      * ********************************************************************* 
      * ******************* FUNCTIONS FOR SHOWING POSTS ********************* 
      * *********************************************************************
      * ****************************************************************** */
-     
-    
-    /**
-     * Checks if the url is a category->post name pair and displays the post
-     *
-     * @return bool
-     */
-    public function submit_is_page_main()
-    {
-        if ($this->hotaru->post->vars['isCategoryPost']) {
-            $this->hotaru->displayTemplate('post', 'submit');
-            return true;
-        } else {
-            return false;
-        }
-    }
     
     /**
      * Gets a category from the url and sets the filter for get_posts
      *
      * @return bool
      */
-    public function post_list_filter()
+    public function sb_base_functions_preparelist($h)
     {
-        if (!$this->cage->get->keyExists('category')) { return false; }
-
-        require_once(PLUGINS . 'categories/libs/Category.php');
-        $cat = new Category($this->db);
-        
-        if (FRIENDLY_URLS == "true") {
-            $cat_id = $cat->getCatId($this->cage->get->noTags('category')); 
-        } else {
-            $cat_id = $this->cage->get->getInt('category'); 
-        }
-        
-        // When a user clicks a parent category, we need to show posts from all child categories, too.
-        // This only works for onle level of sub-categories.
-        $filter_string = '(post_category = %d';
-        $values = array($cat_id);
-        $parent = $cat->getCatParent($cat_id);
-        if ($parent == 1) {
-            $children = $cat->getCatChildren($cat_id);
-            if ($children) {
-                foreach ($children as $child_id) {
-                    $filter_string .= ' || post_category = %d';
-                    array_push($values, $child_id->category_id); 
+        if ($h->subPage == 'category') 
+        {
+            // When a user clicks a parent category, we need to show posts from all child categories, too.
+            // This only works for one level of sub-categories.
+            $filter_string = '(post_category = %d';
+            $values = array($h->vars['category_id']);
+            $parent = $h->getCatParent($h->vars['category_id']);
+            if ($parent == 1) {
+                $children = $h->getCatChildren($h->vars['category_id']);
+                if ($children) {
+                    foreach ($children as $child_id) {
+                        $filter_string .= ' || post_category = %d';
+                        array_push($values, $child_id->category_id); 
+                    }
                 }
             }
+            $filter_string .= ')';
+            $h->vars['filter'][$filter_string] = $values; 
+            $h->vars['filter']['post_archived = %s'] = 'N'; // don't include archived posts
         }
-        $filter_string .= ')';
-        $this->hotaru->vars['filter'][$filter_string] = $values; 
-        $this->hotaru->vars['filter']['post_archived = %s'] = 'N'; // don't include archived posts
-        $rss = " <a href='" . $this->hotaru->url(array('page'=>'rss', 'category'=>$cat_id)) . "'>";
-        $rss .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png'></a>";
-        
-        /* check if we're looking at a category to determine correct breadcrumbs. 
-        This is necessary because when sorting, we have to override whatever is already there. */
-        
-        if ($this->hotaru->cage->get->keyExists('category')) { 
-            $category = $this->hotaru->cage->get->noTags('category');
-            require_once(PLUGINS . 'categories/libs/Category.php');
-            $cat = new Category($this->db);
-            if (is_numeric($category)) { 
-                $parent_id = $cat->getCatParent($category);
-                $category_id = $category;
-                $category = $cat->getCatName($category_id);
-            } else {
-                $category_id = $cat->getCatId($category);
-                $parent_id = $cat->getCatParent($category_id);
-                $category = $cat->getCatName('', $category);
-            }
-            
-            if ($parent_id) { 
-                $parent = $cat->getCatName($parent_id);
-                $parent = stripslashes(htmlentities($parent, ENT_QUOTES,'UTF-8'));
-            }
-
-            $category = stripslashes(htmlentities($category, ENT_QUOTES,'UTF-8'));
-
-            $this->hotaru->title = $category; // used in title tags
-        }
-        
-        if ($parent_id > 1) {
-            $this->hotaru->vars['page_title'] = "<a href='" . $this->hotaru->url(array('category'=>$parent_id)) . "'>" . $parent . "</a> &raquo; " . $this->hotaru->title . $rss;
-        } else {
-            $this->hotaru->vars['page_title'] = $this->hotaru->title . $rss;
-        }
-        
-        // use these in post page breadcrumbs:
-        $this->hotaru->vars['cat_id'] = $category_id;
-        $this->hotaru->vars['cat_name'] = $category;
-        $this->hotaru->vars['parent_cat_id'] = $parent_id;
-        $this->hotaru->vars['parent_cat_name'] = $parent;
-        
-        return true;
-
     }
     
     
     /**
      * Shows categories before post title in breadcrumbs
      */
-    public function breadcrumbs()
+    public function breadcrumbs($h)
     { 
-        if ($this->hotaru->pageType != 'post') { return false; }
-        if (!$this->hotaru->post->vars['useCategories']) { return false; }
-        
-        require_once(PLUGINS . 'categories/libs/Category.php');
-        $cat = new Category($this->db);
-        $cat_id = $cat->getCatId($this->hotaru->post->vars['catSafeName']);
-        $cat_name = $cat->getCatName($cat_id);
-        $parent_id = $cat->getCatParent($cat_id);
+        $crumbs = '';
+                
+        if ($h->subPage == 'category') // the pageType is "list"
+        {
+            $parent_id = $h->getCatParent($h->vars['category_id']);
+            if ($parent_id > 1) {
+                $parent_name = $h->getCatName($parent_id);
+                $parent_name = stripslashes(htmlentities($parent_name, ENT_QUOTES, 'UTF-8'));
+                $crumbs .= "<a href='" . $h->url(array('category'=>$parent_id)) . "'>";
+                $crumbs .= $parent_name . "</a> &raquo; \n";
+            }
+    
+            $crumbs .= "<a href='" . $h->url(array('category'=>$h->vars['category_id'])) . "'>\n";
+            $crumbs .= $h->vars['category_name'] . "</a>\n ";
 
-        
-        if ($parent_id > 1) {
-            $parent_name = $cat->getCatName($parent_id);
-            echo "<a href='" . $this->hotaru->url(array('category'=>$parent_id)) . "'>";
-            echo $parent_name . "</a> &raquo; ";
+            $crumbs .= $h->rssBreadcrumbsLink('', array('category'=>$h->vars['category_id']));
+        }
+        elseif ($h->pageType == 'post') // the pageName is the post slug (post_url)
+        {
+            $parent_id = $h->getCatParent($h->post->category);
+            if ($parent_id > 1) {
+                $parent_name = $h->getCatName($parent_id);
+                $parent_name = stripslashes(htmlentities($parent_name, ENT_QUOTES, 'UTF-8'));
+                $crumbs .= "<a href='" . $h->url(array('category'=>$parent_id)) . "'>";
+                $crumbs .= $parent_name . "</a> &raquo; \n";
+            }
+    
+            $crumbs .= "<a href='" . $h->url(array('category'=>$h->post->category)) . "'>\n";
+            $crumbs .= $h->getCatName($h->post->category) . "</a> &raquo; \n";
+            $crumbs .= $h->post->title . "</a>\n";
         }
         
-        if ($cat_id) {
-            echo "<a href='" . $this->hotaru->url(array('category'=>$cat_id)) . "'>";
-            echo $cat_name . "</a> &raquo; ";
-        }
+        if ($crumbs) { return $crumbs; } else { return false; }
     }
     
     
     /**
-     * Shows tags in each post
+     * Shows category in each post
      */
-    public function submit_show_post_author_date()
+    public function sb_base_show_post_author_date($h)
     { 
-        if ($this->hotaru->post->vars['useCategories'] && $this->hotaru->post->vars['category']) { 
-        
-            $category =  $this->hotaru->post->vars['category'];
-            $cat_name = $this->hotaru->post->vars['catName'];
+        if ($h->post->category != 1) { 
+
+            $cat_name = $h->getCatName($h->post->category);
             
-            echo " " . $this->lang["submit_show_post_in_category"] . " ";
-            
-            $cat_name = stripslashes(html_entity_decode($cat_name, ENT_QUOTES,'UTF-8'));
-            echo "<a href='" . $this->hotaru->url(array('category'=>$category)) . "'>" . $cat_name . "</a></li>\n";
+            echo " " . $h->lang["sb_base_post_in"] . " ";
+            echo "<a href='" . $h->url(array('category'=>$h->post->category)) . "'>" . $cat_name . "</a></li>\n";
         }        
     }
-    
-    
-    /**
-     * Displays categories as a tree
-     *
-     * @param mixed $args
-     *
-     * This isn't a plugin hook, but a public function call created in the Sidebar plugin.
-     */
-    public function sidebar_widget_categories($args)
-    {
-        if (!$this->isActive('sidebar_widgets')) { return false; }
-        
-        require_once(PLUGINS . 'categories/libs/Category.php');
-        $catObj = new Category($this->db);
-        
-        // Get settings from database if they exist...
-        //setting name. plugin name.
-        $bar = $this->getSetting('categories_bar', 'categories');
-                
-        // Only show if the sidebar is enabled
-        if ($bar == 'side') {
-        
-            $sql = "SELECT * FROM " . TABLE_CATEGORIES . " ORDER BY category_order ASC";
-            $the_cats = $this->db->get_results($this->db->prepare($sql));
-            
-            echo "<h2 class='sidebar_widget_head'>" . $this->lang["sidebar_categories"] . "</h2>";
-            echo "<div class='sidebar_widget_body'>\n";
-            echo "<ul class='sidebar_categories'>\n";
-            foreach ($the_cats as $cat) {
-                $cat_level = 1;    // top level category.
-                if ($cat->category_name != "all") {
-                    echo "<li>";
-                    if ($cat->category_parent > 1) {
-                        $depth = $catObj->getCatLevel($cat->category_id, $cat_level, $the_cats);
-                        for($i=1; $i<$depth; $i++) {
-                            echo "--- ";
-                        }
-                    } 
-                    $category = stripslashes(html_entity_decode(urldecode($cat->category_name), ENT_QUOTES,'UTF-8'));
-                    echo "<a href='" . $this->hotaru->url(array('category'=>$cat->category_id)) . "'>";
-                    echo $category . "</a></li>\n";
-                }
-            }
-            echo "</ul></div>\n";
-        
-        }
-    }
-    
-    
-     /* ******************************************************************** 
-     * ********************************************************************* 
-     * ****************** FUNCTIONS FOR SUBMIT SETTINGS ******************** 
-     * *********************************************************************
-     * ****************************************************************** */
-     
-    
-    /**
-     * Gets current category settings from the database
-     */
-    public function submit_settings_get_values()
-    {
-        // Get settings from database if they exist... should return 'checked'
-        $this->hotaru->vars['categories'] = $this->getSetting('submit_categories');
-        
-        // doesn't exist - use default:
-        if (!isset($this->hotaru->vars['categories'])) {
-            $this->hotaru->vars['categories'] = 'checked';
-        }
-    
-    }
-    
-    
-    /**
-     * Add categories field to the submit settings form
-     */
-    public function submit_settings_form()
-    {
-        echo "<input type='checkbox' name='categories' value='categories' " . $this->hotaru->vars['categories'] . ">&nbsp;&nbsp;" . $this->lang["submit_settings_categories"] . "<br />";
-    }
-    
-    
-    /**
-     * Save category settings.
-     */
-    public function submit_save_settings()
-    {
-        // Categories
-        if ($this->cage->post->keyExists('categories')) { 
-            $this->hotaru->vars['categories'] = 'checked'; 
-            $this->hotaru->post->vars['useCategories'] = true;
-        } else { 
-            $this->hotaru->vars['categories'] = ''; 
-            $this->hotaru->post->vars['useCategories'] = false;
-        }
-            
-        $this->updateSetting('submit_categories', $this->hotaru->vars['categories']);
-    
-    }
-    
+
 
      /* ******************************************************************** 
      * ********************************************************************* 
@@ -592,49 +263,42 @@ class Categories extends PluginFunctions
      * Adapted from:
      * @link http://www.cssnewbie.com/easy-css-dropdown-menus/
      */
-    public function post_header()
+    public function header_end($h)
     {
-        // Get settings from database if they exist...
-        $bar = $this->getSetting('categories_bar');
+        $output = '';
         
-        // Only show if the menu bar is enabled
-        if ($bar == 'menu') {
-        
-            $output = '';
-            
-            // get all top-level categories
-            $this->hotaru->smartCache('on', 'categories', $this->hotaru->vars['categories_smart_cache']); // start using cache
-            $sql    = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_id != %d AND category_parent = %d ORDER BY category_order ASC";
-            $categories = $this->db->get_results($this->db->prepare($sql, 1, 1));
-           
-            if($categories)
+        // get all top-level categories
+        $h->smartCache('on', 'categories', 10); // start using cache
+        $sql    = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_id != %d AND category_parent = %d ORDER BY category_order ASC";
+        $categories = $h->db->get_results($h->db->prepare($sql, 1, 1));
+       
+        if($categories)
+        {
+            foreach ($categories as $category)
             {
-                foreach ($categories as $category)
-                {
-                    $parent = $category->category_id;
-                    
-                    // Check for children 
-                    $sql = "SELECT count(*) FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d"; 
-                    $countchildren = $this->db->get_var($this->db->prepare($sql, $parent)); 
-                       
-                    // If children, go to a recursive function to build links for all children of this top-level category 
-                    if ($countchildren) { 
-                        $depth = 1;
-                        $output = $this->buildMenuBar($category, $output, $parent, $depth); 
-                    } else {
-                        $output = $this->categoryLink($category, $output); 
-                    }
-                    
-                    $output .= "</li>\n";
+                $parent = $category->category_id;
+                
+                // Check for children 
+                $sql = "SELECT count(*) FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d"; 
+                $countchildren = $h->db->get_var($h->db->prepare($sql, $parent)); 
+                   
+                // If children, go to a recursive function to build links for all children of this top-level category 
+                if ($countchildren) { 
+                    $depth = 1;
+                    $output = $this->buildMenuBar($h, $category, $output, $parent, $depth); 
+                } else {  
+                    $output = $this->categoryLink($h, $category, $output); 
                 }
                 
-                // Output the category bar
-                $this->hotaru->vars['output'] = $output;
-                $this->hotaru->displayTemplate('category_bar', 'categories');
+                $output .= "</li>\n";
             }
             
-            $this->hotaru->smartCache('off'); // stop using cache
+            // Output the category bar
+            $h->vars['output'] = $output;   
+            $h->displayTemplate('category_bar');
         }
+        
+        $h->smartCache('off'); // stop using cache
     }
     
 
@@ -646,26 +310,26 @@ class Categories extends PluginFunctions
      * @param int $parent 
      * @return string $output 
      */ 
-    public function buildMenuBar($category, $output, $parent, $depth) 
+    public function buildMenuBar($h, $category, $output, $parent, $depth) 
     { 
-        $output = $this->categoryLink($category, $output); 
+        $output = $this->categoryLink($h, $category, $output); 
 
         $sql = "SELECT count(*) FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d"; 
-        $countchildren = $this->db->get_var($this->db->prepare($sql, $category->category_id)); 
+        $countchildren = $h->db->get_var($h->db->prepare($sql, $category->category_id)); 
 
         if ($countchildren) { 
-            $output .=  "<ul>\n"; 
+            $output .=  "<ul class='children'>\n"; 
             
             $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d ORDER BY category_order ASC"; 
-            $children = $this->db->get_results($this->db->prepare($sql, $category->category_id)); 
+            $children = $h->db->get_results($h->db->prepare($sql, $category->category_id)); 
             
             $depth++;
             foreach ($children as $child) { 
                 if ($depth < 3) { 
-                    $output = $this->buildMenuBar($child, $output, $child->category_id, $depth);
+                    $output = $this->buildMenuBar($h, $child, $output, $child->category_id, $depth);
                 }
             } 
-            $output .= "</ul>"; 
+            $output .= "</li></ul>"; 
             return $output; 
         }  
 
@@ -680,7 +344,7 @@ class Categories extends PluginFunctions
      * @param string $output  
      * @return string $output 
      */ 
-    public function categoryLink($category, $output) 
+    public function categoryLink($h, $category, $output) 
     { 
         if (FRIENDLY_URLS == "true") {  
             $link = $category->category_safe_name;  
@@ -689,8 +353,8 @@ class Categories extends PluginFunctions
         } 
     
         $category = stripslashes(html_entity_decode(urldecode($category->category_name), ENT_QUOTES,'UTF-8'));
-        $output .= '<li><a href="' . $this->hotaru->url(array('category'=>$link)) .'">' . $category . "</a>\n"; 
-    
+        $output .= '<li><a href="' . $h->url(array('category'=>$link)) .'">' . $category . "</a>\n"; 
+        
         return $output; 
     } 
 

@@ -28,7 +28,6 @@
 $lang["text_widget_settings_header"] = 'Text Widget';
 $lang["text_widget_title"] = 'Title: ';
 $lang["text_widget_php"] = 'PHP <small>(don\'t use opening and closing &lt;?php ?&gt; tags)</small>';
-$lang["text_widget_settings_save"] = 'Save';
 $lang["text_widget_add"] = 'Add a new widget';
 $lang["text_widget_delete"] = 'Delete the last widget';
 $lang["text_widget_updated"] = 'Widget Updated';

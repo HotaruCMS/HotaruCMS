@@ -63,8 +63,6 @@ $lang["rpx_settings_account"] = "RPX account type:";
 $lang["rpx_settings_account_desc"] = "<small>(Plus or Pro accounts include <a href='https://rpxnow.com/features#account_mapping'>Account Mapping</a>)</small>";
 $lang["rpx_settings_display"] = "RPX display type:";
 $lang["rpx_settings_display_desc"] = "You can (1) embed the RPX widget in the login and registration pages, (2) overlay the screen with the widget from links in the login and registration pages, or (3) replace the login and registration pages completely, and use a \"Sign in\" link in the navigation bar to overlay the screen with the widget. See the forums for more details.</small>";
-$lang["rpx_settings_save"] = "Save";
-$lang["rpx_settings_saved"] = "Settings Saved";
 $lang["rpx_settings_error_application"] = "There's a problem with the application name";
 $lang["rpx_settings_error_api_key"] = "There's a problem with the API key";
 $lang["rpx_settings_error_language"] = "There's a problem with the language";

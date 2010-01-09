@@ -24,35 +24,33 @@
  * @link      http://www.hotarucms.org/
  */
  
-class RpxSettings extends RPX
+class RpxSettings
 {
      /**
      * Admin settings for the Users plugin
      */
-    public function settings()
+    public function settings($h)
     {
-        $this->includeLanguage();
-        
         require_once(PLUGINS . 'users/libs/UserFunctions.php');
         $uf = new UserFunctions($this->hotaru);
         
         // If the form has been submitted, go and save the data...
-        if ($this->cage->post->getAlpha('submitted') == 'true') { 
-            $this->saveSettings(); 
+        if ($h->cage->post->getAlpha('submitted') == 'true') { 
+            $this->saveSettings($h); 
         }    
         
-        echo "<h1>" . $this->lang["rpx_settings_header"] . "</h1>\n";
+        echo "<h1>" . $h->lang["rpx_settings_header"] . "</h1>\n";
         
         // Get settings from database if they exist...
-        $rpx_settings = $this->getSerializedSettings();
+        $rpx_settings = $h->getSerializedSettings();
         
-        $rpx_application = $rpx_settings['rpx_application'];
-        $rpx_api_key = $rpx_settings['rpx_api_key'];
-        $rpx_language = $rpx_settings['rpx_language'];
-        $rpx_account = $rpx_settings['rpx_account'];
-        $rpx_display = $rpx_settings['rpx_display'];
+        $rpx_application = $rpx_settings['application'];
+        $rpx_api_key = $rpx_settings['api_key'];
+        $rpx_language = $rpx_settings['language'];
+        $rpx_account = $rpx_settings['account'];
+        $rpx_display = $rpx_settings['display'];
     
-        $this->pluginHook('rpx_settings_get_values');
+        $h->pluginHook('rpx_settings_get_values');
         
         //...otherwise set to defaults:
         if (!$rpx_application) { $rpx_application = ''; }
@@ -85,37 +83,38 @@ class RpxSettings extends RPX
         
         echo "<form name='rpx_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=rpx' method='post'>\n";
         
-        echo "<p>" . $this->lang["rpx_settings_instructions"] . "</p><br />\n";
+        echo "<p>" . $h->lang["rpx_settings_instructions"] . "</p><br />\n";
 
-        echo "<p>" . $this->lang["rpx_settings_application"] . "</p>";
+        echo "<p>" . $h->lang["rpx_settings_application"] . "</p>";
         echo "<p><input type='text' name='rpx_application' size=50 value='" . $rpx_application . "'></p>\n";
-        echo "<p>" . $this->lang["rpx_settings_api_key"] . "</p>";
+        echo "<p>" . $h->lang["rpx_settings_api_key"] . "</p>";
         echo "<p><input type='text' name='rpx_api_key' size=50 value='" . $rpx_api_key . "'></p>\n";
-        echo "<p>" . $this->lang["rpx_settings_language"] . "</p>";
-        echo "<p><input type='text' name='rpx_language' size=50 value='" . $rpx_language . "'>&nbsp;" . $this->lang["rpx_settings_language_default"] . "</p>\n";
+        echo "<p>" . $h->lang["rpx_settings_language"] . "</p>";
+        echo "<p><input type='text' name='rpx_language' size=50 value='" . $rpx_language . "'>&nbsp;" . $h->lang["rpx_settings_language_default"] . "</p>\n";
         
-        echo "<p>" . $this->lang["rpx_settings_account"] . "&nbsp;\n";
+        echo "<p>" . $h->lang["rpx_settings_account"] . "&nbsp;\n";
         echo "<select name='rpx_account'>\n";
         echo "<option value='basic' " . $selected_basic . ">Basic</option>\n";
         echo "<option value='plus' " . $selected_plus . ">Plus</option>\n";
         echo "<option value='pro' " . $selected_pro . ">Pro</option>\n";
         echo "</select>";
-        echo "&nbsp;" . $this->lang["rpx_settings_account_desc"] . "</p>";
+        echo "&nbsp;" . $h->lang["rpx_settings_account_desc"] . "</p>";
         
-        echo "<p>" . $this->lang["rpx_settings_display_desc"] . "</p>";
+        echo "<p>" . $h->lang["rpx_settings_display_desc"] . "</p>";
         
-        echo "<p>" . $this->lang["rpx_settings_display"] . "&nbsp;\n";
+        echo "<p>" . $h->lang["rpx_settings_display"] . "&nbsp;\n";
         echo "<select name='rpx_display'>\n";
         echo "<option value='embed' " . $selected_embed . ">Embed</option>\n";
         echo "<option value='overlay' " . $selected_overlay . ">Overlay</option>\n";
         echo "<option value='replace' " . $selected_replace . ">Replace</option>\n";
         echo "</select></p>";
                 
-        $this->pluginHook('rpx_settings_form');
+        $h->pluginHook('rpx_settings_form');
                 
         echo "<br /><br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
-        echo "<input type='submit' value='" . $this->lang["rpx_settings_save"] . "' />\n";
+        echo "<input type='submit' value='" . $h->lang["main_form_save"] . "' />\n";
+        echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }
     
@@ -123,51 +122,51 @@ class RpxSettings extends RPX
     /**
      * Save Users Settings
      */
-    public function saveSettings()
+    public function saveSettings($h)
     {
         $error = array();
         
-        $rpx_settings = $this->getSerializedSettings();
+        $rpx_settings = $h->getSerializedSettings();
         
-        $rpx_application = $this->cage->post->testAlnumLines('rpx_application');
+        $rpx_application = $h->cage->post->testAlnumLines('rpx_application');
         if ($rpx_application) { 
-            $rpx_settings['rpx_application'] = $rpx_application;
+            $rpx_settings['application'] = $rpx_application;
         } else {
             array_push($error, "application");
         }
         
-        $rpx_api_key = $this->cage->post->testAlnum('rpx_api_key');
+        $rpx_api_key = $h->cage->post->testAlnum('rpx_api_key');
         if ($rpx_api_key) { 
-            $rpx_settings['rpx_api_key'] = $rpx_api_key;
+            $rpx_settings['api_key'] = $rpx_api_key;
         } else {
             array_push($error, "api_key");
         }
         
-        $rpx_language = $this->cage->post->testAlpha('rpx_language');
+        $rpx_language = $h->cage->post->testAlpha('rpx_language');
         if ($rpx_language) { 
-            $rpx_settings['rpx_language'] = $rpx_language;
+            $rpx_settings['language'] = $rpx_language;
         } else {
             array_push($error, "language");
         }
         
-        $rpx_settings['rpx_account'] = $this->cage->post->testAlpha('rpx_account');
+        $rpx_settings['account'] = $h->cage->post->testAlpha('rpx_account');
         
-        $rpx_settings['rpx_display'] = $this->cage->post->testAlpha('rpx_display');
+        $rpx_settings['display'] = $h->cage->post->testAlpha('rpx_display');
                 
-        $this->pluginHook('rpx_save_settings');
+        $h->pluginHook('rpx_save_settings');
         
-        $this->updateSetting('rpx_settings', serialize($rpx_settings));
+        $h->updateSetting('rpx_settings', serialize($rpx_settings));
         
         if ($error) {
             foreach ($error as $err) {
                 $lang_var = "rpx_settings_error_" . $err;
-                $this->hotaru->messages[$this->lang[$lang_var]] = "red";
+                $h->messages[$h->lang[$lang_var]] = "red";
             }
         } else {
-            $this->hotaru->messages[$this->lang["rpx_settings_saved"]] = "green";
+            $h->messages[$h->lang["main_settings_saved"]] = "green";
         }
         
-        $this->hotaru->showMessages();
+        $h->showMessages();
         
         return true;    
     }

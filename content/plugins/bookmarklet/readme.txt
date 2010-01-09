@@ -11,7 +11,7 @@ Instructions
 1. Upload the "bookmarklet" folder to your plugins folder. Install it from Plugin Management in Admin.
 2. Add the following plugin hook in a template, wherever you want to display the link:
 
-<?php $hotaru->plugins->pluginHook('hotaru_bookmarklet'); ?>
+<?php $h->pluginHook('hotaru_bookmarklet'); ?>
 
 By default, the language used for the link is "Submit to YOUR SITE". You can change that in the language file.
 
@@ -24,4 +24,5 @@ Internet Explorer: Right click the link, and choose "Add to favorites"
 
 Changelog
 ---------
+v.0.2 2009/12/28 - Nick - Updated for compatibility with Hotaru 1.0
 v.0.1 2009/11/28 - Nick - Released first version

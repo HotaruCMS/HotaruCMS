@@ -27,28 +27,10 @@
 
 class PliggImp6
 {
-    public $db;                         // database object
-    public $cage;                       // Inspekt object
-    public $hotaru;                     // Hotaru object
-    public $current_user;               // UserBase object
-    
-    
-    /**
-     * Build a $plugins object containing $db and $cage
-     */
-    public function __construct($hotaru)
-    {
-        $this->hotaru           = $hotaru;
-        $this->db               = $hotaru->db;
-        $this->cage             = $hotaru->cage;
-        $this->current_user     = $hotaru->current_user;
-    }
-    
-    
     /**
      * Page 6 - Request votes file
      */
-    public function page_6()
+    public function page_6($h)
     {
         echo "<h2>Step 6/6 - Votes</h2>";
         echo "Please upload your <b>votes</b> XML file:<br />";
@@ -58,6 +40,7 @@ class PliggImp6
         echo "<input type='hidden' name='submitted' value='true' />\n";
         echo "<input type='hidden' name='table' value='Votes' />\n";
         echo "<input type='submit' name='submit' value='Upload' />\n";
+        echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }
     
@@ -68,21 +51,14 @@ class PliggImp6
      * @param string $file_name
      * @return bool
      */
-    function step6($xml, $file_name)
+    function step6($h, $xml, $file_name)
     {
         echo "<b>Table:</b> Votes...<br /><br />";
         
         $this_table = "postvotes";
-        if (!$this->db->table_empty($this_table)) {
-            if (!$this->cage->get->getAlpha('overwrite') == 'true') {
-                echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . DB_PREFIX . $this_table . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data, and also any data in the <i>commentvotes</i> table.<br />";
-                echo "<a class='pliggimp_next' href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer&amp;file_name=" . $file_name . "&amp;step=6&amp;overwrite=true'>Continue</a>";
-                return false;
-            } 
-        }
         
-        $this->db->query($this->db->prepare("TRUNCATE " . DB_PREFIX . 'postvotes'));
-        $this->db->query($this->db->prepare("TRUNCATE " . DB_PREFIX . 'commentvotes'));
+        $h->db->query($h->db->prepare("TRUNCATE " . DB_PREFIX . 'postvotes'));
+        $h->db->query($h->db->prepare("TRUNCATE " . DB_PREFIX . 'commentvotes'));
         
         echo "<i>Number of records added:</i> ";
         
@@ -106,20 +82,20 @@ class PliggImp6
                 
                 $sql        = "INSERT IGNORE " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%d, %d, %s, %s, %s, %s, %d, %d)";
                 
-                $lks = new PliggImp2($this->hotaru);
-                $usr = new PliggImp5($this->hotaru);
+                $lks = new PliggImp2();
+                $usr = new PliggImp5();
                 
                 // Insert into postvotes table
-                $this->db->query($this->db->prepare(
+                $h->db->query($h->db->prepare(
                     $sql,
-                    $lks->get_new_link_id($child->vote_link_id),
-                    $usr->get_new_user_id($child->vote_user_id),
+                    $lks->get_new_link_id($h, $child->vote_link_id),
+                    $usr->get_new_user_id($h, $child->vote_user_id),
                     $child->vote_ip,
                     $child->vote_date,
                     'vote_simple',
                     $rating,
                     0,
-                    $this->current_user->id));
+                    $h->currentUser->id));
             }
             
             // Now do comment votes...
@@ -138,16 +114,16 @@ class PliggImp6
                 $sql        = "INSERT IGNORE " . DB_PREFIX . "commentvotes (" . $columns . ") VALUES(%d, %d, %d, %s, %s, %s, %d, %d)";
                 
                 // Insert into commentvotes table
-                $this->db->query($this->db->prepare(
+                $h->db->query($h->db->prepare(
                     $sql,
-                    $lks->get_new_link_id($child->vote_link_id),
+                    $lks->get_new_link_id($h, $child->vote_link_id),
                     0,
-                    $usr->get_new_user_id($child->vote_user_id),
+                    $usr->get_new_user_id($h, $child->vote_user_id),
                     $child->vote_ip,
                     $child->vote_date,
                     $rating,
                     0,
-                    $this->current_user->id));
+                    $h->currentUser->id));
             }
         }
     

@@ -2,11 +2,14 @@
 /**
  * name: Akismet
  * description: Anti-spam service
- * version: 0.3
+ * version: 0.4
  * folder: akismet
  * class: HotaruAkismet
- * requires: submit 1.4, comments 1.0
+ * type: antispam
+ * requires: submit 1.9, comments 1.2
  * hooks: admin_plugin_settings, admin_sidebar_plugin_settings, install_plugin, comment_pre_add_comment, submit_step_3_pre_trackback, com_man_approve_comment, com_man_delete_comment, comments_delete_comment, post_man_status_new, post_man_status_top, post_man_status_buried, post_man_delete, submit_edit_post_change_status, submit_edit_post_delete, vote_post_status_buried
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *
@@ -30,25 +33,20 @@
  * @link      http://www.hotarucms.org/
  */
 
-class HotaruAkismet extends PluginFunctions
+class HotaruAkismet
 {
-
     /**
      * Default settings on install
      */
-    public function install_plugin()
+    public function install_plugin($h)
     {
         // Default settings 
-        $akismet_settings = $this->getSerializedSettings();
+        $akismet_settings = $h->getSerializedSettings();
         if (!isset($akismet_settings['akismet_use_posts'])) { $akismet_settings['akismet_use_posts'] = ""; }
         if (!isset($akismet_settings['akismet_use_comments'])) { $akismet_settings['akismet_use_comments'] = ""; }
         if (!isset($akismet_settings['akismet_key'])) { $akismet_settings['akismet_key'] = ""; }
         
-        $this->updateSetting('akismet_settings', serialize($akismet_settings));
-        
-        // Include language file. Also included in hotaru_header, but needed here so 
-        // that the link in the Admin sidebar shows immediately after installation.
-        $this->includeLanguage();
+        $h->updateSetting('akismet_settings', serialize($akismet_settings));
     }
     
     
@@ -57,15 +55,15 @@ class HotaruAkismet extends PluginFunctions
      *
      * @return object
      */
-    public function prepareAkismet()
+    public function prepareAkismet($h)
     {
-        $akismet_settings = $this->getSerializedSettings();
+        $akismet_settings = $h->getSerializedSettings();
         
         $WordPressAPIKey    = $akismet_settings['akismet_key'];
         $MySiteURL          = BASEURL;
         
         require_once(PLUGINS . 'akismet/libs/Akismet.class.php');
-        $akismet = new Akismet($this->cage, $MySiteURL ,$WordPressAPIKey);
+        $akismet = new Akismet($h->cage, $MySiteURL ,$WordPressAPIKey);
         
         return $akismet;
     }
@@ -74,14 +72,14 @@ class HotaruAkismet extends PluginFunctions
     /**
      * Displays "Akismet!" wherever the plugin hook is.
      */
-    public function akismet($username, $email, $website, $comment, $permalink, $type)
+    public function akismet($h, $username, $email, $website, $comment, $permalink, $type)
     {
-        $akismet = $this->prepareAkismet();
+        $akismet = $this->prepareAkismet($h);
 
         $akismet->setCommentAuthor($username);
         $akismet->setCommentAuthorEmail($email);
         $akismet->setCommentAuthorURL($website);
-        $akismet->setCommentContent($this->db->escape($comment));
+        $akismet->setCommentContent($h->db->escape($comment));
         $akismet->setPermalink($permalink);
         
         if ($type == 'ham')
@@ -95,11 +93,11 @@ class HotaruAkismet extends PluginFunctions
         else 
         {
             if($akismet->isCommentSpam()) {
-                if ($type == 'comment') { $this->hotaru->comment->status = 'pending'; }
-                if ($type == 'post') { $this->hotaru->post->status = 'pending'; }
+                if ($type == 'comment') { $h->comment->status = 'pending'; }
+                if ($type == 'post') { $h->post->status = 'pending'; }
             } else {
-                if ($type == 'comment') { $this->hotaru->comment->status = 'approved'; }
-                if ($type == 'post') { $this->hotaru->post->status = 'new'; }
+                if ($type == 'comment') { $h->comment->status = 'approved'; }
+                if ($type == 'post') { $h->post->status = 'new'; }
             }
         }
     }
@@ -108,38 +106,36 @@ class HotaruAkismet extends PluginFunctions
     /**
      * Call to Akimset before adding a comment
      */
-    public function comment_pre_add_comment()
+    public function comment_pre_add_comment($h)
     {
-        $akismet_settings = $this->getSerializedSettings();
+        $akismet_settings = $h->getSerializedSettings();
         if (!$akismet_settings['akismet_use_comments']) { return false; }
         
-        $user = new UserBase($this->hotaru);
-        $username = $user->getUserNameFromId($this->hotaru->comment->author);
-        $email = $user->getEmailFromId($this->hotaru->comment->author);
+        $username = $h->getUserNameFromId($h->comment->author);
+        $email = $h->getEmailFromId($h->comment->author);
         $website = '';
-        $comment = $this->hotaru->comment->content;
-        $permalink = $this->hotaru->url(array('page'=>$this->hotaru->post->id));
+        $comment = $h->comment->content;
+        $permalink = $h->url(array('page'=>$h->post->id));
         
-        $this->akismet($username, $email, $website, $comment, $permalink, 'comment');
+        $this->akismet($h, $username, $email, $website, $comment, $permalink, 'comment');
     }
     
     
     /**
      * Call to Akimset before adding a post
      */
-    public function submit_step_3_pre_trackback()
+    public function submit_step_3_pre_trackback($h)
     {
-        $akismet_settings = $this->getSerializedSettings();
+        $akismet_settings = $h->getSerializedSettings();
         if (!$akismet_settings['akismet_use_posts']) { return false; }
         
-        $user = new UserBase($this->hotaru);
-        $username = $user->getUserNameFromId($this->hotaru->post->author);
-        $email = $user->getEmailFromId($this->hotaru->post->author);
-        $website = $this->hotaru->post->origUrl;   // the url being submitted
-        $comment = $this->hotaru->post->content;
+        $username = $h->getUserNameFromId($h->post->author);
+        $email = $h->getEmailFromId($h->post->author);
+        $website = $h->post->origUrl;   // the url being submitted
+        $comment = $h->post->content;
         $permalink = '';    // There is no permalink since this post hasn't been submitted yet.
         
-        $this->akismet($username, $email, $website, $comment, $permalink, 'post');
+        $this->akismet($h, $username, $email, $website, $comment, $permalink, 'post');
     }
 
 
@@ -150,20 +146,19 @@ class HotaruAkismet extends PluginFunctions
      *
      * This hook is in Comment Manager Settings, just before individual comments are approved.
      */
-    public function com_man_approve_comment($comment)
+    public function com_man_approve_comment($h, $comment)
     {
-        $akismet_settings = $this->getSerializedSettings();
+        $akismet_settings = $h->getSerializedSettings();
         if (!$akismet_settings['akismet_use_comments']) { return false; }
         
         $c = $comment[0]; 
         
-        $user = new UserBase($this->hotaru);
-        $username = $user->getUserNameFromId($this->hotaru->post->author);
-        $email = $user->getEmailFromId($this->hotaru->post->author);
+        $username = $h->getUserNameFromId($h->post->author);
+        $email = $h->getEmailFromId($h->post->author);
         $website = '';
         $comment = $c->content;
-        $permalink = $this->hotaru->url(array('page'=>$this->hotaru->post->id));
-        $this->akismet($username, $email, $website, $comment, $permalink, 'ham');
+        $permalink = $h->url(array('page'=>$h->post->id));
+        $this->akismet($h, $username, $email, $website, $comment, $permalink, 'ham');
     }
     
     
@@ -174,20 +169,19 @@ class HotaruAkismet extends PluginFunctions
      *
      * This hook is in Comment Manager Settings, just before individual comments are deleted.
      */
-    public function com_man_delete_comment($comment)
+    public function com_man_delete_comment($h, $comment)
     {
-        $akismet_settings = $this->getSerializedSettings();
+        $akismet_settings = $h->getSerializedSettings();
         if (!$akismet_settings['akismet_use_comments']) { return false; }
         
         $c = $comment[0]; 
         
-        $user = new UserBase($this->hotaru);
-        $username = $user->getUserNameFromId($this->hotaru->post->author);
-        $email = $user->getEmailFromId($this->hotaru->post->author);
+        $username = $h->getUserNameFromId($h->post->author);
+        $email = $h->getEmailFromId($h->post->author);
         $website = '';
         $comment = $c->content;
-        $permalink = $this->hotaru->url(array('page'=>$this->hotaru->post->id));
-        $this->akismet($username, $email, $website, $comment, $permalink, 'spam');
+        $permalink = $h->url(array('page'=>$h->post->id));
+        $this->akismet($h, $username, $email, $website, $comment, $permalink, 'spam');
     }
     
     
@@ -196,35 +190,33 @@ class HotaruAkismet extends PluginFunctions
      *
      * This hook is in Comments, just before individual comments are deleted.
      */
-    public function comments_delete_comment()
+    public function comments_delete_comment($h)
     {
-        $akismet_settings = $this->getSerializedSettings();
+        $akismet_settings = $h->getSerializedSettings();
         if (!$akismet_settings['akismet_use_comments']) { return false; }
         
-        $user = new UserBase($this->hotaru);
-        $username = $user->getUserNameFromId($this->hotaru->post->author);
-        $email = $user->getEmailFromId($this->hotaru->post->author);
+        $username = $h->getUserNameFromId($h->post->author);
+        $email = $h->getEmailFromId($h->post->author);
         $website = '';
-        $comment = $this->hotaru->comment->content;
-        $permalink = $this->hotaru->url(array('page'=>$this->hotaru->post->id));
-        $this->akismet($username, $email, $website, $comment, $permalink, 'spam');
+        $comment = $h->comment->content;
+        $permalink = $h->url(array('page'=>$h->post->id));
+        $this->akismet($h, $username, $email, $website, $comment, $permalink, 'spam');
     }
 
 
     /**
      * Tell Akismet this post is HAM or SPAM
      */
-    public function reportPostHamSpam($type = 'ham')
+    public function reportPostHamSpam($h, $type = 'ham')
     {
-        $akismet_settings = $this->getSerializedSettings();
+        $akismet_settings = $h->getSerializedSettings();
         if (!$akismet_settings['akismet_use_posts']) { return false; }
         
-        $user = new UserBase($this->hotaru);
-        $username = $user->getUserNameFromId($this->hotaru->post->author);
-        $email = $user->getEmailFromId($this->hotaru->post->author);
-        $website = $this->hotaru->post->origUrl;
-        $post_content = $this->hotaru->post->content;
-        $permalink = $this->hotaru->url(array('page'=>$this->hotaru->post->id));
+        $username = $h->getUserNameFromId($h->post->author);
+        $email = $h->getEmailFromId($h->post->author);
+        $website = $h->post->origUrl;
+        $post_content = $h->post->content;
+        $permalink = $h->url(array('page'=>$h->post->id));
         
         /* for testing:
         echo "username: " . $username . "<br />";
@@ -236,31 +228,31 @@ class HotaruAkismet extends PluginFunctions
         exit;
         */
         
-        $this->akismet($username, $email, $website, $post_content, $permalink, $type);
+        $this->akismet($h, $username, $email, $website, $post_content, $permalink, $type);
     }
 
-    public function post_man_status_new() { $this->reportPostHamSpam('ham'); } // HAM
-    public function post_man_status_top() { $this->reportPostHamSpam('ham'); } // HAM
-    public function post_man_status_buried() { $this->reportPostHamSpam('spam'); } // SPAM
-    public function post_man_delete() { $this->reportPostHamSpam('spam'); } // SPAM
-    public function submit_edit_post_delete() { $this->reportPostHamSpam('spam'); } // SPAM
-    public function vote_post_status_buried() { $this->reportPostHamSpam('spam'); } // SPAM
+    public function post_man_status_new($h) { $this->reportPostHamSpam($h, 'ham'); } // HAM
+    public function post_man_status_top($h) { $this->reportPostHamSpam($h, 'ham'); } // HAM
+    public function post_man_status_buried($h) { $this->reportPostHamSpam($h, 'spam'); } // SPAM
+    public function post_man_delete($h) { $this->reportPostHamSpam($h, 'spam'); } // SPAM
+    public function submit_edit_post_delete($h) { $this->reportPostHamSpam($h, 'spam'); } // SPAM
+    public function vote_post_status_buried($h) { $this->reportPostHamSpam($h, 'spam'); } // SPAM
     
     
     /**
      * Tell Akismet this post is HAM or SPAM when editing a post
      */
-    public function submit_edit_post_change_status()
+    public function submit_edit_post_change_status($h)
     { 
-        switch($this->hotaru->post->status) {
+        switch($h->post->status) {
             case 'top':
-                $this->reportPostHamSpam('ham');
+                $this->reportPostHamSpam($h, 'ham');
                 break;
             case 'new':
-                $this->reportPostHamSpam('ham');
+                $this->reportPostHamSpam($h, 'ham');
                 break;
             case 'buried':
-                $this->reportPostHamSpam('spam');
+                $this->reportPostHamSpam($h, 'spam');
                 break;
             default:
                 // do nothing

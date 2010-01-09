@@ -24,18 +24,18 @@
  * @link      http://www.hotarucms.org/
  */
 
-if ($hotaru->current_user->getPermission('can_search') == 'yes') { $disabled = ''; } else { $disabled = "onkeypress='return handleEnter(this, event)' disabled"; }
-if ($hotaru->cage->get->keyExists('search')) { $current_search = $hotaru->vars['orig_search']; } else { $current_search = $hotaru->lang['search_text']; }
+if ($h->currentUser->getPermission('can_search') == 'yes') { $disabled = ''; } else { $disabled = "onkeypress='return handleEnter(this, event)' disabled"; }
+if ($h->cage->get->keyExists('search')) { $current_search = $h->vars['orig_search']; } else { $current_search = $h->lang['search_text']; }
 ?>
 
-<!-- <h2 class="sidebar_widget_head"><?php echo $hotaru->lang['search_title']; ?></h2> -->
-<div class="sidebar_widget_body search_box">
+<!-- <h2 class="widget_head"><?php echo $h->lang['search_title']; ?></h2> -->
+<div class="widget_body search_box">
     <form name='search_form' id='search_form' action='<?php echo BASEURL; ?>index.php?page=search' method='get'> 
-        <input id="search_input" type="text" value="<?php echo $current_search;  ?>" name="search" id="searchsite"  
-            onfocus="if (this.value == '<?php echo $hotaru->lang['search_text']; ?>') {this.value = '';}"
+        <input id="search_input" type="text" value="<?php echo $current_search;  ?>" name="search" 
+            onfocus="if (this.value == '<?php echo $h->lang['search_text']; ?>') {this.value = '';}"
         />
         <input type="hidden" id="dosearch" />
-        <input id="search_button" type="submit" id="search-submit" value="<?php echo $hotaru->lang['search_submit']; ?>" <?php echo $disabled; ?> />
+        <input id="search_button" type="submit" value="<?php echo $h->lang['search_submit']; ?>" <?php echo $disabled; ?> />
     </form>
 </div>
 

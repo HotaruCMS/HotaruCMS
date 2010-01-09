@@ -25,56 +25,59 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-        
 // plugin hook
-$result = $admin->plugins->pluginHook('admin_theme_index_replace');
-if (!isset($result) || !is_array($result)) {
+$result = $h->pluginHook('admin_theme_index_top');
+if (!$result) {
 ?>
         <!-- HEADER-->
         <?php
             // plugin hook
-            $result = $admin->plugins->pluginHook('admin_theme_index_header');
-            if (!isset($result) || !is_array($result)) {
-                $admin->displayAdminTemplate('header');
+            $result = $h->pluginHook('admin_theme_index_header');
+            if (!$result) {
+                $h->displayTemplate('header');
             }
         ?>
     
         <div id="bd" role="main">              
-            <?php if ($admin->sidebars) { ?>
+            <?php if ($h->sidebars) { ?>
                 <div class='yui-gf'> 
                 <div class="yui-u">
             <?php } else { ?>
                 <div class='yui-g'>
                     <div class="yui-u" style='width: 100%;'>
             <?php } ?>
+                        <!-- BREADCRUMBS -->
+                        <div id='breadcrumbs'>
+                            <?php echo $h->breadcrumbs(); ?>
+                        </div>
+                            
                         <!-- MAIN -->
                         <div id="main">
                         <?php
                             // plugin hook
-                        $result = $admin->plugins->pluginHook('admin_theme_index_main');
-                        if (!isset($result) || !is_array($result)) {
-                                $page = $admin->hotaru->getPageName();
-                                if ($page == 'admin_login') {
-                                    if ($admin->current_user->loggedIn) {
-                                        $admin->displayAdminTemplate('main');
+                        $result = $h->pluginHook('admin_theme_index_main');
+                        if (!$result) {
+                                if ($h->pageName == 'admin_login') {
+                                    if ($h->currentUser->loggedIn) {
+                                        $h->displayTemplate('admin_home');
                                     } else {
-                                        $admin->adminLoginForm($admin);
+                                        $h->adminLoginForm();
                                     }
                                 } else {
-                                    $admin->displayAdminTemplate($page);
+                                    $h->displayTemplate($h->pageName);
                                 } 
-                        }     
+                        }
                     ?>    
                     </div>        
                     </div>
-                    <?php if ($admin->sidebars) { ?>
+                    <?php if ($h->sidebars) { ?>
                         <div class="yui-u first">
                         <!-- SIDEBAR -->
                         <?php
                             // plugin hook
-                            $result = $admin->plugins->pluginHook('admin_theme_index_sidebar');
-                            if (!isset($result) || !is_array($result)) {
-                                $admin->displayAdminTemplate('sidebar');
+                            $result = $h->pluginHook('admin_theme_index_sidebar');
+                            if (!$result) {
+                                $h->displayTemplate('sidebar');
                             }
                         ?>
                         </div>
@@ -84,9 +87,9 @@ if (!isset($result) || !is_array($result)) {
         <!-- FOOTER -->
         <?php
             // plugin hook
-            $result = $admin->plugins->pluginHook('admin_theme_index_footer');
-            if (!isset($result) || !is_array($result)) {
-                $admin->displayAdminTemplate('footer');
+            $result = $h->pluginHook('admin_theme_index_footer');
+            if (!$result) {
+                $h->displayTemplate('footer');
             }
         ?>
 <?php    } ?>

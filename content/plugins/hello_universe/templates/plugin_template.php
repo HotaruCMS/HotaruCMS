@@ -28,15 +28,10 @@
 
 ?>
 
-<div id="breadcrumbs">
-    <a href="<?php echo BASEURL; ?>"><?php echo $hotaru->lang['submit_form_home']; ?></a> &raquo; 
-    <?php echo $hotaru->lang["hello_universe_template_example"]; ?>
-</div>
-
 <h2>A new template!</h2>
 
 <p>This is the plugin_template.php file in the Hello Universe plugin folder.</p>
 
-<p>To see how we made this page, look at Function #1 in hello_universe.php.</p>
+<p>To see how we made this page, look at Function #2 in hello_universe.php.</p>
 
-<p><a href="<?php echo BASEURL; ?>"><?php echo $hotaru->lang["hello_universe_back_home"]; ?></a></p>
+<p><a href="<?php echo BASEURL; ?>"><?php echo $h->lang["hello_universe_back_home"]; ?></a></p>

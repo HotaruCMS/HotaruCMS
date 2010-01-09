@@ -1,6 +1,6 @@
 <?php
 /**
- * Determines which page of Admin should be shown
+ * Includes settings and constructs Hotaru.
  *
  * PHP version 5
  *
@@ -23,11 +23,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
- 
 
 // includes
 require_once('hotaru_settings.php');
-require_once(LIBS . 'Admin.php');
-$admin = new Admin('admin');
+require_once('Hotaru.php');
+$h = new Hotaru();
+$h->start('admin');
 
 ?>

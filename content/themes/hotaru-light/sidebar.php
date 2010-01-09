@@ -1,8 +1,8 @@
 <?php 
 /**
- * Theme name: hotaru-light
+ * Theme name: default
  * Template name: sidebar.php
- * Template author: carlo75
+ * Template author: Nick Ramsay
  *
  * PHP version 5
  *
@@ -30,6 +30,6 @@
 
 <div id="sidebar">
 
-    <?php $hotaru->plugins->pluginHook('sidebar', true, '', array(1)); ?>
+    <?php $h->pluginHook('widget_block', '', array(1)); ?>
 
 </div>

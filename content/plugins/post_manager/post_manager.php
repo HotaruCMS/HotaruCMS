@@ -2,11 +2,13 @@
 /**
  * name: Post Manager
  * description: Manage posts.
- * version: 0.3
+ * version: 0.4
  * folder: post_manager
  * class: PostManager
- * requires: submit 1.4
+ * requires: submit 1.9
  * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *
@@ -30,22 +32,9 @@
  * @link      http://www.hotarucms.org/
  */
  
-return false; die(); // die on direct access.
-
-class PostManager extends PluginFunctions
+class PostManager
 {
-    /**
-     * Define a global "table_categories" and include language
-     *
-     *@return true
-     */
-    public function hotaru_header()
-    {
-        $this->includeLanguage();
-        
-        if (!defined('TABLE_POSTS')) { define("TABLE_POSTS", DB_PREFIX . 'posts'); }
-        return true;
-    }
+    // nothing to do. See post_manager_settings.php
 }
 
 ?>

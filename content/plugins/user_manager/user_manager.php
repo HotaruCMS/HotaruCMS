@@ -2,11 +2,13 @@
 /**
  * name: User Manager
  * description: Manage users.
- * version: 0.4
+ * version: 0.5
  * folder: user_manager
  * class: UserManager
- * requires: users 0.8
+ * requires: users 1.1, user_signin 0.1
  * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *
@@ -30,9 +32,7 @@
  * @link      http://www.hotarucms.org/
  */
  
-return false; die(); // die on direct access.
-
-class UserManager extends PluginFunctions
+class UserManager
 {
     // nothing to do. See user_manager_settings.php
 }

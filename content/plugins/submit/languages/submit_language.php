@@ -25,83 +25,83 @@
  */
 
 /* Submit Form */
-$lang["submit_form_home"] = "Home";
-$lang["submit_form_step1"] = "Submit a Story 1/3";
-$lang["submit_form_step2"] = "Submit a Story 2/3";
-$lang["submit_form_step3"] = "Submit a Story 3/3";
-$lang["submit_form_url"] = "Source URL:";
-$lang["submit_form_title"] = "Title:";
-$lang["submit_form_content"] = "Description:";
-$lang["submit_form_instructions_1"] = "Enter a url to submit:";
-$lang["submit_form_post_without_link"] = "Post without a URL"; 
-$lang["submit_form_not_found"] = "No title found";
-$lang["submit_form_instructions_2"] = "Complete the fields below.";
-$lang['submit_form_subscribe'] = "Subscribe to comments";
-$lang["submit_form_instructions_3"] = "Your submission will look like this. Use the buttons below to modify or confirm it.";
-$lang["submit_form_url_not_present_error"] = "Invalid url";
-$lang["submit_form_url_already_exists_error"] = "Sorry, that url has already been submitted.";
-$lang["submit_form_no_permission"] = "Sorry, you don't have permission to post links.";
-$lang['submit_form_url_blocked'] = "Sorry, this url or domain is on the blocked list.";
-$lang['submit_form_daily_limit_exceeded'] = "Sorry, you have reached the 24 hour submission limit.";
-$lang['submit_form_freq_limit_error'] = "Please wait a while before you submit another story.";
-$lang['submit_form_content_too_many_links'] = "There are too many links in the description.";
-$lang["submit_form_title_not_present_error"] = "No title was provided.";
-$lang["submit_form_title_already_exists_error"] = "Sorry, that title has already been used.";
-$lang["submit_form_content_not_present_error"] = "No description entered.";
-$lang["submit_form_content_too_short_error"] = "Sorry, that description is too short.";
-$lang["submit_form_submit_button"] = "Submit";
-$lang['submit_form_submit_edit_button'] = "Edit";
-$lang['submit_form_submit_confirm_button'] = "Confirm";
-$lang['submit_form_submit_next_button'] = "Next";
-$lang['submit_form_submit_accidental_click'] = "Wait, you have not submitted your story yet!";
-$lang['submit_form_allowable_tags'] = "Allowed HTML tags:";
-$lang['submit_form_moderation'] = "Thank you, your post has been placed in the moderation queue.";
+$lang["submit_home"] = "Home";
+$lang["submit_step1"] = "Submit a Story 1/3";
+$lang["submit_step2"] = "Submit a Story 2/3";
+$lang["submit_step3"] = "Submit a Story 3/3";
+$lang["submit_url"] = "Source URL:";
+$lang["submit_title"] = "Title:";
+$lang["submit_content"] = "Description:";
+$lang["submit_instructions_1"] = "Enter a url to submit:";
+$lang["submit_post_without_link"] = "Post without a URL"; 
+$lang["submit_not_found"] = "No title found";
+$lang["submit_instructions_2"] = "Complete the fields below.";
+$lang['submit_subscribe'] = "Subscribe to comments";
+$lang["submit_instructions_3"] = "Your submission will look like this. Use the buttons below to modify or confirm it.";
+$lang["submit_nothing_submitted"] = "Nothing submitted...";
+$lang["submit_url_not_present_error"] = "Invalid url";
+$lang["submit_url_already_exists_error"] = "Sorry, that url has already been submitted.";
+$lang["submit_no_post_permission"] = "Sorry, you don't have permission to post links.";
+$lang["submit_no_edit_permission"] = "Sorry, you don't have permission to edit this post.";
+$lang["submit_posting_closed"] = "Sorry, post submission is currently closed";
+$lang['submit_url_blocked'] = "Sorry, this url or domain is on the blocked list.";
+$lang['submit_daily_limit_exceeded'] = "Sorry, you have reached the 24 hour submission limit.";
+$lang['submit_freq_limit_error'] = "Please wait a while before you submit another story.";
+$lang['submit_content_too_many_links'] = "There are too many links in the description.";
+$lang["submit_title_not_present_error"] = "No title was provided.";
+$lang["submit_title_already_exists_error"] = "Sorry, that title has already been used.";
+$lang["submit_content_not_present_error"] = "No description entered.";
+$lang["submit_content_too_short_error"] = "Sorry, that description is too short.";
+$lang["submit_submit_button"] = "Submit";
+$lang['submit_submit_edit_button'] = "Edit";
+$lang['submit_submit_confirm_button'] = "Confirm";
+$lang['submit_submit_next_button'] = "Next";
+$lang['submit_accidental_click'] = "Wait, you have not submitted your story yet!";
+$lang['submit_allowable_tags'] = "Allowed HTML tags:";
+$lang['submit_moderation'] = "Thank you, your post has been placed in the moderation queue.";
+$lang["submit_category"] = "Category";
+$lang['submit_category_select'] = "Select a category";
+$lang['submit_category_error'] = "Please choose a category.";
+$lang["submit_tags"] = "Tags:";
+$lang['submit_tags_not_present_error'] = "No tags entered.";
+$lang['submit_tags_length_error'] = "Sorry, you've entered too many tags.";
 
 /* Edit Post */
-$lang["submit_edit_post_admin_only"] = "Admin Only...";
-$lang["submit_edit_post_title"] = "Edit Post";
-$lang["submit_edit_post_instructions"] = "Edit the fields below.";
-$lang["submit_edit_post_title_not_present_error"] = "No title was provided.";
-$lang["submit_edit_post_content_not_present_error"] = "No description entered.";
-$lang["submit_edit_post_status"] = "Post status:";
-$lang['submit_form_url_not_complete_error'] = "Source URL error...";
-$lang["submit_edit_post_delete"] = "Physically delete this post, its votes and comments";
-$lang["submit_edit_post_save"] = "Save";
-$lang["submit_edit_post_deleted"] = "This post and associated tags, votes and comments have been deleted.";
+$lang["submit_edit_admin_only"] = "Admin Only...";
+$lang["submit_edit_title"] = "Edit Post";
+$lang["submit_edit_instructions"] = "Edit the fields below.";
+$lang["submit_edit_no_title_error"] = "No title was provided.";
+$lang["submit_edit_content_not_present_error"] = "No description entered.";
+$lang["submit_edit_status"] = "Post status:";
+$lang['submit_edit_source_url_error'] = "Source URL error...";
+$lang["submit_edit_delete"] = "Physically delete this post, its votes and comments";
+$lang["submit_edit_save"] = "Save";
+$lang["submit_edit_deleted"] = "This post and associated tags, votes and comments have been deleted.";
 
 /* Submission Disabled */
-$lang['submit_disabled'] = "Sorry, story submission is disabled at this time.";
+$lang['submit_disabled'] = "Sorry, post submission is disabled at this time.";
 
 /* Submit Trackback */
 $lang['submit_trackback_excerpt'] = "This article has been featured on";
 
 /* Navigation */
-$lang['submit_submit_a_story'] = "Submit a Story";
+$lang['submit_submit_a_story'] = "Submit";
 
 /* Submit Settings */
 $lang["submit_settings_header"] = "Submit Configuration";
-$lang["submit_settings_post_components"] = "<b>Post Components</b>";
+$lang["submit_settings_post_components"] = "<b>Displaying Posts</b>";
 $lang["submit_settings_submission_settings"] = "<b>Submission Settings</b> (for users with 'member' roles)";
-$lang["submit_settings_post_archiving"] = "<b>Post Archiving</b>";
 $lang["submit_settings_content"] = "Description";
 $lang["submit_settings_instructions"] = "Check the components you want submissions to have:";
-$lang["submit_settings_save"] = "Save";
-$lang["submit_settings_enable"] = "Enable story submission";
-$lang["submit_settings_title"] = "Title";
-$lang["submit_settings_author"] = "Author";
-$lang["submit_settings_date"] = "Date";
-$lang["submit_settings_content"] = "Description";
+$lang["submit_settings_enable"] = "Enable post submission";
+$lang["submit_settings_enable_instruct"] = "<small>(Uncheck this to prevent new submissions, but still allow post editing)</small>";
 $lang["submit_settings_content_min_length"] = "Minimum characters";
 $lang["submit_settings_summary"] = "Summary";
 $lang["submit_settings_summary_max_length"] = "Maximum characters";
 $lang["submit_settings_summary_instruct"] = "(Description truncated on list pages)";
-$lang["submit_settings_tags"] = "Tags";
-$lang["submit_settings_max_tags"] = "Maximum characters";
 $lang["submit_settings_latest"] = "Split posts into 'Top' and 'Latest'";
-$lang["submit_settings_posts_per_page"] = "posts per page <small>(default: 10)</small>";
 $lang["submit_settings_allowable_tags"] = "Allowed HTML tags in post description:";
 $lang["submit_settings_allowable_tags_example"] = "<small>(E.g. &lt;b&gt;&lt;u&gt;&lt;i&gt;&lt;blockquote&gt;)</small>";
-$lang["submit_settings_saved"] = "Settings Saved.";
 $lang["submit_settings_url_limit"] = "Max links within a post <small>(enter 0 for no limit)</small>";
 $lang["submit_settings_daily_limit"] = "Max posts a user can submit in 24 hours <small>(enter 0 for no limit)</small>";
 $lang["submit_settings_frequency_limit"] = "Minutes before a user can submit another post <small>(enter 0 for no limit)</small>";
@@ -114,68 +114,8 @@ $lang["submit_settings_email_notify"] = "When a new post is submitted, email adm
 $lang["submit_settings_email_notify_all"] = "All new posts";
 $lang["submit_settings_email_notify_pending"] = "Pending posts only";
 $lang["submit_settings_email_notify_none"] = "None";
-$lang["submit_settings_post_archive_desc"] = "On the Maintenance page, there's a link you can use to archive old posts (or remove an existing archive). Archiving speeds up your site by excluding old posts and their comments, votes and tags from most database usage. Old posts can still be accessed via the search box or when loaded directly (e.g. from Google). <i>Note: Archiving is not automatic. You will need to update the archive periodically from the Maintenance page.</i>";
-$lang["submit_settings_post_archive"] = "Posts older than this will be archived. <small>(Default: No archive)</small>";
-$lang["submit_settings_post_archive_no_archive"] = "No archive";
-$lang["submit_settings_post_archive_180"] = "6 months";
-$lang["submit_settings_post_archive_365"] = "1 year";
-$lang["submit_settings_post_archive_730"] = "2 years";
-$lang["submit_settings_post_archive_1095"] = "3 years";
+$lang["submit_settings_categories"] = "Categories";
+$lang["submit_settings_tags"] = "Tags";
+$lang["submit_settings_max_tags"] = "Maximum characters";
 
-/* Maintenance page */
-$lang["submit_maintenance_update_archive"] = "Update the post archive";
-$lang["submit_maintenance_update_archive_remove"] = "Move any archived posts out of the archive. <small>(See Submit Settings)</small>";
-$lang["submit_maintenance_update_archive_desc_1"] = "Posts older than ";
-$lang["submit_maintenance_update_archive_desc_2"] = " will be moved into the archive. <small>(See Submit Settings)</small>";
-$lang["submit_maintenance_archive_removed"] = "Done. There are currently no archived posts.";
-$lang["submit_maintenance_archive_updated"] = "Archive Updated";
-
-/* Submit Breadcrumbs */
-$lang["post_breadcrumbs_all"] = "All Posts";
-$lang["post_breadcrumbs_top"] = "Top Posts";
-$lang["post_breadcrumbs_latest"] = "Latest Posts";
-$lang["post_breadcrumbs_tag"] = "Tag";
-$lang["post_breadcrumbs_category"] = "Category";
-$lang["post_breadcrumbs_user"] = "User";
-$lang["post_breadcrumbs_upcoming"] = "Upcoming Posts";
-$lang["post_breadcrumbs_top_24_hours"] = "Top Posts (last 24 Hours)";
-$lang["post_breadcrumbs_top_48_hours"] = "Top Posts (last 48 Hours)";
-$lang["post_breadcrumbs_top_7_days"] = "Top Posts (last 7 Days)";
-$lang["post_breadcrumbs_top_30_days"] = "Top Posts (last 30 Days)";
-$lang["post_breadcrumbs_top_365_days"] = "Top Posts (last 365 Days)";
-$lang["post_breadcrumbs_top_all_time"] = "Top Posts (All-Time)";
-
-/* Submit Post */
-$lang["submit_page_title_main"] = "top";
-$lang["submit_page_title_latest"] = "latest";
-$lang["submit_page_title_all"] = "all";
-$lang["submit_post_edit"] = "Edit";
-$lang["submit_post_read_more"] = "[Read More]";
-$lang["submit_post_posted"] = "Posted";
-$lang["submit_post_by"] = "by";
-$lang["submit_post_ago"] = "ago";
-$lang["submit_post_buried"] = "This post has been buried";
-$lang["submit_post_pending"] = "This post is pending approval by a moderator";
-
-/* Submit RSS Feed */
-$lang["submit_rss_latest_from"] = "Latest from";
-$lang["submit_rss_top_stories_from"] = "Top Stories from";
-$lang["submit_rss_stories_from_user"] = "Stories submitted by";
-$lang["submit_rss_stories_tagged"] = "Stories tagged"; 
-$lang["submit_rss_stories_in_category"] = "Stories posted in";
-$lang["submit_rss_stories_search"] = "Search results for";
-$lang["submit_rss_stories_upcoming"] = "Upcoming stories";
-
-/* Admin Stats */
-$lang["submit_admin_stats_total_posts"] = "Total posts";
-$lang["submit_admin_stats_approved_posts"] = "Approved posts";
-$lang["submit_admin_stats_pending_posts"] = "Pending posts";
-$lang["submit_admin_stats_buried_posts"] = "Buried posts";
-$lang["submit_admin_stats_archived_posts"] = "Archived posts";
-
-/* User Settings */
-$lang['users_settings_open_new_tab'] = "Open posts in a new tab?";
-$lang['users_settings_link_action'] = "Front page links open:";
-$lang['users_settings_source'] = "Original post";
-$lang['users_settings_post'] = SITE_NAME . " post";
 ?>

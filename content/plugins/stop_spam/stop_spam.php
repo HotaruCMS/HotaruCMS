@@ -2,11 +2,14 @@
 /**
  * name: StopSpam
  * description: Checks new users against the StopForumSpam.com blacklist
- * version: 0.1
+ * version: 0.2
  * folder: stop_spam
  * class: StopSpam
- * requires: users 0.8
+ * type: antispam
+ * requires: users 1.1
  * hooks: install_plugin, users_register_check_blocked, users_register_pre_add_user, users_register_post_add_user, users_email_conf_post_role, user_manager_details_pending, user_manager_pre_submit_button, user_man_killspam_delete, admin_sidebar_plugin_settings, admin_plugin_settings
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *
@@ -30,35 +33,31 @@
  * @link      http://www.hotarucms.org/
  */
 
-class StopSpam extends PluginFunctions
+class StopSpam
 {
     protected $ssType   =   'go_pending';   // otherwise 'block_reg'
     /**
      * Default settings on install
      */
-    public function install_plugin()
+    public function install_plugin($h)
     {
         // Default settings 
-        if (!$this->getSetting('stop_spam_key')) { $this->updateSetting('stop_spam_key', ''); }
-        if (!$this->getSetting('stop_spam_type')) { $this->updateSetting('stop_spam_type', 'go_pending'); }
-        
-        // Include language file. Also included in hotaru_header, but needed here so 
-        // that the link in the Admin sidebar shows immediately after installation.
-        $this->includeLanguage();
+        if (!$h->getSetting('stop_spam_key')) { $h->updateSetting('stop_spam_key', ''); }
+        if (!$h->getSetting('stop_spam_type')) { $h->updateSetting('stop_spam_type', 'go_pending'); }
     }
     
     
     /**
      * Checks user against the StopForumSpam.com blacklist
      */
-    public function users_register_check_blocked()
+    public function users_register_check_blocked($h)
     {
-        $this->ssType = $this->getSetting('stop_spam_type');
+        $this->ssType = $h->getSetting('stop_spam_type');
         
         // get user info:
-        $username = $this->current_user->name;
-        $email = $this->current_user->email;
-        $ip = $this->hotaru->cage->server->testIp('REMOTE_ADDR');
+        $username = $h->currentUser->name;
+        $email = $h->currentUser->email;
+        $ip = $h->cage->server->testIp('REMOTE_ADDR');
         
         // If any variable is empty or the IP is "localhost", skip using this plugin.
         if (!$username || !$email || !$ip || ($ip == '127.0.0.1')) { return false; }
@@ -91,11 +90,11 @@ class StopSpam extends PluginFunctions
         if ($spammer)
         { 
             // store flags - used when type is "go_pending"
-            $this->current_user->vars['reg_flags'] = $flags;
+            $h->vars['reg_flags'] = $flags;
             
             // if type is "block_reg", provide a way to tell the Users plugin:
             if ($this->ssType == 'block_reg') {
-                $this->current_user->vars['block'] = true;
+                $h->vars['block'] = true;
             }
         } 
         else 
@@ -109,10 +108,10 @@ class StopSpam extends PluginFunctions
     /**
      * Set a spammer's role to "pending"
      */
-    public function users_register_pre_add_user()
+    public function users_register_pre_add_user($h)
     {
-        if ($this->current_user->vars['reg_flags']) {
-            $this->current_user->role = 'pending';
+        if ($h->vars['reg_flags']) {
+            $h->currentUser->role = 'pending';
         }
     }
     
@@ -122,13 +121,13 @@ class StopSpam extends PluginFunctions
      *
      * @param array $vars - contains the last insert id
      */
-    public function users_register_post_add_user($vars)
+    public function users_register_post_add_user($h, $vars)
     {
         $last_insert_id = $vars[0];
         
-        if ($this->current_user->vars['reg_flags']) {
+        if ($h->currentUser->vars['reg_flags']) {
             $sql = "INSERT INTO " . TABLE_USERMETA . " (usermeta_userid, usermeta_key, usermeta_value, usermeta_updateby) VALUES(%d, %s, %s, %d)";
-            $this->db->query($this->db->prepare($sql, $last_insert_id, 'stop_spam_flags', serialize($this->current_user->vars['reg_flags']), $last_insert_id));
+            $h->db->query($h->db->prepare($sql, $last_insert_id, 'stop_spam_flags', serialize($h->currentUser->vars['reg_flags']), $last_insert_id));
         }
         
         /* Registration continues as normal, so the user may have to validate their email address. */
@@ -139,13 +138,13 @@ class StopSpam extends PluginFunctions
      * This function is called after the email confirmtaion function assigns the user a new role.
      * We want to override the role, forcing the user to be "pending";
      */
-    public function users_email_conf_post_role()
+    public function users_email_conf_post_role($h)
     {
         // Check to see if this user has any stop_spam_flags:
         $sql = "SELECT usermeta_value FROM " . TABLE_USERMETA . " WHERE usermeta_userid = %d AND usermeta_key = %s";
-        $flags = $this->db->get_var($this->db->prepare($sql, $this->current_user->id, 'stop_spam_flags'));
+        $flags = $h->db->get_var($h->db->prepare($sql, $h->currentUser->id, 'stop_spam_flags'));
         
-        if ($flags) {  $this->current_user->role = 'pending'; }
+        if ($flags) {  $h->currentUser->role = 'pending'; }
     }
     
     
@@ -153,24 +152,23 @@ class StopSpam extends PluginFunctions
      * This function is called after the email confirmtaion function assigns the user a new role.
      * We want to override the role, forcing the user to be "pending";
      */
-    public function user_manager_details_pending()
+    public function user_manager_details_pending($h)
     {
-        list ($output, $user) = $this->hotaru->vars['user_manager_pending'];
+        list ($output, $user) = $h->vars['user_manager_pending'];
         
         // Check to see if this user has any stop_spam_flags:
         $sql = "SELECT usermeta_value FROM " . TABLE_USERMETA . " WHERE usermeta_userid = %d AND usermeta_key = %s";
-        $flags = $this->db->get_var($this->db->prepare($sql, $user->user_id, 'stop_spam_flags'));
+        $flags = $h->db->get_var($h->db->prepare($sql, $user->user_id, 'stop_spam_flags'));
         
         if ($flags) {
-            $this->includeLanguage();
             $flags = unserialize($flags);  
-            $output .= "<br /><b>" . $this->lang['stop_spam_flagged_reasons'] . "</b><span style='color: red;'>";
+            $output .= "<br /><b>" . $h->lang['stop_spam_flagged_reasons'] . "</b><span style='color: red;'>";
             foreach ($flags as $flag) {
                 $output .= $flag . ", ";
             }
             $output = rstrtrim($output, ", ");
             $output .= "</span>";
-            $this->hotaru->vars['user_manager_pending'] = array($output);
+            $h->vars['user_manager_pending'] = array($output);
         }
     }
     
@@ -178,21 +176,20 @@ class StopSpam extends PluginFunctions
     /**
      * Option to add deleted or killspammed users to the StopForumSpam.com database
      */
-    public function user_manager_pre_submit_button()
+    public function user_manager_pre_submit_button($h)
     {
-        $this->includeLanguage();
         echo "&nbsp;&nbsp;&nbsp;&nbsp; <input type='checkbox' name='stopspam'> ";
-        echo $this->lang['stop_spam_add_database'] . "<br />";
+        echo $h->lang['stop_spam_add_database'] . "<br />";
     }
     
     /**
      * Add deleted or killspammed user to the StopForumSpam.com database
      */
-    public function user_man_killspam_delete($vars)
+    public function user_man_killspam_delete($h, $vars)
     {
-        if (!$this->cage->get->keyExists('stopspam')) { return false; }
+        if (!$h->cage->get->keyExists('stopspam')) { return false; }
         
-        $key = $this->getSetting('stop_spam_key', 'stop_spam'); // used for reporting spammers
+        $key = $h->getSetting('stop_spam_key', 'stop_spam'); // used for reporting spammers
         
         if (!$key) { return false; } // can't use this plugin without an API key from StopForumSpam.com
         
@@ -201,6 +198,9 @@ class StopSpam extends PluginFunctions
         $spam = new StopSpamFunctions();
         $user = $vars[0];
         $spam->addSpammer($user->ip, $user->name, $user->email, $key);
+        
+        // known spammer, already in database, use for testing:
+        //$spam->addSpammer('188.92.76.35', 'Priesseap', 'turkish.zashek.an@gmail.com', $key);
     }
 
 }

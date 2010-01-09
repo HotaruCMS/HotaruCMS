@@ -30,18 +30,18 @@
 
     <div id="ft">
         <?php 
-            $hotaru->plugins->pluginHook('footer');
+            $h->pluginHook('footer');
         
             // Link to forums...
-            echo "<p><a href='http://hotarucms.org'><img src='" . BASEURL . "content/themes/" . THEME . "images/hotarucms.png' ";
-            echo "title='" . $hotaru->lang["main_theme_footer_hotaru_link"] . "'></a></p>";
+            echo "<p><a href='http://hotarucms.org' title='" . $h->lang["main_theme_footer_hotaru_link"] . "'><img src='" . BASEURL . "content/themes/" . THEME . "images/hotarucms.png' ";
+            echo "alt='" . $h->lang["main_theme_footer_hotaru_link"] . "' /></a></p>";
         
-            $hotaru->showQueriesAndTime();
+            $h->showQueriesAndTime();
         ?>
     </div> <!-- close "ft" -->
 </div> <!-- close "yui-t7 first" -->
 
-<?php $hotaru->plugins->pluginHook('pre_close_body'); ?>
+<?php $h->pluginHook('pre_close_body'); ?>
 
 </body>
 </html>

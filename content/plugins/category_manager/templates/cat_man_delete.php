@@ -27,19 +27,19 @@
 
 ?>
  
-     <h2><?php echo $hotaru->lang["cat_man_delete"]; ?></h2>
+     <h2><?php echo $h->lang["cat_man_delete"]; ?></h2>
 
     <table class="cat_man_table">
     <tr><td class="cat_man_body">
-        <?php echo $hotaru->lang["cat_man_delete_instruct"]; ?>
-        <h3><i><?php echo $hotaru->lang["cat_man_delete_notes"]; ?></i></h3>
-        1. <?php echo $hotaru->lang["cat_man_delete_note1"]; ?> <br />
-        2. <?php echo $hotaru->lang["cat_man_delete_note2"]; ?><br /><br />
+        <?php echo $h->lang["cat_man_delete_instruct"]; ?>
+        <h3><i><?php echo $h->lang["cat_man_delete_notes"]; ?></i></h3>
+        1. <?php echo $h->lang["cat_man_delete_note1"]; ?> <br />
+        2. <?php echo $h->lang["cat_man_delete_note2"]; ?><br /><br />
     
         <form name='category_manager_delete_form' action='<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=delete_save' method='post'>
         <?php 
-        foreach ($hotaru->vars['the_cats'] as $cat) {
-            if ($cat['category_name'] != "all") {
+        foreach ($h->vars['the_cats'] as $cat) {
+            if ($cat['category_safe_name'] != "all") {
             
                 if ($cat['category_empty']) {    // safe to delete
                     echo "<input type='checkbox' name='delete_cats[" . $cat['category_id'] . "]' value='" . $cat['category_id']. "'>&nbsp;&nbsp;";
@@ -63,20 +63,21 @@
         ?>
         <br />
         <div style="text-align: center;">
-            <input type='submit' name='cancel_all' value='<?php echo $hotaru->lang["cat_man_cancel"]; ?>'>&nbsp;&nbsp;<input type='submit' name='delete' value='<?php echo $hotaru->lang["cat_man_delete_selected"]; ?>'>
+            <input type='submit' name='cancel_all' value='<?php echo $h->lang["cat_man_cancel"]; ?>'>&nbsp;&nbsp;<input type='submit' name='delete' value='<?php echo $h->lang["cat_man_delete_selected"]; ?>'>
         </div>
+        <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
         </form>
     </td>
     
     <td class="cat_man_menu_holder">
         <div>
-            <h3><?php echo $hotaru->lang["cat_man_menu_title"]; ?></h3>
-            <?php $hotaru->displayTemplate('cat_man_menu', 'category_manager'); ?>
+            <h3><?php echo $h->lang["cat_man_menu_title"]; ?></h3>
+            <?php $h->displayTemplate('cat_man_menu', 'category_manager'); ?>
             
-            <h3><?php echo $hotaru->lang["cat_man_category_tree"]; ?></h3>
+            <h3><?php echo $h->lang["cat_man_category_tree"]; ?></h3>
             <?php
-                $tree = new CategoryManagerSettings('', $hotaru); 
-                $tree->tree($hotaru->vars['the_cats']);
+                $tree = new CategoryManagerSettings($h); 
+                $tree->tree($h, $h->vars['the_cats']);
             ?>
 
         </div>

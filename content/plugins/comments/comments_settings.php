@@ -25,31 +25,31 @@
  * @link      http://www.hotarucms.org/
  */
 
-class CommentsSettings extends Comments
+class CommentsSettings
 {
      /**
      * Admin settings for Comments
      */
-    public function settings()
+    public function settings($h)
     {
         // If the form has been submitted, go and save the data...
-        if ($this->cage->post->getAlpha('submitted') == 'true') { 
-            $this->saveSettings(); 
+        if ($h->cage->post->getAlpha('submitted') == 'true') { 
+            $this->saveSettings($h); 
         }
         
         // Get settings from database if they exist...
-        $comments_settings = $this->getSerializedSettings();
+        $comments_settings = $h->getSerializedSettings();
         
         // Assign settings to class member
-        $this->hotaru->comment->allForms = $comments_settings['comment_all_forms'];
-        $this->hotaru->comment->avatars = $comments_settings['comment_avatars'];
-        $this->hotaru->comment->voting = $comments_settings['comment_voting'];
-        $this->hotaru->comment->email = $comments_settings['comment_email'];
-        $this->hotaru->comment->allowableTags = $comments_settings['comment_allowable_tags'];
-        $this->hotaru->comment->levels = $comments_settings['comment_levels'];
-        $this->hotaru->comment->itemsPerPage = $comments_settings['comment_items_per_page'];
-        $this->hotaru->comment->order = $comments_settings['comment_order'];
-        $this->hotaru->comment->pagination = $comments_settings['comment_pagination'];
+        $h->comment->allForms = $comments_settings['comment_all_forms'];
+        $h->comment->avatars = $comments_settings['comment_avatars'];
+        $h->comment->voting = $comments_settings['comment_voting'];
+        $h->comment->email = $comments_settings['comment_email'];
+        $h->comment->allowableTags = $comments_settings['comment_allowable_tags'];
+        $h->comment->levels = $comments_settings['comment_levels'];
+        $h->comment->itemsPerPage = $comments_settings['comment_items_per_page'];
+        $h->comment->order = $comments_settings['comment_order'];
+        $h->comment->pagination = $comments_settings['comment_pagination'];
         $set_pending = $comments_settings['comment_set_pending'];
         $x_comments = $comments_settings['comment_x_comments'];
         $email_notify = $comments_settings['comment_email_notify'];
@@ -57,64 +57,64 @@ class CommentsSettings extends Comments
         $url_limit = $comments_settings['comment_url_limit'];
         $daily_limit = $comments_settings['comment_daily_limit'];
         
-        echo "<h1>" . $this->lang["comments_settings_header"] . "</h1>\n";
+        echo "<h1>" . $h->lang["comments_settings_header"] . "</h1>\n";
           
         // Set defaults for empty values:
-        if (!$this->hotaru->comment->allForms) { $this->hotaru->comment->allForms = ''; }
-        if (!$this->hotaru->comment->avatars) { $this->hotaru->comment->avatars = ''; }
-        if (!$this->hotaru->comment->voting) { $this->hotaru->comment->voting = ''; }
-        if (!$this->hotaru->comment->levels) { $this->hotaru->comment->levels = 5; }
-        if (!$this->hotaru->comment->email) { $this->hotaru->comment->email = ''; }
-        if (!$this->hotaru->comment->allowableTags) { $this->hotaru->comment->allowableTags = ''; }
-        if (!$this->hotaru->comment->itemsPerPage) { $this->hotaru->comment->itemsPerPage = 20; }
-        if (!$this->hotaru->comment->order) { $this->hotaru->comment->order = 'asc'; }
-        if (!$this->hotaru->comment->pagination) { $this->hotaru->comment->pagination = ''; }
+        if (!$h->comment->allForms) { $h->comment->allForms = ''; }
+        if (!$h->comment->avatars) { $h->comment->avatars = ''; }
+        if (!$h->comment->voting) { $h->comment->voting = ''; }
+        if (!$h->comment->levels) { $h->comment->levels = 5; }
+        if (!$h->comment->email) { $h->comment->email = ''; }
+        if (!$h->comment->allowableTags) { $h->comment->allowableTags = ''; }
+        if (!$h->comment->itemsPerPage) { $h->comment->itemsPerPage = 20; }
+        if (!$h->comment->order) { $h->comment->order = 'asc'; }
+        if (!$h->comment->pagination) { $h->comment->pagination = ''; }
         if (!$set_pending) { $set_pending = 'auto_approve'; }
         if (!$url_limit) { $url_limit = 0; }
         if (!$daily_limit) { $daily_limit = 0; }
         if (!$x_comments) { $x_comments = 1; }
     
         // Determine if checkboxes are checked or not
-        if ($this->hotaru->comment->allForms == 'checked') { $check_form = 'checked'; } else { $check_form = ''; }
-        if ($this->hotaru->comment->avatars == 'checked') { $check_avatars = 'checked'; } else { $check_avatars = ''; }
-        if ($this->hotaru->comment->voting == 'checked') { $check_votes = 'checked'; } else { $check_votes = ''; }
-        if ($this->hotaru->comment->pagination == 'checked') { $check_pagination = 'checked'; } else { $check_pagination = ''; }
-        if ($this->hotaru->comment->order == 'asc') { 
+        if ($h->comment->allForms == 'checked') { $check_form = 'checked'; } else { $check_form = ''; }
+        if ($h->comment->avatars == 'checked') { $check_avatars = 'checked'; } else { $check_avatars = ''; }
+        if ($h->comment->voting == 'checked') { $check_votes = 'checked'; } else { $check_votes = ''; }
+        if ($h->comment->pagination == 'checked') { $check_pagination = 'checked'; } else { $check_pagination = ''; }
+        if ($h->comment->order == 'asc') { 
             $ascending = 'checked'; $descending = ''; 
         } else { 
             $ascending = ''; $descending = 'checked'; 
         }
         
-        $this->pluginHook('comments_settings_get_values');
+        $h->pluginHook('comments_settings_get_values');
                
         echo "<form name='comments_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=comments' method='post'>\n";
         
-        echo "<p>" . $this->lang["comments_settings_instructions"] . "</p><br />";
+        echo "<p>" . $h->lang["comments_settings_instructions"] . "</p><br />";
             
-        echo "<p><input type='checkbox' name='comment_form' value='comment_form' " . $check_form . " >&nbsp;&nbsp;" . $this->lang["comments_settings_form"] . "</p>\n";    
-        echo "<p><input type='checkbox' name='comment_avatars' value='comment_avatars' " . $check_avatars . " >&nbsp;&nbsp;" . $this->lang["comments_settings_avatars"] . "</p>\n"; 
-        echo "<p><input type='checkbox' name='comment_voting' value='comment_voting' " . $check_votes . " >&nbsp;&nbsp;" . $this->lang["comments_settings_votes"] . "</p>\n"; 
+        echo "<p><input type='checkbox' name='comment_form' value='comment_form' " . $check_form . " >&nbsp;&nbsp;" . $h->lang["comments_settings_form"] . "</p>\n";    
+        echo "<p><input type='checkbox' name='comment_avatars' value='comment_avatars' " . $check_avatars . " >&nbsp;&nbsp;" . $h->lang["comments_settings_avatars"] . "</p>\n"; 
+        echo "<p><input type='checkbox' name='comment_voting' value='comment_voting' " . $check_votes . " >&nbsp;&nbsp;" . $h->lang["comments_settings_votes"] . "</p>\n"; 
     
-        echo "<p>" . " <input type='text' size=5 name='levels' value='" . $this->hotaru->comment->levels . "' /> " . $this->lang["comments_settings_levels"] . "</p>";
-        echo "<p><input type='checkbox' name='comment_pagination' value='comment_pagination' " . $check_pagination . " >&nbsp;&nbsp;" . $this->lang["comments_settings_pagination"] . "</p>\n"; 
-        echo "<p>" . " <input type='text' size=5 name='itemsperpage' value='" . $this->hotaru->comment->itemsPerPage . "' /> " . $this->lang["comments_settings_per_page"] . "</p>";
-        echo "<p>" . $this->lang["comments_settings_per_page_note"] . "</p>";
+        echo "<p>" . " <input type='text' size=5 name='levels' value='" . $h->comment->levels . "' /> " . $h->lang["comments_settings_levels"] . "</p>";
+        echo "<p><input type='checkbox' name='comment_pagination' value='comment_pagination' " . $check_pagination . " >&nbsp;&nbsp;" . $h->lang["comments_settings_pagination"] . "</p>\n"; 
+        echo "<p>" . " <input type='text' size=5 name='itemsperpage' value='" . $h->comment->itemsPerPage . "' /> " . $h->lang["comments_settings_per_page"] . "</p>";
+        echo "<p>" . $h->lang["comments_settings_per_page_note"] . "</p>";
         
-        echo "<p><input type='radio' name='comment_order' value='asc' " . $ascending . " >&nbsp;" . $this->lang["comments_settings_ascending"] . "&nbsp;&nbsp;\n"; 
-        echo "<input type='radio' name='comment_order' value='desc' " . $descending . " >&nbsp;" . $this->lang["comments_settings_descending"] . "</p>\n"; 
+        echo "<p><input type='radio' name='comment_order' value='asc' " . $ascending . " >&nbsp;" . $h->lang["comments_settings_ascending"] . "&nbsp;&nbsp;\n"; 
+        echo "<input type='radio' name='comment_order' value='desc' " . $descending . " >&nbsp;" . $h->lang["comments_settings_descending"] . "</p>\n"; 
         
-        echo "<p>" . $this->lang["comments_settings_allowable_tags"] . " <input type='text' size=40 name='allowabletags' value='" . $this->hotaru->comment->allowableTags . "' /><br />";
-        echo $this->lang["comments_settings_allowable_tags_example"] . "</p>\n";
+        echo "<p>" . $h->lang["comments_settings_allowable_tags"] . " <input type='text' size=40 name='allowabletags' value='" . $h->comment->allowableTags . "' /><br />";
+        echo $h->lang["comments_settings_allowable_tags_example"] . "</p>\n";
         
-        echo "<p>" . " <input type='text' size=5 name='url_limit' value='" . $url_limit . "' /> " . $this->lang["comments_settings_url_limit"] . "</p>";
-        echo "<p>" . " <input type='text' size=5 name='daily_limit' value='" . $daily_limit . "' /> " . $this->lang["comments_settings_daily_limit"] . "</p>";
+        echo "<p>" . " <input type='text' size=5 name='url_limit' value='" . $url_limit . "' /> " . $h->lang["comments_settings_url_limit"] . "</p>";
+        echo "<p>" . " <input type='text' size=5 name='daily_limit' value='" . $daily_limit . "' /> " . $h->lang["comments_settings_daily_limit"] . "</p>";
         
-        echo "<p>" . $this->lang["comments_settings_limit_note"] . "</p>";
+        echo "<p>" . $h->lang["comments_settings_limit_note"] . "</p>";
         
-        $this->pluginHook('comments_settings_form');
+        $h->pluginHook('comments_settings_form');
         
-        echo "<p>" . $this->lang["comments_settings_email"] . " <input type='text' size=30 name='email' value='" . $this->hotaru->comment->email . "' /> ";
-        echo $this->lang["comments_settings_email_desc"] . "</p>";
+        echo "<p>" . $h->lang["comments_settings_email"] . " <input type='text' size=30 name='email' value='" . $h->comment->email . "' /> ";
+        echo $h->lang["comments_settings_email_desc"] . "</p>";
         
         switch ($set_pending) {
             case 'some_pending':
@@ -129,8 +129,8 @@ class CommentsSettings extends Comments
         
         echo "<br />";
         
-        echo "<input type='radio' name='set_pending' value='auto_approve' " . $auto_approve . " >&nbsp;&nbsp;" . $this->lang["comments_settings_auto_approve"] . "<br />\n"; 
-        echo "<input type='radio' name='set_pending' value='some_pending' " . $some_pending . " >&nbsp;&nbsp;" . $this->lang["comments_settings_some_pending_1"] . "\n"; 
+        echo "<input type='radio' name='set_pending' value='auto_approve' " . $auto_approve . " >&nbsp;&nbsp;" . $h->lang["comments_settings_auto_approve"] . "<br />\n"; 
+        echo "<input type='radio' name='set_pending' value='some_pending' " . $some_pending . " >&nbsp;&nbsp;" . $h->lang["comments_settings_some_pending_1"] . "\n"; 
         echo "<select name='first_x_posts'>\n";
             echo "<option>" . $x_comments . "</option>\n";
             echo '<option disabled>-----</option>';
@@ -142,63 +142,60 @@ class CommentsSettings extends Comments
             echo "<option>10</option>\n";
             echo "<option>20</option>\n";
         echo "</select>\n";
-        echo $this->lang["comments_settings_some_pending_2"] . "<br />\n"; 
-        echo "<input type='radio' name='set_pending' value='all_pending' " . $all_pending . " >&nbsp;&nbsp;" . $this->lang["comments_settings_all_pending"] . "\n"; 
+        echo $h->lang["comments_settings_some_pending_2"] . "<br />\n"; 
+        echo "<input type='radio' name='set_pending' value='all_pending' " . $all_pending . " >&nbsp;&nbsp;" . $h->lang["comments_settings_all_pending"] . "\n"; 
                 
         echo "<br /><br />\n";
                 
-        // email notify options - only show if the UserFunctions file exists
-        if (file_exists(PLUGINS . 'users/libs/UserFunctions.php')) {
-            require_once(PLUGINS . 'users/libs/UserFunctions.php');
-            $uf = new UserFunctions($this->hotaru);
+        // email notify options
             
-            echo "<input type='checkbox' name='email_notify' value='email_notify' id='email_notify' " . $email_notify . ">&nbsp;&nbsp;" ;
-            echo $this->lang["comments_settings_email_notify"] . "<br /><br />\n";
+        echo "<input type='checkbox' name='email_notify' value='email_notify' id='email_notify' " . $email_notify . ">&nbsp;&nbsp;" ;
+        echo $h->lang["comments_settings_email_notify"] . "<br /><br />\n";
+    
+        $admins = $h->getMods('can_comment_manager_settings', 'yes');
+        if (!$email_notify) { $show_admins = 'display: none;'; }
+        echo "<div id='email_notify_options' style='margin-left: 2.0em; " . $show_admins . "'>"; 
         
-            $admins = $uf->getMods('can_comment_manager_settings', 'yes');
-            if (!$email_notify) { $show_admins = 'display: none;'; }
-            echo "<div id='email_notify_options' style='margin-left: 2.0em; " . $show_admins . "'>"; 
-            
-            if ($admins) {
-                echo "<table>\n";
-                foreach ($admins as $ad) {
-                    if (array_key_exists($ad['id'], $email_mods)) { 
-                        switch ($email_mods[$ad['id']]['type']) {
-                            case 'all':
-                                $checked_all = 'checked'; $checked_pend = ''; $checked_none = '';
-                                break;
-                            case 'pending':
-                                $checked_all = ''; $checked_pend = 'checked'; $checked_none = '';
-                                break;
-                            default:
-                                $checked_all = ''; $checked_pend = ''; $checked_none = 'checked';
-                        }
+        if ($admins) {
+            echo "<table>\n";
+            foreach ($admins as $ad) {
+                if (array_key_exists($ad['id'], $email_mods)) { 
+                    switch ($email_mods[$ad['id']]['type']) {
+                        case 'all':
+                            $checked_all = 'checked'; $checked_pend = ''; $checked_none = '';
+                            break;
+                        case 'pending':
+                            $checked_all = ''; $checked_pend = 'checked'; $checked_none = '';
+                            break;
+                        default:
+                            $checked_all = ''; $checked_pend = ''; $checked_none = 'checked';
                     }
-                    else
-                    {
-                        $checked_all = ''; $checked_pend = ''; $checked_none = 'checked';
-                    }
-                    
-                    echo "<tr>\n";
-                    echo "<td><b>" . ucfirst($ad['name']) . "</b></td>\n";
-                    
-                    echo "<td><input type='radio' name='emailmod[" . $ad['id'] . "][" . $ad['email'] . "]' value='all' " . $checked_all . ">";
-                    echo " " . $this->lang["comments_settings_email_notify_all"] . "</td>\n";
-                    
-                    echo "<td><input type='radio' name='emailmod[" . $ad['id'] . "][" . $ad['email'] . "]' value='pending' " . $checked_pend . ">";
-                    echo " " . $this->lang["comments_settings_email_notify_pending"] . "</td>\n";
-                    
-                    echo "<td><input type='radio' name='emailmod[" . $ad['id'] . "][" . $ad['email'] . "]' value='none' " . $checked_none . ">";
-                    echo " " . $this->lang["comments_settings_email_notify_none"] . "</td>\n";
-                    echo "</tr>\n";
                 }
-                echo "</table>\n";
+                else
+                {
+                    $checked_all = ''; $checked_pend = ''; $checked_none = 'checked';
+                }
+                
+                echo "<tr>\n";
+                echo "<td><b>" . ucfirst($ad['name']) . "</b></td>\n";
+                
+                echo "<td><input type='radio' name='emailmod[" . $ad['id'] . "][" . $ad['email'] . "]' value='all' " . $checked_all . ">";
+                echo " " . $h->lang["comments_settings_email_notify_all"] . "</td>\n";
+                
+                echo "<td><input type='radio' name='emailmod[" . $ad['id'] . "][" . $ad['email'] . "]' value='pending' " . $checked_pend . ">";
+                echo " " . $h->lang["comments_settings_email_notify_pending"] . "</td>\n";
+                
+                echo "<td><input type='radio' name='emailmod[" . $ad['id'] . "][" . $ad['email'] . "]' value='none' " . $checked_none . ">";
+                echo " " . $h->lang["comments_settings_email_notify_none"] . "</td>\n";
+                echo "</tr>\n";
             }
-            echo "</div><br />";
+            echo "</table>\n";
         }
+        echo "</div><br />";
         
         echo "<input type='hidden' name='submitted' value='true' />\n";
-        echo "<input type='submit' value='" . $this->lang["comments_settings_save"] . "' />\n";
+        echo "<input type='submit' value='" . $h->lang["comments_settings_save"] . "' />\n";
+        echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }
     
@@ -208,133 +205,133 @@ class CommentsSettings extends Comments
      *
      * @return true
      */
-    public function saveSettings()
+    public function saveSettings($h)
     {
         // enable/disable comment form globally
-        if ($this->cage->post->keyExists('comment_form')) { 
-            $this->hotaru->comment->allForms = 'checked';
+        if ($h->cage->post->keyExists('comment_form')) { 
+            $h->comment->allForms = 'checked';
         } else {
-            $this->hotaru->comment->allForms = '';
+            $h->comment->allForms = '';
         }
         
         // enable avatars on comments
-        if ($this->cage->post->keyExists('comment_avatars')) { 
-            $this->hotaru->comment->avatars = 'checked';
+        if ($h->cage->post->keyExists('comment_avatars')) { 
+            $h->comment->avatars = 'checked';
         } else {
-            $this->hotaru->comment->avatars = '';
+            $h->comment->avatars = '';
         }
         
         // enable votes on comments
-        if ($this->cage->post->keyExists('comment_voting')) { 
-            $this->hotaru->comment->voting = 'checked';
+        if ($h->cage->post->keyExists('comment_voting')) { 
+            $h->comment->voting = 'checked';
         } else {
-            $this->hotaru->comment->voting = '';
+            $h->comment->voting = '';
         }
         
         // levels
-        if ($this->cage->post->keyExists('levels')) { 
-            $levels = $this->cage->post->testInt('levels'); 
-            if (empty($levels)) { $levels = $this->hotaru->comment->levels; }
+        if ($h->cage->post->keyExists('levels')) { 
+            $levels = $h->cage->post->testInt('levels'); 
+            if (empty($levels)) { $levels = $h->comment->levels; }
         } else { 
-            $levels = $this->hotaru->comment->levels; 
+            $levels = $h->comment->levels; 
         }
         
         // email
-        if ($this->cage->post->keyExists('email')) { 
-            $email = $this->cage->post->testEmail('email'); 
-            if (empty($email)) { $email = $this->hotaru->comment->email; }
+        if ($h->cage->post->keyExists('email')) { 
+            $email = $h->cage->post->testEmail('email'); 
+            if (empty($email)) { $email = $h->comment->email; }
         } else { 
-            $email = $this->hotaru->comment->email; 
+            $email = $h->comment->email; 
         }
         
         // Allowable tags
-        if ($this->cage->post->keyExists('allowabletags')) { 
-            $allowable_tags = $this->cage->post->getRaw('allowabletags'); 
-            if (empty($allowable_tags)) { $allowable_tags = $this->hotaru->comment->allowableTags; }
+        if ($h->cage->post->keyExists('allowabletags')) { 
+            $allowable_tags = $h->cage->post->getRaw('allowabletags'); 
+            if (empty($allowable_tags)) { $allowable_tags = $h->comment->allowableTags; }
         } else { 
-            $allowable_tags = $this->hotaru->comment->allowableTags; 
+            $allowable_tags = $h->comment->allowableTags; 
         }
         
         // Items per page
-        if ($this->cage->post->keyExists('itemsperpage')) { 
-            $items_per_page = $this->cage->post->testInt('itemsperpage'); 
-            if (!$items_per_page) { $items_per_page = $this->hotaru->comment->itemsPerPage; }
+        if ($h->cage->post->keyExists('itemsperpage')) { 
+            $items_per_page = $h->cage->post->testInt('itemsperpage'); 
+            if (!$items_per_page) { $items_per_page = $h->comment->itemsPerPage; }
         } else { 
-            $items_per_page = $this->hotaru->comment->itemsPerPage; 
+            $items_per_page = $h->comment->itemsPerPage; 
         }
         
         // Pagination
-        if ($this->cage->post->keyExists('comment_pagination')) { 
-            $this->hotaru->comment->pagination = 'checked';
+        if ($h->cage->post->keyExists('comment_pagination')) { 
+            $h->comment->pagination = 'checked';
         } else {
-            $this->hotaru->comment->pagination = '';
+            $h->comment->pagination = '';
         }
         
         
         // Comment order
-        if ($this->cage->post->keyExists('comment_order')) { 
-            $this->hotaru->comment->order = $this->cage->post->testAlpha('comment_order');
+        if ($h->cage->post->keyExists('comment_order')) { 
+            $h->comment->order = $h->cage->post->testAlpha('comment_order');
         } else {
-            $this->hotaru->comment->order = 'asc'; // default
+            $h->comment->order = 'asc'; // default
         }
         
         // Url limit
-        if ($this->cage->post->keyExists('url_limit')) { 
-            $url_limit = $this->cage->post->testInt('url_limit'); 
+        if ($h->cage->post->keyExists('url_limit')) { 
+            $url_limit = $h->cage->post->testInt('url_limit'); 
             if (!is_numeric($url_limit)) { $url_limit = 0; }
         } else { 
             $url_limit = 0; 
         }
         
         // Daily limit
-        if ($this->cage->post->keyExists('daily_limit')) { 
-            $daily_limit = $this->cage->post->testInt('daily_limit'); 
+        if ($h->cage->post->keyExists('daily_limit')) { 
+            $daily_limit = $h->cage->post->testInt('daily_limit'); 
             if (!is_numeric($daily_limit)) { $daily_limit = 0; }
         } else { 
             $daily_limit = 0; 
         }
         
         // Set pending
-        if ($this->cage->post->keyExists('set_pending')) { 
-            $set_pending = $this->cage->post->testAlnumLines('set_pending');
+        if ($h->cage->post->keyExists('set_pending')) { 
+            $set_pending = $h->cage->post->testAlnumLines('set_pending');
         } else {
             $set_pending = 'auto_approve';
         }
         
         // First X comments
-        if ($this->cage->post->keyExists('first_x_comments')) { 
-            $x_comments = $this->cage->post->testInt('first_x_comments');
+        if ($h->cage->post->keyExists('first_x_comments')) { 
+            $x_comments = $h->cage->post->testInt('first_x_comments');
         } else {
             $x_comments = 1; //default
         }
         
         // Send email notification about new comments
-        if ($this->cage->post->keyExists('email_notify')) { 
+        if ($h->cage->post->keyExists('email_notify')) { 
             $email_notify = 'checked'; 
         } else { 
             $email_notify = ''; 
         }
         
         // admins to receive above email notification
-        if ($this->cage->post->keyExists('emailmod')) 
+        if ($h->cage->post->keyExists('emailmod')) 
         {
             $email_mods = array();
-            foreach ($this->cage->post->keyExists('emailmod') as $id => $array) {
+            foreach ($h->cage->post->keyExists('emailmod') as $id => $array) {
                 $email_mods[$id]['id'] = $id;
                 $email_mods[$id]['email'] = key($array);
                 $email_mods[$id]['type'] = $array[$email_mods[$id]['email']];
             }
         }
         
-        $this->pluginHook('comments_save_settings');
+        $h->pluginHook('comments_save_settings');
         
-        $comments_settings['comment_all_forms'] = $this->hotaru->comment->allForms;
-        $comments_settings['comment_avatars'] = $this->hotaru->comment->avatars;
-        $comments_settings['comment_voting'] = $this->hotaru->comment->voting;
+        $comments_settings['comment_all_forms'] = $h->comment->allForms;
+        $comments_settings['comment_avatars'] = $h->comment->avatars;
+        $comments_settings['comment_voting'] = $h->comment->voting;
         $comments_settings['comment_levels'] = $levels;
         $comments_settings['comment_email'] = $email;
-        $comments_settings['comment_pagination'] = $this->hotaru->comment->pagination;
-        $comments_settings['comment_order'] = $this->hotaru->comment->order;
+        $comments_settings['comment_pagination'] = $h->comment->pagination;
+        $comments_settings['comment_order'] = $h->comment->order;
         $comments_settings['comment_allowable_tags'] = $allowable_tags;
         $comments_settings['comment_items_per_page'] = $items_per_page;
         $comments_settings['comment_url_limit'] = $url_limit;
@@ -344,11 +341,11 @@ class CommentsSettings extends Comments
         $comments_settings['comment_email_notify'] = $email_notify;
         $comments_settings['comment_email_notify_mods'] = $email_mods; //array
         
-        $this->updateSetting('comments_settings', serialize($comments_settings));
+        $h->updateSetting('comments_settings', serialize($comments_settings));
         
-        $this->hotaru->message = $this->lang["comments_settings_saved"];
-        $this->hotaru->messageType = "green";
-        $this->hotaru->showMessage();
+        $h->message = $h->lang["comments_settings_saved"];
+        $h->messageType = "green";
+        $h->showMessage();
         
         return true;    
     }

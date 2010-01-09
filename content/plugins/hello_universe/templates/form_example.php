@@ -25,29 +25,25 @@
  * @link      http://www.hotarucms.org/
  */
 
-$answer = $hotaru->cage->post->getMixedString2('answer');
+$answer = $h->cage->post->getMixedString2('answer');
 if(!$answer) { $answer = ""; }
 
 ?>
 
-<div id="breadcrumbs">
-    <a href="<?php echo BASEURL; ?>"><?php echo $hotaru->lang['submit_form_home']; ?></a> &raquo; 
-    <?php echo $hotaru->lang["hello_universe_form_example"]; ?>
-</div>
-    
     This form is in the form_example.php file in the Hello Universe folder. 
-    It's called via Function #1 in hello_universe.php and includes a special language file which is included using Function #4.
+    It's called via Function #2 in hello_universe.php and includes a special language file which is included using Function #5.
     
-    <?php echo $hotaru->lang["hello_universe_question"]; ?>
+    <?php echo $h->lang["hello_universe_question"]; ?>
     
-    <?php $hotaru->showMessage(); ?>
+    <?php $h->showMessage(); ?>
             
     <form name='update_form' action='<?php echo BASEURL; ?>index.php?page=form_example' method='post'>
     <table>
-    <tr><td><?php $hotaru->lang['hello_universe_answer']; ?> &nbsp; </td><td><input type='text' size=30 name='answer' value='<?php echo $answer ?>' /></td></tr>
+    <tr><td><?php $h->lang['hello_universe_answer']; ?> &nbsp; </td><td><input type='text' size=30 name='answer' value='<?php echo $answer ?>' /></td></tr>
     <input type='hidden' name='submit_example' value='true' />
-    <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $hotaru->lang['hello_universe_form_submit']; ?>' /></td></tr>
+    <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
+    <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $h->lang['hello_universe_form_submit']; ?>' /></td></tr>
     </table>
     </form>
     
-    <p><a href='<?php echo BASEURL; ?>'><?php echo $hotaru->lang["hello_universe_back_home"]; ?></a></p>
+    <p><a href='<?php echo BASEURL; ?>'><?php echo $h->lang["hello_universe_back_home"]; ?></a></p>

@@ -1,0 +1,45 @@
+/* **************************************
+ *	    TAG CLOUD PLUGIN CSS           *
+ ************************************** */
+
+.tag_cloud { text-align: center; }
+
+.tag_cloud a {
+	font-family: Verdana, Tahoma, Arial;
+	line-height: 26px;
+	padding: 0 4px 0 4px;
+	letter-spacing: 3px;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+.widget_tag_cloud a {
+	line-height: 20px;
+	padding: 0 4px 0 4px;
+	letter-spacing: 3px;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+.tag_group0 { color: #000; font-size: 26px; }
+.tag_group1 { color: #111; font-size: 24px; }
+.tag_group2 { color: #222; font-size: 22px; }
+.tag_group3 { color: #333; font-size: 20px; }
+.tag_group4 { color: #444; font-size: 18px; }
+.tag_group5 { color: #555; font-size: 16px; }
+.tag_group6 { color: #666; font-size: 14px; }
+.tag_group7 { color: #777; font-size: 12px; }
+.tag_group8 { color: #888; font-size: 10px; }
+.tag_group9 { color: #999; font-size: 8px; }
+
+.widget_tag_group0 { color: #000; font-size: 26px; }
+.widget_tag_group1 { color: #111; font-size: 24px; }
+.widget_tag_group2 { color: #222; font-size: 22px; }
+.widget_tag_group3 { color: #333; font-size: 20px; }
+.widget_tag_group4 { color: #444; font-size: 18px; }
+.widget_tag_group5 { color: #555; font-size: 16px; }
+.widget_tag_group6 { color: #666; font-size: 14px; }
+.widget_tag_group7 { color: #777; font-size: 12px; }
+.widget_tag_group8 { color: #888; font-size: 10px; }
+.widget_tag_group9 { color: #999; font-size: 8px; }
+.widget_more_tags  { color: #000; font-weight: bold; font-size: 12px; }

@@ -99,10 +99,20 @@ class StopSpamFunctions
         $url .= "email=" . $email;
         $url .= "api_key=" . $apikey;
         
-        $error = implode('',file($url));
+        /*
+        Old method:
+        require_once(EXTENSIONS . 'SWCMS/class.httprequest.php');
+        $r = new HTTPRequest($url);
+        $error = $r->DownloadToString();
         if (!$error) { 
             // success! 
-        }
+        }*/
+        
+        // http://www.phpfour.com/blog/2008/01/php-http-class/
+        require_once(EXTENSIONS . 'http/class.http.php');
+        $http = new Http();
+        $http->execute($url);
+        if (!$http->error) { echo "Success"; } else { echo // $http->error; }
     }
 }
 

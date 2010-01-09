@@ -29,34 +29,44 @@
 
 <!-- Navigation Bar -->
 <ul id="navigation">
-    <?php $hotaru->plugins->pluginHook('navigation_first'); ?>
+    <?php   if ($h->currentUser->loggedIn) {
+                if($h->isActive('avatar')) {
+                    $h->setAvatar($h->currentUser->id, 16);
+                    echo $h->linkAvatar();
+                }
+    ?> 
+                <?php if (($h->pageType == 'user') && ($h->vars['user']->id == $h->currentUser->id)) { $status = "id='navigation_active'"; } else { $status = ""; } ?>
+                <li><a <?php echo $status; ?> href='<?php echo $h->url(array('user' => $h->currentUser->name)); ?>' title='<?php echo $h->lang["users_profile"]; ?>'>
+                    <?php echo $h->currentUser->name; ?>
+                </a></li>
+    <?php  } ?>
     
-    <?php if ($hotaru->title == 'top') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
-    <li><a <?php echo $status; ?> href="<?php echo BASEURL; ?>"><?php echo $hotaru->lang["main_theme_navigation_home"]; ?></a></li>
-    <?php $hotaru->plugins->pluginHook('navigation'); ?>
+    <?php if ($h->pageName == 'index') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
+    <li><a <?php echo $status; ?> href="<?php echo BASEURL; ?>"><?php echo $h->lang["main_theme_navigation_home"]; ?></a></li>
+    <?php $h->pluginHook('navigation'); ?>
     <?php 
-        if (!$hotaru->plugins->isActive('users')) { 
+        if (!$h->isActive('signin')) { 
 
-            if ($hotaru->current_user->loggedIn == true) { 
+            if ($h->currentUser->loggedIn == true) { 
             
-                if ($hotaru->title == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
-                echo "<li><a " . $status . " href='" . $hotaru->url(array(), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_admin"] . "</a></li>"; 
+                if ($h->pageName == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
+                echo "<li><a " . $status . " href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_admin"] . "</a></li>"; 
                 
-                if ($hotaru->title == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
-                echo "<li><a " . $status . " href='" . $hotaru->url(array('page'=>'admin_logout'), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_logout"] . "</a></li>";
+                if ($h->pageName == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
+                echo "<li><a " . $status . " href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang["main_theme_navigation_logout"] . "</a></li>";
             } else { 
-                if ($hotaru->title == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
-                echo "<li><a " . $status . " href='" . $hotaru->url(array(), 'admin') . "'>" . $hotaru->lang["main_theme_navigation_login"] . "</a></li>"; 
+                if ($h->pageName == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
+                echo "<li><a " . $status . " href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_login"] . "</a></li>"; 
             }
         } else {
-            $hotaru->plugins->pluginHook('navigation_users', true, 'users'); // ensures login/logout/register are last.
+            $h->pluginHook('navigation_users'); // ensures login/logout/register are last.
         }
     ?>
     
-    <?php     // RSS Link and icon if Submit plugin is active
-        if ($hotaru->plugins->getPluginStatus('submit') == 'active') { ?>
+    <?php     // RSS Link and icon if a "post" type plugin is active
+        if ($h->isActive('post')) { ?>
         <li>
-        <div id="rss"><a href="<?php echo $hotaru->url(array('page'=>'rss')); ?>">RSS 
+        <div id="rss"><a href="<?php echo $h->url(array('page'=>'rss')); ?>">RSS 
             <img src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png">
         </a></div>
         </li>
@@ -64,4 +74,4 @@
             
 </ul>
 
-<?php $hotaru->plugins->pluginHook('navigation_last'); ?>
+<?php $h->pluginHook('navigation_last'); ?>

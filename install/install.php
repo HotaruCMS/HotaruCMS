@@ -28,6 +28,9 @@
  * @link      http://www.hotarucms.org/
  */
 
+// start session:
+session_start();
+
 // Remove any cookies set in a previous installation:
 setcookie("hotaru_user", "", time()-3600, "/");
 setcookie("hotaru_key", "", time()-3600, "/");
@@ -36,12 +39,14 @@ setcookie("hotaru_key", "", time()-3600, "/");
 require_once('../hotaru_settings.php');
 require_once('install_tables.php');
 require_once('install_functions.php');
-require_once(LIBS . 'Hotaru.php');
-require_once(INSTALL . 'install_language.php');    // language file for install
+require_once(BASE . 'Hotaru.php');
+require_once(EXTENSIONS . 'csrf/csrf_class.php'); // protection against CSRF attacks
 require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
 require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
 require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php'); // database
-
+$h  = new Hotaru(); // must come before language inclusion
+require_once(INSTALL . 'install_language.php');    // language file for install
+    
 $db = init_database();
 $cage = init_inspekt_cage();
 
@@ -88,7 +93,7 @@ function html_header()
     // Title
     $header .= "<TITLE>" . $lang['install_title'] . "</TITLE>\n";
     $header .= "<META HTTP-EQUIV='Content-Type' CONTENT='text'>\n";
-    $header .= "<link rel='stylesheet' href='" . BASEURL . "libs/extensions/YUI-CSS/reset-fonts-grids.css' type='text/css'>\n";
+    $header .= "<link rel='stylesheet' type='text/css' href='" . BASEURL . "install/reset-fonts-grids.css' type='text/css'>\n";
     $header .= "<link rel='stylesheet' type='text/css' href='" . BASEURL . "install/install_style.css'>\n";
     $header .= "</HEAD>\n";
     
@@ -96,7 +101,7 @@ function html_header()
     $header .= "<BODY>\n";
     $header .= "<div id='doc' class='yui-t7 install'>\n";
     $header .= "<div id='hd' role='banner'>";
-    $header .= "<img align='left' src='" . BASEURL . "content/admin_themes/admin_default/images/hotaru.png' style='height:60px; width:69px;'>";
+    $header .= "<img align='left' src='" . BASEURL . "content/admin_themes/admin_default/images/hotaru.png' style='height:60px; width:60px;'>";
     $header .= "<h1>" . $lang['install_title'] . "</h1></div>\n"; 
     $header .= "<div id='bd' role='main'>\n";
     $header .= "<div class='yui-g'>\n";
@@ -211,8 +216,8 @@ function database_creation()
         drop_table($pt); // table name
     }
     
-    //create tables  - these should match the list in the listPluginTables function in libs/Admin.php
-    $tables = array('settings', 'miscdata', 'users', 'plugins', 'pluginhooks', 'pluginsettings', 'blocked');
+    //create tables
+    $tables = array('blocked', 'categories', 'comments', 'commentvotes', 'miscdata', 'plugins', 'pluginhooks', 'pluginsettings', 'posts', 'postmeta', 'postvotes', 'settings', 'tags', 'tempdata', 'tokens', 'users', 'usermeta', 'useractivity', 'widgets');
     foreach ($tables as $table_name) {
         create_table($table_name);
     } 
@@ -234,9 +239,9 @@ function database_creation()
 function register_admin()
 {
     global $lang;   //already included so Hotaru can't re-include it
-    
-    $hotaru  = new Hotaru('install');
-    
+    global $db;
+    global $h;
+
     echo html_header();
     
     // Step title
@@ -246,74 +251,85 @@ function register_admin()
     echo "<div class='install_content'>" . $lang['install_step4_instructions'] . ":<br />\n";
     
     $error = 0;
-    if ($hotaru->cage->post->getInt('step') == 4) 
+    if ($h->cage->post->getInt('step') == 4) 
     {
+        // Test CSRF
+        if (!$h->csrf()) {
+            $h->message = $lang['install_step4_csrf_error'];
+            $h->messageType = 'red';
+            $h->showMessage();
+            $error = 1;
+        }
+        
         // Test username
-        $name_check = $hotaru->cage->post->testUsername('username');
+        $name_check = $h->cage->post->testUsername('username');
         // alphanumeric, dashes and underscores okay, case insensitive
         if ($name_check) {
             $user_name = $name_check;
         } else {
-            $hotaru->message = $lang['install_step4_username_error'];
-            $hotaru->messageType = 'red';
-            $hotaru->showMessage();
+            $h->message = $lang['install_step4_username_error'];
+            $h->messageType = 'red';
+            $h->showMessage();
             $error = 1;
         }
 
         // Test password
-        $password_check = $hotaru->cage->post->testPassword('password');    
+        $password_check = $h->cage->post->testPassword('password');    
         if ($password_check) {
-            $password2_check = $hotaru->cage->post->testPassword('password2');
+            $password2_check = $h->cage->post->testPassword('password2');
             if ($password_check == $password2_check) {
                 // success
-                $user_password = $hotaru->current_user->generateHash($password_check);
+                $user_password = $h->currentUser->generateHash($password_check);
             } else {
-                $hotaru->message = $lang['install_step4_password_match_error'];
-                $hotaru->messageType = 'red';
-                $hotaru->showMessage();
+                $h->message = $lang['install_step4_password_match_error'];
+                $h->messageType = 'red';
+                $h->showMessage();
                 $error = 1;
             }
         } else {
             $password_check = "";
             $password2_check = "";
-            $hotaru->message = $lang['install_step4_password_error'];
-            $hotaru->messageType = 'red';
-            $hotaru->showMessage();
+            $h->message = $lang['install_step4_password_error'];
+            $h->messageType = 'red';
+            $h->showMessage();
             $error = 1;
         }
 
         // Test email
-        $email_check = $hotaru->cage->post->testEmail('email');
+        $email_check = $h->cage->post->testEmail('email');
         if ($email_check) {
             $user_email = $email_check;
         } else {
-            $hotaru->message = $lang['install_step4_email_error'];
-            $hotaru->messageType = 'red';
-            $hotaru->showMessage();
+            $h->message = $lang['install_step4_email_error'];
+            $h->messageType = 'red';
+            $h->showMessage();
             $error = 1;
         }
     }
-
+    
     // Show success message
-    if (($hotaru->cage->post->getInt('step') == 4) && $error == 0) {
-        $hotaru->message = $lang['install_step4_update_success'];
-        $hotaru->messageType = 'green';
-        $hotaru->showMessage();
+    if (($h->cage->post->getInt('step') == 4) && $error == 0) {
+        $h->message = $lang['install_step4_update_success'];
+        $h->messageType = 'green';
+        $h->showMessage();
     }
     
     if ($error == 0) {
-        if (!$admin_name = $hotaru->current_user->adminExists())
+    
+        $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_role = %s";
+        
+        if (!$admin_name = $h->db->get_var($h->db->prepare($sql, 'admin')))
         {
             // Insert default settings
             $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email, user_permissions) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s)";
-            $hotaru->db->query($hotaru->db->prepare($sql, 'admin', 'admin', 'password', 'admin@mysite.com', serialize($hotaru->current_user->getDefaultPermissions('admin'))));
+            $h->db->query($h->db->prepare($sql, 'admin', 'admin', 'password', 'admin@mysite.com', serialize($h->currentUser->getDefaultPermissions($h, 'admin'))));
             $user_name = 'admin';
             $user_email = 'admin@mysite.com';
             $user_password = 'password';
         } 
         else 
         {
-            $user_info = $hotaru->current_user->getUserBasic(0, $admin_name);
+            $user_info = $h->currentUser->getUserBasic($h, 0, $admin_name);
             // On returning to this page via back or next, the fields are empty at this point, so...
             if (!isset($user_name)) { $user_name = ""; }
             if (!isset($user_email)){ $user_email = ""; } 
@@ -321,7 +337,8 @@ function register_admin()
             if (($user_name != "") && ($user_email != "") && ($user_password != "")) {
                 // There's been a change so update...
                 $sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_date = CURRENT_TIMESTAMP, user_password = %s, user_email = %s, user_email_valid = %d WHERE user_role = %s";
-                $hotaru->db->query($hotaru->db->prepare($sql, $user_name, 'admin', $user_password, $user_email, 1, 'admin'));
+                $h->db->query($h->db->prepare($sql, $user_name, 'admin', $user_password, $user_email, 1, 'admin'));
+                $next_button = true;
             } else {
                 $user_id = $user_info->user_id;
                 $user_name = $user_info->user_username;
@@ -348,6 +365,7 @@ function register_admin()
     // Password verify
     echo "<tr><td>" . $lang["install_step4_password_verify"] . "&nbsp; </td><td><input type='password' size=30 name='password2' value='' /></td></tr>\n";
 
+    echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
     echo "<input type='hidden' name='step' value='4' />\n";
     echo "<input type='hidden' name='updated' value='true' />\n";
     
@@ -362,7 +380,7 @@ function register_admin()
 
     // Previous/Next buttons
     echo "<div class='back'><a href='install.php?step=3'>" . $lang['install_back'] . "</a></div>\n";
-    if ($hotaru->cage->post->getAlpha('updated') == 'true') {
+    if ($h->cage->post->getAlpha('updated') == 'true' && isset($next_button)) {
         // active "next" link if user has been updated
         echo "<div class='next'><a href='install.php?step=5'>" . $lang['install_next'] . "</a></div>\n";
     } else {

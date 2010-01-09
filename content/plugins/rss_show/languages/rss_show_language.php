@@ -48,7 +48,6 @@ $lang["rss_show_no"] = "No";
 $lang["rss_show_titles_only"] = "Titles only";
 $lang["rss_show_summaries"] = "Summaries";
 $lang["rss_show_full"] = "Full";
-$lang["rss_show_save"] = "Save";
 $lang["rss_show_delete"] = "Delete the last feed";
 $lang["rss_show_add"] = "Add another RSS feed";
 $lang["rss_show_usage"] = "Usage:";

@@ -2,11 +2,13 @@
 /**
  * name: Category Manager
  * description: Manage categories.
- * version: 0.6
+ * version: 0.7
  * folder: category_manager
  * class: CategoryManager
- * requires: submit 1.4
- * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings
+ * requires: sb_base 0.1
+ * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *
@@ -30,65 +32,24 @@
  * @link      http://www.hotarucms.org/
  */
  
-return false; die(); // die on direct access.
-
-class CategoryManager extends PluginFunctions
+class CategoryManager
 {
     /**
-     * Install and create a "categories" table if not already there
+     * Install and add a default "all" catgeory if not already there.
      */
-    public function install_plugin()
+    public function install_plugin($h)
     {
-        // Create a new empty table called "categories"
-        $exists = $this->db->table_exists('categories');
+        // Insert default category if not already there...
+        $sql = "SELECT category_id FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s";
+        $exists = $h->db->get_var($h->db->prepare($sql, 'all'));
         if (!$exists) {
-            //echo "table doesn't exist. Stopping before creation."; exit;
-            $sql = "CREATE TABLE `" . DB_PREFIX . "categories` (
-              `category_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-              `category_parent` int(11) NOT NULL DEFAULT '1',
-              `category_name` varchar(64) NOT NULL DEFAULT '',
-              `category_safe_name` varchar(64) NOT NULL DEFAULT '',
-              `rgt` int(11) NOT NULL DEFAULT '0',
-              `lft` int(11) NOT NULL DEFAULT '0',
-              `category_order` int(11) NOT NULL DEFAULT '0',
-              `category_desc` text NULL,
-              `category_keywords` varchar(255) NOT NULL,
-              `category_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-              `category_updateby` int(20) NOT NULL DEFAULT 0, 
-              UNIQUE KEY `key` (`category_name`)
-            ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Categories';";
-            $this->db->query($sql); 
-        
-        // Insert default settings...
-            
-        $sql = "INSERT INTO " . DB_PREFIX . "categories (category_name, category_safe_name) VALUES (%s, %s)";
-        $this->db->query($this->db->prepare($sql, urlencode('all'), urlencode('all')));
-        
+            $sql = "INSERT INTO " . DB_PREFIX . "categories (category_name, category_safe_name) VALUES (%s, %s)";
+            $h->db->query($h->db->prepare($sql, urlencode('All'), urlencode('all')));
         }
-            
-        // 'checked' means that categories are enabled by the Submit plugin.
-        if (!$this->getSetting('submit_categories', 'categories')) { $this->updateSetting('submit_categories', 'checked', 'categories'); }
-    
-        // Include language file. Also included in hotaru_header, but needed here so 
-        // that the link in the Admin sidebar shows immediately after installation.
-        $this->includeLanguage();
-        
     }
     
-    
-    /**
-     * Define a global "table_categories" and include language
-     *
-     *@return true
-     */
-    public function hotaru_header()
-    {
-        $this->includeLanguage();
-        
-        if (!defined('TABLE_CATEGORIES')) { define("TABLE_CATEGORIES", DB_PREFIX . 'categories'); }
-        return true;
-    }
-
+    // no other methods necessary because we fall back on the defaults.
+    // See category_manager_settings for all the real code.
 }
 
 ?>

@@ -33,60 +33,40 @@
 <html>
 <head>
    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
-   <title>
-       <?php 
-           if ($admin->hotaru->title != "")
-           {
-               echo $admin->hotaru->title . " &laquo; " . $admin->lang["admin"] . " &laquo; " . SITE_NAME;
-           }
-           elseif ($admin->hotaru->getPageName() != "main")
-           {
-               $admin->hotaru->title = $admin->hotaru->getPageName();
-               echo $admin->hotaru->pageToTitleCaps($admin->hotaru->title) . " &laquo; " . $admin->lang["admin"] . " &laquo; " . SITE_NAME;
-           }
-           else
-           { 
-               echo $admin->lang["admin"] . " &laquo; " . SITE_NAME;
-           } 
-           
-           $admin->hotaru->title = 'admin';    // highlights "Admin" in the navigation bar, for all pages in Admin
-       ?>
-   </title>
+   
+   <title><?php echo $h->getTitle(); ?></title>
+   
    <script language="JavaScript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery-ui.min.js'; ?>"></script>
    <script language="JavaScript" src="<?php echo BASEURL . 'javascript/hotaru.js'; ?>"></script>
    
     <!-- Include merged files for all the plugin css and javascript (if any) -->
-    <?php 
-        $version_js = $admin->hotaru->combineIncludes('js', 0, true);
-        $version_css = $admin->hotaru->combineIncludes('css', 0, true);
-        $admin->hotaru->includeCombined($version_js, $version_css, true);
-    ?>
+    <?php $h->doIncludes(); ?>
     <!-- End -->
     
-   <link rel="stylesheet" href="<?php echo BASEURL . 'libs/extensions/YUI-CSS/reset-fonts-grids.css'; ?>" type="text/css">
+   <link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/reset-fonts-grids.css'; ?>" type="text/css">
    <link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css'; ?>" type="text/css">
-   <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico">
+   <!-- <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico"> -->
    
-   <?php $admin->plugins->pluginHook('admin_header_include_raw'); ?>
+   <?php $h->pluginHook('admin_header_include_raw'); ?>
       
 </head>
 <body>
 <?php 
-    if ($admin->checkAdminAnnouncements() && ($admin->current_user->getPermission('can_access_admin') == 'yes')) { 
-        $announcements = $admin->checkAdminAnnouncements();
+    if ($h->checkAnnouncements() && ($h->currentUser->getPermission('can_access_admin') == 'yes')) { 
+        $announcements = $h->checkAnnouncements();
 ?>
     <div id="announcement">
-        <?php $admin->plugins->pluginHook('admin_announcement_first'); ?>
+        <?php $h->pluginHook('admin_announcement_first'); ?>
         <?php foreach ($announcements as $announcement) { echo $announcement . "<br />"; } ?>
-        <?php $admin->plugins->pluginHook('admin_announcement_last'); ?>
+        <?php $h->pluginHook('admin_announcement_last'); ?>
     </div>
 <?php } ?>
 <div id="doc2" class="yui-t7">
     <div id="hd" role="banner">
-        <h1><a href="<?php echo $admin->hotaru->url(array(), 'admin'); ?>"><?php echo SITE_NAME . " " . $admin->lang["admin"]; ?> </a></h1>
-        <?php $admin->plugins->pluginHook('header_post_admin_title'); ?>
+        <h1><a href="<?php echo $h->url(array(), 'admin'); ?>"><?php echo SITE_NAME . " " . $h->lang["admin"]; ?> </a></h1>
+        <?php $h->pluginHook('header_post_admin_title'); ?>
         
         <!-- NAVIGATION -->
-        <?php echo $admin->displayAdminTemplate('navigation'); ?>
+        <?php echo $h->displayTemplate('navigation'); ?>
     </div>

@@ -26,7 +26,11 @@
 /* Upgrade Step 1 */
 $lang["upgrade_title"] = "Hotaru CMS Upgrade";
 $lang["upgrade_step1"] = "Step 1/2: Welcome Back";
-$lang["upgrade_step1_details"] = "To upgrade Hotaru to version 0.8, click 'Next'...";
+if (isset($old_version)) {
+    $lang["upgrade_step1_details"] = "To upgrade Hotaru from " . $old_version . " to " . $h->version . ", click 'Next'...";
+} else {
+    $lang["upgrade_step1_details"] = "To upgrade Hotaru to version " . $h->version . ", click 'Next'...";
+}
 
 /* Upgrade Step 1 */
 $lang["upgrade_step2"] = "Step 2/2: Upgrade Complete";
@@ -71,6 +75,7 @@ $lang["install_step4_username"] = "Username:";
 $lang["install_step4_email"] = "Email:";
 $lang["install_step4_password"] = "Password:";
 $lang["install_step4_password_verify"] = "Password (again):";
+$lang["install_step4_csrf_error"] = "Ah! You've triggered a CSRF error. That's only supposed to happen when someone tries hacking into the site...";
 $lang["install_step4_username_error"] = "Your username must be at least 4 characters and can contain letters, dashes and underscores only";
 $lang["install_step4_password_error"] = "The password must be at least 8 characters and can only contain letters, numbers and these symbols: @ * # - _";
 $lang["install_step4_password_match_error"] = "The password fields don't match";

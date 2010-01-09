@@ -36,12 +36,12 @@ $delete_link = BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=catego
 ?>
  
 <div class='cat_man_menu'>
-    &raquo; <a href = '<?php echo $home_link; ?>'><?php echo $hotaru->lang["cat_man_menu_home"]; ?></a><br />
-    &raquo; <a href = '<?php echo $order_link; ?>'><?php echo $hotaru->lang["cat_man_menu_order"]; ?></a><br />
-    &raquo; <a href = '<?php echo $add_link; ?>'><?php echo $hotaru->lang["cat_man_menu_add"]; ?></a><br />
-    &raquo; <a href = '<?php echo $edit_link; ?>'><?php echo $hotaru->lang["cat_man_menu_edit"]; ?></a><br />
-    &raquo; <a href = '<?php echo $edit_meta_link; ?>'><?php echo $hotaru->lang["cat_man_menu_edit_meta"]; ?></a><br />
-    &raquo; <a href = '<?php echo $move_link; ?>'><?php echo $hotaru->lang["cat_man_menu_move"]; ?></a><br />
-    &raquo; <a href = '<?php echo $delete_link; ?>'><?php echo $hotaru->lang["cat_man_menu_delete"]; ?></a><br />
+    &raquo; <a href = '<?php echo $home_link; ?>'><?php echo $h->lang["cat_man_menu_home"]; ?></a><br />
+    &raquo; <a href = '<?php echo $order_link; ?>'><?php echo $h->lang["cat_man_menu_order"]; ?></a><br />
+    &raquo; <a href = '<?php echo $add_link; ?>'><?php echo $h->lang["cat_man_menu_add"]; ?></a><br />
+    &raquo; <a href = '<?php echo $edit_link; ?>'><?php echo $h->lang["cat_man_menu_edit"]; ?></a><br />
+    &raquo; <a href = '<?php echo $edit_meta_link; ?>'><?php echo $h->lang["cat_man_menu_edit_meta"]; ?></a><br />
+    &raquo; <a href = '<?php echo $move_link; ?>'><?php echo $h->lang["cat_man_menu_move"]; ?></a><br />
+    &raquo; <a href = '<?php echo $delete_link; ?>'><?php echo $h->lang["cat_man_menu_delete"]; ?></a><br />
 </div>
     

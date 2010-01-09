@@ -218,6 +218,7 @@
 
         function get_col($query=null,$x=0)
         {
+            $new_array = array();
 
             // If there is a query then perform it if not then use cached results..
             if ( $query )

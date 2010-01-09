@@ -27,28 +27,10 @@
 
 class PliggImp4
 {
-    public $db;                         // database object
-    public $cage;                       // Inspekt object
-    public $hotaru;                     // Hotaru object
-    public $current_user;               // UserBase object
-    
-    
-    /**
-     * Build a $plugins object containing $db and $cage
-     */
-    public function __construct($hotaru)
-    {
-        $this->hotaru           = $hotaru;
-        $this->db               = $hotaru->db;
-        $this->cage             = $hotaru->cage;
-        $this->current_user     = $hotaru->current_user;
-    }
-    
-    
     /**
      * Page 4 - Request tags file
      */
-    public function page_4()
+    public function page_4($h)
     {
         echo "<h2>Step 4/6 - Tags</h2>";
         echo "Please upload your <b>tags</b> XML file:<br />";
@@ -58,6 +40,7 @@ class PliggImp4
         echo "<input type='hidden' name='submitted' value='true' />\n";
         echo "<input type='hidden' name='table' value='Tags' />\n";
         echo "<input type='submit' name='submit' value='Upload' />\n";
+        echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }
     
@@ -69,20 +52,13 @@ class PliggImp4
      * @param string $file_name
      * @return bool
      */
-    function step4($xml, $file_name)
+    function step4($h, $xml, $file_name)
     {
         echo "<b>Table:</b> Tags...<br /><br />";
         
         $this_table = "tags";
-        if (!$this->db->table_empty($this_table)) {
-            if (!$this->cage->get->getAlpha('overwrite') == 'true') {
-                echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . DB_PREFIX . $this_table . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
-                echo "<a class='pliggimp_next' href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer&amp;file_name=" . $file_name . "&amp;step=4&amp;overwrite=true'>Continue</a>";
-                return false;
-            } 
-        }
         
-        $this->db->query($this->db->prepare("TRUNCATE " . DB_PREFIX . $this_table));
+        $h->db->query($h->db->prepare("TRUNCATE " . DB_PREFIX . $this_table));
         
         echo "<i>Number of records added:</i> ";
         
@@ -100,15 +76,15 @@ class PliggImp4
                 
                 $sql        = "INSERT IGNORE " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%d, %s, %s, %d)";
                 
-                $lks = new PliggImp2($this->hotaru);
+                $lks = new PliggImp2();
                 
                 // Insert into tags table
-                $this->db->query($this->db->prepare(
+                $h->db->query($h->db->prepare(
                     $sql,
-                    $lks->get_new_link_id($child->tag_link_id),
+                    $lks->get_new_link_id($h, $child->tag_link_id),
                     $child->tag_date,
                     urlencode(str_replace(' ', '_', trim($child->tag_words))),
-                    $this->current_user->id));
+                    $h->currentUser->id));
             }
         }
     

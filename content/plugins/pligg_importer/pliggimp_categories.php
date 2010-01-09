@@ -27,28 +27,10 @@
 
 class PliggImp1
 {
-    public $db;                         // database object
-    public $cage;                       // Inspekt object
-    public $hotaru;                     // Hotaru object
-    public $current_user;               // UserBase object
-    
-    
-    /**
-     * Build a $plugins object containing $db and $cage
-     */
-    public function __construct($hotaru)
-    {
-        $this->hotaru           = $hotaru;
-        $this->db               = $hotaru->db;
-        $this->cage             = $hotaru->cage;
-        $this->current_user     = $hotaru->current_user;
-    }
-    
-    
     /**
      * Page 1 - Request categories file
      */
-    public function page_1()
+    public function page_1($h)
     {
         echo "<h2>Step 1/6 - Categories</h2>";
         echo "Please upload your <b>categories</b> XML file:<br />";
@@ -58,6 +40,7 @@ class PliggImp1
         echo "<input type='hidden' name='submitted' value='true' />\n";
         echo "<input type='hidden' name='table' value='Categories' />\n";
         echo "<input type='submit' name='submit' value='Upload' />\n";
+        echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }
     
@@ -69,20 +52,13 @@ class PliggImp1
      * @param string $file_name
      * @return bool
      */
-    function step1($xml, $file_name)
+    function step1($h, $xml, $file_name)
     {
         echo "<b>Table:</b> Categories...<br /><br />";
         
         $this_table = "categories";
-        if (!$this->db->table_empty($this_table)) {
-            if (!$this->cage->get->getAlpha('overwrite') == 'true') {
-                echo "<h2><span style='color: red';>WARNING!</h2></span>The target table, <i>" . DB_PREFIX . $this_table . "</i>, is not empty. Clicking \"Continue\" will overwrite the existing data.<br />";
-                echo "<a class='pliggimp_next' href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=pligg_importer&amp;file_name=" . $file_name . "&amp;step=1&amp;overwrite=true'>Continue</a>";
-                return false;
-            } 
-        }
         
-        $this->db->query($this->db->prepare("TRUNCATE " . DB_PREFIX . $this_table));
+        $h->db->query($h->db->prepare("TRUNCATE " . DB_PREFIX . $this_table));
     
         echo "<i>Adding...</i> ";
         
@@ -104,21 +80,21 @@ class PliggImp1
             $sql        = "INSERT INTO " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%s, %s, %d, %s, %s, %d)";
             
             // Insert what we can so far...
-            $this->db->query($this->db->prepare(
+            $h->db->query($h->db->prepare(
                 $sql,
                 urlencode($child->category_name),
                 urlencode(strtolower($child->category_safe_name)),
                 $child->category_order,
                 urlencode($child->category_desc),
                 urlencode($child->category_keywords),
-                $this->current_user->id));
+                $h->currentUser->id));
                 
             // Grab the ID of the last insert. We'll use this to match parents...
-            $cat[$count]['old_id']['new_id'] = $this->db->get_var($this->db->prepare("SELECT LAST_INSERT_ID()"));
+            $cat[$count]['old_id']['new_id'] = $h->db->get_var($h->db->prepare("SELECT LAST_INSERT_ID()"));
             
             $sql = "REPLACE INTO " . DB_PREFIX . "pliggimp_temp (pliggimp_setting, pliggimp_old_value, pliggimp_new_value) VALUES(%s, %d, %d)";
             
-            $this->db->query($this->db->prepare($sql, 'category_id', $cat[$count]['old_id'], $cat[$count]['old_id']['new_id']));
+            $h->db->query($h->db->prepare($sql, 'category_id', $cat[$count]['old_id'], $cat[$count]['old_id']['new_id']));
         }
     
     
@@ -142,7 +118,7 @@ class PliggImp1
                         $sql = "UPDATE " . DB_PREFIX . $this_table . " SET category_parent = %d WHERE category_id = %d";
     
                         // Set this parent to the new_id of the old_id's parent...
-                        $this->db->query($this->db->prepare(
+                        $h->db->query($h->db->prepare(
                             $sql, 
                             (int)$c2['old_id']['new_id'], 
                             (int)$c['old_id']['new_id']));
@@ -153,7 +129,7 @@ class PliggImp1
     
         }
         
-        $this->rebuild_cat_tree(1, 0, $this_table);
+        $this->rebuild_cat_tree($h, 1, 0, $this_table);
         
         echo "<br /><br />";
         echo "<span style='color: green;'><b>Categories table imported successfully!</b></span><br /><br />";
@@ -170,11 +146,11 @@ class PliggImp1
      * @param int $old_cat_id
      * @return int|false
      */
-    function get_new_cat_id($old_cat_id)
+    function get_new_cat_id($h, $old_cat_id)
     {
         $sql = "SELECT pliggimp_new_value FROM " . DB_PREFIX . "pliggimp_temp WHERE pliggimp_setting = %s AND pliggimp_old_value = %d";
         
-        $new_cat_id = $this->db->get_var($this->db->prepare($sql, 'category_id', $old_cat_id));
+        $new_cat_id = $h->db->get_var($h->db->prepare($sql, 'category_id', $old_cat_id));
         
         if ($new_cat_id) { return $new_cat_id; } else { return false; }
     }
@@ -187,18 +163,18 @@ class PliggImp1
      * @param int $left starting node
      * @return int
      */
-    function rebuild_cat_tree($parent_id, $left, $this_table)
+    function rebuild_cat_tree($h, $parent_id, $left, $this_table)
     {
         $right = $left+1;
         
         // get all children of this node
         $sql = "SELECT category_id FROM " . DB_PREFIX . $this_table . " WHERE category_id != %d AND category_parent = %d ORDER BY category_order ASC";
         
-        $categories = $this->db->get_results($this->db->prepare($sql, $parent_id, $parent_id));
+        $categories = $h->db->get_results($h->db->prepare($sql, $parent_id, $parent_id));
         
         if ($categories) {
             foreach ($categories as $this_category) {
-                 $right = $this->rebuild_cat_tree($this_category->category_id, $right, $this_table);
+                 $right = $this->rebuild_cat_tree($h, $this_category->category_id, $right, $this_table);
             }
         }
         
@@ -206,7 +182,7 @@ class PliggImp1
         // the children of this node we also know the right value
         $sql = "UPDATE " . DB_PREFIX . $this_table . " SET lft = %d, rgt = %d, category_updateby = %d WHERE category_id = %d";
         
-        $this->db->query($this->db->prepare($sql, $left, $right, $this->current_user->id, $parent_id));
+        $h->db->query($h->db->prepare($sql, $left, $right, $h->currentUser->id, $parent_id));
         
         // return the right value of this node + 1
         return $right+1;
