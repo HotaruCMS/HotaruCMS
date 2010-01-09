@@ -6,7 +6,7 @@
  * folder: disqus
  * class: Disqus
  * type: comments
- * requires: submit 1.9
+ * requires: sb_base 0.1
  * hooks: header_include, header_include_raw, install_plugin, hotaru_header, sb_base_show_post_extra_fields, sb_base_post_show_post, pre_close_body, admin_plugin_settings, admin_sidebar_plugin_settings
  *
  * PHP version 5

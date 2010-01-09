@@ -35,10 +35,14 @@
  *
  * USAGE: This class hooks into the Avatar class, so is used like this:
  * 
- * $avatar = new Avatar($h);
- * $avatar->setAvatar($size, $user_id, $rating);
- * $avatar->getAvatar(); // returns the avatar for custom display... OR...
- * $avatar->showAvatar(); // displays the avatar using default HTML
+ * $avatar = new Avatar($h, $user_id, $size, $rating);
+ * $avatar->getAvatar($h); // returns the avatar for custom display... OR...
+ * $avatar->linkAvatar($h); // displays the avatar linked to the user's profile
+ * $avatar->wrapAvatar($h); // displays the avatar linked and wrapped in a div (css class: avatar_wrapper)
+ *
+ * Shortcuts:
+ * $h->setAvatar($user_id, $size, $rating);
+ * $h->getAvatar(); $h->linkAvatar(); $h->wrapAvatar();
  */
 
 class Gravatar

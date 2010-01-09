@@ -5,7 +5,7 @@
  * version: 1.0
  * folder: posts_widget
  * class: PostsWidget
- * requires: widgets 0.6, submit 1.9
+ * requires: widgets 0.6, sb_base 0.1
  * hooks: install_plugin, hotaru_header, header_include
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick

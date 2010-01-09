@@ -14,7 +14,7 @@ Instructions
 
 Changelog
 ---------
-v.1.0 2010/01/04 - Nick - Updates for compatibility with Hotaru 1.0
+v.1.0 2010/01/04 - Nick - Renamed from "Sidebar Posts" and updated for Hotaru 1.0
 v.0.9 2009/11/23 - Nick - Removed settings and custom box.
 v.0.8 2009/10/20 - Nick - Added check for vote setting (set in Vote Simple plugin)
 v.0.7 2009/10/15 - Nick - Bug fixes for slashed apostrophes
