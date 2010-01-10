@@ -128,10 +128,10 @@ function sanitize($var, $santype = 1, $allowable_tags = '')
         // htmlentities: YES
         if ($santype == 1) {
                 if (!get_magic_quotes_gpc()) {
-                        return addslashes(htmlentities(strip_tags($var, $allowable_tags),ENT_QUOTES,'UTF-8'));
+                        return htmlentities(strip_tags($var, $allowable_tags),ENT_QUOTES,'UTF-8');
                 }
                 else {
-                   return htmlentities(strip_tags($var, $allowable_tags),ENT_QUOTES,'UTF-8');
+                   return stripslashes(htmlentities(strip_tags($var, $allowable_tags),ENT_QUOTES,'UTF-8'));
                 }
                 return false;
         }
@@ -139,10 +139,10 @@ function sanitize($var, $santype = 1, $allowable_tags = '')
         // htmlentities: NO
         if ($santype == 2) {
                 if (!get_magic_quotes_gpc()) {
-                        return addslashes(strip_tags($var, $allowable_tags));
+                        return strip_tags($var, $allowable_tags);
                 }
                 else {
-                   return strip_tags($var, $allowable_tags);
+                   return stripslashes(strip_tags($var, $allowable_tags));
                 }
                 return false;
         }
