@@ -249,32 +249,35 @@ class SbBase
                 $buried = false; $pending = false; $can_edit = false;
                 
                 // check if buried:
-                if ($h->post->status == 'buried') { 
+                if ($h->post->status == 'buried') {
                     $buried = true;
-                    $h->message = $h->lang["sb_base_post_buried"];
+                    $h->messages[$h->lang["sb_base_post_buried"]] = "red";
                 } 
                 
                 // check if pending:
                 if ($h->post->status == 'pending') { 
                     $pending = true;
-                    $h->message = $h->lang["sb_base_post_pending"];
+                    $h->messages[$h->lang["sb_base_post_pending"]] = "red";
                 }
                 
                 // check if global edit permissions
                 if ($h->currentUser->getPermission('can_edit_posts') == 'yes') { $can_edit = true; }
-                
+
                 // display post or show error message
-                if ((!$buried && !$pending) || $can_edit){
+                if (!$buried && !$pending){
+                    $h->displayTemplate('sb_post');
+                } elseif ($can_edit) {
+                    $h->showMessages();
                     $h->displayTemplate('sb_post');
                 } else {
-                    $h->messageType = "red";
-                    $h->showMessage();
+                    $h->showMessages();
                 }
                 
                 return true;
                 break;
                 
             case 'list':
+                
                 $h->displayTemplate('sb_list');
                 return true;
         }
