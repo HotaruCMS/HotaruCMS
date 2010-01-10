@@ -53,6 +53,8 @@ class Avatar
      */
     public function  __construct($h, $user_id = 0, $size = 32, $rating = 'g')
     {
+        if (!$user_id) { return false; }
+        
         $this->user_id = $user_id;
         
         $user = new UserBase();
@@ -82,6 +84,8 @@ class Avatar
      */
     public function getAvatar($h)
     {
+        if (!$this->user_id) { return false; }
+        
         $result = $h->pluginHook('avatar_get_avatar');
         if ($result) {
             foreach ($result as $key => $value) {
@@ -99,6 +103,8 @@ class Avatar
      */
     public function linkAvatar($h)
     {
+        if (!$this->user_id) { return false; }
+        
         $output = "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>\n";
         $result = $h->pluginHook('avatar_get_avatar');
         if ($result) {
@@ -117,6 +123,8 @@ class Avatar
      */
     public function wrapAvatar($h)
     {
+        if (!$this->user_id) { return false; }
+        
         $output = "<div class='avatar_wrapper'>";
         $output .= "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>\n";
         $result = $h->pluginHook('avatar_get_avatar');
