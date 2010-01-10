@@ -7,7 +7,7 @@
  * class: Vote
  * type: vote
  * requires: submit 1.9, users 1.1
- * hooks: install_plugin, theme_index_top, post_read_post, header_include, sb_base_show_post_title, sb_base_pre_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, post_add_post, sb_base_show_post_extra_fields, sb_base_show_post_extras, post_delete_post
+ * hooks: install_plugin, theme_index_top, post_read_post, header_include, sb_base_show_post_title, sb_base_pre_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, post_add_post, submit_confirm_pre_trackback, sb_base_show_post_extra_fields, sb_base_show_post_extras, post_delete_post
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -103,7 +103,7 @@ class Vote
     public function post_add_post($h)
     {
          //get vote settings
-        $vote_settings = unserialize($h->getSetting('vote_settings')); 
+        $vote_settings = $h->getSerializedSettings('vote_settings'); 
         $submit_vote = $vote_settings['submit_vote'];
         $submit_vote_value = $vote_settings['submit_vote_value'];
         
@@ -121,6 +121,35 @@ class Vote
             }
         }            
                     
+    }
+    
+    
+    /**
+     * Check if auto-vote on submission can push the story to the front page
+     */
+    public function submit_confirm_pre_trackback($h)
+    {
+        // get settings (cached at this point)
+        $vote_settings = $h->getSerializedSettings('vote_settings'); 
+        
+        // get current vote count and status
+        $sql = "SELECT post_votes_up, post_status FROM " . TABLE_POSTS . " WHERE post_id = %d";
+        $result = $h->db->get_row($h->db->prepare($sql, $h->post->id));
+        
+        // check if the automatic vote is enough to immediately push the story to Top Stories
+        // only do this if the status is "new"
+        if ((($result->post_votes_up + $submit_vote_value) >= $vote_settings['votes_to_promote']) 
+            && $result->post_status == 'new') 
+        { 
+            $post_status = 'top'; 
+            $h->vars['submit_redirect'] = BASEURL; // so we can redirect to the home page instead of Latest
+        } else { 
+            $post_status = $result->post_status;
+        }
+        
+        //update the post status
+        $sql = "UPDATE " . TABLE_POSTS . " SET post_status = %s WHERE post_id = %d";
+        $h->db->query($h->db->prepare($sql, $post_status, $h->post->id));
     }
      
     

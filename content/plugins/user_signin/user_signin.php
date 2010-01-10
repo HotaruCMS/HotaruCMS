@@ -306,7 +306,7 @@ class UserSignin
         $h->vars['useEmailConf'] = $user_signin_settings['emailconf_enabled'];
         
         if ($h->vars['useEmailConf'] && ($h->currentUser->emailValid == 0)) {
-            $this->sendConfirmationEmail($h->currentUser->id);
+            $this->sendConfirmationEmail($h, $h->currentUser->id);
             $h->messages[$h->lang["user_signin_login_failed_email_not_validated"]] = 'red';
             $h->messages[$h->lang["user_signin_login_failed_email_request_sent"]] = 'green';
             return false;
