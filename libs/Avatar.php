@@ -64,7 +64,16 @@ class Avatar
         
         $this->size = $size;
         $this->rating = $rating;
-        
+
+        $this->setVars($h);
+    }
+    
+    
+    /**
+     * Add Avatar properties to a vars array for plugins to use
+     */
+    public function setVars($h)
+    {
         $vars = array(
             'user_id'=>$this->user_id,
             'user_name'=>$this->user_name,
