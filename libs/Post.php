@@ -306,8 +306,23 @@ class Post
     public function titleExists($h, $title = '')
     {
         $title = trim($title);
+        $sql = "SELECT post_id, post_status FROM " . TABLE_POSTS . " WHERE post_title = %s";
+        $posts = $h->db->get_results($h->db->prepare($sql, urlencode($title)));
+        
+        if (!$posts) { return false; }
+        
+        // we know there's at least one post with the same title, so if it's processing, let's delete it:
+        foreach ($posts as $post) {
+            if ($post->post_status == 'processing') {
+                $h->post->id = $post->post_id;
+                $h->deletePost($h);
+            }
+        }
+        
+        // One last check to see if a post is present:
         $sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_title = %s";
         $post_id = $h->db->get_var($h->db->prepare($sql, urlencode($title)));
+        
         if ($post_id) { return $post_id; } else { return false; }
     }
     

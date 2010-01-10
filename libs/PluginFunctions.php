@@ -73,6 +73,7 @@ class PluginFunctions
                     // If this plugin class is a child, include the parent class
                     if ($value->plugin_enabled && $value->plugin_class == $plugin->plugin_extends) {
                         include_once(PLUGINS . $value->plugin_folder . "/" . $value->plugin_folder . ".php");
+                        $h->includeLanguage($value->plugin_folder); // include the language for the parent plugin
                     }
                     
                     // If this plugin class has children, skip it because we will use the children instead
