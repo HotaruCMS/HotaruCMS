@@ -7,7 +7,7 @@
  * class: Vote
  * type: vote
  * requires: submit 1.9, users 1.1
- * hooks: install_plugin, theme_index_top, post_read_post, header_include, sb_base_pre_show_post, sb_base_show_post_title, admin_plugin_settings, admin_sidebar_plugin_settings, post_add_post, sb_base_show_post_extra_fields, sb_base_show_post_extras, post_delete_post
+ * hooks: install_plugin, theme_index_top, post_read_post, header_include, sb_base_show_post_title, sb_base_pre_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, post_add_post, sb_base_show_post_extra_fields, sb_base_show_post_extras, post_delete_post
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -129,6 +129,63 @@ class Vote
      */
     public function sb_base_pre_show_post($h)
     {
+        $h->vars['flagged'] = false;
+        if ($h->post->status == 'new' && $h->vars['useAlerts'] == "checked") {
+            // CHECK TO SEE IF THIS POST IS BEING FLAGGED AND IF SO, ADD IT TO THE DATABASE
+            if ($h->cage->get->keyExists('alert') && $h->currentUser->loggedIn) {
+                // Check if already flagged...
+                $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating = %s";
+                $flagged = $h->db->get_var($h->db->prepare($sql, $h->post->id, $h->currentUser->id, 'alert'));
+                if (!$flagged) {
+                    $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_reason, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d, %d)";
+                    $h->db->query($h->db->prepare($sql, $h->post->id, $h->currentUser->id, $h->cage->server->testIp('REMOTE_ADDR'), 'vote', 'alert', $h->cage->get->testInt('alert'), $h->currentUser->id));
+                    
+                    $h->pluginHook('vote_flag_insert');
+                }
+                else
+                {
+                    $h->messages[$h->lang["vote_alert_already_flagged"]] = "red";
+                    $h->showMessages();
+                }
+            }
+            
+            // CHECK TO SEE IF THIS POST HAS BEEN FLAGGED AND IF SO, SHOW THE ALERT STATUS
+        
+            // Get settings from the database if they exist...
+            $vote_settings = unserialize($h->getSetting('vote_settings')); 
+            
+            // Check if already flagged...
+            $sql = "SELECT * FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_rating = %s";
+            $flagged = $h->db->get_results($h->db->prepare($sql, $h->post->id, 'alert'));
+            if ($flagged) {
+                $h->vars['flag_count'] = 0;
+                $h->vars['reasons'] = array();
+                foreach ($flagged as $flag) {
+                    array_push($h->vars['reasons'], $flag->vote_reason);
+                    $h->vars['flag_count']++;
+                }
+                
+                // Buries or Deletes a post if this new flag sends it over the limit set in Vote Settings
+                if ($h->cage->get->keyExists('alert') && $h->vars['flag_count'] >= $vote_settings['alerts_to_bury'])
+                {
+                    $h->readPost($h->post->id); //make sure we've got all post details
+                    
+                    if ($vote_settings['physical_delete']) { 
+                        $h->deletePost(); // Akismet uses those details to report the post as spam
+                    } else {
+                        $h->changePostStatus('buried');
+                        $h->pluginHook('vote_post_status_buried'); // Akismet hooks in here to report the post as spam
+                    }
+                    
+                    $h->messages[$h->lang["vote_alert_post_buried"]] = "red";
+                    $h->showMessages();
+                }
+                
+                $h->vars['flagged'] = true;
+            }
+        }
+        
+        
         // CHECK TO SEE IF THE CURRENT USER HAS VOTED FOR THIS POST
          if ($h->currentUser->loggedIn) {
             $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating != %s";
@@ -150,78 +207,25 @@ class Vote
     
     
      /**
-     * Displays the vote button.
+     * Displays the flags next to the post title.
      */
     public function sb_base_show_post_title($h)
     {
-        if ($h->post->status == 'new' && $h->vars['useAlerts'] == "checked") {
-            // CHECK TO SEE IF THIS POST IS BEING FLAGGED AND IF SO, ADD IT TO THE DATABASE
-            if ($h->cage->get->keyExists('alert') && $h->currentUser->loggedIn) {
-                // Check if already flagged...
-                $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating = %s";
-                $flagged = $h->db->get_var($h->db->prepare($sql, $h->post->id, $h->currentUser->id, 'alert'));
-                if (!$flagged) {
-                    $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_reason, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d, %d)";
-                    $h->db->query($h->db->prepare($sql, $h->post->id, $h->currentUser->id, $h->cage->server->testIp('REMOTE_ADDR'), 'vote', 'alert', $h->cage->get->testInt('alert'), $h->currentUser->id));
-                    
-                    $h->pluginHook('vote_flag_insert');
-                }
-                else
-                {
-                    $h->message = $h->lang["vote_alert_already_flagged"];
-                    $h->messageType = "red";
-                    $h->showMessage();
-                }
-            }
-            
-            // CHECK TO SEE IF THIS POST HAS BEEN FLAGGED AND IF SO, SHOW THE ALERT STATUS
+        if (!isset($h->vars['flagged']) || !$h->vars['flagged']) { return false; }
         
-            // Get settings from the database if they exist...
-            $vote_settings = unserialize($h->getSetting('vote_settings')); 
-            
-            // Check if already flagged...
-            $sql = "SELECT * FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_rating = %s";
-            $flagged = $h->db->get_results($h->db->prepare($sql, $h->post->id, 'alert'));
-            if ($flagged) {
-                $flag_count = 0;
-                $reasons = array();
-                foreach ($flagged as $flag) {
-                    array_push($reasons, $flag->vote_reason);
-                    $flag_count++;
-                }
-                
-                // Buries or Deletes a post if this new flag sends it over the limit set in Vote Settings
-                if ($h->cage->get->keyExists('alert') && $flag_count >= $vote_settings['alerts_to_bury'])
-                {
-                    $h->readPost($h->post->id); //make sure we've got all post details
-                    
-                    if ($vote_settings['physical_delete']) { 
-                        $h->deletePost(); // Akismet uses those details to report the post as spam
-                    } else {
-                        $h->changePostStatus('buried');
-                        $h->pluginHook('vote_post_status_buried'); // Akismet hooks in here to report the post as spam
-                    }
-                    
-                    $h->message = $h->lang["vote_alert_post_buried"];
-                    $h->messageType = "red";
-                    $h->showMessage();
-                    return true; // This will stop the post from showing    
-                }
-                
-                $why_list = "";
-                foreach ($reasons as $why) {
-                    $alert_lang = "vote_alert_reason_" . $why;
-                    $why_list .= $h->lang[$alert_lang] . ", ";
-                }
-                $why_list = rstrtrim($why_list, ", ");    // removes trailing comma
-
-                $h->vars['flag_count'] = $flag_count;
-                $h->vars['flag_why'] = $why_list;
-                $h->displayTemplate('vote_alert', 'vote', NULL, false);
-            }
+        $why_list = "";
+        foreach ($h->vars['reasons'] as $why) {
+            $alert_lang = "vote_alert_reason_" . $why;
+            $why_list .= $h->lang[$alert_lang] . ", ";
         }
+        $why_list = rstrtrim($why_list, ", ");    // removes trailing comma
+
+        // $h->vars['flag_count'] got from above function
+        $h->vars['flag_why'] = $why_list;
+        $h->displayTemplate('vote_alert', 'vote', NULL, false);
     }
-    
+
+
      /**
      * Add an "alert" link below the story
      */
