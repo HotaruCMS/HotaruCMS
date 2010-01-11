@@ -154,7 +154,7 @@ class TweetThis
 
         // return the shortened url if no error
         if ($bitlyinfo['errorCode'] == 0) {
-            return $bitlyinfo['results'][urldecode($url)]['shortUrl'];
+            return $bitlyinfo['results'][urldecode($post_url)]['shortUrl'];
         } else {
             return false;
         }
