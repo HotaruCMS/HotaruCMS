@@ -103,7 +103,7 @@ class Vote
     public function post_add_post($h)
     {
          //get vote settings
-        $vote_settings = $h->getSerializedSettings('vote_settings'); 
+        $vote_settings = $h->getSerializedSettings('vote'); 
         $submit_vote = $vote_settings['submit_vote'];
         $submit_vote_value = $vote_settings['submit_vote_value'];
         
@@ -130,15 +130,15 @@ class Vote
     public function submit_confirm_pre_trackback($h)
     {
         // get settings (cached at this point)
-        $vote_settings = $h->getSerializedSettings('vote_settings'); 
+        $vote_settings = $h->getSerializedSettings('vote'); 
         
         // get current vote count and status
         $sql = "SELECT post_votes_up, post_status FROM " . TABLE_POSTS . " WHERE post_id = %d";
         $result = $h->db->get_row($h->db->prepare($sql, $h->post->id));
         
-        // check if the automatic vote is enough to immediately push the story to Top Stories
+        // check if the automatically added votes are enough to immediately push the story to Top Stories
         // only do this if the status is "new"
-        if ((($result->post_votes_up + $submit_vote_value) >= $vote_settings['votes_to_promote']) 
+        if ((($result->post_votes_up) >= $vote_settings['votes_to_promote']) 
             && $result->post_status == 'new') 
         { 
             $post_status = 'top'; 
