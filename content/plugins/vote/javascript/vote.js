@@ -82,10 +82,10 @@ function vote(baseurl, ip, id, rating)
 							
 
 					target_votes.innerHTML = returnvalue.votes;
-					if(rating == 'positive') {
+					if(rating > 0) {
 						target_text_vote.style.display = 'none';
 						target_text_unvote.style.display = '';
-					} else {
+					} else if(rating < 0) {
 						target_text_vote.style.display = '';
 						target_text_unvote.style.display = 'none';
 					}

@@ -39,7 +39,7 @@ $h->includeLanguage('vote', 'vote');
 if ($h->cage->post->keyExists('post_id')) {
     $post_id = $h->cage->post->testInt('post_id');
     $user_ip = $h->cage->post->testIp('user_ip');
-    $vote_rating = $h->cage->post->testAlnumLines('rating');
+    $vote_rating = $h->cage->post->testInt('rating');
         
     //get vote settings
     $vote_settings = unserialize($h->getSetting('vote_settings', 'vote')); 
@@ -51,8 +51,8 @@ if ($h->cage->post->keyExists('post_id')) {
         
         // get vote history for this post:
         
-        $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating != %s";
-        $voted = $h->db->get_var($h->db->prepare($sql, $post_id, $user_id, 'alert'));
+        $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating != %d";
+        $voted = $h->db->get_var($h->db->prepare($sql, $post_id, $user_id, -999));
         
         if ($voted == $vote_rating) {
             // Repeat vote. Must be from a double-click. Return false and 
@@ -65,7 +65,7 @@ if ($h->cage->post->keyExists('post_id')) {
         $sql = "SELECT post_votes_up, post_status, post_date FROM " . TABLE_POSTS . " WHERE post_id = %d";
         $result = $h->db->get_row($h->db->prepare($sql, $post_id));
             
-        if ($vote_rating == 'positive')
+        if ($vote_rating > 0)
         {
             // Change the status to 'top' if we have enough votes and are within the time limit to hit the front page:
             $front_page_deadline = "-" . $vote_settings['no_front_page'] . " days"; // default: -5 days
@@ -90,7 +90,7 @@ if ($h->cage->post->keyExists('post_id')) {
         else // negative vote
         {
             // REMOVE POSITIVE VOTE, i.e. undo a vote if the user is changing his/her mind...
-            if ($voted && $voted == 'positive')
+            if ($voted && $voted > 0)
             {
                 // Update Posts table
                 $sql = "UPDATE " . TABLE_POSTS . " SET post_votes_up=post_votes_up-1 WHERE post_id = %d";
@@ -103,7 +103,7 @@ if ($h->cage->post->keyExists('post_id')) {
                 }
 
                 // Update Postvotes table
-                $sql = "DELETE FROM  " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating = %s";
+                $sql = "DELETE FROM  " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating = %d";
                 $h->db->query($h->db->prepare($sql, $post_id, $user_id, $voted));
                 
                 $h->pluginHook('vote_negative_vote', '', array('user' => $user_id, 'post'=>$post_id));

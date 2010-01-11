@@ -46,12 +46,12 @@ $vote_button_type = 'vote_button_' . $status . '_story';  // for css difference 
     
     <!-- Shown -->
     <div id='text_vote_<?php echo $h->post->id; ?>' class='vote_button_bottom'>
-        <a href="#" onclick="vote('<?php echo BASEURL; ?>', '<?php echo $user_ip; ?>', <?php echo $h->post->id; ?>, 'positive'); return false;"><b><?php echo $h->lang["vote_button_vote"]; ?></b></a>
+        <a href="#" onclick="vote('<?php echo BASEURL; ?>', '<?php echo $user_ip; ?>', <?php echo $h->post->id; ?>, 10); return false;"><b><?php echo $h->lang["vote_button_vote"]; ?></b></a>
     </div>    
     
     <!-- Hidden -->
     <div id='text_unvote_<?php echo $h->post->id; ?>' class='vote_button_bottom' style="display: none;">
-        <a href="#" onclick="vote('<?php echo BASEURL; ?>', '<?php echo $user_ip; ?>', <?php echo $h->post->id; ?>, 'negative'); return false;"><?php echo $h->lang["vote_button_unvote"]; ?></a>
+        <a href="#" onclick="vote('<?php echo BASEURL; ?>', '<?php echo $user_ip; ?>', <?php echo $h->post->id; ?>, -10); return false;"><?php echo $h->lang["vote_button_unvote"]; ?></a>
     </div>        
     
 <?php } elseif ($h->currentUser->loggedIn && $h->vars['voted']) { ?>
@@ -59,12 +59,12 @@ $vote_button_type = 'vote_button_' . $status . '_story';  // for css difference 
     
     <!-- Hidden -->
     <div id='text_vote_<?php echo $h->post->id; ?>' class='vote_button_bottom' style="display: none;">
-        <a href="#" onclick="vote('<?php echo BASEURL; ?>', '<?php echo $user_ip; ?>', <?php echo $h->post->id; ?>, 'positive'); return false;"><b><?php echo $h->lang["vote_button_vote"]; ?></b></a>
+        <a href="#" onclick="vote('<?php echo BASEURL; ?>', '<?php echo $user_ip; ?>', <?php echo $h->post->id; ?>, 10); return false;"><b><?php echo $h->lang["vote_button_vote"]; ?></b></a>
     </div>
     
     <!-- Shown -->
     <div id='text_unvote_<?php echo $h->post->id; ?>' class='vote_button_bottom'>
-        <a href="#" onclick="vote('<?php echo BASEURL; ?>', '<?php echo $user_ip; ?>', <?php echo $h->post->id; ?>, 'negative'); return false;"><?php echo $h->lang["vote_button_unvote"]; ?></a>
+        <a href="#" onclick="vote('<?php echo BASEURL; ?>', '<?php echo $user_ip; ?>', <?php echo $h->post->id; ?>, -10); return false;"><?php echo $h->lang["vote_button_unvote"]; ?></a>
     </div>
     
 <?php } else { ?>

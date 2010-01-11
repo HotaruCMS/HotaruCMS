@@ -282,7 +282,7 @@ function create_table($table_name)
           `vote_user_ip` varchar(32) NOT NULL DEFAULT '0',
           `vote_date` timestamp NOT NULL,
           `vote_type` varchar(32) NULL,
-          `vote_rating` enum('positive','negative','alert') NULL,
+          `vote_rating` smallint(11) NOT NULL DEFAULT '0',
           `vote_reason` tinyint(3) NOT NULL DEFAULT 0,
           `vote_updateby` int(20) NOT NULL DEFAULT 0,
            INDEX  (`vote_post_id`)

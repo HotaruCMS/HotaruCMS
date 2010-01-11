@@ -147,7 +147,7 @@ class SubmitLight extends Submit
                     $errors = $funcs->checkErrors($h, 'submit2', $key);
                     if (!$errors) {
                         $funcs->processSubmission($h, $key);
-                        $postid = $h->post->id; // got this from addPost in Post.php
+                        $post_id = $h->post->id; // got this from addPost in Post.php
                         $h->readPost($post_id);
                         $h->changePostStatus('new');
                         

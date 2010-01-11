@@ -32,7 +32,7 @@ if (isset($old_version)) {
     $lang["upgrade_step1_details"] = "To upgrade Hotaru to version " . $h->version . ", click 'Next'...";
 }
 
-/* Upgrade Step 1 */
+/* Upgrade Step 2 */
 $lang["upgrade_step2"] = "Step 2/2: Upgrade Complete";
 $lang["upgrade_step2_details"] = "Congratulations! You have successfully upgraded Hotaru CMS.";
 $lang["upgrade_home"] = "Finish";

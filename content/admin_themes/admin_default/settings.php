@@ -63,7 +63,7 @@ $loaded_settings = $h->vars['admin_settings'];
     
     <br />
     <input type='hidden' name='settings_update' value='true' />
-    <input type='hidden' name='token' value='<?php echo $h->token; ?>' />
+    <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
     </table>
     <input id='settings_submit' type='submit' value='Save' />
     </form>
