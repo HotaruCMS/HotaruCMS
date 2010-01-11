@@ -7,7 +7,7 @@
  * class: Smilies
  * type: smilies
  * requires: comments 1.2
- * hooks: show_comments_content, comment_manager_comment_content, sidebar_comments_comment_content
+ * hooks: show_comments_content, comment_manager_comment_content, comments_widget_comment_content
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -128,9 +128,9 @@ class Smilies
     
     
     /**
-     * Show smilies in Sidebar Comments
+     * Show smilies in the Comments Widget
      */
-    public function sidebar_comments_comment_content($h)
+    public function comments_widget_comment_content($h)
     {
         $comment = $this->show_comments_content($h, true);
         $h->comment->content = $comment;
