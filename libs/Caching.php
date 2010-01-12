@@ -181,6 +181,9 @@ class Caching
             case 'commentvotes':
                 $sql = "SELECT cvote_updatedts FROM " . DB_PREFIX . "commentvotes ORDER BY cvote_updatedts DESC";
                 break;
+            case 'users':
+                $sql = "SELECT user_updatedts FROM " . DB_PREFIX . "users ORDER BY user_updatedts DESC";
+                break;
             case 'useractivity':
                 $sql = "SELECT useract_updatedts FROM " . DB_PREFIX . "useractivity ORDER BY useract_updatedts DESC";
                 break;
