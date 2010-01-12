@@ -93,26 +93,26 @@ class StopSpamFunctions
     {
         if (!$ip || !$username || !$email || !$apikey || $ip == '127.0.0.1') { return false; }
         
-        $url = "http://www.stopforumspam.com/post.php?";
-        $url .= "username=" . $username;
+        $url = "http://www.stopforumspam.com/add.php?";
+        $url .= "username=" . urlencode($username);
         $url .= "&ip_addr=" . $ip;
-        $url .= "email=" . $email;
-        $url .= "api_key=" . $apikey;
+        $url .= "&email=" . urlencode($email);
+        $url .= "&api_key=" . $apikey;
         
         /*
-        Old method:
+        // Old method:
         require_once(EXTENSIONS . 'SWCMS/class.httprequest.php');
         $r = new HTTPRequest($url);
         $error = $r->DownloadToString();
-        if (!$error) { 
-            // success! 
-        }*/
+        if (!$error) { echo "Success"; } else { echo $error; }
+        */
         
+        // New method:
         // http://www.phpfour.com/blog/2008/01/php-http-class/
         require_once(EXTENSIONS . 'http/class.http.php');
         $http = new Http();
         $http->execute($url);
-        if (!$http->error) { echo "Success"; } else { echo // $http->error; }
+        //if (!$http->error) { echo "Success"; } else { echo $http->error; }
     }
 }
 

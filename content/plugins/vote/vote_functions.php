@@ -44,7 +44,7 @@ if ($h->cage->post->keyExists('post_id')) {
     //get vote settings
     $vote_settings = unserialize($h->getSetting('vote_settings', 'vote')); 
     
-    // Only proceed if the user is logged in OR anonyous votes are allowed
+    // Only proceed if the user is logged in
     if ($h->currentUser->loggedIn) {
             
         $user_id = $h->currentUser->id;

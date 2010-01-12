@@ -73,14 +73,14 @@ class PliggImp6
                 $count++;
     
                 if ($child->vote_value > 0) { 
-                    $rating = 'positive'; 
+                    $rating = $child->vote_value; 
                 } else {
-                    $rating = 'negative';
+                    $rating = -999; // buried/flagged
                 }
                 
                 $columns    = "vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_reason, vote_updateby";
                 
-                $sql        = "INSERT IGNORE " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%d, %d, %s, %s, %s, %s, %d, %d)";
+                $sql        = "INSERT IGNORE " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%d, %d, %s, %s, %s, %d, %d, %d)";
                 
                 $lks = new PliggImp2();
                 $usr = new PliggImp5();

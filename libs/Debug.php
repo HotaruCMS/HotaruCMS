@@ -32,7 +32,7 @@ class Debug
     {
         if ($h->isDebug) { 
             echo "<p class='debug'>" . $h->db->num_queries . " " . $h->lang['main_hotaru_queries_time'] . " " . timer_stop(1) . " " . 
-            $h->lang['main_hotaru_seconds'] . $h->lang['main_hotaru_memory_usage1'] . display_filesize(memory_get_usage()) . $h->lang['main_hotaru_memory_usage2'] . "</p>"; 
+            $h->lang['main_hotaru_seconds'] . " " . $h->lang['main_hotaru_memory_usage1'] . display_filesize(memory_get_usage()) . $h->lang['main_hotaru_memory_usage2'] . " &nbsp; [Hotaru CMS v." . $h->version . "]</p>"; 
         }
     }
 }

@@ -92,7 +92,7 @@ class Post
             $this->date = $post_row->post_date;
             $this->status = $post_row->post_status;
             $this->type = urldecode($post_row->post_type);
-            $this->category = $post_row->post_category;
+            $this->category = urldecode($post_row->post_category);
             $this->tags = stripslashes(urldecode($post_row->post_tags));
             $this->title = stripslashes(urldecode($post_row->post_title));
             $this->origUrl = urldecode($post_row->post_orig_url);

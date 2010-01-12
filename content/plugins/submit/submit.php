@@ -636,7 +636,7 @@ class Submit
             if ($category_safe_name == 'all') { 
                 $output .= "<option value='1' selected>" . $h->lang['submit_category_select'] . "</option>\n";
             } else {
-                $output .= "<option value=" . $h->vars['submit_category'] . " selected>" . $result->category_name . "</option>\n";
+                $output .= "<option value=" . $h->vars['submit_category'] . " selected>" . urldecode($result->category_name) . "</option>\n";
             }
         } else {
             $output .= "<option value='1' selected>" . $h->lang['submit_category_select'] . "</option>\n";

@@ -157,6 +157,10 @@ function create_table($table_name)
         
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (miscdata_key, miscdata_value, miscdata_default) VALUES (%s, %s, %s)";
         $db->query($db->prepare($sql, 'permissions', $perms, $perms));
+        
+        // default settings
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (miscdata_key, miscdata_value, miscdata_default) VALUES (%s, %s, %s)";
+        $db->query($db->prepare($sql, 'user_settings', '', ''));
     }
     
     
