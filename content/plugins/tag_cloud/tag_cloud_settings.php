@@ -28,7 +28,7 @@
 class TagCloudSettings
 {
      /**
-     * Admin settings for tags
+     * Admin settings for tag cloud
      */
     public function settings($h)
     {
@@ -50,12 +50,12 @@ class TagCloudSettings
         if (!$num_tags_widget) { $num_tags_widget = 25; }
         if (!$show_widget_title) { $show_widget_title = ''; }
     
-        $h->pluginHook('tags_settings_get_values');
+        $h->pluginHook('tag_cloud_settings_get_values');
         
         //...otherwise set to blank:
         if (!$num_tags_page) { $num_tags_page = 'subconcious'; }  // This is the default in tags' generic code
             
-        echo "<form name='tags_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=tag_cloud' method='post'>\n";
+        echo "<form name='tag_cloud_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=tag_cloud' method='post'>\n";
         
         echo "<h3>" . $h->lang["tag_cloud_settings_main_cloud"] . "</h3><br />";
             
@@ -69,7 +69,7 @@ class TagCloudSettings
             echo $h->lang["tag_cloud_settings_show_widget_title"] . "<br /><br />\n";
         echo "<input type='text' size=5 name='num_tags_widget' value='" . $num_tags_widget . "'> - " . $h->lang["tag_cloud_settings_num_tags_widget"] . "\n";    
     
-        $h->pluginHook('tags_settings_form');
+        $h->pluginHook('tag_cloud_settings_form');
                 
         echo "<br /><br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
@@ -80,7 +80,7 @@ class TagCloudSettings
     
     
      /**
-     * Save admin settings for tags
+     * Save admin settings for tag cloud
      *
      * @return true
      */
@@ -107,7 +107,7 @@ class TagCloudSettings
             $num_tags_widget = 25; // default
         }
         
-        $h->pluginHook('tags_save_settings');
+        $h->pluginHook('tag_cloud_save_settings');
         
         if (is_numeric($num_tags_page) && is_numeric($num_tags_widget))
         { 
