@@ -83,7 +83,7 @@ class UserManagerSettings
                             $h->addToBlockedList($type = 'user', $value = $u->name, false);
                             $h->addToBlockedList($type = 'email', $value = $u->email, false);
                         }
-                        $h->pluginHook('user_man_killspam_delete', true, '', array($u));
+                        $h->pluginHook('user_man_killspam_delete', '', array($u));
                         if ($new_role == 'deleted') { $u->deleteUser($h); }
                     }
                 }
