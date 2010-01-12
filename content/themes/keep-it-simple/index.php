@@ -90,14 +90,14 @@ echo "<div id=\"main\" class=\"grid_8\">";
 else {
                       echo "<!-- SIDEBAR -->
 							<!-- left-columns starts -->
-							<div id=\"left-columns\" class=\"grid_8\">
+							<div id=\"left-columns\" class=\"grid_8\" style=\"margin-top: -65px;\">
 							<div class=\"grid_4 alpha\"><!-- left-sidebar starts -->
 							<div class=\"sidemenu\">";	
                             
                                 // plugin hook
                                 $result = $h->pluginHook('theme_index_sidebar');
                                 if (!$result) {
-                                    $h->displayTemplate('sidebar');
+                                    $h->displayTemplate('sidebar_left');
                                 }                                
                             
 					  echo "</div>
@@ -108,7 +108,7 @@ else {
                                 // plugin hook
                                 $result = $h->pluginHook('theme_index_sidebar_2');
                                 if (!$result) {
-                                    $h->displayTemplate('sidebar');
+                                    $h->displayTemplate('sidebar_right');
                                 }                                
                             
 					  echo "</div>
