@@ -707,7 +707,7 @@ class SubmitFunctions
             $title = '';
         }
         
-        return sanitize(utf8_encode($title), 1);
+        return sanitize(utf8_encode($title), 2);
     }
     
 }
