@@ -95,7 +95,7 @@
 		<div id="footer-bottom">
 	
 			<p class="bottom-left">			
-			&nbsp; &copy;2009 All your copyright info here &nbsp; &nbsp;
+			&nbsp; &copy;2010 All your copyright info here &nbsp; &nbsp;
 			Original design by: <a href="http://www.styleshout.com/">styleshout</a>. Modified by <a href="http://www.tr3ndy.com/">tr3ndy</a> for HotaruCMS.									
 			</p>	
 			

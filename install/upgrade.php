@@ -47,7 +47,7 @@ switch ($step) {
         upgrade_welcome();     // "Welcome to Hotaru CMS. 
         break;
     case 2:
-        do_upgrade();
+        do_upgrade($old_version);
         upgrade_complete();    // Delete "install" folder. Visit your site"
         break;
     default:
@@ -165,11 +165,60 @@ function upgrade_complete()
 /**
  * Do Upgrade
  */
-function do_upgrade()
+function do_upgrade($old_version)
 {
     global $h;
 
     // can't upgrade from pre-1.0 versions of Hotaru.
+    
+    // 1.0 to 1.0.1
+    if ($old_version == "1.0") {
+
+        // Change "positive" to 10
+        $sql = "UPDATE " . TABLE_POSTVOTES . " SET vote_rating = %d WHERE vote_rating = %s";
+        $h->db->query($h->db->prepare($sql, 10, 'positive'));
+        
+        // Change "negative" to -10
+        $sql = "UPDATE " . TABLE_POSTVOTES . " SET vote_rating = %d WHERE vote_rating = %s";
+        $h->db->query($h->db->prepare($sql, -10, 'negative'));
+        
+        // Change "alert" to -999
+        $sql = "UPDATE " . TABLE_POSTVOTES . " SET vote_rating = %d WHERE vote_rating = %s";
+        $h->db->query($h->db->prepare($sql, -999, 'alert'));
+        
+        // Alter the PostVotes table so the vote rating is an INT
+        $sql = "ALTER TABLE " . TABLE_POSTVOTES . " CHANGE vote_rating vote_rating smallint(11) NOT NULL DEFAULT %d";
+        $h->db->query($h->db->prepare($sql, 0));
+        
+        // Update Hotaru version number to the database (referred to when upgrading)
+        $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_key = %s, miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";
+        $h->db->query($h->db->prepare($sql, 'hotaru_version', $h->version, $h->version, 'hotaru_version'));
+    
+        // check there are default permissions present and add if necessary
+        $sql = "SELECT miscdata_id FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+        $result = $h->db->get_var($h->db->prepare($sql, 'permissions'));
+        if (!$result) {
+            // Default permissions
+            $perms['options']['can_access_admin'] = array('yes', 'no');
+            $perms['can_access_admin']['admin'] = 'yes';
+            $perms['can_access_admin']['supermod'] = 'yes';
+            $perms['can_access_admin']['default'] = 'no';
+            $perms = serialize($perms);
+            
+            $sql = "INSERT INTO " . TABLE_MISCDATA . " (miscdata_key, miscdata_value, miscdata_default) VALUES (%s, %s, %s)";
+            $h->db->query($h->db->prepare($sql, 'permissions', $perms, $perms));
+        }
+        
+        // check there are default user_settings present and add if necessary
+        $sql = "SELECT miscdata_id FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+        $result = $h->db->get_var($h->db->prepare($sql, 'user_settings'));
+        if (!$result) {
+            // default settings
+            $sql = "INSERT INTO " . TABLE_MISCDATA . " (miscdata_key, miscdata_value, miscdata_default) VALUES (%s, %s, %s)";
+            $h->db->query($h->db->prepare($sql, 'user_settings', '', ''));
+        }
+        
+    }
 }
 
 ?>

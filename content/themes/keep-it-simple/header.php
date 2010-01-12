@@ -82,7 +82,7 @@
 		<p id="intro" style="margin-top: -20px;">Put your favorite slogan here...</p>			
 
         <!-- CATEGORIES, ETC -->
-		<div id="categories_kisp"><?php $h->pluginHook('post_header'); ?></div>	 
+		<div id="categories_kisp"><?php $h->pluginHook('header_end'); ?></div>	 
 
 </div> <!-- Fine div header --> 
 </div> <!-- Fine div header-wrap -->

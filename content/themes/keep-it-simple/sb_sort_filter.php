@@ -1,6 +1,6 @@
 <?php
 /**
- * Sorting Options (Vote Simple plugin)
+ * Sort and filter template
  *
  * PHP version 5
  *
@@ -31,59 +31,59 @@
     <ul class="sort_menu">
     
         <li <?php echo $h->vars['popular_active']; ?>>
-            <a href="<?php echo $h->vars['popular_link']; ?>">
-            <?php echo $h->lang["vote_sort_recently_popular"]; ?></a>
+			<a href="<?php echo $h->vars['popular_link']; ?>">
+            <?php echo $h->lang["sb_base_sort_recently_popular"]; ?></a>
         </li>
 
         <li <?php echo $h->vars['upcoming_active']; ?>>
             <a href="<?php echo $h->vars['upcoming_link']; ?>">
-            <?php echo $h->lang["vote_sort_upcoming"]; ?></a>
+            <?php echo $h->lang["sb_base_sort_upcoming"]; ?></a>
         </li>
         
         <li <?php echo $h->vars['latest_active']; ?>>
             <a href="<?php echo $h->vars['latest_link']; ?>">
-            <?php echo $h->lang["vote_sort_latest"]; ?></a>
+            <?php echo $h->lang["sb_base_sort_latest"]; ?></a>
         </li>
         
         <li <?php echo $h->vars['all_active']; ?>>
             <a href="<?php echo $h->vars['all_link']; ?>">
-            <?php echo $h->lang["vote_sort_all"]; ?></a>
+            <?php echo $h->lang["sb_base_sort_all"]; ?></a>
         </li>
         
-        
-        <li><br />
-        <?php echo $h->lang["vote_sort_best_from"]; ?></li>
+        <br />
+        <li>
+        <?php echo $h->lang["sb_base_sort_best_from"]; ?></li>
         
         <li <?php echo $h->vars['top_24_hours_active']; ?>>
             <a href="<?php echo $h->vars['24_hours_link']; ?>">
-            <?php echo $h->lang["vote_sort_top_1_day"]; ?></a>
+            <?php echo $h->lang["sb_base_sort_top_1_day"]; ?></a>
         </li>
         
         <!-- Doesn't fit in the default theme
         <li <?php echo $h->vars['top_48_hours_active']; ?>>
             <a href="<?php echo $h->vars['48_hours_link']; ?>">
-            <?php echo $h->lang["vote_sort_top_2_days"]; ?></a>
+            <?php echo $h->lang["sb_base_sort_top_2_days"]; ?></a>
         </li>
         -->
         
         <li <?php echo $h->vars['top_7_days_active']; ?>>
             <a href="<?php echo $h->vars['7_days_link']; ?>">
-            <?php echo $h->lang["vote_sort_top_7_days"]; ?></a>
+            <?php echo $h->lang["sb_base_sort_top_7_days"]; ?></a>
         </li>
         
         <li <?php echo $h->vars['top_30_days_active']; ?>>
             <a href="<?php echo $h->vars['30_days_link']; ?>">
-            <?php echo $h->lang["vote_sort_top_30_days"]; ?></a>
+            <?php echo $h->lang["sb_base_sort_top_30_days"]; ?></a>
         </li>
         
         <li <?php echo $h->vars['top_365_days_active']; ?>>
             <a href="<?php echo $h->vars['365_days_link']; ?>">
-            <?php echo $h->lang["vote_sort_top_365_days"]; ?></a>
+            <?php echo $h->lang["sb_base_sort_top_365_days"]; ?></a>
         </li>
         
         <li <?php echo $h->vars['top_all_time_active']; ?>>
             <a href="<?php echo $h->vars['all_time_link']; ?>">
-            <?php echo $h->lang["vote_sort_top_all_time"]; ?></a>
+            <?php echo $h->lang["sb_base_sort_top_all_time"]; ?></a>
         </li>
         
     </ul>

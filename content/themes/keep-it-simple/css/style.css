@@ -48,8 +48,8 @@ h4 { font-size: 1.3em; }
 
 /* Lists */
 ul, ol {
-	margin: 10px 20px;
-	padding: 0 20px;
+	margin: 10px 12px;
+	padding: 2px 20px;
 }
 ul { list-style: disc; }
 ol { list-style: decimal; }
@@ -463,6 +463,8 @@ text-decoration:none;
 
 /* footer-content */
 #footer-content {
+	color: #666666;
+	font-weight: normal;
 	float: left;	
 	width: 100%;	
 	padding: 0 0 35px 0;				
@@ -629,7 +631,7 @@ ol.commentlist {
 	border:none;
 }
 
-#sort_box {margin-top: -20px; margin-botton: 20px;}
+#sort_box {margin-top: -32px; margin-botton: 20px;}
 
 /* sidebar */
 
@@ -684,11 +686,14 @@ input.submit{
 
 /* submission form */
 
-input#post_orig_url { 
+input#submit_orig_url { 
 	width: 665px;
 }
 input#post_title { 
 	width: 665px;
+}
+input#post_tags { 
+	width: 300px;
 }
 textarea#post_content { 
 	width: 665px;

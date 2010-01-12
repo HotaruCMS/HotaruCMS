@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.1.2 2010/01/12 - Nick - Fixes for auto-vote on post submission
 v.1.1 2010/01/03 - Nick - Updated for Hotaru 1.0
 v.1.0 2009/11/30 - Nick - Ability to filter to media type (requires Media Select plugin)
 v.0.9 2009/11/22 - Nick - Option to allow unvoting back to latet page. Bug fix for post promotion error 

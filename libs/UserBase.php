@@ -169,6 +169,8 @@ class UserBase
         $existing_perms = unserialize($user_info->user_permissions);
         
         // merge permissions
+        if (!$default_perms) { $default_perms = array(); }
+        if (!$existing_perms) { $existing_perms = array(); }
         $updated_perms = array_merge($default_perms, $existing_perms);
         
         $this->setAllPermissions($updated_perms);
@@ -358,7 +360,9 @@ class UserBase
             $result = unserialize($result);
             if ($type == 'user_settings') {
                 $defaults = $this->getDefaultSettings($h);
-                $result = array_merge($defaults, $result);
+                if ($defaults) {
+                    $result = array_merge($defaults, $result);
+                }
             }
         } elseif ($type == 'user_settings') {
             return $this->getDefaultSettings($h);
@@ -418,7 +422,7 @@ class UserBase
         } else {
             $h->smartCache('on', 'miscdata', 10); // start using database cache (saves for 10 minutes unless updated)
             $result = $h->db->get_var($sql);
-            $h->vars[$sql] = $result;    // cache result
+            $h->vars[$sql] = $result; // cache result in memory for this page load
             $h->smartCache('off'); // stop using database cache
         }
         
@@ -440,14 +444,8 @@ class UserBase
     public function updateDefaultSettings($h, $settings, $type = 'site')
     {
         if (!$settings) { return false; } else { $settings = serialize($settings); }
-        
-        $result = $h->getDefaultSettings($type);
-        
-        if (!$result) {
-            // insert settings for the first time
-            $sql = "INSERT INTO " . TABLE_MISCDATA . " (miscdata_key, miscdata_value, miscdata_default, miscdata_updateby) VALUES (%s, %s, %s, %d)";
-            $h->db->query($h->db->prepare($sql, 'user_settings', $settings, $settings, $this->id));
-        } elseif ($type == 'site') {
+
+        if ($type == 'site') {
             // update the site defaults
             $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
             $h->db->query($h->db->prepare($sql, $settings, $h->currentUser->id, 'user_settings'));
