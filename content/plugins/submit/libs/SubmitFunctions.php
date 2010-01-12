@@ -164,7 +164,7 @@ class SubmitFunctions
                     $h->vars['submitted_data']['submit_title'] = $title;
                     // get content:
                     $allowable_tags = $h->vars['submit_settings']['allowable_tags'];
-                    $content = sanitize($h->cage->post->getHtmLawed('post_content'), 1, $allowable_tags);
+                    $content = sanitize($h->cage->post->getHtmLawed('post_content'), 2, $allowable_tags);
                     $h->vars['submitted_data']['submit_content'] = $content;
                     // get category:
                     $category = $h->cage->post->getInt('post_category');
@@ -206,7 +206,7 @@ class SubmitFunctions
                     $h->vars['submitted_data']['submit_title'] = $title;
                     // get content:
                     $allowable_tags = $h->vars['submit_settings']['allowable_tags'];
-                    $content = sanitize($h->cage->post->getHtmLawed('post_content'), 1, $allowable_tags);
+                    $content = sanitize($h->cage->post->getHtmLawed('post_content'), 2, $allowable_tags);
                     $h->vars['submitted_data']['submit_content'] = $content;
                     // get category:
                     $category = $h->cage->post->testInt('post_category');
