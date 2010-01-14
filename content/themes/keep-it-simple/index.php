@@ -64,7 +64,7 @@ if (!$result) {
                             
                             <!-- MAIN -->
 							
-<?php if ($h->pageName == "submit1" || $h->pageName == "submit2") {  "<div id=\"submission\">"; }
+<?php if ($h->pageName == "submit1" || $h->pageName == "submit2" || $h->pageName == "edit_post") {  "<div id=\"submission\">"; }
 else {
 echo "<div id=\"main\" class=\"grid_8\">"; 
 } ?>
@@ -79,7 +79,7 @@ echo "<div id=\"main\" class=\"grid_8\">";
 
                     <?php if ($h->sidebars) { ?>
 
-<?php if ($h->pageName == "submit1" || $h->pageName == "submit2")
+<?php if ($h->pageName == "submit1" || $h->pageName == "submit2" || $h->pageName == "edit_post")
 { // DO NOTHING Submission in progress 
 	echo "<style type=\"text/css\">
 	<!-- #main form {
