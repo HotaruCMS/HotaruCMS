@@ -50,7 +50,7 @@ $h->pluginHook('submit_2_assign');
     <tr>
         <td style='vertical-align: top;'><?php echo $h->lang["submit_content"]; ?>&nbsp; </td>
         <td colspan=2>
-            <textarea id='post_content' name='post_content' rows='6' maxlength='<?php echo $h->vars["submit_content_length"]; ?>'><?php echo $h->vars['submit_content']; ?></textarea>
+            <textarea id='post_content' name='post_content' rows='6'><?php echo $h->vars['submit_content']; ?></textarea>
         </td>
     </tr>
     <tr>
