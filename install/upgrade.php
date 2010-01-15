@@ -219,6 +219,19 @@ function do_upgrade($old_version)
         }
         
     }
+    
+    
+    // 1.0.1 to 1.0.2
+    if ($old_version == "1.0.1") {
+        
+        // Add new user_lastactivity field
+        $exists = $h->db->column_exists('users', 'user_lastvisit');
+        if (!$exists) {
+            // Alter the Users table to include user_lastvisit
+            $sql = "ALTER TABLE " . TABLE_USERS . " ADD user_lastvisit TIMESTAMP NULL AFTER user_lastlogin";
+            $h->db->query($h->db->prepare($sql));
+        }
+    }
 }
 
 ?>
