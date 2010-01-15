@@ -25,7 +25,7 @@
  */
 class Hotaru
 {
-    protected $version              = "1.0.1";  // Hotaru CMS version
+    protected $version              = "1.0.2";  // Hotaru CMS version
     protected $isDebug              = false;    // show db queries and page loading time
     protected $isAdmin              = false;    // flag to tell if we are in Admin or not
     protected $sidebars             = true;     // enable or disable the sidebars
@@ -218,7 +218,11 @@ class Hotaru
         // This requires there to be a file in the plugin folder called pluginname_settings.php
         // The file must contain a class titled PluginNameSettings
         // The class must have a method called "settings".
-        if ($this->cage->get->testAlnumLines('plugin') != $this->plugin->folder) { return false; }
+        if (($this->cage->get->testAlnumLines('plugin') != $this->plugin->folder)
+            && ($this->cage->post->testAlnumLines('plugin') != $this->plugin->folder)) 
+        { 
+            return false; 
+        }
         
         if (file_exists(PLUGINS . $this->plugin->folder . '/' . $this->plugin->folder . '_settings.php')) {
             include_once(PLUGINS . $this->plugin->folder . '/' . $this->plugin->folder . '_settings.php');
@@ -1027,15 +1031,18 @@ class Hotaru
  
     /**
      * Displays an announcement at the top of the screen
+     *
+     * @param string $announcement - optional for non-admin pages
+     * @return array
      */
-    public function checkAnnouncements() 
+    public function checkAnnouncements($announcement = '') 
     {
         require_once(LIBS . 'Announcements.php');
         $announce = new Announcements();
         if ($this->isAdmin) {
             return $announce->checkAdminAnnouncements($this);
         } else {
-            return $announce->checkAnnouncements($this);
+            return $announce->checkAnnouncements($this, $announcement);
         }
     }
     
@@ -1300,7 +1307,7 @@ class Hotaru
     {
         require_once(LIBS . 'Caching.php');
         $caching = new Caching();
-        $caching->smartCache($this, $switch, $table, $timeout, $html, $label);
+        return $caching->smartCache($this, $switch, $table, $timeout, $html, $label);
     }
     
     

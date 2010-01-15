@@ -58,7 +58,7 @@ class Caching
      * This function caches blocks of HTML code
      *
      * @param string $table DB table name
-     * @param int $timeout timeout in minutes
+     * @param int $timeout timeout in minutes before cache file is deleted
      * @return bool
      */
     public function smartCacheHTML($h, $table = '', $timeout = 0, $html = '', $label = '')
@@ -72,19 +72,29 @@ class Caching
             $last_update = $h->vars['last_updates'][$table] = $last_update;
         }
         
-        // compare times (if there's $html, we don't want to return because we need to update the cache.
-        if (($last_update >= (time() - $timeout*60)) && !$html) { return false; } // there's been a recent update so don't use the cache.
-        
-        $cache_length = $timeout*60;   // seconds - NOT USING THIS IN HTML CACHE
+        $cache_length = $timeout*60;   // seconds
         $cache = CACHE . 'html_cache/';
         if ($label) { $label = '_' . $label; } 
         $file = $cache . $table . $label . ".cache";
+        
+        //echo "time now: " . time() . "<br />";
+        //echo "time minus timeout: " . (time() - $timeout*60) . "<br />";
+        //echo "last update: " . $last_update . "<br />";
         
         if (!$html) {
             // we only want to read the cache if it exists, hence no $html passed to this function
             if (file_exists($file)) {
                 $content = file_get_contents($file);
-                return $content;    // return the HTML to display
+                $last_modified = filemtime($file);
+                //echo "last modified: " . $last_modified . "<br />";
+                if ($last_modified <= (time() - $cache_length)) { 
+                    // delete cache
+                    unlink($file);
+                    return false;
+                } else {
+                    if ($last_update >= $last_modified) { return false; } // there's been a recent update so don't use the cache.
+                    return $content;    // return the HTML to display
+                }
             } else {
                 return false;
             }
@@ -103,7 +113,6 @@ class Caching
         }
         
         fclose($fp);
-        
         return true; // the calling function already has the HTML to output
     }
     

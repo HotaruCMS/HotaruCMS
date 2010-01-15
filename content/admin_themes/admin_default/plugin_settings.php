@@ -29,11 +29,16 @@
 if ($h->vars['plugin_settings_csrf_error']) { 
     $h->showMessage($h->lang['error_csrf'], 'red'); return false;
 }
+
 ?>
 
 <div id="plugin_settings">
     <?php 
-        $result = $h->pluginHook('admin_plugin_settings', $h->vars['settings_plugin']);
+        $result = '';
+        if ($h->vars['settings_plugin']) {
+            $result = $h->pluginHook('admin_plugin_settings', $h->vars['settings_plugin']);
+        }
+        
         if (!$result) {
             $sb_links = $h->pluginHook('admin_sidebar_plugin_settings');
             if ($sb_links) {

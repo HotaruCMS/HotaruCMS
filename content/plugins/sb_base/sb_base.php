@@ -463,6 +463,8 @@ class SbBase
      */
     public function user_settings_fill_form($h)
     {
+        if (!isset($h->vars['settings']) || !$h->vars['settings']) { return false; }
+        
         if ($h->vars['settings']['new_tab']) { 
             $h->vars['new_tab_yes'] = "checked"; 
             $h->vars['new_tab_no'] = ""; 
@@ -486,6 +488,8 @@ class SbBase
      */
     public function user_settings_extra_settings($h)
     {
+        if (!isset($h->vars['settings']) || !$h->vars['settings']) { return false; }
+        
         echo "<tr>\n";
             // OPEN POSTS IN A NEW TAB?
         echo "<td>" . $h->lang['sb_base_users_settings_open_new_tab'] . "</td>\n";

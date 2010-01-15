@@ -34,6 +34,18 @@ class UserManagerSettings
      */
     public function settings($h)
     {
+        if (($h->cage->get->testPage('subpage') == 'default_perms') 
+            || ($h->cage->post->testPage('subpage') == 'default_perms')) {
+            $this->defaultPerms($h);
+            return true;
+        }
+        
+        if (($h->cage->get->testPage('subpage') == 'default_settings')
+            || ($h->cage->post->testPage('subpage') == 'default_settings')) {
+            $this->defaultSettings($h);
+            return true;
+        }
+        
         // grab the number of pending users:
         $sql = "SELECT COUNT(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
         $num_pending = $h->db->get_var($h->db->prepare($sql, 'pending'));
@@ -234,6 +246,9 @@ class UserManagerSettings
     }
     
     
+    /**
+     * Draw Rows
+     */
     public function drawRows($h, $users, $filter = '', $search_term = '')
     {
         // prepare for showing posts, 20 per page
@@ -298,6 +313,250 @@ class UserManagerSettings
         }
         
         return $output;
+    }
+    
+    
+    /**
+     * Edit Default Permissions
+     */
+    public function defaultPerms($h)
+    {
+        $role = $h->cage->get->testAlpha('role');
+        if (!$role) { $h->cage->post->testAlpha('role'); }
+        if ($role) {
+            $h->vars['user_man_role'] = $role;
+        } else {
+            $h->vars['user_man_role'] = 'member';
+        }
+        
+        $h->vars['user_man_perms_existing'] = ""; // disable applying changes to other users by default
+        
+        // prevent non-admin user viewing permissions of admin user
+        if (($h->vars['user_man_role'] == 'admin') && ($h->currentUser->role != 'admin')) {
+            $h->showMessage($h->lang["user_man_admin_access_denied"], 'red');
+            return true;
+        }
+
+        // if the form has been submitted...
+        if (($h->cage->post->testAlnumLines('subpage') == 'default_perms') && (($h->cage->post->testAlpha('submitted') == 'true'))) {
+
+            // No CSRF check here because all plugin setting pages are already checked.
+            
+            // get all existing site permissions:
+            $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+            $old_perms = $h->db->get_var($h->db->prepare($sql, 'permissions'));
+            $new_perms = unserialize($old_perms);
+            foreach ($new_perms as $perm => $roles) {
+                if ($perm == 'options') { continue; }
+                $updated = false;
+                foreach ($roles as $role => $value) {
+                    if ($role == $h->vars['user_man_role']) {
+                        $new_perms[$perm][$role] = $h->cage->post->testAlnumLines($perm);
+                        $updated = true;
+                    }
+                }
+                // if no permission found for this role so make one:
+                if (!$updated) {
+                    $new_perms[$perm][$h->vars['user_man_role']] = $h->cage->post->testAlnumLines($perm);
+                }
+            }
+            
+            // save updated site permissions:
+            $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
+            $h->db->query($h->db->prepare($sql, serialize($new_perms), $h->currentUser->id, 'permissions'));
+            
+            $h->message = $h->lang["user_man_perms_updated"];
+            $h->messageType = 'green';
+        }
+
+        // revert to original defaults for this usergroup
+        if (($h->cage->get->testAlnumLines('subpage') == 'default_perms') && (($h->cage->get->testAlpha('revert') == 'true'))) {
+        
+            // get original base permissions:
+            $sql = "SELECT miscdata_default FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+            $base_perms = $h->db->get_var($h->db->prepare($sql, 'permissions'));
+            if (!$base_perms) { $base_perms = array(); } else { $base_perms = unserialize($base_perms); }
+            //echo "BASE PERMS: " . "<br />";
+            //echo "<pre>"; print_r($base_perms); echo "</pre>";
+            
+            // get site permissions:
+            $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+            $site_perms = $h->db->get_var($h->db->prepare($sql, 'permissions'));
+            if (!$site_perms) { $site_perms = array(); } else { $site_perms = unserialize($site_perms); }
+            //echo "SITE PERMS: " . "<br />";
+            //echo "<pre>"; print_r($site_perms); echo "</pre>";
+            
+            // remove role from site perms
+            foreach ($site_perms as $perm => $roles) {
+                if ($perm == 'options') { unset($site_perms[$perm]); continue; }
+                foreach ($roles as $role => $value) {
+                    if ($role == $h->vars['user_man_role']) {
+                        unset($site_perms[$perm][$role]);
+                    }
+                }
+            }
+            
+            //merge arrays
+            $site_perms = array_merge($site_perms, $base_perms);
+            
+            //echo "MERGED PERMS: " . "<br />";
+            //echo "<pre>"; print_r($site_perms); echo "</pre>";
+            
+            // save updated site permissions:
+            $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
+            $h->db->query($h->db->prepare($sql, serialize($site_perms), $h->currentUser->id, 'permissions'));
+            
+            $h->message = $h->lang["user_man_perms_reverted"];
+            $h->messageType = 'green';
+        }
+        
+        // revert all usergroups to original defaults
+        if (($h->cage->get->testAlnumLines('subpage') == 'default_perms') && (($h->cage->get->testAlpha('revert') == 'all'))) {
+        
+            // get original base permissions:
+            $sql = "SELECT miscdata_default FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+            $base_perms = $h->db->get_var($h->db->prepare($sql, 'permissions'));
+            
+            // overwrite site permissions:
+            if ($base_perms) {
+                $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
+                $h->db->query($h->db->prepare($sql, $base_perms, $h->currentUser->id, 'permissions'));
+            }
+            
+            $h->message = $h->lang["user_man_all_perms_reverted"];
+            $h->messageType = 'green';
+        }
+        
+        // wipe all defaults and reinstall plugins
+        if (($h->cage->get->testAlnumLines('subpage') == 'default_perms') && (($h->cage->get->testAlpha('revert') == 'complete'))) {
+            
+            // delete defaults:
+            $sql = "DELETE FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+            $h->db->query($h->db->prepare($sql, 'permissions'));
+            
+            // Default permissions
+            $perms['options']['can_access_admin'] = array('yes', 'no');
+            $perms['can_access_admin']['admin'] = 'yes';
+            $perms['can_access_admin']['supermod'] = 'yes';
+            $perms['can_access_admin']['default'] = 'no';
+            $perms = serialize($perms);
+            
+            $sql = "INSERT INTO " . TABLE_MISCDATA . " (miscdata_key, miscdata_value, miscdata_default, miscdata_updateby) VALUES (%s, %s, %s, %d)";
+            $h->db->query($h->db->prepare($sql, 'permissions', $perms, $perms, $h->currentUser->id));
+            
+            $h->message = $h->lang["user_man_all_perms_deleted"];
+            $h->messageType = 'green';
+        }
+        
+        
+        // get permissions from the database
+        $h->vars['tempPermissionsCache'] = array(); // clear the cache
+        $perm_options = $h->getDefaultPermissions('', 'site', true);
+        $default_perms = $h->getDefaultPermissions($h->vars['user_man_role'], 'site');
+        
+        // update existing users?
+        if ($h->cage->post->keyExists('apply_perms')) {
+            $sql = "UPDATE " . TABLE_USERS . " SET user_permissions = %s, user_updateby = %d WHERE user_role = %s";
+            $h->db->query($h->db->prepare($sql, serialize($default_perms), $h->currentUser->id, $h->vars['user_man_role']));
+        }
+        
+        $h->vars['perm_options'] = '';
+        foreach ($perm_options as $key => $options) {
+            $h->vars['perm_options'] .= "<tr><td>" . make_name($key) . ": </td>\n";
+            foreach($options as $value) {
+                if (isset($default_perms[$key]) && ($default_perms[$key] == $value)) { $checked = 'checked'; } else { $checked = ''; } 
+                if ($key == 'can_access_admin' && ($h->vars['user_man_role'] == 'admin')) { $disabled = 'disabled'; } else { $disabled = ''; }
+                $h->vars['perm_options'] .= "<td><input type='radio' name='" . $key . "' value='" . $value . "' " . $checked . " " . $disabled . "> " . $value . " &nbsp;</td>\n";
+            }
+            $h->vars['perm_options'] .= "</tr>";
+        }
+        
+        // Show template:
+        $h->displayTemplate('user_man_perms', 'user_manager');
+    }
+    
+    
+    /**
+     * Edit Default Settings
+     */
+    public function defaultSettings($h)
+    {
+        // prevent non-admin user viewing permissions of admin user
+        if ($h->currentUser->role != 'admin') {
+            $h->showMessage($h->lang["user_man_admin_access_denied"], 'red');
+            return true;
+        }
+        
+        $h->vars['user_man_user_settings_existing'] = ""; // disable forcing changes on other users by default
+
+        // if the form has been submitted...
+        if (($h->cage->post->testAlnumLines('subpage') == 'default_settings') && (($h->cage->post->testAlpha('submitted') == 'true'))) {
+
+            // No CSRF check here because all plugin setting pages are already checked.
+            
+            // plugin hook
+            $h->pluginHook('user_settings_pre_save');
+            
+            // save updated site permissions:
+            $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
+            $h->db->query($h->db->prepare($sql, serialize($h->vars['settings']), $h->currentUser->id, 'user_settings'));
+            
+            $default_settings = $h->vars['settings'];
+            
+            $h->message = $h->lang["user_man_user_settings_updated"];
+            $h->messageType = 'green';
+        }
+
+        // revert all to original defaults
+        if (($h->cage->get->testAlnumLines('subpage') == 'default_settings') && (($h->cage->get->testAlpha('revert') == 'all'))) {
+        
+            // get original base settings:
+            $sql = "SELECT miscdata_default FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+            $base_settings = $h->db->get_var($h->db->prepare($sql, 'user_settings'));
+            
+            // overwrite site settings:
+            if ($base_settings) {
+                $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
+                $h->db->query($h->db->prepare($sql, $base_settings, $h->currentUser->id, 'user_settings'));
+            }
+            
+            $default_settings = unserialize($base_settings);
+            
+            $h->message = $h->lang["user_man_all_user_settings_reverted"];
+            $h->messageType = 'green';
+        }
+        
+        // wipe all defaults and reinstall plugins
+        if (($h->cage->get->testAlnumLines('subpage') == 'default_settings') && (($h->cage->get->testAlpha('revert') == 'complete'))) {
+            
+            // delete defaults:
+            $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_default = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
+            $h->db->query($h->db->prepare($sql, '', '', $h->currentUser->id, 'user_settings'));
+            
+            $default_settings = array();
+            
+            $h->message = $h->lang["user_man_all_user_settings_deleted"];
+            $h->messageType = 'green';
+        }
+        
+        
+        // get default settings from the database if we don't already have them:
+        if (!isset($default_settings)) {
+            $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+            $default_settings = $h->db->get_var($h->db->prepare($sql, 'user_settings'));
+            $default_settings = unserialize($default_settings);
+        }
+        
+        // update existing users?
+        if ($h->cage->post->keyExists('force_settings')) {
+            $sql = "UPDATE " . TABLE_USERMETA . " SET usermeta_value = %s, usermeta_updateby = %d WHERE usermeta_key = %s";
+            $h->db->query($h->db->prepare($sql, serialize($default_settings), $h->currentUser->id, 'user_settings'));
+        }
+        
+        $h->vars['settings'] = $default_settings;
+
+        // Show template:
+        $h->displayTemplate('user_man_user_settings', 'user_manager');
     }
 }
 ?>

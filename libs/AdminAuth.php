@@ -264,6 +264,10 @@ class AdminAuth
         if (($h_user != $user_info[0]) || (crypt($user_info[0], 22) != $user_info[1])) { return false; }
         
         if (!$h->isAdmin($h_user)) { return false; }
+        
+        if ($h->vars['update_last_visit']) {
+            $h->currentUser->updateUserLastVisit($h);
+        }
 
         //success...
         return true;

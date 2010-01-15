@@ -70,7 +70,7 @@ class RecentVisitors
         // check for a cached version and use it if no recent update:
         $output = $h->smartCache('html', 'users', 10, '', $label);
         if ($output) {
-            echo $output;
+            echo $output; return true;
         } else {
             $need_cache = true;
         }
@@ -103,6 +103,9 @@ class RecentVisitors
         }
         
         $output .= "<div class='widget_body widget_recent_visitors'>";
+        
+        if ($list) { $output .="<ul class='recent_visitors_list'>\n"; } 
+        
         foreach ($visitors as $visitor) 
         {
             if ($list) {
@@ -123,6 +126,7 @@ class RecentVisitors
             
             if ($list) { $output .="</li>"; } else { $output .="&nbsp;"; }
         }
+        if ($list) { $output .="</ul>"; }
         $output .="</div>";
         
         if ($need_cache) {
@@ -141,7 +145,7 @@ class RecentVisitors
      */
     public function getRecentVisitors($h, $limit)
     {
-        $sql = "SELECT user_id, user_username, user_email FROM " . TABLE_USERS . " ORDER BY user_lastlogin DESC LIMIT " . $limit;
+        $sql = "SELECT user_id, user_username, user_email FROM " . TABLE_USERS . " ORDER BY user_lastvisit DESC LIMIT " . $limit;
         $visitors = $h->db->get_results($h->db->prepare($sql));
        
         if ($visitors) { return $visitors; } else {return false; }

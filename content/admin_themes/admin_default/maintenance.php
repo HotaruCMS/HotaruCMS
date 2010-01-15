@@ -45,11 +45,34 @@ $db_tables = $h->vars['admin_plugin_tables'];
     <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=open">
         <?php echo $h->lang["admin_theme_maintenance_open_site"]; ?></a> - <?php echo $h->lang["admin_theme_maintenance_open_site_desc"]; ?></li>
     <?php } ?>
+    
+    <br />
+    <?php echo $h->lang["admin_theme_maintenance_announcement"]; ?>
+    
+    <form name='maintenance_announcement' action='<?php echo BASEURL; ?>admin_index.php' method='get'>    
+    <table>
+        <tr>
+        <td colspan=2><textarea name='announcement_text' cols=80 rows=2><?php echo $h->vars['admin_announcement']; ?></textarea><br />
+        <?php echo $h->lang["admin_theme_maintenance_announcement_tags"]; ?>
+        </td>
+        </tr>
+        <tr>
+        <td><input type='checkbox' name='announcement_enabled' value='announcement_enabled' <?php echo $h->vars['admin_announcement_enabled']; ?>>
+            <?php echo $h->lang["admin_theme_maintenance_announcement_enable"]; ?></td>
+        <td style='text-align:right;'><input type='submit' value='<?php echo $h->lang['main_form_submit']; ?>' /></td>
+        </tr>            
+    </table>
+    <input type='hidden' name='action' value='announcement'>
+    <input type='hidden' name='page' value='maintenance'>
+    <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
+    </form>
+    
 </ul>
 
-<br />
 <h2><?php echo $h->lang["admin_theme_maintenance_cache"]; ?></h2>
 <ul>
+    <li style="margin-bottom: 1em;"><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=clear_all_cache">
+        <?php echo $h->lang["admin_theme_maintenance_all_cache"]; ?></a> - <?php echo $h->lang["admin_theme_maintenance_all_cache_desc"]; ?></li>
     <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=clear_db_cache">
         <?php echo $h->lang["admin_theme_maintenance_db_cache"]; ?></a> - <?php echo $h->lang["admin_theme_maintenance_db_cache_desc"]; ?></li>
     <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=clear_css_js_cache">

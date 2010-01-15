@@ -26,6 +26,8 @@
 
 /* Main Page */
 $lang["user_man"] = "User Manager";
+$lang["user_man_default_perms"] = "Edit Default Permissions";
+$lang["user_man_default_settings"] = "Edit Default User Settings";
 $lang["user_man_user"] = "User";
 $lang["user_man_user_submissions_1"] = "You can see all";
 $lang["user_man_user_submissions_2"] = "'s submissions";
@@ -84,5 +86,38 @@ $lang['user_man_add_blocked_list'] = "Add to Blocked List";
 /* Sidebar */
 $lang["user_man_admin_sidebar"] = "User Manager";
 
+/* Edit Default Permissions */
+$lang["user_man_perms_desc"] = "Use this page to edit the <b>default</b> permissions for each usergroup.";
+$lang["user_man_admin_access_denied"] = "Sorry, only admins can access this page.";
+$lang["user_man_default_perms_for"] = "Default permissions for ";
+$lang["user_man_apply_perms_desc"] = "Changing default permissions <b>only affects <i>new</i> users</b>. Check the box below if you want existing users to have these permissions, too. <b>Be careful</b> because you will overwrite any changes you may have made for individual users."; 
+$lang["user_man_apply_perms"] = "Apply changes to existing users";
+$lang["user_man_revert_perms"] = "Revert this usergroup to its original default permissions";
+$lang["user_man_revert_all_perms"] = "Revert <span class='bold_red'>all usergroups</span> to their original default permissions";
+$lang["user_man_revert_perms_note"] = "<small>(not forced on existing users)</small>";
+$lang["user_man_perms_updated"] = "Permissions updated";
+$lang["user_man_perms_reverted"] = "Permissions reverted to defaults";
+$lang["user_man_all_perms_reverted"] = "All permissions reverted to defaults";
+$lang["user_man_all_perms_deleted"] = "All default permissions deleted";
+$lang["user_man_perms_trouble"] = "<span class='bold_red'>DELETE ALL DEFAULTS</span>";
+$lang["user_man_perms_trouble_note"] = "<small>(You will need to uninstall and reinstall plugins to restore them)</small>";
+$lang['user_man_no_perms'] = "That's odd, there are no default permissions... Try clicking \"DELETE ALL DEFAULTS\" to reinstall the required \"Can Access Admin\" permission.";
+
+/* Edit Default Settings */
+$lang["user_man_user_settings_desc"] = "Use this page to edit the <b>default</b> user settings for each usergroup.";
+$lang["user_man_admin_access_denied"] = "Sorry, only admins can access this page.";
+$lang["user_man_default_user_settings_for"] = "Default user settings for ";
+$lang["user_man_force_user_settings_desc"] = "Changing default user settings <b>only affects <i>new</i> users</b>. Check the box below if you want to force these settings on existing users, too. <b>Be careful</b> because you will overwrite their own custom settings!"; 
+$lang["user_man_force_user_settings"] = "Force changes on existing users";
+$lang["user_man_revert_user_settings"] = "Revert this usergroup to its original default user settings";
+$lang["user_man_revert_all_user_settings"] = "Revert <span class='bold_red'>all users</span> to the original default settings";
+$lang["user_man_revert_user_settings_note"] = "<small>(not forced on existing users)</small>";
+$lang["user_man_user_settings_updated"] = "User settings updated";
+$lang["user_man_user_settings_reverted"] = "User settings reverted to defaults";
+$lang["user_man_all_user_settings_reverted"] = "All user settings reverted to defaults";
+$lang["user_man_all_user_settings_deleted"] = "All default user settings deleted";
+$lang["user_man_user_settings_trouble"] = "<span class='bold_red'>DELETE ALL DEFAULTS</span>";
+$lang["user_man_user_settings_trouble_note"] = "<small>(You will need to uninstall and reinstall plugins to restore them)</small>";
+$lang['user_man_no_settings'] = "There haven't been any settings installed by plugins yet";
 
 ?>

@@ -218,6 +218,8 @@ function do_upgrade($old_version)
             $h->db->query($h->db->prepare($sql, 'user_settings', '', ''));
         }
         
+        // update "old version" for next set of upgrades
+        $old_version = "1.0.1"
     }
     
     
