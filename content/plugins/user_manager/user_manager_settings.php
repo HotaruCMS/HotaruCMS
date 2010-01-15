@@ -322,7 +322,7 @@ class UserManagerSettings
     public function defaultPerms($h)
     {
         $role = $h->cage->get->testAlpha('role');
-        if (!$role) { $h->cage->post->testAlpha('role'); }
+        if (!$role) { $role = $h->cage->post->testAlpha('role'); }
         if ($role) {
             $h->vars['user_man_role'] = $role;
         } else {

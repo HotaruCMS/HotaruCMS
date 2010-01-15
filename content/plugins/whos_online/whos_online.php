@@ -6,7 +6,7 @@
  * folder: whos_online
  * class: WhosOnline
  * requires: widgets 0.6, users 1.1
- * hooks: install_plugin, admin_plugin_settings, admin_sidebar_plugin_settings, userauth_checkcookie_success, 
+ * hooks: install_plugin, header_include, admin_plugin_settings, admin_sidebar_plugin_settings, userauth_checkcookie_success, 
  *
  * PHP version 5
  *
@@ -187,7 +187,7 @@ class WhosOnline
     public function getOnlineGuests($h)
     {
         /* Define how long the maximum amount of time the session can be inactive. */
-        define("MAX_IDLE_TIME", 3);
+        define("MAX_IDLE_TIME", 20);
         
         if ( $directory_handle = opendir( session_save_path() ) ) { 
             $count = 0;
@@ -195,9 +195,9 @@ class WhosOnline
             while ( false !== ( $file = readdir( $directory_handle ) ) ) {
                 if($file != '.' && $file != '..') {
                     // Comment the 'if(...){' and '}' lines if you get a significant amount of traffic
-                    //if(time()- fileatime(session_save_path() . '\\' . $file) < MAX_IDLE_TIME * 60) {
+                    // if(time()- fileatime(session_save_path() . '\\' . $file) < MAX_IDLE_TIME * 60) {
                         $count++;
-                    //}
+                    // }
                 }
             }
             closedir($directory_handle);

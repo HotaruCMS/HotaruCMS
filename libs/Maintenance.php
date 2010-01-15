@@ -199,6 +199,7 @@ class Maintenance
         echo "</HEAD>\n<BODY>\n";
         echo "<div id='site_closed'>\n";
         echo $lang['main_hotaru_site_closed'];
+        echo "<br /><span style='font-size: 8pt; margin-top: 1.0em;'>[<a href='" . BASEURL . "admin_index.php?page=admin_login'>Admin Login</a>]</span>";
         echo "\n</div>\n</BODY>\n</HTML>\n";
         die(); exit;
     }
