@@ -14,5 +14,6 @@ Instructions
 
 Changelog
 ---------
+v.0.3 2010/01/15 - Nick - Fixes for deleting items and refreshing the cache
 v.0.2 2010/01/03 - Nick - Updates for compatibility with Hotaru 1.0
 v.0.1 2009/11/23 - Nick - Released first version
