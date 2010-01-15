@@ -233,6 +233,15 @@ function do_upgrade($old_version)
             $sql = "ALTER TABLE " . TABLE_USERS . " ADD user_lastvisit TIMESTAMP NULL AFTER user_lastlogin";
             $h->db->query($h->db->prepare($sql));
         }
+        
+        // Add site announcement record
+        $sql = "SELECT miscdata_id FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+        $result = $h->db->get_var($h->db->prepare($sql, 'site_announcement'));
+        if (!$result) {
+            // site announcement
+            $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (miscdata_key, miscdata_value, miscdata_default) VALUES (%s, %s, %s)";
+            $db->query($db->prepare($sql, 'site_announcement', '', ''));
+        }
     }
 }
 

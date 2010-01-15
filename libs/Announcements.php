@@ -58,12 +58,10 @@ class Announcements
         // get the announcement set in the Admin Maintenance page:
         require_once(LIBS . 'Maintenance.php');
         $maintenance = new Maintenance();
-        $result = $maintenance->getSiteAnnouncement($h);
-        if ($result) {
-            if ($result['announcement'] && $result['enabled']) {
-                array_push($announcements, urldecode($result['announcement']));
-            }
-        } 
+        $maintenance->getSiteAnnouncement($h);
+        if ($h->vars['admin_announcement_enabled']) {
+            array_push($announcements, urldecode($h->vars['admin_announcement']));
+        }
         
         // Plugins can add announcements with this:
         $h->vars['hotaru_announcements'] = $announcements;

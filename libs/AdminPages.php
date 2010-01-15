@@ -218,12 +218,12 @@ class AdminPages
     {
         require_once(LIBS . 'Maintenance.php');
         $maintenance = new Maintenance();
-        $announcement_exists = $maintenance->getSiteAnnouncement($h);
+        $maintenance->getSiteAnnouncement($h);
         
         // if no action, return now
         if (!$action = $h->cage->get->testAlnumLines('action')) { return false; }
         
-        if ($action == 'announcement') { $maintenance->addSiteAnnouncement($h, $announcement_exists); }
+        if ($action == 'announcement') { $maintenance->addSiteAnnouncement($h); }
         if ($action == 'open') { $h->openCloseSite('open'); }
         if ($action == 'close') { $h->openCloseSite('close'); }
         if ($action == 'clear_all_cache') { 
