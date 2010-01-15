@@ -265,7 +265,7 @@ class AdminAuth
         
         if (!$h->isAdmin($h_user)) { return false; }
         
-        if ($h->vars['update_last_visit']) {
+        if (!session_id()) {
             $h->currentUser->updateUserLastVisit($h);
         }
 
