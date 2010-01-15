@@ -16,4 +16,5 @@ Instructions
 
 Changelog
 ---------
+v.0.2 2010/01/15 - Nick - Replace "lastlogin" with "lastvisit" for more up-to-date stats
 v.0.1 2010/01/12 - Nick - Released first version
