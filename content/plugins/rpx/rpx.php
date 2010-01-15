@@ -203,7 +203,7 @@ class RPX
     {
         // get the token if available. If not, stop executing this function
         // also stop here if there's no apiKey
-        $token = $h->cage->get->getMixedString1('token');
+        $token = $h->cage->post->getMixedString1('token');
         if (!$token || !$this->apiKey) { return false; }
         
         // get the functions file:
@@ -243,7 +243,7 @@ class RPX
             } 
         }
         
-        if(isset($rpx_profile['primaryKey']) && ($this->account != 'basic')) // PLUS & PRO ACCOUNTS ONLY
+        if (isset($rpx_profile['primaryKey']) && ($this->account != 'basic')) // PLUS & PRO ACCOUNTS ONLY
         {
             //get username from database for this primarykey
             $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_id = %d";
@@ -270,7 +270,7 @@ class RPX
             } 
         } 
         
-        if($rpx_profile['identifier'] && ($this->account == 'basic')) // BASIC ACCOUNTS
+        if ($rpx_profile['identifier'] && ($this->account == 'basic')) // BASIC ACCOUNTS
         {
             //get username from database for this identifier
             $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_rpx_id = %s";
@@ -342,7 +342,7 @@ class RPX
     public function user_signin_pre_display_register_template($h)
     {
         // don't show this register form if there's no token in the url OR the register form from RPX's register template was not submitted
-        if (!$h->cage->get->keyExists('token')
+        if (!$h->cage->post->keyExists('token')
             && ($h->cage->post->testAlpha('rpx') != 'true')) { return false; }
         
         /* Removed this because the user sigin plugin already does a CSRF check, therefore removing this very token!
