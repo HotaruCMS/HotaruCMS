@@ -220,6 +220,9 @@ class SbBase
             case 'latest':
                 return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink('new');
                 break;
+            case 'upcoming':
+                return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink('upcoming');
+                break;
             case 'all':
                 return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink();
                 break;

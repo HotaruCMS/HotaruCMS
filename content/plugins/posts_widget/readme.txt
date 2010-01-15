@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.1.1 2010/01/15 - Nick - Widget title links and RSS feeds fixed
 v.1.0 2010/01/04 - Nick - Renamed from "Sidebar Posts" and updated for Hotaru 1.0
 v.0.9 2009/11/23 - Nick - Removed settings and custom box.
 v.0.8 2009/10/20 - Nick - Added check for vote setting (set in Vote Simple plugin)
