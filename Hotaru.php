@@ -64,10 +64,10 @@ class Hotaru
     /**
      * CONSTRUCTOR - Initialize
      */
-    public function __construct()
+    public function __construct($start = '')
     {
         // initialize Hotaru
-        if (!isset($start)) { 
+        if (!$start) { 
             require_once(LIBS . 'Initialize.php');
             $init = new Initialize($this);
             $this->db           = $init->db;            // database object
