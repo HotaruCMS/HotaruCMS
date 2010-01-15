@@ -219,7 +219,7 @@ function do_upgrade($old_version)
         }
         
         // update "old version" for next set of upgrades
-        $old_version = "1.0.1"
+        $old_version = "1.0.1";
     }
     
     
