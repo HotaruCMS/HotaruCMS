@@ -39,7 +39,7 @@ class WhosOnline
      * ****************************************************************** */
      
     /**
-     * Add a post_tags field to posts table if it doesn't alredy exist
+     * Install widget settings
      */
     public function install_plugin($h)
     {
