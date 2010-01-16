@@ -11,6 +11,7 @@ Instructions
 1. Upload the "activity" folder to your plugins folder.
 2. Install it from Admin -> Plugin Management
 3. Edit settings in Admin -> Activity
+4. Enable the widget in Admin -> Widgets
 
 Changelog
 ---------

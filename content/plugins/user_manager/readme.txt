@@ -4,7 +4,7 @@ Created by: Nick Ramsay
 
 Description
 -----------
-Manage users.
+The main page enables you to view, sort, search, filter, edit and delete users. Two additional pages let you edit the default user permissions and settings for new users or existing usergroups.
 
 Instructions
 ------------

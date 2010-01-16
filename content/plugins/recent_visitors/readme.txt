@@ -4,17 +4,17 @@ Created by: Nick Ramsay
 
 Description
 -----------
-With this plugin you can view a list of the last few registered users to visit your site.
+A widget that shows the most recent site members to have logged in. Includes a settings page that lets you edit the number of users, whether to display them as a list or inline, whether to use avatars, the avatar size, and user name. All user names and avatars link to user profiles, and the widget HTML is cached until the users table is next updated.
 
 Instructions
 ------------
 1. Upload the "recent_visitors" folder to your plugins folder.
 2. Install it from Plugin Management in Admin.
-3. Edit the recent visitors settings in Admin -> Recent Visitors
-4. There are CSS and language files in the plugin folder that you can customize if you want to.
+3. Edit settings in Admin -> Recent Visitors
+4. Enable the widget in Admin -> Widgets
 
 
 Changelog
 ---------
-v.0.2 2010/01/15 - Nick - Replace "lastlogin" with "lastvisit" for more up-to-date stats
+v.0.2 2010/01/15 - Nick - Replaced "lastlogin" with "lastvisit" for more up-to-date stats
 v.0.1 2010/01/12 - Nick - Released first version

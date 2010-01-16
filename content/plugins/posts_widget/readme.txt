@@ -8,9 +8,10 @@ Displays lists of posts in widgets: Top, New, Upcoming, Top 7 Days, Top 30 Days,
 
 Instructions
 ------------
-1. Activate widgets from Admin -> Widgets
-2. Upload the "posts_widget" folder to your plugins folder. Install it from Plugin Management in Admin.
+1. Upload the "posts_widget" folder to your plugins folder. 
+2. Install it from Plugin Management in Admin.
 3. Enable votes from Admin -> Vote
+4. Enable the widget in Admin -> Widgets
 
 Changelog
 ---------
