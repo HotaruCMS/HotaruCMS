@@ -25,6 +25,9 @@
  */
 class Debug
 {
+    protected $fh = array();    // file handlers
+    protected $log = array();   // file paths
+    
     /**
      * Shows number of database queries and the time it takes for a page to load
      */
@@ -34,6 +37,50 @@ class Debug
             echo "<p class='debug'>" . $h->db->num_queries . " " . $h->lang['main_hotaru_queries_time'] . " " . timer_stop(1) . " " . 
             $h->lang['main_hotaru_seconds'] . " " . $h->lang['main_hotaru_memory_usage1'] . display_filesize(memory_get_usage()) . $h->lang['main_hotaru_memory_usage2'] . " &nbsp; [Hotaru CMS v." . $h->version . "]</p>"; 
         }
+    }
+
+
+    /**
+     * Open file for logging
+     *
+     * @param string $type "speed", "error", etc.
+     */
+    public function openLog($h, $type = 'error')
+    {
+        $this->log[$type] = CACHE . "debug_logs/" . $type . ".txt";
+        
+        // delete the file after 1 week:
+        $last_modified = filemtime($this->log[$type]);
+        $expire = (7 * 24 * 60 * 60); // 1 week
+        if ($last_modified < (time() - $expire)) { unlink ($this->log[$type]); }
+        
+        // open/create a file:
+        $this->fh[$type] = fopen($this->log[$type], 'a') or die("can't open file");
+    }
+    
+    
+    /**
+     * Log performance and errors
+     *
+     * @param string $type "error", "speed", etc.
+     */
+    public function writeLog($h, $type = 'error', $string = '')
+    {
+        if ($string) {
+            $string = date('d M Y H:i:s', time()) . ": " . $string . "\n";
+            fwrite($this->fh[$type], $string);
+        }
+    }
+    
+    
+    /**
+     * Close log file
+     *
+     * @param string $type "speed", "error", etc.
+     */
+    public function closeLog($h, $type = 'error')
+    {
+        if (isset($this->fh[$type])) { fclose($this->fh[$type]); }
     }
 }
 ?>

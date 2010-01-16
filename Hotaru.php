@@ -41,6 +41,7 @@ class Hotaru
     protected $avatar;                          // Avatar object
     protected $comment;                         // Comment object
     protected $includes;                        // for CSS/JavaScript includes
+    protected $debug;                           // Debug object
     
     // page info
     protected $pageName             = '';       // e.g. index, category
@@ -64,8 +65,10 @@ class Hotaru
     /**
      * CONSTRUCTOR - Initialize
      */
-    public function __construct($start = '')
+    public function __construct($start = '', $admin = false)
     {
+        if ($admin) { $this->isAdmin = true; }      // we have this here because the checkCssJs function needs it 
+        
         // initialize Hotaru
         if (!$start) { 
             require_once(LIBS . 'Initialize.php');
@@ -77,6 +80,8 @@ class Hotaru
             $this->plugin       = new Plugin();         // instantiate Plugin object
             $this->post         = new Post();           // instantiate Post object
             $this->includes     = new IncludeCssJs();   // instantiate Includes object
+
+            $this->checkCssJs();                        // check if we need to merge css/js
             $this->csrf('set');                         // set a csrfToken
         }
     }
@@ -94,6 +99,13 @@ class Hotaru
      */
     public function start($entrance = '')
     {
+        // Set up debugging:
+        if ($this->isDebug) { 
+            require_once(LIBS . 'Debug.php');
+            $this->debug = new Debug();
+            $this->openLog();
+        }
+        
         // include "main" language pack
         $lang = new Language();
         $this->lang = $lang->includeLanguagePack($this->lang, 'main');
@@ -109,17 +121,20 @@ class Hotaru
                 $this->checkCookie();                   // check cookie reads user details
                 $this->checkAccess();                   // site closed if no access permitted
                 $page = $admin->adminInit($this);       // initialize Admin & get desired page
-                $this->checkCssJs();                    // check if we need to merge css/js
                 $this->adminPages($page);               // Direct to desired Admin page
                 break;
             default:
+                $this->isAdmin = false;
                 $this->checkCookie();                   // log in user if cookie
                 $this->checkAccess();                   // site closed if no access permitted
-                $this->checkCssJs();                    // check if we need to merge css/js
                 if (!$entrance) { return false; }       // stop here if entrance not defined
                 $this->displayTemplate('index');        // displays the index page
         }
 
+        if ($this->isDebug) {
+            $this->closeLog('error');
+        }
+        
         exit;
     }
     
@@ -966,6 +981,7 @@ class Hotaru
         $type = $this->cage->get->testAlpha('type');
         $version = $this->cage->get->testInt('version');
         $this->includes->combineIncludes($this, $type, $version);
+        return true;
      }
      
      
@@ -1073,9 +1089,39 @@ class Hotaru
      */
     public function showQueriesAndTime()
     {
-        require_once(LIBS . 'Debug.php');
-        $debug = new Debug();
-        $debug->showQueriesAndTime($this);
+        $this->debug->showQueriesAndTime($this);
+    }
+    
+    /**
+     * Open file for logging
+     *
+     * @param string $type "speed", "error", etc.
+     */
+    public function openLog($type = 'error')
+    {
+        $this->debug->openLog($this, $type);
+    }
+    
+    
+    /**
+     * Log performance and errors
+     *
+     * @param string $type "speed", "error", etc.
+     */
+    public function writeLog($type = 'error', $string = '')
+    {
+        $this->debug->writeLog($this, $type, $string);
+    }
+    
+    
+    /**
+     * Close log file
+     *
+     * @param string $type "speed", "error", etc.
+     */
+    public function closeLog($type = 'error')
+    {
+        $this->debug->closeLog($this, $type);
     }
     
     
