@@ -199,8 +199,67 @@ class Maintenance
         echo "</HEAD>\n<BODY>\n";
         echo "<div id='site_closed'>\n";
         echo $lang['main_hotaru_site_closed'];
+        echo "<br /><span style='font-size: 8pt; margin-top: 1.0em;'>[<a href='" . BASEURL . "admin_index.php?page=admin_login'>Admin Login</a>]</span>";
         echo "\n</div>\n</BODY>\n</HTML>\n";
         die(); exit;
+    }
+    
+    
+    /**
+     * Get Site Annoucement for Maintenance Page (AdminPages.php)
+     */
+    public function getSiteAnnouncement($h)
+    {
+        if ($h->pageName != 'maintenance') {
+            $h->smartCache('on', 'miscdata', 10); // start using cache
+        }
+        
+        // get announcement from database
+        $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA ." WHERE miscdata_key = %s";
+        $result = $h->db->get_var($h->db->prepare($sql, 'site_announcement'));
+        
+        if ($h->pageName != 'maintenance') {
+            $h->smartCache('off'); // stop using cache 
+        }
+        
+        // assign results to $h
+        if ($result) {
+            $result = unserialize($result);
+            $h->vars['admin_announcement'] = urldecode($result['announcement']);
+            $h->vars['admin_announcement_enabled'] = $result['enabled'];
+        } else {
+            $h->vars['admin_announcement'] = "";
+            $h->vars['admin_announcement_enabled'] = "";
+        }
+
+    }
+    
+    
+    /**
+     * Add Site Annoucement from Maintenance Page (AdminPages.php)
+     *
+     * @param object $announcement_exists - result from getSiteAnnouncement()
+     */
+    public function addSiteAnnouncement($h)
+    {
+        $allowable_tags = "<div><p><span><b><i><u><a><img><blockquote><strike>";
+        $h->vars['admin_announcement'] = sanitize($h->cage->get->getHtmLawed('announcement_text'), 2, $allowable_tags);
+        if ($h->cage->get->keyExists('announcement_enabled')) {
+            $h->vars['admin_announcement_enabled'] = "checked";
+        } else {
+            $h->vars['admin_announcement_enabled'] = "";
+        }
+        
+        // prepare annoucment for database entry:
+        $value = array('announcement'=>urlencode($h->vars['admin_announcement']), 'enabled'=>$h->vars['admin_announcement_enabled']);
+        $value = serialize($value);
+        
+        // update existing db record
+        $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
+        $h->db->query($h->db->prepare($sql, $value, $h->currentUser->id, 'site_announcement'));
+
+        $h->message = $h->lang['admin_maintenance_announcement_updated'];
+        $h->messageType = 'green';
     }
 }
 ?>

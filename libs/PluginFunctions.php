@@ -176,7 +176,7 @@ class PluginFunctions
      *
      * @param string $property - plugin property, e.g. "plugin_version"
      * @param string $folder - plugin folder name, else $h->plugin->folder is used
-     * @param string $field - an alternative field to use instead of $folder
+     * @param string $field - an alternative field to use instead of $folder (no "plugin_" prefix)
      */
     public function getPluginProperty($h, $property = '', $folder = '', $field = '')
     {

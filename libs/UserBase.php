@@ -36,6 +36,7 @@ class UserBase
     protected $settings     = array();  // settings
     protected $profile      = array();  // profile
     protected $ip           = 0;
+    protected $lastActivity = 0;
     
 
     /**
@@ -298,21 +299,21 @@ class UserBase
             $site_perms = $this->getDefaultPermissions($h,'all', 'site'); //get site defaults
             $site_perms = array_merge_recursive($site_perms, $new_perms); // merge
             $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s WHERE miscdata_key = %s";
-            $h->db->query($this->db->prepare($sql, serialize($site_perms), 'permissions'));
+            $h->db->query($h->db->prepare($sql, serialize($site_perms), 'permissions'));
         } 
         elseif ($defaults == 'base')
         {
             $base_perms = $this->getDefaultPermissions($h,'all', 'base'); // get base defaults
             $base_perms = array_merge_recursive($site_perms, $new_perms); // merge
             $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_default = %s WHERE miscdata_key = %s";
-            $h->db->query($this->db->prepare($sql, serialize($base_perms), 'permissions'));
+            $h->db->query($h->db->prepare($sql, serialize($base_perms), 'permissions'));
         }
         else 
         {
             $site_perms = $this->getDefaultPermissions($h,'all', 'site'); //get site defaults
             $site_perms = array_merge_recursive($site_perms, $new_perms); // merge
             $base_perms = $this->getDefaultPermissions($h,'all', 'base'); // get base defaults
-            $base_perms = array_merge_recursive($site_perms, $new_perms); // merge
+            $base_perms = array_merge_recursive($base_perms, $new_perms); // merge
             $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";
             $h->db->query($h->db->prepare($sql, serialize($site_perms), serialize($base_perms), 'permissions'));
         }
@@ -417,12 +418,12 @@ class UserBase
         $query = "SELECT " . $field . " FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
         $sql = $h->db->prepare($query, 'user_settings');
 
-        if (isset($h->vars[$sql])) { 
-            $result = $h->vars[$sql]; 
+        if (isset($h->vars['default_user_settings'][$sql])) { 
+            $result = $h->vars['default_user_settings'][$sql]; 
         } else {
             $h->smartCache('on', 'miscdata', 10); // start using database cache (saves for 10 minutes unless updated)
             $result = $h->db->get_var($sql);
-            $h->vars[$sql] = $result; // cache result in memory for this page load
+            $h->vars['default_user_settings'][$sql] = $result; // cache result in memory for this page load
             $h->smartCache('off'); // stop using database cache
         }
         

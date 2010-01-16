@@ -2,7 +2,7 @@
 /**
  * name: Activity
  * description: Show recent activity
- * version: 0.2
+ * version: 0.3
  * folder: activity
  * class: Activity
  * requires: users 1.1, widgets 0.6
@@ -108,6 +108,8 @@ class Activity
     {
         $sql = "DELETE FROM " . TABLE_USERACTIVITY . " WHERE useract_key = %s AND useract_value = %d";
         $h->db->query($h->db->prepare($sql, 'comment', $h->comment->id));
+        
+        $h->clearCache('html_cache', false);
     }
 
 
@@ -157,6 +159,14 @@ class Activity
     {
         $sql = "DELETE FROM " . TABLE_USERACTIVITY . " WHERE useract_key = %s AND useract_value = %d";
         $h->db->query($h->db->prepare($sql, 'post', $h->post->id));
+        
+        $sql = "DELETE FROM " . TABLE_USERACTIVITY . " WHERE useract_key = %s AND useract_value2 = %d";
+        $h->db->query($h->db->prepare($sql, 'comment', $h->post->id));
+        
+        $sql = "DELETE FROM " . TABLE_USERACTIVITY . " WHERE useract_key = %s AND useract_value2 = %d";
+        $h->db->query($h->db->prepare($sql, 'vote', $h->post->id));
+        
+        $h->clearCache('html_cache', false);
     }
     
     
@@ -169,6 +179,8 @@ class Activity
         
         $sql = "DELETE FROM " . TABLE_USERACTIVITY . " WHERE useract_userid = %d AND useract_key = %s";
         $h->db->query($h->db->prepare($sql, 'vote', $user_id));
+        
+        $h->clearCache('html_cache', false);
     }
     
     

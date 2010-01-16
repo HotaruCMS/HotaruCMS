@@ -39,8 +39,8 @@ class AdminAuth
             }
         }
 
-        // Authenticate the admin if a Signin plugin is ACTIVE:
-        if (is_object($h->currentUser) && $h->isActive('signin'))
+        // Authenticate the admin if a Signin plugin is ACTIVE and site is OPEN:
+        if (is_object($h->currentUser) && $h->isActive('signin') && (SITE_OPEN == 'true'))
         {
             // This first condition happens when the Users plugin is activated 
             // and there's no cookie for the Admin yet.
@@ -264,6 +264,10 @@ class AdminAuth
         if (($h_user != $user_info[0]) || (crypt($user_info[0], 22) != $user_info[1])) { return false; }
         
         if (!$h->isAdmin($h_user)) { return false; }
+        
+        if (!session_id()) {
+            $h->currentUser->updateUserLastVisit($h);
+        }
 
         //success...
         return true;

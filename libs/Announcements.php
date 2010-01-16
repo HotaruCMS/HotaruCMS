@@ -27,9 +27,11 @@ class Announcements
 {
     /**
      * Displays an announcement at the top of the screen
+     *
+     * @param string $announcement - optional 
      * @return array
      */
-    public function checkAnnouncements($h) 
+    public function checkAnnouncements($h, $announcement = '') 
     {
         $announcements = array();
         
@@ -46,6 +48,19 @@ class Announcements
                 $announcements, 
                 $h->lang['main_announcement_plugins_disabled']
             );
+        }
+        
+        // if using the announcement parameter, then add to non-admin pages only:
+        if ($announcement && !$h->isAdmin) {
+            array_push($announcements, $announcement);
+        }
+        
+        // get the announcement set in the Admin Maintenance page:
+        require_once(LIBS . 'Maintenance.php');
+        $maintenance = new Maintenance();
+        $maintenance->getSiteAnnouncement($h);
+        if ($h->vars['admin_announcement_enabled']) {
+            array_push($announcements, urldecode($h->vars['admin_announcement']));
         }
         
         // Plugins can add announcements with this:

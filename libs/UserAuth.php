@@ -51,6 +51,12 @@ class UserAuth extends UserBase
         if ($h_user) {
             $this->getUserBasic($h, 0, $this->name);
             $this->loggedIn = true;
+            // update user_lastvisit field when a new session is created
+            if (!session_id()) {
+                $this->updateUserLastVisit($h);
+            }
+            
+            $h->pluginHook('userauth_checkcookie_success');
         } else {
             $this->setLoggedOutUser($h);
             return false; 
@@ -144,6 +150,23 @@ class UserAuth extends UserBase
     {
         if ($this->id != 0) {
             $sql = "UPDATE " . TABLE_USERS . " SET user_lastlogin = CURRENT_TIMESTAMP WHERE user_id = %d";
+            $h->db->query($h->db->prepare($sql, $this->id));
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+
+    /**
+     * Update last visit (new session started)
+     *
+     * @return bool
+     */
+    public function updateUserLastVisit($h)
+    {
+        if ($this->id != 0) {
+            $sql = "UPDATE " . TABLE_USERS . " SET user_lastvisit = CURRENT_TIMESTAMP WHERE user_id = %d";
             $h->db->query($h->db->prepare($sql, $this->id));
             return true;
         } else {

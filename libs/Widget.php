@@ -34,6 +34,17 @@ class Widget
         // Get settings from the database if they exist...
         $widgets_settings = $h->getSerializedSettings('widgets'); 
         
+        // delete completely any widgets from uninstalled plugins:
+        foreach ($widgets_settings as $ws => $plugins) {
+            foreach ($plugins as $plugin) {
+                if (!$h->isInstalled($plugin['plugin'])) {
+                    $this->deleteWidget($h, $plugin['function']);
+                    unset($widgets_settings['widgets'][$plugin['plugin']]);
+                    // widget settings get updated at the end of this function
+                }
+            }
+        }
+        
         $widgets = $this->getWidgets($h);
         
         if ($widgets) {
@@ -68,9 +79,9 @@ class Widget
 
                 $count++;
             }
-            
-            $h->updateSetting('widgets_settings', serialize($widgets_settings), 'widgets');
         }
+        
+        $h->updateSetting('widgets_settings', serialize($widgets_settings), 'widgets');
     }
 
 
@@ -148,6 +159,7 @@ class Widget
         // Get settings from the database if they exist...
         $sql = "DELETE FROM " . DB_PREFIX . "widgets WHERE widget_function = %s";
         $h->db->query($h->db->prepare($sql, $function));
+        echo "skipping delete from widgets table";
         
         $h->db->query("OPTIMIZE TABLE " . TABLE_WIDGETS);
     }

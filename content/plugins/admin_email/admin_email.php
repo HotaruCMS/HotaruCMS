@@ -275,6 +275,8 @@ class adminEmail
      */
     public function user_settings_fill_form($h)
     {
+        if (!isset($h->vars['settings']) || !$h->vars['settings']) { return false; }
+        
         if ($h->vars['settings']['admin_notify']) { 
             $h->vars['admin_notify_yes'] = "checked"; 
             $h->vars['admin_notify_no'] = ""; 
@@ -290,6 +292,8 @@ class adminEmail
      */
     public function user_settings_extra_settings($h)
     {
+        if (!isset($h->vars['settings']) || !$h->vars['settings']) { return false; }
+        
         echo "<tr>\n";
             // ACCEPT EMAIL FROM ADMINS?
         echo "<td>" . $h->lang['users_settings_email_from_admin'] . "</td>\n";

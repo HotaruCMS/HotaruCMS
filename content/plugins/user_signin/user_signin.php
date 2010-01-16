@@ -324,6 +324,7 @@ class UserSignin
         $h->currentUser->setCookie($h, $remember);
         $h->currentUser->loggedIn = true;
         $h->currentUser->updateUserLastLogin($h);
+        $h->currentUser->updateUserLastVisit($h);
         
         return true;
     }

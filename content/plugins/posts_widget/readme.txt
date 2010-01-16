@@ -8,12 +8,14 @@ Displays lists of posts in widgets: Top, New, Upcoming, Top 7 Days, Top 30 Days,
 
 Instructions
 ------------
-1. Activate widgets from Admin -> Widgets
-2. Upload the "posts_widget" folder to your plugins folder. Install it from Plugin Management in Admin.
+1. Upload the "posts_widget" folder to your plugins folder. 
+2. Install it from Plugin Management in Admin.
 3. Enable votes from Admin -> Vote
+4. Enable the widget in Admin -> Widgets
 
 Changelog
 ---------
+v.1.1 2010/01/15 - Nick - Widget title links and RSS feeds fixed
 v.1.0 2010/01/04 - Nick - Renamed from "Sidebar Posts" and updated for Hotaru 1.0
 v.0.9 2009/11/23 - Nick - Removed settings and custom box.
 v.0.8 2009/10/20 - Nick - Added check for vote setting (set in Vote Simple plugin)

@@ -4,7 +4,7 @@ Created by: Nick Ramsay
 
 Description
 -----------
-Manage users.
+The main page enables you to view, sort, search, filter, edit and delete users. Two additional pages let you edit the default user permissions and settings for new users or existing usergroups.
 
 Instructions
 ------------
@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.0.6 2010/01/15 - Nick - Added user permissions and settings editors
 v.0.5 2010/01/04 - Nick - Updates for compatibility with Hotaru 1.0
 v.0.4 2009/11/26 - Nick - Bug fixes for changing user roles
 v.0.3 2009/11/04 - Nick - Updated install function for easier upgrading

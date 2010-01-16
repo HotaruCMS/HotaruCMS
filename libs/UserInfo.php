@@ -334,8 +334,8 @@ class UserInfo extends UserBase
         array_push($unique_roles, 'supermod');
         array_push($unique_roles, 'moderator');
         array_push($unique_roles, 'member');
-        array_push($unique_roles, 'pending');
         array_push($unique_roles, 'undermod');
+        array_push($unique_roles, 'pending');
         array_push($unique_roles, 'suspended');
         array_push($unique_roles, 'banned');
         array_push($unique_roles, 'killspammed');

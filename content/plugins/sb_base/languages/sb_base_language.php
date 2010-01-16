@@ -99,6 +99,7 @@ $lang["sb_base_sort_top_all_time"] = "All Time";
 /* Submit RSS Feed */
 $lang["sb_base_rss_latest_from"] = "Latest from";
 $lang["sb_base_rss_top_stories_from"] = "Top Stories from";
+$lang["sb_base_rss_upcoming_stories_from"] = "Upcoming Stories on";
 $lang["sb_base_rss_stories_from_user"] = "Stories submitted by";
 $lang["sb_base_rss_stories_tagged"] = "Stories tagged"; 
 $lang["sb_base_rss_stories_in_category"] = "Stories posted in";

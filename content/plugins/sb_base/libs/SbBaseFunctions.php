@@ -292,6 +292,18 @@ class SbBaseFunctions
         if ($category && (FRIENDLY_URLS == "true")) { $cat_id = $h->getCatId($category); }
         if ($category && (FRIENDLY_URLS == "false")) { $cat_id = $category; }
         
+        if ($status == 'upcoming') {
+            // Filters page to "new" stories by most votes, but only stories from the last X days!
+            $vote_settings = unserialize($h->getSetting('vote_settings', 'vote')); 
+            $upcoming_duration = "-" . $vote_settings['upcoming_duration'] . " days"; // default: -5 days
+            
+            $filter['post_status = %s'] = 'new'; 
+            $start = date('YmdHis', strtotime("now"));
+            $end = date('YmdHis', strtotime($upcoming_duration)); // should be negative
+            $filter['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
+            $orderby = "post_votes_up DESC";
+        }
+        
         // When a user clicks a parent category, we need to show posts from all child categories, too.
         // This only works for one level of sub-categories.
         if ($category) {
@@ -340,6 +352,10 @@ class SbBaseFunctions
         elseif ($status == 'top') 
         { 
             $feed->description = $h->lang["sb_base_rss_top_stories_from"] . " " . SITE_NAME; 
+        }
+        elseif ($status == 'upcoming') 
+        { 
+            $feed->description = $h->lang["sb_base_rss_upcoming_stories_from"] . " " . SITE_NAME; 
         }
         elseif ($user) 
         { 

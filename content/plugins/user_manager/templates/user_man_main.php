@@ -30,12 +30,18 @@ if (!isset($h->vars['user_man_rows'])) { $h->vars['user_man_rows'] = ''; }
 if (!isset($h->vars['user_man_navi'])) { $h->vars['user_man_navi'] = ''; }
 ?>
 
-<!-- TITLE FOR ADMIN NEWS -->
+<!-- TITLE FOR USER MANAGER -->
 <h2><?php echo $h->lang["user_man"]; ?></h2>
 
 <?php echo $h->lang["user_man_desc"]; ?>
 
 <?php echo " [<a href='" . BASEURL . "admin_index.php?user_filter=pending&plugin=user_manager&page=plugin_settings&type=filter'>" . $h->lang["user_man_num_pending"] . $h->vars['num_pending'] . "</a>]"; ?>
+
+<p id="user_man_navigation">
+    <b><u><?php echo $h->lang["user_man"]; ?></u></b> &nbsp;&nbsp;
+    <?php echo "<a href='" . BASEURL . "admin_index.php?plugin=user_manager&page=plugin_settings&subpage=default_perms'>" . $h->lang["user_man_default_perms"] . "</a>"; ?> &nbsp;&nbsp;
+    <?php echo "<a href='" . BASEURL . "admin_index.php?plugin=user_manager&page=plugin_settings&subpage=default_settings'>" . $h->lang["user_man_default_settings"] . "</a>"; ?>
+</p>
 
 <?php echo $h->showMessage(); ?>
 

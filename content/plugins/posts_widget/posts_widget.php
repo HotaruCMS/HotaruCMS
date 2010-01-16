@@ -2,7 +2,7 @@
 /**
  * name: Posts Widget
  * description: Adds links in widgets to the latest posts and top stories on the site.
- * version: 1.0
+ * version: 1.1
  * folder: posts_widget
  * class: PostsWidget
  * requires: widgets 0.6, sb_base 0.1
@@ -76,12 +76,34 @@ class PostsWidget
         if (isset($posts) && !empty($posts)) {
             
             $output = "<h2 class='widget_head posts_widget_title'>\n";
-            $output .= "<a href='" . $h->url(array('page'=>'rss', 'status'=>$type)) . "' title='" . $h->lang["posts_widget_icon_anchor_title"] . "'>\n";
-            $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png' alt='RSS' /></a>&nbsp;\n"; // RSS icon
-            if ($type == 'new') {
-                $link = $h->url(array('page'=>'latest'));
-            } else {
-                $link = BASEURL;
+            if ($type == 'top' || $type == 'new' || $type == 'upcoming') {
+                $output .= "<a href='" . $h->url(array('page'=>'rss', 'status'=>$type)) . "' title='" . $h->lang["posts_widget_icon_anchor_title"] . "'>\n";
+                $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png' alt='RSS' /></a>&nbsp;\n"; // RSS icon
+            }
+            switch ($type) {
+                case 'new':
+                    $link = $h->url(array('page'=>'latest'));
+                    break;
+                case 'upcoming':
+                    $link = $h->url(array('page'=>'upcoming'));
+                    break;
+                case 'top-24-hours':
+                    $link = $h->url(array('sort'=>'top-24-hours'));
+                    break;
+                case 'top-7-days':
+                    $link = $h->url(array('sort'=>'top-7-days'));
+                    break;
+                case 'top-30-days':
+                    $link = $h->url(array('sort'=>'top-30-days'));
+                    break;
+                case 'top-365-days':
+                    $link = $h->url(array('sort'=>'top-365-days'));
+                    break;
+                case 'top-all-time':
+                    $link = $h->url(array('sort'=>'top-all-time'));
+                    break;
+                default:
+                    $link = BASEURL;
             }
             $output .= "<a href='" . $link . "' title='" . $h->lang["posts_widget_title_anchor_title"] . "'>" . $title . "</a></h2>\n"; 
             

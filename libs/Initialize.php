@@ -35,12 +35,12 @@ class Initialize
      */
     public function __construct($h)
     {
-        // session to be used by CSRF
+        // session to be used by CSRF, etc.
         if (!isset($_SESSION['HotaruCMS'])) {
             session_start();
             $_SESSION['HotaruCMS'] = time();
         }
-    
+            
         // The order here is important!
         $this->errorReporting();
         $this->getFiles();

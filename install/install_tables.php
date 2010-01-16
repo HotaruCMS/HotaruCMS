@@ -53,7 +53,7 @@ function create_table($table_name)
           `blocked_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
           `blocked_updateby` int(20) NOT NULL DEFAULT 0,
           INDEX  (`blocked_type`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Blocked IPs, users, emails, etc';";
+        ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Blocked IPs, users, emails, etc';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql);
     }
@@ -76,7 +76,7 @@ function create_table($table_name)
           `category_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
           `category_updateby` int(20) NOT NULL DEFAULT 0, 
           UNIQUE KEY `key` (`category_name`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Categories';";
+        ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Categories';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql);
         
@@ -103,7 +103,7 @@ function create_table($table_name)
           `comment_subscribe` tinyint(1) NOT NULL DEFAULT '0',
           `comment_updateby` int(20) NOT NULL DEFAULT 0,
           FULLTEXT (`comment_content`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Post Comments';";
+        ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Post Comments';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql); 
     }
@@ -124,7 +124,7 @@ function create_table($table_name)
               `cvote_rating` enum('positive','negative','alert') NULL,
               `cvote_reason` tinyint(3) NOT NULL DEFAULT 0,
               `cvote_updateby` int(20) NOT NULL DEFAULT 0
-            ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Comment Votes';";
+            ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Comment Votes';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql); 
     }
@@ -140,7 +140,7 @@ function create_table($table_name)
           `miscdata_default` text NOT NULL DEFAULT '',
           `miscdata_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
           `miscdata_updateby` int(20) NOT NULL DEFAULT 0
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Miscellaneous Data';";
+        ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Miscellaneous Data';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql);
         
@@ -161,6 +161,10 @@ function create_table($table_name)
         // default settings
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (miscdata_key, miscdata_value, miscdata_default) VALUES (%s, %s, %s)";
         $db->query($db->prepare($sql, 'user_settings', '', ''));
+        
+        // site announcement
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (miscdata_key, miscdata_value, miscdata_default) VALUES (%s, %s, %s)";
+        $db->query($db->prepare($sql, 'site_announcement', '', ''));
     }
     
     
@@ -187,7 +191,7 @@ function create_table($table_name)
           `plugin_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
           `plugin_updateby` int(20) NOT NULL DEFAULT 0,
           UNIQUE KEY `key` (`plugin_folder`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Application Plugins';";
+        ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Application Plugins';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql);
     }
@@ -202,7 +206,7 @@ function create_table($table_name)
           `plugin_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
           `plugin_updateby` int(20) NOT NULL DEFAULT 0,
           INDEX  (`plugin_folder`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Plugins Hooks';";
+        ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Plugins Hooks';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql);
     }
@@ -218,7 +222,7 @@ function create_table($table_name)
           `plugin_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
           `plugin_updateby` int(20) NOT NULL DEFAULT 0,
           INDEX  (`plugin_folder`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Plugins Settings';";
+        ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Plugins Settings';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql);
     }
@@ -249,7 +253,7 @@ function create_table($table_name)
           `post_subscribe` tinyint(1) NOT NULL DEFAULT '0',
           `post_updateby` int(20) NOT NULL DEFAULT 0, 
           FULLTEXT (`post_title`, `post_domain`, `post_url`, `post_content`, `post_tags`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Story Posts';";
+        ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Story Posts';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql); 
     }
@@ -268,7 +272,7 @@ function create_table($table_name)
           `postmeta_value` text NULL,
            `postmeta_updateby` int(20) NOT NULL DEFAULT 0, 
           INDEX  (`postmeta_postid`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Post Meta';";
+        ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Post Meta';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql); 
     }
@@ -290,7 +294,7 @@ function create_table($table_name)
           `vote_reason` tinyint(3) NOT NULL DEFAULT 0,
           `vote_updateby` int(20) NOT NULL DEFAULT 0,
            INDEX  (`vote_post_id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Post Votes';";
+        ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Post Votes';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql); 
     } 
@@ -308,7 +312,7 @@ function create_table($table_name)
           `settings_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
           `settings_updateby` int(20) NOT NULL DEFAULT 0,
           UNIQUE KEY `key` (`settings_name`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Application Settings';";
+        ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Application Settings';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql);
         
@@ -386,7 +390,7 @@ function create_table($table_name)
           `tags_word` varchar(64) NOT NULL DEFAULT '',
           `tags_updateby` int(20) NOT NULL DEFAULT 0, 
           UNIQUE KEY `tags_post_id` (`tags_post_id`,`tags_word`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Post Tags';";
+        ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Post Tags';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql); 
     }
@@ -402,7 +406,7 @@ function create_table($table_name)
           `tempdata_value` text NULL,
           `tempdata_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
           `tempdata_updateby` int(20) NOT NULL DEFAULT 0
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Temporary Data';";
+        ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Temporary Data';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql); 
     }
@@ -418,7 +422,7 @@ function create_table($table_name)
           `token_stamp` INT(11) NOT NULL default '0',
           `token_action` varchar(64),
           INDEX  (`token_key`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Tokens for CSRF protection';";
+        ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Tokens for CSRF protection';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql);
     }
@@ -441,10 +445,11 @@ function create_table($table_name)
           `user_permissions` text NOT NULL DEFAULT '',
           `user_ip` varchar(32) NOT NULL DEFAULT '0',
           `user_lastlogin` timestamp NULL,
+          `user_lastvisit` timestamp NULL,
           `user_updateby` int(20) NOT NULL DEFAULT 0,
           UNIQUE KEY `key` (`user_username`),
           KEY `user_email` (`user_email`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Users and Roles';";
+        ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Users and Roles';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql); 
     }
@@ -462,7 +467,7 @@ function create_table($table_name)
           `usermeta_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
           `usermeta_updateby` int(20) NOT NULL DEFAULT 0, 
           INDEX  (`usermeta_userid`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='User Meta';";
+        ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='User Meta';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql); 
     }
@@ -485,7 +490,7 @@ function create_table($table_name)
           `useract_date` timestamp NOT NULL,
           `useract_updateby` int(20) NOT NULL DEFAULT 0, 
           INDEX  (`useract_userid`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='User Activity';";
+        ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='User Activity';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql); 
     }
@@ -502,7 +507,7 @@ function create_table($table_name)
           `widget_function` varchar(255) NULL, 
           `widget_args` varchar(255) NULL, 
           `widget_updateby` int(20) NOT NULL DEFAULT 0
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Widgets';";
+        ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Widgets';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql); 
     }

@@ -63,6 +63,9 @@ class AdminPages
                 break;
             case "plugin_settings":
                 $h->vars['settings_plugin'] = $h->cage->get->testAlnumLines('plugin'); // get plugin name from url
+                if (!$h->vars['settings_plugin']) { 
+                    $h->vars['settings_plugin'] = $h->cage->post->testAlnumLines('plugin');  // get plugin name from form
+                }
                 $h->vars['plugin_settings_csrf_error'] = '';
                 if ($h->cage->post->testAlpha('submitted') == 'true') { 
                     $h->vars['plugin_settings_csrf_error'] = (!$h->csrf()) ? true : false;
@@ -213,10 +216,24 @@ class AdminPages
      */
     public function maintenanceAction($h)
     {
+        require_once(LIBS . 'Maintenance.php');
+        $maintenance = new Maintenance();
+        $maintenance->getSiteAnnouncement($h);
+        
+        // if no action, return now
         if (!$action = $h->cage->get->testAlnumLines('action')) { return false; }
         
+        if ($action == 'announcement') { $maintenance->addSiteAnnouncement($h); }
         if ($action == 'open') { $h->openCloseSite('open'); }
         if ($action == 'close') { $h->openCloseSite('close'); }
+        if ($action == 'clear_all_cache') { 
+            $h->clearCache('db_cache', false);
+            $h->clearCache('css_js_cache', false);
+            $h->clearCache('rss_cache', false);
+            $h->clearCache('html_cache', false);
+            $h->message = $h->lang['admin_maintenance_clear_all_cache_success'];
+            $h->messageType = 'green';
+        }
         if ($action == 'clear_db_cache') { $h->clearCache('db_cache'); }
         if ($action == 'clear_css_js_cache') { $h->clearCache('css_js_cache'); }
         if ($action == 'clear_rss_cache') { $h->clearCache('rss_cache'); }
