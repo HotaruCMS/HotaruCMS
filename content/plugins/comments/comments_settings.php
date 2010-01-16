@@ -43,6 +43,7 @@ class CommentsSettings
         // Assign settings to class member
         $h->comment->allForms = $comments_settings['comment_all_forms'];
         $h->comment->avatars = $comments_settings['comment_avatars'];
+        $h->comment->avatarSize = $comments_settings['comment_avatar_size'];
         $h->comment->voting = $comments_settings['comment_voting'];
         $h->comment->email = $comments_settings['comment_email'];
         $h->comment->allowableTags = $comments_settings['comment_allowable_tags'];
@@ -62,6 +63,7 @@ class CommentsSettings
         // Set defaults for empty values:
         if (!$h->comment->allForms) { $h->comment->allForms = ''; }
         if (!$h->comment->avatars) { $h->comment->avatars = ''; }
+        if (!$h->comment->avatarSize) { $h->comment->avatarSize = 16; }
         if (!$h->comment->voting) { $h->comment->voting = ''; }
         if (!$h->comment->levels) { $h->comment->levels = 5; }
         if (!$h->comment->email) { $h->comment->email = ''; }
@@ -92,7 +94,8 @@ class CommentsSettings
         echo "<p>" . $h->lang["comments_settings_instructions"] . "</p><br />";
             
         echo "<p><input type='checkbox' name='comment_form' value='comment_form' " . $check_form . " >&nbsp;&nbsp;" . $h->lang["comments_settings_form"] . "</p>\n";    
-        echo "<p><input type='checkbox' name='comment_avatars' value='comment_avatars' " . $check_avatars . " >&nbsp;&nbsp;" . $h->lang["comments_settings_avatars"] . "</p>\n"; 
+        echo "<p><input type='checkbox' name='comment_avatars' value='comment_avatars' " . $check_avatars . " >&nbsp;&nbsp;" . $h->lang["comments_settings_avatars"] . "</p>\n";
+        echo "<p>" . " <input type='text' size=5 name='avatar_size' value='" . $h->comment->avatarSize . "' /> " . $h->lang["comments_settings_avatar_size"] . "</p>";
         echo "<p><input type='checkbox' name='comment_voting' value='comment_voting' " . $check_votes . " >&nbsp;&nbsp;" . $h->lang["comments_settings_votes"] . "</p>\n"; 
     
         echo "<p>" . " <input type='text' size=5 name='levels' value='" . $h->comment->levels . "' /> " . $h->lang["comments_settings_levels"] . "</p>";
@@ -153,7 +156,7 @@ class CommentsSettings
         echo $h->lang["comments_settings_email_notify"] . "<br /><br />\n";
     
         $admins = $h->getMods('can_comment_manager_settings', 'yes');
-        if (!$email_notify) { $show_admins = 'display: none;'; }
+        if (!$email_notify) { $show_admins = 'display: none;'; } else { $show_admins = ''; }
         echo "<div id='email_notify_options' style='margin-left: 2.0em; " . $show_admins . "'>"; 
         
         if ($admins) {
@@ -219,6 +222,14 @@ class CommentsSettings
             $h->comment->avatars = 'checked';
         } else {
             $h->comment->avatars = '';
+        }
+        
+        // avatar size
+        if ($h->cage->post->keyExists('avatar_size')) { 
+            $avatar_size = $h->cage->post->testInt('avatar_size'); 
+            if (empty($avatar_size)) { $avatar_size = $h->comment->avatarSize; }
+        } else { 
+            $avatar_size = $h->comment->avatarSize; 
         }
         
         // enable votes on comments
@@ -327,6 +338,7 @@ class CommentsSettings
         
         $comments_settings['comment_all_forms'] = $h->comment->allForms;
         $comments_settings['comment_avatars'] = $h->comment->avatars;
+        $comments_settings['comment_avatar_size'] = $avatar_size;
         $comments_settings['comment_voting'] = $h->comment->voting;
         $comments_settings['comment_levels'] = $levels;
         $comments_settings['comment_email'] = $email;

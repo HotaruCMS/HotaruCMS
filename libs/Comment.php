@@ -45,6 +45,7 @@ class Comment
     protected $thisForm     = '';
     protected $allForms     = 'checked';
     protected $avatars      = '';
+    protected $avatarSize   = 16;
     protected $voting       = '';
     protected $order        = 'asc';   // oldest comments first
 

@@ -2,7 +2,7 @@
 /**
  * name: Who Voted
  * description: Show a list of who voted
- * version: 0.2
+ * version: 0.1
  * folder: who_voted
  * class: WhoVoted
  * requires: sb_base 0.1, vote 1.2
@@ -84,19 +84,17 @@ class WhoVoted
                 $output .= "<h2 id='who_voted_title'>" . $h->lang['who_voted'] . "</h2>";
             }
         
-            $output .= "<div id='who_voted_content'><ul>\n";
+            $output .= "<div id='who_voted_content'>\n";
             foreach ($results as $item) {
                 $h->setAvatar($item->user_id, $avatar_size);
-                $output .= "<li class='who_voted_item'>\n";
                 if ($avatars) {
                     $output .= $h->linkAvatar(); 
                 }
                 if ($names) {
-                    $output .="<a href='" . $h->url(array('user' => $item->user_username)) . "'>" . $item->user_username . "</a>\n";
+                    $output .="<a href='" . $h->url(array('user' => $item->user_username)) . "'>" . $item->user_username . "</a> &nbsp;\n";
                 }
-                $output .= "</li>\n";
             }
-            $output .= "</ul></div>\n";
+            $output .= "</div>\n";
         }
         else 
         {
