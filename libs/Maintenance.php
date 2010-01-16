@@ -257,6 +257,9 @@ class Maintenance
         // update existing db record
         $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
         $h->db->query($h->db->prepare($sql, $value, $h->currentUser->id, 'site_announcement'));
+        
+        // clear the database cache:
+        $h->clearCache('db_cache', false);
 
         $h->message = $h->lang['admin_maintenance_announcement_updated'];
         $h->messageType = 'green';
