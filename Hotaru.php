@@ -825,6 +825,20 @@ class Hotaru
         if (!$result) { $result = $this->getPluginProperty('plugin_enabled', $type); }
         return $result;
     }
+
+
+    /**
+     * Determines if a specific plugin is installed
+     *
+     * @param string $folder folder name
+     * @return bool
+     */
+    public function isInstalled($folder = '')
+    {
+        $pluginFunctions = new PluginFunctions();
+        $result = $this->getPluginProperty('plugin_id', $folder);
+        return $result;
+    }
     
     
     /**
