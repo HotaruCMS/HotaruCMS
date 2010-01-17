@@ -278,10 +278,10 @@ class Submit
 
                 if ($set_pending == 'some_pending') {
                     $posts_approved = $h->postsApproved();
-                    $x_posts_needed = $submit_settings['x_posts'];
+                    $x_posts_needed = $h->vars['submit_settings']['x_posts'];
                 }
 
-                
+
                 // Set to pending is the user's permissions for "can_submit" are "mod" OR
                 // if "Put all new posts in moderation" has been checked in Admin->Submit
                 if (   ($h->currentUser->getPermission('can_submit') == 'mod')
@@ -290,10 +290,10 @@ class Submit
                 {
                 // Submitted posts given 'pending' for this user
                     $h->changePostStatus('pending');
-                    $h->messages[$h->lang['submit_form_moderation']] = 'green';
+                    $h->messages[$h->lang['submit_moderation']] = 'green';
                     $return = 1; // will return false just after we notify admins of the post (see about 10 lines down)
                 }
-                
+
                 $h->pluginHook('submit_confirm_pre_trackback'); // Vote uses this to change pst status and redirection
 
                 // notify chosen mods of new post by email if enabled and UserFunctions file exists

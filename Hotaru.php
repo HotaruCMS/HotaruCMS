@@ -1580,7 +1580,7 @@ class Hotaru
      * @param int $userid (optional)
      * @return int 
      */
-    public function postsApproved($userid)
+    public function postsApproved($userid = 0)
     {
         return $this->post->postsApproved($this, $userid);
     }
