@@ -284,7 +284,8 @@ class Maintenance
             }
         }
         closedir($handle);
-        return $files;
+        
+        if ($files) { return $files; } else { return false; }
     }
 }
 ?>

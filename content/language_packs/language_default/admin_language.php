@@ -175,7 +175,7 @@ $lang["admin_theme_maintenance_remove"] = "Remove";
 $lang["admin_theme_maintenance_drop"] = "Delete";
 $lang["admin_theme_maintenance_db_table_warning"] = "<b>Warning: Use with extreme caution!</b>";
 $lang["admin_theme_maintenance_plugin_settings_explanation"] = "Some Hotaru CMS plugins add settings to the database. To save you from having to reconfigure your plugins every time you upgrade, those settings are not removed, even when uninstalling the plugins. If for any reason, you want to delete those settings, you can do it here. It's highly recommended to uninstall each plugin first.";
-$lang["admin_theme_maintenance_empty_explanation"] = "Emptying tables will remove any data, but retain the structure. Remember, some plugins may rely on the data in these tables so removing them may cause problems for your site. Note that the settings, users and usermeta tables are excluded from the list because emptying them would break this page.";
+$lang["admin_theme_maintenance_empty_explanation"] = "Emptying tables will remove any data, but retain the structure. Remember, some plugins may rely on the data in these tables so removing them may cause problems for your site. Unless advised to empty tables by a developer, it's best to leave these alone.";
 $lang["admin_theme_maintenance_no_db_tables_to_empty"] = "No database tables to empty.";
 $lang["admin_theme_maintenance_no_plugin_settings_to_delete"] = "No plugin settings to delete.";
 
