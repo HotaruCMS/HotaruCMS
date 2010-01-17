@@ -44,18 +44,22 @@ class Debug
      * Open file for logging
      *
      * @param string $type "speed", "error", etc.
+     * @param string $mode e.g. 'a' or 'w'. 
+     * @link http://php.net/manual/en/function.fopen.php
      */
-    public function openLog($h, $type = 'error')
+    public function openLog($h, $type = 'debug', $mode = 'a+')
     {
         $this->log[$type] = CACHE . "debug_logs/" . $type . ".txt";
         
-        // delete the file after 1 week:
+        // auto-delete the file after 1 week:
+        /*
         $last_modified = filemtime($this->log[$type]);
         $expire = (7 * 24 * 60 * 60); // 1 week
         if ($last_modified < (time() - $expire)) { unlink ($this->log[$type]); }
+        */
         
         // open/create a file:
-        $this->fh[$type] = fopen($this->log[$type], 'a') or die("can't open file");
+        $this->fh[$type] = fopen($this->log[$type], $mode) or die("can't open file");
     }
     
     
@@ -64,7 +68,7 @@ class Debug
      *
      * @param string $type "error", "speed", etc.
      */
-    public function writeLog($h, $type = 'error', $string = '')
+    public function writeLog($h, $type = 'debug', $string = '')
     {
         if ($string) {
             $string = date('d M Y H:i:s', time()) . ": " . $string . "\n";
@@ -78,7 +82,7 @@ class Debug
      *
      * @param string $type "speed", "error", etc.
      */
-    public function closeLog($h, $type = 'error')
+    public function closeLog($h, $type = 'debug')
     {
         if (isset($this->fh[$type])) { fclose($this->fh[$type]); }
     }

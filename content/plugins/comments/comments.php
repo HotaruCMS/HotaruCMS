@@ -121,9 +121,9 @@ class Comments
      */
     public function theme_index_top($h)
     {
-        // Create a new global object called "comments".
+        // Create a new global object called "comment".
         require_once(LIBS . 'Comment.php');
-        $h->comment = new Comment($this->hotaru);
+        $h->comment = new Comment();
         
         // Get settings from database if they exist...
         $comments_settings = $h->getSerializedSettings();

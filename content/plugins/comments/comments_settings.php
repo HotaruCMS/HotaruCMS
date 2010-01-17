@@ -40,6 +40,10 @@ class CommentsSettings
         // Get settings from database if they exist...
         $comments_settings = $h->getSerializedSettings();
         
+        // Create a new global object called "comment".
+        require_once(LIBS . 'Comment.php');
+        $h->comment = new Comment();
+        
         // Assign settings to class member
         $h->comment->allForms = $comments_settings['comment_all_forms'];
         $h->comment->avatars = $comments_settings['comment_avatars'];
@@ -210,6 +214,10 @@ class CommentsSettings
      */
     public function saveSettings($h)
     {
+        // Create a new global object called "comment".
+        require_once(LIBS . 'Comment.php');
+        $h->comment = new Comment();
+        
         // enable/disable comment form globally
         if ($h->cage->post->keyExists('comment_form')) { 
             $h->comment->allForms = 'checked';

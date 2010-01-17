@@ -103,7 +103,6 @@ class Hotaru
         if ($this->isDebug) { 
             require_once(LIBS . 'Debug.php');
             $this->debug = new Debug();
-            $this->openLog();
         }
         
         // include "main" language pack
@@ -1113,10 +1112,12 @@ class Hotaru
      * Open file for logging
      *
      * @param string $type "speed", "error", etc.
+     * @param string $mode e.g. 'a' or 'w'. 
+     * @link http://php.net/manual/en/function.fopen.php
      */
-    public function openLog($type = 'error')
+    public function openLog($type = 'debug', $mode = 'a+')
     {
-        $this->debug->openLog($this, $type);
+        $this->debug->openLog($this, $type, $mode);
     }
     
     
@@ -1357,6 +1358,20 @@ class Hotaru
         require_once(LIBS . 'Maintenance.php');
         $maintenance = new Maintenance();
         $maintenance->clearCache($this, $folder, $msg);
+    }
+    
+    
+    /**
+     * Get all files in the specified directory except placeholder.txt
+     *
+     * @param string $dir - path to the folder
+     * @return array
+     */    
+    public function getFiles($dir)
+    {
+        require_once(LIBS . 'Maintenance.php');
+        $maintenance = new Maintenance();
+        return $maintenance->getFiles($dir);
     }
     
     

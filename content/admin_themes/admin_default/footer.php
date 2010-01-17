@@ -36,8 +36,9 @@
             echo " <a href='http://hotarucms.org'>HotaruCMS.org</a> ";
             echo $h->lang["admin_theme_footer_for_help"] . "</p>";
             
-            $h->showQueriesAndTime();
-
+            if ($h->isDebug) {
+                $h->showQueriesAndTime();
+            }
         ?>
     </div>
 </div>

@@ -40,9 +40,10 @@ class Initialize
             session_start();
             $_SESSION['HotaruCMS'] = time();
         }
-            
+
         // The order here is important!
-        $this->errorReporting();
+        $this->setDefaultTimezone();
+        $this->errorReporting(); 
         $this->getFiles();
         $this->db = $this->initDatabase();
         $this->cage = $this->initInspektCage();
@@ -78,9 +79,28 @@ class Initialize
      */
     public function errorReporting()
     {
-        ini_set('display_errors',1);
-        ini_set('log_errors',1);
+        // display errors
+        ini_set('display_errors', 1); // Gets disabled later in checkDebug()
         error_reporting(E_ALL);
+        
+        // log errors to a file
+        require_once(EXTENSIONS . 'SWCMS/swcms_error_handler.php'); // error_handler class
+        $error_handler = new swcms_error_handler(0, 0, 1, NULL, CACHE . 'debug_logs/error_log.txt');
+        set_error_handler(array($error_handler, "handler"));
+    }
+
+
+    /**
+     * Set the timezone
+     */
+    public function setDefaultTimezone()
+    {
+        // set timezone
+        $version = explode('.', phpversion());
+        if($version[0] > 4){
+            $tmz = date_default_timezone_get();
+            date_default_timezone_set($tmz);
+        }
     }
 
 
@@ -90,12 +110,10 @@ class Initialize
     public function getFiles()
     {
         // include third party libraries
-
         require_once(EXTENSIONS . 'csrf/csrf_class.php'); // protection against CSRF attacks
         require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
         require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
         require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php'); // database
-        
         
         // include libraries
         require_once(LIBS . 'Avatar.php');          // for displaying avatars
@@ -117,7 +135,7 @@ class Initialize
         require_once(FUNCTIONS . 'funcs.files.php');
         
     }
-    
+
     
     /**
      * Initialize Database
@@ -210,8 +228,12 @@ class Initialize
         if (DEBUG == "true") {
             require_once(FUNCTIONS . 'funcs.times.php');
             timer_start();
+            ini_set('display_errors', 1); // show errors 
             return true;
+        } else {
+            ini_set('display_errors', 0); // don't show errors 
         }
+        
         return false;
     }
         

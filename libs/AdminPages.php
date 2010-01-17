@@ -220,6 +220,12 @@ class AdminPages
         $maintenance = new Maintenance();
         $maintenance->getSiteAnnouncement($h);
         
+        if ($h->isDebug) { 
+            $h->vars['debug_files'] = $h->getFiles(CACHE . 'debug_logs');
+        } else {
+            $h->vars['debug_files'] = '';
+        }
+        
         // if no action, return now
         if (!$action = $h->cage->get->testAlnumLines('action')) { return false; }
         
@@ -238,10 +244,16 @@ class AdminPages
         if ($action == 'clear_css_js_cache') { $h->clearCache('css_js_cache'); }
         if ($action == 'clear_rss_cache') { $h->clearCache('rss_cache'); }
         if ($action == 'clear_html_cache') { $h->clearCache('html_cache'); }
+        if ($action == 'delete_debugs') { $h->clearCache('debug_logs'); }
         if ($action == 'optimize') { $h->optimizeTables(); }
         if ($action == 'empty') { $h->emptyTable($h->cage->get->testAlnumLines('table')); }
         if ($action == 'drop') { $h->dropTable($h->cage->get->testAlnumLines('table')); }
         if ($action == 'remove_settings') { $h->removeSettings($h->cage->get->testAlnumLines('settings')); }
+        
+        // do this again in case the debug cache has just been cleared.
+        if ($h->isDebug) { 
+            $h->vars['debug_files'] = $h->getFiles(CACHE . 'debug_logs');
+        }
     }
     
     

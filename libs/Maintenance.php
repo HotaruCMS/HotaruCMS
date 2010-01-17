@@ -125,7 +125,6 @@ class Maintenance
         
         $h->message = $h->lang['admin_maintenance_optimize_success'];
         $h->messageType = 'green';
-;
     }
     
     
@@ -263,6 +262,29 @@ class Maintenance
 
         $h->message = $h->lang['admin_maintenance_announcement_updated'];
         $h->messageType = 'green';
+    }
+    
+    
+    /**
+     * Get all files in the specified directory except placeholder.txt
+     *
+     * @param string $dir - path to the folder
+     * @return array
+     */    
+    public function getFiles($dir)
+    {
+        $files = array();
+        $exceptions = array('.svn', '.', '..', 'placeholder.txt');
+        
+        $handle=opendir($dir);
+    
+        while (($file = readdir($handle))!==false) {
+            if (!in_array($file, $exceptions)) {
+                array_push($files, $file);
+            }
+        }
+        closedir($handle);
+        return $files;
     }
 }
 ?>

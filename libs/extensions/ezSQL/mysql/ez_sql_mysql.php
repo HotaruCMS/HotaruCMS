@@ -140,7 +140,7 @@
         *  (no mater if magic quotes are on or not)
         */
 
-        function escape($str)
+        function escape($str = '')
         {
             return mysql_escape_string(stripslashes($str));
         }
@@ -159,7 +159,7 @@
         *  Perform mySQL query and try to detirmin result value
         */
 
-        function query($query)
+        function query($query = '')
         {
 
             // Initialise return
@@ -242,22 +242,26 @@
 
                 // Take note of column info
                 $i=0;
-                while ($i < @mysql_num_fields($this->result))
-                {
-                    $this->col_info[$i] = @mysql_fetch_field($this->result);
-                    $i++;
+                if (is_resource($this->result)) {
+                    while ($i < @mysql_num_fields($this->result))
+                    {
+                        $this->col_info[$i] = @mysql_fetch_field($this->result);
+                        $i++;
+                    }
                 }
 
                 // Store Query Results
                 $num_rows=0;
+                if (is_resource($this->result)) {
                 while ( $row = @mysql_fetch_object($this->result) )
-                {
-                    // Store relults as an objects within main array
-                    $this->last_result[$num_rows] = $row;
-                    $num_rows++;
+                    {
+                        // Store relults as an objects within main array
+                        $this->last_result[$num_rows] = $row;
+                        $num_rows++;
+                    }
                 }
 
-                @mysql_free_result($this->result);
+                if (is_resource($this->result)) { @mysql_free_result($this->result); }
 
                 // Log number of rows the query returned
                 $this->num_rows = $num_rows;

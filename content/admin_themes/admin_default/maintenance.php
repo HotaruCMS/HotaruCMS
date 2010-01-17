@@ -84,6 +84,26 @@ $db_tables = $h->vars['admin_plugin_tables'];
 </ul>
 
 <br />
+
+<?php if ($h->isDebug) { ?>
+    <h2><?php echo $h->lang["admin_theme_maintenance_debug"]; ?></h2>
+    <ul>
+        <li style="margin-bottom: 1em;"><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=delete_debugs">
+            <?php echo $h->lang["admin_theme_maintenance_debug_delete"]; ?></a></li>
+    </ul>
+    
+    <?php   if ($h->vars['debug_files']) {
+                echo $h->lang["admin_theme_maintenance_debug_view"] . "<br />";
+                foreach ($h->vars['debug_files'] as $file) {
+                    echo "<a href='" . BASEURL . "cache/debug_logs/" . $file . "'>" . $file . "</a><br />";
+                }
+            } else {
+                 echo $h->lang["admin_theme_maintenance_debug_no_files"] . "<br />";
+            }
+    ?>
+    <br />
+<?php } ?>
+
 <h2><?php echo $h->lang["admin_theme_maintenance_optimize"]; ?></h2>
 <ul>
     <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=optimize">
