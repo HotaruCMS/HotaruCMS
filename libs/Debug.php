@@ -34,8 +34,17 @@ class Debug
     public function showQueriesAndTime($h)
     {
         if ($h->isDebug) { 
-            echo "<p class='debug'>" . $h->db->num_queries . " " . $h->lang['main_hotaru_queries_time'] . " " . timer_stop(1) . " " . 
-            $h->lang['main_hotaru_seconds'] . " " . $h->lang['main_hotaru_memory_usage1'] . display_filesize(memory_get_usage()) . $h->lang['main_hotaru_memory_usage2'] . " &nbsp; [Hotaru CMS v." . $h->version . "]</p>"; 
+        
+            $mysql_version = $h->db->get_var("SELECT VERSION() AS VE");
+            
+            echo "<p class='debug'>";
+            echo $h->lang['main_hotaru_db_queries'] . $h->db->num_queries . " | ";
+            echo $h->lang['main_hotaru_page_load_time'] . timer_stop(1) . $h->lang['main_times_secs'] . " | ";
+            echo $h->lang['main_hotaru_memory_usage'] . display_filesize(memory_get_usage()) . " | ";
+            echo $h->lang['main_hotaru_php_version'] . phpversion() . " | ";
+            echo $h->lang['main_hotaru_mysql_version'] . $mysql_version . " | ";
+            echo $h->lang['main_hotaru_hotaru_version'] . $h->version; 
+            echo "</p>"; 
         }
     }
 

@@ -231,7 +231,7 @@ class Initialize
             ini_set('display_errors', 1); // show errors 
             return true;
         } else {
-            ini_set('display_errors', 0); // don't show errors 
+            ini_set('display_errors', 1); // This should be 0 to hide errors, but some errors (e.g. fatal errors) aren't getting logged so I'm leaving it on for now. Nick
         }
         
         return false;

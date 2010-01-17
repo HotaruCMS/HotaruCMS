@@ -30,7 +30,7 @@
 
     <div id="ft">
         <?php 
-            $h->pluginHook('footer');
+            $h->plugitnHook('footer');
         
             // Link to forums...
             echo "<p><a href='http://hotarucms.org' title='" . $h->lang["main_theme_footer_hotaru_link"] . "'><img src='" . BASEURL . "content/themes/" . THEME . "images/hotarucms.png' ";

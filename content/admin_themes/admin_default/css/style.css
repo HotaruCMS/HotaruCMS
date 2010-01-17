@@ -260,3 +260,5 @@ table#settings {
     border:solid 1px #444444;
     text-decoration: none;
 }
+
+.debug  { font-size: 0.8em; }

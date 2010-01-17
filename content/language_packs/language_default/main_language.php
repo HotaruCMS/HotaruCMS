@@ -44,10 +44,12 @@ $lang["main_settings_not_saved"] = "Error! Settings not saved";
 $lang['main_userbase_cookie_error'] = "Error setting cookie. Username not provided.";
 
 /* Debug / Maintenance */
-$lang['main_hotaru_queries_time'] = "database queries and a page load time of";
-$lang['main_hotaru_seconds'] = "seconds.";
-$lang['main_hotaru_memory_usage1'] = "This page used ";
-$lang['main_hotaru_memory_usage2'] = " bytes of memory.";
+$lang['main_hotaru_db_queries'] = "Database queries: ";
+$lang['main_hotaru_page_load_time'] = "Page load time: ";
+$lang['main_hotaru_memory_usage'] = "Memory usage: ";
+$lang['main_hotaru_php_version'] = "PHP v.";
+$lang['main_hotaru_mysql_version'] = "MySQL v.";
+$lang['main_hotaru_hotaru_version'] = "Hotaru CMS v.";
 $lang['main_hotaru_site_closed'] = SITE_NAME . " is undergoing maintenance.<br />Please come back later.";
 
 /* Announcements */
@@ -63,6 +65,7 @@ $lang['main_times_hour'] = "hr";
 $lang['main_times_minutes'] = "mins";
 $lang['main_times_minute'] = "min";
 $lang['main_times_seconds'] = "a few seconds";
+$lang['main_times_secs'] = "s";
 
 /* Pagination */
 $lang['pagination_first'] = "First";
