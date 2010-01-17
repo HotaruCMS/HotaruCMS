@@ -141,22 +141,67 @@ class UserInfo extends UserBase
     
     
     /**
+     * Check if an username exists in the database (used in forgotten password)
+     *
+     * @param string $username user username
+     * @param string $role user role (optional)
+     * @param int $exclude - exclude a user
+     * @return string|false
+     */
+    public function nameExists($h, $username = '', $role = '', $exclude = 0)
+    {
+        if (!$username) {  return false; }
+        
+        if (!$exclude) {
+            if ($role) { 
+                $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_username = %s AND user_role = %s";
+                $valid_username = $h->db->get_var($h->db->prepare($sql, $username, $role));
+            } else {
+                $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_username = %s";
+                $valid_username = $h->db->get_var($h->db->prepare($sql, $username));
+            }
+        } else {
+            if ($role) { 
+                $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_username = %s AND user_role = %s AND user_id != %d";
+                $valid_username = $h->db->get_var($h->db->prepare($sql, $username, $role, $exclude));
+            } else {
+                $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_username = %s AND user_id != %d";
+                $valid_username = $h->db->get_var($h->db->prepare($sql, $username, $exclude));
+            }
+        }
+
+        if ($valid_username) { return $valid_username; } else { return false; }
+    }
+    
+    
+    /**
      * Check if an email exists in the database (used in forgotten password)
      *
      * @param string $email user email
      * @param string $role user role (optional)
+     * @param int $exclude - exclude a user
      * @return string|false
      */
-    public function emailExists($h, $email = '', $role = '')
+    public function emailExists($h, $email = '', $role = '', $exclude = 0)
     {
         if (!$email) {  return false; }
         
-        if ($role) { 
-            $sql = "SELECT user_email FROM " . TABLE_USERS . " WHERE user_email = %s AND user_role = %s";
-            $valid_email = $h->db->get_var($h->db->prepare($sql, $email, $role));
+        if (!$exclude) {
+            if ($role) { 
+                $sql = "SELECT user_email FROM " . TABLE_USERS . " WHERE user_email = %s AND user_role = %s";
+                $valid_email = $h->db->get_var($h->db->prepare($sql, $email, $role));
+            } else {
+                $sql = "SELECT user_email FROM " . TABLE_USERS . " WHERE user_email = %s";
+                $valid_email = $h->db->get_var($h->db->prepare($sql, $email));
+            }
         } else {
-            $sql = "SELECT user_email FROM " . TABLE_USERS . " WHERE user_email = %s";
-            $valid_email = $h->db->get_var($h->db->prepare($sql, $email));
+            if ($role) { 
+                $sql = "SELECT user_email FROM " . TABLE_USERS . " WHERE user_email = %s AND user_role = %s AND user_id != %d";
+                $valid_email = $h->db->get_var($h->db->prepare($sql, $email, $role, $exclude));
+            } else {
+                $sql = "SELECT user_email FROM " . TABLE_USERS . " WHERE user_email = %s AND user_id != %d";
+                $valid_email = $h->db->get_var($h->db->prepare($sql, $email, $exclude));
+            }
         }
 
         if ($valid_email) { return $valid_email; } else { return false; }

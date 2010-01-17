@@ -491,20 +491,20 @@ class UserSignin
                 }
         
                 return $last_insert_id; // so we can retrieve this user's details for the email confirmation step;
-            } elseif ($result == 0) {
+            } elseif ($exists == 'id') {
                 $h->messages[$h->lang['user_signin_register_id_exists']] = 'red';
     
-            } elseif ($result == 1) {
+            } elseif ($exists == 'name') {
                 $h->messages[$h->lang['user_signin_register_username_exists']] = 'red';
     
-            } elseif ($result == 2) {
+            } elseif ($exists == 'email') {
                 $h->messages[$h->lang['user_signin_register_email_exists']] = 'red';
             } elseif ($blocked) {
                 $h->messages[$h->lang['user_signin_register_user_blocked']] = 'red';
             } else {
                 // allow plugin to override the default "unexpected error" message:
                 $result = $h->pluginHook('user_signin_register_error_message');
-                if (!isset($result) || !is_array($result)) {
+                if (!$result) {
                     $h->messages[$h->lang["user_signin_register_unexpected_error"]] = 'red';
                 }
             }

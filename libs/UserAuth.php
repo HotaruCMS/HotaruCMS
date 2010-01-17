@@ -263,19 +263,27 @@ class UserAuth extends UserBase
             }
     
             $username_check = $h->cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
-            if ($username_check) {
-                $viewee->name = $username_check; // updates the db record
-            } else {
+            if (!$username_check) {
                 $h->messages[$h->lang['main_user_account_update_username_error']] = 'red';
                 $error = 1;
+            } elseif($h->nameExists($username_check, '', $viewee->id)) {
+                $h->messages[$h->lang['main_user_account_update_username_exists']] = 'red';
+                $error = 1;
+            } else {
+                //success
+                $viewee->username = $username_check;
             }
                                 
-            $email_check = $h->cage->post->testEmail('email');    
-            if ($email_check) {
-                $viewee->email = $email_check;
-            } else {
+            $email_check = $h->cage->post->testEmail('email');
+            if (!$email_check) {
                 $h->messages[$h->lang['main_user_account_update_email_error']] = 'red';
                 $error = 1;
+            } elseif($h->emailExists($email_check, '', $viewee->id)) {
+                $h->messages[$h->lang['main_user_account_update_email_exists']] = 'red';
+                $error = 1;
+            } else {
+                //success
+                $viewee->email = $email_check;
             }
             
             $role_check = $h->cage->post->testAlnumLines('user_role'); // from Users plugin account page

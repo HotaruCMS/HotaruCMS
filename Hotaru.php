@@ -630,17 +630,34 @@ class Hotaru
     
     
     /**
+     * Check if an username exists in the database (used in forgotten password)
+     *
+     * @param string $username user username
+     * @param string $role user role (optional)
+     * @param int $exclude - exclude a user
+     * @return string|false
+     */
+    public function nameExists($username = '', $role = '', $exclude = 0)
+    {
+        require_once(LIBS . 'UserInfo.php');
+        $userInfo = new UserInfo();
+        return $userInfo->nameExists($this, $username, $role, $exclude);
+    }
+    
+    
+    /**
      * Check if an email exists in the database (used in forgotten password)
      *
      * @param string $email user email
      * @param string $role user role (optional)
+     * @param int $exclude - exclude a user
      * @return string|false
      */
-    public function emailExists($email = '', $role = '')
+    public function emailExists($email = '', $role = '', $exclude = 0)
     {
         require_once(LIBS . 'UserInfo.php');
         $userInfo = new UserInfo();
-        return $userInfo->emailExists($this, $email, $role);
+        return $userInfo->emailExists($this, $email, $role, $exclude);
     }
     
     
