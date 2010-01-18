@@ -236,7 +236,7 @@ function do_upgrade($old_version)
         if (!$result) {
             // site announcement
             $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (miscdata_key, miscdata_value, miscdata_default) VALUES (%s, %s, %s)";
-            $db->query($db->prepare($sql, 'site_announcement', '', ''));
+            $h->db->query($h->db->prepare($sql, 'site_announcement', '', ''));
         }
     }
     
