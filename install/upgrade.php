@@ -189,10 +189,6 @@ function do_upgrade($old_version)
         // Alter the PostVotes table so the vote rating is an INT
         $sql = "ALTER TABLE " . TABLE_POSTVOTES . " CHANGE vote_rating vote_rating smallint(11) NOT NULL DEFAULT %d";
         $h->db->query($h->db->prepare($sql, 0));
-        
-        // Update Hotaru version number to the database (referred to when upgrading)
-        $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_key = %s, miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";
-        $h->db->query($h->db->prepare($sql, 'hotaru_version', $h->version, $h->version, 'hotaru_version'));
     
         // check there are default permissions present and add if necessary
         $sql = "SELECT miscdata_id FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
@@ -243,6 +239,16 @@ function do_upgrade($old_version)
             $db->query($db->prepare($sql, 'site_announcement', '', ''));
         }
     }
+    
+    
+    // 1.0.2 to 1.0.3
+    if ($old_version == "1.0.2") {
+        // nothing to do...
+    }
+    
+    // Update Hotaru version number to the database (referred to when upgrading)
+    $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_key = %s, miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";
+    $h->db->query($h->db->prepare($sql, 'hotaru_version', $h->version, $h->version, 'hotaru_version'));
 }
 
 ?>
