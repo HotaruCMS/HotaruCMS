@@ -2,7 +2,7 @@
 /**
  * name: Comments
  * description: Enables logged-in users to comment on posts
- * version: 1.2
+ * version: 1.3
  * folder: comments
  * class: Comments
  * type: comments
@@ -104,6 +104,7 @@ class Comments
         if (!isset($comments_settings['comment_email_notify_mods'])) { $comments_settings['comment_email_notify_mods'] = array(); }
         if (!isset($comments_settings['comment_url_limit'])) { $comments_settings['comment_url_limit'] = 0; }
         if (!isset($comments_settings['comment_daily_limit'])) { $comments_settings['comment_daily_limit'] = 0; }
+        if (!isset($comments_settings['comment_avatar_size'])) { $comments_settings['comment_avatar_size'] = "16"; }
         
         if ($h->isActive('avatar')) {
             if (!isset($comments_settings['comment_avatars'])) { $comments_settings['comment_avatars'] = "checked"; }
@@ -120,15 +121,16 @@ class Comments
      */
     public function theme_index_top($h)
     {
-        // Create a new global object called "comments".
+        // Create a new global object called "comment".
         require_once(LIBS . 'Comment.php');
-        $h->comment = new Comment($this->hotaru);
+        $h->comment = new Comment();
         
         // Get settings from database if they exist...
         $comments_settings = $h->getSerializedSettings();
     
         // Assign settings to class member
         $h->comment->avatars = $comments_settings['comment_avatars'];
+        $h->comment->avatarSize = $comments_settings['comment_avatar_size'];
         $h->comment->voting = $comments_settings['comment_voting'];
         $h->comment->email = $comments_settings['comment_email'];
         $h->comment->allowableTags = $comments_settings['comment_allowable_tags'];

@@ -29,5 +29,4 @@ require_once('hotaru_settings.php');
 require_once('Hotaru.php');
 $h = new Hotaru();
 $h->start('main');
-
 ?>

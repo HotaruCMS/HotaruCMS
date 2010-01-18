@@ -125,7 +125,6 @@ class Maintenance
         
         $h->message = $h->lang['admin_maintenance_optimize_success'];
         $h->messageType = 'green';
-;
     }
     
     
@@ -257,9 +256,36 @@ class Maintenance
         // update existing db record
         $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
         $h->db->query($h->db->prepare($sql, $value, $h->currentUser->id, 'site_announcement'));
+        
+        // clear the database cache:
+        $h->clearCache('db_cache', false);
 
         $h->message = $h->lang['admin_maintenance_announcement_updated'];
         $h->messageType = 'green';
+    }
+    
+    
+    /**
+     * Get all files in the specified directory except placeholder.txt
+     *
+     * @param string $dir - path to the folder
+     * @return array
+     */    
+    public function getFiles($dir)
+    {
+        $files = array();
+        $exceptions = array('.svn', '.', '..', 'placeholder.txt');
+        
+        $handle=opendir($dir);
+    
+        while (($file = readdir($handle))!==false) {
+            if (!in_array($file, $exceptions)) {
+                array_push($files, $file);
+            }
+        }
+        closedir($handle);
+        
+        if ($files) { return $files; } else { return false; }
     }
 }
 ?>

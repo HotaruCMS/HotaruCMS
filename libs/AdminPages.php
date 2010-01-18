@@ -220,6 +220,8 @@ class AdminPages
         $maintenance = new Maintenance();
         $maintenance->getSiteAnnouncement($h);
         
+        $h->vars['debug_files'] = $h->getFiles(CACHE . 'debug_logs');
+        
         // if no action, return now
         if (!$action = $h->cage->get->testAlnumLines('action')) { return false; }
         
@@ -242,6 +244,10 @@ class AdminPages
         if ($action == 'empty') { $h->emptyTable($h->cage->get->testAlnumLines('table')); }
         if ($action == 'drop') { $h->dropTable($h->cage->get->testAlnumLines('table')); }
         if ($action == 'remove_settings') { $h->removeSettings($h->cage->get->testAlnumLines('settings')); }
+        if ($action == 'delete_debugs') { 
+            $h->clearCache('debug_logs');
+            $h->vars['debug_files'] = $h->getFiles(CACHE . 'debug_logs');
+        }
     }
     
     
@@ -273,10 +279,20 @@ class AdminPages
     {
         $db_tables = array();
         
-        $core_tables = array(
-            'hotaru_settings',
-            'hotaru_users',
-            'hotaru_usermeta',
+        $exceptions = array(
+            DB_PREFIX . 'settings',
+            DB_PREFIX . 'users',
+            DB_PREFIX . 'usermeta',
+            DB_PREFIX . 'categories',
+            DB_PREFIX . 'comments',
+            DB_PREFIX . 'commentvotes',
+            DB_PREFIX . 'miscdata',
+            DB_PREFIX . 'postmeta',
+            DB_PREFIX . 'posts',
+            DB_PREFIX . 'postvotes',
+            DB_PREFIX . 'tags',
+            DB_PREFIX . 'useractivity',
+            DB_PREFIX . 'widgets',
         );
             
         $h->db->select(DB_NAME);
@@ -285,7 +301,7 @@ class AdminPages
         
         foreach ( $h->db->get_col("SHOW TABLES",0) as $table_name )
         {
-            if (!in_array($table_name, $core_tables)) {
+            if (!in_array($table_name, $exceptions)) {
                 array_push($db_tables, $table_name);
             }
         }

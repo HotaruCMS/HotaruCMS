@@ -25,7 +25,7 @@
  */
 class Hotaru
 {
-    protected $version              = "1.0.2";  // Hotaru CMS version
+    protected $version              = "1.0.3";  // Hotaru CMS version
     protected $isDebug              = false;    // show db queries and page loading time
     protected $isAdmin              = false;    // flag to tell if we are in Admin or not
     protected $sidebars             = true;     // enable or disable the sidebars
@@ -41,6 +41,7 @@ class Hotaru
     protected $avatar;                          // Avatar object
     protected $comment;                         // Comment object
     protected $includes;                        // for CSS/JavaScript includes
+    protected $debug;                           // Debug object
     
     // page info
     protected $pageName             = '';       // e.g. index, category
@@ -64,8 +65,10 @@ class Hotaru
     /**
      * CONSTRUCTOR - Initialize
      */
-    public function __construct($start = '')
+    public function __construct($start = '', $admin = false)
     {
+        if ($admin) { $this->isAdmin = true; }      // we have this here because the checkCssJs function needs it 
+        
         // initialize Hotaru
         if (!$start) { 
             require_once(LIBS . 'Initialize.php');
@@ -77,6 +80,8 @@ class Hotaru
             $this->plugin       = new Plugin();         // instantiate Plugin object
             $this->post         = new Post();           // instantiate Post object
             $this->includes     = new IncludeCssJs();   // instantiate Includes object
+
+            $this->checkCssJs();                        // check if we need to merge css/js
             $this->csrf('set');                         // set a csrfToken
         }
     }
@@ -94,6 +99,12 @@ class Hotaru
      */
     public function start($entrance = '')
     {
+        // Set up debugging:
+        if ($this->isDebug) { 
+            require_once(LIBS . 'Debug.php');
+            $this->debug = new Debug();
+        }
+        
         // include "main" language pack
         $lang = new Language();
         $this->lang = $lang->includeLanguagePack($this->lang, 'main');
@@ -109,17 +120,20 @@ class Hotaru
                 $this->checkCookie();                   // check cookie reads user details
                 $this->checkAccess();                   // site closed if no access permitted
                 $page = $admin->adminInit($this);       // initialize Admin & get desired page
-                $this->checkCssJs();                    // check if we need to merge css/js
                 $this->adminPages($page);               // Direct to desired Admin page
                 break;
             default:
+                $this->isAdmin = false;
                 $this->checkCookie();                   // log in user if cookie
                 $this->checkAccess();                   // site closed if no access permitted
-                $this->checkCssJs();                    // check if we need to merge css/js
                 if (!$entrance) { return false; }       // stop here if entrance not defined
                 $this->displayTemplate('index');        // displays the index page
         }
 
+        if ($this->isDebug) {
+            $this->closeLog('error');
+        }
+        
         exit;
     }
     
@@ -615,17 +629,34 @@ class Hotaru
     
     
     /**
+     * Check if an username exists in the database (used in forgotten password)
+     *
+     * @param string $username user username
+     * @param string $role user role (optional)
+     * @param int $exclude - exclude a user
+     * @return string|false
+     */
+    public function nameExists($username = '', $role = '', $exclude = 0)
+    {
+        require_once(LIBS . 'UserInfo.php');
+        $userInfo = new UserInfo();
+        return $userInfo->nameExists($this, $username, $role, $exclude);
+    }
+    
+    
+    /**
      * Check if an email exists in the database (used in forgotten password)
      *
      * @param string $email user email
      * @param string $role user role (optional)
+     * @param int $exclude - exclude a user
      * @return string|false
      */
-    public function emailExists($email = '', $role = '')
+    public function emailExists($email = '', $role = '', $exclude = 0)
     {
         require_once(LIBS . 'UserInfo.php');
         $userInfo = new UserInfo();
-        return $userInfo->emailExists($this, $email, $role);
+        return $userInfo->emailExists($this, $email, $role, $exclude);
     }
     
     
@@ -966,6 +997,7 @@ class Hotaru
         $type = $this->cage->get->testAlpha('type');
         $version = $this->cage->get->testInt('version');
         $this->includes->combineIncludes($this, $type, $version);
+        return true;
      }
      
      
@@ -1073,9 +1105,41 @@ class Hotaru
      */
     public function showQueriesAndTime()
     {
-        require_once(LIBS . 'Debug.php');
-        $debug = new Debug();
-        $debug->showQueriesAndTime($this);
+        $this->debug->showQueriesAndTime($this);
+    }
+    
+    /**
+     * Open file for logging
+     *
+     * @param string $type "speed", "error", etc.
+     * @param string $mode e.g. 'a' or 'w'. 
+     * @link http://php.net/manual/en/function.fopen.php
+     */
+    public function openLog($type = 'debug', $mode = 'a+')
+    {
+        $this->debug->openLog($this, $type, $mode);
+    }
+    
+    
+    /**
+     * Log performance and errors
+     *
+     * @param string $type "speed", "error", etc.
+     */
+    public function writeLog($type = 'error', $string = '')
+    {
+        $this->debug->writeLog($this, $type, $string);
+    }
+    
+    
+    /**
+     * Close log file
+     *
+     * @param string $type "speed", "error", etc.
+     */
+    public function closeLog($type = 'error')
+    {
+        $this->debug->closeLog($this, $type);
     }
     
     
@@ -1294,6 +1358,20 @@ class Hotaru
         require_once(LIBS . 'Maintenance.php');
         $maintenance = new Maintenance();
         $maintenance->clearCache($this, $folder, $msg);
+    }
+    
+    
+    /**
+     * Get all files in the specified directory except placeholder.txt
+     *
+     * @param string $dir - path to the folder
+     * @return array
+     */    
+    public function getFiles($dir)
+    {
+        require_once(LIBS . 'Maintenance.php');
+        $maintenance = new Maintenance();
+        return $maintenance->getFiles($dir);
     }
     
     
@@ -1517,7 +1595,7 @@ class Hotaru
      * @param int $userid (optional)
      * @return int 
      */
-    public function postsApproved($userid)
+    public function postsApproved($userid = 0)
     {
         return $this->post->postsApproved($this, $userid);
     }

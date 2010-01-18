@@ -25,15 +25,75 @@
  */
 class Debug
 {
+    protected $fh = array();    // file handlers
+    protected $log = array();   // file paths
+    
     /**
      * Shows number of database queries and the time it takes for a page to load
      */
     public function showQueriesAndTime($h)
     {
         if ($h->isDebug) { 
-            echo "<p class='debug'>" . $h->db->num_queries . " " . $h->lang['main_hotaru_queries_time'] . " " . timer_stop(1) . " " . 
-            $h->lang['main_hotaru_seconds'] . " " . $h->lang['main_hotaru_memory_usage1'] . display_filesize(memory_get_usage()) . $h->lang['main_hotaru_memory_usage2'] . " &nbsp; [Hotaru CMS v." . $h->version . "]</p>"; 
+        
+            $mysql_version = $h->db->get_var("SELECT VERSION() AS VE");
+            
+            echo "<p class='debug'>";
+            echo $h->lang['main_hotaru_db_queries'] . $h->db->num_queries . " | ";
+            echo $h->lang['main_hotaru_page_load_time'] . timer_stop(1) . $h->lang['main_times_secs'] . " | ";
+            echo $h->lang['main_hotaru_memory_usage'] . display_filesize(memory_get_usage()) . " | ";
+            echo $h->lang['main_hotaru_php_version'] . phpversion() . " | ";
+            echo $h->lang['main_hotaru_mysql_version'] . $mysql_version . " | ";
+            echo $h->lang['main_hotaru_hotaru_version'] . $h->version; 
+            echo "</p>"; 
         }
+    }
+
+
+    /**
+     * Open file for logging
+     *
+     * @param string $type "speed", "error", etc.
+     * @param string $mode e.g. 'a' or 'w'. 
+     * @link http://php.net/manual/en/function.fopen.php
+     */
+    public function openLog($h, $type = 'debug', $mode = 'a+')
+    {
+        $this->log[$type] = CACHE . "debug_logs/" . $type . ".txt";
+        
+        // auto-delete the file after 1 week:
+        /*
+        $last_modified = filemtime($this->log[$type]);
+        $expire = (7 * 24 * 60 * 60); // 1 week
+        if ($last_modified < (time() - $expire)) { unlink ($this->log[$type]); }
+        */
+        
+        // open/create a file:
+        $this->fh[$type] = fopen($this->log[$type], $mode) or die("can't open file");
+    }
+    
+    
+    /**
+     * Log performance and errors
+     *
+     * @param string $type "error", "speed", etc.
+     */
+    public function writeLog($h, $type = 'debug', $string = '')
+    {
+        if ($string) {
+            $string = date('d M Y H:i:s', time()) . ": " . $string . "\n";
+            fwrite($this->fh[$type], $string);
+        }
+    }
+    
+    
+    /**
+     * Close log file
+     *
+     * @param string $type "speed", "error", etc.
+     */
+    public function closeLog($h, $type = 'debug')
+    {
+        if (isset($this->fh[$type])) { fclose($this->fh[$type]); }
     }
 }
 ?>

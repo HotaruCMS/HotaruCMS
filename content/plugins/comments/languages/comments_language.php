@@ -62,6 +62,7 @@ $lang["comments_settings_header"] = "Comments Settings";
 $lang["comments_settings_instructions"] = "Options for comments:";
 $lang["comments_settings_form"] = "Enable the comment form <small>(Unchecked closes all forms. Checked opens all forms unless individually closed)</small>";
 $lang["comments_settings_avatars"] = "Enable avatars on comments (requires an avatar plugin, e.g. <i>Gravatar</i>)";
+$lang["comments_settings_avatar_size"] = "Avatar size in pixels <small>(default: 16)</small>";
 $lang["comments_settings_votes"] = "Enable votes on comments (requires a comment voting plugin)";
 $lang["comments_settings_levels"] = "Comment nesting levels <small>(default: 5)</small>";
 $lang["comments_settings_pagination"] = "Pagination (spread comments over pages)";

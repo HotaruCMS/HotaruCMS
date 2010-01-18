@@ -52,9 +52,9 @@
       
 </head>
 <body>
-<?php 
-    if ($h->checkAnnouncements() && ($h->currentUser->getPermission('can_access_admin') == 'yes')) { 
-        $announcements = $h->checkAnnouncements();
+<?php
+    $announcements = $h->checkAnnouncements();
+    if ($announcements && ($h->currentUser->getPermission('can_access_admin') == 'yes')) { 
 ?>
     <div id="announcement">
         <?php $h->pluginHook('admin_announcement_first'); ?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * Includes settings and constructs Hotaru.
+ * WHO VOTED LANGUAGE
  *
  * PHP version 5
  *
@@ -24,10 +24,16 @@
  * @link      http://www.hotarucms.org/
  */
 
-// includes
-require_once('hotaru_settings.php');
-require_once('Hotaru.php');
-$h = new Hotaru('', true);  // $admin set to true
-$h->start('admin');
+$lang['who_voted'] = "Who Voted";
+$lang['who_voted_no_results'] = "Be the first to vote for this post!";
+
+/* Who Voted Settings */
+$lang["who_voted_settings_header"] = "Who Voted Settings";
+$lang["who_voted_settings_note"] = "Customize how you want to display users that have voted on a post:";
+$lang["who_voted_settings_num_visitors"] = "Maximum number of members to show <small>(0 for all voters)</small>";
+$lang["who_voted_settings_avatars"] = "Show user avatars <small>(Requires an avatar plugin)</small>";
+$lang["who_voted_settings_avatar_size"] = "Size (pixels):";
+$lang["who_voted_settings_names"] = "Show user names";
+$lang["who_voted_settings_show_widget_title"] = "Show title <small>(Default: \"Who Voted\". You can edit it in who_voted_language.php)</small>";
 
 ?>

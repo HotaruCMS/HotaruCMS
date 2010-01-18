@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.1.3 2009/01/17 - Nick - Added option for avatar size
 v.1.2 2009/12/30 - Nick - Updates for compatibility with Hotaru 1.0
 v.1.1 2009/11/25 - Nick - Bug fix for comment form closing when a post is edited by a non-admin user
 v.1.0 2009/11/01 - Nick - Added "All comments" page, comments RSS, pagination, comments per page, comment order

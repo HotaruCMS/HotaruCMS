@@ -77,7 +77,7 @@
         *  Basic Query    - over-ridden by specific DB class
         */
 
-        function query()
+        function query($query = '')
         {
             die(EZSQL_CORE_ERROR);
         }
@@ -87,7 +87,7 @@
         *  DB class
         */
 
-        function escape()
+        function escape($str = '')
         {
             die(EZSQL_CORE_ERROR);
         }

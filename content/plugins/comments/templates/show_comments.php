@@ -33,7 +33,7 @@
         <?php   // Show avatars if enabled (requires an avatars plugin)
                 if ($h->comment->avatars == 'checked') {
                     if($h->isActive('avatar')) {
-                        $h->setAvatar($h->comment->author, 16);
+                        $h->setAvatar($h->comment->author, $h->comment->avatarSize);
                         echo $h->wrapAvatar();
                     }
                 }
