@@ -82,7 +82,7 @@ if ($h->cage->post->keyExists('post_id')) {
             $h->db->query($h->db->prepare($sql, $post_status, $post_id));
                 
             // Update Postvotes table
-            $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d)";
+            $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %d, %d)";
             $h->db->query($h->db->prepare($sql, $post_id, $user_id, $user_ip, 'vote', $vote_rating, $user_id));
             
             $h->pluginHook('vote_positive_vote', '', array('user' => $user_id, 'post'=>$post_id));
