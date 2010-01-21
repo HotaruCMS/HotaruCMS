@@ -48,12 +48,25 @@
                 if ($sb_links) {
                     $sb_links = sksort($sb_links, $subkey="name", $type="char", true);
                     foreach ($sb_links as $plugin => $details) { 
-                        echo "<li><a href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $details['plugin'] . "'>" . $details['name'] . "</a></li>";
+                        echo "<li><a href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $details['plugin'] . "'>" . $details['name'] . "</a></li>\n";
                     }
                 }
             ?>
         </ul>
     <?php } ?>
+    <li><?php echo $h->lang["admin_theme_theme_settings"]; ?></li>
+        <ul id="plugin_settings_list">
+            <?php 
+                $themes = $h->getFiles(THEMES, array('404error.php'));
+                if ($themes) {
+                    $themes = sksort($themes, $subkey="name", $type="char", true);
+                    foreach ($themes as $theme) { 
+                        if ($theme == rtrim(THEME, '/')) { $active = ' <i><small>(current)</small></i>'; } else { $active = ''; } 
+                        echo "<li><a href='" . BASEURL . "admin_index.php?page=theme_settings&amp;theme=" . $theme . "'>" . make_name($theme, '-') . "</a>" . $active . "</li>\n";
+                    }
+                }
+            ?>
+        </ul>
     
     <?php $h->pluginHook('admin_sidebar'); ?>
 </ul>

@@ -40,6 +40,9 @@ if ($h->vars['plugin_settings_csrf_error']) {
         }
         
         if (!$result) {
+    ?>
+        <h3><?php echo $h->lang["admin_theme_plugin_settings"]; ?></h3>
+    <?php 
             $sb_links = $h->pluginHook('admin_sidebar_plugin_settings');
             if ($sb_links) {
                 $sb_links = sksort($sb_links, $subkey="name", $type="char", true);

@@ -269,12 +269,14 @@ class Maintenance
      * Get all files in the specified directory except placeholder.txt
      *
      * @param string $dir - path to the folder
+     * @param array $exclude - array of file/folder names to exclude
      * @return array
      */    
-    public function getFiles($dir)
+    public function getFiles($dir, $exclude = array())
     {
         $files = array();
         $exceptions = array('.svn', '.', '..', 'placeholder.txt');
+        $exceptions = array_merge($exceptions, $exclude);
         
         $handle=opendir($dir);
     

@@ -982,6 +982,57 @@ class Hotaru
 
  /* *************************************************************
  *
+ *  THEME SETTINGS FUNCTIONS
+ *
+ * *********************************************************** */
+
+    /**
+     * Read and return plugin info from top of a plugin file.
+     *
+     * @param string $theme - theme folder
+     * @return array|false
+     */
+    public function readThemeMeta($theme = 'default')
+    {
+        require_once(LIBS . 'ThemeSettings.php');
+        $themeSettings = new ThemeSettings();
+        return $themeSettings->readThemeMeta($this, $theme);
+    }
+    
+    
+    /**
+     * Get and unserialize serialized settings
+     *
+     * @param string $theme theme folder name
+     * @param string $return 'value' or 'default'
+     * @return array - of theme settings
+     */
+    public function getThemeSettings($theme = '', $return = 'value')
+    {
+        require_once(LIBS . 'ThemeSettings.php');
+        $themeSettings = new ThemeSettings();
+        return $themeSettings->getThemeSettings($this, $theme, $return);
+    }
+    
+    
+    /**
+     * Update theme settings
+     *
+     * @param array $settings array of settings
+     * @param string $theme theme folder name
+     * @param string $column 'value', 'default' or 'both'
+
+     */
+    public function updateThemeSettings($settings = array(), $theme = '', $column = 'value')
+    {
+        require_once(LIBS . 'ThemeSettings.php');
+        $themeSettings = new ThemeSettings();
+        return $themeSettings->updateThemeSettings($this, $settings, $theme, $column);
+    }
+
+
+ /* *************************************************************
+ *
  *  INCLUDE CSS & JAVASCRIPT FUNCTIONS
  *
  * *********************************************************** */
@@ -1283,7 +1334,7 @@ class Hotaru
      * @param string $table_name - table to empty
      * @param string $msg - show "emptied" message or not
      */
-    public function emptyTable($table_name, $msg = true)
+    public function emptyTable($table_name = '', $msg = true)
     {
         require_once(LIBS . 'Maintenance.php');
         $maintenance = new Maintenance();
@@ -1297,7 +1348,7 @@ class Hotaru
      * @param string $table_name - table to drop
      * @param string $msg - show "dropped" message or not
      */
-    public function dropTable($table_name, $msg = true)
+    public function dropTable($table_name = '', $msg = true)
     {
         require_once(LIBS . 'Maintenance.php');
         $maintenance = new Maintenance();
@@ -1311,7 +1362,7 @@ class Hotaru
      * @param string $folder - plugin folder name
      * @param bool $msg - show "Removed" message or not
      */
-    public function removeSettings($folder, $msg = true)
+    public function removeSettings($folder = '', $msg = true)
     {
         require_once(LIBS . 'Maintenance.php');
         $maintenance = new Maintenance();
@@ -1339,7 +1390,7 @@ class Hotaru
      * @param string $dir - path to the cache folder
      * @return bool
      */    
-    public function deleteFiles($dir)
+    public function deleteFiles($dir = '')
     {
         require_once(LIBS . 'Maintenance.php');
         $maintenance = new Maintenance();
@@ -1353,7 +1404,7 @@ class Hotaru
      * @param string $folder - path to the cache folder
      * @param string $msg - show "cleared" message or not
      */
-    public function clearCache($folder, $msg = true)
+    public function clearCache($folder = '', $msg = true)
     {
         require_once(LIBS . 'Maintenance.php');
         $maintenance = new Maintenance();
@@ -1365,13 +1416,14 @@ class Hotaru
      * Get all files in the specified directory except placeholder.txt
      *
      * @param string $dir - path to the folder
+     * @param array $exclude - array of file/folder names to exclude
      * @return array
      */    
-    public function getFiles($dir)
+    public function getFiles($dir = '', $exclude = array())
     {
         require_once(LIBS . 'Maintenance.php');
         $maintenance = new Maintenance();
-        return $maintenance->getFiles($dir);
+        return $maintenance->getFiles($dir, $exclude);
     }
     
     

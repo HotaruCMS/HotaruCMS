@@ -71,6 +71,16 @@ class AdminPages
                     $h->vars['plugin_settings_csrf_error'] = (!$h->csrf()) ? true : false;
                 }
                 break;
+            case "theme_settings":
+                $h->vars['settings_theme'] = $h->cage->get->testAlnumLines('theme'); // get plugin name from url
+                if (!$h->vars['settings_theme']) { 
+                    $h->vars['settings_theme'] = $h->cage->post->testAlnumLines('theme');  // get plugin name from form
+                }
+                $h->vars['theme_settings_csrf_error'] = '';
+                if ($h->cage->post->testAlpha('submitted') == 'true') { 
+                    $h->vars['theme_settings_csrf_error'] = (!$h->csrf()) ? true : false;
+                }
+                break;
             default:
                 // we need this because it's not specified in the url:
                 $h->pageName = 'admin_home';
