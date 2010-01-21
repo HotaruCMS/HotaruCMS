@@ -28,7 +28,7 @@ class Language
     /**
      * Include language pack
      *
-     * @param string $pack - either "main" or "default"
+     * @param string $pack - either "main" or "admin"
      * @return array $lang_array
      */
     public function includeLanguagePack($lang_array = array(), $pack = 'main')
@@ -36,15 +36,10 @@ class Language
         if ($pack == 'install') {
             include_once(INSTALL . 'install_language.php');    // language file for install
         } 
-        elseif (file_exists(LANGUAGES . LANGUAGE_PACK . $pack . '_language.php'))
+        elseif (file_exists(BASE . 'content/' . $pack . '_language.php'))
         {
-            // language file from the chosen language pack
-            include_once(LANGUAGES . LANGUAGE_PACK . $pack . '_language.php');
-        }
-        else 
-        {
-           // try the default language pack
-            include_once(LANGUAGES . 'language_default/' . $pack . '_language.php'); 
+            // include language file
+            include_once(BASE . 'content/' . $pack . '_language.php');
         }
         
         // Add new language to our lang property
@@ -76,28 +71,43 @@ class Language
             // If not filename given, make the plugin name the file name
             if (!$filename) { $filename = $folder; }
             
-            // First, look in the user's language_pack folder for a language file...
-            if (file_exists(LANGUAGES . LANGUAGE_PACK . $filename . '_language.php')) {
-                include_once(LANGUAGES . LANGUAGE_PACK . $filename . '_language.php');
+            // First, look in the user's theme languages folder for a language file...
+            if (file_exists(THEMES . THEME . 'languages/' . $filename . '_language.php')) {
+                include_once(THEMES . THEME . 'languages/' . $filename . '_language.php');
                 
-            // If not there, look in the default language_pack folder for a language file...
-            } elseif (file_exists(LANGUAGES . 'language_default/' . $filename . '_language.php')) {
-                include_once(LANGUAGES . 'language_default/' . $filename . '_language.php');
-    
             // If still not found, look in the plugin folder for a language file... 
             } elseif (file_exists(PLUGINS . $folder . '/languages/' . $filename . '_language.php')) {
                 include_once(PLUGINS . $folder . '/languages/' . $filename . '_language.php');
-            
-            // If STILL not found, include the user's main language file...
-            } elseif (file_exists(LANGUAGES . LANGUAGE_PACK . 'main_language.php')) {
-                include_once(LANGUAGES . LANGUAGE_PACK . 'main_language.php');
-    
-            // Finally, give up and include the main default language file...
-            } else {
-                include_once(LANGUAGES . 'language_default/main_language.php');
             }
             
-            
+            // Add new language to our lang property
+            if (isset($lang)) {
+                foreach($lang as $l => $text) {
+                    $h->lang[$l] = $text;
+                }
+            }
+        }
+    }
+    
+    
+    /**
+     * Include a language file for a theme
+     *
+     * @param string $theme name of the theme
+     * @param string $filename optional filename without '_language.php' file extension
+     *
+     * Note: the language file should be in a plugin folder named 'languages'.
+     * '_language.php' is appended automatically to the folder of file name.
+     */    
+    public function includeThemeLanguage($h, $theme = '', $filename = '')
+    {
+        if (!$theme) { $theme = rtrim(THEME, '/'); }
+        if (!$filename) { $filename = $theme; }
+
+        // Look in the current theme a language file...
+        if (file_exists(THEMES . THEME . 'languages/' . $filename . '_language.php')) {
+            include_once(THEMES . THEME . 'languages/' . $filename . '_language.php');
+
             // Add new language to our lang property
             if (isset($lang)) {
                 foreach($lang as $l => $text) {

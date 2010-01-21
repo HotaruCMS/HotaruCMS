@@ -55,7 +55,6 @@ define("EXTENSIONS", dirname(__FILE__).'/libs/extensions/');
 define("FUNCTIONS", dirname(__FILE__).'/functions/');
 define("THEMES", dirname(__FILE__).'/content/themes/');
 define("PLUGINS", dirname(__FILE__).'/content/plugins/');
-define("LANGUAGES", dirname(__FILE__).'/content/language_packs/');
 define("ADMIN_THEMES", dirname(__FILE__).'/content/admin_themes/');
 
 // define database tables
