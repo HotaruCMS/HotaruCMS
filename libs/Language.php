@@ -93,17 +93,13 @@ class Language
     /**
      * Include a language file for a theme
      *
-     * @param string $theme name of the theme
      * @param string $filename optional filename without '_language.php' file extension
      *
      * Note: the language file should be in a plugin folder named 'languages'.
      * '_language.php' is appended automatically to the folder of file name.
      */    
-    public function includeThemeLanguage($h, $theme = '', $filename = '')
+    public function includeThemeLanguage($h, $filename = 'main')
     {
-        if (!$theme) { $theme = rtrim(THEME, '/'); }
-        if (!$filename) { $filename = $theme; }
-
         // Look in the current theme a language file...
         if (file_exists(THEMES . THEME . 'languages/' . $filename . '_language.php')) {
             include_once(THEMES . THEME . 'languages/' . $filename . '_language.php');

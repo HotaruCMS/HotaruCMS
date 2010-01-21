@@ -1522,17 +1522,16 @@ class Hotaru
     /**
      * Include a language file for a theme
      *
-     * @param string $theme name of the theme
      * @param string $filename optional filename without '_language.php' file extension
      *
      * Note: the language file should be in a plugin folder named 'languages'.
      * '_language.php' is appended automatically to the folder of file name.
      */    
-    public function includeThemeLanguage($theme = '', $filename = '')
+    public function includeThemeLanguage($filename = 'main')
     {
         require_once(LIBS . 'Language.php');
         $language = new Language();
-        $language->includeThemeLanguage($this, $theme, $filename);
+        $language->includeThemeLanguage($this, $filename);
     }
     
     
