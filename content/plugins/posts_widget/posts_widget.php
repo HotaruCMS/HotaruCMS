@@ -76,10 +76,7 @@ class PostsWidget
         if (isset($posts) && !empty($posts)) {
             
             $output = "<h2 class='widget_head posts_widget_title'>\n";
-            if ($type == 'top' || $type == 'new' || $type == 'upcoming') {
-                $output .= "<a href='" . $h->url(array('page'=>'rss', 'status'=>$type)) . "' title='" . $h->lang["posts_widget_icon_anchor_title"] . "'>\n";
-                $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png' alt='RSS' /></a>&nbsp;\n"; // RSS icon
-            }
+
             switch ($type) {
                 case 'new':
                     $link = $h->url(array('page'=>'latest'));
@@ -105,7 +102,14 @@ class PostsWidget
                 default:
                     $link = BASEURL;
             }
-            $output .= "<a href='" . $link . "' title='" . $h->lang["posts_widget_title_anchor_title"] . "'>" . $title . "</a></h2>\n"; 
+            $output .= "<a href='" . $link . "' title='" . $h->lang["posts_widget_title_anchor_title"] . "'>" . $title . "</a>\n";
+            
+            if ($type == 'top' || $type == 'new' || $type == 'upcoming') {
+                $output .= "<a href='" . $h->url(array('page'=>'rss', 'status'=>$type)) . "' title='" . $h->lang["posts_widget_icon_anchor_title"] . "'>\n";
+                $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png' alt='RSS' /></a>\n"; // RSS icon
+            }
+            
+            $output .= "</h2>\n"; 
             
             $output .= "<ul class='widget_body posts_widget_items'>\n";
             $output .= $this->getPostsWidgetItems($h, $posts, $type);

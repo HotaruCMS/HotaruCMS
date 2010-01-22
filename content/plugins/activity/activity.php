@@ -245,10 +245,11 @@ class Activity
         if (isset($activity) && !empty($activity)) {
             
             $output = "<h2 class='widget_head activity_widget_title'>\n";
-            $output .= "<a href='" . $h->url(array('page'=>'rss_activity')) . "' title='" . $anchor_title . "'>\n";
-            $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'>\n</a>&nbsp;"; // RSS icon
             $link = BASEURL;
-            $output .= $title . "</h2>\n"; 
+            $output .= $title;
+            $output .= "<a href='" . $h->url(array('page'=>'rss_activity')) . "' title='" . $anchor_title . "'>\n";
+            $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'>\n</a>"; // RSS icon 
+            $output .= "</h2>\n"; 
                 
             $output .= "<ul class='widget_body activity_widget_items'>\n";
             
@@ -433,9 +434,10 @@ class Activity
             if ($h->pageName == 'profile') {
                 $anchor_title = htmlentities($h->lang["activity_title_anchor_title"], ENT_QUOTES, 'UTF-8');
                 echo "<h2>\n";
+                echo $h->lang['activity_title'];
                 echo "<a href='" . $h->url(array('page'=>'rss_activity', 'user'=>$user)) . "' title='" . $anchor_title . "'>\n";
-                echo "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'>\n</a>&nbsp;"; // RSS icon
-                echo $h->lang['activity_title'] . "</h2>\n"; 
+                echo "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'>\n</a>"; // RSS icon
+                echo "</h2>\n"; 
                 $label = $user; // used in cache filename
             } else {
                 /* BREADCRUMBS */

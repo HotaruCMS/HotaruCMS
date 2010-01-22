@@ -78,10 +78,12 @@ class CommentsWidget
         if (isset($comments) && !empty($comments)) {
             
             $output = "<h2 class='widget_head comments_widget_title'>\n";
-            $output .= "<a href='" . $h->url(array('page'=>'rss_comments')) . "' title='" . $anchor_title . "'>\n";
-            $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'>\n</a>&nbsp;"; // RSS icon
+
             $link = BASEURL;
-            $output .= $title . "</h2>\n"; 
+            $output .= $title;
+            $output .= "<a href='" . $h->url(array('page'=>'rss_comments')) . "' title='" . $anchor_title . "'>\n";
+            $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'>\n</a>"; // RSS icon
+            $output .= "</h2>\n"; 
                 
             $output .= "<ul class='widget_body comments_widget_items'>\n";
             $output .= $this->getCommentsWidgetItems($h, $comments, $comments_widget_settings);

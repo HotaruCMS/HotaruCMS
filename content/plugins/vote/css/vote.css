@@ -33,9 +33,10 @@
 	background:transparent;
 }
 
-.vote_button_top_story { border: 1px solid #d0d0d0; background-color: #f4f4f4; color: #000; }
-.vote_button_new_story { border: 1px solid #d0d0d0; color: #000; }
+/* colors */]
 
+.vote_color_top { border: 1px solid #d0d0d0; background-color: #f0f0f0; color: #000; }
+.vote_color_new { border: 1px solid #d0d0d0; background-color: #ffffff; color: #000; }
 
 /* ***********************************
  * ** SPACE BETWEEN BUTTON AND POST **

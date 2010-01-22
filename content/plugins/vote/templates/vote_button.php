@@ -31,7 +31,7 @@ $user_ip = $h->cage->server->testIp('REMOTE_ADDR');
 // Determine the status of the post so we can apply different css to top and new vote buttons:
 $status = $h->post->status;
 if ($status != 'top' && $status != 'new') { $status = 'new'; }  // used on next line to default to a blue button
-$vote_button_type = 'vote_button_' . $status . '_story';  // for css difference between top and new stories
+$vote_button_type = 'vote_color_' . $status;  // for css difference between top and new stories
 ?>
  
 <!-- Vote Button -->
