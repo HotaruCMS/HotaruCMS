@@ -238,12 +238,83 @@ function do_upgrade($old_version)
             $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (miscdata_key, miscdata_value, miscdata_default) VALUES (%s, %s, %s)";
             $h->db->query($h->db->prepare($sql, 'site_announcement', '', ''));
         }
+        
+        // update "old version" for next set of upgrades
+        $old_version = "1.0.2";
     }
     
     
     // 1.0.2 to 1.0.3
     if ($old_version == "1.0.2") {
         // nothing to do...
+        
+        // update "old version" for next set of upgrades
+        $old_version = "1.0.3";
+    }
+    
+    
+    // 1.0.3 to 1.0.4
+    if ($old_version == "1.0.3") {
+        
+        // remove language pack option from settings
+        $sql = "DELETE FROM " . TABLE_SETTINGS . " WHERE settings_name = %s";
+        $h->db->query($h->db->prepare($sql, 'LANGUAGE_PACK'));
+        
+        // Drop temporary cvotes_temp table if it already exists
+        $sql = 'DROP TABLE IF EXISTS `' . DB_PREFIX . 'cvotes_temp`;';
+        $h->db->query($sql);
+        
+        // create a temp table to store old comment votes
+        $sql = "CREATE TABLE `" . DB_PREFIX . "cvotes_temp` (
+              `cvote_archived` enum('Y','N') NOT NULL DEFAULT 'N',
+              `cvote_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+              `cvote_post_id` int(11) NOT NULL DEFAULT '0',
+              `cvote_comment_id` int(11) NOT NULL DEFAULT '0',
+              `cvote_user_id` int(11) NOT NULL DEFAULT '0',
+              `cvote_user_ip` varchar(32) NOT NULL DEFAULT '0',
+              `cvote_date` timestamp NOT NULL,
+              `cvote_rating` smallint(11) NOT NULL DEFAULT '0',
+              `cvote_reason` tinyint(3) NOT NULL DEFAULT 0,
+              `cvote_updateby` int(20) NOT NULL DEFAULT 0
+            ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Comment Votes';";
+        $h->db->query($sql);
+        
+        // get old cvote data
+        $sql = "SELECT * FROM " . TABLE_COMMENTVOTES;
+        $old_cvotes = $h->db->get_results($h->db->prepare($sql));
+        if ($old_cvotes) {
+            $columns    = "cvote_post_id, cvote_comment_id, cvote_user_id, cvote_user_ip, cvote_date, cvote_rating, cvote_reason, cvote_updateby";
+            foreach ($old_cvotes as $cvote) {
+                if ($cvote->cvote_rating == 'positive') { $rating = 10; } else { $rating = -10; }
+                $sql = "INSERT INTO " . DB_PREFIX . "cvotes_temp (" . $columns . ") VALUES(%d, %d, %d, %s, %s, %d, %d, %d)";
+                $h->db->query($h->db->prepare($sql, $cvote->cvote_post_id, $cvote->cvote_comment_id, $cvote->cvote_user_id, $cvote->cvote_user_ip, $cvote->cvote_date, $rating, $cvote->cvote_reason, $cvote->cvote_updateby));
+            }
+        }
+        
+        // drop old commentvotes table
+        $h->db->query("DROP TABLE " . TABLE_COMMENTVOTES);
+        
+        // rename new table
+        $h->db->query("RENAME TABLE " . DB_PREFIX . "cvotes_temp TO " . DB_PREFIX . "commentvotes");
+        
+        // add new comment_votes_down column to comments table
+        $exists = $h->db->column_exists('comments', 'comment_votes_down');
+        if (!$exists) {
+            // Alter the Users table to include user_lastvisit
+            $sql = "ALTER TABLE " . TABLE_COMMENTS . " ADD comment_votes_down smallint(11) NOT NULL DEFAULT '0' AFTER comment_votes";
+            $h->db->query($h->db->prepare($sql));
+        }
+        
+        // rename comment_votes column to comments_votes_up
+        $exists = $h->db->column_exists('comments', 'comment_votes_up');
+        if (!$exists) {
+            // Alter the Users table to include user_lastvisit
+            $sql = "ALTER TABLE " . TABLE_COMMENTS . " CHANGE comment_votes comment_votes_up smallint(11) NOT NULL DEFAULT '0'";
+            $h->db->query($h->db->prepare($sql));
+        }
+
+        // update "old version" for next set of upgrades
+        $old_version = "1.0.4";
     }
     
     // Update Hotaru version number to the database (referred to when upgrading)

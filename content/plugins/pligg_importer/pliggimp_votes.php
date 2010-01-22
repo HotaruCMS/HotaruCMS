@@ -104,14 +104,14 @@ class PliggImp6
                 $count++;
     
                 if ($child->vote_value > 0) { 
-                    $rating = 'positive'; 
+                    $rating = 10; 
                 } else {
-                    $rating = 'negative';
+                    $rating = -10;
                 }
                 
                 $columns    = "cvote_post_id, cvote_comment_id, cvote_user_id, cvote_user_ip, cvote_date, cvote_rating, cvote_reason, cvote_updateby";
                 
-                $sql        = "INSERT IGNORE " . DB_PREFIX . "commentvotes (" . $columns . ") VALUES(%d, %d, %d, %s, %s, %s, %d, %d)";
+                $sql        = "INSERT IGNORE " . DB_PREFIX . "commentvotes (" . $columns . ") VALUES(%d, %d, %d, %s, %s, %d, %d, %d)";
                 
                 // Insert into commentvotes table
                 $h->db->query($h->db->prepare(

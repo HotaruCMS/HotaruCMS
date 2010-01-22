@@ -109,6 +109,12 @@ class SbBase
         
         $h->pluginHook('sb_base_theme_index_top');
         
+        if (!$h->pageName && $h->cage->get->keyExists('pg')) {
+            $h->pageName = 'index';
+            $h->pageType = 'list';
+            $h->pageTitle = $h->lang["sb_base_site_name"];
+        }
+        
         // stop here if not a list or the pageType has been set elsewhere:
         if (!empty($h->pageType) && ($h->pageType != 'list') && ($h->pageType != 'post')) {
             return false; 
