@@ -54,19 +54,22 @@
             ?>
         </ul>
     <?php } ?>
-    <li><?php echo $h->lang["admin_theme_theme_settings"]; ?></li>
-        <ul id="plugin_settings_list">
-            <?php 
-                $themes = $h->getFiles(THEMES, array('404error.php'));
-                if ($themes) {
-                    $themes = sksort($themes, $subkey="name", $type="char", true);
-                    foreach ($themes as $theme) { 
-                        if ($theme == rtrim(THEME, '/')) { $active = ' <i><small>(current)</small></i>'; } else { $active = ''; } 
-                        echo "<li><a href='" . BASEURL . "admin_index.php?page=theme_settings&amp;theme=" . $theme . "'>" . make_name($theme, '-') . "</a>" . $active . "</li>\n";
+    
+    <?php if ($h->vars['admin_sidebar_layout'] != 'horizontal') { ?>
+        <li><?php echo $h->lang["admin_theme_theme_settings"]; ?></li>
+            <ul id="plugin_settings_list">
+                <?php 
+                    $themes = $h->getFiles(THEMES, array('404error.php'));
+                    if ($themes) {
+                        $themes = sksort($themes, $subkey="name", $type="char", true);
+                        foreach ($themes as $theme) { 
+                            if ($theme == rtrim(THEME, '/')) { $active = ' <i><small>(current)</small></i>'; } else { $active = ''; } 
+                            echo "<li><a href='" . BASEURL . "admin_index.php?page=theme_settings&amp;theme=" . $theme . "'>" . make_name($theme, '-') . "</a>" . $active . "</li>\n";
+                        }
                     }
-                }
-            ?>
-        </ul>
+                ?>
+            </ul>
+    <?php } ?>
     
     <?php $h->pluginHook('admin_sidebar'); ?>
 </ul>
