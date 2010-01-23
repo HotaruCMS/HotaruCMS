@@ -80,10 +80,17 @@ class PliggImp3
                 $comment[$count]['old_id']['author'] = $child->comment_author_id;
                 
                 if(!isset($child->comment_subscribe)) { $child->comment_subscribe = 0; }
-        
-                $columns    = "comment_post_id, comment_user_id, comment_parent, comment_date, comment_content, comment_votes, comment_subscribe, comment_updateby";
                 
-                $sql        = "INSERT INTO " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%d, %d, %d, %s, %s, %d, %d, %d)";
+                if ($child->comment_votes < 0) { 
+                    $cvotes_up = 0; $cvotes_down = abs($child->comment_votes);
+                } else {
+                    $cvotes_up = $child->comment_votes; $cvotes_down = 0;
+                }
+
+        
+                $columns    = "comment_post_id, comment_user_id, comment_parent, comment_date, comment_content, comment_votes_up, comment_votes_down, comment_subscribe, comment_updateby";
+                
+                $sql        = "INSERT INTO " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%d, %d, %d, %s, %s, %d, %d, %d, %d)";
                 $lks = new PliggImp2();
                 
                 // Insert into Comments table
@@ -94,7 +101,8 @@ class PliggImp3
                     $child->comment_parent,
                     $child->comment_date,
                     urlencode(trim($child->comment_content)),
-                    $child->comment_votes,
+                    $cvotes_up,
+                    $cvotes_down,
                     $child->comment_subscribe,
                     $h->currentUser->id));
                     
@@ -140,6 +148,22 @@ class PliggImp3
             }
         }
     
+    }
+    
+    
+    /**
+     * Get new link id
+     *
+     * @param int $old_link_id
+     * @return int|false
+     */
+    function get_new_comment_id($h, $old_comment_id)
+    {
+        $sql = "SELECT pliggimp_new_value FROM " . DB_PREFIX . "pliggimp_temp WHERE pliggimp_setting = %s AND pliggimp_old_value = %d";
+        
+        $new_link_id = $h->db->get_var($h->db->prepare($sql, 'comment_id', $old_comment_id));
+        
+        if ($new_comment_id) { return $new_comment_id; } else { return false; }
     }
 }
 

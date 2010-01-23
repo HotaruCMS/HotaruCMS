@@ -83,6 +83,7 @@ class PliggImp6
                 $sql        = "INSERT IGNORE " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%d, %d, %s, %s, %s, %d, %d, %d)";
                 
                 $lks = new PliggImp2();
+                $comms = new PliggImp3();
                 $usr = new PliggImp5();
                 
                 // Insert into postvotes table
@@ -116,8 +117,8 @@ class PliggImp6
                 // Insert into commentvotes table
                 $h->db->query($h->db->prepare(
                     $sql,
-                    $lks->get_new_link_id($h, $child->vote_link_id),
                     0,
+                    $comms->get_new_comment_id($h, $child->vote_link_id),
                     $usr->get_new_user_id($h, $child->vote_user_id),
                     $child->vote_ip,
                     $child->vote_date,

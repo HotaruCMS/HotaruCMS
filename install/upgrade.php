@@ -285,7 +285,7 @@ function do_upgrade($old_version)
         if ($old_cvotes) {
             $columns    = "cvote_post_id, cvote_comment_id, cvote_user_id, cvote_user_ip, cvote_date, cvote_rating, cvote_reason, cvote_updateby";
             foreach ($old_cvotes as $cvote) {
-                if ($cvote->cvote_rating == 'positive') { $rating = 10; } else { $rating = -10; }
+                if ($cvote->cvote_rating == 'negative') { $rating = -10; } else { $rating = 10; }
                 $sql = "INSERT INTO " . DB_PREFIX . "cvotes_temp (" . $columns . ") VALUES(%d, %d, %d, %s, %s, %d, %d, %d)";
                 $h->db->query($h->db->prepare($sql, $cvote->cvote_post_id, $cvote->cvote_comment_id, $cvote->cvote_user_id, $cvote->cvote_user_ip, $cvote->cvote_date, $rating, $cvote->cvote_reason, $cvote->cvote_updateby));
             }
@@ -311,6 +311,16 @@ function do_upgrade($old_version)
             // Alter the Users table to include user_lastvisit
             $sql = "ALTER TABLE " . TABLE_COMMENTS . " CHANGE comment_votes comment_votes_up smallint(11) NOT NULL DEFAULT '0'";
             $h->db->query($h->db->prepare($sql));
+        }
+        
+        // move any negative comment vote counts to the down column
+        $sql = "SELECT comment_id, comment_votes_up FROM " . TABLE_COMMENTS . " WHERE comment_votes_up < %d";
+        $negatives = $h->db->get_results($h->db->prepare($sql, 0));
+        if ($negatives) {
+            foreach ($negatives as $neg) {
+                $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_votes_up = %d, comment_votes_down = %d WHERE comment_id = %d";
+                $h->db->query($h->db->prepare($sql, 0, abs($neg->comment_votes_up), $neg->comment_id));
+            }
         }
 
         // update "old version" for next set of upgrades

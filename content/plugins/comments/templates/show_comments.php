@@ -38,6 +38,12 @@
                     }
                 }
         ?>
+
+        <?php   // Show votes if enabled (requires a comment voting plugin)
+                if ($h->comment->voting == 'checked') {
+                    $h->pluginHook('show_comments_votes'); 
+                }
+        ?>
         
         <div class="comment_content">
             <?php 
@@ -47,12 +53,6 @@
                 }
             ?> 
         </div>
-        
-        <?php   // Show votes if enabled (requires a comment voting plugin)
-                if ($h->comment->voting == 'checked') {
-                    $h->pluginHook('show_comments_votes'); 
-                }
-        ?>
         
         <div class="comment_author_date">
             <?php 
