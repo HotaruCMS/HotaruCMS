@@ -32,23 +32,23 @@
  "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-   <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
-   
-   <title><?php echo $h->getTitle(); ?></title>
-   
-   <script language="JavaScript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery.min.js'; ?>"></script>
-   <script language="JavaScript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery-ui.min.js'; ?>"></script>
-   <script language="JavaScript" src="<?php echo BASEURL . 'javascript/hotaru.js'; ?>"></script>
+    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
+    
+    <title><?php echo $h->getTitle(); ?></title>
+    
+    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js?ver=1.4.0'></script>
+    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js?ver=1.7.2'></script>
+    <script language="JavaScript" src="<?php echo BASEURL . 'javascript/hotaru.js'; ?>"></script>
    
     <!-- Include merged files for all the plugin css and javascript (if any) -->
     <?php $h->doIncludes(); ?>
     <!-- End -->
     
-   <link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/reset-fonts-grids.css'; ?>" type="text/css">
-   <link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css'; ?>" type="text/css">
-   <!-- <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico"> -->
-   
-   <?php $h->pluginHook('admin_header_include_raw'); ?>
+    <link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/reset-fonts-grids.css'; ?>" type="text/css">
+    <link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css'; ?>" type="text/css">
+    <!-- <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico"> -->
+    
+    <?php $h->pluginHook('admin_header_include_raw'); ?>
       
 </head>
 <body>

@@ -159,7 +159,6 @@ class Widget
         // Get settings from the database if they exist...
         $sql = "DELETE FROM " . DB_PREFIX . "widgets WHERE widget_function = %s";
         $h->db->query($h->db->prepare($sql, $function));
-        echo "skipping delete from widgets table";
         
         $h->db->query("OPTIMIZE TABLE " . TABLE_WIDGETS);
     }
