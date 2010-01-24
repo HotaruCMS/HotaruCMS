@@ -28,6 +28,8 @@ $h->pluginHook('submit_2_assign');
 
 ?>
 
+<div id="submit_edit">
+
     <?php echo $h->showMessages(); ?>
     
     <?php echo $h->lang["submit_edit_instructions"]; ?>
@@ -37,25 +39,23 @@ $h->pluginHook('submit_2_assign');
     <tr>
         <td><?php echo $h->lang["submit_url"]; ?>&nbsp; </td>
         <td><?php echo "<a target='_blank' href='" . $h->vars['submit_orig_url'] . "'>" . $h->vars['submit_orig_url'] . "</a>"; ?></td>
-        <td>&nbsp;</td>
     </tr>
     <tr>
         <td><?php echo $h->lang["submit_title"]; ?>&nbsp; </td>
         <td><input type='text' id='post_title' name='post_title' value='<?php echo $h->vars['submit_title']; ?>'></td>
-        <td>&nbsp;</td>
     </tr>
     
     <?php if ($h->vars['submit_use_content']) { ?>
     
     <tr>
         <td style='vertical-align: top;'><?php echo $h->lang["submit_content"]; ?>&nbsp; </td>
-        <td colspan=2>
+        <td>
             <textarea id='post_content' name='post_content' rows='6'><?php echo $h->vars['submit_content']; ?></textarea>
         </td>
     </tr>
     <tr>
         <td>&nbsp;</td>
-        <td colspan=2 style='vertical-align: top;' class="submit_instructions"><?php echo $h->lang['submit_allowable_tags']; ?>
+        <td style='vertical-align: top;' class="submit_instructions"><?php echo $h->lang['submit_allowable_tags']; ?>
             <?php echo $h->vars['submit_allowable_tags']; ?>
         </td>
     </tr>
@@ -75,7 +75,6 @@ $h->pluginHook('submit_2_assign');
             echo "<tr>";
                 echo "<td>" . $h->lang["submit_tags"] . "&nbsp; </td>";
                 echo "<td><input type='text' id='post_tags' name='post_tags' value='" . $h->vars['submit_tags'] . "'></td>";
-                echo "<td>&nbsp;</td>";
             echo "</tr>";
         }
     ?>
@@ -91,7 +90,6 @@ $h->pluginHook('submit_2_assign');
             <tr>
                 <td><?php echo $h->lang["submit_url"]; ?>&nbsp; </td>
                 <td><input type='text' id='post_orig_url' name='post_orig_url' value='<?php echo $h->vars['submit_orig_url']; ?>'></td>
-                <td>&nbsp;</td>
             </tr>
         <?php } ?>
         
@@ -115,7 +113,7 @@ $h->pluginHook('submit_2_assign');
     <input type='hidden' name='edit_post' value='true' />
     <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
     
-    <tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' class='submit' name='submit_edit_post' value='<?php echo $h->lang["main_form_update"]; ?>' /></td></tr>    
+    <tr><td>&nbsp; </td><td style='text-align:right;'><input type='submit' class='submit' name='submit_edit_post' value='<?php echo $h->lang["main_form_update"]; ?>' /></td></tr>    
     </table>
     </form>
     
@@ -123,3 +121,5 @@ $h->pluginHook('submit_2_assign');
         <a class='bold_red' href="<?php echo $h->url(array('page'=>'edit_post', 'post_id'=>$h->post->id, 'action'=>'delete')); ?>">
         <?php echo $h->lang["submit_edit_delete"]; } ?>
         </a>
+        
+</div>

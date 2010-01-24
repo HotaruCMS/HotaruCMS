@@ -2,7 +2,7 @@
 /**
  * name: Activity
  * description: Show recent activity
- * version: 0.3
+ * version: 0.4
  * folder: activity
  * class: Activity
  * requires: users 1.1, widgets 0.6
@@ -245,10 +245,11 @@ class Activity
         if (isset($activity) && !empty($activity)) {
             
             $output = "<h2 class='widget_head activity_widget_title'>\n";
-            $output .= "<a href='" . $h->url(array('page'=>'rss_activity')) . "' title='" . $anchor_title . "'>\n";
-            $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'>\n</a>&nbsp;"; // RSS icon
             $link = BASEURL;
-            $output .= $title . "</h2>\n"; 
+            $output .= $title;
+            $output .= "<a href='" . $h->url(array('page'=>'rss_activity')) . "' title='" . $anchor_title . "'>\n";
+            $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'>\n</a>"; // RSS icon 
+            $output .= "</h2>\n"; 
                 
             $output .= "<ul class='widget_body activity_widget_items'>\n";
             
@@ -289,7 +290,7 @@ class Activity
      * @param array $activity_settings
      * return string $output
      */
-    public function getWidgetActivityItems($h, $activity = array(), $activity_settings, $cache = true)
+    public function getWidgetActivityItems($h, $activity = array(), $cache = true)
     {
         $need_cache = false;
         $label = 'sb_act';
@@ -303,12 +304,34 @@ class Activity
                 $need_cache = true;
             }
         }
-        
-        if (!isset($user)) { $user = new UserBase(); }
                 
         if (!$activity) { return false; }
         
+        $output = $this->getActivityItems($h, $activity);
+        
+        if ($need_cache) {
+            $h->smartCache('html', 'useractivity', 10, $output, $label); // make or rewrite the cache file
+        }
+        
+        return $output;
+    }
+    
+    
+    /**
+     * Get activity items
+     *
+     * @param array $activity 
+     * @param array $activity_settings
+     * return string $output
+     */
+    public function getActivityItems($h, $activity = array())
+    {
         $output = '';
+        
+        // Get settings from database if they exist... (should be in cache by now)
+        $activity_settings = $h->getSerializedSettings('activity');
+        
+        if (!isset($user)) { $user = new UserBase(); }
         
         foreach ($activity as $item)
         {
@@ -371,11 +394,6 @@ class Activity
                     break;
             }
             
-            // for plugins to add their own activity:
-            $h->vars['activity_output'] = array($output, $title_link, $cid, $post_title);
-            $h->pluginHook('activity_output');
-            list($output, $title_link, $cid, $post_title) = $h->vars['activity_output'];
-            
             $output .= "&quot;<a href='" . $title_link . $cid . "' >" . $post_title . "</a>&quot; \n";
             
             if ($activity_settings['time']) { 
@@ -389,14 +407,69 @@ class Activity
             $output .= "</li>\n\n";
         }
         
-        if ($need_cache) {
-            $h->smartCache('html', 'useractivity', 10, $output, $label); // make or rewrite the cache file
-        }
-        
         return $output;
     }
 
 
+    /**
+     * Get activity content (Profile and Activity Pages only)
+     *
+     * @param array $activity 
+     * return string $output
+     */
+    public function activityContent($h, $item = array())
+    {
+        if (!$item) { return false; }
+        
+        $output = '';
+        
+        // Post used in Hotaru's url function
+        if ($item->useract_key == 'post') {
+            $h->readPost($item->useract_value);
+        } elseif  ($item->useract_key2 == 'post') {
+            $h->readPost($item->useract_value2);
+        }
+        
+        $h->post->vars['catSafeName'] =  $h->getCatSafeName($h->post->category);
+       
+        // content
+        $post_title = stripslashes(html_entity_decode(urldecode($h->post->title), ENT_QUOTES,'UTF-8'));
+        $title_link = $h->url(array('page'=>$h->post->id));
+        $cid = ''; // comment id string
+        
+        switch ($item->useract_key) {
+            case 'comment':
+                $output .= $h->lang["activity_commented"] . " ";
+                $cid = "#c" . $item->useract_value; // comment id to be put on the end of the url
+                break;
+            case 'post':
+                $output .= $h->lang["activity_submitted"] . " ";
+                break;
+            case 'vote':
+                switch ($item->useract_value) {
+                    case 'up':
+                        $output .= $h->lang["activity_voted_up"] . " ";
+                        break;
+                    case 'down':
+                        $output .= $h->lang["activity_voted_down"] . " ";
+                        break;
+                    case 'flag':
+                        $output .= $h->lang["activity_voted_flagged"] . " ";
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            default:
+                break;
+        }
+        
+        $output .= "&quot;<a href='" . $title_link . $cid . "' >" . $post_title . "</a>&quot; \n";
+        
+        return $output;
+    }
+    
+    
     /**
      * Redirect to Activity RSS
      *
@@ -413,66 +486,56 @@ class Activity
     /**
      * Display All Activity page
      */
-    public function theme_index_main($h, $profile = false)
+    public function theme_index_main($h)
     {
-        if ($h->isPage('activity') || $profile == true) {
+        if ($h->pageName != 'activity') { return false; }
         
-            if ($h->pageName == 'profile') {
-                $user = $h->cage->get->testUsername('user');
-                $userid = $h->getUserIdFromName($user);
-            } else {
-                $userid = 0;
-            }
-                
-            // Get settings from database if they exist...
-            $activity_settings = $h->getSerializedSettings('activity');
-
-            // gets however many are items shown per page on activity pages:
-            $activity = $this->getLatestActivity($h, 0, $userid); // 0 means no limit, ALL activity 
-            
-            if ($h->pageName == 'profile') {
-                $anchor_title = htmlentities($h->lang["activity_title_anchor_title"], ENT_QUOTES, 'UTF-8');
-                echo "<h2>\n";
-                echo "<a href='" . $h->url(array('page'=>'rss_activity', 'user'=>$user)) . "' title='" . $anchor_title . "'>\n";
-                echo "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'>\n</a>&nbsp;"; // RSS icon
-                echo $h->lang['activity_title'] . "</h2>\n"; 
-                $label = $user; // used in cache filename
-            } else {
-                /* BREADCRUMBS */
-                $label = 'site'; // used in cache filename
-            }
-            
-             $pg = $h->cage->get->testInt('pg');
-            $pagedResults = $h->pagination($activity, $activity_settings['number'], $pg);
-                        
-            $output = "<div id='activity'>";
-            $output .= "<ul class='sidebar_widget_body activity_widget_items'>\n";
-            
-            if ($pagedResults) {
-                while($action = $pagedResults->fetchPagedRow()) {
-                    $output .= $this->getWidgetActivityItems($h, array($action), $activity_settings, false);
-                }
-            }
-            
-            $output .= "</ul>\n\n";
-            $output .= "</div>";
-            
-            echo $output;
-            
-            if ($pagedResults) {
-                echo $h->pageBar($pagedResults);
-            }
-            return true;
-        }
+        $this->activityPage($h);
+        
+        return true;
     }
     
     
     /**
-     * Show activity on a user's profile
-     */    
+     * Display All Activity page
+     */
+    public function activityPage($h)
+    {
+        // Get settings from database if they exist...
+        $activity_settings = $h->getSerializedSettings('activity');
+        
+        // gets however many are items shown per page on activity pages:
+        $activity = $this->getLatestActivity($h);
+        
+        // pagination 
+        $pg = $h->cage->get->testInt('pg');
+        $h->vars['pagedResults'] = $h->pagination($activity, $activity_settings['number'], $pg);
+        
+        $h->displayTemplate('activity');
+
+    }
+    
+    
+    /**
+     * Display activity on Profile page
+     */
     public function profile($h)
     {
-        $this->theme_index_main($h, true);
+        $user = $h->cage->get->testUsername('user');
+        $userid = $h->getUserIdFromName($user);
+        $h->vars['user_name'] = $user;
+                
+        // Get settings from database if they exist...
+        $activity_settings = $h->getSerializedSettings('activity');
+
+        // gets however many are items shown per page on activity pages:
+        $activity = $this->getLatestActivity($h, 0, $userid); // 0 means no limit, ALL activity
+        
+        // pagination
+        $pg = $h->cage->get->testInt('pg');
+        $h->vars['pagedResults'] = $h->pagination($activity, $activity_settings['number'], $pg);
+        
+        $h->displayTemplate('activity_profile');
     }
     
     

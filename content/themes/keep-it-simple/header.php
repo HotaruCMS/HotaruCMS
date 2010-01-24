@@ -45,8 +45,8 @@
                 <meta name="keywords" content="<?php echo $h->lang['header_meta_keywords']; ?>" />
         <?php } ?>
    
-    <script type="text/javascript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery.min.js'; ?>"></script>
-    <script type="text/javascript" src="<?php echo BASEURL . 'libs/extensions/jQuery/jquery-ui.min.js'; ?>"></script>
+    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js?ver=1.4.0'></script>
+    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js?ver=1.7.2'></script>
     <script type="text/javascript" src="<?php echo BASEURL . 'javascript/hotaru.js'; ?>"></script>
 
     <!-- Include merged files for all the plugin css and javascript (if any) -->

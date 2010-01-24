@@ -245,7 +245,9 @@ class Vote
         $why_list = "";
         foreach ($h->vars['reasons'] as $why) {
             $alert_lang = "vote_alert_reason_" . $why;
-            $why_list .= $h->lang[$alert_lang] . ", ";
+            if (isset($h->lang[$alert_lang])) {
+                $why_list .= $h->lang[$alert_lang] . ", ";
+            }
         }
         $why_list = rstrtrim($why_list, ", ");    // removes trailing comma
 

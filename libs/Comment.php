@@ -183,7 +183,8 @@ class Comment
         $this->author = $comment->comment_user_id;
         $this->date = $comment->comment_date;
         $this->status = $comment->comment_status;
-        $this->votes = $comment->comment_votes;
+        $this->votes_up = $comment->comment_votes_up;
+        $this->votes_down = $comment->comment_votes_down;
         $this->content = urldecode($comment->comment_content);
         $this->subscribe = $comment->comment_subscribe;
         

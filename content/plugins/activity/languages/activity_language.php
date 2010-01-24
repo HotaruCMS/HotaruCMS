@@ -40,13 +40,13 @@ $lang['activity_icon_anchor_title'] = "Subscribe to this feed";
 /* Admin Settings */
 $lang["activity_settings_header"] = "Activity Settings";
 $lang["activity_settings_widget_header"] = "Activity Widget";
-$lang["activity_settings_instructions"] = "Choose how you would like activity displayed:";
+$lang["activity_settings_instructions"] = "<b>The settings below are for the Activity Widget only.</b><br /><small>You can change how activity looks on user profiles and the main activity page by copying the templates from activity/templates/ to your theme folder and editing them there.</small>";
 
 $lang["activity_settings_avatar"] = "Show user's avatar <small>(requires the Gravatar plugin)</small>";
 $lang["activity_settings_avatar_size"] = "Avatar size in pixels <small>(default: 16)</small>";
 $lang["activity_settings_user"] = "Show user's name";
 $lang["activity_settings_time"] = "Show time since activity";
-$lang["activity_settings_widget_number"] = "Number of items to show in the sidebar <small>(default: 10)</small>";
+$lang["activity_settings_widget_number"] = "Number of items to show in the widget <small>(default: 10)</small>";
 $lang["activity_settings_number"] = "Number of items per page to show on activity pages and RSS feed <small>(default: 20)</small>";
 
 $lang["activity_settings_save"] = "Save";

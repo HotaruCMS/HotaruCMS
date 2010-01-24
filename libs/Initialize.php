@@ -231,7 +231,8 @@ class Initialize
         if (DEBUG == "true") {
             require_once(FUNCTIONS . 'funcs.times.php');
             timer_start();
-            ini_set('display_errors', 1); // show errors 
+            ini_set('display_errors', 1); // show errors
+            ini_set('error_log', CACHE . 'debug_logs/error_log.txt');
             return true;
         } else {
             ini_set('display_errors', 0); // hide errors

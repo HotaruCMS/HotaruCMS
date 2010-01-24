@@ -46,6 +46,8 @@ $h->vars['profile'] = $profile;
 $h->pluginHook('user_edit_profile_fill_form'); 
 
 ?>
+<div id="users_edit_profile">
+
     <h2><?php echo $h->lang["users_profile_edit"]; ?>: <?php echo $h->vars['user']->name; ?></h2>
     
     <?php echo $h->showMessage(); ?>
@@ -66,3 +68,4 @@ $h->pluginHook('user_edit_profile_fill_form');
     <input type='hidden' name='edited_profile' value='true' />
     <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
     </form>
+</div>

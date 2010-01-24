@@ -12,5 +12,5 @@
 .related_posts_link  { display: block; }
 .related_posts_indent { margin-left: 2.4em; }
 #related_posts_none { font-style: italic; color: #888; margin: 0 0 1.6em 2.4em;}
-.vote_color_top { border: 1px solid #d0d0d0; background-color: #f0f0f0; color: #000; }
-.vote_color_new { border: 1px solid #d0d0d0; background-color: #ffffff; color: #000; }
+
+/* vote colors moved to vote.css in Vote plugin */

@@ -83,6 +83,7 @@ class PliggImp6
                 $sql        = "INSERT IGNORE " . DB_PREFIX . $this_table . " (" . $columns . ") VALUES(%d, %d, %s, %s, %s, %d, %d, %d)";
                 
                 $lks = new PliggImp2();
+                $comms = new PliggImp3();
                 $usr = new PliggImp5();
                 
                 // Insert into postvotes table
@@ -104,20 +105,20 @@ class PliggImp6
                 $count++;
     
                 if ($child->vote_value > 0) { 
-                    $rating = 'positive'; 
+                    $rating = 10; 
                 } else {
-                    $rating = 'negative';
+                    $rating = -10;
                 }
                 
                 $columns    = "cvote_post_id, cvote_comment_id, cvote_user_id, cvote_user_ip, cvote_date, cvote_rating, cvote_reason, cvote_updateby";
                 
-                $sql        = "INSERT IGNORE " . DB_PREFIX . "commentvotes (" . $columns . ") VALUES(%d, %d, %d, %s, %s, %s, %d, %d)";
+                $sql        = "INSERT IGNORE " . DB_PREFIX . "commentvotes (" . $columns . ") VALUES(%d, %d, %d, %s, %s, %d, %d, %d)";
                 
                 // Insert into commentvotes table
                 $h->db->query($h->db->prepare(
                     $sql,
-                    $lks->get_new_link_id($h, $child->vote_link_id),
                     0,
+                    $comms->get_new_comment_id($h, $child->vote_link_id),
                     $usr->get_new_user_id($h, $child->vote_user_id),
                     $child->vote_ip,
                     $child->vote_date,

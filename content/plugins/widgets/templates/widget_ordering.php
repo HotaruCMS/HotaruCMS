@@ -47,7 +47,6 @@ for ($i=1; $i<=$blocks; $i++) {
         $alt = 0;
         if ($widgets) {
             foreach ($widgets as $widget => $details) {
-            
                 if ($details['block'] == $i) {
                     // For the enabled button...
                     if ($details['enabled']) {
@@ -77,7 +76,7 @@ for ($i=1; $i<=$blocks; $i++) {
                     echo "<tr id='table_tr' class='table_row_" . $alt % 2 . "'>\n";
                         echo "<td class='plugins_active widgets_active'>" . $enabled_output . "</td>\n";
                         echo "<td class='table_text'>" . make_name($widget) . " </td>\n";
-                        echo "<td class='plugins_order widgets_order'>" . $order_output . "</td>\n";
+                        echo "<td class='plugins_order widgets_order'>" . $order_output . " " . $details['order'] . " " . $details['block'] . "</td>\n";
                     echo "</tr>\n";
                 }
             }

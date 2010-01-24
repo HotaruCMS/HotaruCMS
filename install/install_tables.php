@@ -99,7 +99,8 @@ function create_table($table_name)
           `comment_date` timestamp NOT NULL,
           `comment_status` varchar(32) NOT NULL DEFAULT 'approved',
           `comment_content` text NOT NULL,
-          `comment_votes` int(20) NOT NULL DEFAULT '0',
+          `comment_votes_up` smallint(11) NOT NULL DEFAULT '0',
+          `comment_votes_down` smallint(11) NOT NULL DEFAULT '0',
           `comment_subscribe` tinyint(1) NOT NULL DEFAULT '0',
           `comment_updateby` int(20) NOT NULL DEFAULT 0,
           FULLTEXT (`comment_content`)
@@ -114,16 +115,16 @@ function create_table($table_name)
     if ($table_name == "commentvotes") {
         //echo "table doesn't exist. Stopping before creation."; exit;
         $sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
-              `cvote_archived` enum('Y','N') NOT NULL DEFAULT 'N',
-              `cvote_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-              `cvote_post_id` int(11) NOT NULL DEFAULT '0',
-              `cvote_comment_id` int(11) NOT NULL DEFAULT '0',
-              `cvote_user_id` int(11) NOT NULL DEFAULT '0',
-              `cvote_user_ip` varchar(32) NOT NULL DEFAULT '0',
-              `cvote_date` timestamp NOT NULL,
-              `cvote_rating` enum('positive','negative','alert') NULL,
-              `cvote_reason` tinyint(3) NOT NULL DEFAULT 0,
-              `cvote_updateby` int(20) NOT NULL DEFAULT 0
+            `cvote_archived` enum('Y','N') NOT NULL DEFAULT 'N',
+            `cvote_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+            `cvote_post_id` int(11) NOT NULL DEFAULT '0',
+            `cvote_comment_id` int(11) NOT NULL DEFAULT '0',
+            `cvote_user_id` int(11) NOT NULL DEFAULT '0',
+            `cvote_user_ip` varchar(32) NOT NULL DEFAULT '0',
+            `cvote_date` timestamp NOT NULL,
+            `cvote_rating` smallint(11) NOT NULL DEFAULT '0',
+            `cvote_reason` tinyint(3) NOT NULL DEFAULT 0,
+            `cvote_updateby` int(20) NOT NULL DEFAULT 0
             ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Comment Votes';";
         echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
         $db->query($sql); 
@@ -333,12 +334,6 @@ function create_table($table_name)
         // Admin theme
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
         $db->query($db->prepare($sql, 'ADMIN_THEME', 'admin_default/', 'admin_default/', 'You need the "\/"'));
-        
-        // Language_pack 
-        /* Defined in hotaru_settings because we need it for this installation script, but here we check it has been defined, just in case.*/
-        if (!isset($language_pack)) { $language_pack = 'default/'; }
-        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'LANGUAGE_PACK', $language_pack, 'language_default/', 'You need the "\/"'));
         
         // Friendly urls
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";

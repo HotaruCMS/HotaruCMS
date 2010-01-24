@@ -1,0 +1,13 @@
+/* ************************************
+ * ******* COMMENT VOTING CSS ********
+ * ********************************* */
+
+.comment_votes { float: right; }
+.comment_votes img { margin-bottom: -3px; }
+
+.comment_votes_up{ display: inline; }
+.comment_votes_up_link, .comment_votes_up_text  { display: inline; }
+
+.comment_votes_down { display: inline; }
+.comment_votes_down_link, .comment_votes_down_text { display: inline; }
+ 

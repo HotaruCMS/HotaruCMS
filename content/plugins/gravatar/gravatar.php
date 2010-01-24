@@ -97,7 +97,7 @@ class Gravatar
             "&amp;size=" . $size . 
             "&amp;r=" . $rating;
             
-        $img_url = "<img class='avatar' src='" . $grav_url . "' " . $resized  ." alt='' />\n";
+        $img_url = "<img class='avatar' src='" . $grav_url . "' " . $resized  ." alt='' />";
         
         return $img_url;
     }

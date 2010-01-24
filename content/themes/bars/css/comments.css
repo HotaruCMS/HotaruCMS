@@ -1,0 +1,58 @@
+/* **************************************
+ *	 COMMENTS PLUGIN CSS            *
+ ************************************** */
+
+.comment_link	{ padding-left: 1.5em; background-image: url(content/themes/default/images/comment.png); }
+
+#comments_wrapper h2 {
+	padding-bottom: 0em;
+}
+
+.comment_form form { padding: 12px; }
+
+.comment .avatar_wrapper a {
+	float: left;
+	padding: 0 0.6em 0.6em 0;
+}
+
+.comment {
+	background-color: #fff;
+	border: 2px solid #ffcc00;
+	margin-top: 1.0em;
+	padding: 0.4em;
+}
+
+.comment_reply {
+	background-color: #ffcc00;
+}
+
+.comment_reply_link, .comment_edit_link {
+	padding: 3px;
+	background-color: #cc0000;
+	color: #fff;
+	font-size: 10px;
+}
+
+.comment_author_date {
+	font-size: 0.8em;
+	float: right;
+}
+
+.comment_form textarea {
+	width: 98%;
+}
+
+.comment_form_off {
+	margin-top: 2.0em;
+	text-align: center;
+}
+
+.comment_status {
+	float: right;
+	text-align: right;
+}
+
+#comment_manager_link {
+	float: right;
+	text-align: right;	
+}

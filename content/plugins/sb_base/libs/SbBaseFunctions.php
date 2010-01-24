@@ -80,7 +80,6 @@ class SbBaseFunctions
         }
         
         $prepared_filter = $this->filter($h->vars['filter'], $limit, $all, $h->vars['select'], $h->vars['orderby']);
-        
         $stories = $this->getPosts($h, $prepared_filter);
         
         return $stories;
@@ -251,16 +250,19 @@ class SbBaseFunctions
      */    
     public function getPosts($h, $prepared_array = array())
     {
-        if (!empty($prepared_array)) {
-            if (empty($prepared_array[1])) {
-                $posts = $h->db->get_results($prepared_array[0]); // ignoring the prepare function.
-            } else {
-                $posts = $h->db->get_results($h->db->prepare($prepared_array));
-            }
-            if ($posts) { return $posts; }
+        if (!$prepared_array) { return false; }
+        
+        $h->smartCache('on', 'posts', 60); // start using cache (lasts 60 mins if no update to tags table)
+        
+        if (empty($prepared_array[1])) {
+            $posts = $h->db->get_results($prepared_array[0]); // ignoring the prepare function.
+        } else {
+            $posts = $h->db->get_results($h->db->prepare($prepared_array));
         }
         
-        return false;
+        $h->smartCache('off'); // stop using cache
+        
+        if ($posts) { return $posts; } else { return false; }
     }
     
     

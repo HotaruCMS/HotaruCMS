@@ -166,8 +166,8 @@ class generic_pmd {
          $info[strtolower($uu[1][$i])] = trim($uu[2][$i]);
       }
 
-      #-- ok
-      if ($info["folder"]) {
+      #-- ok - folder used for plugins, name used for themes
+      if (isset($info["folder"]) || isset($info["name"])) {
          return($info);
       }
    }

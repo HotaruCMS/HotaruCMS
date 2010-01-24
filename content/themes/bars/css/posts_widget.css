@@ -1,0 +1,6 @@
+/* **************************************
+ *	POSTS WIDGET CSS          *
+ ************************************** */
+
+.posts_widget_vote { float: left; width: 20px; height: 18px; text-align: center;  margin-right: 6px; }
+.posts_widget_link  { display: inline; padding: 0 0 4px 0; line-height: 20px; }

@@ -28,6 +28,8 @@ $username = $username_check; // used for user_tabs template
 if ($username_check == 'deleted') { $h->showMessage(); return true; } // shows "User deleted" notice
 
 ?>
+<div id="users_account">
+
     <h2><?php echo $h->lang["users_account"]; ?>: <?php echo $username; ?></h2>
     
     <?php echo $h->showMessages(); ?>
@@ -89,4 +91,4 @@ if ($username_check == 'deleted') { $h->showMessage(); return true; } // shows "
         </table>
         </form>
     <?php } ?>
-
+</div>

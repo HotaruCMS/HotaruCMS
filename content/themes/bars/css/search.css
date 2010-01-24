@@ -1,0 +1,8 @@
+/* **************************************
+ *	SIDEBAR POSTS PLUGIN CSS          *
+ ************************************** */
+
+/* Search Box */
+
+#search_form { padding: 0; text-align: center;}
+#search_form input#search_input { padding: 2px; width: 160px; }

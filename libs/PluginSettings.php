@@ -145,7 +145,7 @@ class PluginSettings
      *
      * @param string $folder name of plugin folder
      * @param string $setting name of the setting
-     * @param string $setting stting value
+     * @param string $setting setting value
      */
     public function updateSetting($h, $setting = '', $value = '', $folder = '')
     {

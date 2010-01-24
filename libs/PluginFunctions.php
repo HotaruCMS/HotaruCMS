@@ -60,7 +60,7 @@ class PluginFunctions
         {
             if (!$plugin->plugin_enabled) { continue; } // if the plugin isn't active, skip this iteration
             
-            if ($plugin->plugin_folder &&  $plugin->plugin_hook && ($plugin->plugin_enabled == 1)
+            if ($plugin->plugin_folder && $plugin->plugin_hook && ($plugin->plugin_enabled == 1)
                 && !in_array($plugin->plugin_folder, $exclude)) 
             {
 

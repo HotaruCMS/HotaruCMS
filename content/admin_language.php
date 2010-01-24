@@ -222,8 +222,10 @@ $lang["admin_theme_main_admin_home"] = "Admin Home";
 $lang["admin_theme_main_latest"] = "Latest from Hotaru CMS";
 $lang["admin_theme_main_stats"] = "Stats";
 
-/* plugin settings */
+/* theme settings */
 $lang["admin_theme_plugin_settings"] = "Plugin Settings";
+$lang["admin_theme_theme_settings"] = "Theme Settings";
+$lang["admin_theme_theme_no_settings"] = " doesn't have any settings.";
 
 /* footer */
 $lang["admin_theme_footer_having_trouble_vist_forums"] = "Having trouble? Visit the forums at";

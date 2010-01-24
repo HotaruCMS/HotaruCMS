@@ -80,7 +80,7 @@ jQuery.fn.fadeToggle = function(speed, easing, callback) {
 $(document).ready(function(){
 
 	// Fade message
-	$(".message").css({display: "none"}).fadeIn("slow");
+	$(".message").css({display: "none"}).fadeIn(1000);
 	
         
 	// Show/Hide table details (Plugin Management page and similar tables)
