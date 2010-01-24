@@ -137,8 +137,10 @@ class Widgets
                                 $h->messages[$h->lang['widgets_order_updated']] = 'green';
                                 break;
                             } else {
-                                // In different blocks so don't change the order, just the block value
-                                $widgets_settings['widgets'][$this_widget_function]['block']--;
+                                // In different blocks so don't change the order, just the block value (but only if greater than 1)
+                                if ($widgets_settings['widgets'][$this_widget_function]['block'] > 1) {
+                                    $widgets_settings['widgets'][$this_widget_function]['block']--;
+                                }
                             }
                         }
                     }
@@ -157,8 +159,14 @@ class Widgets
                     // find widget in the target spot...
                     foreach ($widgets as $widget => $details) {
                         if ($details['order'] == ($this_widget_order + 1)) {
-                            $widgets_settings['widgets'][$widget]['order'] = $details['order'] - 1;
-                            $widgets_settings['widgets'][$this_widget_function]['order'] = $this_widget_order + 1;
+                            // just increase the block?
+                            if ($widgets_settings['widgets'][$widget]['block'] > $this_widget_block) {
+                                $widgets_settings['widgets'][$this_widget_function]['block']++;
+                            // or increase the order?
+                            } else {
+                                $widgets_settings['widgets'][$widget]['order'] = $details['order'] - 1;
+                                $widgets_settings['widgets'][$this_widget_function]['order'] = $this_widget_order + 1;
+                            }
                             $h->messages[$h->lang['widgets_order_updated']] = 'green';
                             break;
                         }

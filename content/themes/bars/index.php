@@ -38,7 +38,7 @@ $h->includeThemeLanguage();
 
 // set widths and widget block numbers
 if ($bars['left'] && $bars['right']) { 
-    $bar_width = 6; $content_width = 12;            // BOTH BARS: total 24 (6x2 + 12)
+    $bar_width = 6; $content_width = 11;            // BOTH BARS: total 24 (6x2 + 12)
     $left = 1; $right = 2;
 } elseif (!$bars['left'] && !$bars['right']) {
     $h->sidebars = false;

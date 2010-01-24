@@ -72,10 +72,11 @@ class RssShow
                 // SITE TITLE
                 if ($settings['title']) { 
                     $output .= "<h2 class='widget_head rss_show_feed_title'>\n";
-                    $output .= "<a href='" . $feed->subscribe_url() . "' title='" . $h->lang["rss_show_icon_anchor_title"] . "'>\n";
-                    $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'></a>&nbsp;\n"; // RSS icon
                     if ($feed->get_link()) { $link = $feed->get_link(); } else { $link = $feed->subscribe_url(); }
-                    $output .= "<a href='" . $link . "' title='" . $h->lang["rss_show_title_anchor_title"] . "'>" . $settings['title'] . "</a></h2>\n"; 
+                    $output .= "<a href='" . $link . "' title='" . $h->lang["rss_show_title_anchor_title"] . "'>" . $settings['title'] . "</a>";
+                    $output .= "<a href='" . $feed->subscribe_url() . "' title='" . $h->lang["rss_show_icon_anchor_title"] . "'>\n";
+                    $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'></a>\n"; // RSS icon
+                    $output .= "</h2>\n"; 
                 }
                     
                 if ($feed->data) { 

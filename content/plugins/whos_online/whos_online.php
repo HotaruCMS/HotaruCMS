@@ -137,8 +137,8 @@ class WhosOnline
                 }
                 
                 if ($avatars) {
-                    $h->setAvatar($userid, $avatar_size);  
-                    $output .= $h->linkAvatar() . " \n";
+                    $h->setAvatar($userid, $avatar_size);
+                    $output .= $h->linkAvatar();
                 }
                 
                 if ($names) {
@@ -157,7 +157,7 @@ class WhosOnline
         
         echo $output;
         
-        echo "</div>";
+        echo "</div>\n";
     }
     
     

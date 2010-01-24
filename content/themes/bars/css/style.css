@@ -151,7 +151,7 @@ ul.sort_menu  { margin: 0; }
 }
 
 /* FOOTER */
-#bottom_background { background: #cc0000; }
+#bottom_background { background: #cc0000; margin-top: 16px; }
 #footer p { margin-top: 16px; }
 
 /* SITE CLOSED MESSAGE */

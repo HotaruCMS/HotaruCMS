@@ -120,7 +120,7 @@ class Avatar
             foreach ($result as $key => $value) {
                 $avatar = $value;
             }
-            $output .=  $avatar; // uses the last avatar sent to this hook
+            $output .= $avatar; // uses the last avatar sent to this hook
         }
         $output .= "</a>\n";
         return $output;
