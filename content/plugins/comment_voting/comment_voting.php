@@ -57,7 +57,7 @@ class CommentVoting
             $h->vars['already_voted'] = $h->db->get_var($h->db->prepare($sql, $h->comment->id));
         }
         
-        $h->displayTemplate('cvotes', 'comment_voting', false);
+        $h->displayTemplate('comment_votes', 'comment_voting', false);
     }
 }
 

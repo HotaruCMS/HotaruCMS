@@ -44,12 +44,12 @@ $user_ip = $h->cage->server->testIp('REMOTE_ADDR');
     
     <div id='comment_votes_up_link_<?php echo $h->comment->id; ?>' class='comment_votes_up_link' <?php echo $link_display; ?>>
         <a href="#" onclick="comment_voting('<?php echo BASEURL; ?>', '<?php echo $user_ip; ?>', <?php echo $h->post->id; ?>, <?php echo $h->comment->id; ?>, 10); return false;">
-        <img src="<?php echo BASEURL; ?>content/plugins/comment_voting/images/thumbsup.png" alt="<?php echo $h->lang['comment_voting_button_vote_up']; ?>">
+        <img src="<?php echo BASEURL; ?>content/plugins/comment_voting/images/thumbsup.png" title="<?php echo $h->lang['comment_voting_button_vote_up']; ?>">
         </a>
     </div>
 
     <div id='comment_votes_up_text_<?php echo $h->comment->id; ?>' class='comment_votes_up_text' <?php echo $text_display; ?>>
-        <img src="<?php echo BASEURL; ?>content/plugins/comment_voting/images/thumbsup.png" alt="<?php echo $h->lang['comment_voting_button_vote_up']; ?>">
+        <img src="<?php echo BASEURL; ?>content/plugins/comment_voting/images/thumbsup.png" title="<?php echo $h->lang['comment_voting_button_vote_up']; ?>">
     </div>
     
     
@@ -66,12 +66,12 @@ $user_ip = $h->cage->server->testIp('REMOTE_ADDR');
     
     <div id='comment_votes_down_link_<?php echo $h->comment->id; ?>' class='comment_votes_down_link' <?php echo $link_display; ?>>
         <a href="#" onclick="comment_voting('<?php echo BASEURL; ?>', '<?php echo $user_ip; ?>', <?php echo $h->post->id; ?>, <?php echo $h->comment->id; ?>, -10); return false;">
-        <img src="<?php echo BASEURL; ?>content/plugins/comment_voting/images/thumbsdown.png" alt="<?php echo $h->lang['comment_voting_button_vote_down']; ?>">
+        <img src="<?php echo BASEURL; ?>content/plugins/comment_voting/images/thumbsdown.png" title="<?php echo $h->lang['comment_voting_button_vote_down']; ?>">
         </a>
     </div>
 
     <div id='comment_votes_down_text_<?php echo $h->comment->id; ?>' class='comment_votes_down_text' <?php echo $text_display; ?>>
-        <img src="<?php echo BASEURL; ?>content/plugins/comment_voting/images/thumbsdown.png" alt="<?php echo $h->lang['comment_voting_button_vote_down']; ?>">
+        <img src="<?php echo BASEURL; ?>content/plugins/comment_voting/images/thumbsdown.png" title="<?php echo $h->lang['comment_voting_button_vote_down']; ?>">
     </div>
     
 </div>

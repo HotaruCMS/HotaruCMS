@@ -24,12 +24,13 @@
 }
 
 .comment_reply_link, .comment_edit_link {
-	padding: 0.4em;
+	padding: 0.2em 0.4em 0.2em 0.4em;
 	background-color: #ffffff;
 	font-size: 1.2em;
 }
 
 .comment_author_date {
+    margin-top: 0.6em;
 	font-size: 0.8em;
 	float: right;
 }
