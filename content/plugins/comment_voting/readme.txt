@@ -10,6 +10,7 @@ Instructions
 ------------
 1. Upload the "comment_voting" folder to your plugins folder.
 2. Install it from Plugin Management in Admin.
+3. Enable votes on comments in Admin -> Comments
 
 Changelog
 ---------
