@@ -61,7 +61,10 @@ class ActivitySettings
         
         echo "<form name='activity_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=activity' method='post'>\n";
         
-        echo "<p>" . $h->lang["activity_settings_instructions"] . "</p><br />";
+        // number of items on the activity page
+        echo "<p><input type='text' size=5 name='pg_number' value='" . $pg_number . "' /> " . $h->lang["activity_settings_number"] . "</p>\n";
+        
+        echo "<br /><p>" . $h->lang["activity_settings_instructions"] . "</p>";
         
         // show avatars?
         echo "<p><input type='checkbox' name='avatar' value='avatar' " . $avatar . " >&nbsp;&nbsp;" . $h->lang["activity_settings_avatar"] . "</p>\n"; 
@@ -77,9 +80,6 @@ class ActivitySettings
         
         // number of items in the widget
         echo "<p><input type='text' size=5 name='widget_number' value='" . $widget_number . "' /> " . $h->lang["activity_settings_widget_number"] . "</p>\n";
-        
-        // number of items on the activity page
-        echo "<p><input type='text' size=5 name='pg_number' value='" . $pg_number . "' /> " . $h->lang["activity_settings_number"] . "</p>\n";
         
         $h->pluginHook('activity_settings_form');
                         
