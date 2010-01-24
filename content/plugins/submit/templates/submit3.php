@@ -25,6 +25,8 @@
  */
 
 ?>
+<div id="submit_3">
+
     <?php echo $h->lang["submit_instructions_3"]; ?> <br /><br />
     
     <?php $h->displayTemplate('sb_post', 'sb_base') ?>
@@ -52,3 +54,4 @@
     
     <?php $h->pluginHook('submit_step3_post_buttons'); ?>
     
+</div>

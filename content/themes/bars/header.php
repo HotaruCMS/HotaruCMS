@@ -1,6 +1,6 @@
 <?php
 /**
- * Theme name: default
+ * Theme name: bars
  * Template name: header.php
  * Template author: Nick Ramsay
  *
@@ -46,14 +46,30 @@
     <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js?ver=1.4.0'></script>
     <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js?ver=1.7.2'></script>
     <script type="text/javascript" src="<?php echo BASEURL . 'javascript/hotaru.js'; ?>"></script>
-       
-    <link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME . 'css/reset-fonts-grids.css'; ?>" type="text/css" />
+    
+    <script type="text/javascript">
+        $(document).ready(function(){
+            // Show/Hide forgot password form
+            $("#sort_box_link").click(function () {
+            var target = $(this).next("ul");
+            var target2 = $(this).next("ul").next("ul");
+            target.fadeToggle();
+            target2.fadeToggle();
+            return false;
+            });
+        });
+    </script>
+
+    <link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME; ?>css/blueprint/screen.css" type="text/css" media="screen, projection">
+    <link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME; ?>css/blueprint/print.css" type="text/css" media="print">
+    <!--[if IE]><link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME; ?>css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
     
     <!-- Include merged files for all the plugin css and javascript (if any) -->
     <?php $h->doIncludes(); ?>
     <!-- End -->
-    
+
     <link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME . 'css/style.css'; ?>" type="text/css" />
+
     <!-- <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico" /> -->
    
     <?php $h->pluginHook('header_include_raw'); ?>
@@ -70,24 +86,16 @@
     </div>
 <?php } ?>
 
-<div id="doc2" class="yui-t7">
-    <div id="nav">
-        <!-- NAVIGATION -->
-        <?php echo $h->displayTemplate('navigation'); ?>
-    </div>
-    <div class="clear">&nbsp;</div>
-    
-    <div id="hd">
-        <!-- TITLE & AD BLOCKS -->
-        <div id="hd_title">
-            <h1><a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a></h1>
+<div id="top_background">
+    <div class="container">
+        <div id="navigation" class="span-24 last">
+            <!-- NAVIGATION -->
+            <?php echo $h->displayTemplate('navigation'); ?>
         </div>
-        <div id="hd_block2">
+    
+        <div id="header_end" class="span-24 last">
+            <!-- CATEGORIES, ETC -->
+            <?php $h->pluginHook('header_end'); ?>
         </div>
     </div>
-    <div class="clear">&nbsp;</div>
-    
-    <div id="header_end">
-        <!-- CATEGORIES, ETC -->
-        <?php $h->pluginHook('header_end'); ?>
-    </div>
+</div>

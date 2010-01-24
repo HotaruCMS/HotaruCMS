@@ -38,6 +38,8 @@ if ($h->cage->post->getAlpha('updated_settings') == 'true') {
 $h->pluginHook('user_settings_fill_form'); 
 
 ?>
+<div id="users_settings">
+
     <h2><?php echo $h->lang["users_settings"]; ?>: <?php echo $h->vars['user']->name; ?></h2>
     
     <?php echo $h->showMessage(); ?>
@@ -52,3 +54,4 @@ $h->pluginHook('user_settings_fill_form');
     <input type='hidden' name='updated_settings' value='true' />
     <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
     </form>
+</div>

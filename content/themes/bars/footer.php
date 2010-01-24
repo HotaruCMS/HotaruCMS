@@ -1,6 +1,8 @@
-<?php
+<?php 
 /**
- * Users Settings
+ * Theme name: bars
+ * Template name: footer.php
+ * Template author: Nick Ramsay
  *
  * PHP version 5
  *
@@ -23,23 +25,25 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
+
 ?>
-<div id="users_permissions">
+<div id="bottom_background">
+    <div class="container">
+        <div id="footer" class="span-24 last">
+            <?php 
+                $h->pluginHook('footer');
+            
+                // Link to forums...
+                echo "<p><a href='http://hotarucms.org' title='" . $h->lang["main_theme_footer_hotaru_link"] . "'><img src='" . BASEURL . "content/themes/" . THEME . "images/hotarucms.png' ";
+                echo "alt='" . $h->lang["main_theme_footer_hotaru_link"] . "' /></a></p>";
+            
+                $h->showQueriesAndTime();
+            ?>
+        </div> <!-- close "footer" -->
+    </div> <!-- close "container" -->
+</div> <!-- close "bottom background" -->
 
-    <h2><?php echo $h->lang["users_permissions"]; ?>: <?php echo $h->vars['user']->name; ?></h2>
-    
-    <?php $h->showMessages(); ?>
-        
-    <form name='permissions_form' action='<?php echo BASEURL; ?>index.php' method='post'>
-    <table class='permissions'>
-    <?php echo $h->vars['perm_options']; ?>
+<?php $h->pluginHook('pre_close_body'); ?>
 
-    
-    </table>
-    <input type='hidden' name='page' value='permissions' />
-    <input type='hidden' name='permissions' value='updated' />
-    <input type='hidden' name='userid' value='<?php echo $h->vars['user']->id; ?>' />
-    <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
-    <div style='text-align: right'><input class='submit' type='submit' value='<?php echo  $h->lang['users_permissions_update']; ?>' /></div>
-    </form>
-</div>
+</body>
+</html>

@@ -26,6 +26,8 @@
 $h->pluginHook('submit_2_assign');
 
 ?>
+<div id="submit_2">
+
     <?php $h->showMessages(); ?>
     
     <?php echo $h->lang["submit_instructions_2"]; ?>
@@ -37,27 +39,25 @@ $h->pluginHook('submit_2_assign');
         <tr>
             <td><?php echo $h->lang["submit_url"]; ?>&nbsp; </td>
             <td><?php echo $h->vars['submit_orig_url']; ?></td>
-            <td>&nbsp;</td>
         </tr>
     <?php } ?>
     
     <tr>
         <td><?php echo $h->lang["submit_title"]; ?>&nbsp; </td>
         <td><input type='text' id='post_title' name='post_title' value='<?php echo $h->vars['submit_title']; ?>'></td>
-        <td id='ajax_loader'>&nbsp;</td>
     </tr>
     
     <?php if ($h->vars['submit_use_content']) { ?>
     <tr>
         <td style='vertical-align: top;'><?php echo $h->lang["submit_content"]; ?>&nbsp; </td>
-        <td colspan='2'>
+        <td>
             <textarea id='post_content' name='post_content' rows='6'><?php echo $h->vars['submit_content']; ?></textarea>
         </td>
     </tr>
     
     <tr>
         <td>&nbsp;</td>
-        <td colspan=2 style='vertical-align: top;' class="submit_instructions">
+        <td style='vertical-align: top;' class="submit_instructions">
             <?php echo $h->lang['submit_allowable_tags']; ?>
             <?php echo $h->vars['submit_allowable_tags']; ?>
         </td>
@@ -92,6 +92,8 @@ $h->pluginHook('submit_2_assign');
     <input type='hidden' name='submit_key' value='<?php echo $h->vars['submit_key']; ?>' />
     <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
     
-    <tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' onclick="javascript:safeExit=true;" class='submit' name='submit' value='<?php echo $h->lang['main_form_next']; ?>' /></td></tr>    
+    <tr><td>&nbsp; </td><td style='text-align:right;'><input type='submit' onclick="javascript:safeExit=true;" class='submit' name='submit' value='<?php echo $h->lang['main_form_next']; ?>' /></td></tr>    
     </table>
     </form>
+
+</div>

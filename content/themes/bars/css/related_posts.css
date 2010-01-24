@@ -1,0 +1,14 @@
+/* **************************************
+ *	RELATED POSTS PLUGIN CSS          *
+ ************************************** */
+
+/* ***********************************
+ * ******* RELATED POSTS VOTES ********
+ * ********************************* */
+
+#related_posts_title {margin-top: 10px; }
+.related_posts { margin-bottom: 10px; padding: 0}
+.related_posts_vote { float: left; width: 20px; text-align: center;  margin-right: 6px; }
+.related_posts_link  { display: inline; padding: 2px 0 2px 0; line-height: 20px; }
+.related_posts_link a, .related_posts_link a:hover { font-weight: normal; }
+#related_posts_none { font-style: italic; color: #888; margin: 0 0 16px 24px;}

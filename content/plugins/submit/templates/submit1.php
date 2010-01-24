@@ -26,6 +26,7 @@
  
 $submitted_url = urldecode($h->vars['submitted_data']['submit_orig_url']);
 ?>
+<div id="submit_1">
 
     <?php echo $h->showMessage(); ?>
             
@@ -33,23 +34,15 @@ $submitted_url = urldecode($h->vars['submitted_data']['submit_orig_url']);
     <?php echo $h->lang["submit_instructions_1"]; ?>
     
     <form name='submit_1' action='<?php echo BASEURL; ?>index.php?page=submit1' method='post'>
-    <table>
-    <tr>
-        <td><?php echo $h->lang["submit_url"]; ?>&nbsp; </td>
-        <td><input type='text' id='submit_orig_url' name='submit_orig_url' value='<?php echo $submitted_url; ?>' /></td>
-        <td>&nbsp;</td>
-    </tr>
-    <?php if ($h->currentUser->getPermission('can_post_without_link') == 'yes') { ?>
-    <tr>
-        <td colspan = 3><input type='checkbox' name='no_link'>&nbsp;
-            <?php echo $h->lang["submit_post_without_link"]; ?></td>
-    </tr>
-    <?php } ?>
+        <?php echo $h->lang["submit_url"]; ?>&nbsp; 
+        <input id='submit_orig_url'type='text' name='submit_orig_url' value='<?php echo $submitted_url; ?>' />
+        <?php if ($h->currentUser->getPermission('can_post_without_link') == 'yes') { ?>
+            <br /><input id='submit_no_link' type='checkbox' name='no_link'>&nbsp;<?php echo $h->lang["submit_post_without_link"]; ?>
+        <?php } ?>
 
-    <input type='hidden' name='submit1' value='true' />
-
-    <tr><td colspan=3>&nbsp;</td></tr>
-    <tr><td>&nbsp; </td><td>&nbsp; </td><td style='text-align:right;'><input type='submit' class='submit' name='submit' value='<?php echo $h->lang['main_form_next']; ?>' /></td></tr>    
-    </table>
+        <input type='hidden' name='submit1' value='true' />
+        <br />
+        <input id="submit_button_1" type='submit' class='submit' name='submit' value='<?php echo $h->lang['main_form_next']; ?>' />
     </form>
 
+</div>
