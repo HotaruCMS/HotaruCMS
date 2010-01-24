@@ -1156,7 +1156,9 @@ class Hotaru
      */
     public function showQueriesAndTime()
     {
-        $this->debug->showQueriesAndTime($this);
+        if ($this->isDebug) {
+            $this->debug->showQueriesAndTime($this);
+        }
     }
     
     /**
