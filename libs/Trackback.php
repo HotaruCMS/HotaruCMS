@@ -48,9 +48,11 @@ class Trackback
         $url = BASEURL . 'index.php?page=' . $h->post->id; 
         
         if ($this->ping($h, $trackback, $url, $title, $excerpt)) {
-            echo "Trackback sent successfully...";
+            //echo "Trackback sent successfully...";
+            return true;
         } else {
-            echo "Error sending trackback....";
+            //echo "Error sending trackback....";
+            return false;
         }
     }
     
