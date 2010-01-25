@@ -262,6 +262,8 @@ class SubmitLight extends Submit
                     $h->messages[$h->lang['submit_form_moderation']] = 'green';
                     $return = 1; // will return false just after we notify admins of the post (see about 10 lines down)
                 }
+                
+                $h->pluginHook('submit_confirm_pre_trackback'); // Vote uses this to change pst status and redirection
 
                 // notify chosen mods of new post by email if enabled and UserFunctions file exists
                 if (($h->vars['submit_settings']['email_notify']) && (file_exists(PLUGINS . 'users/libs/UserFunctions.php')))
