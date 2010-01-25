@@ -1940,5 +1940,18 @@ class Hotaru
         $widget = new Widget();
         $widget->deleteWidget($this, $function);
     }
+    
+ 
+    /**
+     * Get plugin name from widget function name
+     *
+     * @return string
+     */
+    public function getPluginFromFunction($function)
+    {
+        require_once(LIBS . 'Widget.php');
+        $widget = new Widget();
+        return $widget->getPluginFromFunction($this, $function);
+    }
 }
 ?>

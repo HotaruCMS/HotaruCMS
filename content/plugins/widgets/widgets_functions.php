@@ -38,7 +38,7 @@ $h->start();
 if ($h->cage->post->testAlpha('plugin') == 'widgets' ) {
 	if ($h->cage->post->testAlpha('action') == 'enable') { 
 		$this_widget_function = $h->cage->post->testAlnumLines('widget');
-		$this_widget_name = $h->vars['widgets']->getPluginFromFunction($h, $this_widget_function);
+		$this_widget_name = $h->getPluginFromFunction($this_widget_function);
 	 
 		// enable a widget
 		if ($h->isActive($this_widget_name)) {
