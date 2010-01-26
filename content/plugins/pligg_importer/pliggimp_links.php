@@ -103,7 +103,11 @@ class PliggImp2
                 
                 // Get the original domain
                 $parsed = parse_url($child->link_url); 
-                $domain = $parsed['scheme'] . "://" . $parsed['host'];
+                if ($parsed) {
+                    $domain = $parsed['scheme'] . "://" . $parsed['host'];
+                } else {
+                    $domain = '';
+                }
                 
                 $columns    = "post_author, post_category, post_status, post_type, post_date, post_title, post_orig_url, post_domain, post_url, post_content, post_votes_up, post_votes_down, post_tags, post_updateby";
                 
