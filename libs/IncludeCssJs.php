@@ -30,7 +30,7 @@ class IncludeCssJs
     protected $jsIncludes           = array();  // a list of js files to include
     protected $jsIncludesAdmin      = array();  // a list of js files to include in Admin
     protected $includeType          = '';       // 'css' or 'js'
-    
+	protected $debug				= false;     // local file debug var, normally set to false;
     
     /**
      * setCssIncludes
@@ -67,12 +67,13 @@ class IncludeCssJs
      */
     public function setJsIncludes($file, $admin = false)
     {
+		if ($this->debug) print  "in the setJsIncludes function    -> " . $file. " (admin:" . $admin .")<br/><br/>";
         if ($admin) { 
             array_push($this->jsIncludesAdmin, $file);
+			if ($this->debug) print "Updated array. Items = " . sizeof($this->jsIncludesAdmin) . "<br/><br/>";
         } else {
             array_push($this->jsIncludes, $file);
-        }
-        
+        }        
     }
     
     
@@ -80,9 +81,10 @@ class IncludeCssJs
      * getJsIncludes
      */
     public function getJsIncludes($admin = false)
-    {
+    {	if ($this->debug) print "in the getJsIncludes function (admin:".$admin.")<br/><br/>";
         if ($admin) {
-            return $this->jsIncludesAdmin;
+			if ($this->debug) print "Looking at array in getJsIncludes. Items = " . sizeof($this->jsIncludesAdmin) . "<br/>";
+            return $this->jsIncludesAdmin;			
         } else {
             return $this->jsIncludes;
         }
@@ -118,7 +120,7 @@ class IncludeCssJs
      * @param $filename - optional js file without an extension
      */
      public function includeJs($h, $folder = '', $filename = '')
-     {
+     {	if ($this->debug) print "in the includeJs function for " . $filename . " (folder) " . $folder . "<br/>";
         if (!$folder) { $folder = $h->plugin->folder; }
                 
         // If no filename provided, the filename is assigned the plugin name.
@@ -126,7 +128,7 @@ class IncludeCssJs
         
         $file_location = $this->findJsFile($folder, $filename);
         
-        // Add this css file to the global array of css_files
+        // Add this js file to the global array of js_files
         $this->setJsIncludes($file_location, $h->isAdmin);
         
         return $folder; // returned for testing purposes only
@@ -177,7 +179,7 @@ class IncludeCssJs
      * Note: the js file should be in a folder named 'javascript' and a file of the format plugin_name.js, e.g. category_manager.js
      */    
     public function findJsFile($folder = '', $filename = '')
-    {
+    {	if ($this->debug) print "in the findJSFile function for " . $filename . " (folder) " . $folder . "<br/>";
         if (!$folder) { return false; }
 
         // If filename not given, make the plugin name the file name
@@ -193,9 +195,14 @@ class IncludeCssJs
             
         // If still not found, look in the plugin folder for a js file... 
         } elseif (file_exists(PLUGINS . $folder . '/javascript/' . $filename . '.js')) {
-            $file_location = PLUGINS . $folder . '/javascript/' . $filename . '.js';
+            $file_location = PLUGINS . $folder . '/javascript/' . $filename . '.js';        
+
+		// If still not found, look in the full given folder itself for a js file... 
+        } elseif (file_exists($folder . $filename . '.js')) {
+            $file_location = $folder . $filename . '.js';
+			if ($this->debug) print "found in cache folder: " . $file_location . "<br/>";
         }
-         
+         //print $folder . $filename . '.js      ---        ';
         if (isset($file_location)) {
             return $file_location;
         }
@@ -229,13 +236,27 @@ class IncludeCssJs
         } else { 
             $type = 'js'; 
             $content_type = 'text/javascript';
+			//don't forget to get the globals js file as well
+			if ($this->debug) print "PASS HERE ONCE TO INSERT NEW CODE FOR JavaScriptsConstants" ."<br/><br/>";
+			//$this->setJsIncludes($cache . 'JavascriptConstants.js' , $h->isAdmin);
+			$this->includeJs($h, $cache, 'JavascriptConstants')	;
+			if ($this->debug) print "END OF NEW CODE FOR JavaScriptsConstants" ."<br/><br/>";			
             $includes = $this->getJsIncludes($h->isAdmin);
+			
+			if ($this->debug) print "<br/>ARRAY FOR JS FILES BEFORE RUN DUPLICATES FUNCTION<br/><br/>";
+			if ($this->debug) print_r($includes );
+			if ($this->debug) print "<br/><br/>";
         }
         
         $includes = array_unique($includes);    // remove duplicate includes
-        
         if(empty($includes)) { return false; }
-        
+
+		 if($type == 'js') { 
+			if ($this->debug) print "ARRAY FOR JS FILES AFTER RUN DUPLICATES FUNCTION<br/><br/>";
+			if ($this->debug) print_r($includes );
+			if ($this->debug) print "<br/><br/>";
+			if ($this->debug) print "EVERYTHING LOOKS FINE UPTO HERE THEN THE LOOP RUNS AGAIN ???<br/><br/>";
+		 }
          /*
             if version parameter is present then the script is being called directly, otherwise we're including it in 
             another script with require or include. If calling directly we return code othewise we return the etag 
@@ -306,6 +327,12 @@ class IncludeCssJs
         
           // output merged code
           echo $sCode;
+
+		  //if($type == 'js') { 
+			//  $global_ajax_var = "jQuery('document').ready(function($) {BASEURL = '". BASEURL ."'; ADMIN_THEME = '" . ADMIN_THEME . "'; });";	
+			//  echo  $global_ajax_var;
+		  //}	
+
           exit; // we don't want to drop out and continue building Hotaru or Admin objects when we're just including a file!
           
         } else {
@@ -334,6 +361,7 @@ class IncludeCssJs
      */
      public function includeCombined($version_js = 0, $version_css = 0, $admin = false)
      {
+		if ($this->debug) print "in the include combined function <br/>";
         if ($admin) { $index = 'admin_index'; } else { $index = 'index'; }
         
         if ($version_js > 0) {
