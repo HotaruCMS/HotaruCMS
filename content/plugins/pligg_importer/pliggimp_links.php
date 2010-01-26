@@ -103,7 +103,7 @@ class PliggImp2
                 
                 // Get the original domain
                 $parsed = parse_url($child->link_url); 
-                if ($parsed) {
+                if (isset($parsed['scheme']) && isset($parsed['host'])) {
                     $domain = $parsed['scheme'] . "://" . $parsed['host'];
                 } else {
                     $domain = '';
