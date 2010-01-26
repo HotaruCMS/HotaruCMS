@@ -161,7 +161,7 @@ class PliggImp3
     {
         $sql = "SELECT pliggimp_new_value FROM " . DB_PREFIX . "pliggimp_temp WHERE pliggimp_setting = %s AND pliggimp_old_value = %d";
         
-        $new_link_id = $h->db->get_var($h->db->prepare($sql, 'comment_id', $old_comment_id));
+        $new_comment_id = $h->db->get_var($h->db->prepare($sql, 'comment_id', $old_comment_id));
         
         if ($new_comment_id) { return $new_comment_id; } else { return false; }
     }
