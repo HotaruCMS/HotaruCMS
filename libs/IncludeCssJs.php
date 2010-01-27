@@ -240,6 +240,10 @@ class IncludeCssJs
 			if ($this->debug) print "PASS HERE ONCE TO INSERT NEW CODE FOR JavaScriptsConstants" ."<br/><br/>";
 			//$this->setJsIncludes($cache . 'JavascriptConstants.js' , $h->isAdmin);
 			$this->includeJs($h, $cache, 'JavascriptConstants')	;
+			$this->includeJs($h, ADMIN_THEMES . ADMIN_THEME. "javascript/" , rtrim(ADMIN_THEME, "/"));
+			$this->includeJs($h, BASE , "hotaru");
+			//print ADMIN_THEMES . ADMIN_THEME . "javascript/". rtrim(ADMIN_THEME, "/");
+			
 			if ($this->debug) print "END OF NEW CODE FOR JavaScriptsConstants" ."<br/><br/>";			
             $includes = $this->getJsIncludes($h->isAdmin);
 			
@@ -262,11 +266,13 @@ class IncludeCssJs
             another script with require or include. If calling directly we return code othewise we return the etag 
             (version number) representing the latest files
         */
-        
+
+if ($this->debug) print "VERSION NUMBER IS " . $version . "<br/><br/>";			
         if ($version > 0) {
         
             // GET ACTUAL CODE - IF IT'S CACHED, SHOW THE CACHED CODE, OTHERWISE, GET INCLUDE FILES, BUILD AN ARCHIVE AND SHOW IT
-        
+ if ($this->debug) print "VERSION IS GREATER THAN 0<br/><br/>";	
+ 
             $iETag = $version;
             $sLastModified = gmdate('D, d M Y H:i:s', $iETag).' GMT';
             
@@ -283,7 +289,9 @@ class IncludeCssJs
             if (!is_dir($cache)) {
                 mkdir($cache);
             }
-        
+
+if ($this->debug) print "BEFORE CHECKING IF CACHE IS ON OR NOT<br/><br/>";		
+
             // get code from archive folder if it exists, otherwise grab latest files, merge and save in archive folder
             if ((CSS_JS_CACHE_ON == "true") && file_exists($cache . $prefix . $type . '_' . $iETag . '.cache')) {
                 $sCode = file_get_contents($cache . $prefix . $type . '_' . $iETag . '.cache');
@@ -302,6 +310,8 @@ class IncludeCssJs
                 // sort dates, newest first
                 rsort($aLastModifieds);
                 
+if ($this->debug) print "STARTING ETAG MODIFIED LOOP<br/><br/>";
+
                 if ($iETag == $aLastModifieds[0]) { // check for valid etag, we don't want invalid requests to fill up archive folder
                     $oFile = fopen($cache . $prefix . $type . '_' . $iETag . '.cache', 'w');
                     if (flock($oFile, LOCK_EX)) {
@@ -315,6 +325,8 @@ class IncludeCssJs
                     exit;
                 }
         
+if ($this->debug) print "END ETAG MODIFIED LOOP<br/><br/>";
+
             }
         
             // send HTTP headers to ensure aggressive caching
@@ -361,6 +373,8 @@ class IncludeCssJs
      */
      public function includeCombined($version_js = 0, $version_css = 0, $admin = false)
      {
+if ($this->debug) print "in the includeCombined function with JS version: ". $version_js . "   and CSS version" . $version_css . "<br/><br/>";
+
 		if ($this->debug) print "in the include combined function <br/>";
         if ($admin) { $index = 'admin_index'; } else { $index = 'index'; }
         
