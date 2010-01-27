@@ -34,13 +34,15 @@ class Widget
         // Get settings from the database if they exist...
         $widgets_settings = $h->getSerializedSettings('widgets'); 
         
-        // delete completely any widgets from uninstalled plugins:
-        foreach ($widgets_settings as $ws => $plugins) {
-            foreach ($plugins as $plugin) {
-                if (!$h->isInstalled($plugin['plugin'])) {
-                    $this->deleteWidget($h, $plugin['function']);
-                    unset($widgets_settings['widgets'][$plugin['plugin']]);
-                    // widget settings get updated at the end of this function
+        if ($widgets_settings) {
+            // delete completely any widgets from uninstalled plugins:
+            foreach ($widgets_settings as $ws => $plugins) {
+                foreach ($plugins as $plugin) {
+                    if (!$h->isInstalled($plugin['plugin'])) {
+                        $this->deleteWidget($h, $plugin['function']);
+                        unset($widgets_settings['widgets'][$plugin['plugin']]);
+                        // widget settings get updated at the end of this function
+                    }
                 }
             }
         }
