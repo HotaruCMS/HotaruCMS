@@ -41,19 +41,20 @@ if ($h->cage->post->testAlpha('plugin') == 'widgets' ) {
 		// get the name of the supporting plugin
 		$this_plugin_name = $h->getPluginFromFunction($this_widget_function);
 
+        $h->includeLanguage('widgets');
 		// enable a widget if plugin is active
 		if ($h->isActive($this_plugin_name)) {
 			$widgets_settings['widgets'][$this_widget_function]['enabled'] = true;			
-			$json_array = array('enabled'=>'true', 'message'=>'widget has been enabled', 'color'=>'green'); 
+			$json_array = array('enabled'=>'true', 'message'=>$h->lang['widgets_order_enabled'], 'color'=>'green');
 		} else {
 			// don't enable it if the plugin is inactive		
 			$widgets_settings['widgets'][$this_widget_function]['enabled'] = false;
-			$json_array = array('enabled'=>'false', 'message'=>'plugin is inactive', 'color'=>'red'); 						
+			$json_array = array('enabled'=>'false', 'message'=>$h->lang['widgets_order_not_active'], 'color'=>'red');
 		}						
 	} 	
 	elseif ($h->cage->post->testAlpha('action') == 'disable') {
 		$widgets_settings['widgets'][$this_widget_function]['enabled'] = false;
-		$json_array = array('enabled'=>'false', 'message'=>'widget has been disabled', 'color'=>'green'); 					
+		$json_array = array('enabled'=>'false', 'message'=>$h->lang['widgets_order_disabled'], 'color'=>'green');
 	}
             
 	// Save updated widgets settings
