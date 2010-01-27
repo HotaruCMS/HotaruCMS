@@ -573,6 +573,7 @@ class SubmitFunctions
     public function processSubmission($h, $key)
     {
         $h->post->id = $h->cage->post->getInt('submit_post_id');
+        if ($h->post->id) { $h->readPost(); } // read what we've already got for this post
         
         // get the last submitted data by this user:
         $submitted_data = $this->loadSubmitData($h, $key);
@@ -691,6 +692,7 @@ class SubmitFunctions
         
         if (preg_match('/charset=([a-zA-Z0-9-_]+)/i', $string , $matches)) {
             $encoding=trim($matches[1]);
+
             //you need iconv to encode to utf-8
             if (function_exists("iconv"))
             {
@@ -707,7 +709,8 @@ class SubmitFunctions
             $title = '';
         }
         
-        return sanitize(utf8_encode($title), 2);
+        //echo sanitize(utf8_encode($title), 2); // doesn't play well with non-standard characters
+        return htmlspecialchars($title);
     }
     
 }
