@@ -36,12 +36,12 @@ $h = new Hotaru();
 $h->start();
 
 if ($h->cage->post->testAlpha('plugin') == 'widgets' ) {
+    $h->includeLanguage('widgets');
 	$this_widget_function = $h->cage->post->testAlnumLines('widget');	
 	if ($h->cage->post->testAlpha('action') == 'enable') { 	
 		// get the name of the supporting plugin
 		$this_plugin_name = $h->getPluginFromFunction($this_widget_function);
-
-        $h->includeLanguage('widgets');
+        
 		// enable a widget if plugin is active
 		if ($h->isActive($this_plugin_name)) {
 			$widgets_settings['widgets'][$this_widget_function]['enabled'] = true;			
