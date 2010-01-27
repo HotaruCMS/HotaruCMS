@@ -318,3 +318,5 @@ table#settings {
 }
 
 .accordion .horizontal { }
+
+#admin_theme_theme_activate {cursor: pointer;}
