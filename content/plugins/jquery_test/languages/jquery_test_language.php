@@ -27,7 +27,7 @@
 /* Main Page */
 $lang["jquery_test_settings_header"] = "JQuery Test";
 $lang["jquery_test_settings_instructions"] = "The JQuery Test allows you to check whether JQuery is operating properly on this Site.<br/><br/>If the Box does not move then there is a problem with JQuery. (You may need to hit hard refresh first CTRL-F5 to clear the cache sometimes).";
-$lang["jquery_test_settings_start"] = "Click the box to run the JQuery test";
+$lang["jquery_test_settings_start"] = "Click here to run the JQuery test";
 $lang["jquery_test_settings_result"] = "This test will also check global variables from JS files ...";
 $lang["jquery_test_settings_ctrlf5"] = "(You may need to hit hard refresh first CTRL-F5 to clear the cache sometimes)";
 
