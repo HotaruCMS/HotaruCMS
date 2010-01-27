@@ -36,23 +36,24 @@ $h = new Hotaru();
 $h->start();
 
 if ($h->cage->post->testAlpha('plugin') == 'widgets' ) {
-	if ($h->cage->post->testAlpha('action') == 'enable') { 
-		$this_widget_function = $h->cage->post->testAlnumLines('widget');
-		$this_widget_name = $h->getPluginFromFunction($this_widget_function);
-	 
-		// enable a widget
-		if ($h->isActive($this_widget_name)) {
+	$this_widget_function = $h->cage->post->testAlnumLines('widget');	
+	if ($h->cage->post->testAlpha('action') == 'enable') { 	
+		// get the name of the supporting plugin
+		$this_plugin_name = $h->getPluginFromFunction($this_widget_function);
+
+		// enable a widget if plugin is active
+		if ($h->isActive($this_plugin_name)) {
 			$widgets_settings['widgets'][$this_widget_function]['enabled'] = true;			
-			$json_array = array('enabled'=>'true', 'message'=>'xxxxxxxxx', 'color'=>'green'); 
+			$json_array = array('enabled'=>'true', 'message'=>'widget has been enabled', 'color'=>'green'); 
 		} else {
 			// don't enable it if the plugin is inactive		
 			$widgets_settings['widgets'][$this_widget_function]['enabled'] = false;
-			$json_array = array('enabled'=>'false', 'message'=>'xxxxxxxxx', 'color'=>'red'); 						
+			$json_array = array('enabled'=>'false', 'message'=>'plugin is inactive', 'color'=>'red'); 						
 		}						
 	} 	
 	elseif ($h->cage->post->testAlpha('action') == 'disable') {
 		$widgets_settings['widgets'][$this_widget_function]['enabled'] = false;
-		$json_array = array('enabled'=>'false', 'message'=>'xxxxxxxxx', 'color'=>'green'); 					
+		$json_array = array('enabled'=>'false', 'message'=>'widget has been disabled', 'color'=>'green'); 					
 	}
             
 	// Save updated widgets settings
