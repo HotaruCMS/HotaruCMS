@@ -199,8 +199,24 @@ class UserAuth extends UserBase
                 $month = 0; 
             }
             
-            setcookie("hotaru_user", $this->name, $month, "/");
-            setcookie("hotaru_key", $strCookie, $month, "/");
+            if (strpos(BASEURL, "localhost") !== false) {
+                setcookie("hotaru_user", $this->name, $month, "/");
+                setcookie("hotaru_key", $strCookie, $month, "/");
+            } else {
+                $parsed = parse_url(BASEURL); 
+                
+                // $parsed['host'] will equal www.domain.com, sub.domain.com or domain.com
+                // strip the www or anything else before the first dot:
+                $raw_domain = strstr($parsed['host'], '.');
+                
+                // if we had www. we now have .domain.com, otherwise we have domain.com
+                // take off that dot to guarantee just "domain.com"
+                $raw_domain = ltrim($raw_domain, '.'); 
+                
+                // now we need a dot in front of that so cookies work across subdomains:
+                setcookie("hotaru_user", $this->name, $month, "/", "." . $raw_domain);
+                setcookie("hotaru_key", $strCookie, $month, "/", "." . $raw_domain);
+            }
             return true;
         }
     }
