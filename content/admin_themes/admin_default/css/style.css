@@ -85,8 +85,12 @@ li a#navigation_active { text-decoration: underline; }
 	border: 1px solid #666;
 }
 
-#main, #sidebar {
+#main {
 	padding: 1.2em;
+}
+
+#sidebar {
+	padding: 0;
 }
 
 #breadcrumbs {
@@ -137,6 +141,10 @@ form {
 	font-weight: bold;
 }
 
+#return_message {display:none;}
+
+.visible {display:block;}
+
 .green {
 	background-color: #99FF66;
 }
@@ -151,7 +159,7 @@ form {
 	font-weight: bold;
 }
 
-
+.widget {height: 32px; vertical-align:middle;}
 /* *************************************
 *  Admin Home page *
 ************************************** */
@@ -262,3 +270,48 @@ table#settings {
 }
 
 .debug  { font-size: 0.8em; }
+
+/* ****************************
+*  Sidebar  *
+******************************* */
+
+.accordion {
+	width: 227px;
+	border-bottom: solid 1px #c4c4c4;
+}
+.accordion li {
+	background: #fff url(/content/admin_themes/admin_default/images/arrow-square.gif) no-repeat right -51px;
+	padding: 8px 15px;
+	margin: 0;
+	font: bold 120%/100% Arial, Helvetica, sans-serif;
+	border: solid 1px #c4c4c4;
+	border-bottom: none;
+	cursor: pointer;
+}
+.accordion li:hover {
+	background-color: #e3e2e2;
+}
+.accordion li.active {
+	background-position: right 5px;
+}
+
+.accordion li ul li {
+	background: #fff none;
+	padding: 5px 12px;
+	margin: 0;
+	font: normal 80%/100% Arial, Helvetica, sans-serif;
+	border: none;
+	cursor: pointer;
+}
+
+.accordion li ul {
+	margin-top:10px;
+}
+
+.accordion p {
+	background: #f7f7f7;
+	margin: 0;
+	padding: 10px 15px 20px;
+	border-left: solid 1px #c4c4c4;
+	border-right: solid 1px #c4c4c4;
+}
