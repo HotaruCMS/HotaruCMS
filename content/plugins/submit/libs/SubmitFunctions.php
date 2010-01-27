@@ -598,7 +598,8 @@ class SubmitFunctions
         }
         
         $h->post->title = $submitted_data['submit_title'];
-        $h->post->url = make_url_friendly($h->post->title);
+        $title = html_entity_decode($h->post->title, ENT_QUOTES, 'UTF-8');
+        $h->post->url = make_url_friendly($title);
         $h->post->content = $submitted_data['submit_content'];
         $h->post->type = 'news';    // This is the type we use to distinguish social bookmarking from forums, blogs, etc.
         if (!$h->post->id) { $h->post->author = $h->currentUser->id; } // no author yet
@@ -709,8 +710,7 @@ class SubmitFunctions
             $title = '';
         }
         
-        //echo sanitize(utf8_encode($title), 2); // doesn't play well with non-standard characters
-        return htmlspecialchars($title);
+        return $title;
     }
     
 }
