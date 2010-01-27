@@ -1447,15 +1447,15 @@ class Hotaru
      * @param string $switch either "on", "off" or "html"
      * @param string $table DB table name
      * @param int $timeout time before DB cache expires
-     * @param string $html output as HTML
+     * @param string $html_sql output as HTML, or an SQL query
      * @param string $label optional label to append to filename
      * @return bool
      */
-    public function smartCache($switch = 'off', $table = '', $timeout = 0, $html = '', $label = '')
+    public function smartCache($switch = 'off', $table = '', $timeout = 0, $html_sql = '', $label = '')
     {
         require_once(LIBS . 'Caching.php');
         $caching = new Caching();
-        return $caching->smartCache($this, $switch, $table, $timeout, $html, $label);
+        return $caching->smartCache($this, $switch, $table, $timeout, $html_sql, $label);
     }
     
     

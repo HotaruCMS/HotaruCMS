@@ -252,12 +252,13 @@ class SbBaseFunctions
     {
         if (!$prepared_array) { return false; }
         
-        $h->smartCache('on', 'posts', 60); // start using cache (lasts 60 mins if no update to tags table)
-        
         if (empty($prepared_array[1])) {
+            $h->smartCache('on', 'posts', 60, $prepared_array[0]); // start using cache
             $posts = $h->db->get_results($prepared_array[0]); // ignoring the prepare function.
         } else {
-            $posts = $h->db->get_results($h->db->prepare($prepared_array));
+            $query = $h->db->prepare($prepared_array);
+            $h->smartCache('on', 'posts', 60, $query); // start using cache
+            $posts = $h->db->get_results($query);
         }
         
         $h->smartCache('off'); // stop using cache
