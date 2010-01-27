@@ -101,8 +101,9 @@ li a#navigation_active { text-decoration: underline; }
 	padding-left: 1.0em;
 }
 
-ul#sidebar.horizontal { background-color: #f0f0f0; margin-bottom: 0.6em; }
-ul#sidebar.horizontal li { padding-left: 1.0em; display: inline; } 
+#sidebar.horizontal { background-color: #f0f0f0; margin-bottom: 0.6em; width:917px; height: 1.9em;}
+#sidebar.horizontal li { padding-left: 1.0em; display: inline; font-size:110%; background: none; padding: 0.3em 1.2em; line-height:1.8em;}
+#sidebar.horizontal li a {padding-top:0.6em;}
 
 #ft {
 	height: auto;
@@ -315,3 +316,5 @@ table#settings {
 	border-left: solid 1px #c4c4c4;
 	border-right: solid 1px #c4c4c4;
 }
+
+.accordion .horizontal { }
