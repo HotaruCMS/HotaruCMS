@@ -245,17 +245,17 @@ class Comments
                     // before setting pending, we need to be certain this user has permission:
                     if ($h->currentUser->getPermission('can_set_comments_pending') == 'yes') {
                         $cid = $h->cage->get->testInt('cid'); // comment id
-                        $comment = $h->comment->getComment($cid);
-                        $h->comment->readComment($comment); // read comment
+                        $comment = $h->comment->getComment($h, $cid);
+                        $h->comment->readComment($h, $comment); // read comment
                         $h->comment->status = 'pending'; // set to pending
-                        $h->comment->editComment();  // update this comment
+                        $h->comment->editComment($h);  // update this comment
     
                         $h->comment->postId = $h->cage->get->testInt('pid');  // post id
-                        $h->comment->setPendingCommentTree($cid);   // set all responses to 'pending', too.
+                        $h->comment->setPendingCommentTree($h,$cid);   // set all responses to 'pending', too.
                         
                         // redirect back to thread:
-                        $h->post = new Post($this->hotaru);
-                        $h->post->readPost($h->comment->postId);
+                        $h->post = new Post();
+                        $h->readPost($h->comment->postId);
                         header("Location: " . $h->url(array('page'=>$h->post->id)));    // Go to the post
                         die();
                     }
