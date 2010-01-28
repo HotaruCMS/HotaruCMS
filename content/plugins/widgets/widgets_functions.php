@@ -41,7 +41,11 @@ if ($h->cage->post->testAlpha('plugin') == 'widgets' ) {
      $widgets_settings = $h->getSerializedSettings('widgets');   
    
     $this_widget_function = $h->cage->post->testAlnumLines('widget');
-    $this_widget_name = ltrim($this_widget_function, 'widget_');
+    
+    // get the name of this widget, e.g. widget_text_widget (function) -> text_widget (widget name)
+    $this_widget_name = strstr($this_widget_function, '_'); // get every thing after "widget_" (returns the underscore)
+    $this_widget_name = ltrim($this_widget_name, '_'); // strip the underscore off the front
+    
     // get the name of the supporting plugin
 	$this_plugin_name = $h->getPluginFromFunction($this_widget_function);
 	if ($h->cage->post->testAlpha('action') == 'enable') {                  
@@ -67,7 +71,7 @@ if ($h->cage->post->testAlpha('plugin') == 'widgets' ) {
         }
             
 	// Save updated widgets settings
-	//$h->updateSetting('widgets_settings', serialize($widgets_settings), 'widgets');
+	$h->updateSetting('widgets_settings', serialize($widgets_settings), 'widgets');
     
 	// Send back result data
 	echo json_encode($json_array);

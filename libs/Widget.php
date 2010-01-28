@@ -171,8 +171,9 @@ class Widget
      * @param array $widgets
      * @return array - sorted widgets
      */
-    public function orderWidgets($widgets)
+    public function orderWidgets($widgets = array())
     {
+        if (!$widgets) { return false; }
         return sksort($widgets, "order", "int", true);
     }
     
