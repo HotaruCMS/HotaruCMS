@@ -107,7 +107,7 @@ class Widgets
         
         echo "<h1>" . $h->lang["widgets_settings_header"] . "</h1>\n";
         
-	echo '<div id="return_message" class="message_bar"></div>';
+	echo '<div id="return_message"></div>';
 
         if ($h->cage->get->testAlpha('action')) {
         

@@ -67,8 +67,9 @@ jQuery('document').ready(function($) {
                         if(data.enabled == 'true') { img_src = "active.png"; } else { img_src = "inactive.png"; }
                         widget.html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/' + img_src + '"/>');
                     }                    
-                    $('.message_bar').html(data.message).addClass(data.color);
-                    $('.message_bar').html(data.message).addClass('visible');
+                    $('#return_message').html(data.message).addClass(data.color);
+                    $('#return_message').html(data.message).addClass('message');
+                    $('#return_message').fadeIn(1000).fadeout(1000);
             },
             dataType: "json"
         });
@@ -111,8 +112,9 @@ jQuery('document').ready(function($) {
                         //if(data.enabled == 'true') { img_src = "active.png"; } else { img_src = "inactive.png"; }
                         //widget.html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/' + img_src + '"/>');
                     }
-                    $('.message_bar').html(data.message).addClass(data.color);
-                    $('.message_bar').html(data.message).addClass('visible');
+                    $('#return_message').html(data.message).addClass(data.color);
+                    $('#return_message').html(data.message).addClass('message');
+                    $('#return_message').css({display: "none"}).fadeIn(1000).delay(5000).fadeout(1000);
             },
             dataType: "json"
         });
