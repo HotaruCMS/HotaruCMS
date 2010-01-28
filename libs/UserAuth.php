@@ -228,8 +228,25 @@ class UserAuth extends UserBase
     public function destroyCookieAndSession()
     {
         // setting a cookie with a negative time expires it
-        setcookie("hotaru_user", "", time()-3600, "/");
-        setcookie("hotaru_key", "", time()-3600, "/");
+        
+        if (strpos(BASEURL, "localhost") !== false) {
+            setcookie("hotaru_user", "", time()-3600, "/");
+            setcookie("hotaru_key", "", time()-3600, "/");
+        } else {
+            $parsed = parse_url(BASEURL); 
+            
+            // $parsed['host'] will equal www.domain.com, sub.domain.com or domain.com
+            // strip the www or anything else before the first dot:
+            $raw_domain = strstr($parsed['host'], '.');
+            
+            // if we had www. we now have .domain.com, otherwise we have domain.com
+            // take off that dot to guarantee just "domain.com"
+            $raw_domain = ltrim($raw_domain, '.'); 
+            
+            // now we need a dot in front of that so cookies are cleared across subdomains:
+            setcookie("hotaru_user", "", time()-3600, "/", "." . $raw_domain);
+            setcookie("hotaru_key", "", time()-3600, "/", "." . $raw_domain);
+        }
         
         session_destroy(); // sessions are used in CSRF
         
