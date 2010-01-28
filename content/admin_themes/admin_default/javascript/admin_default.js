@@ -33,7 +33,7 @@ jQuery('document').ready(function($) {
     $('#admin_theme_theme_activate').click(function() {        
         var theme = $(this).attr("name");       
         var formdata = 'admin=theme_settings&theme='  + theme;
-		var sendurl = BASEURL + "content/admin_themes/" + ADMIN_THEME + 'theme_settings_functions.php';
+		var sendurl = BASEURL + "admin_index.php?page=settings";
 
         $.ajax(
 			{
