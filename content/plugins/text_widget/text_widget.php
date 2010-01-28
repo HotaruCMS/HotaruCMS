@@ -83,10 +83,11 @@ class TextWidget
             
             // Get settings from the database:
             $settings = unserialize($h->getSetting('text_widget_' . $id . '_settings', 'text_widget')); 
+            $title = html_entity_decode(stripslashes($settings['text_widget_title']), ENT_QUOTES,'UTF-8');
             $content = html_entity_decode(stripslashes($settings['text_widget_content']), ENT_QUOTES,'UTF-8');
 
             if ($settings['text_widget_title']) {
-                echo "<h2 class='widget_head'>" . stripslashes($settings['text_widget_title']) . "</h2>\n";
+                echo "<h2 class='widget_head'>" . stripslashes($title) . "</h2>\n";
             }
 
             if ($settings['text_widget_php']) {
@@ -151,8 +152,15 @@ class TextWidget
             } else {
                 $parameters['text_widget_php'] = '';
             }
-            $parameters['text_widget_title'] = $h->cage->post->noTags('text_widget_title');
-            $parameters['text_widget_content'] = htmlentities(stripslashes($h->cage->post->getRaw('text_widget_content')), ENT_QUOTES,'UTF-8');
+            $parameters['text_widget_title'] = sanitize($h->cage->post->noTags('text_widget_title'), 1);
+            
+            if (!get_magic_quotes_gpc()) {
+                $parameters['text_widget_content'] = htmlentities($h->cage->post->getRaw('text_widget_content'), ENT_QUOTES,'UTF-8');
+            }
+            else {
+                $parameters['text_widget_content'] = stripslashes(htmlentities($h->cage->post->getRaw('text_widget_content'), ENT_QUOTES,'UTF-8'));
+            }
+            
             $this->save_settings($h, $id, $parameters);
         }
     }
