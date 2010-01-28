@@ -388,13 +388,13 @@ class SubmitFunctions
             $h->messageType = 'red';
             $error = 1;
         } elseif (($h->currentUser->role == 'member' || $h->currentUser->role == 'undermod')
-                   && $daily_limit && ($daily_limit < $h->post->countPosts(24))) { 
+                   && $daily_limit && ($daily_limit < $h->countPosts(24))) { 
             // exceeded daily limit
             $h->message = $h->lang['submit_daily_limit_exceeded'];
             $h->messageType = 'red';
             $error = 1;
         } elseif (($h->currentUser->role == 'member' || $h->currentUser->role == 'undermod')
-                   && $freq_limit && ($h->post->countPosts(0, $freq_limit) > 0)) { 
+                   && $freq_limit && ($h->countPosts(0, $freq_limit) > 0)) { 
             // already submitted a post in the last X minutes. Needs to wait before submitting again
             $h->message = $h->lang['submit_freq_limit_error'];
             $h->messageType = 'red';

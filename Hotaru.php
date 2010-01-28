@@ -1681,7 +1681,7 @@ class Hotaru
      */
     public function countPosts($hours = 0, $minutes = 0, $user_id = 0)
     {
-        return $this->post->countPosts($hours, $minutes, $user_id);
+        return $this->post->countPosts($this, $hours, $minutes, $user_id);
     }
 
 
