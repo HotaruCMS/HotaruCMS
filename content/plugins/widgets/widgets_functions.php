@@ -34,26 +34,21 @@ require_once('../../../Hotaru.php');    // Not the cleanest way of getting to th
 
 $h = new Hotaru();
 $h->start();
-// print "hello";
+
 if ($h->cage->post->testAlpha('plugin') == 'widgets' ) {
     $h->includeLanguage('widgets');
      // Get widget settings from the database...
-     $widgets_settings = $h->getSerializedSettings('widgets');
-      
-    //print_r($h->getSerializedSettings('widgets'));
+     $widgets_settings = $h->getSerializedSettings('widgets');   
    
-	$this_widget_function = $h->cage->post->testAlnumLines('widget');
+    $this_widget_function = $h->cage->post->testAlnumLines('widget');
     $this_widget_name = ltrim($this_widget_function, 'widget_');
     // get the name of the supporting plugin
 	$this_plugin_name = $h->getPluginFromFunction($this_widget_function);
 	if ($h->cage->post->testAlpha('action') == 'enable') {                  
 		// enable a widget if plugin is active
 		if ($h->isActive($this_plugin_name)) {
-            //print "before: " . serialize($widgets_settings) . "   END<br/>";
-            //print "   this_widget_name: " . $this_widget_name . "          ";
-			$widgets_settings['widgets'][$this_widget_name]['enabled'] = true;
-            //print "after: " . serialize($widgets_settings) . "   END<br/>";
-			$json_array = array('enabled'=>'true', 'message'=>$h->lang['widgets_order_enabled'], 'color'=>'green');
+  			$widgets_settings['widgets'][$this_widget_name]['enabled'] = true;
+ 			$json_array = array('enabled'=>'true', 'message'=>$h->lang['widgets_order_enabled'], 'color'=>'green');
 		} else {
 			// don't enable it if the plugin is inactive		
 			$widgets_settings['widgets'][$this_widget_name]['enabled'] = false;
@@ -61,17 +56,13 @@ if ($h->cage->post->testAlpha('plugin') == 'widgets' ) {
 		}						
 	} 	
 	elseif ($h->cage->post->testAlpha('action') == 'disable') {
-        //print "before2: " . serialize($widgets_settings) . "   END<br/>";
-        //print "   widget_name: " . $this_widget_name . "          ";
-		$widgets_settings['widgets'][$this_widget_name]['enabled'] = false;
-        //print "after2: " . serialize($widgets_settings) . "   END<br/>";
-		$json_array = array('enabled'=>'false', 'message'=>$h->lang['widgets_order_disabled'], 'color'=>'green');
+ 		$widgets_settings['widgets'][$this_widget_name]['enabled'] = false;
+ 		$json_array = array('enabled'=>'false', 'message'=>$h->lang['widgets_order_disabled'], 'color'=>'green');
 	}
             
 	// Save updated widgets settings
 	$h->updateSetting('widgets_settings', serialize($widgets_settings), 'widgets');
     
-
 	// Send back result data
 	echo json_encode($json_array);
 }

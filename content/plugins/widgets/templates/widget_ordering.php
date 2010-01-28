@@ -31,7 +31,6 @@ $blocks = $h->vars['widgets']->getLastWidgetBlock($widgets);
 
 for ($i=1; $i<=$blocks; $i++) {
 ?>
-
     <div id="table_list">
     
     <table>
@@ -49,13 +48,9 @@ for ($i=1; $i<=$blocks; $i++) {
             foreach ($widgets as $widget => $details) {
                 if ($details['block'] == $i) {
                     // For the enabled button...
-                    if ($details['enabled']) {
-						$enabled_output  = "<div id='widget_" . $widget . "' class='widget'>" ;
-						$enabled_output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/active.png'></div>";           
-                    } else {
-                        $enabled_output  = "<div id='widget_" . $widget . "' class='widget'>" ;
-						$enabled_output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/inactive.png'></div>";   
-                    }
+                    if ($details['enabled']) { $img_src = 'active.png'; } else {$img_src = 'inactive.png';}
+                    $enabled_output  = '<div id="widget_' . $widget . '" class="widget">' ;
+                    $enabled_output .= '<img src="' . BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'images/' . $img_src . '"></div>';
                     
                     // For the up and down arrows...
                     $order_output = "<a href='" . BASEURL;

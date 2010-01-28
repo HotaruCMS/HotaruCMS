@@ -23,55 +23,50 @@
 
 jQuery('document').ready(function($) {
 			
-		// start submit function //								  
-		$(".widget").click(	function(){ $.fn.widget_onoff($(this)); });
+    // start submit function //
+    $(".widget").click(	function(){ $.fn.widget_onoff($(this)); });
 
 });	
 
 
-	$.fn.widget_onoff = function(widget) {
-		// Get the current widget		
-		var currentId = widget.attr("id");
-		var widget_image = widget.children("img").attr("src");		
-		this.widget_image = $(widget_image);
-		
-		var image_names = widget_image.split('/');		
-		var image_name = image_names[image_names.length-1];
-		if (image_name == "active.png") { var action = 'action=disable'; } else { var action = 'action=enable'; }
-		
-		//alert(image_name);		
-		var formdata = 'plugin=widgets&' + action + '&widget=' + currentId;  	
-		var sendurl = BASEURL + 'content/plugins/widgets/widgets_functions.php';
+    $.fn.widget_onoff = function(widget) {
+        // Get the current widget
+        var currentId = widget.attr("id");
+        var widget_image = widget.children("img").attr("src");
+        this.widget_image = $(widget_image);
+        var action = '';
 
-		$.ajax(
-			{
-			type: 'post',
-				url: sendurl,
-				data: formdata,
-				beforeSend: function () {
-						widget.html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/ajax-loader.gif' + '"/>');		
-					},
-				error: 	function(XMLHttpRequest, textStatus, errorThrown) {						
-						widget.html('ERROR');	
-				},
-				success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
-					if (data.error === true) {																									
-					}
-					else
-					{
-						// get required image based on returned data showing new status									
-						if(data.enabled == 'true') {
-							var show_image = "images/active.png";							
-						}
-						else {
-							var show_image = "images/inactive.png";
-						}
+        var image_names = widget_image.split('/');
+        var image_name = image_names[image_names.length-1];
+        if (image_name == "active.png") {  action = 'action=disable'; } else { action = 'action=enable'; }
 
-						widget.html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + show_image + '"/>');
-												
-					}
-					$('.message').html(data.message).addClass(data.color, 'visible');
-				},
-				dataType: "json"
-		}); 			
-	}
+        //alert(image_name);
+        var formdata = 'plugin=widgets&' + action + '&widget=' + currentId;
+        var sendurl = BASEURL + 'content/plugins/widgets/widgets_functions.php';
+
+        $.ajax(
+            {
+            type: 'post',
+            url: sendurl,
+            data: formdata,
+            beforeSend: function () {
+                            widget.html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/ajax-loader.gif' + '"/>');
+                    },
+            error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+                            widget.html('ERROR');
+            },
+            success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
+                    if (data.error === true) {
+                    }
+                    else
+                    {
+                        var img_src = "";
+                        // get required image based on returned data showing new status
+                        if(data.enabled == 'true') { img_src = "active.png"; } else { var img_src = "inactive.png"; }
+                        widget.html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/' + img_src + '"/>');
+                    }
+                    $('.message').html(data.message).addClass(data.color, 'visible');
+            },
+            dataType: "json"
+        });
+    }
