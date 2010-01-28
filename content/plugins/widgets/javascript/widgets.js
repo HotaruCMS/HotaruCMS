@@ -24,7 +24,9 @@
 jQuery('document').ready(function($) {
 			
     // start submit function //
-    $(".widget").click(	function(){ $.fn.widget_onoff($(this)); });
+    $(".widget_onoff").click(	function(){ $.fn.widget_onoff($(this)); });
+    //$(".widget_order_up").click(	function(){ $.fn.widget_order($(this)); });
+    //$(".widget_order_down").click(	function(){ $.fn.widget_order($(this)); });
 
 });	
 
@@ -38,10 +40,54 @@ jQuery('document').ready(function($) {
 
         var image_names = widget_image.split('/');
         var image_name = image_names[image_names.length-1];
-        if (image_name == "active.png") {  action = 'action=disable'; } else { action = 'action=enable'; }
+        if (image_name == "active.png") {  action = 'disable'; } else { action = 'enable'; }
 
         //alert(image_name);
-        var formdata = 'plugin=widgets&' + action + '&widget=' + currentId;
+        var formdata = 'plugin=widgets&action=' + action + '&widget=' + currentId;
+        var sendurl = BASEURL + 'content/plugins/widgets/widgets_functions.php';
+
+        $.ajax(
+            {
+            type: 'post',
+            url: sendurl,
+            data: formdata,
+            beforeSend: function () {
+                            widget.html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/ajax-loader.gif' + '"/>');
+                    },
+            error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+                            //widget.html('ERROR');
+            },
+            success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
+                    if (data.error === true) {
+                    }
+                    else
+                    {
+                        var img_src = "";
+                        // get required image based on returned data showing new status
+                        if(data.enabled == 'true') { img_src = "active.png"; } else { img_src = "inactive.png"; }
+                        widget.html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/' + img_src + '"/>');
+                    }                    
+                    $('.message_bar').html(data.message).addClass(data.color);
+                    $('.message_bar').html(data.message).addClass('visible');
+            },
+            dataType: "json"
+        });
+    }
+
+     $.fn.widget_order = function(widget) {
+          // Get the current widget
+        var currentId = widget.attr("id");
+        var action = widget.attr("class");
+        action = action.split("_");
+        action = "order_" +  action[action.length-1];
+
+        if (action == "up") {
+
+        } else {
+    
+        }
+        //alert(image_name);
+        var formdata = 'plugin=widgets&action=' + action + '&widget=' + currentId;
         var sendurl = BASEURL + 'content/plugins/widgets/widgets_functions.php';
 
         $.ajax(
@@ -60,14 +106,14 @@ jQuery('document').ready(function($) {
                     }
                     else
                     {
-                        var img_src = "";
+                        //var img_src = "";
                         // get required image based on returned data showing new status
-                        if(data.enabled == 'true') { img_src = "active.png"; } else { img_src = "inactive.png"; }
-                        widget.html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/' + img_src + '"/>');
-                    }                    
+                        //if(data.enabled == 'true') { img_src = "active.png"; } else { img_src = "inactive.png"; }
+                        //widget.html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/' + img_src + '"/>');
+                    }
                     $('.message_bar').html(data.message).addClass(data.color);
                     $('.message_bar').html(data.message).addClass('visible');
             },
             dataType: "json"
         });
-    }
+     }

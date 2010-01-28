@@ -59,9 +59,15 @@ if ($h->cage->post->testAlpha('plugin') == 'widgets' ) {
  		$widgets_settings['widgets'][$this_widget_name]['enabled'] = false;
  		$json_array = array('enabled'=>'false', 'message'=>$h->lang['widgets_order_disabled'], 'color'=>'green');
 	}
+        elseif ($h->cage->post->testAlpha('action') == 'up') {
+            $json_array = array('message'=>$h->lang['widgets_order_updated'], 'color'=>'green');
+        }
+        elseif ($h->cage->post->testAlpha('action') == 'down') {
+            $json_array = array('message'=>$h->lang['widgets_order_updated'], 'color'=>'green');
+        }
             
 	// Save updated widgets settings
-	$h->updateSetting('widgets_settings', serialize($widgets_settings), 'widgets');
+	//$h->updateSetting('widgets_settings', serialize($widgets_settings), 'widgets');
     
 	// Send back result data
 	echo json_encode($json_array);
