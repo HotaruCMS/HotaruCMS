@@ -241,7 +241,7 @@ class IncludeCssJs
 			//$this->setJsIncludes($cache . 'JavascriptConstants.js' , $h->isAdmin);
 			$this->includeJs($h, $cache, 'JavascriptConstants')	;
 			$this->includeJs($h, ADMIN_THEMES . ADMIN_THEME. "javascript/" , rtrim(ADMIN_THEME, "/"));
-			$this->includeJs($h, BASE , "hotaru");
+			$this->includeJs($h, BASE . 'javascript/' , "hotaru");
 			//print ADMIN_THEMES . ADMIN_THEME . "javascript/". rtrim(ADMIN_THEME, "/");
 			
 			if ($this->debug) print "END OF NEW CODE FOR JavaScriptsConstants" ."<br/><br/>";			
