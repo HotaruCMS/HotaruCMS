@@ -204,18 +204,10 @@ class UserAuth extends UserBase
                 setcookie("hotaru_key", $strCookie, $month, "/");
             } else {
                 $parsed = parse_url(BASEURL); 
-                
-                // $parsed['host'] will equal www.domain.com, sub.domain.com or domain.com
-                // strip the www or anything else before the first dot:
-                $raw_domain = strstr($parsed['host'], '.');
-                
-                // if we had www. we now have .domain.com, otherwise we have domain.com
-                // take off that dot to guarantee just "domain.com"
-                $raw_domain = ltrim($raw_domain, '.'); 
-                
+
                 // now we need a dot in front of that so cookies work across subdomains:
-                setcookie("hotaru_user", $this->name, $month, "/", "." . $raw_domain);
-                setcookie("hotaru_key", $strCookie, $month, "/", "." . $raw_domain);
+                setcookie("hotaru_user", $this->name, $month, "/", "." . $parsed['host']);
+                setcookie("hotaru_key", $strCookie, $month, "/", "." . $parsed['host']);
             }
             return true;
         }
@@ -235,17 +227,9 @@ class UserAuth extends UserBase
         } else {
             $parsed = parse_url(BASEURL); 
             
-            // $parsed['host'] will equal www.domain.com, sub.domain.com or domain.com
-            // strip the www or anything else before the first dot:
-            $raw_domain = strstr($parsed['host'], '.');
-            
-            // if we had www. we now have .domain.com, otherwise we have domain.com
-            // take off that dot to guarantee just "domain.com"
-            $raw_domain = ltrim($raw_domain, '.'); 
-            
             // now we need a dot in front of that so cookies are cleared across subdomains:
-            setcookie("hotaru_user", "", time()-3600, "/", "." . $raw_domain);
-            setcookie("hotaru_key", "", time()-3600, "/", "." . $raw_domain);
+            setcookie("hotaru_user", "", time()-3600, "/", "." . $parsed['host']);
+            setcookie("hotaru_key", "", time()-3600, "/", "." . $parsed['host']);
         }
         
         session_destroy(); // sessions are used in CSRF
