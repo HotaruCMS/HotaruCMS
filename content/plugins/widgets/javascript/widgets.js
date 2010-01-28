@@ -62,10 +62,11 @@ jQuery('document').ready(function($) {
                     {
                         var img_src = "";
                         // get required image based on returned data showing new status
-                        if(data.enabled == 'true') { img_src = "active.png"; } else { var img_src = "inactive.png"; }
+                        if(data.enabled == 'true') { img_src = "active.png"; } else { img_src = "inactive.png"; }
                         widget.html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/' + img_src + '"/>');
-                    }
-                    $('.message').html(data.message).addClass(data.color, 'visible');
+                    }                    
+                    $('.message_bar').html(data.message).addClass(data.color);
+                    $('.message_bar').html(data.message).addClass('visible');
             },
             dataType: "json"
         });

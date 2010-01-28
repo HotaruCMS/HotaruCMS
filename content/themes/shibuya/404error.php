@@ -1,8 +1,8 @@
 <?php 
 /**
- * Theme name: default
+ * Theme name: shibuya
  * Template name: 404.php
- * Template author: Nick Ramsay
+ * Template author: shibuya246
  *
  * PHP version 5
  *
@@ -20,10 +20,10 @@
  * 
  * @category  Content Management System
  * @package   HotaruCMS
- * @author    Nick Ramsay <admin@hotarucms.org>
+ * @author    shibuya246 <blog@shibuya246.com>
  * @copyright Copyright (c) 2009, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
- * @link      http://www.hotarucms.org/
+ * @link      http://www.shibuya246.com/
  */
 
 ?>
