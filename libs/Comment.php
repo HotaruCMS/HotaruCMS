@@ -456,8 +456,6 @@ class Comment
     {
         $text = $this->content;
         
-        echo "<br />" . $text . "</br >";
-        
         //$http = substr_count($text, "http");
         $href = substr_count($text, "href");
         $url = substr_count($text, "[url");
