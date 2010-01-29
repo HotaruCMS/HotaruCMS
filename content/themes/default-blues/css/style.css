@@ -139,7 +139,7 @@ img {
 
 /** CONTENT **/
 #content {
-	width: 620px;
+	width: 650px;
 	float: left;
 	margin-top: 12px;
 	background-color: #ffffff;
@@ -297,7 +297,7 @@ img {
 
 /** SIDEBAR **/
 #sidebar {
-	width: 302px;
+	width: 275px;
 	float: right;
 	padding-top: 11px;
 }
@@ -314,13 +314,19 @@ img {
 			text-transform: uppercase;
 			padding: 10px;
 		}
+		#sidebar .box h2 a {
+			color: #ffffff;
+		}
 		#sidebar .box .ads {
-			padding: 10px;
+			padding: 3px;
 			text-align: center;
 		}
 			#sidebar .box .ads img {
-				margin: 6px;
+				margin: 3px;
 			}
+		#sidebar .box a {
+			text-decoration: none;
+		}
 		#sidebar .box ul {
 			list-style-type: none;
 		}
@@ -329,7 +335,6 @@ img {
 				line-height: 1.6em;
 				font-family: Verdana;
 				border-top: 1px solid #D5D5D5;
-				background: url(../images/bullet.gif) no-repeat 128px center;
 			}
 			#sidebar .box ul li a {
 				color: #000000;
@@ -350,11 +355,11 @@ img {
 		}
 			#sidebar .box .tags a {
 				text-decoration: none;
-				color: #212121;
+				color: #ffffff;
 			}
 			#sidebar .box .tags a:hover {
-				text-decoration: underline;
-				color: #BB2222;
+				font-weight: bold;
+				color: #ffffff;
 			}
 		#sidebar .box .popular {
 			
@@ -365,8 +370,8 @@ img {
 			}
 			#sidebar .box .popular li a {
 				font-weight: bold;
-				text-decoration: underline;
-				color: #BB2222;
+				text-decoration: none;
+				color: #ffffff;
 			}
 		#sidebar form {
 			margin-bottom: 15px;
@@ -389,11 +394,11 @@ img {
 				background-color: transparent;
 			}
 	#sidebar .l {
-		width: 140px;
+		width: 130px;
 		float: left;
 	}
 	#sidebar .r {
-		width: 140px;
+		width: 130px;
 		float: right;
 	}
 /** End Sidebar **/
