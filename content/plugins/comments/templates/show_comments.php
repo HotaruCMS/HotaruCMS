@@ -82,7 +82,7 @@
                             '<?php echo BASEURL; ?>',
                             '<?php echo $h->comment->id; ?>',
                             '<?php echo $h->lang['comments_form_submit']; ?>');
-                            return false;" ><span class="comment_link"></span><?php echo $h->lang['comments_reply_link']; ?></a>
+                            return false;" ><?php echo $h->lang['comments_reply_link']; ?></a>
                     <?php } ?>
                 <?php } ?>
 
@@ -94,7 +94,7 @@
                             '<?php echo $h->comment->id; ?>',
                             '<?php echo urlencode($h->comment->content); ?>',
                             '<?php echo $h->lang['comments_form_edit']; ?>');
-                            return false;" ><span class="comment_link_edit"></span><?php echo $h->lang['comments_edit_link']; ?></a>
+                            return false;" ><?php echo $h->lang['comments_edit_link']; ?></a>
                 <?php } ?>
             </div>
         </div>

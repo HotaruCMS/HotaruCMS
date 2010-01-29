@@ -3,7 +3,10 @@
  ************************************** */
 
 .comment_link       { padding-left: 1.5em; background-image: url(content/themes/default/images/comment.png); background-repeat: no-repeat; }
-.comment_link_edit { padding-left: 1.5em; background-image: url(content/themes/default/images/edit.png); background-repeat: no-repeat; }
+.comment_reply_link { padding-left: 1.9em; background-image: url(content/themes/default/images/comment.png); background-repeat: no-repeat; background-position: 0 0;}
+.comment_edit_link { padding-left: 1.9em; padding-top:0.1em; background-image: url(content/themes/default/images/edit.png); background-repeat: no-repeat;  background-position: 0 0;}
+.comment_reply a:hover  { background-position: 0 -32px;}
+
 
 #comments_wrapper h2 {
 	padding-bottom: 0em;
@@ -19,17 +22,16 @@
         border: 2pt solid #ddd;
 }
 
-.comment_reply {
-	background-color: #fafafa;
+.comment_reply {	
         padding-bottom:1em;
         padding-top: 0.8em;
         text-align:right;
+        margin-right: 0.6em;
 }
 
 .comment_reply_link, .comment_edit_link {
-    padding: 0.2em 0.4em 0.2em 0.4em;
-    background-color: #ffffff;
-    font-size: 1.0em;
+    /* padding: 0.2em 0.4em 0.2em 0.4em;     */
+    font-size: 8pt;
     text-decoration: none;
     color:#444444;
     font-weight:bold;
