@@ -26,7 +26,14 @@ jQuery('document').ready(function($) {
 
 	$('.accordion li').has('ul').click(function() {
 		
-		$(this).children("ul").toggle('slow');
+                if ($(this).children("ul").is(":hidden")) {
+
+                    $(this).children("ul").slideDown("slow");
+                } else {
+                    $(this).children("ul").slideUp("slow");
+                }
+
+		
 		
 	});
 
