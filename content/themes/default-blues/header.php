@@ -47,6 +47,7 @@
 	
 	<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js?ver=1.4.0'></script>
 	<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js?ver=1.7.2'></script>
+	<script type="text/javascript" src="<?php echo BASEURL . 'javascript/hotaru.js'; ?>"></script>
 
 	<link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME . 'css/style.css'; ?>" type="text/css" />
 	
@@ -76,31 +77,24 @@
 	<!-- HEADER -->
 	<div id="header">
 		<h1><a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a></h1>
-		<div class="ad468x60"><img src="<?php echo BASEURL . 'content/themes/' . THEME; ?>images/wiki_banner.png" /></div>
 
 		<div class="break"></div>
 
 		<!-- NAVIGATION -->
     	<ul>
-    	<?php
-			if ($h->currentUser->loggedIn) { ?>
-    	<?php
-            if($h->isActive('avatar')) {
-                $h->setAvatar($h->currentUser->id, 16);
-                echo "<li>" . $h->linkAvatar() . "</li>";
-            }
-    	?>          
-        <?php if (($h->pageType == 'user') && ($h->vars['user']->id == $h->currentUser->id)) { $status = "id='navigation_active'"; } else { $status = ""; } ?>
-        	<li <?php echo $status; ?>><a <?php echo $status; ?> href='<?php echo $h->url(array('user' => $h->currentUser->name)); ?>' title='<?php echo $h->lang["users_profile"]; ?>'>
-            <?php echo $h->currentUser->name; ?>
-        	</a></li>
-		<?php  } ?>
-
     	<?php if ($h->pageName == 'index') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
 		<li <?php echo $status; ?>><a <?php echo $status; ?> href="<?php echo BASEURL; ?>"><?php echo $h->lang["main_theme_navigation_home"]; ?></a></li>
     
 		<?php $h->pluginHook('navigation'); ?>
-	
+
+    	<?php
+			if ($h->currentUser->loggedIn) { ?>
+        <?php if (($h->pageType == 'user') && ($h->vars['user']->id == $h->currentUser->id)) { $status = "id='navigation_active'"; } else { $status = ""; } ?>
+        	<li <?php echo $status; ?>><a <?php echo $status; ?> href='<?php echo $h->url(array('user' => $h->currentUser->name)); ?>' title='<?php echo $h->lang["users_profile"]; ?>'>
+            <?php echo "My Settings"; ?>
+        	</a></li>
+		<?php  } ?>
+
 		<?php 
         	if (!$h->isActive('signin')) { 
 
@@ -121,6 +115,6 @@
 		</ul>
 
 		<a class="rss" href="<?php echo $h->url(array('page'=>'rss')); ?>">RSS</a>
-		<p><a href="<?php echo $h->url(array('page'=>'rss')); ?>">Posts</a> | <a href="<?php echo $h->url(array('page'=>'rss')); ?>">Comments</a></p>
+		<p><a href="<?php echo $h->url(array('page'=>'rss')); ?>">Posts</a> | <a href="<?php echo $h->url(array('page'=>'rss_comments')); ?>">Comments</a></p>
 	</div>
 	<!-- End Header -->

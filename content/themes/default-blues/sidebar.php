@@ -31,18 +31,6 @@
 <!-- SIDEBAR -->
 <div id="sidebar">
 
-	<!-- ADVERTISEMENTS -->
-	<div class="box">
-		<h2>Advertise Here</h2>
-		<p class="ads">
-			<img src="<?php echo BASEURL . 'content/themes/' . THEME; ?>images/banner125.gif" />
-			<img src="<?php echo BASEURL . 'content/themes/' . THEME; ?>images/banner125.gif" />
-			<img src="<?php echo BASEURL . 'content/themes/' . THEME; ?>images/banner125.gif" />
-			<img src="<?php echo BASEURL . 'content/themes/' . THEME; ?>images/banner125.gif" />
-		</p>
-	</div>
-	<!-- End Advertisements -->
-
 <?php
 /**
 	<!-- SEARCH -->
