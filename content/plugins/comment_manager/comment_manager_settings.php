@@ -292,7 +292,7 @@ class CommentManagerSettings
             $output .= "<td class='cm_id'>" . $h->comment->id . "</td>\n";
             $output .= "<td class='cm_status'><b>" . ucfirst($h->comment->status) . "</b></td>\n";
             $output .= "<td class='cm_date'>" . date('d M \'y H:i:s', strtotime($h->comment->date))  . "</a></td>\n";
-            $output .= "<td class='cm_author'>" . $user->name . "</td>\n";
+            $output .= "<td class='cm_author'><a href='" . $h->url(array('user'=>$user->name)) . "'>" . $user->name . "</td>\n";
             $output .= "<td class='cm_post'><a href='" . $post_link . "'>" . $h->post->title . "</a></td>\n";
             $output .= "<td class='cm_approve'>" . "<a href='" . $approve_link . "'>\n";
             $output .= "<img src='" . BASEURL . "content/plugins/comment_manager/images/approve.png'>" . "</a></td>\n";
