@@ -36,8 +36,8 @@ $lang['comments_access_comment_manager'] = "Access Comment Manager";
 /* Comment */
 $lang['comments_written_by'] = "Written by";
 $lang['comments_time_ago'] = "ago";
-$lang['comments_reply_link'] = "REPLY";
-$lang['comments_edit_link'] = "EDIT";
+$lang['comments_reply_link'] = "Reply";
+$lang['comments_edit_link'] = "Edit";
 
 /* Comment Form */
 $lang['comments_please_login'] = "You need to be logged in to comment.";
