@@ -266,7 +266,7 @@ class Submit
             case 'submit_confirm':
             
                 $post_id = $h->cage->post->testInt('submit_post_id');
-                $h->readPost($post_id);
+                $h->readPost($post_id); // be careful! The results are cached and returned on next readPost 
                 $h->changePostStatus('new');
                 
                 $return = 0; // will return false later if set to 1.

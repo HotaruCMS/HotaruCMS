@@ -487,7 +487,7 @@ class UserSignin
                 {
                     require_once(PLUGINS . 'users/libs/UserFunctions.php');
                     $uf = new UserFunctions();
-                    $uf->notifyMods($h, 'user', $h->currentUser->role);
+                    $uf->notifyMods($h, 'user', $h->currentUser->role, $last_insert_id);
                 }
         
                 return $last_insert_id; // so we can retrieve this user's details for the email confirmation step;

@@ -1908,6 +1908,33 @@ class Hotaru
     }
     
     
+    /**
+     * Get comment from database
+     *
+     * @param int $comment_id
+     * @return array|false
+     */
+    function getComment($comment_id = 0)
+    {
+        require_once(LIBS . 'Comment.php');
+        $comment = new Comment();
+        return $comment->getComment($this, $comment_id);
+    }
+    
+    
+    /**
+     * Read comment
+     *
+     * @param array $comment_row pulled from database
+     */
+    function readComment($comment_row = array())
+    {
+        require_once(LIBS . 'Comment.php');
+        $comment = new Comment();
+        return $comment->readComment($this, $comment_row);
+    }
+    
+    
 /* *************************************************************
  *
  *  WIDGET FUNCTIONS

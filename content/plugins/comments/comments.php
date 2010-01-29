@@ -209,7 +209,7 @@ class Comments
                                 {
                                     require_once(PLUGINS . 'users/libs/UserFunctions.php');
                                     $uf = new UserFunctions();
-                                    $uf->notifyMods($h, 'comment', $h->comment->status, $h->post->id, $h->comment->id);
+                                    $uf->notifyMods($h, 'comment', $h->comment->status, $h->comment->postId, $h->comment->id);
                                 }
                     
                                 // email comment subscribers if this comment has 'approved' status:

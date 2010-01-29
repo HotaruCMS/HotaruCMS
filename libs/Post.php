@@ -262,7 +262,10 @@ class Post
         $sql = "UPDATE " . TABLE_POSTS . " SET post_status = %s WHERE post_id = %d";
         $h->db->query($h->db->prepare($sql, $this->status, $post_id));
         
-        $h->post->id = $post_id; // a small hack to get the id for use in plugins.
+        // hacks for plugins:
+        $h->post->id = $post_id;
+        $h->post->status = $this->status;
+         
         $h->pluginHook('post_change_status');
                 
         return true;

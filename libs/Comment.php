@@ -131,11 +131,11 @@ class Comment
      * @param int $comment_id
      * @return array|false
      */
-    function getComment($h, $comment_id)
+    function getComment($h, $comment_id = 0)
     {
         $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_id = %d";
         $comment = $h->db->get_row($h->db->prepare($sql, $comment_id));
-        
+
         if($comment) { return $comment; } else { return false; }
     }
     
@@ -175,7 +175,7 @@ class Comment
      *
      * @param array $comment
      */
-    function readComment($h, $comment)
+    function readComment($h, $comment = array())
     {
         $this->id = $comment->comment_id;
         $this->parent = $comment->comment_parent;
@@ -189,6 +189,8 @@ class Comment
         $this->subscribe = $comment->comment_subscribe;
         
         $h->pluginHook('comment_read_comment');
+        
+        return $this;
     }
     
     
@@ -332,7 +334,6 @@ class Comment
     public function setPendingCommentTree($h, $comment_id)
     {
         while ($children = $this->readAllChildren($h, $comment_id)) {
-            print_r($children);
             foreach ($children as $child) {
                 $this->readComment($h, $child);
                 $this->status = 'pending';
