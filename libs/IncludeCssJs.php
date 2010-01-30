@@ -65,9 +65,9 @@ class IncludeCssJs
      * @param string $file - full path to the JS file
      */
     public function setJsIncludes($file, $admin = false)
-    {		
+    {        
         if ($admin) { 
-            array_push($this->jsIncludesAdmin, $file);		
+            array_push($this->jsIncludesAdmin, $file);        
         } else {
             array_push($this->jsIncludes, $file);
         }        
@@ -78,9 +78,9 @@ class IncludeCssJs
      * getJsIncludes
      */
     public function getJsIncludes($admin = false)
-    {	
-        if ($admin) {			
-            return $this->jsIncludesAdmin;			
+    {    
+        if ($admin) {            
+            return $this->jsIncludesAdmin;            
         } else {
             return $this->jsIncludes;
         }
@@ -116,7 +116,7 @@ class IncludeCssJs
      * @param $filename - optional js file without an extension
      */
      public function includeJs($h, $folder = '', $filename = '')
-     {	
+     {    
         if (!$folder) { $folder = $h->plugin->folder; }
                 
         // If no filename provided, the filename is assigned the plugin name.
@@ -175,7 +175,7 @@ class IncludeCssJs
      * Note: the js file should be in a folder named 'javascript' and a file of the format plugin_name.js, e.g. category_manager.js
      */    
     public function findJsFile($folder = '', $filename = '')
-    {	
+    {    
         if (!$folder) { return false; }
 
         // If filename not given, make the plugin name the file name
@@ -193,10 +193,9 @@ class IncludeCssJs
         } elseif (file_exists(PLUGINS . $folder . '/javascript/' . $filename . '.js')) {
             $file_location = PLUGINS . $folder . '/javascript/' . $filename . '.js';        
 
-		// If still not found, look in the full given folder itself for a js file... 
+        // If still not found, look in the full given folder itself for a js file... 
         } elseif (file_exists($folder . $filename . '.js')) {
             $file_location = $folder . $filename . '.js';
-			if ($this->debug) print "found in cache folder: " . $file_location . "<br/>";
         }
          //print $folder . $filename . '.js      ---        ';
         if (isset($file_location)) {
@@ -232,24 +231,24 @@ class IncludeCssJs
         } else { 
             $type = 'js'; 
             $content_type = 'text/javascript';
-			//don't forget to get the globals js file as well			
-			$this->includeJs($h, $cache, 'JavascriptConstants')	;
-			$this->includeJs($h, ADMIN_THEMES . ADMIN_THEME. "javascript/" , rtrim(ADMIN_THEME, "/"));
-			$this->includeJs($h, BASE . 'javascript/' , "hotaru");		
-					
-                        $includes = $this->getJsIncludes($h->isAdmin);
+            //don't forget to get the globals js file as well            
+            $this->includeJs($h, $cache, 'JavascriptConstants')    ;
+            $this->includeJs($h, ADMIN_THEMES . ADMIN_THEME. "javascript/" , rtrim(ADMIN_THEME, "/"));
+            $this->includeJs($h, BASE . 'javascript/' , "hotaru");        
+                    
+            $includes = $this->getJsIncludes($h->isAdmin);
         }
         
         $includes = array_unique($includes);    // remove duplicate includes
         if(empty($includes)) { return false; }
-		
+        
          /*
             if version parameter is present then the script is being called directly, otherwise we're including it in 
             another script with require or include. If calling directly we return code othewise we return the etag 
             (version number) representing the latest files
         */
 
-		
+        
         if ($version > 0) {        
             // GET ACTUAL CODE - IF IT'S CACHED, SHOW THE CACHED CODE, OTHERWISE, GET INCLUDE FILES, BUILD AN ARCHIVE AND SHOW IT
  
@@ -268,7 +267,7 @@ class IncludeCssJs
             // create a directory for storing current and archive versions
             if (!is_dir($cache)) {
                 mkdir($cache);
-            }	
+            }    
 
             // get code from archive folder if it exists, otherwise grab latest files, merge and save in archive folder
             if ((CSS_JS_CACHE_ON == "true") && file_exists($cache . $prefix . $type . '_' . $iETag . '.cache')) {
@@ -313,10 +312,10 @@ class IncludeCssJs
           // output merged code
           echo $sCode;
 
-		  //if($type == 'js') { 
-			//  $global_ajax_var = "jQuery('document').ready(function($) {BASEURL = '". BASEURL ."'; ADMIN_THEME = '" . ADMIN_THEME . "'; });";	
-			//  echo  $global_ajax_var;
-		  //}	
+          //if($type == 'js') { 
+            //  $global_ajax_var = "jQuery('document').ready(function($) {BASEURL = '". BASEURL ."'; ADMIN_THEME = '" . ADMIN_THEME . "'; });";    
+            //  echo  $global_ajax_var;
+          //}    
 
           exit; // we don't want to drop out and continue building Hotaru or Admin objects when we're just including a file!
           
@@ -345,7 +344,7 @@ class IncludeCssJs
      * @param bool $admin 
      */
      public function includeCombined($version_js = 0, $version_css = 0, $admin = false)
-     {		
+     {        
         if ($admin) { $index = 'admin_index'; } else { $index = 'index'; }
         
         if ($version_js > 0) {
