@@ -30,7 +30,6 @@ class IncludeCssJs
     protected $jsIncludes           = array();  // a list of js files to include
     protected $jsIncludesAdmin      = array();  // a list of js files to include in Admin
     protected $includeType          = '';       // 'css' or 'js'
-	protected $debug				= false;     // local file debug var, normally set to false;
     
     /**
      * setCssIncludes
@@ -66,11 +65,9 @@ class IncludeCssJs
      * @param string $file - full path to the JS file
      */
     public function setJsIncludes($file, $admin = false)
-    {
-		if ($this->debug) print  "in the setJsIncludes function    -> " . $file. " (admin:" . $admin .")<br/><br/>";
+    {		
         if ($admin) { 
-            array_push($this->jsIncludesAdmin, $file);
-			if ($this->debug) print "Updated array. Items = " . sizeof($this->jsIncludesAdmin) . "<br/><br/>";
+            array_push($this->jsIncludesAdmin, $file);		
         } else {
             array_push($this->jsIncludes, $file);
         }        
@@ -81,9 +78,8 @@ class IncludeCssJs
      * getJsIncludes
      */
     public function getJsIncludes($admin = false)
-    {	if ($this->debug) print "in the getJsIncludes function (admin:".$admin.")<br/><br/>";
-        if ($admin) {
-			if ($this->debug) print "Looking at array in getJsIncludes. Items = " . sizeof($this->jsIncludesAdmin) . "<br/>";
+    {	
+        if ($admin) {			
             return $this->jsIncludesAdmin;			
         } else {
             return $this->jsIncludes;
@@ -120,7 +116,7 @@ class IncludeCssJs
      * @param $filename - optional js file without an extension
      */
      public function includeJs($h, $folder = '', $filename = '')
-     {	if ($this->debug) print "in the includeJs function for " . $filename . " (folder) " . $folder . "<br/>";
+     {	
         if (!$folder) { $folder = $h->plugin->folder; }
                 
         // If no filename provided, the filename is assigned the plugin name.
@@ -179,7 +175,7 @@ class IncludeCssJs
      * Note: the js file should be in a folder named 'javascript' and a file of the format plugin_name.js, e.g. category_manager.js
      */    
     public function findJsFile($folder = '', $filename = '')
-    {	if ($this->debug) print "in the findJSFile function for " . $filename . " (folder) " . $folder . "<br/>";
+    {	
         if (!$folder) { return false; }
 
         // If filename not given, make the plugin name the file name
@@ -236,42 +232,26 @@ class IncludeCssJs
         } else { 
             $type = 'js'; 
             $content_type = 'text/javascript';
-			//don't forget to get the globals js file as well
-			if ($this->debug) print "PASS HERE ONCE TO INSERT NEW CODE FOR JavaScriptsConstants" ."<br/><br/>";
-			//$this->setJsIncludes($cache . 'JavascriptConstants.js' , $h->isAdmin);
+			//don't forget to get the globals js file as well			
 			$this->includeJs($h, $cache, 'JavascriptConstants')	;
 			$this->includeJs($h, ADMIN_THEMES . ADMIN_THEME. "javascript/" , rtrim(ADMIN_THEME, "/"));
-			$this->includeJs($h, BASE . 'javascript/' , "hotaru");
-			//print ADMIN_THEMES . ADMIN_THEME . "javascript/". rtrim(ADMIN_THEME, "/");
-			
-			if ($this->debug) print "END OF NEW CODE FOR JavaScriptsConstants" ."<br/><br/>";			
-            $includes = $this->getJsIncludes($h->isAdmin);
-			
-			if ($this->debug) print "<br/>ARRAY FOR JS FILES BEFORE RUN DUPLICATES FUNCTION<br/><br/>";
-			if ($this->debug) print_r($includes );
-			if ($this->debug) print "<br/><br/>";
+			$this->includeJs($h, BASE . 'javascript/' , "hotaru");		
+					
+                        $includes = $this->getJsIncludes($h->isAdmin);
         }
         
         $includes = array_unique($includes);    // remove duplicate includes
         if(empty($includes)) { return false; }
-
-		 if($type == 'js') { 
-			if ($this->debug) print "ARRAY FOR JS FILES AFTER RUN DUPLICATES FUNCTION<br/><br/>";
-			if ($this->debug) print_r($includes );
-			if ($this->debug) print "<br/><br/>";
-			if ($this->debug) print "EVERYTHING LOOKS FINE UPTO HERE THEN THE LOOP RUNS AGAIN ???<br/><br/>";
-		 }
+		
          /*
             if version parameter is present then the script is being called directly, otherwise we're including it in 
             another script with require or include. If calling directly we return code othewise we return the etag 
             (version number) representing the latest files
         */
 
-if ($this->debug) print "VERSION NUMBER IS " . $version . "<br/><br/>";			
-        if ($version > 0) {
-        
+		
+        if ($version > 0) {        
             // GET ACTUAL CODE - IF IT'S CACHED, SHOW THE CACHED CODE, OTHERWISE, GET INCLUDE FILES, BUILD AN ARCHIVE AND SHOW IT
- if ($this->debug) print "VERSION IS GREATER THAN 0<br/><br/>";	
  
             $iETag = $version;
             $sLastModified = gmdate('D, d M Y H:i:s', $iETag).' GMT';
@@ -288,9 +268,7 @@ if ($this->debug) print "VERSION NUMBER IS " . $version . "<br/><br/>";
             // create a directory for storing current and archive versions
             if (!is_dir($cache)) {
                 mkdir($cache);
-            }
-
-if ($this->debug) print "BEFORE CHECKING IF CACHE IS ON OR NOT<br/><br/>";		
+            }	
 
             // get code from archive folder if it exists, otherwise grab latest files, merge and save in archive folder
             if ((CSS_JS_CACHE_ON == "true") && file_exists($cache . $prefix . $type . '_' . $iETag . '.cache')) {
@@ -310,8 +288,6 @@ if ($this->debug) print "BEFORE CHECKING IF CACHE IS ON OR NOT<br/><br/>";
                 // sort dates, newest first
                 rsort($aLastModifieds);
                 
-if ($this->debug) print "STARTING ETAG MODIFIED LOOP<br/><br/>";
-
                 if ($iETag == $aLastModifieds[0]) { // check for valid etag, we don't want invalid requests to fill up archive folder
                     $oFile = fopen($cache . $prefix . $type . '_' . $iETag . '.cache', 'w');
                     if (flock($oFile, LOCK_EX)) {
@@ -323,10 +299,7 @@ if ($this->debug) print "STARTING ETAG MODIFIED LOOP<br/><br/>";
                     // archive file no longer exists or invalid etag specified
                     header("{$h->cage->server->getRaw('SERVER_PROTOCOL')} 404 Not Found");
                     exit;
-                }
-        
-if ($this->debug) print "END ETAG MODIFIED LOOP<br/><br/>";
-
+                }        
             }
         
             // send HTTP headers to ensure aggressive caching
@@ -372,10 +345,7 @@ if ($this->debug) print "END ETAG MODIFIED LOOP<br/><br/>";
      * @param bool $admin 
      */
      public function includeCombined($version_js = 0, $version_css = 0, $admin = false)
-     {
-if ($this->debug) print "in the includeCombined function with JS version: ". $version_js . "   and CSS version" . $version_css . "<br/><br/>";
-
-		if ($this->debug) print "in the include combined function <br/>";
+     {		
         if ($admin) { $index = 'admin_index'; } else { $index = 'index'; }
         
         if ($version_js > 0) {

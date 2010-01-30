@@ -31,11 +31,10 @@ jQuery('document').ready(function($) {
                     $(this).children("ul").slideDown("slow");
                 } else {
                     $(this).children("ul").slideUp("slow");
-                }
-
-		
-		
+                }		
 	});
+        
+        $('.accordion li').has('ul').addcssclass("arrow");
 
     $('#admin_theme_theme_activate').click(function() {        
         var theme = $(this).attr("name");       

@@ -280,8 +280,7 @@ table#settings {
 	width: 227px;
 	border-bottom: solid 1px #c4c4c4;
 }
-.accordion li {
-	background: #fff url(/content/admin_themes/admin_default/images/arrow-square.gif) no-repeat right -51px;
+.accordion li {	
 	padding: 8px 15px;
 	margin: 0;
 	font: bold 120%/100% Arial, Helvetica, sans-serif;
@@ -289,6 +288,10 @@ table#settings {
 	border-bottom: none;
 	cursor: pointer;
 }
+.accordion .arrow {
+    background: #fff url(/content/admin_themes/admin_default/images/arrow-square.gif) no-repeat right -51px;
+}
+
 .accordion li:hover {
 	background-color: #e3e2e2;
 }
