@@ -70,7 +70,7 @@
                 ?>
             </div>
 
-            <div class="comment_reply">
+            <div class="comment_reply_wrapper">
 
                 <?php   // REPLY LINK - (if logged in) AND (can comment) AND (form is turned on)...
                     if ($h->currentUser->loggedIn
