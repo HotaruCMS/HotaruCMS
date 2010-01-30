@@ -643,7 +643,7 @@ class UserSignin
             if (($h->vars['useEmailNotify'] == 'checked') && (file_exists(PLUGINS . 'users/libs/UserFunctions.php'))) {
                 require_once(PLUGINS . 'users/libs/UserFunctions.php');
                 $uf = new UserFunctions();
-                $uf->notifyMods($h, 'user', $user->role);
+                $uf->notifyMods($h, 'user', $user->role, $user->id);
             }
         
             $success_message = $h->lang['user_signin_register_emailconf_success'] . " <br /><b><a href='" . $h->url(array('page'=>'login')) . "'>" . $h->lang['user_signin_register_emailconf_success_login'] . "</a></b>";

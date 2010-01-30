@@ -372,7 +372,7 @@ class SubmitFunctions
             $h->message = $h->lang['submit_url_not_present_error'];
             $h->messageType = 'red';
             $error = 1;
-        } elseif ($h->urlExists(urlencode($url))) {
+        } elseif ($h->urlExists($url)) {
             // URL already exists...
             $h->message = $h->lang['submit_url_already_exists_error'];
             $h->messageType = 'red';

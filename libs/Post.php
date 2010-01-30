@@ -264,7 +264,6 @@ class Post
         
         // hacks for plugins:
         $h->post->id = $post_id;
-        $h->post->status = $this->status;
          
         $h->pluginHook('post_change_status');
                 

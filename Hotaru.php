@@ -185,6 +185,8 @@ class Hotaru
      */
     public function header_include()
     {
+        if ($this->isAdmin) { return false; }
+        
         // include a files that match the name of the plugin folder:
         $this->includeJs($this->plugin->folder); // folder name, filename
         $this->includeCss($this->plugin->folder);
@@ -196,6 +198,8 @@ class Hotaru
      */
     public function admin_header_include()
     {
+        if (!$this->isAdmin) { return false; }
+        
         // include a files that match the name of the plugin folder:
         $this->includeJs($this->plugin->folder); // folder name, filename
         $this->includeCss($this->plugin->folder);

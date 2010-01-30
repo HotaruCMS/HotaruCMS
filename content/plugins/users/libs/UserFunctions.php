@@ -56,6 +56,7 @@ class UserFunctions
                 $subject = $h->lang['userfunctions_notifymods_subject_post'];
                 $about = $h->lang['userfunctions_notifymods_body_about_post'];
                 $h->readPost($id); // If you're having problems, the caching used in an earlier readPost might be the cause
+                $h->post->status = $status;
                 break;
             case 'comment':
                 $user->getUserBasic($h, $h->comment->author);
@@ -83,8 +84,6 @@ class UserFunctions
             
             if ($type == 'post') {
                 $body .= $line_break;
-                $body .= "status variable" . $status . $next_line;
-                $body .= "mod type variable" . $mod['type'] . $next_line;
                 $body .= $h->lang['userfunctions_notifymods_body_post_status'] . $h->post->status . $next_line;
                 $body .= $h->lang['userfunctions_notifymods_body_post_title'] . stripslashes(html_entity_decode(urldecode($h->post->title), ENT_QUOTES,'UTF-8')) . $next_line;
                 $body .= $h->lang['userfunctions_notifymods_body_post_content'] . stripslashes(html_entity_decode(urldecode($h->post->content), ENT_QUOTES,'UTF-8')) . $next_line;

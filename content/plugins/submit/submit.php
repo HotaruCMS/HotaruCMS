@@ -617,6 +617,12 @@ class Submit
                 $h->displayTemplate('submit_edit');
                 return true;
                 break;
+                
+            // Submitted
+            case 'submit_confirm':
+                $h->showMessages();
+                return true;
+                break;
         }
     }
 

@@ -233,8 +233,10 @@ class IncludeCssJs
             $content_type = 'text/javascript';
             //don't forget to get the globals js file as well            
             $this->includeJs($h, $cache, 'JavascriptConstants')    ;
-            $this->includeJs($h, ADMIN_THEMES . ADMIN_THEME. "javascript/" , rtrim(ADMIN_THEME, "/"));
             $this->includeJs($h, BASE . 'javascript/' , "hotaru");        
+            if ($h->isAdmin) {
+                $this->includeJs($h, ADMIN_THEMES . ADMIN_THEME. "javascript/" , rtrim(ADMIN_THEME, "/"));
+            }
                     
             $includes = $this->getJsIncludes($h->isAdmin);
         }
