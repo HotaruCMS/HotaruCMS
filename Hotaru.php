@@ -1636,7 +1636,7 @@ class Hotaru
      */
     public function deletePosts($user_id = 0) 
     {
-        return $this->post->deletePost($this, $user_id);
+        return $this->post->deletePosts($this, $user_id);
     }
     
     
