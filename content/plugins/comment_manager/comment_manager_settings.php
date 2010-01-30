@@ -42,7 +42,7 @@ class CommentManagerSettings
         
         // clear variables:
         $h->vars['search_term'] = '';
-        $h->vars['comment_status_filter'] = 'all';
+        $h->vars['comment_status_filter'] = 'newest';
         
         require_once(LIBS . 'Comment.php');
         $h->comment = new Comment();

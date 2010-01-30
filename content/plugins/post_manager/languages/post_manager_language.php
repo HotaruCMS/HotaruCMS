@@ -68,5 +68,7 @@ $lang["post_man_num_pending"] = "<span style='color: red;'>Pending posts: </span
 /* Sidebar */
 $lang["post_man_admin_sidebar"] = "Post Manager";
 
+/* User Manager */
+$lang["post_man_flagged_reasons"] = "Posts from this user are: ";
 
 ?>

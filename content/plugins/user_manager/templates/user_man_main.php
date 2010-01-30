@@ -75,6 +75,7 @@ if (!isset($h->vars['user_man_navi'])) { $h->vars['user_man_navi'] = ''; }
                 <option value='' disabled>-----</option>
                 <option value='newest'><?php echo $h->lang['user_man_filter_newest']; ?></option>
                 <option value='oldest'><?php echo $h->lang['user_man_filter_oldest']; ?></option>
+                <option value='last_visited'><?php echo $h->lang['user_man_filter_last_visited']; ?></option>
                 <option value='' disabled>-----</option>
                 <?php 
                 if ($h->vars['roles']) {

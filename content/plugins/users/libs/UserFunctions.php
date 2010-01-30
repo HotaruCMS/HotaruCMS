@@ -108,7 +108,7 @@ class UserFunctions
             $body .= $h->lang['userfunctions_notifymods_body_user_role'] . $user->role . $next_line;
             $body .= $h->lang['userfunctions_notifymods_body_user_email'] . $user->email . $next_line;
             $body .= $h->lang['userfunctions_notifymods_body_user_account'] . $h->url(array('page'=>'account', 'user'=>$user->name)) . $next_line;
-            $body .= $h->lang['userfunctions_notifymods_body_user_management'] . BASEURL . "admin_index.php?user_filter=" . $user->role . "&plugin=user_manager&page=plugin_settings&type=filter";
+            $body .= $h->lang['userfunctions_notifymods_body_user_management'] . BASEURL . "admin_index.php?search_value=" . $user->name . "&plugin=user_manager&page=plugin_settings&type=search";
             
             $body .= $line_break;
             $body .= $h->lang['userfunctions_notifymods_body_regards'];
