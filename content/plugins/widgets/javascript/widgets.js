@@ -41,8 +41,7 @@ jQuery('document').ready(function($) {
         var image_names = widget_image.split('/');
         var image_name = image_names[image_names.length-1];
         if (image_name == "active.png") {  action = 'disable'; } else { action = 'enable'; }
-
-        //alert(image_name);
+        
         var formdata = 'plugin=widgets&action=' + action + '&widget=' + currentId;
         var sendurl = BASEURL + 'content/plugins/widgets/widgets_functions.php';
 
@@ -86,8 +85,7 @@ jQuery('document').ready(function($) {
 
         } else {
     
-        }
-        //alert(image_name);
+        }        
         var formdata = 'plugin=widgets&action=' + action + '&widget=' + currentId;
         var sendurl = BASEURL + 'content/plugins/widgets/widgets_functions.php';
 
