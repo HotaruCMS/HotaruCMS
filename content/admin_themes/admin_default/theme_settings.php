@@ -37,7 +37,7 @@ $theme = $h->vars['settings_theme'];    // theme folder name
     <?php 
         $result = '';
         if ($theme) {
-            echo '<div id="admin_theme_theme_activate" name="'. $theme .'">' . make_name($theme, '-') . $h->lang['admin_theme_theme_activate'] . '</div><br/>';
+            echo '<div id="admin_theme_theme_activate" class="power_on" name="'. $theme .'">' . make_name($theme, '-') . $h->lang['admin_theme_theme_activate'] . '</div><br/>';
             if (file_exists(THEMES . $theme . '/settings.php')) {                
                 $meta = $h->readThemeMeta($theme);
                 foreach ($meta as $key => $value) {

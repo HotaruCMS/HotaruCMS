@@ -147,12 +147,12 @@ form {
 .visible {display:block !important;}
 
 .green {
-	background-color: #99FF66;
+	background-color: #99FF66 !important;
 }
 
 .red {
-	background-color: #FF6A55;
-	color: #ffffff;
+	background-color: #FF6A55 !important;
+	color: #ffffff !important;
 }
 
 .bold_red {
@@ -322,5 +322,10 @@ table#settings {
 
 .accordion .horizontal { }
 
-#admin_theme_theme_activate {cursor: pointer;}
+#admin_theme_theme_activate {cursor: pointer;  }
+.power_on {padding-left: 1.5em; background-image: url(/content/admin_themes/admin_default/images/power_on.png); background-repeat: no-repeat;}
+.tick_on {padding-left: 1.5em; background-image: url(/content/admin_themes/admin_default/images/tick_yes.png); background-repeat: no-repeat;}
+.warning_on {padding-left: 1.5em; background-image: url(/content/admin_themes/admin_default/images/warning.png); background-repeat: no-repeat;}
+
+.home {padding-left: 1.5em; background-image: url(/content/admin_themes/admin_default/images/home.png); background-repeat: no-repeat;}}
 

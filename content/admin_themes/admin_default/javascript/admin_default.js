@@ -41,7 +41,15 @@ jQuery('document').ready(function($) {
             $(this).children("ul").slideUp("slow");
         }		
 	});       
-    
+
+    $('.warning_slash').blur(function() {
+        var value = $(this).val();
+        var length = value.length;
+        var check = value.substring(length-1,length);        
+        var notes = $(this).parent().parent().children('td:eq(3)'); 
+        if (check != '/' ) { notes.addClass('red'); } else { notes.removeClass('red');}
+    });
+
 
     $('#admin_theme_theme_activate').click(function() {        
         var theme = $(this).attr("name");       
@@ -57,14 +65,17 @@ jQuery('document').ready(function($) {
 						$('#admin_theme_theme_activate').html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/ajax-loader.gif' + '"/>&nbsp;Attempting to activate theme.');
 					},
 				error: 	function(XMLHttpRequest, textStatus, errorThrown) {
-						$(this).html('ERROR');
+						$('#admin_theme_theme_activate').html('ERROR');
+                        $('#admin_theme_theme_activate').removeClass('power_on').addClass('warning_on');
 				},
 				success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
 					if (data.error === true) {
+                        $('#admin_theme_theme_activate').removeClass('power_on').addClass('warning_on');
 					}
 					else
-					{										
+					{                        
                         $('#admin_theme_theme_activate').html(data.message);
+                        $('#admin_theme_theme_activate').removeClass('power_on').addClass('tick_on');
 					}
 					$('.message').html(data.message).addClass(data.color, 'visible');
 				},
