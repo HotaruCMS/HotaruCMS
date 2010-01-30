@@ -34,7 +34,7 @@ jQuery('document').ready(function($) {
                 }		
 	});
         
-        $('.accordion li').has('ul').addcssclass("arrow");
+        // $('.accordion li').has('ul').addcssclass("arrow");
 
     $('#admin_theme_theme_activate').click(function() {        
         var theme = $(this).attr("name");       
