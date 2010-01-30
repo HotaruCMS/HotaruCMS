@@ -233,7 +233,7 @@ class Post
      */
     public function deletePosts($h, $user_id = 0) 
     {
-        $sql = "SELECT post_id FROM " . TABLE_POSTS. "s WHERE post_author = %d";
+        $sql = "SELECT post_id FROM " . TABLE_POSTS. " WHERE post_author = %d";
         $results = $h->db->get_results($h->db->prepare($sql, $user_id));
         
         if ($results) {
