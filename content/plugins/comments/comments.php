@@ -604,8 +604,8 @@ class Comments
             $h->post->subscribe = 1; 
             $subscribe = 'checked'; 
         } else {
-            $h->post->subscribe = 0;
-            $subscribe = '';
+            // use existing setting:
+            $subscribe = ($h->post->subscribe) ? 'checked' : ''; 
         }
 
         $h->vars['submitted_data']['submit_subscribe'] = $h->post->subscribe;
@@ -618,8 +618,8 @@ class Comments
                 $h->post->comments = 'open'; 
                 $comments = 'open';
             } else { 
-                $h->post->comments = 'closed'; 
-                $comments = 'closed';
+                // use existing setting:
+                $comments = $h->post->comments; 
             }
         } else {
             // open for submit 2

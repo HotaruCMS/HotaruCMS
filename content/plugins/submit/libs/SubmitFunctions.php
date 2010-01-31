@@ -200,29 +200,41 @@ class SubmitFunctions
                 
             case 'edit_post': // from Edit post page
                 
-                if ($h->cage->post->getAlpha('edit_post') == 'true') { 
+                if ($h->cage->post->getAlpha('edit_post') == 'true') {
+                    // get id:
+                    $h->vars['submitted_data']['submit_id'] = $h->cage->post->testInt('submit_post_id');
+                    
+                    // get status
+                    if ($h->cage->post->testAlnumLines('post_status')) {
+                        $h->vars['submitted_data']['submit_status'] = $h->cage->post->testAlnumLines('post_status');
+                    } else {
+                        $h->vars['submitted_data']['submit_status'] = $h->post->status;
+                    }
+                    
                     // get new (edited) title:
                     $title = $h->cage->post->getMixedString1('post_title');
                     $h->vars['submitted_data']['submit_title'] = $title;
+                    
                     // get content:
                     $allowable_tags = $h->vars['submit_settings']['allowable_tags'];
                     $content = sanitize($h->cage->post->getHtmLawed('post_content'), 2, $allowable_tags);
                     $h->vars['submitted_data']['submit_content'] = $content;
+                    
                     // get category:
                     $category = $h->cage->post->testInt('post_category');
                     $h->vars['submitted_data']['submit_category'] = $category;
+                    
                     // get tags:
                     $tags = stripslashes(sanitize($h->cage->post->noTags('post_tags'), 2));
                     $h->vars['submitted_data']['submit_tags'] = $tags;
-                    // get status
-                    $h->vars['submitted_data']['submit_status'] = $h->cage->post->testAlnumLines('post_status');
-                    $h->vars['submitted_data']['submit_id'] = $h->cage->post->testInt('submit_post_id');
+                    
                     // get url if present:
                     if( $url = $h->cage->post->testUri('post_orig_url')) {
                         $h->vars['submitted_data']['submit_orig_url'] = $url;
                     } else {
                         $h->vars['submitted_data']['submit_orig_url'] = $h->post->origUrl;
                     }
+                    
                     // from Post Manager...
                     $h->vars['submitted_data']['submit_pm_from'] = $h->cage->post->testAlnumLines('from');
                     $h->vars['submitted_data']['submit_pm_search'] = $h->cage->post->getMixedString2('search_value'); 

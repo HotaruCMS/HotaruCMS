@@ -165,7 +165,8 @@ class MediaSelect
         if ($h->cage->post->keyExists('post_media')) {
             $h->post->vars['media'] = $h->cage->post->getAlpha('post_media');
         } else {
-            $h->post->vars['media'] = 'text'; // default
+            // use existing setting unless blank, in which case set default:
+            if (!$h->post->vars['media']) { $h->post->vars['media'] = 'text'; } // default
         }
 
         $h->vars['submitted_data']['submit_media'] = $h->post->vars['media'];
