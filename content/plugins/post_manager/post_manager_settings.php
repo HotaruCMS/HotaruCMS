@@ -228,7 +228,7 @@ class PostManagerSettings
             $output .= "<a class='table_hide_details' style='float: right;' href='#'>[" . $h->lang["admin_theme_plugins_close"] . "]</a>";
             $output .= "<b>" . stripslashes(urldecode($post->post_title)) . "</b><br />\n";
             $output .= "<i>" . $h->lang["post_man_posted"] ."</i> " .  date('d M Y H:i:s', strtotime($post->post_date)) . "<br />\n";
-            $output .= "<i>" . $h->lang["post_man_author"] ."</i> <a href='" . $h->url(array('user'=>$username)) . "' title='User Profile'>" . $username . "</a> (id:" .  $post->post_author . ")" . $icons . "<br />\n";
+            $output .= "<i>" . $h->lang["post_man_author"] ."</i> <a href='" . $h->url(array('user'=>$username)) . "' title='User Profile'>" . $username . "</a> (id:" .  $post->post_author . ")" . "<br />\n";
             $output .= "<p><i>" . $h->lang["post_man_content"] ."</i> " . stripslashes(urldecode($post->post_content)) . "</p> \n";
             $output .= "<i>" . $h->lang["post_man_category"] ."</i> " . $category . "<br /> \n";   // we got $category above
             $output .= "<i>" . $h->lang["post_man_tags"] ."</i> " . (urldecode($post->post_tags)) . "<br /> \n";

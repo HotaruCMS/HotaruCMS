@@ -237,6 +237,7 @@ class SubmitLight extends Submit
                 $post_id = $h->cage->post->testInt('submit_post_id');
                 $h->readPost($post_id);
                 $h->changePostStatus('new');
+                $h->post->status = 'new'; // this fixes a caching-related problem by forcing the new status on the post property
                 
                 $return = 0; // will return false later if set to 1.
                 

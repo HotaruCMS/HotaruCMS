@@ -63,17 +63,27 @@ $loaded_settings = $h->vars['admin_settings'];
                 if ( $ls->settings_value == 'true' || $ls->settings_value == 'false' ) {
                     echo '<input type="radio" name="' . $ls->settings_name .'" value="true" ';
                     if ($ls->settings_value == 'true') { echo ' checked'; }
-                    echo '" >&nbsp;ON&nbsp;&nbsp;';
+                    echo ' >&nbsp;ON&nbsp;&nbsp;';
                     echo '<input type="radio" name="' . $ls->settings_name .'" value="false" ';
                     if ($ls->settings_value == 'false') { echo ' checked'; }
-                    echo '" >&nbsp;OFF';
+                    echo ' >&nbsp;OFF';
                 }
                 else {
                     echo '<input type="text" size=20 name="' . $ls->settings_name .'" value="' . $ls->settings_value . '" ' . $css_class . ' />';
                 }
                 ?>
             </td>
-            <td><?php echo $ls->settings_default; ?></td>
+            <td>
+                <?php 
+                    if ($ls->settings_default == 'true') {
+                        echo "ON"; 
+                    } elseif($ls->settings_default == 'false') {
+                        echo "OFF"; 
+                    } else {
+                        echo $ls->settings_default; 
+                    }
+                ?>
+            </td>
             <td><i><?php echo $ls->settings_note; ?></i></td>
             </tr>
      

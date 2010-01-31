@@ -84,7 +84,7 @@ class PostManager
             $output .= "<br /><b>" . $h->lang["post_man_flagged_reasons"] . "</b>";
             foreach ($flags as $flag) {
                 $h->readPost($flag->post_id);
-                $output .= "<a href='" . $h->url(array('page'=>$flag->post_id)) . "'>" . $flag->post_status . "</a>, ";
+                $output .= "<a href='" . $h->url(array('page'=>$flag->post_id)) . "' title='" . $lang["post_man_flags_title"] . $h->post->title . "'>" . $flag->post_status . "</a>, ";
             }
             $output = rstrtrim($output, ", ");
             $h->vars['user_manager_details'] = array($output, $user);

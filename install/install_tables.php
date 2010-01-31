@@ -321,7 +321,7 @@ function create_table($table_name)
         
         // Friendly urls
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'SITE_OPEN', 'true', 'true', 'true/false'));
+        $db->query($db->prepare($sql, 'SITE_OPEN', 'true', 'true', ''));
         
         // Site name
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
@@ -337,7 +337,7 @@ function create_table($table_name)
         
         // Friendly urls
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'FRIENDLY_URLS', 'false', 'false', 'true/false'));
+        $db->query($db->prepare($sql, 'FRIENDLY_URLS', 'false', 'false', ''));
         
         // Site email
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
@@ -345,7 +345,7 @@ function create_table($table_name)
         
         // Database cache
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'DB_CACHE_ON', 'false', 'false', 'true/false'));
+        $db->query($db->prepare($sql, 'DB_CACHE_ON', 'false', 'false', ''));
         
         // Database cache duration (hours)
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %d, %d, %s)";
@@ -353,7 +353,7 @@ function create_table($table_name)
         
         // RSS cache
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'RSS_CACHE_ON', 'true', 'true', 'true/false'));
+        $db->query($db->prepare($sql, 'RSS_CACHE_ON', 'true', 'true', ''));
         
         // RSS cache duration (hours)
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %d, %d, %s)";
@@ -361,15 +361,15 @@ function create_table($table_name)
         
         // CSS/JavaScript cache
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'CSS_JS_CACHE_ON', 'true', 'true', 'true/false'));
+        $db->query($db->prepare($sql, 'CSS_JS_CACHE_ON', 'true', 'true', ''));
         
         // HTML cache
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'HTML_CACHE_ON', 'true', 'true', 'true/false'));
+        $db->query($db->prepare($sql, 'HTML_CACHE_ON', 'true', 'true', ''));
         
         // Debug
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'DEBUG', 'false', 'false', 'true/false'));
+        $db->query($db->prepare($sql, 'DEBUG', 'false', 'false', ''));
     }
     
     
