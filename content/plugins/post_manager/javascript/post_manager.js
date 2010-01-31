@@ -1,6 +1,6 @@
 /* ****************************************************************************************************
- *  File: /plugins/user_manager/javascript/user_manager.js
- *  Purpose: Ajax for User_Manager Plugin
+ *  File: /plugins/post_manager/javascript/post_manager.js
+ *  Purpose: Ajax for Post_Manager Plugin
  *  Notes:
  *  License:
  *
@@ -28,6 +28,16 @@ jQuery('document').ready(function($) {
         var td =$(this).children('.pm_author');        
         var icons = td.children('.user_manager_name_icons');        
         icons.toggle();        
+    });
+
+    $("#post_man_table .table_tr_details").hover(function() {        
+        var trparent = $(this).parent('tbody');
+        var position = $('tr', $(this).parent('tbody')).index(this);
+        position -=1;       
+        var tr=trparent.children('tr:eq('+ position +')');              
+        var td =tr.children('.pm_author');
+        var icons = td.children('.user_manager_name_icons');
+        icons.toggle();
     });
 
 });
