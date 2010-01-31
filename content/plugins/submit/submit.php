@@ -268,6 +268,7 @@ class Submit
                 $post_id = $h->cage->post->testInt('submit_post_id');
                 $h->readPost($post_id); // be careful! The results are cached and returned on next readPost 
                 $h->changePostStatus('new');
+                $h->post->status = 'new'; // this fixes a caching-related problem by forcing the new status on the post property
                 
                 $return = 0; // will return false later if set to 1.
                 

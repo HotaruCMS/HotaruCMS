@@ -112,6 +112,7 @@ $lang['userfunctions_notifymods_body_post_title'] = "Post Title: ";
 $lang['userfunctions_notifymods_body_post_content'] = "Post Content: "; 
 $lang['userfunctions_notifymods_body_post_status'] = "Post Status: ";
 $lang['userfunctions_notifymods_body_post_page'] = "Post Page: "; 
+$lang['userfunctions_notifymods_body_post_orig'] = "Original Post: "; 
 $lang['userfunctions_notifymods_body_post_edit'] = "Edit Post: "; 
 $lang['userfunctions_notifymods_body_post_management'] = "Post Management: ";
 

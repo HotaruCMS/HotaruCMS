@@ -288,11 +288,16 @@ class CommentManagerSettings
                 $colspan = 6;
             }
             
+            // put icons next to the username with links to User Manager
+            $h->vars['user_manager_name_icons'] = array($user->name, ''); // second param is "output"
+            $h->pluginHook('comment_manager_user_name');
+            $icons = $h->vars['user_manager_name_icons']['output'];
+            
             $output .= "<tr class='table_row_" . $alt % 2 . " cm_details_" . $alt % 2 . "'>\n";
             $output .= "<td class='cm_id'>" . $h->comment->id . "</td>\n";
             $output .= "<td class='cm_status'><b>" . ucfirst($h->comment->status) . "</b></td>\n";
             $output .= "<td class='cm_date'>" . date('d M \'y H:i:s', strtotime($h->comment->date))  . "</a></td>\n";
-            $output .= "<td class='cm_author'><a href='" . $h->url(array('user'=>$user->name)) . "'>" . $user->name . "</td>\n";
+            $output .= "<td class='cm_author'><a href='" . $h->url(array('user'=>$user->name)) . "' title='User Profile'>" . $user->name . $icons . "</td>\n";
             $output .= "<td class='cm_post'><a href='" . $post_link . "'>" . $h->post->title . "</a></td>\n";
             $output .= "<td class='cm_approve'>" . "<a href='" . $approve_link . "'>\n";
             $output .= "<img src='" . BASEURL . "content/plugins/comment_manager/images/approve.png'>" . "</a></td>\n";

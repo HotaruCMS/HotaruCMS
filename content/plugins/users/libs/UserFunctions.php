@@ -88,6 +88,7 @@ class UserFunctions
                 $body .= $h->lang['userfunctions_notifymods_body_post_title'] . stripslashes(html_entity_decode(urldecode($h->post->title), ENT_QUOTES,'UTF-8')) . $next_line;
                 $body .= $h->lang['userfunctions_notifymods_body_post_content'] . stripslashes(html_entity_decode(urldecode($h->post->content), ENT_QUOTES,'UTF-8')) . $next_line;
                 $body .= $h->lang['userfunctions_notifymods_body_post_page'] . $h->url(array('page'=>$h->post->id)) . $next_line; // edit post page
+                $body .= $h->lang['userfunctions_notifymods_body_post_orig'] . $h->post->origUrl . $next_line; // edit post page
                 $body .= $h->lang['userfunctions_notifymods_body_post_edit'] . BASEURL . "index.php?page=edit_post&post_id=" . $id . $next_line; // edit post page
                 $body .= $h->lang['userfunctions_notifymods_body_post_management'] . BASEURL . "admin_index.php?post_status_filter=" . $h->post->status . "&plugin=post_manager&page=plugin_settings&type=filter";
             
