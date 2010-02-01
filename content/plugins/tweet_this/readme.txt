@@ -16,5 +16,6 @@ Instructions
 
 Changelog
 ---------
+v.0.3 2010/02/01 - Kyle - Added tracking option for Google Analytics
 v.0.2 2009/12/22 - Nick - Updated for compatibility with Hotaru 1.0
 v.0.1 2009/11/28 - Nick - Released first version
