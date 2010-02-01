@@ -55,7 +55,7 @@ class UserManager
         $output .= "<img src='" . BASEURL . "content/plugins/user_manager/images/user_manager.png' title='User Manager'></a>";
         $output .= "</div>";
         
-        $h->vars['user_manager_name_icons'] = array('username'=>$username, 'output'=>$output);
+        $h->vars['user_manager_name_icons'] = array($username, $output);
     }
 }
 

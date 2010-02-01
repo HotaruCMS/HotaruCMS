@@ -209,7 +209,7 @@ class PostManagerSettings
             // put icons next to the username with links to User Manager
             $h->vars['user_manager_name_icons'] = array($username, ''); // second param is "output"
             $h->pluginHook('post_manager_user_name');
-            $icons = $h->vars['user_manager_name_icons']['output'];
+            $icons = $h->vars['user_manager_name_icons'][1]; // 1 is the second param: output
             
             $output .= "<tr class='table_row_" . $alt % 2 . "'>\n";
             $output .= "<td class='pm_id'>" . $post->post_id . "</td>\n";
