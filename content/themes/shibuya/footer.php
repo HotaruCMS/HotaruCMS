@@ -35,6 +35,8 @@
             // Link to forums...
             echo "<p><a href='http://hotarucms.org' title='" . $h->lang["main_theme_footer_hotaru_link"] . "'><img src='" . BASEURL . "content/themes/" . THEME . "images/hotarucms.png' ";
             echo "alt='" . $h->lang["main_theme_footer_hotaru_link"] . "' /></a></p>";
+
+            echo "<div class='theme_strapline'>Shibuya Theme by <a href='http://shibuya246.com'>shibuya246</a> created for hotarucms</div>";
         
             $h->showQueriesAndTime();
 
