@@ -89,8 +89,8 @@ class UserFunctions
                 $body .= $h->lang['userfunctions_notifymods_body_post_content'] . stripslashes(html_entity_decode(urldecode($h->post->content), ENT_QUOTES,'UTF-8')) . $next_line;
                 $body .= $h->lang['userfunctions_notifymods_body_post_page'] . $h->url(array('page'=>$h->post->id)) . $next_line; // edit post page
                 $body .= $h->lang['userfunctions_notifymods_body_post_orig'] . $h->post->origUrl . $next_line; // edit post page
-                $body .= $h->lang['userfunctions_notifymods_body_post_edit'] . BASEURL . "index.php?page=edit_post&post_id=" . $id . $next_line; // edit post page
-                $body .= $h->lang['userfunctions_notifymods_body_post_management'] . BASEURL . "admin_index.php?post_status_filter=" . $h->post->status . "&plugin=post_manager&page=plugin_settings&type=filter";
+                $body .= $h->lang['userfunctions_notifymods_body_post_edit'] . BASEURL . "index.php?page=edit_post&amp;post_id=" . $id . $next_line; // edit post page
+                $body .= $h->lang['userfunctions_notifymods_body_post_management'] . BASEURL . "admin_index.php?post_status_filter=" . $h->post->status . "&amp;plugin=post_manager&amp;page=plugin_settings&amp;type=filter";
             
             }
             
@@ -100,7 +100,7 @@ class UserFunctions
                 $body .= $h->lang['userfunctions_notifymods_body_comment_status'] . $comment->status . $next_line;
                 $body .= $h->lang['userfunctions_notifymods_body_comment_content'] . stripslashes(html_entity_decode(urldecode($h->comment->content), ENT_QUOTES,'UTF-8')) . $next_line;
                 $body .= $h->lang['userfunctions_notifymods_body_post_page'] . $h->url(array('page'=>$h->post->id)) . $next_line; // edit post page
-                $body .= $h->lang['userfunctions_notifymods_body_comment_management'] . BASEURL . "admin_index.php?comment_status_filter=" . $comment->status . "&plugin=comment_manager&page=plugin_settings&type=filter";
+                $body .= $h->lang['userfunctions_notifymods_body_comment_management'] . BASEURL . "admin_index.php?comment_status_filter=" . $comment->status . "&amp;plugin=comment_manager&amp;page=plugin_settings&amp;type=filter";
             
             }
             
@@ -109,7 +109,7 @@ class UserFunctions
             $body .= $h->lang['userfunctions_notifymods_body_user_role'] . $user->role . $next_line;
             $body .= $h->lang['userfunctions_notifymods_body_user_email'] . $user->email . $next_line;
             $body .= $h->lang['userfunctions_notifymods_body_user_account'] . $h->url(array('page'=>'account', 'user'=>$user->name)) . $next_line;
-            $body .= $h->lang['userfunctions_notifymods_body_user_management'] . BASEURL . "admin_index.php?search_value=" . $user->name . "&plugin=user_manager&page=plugin_settings&type=search";
+            $body .= $h->lang['userfunctions_notifymods_body_user_management'] . BASEURL . "admin_index.php?search_value=" . $user->name . "&amp;plugin=user_manager&amp;page=plugin_settings&amp;&type=search";
             
             $body .= $line_break;
             $body .= $h->lang['userfunctions_notifymods_body_regards'];
