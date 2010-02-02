@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-type" content="Content-type: text/html; charset=utf-8">
+<title>CSRF Protection Class</title>
+<style type="text/css">
+body {
+   background-color: #eeeeee;
+   }
+
+.mono {
+   font-family: Monaco, "Lucida Mono", "Lucida Mono EFOP", "Lucida Mono EF", Courier, monospace;
+   color: blue;
+   }
+   
+pre {
+   font-family: Monaco, "Lucida Mono", "Lucida Mono EFOP", "Lucida Mono EF", Courier, monospace;
+   color: blue;
+   }
+   
+div.content {
+   margin-left: 10%;
+   width: 40em;
+   float: left;
+   }
+   
+h1 {
+   margin-left: -6%;
+   }
+  
+h2,h3,h4 {
+   margin-left: -3%;
+   }
+  
+dt {
+   margin-left: -2%;
+   font-family: Monaco, "Lucida Mono", "Lucida Mono EFOP", "Lucida Mono EF", Courier, monospace;
+   color: blue;
+   }
+   
+dd {
+   margin-left: 2%;
+   }
+</style>
+</head>
+<body>
+<div class="content">
+<h1>Cross-Site Request Forgery</h1>
+<p>CSRF in a nutshell is an attack where the attacker gets a victim to click a link that submits a form to another web site. If the victim has authentication credentials at that other web site, it is possible that actions the user does not want to take place will take place on the server where the form is submitted.</p>
+<p>The standard and very effective way of protecting users and your server against this kind of attack is to include some kind of a token as a hidden input in your forms. The token needs to be extremely difficult for an attacker to guess. If the proper token is not submitted with the form, the form action script does not process the request.</p>
+<p>I have been accused of going a little overboard with my method of CSRF protection since I involve a database. So before presenting my method, I will discuss the simpler methods and why I do not personally like to use them. You may decide my concerns are not relevant to your scenario, or you may decide they are.</p>
+<p>On the form processing side, all the post token based methods pretty much work the same, generally some variation of this:</p>
+<pre>&lt;?php
+$valid_post = false;
+if (isset($_POST['ptoken'])) {
+   $valid_post = check_token($_POST['ptoken']);
+   }
+?&gt;</pre>
+<p>where <span class="mono">check_token()</span> is a function that checks to see if the post token validates.</p>
+<p>The form action script then only does the requested operation if the <span class="mono">$valid_post</span> Boolean is set to <span class="mono">true</span>. Otherwise it either spits out an error, redirects to the home page or logout page, etc.</p>
+<p>How the token is generated is where the different methods exist.</p>
+<h2>Session ID as Post Token</h2>
+<p>Some web developers will use the Session ID for a post token. For example:</p>
+<pre>&lt;input type="hidden" name="ptoken" value="&lt;?php echo(session_id());?&gt;" /&gt;</pre>
+<p>I think it is a very bad idea for a users session ID to ever be incorporated in a web page since it makes it easier for a session to be hijacked. The argument is that the session ID is in already in a cookie, so unless you are using SSL, if an attacker wants the session ID the cookie can be sniffed just as easily as the web page.</p>
+<p>However, some security technologies (such as the <a href="http://www.hardened-php.net/suhosin/">Suhosin php module</a>) will transparently encrypt a cookie before sending it to the browser, making it much more difficult for the attacker to get a valid session ID from a sniffed cookie. As soon as you put that session ID unencrypted into your form, you have essentially neutered the session hijacking protection that those technologies make available to you.</p>
+<h2>Salted Session ID as Post Token</h2>
+<p>Another common technique is to use an md5sum of the session ID plus a salt. For example:</p>
+<pre>&lt;?php
+$ptoken = md5(session_id() . $salt);
+?&gt;
+&lt;input type="hidden" name="ptoken" value="&lt;?php echo($ptoken);?&gt;" /&gt;</pre>
+<p>While this method is much better than the first since it does not reveal the users session ID, some users may keep their session alive for a very long time. This is especially a problem with web applications that set the session ID cookie as a persistent cookie and/or do not force regeneration of the session ID with frequency.</p>
+<p>If you do force regeneration of session ID during an active session, you run the risk of changing the users session after the user has started filling out a form but before the user actually submits the form. Users frequently surf around a site in another tab while they have form in the first tab, especially if they are a little confused by the form, so forcing a regeneration can cause a post failure to a legitimate user.</p>
+<p>While the risk of this method to your users is much lower than the previous method, using a post token that will always be valid for the session could allow the attacker to attack a specific user and sniff the post token that corresponds to that users session allowing it to be used in a crafted CSRF attack. With the prevalence of open wireless networks, I believe this is something to be concerned about.</p>
+<h2>Dynamic Post Token as Session Variable</h2>
+<p>A better method is to create a post token based upon the time and store it as a session variable that you can check against a submitted value. This is the best method that does not involve a database dedicated to CSRF protection. For example:</p>
+<pre>&lt;?php
+$ptoken = md5(session_id() . rand() . microtime());
+$_SESSION['ptoken']=$ptoken;
+?&gt;
+&lt;input type="hidden" name="ptoken" value="&lt;?php echo($ptoken);?&gt;" /&gt;</pre>
+<p>Unfortunately the dynamic nature causes another issue. If the user wanders around your site while filling out the form and stumbles upon another form, the session variable may be changed. Then when the user submits the first form, the token submitted will not match what is in the users session data.</p>
+<h2>Dynamic Post Token in Database</h2>
+<p>Sticking a dynamic post token in a database solves all these problems. If the user has opened multiple forms before submitting one, they can have multiple post tokens in the database without any of them being invalidated. As soon as a token is used, it gets deleted from the database. The token can also be specific to the action script where it can be used.</p>
+<pre>&lt;?php
+$csrf = new csrf($mdb2);
+$csrf-&gt;action = "e-mail reset";
+$csrf-&gt;life = 20;
+$ptoken = $csrf-&gt;csrfkey();
+?&gt;
+&lt;input type="hidden" name="ptoken" value="&lt;?php echo($ptoken);?&gt;" /&gt;</pre>
+<h1>Using The Class</h1>
+<p>You will need to customize the class for your own environment.</p>
+<h2>Pear MDB2</h2>
+<p>I use the <a href="http://pear.php.net/package/MDB2">Pear MDB2</a> database abstraction class. If you use a different database abstraction class, you will need to port the syntax to whatever database abstraction class you use. If you do not use a database abstraction class, you really should look into one.</p>
+<h2>Database Setup</h2>
+<p>The following will create a suitable database table in MySQL:</p>
+<pre>CREATE TABLE token_table_name (
+   id MEDIUMINT unsigned NOT NULL AUTO_INCREMENT,
+   sid VARCHAR(32) NOT NULL,
+   mykey CHAR(32) NOT NULL,
+   stamp INT(11) NOT NULL default '0',
+   action VARCHAR(64),
+   PRIMARY KEY (id)
+   );</pre>
+<p>Make sure the table name you use matches what you have set for the private <span class="mono">$table</span> class variable.</p>
+<h2>Public Variables</h2>
+<dl>
+<dt>$action</dt>
+<dd>Sets the scope of where the key is valid. If you are not that paranoid, you can leave the default alone. However, setting it does add some protection. For example, if it is a password reset form, you may want to set it to <span class="mono">PasswordReset</span>. If you set that variable before generating a key, then you must set the variable to the same string when checking the key on the action page.</dd>
+<dt>$life</dt>
+<dd>Sets how many minutes the token key is valid for. You may want to explicitly shorten it for sensitive actions, such as a password or e-mail address change.</dd>
+</dl>
+<h2>Public Functions</h2>
+<dl>
+<dt>csrf($mdb2)</dt>
+<dd>The constructor function. This function is executed when you create a new instance of the class. You will need to initialize the class both on your form page and on your action page. The argument is the object for the MDB2 database class.</dd>
+<dt>&nbsp;</dt>
+<dd>The function grabs and sanitizes the session ID to avoid SQL injection from carefully crafted cookies. Using MDB2 prepared statements should render SQL injection attacks impotent even if the session ID is not sanitized, but better safe than sorry if/when an MDB2 driver has a bug.</dd>
+<dt>csrfkey()</dt>
+<dd>Generates a token key, inserts the token into the database and then returns the key.</dd>
+<dt>checkcsrf($key)</dt>
+<dd>Checks a key. Returns true if the key is valid, false if the key is not valid. This is the function you need to use on you form action pages to validate a token sent in the form post. The key is sanitized against any possible SQL injection attacks, and any expired keys are deleted from the database before the submitted key is verified.</dd>
+<dt>logout()</dt>
+<dd>This is just a nice optional way to remove any keys, expired or not, when a user logs off your website. Optionally call the function as part of your logout procedure.</dd>
+</dl>
+<h1>Origin Header</h1>
+<p>Browsers may soon incorporate some built in CSRF protection, through an origin header. The proposal can be viewed here: <a href="https://wiki.mozilla.org/Security/Origin">Mozilla Security/Origin Wiki</a>.</p>
+<hr>
+<h2>Contact</h2>
+<p><a href="mailto:mpeters@mac.com">mpeters@mac.com</a></p>
+</div>
+</body>
+</html>

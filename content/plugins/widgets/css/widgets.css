@@ -1,0 +1,10 @@
+/* **************************************
+ *     WIDGETS PLUGIN CSS       *
+ ************************************** */
+
+td.widgets_active, td.widgets_order {
+	width: 6.0em;
+}
+
+.widget_head { margin-top: 0.4em; }
+.widget_body { margin-bottom: 2.5em;}

@@ -1,0 +1,170 @@
+/* Bars Theme CSS */
+
+/* Blueprint font-size 16px */
+/* Blueprint line-height 18px */
+/* Blueprint col width 40px */
+
+/* Top Stories color: #cc0000 */
+/* Latest stories color: #ffcc00 */
+
+/* GENERAL */
+body {
+    color: #555;
+}
+
+h2 { font-weight: normal; font-size: 150%; margin: 0 0 6px 0; }
+table { width: auto; }
+table td { vertical-align: top; }
+
+/* FORMS */
+form { padding: 10px; }
+
+input.submit {
+    font-size: 125%;
+	margin-top: 5px;
+	padding: 2px 4px 2px 4px;
+	font-weight: bold;
+}
+
+a { 
+    text-decoration: none;
+    font-weight: bold;
+    color: #000;
+}
+
+a:hover { 
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+ul { padding-left: 0; }
+ul li { list-style: none; }
+
+.active { text-decoration: underline; }
+
+/* ANNOUNCEMENT */
+
+#announcement { 
+    background-color: #ffcc00;
+    border-bottom: 1px solid #555;  
+    color: #000;
+    text-align: center;
+} 
+
+/* NAVIGATION */
+
+#top_background { 
+    background: #cc0000;
+}
+
+#navigation { height: 62px; margin-top: 4px; }
+#navigation ul a img.avatar { margin-bottom: 4px; }
+#navigation ul { float: left; list-style: none; margin: 0px; padding: 0px; }
+#navigation ul li { display: inline; font-size: 175%; font-weight: bold; }
+#navigation ul li a { padding: 2px 4px 2px 4px; }
+#navigation ul li a:hover { color: #000; }
+#navigation ul li a img { vertical-align: middle; }
+#navigation ul li a#navigation_active { color: #fff; }
+
+#navigation div.nav_right { display: inline; float: right; }
+#navigation h1 { display: inline; font-size: 48px; }
+#navigation h1 a { font-weight: bold; color: #fff; text-decoration: none; }
+#navigation h1 a:hover { font-weight: bold; color: #fff; text-decoration: none; }
+#rss_icon { padding-left: 6px; margin-top: -4px; }
+
+/* CATEGORIES */
+
+#category_bar a, #category_bar a:visited { background: #cc0000; color: #fff; border: 0; }
+#category_bar li li a, #category_bar li li a:link, #category_bar li li a:visited { background: #cc0000; color: #fff; }
+#category_bar li li a:hover, #category_bar li li a:active {	background: #000; color: #fff; }
+
+/* BREADCRUMBS */
+
+#breadcrumbs { margin: 9px 0 9px 0; }
+
+/* SORT & FILTER */
+#sort_box   { margin-bottom: 18px; font-size: 100%; }
+ul.sort_menu  { margin: 0; }
+
+/* USER TABS */
+
+.user_tabs { background: #fff; }
+.user_tabs li { padding-left: 0; }
+
+/* POSTS - see sb_base.css */
+
+/* WIDGETS */
+
+.widget_head a, .widget_body a { font-weight: normal; }
+.widget_body { padding: 0; }
+
+/* VOTES - see vote.css */
+
+.vote_color_top { border-right: 1px solid #444; border-bottom: 1px solid #444; background-color: #cc0000; color: #fff; }
+.vote_color_new { border-right: 1px solid #444; border-bottom: 1px solid #444; background-color: #ffcc00; color: #000; }
+
+
+/* IMAGES */
+.avatar { vertical-align: bottom; }
+ 
+/* MESSAGES */
+
+.message {
+    margin: 18px auto 18px auto;
+    width: 90%;
+    padding: 12px;
+    text-align: center;
+    font-size: 125%;
+    font-weight: bold;
+}
+
+/* COLORS */
+
+.green    { background-color: #99FF66; }
+.red      { background-color: #FF6A55; color: #ffffff; }
+.bold_red { color: red; font-weight: bold; }
+
+/* PAGINATION */
+
+#pagination {
+    margin-top: 18px;
+    text-align: right;
+}
+
+#pagination a {
+    display: inline;
+    padding: 3px 8px 3px 8px;
+    border:solid 1px #F0F0F0;
+}
+
+#pagination .pagi_current {
+    color: #fff;
+    background-color: #000;
+    font-weight: bold;
+    padding: 3px 8px 3px 8px;
+    border:solid 1px #444444;
+}
+
+#pagination a:hover {
+    border:solid 1px #444444;
+    text-decoration: none;
+}
+
+/* FOOTER */
+#bottom_background { background: #cc0000; margin-top: 16px; }
+#footer p { margin-top: 16px; }
+
+/* SITE CLOSED MESSAGE */
+
+#site_closed { 
+    background-color: #fff; 
+    border-top: 2px solid #cc0000; border-bottom: 2px solid #cc0000; 
+	text-align: center; 
+	margin-top: 20px; 
+	font-size: 24px; 
+	line-height: 36px; 
+}
+
+/* DEBUG */
+
+.debug  { font-size: 90%; color: #fff;}

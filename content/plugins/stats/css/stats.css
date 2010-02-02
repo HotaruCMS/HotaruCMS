@@ -1,0 +1,28 @@
+.widget_body {
+	font-size: .9em;
+}
+	
+#statBlock {
+	line-height: 1.2em;
+	margin-top: .5em;
+}
+
+/*
+#statBlock a {
+	font-weight: bold;
+	color: #0000FF;
+}
+
+#statBlock a:hover {
+	color: #00FF00;
+}	
+*/
+
+#emphasizeStat {
+	font-weight: bold;
+	color: #000000;
+}
+
+.makeCentered {
+	text-align: center;
+}

@@ -1,0 +1,59 @@
+/* ************************************
+ * *********** VOTE BUTTON ************
+ * ********************************* */
+ 
+.vote_button {
+	float: left; 
+	margin: 0 6px 6px 0;
+	text-align: center;
+}
+
+.vote_button_top {
+	line-height: 2.0em;
+	font-size: 1.5em;
+	width: 50px; 
+	font-weight: bold;
+}
+
+.vote_button_bottom {
+    margin-top:5px;
+    padding: 2px 0 2px 0;
+    background: #000;
+    border-right: 1px solid #444; 
+    border-bottom: 1px solid #444;
+	width: 50px; 
+}
+
+.vote_button_bottom a { 
+    color: #fff;
+	background:transparent;
+}
+
+.vote_button_bottom a:hover { 
+    color: #fff;
+    text-decoration: underline;
+	background:transparent;
+}
+
+.vote_button_top_story { border-right: 1px solid #444; border-bottom: 1px solid #444; background-color: #cc0000; color: #fff; }
+.vote_button_new_story { border-right: 1px solid #444; border-bottom: 1px solid #444; background-color: #ffcc00; color: #000; }
+
+
+/* ***********************************
+ * ** SPACE BETWEEN BUTTON AND POST **
+ * ********************************* */
+ 
+/* Used in submit plugin - button width + padding: */
+.vote_button_space { margin-left: 58px; }
+
+
+/* ***********************************
+ * ******** FLAGGED MESSAGE **********
+ * ********************************* */
+ 
+ .alert_link { padding-left: 1.5em; background-image: url(content/themes/default/images/alert.png); }
+ 
+ .alert_choices li {
+	display:inline; 
+	padding-right: 0.8em;	
+ }

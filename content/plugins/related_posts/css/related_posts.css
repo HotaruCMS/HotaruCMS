@@ -1,0 +1,16 @@
+/* **************************************
+ *	RELATED POSTS PLUGIN CSS          *
+ ************************************** */
+
+/* ***********************************
+ * ******* RELATED POSTS VOTES ********
+ * ********************************* */
+
+#related_posts_title {margin-top: 1.0em; }
+.related_posts { margin-bottom: 1.6em; }
+.related_posts_vote { float: left; width: 1.8em; text-align: center;  margin-right: 0.5em; }
+.related_posts_link  { display: block; }
+.related_posts_indent { margin-left: 2.4em; }
+#related_posts_none { font-style: italic; color: #888; margin: 0 0 1.6em 2.4em;}
+
+/* vote colors moved to vote.css in Vote plugin */

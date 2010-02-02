@@ -1,0 +1,31 @@
+/* **************************************
+ *	    SB BASE PLUGIN CSS           *
+ ************************************** */
+
+/* ******* SORT LINKS ******** */
+ 
+#sort_box ul { padding: 0;}
+.sort_menu li { display: inline; margin: 0 0.3em 0 0; padding: 0.2em;}
+
+/* ******* POST CSS ******** */
+
+.show_post { margin-bottom: 1.0em; }
+
+.avatar_wrapper a { float: left; padding: 0 0.6em 0.2em 0; }
+
+.show_post_title { font-size: 18px; font-weight: bold; line-height: 20px;}
+.show_post_author_date { font-size: 10px; }
+.show_post_content { margin: 0.4em 0 0.4em 0; }
+
+.show_post_edit	{	
+	background-repeat: no-repeat; background-position: 0 0px; 
+	font-weight: normal; color:#848484; 
+	margin-left: 0.8em; padding: 0.2em 0 0.2em 1.8em;;
+	background-image: url(content/themes/default/images/edit.png); 
+}
+.show_post_edit:hover { background-position: 0 -32px; color:#000; }
+
+.show_post_extra_fields ul { padding: 0; }
+.show_post_extra_fields ul li { padding-right: 4px; display: inline; color:#848484; margin-right: 14px;}
+.show_post_extra_fields ul li a { background-repeat: no-repeat; background-position: 0 0px; font-weight: normal; color:#848484; }
+.show_post_extra_fields ul li a:hover { background-position: 0 -32px; color:#000; }

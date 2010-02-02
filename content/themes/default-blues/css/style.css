@@ -1,0 +1,611 @@
+/**
+ * Theme name: Default Blues
+ * Template name: style.css
+ * Template author: Jason F. Irwin
+ *
+ * PHP version 5
+ *
+ * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation, either version 3 of 
+ * the License, or (at your option) any later version. 
+ *
+ * Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE. 
+ *
+ * You should have received a copy of the GNU General Public License along 
+ * with Hotaru CMS. If not, see http://www.gnu.org/licenses/.
+ * 
+ * @category  Content Management System
+ * @package   HotaruCMS
+ * @author    Nick Ramsay <admin@hotarucms.org>
+ * @copyright Copyright (c) 2009, Hotaru CMS
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * @link      http://www.hotarucms.org/
+ */
+
+* {
+	margin: 0; padding: 0;
+}
+body {
+	text-align: center;
+	font: 12px Arial;
+	color: #212121;
+	background-color: #F5F5F5;
+}
+a {
+	color: #BB2222;
+}
+a:hover {
+	text-decoration: none;
+	color: #ff0000;
+}
+img {
+	border: 0;
+}
+
+.break {
+	font-size: 0;
+	width: 0; height: 0;
+	clear: both;
+}
+.alignleft {
+	float: left;
+	margin: 4px 10px 5px 0;
+}
+.alignright {
+	float: right;
+	margin: 4px 0 5px 10px;
+}
+.aligncenter {
+	text-align: center;
+}
+.hidden {
+	display: none;
+}
+
+/** WRAPPER **/
+#wrapper {
+	width: 970px;
+	margin: auto auto;
+	text-align: left;
+}
+/** End Wrapper **/
+
+/** HEADER **/
+#header {
+	height: 147px;
+	background: url(../images/header.png) repeat-x 0 130px;
+	padding-top: 30px;
+}
+	#header h1 {
+		float: left;
+	}
+		#header h1 a {
+			width: 384px; height: 60px;
+			display: block;
+			text-indent: -9999px;
+			outline: none;
+			background: url(../images/logo.png) no-repeat 0 0;
+		}
+	#header .ad468x60 {
+		float: right;
+	}
+	#header ul {
+		clear: both;
+		list-style-type: none;
+		padding: 40px 20px 0;
+	}
+		#header ul li {
+			float: left;
+			font-size: 0.9em;
+			font-family: Verdana;
+			font-weight: bold;
+			text-transform: uppercase;
+		}
+		#header ul li a {
+			display: block;
+			color: #ffffff;
+			text-decoration: none;
+			padding: 13px 15px 14px;
+		}
+		#header ul li a:hover {
+			background-color: #113377;
+		}
+	#header p {
+		float: right;
+		font-size: 0.9em;
+		font-weight: bold;
+		font-family: Verdana;
+		color: #ffffff;
+		padding-top: 12px;
+	}
+		#header p a {
+			text-decoration: none;
+			color: #ffffff;
+			margin: 0 5px;
+		}
+	#header .rss {
+		display: block;
+		float: right;
+		width: 37px; height: 38px;
+		text-indent: -9999px;
+		outline: none;
+		background: url(../images/rss.png) no-repeat 0 0;
+		margin: 6px 5px 0 10px;
+	}
+/** End Header **/
+
+/** CONTENT **/
+#content {
+	width: 650px;
+	float: left;
+	margin-top: 12px;
+	background-color: #ffffff;
+	border: 1px solid #D5D5D5;
+	padding: 15px;
+	margin-bottom: 15px;
+}
+	#content .fwrapper {
+		background-color: #F2F2F1;
+		padding: 10px;
+		border: 1px solid #E9E9E9;
+		margin: 0 5px 15px;
+	}
+	#featured {
+		overflow: hidden;
+		width: 589px; height: 308px;
+	}
+	#content .featured img {
+		width: 589px;
+	}
+		#content .featured {
+			overflow: hidden;
+			position: relative;
+			width: 589px; height: 308px;	
+			overflow: hidden;
+		}
+		#content .featured .text {
+			
+		}
+		#content .featured-img {
+			
+		}
+		#content .featured-img .text h2 {
+			font-size: 1.5em;
+			background-image: none;
+			margin-bottom: 4px;
+			padding: 0;
+		}
+		#content .featured-img .text h2 a {
+			color: #FFFFFF;
+			font-weight: bold;
+			text-transform: none;
+			text-decoration: none;
+		}
+		#content .featured-img .text p {
+			line-height: 1.4em;
+			font-size: 1em;
+			color: #FFFFFF;
+			padding-bottom: 10px;
+		}
+		#content .featured-img .text .next {
+			color: #FFFFFF;
+			font-weight: bold;
+			font-size: 0.9em;
+			text-transform: uppercase;
+		}
+			#content .featured-img .text .continue:hover {
+				text-decoration: none;
+			}
+		#content .featured .photo {
+				list-style-type: none;
+			}
+				#content .photo li {
+					position: absolute;
+					top: 0; left: 0;
+					z-index: 0;
+				}
+				#content .photo li.first {
+					z-index: 2;
+				}
+			#content .featured .text {
+				list-style-type: none;
+			}
+				#content .featured .text li {
+					width: 230px; height: 290px;
+					position: absolute;
+					top: 0; right: -280px;
+					padding: 15px;
+					color: #ffffff;
+					font-family: Verdana;
+					background: url(../images/shade.png) repeat 0 0;
+					z-index: 4;
+				}
+				#content .featured .text li.first {
+					right: 0;
+				}
+	#content .post {
+		clear: both;
+		padding-top: 20px;
+		border-top: 1px solid #e9e9e9;
+		margin: 0 5px;
+	}
+		#content .post .r {
+			width: 450px;
+			float: right;
+		}
+		#content .post .thumb img {
+			float: left;
+			background-color: #F2F2F1;
+			border: 1px solid #e9e9e9;
+			padding: 6px;
+			margin: 4px 0 10px;
+			width: 134px; height: 134px;
+		}
+		#content .post h2 {
+			font-size: 2em;
+			font-weight: normal;
+			margin-bottom: 10px;
+		}
+			#content .post h2 a {
+				color: #212121;
+				text-decoration: none;
+			}
+		#content .post p {
+			line-height: 1.6em;
+			margin-bottom: 10px;
+		}
+		#content .post .links {
+			font-size: 0.9em;
+			font-family: Verdana;
+			float: left;
+		}
+			#content .post .links a {
+				text-decoration: none;
+				color: #212121;
+			}
+			#content .post .links a:hover {
+				text-decoration: underline;
+				color: #6B001A;
+			}
+		#content .post .comments {
+			font-size: 0.8em;
+			font-family: Verdana;
+			float: right;
+		}
+			#content .post .comments a {
+				display: block;
+				padding: 5px 0 11px;
+				color: #ffffff;
+				text-decoration: none;
+				background: #212121 url(../images/comments.gif) no-repeat bottom right;
+				text-align: center;
+				width: 91px;
+				margin-bottom: 10px;
+			}
+	#content .postnav {
+		clear: both;
+		padding-top: 20px;
+		font-weight: bold;
+	}
+		#content .postnav a {
+			text-decoration: none;
+		}
+/** End Content **/
+
+/** SIDEBAR **/
+#sidebar {
+	width: 275px;
+	float: right;
+	padding-top: 11px;
+}
+	#sidebar .box {
+		border: 1px solid #D5D5D5;
+		background-color: #ffffff;
+		margin-bottom: 15px;
+	}
+		#sidebar .box h2 {
+			background-color: #2266AA;
+			color: #ffffff;
+			font-size: 0.9em;
+			font-family: Verdana;
+			text-transform: uppercase;
+			padding: 10px;
+		}
+		#sidebar .box h2 a {
+			color: #ffffff;
+		}
+		#sidebar .box .ads {
+			padding: 3px;
+			text-align: center;
+		}
+			#sidebar .box .ads img {
+				margin: 3px;
+			}
+		#sidebar .box a {
+			text-decoration: none;
+		}
+		#sidebar .box ul {
+			list-style-type: none;
+		}
+			#sidebar .box ul li {
+				padding: 8px 18px 8px 10px;
+				line-height: 1.6em;
+				font-family: Verdana;
+				border-top: 1px solid #D5D5D5;
+			}
+			#sidebar .box ul li a {
+				color: #000000;
+				text-decoration: none;
+			}
+		#sidebar .box .flickr {
+			text-align: center;
+			padding: 10px;
+		}
+			#sidebar .box .flickr img {
+				margin: 5px;
+			}
+		#sidebar .box .video {
+			padding: 4px;
+		}
+		#sidebar .box .tags {
+			padding: 10px 20px;
+		}
+			#sidebar .box .tags a {
+				text-decoration: none;
+				color: #ffffff;
+			}
+			#sidebar .box .tags a:hover {
+				font-weight: bold;
+				color: #ffffff;
+			}
+		#sidebar .box .popular {
+			
+		}
+			#sidebar .box .popular li {
+				background-image: none;
+				border: 0;
+			}
+			#sidebar .box .popular li a {
+				font-weight: bold;
+				text-decoration: none;
+				color: #ffffff;
+			}
+		#sidebar form {
+			margin-bottom: 15px;
+			background: url(../images/search.gif) no-repeat 0 0;
+			height: 41px;
+		}
+			#sidebar form input {
+				float: left;
+				border: 0;
+				width: 200px;
+				margin: 12px 10px 0;
+				font-size: 1.2em;
+				background-color: transparent;
+			}
+			#sidebar form button {
+				float: right;
+				border: 0;
+				text-indent: -9999px;
+				width: 81px; height: 41px;
+				background-color: transparent;
+			}
+	#sidebar .l {
+		width: 130px;
+		float: left;
+	}
+	#sidebar .r {
+		width: 130px;
+		float: right;
+	}
+/** End Sidebar **/
+
+/** FOOTER **/
+#footer {
+	clear: both;
+	padding: 25px 0 20px;
+	background-color: #2266AA;
+	color: #ffffff;
+	font-family: Verdana;
+	font-size: 0.9em;
+}
+	#footer p {
+		margin-bottom: 10px;
+		line-height: 1.6em;
+		width: 970px;
+		margin: auto auto;
+	}
+	#footer a {
+		color: #ffffff;
+		text-decoration: none;
+	}
+	#footer a:hover {
+		color: #ffffff;
+		font-weight : bold;
+		text-decoration: underline;
+	}
+	#footer .categories {
+		text-transform: uppercase;
+		font-weight: bold;
+		line-height: 1.8em;
+		margin-bottom: 10px;
+	}
+		#footer .categories a {
+			margin: 0 5px;
+		}
+	#footer .designer {
+		font-size: 0.9em;
+	}
+		#footer .designer a:hover {
+			color: #ffffff;
+		}
+/** End Footer **/
+
+/** MISC **/
+#content .single {
+	border-top: 0;
+	padding-top: 5px;
+}
+	#content .single p {
+		line-height: 1.5em;
+		margin-bottom: 10px;
+	}
+	#content .single ul, #content .single ol {
+		list-style-position: inside;
+		margin-bottom: 10px;
+	}
+	#content .single li {
+		line-height: 1.5em;
+		padding: 2px 0;
+	}
+	#content .single blockquote {
+		padding: 10px 10px 5px;
+		margin-bottom: 10px;
+		background-color: #eeeeee;
+		border-width: 1px 0;
+		border-style: solid;
+		border-color: #eeeeee;
+	}
+	#content .single h3, #content .single h4, #content .single h5, #content .single h6 {
+		font-size: 1.2em;
+		margin-bottom: 5px;
+	}
+#comments {
+	padding: 20px 0;
+}
+	#comments a {
+		text-decoration: none;
+	}
+	#comments h2 {
+		font-size: 1.5em;
+		margin: 10px 0;
+	}
+	#comments p {
+		margin-bottom: 10px;
+		line-height: 1.6em;
+	}
+	#comments form {
+		
+	}
+	#comments form p {
+		margin-bottom: 5px;
+	}
+		#comments form input {
+			margin-right: 5px;
+		}
+		#comments form input, textarea {
+			border: 1px solid #e0e0e0;
+			font-size: 0.9em;
+			font-family: Verdana;
+			padding: 4px;
+			background-position: 4px 4px;
+			background-repeat: no-repeat;
+		}
+		#comments form input {
+			width: 240px;
+			border: 1px solid #e0e0e0;
+		}
+		#comments form textarea {
+			width: 350px;
+			padding: 4px 4px !important;
+			border: 1px solid #e0e0e0;
+		}
+		#comments form button {
+			border: 1px solid #a0a0a0;
+			font-size: 1em;
+			font-family: Verdana;
+			padding: 2px 6px;
+		}
+	.commentdetails {
+		margin-top: 25px;
+	}
+	.commentauthor {
+		margin-bottom: 5px !important;
+		font-weight: bold;
+	}
+	.commentdate {
+		font-size: 0.8em;
+		margin-bottom: 5px;
+		color: #909090;
+	}
+	.required {
+		color: #ff0000;
+	}
+h2.title {
+	font-size: 1em !important;
+	text-transform: uppercase;
+	margin-bottom: 15px;
+	color: #565656;
+}
+.notfound {
+	padding: 40px;
+}
+	.notfound h2 {
+		font-size: 18px;
+		font-weight: normal;
+		margin-bottom: 10px;
+	}
+
+/** End Misc **/
+
+/** COMMENTS **/
+#comments ol {
+	list-style-type: none;
+	clear: both;
+	padding: 0;
+	margin: 0;
+}
+	#comments .buffer {
+		padding: 10px;
+	}
+	#comments ol li {
+		margin-bottom: 10px;
+	}
+	#comments ol li ul li {
+		border: 1px solid #eeeeee;
+		padding: 10px;
+	}
+	#comments ol li .avatar {
+		float: right;
+	}
+	#comments ol li .comment-author {
+		
+	}
+		#comments ol li .comment-author .fn {
+			font-weight: bold;
+			font-size: 1.2em;
+		}
+	#comments ol li .comment-meta {
+		font-size: 0.9em;
+		color: #999999;
+		margin: 5px 0 10px;
+	}
+	#comments ol li .reply {
+		font-size: 0.9em;
+		font-weight: bold;
+		padding-bottom: 10px;
+	}
+	#comments .children {
+		list-style-type: none;
+	}
+#comments .navigation {
+	padding: 0 0 40px;
+	font-size: 0.9em;
+}
+	#comments .navigation a {
+		color: #999999;
+		padding: 3px 8px;
+		border: 1px solid #eeeeee;
+	}
+	#comments .navigation a:hover {
+		color: #000000;
+		border-color: #000000;
+		text-decoration: none;
+	}
+#comments .says {
+	display: none;
+}
+/** End Comments **/

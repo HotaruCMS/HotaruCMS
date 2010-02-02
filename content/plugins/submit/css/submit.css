@@ -1,0 +1,20 @@
+/* **************************************
+ *	    SUBMIT PLUGIN CSS           *
+ ************************************** */
+
+#submit_1, #submit_2, #submit_3, #submit_edit { margin-top: 1.0em; }
+
+/* step 1 */
+#submit_orig_url { width: 30em; }
+#submit_button_1 { float: right; }
+#submit_no_link { margin-top: 0.4em; }
+
+/* step 2 */
+#post_title, #post_content, #post_tags { width: 36em; }
+
+/* step 3 */
+#submit_edit_confirm { width: 100%; text-align: center; }
+#submit_edit_confirm input { width: 10.0em; }
+
+/* edit */
+#post_orig_url { width: 36em; } /* source url for admins only */

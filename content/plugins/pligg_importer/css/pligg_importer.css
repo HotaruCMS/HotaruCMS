@@ -1,0 +1,44 @@
+/* **************************************
+ *    PLIGG_IMPORTER PLUGIN CSS         *
+ ************************************** */
+
+/* Defaults */
+#pliggimp table { margin-left:auto; margin-right:auto; }
+#pliggimp td { vertical-align: top; }
+
+ /* Next/Continue buttons*/
+.pliggimp_next {
+	margin-top: 0.6em;
+	margin-bottom: 2.6em;
+	float: right;
+	font-size: 1.2em;
+	padding: 0.3em 0.5em 0.3em 0.5em;
+	background-color: #f6f6f6;
+	-moz-border-radius: 0.5em;
+	-webkit-border-radius: 0.5em;
+	border: 0.1em solid #666;
+}
+
+p.pliggimp_next a {
+	font-weight: bold;
+}
+
+/* List of needed XML files and plugins */
+#pliggimp td#before_begin {
+	font-size: 1.5em;
+	font-weight: bold;
+	color: red;
+}
+
+#pliggimp ul#table_list {
+	width: 12em;
+	margin: 0 0 1.5em 0;
+	font-size: 1.2em;
+	line-height: 1.5em;
+}
+
+#pliggimp li.list_header {
+	font-weight: bold;
+	padding-bottom: 0.4em;
+}
+

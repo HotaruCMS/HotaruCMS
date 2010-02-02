@@ -1,0 +1,13 @@
+/* **************************************
+ *        ACTIVITY PLUGIN CSS       *
+ ************************************** */
+
+/* WIDGET */
+.activity_widget_item { margin: 0.3em 0 0.3em 0; }
+.activity_widget_avatar { display: inline; padding: 0.2em; }
+.activity_widget_content { display: inline; }
+
+/* USER PROFILE & ACTIVITY PAGE */
+.activity_item { margin: 0.3em 0 0.3em 0; }
+.activity_avatar { display: inline; padding: 0.2em; }
+.activity_content { display: inline; }
