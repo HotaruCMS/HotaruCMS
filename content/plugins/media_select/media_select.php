@@ -165,7 +165,8 @@ class MediaSelect
         if ($h->cage->post->keyExists('post_media')) {
             $h->post->vars['media'] = $h->cage->post->getAlpha('post_media');
         } else {
-            $h->post->vars['media'] = 'text'; // default
+            // use existing setting unless blank, in which case set default:
+            if (!$h->post->vars['media']) { $h->post->vars['media'] = 'text'; } // default
         }
 
         $h->vars['submitted_data']['submit_media'] = $h->post->vars['media'];
@@ -196,8 +197,8 @@ class MediaSelect
      */
     public function category_bar_end($h)
     {
-        echo "<li><a href='#'>" . $h->lang['media_select'] . "\n";
-        echo "<ul>";
+        echo "<li><a href='#'>" . $h->lang['media_select'] . "</a>\n";
+        echo "<ul class='children'>\n";
         echo "<li><a href='" . $h->url(array('media'=>'text')) . "'>" . $h->lang['media_select_text'] . "</a>\n";
         echo "<li><a href='" . $h->url(array('media'=>'video')) . "'>" . $h->lang['media_select_videos'] . "</a>\n";
         echo "<li><a href='" . $h->url(array('media'=>'image')) . "'>" . $h->lang['media_select_images'] . "</a>\n";

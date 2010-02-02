@@ -28,12 +28,14 @@ class TextWidgetSettings
     {
         // Cycle through the text widgets, displaying their settings...
         $id = 1;
+
         while($settings = unserialize($h->getSetting('text_widget_' . $id . '_settings', 'text_widget'))) 
         {
             echo "<h1>" . $h->lang["text_widget_settings_header"] . " [ id:" .  $id . " ]</h1>";
             
             // Get settings from the database if they exist...
             $php_check = $settings['text_widget_php'];
+            $title = html_entity_decode(stripslashes($settings['text_widget_title']), ENT_QUOTES,'UTF-8');
             $content = html_entity_decode(stripslashes($settings['text_widget_content']), ENT_QUOTES,'UTF-8');
         
             //...otherwise set to blank:
@@ -46,7 +48,7 @@ class TextWidgetSettings
             echo '<input type="hidden" name="page" value="plugin_settings" />' . "\n";
             echo '<input type="hidden" name="text_widget_id" value="' . $id . '" />' . "\n";
             
-            echo $h->lang["text_widget_title"] . ' <input type="text" size=30 name="text_widget_title" value="' . $settings['text_widget_title'] . '" /><br /><br />' . "\n";
+            echo $h->lang["text_widget_title"] . ' <input type="text" size=30 name="text_widget_title" value="' . $title . '" /><br /><br />' . "\n";
             echo '<input type="checkbox" name="text_widget_php" ' . $php_check . ' /> ' . $h->lang['text_widget_php'] . '<br /><br />' . "\n";
             echo '<textarea name="text_widget_content" cols=60 rows = 15>' . $content . '</textarea>' . "\n";
             

@@ -85,8 +85,12 @@ li a#navigation_active { text-decoration: underline; }
 	border: 1px solid #666;
 }
 
-#main, #sidebar {
+#main {
 	padding: 1.2em;
+}
+
+#sidebar {
+	padding: 0;
 }
 
 #breadcrumbs {
@@ -97,8 +101,9 @@ li a#navigation_active { text-decoration: underline; }
 	padding-left: 1.0em;
 }
 
-ul#sidebar.horizontal { background-color: #f0f0f0; margin-bottom: 0.6em; }
-ul#sidebar.horizontal li { padding-left: 1.0em; display: inline; } 
+#sidebar.horizontal { background-color: #f0f0f0; margin-bottom: 0.6em; width:917px; height: 1.9em;}
+#sidebar.horizontal li { padding-left: 1.0em; display: inline; font-size:110%; background: none; padding: 0.3em 1.2em; line-height:1.8em;}
+#sidebar.horizontal li a {padding-top:0.6em;}
 
 #ft {
 	height: auto;
@@ -128,7 +133,7 @@ form {
 	padding: 0.8em;
 }
 
-.message {
+.message{
 	margin: 1.0em auto 0.0em auto;
 	width: 90%;
 	padding: 0.8em;
@@ -137,13 +142,17 @@ form {
 	font-weight: bold;
 }
 
+#return_message {display:none;}
+
+.visible {display:block !important;}
+
 .green {
-	background-color: #99FF66;
+	background-color: #99FF66 !important;
 }
 
 .red {
-	background-color: #FF6A55;
-	color: #ffffff;
+	background-color: #FF6A55 !important;
+	color: #ffffff !important;
 }
 
 .bold_red {
@@ -151,6 +160,7 @@ form {
 	font-weight: bold;
 }
 
+.widget {height: 32px; vertical-align:middle; cursor: pointer;}
 
 /* *************************************
 *  Admin Home page *
@@ -203,8 +213,7 @@ form {
 #plugin_management span.table_requires { font-size: 0.8em; font-weight: normal; color: #666; }
 #plugin_management td.table_install { width: 17%; font-size: 0.8em; }
 #plugin_management td.table_description { font-size: 0.8em; background-color: #fefefe; border-style:solid; border-width: 0.2em 0 0.2em 0.2em; border-color: #e0e0e0; }
-#plugin_management td.table_description_close { font-size: 0.8em; background-color: #fefefe; border-style:solid; border-width: 0.2em 0.2em 0.2em 0;
-	                            border-color: #e0e0e0; text-align: center; }
+#plugin_management td.table_description_close { font-size: 0.8em; background-color: #fefefe; border-style:solid; border-width: 0.2em 0.2em 0.2em 0; border-color: #e0e0e0; text-align: center; }
 
 /* *************************************
 *  Site Settings  *
@@ -262,3 +271,61 @@ table#settings {
 }
 
 .debug  { font-size: 0.8em; }
+
+/* ****************************
+*  Sidebar  *
+******************************* */
+
+.accordion {
+	width: 227px;
+	border-bottom: solid 1px #c4c4c4;
+}
+.accordion li {	
+	padding: 8px 15px;
+	margin: 0;
+	font: bold 120%/100% Arial, Helvetica, sans-serif;
+	border: solid 1px #c4c4c4;
+	border-bottom: none;
+	cursor: pointer;
+}
+.accordion .arrow {
+    background: #fff url(../images/arrow-square.gif) no-repeat right -51px;
+}
+
+.accordion li:hover {
+	background-color: #e3e2e2;
+}
+.accordion li.active {
+	background-position: right 5px;
+}
+
+.accordion li ul li {
+	background: #fff none;
+	padding: 5px 12px;
+	margin: 0;
+	font: normal 80%/100% Arial, Helvetica, sans-serif;
+	border: none;
+	cursor: pointer;
+}
+
+.accordion li ul {
+	margin-top:10px;
+}
+
+.accordion p {
+	background: #f7f7f7;
+	margin: 0;
+	padding: 10px 15px 20px;
+	border-left: solid 1px #c4c4c4;
+	border-right: solid 1px #c4c4c4;
+}
+
+.accordion .horizontal { }
+
+#admin_theme_theme_activate {cursor: pointer;  }
+.power_on {padding-left: 1.5em; background-image: url(../images/power_on.png); background-repeat: no-repeat;}
+.tick_on {padding-left: 1.5em; background-image: url(../images/tick_yes.png); background-repeat: no-repeat;}
+.warning_on {padding-left: 1.5em; background-image: url(../images/warning.png); background-repeat: no-repeat;}
+
+#sidebar.vertical .home {padding-left: 1.5em; background-image: url(../images/home.png); background-repeat: no-repeat;}
+

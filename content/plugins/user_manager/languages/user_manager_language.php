@@ -33,11 +33,12 @@ $lang["user_man_user_submissions_1"] = "You can see all";
 $lang["user_man_user_submissions_2"] = "'s submissions";
 $lang["user_man_user_last_logged_in"] = "last logged in at";
 $lang["user_man_user_registered_on"] = "registered at";
+$lang["user_man_user_email_icon"] = "Email address not validated yet.";
 $lang["user_man_user_email_not_validated"] = ", but has <b>not</b> validated his or her email address yet.";
 $lang["user_man_user_email_validated"] = " and has validated his or her email address.";
 $lang['user_man_here'] = "here";
 $lang['user_man_email'] = "Email:";
-$lang["user_man_desc"] = "The User Manager enables you to quickly find and edit users, ordered by last login.";
+$lang["user_man_desc"] = "The User Manager enables you to quickly find and edit users, ordered newest first.";
 $lang["user_man_search"] = "Search for a user: <span style='font-weight: normal;'><small>(username or email)</small></span>";
 $lang["user_man_search_too_short"] = "You search term must be at least 3 characters";
 $lang["user_man_filter"] = "Filter users:";
@@ -53,6 +54,7 @@ $lang['user_man_filter_all'] = "All";
 $lang['user_man_filter_not_killspammed'] = "Not Killspammed";
 $lang['user_man_filter_newest'] = "Newest";
 $lang['user_man_filter_oldest'] = "Oldest";
+$lang['user_man_filter_last_visited'] = "Last Visited";
 $lang["user_man_show_content"] = "Show content";
 $lang["user_man_need_search"] = "Please install and activate the Search plugin";
 $lang["user_man_usered"] = "Usered:";
@@ -85,6 +87,9 @@ $lang['user_man_add_blocked_list'] = "Add to Blocked List";
 
 /* Sidebar */
 $lang["user_man_admin_sidebar"] = "User Manager";
+
+/* Submit Post Edit */
+$lang['user_man_find_user'] = "Find this post's author in User Manager";
 
 /* Edit Default Permissions */
 $lang["user_man_perms_desc"] = "Use this page to edit the <b>default</b> permissions for each usergroup.";

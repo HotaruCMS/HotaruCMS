@@ -1,5 +1,5 @@
 /* **************************************************************************************************** 
- *  File: /plugins/category_manager/cat_man_jquery.js
+ *  File: /plugins/comments/comments.js
  *  Purpose: Drop-down boxes for managing categories
  *  Notes: Uses Hotaru's built-in fadeToggle function.
  *  License:

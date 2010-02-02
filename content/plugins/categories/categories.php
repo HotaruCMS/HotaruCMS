@@ -228,7 +228,7 @@ class Categories
     
             $crumbs .= "<a href='" . $h->url(array('category'=>$h->post->category)) . "'>\n";
             $crumbs .= $h->getCatName($h->post->category) . "</a> &raquo; \n";
-            $crumbs .= $h->post->title . "</a>\n";
+            $crumbs .= "<a href='" . $h->url(array('page'=>$h->post->id)) . "'>" . $h->post->title . "</a>\n";
         }
         
         if ($crumbs) { return $crumbs; } else { return false; }
@@ -268,9 +268,10 @@ class Categories
         $output = '';
         
         // get all top-level categories
-        $h->smartCache('on', 'categories', 10); // start using cache
         $sql    = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_id != %d AND category_parent = %d ORDER BY category_order ASC";
-        $categories = $h->db->get_results($h->db->prepare($sql, 1, 1));
+        $query = $h->db->prepare($sql, 1, 1);
+        $h->smartCache('on', 'categories', 60, $query); // start using cache
+        $categories = $h->db->get_results($query);
        
         if($categories)
         {

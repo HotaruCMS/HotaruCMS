@@ -175,7 +175,7 @@ class UserSignin
                 if ($h->pageName == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
                 
                 if (!$h->isPage('login')) {
-                    echo "<li><a  " . $status . " href='" . BASEURL . "index.php?page=login&return=" . $return . "'>" . $h->lang["user_signin_login"] . "</a></li>\n";
+                    echo "<li><a  " . $status . " href='" . BASEURL . "index.php?page=login&amp;return=" . $return . "'>" . $h->lang["user_signin_login"] . "</a></li>\n";
                 } else {
                     echo "<li><a  " . $status . " href='" . $h->url(array('page'=>'login')) . "'>" . $h->lang["user_signin_login"] . "</a></li>\n";
                 }
@@ -487,7 +487,7 @@ class UserSignin
                 {
                     require_once(PLUGINS . 'users/libs/UserFunctions.php');
                     $uf = new UserFunctions();
-                    $uf->notifyMods($h, 'user', $h->currentUser->role);
+                    $uf->notifyMods($h, 'user', $h->currentUser->role, $last_insert_id);
                 }
         
                 return $last_insert_id; // so we can retrieve this user's details for the email confirmation step;
@@ -582,7 +582,7 @@ class UserSignin
         $body .= $line_break;
         $body .= $h->lang['user_signin_register_emailconf_body_click'];
         $body .= $line_break;
-        $body .= BASEURL . "index.php?page=emailconf&plugin=users&id=" . $user->id . "&conf=" . $email_conf;
+        $body .= BASEURL . "index.php?page=emailconf&amp;plugin=users&amp;id=" . $user->id . "&amp;conf=" . $email_conf;
         $body .= $line_break;
         $body .= $h->lang['user_signin_register_emailconf_body_regards'];
         $body .= $next_line;
@@ -643,7 +643,7 @@ class UserSignin
             if (($h->vars['useEmailNotify'] == 'checked') && (file_exists(PLUGINS . 'users/libs/UserFunctions.php'))) {
                 require_once(PLUGINS . 'users/libs/UserFunctions.php');
                 $uf = new UserFunctions();
-                $uf->notifyMods($h, 'user', $user->role);
+                $uf->notifyMods($h, 'user', $user->role, $user->id);
             }
         
             $success_message = $h->lang['user_signin_register_emailconf_success'] . " <br /><b><a href='" . $h->url(array('page'=>'login')) . "'>" . $h->lang['user_signin_register_emailconf_success_login'] . "</a></b>";

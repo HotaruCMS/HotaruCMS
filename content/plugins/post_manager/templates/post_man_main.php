@@ -93,12 +93,13 @@ if (!isset($h->vars['post_man_navi'])) { $h->vars['post_man_navi'] = ''; }
 
 <form name='post_man_checkbox_form' style='margin: 0px; padding: 0px;' action='<?php echo BASEURL; ?>admin_index.php?plugin=post_manager' method='get'>
     
-<div id="table_list">
+<div id="post_man_table">
     <table>
     <tr class='table_headers'>
         <td><?php echo $h->lang["post_man_id"]; ?></td>
         <td><?php echo $h->lang["post_man_status"]; ?></td>
         <td><?php echo $h->lang["post_man_date"]; ?></td>
+        <td><?php echo $h->lang["post_man_user"]; ?></td>
         <td><?php echo $h->lang["post_man_title"]; ?></td>
         <td><?php echo $h->lang["post_man_edit"]; ?></td>
         <td><?php echo $h->lang["post_man_check"]; ?></td>

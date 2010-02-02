@@ -52,7 +52,7 @@ class VideoInc
     
     public function sb_base_show_post_content_list($h)
     {
-        if ($h->post->vars['media'] != 'video') { return false; }
+        if (!isset($h->post->vars['media']) || $h->post->vars['media'] != 'video') { return false; }
         
         include_once(PLUGINS . "video_inc/libs/AutoEmbed.class.php");
         $AE = new AutoEmbed();
@@ -81,7 +81,7 @@ class VideoInc
     
     public function sb_base_show_post_content_post($h)
     {
-        if ($h->post->vars['media'] != 'video') { return false; }
+        if (!isset($h->post->vars['media']) || $h->post->vars['media'] != 'video') { return false; }
         
         $embed = $this->getCode($h->post->origUrl);
 

@@ -136,16 +136,16 @@ class TagCloud
      */
     public function buildTagCloud($h, $count)
     {
-        $h->smartCache('on', 'tags', 10); // start using cache (lasts 10 mins if no update to tags table)
-        
         $sql = "SELECT tags_word FROM " . TABLE_TAGS . ", " . TABLE_POSTS;
         $sql .= " WHERE tags_archived = %s AND (tags_post_id = post_id) AND";
         $sql .= " (post_status = %s || post_status = %s)";
-        $tags = $h->db->get_results($h->db->prepare($sql, 'N', 'new', 'top'));
+        
+        $query = $h->db->prepare($sql, 'N', 'new', 'top');
+        $h->smartCache('on', 'tags', 60, $query); // start using cache
+        $tags = $h->db->get_results($query);
+        $h->smartCache('off'); // stop using cache
        
         if (!$tags) { return false; }
-        
-        $h->smartCache('off'); // stop using cache
         
         // Put the tags in an array:
         $tags_array = array();

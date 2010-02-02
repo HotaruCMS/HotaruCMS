@@ -206,10 +206,16 @@ class PostManagerSettings
             if ($search_term) { $edit_link .= "&amp;search_value=" . $search_term; }
             if ($pg) { $edit_link .= "&amp;pg=" . $pg; }
             
+            // put icons next to the username with links to User Manager
+            $h->vars['user_manager_name_icons'] = array($username, ''); // second param is "output"
+            $h->pluginHook('post_manager_user_name');
+            $icons = $h->vars['user_manager_name_icons'][1]; // 1 is the second param: output
+            
             $output .= "<tr class='table_row_" . $alt % 2 . "'>\n";
             $output .= "<td class='pm_id'>" . $post->post_id . "</td>\n";
             $output .= "<td class='pm_status'>" . $post->post_status . "</td>\n";
             $output .= "<td class='pm_date'>" . date('d M y', strtotime($post->post_date)) . "</a></td>\n";
+            $output .= "<td class='pm_author'><a href='" . $h->url(array('user'=>$username)) . "' title='User Profile'>" . $username . "</a>" . $icons . "</td>\n";
             $output .= "<td class='pm_title'><a class='table_drop_down' href='#' title='" . $h->lang["post_man_show_content"] . "'>";
             $output .= stripslashes(urldecode($post->post_title)) . "</a></td>\n";
             $output .= "<td class='pm_edit'>" . "<a href='" . $edit_link . "'>\n";
@@ -218,11 +224,11 @@ class PostManagerSettings
             $output .= "</tr>\n";
             
             $output .= "<tr class='table_tr_details' style='display:none;'>\n";
-            $output .= "<td colspan=6 class='table_description pm_description'>\n";
+            $output .= "<td colspan=7 class='table_description pm_description'>\n";
             $output .= "<a class='table_hide_details' style='float: right;' href='#'>[" . $h->lang["admin_theme_plugins_close"] . "]</a>";
             $output .= "<b>" . stripslashes(urldecode($post->post_title)) . "</b><br />\n";
             $output .= "<i>" . $h->lang["post_man_posted"] ."</i> " .  date('d M Y H:i:s', strtotime($post->post_date)) . "<br />\n";
-            $output .= "<i>" . $h->lang["post_man_author"] ."</i> " . $username . " (id:" .  $post->post_author . ")<br />\n";
+            $output .= "<i>" . $h->lang["post_man_author"] ."</i> <a href='" . $h->url(array('user'=>$username)) . "' title='User Profile'>" . $username . "</a> (id:" .  $post->post_author . ")" . "<br />\n";
             $output .= "<p><i>" . $h->lang["post_man_content"] ."</i> " . stripslashes(urldecode($post->post_content)) . "</p> \n";
             $output .= "<i>" . $h->lang["post_man_category"] ."</i> " . $category . "<br /> \n";   // we got $category above
             $output .= "<i>" . $h->lang["post_man_tags"] ."</i> " . (urldecode($post->post_tags)) . "<br /> \n";

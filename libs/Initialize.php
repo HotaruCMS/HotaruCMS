@@ -52,6 +52,8 @@ class Initialize
         $this->setUpDatabaseCache();
         $this->isDebug = $this->checkDebug();
 
+		$this->setUpJsConstants();
+
         return $this;
     }
     
@@ -238,6 +240,26 @@ class Initialize
             ini_set('display_errors', 0); // hide errors
         }
         
+        return false;
+    }
+
+	/**
+     * Get JQuery Globals
+     *
+     *  
+     */
+    public function setUpJsConstants()
+    {
+        // Start timer if debugging
+		$global_js_var = "jQuery('document').ready(function($) {BASEURL = '". BASEURL ."'; ADMIN_THEME = '" . ADMIN_THEME . "'; THEME = '" . THEME . "';});";	
+		$JsConstantsFile = "css_js_cache/JavascriptConstants.js";
+
+		if (!file_exists(CACHE . $JsConstantsFile)) {
+			$JsConstantsPath = CACHE . $JsConstantsFile;
+			$JsConstantsfh = fopen($JsConstantsPath, 'w') or die ("Can't open file");	
+			fwrite($JsConstantsfh, $global_js_var);
+			fclose($JsConstantsfh);		
+		}        
         return false;
     }
         

@@ -2,11 +2,11 @@
 /**
  * name: User Manager
  * description: Manage users.
- * version: 0.6
+ * version: 0.7
  * folder: user_manager
  * class: UserManager
  * requires: users 1.1, user_signin 0.1
- * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, post_manager_user_name, comment_manager_user_name, submit_edit_end
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -34,7 +34,43 @@
  
 class UserManager
 {
-    // nothing to do. See user_manager_settings.php
+    // See user_manager_settings.php for main functions
+
+    /**
+     * Insert icons next to user name
+     *
+     * @return bool
+     */
+    public function comment_manager_user_name($h) { $this->post_manager_user_name($h); }
+    
+    public function post_manager_user_name($h)
+    {
+        list($username, $output) = $h->vars['user_manager_name_icons'];
+        
+        $output .="<div class='user_manager_name_icons'>";
+        $output .= "&nbsp;<a href='" . $h->url(array('page'=>'account', 'user'=>$username)) . "'>";
+        $output .= "<img src='" . BASEURL . "content/plugins/user_manager/images/user_account.png' title='User Account'></a>";
+        
+        $output .= "&nbsp;<a href='" . BASEURL . "admin_index.php?search_value=" . $username . "&plugin=user_manager&page=plugin_settings&type=search'>";
+        $output .= "<img src='" . BASEURL . "content/plugins/user_manager/images/user_manager.png' title='User Manager'></a>";
+        $output .= "</div>";
+        
+        $h->vars['user_manager_name_icons'] = array($username, $output);
+    }
+    
+
+    /**
+     * Add link to user at bottom of Submit Edit Post
+     */
+    public function submit_edit_end($h, $vars)
+    {
+        // need admin access permissions:
+        if ($h->currentUser->getPermission('can_access_admin') != 'yes') { return false; }
+        
+        $username = $h->getUserNameFromId($vars['userid']);
+        
+        echo "<p class='user_man_find_user'><a href='" . BASEURL . "admin_index.php?search_value=" . $username . "&plugin=user_manager&page=plugin_settings&type=search'>" . $h->lang['user_man_find_user'] . "</a></p>";
+    }
 }
 
 ?>

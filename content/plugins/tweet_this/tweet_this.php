@@ -2,7 +2,7 @@
 /**
  * name: Tweet This
  * description: Send posts to Twitter
- * version: 0.2
+ * version: 0.3
  * folder: tweet_this
  * class: TweetThis
  * hooks: install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, sb_base_show_post_extra_fields, theme_index_top, header_include
@@ -45,6 +45,7 @@ class TweetThis
         if (!isset($tweet_this_settings['tt_shortener'])) { $tweet_this_settings['tt_shortener'] = "isgd"; }
         if (!isset($tweet_this_settings['tt_bitly_login'])) { $tweet_this_settings['tt_bitly_login'] = ""; }
         if (!isset($tweet_this_settings['tt_bitly_api_key'])) { $tweet_this_settings['tt_bitly_api_key'] = ""; }
+        if (!isset($tweet_this_settings['tt_use_GA_tracking'])) { $tweet_this_settings['tt_use_GA_tracking'] = "checked"; }
         $h->updateSetting('tweet_this_settings', serialize($tweet_this_settings));
     }
     
@@ -108,7 +109,26 @@ class TweetThis
             
             // get settings so we know which shortener to use:
             $tweet_this_settings = $h->getSerializedSettings();
+
+            // get the post's url and encode it:
+           if ($tweet_this_settings['tt_use_GA_tracking']) // do we want GA tracking tags?
+           {
+                if (FRIENDLY_URLS == "false")    {
+                    // friendly URLs are not enabled (add more query string parameters)
+                    $post_url = urlencode($h->url(array('page'=>$post_id)) . '&utm_source=tweet-this&utm_medium=Twitter&utm_campaign=story-promotion' );
+                }
+                else 
+                {   // friendly URLs are enabled (start with query string parameters)
+                    $post_url = urlencode($h->url(array('page'=>$post_id)) . '?utm_source=tweet-this&utm_medium=Twitter&utm_campaign=story-promotion' );
+                } 
+            }
+            else 
+            {   
+                // just send the URL without tracking tags
+                $post_url = urlencode($h->url(array('page'=>$post_id)));
+            }
             
+            // which shortener do we use?
             switch($tweet_this_settings['tt_shortener']) {
                 case 'tinyurl':
                     $url = file_get_contents('http://tinyurl.com/api-create.php?url=' . $post_url);

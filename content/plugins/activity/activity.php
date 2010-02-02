@@ -209,8 +209,15 @@ class Activity
         
         // we don't need the status because if the post wasn't visible, it couldn't be voted for.
         
+        /* As of January 2010, there's only one vote plugin and it only allows you to *undo* a vote rather than vote it down, so until another plugin comes along, we'll just remove the orginal "up" vote from the activity table rather than adding a "Nick voted down blah blah" line: */
+        
+        $sql = "DELETE FROM " . TABLE_USERACTIVITY . " WHERE useract_userid = %d AND useract_key = %s AND useract_value = %s AND useract_key2 = %s AND useract_value2 = %d";
+        $h->db->query($h->db->prepare($sql, $user_id, 'vote', 'up', 'post', $post_id));
+        
+        /*
         $sql = "INSERT INTO " . TABLE_USERACTIVITY . " SET useract_archived = %s, useract_userid = %d, useract_status = %s, useract_key = %s, useract_value = %s, useract_key2 = %s, useract_value2 = %s, useract_date = CURRENT_TIMESTAMP, useract_updateby = %d";
         $h->db->query($h->db->prepare($sql, 'N', $user_id, 'show', 'vote', 'down', 'post', $post_id, $h->currentUser->id));
+        */
     }
     
     

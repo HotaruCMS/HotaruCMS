@@ -233,7 +233,7 @@ class Post
      */
     public function deletePosts($h, $user_id = 0) 
     {
-        $sql = "SELECT post_id FROM " . TABLE_POSTS. "s WHERE post_author = %d";
+        $sql = "SELECT post_id FROM " . TABLE_POSTS. " WHERE post_author = %d";
         $results = $h->db->get_results($h->db->prepare($sql, $user_id));
         
         if ($results) {
@@ -262,7 +262,9 @@ class Post
         $sql = "UPDATE " . TABLE_POSTS . " SET post_status = %s WHERE post_id = %d";
         $h->db->query($h->db->prepare($sql, $this->status, $post_id));
         
-        $h->post->id = $post_id; // a small hack to get the id for use in plugins.
+        // hacks for plugins:
+        $h->post->id = $post_id;
+         
         $h->pluginHook('post_change_status');
                 
         return true;

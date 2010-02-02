@@ -93,6 +93,10 @@ class TweetThisSettings
         echo "<p>" . $h->lang['tweet_this_settings_bitly_api_key'];
         echo ": <input type='text' size=30 name='tt_bitly_api_key' value='" . $tweet_this_settings['tt_bitly_api_key'] . "' /></p>\n";
         
+        // use Google Analytics tracking tags?
+        echo "<p><input type='checkbox' name='test' " . $tweet_this_settings['tt_use_GA_tracking'] . ">&nbsp;&nbsp;" . $h->lang['tweet_this_settings_use_GA_tracking'];
+        echo " <a href='http://www.google.com/support/googleanalytics/bin/answer.py?hl=en&answer=55518' target='_blank' >" . $h->lang['tweet_this_settings_what_is_GA_tracking'] . "</a></p>";
+        
         // end form
         echo "<br />";
         echo "<input type='hidden' name='submitted' value='true' />\n";
@@ -117,6 +121,13 @@ class TweetThisSettings
         $tweet_this_settings['tt_shortener'] = $h->cage->post->testAlpha('tt_shortener');
         $tweet_this_settings['tt_bitly_login'] = $h->cage->post->testAlnumLines('tt_bitly_login');
         $tweet_this_settings['tt_bitly_api_key'] = $h->cage->post->testAlnumLines('tt_bitly_api_key');
+        
+        // check whether to use GA tracking or not
+        if ($h->cage->post->keyExists('test')) {
+            $tweet_this_settings['tt_use_GA_tracking'] = 'checked'; } 
+        else { 
+            $tweet_this_settings['tt_use_GA_tracking'] = ''; 
+        }
         
         // if bitly is chosen but either of the login or api key fields are empty, set error, don't save
         if ($tweet_this_settings['tt_shortener'] == 'bitly' &&

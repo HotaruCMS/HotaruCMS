@@ -73,5 +73,6 @@ $lang["com_man_all_note"] = "This refers to every page, not just this one. Also,
 /* Sidebar */
 $lang["com_man_admin_sidebar"] = "Comment Manager";
 
-
+/* User Manager */
+$lang["com_man_flagged_reasons"] = "Comments from this user are: ";
 ?>

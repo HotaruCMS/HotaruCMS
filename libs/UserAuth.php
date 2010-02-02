@@ -199,8 +199,16 @@ class UserAuth extends UserBase
                 $month = 0; 
             }
             
-            setcookie("hotaru_user", $this->name, $month, "/");
-            setcookie("hotaru_key", $strCookie, $month, "/");
+            if (strpos(BASEURL, "localhost") !== false) {
+                setcookie("hotaru_user", $this->name, $month, "/");
+                setcookie("hotaru_key", $strCookie, $month, "/");
+            } else {
+                $parsed = parse_url(BASEURL); 
+
+                // now we need a dot in front of that so cookies work across subdomains:
+                setcookie("hotaru_user", $this->name, $month, "/", "." . $parsed['host']);
+                setcookie("hotaru_key", $strCookie, $month, "/", "." . $parsed['host']);
+            }
             return true;
         }
     }
@@ -212,8 +220,17 @@ class UserAuth extends UserBase
     public function destroyCookieAndSession()
     {
         // setting a cookie with a negative time expires it
-        setcookie("hotaru_user", "", time()-3600, "/");
-        setcookie("hotaru_key", "", time()-3600, "/");
+        
+        if (strpos(BASEURL, "localhost") !== false) {
+            setcookie("hotaru_user", "", time()-3600, "/");
+            setcookie("hotaru_key", "", time()-3600, "/");
+        } else {
+            $parsed = parse_url(BASEURL); 
+            
+            // now we need a dot in front of that so cookies are cleared across subdomains:
+            setcookie("hotaru_user", "", time()-3600, "/", "." . $parsed['host']);
+            setcookie("hotaru_key", "", time()-3600, "/", "." . $parsed['host']);
+        }
         
         session_destroy(); // sessions are used in CSRF
         

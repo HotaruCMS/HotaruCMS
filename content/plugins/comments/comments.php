@@ -209,7 +209,7 @@ class Comments
                                 {
                                     require_once(PLUGINS . 'users/libs/UserFunctions.php');
                                     $uf = new UserFunctions();
-                                    $uf->notifyMods($h, 'comment', $h->comment->status, $h->post->id, $h->comment->id);
+                                    $uf->notifyMods($h, 'comment', $h->comment->status, $h->comment->postId, $h->comment->id);
                                 }
                     
                                 // email comment subscribers if this comment has 'approved' status:
@@ -245,17 +245,17 @@ class Comments
                     // before setting pending, we need to be certain this user has permission:
                     if ($h->currentUser->getPermission('can_set_comments_pending') == 'yes') {
                         $cid = $h->cage->get->testInt('cid'); // comment id
-                        $comment = $h->comment->getComment($cid);
-                        $h->comment->readComment($comment); // read comment
+                        $comment = $h->comment->getComment($h, $cid);
+                        $h->comment->readComment($h, $comment); // read comment
                         $h->comment->status = 'pending'; // set to pending
-                        $h->comment->editComment();  // update this comment
+                        $h->comment->editComment($h);  // update this comment
     
                         $h->comment->postId = $h->cage->get->testInt('pid');  // post id
-                        $h->comment->setPendingCommentTree($cid);   // set all responses to 'pending', too.
+                        $h->comment->setPendingCommentTree($h,$cid);   // set all responses to 'pending', too.
                         
                         // redirect back to thread:
-                        $h->post = new Post($this->hotaru);
-                        $h->post->readPost($h->comment->postId);
+                        $h->post = new Post();
+                        $h->readPost($h->comment->postId);
                         header("Location: " . $h->url(array('page'=>$h->post->id)));    // Go to the post
                         die();
                     }
@@ -604,8 +604,8 @@ class Comments
             $h->post->subscribe = 1; 
             $subscribe = 'checked'; 
         } else {
-            $h->post->subscribe = 0;
-            $subscribe = '';
+            // use existing setting:
+            $subscribe = ($h->post->subscribe) ? 'checked' : ''; 
         }
 
         $h->vars['submitted_data']['submit_subscribe'] = $h->post->subscribe;
@@ -618,8 +618,8 @@ class Comments
                 $h->post->comments = 'open'; 
                 $comments = 'open';
             } else { 
-                $h->post->comments = 'closed'; 
-                $comments = 'closed';
+                // use existing setting:
+                $comments = $h->post->comments; 
             }
         } else {
             // open for submit 2

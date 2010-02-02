@@ -266,8 +266,9 @@ class Submit
             case 'submit_confirm':
             
                 $post_id = $h->cage->post->testInt('submit_post_id');
-                $h->readPost($post_id);
+                $h->readPost($post_id); // be careful! The results are cached and returned on next readPost 
                 $h->changePostStatus('new');
+                $h->post->status = 'new'; // this fixes a caching-related problem by forcing the new status on the post property
                 
                 $return = 0; // will return false later if set to 1.
                 
@@ -295,6 +296,8 @@ class Submit
                 }
                 
                 $h->pluginHook('submit_confirm_pre_trackback'); // Vote uses this to change pst status and redirection
+
+                $h->pluginHook('submit_confirm_pre_trackback'); // Vote uses this to change post status and redirection
 
                 // notify chosen mods of new post by email if enabled and UserFunctions file exists
                 if (($h->vars['submit_settings']['email_notify']) && (file_exists(PLUGINS . 'users/libs/UserFunctions.php')))
@@ -615,6 +618,12 @@ class Submit
                 
                 // display template
                 $h->displayTemplate('submit_edit');
+                return true;
+                break;
+                
+            // Submitted
+            case 'submit_confirm':
+                $h->showMessages();
                 return true;
                 break;
         }

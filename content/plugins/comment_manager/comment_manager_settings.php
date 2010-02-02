@@ -42,26 +42,30 @@ class CommentManagerSettings
         
         // clear variables:
         $h->vars['search_term'] = '';
-        $h->vars['comment_status_filter'] = 'all';
+        $h->vars['comment_status_filter'] = 'newest';
         
         require_once(LIBS . 'Comment.php');
-        $c = new Comment();
+        $h->comment = new Comment();
         
         // approve comment
         if ($h->cage->get->getAlpha('action') == 'approve') 
         {
             $cid = $h->cage->get->testInt('comment_id');
-            $comment = $c->getComment($h, $cid); // get comment from database
-            $c->readComment($h, $comment); // read comment into $c
-            $c->status = 'approved';
+            $comment = $h->comment->getComment($h, $cid); // get comment from database
+            $h->comment->readComment($h, $comment); // read comment into $c
+            $h->comment->status = 'approved';
 
             // Akismet uses this to report Akismet mistakes (actually we do this for ANY comment approval)
-            $h->pluginHook('com_man_approve_comment', true, '', array($c));
+            $h->pluginHook('com_man_approve_comment', '', array($h->comment));
             
-            $c->editComment($h);
+            $h->comment->editComment($h);
             
             // email comment subscribers
-            $c->emailCommentSubscribers($h, $c->postId);
+            if ($h->isActive('comments')) {
+                require_once(PLUGINS . 'comments/comments.php');
+                $c = new Comments($h);
+                $c->emailCommentSubscribers($h, $h->comment->postId);
+            }
                         
             $h->message = $h->lang['com_man_comment_approved'];
             $h->messageType = 'green';
@@ -86,13 +90,13 @@ class CommentManagerSettings
            // before deleting a comment, we need to be certain this user has permission:
             if ($h->currentUser->getPermission('can_delete_comments') == 'yes') {
                 $cid = $h->cage->get->testInt('comment_id'); // comment id
-                $comment = $c->getComment($h, $cid); // get comment from database
-                $c->readComment($h, $comment); // read comment into $c
+                $comment = $h->comment->getComment($h, $cid); // get comment from database
+                $h->comment->readComment($h, $comment); // read comment into $c
                 
                 // Akismet uses this to report Akismet mistakes 
-                $h->pluginHook('com_man_delete_comment', true, '', array($c));
+                $h->pluginHook('com_man_delete_comment', true, '', array($h->comment));
                 
-                $c->deleteComment($h); // delete this comment
+                $h->comment->deleteComment($h); // delete this comment
                 $h->comment->deleteCommentTree($h, $cid);   // delete all responses, too.
                 $h->message = $h->lang['com_man_comment_delete'];
                 $h->messageType = 'green';
@@ -113,9 +117,9 @@ class CommentManagerSettings
                 if ($allpending) {
                     foreach ($allpending as $pending) {
                         $cid = $pending->comment_id; // comment id
-                        $comment = $c->getComment($h, $cid); // get comment from database
-                        $c->readComment($h, $comment); // read comment into $c
-                        $c->deleteComment($h); // delete this comment
+                        $comment = $h->comment->getComment($h, $cid); // get comment from database
+                        $h->comment->readComment($h, $comment); // read comment into $c
+                        $h->comment->deleteComment($h); // delete this comment
                         $h->comment->deleteCommentTree($h, $cid);   // delete all responses, too.
                     }
                     // No need for a message because the "There are no comments pending message (see further down) shows anyway.
@@ -132,15 +136,15 @@ class CommentManagerSettings
         {
             $cid = $h->cage->post->testInt('cid');
             $comment = $c->getComment($h, $cid);
-            $c->readComment($h, $comment);
+            $h->comment->readComment($h, $comment);
             // before editing, we need to be certain this user has permission:
             $safe = false;
             $can_edit = $h->currentUser->getPermission('can_edit_comments');
             if ($can_edit == 'yes') { $safe = true; }
-            if (($can_edit == 'own') && ($h->currentUser->id == $c->author)) { $safe = true; }
+            if (($can_edit == 'own') && ($h->currentUser->id == $h->comment->author)) { $safe = true; }
             if ($safe) {
-                $c->content = sanitize($h->cage->post->getHtmLawed('com_man_edit_content'), 2, $c->allowableTags);
-                $c->editComment($h);
+                $h->comment->content = sanitize($h->cage->post->getHtmLawed('com_man_edit_content'), 2, $h->comment->allowableTags);
+                $h->comment->editComment($h);
             } else {
                 $h->message = $h->lang["com_man_edit_form_denied"];
                 $h->messageType = 'red';
@@ -221,7 +225,7 @@ class CommentManagerSettings
         }
         
         if ($comments) { 
-            $h->vars['com_man_rows'] = $this->drawRows($h, $c, $comments, $filter, $search_term);
+            $h->vars['com_man_rows'] = $this->drawRows($h, $comments, $filter, $search_term);
         } elseif ($h->vars['comment_status_filter'] == 'pending') {
             $h->message = $h->lang['com_man_no_pending_comments'];
             $h->messageType = 'green';
@@ -232,7 +236,7 @@ class CommentManagerSettings
     }
     
     
-    public function drawRows($h, $c, $comments, $filter = '', $search_term = '')
+    public function drawRows($h, $comments, $filter = '', $search_term = '')
     {
         // prepare for showing comments, 20 per page
         $pg = $h->cage->get->getInt('pg');
@@ -250,14 +254,13 @@ class CommentManagerSettings
             $user->getUserBasic($h, $comments->comment_user_id);
             
             // need to read the comment into the Comment object.
-            $c->readComment($h, $comments);
-            $h->comment = $c;
+            $h->comment->readComment($h, $comments);
 
-            $h->post->readPost($h, $c->postId);
-            $post_link = $h->url(array('page'=>$h->post->id)) . "#c" . $c->id;
+            $h->post->readPost($h, $h->comment->postId);
+            $post_link = $h->url(array('page'=>$h->post->id)) . "#c" . $h->comment->id;
             
             // COMMENT CONTENT
-            $original_content = stripslashes(urldecode($c->content)); // clean comment
+            $original_content = stripslashes(urldecode($h->comment->content)); // clean comment
             // since the whole comment can be seen in the edit box, we'll just use a summary in the main comment area:
             if ($h->currentUser->getPermission('can_edit_comments') == 'yes') { 
                 $content = truncate($original_content, 140); // truncating strips tags, so we have to do this before we use Smilies, etc.
@@ -269,12 +272,12 @@ class CommentManagerSettings
             $content = $h->comment->content; // assign edited or unedited comment back to $content.
             
             
-            $approve_link = BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=comment_manager&amp;action=approve&amp;comment_id=" . $c->id; 
+            $approve_link = BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=comment_manager&amp;action=approve&amp;comment_id=" . $h->comment->id; 
             if ($filter) { $approve_link .= "&amp;type=filter&amp;comment_status_filter=" . $filter; }
             if ($search_term) { $approve_link .= "&amp;type=search&amp;search_value=" . $search_term; }
             if ($pg) { $approve_link .= "&amp;pg=" . $pg; }
             
-            $delete_link = BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=comment_manager&amp;action=delete&amp;comment_id=" . $c->id; 
+            $delete_link = BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=comment_manager&amp;action=delete&amp;comment_id=" . $h->comment->id; 
             if ($filter) { $delete_link .= "&amp;type=filter&amp;comment_status_filter=" . $filter; }
             if ($search_term) { $delete_link .= "&amp;type=search&amp;search_value=" . $search_term; }
             if ($pg) { $delete_link .= "&amp;pg=" . $pg; }
@@ -285,11 +288,16 @@ class CommentManagerSettings
                 $colspan = 6;
             }
             
+            // put icons next to the username with links to User Manager
+            $h->vars['user_manager_name_icons'] = array($user->name, ''); // second param is "output"
+            $h->pluginHook('comment_manager_user_name');
+            $icons = $h->vars['user_manager_name_icons'][1]; // 1 is the second param: output
+            
             $output .= "<tr class='table_row_" . $alt % 2 . " cm_details_" . $alt % 2 . "'>\n";
-            $output .= "<td class='cm_id'>" . $c->id . "</td>\n";
-            $output .= "<td class='cm_status'><b>" . ucfirst($c->status) . "</b></td>\n";
-            $output .= "<td class='cm_date'>" . date('d M \'y H:i:s', strtotime($c->date))  . "</a></td>\n";
-            $output .= "<td class='cm_author'>" . $user->name . "</td>\n";
+            $output .= "<td class='cm_id'>" . $h->comment->id . "</td>\n";
+            $output .= "<td class='cm_status'><b>" . ucfirst($h->comment->status) . "</b></td>\n";
+            $output .= "<td class='cm_date'>" . date('d M \'y H:i:s', strtotime($h->comment->date))  . "</a></td>\n";
+            $output .= "<td class='cm_author'><a href='" . $h->url(array('user'=>$user->name)) . "' title='User Profile'>" . $user->name . $icons . "</td>\n";
             $output .= "<td class='cm_post'><a href='" . $post_link . "'>" . $h->post->title . "</a></td>\n";
             $output .= "<td class='cm_approve'>" . "<a href='" . $approve_link . "'>\n";
             $output .= "<img src='" . BASEURL . "content/plugins/comment_manager/images/approve.png'>" . "</a></td>\n";
@@ -318,7 +326,7 @@ class CommentManagerSettings
                 $output .= "</tr>\n";
                 $output .= "<td><input class='submit' type='submit' value='" . $h->lang['com_man_edit_form_update'] . "' /></td>\n";
                 $output .= "</tr></table>\n";
-                $output .= "<input type='hidden' name='cid' value='" . $c->id . "' />\n";
+                $output .= "<input type='hidden' name='cid' value='" . $h->comment->id . "' />\n";
                 $output .= "<input type='hidden' name='page' value='plugin_settings' />\n";
                 $output .= "<input type='hidden' name='type' value='edit' />\n";
                 $output .= "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";

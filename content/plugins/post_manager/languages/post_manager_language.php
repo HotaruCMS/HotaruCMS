@@ -32,7 +32,9 @@ $lang["post_man_filter"] = "Filter posts:";
 $lang["post_man_id"] = "ID";
 $lang["post_man_status"] = "Status";
 $lang["post_man_date"] = "Date";
+$lang["post_man_user"] = "User";
 $lang["post_man_title"] = "Title <span style='font-weight: normal;'><small>(click for details)</small></span>";
+$lang["post_man_flags_title"] = "Title: ";
 $lang["post_man_edit"] = "Edit";
 $lang['post_man_search_button'] = "Search";
 $lang['post_man_filter_button'] = "Filter";
@@ -68,5 +70,7 @@ $lang["post_man_num_pending"] = "<span style='color: red;'>Pending posts: </span
 /* Sidebar */
 $lang["post_man_admin_sidebar"] = "Post Manager";
 
+/* User Manager */
+$lang["post_man_flagged_reasons"] = "Posts from this user are: ";
 
 ?>

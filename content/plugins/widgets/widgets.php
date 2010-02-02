@@ -2,7 +2,7 @@
 /**
  * name: Widgets
  * description: Manages the contents of the widget blocks
- * version: 0.6
+ * version: 0.7
  * folder: widgets
  * class: Widgets
  * hooks: theme_index_top, admin_theme_index_top, header_include, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, widget_block
@@ -107,6 +107,8 @@ class Widgets
         
         echo "<h1>" . $h->lang["widgets_settings_header"] . "</h1>\n";
         
+        echo '<div id="return_message"></div>';
+
         if ($h->cage->get->testAlpha('action')) {
         
             // Get widget settings from the database...

@@ -97,6 +97,7 @@ class Maintenance
     {
         $handle=opendir($dir);
     
+        $success = false;
         while (($file = readdir($handle))!==false) {
             if ($file != 'placeholder.txt') {
                 if (@unlink($dir.'/'.$file)) {
@@ -209,13 +210,15 @@ class Maintenance
      */
     public function getSiteAnnouncement($h)
     {
-        if ($h->pageName != 'maintenance') {
-            $h->smartCache('on', 'miscdata', 10); // start using cache
-        }
-        
         // get announcement from database
         $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA ." WHERE miscdata_key = %s";
-        $result = $h->db->get_var($h->db->prepare($sql, 'site_announcement'));
+        $query = $h->db->prepare($sql, 'site_announcement');
+        
+        if ($h->pageName != 'maintenance') {
+            $h->smartCache('on', 'miscdata', 60, $query); // start using cache
+        }
+
+        $result = $h->db->get_var($query);
         
         if ($h->pageName != 'maintenance') {
             $h->smartCache('off'); // stop using cache 
@@ -241,7 +244,7 @@ class Maintenance
      */
     public function addSiteAnnouncement($h)
     {
-        $allowable_tags = "<div><p><span><b><i><u><a><img><blockquote><strike>";
+        $allowable_tags = "<div><p><span><b><i><u><a><img><blockquote><strike><br>";
         $h->vars['admin_announcement'] = sanitize($h->cage->get->getHtmLawed('announcement_text'), 2, $allowable_tags);
         if ($h->cage->get->keyExists('announcement_enabled')) {
             $h->vars['admin_announcement_enabled'] = "checked";

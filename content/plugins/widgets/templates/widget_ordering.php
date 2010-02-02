@@ -31,7 +31,6 @@ $blocks = $h->vars['widgets']->getLastWidgetBlock($widgets);
 
 for ($i=1; $i<=$blocks; $i++) {
 ?>
-
     <div id="table_list">
     
     <table>
@@ -49,28 +48,23 @@ for ($i=1; $i<=$blocks; $i++) {
             foreach ($widgets as $widget => $details) {
                 if ($details['block'] == $i) {
                     // For the enabled button...
-                    if ($details['enabled']) {
-                        $enabled_output = "<a href='" . BASEURL;
-                        $enabled_output .= "admin_index.php?page=plugin_settings&amp;plugin=widgets&amp;";
-                        $enabled_output .= "action=disable&amp;widget=". $widget . "'>";
-                        $enabled_output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/active.png'></a>";
-                    } else {
-                        $enabled_output = "<a href='" . BASEURL;
-                        $enabled_output .= "admin_index.php?page=plugin_settings&amp;plugin=widgets&amp;";
-                        $enabled_output .= "action=enable&amp;widget=". $widget . "'>";
-                        $enabled_output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/inactive.png'></a>";
-                    }
+                    if ($details['enabled']) { $img_src = 'active.png'; } else {$img_src = 'inactive.png';}
+                    $enabled_output  = '<div id="widget_' . $widget . '" class="widget_onoff">' ;
+                    $enabled_output .= '<img src="' . BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'images/' . $img_src . '"></div>';
                     
                     // For the up and down arrows...
-                    $order_output = "<a href='" . BASEURL;
+                    $order_output = '<div class="widget_order_container">';
+                    $order_output .= "<a href='" . BASEURL;
                     $order_output .= "admin_index.php?page=plugin_settings&amp;plugin=widgets&amp;";
                     $order_output .= "action=orderup&amp;widget=". $widget . "&amp;args=". $details['args'] . "&amp;block=" . $details['block'] . "&amp;order=" . $details['order'] . "'>";
-                    $order_output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/up.png'>";
+                    $order_output .= '<span id="widget_' . $widget . '" class="widget_order_up">' ;
+                    $order_output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/up.png'></span>";
                     $order_output .= "</a> \n<a href='" . BASEURL;
                     $order_output .= "admin_index.php?page=plugin_settings&amp;plugin=widgets&amp;";
                     $order_output .= "action=orderdown&amp;widget=". $widget . "&amp;args=". $details['args'] . "&amp;block=" . $details['block'] . "&amp;order=" . $details['order'] . "'>";
-                    $order_output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/down.png'>";
-                    $order_output .= "</a>\n";
+                    $order_output .= '<span id="widget_' . $widget . '" class="widget_order_down">' ;
+                    $order_output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/down.png'></span>";
+                    $order_output .= "</a></div>\n";
                                 
                     $alt++;
                     echo "<tr id='table_tr' class='table_row_" . $alt % 2 . "'>\n";

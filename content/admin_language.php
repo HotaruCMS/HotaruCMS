@@ -120,6 +120,7 @@ $lang["admin_theme_plugins_readmetxt"] = "readme.txt";
 
 /* Settings */
 $lang['admin_settings_update_success'] = "Updated successfully.";
+$lang["admin_settings_theme_activate_success"] = "Theme was activated successfully.";
 $lang["admin_theme_settings"] = "Settings";
 $lang["admin_theme_settings_title"] = "Hotaru Settings";
 $lang["admin_theme_settings_setting"] = "Setting";
@@ -144,7 +145,8 @@ $lang["admin_theme_maintenance_title"] = "Hotaru Maintenance";
 $lang["admin_theme_maintenance_site"] = "Site:";
 $lang["admin_theme_maintenance_announcement"] = "Display this announcement at the top of every page:";
 $lang["admin_theme_maintenance_announcement_enable"] = "Enabled";
-$lang["admin_theme_maintenance_announcement_tags"] = "<small>Allowed: &lt;div&gt;&lt;p&gt;&lt;span&gt;&lt;b&gt;&lt;u&gt;&lt;i&gt;&lt;a&gt;&lt;img&gt;&lt;blockquote&gt;&lt;strike&gt;</small>";
+$lang["admin_theme_maintenance_announcement_tags"] = "<small>Allowed: &lt;div&gt;&lt;p&gt;&lt;span&gt;&lt;b&gt;&lt;u&gt;&lt;i&gt;&lt;a&gt;&lt;img&gt;&lt;blockquote&gt;&lt;strike&gt;&lt;br&gt;</small>";
+
 $lang["admin_theme_maintenance_close_site"] = "Close " . SITE_NAME . " for maintenance";
 $lang["admin_theme_maintenance_open_site"] = "Open " . SITE_NAME . " to the public";
 $lang["admin_theme_maintenance_close_site_desc"] = "Only users with \"access admin\" permissions will be able to view the site.";
@@ -226,6 +228,10 @@ $lang["admin_theme_main_stats"] = "Stats";
 $lang["admin_theme_plugin_settings"] = "Plugin Settings";
 $lang["admin_theme_theme_settings"] = "Theme Settings";
 $lang["admin_theme_theme_no_settings"] = " doesn't have any settings.";
+$lang["admin_theme_theme_activate"] = " Theme can be activated by clicking here.";
+$lang["admin_theme_theme_activate_success"] = " Theme was activated successfully.";
+$lang["admin_theme_theme_activate_error"] = " Theme was not activated due to an error.";
+
 
 /* footer */
 $lang["admin_theme_footer_having_trouble_vist_forums"] = "Having trouble? Visit the forums at";

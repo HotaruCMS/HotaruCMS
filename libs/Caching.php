@@ -36,16 +36,18 @@ class Caching
      * @param string $switch either "on", "off" or "html"
      * @param string $table DB table name
      * @param int $timeout time before DB cache expires
-     * @param string $html output as HTML
+     * @param string $html_sql output as HTML, or an SQL query
      * @param string $label optional label to append to filename
      * @return bool
      */
-    public function smartCache($h, $switch = 'off', $table = '', $timeout = 0, $html = '', $label = '')
+    public function smartCache($h, $switch = 'off', $table = '', $timeout = 0, $html_sql = '', $label = '')
     {
         if ($switch == 'html') { 
+            $html = $html_sql;
             $result = $this->smartCacheHTML($h, $table, $timeout, $html, $label); 
         } else {
-            $result = $this->smartCacheDB($h, $switch, $table, $timeout);
+            $sql = $html_sql;
+            $result = $this->smartCacheDB($h, $switch, $table, $sql, $timeout);
         }
         
         return $result;
@@ -127,7 +129,7 @@ class Caching
      * @param int $timeout timeout in minutes
      * @return bool
      */
-    public function smartCacheDB($h, $switch = 'off', $table = '', $timeout = 0)
+    public function smartCacheDB($h, $switch = 'off', $table = '', $sql = '', $timeout = 0)
     {
         // Stop caching?
         if ($switch != 'on') {
@@ -136,27 +138,52 @@ class Caching
             return false;
         }
         
-        if(isset($h->vars['last_updates'][$table])) {
-            $last_update = $h->vars['last_updates'][$table]; // cached
-        } else {
-            $last_update = $this->smartCacheSQL($h, $table);
-            $last_update = $h->vars['last_updates'][$table] = $last_update;
-        }
-
-        // compare times
-        if ($last_update >= (time() - $timeout*60)) { return false; } // there's been a recent update so don't use the cache.
+        if (!$sql) { return false; }
         
-        /* ezSQL uses hours for its timeout. We'll use minutes and divide
-           by 60 to get the hours. */
-           
+        if (!$timeout) { $timeout = (DB_CACHE_DURATION * 60); } // hours * 60 = total minutes
+        
+        // ezSQL uses hours for its timeout. We'll use minutes and divide by 60 to get the hours.
         if ($timeout) { 
             $h->db->cache_timeout = $timeout/60; // mins/60 = hours
         } else {
             $h->db->cache_timeout = DB_CACHE_DURATION;
         }
         
-        $h->db->cache_queries = true;    // start using cache
+        // determine time of last DB table update:
+        if(isset($h->vars['last_updates'][$table])) {
+            $last_update = $h->vars['last_updates'][$table]; // cached
+        } else {
+            $last_update = $this->smartCacheSQL($h, $table);
+            $last_update = $h->vars['last_updates'][$table] = $last_update;
+        }
         
+        // use caching?
+        if (DB_CACHE_ON == 'true') {
+            $h->db->cache_queries = true;    // start using cache
+        } else {
+            return false;   // don't use caching
+        }
+        
+        // check existence of a cache file for this query:
+        $cache_file = CACHE . 'db_cache/' . md5($sql);
+        if (!file_exists($cache_file)) {
+            // no cache file so return and pull data direct from DB, caching the query at the same time.
+            return true; 
+        }
+        
+        // check if the cache file is older than our timeout:
+        $file_modified = filemtime($cache_file);
+        if ($file_modified < (time() - $timeout*60)) { 
+            unlink($cache_file); // delete old cache file so we can make a new one with fresh data
+            return true; 
+        }
+        
+        // check if the $last_update is more recent than the cache file:
+        if ($file_modified < $last_update) { 
+            unlink($cache_file); // delete old cache file so we can make a new one with fresh data
+            return true; 
+        }
+
         return true;
     }
     

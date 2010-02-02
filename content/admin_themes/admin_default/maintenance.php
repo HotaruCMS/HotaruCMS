@@ -52,7 +52,7 @@ $db_tables = $h->vars['admin_plugin_tables'];
     <form name='maintenance_announcement' action='<?php echo BASEURL; ?>admin_index.php' method='get'>    
     <table>
         <tr>
-        <td colspan=2><textarea name='announcement_text' cols=80 rows=2><?php echo $h->vars['admin_announcement']; ?></textarea><br />
+        <td colspan=2><textarea name='announcement_text' cols=80 rows=3><?php echo $h->vars['admin_announcement']; ?></textarea><br />
         <?php echo $h->lang["admin_theme_maintenance_announcement_tags"]; ?>
         </td>
         </tr>

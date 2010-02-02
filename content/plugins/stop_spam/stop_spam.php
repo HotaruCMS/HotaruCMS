@@ -7,7 +7,7 @@
  * class: StopSpam
  * type: antispam
  * requires: users 1.1
- * hooks: install_plugin, users_register_check_blocked, users_register_pre_add_user, users_register_post_add_user, users_email_conf_post_role, user_manager_details_pending, user_manager_pre_submit_button, user_man_killspam_delete, admin_sidebar_plugin_settings, admin_plugin_settings
+ * hooks: install_plugin, users_register_check_blocked, users_register_pre_add_user, users_register_post_add_user, users_email_conf_post_role, user_manager_role, user_manager_details, user_manager_pre_submit_button, user_man_killspam_delete, admin_sidebar_plugin_settings, admin_plugin_settings
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -149,16 +149,45 @@ class StopSpam
     
     
     /**
-     * This function is called after the email confirmtaion function assigns the user a new role.
-     * We want to override the role, forcing the user to be "pending";
+     * Adds an icon in User Manager about the user being flagged
      */
-    public function user_manager_details_pending($h)
+    public function user_manager_role($h)
     {
-        list ($output, $user) = $h->vars['user_manager_pending'];
+        list ($icons, $user_role, $user) = $h->vars['user_manager_role'];
         
         // Check to see if this user has any stop_spam_flags:
         $sql = "SELECT usermeta_value FROM " . TABLE_USERMETA . " WHERE usermeta_userid = %d AND usermeta_key = %s";
         $flags = $h->db->get_var($h->db->prepare($sql, $user->user_id, 'stop_spam_flags'));
+        $h->vars['stop_spam_flags'] = $flags;
+        
+        if ($flags) {
+            $flags = unserialize($flags);
+            $title = $h->lang['stop_spam_flagged_reasons'];
+            foreach ($flags as $flag) {
+                $title .= $flag . ", ";
+            }
+            $title = rstrtrim($title, ", ");
+            $icons .= " <img src = '" . BASEURL . "content/plugins/user_manager/images/flag_red.png' title='" . $title . "'>";
+            $h->vars['user_manager_role'] = array($icons, $user_role, $user);
+        }
+    }
+    
+    
+    /**
+     * Adds a note in User Manager about the user being flagged
+     */
+    public function user_manager_details($h)
+    {
+        list ($output, $user) = $h->vars['user_manager_details'];
+        
+        // Check to see if this user has any stop_spam_flags:
+        $sql = "SELECT usermeta_value FROM " . TABLE_USERMETA . " WHERE usermeta_userid = %d AND usermeta_key = %s";
+        
+        if (!isset($h->vars['stop_spam_flags'])) {
+            $flags = $h->db->get_var($h->db->prepare($sql, $user->user_id, 'stop_spam_flags'));
+        } else {
+            $flags = $h->vars['stop_spam_flags']; // retrieve from memory
+        }
         
         if ($flags) {
             $flags = unserialize($flags);  
@@ -168,7 +197,7 @@ class StopSpam
             }
             $output = rstrtrim($output, ", ");
             $output .= "</span>";
-            $h->vars['user_manager_pending'] = array($output);
+            $h->vars['user_manager_details'] = array($output);
         }
     }
     

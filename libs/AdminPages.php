@@ -157,7 +157,19 @@ class AdminPages
                 $h->message = $h->lang['admin_settings_update_failure'];
                 $h->messageType = 'red';
             }
-        }    
+        }
+        
+        // Activate themes from theme settings pages - called via JavaScript
+        if ($h->cage->post->testAlnumLines('admin') == 'theme_settings' )
+        {
+            $theme = strtolower($h->cage->post->testAlnumLines('theme') . "/" );
+            $this->adminSettingUpdate($h, 'THEME', $theme);
+            $json_array = array('activate'=>'true', 'message'=>$h->lang["admin_settings_theme_activate_success"], 'color'=>'green');
+            
+            // Send back result data
+            echo json_encode($json_array);
+            exit;
+        }
         
         $loaded_settings = $this->getAllAdminSettings($h->db);
         

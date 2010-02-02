@@ -114,7 +114,7 @@ class UserManagerSettings
             } else {
                 $h->vars['search_term'] = $search_term; // used to refill the search box after a search
                 $where_clause = " WHERE user_username LIKE %s OR user_email LIKE %s"; 
-                $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                 $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                 $search_term = '%' . $search_term . '%';
                 $results = $h->db->get_results($h->db->prepare($sql, $search_term, $search_term)); 
@@ -131,67 +131,67 @@ class UserManagerSettings
             $h->vars['user_filter'] = $filter;  // used to refill the filter box after use
             switch ($filter) {
                 case 'all': 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql)); 
                     break;
                 case 'not_killspammed': 
                     $where_clause = " WHERE user_role != %s"; 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, 'killspammed')); 
                     break;
                 case 'admin': 
                     $where_clause = " WHERE user_role = %s"; 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, 'admin')); 
                     break;
                 case 'supermod': 
                     $where_clause = " WHERE user_role = %s"; 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, 'mod')); 
                     break;
                 case 'moderator': 
                     $where_clause = " WHERE user_role = %s"; 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, 'mod')); 
                     break;
                 case 'member': 
                     $where_clause = " WHERE user_role = %s"; 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, 'member')); 
                     break;
                 case 'pending': 
                     $where_clause = " WHERE user_role = %s"; 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, 'pending')); 
                     break;
                 case 'undermod': 
                     $where_clause = " WHERE user_role = %s"; 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, 'undermod')); 
                     break;
                 case 'suspended': 
                     $where_clause = " WHERE user_role = %s"; 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, 'suspended')); 
                     break;
                 case 'banned': 
                     $where_clause = " WHERE user_role = %s"; 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, 'banned')); 
                     break;
                 case 'killspammed': 
                     $where_clause = " WHERE user_role = %s"; 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, 'killspammed')); 
                     break;
@@ -205,8 +205,13 @@ class UserManagerSettings
                     $sql = "SELECT * FROM " . TABLE_USERS . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql)); 
                     break;
+                case 'last_visited':
+                    $sort_clause = ' ORDER BY user_lastvisit DESC';
+                    $sql = "SELECT * FROM " . TABLE_USERS . $sort_clause;
+                    $filtered_results = $h->db->get_results($h->db->prepare($sql)); 
+                    break;
                 default:
-                    $where_clause = " WHERE user_role = %s"; $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered newest first for convenience
+                    $where_clause = " WHERE user_role = %s"; $sort_clause = ' ORDER BY user_date DESC'; // ordered newest first for convenience
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, $filter)); // filter = new, top, or other post status
                     break;
@@ -221,14 +226,14 @@ class UserManagerSettings
             // if all new users are set to 'pending' show pending list as default...
             if ($h->vars['regStatus'] == 'pending') {
                 $where_clause = " WHERE user_role = %s"; 
-                $sort_clause = ' ORDER BY user_lastlogin DESC';
+                $sort_clause = ' ORDER BY user_date DESC';
                 $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                 $users = $h->db->get_results($h->db->prepare($sql, 'pending')); 
             }
-            // else show all users by last login...
+            // else show all users by newest...
             else
             {
-                $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered by lastlogin for convenience
+                $sort_clause = ' ORDER BY user_date DESC'; // ordered by newest
                 $sql = "SELECT * FROM " . TABLE_USERS . $sort_clause;
                 $users = $h->db->get_results($h->db->prepare($sql)); 
             }
@@ -251,9 +256,9 @@ class UserManagerSettings
      */
     public function drawRows($h, $users, $filter = '', $search_term = '')
     {
-        // prepare for showing posts, 20 per page
+        // prepare for showing users, 30 per page
         $pg = $h->cage->get->getInt('pg');
-        $items = 20;
+        $items = 30;
         
         $pagedResults = $h->pagination($users, $items, $pg);
         
@@ -264,11 +269,23 @@ class UserManagerSettings
 
             $account_link = BASEURL . "index.php?page=account&amp;user=" . $user->user_username; 
             $perms_link = BASEURL . "index.php?page=permissions&amp;user=" . $user->user_username; 
-            if ($user->user_role == 'admin') { $disable = 'disabled'; } else { $disable = ''; } 
+            if ($user->user_role == 'admin') { $disable = 'disabled'; } else { $disable = ''; }
+            
+            // add icons to user role:
+            $user_icon = '';
+            if ($h->vars['useEmailConf']) {
+                if ($user->user_email_valid == 0) {
+                    $user_icon .= " <img src = '" . BASEURL . "content/plugins/user_manager/images/email.png' title='" . $h->lang["user_man_user_email_icon"] . "'>";
+                }
+            }
+            // plugins can add other icons here
+            $h->vars['user_manager_role'] = array($user_icon, $user->user_role, $user);
+            $h->pluginHook('user_manager_role');
+            $user_icon = $h->vars['user_manager_role'][0];
             
             $output .= "<tr class='table_row_" . $alt % 2 . "'>\n";
             $output .= "<td class='um_id'>" . $user->user_id . "</td>\n";
-            $output .= "<td class='um_role'>" . $user->user_role . "</td>\n";
+            $output .= "<td class='um_role'>" . $user->user_role . $user_icon . "</td>\n";
             $output .= "<td class='um_username'><a class='table_drop_down' href='#' title='" . $h->lang["user_man_show_content"] . "'>";
             $output .= $user->user_username . "</a></td>\n";
             $output .= "<td class='um_joined'>" . date('d M y', strtotime($user->user_date)) . "</a></td>\n";
@@ -290,19 +307,18 @@ class UserManagerSettings
                     } else {
                         $output .= $h->lang["user_man_user_email_validated"] . "\n";
                     }
-                }
-                
-                // plugin hook (StopSpam plugin adds a note about whya user is pending)
-                $h->vars['user_manager_pending'] = array($output, $user);
-                $h->pluginHook('user_manager_details_pending');
-                $output = $h->vars['user_manager_pending'][0]; // $output
-                $output .= "<br />";
-                
+                }                
             } else {
                 // show last login amd submissions info:
                 $output .= $user->user_username . " " . $h->lang["user_man_user_last_logged_in"] ." " . date('H:i:s \o\n l, F jS Y', strtotime($user->user_lastlogin)) . ".<br />\n";
-            $output .= $h->lang["user_man_user_submissions_1"] . " " . $user->user_username . $h->lang["user_man_user_submissions_2"] . " <a href='" . $h->url(array('user'=>$user->user_username)) . "'>" . $h->lang['user_man_here'] . ".</a><br />\n";
+                $output .= $h->lang["user_man_user_submissions_1"] . " " . $user->user_username . $h->lang["user_man_user_submissions_2"] . " <a href='" . $h->url(array('user'=>$user->user_username)) . "'>" . $h->lang['user_man_here'] . ".</a>\n";
             }
+            
+            // plugin hook (StopSpam plugin adds a note about why a user is pending)
+            $h->vars['user_manager_details'] = array($output, $user);
+            $h->pluginHook('user_manager_details');
+            $output = $h->vars['user_manager_details'][0]; // $output
+            $output .= "<br />";
     
             $output .= "<i>" . $h->lang['user_man_email'] . "</i> <a href='mailto:" . $user->user_email . "'>$user->user_email</a>";
             $output .= "</td></tr>";

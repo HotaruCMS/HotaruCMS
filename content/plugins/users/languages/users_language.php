@@ -100,14 +100,40 @@ $lang["users_admin_stats_undermod_users"] = "Under moderation";
 $lang["users_admin_stats_banned_users"] = "Banned users";
 $lang["users_admin_stats_killspammed_users"] = "Killspammed users";
 
-/* UserFunctions class */
-$lang['userfunctions_notifymods_subject_user'] = "New user registered at " . SITE_NAME;
+/* UserFunctions CLASS: */
+
+/* NOTIFY MODS BY EMAIL */
+
+/* Posts */
 $lang['userfunctions_notifymods_subject_post'] = "New post submitted at " . SITE_NAME;
+$lang['userfunctions_notifymods_body_about_post'] = "A new post has been submitted at " . SITE_NAME;
+$lang['userfunctions_notifymods_body_post_status'] = "Post Status: ";
+$lang['userfunctions_notifymods_body_post_title'] = "Post Title: "; 
+$lang['userfunctions_notifymods_body_post_content'] = "Post Content: "; 
+$lang['userfunctions_notifymods_body_post_status'] = "Post Status: ";
+$lang['userfunctions_notifymods_body_post_page'] = "Post Page: "; 
+$lang['userfunctions_notifymods_body_post_orig'] = "Original Post: "; 
+$lang['userfunctions_notifymods_body_post_edit'] = "Edit Post: "; 
+$lang['userfunctions_notifymods_body_post_management'] = "Post Management: ";
+
+/* Users */
+$lang['userfunctions_notifymods_subject_user'] = "New user registered at " . SITE_NAME;
+$lang['userfunctions_notifymods_body_about_user'] = "A new user has registered at " . SITE_NAME;
+$lang['userfunctions_notifymods_body_user_name'] = "User Name: ";
+$lang['userfunctions_notifymods_body_user_email'] = "User Email: ";
+$lang['userfunctions_notifymods_body_user_role'] = "User Role: ";
+$lang['userfunctions_notifymods_body_user_account'] = "User Account: ";
+$lang['userfunctions_notifymods_body_user_management'] = "User Management: ";
+
+/* Comments */
 $lang['userfunctions_notifymods_subject_comment'] = "New comment posted at " . SITE_NAME;
-$lang['userfunctions_notifymods_hello'] = "Hi ";
-$lang['userfunctions_notifymods_body_about_user'] = "A new user has registered at " . SITE_NAME; 
-$lang['userfunctions_notifymods_body_about_post'] = "A new post has been submitted at " . SITE_NAME; 
 $lang['userfunctions_notifymods_body_about_comment'] = "A new comment has been posted at " . SITE_NAME; 
+$lang['userfunctions_notifymods_body_comment_status'] = "Comment Status: ";
+$lang['userfunctions_notifymods_body_comment_content'] = "Comment Content: "; 
+$lang['userfunctions_notifymods_body_comment_management'] = "Comment Management: ";
+
+/* Common */
+$lang['userfunctions_notifymods_hello'] = "Hi ";
 $lang['userfunctions_notifymods_body_click'] = "More details can be found here: ";
 $lang['userfunctions_notifymods_body_regards'] = "Thank you,";
 $lang['userfunctions_notifymods_body_sign'] = SITE_NAME . " Admin";

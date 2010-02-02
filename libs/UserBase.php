@@ -347,7 +347,7 @@ class UserBase
         if (isset($h->vars[$sql])) { 
             $result = $h->vars[$sql]; 
         } else {
-            $h->smartCache('on', 'usermeta', 10); // start using database cache (saves for 10 minutes unless updated)
+            $h->smartCache('on', 'usermeta', 60, $sql); // start using database cache
             $result = $h->db->get_var($sql);
             $h->vars[$sql] = $result;    // cache result in memory (saves for just this page load)
             $h->smartCache('off'); // stop using database cache
@@ -421,7 +421,7 @@ class UserBase
         if (isset($h->vars['default_user_settings'][$sql])) { 
             $result = $h->vars['default_user_settings'][$sql]; 
         } else {
-            $h->smartCache('on', 'miscdata', 10); // start using database cache (saves for 10 minutes unless updated)
+            $h->smartCache('on', 'miscdata', 60, $sql); // start using database cache
             $result = $h->db->get_var($sql);
             $h->vars['default_user_settings'][$sql] = $result; // cache result in memory for this page load
             $h->smartCache('off'); // stop using database cache

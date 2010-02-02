@@ -39,28 +39,34 @@ class UserFunctions
         $line_break = "\r\n\r\n";
         $next_line = "\r\n";
         
-        // build email ($url is the link admins can click to go to to approve the user/post/comment)
+        $user = new UserBase();
+        
         switch ($type) {
             case 'user':
+                $user->getUserBasic($h, $id);
                 $user_signin_settings = $h->getSerializedSettings('user_signin');
                 $email_mods = $user_signin_settings['email_notify_mods'];
                 $subject = $h->lang['userfunctions_notifymods_subject_user'];
                 $about = $h->lang['userfunctions_notifymods_body_about_user'];
-                $url = BASEURL . "admin_index.php?page=plugin_settings&plugin=user_manager&page=plugin_settings";
                 break;
             case 'post':
+                $user->getUserBasic($h, $h->post->author);
                 $submit_settings = $h->getSerializedSettings('submit');
                 $email_mods = $submit_settings['email_notify_mods'];
                 $subject = $h->lang['userfunctions_notifymods_subject_post'];
                 $about = $h->lang['userfunctions_notifymods_body_about_post'];
-                $url = BASEURL . "index.php?page=edit_post&post_id=" . $id;
+                $h->readPost($id); // If you're having problems, the caching used in an earlier readPost might be the cause
+                $h->post->status = $status;
                 break;
             case 'comment':
+                $user->getUserBasic($h, $h->comment->author);
                 $comments_settings = $h->getSerializedSettings('comments');
                 $email_mods = $comments_settings['comment_email_notify_mods'];
                 $subject = $h->lang['userfunctions_notifymods_subject_comment'];
                 $about = $h->lang['userfunctions_notifymods_body_about_comment'];
-                $url = BASEURL . "admin_index.php?page=plugin_settings&plugin=comment_manager&page=plugin_settings";
+                $h->readPost($id); // If you're having problems, the caching used in an earlier readPost might be the cause
+                $comment_array = $h->getComment($commentid);
+                $comment = $h->readComment($comment_array);
                 break;
             default:
         }
@@ -71,14 +77,40 @@ class UserFunctions
         {
             if ($mod['type'] == 'none') { continue; } // skip rest of this iteration
             if (($mod['type'] == 'pending') && ($status != 'pending')) { continue; } // skip rest of this iteration
-            
+                
             $body = $h->lang['userfunctions_notifymods_hello'] . $h->getUserNameFromId($mod['id']);
             $body .= $line_break;
             $body .= $about;
+            
+            if ($type == 'post') {
+                $body .= $line_break;
+                $body .= $h->lang['userfunctions_notifymods_body_post_status'] . $h->post->status . $next_line;
+                $body .= $h->lang['userfunctions_notifymods_body_post_title'] . stripslashes(html_entity_decode(urldecode($h->post->title), ENT_QUOTES,'UTF-8')) . $next_line;
+                $body .= $h->lang['userfunctions_notifymods_body_post_content'] . stripslashes(html_entity_decode(urldecode($h->post->content), ENT_QUOTES,'UTF-8')) . $next_line;
+                $body .= $h->lang['userfunctions_notifymods_body_post_page'] . $h->url(array('page'=>$h->post->id)) . $next_line; // edit post page
+                $body .= $h->lang['userfunctions_notifymods_body_post_orig'] . $h->post->origUrl . $next_line; // edit post page
+                $body .= $h->lang['userfunctions_notifymods_body_post_edit'] . BASEURL . "index.php?page=edit_post&amp;post_id=" . $id . $next_line; // edit post page
+                $body .= $h->lang['userfunctions_notifymods_body_post_management'] . BASEURL . "admin_index.php?post_status_filter=" . $h->post->status . "&amp;plugin=post_manager&amp;page=plugin_settings&amp;type=filter";
+            
+            }
+            
+            if ($type == 'comment') {
+                $body .= $line_break;
+                $body .= $h->lang['userfunctions_notifymods_body_post_title'] . stripslashes(html_entity_decode(urldecode($h->post->title), ENT_QUOTES,'UTF-8')) . $next_line;
+                $body .= $h->lang['userfunctions_notifymods_body_comment_status'] . $comment->status . $next_line;
+                $body .= $h->lang['userfunctions_notifymods_body_comment_content'] . stripslashes(html_entity_decode(urldecode($h->comment->content), ENT_QUOTES,'UTF-8')) . $next_line;
+                $body .= $h->lang['userfunctions_notifymods_body_post_page'] . $h->url(array('page'=>$h->post->id)) . $next_line; // edit post page
+                $body .= $h->lang['userfunctions_notifymods_body_comment_management'] . BASEURL . "admin_index.php?comment_status_filter=" . $comment->status . "&amp;plugin=comment_manager&amp;page=plugin_settings&amp;type=filter";
+            
+            }
+            
             $body .= $line_break;
-            $body .= $h->lang['userfunctions_notifymods_body_click'];
-            $body .= $line_break;
-            $body .= $url;
+            $body .= $h->lang['userfunctions_notifymods_body_user_name'] . $user->name . $next_line;
+            $body .= $h->lang['userfunctions_notifymods_body_user_role'] . $user->role . $next_line;
+            $body .= $h->lang['userfunctions_notifymods_body_user_email'] . $user->email . $next_line;
+            $body .= $h->lang['userfunctions_notifymods_body_user_account'] . $h->url(array('page'=>'account', 'user'=>$user->name)) . $next_line;
+            $body .= $h->lang['userfunctions_notifymods_body_user_management'] . BASEURL . "admin_index.php?search_value=" . $user->name . "&amp;plugin=user_manager&amp;page=plugin_settings&amp;&type=search";
+            
             $body .= $line_break;
             $body .= $h->lang['userfunctions_notifymods_body_regards'];
             $body .= $next_line;
@@ -86,7 +118,7 @@ class UserFunctions
             $to = $mod['email'];
             $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
         
-            mail($to, $subject, $body, $headers);    
+            mail($to, $subject, $body, $headers);
         }
         
         return true;

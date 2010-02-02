@@ -200,29 +200,41 @@ class SubmitFunctions
                 
             case 'edit_post': // from Edit post page
                 
-                if ($h->cage->post->getAlpha('edit_post') == 'true') { 
+                if ($h->cage->post->getAlpha('edit_post') == 'true') {
+                    // get id:
+                    $h->vars['submitted_data']['submit_id'] = $h->cage->post->testInt('submit_post_id');
+                    
+                    // get status
+                    if ($h->cage->post->testAlnumLines('post_status')) {
+                        $h->vars['submitted_data']['submit_status'] = $h->cage->post->testAlnumLines('post_status');
+                    } else {
+                        $h->vars['submitted_data']['submit_status'] = $h->post->status;
+                    }
+                    
                     // get new (edited) title:
                     $title = $h->cage->post->getMixedString1('post_title');
                     $h->vars['submitted_data']['submit_title'] = $title;
+                    
                     // get content:
                     $allowable_tags = $h->vars['submit_settings']['allowable_tags'];
                     $content = sanitize($h->cage->post->getHtmLawed('post_content'), 2, $allowable_tags);
                     $h->vars['submitted_data']['submit_content'] = $content;
+                    
                     // get category:
                     $category = $h->cage->post->testInt('post_category');
                     $h->vars['submitted_data']['submit_category'] = $category;
+                    
                     // get tags:
                     $tags = stripslashes(sanitize($h->cage->post->noTags('post_tags'), 2));
                     $h->vars['submitted_data']['submit_tags'] = $tags;
-                    // get status
-                    $h->vars['submitted_data']['submit_status'] = $h->cage->post->testAlnumLines('post_status');
-                    $h->vars['submitted_data']['submit_id'] = $h->cage->post->testInt('submit_post_id');
+                    
                     // get url if present:
                     if( $url = $h->cage->post->testUri('post_orig_url')) {
                         $h->vars['submitted_data']['submit_orig_url'] = $url;
                     } else {
                         $h->vars['submitted_data']['submit_orig_url'] = $h->post->origUrl;
                     }
+                    
                     // from Post Manager...
                     $h->vars['submitted_data']['submit_pm_from'] = $h->cage->post->testAlnumLines('from');
                     $h->vars['submitted_data']['submit_pm_search'] = $h->cage->post->getMixedString2('search_value'); 
@@ -372,7 +384,7 @@ class SubmitFunctions
             $h->message = $h->lang['submit_url_not_present_error'];
             $h->messageType = 'red';
             $error = 1;
-        } elseif ($h->urlExists(urlencode($url))) {
+        } elseif ($h->urlExists($url)) {
             // URL already exists...
             $h->message = $h->lang['submit_url_already_exists_error'];
             $h->messageType = 'red';
@@ -388,13 +400,13 @@ class SubmitFunctions
             $h->messageType = 'red';
             $error = 1;
         } elseif (($h->currentUser->role == 'member' || $h->currentUser->role == 'undermod')
-                   && $daily_limit && ($daily_limit < $h->post->countPosts(24))) { 
+                   && $daily_limit && ($daily_limit < $h->countPosts(24))) { 
             // exceeded daily limit
             $h->message = $h->lang['submit_daily_limit_exceeded'];
             $h->messageType = 'red';
             $error = 1;
         } elseif (($h->currentUser->role == 'member' || $h->currentUser->role == 'undermod')
-                   && $freq_limit && ($h->post->countPosts(0, $freq_limit) > 0)) { 
+                   && $freq_limit && ($h->countPosts(0, $freq_limit) > 0)) { 
             // already submitted a post in the last X minutes. Needs to wait before submitting again
             $h->message = $h->lang['submit_freq_limit_error'];
             $h->messageType = 'red';
@@ -573,6 +585,7 @@ class SubmitFunctions
     public function processSubmission($h, $key)
     {
         $h->post->id = $h->cage->post->getInt('submit_post_id');
+        if ($h->post->id) { $h->readPost(); } // read what we've already got for this post
         
         // get the last submitted data by this user:
         $submitted_data = $this->loadSubmitData($h, $key);
@@ -597,7 +610,8 @@ class SubmitFunctions
         }
         
         $h->post->title = $submitted_data['submit_title'];
-        $h->post->url = make_url_friendly($h->post->title);
+        $title = html_entity_decode($h->post->title, ENT_QUOTES, 'UTF-8');
+        $h->post->url = make_url_friendly($title);
         $h->post->content = $submitted_data['submit_content'];
         $h->post->type = 'news';    // This is the type we use to distinguish social bookmarking from forums, blogs, etc.
         if (!$h->post->id) { $h->post->author = $h->currentUser->id; } // no author yet
@@ -691,6 +705,7 @@ class SubmitFunctions
         
         if (preg_match('/charset=([a-zA-Z0-9-_]+)/i', $string , $matches)) {
             $encoding=trim($matches[1]);
+
             //you need iconv to encode to utf-8
             if (function_exists("iconv"))
             {
@@ -707,7 +722,7 @@ class SubmitFunctions
             $title = '';
         }
         
-        return sanitize(utf8_encode($title), 2);
+        return $title;
     }
     
 }

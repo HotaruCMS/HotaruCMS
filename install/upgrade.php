@@ -327,6 +327,17 @@ function do_upgrade($old_version)
         $old_version = "1.0.4";
     }
     
+    // 1.0.4 to 1.0.5
+    if ($old_version == "1.0.4") {
+        
+        // remove true/false "Notes" from admin settings
+        $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_note = %s WHERE settings_note = %s";
+        $h->db->query($h->db->prepare($sql, '', 'true/false'));
+        
+        // update "old version" for next set of upgrades
+        $old_version = "1.0.5";
+    }
+    
     // Update Hotaru version number to the database (referred to when upgrading)
     $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_key = %s, miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";
     $h->db->query($h->db->prepare($sql, 'hotaru_version', $h->version, $h->version, 'hotaru_version'));

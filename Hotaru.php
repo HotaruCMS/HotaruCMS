@@ -25,7 +25,7 @@
  */
 class Hotaru
 {
-    protected $version              = "1.0.4";  // Hotaru CMS version
+    protected $version              = "1.0.5";  // Hotaru CMS version
     protected $isDebug              = false;    // show db queries and page loading time
     protected $isAdmin              = false;    // flag to tell if we are in Admin or not
     protected $sidebars             = true;     // enable or disable the sidebars
@@ -185,6 +185,8 @@ class Hotaru
      */
     public function header_include()
     {
+        if ($this->isAdmin) { return false; }
+        
         // include a files that match the name of the plugin folder:
         $this->includeJs($this->plugin->folder); // folder name, filename
         $this->includeCss($this->plugin->folder);
@@ -196,6 +198,8 @@ class Hotaru
      */
     public function admin_header_include()
     {
+        if (!$this->isAdmin) { return false; }
+        
         // include a files that match the name of the plugin folder:
         $this->includeJs($this->plugin->folder); // folder name, filename
         $this->includeCss($this->plugin->folder);
@@ -1447,15 +1451,15 @@ class Hotaru
      * @param string $switch either "on", "off" or "html"
      * @param string $table DB table name
      * @param int $timeout time before DB cache expires
-     * @param string $html output as HTML
+     * @param string $html_sql output as HTML, or an SQL query
      * @param string $label optional label to append to filename
      * @return bool
      */
-    public function smartCache($switch = 'off', $table = '', $timeout = 0, $html = '', $label = '')
+    public function smartCache($switch = 'off', $table = '', $timeout = 0, $html_sql = '', $label = '')
     {
         require_once(LIBS . 'Caching.php');
         $caching = new Caching();
-        return $caching->smartCache($this, $switch, $table, $timeout, $html, $label);
+        return $caching->smartCache($this, $switch, $table, $timeout, $html_sql, $label);
     }
     
     
@@ -1632,7 +1636,7 @@ class Hotaru
      */
     public function deletePosts($user_id = 0) 
     {
-        return $this->post->deletePost($this, $user_id);
+        return $this->post->deletePosts($this, $user_id);
     }
     
     
@@ -1681,7 +1685,7 @@ class Hotaru
      */
     public function countPosts($hours = 0, $minutes = 0, $user_id = 0)
     {
-        return $this->post->countPosts($hours, $minutes, $user_id);
+        return $this->post->countPosts($this, $hours, $minutes, $user_id);
     }
 
 
@@ -1908,6 +1912,33 @@ class Hotaru
     }
     
     
+    /**
+     * Get comment from database
+     *
+     * @param int $comment_id
+     * @return array|false
+     */
+    function getComment($comment_id = 0)
+    {
+        require_once(LIBS . 'Comment.php');
+        $comment = new Comment();
+        return $comment->getComment($this, $comment_id);
+    }
+    
+    
+    /**
+     * Read comment
+     *
+     * @param array $comment_row pulled from database
+     */
+    function readComment($comment_row = array())
+    {
+        require_once(LIBS . 'Comment.php');
+        $comment = new Comment();
+        return $comment->readComment($this, $comment_row);
+    }
+    
+    
 /* *************************************************************
  *
  *  WIDGET FUNCTIONS
@@ -1939,6 +1970,19 @@ class Hotaru
         require_once(LIBS . 'Widget.php');
         $widget = new Widget();
         $widget->deleteWidget($this, $function);
+    }
+    
+ 
+    /**
+     * Get plugin name from widget function name
+     *
+     * @return string
+     */
+    public function getPluginFromFunction($function)
+    {
+        require_once(LIBS . 'Widget.php');
+        $widget = new Widget();
+        return $widget->getPluginFromFunction($this, $function);
     }
 }
 ?>
