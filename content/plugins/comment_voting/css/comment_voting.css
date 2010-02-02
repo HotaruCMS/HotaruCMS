@@ -2,7 +2,7 @@
  * ******* COMMENT VOTING CSS ********
  * ********************************* */
 
-.comment_votes { float: right; cursor: pointer;  }
+.comment_votes { float: right; }
 .comment_votes img { margin-bottom: -3px; }
 
 .comment_votes_up{ display: inline; }

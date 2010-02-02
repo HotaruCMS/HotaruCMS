@@ -2,7 +2,7 @@
 /**
  * name: Post Manager
  * description: Manage posts.
- * version: 0.4
+ * version: 0.5
  * folder: post_manager
  * class: PostManager
  * requires: submit 1.9

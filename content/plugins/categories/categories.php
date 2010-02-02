@@ -228,7 +228,7 @@ class Categories
     
             $crumbs .= "<a href='" . $h->url(array('category'=>$h->post->category)) . "'>\n";
             $crumbs .= $h->getCatName($h->post->category) . "</a> &raquo; \n";
-            $crumbs .= $h->post->title . "</a>\n";
+            $crumbs .= "<a href='" . $h->url(array('page'=>$h->post->id)) . "'>" . $h->post->title . "</a>\n";
         }
         
         if ($crumbs) { return $crumbs; } else { return false; }

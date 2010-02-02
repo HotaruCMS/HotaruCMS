@@ -53,8 +53,8 @@ class CommentVoting
     {
         $h->vars['already_voted'] = false;
         if ($h->currentUser->loggedIn) {
-            $sql = "SELECT cvote_user_id FROM " . TABLE_COMMENTVOTES . " WHERE cvote_comment_id = %d";
-            $h->vars['already_voted'] = $h->db->get_var($h->db->prepare($sql, $h->comment->id));
+            $sql = "SELECT cvote_user_id FROM " . TABLE_COMMENTVOTES . " WHERE cvote_comment_id = %d AND cvote_user_id = %d";
+            $h->vars['already_voted'] = $h->db->get_var($h->db->prepare($sql, $h->comment->id, $h->currentUser->id));
         }
         
         $h->displayTemplate('comment_votes', 'comment_voting', false);

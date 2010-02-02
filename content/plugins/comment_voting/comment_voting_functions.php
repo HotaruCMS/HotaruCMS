@@ -49,7 +49,6 @@ if ($h->cage->post->keyExists('comment_id')) {
         $user_id = $h->currentUser->id;
         
         // get comment_voting history for this comment:
-        
         $sql = "SELECT cvote_rating FROM " . TABLE_COMMENTVOTES . " WHERE cvote_comment_id = %d AND cvote_user_id = %d";
         $comment_voting = $h->db->get_var($h->db->prepare($sql, $comment_id, $user_id));
         

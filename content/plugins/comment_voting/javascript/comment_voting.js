@@ -30,7 +30,7 @@
 
 /* ******************************************************************** 
  *  Function: comment_voting
- *  Parameters: user ip, post id
+ *  Parameters: baseurl, user ip, post id, comment id, rating
  *  Purpose: Used for instant voting without reloading the page
  *  Notes: ---
  ********************************************************************** */
