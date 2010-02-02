@@ -23,9 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
- 
-
-$h->readPost($h->comment->postId);
 
 ?>
     <a id="c<?php echo $h->comment->id; ?>"></a>
@@ -51,34 +48,48 @@ $h->readPost($h->comment->postId);
                         echo $h->lang['comments_time_ago'] . ".";
                 ?>
                 </div>
-            </div>
+            </div>   <!-- close comment_header_left-->
 
         <?php   // Show votes if enabled (requires a comment voting plugin)
                 if ($h->comment->voting == 'checked') {
                     $h->pluginHook('show_comments_votes');
                 }
         ?>
-        </div>
+        </div>  <!-- close comment_header -->
 
         <div class="clear"></div>
 
         <div class="comment_main">
             <div class="comment_content">
                 <?php
-               
                     $result = $h->pluginHook('show_comments_content');
-                    if (!isset($result) || !is_array($result)) {
+                    if (!$result) {
                         echo nl2br($h->comment->content);
-                        echo '<div class="comment_post_link">';
-                        echo '<a href="' . $h->url(array('page'=>$h->post->id)) . '">';
-                        echo $h->post->title;
-                        echo '</a>';
-                        echo '</div>';
                     }
                 ?>
-            </div>
-        </div>
+                    
+                <div class="comment_post_link">
+                <a href="<?php echo $h->url(array('page'=>$h->post->id)); ?>">
+                <?php echo $h->post->title; ?>
+                </a>
 
-    </div>
+            <?php 
+                // EDIT LINK - (if comment owner AND permission to edit own comments) OR (permission to edit ALL comments)...
+                if (($h->currentUser->id == $h->comment->author && ($h->currentUser->getPermission('can_edit_comments') == 'own'))
+                  || ($h->currentUser->getPermission('can_edit_comments') == 'yes')) { 
+            ?>
+                <a href='#' class='comment_edit_link' onclick="edit_comment(
+                    '<?php echo BASEURL; ?>',
+                    '<?php echo $h->comment->id; ?>',
+                    '<?php echo urlencode($h->comment->content); ?>',
+                    '<?php echo $h->lang['comments_form_edit']; ?>');
+                    return false;" ><?php echo $h->lang['comments_edit_link']; ?></a>
+                <?php } ?>
+                
+                </div> <!-- close comment_post_link -->
+            </div> <!-- close comment_content -->
+        </div> <!-- close comment_main -->
+
+    </div> <!-- close comment -->
 
     <div class="clear"></div>
