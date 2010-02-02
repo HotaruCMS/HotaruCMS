@@ -114,7 +114,7 @@ class UserManagerSettings
             } else {
                 $h->vars['search_term'] = $search_term; // used to refill the search box after a search
                 $where_clause = " WHERE user_username LIKE %s OR user_email LIKE %s"; 
-                $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                 $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                 $search_term = '%' . $search_term . '%';
                 $results = $h->db->get_results($h->db->prepare($sql, $search_term, $search_term)); 
@@ -131,67 +131,67 @@ class UserManagerSettings
             $h->vars['user_filter'] = $filter;  // used to refill the filter box after use
             switch ($filter) {
                 case 'all': 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql)); 
                     break;
                 case 'not_killspammed': 
                     $where_clause = " WHERE user_role != %s"; 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, 'killspammed')); 
                     break;
                 case 'admin': 
                     $where_clause = " WHERE user_role = %s"; 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, 'admin')); 
                     break;
                 case 'supermod': 
                     $where_clause = " WHERE user_role = %s"; 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, 'mod')); 
                     break;
                 case 'moderator': 
                     $where_clause = " WHERE user_role = %s"; 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, 'mod')); 
                     break;
                 case 'member': 
                     $where_clause = " WHERE user_role = %s"; 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, 'member')); 
                     break;
                 case 'pending': 
                     $where_clause = " WHERE user_role = %s"; 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, 'pending')); 
                     break;
                 case 'undermod': 
                     $where_clause = " WHERE user_role = %s"; 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, 'undermod')); 
                     break;
                 case 'suspended': 
                     $where_clause = " WHERE user_role = %s"; 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, 'suspended')); 
                     break;
                 case 'banned': 
                     $where_clause = " WHERE user_role = %s"; 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, 'banned')); 
                     break;
                 case 'killspammed': 
                     $where_clause = " WHERE user_role = %s"; 
-                    $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered last logged in for convenience
+                    $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, 'killspammed')); 
                     break;
@@ -211,7 +211,7 @@ class UserManagerSettings
                     $filtered_results = $h->db->get_results($h->db->prepare($sql)); 
                     break;
                 default:
-                    $where_clause = " WHERE user_role = %s"; $sort_clause = ' ORDER BY user_lastlogin DESC'; // ordered newest first for convenience
+                    $where_clause = " WHERE user_role = %s"; $sort_clause = ' ORDER BY user_date DESC'; // ordered newest first for convenience
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, $filter)); // filter = new, top, or other post status
                     break;

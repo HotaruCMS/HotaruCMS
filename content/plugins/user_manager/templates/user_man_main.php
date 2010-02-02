@@ -68,7 +68,7 @@ if (!isset($h->vars['user_man_navi'])) { $h->vars['user_man_navi'] = ''; }
     <table>
         <tr class='table_headers'>
             <td><select name='user_filter'>
-                <option style='font-weight: bold;' value='<?php echo $h->vars['user_filter']; ?>'><?php echo ucfirst($h->vars['user_filter']); ?></option>
+                <option style='font-weight: bold;' value='<?php echo $h->vars['user_filter']; ?>'><?php echo make_name($h->vars['user_filter'], '_'); ?></option>
                 <option value='' disabled>-----</option>
                 <option value='all'><?php echo $h->lang['user_man_filter_all']; ?></option>
                 <option value='not_killspammed'><?php echo $h->lang['user_man_filter_not_killspammed']; ?></option>
