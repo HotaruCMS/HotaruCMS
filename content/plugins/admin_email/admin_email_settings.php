@@ -171,11 +171,11 @@ class adminEmailSettings extends adminEmail
         } else { $error[$i] = 'recipients'; $i++; }
         
         // save subject
-        $subject = sanitize($h->cage->post->getHtmLawed('subject'), 1);
+        $subject = sanitize($h->cage->post->getHtmLawed('subject'), 'all');
         if ($subject) { $admin_email_settings['admin_email_subject'] = $subject; } else { $error[$i] = 'subject'; $i++; }
         
         // save body
-        $body = sanitize($h->cage->post->getHtmLawed('body'), 1);
+        $body = sanitize($h->cage->post->getHtmLawed('body'), 'all');
         if ($body) { $admin_email_settings['admin_email_body'] = $body; } else { $error[$i] = 'body'; $i++; }
         
         // save send self

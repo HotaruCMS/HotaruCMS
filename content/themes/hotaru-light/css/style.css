@@ -19,6 +19,7 @@ a:hover    { text-decoration: underline; }
 form     { padding: 1.0em; }
 td     { padding: 0.5em; }
 small     { font-size: 0.8em; background-color:#F0F0F0; font-style:normal; padding:0 0.6em;}
+del     { text-decoration: line-through; }
 
 /* LAYOUT */
 

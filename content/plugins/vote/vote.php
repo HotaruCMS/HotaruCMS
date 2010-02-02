@@ -223,8 +223,8 @@ class Vote
 
         // determine where to return the user to after logging in:
         if (!$h->cage->get->keyExists('return')) {
-            $host = $h->cage->server->getMixedString2('HTTP_HOST');
-            $uri = $h->cage->server->getMixedString2('REQUEST_URI');
+            $host = $h->cage->server->sanitizeTags('HTTP_HOST');
+            $uri = $h->cage->server->sanitizeTags('REQUEST_URI');
             $return = 'http://' . $host . $uri;
             $return = urlencode(htmlentities($return,ENT_QUOTES,'UTF-8'));
         } else {

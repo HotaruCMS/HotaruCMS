@@ -26,6 +26,8 @@ form     { padding: 1.0em; }
 td     { padding: 0.5em; }
 small     { font-size: 0.8em; }
 div	{margin:0; padding:0;}
+del     { text-decoration: line-through; }
+
 /* LAYOUT */
 
 .clear	{ clear: both; margin: 0; line-height: 0em;} /* need line-height for IE */

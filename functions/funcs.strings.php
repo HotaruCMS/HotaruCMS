@@ -117,35 +117,46 @@ function random_string($length = 8)
  * Sanitize input
  *
  * @param string $var the string to sanitize
- * @param int $santype type of sanitation (1 or 2)
+ * @param string $santype type of sanitation: 'all', 'ents', 'tags'
  * @param string $allowable_tags
  * @return string|false
  *
  * Note: Borrowed from SWCMS
  */
-function sanitize($var, $santype = 1, $allowable_tags = '')
+function sanitize($var, $santype = 'all', $allowable_tags = '')
 {
-        // htmlentities: YES
-        if ($santype == 1) {
-                if (!get_magic_quotes_gpc()) {
-                        return htmlentities(strip_tags($var, $allowable_tags),ENT_QUOTES,'UTF-8');
-                }
-                else {
-                   return stripslashes(htmlentities(strip_tags($var, $allowable_tags),ENT_QUOTES,'UTF-8'));
-                }
-                return false;
-        }
-        
-        // htmlentities: NO
-        if ($santype == 2) {
-                if (!get_magic_quotes_gpc()) {
-                        return strip_tags($var, $allowable_tags);
-                }
-                else {
-                   return stripslashes(strip_tags($var, $allowable_tags));
-                }
-                return false;
-        }
+    // htmlentities & Strip tags
+    if ($santype == 'all') {
+            if (!get_magic_quotes_gpc()) {
+                    return htmlentities(strip_tags($var, $allowable_tags),ENT_QUOTES,'UTF-8');
+            }
+            else {
+               return stripslashes(htmlentities(strip_tags($var, $allowable_tags),ENT_QUOTES,'UTF-8'));
+            }
+            return false;
+    }
+    
+    // Strip tags
+    if ($santype == 'tags') {
+            if (!get_magic_quotes_gpc()) {
+                    return strip_tags($var, $allowable_tags);
+            }
+            else {
+               return stripslashes(strip_tags($var, $allowable_tags));
+            }
+            return false;
+    }
+    
+    // htmlentities
+    if ($santype == 'ents') {
+            if (!get_magic_quotes_gpc()) {
+                    return htmlentities($var,ENT_QUOTES,'UTF-8');
+            }
+            else {
+               return stripslashes(htmlentities($var,ENT_QUOTES,'UTF-8'));
+            }
+            return false;
+    }
 }
 
 

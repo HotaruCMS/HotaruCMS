@@ -82,7 +82,7 @@ class Submit
         if (!isset($submit_settings['content_length'])) { $submit_settings['content_length'] = 50; }
         if (!isset($submit_settings['summary'])) { $submit_settings['summary'] = "checked"; }
         if (!isset($submit_settings['summary_length'])) { $submit_settings['summary_length'] = 200; }
-        if (!isset($submit_settings['allowable_tags'])) { $submit_settings['allowable_tags'] = "<b><i><u><a><blockquote><strike>"; }
+        if (!isset($submit_settings['allowable_tags'])) { $submit_settings['allowable_tags'] = "<b><i><u><a><blockquote><del>"; }
         if (!isset($submit_settings['url_limit'])) { $submit_settings['url_limit'] = 0; }
         if (!isset($submit_settings['daily_limit'])) { $submit_settings['daily_limit'] = 0; }
         if (!isset($submit_settings['freq_limit'])) { $submit_settings['freq_limit'] = 0; }
@@ -374,9 +374,9 @@ class Submit
                                 $redirect .= "&type=filter";
                                 $redirect .= "&post_status_filter=" . $h->cage->post->testAlnumLines('post_status_filter');
                             }
-                            if ($h->cage->post->getMixedString2('search_value')) {
+                            if ($h->cage->post->sanitizeTags('search_value')) {
                                 $redirect .= "&type=search";
-                                $redirect .= "&search_value=" . $h->cage->post->getMixedString2('search_value');
+                                $redirect .= "&search_value=" . $h->cage->post->sanitizeTags('search_value');
                             }
                             $redirect .= "&pg=" . $h->cage->post->testInt('pg');
                             header("Location: " . $redirect);    // Go back to where we were in Post Manager
@@ -523,11 +523,11 @@ class Submit
                 // submitted data
                 $h->vars['submit_editorial'] = $h->vars['submitted_data']['submit_editorial'];
                 $h->vars['submit_orig_url'] = urldecode($h->vars['submitted_data']['submit_orig_url']);
-                $h->vars['submit_title'] = sanitize($h->vars['submitted_data']['submit_title'], 1);
-                $h->vars['submit_content'] = sanitize($h->vars['submitted_data']['submit_content'], 1);
+                $h->vars['submit_title'] = sanitize($h->vars['submitted_data']['submit_title'], 'all');
+                $h->vars['submit_content'] = sanitize($h->vars['submitted_data']['submit_content'], 'all');
                 $h->vars['submit_post_id'] = $h->vars['submitted_data']['submit_id'];
                 $h->vars['submit_category'] = $h->vars['submitted_data']['submit_category'];
-                $h->vars['submit_tags'] = sanitize($h->vars['submitted_data']['submit_tags'], 1);
+                $h->vars['submit_tags'] = sanitize($h->vars['submitted_data']['submit_tags'], 'all');
                 
                 // strip htmlentities before showing in the form:
                 $h->vars['submit_title'] = html_entity_decode($h->vars['submit_title']);

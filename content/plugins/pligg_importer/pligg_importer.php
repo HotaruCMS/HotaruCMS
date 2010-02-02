@@ -63,7 +63,7 @@ class PliggImporter
         elseif ($h->cage->get->keyExists('step'))
         {
             $step = $h->cage->get->testInt('step');
-            $file_name = $h->cage->get->getMixedString2('file_name');
+            $file_name = $h->cage->get->sanitizeTags('file_name');
             
             if (!isset($file_name) || !$file_name) { 
                 // Go to page 
@@ -191,7 +191,7 @@ class PliggImporter
          * ****************************/
          
         $tmp_filepath = $h->cage->files->getRaw('/file/tmp_name');
-        $file_name = basename($h->cage->files->getMixedString2('/file/name'));
+        $file_name = basename($h->cage->files->sanitizeTags('/file/name'));
         $file_type = $h->cage->files->testPage('/file/type');
         $file_size = $h->cage->files->testInt('/file/size');
         $file_error = $h->cage->files->testInt('/file/error');

@@ -152,7 +152,7 @@ class TextWidget
             } else {
                 $parameters['text_widget_php'] = '';
             }
-            $parameters['text_widget_title'] = sanitize($h->cage->post->noTags('text_widget_title'), 1);
+            $parameters['text_widget_title'] = sanitize($h->cage->post->noTags('text_widget_title'), 'all');
             
             if (!get_magic_quotes_gpc()) {
                 $parameters['text_widget_content'] = htmlentities($h->cage->post->getRaw('text_widget_content'), ENT_QUOTES,'UTF-8');

@@ -107,7 +107,7 @@ class UserManagerSettings
         // if search
         $search_term = '';
         if ($h->cage->get->getAlpha('type') == 'search') {
-            $search_term = $h->cage->get->getMixedString2('search_value');        
+            $search_term = $h->cage->get->sanitizeTags('search_value');        
             if (strlen($search_term) < 3) {
                 $h->message = $h->lang["user_man_search_too_short"];
                 $h->messageType = 'red';

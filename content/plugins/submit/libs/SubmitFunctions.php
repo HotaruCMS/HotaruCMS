@@ -160,17 +160,17 @@ class SubmitFunctions
                     $key = $h->cage->post->testAlnum('submit_key'); // from the form
                     $h->vars['submitted_data'] = $this->loadSubmitData($h, $key);
                     // get new (edited) title:
-                    $title = $h->cage->post->getMixedString1('post_title');
+                    $title = $h->cage->post->sanitizeAll('post_title');
                     $h->vars['submitted_data']['submit_title'] = $title;
                     // get content:
                     $allowable_tags = $h->vars['submit_settings']['allowable_tags'];
-                    $content = sanitize($h->cage->post->getHtmLawed('post_content'), 2, $allowable_tags);
+                    $content = sanitize($h->cage->post->getHtmLawed('post_content'), 'tags', $allowable_tags);
                     $h->vars['submitted_data']['submit_content'] = $content;
                     // get category:
                     $category = $h->cage->post->getInt('post_category');
                     $h->vars['submitted_data']['submit_category'] = $category;
                     // get tags:
-                    $tags = stripslashes(sanitize($h->cage->post->noTags('post_tags'), 2));
+                    $tags = sanitize($h->cage->post->noTags('post_tags'), 'tags');
                     $h->vars['submitted_data']['submit_tags'] = $tags;
                     // get post id (if editing)
                     $post_id = $h->cage->post->testInt('submit_post_id');
@@ -212,12 +212,12 @@ class SubmitFunctions
                     }
                     
                     // get new (edited) title:
-                    $title = $h->cage->post->getMixedString1('post_title');
+                    $title = $h->cage->post->sanitizeAll('post_title');
                     $h->vars['submitted_data']['submit_title'] = $title;
                     
                     // get content:
                     $allowable_tags = $h->vars['submit_settings']['allowable_tags'];
-                    $content = sanitize($h->cage->post->getHtmLawed('post_content'), 2, $allowable_tags);
+                    $content = sanitize($h->cage->post->getHtmLawed('post_content'), 'tags', $allowable_tags);
                     $h->vars['submitted_data']['submit_content'] = $content;
                     
                     // get category:
@@ -225,7 +225,7 @@ class SubmitFunctions
                     $h->vars['submitted_data']['submit_category'] = $category;
                     
                     // get tags:
-                    $tags = stripslashes(sanitize($h->cage->post->noTags('post_tags'), 2));
+                    $tags = sanitize($h->cage->post->noTags('post_tags'), 'tags');
                     $h->vars['submitted_data']['submit_tags'] = $tags;
                     
                     // get url if present:
@@ -237,7 +237,7 @@ class SubmitFunctions
                     
                     // from Post Manager...
                     $h->vars['submitted_data']['submit_pm_from'] = $h->cage->post->testAlnumLines('from');
-                    $h->vars['submitted_data']['submit_pm_search'] = $h->cage->post->getMixedString2('search_value'); 
+                    $h->vars['submitted_data']['submit_pm_search'] = $h->cage->post->sanitizeTags('search_value'); 
                     $h->vars['submitted_data']['submit_pm_filter'] = $h->cage->post->testAlnumLines('post_status_filter');
                     $h->vars['submitted_data']['submit_pm_page'] =  $h->cage->post->testInt('pg');
                 }
@@ -544,7 +544,7 @@ class SubmitFunctions
         
         // ******** CHECK TAGS ********
         if ($submit_settings['tags']) {
-            $tags = stripslashes(sanitize($h->cage->post->noTags('post_tags'), 2));
+            $tags = sanitize($h->cage->post->noTags('post_tags'), 'tags');
             
             if (!$tags) {
                 // No tags present...

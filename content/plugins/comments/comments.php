@@ -94,7 +94,7 @@ class Comments
         if (!isset($comments_settings['comment_voting'])) { $comments_settings['comment_voting'] = ""; }
         if (!isset($comments_settings['comment_levels'])) { $comments_settings['comment_levels'] = 5; }
         if (!isset($comments_settings['comment_email'])) { $comments_settings['comment_email'] = SITE_EMAIL; }
-        if (!isset($comments_settings['comment_allowable_tags'])) { $comments_settings['comment_allowable_tags'] = "<b><i><u><a><blockquote><strike>"; }
+        if (!isset($comments_settings['comment_allowable_tags'])) { $comments_settings['comment_allowable_tags'] = "<b><i><u><a><blockquote><del>"; }
         if (!isset($comments_settings['comment_set_pending'])) { $comments_settings['comment_set_pending'] = ""; }
         if (!isset($comments_settings['comment_order'])) { $comments_settings['comment_order'] = 'asc'; }
         if (!isset($comments_settings['comment_pagination'])) { $comments_settings['comment_pagination'] = ''; }
@@ -165,7 +165,7 @@ class Comments
                 {
         
                     if ($h->cage->post->keyExists('comment_content')) {
-                        $h->comment->content = sanitize($h->cage->post->getHtmLawed('comment_content'), 2, $h->comment->allowableTags);
+                        $h->comment->content = sanitize($h->cage->post->getHtmLawed('comment_content'), 'tags', $h->comment->allowableTags);
                     }
                     
                     if ($h->cage->post->keyExists('comment_post_id')) {
@@ -406,8 +406,8 @@ class Comments
         
         // determine where to return the user to after logging in:
         if (!$h->cage->get->keyExists('return')) {
-            $host = $h->cage->server->getMixedString2('HTTP_HOST');
-            $uri = $h->cage->server->getMixedString2('REQUEST_URI');
+            $host = $h->cage->server->sanitizeTags('HTTP_HOST');
+            $uri = $h->cage->server->sanitizeTags('REQUEST_URI');
             $return = 'http://' . $host . $uri;
             $return = urlencode(htmlentities($return,ENT_QUOTES,'UTF-8'));
         } else {

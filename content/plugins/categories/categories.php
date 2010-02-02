@@ -107,7 +107,7 @@ class Categories
     public function pagehandling_getpagename($h)
     {
         // Can't get keys from the url with Inspekt, so must get the whole query string instead.
-        $query_string = $h->cage->server->getMixedString2('QUERY_STRING');
+        $query_string = $h->cage->server->sanitizeTags('QUERY_STRING');
 
         // no query string? exit...
         if (!$query_string) { return false; }

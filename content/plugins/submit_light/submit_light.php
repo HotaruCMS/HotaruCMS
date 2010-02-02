@@ -343,9 +343,9 @@ class SubmitLight extends Submit
                                 $redirect .= "&type=filter";
                                 $redirect .= "&post_status_filter=" . $h->cage->post->testAlnumLines('post_status_filter');
                             }
-                            if ($h->cage->post->getMixedString2('search_value')) {
+                            if ($h->cage->post->sanitizeTags('search_value')) {
                                 $redirect .= "&type=search";
-                                $redirect .= "&search_value=" . $h->cage->post->getMixedString2('search_value');
+                                $redirect .= "&search_value=" . $h->cage->post->sanitizeTags('search_value');
                             }
                             $redirect .= "&pg=" . $h->cage->post->testInt('pg');
                             header("Location: " . $redirect);    // Go back to where we were in Post Manager

@@ -60,8 +60,8 @@ class RPX
         
         // determine where to return the user to after logging in:
         if (!$h->cage->get->keyExists('return')) {
-            $host = $h->cage->server->getMixedString2('HTTP_HOST');
-            $uri = $h->cage->server->getMixedString2('REQUEST_URI');
+            $host = $h->cage->server->sanitizeTags('HTTP_HOST');
+            $uri = $h->cage->server->sanitizeTags('REQUEST_URI');
             $return = 'http://' . $host . $uri;
             // so we don't return to the login page...
             if (strpos($return, urlencode('login')) !== false) { $return = BASEURL; }
@@ -203,7 +203,7 @@ class RPX
     {
         // get the token if available. If not, stop executing this function
         // also stop here if there's no apiKey
-        $token = $h->cage->post->getMixedString1('token');
+        $token = $h->cage->post->sanitizeAll('token');
         if (!$token || !$this->apiKey) { return false; }
         
         // get the functions file:

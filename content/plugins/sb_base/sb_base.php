@@ -190,7 +190,7 @@ class SbBase
     public function header_meta($h)
     {    
         if ($h->pageType != 'post') { return false; }
-        $meta_content = sanitize($h->post->content, 1);
+        $meta_content = sanitize($h->post->content, 'all');
         $meta_content = truncate($meta_content, 200);
         echo '<meta name="description" content="' . $meta_content . '">' . "\n";
         return true;

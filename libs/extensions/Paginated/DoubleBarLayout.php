@@ -11,8 +11,8 @@ class DoubleBarLayout implements PageLayout
         if ($h->isAdmin == true) { $head = 'admin_index.php?'; } else { $head = 'index.php?'; }
         
         // get full url from address bar
-        $host = $h->cage->server->getMixedString2('HTTP_HOST');
-        $uri = $h->cage->server->getMixedString2('REQUEST_URI');
+        $host = $h->cage->server->sanitizeTags('HTTP_HOST');
+        $uri = $h->cage->server->sanitizeTags('REQUEST_URI');
         $path = "http://" . $host  . $uri;
         
         // if it doesn't contain $head, then it must be a friendly url 
