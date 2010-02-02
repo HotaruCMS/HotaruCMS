@@ -144,16 +144,17 @@ class Tags
         
         if (!$raw) {
             echo "<div class='show_tags' style='display: none;'>\n";
-            echo "<ul>" . $h->lang["tags_list"] . " \n";
+            echo "<ul><li>" . $h->lang["tags_list"] . "</li>";
         }
         
         foreach ($tags as $tag) {
-            echo "<a href='" . $h->url(array('tag' => str_replace(' ', '_', trim($tag)))) . "'>" . trim($tag) . "</a>&nbsp;\n";
+            echo "<li><a href='" . $h->url(array('tag' => str_replace(' ', '_', trim($tag)))) . "'>" . trim($tag) . "</a></li>";
         }
         
         if (!$raw) {
             echo "</ul>\n";
             echo "</div>\n";
+            echo "<div class='clear'>&nbsp;</div>\n";
         }
     }
 }
