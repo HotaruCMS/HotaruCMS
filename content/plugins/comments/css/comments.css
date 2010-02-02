@@ -85,4 +85,6 @@
     width: 70%;
 }
 
+.comment_post_link {margin: 0.6em 0.6em 0.4em; text-align:right;}
+
 .clear	{ clear: both; margin: 0; line-height: 0em;} /* need line-height for IE */
