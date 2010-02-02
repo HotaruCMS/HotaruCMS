@@ -29,16 +29,29 @@
 ?>
 
     <div id="ft">
-        <?php 
-            $h->pluginHook('footer');
+        <div class="hotaru_logo">
+        <?php            
         
             // Link to forums...
             echo "<p><a href='http://hotarucms.org' title='" . $h->lang["main_theme_footer_hotaru_link"] . "'><img src='" . BASEURL . "content/themes/" . THEME . "images/hotarucms.png' ";
             echo "alt='" . $h->lang["main_theme_footer_hotaru_link"] . "' /></a></p>";
         
             $h->showQueriesAndTime();
+
         ?>
+        </div>
+        <div class="W3C">
+            <p>
+                <a href="http://validator.w3.org/check?uri=referer"><img
+                    src="http://www.w3.org/Icons/valid-xhtml10"
+                    alt="Valid XHTML 1.0 Transitional" height="31" width="88" /></a>
+              </p>
+        </div>
+        
     </div> <!-- close "ft" -->
+
+    <?php $h->pluginHook('footer'); ?>
+
 </div> <!-- close "yui-t7 first" -->
 
 <?php $h->pluginHook('pre_close_body'); ?>

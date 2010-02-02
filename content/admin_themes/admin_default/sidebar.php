@@ -31,7 +31,7 @@
 
 
 <ul id="sidebar" class='accordion <?php echo $h->vars['admin_sidebar_layout']; ?>'>
-    <li><a  class="home" href="<?php echo $h->url(array(), 'admin'); ?>"><?php echo $h->lang["admin_theme_main_admin_home"]; ?></a></li>
+    <li><a class="home" href="<?php echo $h->url(array(), 'admin'); ?>"><?php echo $h->lang["admin_theme_main_admin_home"]; ?></a></li>
     <?php if ($h->currentUser->loggedIn == true) { ?>
         <li><a href="<?php echo BASEURL; ?>admin_index.php?page=admin_account"><?php echo $h->lang["admin_theme_account"]; ?></a></li>
     <?php } ?>

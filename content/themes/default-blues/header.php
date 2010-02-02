@@ -81,14 +81,14 @@
 
 		<!-- NAVIGATION -->
     	<ul>
-    	<?php if ($h->pageName == 'index') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
+    	<?php if ($h->pageName == 'index') { $status = "class='navigation_active'"; } else { $status = ""; } ?>
 		<li <?php echo $status; ?>><a <?php echo $status; ?> href="<?php echo BASEURL; ?>"><?php echo $h->lang["main_theme_navigation_home"]; ?></a></li>
     
 		<?php $h->pluginHook('navigation'); ?>
 
     	<?php
 			if ($h->currentUser->loggedIn) { ?>
-        <?php if (($h->pageType == 'user') && ($h->vars['user']->id == $h->currentUser->id)) { $status = "id='navigation_active'"; } else { $status = ""; } ?>
+        <?php if (($h->pageType == 'user') && ($h->vars['user']->id == $h->currentUser->id)) { $status = "class='navigation_active'"; } else { $status = ""; } ?>
         	<li <?php echo $status; ?>><a <?php echo $status; ?> href='<?php echo $h->url(array('user' => $h->currentUser->name)); ?>' title='<?php echo $h->lang["users_profile"]; ?>'>
             <?php echo "My Settings"; ?>
         	</a></li>
@@ -98,13 +98,13 @@
         	if (!$h->isActive('signin')) { 
 
             if ($h->currentUser->loggedIn == true) { 
-                if ($h->pageName == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
+                if ($h->pageName == 'admin') { $status = "class='navigation_active'"; } else { $status = ""; }
                 echo "<li " . $status . "><a " . $status . " href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_admin"] . "</a></li>"; 
 
-                if ($h->pageName == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
+                if ($h->pageName == 'logout') { $status = "class='navigation_active'"; } else { $status = ""; }
                 echo "<li " . $status . "><a " . $status . " href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang["main_theme_navigation_logout"] . "</a></li>";
             } else { 
-                if ($h->pageName == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
+                if ($h->pageName == 'login') { $status = "class='navigation_active'"; } else { $status = ""; }
                 echo "<li " . $status . "><a " . $status . " href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_login"] . "</a></li>"; 
             }
         } else {
