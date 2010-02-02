@@ -70,9 +70,9 @@ class VideoInc
             echo "<div class='video_inc_list'>\n";
             if ($h->isActive('thickbox')) {
                 echo "<a href='" . $video_inc_url . "&amp;height=336&amp;width=588' class='thickbox'>\n";
-                echo "<img src='" . $imageURL . "'></a>\n";
+                echo "<img src='" . $imageURL . "' /></a>\n";
             } else {
-                echo "<img src='" . $imageURL . "'>\n";
+                echo "<img src='" . $imageURL . "' />\n";
             }
             echo "</div>\n";
         }
