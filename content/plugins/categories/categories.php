@@ -286,7 +286,8 @@ class Categories
                 // If children, go to a recursive function to build links for all children of this top-level category 
                 if ($countchildren) { 
                     $depth = 1;
-                    $output = $this->buildMenuBar($h, $category, $output, $parent, $depth); 
+                    $output = $this->buildMenuBar($h, $category, $output, $parent, $depth);
+                    $output .= "</ul>";
                 } else {  
                     $output = $this->categoryLink($h, $category, $output); 
                 }
@@ -333,7 +334,7 @@ class Categories
             $output .= "";
             return $output; 
         }  
-        $output .= "</li></ul>";
+        $output .= "</li>";
         return $output; 
     }
 
