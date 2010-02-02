@@ -88,6 +88,9 @@ $lang['user_man_add_blocked_list'] = "Add to Blocked List";
 /* Sidebar */
 $lang["user_man_admin_sidebar"] = "User Manager";
 
+/* Submit Post Edit */
+$lang['user_man_find_user'] = "Find this post's author in User Manager";
+
 /* Edit Default Permissions */
 $lang["user_man_perms_desc"] = "Use this page to edit the <b>default</b> permissions for each usergroup.";
 $lang["user_man_admin_access_denied"] = "Sorry, only admins can access this page.";

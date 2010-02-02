@@ -97,6 +97,7 @@ class Maintenance
     {
         $handle=opendir($dir);
     
+        $success = false;
         while (($file = readdir($handle))!==false) {
             if ($file != 'placeholder.txt') {
                 if (@unlink($dir.'/'.$file)) {

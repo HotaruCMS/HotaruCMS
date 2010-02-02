@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.0.7 2010/02/02 - Nick - Improvements for spam management
 v.0.6 2010/01/15 - Nick - Added user permissions and settings editors
 v.0.5 2010/01/04 - Nick - Updates for compatibility with Hotaru 1.0
 v.0.4 2009/11/26 - Nick - Bug fixes for changing user roles

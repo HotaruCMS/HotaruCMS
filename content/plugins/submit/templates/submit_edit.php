@@ -119,7 +119,10 @@ $h->pluginHook('submit_2_assign');
     
     <?php if ($h->currentUser->getPermission('can_delete_posts') == 'yes') { ?>
         <a class='bold_red' href="<?php echo $h->url(array('page'=>'edit_post', 'post_id'=>$h->post->id, 'action'=>'delete')); ?>">
-        <?php echo $h->lang["submit_edit_delete"]; } ?>
+        <?php echo $h->lang["submit_edit_delete"]; ?>
         </a>
+    <?php } ?>
+    
+    <?php $h->pluginHook('submit_edit_end', '', array('userid'=>$h->post->author)); ?>
         
 </div>
