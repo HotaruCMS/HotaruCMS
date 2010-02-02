@@ -82,7 +82,7 @@ class CommentsWidget
             $link = BASEURL;
             $output .= $title;
             $output .= "<a href='" . $h->url(array('page'=>'rss_comments')) . "' title='" . $anchor_title . "'>\n";
-            $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'>\n</a>"; // RSS icon
+            $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png' alt='rss' />\n</a>"; // RSS icon
             $output .= "</h2>\n"; 
                 
             $output .= "<ul class='widget_body comments_widget_items'>\n";

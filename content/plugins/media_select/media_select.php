@@ -199,9 +199,9 @@ class MediaSelect
     {
         echo "<li><a href='#'>" . $h->lang['media_select'] . "</a>\n";
         echo "<ul class='children'>\n";
-        echo "<li><a href='" . $h->url(array('media'=>'text')) . "'>" . $h->lang['media_select_text'] . "</a>\n";
-        echo "<li><a href='" . $h->url(array('media'=>'video')) . "'>" . $h->lang['media_select_videos'] . "</a>\n";
-        echo "<li><a href='" . $h->url(array('media'=>'image')) . "'>" . $h->lang['media_select_images'] . "</a>\n";
+        echo "<li><a href='" . $h->url(array('media'=>'text')) . "'>" . $h->lang['media_select_text'] . "</a></li>\n";
+        echo "<li><a href='" . $h->url(array('media'=>'video')) . "'>" . $h->lang['media_select_videos'] . "</a></li>\n";
+        echo "<li><a href='" . $h->url(array('media'=>'image')) . "'>" . $h->lang['media_select_images'] . "</a></li>\n";
         echo "</ul></li>";
     }
     

@@ -245,7 +245,7 @@ class Categories
             $cat_name = $h->getCatName($h->post->category);
             
             echo " " . $h->lang["sb_base_post_in"] . " ";
-            echo "<a href='" . $h->url(array('category'=>$h->post->category)) . "'>" . $cat_name . "</a></li>\n";
+            echo "<a href='" . $h->url(array('category'=>$h->post->category)) . "'>" . $cat_name . "</a>\n";
         }        
     }
 
@@ -330,10 +330,10 @@ class Categories
                     $output = $this->buildMenuBar($h, $child, $output, $child->category_id, $depth);
                 }
             } 
-            $output .= "</li></ul>"; 
+            $output .= "";
             return $output; 
         }  
-
+        $output .= "</li></ul>";
         return $output; 
     }
 
@@ -354,7 +354,7 @@ class Categories
         } 
     
         $category = stripslashes(html_entity_decode(urldecode($category->category_name), ENT_QUOTES,'UTF-8'));
-        $output .= '<li><a href="' . $h->url(array('category'=>$link)) .'">' . $category . "</a>\n"; 
+        $output .= '<li><a href="' . $h->url(array('category'=>$link)) .'">' . $category . "</a>\n";
         
         return $output; 
     } 

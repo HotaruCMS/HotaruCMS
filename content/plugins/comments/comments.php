@@ -416,7 +416,7 @@ class Comments
                 
         if (!$h->currentUser->loggedIn) {
             echo "<div class='comment_form_off'>";
-            echo "<a href='" . BASEURL . "index.php?page=login&return=" . $return . "'>";
+            echo "<a href='" . BASEURL . "index.php?page=login&amp;return=" . $return . "'>";
             echo $h->lang['comments_please_login'] . "</a></div>";
             return false;
         }

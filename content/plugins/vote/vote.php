@@ -230,7 +230,7 @@ class Vote
         } else {
             $return = $h->cage->get->testUri('return'); // use existing return parameter
         }
-        $h->vars['vote_login_url'] = BASEURL . "index.php?page=login&return=" . $return;
+        $h->vars['vote_login_url'] = BASEURL . "index.php?page=login&amp;return=" . $return;
         $h->displayTemplate('vote_button', 'vote', NULL, false);
     }
     
