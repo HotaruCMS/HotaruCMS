@@ -255,7 +255,7 @@ class Activity
             $link = BASEURL;
             $output .= $title;
             $output .= "<a href='" . $h->url(array('page'=>'rss_activity')) . "' title='" . $anchor_title . "'>\n";
-            $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'>\n</a>"; // RSS icon 
+            $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png' alt='RSS' />\n</a>"; // RSS icon
             $output .= "</h2>\n"; 
                 
             $output .= "<ul class='widget_body activity_widget_items'>\n";
