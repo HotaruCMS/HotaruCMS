@@ -146,7 +146,6 @@ $lang["admin_theme_maintenance_site"] = "Site:";
 $lang["admin_theme_maintenance_announcement"] = "Display this announcement at the top of every page:";
 $lang["admin_theme_maintenance_announcement_enable"] = "Enabled";
 $lang["admin_theme_maintenance_announcement_tags"] = "<small>Allowed: &lt;div&gt;&lt;p&gt;&lt;span&gt;&lt;b&gt;&lt;u&gt;&lt;i&gt;&lt;a&gt;&lt;img&gt;&lt;blockquote&gt;&lt;strike&gt;&lt;br&gt;</small>";
-
 $lang["admin_theme_maintenance_close_site"] = "Close " . SITE_NAME . " for maintenance";
 $lang["admin_theme_maintenance_open_site"] = "Open " . SITE_NAME . " to the public";
 $lang["admin_theme_maintenance_close_site_desc"] = "Only users with \"access admin\" permissions will be able to view the site.";
