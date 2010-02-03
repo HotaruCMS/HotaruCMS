@@ -44,7 +44,7 @@ class Blocked
         if ($safe && $h->cage->post->getAlpha('type') == 'new')
         {
             $type = $h->cage->post->testAlnumLines('blocked_type');
-            $value = $h->cage->post->getMixedString2('value');
+            $value = $h->cage->post->sanitizeTags('value');
             
             if (!$value) {
                 $h->message = $h->lang['admin_blocked_list_empty'];
@@ -59,7 +59,7 @@ class Blocked
         {
             $id = $h->cage->post->testInt('id');
             $type = $h->cage->post->testAlnumLines('blocked_type');
-            $value = $h->cage->post->getMixedString2('value');
+            $value = $h->cage->post->sanitizeTags('value');
             $this->updateBlockedList($h, $id, $type, $value);
             $h->message = $h->lang['admin_blocked_list_updated'];
             $h->messageType = 'green';
@@ -80,7 +80,7 @@ class Blocked
         
         // if search
         if ($safe && $h->cage->post->getAlpha('type') == 'search') {
-            $search_term = $h->cage->post->getMixedString2('search_value');
+            $search_term = $h->cage->post->sanitizeTags('search_value');
             $where_clause = " WHERE blocked_value LIKE '%" . trim($h->db->escape($search_term)) . "%'";
         }
         

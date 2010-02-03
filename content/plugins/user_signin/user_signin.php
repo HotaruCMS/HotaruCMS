@@ -161,8 +161,8 @@ class UserSignin
             { 
                 // determine where to return the user to after logging in:
                 if (!$h->cage->get->keyExists('return')) {
-                    $host = $h->cage->server->getMixedString2('HTTP_HOST');
-                    $uri = $h->cage->server->getMixedString2('REQUEST_URI');
+                    $host = $h->cage->server->sanitizeTags('HTTP_HOST');
+                    $uri = $h->cage->server->sanitizeTags('REQUEST_URI');
                     $return = 'http://' . $host . $uri;
                     $return = urlencode(htmlentities($return,ENT_QUOTES,'UTF-8'));
                 } else {
@@ -582,7 +582,7 @@ class UserSignin
         $body .= $line_break;
         $body .= $h->lang['user_signin_register_emailconf_body_click'];
         $body .= $line_break;
-        $body .= BASEURL . "index.php?page=emailconf&amp;plugin=users&amp;id=" . $user->id . "&amp;conf=" . $email_conf;
+        $body .= BASEURL . "index.php?page=emailconf&plugin=users&id=" . $user->id . "&conf=" . $email_conf;
         $body .= $line_break;
         $body .= $h->lang['user_signin_register_emailconf_body_regards'];
         $body .= $next_line;

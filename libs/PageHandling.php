@@ -36,8 +36,8 @@ class PageHandling
         
         if (!$real_page) { 
             /*  Possibly a post with multi-byte characters? 
-                Try getMixedString2... */
-            $real_page = $h->cage->get->getMixedString2('page');
+                Try sanitizeTags... */
+            $real_page = $h->cage->get->sanitizeTags('page');
         }
         
         // Try POST...
@@ -62,8 +62,8 @@ class PageHandling
         $page = $h->cage->get->testPage('page');
         if (!$page) {
             /*  Possibly a post with multi-byte characters? 
-                Try getMixedString2... */
-            $page = $h->cage->get->getMixedString2('page');
+                Try sanitizeTags... */
+            $page = $h->cage->get->sanitizeTags('page');
         }
         
         // Try POST...
@@ -71,8 +71,8 @@ class PageHandling
         
         // Analyze the URL:
         if (!$page) {
-            $host = $h->cage->server->getMixedString2('HTTP_HOST');
-            $uri = $h->cage->server->getMixedString2('REQUEST_URI');
+            $host = $h->cage->server->sanitizeTags('HTTP_HOST');
+            $uri = $h->cage->server->sanitizeTags('REQUEST_URI');
             $path = "http://" . $host  . $uri;
             
             if (FRIENDLY_URLS == 'true') {

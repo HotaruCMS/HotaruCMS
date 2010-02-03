@@ -143,7 +143,7 @@ class CommentManagerSettings
             if ($can_edit == 'yes') { $safe = true; }
             if (($can_edit == 'own') && ($h->currentUser->id == $h->comment->author)) { $safe = true; }
             if ($safe) {
-                $h->comment->content = sanitize($h->cage->post->getHtmLawed('com_man_edit_content'), 2, $h->comment->allowableTags);
+                $h->comment->content = sanitize($h->cage->post->getHtmLawed('com_man_edit_content'), 'tags', $h->comment->allowableTags);
                 $h->comment->editComment($h);
             } else {
                 $h->message = $h->lang["com_man_edit_form_denied"];
@@ -155,7 +155,7 @@ class CommentManagerSettings
         // if search
         $search_term = '';
         if ($h->cage->get->getAlpha('type') == 'search') {
-           $search_term = $h->cage->get->getMixedString2('search_value');        
+           $search_term = $h->cage->get->sanitizeTags('search_value');        
             if (strlen($search_term) < 4) {
                 $h->message = $h->lang["com_man_search_too_short"];
                 $h->messageType = 'red';

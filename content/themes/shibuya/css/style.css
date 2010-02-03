@@ -26,6 +26,8 @@ form     { padding: 1.0em; }
 td     { padding: 0.5em; }
 small     { font-size: 0.8em; }
 div	{margin:0; padding:0;}
+del     { text-decoration: line-through; }
+
 /* LAYOUT */
 
 .clear	{ clear: both; margin: 0; line-height: 0em;} /* need line-height for IE */
@@ -165,4 +167,6 @@ input.submit {
 .debug  { font-size: 0.8em; }
 
 #ft .hotaru_logo {float:left;}
-#ft .W3C {float:right; margin-right: 1em; }
+#ft .W3C {float:right; margin: 0.2em 1em 0 0; }
+
+#ft .theme_strapline {margin: 0 0 0.4em 0.4em;}

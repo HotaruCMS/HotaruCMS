@@ -282,7 +282,7 @@ class SbBaseFunctions
         $user = $h->cage->get->testUsername('user');
         $tag = $h->cage->get->noTags('tag');
         $media = $h->cage->get->testAlnumLines('media');
-        $search = $h->cage->get->getMixedString2('search');
+        $search = $h->cage->get->sanitizeTags('search');
         $category = $h->cage->get->noTags('category');
                 
         //if (!$status) { $status = "top"; }

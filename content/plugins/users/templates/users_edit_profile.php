@@ -28,7 +28,7 @@ $profile = $h->vars['profile']; // saved profile data
 
 // get updated fields. 
 if ($h->cage->post->getAlpha('edited_profile') == 'true') {
-    $profile['bio'] = sanitize($h->cage->post->getHtmLawed('bio'), 1);
+    $profile['bio'] = sanitize($h->cage->post->getHtmLawed('bio'), 'all');
     
     // Add your own $profile['something'] stuff here. Use Inspekt: http://hotarucms.org/showpost.php?p=20&postcount=2
     

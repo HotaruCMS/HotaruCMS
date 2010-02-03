@@ -128,7 +128,7 @@ class HelloUniverse
                 return false;
             };
             
-            $answer = $h->cage->post->getMixedString2('answer');
+            $answer = $h->cage->post->sanitizeTags('answer');
             if ($answer && $answer == 'Paris') {
                 $h->message = $h->lang['hello_universe_success'];
                 $h->messageType = 'green';

@@ -25,7 +25,7 @@
  * @link      http://www.hotarucms.org/
  */
 
-$answer = $h->cage->post->getMixedString2('answer');
+$answer = $h->cage->post->sanitizeTags('answer');
 if(!$answer) { $answer = ""; }
 
 ?>

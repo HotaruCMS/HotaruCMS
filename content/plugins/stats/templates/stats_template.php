@@ -33,34 +33,34 @@
 <!--<p>	<?php echo $h->lang['stats_pretext'] ?>:  </p> -->
 
 	<!-- Basic stats -->
-	<div id="statBlock">
-		<?php echo $h->lang['members']; ?>: <span id="emphasizeStat"><?php echo $h->vars['stats_numMembers']; ?> </span><br />
-		<?php echo $h->lang['posts']; ?>: <span id="emphasizeStat"><?php echo $h->vars['stats_numPosts']; ?> </span><br />
-		<?php echo $h->lang['comments']; ?>: <span id="emphasizeStat"><?php echo $h->vars['stats_numComments']; ?> </span><br />
-		<?php echo $h->lang['votes']; ?>: <span id="emphasizeStat"><?php echo $h->vars['stats_numVotes']; ?> </span><br />
+	<div class="statBlock">
+		<?php echo $h->lang['members']; ?>: <span class="emphasizeStat"><?php echo $h->vars['stats_numMembers']; ?> </span><br />
+		<?php echo $h->lang['posts']; ?>: <span class="emphasizeStat"><?php echo $h->vars['stats_numPosts']; ?> </span><br />
+		<?php echo $h->lang['comments']; ?>: <span class="emphasizeStat"><?php echo $h->vars['stats_numComments']; ?> </span><br />
+		<?php echo $h->lang['votes']; ?>: <span class="emphasizeStat"><?php echo $h->vars['stats_numVotes']; ?> </span><br />
     </div>
     
 	<!-- Average per member -->
-	<div id="statBlock">
-	    <?php echo $h->lang['posts_per_member']; ?>: <span id="emphasizeStat"><?php echo round(($h->vars['stats_numPosts'] / $h->vars['stats_numMembers']), 2); ?> </span> <br />
-	    <?php echo $h->lang['comments_per_member']; ?>: <span id="emphasizeStat"><?php echo round(($h->vars['stats_numComments'] / $h->vars['stats_numMembers']), 2); ?> </span> <br />
-	    <?php echo $h->lang['votes_per_member']; ?>: <span id="emphasizeStat"><?php echo round(($h->vars['stats_numVotes'] / $h->vars['stats_numMembers']), 2); ?> </span> <br />
+	<div class="statBlock">
+	    <?php echo $h->lang['posts_per_member']; ?>: <span class="emphasizeStat"><?php echo round(($h->vars['stats_numPosts'] / $h->vars['stats_numMembers']), 2); ?> </span> <br />
+	    <?php echo $h->lang['comments_per_member']; ?>: <span class="emphasizeStat"><?php echo round(($h->vars['stats_numComments'] / $h->vars['stats_numMembers']), 2); ?> </span> <br />
+	    <?php echo $h->lang['votes_per_member']; ?>: <span class="emphasizeStat"><?php echo round(($h->vars['stats_numVotes'] / $h->vars['stats_numMembers']), 2); ?> </span> <br />
     </div>
 
     <!-- Newest member -->
-	<div id="statBlock">
+	<div class="statBlock">
 		<?php echo $h->lang['newest_member']; ?>: 
-			<a href="<?php echo $h->url(array('user'=>$h->vars['newestMemberName'])); ?> "><span id="emphasizeStat"><?php echo $h->vars['newestMemberName']; ?></span></a><br />
+			<a href="<?php echo $h->url(array('user'=>$h->vars['newestMemberName'])); ?> "><span class="emphasizeStat"><?php echo $h->vars['newestMemberName']; ?></span></a><br />
     </div>
 
     <!-- Highest rated post -->
-    <div id="statBlock">
-    	<?php echo $h->lang['highest_voted_post']; ?>: <span id="emphasizeStat">
-    		<a href="<?php echo $h->url(array('page'=>$h->post->id)); ?>"> <span id="emphasizeStat"><?php echo $h->post->title; ?></span></a><br />
+    <div class="statBlock">
+    	<?php echo $h->lang['highest_voted_post']; ?>: 
+    		<a href="<?php echo $h->url(array('page'=>$h->post->id)); ?>"> <span class="emphasizeStat"><?php echo $h->post->title; ?></span></a><br />
     </div>
 
 <!-- soon-to-be link to the main stats page
-    <div id="statBlock" class="makeCentered">
+    <div class="statBlock" class="makeCentered">
     	<a href="<?php echo BASEURL; ?>"> <?php echo $h->lang['complete_stats_anchor_text']; ?></a>
 	</div>
 -->

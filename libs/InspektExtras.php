@@ -112,30 +112,43 @@ class getFriendlyUrl extends AccessorAbstract {
 }
 
 
-class getMixedString1 extends AccessorAbstract {
+class sanitizeAll extends AccessorAbstract {
 
    /**
-    * a function to sanitize a string with htmlentities
+    * a function to sanitize a string with htmlentities and strip_tags
     *
     * @return string
     */
     protected function inspekt($val)
     {
-        return sanitize($val, 1);
+        return sanitize($val, 'all');
    }
 }
 
 
-class getMixedString2 extends AccessorAbstract {
+class sanitizeTags extends AccessorAbstract {
 
    /**
-    * a function to sanitize a string without htmlentities
+    * a function to sanitize a string with strip_tags
     *
     * @return string
     */
     protected function inspekt($val)
     {
-        return sanitize($val, 2);
+        return sanitize($val, 'tags');
+   }
+}
+
+class sanitizeEnts extends AccessorAbstract {
+
+   /**
+    * a function to sanitize with htmlentities
+    *
+    * @return string
+    */
+    protected function inspekt($val)
+    {
+        return sanitize($val, 'ents');
    }
 }
 

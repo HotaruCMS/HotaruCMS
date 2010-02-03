@@ -61,7 +61,7 @@ class Search
     {
         // Get page title
         if ($h->cage->get->keyExists('search')) { 
-            $title = stripslashes(htmlentities($h->cage->get->getMixedString2('search'),ENT_QUOTES,'UTF-8'));
+            $title = stripslashes(htmlentities($h->cage->get->sanitizeTags('search'),ENT_QUOTES,'UTF-8'));
             $h->pageTitle = make_name($title);
             $h->subPage = 'search';
             $h->pageType = 'list';
@@ -94,7 +94,7 @@ class Search
     {
         if ($h->cage->get->keyExists('search')) 
         {
-            $orig_search_terms = stripslashes($h->cage->get->getMixedString2('search'));
+            $orig_search_terms = stripslashes($h->cage->get->sanitizeTags('search'));
             $search_terms = $orig_search_terms;
         
             if ($search_terms)

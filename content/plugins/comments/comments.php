@@ -94,7 +94,7 @@ class Comments
         if (!isset($comments_settings['comment_voting'])) { $comments_settings['comment_voting'] = ""; }
         if (!isset($comments_settings['comment_levels'])) { $comments_settings['comment_levels'] = 5; }
         if (!isset($comments_settings['comment_email'])) { $comments_settings['comment_email'] = SITE_EMAIL; }
-        if (!isset($comments_settings['comment_allowable_tags'])) { $comments_settings['comment_allowable_tags'] = "<b><i><u><a><blockquote><strike>"; }
+        if (!isset($comments_settings['comment_allowable_tags'])) { $comments_settings['comment_allowable_tags'] = "<b><i><u><a><blockquote><del>"; }
         if (!isset($comments_settings['comment_set_pending'])) { $comments_settings['comment_set_pending'] = ""; }
         if (!isset($comments_settings['comment_order'])) { $comments_settings['comment_order'] = 'asc'; }
         if (!isset($comments_settings['comment_pagination'])) { $comments_settings['comment_pagination'] = ''; }
@@ -165,7 +165,7 @@ class Comments
                 {
         
                     if ($h->cage->post->keyExists('comment_content')) {
-                        $h->comment->content = sanitize($h->cage->post->getHtmLawed('comment_content'), 2, $h->comment->allowableTags);
+                        $h->comment->content = sanitize($h->cage->post->getHtmLawed('comment_content'), 'tags', $h->comment->allowableTags);
                     }
                     
                     if ($h->cage->post->keyExists('comment_post_id')) {
@@ -272,10 +272,12 @@ class Comments
                         
                         $h->pluginHook('comments_delete_comment');
                         
-                        $h->comment->deleteComment($h); // delete this comment
-    
+                        $h->comment->deleteComment($h, $cid); // delete this comment
+                        $h->comment->deleteCommentTree($h, $cid);   // delete all responses, too.
+                        
+                        $h->clearCache('html_cache', false); // clear HTML cache to refresh Comments and Activity widgets
+                        
                         $h->comment->postId = $h->cage->get->testInt('pid');  // post id
-                        $h->comment->deleteCommentTree($h, $cid);   // delete all rsponses, too.
                         
                         // redirect back to thread:
                         $h->readPost($h->comment->postId);
@@ -406,8 +408,8 @@ class Comments
         
         // determine where to return the user to after logging in:
         if (!$h->cage->get->keyExists('return')) {
-            $host = $h->cage->server->getMixedString2('HTTP_HOST');
-            $uri = $h->cage->server->getMixedString2('REQUEST_URI');
+            $host = $h->cage->server->sanitizeTags('HTTP_HOST');
+            $uri = $h->cage->server->sanitizeTags('REQUEST_URI');
             $return = 'http://' . $host . $uri;
             $return = urlencode(htmlentities($return,ENT_QUOTES,'UTF-8'));
         } else {
@@ -524,7 +526,10 @@ class Comments
         }
 
         $comments = $h->comment->getAllComments($h, 0, 'DESC', 0, $userid);
-        if (!$comments) { return false; }
+        if (!$comments) {
+            $h->showMessage($h->lang['comments_user_no_comments'], 'red');
+            return true; 
+        }
         
         $comments_settings = $h->getSerializedSettings();
         $h->comment->itemsPerPage = $comments_settings['comment_items_per_page'];
@@ -619,8 +624,8 @@ class Comments
                 $comments = 'open';
             } else { 
                 // use existing setting:
-                $h->post->comments = 'closed'; 
-                $comments = 'closed';
+                $h->post->comments = 'closed';
+                $comments = 'closed'; 
             }
         } else {
             // open for submit 2
@@ -814,7 +819,7 @@ class Comments
         exit;
         */
     
-        @mail($to, $subject, $message, $headers);
+        mail($to, $subject, $message, $headers);
     }
 }
 

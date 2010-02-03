@@ -109,8 +109,8 @@ class CategoryManagerSettings
             if ($h->cage->get->keyExists('id')){ 
                 $category_meta_id = $h->cage->get->getInt('id');
                 if ($h->cage->post->keyExists('save_edit_meta')) {
-                    $description = $h->cage->post->getMixedString2('description');
-                    $keywords = $h->cage->post->getMixedString2('keywords');
+                    $description = $h->cage->post->sanitizeTags('description');
+                    $keywords = $h->cage->post->sanitizeTags('keywords');
                     $this->saveMeta($h, $category_meta_id, $description, $keywords);
                     $h->showMessage($h->lang["cat_man_changes_saved"], 'green');
                 }
@@ -131,7 +131,7 @@ class CategoryManagerSettings
         if ($action == "add_save") { 
             if ($h->cage->post->keyExists('save_new_category1')) {
                 $parent = 1; // parent is "all" because this is a main category
-                $new_cat_name = $h->cage->post->getMixedString2('new_category');
+                $new_cat_name = $h->cage->post->sanitizeTags('new_category');
                 if ($new_cat_name != "") {
                     $result = $this->addNewCategory($h, $parent, $new_cat_name);
                     if ($result) {
@@ -144,7 +144,7 @@ class CategoryManagerSettings
                 }
             } elseif ($h->cage->post->keyExists('save_new_category2')) {
                 $parent = $h->cage->post->getInt('parent');
-                $new_cat_name = $h->cage->post->getMixedString2('new_category');
+                $new_cat_name = $h->cage->post->sanitizeTags('new_category');
                 if ($new_cat_name != "") {
                     $result = $this->addNewCategory($h, $parent, $new_cat_name);
                     if ($result) {
@@ -157,7 +157,7 @@ class CategoryManagerSettings
                 }
             } elseif ($h->cage->post->keyExists('save_new_category3')) {
                 $parent = $h->cage->post->getInt('parent');
-                $new_cat_name = $h->cage->post->getMixedString2('new_category');
+                $new_cat_name = $h->cage->post->sanitizeTags('new_category');
                 if ($new_cat_name != "") {
                     $result = $this->addNewCategory($h, $parent, $new_cat_name);
                     if ($result) {
@@ -458,7 +458,7 @@ class CategoryManagerSettings
         $sql = "SELECT category_id, category_name, category_safe_name FROM " . TABLE_CATEGORIES . " WHERE category_id != %d ORDER BY category_order ASC";
         $categories = $h->db->get_results($h->db->prepare($sql, 1));
         foreach ( $categories as $category ) {
-            $new_name = $h->cage->post->getMixedString2($category->category_id);
+            $new_name = $h->cage->post->sanitizeTags($category->category_id);
             if ($new_name != "") {
                 $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_name = %s, category_safe_name = %s, category_updateby = %d WHERE category_id = %d";
                 $h->db->query($h->db->prepare($sql, urlencode($new_name), urlencode(make_url_friendly($new_name)), $h->currentUser->id, $category->category_id));

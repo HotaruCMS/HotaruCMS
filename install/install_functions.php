@@ -58,8 +58,8 @@ function init_inspekt_cage()
     $cage->addAccessor('testUsername');
     $cage->addAccessor('testPassword');
     $cage->addAccessor('getFriendlyUrl');
-    $cage->addAccessor('getMixedString1');
-    $cage->addAccessor('getMixedString2');
+    $cage->addAccessor('sanitizeAll');
+    $cage->addAccessor('sanitizeTags');
     $cage->addAccessor('getHtmLawed');
     
     return $cage;

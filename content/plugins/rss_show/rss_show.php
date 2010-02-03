@@ -75,7 +75,7 @@ class RssShow
                     if ($feed->get_link()) { $link = $feed->get_link(); } else { $link = $feed->subscribe_url(); }
                     $output .= "<a href='" . $link . "' title='" . $h->lang["rss_show_title_anchor_title"] . "'>" . $settings['title'] . "</a>";
                     $output .= "<a href='" . $feed->subscribe_url() . "' title='" . $h->lang["rss_show_icon_anchor_title"] . "'>\n";
-                    $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png'></a>\n"; // RSS icon
+                    $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png' alt='RSS'/></a>\n"; // RSS icon
                     $output .= "</h2>\n"; 
                 }
                     
