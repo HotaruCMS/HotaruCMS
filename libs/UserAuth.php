@@ -288,7 +288,7 @@ class UserAuth extends UserBase
                 $error = 1;
             } else {
                 //success
-                $viewee->username = $username_check;
+                $viewee->name = $username_check;
             }
                                 
             $email_check = $h->cage->post->testEmail('email');
