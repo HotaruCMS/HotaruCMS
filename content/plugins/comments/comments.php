@@ -619,7 +619,8 @@ class Comments
                 $comments = 'open';
             } else { 
                 // use existing setting:
-                $comments = $h->post->comments; 
+                $h->post->comments = 'closed';
+                $comments = 'closed'; 
             }
         } else {
             // open for submit 2
