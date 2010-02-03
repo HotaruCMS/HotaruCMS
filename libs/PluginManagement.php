@@ -410,6 +410,8 @@ class PluginManagement
         // Settings aren't deleted anymore, but a user can do so manually from Admin->Maintenance
         //$h->db->query($h->db->prepare("DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_folder = %s", $h->plugin->folder));
         
+        $h->pluginHook('uninstall_plugin', $h->plugin->folder);
+        
         if ($upgrade == 0) {
             $h->messages[$h->lang["admin_plugins_uninstall_done"]] = 'green';
         }
