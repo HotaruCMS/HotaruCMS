@@ -531,7 +531,7 @@ class UserSignin
         }
         
         // Is email domain blocked?
-        $email_bits = explode('@', $email);
+        $email_bits = split('@', $email);
         $email_domain = $email_bits[1];
         if ($h->isBlocked('email', $email_domain)) {
             return true;
@@ -582,7 +582,7 @@ class UserSignin
         $body .= $line_break;
         $body .= $h->lang['user_signin_register_emailconf_body_click'];
         $body .= $line_break;
-        $body .= BASEURL . "index.php?page=emailconf&amp;plugin=users&amp;id=" . $user->id . "&amp;conf=" . $email_conf;
+        $body .= BASEURL . "index.php?page=emailconf&plugin=users&id=" . $user->id . "&conf=" . $email_conf;
         $body .= $line_break;
         $body .= $h->lang['user_signin_register_emailconf_body_regards'];
         $body .= $next_line;
