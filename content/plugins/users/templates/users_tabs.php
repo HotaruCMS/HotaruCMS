@@ -45,7 +45,7 @@ $username = $h->vars['user']->name;
 
     <?php // show User Manager link only if theplugin is active
         if ($h->isActive('user_manager')) { ?>
-        <li><a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&plugin=user_manager"><?php echo $h->lang['user_man_link']; ?></a></li>
+        <li><a href="<?php echo BASEURL; ?>admin_index.php?search_value=<?php echo $username; ?>&amp;plugin=user_manager&amp;page=plugin_settings&amp;type=search"><?php echo $h->lang['user_man_link']; ?></a></li>
     <?php } ?>
     
 <?php } ?>

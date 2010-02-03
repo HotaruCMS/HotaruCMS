@@ -138,7 +138,8 @@ class SbBase
                 // Probably a post, let's check:
                 if (is_numeric($h->pageName)) {
                     // Page name is a number so it must be a post with non-friendly urls
-                    $h->readPost($h->pageName);    // read current post
+                    $exists = $h->readPost($h->pageName);    // read current post
+                    if (!$exists) { $h->pageTitle = $h->lang['main_theme_page_not_found']; return false; }
                     $h->pageTitle = $h->post->title;
                     $h->pageType = 'post';
                 } elseif ($post_id = $h->isPostUrl($h->pageName)) {

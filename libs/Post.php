@@ -211,6 +211,8 @@ class Post
      */    
     public function deletePost($h)
     {
+        if (!$this->id) { return false; }
+        
         $sql = "DELETE FROM " . TABLE_POSTS . " WHERE post_id = %d";
         $h->db->query($h->db->prepare($sql, $this->id));
         
@@ -222,6 +224,10 @@ class Post
         $tags->deleteTags($h, $this->id); // delete existing tags
         
         $h->pluginHook('post_delete_post');
+        
+        // Need to clear both these cache to be sure the post is removed from widgets:
+        $h->clearCache('html_cache', false); 
+        $h->clearCache('db_cache', false); 
     }
     
     
@@ -233,6 +239,8 @@ class Post
      */
     public function deletePosts($h, $user_id = 0) 
     {
+        if (!$user_id) { return false; }
+        
         $sql = "SELECT post_id FROM " . TABLE_POSTS. " WHERE post_author = %d";
         $results = $h->db->get_results($h->db->prepare($sql, $user_id));
         

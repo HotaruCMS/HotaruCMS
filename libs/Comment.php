@@ -266,16 +266,18 @@ class Comment
      * Physically delete a comment from the database 
      *
      */    
-    public function deleteComment($h)
+    public function deleteComment($h, $comment_id = 0)
     {
+        if (!$comment_id) { return false; }
+        
         $sql = "DELETE FROM " . TABLE_COMMENTS . " WHERE comment_id = %d";
-        $h->db->query($h->db->prepare($sql, $this->id));
+        $h->db->query($h->db->prepare($sql, $comment_id));
         
         // delete any votes for this comment
         //$sql = "DELETE FROM " . TABLE_COMMENTVOTES . " WHERE cvote_comment_id = %d";
         //$h->db->query($h->db->prepare($sql, $this->id));
         
-        $h->comment->id = $this->id; // a small hack to get the id for use in plugins.
+        $h->comment->id = $comment_id; // a small hack to get the id for use in plugins.
         $h->pluginHook('comment_delete_comment');
     }
     
@@ -286,15 +288,17 @@ class Comment
      * @param array $user_id
      * @return bool
      */
-    public function deleteComments($h, $user_id) 
+    public function deleteComments($h, $user_id = 0) 
     {
+        if (!$user_id) { return false; }
+        
         $sql = "SELECT comment_id FROM " . DB_PREFIX . "comments WHERE comment_user_id = %d";
         $results = $h->db->get_results($h->db->prepare($sql, $user_id));
 
         if ($results) {
             foreach ($results as $r) {
                 $h->comment->id = $r->comment_id;   // used by other plugins in "comment_delete_comment" function/hook
-                $this->deleteComment($h);    // delete parent comment
+                $this->deleteComment($h, $h->comment->id);    // delete parent comment
                 $this->deleteCommentTree($h, $h->comment->id);  // delete all children of that comment regardless of user
             }
         }
@@ -314,7 +318,7 @@ class Comment
         while ($children = $this->readAllChildren($h, $comment_id)) {
             foreach ($children as $child) {
                 $this->readComment($h, $child);
-                $this->deleteComment($h);
+                $this->deleteComment($h, $this->id);
                 if ($this->deletecommentTree($h, $this->id)) {
                     return true;
                 }

@@ -78,6 +78,8 @@
 
 .comment_content {
     margin: 0.6em 0 0 0.8em;
+    overflow: hidden;
+    width: 100%;
 }
 
 .comment_header_left {

@@ -272,10 +272,12 @@ class Comments
                         
                         $h->pluginHook('comments_delete_comment');
                         
-                        $h->comment->deleteComment($h); // delete this comment
-    
+                        $h->comment->deleteComment($h, $cid); // delete this comment
+                        $h->comment->deleteCommentTree($h, $cid);   // delete all responses, too.
+                        
+                        $h->clearCache('html_cache', false); // clear HTML cache to refresh Comments and Activity widgets
+                        
                         $h->comment->postId = $h->cage->get->testInt('pid');  // post id
-                        $h->comment->deleteCommentTree($h, $cid);   // delete all rsponses, too.
                         
                         // redirect back to thread:
                         $h->readPost($h->comment->postId);
@@ -524,7 +526,10 @@ class Comments
         }
 
         $comments = $h->comment->getAllComments($h, 0, 'DESC', 0, $userid);
-        if (!$comments) { return false; }
+        if (!$comments) {
+            $h->showMessage($h->lang['comments_user_no_comments'], 'red');
+            return true; 
+        }
         
         $comments_settings = $h->getSerializedSettings();
         $h->comment->itemsPerPage = $comments_settings['comment_items_per_page'];
@@ -814,7 +819,7 @@ class Comments
         exit;
         */
     
-        @mail($to, $subject, $message, $headers);
+        mail($to, $subject, $message, $headers);
     }
 }
 

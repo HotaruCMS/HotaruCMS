@@ -55,6 +55,7 @@ $lang['comments_form_moderation_on'] = "<b>Note</b>: <span style='color: red;'>A
 /* All Comments */
 $lang['comments_posted_on'] = " on ";
 $lang['comments_all'] = "All Comments";
+$lang['comments_user_no_comments'] = "This user hasn't made any comments yet.";
 
 /* Admin Settings */
 $lang['comments_admin_sidebar'] = "Comments";

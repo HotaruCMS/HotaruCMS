@@ -7,4 +7,4 @@ td.widgets_active, td.widgets_order {
 }
 
 .widget_head { margin-top: 0.4em; }
-.widget_body { margin-bottom: 2.5em;}
+.widget_body { margin-bottom: 2.5em; overflow: hidden; width: 100%; }
