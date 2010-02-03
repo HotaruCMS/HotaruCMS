@@ -531,7 +531,7 @@ class UserSignin
         }
         
         // Is email domain blocked?
-        $email_bits = split('@', $email);
+        $email_bits = explode('@', $email);
         $email_domain = $email_bits[1];
         if ($h->isBlocked('email', $email_domain)) {
             return true;
