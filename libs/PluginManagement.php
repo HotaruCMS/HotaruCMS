@@ -228,7 +228,7 @@ class PluginManagement
         
         foreach (explode(',', $h->plugin->requires) as $pair) 
         {
-            list($k,$v) = explode (' ', trim($pair));
+            list($k,$v) = explode(' ', trim($pair));
             $h->plugin->dependencies[$k] = $v;
         }
     }
