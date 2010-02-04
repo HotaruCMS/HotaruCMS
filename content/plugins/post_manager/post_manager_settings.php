@@ -107,9 +107,11 @@ class PostManagerSettings
                     $h->messageType = 'red';
                 } else {
                     $s = new Search();
+                    require_once(PLUGINS . 'sb_base/libs/SbBaseFunctions.php');
+                    $sbFuncs = new SbBaseFunctions();
                     $s->prepareSearchFilter($h, stripslashes(trim($h->db->escape($search_term))));
-                    $filtered_search = $p->filter($h, $h->vars['filter'], 0, true, $h->vars['select'], $h->vars['orderby']);
-                    $posts = $p->getPosts($h, $filtered_search);
+                    $filtered_search = $sbFuncs->filter($h->vars['filter'], 0, true, $h->vars['select'], $h->vars['orderby']);
+                    $posts = $sbFuncs->getPosts($h, $filtered_search);
                 }
             } else {
                 $h->message = $h->lang["post_man_need_search"];
