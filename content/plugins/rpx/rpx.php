@@ -5,7 +5,7 @@
  * version: 0.4
  * folder: rpx
  * class: RPX
- * hooks: install_plugin, theme_index_top, header_include, pre_close_body, user_signin_login_pre_login_form, userbase_logincheck, user_signin_pre_display_register_template, user_signin_register_pre_register_form, user_signin_register_password_check, user_signin_register_post_add_user, admin_sidebar_plugin_settings, admin_plugin_settings, users_account_pre_password_user_only, userbase_delete_user, user_signin_register_error_check, users_navigation_logged_out
+ * hooks: install_plugin, theme_index_top, header_include, pre_close_body, user_signin_login_pre_login_form, userbase_logincheck, user_signin_pre_display_register_template, user_signin_register_pre_register_form, user_signin_register_password_check, user_signin_register_post_add_user, admin_sidebar_plugin_settings, admin_plugin_settings, users_account_pre_password_user_only, userbase_delete_user, user_signin_register_error_check, user_signin_navigation_logged_out
  * requires: users 1.1, user_signin 0.1
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
@@ -572,7 +572,7 @@ class RPX
      *
      * @param return bool
      */
-    public function users_navigation_logged_out($h)
+    public function user_signin_navigation_logged_out($h)
     {
         if ($this->display != 'replace') { return false; }
         
