@@ -10,6 +10,8 @@
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
+ * Based on the original Tweet This plugin for Wordpress by Richard X. Thripp - http://richardxthripp.thripp.com/tweet-this
+ * 
  * PHP version 5
  *
  * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 

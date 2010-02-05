@@ -192,7 +192,7 @@ input.button {
 	background: #fff url(../images/content-bg.gif) repeat-y center top;	
 	padding-bottom: 35px;
 	padding-top: 5px;		
-	overflow: auto;
+	overflow: hidden;
 }
 #header-wrap {
 	width: 100%;
@@ -702,8 +702,32 @@ textarea#post_content {
 	width: 665px;
 }
 
+/* Widget*/
+.widget_head {
+margin-top:0.4em;
+}
+.widget_head h2{
+color:#663333;
+font-size:22px;
+}
+.widget_body {
+font: 11px/165% 'Lucida Grande', Verdana, Helvetica, sans-serif;
+padding-left:12px;
+}
+
+.message {
+    margin: 1.0em auto 1.0em auto;
+	background-color: #FF6A55;
+	color: #ffffff;
+    width: 90%;
+    padding: 0.8em;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
 /* Search Box */
 
-#search_form { padding: 0; text-align: right;}
+#search_form { padding-left: 0; margin:0px 7px 0px 2px; text-align: right;}
 #search_form input#search_input { padding: 0.2em; width: 145px; }
 #search_form input#search_button {margin-right: 5px; color: #fff; background: #9CCF5F; border-width: 1px; border-style: solid; border-color: #B6DE8F #8DB836 #8DB836 #B6DE8F;}

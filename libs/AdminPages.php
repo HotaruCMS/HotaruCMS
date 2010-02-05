@@ -32,8 +32,8 @@ class AdminPages
     {
         $h->vars['admin_sidebar_layout'] = 'vertical';
         
-        $h->pluginHook('admin_pages');
-        
+        $h->pluginHook('admin_pages');       
+      
         switch ($page) {
             case "admin_login":
                 $h->sidebars = false;
@@ -61,7 +61,7 @@ class AdminPages
                 $h->vars['admin_sidebar_layout'] = 'horizontal';
                 $this->adminPlugins($h);
                 break;
-            case "plugin_settings":
+            case "plugin_settings":                
                 $h->vars['settings_plugin'] = $h->cage->get->testAlnumLines('plugin'); // get plugin name from url
                 if (!$h->vars['settings_plugin']) { 
                     $h->vars['settings_plugin'] = $h->cage->post->testAlnumLines('plugin');  // get plugin name from form
@@ -70,6 +70,8 @@ class AdminPages
                 if ($h->cage->post->testAlpha('submitted') == 'true') { 
                     $h->vars['plugin_settings_csrf_error'] = (!$h->csrf()) ? true : false;
                 }
+                $alt_template = $h->cage->get->testPage('alt_template');
+                if ($alt_template) { $h->displayTemplate($alt_template, $h->vars['settings_plugin']); exit; }
                 break;
             case "theme_settings":
                 $h->vars['settings_theme'] = $h->cage->get->testAlnumLines('theme'); // get plugin name from url
