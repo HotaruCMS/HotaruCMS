@@ -67,7 +67,7 @@ class CommentsWidget
         // Get settings from database if they exist...
         $comments_widget_settings = $h->getSerializedSettings('comments_widget');
         
-        $comments = $this->getCommentsWidget($h, $comments_widget_settings);
+        $comments = $this->getCommentsWidget($h, $comments_widget_settings['number']);
         
         // build link that will link the widget title to all comments...
         
@@ -100,9 +100,9 @@ class CommentsWidget
      *
      * return array $comments
      */
-    public function getCommentsWidget($h, $comments_widget_settings)
+    public function getCommentsWidget($h, $limit)
     {
-        $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_status = %s ORDER BY comment_date DESC LIMIT " . $comments_widget_settings['number'];
+        $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_status = %s ORDER BY comment_date DESC LIMIT " . $limit;
         $comments = $h->db->get_results($h->db->prepare($sql, 'approved'));
         
         if ($comments) { return $comments; } else { return false; }
