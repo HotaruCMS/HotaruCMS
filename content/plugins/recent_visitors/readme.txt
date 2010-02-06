@@ -16,5 +16,6 @@ Instructions
 
 Changelog
 ---------
+v.0.3 2010/02/06 - Nick - Added "Need an avatar? Get Gravatar!", filtered out users below "undermod" and hide users who registered within the last 24 hours
 v.0.2 2010/01/15 - Nick - Replaced "lastlogin" with "lastvisit" for more up-to-date stats
 v.0.1 2010/01/12 - Nick - Released first version

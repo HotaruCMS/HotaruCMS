@@ -2,7 +2,7 @@
 /**
  * name: Recent Visitors
  * description: Show recent visitors in a widget
- * version: 0.2
+ * version: 0.3
  * folder: recent_visitors
  * class: RecentVisitors
  * requires: widgets 0.6, users 1.1
@@ -51,6 +51,7 @@ class RecentVisitors
         if (!isset($recent_visitors_settings['visitors_avatar_size'])) { $recent_visitors_settings['visitors_avatar_size'] = '16'; }
         if (!isset($recent_visitors_settings['visitors_names'])) { $recent_visitors_settings['visitors_names'] = 'checked'; }
         if (!isset($recent_visitors_settings['visitors_widget_title'])) { $recent_visitors_settings['visitors_widget_title'] = 'checked'; }
+        if (!isset($recent_visitors_settings['visitors_widget_get_avatar'])) { $recent_visitors_settings['visitors_widget_get_avatar'] = 'checked'; }
         
         $h->updateSetting('recent_visitors_settings', serialize($recent_visitors_settings));
 
@@ -82,6 +83,7 @@ class RecentVisitors
         $avatar_size = $recent_visitors_settings['visitors_avatar_size'];
         $names = $recent_visitors_settings['visitors_names'];
         $show_title = $recent_visitors_settings['visitors_widget_title'];
+        $show_get_avatar = $recent_visitors_settings['visitors_widget_get_avatar'];
         
         // build the recent visitors:
         $visitors = $this->getRecentVisitors($h, $limit);
@@ -127,6 +129,11 @@ class RecentVisitors
             if ($list) { $output .="</li>"; } else { $output .="&nbsp;"; }
         }
         if ($list) { $output .="</ul>"; }
+        
+        if ($show_get_avatar) {
+            $output .= "<div class='recent_visitors_get_avatar'>" . $h->lang['recent_visitors_widget_get_avatar'] . "</div>";
+        }
+        
         $output .="</div>";
         
         if ($need_cache) {
@@ -145,8 +152,9 @@ class RecentVisitors
      */
     public function getRecentVisitors($h, $limit)
     {
-        $sql = "SELECT user_id, user_username, user_email FROM " . TABLE_USERS . " ORDER BY user_lastvisit DESC LIMIT " . $limit;
-        $visitors = $h->db->get_results($h->db->prepare($sql));
+        $time_ago = date('Y-m-d H:i:s', strtotime("-1 day"));; // new users won't show up for 24 hours (reduces spammers showing up)
+        $sql = "SELECT user_id, user_username, user_email FROM " . TABLE_USERS . " WHERE (user_role != %s) AND (user_role != %s) AND (user_role != %s) AND (user_role != %s) AND (user_date < %s) ORDER BY user_lastvisit DESC LIMIT " . $limit;
+        $visitors = $h->db->get_results($h->db->prepare($sql, 'killspammed', 'banned', 'suspended', 'pending', $time_ago));
        
         if ($visitors) { return $visitors; } else {return false; }
     }

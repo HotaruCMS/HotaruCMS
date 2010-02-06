@@ -48,6 +48,7 @@ class RecentVisitorsSettings
         $avatar_size = $recent_visitors_settings['visitors_avatar_size'];
         $names = $recent_visitors_settings['visitors_names'];
         $show_title = $recent_visitors_settings['visitors_widget_title'];
+        $show_get_avatar = $recent_visitors_settings['visitors_widget_get_avatar'];
         
         $h->pluginHook('recent_visitors_settings_get_values');
             
@@ -66,6 +67,9 @@ class RecentVisitorsSettings
             
         echo "<p><input type='checkbox' name='names' value='names' " . $names . ">&nbsp;&nbsp;";
             echo $h->lang["recent_visitors_settings_names"] . "</p>\n";
+            
+        echo "<p><input type='checkbox' name='get_avatar' value='gat_avatar' " . $show_get_avatar . ">&nbsp;&nbsp;";
+            echo $h->lang["recent_visitors_settings_show"] . " &quot;" . $h->lang["recent_visitors_widget_get_avatar"] . "&quot;</p>\n";
     
         $h->pluginHook('recent_visitors_settings_form');
                 

@@ -26,6 +26,7 @@
 
 /* Recent Visitors Widget Title */
 $lang["recent_visitors_widget_title"] = "Recent Visitors";
+$lang["recent_visitors_widget_get_avatar"] = "<small>Need an avatar? <a href='http://en.gravatar.com/'>Get Gravatar</a>!</small>";
 
 /* Recent Visitors Settings */
 $lang["recent_visitors_settings_header"] = "Recent Visitors Settings";
@@ -36,5 +37,6 @@ $lang["recent_visitors_settings_avatars"] = "Show user avatars <small>(Requires 
 $lang["recent_visitors_settings_avatar_size"] = "Size (pixels):";
 $lang["recent_visitors_settings_names"] = "Show user names";
 $lang["recent_visitors_settings_show_widget_title"] = "Show widget title <small>(Default: \"Recent Visitors\". You can edit it in recent_visitors_language.php)</small>";
+$lang["recent_visitors_settings_show"] = "Show: ";
 
 ?>
