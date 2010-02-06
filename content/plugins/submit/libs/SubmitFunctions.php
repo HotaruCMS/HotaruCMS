@@ -350,6 +350,7 @@ class SubmitFunctions
         if ($h->cage->post->keyExists('submit1')) {
             // this is used for submit forms in the sidebar, etc.
             $page = $h->cage->post->testPage('page');
+            if ($page == 'submit1') { $page = 'submit'; } // this is a bug fix
             if (!$h->csrf('check', $page)) {
                 $h->message = $h->lang['error_csrf'];
                 $h->messageType = 'red';
