@@ -135,7 +135,7 @@ class CommentManagerSettings
         if ($h->cage->post->getAlpha('type') == 'edit') 
         {
             $cid = $h->cage->post->testInt('cid');
-            $comment = $c->getComment($h, $cid);
+            $comment = $h->comment->getComment($h, $cid);
             $h->comment->readComment($h, $comment);
             // before editing, we need to be certain this user has permission:
             $safe = false;
