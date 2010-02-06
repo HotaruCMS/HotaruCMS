@@ -56,6 +56,9 @@ class UserFunctions
                 $subject = $h->lang['userfunctions_notifymods_subject_post'];
                 $about = $h->lang['userfunctions_notifymods_body_about_post'];
                 $h->readPost($id); // If you're having problems, the caching used in an earlier readPost might be the cause
+                // emails were still saying new posts were "pending" and sending notification, so let's forcefully get the status:
+                $sql = "SELECT post_status FROM " . TABLE_POSTS . " WHERE post_id = %d";
+                $status = $h->db->get_var($h->db->prepare($sql, $id));
                 $h->post->status = $status;
                 break;
             case 'comment':
