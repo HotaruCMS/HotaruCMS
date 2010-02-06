@@ -44,6 +44,7 @@ $lang['com_man_filter_newest'] = "Newest";
 $lang['com_man_filter_oldest'] = "Oldest";
 $lang['com_man_filter_approved'] = "Approved";
 $lang['com_man_filter_pending'] = "Pending";
+$lang['com_man_filter_buried'] = "Buried";
 $lang["com_man_show_content"] = "Show content";
 $lang["com_man_need_search"] = "Please install and activate the Search plugin";
 $lang["com_man_urls"] = "Posted on:";
@@ -67,7 +68,8 @@ $lang['com_man_comment_delete'] = "Comment (and replies) deleted";
 $lang['com_man_comment_approved'] = "Comment approved";
 $lang['com_man_comment_delete_denied'] = "Sorry, you do not have permission to delete comments";
 $lang["com_man_approve_all"] = "Approve ALL 'pending' comments";
-$lang["com_man_delete_all"] = "Delete ALL 'pending' comments";
+$lang["com_man_delete_all_pending"] = "Delete ALL 'pending' comments";
+$lang["com_man_delete_all_buried"] = "Delete ALL 'buried' comments";
 $lang["com_man_all_note"] = "This refers to every page, not just this one. Also, setting all comments to 'pending' will <i>not</i> send email notfications to users subscribed to those threads. However, approving comments individually <i>will</i> inform subscribers.";
 
 /* Sidebar */

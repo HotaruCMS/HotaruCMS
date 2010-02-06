@@ -348,6 +348,9 @@ class Activity
             } elseif  ($item->useract_key2 == 'post') {
                 $h->readPost($item->useract_value2);
             }
+            
+            // Hide activity if its post has been buried or set to pending:
+            if ($h->post->status == 'pending' || $h->post->status == 'buried') { continue; }
                        
             // get user details
             $user->getUserBasic($h, $item->useract_userid);
@@ -417,6 +420,30 @@ class Activity
         return $output;
     }
 
+
+    /**
+     * Check if the post this action applies to can be shown
+     *
+     * @param array $activity 
+     * return bool
+     */
+    public function postSafe($h, $item = array())
+    {
+        // Post used in Hotaru's url function
+        if ($item->useract_key == 'post') {
+            $h->readPost($item->useract_value);
+        } elseif  ($item->useract_key2 == 'post') {
+            $h->readPost($item->useract_value2);
+        }
+        
+        // return status
+        if ($h->post->status == 'buried' || $h->post->status == 'pending') { 
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
 
     /**
      * Get activity content (Profile and Activity Pages only)

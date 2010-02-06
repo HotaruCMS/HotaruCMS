@@ -64,9 +64,10 @@ if (!isset($h->vars['com_man_navi'])) { $h->vars['com_man_navi'] = ''; }
             <td><select name='comment_status_filter'>
                 <option style='font-weight: bold;' value='<?php echo $h->vars['comment_status_filter']; ?>'><?php echo ucfirst($h->vars['comment_status_filter']); ?></option>
                 <option value='' disabled>-----</option>
-                <option value='pending'><?php echo $h->lang['com_man_filter_pending']; ?></option>
-                <option value='approved'><?php echo $h->lang['com_man_filter_approved']; ?></option>
                 <option value='all'><?php echo $h->lang['com_man_filter_all']; ?></option>
+                <option value='approved'><?php echo $h->lang['com_man_filter_approved']; ?></option>
+                <option value='pending'><?php echo $h->lang['com_man_filter_pending']; ?></option>
+                <option value='buried'><?php echo $h->lang['com_man_filter_buried']; ?></option>
                 <option value='' disabled>-----</option>
                 <option value='newest'><?php echo $h->lang['com_man_filter_newest']; ?></option>
                 <option value='oldest'><?php echo $h->lang['com_man_filter_oldest']; ?></option>
@@ -105,8 +106,12 @@ if (!isset($h->vars['com_man_navi'])) { $h->vars['com_man_navi'] = ''; }
     </a>
     <?php if ($h->currentUser->getPermission('can_delete_comments') == 'yes') { ?>
     &nbsp; | &nbsp;
-    <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=comment_manager&amp;action=delete_all">
-        <span class="bold_red"><?php echo $h->lang["com_man_delete_all"]; ?></span>
+    <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=comment_manager&amp;action=delete_all_pending">
+        <span class="bold_red"><?php echo $h->lang["com_man_delete_all_pending"]; ?></span>
+    </a>
+    &nbsp; | &nbsp;
+    <a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=comment_manager&amp;action=delete_all_buried">
+        <span class="bold_red"><?php echo $h->lang["com_man_delete_all_buried"]; ?></span>
     </a>
     <?php } ?>
     <br />
