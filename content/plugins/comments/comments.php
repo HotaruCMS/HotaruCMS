@@ -472,11 +472,13 @@ class Comments
                 $this->displayComment($h, $child);
                 if ($this->commentTree($h, $child->comment_id, $depth)) {
                     return true;
+                } else {
+                    $depth--; // no more children for previous comment, come back up a level
                 }
             }
-            
             return false;
         }
+        return false;
     }
     
     
