@@ -107,8 +107,8 @@ class CommentManagerSettings
         }
         
         
-        // delete all comments and their replies
-        if ($h->cage->get->testAlnumLines('action') == 'delete_all') 
+        // delete all PENDING comments and their replies
+        if ($h->cage->get->testAlnumLines('action') == 'delete_all_pending') 
         {
            // before deleting a comment, we need to be certain this user has permission:
             if ($h->currentUser->getPermission('can_delete_comments') == 'yes') {
@@ -117,6 +117,30 @@ class CommentManagerSettings
                 if ($allpending) {
                     foreach ($allpending as $pending) {
                         $cid = $pending->comment_id; // comment id
+                        $comment = $h->comment->getComment($h, $cid); // get comment from database
+                        $h->comment->readComment($h, $comment); // read comment into $c
+                        $h->comment->deleteComment($h); // delete this comment
+                        $h->comment->deleteCommentTree($h, $cid);   // delete all responses, too.
+                    }
+                    // No need for a message because the "There are no comments pending message (see further down) shows anyway.
+                }
+            } else {
+                $h->message = $h->lang['com_man_comment_delete_denied'];
+                $h->messageType = 'red';
+            }
+        }
+        
+        
+        // delete all BURIED comments and their replies
+        if ($h->cage->get->testAlnumLines('action') == 'delete_all_buried') 
+        {
+           // before deleting a comment, we need to be certain this user has permission:
+            if ($h->currentUser->getPermission('can_delete_comments') == 'yes') {
+                $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_status = %s";
+                $allburied = $h->db->get_results($h->db->prepare($sql, 'buried'));
+                if ($allburied) {
+                    foreach ($allburied as $buried) {
+                        $cid = $buried->comment_id; // comment id
                         $comment = $h->comment->getComment($h, $cid); // get comment from database
                         $h->comment->readComment($h, $comment); // read comment into $c
                         $h->comment->deleteComment($h); // delete this comment
@@ -186,6 +210,12 @@ class CommentManagerSettings
                     $sort_clause = ' ORDER BY comment_date DESC';  // same as "all"
                     $sql = "SELECT * FROM " . TABLE_COMMENTS . $where_clause . $sort_clause;
                     $filtered_results = $h->db->get_results($h->db->prepare($sql, 'pending')); 
+                    break;
+                case 'buried':
+                    $where_clause = " WHERE comment_status = %s"; 
+                    $sort_clause = ' ORDER BY comment_date DESC';  // same as "all"
+                    $sql = "SELECT * FROM " . TABLE_COMMENTS . $where_clause . $sort_clause;
+                    $filtered_results = $h->db->get_results($h->db->prepare($sql, 'buried')); 
                     break;
                 case 'approved': 
                     $where_clause = " WHERE comment_status = %s"; 

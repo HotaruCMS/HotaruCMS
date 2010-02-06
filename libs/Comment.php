@@ -279,6 +279,10 @@ class Comment
         
         $h->comment->id = $comment_id; // a small hack to get the id for use in plugins.
         $h->pluginHook('comment_delete_comment');
+        
+        // Need to clear both these caches to be sure related items are updated in widgets, etc.:
+        $h->clearCache('html_cache', false); 
+        $h->clearCache('db_cache', false); 
     }
     
     

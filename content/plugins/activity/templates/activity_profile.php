@@ -36,6 +36,7 @@
             $act = new Activity();
             if ($h->vars['pagedResults']) { 
                 while($action = $h->vars['pagedResults']->fetchPagedRow()) {
+                    if (!$act->postSafe($h, $action)) { continue; } // skip if postis buried or pending
                     $user_id = $action->useract_userid;
                     $user_name = $h->getUserNameFromId($user_id);
         ?>

@@ -540,6 +540,9 @@ class Comments
         if ($pagedResults) {
             while($comment = $pagedResults->fetchPagedRow()) {
                 $h->readPost($comment->comment_post_id);
+                // don't show this comment if its post is buried or pending:
+                if ($h->post->status == 'buried' || $h->post->status == 'pending') { continue; }
+                
                 $this->displayComment($h, $comment, true);
             }
             
@@ -652,6 +655,8 @@ class Comments
      */
     public function post_delete_post($h)
     {
+        if (!$h->post->id) { return false; }
+        
         $sql = "DELETE FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d";
         $h->db->query($h->db->prepare($sql, $h->post->id));
     }

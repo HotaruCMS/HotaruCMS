@@ -92,6 +92,10 @@ class PostManagerSettings
                 }
                 
             }
+            
+            // Need to clear both these caches to be sure related items are updated in widgets, etc.:
+            $h->clearCache('html_cache', false); 
+            $h->clearCache('db_cache', false); 
         }
         
         $p = new Post();

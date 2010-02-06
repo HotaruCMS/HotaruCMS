@@ -135,6 +135,9 @@ class CommentsWidget
         {
             // Post used in Hotaru's url function
             $h->readPost($item->comment_post_id);
+            
+            // Hide comments from widget if their post has been buried or set to pending:
+            if ($h->post->status == 'pending' || $h->post->status == 'buried') { continue; }
 
             // get author details
             $author->getUserBasic($h, $item->comment_user_id);
