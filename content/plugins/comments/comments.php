@@ -631,7 +631,7 @@ class Comments
                 if ($h->currentUser->getPermission('can_edit_posts') == 'yes') {
                     $h->post->comments = 'closed';
                     $comments = 'closed'; 
-                }
+                } else {
                     $comments = $h->post->comments; // keep existing setting
                 }
             }
