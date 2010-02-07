@@ -628,9 +628,12 @@ class Comments
                 $h->post->comments = 'open'; 
                 $comments = 'open';
             } else { 
-                // use existing setting:
-                $h->post->comments = 'closed';
-                $comments = 'closed'; 
+                if ($h->currentUser->getPermission('can_edit_posts') == 'yes') {
+                    $h->post->comments = 'closed';
+                    $comments = 'closed'; 
+                }
+                    $comments = $h->post->comments; // keep existing setting
+                }
             }
         } else {
             // open for submit 2
