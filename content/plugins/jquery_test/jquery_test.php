@@ -2,7 +2,7 @@
 /**
  * name: JQuery Test
  * description: Tests whether jquery is running 
- * version: 0.8
+ * version: 0.1
  * folder: jquery_test
  * class: JQueryTest
  * hooks:  admin_plugin_settings, admin_sidebar_plugin_settings, header_include, admin_header_include, footer
