@@ -20,9 +20,14 @@ body {
 	text-align: center;
 }
 /* Links */
-a:link, a:visited { 
+a:link { 
 	text-decoration: none;
 	color: #AE855C;	
+}
+a:visited { 
+	text-decoration: none;
+	color: #666;	
+	font-weight:normal;
 }
 a:hover {
 	border-bottom: 1px dotted #AE855C;	
@@ -302,7 +307,7 @@ input.button {
 	font: bold 14px/40px 'Trebuchet MS', 'Helvetica Neue', Arial, Sans-Serif;
 	text-transform: uppercase;	
 }
-#header #nav ul li a:hover, 
+#header #nav ul li a:hover, 	
 #header #nav ul li a:active {
 	border: none;
 	color: #111;
@@ -347,12 +352,12 @@ input.button {
 	padding: 5px 10px;
 	margin: 12px 0 5px 0;
 }
-#left-columns h3 a:link, a:visited {
-color:#444;
+#left-columns  a:link {
 text-decoration:none;
 }
-
-
+#left-columns  a:visited {
+text-decoration:none;
+}
 /* sidebar menu */
 .sidemenu ul {
 	text-align: left;
@@ -666,7 +671,9 @@ background-position:0 -32px;
 color:#666666;
 }
 
-
+/* who voted*/
+#main h2#who_voted_title {font-size:2em; font-weight:normal; letter-spacing:-0.5px; padding-top:15px;}
+#who_voted_content {padding: 12px 0 0 40px;}
 /* comments */
 #comments_wrapper h2 {font-size:2em; font-weight:normal; letter-spacing:-0.5px; padding-top:15px;}
 input.submit{
@@ -701,20 +708,26 @@ input#post_tags {
 textarea#post_content { 
 	width: 665px;
 }
+#submit_button_1 {
+float:right;
+margin: -10px -20px 0 0;
+}
 
 /* Widget*/
 .widget_head {
+color:#666;
 margin-top:0.4em;
+font-size:18px;
+font-weight:normal;
 }
-.widget_head h2{
-color:#663333;
-font-size:22px;
+.widget_head:first-letter{
+color: #7BA857;
+font-weight:bold;
 }
 .widget_body {
 font: 11px/165% 'Lucida Grande', Verdana, Helvetica, sans-serif;
 padding-left:12px;
 }
-
 .message {
     margin: 1.0em auto 1.0em auto;
 	background-color: #FF6A55;
