@@ -48,6 +48,7 @@ $display = ($h->comment->votes_down >= $h->vars['comment_hide']) ? 'display: non
                         echo "<a href='" . $h->url(array('user' => $username)) . "'>" . $username . "</a>, ";
                         echo time_difference(unixtimestamp($h->comment->date), $h->lang) . " ";
                         echo $h->lang['comments_time_ago'] . ".";
+                        if ($display) { echo "<a href='#' class='comment_show_hide'>" . $h->lang['comments_show_hide'] . "</a>"; }
                 ?>
                 </div>
             </div>

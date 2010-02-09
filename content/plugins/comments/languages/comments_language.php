@@ -38,6 +38,7 @@ $lang['comments_written_by'] = "Written by";
 $lang['comments_time_ago'] = "ago";
 $lang['comments_reply_link'] = "Reply";
 $lang['comments_edit_link'] = "Edit";
+$lang['comments_show_hide'] = "Show / Hide comment";
 
 /* Comment Form */
 $lang['comments_please_login'] = "You need to be logged in to comment.";

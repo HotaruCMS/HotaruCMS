@@ -24,7 +24,7 @@
  * @link      http://www.hotarucms.org/
  */
 
-$display = ($h->comment->votes_down > $h->vars['comment_hide']) ? 'display: none;' : ''; // comments are shown unless they have X negative votes
+$display = ($h->comment->votes_down >= $h->vars['comment_hide']) ? 'display: none;' : ''; // comments are shown unless they have X negative votes
 ?>
     <a id="c<?php echo $h->comment->id; ?>"></a>
 
@@ -47,6 +47,7 @@ $display = ($h->comment->votes_down > $h->vars['comment_hide']) ? 'display: none
                         echo "<a href='" . $h->url(array('user' => $username)) . "'>" . $username . "</a>, ";
                         echo time_difference(unixtimestamp($h->comment->date), $h->lang) . " ";
                         echo $h->lang['comments_time_ago'] . ".";
+                        if ($display) { echo "<a href='#' class='comment_show_hide'>" . $h->lang['comments_show_hide'] . "</a>"; }
                 ?>
                 </div>
             </div>   <!-- close comment_header_left-->

@@ -89,4 +89,6 @@
 
 .comment_post_link {margin: 0.6em 0.6em 0.4em; text-align:right;}
 
+.comment_show_hide  { margin-left: 2.0em; font-size: 0.8em; }
+
 .clear	{ clear: both; margin: 0; line-height: 0em;} /* need line-height for IE */
