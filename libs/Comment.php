@@ -32,7 +32,8 @@ class Comment
     protected $author       = 0;
     protected $date         = '';
     protected $status       = 'approved';
-    protected $votes        = 0;
+    protected $votes_up     = 0;
+    protected $votes_down   = 0;
     protected $content      = '';
     protected $type         = 'newcomment';   // or "editcomment"
     protected $subscribe    = 0;

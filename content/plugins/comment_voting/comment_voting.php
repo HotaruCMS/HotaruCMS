@@ -2,7 +2,7 @@
 /**
  * name: Comment Voting
  * description: Adds voting ability to posted stories.
- * version: 0.1
+ * version: 0.2
  * folder: comment_voting
  * class: CommentVoting
  * type: comment_vote

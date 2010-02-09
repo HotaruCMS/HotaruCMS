@@ -61,6 +61,8 @@ class CommentsSettings
         $email_mods = $comments_settings['comment_email_notify_mods'];
         $url_limit = $comments_settings['comment_url_limit'];
         $daily_limit = $comments_settings['comment_daily_limit'];
+        $hide = $comments_settings['comment_hide'];
+        $bury = $comments_settings['comment_bury'];
         
         echo "<h1>" . $h->lang["comments_settings_header"] . "</h1>\n";
           
@@ -79,6 +81,8 @@ class CommentsSettings
         if (!$url_limit) { $url_limit = 0; }
         if (!$daily_limit) { $daily_limit = 0; }
         if (!$x_comments) { $x_comments = 1; }
+        if (!$hide) { $hide = 3; }
+        if (!$bury) { $bury = 10; }
     
         // Determine if checkboxes are checked or not
         if ($h->comment->allForms == 'checked') { $check_form = 'checked'; } else { $check_form = ''; }
@@ -100,7 +104,9 @@ class CommentsSettings
         echo "<p><input type='checkbox' name='comment_form' value='comment_form' " . $check_form . " >&nbsp;&nbsp;" . $h->lang["comments_settings_form"] . "</p>\n";    
         echo "<p><input type='checkbox' name='comment_avatars' value='comment_avatars' " . $check_avatars . " >&nbsp;&nbsp;" . $h->lang["comments_settings_avatars"] . "</p>\n";
         echo "<p>" . " <input type='text' size=5 name='avatar_size' value='" . $h->comment->avatarSize . "' /> " . $h->lang["comments_settings_avatar_size"] . "</p>";
-        echo "<p><input type='checkbox' name='comment_voting' value='comment_voting' " . $check_votes . " >&nbsp;&nbsp;" . $h->lang["comments_settings_votes"] . "</p>\n"; 
+        echo "<p><input type='checkbox' name='comment_voting' value='comment_voting' " . $check_votes . " >&nbsp;&nbsp;" . $h->lang["comments_settings_votes"] . "</p>\n";
+        echo "<p>" . " <input type='text' size=5 name='hide' value='" . $hide . "' /> " . $h->lang["comments_settings_hide"] . "</p>";
+        echo "<p>" . " <input type='text' size=5 name='bury' value='" . $bury . "' /> " . $h->lang["comments_settings_bury"] . "</p>";
     
         echo "<p>" . " <input type='text' size=5 name='levels' value='" . $h->comment->levels . "' /> " . $h->lang["comments_settings_levels"] . "</p>";
         echo "<p><input type='checkbox' name='comment_pagination' value='comment_pagination' " . $check_pagination . " >&nbsp;&nbsp;" . $h->lang["comments_settings_pagination"] . "</p>\n"; 
@@ -247,6 +253,14 @@ class CommentsSettings
             $h->comment->voting = '';
         }
         
+        // Number of down votes to hide a comment
+        $hide = $h->cage->post->testInt('hide'); 
+        if (!$hide) { $hide = 3; } // default
+        
+        // Number of down votes to bury a comment
+        $bury = $h->cage->post->testInt('bury'); 
+        if (!$bury) { $bury = 10; } // default
+        
         // levels
         if ($h->cage->post->keyExists('levels')) { 
             $levels = $h->cage->post->testInt('levels'); 
@@ -360,6 +374,8 @@ class CommentsSettings
         $comments_settings['comment_x_comments'] = $x_comments;
         $comments_settings['comment_email_notify'] = $email_notify;
         $comments_settings['comment_email_notify_mods'] = $email_mods; //array
+        $comments_settings['comment_hide'] = $hide;
+        $comments_settings['comment_bury'] = $bury;
         
         $h->updateSetting('comments_settings', serialize($comments_settings));
         

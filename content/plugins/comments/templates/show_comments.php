@@ -23,13 +23,14 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
- 
 
+$display = ($h->comment->votes_down >= $h->vars['comment_hide']) ? 'display: none;' : ''; // comments are shown unless they have X negative votes
 ?>
     <a id="c<?php echo $h->comment->id; ?>"></a>
 
     <?php if ($h->comment->avatarSize < 16) {$comment_header_size=16;} else { $comment_header_size= $h->comment->avatarSize; } ?>
     <div class="comment" style="margin-left: <?php echo $h->comment->depth * 2.0; ?>em;">
+    
         <div class="comment_header" style="height:<?php echo $comment_header_size; ?>px;">
             <div class="comment_header_left">
                 <?php   // Show avatars if enabled (requires an avatars plugin)
@@ -60,7 +61,7 @@
 
         <div class="clear"></div>
 
-        <div class="comment_main">
+        <div class="comment_main" style="<?php echo $display; ?>">
             <div class="comment_content">
                 <?php
                     $result = $h->pluginHook('show_comments_content');

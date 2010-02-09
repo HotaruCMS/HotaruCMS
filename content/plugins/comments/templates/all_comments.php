@@ -24,6 +24,7 @@
  * @link      http://www.hotarucms.org/
  */
 
+$display = ($h->comment->votes_down > $h->vars['comment_hide']) ? 'display: none;' : ''; // comments are shown unless they have X negative votes
 ?>
     <a id="c<?php echo $h->comment->id; ?>"></a>
 
@@ -59,7 +60,7 @@
 
         <div class="clear"></div>
 
-        <div class="comment_main">
+        <div class="comment_main" style="<?php echo $display; ?>">
             <div class="comment_content">
                 <?php
                     $result = $h->pluginHook('show_comments_content');

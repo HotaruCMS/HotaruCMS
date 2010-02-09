@@ -2,7 +2,7 @@
 /**
  * name: Comments
  * description: Enables logged-in users to comment on posts
- * version: 1.3
+ * version: 1.4
  * folder: comments
  * class: Comments
  * type: comments
@@ -105,6 +105,8 @@ class Comments
         if (!isset($comments_settings['comment_url_limit'])) { $comments_settings['comment_url_limit'] = 0; }
         if (!isset($comments_settings['comment_daily_limit'])) { $comments_settings['comment_daily_limit'] = 0; }
         if (!isset($comments_settings['comment_avatar_size'])) { $comments_settings['comment_avatar_size'] = "16"; }
+        if (!isset($comments_settings['comment_hide'])) { $comments_settings['comment_hide'] = "3"; }
+        if (!isset($comments_settings['comment_bury'])) { $comments_settings['comment_bury'] = "10"; }
         
         if ($h->isActive('avatar')) {
             if (!isset($comments_settings['comment_avatars'])) { $comments_settings['comment_avatars'] = "checked"; }
@@ -137,6 +139,7 @@ class Comments
         $h->comment->levels = $comments_settings['comment_levels'];
         $h->comment->setPending = $comments_settings['comment_set_pending'];
         $h->comment->allForms = $comments_settings['comment_all_forms'];
+        $h->vars['comment_hide'] = $comments_settings['comment_hide'];
         
         
         if ($h->pageName == 'rss_comments') {

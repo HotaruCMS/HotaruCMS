@@ -41,7 +41,10 @@ if ($h->cage->post->keyExists('comment_id')) {
     $cvote_rating = $h->cage->post->testInt('rating');
         
     //get comment_voting settings
-    $comment_voting_settings = unserialize($h->getSetting('comment_voting_settings', 'comment_voting')); 
+    $comments_settings = $h->getSerializedSettings('comments');
+    if (isset($comments_settings) && isset($comments_settings['comment_bury'])) {
+        $bury = $comments_settings['comment_bury'];
+    }
     
     // Only proceed if the user is logged in
     if ($h->currentUser->loggedIn) {
@@ -58,10 +61,13 @@ if ($h->cage->post->keyExists('comment_id')) {
             echo json_encode($json_array);
             return false;
         }
+        
+        // get current status and down votes
+        $sql = "SELECT comment_votes_down, comment_status FROM " . TABLE_COMMENTS . " WHERE comment_id = %d";
+        $c_row = $h->db->get_row($h->db->prepare($sql, $comment_id));
             
         if ($cvote_rating > 0)
         {
-            
             // Update comments table
             $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_votes_up = comment_votes_up + 1 WHERE comment_id = %d";
             $h->db->query($h->db->prepare($sql, $comment_id));
@@ -76,9 +82,15 @@ if ($h->cage->post->keyExists('comment_id')) {
         {
             if ($cvote_rating && ($cvote_rating < 0))
             {
-                // Update Posts table
-                $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_votes_down=comment_votes_down + 1 WHERE comment_id = %d";
-                $h->db->query($h->db->prepare($sql, $comment_id));
+                // Increase down votes and set to buried
+                if (isset($bury) && ($c_row->comment_votes_down+1 >= $bury) && ($c_row->comment_status != 'buried')) {
+                    $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_votes_down=comment_votes_down + 1, comment_status = %s WHERE comment_id = %d";
+                    $h->db->query($h->db->prepare($sql, 'buried', $comment_id));
+                } else {
+                    // Just increase the down votes
+                    $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_votes_down=comment_votes_down + 1 WHERE comment_id = %d";
+                    $h->db->query($h->db->prepare($sql, $comment_id));
+                }
 
                 // Update commentvotes table
                 $sql = "INSERT INTO " . TABLE_COMMENTVOTES . " (cvote_post_id, cvote_comment_id, cvote_user_id, cvote_user_ip, cvote_date, cvote_rating, cvote_updateby) VALUES (%d, %d, %d, %s, CURRENT_TIMESTAMP, %d, %d)";
