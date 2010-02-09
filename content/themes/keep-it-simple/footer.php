@@ -122,5 +122,12 @@
 	<!-- footer ends here -->
 <?php $h->pluginHook('pre_close_body'); ?>
 
+ <script type='text/javascript'>
+
+    jQuery('document').ready(function($) {
+        $("a#navigation_active").parent("li").addClass("navigation_active");
+        });
+        
+</script>
 </body>
 </html>
