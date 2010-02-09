@@ -640,6 +640,13 @@ ol.commentlist {
 
 #sort_box {margin-top: -32px; margin-bottom: 20px;}
 
+.user_tabs {
+background-color:#F0F0F0;
+margin-bottom:4em;
+padding-bottom:0.4em;
+padding-top:0.4em;
+}
+
 /* sidebar */
 
 
@@ -676,6 +683,7 @@ color:#666666;
 /* who voted*/
 #main h2#who_voted_title {font-size:2em; font-weight:normal; letter-spacing:-0.5px; padding-top:15px;}
 #who_voted_content {padding: 12px 0 0 40px;}
+
 /* comments */
 #comments_wrapper h2 {font-size:2em; font-weight:normal; letter-spacing:-0.5px; padding-top:15px;}
 input.submit{

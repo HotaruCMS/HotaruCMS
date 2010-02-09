@@ -78,7 +78,7 @@
         if ($h->isActive('post')) { ?>
 		<div id="iconrss">
 		<a href="<?php echo $h->url(array('page'=>'rss')); ?>">
-                    <img src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/new-rss.png">
+                    <img src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/new-rss.png" alt="Feed RSS" />
         </a>
 		</div>
 			<div id="ricerca">
