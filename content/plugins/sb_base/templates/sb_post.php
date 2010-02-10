@@ -32,7 +32,7 @@ $user->getUserBasic($h, $h->post->author);
 <?php $h->pluginHook('sb_base_pre_show_post'); ?>
 
 <!-- POST -->
-<div class="show_post vote_button_space">
+<div class="show_post vote_button_space" id="show_post_<?php echo $h->post->id ?>" >
 
     <?php $h->pluginHook('sb_base_show_post_pre_title'); ?>
 
@@ -45,7 +45,7 @@ $user->getUserBasic($h, $h->post->author);
         
     <div class="show_post_title">
         <?php if (!$h->vars['editorial']) { ?> 
-            <a href='<?php echo $h->post->origUrl; ?>' <?php echo $h->vars['target']; ?>><?php echo $h->post->title; ?></a>
+            <a href='<?php echo $h->post->origUrl; ?>' <?php echo $h->vars['target']; ?> class="click_to_source"><?php echo $h->post->title; ?></a>
         <?php } else { ?>
             <?php echo $h->post->title; ?>
         <?php } ?>
