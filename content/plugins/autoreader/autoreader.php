@@ -34,8 +34,12 @@ require_once(PLUGINS . 'autoreader/autoreader_settings.php');
 
 class Autoreader extends AutoreaderSettings
 {
+
      var $version = '0.2';
      var $newsetup = false;  // set to true only if this version requires db changes from last version
+
+     var $campaign_structure = array('main' => array(), 'rewrites' => array(),
+                                  'categories' => array(), 'feeds' => array());
 
     /**
      * Install or Upgrade
@@ -84,6 +88,7 @@ class Autoreader extends AutoreaderSettings
           'campaign_post'       =>  DB_PREFIX .  'autoreader_campaign_post',
           'log'                 =>  DB_PREFIX .  'autoreader_log'
         );
+
     }
 
 

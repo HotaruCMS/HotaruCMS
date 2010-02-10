@@ -1,5 +1,5 @@
 <?php
-require_once(PLUGINS . 'autoreader/autoreader.php');
+    require_once(PLUGINS . 'autoreader/autoreader.php');
     $arSettings = new Autoreader();
     $campaigns = $arSettings->getCampaigns($h);
 
