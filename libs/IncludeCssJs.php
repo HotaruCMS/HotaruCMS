@@ -345,7 +345,7 @@ class IncludeCssJs
      * @param int $version_css 
      * @param bool $admin 
      */
-     public function includeCombined($version_js = 0, $version_css = 0, $admin = false)
+     public function includeCombined($h, $version_js = 0, $version_css = 0, $admin = false)
      {        
         if ($admin) { $index = 'admin_index'; } else { $index = 'index'; }
         
@@ -356,7 +356,7 @@ class IncludeCssJs
         if ($version_css > 0) {
             echo "<link rel='stylesheet' href='" . BASEURL . $index . ".php?combine=1&amp;type=css&amp;version=" . $version_css . "' type='text/css' />\n";
         }
-
+        if ($h->currentUser->loggedIn) {echo "<div id='loggedIn' class='loggedIn_true'/>"; } else {"<div id='loggedIn' class='loggedIn_false'/>";}
      }
 }
 ?>
