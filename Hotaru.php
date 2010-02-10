@@ -1063,7 +1063,7 @@ class Hotaru
      {
         $version_js = $this->includes->combineIncludes($this, 'js');
         $version_css = $this->includes->combineIncludes($this, 'css');
-        $this->includes->includeCombined($version_js, $version_css, $this->isAdmin);
+        $this->includes->includeCombined($this, $version_js, $version_css, $this->isAdmin);
      }
      
      
