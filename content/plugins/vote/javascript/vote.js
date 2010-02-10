@@ -36,8 +36,31 @@ $(document).ready(function(){
 		var target = $(this).parents('div').next('div').children('div.alert_choices');
                 target.fadeToggle();
                 return false;
-        });  
-        
+        });
+
+
+       if ($('#loggedIn').hasClass('loggedIn_true')) {
+            $(".show_post_title a").click(function(event) {
+                if (vote_on_url_click == "checked") {
+                    if ($(this).hasClass('click_to_source')) {
+                        event.preventDefault();
+                        var post_id = $(this).parent().parent().attr("id");
+                        var parts = post_id.split('_');
+                        post_id = parts[parts.length-1];
+
+                        vote( post_id, 10, 'link' );
+                        link = $(this).attr('href');
+
+                        setTimeout(function () {
+                            window.location.href = link
+                        }, 500);
+                        return false;
+                        }
+                    }
+                    return true;
+            });
+       }
+
 }); 
 
 /* ******************************************************************** 
@@ -47,51 +70,43 @@ $(document).ready(function(){
  *  Notes: ---
  ********************************************************************** */
 	 
-function vote(baseurl, ip, id, rating)
+function vote(id, rating, referer)
 {
-	url = baseurl+"content/plugins/vote/vote_functions.php";
+	sendurl = BASEURL +"content/plugins/vote/vote_functions.php";
 	
-	var target_votes = document.getElementById("votes_"+id);
-	var target_text_vote = document.getElementById("text_vote_"+id);
-	var target_text_unvote = document.getElementById("text_unvote_"+id);
+	$target_votes = $("#votes_"+id);
+	$target_text_vote = $("#text_vote_"+id);
+	$target_text_unvote = $("#text_unvote_"+id);
+
+    var formdata = "post_id="+id+"&rating="+rating+"&referer="+referer;
+
+        $.ajax(
+            {
+            type: 'post',
+            url: sendurl,
+            data: formdata,
+            beforeSend: function () {
+                            $target_votes.addClass('vote_color_top_clicked');
+                    },
+            error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+                             $target_votes.html('err');
+            },
+            success: function(data) { // success means it returned some form of json code to us. may be code with custom error msg
+                    if (data.error === true || referer === "link") {
+                    }
+                    else {                        
+                        $target_votes.html(data.votes);
+                        $target_votes.addClass('vote_color_top_just_voted');
+                        if(rating > 0) {
+                            $target_text_vote.css('display','none');
+                            $target_text_unvote.css('display','block');
+                        } else if(rating < 0) {
+                            $target_text_vote.css('display','block');
+                            $target_text_unvote.css('display','none');
+                        }
+                    }
+            },
+            dataType: "json"
+        });
 	
-	if (xmlhttp) {
-		mycontent = "baseurl="+baseurl+"&user_ip="+ip+"&post_id="+id+"&rating="+rating;
-		ajax['response'] = new myXMLHttpRequest ();
-		
-		if (ajax) {
-			ajax['response'].open ("POST", url, true);
-			ajax['response'].setRequestHeader ('Content-Type',
-					   'application/x-www-form-urlencoded');
-
-			ajax['response'].send (mycontent);
-			ajax['response'].onreadystatechange = function () {
-				if (ajax['response'].readyState == 4) {
-					try{
-						var returnvalue = [];
-						returnvalue = json_decode(ajax['response'].responseText);
-					}
-					catch(e) {
-						alert("Unable to add your vote. Sorry!");
-					}
-						
-					if(returnvalue.result) {
-						alert(returnvalue.result);
-						return;
-					}
-							
-
-					target_votes.innerHTML = returnvalue.votes;
-					if(rating > 0) {
-						target_text_vote.style.display = 'none';
-						target_text_unvote.style.display = '';
-					} else if(rating < 0) {
-						target_text_vote.style.display = '';
-						target_text_unvote.style.display = 'none';
-					}
-
-				} 
-			}
-		}
-	}
 }

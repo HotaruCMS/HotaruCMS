@@ -52,6 +52,7 @@ class VoteSettings
         $upcoming_duration = $vote_settings['upcoming_duration'];
         $no_front_page = $vote_settings['no_front_page'];
         $posts_widget = $vote_settings['posts_widget'];
+        $vote_on_url_click = $vote_settings['vote_on_url_click'];
         
         //...otherwise set to blank or default:
         if (!$submit_vote) { $submit_vote = ''; }
@@ -64,6 +65,7 @@ class VoteSettings
         if (!$upcoming_duration) { $upcoming_duration = 5; }
         if (!$no_front_page) { $no_front_page = 5; }
         if (!$posts_widget) { $posts_widget = 'checked'; }
+        if (!$vote_on_url_click) { $vote_on_url_click = ''; }
         
         // A plugin hook so other plugin developers can add settings
         $h->pluginHook('vote_settings_get_values');
@@ -91,8 +93,10 @@ class VoteSettings
         echo "<p><input type='checkbox' id='vote_physical_delete' name='vote_physical_delete' " . $physical_delete . " /> " . $h->lang["vote_settings_physical_delete"] . "</p>";
         
         echo "<br /><p><b>" . $h->lang["vote_settings_other"] . "</b></p>";
-echo "<p><input type='checkbox' name='widget_votes' value='widget_votes' " . $posts_widget . ">&nbsp;&nbsp;" . $h->lang["vote_settings_posts_widget"] . "</p>\n"; 
-            
+        echo "<p><input type='checkbox' name='widget_votes' value='widget_votes' " . $posts_widget . ">&nbsp;&nbsp;" . $h->lang["vote_settings_posts_widget"] . "</p>\n";
+        echo "<p><input type='checkbox' name='vote_on_url_click' value=vote_on_url_click' " . $vote_on_url_click . ">&nbsp;&nbsp;" . $h->lang["vote_on_url_click"] . "</p>\n";
+
+
         // A plugin hook so other plugin developers can show settings
         $h->pluginHook('vote_settings_form_2');
         
@@ -224,6 +228,14 @@ echo "<p><input type='checkbox' name='widget_votes' value='widget_votes' " . $po
             $posts_widget = '';
         }
         
+        // vote_on_url_click
+        if ($h->cage->post->keyExists('vote_on_url_click')) { 
+            $vote_on_url_click = 'checked';
+        } else { 
+            $vote_on_url_click = '';
+        }
+
+        
         // A plugin hook so other plugin developers can save settings   
         $h->pluginHook('vote_save_settings');
         
@@ -238,7 +250,8 @@ echo "<p><input type='checkbox' name='widget_votes' value='widget_votes' " . $po
         $vote_settings['upcoming_duration'] = $upcoming_duration;
         $vote_settings['no_front_page'] = $no_front_page;
         $vote_settings['posts_widget'] = $posts_widget;
-        
+        $vote_settings['vote_on_url_click'] = $vote_on_url_click;
+       
         // parameters: plugin folder name, setting name, setting value
         $h->updateSetting('vote_settings', serialize($vote_settings));
         
