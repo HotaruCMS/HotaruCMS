@@ -614,6 +614,8 @@ class PluginManagement
         if ($enabled == 0) { 
             $h->messages[$h->lang["admin_plugins_deactivated"]] = 'green'; 
         }
+        
+        $h->pluginHook('activate_deactivate', '', array('enabled' => $enabled));
     }
     
     
