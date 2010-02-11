@@ -173,6 +173,7 @@ class Initialize
         $cage->addAccessor('getFriendlyUrl');
         $cage->addAccessor('sanitizeAll');
         $cage->addAccessor('sanitizeTags');
+        $cage->addAccessor('sanitizeEnts');
         $cage->addAccessor('getHtmLawed');
         
         return $cage;
