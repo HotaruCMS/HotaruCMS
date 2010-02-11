@@ -2,7 +2,7 @@
 /**
  * name: Submit Light
  * description: Reduces Submit to two steps
- * version: 0.1
+ * version: 0.2
  * folder: submit_light
  * class: SubmitLight
  * hooks: theme_index_top
@@ -172,7 +172,7 @@ class SubmitLight extends Submit
                         {
                         // Submitted posts given 'pending' for this user
                             $h->changePostStatus('pending');
-                            $h->messages[$h->lang['submit_form_moderation']] = 'green';
+                            $h->messages[$h->lang['submit_moderation']] = 'green';
                             $return = 1; // will return false just after we notify admins of the post (see about 10 lines down)
                         }
                         
