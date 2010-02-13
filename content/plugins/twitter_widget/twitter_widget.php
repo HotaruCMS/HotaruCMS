@@ -6,7 +6,7 @@
  * folder: twitter_widget
  * class: TwitterWidget
  * requires: widgets 0.7
- * hooks: install_plugin, header_include, hotaru_header, admin_plugin_settings
+ * hooks: install_plugin, header_include, admin_plugin_settings
  * author: Jon Harvey
  * authorurl: http://hotarucms.org/
  * thanks to: http://github.com/jdp/twitterlibphp and http://woork.blogspot.com/2009/06/super-simple-way-to-work-with-twitter.html
@@ -52,7 +52,7 @@ class TwitterWidget
 
     public function header_include($h)
     {
-        $h->includeCss('twitter_widget');
+        $h->includeCss();
     }
 
     public function widget_twitter_widget($h)
@@ -66,29 +66,57 @@ class TwitterWidget
         
         // initialize the twitter class
         $twitter = new Twitter($twitter_widget_username, $twitter_widget_password);
-    
-        // fetch your profile in xml format
+		
+		// fetch your profile in xml format
+		$user = $twitter->showUser();
+		
+		$my_info = new SimpleXMLElement($user);
+		
+        // fetch your friends in xml format or use getUserTimeline to show your own 
         $xml = $twitter->getFriendsTimeline();
-    
+		
         // fetch your session xml format    
         $twitter_status = new SimpleXMLElement($xml);
-        
-        // show twitter widget template
+		
+		// trim characters to show for each tweet		
+		function ShortenText($text) {
+		  // Change here. default 77
+		  $chars = 77;
 
+		  $text = $text." ";
+		  $text = substr($text,0,$chars);
+		  $text = substr($text,0,strrpos($text,' '));
+		  $text = $text."...";
+
+		  return $text;
+		  }	
+		
+	// show twitter widget template
         echo '<div class="twitter_container">';
-
-        foreach($twitter_status->status as $status){
-            echo '<div class="twitter_status">';
+		
+		echo '<div class="twitter_header">';
+		echo '<img src="'.$my_info->profile_image_url.'" class="twitter_image">';
+		echo '<h3><a href="http://www.twitter.com/'.$my_info->screen_name.'">'. $h->lang["twitter_widget_follow_us"] .'</a></h3>';
+		//echo '<br/>';
+		echo '<strong>'.$my_info->followers_count.' Followers</strong>';
+		echo '</div>';
+		
+			$i = 1;
+	 foreach($twitter_status->status as $status){
+            if($i < 6){ //show up to 20 latest tweets default is 5
+			echo '<div class="twitter_status">';
             foreach($status->user as $user){
                 echo '<img src="'.$user->profile_image_url.'" class="twitter_image">';
                 echo '<a href="http://www.twitter.com/'.$user->screen_name.'">'.$user->name.'</a>: ';
             }
-            echo $status->text;
+            echo ShortenText($status->text);
             echo '<br/>';
-            echo '<div class="twitter_posted_at"><strong>Posted at:</strong> '.$status->created_at.'</div>';
+            //echo '<div class="twitter_posted_at"><strong>Posted at:</strong> '.$status->created_at.'</div>';
             echo '</div>';
-            echo '</div>';
+			}
+			 $i++;
         }
+		echo '</div>';
 
     }
 

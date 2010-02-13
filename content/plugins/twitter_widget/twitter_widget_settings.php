@@ -28,47 +28,49 @@
  
 class TwitterWidgetSettings
 {
-    /**
+	/**
      * Admin settings for twitter_widget
      */
-    public function settings($h)
-    {
-        
-        // If the form has been submitted, go and save the data...
-        if ($h->cage->post->getAlpha('submitted') == 'true') { 
-            $this->saveSettings($h); 
-        }    
-        
-        echo "<h1>" . $h->lang["twitter_widget_settings_header"] . "</h1>\n";
-        
-        // Get settings from the database if they exist...
-        $twitter_widget_username = $h->getSetting('twitter_widget_username');
-        $twitter_widget_password = $h->getSetting('twitter_widget_password');
+	public function settings($h)
+	{
+		
+		// If the form has been submitted, go and save the data...
+		if ($h->cage->post->getAlpha('submitted') == 'true') { 
+			$this->saveSettings($h); 
+		}    
+		
+		echo "<h1>" . $h->lang["twitter_widget_settings_header"] . "</h1>\n";
+		
+		$h->showMessage(); // Saved / Error message
+		
+		// Get settings from the database if they exist...
+		$twitter_widget_username = $h->getSetting('twitter_widget_username');
+		$twitter_widget_password = $h->getSetting('twitter_widget_password');
 
-        //...otherwise set to blank:
-        if (!$twitter_widget_username) { $twitter_widget_username = ''; }
-        if (!$twitter_widget_password) { $twitter_widget_password = ''; }
+		//...otherwise set to blank:
+		if (!$twitter_widget_username) { $twitter_widget_username = ''; }
+		if (!$twitter_widget_password) { $twitter_widget_password = ''; }
 
-        // A plugin hook so other plugin developers can add settings
-        $h->pluginHook('twitter_widget_settings_get_values');
+		// A plugin hook so other plugin developers can add settings
+		$h->pluginHook('twitter_widget_settings_get_values');
 
-        // The form should be submitted to the admin_index.php page:
-        echo "<form name='twitter_widget_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=twitter_widget' method='post'>\n";
+		// The form should be submitted to the admin_index.php page:
+		echo "<form name='twitter_widget_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=twitter_widget' method='post'>\n";
         
         echo "<p>" . $h->lang["twitter_widget_settings_instructions"] . "</p><br />";
        
         echo "<p>" . $h->lang["twitter_widget_settings_username"] . " <input type='text' size=25 name='twitter_widget_username' value='" . $twitter_widget_username . "'></p>\n";    
         echo "<p>" . $h->lang["twitter_widget_settings_password"] . " <input type='password' size=25 name='twitter_widget_password' value='" . $twitter_widget_password . "'></p>\n";    
 
-        // A plugin hook so other plugin developers can show settings        
-        $h->pluginHook('twitter_widget_settings_form');
+		// A plugin hook so other plugin developers can show settings		
+		$h->pluginHook('twitter_widget_settings_form');
                 
         echo "<br /><br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
         echo "<input type='submit' value='" . $h->lang["main_form_save"] . "' />\n";
         echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
-    
+	
 }  
 
 public function saveSettings($h)
@@ -86,8 +88,8 @@ public function saveSettings($h)
             $h->messageType = "red";
         }
        
-       // twitter_widget check password
-       if ($h->cage->post->keyExists('twitter_widget_password')) { 
+	   // twitter_widget check password
+	   if ($h->cage->post->keyExists('twitter_widget_password')) { 
             $twitter_widget_password = $h->cage->post->testAlnumLines('twitter_widget_password');
             $error = 0;
         } else {
@@ -97,7 +99,7 @@ public function saveSettings($h)
             $h->messageType = "red";
         }
 
-       
+	   
         $h->pluginHook('twitter_widget_save_settings');
         
         if ($error == 0) {
@@ -108,7 +110,7 @@ public function saveSettings($h)
             $h->messageType = "green";
         }
         $h->showMessage();
-        
+		
     return true;    
 }  
 

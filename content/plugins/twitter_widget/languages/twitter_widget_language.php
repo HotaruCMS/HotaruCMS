@@ -34,4 +34,6 @@ $lang["twitter_widget_settings_mo_username"] = "Username not entered.";
 $lang["twitter_widget_settings_no_password"] = "Password not entered.";
 $lang["twitter_widget_main_settings_saved"] = "Username and Password Saved.";
 
+/* Sidebar */
+$lang["twitter_widget_follow_us"] = "Follow Us on Twitter!";
 ?>
