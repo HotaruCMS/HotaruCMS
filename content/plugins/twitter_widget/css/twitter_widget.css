@@ -1,0 +1,57 @@
+/* by Antonio Lupetti http://woork.blogspot.com/2009/06/super-simple-way-to-work-with-twitter.html */
+
+
+.twitter_container{
+	color:#444;
+	font-family:"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif;
+	font-size:12px;
+	width:100%;
+	margin: 0 auto;
+}
+
+.twitter_container a {
+	color:#0066CC;
+	font-weight:bold;
+}
+.twitter_header{
+	background: #94E4E8 url(content/plugins/twitter_widget/images/twitwidbg.gif) no-repeat left center;
+    height:48px;
+	padding:6px;
+	border-top:solid 1px #DEDEDE;
+	border-bottom:solid 1px #DEDEDE;
+}
+.twitter_header h3{
+   padding-top:4px;
+}
+.twitter_header h3 a{
+   font-size:1.2em;
+   padding-top:4px;
+   color:#0066CC;
+}
+.twitter_header img{
+	float:left; 
+	margin-right:14px;
+	width:48px;
+	height:48px;
+}
+.twitter_header a{
+    color:#000000;
+}
+.twitter_status{
+	height:50px;
+	padding:6px;
+	border-bottom:solid 1px #DEDEDE;
+
+}
+.twitter_image{
+	float:left; 
+	margin-right:14px;
+	border:solid 2px #DEDEDE;
+	width:48px;
+	height:48px;
+}
+.twitter_posted_at{
+	 font-size:11px;
+	 padding-top:4px;
+	 color:#999;
+}
