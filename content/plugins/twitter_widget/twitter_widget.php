@@ -90,15 +90,15 @@ class TwitterWidget
 
 		  return $text;
 		  }	
-		
+		   
+	
 	// show twitter widget template
-        echo '<div class="twitter_container">';
-		
+        echo '<div class="twitter_container">';	
 		echo '<div class="twitter_header">';
-		echo '<img src="'.$my_info->profile_image_url.'" class="twitter_image">';
-		echo '<h3><a href="http://www.twitter.com/'.$my_info->screen_name.'">'. $h->lang["twitter_widget_follow_us"] .'</a></h3>';
+		echo '<img src="'.$my_info->profile_image_url.'" alt='.$my_info->screen_name.' title='.$my_info->screen_name.' >';
+		echo '<h3><a href="http://www.twitter.com/'.$my_info->screen_name.'">'.$my_info->followers_count.' Followers</a></h3>';
 		//echo '<br/>';
-		echo '<strong>'.$my_info->followers_count.' Followers</strong>';
+		echo '<a href="http://www.twitter.com/'.$my_info->screen_name.'">'.$h->lang["twitter_widget_follow_us"].'</a>';
 		echo '</div>';
 		
 			$i = 1;
@@ -111,12 +111,14 @@ class TwitterWidget
             }
             echo ShortenText($status->text);
             echo '<br/>';
+			// uncommment below to show posted time - might have to adjust CSS!
             //echo '<div class="twitter_posted_at"><strong>Posted at:</strong> '.$status->created_at.'</div>';
             echo '</div>';
 			}
 			 $i++;
         }
 		echo '</div>';
+
 
     }
 
