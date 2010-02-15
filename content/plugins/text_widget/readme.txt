@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.0.5 2010/02/15 - Nick - Minor widget ids fix for W3C compatibility 
 v.0.4 2010/01/04 - Nick - Updates for compatibility with Hotaru 1.0
 v.0.3 2009/11/04 - Nick - Updated install function for easier upgrading
 v.0.2 2009/10/13 - Nick - Bug fix for deleting text widgets

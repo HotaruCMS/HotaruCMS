@@ -2,7 +2,7 @@
 /**
  * name: Text Widget
  * description: Paste text or code into a blank widget
- * version: 0.4
+ * version: 0.5
  * folder: text_widget
  * class: TextWidget
  * requires: widgets 0.6
@@ -87,13 +87,13 @@ class TextWidget
             $content = html_entity_decode(stripslashes($settings['text_widget_content']), ENT_QUOTES,'UTF-8');
 
             if ($settings['text_widget_title']) {
-                echo "<h2 class='widget_head' id='text_widget_" . $id . "'>" . stripslashes($title) . "</h2>\n";
+                echo "<h2 class='widget_head' id='text_widget_" . $id . "_head'>" . stripslashes($title) . "</h2>\n";
             }
 
             if ($settings['text_widget_php']) {
-                echo "<div class='widget_body' id='text_widget_" . $id . "'>"; eval($content); echo "</div>\n";
+                echo "<div class='widget_body' id='text_widget_" . $id . "_body'>"; eval($content); echo "</div>\n";
             } else {
-                echo "<div class='widget_body' id='text_widget_" . $id . "'>"; echo $content; echo "</div>\n";
+                echo "<div class='widget_body' id='text_widget_" . $id . "_body'>"; echo $content; echo "</div>\n";
             }
 
         }
