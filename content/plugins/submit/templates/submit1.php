@@ -42,7 +42,6 @@ $submitted_url = urldecode($h->vars['submitted_data']['submit_orig_url']);
 
         <input type='hidden' name='submit1' value='true' />
         <input type='hidden' name='page' value='<?php echo $h->pageName; ?>' />
-        <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
         <br />
         <input id="submit_button_1" type='submit' class='submit' name='submit' value='<?php echo $h->lang['main_form_next']; ?>' />
     </form>
