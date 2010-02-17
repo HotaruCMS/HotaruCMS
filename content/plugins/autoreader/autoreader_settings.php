@@ -97,12 +97,64 @@ $where ="";
   	$sql = "SELECT * FROM {$this->db['campaign']} WHERE 1 = 1 $where "
          . ""; //ORDER BY $orderby $ordertype $limit";
 
-    //print $sql;
-    
-
-    return $h->db->get_results($sql);
-  
+    //print $sql;  
+    return $h->db->get_results($sql);  
   }
+
+
+    /**
+   * Retrieves feeds for a certain campaign
+   *
+   * @param   integer   $id     Campaign id
+   */
+  function getCampaignFeeds($h,$id)
+  {
+    return $h->db->get_results("SELECT * FROM {$this->db['campaign_feed']} WHERE campaign_id = $id");
+  }
+
+
+  /**
+   * Retrieves all posts for a certain campaign
+   *
+   * @param   integer   $id     Campaign id
+   */
+  function getCampaignPosts($h, $id)
+  {
+    return $h->db->get_results("SELECT post_id FROM {$this->db['campaign_post']} WHERE campaign_id = $id ");
+  }
+
+  /**
+   * Adds a feed by url and campaign id
+   *
+   *
+   */
+  function addCampaignFeed($h, $id, $feed)
+  {
+
+    $simplepie = $this->fetchFeed($feed, true);
+    $url = $h->db->escape($simplepie->subscribe_url());
+
+    // If it already exists, ignore it
+    if(! $h->db->get_var("SELECT id FROM {$this->db['campaign_feed']} WHERE campaign_id = $id AND url = '$url' "))
+    {
+      $h->db->query(WPOTools::insertQuery($this->db['campaign_feed'],
+        array('url' => $url,
+              'title' => $h->db->escape($simplepie->get_title()),
+              'description' => $h->db->escape($simplepie->get_description()),
+              'logo' =>$h->db->escape($simplepie->get_image_url()),
+              'campaign_id' => $id)
+      ));  
+
+      return  $h->db->insert_id;
+    }
+
+    return false;
+  }
+
+
+
+
+
 
 
      /**
@@ -129,11 +181,10 @@ $where ="";
       public function adminAdd($h)
       {
         $data = $this->campaign_structure;
+        $data_add = $h->cage->post->testAlnumLines('campaign_add');
 
-        if(isset($_REQUEST['campaign_add']))
-        {
-          check_admin_referer('wpomatic-edit-campaign');
-
+        if(isset($data_add))
+        {         
           if($this->errno)
             $data = $this->campaign_data;
           else
@@ -142,7 +193,7 @@ $where ="";
 
         $author_usernames = $this->getBlogUsernames();
         $campaign_add = true;
-        include(WPOTPL . 'edit.php');
+       // include(WPOTPL . 'edit.php');
       }
 
 
@@ -180,8 +231,8 @@ $where ="";
 
   function adminEditCategories($h, &$data, $parent = 0, $level = 0, $categories = 0)
   {
-  	if ( !$categories )
-  		$categories = get_categories(array('hide_empty' => 0));
+  	if ( !$categories )       
+  		$categories = $h->getCategories();
 
     if(function_exists('_get_category_hierarchy'))
       $children = _get_category_hierarchy();
@@ -191,18 +242,30 @@ $where ="";
       $children = array();
 
   	if ( $categories ) {
-  		ob_start();
-  		foreach ( $categories as $category ) {
-  			if ( $category->parent == $parent) {
-  				echo "\t" . _wpo_edit_cat_row($category, $level, $data);
-  				if ( isset($children[$category->term_id]) )
-  					$this->adminEditCategories($data, $category->term_id, $level + 1, $categories );
-  			}
-  		}
-  		$output = ob_get_contents();
-  		ob_end_clean();
 
-  		echo $output;
+        require_once(LIBS . 'Category.php');
+        $catObj = new Category();
+        $depth = 1;
+
+  		echo "<ul class='categories_widget'>\n";
+        foreach ($categories as $cat) {
+            $cat_level = 1;    // top level category.           
+            if ($cat->category_safe_name != "all") {
+                echo '<li class="required pad'.$depth.'">';
+                if ($cat->category_parent > 1) {
+                    $depth = $catObj->getCatLevel($h, $cat->category_id, $cat_level, $categories);
+                    for($i=1; $i<$depth; $i++) {
+                        echo "--- ";
+                    }
+                }
+                $category = stripslashes(html_entity_decode(urldecode($cat->category_name), ENT_QUOTES,'UTF-8'));
+                //echo "<a href='" . $h->url(array('category'=>$cat->category_id)) . "'>";
+                //echo $category . "</a></li>\n";
+                echo checkbox_tag('campaign_categories[]', $cat->category_id, in_array($cat->category_id, $data['categories']), 'id=category_' .$cat->category_id);
+                echo "&nbsp;" . label_for('category_' .  $cat->category_id, $category) .  "</li>\n";
+            }
+        }
+        echo "</ul>\n";
   	} else {
   		return false;
   	}
@@ -217,8 +280,6 @@ $where ="";
    */
   function adminReset($h)
   {
-
-
     $id = intval($_REQUEST['id']);
 
     if(! defined('DOING_AJAX'))
@@ -260,10 +321,10 @@ $where ="";
     if(! defined('DOING_AJAX'))
       check_admin_referer('delete-campaign_'.$id);
 
-    $wpdb->query("DELETE FROM {$this->db['campaign']} WHERE id = $id");
-    $wpdb->query("DELETE FROM {$this->db['campaign_feed']} WHERE campaign_id = $id");
-    $wpdb->query("DELETE FROM {$this->db['campaign_word']} WHERE campaign_id = $id");
-    $wpdb->query("DELETE FROM {$this->db['campaign_category']} WHERE campaign_id = $id");
+    $h->db->query("DELETE FROM {$this->db['campaign']} WHERE id = $id");
+    $h->db->query("DELETE FROM {$this->db['campaign_feed']} WHERE campaign_id = $id");
+    $h->db->query("DELETE FROM {$this->db['campaign_word']} WHERE campaign_id = $id");
+    $h->db->query("DELETE FROM {$this->db['campaign_category']} WHERE campaign_id = $id");
 
     if(defined('DOING_AJAX'))
       die('1');
@@ -302,6 +363,341 @@ $where ="";
 
 
 
+    /**
+   * Processes all campaigns
+   *
+   */
+  function processAll()
+  {
+    @set_time_limit(0);
+
+    $campaigns = $this->getCampaigns('unparsed=1');
+
+    foreach($campaigns as $campaign)
+    {
+      $this->processCampaign($campaign);
+    }
+  }
+
+  /**
+   * Processes a campaign
+   *
+   * @param   object    $campaign   Campaign database object
+   * @return  integer   Number of processed items
+   */
+  function processCampaign($h, &$campaign)
+  {
+    @set_time_limit(0);
+    ob_implicit_flush();
+//print $campaign;
+    // Get campaign
+    $campaign = is_numeric($campaign) ? $this->getCampaignById($h,$campaign) : $campaign;
+//print_r ($campaign);
+    // Log
+    $this->log($h, 'Processing campaign ' . $campaign->title . ' (ID: ' . $campaign->id . ')');
+
+    // Get feeds
+    $count = 0;
+    $feeds = $this->getCampaignFeeds($h, $campaign->id);
+//print_r ($feeds);
+    foreach($feeds as $feed)
+  
+//    print_r ($campaign);
+//    print_r ($feed);
+      $count += $this->processFeed($h, $campaign, $feed);
+    $h->db->query(WPOTools::updateQuery($this->db['campaign'], array(
+      'count' => $campaign->count + $count,
+      'lastactive' => current_time('mysql', true)
+    ), "id = {$campaign->id}"));
+
+    return $count;
+  }
+
+  /**
+   * Processes a feed
+   *
+   * @param   $campaign   object    Campaign database object
+   * @param   $feed       object    Feed database object
+   * @return  The number of items added to database
+   */
+
+  function processFeed($h, &$campaign, &$feed)
+  {   
+
+    @set_time_limit(0);
+
+    // Log
+    $this->log($h, 'Processing feed ' . $feed->title . ' (ID: ' . $feed->id . ')');
+
+    // Access the feed
+    $simplepie = $this->fetchFeed($feed->url, false, $campaign->max);
+
+    // Get posts (last is first)
+    $items = array();
+    $count = 0;
+
+    foreach($simplepie->get_items() as $item)
+    {
+      if($feed->hash == $this->getItemHash($item))
+      {
+        if($count == 0) $this->log($h, 'No new posts');
+        break;
+      }
+
+//      if($this->isDuplicate($h, $campaign, $feed, $item))
+//      {
+//        $this->log($h, 'Filtering duplicate post');
+//        break;
+//      }
+
+      $count++;
+      array_unshift($items, $item);
+
+      if($count == $campaign->max)
+      {
+        $this->log($h, 'Campaign fetch limit reached at ' . $campaign->max);
+        break;
+      }
+    }
+
+    // Processes post stack
+    foreach($items as $item)
+    {
+      $this->processItem($h, $campaign, $feed, $item);
+      $lasthash = $this->getItemHash($item);
+    }
+
+    // If we have added items, let's update the hash
+    if($count)
+    {
+      $h->db->query(WPOTools::updateQuery($this->db['campaign_feed'], array(
+        'count' => $count,
+        'lastactive' => current_time('mysql', true),
+        'hash' => $lasthash
+      ), "id = {$feed->id}"));
+
+      $this->log( $count . ' posts added' );
+    }
+
+    return $count;
+  }
+
+
+ /**
+   * Processes an item
+   *
+   * @param   $item       object    SimplePie_Item object
+   */
+  function getItemHash($item)
+  {
+      print  $item->get_permalink();
+    return sha1($item->get_title() . $item->get_permalink());
+  }
+
+
+   /**
+   * Processes an item
+   *
+   * @param   $campaign   object    Campaign database object
+   * @param   $feed       object    Feed database object
+   * @param   $item       object    SimplePie_Item object
+   */
+  function processItem($h, &$campaign, &$feed, &$item)
+  {
+    $this->log($h, 'Processing item');
+
+    // Item content
+    $content = $this->parseItemContent($h, $campaign, $feed, $item);
+
+    // Item date
+   /* if($campaign->feeddate && ($item->get_date('U') > (current_time('timestamp', 1) - $campaign->frequency) && $item->get_date('U') < current_time('timestamp', 1)))
+      $date = $item->get_date('U');
+    else
+      $date = null;*/
+
+	   if($campaign->feeddate)
+     	 $date = $item->get_date('U');
+    else
+      $date = null;
+
+    // Categories
+    $categories = $this->getCampaignData($h, $campaign->id, 'categories');
+
+    $orig_url = $item->get_permalink();
+    print_r ($item);
+	//  $catlists=get_categories('hide_empty=0');
+
+	//	foreach ($catlists as $catlist)
+	//  	{
+	//		$category_description=$catlist->category_description;
+	//		$category_description=explode('*****',$category_description );
+	//		$category_description=$category_description[2];
+	//		$category_description=explode("/",$category_description);
+	//		$category_description=$category_description[2];
+	//	  	$category_description=str_replace( 'www.','', $category_description);
+	//		$category_id[$category_description]=$catlist->cat_ID;
+	//	}
+
+
+    // Meta
+
+		/*if(str_replace('http://','',$item->get_permalink()))
+		$prefix='http://';
+
+		$wpo_websit1=str_replace('http://','',$item->get_permalink());
+
+		if(str_replace('https://','',$wpo_websit1))
+		$prefix='https://';
+		$wpo_websit2=str_replace('https://','',$wpo_websit1);
+
+		if(str_replace('www.','',$wpo_websit2))
+		$prefix.='www.';*/
+
+//		$permalink=$item->get_permalink();
+//		$root=$_SERVER['HTTP_HOST'];
+
+//		$posturl=file_get_contents("http://$root/wp-content/plugins/wp-o-matic/original_url.php?blog=$permalink");
+
+//		$posturl = $this->get_sourceurl($permalink);
+//		$wpo_websit1=explode('/', $posturl);
+//		$wpo_websit2=$wpo_websit1[2];
+//		$wpo_websit3=str_replace('www.','',$wpo_websit2);
+//		$wpo_website=$wpo_websit1[0].'//'.$wpo_websit1[2];
+//		$categories[]=$category_id[$wpo_websit3];
+
+
+    $meta = array(
+      'wpo_campaignid' => $campaign->id,
+      'wpo_feedid' => $feed->id,
+//      'wpo_sourcepermalink' =>$posturl,
+	 // $item->get_permalink(),
+//	  'wpo_website' => $wpo_website
+    );
+
+    // Create post
+
+//echo  $content;
+
+
+
+    $postid = $this->insertPost($h, $h->db->escape($item->get_title()), $h->db->escape($content), $date, $categories, $campaign->posttype, $campaign->authorid, $campaign->allowpings, $campaign->comment_status, $meta);
+
+	$post_tags=$item->get_categories();
+
+	$tag_list="";
+	if($post_tags)
+	 {
+		foreach($post_tags as $post_tag)
+		 $tag_list.=$post_tag->term.",";
+	 }
+
+    if($tag_list!="") { wp_add_post_tags($postid, $tag_list);  }
+
+    // If pingback/trackbacks
+    if($campaign->dopingbacks)
+    {
+      $this->log('Processing item pingbacks');
+
+      require_once(ABSPATH . WPINC . '/comment.php');
+    	pingback($content, $postid);
+    }
+
+    // Save post to log database
+    $h->db->query(WPOTools::insertQuery($this->db['campaign_post'], array(
+      'campaign_id' => $campaign->id,
+      'feed_id' => $feed->id,
+      'post_id' => $postid,
+      'hash' => $this->getItemHash($item)
+    )));
+  }
+
+
+
+ /**
+   * Processes an item
+   *
+   * @param   $campaign   object    Campaign database object
+   * @param   $feed       object    Feed database object
+   * @param   $item       object    SimplePie_Item object
+   */
+  function isDuplicate($h, &$campaign, &$feed, &$item)
+  {
+    $hash = $this->getItemHash($item);
+    $row = $h->db->get_row("SELECT * FROM {$this->db['campaign_post']} "
+                          . "WHERE campaign_id = {$campaign->id} AND feed_id = {$feed->id} AND hash = '$hash' ");
+    return !! $row;
+  }
+
+
+ /**
+   * Writes a post to blog
+   *
+   *
+   * @param   string    $title            Post title
+   * @param   string    $content          Post content
+   * @param   integer   $timestamp        Post timestamp
+   * @param   array     $category         Array of categories
+   * @param   string    $status           'draft', 'published' or 'private'
+   * @param   integer   $authorid         ID of author.
+   * @param   boolean   $allowpings       Allow pings
+   * @param   boolean   $comment_status   'open', 'closed', 'registered_only'
+   * @param   array     $meta             Meta key / values
+   * @return  integer   Created post id
+   */
+  function insertPost($h, $title, $content, $timestamp = null, $category = null, $status = 'pending', $authorid = null, $allowpings = true, $comment_status = 'open', $meta = array())
+  {
+    $date = ($timestamp) ? gmdate('Y-m-d H:i:s', $timestamp + (get_option('gmt_offset') * 3600)) : null;
+
+    $h->post = new Post();
+
+    $h->post->title =  $title;
+    $h->post->url = make_url_friendly($title);
+    $h->post->content = $content;
+    $h->post->type = 'news';
+    $h->post->author = $h->currentUser->id;
+    $h->post->status = $status;
+
+    $h->addPost();
+
+
+   /* $postid = wp_insert_post(array(
+    	'post_title' 	            => $title,
+  		'post_content'  	        => $content,
+  		'post_content_filtered'  	=> $content,
+  		'post_category'           => $category,
+  		'post_status' 	          => $status,
+  		'post_author'             => $authorid,
+  		'post_date'               => $date,
+  		'comment_status'          => $comment_status,
+  		'ping_status'             => $allowpings
+    ));
+
+		foreach($meta as $key => $value)
+			$this->insertPostMeta($postid, $key, $value);
+*/
+        $postid = $h->post->vars['last_insert_id'];
+
+		return $postid;
+  }
+
+  /**
+   * insertPostMeta
+   *
+   *
+   */
+	function insertPostMeta($h, $postid, $key, $value) {
+
+		$result = $h->db->query( "INSERT INTO $h->db->postmeta (post_id,meta_key,meta_value ) "
+					                . " VALUES ('$postid','$key','$value') ");
+					
+		return $h->db->insert_id;
+	}
+
+
+
+
+
+
 
 
 
@@ -315,33 +711,43 @@ $where ="";
    *
    * @return array  errors
    */
-  function adminCampaignRequest($h, $data)
+  function adminCampaignRequest($h)
   {
+    $data_active = $h->cage->post->testAlnumLines('campaign_active');
+    $data_template = $h->cage->post->testAlnumLines('campaign_templatechk');
+    $data_cacheimages = $h->cage->post->keyExists('campaign_cacheimages');
+    $data_feeddate = $h->cage->post->keyExists('campaign_feeddate');
+    $data_allowpings = $h->cage->post->keyExists('campaign_allowpings');
+    $data_dopingbacks = $h->cage->post->keyExists('campaign_dopingbacks');
+    $data_linktosource =  $h->cage->post->testInt('campaign_linktosource');
 
     # Main data
     $this->campaign_data = $this->campaign_structure;
     $this->campaign_data['main'] = array(
-        'title'         => $data['campaign_title'],
-        'active'        => isset($data['campaign_active']),
-        'slug'          => $data['campaign_slug'],
-        'template'      => (isset($data['campaign_templatechk']))
-                            ? $data['campaign_template'] : null,
-        'frequency'     => intval($data['campaign_frequency_d']) * 86400
-                          + intval($data['campaign_frequency_h']) * 3600
-                          + intval($data['campaign_frequency_m']) * 60,
-        'cacheimages'   => (int) isset($data['campaign_cacheimages']),
-        'feeddate'      => (int) isset($data['campaign_feeddate']),
-        'posttype'      => $data['campaign_posttype'],
-        'author'        => sanitize($data['campaign_author']),
-        'comment_status' => $data['campaign_commentstatus'],
-        'allowpings'    => (int) isset($data['campaign_allowpings']),
-        'dopingbacks'   => (int) isset($data['campaign_dopingbacks']),
-        'max'           => intval($data['campaign_max']),
-        'linktosource'  => (int) isset($data['campaign_linktosource'])
+        'title'         => $h->cage->post->testAlnumLines('campaign_title'),
+        'active'        => (isset( $data_active)),
+        'slug'          => $h->cage->post->testAlnumLines('campaign_slug'),
+        'template'      => (isset($data_template))
+                            ? $data = $h->cage->post->testAlnumLines('campaign_template') : null,
+        'frequency'     => intval($h->cage->post->testInt('campaign_frequency_d')) * 86400
+                          + intval($h->cage->post->testInt('campaign_frequency_h')) * 3600
+                          + intval($h->cage->post->testInt('campaign_frequency_m')) * 60,
+        'cacheimages'   => (int) isset( $data_cacheimages),
+        'feeddate'      => (int) isset( $data_feeddate),
+        'posttype'      => $h->cage->post->testAlpha('campaign_posttype'),
+        'author'        => $h->cage->post->testAlpha('campaign_author'),
+        'comment_status' => $h->cage->post->testAlpha('campaign_commentstatus'),
+        'allowpings'    => (int) isset($data_allowpings),
+        'dopingbacks'   => (int) isset( $data_dopingbacks),
+        'max'           => intval($h->cage->post->testInt('campaign_max')),
+        'linktosource'  => (int) isset($data_linktosource)
     );
 
     // New feeds
-    foreach($data['campaign_feed']['new'] as $i => $feed)
+    
+    $results=($h->cage->post->getRaw('campaign_feed/new'));
+   
+    foreach( $results as $i => $feed)
     {
       $feed = trim($feed);
 
@@ -363,7 +769,7 @@ $where ="";
         $this->campaign_data['feeds']['delete'][] = intval($feedid);
     }
 
-//    // Existing feeds.
+    // Existing feeds.
     if(isset($data['id']))
     {
       $this->campaign_data['feeds']['edit'] = array();
@@ -371,7 +777,7 @@ $where ="";
         $this->campaign_data['feeds']['edit'][$feed->id] = $feed->url;
     }
 
-//    // Categories
+    // Categories
     if(isset($data['campaign_categories']))
     {
       foreach($data['campaign_categories'] as $category)
@@ -381,7 +787,7 @@ $where ="";
       }
     }
 
-//    # New categories
+    # New categories
     if(isset($data['campaign_newcat']))
     {
       foreach($data['campaign_newcat'] as $k => $on)
@@ -439,7 +845,7 @@ $where ="";
     # Main
     if(empty($this->campaign_data['main']['title']))
     {
- //     $errors['basic'][] = __('You have to enter a campaign title', 'wpomatic');
+      $errors['basic'][] = 'You have to enter a campaign title';
       $this->errno++;
     }
 
@@ -452,7 +858,7 @@ $where ="";
 
     if(!$feedscount)
     {
-//      $errors['feeds'][] = __('You have to enter at least one feed', 'wpomatic');
+      $errors['feeds'][] ='You have to enter at least one feed';
       $this->errno++;
     } else {
       if(isset($this->campaign_data['feeds']['new']))
@@ -462,7 +868,7 @@ $where ="";
           $simplepie = $this->fetchFeed($feed, true);
           if($simplepie->error())
           {
-//            $errors['feeds'][] = sprintf(__('Feed <strong>%s</strong> could not be parsed (SimplePie said: %s)', 'wpomatic'), $feed, $simplepie->error());
+            $errors['feeds'][] = 'Feed <strong>' . $feed . '</strong> could not be parsed (SimplePie said: ' . $simplepie->error() . ')';
             $this->errno++;
           }
         }
@@ -472,7 +878,7 @@ $where ="";
     # Categories
     if(! sizeof($this->campaign_data['categories']))
     {
-//      $errors['categories'][] = __('Select at least one category', 'wpomatic');
+      $errors['categories'][] ='Select at least one category';
       $this->errno++;
     }
 
@@ -485,7 +891,7 @@ $where ="";
         {
           if(false === @preg_match($rewrite['origin']['search'], ''))
           {
-//            $errors['rewrites'][] = __('There\'s an error with the supplied RegEx expression', 'wpomatic');
+            $errors['rewrites'][] = 'There\'s an error with the supplied RegEx expression';
             $this->errno++;
           }
         }
@@ -501,23 +907,26 @@ $where ="";
 
     if(! $this->campaign_data['main']['frequency'])
     {
-//      $errors['options'][] = __('Selected frequency is not valid', 'wpomatic');
+      $errors['options'][] ='Selected frequency is not valid';
       $this->errno++;
     }
 
     if(! ($this->campaign_data['main']['max'] === 0 || $this->campaign_data['main']['max'] > 0))
     {
-//      $errors['options'][] = __('Max items should be a valid number (greater than zero)', 'wpomatic');
+      $errors['options'][] ='Max items should be a valid number (greater than zero)';
       $this->errno++;
     }
 
     if($this->campaign_data['main']['cacheimages'] && !is_writable($this->cachepath))
     {
-//      $errors['options'][] = sprintf(__('Cache path (in <a href="%s">Options</a>) must be writable before enabling image caching.', 'wpomatic'), $this->adminurl . '&s=options' );
+      $errors['options'][] = 'Cache path (in <a href="' . $this->adminurl . '&s=options">Options</a>) must be writable before enabling image caching.';
       $this->errno++;
     }
 
-//    $this->errors = $errors;
+    $this->errors = $errors;
+    return $errors;
+    //print_r ( $this->errors);
+    //exit;
   }
 
   /**
@@ -533,7 +942,7 @@ $where ="";
 
     // Process the edit
     $this->campaign_data['main']['lastactive'] = 0;
-    $this->adminProcessEdit($cid);
+    $this->adminProcessEdit($h,$cid);
     return $cid;
   }
 
@@ -544,9 +953,10 @@ $where ="";
    */
   function adminProcessEdit($h,$id)
   {
-
+//print $id;
+//print_r ($this->campaign_data);
     // If we need to execute a tool action we stop here
-    if($this->adminProcessTools()) return;
+    if($this->adminProcessTools($h)) return;
 
     // Delete all to recreate
     $h->db->query("DELETE FROM {$this->db['campaign_word']} WHERE campaign_id = $id");
@@ -560,6 +970,8 @@ $where ="";
         $this->campaign_data['categories'][] = wp_insert_category(array('cat_name' => $category));
 
       unset($this->campaign_data['categories']['new']);
+
+     // print "new campaign";
     }
 
     # All
@@ -577,7 +989,7 @@ $where ="";
     if(isset($this->campaign_data['feeds']['new']))
     {
       foreach($this->campaign_data['feeds']['new'] as $feed)
-        $this->addCampaignFeed($id, $feed);
+        $this->addCampaignFeed($h, $id, $feed);
     }
 
     # Delete
@@ -604,13 +1016,12 @@ $where ="";
     $main = $this->campaign_data['main'];
 
     // Fetch author id
-    $author = get_userdatabylogin($this->campaign_data['main']['author']);
-    $main['authorid'] = $author->ID;
+    $main['authorid'] = $h->getUserIdFromName($this->campaign_data['main']['author']);
     unset($main['author']);
 
     // Query
     $query = WPOTools::updateQuery($this->db['campaign'], $main, 'id = ' . intval($id));
-    $wpdb->query($query);
+    $h->db->query($query);
   }
 
   /**
@@ -644,8 +1055,8 @@ $where ="";
 
     if(isset($_REQUEST['tool_changetype']))
     {
-      $this->adminUpdateCampaignPosts($id, array(
-        'post_status' => $wpdb->escape($_REQUEST['campaign_tool_changetype'])
+      $this->adminUpdateCampaignPosts($h, $id, array(
+        'post_status' => $h->db->escape($_REQUEST['campaign_tool_changetype'])
       ));
 
       $this->tool_success = __('Posts status updated', 'wpomatic');
@@ -660,13 +1071,13 @@ $where ="";
       if($author)
       {
         $authorid = $author->ID;
-        $this->adminUpdateCampaignPosts($id, array('post_author' => $authorid));
+        $this->adminUpdateCampaignPosts($h, $id, array('post_author' => $authorid));
       } else {
         $this->errno = 1;
-        $this->errors = array('tools' => array(sprintf(__('Author %s not found', 'wpomatic'), attribute_escape($_REQUEST['campaign_tool_changeauthor']))));
+        $this->errors = array('tools' => array(print('Author' . attribute_escape($_REQUEST['campaign_tool_changeauthor'])).  ' not found' ));
       }
 
-      $this->tool_success = __('Posts status updated', 'wpomatic');
+      $this->tool_success = 'Posts status updated';
       return true;
     }
 
@@ -675,11 +1086,115 @@ $where ="";
 
   function adminUpdateCampaignPosts($h,$id, $properties)
   {
-
-    $posts = $this->getCampaignPosts($id);
+    $posts = $this->getCampaignPosts($h, $id);
 
     foreach($posts as $post)
-       $h->db->query(WPOTools::updateQuery($wpdb->posts, $properties, "ID = {$post->id}"));
+       $h->db->query(WPOTools::updateQuery($h->db->posts, $properties, "ID = {$post->id}"));
+  }
+
+  /**
+   * Parses an item content
+   *
+   * @param   $campaign       object    Campaign database object
+   * @param   $feed           object    Feed database object
+   * @param   $item           object    SimplePie_Item object
+   */
+  function parseItemContent($h, &$campaign, &$feed, &$item)
+  {
+    $content = $item->get_content();
+
+    // Caching
+    if ($campaign->cacheimages)   // set override here for all campaigns  get_option('wpo_cacheimages')
+    {
+      $images = WPOTools::parseImages($content);
+      $urls = $images[2];
+
+      if(sizeof($urls))
+      {
+        $this->log('Caching images');
+
+        foreach($urls as $url)
+        {
+          $newurl = $this->cacheRemoteImage($url);
+          if($newurl)
+            $content = str_replace($url, $newurl, $content);
+        }
+      }
+    }
+
+    // Template parse
+    $vars = array(
+      '{content}',
+      '{title}',
+      '{permalink}',
+      '{feedurl}',
+      '{feedtitle}',
+      '{feedlogo}',
+      '{campaigntitle}',
+      '{campaignid}',
+      '{campaignslug}'
+    );
+
+    $replace = array(
+      $content,
+      $item->get_title(),
+      $item->get_link(),
+      $feed->url,
+      $feed->title,
+      $feed->logo,
+      $campaign->title,
+      $campaign->id,
+      $campaign->slug
+    );
+
+    $content = str_ireplace($vars, $replace, ($campaign->template) ? $campaign->template : '{content}');
+
+    // Rewrite
+    $rewrites = $this->getCampaignData($h, $campaign->id, 'rewrites');
+    foreach($rewrites as $rewrite)
+    {
+      $origin = $rewrite['origin']['search'];
+
+      if(isset($rewrite['rewrite']))
+      {
+        $reword = isset($rewrite['relink'])
+                    ? '<a href="'. $rewrite['relink'] .'">' . $rewrite['rewrite'] . '</a>'
+                    : $rewrite['rewrite'];
+
+        if($rewrite['origin']['regex'])
+        {
+          $content = preg_replace($origin, $reword, $content);
+        } else
+          $content = str_ireplace($origin, $reword, $content);
+      } else if(isset($rewrite['relink']))
+        $content = str_ireplace($origin, '<a href="'. $rewrite['relink'] .'">' . $origin . '</a>', $content);
+    }
+
+    return $content;
+  }
+
+  /**
+   * Cache remote image
+   *
+   * @return string New url
+   */
+  function cacheRemoteImage($h, $url)
+  {
+    $contents = @file_get_contents($url);
+
+    $url=explode("?", $url );
+	$url=$url[0];
+    $filename = substr(md5(time()), 0, 5) . '_' . basename($url);
+
+    $cachepath = $this->cachepath;
+
+    if(is_writable($cachepath) && $contents)
+    {
+      file_put_contents($cachepath . '/' . $filename, $contents);
+      return $this->pluginpath . '/' . get_option('wpo_cachepath') . '/' . $filename;
+    }
+
+    return false;
   }
 
 /**
@@ -689,12 +1204,12 @@ $where ="";
    * @param   integer     $max              Limit of items to fetch
    * @return  SimplePie_Item    Feed object
    **/
-  function fetchFeed($h,$url, $stupidly_fast = false, $max = 0)
+  function fetchFeed($url, $stupidly_fast = false, $max = 0)
   {
-    # SimplePie
+    # SimplePie     
     if(! class_exists('SimplePie'))
-      require_once( BASEURL . 'libs/extensions/simplepie/simplepie.inc' );
-
+      require_once( LIBS . 'extensions/SimplePie/simplepie.inc' );
+ 
     $feed = new SimplePie();
     $feed->enable_order_by_date(false); // thanks Julian Popov
     $feed->set_feed_url($url);
@@ -707,8 +1222,148 @@ $where ="";
     return $feed;
   }
 
+  /**
+   * Returns all blog usernames (in form [user_login => display_name (user_login)] )
+   *
+   * @return array $usernames
+   **/
+  function getBlogUsernames()
+  {
+    $return = array();
+    $users = get_users_of_blog();
+
+    foreach($users as $user)
+    {
+      if($user->display_name == $user->user_login)
+        $return[$user->user_login] = "{$user->display_name}";
+      else
+        $return[$user->user_login] = "{$user->display_name} ({$user->user_login})";
+    }
+
+    return $return;
+  }
 
 
+  /**
+   * Returns all data for a campaign
+   *
+   *
+   */
+  function getCampaignData($h, $id, $section = null)
+  {   
+    $campaign = (array) $this->getCampaignById($h, $id);
+
+    if($campaign)
+    {
+      $campaign_data = $this->campaign_structure;
+
+      // Main
+      if(!$section || $section == 'main')
+      {
+        $campaign_data['main'] = array_merge($campaign_data['main'], $campaign);
+        $userdata = get_userdata($campaign_data['main']['authorid']);
+        $campaign_data['main']['author'] = $userdata->user_login;
+      }
+
+      // Categories
+      if(!$section || $section == 'categories')
+      {
+        $categories = $h->db->get_results("SELECT * FROM {$this->db['campaign_category']} WHERE campaign_id = $id");
+        if ($categories) {
+        foreach($categories as $category)
+          $campaign_data['categories'][] = $category->category_id;
+        } else {
+            }
+      }
+
+      // Feeds
+      if(!$section || $section == 'feeds')
+      {
+        $campaign_data['feeds']['edit'] = array();
+
+        $feeds = $this->getCampaignFeeds($id);
+        foreach($feeds as $feed)
+          $campaign_data['feeds']['edit'][$feed->id] = $feed->url;
+      }
+
+      // Rewrites
+      if(!$section || $section == 'rewrites')
+      {
+        $rewrites = $h->db->get_results("SELECT * FROM {$this->db['campaign_word']} WHERE campaign_id = $id");
+        if ($rewrites) {
+            foreach($rewrites as $rewrite)
+            {
+              $word = array('origin' => array('search' => $rewrite->word, 'regex' => $rewrite->regex), 'rewrite' => $rewrite->rewrite_to, 'relink' => $rewrite->relink);
+
+              if(! $rewrite->rewrite) unset($word['rewrite']);
+              if(empty($rewrite->relink)) unset($word['relink']);
+
+              $campaign_data['rewrites'][] = $word;
+            }
+        }  
+      }
+
+      if($section)
+        return $campaign_data[$section];
+
+      return $campaign_data;
+    }
+
+    return false;
+  }
+
+  /**
+   * Retrieves logs from database
+   *
+   *
+   */
+  function getLogs($h, $args = '')
+  {   
+    extract(WPOTools::getQueryArgs($args, array('orderby' => 'created_on',
+                                                'ordertype' => 'DESC',
+                                                'limit' => null,
+                                                'page' => null,
+                                                'perpage' => null)));
+    if(!is_null($page))
+    {
+      if($page == 0) $page = 1;
+      $page--;
+
+      $start = $page * $perpage;
+      $end = $start + $perpage;
+      $limit = "LIMIT {$start}, {$end}";
+    }
+
+  	return $h->db->get_results("SELECT * FROM {$this->db['log']} ORDER BY $orderby $ordertype $limit");
+  }
+
+  /**
+   * Retrieves a campaign by its id
+   *
+   *
+   */
+  function getCampaignById($h, $id)
+  {
+    $id = intval($id);
+    return $h->db->get_row("SELECT * FROM {$this->db['campaign']} WHERE id = $id");
+  }
+
+  /**
+   * Retrieves a feed by its id
+   *
+   *
+   */
+  function getFeedById($h, $id)
+  {
+    $id = intval($id);
+    return $h->db->get_row("SELECT * FROM {$this->db['campaign_feed']} WHERE id = $id");
+  }
+
+
+
+
+
+  
 
 
 
@@ -719,38 +1374,41 @@ $where ="";
    *
    *
    */
-  function adminTestfeed()
+  function adminTestfeed($url)
   {
-    if(!isset($_REQUEST['url'])) return false;
+     
+    //if(!isset($_REQUEST['url'])) return false;
 
-    $url = $_REQUEST['url'];
+   // $url = $_REQUEST['url'];
     $feed = $this->fetchFeed($url, true);
     $works = ! $feed->error(); // if no error returned
 
+     if($works):
+        $json_array = array('result'=>'ok', 'url'=>$feed->feed_url );
+     else:
+        $json_array = array('result'=>'fail', 'error'=>$works );
+     endif ;
 
-         if($works): ?>
-        <?php printf(__('The feed %s has been parsed successfully.', 'wpomatic'), $url) ?>
-        <?php else: ?>
-        <?php printf(__('The feed %s cannot be parsed. Simplepie said: %s', 'wpomatic'), $url, $works) ?>
-        <?php endif ;
+     echo json_encode($json_array);
 
   }
 
 
-
-
-
-
-
-    /**
-   * Retrieves feeds for a certain campaign
+  /**
+   * Forcedfully processes a campaign
    *
-   * @param   integer   $id     Campaign id
+   *
    */
-  function getCampaignFeeds($h,$id)
-  {  
-    return $h->db->get_results("SELECT * FROM {$this->db['campaign_feed']} WHERE campaign_id = $id");
+  function adminForcefetch($h)
+  {
+    $cid = $h->cage->post->testInt('id');
+
+    $this->forcefetched = $this->processCampaign($h,$cid);
+    
+    return false;
   }
+
+
 
 
 

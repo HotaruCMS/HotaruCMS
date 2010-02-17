@@ -1,5 +1,3 @@
-<div class="wrap">
-
 <?php
 
     # Dependencies
@@ -11,41 +9,52 @@
     require_once(PLUGINS . 'autoreader/autoreader.php');
     $arSettings = new Autoreader();   
     
-    $action = $h->cage->get->testAlpha('action');
+    $action = $h->cage->post->testAlnumLines('action');
     $id = 0; // set to id of campaign we are editing 
 
     switch ($action) {
         case "edit":
             echo '<h2>Editing Campaign</h2>';
-        // what $data settings are needed
-         $data = $arSettings->campaign_structure;
+         // what $data settings are needed
+            $data = $arSettings->campaign_structure;
             action_add($h, $data, $id);
             break;
-        case "save" :
-            $data = unserialize($_REQUEST['campaign']);
-            $result = $arSettings->adminCampaignRequest($h, $data);
-            //echo a json success or failure           
-            break;
+        case "save" :           
+             $arSettings->adminCampaignRequest($h);
+             $arSettings->adminProcessAdd($h);
+             
+
+            //echo json_encode($array);
+       
+
+            exit;
+
+            //echo a json success or failure
+           exit;  // this is an ajax return call, so we don't want any html echoing to the screen
+        case "test_feed" :           
+            $data = $h->cage->post->testUri('url');            
+            $arSettings->adminTestfeed($data);
+            exit;  // this is an ajax return call, so we don't want any html echoing to the screen
         default :
-            echo '<h2>Add New Campaign</h2>';
-            $data = $arSettings->campaign_structure;
-            action_add($h, $data);
+            echo '<h2>Add New Campaign</h2>';           
+            action_add($h, $arSettings);
     }
 
    ?>
 
+<div class="wrap">
    
  <?php
-function action_add($h, $data, $id=0) {
+function action_add($h, $arSettings, $id=0) {
     global $action;
-    global $arSettings;
+    $data = $arSettings->campaign_structure;
  ?>
     <form id="edit_campaign" action="" method="post" accept-charset="utf-8">
       
-      <?php if($action == 'edit'): ?>
-           <input type="hidden" name="campaign_edit" id="campaign_edit" value="<?php echo $id; ?>" />
+      <?php if($action=='edit'): ?>
+        <?php echo input_hidden_tag('campaign_edit', $id) ?>
       <?php else: ?>
-          <input type="hidden" name="campaign_add" id="campaign_add" value="1" />
+        <?php echo input_hidden_tag('campaign_add', 1) ?>
       <?php endif; ?>
 
       <ul id="edit_buttons" class="submit">
@@ -130,8 +139,7 @@ function action_add($h, $data, $id=0) {
           <p>You have to select at least one.</p>
 
           <ul id="categories">
-<?php // $arSettings->adminEditCategories($h, $data) ?>
-
+        <?php $arSettings->adminEditCategories($h, $data) ?>
             <?php if(isset($data['categories']['new'])): ?>
               <?php foreach($data['categories']['new'] as $i => $catname): ?>
               <li>
@@ -148,7 +156,7 @@ function action_add($h, $data, $id=0) {
         <!-- Rewrite section -->
         <div class="section" id="section_rewrite">
           <p>Want to transform a word into another? Or link a specific word to some website?
-           <?php printf('<a href="%s" class="help_link">Read more</a>', $arSettings->helpurl . 'campaign_rewrite') ?></p>
+<?php // echo '<a href=' . $arSettings->helpurl . '" class="help_link">Read more</a>' ?></p>
 
           <ul id="edit_words">
             <?php if(isset($data['rewrites']) && count($data['rewrites'])): ?>
@@ -229,7 +237,7 @@ function action_add($h, $data, $id=0) {
               </p>
             </div>
 
-            <p class="note"><?php printf('Read about <a href="%s" class="help_link">post templates</a>, or check some <a href="%s" class="help_link">examples</a>',  $arSettings->helpurl . 'post_templates', $arSettings->helpurl . 'post_templates_examples') ?></p>
+            <p class="note">Read about <a href="<?php echo $arSettings->helpurl; ?>" class="help_link">post templates</a>, or check some <a href="<?php echo $arSettings->helpurl; ?>" class="help_link">examples</a> ?></p>
           </div>
 
           <div class="multipletext">
@@ -259,16 +267,17 @@ function action_add($h, $data, $id=0) {
 
           <div class="checkbox">
             <?php echo label_for('campaign_cacheimages', 'Cache images') ?>
-            <?php echo checkbox_tag('campaign_cacheimages', 1, _data_value($data['main'], 'cacheimages', is_writable($arSettings->cachepath))) ?>
+<? // need to install timthumb folder to get the following working  ?>
+<?php // echo checkbox_tag('campaign_cacheimages', 1, _data_value($data['main'], 'cacheimages', is_writable($arSettings->cachepath))) ?>
             <p class="note">Images will be stored in your server, instead of hotlinking from the original site.
-                <a href="<?php echo $arSettings->helpurl ?>image_caching" class="help_link">More</a></p>
+                <a href="helpurl image_caching" class="help_link">More</a></p>
           </div>
 
           <div class="checkbox">
             <?php echo label_for('campaign_feeddate', 'Use feed date') ?>
             <?php echo checkbox_tag('campaign_feeddate', 1, _data_value($data['main'], 'feeddate', false)) ?>
             <p class="note">Use the original date from the post instead of the time the post is created by WP-o-Matic.
-                <a href="<?php echo $arSettings->helpurl ?>feed_date_option" class="help_link">More</a></p>
+                <a href="helpurl feed_date_option" class="help_link">More</a></p>
           </div>
 
           <div class="checkbox">
@@ -280,18 +289,15 @@ function action_add($h, $data, $id=0) {
             <label class="main">Type of post to create</label>
 
             <?php echo radiobutton_tag('campaign_posttype', 'publish', !isset($data['main']['posttype']) || _data_value($data['main'], 'posttype') == 'publish', 'id=type_published') ?>
-            <?php echo label_for('type_published', 'Published') ?>
+            <?php echo label_for('type_published', 'Published (New)') ?>
 
-            <?php echo radiobutton_tag('campaign_posttype', 'private', _data_value($data['main'], 'posttype') == 'private', 'id=type_private') ?>
-            <?php echo label_for('type_private', 'Private') ?>
-
-            <?php echo radiobutton_tag('campaign_posttype', 'draft', _data_value($data['main'], 'posttype') == 'draft', 'id=type_draft') ?>
-            <?php echo label_for('type_draft', 'Draft') ?>
+            <?php echo radiobutton_tag('campaign_posttype', 'pending', _data_value($data['main'], 'posttype') == 'pending', 'id=type_pending') ?>
+            <?php echo label_for('type_pending', 'Pending') ?>
           </div>
 
           <div class="text">
             <?php echo label_for('campaign_author', 'Author:') ?>
-            <?php echo select_tag('campaign_author', options_for_select($author_usernames, _data_value($data['main'], 'author', 'admin'))) ?>
+ <?php // echo select_tag('campaign_author', options_for_select($author_usernames, _data_value($data['main'], 'author', 'admin'))) ?>
             <p class="note">The created posts will be assigned to this author.</p>
           </div>
 
@@ -405,8 +411,10 @@ function action_add($h, $data, $id=0) {
         //   item_uid = item_uid[item_uid.length-1];  // this gets the id of the post from the class that WP adds in, gets last element on post id
 
         var campaign = $("form#edit_campaign").serialize();
-        var formdata = 'campaign=' + campaign;
-        var sendurl = BASEURL + 'admin_index.php?page=plugin_settings&plugin=autoreader&alt_template=autoreader_add&action=save';
+      
+       // campaign =  $.URLEncode(campaign);
+        var formdata = 'campaign=' + campaign + "&action=save";
+        var sendurl = BASEURL + 'admin_index.php?page=plugin_settings&plugin=autoreader&alt_template=autoreader_add';
 
         $.ajax(
             {
@@ -454,8 +462,6 @@ function toSlug(str) {
 		});
 
 
-
-
     // Feeds tab
 
 		//- Test feed links
@@ -463,11 +469,35 @@ function toSlug(str) {
 		  feed.addClass('input_text');
           if(feed.val().length > 0)
           {
-            feed.addClass('green');
-            var t = typeof t === 'string' ? t : t.responseText;
-            if (t==1) { feed.addClass('ok input_text'); } else { feed.addClass('err input_text'); }
-          };
-          //jQuery.post("admin-ajax.php", {action: "test-feed", url: el.value, 'cookie': encodeURIComponent(document.cookie)}, oncomplete);
+              var formdata = "url=" + feed.val()+ "&action=test_feed";
+              var sendurl = BASEURL + 'admin_index.php?page=plugin_settings&plugin=autoreader&alt_template=autoreader_add';
+
+              $.ajax(
+                {
+                type: 'post',
+                url: sendurl,
+                data: formdata,
+                beforeSend: function () {
+                                feed.addClass('green');
+                        },
+                error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+                                feed.addClass('red');
+                                 feed.val("Error occured");
+                },
+                success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
+                        if (data.result === 'fail') {
+                             feed.addClass('red');
+                             feed.val(data.error);
+                        }
+                        else
+                        {
+                            feed.addClass('green');
+                            feed.val(data.url);
+                        }
+                },
+                dataType: "json"
+            });
+          };         
           feed.addClass('load input_text');
 		};
 
@@ -490,3 +520,6 @@ function toSlug(str) {
 
 
 </script>
+
+
+

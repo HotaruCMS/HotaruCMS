@@ -3,6 +3,18 @@
     $arSettings = new Autoreader();
     $campaigns = $arSettings->getCampaigns($h);
 
+    $action = $h->cage->post->testAlnumLines('action');
+
+
+     switch ($action) {
+        case "fetch":            
+                 $arSettings->adminForcefetch($h);
+            exit;
+     default :
+         //print "default";
+
+    }
+
  ?>
 
   <div class="wrap">
@@ -30,16 +42,16 @@
           
           <?php foreach($campaigns as $campaign): ?>
           <?php $class = ('alternate' == $class) ? '' : 'alternate'; ?>             
-          <tr id='campaign-<?php echo $campaign->id ?>' class='<?php echo $class ?> <?php if($_REQUEST['id'] == $campaign->id) echo 'highlight'; ?>'> 
+          <tr id='campaign-<?php echo $campaign->id ?>' class='<?php echo $class ?> <?php if($h->cage->get->getInt('id') == $campaign->id) echo 'highlight'; ?>'>
             <th scope="row" style="text-align: center"><?php echo $campaign->id ?></th> 
-            <td><?php echo attribute_escape($campaign->title) ?></td>          
-            <td style="text-align: center"><?php echo _e($campaign->active ? 'Yes' : 'No', 'wpomatic') ?></td>
+            <td><?php echo $campaign->title; ?></td>
+            <td style="text-align: center"><?php if ($campaign->active) {echo 'Yes'; } else {echo 'No';}  ?></td>
             <td style="text-align: center"><?php echo $campaign->count ?></td>        
             <td><?php echo $campaign->lastactive?></td>
-            <td><a href="<?php echo $this->adminurl ?>&amp;s=edit&amp;id=<?php echo $campaign->id ?>" class='edit'>Edit</a></td> 
-            <td><?php echo "<a href='#' class='edit' onclick=\"return confirm('". __('Are you sure you want to process all feeds from this campaign?', 'wpomatic') ."')\">" . __('Fetch', 'wpomatic') . "</a>"; ?></td>
-            <td><?php echo "<a href='#' class='delete' onclick=\"return confirm('". __('Are you sure you want to reset this campaign? Resetting does not affect already created wp posts.', 'wpomatic') ."')\">" . __('Reset', 'wpomatic') . "</a>"; ?></td>
-            <td><?php echo "<a href='#' class='delete' onclick=\"return confirm('" . __("You are about to delete the campaign '%s'. This action doesn't remove campaign generated wp posts.\n'OK' to delete, 'Cancel' to stop.") ."')\">" . __('Delete', 'wpomatic') . "</a>"; ?></td>
+            <td><a href="/admin_index.php?page=plugin_settings&plugin=autoreader&amp;s=edit&amp;id=<?php echo $campaign->id; ?>" class='edit'>Edit</a></td>
+            <td><?php echo "<a id='fetch_" . $campaign->id . "' href='#' class='fetch' onclick=\"return confirm('Are you sure you want to process all feeds from this campaign?')\">" .'Fetch' . "</a>"; ?></td>
+            <td><?php echo "<a href='#' class='delete' onclick=\"return confirm(Are you sure you want to reset this campaign? Resetting does not affect already created wp posts')\">" .'Reset' . "</a>"; ?></td>
+            <td><?php echo "<a href='#' class='delete' onclick=\"return confirm('You are about to delete the campaign '%s'. This action doesn't remove campaign generated wp posts.\n'OK' to delete, 'Cancel' to stop.')\">" . 'Delete' . "</a>"; ?></td>
           </tr>              
           <?php endforeach; ?>                    
         <?php endif; ?>
@@ -47,4 +59,49 @@
     </table>
            
   </div>
+
+ <script type='text/javascript'>
+    jQuery('document').ready(function($) {
+
+        $(".fetch").click(function(event) {
+        event.preventDefault();
+        var campign_ref = $(this).attr('id').split('_');        
+        var campaign_id = campign_ref[campign_ref.length-1];      
+        var formdata = 'action=fetch&s=forcefetch&id=' + campaign_id;
+        var sendurl = BASEURL + 'admin_index.php?page=plugin_settings&plugin=autoreader&alt_template=autoreader_list';
+
+        $.ajax(
+            {
+            type: 'post',
+            url: sendurl,
+            data: formdata,
+            beforeSend: function () {
+                            $('#fetch_' + campaign_id).html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/ajax-loader.gif' + '"/>');
+                    },
+            error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+                            $('#fetch_' + campaign_id).html('ERR');
+            },
+            success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
+                    if (data.error === true) {
+                    }
+                    else
+                    {
+                        var img_src = "";
+                        // get required image based on returned data showing new status
+                        if(data.enabled == 'true') { img_src = "active.png"; } else { img_src = "inactive.png"; }
+                        $('#fetch_' + campaign_id).html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/' + img_src + '"/>');
+                    }
+                    //$('#return_message').html(data.message).addClass(data.color);
+                    //$('#return_message').html(data.message).addClass('message');
+                    //$('#return_message').fadeIn(1000).fadeout(1000);
+            },
+            dataType: "json"
+        });
+
+
+        return false;
+       });
+
+     });
+ </script>
   
