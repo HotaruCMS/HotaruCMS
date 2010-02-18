@@ -23,8 +23,21 @@
  * @copyright Copyright (c) 2009, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
+ * *
+ * Ported from original WP Plugin WP-O-Matic
+ * Description: Enables administrators to create posts automatically from RSS/Atom feeds.
+ * Author: Guillermo Rauch
+ * Plugin URI: http://devthought.com/wp-o-matic-the-wordpress-rss-agreggator/
+ * Version: 1.0RC4-6
+ * 
+ * Additions for Image cache, original url link, category search, tags, thumbnail, short excertps, code change for hotaru by shibuya246
  */
- 
+
+  require_once(PLUGINS . 'autoreader/inc/tools.class.php' );
+  require_once(PLUGINS . 'autoreader/helper/form.helper.php' );
+  require_once(PLUGINS . 'autoreader/helper/tag.helper.php');
+
+  
 class AutoreaderSettings
 {
      /**
@@ -64,7 +77,7 @@ class AutoreaderSettings
                                 <li><a name="autoreader_list" href="#">List Campaigns</a></li>
                             </ul>
                         </li>
-                        <li><a name="autoreader_empty" href="#">Options</a></li>
+                        <li><a name="autoreader_options" href="#">Options</a></li>
                     </ul>
                 </div>
 
@@ -79,15 +92,49 @@ class AutoreaderSettings
         }
     }
 
+    /**
+     * Get Option Settings, update if required
+     * 
+     * 
+     */
+    public function getOptionSettings($h, $options = null)
+    {
+        print "---" . $h->plugin->folder;
+        $autoreader_settings = $h->getSerializedSettings();
 
-     /**
+        // Default settings
+        if (!isset($autoreader_settings['log_actions'])) { $autoreader_settings['wpo_log'] = true; }
+        if (!isset($autoreader_settings['log_stdout'])) { $autoreader_settings['wpo_log_stdout'] = false; }
+        if (!isset($autoreader_settings['log_unixcron'])) { $autoreader_settings['wpo_unixcron'] = false; }
+        if (!isset($autoreader_settings['log_croncode'])) { $autoreader_settings['wpo_croncode'] = 0; }
+        if (!isset($autoreader_settings['log_cacheimage'])) { $autoreader_settings['wpo_cacheimage'] = 0; }
+        if (!isset($autoreader_settings['log_cachepath'])) { $autoreader_settings['wpo_cachepath'] = 'cache'; }
+
+        if ($h->cage->post->testAlpha('action') == "save" ) {
+            $array = array('saved' => 'true');
+            $autoreader_settings['wpo_log'] = $h->cage->post->testAlnumLines('option_logging');
+            $autoreader_settings['wpo_log_stdout'] =  $h->cage->post->testAlnumLines('option_log_stdout');
+            $autoreader_settings['wpo_unixcron'] =  $h->cage->post->testAlnumLines('option_unixcron');
+            $autoreader_settings['wpo_croncode'] =  $h->cage->post->testAlnumLines('option_croncode');
+            $autoreader_settings['wpo_cacheimage'] = $h->cage->post->testAlnumLines('option_cachimage');
+            $autoreader_settings['wpo_cachepath'] = $h->cage->post->testAlnumLines('option_cachepath');
+
+            $h->updateSetting('autoreader_settings', serialize($autoreader_settings));
+        }
+        else { $array = $autoreader_settings; }
+        
+        return $array;
+    }
+
+
+   /**
    * Retrieves campaigns from database
    *
    *
    */
   public function getCampaigns($h, $args = '')
   {       
-$where ="";
+    $where ="";
   	if(! empty($search))
   	  $where .= " AND title LIKE '%{$search}%' ";
      $orderby =""; $ordertype=""; $limit="";
@@ -204,29 +251,30 @@ $where ="";
    */
   function adminEdit($h)
   {
-    $id = intval($_REQUEST['id']);
+     $id = $h->cage->get->testInt('id');
     if(!$id) die("Can't be called directly");
 
-    if(isset($_REQUEST['campaign_edit']))
-    {
-      check_admin_referer('wpomatic-edit-campaign');
+//    if(isset($_REQUEST['campaign_edit']))
+//    {
+//      check_admin_referer('wpomatic-edit-campaign');
+//
+//      $data = $this->campaign_data;
+//      $submitted = true;
+//
+//      if(! $this->errno)
+//      {
+//        $this->adminProcessEdit($h, $id);
+//        $edited = true;
+//        $data = $this->getCampaignData($h, $id);
+//      }
+//    } else
+      $data = $this->getCampaignData($h, $id);
 
-      $data = $this->campaign_data;
-      $submitted = true;
-
-      if(! $this->errno)
-      {
-        $this->adminProcessEdit($id);
-        $edited = true;
-        $data = $this->getCampaignData($id);
-      }
-    } else
-      $data = $this->getCampaignData($id);
-
-    $author_usernames = $this->getBlogUsernames();
+   // $author_usernames = $this->getBlogUsernames();
     $campaign_edit = true;
 
-    include(WPOTPL . 'edit.php');
+   // include(WPOTPL . 'edit.php');
+    return $data;
   }
 
   function adminEditCategories($h, &$data, $parent = 0, $level = 0, $categories = 0)
@@ -358,7 +406,59 @@ $where ="";
   }
 
 
+ /**
+   * Called by cron.php to update the site
+   *
+   *
+   */
+  function runCron($h, $log = true)
+  {
+    $this->log($h, 'Running cron job');
+    $this->processAll($h);
+  }
 
+  /**
+   * Finds a suitable command to run cron
+   *
+   * @return string command
+   **/
+  function getCommand()
+  {
+    $commands = array(
+      @WPOTools::getBinaryPath('curl'),
+      @WPOTools::getBinaryPath('wget'),
+      @WPOTools::getBinaryPath('lynx', ' -dump'),
+      @WPOTools::getBinaryPath('ftp')
+    );
+
+    return WPOTools::pick($commands[0], $commands[1], $commands[2], $commands[3], '<em>{wget or similar command here}</em>');
+  }
+
+  /**
+   * Determines what the title has to link to
+   *
+   * @return string new text
+   **/
+  function filterPermalink($h, $url)
+  {
+    // if from admin panel
+    if($this->admin)
+      return $url;
+
+    if(get_the_ID())
+    {
+    	$campaignid = (int) get_post_meta(get_the_ID(), 'wpo_campaignid', true);
+
+    	if($campaignid)
+    	{
+    	  $campaign = $this->getCampaignById($campaignid);
+    	  if($campaign->linktosource)
+    	    return get_post_meta(get_the_ID(), 'wpo_sourcepermalink', true);
+    	}
+
+    	return $url;
+    }
+  }
 
 
 
@@ -367,15 +467,15 @@ $where ="";
    * Processes all campaigns
    *
    */
-  function processAll()
+  function processAll($h)
   {
     @set_time_limit(0);
 
-    $campaigns = $this->getCampaigns('unparsed=1');
+    $campaigns = $this->getCampaigns($h, 'unparsed=1');
 
     foreach($campaigns as $campaign)
     {
-      $this->processCampaign($campaign);
+      $this->processCampaign($h, $campaign);
     }
   }
 
@@ -389,25 +489,22 @@ $where ="";
   {
     @set_time_limit(0);
     ob_implicit_flush();
-//print $campaign;
+
     // Get campaign
     $campaign = is_numeric($campaign) ? $this->getCampaignById($h,$campaign) : $campaign;
-//print_r ($campaign);
+
     // Log
     $this->log($h, 'Processing campaign ' . $campaign->title . ' (ID: ' . $campaign->id . ')');
 
     // Get feeds
     $count = 0;
     $feeds = $this->getCampaignFeeds($h, $campaign->id);
-//print_r ($feeds);
+
     foreach($feeds as $feed)
-  
-//    print_r ($campaign);
-//    print_r ($feed);
       $count += $this->processFeed($h, $campaign, $feed);
     $h->db->query(WPOTools::updateQuery($this->db['campaign'], array(
       'count' => $campaign->count + $count,
-      'lastactive' => current_time('mysql', true)
+      'lastactive' => time() //('mysql', true)
     ), "id = {$campaign->id}"));
 
     return $count;
@@ -444,11 +541,11 @@ $where ="";
         break;
       }
 
-//      if($this->isDuplicate($h, $campaign, $feed, $item))
-//      {
-//        $this->log($h, 'Filtering duplicate post');
-//        break;
-//      }
+      if($this->isDuplicate($h, $campaign, $feed, $item))
+      {
+        $this->log($h, 'Filtering duplicate post');
+        break;
+      }
 
       $count++;
       array_unshift($items, $item);
@@ -472,11 +569,11 @@ $where ="";
     {
       $h->db->query(WPOTools::updateQuery($this->db['campaign_feed'], array(
         'count' => $count,
-        'lastactive' => current_time('mysql', true),
+        'lastactive' => time(),//current_time('mysql', true),
         'hash' => $lasthash
       ), "id = {$feed->id}"));
 
-      $this->log( $count . ' posts added' );
+      $this->log($h, $count . ' posts added' );
     }
 
     return $count;
@@ -489,8 +586,7 @@ $where ="";
    * @param   $item       object    SimplePie_Item object
    */
   function getItemHash($item)
-  {
-      print  $item->get_permalink();
+  {    
     return sha1($item->get_title() . $item->get_permalink());
   }
 
@@ -523,76 +619,40 @@ $where ="";
     // Categories
     $categories = $this->getCampaignData($h, $campaign->id, 'categories');
 
-    $orig_url = $item->get_permalink();
-    print_r ($item);
-	//  $catlists=get_categories('hide_empty=0');
-
-	//	foreach ($catlists as $catlist)
-	//  	{
-	//		$category_description=$catlist->category_description;
-	//		$category_description=explode('*****',$category_description );
-	//		$category_description=$category_description[2];
-	//		$category_description=explode("/",$category_description);
-	//		$category_description=$category_description[2];
-	//	  	$category_description=str_replace( 'www.','', $category_description);
-	//		$category_id[$category_description]=$catlist->cat_ID;
-	//	}
-
-
     // Meta
-
-		/*if(str_replace('http://','',$item->get_permalink()))
-		$prefix='http://';
-
-		$wpo_websit1=str_replace('http://','',$item->get_permalink());
-
-		if(str_replace('https://','',$wpo_websit1))
-		$prefix='https://';
-		$wpo_websit2=str_replace('https://','',$wpo_websit1);
-
-		if(str_replace('www.','',$wpo_websit2))
-		$prefix.='www.';*/
-
-//		$permalink=$item->get_permalink();
-//		$root=$_SERVER['HTTP_HOST'];
+    $permalink=$item->get_permalink();
+    $root=$_SERVER['HTTP_HOST'];
 
 //		$posturl=file_get_contents("http://$root/wp-content/plugins/wp-o-matic/original_url.php?blog=$permalink");
 
-//		$posturl = $this->get_sourceurl($permalink);
-//		$wpo_websit1=explode('/', $posturl);
-//		$wpo_websit2=$wpo_websit1[2];
-//		$wpo_websit3=str_replace('www.','',$wpo_websit2);
-//		$wpo_website=$wpo_websit1[0].'//'.$wpo_websit1[2];
-//		$categories[]=$category_id[$wpo_websit3];
+//    $posturl = $this->get_sourceurl($permalink);
+$posturl =  $permalink;
 
 
     $meta = array(
       'wpo_campaignid' => $campaign->id,
       'wpo_feedid' => $feed->id,
-//      'wpo_sourcepermalink' =>$posturl,
-	 // $item->get_permalink(),
+      'wpo_sourcepermalink' =>$posturl,
 //	  'wpo_website' => $wpo_website
     );
-
-    // Create post
-
-//echo  $content;
-
-
-
-    $postid = $this->insertPost($h, $h->db->escape($item->get_title()), $h->db->escape($content), $date, $categories, $campaign->posttype, $campaign->authorid, $campaign->allowpings, $campaign->comment_status, $meta);
-
-	$post_tags=$item->get_categories();
+  
+  
+	//tags
+    $post_tags=$item->get_categories();
 
 	$tag_list="";
 	if($post_tags)
 	 {
 		foreach($post_tags as $post_tag)
 		 $tag_list.=$post_tag->term.",";
+         $tag_list = trim($tag_list,',');
 	 }
+     
+    // Create post
+    $postid = $this->insertPost($h, $h->db->escape($item->get_title()), $h->db->escape($content), $date, $categories, $tag_list, $campaign->posttype, $campaign->authorid, $campaign->allowpings, $campaign->comment_status, $meta);
 
-    if($tag_list!="") { wp_add_post_tags($postid, $tag_list);  }
-
+    
+    /*
     // If pingback/trackbacks
     if($campaign->dopingbacks)
     {
@@ -601,6 +661,7 @@ $where ="";
       require_once(ABSPATH . WPINC . '/comment.php');
     	pingback($content, $postid);
     }
+*/
 
     // Save post to log database
     $h->db->query(WPOTools::insertQuery($this->db['campaign_post'], array(
@@ -644,7 +705,7 @@ $where ="";
    * @param   array     $meta             Meta key / values
    * @return  integer   Created post id
    */
-  function insertPost($h, $title, $content, $timestamp = null, $category = null, $status = 'pending', $authorid = null, $allowpings = true, $comment_status = 'open', $meta = array())
+  function insertPost($h, $title, $content, $timestamp = null, $category = null, $tags= null, $status = 'pending', $authorid = null, $allowpings = true, $comment_status = 'open', $meta = array())
   {
     $date = ($timestamp) ? gmdate('Y-m-d H:i:s', $timestamp + (get_option('gmt_offset') * 3600)) : null;
 
@@ -654,6 +715,8 @@ $where ="";
     $h->post->url = make_url_friendly($title);
     $h->post->content = $content;
     $h->post->type = 'news';
+    $h->post->category = "";
+    $h->post->tags = $tags;
     $h->post->author = $h->currentUser->id;
     $h->post->status = $status;
 
@@ -1111,7 +1174,7 @@ $where ="";
 
       if(sizeof($urls))
       {
-        $this->log('Caching images');
+        $this->log($h, 'Caching images');
 
         foreach($urls as $url)
         {
@@ -1121,6 +1184,11 @@ $where ="";
         }
       }
     }
+
+    // cut images here
+    preg_replace("/<img[^>]+\>/i", "", $content);
+
+    
 
     // Template parse
     $vars = array(
@@ -1252,7 +1320,7 @@ $where ="";
   function getCampaignData($h, $id, $section = null)
   {   
     $campaign = (array) $this->getCampaignById($h, $id);
-
+//print_r ($campaign);
     if($campaign)
     {
       $campaign_data = $this->campaign_structure;
@@ -1261,8 +1329,8 @@ $where ="";
       if(!$section || $section == 'main')
       {
         $campaign_data['main'] = array_merge($campaign_data['main'], $campaign);
-        $userdata = get_userdata($campaign_data['main']['authorid']);
-        $campaign_data['main']['author'] = $userdata->user_login;
+//        $userdata = get_userdata($campaign_data['main']['authorid']);
+//        $campaign_data['main']['author'] = $userdata->user_login;
       }
 
       // Categories
@@ -1281,7 +1349,7 @@ $where ="";
       {
         $campaign_data['feeds']['edit'] = array();
 
-        $feeds = $this->getCampaignFeeds($id);
+        $feeds = $this->getCampaignFeeds($h, $id);
         foreach($feeds as $feed)
           $campaign_data['feeds']['edit'][$feed->id] = $feed->url;
       }
@@ -1405,7 +1473,7 @@ $where ="";
 
     $this->forcefetched = $this->processCampaign($h,$cid);
     
-    return false;
+    return $this->forcefetched;
   }
 
 
@@ -1413,12 +1481,26 @@ $where ="";
 
 
 
+ /**
+    * Saves a log message to database
+    *
+    *
+    * @param string  $message  Message to save
+    */
+      function log($h, $message)
+      {       
+        $autoreader_settings = $h->getSerializedSettings('autoreader');
+      
+        if ($autoreader_settings['wpo_log_stdout'])
+             echo $message;
 
-
-
-
-
-
+        if ($autoreader_settings['wpo_log'])
+        {
+          $message = $h->db->escape($message);
+          $time = time(); // current_time('mysql', true);
+          $h->db->query("INSERT INTO {$this->db['log']} (message, created_on) VALUES ('{$message}', '{$time}') ");
+        }
+      }
 
 
 

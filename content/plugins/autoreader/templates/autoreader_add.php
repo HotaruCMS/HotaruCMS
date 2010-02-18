@@ -1,35 +1,27 @@
 <?php
 
-    # Dependencies
-    require_once(PLUGINS . 'autoreader/inc/tools.class.php' );
-    require_once(PLUGINS . 'autoreader/helper/form.helper.php' );
-    require_once(PLUGINS . 'autoreader/helper/edit.helper.php' );
-    require_once(PLUGINS . 'autoreader/helper/tag.helper.php');
+    # Dependencies     
+    require_once(PLUGINS . 'autoreader/helper/edit.helper.php' );  
 
     require_once(PLUGINS . 'autoreader/autoreader.php');
-    $arSettings = new Autoreader();   
-    
-    $action = $h->cage->post->testAlnumLines('action');
-    $id = 0; // set to id of campaign we are editing 
+    $arSettings = new Autoreader($h);
 
+    $id = 0;
+    $action = $h->cage->post->testAlnumLines('action');  
+    $action_get = $h->cage->get->testAlnumLines('action');
+    if (!$action) { $action = $action_get; }  
     switch ($action) {
-        case "edit":
-            echo '<h2>Editing Campaign</h2>';
+        case "edit":               
+             $data = $arSettings->adminEdit($h);
+            //print_r($data);
+            echo '<h2>Editing Campaign #' . $data['main']['id'] . ", " .  $data['main']['title'] . '</h2>';
+            action_add($h, $arSettings,  $data, 'edit');
          // what $data settings are needed
-            $data = $arSettings->campaign_structure;
-            action_add($h, $data, $id);
             break;
         case "save" :           
              $arSettings->adminCampaignRequest($h);
-             $arSettings->adminProcessAdd($h);
-             
-
-            //echo json_encode($array);
-       
-
-            exit;
-
-            //echo a json success or failure
+             $arSettings->adminProcessAdd($h);             
+            //echo json_encode($array);                 
            exit;  // this is an ajax return call, so we don't want any html echoing to the screen
         case "test_feed" :           
             $data = $h->cage->post->testUri('url');            
@@ -45,17 +37,22 @@
 <div class="wrap">
    
  <?php
-function action_add($h, $arSettings, $id=0) {
-    global $action;
-    $data = $arSettings->campaign_structure;
+function action_add($h, $arSettings, $data=null, $action = 'add') {
+  
  ?>
     <form id="edit_campaign" action="" method="post" accept-charset="utf-8">
       
-      <?php if($action=='edit'): ?>
-        <?php echo input_hidden_tag('campaign_edit', $id) ?>
-      <?php else: ?>
-        <?php echo input_hidden_tag('campaign_add', 1) ?>
-      <?php endif; ?>
+      <?php 
+      
+      if ($action=='edit') {
+            $id =  $data['main']['id'];
+            echo input_hidden_tag('campaign_edit', $id);
+            }
+      else {
+            echo input_hidden_tag('campaign_add', 1);
+            $data = $arSettings->campaign_structure;
+            }
+      ?>
 
       <ul id="edit_buttons" class="submit">
         <li><a href="http://bloglinkjapan.com/wp-content/plugins/wp-o-matic/help.php?item=campaigns" class="help_link">Help</a></li>
@@ -288,8 +285,8 @@ function action_add($h, $arSettings, $id=0) {
           <div class="radio">
             <label class="main">Type of post to create</label>
 
-            <?php echo radiobutton_tag('campaign_posttype', 'publish', !isset($data['main']['posttype']) || _data_value($data['main'], 'posttype') == 'publish', 'id=type_published') ?>
-            <?php echo label_for('type_published', 'Published (New)') ?>
+            <?php echo radiobutton_tag('campaign_posttype', 'new', !isset($data['main']['posttype']) || _data_value($data['main'], 'posttype') == 'new', 'id=type_new') ?>
+            <?php echo label_for('type_new', 'Published (New)') ?>
 
             <?php echo radiobutton_tag('campaign_posttype', 'pending', _data_value($data['main'], 'posttype') == 'pending', 'id=type_pending') ?>
             <?php echo label_for('type_pending', 'Pending') ?>
@@ -327,7 +324,7 @@ function action_add($h, $arSettings, $id=0) {
           </div>
         </div>
 
-        <?php if(isset($campaign_edit)): ?>
+        <?php if($action == 'edit'): ?>
         <!-- Tools -->
         <div class="section" id="section_tools">
           <div class="buttons">
@@ -344,7 +341,7 @@ function action_add($h, $arSettings, $id=0) {
                 <div class="radio">
                   <label class="main">Change status to:</label>
 
-                  <input type="radio" name="campaign_tool_changetype" value="publish" id="changetype_published" checked="checked" /> <label for="changetype_published">Published</label>
+                  <input type="radio" name="campaign_tool_changetype" value="new" id="changetype_new" checked="checked" /> <label for="changetype_new">New</label>
                   <input type="radio" name="campaign_tool_changetype" value="private" id="changetype_private" /> <label for="changetype_private">Private</label>
                   <input type="radio" name="campaign_tool_changetype" value="draft" id="changetype_draft" /> <label for="changetype_draft">Draft</label>
                   <input type="submit" name="tool_changetype" value="Change" />

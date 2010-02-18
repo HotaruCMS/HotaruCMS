@@ -28,6 +28,14 @@
  * @copyright Copyright (c) 2009, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
+ *
+ * Ported from original WP Plugin WP-O-Matic
+ * Description: Enables administrators to create posts automatically from RSS/Atom feeds.
+ * Author: Guillermo Rauch
+ * Plugin URI: http://devthought.com/wp-o-matic-the-wordpress-rss-agreggator/
+ * Version: 1.0RC4-6
+ *
+ * Additions for Image cache, original url link, category search, tags, thumbnail, short excertps, code change for hotaru by shibuya246
  */
 
 require_once(PLUGINS . 'autoreader/autoreader_settings.php');
@@ -40,6 +48,9 @@ class Autoreader extends AutoreaderSettings
 
      var $campaign_structure = array('main' => array(), 'rewrites' => array(),
                                   'categories' => array(), 'feeds' => array());
+
+
+
 
     /**
      * Install or Upgrade
@@ -57,17 +68,8 @@ class Autoreader extends AutoreaderSettings
         // SETTINGS
         // ************
         // Get settings from database if they exist...
-        $autoreader_settings = $h->getSerializedSettings();
-
-        // Default settings
-        if (!isset($autoreader_settings['log_actions'])) { $autoreader_settings['log_actions'] = true; }
-        if (!isset($autoreader_settings['log_stdout'])) { $autoreader_settings['log_stdout'] = false; }
-        if (!isset($autoreader_settings['log_unixcron'])) { $autoreader_settings['log_unixcron'] = false; }
-        if (!isset($autoreader_settings['log_croncode'])) { $autoreader_settings['log_croncode'] = 0; }
-        if (!isset($autoreader_settings['log_cacheimage'])) { $autoreader_settings['log_cacheimage'] = 0; }
-        if (!isset($autoreader_settings['log_cachepath'])) { $autoreader_settings['log_cachepath'] = 'cache'; }
-
-        $h->updateSetting('autoreader_settings', serialize($autoreader_settings));
+        getOptionSettings();
+      
 
         $this->activate($h);
     }
@@ -77,8 +79,10 @@ class Autoreader extends AutoreaderSettings
      /**
      * Constructor for autoreader
      */
-    public function autoreader()
+    public function autoreader($h)
     {
+          $autoreader_settings = $h->getSerializedSettings();
+
          // Table names init
          $this->db = array(
           'campaign'            =>  DB_PREFIX . 'autoreader_campaign',
@@ -89,6 +93,12 @@ class Autoreader extends AutoreaderSettings
           'log'                 =>  DB_PREFIX .  'autoreader_log'
         );
 
+        $this->pluginpath = BASEURL . 'plugins/autoreader';
+       // $this->cachepath = BASEURL . get_option('wpo_cachepath');
+
+        # Cron command / url
+        $this->cron_url = $this->pluginpath . '/cron.php?code=' .   $autoreader_settings['wpo_croncode'];
+        $this->cron_command = '*/20 * * * * '. $this->getCommand() . ' ' . $this->cron_url;
     }
 
 
@@ -100,8 +110,15 @@ class Autoreader extends AutoreaderSettings
     public function activate($h, $force_install = false)
     {
 
-    // write options to hotaru db if required
-    //
+     # Options
+    WPOTools::addMissingOptions(array(
+     'wpo_log'          => array(1, 'Log WP-o-Matic actions'),
+     'wpo_log_stdout'   => array(0, 'Output logs to browser while a campaign is being processed'),
+     'wpo_unixcron'     => array(WPOTools::isUnix(), 'Use unix-style cron'),
+     'wpo_croncode'     => array(substr(md5(time()), 0, 8), 'Cron job password.'),
+     'wpo_cacheimages'  => array(0, 'Cache all images. Overrides campaign options'),
+     'wpo_cachepath'    => array('cache', 'Cache path relative to wpomatic directory')
+    ));
 
     // only re-install if there is new version or plugin has been uninstalled
     if($force_install || ! $h->getPluginVersion() || $h->getPluginVersion() != $this->version)   
@@ -118,7 +135,7 @@ class Autoreader extends AutoreaderSettings
                                 frequency int(5) default '180',
                                 feeddate tinyint(1) default '0',
                                 cacheimages tinyint(1) default '1',
-                                posttype enum('publish','draft','private') NOT NULL default 'publish',
+                                posttype enum('new','pending','latest') NOT NULL default 'pending',
                                 authorid int(11) default NULL,
                                 comment_status enum('open','closed','registered_only') NOT NULL default 'open',
                                 allowpings tinyint(1) default '1',
@@ -165,32 +182,32 @@ class Autoreader extends AutoreaderSettings
         }
 
         # autoreader_campaign_post
-        $exists = $h->db->table_exists($this->db['campaign_word']);
+        $exists = $h->db->table_exists($this->db['campaign_post']);
         if (!$exists) {
-            $h->db->query ( "CREATE TABLE " . $this->db['campaign_word'] . " (
+            $h->db->query ( "CREATE TABLE " . $this->db['campaign_post'] . " (
                             id int(11) unsigned NOT NULL auto_increment,
                               campaign_id int(11) NOT NULL,
                               feed_id int(11) NOT NULL,
                               post_id int(11) NOT NULL,
                                 hash varchar(255) default '',
                               PRIMARY KEY  (id)
-                          ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='autoreader campaign feed'; "
+                          ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='autoreader campaign post'; "
                 );
         }
 
          # autoreader_campaign_word
-         $exists = $h->db->table_exists($this->db['campaign_post']);
+         $exists = $h->db->table_exists($this->db['campaign_word']);
          if (!$exists) {
-            $h->db->query ( "CREATE TABLE " . $this->db['campaign_post'] . " (
+            $h->db->query ( "CREATE TABLE " . $this->db['campaign_word'] . " (
                                 id int(11) unsigned NOT NULL auto_increment,
                                   campaign_id int(11) NOT NULL,
                                   word varchar(255) NOT NULL default '',
-                                    regex tinyint(1) default '0',
+                                  regex tinyint(1) default '0',
                                   rewrite tinyint(1) default '1',
                                   rewrite_to varchar(255) default '',
                                   relink varchar(255) default '',
                                   PRIMARY KEY  (id)
-                              ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='autoreader campaign feed'; "
+                              ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='autoreader campaign word'; "
                  );
          }
 
@@ -202,7 +219,7 @@ class Autoreader extends AutoreaderSettings
                                   message mediumtext NOT NULL default '',
                                   created_on datetime NOT NULL default '0000-00-00 00:00:00',
                                   PRIMARY KEY  (id)
-                              ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='autoreader campaign feed'; "
+                              ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='autoreader log'; "
                  );
           }
 
@@ -256,24 +273,7 @@ class Autoreader extends AutoreaderSettings
     }
 
 
-    /**
-    * Saves a log message to database
-    *
-    *
-    * @param string  $message  Message to save
-    */
-      function log($h, $message)
-      {
-        $autoreader_settings = $h->getSerializedSettings();
-        if ($autoreader_settings['log_actions'])
-
-        if ($autoreader_settings['log_stdout'])
-        {
-          //$message = $h->$db->escape($message);
-          //$time = current_time('mysql', true);
-          //$h->$db->query("INSERT INTO {$this->db['log']} (message, created_on) VALUES ('{$message}', '{$time}') ");
-        }
-      }
+   
 
 
       

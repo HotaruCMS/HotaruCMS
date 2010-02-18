@@ -1,6 +1,6 @@
 <?php
     require_once(PLUGINS . 'autoreader/autoreader.php');
-    $arSettings = new Autoreader();
+    $arSettings = new Autoreader($h);
     $campaigns = $arSettings->getCampaigns($h);
 
     $action = $h->cage->post->testAlnumLines('action');
@@ -8,7 +8,9 @@
 
      switch ($action) {
         case "fetch":            
-                 $arSettings->adminForcefetch($h);
+            $fetched= $arSettings->adminForcefetch($h);
+            $array = array('fetched'=> $fetched);
+            echo json_encode($array);
             exit;
      default :
          //print "default";
@@ -48,10 +50,10 @@
             <td style="text-align: center"><?php if ($campaign->active) {echo 'Yes'; } else {echo 'No';}  ?></td>
             <td style="text-align: center"><?php echo $campaign->count ?></td>        
             <td><?php echo $campaign->lastactive?></td>
-            <td><a href="/admin_index.php?page=plugin_settings&plugin=autoreader&amp;s=edit&amp;id=<?php echo $campaign->id; ?>" class='edit'>Edit</a></td>
+            <td><?php echo "<a id='edit_" . $campaign->id . "' href='#' class='edit'>Edit</a></td>"; ?>
             <td><?php echo "<a id='fetch_" . $campaign->id . "' href='#' class='fetch' onclick=\"return confirm('Are you sure you want to process all feeds from this campaign?')\">" .'Fetch' . "</a>"; ?></td>
-            <td><?php echo "<a href='#' class='delete' onclick=\"return confirm(Are you sure you want to reset this campaign? Resetting does not affect already created wp posts')\">" .'Reset' . "</a>"; ?></td>
-            <td><?php echo "<a href='#' class='delete' onclick=\"return confirm('You are about to delete the campaign '%s'. This action doesn't remove campaign generated wp posts.\n'OK' to delete, 'Cancel' to stop.')\">" . 'Delete' . "</a>"; ?></td>
+            <td><?php echo "<a id='reset_" . $campaign->id . "' href='#' class='reset' onclick=\"return confirm(Are you sure you want to reset this campaign? Resetting does not affect already created wp posts')\">" .'Reset' . "</a>"; ?></td>
+            <td><?php echo "<a id='delete_" . $campaign->id . "' href='#' class='delete' onclick=\"return confirm('You are about to delete the campaign '%s'. This action doesn't remove campaign generated wp posts.\n'OK' to delete, 'Cancel' to stop.')\">" . 'Delete' . "</a>"; ?></td>
           </tr>              
           <?php endforeach; ?>                    
         <?php endif; ?>
@@ -85,15 +87,9 @@
                     if (data.error === true) {
                     }
                     else
-                    {
-                        var img_src = "";
-                        // get required image based on returned data showing new status
-                        if(data.enabled == 'true') { img_src = "active.png"; } else { img_src = "inactive.png"; }
-                        $('#fetch_' + campaign_id).html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/' + img_src + '"/>');
-                    }
-                    //$('#return_message').html(data.message).addClass(data.color);
-                    //$('#return_message').html(data.message).addClass('message');
-                    //$('#return_message').fadeIn(1000).fadeout(1000);
+                    {                                             
+                        $('#fetch_' + campaign_id).html(data.fetched);
+                    }                   
             },
             dataType: "json"
         });
@@ -101,6 +97,25 @@
 
         return false;
        });
+
+
+       $(".edit").click(function(event) {
+        event.preventDefault();       
+        var campign_ref = $(this).attr('id').split('_');
+        var campaign_id = campign_ref[campign_ref.length-1];        
+        var sendurl = BASEURL + 'admin_index.php?page=plugin_settings&plugin=autoreader&alt_template=autoreader_add&action=edit&id=' + campaign_id;
+
+        $("#admin_plugin_content")
+                .fadeOut("fast")
+                .text("... loading ...")
+                .load(sendurl)
+                .fadeIn("fast");
+
+
+        return false;
+       });
+
+
 
      });
  </script>
