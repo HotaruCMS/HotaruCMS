@@ -153,33 +153,14 @@ class relatedPosts
         /* when we start reading other posts, we'll lose this original one
            which we need later to show comments and whatnot. */
         $original_id = $h->post->id;
-
-        /* strip all words less than 4 chars from the title
-           and make a space separated string: 
-        $title = $h->post->title;
-        $title_array = explode(' ', $title);
-        $new_title = "";
-        foreach($title_array as $title_word) {
-            if (strlen(trim($title_word)) >= 4) {
-                $new_title .= $title_word . " ";
-            }
-        }*/
-        
-        // remove hyphens from category safe name
-        /*
-        if ($h->post->vars['useCategories']) {
-            require_once(PLUGINS . 'categories/libs/Category.php');
-            $cat = new Category($this->db);
-            $cat_safe_name = $cat->getCatSafeName($h->post->vars['category']);
-            $category = str_replace("-"," ", $cat_safe_name); 
-        }*/
         
         // make the tags a space separated string
         $tags = str_replace(', ', ' ', $h->post->tags);
         $tags = str_replace(',', ' ', $tags); // if no space after commas
+        $tags = trim($tags);    // remove any spaces at the start and end
         
-        // search terms in a space separated string
-        //$search_terms = trim($new_title) . " " . $tags . " " . $category;
+        // abort of no tags for this post
+        if (!$tags) { echo $this->noRelatedPosts($h); return true; }
         
         $search_terms = $tags;
         
@@ -198,39 +179,56 @@ class relatedPosts
      */
     public function showRelatedPosts($h, $search_terms = '', $num_posts = 10)
     {
-        $results = $this->getRelatedPosts($h, $search_terms, $num_posts);
-        if ($results) 
-        {
-            $output = "<h2 id='related_posts_title'>" . $h->lang['related_posts'] . "</h2>";
+        $output = '';
         
-            $output .= "<ul class='related_posts'>\n";
-            foreach ($results as $item) {
-                $h->readPost(0, $item); // needed for the url function
-                $output .= "<li class='related_posts_item'>\n";
-                if (!isset($item->post_votes_up)) { $item->post_votes_up = '&nbsp;'; }
-                $output .= "<div class='related_posts_vote vote_color_" . $item->post_status . "'>";
-                $output .= $item->post_votes_up;
-                $output .= "</div>\n";
-                $output .= "<div class='related_posts_link related_posts_indent'>\n";
-                $output .= "<a href='" . $h->url(array('page'=>$item->post_id)) . "' ";
-                $output .= "title='" . $h->lang['related_links_new_tab'] . "'>\n";
-                $output .= stripslashes(urldecode($item->post_title)); 
-                $output .= "</a>";
-                $output .= "</div>";
-                $output .= "</li>\n";
-            }
-            $output .= "</ul>\n";
-        }
-        else 
-        {
+        $results = $this->getRelatedPosts($h, $search_terms, $num_posts);
+        if (!$results) {
             // Show "No other posts found with matching tags"
-            $output = "<div id='related_posts_none'>\n";
-            $output .= $h->lang['related_links_no_results'];
+            return $this->noRelatedPosts($h);
+        } 
+
+        $output = "<h2 id='related_posts_title'>" . $h->lang['related_posts'] . "</h2>";
+    
+        $output .= "<ul class='related_posts'>\n";
+        foreach ($results as $item) {
+            $h->readPost(0, $item); // needed for the url function
+            $output .= "<li class='related_posts_item'>\n";
+            if (!isset($item->post_votes_up)) { $item->post_votes_up = '&nbsp;'; }
+            $output .= "<div class='related_posts_vote vote_color_" . $item->post_status . "'>";
+            $output .= $item->post_votes_up;
             $output .= "</div>\n";
+            $output .= "<div class='related_posts_link related_posts_indent'>\n";
+            $output .= "<a href='" . $h->url(array('page'=>$item->post_id)) . "' ";
+            $output .= "title='" . $h->lang['related_links_new_tab'] . "'>\n";
+            $output .= stripslashes(urldecode($item->post_title)); 
+            $output .= "</a>";
+            $output .= "</div>";
+            $output .= "</li>\n";
         }
+        $output .= "</ul>\n";
 
         return $output;
     }
+    
+    
+    /**
+     * Message when no related posts found, or no tags present
+     *
+     * @param string $output
+     * return string $output
+     */
+    public function noRelatedPosts($h, $output = '')
+    {
+        // Commented this out because I doubt anyone will want to see a "No related posts found" message. Handy for testing, though!
+        /*
+        $output .= "<div id='related_posts_none'>\n";
+        $output .= $h->lang['related_links_no_results'];
+        $output .= "</div>\n";
+        */
+        
+        return $output;
+    }
+    
     
     /**
      * Get related results from the database
