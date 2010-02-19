@@ -88,15 +88,17 @@ $display = ($h->comment->votes_down >= $h->vars['comment_hide']) ? 'display: non
                     <?php } ?>
                 <?php } ?>
 
-                <?php   // EDIT LINK - (if comment owner AND permission to edit own comments) OR (permission to edit ALL comments)...
-                    if (($h->currentUser->id == $h->comment->author && ($h->currentUser->getPermission('can_edit_comments') == 'own'))
-                        || ($h->currentUser->getPermission('can_edit_comments') == 'yes')) { ?>
-                        <a href='#' class='comment_edit_link' onclick="edit_comment(
-                            '<?php echo BASEURL; ?>',
-                            '<?php echo $h->comment->id; ?>',
-                            '<?php echo urlencode($h->comment->content); ?>',
-                            '<?php echo $h->lang['comments_form_edit']; ?>');
-                            return false;" ><?php echo $h->lang['comments_edit_link']; ?></a>
+                <?php   // EDIT LINK - (if comment form is open AND ((comment owner AND permission to edit own comments) OR (permission to edit ALL comments))...
+                    if ($h->comment->thisForm == 'open') {
+                        if (($h->currentUser->id == $h->comment->author && ($h->currentUser->getPermission('can_edit_comments') == 'own'))
+                            || ($h->currentUser->getPermission('can_edit_comments') == 'yes')) { ?>
+                            <a href='#' class='comment_edit_link' onclick="edit_comment(
+                                '<?php echo BASEURL; ?>',
+                                '<?php echo $h->comment->id; ?>',
+                                '<?php echo urlencode($h->comment->content); ?>',
+                                '<?php echo $h->lang['comments_form_edit']; ?>');
+                                return false;" ><?php echo $h->lang['comments_edit_link']; ?></a>
+                    <?php } ?>
                 <?php } ?>
             </div>
         </div>
