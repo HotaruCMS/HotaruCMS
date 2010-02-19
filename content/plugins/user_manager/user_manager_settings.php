@@ -83,7 +83,7 @@ class UserManagerSettings
                     // change role:
                     $u->role = $new_role;
                     $new_perms = $u->getDefaultPermissions($h, $new_role);
-                    $u->setAllPermissions($h, $new_perms);
+                    $u->setAllPermissions($new_perms);
                     $u->updatePermissions($h);
                     $u->updateUserBasic($h, $id);
                     $h->message = $h->lang["user_man_checkboxes_role_changed"];
