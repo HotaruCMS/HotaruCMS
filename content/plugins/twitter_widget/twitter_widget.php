@@ -137,9 +137,9 @@ class TwitterWidget
 		   $need_cache = false;
 				
 					// check for a cached version and use it if no recent update:
-					$output = $h->smartCache('html', 'posts', 10, '', 'twitter_widget');
-					if ($output) {
-						return $output; // cached HTML
+					$cached_output = $h->smartCache('html', 'posts', 10, '', 'twitter_widget');
+					if ($cached_output) {
+						return $cached_output; // cached HTML
 					} else {
 						$need_cache = true;
 					}
