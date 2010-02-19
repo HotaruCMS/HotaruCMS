@@ -302,26 +302,6 @@ class PageHandling
     
     
     /**
-     * Prepare pagination and display page numbers bar
-     *
-     * @param array $items - array of all items to show
-     * @param int $items_per_page
-     * @param int $pg - current page number
-     * @return object - object of type Paginated
-     */
-    public function pagination($h, $items = array(), $items_per_page = 10, $pg = 0)
-    {
-        if (!$items) { return false; }
-        
-        require_once(EXTENSIONS . 'Paginated/Paginated.php');
-        require_once(EXTENSIONS . 'Paginated/DoubleBarLayout.php');
-
-        $pg = $h->cage->get->getInt('pg');
-        return new Paginated($items, $items_per_page, $pg);
-    }
-    
-    
-    /**
      * Return page numbers bar
      *
      * @param object $pageObject - current object of type Paginated

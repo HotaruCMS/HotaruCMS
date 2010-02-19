@@ -26,12 +26,10 @@
 
 ?>
 <?php 
-
-if ($h->vars['posts']) {
-    $pg = $h->cage->get->getInt('pg');
+if ($h->vars['post_count']) {
     
-    $pagedResults = $h->pagination($h->vars['posts'], $h->vars['posts_per_page'], $pg);
-    while($post = $pagedResults->fetchPagedRow()) {
+    $pagedResults = $h->pagination($h->vars['post_query'], $h->vars['post_count'], $h->vars['posts_per_page'], 'posts');
+    foreach ($pagedResults->items as $post) {
         $h->readPost(0, $post);
         $user = new UserBase();
         $user->getUserBasic($h, $h->post->author);

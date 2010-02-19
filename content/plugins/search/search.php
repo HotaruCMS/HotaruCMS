@@ -90,17 +90,18 @@ class Search
     /**
      * Use the search terms to build a filter
      */
-    public function sb_base_functions_preparelist($h)
+    public function sb_base_functions_preparelist($h, $vars)
     {
         if ($h->cage->get->keyExists('search')) 
         {
+            $return = $vars['return'];  // are we getting the count or the result set?
             $orig_search_terms = stripslashes($h->cage->get->sanitizeTags('search'));
             $search_terms = $orig_search_terms;
         
             if ($search_terms)
             {
                 // fetch select, orderby and filter...
-                $prepared_search = $this->prepareSearchFilter($h, $search_terms);
+                $prepared_search = $this->prepareSearchFilter($h, $search_terms, $return);
                 extract($prepared_search);
                 
                 $h->vars['orig_search'] = $orig_search_terms; // use this to re-fill the search box after a search
@@ -117,7 +118,7 @@ class Search
     /**
      * Prepare search filter
      */
-    public function prepareSearchFilter($h, $search)
+    public function prepareSearchFilter($h, $search, $return = 'posts')
     {
         $search_terms = strtolower($search);
         $search_terms = explode(" ", $search_terms);
@@ -145,11 +146,13 @@ class Search
         $h->vars['filter']['(post_status = %s OR post_status = %s)'] = array('top', 'new');
         
         if ($full_index) {
-            $h->vars['select'] = "*, MATCH(post_title, post_domain, post_url, post_content, post_tags) AGAINST ('" . $search_terms_clean . "') AS relevance";
-            $h->vars['orderby'] = "relevance DESC";        
+            if ($return == 'count') { $select = "count(*) AS number "; } else { $select = "*"; }
+            $h->vars['select'] = $select . ", MATCH(post_title, post_domain, post_url, post_content, post_tags) AGAINST ('" . $search_terms_clean . "') AS relevance";
+            $h->vars['orderby'] = "relevance DESC";
             $h->vars['filter']["MATCH (post_title, post_domain, post_url, post_content, post_tags) AGAINST (%s IN BOOLEAN MODE)"] = $search_terms_clean; 
         } else {
-            $h->vars['select'] = "*";
+            if ($return == 'count') { $select = "count(*) AS number "; } else { $select = "*"; }
+            $h->vars['select'] = $select;
             $h->vars['orderby'] = "post_date DESC";
             $h->vars['filter_vars'] = array();
             $where = $this->explodeSearch($h, 'post_title', $search_terms_clean) . " OR ";

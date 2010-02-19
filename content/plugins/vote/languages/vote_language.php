@@ -89,6 +89,6 @@ $lang["vote_settings_alerts_to_bury_invalid"] = "The number of alerts needed mus
 $lang["vote_settings_physical_delete"] = "Physically delete a post from the database when buried";
 $lang["vote_settings_other"] = "Other";
 $lang["vote_settings_posts_widget"] = "Show vote count before post links in widgets <small>(requires Posts Widget plugin)</small>";
-$lang["vote_on_url_click"] = "Automatically count a users vote when they click on the URL link";
+$lang["vote_settings_vote_on_url_click"] = "Automatically count a users vote when they click on the URL link";
 
 ?>

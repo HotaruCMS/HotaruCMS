@@ -128,7 +128,8 @@ class SbBase
         switch ($h->pageType)
         {
             case 'list':
-                $h->vars['posts'] = $sb_funcs->prepareList($h);
+                $h->vars['post_count'] = $sb_funcs->prepareList($h, '', 'count');   // get the number of posts
+                $h->vars['post_query'] = $sb_funcs->prepareList($h, '', 'query');   // and the SQL query used
                 break;
             case 'post':
                 // if a post is already set (e.g. from the sb_categories plugin), we don't want to

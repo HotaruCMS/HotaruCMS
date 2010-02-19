@@ -172,6 +172,48 @@ class Comment
     
     
     /**
+     * Get all comments from database
+     *
+     * @param int $post_id - you can limit comments to a single post
+     * @return array|false
+     */
+    function getAllCommentsCount($h, $order = "ASC", $userid = 0)
+    {
+        // get all comments
+        if ($userid) { 
+            $sql = "SELECT count(*) AS number FROM " . TABLE_COMMENTS . " WHERE comment_status = %s AND comment_user_id = %d ORDER BY comment_date " . $order;
+            $comment_count = $h->db->get_var($h->db->prepare($sql, 'approved', $userid));
+        } else {
+            $sql = "SELECT count(*) AS number FROM " . TABLE_COMMENTS . " WHERE comment_status = %s ORDER BY comment_date " . $order;
+            $comment_count = $h->db->get_var($h->db->prepare($sql, 'approved'));
+        }
+        
+        if($comment_count) { return $comment_count; } else { return false; }
+    }
+    
+    
+    /**
+     * Get all comments from database
+     *
+     * @param int $post_id - you can limit comments to a single post
+     * @return array|false
+     */
+    function getAllCommentsQuery($h, $order = "ASC", $userid = 0)
+    {
+        // get all comments
+        if ($userid) { 
+            $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_status = %s AND comment_user_id = %d ORDER BY comment_date " . $order;
+            $query = $h->db->prepare($sql, 'approved', $userid);
+        } else {
+            $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_status = %s ORDER BY comment_date " . $order;
+            $query = $h->db->prepare($sql, 'approved');
+        }
+        
+        if($query) { return $query; } else { return false; }
+    }
+    
+    
+    /**
      * Read comment
      *
      * @param array $comment

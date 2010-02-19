@@ -115,12 +115,12 @@ class UserManagerSettings
                 $h->vars['search_term'] = $search_term; // used to refill the search box after a search
                 $where_clause = " WHERE user_username LIKE %s OR user_email LIKE %s"; 
                 $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
-                $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
                 $search_term = '%' . $search_term . '%';
-                $results = $h->db->get_results($h->db->prepare($sql, $search_term, $search_term)); 
+                $count_sql = "SELECT count(*) AS number FROM " . TABLE_USERS . $where_clause . $sort_clause;
+                $count = $h->db->get_var($h->db->prepare($count_sql, $search_term, $search_term));
+                $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
+                $query = $h->db->prepare($sql, $search_term, $search_term); 
             }
-            
-            if (isset($results)) { $users = $results; } else {  $users = array(); }
         }
         
         
@@ -132,115 +132,149 @@ class UserManagerSettings
             switch ($filter) {
                 case 'all': 
                     $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_USERS . $sort_clause;
+                    $count = $h->db->get_var($h->db->prepare($count_sql));
                     $sql = "SELECT * FROM " . TABLE_USERS . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql)); 
+                    $query = $h->db->prepare($sql);
                     break;
                 case 'not_killspammed': 
                     $where_clause = " WHERE user_role != %s"; 
                     $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_USERS . $where_clause . $sort_clause;
+                    $count = $h->db->get_var($h->db->prepare($count_sql, 'killspammed'));
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql, 'killspammed')); 
+                    $query = $h->db->prepare($sql, 'killspammed');
                     break;
                 case 'admin': 
                     $where_clause = " WHERE user_role = %s"; 
                     $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_USERS . $where_clause . $sort_clause;
+                    $count = $h->db->get_var($h->db->prepare($count_sql, 'admin'));
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql, 'admin')); 
+                    $query = $h->db->prepare($sql, 'admin');
                     break;
                 case 'supermod': 
                     $where_clause = " WHERE user_role = %s"; 
                     $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_USERS . $where_clause . $sort_clause;
+                    $count = $h->db->get_var($h->db->prepare($count_sql, 'supermod'));
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql, 'mod')); 
+                    $query = $h->db->prepare($sql, 'supermod');
                     break;
                 case 'moderator': 
                     $where_clause = " WHERE user_role = %s"; 
                     $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_USERS . $where_clause . $sort_clause;
+                    $count = $h->db->get_var($h->db->prepare($count_sql, 'moderator'));
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql, 'mod')); 
+                    $query = $h->db->prepare($sql, 'moderator');
                     break;
                 case 'member': 
                     $where_clause = " WHERE user_role = %s"; 
                     $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_USERS . $where_clause . $sort_clause;
+                    $count = $h->db->get_var($h->db->prepare($count_sql, 'member'));
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql, 'member')); 
+                    $query = $h->db->prepare($sql, 'member');
                     break;
                 case 'pending': 
                     $where_clause = " WHERE user_role = %s"; 
                     $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_USERS . $where_clause . $sort_clause;
+                    $count = $h->db->get_var($h->db->prepare($count_sql, 'pending'));
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql, 'pending')); 
+                    $query = $h->db->prepare($sql, 'pending');
                     break;
                 case 'undermod': 
                     $where_clause = " WHERE user_role = %s"; 
                     $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_USERS . $where_clause . $sort_clause;
+                    $count = $h->db->get_var($h->db->prepare($count_sql, 'undermod'));
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql, 'undermod')); 
+                    $query = $h->db->prepare($sql, 'undermod');
                     break;
                 case 'suspended': 
                     $where_clause = " WHERE user_role = %s"; 
                     $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_USERS . $where_clause . $sort_clause;
+                    $count = $h->db->get_var($h->db->prepare($count_sql, 'suspended'));
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql, 'suspended')); 
+                    $query = $h->db->prepare($sql, 'suspended');
                     break;
                 case 'banned': 
                     $where_clause = " WHERE user_role = %s"; 
                     $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_USERS . $where_clause . $sort_clause;
+                    $count = $h->db->get_var($h->db->prepare($count_sql, 'banned'));
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql, 'banned')); 
+                    $query = $h->db->prepare($sql, 'banned');
                     break;
                 case 'killspammed': 
                     $where_clause = " WHERE user_role = %s"; 
                     $sort_clause = ' ORDER BY user_date DESC'; // ordered by registration date
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_USERS . $where_clause . $sort_clause;
+                    $count = $h->db->get_var($h->db->prepare($count_sql, 'killspammed'));
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql, 'killspammed')); 
+                    $query = $h->db->prepare($sql, 'killspammed');
                     break;
                 case 'newest':
                     $sort_clause = ' ORDER BY user_date DESC';  // same as "all"
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_USERS;
+                    $count = $h->db->get_var($h->db->prepare($count_sql));
                     $sql = "SELECT * FROM " . TABLE_USERS . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql)); 
+                    $query = $h->db->prepare($sql);
                     break;
                 case 'oldest':
                     $sort_clause = ' ORDER BY user_date ASC';
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_USERS;
+                    $count = $h->db->get_var($h->db->prepare($count_sql));
                     $sql = "SELECT * FROM " . TABLE_USERS . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql)); 
+                    $query = $h->db->prepare($sql);
                     break;
                 case 'last_visited':
                     $sort_clause = ' ORDER BY user_lastvisit DESC';
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_USERS;
+                    $count = $h->db->get_var($h->db->prepare($count_sql));
                     $sql = "SELECT * FROM " . TABLE_USERS . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql)); 
+                    $query = $h->db->prepare($sql);
                     break;
                 default:
                     $where_clause = " WHERE user_role = %s"; $sort_clause = ' ORDER BY user_date DESC'; // ordered newest first for convenience
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_USERS . $where_clause . $sort_clause;
+                    $count = $h->db->get_var($h->db->prepare($count_sql, $filter));
                     $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql, $filter)); // filter = new, top, or other post status
+                    $query = $h->db->prepare($sql, $filter);    // filter = 'admin', 'member', etc.
                     break;
             }
-            
-            if (isset($filtered_results)) { $users = $filtered_results; } else {  $users = array(); }
         }
 
-        if(!isset($users)) {
+        if(!isset($query)) {
             // default list
             
             // if all new users are set to 'pending' show pending list as default...
             if ($h->vars['regStatus'] == 'pending') {
                 $where_clause = " WHERE user_role = %s"; 
                 $sort_clause = ' ORDER BY user_date DESC';
+                $count_sql = "SELECT count(*) AS number FROM " . TABLE_USERS . $where_clause . $sort_clause;
+                $count = $h->db->get_var($h->db->prepare($count_sql, 'pending'));
                 $sql = "SELECT * FROM " . TABLE_USERS . $where_clause . $sort_clause;
-                $users = $h->db->get_results($h->db->prepare($sql, 'pending')); 
+                $query = $h->db->prepare($sql, 'pending'); 
             }
             // else show all users by newest...
             else
             {
                 $sort_clause = ' ORDER BY user_date DESC'; // ordered by newest
+                $count_sql = "SELECT count(*) AS number FROM " . TABLE_USERS . $sort_clause;
+                $count = $h->db->get_var($h->db->prepare($count_sql));
                 $sql = "SELECT * FROM " . TABLE_USERS . $sort_clause;
-                $users = $h->db->get_results($h->db->prepare($sql)); 
+                $query = $h->db->prepare($sql); 
             }
         }
+
+        $pagedResults = $h->pagination($query, $count, 30, 'users');
         
-        if ($users) { 
-            $h->vars['user_man_rows'] = $this->drawRows($h, $users, $filter, $search_term);
+        if ($pagedResults) { 
+            $h->vars['user_man_rows'] = $this->drawRows($h, $pagedResults, $filter, $search_term);
         } elseif ($h->vars['user_filter'] == 'pending') {
             $h->message = $h->lang['user_man_no_pending_users'];
             $h->messageType = 'green';
@@ -254,17 +288,15 @@ class UserManagerSettings
     /**
      * Draw Rows
      */
-    public function drawRows($h, $users, $filter = '', $search_term = '')
+    public function drawRows($h, $pagedResults, $filter = '', $search_term = '')
     {
-        // prepare for showing users, 30 per page
-        $pg = $h->cage->get->getInt('pg');
-        $items = 30;
-        
-        $pagedResults = $h->pagination($users, $items, $pg);
-        
         $output = "";
         $alt = 0;
-        while($user = $pagedResults->fetchPagedRow()) {    //when $story is false loop terminates    
+        
+        if (!$pagedResults->items) { return ""; }
+        
+        foreach ($pagedResults->items as $user)
+        {    //when $story is false loop terminates    
             $alt++;
 
             $account_link = BASEURL . "index.php?page=account&amp;user=" . $user->user_username; 
@@ -274,7 +306,7 @@ class UserManagerSettings
             // add icons to user role:
             $user_icon = '';
             if ($h->vars['useEmailConf']) {
-                if ($user->user_email_valid == 0) {
+                if ($user->user_role == 'pending' && $user->user_email_valid == 0) {
                     $user_icon .= " <img src = '" . BASEURL . "content/plugins/user_manager/images/email.png' title='" . $h->lang["user_man_user_email_icon"] . "'>";
                 }
             }

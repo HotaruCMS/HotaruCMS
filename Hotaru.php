@@ -358,28 +358,30 @@ class Hotaru
     /**
      * Prepare pagination
      *
-     * @param array $items - array of all items to show
+     * @param string $query - SQL query
+     * @param int $total_items - total row count
      * @param int $items_per_page
      * @param int $pg - current page number
-     * @return object - object of type Paginated
+     * @param string $cache_table - must provide a table, e.g. "posts" for caching to be used
+     * @return array - result set
      */
-    public function pagination($items = array(), $items_per_page = 10, $pg = 0)
+    public function pagination($query, $total_items, $items_per_page = 10, $cache_table = '')
     {
-        $pageHandling = new PageHandling();
-        return $pageHandling->pagination($this, $items, $items_per_page, $pg);
+        require_once(LIBS . 'Paginator.php');
+        $paginator = new Paginator();
+        return $paginator->pagination($this, $query, $total_items, $items_per_page, $cache_table);
     }
     
  
     /**
      * Return page numbers bar
      *
-     * @param object $pageObject - current object of type Paginated
+     * @param object $paginator - current object of type Paginator
      * @return string - HTML for page number bar
      */
-    public function pageBar($pageObject = NULL)
+    public function pageBar($paginator = NULL)
     {
-        $pageHandling = new PageHandling();
-        return $pageHandling->pageBar($this, $pageObject);
+        return $paginator->pageBar($this);
     }
     
 

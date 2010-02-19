@@ -113,9 +113,21 @@ class PostManagerSettings
                     $s = new Search();
                     require_once(PLUGINS . 'sb_base/libs/SbBaseFunctions.php');
                     $sbFuncs = new SbBaseFunctions();
-                    $s->prepareSearchFilter($h, stripslashes(trim($h->db->escape($search_term))));
+                    
+                    // get count
+                    $s->prepareSearchFilter($h, stripslashes(trim($h->db->escape($search_term))), 'count');
                     $filtered_search = $sbFuncs->filter($h->vars['filter'], 0, true, $h->vars['select'], $h->vars['orderby']);
-                    $posts = $sbFuncs->getPosts($h, $filtered_search);
+                    $posts_count = $sbFuncs->getPosts($h, $filtered_search);
+                    $count = $posts_count[0]->number;
+                    
+                    // get query
+                    $s->prepareSearchFilter($h, stripslashes(trim($h->db->escape($search_term))), 'query');
+                    $prepared_filter = $sbFuncs->filter($h->vars['filter'], 0, true, $h->vars['select'], $h->vars['orderby']);
+                    if (isset($prepared_filter[1])) {
+                        $query = $h->db->prepare($prepared_filter);
+                    } else {
+                        $query = $prepared_filter[0];    // returns the prepared query array
+                    }
                 }
             } else {
                 $h->message = $h->lang["post_man_need_search"];
@@ -132,51 +144,65 @@ class PostManagerSettings
             switch ($filter) {
                 case 'all': 
                     $sort_clause = ' ORDER BY post_date DESC'; // ordered newest first for convenience
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_POSTS;
+                    $count = $h->db->get_var($h->db->prepare($count_sql));
                     $sql = "SELECT * FROM " . TABLE_POSTS . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql)); 
+                    $query = $h->db->prepare($sql); 
                     break;
                 case 'not_buried': 
                     $where_clause = " WHERE post_status != %s"; 
                     $sort_clause = ' ORDER BY post_date DESC'; // ordered newest first for convenience
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_POSTS . $where_clause;
+                    $count = $h->db->get_var($h->db->prepare($count_sql, 'buried'));
                     $sql = "SELECT * FROM " . TABLE_POSTS . $where_clause . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql, 'buried')); 
+                    $query = $h->db->prepare($sql, 'buried'); 
                     break;
                 case 'newest':
                     $sort_clause = ' ORDER BY post_date DESC';  // same as "all"
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_POSTS;
+                    $count = $h->db->get_var($h->db->prepare($count_sql));
                     $sql = "SELECT * FROM " . TABLE_POSTS . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql)); 
+                    $query = $h->db->prepare($sql); 
                     break;
                 case 'oldest':
                     $sort_clause = ' ORDER BY post_date ASC';
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_POSTS;
+                    $count = $h->db->get_var($h->db->prepare($count_sql));
                     $sql = "SELECT * FROM " . TABLE_POSTS . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql)); 
+                    $query = $h->db->prepare($sql); 
                     break;
                 default:
                     $where_clause = " WHERE post_status = %s"; $sort_clause = ' ORDER BY post_date DESC'; // ordered newest first for convenience
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_POSTS . $where_clause;
+                    $count = $h->db->get_var($h->db->prepare($count_sql, $filter));
                     $sql = "SELECT * FROM " . TABLE_POSTS . $where_clause . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql, $filter)); // filter = new, top, or other post status
+                    $query = $h->db->prepare($sql, $filter); // filter = new, top, or other post status
                     break;
             }
-
-            if (isset($filtered_results)) { $posts = $filtered_results; } else {  $posts = array(); }
         }
 
-        if(!isset($posts)) {
+        if(!isset($query)) {
             // default list
             if ($h->vars['post_status_filter'] == 'pending') {
                 $where_clause = " WHERE post_status = %s";
                 $sort_clause = ' ORDER BY post_date DESC'; // ordered newest first for convenience
+                $count_sql = "SELECT count(*) AS number FROM " . TABLE_POSTS . $where_clause;
+                $count = $h->db->get_var($h->db->prepare($count_sql, 'pending'));
                 $sql = "SELECT * FROM " . TABLE_POSTS . $where_clause . $sort_clause;
-                $posts = $h->db->get_results($h->db->prepare($sql, 'pending')); 
+                $query = $h->db->prepare($sql, 'pending'); 
             } else {
                 $sort_clause = ' ORDER BY post_date DESC'; // ordered newest first for convenience
+                $count_sql = "SELECT count(*) AS number FROM " . TABLE_POSTS;
+                $count = $h->db->get_var($h->db->prepare($count_sql));
                 $sql = "SELECT * FROM " . TABLE_POSTS . $sort_clause;
-                $posts = $h->db->get_results($h->db->prepare($sql)); 
+                $query = $h->db->prepare($sql); 
             }
         }
         
-        if ($posts) { 
-            $h->vars['post_man_rows'] = $this->drawRows($h, $p, $posts, $filter, $search_term);
+        $pagedResults = $h->pagination($query, $count, 20, 'posts');
+        
+        if ($pagedResults) { 
+            $h->vars['post_man_rows'] = $this->drawRows($h, $p, $pagedResults, $filter, $search_term);
         } elseif ($h->vars['post_status_filter'] == 'pending') {
             $h->message = $h->lang['post_man_no_pending_posts'];
             $h->messageType = 'green';
@@ -187,17 +213,16 @@ class PostManagerSettings
     }
     
     
-    public function drawRows($h, $p, $posts, $filter = '', $search_term = '')
+    public function drawRows($h, $p, $pagedResults, $filter = '', $search_term = '')
     {
-        // prepare for showing posts, 20 per page
-        $pg = $h->cage->get->getInt('pg');
-        $items = 20;
-        
-        $pagedResults = $h->pagination($posts, $items, $pg);
-        
         $output = "";
         $alt = 0;
-        while($post = $pagedResults->fetchPagedRow()) {    //when $story is false loop terminates    
+        $pg = $h->cage->get->getInt('pg');
+        
+        if (!$pagedResults->items) { return ""; }
+        
+        foreach ($pagedResults->items as $post) 
+        {
             $alt++;
             
             $username = $h->getUserNameFromId($post->post_author);

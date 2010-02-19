@@ -380,7 +380,7 @@ class Comments
 
                 if ($pagedResults) {
                 // cycle through the parents, and go get their children
-                    while($parent = $pagedResults->fetchPagedRow()) {
+                    foreach($pagedResults->items as $parent) {
         
                             $this->displayComment($h, $parent);
                             $this->commentTree($h, $parent->comment_id, 0);
@@ -539,11 +539,18 @@ class Comments
         $comments_settings = $h->getSerializedSettings();
         $h->comment->itemsPerPage = $comments_settings['comment_items_per_page'];
         
-        $pg = $h->cage->get->getInt('pg');
-        $pagedResults = $h->pagination($comments, $h->comment->itemsPerPage, $pg);
+        if ($userid) {
+            $comments_count = $h->comment->getAllCommentsCount($h, '', $userid);
+            $comments_query = $h->comment->getAllCommentsQuery($h, 'DESC', $userid);
+        } else {
+            $comments_count = $h->comment->getAllCommentsCount($h);
+            $comments_query = $h->comment->getAllCommentsQuery($h, 'DESC');
+        }
+            
+        $pagedResults = $h->pagination($comments_query, $comments_count, $h->comment->itemsPerPage, 'comments');
         
         if ($pagedResults) {
-            while($comment = $pagedResults->fetchPagedRow()) {
+            foreach ($pagedResults->items as $comment) {
                 $h->readPost($comment->comment_post_id);
                 // don't show this comment if its post is buried or pending:
                 if ($h->post->status == 'buried' || $h->post->status == 'pending') { continue; }
