@@ -115,7 +115,7 @@ class Blocked
             $query = $h->db->prepare($sql);
         }
         
-        $items_per_page = 5;
+        $items_per_page = 20;
         $output = "";
         
         $pagedResults = $h->pagination($query, $count, $items_per_page, 'blocked');

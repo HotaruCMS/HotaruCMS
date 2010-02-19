@@ -529,12 +529,6 @@ class Comments
             $userid = 0;
         }
 
-        $comments = $h->comment->getAllComments($h, 0, 'DESC', 0, $userid);
-        if (!$comments) {
-            $h->showMessage($h->lang['comments_user_no_comments'], 'red');
-            return true; 
-        }
-        
         $comments_settings = $h->getSerializedSettings();
         $h->comment->itemsPerPage = $comments_settings['comment_items_per_page'];
         
@@ -544,6 +538,11 @@ class Comments
         } else {
             $comments_count = $h->comment->getAllCommentsCount($h);
             $comments_query = $h->comment->getAllCommentsQuery($h, 'DESC');
+        }
+        
+        if (!$comments_count) {
+            $h->showMessage($h->lang['comments_user_no_comments'], 'red');
+            return true; 
         }
             
         $pagedResults = $h->pagination($comments_query, $comments_count, $h->comment->itemsPerPage, 'comments');

@@ -159,11 +159,11 @@ class Comment
         } else {
             // get all comments
             if ($userid) { 
-                $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_status = %s AND comment_user_id = %d ORDER BY comment_date " . $order . $limit;
-                $comments = $h->db->get_results($h->db->prepare($sql, 'approved', $userid));
+                $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s AND comment_status = %s AND comment_user_id = %d ORDER BY comment_date " . $order . $limit;
+                $comments = $h->db->get_results($h->db->prepare($sql, 'N', 'approved', $userid));
             } else {
-                $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_status = %s ORDER BY comment_date " . $order . $limit;
-                $comments = $h->db->get_results($h->db->prepare($sql, 'approved'));
+                $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s AND comment_status = %s ORDER BY comment_date " . $order . $limit;
+                $comments = $h->db->get_results($h->db->prepare($sql, 'N', 'approved'));
             }
         }
         
@@ -181,11 +181,11 @@ class Comment
     {
         // get all comments
         if ($userid) { 
-            $sql = "SELECT count(*) AS number FROM " . TABLE_COMMENTS . " WHERE comment_status = %s AND comment_user_id = %d ORDER BY comment_date " . $order;
-            $comment_count = $h->db->get_var($h->db->prepare($sql, 'approved', $userid));
+            $sql = "SELECT count(*) AS number FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s AND comment_status = %s AND comment_user_id = %d ORDER BY comment_date " . $order;
+            $comment_count = $h->db->get_var($h->db->prepare($sql, 'N', 'approved', $userid));
         } else {
-            $sql = "SELECT count(*) AS number FROM " . TABLE_COMMENTS . " WHERE comment_status = %s ORDER BY comment_date " . $order;
-            $comment_count = $h->db->get_var($h->db->prepare($sql, 'approved'));
+            $sql = "SELECT count(*) AS number FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s AND comment_status = %s ORDER BY comment_date " . $order;
+            $comment_count = $h->db->get_var($h->db->prepare($sql, 'N', 'approved'));
         }
         
         if($comment_count) { return $comment_count; } else { return false; }

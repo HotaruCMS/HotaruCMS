@@ -102,8 +102,8 @@ class CommentsWidget
      */
     public function getCommentsWidget($h, $limit)
     {
-        $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_status = %s ORDER BY comment_date DESC LIMIT " . $limit;
-        $comments = $h->db->get_results($h->db->prepare($sql, 'approved'));
+        $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s AND comment_status = %s ORDER BY comment_date DESC LIMIT " . $limit;
+        $comments = $h->db->get_results($h->db->prepare($sql, 'N', 'approved'));
         
         if ($comments) { return $comments; } else { return false; }
     }
