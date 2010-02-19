@@ -67,6 +67,11 @@ class TwitterWidget
         // initialize the twitter class
         $twitter = new Twitter($twitter_widget_username, $twitter_widget_password);
 		
+		// grabs status for API rate limit for testing cache
+		$calls = $twitter->rateLimitStatus();
+		
+		$hits = new SimpleXMLElement($calls);
+	
 		// fetch your profile in xml format
 		$user = $twitter->showUser();
 		
@@ -90,36 +95,64 @@ class TwitterWidget
 
 		  return $text;
 		  }	
-		   
-	
+		  
+        
+		
 	// show twitter widget template
-        echo '<div class="twitter_container">';	
-		echo '<div class="twitter_header">';
-		echo '<img src="'.$my_info->profile_image_url.'" alt='.$my_info->screen_name.' title='.$my_info->screen_name.' >';
-		echo '<h3><a href="http://www.twitter.com/'.$my_info->screen_name.'">'.$my_info->followers_count.' Followers</a></h3>';
-		//echo '<br/>';
-		echo '<a href="http://www.twitter.com/'.$my_info->screen_name.'">'.$h->lang["twitter_widget_follow_us"].'</a>';
-		echo '</div>';
+        $output = "<div class='twitter_container'>\n";		
+		$output .= "<div class='twitter_header'>\n";
+		$output .= "<img src='".$my_info->profile_image_url."' alt=".$my_info->screen_name." title=".$my_info->screen_name." >\n";
+		$output .= "<h3><a href='http://www.twitter.com/".$my_info->screen_name."'>".$my_info->followers_count." Followers</a></h3>\n";
+		//$output .= "<br/>\n";
+		$output .= "<a href='http://www.twitter.com/".$my_info->screen_name."'>".$h->lang['twitter_widget_follow_us']."</a>\n";
+		$output .= "</div>\n";
 		
 			$i = 1;
 	 foreach($twitter_status->status as $status){
             if($i < 6){ //show up to 20 latest tweets default is 5
-			echo '<div class="twitter_status">';
+			$output .= "<div class='twitter_status'>\n";
             foreach($status->user as $user){
-                echo '<img src="'.$user->profile_image_url.'" class="twitter_image">';
-                echo '<a href="http://www.twitter.com/'.$user->screen_name.'">'.$user->name.'</a>: ';
+                $output .= "<img src='".$user->profile_image_url."' class='twitter_image'>\n";
+                $output .= "<a href='http://www.twitter.com/".$user->screen_name."'>".$user->name."</a>: \n";
             }
-            echo ShortenText($status->text);
-            echo '<br/>';
+            $output .= ShortenText($status->text);
+            $output .= "<br/>\n";
 			// uncommment below to show posted time - might have to adjust CSS!
-            //echo '<div class="twitter_posted_at"><strong>Posted at:</strong> '.$status->created_at.'</div>';
-            echo '</div>';
+            //$output .= "<div class='twitter_posted_at'><strong>Posted at:</strong> ".$status->created_at."</div>";
+            $output .= "</div>\n";
 			}
 			 $i++;
         }
-		echo '</div>';
+		$output .= "</div>";
+		
+		echo $output;
+		///// testing purposes (doesn't count against your hit limit to call up remaining hits)
+		echo '<br/>';
+		echo 'remaining hits for this hour = ' . $hits->{'remaining-hits'};
+		
 
+		///////////////////////////////////	  
 
+		 
+		   $need_cache = false;
+				
+					// check for a cached version and use it if no recent update:
+					$output = $h->smartCache('html', 'posts', 10, '', 'twitter_widget');
+					if ($output) {
+						return $output; // cached HTML
+					} else {
+						$need_cache = true;
+					}
+				
+						
+				if ($need_cache) {
+					$h->smartCache('html', 'posts', 10, $output, 'twitter_widget'); 
+				}
+				
+				return $output;
+			
+		//////////////////////////////////////////
+		
     }
 
 }
