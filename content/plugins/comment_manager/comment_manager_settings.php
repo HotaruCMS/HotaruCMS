@@ -94,7 +94,7 @@ class CommentManagerSettings
                 $h->comment->readComment($h, $comment); // read comment into $c
                 
                 // Akismet uses this to report Akismet mistakes 
-                $h->pluginHook('com_man_delete_comment', true, '', array($h->comment));
+                $h->pluginHook('com_man_delete_comment', '', array($h->comment));
                 
                 $h->comment->deleteComment($h); // delete this comment
                 $h->comment->deleteCommentTree($h, $cid);   // delete all responses, too.

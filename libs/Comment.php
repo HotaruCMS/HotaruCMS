@@ -311,14 +311,15 @@ class Comment
      */    
     public function deleteComment($h, $comment_id = 0)
     {
+        if (!$comment_id) { $comment_id = $this->id; }
         if (!$comment_id) { return false; }
-        
+
         $sql = "DELETE FROM " . TABLE_COMMENTS . " WHERE comment_id = %d";
         $h->db->query($h->db->prepare($sql, $comment_id));
         
         // delete any votes for this comment
-        //$sql = "DELETE FROM " . TABLE_COMMENTVOTES . " WHERE cvote_comment_id = %d";
-        //$h->db->query($h->db->prepare($sql, $this->id));
+        $sql = "DELETE FROM " . TABLE_COMMENTVOTES . " WHERE cvote_comment_id = %d";
+        $h->db->query($h->db->prepare($sql, $this->id));
         
         $h->comment->id = $comment_id; // a small hack to get the id for use in plugins.
         $h->pluginHook('comment_delete_comment');
