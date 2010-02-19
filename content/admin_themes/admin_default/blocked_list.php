@@ -35,7 +35,7 @@ extract($h->vars['admin_blocked_list']); // extracts $output and $pagedResults;
 
 <?php echo $h->showMessage(); ?>
 
-<form name='blocked_list_new_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>
+<form name='blocked_list_new_form' action='<?php echo BASEURL; ?>admin_index.php?page=blocked_list' method='post'>
     <h3><?php echo $h->lang["admin_theme_blocked_new"]; ?></h3>
     <table>
         <tr class='table_headers'>
@@ -49,14 +49,13 @@ extract($h->vars['admin_blocked_list']); // extracts $output and $pagedResults;
             <td><input class='submit' type='submit' value='<?php echo $h->lang['admin_theme_blocked_submit_add']; ?>' /></td>
         </tr>
     </table>
-    <input type='hidden' name='page' value='blocked_list' />
     <input type='hidden' name='type' value='new' />
     <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
 </form>
 
 <table><tr><td>
 
-<form name='blocked_list_search_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>
+<form name='blocked_list_search_form' action='<?php echo BASEURL; ?>admin_index.php?page=blocked_list' method='post'>
     <h3><?php echo $h->lang["admin_theme_blocked_search"]; ?></h3>
     <table>
         <tr class='table_headers'>
@@ -64,14 +63,13 @@ extract($h->vars['admin_blocked_list']); // extracts $output and $pagedResults;
             <td><input class='submit' type='submit' value='<?php echo $h->lang['admin_theme_blocked_submit_search']; ?>' /></td>
         </tr>
     </table>
-    <input type='hidden' name='page' value='blocked_list' />
     <input type='hidden' name='type' value='search' />
     <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
 </form>
 
 </td><td>
 
-<form name='blocked_list_filter_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>
+<form name='blocked_list_filter_form' action='<?php echo BASEURL; ?>admin_index.php?page=blocked_list' method='post'>
     <h3><?php echo $h->lang["admin_theme_blocked_filter"]; ?></h3>
     <table>
         <tr class='table_headers'>
@@ -85,7 +83,6 @@ extract($h->vars['admin_blocked_list']); // extracts $output and $pagedResults;
             <td><input class='submit' type='submit' value='<?php echo $h->lang['admin_theme_blocked_submit_filter']; ?>' /></td>
         </tr>
     </table>
-    <input type='hidden' name='page' value='blocked_list' />
     <input type='hidden' name='type' value='filter' />
     <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
 </form>
@@ -106,7 +103,6 @@ extract($h->vars['admin_blocked_list']); // extracts $output and $pagedResults;
 
 <?php 
     if (isset($pagedResults)) {
-        $pagedResults->setLayout(new DoubleBarLayout());
-        echo $pagedResults->fetchPagedNavigation($h);
+        echo $h->pageBar($pagedResults);
     }
 ?>

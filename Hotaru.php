@@ -356,20 +356,34 @@ class Hotaru
     
     
     /**
-     * Prepare pagination
+     * Pagination with query and row count (better for large sets of data)
      *
      * @param string $query - SQL query
      * @param int $total_items - total row count
      * @param int $items_per_page
-     * @param int $pg - current page number
      * @param string $cache_table - must provide a table, e.g. "posts" for caching to be used
-     * @return array - result set
+     * @return object|false - object
      */
     public function pagination($query, $total_items, $items_per_page = 10, $cache_table = '')
     {
         require_once(LIBS . 'Paginator.php');
         $paginator = new Paginator();
         return $paginator->pagination($this, $query, $total_items, $items_per_page, $cache_table);
+    }
+    
+
+    /**
+     * Pagination with full dataset (easier for small sets of data)
+     *
+     * @param array $data - array of results for paginating
+     * @param int $items_per_page
+     * @return object|false - object
+     */
+    public function paginationFull($data, $items_per_page = 10)
+    {
+        require_once(LIBS . 'Paginator.php');
+        $paginator = new Paginator();
+        return $paginator->paginationFull($this, $data, $items_per_page);
     }
     
  

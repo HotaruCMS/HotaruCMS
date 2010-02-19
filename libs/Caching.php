@@ -229,6 +229,9 @@ class Caching
             case 'miscdata':
                 $sql = "SELECT miscdata_updatedts FROM " . DB_PREFIX . "miscdata ORDER BY miscdata_updatedts DESC";
                 break;
+            case 'blocked':
+                $sql = "SELECT blocked_updatedts FROM " . DB_PREFIX . "blocked ORDER BY blocked_updatedts DESC";
+                break;
             default:
                 return false;
         }

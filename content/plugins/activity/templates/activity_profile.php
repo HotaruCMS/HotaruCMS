@@ -34,7 +34,7 @@
     <ul class='activity_items'>
         <?php 
             $act = new Activity();
-            if ($h->vars['pagedResults']) { 
+            if ($h->vars['pagedResults']->items) { 
                 foreach ($h->vars['pagedResults']->items as $action) {
                     if (!$act->postSafe($h, $action)) { continue; } // skip if postis buried or pending
                     $user_id = $action->useract_userid;

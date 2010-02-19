@@ -375,10 +375,9 @@ class Comments
             // IF PAGINATING COMMENTS:
             if ($h->comment->pagination)
             {
-                $pg = $h->cage->get->getInt('pg');
-                $pagedResults = $h->pagination($parents, $h->comment->itemsPerPage, $pg);
+                $pagedResults = $h->paginationFull($parents, $h->comment->itemsPerPage);
 
-                if ($pagedResults) {
+                if ($pagedResults->items) {
                 // cycle through the parents, and go get their children
                     foreach($pagedResults->items as $parent) {
         
@@ -549,7 +548,7 @@ class Comments
             
         $pagedResults = $h->pagination($comments_query, $comments_count, $h->comment->itemsPerPage, 'comments');
         
-        if ($pagedResults) {
+        if ($pagedResults->items) {
             foreach ($pagedResults->items as $comment) {
                 $h->readPost($comment->comment_post_id);
                 // don't show this comment if its post is buried or pending:

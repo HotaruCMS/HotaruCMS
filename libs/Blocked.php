@@ -76,86 +76,97 @@ class Blocked
         
         // GET CURRENTLY BLOCKED ITEMS...
         
+        $query = '';
         $where_clause = '';
+        $sort_clause = " ORDER BY blocked_updatedts DESC";
         
         // if search
         if ($safe && $h->cage->post->getAlpha('type') == 'search') {
             $search_term = $h->cage->post->sanitizeTags('search_value');
-            $where_clause = " WHERE blocked_value LIKE '%" . trim($h->db->escape($search_term)) . "%'";
+            $where_clause = " WHERE blocked_value LIKE %s";
+            $count_sql = "SELECT count(*) AS number FROM " . TABLE_BLOCKED . $where_clause;
+            $count = $h->db->get_var($h->db->prepare($count_sql, '%' . trim($search_term) . '%'));
+            $sql = "SELECT * FROM " . TABLE_BLOCKED . $where_clause . $sort_clause;
+            $query = $h->db->prepare($sql, '%' . trim($search_term) . '%');
         }
         
         // if filter
+        $filter = '';
         if ($safe && $h->cage->post->getAlpha('type') == 'filter') {
             $filter = $h->cage->post->testAlnumLines('blocked_type');
-            if ($filter == 'all') { $where_clause = ''; } else { $where_clause = " WHERE blocked_type = %s"; }
+            if ($filter == 'all') { 
+                $count_sql = "SELECT count(*) AS number FROM " . TABLE_BLOCKED;
+                $count = $h->db->get_var($h->db->prepare($count_sql));
+                $sql = "SELECT * FROM " . TABLE_BLOCKED . $sort_clause;
+                $query = $h->db->prepare($sql);
+            } else {
+                $count_sql = "SELECT count(*) AS number FROM " . TABLE_BLOCKED . " WHERE blocked_type = %s";
+                $count = $h->db->get_var($h->db->prepare($count_sql, $filter));
+                $sql = "SELECT * FROM " . TABLE_BLOCKED . " WHERE blocked_type = %s" . $sort_clause;
+                $query = $h->db->prepare($sql, $filter);
+            }
         }
         
         // SQL
-        $sql = "SELECT * FROM " . TABLE_BLOCKED . $where_clause;
-
-        if (isset($search_term)) { 
-            $blocked_items = $h->db->get_results($sql);
-        } elseif (isset($filter)) { 
-            $blocked_items = $h->db->get_results($h->db->prepare($sql, $filter));
-        } else {
-            $blocked_items = $h->db->get_results($h->db->prepare($sql));
+        if (!$query) { 
+            $count_sql = "SELECT count(*) AS number FROM " . TABLE_BLOCKED;
+            $count = $h->db->get_var($h->db->prepare($count_sql));
+            $sql = "SELECT * FROM " . TABLE_BLOCKED . $sort_clause;
+            $query = $h->db->prepare($sql);
         }
         
-        if (!$blocked_items) { return array(); }
-        
-        $pg = $h->cage->get->getInt('pg');
-        $items = 20;
+        $items_per_page = 5;
         $output = "";
         
-        require_once(EXTENSIONS . 'Paginated/Paginated.php');
-        require_once(EXTENSIONS . 'Paginated/DoubleBarLayout.php');
-        $pagedResults = new Paginated($blocked_items, $items, $pg);
+        $pagedResults = $h->pagination($query, $count, $items_per_page, 'blocked');
         
         $alt = 0;
-        while($block = $pagedResults->fetchPagedRow()) {    //when $story is false loop terminates    
-            $alt++;
-            $output .= "<tr class='table_row_" . $alt % 2 . "'>\n";
-            $output .= "<td>" . $block->blocked_type . "</td>\n";
-            $output .= "<td>" . $block->blocked_value . "</td>\n";
-            $output .= "<td>" . "<a class='table_drop_down' href='#'>\n";
-            $output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/edit.png'>" . "</a></td>\n";
-            $output .= "<td>" . "<a href='" . BASEURL . "admin_index.php?page=blocked_list&amp;action=remove&amp;id=" . $block->blocked_id . "'>\n";
-            $output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/delete.png'>" . "</a></td>\n";
-            $output .= "</tr>\n";
-            $output .= "<tr class='table_tr_details' style='display:none;'>\n";
-            $output .= "<td colspan=3 class='table_description'>\n";
-            $output .= "<form name='blocked_list_edit_form' action='" . BASEURL . "admin_index.php' method='post'>\n";
-            $output .= "<table><tr><td><select name='blocked_type'>\n";
-            
-            switch($block->blocked_type) { 
-                case 'url':
-                    $text = $h->lang["admin_theme_blocked_url"];
-                    break;
-                case 'email':
-                    $text = $h->lang["admin_theme_blocked_email"];
-                    break;
-                default:
-                    $text = $h->lang["admin_theme_blocked_ip"];
-                    break;
+        if ($pagedResults->items) {
+            foreach ($pagedResults->items as $block) {
+                $alt++;
+                $output .= "<tr class='table_row_" . $alt % 2 . "'>\n";
+                $output .= "<td>" . $block->blocked_type . "</td>\n";
+                $output .= "<td>" . $block->blocked_value . "</td>\n";
+                $output .= "<td>" . "<a class='table_drop_down' href='#'>\n";
+                $output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/edit.png'>" . "</a></td>\n";
+                $output .= "<td>" . "<a href='" . BASEURL . "admin_index.php?page=blocked_list&amp;action=remove&amp;id=" . $block->blocked_id . "'>\n";
+                $output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/delete.png'>" . "</a></td>\n";
+                $output .= "</tr>\n";
+                $output .= "<tr class='table_tr_details' style='display:none;'>\n";
+                $output .= "<td colspan=3 class='table_description'>\n";
+                $output .= "<form name='blocked_list_edit_form' action='" . BASEURL . "admin_index.php' method='post'>\n";
+                $output .= "<table><tr><td><select name='blocked_type'>\n";
+                
+                switch($block->blocked_type) { 
+                    case 'url':
+                        $text = $h->lang["admin_theme_blocked_url"];
+                        break;
+                    case 'email':
+                        $text = $h->lang["admin_theme_blocked_email"];
+                        break;
+                    default:
+                        $text = $h->lang["admin_theme_blocked_ip"];
+                        break;
+                }
+                
+                $output .= "<option value='" . $block->blocked_type . "'>" . $text . "</option>\n";
+                $output .= "<option value='ip'>" . $h->lang["admin_theme_blocked_ip"] . "</option>\n";
+                $output .= "<option value='url'>" . $h->lang["admin_theme_blocked_url"] . "</option>\n";
+                $output .= "<option value='email'>" . $h->lang["admin_theme_blocked_email"] . "</option>\n";
+                $output .= "<option value='user'>" . $h->lang["admin_theme_blocked_username"] . "</option>\n";
+                $output .= "</select></td>\n";
+                $output .= "<td><input type='text' size=30 name='value' value='" . $block->blocked_value . "' /></td>\n";
+                $output .= "<td><input class='submit' type='submit' value='" . $h->lang['admin_blocked_list_update'] . "' /></td>\n";
+                $output .= "</tr></table>\n";
+                $output .= "<input type='hidden' name='id' value='" . $block->blocked_id . "' />\n";
+                $output .= "<input type='hidden' name='page' value='blocked_list' />\n";
+                $output .= "<input type='hidden' name='type' value='edit' />\n";
+                $output .= "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />";
+                $output .= "</form>\n";
+                $output .= "</td>";
+                $output .= "<td class='table_description_close'><a class='table_hide_details' href='#'>" . $h->lang["admin_theme_plugins_close"] . "</a></td>";
+                $output .= "</tr>";
             }
-            
-            $output .= "<option value='" . $block->blocked_type . "'>" . $text . "</option>\n";
-            $output .= "<option value='ip'>" . $h->lang["admin_theme_blocked_ip"] . "</option>\n";
-            $output .= "<option value='url'>" . $h->lang["admin_theme_blocked_url"] . "</option>\n";
-            $output .= "<option value='email'>" . $h->lang["admin_theme_blocked_email"] . "</option>\n";
-            $output .= "<option value='user'>" . $h->lang["admin_theme_blocked_username"] . "</option>\n";
-            $output .= "</select></td>\n";
-            $output .= "<td><input type='text' size=30 name='value' value='" . $block->blocked_value . "' /></td>\n";
-            $output .= "<td><input class='submit' type='submit' value='" . $h->lang['admin_blocked_list_update'] . "' /></td>\n";
-            $output .= "</tr></table>\n";
-            $output .= "<input type='hidden' name='id' value='" . $block->blocked_id . "' />\n";
-            $output .= "<input type='hidden' name='page' value='blocked_list' />\n";
-            $output .= "<input type='hidden' name='type' value='edit' />\n";
-            $output .= "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />";
-            $output .= "</form>\n";
-            $output .= "</td>";
-            $output .= "<td class='table_description_close'><a class='table_hide_details' href='#'>" . $h->lang["admin_theme_plugins_close"] . "</a></td>";
-            $output .= "</tr>";
         }
 
         $blocked_array = array('blocked_items' => $output, 'pagedResults' => $pagedResults);
