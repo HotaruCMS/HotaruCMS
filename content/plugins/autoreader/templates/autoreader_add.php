@@ -133,18 +133,10 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
         <!-- Categories section -->
         <div class="section" id="section_categories">
           <p>These are the categories where the posts will be created once they're fetched from the feeds.</p>
-          <p>You have to select at least one.</p>
+          <p>Please select at one.</p>
 
           <ul id="categories">
-        <?php $arSettings->adminEditCategories($h, $data) ?>
-            <?php if(isset($data['categories']['new'])): ?>
-              <?php foreach($data['categories']['new'] as $i => $catname): ?>
-              <li>
-                <?php echo checkbox_tag('campaign_newcat[]', 1, true, 'id=campaign_newcat_' . $i) ?>
-                <?php echo input_tag('campaign_newcatname[]', $catname, 'class=input_text id=campaign_newcatname_' . $i) ?>
-              </li>
-              <?php endforeach ?>
-            <?php endif ?>
+            <?php $arSettings->adminEditCategories($h, $data) ?>
           </ul>
 
           <a href="#quick_add" id="quick_add">Quick add</a>
