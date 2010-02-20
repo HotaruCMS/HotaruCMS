@@ -277,18 +277,12 @@ class AutoreaderSettings
     return $data;
   }
 
-  function adminEditCategories($h, &$data, $parent = 0, $level = 0, $categories = 0)
+  function adminEditCategories($h, $data, $parent = 0, $level = 0, $categories = 0)
   {
   	if ( !$categories )       
-  		$categories = $h->getCategories();
-
-    if(function_exists('_get_category_hierarchy'))
-      $children = _get_category_hierarchy();
-    elseif(function_exists('_get_term_hierarchy'))
-      $children = _get_term_hierarchy('category');
-    else
-      $children = array();
-
+        $args = array("orderby"=>"category_order", "order"=>"ASC");
+  		$categories = $h->getCategories($args);
+   
   	if ( $categories ) {
 
         require_once(LIBS . 'Category.php');
@@ -306,10 +300,8 @@ class AutoreaderSettings
                         echo "--- ";
                     }
                 }
-                $category = stripslashes(html_entity_decode(urldecode($cat->category_name), ENT_QUOTES,'UTF-8'));
-                //echo "<a href='" . $h->url(array('category'=>$cat->category_id)) . "'>";
-                //echo $category . "</a></li>\n";
-                echo checkbox_tag('campaign_categories[]', $cat->category_id, in_array($cat->category_id, $data['categories']), 'id=category_' .$cat->category_id);
+                $category = stripslashes(html_entity_decode(urldecode($cat->category_name), ENT_QUOTES,'UTF-8'));               
+                echo radiobutton_tag('campaign_categories[]', $cat->category_id, in_array($cat->category_id, $data['categories']), 'id=category_' .$cat->category_id);
                 echo "&nbsp;" . label_for('category_' .  $cat->category_id, $category) .  "</li>\n";
             }
         }
