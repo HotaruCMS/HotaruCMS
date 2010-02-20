@@ -121,7 +121,7 @@ class Users
     public function header_meta($h)
     {
         if ($h->pageName == 'profile') {
-            if (isset($h->vars['profile']['bio'])) { 
+            if (isset($h->vars['profile']['bio']) && ($h->vars['profile']['bio'] != $h->lang['users_profile_default_bio'])) { 
                 echo '<meta name="description" content="' . $h->vars['profile']['bio'] . '">' . "\n";
             } else {
                 echo '<meta name="description" content="' . $h->lang['users_default_meta_description_before'] . $h->vars['user']->name . $h->lang['users_default_meta_description_after'] . '">' . "\n";  // default profile meta description (see language file)
