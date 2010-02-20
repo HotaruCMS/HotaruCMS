@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.0.6 2010/02/18 - Nick - Code changes for pagination
 v.0.5 2010/02/02 - Nick - User links added for easier spam management
 v.0.4 2010/01/04 - Nick - Updates for compatibility with Hotaru 1.0
 v.0.3 2009/11/04 - Nick - Updated install function for easier upgrading

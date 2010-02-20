@@ -2,7 +2,7 @@
 /**
  * name: Related Posts
  * description: Show a list of related posts
- * version: 0.2
+ * version: 0.3
  * folder: related_posts
  * class: relatedPosts
  * requires: submit 1.9, search 0.8

@@ -2,7 +2,7 @@
 /**
  * name: Search
  * description: Displays "Search!"
- * version: 0.8
+ * version: 0.9
  * folder: search
  * class: Search
  * type: search

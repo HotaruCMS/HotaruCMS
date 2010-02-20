@@ -13,4 +13,5 @@ Instructions
 
 Changelog
 ---------
+v.0.2 2010/02/18 - Nick - Code changes for pagination
 v.0.1 2009/12/16 - Nick - Released first version

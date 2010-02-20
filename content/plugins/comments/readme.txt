@@ -14,7 +14,7 @@ Instructions
 
 Changelog
 ---------
-v.1.4 2009/02/09 - Nick - Option to hide comments after X down votes (requires a comment voting plugin)
+v.1.4 2009/02/09 - Nick - Option to hide comments after X down votes, plus pagination code changes
 v.1.3 2009/01/17 - Nick - Added option for avatar size
 v.1.2 2009/12/30 - Nick - Updates for compatibility with Hotaru 1.0
 v.1.1 2009/11/25 - Nick - Bug fix for comment form closing when a post is edited by a non-admin user

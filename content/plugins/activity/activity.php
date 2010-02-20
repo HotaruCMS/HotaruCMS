@@ -2,7 +2,7 @@
 /**
  * name: Activity
  * description: Show recent activity
- * version: 0.4
+ * version: 0.5
  * folder: activity
  * class: Activity
  * requires: users 1.1, widgets 0.6
