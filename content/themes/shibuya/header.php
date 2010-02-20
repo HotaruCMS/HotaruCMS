@@ -60,7 +60,7 @@
             $site_color = '#' . $h->vars['settings']['site_color']; ?>
             <style type="text/css">
             <!--
-            #hd, #ft, #annoucement {background-color:<?php echo $site_color; ?> !important; }
+            #hd, #ft, #announcement {background-color:<?php echo $site_color; ?> !important; }
             a#navigation_active {color: <?php echo $site_color; ?> !important;}
             -->
             </style>
