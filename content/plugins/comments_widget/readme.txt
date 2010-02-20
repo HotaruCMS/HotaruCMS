@@ -14,4 +14,5 @@ Instructions
 
 Changelog
 ---------
+v.0.2 2010/02/19 - Nick - Restricted SQL query to non-archived comments
 v.0.1 2010/01/03 - Nick - Released first version

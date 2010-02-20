@@ -2,12 +2,12 @@
 /**
  * name: Gravatar
  * description: Enables Gravatar avatars for users
- * version: 0.7
+ * version: 0.8
  * folder: gravatar
  * class: Gravatar
  * type: avatar
  * requires: users 1.1
- * hooks: avatar_set_avatar, avatar_get_avatar, avatar_show_avatar
+ * hooks: avatar_set_avatar, avatar_get_avatar, avatar_show_avatar, avatar_test_avatar
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -67,9 +67,27 @@ class Gravatar
      *
      * @return return the avatar
      */
+    public function avatar_test_avatar($h)
+    {
+        $grav_url = $this->buildGravatarUrl($h->vars['avatar_user_email'], $h->vars['avatar_size'], $h->vars['avatar_rating'], '404');
+
+        $headers = @get_headers($grav_url);
+        if (preg_match("|200|", $headers[0])) {
+            return $this->buildGravatarImage($grav_url, $h->vars['avatar_size']);
+        }
+    }
+    
+    
+    /**
+     * return the avatar with no surrounding HTML div
+     *
+     * @return return the avatar
+     */
     public function avatar_get_avatar($h)
     {
-        return $this->buildGravatarImage($h->vars['avatar_user_email'], $h->vars['avatar_size'], $h->vars['avatar_rating']);
+        $grav_url = $this->buildGravatarUrl($h->vars['avatar_user_email'], $h->vars['avatar_size'], $h->vars['avatar_rating']);
+        $img_url = $this->buildGravatarImage($grav_url, $h->vars['avatar_size']);
+        return $img_url;
     }
     
     
@@ -81,24 +99,43 @@ class Gravatar
      * @param string $rating - g, pg, r or x
      * @return string - html for image
      */
-    public function buildGravatarImage($email = '', $size = 32, $rating = 'g')
+    public function buildGravatarUrl($email = '', $size = 32, $rating = 'g', $default = '')
     {
-        // Look in the theme's images folder for a default avatar before using the one in the Gravatar images folder
-        if (file_exists(THEMES . THEME . "images/default_80.png")) {
-            $default_image = BASEURL . "content/themes/"  . THEME . "images/default_80.png";
-        } else { 
-            $default_image = BASEURL . "content/plugins/gravatar/images/default_80.png"; 
+        if ($default != '404') {
+            // Look in the theme's images folder for a default avatar before using the one in the Gravatar images folder
+            if (file_exists(THEMES . THEME . "images/default_80.png")) {
+                $default_image = BASEURL . "content/themes/"  . THEME . "images/default_80.png";
+                $default = urlencode($default_image);
+            } else { 
+                $default_image = BASEURL . "content/plugins/gravatar/images/default_80.png"; 
+                $default = urlencode($default_image);
+            }
         }
         
-        $resized = "style='height: " . $size . "px; width: " . $size . "px'";
-        
-        $grav_url = "http://www.gravatar.com/avatar.php?gravatar_id=".md5( strtolower($email) ).
-            "&amp;default=".urlencode($default_image).
+        $grav_url = "http://www.gravatar.com/avatar/".md5( strtolower($email) ).
+            "?d=". $default .
             "&amp;size=" . $size . 
             "&amp;r=" . $rating;
-            
-        $img_url = "<img class='avatar' src='" . $grav_url . "' " . $resized  ." alt='' />";
         
+        return $grav_url;
+    }
+    
+    
+    /**
+     * Build Gravatar image
+     *
+     * @param string $email - email of avatar user
+     * @param int $size - size (1 ~ 512 pixels)
+     * @param string $rating - g, pg, r or x
+     * @return string - html for image
+     */
+    public function buildGravatarImage($grav_url = '', $size = 32)
+    {
+        if (!$grav_url) { return false; }
+        
+        $resized = "style='height: " . $size . "px; width: " . $size . "px'";
+                
+        $img_url = "<img class='avatar' src='" . $grav_url . "' " . $resized  ." alt='' />";
         return $img_url;
     }
 

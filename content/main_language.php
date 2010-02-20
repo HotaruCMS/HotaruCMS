@@ -75,7 +75,7 @@ $lang['pagination_next'] = "Next";
 
 /* Errors */
 $lang["main_theme_page_not_found"] = "Page not found";
-$lang['error_csrf'] = "Ah! You've triggered a CSRF error. That's only supposed to happen when someone tries hacking into the site...";
+$lang['error_csrf'] = "CSRF error. Please refresh the page and try again.";
 
 /* header */
 $lang["header_meta_description"] = "Hotaru CMS is an open source content management system, written in PHP.";

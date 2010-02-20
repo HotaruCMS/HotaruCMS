@@ -46,6 +46,7 @@ class RecentVisitorsSettings
         $list = $recent_visitors_settings['visitors_list'];
         $avatars = $recent_visitors_settings['visitors_avatars'];
         $avatar_size = $recent_visitors_settings['visitors_avatar_size'];
+        $avatar_filter = $recent_visitors_settings['visitors_avatar_filter'];
         $names = $recent_visitors_settings['visitors_names'];
         $show_title = $recent_visitors_settings['visitors_widget_title'];
         $show_get_avatar = $recent_visitors_settings['visitors_widget_get_avatar'];
@@ -64,6 +65,9 @@ class RecentVisitorsSettings
             echo $h->lang["recent_visitors_settings_avatars"] . "&nbsp;&nbsp; ";
             echo $h->lang["recent_visitors_settings_avatar_size"];
             echo " <input type='text' size=5 name='avatar_size' value='" . $avatar_size . "'></p>\n";
+            
+        echo "<p><input type='checkbox' name='avatar_filter' value='avatar_filter' " . $avatar_filter . ">&nbsp;&nbsp;";
+            echo $h->lang["recent_visitors_settings_avatar_filter"] . "</p>\n";
             
         echo "<p><input type='checkbox' name='names' value='names' " . $names . ">&nbsp;&nbsp;";
             echo $h->lang["recent_visitors_settings_names"] . "</p>\n";
@@ -131,6 +135,14 @@ class RecentVisitorsSettings
         }
         
         
+        // filter users with no avatars:
+        if ($h->cage->post->keyExists('avatar_filter')) { 
+            $avatar_filter = 'checked';
+        } else {
+            $avatar_filter = ''; 
+        }
+        
+        
         // show names:
         if ($h->cage->post->keyExists('names')) { 
             $names = 'checked';
@@ -148,6 +160,7 @@ class RecentVisitorsSettings
             $recent_visitors_settings['visitors_list'] = $list;
             $recent_visitors_settings['visitors_avatars'] = $avatars;
             $recent_visitors_settings['visitors_avatar_size'] = $avatar_size;
+            $recent_visitors_settings['visitors_avatar_filter'] = $avatar_filter;
             $recent_visitors_settings['visitors_names'] = $names;
             $h->updateSetting('recent_visitors_settings', serialize($recent_visitors_settings));
             

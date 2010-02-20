@@ -137,4 +137,13 @@ $lang['userfunctions_notifymods_hello'] = "Hi ";
 $lang['userfunctions_notifymods_body_click'] = "More details can be found here: ";
 $lang['userfunctions_notifymods_body_regards'] = "Thank you,";
 $lang['userfunctions_notifymods_body_sign'] = SITE_NAME . " Admin";
+
+/* User Meta Tags */
+$lang['users_default_meta_description_before'] = "I'm ";
+$lang['users_default_meta_description_after'] = " and this is my profile on " . SITE_NAME;
+$lang['users_profile_meta_keywords_more'] = ", profile, activity"; // you need the comma because the user's name is the first keyword 
+$lang['users_meta_description_results_before'] = "";
+$lang['users_meta_description_results_middle'] = " by ";
+$lang['users_meta_description_results_after'] = " on " . SITE_NAME;
+$lang['users_meta_description_popular'] = "Popular posts";
 ?>

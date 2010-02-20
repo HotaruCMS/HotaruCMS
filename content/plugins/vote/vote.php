@@ -2,12 +2,12 @@
 /**
  * name: Vote
  * description: Adds voting ability to posted stories.
- * version: 1.2
+ * version: 1.3
  * folder: vote
  * class: Vote
  * type: vote
  * requires: submit 1.9, users 1.1
- * hooks: install_plugin, theme_index_top, post_read_post, header_include, sb_base_show_post_title, sb_base_pre_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, post_add_post, submit_confirm_pre_trackback, sb_base_show_post_extra_fields, sb_base_show_post_extras, post_delete_post
+ * hooks: install_plugin, theme_index_top, post_read_post, header_include, sb_base_show_post_title, sb_base_pre_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, post_add_post, submit_confirm_pre_trackback, sb_base_show_post_extra_fields, sb_base_show_post_extras, post_delete_post, header_include_raw
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -52,6 +52,8 @@ class Vote
         if (!isset($vote_settings['upcoming_duration'])) { $vote_settings['upcoming_duration'] = 5; }
         if (!isset($vote_settings['no_front_page'])) { $vote_settings['no_front_page'] = 5; }
         if (!isset($vote_settings['posts_widget'])) { $vote_settings['posts_widget'] = 'checked'; }
+        if (!isset($vote_settings['vote_on_url_click'])) { $vote_settings['vote_on_url_click'] = ''; }
+
         
         $h->updateSetting('vote_settings', serialize($vote_settings));
     }  
@@ -79,14 +81,15 @@ class Vote
     }
     
     
+    
+
     /**
-     * Includes css and javascript for the vote buttons.
+     * includes for raw data
      */
-    public function header_include($h)
+    public function header_include_raw($h)
     {
-        $h->includeCss('vote');
-        $h->includeJs('vote');
-        $h->includeJs('vote', 'json2.min');
+     $vote_settings = $h->getSerializedSettings();
+     echo '<script type="text/javascript">$(document).ready(function(){ vote_on_url_click = "' . $vote_settings['vote_on_url_click'] . '" });</script>';
     }
     
     

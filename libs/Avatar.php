@@ -41,6 +41,7 @@ class Avatar
     public $user_email  = '';
     public $size        = 32;
     public $rating      = 'g';  // "global" used by Gravatar
+    public $valid       = true;
     
     
     /**
@@ -87,6 +88,28 @@ class Avatar
     
     
     /**
+     * test the avatar to see if it's valid
+     *
+     * @return bool
+     */
+    public function testAvatar($h)
+    {
+        if (!$this->user_id) { return false; }
+        
+        $result = $h->pluginHook('avatar_test_avatar');
+
+        if (!$result) {
+            $this->valid = false;
+            return false;
+        } 
+        
+        $this->valid = true;
+        return $result[key($result)];   // returns the result (i.e. Gravatar url in the case of Gravatar)
+
+    }
+    
+    
+    /**
      * get the plain avatar with no surrounding HTML div
      *
      * @return return the avatar
@@ -108,7 +131,7 @@ class Avatar
 
 
     /**
-     * option to display the avatar linked to ther user's profile
+     * option to display the avatar linked to ther user's profile (image obtained from plugin)
      */
     public function linkAvatar($h)
     {
@@ -128,7 +151,7 @@ class Avatar
 
 
     /**
-     * option to display the profile-linked avatar wrapped in a div
+     * option to display the profile-linked avatar wrapped in a div (image obtained from plugin)
      */
     public function wrapAvatar($h)
     {
@@ -143,6 +166,36 @@ class Avatar
             }
             $output .= $avatar; // uses the last avatar sent to this hook
         }
+        $output .= "</a>\n";
+        $output .= "</div>\n";
+        return $output;
+    }
+    
+    
+    /**
+     * option to display the avatar linked to ther user's profile (image already set)
+     */
+    public function linkAvatarImage($h, $avatar_image = '')
+    {
+        if (!$this->user_id) { return false; }
+        
+        $output = "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>\n";
+        $output .= $avatar_image; // avatar in img tags
+        $output .= "</a>\n";
+        return $output;
+    }
+
+
+    /**
+     * option to display the profile-linked avatar wrapped in a div (image already set)
+     */
+    public function wrapAvatarImage($h, $avatar_image = '')
+    {
+        if (!$this->user_id) { return false; }
+        
+        $output = "<div class='avatar_wrapper'>";
+        $output .= "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>\n";
+        $output .= $avatar_image; // avatar in img tags
         $output .= "</a>\n";
         $output .= "</div>\n";
         return $output;

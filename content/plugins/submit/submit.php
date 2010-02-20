@@ -2,7 +2,7 @@
 /**
  * name: Submit
  * description: Social Bookmarking submit - Enables post submission
- * version: 1.9
+ * version: 2.1
  * folder: submit
  * class: Submit
  * type: post
@@ -524,7 +524,7 @@ class Submit
                 $h->vars['submit_editorial'] = $h->vars['submitted_data']['submit_editorial'];
                 $h->vars['submit_orig_url'] = urldecode($h->vars['submitted_data']['submit_orig_url']);
                 $h->vars['submit_title'] = sanitize($h->vars['submitted_data']['submit_title'], 'all');
-                $h->vars['submit_content'] = sanitize($h->vars['submitted_data']['submit_content'], 'all');
+                $h->vars['submit_content'] = sanitize($h->vars['submitted_data']['submit_content'], 'tags', $allowable_tags);
                 $h->vars['submit_post_id'] = $h->vars['submitted_data']['submit_id'];
                 $h->vars['submit_category'] = $h->vars['submitted_data']['submit_category'];
                 $h->vars['submit_tags'] = sanitize($h->vars['submitted_data']['submit_tags'], 'all');
@@ -592,7 +592,7 @@ class Submit
                 $h->vars['submit_pm_page'] = $h->vars['submitted_data']['submit_pm_page'];
                 
                 // strip htmlentities before showing in the form:
-                $h->vars['submit_title'] = html_entity_decode($h->vars['submit_title']);
+                $h->vars['submit_title'] = $h->vars['submit_title'];
                 $h->vars['submit_content'] = html_entity_decode($h->vars['submit_content']);
                 $h->vars['submit_tags'] = html_entity_decode($h->vars['submit_tags']);
                 

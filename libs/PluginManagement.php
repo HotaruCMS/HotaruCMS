@@ -274,18 +274,26 @@ class PluginManagement
             }
             return false;
         }
-                    
-        $sql = "REPLACE INTO " . TABLE_PLUGINS . " (plugin_enabled, plugin_name, plugin_folder, plugin_class, plugin_extends, plugin_type, plugin_desc, plugin_requires, plugin_version, plugin_author, plugin_authorurl, plugin_updateby) VALUES (%d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d)";
-        $h->db->query($h->db->prepare($sql, $h->plugin->enabled, $h->plugin->name, $h->plugin->folder, $h->plugin->class, $h->plugin->extends, $h->plugin->type, $h->plugin->desc, $h->plugin->requires, $h->plugin->version, $h->plugin->author, urlencode($h->plugin->authorurl), $h->currentUser->id));
 
-        // Get the last order number - doing this after REPLACE INTO because 
-        // we don't know whether the above will insert or replace.
-        $sql = "SELECT plugin_order FROM " . TABLE_PLUGINS . " ORDER BY plugin_order DESC LIMIT 1";
-        $highest_order = $h->db->get_var($h->db->prepare($sql));
+        // set a new plugin order if NOT upgrading
+        if ($upgrade == 0) {
+        
+            $sql = "REPLACE INTO " . TABLE_PLUGINS . " (plugin_enabled, plugin_name, plugin_folder, plugin_class, plugin_extends, plugin_type, plugin_desc, plugin_requires, plugin_version, plugin_author, plugin_authorurl, plugin_updateby) VALUES (%d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d)";
+            $h->db->query($h->db->prepare($sql, $h->plugin->enabled, $h->plugin->name, $h->plugin->folder, $h->plugin->class, $h->plugin->extends, $h->plugin->type, $h->plugin->desc, $h->plugin->requires, $h->plugin->version, $h->plugin->author, urlencode($h->plugin->authorurl), $h->currentUser->id));
 
-        // Give the new plugin the order number + 1
-        $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_id = LAST_INSERT_ID()";
-        $h->db->query($h->db->prepare($sql, ($highest_order + 1)));
+            // Get the last order number - doing this after REPLACE INTO because 
+            // we don't know whether the above will insert or replace.
+            $sql = "SELECT plugin_order FROM " . TABLE_PLUGINS . " ORDER BY plugin_order DESC LIMIT 1";
+            $highest_order = $h->db->get_var($h->db->prepare($sql));
+    
+            // Give the new plugin the order number + 1
+            $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_id = LAST_INSERT_ID()";
+            $h->db->query($h->db->prepare($sql, ($highest_order + 1)));
+        } else {
+            // upgrading:
+            $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_enabled = %d, plugin_name = %s, plugin_folder = %s, plugin_class = %s, plugin_extends = %s, plugin_type = %s, plugin_desc = %s, plugin_requires = %s, plugin_version = %s, plugin_author = %s, plugin_authorurl = %s, plugin_updateby = %d WHERE plugin_folder = %s";
+            $h->db->query($h->db->prepare($sql, $h->plugin->enabled, $h->plugin->name, $h->plugin->folder, $h->plugin->class, $h->plugin->extends, $h->plugin->type, $h->plugin->desc, $h->plugin->requires, $h->plugin->version, $h->plugin->author, urlencode($h->plugin->authorurl), $h->currentUser->id, $h->plugin->folder));
+        }
         
         // Add any plugin hooks to the hooks table
         $this->addPluginHooks($h);
@@ -404,7 +412,10 @@ class PluginManagement
         // Clear the css/js cache to ensure this plugin's files are removed
         $h->deleteFiles(CACHE . 'css_js_cache');
 
-        $h->db->query($h->db->prepare("DELETE FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $h->plugin->folder));
+        if ($upgrade == 0) { // don't delete plugin when we're upgrading
+            $h->db->query($h->db->prepare("DELETE FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $h->plugin->folder));
+        }
+        
         $h->db->query($h->db->prepare("DELETE FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_folder = %s", $h->plugin->folder));
         
         // Settings aren't deleted anymore, but a user can do so manually from Admin->Maintenance
@@ -589,7 +600,7 @@ class PluginManagement
             
             // If file version is newer the the current plugin version, then upgrade...
             if (version_compare($file_version, $db_version, '>')) {
-                $this->upgrade($h); // runs the install function ans hows "upgraded!" message instead of "installed".
+                $this->upgrade($h); // runs the install function and shows "upgraded!" message instead of "installed".
             } else {
                 // else simply show an activated message...
                 $h->messages[$h->lang["admin_plugins_activated"]] = 'green'; 
@@ -603,6 +614,8 @@ class PluginManagement
         if ($enabled == 0) { 
             $h->messages[$h->lang["admin_plugins_deactivated"]] = 'green'; 
         }
+        
+        $h->pluginHook('activate_deactivate', '', array('enabled' => $enabled));
     }
     
     

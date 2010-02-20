@@ -14,4 +14,5 @@ Instructions
 
 Changelog
 ---------
+v.0.2 2010/02/09 - Nick - Added options to hide and bury comments
 v.0.1 2010/01/24 - Nick - Released first version

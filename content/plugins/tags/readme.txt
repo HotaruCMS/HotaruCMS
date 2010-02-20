@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.1.5 2010/02/20 - Nick - Meta description and keywords added for browsing tag pages
 v.1.4 2009/12/28 - Nick - Updated for compatibility with Hotaru 1.0
 v.1.3 2009/11/26 - Nick - Filter tag cloud to tags from "top" and "new" posts only. Added a cache.
 v.1.2 2009/11/25 - Nick - Changes so you can get tags without a wrapper div and ul.

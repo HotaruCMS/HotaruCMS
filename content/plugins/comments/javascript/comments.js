@@ -49,6 +49,18 @@ $(document).ready(function(){
                 return false;
         }); 
         
+	// Show/Hide comment content
+	$(".comment_show_hide").click(function () {
+		var target = $(this).parents(".comment_header");
+		target = $(target).next("div").next("div"); // finds div surrounding form
+		target.fadeToggle();
+
+		target2 = $(target).find("div.comment_status"); // finds div in form
+		target2.show();
+
+                return false;
+        }); 
+        
 });  
 
 

@@ -63,7 +63,7 @@ $lang["sb_base_settings_post_archive_1095"] = "3 years";
 
 /* Maintenance page */
 $lang["sb_base_maintenance_update_archive"] = "Update the post archive";
-$lang["sb_base_maintenance_update_archive_remove"] = "Move any archived posts out of the archive. <small>(See Submit Settings)</small>";
+$lang["sb_base_maintenance_update_archive_remove"] = "Move any archived posts out of the archive. <small>(See SB Base Settings)</small>";
 $lang["sb_base_maintenance_update_archive_desc_1"] = "Posts older than ";
 $lang["sb_base_maintenance_update_archive_desc_2"] = " will be moved into the archive. <small>(See SB Base Settings)</small>";
 $lang["sb_base_maintenance_archive_removed"] = "Done. There are currently no archived posts.";

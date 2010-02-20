@@ -26,12 +26,10 @@
 
 ?>
 <?php 
-
-if ($h->vars['posts']) {
-    $pg = $h->cage->get->getInt('pg');
+if ($h->vars['post_count']) {
     
-    $pagedResults = $h->pagination($h->vars['posts'], $h->vars['posts_per_page'], $pg);
-    while($post = $pagedResults->fetchPagedRow()) {
+    $pagedResults = $h->pagination($h->vars['post_query'], $h->vars['post_count'], $h->vars['posts_per_page'], 'posts');
+    foreach ($pagedResults->items as $post) {
         $h->readPost(0, $post);
         $user = new UserBase();
         $user->getUserBasic($h, $h->post->author);
@@ -40,7 +38,7 @@ if ($h->vars['posts']) {
 <!-- POST -->
 <?php $h->pluginHook('sb_base_pre_show_post'); ?>
 
-    <div class="show_post vote_button_space">
+    <div class="show_post vote_button_space" id="show_post_<?php echo $h->post->id ?>" >
     
         <?php $h->pluginHook('sb_base_show_post_pre_title'); ?>
         
@@ -53,9 +51,9 @@ if ($h->vars['posts']) {
         
         <div class="show_post_title">
             <?php if ($h->vars['link_action'] == 'source') { ?>
-                <a href='<?php echo $h->post->origUrl; ?>' <?php echo $h->vars['target']; ?>><?php echo $h->post->title; ?></a>
+                <a href='<?php echo $h->post->origUrl; ?>' <?php echo $h->vars['target']; ?> class="click_to_source"><?php echo $h->post->title; ?></a>
             <?php } else { ?>
-                <a href='<?php echo $h->url(array('page'=>$h->post->id)); ?>' <?php echo $h->vars['target']; ?>><?php echo $h->post->title; ?></a>
+                <a href='<?php echo $h->url(array('page'=>$h->post->id)); ?>' <?php echo $h->vars['target']; ?> class="click_to_post"><?php echo $h->post->title; ?></a>
             <?php } ?>
             <?php $h->pluginHook('sb_base_show_post_title'); ?>
         </div>

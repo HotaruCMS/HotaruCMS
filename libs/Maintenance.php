@@ -101,7 +101,8 @@ class Maintenance
         while (($file = readdir($handle))!==false) {
             if ($file != 'placeholder.txt') {
                 if (@unlink($dir.'/'.$file)) {
-                    $success = true;
+                    // ignore setting $success for the JavascriptConstants file which is ALWAYS present (even gets regenerated after deletion)
+                    if ($file != 'JavascriptConstants.js') { $success = true; }
                 } else {
                     $success = false;
                 }

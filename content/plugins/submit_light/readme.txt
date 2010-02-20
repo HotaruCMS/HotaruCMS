@@ -14,4 +14,5 @@ Instructions
 
 Changelog
 ---------
+v.0.2 2009/02/11 - Nick - Bug fix for missing moderation language item
 v.0.1 2010/01/10 - Nick - Released first version

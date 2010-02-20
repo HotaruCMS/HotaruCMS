@@ -15,6 +15,7 @@ Instructions
 
 Changelog
 ---------
+v.0.5 2010/02/18 - Nick - Code changes for pagination
 v.0.4 2010/01/24 - Nick - HTML for user profiles and Activity page moved into templates
 v.0.3 2010/01/15 - Nick - Fixes for deleting items and refreshing the cache
 v.0.2 2010/01/03 - Nick - Updates for compatibility with Hotaru 1.0

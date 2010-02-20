@@ -35,6 +35,7 @@ $lang["recent_visitors_settings_num_visitors"] = "Number of visitors to show <sm
 $lang["recent_visitors_settings_list"] = "Display recent visitors as a list. If unchecked, they will be listed on the same line</small>";
 $lang["recent_visitors_settings_avatars"] = "Show user avatars <small>(Requires an avatar plugin)</small>";
 $lang["recent_visitors_settings_avatar_size"] = "Size (pixels):";
+$lang["recent_visitors_settings_avatar_filter"] = "Filter out users who don't have an avatar";
 $lang["recent_visitors_settings_names"] = "Show user names";
 $lang["recent_visitors_settings_show_widget_title"] = "Show widget title <small>(Default: \"Recent Visitors\". You can edit it in recent_visitors_language.php)</small>";
 $lang["recent_visitors_settings_show"] = "Show: ";

@@ -94,7 +94,7 @@ class CommentManagerSettings
                 $h->comment->readComment($h, $comment); // read comment into $c
                 
                 // Akismet uses this to report Akismet mistakes 
-                $h->pluginHook('com_man_delete_comment', true, '', array($h->comment));
+                $h->pluginHook('com_man_delete_comment', '', array($h->comment));
                 
                 $h->comment->deleteComment($h); // delete this comment
                 $h->comment->deleteCommentTree($h, $cid);   // delete all responses, too.
@@ -190,12 +190,13 @@ class CommentManagerSettings
                 $sort_clause = "ORDER BY relevance DESC ";        
                 $where_clause = "WHERE MATCH (comment_content) AGAINST (%s IN BOOLEAN MODE) "; 
 
-                $sql = $select_clause . $where_clause . $sort_clause;
                 $search_term_like = '%' . $search_term . '%';
-                $results = $h->db->get_results($h->db->prepare($sql, $search_term, $search_term_like)); 
+                $count_sql = "SELECT count(*) AS number, MATCH(comment_content) AGAINST ('%s') AS relevance FROM " . TABLE_COMMENTS . " " . $where_clause;
+                $count = $h->db->get_var($h->db->prepare($count_sql, $search_term, $search_term_like));
+
+                $sql = $select_clause . $where_clause . $sort_clause;
+                $query = $h->db->prepare($sql, $search_term, $search_term_like);
             }
-            
-            if (isset($results)) { $comments = $results; } else {  $comments = array(); }
         }
         
         
@@ -208,54 +209,68 @@ class CommentManagerSettings
                 case 'pending':
                     $where_clause = " WHERE comment_status = %s"; 
                     $sort_clause = ' ORDER BY comment_date DESC';  // same as "all"
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_COMMENTS . $where_clause;
+                    $count = $h->db->get_var($h->db->prepare($count_sql, 'pending'));
                     $sql = "SELECT * FROM " . TABLE_COMMENTS . $where_clause . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql, 'pending')); 
+                    $query = $h->db->prepare($sql, 'pending');
                     break;
                 case 'buried':
                     $where_clause = " WHERE comment_status = %s"; 
                     $sort_clause = ' ORDER BY comment_date DESC';  // same as "all"
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_COMMENTS . $where_clause;
+                    $count = $h->db->get_var($h->db->prepare($count_sql, 'buried'));
                     $sql = "SELECT * FROM " . TABLE_COMMENTS . $where_clause . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql, 'buried')); 
+                    $query = $h->db->prepare($sql, 'buried');
                     break;
                 case 'approved': 
                     $where_clause = " WHERE comment_status = %s"; 
                     $sort_clause = ' ORDER BY comment_date DESC'; // ordered newest first for convenience
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_COMMENTS . $where_clause;
+                    $count = $h->db->get_var($h->db->prepare($count_sql, 'approved'));
                     $sql = "SELECT * FROM " . TABLE_COMMENTS . $where_clause . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql, 'approved')); 
+                    $query = $h->db->prepare($sql, 'approved');
                     break;
                 case 'oldest':
                     $sort_clause = ' ORDER BY comment_date ASC'; // ordered oldest first
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_COMMENTS;
+                    $count = $h->db->get_var($h->db->prepare($count_sql));
                     $sql = "SELECT * FROM " . TABLE_COMMENTS . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql)); 
+                    $query = $h->db->prepare($sql);
                     break;
                 case 'all': 
                 case 'newest':
                 default:
                     $sort_clause = ' ORDER BY comment_date DESC'; // ordered newest first for convenience
+                    $count_sql = "SELECT count(*) AS number FROM " . TABLE_COMMENTS;
+                    $count = $h->db->get_var($h->db->prepare($count_sql));
                     $sql = "SELECT * FROM " . TABLE_COMMENTS . $sort_clause;
-                    $filtered_results = $h->db->get_results($h->db->prepare($sql)); 
+                    $query = $h->db->prepare($sql); 
                     break;
             }
-
-            if (isset($filtered_results)) { $comments = $filtered_results; } else {  $comments = array(); }
         }
 
-        if(!isset($comments)) {
+        if(!isset($query)) {
             // default list
             if ($h->vars['comment_status_filter'] == 'pending') {
                 $where_clause = " WHERE comment_status = %s";
                 $sort_clause = ' ORDER BY comment_date DESC'; 
+                $count_sql = "SELECT count(*) AS number FROM " . TABLE_COMMENTS . $where_clause;
+                $count = $h->db->get_var($h->db->prepare($count_sql, 'pending'));
                 $sql = "SELECT * FROM " . TABLE_COMMENTS . $where_clause . $sort_clause;
-                $posts = $h->db->get_results($h->db->prepare($sql, 'pending')); 
+                $query = $h->db->prepare($sql, 'pending'); 
             } else {
                 $sort_clause = ' ORDER BY comment_date DESC';  // same as "all"
+                $count_sql = "SELECT count(*) AS number FROM " . TABLE_COMMENTS;
+                $count = $h->db->get_var($h->db->prepare($count_sql));
                 $sql = "SELECT * FROM " . TABLE_COMMENTS . $sort_clause;
-                $comments = $h->db->get_results($h->db->prepare($sql));
+                $query = $h->db->prepare($sql);
             }
         }
         
-        if ($comments) { 
-            $h->vars['com_man_rows'] = $this->drawRows($h, $comments, $filter, $search_term);
+        $pagedResults = $h->pagination($query, $count, 20, 'comments');
+        
+        if ($pagedResults) { 
+            $h->vars['com_man_rows'] = $this->drawRows($h, $pagedResults, $filter, $search_term);
         } elseif ($h->vars['comment_status_filter'] == 'pending') {
             $h->message = $h->lang['com_man_no_pending_comments'];
             $h->messageType = 'green';
@@ -266,17 +281,16 @@ class CommentManagerSettings
     }
     
     
-    public function drawRows($h, $comments, $filter = '', $search_term = '')
+    public function drawRows($h, $pagedResults, $filter = '', $search_term = '')
     {
-        // prepare for showing comments, 20 per page
-        $pg = $h->cage->get->getInt('pg');
-        $items = 20;
-
-        $pagedResults = $h->pagination($comments, $items, $pg);
-        
         $output = "";
         $alt = 0;
-        while($comments = $pagedResults->fetchPagedRow()) {    //when $story is false loop terminates    
+        $pg = $h->cage->get->getInt('pg');
+        
+        if (!$pagedResults->items) { return ""; }
+        
+        foreach ($pagedResults->items as $comments) 
+        {
             $alt++;
             
             // We need user for the post author's name:

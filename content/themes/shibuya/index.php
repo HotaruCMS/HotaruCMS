@@ -1,8 +1,10 @@
 <?php 
 /**
- * Theme name: shibuya
- * Template name: index.php
- * Template author: shibuya246
+ * name: shibuya
+ * version: 1.1
+ * author: shibuya246
+ * description: Flexible starter theme for hotaru
+ * authorurl: http:/shibuya246.com
  *
  * PHP version 5
  *
@@ -25,6 +27,12 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.shibuya246.com/
  */
+
+// get settings:
+$h->vars['settings'] =  $h->getThemeSettings();
+
+// get language
+$h->includeThemeLanguage();
 
 // plugin hook
 $result = $h->pluginHook('theme_index_top');

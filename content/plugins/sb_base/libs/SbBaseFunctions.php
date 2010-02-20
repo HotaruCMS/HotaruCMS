@@ -33,9 +33,10 @@ class SbBaseFunctions
      * miscelleneous stuff like Sidebar Posts
      *
      * @param string $type e.g. latest, upcoming, top-24-hours
+     * @param string $return - 'posts', 'count' or 'query'
      * @return array
      */
-    public function prepareList($h, $type = '')
+    public function prepareList($h, $type = '', $return = 'posts')
     {
         if (!isset($h->vars['filter'])) { $h->vars['filter'] = array(); }
         
@@ -64,7 +65,7 @@ class SbBaseFunctions
                     $this->prepareListFilters($h, 'all');
                 }
 
-            $h->pluginHook('sb_base_functions_preparelist'); // formerly post_list_filter
+            $h->pluginHook('sb_base_functions_preparelist', '', array('return' => $return)); // formerly post_list_filter
         }
         
         // defaults
@@ -79,10 +80,26 @@ class SbBaseFunctions
             $all = false;
         }
         
-        $prepared_filter = $this->filter($h->vars['filter'], $limit, $all, $h->vars['select'], $h->vars['orderby']);
-        $stories = $this->getPosts($h, $prepared_filter);
+        // if we want to count the totals, we need to replace the select clause with COUNT, but some queries that use MATCH and relevance are a bit complicated, 
+        // so we'll let those plugins (e.g. search) add COUNT to their queries themselves and skip them here (which we can do by checking for MATCH).
+        if ($return == 'count' && (strpos($h->vars['select'], "MATCH") === false)) { $h->vars['select'] = "count(post_id) AS number"; }
+        if ($return == 'query') { $all = true; }    // this removes the "LIMIT" parameter so we can add it later when paginating.
         
-        return $stories;
+        $prepared_filter = $this->filter($h->vars['filter'], $limit, $all, $h->vars['select'], $h->vars['orderby']);
+        
+        if ($return == 'query') { 
+            if (isset($prepared_filter[1])) {
+                return $h->db->prepare($prepared_filter);
+            } else {
+                return $prepared_filter[0];    // returns the prepared query array
+            }
+        } elseif($return == 'count') {
+            unset($h->vars['select']);  // so it doesn't get used again unintentionally
+            $count_array = $this->getPosts($h, $prepared_filter);
+            return $count_array[0]->number; // returns the number of posts
+        } else {
+            return $this->getPosts($h, $prepared_filter);   // returns the posts OR post count depending on the query
+        }
     }
     
     

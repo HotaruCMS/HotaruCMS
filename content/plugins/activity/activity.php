@@ -2,7 +2,7 @@
 /**
  * name: Activity
  * description: Show recent activity
- * version: 0.4
+ * version: 0.5
  * folder: activity
  * class: Activity
  * requires: users 1.1, widgets 0.6
@@ -291,6 +291,47 @@ class Activity
     
     
     /**
+     * Get activity count
+     *
+     * @param int $limit
+     * @param int $userid
+     * @param string $return 'activity', 'query' or 'count'
+     * return array $activity
+     */
+    public function getLatestActivityCount($h, $userid = 0)
+    {
+        if (!$userid) {
+            $sql = "SELECT count(useract_id) AS number FROM " . TABLE_USERACTIVITY . " WHERE useract_status = %s ORDER BY useract_date DESC ";
+            $activity = $h->db->get_var($h->db->prepare($sql, 'show'));
+        } else {
+            $sql = "SELECT count(useract_id) AS number FROM " . TABLE_USERACTIVITY . " WHERE useract_status = %s AND useract_userid = %d ORDER BY useract_date DESC ";
+            $activity = $h->db->get_var($h->db->prepare($sql, 'show', $userid));
+        }
+        
+        if ($activity) { return $activity; } else { return false; }
+    }
+    
+    
+    /**
+     * Get activity
+     *
+     * return array $activity
+     */
+    public function getLatestActivityQuery($h, $userid = 0)
+    {
+        if (!$userid) {
+            $sql = "SELECT * FROM " . TABLE_USERACTIVITY . " WHERE useract_status = %s ORDER BY useract_date DESC ";
+            $query = $h->db->prepare($sql, 'show');
+            return $query;
+        } else {
+            $sql = "SELECT * FROM " . TABLE_USERACTIVITY . " WHERE useract_status = %s AND useract_userid = %d ORDER BY useract_date DESC ";
+            $query = $h->db->prepare($sql, 'show', $userid);
+            return $query;
+        }
+    }
+    
+    
+    /**
      * Get sidebar activity items
      *
      * @param array $activity 
@@ -538,12 +579,12 @@ class Activity
         // Get settings from database if they exist...
         $activity_settings = $h->getSerializedSettings('activity');
         
-        // gets however many are items shown per page on activity pages:
-        $activity = $this->getLatestActivity($h);
+        // gets query and total count for pagination
+        $act_query = $this->getLatestActivityQuery($h);
+        $act_count = $this->getLatestActivityCount($h);
         
         // pagination 
-        $pg = $h->cage->get->testInt('pg');
-        $h->vars['pagedResults'] = $h->pagination($activity, $activity_settings['number'], $pg);
+        $h->vars['pagedResults'] = $h->pagination($act_query, $act_count, $activity_settings['number'], 'activity');
         
         $h->displayTemplate('activity');
 
@@ -562,12 +603,12 @@ class Activity
         // Get settings from database if they exist...
         $activity_settings = $h->getSerializedSettings('activity');
 
-        // gets however many are items shown per page on activity pages:
-        $activity = $this->getLatestActivity($h, 0, $userid); // 0 means no limit, ALL activity
+        // gets query and total count for pagination
+        $act_query = $this->getLatestActivityQuery($h, $userid);
+        $act_count = $this->getLatestActivityCount($h, $userid);
         
-        // pagination
-        $pg = $h->cage->get->testInt('pg');
-        $h->vars['pagedResults'] = $h->pagination($activity, $activity_settings['number'], $pg);
+        // pagination 
+        $h->vars['pagedResults'] = $h->pagination($act_query, $act_count, $activity_settings['number'], 'activity');
         
         $h->displayTemplate('activity_profile');
     }

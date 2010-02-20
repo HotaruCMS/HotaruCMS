@@ -12,6 +12,8 @@ Instructions
 
 Changelog
 ---------
+v.2.1 2009/02/15 - Nick - Removed CSRF check from submission step 1 
+v.2.0 2009/02/11 - Nick - Bug fixes for character problems and stripped HTML
 v.1.9 2009/12/16 - Nick - Updated for compatibility with Hotaru 1.0
 v.1.8 2009/11/29 - Nick - Added plugin hooks in post descriptions
 v.1.7 2009/11/27 - Nick - Bug fix for wrong order of sidebar posts. Ability to block domain extensions, e.g. .ru

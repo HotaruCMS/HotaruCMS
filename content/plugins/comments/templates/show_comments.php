@@ -23,13 +23,14 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
- 
 
+$display = ($h->comment->votes_down >= $h->vars['comment_hide']) ? 'display: none;' : ''; // comments are shown unless they have X negative votes
 ?>
     <a id="c<?php echo $h->comment->id; ?>"></a>
 
     <?php if ($h->comment->avatarSize < 16) {$comment_header_size=16;} else { $comment_header_size= $h->comment->avatarSize; } ?>
     <div class="comment" style="margin-left: <?php echo $h->comment->depth * 2.0; ?>em;">
+    
         <div class="comment_header" style="height:<?php echo $comment_header_size; ?>px;">
             <div class="comment_header_left">
                 <?php   // Show avatars if enabled (requires an avatars plugin)
@@ -47,6 +48,7 @@
                         echo "<a href='" . $h->url(array('user' => $username)) . "'>" . $username . "</a>, ";
                         echo time_difference(unixtimestamp($h->comment->date), $h->lang) . " ";
                         echo $h->lang['comments_time_ago'] . ".";
+                        if ($display) { echo "<a href='#' class='comment_show_hide'>" . $h->lang['comments_show_hide'] . "</a>"; }
                 ?>
                 </div>
             </div>
@@ -60,7 +62,7 @@
 
         <div class="clear"></div>
 
-        <div class="comment_main">
+        <div class="comment_main" style="<?php echo $display; ?>">
             <div class="comment_content">
                 <?php
                     $result = $h->pluginHook('show_comments_content');
@@ -86,15 +88,17 @@
                     <?php } ?>
                 <?php } ?>
 
-                <?php   // EDIT LINK - (if comment owner AND permission to edit own comments) OR (permission to edit ALL comments)...
-                    if (($h->currentUser->id == $h->comment->author && ($h->currentUser->getPermission('can_edit_comments') == 'own'))
-                        || ($h->currentUser->getPermission('can_edit_comments') == 'yes')) { ?>
-                        <a href='#' class='comment_edit_link' onclick="edit_comment(
-                            '<?php echo BASEURL; ?>',
-                            '<?php echo $h->comment->id; ?>',
-                            '<?php echo urlencode($h->comment->content); ?>',
-                            '<?php echo $h->lang['comments_form_edit']; ?>');
-                            return false;" ><?php echo $h->lang['comments_edit_link']; ?></a>
+                <?php   // EDIT LINK - (if comment form is open AND ((comment owner AND permission to edit own comments) OR (permission to edit ALL comments))...
+                    if ($h->comment->thisForm == 'open') {
+                        if (($h->currentUser->id == $h->comment->author && ($h->currentUser->getPermission('can_edit_comments') == 'own'))
+                            || ($h->currentUser->getPermission('can_edit_comments') == 'yes')) { ?>
+                            <a href='#' class='comment_edit_link' onclick="edit_comment(
+                                '<?php echo BASEURL; ?>',
+                                '<?php echo $h->comment->id; ?>',
+                                '<?php echo urlencode($h->comment->content); ?>',
+                                '<?php echo $h->lang['comments_form_edit']; ?>');
+                                return false;" ><?php echo $h->lang['comments_edit_link']; ?></a>
+                    <?php } ?>
                 <?php } ?>
             </div>
         </div>

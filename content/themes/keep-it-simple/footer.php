@@ -114,7 +114,7 @@
         
             // Link to forums...
             echo "<p><a href='http://hotarucms.org'><img src='" . BASEURL . "content/themes/" . THEME . "images/hotarucms.png' ";
-            echo "title='" . $h->lang["main_theme_footer_hotaru_link"] . "'></a></p>";
+            echo "title='" . $h->lang["main_theme_footer_hotaru_link"] . " ' alt='Powered by HotaruCMS'/></a></p>";
         
             $h->showQueriesAndTime();
         ?>
@@ -122,5 +122,12 @@
 	<!-- footer ends here -->
 <?php $h->pluginHook('pre_close_body'); ?>
 
+ <script type='text/javascript'>
+
+    jQuery('document').ready(function($) {
+        $("a#navigation_active").parent("li").addClass("navigation_active");
+        });
+        
+</script>
 </body>
 </html>

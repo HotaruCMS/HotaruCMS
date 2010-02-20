@@ -38,6 +38,8 @@
 .vote_color_top { border: 1px solid #d0d0d0; background-color: #f0f0f0; color: #000; }
 .vote_color_new { border: 1px solid #d0d0d0; background-color: #ffffff; color: #000; }
 
+.vote_color_top_clicked { background-color: #f0f0aa; }
+.vote_color_top_just_voted { background-color: #f99555; }
 /* ***********************************
  * ** SPACE BETWEEN BUTTON AND POST **
  * ********************************* */

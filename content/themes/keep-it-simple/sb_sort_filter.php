@@ -48,9 +48,9 @@
         <li <?php echo $h->vars['all_active']; ?>>
             <a href="<?php echo $h->vars['all_link']; ?>">
             <?php echo $h->lang["sb_base_sort_all"]; ?></a>
-        </li>
+        <br/>
+		</li>
         
-        <br />
         <li>
         <?php echo $h->lang["sb_base_sort_best_from"]; ?></li>
         

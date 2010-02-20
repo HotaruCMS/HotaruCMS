@@ -1,0 +1,12 @@
+/* **************************************
+ *	 FACEBOOK SHARE CSS            *
+ ************************************** */
+ 
+#facebook_share_link a {
+	text-decoration: underline;
+}
+
+#facebook_share_link a:hover {
+	background: #000000;
+	text-decoration: none;
+}	

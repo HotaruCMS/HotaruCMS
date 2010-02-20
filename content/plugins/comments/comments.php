@@ -2,7 +2,7 @@
 /**
  * name: Comments
  * description: Enables logged-in users to comment on posts
- * version: 1.3
+ * version: 1.4
  * folder: comments
  * class: Comments
  * type: comments
@@ -105,6 +105,8 @@ class Comments
         if (!isset($comments_settings['comment_url_limit'])) { $comments_settings['comment_url_limit'] = 0; }
         if (!isset($comments_settings['comment_daily_limit'])) { $comments_settings['comment_daily_limit'] = 0; }
         if (!isset($comments_settings['comment_avatar_size'])) { $comments_settings['comment_avatar_size'] = "16"; }
+        if (!isset($comments_settings['comment_hide'])) { $comments_settings['comment_hide'] = "3"; }
+        if (!isset($comments_settings['comment_bury'])) { $comments_settings['comment_bury'] = "10"; }
         
         if ($h->isActive('avatar')) {
             if (!isset($comments_settings['comment_avatars'])) { $comments_settings['comment_avatars'] = "checked"; }
@@ -137,6 +139,7 @@ class Comments
         $h->comment->levels = $comments_settings['comment_levels'];
         $h->comment->setPending = $comments_settings['comment_set_pending'];
         $h->comment->allForms = $comments_settings['comment_all_forms'];
+        $h->vars['comment_hide'] = $comments_settings['comment_hide'];
         
         
         if ($h->pageName == 'rss_comments') {
@@ -372,12 +375,11 @@ class Comments
             // IF PAGINATING COMMENTS:
             if ($h->comment->pagination)
             {
-                $pg = $h->cage->get->getInt('pg');
-                $pagedResults = $h->pagination($parents, $h->comment->itemsPerPage, $pg);
+                $pagedResults = $h->paginationFull($parents, $h->comment->itemsPerPage);
 
-                if ($pagedResults) {
+                if ($pagedResults->items) {
                 // cycle through the parents, and go get their children
-                    while($parent = $pagedResults->fetchPagedRow()) {
+                    foreach($pagedResults->items as $parent) {
         
                             $this->displayComment($h, $parent);
                             $this->commentTree($h, $parent->comment_id, 0);
@@ -527,20 +529,26 @@ class Comments
             $userid = 0;
         }
 
-        $comments = $h->comment->getAllComments($h, 0, 'DESC', 0, $userid);
-        if (!$comments) {
-            $h->showMessage($h->lang['comments_user_no_comments'], 'red');
-            return true; 
-        }
-        
         $comments_settings = $h->getSerializedSettings();
         $h->comment->itemsPerPage = $comments_settings['comment_items_per_page'];
         
-        $pg = $h->cage->get->getInt('pg');
-        $pagedResults = $h->pagination($comments, $h->comment->itemsPerPage, $pg);
+        if ($userid) {
+            $comments_count = $h->comment->getAllCommentsCount($h, '', $userid);
+            $comments_query = $h->comment->getAllCommentsQuery($h, 'DESC', $userid);
+        } else {
+            $comments_count = $h->comment->getAllCommentsCount($h);
+            $comments_query = $h->comment->getAllCommentsQuery($h, 'DESC');
+        }
         
-        if ($pagedResults) {
-            while($comment = $pagedResults->fetchPagedRow()) {
+        if (!$comments_count) {
+            $h->showMessage($h->lang['comments_user_no_comments'], 'red');
+            return true; 
+        }
+            
+        $pagedResults = $h->pagination($comments_query, $comments_count, $h->comment->itemsPerPage, 'comments');
+        
+        if ($pagedResults->items) {
+            foreach ($pagedResults->items as $comment) {
                 $h->readPost($comment->comment_post_id);
                 // don't show this comment if its post is buried or pending:
                 if ($h->post->status == 'buried' || $h->post->status == 'pending') { continue; }
@@ -628,9 +636,12 @@ class Comments
                 $h->post->comments = 'open'; 
                 $comments = 'open';
             } else { 
-                // use existing setting:
-                $h->post->comments = 'closed';
-                $comments = 'closed'; 
+                if ($h->currentUser->getPermission('can_edit_posts') == 'yes') {
+                    $h->post->comments = 'closed';
+                    $comments = 'closed'; 
+                } else {
+                    $comments = $h->post->comments; // keep existing setting
+                }
             }
         } else {
             // open for submit 2

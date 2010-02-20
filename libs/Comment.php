@@ -32,7 +32,8 @@ class Comment
     protected $author       = 0;
     protected $date         = '';
     protected $status       = 'approved';
-    protected $votes        = 0;
+    protected $votes_up     = 0;
+    protected $votes_down   = 0;
     protected $content      = '';
     protected $type         = 'newcomment';   // or "editcomment"
     protected $subscribe    = 0;
@@ -158,15 +159,57 @@ class Comment
         } else {
             // get all comments
             if ($userid) { 
-                $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_status = %s AND comment_user_id = %d ORDER BY comment_date " . $order . $limit;
-                $comments = $h->db->get_results($h->db->prepare($sql, 'approved', $userid));
+                $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s AND comment_status = %s AND comment_user_id = %d ORDER BY comment_date " . $order . $limit;
+                $comments = $h->db->get_results($h->db->prepare($sql, 'N', 'approved', $userid));
             } else {
-                $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_status = %s ORDER BY comment_date " . $order . $limit;
-                $comments = $h->db->get_results($h->db->prepare($sql, 'approved'));
+                $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s AND comment_status = %s ORDER BY comment_date " . $order . $limit;
+                $comments = $h->db->get_results($h->db->prepare($sql, 'N', 'approved'));
             }
         }
         
         if($comments) { return $comments; } else { return false; }
+    }
+    
+    
+    /**
+     * Get all comments from database
+     *
+     * @param int $post_id - you can limit comments to a single post
+     * @return array|false
+     */
+    function getAllCommentsCount($h, $order = "ASC", $userid = 0)
+    {
+        // get all comments
+        if ($userid) { 
+            $sql = "SELECT count(*) AS number FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s AND comment_status = %s AND comment_user_id = %d ORDER BY comment_date " . $order;
+            $comment_count = $h->db->get_var($h->db->prepare($sql, 'N', 'approved', $userid));
+        } else {
+            $sql = "SELECT count(*) AS number FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s AND comment_status = %s ORDER BY comment_date " . $order;
+            $comment_count = $h->db->get_var($h->db->prepare($sql, 'N', 'approved'));
+        }
+        
+        if($comment_count) { return $comment_count; } else { return false; }
+    }
+    
+    
+    /**
+     * Get all comments from database
+     *
+     * @param int $post_id - you can limit comments to a single post
+     * @return array|false
+     */
+    function getAllCommentsQuery($h, $order = "ASC", $userid = 0)
+    {
+        // get all comments
+        if ($userid) { 
+            $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_status = %s AND comment_user_id = %d ORDER BY comment_date " . $order;
+            $query = $h->db->prepare($sql, 'approved', $userid);
+        } else {
+            $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_status = %s ORDER BY comment_date " . $order;
+            $query = $h->db->prepare($sql, 'approved');
+        }
+        
+        if($query) { return $query; } else { return false; }
     }
     
     
@@ -268,14 +311,15 @@ class Comment
      */    
     public function deleteComment($h, $comment_id = 0)
     {
+        if (!$comment_id) { $comment_id = $this->id; }
         if (!$comment_id) { return false; }
-        
+
         $sql = "DELETE FROM " . TABLE_COMMENTS . " WHERE comment_id = %d";
         $h->db->query($h->db->prepare($sql, $comment_id));
         
         // delete any votes for this comment
-        //$sql = "DELETE FROM " . TABLE_COMMENTVOTES . " WHERE cvote_comment_id = %d";
-        //$h->db->query($h->db->prepare($sql, $this->id));
+        $sql = "DELETE FROM " . TABLE_COMMENTVOTES . " WHERE cvote_comment_id = %d";
+        $h->db->query($h->db->prepare($sql, $this->id));
         
         $h->comment->id = $comment_id; // a small hack to get the id for use in plugins.
         $h->pluginHook('comment_delete_comment');

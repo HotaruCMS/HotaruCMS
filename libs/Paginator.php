@@ -1,11 +1,96 @@
 <?php
-
-require_once "PageLayout.php";
-
-class DoubleBarLayout implements PageLayout
+/**
+ * Pagination functions
+ *
+ * PHP version 5
+ *
+ * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation, either version 3 of 
+ * the License, or (at your option) any later version. 
+ *
+ * Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE. 
+ *
+ * You should have received a copy of the GNU General Public License along 
+ * with Hotaru CMS. If not, see http://www.gnu.org/licenses/.
+ * 
+ * @category  Content Management System
+ * @package   HotaruCMS
+ * @author    Nick Ramsay <admin@hotarucms.org>
+ * @copyright Copyright (c) 2009, Hotaru CMS
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * @link      http://www.hotarucms.org/
+ */
+class Paginator
 {
-
-    public function fetchPagedLinks($parent, $h) 
+    protected $limit       = 0;    // start (limit X)
+    protected $itemsPerPage = 10;   // range (limit Y)
+    protected $offset       = 0;    // start of each "array_slice"
+    protected $pg           = 1;    // page
+    protected $totalItems   = 0;
+    protected $totalPages   = 0;
+    public $items           = array();
+    
+    /**
+     * Pagination with query and row count (better for large sets of data)
+     *
+     * @param string $query - this should be a *prepared* SQL statement
+     * @param int $total_items - total row count
+     * @param int $items_per_page
+     * @param string $cache_table - must provide a table, e.g. "posts" for caching to be used
+     * @return array|false
+     */
+    public function pagination($h, $query = '', $total_items = 0, $items_per_page = 10, $cache_table = '')
+    {
+        if (!$query) { return false; }
+        
+        $this->totalItems = $total_items;
+        $this->itemsPerPage = $items_per_page;
+        
+        // get page from url
+        $this->pg = $h->cage->get->testInt('pg');
+        if (!$this->pg) { $this->pg = 1; }
+        
+        $this->limit = ($this->itemsPerPage * ($this->pg - 1));  // e.g. page 1 will start at 0, page 2 will start at 10, etc.
+        
+        $query .= " LIMIT " . $this->limit . ", " . $this->itemsPerPage;
+        
+        if ($cache_table) { $h->smartCache('on', $cache_table, 60, $query); } // start using cache
+        $this->items = $h->db->get_results($query);
+        if ($cache_table) { $h->smartCache('off'); } // stop using cache
+        
+        return $this;
+    }
+    
+    
+    /**
+     * Pagination with full dataset (easier for small sets of data)
+     *
+     * @param array $data - array of results for paginating
+     * @param int $items_per_page
+     * @return object|false - object
+     */
+    public function paginationFull($h, $data = array(), $items_per_page = 10)
+    {
+        if (!$data) { return false; }
+        
+        $this->totalItems = count($data);
+        $this->itemsPerPage = $items_per_page;
+        
+        // get page from url
+        $this->pg = $h->cage->get->testInt('pg');
+        if (!$this->pg) { $this->pg = 1; }
+        
+        $this->offset = ($this->itemsPerPage * ($this->pg - 1));  // e.g. page 1 will start at 0, page 2 will start at 10, etc.
+        $this->items = array_slice($data, $this->offset, $this->itemsPerPage);
+        
+        return $this;
+    }
+    
+    
+    public function pageBar($h) 
     {
         // NOTE: FRIENDLY URLS ARE NOT USED IN PAGINATION (I tried, but there's always *something* that screws up. Nick)
         if ($h->isAdmin == true) { $head = 'admin_index.php?'; } else { $head = 'index.php?'; }
@@ -35,15 +120,18 @@ class DoubleBarLayout implements PageLayout
             $path = $path . http_build_query($parsed_query_args); // rebuild url without pg parameter
         }
         
-        $currentPage = $parent->getPageNumber();
+        $currentPage = $this->pg;
+
         $str = "";
         
         $before = 4;
         $after = 3;
+        
+        $this->totalPages = $this->countTotalPages();
 
         //write statement that handles the previous and next phases
            //if it is not the first page then write previous to the screen
-        if (!$parent->isFirstPage()) {
+        if (!$this->isFirstPage()) {
             $previousPage = $currentPage - 1;
             $link = $path . '&pg=' . $previousPage;
             $link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark
@@ -51,7 +139,7 @@ class DoubleBarLayout implements PageLayout
         }
         
         // NOT FIRST PAGE
-        if (!$parent->isFirstPage() && !($currentPage <= ($before + 1))) {
+        if (!$this->isFirstPage() && !($currentPage <= ($before + 1))) {
             if ($currentPage != 1) {
                 $link = $path . '&pg=1';
                 $link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark
@@ -68,7 +156,7 @@ class DoubleBarLayout implements PageLayout
                 continue;
             }
     
-            if ($i > $parent->fetchNumberPages()) {
+            if ($i > $this->totalPages) {
                 break;
             }
     
@@ -80,24 +168,21 @@ class DoubleBarLayout implements PageLayout
                 $link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark
                 $str .= "<a class='pagi_page' href='" . $link . "'>$i</a>\n";
             }
-            if ($i != $currentPage + $after && $i != $parent->fetchNumberPages()) { $str .= ' '; }
-            // ($i == $currentPage + $after || $i == $parent->fetchNumberPages()) ? $str .= " " : $str .= " | ";    // determine if to print bars or not
+            if ($i != $currentPage + $after && $i != $this->totalPages) { $str .= ' '; }
         } //end for
 
-        //$str = rstrtrim($str, '| '); // trim trailing bar
-              
-        if (!$parent->isLastPage() && !($currentPage > ($parent->fetchNumberPages() - $after))) {
-            if ($currentPage != $parent->fetchNumberPages() && $currentPage != $parent->fetchNumberPages() -1 && $currentPage != $parent->fetchNumberPages() - $before)
+        if (!$this->isLastPage() && !($currentPage > ($this->totalPages - $after))) {
+            if ($currentPage != $this->totalPages && $currentPage != $this->totalPages -1 && $currentPage != $this->totalPages - $before)
             {
-                if ($currentPage < ($parent->fetchNumberPages() - ($after + 1))) { $str .= " <span class='pagi_dots'>...</span> \n"; }
-                $link = $path . '&pg=' . $parent->fetchNumberPages();
+                if ($currentPage < ($this->totalPages - ($after + 1))) { $str .= " <span class='pagi_dots'>...</span> \n"; }
+                $link = $path . '&pg=' . $this->totalPages;
                 $link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark
-                $str .= "<a class='pagi_last' href='" . $link . "'  title='" . $h->lang['pagination_last'] . "'>".$parent->fetchNumberPages()."</a> \n";
+                $str .= "<a class='pagi_last' href='" . $link . "'  title='" . $h->lang['pagination_last'] . "'>".$this->totalPages."</a> \n";
             }
         }
         
         // NOT LAST PAGE
-        if (!$parent->isLastPage()) {
+        if (!$this->isLastPage()) {
             $nextPage = $currentPage + 1;
             $link = $path . '&pg=' . $nextPage;
             $link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark
@@ -149,6 +234,30 @@ class DoubleBarLayout implements PageLayout
         }
         
         return $standard_url;
+    }
+    
+    
+    /**
+     * Is this the first page?
+     */
+    public function isFirstPage() {
+        return ($this->pg <= 1);
+    }
+
+
+    /**
+     * Is this the last page?
+     */
+    public function isLastPage() {
+        return ($this->pg >= $this->totalPages);
+    }
+    
+    
+    /**
+     * Total pages
+     */
+    public function countTotalPages() {
+        return ceil($this->totalItems / $this->itemsPerPage);
     }
 }
 ?>

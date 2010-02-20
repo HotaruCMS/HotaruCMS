@@ -2,7 +2,7 @@
 /**
  * name: Recent Visitors
  * description: Show recent visitors in a widget
- * version: 0.3
+ * version: 0.4
  * folder: recent_visitors
  * class: RecentVisitors
  * requires: widgets 0.6, users 1.1
@@ -49,6 +49,7 @@ class RecentVisitors
         if (!isset($recent_visitors_settings['visitors_list'])) { $recent_visitors_settings['visitors_list'] = ''; }
         if (!isset($recent_visitors_settings['visitors_avatars'])) { $recent_visitors_settings['visitors_avatars'] = ''; }
         if (!isset($recent_visitors_settings['visitors_avatar_size'])) { $recent_visitors_settings['visitors_avatar_size'] = '16'; }
+        if (!isset($recent_visitors_settings['visitors_avatar_filter'])) { $recent_visitors_settings['visitors_avatar_filter'] = ''; }
         if (!isset($recent_visitors_settings['visitors_names'])) { $recent_visitors_settings['visitors_names'] = 'checked'; }
         if (!isset($recent_visitors_settings['visitors_widget_title'])) { $recent_visitors_settings['visitors_widget_title'] = 'checked'; }
         if (!isset($recent_visitors_settings['visitors_widget_get_avatar'])) { $recent_visitors_settings['visitors_widget_get_avatar'] = 'checked'; }
@@ -81,6 +82,7 @@ class RecentVisitors
         $list = $recent_visitors_settings['visitors_list'];
         $avatars = $recent_visitors_settings['visitors_avatars'];
         $avatar_size = $recent_visitors_settings['visitors_avatar_size'];
+        $avatar_filter = $recent_visitors_settings['visitors_avatar_filter'];
         $names = $recent_visitors_settings['visitors_names'];
         $show_title = $recent_visitors_settings['visitors_widget_title'];
         $show_get_avatar = $recent_visitors_settings['visitors_widget_get_avatar'];
@@ -110,16 +112,29 @@ class RecentVisitors
         
         foreach ($visitors as $visitor) 
         {
-            if ($list) {
-                $output .="<li class='recent_visitors_item'>";
-            }
+            $has_avatar = false;
             
             if ($avatars) {
                 $avatar->user_id = $visitor->user_id;
                 $avatar->user_email = $visitor->user_email;
                 $avatar->user_name = $visitor->user_username;
                 $avatar->setVars($h);
-                $output .= $avatar->linkAvatar($h) . " \n";
+                if ($avatar_filter) {
+                    $has_avatar = $avatar->testAvatar($h); // testif user has an avatar
+                    if (!$has_avatar) { continue; } // skip to the next user
+                }
+            }
+            
+            if ($list) {
+                $output .="<li class='recent_visitors_item'>";
+            }
+            
+            if ($avatars) {
+                if ($has_avatar) {
+                    $output .= $avatar->linkAvatarImage($h, $has_avatar) . " \n"; // we got the avatar with IMG tags when we tested if the user had an avatar
+                } else {
+                    $output .= $avatar->linkAvatar($h) . " \n";
+                }
             }
             
             if ($names) {
@@ -137,7 +152,7 @@ class RecentVisitors
         $output .="</div>";
         
         if ($need_cache) {
-            $h->smartCache('html', 'users', 10, $output, $label); // make or rewrite the cache file
+            $h->smartCache('html', 'users', 60, $output, $label); // make or rewrite the cache file
         }
         
         echo $output;

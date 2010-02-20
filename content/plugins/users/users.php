@@ -2,11 +2,11 @@
 /**
  * name: Users
  * description: Provides profile, settings and permission pages
- * version: 1.1
+ * version: 1.2
  * folder: users
  * type: users
  * class: Users
- * hooks: pagehandling_getpagename, theme_index_top, header_include, sb_base_functions_preparelist, breadcrumbs, theme_index_post_breadcrumbs, theme_index_main, users_edit_profile_save, user_settings_save, admin_theme_main_stats
+ * hooks: pagehandling_getpagename, theme_index_top, header_include, sb_base_functions_preparelist, breadcrumbs, theme_index_post_breadcrumbs, theme_index_main, users_edit_profile_save, user_settings_save, admin_theme_main_stats, header_meta
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -113,6 +113,42 @@ class Users
             $h->pageType = 'user';
         }
     }
+    
+    
+    /**
+     * Match meta tags when browsing results for individual users 
+     */
+    public function header_meta($h)
+    {
+        if ($h->pageName == 'profile') {
+            if (isset($h->vars['profile']['bio']) && ($h->vars['profile']['bio'] != $h->lang['users_profile_default_bio'])) { 
+                echo '<meta name="description" content="' . $h->vars['profile']['bio'] . '" />' . "\n";
+            } else {
+                echo '<meta name="description" content="' . $h->lang['users_default_meta_description_before'] . $h->vars['user']->name . $h->lang['users_default_meta_description_after'] . '" />' . "\n";  // default profile meta description (see language file)
+            }
+            
+            echo '<meta name="keywords" content="' . $h->vars['user']->name . $h->lang['users_profile_meta_keywords_more'] . '" />' . "\n";  // default profile meta keywords (see language file)
+            
+            return true;
+        }
+        
+        
+        if ($h->subPage == 'user' && ($h->pageName != 'profile'))
+        { 
+            $user = $h->cage->get->testUsername('user');
+            if ($user) {
+                $first_word = $h->pageName;
+                if ($first_word == 'sort') { $first_word = $h->cage->get->testPage('sort'); }
+                if ($first_word == 'index') { $first_word = $h->lang['users_meta_description_popular']; }
+                $first_word = ucfirst(strtolower(make_name($first_word, '-')));
+                echo '<meta name="description" content="' . $h->lang['users_meta_description_results_before'] . $first_word . $h->lang['users_meta_description_results_middle'] . $user . $h->lang['users_meta_description_results_after'] . '" />' . "\n";
+                echo '<meta name="keywords" content="' . $user . $h->lang['users_profile_meta_keywords_more'] . '" />' . "\n";  // default profile meta keywords (see language file)
+                return true;
+            }
+        }
+    }
+    
+    
     
     /**
      * Filter posts to this user

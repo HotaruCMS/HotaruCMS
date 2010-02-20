@@ -2,7 +2,7 @@
 /**
  * name: SB Base
  * description: Social Bookmarking base - provides "list" and "post" templates. 
- * version: 0.1
+ * version: 0.2
  * folder: sb_base
  * class: SbBase
  * type: base
@@ -128,7 +128,8 @@ class SbBase
         switch ($h->pageType)
         {
             case 'list':
-                $h->vars['posts'] = $sb_funcs->prepareList($h);
+                $h->vars['post_count'] = $sb_funcs->prepareList($h, '', 'count');   // get the number of posts
+                $h->vars['post_query'] = $sb_funcs->prepareList($h, '', 'query');   // and the SQL query used
                 break;
             case 'post':
                 // if a post is already set (e.g. from the sb_categories plugin), we don't want to
@@ -193,7 +194,7 @@ class SbBase
         if ($h->pageType != 'post') { return false; }
         $meta_content = sanitize($h->post->content, 'all');
         $meta_content = truncate($meta_content, 200);
-        echo '<meta name="description" content="' . $meta_content . '">' . "\n";
+        echo '<meta name="description" content="' . $meta_content . '" />' . "\n";
         return true;
     }
     

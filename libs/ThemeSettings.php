@@ -66,7 +66,7 @@ class ThemeSettings
             $settings = unserialize($settings->miscdata_default);
         }
         
-        return $settings; 
+        if ($settings) { return $settings; } else { return false; } 
     }
     
     

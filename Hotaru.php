@@ -25,7 +25,7 @@
  */
 class Hotaru
 {
-    protected $version              = "1.0.5";  // Hotaru CMS version
+    protected $version              = "1.1";  // Hotaru CMS version
     protected $isDebug              = false;    // show db queries and page loading time
     protected $isAdmin              = false;    // flag to tell if we are in Admin or not
     protected $sidebars             = true;     // enable or disable the sidebars
@@ -356,30 +356,46 @@ class Hotaru
     
     
     /**
-     * Prepare pagination
+     * Pagination with query and row count (better for large sets of data)
      *
-     * @param array $items - array of all items to show
+     * @param string $query - SQL query
+     * @param int $total_items - total row count
      * @param int $items_per_page
-     * @param int $pg - current page number
-     * @return object - object of type Paginated
+     * @param string $cache_table - must provide a table, e.g. "posts" for caching to be used
+     * @return object|false - object
      */
-    public function pagination($items = array(), $items_per_page = 10, $pg = 0)
+    public function pagination($query, $total_items, $items_per_page = 10, $cache_table = '')
     {
-        $pageHandling = new PageHandling();
-        return $pageHandling->pagination($this, $items, $items_per_page, $pg);
+        require_once(LIBS . 'Paginator.php');
+        $paginator = new Paginator();
+        return $paginator->pagination($this, $query, $total_items, $items_per_page, $cache_table);
+    }
+    
+
+    /**
+     * Pagination with full dataset (easier for small sets of data)
+     *
+     * @param array $data - array of results for paginating
+     * @param int $items_per_page
+     * @return object|false - object
+     */
+    public function paginationFull($data, $items_per_page = 10)
+    {
+        require_once(LIBS . 'Paginator.php');
+        $paginator = new Paginator();
+        return $paginator->paginationFull($this, $data, $items_per_page);
     }
     
  
     /**
      * Return page numbers bar
      *
-     * @param object $pageObject - current object of type Paginated
+     * @param object $paginator - current object of type Paginator
      * @return string - HTML for page number bar
      */
-    public function pageBar($pageObject = NULL)
+    public function pageBar($paginator = NULL)
     {
-        $pageHandling = new PageHandling();
-        return $pageHandling->pageBar($this, $pageObject);
+        return $paginator->pageBar($this);
     }
     
 
@@ -1063,7 +1079,7 @@ class Hotaru
      {
         $version_js = $this->includes->combineIncludes($this, 'js');
         $version_css = $this->includes->combineIncludes($this, 'css');
-        $this->includes->includeCombined($version_js, $version_css, $this->isAdmin);
+        $this->includes->includeCombined($this, $version_js, $version_css, $this->isAdmin);
      }
      
      
@@ -1874,6 +1890,20 @@ class Hotaru
         require_once(LIBS . 'Category.php');
         $category = new Category();
         return $category->getCatChildren($this, $cat_parent_id);
+    }
+    
+    
+    /**
+     * Returns meta description and keywords for the category (if available)
+     *
+     * @param int $cat_id
+     * @return array|false
+     */
+    public function getCatMeta($cat_id)
+    {
+        require_once(LIBS . 'Category.php');
+        $category = new Category();
+        return $category->getCatMeta($this, $cat_id);
     }
     
     
