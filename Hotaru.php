@@ -1891,6 +1891,19 @@ class Hotaru
         $category = new Category();
         return $category->getCatChildren($this, $cat_parent_id);
     }
+
+     /**
+     * Returns Category list ids
+     *
+     * @param array $args
+     * @return int
+     */
+    public function getCategories($args = array())
+    {
+        require_once(LIBS . 'Category.php');
+        $category = new Category();
+        return $category->getCategories($this, $args);
+    }
     
     
     /**
