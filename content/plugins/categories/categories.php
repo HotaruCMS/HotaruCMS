@@ -154,15 +154,15 @@ class Categories
             $cat_meta = $h->getCatMeta($h->vars['category_id']);
             
             if ($cat_meta->category_desc) {
-                echo '<meta name="description" content="' . urldecode($cat_meta->category_desc) . '">' . "\n";
+                echo '<meta name="description" content="' . urldecode($cat_meta->category_desc) . '" />' . "\n";
             } else {
-                echo '<meta name="description" content="' . $h->lang['header_meta_description'] . '">' . "\n";  // default meta tags
+                echo '<meta name="description" content="' . $h->lang['header_meta_description'] . '" />' . "\n";  // default meta tags
             }
             
             if ($cat_meta->category_keywords) {
-                echo '<meta name="keywords" content="' . urldecode($cat_meta->category_keywords) . '">' . "\n";
+                echo '<meta name="keywords" content="' . urldecode($cat_meta->category_keywords) . '" />' . "\n";
             } else {
-                echo '<meta name="description" content="' . $h->lang['header_meta_keywords'] . '">' . "\n";  // default meta tags
+                echo '<meta name="description" content="' . $h->lang['header_meta_keywords'] . '" />' . "\n";  // default meta tags
             }
 
             return true;
