@@ -52,12 +52,24 @@ class Tags
     
     /**
      * Match meta tag to a post's keywords (description is done in the Submit plugin)
+     * Also changes meta when browsing a tag page
      */
     public function header_meta($h)
     {    
-        if ($h->pageType == 'post') {
+        if ($h->pageType == 'post')
+        {
             echo '<meta name="keywords" content="' . stripslashes($h->post->tags) . '">' . "\n";
             return true;
+        } 
+        elseif ($h->subPage == 'tags')
+        { 
+            $tag = stripslashes($h->vars['tag']); 
+            
+            if ($tag) {
+                echo '<meta name="description" content="' . $h->lang['tags_meta_description_before'] . $tag . $h->lang['tags_meta_description_after'] . '">' . "\n";
+                echo '<meta name="keywords" content="' . $tag . $h->lang['tags_meta_keywords_more'] . '">' . "\n";
+                return true;
+            }
         }
     }
     

@@ -2,12 +2,12 @@
 /**
  * name: Categories
  * description: Enables categories for posts
- * version: 1.2
+ * version: 1.3
  * folder: categories
  * class: Categories
  * type: categories
  * requires: sb_base 0.1, submit 1.9, category_manager 0.7
- * hooks: sb_base_theme_index_top, header_include, pagehandling_getpagename, sb_base_functions_preparelist, sb_base_show_post_author_date, header_end, breadcrumbs
+ * hooks: sb_base_theme_index_top, header_include, pagehandling_getpagename, sb_base_functions_preparelist, sb_base_show_post_author_date, header_end, breadcrumbs, header_meta
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -141,6 +141,32 @@ class Categories
         $h->pageTitle = $h->post->title;
         $h->pageType = 'post';
         return true;
+    }
+    
+    
+    /**
+     * Also changes meta when browsing a category page
+     */
+    public function header_meta($h)
+    {    
+        if ($h->subPage == 'category')
+        { 
+            $cat_meta = $h->getCatMeta($h->vars['category_id']);
+            
+            if ($cat_meta->category_desc) {
+                echo '<meta name="description" content="' . urldecode($cat_meta->category_desc) . '">' . "\n";
+            } else {
+                echo '<meta name="description" content="' . $h->lang['header_meta_description'] . '">' . "\n";  // default meta tags
+            }
+            
+            if ($cat_meta->category_keywords) {
+                echo '<meta name="keywords" content="' . urldecode($cat_meta->category_keywords) . '">' . "\n";
+            } else {
+                echo '<meta name="description" content="' . $h->lang['header_meta_keywords'] . '">' . "\n";  // default meta tags
+            }
+
+            return true;
+        }
     }
     
     

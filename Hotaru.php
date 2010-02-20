@@ -1893,6 +1893,20 @@ class Hotaru
     }
     
     
+    /**
+     * Returns meta description and keywords for the category (if available)
+     *
+     * @param int $cat_id
+     * @return array|false
+     */
+    public function getCatMeta($cat_id)
+    {
+        require_once(LIBS . 'Category.php');
+        $category = new Category();
+        return $category->getCatMeta($this, $cat_id);
+    }
+    
+    
 /* *************************************************************
  *
  *  COMMENT FUNCTIONS

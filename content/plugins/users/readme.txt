@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.1.2 2010/02/20 - Nick - Meta tags generated from user details and profile
 v.1.1 2009/12/22 - Nick - Updated for compatibility with Hotaru 1.0
 v.1.0 2009/11/25 - Nick - Cleaned up user_settings.php for better plugin integration
 v.0.9 2009/11/23 - Nick - Added new plugin hooks for the RPX plugin to use

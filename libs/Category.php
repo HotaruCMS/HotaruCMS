@@ -136,6 +136,20 @@ class Category
         $cat_children_ids = $h->db->get_results($h->db->prepare($sql, $cat_parent_id));
         if ($cat_children_ids) { return $cat_children_ids; } else { return false; }
     }
+    
+    
+    /**
+     * Returns meta description and keywords for the category (if available)
+     *
+     * @param int $cat_id
+     * @return array|false
+     */
+    public function getCatMeta($h, $cat_id)
+    {
+        $sql = "SELECT category_desc, category_keywords FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
+        $cat_meta = $h->db->get_row($h->db->prepare($sql, $cat_id));
+        if ($cat_meta) { return $cat_meta; } else { return false; }
+    }
 }
 
 ?>

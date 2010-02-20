@@ -26,4 +26,7 @@
 
 $lang['tags'] = 'Tags';
 $lang['tags_list'] = 'Tags:';
+$lang['tags_meta_description_before'] = 'Posts tagged ';
+$lang['tags_meta_description_after'] = '';
+$lang['tags_meta_keywords_more'] = ''; // e.g. ", sport, exercise" - you need the first comma.
 ?>
