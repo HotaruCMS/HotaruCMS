@@ -584,7 +584,7 @@ class Activity
         $act_count = $this->getLatestActivityCount($h);
         
         // pagination 
-        $h->vars['pagedResults'] = $h->pagination($act_query, $act_count, $activity_settings['number'], 'activity');
+        $h->vars['pagedResults'] = $h->pagination($act_query, $act_count, $activity_settings['number'], 'useractivity');
         
         $h->displayTemplate('activity');
 
@@ -608,7 +608,7 @@ class Activity
         $act_count = $this->getLatestActivityCount($h, $userid);
         
         // pagination 
-        $h->vars['pagedResults'] = $h->pagination($act_query, $act_count, $activity_settings['number'], 'activity');
+        $h->vars['pagedResults'] = $h->pagination($act_query, $act_count, $activity_settings['number'], 'useractivity');
         
         $h->displayTemplate('activity_profile');
     }
