@@ -151,7 +151,7 @@ class adminEmail
 
         // reload the page, without any html...
         $url = BASEURL . "admin_index.php?page=plugin_settings&plugin=admin_email&mailing=1";
-        echo "<meta http-equiv='Refresh' content='0; URL=" . $url . "'>";
+        echo "<meta http-equiv='Refresh' content='0; URL=" . $url . "' />";
         echo $h->lang["admin_email_redirecting"];
         ob_flush();
         flush();

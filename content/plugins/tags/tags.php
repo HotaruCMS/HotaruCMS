@@ -58,7 +58,7 @@ class Tags
     {    
         if ($h->pageType == 'post')
         {
-            echo '<meta name="keywords" content="' . stripslashes($h->post->tags) . '">' . "\n";
+            echo '<meta name="keywords" content="' . stripslashes($h->post->tags) . '" />' . "\n";
             return true;
         } 
         elseif ($h->subPage == 'tags')
@@ -66,8 +66,8 @@ class Tags
             $tag = stripslashes($h->vars['tag']); 
             
             if ($tag) {
-                echo '<meta name="description" content="' . $h->lang['tags_meta_description_before'] . $tag . $h->lang['tags_meta_description_after'] . '">' . "\n";
-                echo '<meta name="keywords" content="' . $tag . $h->lang['tags_meta_keywords_more'] . '">' . "\n";
+                echo '<meta name="description" content="' . $h->lang['tags_meta_description_before'] . $tag . $h->lang['tags_meta_description_after'] . '" />' . "\n";
+                echo '<meta name="keywords" content="' . $tag . $h->lang['tags_meta_keywords_more'] . '" />' . "\n";
                 return true;
             }
         }

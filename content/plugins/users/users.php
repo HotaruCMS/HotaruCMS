@@ -122,12 +122,12 @@ class Users
     {
         if ($h->pageName == 'profile') {
             if (isset($h->vars['profile']['bio']) && ($h->vars['profile']['bio'] != $h->lang['users_profile_default_bio'])) { 
-                echo '<meta name="description" content="' . $h->vars['profile']['bio'] . '">' . "\n";
+                echo '<meta name="description" content="' . $h->vars['profile']['bio'] . '" />' . "\n";
             } else {
-                echo '<meta name="description" content="' . $h->lang['users_default_meta_description_before'] . $h->vars['user']->name . $h->lang['users_default_meta_description_after'] . '">' . "\n";  // default profile meta description (see language file)
+                echo '<meta name="description" content="' . $h->lang['users_default_meta_description_before'] . $h->vars['user']->name . $h->lang['users_default_meta_description_after'] . '" />' . "\n";  // default profile meta description (see language file)
             }
             
-            echo '<meta name="keywords" content="' . $h->vars['user']->name . $h->lang['users_profile_meta_keywords_more'] . '">' . "\n";  // default profile meta keywords (see language file)
+            echo '<meta name="keywords" content="' . $h->vars['user']->name . $h->lang['users_profile_meta_keywords_more'] . '" />' . "\n";  // default profile meta keywords (see language file)
             
             return true;
         }
@@ -141,8 +141,8 @@ class Users
                 if ($first_word == 'sort') { $first_word = $h->cage->get->testPage('sort'); }
                 if ($first_word == 'index') { $first_word = $h->lang['users_meta_description_popular']; }
                 $first_word = ucfirst(strtolower(make_name($first_word, '-')));
-                echo '<meta name="description" content="' . $h->lang['users_meta_description_results_before'] . $first_word . $h->lang['users_meta_description_results_middle'] . $user . $h->lang['users_meta_description_results_after'] . '">' . "\n";
-                echo '<meta name="keywords" content="' . $user . $h->lang['users_profile_meta_keywords_more'] . '">' . "\n";  // default profile meta keywords (see language file)
+                echo '<meta name="description" content="' . $h->lang['users_meta_description_results_before'] . $first_word . $h->lang['users_meta_description_results_middle'] . $user . $h->lang['users_meta_description_results_after'] . '" />' . "\n";
+                echo '<meta name="keywords" content="' . $user . $h->lang['users_profile_meta_keywords_more'] . '" />' . "\n";  // default profile meta keywords (see language file)
                 return true;
             }
         }
