@@ -54,7 +54,16 @@
     
     <link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME . 'css/style.css'; ?>" type="text/css" />
     <!-- <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico" /> -->
-   
+
+    <?php  $site_color = '#' . $h->vars['settings']['site_color']; ?>
+    <style type="text/css">
+    <!--
+    #hd, #ft, #annoucement {background-color:<?php echo $site_color; ?> !important; }
+    a#navigation_active {color: <?php echo $site_color; ?> !important;}
+    -->
+    
+    </style>
+
     <?php $h->pluginHook('header_include_raw'); ?>
    
 </head>
