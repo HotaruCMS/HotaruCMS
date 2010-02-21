@@ -39,6 +39,7 @@ $lang["sb_base_top_7_days"] = "Top Posts (last 7 Days)";
 $lang["sb_base_top_30_days"] = "Top Posts (last 30 Days)";
 $lang["sb_base_top_365_days"] = "Top Posts (last 365 Days)";
 $lang["sb_base_top_all_time"] = "Top Posts (All-Time)";
+$lang["sb_base_no_posts"] = "No posts found.";
 
 /* Post */
 $lang["sb_base_post_edit"] = "Edit";

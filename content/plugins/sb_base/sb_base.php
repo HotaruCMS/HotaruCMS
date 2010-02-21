@@ -2,7 +2,7 @@
 /**
  * name: SB Base
  * description: Social Bookmarking base - provides "list" and "post" templates. 
- * version: 0.2
+ * version: 0.3
  * folder: sb_base
  * class: SbBase
  * type: base
@@ -122,14 +122,15 @@ class SbBase
         
         // get settings
         $h->vars['sb_base_settings'] = $h->getSerializedSettings('sb_base');
-        $h->vars['posts_per_page'] = $h->vars['sb_base_settings']['posts_per_page'];
+        $posts_per_page = $h->vars['sb_base_settings']['posts_per_page'];
         
         // if a list, get the posts:
         switch ($h->pageType)
         {
             case 'list':
-                $h->vars['post_count'] = $sb_funcs->prepareList($h, '', 'count');   // get the number of posts
-                $h->vars['post_query'] = $sb_funcs->prepareList($h, '', 'query');   // and the SQL query used
+                $post_count = $sb_funcs->prepareList($h, '', 'count');   // get the number of posts
+                $post_query = $sb_funcs->prepareList($h, '', 'query');   // and the SQL query used
+                $h->vars['pagedResults'] = $h->pagination($post_query, $post_count, $posts_per_page, 'posts');
                 break;
             case 'post':
                 // if a post is already set (e.g. from the sb_categories plugin), we don't want to
@@ -288,8 +289,12 @@ class SbBase
                 break;
                 
             case 'list':
-                
-                $h->displayTemplate('sb_list');
+                if (isset($h->vars['pagedResults']->items)) {
+                    $h->displayTemplate('sb_list');
+                    echo $h->pageBar($h->vars['pagedResults']);
+                } else {
+                    $h->displayTemplate('sb_no_posts');
+                } 
                 return true;
         }
     }
