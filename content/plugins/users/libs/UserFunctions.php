@@ -36,6 +36,8 @@ class UserFunctions
      */
     public function notifyMods($h, $type, $status, $id = 0, $commentid = 0)
     {
+        $h->includeLanguage('users'); // in some cases, we don't already have the language file so need to include it.
+
         $line_break = "\r\n\r\n";
         $next_line = "\r\n";
         
