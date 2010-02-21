@@ -41,8 +41,6 @@ class TwitterWidgetSettings
 		
 		echo "<h1>" . $h->lang["twitter_widget_settings_header"] . "</h1>\n";
 		
-		$h->showMessage(); // Saved / Error message
-		
 		// Get settings from the database if they exist...
 		$twitter_widget_username = $h->getSetting('twitter_widget_username');
 		$twitter_widget_password = $h->getSetting('twitter_widget_password');
