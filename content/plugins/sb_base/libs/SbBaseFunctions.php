@@ -326,7 +326,7 @@ class SbBaseFunctions
         
         // When a user clicks a parent category, we need to show posts from all child categories, too.
         // This only works for one level of sub-categories.
-        if ($category) {
+        if ($category && $cat_id) {
             $filter_string = '(post_category = %d';
             $values = array($cat_id);
             $parent = $h->getCatParent($cat_id);
