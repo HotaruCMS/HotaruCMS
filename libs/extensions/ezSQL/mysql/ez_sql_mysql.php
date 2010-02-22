@@ -215,6 +215,19 @@
             // If there is an error then take note of it..
             if ( $str = @mysql_error($this->dbh) )
             {
+                if (DEBUG == 'true') {
+                    $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
+                    $subject = SITE_NAME . " Database Error";
+                    $body = "SQL query:\r\n";
+                    $body .= $query . "\r\n\r\n";
+                    
+                    $body .= "PHP error log:\r\n";
+                    $body .= $str . "\r\n\r\n";
+                    
+                    $body .= "If you need help, visit the forums at http://hotarucms.org\r\n";
+                    mail(SITE_EMAIL, $subject, $body, $headers);
+                }
+
                 $is_insert = true;
                 $this->register_error($str);
                 $this->show_errors ? trigger_error($str,E_USER_WARNING) : null;

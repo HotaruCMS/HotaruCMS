@@ -13,6 +13,6 @@ Instructions
 
 Changelog
 ---------
-v.0.3 2010/02/21 - Nick - Bug fix, cleaner list template and new "sb_no_posts" template
+v.0.3 2010/02/21 - Nick - Bug fixes, cleaner list template and new "sb_no_posts" template
 v.0.2 2010/02/18 - Nick - Code changes for pagination
 v.0.1 2009/12/16 - Nick - Released first version

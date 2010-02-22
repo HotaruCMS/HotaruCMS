@@ -691,14 +691,10 @@ class SubmitFunctions
     public function fetchTitle($url)
     {
         require_once(EXTENSIONS . 'SWCMS/class.httprequest.php');
-        //require_once(EXTENSIONS . 'http/class.http.php');
         
         if ($url != 'http://' && $url != ''){
             $r = new HTTPRequest($url);
             $string = $r->DownloadToString();
-            //$http = new Http();
-            //$http->execute($url);
-            //$string = $http->result;
         } else {
             $string = '';
         }
