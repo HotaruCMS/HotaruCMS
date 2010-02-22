@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.0.4 2010/02/22 - Nick - Caches the HTML results until the tags table is updated
 v.0.3 2010/02/20 - Nick - Fix for SQL warning when no tags present
 v.0.2 2009/12/31 - Nick - Compatibility with Hotaru 1.0
 v.0.1 2009/11/23 - Nick - Released first version
