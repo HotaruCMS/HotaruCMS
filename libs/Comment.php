@@ -456,7 +456,7 @@ class Comment
      */
     function updateSubscribe($h, $post_id)
     {
-        if ($this->comment_subscribe == 1)
+        if ($this->subscribe == 1)
         {
             $sql = "UPDATE " . TABLE_COMMENTS . " SET comment_subscribe = %d WHERE comment_post_id = %d AND comment_user_id = %d";
             $h->db->query($h->db->prepare($sql, 1, $h->post->id, $h->currentUser->id));
