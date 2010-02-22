@@ -48,6 +48,15 @@
             $this->dbname = $dbname;
             $this->dbhost = $dbhost;
         }
+        
+        /**********************************************************************
+        *  Set $h - global Hotaru object
+        */
+
+        function setHotaru($h)
+        {
+            $this->h = $h;
+        }
 
         /**********************************************************************
         *  Short hand way to connect to mySQL database server
@@ -218,11 +227,21 @@
                 if (DEBUG == 'true') {
                     $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
                     $subject = SITE_NAME . " Database Error";
-                    $body = "SQL query:\r\n";
+                    $body = SITE_NAME . " Database Error\r\n\r\n";
+                    $body .= "Date: " . date('d M Y H:i:s') . " (timezone: " . date_default_timezone_get() . ")\r\n\r\n";
+                    $body .= "SQL query:\r\n";
                     $body .= $query . "\r\n\r\n";
                     
                     $body .= "PHP error log:\r\n";
                     $body .= $str . "\r\n\r\n";
+                    
+                    if(isset($this->h)) {
+                        $body .=  "Current User: " . $this->h->currentUser->name . " (id: " . $this->h->currentUser->id .")\r\n";
+                        $body .=  "User Role: " . $this->h->currentUser->role . "\r\n";
+                        $body .=  "Page Name: " . $this->h->pageName . "\r\n";
+                        $body .=  "Sub Page: " . $this->h->subPage . "\r\n";
+                        $body .=  "Plugin: " . $this->h->plugin->folder . "\r\n\r\n";
+                    }
                     
                     $body .= "If you need help, visit the forums at http://hotarucms.org\r\n";
                     mail(SITE_EMAIL, $subject, $body, $headers);

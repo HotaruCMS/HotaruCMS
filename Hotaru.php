@@ -83,6 +83,7 @@ class Hotaru
 
             $this->checkCssJs();                        // check if we need to merge css/js
             $this->csrf('set');                         // set a csrfToken
+            $this->db->setHotaru($this);                // pass $h object to EzSQL for error reporting
         }
     }
     
