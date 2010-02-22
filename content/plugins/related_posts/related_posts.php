@@ -2,7 +2,7 @@
 /**
  * name: Related Posts
  * description: Show a list of related posts
- * version: 0.3
+ * version: 0.4
  * folder: related_posts
  * class: relatedPosts
  * requires: submit 1.9, search 0.8
@@ -164,7 +164,25 @@ class relatedPosts
         
         $search_terms = $tags;
         
+        $need_cache = false;
+        
+        // check for a cached version and use it if no recent update:
+        $output = $h->smartCache('html', 'tags', 60, '', 'related_posts_' . $original_id);
+        if ($output) {
+            echo $output; // cached HTML
+            return true;
+        } else {
+            $need_cache = true;
+        }
+        
+        // get the results and generate HTML:
         $output = $this->showRelatedPosts($h, $search_terms, $num_posts);
+        
+        // write them to the cache
+        if ($need_cache) {
+            $h->smartCache('html', 'tags', 60, $output, 'related_posts_' . $original_id); // make or rewrite the cache file
+        }
+        
         echo $output;
         
         $h->readPost($original_id); // fill the object with the original post details.
@@ -212,19 +230,18 @@ class relatedPosts
     
     
     /**
-     * Message when no related posts found, or no tags present
+     * Message when no related posts found, or no tags present on submit step 3
      *
      * @param string $output
      * return string $output
      */
     public function noRelatedPosts($h, $output = '')
     {
-        // Commented this out because I doubt anyone will want to see a "No related posts found" message. Handy for testing, though!
-        /*
-        $output .= "<div id='related_posts_none'>\n";
-        $output .= $h->lang['related_links_no_results'];
-        $output .= "</div>\n";
-        */
+        if ($h->isPage('submit3')) { 
+            $output .= "<div id='related_posts_none'>\n";
+            $output .= $h->lang['related_links_no_results'];
+            $output .= "</div>\n";
+        }
         
         return $output;
     }
