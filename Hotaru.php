@@ -1191,7 +1191,7 @@ class Hotaru
      */
     public function openLog($type = 'debug', $mode = 'a+')
     {
-        $this->debug->openLog($this, $type, $mode);
+        $this->debug->openLog($type, $mode);
     }
     
     
@@ -1202,7 +1202,7 @@ class Hotaru
      */
     public function writeLog($type = 'error', $string = '')
     {
-        $this->debug->writeLog($this, $type, $string);
+        $this->debug->writeLog($type, $string);
     }
     
     
@@ -1213,7 +1213,7 @@ class Hotaru
      */
     public function closeLog($type = 'error')
     {
-        $this->debug->closeLog($this, $type);
+        $this->debug->closeLog($type);
     }
     
     
@@ -2027,6 +2027,31 @@ class Hotaru
         require_once(LIBS . 'Widget.php');
         $widget = new Widget();
         return $widget->getPluginFromFunction($this, $function);
+    }
+    
+    
+/* *************************************************************
+ *
+ *  EMAIL FUNCTIONS
+ *
+ * *********************************************************** */
+ 
+    /**
+     * Send emails
+     *
+     * @param string $to - defaults to SITE_EMAIL
+     * @param string $subject - defaults to "No Subject";
+     * @param string $body - returns false if empty
+     * @param string $headers default is "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
+     * @param string $type - default is "email", but you can write to a "log" file, print to "screen" or "return" an array of the content
+     * @return array|false - only if $type = "return"
+     */
+    public function email($to = '', $subject = '', $body = '', $headers = '', $type = 'email')
+    {
+        require_once(LIBS . 'EmailFunctions.php');
+        $emailFunctions = new EmailFunctions($to, $subject, $body, $headers, $type);
+        $emailFunctions->type = $type;
+        return $emailFunctions->doEmail();
     }
 }
 ?>

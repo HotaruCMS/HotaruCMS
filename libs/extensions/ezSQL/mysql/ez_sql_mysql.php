@@ -244,7 +244,11 @@
                     }
                     
                     $body .= "If you need help, visit the forums at http://hotarucms.org\r\n";
-                    mail(SITE_EMAIL, $subject, $body, $headers);
+                    
+                    // we can avoid using the $h object (which we might not have) by calling EmailFunctions directly.
+                    require_once(LIBS . 'EmailFunctions.php');
+                    $emailFunctions = new EmailFunctions(SITE_EMAIL, $subject, $body, $headers);
+                    $emailFunctions->doEmail();
                 }
 
                 $is_insert = true;
