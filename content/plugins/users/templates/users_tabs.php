@@ -26,29 +26,30 @@
 $username = $h->vars['user']->name;
 ?>
 
-<ul class='user_tabs'>
-
-<li><?php echo $h->lang["users_edit"]; ?> 
-    <a href='<?php echo $h->url(array('user'=>$username)); ?>'><?php echo $username; ?></a>:
-</li>
-
 <?php // show account and profile links to owner or admin access users: 
     if (($h->currentUser->name == $username) || ($h->currentUser->getPermission('can_access_admin') == 'yes')) { ?>
+    
+    <ul class='user_tabs'>
+    
+    <li><?php echo $h->lang["users_edit"]; ?> 
+        <a href='<?php echo $h->url(array('user'=>$username)); ?>'><?php echo $username; ?></a>:
+    </li>
+    
     <li><a href='<?php echo $h->url(array('page'=>'account', 'user'=>$username)); ?>'><?php echo $h->lang["users_account"]; ?></a></li>
     <li><a href='<?php echo $h->url(array('page'=>'edit-profile', 'user'=>$username)); ?>'><?php echo $h->lang["users_profile"]; ?></a></li>
     <li><a href='<?php echo $h->url(array('page'=>'user-settings', 'user'=>$username)); ?>'><?php echo $h->lang["users_settings"]; ?></a></li>
-<?php } ?>
 
-<?php // show permissions and User Manager links admin access users only: 
-    if ($h->currentUser->getPermission('can_access_admin') == 'yes') { ?>
-    <li><a href='<?php echo $h->url(array('page'=>'permissions', 'user'=>$username)); ?>'><?php echo $h->lang["users_permissions"]; ?></a></li>
-
-    <?php // show User Manager link only if theplugin is active
-        if ($h->isActive('user_manager')) { ?>
-        <li><a href="<?php echo BASEURL; ?>admin_index.php?search_value=<?php echo $username; ?>&amp;plugin=user_manager&amp;page=plugin_settings&amp;type=search"><?php echo $h->lang['user_man_link']; ?></a></li>
+    <?php // show permissions and User Manager links admin access users only: 
+        if ($h->currentUser->getPermission('can_access_admin') == 'yes') { ?>
+        <li><a href='<?php echo $h->url(array('page'=>'permissions', 'user'=>$username)); ?>'><?php echo $h->lang["users_permissions"]; ?></a></li>
+    
+        <?php // show User Manager link only if theplugin is active
+            if ($h->isActive('user_manager')) { ?>
+            <li><a href="<?php echo BASEURL; ?>admin_index.php?search_value=<?php echo $username; ?>&amp;plugin=user_manager&amp;page=plugin_settings&amp;type=search"><?php echo $h->lang['user_man_link']; ?></a></li>
+        <?php } ?>
+        
     <?php } ?>
     
+    </ul>
+
 <?php } ?>
-
-</ul>
-
