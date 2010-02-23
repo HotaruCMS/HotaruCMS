@@ -396,7 +396,7 @@ class UserAuth extends UserBase
             }
             
             
-            $password_check_old = $h->cage->post->testPassword('password_old');    
+            $password_check_old = $h->cage->post->noTags('password_old');
             
             if ($this->loginCheck($h, $this->name, $password_check_old)) {
                 // safe, the old password matches the password for this user.
