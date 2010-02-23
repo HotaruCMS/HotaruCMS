@@ -104,8 +104,8 @@ class Comment
      */
     function readAllParents($h, $post_id, $order = "ASC")
     {
-        $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_parent = %d ORDER BY comment_date " . $order;
-        $parents = $h->db->get_results($h->db->prepare($sql, $post_id, 0));
+        $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_parent = %d AND comment_status = %s ORDER BY comment_date " . $order;
+        $parents = $h->db->get_results($h->db->prepare($sql, $post_id, 0, 'approved'));
         
         if($parents) { return $parents; } else { return false; }
     }
@@ -119,8 +119,8 @@ class Comment
      */
     function readAllChildren($h, $parent)
     {
-        $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_parent = %d ORDER BY comment_date";
-        $children = $h->db->get_results($h->db->prepare($sql, $parent));
+        $sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_parent = %d AND comment_status = %s ORDER BY comment_date";
+        $children = $h->db->get_results($h->db->prepare($sql, $parent, 'approved'));
         
         if($children) { return $children; } else { return false; }
     }
@@ -244,11 +244,25 @@ class Comment
      */
     function addComment($h)
     {
+        $result = array(); // this will be sent back containing various info
+        
+        // setup
+        $result['set_pending'] = '';
+        $result['comments_approved'] = 0;
+        $result['comments_needed'] = 0;
+        $result['exceeded_daily_limit'] = false;
+        $result['exceeded_url_limit'] = false;
+        $result['under_moderation'] = false;
+        $result['not_enough_comments'] = false;
+        
         $h->pluginHook('comment_pre_add_comment');  // Akismet uses this to change the status
         
         $can_comment = $h->currentUser->getPermission('can_comment'); // This was already checked, but Akismet sometimes reverts the status, so we do it again.
 
-        if ($can_comment == 'mod') { $this->status = 'pending'; } // forces all to 'pending' if user's comments are moderated
+        if ($can_comment == 'mod') { // forces all to 'pending' if user's comments are moderated
+            $this->status = 'pending'; 
+            $result['under_moderation'] = true;
+        } 
         
         // Get settings from database...
         $comments_settings = $h->getSerializedSettings('comments');
@@ -256,20 +270,36 @@ class Comment
         $set_pending = $comments_settings['comment_set_pending'];
         $daily_limit = $comments_settings['comment_daily_limit'];
         $url_limit = $comments_settings['comment_url_limit'];
-        
+
+        $result['set_pending'] = $set_pending;
+                    
         if ($set_pending == 'some_pending') {
             $comments_approved = $this->commentsApproved($h, $h->currentUser->id);
             $x_comments_needed = $comments_settings['comment_x_comments'];
         }
         
-        if ($h->currentUser->role == 'member') {
-            if ($daily_limit && ($daily_limit < $this->countDailyComments($h))) { $this->status = 'pending'; } // exceeded daily limit, set to pending
-            if ($url_limit && ($url_limit < $this->countUrls())) { $this->status = 'pending'; } // exceeded url limit, set to pending
+        if ($h->currentUser->role == 'member')
+        {
+            if ($daily_limit && ($daily_limit < $this->countDailyComments($h)))
+            {
+                 // exceeded daily limit, set to pending
+                $this->status = 'pending'; 
+                $result['exceeded_daily_limit'] = true;
+            }
+            
+            if ($url_limit && ($url_limit < $this->countUrls()))
+            { 
+                // exceeded url limit, set to pending
+                $this->status = 'pending';
+                $result['exceeded_url_limit'] = true;
+            }
+            
         }
                     
         if ($set_pending == 'all_pending') {
-            $this->status = 'pending'; 
+            $this->status = 'pending';
         } elseif (($set_pending == 'some_pending') && ($comments_approved <= $x_comments_needed)) {
+            $result['not_enough_comments'] = true;
             $this->status = 'pending'; 
         } 
                 
@@ -284,7 +314,7 @@ class Comment
         
         $h->pluginHook('comment_post_add_comment');
         
-        return true;
+        return $result;
     }
     
 
