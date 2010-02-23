@@ -2,7 +2,7 @@
 /**
  * name: Comments
  * description: Enables logged-in users to comment on posts
- * version: 1.4
+ * version: 1.5
  * folder: comments
  * class: Comments
  * type: comments
@@ -157,7 +157,7 @@ class Comments
         // Is the comment form open on this thread? 
         $h->comment->thisForm = $h->comment->formStatus($h, 'select'); // returns 'open' or 'closed'
 
-        if (   ($h->pageName == 'comments') 
+        if (   ($h->pageType == 'post') 
             && ($h->comment->thisForm == 'open')
             && ($h->comment->allForms == 'checked')) {
             
@@ -201,11 +201,13 @@ class Comments
                         if ($can_comment == 'yes') { $safe = true; }
                         if ($can_comment == 'mod') { $safe = true; $h->comment->status = 'pending'; }
                         
+                        $result = array(); // holds results from addComment function
+                        
                         // Okay, safe to add the comment...
                         if ($safe) {
                             // A user can unsubscribe by submitting an empty comment, so...
                             if ($h->comment->content != '') {
-                                $h->comment->addComment($h);
+                                $result = $h->comment->addComment($h);
             
                                 // notify chosen mods of new comment by email if enabled and UserFunctions file exists
                                 if (($comments_settings['comment_email_notify']) && (file_exists(PLUGINS . 'users/libs/UserFunctions.php')))
@@ -222,7 +224,16 @@ class Comments
                             } else {
                                 //comment empty so just check subscribe box:
                                 $h->comment->updateSubscribe($h, $h->comment->postId);
+                                $h->messages[$h->lang['comment_moderation_unsubscribed']] = 'green';
                             }
+                        }
+                        
+                        if ($result['exceeded_daily_limit']) {
+                            $h->messages[$h->lang['comment_moderation_exceeded_daily_limit']] = 'green';
+                        } elseif ($result['exceeded_url_limit']) {
+                            $h->messages[$h->lang['comment_moderation_exceeded_url_limit']] = 'green';
+                        } elseif ($result['not_enough_comments']) {
+                            $h->messages[$h->lang['comment_moderation_not_enough_comments']] = 'green';
                         }
                     }
                     elseif($h->cage->post->getAlpha('comment_process') == 'editcomment')
@@ -237,6 +248,10 @@ class Comments
                         }
                     }
                    
+                    if ($h->comment->status == 'pending') {
+                        return false;
+                    }
+                    
                     header("Location: " . $h->url(array('page'=>$h->comment->postId)));    // Go to the post
                     die();
                     

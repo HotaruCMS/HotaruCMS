@@ -34,7 +34,7 @@
     
 <?php } // JavaScript changes this form! See comments.js ?>
 
-    <form name='comment_form' action='<?php echo BASEURL; ?>index.php?page=comments' method='post'>
+    <form name='comment_form' action='<?php echo $h->url(array('page' => $h->post->id)); ?>' method='post'>
         <textarea name="comment_content" id="comment_content_<?php echo $h->comment->id; ?>" rows="6" cols="50"></textarea><br />
         <div class="comment_instructions"><?php echo $h->lang['comments_form_allowable_tags']; ?><?php echo htmlentities($h->comment->allowableTags); ?></div>
         <div class="comment_subscribe"><input id="comment_subscribe" name="comment_subscribe" type="checkbox" <?php echo $h->vars['subscribe']; ?> /> <?php echo $h->lang['comments_form_subscribe']; ?><?php if ($h->vars['subscribe']) { echo " <small>(" . $h->lang['comments_form_unsubscribe'] . ")</small>"; } ?></div>
