@@ -2,7 +2,7 @@
 /**
  * name: User Signin
  * description: Provides user registration and login
- * version: 0.1
+ * version: 0.2
  * folder: user_signin
  * type: signin
  * class: UserSignin
@@ -653,6 +653,26 @@ class UserSignin
         }
             
         return true;
+    }
+    
+    
+     /**
+     * Check login permission during cookie check
+     *
+     * @return true;
+     */
+    public function userauth_checkcookie_success()
+    {
+        $fail_array = array('killspammed', 'banned', 'suspended');
+        if (!in_array($h->currentUser->role, $fail_array)) { echo "SAFE!"; return true; }
+        
+        if ($h->currentUser->getPermission('can_login') == 'no') {
+            $h->currentUser->destroyCookieAndSession();
+            $h->currentUser->setLoggedOutUser($h);
+            header("Location: " . BASEURL);
+            exit;
+        }
+        
     }
 }
 
