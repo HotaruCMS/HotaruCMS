@@ -224,7 +224,7 @@
             // If there is an error then take note of it..
             if ( $str = @mysql_error($this->dbh) )
             {
-                if (DEBUG == 'true') {
+                if (defined(DEBUG) && (DEBUG == 'true')) {
                     $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
                     $subject = SITE_NAME . " Database Error";
                     $body = SITE_NAME . " Database Error\r\n\r\n";
