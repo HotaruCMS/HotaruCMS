@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.1.4 2010/02/23 - Nick - Removed showMessages() function call because it's in SB Base 0.4
 v.1.3 2010/02/10 - shibuya246 - Option to automatically increase vote count when clicking a post link
 v.1.2 2010/01/12 - Nick - Fixes for auto-vote on post submission
 v.1.1 2010/01/03 - Nick - Updated for Hotaru 1.0
