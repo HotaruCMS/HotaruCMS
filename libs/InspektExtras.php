@@ -89,7 +89,7 @@ class testPassword extends AccessorAbstract {
     */
     protected function inspekt($val)
     {
-        if (preg_match('/^([a-z0-9@*#_-]{8,60})+$/i', $val)) {
+        if (preg_match('/^([a-z0-9!@*#_-]{8,60})+$/i', $val)) {
             return $val;
         } else {
             return false;
