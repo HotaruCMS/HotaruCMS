@@ -306,8 +306,12 @@ class SbBaseFunctions
         if (!$limit) { $limit = 10; }
                     
         if ($status) { $filter['post_status = %s'] = $status; }
-        if ($user) { $filter['post_author = %d'] = $h->getUserIdFromName($h->cage->get->testUsername('user'));  }
-        if ($tag) { $filter['post_tags LIKE %s'] = '%' . urlencode(stripslashes($tag)) . '%'; }
+        if ($user) {
+            $user_id = $h->getUserIdFromName($user);
+            if ($user_id) { $filter['post_author = %d'] = $user_id; }
+        }
+        if ($tag) { 
+            $filter['post_tags LIKE %s'] = '%' . urlencode(stripslashes($tag)) . '%'; }
         if ($media) { $filter['post_media = %s'] = $media; }
         if ($category && (FRIENDLY_URLS == "true")) { $cat_id = $h->getCatId($category); }
         if ($category && (FRIENDLY_URLS == "false")) { $cat_id = $category; }

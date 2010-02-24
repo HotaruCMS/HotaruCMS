@@ -37,6 +37,7 @@ if ($username_check == 'deleted') { $h->showMessage(); return true; } // shows "
     <form name='update_form' class='users_form' action='<?php echo BASEURL; ?>index.php?page=account' method='post'>    
     <table>
     <tr><td><?php echo $h->lang["users_account_username"]; ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username; ?>' /></td></tr>
+    <tr><td colspan='2'><small><?php echo $h->lang["users_account_username_requirements"]; ?></small></td></tr>
     <tr><td><?php echo $h->lang["users_account_email"]; ?>&nbsp; </td><td><input type='text' size=30 name='email' value='<?php echo $email_check; ?>' /></td></tr>
     <?php 
         // show role picker to anyone who can access admin, but not to yourself!
@@ -80,6 +81,7 @@ if ($username_check == 'deleted') { $h->showMessage(); return true; } // shows "
         <b><?php echo $h->lang["users_account_password_instruct"]; ?></b>
         <form name='update_form' class='users_form' action='<?php echo BASEURL; ?>index.php' method='post'>
         <table>
+        <tr><td colspan='2'><small><?php echo $h->lang["users_account_password_requirements"]; ?></small></td></tr>
         <tr><td><?php echo $h->lang["users_account_old_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_old' value='<?php echo $password_check_old; ?>' /></td></tr>
         <tr><td><?php echo $h->lang["users_account_new_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_new' value='<?php echo $password_check_new; ?>' /></td></tr>
         <tr><td><?php echo $h->lang["users_account_new_password_verify"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_new2' value='<?php echo $password_check_new2; ?>' /></td></tr>

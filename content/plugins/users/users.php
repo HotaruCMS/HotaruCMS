@@ -2,7 +2,7 @@
 /**
  * name: Users
  * description: Provides profile, settings and permission pages
- * version: 1.2
+ * version: 1.3
  * folder: users
  * type: users
  * class: Users
@@ -284,6 +284,16 @@ class Users
         
         $h->vars['user']->saveProfileSettingsData($h, $profile, 'user_profile', $h->vars['user']->id);
         
+        /*  Problem! The previous profile data is cached and we don't want to disable caching for profiles, 
+            nor do we want to clear the entire db_cache, so instead, we'll delete the cache file that holds
+            the previous profile for this user. */
+        $sql = "SELECT usermeta_value FROM " . DB_PREFIX . "usermeta WHERE usermeta_userid = %d AND usermeta_key = %s";
+        $query = $h->db->prepare($sql, $h->vars['user']->id, 'user_profile');
+        $cache_file = CACHE . 'db_cache/' . md5($query);
+        if (file_exists($cache_file)) {
+            unlink($cache_file); // delete cache file.
+        }
+        
         $h->message = $h->lang["users_profile_edit_saved"] . "<br />\n";
         $h->message .= "<a href='" . $h->url(array('user'=>$h->vars['user']->name)) . "'>";
         $h->message .= $h->lang["users_profile_edit_view_profile"] . "</a>\n";
@@ -307,6 +317,16 @@ class Users
         }
         
         $h->vars['user']->saveProfileSettingsData($h, $settings, 'user_settings', $h->vars['user']->id);
+        
+        /*  Problem! The previous settings data is cached and we don't want to disable caching for settings, 
+            nor do we want to clear the entire db_cache, so instead, we'll delete the cache file that holds
+            the previous settings for this user. */
+        $sql = "SELECT usermeta_value FROM " . DB_PREFIX . "usermeta WHERE usermeta_userid = %d AND usermeta_key = %s";
+        $query = $h->db->prepare($sql, $h->vars['user']->id, 'user_settings');
+        $cache_file = CACHE . 'db_cache/' . md5($query);
+        if (file_exists($cache_file)) {
+            unlink($cache_file); // delete cache file.
+        }
         
         $h->message = $h->lang["users_settings_saved"] . "<br />\n";
         $h->messageType = "green";

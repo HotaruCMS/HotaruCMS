@@ -52,7 +52,7 @@ class Initialize
         $this->setUpDatabaseCache();
         $this->isDebug = $this->checkDebug();
 
-		$this->setUpJsConstants();
+        $this->setUpJsConstants();
 
         return $this;
     }

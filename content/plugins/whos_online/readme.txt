@@ -19,4 +19,5 @@ If you're surprised by a higher than expected number of guests, it's because the
 
 Changelog
 ---------
+v.0.2 2010/02/24 - Nick - Fix for undefined $count
 v.0.1 2010/01/14 - Nick - Released first version

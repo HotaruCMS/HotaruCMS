@@ -2,7 +2,7 @@
 /**
  * name: SB Base
  * description: Social Bookmarking base - provides "list" and "post" templates. 
- * version: 0.3
+ * version: 0.4
  * folder: sb_base
  * class: SbBase
  * type: base
@@ -275,14 +275,15 @@ class SbBase
                 // check if global edit permissions
                 if ($h->currentUser->getPermission('can_edit_posts') == 'yes') { $can_edit = true; }
 
+                $h->showMessages();
+                
                 // display post or show error message
                 if (!$buried && !$pending){
                     $h->displayTemplate('sb_post');
                 } elseif ($can_edit) {
-                    $h->showMessages();
                     $h->displayTemplate('sb_post');
                 } else {
-                    $h->showMessages();
+                    // don't show the post
                 }
                 
                 return true;

@@ -123,7 +123,7 @@ class UserFunctions
             $to = $mod['email'];
             $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
         
-            mail($to, $subject, $body, $headers);
+            $h->email($to, $subject, $body, $headers);
         }
         
         return true;

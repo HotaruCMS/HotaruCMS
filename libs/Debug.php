@@ -56,7 +56,7 @@ class Debug
      * @param string $mode e.g. 'a' or 'w'. 
      * @link http://php.net/manual/en/function.fopen.php
      */
-    public function openLog($h, $type = 'debug', $mode = 'a+')
+    public function openLog($type = 'debug', $mode = 'a+')
     {
         $this->log[$type] = CACHE . "debug_logs/" . $type . ".txt";
         
@@ -77,7 +77,7 @@ class Debug
      *
      * @param string $type "error", "speed", etc.
      */
-    public function writeLog($h, $type = 'debug', $string = '')
+    public function writeLog($type = 'debug', $string = '')
     {
         if ($string) {
             $string = date('d M Y H:i:s', time()) . ": " . $string . "\n";
@@ -91,7 +91,7 @@ class Debug
      *
      * @param string $type "speed", "error", etc.
      */
-    public function closeLog($h, $type = 'debug')
+    public function closeLog($type = 'debug')
     {
         if (isset($this->fh[$type])) { fclose($this->fh[$type]); }
     }

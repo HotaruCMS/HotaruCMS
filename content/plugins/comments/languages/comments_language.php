@@ -53,6 +53,12 @@ $lang['comments_form_set_pending'] = "Put in moderation queue";
 $lang['comments_form_delete'] = "Delete this and responses";
 $lang['comments_form_moderation_on'] = "<b>Note</b>: <span style='color: red;'>All comments are moderated</span>.";
 
+/* Comment Submission */
+$lang['comment_moderation_unsubscribed'] = "You have unsubscribed from this thread.";
+$lang['comment_moderation_exceeded_daily_limit'] = "You've exceeded the daily comment limit. This and any further comments will need approval.";
+$lang['comment_moderation_exceeded_url_limit'] = "You used too many URLs so your comment will need approval.";
+$lang['comment_moderation_not_enough_comments'] = "Your comment is awaiting approval.";
+
 /* All Comments */
 $lang['comments_posted_on'] = " on ";
 $lang['comments_all'] = "All Comments";

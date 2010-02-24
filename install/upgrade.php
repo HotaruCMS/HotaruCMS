@@ -339,11 +339,10 @@ function do_upgrade($old_version)
     }
     
     // 1.0.5 to 1.1
-    if ($old_version == "1.0.5") {
-        
-        // update "old version" for next set of upgrades
-        $old_version = "1.1";
-    }
+    if ($old_version == "1.0.5") { $old_version = "1.1"; } // update "old version" for next set of upgrades
+    
+    // 1.1 to 1.1.1
+    if ($old_version == "1.1") { $old_version = "1.1.1"; } // update "old version" for next set of upgrades
     
     // Update Hotaru version number to the database (referred to when upgrading)
     $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_key = %s, miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";

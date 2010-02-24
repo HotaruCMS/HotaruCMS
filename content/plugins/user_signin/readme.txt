@@ -14,4 +14,5 @@ Instructions
 
 Changelog
 ---------
+v.0.2 2010/02/23 - Nick - Throws out killspammed, banned or suspended users when checking the cookie
 v.0.1 2009/12/27 - Nick - Released first version

@@ -4,7 +4,7 @@ Created by: Nick Ramsay
 
 Description
 -----------
-Enable your registered users to comment on each post. Supports avatars (e.g. Gravatar plugin), replies, unlimited nesting, editing, HTML tags (chosen by the Admin) and comment subscription. 
+Enable your registered users to comment on each post. Supports avatars (e.g. Gravatar plugin), replies, unlimited nesting, editing, HTML tags (chosen by the Admin), pagination and comment subscription. 
 
 Instructions
 ------------
@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.1.5 2009/02/23 - Nick - Shows messages for moderated comments: "Awaiting approval", "Exceeded Daily Limit", etc.
 v.1.4 2009/02/09 - Nick - Option to hide comments after X down votes, plus pagination code changes
 v.1.3 2009/01/17 - Nick - Added option for avatar size
 v.1.2 2009/12/30 - Nick - Updates for compatibility with Hotaru 1.0

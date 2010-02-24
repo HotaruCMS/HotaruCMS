@@ -63,6 +63,8 @@ $lang["users_account_success"] = "Updated successfully.";
 $lang["users_account_update"] = "Update";
 $lang["users_account_deleted"] = "User Deleted";
 $lang["users_account_admin_admin"] = "Sorry, only admins can access admin accounts.";
+$lang["users_account_username_requirements"] = "At least 4 characters, using only letters, dashes and underscores";
+$lang["users_account_password_requirements"] = "At least 8 characters, using only letters, numbers and these symbols: ! @ * # - _";
 // Other language is used in content/language_packs/language_default/admin_language
 
 /* User Edit Profile */

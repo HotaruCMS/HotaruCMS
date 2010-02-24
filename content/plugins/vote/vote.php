@@ -2,11 +2,11 @@
 /**
  * name: Vote
  * description: Adds voting ability to posted stories.
- * version: 1.3
+ * version: 1.4
  * folder: vote
  * class: Vote
  * type: vote
- * requires: submit 1.9, users 1.1
+ * requires: submit 1.9, users 1.1, sb_base 0.4
  * hooks: install_plugin, theme_index_top, post_read_post, header_include, sb_base_show_post_title, sb_base_pre_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, post_add_post, submit_confirm_pre_trackback, sb_base_show_post_extra_fields, sb_base_show_post_extras, post_delete_post, header_include_raw
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
@@ -177,7 +177,6 @@ class Vote
                 else
                 {
                     $h->messages[$h->lang["vote_alert_already_flagged"]] = "red";
-                    $h->showMessages();
                 }
             }
             
@@ -210,7 +209,6 @@ class Vote
                     }
                     
                     $h->messages[$h->lang["vote_alert_post_buried"]] = "red";
-                    $h->showMessages();
                 }
                 
                 $h->vars['flagged'] = true;

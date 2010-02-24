@@ -329,6 +329,13 @@ class UserBase
     {
         $sql = "UPDATE " . TABLE_USERS . " SET user_permissions = %s WHERE user_id = %d";
         $h->db->get_var($h->db->prepare($sql, serialize($this->getAllPermissions()), $this->id));
+        
+        // for undermods and above, set their emailValid to true when updating permissions or changing role
+        $safe_array = array('undermod', 'member', 'moderator', 'supermod', 'admin');
+        if (!$this->emailValid && in_array($this->role, $safe_array)) {
+            $sql = "UPDATE " . TABLE_USERS . " SET user_email_valid = %d WHERE user_id = %d";
+            $h->db->get_var($h->db->prepare($sql, 1, $this->id));
+        }
     }
     
     

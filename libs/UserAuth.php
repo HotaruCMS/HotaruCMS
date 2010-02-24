@@ -49,20 +49,23 @@ class UserAuth extends UserBase
 
         $this->name = $h_user;
         if ($h_user) {
-            $this->getUserBasic($h, 0, $this->name);
-            $this->loggedIn = true;
-            // update user_lastvisit field when a new session is created
-            if (!session_id()) {
-                $this->updateUserLastVisit($h);
-            }
-            
-            $h->pluginHook('userauth_checkcookie_success');
-        } else {
-            $this->setLoggedOutUser($h);
-            return false; 
-        }
+            $valid = $this->getUserBasic($h, 0, $this->name);
+
+            if ($valid) {
+                $this->loggedIn = true;
+                if (!session_id()) { $this->updateUserLastVisit($h); } // update user_lastvisit field when a new session is created
+                $h->pluginHook('userauth_checkcookie_success'); // user_signin throws out killspammed, banned and suspended users
                 
-        return true;
+                // SUCCESS!!!
+                return true;
+            } else {
+                $h->currentUser->destroyCookieAndSession(); // removes cookie and session for physically deleted users
+            }
+        }
+        
+        // otherwise, give them "logged out" permissions
+        $this->setLoggedOutUser($h);
+        return false; 
     }
     
     
@@ -393,7 +396,7 @@ class UserAuth extends UserBase
             }
             
             
-            $password_check_old = $h->cage->post->testPassword('password_old');    
+            $password_check_old = $h->cage->post->noTags('password_old');
             
             if ($this->loginCheck($h, $this->name, $password_check_old)) {
                 // safe, the old password matches the password for this user.

@@ -150,6 +150,41 @@ class Category
         $cat_meta = $h->db->get_row($h->db->prepare($sql, $cat_id));
         if ($cat_meta) { return $cat_meta; } else { return false; }
     }
+
+     /**
+     * Returns all categories
+     *
+     * @param array $args
+     * @return int
+     */
+    public function getCategories($h, $args = array())
+    {       
+        if (isset($args['cat_parent'])) {
+            $where = " WHERE category_parent = %d" ;
+            $where_d = $args['cat_parent'];
+        }
+        else {
+            $where = '';
+            $where_d = '';
+        }
+
+        if (isset($args["orderby"])) {            
+            $orderBy = " ORDER BY " . $args["orderby"] . " ";            
+            if (isset($args['order'])) {
+                if ($args["order"] == 'ASC' | $args["order"] == 'DESC') {
+                    $orderBy .= $args["order"];
+                    } else {$orderby .= 'ASC'; }}
+        }
+        else
+        { $orderBy = ''; }
+
+        $sql = "SELECT * FROM " . TABLE_CATEGORIES . $where . $orderBy ;
+        print $sql;
+        $categories = $h->db->get_results($h->db->prepare($sql, $where_d));
+        if ($categories) { return $categories; } else { return false; }
+    }
+
+    
 }
 
 ?>
