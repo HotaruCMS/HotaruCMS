@@ -1,6 +1,6 @@
 HOTARU CMS
-Version: 1.1
-Released: Feb 20th 2010
+Version: 1.1.1
+Released: Feb 24th 2010
 
 INSTALLATION
 ------------
