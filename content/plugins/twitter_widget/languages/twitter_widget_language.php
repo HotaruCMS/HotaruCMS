@@ -36,4 +36,6 @@ $lang["twitter_widget_main_settings_saved"] = "Username and Password Saved.";
 
 /* Sidebar */
 $lang["twitter_widget_follow_us"] = "Follow Us on Twitter!";
+$lang["twitter_widget_followers"] = "Followers";
+
 ?>

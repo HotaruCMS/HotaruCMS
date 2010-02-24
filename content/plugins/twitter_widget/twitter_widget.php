@@ -1,11 +1,11 @@
 <?php 
 /**
  * name: Twitter Widget
- * description: Sidebar widget that shows your sites Twitter follower count and tweets
+ * description: Sidebar widget that shows your sites Twitter follower count and friends tweets
  * version: 0.1
  * folder: twitter_widget
  * class: TwitterWidget
- * requires: widgets 0.7
+ * requires: widgets 0.7, sb_base 0.1
  * hooks: install_plugin, header_include, admin_plugin_settings, admin_sidebar_plugin_settings
  * author: Jon Harvey
  * authorurl: http://hotarucms.org/
@@ -57,10 +57,33 @@ class TwitterWidget
 
     public function widget_twitter_widget($h)
     {
+	
+		// your twitter username and password
+        $twitter_widget_username = $h->getSetting('twitter_widget_username', 'twitter_widget'); 
+        $twitter_widget_password = $h->getSetting('twitter_widget_password', 'twitter_widget');
+        
+        // include Twitterlibphp
+        require_once(PLUGINS . 'twitter_widget/libs/twitter_lib.php');
+		
+		// initialize the twitter class
+        $twitter = new Twitter($twitter_widget_username, $twitter_widget_password);
+        
+
+		///// testing purposes (doesn't count against your hit limit to call up remaining hits)
+        if ($h->isDebug) {
+		    // grabs status for API rate limit for testing cache
+			$calls = $twitter->rateLimitStatus();
+			
+			$hits = new SimpleXMLElement($calls);
+			
+            echo '<br/>';
+            echo 'remaining hits for this hour = ' . $hits->{'remaining-hits'};
+        }
+        
         $need_cache = false;
 
         // check for a cached version and use it if no recent update:
-        $cached_output = $h->smartCache('html', 'posts', 60, '', 'twitter_widget');
+        $cached_output = $h->smartCache('html', 'posts', 10, '', 'twitter_widget');
         if ($cached_output) {
             echo $cached_output; // cached HTML
             return true;
@@ -68,27 +91,12 @@ class TwitterWidget
             $need_cache = true;
         }
 
-        // your twitter username and password
-        $twitter_widget_username = $h->getSetting('twitter_widget_username', 'twitter_widget'); 
-        $twitter_widget_password = $h->getSetting('twitter_widget_password', 'twitter_widget');
-        
-        // include Twitterlibphp
-        require_once(PLUGINS . 'twitter_widget/libs/twitter_lib.php');
-        
-        // initialize the twitter class
-        $twitter = new Twitter($twitter_widget_username, $twitter_widget_password);
-        
-        // grabs status for API rate limit for testing cache
-        $calls = $twitter->rateLimitStatus();
-        
-        $hits = new SimpleXMLElement($calls);
-    
         // fetch your profile in xml format
         $user = $twitter->showUser();
         
         $my_info = new SimpleXMLElement($user);
         
-        // fetch your friends in xml format or use getUserTimeline to show your own 
+        // fetch your friends (people you follow) in xml format or use getUserTimeline() to show your own 
         $xml = $twitter->getFriendsTimeline();
         
         // fetch your session xml format    
@@ -108,12 +116,11 @@ class TwitterWidget
           }    
           
         
-        
     // show twitter widget template
         $output = "<div class='twitter_container'>\n";        
         $output .= "<div class='twitter_header'>\n";
         $output .= "<img src='".$my_info->profile_image_url."' alt=".$my_info->screen_name." title=".$my_info->screen_name." >\n";
-        $output .= "<h3><a href='http://www.twitter.com/".$my_info->screen_name."'>".$my_info->followers_count." Followers</a></h3>\n";
+        $output .= "<h3><a href='http://www.twitter.com/".$my_info->screen_name."'>".$my_info->followers_count ."&nbsp;". $h->lang['twitter_widget_followers']."</a></h3>\n";
         //$output .= "<br/>\n";
         $output .= "<a href='http://www.twitter.com/".$my_info->screen_name."'>".$h->lang['twitter_widget_follow_us']."</a>\n";
         $output .= "</div>\n";
@@ -123,7 +130,7 @@ class TwitterWidget
             if($i < 6){ //show up to 20 latest tweets default is 5
             $output .= "<div class='twitter_status'>\n";
             foreach($status->user as $user){
-                $output .= "<img src='".$user->profile_image_url."' class='twitter_image'>\n";
+                $output .= "<img src='".$user->profile_image_url."' alt=".$user->screen_name." title=".$user->screen_name." class='twitter_image'>\n";
                 $output .= "<a href='http://www.twitter.com/".$user->screen_name."'>".$user->name."</a>: \n";
             }
             $output .= ShortenText($status->text);
@@ -136,23 +143,13 @@ class TwitterWidget
         }
         $output .= "</div>";
 
-        ///// testing purposes (doesn't count against your hit limit to call up remaining hits)
-        if ($h->isDebug) {
-            $output .= '<br/>';
-            $output .= 'remaining hits for this hour = ' . $hits->{'remaining-hits'};
-        }
         
-
-        ///////////////////////////////////      
-
         if ($need_cache) {
             $h->smartCache('html', 'posts', 10, $output, 'twitter_widget'); 
         }
         
         echo $output;
 
-        //////////////////////////////////////////
-        
     }
 
 }

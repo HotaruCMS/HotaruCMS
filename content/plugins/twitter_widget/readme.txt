@@ -1,7 +1,7 @@
 Twitter Widget Plugin for Hotaru CMS
 ---------------------------------
 Created by: Jon Harvey
-Uses Twitterlibphp
+Uses: Twitterlibphp
 Thanks to : Antonio Lupetti
 
 
@@ -18,4 +18,4 @@ Instructions
 
 Changelog
 ---------
-v.0.1 2010/--/-- - JonH - Released first version
+v.0.1 2010/02/24 - JonH - Released first version
