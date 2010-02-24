@@ -2,7 +2,7 @@
 /**
  * name: Who's Online
  * description: Show who's online
- * version: 0.1
+ * version: 0.2
  * folder: whos_online
  * class: WhosOnline
  * requires: widgets 0.6, users 1.1
@@ -189,8 +189,9 @@ class WhosOnline
         /* Define how long the maximum amount of time the session can be inactive. */
         define("MAX_IDLE_TIME", 20);
         
+        $count = 0;
+            
         if ( $directory_handle = opendir( session_save_path() ) ) { 
-            $count = 0;
             
             while ( false !== ( $file = readdir( $directory_handle ) ) ) {
                 if($file != '.' && $file != '..') {
