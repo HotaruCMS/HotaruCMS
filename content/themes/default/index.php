@@ -53,7 +53,7 @@ if (!$result) {
                                 <?php echo $h->breadcrumbs(); ?>
                             </div>
                             
-                            <!-- USER TABS -->
+                            <!-- POST BREADCRUMBS -->
                             <?php 
                                 // plugin hook
                                 $result = $h->pluginHook('theme_index_post_breadcrumbs');
