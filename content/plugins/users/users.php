@@ -2,11 +2,12 @@
 /**
  * name: Users
  * description: Provides profile, settings and permission pages
- * version: 1.3
+ * version: 1.4
  * folder: users
  * type: users
  * class: Users
- * hooks: pagehandling_getpagename, theme_index_top, header_include, sb_base_functions_preparelist, breadcrumbs, theme_index_post_breadcrumbs, theme_index_main, users_edit_profile_save, user_settings_save, admin_theme_main_stats, header_meta
+ * requires: sb_base 0.1
+ * hooks: pagehandling_getpagename, sb_base_theme_index_top, header_include, sb_base_functions_preparelist, breadcrumbs, theme_index_main, users_edit_profile_save, user_settings_save, admin_theme_main_stats, header_meta
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -49,38 +50,53 @@ class Users
     /**
      * Determine what page we're looking at
      */
-    public function theme_index_top($h)
+    public function sb_base_theme_index_top($h)
     {
         if ($h->cage->get->keyExists('user')) {
             $h->subPage = 'user';
+            $user = $h->cage->get->testUsername('user');
         }
         
         switch ($h->pageName)
         {
             case 'profile':
-                $user = $h->cage->get->testUsername('user');
                 $h->pageTitle = $h->lang["users_profile"] . '[delimiter]' . $user;
                 $h->pageType = 'user';
                 break;
             case 'account':
-                $user = $h->cage->get->testUsername('user');
                 $h->pageTitle = $h->lang["users_account"] . '[delimiter]' . $user;
                 $h->pageType = 'user';
                 break;
             case 'edit-profile':
-                $user = $h->cage->get->testUsername('user');
                 $h->pageTitle = $h->lang["users_profile_edit"] . '[delimiter]' . $user;
                 $h->pageType = 'user';
                 break;
             case 'user-settings':
-                $user = $h->cage->get->testUsername('user');
                 $h->pageTitle = $h->lang["users_settings"] . '[delimiter]' . $user;
                 $h->pageType = 'user';
                 break;
             case 'permissions':
-                $user = $h->cage->get->testUsername('user');
                 $h->pageTitle = $h->lang["users_permissions"] . '[delimiter]' . $user;
                 $h->pageType = 'user';
+                break;
+            case 'index':
+                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["sb_base_top"] . '[delimiter]' . $user . '[delimiter]' . $h->pageTitle = $h->lang["sb_base_site_name"]; }
+                break;
+            case 'latest':
+                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["sb_base_latest"] . '[delimiter]' . $user; }
+                break;
+            case 'upcoming':
+                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["sb_base_upcoming"] . '[delimiter]' . $user; }
+                break;
+            case 'all':
+                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["sb_base_all"] . '[delimiter]' . $user; }
+                break;
+            case 'sort':
+                if ($h->subPage == 'user') { 
+                    $sort = $h->cage->get->testPage('sort');
+                    $sort_lang = 'sb_base_' . str_replace('-', '_', $sort);
+                    $h->pageTitle = $h->lang[$sort_lang] . '[delimiter]' . $user;
+                }
                 break;
         }
         
@@ -199,24 +215,36 @@ class Users
         
         // This is used for filtered story pages, e.g. popular, latest, etc:
         if ($h->subPage == 'user' && $h->pageType == 'list') {
+            switch ($h->pageName) {
+                case 'index':
+                    if ($h->subPage == 'user') { $title = $h->lang["sb_base_top"]; }
+                    break;
+                case 'latest':
+                    if ($h->subPage == 'user') { $title = $h->lang["sb_base_latest"]; }
+                    break;
+                case 'upcoming':
+                    if ($h->subPage == 'user') { $title = $h->lang["sb_base_upcoming"]; }
+                    break;
+                case 'all':
+                    if ($h->subPage == 'user') { $title = $h->lang["sb_base_all"]; }
+                    break;
+                case 'sort':
+                    $sort = $h->cage->get->testPage('sort');
+                    $sort_lang = 'sb_base_' . str_replace('-', '_', $sort);
+                    $title = $h->lang[$sort_lang];
+                    break;
+                default:
+                    $title = $h->lang['users_posts'];
+                    break;
+            }
+            
             $user = $h->cage->get->testUsername('user');
             $crumbs = "<a href='" . $h->url(array('user'=>$user)) . "'>\n";
             $crumbs .= $user . "</a>\n ";
-            $crumbs .= " &raquo; " . $h->pageTitle;
+            $crumbs .= " &raquo; " . $title;
             
             return $crumbs . $h->rssBreadcrumbsLink('', array('user'=>$user));
         }
-    }
-    
-    /**
-     * Display the user tabs
-     */
-    public function theme_index_post_breadcrumbs($h)
-    {
-        if ($h->pageType != 'user') { return false; }
-        
-        $h->displayTemplate('users_tabs');
-        return true;
     }
     
     
@@ -231,6 +259,8 @@ class Users
         $admin = false; $own = false; $denied = false;
         if ($h->currentUser->getPermission('can_access_admin') == 'yes') { $admin = true; }
         if ($h->currentUser->id == $h->vars['user']->id) { $own = true; }
+        
+        $h->displayTemplate('users_navigation');
         
         switch($h->pageName) {
             case 'profile':

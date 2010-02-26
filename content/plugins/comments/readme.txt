@@ -14,9 +14,10 @@ Instructions
 
 Changelog
 ---------
-v.1.5 2009/02/23 - Nick - Shows messages for moderated comments: "Awaiting approval", "Exceeded Daily Limit", etc.
-v.1.4 2009/02/09 - Nick - Option to hide comments after X down votes, plus pagination code changes
-v.1.3 2009/01/17 - Nick - Added option for avatar size
+v.1.6 2010/02/26 - Nick - Adds link to profile navigation; Email changed to go through Hotaru's "email" function 
+v.1.5 2010/02/23 - Nick - Shows messages for moderated comments: "Awaiting approval", "Exceeded Daily Limit", etc.
+v.1.4 2010/02/09 - Nick - Option to hide comments after X down votes, plus pagination code changes
+v.1.3 2010/01/17 - Nick - Added option for avatar size
 v.1.2 2009/12/30 - Nick - Updates for compatibility with Hotaru 1.0
 v.1.1 2009/11/25 - Nick - Bug fix for comment form closing when a post is edited by a non-admin user
 v.1.0 2009/11/01 - Nick - Added "All comments" page, comments RSS, pagination, comments per page, comment order

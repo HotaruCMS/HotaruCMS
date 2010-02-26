@@ -1,6 +1,6 @@
 <?php
 /**
- * User Tabs
+ * User Profile
  *
  * PHP version 5
  *
@@ -23,21 +23,26 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
+ 
 $username = $h->vars['user']->name;
 ?>
 
-<?php // show account and profile links to owner or admin access users: 
-    if (($h->currentUser->name == $username) || ($h->currentUser->getPermission('can_access_admin') == 'yes')) { ?>
+<div class="profile_navigation">
+
+    <ul>
     
-    <ul class='user_tabs'>
+    <li><a href='<?php echo $h->url(array('user'=>$username)); ?>'><?php echo $h->lang["users_profile"]; ?></a></li>
     
-    <li><?php echo $h->lang["users_edit"]; ?> 
-        <a href='<?php echo $h->url(array('user'=>$username)); ?>'><?php echo $username; ?></a>:
-    </li>
+    <?php $h->pluginHook('profile_navigation'); ?>
     
+    <?php // show account and profile links to owner or admin access users: 
+        if (($h->currentUser->name == $username) || ($h->currentUser->getPermission('can_access_admin') == 'yes')) { ?>
+
     <li><a href='<?php echo $h->url(array('page'=>'account', 'user'=>$username)); ?>'><?php echo $h->lang["users_account"]; ?></a></li>
-    <li><a href='<?php echo $h->url(array('page'=>'edit-profile', 'user'=>$username)); ?>'><?php echo $h->lang["users_profile"]; ?></a></li>
+    <li><a href='<?php echo $h->url(array('page'=>'edit-profile', 'user'=>$username)); ?>'><?php echo $h->lang["users_profile_edit"]; ?></a></li>
     <li><a href='<?php echo $h->url(array('page'=>'user-settings', 'user'=>$username)); ?>'><?php echo $h->lang["users_settings"]; ?></a></li>
+
+    <?php $h->pluginHook('profile_navigation_restricted'); ?>
 
     <?php // show permissions and User Manager links admin access users only: 
         if ($h->currentUser->getPermission('can_access_admin') == 'yes') { ?>
@@ -53,3 +58,4 @@ $username = $h->vars['user']->name;
     </ul>
 
 <?php } ?>
+</div>

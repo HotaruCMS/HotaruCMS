@@ -28,7 +28,7 @@ $username = $username_check; // used for user_tabs template
 if ($username_check == 'deleted') { $h->showMessage(); return true; } // shows "User deleted" notice
 
 ?>
-<div id="users_account">
+<div id="users_account" class="users_content">
 
     <h2><?php echo $h->lang["users_account"]; ?>: <?php echo $username; ?></h2>
     

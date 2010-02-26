@@ -44,7 +44,9 @@ $lang["users_settings_email_notify_none"] = "None";
 $lang["users_settings_no_keys"] = "Settings saved, but reCaptcha won't work without both keys!";
 $lang["users_settings_saved"] = "Settings Saved";
 
-/* User Tabs */
+/* User Navigation */
+$lang["users_all_posts"] = "All Posts";
+$lang["users_all_comments"] = "All Comments";
 $lang["users_edit"] = "Edit";
 $lang["user_man_link"] = "User Manager";
 
@@ -88,9 +90,6 @@ $lang["users_permissions"] = "Permissions";
 $lang["users_permissions_update"] = "Update";
 $lang['users_permissions_updated'] = "Permissions Updated";
 
-/* User Profile */
-$lang['users_profile_usage'] = "Use the links above to see all the stories I've submitted";
-
 /* Admin Stats */
 $lang["users_admin_stats_total_users"] = "Total users";
 $lang["users_admin_stats_admins"] = "Admins";
@@ -107,6 +106,7 @@ $lang["users_admin_stats_killspammed_users"] = "Killspammed users";
 /* NOTIFY MODS BY EMAIL */
 
 /* Posts */
+$lang['users_posts'] = "Posts";
 $lang['userfunctions_notifymods_subject_post'] = "New post submitted at " . SITE_NAME;
 $lang['userfunctions_notifymods_body_about_post'] = "A new post has been submitted at " . SITE_NAME;
 $lang['userfunctions_notifymods_body_post_status'] = "Post Status: ";

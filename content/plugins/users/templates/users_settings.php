@@ -38,7 +38,7 @@ if ($h->cage->post->getAlpha('updated_settings') == 'true') {
 $h->pluginHook('user_settings_fill_form'); 
 
 ?>
-<div id="users_settings">
+<div id="users_settings" class="users_content">
 
     <h2><?php echo $h->lang["users_settings"]; ?>: <?php echo $h->vars['user']->name; ?></h2>
     

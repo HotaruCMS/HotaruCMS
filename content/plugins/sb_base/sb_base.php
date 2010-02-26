@@ -2,11 +2,11 @@
 /**
  * name: SB Base
  * description: Social Bookmarking base - provides "list" and "post" templates. 
- * version: 0.4
+ * version: 0.5
  * folder: sb_base
  * class: SbBase
  * type: base
- * hooks: install_plugin, theme_index_top, header_meta, header_include, navigation, breadcrumbs, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, admin_maintenance_database, admin_maintenance_top, admin_theme_main_stats, user_settings_pre_save, user_settings_fill_form, user_settings_extra_settings, theme_index_pre_main
+ * hooks: install_plugin, theme_index_top, header_meta, header_include, navigation, breadcrumbs, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, admin_maintenance_database, admin_maintenance_top, admin_theme_main_stats, user_settings_pre_save, user_settings_fill_form, user_settings_extra_settings, theme_index_pre_main, profile_navigation
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -538,6 +538,15 @@ class SbBase
         $this->setUpSortLinks($h);
         
 
+    }
+    
+    
+    /**
+     * Profile navigation link
+     */
+    public function profile_navigation($h)
+    {
+        echo "<li><a href='" . $h->url(array('page'=>'all', 'user'=>$h->vars['user']->name)) . "'>" . $h->lang["users_all_posts"] . "</a></li>\n";
     }
     
     

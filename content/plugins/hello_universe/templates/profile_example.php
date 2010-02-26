@@ -1,6 +1,8 @@
-<?php
+<?php 
 /**
- * Users Settings
+ * Plugin name: Hello Universe
+ * Template name: profile_example.php
+ * Template author: Nick Ramsay
  *
  * PHP version 5
  *
@@ -23,23 +25,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
+
 ?>
-<div id="users_permissions" class="users_content">
 
-    <h2><?php echo $h->lang["users_permissions"]; ?>: <?php echo $h->vars['user']->name; ?></h2>
-    
-    <?php $h->showMessages(); ?>
-        
-    <form name='permissions_form' action='<?php echo BASEURL; ?>index.php' method='post'>
-    <table class='permissions'>
-    <?php echo $h->vars['perm_options']; ?>
+<h2>A new user page!</h2>
 
-    
-    </table>
-    <input type='hidden' name='page' value='permissions' />
-    <input type='hidden' name='permissions' value='updated' />
-    <input type='hidden' name='userid' value='<?php echo $h->vars['user']->id; ?>' />
-    <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
-    <div style='text-align: right'><input class='submit' type='submit' value='<?php echo  $h->lang['users_permissions_update']; ?>' /></div>
-    </form>
-</div>
+<p>This is the profile_example.php file in the Hello Universe plugin folder.</p>
+
+<p>The link to this page in the menu was done in Function #6 in hello_universe.php. This page is displayed from the <i>theme_index_main</i> function (Function #2).</p>
+
+<p><a href="<?php echo BASEURL; ?>"><?php echo $h->lang["hello_universe_back_home"]; ?></a></p>

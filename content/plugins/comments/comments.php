@@ -2,12 +2,12 @@
 /**
  * name: Comments
  * description: Enables logged-in users to comment on posts
- * version: 1.5
+ * version: 1.6
  * folder: comments
  * class: Comments
  * type: comments
  * requires: sb_base 0.1, users 1.1
- * hooks: install_plugin, theme_index_top, header_include, admin_header_include_raw, theme_index_main, sb_base_show_post_extra_fields, sb_base_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_2_fields, submit_edit_admin_fields, post_delete_post, profile_usage, , admin_theme_main_stats, breadcrumbs, submit_functions_process_submitted, submit_2_process_submission
+ * hooks: install_plugin, theme_index_top, header_include, admin_header_include_raw, theme_index_main, sb_base_show_post_extra_fields, sb_base_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_2_fields, submit_edit_admin_fields, post_delete_post, profile_navigation, , admin_theme_main_stats, breadcrumbs, submit_functions_process_submitted, submit_2_process_submission
  *
  * PHP version 5
  *
@@ -688,17 +688,14 @@ class Comments
         $sql = "DELETE FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d";
         $h->db->query($h->db->prepare($sql, $h->post->id));
     }
-    
+
     
     /**
-     * Add all comments link to Profile
+     * Profile navigation link
      */
-    public function profile_usage($h)
+    public function profile_navigation($h)
     {
-        echo "<a id='profile_see_comments' href='" . $h->url(array('page'=>'comments', 'user'=>$h->vars['user']->name)) . "'>";
-        echo $h->lang['comments_profile_see_comments'] . ".";
-        echo "</a>";
-        
+        echo "<li><a href='" . $h->url(array('page'=>'comments', 'user'=>$h->vars['user']->name)) . "'>" . $h->lang['users_all_comments']  . "</a></li>\n";
     }
     
     
@@ -852,7 +849,7 @@ class Comments
         exit;
         */
     
-        mail($to, $subject, $message, $headers);
+        $h->email($to, $subject, $message, $headers);
     }
 }
 

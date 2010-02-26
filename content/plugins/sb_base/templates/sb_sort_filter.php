@@ -24,6 +24,8 @@
  * @link      http://www.hotarucms.org/
  */
 
+if ($h->pageType == 'user') { return false; } // don't show filter on profile, account, etc.
+
 ?>
 
 <!-- SORT -->

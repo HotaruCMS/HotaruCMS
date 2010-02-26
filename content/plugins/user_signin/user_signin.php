@@ -2,7 +2,7 @@
 /**
  * name: User Signin
  * description: Provides user registration and login
- * version: 0.2
+ * version: 0.3
  * folder: user_signin
  * type: signin
  * class: UserSignin
@@ -597,7 +597,7 @@ class UserSignin
         echo "Headers: " . $headers . "<br />";
         */
 
-        mail($to, $subject, $body, $headers);    
+        $h->email($to, $subject, $body, $headers);    
     }
     
     

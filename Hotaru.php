@@ -1573,7 +1573,7 @@ class Hotaru
      * @param int $life - minutes before the token expires
      * @return string $key (if using $type "fetch")
      */
-    public function csrf($type = 'check', $script = '', $life = 10)
+    public function csrf($type = 'check', $script = '', $life = 30)
     {
         $csrf = new csrf();
         return $csrf->csrfInit($this, $type, $script, $life);

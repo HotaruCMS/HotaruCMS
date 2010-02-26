@@ -65,6 +65,8 @@ if ($h->cage->post->getAlpha('users_type') == 'register') {
             <?php echo $h->lang["user_signin_register_password_verify"]; ?>&nbsp; </td><td><input type='password' size=30 name='password2' value='<?php echo $password2_check; ?>' />
         </td></tr>
         
+        <?php $h->pluginHook('user_signin_register_register_form'); ?>
+        
         <?php 
             if ($h->vars['useRecaptcha']) { 
                 $user_signin_settings = $h->getSerializedSettings('user_signin');

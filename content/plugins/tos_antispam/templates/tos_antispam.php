@@ -1,6 +1,6 @@
 <?php
 /**
- * Users Settings
+ * TOS Anti Spam register form
  *
  * PHP version 5
  *
@@ -23,23 +23,25 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
+ 
 ?>
-<div id="users_permissions" class="users_content">
+<tr>
+    <td colspan='2'>
+        <input type='checkbox' name='tos_check' value='tos_check' <?php echo $h->vars['tos_check']; ?> />&nbsp;&nbsp;<?php echo $h->lang["tos_antispam_tos"]; ?> 
+    </td>
+</tr>
 
-    <h2><?php echo $h->lang["users_permissions"]; ?>: <?php echo $h->vars['user']->name; ?></h2>
-    
-    <?php $h->showMessages(); ?>
-        
-    <form name='permissions_form' action='<?php echo BASEURL; ?>index.php' method='post'>
-    <table class='permissions'>
-    <?php echo $h->vars['perm_options']; ?>
-
-    
-    </table>
-    <input type='hidden' name='page' value='permissions' />
-    <input type='hidden' name='permissions' value='updated' />
-    <input type='hidden' name='userid' value='<?php echo $h->vars['user']->id; ?>' />
-    <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
-    <div style='text-align: right'><input class='submit' type='submit' value='<?php echo  $h->lang['users_permissions_update']; ?>' /></div>
-    </form>
-</div>
+<tr>
+    <td colspan='2'>
+        <?php echo $h->vars["tos_question"]; ?> 
+        <select name='tos_answer'>
+        <?php if ($h->vars['tos_answer_selected'] == "choose") { ?>
+            <option value="choose" selected="selected"><?php echo $h->lang["tos_antispam_select"]; ?></option>
+        <?php } ?>
+        <?php foreach ($h->vars['tos_choices'] as $key => $value) { ?>
+            <?php if ($h->vars['tos_answer_selected'] == $key) { $selected = "selected"; } else { $selected = ""; } ?>
+            <option value="<?php echo $key; ?>" <?php echo $selected; ?>><?php echo $value; ?></option>
+        <?php } ?>
+        </select>
+    </td>
+</tr>

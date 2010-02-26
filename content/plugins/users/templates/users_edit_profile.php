@@ -46,7 +46,7 @@ $h->vars['profile'] = $profile;
 $h->pluginHook('user_edit_profile_fill_form'); 
 
 ?>
-<div id="users_edit_profile">
+<div id="users_edit_profile" class="users_content">
 
     <h2><?php echo $h->lang["users_profile_edit"]; ?>: <?php echo $h->vars['user']->name; ?></h2>
     
