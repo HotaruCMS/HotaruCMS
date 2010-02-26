@@ -217,16 +217,16 @@ class Users
         if ($h->subPage == 'user' && $h->pageType == 'list') {
             switch ($h->pageName) {
                 case 'index':
-                    if ($h->subPage == 'user') { $title = $h->lang["sb_base_top"]; }
+                    $title = $h->lang["sb_base_top"];
                     break;
                 case 'latest':
-                    if ($h->subPage == 'user') { $title = $h->lang["sb_base_latest"]; }
+                    $title = $h->lang["sb_base_latest"];
                     break;
                 case 'upcoming':
-                    if ($h->subPage == 'user') { $title = $h->lang["sb_base_upcoming"]; }
+                    $title = $h->lang["sb_base_upcoming"];
                     break;
                 case 'all':
-                    if ($h->subPage == 'user') { $title = $h->lang["sb_base_all"]; }
+                    $title = $h->lang["sb_base_all"];
                     break;
                 case 'sort':
                     $sort = $h->cage->get->testPage('sort');
@@ -237,7 +237,7 @@ class Users
                     $title = $h->lang['users_posts'];
                     break;
             }
-            
+
             $user = $h->cage->get->testUsername('user');
             $crumbs = "<a href='" . $h->url(array('user'=>$user)) . "'>\n";
             $crumbs .= $user . "</a>\n ";
