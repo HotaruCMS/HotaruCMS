@@ -2,10 +2,10 @@
 /**
  * name: Hello Universe
  * description: Demonstrates how to make plugins
- * version: 0.6
+ * version: 0.7
  * folder: hello_universe
  * class: HelloUniverse
- * hooks: theme_index_top, theme_index_main, theme_index_sidebar
+ * hooks: theme_index_top, theme_index_main, theme_index_sidebar, profile_navigation
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -67,9 +67,27 @@ class HelloUniverse
                 $h->displayTemplate('form_example'); // Displays the page from this plugin folder
                 return true;
                 break;
-            default:
+            case 'profile_example':
+                $user = $h->cage->get->testUsername('user');
+                if ($user) {
+                    // create a user object and fill it with user info
+                    $h->vars['user'] = new UserAuth();
+                    $user_info = $h->vars['user']->getUserBasic($h, 0, $user);
+                    if ($user_info) {
+                        // only show the page if the user exists:
+                        $h->pageType = 'user';
+                        $h->displayTemplate('users_navigation', 'users'); // Displays user navigation from Users plugin
+                        $h->displayTemplate('profile_example'); // Displays the page from this plugin folder
+                        return true;
+                    }
+                }
+                break;
+            case 'index':
                 $this->mainPage($h);
                 return true;
+                break;
+            default:
+                // do nothing
                 break;
         }
     }
@@ -140,6 +158,17 @@ class HelloUniverse
         } 
         
         return false;
+    }
+    
+    
+    /**
+     * FUNCTION #6
+     *
+     * Profile navigation link
+     */
+    public function profile_navigation($h)
+    {
+        echo "<li><a href='" . $h->url(array('page'=>'profile_example', 'user'=>$h->vars['user']->name)) . "'>" . $h->lang['hello_universe_profile_example'] . "</a></li>\n";
     }
 
 }

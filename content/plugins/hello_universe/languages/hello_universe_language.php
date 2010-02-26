@@ -41,6 +41,9 @@ $lang["hello_universe_success"] = "Correct!";
 $lang["hello_universe_failure"] = "Wrong answer!";
 $lang["hello_universe_form_submit"] = "Submit";
 
+/* Example User Page */
+$lang["hello_universe_profile_example"] = "Example Page";
+
 /* Common language */
 $lang["hello_universe_back_home"] = "Back Home";
 

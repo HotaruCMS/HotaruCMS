@@ -17,6 +17,7 @@ Instructions
 
 Changelog
 ---------
+v.0.5 2010/02/25 - Nick - New plugin hook in register template (used by TOS AntiSpam plugin)
 v.0.4 2010/01/16 - Nick - Fixes for RPX change from GET to POST method
 v.0.3 2010/01/04 - Nick - Updates for compatibility with Hotaru 1.0
 v.0.2 2009/11/26 - Nick - Bug fixes for RPX Basic login

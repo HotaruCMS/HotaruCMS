@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.0.7 2010/02/26 - Nick - Demonstration of adding a page to a user profile
 v.0.6 2009/12/28 - Nick - Updates for compatibility with Hotaru 1.0
 v.0.5 2009/10/19 - Nick - Bug fixes
 v.0.4 2009/10/07 - Nick - Updates for compatibility with Hotaru 0.7
