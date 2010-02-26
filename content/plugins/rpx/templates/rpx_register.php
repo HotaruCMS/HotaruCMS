@@ -54,6 +54,8 @@ if ($h->cage->post->getAlpha('users_type') == 'register') {
             <td><input type='text' size=30 name='email' value='<?php echo $h->vars['rpx_profile']['email']; ?>' />
         </td></tr>
         
+        <?php $h->pluginHook('user_signin_register_register_form'); ?>
+        
         <?php 
             if ($h->vars['useRecaptcha']) { 
                 $user_signin_settings = $h->getSerializedSettings('user_signin');
