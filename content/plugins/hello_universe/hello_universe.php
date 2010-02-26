@@ -2,10 +2,10 @@
 /**
  * name: Hello Universe
  * description: Demonstrates how to make plugins
- * version: 0.7
+ * version: 0.8
  * folder: hello_universe
  * class: HelloUniverse
- * hooks: theme_index_top, theme_index_main, theme_index_sidebar, profile_navigation
+ * hooks: theme_index_top, theme_index_main, theme_index_sidebar, profile_navigation, breadcrumbs
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -45,6 +45,17 @@ class HelloUniverse
         if (!$h->pageName) { 
             $h->pageTitle = $h->lang["hello_universe"];
         }
+        
+        if ($h->pageName == 'profile_example')
+        {
+            $user = $h->cage->get->testUsername('user');
+            $h->pageTitle = "Profile Example" .  "[delimiter]" . $user;
+            $h->pageType = 'user'; // this setting hides the posts filter bar
+            
+            // create a user object and fill it with user info
+            $h->vars['user'] = new UserAuth();
+            $h->vars['user']->getUserBasic($h, 0, $user);
+        }
     }
     
     
@@ -70,12 +81,8 @@ class HelloUniverse
             case 'profile_example':
                 $user = $h->cage->get->testUsername('user');
                 if ($user) {
-                    // create a user object and fill it with user info
-                    $h->vars['user'] = new UserAuth();
-                    $user_info = $h->vars['user']->getUserBasic($h, 0, $user);
-                    if ($user_info) {
+                    if ($h->vars['user']->id) {
                         // only show the page if the user exists:
-                        $h->pageType = 'user';
                         $h->displayTemplate('users_navigation', 'users'); // Displays user navigation from Users plugin
                         $h->displayTemplate('profile_example'); // Displays the page from this plugin folder
                         return true;
@@ -169,6 +176,20 @@ class HelloUniverse
     public function profile_navigation($h)
     {
         echo "<li><a href='" . $h->url(array('page'=>'profile_example', 'user'=>$h->vars['user']->name)) . "'>" . $h->lang['hello_universe_profile_example'] . "</a></li>\n";
+    }
+    
+    
+    /**
+     * FUNCTION #7
+     *
+     * Breadcrumbs for the profile page
+     */
+    public function breadcrumbs($h)
+    {
+        if ($h->pageName == 'profile_example') {
+            $user = $h->cage->get->testUsername('user');
+            return "<a href='" . $h->url(array('user'=>$user)) . "'>" . $user . "</a> &raquo; Profile Example";
+        }
     }
 
 }
