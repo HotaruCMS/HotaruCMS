@@ -32,6 +32,10 @@
 
 <p>This is the profile_example.php file in the Hello Universe plugin folder.</p>
 
-<p>The link to this page in the menu was done in Function #6 in hello_universe.php. This page is displayed from the <i>theme_index_main</i> function (Function #2).</p>
+<p>The title was set and user info retrieved in the <i>theme_index_top</i> function (Function #1).</p>
+<p>The page was displayed from the <i>theme_index_main</i> function (Function #2).</p>
+<p>The link to this page in the menu was done in the <i>profile_navigation</i> function (Function #6).</p>
+<p>The link to this page in the menu was done in the <i>breadcrumbs</i> function (Function #7).</p>
+
 
 <p><a href="<?php echo BASEURL; ?>"><?php echo $h->lang["hello_universe_back_home"]; ?></a></p>

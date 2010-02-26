@@ -218,6 +218,8 @@ class SbBase
      */
     public function breadcrumbs($h)
     {
+        if ($h->subPage) { return false; } // don't use these breadcrumbs if on a subpage 
+        
         if ($h->pageName == 'index') { 
             $h->pageTitle = $h->lang["sb_base_top"];
         }
