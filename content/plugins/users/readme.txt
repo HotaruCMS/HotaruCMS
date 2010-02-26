@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.1.4 2010/02/26 - Nick - User pages (profile, account, etc.) reworked for plugins to extend more easily; Fixed title tags
 v.1.3 2010/02/23 - Nick - Fix for profile refresh bug, mail sent through Email class, instructions added to Account update form.
 v.1.2 2010/02/20 - Nick - Meta tags generated from user details and profile
 v.1.1 2009/12/22 - Nick - Updated for compatibility with Hotaru 1.0

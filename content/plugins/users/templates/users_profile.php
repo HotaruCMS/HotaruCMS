@@ -31,7 +31,7 @@ $profile = $h->vars['profile'];
     $h->pluginHook('user_profile_defaults'); 
 ?>
 
-<div id="profile">
+<div id="profile" class="users_content">
 
     <?php 
         if ($h->isActive('avatar')) { 
@@ -47,11 +47,6 @@ $profile = $h->vars['profile'];
     </div>
     
     <div class="clear"></div>
-    
-    <div id="profile_usage">
-        <?php echo $h->lang['users_profile_usage']; ?>
-        <?php $h->pluginHook('profile_usage'); ?>
-    </div>
     
     <?php $h->pluginHook('profile'); ?>
     

@@ -24,7 +24,7 @@
  * @link      http://www.hotarucms.org/
  */
 ?>
-<div id="users_permissions">
+<div id="users_permissions" class="users_content">
 
     <h2><?php echo $h->lang["users_permissions"]; ?>: <?php echo $h->vars['user']->name; ?></h2>
     

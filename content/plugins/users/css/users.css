@@ -2,8 +2,21 @@
  *        USERS PLUGIN CSS       *
  ************************************** */
 
-.user_tabs { margin-bottom: 1.0em; background-color: #f0f0f0; padding-top: 0.4em; padding-bottom: 0.4em; }
-.user_tabs li { display: inline; padding-left: 0.6em; padding-right: 0.6em; }
+.profile_navigation {
+    width: 18%;
+    margin-right: 2%;
+    float: left; 
+    display: inline; 
+}
+
+.users_content {
+    width: 80%;
+    float: left;
+}
+
+#users_posts_filter#sort_box.sort_menu li { display: block; margin: 0;}
+#users_posts_filter#sort_box.sort_menu li.active { background-color: #f8f8f8; }
+#users_posts_filter#sort_box.sort_menu li.active a { color: #000; font-weight: bold; }
 
 #profile_avatar { float: left; margin: 0.6em 1.0em 1.0em 0; }
 #profile_bio { float: left; margin: 0.6em 1.0em 1.0em 0; }
