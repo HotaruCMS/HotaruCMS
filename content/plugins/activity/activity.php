@@ -2,7 +2,7 @@
 /**
  * name: Activity
  * description: Show recent activity
- * version: 0.5
+ * version: 0.6
  * folder: activity
  * class: Activity
  * requires: users 1.1, widgets 0.6
@@ -619,16 +619,10 @@ class Activity
      */
     public function breadcrumbs($h)
     {
-        if (($h->pageName != 'activity') && ($h->pageName != 'profile')) { return false; }
+        if ($h->pageName != 'activity') { return false; }
         
-        if ($h->pageName == 'profile') {
-            $user = $h->cage->get->testUsername('user');
-            $crumbs = "<a href='" . $h->url(array('user'=>$user)) . "'>" . $user . "</a> ";
-            $crumbs .= "<a href='" . $h->url(array('page'=>'rss_activity', 'user'=>$user)) . "'> ";
-        } else {
-            $crumbs = $h->pageTitle;
-            $crumbs .= "<a href='" . $h->url(array('page'=>'rss_activity')) . "'>";
-        }
+        $crumbs = $h->pageTitle;
+        $crumbs .= "<a href='" . $h->url(array('page'=>'rss_activity')) . "'>";
         $crumbs .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png' alt='" . $h->pageTitle . " RSS' /></a>\n";
         
         return $crumbs;

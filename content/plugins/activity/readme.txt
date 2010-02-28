@@ -15,6 +15,7 @@ Instructions
 
 Changelog
 ---------
+v.0.6 2010/02/28 - Nick - Removed unnecessary breadcrumbs for profiles
 v.0.5 2010/02/18 - Nick - Code changes for pagination
 v.0.4 2010/01/24 - Nick - HTML for user profiles and Activity page moved into templates
 v.0.3 2010/01/15 - Nick - Fixes for deleting items and refreshing the cache
