@@ -1,0 +1,39 @@
+/* **************************************
+ *	 MESSAGING CSS            *
+ ************************************** */
+ 
+.messaging_list {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+.messaging_list td {
+    border-bottom: 1px solid #f6f6f6;
+}
+
+.messaging_list_headers td {
+    background: #f6f6f6;
+    border: 0;
+}
+
+.messaging_date {
+
+}
+
+.messaging_delete {
+    width: 1.0em;
+}
+
+#messaging_compose td { 
+    vertical-align: top;
+}
+
+#messaging_compose input#message_to,
+#messaging_compose input#message_subject {
+    width: 20em;
+}
+
+#messaging_compose textarea#message_body { 
+    width: 30em; 
+}
