@@ -160,7 +160,7 @@ class SubmitLight extends Submit
         
                         if ($set_pending == 'some_pending') {
                             $posts_approved = $h->postsApproved();
-                            $x_posts_needed = $submit_settings['x_posts'];
+                            $x_posts_needed = $h->vars['submit_settings']['x_posts'];
                         }
         
                         
