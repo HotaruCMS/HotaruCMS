@@ -2,7 +2,7 @@
 /**
  * name: Users
  * description: Provides profile, settings and permission pages
- * version: 1.4
+ * version: 1.5
  * folder: users
  * type: users
  * class: Users
@@ -52,9 +52,9 @@ class Users
      */
     public function sb_base_theme_index_top($h)
     {
-        if ($h->cage->get->keyExists('user')) {
+        $user = $h->cage->get->testUsername('user');
+        if ($user) {
             $h->subPage = 'user';
-            $user = $h->cage->get->testUsername('user');
         }
         
         switch ($h->pageName)
@@ -76,6 +76,10 @@ class Users
                 $h->pageType = 'user';
                 break;
             case 'permissions':
+                if (!$user) { // when the permissions form is submitted
+                    $userid = $h->cage->post->testInt('userid');
+                    $user = $h->getUserNameFromId($userid);
+                }
                 $h->pageTitle = $h->lang["users_permissions"] . '[delimiter]' . $user;
                 $h->pageType = 'user';
                 break;
