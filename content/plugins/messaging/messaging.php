@@ -2,7 +2,7 @@
 /**
  * name: Messaging
  * description: Enable users to send private messages to each other
- * version: 0.1
+ * version: 0.2
  * folder: messaging
  * class: Messaging
  * requires: users 1.5
@@ -270,7 +270,7 @@ class Messaging
      */
     public function theme_index_main($h)
     {
-        if ($h->currentUser->id != $h->vars['user']->id) { return false; }
+        if (isset($h->vars['user']->id) && ($h->currentUser->id != $h->vars['user']->id)) { return false; }
             
         switch ($h->pageName)
         {
