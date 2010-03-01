@@ -2,7 +2,7 @@
 /**
  * name: Messaging
  * description: Enable users to send private messages to each other
- * version: 0.2
+ * version: 0.3
  * folder: messaging
  * class: Messaging
  * requires: users 1.5
@@ -210,6 +210,7 @@ class Messaging
                 $original_message = $msgFuncs->getMessage($h, $h->vars['message_id']);
                 
                 if (!$original_message) { $h->vars['message_id'] = 0; return false; }
+				$h->vars['message_to_id'] = $original_message->message_to;
                 $h->vars['message_from_name'] = $h->getUserNameFromId($original_message->message_from);
                 $h->vars['message_from_id'] = $original_message->message_from;
                 $h->vars['message_date'] = $original_message->message_date;

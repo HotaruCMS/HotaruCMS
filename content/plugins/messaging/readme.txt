@@ -24,5 +24,6 @@ Instructions
 
 Changelog
 ---------
+v.0.3 2010/03/01 - williamd - Fix for unauthorized viewing of messages
 v.0.2 2010/03/01 - Nick - Bug fixes
 v.0.1 2010/02/28 - Nick - Released first version
