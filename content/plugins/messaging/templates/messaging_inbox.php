@@ -41,7 +41,7 @@
         <td class="messaging_delete"></td>
     </tr>
     
-    <?php if (isset($h->vars['messages_list']->list)) { ?>
+    <?php if (isset($h->vars['messages_list']->items)) { ?>
 
         <?php foreach ($h->vars['messages_list']->items as $msg) { ?>
         

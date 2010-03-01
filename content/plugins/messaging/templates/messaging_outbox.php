@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
- 
+
 ?>
 
 <div id="messaging_outbox" class="users_content">
@@ -41,7 +41,7 @@
         <td class="messaging_delete"></td>
     </tr>
     
-    <?php if (isset($h->vars['messages_list']->list)) { ?>
+    <?php if (isset($h->vars['messages_list']->items)) { ?>
 
         <?php foreach ($h->vars['messages_list']->items as $msg) { ?>
             <tr id="<?php echo $msg->message_id; ?>">

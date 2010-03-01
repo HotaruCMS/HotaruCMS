@@ -2,7 +2,7 @@
 /**
  * name: Messaging
  * description: Enable users to send private messages to each other
- * version: 0.3
+ * version: 0.4
  * folder: messaging
  * class: Messaging
  * requires: users 1.5
