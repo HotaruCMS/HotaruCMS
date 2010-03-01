@@ -2,7 +2,7 @@
 /**
  * name: Submit Light
  * description: Reduces Submit to two steps
- * version: 0.2
+ * version: 0.3
  * folder: submit_light
  * class: SubmitLight
  * hooks: theme_index_top
@@ -160,7 +160,7 @@ class SubmitLight extends Submit
         
                         if ($set_pending == 'some_pending') {
                             $posts_approved = $h->postsApproved();
-                            $x_posts_needed = $submit_settings['x_posts'];
+                            $x_posts_needed = $h->vars['submit_settings']['x_posts'];
                         }
         
                         

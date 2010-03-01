@@ -24,4 +24,5 @@ Instructions
 
 Changelog
 ---------
+v.0.2 2010/03/01 - Nick - Bug fixes
 v.0.1 2010/02/28 - Nick - Released first version
