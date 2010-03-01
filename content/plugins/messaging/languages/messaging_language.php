@@ -52,6 +52,7 @@ $lang["messaging_reply"] = "Reply to this message";
 $lang["messaging_in_reply_to"] = "In reply to: ";
 $lang["messaging_re"] = "Re: ";
 $lang["messaging_view_message"] = "Viewing Message";
+$lang["messaging_view_message_unauthorized"] = "Sorry, you're not allowed to view this message.";
 
 /* Email notification */
 $lang['messaging_email_subject'] = "New message from " . SITE_NAME;
