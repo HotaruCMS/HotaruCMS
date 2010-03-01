@@ -2,7 +2,7 @@
 /**
  * name: Submit Light
  * description: Reduces Submit to two steps
- * version: 0.2
+ * version: 0.3
  * folder: submit_light
  * class: SubmitLight
  * hooks: theme_index_top
