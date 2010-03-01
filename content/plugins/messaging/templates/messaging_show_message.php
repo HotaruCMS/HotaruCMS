@@ -30,7 +30,10 @@ $h->setAvatar($h->vars['message_from_id'], 16);
 
 <h2><?php echo $h->lang["messaging_view_message"]; ?></h2>
     
-<?php echo $h->showMessages(); ?>
+<?php
+if ( $h->vars['message_from_id'] === $h->currentUser->id || $h->vars['message_to_id'] === $h->currentUser->id ) {
+echo $h->showMessages();
+?>
 
     <table>
         <tr>
@@ -71,5 +74,9 @@ $h->setAvatar($h->vars['message_from_id'], 16);
     
     <br/>
     <p align="center"><a href="<?php echo BASEURL; ?>index.php?page=compose&amp;reply=<?php echo $h->vars['message_id']; ?>"><?php echo $h->lang["messaging_reply"]; ?></a></p>
+
+<?php } else { ?>
+	<p><?php echo $h->lang["messaging_view_message_unauthorized"]; ?></p>
+<?php } ?>
 
 </div>
