@@ -280,15 +280,17 @@ class IncludeCssJs
                 $aLastModifieds = array();
                 
                 // if not in debug mode, get the Jsmin class
-                if (!$h->debug) {
+                if (!$h->isDebug) {
                     require_once(EXTENSIONS . 'Jsmin/Jsmin.php');
                 }
         
                 foreach ($includes as $sFile) {
                     if ($sFile) {
                         $aLastModifieds[] = filemtime($sFile);
-                        if ($h->debug) {
+                        if ($h->isDebug) {
+                            $sCode .= "/* Open: " . $sFile . " */\n\n";
                             $sCode .= file_get_contents($sFile); // don't minify files when debugging
+                            $sCode .= "\n\n/* Close: " . $sFile . " */\n\n";
                         } else {
                             $sCode .= JSMin::minify(file_get_contents($sFile)); // minify files
                         }
