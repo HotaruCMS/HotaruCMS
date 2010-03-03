@@ -233,7 +233,10 @@ class Caching
                 $sql = "SELECT blocked_updatedts FROM " . DB_PREFIX . "blocked ORDER BY blocked_updatedts DESC";
                 break;
             default:
-                return false;
+                $h->vars['smart_cache_sql'] = '';
+                $h->pluginHook('smart_cache_sql');  // allow plugins to add additional table checks here
+                $sql = $h->vars['smart_cache_sql'];
+                if (!$sql) { return false; }
         }
         
         // run DB query:
