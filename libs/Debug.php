@@ -46,6 +46,8 @@ class Debug
             echo $h->lang['main_hotaru_hotaru_version'] . $h->version; 
             echo "</p>"; 
         }
+
+        if ($h->currentUser->loggedIn) {echo "<span id='loggedIn' class='loggedIn_true'/>"; } else {"<span id='loggedIn' class='loggedIn_false'/>";}
     }
 
 
