@@ -2,7 +2,7 @@
 /**
  * name: Thick Box
  * description: Used for display video and images over a page
- * version: 0.2
+ * version: 0.3
  * folder: thickbox
  * class: ThickBox
  * hooks: header_include
