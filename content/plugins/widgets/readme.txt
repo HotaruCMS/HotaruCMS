@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.0.8 2010/03/04 - Nick - Wrapped "widget_head" and "widget_body" in a "widget" div
 v.0.7 2010/02/02 - Alan - jQuery for instant widget activation
 v.0.6 2009/12/31 - Nick - Updates for compatibility with Hotaru 1.0
 v.0.5 2009/11/04 - Nick - Updated install function for easier upgrading

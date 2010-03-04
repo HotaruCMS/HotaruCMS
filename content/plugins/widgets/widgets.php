@@ -2,7 +2,7 @@
 /**
  * name: Widgets
  * description: Manages the contents of the widget blocks
- * version: 0.7
+ * version: 0.8
  * folder: widgets
  * class: Widgets
  * hooks: theme_index_top, admin_theme_index_top, header_include, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, widget_block
@@ -71,6 +71,7 @@ class Widgets
                 require_once(PLUGINS . $details['plugin'] . "/" . $details['plugin'] . ".php");
                 $h->includeLanguage($details['plugin']);  // same for language
                 
+                echo "<div class='widget'>";
                 if ($details['class'] && method_exists($details['class'], $function_name)) 
                 {   
                     // must be a class object with a method that matches!
@@ -93,6 +94,7 @@ class Widgets
                         $class->$function_name($h, $details['args']);
                     }
                 }
+                echo "</div>";
             }
         }
     }
