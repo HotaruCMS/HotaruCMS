@@ -71,7 +71,7 @@ class Widgets
                 require_once(PLUGINS . $details['plugin'] . "/" . $details['plugin'] . ".php");
                 $h->includeLanguage($details['plugin']);  // same for language
                 
-                echo "<div class='widget'>";
+                echo "<div class='widget'>\n";
                 if ($details['class'] && method_exists($details['class'], $function_name)) 
                 {   
                     // must be a class object with a method that matches!
@@ -94,7 +94,7 @@ class Widgets
                         $class->$function_name($h, $details['args']);
                     }
                 }
-                echo "</div>";
+                echo "</div>\n";
             }
         }
     }
