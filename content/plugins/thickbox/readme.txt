@@ -22,5 +22,6 @@ If it doesn't work, clear the css/js cache from Admin -> Maintenance, then view 
 
 Changelog
 ---------
+v.0.3 2010/03/04 - Nick - Removed IE6 hacks which caused IE problems when CSS is minified
 v.0.2 2010/01/02 - Nick - Updated for compatibility with Hotaru 1.0
 v.0.1 2009/11/28 - Nick - Released first version

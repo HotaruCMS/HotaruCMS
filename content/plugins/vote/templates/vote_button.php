@@ -38,7 +38,7 @@ $vote_button_type = 'vote_color_' . $status;  // for css difference between top 
 <div class='vote_button'>
 
 <!-- VOTE COUNT -->
-<div id='votes_<?php echo $h->post->id; ?>' class='vote_button_top  <?php echo $vote_button_type; ?>'><?php echo $h->vars['votesUp']; ?></div>
+<div id='votes_<?php echo $h->post->id; ?>' class='vote_button_top <?php echo $vote_button_type; ?>'><?php echo $h->vars['votesUp']; ?></div>
 
 <!-- VOTE OR UN-VOTE LINK -->
 <?php if ($h->currentUser->loggedIn && !$h->vars['voted']) { ?>

@@ -2,7 +2,7 @@
 /**
  * name: Activity
  * description: Show recent activity
- * version: 0.6
+ * version: 0.7
  * folder: activity
  * class: Activity
  * requires: users 1.1, widgets 0.6
@@ -192,10 +192,17 @@ class Activity
         $user_id = $vars['user'];
         $post_id = $vars['post'];
         
-        // we don't need the status because if the post wasn't visible, it couldn't be voted for.
+        // if we're voting down something we previously voted up, we should remove the previous vote:
+        $sql = "DELETE FROM " . TABLE_USERACTIVITY . " WHERE useract_userid = %d AND useract_key = %s AND useract_value = %s AND useract_key2 = %s AND useract_value2 = %d";
+        $result = $h->db->query($h->db->prepare($sql, $user_id, 'vote', 'down', 'post', $post_id));
         
-        $sql = "INSERT INTO " . TABLE_USERACTIVITY . " SET useract_archived = %s, useract_userid = %d, useract_status = %s, useract_key = %s, useract_value = %s, useract_key2 = %s, useract_value2 = %s, useract_date = CURRENT_TIMESTAMP, useract_updateby = %d";
-        $h->db->query($h->db->prepare($sql, 'N', $user_id, 'show', 'vote', 'up', 'post', $post_id, $h->currentUser->id));
+        // if there wasn't a previous vote, i.e. nothing was found when we tried to delete it, then we can add it as an up vote:
+        if (!$result) {
+            $sql = "INSERT INTO " . TABLE_USERACTIVITY . " SET useract_archived = %s, useract_userid = %d, useract_status = %s, useract_key = %s, useract_value = %s, useract_key2 = %s, useract_value2 = %s, useract_date = CURRENT_TIMESTAMP, useract_updateby = %d";
+            $h->db->query($h->db->prepare($sql, 'N', $user_id, 'show', 'vote', 'up', 'post', $post_id, $h->currentUser->id));
+        } else {
+            $h->clearCache('html_cache', false); // clear the html cache in order to update the activity widget after the deletion
+        }
     }
     
     
@@ -207,17 +214,17 @@ class Activity
         $user_id = $vars['user'];
         $post_id = $vars['post'];
         
-        // we don't need the status because if the post wasn't visible, it couldn't be voted for.
-        
-        /* As of January 2010, there's only one vote plugin and it only allows you to *undo* a vote rather than vote it down, so until another plugin comes along, we'll just remove the orginal "up" vote from the activity table rather than adding a "Nick voted down blah blah" line: */
-        
+        // if we're un-voting or voting up something we previously voted down, we should remove the previous vote:
         $sql = "DELETE FROM " . TABLE_USERACTIVITY . " WHERE useract_userid = %d AND useract_key = %s AND useract_value = %s AND useract_key2 = %s AND useract_value2 = %d";
-        $h->db->query($h->db->prepare($sql, $user_id, 'vote', 'up', 'post', $post_id));
+        $result = $h->db->query($h->db->prepare($sql, $user_id, 'vote', 'up', 'post', $post_id));
         
-        /*
-        $sql = "INSERT INTO " . TABLE_USERACTIVITY . " SET useract_archived = %s, useract_userid = %d, useract_status = %s, useract_key = %s, useract_value = %s, useract_key2 = %s, useract_value2 = %s, useract_date = CURRENT_TIMESTAMP, useract_updateby = %d";
-        $h->db->query($h->db->prepare($sql, 'N', $user_id, 'show', 'vote', 'down', 'post', $post_id, $h->currentUser->id));
-        */
+        // if there wasn't a previous vote, i.e. nothing was found when we tried to delete it, then we can add it as a down vote:
+        if (!$result) {
+            $sql = "INSERT INTO " . TABLE_USERACTIVITY . " SET useract_archived = %s, useract_userid = %d, useract_status = %s, useract_key = %s, useract_value = %s, useract_key2 = %s, useract_value2 = %s, useract_date = CURRENT_TIMESTAMP, useract_updateby = %d";
+            $h->db->query($h->db->prepare($sql, 'N', $user_id, 'show', 'vote', 'down', 'post', $post_id, $h->currentUser->id));
+        } else {
+            $h->clearCache('html_cache', false); // clear the html cache in order to update the activity widget after the deletion
+        }
     }
     
     

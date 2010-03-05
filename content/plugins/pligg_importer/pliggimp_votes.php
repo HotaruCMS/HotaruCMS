@@ -93,7 +93,7 @@ class PliggImp6
                     $usr->get_new_user_id($h, $child->vote_user_id),
                     $child->vote_ip,
                     $child->vote_date,
-                    'vote_simple',
+                    'vote',
                     $rating,
                     0,
                     $h->currentUser->id));

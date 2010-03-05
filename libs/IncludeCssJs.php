@@ -280,15 +280,17 @@ class IncludeCssJs
                 $aLastModifieds = array();
                 
                 // if not in debug mode, get the Jsmin class
-                if (!$h->debug) {
+                if (!$h->isDebug) {
                     require_once(EXTENSIONS . 'Jsmin/Jsmin.php');
                 }
         
                 foreach ($includes as $sFile) {
                     if ($sFile) {
                         $aLastModifieds[] = filemtime($sFile);
-                        if ($h->debug) {
+                        if ($h->isDebug) {
+                            $sCode .= "/* Open: " . $sFile . " */\n\n";
                             $sCode .= file_get_contents($sFile); // don't minify files when debugging
+                            $sCode .= "\n\n/* Close: " . $sFile . " */\n\n";
                         } else {
                             $sCode .= JSMin::minify(file_get_contents($sFile)); // minify files
                         }
@@ -365,7 +367,7 @@ class IncludeCssJs
         if ($version_css > 0) {
             echo "<link rel='stylesheet' href='" . BASEURL . $index . ".php?combine=1&amp;type=css&amp;version=" . $version_css . "' type='text/css' />\n";
         }
-        if ($h->currentUser->loggedIn) {echo "<div id='loggedIn' class='loggedIn_true'/>"; } else {"<div id='loggedIn' class='loggedIn_false'/>";}
+       
      }
 }
 ?>
