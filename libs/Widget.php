@@ -40,12 +40,14 @@ class Widget
                 foreach ($plugins as $plugin) {
                     if (!$h->isInstalled($plugin['plugin'])) {
                         $this->deleteWidget($h, $plugin['function']);
-                        unset($widgets_settings['widgets'][$plugin['plugin']]);
+                        unset($widgets_settings['widgets'][$plugin['function']]);
                         // widget settings get updated at the end of this function
                     }
                 }
             }
         }
+        
+        echo "<pre>"; print_r($widgets_settings['widgets']); echo "</pre>";
         
         $widgets = $this->getWidgets($h);
         
