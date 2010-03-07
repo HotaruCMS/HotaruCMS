@@ -201,15 +201,15 @@ class Maintenance
         echo "<div id='site_closed'>\n";
         
         // show custom maintenance page if one exists:
-        if (file_exists(THEMES . THEME . 'maintenance.php'))
+        if (file_exists(THEMES . THEME . 'closed.php'))
         {
-            $h->displayTemplate('maintenance');
+            $h->displayTemplate('closed');
         } 
         else
         {
             // show default maintenance page:
             echo $lang['main_hotaru_site_closed'];
-            echo "<br /><span style='font-size: 8pt; margin-top: 1.0em;'>[<a href='" . BASEURL . "admin_index.php?page=admin_login'>Admin Login</a>]</span>";
+            echo "<br /><span id='site_closed_admin_link'>[<a href='" . BASEURL . "admin_index.php?page=admin_login'>Admin Login</a>]</span>";
         }
         
         echo "\n</div>\n</BODY>\n</HTML>\n";
