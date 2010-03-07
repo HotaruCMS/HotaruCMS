@@ -192,16 +192,28 @@ class Maintenance
      *
      * @param object $h
      */
-    public function siteClosed($lang)
+    public function siteClosed($h, $lang)
     {
-        // site closed and access not granted, so exit with a message:
+        // site closed and access not granted
         echo "<HTML>\n<HEAD>\n";
         echo "<link rel='stylesheet' href='" . BASEURL . "content/themes/" . THEME . "css/style.css' type='text/css'>\n";
         echo "</HEAD>\n<BODY>\n";
         echo "<div id='site_closed'>\n";
-        echo $lang['main_hotaru_site_closed'];
-        echo "<br /><span style='font-size: 8pt; margin-top: 1.0em;'>[<a href='" . BASEURL . "admin_index.php?page=admin_login'>Admin Login</a>]</span>";
+        
+        // show custom maintenance page if one exists:
+        if (file_exists(THEMES . THEME . 'maintenance.php'))
+        {
+            $h->displayTemplate('maintenance');
+        } 
+        else
+        {
+            // show default maintenance page:
+            echo $lang['main_hotaru_site_closed'];
+            echo "<br /><span style='font-size: 8pt; margin-top: 1.0em;'>[<a href='" . BASEURL . "admin_index.php?page=admin_login'>Admin Login</a>]</span>";
+        }
+        
         echo "\n</div>\n</BODY>\n</HTML>\n";
+        
         die(); exit;
     }
     

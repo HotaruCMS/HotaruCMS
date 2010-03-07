@@ -130,10 +130,6 @@ class Hotaru
                 if (!$entrance) { return false; }       // stop here if entrance not defined
                 $this->displayTemplate('index');        // displays the index page
         }
-
-        if ($this->isDebug) {
-            $this->closeLog('error');
-        }
         
         exit;
     }
@@ -1323,7 +1319,7 @@ class Hotaru
         
         require_once(LIBS . 'Maintenance.php');
         $maintenance = new Maintenance();
-        return $maintenance->siteClosed($this->lang); // displays "Site Closed for Maintenance"
+        return $maintenance->siteClosed($this, $this->lang); // displays "Site Closed for Maintenance"
     }
     
     
