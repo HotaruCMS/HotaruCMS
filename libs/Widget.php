@@ -47,8 +47,6 @@ class Widget
             }
         }
         
-        echo "<pre>"; print_r($widgets_settings['widgets']); echo "</pre>";
-        
         $widgets = $this->getWidgets($h);
         
         if ($widgets) {
