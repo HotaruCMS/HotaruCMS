@@ -1476,6 +1476,24 @@ class Hotaru
     }
     
     
+    /**
+     * Cache HTML without checking for database updates
+     *
+     * This function caches blocks of HTML code
+     *
+     * @param int $timeout timeout in minutes before cache file is deleted
+     * @param string $html block of HTML to cache
+     * @param string $label name to identify the cached file
+     * @return bool
+     */
+    public function cacheHTML($timeout = 0, $html = '', $label = '')
+    {
+        require_once(LIBS . 'Caching.php');
+        $caching = new Caching();
+        return $caching->cacheHTML($this, $timeout, $html, $label);
+    }
+    
+    
  /* *************************************************************
  *
  *  BLOCKED FUNCTIONS (i.e. Admin's Blocked list)
