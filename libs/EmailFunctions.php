@@ -112,7 +112,8 @@ class EmailFunctions
                 return array('headers' => $this->headers, 'to' => $this->to, 'subject' => $this->subject, 'body' => $this->body, 'type' => $this->type);
                 break;
             default:
-                mail($this->to, $this->subject, $this->body, $this->headers);
+                $return_path = "-f " . SITE_EMAIL;
+                mail($this->to, $this->subject, $this->body, $this->headers, $return_path);
         }
     }
 }

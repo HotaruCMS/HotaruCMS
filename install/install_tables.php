@@ -341,7 +341,7 @@ function create_table($table_name)
         
         // Site email
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'SITE_EMAIL', 'admin@mysite.com', 'admin@mysite.com', 'Must be changed'));
+        $db->query($db->prepare($sql, 'SITE_EMAIL', 'email@example.com', 'email@example.com', 'Must be changed'));
         
         // Database cache
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
