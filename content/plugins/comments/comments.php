@@ -2,7 +2,7 @@
 /**
  * name: Comments
  * description: Enables logged-in users to comment on posts
- * version: 1.6
+ * version: 1.7
  * folder: comments
  * class: Comments
  * type: comments
@@ -147,7 +147,56 @@ class Comments
             return true;
         }
         
-        if ($h->pageName == 'comments') {
+        if ($h->pageName == 'comments')
+        {
+            // set current comment and responses to pending:
+            if ($h->cage->get->getAlpha('action') == 'setpending') { 
+            
+                // before setting pending, we need to be certain this user has permission:
+                if ($h->currentUser->getPermission('can_set_comments_pending') == 'yes') {
+                    $cid = $h->cage->get->testInt('cid'); // comment id
+                    $comment = $h->comment->getComment($h, $cid);
+                    $h->comment->readComment($h, $comment); // read comment
+                    $h->comment->status = 'pending'; // set to pending
+                    $h->comment->editComment($h);  // update this comment
+
+                    $h->comment->postId = $h->cage->get->testInt('pid');  // post id
+                    $h->comment->setPendingCommentTree($h,$cid);   // set all responses to 'pending', too.
+                    
+                    // redirect back to thread:
+                    $h->post = new Post();
+                    $h->readPost($h->comment->postId);
+                    header("Location: " . $h->url(array('page'=>$h->post->id)));    // Go to the post
+                    die();
+                }
+            }
+            
+            // delete current comment and responses:
+            if ($h->cage->get->getAlpha('action') == 'delete') { 
+            
+                // before deleting a comment, we need to be certain this user has permission:
+                if ($h->currentUser->getPermission('can_delete_comments') == 'yes') {
+                    $cid = $h->cage->get->testInt('cid'); // comment id
+                    $comment = $h->comment->getComment($h, $cid);
+                    $h->comment->readComment($h, $comment); // read comment
+                    
+                    $h->pluginHook('comments_delete_comment');
+                    
+                    $h->comment->deleteComment($h, $cid); // delete this comment
+                    $h->comment->deleteCommentTree($h, $cid);   // delete all responses, too.
+                    
+                    $h->clearCache('html_cache', false); // clear HTML cache to refresh Comments and Activity widgets
+                    
+                    $h->comment->postId = $h->cage->get->testInt('pid');  // post id
+                    
+                    // redirect back to thread:
+                    $h->readPost($h->comment->postId);
+                    header("Location: " . $h->url(array('page'=>$h->comment->postId)));    // Go to the post
+                    die();
+                }
+            }
+            
+            // FOR THE COMMENTS PAGE:
             $h->pageTitle = $h->lang['comments'];
             if ($h->cage->get->keyExists('user')) {
                 $h->pageTitle .= '[delimiter]' . $h->cage->get->testUsername('user');
@@ -256,54 +305,6 @@ class Comments
                     die();
                     
                 }
-                
-                // set current comment and responses to pending:
-                if ($h->cage->get->getAlpha('action') == 'setpending') { 
-                
-                    // before setting pending, we need to be certain this user has permission:
-                    if ($h->currentUser->getPermission('can_set_comments_pending') == 'yes') {
-                        $cid = $h->cage->get->testInt('cid'); // comment id
-                        $comment = $h->comment->getComment($h, $cid);
-                        $h->comment->readComment($h, $comment); // read comment
-                        $h->comment->status = 'pending'; // set to pending
-                        $h->comment->editComment($h);  // update this comment
-    
-                        $h->comment->postId = $h->cage->get->testInt('pid');  // post id
-                        $h->comment->setPendingCommentTree($h,$cid);   // set all responses to 'pending', too.
-                        
-                        // redirect back to thread:
-                        $h->post = new Post();
-                        $h->readPost($h->comment->postId);
-                        header("Location: " . $h->url(array('page'=>$h->post->id)));    // Go to the post
-                        die();
-                    }
-                }
-                
-                // delete current comment and responses:
-                if ($h->cage->get->getAlpha('action') == 'delete') { 
-                
-                    // before deleting a comment, we need to be certain this user has permission:
-                    if ($h->currentUser->getPermission('can_delete_comments') == 'yes') {
-                        $cid = $h->cage->get->testInt('cid'); // comment id
-                        $comment = $h->comment->getComment($h, $cid);
-                        $h->comment->readComment($h, $comment); // read comment
-                        
-                        $h->pluginHook('comments_delete_comment');
-                        
-                        $h->comment->deleteComment($h, $cid); // delete this comment
-                        $h->comment->deleteCommentTree($h, $cid);   // delete all responses, too.
-                        
-                        $h->clearCache('html_cache', false); // clear HTML cache to refresh Comments and Activity widgets
-                        
-                        $h->comment->postId = $h->cage->get->testInt('pid');  // post id
-                        
-                        // redirect back to thread:
-                        $h->readPost($h->comment->postId);
-                        header("Location: " . $h->url(array('page'=>$h->comment->postId)));    // Go to the post
-                        die();
-                    }
-                }
-    
             }
             
         }
