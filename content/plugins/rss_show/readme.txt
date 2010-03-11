@@ -31,6 +31,7 @@ To show two feeds back to back, paste this into your template with the ids in th
 
 Changelog
 ---------
+v.0.8 2010/03/11 - Nick - Added some sanitation to feed output
 v.0.7 2010/01/04 - Nick - Updates for compatibility with Hotaru 1.0
 v.0.6 2009/11/04 - Nick - Updated install function for easier upgrading
 v.0.5 2009/10/13 - Nick - Bug fix for deleting feeds

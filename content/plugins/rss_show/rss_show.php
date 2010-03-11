@@ -2,7 +2,7 @@
 /**
  * name: RSS Show
  * description: Adds links in a widget block to the latest posts from a specified RSS feed.
- * version: 0.7
+ * version: 0.8
  * folder: rss_show
  * class: RssShow
  * requires: widgets 0.6
@@ -86,7 +86,7 @@ class RssShow
                             // POST TITLE
                             $output .= "<li class='rss_show_feed_item'>";
                             $output .= "<span class='rss_show_title'>";
-                            $output .= "<a href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a></span>\n";
+                            $output .= "<a href='" . $item->get_permalink() . "'>" . sanitize($item->get_title(), 'tags') . "</a></span>\n";
                             
                             // AUTHOR / DATE
                         if (($settings['author'] == 'yesauthor') || ($settings['date'] == 'yesdate')) {
@@ -94,7 +94,7 @@ class RssShow
                                 if ($settings['author'] == 'yesauthor') {
                                     $output .= " by ";
                                         foreach ($item->get_authors() as $author)  {
-                                    $output .= $author->get_name(); 
+                                    $output .= sanitize($author->get_name(), 'ents'); 
                                 }
                             }
                             if ($settings['date'] == 'yesdate') {
@@ -105,9 +105,9 @@ class RssShow
                         
                         // SUMMARY
                         if ($settings['content'] == 'summaries') {
-                            $output .= "<p class='rss_show_content'>" . substr(strip_tags($item->get_content()), 0, 300);
+                            $output .= "<p class='rss_show_content'>" . substr(sanitize($item->get_content(), 'tags'), 0, 300);
                             $output .= "... ";
-                            $output .= "<small><a href='" . $item->get_permalink() . "' title='" . $item->get_title() . "'>" . $h->lang["rss_show_read_more"] . "</a>";
+                            $output .= "<small><a href='" . $item->get_permalink() . "' title='" . sanitize($item->get_title(), 'tags') . "'>" . $h->lang["rss_show_read_more"] . "</a>";
                             $output .= "</small></p>";
                         }
                         
