@@ -78,7 +78,7 @@ class Feeds
                 $output .= "<div>";
                 
                 // Title
-                $output .= "<a href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a><br />";
+                $output .= "<a href='" . $item->get_permalink() . "'>" . sanitize($item->get_title(), 'tags') . "</a><br />";
                 
                 if ($item_count < $items_with_content)
                 {
@@ -95,11 +95,11 @@ class Feeds
                     $output .= "</small><br />";
                     
                     // Content
-                    $output .= substr(strip_tags($item->get_content()), 0, $max_chars);
+                    $output .= substr(sanitize($item->get_content(), 'tags'), 0, $max_chars);
                     $output .= "... ";
                     
                     // Read more
-                    $output .= "<small><a href='" . $item->get_permalink() . "' title='" . $item->get_title() . "'>[" . $lang["admin_news_read_more"] . "]</a>";
+                    $output .= "<small><a href='" . $item->get_permalink() . "' title='" . sanitize($item->get_title(), 'tags') . "'>[" . $lang["admin_news_read_more"] . "]</a>";
                     $output .= "</small>";
                 }
                 
