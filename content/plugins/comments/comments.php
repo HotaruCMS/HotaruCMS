@@ -153,7 +153,7 @@ class Comments
             if ($h->cage->get->getAlpha('action') == 'setpending') { 
             
                 // before setting pending, we need to be certain this user has permission:
-                if ($h->currentUser->getPermission('can_set_comments_pending') == 'yes') {
+                if ($h->currentUser->loggedIn && $h->currentUser->getPermission('can_set_comments_pending') == 'yes') {
                     $cid = $h->cage->get->testInt('cid'); // comment id
                     $comment = $h->comment->getComment($h, $cid);
                     $h->comment->readComment($h, $comment); // read comment
@@ -175,7 +175,7 @@ class Comments
             if ($h->cage->get->getAlpha('action') == 'delete') { 
             
                 // before deleting a comment, we need to be certain this user has permission:
-                if ($h->currentUser->getPermission('can_delete_comments') == 'yes') {
+                if ($h->currentUser->loggedIn && $h->currentUser->getPermission('can_delete_comments') == 'yes') {
                     $cid = $h->cage->get->testInt('cid'); // comment id
                     $comment = $h->comment->getComment($h, $cid);
                     $h->comment->readComment($h, $comment); // read comment
