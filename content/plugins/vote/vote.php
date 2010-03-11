@@ -205,6 +205,7 @@ class Vote
                         $h->deletePost(); // Akismet uses those details to report the post as spam
                     } else {
                         $h->changePostStatus('buried');
+                        $h->clearCache('html_cache', false);
                         $h->pluginHook('vote_post_status_buried'); // Akismet hooks in here to report the post as spam
                     }
                     
