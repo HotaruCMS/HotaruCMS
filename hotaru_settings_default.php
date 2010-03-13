@@ -40,7 +40,6 @@ define("DB_COLLATE", 'utf8_unicode_ci');		// Database Collation (UTF8 is Recomme
 
 // Paths
 define('BASEURL', "http://www.mysite.com/");    // e.g. http://www.mysite.com/
-
                                                 // Needs trailing slash (/)
 
 // DON'T EDIT ANYTHING BEYOND THIS POINT

@@ -225,7 +225,6 @@
             if ( $str = @mysql_error($this->dbh) )
             {
                 if (defined(DEBUG) && (DEBUG == 'true')) {
-                    $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
                     $subject = SITE_NAME . " Database Error";
                     $body = SITE_NAME . " Database Error\r\n\r\n";
                     $body .= "Date: " . date('d M Y H:i:s') . " (timezone: " . date_default_timezone_get() . ")\r\n\r\n";
@@ -247,7 +246,9 @@
                     
                     // we can avoid using the $h object (which we might not have) by calling EmailFunctions directly.
                     require_once(LIBS . 'EmailFunctions.php');
-                    $emailFunctions = new EmailFunctions(SITE_EMAIL, $subject, $body, $headers);
+                    $emailFunctions = new EmailFunctions();
+                    $emailFunctions->subject = $subject;
+                    $emailFunctions->body = $body;
                     $emailFunctions->doEmail();
                 }
 

@@ -128,7 +128,7 @@ class SbBaseFunctions
             $start = date('YmdHis', strtotime("now"));
             $end = date('YmdHis', strtotime($upcoming_duration)); // should be negative
             $h->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
-            $h->vars['orderby'] = "post_votes_up DESC";
+            $h->vars['orderby'] = "post_votes_up DESC, post_date DESC";
         } 
         elseif ($type == 'top-24-hours')
         {
@@ -137,7 +137,7 @@ class SbBaseFunctions
             $start = date('YmdHis', strtotime("now"));
             $end = date('YmdHis', strtotime("-1 day"));
             $h->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
-            $h->vars['orderby'] = "post_votes_up DESC";
+            $h->vars['orderby'] = "post_votes_up DESC, post_date DESC";
         } 
         elseif ($type == 'top-48-hours') 
         {
@@ -146,7 +146,7 @@ class SbBaseFunctions
             $start = date('YmdHis', strtotime("now"));
             $end = date('YmdHis', strtotime("-2 days"));
             $h->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
-            $h->vars['orderby'] = "post_votes_up DESC";
+            $h->vars['orderby'] = "post_votes_up DESC, post_date DESC";
         } 
         elseif ($type == 'top-7-days')
         {
@@ -155,7 +155,7 @@ class SbBaseFunctions
             $start = date('YmdHis', strtotime("now"));
             $end = date('YmdHis', strtotime("-7 days"));
             $h->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
-            $h->vars['orderby'] = "post_votes_up DESC";
+            $h->vars['orderby'] = "post_votes_up DESC, post_date DESC";
         } 
         elseif ($type == 'top-30-days')
         {
@@ -164,7 +164,7 @@ class SbBaseFunctions
             $start = date('YmdHis', strtotime("now"));
             $end = date('YmdHis', strtotime("-30 days"));
             $h->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
-            $h->vars['orderby'] = "post_votes_up DESC";
+            $h->vars['orderby'] = "post_votes_up DESC, post_date DESC";
         } 
         elseif ($type == 'top-365-days')
         {
@@ -173,13 +173,13 @@ class SbBaseFunctions
             $start = date('YmdHis', strtotime("now"));
             $end = date('YmdHis', strtotime("-365 days"));
             $h->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
-            $h->vars['orderby'] = "post_votes_up DESC";
+            $h->vars['orderby'] = "post_votes_up DESC, post_date DESC";
         } 
         elseif ($type == 'top-all-time')
         {
             // Filters page to "top" stories in order of votes
             $h->vars['filter']['post_status = %s'] = 'top'; 
-            $h->vars['orderby'] = "post_votes_up DESC";
+            $h->vars['orderby'] = "post_votes_up DESC, post_date DESC";
         } 
         elseif ($type == 'top')
         {

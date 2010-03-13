@@ -77,6 +77,7 @@ ul.nav_right { display: inline; float: right; }
 }
 
 .green    { background-color: #99FF66; }
+.yellow   { background-color: #fbe760; }
 .red      { background-color: #FF6A55; color: #ffffff; }
 .bold_red { color: red; font-weight: bold; }
 

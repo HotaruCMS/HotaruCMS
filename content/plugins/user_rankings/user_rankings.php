@@ -177,6 +177,10 @@ class UserRankings
                 $output .= "<a class='user_rankings_" . $css . "_name' href='" . $h->url(array('user' => $user->name)) . "'>" . $user->name . "</a> \n";
             }
             
+            $h->vars['user_rankings_output'] = "";
+            $h->pluginHook('user_rankings_item', '', array('points' => $points, 'css' => $css));
+            $output .= $h->vars['user_rankings_output'];
+            
             $output .= "<div class='user_rankings_" . $css . "_points'>" . $points . "</div>\n";
             $output .= "</li>\n\n";
 

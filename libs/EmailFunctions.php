@@ -27,10 +27,12 @@
 class EmailFunctions
 {
     protected $to           = '';
-    protected $subject      = '';
+    protected $from         = '';
+    protected $subject      = 'No Subject';
     protected $body         = '';
     protected $headers      = '';
-    protected $type         = '';
+    protected $type         = 'email';
+    private $smtp   = NULL;
     
     /**
      * Access modifier to set protected properties
@@ -49,46 +51,27 @@ class EmailFunctions
     {
         return $this->$var;
     }
-    
-    
-    /**
-     * Constructor
-     *
-     * @param string $to - defaults to SITE_EMAIL
-     * @param string $subject - defaults to "No Subject";
-     * @param string $body - returns false if empty
-     * @param string $headers e.g. "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
-     * @param string $type - default is "email", but you can write to a "log" file, print to "screen" or "return" the content
-     * @return array - only if $type = "return"
-     */
-    public function __construct($to = '', $subject = '', $body = '', $headers = '', $type = 'email')
-    {
-        $this->to = $to;
-        $this->subject = $subject;
-        $this->body = $body;
-        $this->headers = $headers;
-        $this->type = $type;
-        
-        if (!$this->to) { $this->to = SITE_EMAIL; }
-        if (!$this->subject) { $this->subject = "No Subject"; }
-        if (!$this->body) { return false; }
-        if (!$this->headers) { $this->headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n"; }
-    }
+
     
     /**
-     * Send emails
-     *
-     * @param string $to - defaults to SITE_EMAIL
-     * @param string $subject - defaults to "No Subject";
-     * @param string $body - returns false if empty
-     * @param string $headers default is "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
-     * @param string $type - default is "email", but you can write to a "log" file, print to "screen" or "return" an array of the content
-     * @return array - only if $type = "return"
+     * Send emails - Note: properties must be set before calling this function
      */
     public function doEmail()
-    {
-        // OVERRIDE THE TYPE HERE BY UNCOMMENTING THE LINE BELOW - Very handy when developing offline with WampServer, etc.
-        // $this->type = 'log'; // this will write all emails to email_log.txt in the cache folder INSTEAD of sending them.
+    {        
+        if (!$this->body) { return false; }
+        
+        if (!$this->to) { $this->to = SITE_NAME . ' <' . SITE_EMAIL . '>'; }
+        if (!$this->from) { $this->from = SITE_NAME . ' <' . SITE_EMAIL . '>'; }
+        
+        if (SMTP_ON == 'true') {
+            // note: this overwrites headers passed to this function:
+            $this->headers = array ('From' => $this->from, 'To' => $this->to, 'Subject' => $this->subject);
+        } else {
+            // if not using SMTP and no headers passed to this function, use default
+            if (!$this->headers) { 
+                $this->headers = "From: " . $this->from . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
+            }
+        }
         
         switch ($this->type)
         {
@@ -112,9 +95,43 @@ class EmailFunctions
                 return array('headers' => $this->headers, 'to' => $this->to, 'subject' => $this->subject, 'body' => $this->body, 'type' => $this->type);
                 break;
             default:
-                $return_path = "-f " . SITE_EMAIL;
-                mail($this->to, $this->subject, $this->body, $this->headers, $return_path);
+                if (SMTP_ON == 'true') {
+                    $this->doSmtpEmail();
+                } else {
+                    $return_path = "-f " . SITE_EMAIL;
+                    mail($this->to, $this->subject, $this->body, $this->headers, $return_path);
+                }
         }
+    }
+    
+    
+    /**
+     * Send email using SMTP authentication and SSL Encryption
+     */
+    public function doSmtpEmail()
+    {
+        //  Only create a new smtp object if we don't already have one:
+        if (!is_object($this->smtp))
+        {
+            $smtp_array = array (
+                'host' => SMTP_HOST, 
+                'port' => SMTP_PORT,
+                'auth' => true, 
+                'username' => SMTP_USERNAME, 
+                'password' => SMTP_PASSWORD
+            );
+
+            require_once "Mail.php";
+            $this->smtp = Mail::factory('smtp', $smtp_array);
+        }
+
+        $mail = $this->smtp->send($this->to, $this->headers, $this->body);
+
+        
+        if (PEAR::isError($mail)) {
+            echo("<p>" . $mail->getMessage() . "</p>");
+            exit;
+        } 
     }
 }
 

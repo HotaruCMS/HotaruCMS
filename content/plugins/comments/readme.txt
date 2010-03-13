@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.1.7 2010/03/11 - Nick - Fix for a previous change that broke the set pending and delete links within comments.
 v.1.6 2010/02/26 - Nick - Adds link to profile navigation; Email changed to go through Hotaru's "email" function 
 v.1.5 2010/02/23 - Nick - Shows messages for moderated comments: "Awaiting approval", "Exceeded Daily Limit", etc.
 v.1.4 2010/02/09 - Nick - Option to hide comments after X down votes, plus pagination code changes

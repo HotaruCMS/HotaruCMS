@@ -153,7 +153,7 @@ class adminEmail
         $url = BASEURL . "admin_index.php?page=plugin_settings&plugin=admin_email&mailing=1";
         echo "<meta http-equiv='Refresh' content='0; URL=" . $url . "' />";
         echo $h->lang["admin_email_redirecting"];
-        ob_flush();
+        @ob_flush();
         flush();
         exit;
     }
@@ -213,18 +213,17 @@ class adminEmail
             $message .= BASEURL . "index.php?page=user-settings&user=" . $recipient->user_username;
             $from = SITE_EMAIL; // Send_From_Email is admin
             $to = $recipient->user_email;  
-            $headers = "From: " . $from . "\r\nReply-To: " . $from . "\r\nX-Priority: 3\r\n";
             
             if ($send_self && ($h->currentUser->id == $recipient->user_id)) {
                 echo $h->lang["admin_email_sent_to"] . "<i>" . $to . "</i><br />\n";
-                @mail($to, $subject, $message, $headers);   // This sends an email to the requesting admin
+                $h->email($to, $subject, $message);   // This sends an email to the requesting admin
             } elseif ($simulation) {
                 echo $h->lang["admin_email_fake_sending"] . $to . "<br />\n";
             } else {
                 echo $h->lang["admin_email_sent_to"] . $to . "<br />\n";
-                @mail($to, $subject, $message, $headers);   // This does the actual sending!
+                $h->email($to, $subject, $message);   // This does the actual sending!
             }
-            ob_flush();
+            @ob_flush();
             flush();
             sleep(1); // one second pause between sending emails
         }

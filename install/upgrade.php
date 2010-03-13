@@ -345,7 +345,31 @@ function do_upgrade($old_version)
     if ($old_version == "1.1") { $old_version = "1.1.1"; } // update "old version" for next set of upgrades
     
     // 1.1 to 1.1.2
-    if ($old_version == "1.1.1") { $old_version = "1.1.2"; } // update "old version" for next set of upgrades
+    if ($old_version == "1.1.1") { 
+    
+        // SMTP on
+        $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $h->db->query($h->db->prepare($sql, 'SMTP_ON', 'false', 'false', 'Email auth'));
+        
+        // SMTP host
+        $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $h->db->query($h->db->prepare($sql, 'SMTP_HOST', 'mail.example.com', 'mail.example.com', ''));
+        
+        // SMTP port
+        $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $h->db->query($h->db->prepare($sql, 'SMTP_PORT', '25', '25', ''));
+        
+        // SMTP username
+        $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $h->db->query($h->db->prepare($sql, 'SMTP_USERNAME', '', '', ''));
+        
+        // SMTP password
+        $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $h->db->query($h->db->prepare($sql, 'SMTP_PASSWORD', '', '', ''));
+        
+        // update "old version" for next set of upgrades
+        $old_version = "1.1.2"; 
+    }
     
     // Update Hotaru version number to the database (referred to when upgrading)
     $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_key = %s, miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";

@@ -133,22 +133,23 @@ class AdminPages
         
             foreach ($loaded_settings as $setting_name) {
                 if ($h->cage->post->keyExists($setting_name->settings_name)) {
-                    $setting_value = $h->cage->post->noTags($setting_name->settings_name);
+                    $setting_value = $h->cage->post->getRaw($setting_name->settings_name);
                     if (!$error && $setting_value && $setting_value != $setting_name->settings_value) {
                         $this->adminSettingUpdate($h, $setting_name->settings_name, $setting_value);
     
                     } else {
                         if (!$setting_value) {
                             // empty value 
-                            $error = 1; 
-                        } else { 
-                            // No change to the value
-                            $error = 0; 
+                            $error = 1;
                         }
                     }
                 } else {
-                    // error, setting empty.
-                    $error = 1;
+                    // values that are allowed to be empty:
+                    $exempt = array('SMTP_USERNAME', 'SMTP_PASSWORD');
+                    if (!in_array($setting_name->settings_name, $exempt)) { 
+                        // otherwise flag as an error:
+                        $error = 1;
+                    } 
                 }
             }
             

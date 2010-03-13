@@ -162,7 +162,9 @@ class getHtmLawed extends AccessorAbstract {
     */
     protected function inspekt($text)
     {
-        $config = array('safe' => 1);
+        /*  make_tag_strict is OFF because we don't want to convert <u>, etc. to css 
+            otherwise the strip_tags won't be able to allow them when requested in sanitize(). */
+        $config = array('safe' => 1, 'make_tag_strict' => 0);
         
         // Allow plugins to alter the value of $config/
         // Plugins should return an array, e.g. array('safe' => 1); 

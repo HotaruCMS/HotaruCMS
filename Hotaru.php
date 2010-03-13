@@ -42,6 +42,7 @@ class Hotaru
     protected $comment;                         // Comment object
     protected $includes;                        // for CSS/JavaScript includes
     protected $debug;                           // Debug object
+    protected $email;                           // Email object
     
     // page info
     protected $pageName             = '';       // e.g. index, category
@@ -2062,10 +2063,18 @@ class Hotaru
      */
     public function email($to = '', $subject = '', $body = '', $headers = '', $type = 'email')
     {
-        require_once(LIBS . 'EmailFunctions.php');
-        $emailFunctions = new EmailFunctions($to, $subject, $body, $headers, $type);
-        $emailFunctions->type = $type;
-        return $emailFunctions->doEmail();
+        if (!is_object($this->email)) { 
+            require_once(LIBS . 'EmailFunctions.php');
+            $this->email = new EmailFunctions();
+        }
+        
+        $this->email->to = $to;
+        $this->email->subject = $subject;
+        $this->email->body = $body;
+        $this->email->headers = $headers;
+        $this->email->type = $type;
+        
+        return $this->email->doEmail();
     }
 }
 ?>
