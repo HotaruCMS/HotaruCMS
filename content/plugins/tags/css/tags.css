@@ -1,6 +1,4 @@
-/* **************************************
- *	    TAGS PLUGIN CSS           *
- ************************************** */
+/* tags */
  
 .tags_link	{ padding-left: 1.5em; background-image: url(content/themes/default/images/tags.png); }
 .show_tags ul li {float:left; margin-right:0.6em;}
