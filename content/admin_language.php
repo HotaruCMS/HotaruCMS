@@ -119,7 +119,8 @@ $lang["admin_theme_plugins_more_info"] = "More Info";
 $lang["admin_theme_plugins_readmetxt"] = "readme.txt";
 
 /* Settings */
-$lang['admin_settings_update_success'] = "Updated successfully.";
+$lang['admin_settings_update_success'] = "Updated successfully";
+$lang['admin_settings_update_failure'] = "Error saving settings";
 $lang["admin_settings_theme_activate_success"] = "Theme was activated successfully.";
 $lang["admin_theme_settings"] = "Settings";
 $lang["admin_theme_settings_title"] = "Hotaru Settings";

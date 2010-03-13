@@ -370,6 +370,26 @@ function create_table($table_name)
         // Debug
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
         $db->query($db->prepare($sql, 'DEBUG', 'false', 'false', ''));
+        
+        // SMTP on
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $db->query($db->prepare($sql, 'SMTP_ON', 'false', 'false', 'Email auth'));
+        
+        // SMTP host
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $db->query($db->prepare($sql, 'SMTP_HOST', 'mail.example.com', 'mail.example.com', ''));
+        
+        // SMTP port
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $db->query($db->prepare($sql, 'SMTP_PORT', '25', '25', ''));
+        
+        // SMTP username
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $db->query($db->prepare($sql, 'SMTP_USERNAME', '', '', ''));
+        
+        // SMTP password
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $db->query($db->prepare($sql, 'SMTP_PASSWORD', '', '', ''));
     }
     
     
