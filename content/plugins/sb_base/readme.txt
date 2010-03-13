@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.0.6 2010/03/13 - Nick - Lists ranked by vote are now ranked first by vote, second by recency
 v.0.5 2010/02/26 - Nick - Filters hidden from user pages; Added profile navigation link
 v.0.4 2010/02/23 - Nick - Bug fix for user RSS feed and showing messages above posts
 v.0.3 2010/02/21 - Nick - Bug fixes, cleaner list template and new "sb_no_posts" template
