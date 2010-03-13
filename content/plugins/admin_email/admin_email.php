@@ -2,7 +2,7 @@
 /**
  * name: Admin Email
  * description: Send email to all members, groups or users
- * version: 0.3
+ * version: 0.4
  * folder: admin_email
  * class: adminEmail
  * requires: users 1.1

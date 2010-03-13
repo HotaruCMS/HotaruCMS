@@ -2,7 +2,7 @@
 /**
  * name: SB Base
  * description: Social Bookmarking base - provides "list" and "post" templates. 
- * version: 0.5
+ * version: 0.6
  * folder: sb_base
  * class: SbBase
  * type: base
