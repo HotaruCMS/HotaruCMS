@@ -1,6 +1,4 @@
-/* **************************************
- *        USER MANAGER PLUGIN CSS       *
- ************************************** */
+/* user manager */
 
 #table_list td.um_id 	  { width: 7%; font-size: 0.8em;}
 #table_list td.um_role    { width: 15%; }
