@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.1.6 2010/03/13 - Nick - Fix for missing user menu when viewing a message
 v.1.5 2010/02/28 - Nick - Fix for undefined $user errors
 v.1.4 2010/02/26 - Nick - User pages (profile, account, etc.) reworked for plugins to extend more easily; Fixed title tags
 v.1.3 2010/02/23 - Nick - Fix for profile refresh bug, mail sent through Email class, instructions added to Account update form.

@@ -2,7 +2,7 @@
 /**
  * name: Users
  * description: Provides profile, settings and permission pages
- * version: 1.5
+ * version: 1.6
  * folder: users
  * type: users
  * class: Users
@@ -113,7 +113,11 @@ class Users
         } else {
             // when the account page has been submitted (get id in case username has changed)
             $userid = $h->cage->post->testInt('userid');
-            if ($userid) { $result = $h->vars['user']->getUserBasic($h, $userid); }
+            if ($userid) { 
+                $result = $h->vars['user']->getUserBasic($h, $userid); 
+            } else {
+                $result = $h->vars['user']->getUserBasic($h, $h->currentUser->id); // default to self 
+            }
         }
         
         if (isset($result)) {
