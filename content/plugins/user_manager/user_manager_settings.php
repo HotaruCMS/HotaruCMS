@@ -96,7 +96,10 @@ class UserManagerSettings
                             $h->addToBlockedList($type = 'email', $value = $u->email, false);
                         }
                         $h->pluginHook('user_man_killspam_delete', '', array($u));
-                        if ($new_role == 'deleted') { $u->deleteUser($h); }
+                        if ($new_role == 'deleted') { 
+                            $u->deleteUser($h); 
+                            $h->clearCache('db_cache', false); // clears them from User Manager list
+                        }
                     }
                 }
                 

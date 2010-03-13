@@ -1,13 +1,13 @@
 HOTARU CMS
-Version: 1.1.1
-Released: Feb 24th 2010
+Version: 1.1.2
+Released: Mar 8th 2010
 
 INSTALLATION
 ------------
 
 Please visit http://hotarucms.org/showthread.php?t=14 for the most up-to-date version of these instructions.
 
-Instructions last updated: January 18th 2010
+Instructions last updated: Mar 8th 2010
 
 Requirements
 
@@ -17,9 +17,12 @@ Upgrading
 
    1. Backup your database.
    2. Download the latest version of Hotaru CMS.
-   3. Overwrite ALL the old files. If you've made any customizations, read this first: http://hotarucms.org/showthread.php?t=46
-   4. Go to /install/upgrade.php
-   5. When finished, delete the install folder.
+   3. Turn off all your plugins.
+   4. Overwrite ALL the old files. If you've made any customizations, read this first: http://hotarucms.org/showthread.php?t=46
+   5. Go to /install/upgrade.php
+   6. Turn your plugins back on
+   7. Reactivate your widgets
+   8. When finished, delete the install folder.
 
 First-time Installation
 

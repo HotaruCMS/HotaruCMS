@@ -244,5 +244,58 @@ class Caching
         
         return $last_update;
     }
+    
+    
+    /**
+     * Cache HTML without checking for database updates
+     *
+     * This function caches blocks of HTML code
+     *
+     * @param int $timeout timeout in minutes before cache file is deleted
+     * @param string $html block of HTML to cache
+     * @param string $label name to identify the cached file
+     * @return bool
+     */
+    public function cacheHTML($h, $timeout = 0, $html = '', $label = '')
+    {
+        if (!$timeout || (HTML_CACHE_ON != 'true') || !$label) { return false; }
+        
+        $cache_length = $timeout*60;   // seconds
+        $cache = CACHE . 'html_cache/';
+        $file = $cache . $label . ".cache";
+        
+        if (!$html) {
+            // we only want to read the cache if it exists, hence no $html passed to this function
+            if (file_exists($file)) {
+                $content = file_get_contents($file);
+                $last_modified = filemtime($file);
+                //echo "last modified: " . $last_modified . "<br />";
+                if ($last_modified <= (time() - $cache_length)) { 
+                    // delete cache
+                    unlink($file);
+                    return false;
+                } else {
+                    return $content;    // return the HTML to display
+                }
+            } else {
+                return false;
+            }
+        }
+        
+        // if we're here, we need to make or rewrite the cache
+        
+        $fp = fopen($file, "w");
+
+        if (flock($fp, LOCK_EX)) { // do an exclusive lock
+            ftruncate($fp, 0);  // truncate file
+            fwrite($fp, $html); // write HTML
+            flock($fp, LOCK_UN); // release the lock
+        } else {
+            echo "Couldn't get the lock for the HTML cache!";
+        }
+        
+        fclose($fp);
+        return true; // the calling function already has the HTML to output
+    }
 }
 ?>

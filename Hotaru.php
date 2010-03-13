@@ -25,7 +25,7 @@
  */
 class Hotaru
 {
-    protected $version              = "1.1.1";  // Hotaru CMS version
+    protected $version              = "1.1.2";  // Hotaru CMS version
     protected $isDebug              = false;    // show db queries and page loading time
     protected $isAdmin              = false;    // flag to tell if we are in Admin or not
     protected $sidebars             = true;     // enable or disable the sidebars
@@ -129,10 +129,6 @@ class Hotaru
                 $this->checkAccess();                   // site closed if no access permitted
                 if (!$entrance) { return false; }       // stop here if entrance not defined
                 $this->displayTemplate('index');        // displays the index page
-        }
-
-        if ($this->isDebug) {
-            $this->closeLog('error');
         }
         
         exit;
@@ -1323,7 +1319,7 @@ class Hotaru
         
         require_once(LIBS . 'Maintenance.php');
         $maintenance = new Maintenance();
-        return $maintenance->siteClosed($this->lang); // displays "Site Closed for Maintenance"
+        return $maintenance->siteClosed($this, $this->lang); // displays "Site Closed for Maintenance"
     }
     
     
@@ -1477,6 +1473,24 @@ class Hotaru
         require_once(LIBS . 'Caching.php');
         $caching = new Caching();
         return $caching->smartCache($this, $switch, $table, $timeout, $html_sql, $label);
+    }
+    
+    
+    /**
+     * Cache HTML without checking for database updates
+     *
+     * This function caches blocks of HTML code
+     *
+     * @param int $timeout timeout in minutes before cache file is deleted
+     * @param string $html block of HTML to cache
+     * @param string $label name to identify the cached file
+     * @return bool
+     */
+    public function cacheHTML($timeout = 0, $html = '', $label = '')
+    {
+        require_once(LIBS . 'Caching.php');
+        $caching = new Caching();
+        return $caching->cacheHTML($this, $timeout, $html, $label);
     }
     
     

@@ -1,0 +1,24 @@
+/* user rankings */
+
+.user_rankings_clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+/* WIDGET */
+.user_rankings_widget_item { margin: 0.5em 0.3em 0.3em 0; display: block; }
+.user_rankings_widget_avatar { float: left; padding-right: 0.3em; }
+.user_rankings_widget_name { float: left; }
+.user_rankings_widget_points { float: right; }
+.user_rankings_widget_title small { font-size: 0.7em; }
+
+/* USER RANKINGS PAGE */
+#user_rankings_page small { font-size: 0.7em; }
+.user_rankings_page_item { margin: 0.5em 0.5em 0.3em 0; display: block; border-bottom: 1px dashed #eee; }
+.user_rankings_page_avatar { float: left; padding-right: 0.5em; }
+.user_rankings_page_name { float: left; font-size: 1.2em; }
+.user_rankings_page_points { float: right; }
+.user_rankings_page_title small { font-size: 0.7em; }

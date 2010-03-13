@@ -43,7 +43,7 @@
                 <meta name="keywords" content="<?php echo $h->lang['header_meta_keywords']; ?>" />
         <?php } ?>
    
-    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js?ver=1.4.0'></script>
+    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js?ver=1.4.2'></script>
     <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js?ver=1.7.2'></script>
        
     <link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME . 'css/reset-fonts-grids.css'; ?>" type="text/css" />
