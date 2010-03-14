@@ -69,7 +69,8 @@ $loaded_settings = $h->vars['admin_settings'];
                     echo ' >&nbsp;OFF';
                 }
                 else {
-                    echo '<input type="text" size=20 name="' . $ls->settings_name .'" value="' . $ls->settings_value . '" ' . $css_class . ' />';
+                    if ($ls->settings_name == 'SMTP_PASSWORD') { $type = 'password'; } else { $type = 'text'; }
+                    echo '<input type="' . $type . '" size=20 name="' . $ls->settings_name .'" value="' . $ls->settings_value . '" ' . $css_class . ' />';
                 }
                 ?>
             </td>
