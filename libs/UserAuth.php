@@ -489,9 +489,8 @@ class UserAuth extends UserBase
         $body .= $next_line;
         $body .= $h->lang['main_user_email_password_conf_body_sign'];
         $to = $email;
-        $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
     
-        mail($to, $subject, $body, $headers);    
+        $h->email($to, $subject, $body);    
         
         return true;
     }
@@ -543,9 +542,8 @@ class UserAuth extends UserBase
         $body .= $next_line;
         $body .= $h->lang['main_user_email_password_conf_body_sign'];
         $to = $email;
-        $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
     
-        mail($to, $subject, $body, $headers);    
+        $h->email($to, $subject, $body);    
         
         return true;
     }
