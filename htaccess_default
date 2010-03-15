@@ -7,10 +7,10 @@ Options +Indexes +FollowSymlinks
 RewriteEngine on
 ## If Hotaru is installed in a subfolder, change the below line to RewriteBase /name-of-subfolder
 RewriteBase /
-## If installed in a subfolder you may need to add ## to the beginning of the next line
+## If installed in a subfolder or subdomain you may need to add ## to the beginning of the next line
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /.*index\.php\ HTTP/
 
-## Remove these two lines if you have a sub-domain like  http://bookmarking.myhotarusite.com  or http://localhost
+## Remove these two lines if you have a subdomain like  http://bookmarking.myhotarusite.com  or http://localhost
 ## Keep if your site url looks like http://www.myhotarusite.com
 RewriteCond %{HTTP_HOST} !^www\.
 RewriteRule ^\/?(.*)$ http://www.%{HTTP_HOST}/$1 [R=301,L]

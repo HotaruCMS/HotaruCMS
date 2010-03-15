@@ -52,7 +52,8 @@ $lang["sb_base_post_pending"] = "This post is pending approval by a moderator";
 
 /* SB Base Settings */
 $lang["sb_base_settings_header"] = "SB Base Configuration";
-$lang["sb_base_settings_posts_per_page"] = "posts per page <small>(default: 10)</small>";
+$lang["sb_base_settings_posts_per_page"] = "Posts per page <small>(default: 10)</small>";
+$lang["sb_base_settings_rss_redirect"] = "Automatically redirect RSS links to their original sources";
 $lang["sb_base_settings_post_archiving"] = "<b>Post Archiving</b>";
 $lang["sb_base_settings_post_archive_desc"] = "On the Maintenance page, there's a link you can use to archive old posts (or remove an existing archive). Archiving speeds up your site by excluding old posts and their comments, votes and tags from most database usage. Old posts can still be accessed via the search box or when loaded directly (e.g. from Google). <i>Note: Archiving is not automatic. You will need to update the archive periodically from the Maintenance page.</i>";
 $lang["sb_base_settings_post_archive"] = "Posts older than this will be archived. <small>(Default: No archive)</small>";

@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.0.7 2010/03/15 - Nick - Added option to redirect RSS feeds through your site to their sources [courtesy of Gunaxin.com]
 v.0.6 2010/03/13 - Nick - Lists ranked by vote are now ranked first by vote, second by recency
 v.0.5 2010/02/26 - Nick - Filters hidden from user pages; Added profile navigation link
 v.0.4 2010/02/23 - Nick - Bug fix for user RSS feed and showing messages above posts

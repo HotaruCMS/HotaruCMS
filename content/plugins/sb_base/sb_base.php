@@ -2,7 +2,7 @@
 /**
  * name: SB Base
  * description: Social Bookmarking base - provides "list" and "post" templates. 
- * version: 0.6
+ * version: 0.7
  * folder: sb_base
  * class: SbBase
  * type: base
@@ -42,6 +42,7 @@ class SbBase
         // Default settings 
         $sb_base_settings = $h->getSerializedSettings();
         if (!isset($sb_base_settings['posts_per_page'])) { $sb_base_settings['posts_per_page'] = 10; }
+        if (!isset($sb_base_settings['rss_redirect'])) { $sb_base_settings['rss_redirect'] = ''; }
         if (!isset($sb_base_settings['archive'])) { $sb_base_settings['archive'] = "no_archive"; }
         $h->updateSetting('sb_base_settings', serialize($sb_base_settings));
         
@@ -69,6 +70,16 @@ class SbBase
         // check if we're using the sort/filter links
         if ($h->cage->get->keyExists('sort')) {
             $h->pageName = 'sort';
+        }
+        
+        // check if this is an RSS link forwarding to the source
+        if ($h->cage->get->keyExists('forward')) {
+            $post_id = $h->cage->get->testInt('forward');
+            if ($post_id) { $post = $h->getPost($post_id); }
+            if (isset($post->post_orig_url)) { 
+                header("Location:" . urldecode($post->post_orig_url));
+                exit;
+            }
         }
         
         // include sb_base_functions class:

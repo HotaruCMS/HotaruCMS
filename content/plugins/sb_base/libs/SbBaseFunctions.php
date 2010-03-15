@@ -410,6 +410,10 @@ class SbBaseFunctions
         $results = $this->getPosts($h, $prepared_array);
             
         if ($results) {
+        
+            // get sb base settings
+            $sb_base_settings = $h->getSerializedSettings('sb_base');
+            
             foreach ($results as $result) 
             {
                 $h->post->url = $result->post_url; // used in Hotaru's url function
@@ -418,7 +422,13 @@ class SbBaseFunctions
                 $item = new RSSItem();
                 $title = html_entity_decode(urldecode($result->post_title), ENT_QUOTES,'UTF-8');
                 $item->title = stripslashes($title);
-                $item->link  = $h->url(array('page'=>$result->post_id));
+                
+                // if RSS redirecting is enabled, append forward=1 to the url
+                if (isset($sb_base_settings['rss_redirect']) && !empty($sb_base_settings['rss_redirect'])) {
+                    $item->link  = html_entity_decode($h->url(array('page'=>$result->post_id, 'forward'=>$result->post_id)), ENT_QUOTES,'UTF-8');
+                } else {
+                    $item->link  = $h->url(array('page'=>$result->post_id));
+                }
                 $item->setPubDate($result->post_date); 
                 $item->description = "<![CDATA[ " . stripslashes(urldecode($result->post_content)) . " ]]>";
                 $feed->addItem($item);
