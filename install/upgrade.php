@@ -370,6 +370,15 @@ function do_upgrade($old_version)
         // update "old version" for next set of upgrades
         $old_version = "1.1.2"; 
     }
+
+     // 1.1.2 to 1.1.3
+    if ($old_version == "1.1.3") {
+
+       // GMT Offset
+        $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $h->db->query($h->db->prepare($sql, 'GMT_OFFSET', '0', '0', ''));
+
+    }
     
     // Update Hotaru version number to the database (referred to when upgrading)
     $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_key = %s, miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";
