@@ -1,0 +1,94 @@
+/* **************************************
+ *	 COMMENTS PLUGIN CSS            *
+ ************************************** */
+
+.comment_link       { padding-left: 1.5em; background-image: url(content/themes/cut-here/images/comment.png); background-repeat: no-repeat; }
+.comment_reply_link { padding-left: 1.9em; background-image: url(content/themes/cut-here/images/comment.png); background-repeat: no-repeat; background-position: 0 0;}
+.comment_edit_link { padding-left: 1.9em; padding-top:0.1em; background-image: url(content/plugins/comments/images/edit.png); background-repeat: no-repeat;  background-position: 0 0;}
+.comment_reply_wrapper a:hover  { background-position: 0 -32px;}
+
+
+#comments_wrapper h2 {
+	padding-bottom: 0em;
+}
+
+.comment_header .avatar_wrapper a {	
+	padding: 0 0.6em 0.6em 0;
+}
+
+.comment {
+	background-color: #fafafa;
+	margin-top: 1.0em;	
+        border: 2pt solid #ddd;
+}
+
+.comment_reply_wrapper {
+        padding-bottom:1em;
+        padding-top: 0.8em;
+        text-align:right;
+        margin-right: 0.6em;
+}
+
+.comment_reply_link, .comment_edit_link {
+    /* padding: 0.2em 0.4em 0.2em 0.4em;     */
+    font-size: 8pt;
+    text-decoration: none;
+    color:#444444;
+    font-weight:bold;
+}
+
+.comment_author {
+    
+}
+
+.comment_author_date {
+    margin-top: 0.6em;
+	font-size: 0.8em;
+	float: right;
+}
+
+.comment_form textarea {
+	width: 100%;
+}
+
+.comment_form_off {
+	margin-top: 2.0em;
+	text-align: center;
+}
+
+.comment_status {
+	float: right;
+	text-align: right;
+}
+
+#comment_manager_link {
+	float: right;
+	text-align: right;	
+}
+
+.comment_header {
+    border-bottom:solid 1pt #ddd;
+    border-top:solid 1pt #ddd;
+    padding: 0.4em;
+    background-color: #eee;
+    margin-bottom: 0.4em;
+    height:16px;
+    display:block;
+}
+
+.comment_content {
+    margin: 0.6em 0 0 0.8em;
+    overflow: hidden;
+    width: 96%;
+}
+
+.comment_header_left {
+   float:left;
+    width: 70%;
+}
+
+.comment_post_link {margin: 0.6em 0.6em 0.4em; text-align:right;}
+
+.comment_show_hide  { margin-left: 2.0em; font-size: 0.8em; }
+
+.clear	{ clear: both; margin: 0; line-height: 0em;} /* need line-height for IE */

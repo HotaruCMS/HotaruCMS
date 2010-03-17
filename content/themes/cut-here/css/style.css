@@ -1,0 +1,172 @@
+/* ----------------------------------------------
+	Template Name : Cut Here
+	Platform: HotaruCMS 1.1.2
+	Version : 1.0  
+	Author: Carlo Armanni
+	Author URI : http://www.tr3ndy.com/ 
+	Last Date Modified : March 16, 2010	
+ ------------------------------------------------ */
+
+/* BODY */
+
+body { 
+	color: #333;
+	font-family: Helvetica, Arial, 'Liberation Sans', FreeSans, sans-serif;
+	margin-left: auto;
+	margin-right: auto;
+	width: 960px;
+	text-align: center;
+}
+
+/* DEFAULTS */
+
+h1, h2, h3 { padding: 0em 0 0.5em 0; color: #666; }
+h1    { font-size: 1.6em; }
+h2    { font-size: 1.5em; }
+h3    { font-weight: bold; }
+p     { padding: 0.5em 0 0.5em 0; }
+li     { padding: 0.5em 0 0.5em 0; }
+a     { text-decoration: none; color: #666; }
+a:hover    { color: #c2c2c2; background-color: #f8f8f8; }
+h1 a:hover    { color: #c2c2c2; background-color: transparent; }
+form     { padding: 1.0em; }
+td     { padding: 0.5em; }
+small     { font-size: 0.8em; }
+del     { text-decoration: line-through; }
+
+/* LAYOUT */
+
+.clear	{ clear: both; margin: 0; line-height: 0em;} /* need line-height for IE */
+#grigious { height: 96px; width: 960px; background-color: #d9d9d9; background: url(../images/grigious.png) no-repeat bottom right; border-top: 2px dashed #000; }
+#scissors { height: 96px; background: url(../images/scissors.png) no-repeat top left;}
+#name { height: 96px; font-size: 5em; }
+#name  a:hover    { color: #727272; background-color: transparent; }
+#slogan { top: 15px; height: 96px; font-size: 1.2em; font-style: italic; }
+#breaker { height: 20px; width: 960px; background-color: #e8e8e8;}
+
+/* ANNOUNCEMENTS */
+
+#announcement {
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #000;
+    padding: 0.4em;
+    text-align: center;
+}
+
+/* HEADER */
+
+#hd { margin: auto; height:134px; background: url(../images/header-bg-cat.png) no-repeat; } /* wraps the title and ad blocks */
+
+#hd_title { padding-top: 10px; }	
+#hd_title h1 { font-size: 2.2em; font-weight: bold; padding: 0.5em 0.4em 0.4em 0.4em;}    /* Site title */
+#hd_title h1 a { color: #666; }
+#hd_title h1 a:hover { color: #c2c2c2; }
+
+#hd_block2 { margin-left: 50px; top: -20px; height:134px; background: url(../images/logo-top.png) no-repeat; }
+
+#nav { margin: 0; height:40px; background: url(../images/header-bg-top.png) no-repeat; } /* wraps the navigation bar */
+#nav a:hover { text-decoration: underline; color: #000000; background-color: transparent; }
+ul.navigation { float: left; list-style: none; }
+ul.navigation li { display: inline; font-size: 1.2em; font-weight: bold; }
+ul.navigation li a { color: #666; padding: 0.2em 0.4em 0.2em 0.4em; }
+ul.navigation li a:hover { color: #000; }
+ul.navigation li a img { vertical-align: middle; }
+li a#navigation_active { padding-left: 16px; text-decoration: underline; background: url(../images/here.png) no-repeat center left;}
+ul.nav_right {display: inline;}
+#rss_icon { margin-top: -0.2em; }
+
+#post_header { background-color: #f8f8f8; } /* wraps the categories bar, etc. */
+
+/* BODY */
+
+#bd { background-color: #fff;}
+#bdpost { }
+#sdbar { }
+
+.message {
+    margin: 1.0em auto 1.0em auto;
+    width: 90%;
+    padding: 0.8em;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.green    { background-color: #99FF66; }
+.red      { background-color: #FF6A55; color: #ffffff; }
+.bold_red { color: red; font-weight: bold; }
+.yellow   { background-color: #fbe760; } 
+
+/* SITE CLOSED MESSAGE */
+
+#site_closed { background-color: #fff; border-top: 2px solid #000; border-bottom: 2px solid #000; 
+		text-align: center; margin-top: 4em; font-size: 1.6em; line-height: 1.8em; }
+
+#site_closed_admin_link { font-size: 8pt; margin-top: 1.0em; } 
+
+/* BREADCRUMBS */
+
+#breadcrumbs {
+    margin-bottom: 1.0em;
+}
+
+/* PAGINATION */
+
+#pagination {
+    font-size: 0.9em;
+    margin-top: 2.0em;
+    text-align: right;
+}
+
+#pagination a {
+    display: inline;
+    padding: 0.3em 0.7em 0.3em 0.7em;
+    border:solid 1px #F0F0F0;
+}
+
+#pagination .pagi_current {
+    color: #666;
+    background-color: #d9d9d9;
+    font-weight: bold;
+    padding: 0.3em 0.7em 0.3em 0.7em;
+    border:solid 1px #444444;
+}
+
+#pagination a:hover {
+    border:solid 1px #444444;
+    text-decoration: none;
+}
+
+/* FORMS */
+input.submit {
+	margin-top: 0.4em;
+	padding: 0.2em 0.4em 0.2em 0.4em;
+	font-weight:bold;
+}
+
+/* SIDEBAR */
+
+#sidebar { padding: 1.0em; background-color: #f8f8f8; margin-right: -10px; }
+#sidebar ul li { padding: 0.1em; border-bottom: solid 1px #eee; }
+
+/* FOOTER */
+
+#ft {
+	background: url(../images/footer.png) no-repeat bottom left;
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    font-size: 1.0em;
+}
+
+#ftprebox { font-size: 12px; height:120px; top: 20px;}
+#ftbox1 { font-size: 12px; height:120px; top: 20px;}
+#ftbox2 { font-size: 12px; height:125px; top: 20px;}
+#ftbox3 { font-size: 12px; height:125px; top: 20px;}
+#ftbox4end { font-size: 12px; height:140px; top: 20px;}
+
+.debug  { font-size: 0.8em; }
+
+/* CUSTOMIZATION */
+
