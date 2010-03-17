@@ -97,6 +97,7 @@ ul.nav_right { display: inline; float: right; }
 }
 
 .green    { background-color: #99FF66; }
+.yellow    { background-color: #fbe760; }
 .red      { background-color: #FF6A55; color: #ffffff; }
 .bold_red { color: red; font-weight: bold; }
 
@@ -104,6 +105,8 @@ ul.nav_right { display: inline; float: right; }
 
 #site_closed { background-color: #fff; border-top: 2px solid #000; border-bottom: 2px solid #000; 
 		text-align: center; margin-top: 4em; font-size: 1.6em; line-height: 1.8em; }
+
+#site_closed_admin_link { font-size: 8pt; margin-top: 1.0em; }
 
 /* BREADCRUMBS */
 
