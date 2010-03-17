@@ -281,12 +281,12 @@ class UserAuth extends UserBase
                 $h->messages[$h->lang['error_csrf']] = 'red';
                 $error = 1;
             }
-    
+        
             $username_check = $h->cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
             if (!$username_check) {
                 $h->messages[$h->lang['main_user_account_update_username_error']] = 'red';
                 $error = 1;
-            } elseif($h->nameExists($username_check, '', $viewee->id)) {
+            } elseif($h->nameExists($username_check, '', $viewee->id) || $h->isBlocked('user', $username_check)) {
                 $h->messages[$h->lang['main_user_account_update_username_exists']] = 'red';
                 $error = 1;
             } else {
@@ -298,7 +298,7 @@ class UserAuth extends UserBase
             if (!$email_check) {
                 $h->messages[$h->lang['main_user_account_update_email_error']] = 'red';
                 $error = 1;
-            } elseif($h->emailExists($email_check, '', $viewee->id)) {
+            } elseif($h->emailExists($email_check, '', $viewee->id) || $h->isBlocked('email', $email_check)) {
                 $h->messages[$h->lang['main_user_account_update_email_exists']] = 'red';
                 $error = 1;
             } else {
