@@ -6,7 +6,7 @@
  * folder: cron
  * class: Cron
  * type: cron
- * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, admin_plugin_dropdown_menu, theme_index_top, admin_theme_index_top, cron_schedule_event, cron_update_job
+ * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, admin_plugin_dropdown_menu, theme_index_top, admin_theme_index_top, cron_schedule_event, cron_update_job, cron_hotaru_version, admin_theme_main_stats_post_version
  *
  * PHP version 5
  *
@@ -39,8 +39,10 @@ class Cron
 	 * */
     public function install_plugin($h)
     {
-		//$cron_settings['cron_location'] = BASEURL;
-		//$h->updateSetting('cron_settings', serialize($cron_settings));
+        $timestamp = time();
+        $recurrence = "daily";
+        $hook = "cron_hotaru_version";
+	$this->cron_schedule_event($h, $timestamp, $recurrence, $hook);
     }  
 
    public function theme_index_top($h) {
@@ -49,8 +51,19 @@ class Cron
 
     public function admin_theme_index_top($h) {       
         $h->vars['cron_settings'] = $h->getSerializedSettings();
-        $this->checkrunCron($h);
+        $this->checkrunCron($h);       
         //$this->run_cron($h);
+    }
+
+    public function admin_theme_main_stats_post_version($h) {
+        $hotaru_version_settings = $h->getSerializedSettings('cron', 'hotaru_latest_version');
+        $hotaru_latest_version = $hotaru_version_settings['version'];
+        if ($hotaru_latest_version == $h->version) {
+            echo "<li>Latest version installed</li>";
+        }
+        else {
+            echo "<li><a href='#'>Update to v." . $hotaru_latest_version . "</a></li>";
+        }
     }
 
 
@@ -79,12 +92,10 @@ public function cron_schedule_event($h, $timestamp, $recurrence, $hook, $args = 
 	$key = md5(serialize($args));       
 	if ( !isset( $schedules[$recurrence] ) )
 		return false;
+        
 	$crons[$timestamp][$hook][$key] = array( 'schedule' => $recurrence, 'args' => $args, 'interval' => $schedules[$recurrence]['interval'] );
 	uksort( $crons, "strnatcasecmp" );
-	
-        //echo "--> <pre>";
-        //print_r ($crons);
-        //echo "</pre>";
+       
         $this->_set_cron_array($h, $crons );
 }
 
@@ -247,7 +258,6 @@ public function spawn_cron($h, $local_time = 0 ) {
  * @return null When doesn't need to run Cron.
  */
 public function run_cron($h) {
-
 	if ( false === $crons = $this->_get_cron_array($h) )
 		return;
 
@@ -337,98 +347,117 @@ public function cron_get_schedule($hook, $args = array()) {
  * Retrieve cron info array option.
  *
  */
-public function _get_cron_array($h)  {
-	//$cron = get_option('cron');
-        $cron = $h->vars['cron_settings'];
+public function _get_cron_array($h)  {	
+        $cron = $h->vars['cron_settings'];       
 	if ( ! is_array($cron) )
 		return false;
 
 	return $cron;
 }
 
-/**
- * Updates the CRON settings.
- *
- */
-public function _set_cron_array($h,$cron) {	
-        $h->updateSetting('cron_settings', serialize($cron));
-        $h->vars['cron_settings'] = $cron;
-}
-
-// stub for checking server timer accuracy, using outside standard time sources
-public function check_server_timer( $local_time ) {
-	return true;
-}
-
-public function checkrunCron($h) {
-    if ( !empty($_POST) || defined('DOING_AJAX') || defined('DOING_CRON') )
-	return;
-
-   define('DOING_CRON', true);   
-
-   if ( false === $crons = $this->_get_cron_array($h) )	
-        return;
-
-   $keys = array_keys( $crons );
-   $local_time = time();
-
-   if ( isset($keys[0]) && $keys[0] > $local_time )	
-       return;
-
-   foreach ($crons as $timestamp => $cronhooks) {
-        if ( $timestamp > $local_time )
-            return;
-
-        foreach ($cronhooks as $hook => $keys) {
-            foreach ($keys as $k => $v) {
-                $schedule = $v['schedule'];
-                if ($schedule != false) {
-                        $new_args = array($timestamp, $schedule, $hook, $v['args']);                    
-                        $this->cron_reschedule_event($h,$timestamp, $schedule, $hook, $v['args']);
-                }
-                $this->cron_unschedule_event($h, $timestamp, $hook, $v['args']);
-
-                //print "** run cron " . $hook . " ***********  ";
-                //call function to do task required for cron
-                 $h->pluginHook($hook, '', $v['args']);
-                
-                //print "supposed to run ... " . $hook . " with these args -> ";
-                //print_r ($v['args']);
-            }
-        }
-   }   
-
-}
-
-public function cron_update_job($h, $cron_data)
-{
-    $h->vars['cron_settings'] = $h->getSerializedSettings();
-    
-    //print "hi";
-    //print_r ($cron_data);
-    $timestamp = $cron_data['timestamp'];
-    $recurrence = $cron_data['recurrence'];
-    $hook = $cron_data['hook'];
-    $args = $cron_data['args'];
-    $id = $cron_data['args']['id'];
-
-    //print "id= " . $id;
-    // check whether already have existing event for this autoreader job
-    $crons = $this->_get_cron_array($h);
-    foreach ($crons as $timestamp => $cronhooks) {
-   //   foreach ($cronhooks as $hook => $keys) {
-   //     foreach ($keys as $k => $v) {
-   //         if ($k == 'id' && $v =$id) {
-   //           $cron_id = $timestamp => $id;
-   //         }
-   //     }
-   //   }
+    /**
+     * Updates the CRON settings.
+     *
+     */
+    public function _set_cron_array($h,$cron) {
+            $h->updateSetting('cron_settings', serialize($cron));
+            $h->vars['cron_settings'] = $cron;
     }
 
-    // $this->cron_reschedule_event($h,$timestamp, $schedule, $hook, $v['args']);
-    // $this->cron_unschedule_event($h, $timestamp, $hook, $v['args']);
+    // stub for checking server timer accuracy, using outside standard time sources
+    public function check_server_timer( $local_time ) {
+            return true;
+    }
 
-    $this->cron_schedule_event($h, $timestamp, $recurrence, $hook, $args);
-}
+    public function cron_hotaru_version($h) {
+        $query_vals = array(
+            'api_key' => '',
+            'format' => 'json',
+            'method' => 'hotaru.version.get'
+        );
+
+        // Generate the POST string
+        $ret = '';
+        foreach($query_vals as $key => $value) {
+            $ret .= $key.'='.urlencode($value).'&';
+        }
+
+        $ret = rtrim($ret, '&');
+
+        $ch = curl_init("http://japanreporter.com/index.php?page=api");
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $ret);
+        $response = curl_exec($ch);
+        curl_close ($ch);
+       
+        $info = json_decode($response, true);
+       
+        // save the updated version number to the local db so we can display it on the admin panel until it gets updated.        
+         if (isset($info['version']))
+             $h->updateSetting('hotaru_latest_version', serialize($info), 'cron');
+    }
+
+    public function checkrunCron($h) {
+        if ( !empty($_POST) || defined('DOING_AJAX') || defined('DOING_CRON') )
+            return;
+
+       define('DOING_CRON', true);
+
+       if ( false === $crons = $this->_get_cron_array($h) )
+            return;
+
+       $keys = array_keys( $crons );
+       $local_time = time();
+
+       if ( isset($keys[0]) && $keys[0] > $local_time )
+           return;
+
+       foreach ($crons as $timestamp => $cronhooks) {
+            if ( $timestamp > $local_time )
+                return;
+
+            foreach ($cronhooks as $hook => $keys) {               
+                foreach ($keys as $k => $v) {                   
+                    $schedule = $v['schedule'];
+                    if ($schedule != false) {
+                            //$new_args = array($timestamp, $schedule, $hook, $v['args']);
+                            $this->cron_reschedule_event($h, $timestamp, $schedule, $hook, $v['args']);
+                    }
+                    $this->cron_unschedule_event($h, $timestamp, $hook, $v['args']);
+                    //call function to do task required for cron
+                    print "running hook..-> " . $hook. "     ";
+                    $h->pluginHook($hook, '', $v['args']);
+                }
+            }
+       }
+    }
+
+    public function cron_update_job($h, $cron_data)
+    {
+        $h->vars['cron_settings'] = $h->getSerializedSettings();
+
+        $timestamp = $cron_data['timestamp'];
+        $recurrence = $cron_data['recurrence'];
+        $hook = $cron_data['hook'];
+        $args = $cron_data['args'];
+        $id = $cron_data['args']['id'];
+        $cron_exists = false;
+
+         // check whether already have existing event for this job
+        //  match against hook and args. note args must match
+        $current_crons = $this->_get_cron_array($h);
+        foreach ($current_crons as $current_timestamp => $current_cronhooks) {
+          foreach ($current_cronhooks as $current_hook => $current_keys) {
+            if ($current_hook == $hook && $current_keys = $args) {
+                $this->cron_schedule_event($h, $timestamp, $recurrence, $hook, $args);
+                $this->cron_unschedule_event($h, $current_timestamp, $current_hook, $args);
+                $cron_exists = true;
+            }
+          }
+        }
+
+        if (!$cron_exists) $this->cron_schedule_event($h, $timestamp, $recurrence, $hook, $args);
+    }
 
 }
