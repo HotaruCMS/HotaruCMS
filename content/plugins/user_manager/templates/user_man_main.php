@@ -40,7 +40,8 @@ if (!isset($h->vars['user_man_navi'])) { $h->vars['user_man_navi'] = ''; }
 <p id="user_man_navigation">
     <b><u><?php echo $h->lang["user_man"]; ?></u></b> &nbsp;&nbsp;
     <?php echo "<a href='" . BASEURL . "admin_index.php?plugin=user_manager&page=plugin_settings&subpage=default_perms'>" . $h->lang["user_man_default_perms"] . "</a>"; ?> &nbsp;&nbsp;
-    <?php echo "<a href='" . BASEURL . "admin_index.php?plugin=user_manager&page=plugin_settings&subpage=default_settings'>" . $h->lang["user_man_default_settings"] . "</a>"; ?>
+    <?php echo "<a href='" . BASEURL . "admin_index.php?plugin=user_manager&page=plugin_settings&subpage=default_settings'>" . $h->lang["user_man_default_settings"] . "</a>"; ?> &nbsp;&nbsp;
+    <?php echo "<a href='" . BASEURL . "admin_index.php?plugin=user_manager&page=plugin_settings&subpage=add_user'>" . $h->lang["user_man_add"] . "</a>"; ?>
 </p>
 
 <?php echo $h->showMessage(); ?>

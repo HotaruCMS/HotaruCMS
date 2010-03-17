@@ -46,6 +46,12 @@ class UserManagerSettings
             return true;
         }
         
+        if (($h->cage->get->testPage('subpage') == 'add_user')
+            || ($h->cage->post->testPage('subpage') == 'add_user')) {
+            $this->addUserPage($h);
+            return true;
+        }
+        
         // grab the number of pending users:
         $sql = "SELECT COUNT(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
         $num_pending = $h->db->get_var($h->db->prepare($sql, 'pending'));
@@ -608,6 +614,141 @@ class UserManagerSettings
 
         // Show template:
         $h->displayTemplate('user_man_user_settings', 'user_manager');
+    }
+    
+    
+    /**
+     * add User Page
+     */
+    public function addUserPage($h)
+    {
+        switch ($h->cage->post->testAlnumLines('submitted'))
+        {
+            case 'new_user':
+                $this->createUser($h);
+                break;
+            case 'new_password':
+                $this->sendPassword($h);
+                break;
+            case 'email_validation':
+                $this->sendEmailValidationRequest($h);
+                break;
+        }
+        
+        // one username for each of the three forms, otherwise they all get pre-filled
+        if (!isset($h->vars['user_man_username_1'])) { $h->vars['user_man_username_1'] = ''; }
+        if (!isset($h->vars['user_man_username_2'])) { $h->vars['user_man_username_2'] = ''; }
+        if (!isset($h->vars['user_man_username_3'])) { $h->vars['user_man_username_3'] = ''; }
+        if (!isset($h->vars['user_man_email'])) { $h->vars['user_man_email'] = ''; }
+        
+        $h->displayTemplate('user_man_add');
+    }
+    
+    
+    /**
+     * Create a new user
+     */
+    public function createUser($h)
+    {
+        $error = 0;
+
+        // check username
+        $username = $h->cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
+        if (!$username) {
+            $h->messages[$h->lang['user_signin_register_username_error']] = 'red';
+            $error = 1;
+        } else {
+            $h->vars['user_man_username_1'] = $username;
+        }
+        
+        // check email
+        $email = $h->cage->post->testEmail('email');
+        if (!$email) {
+            $h->messages[$h->lang['user_signin_register_email_error']] = 'red';
+            $error = 1;
+        } else {
+            $h->vars['user_man_email'] = $email;
+        }
+        
+        // process new user
+        if (!$error) {
+            $us = new UserSignin();
+            $blocked = $us->checkBlocked($h, $username, $email); // true if blocked, false if safe
+            $exists = $h->userExists(0, $username, $email);
+            if (!$blocked && ($exists == 'no')) {
+                
+                // SUCCESS!!!
+                $userAuth = new UserAuth();
+                $userAuth->name = $username;
+                $userAuth->email = $email;
+                $userAuth->emailValid = 1;
+                $userAuth->password = random_string(10); // temporary until user is created
+                $userAuth->addUserBasic($h);
+                $last_insert_id = $h->db->get_var($h->db->prepare("SELECT LAST_INSERT_ID()"));
+                
+                // send password!
+                $passconf = md5(crypt(md5($userAuth->email),md5($userAuth->email)));
+                $userAuth->newRandomPassword($h, $last_insert_id, $passconf);
+                $h->messages[$h->lang['user_man_add_success_password_sent']] = 'green';
+                
+                $user = ''; $email = ''; // clear the form.
+                
+            } elseif ($exists == 'id') {
+                $h->messages[$h->lang['user_signin_register_id_exists']] = 'red';
+    
+            } elseif ($exists == 'name') {
+                $h->messages[$h->lang['user_signin_register_username_exists']] = 'red';
+    
+            } elseif ($exists == 'email') {
+                $h->messages[$h->lang['user_signin_register_email_exists']] = 'red';
+                
+            } elseif ($blocked) {
+                $h->messages[$h->lang['user_signin_register_user_blocked']] = 'red';
+            }
+        }
+    }
+    
+    
+    /**
+     * Send new password
+     */
+    public function sendPassword($h)
+    {
+        // check username
+        $username = $h->cage->post->testUsername('username');
+        
+        $userAuth = new UserAuth();
+        $userAuth->getUserBasic($h, 0, $username);
+        if ($userAuth->id) {
+            // send password!
+            $passconf = md5(crypt(md5($userAuth->email),md5($userAuth->email)));
+            $userAuth->newRandomPassword($h, $userAuth->id, $passconf);
+            $h->messages[$h->lang['user_man_new_password_sent']] = 'green';
+        } else {
+            $h->vars['user_man_username_2'] = $username; // to fill the username field 
+            $h->messages[$h->lang['user_man_user_not_found']] = 'red';
+        }
+    }
+    
+    
+    /**
+     * Send email validation request
+     */
+    public function sendEmailValidationRequest($h)
+    {
+        // check username
+        $username = $h->cage->post->testUsername('username');
+        $userid = $h->getUserIdFromName($username);
+        
+        if ($userid) {
+            // send email validation request
+            $us = new UserSignin();
+            $us->sendConfirmationEmail($h, $userid);
+            $h->messages[$h->lang['user_man_email_validation_request_sent']] = 'green';
+        } else {
+            $h->vars['user_man_username_3'] = $username; // to fill the username field 
+            $h->messages[$h->lang['user_man_user_not_found']] = 'red';
+        }
     }
 }
 ?>

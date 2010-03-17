@@ -125,4 +125,25 @@ $lang["user_man_user_settings_trouble"] = "<span class='bold_red'>DELETE ALL DEF
 $lang["user_man_user_settings_trouble_note"] = "<small>(You will need to uninstall and reinstall plugins to restore them)</small>";
 $lang['user_man_no_settings'] = "There haven't been any settings installed by plugins yet";
 
+
+/* User Man Create User */
+
+$lang['user_man_add'] = "Add New User";
+$lang['user_man_add_new_user'] = "Add a New User";
+$lang["user_man_add_desc"] = "Use this page to add new users, send new passwords and email confirmation emails.";
+$lang["user_man_add_detail"] = "Enter a username and email address for the new user. When you click \"Add New User\" a password will be generated and sent to the user's email address.";
+$lang['user_man_add_success_password_sent'] = "User Created and Password Emailed";
+$lang['user_man_create_send'] = "Create User &amp; Send Password";
+
+$lang["user_man_send_new_password"] = "Send a new random password";
+$lang["user_man_send_password_detail"] = "Enter a username for the user you wish to generate a new password for.";
+$lang['user_man_send_password'] = "Send Password";
+$lang['user_man_new_password_sent'] = "New password generated and emailed.";
+$lang['user_man_user_not_found'] = "Sorry, no user found with that name";
+
+$lang["user_man_send_email_validation"] = "Send an email validation request";
+$lang["user_man_send_email_validation_detail"] = "Enter a username for the user you wish to send an email validation message to.";
+$lang['user_man_request_valid_email'] = "Request Email Validation";
+$lang['user_man_email_validation_request_sent'] = "Email validation request sent.";
+
 ?>
