@@ -1,12 +1,12 @@
 /* ----------------------------------------------
 	Template Name : Keep It Simple
-	Platform: HotaruCMS 0.9
-	Version : 1.0   
+	Platform: HotaruCMS 1.1.2
+	Version : 1.2  
 	Author: Carlo Armanni
 	Author URI : http://www.tr3ndy.com/ 
 	Original Author : Erwin Aligam
 	Origianl Author URI : http://www.styleshout.com/       
-	Last Date Modified : December 04, 2009	
+	Last Date Modified : March 15, 2010	
  ------------------------------------------------ */
  
 /* ----------------------------------------------
@@ -68,6 +68,14 @@ dd {
 }
 
 p, dl { padding: 10px 15px; }
+
+
+/* SITE CLOSED MESSAGE */
+
+#site_closed { background-color: #fff; border-top: 2px solid #000; border-bottom: 2px solid #000; 
+		text-align: center; margin-top: 4em; font-size: 1.6em; line-height: 1.8em; }
+		
+#site_closed_admin_link { font-size: 8pt; margin-top: 1.0em; }
 
 /* Images */
 img {
@@ -746,6 +754,11 @@ padding-left:12px;
     font-size: 1.2em;
     font-weight: bold;
 }
+
+.green    { background-color: #99FF66; }
+.yellow   { background-color: #fbe760; }
+.red      { background-color: #FF6A55; color: #ffffff; }
+.bold_red { color: red; font-weight: bold; }
 
 /* Search Box */
 
