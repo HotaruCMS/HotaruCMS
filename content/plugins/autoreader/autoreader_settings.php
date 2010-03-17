@@ -36,21 +36,18 @@
   require_once(PLUGINS . 'autoreader/inc/tools.class.php' );
   require_once(PLUGINS . 'autoreader/helper/form.helper.php' );
   require_once(PLUGINS . 'autoreader/helper/tag.helper.php');
-
   
 class AutoreaderSettings
 {
      /**
-     * Admin settings for the Tweet This plugin
+     * Admin settings
      */
     public function settings($h)
     {
         // include language file
         $h->includeLanguage();
 
-        $template_call = $h->cage->post->testAlnumLines('autoreader_template');
-
-       
+        $template_call = $h->cage->post->testAlnumLines('autoreader_template');     
 
         switch($template_call) {
             case 'autoreader_list': {
@@ -58,7 +55,6 @@ class AutoreaderSettings
             }
 
             default : {
-
                 // show header
                 echo "<h1>" . $h->lang["autoreader_settings_header"] . "</h1>\n";
                 ?>
@@ -68,26 +64,21 @@ class AutoreaderSettings
                         <li><a name="autoreader_dashboard" href="#">Dashboard</a></li>
                         <li><a name="autoreader_list" href="#">Campaigns</a>
                             <ul class="sub_menu">
-                                <li><a name="autoreader_add" href="#">Add Campaign</a>
-                                    <ul class="sub_menu">
-                                        <li><a name="autoreader_add" href="#">Add Campaign</a></li>
-                                        <li><a name="autoreader_list" href="#">List Campaigns</a></li>
-                                     </ul>
-                                </li>
+                                <li><a name="autoreader_add" href="#">Add Campaign</a></li>
                                 <li><a name="autoreader_list" href="#">List Campaigns</a></li>
                             </ul>
                         </li>
                         <li><a name="autoreader_options" href="#">Options</a></li>
                     </ul>
                 </div>
-
+               
                 <div id="admin_plugin_content">
 
                 </div>
 
                 <?php
                 // Get settings from database if they exist...
-                $autoreader_settings = $h->getSerializedSettings();
+                //$autoreader_settings = $h->getSerializedSettings();
             }
         }
     }
@@ -98,11 +89,8 @@ class AutoreaderSettings
      * 
      */
     public function getOptionSettings($h, $options = null)
-    {
-        print "---" . $h->plugin->folder;
-        $autoreader_settings = $h->getSerializedSettings();
-      
-        if ($h->cage->post->testAlpha('action') == "save" ) {
+    {        
+        if ($h->cage->post->testAlpha('action') == "save" ) {           
             $array = array('saved' => 'true');
             $autoreader_settings['wpo_log'] = $h->cage->post->testAlnumLines('option_logging');
             $autoreader_settings['wpo_log_stdout'] =  $h->cage->post->testAlnumLines('option_log_stdout');
@@ -113,7 +101,10 @@ class AutoreaderSettings
 
             $h->updateSetting('autoreader_settings', serialize($autoreader_settings));
         }
-        else { $array = $autoreader_settings; }
+        else { 
+            $autoreader_settings = $h->getSerializedSettings('autoreader');
+            $array = $autoreader_settings;           
+       }
         
         return $array;
     }
@@ -126,19 +117,25 @@ class AutoreaderSettings
    *
    */
   public function getCampaigns($h, $args = '')
-  {       
-    $where ="";
+  {
+    extract(WPOTools::getQueryArgs($args, array('fields' => '*',
+                                                'search' => '',
+                                                'orderby' => 'created_on',
+                                                'ordertype' => 'DESC',
+                                                'where' => '',
+                                                'unparsed' => false,
+                                                'limit' => null)));
+
   	if(! empty($search))
   	  $where .= " AND title LIKE '%{$search}%' ";
-     $orderby =""; $ordertype=""; $limit="";
-  	//if($unparsed)
-  	//  $where .= " AND active = 1 AND (frequency + UNIX_TIMESTAMP(lastactive)) < ". (current_time('timestamp', true) - get_option('gmt_offset') * 3600) . " ";
 
-  	$sql = "SELECT * FROM {$this->db['campaign']} WHERE 1 = 1 $where "
-         . ""; //ORDER BY $orderby $ordertype $limit";
+  	if($unparsed)
+  	  $where .= " AND active = 1 AND (frequency + UNIX_TIMESTAMP(lastactive)) < ". (current_time('timestamp', true) - get_option('gmt_offset') * 3600) . " ";
 
-    //print $sql;  
-    return $h->db->get_results($sql);  
+  	$sql = "SELECT $fields FROM {$this->db['campaign']} WHERE 1 = 1 $where "
+         . "ORDER BY $orderby $ordertype $limit";
+       
+  	return $h->db->get_results($sql);
   }
 
 
@@ -190,11 +187,6 @@ class AutoreaderSettings
 
     return false;
   }
-
-
-
-
-
 
 
      /**
@@ -274,7 +266,7 @@ class AutoreaderSettings
   {
   	if ( !$categories )       
         $args = array("orderby"=>"category_order", "order"=>"ASC");
-  		$categories = $h->getCategories($args);
+  	$categories = $h->getCategories($args);
    
   	if ( $categories ) {
 
@@ -282,7 +274,7 @@ class AutoreaderSettings
         $catObj = new Category();
         $depth = 1;
 
-  		echo "<ul class='categories_widget'>\n";
+  	echo "<ul class='categories_widget'>\n";
         foreach ($categories as $cat) {
             $cat_level = 1;    // top level category.           
             if ($cat->category_safe_name != "all") {
@@ -313,10 +305,8 @@ class AutoreaderSettings
    */
   function adminReset($h)
   {
-    $id = intval($_REQUEST['id']);
-
-    if(! defined('DOING_AJAX'))
-      check_admin_referer('reset-campaign_'.$id);
+    $id = $h->cage->post->testInt('id');
+    if(!$id) die("Can't be called directly");
 
     // Reset count and lasactive
     $wpdb->query(WPOTools::updateQuery($this->db['campaign'], array(
@@ -325,7 +315,7 @@ class AutoreaderSettings
     ), "id = $id"));
 
     // Reset feeds hashes, count, and lasactive
-    foreach($this->getCampaignFeeds($id) as $feed)
+    foreach($this->getCampaignFeeds($h, $id) as $feed)
     {
       $wpdb->query(WPOTools::updateQuery($this->db['campaign_feed'], array(
         'count' => 0,
@@ -334,10 +324,11 @@ class AutoreaderSettings
       ), "id = {$feed->id}"));
     }
 
-    if(defined('DOING_AJAX'))
-      die('1');
-    else
-      $this->adminList();
+    //delete any cron jobs for this campaign ?
+
+    $arr = array('id'=> $id);
+    return json_encode(array('id'=>$id));
+
   }
 
   /**
@@ -348,21 +339,24 @@ class AutoreaderSettings
   function adminDelete($h)
   {
 
-    $id = intval($_REQUEST['id']);
-
-    // If not called through admin-ajax.php
-    if(! defined('DOING_AJAX'))
-      check_admin_referer('delete-campaign_'.$id);
+    $id = $h->cage->post->testInt('id');
+    if(!$id) die("Can't be called directly");
 
     $h->db->query("DELETE FROM {$this->db['campaign']} WHERE id = $id");
     $h->db->query("DELETE FROM {$this->db['campaign_feed']} WHERE campaign_id = $id");
     $h->db->query("DELETE FROM {$this->db['campaign_word']} WHERE campaign_id = $id");
     $h->db->query("DELETE FROM {$this->db['campaign_category']} WHERE campaign_id = $id");
 
-    if(defined('DOING_AJAX'))
-      die('1');
-    else
-      $this->adminList();
+    //delete any cron jobs for this campaign
+   $timestamp = time();
+   $hook = "autoreader_runcron";
+   $args = array('id'=> $id);
+   $cron_data = array('hook'=>$hook, 'args'=>$args);
+   $h->pluginHook('cron_delete_job', 'cron', $cron_data);
+
+    $arr = array('id'=> $id);
+    return json_encode($arr);
+
   }
 
   /**
@@ -486,10 +480,11 @@ class AutoreaderSettings
     $feeds = $this->getCampaignFeeds($h, $campaign->id);
 
     foreach($feeds as $feed)
-      $count += $this->processFeed($h, $campaign, $feed);
+        $count += $this->processFeed($h, $campaign, $feed);
+
     $h->db->query(WPOTools::updateQuery($this->db['campaign'], array(
       'count' => $campaign->count + $count,
-      'lastactive' => time() //('mysql', true)
+      'lastactive' => current_time('mysql', true)
     ), "id = {$campaign->id}"));
 
     return $count;
@@ -608,9 +603,8 @@ class AutoreaderSettings
     $permalink=$item->get_permalink();
     $root=$_SERVER['HTTP_HOST'];
 
-//		$posturl=file_get_contents("http://$root/wp-content/plugins/wp-o-matic/original_url.php?blog=$permalink");
-
-//    $posturl = $this->get_sourceurl($permalink);
+    // $posturl=file_get_contents("http://$root/wp-content/plugins/wp-o-matic/original_url.php?blog=$permalink");
+    // $posturl = $this->get_sourceurl($permalink);
 $posturl =  $permalink;
 
 
@@ -779,7 +773,7 @@ $posturl =  $permalink;
                             ? $data = $h->cage->post->testAlnumLines('campaign_template') : null,
         'frequency'     => intval($h->cage->post->testInt('campaign_frequency_d')) * 86400
                           + intval($h->cage->post->testInt('campaign_frequency_h')) * 3600
-                          + intval($h->cage->post->testInt('campaign_frequency_m')) * 60,
+                          + intval($h->cage->post->testInt('campaign_frequency_m')) * 60,       
         'cacheimages'   => (int) isset( $data_cacheimages),
         'feeddate'      => (int) isset( $data_feeddate),
         'posttype'      => $h->cage->post->testAlpha('campaign_posttype'),
@@ -1071,7 +1065,12 @@ $posturl =  $permalink;
 
    //get data ready to pass to cron plugin
    $timestamp = time();
-   $recurrence = "hourly"; //$this->campaign_data['campaign_frequency_d'];
+   switch ($this->campaign_data['main']['frequency']) {
+       case 43200 : $recurrence = "twicedaily"; break;
+       case 86400 : $recurrence = "daily"; break;
+       case 302400 : $recurrence = "weekly"; break;
+       default : $recurrence = "hourly"; break;
+   }
    $hook = "autoreader_runcron";
    $args = array('id'=> $id);
    $cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook, 'args'=>$args);
@@ -1315,7 +1314,6 @@ $posturl =  $permalink;
   function getCampaignData($h, $id, $section = null)
   {   
     $campaign = (array) $this->getCampaignById($h, $id);
-//print_r ($campaign);
     if($campaign)
     {
       $campaign_data = $this->campaign_structure;

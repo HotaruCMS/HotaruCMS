@@ -1,8 +1,7 @@
 <?php
     require_once(PLUGINS . 'autoreader/autoreader.php');
     $arSettings = new Autoreader($h);
-    //$autoreader_settings = $h->getSerializedSettings();
-
+   
     $action = $h->cage->post->testAlnumLines('action');
 
      switch ($action) {
@@ -34,45 +33,51 @@
 
       <ul id="options">
         <li id="options_cron">
-          <?php echo label_for('option_unixcron', 'Unix cron') ?>
-          <?php echo checkbox_tag('option_unixcron', 1, $autoreader_settings['wpo_unixcron']) ?>
+             <?php if ($autoreader_settings['wpo_premium']) { ?>
+                  <?php echo label_for('option_unixcron', 'Unix cron') ?>
+                  <?php echo checkbox_tag('option_unixcron', 1, $autoreader_settings['wpo_unixcron']) ?>
+            <?php } ?>
 
           <h3>Cron command:</h3>
           <div id="cron_command" class="command"><?php echo $arSettings->cron_command ?></div>
 
-          <h3>WebCron-ready URL:</h3>
-          <div id="cron_command" class="command"><?php echo $arSettings->cron_url ?></div>
+           <?php if ($autoreader_settings['wpo_premium']) { ?>
+              <h3>WebCron-ready URL:</h3>
+              <div id="cron_command" class="command"><?php echo $arSettings->cron_url ?></div>
+           <?php } ?>
 
-          <p class="note"><?php echo 'Cron is set up to handle fetching.'; ?> <a href="<?php echo $arSettings->helpurl ?>cron" class="help_link"><?php echo 'More'; ?></a></p>
+          <p class="note"><?php echo 'Cron is set up to handle fetching.'; ?> <?php if ($autoreader_settings['wpo_help']) { ?><a href="<?php echo $arSettings->helpurl ?>cron" class="help_link"><?php echo 'More'; ?></a><?php } ?></p>
         </li>
 
         <li>
           <?php echo label_for('option_logging', 'Enable logging') ?>
           <?php echo checkbox_tag('option_logging', 1,$autoreader_settings['wpo_log']) ?>
 
-          <p class="note"><?php echo 'Enable database-driven logging of events.'; ?> <a href="<?php echo $this->helpurl ?>logging" class="help_link"><?php echo 'More'; ?></a></p>
+          <p class="note"><?php echo 'Enable database-driven logging of events.'; ?> <?php if ($autoreader_settings['wpo_help']) { ?><a href="<?php echo $this->helpurl ?>logging" class="help_link"><?php echo 'More'; ?></a><?php } ?></p>
         </li>
 
-        <li>
-          <?php echo label_for('option_logging_stdout', 'Enable logging stdout') ?>
-          <?php echo checkbox_tag('option_logging_stdout', 1, $autoreader_settings['wpo_log_stdout']) ?>
+        <?php if ($autoreader_settings['wpo_premium']) { ?>
+            <li>
+              <?php echo label_for('option_logging_stdout', 'Enable logging stdout') ?>
+              <?php echo checkbox_tag('option_logging_stdout', 1, $autoreader_settings['wpo_log_stdout']) ?>
 
-          <p class="note"><?php echo 'With this option enabled, WP-o-Matic will attempt to show you logs creation in real time when manual fetching is used.'; ?> <a href="<?php echo $this->helpurl ?>logging" class="help_link"><?php echo 'More'; ?></a></p>
-        </li>
+              <p class="note"><?php echo 'With this option enabled, Autoreader will attempt to show you logs creation in real time when manual fetching is used.'; ?> <a href="<?php echo $this->helpurl ?>logging" class="help_link"><?php echo 'More'; ?></a></p>
+            </li>
 
-        <li>
-          <?php echo label_for('option_caching','Cache images') ?>
-          <?php echo checkbox_tag('option_caching', 1,$autoreader_settings['wpo_cacheimage']) ?>
+            <li>
+              <?php echo label_for('option_caching','Cache images') ?>
+              <?php echo checkbox_tag('option_caching', 1,$autoreader_settings['wpo_cacheimage']) ?>
 
-          <p class="note"><?php echo 'This option overrides all campaign-specific settings'; ?> <a href="<?php echo $this->helpurl ?>image_caching" class="help_link"><?php echo 'More'; ?></a></p>
-        </li>
+              <p class="note"><?php echo 'This option overrides all campaign-specific settings'; ?> <a href="<?php echo $this->helpurl ?>image_caching" class="help_link"><?php echo 'More'; ?></a></p>
+            </li>
 
-        <li>
-          <?php echo label_for('option_cachepath','Image cache path') ?>
-          <?php echo input_tag('option_cachepath', $autoreader_settings['wpo_cachepath']) ?>
+            <li>
+              <?php echo label_for('option_cachepath','Image cache path') ?>
+              <?php echo input_tag('option_cachepath', $autoreader_settings['wpo_cachepath']) ?>
 
-          <p class="note"><?php echo 'The path <span id="cachepath">'. PLUGINS . 'Autoreader/<span id="cachepath_input">' . $autoreader_settings['wpo_cachepath'] . '</span></span> must exist, be writable by the server and accessible through browser.'; ?></p>
-        </li>
+              <p class="note"><?php echo 'The path <span id="cachepath">'. PLUGINS . 'Autoreader/<span id="cachepath_input">' . $autoreader_settings['wpo_cachepath'] . '</span></span> must exist, be writable by the server and accessible through browser.'; ?></p>
+            </li>
+        <?php } ?>
       </ul>
 
       <p class="submit">

@@ -4,7 +4,7 @@
     $campaigns = $arSettings->getCampaigns($h);
 
     $logs = $arSettings->getLogs($h);
-
+    $autoreader_settings = $arSettings->getOptionSettings($h);
 
     //$logging = get_option('wpo_log');
     $logs = $arSettings->getLogs($h, 'limit=7');
@@ -12,7 +12,6 @@
                                           '&where=active=1&orderby=UNIX_TIMESTAMP(lastactive)%2Bfrequency&ordertype=ASC');
     $lastcampaigns = $arSettings->getCampaigns($h,'fields=id,title,lastactive,frequency&limit=5&where=UNIX_TIMESTAMP(lastactive)>0&orderby=lastactive');
     $campaigns = $arSettings->getCampaigns($h,'fields=id,title,count&limit=5&orderby=count');
-
 
  ?>
 
@@ -23,8 +22,8 @@
 
     <div id="sidebar">
       <div id="sidebar_logging">
-        <a href="<?php echo $this->helpurl ?>logging" class="help_link">Help</a>
-        <h3>&rsaquo; 'Latest log entries <a href="<?php echo $this->adminurl ?>&s=logs">(view all)</a></h3>
+         <?php if ($autoreader_settings['wpo_help']) { ?><a href="<?php echo $this->helpurl ?>logging" class="help_link">Help</a><?php } ?>
+        <h3>Latest log entries  <?php if ($autoreader_settings['wpo_premium']) { ?><a href="<?php echo $this->adminurl ?>&s=logs">(view all)</a><?php } ?></h3>
         <?php if(!$logs): ?>
         <p class="none">No actions to display</p>
         <?php else: ?>
@@ -35,23 +34,24 @@
         </ul>
         <?php endif; ?>
 
-        <p id="log_status">Logging Status (<a title="We recommend keeping logging on only when experimenting with new feeds." href="<?php echo $this->adminurl ?>&amp;s=options">change</a>).</p>
+         <?php if ($autoreader_settings['wpo_premium']) { ?>
+            <p id="log_status">Logging Status (<a title="We recommend keeping logging on only when experimenting with new feeds." href="<?php echo $this->adminurl ?>&amp;s=options">change</a>).</p>
+        <?php } ?>
       </div>
     </div>
 
     <div id="main">
 
-      <p>Welcome to the Dashboard! This is the place where you can quickly watch activity, and keep track of your top campaigns and feeds.</p>
-
+   <?php if ($autoreader_settings['wpo_premium']) { ?>
       <h3>Next campaigns to process</h3>
       <?php if(count($nextcampaigns) == 0): ?>
       <p class="none">No campaigns to display
       <?php else: ?>
         <ol class="campaignlist">
           <?php foreach($nextcampaigns as $campaign):
+              print_r($campaign);
             $cl = $arSettings->getCampaignRemaining($h, $campaign);
             $cl = WPOTools::calcTime($cl, 0, 'd', false);
-print_r($campaign);
             $timestr = '';
             if($cl['days']) $timestr .= $cl['days'] . 'd ';
             if($cl['hours']) $timestr .= $cl['hours'] . 'h ';
@@ -64,6 +64,8 @@ print_r($campaign);
           <?php endforeach; ?>
         </ol>
       <?php endif; ?>
+
+  <?php } ?>
 
       <h3>Latest processed campaigns</h3>
       <?php if(count($lastcampaigns) == 0): ?>

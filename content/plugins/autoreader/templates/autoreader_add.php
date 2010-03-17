@@ -1,21 +1,18 @@
 <?php
-
     # Dependencies     
     require_once(PLUGINS . 'autoreader/helper/edit.helper.php' );  
     require_once(PLUGINS . 'autoreader/autoreader.php');
     $arSettings = new Autoreader($h);
-
+     
     $id = 0;
     $action = $h->cage->post->testAlnumLines('action');  
     $action_get = $h->cage->get->testAlnumLines('action');
     if (!$action) { $action = $action_get; }  
     switch ($action) {
         case "edit":               
-             $data = $arSettings->adminEdit($h);
-            //print_r($data);
+            $data = $arSettings->adminEdit($h);           
             echo '<h2>Editing Campaign #' . $data['main']['id'] . ", " .  $data['main']['title'] . '</h2>';
-            action_add($h, $arSettings,  $data, 'edit');
-         // what $data settings are needed
+            action_add($h, $arSettings,  $data, 'edit');         
             break;
         case "save" :           
             $arSettings->adminCampaignRequest($h);
@@ -35,14 +32,14 @@
             echo '<h2>Add New Campaign</h2>';           
             action_add($h, $arSettings);
     }
-
    ?>
 
 <div class="wrap">
    
  <?php
 function action_add($h, $arSettings, $data=null, $action = 'add') {
-  
+    $arSettings = new Autoreader($h);
+    $autoreader_settings = $arSettings->getOptionSettings($h);
  ?>
     <form id="edit_campaign" action="" method="post" accept-charset="utf-8">
       
@@ -59,7 +56,9 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
       ?>
 
       <ul id="edit_buttons" class="submit">
-        <li><a href="http://bloglinkjapan.com/wp-content/plugins/wp-o-matic/help.php?item=campaigns" class="help_link">Help</a></li>
+         <?php if ($autoreader_settings['wpo_help']) { ?>
+                <li><a href="help.php?item=campaigns" class="help_link">Help</a></li>
+         <?php } ?>       
         <li><input type="submit" name="edit_submit" value="Submit" id="edit_submit" /></li>
       </ul>
 
@@ -83,7 +82,7 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
           <div class="longtext required">
             <?php echo label_for('campaign_title', 'Title') ?>
             <?php echo input_tag('campaign_title', _data_value($data['main'], 'title')) ?>
-            <p class="note">Tip: pick a name that is general for all the campaign's feeds (eg: Paris Hilton)</p>
+            <p class="note">Tip: pick a name that describes the collection of this campaign's feeds (eg: Basketball)</p>
           </div>
 
           <div class="checkbox required">
@@ -130,20 +129,23 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
               <?php endfor ?>
             <?php endif ?>
           </div>
-
-          <a href="#add_feed" id="add_feed">Add more</a> | <a href="#" id="test_feeds">Check all</a>
+         <?php if ($autoreader_settings['wpo_premium']) { ?>
+            <a href="#add_feed" id="add_feed">Add more</a> | <a href="#" id="test_feeds">Check all</a>
+          <?php } ?>
         </div>
 
         <!-- Categories section -->
         <div class="section" id="section_categories">
           <p>These are the categories where the posts will be created once they're fetched from the feeds.</p>
-          <p>Please select at one.</p>
+          <p>Please select one.</p>
 
           <ul id="categories">
             <?php $arSettings->adminEditCategories($h, $data) ?>
           </ul>
 
-          <a href="#quick_add" id="quick_add">Quick add</a>
+           <?php if ($autoreader_settings['wpo_premium']) { ?>
+                <a href="#quick_add" id="quick_add">Quick add</a>
+           <?php } ?>
         </div>
 
         <!-- Rewrite section -->
@@ -200,7 +202,9 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
             <?php endif ?>
           </ul>
 
-          <a href="#add_word" id="add_word">Add more</a>
+           <?php if ($autoreader_settings['wpo_premium']) { ?>
+                <a href="#add_word" id="add_word">Add more</a>
+           <?php } ?>
         </div>
 
         <!-- Options -->
@@ -214,25 +218,26 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
           </div>
           <?php endif ?>
 
-          <div class="checkbox">
-            <label for="campaign_templatechk">Custom post template</label>
-            <?php echo checkbox_tag('campaign_templatechk', 1, _data_value($data['main'], 'template')) ?>
+             <?php if ($autoreader_settings['wpo_premium']) { ?>
+                  <div class="checkbox">
+                    <label for="campaign_templatechk">Custom post template</label>
+                    <?php echo checkbox_tag('campaign_templatechk', 1, _data_value($data['main'], 'template')) ?>
 
-            <div id="post_template" class="textarea <?php if(_data_value($data['main'], 'template', '{content}') !== '{content}') echo 'current' ?>">
-              <?php echo textarea_tag('campaign_template', _data_value($data['main'], 'template', '{content}')) ?>
-              <a href="#" id="enlarge_link">Enlarge</a>
+                    <div id="post_template" class="textarea <?php if(_data_value($data['main'], 'template', '{content}') !== '{content}') echo 'current' ?>">
+                      <?php echo textarea_tag('campaign_template', _data_value($data['main'], 'template', '{content}')) ?>
+                      <a href="#" id="enlarge_link">Enlarge</a>
 
-              <p class="note" id="tags_note">
-                'Valid tags:
-              </p>
-              <p id="tags_list">
-                <span class="tag">{content}</span>, <span class="tag">{title}</span>, <span class="tag">{permalink}</span>, <span class="tag">{feedurl}</span>, <span class="tag">{feedtitle}</span>, <span class="tag">{feedlogo}</span>,<br /> <span class="tag">{campaigntitle}</span>, <span class="tag">{campaignid}</span>, <span class="tag">{campaignslug}</span>
-              </p>
-            </div>
+                      <p class="note" id="tags_note">
+                        'Valid tags:
+                      </p>
+                      <p id="tags_list">
+                        <span class="tag">{content}</span>, <span class="tag">{title}</span>, <span class="tag">{permalink}</span>, <span class="tag">{feedurl}</span>, <span class="tag">{feedtitle}</span>, <span class="tag">{feedlogo}</span>,<br /> <span class="tag">{campaigntitle}</span>, <span class="tag">{campaignid}</span>, <span class="tag">{campaignslug}</span>
+                      </p>
+                    </div>
 
-            <p class="note">Read about <a href="<?php echo $arSettings->helpurl; ?>" class="help_link">post templates</a>, or check some <a href="<?php echo $arSettings->helpurl; ?>" class="help_link">examples</a> ?></p>
-          </div>
-
+                    <p class="note">Read about <a href="<?php echo $arSettings->helpurl; ?>" class="help_link">post templates</a>, or check some <a href="<?php echo $arSettings->helpurl; ?>" class="help_link">examples</a> ?></p>
+                  </div>
+          <?php } ?>
           <div class="multipletext">
             <?php
               $f = _data_value($data['main'], 'frequency');
@@ -246,37 +251,50 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
 
             <label>Frequency</label>
 
-            <?php echo input_tag('campaign_frequency_d', _data_value($frequency, 'days', 1), 'size=2 maxlength=3')?>
-            d
+             <?php if ($autoreader_settings['wpo_premium']) { ?>
+                <?php echo input_tag('campaign_frequency_d', _data_value($frequency, 'days', 1), 'size=2 maxlength=3')?>
+                d
 
-            <?php echo input_tag('campaign_frequency_h', _data_value($frequency, 'hours', 5), 'size=2 maxlength=2')?>
-            h
+                <?php echo input_tag('campaign_frequency_h', _data_value($frequency, 'hours', 5), 'size=2 maxlength=2')?>
+                h
 
-            <?php echo input_tag('campaign_frequency_m', _data_value($frequency, 'minutes', 0), 'size=2 maxlength=2')?>
-            m
+                <?php echo input_tag('campaign_frequency_m', _data_value($frequency, 'minutes', 0), 'size=2 maxlength=2')?>
+                m
+             <?php } ?>
 
-            <p class="note">How often should feeds be checked? (days, hours and minutes)</p>
+             <select name="campaign_frequency_h">
+              <option value="1">hourly</option>
+              <option value="12">twice daily</option>
+              <option value="24">daily</option>
+              <option value="84">weekly</option>
+            </select>
+
+            <p class="note">How often should feeds be checked? </p>
           </div>
 
-          <div class="checkbox">
-            <?php echo label_for('campaign_cacheimages', 'Cache images') ?>
-<? // need to install timthumb folder to get the following working  ?>
-<?php // echo checkbox_tag('campaign_cacheimages', 1, _data_value($data['main'], 'cacheimages', is_writable($arSettings->cachepath))) ?>
-            <p class="note">Images will be stored in your server, instead of hotlinking from the original site.
-                <a href="helpurl image_caching" class="help_link">More</a></p>
-          </div>
+          <?php if ($autoreader_settings['wpo_premium']) { ?>
+              <div class="checkbox">
+                <?php echo label_for('campaign_cacheimages', 'Cache images') ?>
+                <? // need to install timthumb folder to get the following working  ?>
+                <?php  echo checkbox_tag('campaign_cacheimages', 1, _data_value($data['main'], 'cacheimages', is_writable($arSettings->cachepath))) ?>
+                <p class="note">Images will be stored in your server, instead of hotlinking from the original site.
+                    <a href="helpurl image_caching" class="help_link">More</a></p>
+              </div>
+          <?php } ?>
 
           <div class="checkbox">
             <?php echo label_for('campaign_feeddate', 'Use feed date') ?>
             <?php echo checkbox_tag('campaign_feeddate', 1, _data_value($data['main'], 'feeddate', false)) ?>
-            <p class="note">Use the original date from the post instead of the time the post is created by WP-o-Matic.
-                <a href="helpurl feed_date_option" class="help_link">More</a></p>
+            <p class="note">Use the original date from the post instead of the time the post is created by this plugin.
+                </p>
           </div>
 
-          <div class="checkbox">
-            <?php echo label_for('campaign_dopingbacks', 'Perform pingbacks') ?>
-            <?php echo checkbox_tag('campaign_dopingbacks', 1, _data_value($data['main'], 'dopingbacks', false)) ?>
-          </div>
+          <?php if ($autoreader_settings['wpo_premium']) { ?>
+              <div class="checkbox">
+                <?php echo label_for('campaign_dopingbacks', 'Perform pingbacks') ?>
+                <?php echo checkbox_tag('campaign_dopingbacks', 1, _data_value($data['main'], 'dopingbacks', false)) ?>
+              </div>
+          <?php } ?>
 
           <div class="radio">
             <label class="main">Type of post to create</label>
@@ -291,7 +309,7 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
           <div class="text">
             <?php echo label_for('campaign_author', 'Author:') ?>
  <?php // echo select_tag('campaign_author', options_for_select($author_usernames, _data_value($data['main'], 'author', 'admin'))) ?>
-            <p class="note">The created posts will be assigned to this author.</p>
+            <p class="note">The created posts will be assigned to admin.</p>
           </div>
 
           <div class="text required">
@@ -305,21 +323,24 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
             <?php echo checkbox_tag('campaign_linktosource', 1, _data_value($data['main'], 'linktosource', false)) ?>
           </div>
 
-          <div class="radio">
-            <label class="main">Discussion options:</label>
+          <?php if ($autoreader_settings['wpo_premium']) { ?>
+              <div class="radio">
+                <label class="main">Discussion options:</label>
 
-            <?php echo select_tag('campaign_commentstatus',
-                        options_for_select(
-                          array('open' => 'Open',
-                                'closed' => 'Closed',
-                                'registered_only' => 'Registered only'
-                                ), _data_value($data['main'], 'comment_status', 'open'))) ?>
+                <?php echo select_tag('campaign_commentstatus',
+                            options_for_select(
+                              array('open' => 'Open',
+                                    'closed' => 'Closed',
+                                    'registered_only' => 'Registered only'
+                                    ), _data_value($data['main'], 'comment_status', 'open'))) ?>
 
-            <?php echo checkbox_tag('campaign_allowpings', 1, _data_value($data['main'], 'allowpings', true)) ?>
-            <?php echo label_for('campaign_allowpings', 'Allow pings') ?>
-          </div>
+                <?php echo checkbox_tag('campaign_allowpings', 1, _data_value($data['main'], 'allowpings', true)) ?>
+                <?php echo label_for('campaign_allowpings', 'Allow pings') ?>
+              </div>
+         <?php } ?>
         </div>
 
+         <?php if ($autoreader_settings['wpo_premium']) { ?>
         <?php if($action == 'edit'): ?>
         <!-- Tools -->
         <div class="section" id="section_tools">
@@ -363,8 +384,10 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
           -->
         </div>
         <?php endif; ?>
+        <?php } ?>
       </div>
 
+        
     </form>
 
 

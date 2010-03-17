@@ -13,7 +13,13 @@
             echo json_encode($array);
             exit;
         case "delete":
-            print "delete";
+            $result = $arSettings->adminDelete($h);
+            echo $result;
+            exit;
+        case "reset":
+            $result = $arSettings->adminReset($h);
+            echo $result;
+            exit;
      default :
          //print "default";
 
@@ -53,9 +59,9 @@
             <td style="text-align: center"><?php echo $campaign->count ?></td>        
             <td><?php echo $campaign->lastactive?></td>
             <td><?php echo "<a id='edit_" . $campaign->id . "' href='#' class='edit'>Edit</a></td>"; ?>
-            <td><?php echo "<a id='fetch_" . $campaign->id . "' href='#' class='fetch' onclick=\"return confirm('Are you sure you want to process all feeds from this campaign?')\">" .'Fetch' . "</a>"; ?></td>
-            <td><?php echo "<a id='reset_" . $campaign->id . "' href='#' class='reset' onclick=\"return confirm('Are you sure you want to reset this campaign? Resetting does not affect already created posts')\">" .'Reset' . "</a>"; ?></td>
-            <td><a href="#" id="delete_<?php echo $campaign->id; ?>" class="delete" onClick="return confirm('You are about to delete the campaign. This action does not remove campaign generated posts.\nOK to delete, Cancel to stop.')">Delete</a></td>
+            <td><?php echo "<a id='fetch_" . $campaign->id . "' href='#' class='fetch' >" .'Fetch' . "</a>"; ?></td>
+            <td><?php echo "<a id='reset_" . $campaign->id . "' href='#' class='reset' >" .'Reset' . "</a>"; ?></td>
+            <td><a href="#" id="delete_<?php echo $campaign->id; ?>" class="delete">Delete</a></td>
           </tr>              
           <?php endforeach; ?>                    
         <?php endif; ?>
@@ -67,36 +73,97 @@
  <script type='text/javascript'>
     jQuery('document').ready(function($) {
 
-        $(".fetch").click(function(event) {
-        event.preventDefault();
-        var campign_ref = $(this).attr('id').split('_');        
-        var campaign_id = campign_ref[campign_ref.length-1];      
-        var formdata = 'action=fetch&s=forcefetch&id=' + campaign_id;
-        var sendurl = BASEURL + 'admin_index.php?page=plugin_settings&plugin=autoreader&alt_template=autoreader_list';
+        $('.delete').click(function(){
+            var answer = confirm('You are about to delete the campaign. This action does not remove campaign generated posts. Delete ? '+jQuery(this).attr('title'));            
+            if (answer) {
+                var campign_ref = $(this).attr('id').split('_');
+                var campaign_id = campign_ref[campign_ref.length-1];
+                var formdata = 'action=delete&s=delete&id=' + campaign_id;
+                var sendurl = BASEURL + 'admin_index.php?page=plugin_settings&plugin=autoreader&alt_template=autoreader_list';
 
-        $.ajax(
-            {
-            type: 'post',
-            url: sendurl,
-            data: formdata,
-            beforeSend: function () {
-                            $('#fetch_' + campaign_id).html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/ajax-loader.gif' + '"/>');
+                 $.ajax(
+                    {
+                    type: 'post',
+                    url: sendurl,
+                    data: formdata,
+                    error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+                                    $('#delete_' + campaign_id).html('ERR');
                     },
-            error: 	function(XMLHttpRequest, textStatus, errorThrown) {
-                            $('#fetch_' + campaign_id).html('ERR');
-            },
-            success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
-                    if (data.error === true) {
-                    }
-                    else
-                    {                                             
-                        $('#fetch_' + campaign_id).html(data.fetched);
-                    }                   
-            },
-            dataType: "json"
-        });
+                    success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
+                            if (data.error === true) {
+                            }
+                            else
+                            {
+                                $('#delete_' + campaign_id).parent().parent().delay(1000).addClass('red').fadeOut(2000);
+                            }
+                    },
+                    dataType: "json"
+                });
+            }
+            return false;
+            });
 
+         $('.reset').click(function(){
+            var answer = confirm('Are you sure you want to reset this campaign? Resetting does not affect already created posts ? '+jQuery(this).attr('title'));
+            if (answer) {
+            var campign_ref = $(this).attr('id').split('_');
+                var campaign_id = campign_ref[campign_ref.length-1];
+                var formdata = 'action=reset&s=reset&id=' + campaign_id;
+                var sendurl = BASEURL + 'admin_index.php?page=plugin_settings&plugin=autoreader&alt_template=autoreader_list';
 
+                 $.ajax(
+                    {
+                    type: 'post',
+                    url: sendurl,
+                    data: formdata,
+                    error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+                                    $('#reset_' + campaign_id).html('ERR');
+                    },
+                    success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
+                            if (data.error === true) {
+                            }
+                            else
+                            {
+                                $('#reset_' + campaign_id).parent().parent().addClass('yellow');
+                            }
+                    },
+                    dataType: "json"
+                });
+            }
+            return false;
+            });
+
+        $(".fetch").click(function() {
+         var answer = confirm('Are you sure you want to process all feeds from this campaign? '+jQuery(this).attr('title'));
+            if (answer) {
+
+            var campign_ref = $(this).attr('id').split('_');
+            var campaign_id = campign_ref[campign_ref.length-1];
+            var formdata = 'action=fetch&s=forcefetch&id=' + campaign_id;
+            var sendurl = BASEURL + 'admin_index.php?page=plugin_settings&plugin=autoreader&alt_template=autoreader_list';
+
+            $.ajax(
+                {
+                type: 'post',
+                url: sendurl,
+                data: formdata,
+                beforeSend: function () {
+                                $('#fetch_' + campaign_id).html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/ajax-loader.gif' + '"/>');
+                        },
+                error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+                                $('#fetch_' + campaign_id).html('ERR');
+                },
+                success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
+                        if (data.error === true) {
+                        }
+                        else
+                        {
+                            $('#fetch_' + campaign_id).html(data.fetched);
+                        }
+                },
+                dataType: "json"
+            });
+        }
         return false;
        });
 

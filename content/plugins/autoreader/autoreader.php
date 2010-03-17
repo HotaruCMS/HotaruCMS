@@ -35,7 +35,7 @@
  * Plugin URI: http://devthought.com/wp-o-matic-the-wordpress-rss-agreggator/
  * Version: 1.0RC4-6
  *
- * Additions for Image cache, original url link, category search, tags, thumbnail, short excertps, code change for hotaru by shibuya246
+ * Code modification for hotaru by shibuya246
  */
 
 require_once(PLUGINS . 'autoreader/autoreader_settings.php');
@@ -68,10 +68,12 @@ class Autoreader extends AutoreaderSettings
          $autoreader_settings = $h->getSerializedSettings();
         if (!isset($autoreader_settings['wpo_log'])) { $autoreader_settings['wpo_log'] = true; }
         if (!isset($autoreader_settings['wpo_log_stdout'])) { $autoreader_settings['wpo_log_stdout'] = false; }
-        if (!isset($autoreader_settings['wpo_unixcron'])) { $autoreader_settings['wpo_unixcron'] = false; }
-        if (!isset($autoreader_settings['wpo_croncode'])) { $autoreader_settings['wpo_croncode'] = 0; }
+        if (!isset($autoreader_settings['wpo_unixcron'])) { $autoreader_settings['wpo_unixcron'] = false; }       
         if (!isset($autoreader_settings['wpo_cacheimage'])) { $autoreader_settings['wpo_cacheimage'] = 0; }
+        if (!isset($autoreader_settings['wpo_croncode'])) { $autoreader_settings['wpo_croncode'] = substr(md5(time()), 0, 8); }
         if (!isset($autoreader_settings['wpo_cachepath'])) { $autoreader_settings['wpo_cachepath'] = 'cache'; }
+        if (!isset($autoreader_settings['wpo_help'])) { $autoreader_settings['wpo_help'] = false; }
+        if (!isset($autoreader_settings['wpo_premium'])) { $autoreader_settings['wpo_premium'] = false; }
 
         $h->updateSetting('autoreader_settings', serialize($autoreader_settings));
 
@@ -112,16 +114,6 @@ class Autoreader extends AutoreaderSettings
      */
     public function activate($h, $force_install = false)
     {
-
-     # Options
-    WPOTools::addMissingOptions(array(
-     'wpo_log'          => array(1, 'Log WP-o-Matic actions'),
-     'wpo_log_stdout'   => array(0, 'Output logs to browser while a campaign is being processed'),
-     'wpo_unixcron'     => array(WPOTools::isUnix(), 'Use unix-style cron'),
-     'wpo_croncode'     => array(substr(md5(time()), 0, 8), 'Cron job password.'),
-     'wpo_cacheimages'  => array(0, 'Cache all images. Overrides campaign options'),
-     'wpo_cachepath'    => array('cache', 'Cache path relative to wpomatic directory')
-    ));
 
     // only re-install if there is new version or plugin has been uninstalled
     if($force_install || ! $h->getPluginVersion() || $h->getPluginVersion() != $this->version)   
@@ -227,7 +219,15 @@ class Autoreader extends AutoreaderSettings
           }
 
 
-          //add_option('autoreader_version', $this->version, 'Installed version log');
+            # Options
+            WPOTools::addMissingOptions(array(
+             'wpo_log'          => array(1, 'Log WP-o-Matic actions'),
+             'wpo_log_stdout'   => array(0, 'Output logs to browser while a campaign is being processed'),
+             'wpo_unixcron'     => array(WPOTools::isUnix(), 'Use unix-style cron'),
+             'wpo_croncode'     => array(substr(md5(time()), 0, 8), 'Cron job password.'),
+             'wpo_cacheimages'  => array(0, 'Cache all images. Overrides campaign options'),
+             'wpo_cachepath'    => array('cache', 'Cache path relative to wpomatic directory')
+            ));
 
           $this->installed = true;
         }
@@ -278,7 +278,7 @@ class Autoreader extends AutoreaderSettings
 
    public function autoreader_runcron($h, $args) {
     $cid = $args['id'];
-    print_r ($args);
+    //print_r ($args);
 
     $this->forcefetched = $this->processCampaign($h,$cid);
 }
