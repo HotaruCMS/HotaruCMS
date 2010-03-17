@@ -140,12 +140,12 @@ class WPOTools {
   
   function addMissingOptions($options)
   {
-    $opt = array();
+    //$opt = array();
     
-    foreach($options as $option => $vars)
-      if(! get_option($option)) $opt[$option] = $vars;
+    //foreach($options as $option => $vars)
+    //  if(! get_option($option)) $opt[$option] = $vars;
       
-    return count($opt) ? WPOTools::addOptions($opt) : true;
+    //return count($opt) ? WPOTools::addOptions($opt) : true;
   }
   
   function deleteOptions($options)
@@ -330,7 +330,7 @@ class WPOTools {
   
   function timezoneMysql($format, $time)
   {
-    return mysql2date($format, get_date_from_gmt($time));    
+    return mysql2date($format, get_date_from_gmt($time));
   }
   
 }
@@ -365,3 +365,30 @@ if(!function_exists('str_ireplace'))
     return preg_replace($words, $replace, $subject);
   }
 }
+
+//from wordpress
+function mysql2date( $dateformatstring, $mysqlstring, $translate = true ) {    
+     $m = $mysqlstring;
+     if ( empty( $m ) )
+         return false;
+  
+      if ( 'G' == $dateformatstring ) {
+          return strtotime( $m . ' +0000' );
+      }
+
+      $i = strtotime( $m );
+
+     if ( 'U' == $dateformatstring )
+          return $i;
+
+     return date( $dateformatstring, $i );
+}
+
+//from wordpress
+ function get_date_from_gmt($string, $format = 'Y-m-d H:i:s') {      
+      preg_match('#([0-9]{1,4})-([0-9]{1,2})-([0-9]{1,2}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})#', $string, $matches);
+      $string_time = gmmktime($matches[4], $matches[5], $matches[6], $matches[2], $matches[3], $matches[1]);
+      $string_localtime = gmdate($format, $string_time + GMT_OFFSET * 3600);
+      return $string_localtime;
+}
+

@@ -12,6 +12,8 @@
             $array = array('fetched'=> $fetched);
             echo json_encode($array);
             exit;
+        case "delete":
+            print "delete";
      default :
          //print "default";
 
@@ -52,8 +54,8 @@
             <td><?php echo $campaign->lastactive?></td>
             <td><?php echo "<a id='edit_" . $campaign->id . "' href='#' class='edit'>Edit</a></td>"; ?>
             <td><?php echo "<a id='fetch_" . $campaign->id . "' href='#' class='fetch' onclick=\"return confirm('Are you sure you want to process all feeds from this campaign?')\">" .'Fetch' . "</a>"; ?></td>
-            <td><?php echo "<a id='reset_" . $campaign->id . "' href='#' class='reset' onclick=\"return confirm(Are you sure you want to reset this campaign? Resetting does not affect already created wp posts')\">" .'Reset' . "</a>"; ?></td>
-            <td><?php echo "<a id='delete_" . $campaign->id . "' href='#' class='delete' onclick=\"return confirm('You are about to delete the campaign '%s'. This action doesn't remove campaign generated wp posts.\n'OK' to delete, 'Cancel' to stop.')\">" . 'Delete' . "</a>"; ?></td>
+            <td><?php echo "<a id='reset_" . $campaign->id . "' href='#' class='reset' onclick=\"return confirm('Are you sure you want to reset this campaign? Resetting does not affect already created posts')\">" .'Reset' . "</a>"; ?></td>
+            <td><a href="#" id="delete_<?php echo $campaign->id; ?>" class="delete" onClick="return confirm('You are about to delete the campaign. This action does not remove campaign generated posts.\nOK to delete, Cancel to stop.')">Delete</a></td>
           </tr>              
           <?php endforeach; ?>                    
         <?php endif; ?>
@@ -111,6 +113,15 @@
                 .load(sendurl)
                 .fadeIn("fast");
 
+
+        return false;
+       });
+
+        $(".delete").click(function(event) {
+        event.preventDefault();
+        var campign_ref = $(this).attr('id').split('_');
+        var campaign_id = campign_ref[campign_ref.length-1];
+        var sendurl = BASEURL + 'admin_index.php?page=plugin_settings&plugin=autoreader&alt_template=autoreader_list&action=delete&id=' + campaign_id;
 
         return false;
        });

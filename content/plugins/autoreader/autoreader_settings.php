@@ -101,15 +101,7 @@ class AutoreaderSettings
     {
         print "---" . $h->plugin->folder;
         $autoreader_settings = $h->getSerializedSettings();
-
-        // Default settings
-        if (!isset($autoreader_settings['log_actions'])) { $autoreader_settings['wpo_log'] = true; }
-        if (!isset($autoreader_settings['log_stdout'])) { $autoreader_settings['wpo_log_stdout'] = false; }
-        if (!isset($autoreader_settings['log_unixcron'])) { $autoreader_settings['wpo_unixcron'] = false; }
-        if (!isset($autoreader_settings['log_croncode'])) { $autoreader_settings['wpo_croncode'] = 0; }
-        if (!isset($autoreader_settings['log_cacheimage'])) { $autoreader_settings['wpo_cacheimage'] = 0; }
-        if (!isset($autoreader_settings['log_cachepath'])) { $autoreader_settings['wpo_cachepath'] = 'cache'; }
-
+      
         if ($h->cage->post->testAlpha('action') == "save" ) {
             $array = array('saved' => 'true');
             $autoreader_settings['wpo_log'] = $h->cage->post->testAlnumLines('option_logging');
@@ -125,6 +117,7 @@ class AutoreaderSettings
         
         return $array;
     }
+
 
 
    /**
@@ -1008,8 +1001,6 @@ $posturl =  $permalink;
    */
   function adminProcessEdit($h,$id)
   {
-//print $id;
-//print_r ($this->campaign_data);
     // If we need to execute a tool action we stop here
     if($this->adminProcessTools($h)) return;
 
@@ -1077,6 +1068,18 @@ $posturl =  $permalink;
     // Query
     $query = WPOTools::updateQuery($this->db['campaign'], $main, 'id = ' . intval($id));
     $h->db->query($query);
+
+   //get data ready to pass to cron plugin
+   $timestamp = time();
+   $recurrence = "hourly"; //$this->campaign_data['campaign_frequency_d'];
+   $hook = "autoreader_runcron";
+   $args = array('id'=> $id);
+   $cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook, 'args'=>$args);
+   $h->pluginHook('cron_update_job', 'cron', $cron_data);  
+
+   // campaign_frequency_d
+   // campaign_frequency_h
+   // campaign_frequency_m
   }
 
   /**
@@ -1393,7 +1396,6 @@ $posturl =  $permalink;
       $end = $start + $perpage;
       $limit = "LIMIT {$start}, {$end}";
     }
-
   	return $h->db->get_results("SELECT * FROM {$this->db['log']} ORDER BY $orderby $ordertype $limit");
   }
 
@@ -1420,6 +1422,15 @@ $posturl =  $permalink;
   }
 
 
+/**
+   * Returns how many seconds left till reprocessing
+   *
+   * @return seconds
+   **/
+  function getCampaignRemaining(&$campaign, $gmt = 0)
+  {
+    return mysql2date('U', $campaign->lastactive) + $campaign->frequency - time() + (GMT_OFFSET * 3600);
+  }
 
 
 
@@ -1489,7 +1500,7 @@ $posturl =  $permalink;
         if ($autoreader_settings['wpo_log'])
         {
           $message = $h->db->escape($message);
-          $time = time(); // current_time('mysql', true);
+          $time = gmdate('Y-m-d H:i:s');// time(); // current_time('mysql', true);
           $h->db->query("INSERT INTO {$this->db['log']} (message, created_on) VALUES ('{$message}', '{$time}') ");
         }
       }

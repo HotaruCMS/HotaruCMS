@@ -2,7 +2,6 @@
 
     # Dependencies     
     require_once(PLUGINS . 'autoreader/helper/edit.helper.php' );  
-
     require_once(PLUGINS . 'autoreader/autoreader.php');
     $arSettings = new Autoreader($h);
 
@@ -19,10 +18,15 @@
          // what $data settings are needed
             break;
         case "save" :           
-             $arSettings->adminCampaignRequest($h);
-             $arSettings->adminProcessAdd($h);             
-            //echo json_encode($array);                 
-           exit;  // this is an ajax return call, so we don't want any html echoing to the screen
+            $arSettings->adminCampaignRequest($h);
+            if ( $h->cage->post->keyExists('campaign_edit') ) {
+                $cid = $h->cage->post->getInt('campaign_edit');                
+                $arSettings->adminProcessEdit($h,$cid);
+            }
+            else {               
+                $arSettings->adminProcessAdd($h);
+            };
+            exit;  // this is an ajax return call, so we don't want any html echoing to the screen
         case "test_feed" :           
             $data = $h->cage->post->testUri('url');            
             $arSettings->adminTestfeed($data);
@@ -127,7 +131,7 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
             <?php endif ?>
           </div>
 
-          <a href="#add_feed" id="add_feed">Add more</a> | <a href="#" id="test_feeds">Check all) ?></a>
+          <a href="#add_feed" id="add_feed">Add more</a> | <a href="#" id="test_feeds">Check all</a>
         </div>
 
         <!-- Categories section -->
@@ -402,7 +406,7 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
         var campaign = $("form#edit_campaign").serialize();
       
        // campaign =  $.URLEncode(campaign);
-        var formdata = 'campaign=' + campaign + "&action=save";
+        var formdata =  campaign + "&action=save";
         var sendurl = BASEURL + 'admin_index.php?page=plugin_settings&plugin=autoreader&alt_template=autoreader_add';
 
         $.ajax(

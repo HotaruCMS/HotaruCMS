@@ -6,7 +6,7 @@
  * folder: autoreader
  * class: Autoreader
  * type: autoreader
- * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, admin_plugin_dropdown_menu
+ * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, admin_plugin_dropdown_menu, autoreader_runcron
  *
  * PHP version 5
  *
@@ -61,19 +61,22 @@ class Autoreader extends AutoreaderSettings
         // PERMISSIONS
         // ************
 
-
-
-
         // ************
         // SETTINGS
         // ************
         // Get settings from database if they exist...
-        getOptionSettings();
-      
+         $autoreader_settings = $h->getSerializedSettings();
+        if (!isset($autoreader_settings['wpo_log'])) { $autoreader_settings['wpo_log'] = true; }
+        if (!isset($autoreader_settings['wpo_log_stdout'])) { $autoreader_settings['wpo_log_stdout'] = false; }
+        if (!isset($autoreader_settings['wpo_unixcron'])) { $autoreader_settings['wpo_unixcron'] = false; }
+        if (!isset($autoreader_settings['wpo_croncode'])) { $autoreader_settings['wpo_croncode'] = 0; }
+        if (!isset($autoreader_settings['wpo_cacheimage'])) { $autoreader_settings['wpo_cacheimage'] = 0; }
+        if (!isset($autoreader_settings['wpo_cachepath'])) { $autoreader_settings['wpo_cachepath'] = 'cache'; }
+
+        $h->updateSetting('autoreader_settings', serialize($autoreader_settings));
 
         $this->activate($h);
     }
-
 
 
      /**
@@ -81,7 +84,7 @@ class Autoreader extends AutoreaderSettings
      */
     public function autoreader($h)
     {
-          $autoreader_settings = $h->getSerializedSettings();
+          $autoreader_settings = $h->getSerializedSettings('autoreader');
 
          // Table names init
          $this->db = array(
@@ -273,7 +276,12 @@ class Autoreader extends AutoreaderSettings
     }
 
 
-   
+   public function autoreader_runcron($h, $args) {
+    $cid = $args['id'];
+    print_r ($args);
+
+    $this->forcefetched = $this->processCampaign($h,$cid);
+}
 
 
       
