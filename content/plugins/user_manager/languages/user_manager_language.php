@@ -129,9 +129,9 @@ $lang['user_man_no_settings'] = "There haven't been any settings installed by pl
 /* User Man Create User */
 
 $lang['user_man_add'] = "Add New User";
-$lang['user_man_add_new_user'] = "Add a New User";
-$lang["user_man_add_desc"] = "Use this page to add new users, send new passwords and email confirmation emails.";
-$lang["user_man_add_detail"] = "Enter a username and email address for the new user. When you click \"Add New User\" a password will be generated and sent to the user's email address.";
+$lang['user_man_add_new_user'] = "Add a new user";
+$lang["user_man_add_desc"] = "Use this page to add new users, send new passwords and request email validation.";
+$lang["user_man_add_detail"] = "Enter a username and email address for the new user.";
 $lang['user_man_add_success_password_sent'] = "User Created and Password Emailed";
 $lang['user_man_create_send'] = "Create User &amp; Send Password";
 
