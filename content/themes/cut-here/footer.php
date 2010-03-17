@@ -30,7 +30,6 @@
  */
 
 ?>
-<div id="wraptitle">
 	<div id="grigious" class="grid_12 alpha omega">
 		<div id="scissors" class="grid_2 alpha">&nbsp;</div>	
 		<div id="name" class="grid_5">
@@ -38,7 +37,7 @@
 		</div>
 		<div id="slogan" class="grid_5">PUT YOUR SLOGAN HERE</div>
 	</div>
-</div>
+
     <div id="ft">
 			<div id="ftprebox" class="grid_2">
 				<strong>Be Social with Us</strong><br />
@@ -64,7 +63,7 @@
 				Site Link4<br />
 				Site Link5<br />
 			</div>	
-			<div id="ftbox3" class="grid_3">
+			<div id="ftbox3" class="grid_2">
 				<strong>Sponsor</strong><br />
 				Sponsor Site Link1<br />
 				Sponsor Site Link2<br />
@@ -72,19 +71,18 @@
 				Sponsor Site Link4<br />
 				Sponsor Site Link5<br />
 			</div>			
-			<div id="ftbox4end" class="grid_3">
+			<div id="ftbox4end" class="grid_4 alpha">
 				<strong>Contact Us</strong><br />
 				Email: info@site.com<br />
 				Telephone: +39.000.0000000<br />
 				Cell. +39.000.000000<br />
 				Live support<br />
-				Go Mobile<br />
+				<span class="credits"><?php echo "<a href='http://hotarucms.org' title='" . $h->lang["main_theme_footer_hotaru_link"] . "'><img src='" . BASEURL . "content/themes/" . THEME . "images/hotarucms.png' style='vertical-align:text-bottom'";
+				echo "alt='" . $h->lang["main_theme_footer_hotaru_link"] . "' /></a> // <small>Theme design by <a href='http://www.tr3ndy.com' title='Tr3ndy'>Tr3ndy</a></small>"; ?>
+				</span>
 	</div>
         <?php 
             $h->pluginHook('footer');
-			// Link to forums...
-            echo "<a href='http://hotarucms.org' title='" . $h->lang["main_theme_footer_hotaru_link"] . "'><img src='" . BASEURL . "content/themes/" . THEME . "images/hotarucms.png' style='vertical-align:text-bottom'";
-            echo "alt='" . $h->lang["main_theme_footer_hotaru_link"] . "' /></a> // <small>Theme design by <a href='http://www.tr3ndy.com' alt='Tr3ndy'>Tr3ndy</a></small>";
             $h->showQueriesAndTime();
         ?>
     </div> <!-- close "ft" -->

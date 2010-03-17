@@ -27,7 +27,7 @@ h3    { font-weight: bold; }
 p     { padding: 0.5em 0 0.5em 0; }
 li     { padding: 0.5em 0 0.5em 0; }
 a     { text-decoration: none; color: #666; }
-a:hover    { color: #c2c2c2; background-color: #f8f8f8; }
+a:hover    { color: #ffffff; background-color: #d9d9d9; }
 h1 a:hover    { color: #c2c2c2; background-color: transparent; }
 form     { padding: 1.0em; }
 td     { padding: 0.5em; }
@@ -37,12 +37,6 @@ del     { text-decoration: line-through; }
 /* LAYOUT */
 
 .clear	{ clear: both; margin: 0; line-height: 0em;} /* need line-height for IE */
-#grigious { height: 96px; width: 960px; background-color: #d9d9d9; background: url(../images/grigious.png) no-repeat bottom right; border-top: 2px dashed #000; }
-#scissors { height: 96px; background: url(../images/scissors.png) no-repeat top left;}
-#name { height: 96px; font-size: 5em; }
-#name  a:hover    { color: #727272; background-color: transparent; }
-#slogan { top: 15px; height: 96px; font-size: 1.2em; font-style: italic; }
-#breaker { height: 20px; width: 960px; background-color: #e8e8e8;}
 
 /* ANNOUNCEMENTS */
 
@@ -114,8 +108,9 @@ ul.nav_right {display: inline;}
 
 #pagination {
     font-size: 0.9em;
+	padding-bottom: 30px;
     margin-top: 2.0em;
-    text-align: right;
+    text-align: center;
 }
 
 #pagination a {
@@ -152,21 +147,38 @@ input.submit {
 /* FOOTER */
 
 #ft {
-	background: url(../images/footer.png) no-repeat bottom left;
-    background-color: #ffffff;
+	background-color: #ffffff;
     margin: 0;
     padding: 0;
     text-align: left;
     font-size: 1.0em;
 }
 
-#ftprebox { font-size: 12px; height:120px; top: 20px;}
-#ftbox1 { font-size: 12px; height:120px; top: 20px;}
-#ftbox2 { font-size: 12px; height:125px; top: 20px;}
-#ftbox3 { font-size: 12px; height:125px; top: 20px;}
-#ftbox4end { font-size: 12px; height:140px; top: 20px;}
+#ftprebox { margin-top: -8px; font-size: 12px; height:100px; top: 20px;}
+#ftbox1 { margin-top: -8px; font-size: 12px; height:100px; top: 20px;}
+#ftbox2 { margin-top: -8px; font-size: 12px; height:100px; top: 20px;}
+#ftbox3 { margin-top: -8px; font-size: 12px; height:100px; top: 20px;}
+#ftbox4end { margin-top: -8px; font-size: 12px; height:100px; top: 20px;}
+#ftbox4end  .credits{ padding-left: 90px;}
+
+#end { background: url(../images/footer.png) no-repeat bottom left; }
 
 .debug  { font-size: 0.8em; }
 
 /* CUSTOMIZATION */
 
+#grigious { 
+height: 96px; 
+width: 960px; 
+background-color: #d9d9d9; 
+background: url(../images/grigious.png) no-repeat bottom right; 
+border-top: 2px dashed #000; 
+border-right: 2px dashed #000;
+border-bottom: 2px dashed #000;
+}
+#scissors { height: 96px; background: url(../images/scissors.png) no-repeat top left;}
+#name { height: 96px; font-size: 5em; }
+#name  a:hover    { color: #727272; background-color: transparent; }
+#name  a   { color: #464444; background-color: transparent; }
+#slogan { top: 15px; height: 81px; font-size: 1.2em; font-style: italic; }
+#breaker { height: 20px; width: 960px; background-color: #e8e8e8;}
