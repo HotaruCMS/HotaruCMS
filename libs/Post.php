@@ -150,9 +150,15 @@ class Post
      */    
     public function addPost($h)
     {
-        $sql = "INSERT INTO " . TABLE_POSTS . " SET post_author = %d, post_date = CURRENT_TIMESTAMP, post_status = %s, post_type = %s, post_category = %d, post_tags = %s, post_title = %s, post_orig_url = %s, post_domain = %s, post_url = %s, post_content = %s, post_subscribe = %d, post_updateby = %d";
-        
-        $h->db->query($h->db->prepare($sql, $this->author, $this->status, urlencode($this->type), $this->category, urlencode(trim($this->tags)), urlencode(trim($this->title)), urlencode($this->origUrl), urlencode($this->domain), urlencode(trim($this->url)), urlencode(trim($this->content)), $this->subscribe, $h->currentUser->id));
+        if (!$this->date) {
+            $date = 'CURRENT_TIMESTAMP';
+        }
+            else { $date = date('YmdHis', $this->date);
+        }        
+
+        $sql = "INSERT INTO " . TABLE_POSTS . " SET post_author = %d, post_date = %s, post_status = %s, post_type = %s, post_category = %d, post_tags = %s, post_title = %s, post_orig_url = %s, post_domain = %s, post_url = %s, post_content = %s, post_subscribe = %d, post_updateby = %d";
+       
+        $h->db->query($h->db->prepare($sql, $this->author, $date, $this->status, urlencode($this->type), $this->category, urlencode(trim($this->tags)), urlencode(trim($this->title)), urlencode($this->origUrl), urlencode($this->domain), urlencode(trim($this->url)), urlencode(trim($this->content)), $this->subscribe, $h->currentUser->id));
         
         $last_insert_id = $h->db->get_var($h->db->prepare("SELECT LAST_INSERT_ID()"));
         
