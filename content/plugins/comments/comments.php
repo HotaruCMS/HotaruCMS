@@ -2,7 +2,7 @@
 /**
  * name: Comments
  * description: Enables logged-in users to comment on posts
- * version: 1.7
+ * version: 1.8
  * folder: comments
  * class: Comments
  * type: comments
@@ -839,18 +839,16 @@ class Comments
         } else {
             $bcc = "";
         }
-        $headers = "From: " . $from . $bcc . "\r\nReply-To: " . $from . "\r\nX-Priority: 3\r\n";
-    
-        /*
-        echo "to: " . $to . "<br />";
-        echo "bcc: " . $bcc . "<br />";
-        echo "subject: " . $subject . "<br />";
-        echo "message: " . $message . "<br />";
-        echo "headers: " . $headers . "<br />";
-        exit;
-        */
-    
-        $h->email($to, $subject, $message, $headers);
+        
+        if (SMTP_ON == 'true') {
+            $recipients['To'] = $to;
+            $recipients['Bcc'] = $send_to;
+            // no SMTP headers because they get overwritten in EmailFunctions anyway
+            $h->email($recipients, $subject, $message);
+        } else {
+            $headers = "From: " . $from . $bcc . "\r\nReply-To: " . $from . "\r\nX-Priority: 3\r\n";
+            $h->email($to, $subject, $message, $headers);
+        }
     }
 }
 
