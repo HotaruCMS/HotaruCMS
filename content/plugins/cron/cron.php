@@ -6,7 +6,7 @@
  * folder: cron
  * class: Cron
  * type: cron
- * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, admin_plugin_dropdown_menu, theme_index_top, admin_theme_index_top, cron_schedule_event, cron_update_job, cron_hotaru_version, admin_theme_main_stats_post_version
+ * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, admin_plugin_dropdown_menu, theme_index_top, admin_theme_index_top, cron_schedule_event, cron_update_job, cron_delete_job, cron_flush_hook, cron_hotaru_version, admin_theme_main_stats_post_version
  *
  * PHP version 5
  *
@@ -151,7 +151,8 @@ public function cron_reschedule_event($h, $timestamp, $recurrence, $hook, $args 
  * as those used when originally scheduling the event.
  */
 public function cron_unschedule_event($h, $timestamp, $hook, $args = array() ) {
-	$crons = $this->_get_cron_array($h);
+	$crons = $this->_get_cron_array($h);       
+
 	$key = md5(serialize($args));       
 	unset( $crons[$timestamp][$hook][$key] );
 	if ( empty($crons[$timestamp][$hook]) )
@@ -313,6 +314,7 @@ public function cron_get_schedules($h) {
 		'hourly' => array( 'interval' => 3600, 'display' => 'Once Hourly' ),
 		'twicedaily' => array( 'interval' => 43200, 'display' => 'Twice Daily' ),
 		'daily' => array( 'interval' => 86400, 'display' => 'Once Daily' ),
+                'weekly' => array( 'interval' => 604800, 'display' => 'Once Weekly' ),
 	);
 	//return array_merge( apply_filters( 'cron_schedules', array() ), $schedules );
         return $schedules;
@@ -347,12 +349,17 @@ public function cron_get_schedule($hook, $args = array()) {
  * Retrieve cron info array option.
  *
  */
-public function _get_cron_array($h)  {	
-        $cron = $h->vars['cron_settings'];       
-	if ( ! is_array($cron) )
+public function _get_cron_array($h)  {
+        if (isset($h->vars['cron_settings'])) {
+            $cron = $h->vars['cron_settings'];
+            if ( ! is_array($cron) )
 		return false;
 
-	return $cron;
+            return $cron;
+        }
+        else { 
+            return false;
+        }
 }
 
     /**
@@ -384,7 +391,7 @@ public function _get_cron_array($h)  {
 
         $ret = rtrim($ret, '&');
 
-        $ch = curl_init("http://japanreporter.com/index.php?page=api");
+        $ch = curl_init("http://api.hotarucms.org/index.php?page=api");
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $ret);
@@ -426,7 +433,7 @@ public function _get_cron_array($h)  {
                     }
                     $this->cron_unschedule_event($h, $timestamp, $hook, $v['args']);
                     //call function to do task required for cron
-                    print "running hook..-> " . $hook. "     ";
+                    //print "running hook..-> " . $hook. "     ";
                     $h->pluginHook($hook, '', $v['args']);
                 }
             }
@@ -460,4 +467,50 @@ public function _get_cron_array($h)  {
         if (!$cron_exists) $this->cron_schedule_event($h, $timestamp, $recurrence, $hook, $args);
     }
 
+    public function cron_delete_job($h, $cron_data)
+    {        
+        //load current cron jobs from memory space
+        $h->vars['cron_settings'] = $h->getSerializedSettings();
+        
+        $hook = $cron_data['hook'];
+        $args = $cron_data['args'];
+
+        $current_crons = $this->_get_cron_array($h);
+       
+        foreach ($current_crons as $current_timestamp => $current_cronhooks) {
+          foreach ($current_cronhooks as $current_hook => $current_keys) {
+            foreach ($current_keys as $current_md5 => $current_job) { 
+                foreach ($current_job as $current_set => $current_args) {               
+                    if ($current_hook == $hook && $current_args == $args) {                        
+                        $this->cron_unschedule_event($h, $current_timestamp, $current_hook, $current_args);
+                    }
+                }
+            }
+          }
+        }
+    }
+
+     public function cron_flush_hook($h, $cron_data)
+    {
+        $h->vars['cron_settings'] = $h->getSerializedSettings();
+
+        $hook = $cron_data['hook'];
+        $flush_count = 0;
+
+        $current_crons = $this->_get_cron_array($h); 
+        foreach ($current_crons as $current_timestamp => $current_cronhooks) { 
+          foreach ($current_cronhooks as $current_hook => $current_keys) {
+              if ($current_hook == $hook) {                            
+               foreach ($current_keys as $current_md5 => $current_job) {
+                    $flush_count ++;                  
+                    //while ( list ($param, $value) = each ( $current_job ))                                                         
+                    $this->cron_unschedule_event($h, $current_timestamp, $current_hook,  $current_job["args"]);
+                    }
+               }
+          }
+        }
+        $array = array('count' => $flush_count);
+        echo json_encode($array);
+    }
+    
 }
