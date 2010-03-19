@@ -376,7 +376,22 @@ function do_upgrade($old_version)
 
        // GMT Offset
         $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $h->db->query($h->db->prepare($sql, 'SYSTEM_FEEDBACK', '1', '1', 'system info for maintenance'));
+        $h->db->query($h->db->prepare($sql, 'SYS_FEEDBACK', 'true', 'true', 'send system report'));
+
+        $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_name = %s WHERE settings_name = %s";
+        $h->db->query($h->db->prepare($sql, 'DB_CACHE', 'DB_CACHE_ON'));
+
+        $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_name = %s WHERE settings_name = %s";
+        $h->db->query($h->db->prepare($sql, 'RSS_CACHE', 'RSS_CACHE_ON'));
+
+        $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_name = %s WHERE settings_name = %s";
+        $h->db->query($h->db->prepare($sql, 'CSS_JS_CACHE', 'CSS_JS_CACHE_ON'));
+        
+        $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_name = %s WHERE settings_name = %s";
+        $h->db->query($h->db->prepare($sql, 'HTML_CACHE', 'HTML_CACHE_ON'));
+
+        $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_name = %s WHERE settings_name = %s";
+        $h->db->query($h->db->prepare($sql, 'SMTP', 'SMTP_ON'));
         
         // update "old version" for next set of upgrades
         $old_version = "1.1.3"; 
