@@ -43,6 +43,11 @@ class Cron
         $recurrence = "daily";
         $hook = "cron_hotaru_version";
 	$this->cron_schedule_event($h, $timestamp, $recurrence, $hook);
+
+        if (SYS_FEEDBACK == 'true') {
+            $hook = "cron_hotaru_feedback";
+            $this->cron_schedule_event($h, $timestamp, $recurrence, $hook);
+        }
     }  
 
    public function theme_index_top($h) {
@@ -376,12 +381,33 @@ public function _get_cron_array($h)  {
             return true;
     }
 
+    public function cron_hotaru_feedback($h) {
+        $query_vals = array(
+            'api_key' => '',
+            'format' => 'json',
+            'method' => 'hotaru.systemFeedback.add',
+            'version' => $h->version
+        );
+
+       $info = $this->sendApiRequest($h, $query_vals);
+        
+    }
+
     public function cron_hotaru_version($h) {
         $query_vals = array(
             'api_key' => '',
             'format' => 'json',
             'method' => 'hotaru.version.get'
         );
+
+         $info = $this->sendApiRequest($h, $query_vals);
+       
+        // save the updated version number to the local db so we can display it on the admin panel until it gets updated.        
+         if (isset($info['version']))
+             $h->updateSetting('hotaru_latest_version', serialize($info), 'cron');
+    }
+
+    public function sendApiRequest($h, $query_vals) {
 
         // Generate the POST string
         $ret = '';
@@ -397,13 +423,10 @@ public function _get_cron_array($h)  {
         curl_setopt($ch, CURLOPT_POSTFIELDS, $ret);
         $response = curl_exec($ch);
         curl_close ($ch);
-       
-        $info = json_decode($response, true);
-       
-        // save the updated version number to the local db so we can display it on the admin panel until it gets updated.        
-         if (isset($info['version']))
-             $h->updateSetting('hotaru_latest_version', serialize($info), 'cron');
+
+       return json_decode($response, true);
     }
+
 
     public function checkrunCron($h) {
         if ( !empty($_POST) || defined('DOING_AJAX') || defined('DOING_CRON') )
@@ -443,24 +466,26 @@ public function _get_cron_array($h)  {
     public function cron_update_job($h, $cron_data)
     {
         $h->vars['cron_settings'] = $h->getSerializedSettings();
-
-        $timestamp = $cron_data['timestamp'];
-        $recurrence = $cron_data['recurrence'];
-        $hook = $cron_data['hook'];
-        $args = $cron_data['args'];
-        $id = $cron_data['args']['id'];
+        
+        $timestamp = (isset($cron_data['timestamp'])) ? $cron_data['timestamp'] : array();
+        $recurrence = (isset($cron_data['recurrence'])) ? $cron_data['recurrence'] : array();
+        $hook = (isset($cron_data['hook'])) ? $cron_data['hook'] : array();
+        $args = (isset($cron_data['args'])) ? $cron_data['args'] : array();
         $cron_exists = false;
 
-         // check whether already have existing event for this job
+        // check whether already have existing event for this job
         //  match against hook and args. note args must match
         $current_crons = $this->_get_cron_array($h);
         foreach ($current_crons as $current_timestamp => $current_cronhooks) {
           foreach ($current_cronhooks as $current_hook => $current_keys) {
-            if ($current_hook == $hook && $current_keys = $args) {
+             if ($current_hook == $hook) {
+               foreach ($current_keys as $current_md5 => $current_job) {
+              //print_r( $current_job["args"]); print "   **    "; print_r($args);
+            if ($current_job["args"] == $args) {
                 $this->cron_schedule_event($h, $timestamp, $recurrence, $hook, $args);
                 $this->cron_unschedule_event($h, $current_timestamp, $current_hook, $args);
                 $cron_exists = true;
-            }
+            }}}
           }
         }
 
@@ -470,10 +495,10 @@ public function _get_cron_array($h)  {
     public function cron_delete_job($h, $cron_data)
     {        
         //load current cron jobs from memory space
-        $h->vars['cron_settings'] = $h->getSerializedSettings();
-        
-        $hook = $cron_data['hook'];
-        $args = $cron_data['args'];
+        $h->vars['cron_settings'] = $h->getSerializedSettings();        
+       
+        $hook = (isset($cron_data['hook'])) ? $cron_data['hook'] : array();
+        $args = (isset($cron_data['args'])) ? $cron_data['args'] : array();
 
         $current_crons = $this->_get_cron_array($h);
        
@@ -494,7 +519,7 @@ public function _get_cron_array($h)  {
     {
         $h->vars['cron_settings'] = $h->getSerializedSettings();
 
-        $hook = $cron_data['hook'];
+        $hook = (isset($cron_data['hook'])) ? $cron_data['hook'] : array();
         $flush_count = 0;
 
         $current_crons = $this->_get_cron_array($h); 
