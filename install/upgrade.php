@@ -376,7 +376,7 @@ function do_upgrade($old_version)
 
        // GMT Offset
         $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $h->db->query($h->db->prepare($sql, 'GMT_OFFSET', '0', '0', 'E.g. +9'));
+        $h->db->query($h->db->prepare($sql, 'SYSTEM_FEEDBACK', '1', '1', 'system info for maintenance'));
         
         // update "old version" for next set of upgrades
         $old_version = "1.1.3"; 
