@@ -992,7 +992,7 @@ class Hotaru
      * @param string $setting stting value
      */
     public function updateSetting($setting = '', $value = '', $folder = '')
-    {
+    {        
         $pluginSettings = new PluginSettings();
         return $pluginSettings->updateSetting($this, $setting, $value, $folder);
     }
@@ -1232,7 +1232,7 @@ class Hotaru
      *
      * @return object|false $sp
      */
-    public function newSimplePie($feed='', $cache=RSS_CACHE_ON, $cache_duration=RSS_CACHE_DURATION)
+    public function newSimplePie($feed='', $cache=RSS_CACHE, $cache_duration=RSS_CACHE_DURATION)
     {
         require_once(LIBS . 'Feeds.php');
         $feeds = new Feeds();
