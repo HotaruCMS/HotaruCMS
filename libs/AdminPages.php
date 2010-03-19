@@ -152,6 +152,21 @@ class AdminPages
                     } 
                 }
             }
+
+            // cron hook to include SYS_FEEDBACK job
+            if ($h->cage->post->keyExists('SYS_FEEDBACK') == 'true' ) {
+                $timestamp = time();
+                $recurrence = "daily";
+                $hook = "cron_hotaru_feedback";
+                $cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook);
+                $h->pluginHook('cron_update_job', 'cron', $cron_data);
+            }
+            else {
+                $hook = "cron_hotaru_feedback";
+                $cron_data = array('hook'=>$hook);
+                $h->pluginHook('cron_delete_job', 'cron', $cron_data);
+            }
+
             
             if ($error == 0) {
                 $h->message = $h->lang['admin_settings_update_success'];
