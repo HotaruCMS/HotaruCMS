@@ -213,7 +213,7 @@ class Initialize
         // Setup database cache
         $this->db->cache_timeout = DB_CACHE_DURATION; // Note: this is hours
         $this->db->cache_dir = CACHE . 'db_cache';
-        if (DB_CACHE_ON == "true") {
+        if (DB_CACHE == "true") {
             $this->db->use_disk_cache = true;
             return true;
         } else {

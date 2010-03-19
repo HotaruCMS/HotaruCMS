@@ -34,7 +34,7 @@ class Feeds
      *
      * @return object|false $sp
      */
-    public function newSimplePie($feed='', $cache=RSS_CACHE_ON, $cache_duration=RSS_CACHE_DURATION)
+    public function newSimplePie($feed='', $cache=RSS_CACHE, $cache_duration=RSS_CACHE_DURATION)
     {
         include_once(EXTENSIONS . "SimplePie/simplepie.inc");
         
