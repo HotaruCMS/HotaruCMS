@@ -63,7 +63,7 @@ class EmailFunctions
         if (!$this->to) { $this->to = SITE_NAME . ' <' . SITE_EMAIL . '>'; }
         if (!$this->from) { $this->from = SITE_NAME . ' <' . SITE_EMAIL . '>'; }
         
-        if (SMTP_ON == 'true') {
+        if (SMTP == 'true') {
             // note: this overwrites headers passed to this function:
             $this->headers = array ('From' => $this->from, 'To' => $this->to['To'], 'Subject' => $this->subject);
         } else {
@@ -95,7 +95,7 @@ class EmailFunctions
                 return array('headers' => $this->headers, 'to' => $this->to, 'subject' => $this->subject, 'body' => $this->body, 'type' => $this->type);
                 break;
             default:
-                if (SMTP_ON == 'true') {
+                if (SMTP == 'true') {
                     $this->doSmtpEmail();
                 } else {
                     $return_path = "-f " . SITE_EMAIL;
