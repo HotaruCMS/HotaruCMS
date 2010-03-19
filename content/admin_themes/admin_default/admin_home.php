@@ -42,7 +42,7 @@
     <?php echo $h->adminNews(10, 3, 300); ?>
 
     <br/>
-     <h2>Join us on Facebook</h2>
+     <h2>Join us on Facebook and <a href="http://twitter.com/hotarucms">Twitter</a></h2>
             <script type="text/javascript" src="http://static.ak.connect.facebook.com/js/api_lib/v0.4/FeatureLoader.js.php/en_US"></script><script type="text/javascript">FB.init("0ad945f33921afd2275ff6ca8997c2a3");</script><fb:fan profile_id="116731959368" stream="" connections="16" width="460"></fb:fan>
             <div style="font-size:12px; padding-left:10px"><a href="http://www.facebook.com/hotarucms">HotaruCMS on Facebook</a>
      </div>
