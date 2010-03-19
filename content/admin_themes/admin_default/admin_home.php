@@ -34,12 +34,19 @@
 <td id='left'>
 <!-- TITLE FOR ADMIN NEWS -->
     <h2>
-        <a href="http://feeds2.feedburner.com/hotarucms"><img src="<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/rss_16.png"></a>
+        <a href="http://feeds2.feedburner.com/hotarucms"><img src="<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/rss_16.png" alt="rss" /></a>
         &nbsp;<?php echo $h->lang["admin_theme_main_latest"]; ?>
     </h2>
     
     <!-- Feed items, number to show content for, max characters for content -->
     <?php echo $h->adminNews(10, 3, 300); ?>
+
+    <br/>
+     <h2>Join us on Facebook</h2>
+            <script type="text/javascript" src="http://static.ak.connect.facebook.com/js/api_lib/v0.4/FeatureLoader.js.php/en_US"></script><script type="text/javascript">FB.init("0ad945f33921afd2275ff6ca8997c2a3");</script><fb:fan profile_id="116731959368" stream="" connections="16" width="460"></fb:fan>
+            <div style="font-size:12px; padding-left:10px"><a href="http://www.facebook.com/hotarucms">HotaruCMS on Facebook</a>
+     </div>
+
 </td>
 
 <td id='right'>
