@@ -121,9 +121,13 @@ class UserFunctions
             $body .= $next_line;
             $body .= $h->lang['userfunctions_notifymods_body_sign'];
             $to = $mod['email'];
-            $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
-        
-            $h->email($to, $subject, $body, $headers);
+            
+            if (SMTP == 'true') {
+                $recipients['To'] = $to;
+                $h->email($recipients, $subject, $body);
+            } else {
+                $h->email($to, $subject, $body);
+            }
         }
         
         return true;

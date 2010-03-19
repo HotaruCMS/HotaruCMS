@@ -257,7 +257,7 @@ class Comments
                             // A user can unsubscribe by submitting an empty comment, so...
                             if ($h->comment->content != '') {
                                 $result = $h->comment->addComment($h);
-            
+
                                 // notify chosen mods of new comment by email if enabled and UserFunctions file exists
                                 if (($comments_settings['comment_email_notify']) && (file_exists(PLUGINS . 'users/libs/UserFunctions.php')))
                                 {
@@ -265,7 +265,7 @@ class Comments
                                     $uf = new UserFunctions();
                                     $uf->notifyMods($h, 'comment', $h->comment->status, $h->comment->postId, $h->comment->id);
                                 }
-                    
+
                                 // email comment subscribers if this comment has 'approved' status:
                                 if ($h->comment->status == 'approved') {
                                     $this->emailCommentSubscribers($h, $h->comment->postId);
@@ -806,6 +806,7 @@ class Comments
         // Use the ids to make an array of unique email addresses
         $subscribers = array();
         $subscriber_ids = array_unique($subscriber_ids);
+        
         foreach ($subscriber_ids as $subscriber_id) {
             // remove the current comment author so he/she doesn't get emailed his own comment
             if ($subscriber_id != $h->comment->author) {
@@ -832,6 +833,12 @@ class Comments
         $message .= $h->lang["comment_email_do_not_reply"] . " \r\n";
         $message .= $h->lang["comment_email_unsubscribe"];
         
+        if (!$h->comment->email) {
+            // Get settings from database if they exist...
+            $comments_settings = $h->getSerializedSettings('comments');
+            $h->comment->email = $comments_settings['comment_email'];
+        }
+        
         $from = SITE_EMAIL;
         $to = $h->comment->email;  // send email to address specified in Comment Settings; 
         if($send_to != "") {
@@ -839,15 +846,16 @@ class Comments
         } else {
             $bcc = "";
         }
-        
-        if (SMTP_ON == 'true') {
+
+        if (SMTP == 'true') {
             $recipients['To'] = $to;
             $recipients['Bcc'] = $send_to;
             // no SMTP headers because they get overwritten in EmailFunctions anyway
             $h->email($recipients, $subject, $message);
         } else {
+            $recipients = $to;
             $headers = "From: " . $from . $bcc . "\r\nReply-To: " . $from . "\r\nX-Priority: 3\r\n";
-            $h->email($to, $subject, $message, $headers);
+            $h->email($recipients, $subject, $message, $headers);
         }
     }
 }

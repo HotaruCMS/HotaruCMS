@@ -126,7 +126,6 @@ class EmailFunctions
         }
 
         $mail = $this->smtp->send($this->to, $this->headers, $this->body);
-
         
         if (PEAR::isError($mail)) {
             echo("<p>" . $mail->getMessage() . "</p>");

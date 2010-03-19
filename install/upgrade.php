@@ -374,10 +374,11 @@ function do_upgrade($old_version)
      // 1.1.2 to 1.1.3
     if ($old_version == "1.1.2") {
 
-       // GMT Offset
+        // System Feedback
         $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
         $h->db->query($h->db->prepare($sql, 'SYS_FEEDBACK', 'true', 'true', 'send system report'));
 
+        // Remove ON from constant names
         $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_name = %s WHERE settings_name = %s";
         $h->db->query($h->db->prepare($sql, 'DB_CACHE', 'DB_CACHE_ON'));
 
