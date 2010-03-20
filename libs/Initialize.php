@@ -85,13 +85,20 @@ class Initialize
         ini_set('display_errors', 1); // Gets disabled later in checkDebug()
         error_reporting(E_ALL);
         
-        // log errors to a file - the custom error handler below wasn't catching fatal errors, so using PHP's one
-        ini_set('error_log', CACHE . 'debug_logs/error_log.txt');
-        /*
-        require_once(EXTENSIONS . 'SWCMS/swcms_error_handler.php'); // error_handler class
-        $error_handler = new swcms_error_handler(0, 0, 1, NULL, CACHE . 'debug_logs/error_log.txt');
-        set_error_handler(array($error_handler, "handler"));
-        */
+        // error log filename
+        $filename = CACHE . 'debug_logs/error_log.txt';
+        
+        // delete file if over 500K
+        if (file_exists($filename) && filesize($filename) > 500000) {
+            unlink($filename);
+        }
+        
+        // point PHP to our error log
+        ini_set('error_log', $filename);
+        
+        $last_modified = filemtime($this->log[$type]);
+        $expire = (14 * 24 * 60 * 60); // 2 weeks
+        if ($last_modified < (time() - $expire)) { unlink ($this->log[$type]); }
     }
 
 
