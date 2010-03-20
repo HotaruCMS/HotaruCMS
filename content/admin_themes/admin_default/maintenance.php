@@ -109,6 +109,8 @@ $db_tables = $h->vars['admin_plugin_tables'];
     <?php $h->pluginHook('admin_maintenance_database'); ?>
 </ul>
 
+<?php $h->pluginHook('admin_maintenance_middle'); ?>
+
 <br />
 <h2><?php echo $h->lang["admin_theme_maintenance_plugin_settings"]; ?></h2>
 <?php echo $h->lang["admin_theme_maintenance_plugin_settings_explanation"]; ?><br /><br />
