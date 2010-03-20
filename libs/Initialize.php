@@ -95,10 +95,6 @@ class Initialize
         
         // point PHP to our error log
         ini_set('error_log', $filename);
-        
-        $last_modified = filemtime($this->log[$type]);
-        $expire = (14 * 24 * 60 * 60); // 2 weeks
-        if ($last_modified < (time() - $expire)) { unlink ($this->log[$type]); }
     }
 
 
