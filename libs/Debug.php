@@ -114,9 +114,16 @@ class Debug
         
         // convert object to text
         $output = $this->logSystemReport($h, $report);
-        
-        $h->writeLog('system_report', $output);
-        $h->closeLog('system_report');
+        if ($output) {
+            $h->writeLog('system_report', $output);
+            $h->closeLog('system_report');
+            
+            $h->message = $h->lang['admin_maintenance_system_report_success'];
+            $h->messageType = 'green';
+        } else {
+            $h->message = $h->lang['admin_maintenance_system_report_failure'];
+            $h->messageType = 'red';
+        }
     }
 
     /**

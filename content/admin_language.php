@@ -141,6 +141,9 @@ $lang['admin_maintenance_settings_removed'] = "Settings removed";
 $lang["admin_maintenance_site_closed"] = SITE_NAME . " will be closed next page view";
 $lang["admin_maintenance_site_opened"] = SITE_NAME . " will be opened next page view";
 $lang['admin_maintenance_announcement_updated'] = "Site announcement updated";
+$lang['admin_maintenance_system_report_success'] = "New system report generated";
+$lang['admin_maintenance_system_report_failure'] = "Unable to generate a system report";
+
 $lang["admin_theme_maintenance"] = "Maintenance";
 $lang["admin_theme_maintenance_title"] = "Hotaru Maintenance";
 $lang["admin_theme_maintenance_site"] = "Site:";
