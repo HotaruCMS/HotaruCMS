@@ -65,7 +65,8 @@ class EmailFunctions
         
         if (SMTP == 'true') {
             // note: this overwrites headers passed to this function:
-            $this->headers = array ('From' => $this->from, 'To' => $this->to['To'], 'Subject' => $this->subject);
+            if (is_array($this->to)) { $to = $this->to['To']; } else { $to = $this->to; }
+            $this->headers = array ('From' => $this->from, 'To' => $to, 'Subject' => $this->subject);
         } else {
             // if not using SMTP and no headers passed to this function, use default
             if (!$this->headers) { 

@@ -557,20 +557,23 @@ function get_domain($url = '')
 }
 
 
-/**
- * Strip foreign characters from latin1/utf8 database yuckiness
- *
- * @param string $str
- * @return string
- */
-function strip_foreign_characters($str)
+if(!function_exists("iconv"))
 {
-    $str = str_replace('Â', '', $str);
-    $str = str_replace('â€™', '\'', $str);
-    $str = str_replace('â€“', '-', $str);
-    $str = str_replace('â€œ', '"', $str);
-    $str = str_replace('â€', '"', $str);
-    return $str;
+    /**
+     * Convert string to requested character encoding if iconv library not installed
+     *
+     * @param string $from
+     * @param string $to
+     * @param string $string
+     * @return string
+     * @link http://www.jpfox.fr/?post/2007/07/25/165-alternative-a-la-fonction-php-iconv
+     */
+    function iconv($from, $to, $string)
+    {
+        $converted = htmlentities($string, ENT_NOQUOTES, $from); 
+        $converted = html_entity_decode($converted, ENT_NOQUOTES, $to);
+        return $converted;
+    }
 }
 
 
@@ -587,5 +590,22 @@ function countUrls($text = '')
     $url = substr_count($text, "[url");
     
     return $href + $url;
+}
+
+
+/**
+ * Strip foreign characters from latin1/utf8 database yuckiness
+ *
+ * @param string $str
+ * @return string
+ */
+function strip_foreign_characters($str)
+{
+    $str = str_replace('Â', '', $str);
+    $str = str_replace('â€™', '\'', $str);
+    $str = str_replace('â€“', '-', $str);
+    $str = str_replace('â€œ', '"', $str);
+    $str = str_replace('â€', '"', $str);
+    return $str;
 }
 ?>

@@ -122,12 +122,7 @@ class UserFunctions
             $body .= $h->lang['userfunctions_notifymods_body_sign'];
             $to = $mod['email'];
             
-            if (SMTP == 'true') {
-                $recipients['To'] = $to;
-                $h->email($recipients, $subject, $body);
-            } else {
-                $h->email($to, $subject, $body);
-            }
+            $h->email($to, $subject, $body);
         }
         
         return true;
