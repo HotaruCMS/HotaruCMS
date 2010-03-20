@@ -1214,7 +1214,16 @@ class Hotaru
     }
     
     
-     
+    /**
+     * Generate a system report
+     *
+     * @param string $type "log" or "object"
+     */
+    public function generateReport($type = 'log')
+    {
+        $this->debug->generateReport($this, $type);
+    }
+
     
  /* *************************************************************
  *
@@ -1445,6 +1454,11 @@ class Hotaru
         $maintenance = new Maintenance();
         return $maintenance->getFiles($dir, $exclude);
     }
+    
+
+    /** 
+     * System Report is under Debug Functions
+     */
     
     
  /* *************************************************************

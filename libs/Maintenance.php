@@ -25,6 +25,11 @@
  */
 class Maintenance
 {
+    /** 
+     * System Report is in libs/Debug.php 
+     */
+     
+
     /**
      * Calls the delete_files function, then displays a message.
      *

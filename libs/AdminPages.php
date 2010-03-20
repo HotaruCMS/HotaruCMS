@@ -284,6 +284,7 @@ class AdminPages
         if ($action == 'empty') { $h->emptyTable($h->cage->get->testAlnumLines('table')); }
         if ($action == 'drop') { $h->dropTable($h->cage->get->testAlnumLines('table')); }
         if ($action == 'remove_settings') { $h->removeSettings($h->cage->get->testAlnumLines('settings')); }
+        if ($action == 'system_report') { $h->generateReport(); } 
         if ($action == 'delete_debugs') { 
             $h->clearCache('debug_logs');
             $h->vars['debug_files'] = $h->getFiles(CACHE . 'debug_logs');

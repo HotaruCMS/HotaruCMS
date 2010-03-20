@@ -166,6 +166,7 @@ $lang["admin_theme_maintenance_html_cache_desc"] = "deletes cached blocks of HTM
 $lang["admin_theme_maintenance_rss_cache"] = "Clear rss cache";
 $lang["admin_theme_maintenance_rss_cache_desc"] = "deletes cached RSS feeds.";
 $lang["admin_theme_maintenance_debug"] = "Debug:";
+$lang["admin_theme_maintenance_system_report"] = "Generate a system report";
 $lang["admin_theme_maintenance_debug_delete"] = "Clear debug files from the cache";
 $lang["admin_theme_maintenance_debug_view"] = "Click the filenames to view the logs:";
 $lang["admin_theme_maintenance_debug_no_files"] = "<i>There are currently no debug files</i>";
