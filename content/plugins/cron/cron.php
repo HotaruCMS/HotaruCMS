@@ -67,7 +67,7 @@ class Cron
             echo "<li>Latest version installed</li>";
         }
         else {
-            echo "<li><a href='#'>Update to v." . $hotaru_latest_version . "</a></li>";
+            echo "<li><a href='http://hotarucms.org/forumdisplay.php?23-Download-Hotaru-CMS'>Update to v." . $hotaru_latest_version . "</a></li>";
         }
     }
 
