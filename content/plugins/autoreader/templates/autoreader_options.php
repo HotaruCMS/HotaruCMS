@@ -9,8 +9,13 @@
             $autoreader_settings = $arSettings->getOptionSettings($h);
             echo json_encode($autoreader_settings);
             exit;
-     default :
-         $autoreader_settings = $arSettings->getOptionSettings($h);
+        case "flush":
+            $hook = "autoreader_runcron";            
+            $cron_data = array('hook'=>$hook);
+            $h->pluginHook('cron_flush_hook', 'cron', $cron_data);
+            exit;
+        default :
+            $autoreader_settings = $arSettings->getOptionSettings($h);
 
     }
 
@@ -46,7 +51,8 @@
               <div id="cron_command" class="command"><?php echo $arSettings->cron_url ?></div>
            <?php } ?>
 
-          <p class="note"><?php echo 'Cron is set up to handle fetching.'; ?> <?php if ($autoreader_settings['wpo_help']) { ?><a href="<?php echo $arSettings->helpurl ?>cron" class="help_link"><?php echo 'More'; ?></a><?php } ?></p>
+          <p class="note"><?php echo 'Cron is set up to handle fetching if you are familiar with manually setting cron jobs on your server.'; ?> <?php if ($autoreader_settings['wpo_help']) { ?><a href="<?php echo $arSettings->helpurl ?>cron" class="help_link"><?php echo 'More'; ?></a><?php } ?></p>
+          <p class="note">For those not familiar with cron jobs or for shared servers where you cannot access them, you may install the "cron" plugin for hotaru which emulates the function of server cron jobs. This is recommended for most users.</p>
         </li>
 
         <li>
@@ -63,21 +69,28 @@
 
               <p class="note"><?php echo 'With this option enabled, Autoreader will attempt to show you logs creation in real time when manual fetching is used.'; ?> <a href="<?php echo $this->helpurl ?>logging" class="help_link"><?php echo 'More'; ?></a></p>
             </li>
-
+        <?php } ?>
+            
             <li>
               <?php echo label_for('option_caching','Cache images') ?>
-              <?php echo checkbox_tag('option_caching', 1,$autoreader_settings['wpo_cacheimage']) ?>
+              <?php echo checkbox_tag('option_caching', 1,$autoreader_settings['wpo_cacheimages']) ?>
 
-              <p class="note"><?php echo 'This option overrides all campaign-specific settings'; ?> <a href="<?php echo $this->helpurl ?>image_caching" class="help_link"><?php echo 'More'; ?></a></p>
+              <p class="note"><?php echo 'This option overrides any campaign specific image settings'; ?> <?php if ($autoreader_settings['wpo_premium']) { ?><a href="<?php echo $this->helpurl ?>image_caching" class="help_link"><?php echo 'More'; ?></a><?php } ?></p>
             </li>
 
             <li>
               <?php echo label_for('option_cachepath','Image cache path') ?>
               <?php echo input_tag('option_cachepath', $autoreader_settings['wpo_cachepath']) ?>
 
-              <p class="note"><?php echo 'The path <span id="cachepath">'. PLUGINS . 'Autoreader/<span id="cachepath_input">' . $autoreader_settings['wpo_cachepath'] . '</span></span> must exist, be writable by the server and accessible through browser.'; ?></p>
+              <p class="note"><?php echo 'The path <span id="cachepath">'. PLUGINS . 'autoreader/<span id="cachepath_input">' . $autoreader_settings['wpo_cachepath'] . '</span></span> must exist, be writable by the server and accessible through browser.'; ?></p>
             </li>
-        <?php } ?>
+       
+
+            <li>
+                <a href='#' id="flush_cron">Clear</a> all cron jobs listed for "autoreader" in the hotaru "cron" plugin.<div id ="flush_cron_message"></div>
+            </li>
+
+
       </ul>
 
       <p class="submit">
@@ -88,6 +101,38 @@
 
 <script type='text/javascript'>
     jQuery('document').ready(function($) {
+
+        $("#flush_cron").click(function() { 
+         var answer = confirm('Are you sure you want to remove all current cron jobs for autoreader from cron plugin? Existing posts submitted will not be lost and campaign data will not be altered.');
+            if (answer) {
+                var formdata = 'action=flush';
+                var sendurl = BASEURL + 'admin_index.php?page=plugin_settings&plugin=autoreader&alt_template=autoreader_options';
+
+            $.ajax(
+                {
+                type: 'post',
+                url: sendurl,
+                data: formdata,
+                beforeSend: function () {
+                                $('#flush_cron_message').html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/ajax-loader.gif' + '"/>');
+                        },
+                error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+                                $('#flush_cron_message').html('An error occured.');
+                },
+                success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
+                        if (data.error === true) {
+                        }
+                        else
+                        {
+                            $('#flush_cron_message').html(data.count + ' jobs flushed from the cron.');
+                        }
+                },
+                dataType: "json"
+            });
+        }
+        return false;
+       });
+       
 
         $("#edit_submit").click(function(event) {
             event.preventDefault();

@@ -89,20 +89,21 @@ class AutoreaderSettings
      * 
      */
     public function getOptionSettings($h, $options = null)
-    {        
-        if ($h->cage->post->testAlpha('action') == "save" ) {           
-            $array = array('saved' => 'true');
-            $autoreader_settings['wpo_log'] = $h->cage->post->testAlnumLines('option_logging');
-            $autoreader_settings['wpo_log_stdout'] =  $h->cage->post->testAlnumLines('option_log_stdout');
-            $autoreader_settings['wpo_unixcron'] =  $h->cage->post->testAlnumLines('option_unixcron');
-            $autoreader_settings['wpo_croncode'] =  $h->cage->post->testAlnumLines('option_croncode');
-            $autoreader_settings['wpo_cacheimage'] = $h->cage->post->testAlnumLines('option_cachimage');
-            $autoreader_settings['wpo_cachepath'] = $h->cage->post->testAlnumLines('option_cachepath');
+    {
+        $autoreader_settings = $h->getSerializedSettings('autoreader');
 
-            $h->updateSetting('autoreader_settings', serialize($autoreader_settings));
+        if ($h->cage->post->testAlpha('action') == "save" ) {                     
+            $autoreader_settings['wpo_log'] = $h->cage->post->keyExists('option_logging');
+            $autoreader_settings['wpo_log_stdout'] =  $h->cage->post->keyExists('option_log_stdout');
+            $autoreader_settings['wpo_unixcron'] =  $h->cage->post->keyExists('option_unixcron');
+            $autoreader_settings['wpo_croncode'] =  $h->cage->post->keyExists('option_croncode');
+            $autoreader_settings['wpo_cacheimages'] = $h->cage->post->keyExists('option_caching');
+            $autoreader_settings['wpo_cachepath'] = $h->cage->post->testPage('option_cachepath');              
+
+            $h->updateSetting('autoreader_settings', serialize($autoreader_settings),'autoreader');
+            $array = array('saved' => 'true');
         }
-        else { 
-            $autoreader_settings = $h->getSerializedSettings('autoreader');
+        else {             
             $array = $autoreader_settings;           
        }
         
@@ -309,7 +310,7 @@ class AutoreaderSettings
     if(!$id) die("Can't be called directly");
 
     // Reset count and lasactive
-    $wpdb->query(WPOTools::updateQuery($this->db['campaign'], array(
+    $h->db->query(WPOTools::updateQuery($this->db['campaign'], array(
       'count' => 0,
       'lastactive' => 0
     ), "id = $id"));
@@ -317,14 +318,14 @@ class AutoreaderSettings
     // Reset feeds hashes, count, and lasactive
     foreach($this->getCampaignFeeds($h, $id) as $feed)
     {
-      $wpdb->query(WPOTools::updateQuery($this->db['campaign_feed'], array(
+      $h->db->query(WPOTools::updateQuery($this->db['campaign_feed'], array(
         'count' => 0,
         'lastactive' => 0,
         'hash' => ''
       ), "id = {$feed->id}"));
     }
 
-    //delete any cron jobs for this campaign ?
+    //no need to delete cron jobs here
 
     $arr = array('id'=> $id);
     return json_encode(array('id'=>$id));
@@ -464,7 +465,7 @@ class AutoreaderSettings
    * @param   object    $campaign   Campaign database object
    * @return  integer   Number of processed items
    */
-  function processCampaign($h, &$campaign)
+  function processCampaign($h, $campaign)
   {
     @set_time_limit(0);
     ob_implicit_flush();
@@ -472,22 +473,26 @@ class AutoreaderSettings
     // Get campaign
     $campaign = is_numeric($campaign) ? $this->getCampaignById($h,$campaign) : $campaign;
 
-    // Log
-    $this->log($h, 'Processing campaign ' . $campaign->title . ' (ID: ' . $campaign->id . ')');
+    if ($campaign) {
 
-    // Get feeds
-    $count = 0;
-    $feeds = $this->getCampaignFeeds($h, $campaign->id);
+        // Log
+        $this->log($h, 'Processing campaign ' . $campaign->title . ' (ID: ' . $campaign->id . ')');
 
-    foreach($feeds as $feed)
-        $count += $this->processFeed($h, $campaign, $feed);
+        // Get feeds
+        $count = 0;
+        $feeds = $this->getCampaignFeeds($h, $campaign->id);
 
-    $h->db->query(WPOTools::updateQuery($this->db['campaign'], array(
-      'count' => $campaign->count + $count,
-      'lastactive' => current_time('mysql', true)
-    ), "id = {$campaign->id}"));
+        foreach($feeds as $feed)
+            $count += $this->processFeed($h, $campaign, $feed);
 
-    return $count;
+        $h->db->query(WPOTools::updateQuery($this->db['campaign'], array(
+          'count' => $campaign->count + $count,
+          'lastactive' => current_time('mysql', true)
+        ), "id = {$campaign->id}"));
+
+        return $count;
+
+    }
   }
 
   /**
@@ -591,7 +596,7 @@ class AutoreaderSettings
     else
       $date = null;*/
 
-	   if($campaign->feeddate)
+   if($campaign->feeddate)
      	 $date = $item->get_date('U');
     else
       $date = null;
@@ -603,9 +608,9 @@ class AutoreaderSettings
     $permalink=$item->get_permalink();
     $root=$_SERVER['HTTP_HOST'];
 
-    // $posturl=file_get_contents("http://$root/wp-content/plugins/wp-o-matic/original_url.php?blog=$permalink");
+    // $posturl=file_get_contents("/original_url.php?blog=$permalink");
     // $posturl = $this->get_sourceurl($permalink);
-$posturl =  $permalink;
+    $posturl =  $permalink;
 
 
     $meta = array(
@@ -616,7 +621,7 @@ $posturl =  $permalink;
     );
   
   
-	//tags
+    //tags
     $post_tags=$item->get_categories();
 
 	$tag_list="";
@@ -662,15 +667,16 @@ $posturl =  $permalink;
    */
   function isDuplicate($h, &$campaign, &$feed, &$item)
   {
-    $hash = $this->getItemHash($item);
-    $row = $h->db->get_row("SELECT * FROM {$this->db['campaign_post']} "
-                          . "WHERE campaign_id = {$campaign->id} AND feed_id = {$feed->id} AND hash = '$hash' ");
+    $row = $h->urlExists($item->get_permalink());
+    //$hash = $this->getItemHash($item);
+    //$row = $h->db->get_row("SELECT * FROM {$this->db['campaign_post']} "
+    //                      . "WHERE campaign_id = {$campaign->id} AND feed_id = {$feed->id} AND hash = '$hash' ");
     return !! $row;
   }
 
 
  /**
-   * Writes a post to blog
+   * Submit a post to db
    *
    *
    * @param   string    $title            Post title
@@ -686,17 +692,21 @@ $posturl =  $permalink;
    */
   function insertPost($h, $title, $content, $timestamp = null, $category = null, $tags= null, $status = 'pending', $authorid = null, $allowpings = true, $comment_status = 'open', $meta = array())
   {
-    $date = ($timestamp) ? gmdate('Y-m-d H:i:s', $timestamp + (get_option('gmt_offset') * 3600)) : null;
+    $date = $timestamp;
+    //$date = ($timestamp) ? gmdate('Y-m-d H:i:s', $timestamp + (get_option('gmt_offset') * 3600)) : null;
 
     $h->post = new Post();
 
     $h->post->title =  $title;
     $h->post->url = make_url_friendly($title);
     $h->post->content = $content;
+    $h->post->date = $date;
     $h->post->type = 'news';
-    $h->post->category = "";
+    $h->post->category =  $category[0];
     $h->post->tags = $tags;
-    $h->post->author = $h->currentUser->id;
+    $h->post->origUrl = $meta["wpo_sourcepermalink"];
+    $h->post->domain = get_domain($meta["wpo_sourcepermalink"]);
+    $h->post->author = $authorid;
     $h->post->status = $status;
 
     $h->addPost();
@@ -718,8 +728,7 @@ $posturl =  $permalink;
 			$this->insertPostMeta($postid, $key, $value);
 */
         $postid = $h->post->vars['last_insert_id'];
-
-		return $postid;
+	return $postid;
   }
 
   /**
@@ -736,17 +745,6 @@ $posturl =  $permalink;
 	}
 
 
-
-
-
-
-
-
-
-
-
-
-
 /**
    * Checks submitted campaign edit form for errors
    *
@@ -754,7 +752,7 @@ $posturl =  $permalink;
    * @return array  errors
    */
   function adminCampaignRequest($h)
-  {
+  { 
     $data_active = $h->cage->post->testAlnumLines('campaign_active');
     $data_template = $h->cage->post->testAlnumLines('campaign_templatechk');
     $data_cacheimages = $h->cage->post->keyExists('campaign_cacheimages');
@@ -766,23 +764,23 @@ $posturl =  $permalink;
     # Main data
     $this->campaign_data = $this->campaign_structure;
     $this->campaign_data['main'] = array(
-        'title'         => $h->cage->post->testAlnumLines('campaign_title'),
-        'active'        => (isset( $data_active)),
+        'title'         => $h->cage->post->getHtmLawed('campaign_title'),
+        'active'        => $h->cage->post->keyExists('campaign_active'),
         'slug'          => $h->cage->post->testAlnumLines('campaign_slug'),
-        'template'      => (isset($data_template))
+        'template'      => ($h->cage->post->keyExists('campaign_template'))
                             ? $data = $h->cage->post->testAlnumLines('campaign_template') : null,
-        'frequency'     => intval($h->cage->post->testInt('campaign_frequency_d')) * 86400
-                          + intval($h->cage->post->testInt('campaign_frequency_h')) * 3600
-                          + intval($h->cage->post->testInt('campaign_frequency_m')) * 60,       
-        'cacheimages'   => (int) isset( $data_cacheimages),
-        'feeddate'      => (int) isset( $data_feeddate),
+        'frequency'     =>  $h->cage->post->testInt('campaign_frequency_d') * 86400
+                          + $h->cage->post->testInt('campaign_frequency_h') //* 3600
+                          + $h->cage->post->testInt('campaign_frequency_m') * 60,       
+        'cacheimages'   => $h->cage->post->keyExists( 'campaign_cacheimages'),
+        'feeddate'      => $h->cage->post->keyExists( 'campaign_feeddate'),
         'posttype'      => $h->cage->post->testAlpha('campaign_posttype'),
         'author'        => $h->cage->post->testAlpha('campaign_author'),
-        'comment_status' => $h->cage->post->testAlpha('campaign_commentstatus'),
-        'allowpings'    => (int) isset($data_allowpings),
-        'dopingbacks'   => (int) isset( $data_dopingbacks),
-        'max'           => intval($h->cage->post->testInt('campaign_max')),
-        'linktosource'  => (int) isset($data_linktosource)
+        'comment_status'=> $h->cage->post->testAlpha('campaign_commentstatus'),
+        'allowpings'    => $h->cage->post->keyExists('campaign_allowpings'),
+        'dopingbacks'   => $h->cage->post->keyExists('campaign_dopingbacks'),
+        'max'           => $h->cage->post->testInt('campaign_max'),
+        'linktosource'  => $h->cage->post->keyExists('campaign_linktosource')
     );
 
     // New feeds
@@ -792,7 +790,6 @@ $posturl =  $permalink;
     foreach( $results as $i => $feed)
     {
       $feed = trim($feed);
-
       if(!empty($feed))
       {
         if(!isset($this->campaign_data['feeds']['new']))
@@ -803,38 +800,35 @@ $posturl =  $permalink;
     }
 
     // Existing feeds to delete
-    if(isset($data['campaign_feed']['delete']))
-    {
+    if($h->cage->post->keyExists('/campaign_feed/delete'))
+    {        
       $this->campaign_data['feeds']['delete'] = array();
-
-      foreach($data['campaign_feed']['delete'] as $feedid => $yes)
-        $this->campaign_data['feeds']['delete'][] = intval($feedid);
+      foreach($h->cage->post->getRaw('/campaign_feed/delete') as $feedid => $yes)
+        $this->campaign_data['feeds']['delete'][] = intval($feedid);      
     }
 
     // Existing feeds.
-    if(isset($data['id']))
+    if($h->cage->post->keyExists('campaign_edit'))
     {
       $this->campaign_data['feeds']['edit'] = array();
-      foreach($this->getCampaignFeeds(intval($data['id'])) as $feed)
+      foreach($this->getCampaignFeeds($h,intval($h->cage->post->testInt('campaign_edit'))) as $feed)
         $this->campaign_data['feeds']['edit'][$feed->id] = $feed->url;
     }
-
+           
     // Categories
-    if(isset($data['campaign_categories']))
+    if($h->cage->post->keyExists('campaign_categories') )
     {
-      foreach($data['campaign_categories'] as $category)
-      {
-        $id = intval($category);
-        $this->campaign_data['categories'][] = $category;
-      }
+       foreach($h->cage->post->keyExists('campaign_categories') as $key => $value) {
+        $this->campaign_data['categories'][] = $value;
+     }
     }
 
     # New categories
-    if(isset($data['campaign_newcat']))
+    if($h->cage->post->keyExists('campaign_newcat') )
     {
-      foreach($data['campaign_newcat'] as $k => $on)
+      foreach($h->cage->post->keyExists('campaign_newcat') as $k => $on)
       {
-        $catname = $data['campaign_newcatname'][$k];
+        $catname = $on;
         if(!empty($catname))
         {
           if(!isset($this->campaign_data['categories']['new']))
@@ -846,9 +840,9 @@ $posturl =  $permalink;
     }
 
    // Rewrites
-    if(isset($data['campaign_word_origin']))
+    if($h->cage->post->keyExists('campaign_word_origin') )
     {
-      foreach($data['campaign_word_origin'] as $id => $origin_data)
+      foreach($h->cage->post->keyExists('campaign_word_origin') as $id => $origin_data)
       {
         $rewrite = isset($data['campaign_word_option_rewrite'])
                 && isset($data['campaign_word_option_rewrite'][$id]);
@@ -881,8 +875,9 @@ $posturl =  $permalink;
       }
     }
 
-    $errors = array('basic' => array(), 'feeds' => array(), 'categories' => array(),
+    $errors = array('errors'=>0, 'basic' => array(), 'feeds' => array(), 'categories' => array(),
                     'rewrite' => array(), 'options' => array());
+    $this->errno = 0;
 
     # Main
     if(empty($this->campaign_data['main']['title']))
@@ -941,11 +936,12 @@ $posturl =  $permalink;
     }
 
     # Options
-//    if(! get_userdatabylogin($this->campaign_data['main']['author']))
-//    {
-//      $errors['options'][] = __('Author username not found', 'wpomatic');
-//      $this->errno++;
-//    }
+    //Allow blank username as code will allocate currentuser when writing to sql db
+    //if(! $h->getUserIdFromName($this->campaign_data['main']['author']))
+    //{
+    //  $errors['options'][] = 'Author username not found';
+    //  $this->errno++;
+    //}
 
     if(! $this->campaign_data['main']['frequency'])
     {
@@ -959,15 +955,18 @@ $posturl =  $permalink;
       $this->errno++;
     }
 
-    if($this->campaign_data['main']['cacheimages'] && !is_writable($this->cachepath))
+    //print "cacheimages: " . $this->campaign_data['main']['cacheimages'];
+    if($this->campaign_data['main']['cacheimages'] && !is_writable( $this->cachepath))
     {
-      $errors['options'][] = 'Cache path (in <a href="' . $this->adminurl . '&s=options">Options</a>) must be writable before enabling image caching.';
+      $errors['options'][] = 'Cache path must be present and writable before enabling image caching.';
       $this->errno++;
     }
 
+    $errors['errors'] = $this->errno;
     $this->errors = $errors;
-    return $errors;
-    //print_r ( $this->errors);
+    
+    return json_encode($errors);
+    
     //exit;
   }
 
@@ -1014,11 +1013,11 @@ $posturl =  $permalink;
      // print "new campaign";
     }
 
-    # All
+    # All   
     foreach($this->campaign_data['categories'] as $category)
     {
       // Insert
-      $wpdb->query(WPOTools::insertQuery($this->db['campaign_category'],
+      $h->db->query(WPOTools::insertQuery($this->db['campaign_category'],
         array('category_id' => $category,
               'campaign_id' => $id)
       ));
@@ -1036,13 +1035,13 @@ $posturl =  $permalink;
     if(isset($this->campaign_data['feeds']['delete']))
     {
       foreach($this->campaign_data['feeds']['delete'] as $feed)
-        $wpdb->query("DELETE FROM {$this->db['campaign_feed']} WHERE id = $feed ");
+        $h->db->query("DELETE FROM {$this->db['campaign_feed']} WHERE id = $feed ");
     }
 
     // Process words
     foreach($this->campaign_data['rewrites'] as $rewrite)
     {
-      $wpdb->query(WPOTools::insertQuery($this->db['campaign_word'],
+       $h->db->query(WPOTools::insertQuery($this->db['campaign_word'],
         array('word' => $rewrite['origin']['search'],
               'regex' => $rewrite['origin']['regex'],
               'rewrite' => isset($rewrite['rewrite']),
@@ -1055,26 +1054,37 @@ $posturl =  $permalink;
     // Main
     $main = $this->campaign_data['main'];
 
-    // Fetch author id
-    $main['authorid'] = $h->getUserIdFromName($this->campaign_data['main']['author']);
+    //Test author name
+    $authorname =  $this->campaign_data['main']['author'];
+    $userid = $h->getUserIdFromName($authorname);
+    if ($userid) { $main['authorid'] =$userid;  } else { $main['authorid'] = $h->currentUser->id;  }
     unset($main['author']);
 
     // Query
     $query = WPOTools::updateQuery($this->db['campaign'], $main, 'id = ' . intval($id));
     $h->db->query($query);
 
-   //get data ready to pass to cron plugin
-   $timestamp = time();
-   switch ($this->campaign_data['main']['frequency']) {
-       case 43200 : $recurrence = "twicedaily"; break;
-       case 86400 : $recurrence = "daily"; break;
-       case 302400 : $recurrence = "weekly"; break;
-       default : $recurrence = "hourly"; break;
+   if ($this->campaign_data['main']['active']) {
+       //get data ready to pass to cron plugin
+       $timestamp = time();
+       switch ($this->campaign_data['main']['frequency']) {
+           case 43200 : $recurrence = "twicedaily"; break;
+           case 86400 : $recurrence = "daily"; break;
+           case 302400 : $recurrence = "weekly"; break;
+           default : $recurrence = "hourly"; break;
+       }
+       $hook = "autoreader_runcron";
+       $args = array('id'=> $id);
+       $cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook, 'args'=>$args);
+       $h->pluginHook('cron_update_job', 'cron', $cron_data);
    }
-   $hook = "autoreader_runcron";
-   $args = array('id'=> $id);
-   $cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook, 'args'=>$args);
-   $h->pluginHook('cron_update_job', 'cron', $cron_data);  
+   else
+   {
+       $hook = "autoreader_runcron";
+       $args = array('id'=> $id);
+       $cron_data = array('hook'=>$hook, 'args'=>$args);
+       $h->pluginHook('cron_delete_job', 'cron', $cron_data);
+   }
 
    // campaign_frequency_d
    // campaign_frequency_h
@@ -1161,7 +1171,7 @@ $posturl =  $permalink;
     $content = $item->get_content();
 
     // Caching
-    if ($campaign->cacheimages)   // set override here for all campaigns  get_option('wpo_cacheimages')
+    if ($h->vars['autoreader_settings']['cacheimages'] || $campaign->cacheimages)   // set override here for all campaigns  get_option('wpo_cacheimages')
     {
       $images = WPOTools::parseImages($content);
       $urls = $images[2];
@@ -1253,7 +1263,7 @@ $posturl =  $permalink;
     if(is_writable($cachepath) && $contents)
     {
       file_put_contents($cachepath . '/' . $filename, $contents);
-      return $this->pluginpath . '/' . get_option('wpo_cachepath') . '/' . $filename;
+      return $this->pluginpath . '/' . $h->vars['autoreader_settings']['wpo_cachepath'] . '/' . $filename;
     }
 
     return false;
@@ -1322,8 +1332,8 @@ $posturl =  $permalink;
       if(!$section || $section == 'main')
       {
         $campaign_data['main'] = array_merge($campaign_data['main'], $campaign);
-//        $userdata = get_userdata($campaign_data['main']['authorid']);
-//        $campaign_data['main']['author'] = $userdata->user_login;
+        $userdata = $h->getUserNameFromId($campaign_data['main']['authorid']);
+        $campaign_data['main']['author'] = $userdata;
       }
 
       // Categories
@@ -1331,10 +1341,9 @@ $posturl =  $permalink;
       {
         $categories = $h->db->get_results("SELECT * FROM {$this->db['campaign_category']} WHERE campaign_id = $id");
         if ($categories) {
-        foreach($categories as $category)
-          $campaign_data['categories'][] = $category->category_id;
-        } else {
-            }
+            foreach($categories as $category)
+              $campaign_data['categories'][] = $category->category_id;
+        }
       }
 
       // Feeds

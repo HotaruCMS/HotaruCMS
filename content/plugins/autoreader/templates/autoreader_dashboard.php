@@ -75,7 +75,7 @@
           <?php foreach($lastcampaigns as $campaign): ?>
           <li>
             <span class="details"><?php echo WPOTools::timezoneMysql('F j, g:i a', $campaign->lastactive) ?></span>
-            <a href="<?php echo $this->adminurl ?>&amp;s=list&amp;id=<?php echo $campaign->id ?>"><?php echo $campaign->title ?></a></li>
+            <a href="/admin_index.php?page=plugin_settings&plugin=autoreader"><?php echo $campaign->title ?></a></li>
           <?php endforeach; ?>
         </ol>
       <?php endif; ?>
@@ -88,7 +88,7 @@
         <?php foreach($campaigns as $campaign): ?>
         <li>
           <span class="details"><?php echo $campaign->count ?></span>
-          <a href="<?php echo $this->adminurl ?>&amp;s=list&amp;id=<?php echo $campaign->id ?>"><?php echo $campaign->title ?></a></li>
+          <a href="/admin_index.php?page=plugin_settings&plugin=autoreader"><?php echo $campaign->title ?></a></li>
         <?php endforeach; ?>
       </ol>
       <?php endif; ?>

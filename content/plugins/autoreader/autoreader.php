@@ -6,7 +6,7 @@
  * folder: autoreader
  * class: Autoreader
  * type: autoreader
- * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, admin_plugin_dropdown_menu, autoreader_runcron
+ * hooks: install_plugin, admin_plugin_settings, admin_sidebar_plugin_settings, autoreader_runcron, admin_theme_index_top
  *
  * PHP version 5
  *
@@ -50,7 +50,34 @@ class Autoreader extends AutoreaderSettings
                                   'categories' => array(), 'feeds' => array());
 
 
+     public function admin_theme_index_top($h) {
+         print "top";
+         if ($h->cage->get->testAlnumLines('plugin')  == 'autoreader') {
+             print "here";
+            $h->vars['autoreader_settings'] = $h->getSerializedSettings('autoreader');
+            print_r( $h->vars['autoreader_settings'] );
 
+                     // Table names init
+         $this->db = array(
+          'campaign'            =>  DB_PREFIX . 'autoreader_campaign',
+          'campaign_category'   =>  DB_PREFIX .  'autoreader_campaign_category',
+          'campaign_feed'       =>  DB_PREFIX .  'autoreader_campaign_feed',
+          'campaign_word'       =>  DB_PREFIX .  'autoreader_campaign_word',
+          'campaign_post'       =>  DB_PREFIX .  'autoreader_campaign_post',
+          'log'                 =>  DB_PREFIX .  'autoreader_log'
+        );
+
+        $this->pluginpath = PLUGINS . '/autoreader/';
+        $this->cachepath = $this->pluginpath . $h->vars['autoreader_settings']['wpo_cachepath'];
+
+        # Cron command / url
+        $this->cron_url = $this->pluginpath . '/cron.php?code=' .   $h->vars['autoreader_settings']['wpo_croncode'];
+        $this->cron_command = '*/20 * * * * '. $this->getCommand() . ' ' . $this->cron_url;
+
+
+
+         }
+     }
 
     /**
      * Install or Upgrade
@@ -69,7 +96,7 @@ class Autoreader extends AutoreaderSettings
         if (!isset($autoreader_settings['wpo_log'])) { $autoreader_settings['wpo_log'] = true; }
         if (!isset($autoreader_settings['wpo_log_stdout'])) { $autoreader_settings['wpo_log_stdout'] = false; }
         if (!isset($autoreader_settings['wpo_unixcron'])) { $autoreader_settings['wpo_unixcron'] = false; }       
-        if (!isset($autoreader_settings['wpo_cacheimage'])) { $autoreader_settings['wpo_cacheimage'] = 0; }
+        if (!isset($autoreader_settings['wpo_cacheimages'])) { $autoreader_settings['wpo_cacheimages'] = 0; }
         if (!isset($autoreader_settings['wpo_croncode'])) { $autoreader_settings['wpo_croncode'] = substr(md5(time()), 0, 8); }
         if (!isset($autoreader_settings['wpo_cachepath'])) { $autoreader_settings['wpo_cachepath'] = 'cache'; }
         if (!isset($autoreader_settings['wpo_help'])) { $autoreader_settings['wpo_help'] = false; }
@@ -80,31 +107,6 @@ class Autoreader extends AutoreaderSettings
         $this->activate($h);
     }
 
-
-     /**
-     * Constructor for autoreader
-     */
-    public function autoreader($h)
-    {
-          $autoreader_settings = $h->getSerializedSettings('autoreader');
-
-         // Table names init
-         $this->db = array(
-          'campaign'            =>  DB_PREFIX . 'autoreader_campaign',
-          'campaign_category'   =>  DB_PREFIX .  'autoreader_campaign_category',
-          'campaign_feed'       =>  DB_PREFIX .  'autoreader_campaign_feed',
-          'campaign_word'       =>  DB_PREFIX .  'autoreader_campaign_word',
-          'campaign_post'       =>  DB_PREFIX .  'autoreader_campaign_post',
-          'log'                 =>  DB_PREFIX .  'autoreader_log'
-        );
-
-        $this->pluginpath = BASEURL . 'plugins/autoreader';
-       // $this->cachepath = BASEURL . get_option('wpo_cachepath');
-
-        # Cron command / url
-        $this->cron_url = $this->pluginpath . '/cron.php?code=' .   $autoreader_settings['wpo_croncode'];
-        $this->cron_command = '*/20 * * * * '. $this->getCommand() . ' ' . $this->cron_url;
-    }
 
 
     /**
@@ -119,9 +121,9 @@ class Autoreader extends AutoreaderSettings
     if($force_install || ! $h->getPluginVersion() || $h->getPluginVersion() != $this->version)   
     {        
         # autoreader_campaign
-        $exists = $h->db->table_exists($this->db['campaign']);
+        $exists = $h->db->table_exists(str_replace(DB_PREFIX, "", $this->db['campaign']));
         if (!$exists) {
-            $h->db->query ( "CREATE TABLE" . $this->db['campaign'] . " (
+            $h->db->query ( "CREATE TABLE " . $this->db['campaign'] . " (
                                 id int(11) unsigned NOT NULL auto_increment,
                                 title varchar(255) NOT NULL default '',
                                 active tinyint(1) default '1',
@@ -146,7 +148,7 @@ class Autoreader extends AutoreaderSettings
         }
 
 		# autoreader_campaign_category
-        $exists = $h->db->table_exists($this->db['campaign_category']);
+        $exists = $h->db->table_exists( str_replace(DB_PREFIX, "", $this->db['campaign_category']));
         if (!$exists) {
             $h->db->query ( "CREATE TABLE " . $this->db['campaign_category'] . " (
   						    id int(11) unsigned NOT NULL auto_increment,
@@ -158,7 +160,7 @@ class Autoreader extends AutoreaderSettings
         }
 
         # autoreader_campaign_feed
-        $exists = $h->db->table_exists($this->db['campaign_feed']);
+        $exists = $h->db->table_exists(str_replace(DB_PREFIX, "", $this->db['campaign_feed']));
         if (!$exists) {
             $h->db->query ( "CREATE TABLE " . $this->db['campaign_feed'] . " (
                                 id int(11) unsigned NOT NULL auto_increment,
@@ -177,7 +179,7 @@ class Autoreader extends AutoreaderSettings
         }
 
         # autoreader_campaign_post
-        $exists = $h->db->table_exists($this->db['campaign_post']);
+        $exists = $h->db->table_exists(str_replace(DB_PREFIX, "", $this->db['campaign_post']));
         if (!$exists) {
             $h->db->query ( "CREATE TABLE " . $this->db['campaign_post'] . " (
                             id int(11) unsigned NOT NULL auto_increment,
@@ -191,7 +193,7 @@ class Autoreader extends AutoreaderSettings
         }
 
          # autoreader_campaign_word
-         $exists = $h->db->table_exists($this->db['campaign_word']);
+         $exists = $h->db->table_exists(str_replace(DB_PREFIX, "", $this->db['campaign_word']));
          if (!$exists) {
             $h->db->query ( "CREATE TABLE " . $this->db['campaign_word'] . " (
                                 id int(11) unsigned NOT NULL auto_increment,
@@ -207,7 +209,7 @@ class Autoreader extends AutoreaderSettings
          }
 
           # autoreader_log
-          $exists = $h->db->table_exists($this->db['log']);
+          $exists = $h->db->table_exists(str_replace(DB_PREFIX, "", $this->db['log']));
           if (!$exists) {
             $h->db->query ( "CREATE TABLE " . $this->db['log'] . " (
                                 id int(11) unsigned NOT NULL auto_increment,
@@ -262,7 +264,7 @@ class Autoreader extends AutoreaderSettings
 
     /**
     * Checks that autoreader tables exist
-    *
+    * 
     *
     */
     function tablesExist($h)
@@ -278,14 +280,10 @@ class Autoreader extends AutoreaderSettings
 
    public function autoreader_runcron($h, $args) {
     $cid = $args['id'];
-    //print_r ($args);
 
     $this->forcefetched = $this->processCampaign($h,$cid);
 }
-
-
-      
-
+     
 
  }
 ?>

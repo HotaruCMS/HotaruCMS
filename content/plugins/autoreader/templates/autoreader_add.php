@@ -15,15 +15,25 @@
             action_add($h, $arSettings,  $data, 'edit');         
             break;
         case "save" :           
-            $arSettings->adminCampaignRequest($h);
-            if ( $h->cage->post->keyExists('campaign_edit') ) {
-                $cid = $h->cage->post->getInt('campaign_edit');                
-                $arSettings->adminProcessEdit($h,$cid);
+            $errors = $arSettings->adminCampaignRequest($h);
+            print $errors;
+            $arr_errors = json_decode($errors);           
+            if ($arr_errors->errors == 0) {
+                if ( $h->cage->post->keyExists('campaign_edit') ) {
+                    $cid = $h->cage->post->getInt('campaign_edit');
+                    $arSettings->adminProcessEdit($h,$cid);
+                }
+                else {     
+                    $arSettings->adminProcessAdd($h);
+                }
             }
-            else {               
-                $arSettings->adminProcessAdd($h);
-            };
             exit;  // this is an ajax return call, so we don't want any html echoing to the screen
+        case "tools_delete" :
+            $cid = $h->cage->post->getInt('id');
+        print $cid;
+            //$errors = $arSettings->toolsdelete($h);
+            //print $errors;
+            exit;
         case "test_feed" :           
             $data = $h->cage->post->testUri('url');            
             $arSettings->adminTestfeed($data);
@@ -61,7 +71,7 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
          <?php } ?>       
         <li><input type="submit" name="edit_submit" value="Submit" id="edit_submit" /></li>
       </ul>
-
+        <div id="error_message"></div>
       <div id="admin_plugin_tabs">
       <ul class="tabs">
         <li class="current"><a href="#section_basic" id="tab_basic">Basic</a></li>
@@ -100,7 +110,7 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
 
         <!-- Feeds section -->
         <div class="section" id="section_feeds">
-          <p>Please fill in at least one feed. If you\'re not sure about the exact feed url, just type in the domain name, and the feed will be autodetected</p>
+          <p>Please fill in at least one feed. If you are not sure about the exact feed url, just type in the domain name, and the feed will be autodetected</p>
 
           <div id="edit_feed">
             <?php if(isset($data['feeds']['edit'])): ?>
@@ -136,13 +146,23 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
 
         <!-- Categories section -->
         <div class="section" id="section_categories">
-          <p>These are the categories where the posts will be created once they're fetched from the feeds.</p>
+          <p>These are the categories where the posts will be created once they are fetched from the feeds.</p>
           <p>Please select one.</p>
 
           <ul id="categories">
             <?php $arSettings->adminEditCategories($h, $data) ?>
+
+            <?php if(isset($data['categories']['new'])): ?>
+              <?php foreach($data['categories']['new'] as $i => $catname): ?>
+              <li>
+                <?php echo checkbox_tag('campaign_newcat[]', 1, true, 'id=campaign_newcat_' . $i) ?>
+                <?php echo input_tag('campaign_newcatname[]', $catname, 'class=input_text id=campaign_newcatname_' . $i) ?>
+              </li>
+              <?php endforeach ?>
+            <?php endif ?>
           </ul>
 
+        
            <?php if ($autoreader_settings['wpo_premium']) { ?>
                 <a href="#quick_add" id="quick_add">Quick add</a>
            <?php } ?>
@@ -150,8 +170,9 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
 
         <!-- Rewrite section -->
         <div class="section" id="section_rewrite">
+        <?php if ($autoreader_settings['wpo_help']) { ?>
           <p>Want to transform a word into another? Or link a specific word to some website?
-<?php // echo '<a href=' . $arSettings->helpurl . '" class="help_link">Read more</a>' ?></p>
+            <?php // echo '<a href=' . $arSettings->helpurl . '" class="help_link">Read more</a>' ?></p>
 
           <ul id="edit_words">
             <?php if(isset($data['rewrites']) && count($data['rewrites'])): ?>
@@ -202,9 +223,12 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
             <?php endif ?>
           </ul>
 
-           <?php if ($autoreader_settings['wpo_premium']) { ?>
+           
                 <a href="#add_word" id="add_word">Add more</a>
-           <?php } ?>
+           <?php } else {
+               echo "This section is being worked on and will be added in a future release of this plugin.";
+           }?>
+                
         </div>
 
         <!-- Options -->
@@ -212,7 +236,7 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
           <?php if(isset($campaign_edit)): ?>
           <div class="section_warn">
             <img src="<?php echo $arSettings->tplpath ?>/images/icon_alert.gif" alt="Warning" class="icon" />
-            <h3>Remember that</h3>
+            <h3>Note</h3>
             <p>Changing these options only affects the creation of posts after the next time feeds are parsed.</p>
             <p>If you need to edit existing posts, you can do so by using the options under the Tools tab</p>
           </div>
@@ -262,25 +286,27 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
                 m
              <?php } ?>
 
-             <select name="campaign_frequency_h">
-              <option value="1">hourly</option>
-              <option value="12">twice daily</option>
-              <option value="24">daily</option>
-              <option value="84">weekly</option>
-            </select>
+             <?php echo select_tag('campaign_frequency_h',
+                        options_for_select(
+                          array('3600' => 'hourly',
+                                '43200' => 'twice daily',
+                                '86400' => 'daily',
+                                '302400' => 'weekly'
+                                ), _data_value($data['main'], 'frequency', '1'))) ?>
+                
 
-            <p class="note">How often should feeds be checked? </p>
+            <p class="note">How often should this feed be checked? </p>
           </div>
 
-          <?php if ($autoreader_settings['wpo_premium']) { ?>
+           <?php if (!$autoreader_settings['wpo_premium']) { ?>
               <div class="checkbox">
                 <?php echo label_for('campaign_cacheimages', 'Cache images') ?>
                 <? // need to install timthumb folder to get the following working  ?>
-                <?php  echo checkbox_tag('campaign_cacheimages', 1, _data_value($data['main'], 'cacheimages', is_writable($arSettings->cachepath))) ?>
+                <?php  echo checkbox_tag('campaign_cacheimages', 1, _data_value($data['main'], 'cacheimages', is_writable($autoreader_settings['wpo_cachepath']))) ?>
                 <p class="note">Images will be stored in your server, instead of hotlinking from the original site.
-                    <a href="helpurl image_caching" class="help_link">More</a></p>
+                     <?php if ($autoreader_settings['wpo_help']) { ?><a href="helpurl image_caching" class="help_link">More</a><?php } ?></p>
               </div>
-          <?php } ?>
+           <?php } ?>
 
           <div class="checkbox">
             <?php echo label_for('campaign_feeddate', 'Use feed date') ?>
@@ -308,8 +334,9 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
 
           <div class="text">
             <?php echo label_for('campaign_author', 'Author:') ?>
+            <?php echo input_tag('campaign_author', _data_value($data['main'], 'author')) ?>
  <?php // echo select_tag('campaign_author', options_for_select($author_usernames, _data_value($data['main'], 'author', 'admin'))) ?>
-            <p class="note">The created posts will be assigned to admin.</p>
+            <p class="note">If blank, the created posts will be assigned to the current user.</p>
           </div>
 
           <div class="text required">
@@ -318,10 +345,12 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
             <p class="note">Set it to 0 for unlimited. If set to a value, only the last X items will be selected, ignoring the older ones.</p>
           </div>
 
-          <div class="checkbox">
-            <?php echo label_for('campaign_linktosource', 'Post title links to source?') ?>
-            <?php echo checkbox_tag('campaign_linktosource', 1, _data_value($data['main'], 'linktosource', false)) ?>
-          </div>
+          <?php if ($autoreader_settings['wpo_premium']) { ?>
+              <div class="checkbox">
+                <?php echo label_for('campaign_linktosource', 'Post title links to source?') ?>
+                <?php echo checkbox_tag('campaign_linktosource', 1, _data_value($data['main'], 'linktosource', false)) ?>
+              </div>
+          <?php } ?>
 
           <?php if ($autoreader_settings['wpo_premium']) { ?>
               <div class="radio">
@@ -340,38 +369,44 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
          <?php } ?>
         </div>
 
-         <?php if ($autoreader_settings['wpo_premium']) { ?>
-        <?php if($action == 'edit'): ?>
+         
+        <?php if($action == 'edit'): ?>       
         <!-- Tools -->
         <div class="section" id="section_tools">
+            <?php if (!$autoreader_settings['wpo_premium']) { ?>
           <div class="buttons">
             <h3>Posts action</h3>
             <p class="note">The selected action applies to all the posts created by this campaign</p>
-
             <ul>
               <li>
+                 <div class="text">
+                    Check hotaru Cron to confirm running of this campaign. <a href="/admin_index.php?page=plugin_settings&plugin=cron">check now</a>
+                 </div>
+              </li>
+              <li>
+                
+                <label class="main">Delete posts from database:</label>
                 <div class="btn">
                   <input type="submit" name="tool_removeall" value="Remove all" />
                 </div>
+               
               </li>
               <li>
                 <div class="radio">
                   <label class="main">Change status to:</label>
-
-                  <input type="radio" name="campaign_tool_changetype" value="new" id="changetype_new" checked="checked" /> <label for="changetype_new">New</label>
-                  <input type="radio" name="campaign_tool_changetype" value="private" id="changetype_private" /> <label for="changetype_private">Private</label>
-                  <input type="radio" name="campaign_tool_changetype" value="draft" id="changetype_draft" /> <label for="changetype_draft">Draft</label>
-                  <input type="submit" name="tool_changetype" value="Change" />
+                  <input type="radio" name="campaign_tool_changetype" value="new" id="changetype_new" checked="checked" /> <label for="changetype_new">Published (New)</label>
+                  <input type="radio" name="campaign_tool_changetype" value="private" id="changetype_pending" /> <label for="changetype_pending">Pending</label>
+                 <input type="submit" name="tool_changetype" value="Change" />
                 </div>
               </li>
               <li>
                 <div class="text">
-                  <label for="campaign_tool_changeauthor">Change author username to:</label>
-                  <?php echo select_tag('campaign_tool_changeauthor', options_for_select($author_usernames, _data_value($data['main'], 'author', 'admin'))) ?>
-
+                  <?php echo label_for('campaign_tool_changeauthor', 'Change author username to:') ?>
+                  <?php echo input_tag('campaign_tool_changeauthor', _data_value($data['main'], 'author')) ?>
                   <input type="submit" name="tool_changeauthor" value="Change" />
+                  <p class="note">If blank, the created posts will be assigned to the current user.</p>
                 </div>
-              </li>
+              </li>             
             </ul>
           </div>
 
@@ -382,9 +417,10 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
             <p class="note">This option creates one draft from each feed you added.</p>
           </div>
           -->
+           <?php } ?>
         </div>
         <?php endif; ?>
-        <?php } ?>
+       
       </div>
 
         
@@ -438,13 +474,20 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
             url: sendurl,
             data: formdata,
             beforeSend: function () {
-                            $('#edit_buttons').append('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/ajax-loader.gif' + '"/>');                           
+                            $('#error_message').html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/ajax-loader.gif' + '"/>');
                     },
             error: 	function(XMLHttpRequest, textStatus, errorThrown) {
-                            //widget.html('ERROR');
+                             $('#error_message').html('There was an error with the data');
             },
             success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
-                    if (data.error === true) {
+                    $error_message = "";
+                    if (data.errors > 0) {
+                         $error_mesage = 'There are a total of ' + data.errors + " problems to fix<br/>";
+                         if (data.basic.length > 0) { $error_message += 'Basic: ' + data.basic + "<br/>";  }
+                         if (data.feeds.length > 0) { $error_message += 'Feeds ' + data.feeds + "<br/>";  }
+                         if (data.categories.length >0) { $error_message += 'Categories: ' + data.categories + "<br/>";  }
+                         if (data.rewrite.length > 0) { $error_message += 'Rewrite ' + data.rewrite + "<br/>";  }
+                         if (data.options.length > 0) { $error_message += 'Options: ' + data.options + "<br/>";  }
                     }
                     else
                     {
@@ -452,7 +495,9 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
                         // get required image based on returned data showing new status
                         if(data.enabled == 'true') { img_src = "active.png"; } else { img_src = "inactive.png"; }
                         $('#edit_buttons').html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/' + img_src + '"/>');
+                        $error_message += "Your changes have been saved."
                     }
+                    $('#error_message').html($error_message);
                     //$('#return_message').html(data.message).addClass(data.color);
                     //$('#return_message').html(data.message).addClass('message');
                     //$('#return_message').fadeIn(1000).fadeout(1000);
@@ -515,8 +560,38 @@ function toSlug(str) {
             });
           };         
           feed.addClass('load input_text');
-		};
+    };
 
+    $('#tool_removeall').click(function(){
+            event.preventDefault();
+            var answer = confirm('You are about to delete all the posts for this campaign from the database. This action can not be reversed. Delete ? '+jQuery(this).attr('title'));
+            if (answer) {
+                var campaign_id = ('#campaign_edit').val();
+                alert(campaign_id);
+                var formdata = 'action=tools_delete&id=' + campaign_id;
+                var sendurl = BASEURL + 'admin_index.php?page=plugin_settings&plugin=autoreader&alt_template=autoreader_add';
+
+                 $.ajax(
+                    {
+                    type: 'post',
+                    url: sendurl,
+                    data: formdata,
+                    error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+                                    $('#error_message').html('There was an error with the data');
+                    },
+                    success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
+                            if (data.error === true) {
+                            }
+                            else
+                            {
+                                $('#error_message').html('___ records were deleted');
+                            }
+                    },
+                    dataType: "json"
+                });
+            }
+            return false;
+    });
 
     function update_feeds() {          
           $('#edit_feed div input[type=text]').focus(function() {
