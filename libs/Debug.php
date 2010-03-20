@@ -60,17 +60,21 @@ class Debug
      */
     public function openLog($type = 'debug', $mode = 'a+')
     {
-        $this->log[$type] = CACHE . "debug_logs/" . $type . ".txt";
+        $this->log[$type] = CACHE . "debug_logs/" . $type . ".php";
         
-        // auto-delete the file after 1 week:
-        /*
-        $last_modified = filemtime($this->log[$type]);
-        $expire = (7 * 24 * 60 * 60); // 1 week
-        if ($last_modified < (time() - $expire)) { unlink ($this->log[$type]); }
-        */
+        // delete file if over 1MB
+        if (file_exists($this->log[$type]) && (filesize($this->log[$type]) > 1000000)) {
+            unlink($this->log[$type]); 
+        }
         
-        // open/create a file:
-        $this->fh[$type] = fopen($this->log[$type], $mode) or die("can't open file");
+        // If doesn't exist or rewriting, create a new file with die() at the top
+        if (!file_exists($this->log[$type]) || ($mode != 'a' && $mode != 'a+')) {
+            $this->fh[$type] = fopen($this->log[$type], $mode) or die("Sorry, I can't open cache/debug_logs/" . $type . ".php");
+            fwrite($this->fh[$type], "<?php die(); ?>\r\n");
+        } else {
+            // open existing file:
+            $this->fh[$type] = fopen($this->log[$type], $mode) or die("can't open file");
+        }
     }
     
     
@@ -229,7 +233,7 @@ class Debug
      */
     public function logSystemReport($h, $report = NULL)
     {
-        $output = "\n\r";
+        $output = "\n\n";
 
         $output .= "Name: " . $report['hotaru_site_name'] . "\n";
         $output .= "URL: " . $report['hotaru_baseurl'] . "\n";
@@ -238,7 +242,7 @@ class Debug
         $output .= "PHP version: " . $report['php_version'] . "\n";
         $output .= "MySQL version: " . $report['mysql_version'] . "\n";
         
-        $output .= "\r";
+        $output .= "\n";
         
         $output .= "Default site permissions: \n";
         $perms = unserialize($report['hotaru_permissions']);
@@ -252,7 +256,7 @@ class Debug
             $output .= ")\n";
         }
         
-        $output .= "\r";
+        $output .= "\n";
         
         $output .= "Default user settings: \n";
         $user_settings = unserialize($report['hotaru_user_settings']);
@@ -260,7 +264,7 @@ class Debug
             $output .= $key . " => " . $value . "\n";
         }
         
-        $output .= "\r";
+        $output .= "\n";
         
         $output .= "Plugins: \n";
         if (isset($report['hotaru_plugins'])) {
@@ -270,7 +274,7 @@ class Debug
             }
         }
         
-        $output .= "\r";
+        $output .= "\n";
         
         $output .= "Plugin Hooks: \n";
         if (isset($report['hotaru_plugin_hooks'])) {
@@ -279,7 +283,7 @@ class Debug
             }
         }
         
-        $output .= "\r";
+        $output .= "\n";
 
         $output .= "Plugin Settings: \n";
         if (isset($report['hotaru_plugin_settings'])) {
@@ -293,7 +297,7 @@ class Debug
             }
         }
         
-        $output .= "\r";
+        $output .= "\n";
 
         $output .= "Hotaru Settings: \n";
         if (isset($report['hotaru_settings'])) {
@@ -302,7 +306,7 @@ class Debug
             }
         }
 
-        $output .= "\r";
+        $output .= "\n";
         
         $output .= "Widgets: \n";
         if (isset($report['hotaru_widgets'])) {
@@ -313,7 +317,7 @@ class Debug
             }
         }
         
-        $output .= "\r";
+        $output .= "\n";
         
         $output .= "Number of rows in each table: \n";
         if (isset($report['hotaru_table_count'])) {

@@ -96,7 +96,7 @@ $db_tables = $h->vars['admin_plugin_tables'];
 <?php   if ($h->vars['debug_files']) {
             echo $h->lang["admin_theme_maintenance_debug_view"] . "<br />";
             foreach ($h->vars['debug_files'] as $file) {
-                echo "<a href='" . BASEURL . "cache/debug_logs/" . $file . "'>" . $file . "</a><br />";
+                echo "<a href='" . BASEURL . "admin_index.php?page=maintenance&amp;debug=" . $file . "'>" . $file . "</a><br />";
             }
         } else {
              echo $h->lang["admin_theme_maintenance_debug_no_files"];

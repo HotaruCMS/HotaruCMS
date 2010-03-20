@@ -260,10 +260,17 @@ class AdminPages
         $maintenance = new Maintenance();
         $maintenance->getSiteAnnouncement($h);
         
-        $h->vars['debug_files'] = $h->getFiles(CACHE . 'debug_logs');
-        
-        // if no action, return now
-        if (!$action = $h->cage->get->testAlnumLines('action')) { return false; }
+        // check if we're viewing a debug file
+        $debug_file = $h->cage->get->noPath('debug');
+        if ($debug_file) {
+            // skip the opening die() statement and echo debug file
+            $debug_contents = file_get_contents(CACHE . 'debug_logs/' . $debug_file, NULL, NULL, 16);
+            echo nl2br($debug_contents);
+            exit; 
+        }
+                
+        // check if we're performing an action
+        $action = $h->cage->get->testAlnumLines('action');
         
         if ($action == 'announcement') { $maintenance->addSiteAnnouncement($h); }
         if ($action == 'open') { $h->openCloseSite('open'); }
@@ -289,6 +296,9 @@ class AdminPages
             $h->clearCache('debug_logs');
             $h->vars['debug_files'] = $h->getFiles(CACHE . 'debug_logs');
         }
+        
+        // get list of debug logs
+        $h->vars['debug_files'] = $h->getFiles(CACHE . 'debug_logs');
     }
     
     

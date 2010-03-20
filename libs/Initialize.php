@@ -86,11 +86,18 @@ class Initialize
         error_reporting(E_ALL);
         
         // error log filename
-        $filename = CACHE . 'debug_logs/error_log.txt';
+        $filename = CACHE . 'debug_logs/error_log.php';
         
-        // delete file if over 500K
-        if (file_exists($filename) && filesize($filename) > 500000) {
-            unlink($filename);
+        // delete file if over 1MB
+        if (file_exists($filename) && (filesize($filename) > 1000000)) {
+            unlink($filename); 
+        }
+        
+        // If doesn't exist, create a new file with die() at the top
+        if (!file_exists($filename)) {
+            $fh = fopen($filename, 'w') or die("Sorry, I can't open cache/debug_logs/error_log.php");
+            fwrite($fh, "<?php die(); ?>\r\n");
+            fclose($fh);
         }
         
         // point PHP to our error log
@@ -238,7 +245,6 @@ class Initialize
             require_once(FUNCTIONS . 'funcs.times.php');
             timer_start();
             ini_set('display_errors', 1); // show errors
-            ini_set('error_log', CACHE . 'debug_logs/error_log.txt');
             return true;
         } else {
             ini_set('display_errors', 0); // hide errors
