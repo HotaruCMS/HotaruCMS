@@ -32,12 +32,12 @@
  * @link      http://www.hotarucms.org/
  */
 
-require_once 'XML/Serializer.php'; 
+//require_once 'XML/Serializer.php';
 
 class Api
 {
     public function theme_index_top($h)
-    {        
+    {       
         if ($h->pageName == 'api') {                      
             $this->hotaruAPI($h);
             die(); exit;
@@ -47,14 +47,16 @@ class Api
     
     public function hotaruAPI($h)
     {
+        // set to get for testing
         $api_key = $h->cage->post->testAlnumLines('api_key');
         $method = $h->cage->post->getHtmLawed('method');
         $format = $h->cage->post->testAlnumLines('format');
-
+        $args = $h->cage->post->getHtmLawed('args');
+ 
         $data = array("result"=>"empty");
 
-        //print $method;
-        //print $format;
+//        print $method;
+//        print $format;
 
         switch ($method) {
             case "hotaru.version.get":
@@ -65,52 +67,47 @@ class Api
             case "hotaru.activity.getLatest":
                 $data = $this->getLatestActivity($h);
                 break;
+            case "hotaru.systemFeedback.add":
+                $this->addSystemFeedback($h, $args);
+                break;
             default:
                 break;
         }
 
         switch ($format) {
-            case "json" :
-                echo json_encode($data);
+            case "xml" :
+                // An array of serializer options
+//                $serializer_options = array (
+//                   'addDecl' => TRUE,
+//                   'encoding' => 'ISO-8859-1',
+//                   'indent' => '  ',
+//                   'rootName' => 'hotaru',
+//                );
+//                $Serializer = new XML_Serializer($serializer_options);
+//                // Serialize the data structure
+//                $status = $Serializer->serialize($data);
+//                // Check whether serialization worked
+//                if (PEAR::isError($status)) {
+//                   die($status->getMessage());
+//                }
+//                // Display the XML document
+//                header('Content-type: text/xml');
+//                echo $Serializer->getSerializedData();
                 break;
             case "php" :
                 echo  serialize($data);                
                 break;
             default:
-                // An array of serializer options
-                $serializer_options = array (
-                   'addDecl' => TRUE,
-                   'encoding' => 'ISO-8859-1',
-                   'indent' => '  ',
-                   'rootName' => 'hotaru',
-                );
-                $Serializer = new XML_Serializer($serializer_options);
-                // Serialize the data structure
-                $status = $Serializer->serialize($data);
-                // Check whether serialization worked
-                if (PEAR::isError($status)) {
-                   die($status->getMessage());
-                }
-                // Display the XML document
-                header('Content-type: text/xml');
-                echo $Serializer->getSerializedData();
-                
+                echo json_encode($data);
                 break;
         }
     }
 
 
 
-    public function getHotaruVersion($h) {
-        // $query = "SELECT miscdata_value FROM hotaru_miscdata WHERE miscdata_key = %s";
-        //$sql = $h->db->prepare($query, 'hotaru_version');
-        //$result = $h->db->get_row($sql);
-        //return $result->miscdata_value;
-
+    public function getHotaruVersion($h) {     
         return array("version"=>$h->version);
-
     }
-
 
     public function getLatestActivity($h) {
         require_once(PLUGINS . 'activity/activity.php');
@@ -119,6 +116,29 @@ class Api
         return $result;
     }
 
+    public function addSystemFeedback($h, $args) {
+        $data = unserialize($args);
+
+        $origUrl = $data['hotaru_baseurl'];
+
+        $result = $h->urlExists($origUrl);
+
+        if ($result) {           
+            $h->post = $result[0];
+            $h->post->content = $h->debug->logSystemReport($h, $data);
+            $return = $h->updatePost();
+        }
+        else {            
+            $h->post = new Post();
+
+            $h->post->author = 1;
+            $h->post->status = 'new';
+            $h->post->title = $data['hotaru_site_name'];
+            $h->post->origUrl = $data['hotaru_baseurl'];
+            $h->post->content = $h->debug->logSystemReport($h, $data);
+            $return = $h->addPost();
+        }
+    }
 }
 
 ?>
