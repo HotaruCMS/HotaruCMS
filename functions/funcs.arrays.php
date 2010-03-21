@@ -116,4 +116,24 @@ function array_iunique($a)
     return $n;
 }
 
+
+/**
+ * Is serialized?
+ *
+ * @param mixed $data
+ * @return bool 
+ * @link http://www.weberdev.com/get_example-4099.html
+ */
+function is_serialized($data)
+{
+    if (trim($data) == "") {
+        return false;
+    }
+    
+    if (preg_match("/^(i|s|a|o|d)(.*);/si",$data)) {
+        return true;
+    }
+    return false;
+}
+
 ?>

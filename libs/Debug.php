@@ -189,17 +189,48 @@ class Debug
         $plugins = $h->db->get_results($h->db->prepare($sql));
         if ($plugins) {
             foreach ($plugins as $plugin) {
-                // $report['hotaru_plugin_settings'][$plugin->plugin_folder][$plugin->plugin_setting] = gettype($plugin->plugin_value);
-                $report['hotaru_plugin_settings'][$plugin->plugin_folder] = $plugin->plugin_setting;
+                if (is_serialized($plugin->plugin_value)) {
+                    $plugin->plugin_value = unserialize($plugin->plugin_value);
+                    if (is_array($plugin->plugin_value)) {
+                        foreach ($plugin->plugin_value as $key => $value) {
+                            if (is_array($value)) {
+                                foreach ($value as $k => $v) {
+                                    if (is_array($v)) {
+                                        $v = serialize($v);
+                                        $plugin->plugin_value[$key][$k] = preg_replace("/[a-zA-Z0-9]/", "*", $v);
+                                    } else {
+                                        $plugin->plugin_value[$key][$k] = preg_replace("/[a-zA-Z0-9]/", "*", $v);
+                                    }
+                                }
+                            } else {
+                                $plugin->plugin_value[$key] = preg_replace("/[a-zA-Z0-9]/", "*", $value);
+                            }
+                        }
+                        $plugin->plugin_value = serialize($plugin->plugin_value);
+                    }
+                } else {
+                    $plugin->plugin_value = preg_replace("/[a-zA-Z0-9]/", "*", $plugin->plugin_value);
+                }
+                $report['hotaru_plugin_settings'][$plugin->plugin_folder][$plugin->plugin_setting] = $plugin->plugin_value;
             }
         }
         
         // Settings: Name, value (excluding SMTP PASSWORD)
         
-        $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS . " WHERE settings_name != %s";
-        $settings = $h->db->get_results($h->db->prepare($sql, 'SMTP_PASSWORD'));
+        $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;
+        $settings = $h->db->get_results($h->db->prepare($sql));
         if ($settings) {
             foreach ($settings as $setting) {
+                // mask sensitive data
+                switch ($setting->settings_name) {
+                    case 'SITE_EMAIL':
+                    case 'SMTP_HOST':
+                    case 'SMTP_PORT':
+                    case 'SMTP_USERNAME':
+                    case 'SMTP_PASSWORD':
+                        $setting->settings_value = preg_replace("/[a-zA-Z0-9]/", "*", $setting->settings_value);
+                        break;
+                }
                 $report['hotaru_settings'][$setting->settings_name] = $setting->settings_value;
             }
         }
@@ -285,15 +316,21 @@ class Debug
         
         $output .= "\n";
 
-        $output .= "Plugin Settings: \n";
+        $output .= "Plugin Settings: \n\n";
         if (isset($report['hotaru_plugin_settings'])) {
             foreach ($report['hotaru_plugin_settings'] as $key => $value) {
-                /* if we were to use values this code works:
                 foreach ($value as $k => $v) {
-                    $output .= $key . ": " . $k . " = " . $v . " \n";
+                    if (!is_serialized($v)) {
+                        $output .= "Plugin settings for " . $key . ":\n" . $k . " = " . $v . " \n";
+                    } else {
+                        $output .= "Plugin settings for " . $key . ":\n";
+                        $v = unserialize($v);
+                        foreach ($v as $y => $z) {
+                            $output .= "..... " . $y . ": " . $z . " \n";
+                        }
+                        $output .= " \n";
+                    }
                 }
-                */
-                $output .= $key . " => " . $value . " \n";
             }
         }
         
