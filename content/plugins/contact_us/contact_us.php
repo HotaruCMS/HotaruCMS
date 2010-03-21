@@ -2,7 +2,7 @@
 /**
  * name: Contact Us
  * description: Contact form
- * version: 0.1
+ * version: 0.2
  * folder: contact_us
  * type: contact_form
  * class: ContactUs

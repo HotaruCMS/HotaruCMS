@@ -524,12 +524,16 @@ class UserAuth extends UserBase
             $url = BASEURL . 'admin_index.php?page=admin_login'; 
         }
         
+        $username = $h->getUserNameFromId($userid);
+        
         // send email
         $subject = $h->lang['main_user_email_new_password_subject'];
-        $body = $h->lang['main_user_email_password_conf_body_hello'] . " " . $h->getUserNameFromId($userid);
+        $body = $h->lang['main_user_email_password_conf_body_hello'] . " " . $username;
         $body .= $line_break;
         $body .= $h->lang['main_user_email_password_conf_body_requested'];
         $body .= $line_break;
+        $body .= $username;
+        $body .= $next_line;
         $body .= $temp_pass;
         $body .= $line_break;
         $body .= $h->lang['main_user_email_password_conf_body_remember'];
