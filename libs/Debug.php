@@ -62,8 +62,8 @@ class Debug
     {
         $this->log[$type] = CACHE . "debug_logs/" . $type . ".php";
         
-        // delete file if over 1MB
-        if (file_exists($this->log[$type]) && (filesize($this->log[$type]) > 1000000)) {
+        // delete file if over 500KB
+        if (file_exists($this->log[$type]) && (filesize($this->log[$type]) > 500000)) {
             unlink($this->log[$type]); 
         }
         
@@ -106,13 +106,23 @@ class Debug
     /**
      * Generate a System Report
      *
-     * @param string $type 'log' or 'object'
+     * @param string $type 'log', 'email' or 'object'
      */
     public function generateReport($h, $type = 'log')
     {
         $report = $this->getSystemData($h);
         
         if ($type == 'object') { return $report; }
+        
+        if ($type == 'email') {
+            $to = "admin@hotarucms.org"; // do not change!
+            $subject = "System Report from " . SITE_NAME;
+            $body = $this->logSystemReport($h, $report);
+            $h->email($to, $subject, $body, '', 'screen');
+            $h->message = $h->lang['admin_maintenance_system_report_emailed'];
+            $h->messageType = 'green';
+            return true;
+        }
         
         $h->openLog('system_report', 'w');
         
@@ -124,9 +134,11 @@ class Debug
             
             $h->message = $h->lang['admin_maintenance_system_report_success'];
             $h->messageType = 'green';
+            return true;
         } else {
             $h->message = $h->lang['admin_maintenance_system_report_failure'];
             $h->messageType = 'red';
+            return false;
         }
     }
 
@@ -146,6 +158,7 @@ class Debug
         $report['php_version'] = phpversion();
         $report['mysql_version'] = $h->db->get_var("SELECT VERSION() AS VE");
         $report['hotaru_version'] = $h->version;
+        $report['php_extensions'] = get_loaded_extensions();
         
         $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
         $report['hotaru_version_db'] = $h->db->get_var($h->db->prepare($sql, 'hotaru_version'));
@@ -273,6 +286,7 @@ class Debug
         $output .= "Hotaru version in database: " . $report['hotaru_version_db'] . "\n";
         $output .= "PHP version: " . $report['php_version'] . "\n";
         $output .= "MySQL version: " . $report['mysql_version'] . "\n";
+        $output .= "PHP extensions: " . implode(', ', $report['php_extensions']) . "\n";
         
         $output .= "\n";
         

@@ -88,8 +88,8 @@ class Initialize
         // error log filename
         $filename = CACHE . 'debug_logs/error_log.php';
         
-        // delete file if over 1MB
-        if (file_exists($filename) && (filesize($filename) > 1000000)) {
+        // delete file if over 500KB
+        if (file_exists($filename) && (filesize($filename) > 500000)) {
             unlink($filename); 
         }
         

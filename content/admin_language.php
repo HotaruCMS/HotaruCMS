@@ -143,6 +143,7 @@ $lang["admin_maintenance_site_opened"] = SITE_NAME . " will be opened next page 
 $lang['admin_maintenance_announcement_updated'] = "Site announcement updated";
 $lang['admin_maintenance_system_report_success'] = "New system report generated";
 $lang['admin_maintenance_system_report_failure'] = "Unable to generate a system report";
+$lang['admin_maintenance_system_report_emailed'] = "System report emailed to HotaruCMS.org";
 
 $lang["admin_theme_maintenance"] = "Maintenance";
 $lang["admin_theme_maintenance_title"] = "Hotaru Maintenance";
@@ -170,6 +171,8 @@ $lang["admin_theme_maintenance_rss_cache"] = "Clear rss cache";
 $lang["admin_theme_maintenance_rss_cache_desc"] = "deletes cached RSS feeds.";
 $lang["admin_theme_maintenance_debug"] = "Debug:";
 $lang["admin_theme_maintenance_system_report"] = "Generate a system report";
+$lang["admin_theme_maintenance_email_system_report"] = "Email a system report to HotaruCMS.org";
+$lang["admin_theme_maintenance_email_system_report_note"] = "<span style='color: red'>(Only use if requested in the forums)</span>";
 $lang["admin_theme_maintenance_debug_delete"] = "Clear debug files from the cache";
 $lang["admin_theme_maintenance_debug_view"] = "Click the filenames to view the logs:";
 $lang["admin_theme_maintenance_debug_no_files"] = "<i>There are currently no debug files</i>";

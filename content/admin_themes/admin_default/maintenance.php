@@ -87,10 +87,13 @@ $db_tables = $h->vars['admin_plugin_tables'];
 
 <h2><?php echo $h->lang["admin_theme_maintenance_debug"]; ?></h2>
 <ul>
-    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=system_report">
-        <?php echo $h->lang["admin_theme_maintenance_system_report"]; ?></a></li>
-    <li style="margin-bottom: 1em;"><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=delete_debugs">
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=delete_debugs">
         <?php echo $h->lang["admin_theme_maintenance_debug_delete"]; ?></a></li>
+    <li style="margin-bottom: 1em;"><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=system_report">
+        <?php echo $h->lang["admin_theme_maintenance_system_report"]; ?></a></li>
+    <li style="margin-bottom: 1em;"><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=email_report">
+        <?php echo $h->lang["admin_theme_maintenance_email_system_report"]; ?></a>
+        <?php echo $h->lang["admin_theme_maintenance_email_system_report_note"]; ?></li>
 </ul>
 
 <?php   if ($h->vars['debug_files']) {
