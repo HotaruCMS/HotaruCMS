@@ -126,7 +126,7 @@ function array_iunique($a)
  */
 function is_serialized($data)
 {
-    if (trim($data) == "") {
+    if (!$data || !is_string($data)) {
         return false;
     }
     

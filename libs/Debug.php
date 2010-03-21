@@ -188,34 +188,10 @@ class Debug
         $sql = "SELECT plugin_folder, plugin_setting, plugin_value FROM " . TABLE_PLUGINSETTINGS;
         $plugins = $h->db->get_results($h->db->prepare($sql));
         if ($plugins) {
-//            foreach ($plugins as $plugin) {
-//                if (is_serialized($plugin->plugin_value)) {
-//                    $plugin->plugin_value = unserialize($plugin->plugin_value);
-//                    if (is_array($plugin->plugin_value)) {
-//                        foreach ($plugin->plugin_value as $key => $value) {
-//                            if (is_array($value)) {
-//                                foreach ($value as $k => $v) {
-//                                    if (is_array($v)) {
-//                                        $v = serialize($v);
-//                                        $plugin->plugin_value[$key][$k] = $this->aaa($v);
-//                                    } else {
-//                                        $plugin->plugin_value[$key][$k] = preg_replace("/[a-zA-Z0-9]/", "*", $v);
-//                                    }
-//                                }
-//                            } else {
-//                                $plugin->plugin_value[$key] = preg_replace("/[a-zA-Z0-9]/", "*", $value);
-//                            }
-//                        }
-//                        $plugin->plugin_value = serialize($plugin->plugin_value);
-//                    }
-//                } else {
-//                    $plugin->plugin_value = preg_replace("/[a-zA-Z0-9]/", "*", $plugin->plugin_value);
-//                }
-//                $report['hotaru_plugin_settings'][$plugin->plugin_folder][$plugin->plugin_setting] = $plugin->plugin_value;
-//            }
-
-            print_r ($this->loop_through_array($h, $plugins));
-            
+            foreach ($plugins as $plugin) {
+                if (is_serialized($plugin->plugin_value)) { $plugin->plugin_value = unserialize($plugin->plugin_value); }
+                $report['hotaru_plugin_settings'][$plugin->plugin_folder][$plugin->plugin_setting] = $this->applyMaskToArrays($h, $plugin->plugin_value);
+            }
         }
         
         // Settings: Name, value (excluding SMTP PASSWORD)
@@ -259,17 +235,26 @@ class Debug
         return $report;
     }
 
-     function loop_through_array ($h, $array, &$out = array () ) {
-        foreach ( (array) $array as $key => $value ) {
-            if ( ! is_array ( $value ) ) {                
-                $value = serialize($value);
-                array_push ( $out, preg_replace("/[a-zA-Z0-9]/", "*", $value) );
-            }
-            else {
-                $this->loop_through_array ( $value, &$out );
+
+    /**
+     * Recurse through arrays, applying * mask to all values, but not keys
+     *
+     * @param array $array
+     * @return array
+     */
+     public function applyMaskToArrays($h, $array)
+     {
+        //echo "<pre>"; print_r($array); echo "</pre>"; exit;
+        if (!is_array($array) && !is_object($array)) { return false; }
+        
+        foreach ($array as $key => $value) {
+            if (is_array($value) || is_object($value)) {
+                $array[$key] = $this->applyMaskToArrays($h, $value);
+            } else {
+                $array[$key] = preg_replace("/[a-zA-Z0-9]/", "*", $value);
             }
         }
-        return $out;
+        return $array;
     }
 
     
@@ -332,19 +317,15 @@ class Debug
         
         $output .= "\n";
 
-        $output .= "Plugin Settings: \n\n";
+        $output .= "Plugin Settings: \n";
         if (isset($report['hotaru_plugin_settings'])) {
             foreach ($report['hotaru_plugin_settings'] as $key => $value) {
                 foreach ($value as $k => $v) {
-                    if (!is_serialized($v)) {
-                        $output .= "Plugin settings for " . $key . ":\n" . $k . " = " . $v . " \n";
+                    if (!is_array($v)) {
+                        $output .= "\nPlugin settings for " . $key . ":\n...." . $k . " = " . $v . " \n";
                     } else {
-                        $output .= "Plugin settings for " . $key . ":\n";
-                        $v = unserialize($v);
-                        foreach ($v as $y => $z) {
-                            $output .= "..... " . $y . ": " . $z . " \n";
-                        }
-                        $output .= " \n";
+                        $output .= "\nPlugin settings for " . $key . ":\n";
+                        $output = $this->outputArrays($h, $v, $output);
                     }
                 }
             }
@@ -379,6 +360,28 @@ class Debug
             }
         }
         
+        return $output;
+    }
+    
+    
+    /**
+     * Recurse through arrays, adding them to $output for display
+     *
+     * @param array $array
+     * @return array
+     */
+     public function outputArrays($h, $array = array(), $output = '')
+     {
+        if (!is_array($array) && !is_object($array)) { return $output; }
+        
+        foreach ($array as $key => $value) {
+            if (is_array($value) || is_object($array)) {
+                $output .= "..... " . $key . ":\n";
+                $output = $this->outputArrays($h, $value, $output);
+            } else {
+                $output .= "..... " . $key . ": " . $value . " \n";
+            }
+        }
         return $output;
     }
 }
