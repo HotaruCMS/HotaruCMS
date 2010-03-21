@@ -48,10 +48,8 @@ jQuery('document').ready(function($) {
         return false;
     });
    
-
-
-
-
-
+    var link = 'autoreader_dashboard';
+    var sendurl = '/admin_index.php?page=plugin_settings&plugin=autoreader&alt_template=' + link;
+    $("#admin_plugin_content").load(sendurl);
 
 });
