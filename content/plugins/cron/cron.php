@@ -6,7 +6,7 @@
  * folder: cron
  * class: Cron
  * type: cron
- * hooks: install_plugin, admin_plugin_settings, admin_sidebar_plugin_settings, theme_index_top, admin_theme_index_top, cron_schedule_event, cron_update_job, cron_delete_job, cron_flush_hook, cron_hotaru_version, admin_theme_main_stats_post_version
+ * hooks: install_plugin, admin_plugin_settings, admin_sidebar_plugin_settings, theme_index_top, admin_theme_index_top, cron_schedule_event, cron_update_job, cron_delete_job, cron_flush_hook, cron_hotaru_version, cron_hotaru_feedback, admin_theme_main_stats_post_version
  * author: shibuya246
  * authorurl: http://shibuya246.com
  *
@@ -322,7 +322,8 @@ public function cron_get_schedules($h) {
 		'twicedaily' => array( 'interval' => 43200, 'display' => 'Twice Daily' ),
 		'daily' => array( 'interval' => 86400, 'display' => 'Once Daily' ),
                 'weekly' => array( 'interval' => 604800, 'display' => 'Once Weekly' ),
-	);
+	);       
+        
 	//return array_merge( apply_filters( 'cron_schedules', array() ), $schedules );
         return $schedules;
 }
@@ -383,12 +384,14 @@ public function _get_cron_array($h)  {
             return true;
     }
 
-    public function cron_hotaru_feedback($h) {
+    public function cron_hotaru_feedback($h) {       
+        $report = $h->generateReport("object");
+       
         $query_vals = array(
             'api_key' => '',
             'format' => 'json',
             'method' => 'hotaru.systemFeedback.add',
-            'version' => $h->version
+            'args' => serialize($report)
         );
 
        $info = $this->sendApiRequest($h, $query_vals);
