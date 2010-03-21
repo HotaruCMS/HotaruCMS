@@ -2,7 +2,7 @@
 /**
  * name: Submit
  * description: Social Bookmarking submit - Enables post submission
- * version: 2.1
+ * version: 2.2
  * folder: submit
  * class: Submit
  * type: post
