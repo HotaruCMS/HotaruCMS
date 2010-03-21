@@ -152,6 +152,21 @@ class AdminPages
                     } 
                 }
             }
+
+            // cron hook to include SYS_FEEDBACK job
+            if ($h->cage->post->keyExists('SYS_FEEDBACK') == 'true' ) {
+                $timestamp = time();
+                $recurrence = "daily";
+                $hook = "cron_hotaru_feedback";
+                $cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook);
+                $h->pluginHook('cron_update_job', 'cron', $cron_data);
+            }
+            else {
+                $hook = "cron_hotaru_feedback";
+                $cron_data = array('hook'=>$hook);
+                $h->pluginHook('cron_delete_job', 'cron', $cron_data);
+            }
+
             
             if ($error == 0) {
                 $h->message = $h->lang['admin_settings_update_success'];
@@ -245,10 +260,17 @@ class AdminPages
         $maintenance = new Maintenance();
         $maintenance->getSiteAnnouncement($h);
         
-        $h->vars['debug_files'] = $h->getFiles(CACHE . 'debug_logs');
-        
-        // if no action, return now
-        if (!$action = $h->cage->get->testAlnumLines('action')) { return false; }
+        // check if we're viewing a debug file
+        $debug_file = $h->cage->get->noPath('debug');
+        if ($debug_file) {
+            // skip the opening die() statement and echo debug file
+            $debug_contents = file_get_contents(CACHE . 'debug_logs/' . $debug_file, NULL, NULL, 16);
+            echo nl2br($debug_contents);
+            exit; 
+        }
+                
+        // check if we're performing an action
+        $action = $h->cage->get->testAlnumLines('action');
         
         if ($action == 'announcement') { $maintenance->addSiteAnnouncement($h); }
         if ($action == 'open') { $h->openCloseSite('open'); }
@@ -269,10 +291,15 @@ class AdminPages
         if ($action == 'empty') { $h->emptyTable($h->cage->get->testAlnumLines('table')); }
         if ($action == 'drop') { $h->dropTable($h->cage->get->testAlnumLines('table')); }
         if ($action == 'remove_settings') { $h->removeSettings($h->cage->get->testAlnumLines('settings')); }
+        if ($action == 'system_report') { $h->generateReport(); } 
+        if ($action == 'email_report') { $h->generateReport('email'); } 
         if ($action == 'delete_debugs') { 
             $h->clearCache('debug_logs');
             $h->vars['debug_files'] = $h->getFiles(CACHE . 'debug_logs');
         }
+        
+        // get list of debug logs
+        $h->vars['debug_files'] = $h->getFiles(CACHE . 'debug_logs');
     }
     
     

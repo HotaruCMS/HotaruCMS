@@ -25,6 +25,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
+
+// merge custom admin_language.php if exists in admin theme's languages folder
+// can be overridden by an admin_languages.php in a user theme's languages folder
+$h->includeThemeLanguage('admin');
+
 // plugin hook
 $result = $h->pluginHook('admin_theme_index_top');
 if (!$result) {

@@ -85,13 +85,23 @@ class Initialize
         ini_set('display_errors', 1); // Gets disabled later in checkDebug()
         error_reporting(E_ALL);
         
-        // log errors to a file - the custom error handler below wasn't catching fatal errors, so using PHP's one
-        ini_set('error_log', CACHE . 'debug_logs/error_log.txt');
-        /*
-        require_once(EXTENSIONS . 'SWCMS/swcms_error_handler.php'); // error_handler class
-        $error_handler = new swcms_error_handler(0, 0, 1, NULL, CACHE . 'debug_logs/error_log.txt');
-        set_error_handler(array($error_handler, "handler"));
-        */
+        // error log filename
+        $filename = CACHE . 'debug_logs/error_log.php';
+        
+        // delete file if over 500KB
+        if (file_exists($filename) && (filesize($filename) > 500000)) {
+            unlink($filename); 
+        }
+        
+        // If doesn't exist, create a new file with die() at the top
+        if (!file_exists($filename)) {
+            $fh = fopen($filename, 'w') or die("Sorry, I can't open cache/debug_logs/error_log.php");
+            fwrite($fh, "<?php die(); ?>\r\n");
+            fclose($fh);
+        }
+        
+        // point PHP to our error log
+        ini_set('error_log', $filename);
     }
 
 
@@ -213,7 +223,7 @@ class Initialize
         // Setup database cache
         $this->db->cache_timeout = DB_CACHE_DURATION; // Note: this is hours
         $this->db->cache_dir = CACHE . 'db_cache';
-        if (DB_CACHE_ON == "true") {
+        if (DB_CACHE == "true") {
             $this->db->use_disk_cache = true;
             return true;
         } else {
@@ -235,7 +245,6 @@ class Initialize
             require_once(FUNCTIONS . 'funcs.times.php');
             timer_start();
             ini_set('display_errors', 1); // show errors
-            ini_set('error_log', CACHE . 'debug_logs/error_log.txt');
             return true;
         } else {
             ini_set('display_errors', 0); // hide errors

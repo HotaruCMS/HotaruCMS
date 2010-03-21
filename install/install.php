@@ -324,9 +324,9 @@ function register_admin()
         {
             // Insert default settings
             $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email, user_permissions) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s)";
-            $h->db->query($h->db->prepare($sql, 'admin', 'admin', 'password', 'admin@mysite.com', serialize($h->currentUser->getDefaultPermissions($h, 'admin'))));
+            $h->db->query($h->db->prepare($sql, 'admin', 'admin', 'password', 'admin@example.com', serialize($h->currentUser->getDefaultPermissions($h, 'admin'))));
             $user_name = 'admin';
-            $user_email = 'admin@mysite.com';
+            $user_email = 'admin@example.com';
             $user_password = 'password';
         } 
         else 

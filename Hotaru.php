@@ -25,7 +25,7 @@
  */
 class Hotaru
 {
-    protected $version              = "1.1.2";  // Hotaru CMS version
+    protected $version              = "1.1.3";  // Hotaru CMS version
     protected $isDebug              = false;    // show db queries and page loading time
     protected $isAdmin              = false;    // flag to tell if we are in Admin or not
     protected $sidebars             = true;     // enable or disable the sidebars
@@ -992,7 +992,7 @@ class Hotaru
      * @param string $setting stting value
      */
     public function updateSetting($setting = '', $value = '', $folder = '')
-    {
+    {        
         $pluginSettings = new PluginSettings();
         return $pluginSettings->updateSetting($this, $setting, $value, $folder);
     }
@@ -1214,7 +1214,16 @@ class Hotaru
     }
     
     
-     
+    /**
+     * Generate a system report
+     *
+     * @param string $type "log" or "object"
+     */
+    public function generateReport($type = 'log')
+    {
+        return $this->debug->generateReport($this, $type);
+    }
+
     
  /* *************************************************************
  *
@@ -1232,7 +1241,7 @@ class Hotaru
      *
      * @return object|false $sp
      */
-    public function newSimplePie($feed='', $cache=RSS_CACHE_ON, $cache_duration=RSS_CACHE_DURATION)
+    public function newSimplePie($feed='', $cache=RSS_CACHE, $cache_duration=RSS_CACHE_DURATION)
     {
         require_once(LIBS . 'Feeds.php');
         $feeds = new Feeds();
@@ -1316,7 +1325,7 @@ class Hotaru
         // site closed, but user has admin access so go back and continue as normal
         if ($this->currentUser->getPermission('can_access_admin') == 'yes') { return true; }
         
-        if ($this->pageName == 'admin_login') { return true; }
+        if ($this->pageName == 'admin_login' || $this->pageName == 'api' ) { return true; }
         
         require_once(LIBS . 'Maintenance.php');
         $maintenance = new Maintenance();
@@ -1445,6 +1454,11 @@ class Hotaru
         $maintenance = new Maintenance();
         return $maintenance->getFiles($dir, $exclude);
     }
+    
+
+    /** 
+     * System Report is under Debug Functions
+     */
     
     
  /* *************************************************************

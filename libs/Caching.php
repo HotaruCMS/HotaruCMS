@@ -65,7 +65,7 @@ class Caching
      */
     public function smartCacheHTML($h, $table = '', $timeout = 0, $html = '', $label = '')
     {
-        if (!$table || !$timeout || (HTML_CACHE_ON != 'true')) { return false; }
+        if (!$table || !$timeout || (HTML_CACHE != 'true')) { return false; }
         
         if(isset($h->vars['last_updates'][$table])) {
             $last_update = $h->vars['last_updates'][$table]; // cached
@@ -158,7 +158,7 @@ class Caching
         }
         
         // use caching?
-        if (DB_CACHE_ON == 'true') {
+        if (DB_CACHE == 'true') {
             $h->db->cache_queries = true;    // start using cache
         } else {
             return false;   // don't use caching
@@ -258,7 +258,7 @@ class Caching
      */
     public function cacheHTML($h, $timeout = 0, $html = '', $label = '')
     {
-        if (!$timeout || (HTML_CACHE_ON != 'true') || !$label) { return false; }
+        if (!$timeout || (HTML_CACHE != 'true') || !$label) { return false; }
         
         $cache_length = $timeout*60;   // seconds
         $cache = CACHE . 'html_cache/';

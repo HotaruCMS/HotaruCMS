@@ -272,7 +272,7 @@ class IncludeCssJs
             }    
 
             // get code from archive folder if it exists, otherwise grab latest files, merge and save in archive folder
-            if ((CSS_JS_CACHE_ON == "true") && file_exists($cache . $prefix . $type . '_' . $iETag . '.cache')) {
+            if ((CSS_JS_CACHE == "true") && file_exists($cache . $prefix . $type . '_' . $iETag . '.cache')) {
                 $sCode = file_get_contents($cache . $prefix . $type . '_' . $iETag . '.cache');
             } else {
                 // get and merge code

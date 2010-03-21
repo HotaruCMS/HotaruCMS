@@ -20,3 +20,5 @@
 .user_man_submit_button { padding: 1.0em; float: right;}
 
 .user_manager_name_icons { padding: 0.4em; display:none;}
+
+#user_man_add_user form { border-bottom: 1px solid #ccc; }

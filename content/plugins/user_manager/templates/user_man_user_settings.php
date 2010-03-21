@@ -38,7 +38,8 @@ $h->pluginHook('user_settings_fill_form');
 <p id="user_man_navigation">
     <a href='<?php echo BASEURL; ?>admin_index.php?plugin=user_manager&page=plugin_settings'><?php echo $h->lang["user_man"]; ?></a>&nbsp;&nbsp;
     <?php echo "<a href='" . BASEURL . "admin_index.php?plugin=user_manager&page=plugin_settings&subpage=default_perms'>" . $h->lang["user_man_default_perms"] . "</a>"; ?>&nbsp;&nbsp;
-    <b><u><?php echo $h->lang["user_man_default_settings"]; ?></u></b>
+    <b><u><?php echo $h->lang["user_man_default_settings"]; ?></u></b> &nbsp;&nbsp;
+    <?php echo "<a href='" . BASEURL . "admin_index.php?plugin=user_manager&page=plugin_settings&subpage=add_user'>" . $h->lang["user_man_add"] . "</a>"; ?>
 </p>
 
 <?php echo $h->showMessage(); ?>

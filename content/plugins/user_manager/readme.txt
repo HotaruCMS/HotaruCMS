@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.0.9 2010/03/17 - Nick - New page for creating users, sending new passwords and email validation requests
 v.0.8 2010/02/18 - Nick - Fixes for changing user permissions and pagination
 v.0.7 2010/02/02 - Nick - Improvements for spam management
 v.0.6 2010/01/15 - Nick - Added user permissions and settings editors

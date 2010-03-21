@@ -702,13 +702,10 @@ class SubmitFunctions
         if (preg_match('/charset=([a-zA-Z0-9-_]+)/i', $string , $matches)) {
             $encoding=trim($matches[1]);
 
-            //you need iconv to encode to utf-8
-            if (function_exists("iconv"))
-            {
-                if (strcasecmp($encoding, 'utf-8') != 0) {
-                    //convert the html code into utf-8 whatever encoding it is using
-                    $string=iconv($encoding, 'UTF-8//IGNORE', $string);
-                }
+            //you need iconv to encode to utf-8 (if not, use custom iconv in funcs.strings.php)
+            if (strcasecmp($encoding, 'utf-8') != 0) {
+                //convert the html code into utf-8 whatever encoding it is using
+                $string=iconv($encoding, 'UTF-8//IGNORE', $string);
             }
         }
         

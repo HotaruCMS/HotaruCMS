@@ -2,7 +2,7 @@
 /**
  * name: User Signin
  * description: Provides user registration and login
- * version: 0.3
+ * version: 0.4
  * folder: user_signin
  * type: signin
  * class: UserSignin
@@ -588,7 +588,6 @@ class UserSignin
         $body .= $next_line;
         $body .= $h->lang['user_signin_register_emailconf_body_sign'];
         $to = $user->email;
-        $headers = "From: " . SITE_EMAIL . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
         
         /*
         echo "To: " . $to . "<br />";
@@ -597,7 +596,7 @@ class UserSignin
         echo "Headers: " . $headers . "<br />";
         */
 
-        $h->email($to, $subject, $body, $headers);    
+        $h->email($to, $subject, $body);    
     }
     
     

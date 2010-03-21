@@ -1,0 +1,67 @@
+/* ************************************
+ * *********** VOTE BUTTON ************
+ * ********************************* */
+ 
+.vote_button {
+	float: left; 
+	margin: 0 6px 6px 0;
+	text-align: center;
+}
+
+.vote_button_top {
+    margin-bottom:5px;
+    padding: 2px 0 2px 0;
+    background: #f2f2f2;
+    border: 1px solid #d0d0d0;
+	width: 50px; 
+}
+
+.vote_button_count {
+	line-height: 1.5em;
+	font-size: 1.5em;
+	width: 50px; 
+	font-weight: bold;
+}
+
+.vote_button_bottom {
+    margin-top:5px;
+    padding: 2px 0 2px 0;
+    background: #f2f2f2;
+    border: 1px solid #d0d0d0;
+	width: 50px; 
+}
+
+.vote_button_bottom a, .vote_button_top a { 
+	color: #454545;
+	background:transparent;
+}
+
+.vote_button_bottom a:hover, .vote_button_top a:hover { 
+	color: #454545;
+	background:transparent;
+}
+
+/* colors */
+
+.vote_color_top { border: 1px solid #d0d0d0; background-color: #f0f0f0; color: #000; }
+.vote_color_new { border: 1px solid #d0d0d0; background-color: #ffffff; color: #000; }
+
+
+/* ***********************************
+ * ** SPACE BETWEEN BUTTON AND POST **
+ * ********************************* */
+ 
+/* Used in submit plugin - button width + padding: */
+.vote_button_space { margin-left: 58px; }
+
+
+/* ***********************************
+ * ******** FLAGGED MESSAGE **********
+ * ********************************* */
+ 
+ .alert_link { padding-left: 1.5em; background-image: url(content/themes/default/images/alert.png); }
+ 
+ .alert_choices li {
+	display:inline; 
+	padding-right: 0.8em;	
+ }

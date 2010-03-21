@@ -1,0 +1,7 @@
+/* **************************************
+ *	    TAGS PLUGIN CSS           *
+ ************************************** */
+ 
+.tags_link	{ padding-left: 1.5em; background-image: url(content/themes/cut-here/images/tags.png); }
+.show_tags ul li {float:left; margin-right:0.6em;}
+.clear {clear:both; height:0.1em;}

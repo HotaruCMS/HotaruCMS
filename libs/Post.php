@@ -159,6 +159,14 @@ class Post
         $this->id = $last_insert_id;
         $this->vars['last_insert_id'] = $last_insert_id;    // make it available outside this class
         
+        // Update post_date field if $this->date has been declared
+        // Normally used when scheduling or auto-submitting posts
+        if ($this->date) {
+           $date = date('YmdHis', $this->date);
+           $sql = "UPDATE " . TABLE_POSTS . " SET post_date = %s WHERE post_id = %d";
+           $h->db->query($h->db->prepare($sql, $date, $last_insert_id));
+        }
+
         // Add tags to the Tags table:
         require_once(LIBS . 'Tags.php');
         $tags = new TagFunctions();

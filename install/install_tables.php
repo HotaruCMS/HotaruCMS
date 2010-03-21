@@ -342,10 +342,14 @@ function create_table($table_name)
         // Site email
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
         $db->query($db->prepare($sql, 'SITE_EMAIL', 'email@example.com', 'email@example.com', 'Must be changed'));
+
+         // GMT Offset
+        $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+        $db->query($db->prepare($sql, 'SYS_FEEDBACK', 'true', 'true', 'send system report'));
         
         // Database cache
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'DB_CACHE_ON', 'false', 'false', ''));
+        $db->query($db->prepare($sql, 'DB_CACHE', 'false', 'false', ''));
         
         // Database cache duration (hours)
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %d, %d, %s)";
@@ -353,7 +357,7 @@ function create_table($table_name)
         
         // RSS cache
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'RSS_CACHE_ON', 'true', 'true', ''));
+        $db->query($db->prepare($sql, 'RSS_CACHE', 'true', 'true', ''));
         
         // RSS cache duration (hours)
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %d, %d, %s)";
@@ -361,11 +365,11 @@ function create_table($table_name)
         
         // CSS/JavaScript cache
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'CSS_JS_CACHE_ON', 'true', 'true', ''));
+        $db->query($db->prepare($sql, 'CSS_JS_CACHE', 'true', 'true', ''));
         
         // HTML cache
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'HTML_CACHE_ON', 'true', 'true', ''));
+        $db->query($db->prepare($sql, 'HTML_CACHE', 'true', 'true', ''));
         
         // Debug
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
@@ -373,7 +377,7 @@ function create_table($table_name)
         
         // SMTP on
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $db->query($db->prepare($sql, 'SMTP_ON', 'false', 'false', 'Email auth'));
+        $db->query($db->prepare($sql, 'SMTP', 'false', 'false', 'Email auth'));
         
         // SMTP host
         $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";

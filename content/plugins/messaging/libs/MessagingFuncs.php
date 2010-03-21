@@ -194,7 +194,7 @@ class MessagingFuncs
         $email_subject = $h->lang['messaging_email_subject'];   // email subject (New message from SITE_NAME)
         
         // Hi username...
-        $email_message = "Hi " . $this->to . "," . $skip_line;
+        $email_message = $h->lang['messaging_email_greeting'] . $this->to . "," . $skip_line;
         
         // You've been sent a private message from...
         $email_message .= $h->lang['messaging_email_message'] . $this->from . $skip_line;

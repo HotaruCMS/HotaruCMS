@@ -44,23 +44,30 @@ class SbBaseSettings
         $sb_base_settings = $h->getSerializedSettings();
         
         $posts_per_page = $sb_base_settings['posts_per_page'];
+        $rss_redirect = $sb_base_settings['rss_redirect'];
         $archive = $sb_base_settings['archive'];
     
         $h->pluginHook('sb_base_settings_get_values');
         
         //...otherwise set to blank:
         if (!$posts_per_page) { $posts_per_page = 10; }
+        if (!$rss_redirect) { $rss_redirect = ''; }
         if (!$archive) { $archive = 'no_archive'; }
         
         echo "<form name='sb_base_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=sb_base' method='post'>\n";
 
+        // posts per page
         echo "<p><input type='text' size=5 name='posts_per_page' value='" . $posts_per_page . "' /> ";
         echo $h->lang["sb_base_settings_posts_per_page"] . "</p>\n";
+
+        // rss redirecting?
+        echo "<p><input type='checkbox' name='rss_redirect' value='rss_redirect' " . $rss_redirect . " >&nbsp;&nbsp;" . $h->lang["sb_base_settings_rss_redirect"] . "<br />\n"; 
     
         $h->pluginHook('sb_base_settings_form');
     
         echo "<br />\n";
 
+        // post archiving
         echo $h->lang["sb_base_settings_post_archiving"] . "<br /><br />\n";
         echo $h->lang["sb_base_settings_post_archive_desc"] . "<br /><br />\n";
         echo "<select name='post_archive'>\n";
@@ -94,6 +101,14 @@ class SbBaseSettings
         if (!$posts_per_page) { 
             $posts_per_page = $sb_base_settings['posts_per_page']; 
         }
+        
+    
+        // RSS Redirecting
+        if ($h->cage->post->keyExists('rss_redirect')) { 
+            $rss_redirect = 'checked'; 
+        } else { 
+            $rss_redirect = ''; 
+        }
     
         // Post Archiving
         $archive = $h->cage->post->testAlnumLines('post_archive'); 
@@ -104,6 +119,7 @@ class SbBaseSettings
         $h->pluginHook('sb_base_save_settings');
         
         $sb_base_settings['posts_per_page'] = $posts_per_page;
+        $sb_base_settings['rss_redirect'] = $rss_redirect;
         $sb_base_settings['archive'] = $archive;
     
         $h->updateSetting('sb_base_settings', serialize($sb_base_settings));

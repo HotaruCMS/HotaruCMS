@@ -100,7 +100,12 @@ class Language
      */    
     public function includeThemeLanguage($h, $filename = 'main')
     {
-        // Look in the current theme a language file...
+        if ($filename == 'admin') {
+            $this->includeAdminLanguage($h);
+            return true;
+        }
+        
+        // Look in the current theme for a language file...
         if (file_exists(THEMES . THEME . 'languages/' . $filename . '_language.php')) {
             include_once(THEMES . THEME . 'languages/' . $filename . '_language.php');
 
@@ -111,6 +116,46 @@ class Language
                 }
             }
         }
+    }
+    
+    
+    /**
+     * Include admin_language.php
+     *
+     * Hotaru has already got the base admin_language.php file from /content, but
+     * all or parts of it can be overidden.
+     * 
+     * First Hotaru looks for admin_languages.php in the admin theme's "languages" folder
+     * Second, it looks for admin_languages.php in the user theme's "languages" folder.
+     * All files are merged with priority in this order: user theme, admin theme, content/admin_language.php
+     */    
+    public function includeAdminLanguage($h)
+    {
+        // 1. We already have admin_language.php from content/admin_language.php
+        
+        // 2. Merge in anything from admin_language.php in admin theme languages folder
+        
+        if (file_exists(ADMIN_THEMES . ADMIN_THEME . 'languages/admin_language.php')) {
+            include_once(ADMIN_THEMES . ADMIN_THEME . 'languages/admin_language.php');
+            // Add new language to our lang property
+            if (isset($lang)) {
+                foreach($lang as $l => $text) {
+                    $h->lang[$l] = $text;
+                }
+            }
+        }
+        
+        // 2. Merge in anything from admin_language.php in user theme languages folder
+        
+        if (file_exists(THEMES . THEME . 'languages/admin_language.php')) {
+            include_once(THEMES . THEME . 'languages/admin_language.php');
+            // Add new language to our lang property
+            if (isset($lang)) {
+                foreach($lang as $l => $text) {
+                    $h->lang[$l] = $text;
+                }
+            }
+        } 
     }
 }
 ?>
