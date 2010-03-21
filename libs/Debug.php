@@ -118,7 +118,7 @@ class Debug
             $to = "admin@hotarucms.org"; // do not change!
             $subject = "System Report from " . SITE_NAME;
             $body = $this->logSystemReport($h, $report);
-            $h->email($to, $subject, $body, '', 'screen');
+            $h->email($to, $subject, $body);
             $h->message = $h->lang['admin_maintenance_system_report_emailed'];
             $h->messageType = 'green';
             return true;
