@@ -188,31 +188,34 @@ class Debug
         $sql = "SELECT plugin_folder, plugin_setting, plugin_value FROM " . TABLE_PLUGINSETTINGS;
         $plugins = $h->db->get_results($h->db->prepare($sql));
         if ($plugins) {
-            foreach ($plugins as $plugin) {
-                if (is_serialized($plugin->plugin_value)) {
-                    $plugin->plugin_value = unserialize($plugin->plugin_value);
-                    if (is_array($plugin->plugin_value)) {
-                        foreach ($plugin->plugin_value as $key => $value) {
-                            if (is_array($value)) {
-                                foreach ($value as $k => $v) {
-                                    if (is_array($v)) {
-                                        $v = serialize($v);
-                                        $plugin->plugin_value[$key][$k] = preg_replace("/[a-zA-Z0-9]/", "*", $v);
-                                    } else {
-                                        $plugin->plugin_value[$key][$k] = preg_replace("/[a-zA-Z0-9]/", "*", $v);
-                                    }
-                                }
-                            } else {
-                                $plugin->plugin_value[$key] = preg_replace("/[a-zA-Z0-9]/", "*", $value);
-                            }
-                        }
-                        $plugin->plugin_value = serialize($plugin->plugin_value);
-                    }
-                } else {
-                    $plugin->plugin_value = preg_replace("/[a-zA-Z0-9]/", "*", $plugin->plugin_value);
-                }
-                $report['hotaru_plugin_settings'][$plugin->plugin_folder][$plugin->plugin_setting] = $plugin->plugin_value;
-            }
+//            foreach ($plugins as $plugin) {
+//                if (is_serialized($plugin->plugin_value)) {
+//                    $plugin->plugin_value = unserialize($plugin->plugin_value);
+//                    if (is_array($plugin->plugin_value)) {
+//                        foreach ($plugin->plugin_value as $key => $value) {
+//                            if (is_array($value)) {
+//                                foreach ($value as $k => $v) {
+//                                    if (is_array($v)) {
+//                                        $v = serialize($v);
+//                                        $plugin->plugin_value[$key][$k] = $this->aaa($v);
+//                                    } else {
+//                                        $plugin->plugin_value[$key][$k] = preg_replace("/[a-zA-Z0-9]/", "*", $v);
+//                                    }
+//                                }
+//                            } else {
+//                                $plugin->plugin_value[$key] = preg_replace("/[a-zA-Z0-9]/", "*", $value);
+//                            }
+//                        }
+//                        $plugin->plugin_value = serialize($plugin->plugin_value);
+//                    }
+//                } else {
+//                    $plugin->plugin_value = preg_replace("/[a-zA-Z0-9]/", "*", $plugin->plugin_value);
+//                }
+//                $report['hotaru_plugin_settings'][$plugin->plugin_folder][$plugin->plugin_setting] = $plugin->plugin_value;
+//            }
+
+            print_r ($this->loop_through_array($h, $plugins));
+            
         }
         
         // Settings: Name, value (excluding SMTP PASSWORD)
@@ -255,7 +258,20 @@ class Debug
 
         return $report;
     }
-    
+
+     function loop_through_array ($h, $array, &$out = array () ) {
+        foreach ( (array) $array as $key => $value ) {
+            if ( ! is_array ( $value ) ) {                
+                $value = serialize($value);
+                array_push ( $out, preg_replace("/[a-zA-Z0-9]/", "*", $value) );
+            }
+            else {
+                $this->loop_through_array ( $value, &$out );
+            }
+        }
+        return $out;
+    }
+
     
     /**
      * Convert report object to text for logging to file
