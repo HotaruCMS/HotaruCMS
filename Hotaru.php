@@ -1221,6 +1221,10 @@ class Hotaru
      */
     public function generateReport($type = 'log')
     {
+        if (!is_object($this->debug)) { 
+            require_once(LIBS . 'Debug.php');
+            $this->debug = new Debug();
+        }
         return $this->debug->generateReport($this, $type);
     }
 
