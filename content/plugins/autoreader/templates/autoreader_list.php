@@ -1,23 +1,23 @@
 <?php
-    require_once(PLUGINS . 'autoreader/autoreader.php');
-    $arSettings = new Autoreader($h);
-    $campaigns = $arSettings->getCampaigns($h);
+     require_once(PLUGINS . 'autoreader/autoreader.php');
+    $arObj = new Autoreader($h);
+    $arObj->getSettings($h);
 
+    $campaigns = $arObj->getCampaigns($h);
     $action = $h->cage->post->testAlnumLines('action');
-
 
      switch ($action) {
         case "fetch":            
-            $fetched= $arSettings->adminForcefetch($h);
+            $fetched= $arObj->adminForcefetch($h);
             $array = array('fetched'=> $fetched);
             echo json_encode($array);
             exit;
         case "delete":
-            $result = $arSettings->adminDelete($h);
+            $result = $arObj->adminDelete($h);
             echo $result;
             exit;
         case "reset":
-            $result = $arSettings->adminReset($h);
+            $result = $arObj->adminReset($h);
             echo $result;
             exit;
      default :

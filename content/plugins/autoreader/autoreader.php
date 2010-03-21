@@ -6,7 +6,7 @@
  * folder: autoreader
  * class: Autoreader
  * type: autoreader
- * hooks: install_plugin, admin_plugin_settings, admin_sidebar_plugin_settings, autoreader_runcron, admin_theme_index_top
+ * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings,  autoreader_runcron, admin_theme_index_top
  *
  * PHP version 5
  *
@@ -50,15 +50,17 @@ class Autoreader extends AutoreaderSettings
                                   'categories' => array(), 'feeds' => array());
 
 
-     public function admin_theme_index_top($h) {
-         print "top";
+     public function admin_theme_index_top($h) {        
          if ($h->cage->get->testAlnumLines('plugin')  == 'autoreader') {
-             print "here";
-            $h->vars['autoreader_settings'] = $h->getSerializedSettings('autoreader');
-            print_r( $h->vars['autoreader_settings'] );
+           $this->getSettings($h);      
+         }
+     }
 
-                     // Table names init
-         $this->db = array(
+     public function getSettings($h) {
+        $h->vars['autoreader_settings'] = $h->getSerializedSettings('autoreader');
+
+        // Table names init
+        $this->db = array(
           'campaign'            =>  DB_PREFIX . 'autoreader_campaign',
           'campaign_category'   =>  DB_PREFIX .  'autoreader_campaign_category',
           'campaign_feed'       =>  DB_PREFIX .  'autoreader_campaign_feed',
@@ -73,10 +75,6 @@ class Autoreader extends AutoreaderSettings
         # Cron command / url
         $this->cron_url = $this->pluginpath . '/cron.php?code=' .   $h->vars['autoreader_settings']['wpo_croncode'];
         $this->cron_command = '*/20 * * * * '. $this->getCommand() . ' ' . $this->cron_url;
-
-
-
-         }
      }
 
     /**
@@ -84,6 +82,8 @@ class Autoreader extends AutoreaderSettings
      */
     public function install_plugin($h)
     {
+        $this->admin_theme_index_top($h);
+        
         // ************
         // PERMISSIONS
         // ************
@@ -280,7 +280,7 @@ class Autoreader extends AutoreaderSettings
 
    public function autoreader_runcron($h, $args) {
     $cid = $args['id'];
-
+    $this->getSettings($h);
     $this->forcefetched = $this->processCampaign($h,$cid);
 }
      

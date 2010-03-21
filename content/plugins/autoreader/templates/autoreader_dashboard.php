@@ -1,17 +1,17 @@
 <?php
     require_once(PLUGINS . 'autoreader/autoreader.php');
-    $arSettings = new Autoreader($h);
-    $campaigns = $arSettings->getCampaigns($h);
+    $arObj = new Autoreader($h);
+    $arObj->getSettings($h);
 
-    $logs = $arSettings->getLogs($h);
-    $autoreader_settings = $arSettings->getOptionSettings($h);
+    $logs = $arObj->getLogs($h);
+    $autoreader_settings = $arObj->getOptionSettings($h);
 
     //$logging = get_option('wpo_log');
-    $logs = $arSettings->getLogs($h, 'limit=7');
-    $nextcampaigns = $arSettings->getCampaigns($h,'fields=id,title,lastactive,frequency&limit=5' .
+    $logs = $arObj->getLogs($h, 'limit=7');
+    $nextcampaigns = $arObj->getCampaigns($h,'fields=id,title,lastactive,frequency&limit=5' .
                                           '&where=active=1&orderby=UNIX_TIMESTAMP(lastactive)%2Bfrequency&ordertype=ASC');
-    $lastcampaigns = $arSettings->getCampaigns($h,'fields=id,title,lastactive,frequency&limit=5&where=UNIX_TIMESTAMP(lastactive)>0&orderby=lastactive');
-    $campaigns = $arSettings->getCampaigns($h,'fields=id,title,count&limit=5&orderby=count');
+    $lastcampaigns = $arObj->getCampaigns($h,'fields=id,title,lastactive,frequency&limit=5&where=UNIX_TIMESTAMP(lastactive)>0&orderby=lastactive');
+    $campaigns = $arObj->getCampaigns($h,'fields=id,title,count&limit=5&orderby=count');
 
  ?>
 
@@ -50,7 +50,7 @@
         <ol class="campaignlist">
           <?php foreach($nextcampaigns as $campaign):
               print_r($campaign);
-            $cl = $arSettings->getCampaignRemaining($h, $campaign);
+            $cl = $arObj->getCampaignRemaining($h, $campaign);
             $cl = WPOTools::calcTime($cl, 0, 'd', false);
             $timestr = '';
             if($cl['days']) $timestr .= $cl['days'] . 'd ';

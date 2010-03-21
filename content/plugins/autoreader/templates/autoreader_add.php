@@ -2,7 +2,8 @@
     # Dependencies     
     require_once(PLUGINS . 'autoreader/helper/edit.helper.php' );  
     require_once(PLUGINS . 'autoreader/autoreader.php');
-    $arSettings = new Autoreader($h);
+    $arObj = new Autoreader($h);
+    $arObj->getSettings($h);
      
     $id = 0;
     $action = $h->cage->post->testAlnumLines('action');  
@@ -10,46 +11,45 @@
     if (!$action) { $action = $action_get; }  
     switch ($action) {
         case "edit":               
-            $data = $arSettings->adminEdit($h);           
+            $data = $arObj->adminEdit($h);
             echo '<h2>Editing Campaign #' . $data['main']['id'] . ", " .  $data['main']['title'] . '</h2>';
-            action_add($h, $arSettings,  $data, 'edit');         
+            action_add($h, $arObj,  $data, 'edit');
             break;
         case "save" :           
-            $errors = $arSettings->adminCampaignRequest($h);
+            $errors = $arObj->adminCampaignRequest($h);
             print $errors;
             $arr_errors = json_decode($errors);           
             if ($arr_errors->errors == 0) {
                 if ( $h->cage->post->keyExists('campaign_edit') ) {
                     $cid = $h->cage->post->getInt('campaign_edit');
-                    $arSettings->adminProcessEdit($h,$cid);
+                    $arObj->adminProcessEdit($h,$cid);
                 }
                 else {     
-                    $arSettings->adminProcessAdd($h);
+                    $arObj->adminProcessAdd($h);
                 }
             }
             exit;  // this is an ajax return call, so we don't want any html echoing to the screen
-        case "tools_delete" :
+        case "tools" :
             $cid = $h->cage->post->getInt('id');
-        print $cid;
-            //$errors = $arSettings->toolsdelete($h);
-            //print $errors;
-            exit;
+            $result = $arObj->adminProcessTools($h);
+            print $result;
+            exit; // this is an ajax return call, so we don't want any html echoing to the screen
         case "test_feed" :           
             $data = $h->cage->post->testUri('url');            
-            $arSettings->adminTestfeed($data);
+            $arObj->adminTestfeed($data);
             exit;  // this is an ajax return call, so we don't want any html echoing to the screen
         default :
             echo '<h2>Add New Campaign</h2>';           
-            action_add($h, $arSettings);
+            action_add($h, $arObj);
     }
    ?>
 
 <div class="wrap">
    
  <?php
-function action_add($h, $arSettings, $data=null, $action = 'add') {
-    $arSettings = new Autoreader($h);
-    $autoreader_settings = $arSettings->getOptionSettings($h);
+function action_add($h, $arObj, $data=null, $action = 'add') {
+    $arObj = new Autoreader($h);
+    $autoreader_settings = $arObj->getOptionSettings($h);
  ?>
     <form id="edit_campaign" action="" method="post" accept-charset="utf-8">
       
@@ -61,7 +61,7 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
             }
       else {
             echo input_hidden_tag('campaign_add', 1);
-            $data = $arSettings->campaign_structure;
+            $data = $arObj->campaign_structure;
             }
       ?>
 
@@ -69,7 +69,7 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
          <?php if ($autoreader_settings['wpo_help']) { ?>
                 <li><a href="help.php?item=campaigns" class="help_link">Help</a></li>
          <?php } ?>       
-        <li><input type="submit" name="edit_submit" value="Submit" id="edit_submit" /></li>
+        <li><input type="submit" name="edit_submit" value="Save" id="edit_submit" /></li>
       </ul>
         <div id="error_message"></div>
       <div id="admin_plugin_tabs">
@@ -150,7 +150,7 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
           <p>Please select one.</p>
 
           <ul id="categories">
-            <?php $arSettings->adminEditCategories($h, $data) ?>
+            <?php $arObj->adminEditCategories($h, $data) ?>
 
             <?php if(isset($data['categories']['new'])): ?>
               <?php foreach($data['categories']['new'] as $i => $catname): ?>
@@ -172,7 +172,7 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
         <div class="section" id="section_rewrite">
         <?php if ($autoreader_settings['wpo_help']) { ?>
           <p>Want to transform a word into another? Or link a specific word to some website?
-            <?php // echo '<a href=' . $arSettings->helpurl . '" class="help_link">Read more</a>' ?></p>
+            <?php // echo '<a href=' . $arObj->helpurl . '" class="help_link">Read more</a>' ?></p>
 
           <ul id="edit_words">
             <?php if(isset($data['rewrites']) && count($data['rewrites'])): ?>
@@ -235,7 +235,7 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
         <div class="section" id="section_options">
           <?php if(isset($campaign_edit)): ?>
           <div class="section_warn">
-            <img src="<?php echo $arSettings->tplpath ?>/images/icon_alert.gif" alt="Warning" class="icon" />
+            <img src="<?php echo $arObj->tplpath ?>/images/icon_alert.gif" alt="Warning" class="icon" />
             <h3>Note</h3>
             <p>Changing these options only affects the creation of posts after the next time feeds are parsed.</p>
             <p>If you need to edit existing posts, you can do so by using the options under the Tools tab</p>
@@ -259,7 +259,7 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
                       </p>
                     </div>
 
-                    <p class="note">Read about <a href="<?php echo $arSettings->helpurl; ?>" class="help_link">post templates</a>, or check some <a href="<?php echo $arSettings->helpurl; ?>" class="help_link">examples</a> ?></p>
+                    <p class="note">Read about <a href="<?php echo $arObj->helpurl; ?>" class="help_link">post templates</a>, or check some <a href="<?php echo $arObj->helpurl; ?>" class="help_link">examples</a> ?></p>
                   </div>
           <?php } ?>
           <div class="multipletext">
@@ -298,7 +298,7 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
             <p class="note">How often should this feed be checked? </p>
           </div>
 
-           <?php if (!$autoreader_settings['wpo_premium']) { ?>
+           <?php if ($autoreader_settings['wpo_premium']) { ?>
               <div class="checkbox">
                 <?php echo label_for('campaign_cacheimages', 'Cache images') ?>
                 <? // need to install timthumb folder to get the following working  ?>
@@ -385,25 +385,25 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
               </li>
               <li>
                 
-                <label class="main">Delete posts from database:</label>
+                <label class="main">Delete posts for this campaign:</label>
                 <div class="btn">
-                  <input type="submit" name="tool_removeall" value="Remove all" />
-                </div>
+                  <input type="submit" name="tool_removeall" value="Remove all posts" id="tool_removeall"/>
+                </div>                
                
               </li>
               <li>
                 <div class="radio">
                   <label class="main">Change status to:</label>
                   <input type="radio" name="campaign_tool_changetype" value="new" id="changetype_new" checked="checked" /> <label for="changetype_new">Published (New)</label>
-                  <input type="radio" name="campaign_tool_changetype" value="private" id="changetype_pending" /> <label for="changetype_pending">Pending</label>
-                 <input type="submit" name="tool_changetype" value="Change" />
+                  <input type="radio" name="campaign_tool_changetype" value="pending" id="changetype_pending" /> <label for="changetype_pending">Pending</label>
+                 <input type="submit" name="tool_changetype" value="Change" id="tool_changetype" />
                 </div>
               </li>
               <li>
                 <div class="text">
                   <?php echo label_for('campaign_tool_changeauthor', 'Change author username to:') ?>
                   <?php echo input_tag('campaign_tool_changeauthor', _data_value($data['main'], 'author')) ?>
-                  <input type="submit" name="tool_changeauthor" value="Change" />
+                  <input type="submit" name="tool_changeauthor" value="Change" id="tool_changeauthor" />
                   <p class="note">If blank, the created posts will be assigned to the current user.</p>
                 </div>
               </li>             
@@ -454,17 +454,105 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
         });
      });
 
+     $("#tool_removeall").click(function(){
+       
+        var answer = confirm('You are about to delete all the posts for this campaign from the database. This action can not be reversed. Delete ? ');
+        if (answer) {
+            var campaign_id = $('#campaign_edit').attr('value');          
+            var formdata = 'action=tools&tool=tool_removeall&id=' + campaign_id;
+            var sendurl = BASEURL + 'admin_index.php?page=plugin_settings&plugin=autoreader&alt_template=autoreader_add';
+
+             $.ajax(
+                {
+                type: 'post',
+                url: sendurl,
+                data: formdata,
+                error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+                                $('#error_message').html('There was an error with the data');
+                },
+                success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
+                        if (data.error) {
+                            $('#error_message').html(data.error);
+                        }
+                        else
+                        {
+                            $('#error_message').html(data.result);
+                        }
+                },
+                dataType: "json"
+            });
+        }
+        return false;
+     });
+
+     $("#tool_changetype").click(function(){
+
+        var answer = confirm('This will change the status of all submitted posts for this campaign. Change ? ');
+        if (answer) {
+            var campaign_id = $('#campaign_edit').attr('value');           
+            var campaign_tool_changetype = $("input[name='campaign_tool_changetype']:checked").val();
+            var formdata = 'action=tools&tool=tool_changetype&campaign_tool_changetype=' + campaign_tool_changetype + '&id=' + campaign_id;
+            var sendurl = BASEURL + 'admin_index.php?page=plugin_settings&plugin=autoreader&alt_template=autoreader_add';
+
+             $.ajax(
+                {
+                type: 'post',
+                url: sendurl,
+                data: formdata,
+                error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+                                $('#error_message').html('There was an error with the data');
+                },
+                success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
+                        if (data.error) {
+                            $('#error_message').html(data.error);
+                        }
+                        else
+                        {
+                            $('#error_message').html(data.result);
+                        }
+                },
+                dataType: "json"
+            });
+        }
+        return false;
+     });
+
+      $("#tool_changeauthor").click(function(){
+
+        var answer = confirm('This will change the author of all submitted posts for this campaign. Change ? ');
+        if (answer) {
+            var campaign_id = $('#campaign_edit').attr('value');
+            var campaign_tool_changeauthor = $('#campaign_tool_changeauthor').val();
+            var formdata = 'action=tools&tool=tool_changeauthor&campaign_tool_changeauthor=' + campaign_tool_changeauthor + '&id=' + campaign_id;
+            var sendurl = BASEURL + 'admin_index.php?page=plugin_settings&plugin=autoreader&alt_template=autoreader_add';
+
+             $.ajax(
+                {
+                type: 'post',
+                url: sendurl,
+                data: formdata,
+                error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+                                $('#error_message').html('There was an error with the data');
+                },
+                success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
+                        if (data.error) {
+                            $('#error_message').html(data.error);
+                        }
+                        else
+                        {
+                            $('#error_message').html(data.result);
+                        }
+                },
+                dataType: "json"
+            });
+        }
+        return false;
+     });
+
      $("#edit_submit").click(function(event) {
         event.preventDefault();
-
-        // Save via AJAX
-        //var item_uid = $('.post').attr('id');
-        //   item_uid = item_uid.split('-');
-        //   item_uid = item_uid[item_uid.length-1];  // this gets the id of the post from the class that WP adds in, gets last element on post id
-
-        var campaign = $("form#edit_campaign").serialize();
-      
-       // campaign =  $.URLEncode(campaign);
+       
+        var campaign = $("form#edit_campaign").serialize();      
         var formdata =  campaign + "&action=save";
         var sendurl = BASEURL + 'admin_index.php?page=plugin_settings&plugin=autoreader&alt_template=autoreader_add';
 
@@ -508,107 +596,73 @@ function action_add($h, $arSettings, $data=null, $action = 'add') {
 
         return false;
       
-      });
+    });
 
 
-function toSlug(str) {
-    return str.replace(/\W/g, ' ').replace(/\ +/g, '-').replace(/\-$/g, '').replace(/^\-/g, '').toLowerCase();
-  }
+    function toSlug(str) {
+        return str.replace(/\W/g, ' ').replace(/\ +/g, '-').replace(/\-$/g, '').replace(/^\-/g, '').toLowerCase();
+      }
 
 
     // Basic tab
-		$('#campaign_title').keyup(function() {
-           // alert($('#campaign_title').val().replace(/ /g,'_'));
-            $('#campaign_slug').val(toSlug( $('#campaign_title').val()));
-		});
+    $('#campaign_title').keyup(function() {
+        // alert($('#campaign_title').val().replace(/ /g,'_'));
+        $('#campaign_slug').val(toSlug( $('#campaign_title').val()));
+    });
 
 
     // Feeds tab
 
-		//- Test feed links
-		function check_feed(feed) {
-		  feed.addClass('input_text');
-          if(feed.val().length > 0)
-          {
-              var formdata = "url=" + feed.val()+ "&action=test_feed";
-              var sendurl = BASEURL + 'admin_index.php?page=plugin_settings&plugin=autoreader&alt_template=autoreader_add';
+    //- Test feed links
+    function check_feed(feed) {
+      feed.addClass('input_text');
+      if(feed.val().length > 0)
+      {
+          var formdata = "url=" + feed.val()+ "&action=test_feed";
+          var sendurl = BASEURL + 'admin_index.php?page=plugin_settings&plugin=autoreader&alt_template=autoreader_add';
 
-              $.ajax(
-                {
-                type: 'post',
-                url: sendurl,
-                data: formdata,
-                beforeSend: function () {
-                                feed.addClass('green');
-                        },
-                error: 	function(XMLHttpRequest, textStatus, errorThrown) {
-                                feed.addClass('red');
-                                 feed.val("Error occured");
-                },
-                success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
-                        if (data.result === 'fail') {
-                             feed.addClass('red');
-                             feed.val(data.error);
-                        }
-                        else
-                        {
+          $.ajax(
+            {
+            type: 'post',
+            url: sendurl,
+            data: formdata,
+            beforeSend: function () {
                             feed.addClass('green');
-                            feed.val(data.url);
-                        }
-                },
-                dataType: "json"
-            });
-          };         
-          feed.addClass('load input_text');
+                    },
+            error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+                            feed.addClass('red');
+                             feed.val("Error occured");
+            },
+            success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
+                    if (data.result === 'fail') {
+                         feed.addClass('red');
+                         feed.val(data.error);
+                    }
+                    else
+                    {
+                        feed.addClass('green');
+                        feed.val(data.url);
+                    }
+            },
+            dataType: "json"
+        });
+      };
+      feed.addClass('load input_text');
     };
 
-    $('#tool_removeall').click(function(){
-            event.preventDefault();
-            var answer = confirm('You are about to delete all the posts for this campaign from the database. This action can not be reversed. Delete ? '+jQuery(this).attr('title'));
-            if (answer) {
-                var campaign_id = ('#campaign_edit').val();
-                alert(campaign_id);
-                var formdata = 'action=tools_delete&id=' + campaign_id;
-                var sendurl = BASEURL + 'admin_index.php?page=plugin_settings&plugin=autoreader&alt_template=autoreader_add';
-
-                 $.ajax(
-                    {
-                    type: 'post',
-                    url: sendurl,
-                    data: formdata,
-                    error: 	function(XMLHttpRequest, textStatus, errorThrown) {
-                                    $('#error_message').html('There was an error with the data');
-                    },
-                    success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
-                            if (data.error === true) {
-                            }
-                            else
-                            {
-                                $('#error_message').html('___ records were deleted');
-                            }
-                    },
-                    dataType: "json"
-                });
-            }
-            return false;
-    });
-
     function update_feeds() {          
-          $('#edit_feed div input[type=text]').focus(function() {
-             $(this).addClass('input_text').addClass('red');              
-          });
+      $('#edit_feed div input[type=text]').focus(function() {
+         $(this).addClass('input_text').addClass('red');
+      });
 
-          $('#edit_feed div input[type=text]').blur(function() {
-            check_feed($(this));
-             $(this).removeClass('red');
-            //alert('leave');
-          });
-        };
+      $('#edit_feed div input[type=text]').blur(function() {
+        check_feed($(this));
+         $(this).removeClass('red');
+        //alert('leave');
+      });
+    };
 
     update_feeds();
-
-
-
 
 </script>
 

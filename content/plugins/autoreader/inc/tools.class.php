@@ -128,8 +128,9 @@ class WPOTools {
   {
     $bits = array();
     foreach(array_keys($params) as $k )
-      $bits[] = "{$table}.{$k}='$params[$k]'";
+      $bits[] = "{$table}.{$k}='$params[$k]'";      
     return "UPDATE $table SET ".implode(', ',$bits)." WHERE $where";
+
   }
            
   function addOptions($options)
@@ -388,7 +389,21 @@ function mysql2date( $dateformatstring, $mysqlstring, $translate = true ) {
  function get_date_from_gmt($string, $format = 'Y-m-d H:i:s') {      
       preg_match('#([0-9]{1,4})-([0-9]{1,2})-([0-9]{1,2}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})#', $string, $matches);
       $string_time = gmmktime($matches[4], $matches[5], $matches[6], $matches[2], $matches[3], $matches[1]);
-      $string_localtime = gmdate($format, $string_time + GMT_OFFSET * 3600);
+      $string_localtime = gmdate($format, $string_time );
+      //removed until available
+      //$string_localtime = gmdate($format, $string_time + GMT_OFFSET * 3600);
       return $string_localtime;
 }
 
+//from wordpress
+function current_time( $type, $gmt = 0 ) {
+    $t =  ( $gmt ) ? gmdate( 'Y-m-d H:i:s' ) : gmdate( 'Y-m-d H:i:s', ( time() + ( get_option( 'gmt_offset' ) * 3600 ) ) );
+    switch ( $type ) {
+            case 'mysql':
+                    return $t;
+                    break;
+            case 'timestamp':
+                    return strtotime($t);
+                    break;
+    }
+}

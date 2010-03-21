@@ -195,12 +195,12 @@ ul.dropdown li:hover > ul 			{ visibility: visible; }
 }
 
 #edit_sections {
-	background: url('../images/bg_tab_section.gif') no-repeat top right;
+	/* background: url('../images/bg_tab_section.gif') no-repeat top right;*/
 	padding-right: 5px;
 }
 
 #edit_sections .section {
-	background: url('../images/bg_tab_section.gif') no-repeat top left;
+	/* background: url('../images/bg_tab_section.gif') no-repeat top left;*/
 	padding-left: 10px;
 	padding-top: 15px;
 	height: auto !important;
@@ -328,7 +328,7 @@ ul.dropdown li:hover > ul 			{ visibility: visible; }
 }
 
 #edit_feed div.inlinetext input.input_text {
-	width: 480px;
+	width: 440px;
 	padding-right: 25px;
 }
 
@@ -422,6 +422,7 @@ ul.dropdown li:hover > ul 			{ visibility: visible; }
 #options li {
   border-bottom: 1px dotted #ccc;
   padding-bottom: 10px;
+  margin-top: 10px;
 }
 
 #options li label {
@@ -627,7 +628,7 @@ div.error ul li {
 
 
 
-#admin_plugin_tabs {height:6em;margin:1em 0;}
+#admin_plugin_tabs {height:4em;margin:1em 0;}
 
 
 

@@ -482,9 +482,11 @@ class AutoreaderSettings
         $count = 0;
         $feeds = $this->getCampaignFeeds($h, $campaign->id);
 
-        foreach($feeds as $feed)
-            $count += $this->processFeed($h, $campaign, $feed);
-
+        if ($feeds) {
+            foreach($feeds as $feed)
+                $count += $this->processFeed($h, $campaign, $feed);
+        }
+        
         $h->db->query(WPOTools::updateQuery($this->db['campaign'], array(
           'count' => $campaign->count + $count,
           'lastactive' => current_time('mysql', true)
@@ -668,6 +670,8 @@ class AutoreaderSettings
   function isDuplicate($h, &$campaign, &$feed, &$item)
   {
     $row = $h->urlExists($item->get_permalink());
+    //print "------" .  $item->get_permalink() . " ******          ";
+    //print_r($row);
     //$hash = $this->getItemHash($item);
     //$row = $h->db->get_row("SELECT * FROM {$this->db['campaign_post']} "
     //                      . "WHERE campaign_id = {$campaign->id} AND feed_id = {$feed->id} AND hash = '$hash' ");
@@ -699,7 +703,9 @@ class AutoreaderSettings
 
     $h->post->title =  $title;
     $h->post->url = make_url_friendly($title);
-    $h->post->content = $content;
+    //$h->post->content = $content;
+    //$h->post->content = truncate($content, $h->vars['submit']['summary_length']);
+    $h->post->content = truncate($content, 200);
     $h->post->date = $date;
     $h->post->type = 'news';
     $h->post->category =  $category[0];
@@ -995,7 +1001,7 @@ class AutoreaderSettings
   function adminProcessEdit($h,$id)
   {
     // If we need to execute a tool action we stop here
-    if($this->adminProcessTools($h)) return;
+    //if($this->adminProcessTools($h)) return;
 
     // Delete all to recreate
     $h->db->query("DELETE FROM {$this->db['campaign_word']} WHERE campaign_id = $id");
@@ -1098,65 +1104,72 @@ class AutoreaderSettings
    */
   function adminProcessTools($h)
   {
-    $id = $h->cage->post->testAlnum('id');
+    $id = $h->cage->post->testInt('id');
+    $count = 0;
 
-    if($h->cage->post->testAlnumLines('tool_removeall'))
-    {
-      $posts = $this->getCampaignPosts($id);
+    if($h->cage->post->testAlnumLines('tool') == 'tool_removeall') {
+        $posts = $this->getCampaignPosts($h,$id);
 
-      foreach($posts as $post)
-      {
-        $h->db->query("DELETE FROM {$wpdb->posts} WHERE ID = {$post->post_id} ");
-      }
+        if ($posts) {
+            foreach($posts as $post)
+            {               
+                $count++;
+                $h->post->id = $post->post_id;
+                $h->deletePost();
+            }
+        }
 
-      // Delete log
-      $h->db->query("DELETE FROM {$this->db['campaign_post']} WHERE campaign_id = {$id} ");
+        // Delete log
+        $h->db->query("DELETE FROM {$this->db['campaign_post']} WHERE campaign_id = {$id} ");
 
-      // Update feed and campaign posts count
-       $h->db->query(WPOTools::updateQuery($this->db['campaign'], array('count' => 0), "id = {$id}"));
-       $h->db->query(WPOTools::updateQuery($this->db['campaign_feed'], array('hash' => 0, 'count' => 0), "campaign_id = {$id}"));
+        // Update feed and campaign posts count
+        $h->db->query(WPOTools::updateQuery($this->db['campaign'], array('count' => 0), "id = {$id}"));
+        $h->db->query(WPOTools::updateQuery($this->db['campaign_feed'], array('hash' => 0, 'count' => 0), "campaign_id = {$id}"));
 
-      $this->tool_success = __('All posts removed', 'wpomatic');
-      return true;
+        $this->tool_success = 'All posts removed';
+        $result = array('result' => $count . ' posts were succesfully deleted.');
+        return json_encode($result);
     }
 
-    if(isset($_REQUEST['tool_changetype']))
-    {
-      $this->adminUpdateCampaignPosts($h, $id, array(
-        'post_status' => $h->db->escape($_REQUEST['campaign_tool_changetype'])
-      ));
+    if($h->cage->post->testAlnumLines('tool') == 'tool_changetype') {
+        $this->adminUpdateCampaignPosts($h, $id, array(
+        'post_status' => $h->cage->post->testAlpha('campaign_tool_changetype')
+        ));
 
-      $this->tool_success = __('Posts status updated', 'wpomatic');
-      return true;
+        $this->tool_success = 'Posts status updated';
+        return true;
     }
 
-    if(isset($_REQUEST['tool_changeauthor']))
-    {
-//      $author = get_userdatabylogin($_REQUEST['campaign_tool_changeauthor']);
-        //if ($h->currentUser->
+      //Test author name
+//    $authorname =  $this->campaign_data['main']['author'];
+//    $userid = $h->getUserIdFromName($authorname);
+//    if ($userid) { $main['authorid'] =$userid;  } else { $main['authorid'] = $h->currentUser->id;  }
+//    unset($main['author']);
 
-      if($author)
-      {
-        $authorid = $author->ID;
-        $this->adminUpdateCampaignPosts($h, $id, array('post_author' => $authorid));
-      } else {
-        $this->errno = 1;
-        $this->errors = array('tools' => array(print('Author' . attribute_escape($_REQUEST['campaign_tool_changeauthor'])).  ' not found' ));
-      }
+    if($h->cage->post->testAlnumLines('tool') == 'tool_changeauthor') {
+       $authorname = $h->cage->post->testAlnumLines('campaign_tool_changeauthor');
+       $userid = $h->getUserIdFromName($authorname);
+       if ($userid) { $main['authorid'] =$userid;  } else { $main['authorid'] = $h->currentUser->id;  }
 
-      $this->tool_success = 'Posts status updated';
-      return true;
+        if($userid) {
+            $this->adminUpdateCampaignPosts($h, $id, array('post_author' => $userid));
+            $result = array('result' => 'Posts were changed.');
+        } else {
+            $result = array("error" => "That username could not be found.");
+        }        
+        return json_encode($result);
     }
 
-    return false;
+    $error = array("error" => "There was an error. No tools could be run");
+    return json_encode($error);
   }
 
   function adminUpdateCampaignPosts($h,$id, $properties)
   {
     $posts = $this->getCampaignPosts($h, $id);
 
-    foreach($posts as $post)
-       $h->db->query(WPOTools::updateQuery($h->db->posts, $properties, "ID = {$post->id}"));
+    foreach($posts as $post)        
+       $h->db->query(WPOTools::updateQuery('hotaru_posts', $properties, "post_id = $post->post_id"));
   }
 
   /**
@@ -1171,7 +1184,7 @@ class AutoreaderSettings
     $content = $item->get_content();
 
     // Caching
-    if ($h->vars['autoreader_settings']['cacheimages'] || $campaign->cacheimages)   // set override here for all campaigns  get_option('wpo_cacheimages')
+    if ($h->vars['autoreader_settings']['wpo_cacheimages'] || $campaign->cacheimages)   // set override here for all campaigns  get_option('wpo_cacheimages')
     {
       $images = WPOTools::parseImages($content);
       $urls = $images[2];
@@ -1182,7 +1195,7 @@ class AutoreaderSettings
 
         foreach($urls as $url)
         {
-          $newurl = $this->cacheRemoteImage($url);
+          $newurl = $this->cacheRemoteImage($h, $url);
           if($newurl)
             $content = str_replace($url, $newurl, $content);
         }
@@ -1352,8 +1365,10 @@ class AutoreaderSettings
         $campaign_data['feeds']['edit'] = array();
 
         $feeds = $this->getCampaignFeeds($h, $id);
-        foreach($feeds as $feed)
-          $campaign_data['feeds']['edit'][$feed->id] = $feed->url;
+        if ($feeds) {
+            foreach($feeds as $feed)
+                $campaign_data['feeds']['edit'][$feed->id] = $feed->url;
+        }        
       }
 
       // Rewrites
