@@ -179,7 +179,7 @@ class Category
         { $orderBy = ''; }
 
         $sql = "SELECT * FROM " . TABLE_CATEGORIES . $where . $orderBy ;
-        print $sql;
+        
         $categories = $h->db->get_results($h->db->prepare($sql, $where_d));
         if ($categories) { return $categories; } else { return false; }
     }
