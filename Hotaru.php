@@ -1325,7 +1325,7 @@ class Hotaru
         // site closed, but user has admin access so go back and continue as normal
         if ($this->currentUser->getPermission('can_access_admin') == 'yes') { return true; }
         
-        if ($this->pageName == 'admin_login' || $this->pageName == 'api' ) { return true; }
+        if ($this->pageName == 'admin_login') { return true; }
         
         require_once(LIBS . 'Maintenance.php');
         $maintenance = new Maintenance();
