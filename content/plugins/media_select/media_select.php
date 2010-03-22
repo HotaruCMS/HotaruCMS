@@ -5,7 +5,7 @@
  * version: 0.2
  * folder: media_select
  * class: MediaSelect
- * hooks: install_plugin, sb_base_theme_index_top, post_read_post, post_add_post, post_update_post, submit_2_fields, submit_functions_process_submitted, sb_base_functions_preparelist, category_bar_end, breadcrumbs
+ * hooks: install_plugin, header_include, theme_index_top, header_include_raw, sb_base_theme_index_top, post_read_post, post_add_post, post_update_post, submit_2_fields, submit_functions_process_submitted, sb_base_functions_preparelist, category_bar_end, breadcrumbs
  * requires: submit 1.9
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
@@ -72,7 +72,29 @@ class MediaSelect
         } 
     }
     
+public function theme_index_top($h) {
     
+ if($h->cage->post->getAlpha('type') == 'postImages' && $h->cage->post->testUri('url')){
+			$html =  file_get_contents($h->cage->post->getHtmLawed('url'));
+			$parseUrl = parse_url(trim($h->cage->post->getHtmLawed('url')));
+			$hostname = trim($parseUrl['host'] ? $parseUrl['host'] : array_shift(explode('/', $parseUrl['path'], 2)));
+			$html = str_replace('src="/','src="http://'.$hostname.'/',$html);
+			$html = str_replace("src='/","src='http://".$hostname.'/',$html);
+			echo $html;
+			die();
+		}   
+}
+
+
+     public function header_include_raw($h)
+    {
+       
+		echo "<script type='text/javascript' src='".BASEURL."content/plugins/post_images/javascript/jquery.Jcrop.js'></script>";
+		echo "<link rel='stylesheet' href='".BASEURL."content/plugins/post_images/css/jquery.Jcrop.css' type='text/css' />";
+		$h->displayTemplate('image_script');
+	}
+
+
     /**
      * Read post media if post_id exists.
      */
@@ -150,8 +172,21 @@ class MediaSelect
             // image
             echo "<input type='radio' name='post_media' value='image' " . $image . " >";
             echo "&nbsp;&nbsp;" . $h->lang['media_select_image'] . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n"; 
+
             
+ echo  '<div id = "get_image_original_size" />';
+            
+
         echo "</tr>\n";
+
+        echo "<tr><td colspan=3><div id ='thumbs_from_source_space'></div></td></tr>";
+
+
+
+
+        
+
+        
     }
     
     
