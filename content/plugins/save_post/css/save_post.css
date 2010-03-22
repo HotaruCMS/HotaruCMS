@@ -1,0 +1,17 @@
+/* save post css */
+
+.save_post_link	{ 
+    padding-left: 1.5em; 
+    background-image: url(content/plugins/save_post/images/save_post.png); 
+    background-repeat: no-repeat; 
+}
+
+.save_post_widget_item { 
+    padding-right: 1.8em; 
+    background-image: url(content/plugins/save_post/images/save_post_widget.png); 
+    background-repeat: no-repeat; 
+}
+
+.save_post_widget_item:hover { 
+    background-position: 0 -32px;
+}
