@@ -40,22 +40,22 @@
     <?php echo $h->lang["admin_theme_plugins_installed"]; ?>
     <span class='table_key'>
     &nbsp;&nbsp;
-    <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/active_16.png'>
+    <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/active_16.png' alt="">
     <?php echo $h->lang["admin_theme_plugins_active"]; ?>
     &nbsp;&nbsp;
-    <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/inactive_16.png'>
+    <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/inactive_16.png' alt="">
     <?php echo $h->lang["admin_theme_plugins_inactive"]; ?>
     &nbsp;&nbsp;
-    <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/up_12.png'>
+    <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/up_12.png' alt="">
     <?php echo $h->lang["admin_theme_plugins_order_up"]; ?>
     &nbsp;&nbsp;
-    <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/down_12.png'>
+    <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/down_12.png' alt="">
     <?php echo $h->lang["admin_theme_plugins_order_down"]; ?>
     &nbsp;&nbsp;
-    <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/info_16.png'>
+    <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/info_16.png' alt="">
     <?php echo $h->lang["admin_theme_plugins_details"]; ?>
     &nbsp;&nbsp;
-    <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/uninstall_16.png'>
+    <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/uninstall_16.png' alt="">
     <?php echo $h->lang["admin_theme_plugins_uninstall"]; ?>
     </span>
 </td></tr>
@@ -143,10 +143,10 @@
     <?php echo $h->lang["admin_theme_plugins_not_installed"]; ?>
     <span class='table_key'>
     &nbsp;&nbsp;
-    <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/info_16.png'>
+    <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/info_16.png' alt="">
     <?php echo $h->lang["admin_theme_plugins_details"]; ?>
     &nbsp;&nbsp;
-    <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/install_16.png'>
+    <img src='<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/install_16.png' alt="">
     <?php echo $h->lang["admin_theme_plugins_install"]; ?>
     </span>
 </td></tr>
