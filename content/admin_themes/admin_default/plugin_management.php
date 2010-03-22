@@ -66,7 +66,7 @@
     for($i=0; $i<3; $i++) { 
 ?>
 
-<tr>
+
 <td style='width: 33%; vertical-align: top;'>
 
 <table>    
