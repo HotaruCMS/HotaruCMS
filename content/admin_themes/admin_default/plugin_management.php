@@ -61,11 +61,12 @@
 </td></tr>
 
 <?php
-    $the_plugins = $h->vars['installed_plugins']; 
+    $the_plugins = $h->vars['installed_plugins'];
     $per_column = count($the_plugins)/3;
     for($i=0; $i<3; $i++) { 
 ?>
 
+<tr>
 <td style='width: 33%; vertical-align: top;'>
 
 <table>    
