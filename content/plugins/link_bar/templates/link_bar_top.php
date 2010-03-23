@@ -48,7 +48,7 @@
     <?php $h->pluginHook('link_bar_css_js'); ?>
 
     <?php if (file_exists(THEMES . THEME . 'css/link_bar.css')) { ?>
-        <link rel="stylesheet" href="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>link_bar.css" type="text/css" />
+        <link rel="stylesheet" href="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>css/link_bar.css" type="text/css" />
     <?php } else { ?>
         <link rel="stylesheet" href="<?php echo BASEURL; ?>content/plugins/link_bar/css/link_bar.css" type="text/css" />
     <?php } ?>

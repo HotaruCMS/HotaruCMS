@@ -60,6 +60,10 @@ class LinkBar
         if ($post_id) {
             $h->readPost($post_id);
             
+            // if the source url contains the BASEURL, don't use the bar
+            // This is so we don't show the bar on posts submitted without a link
+            if (strpos($h->post->origUrl, BASEURL) !== false) { return false; }
+            
             // get the settings
             $h->vars['link_bar_settings'] = $h->getSerializedSettings('link_bar');
             
