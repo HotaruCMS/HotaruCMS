@@ -70,7 +70,7 @@ $(document).ready(function(){
  *  Notes: ---
  ********************************************************************** */
 	 
-function vote(id, rating, referer)
+function vote(id, rating)
 {
 	sendurl = BASEURL +"content/plugins/vote/vote_functions.php";
 	
