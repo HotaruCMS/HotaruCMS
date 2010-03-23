@@ -71,16 +71,19 @@ class SbBase
         if ($h->cage->get->keyExists('sort')) {
             $h->pageName = 'sort';
         }
-        
+
+         $h->pluginHook('sb_base_theme_index_top');
         // check if this is an RSS link forwarding to the source
-        if ($h->cage->get->keyExists('forward')) {
-            $post_id = $h->cage->get->testInt('forward');
-            if ($post_id) { $post = $h->getPost($post_id); }
-            if (isset($post->post_orig_url)) { 
-                header("Location:" . urldecode($post->post_orig_url));
-                exit;
+        
+            if ($h->cage->get->keyExists('forward')) {
+                $post_id = $h->cage->get->testInt('forward');
+                if ($post_id) { $post = $h->getPost($post_id); }
+                if (isset($post->post_orig_url)) {
+                    header("Location:" . urldecode($post->post_orig_url));
+                    exit;
+                }
             }
-        }
+       
         
         // include sb_base_functions class:
         require_once(PLUGINS . 'sb_base/libs/SbBaseFunctions.php');
