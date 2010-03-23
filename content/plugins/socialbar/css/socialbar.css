@@ -1,0 +1,131 @@
+
+html, body { padding:0; background:none repeat scroll 0 0 #FFFFFF; color:#333; border:0 none; height:100%; margin:0; overflow:hidden;
+font: 14px/18px Helvetica, Arial, 'Liberation Sans', FreeSans, sans-serif;
+}
+
+
+#share_bar {
+    background:none repeat scroll 0 0 #FFFFFF;
+    border-bottom:1px solid #7B7B7B;
+    height:67px;
+    left:0;
+    min-width:950px;
+    overflow:hidden;
+    position:absolute;
+    right:0;
+    top:0;
+    width:100%;
+    z-index:201;
+}
+
+iframe#source {
+    height:100%;
+    left:0;
+    margin:0;
+    overflow-x:hidden;
+    overflow-y:auto;
+    padding:0;
+    position:absolute;
+    right:0;
+    top:68px;
+    width:100%;
+    z-index:200;
+}
+
+.nav h1 {
+    border-right:1px solid #E7E7E7;
+    float:left;
+    height:43px;
+    margin:12px 0 0;
+    padding:0 15px 0 10px;
+}
+
+.poll {
+    height:70px;
+    padding:0 18px 0 0;
+}
+
+.poll .slider {
+    float:left;
+    margin:9px 50px 0 0;
+    padding:0 0 0 15px;
+}
+
+.poll .slider h5 {
+    color:#222222;
+    font-size:14px;
+    font-weight:bold;
+    margin:0 0 6px;
+}
+
+.poll .button {
+    border-color:#BBBBBB #BBBBBB #999999;
+    border-style:solid;
+    border-width:1px;
+    float:left;
+    font-size:11px;
+    height:19px;
+    line-height:18px;
+    margin:0 4px 0 0;
+    padding:0;
+    text-align:center;
+    width:45px;
+}
+
+.poll .responses {
+    border-left:1px solid #E7E7E7;
+    float:left;
+    height:50px;
+    margin:6px 0 0;
+    overflow:hidden;
+    padding:0 0 0 10px;
+}
+.more {
+    float:right;
+    font-size:12px;
+    height:35px;
+    line-height:35px;
+    position:absolute;
+    right:15px;
+    top:5px;
+
+}
+
+.poll .responses ul {
+    list-style:none outside none;
+}
+
+.poll .responses li {
+    color:#F67C00;
+    float:left;
+    line-height:13px;
+    margin:1px 10px 0 0;
+}
+
+.poll .responses img {
+    height:32px;
+    width:32px;
+    border:0 none;
+}
+
+.avatar_wrapper img {border:none; overflow:hidden; width:32px !important; height:32px !important; display:block;position:relative; }
+.avatar_wrapper {display:inline;}
+.avatar_container a {color:#fff;}
+
+.rounded_avatar {display:block;
+height:30px;
+overflow:hidden;
+position:relative;
+width:30px;}
+
+.rounded_corners {
+    display:block;
+    height:100%;
+    left:0;
+    overflow:hidden;
+    position:absolute;
+    top:0;
+    width:100%;
+}
+
+.rounded_corners img {height:32px;width:32px;display:block;left:0;position:absolute;top:0;}
