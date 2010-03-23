@@ -304,6 +304,10 @@ class PluginManagement
         
         $result = $h->pluginHook('install_plugin', $h->plugin->folder);
         
+        // Re-sort all orders and remove any accidental gaps
+        $this->refreshPluginOrder($h);
+        $this->sortPluginHooks($h);
+        
         // For plugins to avoid showing this success message, they need to 
         // return a non-boolean value to $result.
         if (!is_array($result))
@@ -427,7 +431,9 @@ class PluginManagement
             $h->messages[$h->lang["admin_plugins_uninstall_done"]] = 'green';
         }
         
+        // Re-sort all orders and remove any accidental gaps
         $this->refreshPluginOrder($h);
+        $this->sortPluginHooks($h);
     }
     
     
@@ -497,7 +503,7 @@ class PluginManagement
         $this->assignPluginMeta($h, $plugin_metadata);
         
         $this->uninstall($h, 1);    // 1 indicates that "upgrade" is true, used to disable the "Uninstalled" message
-        $this->install($h, 1);      // 1 indicates that "upgrade" is true. 
+        $this->install($h, 1);      // 1 indicates that "upgrade" is true.
     }
     
     
