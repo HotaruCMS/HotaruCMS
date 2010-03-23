@@ -40,9 +40,7 @@ class LinkBarSettings
         echo "<p>" . $h->lang["link_bar_settings_note"] . "</p>";
           
         // Get settings from database if they exist...
-        $link_bar_settings = $h->getSerializedSettings('link_bar');
-        
-        $h->pluginHook('link_bar_settings_get_values');
+        $h->vars['link_bar_settings'] = $h->getSerializedSettings('link_bar');
             
         echo "<form name='link_bar_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=link_bar' method='post'>\n";
             
@@ -64,16 +62,16 @@ class LinkBarSettings
     public function saveSettings($h)
     {
         // get settings again
-        $h->var['link_bar_settings'] = $h->getSerializedSettings('link_bar');
-        $h->var['link_bar_error'] = array();
+        $h->vars['link_bar_settings'] = $h->getSerializedSettings('link_bar');
+        $h->vars['link_bar_error'] = false;
         
         $h->pluginHook('link_bar_save_settings');
         
         // All settings get updated regardless of errors, so plugins should 
         // revert to previous values if there's an error.
-        $h->updateSetting('link_bar_settings', serialize($h->var['link_bar_settings']));
+        $h->updateSetting('link_bar_settings', serialize($h->vars['link_bar_settings']));
             
-        if (!$h->var['link_bar_error'])
+        if (!$h->vars['link_bar_error'])
         { 
             $h->message = $h->lang["main_settings_saved"];
             $h->messageType = "green";

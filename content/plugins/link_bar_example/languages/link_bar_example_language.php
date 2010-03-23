@@ -1,6 +1,6 @@
 <?php
 /**
- * LINK BAR LANGUAGE
+ * LINK BAR EXAMPLE LANGUAGE
  *
  * PHP version 5
  *
@@ -24,8 +24,8 @@
  * @link      http://www.hotarucms.org/
  */
 
-/* Link Bar Settings */
-$lang["link_bar_settings_header"] = "Link Bar Settings";
-$lang["link_bar_settings_note"] = "Plugins add their own settings to this page.";
+/* Link Bar Example Settings */
+$lang["link_bar_example_text"] = "Enter text to show in the link bar:";
+$lang["link_bar_example_error"] = "Sorry, invalid text field.";
 
 ?>

@@ -6,6 +6,7 @@
  * folder: link_bar
  * class: LinkBar
  * type: bar
+ * requires: sb_base 0.8
  * hooks: sb_base_show_post_pre_title, sb_base_theme_index_top, admin_plugin_settings, admin_sidebar_plugin_settings
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
@@ -58,7 +59,14 @@ class LinkBar
         // read the post into $h and display the link bar
         if ($post_id) {
             $h->readPost($post_id);
+            
+            // get the settings
+            $h->vars['link_bar_settings'] = $h->getSerializedSettings('link_bar');
+            
+            // plugin hook
             $h->pluginHook('link_bar_pre_template');
+            
+            // display link bar template
             $h->displayTemplate('link_bar_top');
             die(); exit;
         }
@@ -70,9 +78,6 @@ class LinkBar
      */
     public function sb_base_show_post_pre_title($h)
     {
-        $data = $h->cage->post->testUri('url');
-        $post_id = $h->post->id; 
-
         $h->post->origUrl = $h->url(array('page'=>$h->post->id, 'link'=>$h->post->id));
     }
 }
