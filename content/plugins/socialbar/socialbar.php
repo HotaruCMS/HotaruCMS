@@ -6,7 +6,7 @@
  * folder: socialbar
  * class: SocialBar
  * type: socialbar
- * hooks: install_plugin, theme_index_top, sb_base_show_post_pre_title
+ * hooks: install_plugin, theme_index_top, sb_base_show_post_pre_title, sb_base_theme_index_top
  *
  * PHP version 5
  *
@@ -41,6 +41,12 @@ class SocialBar
 
     public function theme_index_top($h) {
 
+        
+    }
+
+
+    public function sb_base_theme_index_top($h) {
+
          $access= false;
 
          if ($h->cage->get->keyExists('forward')) {
@@ -67,8 +73,8 @@ class SocialBar
                 die(); exit;
             }
         }
-    }
 
+    }
 
     public function admin_theme_index_top($h) {       
         //$h->vars['cron_settings'] = $h->getSerializedSettings();             
