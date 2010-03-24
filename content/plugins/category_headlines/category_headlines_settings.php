@@ -66,7 +66,7 @@ class CategoryHeadlinesSettings
     {
 	// Get settings from database if they exist...
         $category_headlines_settings = $h->getSerializedSettings();
-        $category_headlines_settings['cats'] = $h->cage->post->getAlnum('cats');
+        $category_headlines_settings['cats'] = $h->cage->post->getHtmLawed('cats');
         $category_headlines_settings['limit'] = $h->cage->post->getInt('limit');
         $category_headlines_settings['type'] = $h->cage->post->getAlnum('type');
 	

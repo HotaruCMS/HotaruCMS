@@ -46,33 +46,33 @@ class CategoryHeadlines
 
        $category_headlines_settings = $h->getSerializedSettings('category_headlines');
       
-       $cats_id = array(1,5,6);  // $categoryheadlines_settings['cats']
+       $cats_id = explode(',', $category_headlines_settings['cats']);
 
        foreach ($cats_id as $cat_id) {
-          $posts = $this->getCats($h, $cat_id,  '', $category_headlines_settings['limit']);
+          $posts = $this->getCats($h, trim($cat_id), $category_headlines_settings['type'], $category_headlines_settings['limit']);
 
            if ($posts) {
-               foreach($posts as $post) {                  
+               foreach($posts as $post) {
                    $h->readPost(0,$post);
                    $h->displayTemplate('category_headlines_box','category_headlines', false);
-
                }
            }
        }
-
-            
     }
 
-    public function getCats($h, $cat_id = 0, $status='', $limit = 0) {
+    public function getCats($h, $cat_id = 0, $status = 'new', $limit = 0) {
+    
        if (!isset($h->vars['SB'])) { $h->vars['SB'] = new SbBaseFunctions($h); }
-       $h->vars['select'] = "*";
-       $h->vars['filter']['post_category=%d'] = $cat_id;
-       $h->vars['filter']['post_status = %s'] = $limit;
-       $h->vars['limit'] = $limit;
-       $h->vars['orderby'] = 'post_date DESC';
 
-       return $h->vars['SB']->prepareList($h, $status, 'posts');
+       if ($status == 'latest') { $status = 'new'; }
+       
+       $where['post_category = %d'] = $cat_id;
+       $where['post_status = %s'] = $status;
+       
+       $prepared_array = $h->vars['SB']->filter($where, $limit, false, '*');
+       return $h->vars['SB']->getPosts($h, $prepared_array);
     }
+
 }
 
 ?>

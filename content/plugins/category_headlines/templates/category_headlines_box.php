@@ -26,8 +26,7 @@
  
 ?>
 
-<?php
-    echo $h->url(array('page'=>$h->post->id));
-    echo $h->post->title . "<br/><br/>";
-
-?>
+<a href='<?php echo $h->url(array('page'=>$h->post->id)); ?>' title='<?php echo $h->post->title; ?>'>
+    <?php echo $h->post->title; ?>
+</a>
+<br /><br />
