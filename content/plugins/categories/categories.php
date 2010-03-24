@@ -2,7 +2,7 @@
 /**
  * name: Categories
  * description: Enables categories for posts
- * version: 1.3
+ * version: 1.4
  * folder: categories
  * class: Categories
  * type: categories
@@ -378,10 +378,15 @@ class Categories
             $link = $category->category_safe_name;  
         } else { 
             $link = $category->category_id; 
-        } 
-    
+        }
+        
+        $active = '';
+        if (isset($h->vars['category_id']) && ($h->vars['category_id'] == $category->category_id)) {
+            $active = " class='active_cat'";
+        }
+        
         $category = stripslashes(html_entity_decode(urldecode($category->category_name), ENT_QUOTES,'UTF-8'));
-        $output .= '<li><a href="' . $h->url(array('category'=>$link)) .'">' . $category . "</a>\n";
+        $output .= '<li' . $active . '><a href="' . $h->url(array('category'=>$link)) .'">' . $category . "</a>\n";
         
         return $output; 
     } 
