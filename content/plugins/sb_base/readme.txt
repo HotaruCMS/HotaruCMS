@@ -13,7 +13,7 @@ Instructions
 
 Changelog
 ---------
-v.0.8 2010/03/22 - Nick - Added a new plugin hook before the RSS forwarding redirect. 
+v.0.8 2010/03/24 - Nick - Bug fix for Upcoming RSS and a new plugin hook before the RSS forwarding redirect. 
 v.0.7 2010/03/15 - Nick - Added option to redirect RSS feeds through your site to their sources [courtesy of Gunaxin.com]
 v.0.6 2010/03/13 - Nick - Lists ranked by vote are now ranked first by vote, second by recency
 v.0.5 2010/02/26 - Nick - Filters hidden from user pages; Added profile navigation link

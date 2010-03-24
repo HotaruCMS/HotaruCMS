@@ -293,6 +293,7 @@ class SbBaseFunctions
         require_once(EXTENSIONS . 'RSSWriterClass/rsswriter.php');
         
         $select = '*';
+        $orderby = 'post_date DESC'; // default
         
         $status = $h->cage->get->testAlpha('status');
         $limit = $h->cage->get->getInt('limit');
@@ -325,7 +326,7 @@ class SbBaseFunctions
             $start = date('YmdHis', strtotime("now"));
             $end = date('YmdHis', strtotime($upcoming_duration)); // should be negative
             $filter['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
-            $orderby = "post_votes_up DESC";
+            $orderby = "post_votes_up DESC, post_date DESC";
         }
         
         // When a user clicks a parent category, we need to show posts from all child categories, too.
@@ -405,7 +406,7 @@ class SbBaseFunctions
         }
                 
         if (!isset($filter))  $filter['post_status = %s || post_status = %s'] = array('top', 'new'); // default to all posts
-        $prepared_array = $this->filter($filter, $limit, false, $select);
+        $prepared_array = $this->filter($filter, $limit, false, $select, $orderby);
         
         $results = $this->getPosts($h, $prepared_array);
             
