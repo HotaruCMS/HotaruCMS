@@ -25,8 +25,25 @@
  */
  
 ?>
+<link type="text/css" href="<?php echo BASEURL; ?>content/plugins/category_headlines/css/category_headlines.css" rel="stylesheet">
+ 
 
-<a href='<?php echo $h->url(array('page'=>$h->post->id)); ?>' title='<?php echo $h->post->title; ?>'>
-    <?php echo $h->post->title; ?>
-</a>
-<br /><br />
+
+<div class="category_headlines_box">
+    <div class="category_headlines_box_title"><h3>Category Name</h3><div class="more">more</div></div>
+    <div class="clear"></div>
+    <?php
+        foreach($h->vars['category_headlines']['posts'] as $post) {
+            $h->readPost(0,$post);
+            ?>
+            <div class="category_headlines_post">
+               <a href='<?php echo $h->url(array('page'=>$h->post->id)); ?>' title='<?php echo $h->post->title; ?>'>
+                    <?php echo $h->post->title; ?>
+               </a><br/><br/>
+            </div>
+            <?php
+        }     
+    ?>
+    
+
+</div>

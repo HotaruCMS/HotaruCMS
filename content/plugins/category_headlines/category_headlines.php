@@ -44,18 +44,17 @@ class CategoryHeadlines
 
     public function widget_category_headlines($h) {
 
-       $category_headlines_settings = $h->getSerializedSettings('category_headlines');
-      
-       $cats_id = explode(',', $category_headlines_settings['cats']);
+       $cats_id = array(2,3,7);
+       $category_headlines_settings = $h->getSerializedSettings('category_headlines');      
+       //$cats_id = explode(',', $category_headlines_settings['cats']);
 
        foreach ($cats_id as $cat_id) {
-          $posts = $this->getCats($h, trim($cat_id), $category_headlines_settings['type'], $category_headlines_settings['limit']);
+           
+          $h->vars['category_headlines']['posts'] = $this->getCats($h, $cat_id, $category_headlines_settings['type'], $category_headlines_settings['limit']);
 
-           if ($posts) {
-               foreach($posts as $post) {
-                   $h->readPost(0,$post);
-                   $h->displayTemplate('category_headlines_box','category_headlines', false);
-               }
+           if ($h->vars['category_headlines']['posts']) {
+               $h->displayTemplate('category_headlines_box','category_headlines', false);
+          
            }
        }
     }
