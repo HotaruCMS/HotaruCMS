@@ -31,22 +31,22 @@ RewriteRule ^admin/maintenance/?$ admin_index.php?page=maintenance [L]
 RewriteRule ^admin/plugin_settings/plugin/([a-zA-Z0-9_-]+)/?$ admin_index.php?page=plugin_settings&plugin=$1 [L]
 
 ##### GENERIC RULES #####
-RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc|txt|gz|xml)$
+RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc|txt|gz|xml|html)$
 RewriteRule ^([^/]*)/?$ index.php?page=$1 [L]
 
-RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc|txt|gz|xml)$
+RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc|txt|gz|xml|html)$
 RewriteRule ^([^/]*)/([^/]*)/?$ index.php?$1=$2 [L]
 
-RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc|txt|gz|xml)$
+RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc|txt|gz|xml|html)$
 RewriteRule ^([^/]*)/([^/]*)/([^/]*)/?$ index.php?page=$1&$2=$3 [L]
 
-RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc|txt|gz|xml)$
+RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc|txt|gz|xml|html)$
 RewriteRule ^([^/]*)/([^/]*)/([^/]*)/([^/]*)/?$ index.php?$1=$2&$3=$4 [L]
 
-RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc|txt|gz|xml)$
+RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc|txt|gz|xml|html)$
 RewriteRule ^([^/]*)/([^/]*)/([^/]*)/([^/]*)/([^/]*)/?$ index.php?page=$1&$2=$3&$4=$5 [L]
 
-RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc|txt|gz|xml)$
+RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc|txt|gz|xml|html)$
 RewriteRule ^([^/]*)/([^/]*)/([^/]*)/([^/]*)/([^/]*)/([^/]*)/?$ index.php?$1=$2&$3=$4&$5=$6 [L]
 
 ##### URL Rewriting End #####
