@@ -2,12 +2,12 @@
 /**
  * name: Link Bar
  * description: Bare bones link bar with an iframe
- * version: 0.1
+ * version: 0.2
  * folder: link_bar
  * class: LinkBar
  * type: bar
  * requires: sb_base 0.8
- * hooks: sb_base_show_post_pre_title, sb_base_theme_index_top, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: sb_base_show_post_pre_title, sb_base_show_post_title, sb_base_pre_rss_forward, admin_plugin_settings, admin_sidebar_plugin_settings
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -37,7 +37,7 @@ class LinkBar
     /**
      * Check to see if we should redirect to the link bar page
      */
-    public function sb_base_theme_index_top($h)
+    public function sb_base_pre_rss_forward($h)
     {
         $access= false;
     
@@ -82,6 +82,16 @@ class LinkBar
      */
     public function sb_base_show_post_pre_title($h)
     {
+        $h->vars['link_bar_source'] = $h->post->origUrl;
         $h->post->origUrl = $h->url(array('page'=>$h->post->id, 'link'=>$h->post->id));
+    }
+    
+    
+    /**
+     * Change $h->post->origUrl back so other plugins like Video Inc can use it.
+     */
+    public function sb_base_show_post_title($h)
+    {
+        $h->post->origUrl = $h->vars['link_bar_source'];
     }
 }
