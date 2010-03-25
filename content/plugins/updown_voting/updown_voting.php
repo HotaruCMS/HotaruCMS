@@ -218,7 +218,7 @@ class UpdownVoting
             $return = $h->cage->get->testUri('return'); // use existing return parameter
         }
         $h->vars['vote_login_url'] = BASEURL . "index.php?page=login&amp;return=" . $return;
-        $h->displayTemplate('updown_voting_button', 'updown_voting', NULL, false);
+        $h->displayTemplate('updown_voting_button', 'updown_voting', false);
     }
     
     
@@ -240,7 +240,7 @@ class UpdownVoting
 
         // $h->vars['flag_count'] got from above function
         $h->vars['flag_why'] = $why_list;
-        $h->displayTemplate('updown_voting_alert', 'updown_voting', NULL, false);
+        $h->displayTemplate('updown_voting_alert', 'updown_voting', false);
     }
 
 
