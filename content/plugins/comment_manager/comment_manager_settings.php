@@ -158,6 +158,10 @@ class CommentManagerSettings
         // edit comment
         if ($h->cage->post->getAlpha('type') == 'edit') 
         {
+            // Get settings from database if they exist...
+            $comments_settings = $h->getSerializedSettings('comments');
+            $h->comment->allowableTags = $comments_settings['comment_allowable_tags'];
+        
             $cid = $h->cage->post->testInt('cid');
             $comment = $h->comment->getComment($h, $cid);
             $h->comment->readComment($h, $comment);
