@@ -2,7 +2,7 @@
 /**
  * name: Comments
  * description: Enables logged-in users to comment on posts
- * version: 1.8
+ * version: 1.9
  * folder: comments
  * class: Comments
  * type: comments
@@ -319,7 +319,7 @@ class Comments
     public function header_include($h)
     { 
         $h->includeCss('comments', 'comments');
-        $h->includeJs('comments', 'urldecode.min');
+        $h->includeJs('comments', 'urldecode');
         $h->includeJs('comments', 'comments');
     }
     

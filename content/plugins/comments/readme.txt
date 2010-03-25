@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.1.9 2010/03/26 - Ties - Replaced JavaScript urldecode function with a better one.
 v.1.8 2010/03/18 - Nick - Fix for not sending comment subscriptions when using SMTP email authentication.
 v.1.7 2010/03/11 - Nick - Fix for a previous change that broke the set pending and delete links within comments.
 v.1.6 2010/02/26 - Nick - Adds link to profile navigation; Email changed to go through Hotaru's "email" function 
