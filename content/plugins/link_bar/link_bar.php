@@ -172,11 +172,11 @@ class LinkBar
      */
     public function linkBarEnabled($h)
     {
-        if (!$h->currentUser->loggedIn) { return false; }
-        
-        $user_settings = $h->currentUser->getProfileSettingsData($h, 'user_settings');
-        if (!$user_settings['link_bar']) { 
-            return false; 
+        if ($h->currentUser->loggedIn) { 
+            $user_settings = $h->currentUser->getProfileSettingsData($h, 'user_settings');
+            if (isset($user_settings['external_link_bar']) && (!$user_settings['external_link_bar'])) { 
+                return false; 
+            }
         }
         
         return true;
