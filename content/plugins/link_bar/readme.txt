@@ -33,5 +33,6 @@ Instructions
 
 Changelog
 ---------
+v.0.3 2010/3/26 - Nick - Added option in user settings to disable the Link Bar (but it's on by default) 
 v.0.2 2010/3/25 - Nick - Fix to revert $h->post->origUrl so that Video Inc, etc. can use it. 
 v.0.1 2010/3/23 - Nick - Released first version (based on "SocialBar" by shibuya246) 

@@ -28,4 +28,8 @@
 $lang["link_bar_settings_header"] = "Link Bar Settings";
 $lang["link_bar_settings_note"] = "Plugins add their own settings to this page.";
 
+$lang["link_bar_user_settings"] = "Show the external link bar?";
+$lang["link_bar_yes"] = "Yes";
+$lang["link_bar_no"] = "No";
+
 ?>
