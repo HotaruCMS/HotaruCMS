@@ -346,7 +346,7 @@ class Comments
      */
     public function sb_base_show_post_extra_fields($h)
     {
-        echo '<li><a class="comment_link" href="' . $h->url(array('page'=>$h->post->id)) . '">' . $h->countComments() . '</a></li>' . "\n";
+        echo '<li><a class="comment_link" href="' . $h->url(array('page'=>$h->post->id)) . '">' . $h->countComments(false, $h->lang['comments_leave_comment']) . '</a></li>' . "\n";
     }
     
     
@@ -386,7 +386,7 @@ class Comments
                     
             echo "<!--  START COMMENTS_WRAPPER -->\n";
             echo "<div id='comments_wrapper'>\n";
-            echo "<h2>" . $h->countComments(false) . "</h2>\n";
+            echo "<h2>" . $h->countComments(false, $h->lang['comments_none_link']) . "</h2>\n";
                 
             // IF PAGINATING COMMENTS:
             if ($h->comment->pagination)
