@@ -6,7 +6,7 @@
  * folder: category_headlines
  * class: CategoryHeadlines
  * type: categorywidget
- * hooks: install_plugin, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings
  * requires: widgets 0.6
  * author: shibuya246
  * authorurl: http://shibuya246.com
@@ -43,27 +43,25 @@ class CategoryHeadlines
 }
 
     public function widget_category_headlines($h) {
-
-       $cats_id = array(2,3,7);
-       $category_headlines_settings = $h->getSerializedSettings('category_headlines');      
-       //$cats_id = explode(',', $category_headlines_settings['cats']);
-
-       foreach ($cats_id as $cat_id) {
-           
-          $h->vars['category_headlines']['posts'] = $this->getCats($h, $cat_id, $category_headlines_settings['type'], $category_headlines_settings['limit']);
-
+        
+       $h->vars['category_headlines'] = $h->getSerializedSettings('category_headlines');      
+       $cats = parse_object_to_array($h->vars['category_headlines']['cats']);
+      
+       foreach ($cats as $cat_id) {          
+          $h->vars['category_headlines']['cat_name']= $h->getCatName($cat_id);          
+          $h->vars['category_headlines']['posts'] = $this->getCats($h, $cat_id, $h->vars['category_headlines']['type'], $h->vars['category_headlines']['limit']);
+         
            if ($h->vars['category_headlines']['posts']) {
                $h->displayTemplate('category_headlines_box','category_headlines', false);
-          
+
            }
        }
     }
 
     public function getCats($h, $cat_id = 0, $status = 'new', $limit = 0) {
     
-       if (!isset($h->vars['SB'])) { $h->vars['SB'] = new SbBaseFunctions($h); }
-
-       if ($status == 'latest') { $status = 'new'; }
+       if (!isset($h->vars['SB']))
+               $h->vars['SB'] = new SbBaseFunctions($h);
        
        $where['post_category = %d'] = $cat_id;
        $where['post_status = %s'] = $status;

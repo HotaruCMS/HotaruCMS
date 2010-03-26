@@ -30,7 +30,10 @@
 
 
 <div class="category_headlines_box">
-    <div class="category_headlines_box_title"><h3>Category Name</h3><div class="more">more</div></div>
+    <div class="category_headlines_box_title">
+        <?php if ($h->vars['category_headlines']['image_icon'] == 'true' ) echo "<img src='' alt=''/>"; ?>
+        <h3><?php echo $h->vars['category_headlines']['cat_name']; ?></h3>
+        <div class="more"><a href="<?php echo $h->vars['category_headlines']['cat_name']; ?>">more</a></div></div>
     <div class="clear"></div>
     <?php
         foreach($h->vars['category_headlines']['posts'] as $post) {
