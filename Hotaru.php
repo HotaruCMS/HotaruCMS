@@ -1960,18 +1960,18 @@ class Hotaru
  *
  * *********************************************************** */
 
-
     /**
      * Count comments
      *
-     * @param bool $link - true used for "comments" link, false for top of actual comments
-     * @return string - text to show in the link, e.g. "3 comments"
+     * @param bool $digits_only - return just the count (if false, returns "3 comments", etc.)
+     * @param string $no_comments_text - e.g. "Leave a comment" or "No comments"
+     * @return string - text to show, e.g. "3 comments"
      */
-    function countComments($link = true)
+    function countComments($digits_only = true, $no_comments_text = '')
     {
         require_once(LIBS . 'Comment.php');
         $comment = new Comment();
-        return $comment->countComments($this, $link);
+        return $comment->countComments($this, $digits_only, $no_comments_text);
     }
     
     
