@@ -355,14 +355,13 @@ class SbBaseFunctions
      */
     public function postRssStatus($h)
     {
-        // Status:
-        $status = $h->cage->get->testAlpha('status');
+        $h->vars['postRssStatus'] = $h->cage->get->testAlpha('status');
         
-        if (!$status) { return false; }
+        if (!$h->vars['postRssStatus']) { return false; }
         
-        $h->vars['postRssFilter']['post_status = %s'] = $status;
+        $h->vars['postRssFilter']['post_status = %s'] = $h->vars['postRssStatus'];
         
-        switch ($status) {
+        switch ($h->vars['postRssStatus']) {
             case 'new':
                 $h->vars['postRssFeed']['description'] = $h->lang["sb_base_rss_latest_from"] . " " . SITE_NAME; 
                 break;
@@ -421,8 +420,12 @@ class SbBaseFunctions
 
         $h->vars['postRssFilter']['post_media = %s'] = $media;
         $h->includeLanguage('media_select', 'media_select');
-        if (isset($status) && ($status != '')) { $status .= "_"; } else { $status = ""; }
-        $media_word = "sb_base_rss_stories_media_" . $status . $media;
+        if (isset($h->vars['postRssStatus']) && ($h->vars['postRssStatus'] != '')) { 
+            $h->vars['postRssStatus'] .= "_"; 
+        } else { 
+            $h->vars['postRssStatus'] = ""; 
+        }
+        $media_word = "sb_base_rss_stories_media_" . $h->vars['postRssStatus'] . $media;
         $h->vars['postRssFeed']['description'] = $h->lang[$media_word];
     }
     
