@@ -27,6 +27,29 @@
 
 class SbBaseFunctions
 {
+    protected $feed_array   = array();  // contains a prepared SQL query
+    protected $feed_results = NULL;     // object containing the results of the above query
+    
+    
+    /**
+     * Access modifier to set protected properties
+     */
+    public function __set($var, $val)
+    {
+        $this->$var = $val;
+    }
+    
+    
+    /**
+     * Access modifier to get protected properties
+     * The & is necessary (http://bugs.php.net/bug.php?id=39449)
+     */
+    public function &__get($var)
+    {
+        return $this->$var;
+    }
+    
+    
     /**
      * Prepare filter and breadcrumbs for social bookmarking pages
      * Two main types: one for list pages and the other for 
@@ -282,159 +305,265 @@ class SbBaseFunctions
         
         if ($posts) { return $posts; } else { return false; }
     }
-    
+
     
     /**
      * Publish content as an RSS feed
      * Uses the 3rd party RSS Writer class.
+     *
+     * This function checks the url for the kind of feed
+     * and builds a prepared SQL query
      */    
-    public function rssFeed($h)
+    public function postRssFeedQuery($h)
     {
-        require_once(EXTENSIONS . 'RSSWriterClass/rsswriter.php');
+        // Feed details
+        $h->vars['postRssFeed']['title'] = SITE_NAME;
+        $h->vars['postRssFeed']['link'] = BASEURL;
+        $h->vars['postRssFeed']['description'] = '';
+
+        // Limit:
+        $h->vars['postRssLimit'] = $h->cage->get->getInt('limit');
         
-        $select = '*';
-        $orderby = 'post_date DESC'; // default
+        $this->postRssStatus($h); // Status:
+        $this->postRssUser($h); // User
+        $this->postRssTag($h); // Tag
+        $this->postRssMediaType($h); // Media type
+        $this->postRssCategory($h); // Category
+        $this->postRssSearch($h); // Search
         
+        // allow other plugins to create a feed
+        $h->pluginHook('post_rss_feed');
+
+        // set post rss filter defaults if not already set
+        $this->checkPostRssDefaults($h);
+        
+        // get the prepared SQL query
+        $this->feed_array = $this->filter(
+            $h->vars['postRssFilter'], 
+            $h->vars['postRssLimit'], 
+            false, 
+            $h->vars['postRssSelect'], 
+            $h->vars['postRssOrderBy']
+            );
+        
+        return $this->feed_array;
+    }
+    
+    
+    /**
+     * check post status for the RSS feed
+     */
+    public function postRssStatus($h)
+    {
+        // Status:
         $status = $h->cage->get->testAlpha('status');
-        $limit = $h->cage->get->getInt('limit');
+        
+        if (!$status) { return false; }
+        
+        $h->vars['postRssFilter']['post_status = %s'] = $status;
+        
+        switch ($status) {
+            case 'new':
+                $h->vars['postRssFeed']['description'] = $h->lang["sb_base_rss_latest_from"] . " " . SITE_NAME; 
+                break;
+            case 'top':
+                $h->vars['postRssFeed']['description'] = $h->lang["sb_base_rss_top_stories_from"] . " " . SITE_NAME;
+                break;
+            case 'upcoming':
+                $h->vars['postRssFeed']['description'] = $h->lang["sb_base_rss_upcoming_stories_from"] . " " . SITE_NAME;
+                // Filters page to "new" stories by most votes, but only stories from the last X days!
+                $vote_settings = unserialize($h->getSetting('vote_settings', 'vote')); 
+                $upcoming_duration = "-" . $vote_settings['upcoming_duration'] . " days"; // default: -5 days
+                $h->vars['postRssFilter']['post_status = %s'] = 'new'; 
+                $start = date('YmdHis', strtotime("now"));
+                $end = date('YmdHis', strtotime($upcoming_duration)); // should be negative
+                $h->vars['postRssFilter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
+                $h->vars['postRssOrderBy'] = "post_votes_up DESC, post_date DESC";
+        }
+    }
+    
+    
+    /**
+     * If a user feed, set it up
+     */
+    public function postRssUser($h)
+    {
         $user = $h->cage->get->testUsername('user');
+        if (!$user) { return false; }
+        
+        $user_id = $h->getUserIdFromName($user);
+        if ($user_id) { $h->vars['postRssFilter']['post_author = %d'] = $user_id; }
+        $h->vars['postRssFeed']['description'] = $h->lang["sb_base_rss_stories_from_user"] . " " . $user; 
+    }
+    
+    
+    /**
+     * If a tag feed, set it up
+     */
+    public function postRssTag($h)
+    {
         $tag = $h->cage->get->noTags('tag');
+        if (!$tag) { return false; }
+        
+        $h->vars['postRssFilter']['post_tags LIKE %s'] = '%' . urlencode(stripslashes($tag)) . '%'; 
+        $tag = str_replace('_', ' ', stripslashes(html_entity_decode($tag, ENT_QUOTES,'UTF-8'))); 
+        $h->vars['postRssFeed']['description'] = $h->lang["sb_base_rss_stories_tagged"] . " " . $tag;
+    }
+    
+    
+    /**
+     * If a media type feed, set it up
+     */
+    public function postRssMediaType($h)
+    {
         $media = $h->cage->get->testAlnumLines('media');
-        $search = $h->cage->get->sanitizeTags('search');
+        if (!$media) { return false; }
+
+        $h->vars['postRssFilter']['post_media = %s'] = $media;
+        $h->includeLanguage('media_select', 'media_select');
+        if (isset($status) && ($status != '')) { $status .= "_"; } else { $status = ""; }
+        $media_word = "sb_base_rss_stories_media_" . $status . $media;
+        $h->vars['postRssFeed']['description'] = $h->lang[$media_word];
+    }
+    
+    
+    /**
+     * If a category feed, set it up
+     */
+    public function postRssCategory($h)
+    {
         $category = $h->cage->get->noTags('category');
-                
-        //if (!$status) { $status = "top"; }
-        if (!$limit) { $limit = 10; }
-                    
-        if ($status) { $filter['post_status = %s'] = $status; }
-        if ($user) {
-            $user_id = $h->getUserIdFromName($user);
-            if ($user_id) { $filter['post_author = %d'] = $user_id; }
-        }
-        if ($tag) { 
-            $filter['post_tags LIKE %s'] = '%' . urlencode(stripslashes($tag)) . '%'; }
-        if ($media) { $filter['post_media = %s'] = $media; }
-        if ($category && (FRIENDLY_URLS == "true")) { $cat_id = $h->getCatId($category); }
-        if ($category && (FRIENDLY_URLS == "false")) { $cat_id = $category; }
         
-        if ($status == 'upcoming') {
-            // Filters page to "new" stories by most votes, but only stories from the last X days!
-            $vote_settings = unserialize($h->getSetting('vote_settings', 'vote')); 
-            $upcoming_duration = "-" . $vote_settings['upcoming_duration'] . " days"; // default: -5 days
-            
-            $filter['post_status = %s'] = 'new'; 
-            $start = date('YmdHis', strtotime("now"));
-            $end = date('YmdHis', strtotime($upcoming_duration)); // should be negative
-            $filter['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
-            $orderby = "post_votes_up DESC, post_date DESC";
-        }
+        if (!$category) { return false; }
         
+        if (FRIENDLY_URLS == "true") { $cat_id = $h->getCatId($category); }
+        if (FRIENDLY_URLS == "false") { $cat_id = $category; }
+        
+        if (!$cat_id) { return false; }
+
         // When a user clicks a parent category, we need to show posts from all child categories, too.
         // This only works for one level of sub-categories.
-        if ($category && $cat_id) {
-            $filter_string = '(post_category = %d';
-            $values = array($cat_id);
-            $parent = $h->getCatParent($cat_id);
-            if ($parent == 1) {
-                $children = $h->getCatChildren($cat_id);
-                if ($children) {
-                    foreach ($children as $child_id) {
-                        $filter_string .= ' || post_category = %d';
-                        array_push($values, $child_id->category_id); 
-                    }
+
+        $filter_string = '(post_category = %d';
+        $values = array($cat_id);
+        $parent = $h->getCatParent($cat_id);
+        if ($parent == 1) {
+            $children = $h->getCatChildren($cat_id);
+            if ($children) {
+                foreach ($children as $child_id) {
+                    $filter_string .= ' || post_category = %d';
+                    array_push($values, $child_id->category_id); 
                 }
             }
-            $filter_string .= ')';
-            $filter[$filter_string] = $values; 
         }
-        // end categories
-                
-        if ($search && $h->isActive('search')) {
-            require_once(PLUGINS . 'search/search.php');
-            $search_plugin = new Search();
-            $prepared_search = $search_plugin->prepareSearchFilter($h, $search); 
-            extract($prepared_search);
-            $orderby = "post_date DESC";    // override "relevance DESC" so the RSS feed updates with the latest related terms. 
+        $filter_string .= ')';
+        $h->vars['postRssFilter'][$filter_string] = $values; 
+
+        $category = str_replace('_', ' ', stripslashes(html_entity_decode($cat_id, ENT_QUOTES,'UTF-8'))); 
+        $h->vars['postRssFeed']['description'] = $h->lang["sb_base_rss_stories_in_category"] . " " . $h->getCatName($cat_id); 
+    }
+    
+    
+    /**
+     * If a search feed, set it up
+     */
+    public function postRssSearch($h)
+    {
+        $search = $h->cage->get->sanitizeTags('search');
+        if (!$search || !$h->isActive('search')) { return false; }
+        
+        require_once(PLUGINS . 'search/search.php');
+        $search_plugin = new Search();
+        $prepared_search = $search_plugin->prepareSearchFilter($h, $search); 
+        extract($prepared_search);
+        // override "relevance DESC" so the RSS feed updates with the latest related terms.
+        $h->vars['postRssOrderBy'] = "post_date DESC";
+        $h->vars['postRssFeed']['description'] = $h->lang["sb_base_rss_stories_search"] . " " . stripslashes($search);
+    }
+    
+    
+    /**
+     * Set Post RSS filter defaults if not already set
+     */
+    public function checkPostRssDefaults($h)
+    {
+        // if no select set...
+        if (!isset($h->vars['postRssSelect'])) { 
+            $h->vars['postRssSelect'] = '*'; 
         }
         
-        $h->pluginHook('post_rss_feed');
+        // if no order by set...
+        if (!isset($h->vars['postRssOrderBy'])) { 
+            $h->vars['postRssOrderBy'] = 'post_date DESC'; 
+        }
+        
+        // if no filter set...
+        if (!isset($h->vars['postRssFilter'])) {
+            $h->vars['postRssFilter']['post_status = %s || post_status = %s'] = array('top', 'new'); // default to all posts
+        }
+        
+        // if no limit set...
+        if (!isset($h->vars['postRssLimit'])) { 
+            $h->vars['postRssLimit'] = 10; 
+        }
+        
+        // if no feed title set...
+        if (!isset($h->vars['postRssFeed']['title'])) { 
+            $h->vars['postRssFeed']['title'] = SITE_NAME; 
+        }
+        
+        // if no feed link set...
+        if (!isset($h->vars['postRssFeed']['link'])) { 
+            $h->vars['postRssFeed']['link'] = BASEURL; 
+        }
+        
+        // if no feed description set...
+        if (!isset($h->vars['postRssFeed']['description'])) { 
+            $h->vars['postRssFeed']['description'] = ''; 
+        }
+    }
+    
+    
+    /**
+     * Assign values to $feed object and serve the feed
+     *
+     * @param object $results - post rows
+     */
+    public function doPostRssFeed($h, $results = NULL)
+    {
+        if (!$results) { return false; }
+        
+        require_once(EXTENSIONS . 'RSSWriterClass/rsswriter.php');
         
         $feed           = new RSS();
-        $feed->title    = SITE_NAME;
-        $feed->link     = BASEURL;
-        
-        if ($media) 
-        { 
-            $h->includeLanguage('media_select', 'media_select');
-            if (isset($status) && ($status != '')) { $status .= "_"; } else { $status = ""; }
-            $media_word = "sb_base_rss_stories_media_" . $status . $media;
-            $feed->description = $h->lang[$media_word];
-        }
-        elseif ($status == 'new') 
-        { 
-            $feed->description = $h->lang["sb_base_rss_latest_from"] . " " . SITE_NAME; 
-        }
-        elseif ($status == 'top') 
-        { 
-            $feed->description = $h->lang["sb_base_rss_top_stories_from"] . " " . SITE_NAME; 
-        }
-        elseif ($status == 'upcoming') 
-        { 
-            $feed->description = $h->lang["sb_base_rss_upcoming_stories_from"] . " " . SITE_NAME; 
-        }
-        elseif ($user) 
-        { 
-            $feed->description = $h->lang["sb_base_rss_stories_from_user"] . " " . $user; 
-        }
-        elseif ($tag) 
-        { 
-            $tag = str_replace('_', ' ', stripslashes(html_entity_decode($tag, ENT_QUOTES,'UTF-8'))); 
-            $feed->description = $h->lang["sb_base_rss_stories_tagged"] . " " . $tag;
-        }
-        elseif (isset($cat_id)) 
-        { 
-            $category = str_replace('_', ' ', stripslashes(html_entity_decode($cat_id, ENT_QUOTES,'UTF-8'))); 
-            $feed->description = $h->lang["sb_base_rss_stories_in_category"] . " " . $h->getCatName($cat_id); 
-        }
-        elseif ($search) 
-        { 
-        $feed->description = $h->lang["sb_base_rss_stories_search"] . " " . stripslashes($search); 
-        }
-        else
+        $feed->title    = $h->vars['postRssFeed']['title'];
+        $feed->link     = $h->vars['postRssFeed']['link'];
+        $feed->description = $h->vars['postRssFeed']['description'] = $h->vars['postRssFeed']['description'];
+
+        // get sb base settings
+        $sb_base_settings = $h->getSerializedSettings('sb_base');
+            
+        foreach ($results as $result) 
         {
-        
-        }
-                
-        if (!isset($filter))  $filter['post_status = %s || post_status = %s'] = array('top', 'new'); // default to all posts
-        $prepared_array = $this->filter($filter, $limit, false, $select, $orderby);
-        
-        $results = $this->getPosts($h, $prepared_array);
+            $h->post->url = $result->post_url; // used in Hotaru's url function
+            $h->post->category = $result->post_category; // used in Hotaru's url function
             
-        if ($results) {
-        
-            // get sb base settings
-            $sb_base_settings = $h->getSerializedSettings('sb_base');
+            $item = new RSSItem();
+            $title = html_entity_decode(urldecode($result->post_title), ENT_QUOTES,'UTF-8');
+            $item->title = stripslashes($title);
             
-            foreach ($results as $result) 
-            {
-                $h->post->url = $result->post_url; // used in Hotaru's url function
-                $h->post->category = $result->post_category; // used in Hotaru's url function
-                
-                $item = new RSSItem();
-                $title = html_entity_decode(urldecode($result->post_title), ENT_QUOTES,'UTF-8');
-                $item->title = stripslashes($title);
-                
-                // if RSS redirecting is enabled, append forward=1 to the url
-                if (isset($sb_base_settings['rss_redirect']) && !empty($sb_base_settings['rss_redirect'])) {
-                    $item->link  = html_entity_decode($h->url(array('page'=>$result->post_id, 'forward'=>$result->post_id)), ENT_QUOTES,'UTF-8');
-                } else {
-                    $item->link  = $h->url(array('page'=>$result->post_id));
-                }
-                $item->setPubDate($result->post_date); 
-                $item->description = "<![CDATA[ " . stripslashes(urldecode($result->post_content)) . " ]]>";
-                $feed->addItem($item);
+            // if RSS redirecting is enabled, append forward=1 to the url
+            if (isset($sb_base_settings['rss_redirect']) && !empty($sb_base_settings['rss_redirect'])) {
+                $item->link  = html_entity_decode($h->url(array('page'=>$result->post_id, 'forward'=>$result->post_id)), ENT_QUOTES,'UTF-8');
+            } else {
+                $item->link  = $h->url(array('page'=>$result->post_id));
             }
+            $item->setPubDate($result->post_date); 
+            $item->description = "<![CDATA[ " . stripslashes(urldecode($result->post_content)) . " ]]>";
+            $feed->addItem($item);
         }
+        
+        // do it!
         echo $feed->serve();
     }
 }

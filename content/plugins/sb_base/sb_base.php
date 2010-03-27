@@ -2,7 +2,7 @@
 /**
  * name: SB Base
  * description: Social Bookmarking base - provides "list" and "post" templates. 
- * version: 0.8
+ * version: 0.9
  * folder: sb_base
  * class: SbBase
  * type: base
@@ -92,7 +92,9 @@ class SbBase
         switch ($h->pageName)
         {
             case 'rss':
-                $sb_funcs->rssFeed($h);
+                $sb_funcs->postRssFeedQuery($h);
+                $sb_funcs->feed_results = $sb_funcs->getPosts($h, $sb_funcs->feed_array);
+                $sb_funcs->doPostRssFeed($h, $sb_funcs->feed_results);
                 exit;
                 break;
             case 'index':
