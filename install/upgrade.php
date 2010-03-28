@@ -348,24 +348,44 @@ function do_upgrade($old_version)
     if ($old_version == "1.1.1") { 
     
         // SMTP on
-        $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $h->db->query($h->db->prepare($sql, 'SMTP_ON', 'false', 'false', 'Email auth'));
+        $sql = "SELECT settings_name FROM " . TABLE_SETTINGS . " WHERE settings_name = %s";
+        $result = $h->db->get_var($h->db->prepare($sql, 'SMTP_ON'));
+        if(!$result) {
+            $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+            $h->db->query($h->db->prepare($sql, 'SMTP_ON', 'false', 'false', 'Email auth'));
+        }
         
         // SMTP host
-        $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $h->db->query($h->db->prepare($sql, 'SMTP_HOST', 'mail.example.com', 'mail.example.com', ''));
+        $sql = "SELECT settings_name FROM " . TABLE_SETTINGS . " WHERE settings_name = %s";
+        $result = $h->db->get_var($h->db->prepare($sql, 'SMTP_HOST'));
+        if(!$result) {
+            $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+            $h->db->query($h->db->prepare($sql, 'SMTP_HOST', 'mail.example.com', 'mail.example.com', ''));
+        }
         
         // SMTP port
-        $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $h->db->query($h->db->prepare($sql, 'SMTP_PORT', '25', '25', ''));
+        $sql = "SELECT settings_name FROM " . TABLE_SETTINGS . " WHERE settings_name = %s";
+        $result = $h->db->get_var($h->db->prepare($sql, 'SMTP_PORT'));
+        if(!$result) {
+            $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+            $h->db->query($h->db->prepare($sql, 'SMTP_PORT', '25', '25', ''));
+        }
         
         // SMTP username
-        $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $h->db->query($h->db->prepare($sql, 'SMTP_USERNAME', '', '', ''));
+        $sql = "SELECT settings_name FROM " . TABLE_SETTINGS . " WHERE settings_name = %s";
+        $result = $h->db->get_var($h->db->prepare($sql, 'SMTP_USERNAME'));
+        if(!$result) {
+            $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+            $h->db->query($h->db->prepare($sql, 'SMTP_USERNAME', '', '', ''));
+        }
         
         // SMTP password
-        $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $h->db->query($h->db->prepare($sql, 'SMTP_PASSWORD', '', '', ''));
+        $sql = "SELECT settings_name FROM " . TABLE_SETTINGS . " WHERE settings_name = %s";
+        $result = $h->db->get_var($h->db->prepare($sql, 'SMTP_PASSWORD'));
+        if(!$result) {
+            $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+            $h->db->query($h->db->prepare($sql, 'SMTP_PASSWORD', '', '', ''));
+        }
         
         // update "old version" for next set of upgrades
         $old_version = "1.1.2"; 
@@ -375,8 +395,12 @@ function do_upgrade($old_version)
     if ($old_version == "1.1.2") {
 
         // System Feedback
-        $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-        $h->db->query($h->db->prepare($sql, 'SYS_FEEDBACK', 'true', 'true', 'send system report'));
+        $sql = "SELECT settings_name FROM " . TABLE_SETTINGS . " WHERE settings_name = %s";
+        $result = $h->db->get_var($h->db->prepare($sql, 'SYS_FEEDBACK'));
+        if(!$result) {
+            $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+            $h->db->query($h->db->prepare($sql, 'SYS_FEEDBACK', 'true', 'true', 'Send system report'));
+        }
 
         // Remove ON from constant names
         $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_name = %s WHERE settings_name = %s";
@@ -396,6 +420,25 @@ function do_upgrade($old_version)
         
         // update "old version" for next set of upgrades
         $old_version = "1.1.3"; 
+    }
+    
+     // 1.1.3 to 1.1.4
+    if ($old_version == "1.1.3") {
+
+    // copy post_date column to post_pub_date
+        $exists = $h->db->column_exists('posts', 'post_pub_date');
+        if (!$exists) {
+            // Create a post_pub_date column
+            $sql = "ALTER TABLE " . TABLE_POSTS . " ADD post_pub_date timestamp NOT NULL AFTER post_date";
+            $h->db->query($h->db->prepare($sql));
+            
+            // Copy post_date to post_pub_date
+            $sql = "UPDATE " . TABLE_POSTS . " SET post_pub_date = post_date";
+            $h->db->query($h->db->prepare($sql));
+        }
+        
+        // update "old version" for next set of upgrades
+        $old_version = "1.1.4"; 
     }
     
     // Update Hotaru version number to the database (referred to when upgrading)
