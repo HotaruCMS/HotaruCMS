@@ -44,59 +44,63 @@ if ($h->cage->post->keyExists('post_id')) {
 
     //get vote settings
     $updown_voting_settings = unserialize($h->getSetting('updown_voting_settings', 'updown_voting'));
+    
+    vote($h, $post_id, $vote_rating, $user_ip, $vote_settings);
+}
+
+function vote($h, $post_id, $vote_rating, $user_ip, $referer, $vote_settings) {
 
     // Only proceed if the user is logged in
-    if ($h->currentUser->loggedIn) {
+    if (!$h->currentUser->loggedIn) { return false; }
 
-        $user_id = $h->currentUser->id;
+    $user_id = $h->currentUser->id;
 
-        // get vote history for this post:
+    // get vote history for this post:
 
-        $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating != %d ORDER BY vote_updatedts DESC LIMIT 1";
-        $voted = $h->db->get_var($h->db->prepare($sql, $post_id, $user_id, -999));
+    $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating != %d ORDER BY vote_updatedts DESC LIMIT 1";
+    $voted = $h->db->get_var($h->db->prepare($sql, $post_id, $user_id, -999));
 
-        if ($voted == $vote_rating) {
-            // Repeat vote. Must be from a double-click. Return false and
-            $json_array = array('result'=>$h->lang['vote_already_voted']);
-            echo json_encode($json_array);
-            return false;
-        }
-
-        // get current vote count and status
-        $sql = "SELECT post_votes_up, post_status, post_date FROM " . TABLE_POSTS . " WHERE post_id = %d";
-        $count_and_status = $h->db->get_row($h->db->prepare($sql, $post_id));
-
-        // If already voted down, but now voting up, undo the original vote
-        if ($voted && ($voted < 0) && ($vote_rating > 0)) { 
-            updown_voting_remove_vote($h, $post_id, $user_id, $voted, $vote_rating);
-            $h->pluginHook('vote_positive_vote', '', array('user' => $user_id, 'post'=>$post_id)); // remove from activity
-            $undo = true;
-        }
-        
-        // If already voted up, but now voting down, undo the original vote
-        elseif ($voted && ($voted > 0) && ($vote_rating < 0)) { 
-            updown_voting_remove_vote($h, $post_id, $user_id, $voted, $vote_rating); // same function call as above!
-            $h->pluginHook('vote_negative_vote', '', array('user' => $user_id, 'post'=>$post_id)); // remove from activity
-            $undo = true;
-        }
-        
-        // Vote up!
-        elseif ($vote_rating > 0) { 
-            updown_voting_vote_up($h, $post_id, $user_id, $user_ip, $voted, $vote_rating, $count_and_status, $updown_voting_settings);
-        }
-        
-        // Vote down!
-        elseif ($vote_rating < 0) { 
-            updown_voting_vote_down($h, $post_id, $user_id, $user_ip, $voted, $vote_rating, $count_and_status, $updown_voting_settings);
-        }
-
-        $sql = "SELECT post_votes_up, post_votes_down FROM " . TABLE_POSTS . " WHERE post_id = %d";
-        $votes = $h->db->get_row($h->db->prepare($sql, $post_id));
-
-        $json_array = array('votes'=>$votes->post_votes_up, 'undo'=>$undo);
-
+    if ($voted == $vote_rating) {
+        // Repeat vote. Must be from a double-click. Return false and
+        $json_array = array('result'=>$h->lang['vote_already_voted']);
         echo json_encode($json_array);
+        return false;
     }
+
+    // get current vote count and status
+    $sql = "SELECT post_votes_up, post_status, post_date FROM " . TABLE_POSTS . " WHERE post_id = %d";
+    $count_and_status = $h->db->get_row($h->db->prepare($sql, $post_id));
+
+    // If already voted down, but now voting up, undo the original vote
+    if ($voted && ($voted < 0) && ($vote_rating > 0)) { 
+        updown_voting_remove_vote($h, $post_id, $user_id, $voted, $vote_rating);
+        $h->pluginHook('vote_positive_vote', '', array('user' => $user_id, 'post'=>$post_id)); // remove from activity
+        $undo = true;
+    }
+    
+    // If already voted up, but now voting down, undo the original vote
+    elseif ($voted && ($voted > 0) && ($vote_rating < 0)) { 
+        updown_voting_remove_vote($h, $post_id, $user_id, $voted, $vote_rating); // same function call as above!
+        $h->pluginHook('vote_negative_vote', '', array('user' => $user_id, 'post'=>$post_id)); // remove from activity
+        $undo = true;
+    }
+    
+    // Vote up!
+    elseif ($vote_rating > 0) { 
+        updown_voting_vote_up($h, $post_id, $user_id, $user_ip, $voted, $vote_rating, $count_and_status, $updown_voting_settings);
+    }
+    
+    // Vote down!
+    elseif ($vote_rating < 0) { 
+        updown_voting_vote_down($h, $post_id, $user_id, $user_ip, $voted, $vote_rating, $count_and_status, $updown_voting_settings);
+    }
+
+    $sql = "SELECT post_votes_up, post_votes_down FROM " . TABLE_POSTS . " WHERE post_id = %d";
+    $votes = $h->db->get_row($h->db->prepare($sql, $post_id));
+
+    $json_array = array('votes'=>$votes->post_votes_up, 'undo'=>$undo);
+
+    echo json_encode($json_array);
 }
 
 function updown_voting_remove_vote($h, $post_id, $user_id, $voted, $vote_rating)
