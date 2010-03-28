@@ -173,6 +173,7 @@ form {
 #admin-home td { vertical-align: top; }
 #admin-home #left { width: 70%; padding-right: 1.0em; }
 #admin-home #right { border-left: 1px solid #e0e0e0; padding-left: 1.0em; }
+#admin-home .admin_news {overflow:hidden; width:500px;}
 
 /* **************************************************
 *  Blocked list, Sidebar Widgets and similar tables *
@@ -332,4 +333,3 @@ table#settings {
 .warning_on {padding-left: 1.5em; background-image: url(../images/warning.png); background-repeat: no-repeat;}
 
 #sidebar.vertical .home {padding-left: 1.5em; background-image: url(../images/home.png); background-repeat: no-repeat;}
-
