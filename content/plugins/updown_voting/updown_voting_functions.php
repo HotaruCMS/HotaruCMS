@@ -48,7 +48,7 @@ if ($h->cage->post->keyExists('post_id')) {
     vote($h, $post_id, $vote_rating, $user_ip, $vote_settings);
 }
 
-function vote($h, $post_id, $vote_rating, $user_ip, $referer, $vote_settings) {
+function vote($h, $post_id, $vote_rating, $user_ip, $vote_settings) {
 
     // Only proceed if the user is logged in
     if (!$h->currentUser->loggedIn) { return false; }
