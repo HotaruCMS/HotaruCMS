@@ -99,8 +99,7 @@ class EmailFunctions
                 if (SMTP == 'true') {
                     $this->doSmtpEmail();
                 } else {
-                    $return_path = "-f " . SITE_EMAIL;
-                    mail($this->to, $this->subject, $this->body, $this->headers, $return_path);
+                    mail($this->to, $this->subject, $this->body, $this->headers);
                 }
         }
     }
