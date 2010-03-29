@@ -12,7 +12,7 @@ Instructions
 
 Changelog
 ---------
-v.2.3 2010/03/31 - Nick - New plugin hook in Submit step 1 error checking 
+v.2.3 2010/03/28 - Nick - New plugin hook in Submit step 1 error checking 
 v.2.2 2010/03/21 - Nick - Updated for Hotaru 1.1.3 (no templates/css/js changes) 
 v.2.1 2010/02/15 - Nick - Removed CSRF check from submission step 1 
 v.2.0 2010/02/11 - Nick - Bug fixes for character problems and stripped HTML

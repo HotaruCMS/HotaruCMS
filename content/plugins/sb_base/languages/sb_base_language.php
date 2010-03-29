@@ -28,6 +28,7 @@
 $lang["sb_base_site_name"] = SITE_NAME;
 $lang["sb_base_top"] = "Top Posts";
 $lang["sb_base_latest"] = "Latest";
+$lang["sb_base_new"] = "Latest"; // same as above, but necessary
 $lang["sb_base_upcoming"] = "Upcoming Posts";
 $lang["sb_base_all"] = "All Posts";
 $lang["sb_base_tag"] = "Tag";
