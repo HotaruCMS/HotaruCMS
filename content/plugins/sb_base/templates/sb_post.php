@@ -45,7 +45,7 @@ $user->getUserBasic($h, $h->post->author);
         
     <div class="show_post_title">
         <?php if (!$h->vars['editorial']) { ?> 
-            <a href='<?php echo $h->post->origUrl; ?>' <?php echo $h->vars['target']; ?> class="click_to_source"><?php echo $h->post->title; ?></a>
+            <a href='<?php echo $h->post->origUrl; ?>' <?php echo $h->vars['target']; ?> class="click_to_source" rel="nofollow"><?php echo $h->post->title; ?></a>
         <?php } else { ?>
             <?php echo $h->post->title; ?>
         <?php } ?>

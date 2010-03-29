@@ -46,7 +46,7 @@ foreach ($h->vars['pagedResults']->items as $post) {
         
         <div class="show_post_title">
             <?php if ($h->vars['link_action'] == 'source') { ?>
-                <a href='<?php echo $h->post->origUrl; ?>' <?php echo $h->vars['target']; ?> class="click_to_source"><?php echo $h->post->title; ?></a>
+                <a href='<?php echo $h->post->origUrl; ?>' <?php echo $h->vars['target']; ?> class="click_to_source" rel="nofollow"><?php echo $h->post->title; ?></a>
             <?php } else { ?>
                 <a href='<?php echo $h->url(array('page'=>$h->post->id)); ?>' <?php echo $h->vars['target']; ?> class="click_to_post"><?php echo $h->post->title; ?></a>
             <?php } ?>
