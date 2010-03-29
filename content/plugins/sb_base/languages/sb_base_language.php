@@ -91,6 +91,7 @@ $lang["sb_base_sort_by"] = "Sort by:";
 $lang["sb_base_sort_recently_popular"] = "Popular";
 $lang["sb_base_sort_upcoming"] = "Upcoming";
 $lang["sb_base_sort_latest"] = "Latest";
+$lang["sb_base_sort_new"] = "Latest"; // same as latest, but necessary
 $lang["sb_base_sort_all"] = "All";
 $lang["sb_base_sort_best_from"] = "Best from:";
 $lang["sb_base_sort_top_1_day"] = "24 Hrs";
