@@ -1136,8 +1136,8 @@ class AutoreaderSettings
         'post_status' => $h->cage->post->testAlpha('campaign_tool_changetype')
         ));
 
-        $this->tool_success = 'Posts status updated';
-        return true;
+        $result = array('result' => 'Posts were changed.');
+        return json_encode($result);
     }
 
       //Test author name
