@@ -75,7 +75,7 @@ class Feeds
         if ($feed->data) { 
             foreach ($feed->get_items() as $item)
             {
-                $output .= "<div>";
+                $output .= "<div class='admin_news'>";
                 
                 // Title
                 $output .= "<a href='" . $item->get_permalink() . "'>" . sanitize($item->get_title(), 'tags') . "</a><br />";
