@@ -69,7 +69,7 @@ class Blocked
         if ($safe && ($h->cage->get->getAlpha('action') == 'remove'))
         {
             $id = $h->cage->get->testInt('id');
-            $this->removeFromBlockedList($h->db, $id);
+            $this->removeFromBlockedList($h, $id);
             $h->message = $h->lang["admin_blocked_list_removed"];
             $h->messageType = 'green';
         }
@@ -222,10 +222,11 @@ class Blocked
      /**
      * Remove from blocked list
      */
-    public function removeFromBlockedList($db, $id = 0)
+    public function removeFromBlockedList($h, $id = 0)
     {
         $sql = "DELETE FROM " . TABLE_BLOCKED . " WHERE blocked_id = %d"; 
-        $db->get_var($db->prepare($sql, $id));
+        $h->db->get_var($h->db->prepare($sql, $id));
+        $h->clearCache('db_cache');
     }
     
     
