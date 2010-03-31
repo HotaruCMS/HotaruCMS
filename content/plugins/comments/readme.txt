@@ -14,7 +14,8 @@ Instructions
 
 Changelog
 ---------
-v.1.9 2010/03/26 - Ties - New JavaScript urldecode function that works with Japanese characters
+v.1.9 2010/03/26 - shibuya246 - Fix for duplicate comments posted when double clicking "Submit"
+		 - Ties - New JavaScript urldecode function that works with Japanese characters
                  - Nick - Change to countComments() function call
 v.1.8 2010/03/18 - Nick - Fix for not sending comment subscriptions when using SMTP email authentication.
 v.1.7 2010/03/11 - Nick - Fix for a previous change that broke the set pending and delete links within comments.
