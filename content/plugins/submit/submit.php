@@ -2,7 +2,7 @@
 /**
  * name: Submit
  * description: Social Bookmarking submit - Enables post submission
- * version: 2.3
+ * version: 2.4
  * folder: submit
  * class: Submit
  * type: post
@@ -111,7 +111,7 @@ class Submit
     
     
     /**
-     * Determine the submission step and perform necessary actions
+     * Determine whether post submission is intendended or not:
      */
     public function theme_index_top($h)
     {
@@ -155,6 +155,15 @@ class Submit
         // Include SubmitFunctions
         include_once(PLUGINS . 'submit/libs/SubmitFunctions.php'); // used for submit functions
 
+        $this->checkSubmitStep($h);
+    }
+
+
+    /**
+     * Determine the submission step and perform necessary actions
+     */
+    public function checkSubmitStep($h)
+    {
         // get functions
         $funcs = new SubmitFunctions();
 
@@ -163,241 +172,275 @@ class Submit
             // SUBMIT STEP 1
             case 'submit':
             case 'submit1':
-            
                 // set properties
                 $h->pageName = 'submit1';
                 $h->pageType = 'submit';
                 $h->pageTitle = $h->lang["submit_step1"];
-                
-                // check if data has been submitted
-                $submitted = $funcs->checkSubmitted($h, 'submit1');
-                
-                // save/reload data, then go to step 2 when no more errors
-                if ($submitted) {
-                    $key = $funcs->processSubmitted($h, 'submit1');
-                    $errors = $funcs->checkErrors($h, 'submit1', $key);
-                    if (!$errors) {
-                        $redirect = htmlspecialchars_decode($h->url(array('page'=>'submit2', 'key'=>$key)));
-                        header("Location: " . $redirect);
-                        exit;
-                    }
-                }
+                $this->doSubmit1($h, $funcs);
                 break;
                 
             // SUBMIT STEP 2 
             case 'submit2':
-            
                 // set properties
                 $h->pageType = 'submit';
                 $h->pageTitle = $h->lang["submit_step2"];
-                
-                // check if data has been submitted
-                $submitted = $funcs->checkSubmitted($h, 'submit2');
-                
-                // not submitted so reload data from step 1 (or step 2 if editing)
-                if (!$submitted) {
-                    // if coming from step 1, get the key from the url
-                    $key = $h->cage->get->testAlnum('key');
-                    
-                    // use the key in the step 2 form
-                    $h->vars['submit_key'] = $key; 
-                    
-                    // load submitted data:
-                    $submitted_data = $funcs->loadSubmitData($h, $key);
-                    
-                    // merge defaults from "checkSubmitted" with $submitted_data...
-                    $merged_data = array_merge($h->vars['submitted_data'], $submitted_data);
-                    $h->vars['submitted_data'] = $merged_data;
-                    
-                    // not sure if this is completely necessary, but it's worth having...
-                    if ($h->vars['submitted_data']['submit_id']) {
-                        $h->post->id = $h->vars['submitted_data']['submit_id'];
-                        $h->post->readPost($h);
-                    }
-                }
-                
-                // submitted so save data and proceed to step 3 when no more errors
-                if ($submitted) {
-                    $key = $funcs->processSubmitted($h, 'submit2');
-                    $errors = $funcs->checkErrors($h, 'submit2', $key);
-                    if (!$errors) {
-                        $funcs->processSubmission($h, $key);
-                        $postid = $h->post->id; // got this from addPost in Post.php
-                        $link = $h->url(array('page'=>'submit3', 'postid'=>$postid,'key'=>$key));
-                        $redirect = htmlspecialchars_decode($link);
-                        header("Location: " . $redirect);
-                        exit;
-                    }
-                    $h->vars['submit_key'] = $key; // used in the step 2 form
-                }
+                $this->doSubmit2($h, $funcs);
                 break;
                 
             // SUBMIT STEP 3
             case 'submit3':
-            
                 $h->pageType = 'submit';
                 $h->pageTitle = $h->lang["submit_step3"];
-                
-                // Check if the Edit button has been clicked
-                $funcs = new SubmitFunctions();
-                $submitted = $funcs->checkSubmitted($h, 'submit3');
-                
-                // Edit button pressed so save data with newly assigned post id and go back to step 2
-                if ($submitted) {
-                    $key = $funcs->processSubmitted($h, 'submit3');
-                    $funcs->processSubmission($h, $key);
-                    $link = $h->url(array('page'=>'submit2', 'key'=>$key));
-                    $redirect = htmlspecialchars_decode($link);
-                    header("Location: " . $redirect);
-                    exit;
-                }
-                
-                // get key from the url for the submit 3 form
-                $key = $h->cage->get->testAlnum('key');
-                $h->vars['submit_key'] = $key; 
-                
-                // get post id from the url and read the post for the preview
-                $h->post->id = $h->cage->get->testInt('postid');
-                $h->readPost();
-
+                $this->doSubmit3($h, $funcs);
                 break;
                 
             // SUBMIT CONFIRM
             case 'submit_confirm':
-            
-                $post_id = $h->cage->post->testInt('submit_post_id');
-                $h->readPost($post_id); // be careful! The results are cached and returned on next readPost 
-                $h->changePostStatus('new');
-                $h->post->status = 'new'; // this fixes a caching-related problem by forcing the new status on the post property
-                
-                $return = 0; // will return false later if set to 1.
-                
-                $h->pluginHook('submit_step_3_pre_trackback'); // Akismet uses this to change the status
-                
-                // set to pending?
-                $set_pending = $h->vars['submit_settings']['set_pending'];
-
-                if ($set_pending == 'some_pending') {
-                    $posts_approved = $h->postsApproved();
-                    $x_posts_needed = $h->vars['submit_settings']['x_posts'];
-                }
-
-
-                // Set to pending is the user's permissions for "can_submit" are "mod" OR
-                // if "Put all new posts in moderation" has been checked in Admin->Submit
-                if (   ($h->currentUser->getPermission('can_submit') == 'mod')
-                    || ($set_pending == 'all_pending')
-                    || (($set_pending == 'some_pending') && ($posts_approved <= $x_posts_needed)))
-                {
-                // Submitted posts given 'pending' for this user
-                    $h->changePostStatus('pending');
-                    $h->messages[$h->lang['submit_moderation']] = 'green';
-                    $return = 1; // will return false just after we notify admins of the post (see about 10 lines down)
-                }
-
-                $h->pluginHook('submit_confirm_pre_trackback'); // Vote uses this to change post status and redirection
-
-                // notify chosen mods of new post by email if enabled and UserFunctions file exists
-                if (($h->vars['submit_settings']['email_notify']) && (file_exists(PLUGINS . 'users/libs/UserFunctions.php')))
-                {
-                    require_once(PLUGINS . 'users/libs/UserFunctions.php');
-                    $uf = new UserFunctions();
-                    $uf->notifyMods($h, 'post', $h->post->status, $h->post->id);
-                }
-                
-                if ($return == 1) { return false; } // post is pending so we don't want to send a trackback. Return now.
-                
-                $h->sendTrackback();
-                
-                if (isset($h->vars['submit_redirect'])) {
-                    header("Location: " . $h->vars['submit_redirect']);
-                } else {
-                    header("Location: " . $h->url(array('page'=>'latest')));    // Go to the Latest page
-                }
+                $this->doSubmitConfirm($h, $funcs);
                 break;
                 
             // EDIT POST (after submission)
             case 'edit_post':
                 $h->pageType = 'submit';
                 $h->pageTitle = $h->lang["submit_edit_title"];
-                
-                // get the post id and read in the data
-                if ($h->cage->get->keyExists('post_id')) { // first time from url
-                    $h->post->id = $h->cage->get->testInt('post_id');
-                    $h->readPost();
-                } elseif($h->cage->post->keyExists('submit_post_id')) { // from submit form (used when errors)
-                    $h->post->id = $h->cage->post->testInt('submit_post_id');
-                    $h->readPost();
-                }
-                
-                // authenticate...
-                $can_edit = false;
-                if ($h->currentUser->getPermission('can_edit_posts') == 'yes') { $can_edit = true; }
-                if (($h->currentUser->getPermission('can_edit_posts') == 'own') && ($h->currentUser->id == $h->post->author)) { $can_edit = true; }
-                $h->vars['can_edit'] = $can_edit; // used in theme_index_main()
-                
-                if (!$can_edit) {
-                    $h->messages[$h->lang["submit_no_edit_permission"]] = "red";
-                    return false;
-                    exit;
-                }
-
-                // check if data has been submitted
-                $submitted = $funcs->checkSubmitted($h, 'edit_post');
-                
-                // if being deleted...
-                $h->vars['post_deleted'] = false;
-                if ($h->cage->get->getAlpha('action') == 'delete') {
-                    if ($h->currentUser->getPermission('can_delete_posts') == 'yes') { // double-checking
-                        $post_id = $h->cage->get->testInt('post_id');
-                        $h->readPost($post_id); 
-                        $h->pluginHook('submit_edit_delete'); // Akismet uses this to report the post as spam
-                        $h->deletePost(); 
-                        $h->messages[$h->lang["submit_edit_deleted"]] = 'red';
-                        $h->vars['post_deleted'] = true;
-                        break;
-                    }
-                }
-                
-                // if form has been submitted...
-                if ($submitted) {
-                    $key = $funcs->processSubmitted($h, 'edit_post');
-                    $errors = $funcs->checkErrors($h, 'edit_post', $key);
-                    if (!$errors) {
-                        $funcs->processSubmission($h, $key);
-                        if ($h->cage->post->testAlnumLines('from') == 'post_man')
-                        {
-                            // Build the redirect link to send us back to Post Manager
-                            
-                            $redirect = BASEURL . "admin_index.php?page=plugin_settings&plugin=post_manager";
-                            if ($h->cage->post->testAlnumLines('post_status_filter')) {
-                                $redirect .= "&type=filter";
-                                $redirect .= "&post_status_filter=" . $h->cage->post->testAlnumLines('post_status_filter');
-                            }
-                            if ($h->cage->post->sanitizeTags('search_value')) {
-                                $redirect .= "&type=search";
-                                $redirect .= "&search_value=" . $h->cage->post->sanitizeTags('search_value');
-                            }
-                            $redirect .= "&pg=" . $h->cage->post->testInt('pg');
-                            header("Location: " . $redirect);    // Go back to where we were in Post Manager
-                            exit;
-                        }
-                        else 
-                        {
-                            $redirect = htmlspecialchars_decode($h->url(array('page'=>$h->post->id)));
-                            header("Location: " . $redirect);
-                            exit;
-                        }
-                    }
-                    // load submitted data:
-                    $submitted_data = $funcs->loadSubmitData($h, $key);
-                }
-                
-            break;
+                $this->doSubmitEdit($h, $funcs);
+                break;
         }
     }
 
 
+    /**
+     * Do Submit 1
+     */
+    public function doSubmit1($h, $funcs = array())
+    {
+        // check if data has been submitted
+        $submitted = $funcs->checkSubmitted($h, 'submit1');
+        
+        // save/reload data, then go to step 2 when no more errors
+        if ($submitted) {
+            $key = $funcs->processSubmitted($h, 'submit1');
+            $errors = $funcs->checkErrors($h, 'submit1', $key);
+            if (!$errors) {
+                $redirect = htmlspecialchars_decode($h->url(array('page'=>'submit2', 'key'=>$key)));
+                header("Location: " . $redirect);
+                exit;
+            }
+        }
+    }
+    
+    
+    /**
+     * Do Submit 2
+     */
+    public function doSubmit2($h, $funcs = array())
+    {
+        // check if data has been submitted
+        $submitted = $funcs->checkSubmitted($h, 'submit2');
+        
+        // not submitted so reload data from step 1 (or step 2 if editing)
+        if (!$submitted) {
+            // if coming from step 1, get the key from the url
+            $key = $h->cage->get->testAlnum('key');
+            
+            // use the key in the step 2 form
+            $h->vars['submit_key'] = $key; 
+            
+            // load submitted data:
+            $submitted_data = $funcs->loadSubmitData($h, $key);
+            
+            // merge defaults from "checkSubmitted" with $submitted_data...
+            $merged_data = array_merge($h->vars['submitted_data'], $submitted_data);
+            $h->vars['submitted_data'] = $merged_data;
+            
+            // not sure if this is completely necessary, but it's worth having...
+            if ($h->vars['submitted_data']['submit_id']) {
+                $h->post->id = $h->vars['submitted_data']['submit_id'];
+                $h->post->readPost($h);
+            }
+        }
+        
+        // submitted so save data and proceed to step 3 when no more errors
+        if ($submitted) {
+            $key = $funcs->processSubmitted($h, 'submit2');
+            $errors = $funcs->checkErrors($h, 'submit2', $key);
+            if (!$errors) {
+                $funcs->processSubmission($h, $key);
+                $postid = $h->post->id; // got this from addPost in Post.php
+                $link = $h->url(array('page'=>'submit3', 'postid'=>$postid,'key'=>$key));
+                $redirect = htmlspecialchars_decode($link);
+                header("Location: " . $redirect);
+                exit;
+            }
+            $h->vars['submit_key'] = $key; // used in the step 2 form
+        }
+    }
+    
+    
+    /**
+     * Do Submit 3
+     */
+    public function doSubmit3($h, $funcs = array())
+    {
+        // Check if the Edit button has been clicked
+        $submitted = $funcs->checkSubmitted($h, 'submit3');
+        
+        // Edit button pressed so save data with newly assigned post id and go back to step 2
+        if ($submitted) {
+            $key = $funcs->processSubmitted($h, 'submit3');
+            $funcs->processSubmission($h, $key);
+            $link = $h->url(array('page'=>'submit2', 'key'=>$key));
+            $redirect = htmlspecialchars_decode($link);
+            header("Location: " . $redirect);
+            exit;
+        }
+        
+        // get key from the url for the submit 3 form
+        $key = $h->cage->get->testAlnum('key');
+        $h->vars['submit_key'] = $key; 
+        
+        // get post id from the url and read the post for the preview
+        $h->post->id = $h->cage->get->testInt('postid');
+        $h->readPost();
+    }
+    
+    
+    /**
+     * Do Submit Confirm
+     */
+    public function doSubmitConfirm($h, $funcs = array())
+    {
+        $post_id = $h->cage->post->testInt('submit_post_id');
+        $h->readPost($post_id); // be careful! The results are cached and returned on next readPost 
+        $h->changePostStatus('new');
+        $h->post->status = 'new'; // this fixes a caching-related problem by forcing the new status on the post property
+        
+        $return = 0; // will return false later if set to 1.
+        
+        $h->pluginHook('submit_step_3_pre_trackback'); // Akismet uses this to change the status
+        
+        // set to pending?
+        $set_pending = $h->vars['submit_settings']['set_pending'];
+
+        if ($set_pending == 'some_pending') {
+            $posts_approved = $h->postsApproved();
+            $x_posts_needed = $h->vars['submit_settings']['x_posts'];
+        }
+
+
+        // Set to pending is the user's permissions for "can_submit" are "mod" OR
+        // if "Put all new posts in moderation" has been checked in Admin->Submit
+        if (   ($h->currentUser->getPermission('can_submit') == 'mod')
+            || ($set_pending == 'all_pending')
+            || (($set_pending == 'some_pending') && ($posts_approved <= $x_posts_needed)))
+        {
+        // Submitted posts given 'pending' for this user
+            $h->changePostStatus('pending');
+            $h->messages[$h->lang['submit_moderation']] = 'green';
+            $return = 1; // will return false just after we notify admins of the post (see about 10 lines down)
+        }
+
+        $h->pluginHook('submit_confirm_pre_trackback'); // Vote uses this to change post status and redirection
+
+        // notify chosen mods of new post by email if enabled and UserFunctions file exists
+        if (($h->vars['submit_settings']['email_notify']) && (file_exists(PLUGINS . 'users/libs/UserFunctions.php')))
+        {
+            require_once(PLUGINS . 'users/libs/UserFunctions.php');
+            $uf = new UserFunctions();
+            $uf->notifyMods($h, 'post', $h->post->status, $h->post->id);
+        }
+        
+        if ($return == 1) { return false; } // post is pending so we don't want to send a trackback. Return now.
+        
+        $h->sendTrackback();
+        
+        if (isset($h->vars['submit_redirect'])) {
+            header("Location: " . $h->vars['submit_redirect']);
+        } else {
+            header("Location: " . $h->url(array('page'=>'latest')));    // Go to the Latest page
+        }
+    }
+    
+    
+    /**
+     * Do Submit Edit
+     */
+    public function doSubmitEdit($h, $funcs = array())
+    {
+        // get the post id and read in the data
+        if ($h->cage->get->keyExists('post_id')) { // first time from url
+            $h->post->id = $h->cage->get->testInt('post_id');
+            $h->readPost();
+        } elseif($h->cage->post->keyExists('submit_post_id')) { // from submit form (used when errors)
+            $h->post->id = $h->cage->post->testInt('submit_post_id');
+            $h->readPost();
+        }
+        
+        // authenticate...
+        $can_edit = false;
+        if ($h->currentUser->getPermission('can_edit_posts') == 'yes') { $can_edit = true; }
+        if (($h->currentUser->getPermission('can_edit_posts') == 'own') && ($h->currentUser->id == $h->post->author)) { $can_edit = true; }
+        $h->vars['can_edit'] = $can_edit; // used in theme_index_main()
+        
+        if (!$can_edit) {
+            $h->messages[$h->lang["submit_no_edit_permission"]] = "red";
+            return false;
+            exit;
+        }
+
+        // check if data has been submitted
+        $submitted = $funcs->checkSubmitted($h, 'edit_post');
+        
+        // if being deleted...
+        $h->vars['post_deleted'] = false;
+        if ($h->cage->get->getAlpha('action') == 'delete') {
+            if ($h->currentUser->getPermission('can_delete_posts') == 'yes') { // double-checking
+                $post_id = $h->cage->get->testInt('post_id');
+                $h->readPost($post_id); 
+                $h->pluginHook('submit_edit_delete'); // Akismet uses this to report the post as spam
+                $h->deletePost(); 
+                $h->messages[$h->lang["submit_edit_deleted"]] = 'red';
+                $h->vars['post_deleted'] = true;
+                break;
+            }
+        }
+        
+        // if form has been submitted...
+        if ($submitted) {
+            $key = $funcs->processSubmitted($h, 'edit_post');
+            $errors = $funcs->checkErrors($h, 'edit_post', $key);
+            if (!$errors) {
+                $funcs->processSubmission($h, $key);
+                if ($h->cage->post->testAlnumLines('from') == 'post_man')
+                {
+                    // Build the redirect link to send us back to Post Manager
+                    
+                    $redirect = BASEURL . "admin_index.php?page=plugin_settings&plugin=post_manager";
+                    if ($h->cage->post->testAlnumLines('post_status_filter')) {
+                        $redirect .= "&type=filter";
+                        $redirect .= "&post_status_filter=" . $h->cage->post->testAlnumLines('post_status_filter');
+                    }
+                    if ($h->cage->post->sanitizeTags('search_value')) {
+                        $redirect .= "&type=search";
+                        $redirect .= "&search_value=" . $h->cage->post->sanitizeTags('search_value');
+                    }
+                    $redirect .= "&pg=" . $h->cage->post->testInt('pg');
+                    header("Location: " . $redirect);    // Go back to where we were in Post Manager
+                    exit;
+                }
+                else 
+                {
+                    $redirect = htmlspecialchars_decode($h->url(array('page'=>$h->post->id)));
+                    header("Location: " . $redirect);
+                    exit;
+                }
+            }
+            // load submitted data:
+            $submitted_data = $funcs->loadSubmitData($h, $key);
+        }
+    }
+
+    
     /**
      * Include jQuery for hiding and showing email options in plugin settings
      */

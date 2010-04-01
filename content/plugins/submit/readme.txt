@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.2.4 2010/04/01 - Nick - Split theme_index_top into multiple functions for easier extending (no templates/css/js changes) 
 v.2.3 2010/03/28 - Nick - New plugin hook in Submit step 1 error checking 
 v.2.2 2010/03/21 - Nick - Updated for Hotaru 1.1.3 (no templates/css/js changes) 
 v.2.1 2010/02/15 - Nick - Removed CSRF check from submission step 1 
