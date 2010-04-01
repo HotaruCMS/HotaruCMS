@@ -42,8 +42,6 @@ class UserSigninSettings
         $user_signin_settings = $h->getSerializedSettings();
         
         $recaptcha_enabled = $user_signin_settings['recaptcha_enabled'];
-        $recaptcha_pubkey = $user_signin_settings['recaptcha_pubkey'];
-        $recaptcha_privkey = $user_signin_settings['recaptcha_privkey'];
         $emailconf_enabled = $user_signin_settings['emailconf_enabled'];
         $reg_status = $user_signin_settings['registration_status'];
         $email_notify = $user_signin_settings['email_notify'];
@@ -53,8 +51,6 @@ class UserSigninSettings
         
         //...otherwise set to blank:
         if (!$recaptcha_enabled) { $recaptcha_enabled = ''; }
-        if (!$recaptcha_pubkey) { $recaptcha_pubkey = ''; }
-        if (!$recaptcha_privkey) { $recaptcha_privkey = ''; }
         if (!$emailconf_enabled) { $emailconf_enabled = ''; }
         if (!$reg_status) { $reg_status = 'member'; }
         if (!$email_notify) { $email_notify = ''; }
@@ -67,9 +63,8 @@ class UserSigninSettings
         echo "<b>" . $h->lang["user_signin_settings_registration"] . "</b><br /><br />";
         
         $thisdomain =  rstrtrim(str_replace("http://", "", BASEURL), '/');
-        echo "<input type='checkbox' name='rc_enabled' value='enabled' " . $recaptcha_enabled . " >&nbsp;&nbsp;" . $h->lang["user_signin_settings_recaptcha_enable"] . " <a href='http://recaptcha.net/api/getkey?domain=" . $thisdomain . "&app=HotaruCMS'>reCAPTCHA.net</a><br /><br />\n";    
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $h->lang["user_signin_settings_recaptcha_public_key"] . ": <input type='text' name='rc_pubkey' size=50 value='" . $recaptcha_pubkey . "'><br /><br />\n";
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $h->lang["user_signin_settings_recaptcha_private_key"] . ": <input type='text' name='rc_privkey' size=50 value='" . $recaptcha_privkey . "'><br /><br />\n";
+        echo "<input type='checkbox' name='rc_enabled' value='enabled' " . $recaptcha_enabled . " >&nbsp;&nbsp;" . $h->lang["user_signin_settings_recaptcha_enable"] . "<br /><br />\n";    
+
         echo "<input type='checkbox' name='emailconf' value='emailconf' " . $emailconf_enabled . ">&nbsp;&nbsp;" . $h->lang["user_signin_settings_email_conf"] . "<br /><br />\n";
 
         // reg_status radio buttons:
@@ -169,20 +164,6 @@ class UserSigninSettings
             $h->db->query($h->db->prepare($sql, 1, 0));
         } else { 
             $emailconf_enabled = ''; 
-        }
-        
-        // ReCaptcha Public Key
-        if ($h->cage->post->keyExists('rc_pubkey')) { 
-            $recaptcha_pubkey = $h->cage->post->testAlnumLines('rc_pubkey');
-        } else { 
-            $recaptcha_pubkey = "";
-        }
-        
-        // ReCaptcha Private Key
-        if ($h->cage->post->keyExists('rc_privkey')) {     
-            $recaptcha_privkey = $h->cage->post->testAlnumLines('rc_privkey');
-        } else { 
-            $recaptcha_privkey = ""; 
         }
         
         // Registration auto-pending

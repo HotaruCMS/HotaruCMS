@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.0.5 2010/04/01 - Nick - Built-in reCaptcha removed in favor of separate reCaptcha plugin (user_signin_register template updated)
 v.0.4 2010/03/20 - Nick - Fix for emails when using SMTP email authentication
 v.0.3 2010/02/26 - Nick - New plugin hook in the registration form; mail sent through Hotaru's email function
 v.0.2 2010/02/23 - Nick - Throws out killspammed, banned or suspended users when checking the cookie
