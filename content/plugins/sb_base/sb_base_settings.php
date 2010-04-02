@@ -74,6 +74,8 @@ class SbBaseSettings
             echo "<option value='" . $archive . "'>" . $h->lang["sb_base_settings_post_archive_$archive"] . "</option>\n";
             echo '<option disabled>-----</option>';
             echo "<option value='no_archive'>" . $h->lang["sb_base_settings_post_archive_no_archive"] . "</option>\n";
+            echo "<option value='30'>" . $h->lang["sb_base_settings_post_archive_30"] . "</option>\n";
+            echo "<option value='90'>" . $h->lang["sb_base_settings_post_archive_90"] . "</option>\n";
             echo "<option value='180'>" . $h->lang["sb_base_settings_post_archive_180"] . "</option>\n";
             echo "<option value='365'>" . $h->lang["sb_base_settings_post_archive_365"] . "</option>\n";
             echo "<option value='730'>" . $h->lang["sb_base_settings_post_archive_730"] . "</option>\n";

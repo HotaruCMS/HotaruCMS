@@ -2,7 +2,7 @@
 /**
  * name: User Signin
  * description: Provides user registration and login
- * version: 0.4
+ * version: 0.5
  * folder: user_signin
  * type: signin
  * class: UserSignin
@@ -55,8 +55,6 @@ class UserSignin
         // Plugin settings
         $user_signin_settings = $h->getSerializedSettings();
         if (!isset($user_signin_settings['recaptcha_enabled'])) { $user_signin_settings['recaptcha_enabled'] = ""; }
-        if (!isset($user_signin_settings['recaptcha_pubkey'])) { $user_signin_settings['recaptcha_pubkey'] = ""; }
-        if (!isset($user_signin_settings['recaptcha_privkey'])) { $user_signin_settings['recaptcha_privkey'] = ""; }
         if (!isset($user_signin_settings['emailconf_enabled'])) { $user_signin_settings['emailconf_enabled'] = ""; }
         if (!isset($user_signin_settings['registration_status'])) { $user_signin_settings['registration_status'] = "member"; }
         if (!isset($user_signin_settings['email_notify'])) { $user_signin_settings['email_notify'] = ""; }
@@ -368,10 +366,6 @@ class UserSignin
      */
     public function register($h)
     {
-        if ($h->vars['useRecaptcha']) {
-            require_once(PLUGINS . 'user_signin/recaptcha/recaptchalib.php');
-        }
-        
         $error = 0;
         if ($h->cage->post->getAlpha('users_type') == 'register') {
         
@@ -425,33 +419,20 @@ class UserSignin
                 $error = 1;
             }
         
+            // if using reCaptcha...
             if ($h->vars['useRecaptcha']) {
-                                        
-                $user_signin_settings = $h->getSerializedSettings();
-                $recaptcha_pubkey = $user_signin_settings['recaptcha_pubkey'];
-                $recaptcha_privkey = $user_signin_settings['recaptcha_privkey'];
+                $result = $h->pluginHook('check_recaptcha');
                 
-                $rc_resp = null;
-                $rc_error = null;
-                
-                // was there a reCAPTCHA response?
-                if ($h->cage->post->keyExists('recaptcha_response_field')) {
-                        $rc_resp = recaptcha_check_answer($recaptcha_privkey,
-                                                        $h->cage->server->getRaw('REMOTE_ADDR'),
-                                                        $h->cage->post->getRaw('recaptcha_challenge_field'),
-                                                        $h->cage->post->getRaw('recaptcha_response_field'));
-                                                        
-                        if ($rc_resp->is_valid) {
-                                // success, do nothing.
-                        } else {
-                                # set the error code so that we can display it
-                                $rc_error = $rc_resp->error;
-                                $h->messages[$h->lang['user_signin_register_recaptcha_error']] = 'red';
-                        $error = 1;
-                        }
-                } else {
-                    $h->messages[$h->lang['user_signin_register_recaptcha_empty']] = 'red';
-                        $error = 1;
+                // recaptcha errors
+                if ($result['ReCaptcha_check_recaptcha'] == 'empty')
+                {
+                    $h->messages[$h->lang["user_signin_register_recaptcha_empty"]] = 'red';
+                    $error = 1; 
+                } 
+                elseif ($result['ReCaptcha_check_recaptcha'] == 'error')
+                {
+                    $h->messages[$h->lang["user_signin_register_recaptcha_error"]] = 'red';
+                    $error = 1; 
                 }
             }
             

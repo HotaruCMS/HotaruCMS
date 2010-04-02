@@ -2,7 +2,7 @@
 /**
  * name: Comment Manager
  * description: Manage comments.
- * version: 0.5
+ * version: 0.6
  * folder: comment_manager
  * class: CommentManager
  * requires: comments 1.2

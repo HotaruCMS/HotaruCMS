@@ -2,7 +2,7 @@
 /**
  * name: RPX
  * description: Enables registration and login with Twitter, Facebook ,Google, etc.
- * version: 0.5
+ * version: 0.6
  * folder: rpx
  * class: RPX
  * hooks: install_plugin, theme_index_top, header_include, pre_close_body, user_signin_login_pre_login_form, userbase_logincheck, user_signin_pre_display_register_template, user_signin_register_pre_register_form, user_signin_register_password_check, user_signin_register_post_add_user, admin_sidebar_plugin_settings, admin_plugin_settings, users_account_pre_password_user_only, userbase_delete_user, user_signin_register_error_check, user_signin_navigation_logged_out

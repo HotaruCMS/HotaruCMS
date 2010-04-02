@@ -56,14 +56,14 @@ if ($h->cage->post->getAlpha('users_type') == 'register') {
         
         <?php $h->pluginHook('user_signin_register_register_form'); ?>
         
-        <?php 
-            if ($h->vars['useRecaptcha']) { 
-                $user_signin_settings = $h->getSerializedSettings('user_signin');
-                $recaptcha_pubkey = $user_signin_settings['recaptcha_pubkey'];
-                echo "<tr><td colspan=2>" . $h->lang["rpx_register_captcha"] . "</td></tr>";
-                echo "<tr><td colspan=2>" . recaptcha_get_html($recaptcha_pubkey) . "</td></tr>";
-            }
-        ?>
+        <?php if ($h->vars['useRecaptcha']) { ?>
+                <tr><td colspan=2>
+                    <?php echo $h->lang["rpx_register_captcha"]; ?>
+                </td></tr>
+                <tr><td colspan=2>
+                <?php $h->pluginHook('show_recaptcha'); ?>
+                </td></tr>
+        <?php  } ?>
         
         <input type='hidden' name='users_type' value='register' />
         <input type='hidden' name='rpx' value='true' />

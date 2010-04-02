@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.1.4 2010/03/24 - Nick - Added an "active_cat" class to the category bar for the current category
 v.1.3 2010/02/20 - Nick - Meta description and keywords taken from Category Manager
 v.1.2 2009/12/28 - Nick - Updated for compatibility with Hotaru 1.0
 v.1.1 2009/11/30 - Nick - Categories before post title in breadcrumbs, 

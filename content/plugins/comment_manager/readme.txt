@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.0.6 2010/03/25 - Nick - Fix for "allowable tags" not being applied
 v.0.5 2010/02/20 - Nick - Fix for deleting comments and code changes for pagination
 v.0.4 2010/02/02 - Nick - User links added for easier spam management
 v.0.3 2010/01/03 - Nick - Updated for compatibility with Hotaru 1.0

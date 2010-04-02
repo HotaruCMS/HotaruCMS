@@ -261,7 +261,7 @@ class PostsWidget
                 $output .= "<div class='posts_widget_link'>\n";
             }
             $item_title = stripslashes(html_entity_decode(urldecode($item->post_title), ENT_QUOTES,'UTF-8'));
-            $output .= "<a href='" . $h->url(array('page'=>$item->post_id)) . "'>\n" . $item_title . "\n</a></div>\n";
+            $output .= "<a href='" . $h->url(array('page'=>$item->post_id)) . "' title='" . urldecode($item->post_domain) . "'>\n" . $item_title . "\n</a></div>\n";
             $output .= "</li>\n";
         }
         

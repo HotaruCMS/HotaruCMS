@@ -416,6 +416,11 @@ class SubmitFunctions
             $error = 0;
         }
         
+        // allow plugins to add their own checks
+        $h->vars['submit_1_check_error'] = $error;
+        $h->pluginHook('submit_1_check_errors', '', array('url'=>$url));
+        $error = $h->vars['submit_1_check_error'];
+        
         // Return true if error is found
         if ($error == 1) { return true; } else { return false; }
     }

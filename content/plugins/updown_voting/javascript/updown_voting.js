@@ -46,7 +46,7 @@ $(document).ready(function(){
  *  Notes: ---
  ********************************************************************** */
 	 
-function vote(id, rating, referer)
+function vote(id, rating)
 {
 	sendurl = BASEURL +"content/plugins/updown_voting/updown_voting_functions.php";
 	

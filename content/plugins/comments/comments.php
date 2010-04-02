@@ -2,12 +2,12 @@
 /**
  * name: Comments
  * description: Enables logged-in users to comment on posts
- * version: 1.8
+ * version: 1.9
  * folder: comments
  * class: Comments
  * type: comments
  * requires: sb_base 0.1, users 1.1
- * hooks: install_plugin, theme_index_top, header_include, admin_header_include_raw, theme_index_main, sb_base_show_post_extra_fields, sb_base_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_2_fields, submit_edit_admin_fields, post_delete_post, profile_navigation, , admin_theme_main_stats, breadcrumbs, submit_functions_process_submitted, submit_2_process_submission
+ * hooks: install_plugin, theme_index_top, header_include, admin_header_include_raw, theme_index_main, sb_base_show_post_extra_fields, sb_base_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_2_fields, submit_edit_admin_fields, post_delete_post, profile_navigation, admin_theme_main_stats, breadcrumbs, submit_functions_process_submitted, submit_2_process_submission
  *
  * PHP version 5
  *
@@ -319,7 +319,7 @@ class Comments
     public function header_include($h)
     { 
         $h->includeCss('comments', 'comments');
-        $h->includeJs('comments', 'urldecode.min');
+        $h->includeJs('comments', 'urldecode');
         $h->includeJs('comments', 'comments');
     }
     
@@ -346,7 +346,7 @@ class Comments
      */
     public function sb_base_show_post_extra_fields($h)
     {
-        echo '<li><a class="comment_link" href="' . $h->url(array('page'=>$h->post->id)) . '">' . $h->countComments() . '</a></li>' . "\n";
+        echo '<li><a class="comment_link" href="' . $h->url(array('page'=>$h->post->id)) . '">' . $h->countComments(false, $h->lang['comments_none_link']) . '</a></li>' . "\n";
     }
     
     
@@ -386,7 +386,7 @@ class Comments
                     
             echo "<!--  START COMMENTS_WRAPPER -->\n";
             echo "<div id='comments_wrapper'>\n";
-            echo "<h2>" . $h->countComments(false) . "</h2>\n";
+            echo "<h2>" . $h->countComments(false, $h->lang['comments_leave_comment']) . "</h2>\n";
                 
             // IF PAGINATING COMMENTS:
             if ($h->comment->pagination)

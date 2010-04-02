@@ -1,0 +1,54 @@
+/* link bar */
+
+html, body { 
+    padding:0; margin:0; height:100%; overflow:hidden;
+    font-family: Helvetica, Arial, 'Liberation Sans', FreeSans, sans-serif;
+    font-size: 0.9em; color: #666;
+}
+
+a           { text-decoration: none; color: #666; }
+a:hover     { color: #000; background-color: #f8f8f8; }
+
+#link_bar {
+    background:none repeat scroll 0 0 #FFFFFF;
+    border-bottom:1px solid #7B7B7B;
+    height:33px;
+    left:0;
+    min-width:950px;
+    overflow:hidden;
+    position:absolute;
+    right:0;
+    top:0;
+    width:100%;
+    z-index:201;
+}
+
+.link_bar_logo {
+    float: left; 
+    padding: 0.6em 0 0 0.8em;
+}
+
+.link_bar_post {
+    float: left; 
+    padding: 0.6em 0 0 2.0em;
+}
+
+.link_bar_more {
+    float: right;
+    padding: 0.6em 0.8em 0 0;
+}
+
+iframe#source {
+    height:100%;
+    left:0;
+    margin:0;
+    overflow-x:hidden;
+    overflow-y:auto;
+    padding:0;
+    position:absolute;
+    right:0;
+    top:34px;
+    width:100%;
+    z-index:200;
+}
+
