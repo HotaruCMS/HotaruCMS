@@ -136,4 +136,20 @@ function is_serialized($data)
     return false;
 }
 
+
+/**
+ * Convert/Parse Object to Array
+ *
+ * @param $object
+ * @return bool
+ * @link http://forum.weblivehelp.net/web-development/php-convert-array-object-and-vice-versa-t2.html
+ */
+ function parse_object_to_array($object) {
+   $array = array();
+   if (is_object($object)) {
+       foreach($object as $item)
+         array_push($array, $item);
+   }
+   return $array;
+}
 ?>

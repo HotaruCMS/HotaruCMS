@@ -72,27 +72,24 @@ class Comment
     /**
      * Count comments
      *
-     * @param bool $link - true used for "comments" link, false for top of actual comments
-     * @return string - text to show in the link, e.g. "3 comments"
+     * @param bool $digits_only - return just the count (if false, returns "3 comments", etc.)
+     * @param string $no_comments_text - e.g. "Leave a comment" or "No comments"
+     * @return string - text to show, e.g. "3 comments"
      */
-    function countComments($h, $link = true)
+    function countComments($h, $digits_only = true, $no_comments_text = '')
     {
         $sql = "SELECT COUNT(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_status = %s";
         $num_comments = $h->db->get_var($h->db->prepare($sql, $h->post->id, 'approved'));
+        
+        if ($digits_only) { return $num_comments; } // just return the number
         
         if ($num_comments == 1) {
             return "1 " . $h->lang['comments_singular_link'];
         } elseif ($num_comments > 1) {
             return $num_comments . " " . $h->lang['comments_plural_link'];
-        } else {
-            if (!$link) { 
-                return $h->lang['comments_leave_comment'];  // shows "Leave a comment" above comment form when no comments
-            }
-            else
-            {
-                return $h->lang['comments_none_link']; // Shows "No comments"
-            }
-        }
+        } 
+        
+        return $no_comments_text;  // shows "Leave a comment" above comment form when no comments
     }
     
     

@@ -239,6 +239,7 @@ function create_table($table_name)
           `post_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
           `post_author` int(20) NOT NULL DEFAULT 0,
           `post_date` timestamp NOT NULL,
+          `post_pub_date` timestamp NOT NULL,
           `post_status` varchar(32) NOT NULL DEFAULT 'processing',
           `post_type` varchar(32) NULL,
           `post_category` int(20) NOT NULL DEFAULT 1,

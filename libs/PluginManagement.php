@@ -336,7 +336,12 @@ class PluginManagement
         $h->plugin->version      = $plugin_metadata['version'];
         $h->plugin->folder       = $plugin_metadata['folder'];
         $h->plugin->class        = $plugin_metadata['class'];
-        $h->plugin->hooks        = explode(',', $plugin_metadata['hooks']);
+        
+        if (!isset($plugin_metadata['hooks'])) { 
+            $h->plugin->hooks = array();
+        } else {
+            $h->plugin->hooks = explode(',', $plugin_metadata['hooks']);
+        }
         
         if (isset($plugin_metadata['extends'])) {   $h->plugin->extends      = $plugin_metadata['extends']; }
         if (isset($plugin_metadata['type'])) {      $h->plugin->type         = $plugin_metadata['type'];    }

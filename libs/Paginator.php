@@ -171,8 +171,8 @@ class Paginator
             if ($i != $currentPage + $after && $i != $this->totalPages) { $str .= ' '; }
         } //end for
 
-        if (!$this->isLastPage() && !($currentPage > ($this->totalPages - $after))) {
-            if ($currentPage != $this->totalPages && $currentPage != $this->totalPages -1 && $currentPage != $this->totalPages - $before)
+        if (!$this->isLastPage() && ($currentPage <= ($this->totalPages - $after))) {
+            if ($currentPage != $this->totalPages && $currentPage != $this->totalPages -1 && $currentPage != $this->totalPages - $after)
             {
                 if ($currentPage < ($this->totalPages - ($after + 1))) { $str .= " <span class='pagi_dots'>...</span> \n"; }
                 $link = $path . '&pg=' . $this->totalPages;
