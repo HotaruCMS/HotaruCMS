@@ -45,10 +45,10 @@ if ($h->cage->post->keyExists('post_id')) {
     //get vote settings
     $updown_voting_settings = unserialize($h->getSetting('updown_voting_settings', 'updown_voting'));
     
-    vote($h, $post_id, $vote_rating, $user_ip, $updown_voting_settings);
+    vote($h, $post_id, $vote_rating, $user_ip, $undo, $updown_voting_settings);
 }
 
-function vote($h, $post_id, $vote_rating, $user_ip, $updown_voting_settings) {
+function vote($h, $post_id, $vote_rating, $user_ip, $undo, $updown_voting_settings) {
 
     // Only proceed if the user is logged in
     if (!$h->currentUser->loggedIn) { return false; }

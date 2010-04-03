@@ -2,7 +2,7 @@
 /**
  * name: Up Down Voting
  * description: Adds voting ability to posted stories.
- * version: 0.3
+ * version: 0.4
  * folder: updown_voting
  * class: UpdownVoting
  * type: vote
