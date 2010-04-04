@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.0.9 2010/04/03 - Nick - Removed requirement to have the Users plugin enabled
 v.0.8 2010/02/10 - Nick - Added ability to test if a user has a Gravatar
 v.0.7 2009/12/26 - Nick - Updates for compatibility with Hotaru 1.0
 v.0.6 2009/10/31 - Nick - Changes to make it easier for other plugins to use Gravatar
