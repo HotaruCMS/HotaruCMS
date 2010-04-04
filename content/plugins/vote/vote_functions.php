@@ -76,7 +76,7 @@ function vote($h, $post_id, $vote_rating, $user_ip, $referer, $vote_settings) {
         $front_page_deadline = "-" . $vote_settings['no_front_page'] . " days"; // default: -5 days
         $sql_deadline = date('Y-m-d H:i:s', strtotime($front_page_deadline)); // should be negative
         if ((($result->post_votes_up + 1) >= $vote_settings['votes_to_promote'])
-            && ($result->post_date >= $sql_deadline)) { 
+            && ($result->post_date >= $sql_deadline) && $result->post_status != 'top') { 
             $post_status = 'top'; 
             $sql = "UPDATE " . TABLE_POSTS . " SET post_status = %s, post_pub_date = CURRENT_TIMESTAMP, post_votes_up = post_votes_up + 1 WHERE post_id = %d";
         } else { 
@@ -85,7 +85,6 @@ function vote($h, $post_id, $vote_rating, $user_ip, $referer, $vote_settings) {
         }
 
         // Update Posts table
-        $sql = "UPDATE " . TABLE_POSTS . " SET post_status = %s, post_votes_up = post_votes_up + 1 WHERE post_id = %d";
         $h->db->query($h->db->prepare($sql, $post_status, $post_id));
 
         // Update Postvotes table

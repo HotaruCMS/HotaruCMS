@@ -125,7 +125,7 @@ function updown_voting_vote_up($h, $post_id, $user_id, $user_ip, $voted, $vote_r
     $front_page_deadline = "-" . $updown_voting_settings['no_front_page'] . " days"; // default: -5 days
     $sql_deadline = date('Y-m-d H:i:s', strtotime($front_page_deadline)); // should be negative
     if ((($count_and_status->post_votes_up + 1) >= $updown_voting_settings['votes_to_promote'])
-        && ($count_and_status->post_date >= $sql_deadline)) { 
+        && ($count_and_status->post_date >= $sql_deadline) && $count_and_status->post_status != 'top') { 
         $post_status = 'top'; 
         $sql = "UPDATE " . TABLE_POSTS . " SET post_status = %s, post_pub_date = CURRENT_TIMESTAMP, post_votes_up = post_votes_up + 1 WHERE post_id = %d";
     } else { 
