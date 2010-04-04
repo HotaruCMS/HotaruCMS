@@ -21,4 +21,5 @@ If you'd like to link the "Terms of Service" text to your TOS, you can add the l
 
 Changelog
 ---------
+v.0.2 2010/04/02 - Nick - Fix for being able to skip the captcha question in post submission
 v.0.1 2010/02/25 - Nick - Released first version

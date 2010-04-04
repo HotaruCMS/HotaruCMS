@@ -2,11 +2,10 @@
 /**
  * name: Gravatar
  * description: Enables Gravatar avatars for users
- * version: 0.8
+ * version: 0.9
  * folder: gravatar
  * class: Gravatar
  * type: avatar
- * requires: users 1.1
  * hooks: avatar_set_avatar, avatar_get_avatar, avatar_show_avatar, avatar_test_avatar
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick

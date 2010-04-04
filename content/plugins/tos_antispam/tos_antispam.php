@@ -2,7 +2,7 @@
 /**
  * name: TOS AntiSpam
  * description: Adds Terms of Service checkbox and antispam question to registration and post submission forms
- * version: 0.1
+ * version: 0.2
  * folder: tos_antispam
  * class: TosAntispam
  * requires: user_signin 0.2
@@ -70,8 +70,11 @@ class TosAntispam
                     
         $tos_answer = $h->cage->post->sanitizeTags('tos_answer');
 
-        if (isset($tos_antispam_settings['choices'][$tos_answer]) 
-            && ($tos_antispam_settings['choices'][$tos_answer] == $tos_antispam_settings['answer'])) {
+        if (!isset($tos_antispam_settings['choices'][$tos_answer])) {
+            $tos_antispam_settings['choices'][$tos_answer] = "";
+        }
+        
+        if ($tos_antispam_settings['choices'][$tos_answer] == $tos_antispam_settings['answer']) {
                 $h->vars['tos_answer_selected'] = $tos_answer;
         } else {
             $h->vars['reg_error'] = 1;
@@ -161,8 +164,12 @@ class TosAntispam
         }
         
         $tos_answer = $h->vars['submitted_data']['submit_tos_selected'];
-        if (isset($tos_antispam_settings['choices'][$tos_answer]) 
-            && ($tos_antispam_settings['choices'][$tos_answer] != $tos_antispam_settings['answer'])) {
+
+        if (!isset($tos_antispam_settings['choices'][$tos_answer])) { 
+            $tos_antispam_settings['choices'][$tos_answer] = "";
+        }
+        
+        if ($tos_antispam_settings['choices'][$tos_answer] != $tos_antispam_settings['answer']) {
                 $error = 1;
                 $h->messages[$h->lang['tos_antispam_tos_wrong_answer']] = 'red';
                 $h->vars['tos_answer_selected'] = "choose";

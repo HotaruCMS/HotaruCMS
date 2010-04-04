@@ -31,8 +31,10 @@ $lang["media_select"] = "Media";
 $lang["submit_form_media"] = "Media:"; 
 $lang['media_select_text'] = "News";
 $lang['media_select_image'] = "Image";
-$lang['media_select_images'] = "Images";
 $lang['media_select_video'] = "Video";
+/* added to category bar */
+$lang['media_select_texts'] = "News";
+$lang['media_select_images'] = "Images";
 $lang['media_select_videos'] = "Videos";
 
 /* RSS */
