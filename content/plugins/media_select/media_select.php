@@ -2,7 +2,7 @@
 /**
  * name: Media Select
  * description: Choose and filter to media type, i.e. news, videos or images 
- * version: 0.2
+ * version: 0.3
  * folder: media_select
  * class: MediaSelect
  * hooks: install_plugin, sb_base_theme_index_top, post_read_post, post_add_post, post_update_post, submit_2_fields, submit_functions_process_submitted, sb_base_functions_preparelist, category_bar_end, breadcrumbs
@@ -199,7 +199,7 @@ class MediaSelect
     {
         echo "<li><a href='#'>" . $h->lang['media_select'] . "</a>\n";
         echo "<ul class='children'>\n";
-        echo "<li><a href='" . $h->url(array('media'=>'text')) . "'>" . $h->lang['media_select_text'] . "</a></li>\n";
+        echo "<li><a href='" . $h->url(array('media'=>'text')) . "'>" . $h->lang['media_select_texts'] . "</a></li>\n";
         echo "<li><a href='" . $h->url(array('media'=>'video')) . "'>" . $h->lang['media_select_videos'] . "</a></li>\n";
         echo "<li><a href='" . $h->url(array('media'=>'image')) . "'>" . $h->lang['media_select_images'] . "</a></li>\n";
         echo "</ul></li>";
