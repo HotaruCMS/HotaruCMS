@@ -64,7 +64,7 @@ class AdminAuth
                 
                 // User doesn't have permission to access Admin
                 $h->messages[$h->lang['main_access_denied']] = 'red';
-                $h->displayTemplate('access_denied');
+                $h->displayTemplate('admin_denied');
                 die(); exit;
             }
         }

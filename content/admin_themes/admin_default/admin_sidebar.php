@@ -37,7 +37,7 @@
     <?php } ?>
     <li><a href="<?php echo BASEURL; ?>admin_index.php?page=settings"><?php echo $h->lang["admin_theme_settings"]; ?></a></li>
     <li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance"><?php echo $h->lang["admin_theme_maintenance"]; ?></a></li>
-    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=blocked_list"><?php echo $h->lang["admin_theme_blocked_list"]; ?></a></li>
+    <li><a href="<?php echo BASEURL; ?>admin_index.php?page=blocked"><?php echo $h->lang["admin_theme_blocked_list"]; ?></a></li>
     <li><a href="<?php echo BASEURL; ?>admin_index.php?page=plugin_management"><?php echo $h->lang["admin_theme_plugins"]; ?></a></li>
     
 

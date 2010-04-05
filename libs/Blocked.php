@@ -30,6 +30,8 @@ class Blocked
      */
     public function buildBlockedList($h)
     {
+        $h->pageTitle = $h->lang["admin_theme_blocked_list"]; // set page title as "Blocked List"
+        
         $safe = true; // CSRF flag
         
         if ($h->cage->post->keyExists('type')) {
@@ -129,7 +131,7 @@ class Blocked
                 $output .= "<td>" . $block->blocked_value . "</td>\n";
                 $output .= "<td>" . "<a class='table_drop_down' href='#'>\n";
                 $output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/edit.png'>" . "</a></td>\n";
-                $output .= "<td>" . "<a href='" . BASEURL . "admin_index.php?page=blocked_list&amp;action=remove&amp;id=" . $block->blocked_id . "'>\n";
+                $output .= "<td>" . "<a href='" . BASEURL . "admin_index.php?page=blocked&amp;action=remove&amp;id=" . $block->blocked_id . "'>\n";
                 $output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/delete.png'>" . "</a></td>\n";
                 $output .= "</tr>\n";
                 $output .= "<tr class='table_tr_details' style='display:none;'>\n";
@@ -159,7 +161,7 @@ class Blocked
                 $output .= "<td><input class='submit' type='submit' value='" . $h->lang['admin_blocked_list_update'] . "' /></td>\n";
                 $output .= "</tr></table>\n";
                 $output .= "<input type='hidden' name='id' value='" . $block->blocked_id . "' />\n";
-                $output .= "<input type='hidden' name='page' value='blocked_list' />\n";
+                $output .= "<input type='hidden' name='page' value='blocked' />\n";
                 $output .= "<input type='hidden' name='type' value='edit' />\n";
                 $output .= "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />";
                 $output .= "</form>\n";

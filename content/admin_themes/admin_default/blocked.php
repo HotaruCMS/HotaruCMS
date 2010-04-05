@@ -35,7 +35,7 @@ extract($h->vars['admin_blocked_list']); // extracts $output and $pagedResults;
 
 <?php echo $h->showMessage(); ?>
 
-<form name='blocked_list_new_form' action='<?php echo BASEURL; ?>admin_index.php?page=blocked_list' method='post'>
+<form name='blocked_list_new_form' action='<?php echo BASEURL; ?>admin_index.php?page=blocked' method='post'>
     <h3><?php echo $h->lang["admin_theme_blocked_new"]; ?></h3>
     <table>
         <tr class='table_headers'>
@@ -55,7 +55,7 @@ extract($h->vars['admin_blocked_list']); // extracts $output and $pagedResults;
 
 <table><tr><td>
 
-<form name='blocked_list_search_form' action='<?php echo BASEURL; ?>admin_index.php?page=blocked_list' method='post'>
+<form name='blocked_list_search_form' action='<?php echo BASEURL; ?>admin_index.php?page=blocked' method='post'>
     <h3><?php echo $h->lang["admin_theme_blocked_search"]; ?></h3>
     <table>
         <tr class='table_headers'>
@@ -69,7 +69,7 @@ extract($h->vars['admin_blocked_list']); // extracts $output and $pagedResults;
 
 </td><td>
 
-<form name='blocked_list_filter_form' action='<?php echo BASEURL; ?>admin_index.php?page=blocked_list' method='post'>
+<form name='blocked_list_filter_form' action='<?php echo BASEURL; ?>admin_index.php?page=blocked' method='post'>
     <h3><?php echo $h->lang["admin_theme_blocked_filter"]; ?></h3>
     <table>
         <tr class='table_headers'>

@@ -39,7 +39,7 @@ if (!$result) {
             // plugin hook
             $result = $h->pluginHook('admin_theme_index_header');
             if (!$result) {
-                $h->displayTemplate('header');
+                $h->displayTemplate('admin_header');
             }
         ?>
     
@@ -82,7 +82,7 @@ if (!$result) {
                             // plugin hook
                             $result = $h->pluginHook('admin_theme_index_sidebar');
                             if (!$result) {
-                                $h->displayTemplate('sidebar');
+                                $h->displayTemplate('admin_sidebar');
                             }
                         ?>
                         </div>
@@ -94,7 +94,7 @@ if (!$result) {
             // plugin hook
             $result = $h->pluginHook('admin_theme_index_footer');
             if (!$result) {
-                $h->displayTemplate('footer');
+                $h->displayTemplate('admin_footer');
             }
         ?>
 <?php    } ?>

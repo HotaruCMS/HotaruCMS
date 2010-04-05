@@ -53,7 +53,7 @@ class AdminPages
                 $h->vars['admin_plugin_settings'] = $this->listPluginSettings($h);
                 $h->vars['admin_plugin_tables'] = $this->listDbTables($h);
                 break;
-            case "blocked_list":
+            case "blocked":
                 $h->vars['admin_blocked_list'] = $this->blocked($h);
                 break;
             case "plugin_management":
@@ -90,7 +90,7 @@ class AdminPages
         }
         
         // Display the main theme's index.php template
-        $h->displayTemplate('index');
+        $h->displayTemplate('admin_index');
     }
     
     

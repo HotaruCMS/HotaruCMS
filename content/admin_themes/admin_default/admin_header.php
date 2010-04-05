@@ -67,5 +67,5 @@
         <?php $h->pluginHook('header_post_admin_title'); ?>
         
         <!-- NAVIGATION -->
-        <?php echo $h->displayTemplate('navigation'); ?>
+        <?php echo $h->displayTemplate('admin_navigation'); ?>
     </div>
