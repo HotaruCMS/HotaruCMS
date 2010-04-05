@@ -34,12 +34,12 @@
  */
 function timer_start()
 {
-    global $timestart;
-    
-    $mtime = explode(' ', microtime() );
-    $mtime = $mtime[1] + $mtime[0];
-    $timestart = $mtime;
-    return true;
+	global $timestart;
+	
+	$mtime = explode(' ', microtime() );
+	$mtime = $mtime[1] + $mtime[0];
+	$timestart = $mtime;
+	return true;
 }
 
 
@@ -53,19 +53,19 @@ function timer_start()
  */
 function timer_stop($precision = 3)
 {
-    //if called like timer_stop(1), will echo $timetotal
-    
-    global $timestart, $timeend;
-    
-    $mtime = microtime();
-    $mtime = explode(' ',$mtime);
-    $mtime = $mtime[1] + $mtime[0];
-    $timeend = $mtime;
-    $timetotal = $timeend-$timestart;
-    $r = (function_exists('number_format_i18n')) ? 
-        number_format_i18n($timetotal, $precision) : 
-        number_format($timetotal, $precision);
-    return $r;
+	//if called like timer_stop(1), will echo $timetotal
+	
+	global $timestart, $timeend;
+	
+	$mtime = microtime();
+	$mtime = explode(' ',$mtime);
+	$mtime = $mtime[1] + $mtime[0];
+	$timeend = $mtime;
+	$timetotal = $timeend-$timestart;
+	$r = (function_exists('number_format_i18n')) ? 
+		number_format_i18n($timetotal, $precision) : 
+		number_format($timetotal, $precision);
+	return $r;
 }
 
 
@@ -79,34 +79,42 @@ function timer_stop($precision = 3)
  */
 function time_difference($from, $lang)
 {
-    $output     = '';
-    $now        = time();
-    $diff       = $now-$from;
-    $days       = intval($diff/86400);
-    $diff       = $diff%86400;
-    $hours      = intval($diff/3600);
-    $diff       = $diff%3600;
-    $minutes    = intval($diff/60);
+	$output     = '';
+	$now        = time();
+	$diff       = $now-$from;
+	$days       = intval($diff/86400);
+	$diff       = $diff%86400;
+	$hours      = intval($diff/3600);
+	$diff       = $diff%3600;
+	$minutes    = intval($diff/60);
 
-    if ($days>1) {
-        $output .= $days . " " . $lang['main_times_days'] . " ";
-    } elseif ($days==1) { 
-        $output .= $days . " " . $lang['main_times_day'] . " ";
-    }
-
-    if ($days < 2){
-        if ($hours>1) {
-            $output .= $hours . " " . $lang['main_times_hours'] . " ";
-        } elseif ($hours==1) $output .= $hours . " " . $lang['main_times_hour'] . " ";
-    
-        if ($hours < 3){
-            if ($minutes>1) $output .= $minutes . " " . $lang['main_times_minutes'] . " ";
-            elseif ($minutes==1) $output .= $minutes . " " . $lang['main_times_minute'] . " ";
-        }
-    }
-    
-    if ($output=='') $output = $lang['main_times_seconds'] . " ";
-    return $output;
+	if ($days > 1) {
+		$output .= $days . " " . $lang['main_times_days'] . " ";
+	} elseif ($days == 1) { 
+		$output .= $days . " " . $lang['main_times_day'] . " ";
+	}
+	
+	if ($days < 2){
+		if ($hours > 1) {
+			$output .= $hours . " " . $lang['main_times_hours'] . " ";
+		} elseif ($hours == 1) { 
+			$output .= $hours . " " . $lang['main_times_hour'] . " ";
+		}
+	
+		if ($hours < 3) {
+			if ($minutes > 1) {
+				$output .= $minutes . " " . $lang['main_times_minutes'] . " ";
+			} elseif ($minutes == 1) {
+				$output .= $minutes . " " . $lang['main_times_minute'] . " ";
+			}
+		}
+	}
+	
+	if ($output=='') { 
+		$output = $lang['main_times_seconds'] . " ";
+	}
+	
+	return $output;
 }
 
 
@@ -120,24 +128,24 @@ function time_difference($from, $lang)
  */
 function unixtimestamp($timestamp)
 {
-    if (strlen($timestamp) == 14)
-    {
-        $time = substr($timestamp,0,4)."-".
-                    substr($timestamp,4,2)."-".
-                    substr($timestamp,6,2);
-        $time .= " ";
-        $time .=  substr($timestamp,8,2).":".
-                    substr($timestamp,10,2).":".
-                    substr($timestamp,12,2);
-        return strtotime($time);
-    } 
-    else 
-    {
-        if (strlen($timestamp) == 0) {
-            return 0;
-        } else {
-            return strtotime($timestamp);
-        }
-    }
+	if (strlen($timestamp) == 14)
+	{
+		$time = substr($timestamp,0,4)."-".
+				substr($timestamp,4,2)."-".
+				substr($timestamp,6,2);
+		$time .= " ";
+		$time .= substr($timestamp,8,2).":".
+				substr($timestamp,10,2).":".
+				substr($timestamp,12,2);
+		return strtotime($time);
+	} 
+	else 
+	{
+		if (strlen($timestamp) == 0) {
+			return 0;
+		} else {
+			return strtotime($timestamp);
+		}
+	}
 }
 ?>

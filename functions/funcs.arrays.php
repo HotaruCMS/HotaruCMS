@@ -39,53 +39,53 @@
 function sksort(&$array, $subkey="id", $type="int", $sort_ascending=false)
 {
 
-    if (empty($array)) { return false; }
-    
-    if (count($array)) {
-        $temp_array[key($array)] = array_shift($array);
-    }
+	if (empty($array)) { return false; }
+	
+	if (count($array)) {
+		$temp_array[key($array)] = array_shift($array);
+	}
 
-    foreach ($array as $key => $val)
-    {
-        $offset = 0;
-        $found = false;
-        foreach ($temp_array as $tmp_key => $tmp_val)
-        {
-            if ($type == "int") {
-                if (!$found && ($val[$subkey]) > ($tmp_val[$subkey])) 
-                {
-                        $temp_array = array_merge(
-                            (array)array_slice($temp_array,0,$offset),
-                            array($key => $val),
-                            array_slice($temp_array,$offset)
-                        );
-                        $found = true;
-                }
-            } else {
-            
-                if (!$found && strtolower($val[$subkey]) > strtolower($tmp_val[$subkey])) 
-                {
-                    $temp_array = array_merge(
-                        (array)array_slice($temp_array,0,$offset),
-                        array($key => $val),
-                        array_slice($temp_array,$offset)
-                    );
-                    $found = true;
-                }
-            }
+	foreach ($array as $key => $val)
+	{
+		$offset = 0;
+		$found = false;
+		foreach ($temp_array as $tmp_key => $tmp_val)
+		{
+			if ($type == "int") {
+				if (!$found && ($val[$subkey]) > ($tmp_val[$subkey])) 
+				{
+					$temp_array = array_merge(
+						(array)array_slice($temp_array,0,$offset),
+						array($key => $val),
+						array_slice($temp_array,$offset)
+					);
+					$found = true;
+				}
+			} else {
+			
+				if (!$found && strtolower($val[$subkey]) > strtolower($tmp_val[$subkey])) 
+				{
+					$temp_array = array_merge(
+						(array)array_slice($temp_array,0,$offset),
+						array($key => $val),
+						array_slice($temp_array,$offset)
+					);
+					$found = true;
+				}
+			}
+		
+			$offset++;
+		}
+		if (!$found) {
+			$temp_array = array_merge($temp_array, array($key => $val));
+		}
+	}
 
-            $offset++;
-        }
-        if (!$found) {
-            $temp_array = array_merge($temp_array, array($key => $val));
-        }
-    }
-
-    if ($sort_ascending) { $array = array_reverse($temp_array); }
-
-    else $array = $temp_array;
-    
-    return $array;
+	if ($sort_ascending) { $array = array_reverse($temp_array); }
+	
+	else $array = $temp_array;
+	
+	return $array;
 }
 
 /**
@@ -95,10 +95,10 @@ function sksort(&$array, $subkey="id", $type="int", $sort_ascending=false)
  */
 function in_iarray($str, $a)
 {
-    foreach($a as $v) {
-        if (strcasecmp($str, $v) == 0) { return true;}
-    }
-    return false;
+	foreach($a as $v) {
+		if (strcasecmp($str, $v) == 0) { return true;}
+	}
+	return false;
 }
 
 
@@ -109,11 +109,11 @@ function in_iarray($str, $a)
  */
 function array_iunique($a)
 {
-    $n = array();
-    foreach ($a as $k=>$v) {
-        if (!in_iarray($v, $n)) { $n[$k] = $v; }
-    }
-    return $n;
+	$n = array();
+	foreach ($a as $k=>$v) {
+		if (!in_iarray($v, $n)) { $n[$k] = $v; }
+	}
+	return $n;
 }
 
 
@@ -126,14 +126,14 @@ function array_iunique($a)
  */
 function is_serialized($data)
 {
-    if (!$data || !is_string($data)) {
-        return false;
-    }
-    
-    if (preg_match("/^(i|s|a|o|d)(.*);/si",$data)) {
-        return true;
-    }
-    return false;
+	if (!$data || !is_string($data)) {
+		return false;
+	}
+	
+	if (preg_match("/^(i|s|a|o|d)(.*);/si",$data)) {
+		return true;
+	}
+	return false;
 }
 
 
@@ -144,12 +144,13 @@ function is_serialized($data)
  * @return bool
  * @link http://forum.weblivehelp.net/web-development/php-convert-array-object-and-vice-versa-t2.html
  */
- function parse_object_to_array($object) {
-   $array = array();
-   if (is_object($object)) {
-       foreach($object as $item)
-         array_push($array, $item);
-   }
-   return $array;
+function parse_object_to_array($object)
+{
+	$array = array();
+	if (is_object($object)) {
+		foreach($object as $item)
+		array_push($array, $item);
+	}
+	return $array;
 }
 ?>
