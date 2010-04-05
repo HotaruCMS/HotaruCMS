@@ -27,20 +27,20 @@
 // EDIT THE FOLLOWING ONLY
 
 // Database details
-define("DB_USER", 'root');          			// Add your own database details 
+define("DB_USER", 'root');						// Add your own database details 
 define("DB_PASSWORD", '');
 define("DB_NAME", 'hotaru');
-define("DB_HOST", 'localhost');     			// You probably won't need to change this
+define("DB_HOST", 'localhost');					// You probably won't need to change this
 
-define("DB_PREFIX", 'hotaru_');     			// Database prefix, e.g. "hotaru_"
-define("DB_LANG", 'en');            			// Database language, e.g. "en"
+define("DB_PREFIX", 'hotaru_');					// Database prefix, e.g. "hotaru_"
+define("DB_LANG", 'en');			 			// Database language, e.g. "en"
 define("DB_ENGINE", 'MyISAM');					// Database Engine, e.g. "MyISAM"
 define('DB_CHARSET', 'utf8');					// Database Character Set (UTF8 is Recommended), e.g. "utf8"
 define("DB_COLLATE", 'utf8_unicode_ci');		// Database Collation (UTF8 is Recommended), e.g. "utf8_unicode_ci"
 
 // Paths
-define('BASEURL', "http://www.mysite.com/");    // e.g. http://www.mysite.com/
-                                                // Needs trailing slash (/)
+define('BASEURL', "http://www.mysite.com/");	// e.g. http://www.mysite.com/
+												// Needs trailing slash (/)
 
 // DON'T EDIT ANYTHING BEYOND THIS POINT
 
