@@ -40,26 +40,27 @@ var xmlhttp=false;
 
 if (!xmlhttp && typeof XMLHttpRequest != 'undefined')
 {
-  try {
-	xmlhttp = new XMLHttpRequest ();
-  }
-  catch (e) {
-  	xmlhttp = false}
+	try {
+		xmlhttp = new XMLHttpRequest ();
+	}
+	catch (e) {
+		xmlhttp = false
+	}
 }
 
 function myXMLHttpRequest ()
 {
-  var xmlhttplocal;
+	var xmlhttplocal;
 
-  if (!xmlhttplocal && typeof XMLHttpRequest != 'undefined') {
-	try {
-	  var xmlhttplocal = new XMLHttpRequest ();
+	if (!xmlhttplocal && typeof XMLHttpRequest != 'undefined') {
+		try {
+			var xmlhttplocal = new XMLHttpRequest ();
+		}
+		catch (e) {
+			var xmlhttplocal = false;
+		}
 	}
-	catch (e) {
-	  var xmlhttplocal = false;
-	}
-  }
-  return (xmlhttplocal);
+	return (xmlhttplocal);
 }
 
 var ajax = Array ();
@@ -69,7 +70,7 @@ var returnvalue = Array ();
 
 // FADE TOGGLE
 jQuery.fn.fadeToggle = function(speed, easing, callback) {
-   return this.animate({opacity: 'toggle'}, speed, easing, callback);
+	return this.animate({opacity: 'toggle'}, speed, easing, callback);
 
 }; 
 
@@ -82,26 +83,26 @@ $(document).ready(function(){
 	// Fade message
 	$(".message").css({display: "none"}).fadeIn(1000);
 	
-        
+
 	// Show/Hide table details (Plugin Management page and similar tables)
 	$(".table_drop_down").click(function () {
 		var target = $(this).parents("tr").next("tr");
-                target.fadeToggle();
-                return false;
-        });   
-        
+		target.fadeToggle();
+		return false;
+	});
+
 	// Hide table details (Plugin Management page and similar tables)
 	$(".table_hide_details").click(function () {
-                $(this).parents("tr.table_tr_details").fadeOut();
-                return false;
-        });  
-        
+		$(this).parents("tr.table_tr_details").fadeOut();
+		return false;
+	});  
+
 	// Show/Hide forgot password form
 	$(".forgot_password").click(function () {
 		var target = $(this).next("form");
-                target.fadeToggle();
-                return false;
-        });  
+		target.fadeToggle();
+		return false;
+	});  
  
 });
 
