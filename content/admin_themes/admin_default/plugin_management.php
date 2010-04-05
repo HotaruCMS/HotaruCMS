@@ -27,7 +27,7 @@
  */
 ?>
 
-<?php $h->displayTemplate('sidebar'); ?>
+<?php $h->displayTemplate('admin_sidebar'); ?>
 
 <?php $h->showMessages(); ?>
 
