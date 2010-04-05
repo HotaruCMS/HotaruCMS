@@ -2,7 +2,7 @@
 /**
  * name: Autoreader
  * description: Enables reading of RSS feeds and populating database
- * version: 0.1
+ * version: 0.2
  * folder: autoreader
  * class: Autoreader
  * type: autoreader
@@ -44,7 +44,7 @@ class Autoreader extends AutoreaderSettings
 {
 
      var $version = '0.2';
-     var $newsetup = false;  // set to true only if this version requires db changes from last version
+     var $newsetup = true;  // set to true only if this version requires db changes from last version
 
      var $campaign_structure = array('main' => array(), 'rewrites' => array(),
                                   'categories' => array(), 'feeds' => array());
@@ -107,8 +107,6 @@ class Autoreader extends AutoreaderSettings
         $this->activate($h);
     }
 
-
-
     /**
      * Called when autoreader plugin is first activated
      *
@@ -132,7 +130,7 @@ class Autoreader extends AutoreaderSettings
                                 frequency int(5) default '180',
                                 feeddate tinyint(1) default '0',
                                 cacheimages tinyint(1) default '1',
-                                posttype enum('new','pending','latest') NOT NULL default 'pending',
+                                posttype enum('new','pending','top') NOT NULL default 'pending',
                                 authorid int(11) default NULL,
                                 comment_status enum('open','closed','registered_only') NOT NULL default 'open',
                                 allowpings tinyint(1) default '1',
@@ -146,6 +144,11 @@ class Autoreader extends AutoreaderSettings
                            ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='autoreader campaign'; "
             );
         }
+	else {
+	    //update for 0.1 versions
+	    $sql = "ALTER TABLE " . $this->db['campaign'] . " MODIFY COLUMN posttype enum('new','pending','top') NOT NULL default 'pending'";	   
+	    $h->db->query($h->db->prepare($sql));
+	}
 
 		# autoreader_campaign_category
         $exists = $h->db->table_exists( str_replace(DB_PREFIX, "", $this->db['campaign_category']));

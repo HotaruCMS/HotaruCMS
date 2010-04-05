@@ -328,6 +328,9 @@ function action_add($h, $arObj, $data=null, $action = 'add') {
             <?php echo radiobutton_tag('campaign_posttype', 'new', !isset($data['main']['posttype']) || _data_value($data['main'], 'posttype') == 'new', 'id=type_new') ?>
             <?php echo label_for('type_new', 'Published (New)') ?>
 
+	    <?php echo radiobutton_tag('campaign_posttype', 'top', !isset($data['main']['posttype']) || _data_value($data['main'], 'posttype') == 'top', 'id=type_top') ?>
+            <?php echo label_for('type_top', 'Published (Top)') ?>
+
             <?php echo radiobutton_tag('campaign_posttype', 'pending', _data_value($data['main'], 'posttype') == 'pending', 'id=type_pending') ?>
             <?php echo label_for('type_pending', 'Pending') ?>
           </div>
@@ -395,6 +398,7 @@ function action_add($h, $arObj, $data=null, $action = 'add') {
                 <div class="radio">
                   <label class="main">Change status to:</label>
                   <input type="radio" name="campaign_tool_changetype" value="new" id="changetype_new" checked="checked" /> <label for="changetype_new">Published (New)</label>
+		    <input type="radio" name="campaign_tool_changetype" value="top" id="changetype_top" checked="checked" /> <label for="changetype_top">Published (Top)</label>
                   <input type="radio" name="campaign_tool_changetype" value="pending" id="changetype_pending" /> <label for="changetype_pending">Pending</label>
                  <input type="submit" name="tool_changetype" value="Change" id="tool_changetype" />
                 </div>
