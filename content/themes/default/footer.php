@@ -28,17 +28,17 @@
 
 ?>
 
-    <div id="ft">
-        <?php 
-            $h->pluginHook('footer');
-        
-            // Link to forums...
-            echo "<p><a href='http://hotarucms.org' title='" . $h->lang["main_theme_footer_hotaru_link"] . "'><img src='" . BASEURL . "content/themes/" . THEME . "images/hotarucms.png' ";
-            echo "alt='" . $h->lang["main_theme_footer_hotaru_link"] . "' /></a></p>";
-        
-            $h->showQueriesAndTime();
-        ?>
-    </div> <!-- close "ft" -->
+	<div id="ft">
+		<?php 
+			$h->pluginHook('footer');
+			
+			// Link to forums...
+			echo "<p><a href='http://hotarucms.org' title='" . $h->lang["main_theme_footer_hotaru_link"] . "'><img src='" . BASEURL . "content/themes/" . THEME . "images/hotarucms.png' ";
+			echo "alt='" . $h->lang["main_theme_footer_hotaru_link"] . "' /></a></p>";
+			
+			$h->showQueriesAndTime();
+		?>
+	</div> <!-- close "ft" -->
 </div> <!-- close "yui-t7 first" -->
 
 <?php $h->pluginHook('pre_close_body'); ?>

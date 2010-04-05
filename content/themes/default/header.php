@@ -33,60 +33,60 @@
 <head profile="http://gmpg.org/xfn/11">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-    <title><?php echo $h->getTitle(); ?></title>
-    
-        <?php
-            // plugin hook
-            $result = $h->pluginHook('header_meta');
-            if (!isset($result) || !is_array($result)) { ?>
-                <meta name="description" content="<?php echo $h->lang['header_meta_description']; ?>" />
-                <meta name="keywords" content="<?php echo $h->lang['header_meta_keywords']; ?>" />
-        <?php } ?>
-   
-    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js?ver=1.4.2'></script>
-    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js?ver=1.8.0'></script>
-       
-    <link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME . 'css/reset-fonts-grids.css'; ?>" type="text/css" />
-    
-    <!-- Include merged files for all the plugin css and javascript (if any) -->
-    <?php $h->doIncludes(); ?>
-    <!-- End -->
-    
-    <link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME . 'css/style.css'; ?>" type="text/css" />
-    <!-- <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico" /> -->
-   
-    <?php $h->pluginHook('header_include_raw'); ?>
-   
+	<title><?php echo $h->getTitle(); ?></title>
+	
+		<?php
+			// plugin hook
+			$result = $h->pluginHook('header_meta');
+			if (!isset($result) || !is_array($result)) { ?>
+				<meta name="description" content="<?php echo $h->lang['header_meta_description']; ?>" />
+				<meta name="keywords" content="<?php echo $h->lang['header_meta_keywords']; ?>" />
+		<?php } ?>
+	
+	<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js?ver=1.4.2'></script>
+	<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js?ver=1.8.0'></script>
+	
+	<link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME . 'css/reset-fonts-grids.css'; ?>" type="text/css" />
+	
+	<!-- Include merged files for all the plugin css and javascript (if any) -->
+	<?php $h->doIncludes(); ?>
+	<!-- End -->
+	
+	<link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME . 'css/style.css'; ?>" type="text/css" />
+	<!-- <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico" /> -->
+	
+	<?php $h->pluginHook('header_include_raw'); ?>
+	
 </head>
 <body>
 <?php $h->pluginHook('post_open_body'); ?>
 
 <?php if ($announcements = $h->checkAnnouncements()) { ?>
-    <div id="announcement">
-        <?php $h->pluginHook('announcement_first'); ?>
-        <?php foreach ($announcements as $announcement) { echo $announcement . "<br />"; } ?>
-        <?php $h->pluginHook('announcement_last'); ?>
-    </div>
+	<div id="announcement">
+		<?php $h->pluginHook('announcement_first'); ?>
+		<?php foreach ($announcements as $announcement) { echo $announcement . "<br />"; } ?>
+		<?php $h->pluginHook('announcement_last'); ?>
+	</div>
 <?php } ?>
 
 <div id="doc2" class="yui-t7">
-    <div id="nav">
-        <!-- NAVIGATION -->
-        <?php echo $h->displayTemplate('navigation'); ?>
-    </div>
-    <div class="clear">&nbsp;</div>
-    
-    <div id="hd">
-        <!-- TITLE & AD BLOCKS -->
-        <div id="hd_title">
-            <h1><a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a></h1>
-        </div>
-        <div id="hd_block2">
-        </div>
-    </div>
-    <div class="clear">&nbsp;</div>
-    
-    <div id="header_end">
-        <!-- CATEGORIES, ETC -->
-        <?php $h->pluginHook('header_end'); ?>
-    </div>
+	<div id="nav">
+		<!-- NAVIGATION -->
+		<?php echo $h->displayTemplate('navigation'); ?>
+	</div>
+	<div class="clear">&nbsp;</div>
+	
+	<div id="hd">
+		<!-- TITLE & AD BLOCKS -->
+		<div id="hd_title">
+			<h1><a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a></h1>
+		</div>
+		<div id="hd_block2">
+		</div>
+	</div>
+	<div class="clear">&nbsp;</div>
+	
+	<div id="header_end">
+		<!-- CATEGORIES, ETC -->
+		<?php $h->pluginHook('header_end'); ?>
+	</div>
