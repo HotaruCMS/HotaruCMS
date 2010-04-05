@@ -36,10 +36,10 @@
  */
 function init_database()
 {
-    $ezSQL = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
-    $ezSQL->query("SET NAMES 'utf8'");
-    
-    return $ezSQL;
+	$ezSQL = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
+	$ezSQL->query("SET NAMES 'utf8'");
+	
+	return $ezSQL;
 }
     
     
@@ -50,19 +50,19 @@ function init_database()
  */
 function init_inspekt_cage()
 {
-    $cage = Inspekt::makeSuperCage(); 
-
-    // Add Hotaru custom methods
-    $cage->addAccessor('testAlnumLines');
-    $cage->addAccessor('testPage');
-    $cage->addAccessor('testUsername');
-    $cage->addAccessor('testPassword');
-    $cage->addAccessor('getFriendlyUrl');
-    $cage->addAccessor('sanitizeAll');
-    $cage->addAccessor('sanitizeTags');
-    $cage->addAccessor('getHtmLawed');
-    
-    return $cage;
+	$cage = Inspekt::makeSuperCage(); 
+	
+	// Add Hotaru custom methods
+	$cage->addAccessor('testAlnumLines');
+	$cage->addAccessor('testPage');
+	$cage->addAccessor('testUsername');
+	$cage->addAccessor('testPassword');
+	$cage->addAccessor('getFriendlyUrl');
+	$cage->addAccessor('sanitizeAll');
+	$cage->addAccessor('sanitizeTags');
+	$cage->addAccessor('getHtmLawed');
+	
+	return $cage;
 }
 
 
@@ -74,21 +74,21 @@ function init_inspekt_cage()
  */    
 function delete_files($dir)
 {
-    $handle=opendir($dir);
-
-    while (($file = readdir($handle))!==false) {
-        if ($file != 'placeholder.txt') {
-            if (@unlink($dir.'/'.$file)) {
-                $success = true;
-            } else {
-                $success = false;
-            }
-        }
-    }
-    
-    closedir($handle);
-    
-    return $success;
+	$handle=opendir($dir);
+	
+	while (($file = readdir($handle))!==false) {
+		if ($file != 'placeholder.txt') {
+			if (@unlink($dir.'/'.$file)) {
+				$success = true;
+			} else {
+				$success = false;
+			}
+		}
+	}
+	
+	closedir($handle);
+	
+	return $success;
 }
 
 
@@ -97,32 +97,32 @@ function delete_files($dir)
  */
 function list_plugin_tables()
 {
-    global $db;
-    
-    // These should match the tables created in the install script.
-    $core_tables = array(
-        'hotaru_settings',
-        'hotaru_users',
-        'hotaru_plugins',
-        'hotaru_pluginsettings',
-        'hotaru_pluginhooks',
-        'hotaru_blocked'
-    );
-    
-    $plugin_tables = array();
-        
-    $db->select(DB_NAME);
-    
-    if (!$db->get_col("SHOW TABLES",0)) { return $plugin_tables; }
-    
-    foreach ( $db->get_col("SHOW TABLES",0) as $table_name )
-    {
-        if (!in_array($table_name, $core_tables)) {
-            array_push($plugin_tables, $table_name);
-        }
-    }
-    
-    return $plugin_tables;
+	global $db;
+	
+	// These should match the tables created in the install script.
+	$core_tables = array(
+		'hotaru_settings',
+		'hotaru_users',
+		'hotaru_plugins',
+		'hotaru_pluginsettings',
+		'hotaru_pluginhooks',
+		'hotaru_blocked'
+	);
+	
+	$plugin_tables = array();
+
+	$db->select(DB_NAME);
+	
+	if (!$db->get_col("SHOW TABLES",0)) { return $plugin_tables; }
+	
+	foreach ( $db->get_col("SHOW TABLES",0) as $table_name )
+	{
+		if (!in_array($table_name, $core_tables)) {
+			array_push($plugin_tables, $table_name);
+		}
+	}
+	
+	return $plugin_tables;
 }
 
 
@@ -133,7 +133,7 @@ function list_plugin_tables()
  */
 function drop_table($table_name)
 {
-    global $db;
-    
-    $db->query("DROP TABLE " . $table_name);
+	global $db;
+	
+	$db->query("DROP TABLE " . $table_name);
 }

@@ -27,9 +27,9 @@
 $lang["upgrade_title"] = "Hotaru CMS Upgrade";
 $lang["upgrade_step1"] = "Step 1/2: Welcome Back";
 if (isset($old_version)) {
-    $lang["upgrade_step1_details"] = "To upgrade Hotaru from " . $old_version . " to " . $h->version . ", click 'Next'...";
+	$lang["upgrade_step1_details"] = "To upgrade Hotaru from " . $old_version . " to " . $h->version . ", click 'Next'...";
 } else {
-    $lang["upgrade_step1_details"] = "To upgrade Hotaru to version " . $h->version . ", click 'Next'...";
+	$lang["upgrade_step1_details"] = "To upgrade Hotaru to version " . $h->version . ", click 'Next'...";
 }
 
 /* Upgrade Step 2 */

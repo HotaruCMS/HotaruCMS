@@ -29,14 +29,14 @@ html, body {
 	font-size: 1.0em;
 }
 
-h1	{ 
+h1 { 
 	font-size: 1.5em;
 	margin-left: 1.0em;
 	padding-top: 0.6em;
 }
 
 img {
-    padding-right: 1.0em;
+	padding-right: 1.0em;
 }
 
 h2 { 
@@ -46,7 +46,7 @@ h2 {
 
 a { 
 	text-decoration: none; 
-	color: #0000ff;	
+	color: #0000ff;
 }
 
 a:hover	{ 
@@ -121,7 +121,7 @@ small {
 	color: #00f;
 }
 
-.next, .back	{
+.next, .back {
 	margin-top: 0.8em;
 	float: right;
 	font-size: 1.2em;
@@ -132,8 +132,8 @@ small {
 	border: 0.1em solid #666;
 }
 
-.next	{ float: right; }
-.back	{ float: left; }
+.next { float: right; }
+.back { float: left; }
 
 .next a, .back a {
 	font-weight: bold;
