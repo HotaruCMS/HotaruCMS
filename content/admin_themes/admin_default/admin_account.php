@@ -31,36 +31,52 @@ extract($h->vars['admin_account']); // extracts $username_check, etc.
 
 <?php $h->showMessages(); ?>
 
-    <br />
-    <?php echo $h->lang["main_user_theme_account_instructions"]; ?>
-    <form name='admin_theme_update_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>    
-    <table>
-    <tr><td><?php echo $h->lang["main_user_theme_update_username"]; ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check; ?>' /></td></tr>
-    <tr><td colspan='2'><small><?php echo $h->lang["main_user_account_username_requirements"]; ?></small></td></tr>
-    <tr><td><?php echo $h->lang["main_user_theme_update_email"]; ?>&nbsp; </td><td><input type='text' size=30 name='email' value='<?php echo $email_check; ?>' /></td></tr>
-    <input type='hidden' name='update_type' value='update_general' />
-    <input type='hidden' name='page' value='admin_account'>
-    <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
-    <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $h->lang['main_user_theme_update_form_submit']; ?>' /></td></tr>
-    </table>    
-    </form>
-    
-    <?php $h->pluginHook('users_account_pre_password'); ?>
-    <?php $h->pluginHook('users_account_pre_password_user_only'); ?>
-    
-    <br />
-    
-    <?php echo $h->lang["main_user_theme_update_password_instruct"]; ?>
-    <form name='update_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>
-    <table>
-    <tr><td colspan='2'><small><?php echo $h->lang["main_user_account_password_requirements"]; ?></small></td></tr>
-    <tr><td><?php echo $h->lang["main_user_theme_update_old_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_old' value='<?php echo $password_check_old; ?>' /></td></tr>
-    <tr><td><?php echo $h->lang["main_user_theme_update_new_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_new' value='<?php echo $password_check_new; ?>' /></td></tr>
-    <tr><td><?php echo $h->lang["main_user_theme_update_new_password_verify"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_new2' value='<?php echo $password_check_new2; ?>' /></td></tr>
-    <input type='hidden' name='update_type' value='update_password' />
-    <input type='hidden' name='page' value='admin_account'>
-    <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
-    <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $h->lang['main_user_theme_update_form_submit']; ?>' /></td></tr>            
-    </table>
-    </form>
+<br />
+<?php echo $h->lang["main_user_theme_account_instructions"]; ?>
+<form name='admin_theme_update_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>    
+	<table>
+		<tr>
+			<td><?php echo $h->lang["main_user_theme_update_username"]; ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check; ?>' /></td></tr>
+		<tr>
+			<td colspan='2'><small><?php echo $h->lang["main_user_account_username_requirements"]; ?></small></td></tr>
+		<tr>
+			<td><?php echo $h->lang["main_user_theme_update_email"]; ?>&nbsp; </td><td><input type='text' size=30 name='email' value='<?php echo $email_check; ?>' /></td>
+		</tr>
+		<input type='hidden' name='update_type' value='update_general' />
+		<input type='hidden' name='page' value='admin_account'>
+		<input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
+		<tr>
+			<td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $h->lang['main_user_theme_update_form_submit']; ?>' /></td>
+		</tr>
+	</table>
+</form>
+
+<?php $h->pluginHook('users_account_pre_password'); ?>
+<?php $h->pluginHook('users_account_pre_password_user_only'); ?>
+
+<br />
+
+<?php echo $h->lang["main_user_theme_update_password_instruct"]; ?>
+<form name='update_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>
+	<table>
+		<tr>
+			<td colspan='2'><small><?php echo $h->lang["main_user_account_password_requirements"]; ?></small></td>
+		</tr>
+		<tr>
+			<td><?php echo $h->lang["main_user_theme_update_old_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_old' value='<?php echo $password_check_old; ?>' /></td>
+		</tr>
+		<tr>
+			<td><?php echo $h->lang["main_user_theme_update_new_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_new' value='<?php echo $password_check_new; ?>' /></td>
+		</tr>
+		<tr>
+			<td><?php echo $h->lang["main_user_theme_update_new_password_verify"]; ?>&nbsp; </td><td><input type='password' size=30 name='password_new2' value='<?php echo $password_check_new2; ?>' /></td>
+		</tr>
+		<input type='hidden' name='update_type' value='update_password' />
+		<input type='hidden' name='page' value='admin_account'>
+		<input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
+		<tr>
+			<td>&nbsp;</td><td style='text-align:right;'><input type='submit' value='<?php echo $h->lang['main_user_theme_update_form_submit']; ?>' /></td>
+		</tr>
+	</table>
+</form>
 

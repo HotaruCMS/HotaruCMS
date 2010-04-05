@@ -27,20 +27,20 @@
  */
 
 ?>
-    <div id="ft" role="contentinfo">
-        <?php
-            $h->pluginHook('admin_footer');
-            
-            // Link to forums...
-            echo "<p>" . $h->lang["admin_theme_footer_having_trouble_vist_forums"];
-            echo " <a href='http://hotarucms.org'>HotaruCMS.org</a> ";
-            echo $h->lang["admin_theme_footer_for_help"] . "</p>";
-            
-            if ($h->isDebug) {
-                $h->showQueriesAndTime();
-            }
-        ?>
-    </div>
+	<div id="ft" role="contentinfo">
+		<?php
+			$h->pluginHook('admin_footer');
+			
+			// Link to forums...
+			echo "<p>" . $h->lang["admin_theme_footer_having_trouble_vist_forums"];
+			echo " <a href='http://hotarucms.org'>HotaruCMS.org</a> ";
+			echo $h->lang["admin_theme_footer_for_help"] . "</p>";
+			
+			if ($h->isDebug) {
+				$h->showQueriesAndTime();
+			}
+		?>
+	</div>
 </div>
 
 <?php $h->pluginHook('pre_close_body'); ?>

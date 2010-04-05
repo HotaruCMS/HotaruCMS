@@ -27,20 +27,20 @@
  */
 
 ?>
-        <!-- HEADER-->
-        <?php $h->displayTemplate('header'); ?>
-    
-        <div id="bd" role="main">
-            <div class='yui-g''>
-                <div class="yui-u" style='width: 100%;'>
+<!-- HEADER-->
+<?php $h->displayTemplate('header'); ?>
 
-                    <!-- MAIN -->
-                    <div id="main">
-                        <?php echo $h->showMessages(); ?>
-                    </div>        
-                </div>
-            </div>
-        </div>
-        
-        <!-- FOOTER -->
-        <?php $h->displayTemplate('footer'); ?>
+<div id="bd" role="main">
+	<div class='yui-g''>
+		<div class="yui-u" style='width: 100%;'>
+		
+			<!-- MAIN -->
+			<div id="main">
+				<?php echo $h->showMessages(); ?>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- FOOTER -->
+<?php $h->displayTemplate('footer'); ?>

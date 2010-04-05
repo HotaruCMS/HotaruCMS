@@ -34,67 +34,67 @@ $h->includeThemeLanguage('admin');
 $result = $h->pluginHook('admin_theme_index_top');
 if (!$result) {
 ?>
-        <!-- HEADER-->
-        <?php
-            // plugin hook
-            $result = $h->pluginHook('admin_theme_index_header');
-            if (!$result) {
-                $h->displayTemplate('admin_header');
-            }
-        ?>
-    
-        <div id="bd" role="main">              
-            <?php if ($h->sidebars) { ?>
-                <div class='yui-gf'> 
-                <div class="yui-u">
-            <?php } else { ?>
-                <div class='yui-g'>
-                    <div class="yui-u" style='width: 100%;'>
-            <?php } ?>
-                        <!-- BREADCRUMBS -->
-                        <div id='breadcrumbs'>
-                            <?php echo $h->breadcrumbs(); ?>
-                        </div>
-                            
-                        <!-- MAIN -->
-                        <div id="main">
-                        <?php
-                            // plugin hook
-                        $result = $h->pluginHook('admin_theme_index_main');
-                        if (!$result) {
-                                if ($h->pageName == 'admin_login') {
-                                    if ($h->currentUser->loggedIn) {
-                                        $h->displayTemplate('admin_home');
-                                    } else {
-                                        $h->adminLoginForm();
-                                    }
-                                } else {
-                                    $h->displayTemplate($h->pageName);
-                                } 
-                        }
-                    ?>    
-                    </div>        
-                    </div>
-                    <?php if ($h->sidebars) { ?>
-                        <div class="yui-u first">
-                        <!-- SIDEBAR -->
-                        <?php
-                            // plugin hook
-                            $result = $h->pluginHook('admin_theme_index_sidebar');
-                            if (!$result) {
-                                $h->displayTemplate('admin_sidebar');
-                            }
-                        ?>
-                        </div>
-                    <?php } ?>
-            </div>
-        </div>
-        <!-- FOOTER -->
-        <?php
-            // plugin hook
-            $result = $h->pluginHook('admin_theme_index_footer');
-            if (!$result) {
-                $h->displayTemplate('admin_footer');
-            }
-        ?>
-<?php    } ?>
+<!-- HEADER-->
+<?php
+	// plugin hook
+	$result = $h->pluginHook('admin_theme_index_header');
+	if (!$result) {
+		$h->displayTemplate('admin_header');
+	}
+?>
+
+<div id="bd" role="main">
+	<?php if ($h->sidebars) { ?>
+		<div class='yui-gf'> 
+		<div class="yui-u">
+	<?php } else { ?>
+		<div class='yui-g'>
+			<div class="yui-u" style='width: 100%;'>
+	<?php } ?>
+				<!-- BREADCRUMBS -->
+				<div id='breadcrumbs'>
+					<?php echo $h->breadcrumbs(); ?>
+				</div>
+				
+				<!-- MAIN -->
+				<div id="main">
+				<?php
+				// plugin hook
+				$result = $h->pluginHook('admin_theme_index_main');
+				if (!$result) {
+					if ($h->pageName == 'admin_login') {
+						if ($h->currentUser->loggedIn) {
+							$h->displayTemplate('admin_home');
+						} else {
+							$h->adminLoginForm();
+						}
+					} else {
+						$h->displayTemplate($h->pageName);
+					} 
+				}
+				?>
+				</div> 
+			</div>
+			<?php if ($h->sidebars) { ?>
+				<div class="yui-u first">
+				<!-- SIDEBAR -->
+				<?php
+					// plugin hook
+					$result = $h->pluginHook('admin_theme_index_sidebar');
+					if (!$result) {
+						$h->displayTemplate('admin_sidebar');
+					}
+				?>
+				</div>
+			<?php } ?>
+	</div>
+</div>
+<!-- FOOTER -->
+<?php
+	// plugin hook
+	$result = $h->pluginHook('admin_theme_index_footer');
+	if (!$result) {
+		$h->displayTemplate('admin_footer');
+	}
+?>
+<?php } ?>

@@ -32,40 +32,40 @@
  "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-    <meta http-equiv=Content-Type content="text/html; charset=UTF-8" />
-    
-    <title><?php echo $h->getTitle(); ?></title>
-    
-    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js?ver=1.4.0'></script>
-    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js?ver=1.7.2'></script>
-   
-    <!-- Include merged files for all the plugin css and javascript (if any) -->
-    <?php $h->doIncludes(); ?>
-    <!-- End -->
-    
-    <link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/reset-fonts-grids.css'; ?>" type="text/css">
-    <link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css'; ?>" type="text/css">
-    <!-- <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico"> -->
-    
-    <?php $h->pluginHook('admin_header_include_raw'); ?>
-      
+	<meta http-equiv=Content-Type content="text/html; charset=UTF-8" />
+	
+	<title><?php echo $h->getTitle(); ?></title>
+	
+	<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js?ver=1.4.0'></script>
+	<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js?ver=1.7.2'></script>
+	
+	<!-- Include merged files for all the plugin css and javascript (if any) -->
+	<?php $h->doIncludes(); ?>
+	<!-- End -->
+	
+	<link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/reset-fonts-grids.css'; ?>" type="text/css">
+	<link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css'; ?>" type="text/css">
+	<!-- <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico"> -->
+	
+	<?php $h->pluginHook('admin_header_include_raw'); ?>
+
 </head>
 <body>
 <?php
-    $announcements = $h->checkAnnouncements();
-    if ($announcements && ($h->currentUser->getPermission('can_access_admin') == 'yes')) { 
-?>
-    <div id="announcement">
-        <?php $h->pluginHook('admin_announcement_first'); ?>
-        <?php foreach ($announcements as $announcement) { echo $announcement . "<br />"; } ?>
-        <?php $h->pluginHook('admin_announcement_last'); ?>
-    </div>
+	$announcements = $h->checkAnnouncements();
+	if ($announcements && ($h->currentUser->getPermission('can_access_admin') == 'yes')) { 
+	?>
+	<div id="announcement">
+		<?php $h->pluginHook('admin_announcement_first'); ?>
+		<?php foreach ($announcements as $announcement) { echo $announcement . "<br />"; } ?>
+		<?php $h->pluginHook('admin_announcement_last'); ?>
+	</div>
 <?php } ?>
 <div id="doc2" class="yui-t7">
-    <div id="hd" role="banner">
-        <h1><a href="<?php echo $h->url(array(), 'admin'); ?>"><?php echo SITE_NAME . " " . $h->lang["admin"]; ?> </a></h1>
-        <?php $h->pluginHook('header_post_admin_title'); ?>
-        
-        <!-- NAVIGATION -->
-        <?php echo $h->displayTemplate('admin_navigation'); ?>
-    </div>
+	<div id="hd" role="banner">
+		<h1><a href="<?php echo $h->url(array(), 'admin'); ?>"><?php echo SITE_NAME . " " . $h->lang["admin"]; ?> </a></h1>
+		<?php $h->pluginHook('header_post_admin_title'); ?>
+		
+		<!-- NAVIGATION -->
+		<?php echo $h->displayTemplate('admin_navigation'); ?>
+	</div>
