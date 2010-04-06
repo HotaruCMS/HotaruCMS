@@ -25,31 +25,31 @@
  */
 class TagFunctions
 {
-    /**
-     * Add tags to the tags table
-     */
-    public function addTags($h, $post_id = 0, $new_tags = '')
-    {
-        // Tags table
-        if ($new_tags) {
-            $tags_array = explode(',', $new_tags);
-            if ($tags_array) {
-                foreach ($tags_array as $tag) {
-                    $sql = "INSERT INTO " . TABLE_TAGS . " SET tags_post_id = %d, tags_date = CURRENT_TIMESTAMP, tags_word = %s, tags_updateby = %d";
-                    $h->db->query($h->db->prepare($sql, $post_id, urlencode(str_replace(' ', '_', trim($tag))), $h->currentUser->id));
-                }
-            }
-        }
-    }
-    
-    
-    /**
-     * Delete tags from the tags table
-     */
-    public function deleteTags($h, $post_id = 0)
-    {
-        $sql = "DELETE FROM " . TABLE_TAGS . " WHERE tags_post_id = %d";
-        $h->db->query($h->db->prepare($sql, $post_id));
-    }
+	/**
+	 * Add tags to the tags table
+	 */
+	public function addTags($h, $post_id = 0, $new_tags = '')
+	{
+		// Tags table
+		if ($new_tags) {
+			$tags_array = explode(',', $new_tags);
+			if ($tags_array) {
+				foreach ($tags_array as $tag) {
+					$sql = "INSERT INTO " . TABLE_TAGS . " SET tags_post_id = %d, tags_date = CURRENT_TIMESTAMP, tags_word = %s, tags_updateby = %d";
+					$h->db->query($h->db->prepare($sql, $post_id, urlencode(str_replace(' ', '_', trim($tag))), $h->currentUser->id));
+				}
+			}
+		}
+	}
+	
+	
+	/**
+	 * Delete tags from the tags table
+	 */
+	public function deleteTags($h, $post_id = 0)
+	{
+		$sql = "DELETE FROM " . TABLE_TAGS . " WHERE tags_post_id = %d";
+		$h->db->query($h->db->prepare($sql, $post_id));
+	}
 }
 ?>

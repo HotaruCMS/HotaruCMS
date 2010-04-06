@@ -25,38 +25,38 @@
  */
 class Plugin
 {
-    protected $id               = 0;
-    protected $folder           = '';
-    protected $enabled          = 0;
-    protected $name             = '';
-    protected $class            = '';
-    protected $extends          = '';
-    protected $type             = '';
-    protected $desc             = '';
-    protected $version          = 0;
-    protected $order            = 0;
-    protected $author           = '';
-    protected $authorurl        = '';
-    protected $requires         = '';
-    protected $dependencies     = array();
-    protected $hooks            = array();
-    
-    /**
-     * Access modifier to set protected properties
-     */
-    public function __set($var, $val)
-    {
-        $this->$var = $val;
-    }
-    
-    
-    /**
-     * Access modifier to get protected properties
-     * The & is necessary (http://bugs.php.net/bug.php?id=39449)
-     */
-    public function &__get($var)
-    {
-        return $this->$var;
-    }
+	protected $id               = 0;
+	protected $folder           = '';
+	protected $enabled          = 0;
+	protected $name             = '';
+	protected $class            = '';
+	protected $extends          = '';
+	protected $type             = '';
+	protected $desc             = '';
+	protected $version          = 0;
+	protected $order            = 0;
+	protected $author           = '';
+	protected $authorurl        = '';
+	protected $requires         = '';
+	protected $dependencies     = array();
+	protected $hooks            = array();
+	
+	/**
+	 * Access modifier to set protected properties
+	 */
+	public function __set($var, $val)
+	{
+		$this->$var = $val;
+	}
+	
+	
+	/**
+	 * Access modifier to get protected properties
+	 * The & is necessary (http://bugs.php.net/bug.php?id=39449)
+	 */
+	public function &__get($var)
+	{
+		return $this->$var;
+	}
 }
 ?>
