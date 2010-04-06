@@ -25,94 +25,94 @@
  */
 class Feeds
 {
-    /**
-     * Includes the SimplePie RSS file and sets the cache
-     *
-     * @param string $feed
-     * @param bool $cache
-     * @param int $cache_duration
-     *
-     * @return object|false $sp
-     */
-    public function newSimplePie($feed='', $cache=RSS_CACHE, $cache_duration=RSS_CACHE_DURATION)
-    {
-        include_once(EXTENSIONS . "SimplePie/simplepie.inc");
-        
-        if ($feed != '') {
-            $sp = new SimplePie();
-            $sp->set_feed_url($feed);
-            $sp->set_cache_location(CACHE . "rss_cache/");
-            $sp->set_cache_duration($cache_duration);
-            if ($cache == "true") { 
-                $sp->enable_cache(true);
-            } else {
-                $sp->enable_cache(false);
-            }
-            $sp->handle_content_type();
-            return $sp;
-        } else { 
-            return false; 
-        }
-    }
-    
-    
-     /**
-     * Display Hotaru forums feed on Admin front page
-     *
-     * @param int $max_items
-     * @param int $items_with_content
-     * @param int $max_chars
-     */
-    public function adminNews($lang, $max_items = 10, $items_with_content = 3, $max_chars = 300)
-    {
-        $feedurl = 'http://feeds2.feedburner.com/hotarucms';
-        $feed = $this->newSimplePie($feedurl);
-        $feed->init();
-            
-        $output = "";
-        $item_count = 0;
-            
-        if ($feed->data) { 
-            foreach ($feed->get_items() as $item)
-            {
-                $output .= "<div class='admin_news'>";
-                
-                // Title
-                $output .= "<a href='" . $item->get_permalink() . "'>" . sanitize($item->get_title(), 'tags') . "</a><br />";
-                
-                if ($item_count < $items_with_content)
-                {
-                    // Posted by
-                    $output .= "<small>" . $lang["admin_news_posted_by"] . " ";
-                    
-                    foreach ($item->get_authors() as $author) 
-                    {
-                        $output .= $author->get_name(); 
-                    }
-                    
-                    // Date
-                    $output .= " " . $lang["admin_news_on"] . " " . $item->get_date('j F Y');
-                    $output .= "</small><br />";
-                    
-                    // Content
-                    $output .= substr(sanitize($item->get_content(), 'tags'), 0, $max_chars);
-                    $output .= "... ";
-                    
-                    // Read more
-                    $output .= "<small><a href='" . $item->get_permalink() . "' title='" . sanitize($item->get_title(), 'tags') . "'>[" . $lang["admin_news_read_more"] . "]</a>";
-                    $output .= "</small>";
-                }
-                
-                $output .= "</div>";
-                if ($item_count < $items_with_content) { $output .="<br />"; }
-                if ($item_count == ($items_with_content - 1)) { $output .= "<h3>" . $lang["admin_news_more_threads"] . "</h3>"; }
-                
-                $item_count++;
-                if ($item_count >= $max_items) { break;}
-            }
-        }
-        
-        echo $output;
-    }
+	/**
+	 * Includes the SimplePie RSS file and sets the cache
+	 *
+	 * @param string $feed
+	 * @param bool $cache
+	 * @param int $cache_duration
+	 *
+	 * @return object|false $sp
+	 */
+	public function newSimplePie($feed='', $cache=RSS_CACHE, $cache_duration=RSS_CACHE_DURATION)
+	{
+		include_once(EXTENSIONS . "SimplePie/simplepie.inc");
+		
+		if ($feed != '') {
+			$sp = new SimplePie();
+			$sp->set_feed_url($feed);
+			$sp->set_cache_location(CACHE . "rss_cache/");
+			$sp->set_cache_duration($cache_duration);
+			if ($cache == "true") { 
+				$sp->enable_cache(true);
+			} else {
+				$sp->enable_cache(false);
+			}
+			$sp->handle_content_type();
+			return $sp;
+		} else { 
+			return false; 
+		}
+	}
+	
+	
+	 /**
+	 * Display Hotaru forums feed on Admin front page
+	 *
+	 * @param int $max_items
+	 * @param int $items_with_content
+	 * @param int $max_chars
+	 */
+	public function adminNews($lang, $max_items = 10, $items_with_content = 3, $max_chars = 300)
+	{
+		$feedurl = 'http://feeds2.feedburner.com/hotarucms';
+		$feed = $this->newSimplePie($feedurl);
+		$feed->init();
+		
+		$output = "";
+		$item_count = 0;
+		
+		if ($feed->data) { 
+			foreach ($feed->get_items() as $item)
+			{
+				$output .= "<div class='admin_news'>";
+				
+				// Title
+				$output .= "<a href='" . $item->get_permalink() . "'>" . sanitize($item->get_title(), 'tags') . "</a><br />";
+				
+				if ($item_count < $items_with_content)
+				{
+					// Posted by
+					$output .= "<small>" . $lang["admin_news_posted_by"] . " ";
+					
+					foreach ($item->get_authors() as $author) 
+					{
+					    $output .= $author->get_name(); 
+					}
+					
+					// Date
+					$output .= " " . $lang["admin_news_on"] . " " . $item->get_date('j F Y');
+					$output .= "</small><br />";
+					
+					// Content
+					$output .= substr(sanitize($item->get_content(), 'tags'), 0, $max_chars);
+					$output .= "... ";
+					
+					// Read more
+					$output .= "<small><a href='" . $item->get_permalink() . "' title='" . sanitize($item->get_title(), 'tags') . "'>[" . $lang["admin_news_read_more"] . "]</a>";
+					$output .= "</small>";
+				}
+				
+				$output .= "</div>";
+				if ($item_count < $items_with_content) { $output .="<br />"; }
+				if ($item_count == ($items_with_content - 1)) { $output .= "<h3>" . $lang["admin_news_more_threads"] . "</h3>"; }
+				
+				$item_count++;
+				if ($item_count >= $max_items) { break;}
+			}
+		}
+		
+		echo $output;
+	}
 }
 ?>
