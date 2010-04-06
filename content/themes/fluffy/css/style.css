@@ -1,0 +1,141 @@
+/* ----------------------------------------------
+	Template Name : Cut Here
+	Platform: HotaruCMS
+	Version : 1.0  
+	Author: Carlo Armanni
+	Author URI : http://www.tr3ndy.com/ 
+	Last Date Modified : April 06, 2010	
+ ------------------------------------------------ */
+
+body { 
+	background: url(../images/bg.png) repeat-x scroll center top #AEDFE5;
+	font-family: 'Lucida Sans', Arial, verdana;
+	font-size: 15px;
+}
+
+#super {
+background:url("../images/clouds.jpg") no-repeat scroll center top transparent;
+display:block;
+height:100%;
+margin:0 auto;
+text-align:center;
+width:100%;
+}
+
+#container {text-align: left; } /* Centering for IE */
+
+/* HEADER */
+
+#twobutton {height: 30px; width: auto; display: block; }
+#headertop {height: 100px; width: 100%; }
+#logo {background: url(../images/logo.png) no-repeat; height: 100px; width: 300px; }
+#navtop {margin-left: 38px; background: url(../images/navigation.png) no-repeat 158px 17px; height: 107px; }
+#search {-moz-border-radius: 10px 10px 10px 10px; background-color: #ffffff; border:1px solid #DCDDDE; float:right; height:28px; margin: 6px 18px 0 0; width:318px; }
+#search input.lens {margin: -18px 0 0 296px; display:block; height:16px; width: 16px; }
+#search input.searchbox {margin: 1px 0 0 6px; padding: 5px 0 0 5px; border:0; display:block; height:18px; width: 285px; }
+#social { padding-left: 616px; padding-top: 13px;}
+
+#navtop img.avatar {margin-top:-2px;}
+ul.navigation {padding-top: 40px; padding-right: 20px; }
+ul.navigation li {display: inline; float: right; font-size: 1em; font-weight: bold; }
+ul.navigation li a {color: #666; }
+ul.navigation li a:hover {color: #AB0805; }
+ul.navigation li a img { }
+li a#navigation_active {color: #AB0805; }
+
+/* NEWS BODY */
+
+#prebd  {width: 960px; height: 90px; background: url(../images/top-border.png) no-repeat; background-position: 10px 0px;}
+#bd { padding-bottom: 20px; background-color: #fff; background: url(../images/bottom-border.png) no-repeat bottom center #fff; }
+#news_c {padding-left: 20px;}
+#news_c h2 {font-size: 18px; text-transform:capitalize;}
+#news {color: #333; background-color: #fff; font-size: 14px;}
+#news li {margin-left: 0px;}
+#news a {color: #333;}
+#news a:hover {color: #AB0805;}
+
+.show_post_title {font-size:1.3em; font-weight:bold;}
+.show_post { padding-left:10px; margin-bottom:1em; width:500px; text-align: justify;}
+.show_post_content { margin:0.4em 0; overflow:hidden; width: 100%; font-size: 12px; }
+.show_post_author_date  { font-size:10px; font-style:italic;}
+.show_post_extra_fields {font-size: 11px;}
+.show_post_extras {font-size: 14px;}
+.show_tags ul li { float:left; margin-right:5px; display: inline; padding-right:5px;}
+.alert_choices {padding-top: 10px;}
+.alert_choices li { display:inline; padding-right:8px;}
+
+/* COMMENTS */
+
+#comments_wrapper {width: 578px;}
+.comment_form {width: 572px;}
+.comment { background-color:#FAFAFA; border:2px solid #DDDDDD; margin-top:1em;}
+.comment_header { background-color:#E88A8A; border-bottom:1pt solid #DDDDDD; border-top:1pt solid #DDDDDD; display:block; height:16px; margin-bottom:0.4em; padding:0.4em; }
+
+
+/* BREADCRUMBS */
+
+#breadcrumbs {padding: 10px 0 0 0; font-weight: bold; }
+#sort_box {padding: 10px 0 15px 0;}
+.sort_menu {margin-bottom: 5px;}
+.sort_menu li {display:inline; padding: 0; margin: 0; font-size: 18px; font-weight: bold;}
+.sort_menu li.active {color: #cc0000; background-color:#ffffff;}
+.sort_menu_bottom li {display:inline; padding: 0; margin: 0;}
+
+/* SIDEBAR */
+
+#sidebar {margin-bottom: 10px; color: #333; background-color: #fff; 	font-size: 10px; text-align: justify;}
+.widget h2 {text-align: center; font-size: 18px; color: #333; border-bottom: 1px dotted #AB0805;}
+.widget h2 a{text-decoration: none; color: #333;}
+.widget a{text-decoration: none; color: #AB0805;}
+
+/* FOOTER */
+
+#ft {height: 131px; margin-top: 35px; background: url(../images/ground.jpg) repeat-x;}
+#ft p {text-align:center; font-size: 11px; color: #333}
+#ft img {vertical-align: middle;}
+
+/* CATEGORIES */
+
+#header_end { background: url(../images/book.jpg) no-repeat; background-position: -20px 10px; margin-top: -10px; padding-bottom: 6px; text-align: justify; width: 570px; border-bottom: 1px dotted #AB0805;}
+#category_bar {font-size: 11px; font-weight: bold; width: 100%; height: 2.7em; margin: 0px 0 0px; padding: 0px; position:relative; z-index: 1;	}
+#category_bar li.active_cat, #category_bar li a.active_cat{ background: url(../images/cat-highlight.png) no-repeat -4px 2px; text-transform: uppercase; background-color:transparent;}
+#category_bar, #category_bar ul {margin: 0px; padding: 0px; list-style: none; }
+#category_bar a, #category_bar a:visited { text-decoration: none; background: transparent; color: #333; display: block; margin: 0px 0px 0px 0px; padding: 6px 9px; border: none;}
+#category_bar a:hover {background: url(../images/cat-highlight.png) no-repeat -4px 2px; color: #fff; display: block; text-decoration: none; margin: 0px 0px 0px 0px;	padding: 6px 9px; }
+#category_bar li {margin: 0px; padding: 0px; z-index: 1;	text-align: center;}
+#category_bar li li {float: left; margin: 0px; padding: 0px; width: 160px;}
+#category_bar li li a:hover, #category_bar li li a:active { background: #E88A8A; color: #fff;}
+
+/* EXTRA-CUSTOM */
+
+#submit_button_1 {margin: -24px 40px 0 0}
+#post_content {padding-right: 16px}
+#pagination {text-align: center}
+.activity_item {list-style-type:none}
+
+.vote_color_new {background-color:transparent; border:none; color:#000000;}
+.vote_button_bottom { background-color:transparent; background:none repeat scroll 0 0; border:none; margin-top:-15px; padding:0px 0px 2px 15px; width:50px;}
+.vote_button {position:relative; z-index: 999; margin: -7px 0px 0px -33px; height: 55px; width: 87px; background: url(../images/tab.png) no-repeat}
+.vote_button_top {padding: 2px 0px 0px 15px; }
+
+/* SITE CLOSED AND MESSAGE */
+
+#site_closed { background-color: #fff; border-top: 2px solid #000; border-bottom: 2px solid #000; 
+		text-align: center; margin-top: 4em; font-size: 1.6em; line-height: 1.8em; }
+		
+#site_closed_admin_link { font-size: 8pt; margin-top: 1.0em; }
+
+.message {
+	margin: 1.0em auto 1.0em auto;
+	width: 90%;
+	padding: 0.8em;
+	text-align: center;
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+.green    { background-color: #99FF66; }
+.yellow   { background-color: #fbe760; }
+.red      { background-color: #FF6A55; color: #ffffff; }
+.bold_red { color: red; font-weight: bold; }
+.debug { font-size: 0.8em; }
