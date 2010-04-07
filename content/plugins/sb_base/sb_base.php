@@ -103,7 +103,7 @@ class SbBase
 				break;
 			case 'popular':
 				$h->pageType = 'list';
-				$h->pageTitle = $h->lang["sb_base_top"];
+				$h->pageTitle =  ($h->home == 'popular') ? $h->lang["sb_base_site_name"] : $h->lang["sb_base_top"];
 				break;
 			case 'latest':
 				$h->pageType = 'list';
@@ -136,9 +136,6 @@ class SbBase
 			$h->pageType = 'list';
 			$h->pageTitle = $h->lang["sb_base_top"]; 
 		}
-		
-		// no need to continue for other types of homepage
-		if (($h->pageName == $h->home) && ($h->home != 'popular')) { return false; }
 
 		// stop here if not a list or the pageType has been set elsewhere:
 		if (!empty($h->pageType) && ($h->pageType != 'list') && ($h->pageType != 'post')) {
@@ -209,6 +206,9 @@ class SbBase
         if (!isset($h->vars['submit_settings'])) {
             $h->vars['submit_settings'] = $h->getSerializedSettings('submit');
         }
+        
+		// no need to continue for other types of homepage
+		if (($h->pageName == $h->home) && ($h->home != 'popular')) { return false; }
     }
     
     
