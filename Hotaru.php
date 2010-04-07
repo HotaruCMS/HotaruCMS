@@ -29,6 +29,7 @@ class Hotaru
 	protected $isDebug              = false;    // show db queries and page loading time
 	protected $isAdmin              = false;    // flag to tell if we are in Admin or not
 	protected $sidebars             = true;     // enable or disable the sidebars
+	protected $home                 = '';       // name for the front page
 	protected $csrfToken            = '';       // token for CSRF
 	protected $lang                 = array();  // stores language file content
 	
