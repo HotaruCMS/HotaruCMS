@@ -1719,11 +1719,12 @@ class Hotaru
 	 * Count how many approved posts a user has had
 	 *
 	 * @param int $userid (optional)
+	 * @param int $post_type (optional)
 	 * @return int 
 	 */
-	public function postsApproved($userid = 0)
+	public function postsApproved($userid = 0, $post_type = 'news')
 	{
-		return $this->post->postsApproved($this, $userid);
+		return $this->post->postsApproved($this, $userid, $post_type);
 	}
 	
 	
@@ -1733,11 +1734,12 @@ class Hotaru
 	 * @param int $hours
 	 * @param int $minutes
 	 * @param int $user_id (optional)
+	 * @param int $post_type (optional)
 	 * @return int 
 	 */
-	public function countPosts($hours = 0, $minutes = 0, $user_id = 0)
+	public function countPosts($hours = 0, $minutes = 0, $user_id = 0, $post_type = 'news')
 	{
-		return $this->post->countPosts($this, $hours, $minutes, $user_id);
+		return $this->post->countPosts($this, $hours, $minutes, $user_id, $post_type);
 	}
 	
 	

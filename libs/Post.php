@@ -290,7 +290,7 @@ class Post
 	
 	
 	/**
-	 * Checks for existence of a url
+	 * Checks for existence of a source url (i social bookmarking)
 	 *
 	 * @return array|false - array of posts
 	 */    
@@ -365,14 +365,15 @@ class Post
 	 * Count how many approved posts a user has had
 	 *
 	 * @param int $userid (optional)
+	 * @param int $post_type (optional)
 	 * @return int 
 	 */
-	public function postsApproved($h, $user_id = 0)
+	public function postsApproved($h, $user_id = 0, $post_type = 'news')
 	{
 		if (!$user_id) { $user_id = $h->currentUser->id; }
 		
-		$sql = "SELECT COUNT(*) FROM " . TABLE_POSTS . " WHERE (post_status = %s || post_status = %s) AND post_author = %d";
-		$count = $h->db->get_var($h->db->prepare($sql, 'top', 'new', $user_id));
+		$sql = "SELECT COUNT(*) FROM " . TABLE_POSTS . " WHERE (post_status = %s || post_status = %s) AND post_author = %d AND post_type = %s";
+		$count = $h->db->get_var($h->db->prepare($sql, 'top', 'new', $user_id, $post_type));
 		
 		return $count;
 		
@@ -396,9 +397,10 @@ class Post
 	 * @param int $hours
 	 * @param int $minutes
 	 * @param int $user_id (optional)
+	 * @param int $post_type (optional)
 	 * @return int 
 	 */
-	public function countPosts($h, $hours = 0, $minutes = 0, $user_id = 0)
+	public function countPosts($h, $hours = 0, $minutes = 0, $user_id = 0, $post_type = 'news')
 	{
 		if (!$user_id) { $user_id = $h->currentUser->id; }
 		if ($hours) { 
@@ -409,8 +411,8 @@ class Post
 		
 		$start = date('YmdHis', strtotime("now"));
 		$end = date('YmdHis', strtotime($time_ago));
-		$sql = "SELECT COUNT(post_id) FROM " . TABLE_POSTS . " WHERE post_archived = %s AND post_author = %d AND (post_date >= %s AND post_date <= %s)";
-		$count = $h->db->get_var($h->db->prepare($sql, 'N', $user_id, $end, $start));
+		$sql = "SELECT COUNT(post_id) FROM " . TABLE_POSTS . " WHERE post_archived = %s AND post_author = %d AND post_type = %s AND (post_date >= %s AND post_date <= %s)";
+		$count = $h->db->get_var($h->db->prepare($sql, 'N', $user_id, $post_type, $end, $start));
 		
 		return $count;
 	}
