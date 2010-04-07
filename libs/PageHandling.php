@@ -121,8 +121,8 @@ class PageHandling
 			// return the title only
 			if ($raw) { return $h->pageTitle; }
 			
-			// if this is the index page...
-			if ($h->pageName == 'index') {
+			// if this is the home page...
+			if ($h->pageName == $h->home) {
 				// title only (set by plugins, e.g. sb_base)
 				return $h->pageTitle;
 			} else {
