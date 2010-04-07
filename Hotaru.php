@@ -29,7 +29,6 @@ class Hotaru
 	protected $isDebug              = false;    // show db queries and page loading time
 	protected $isAdmin              = false;    // flag to tell if we are in Admin or not
 	protected $sidebars             = true;     // enable or disable the sidebars
-	protected $home                 = '';       // name for the front page
 	protected $csrfToken            = '';       // token for CSRF
 	protected $lang                 = array();  // stores language file content
 	
@@ -46,6 +45,7 @@ class Hotaru
 	protected $email;                           // Email object
 	
 	// page info
+	protected $home                 = '';       // name for front page
 	protected $pageName             = '';       // e.g. index, category
 	protected $pageTitle            = '';       // e.g. Top Stories
 	protected $pageType             = '';       // e.g. post, list
@@ -112,14 +112,14 @@ class Hotaru
 		$lang = new Language();
 		$this->lang = $lang->includeLanguagePack($this->lang, 'main');
 		
-		$this->getPageName();   // fills $h->pageName
+		$this->getPageName();                   // fills $h->pageName
 		
 		switch ($entrance) {
 			case 'admin':
 				$this->isAdmin = true;
 				$this->lang = $lang->includeLanguagePack($this->lang, 'admin');
-				require_once(LIBS . 'AdminAuth.php');       // include Admin class
-				$admin = new AdminAuth();                   // new Admin object
+				require_once(LIBS . 'AdminAuth.php');   // include Admin class
+				$admin = new AdminAuth();               // new Admin object
 				$this->checkCookie();                   // check cookie reads user details
 				$this->checkAccess();                   // site closed if no access permitted
 				$page = $admin->adminInit($this);       // initialize Admin & get desired page
@@ -259,7 +259,20 @@ class Hotaru
  *  PAGE HANDLING FUNCTIONS
  *
  * *********************************************************** */
- 
+
+	/**
+	 * Set the homepage (and set page name)
+	 *
+	 * @param string $home
+	 * @param string $pagename
+	 */
+	public function setHome($home = 'home', $pagename = '')
+	{
+		$pageHandling = new PageHandling();
+		$pageHandling->setHome($this, $home, $pagename);
+	}
+	
+	
 	/**
 	 * Determine the title tags for the header
 	 *

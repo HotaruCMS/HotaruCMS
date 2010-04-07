@@ -27,6 +27,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.shibuya246.com/
  */
+ 
+// set a custom home page:
+$h->setHome('');
 
 // get settings:
 $h->vars['settings'] =  $h->getThemeSettings();

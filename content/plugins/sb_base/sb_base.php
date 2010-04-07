@@ -62,91 +62,92 @@ class SbBase
     }
     
     
-    /**
-     * Determine the pageType
-     */
-    public function theme_index_top($h)
-    {
-        // check if we're using the sort/filter links
-        if ($h->cage->get->keyExists('sort')) {
-            $h->pageName = 'sort';
-        }
+	/**
+	 * Determine the pageType
+	 */
+	public function theme_index_top($h)
+	{
+		// check if we're using the sort/filter links
+		if ($h->cage->get->keyExists('sort')) {
+			$h->pageName = 'sort';
+		}
 
-        $h->pluginHook('sb_base_pre_rss_forward');
-         
-        // check if this is an RSS link forwarding to the source
-        if ($h->cage->get->keyExists('forward')) {
-            $post_id = $h->cage->get->testInt('forward');
-            if ($post_id) { $post = $h->getPost($post_id); }
-            if (isset($post->post_orig_url)) {
-                header("Location:" . urldecode($post->post_orig_url));
-                exit;
-            }
-        }
-       
-        
-        // include sb_base_functions class:
-        require_once(PLUGINS . 'sb_base/libs/SbBaseFunctions.php');
-        $sb_funcs = new SbBaseFunctions();
-        
-        switch ($h->pageName)
-        {
-            case 'rss':
-                $sb_funcs->postRssFeedQuery($h);
-                $sb_funcs->feed_results = $sb_funcs->getPosts($h, $sb_funcs->feed_array);
-                $sb_funcs->doPostRssFeed($h, $sb_funcs->feed_results);
-                exit;
-                break;
-            case 'popular':
-                $h->pageType = 'list';
-                $h->pageTitle = $h->lang["sb_base_top"];
-                break;
-            case 'latest':
-                $h->pageType = 'list';
-                $h->pageTitle = $h->lang["sb_base_latest"];
-                break;
-            case 'upcoming':
-                $h->pageType = 'list';
-                $h->pageTitle = $h->lang["sb_base_upcoming"];
-                break;
-            case 'all':
-                $h->pageType = 'list';
-                $h->pageTitle = $h->lang["sb_base_all"];
-                break;
-            case 'sort':
-                $h->pageType = 'list';
-                $sort = $h->cage->get->testPage('sort');
-                $sort_lang = 'sb_base_' . str_replace('-', '_', $sort);
-                $h->pageTitle = $h->lang[$sort_lang];
-                break;
-            default:
-                // no default or we'd mess up anything set by other plugins
-        }
-        
-        $h->pluginHook('sb_base_theme_index_top');
-        
-        // case for paginated pages, but no pagename
-        if (!$h->pageName && $h->cage->get->keyExists('pg')) {
-            $h->pageName = 'popular';
-            $h->pageType = 'list';
-            $h->pageTitle = $h->lang["sb_base_top"];
-        }
-        
-        // This is where SB Base sets "popular" as the front page:
-        if ($h->pageName == 'index') {
-            $h->pageName = 'popular';
-            $h->pageType = 'list';
-            $h->pageTitle = $h->lang["sb_base_top"];
-        }
-        
-        // stop here if not a list or the pageType has been set elsewhere:
-        if (!empty($h->pageType) && ($h->pageType != 'list') && ($h->pageType != 'post')) {
-            return false; 
-        }
-        
-        // get settings
-        $h->vars['sb_base_settings'] = $h->getSerializedSettings('sb_base');
-        $posts_per_page = $h->vars['sb_base_settings']['posts_per_page'];
+		$h->pluginHook('sb_base_pre_rss_forward');
+		 
+		// check if this is an RSS link forwarding to the source
+		if ($h->cage->get->keyExists('forward')) {
+			$post_id = $h->cage->get->testInt('forward');
+			if ($post_id) { $post = $h->getPost($post_id); }
+			if (isset($post->post_orig_url)) {
+				header("Location:" . urldecode($post->post_orig_url));
+				exit;
+			}
+		}
+
+		// include sb_base_functions class:
+		require_once(PLUGINS . 'sb_base/libs/SbBaseFunctions.php');
+		$sb_funcs = new SbBaseFunctions();
+
+		// Allow SB Base to set the homepage to "popular" unless already set.
+		if (!$h->home) {
+			$h->setHome('popular', 'popular'); // and force page name to popular, too, if not already set.
+		}
+
+		switch ($h->pageName)
+		{
+			case 'rss':
+				$sb_funcs->postRssFeedQuery($h);
+				$sb_funcs->feed_results = $sb_funcs->getPosts($h, $sb_funcs->feed_array);
+				$sb_funcs->doPostRssFeed($h, $sb_funcs->feed_results);
+				exit;
+				break;
+			case 'popular':
+				$h->pageType = 'list';
+				$h->pageTitle = $h->lang["sb_base_top"];
+				break;
+			case 'latest':
+				$h->pageType = 'list';
+				$h->pageTitle = $h->lang["sb_base_latest"];
+				break;
+			case 'upcoming':
+				$h->pageType = 'list';
+				$h->pageTitle = $h->lang["sb_base_upcoming"];
+				break;
+			case 'all':
+				$h->pageType = 'list';
+				$h->pageTitle = $h->lang["sb_base_all"];
+				break;
+			case 'sort':
+				$h->pageType = 'list';
+				$sort = $h->cage->get->testPage('sort');
+				$sort_lang = 'sb_base_' . str_replace('-', '_', $sort);
+				$h->pageTitle = $h->lang[$sort_lang];
+				break;
+			default:
+				// no default or we'd mess up anything set by other plugins
+		}
+		
+		$h->pluginHook('sb_base_theme_index_top');
+		
+		// case for paginated pages, but no pagename
+		if ((!$h->pageName || $h->pageName == 'popular') && $h->cage->get->keyExists('pg')) {
+			if (!$h->home) { $h->setHome('popular'); } // query vars previously prevented getPageName returning a name
+			$h->pageName = 'popular';
+			$h->pageType = 'list';
+			$h->pageTitle = $h->lang["sb_base_top"]; 
+		}
+		
+		// no need to continue for other types of homepage
+		if (($h->pageName == $h->home) && ($h->home != 'popular')) { return false; }
+
+		// stop here if not a list or the pageType has been set elsewhere:
+		if (!empty($h->pageType) && ($h->pageType != 'list') && ($h->pageType != 'post')) {
+			return false; 
+		}
+		
+		// get settings
+		$h->vars['sb_base_settings'] = $h->getSerializedSettings('sb_base');
+		$posts_per_page = $h->vars['sb_base_settings']['posts_per_page'];
         
         // if a list, get the posts:
         switch ($h->pageType)
@@ -224,19 +225,27 @@ class SbBase
     }
     
     
-    /**
-     * Add "Latest" to the navigation bar
-     */
-    public function navigation($h)
-    {
-        // highlight "Latest" as active tab
-        if ($h->pageName == 'latest') { $status = "id='navigation_active'"; } else { $status = ""; }
-        
-        // display the link in the navigation bar
-        echo "<li><a  " . $status . " href='" . $h->url(array('page'=>'latest')) . "'>" . $h->lang["sb_base_latest"] . "</a></li>\n";
-    }
-    
-    
+	/**
+	 * Add "Latest" to the navigation bar
+	 */
+	public function navigation($h)
+	{
+		if ($h->home != 'popular') {
+			// highlight "Top Stories" as active tab
+			if ($h->pageName == 'popular') { $status = "id='navigation_active'"; } else { $status = ""; }
+			
+			// display the link in the navigation bar
+			echo "<li><a  " . $status . " href='" . $h->url(array('page'=>'popular')) . "'>" . $h->lang["sb_base_top"] . "</a></li>\n";
+		}
+		
+		// highlight "Latest" as active tab
+		if ($h->pageName == 'latest') { $status = "id='navigation_active'"; } else { $status = ""; }
+		
+		// display the link in the navigation bar
+		echo "<li><a  " . $status . " href='" . $h->url(array('page'=>'latest')) . "'>" . $h->lang["sb_base_latest"] . "</a></li>\n";
+	}
+
+
     /**
      * Replace the default breadcrumbs in specific circumstances
      */
@@ -249,7 +258,7 @@ class SbBase
         }
         
         switch ($h->pageName) {
-            case 'index':
+            case 'popular':
                 return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink('top');
                 break;
             case 'latest':
@@ -609,11 +618,11 @@ class SbBase
         } 
         
         // POPULAR LINK
-        if (isset($category)) { $url = $h->url(array('category'=>$category));
-         } elseif (isset($tag)) { $url = $h->url(array('tag'=>$tag));
-         } elseif (isset($media)) { $url = $h->url(array('media'=>$media));
-         } elseif (isset($user)) { $url = $h->url(array('page'=>'index', 'user'=>$user));
-         } else { $url = $h->url(array()); } 
+        if (isset($category)) { $url = $h->url(array('page'=>'popular', 'category'=>$category));
+         } elseif (isset($tag)) { $url = $h->url(array('page'=>'popular', 'tag'=>$tag));
+         } elseif (isset($media)) { $url = $h->url(array('page'=>'popular', 'media'=>$media));
+         } elseif (isset($user)) { $url = $h->url(array('page'=>'popular', 'user'=>$user));
+         } else { $url = $h->url(array('page'=>'popular',)); } 
         $h->vars['popular_link'] = $url;
          
         // POPULAR ACTIVE OR INACTIVE

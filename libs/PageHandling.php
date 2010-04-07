@@ -26,6 +26,20 @@
 class PageHandling
 {
 	/**
+	 * Set the homepage (and set page name)
+	 *
+	 * @param string $home
+	 * @param string $pagename
+	 */
+	public function setHome($h, $home = '', $pagename = '')
+	{
+		$h->home = $home;
+		$h->pageName = $h->getPageName();
+		if (!$h->pageName) { $h->pageName = ''; } // force pageName (optional)
+	}
+	
+	
+	/**
 	 * Checks if current page (in url or form) matches the page parameter
 	 *
 	 * @param string $page page name
@@ -82,7 +96,8 @@ class PageHandling
 			$query_args = parse_url($path, PHP_URL_QUERY);  // get all query vars
 			
 			if (!$query_args) { // no query vars - must be the home page
-				return ($h->isAdmin) ? 'admin_index' : 'index';
+				$index = ($h->home) ? $h->home : ''; 
+				return ($h->isAdmin) ? 'admin_index' : $index;
 			}
 			
 			parse_str($query_args, $parsed_query_args); // split query vars into key->value pairs
@@ -138,6 +153,9 @@ class PageHandling
 			
 			// return the title only
 			if ($raw) { return $h->pageTitle; }
+			
+			// return just the site name for the omepage
+			if ($h->pageName == $h->home) { return SITE_NAME; }
 			
 			// return with site name
 			return $h->pageTitle . $delimiter . SITE_NAME;
