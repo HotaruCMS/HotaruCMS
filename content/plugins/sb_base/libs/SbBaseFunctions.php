@@ -71,7 +71,7 @@ class SbBaseFunctions
         } else {
             // for pages, i.e. lists of stories with pagination
             switch ($h->pageName) {
-                case 'index':
+                case 'popular':
                     $this->prepareListFilters($h, 'top');
                     break;
                 case 'latest':

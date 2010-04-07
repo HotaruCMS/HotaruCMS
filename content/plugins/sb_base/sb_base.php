@@ -97,9 +97,9 @@ class SbBase
                 $sb_funcs->doPostRssFeed($h, $sb_funcs->feed_results);
                 exit;
                 break;
-            case 'index':
+            case 'popular':
                 $h->pageType = 'list';
-                $h->pageTitle = $h->lang["sb_base_site_name"];
+                $h->pageTitle = $h->lang["sb_base_top"];
                 break;
             case 'latest':
                 $h->pageType = 'list';
@@ -125,10 +125,18 @@ class SbBase
         
         $h->pluginHook('sb_base_theme_index_top');
         
+        // case for paginated pages, but no pagename
         if (!$h->pageName && $h->cage->get->keyExists('pg')) {
-            $h->pageName = 'index';
+            $h->pageName = 'popular';
             $h->pageType = 'list';
-            $h->pageTitle = $h->lang["sb_base_site_name"];
+            $h->pageTitle = $h->lang["sb_base_top"];
+        }
+        
+        // This is where SB Base sets "popular" as the front page:
+        if ($h->pageName == 'index') {
+            $h->pageName = 'popular';
+            $h->pageType = 'list';
+            $h->pageTitle = $h->lang["sb_base_top"];
         }
         
         // stop here if not a list or the pageType has been set elsewhere:
@@ -236,7 +244,7 @@ class SbBase
     {
         if ($h->subPage) { return false; } // don't use these breadcrumbs if on a subpage 
         
-        if ($h->pageName == 'index') { 
+        if ($h->pageName == 'popular') { 
             $h->pageTitle = $h->lang["sb_base_top"];
         }
         
@@ -609,7 +617,7 @@ class SbBase
         $h->vars['popular_link'] = $url;
          
         // POPULAR ACTIVE OR INACTIVE
-        if (($pagename == 'index') && (!isset($sort)) && $h->pageType != 'profile') { 
+        if (($pagename == 'popular') && (!isset($sort)) && $h->pageType != 'profile') { 
             $h->vars['popular_active'] = "class='active'";
         } else { $h->vars['popular_active'] = ""; }
         
