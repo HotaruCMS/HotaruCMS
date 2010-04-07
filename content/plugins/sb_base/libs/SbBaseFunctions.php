@@ -239,6 +239,9 @@ class SbBaseFunctions
         $prepare_array = array();
         $prepare_array[0] = "temp";    // placeholder to be later filled with the SQL query.
         
+        // default to posts of type "news" if not otherwise set
+        if (!isset($vars['post_type'])) { $vars['post_type = %s'] = 'news'; } 
+        
         if (!empty($vars)) {
             $filter = " WHERE ";
             foreach ($vars as $key => $value) {
