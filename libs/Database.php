@@ -52,14 +52,13 @@ class Database extends ezSQL_mysql
 	
 	
 	/**
-	 * Build an SQL "SELECT" query
+	 * Fill Database Object
 	 *
 	 * @param array $select - associative array of select terms
 	 * @param string $table - full table name including prefix
 	 * @param array $where - associative array of where terms, e.g. array('id = %d' = 5, 'name = %s' = 'tony')
 	 * @param string $orderby - e.g. "post_date DESC"
 	 * @param string $limit - e.g. "10" or "5, 10"
-	 * @return array|false
 	 */
 	public function fillObject($select = array(), $table = '', $where = array(), $orderby = '', $limit = '')
 	{
@@ -68,6 +67,19 @@ class Database extends ezSQL_mysql
 		if ($where)   { $this->where = $where; }
 		if ($orderby) { $this->orderby = $orderby; }
 		if ($limit)   { $this->limit = $limit; }
+	}
+	
+	/**
+	 * Empty Database Object
+	 */
+	public function emptyObject()
+	{
+		$this->select        = array();
+		$this->table         = '';
+		$this->where         = array();
+		$this->orderby       = '';
+		$this->limit         = '';
+		$this->prepare_array = array();
 	}
 	
 	
@@ -85,6 +97,9 @@ class Database extends ezSQL_mysql
 	{
 		// for flexibility, we want to use object properties:
 		$this->fillObject($select, $table, $where, $orderby, $limit);
+		
+		// plugin hook
+		$h->pluginHook('database_select');
 		
 		$this->prepare_array = array();
 		$this->prepare_array[0] = "temp";    // placeholder to be later filled with the SQL query.
@@ -175,6 +190,8 @@ class Database extends ezSQL_mysql
 		}
 		
 		$h->smartCache('off'); // stop using cache
+		
+		$this->emptyObject(); // reset the object or we'll confuse subsequent DB calls.
 		
 		if ($data) { return $data; } else { return false; }
 	}
