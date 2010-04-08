@@ -131,6 +131,7 @@ class Initialize
 		require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php'); // database
 		
 		// include libraries
+		require_once(LIBS . 'Database.php');        // for database queries
 		require_once(LIBS . 'Avatar.php');          // for displaying avatars
 		require_once(LIBS . 'IncludeCssJs.php');    // for including and mergeing css and javascript
 		require_once(LIBS . 'InspektExtras.php');   // for custom Inspekt methods
@@ -158,7 +159,7 @@ class Initialize
 	 */
 	public function initDatabase()
 	{
-		$ezSQL = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
+		$ezSQL = new Database(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
 		$ezSQL->query("SET NAMES 'utf8'");
 		
 		return $ezSQL;

@@ -346,7 +346,7 @@ class AdminPages
 			DB_PREFIX . 'widgets',
 		);
 
-		$h->db->select(DB_NAME);
+		$h->db->selectDB(DB_NAME);
 		
 		if (!$h->db->get_col("SHOW TABLES",0)) { return $db_tables; }
 		

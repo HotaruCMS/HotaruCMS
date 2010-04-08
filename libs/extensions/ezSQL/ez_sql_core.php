@@ -68,7 +68,7 @@
         *  Select DB - over-ridden by specific DB class
         */
 
-        function select()
+        function selectDB()
         {
             die(EZSQL_CORE_ERROR);
         }

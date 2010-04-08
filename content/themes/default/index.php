@@ -27,7 +27,7 @@
  */
 
 // set a custom home page:
-$h->setHome('');
+$h->setHome();
 
 // get language
 $h->includeThemeLanguage();
