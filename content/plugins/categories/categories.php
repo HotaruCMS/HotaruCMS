@@ -60,7 +60,7 @@ class Categories
                 $h->vars['category_safe_name'] = $category;
                 $h->pageTitle = $h->vars['category_name'];
             }
-            if (!$h->pageName) { $h->pageName = 'index'; }
+            if (!$h->pageName) { $h->pageName = 'popular'; }
             $h->subPage = 'category';
             $h->pageType = 'list';
         }

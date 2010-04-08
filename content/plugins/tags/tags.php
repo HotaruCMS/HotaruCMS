@@ -42,7 +42,7 @@ class Tags
     {
         if ($h->cage->get->keyExists('tag')) { 
             $h->pageTitle = stripslashes(make_name($h->cage->get->noTags('tag')));
-            if (!$h->pageName) { $h->pageName = 'index'; }
+            if (!$h->pageName) { $h->pageName = 'popular'; }
             $h->subPage = 'tags';
             $h->pageType = 'list';
             $h->vars['tag'] = $h->cage->get->noTags('tag');

@@ -29,7 +29,7 @@
  */
  
 // set a custom home page:
-$h->setHome('');
+$h->setHome();
 
 // get settings:
 $h->vars['settings'] =  $h->getThemeSettings();

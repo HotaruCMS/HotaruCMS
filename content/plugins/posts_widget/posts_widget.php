@@ -132,7 +132,7 @@ class PostsWidget
         // FILTER TO NEW POSTS OR TOP POSTS?
         if ($type == 'new' && $h->pageName != 'latest') { 
             $title = $h->lang['posts_widget_latest_posts'];
-        } elseif ($type == 'top' && $h->pageName != 'index') {
+        } elseif ($type == 'top' && $h->pageName != 'popular') {
             $title = $h->lang['posts_widget_top_posts'];
         } elseif ($type == 'upcoming' && $h->pageName != 'upcoming') {
             $title = $h->lang['posts_widget_upcoming_posts'];
@@ -181,7 +181,7 @@ class PostsWidget
             // Show latest on front page, top stories on latest page, or both otherwise
             if ($type == 'new' && $h->pageName != 'latest') { 
                 $posts = $sbfuncs->prepareList($h, 'new');
-            } elseif ($type == 'top' && $h->pageName != 'index') {
+            } elseif ($type == 'top' && $h->pageName != 'popular') {
                 $posts = $sbfuncs->prepareList($h, 'top');
             } elseif ($type == 'upcoming' && $h->pageName != 'upcoming') {
                 $posts = $sbfuncs->prepareList($h, 'upcoming');
