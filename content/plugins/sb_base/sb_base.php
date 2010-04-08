@@ -87,6 +87,8 @@ class SbBase
 		// include sb_base_functions class:
 		require_once(PLUGINS . 'sb_base/libs/SbBaseFunctions.php');
 		$sb_funcs = new SbBaseFunctions();
+		
+		$h->pluginHook('sb_base_pre_set_home');
 
 		// Allow SB Base to set the homepage to "popular" unless already set.
 		if (!$h->home) {
