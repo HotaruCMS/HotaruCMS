@@ -34,34 +34,34 @@
 
 class SbBase
 {
-    /**
-     * Install Submit settings if they don't already exist
-     */
-    public function install_plugin($h)
-    {
-        // Default settings 
-        $sb_base_settings = $h->getSerializedSettings();
-        if (!isset($sb_base_settings['posts_per_page'])) { $sb_base_settings['posts_per_page'] = 10; }
-        if (!isset($sb_base_settings['rss_redirect'])) { $sb_base_settings['rss_redirect'] = ''; }
-        if (!isset($sb_base_settings['archive'])) { $sb_base_settings['archive'] = "no_archive"; }
-        $h->updateSetting('sb_base_settings', serialize($sb_base_settings));
-        
-        // Add "open in new tab" option to the default user settings
-        $base_settings = $h->getDefaultSettings('base'); // originals from plugins
-        $site_settings = $h->getDefaultSettings('site'); // site defaults updated by admin
-        if (!isset($base_settings['new_tab'])) { 
-            $base_settings['new_tab'] = ""; $site_settings['new_tab'] = "";
-            $h->updateDefaultSettings($base_settings, 'base'); 
-            $h->updateDefaultSettings($site_settings, 'site');
-        }
-        if (!isset($base_settings['link_action'])) { 
-            $base_settings['link_action'] = ""; $site_settings['link_action'] = "";
-            $h->updateDefaultSettings($base_settings, 'base'); 
-            $h->updateDefaultSettings($site_settings, 'site');
-        }
-    }
-    
-    
+	/**
+	 * Install Submit settings if they don't already exist
+	 */
+	public function install_plugin($h)
+	{
+		// Default settings 
+		$sb_base_settings = $h->getSerializedSettings();
+		if (!isset($sb_base_settings['posts_per_page'])) { $sb_base_settings['posts_per_page'] = 10; }
+		if (!isset($sb_base_settings['rss_redirect'])) { $sb_base_settings['rss_redirect'] = ''; }
+		if (!isset($sb_base_settings['archive'])) { $sb_base_settings['archive'] = "no_archive"; }
+		$h->updateSetting('sb_base_settings', serialize($sb_base_settings));
+		
+		// Add "open in new tab" option to the default user settings
+		$base_settings = $h->getDefaultSettings('base'); // originals from plugins
+		$site_settings = $h->getDefaultSettings('site'); // site defaults updated by admin
+		if (!isset($base_settings['new_tab'])) { 
+			$base_settings['new_tab'] = ""; $site_settings['new_tab'] = "";
+			$h->updateDefaultSettings($base_settings, 'base'); 
+			$h->updateDefaultSettings($site_settings, 'site');
+		}
+		if (!isset($base_settings['link_action'])) { 
+			$base_settings['link_action'] = ""; $site_settings['link_action'] = "";
+			$h->updateDefaultSettings($base_settings, 'base'); 
+			$h->updateDefaultSettings($site_settings, 'site');
+		}
+	}
+
+
 	/**
 	 * Determine the pageType
 	 */
@@ -137,6 +137,9 @@ class SbBase
 			$h->pageTitle = $h->lang["sb_base_top"]; 
 		}
 
+		// no need to continue for other types of homepage
+		if (($h->pageName == $h->home) && ($h->home != 'popular')) { return false; }
+
 		// stop here if not a list or the pageType has been set elsewhere:
 		if (!empty($h->pageType) && ($h->pageType != 'list') && ($h->pageType != 'post')) {
 			return false; 
@@ -145,86 +148,83 @@ class SbBase
 		// get settings
 		$h->vars['sb_base_settings'] = $h->getSerializedSettings('sb_base');
 		$posts_per_page = $h->vars['sb_base_settings']['posts_per_page'];
-        
-        // if a list, get the posts:
-        switch ($h->pageType)
-        {
-            case 'list':
-                $post_count = $sb_funcs->prepareList($h, '', 'count');   // get the number of posts
-                $post_query = $sb_funcs->prepareList($h, '', 'query');   // and the SQL query used
-                $h->vars['pagedResults'] = $h->pagination($post_query, $post_count, $posts_per_page, 'posts');
-                break;
-            case 'post':
-                // if a post is already set (e.g. from the sb_categories plugin), we don't want to
-                // do the default stuff below. We do, however, need the "target", "editorial" stuff after it, though...
-                break;
-            default:
-                // Probably a post, let's check:
-                if (is_numeric($h->pageName)) {
-                    // Page name is a number so it must be a post with non-friendly urls
-                    $exists = $h->readPost($h->pageName);    // read current post
-                    if (!$exists) { $h->pageTitle = $h->lang['main_theme_page_not_found']; return false; }
-                    $h->pageTitle = $h->post->title;
-                    $h->pageType = 'post';
-                } elseif ($post_id = $h->isPostUrl($h->pageName)) {
-                    // Page name belongs to a story
-                    $h->readPost($post_id);    // read current post
-                    $h->pageTitle = $h->post->title;
-                    $h->pageType = 'post';
-                }
-        } // close switch
-        
-        // user defined settings:
-        
-        if (!$h->currentUser->settings) { 
-            // logged out users get the default settings:
-            $h->currentUser->settings = $h->getDefaultSettings('site');
-        }
-        
-        // open links in a new tab?
-        if ($h->currentUser->settings['new_tab']) { 
-            $h->vars['target'] = 'target="_blank"'; 
-        } else { 
-            $h->vars['target'] = ''; 
-        }
-        
-        // open link to the source or the site post?
-        if ($h->currentUser->settings['link_action']) { 
-            $h->vars['link_action'] = 'source'; 
-        } else { 
-            $h->vars['link_action'] = ''; 
-        }
-        
-        // editorial (story with an internal link)
-        if (strstr($h->post->origUrl, BASEURL)) { 
-            $h->vars['editorial'] = true;
-        } else { 
-            $h->vars['editorial'] = false; 
-        } 
-        
-        // get settings from Submit 
-        if (!isset($h->vars['submit_settings'])) {
-            $h->vars['submit_settings'] = $h->getSerializedSettings('submit');
-        }
-        
-		// no need to continue for other types of homepage
-		if (($h->pageName == $h->home) && ($h->home != 'popular')) { return false; }
-    }
-    
-    
-    /**
-     * Match meta tag to a post's description (keywords is done in the Tags plugin)
-     */
-    public function header_meta($h)
-    {    
-        if ($h->pageType != 'post') { return false; }
-        $meta_content = sanitize($h->post->content, 'all');
-        $meta_content = truncate($meta_content, 200);
-        echo '<meta name="description" content="' . $meta_content . '" />' . "\n";
-        return true;
-    }
-    
-    
+		
+		// if a list, get the posts:
+		switch ($h->pageType)
+		{
+			case 'list':
+				$post_count = $sb_funcs->prepareList($h, '', 'count');   // get the number of posts
+				$post_query = $sb_funcs->prepareList($h, '', 'query');   // and the SQL query used
+				$h->vars['pagedResults'] = $h->pagination($post_query, $post_count, $posts_per_page, 'posts');
+				break;
+			case 'post':
+				// if a post is already set (e.g. from the sb_categories plugin), we don't want to
+				// do the default stuff below. We do, however, need the "target", "editorial" stuff after it, though...
+				break;
+			default:
+				// Probably a post, let's check:
+				if (is_numeric($h->pageName)) {
+					// Page name is a number so it must be a post with non-friendly urls
+					$exists = $h->readPost($h->pageName);    // read current post
+					if (!$exists) { $h->pageTitle = $h->lang['main_theme_page_not_found']; return false; }
+					$h->pageTitle = $h->post->title;
+					$h->pageType = 'post';
+				} elseif ($post_id = $h->isPostUrl($h->pageName)) {
+					// Page name belongs to a story
+					$h->readPost($post_id);    // read current post
+					$h->pageTitle = $h->post->title;
+					$h->pageType = 'post';
+				}
+		} // close switch
+		
+		// user defined settings:
+		
+		if (!$h->currentUser->settings) { 
+			// logged out users get the default settings:
+			$h->currentUser->settings = $h->getDefaultSettings('site');
+		}
+		
+		// open links in a new tab?
+		if ($h->currentUser->settings['new_tab']) { 
+			$h->vars['target'] = 'target="_blank"'; 
+		} else { 
+			$h->vars['target'] = ''; 
+		}
+		
+		// open link to the source or the site post?
+		if ($h->currentUser->settings['link_action']) { 
+			$h->vars['link_action'] = 'source'; 
+		} else { 
+			$h->vars['link_action'] = ''; 
+		}
+		
+		// editorial (story with an internal link)
+		if (strstr($h->post->origUrl, BASEURL)) { 
+			$h->vars['editorial'] = true;
+		} else { 
+			$h->vars['editorial'] = false; 
+		} 
+		
+		// get settings from Submit 
+		if (!isset($h->vars['submit_settings'])) {
+			$h->vars['submit_settings'] = $h->getSerializedSettings('submit');
+		}
+	}
+	
+	
+	/**
+	 * Match meta tag to a post's description (keywords is done in the Tags plugin)
+	 */
+	public function header_meta($h)
+	{
+		if ($h->pageType != 'post') { return false; }
+		$meta_content = sanitize($h->post->content, 'all');
+		$meta_content = truncate($meta_content, 200);
+		echo '<meta name="description" content="' . $meta_content . '" />' . "\n";
+		return true;
+	}
+	
+	
 	/**
 	 * Add "Latest" to the navigation bar
 	 */
@@ -246,34 +246,34 @@ class SbBase
 	}
 
 
-    /**
-     * Replace the default breadcrumbs in specific circumstances
-     */
-    public function breadcrumbs($h)
-    {
-        if ($h->subPage) { return false; } // don't use these breadcrumbs if on a subpage 
-        
-        if ($h->pageName == 'popular') { 
-            $h->pageTitle = $h->lang["sb_base_top"];
-        }
-        
-        switch ($h->pageName) {
-            case 'popular':
-                return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink('top');
-                break;
-            case 'latest':
-                return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink('new');
-                break;
-            case 'upcoming':
-                return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink('upcoming');
-                break;
-            case 'all':
-                return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink();
-                break;
-        }
-    }
-    
-    
+	/**
+	 * Replace the default breadcrumbs in specific circumstances
+	 */
+	public function breadcrumbs($h)
+	{
+		if ($h->subPage) { return false; } // don't use these breadcrumbs if on a subpage 
+		
+		if ($h->pageName == 'popular') { 
+			$h->pageTitle = $h->lang["sb_base_top"];
+		}
+		
+		switch ($h->pageName) {
+			case 'popular':
+				return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink('top');
+				break;
+			case 'latest':
+				return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink('new');
+				break;
+			case 'upcoming':
+				return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink('upcoming');
+				break;
+			case 'all':
+				return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink();
+				break;
+		}
+	}
+
+
     /**
      * Determine which template to show and do preparation of variables, etc.
      */

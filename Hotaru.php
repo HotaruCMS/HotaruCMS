@@ -266,7 +266,7 @@ class Hotaru
 	 * @param string $home
 	 * @param string $pagename
 	 */
-	public function setHome($home = 'home', $pagename = '')
+	public function setHome($home = '', $pagename = '')
 	{
 		$pageHandling = new PageHandling();
 		$pageHandling->setHome($this, $home, $pagename);
