@@ -31,7 +31,7 @@
 <!-- Navigation Bar -->
 <ul class="navigation">
     
-    <?php if ($h->pageName == 'index') { $status = "id='navigation_active'"; } else { $status = ""; } ?>
+    <?php if ($h->pageName == $h->home) { $status = "id='navigation_active'"; } else { $status = ""; } ?>
     <li><a <?php echo $status; ?> href="<?php echo BASEURL; ?>"><?php echo $h->lang["main_theme_navigation_home"]; ?></a></li>
     <?php $h->pluginHook('navigation'); ?>
     <?php 

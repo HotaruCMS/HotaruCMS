@@ -29,6 +29,12 @@
  * @link      http://www.tr3ndy.com/
  */
 
+ // set a custom home page:
+$h->setHome();
+
+// get language
+$h->includeThemeLanguage();
+
 // plugin hook
 $result = $h->pluginHook('theme_index_top');
 if (!$result) {
