@@ -44,6 +44,9 @@ class LinkBarSettings
             
         echo "<form name='link_bar_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=link_bar' method='post'>\n";
             
+        echo "<p><input type='checkbox' name='logged_out' value='logged_out' " . $h->vars['link_bar_settings']['show_logged_out'] . " >&nbsp;&nbsp;" . $h->lang["link_bar_settings_show_logged_out"] . "<br />\n";
+        echo "<input type='checkbox' name='logged_in' value='logged_in' " . $h->vars['link_bar_settings']['show_logged_in'] . " >&nbsp;&nbsp;" . $h->lang["link_bar_settings_show_logged_in"] . "</p>\n";
+        
         $h->pluginHook('link_bar_settings_form');
                 
         echo "<br /><br />\n";
@@ -64,6 +67,20 @@ class LinkBarSettings
         // get settings again
         $h->vars['link_bar_settings'] = $h->getSerializedSettings('link_bar');
         $h->vars['link_bar_error'] = false;
+        
+        // show to logged in users?
+        if ($h->cage->post->keyExists('logged_in')) {
+        	$h->vars['link_bar_settings']['show_logged_in'] = 'checked';
+        } else {
+        	$h->vars['link_bar_settings']['show_logged_in'] = '';
+        }
+        
+        // show to logged out users?
+        if ($h->cage->post->keyExists('logged_out')) {
+        	$h->vars['link_bar_settings']['show_logged_out'] = 'checked';
+        } else {
+        	$h->vars['link_bar_settings']['show_logged_out'] = '';
+        }
         
         $h->pluginHook('link_bar_save_settings');
         

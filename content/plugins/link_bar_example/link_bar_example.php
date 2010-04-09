@@ -2,7 +2,7 @@
 /**
  * name: Link Bar Example
  * description: Coding example for extending link Bar
- * version: 0.1
+ * version: 0.2
  * folder: link_bar_example
  * class: LinkBarExample
  * requires: link_bar 0.1
@@ -42,7 +42,7 @@ class LinkBarExample
         $link_bar_settings = $h->getSerializedSettings('link_bar');
         
         // add default settingif not already set
-        if (!isset($link_bar_settings['link_bar_example_text'])) { $link_bar_settings['link_bar_example_text'] = "Hello World!"; }
+        if (!isset($link_bar_settings['example_text'])) { $link_bar_settings['example_text'] = "Hello World!"; }
         
         // update link bar settings
         $h->updateSetting('link_bar_settings', serialize($link_bar_settings), 'link_bar');
@@ -55,10 +55,10 @@ class LinkBarExample
     public function link_bar_settings_form($h)
     {
         // if for some reason our default isn't found, set it here:
-        if (!isset($h->vars["link_bar_example_text"])) { $h->vars["link_bar_example_text"] = "Hello World!"; }
+        if (!isset($h->vars['link_bar_settings']['example_text'])) { $h->vars['link_bar_settings']['example_text'] = "Hello World!"; }
         
         echo "<p>" . $h->lang["link_bar_example_text"] . "&nbsp;";
-        echo "<input type='text' name='lbe_text' size=40 value='" . $h->vars["link_bar_example_text"] . "'></p>\n";
+        echo "<input type='text' name='lbe_text' size=40 value='" . $h->vars['link_bar_settings']['example_text'] . "'></p>\n";
     }
     
     
@@ -70,7 +70,7 @@ class LinkBarExample
         // get submitted data
         $example_text = $h->cage->post->getHtmLawed('lbe_text');
         if ($example_text) {
-            $h->vars["link_bar_example_text"] = $example_text;
+            $h->vars['link_bar_settings']['example_text'] = $example_text;
         } else {
             $h->vars['link_bar_error'] = true;
             $h->messages[$h->lang["link_bar_example_error"]] = "red";
@@ -83,6 +83,6 @@ class LinkBarExample
      */
     public function link_bar_post($h)
     {
-        echo $h->vars['link_bar_settings']['link_bar_example_text'];
+        echo $h->vars['link_bar_settings']['example_text'];
     }
 }

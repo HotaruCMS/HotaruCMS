@@ -14,4 +14,5 @@ Instructions
 
 Changelog
 ---------
+v.0.2 2010/4/09 - Nick - Fix for example text not updating
 v.0.1 2010/3/23 - Nick - Released first version

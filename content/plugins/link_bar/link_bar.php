@@ -2,7 +2,7 @@
 /**
  * name: Link Bar
  * description: Bare bones link bar with an iframe
- * version: 0.3
+ * version: 0.4
  * folder: link_bar
  * class: LinkBar
  * type: bar
@@ -48,24 +48,38 @@ class LinkBar
             $h->updateDefaultSettings($base_settings, 'base');
             $h->updateDefaultSettings($site_settings, 'site');
         }
-    }
-    
-    
-    /**
-     * User Settings - fill the form
-     */
-    public function user_settings_fill_form($h)
-    {
-        if (!isset($h->vars['settings']) || !$h->vars['settings']) { return false; }
         
-        if ($h->vars['settings']['external_link_bar']) {
-            $h->vars['link_bar_yes'] = "checked"; 
-            $h->vars['link_bar_no'] = ""; 
-        } else { 
-            $h->vars['link_bar_yes'] = ""; 
-            $h->vars['link_bar_no'] = "checked"; 
-        }
+        // get settings
+        $link_bar_settings = $h->getSerializedSettings('link_bar');
+        
+        // add default settingif not already set
+        if (!isset($link_bar_settings['show_logged_in'])) { $link_bar_settings['show_logged_in'] = "checked"; }
+        if (!isset($link_bar_settings['show_logged_out'])) { $link_bar_settings['show_logged_out'] = "checked"; }
+        
+        // update link bar settings
+        $h->updateSetting('link_bar_settings', serialize($link_bar_settings), 'link_bar');
     }
+    
+    
+	/**
+	 * User Settings - fill the form
+	 */
+	public function user_settings_fill_form($h)
+	{
+		if (!isset($h->vars['settings']) || !$h->vars['settings']) { return false; }
+	
+		// if bar is disabled for logged in users, return false
+		$lb_settings = $h->getSerializedSettings('link_bar');
+		if (!$lb_settings['show_logged_in']) { return false; }
+		
+		if ($h->vars['settings']['external_link_bar']) {
+			$h->vars['link_bar_yes'] = "checked"; 
+			$h->vars['link_bar_no'] = ""; 
+		} else { 
+			$h->vars['link_bar_yes'] = ""; 
+			$h->vars['link_bar_no'] = "checked"; 
+		}
+	}
         
         
     /**
@@ -75,6 +89,10 @@ class LinkBar
     {
         if (!isset($h->vars['settings']) || !$h->vars['settings']) { return false; }
         
+		// if bar is disabled for logged in users, return false
+		$lb_settings = $h->getSerializedSettings('link_bar');
+		if (!$lb_settings['show_logged_in']) { return false; }
+		
         // Use the external link bar?
         echo "<tr>\n";
         echo "<td>" . $h->lang['link_bar_user_settings'] . "</td>\n";
@@ -89,6 +107,10 @@ class LinkBar
      */
     public function user_settings_pre_save($h)
     {
+		// if bar is disabled for logged in users, return false
+		$lb_settings = $h->getSerializedSettings('link_bar');
+		if (!$lb_settings['show_logged_in']) { return false; }
+		
         // Use the external link bar?
         if ($h->cage->post->getAlpha('link_bar') == 'yes') {
             $h->vars['settings']['external_link_bar'] = "checked"; 
@@ -165,20 +187,32 @@ class LinkBar
         $h->post->origUrl = $h->vars['link_bar_source'];
     }
     
-    /**
-     * Check if the user has link bar enabled in user settings
-     *
-     * @return bool
-     */
-    public function linkBarEnabled($h)
-    {
-        if ($h->currentUser->loggedIn) { 
-            $user_settings = $h->currentUser->getProfileSettingsData($h, 'user_settings');
-            if (isset($user_settings['external_link_bar']) && (!$user_settings['external_link_bar'])) { 
-                return false; 
-            }
-        }
-        
-        return true;
-    }
+	/**
+	 * Check if the user has link bar enabled in user settings, and if globally enabled
+	 *
+	 * @return bool
+	 */
+	public function linkBarEnabled($h)
+	{
+		// Get settings from database if they exist...
+		$lb_settings = $h->getSerializedSettings('link_bar');
+		
+		if ($h->currentUser->loggedIn)
+		{ 
+			// if bar is disabled for logged in users, return false
+			if (!$lb_settings['show_logged_in']) { return false; }
+			
+			$user_settings = $h->currentUser->getProfileSettingsData($h, 'user_settings');
+			if (isset($user_settings['external_link_bar']) && (!$user_settings['external_link_bar'])) { 
+				return false; 
+			}
+		}
+		else
+		{
+			// if bar is disabled for logged out users, return false
+			if (!$lb_settings['show_logged_out']) { return false; }
+		}
+		
+		return true;
+	}
 }
