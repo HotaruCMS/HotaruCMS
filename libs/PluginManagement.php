@@ -479,10 +479,12 @@ class PluginManagement
 		$h->db->query($h->db->prepare("TRUNCATE TABLE " . TABLE_PLUGINHOOKS));
 		
 		// Add plugin hooks back into the hooks table
-		foreach ($rows  as $row)
-		{
-			$sql = "INSERT INTO " . TABLE_PLUGINHOOKS . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
-			$h->db->query($h->db->prepare($sql, $row->plugin_folder, $row->plugin_hook, $h->currentUser->id));
+		if ($rows) {
+			foreach ($rows  as $row)
+			{
+				$sql = "INSERT INTO " . TABLE_PLUGINHOOKS . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
+				$h->db->query($h->db->prepare($sql, $row->plugin_folder, $row->plugin_hook, $h->currentUser->id));
+			}
 		}
 		
 		// optimize the table
