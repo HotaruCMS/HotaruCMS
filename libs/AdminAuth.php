@@ -236,8 +236,16 @@ class AdminAuth
 			// (2592000 = 60 seconds * 60 mins * 24 hours * 30 days.)
 			$month = 2592000 + time();
 			
-			setcookie("hotaru_user", $username, $month, "/");
-			setcookie("hotaru_key", $strCookie, $month, "/");
+			if (strpos(BASEURL, "localhost") !== false) {
+			     setcookie("hotaru_user", $username, $month, "/");
+			     setcookie("hotaru_key", $strCookie, $month, "/");
+			} else {
+			     $parsed = parse_url(BASEURL); 
+			                
+			     // now we need a dot in front of that so cookies work across subdomains:
+			     setcookie("hotaru_user", $username, $month, "/", "." . $parsed['host']);
+			     setcookie("hotaru_key", $strCookie, $month, "/", "." . $parsed['host']);
+			}  
 			
 			return true;
 		}
