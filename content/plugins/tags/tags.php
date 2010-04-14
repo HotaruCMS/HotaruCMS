@@ -2,7 +2,7 @@
 /**
  * name: Tags
  * description: Show tags, filter tags and RSS for tags
- * version: 1.5
+ * version: 1.6
  * folder: tags
  * class: Tags
  * type: tags

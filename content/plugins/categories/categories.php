@@ -2,7 +2,7 @@
 /**
  * name: Categories
  * description: Enables categories for posts
- * version: 1.4
+ * version: 1.5
  * folder: categories
  * class: Categories
  * type: categories

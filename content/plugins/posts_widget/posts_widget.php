@@ -2,7 +2,7 @@
 /**
  * name: Posts Widget
  * description: Adds links in widgets to the latest posts and top stories on the site.
- * version: 1.1
+ * version: 1.2
  * folder: posts_widget
  * class: PostsWidget
  * requires: widgets 0.6, sb_base 0.1
