@@ -1,7 +1,7 @@
 <?php
 
 /* **************************************************************************************************** 
- *  File: /3rdparty/SWCMS/class.httprequest.php
+ *  File: HotaruHttpRequest.php
  *  Purpose: Fetch content from a given url.
  *  Notes: ---
  *  License:
@@ -16,7 +16,7 @@
  *
  **************************************************************************************************** */
 
-class HTTPRequest
+class HotaruHttpRequest
 {
    var $_fp;        // HTTP socket
    var $_url;        // full URL
@@ -55,7 +55,7 @@ class HTTPRequest
    }
 
    // constructor
-   function HTTPRequest($url)
+   function HotaruHttpRequest($url)
    {
 		$this->_url = $url;
 		$this->_scan_url();
@@ -98,7 +98,7 @@ class HTTPRequest
        // redirection?
        if(isset($headers['location']))
        {
-           $http = new HTTPRequest($headers['location']);
+           $http = new HotaruHttpRequest($headers['location']);
            return($http->DownloadToString($http));
        }
        else
