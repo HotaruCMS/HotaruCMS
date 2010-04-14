@@ -695,10 +695,10 @@ class SubmitFunctions
      */
     public function fetchTitle($url)
     {
-        require_once(EXTENSIONS . 'SWCMS/class.httprequest.php');
+        require_once(EXTENSIONS . 'SWCMS/HotaruHttpRequest.php');
         
         if ($url != 'http://' && $url != ''){
-            $r = new HTTPRequest($url);
+            $r = new HotaruHttpRequest($url);
             $string = $r->DownloadToString();
         } else {
             $string = '';
