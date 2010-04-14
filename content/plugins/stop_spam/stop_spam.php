@@ -2,7 +2,7 @@
 /**
  * name: StopSpam
  * description: Checks new users against the StopForumSpam.com blacklist
- * version: 0.3
+ * version: 0.4
  * folder: stop_spam
  * class: StopSpam
  * type: antispam

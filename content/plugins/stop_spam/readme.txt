@@ -26,6 +26,7 @@ Notes
 
 Changelog
 ---------
+v.0.4 2010/04/14 - Nick - Renamed httprequest file and class to avoid clash with a PHP extension
 v.0.3 2010/02/22 - Nick - Reverted to SWCMS httprequest class to avoid CURL warnings
 v.0.2 2010/01/04 - Nick - Updates for compatibility with Hotaru 1.0
 v.0.1 2009/11/23 - Nick - Released first version
