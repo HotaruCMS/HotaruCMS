@@ -2,7 +2,7 @@
 /**
  * name: Widgets
  * description: Manages the contents of the widget blocks
- * version: 0.8
+ * version: 0.9
  * folder: widgets
  * class: Widgets
  * hooks: theme_index_top, admin_theme_index_top, header_include, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, widget_block
@@ -46,59 +46,78 @@ class Widgets
         $h->vars['widgets']->initializeWidgets($h);
     }
 
-    
-    /**
-     * This is the hook in the widget_block (sidebar) template. 
-     *
-     * It builds a new function name from the widget name and calls it.
-     */
-    public function widget_block($h, $block_id = array(1))
-    {
-        $block_id = $block_id[0];
-            
-        $widgets = $h->vars['widgets']->getArrayWidgets($h);
-        
-        if (!$widgets) { return false; }
-        
-        foreach ($widgets as $widget => $details) {
-            $function_name = "widget_" . $widget;
-            
-            // Only show widgets intended for this block
-            if (($details['block'] == $block_id) && $details['enabled'])
-            {
-                /*  include the plugin class if not already. This is usually done in the pluginHook
-                    function, but if no other functions are used, we need to include it here: */
-                require_once(PLUGINS . $details['plugin'] . "/" . $details['plugin'] . ".php");
-                $h->includeLanguage($details['plugin']);  // same for language
-                
-                echo "<div class='widget'>\n";
-                if ($details['class'] && method_exists($details['class'], $function_name)) 
-                {   
-                    // must be a class object with a method that matches!
-                    $class = new $details['class']($widget);
-                    $class->$function_name($h, $details['args']);
-                } 
-                else 
-                {
-                    /* For multiple instances of widgets, we need to strip the id off the end and use the argument as the identifier.
-                       E.g. CHANGE widget_rss_show_1(1); 
-                            TO     widget_rss_show(1); */
-                    
-                    $function_name_array = explode('_', $function_name);
-                    array_pop($function_name_array); 
-                    $function_name = implode('_', $function_name_array);
-                    if ($details['class'])
-                    {
-                        // must be a class object!
-                        $class = new $details['class']($widget);
-                        $class->$function_name($h, $details['args']);
-                    }
-                }
-                echo "</div>\n";
-            }
-        }
-    }
-    
+	
+	/**
+	 * This is the hook in the widget_block (sidebar) template. 
+	 *
+	 * It builds a new function name from the widget name and calls it.
+	 */
+	public function widget_block($h, $block_id = array(1))
+	{
+		$block_id = $block_id[0];
+
+		$widgets = $h->vars['widgets']->getArrayWidgets($h);
+		
+		if (!$widgets) { return false; }
+		
+		foreach ($widgets as $widget => $details)
+		{
+			// Only show widgets intended for this block
+			if ($details['block'] == $block_id)
+			{
+				$this->singleWidget($h, $widget, $details);
+			}
+		}
+	}
+
+
+	/**
+	 * Call individual widget
+	 *
+	 * @param $widget - widget name
+	 * @param $details - array of widget details
+	 */
+	public function singleWidget($h, $widget = '', $details = array())
+	{
+		if (!$widget) { return false; }
+		
+		if (!$details) { $details = $h->vars['widgets']->getArrayWidgets($widget); }
+		
+		if (!$details['enabled']) { return false; }
+		
+		$function_name = "widget_" . $widget;
+		
+		/*  include the plugin class if not already. This is usually done in the pluginHook
+		    function, but if no other functions are used, we need to include it here: */
+		require_once(PLUGINS . $details['plugin'] . "/" . $details['plugin'] . ".php");
+		$h->includeLanguage($details['plugin']);  // same for language
+		
+		echo "<div class='widget'>\n";
+		if ($details['class'] && method_exists($details['class'], $function_name)) 
+		{   
+			// must be a class object with a method that matches!
+			$class = new $details['class']($widget);
+			$class->$function_name($h, $details['args']);
+		} 
+		else 
+		{
+			/* For multiple instances of widgets, we need to strip the id off the end and use the argument as the identifier.
+			   E.g. CHANGE widget_rss_show_1(1); 
+			        TO     widget_rss_show(1); */
+			
+			$function_name_array = explode('_', $function_name);
+			array_pop($function_name_array); 
+			$function_name = implode('_', $function_name_array);
+			if ($details['class'])
+			{
+				// must be a class object!
+				$class = new $details['class']($widget);
+				$class->$function_name($h, $details['args']);
+			}
+		}
+		echo "</div>\n";
+	}
+
 
     /**
      * Widget Settings Page
