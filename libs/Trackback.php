@@ -67,13 +67,13 @@ class Trackback
 	 */
 	public function detectTrackback($h)
 	{
-		include_once(EXTENSIONS . 'SWCMS/class.httprequest.php');
+		include_once(EXTENSIONS . 'SWCMS/HotaruHttpRequest.php');
 		
 		// Fetch the content of the original url...
 		$url = $h->post->origUrl;
 		
 		if ($url != 'http://' && $url != ''){
-		$r = new HTTPRequest($url);
+		$r = new HotaruHttpRequest($url);
 		$content = $r->DownloadToString();
 		} else {
 			$content = '';
