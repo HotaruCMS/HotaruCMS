@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.1.0 2010/04/14 - Nick - Changes to enable home page overriding
 v.0.9 2010/03/27 - Nick - 1 & 3 month options for post archiving, plus reorganization of post RSS methods
 v.0.8 2010/03/24 - Nick - Bug fix for Upcoming RSS and a new plugin hook before the RSS forwarding redirect. 
 v.0.7 2010/03/15 - Nick - Added option to redirect RSS feeds through your site to their sources [courtesy of Gunaxin.com]
