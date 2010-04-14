@@ -172,12 +172,10 @@ function make_url_friendly($input)
 {
 	$output = replace_symbols($input);        
 	$output = mb_substr($output, 0, 240);
-	$output = mb_strtolower($output);
+	$output = mb_strtolower($output, "UTF-8");
 	$output = trim($output);    
-	
 	//From Wordpress and http://www.bernzilla.com/item.php?id=1007
 	$output = sanitize_title_with_dashes($output);
-	
 	$output = urldecode($output); 
 	
 	if ($output) { return $output; } else { return false; }
