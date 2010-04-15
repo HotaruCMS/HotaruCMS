@@ -133,15 +133,19 @@ class Widget
 	 * USAGE: foreach ($widgets as $widget=>$details) 
 	 * { echo "Name: " . $widget; echo $details['order']; echo $details['args']; } 
 	 * 
+	 * @param $widget_name - optional for a single widget
 	 * @return array - of widgets
 	 */
-	public function getArrayWidgets($h)
+	public function getArrayWidgets($h, $widget_name = '')
 	{
 		// Get settings from the database if they exist...
 		$widgets_settings = $h->getSerializedSettings('widgets'); 
 		
 		if ($widgets_settings['widgets']) {
 			$widgets = $widgets_settings['widgets'];    // associative array
+			
+			// return an individual widget
+			if ($widget_name && isset($widgets[$widget_name])) { return $widgets[$widget_name]; }
 		
 			$widgets = $this->orderWidgets($widgets);    // sorts plugins by "order"
 		
