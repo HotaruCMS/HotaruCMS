@@ -132,10 +132,10 @@ ul.nav_right { display: inline; float: right; }
 
 #pagination .pagi_current {
 	color: #fff;
-	background-color: #000;
+	background-color: #c0c0c0;
 	font-weight: bold;
 	padding: 0.3em 0.7em 0.3em 0.7em;
-	border:solid 1px #444444;
+	border:solid 1px #F7F5F5;
 }
 
 #pagination a:hover {
