@@ -145,7 +145,13 @@ class Widget
 			$widgets = $widgets_settings['widgets'];    // associative array
 			
 			// return an individual widget
-			if ($widget_name && isset($widgets[$widget_name])) { return $widgets[$widget_name]; }
+			if ($widget_name && isset($widgets[$widget_name])) { 
+				if (!$h->isActive($widgets[$widget_name]['plugin'])) { 
+					return false; 
+				} else { 
+					return $widgets[$widget_name]; 
+				}
+			}
 		
 			$widgets = $this->orderWidgets($widgets);    // sorts plugins by "order"
 		

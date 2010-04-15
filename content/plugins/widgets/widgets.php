@@ -63,7 +63,7 @@ class Widgets
 		foreach ($widgets as $widget => $details)
 		{
 			// Only show widgets intended for this block
-			if ($details['block'] == $block_id)
+			if (($details['block'] == $block_id) && $details['enabled'])
 			{
 				$this->singleWidget($h, $widget, $details);
 			}
@@ -81,9 +81,11 @@ class Widgets
 	{
 		if (!$widget) { return false; }
 		
-		if (!$details) { $details = $h->vars['widgets']->getArrayWidgets($widget); }
+		if (!$details) { 
+			$details = $h->vars['widgets']->getArrayWidgets($h, $widget); 
+		}
 		
-		if (!$details['enabled']) { return false; }
+		if (!$details) { return false; } // the plugin for this widget is probably inactive
 		
 		$function_name = "widget_" . $widget;
 		
