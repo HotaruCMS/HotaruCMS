@@ -2054,6 +2054,23 @@ class Hotaru
 		$widget->addWidget($this, $plugin, $function, $args);
 	}
 	
+
+	/**
+	 * Get widgets from widgets_settings array
+	 *
+	 * USAGE: foreach ($widgets as $widget=>$details) 
+	 * { echo "Name: " . $widget; echo $details['order']; echo $details['args']; } 
+	 * 
+	 * @param $widget_name - optional for a single widget
+	 * @return array - of widgets
+	 */
+	public function getArrayWidgets($widget_name = '')
+	{
+		require_once(LIBS . 'Widget.php');
+		$widget = new Widget();
+		return $widget->getArrayWidgets($this, $widget_name);
+	}
+	
 	
 	/**
 	 * Delete a widget from the widget db table
