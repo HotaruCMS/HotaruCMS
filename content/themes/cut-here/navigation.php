@@ -33,6 +33,7 @@
                 if($h->isActive('avatar')) {
                     $h->setAvatar($h->currentUser->id, 16);
                     echo $h->linkAvatar();
++					echo '<li>' . $h->linkAvatar() . '</li>';					
                 }
             } ?>
     

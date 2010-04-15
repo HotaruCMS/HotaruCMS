@@ -1,6 +1,6 @@
 <?php 
 /**
- * Theme name: Fluffy
+ * Theme name: CFiber
  * Template name: sidebar.php
  * Template author: Carlo Armanni
  * Template author website: http://www.tr3ndy.com
@@ -29,9 +29,8 @@
 
 ?>
 
-<div id="sidebar" class="grid_4">
+<div id="sidebar" class="grid_4 alpha">
 
-    <?php $h->pluginHook('widget_block', '', array(1)); ?>
+	<?php $h->pluginHook('widget_block', '', array(1)); ?>
 
 </div>
-<div class="clear"></div>

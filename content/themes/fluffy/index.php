@@ -1,6 +1,6 @@
 <?php 
 /**
- * Theme name: default
+ * Theme name: Fluffy
  * Template name: index.php
  * Template author: Carlo Armanni
  * Template author website: http://www.tr3ndy.com

@@ -33,7 +33,8 @@
                 if($h->isActive('avatar')) {
                     $h->setAvatar($h->currentUser->id, 16);
                     echo $h->linkAvatar();
-                }
+					echo '<li>' . $h->linkAvatar() . '</li>';
+					}
     ?> 
                 <?php if (($h->pageType == 'user') && ($h->vars['user']->id == $h->currentUser->id)) { $status = "id='navigation_active'"; } else { $status = ""; } ?>
                 <li><a <?php echo $status; ?> href='<?php echo $h->url(array('user' => $h->currentUser->name)); ?>' title='<?php echo $h->lang["users_profile"]; ?>'>
