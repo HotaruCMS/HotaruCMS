@@ -28,7 +28,7 @@
 
 <h2><?php echo $h->lang['activity_title']; ?>
     <a href="<?php echo $h->url(array('page'=>'rss_activity'))?>" title="<?php echo $h->lang['activity_title_anchor_title']; ?>">
-    <img src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png"></a>
+    <img src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png" alt="rss" /></a>
 </h2>
 
 <div id='activity'>
