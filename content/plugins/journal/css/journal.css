@@ -1,0 +1,27 @@
+/* Journal CSS */
+
+#journal_posts { 
+	float: left; 
+	width: 80%;
+}
+
+#journal_posts .post_form input { 
+	width: 85%;
+	margin-bottom: 0.4em;
+}
+
+#journal_posts .post_form textarea { 
+	width: 100%;
+	margin-bottom: 0.4em;
+}
+
+#journal_posts .form_submit { 
+	float: right;
+}
+
+#journal_posts .post_instructions { 
+}
+
+#journal_posts .journal_post_wrapper {
+	margin-bottom: 2.0em;
+}
