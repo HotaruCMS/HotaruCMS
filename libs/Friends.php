@@ -30,7 +30,6 @@ class Friends
 	 *
 	 * @param int $userid - get people following this user
 	 * @param string $type - 'following' or 'follower'
-	 *
 	 * @return int $count
 	 */
 	public function countFriends($h, $userid = 0, $type = 'follower')
@@ -83,24 +82,62 @@ class Friends
 	 
 	 
 	/**
-	 * Follow / become a fan of user X
+	 * Check if the specified user is already following or being followed by $h->currentUser
 	 *
-	 * @param int $userid - user to follow
+	 * @param string $type - 'following' or 'follower'
+	 * @return bool
 	 */
-	public function follow($h, $userid = 0)
-	{
+	 public function checkFriends($h, $user_id = 0, $type = 'follower')
+	 {
+		if (!$user_id) { return false; }
+		
+		if ($type == 'follower') { 
+			$type1 = "following_user_id"; 
+			$type2 = "follower_user_id"; 
+		} else { 
+			$type1 = "follower_user_id"; 
+			$type2 = "following_user_id";
+		}
+	
+		$sql = "SELECT count(*) FROM " . DB_PREFIX . "follow WHERE " . $type1 ." = %d AND " . $type2 . " = %d";
+		$result = $h->db->get_var($h->db->prepare($sql, $h->currentUser->id, $user_id));
+	
+		return ($result) ? true : false;
+	 }
 
-	}
-	
-	
+
 	/**
-	 * Unfollow / stop being a fan of user X
+	 * Update Friend - follow or unfollow
 	 *
-	 * @param int $userid - user to stop following
+	 * @param int $userid - user to follow or unfollow
+	 * @param string $action - 'follow' or 'unfollow'
+	 * @return bool
 	 */
-	public function unfollow($h, $userid = 0)
+	public function updateFriends($h, $userid = 0, $action = 'follow')
 	{
-
+		if (!$user_id) { return false; }
+		
+		if ($action = 'follow') 
+		{
+			// if already following, return false 
+			if ($h->isFollowing($user_id)) { return false; }
+			
+			// start following
+			$sql = "INSERT INTO " . TABLE_FRIENDS . " (follower_user_id, following_user_id) VALUES (%d, %d)";
+			$h->db->query($h->db->prepare($sql, $h->currentUser->id, $user_id));
+		}
+		else
+		{
+		// if not following anyway, return false 
+		if ($h->isFollower($user_id)) { return false; }
+		
+		// stop following
+		$sql = "DELETE FROM " . DB_PREFIX . "follow WHERE (follower_user_id = %d AND following_user_id = %d)";
+		$h->db->query($h->db->prepare($sql, $h->currentUser->id, $user_id));
+		}
+		
+		return true;
 	}
+
 }
 ?>

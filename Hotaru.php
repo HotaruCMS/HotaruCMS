@@ -2196,15 +2196,44 @@ class Hotaru
 	
 	
 	/**
+	 * Is current user being followed by user X?
+	 *
+	 * @param int $userid - user X
+	 * @return bool
+	 */
+	public function isFollower($userid = 0)
+	{
+		require_once(LIBS . 'Friends.php');
+		$friends = new Friends();
+		return $friends->checkFriends($this, $userid, 'follower');
+	}
+	
+	
+	/**
+	 * Is current user following user X?
+	 *
+	 * @param int $userid - user X
+	 * @return bool
+	 */
+	public function isFollowing($userid = 0)
+	{
+		require_once(LIBS . 'Friends.php');
+		$friends = new Friends();
+		return $friends->checkFriends($this, $userid, 'following');
+	}
+	
+	
+	/**
 	 * Follow / become a fan of user X
 	 *
 	 * @param int $follow - user to follow
+	 * @return bool
 	 */
 	public function follow($userid = 0)
 	{
 		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
-		$friends->follow($this, $userid);
+		return $friends->updateFriends($this, $userid, 'follow');
 	}
 	
 	
@@ -2212,12 +2241,13 @@ class Hotaru
 	 * Unfollow / stop being a fan of user X
 	 *
 	 * @param int $unfollow - user to stop following
+	 * @return bool
 	 */
 	public function unfollow($userid = 0)
 	{
 		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
-		$friends->unfollow($this, $userid);
+		return $friends->updateFriends($this, $userid, 'unfollow');
 	}
 }
 ?>
