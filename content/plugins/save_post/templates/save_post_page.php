@@ -3,7 +3,7 @@
 <?php
 	$profile = $h->vars['user']->getProfileSettingsData($h, 'user_profile', $h->vars['user']->id);
 	$output = '
-		<h2 class="widget_head widget_save_post_title">'.$h->lang['save_post_title'].'</h2>
+		<h2>' . $h->lang['save_post_title'] . ': ' . $h->vars['user']->name . '</h2>
 		
 		<p>' . $h->lang['save_post_page_description'] . '</p>
 		
