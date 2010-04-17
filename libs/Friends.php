@@ -28,13 +28,13 @@ class Friends
 	/**
 	 * count followers / following
 	 *
-	 * @param int $userid - get people following this user
+	 * @param int $user_id - get people following this user
 	 * @param string $type - 'following' or 'follower'
 	 * @return int $count
 	 */
-	public function countFriends($h, $userid = 0, $type = 'follower')
+	public function countFriends($h, $user_id = 0, $type = 'follower')
 	{
-		if (!$userid) { $userid = $h->currentUser->id; }
+		if (!$user_id) { $user_id = $h->currentUser->id; }
 		
 		if ($type == 'follower') { 
 			$where = "following_user_id"; // get users who are followING this user
@@ -52,14 +52,14 @@ class Friends
 	 /**
 	 * Get Followers / Following
 	 *
-	 * @param int $userid - get people following this user
+	 * @param int $user_id - get people following this user
 	 * @param string $type - 'following' or 'follower'
 	 * @param string $return - 'array' or prepared 'query'
 	 * @return array | string
 	 */
 	 public function getFriends($h, $user_id = 0, $type = 'follower', $return = 'array')
 	 {
-		if (!$userid) { $userid = $h->currentUser->id; }
+		if (!$user_id) { $user_id = $h->currentUser->id; }
 
 		if ($type == 'follower') { 
 			$type1 = "follower_user_id"; 
@@ -109,11 +109,11 @@ class Friends
 	/**
 	 * Update Friend - follow or unfollow
 	 *
-	 * @param int $userid - user to follow or unfollow
+	 * @param int $user_id - user to follow or unfollow
 	 * @param string $action - 'follow' or 'unfollow'
 	 * @return bool
 	 */
-	public function updateFriends($h, $userid = 0, $action = 'follow')
+	public function updateFriends($h, $user_id = 0, $action = 'follow')
 	{
 		if (!$user_id) { return false; }
 		

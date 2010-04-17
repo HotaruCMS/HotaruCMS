@@ -2140,86 +2140,86 @@ class Hotaru
 	/**
 	 * count followers
 	 *
-	 * @param int $userid - get people following this user
+	 * @param int $user_id - get people following this user
 	 * @return int
 	 */
-	public function countFollowers($userid = 0)
+	public function countFollowers($user_id = 0)
 	{
 		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
-		return $friends->countFriends($this, $userid, 'follower')
+		return $friends->countFriends($this, $user_id, 'follower');
 	}
 	
 	
 	/**
 	 * count following
 	 *
-	 * @param int $userid - get people following this user
+	 * @param int $user_id - get people following this user
 	 * @return int
 	 */
-	public function countFollowing($userid = 0)
+	public function countFollowing($user_id = 0)
 	{
 		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
-		return $friends->countFriends($this, $userid, 'following')
+		return $friends->countFriends($this, $user_id, 'following');
 	}
 	
 	
 	/**
 	 * get followers
 	 *
-	 * @param int $userid - get this user's followers
+	 * @param int $user_id - get this user's followers
 	 * @param string $return - return 'array' of users of prepared 'query'
 	 * @return array|string
 	 */
-	public function getFollowers($userid = 0, $return = 'array')
+	public function getFollowers($user_id = 0, $return = 'array')
 	{
 		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
-		return $friends->getFriends($this, $userid, 'follower', $return);
+		return $friends->getFriends($this, $user_id, 'follower', $return);
 	}
 	
 	
 	/**
 	 * get people this user is following
 	 *
-	 * @param int $userid
+	 * @param int $user_id
 	 * @param string $return - return 'array' of users of prepared 'query'
 	 * @return array|string
 	 */
-	public function getFollowing($userid = 0, $return = 'array')
+	public function getFollowing($user_id = 0, $return = 'array')
 	{
 		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
-		$friends->getFollowing($this, $userid, 'following', $return);
+		$friends->getFriends($this, $user_id, 'following', $return);
 	}
 	
 	
 	/**
 	 * Is current user being followed by user X?
 	 *
-	 * @param int $userid - user X
+	 * @param int $user_id - user X
 	 * @return bool
 	 */
-	public function isFollower($userid = 0)
+	public function isFollower($user_id = 0)
 	{
 		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
-		return $friends->checkFriends($this, $userid, 'follower');
+		return $friends->checkFriends($this, $user_id, 'follower');
 	}
 	
 	
 	/**
 	 * Is current user following user X?
 	 *
-	 * @param int $userid - user X
+	 * @param int $user_id - user X
 	 * @return bool
 	 */
-	public function isFollowing($userid = 0)
+	public function isFollowing($user_id = 0)
 	{
 		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
-		return $friends->checkFriends($this, $userid, 'following');
+		return $friends->checkFriends($this, $user_id, 'following');
 	}
 	
 	
@@ -2229,11 +2229,11 @@ class Hotaru
 	 * @param int $follow - user to follow
 	 * @return bool
 	 */
-	public function follow($userid = 0)
+	public function follow($user_id = 0)
 	{
 		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
-		return $friends->updateFriends($this, $userid, 'follow');
+		return $friends->updateFriends($this, $user_id, 'follow');
 	}
 	
 	
@@ -2243,11 +2243,11 @@ class Hotaru
 	 * @param int $unfollow - user to stop following
 	 * @return bool
 	 */
-	public function unfollow($userid = 0)
+	public function unfollow($user_id = 0)
 	{
 		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
-		return $friends->updateFriends($this, $userid, 'unfollow');
+		return $friends->updateFriends($this, $user_id, 'unfollow');
 	}
 }
 ?>

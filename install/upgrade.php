@@ -448,13 +448,12 @@ function do_upgrade($old_version)
 		$exists = $h->db->table_exists('friends');
 		if (!$exists) {
 			// create a Friends table
-			$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
+			$sql = "CREATE TABLE `" . DB_PREFIX . "friends` (
 					`follower_user_id` int(20) NOT NULL default '0',
 					`following_user_id` int(20) NOT NULL default '0',
 					`friends_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 					PRIMARY KEY (follower_user_id, following_user_id)
 			) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Friends';";
-			echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
 			$h->db->query($sql);
 		}
 
