@@ -33,6 +33,7 @@ $profile = $h->vars['profile'];
 
 <div id="profile" class="users_content">
 
+<h2><?php echo $h->lang["users_profile"]; ?>: <?php echo $h->vars['user']->name; ?></h2>
    
     <div id="profile_bio">
         <?php echo $profile['bio']; ?>

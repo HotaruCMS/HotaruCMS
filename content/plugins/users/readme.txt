@@ -13,6 +13,8 @@ Instructions
 
 Changelog
 ---------
+v.1.8 2010/04/17 - Nick - Added "Profile: username" header to profile page
+                 - shibuya246 - Moved user profile avatar to the user navigation menu
 v.1.7 2010/03/20 - Nick - Fix for moderator email notification when using SMTP email authentication
 v.1.6 2010/03/13 - Nick - Fix for missing user menu when viewing a message
 v.1.5 2010/02/28 - Nick - Fix for undefined $user errors
