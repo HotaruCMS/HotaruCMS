@@ -56,18 +56,15 @@ class FollowFuncs
 		$user_id == 0 ? $user_id = $h->vars['user']->id : '';
 			
 		if ($status == "unfollow") {
-			if ($h->isFollowing($user_id)) {
-				$h->unfollow($user_id);
-				return json_encode(array('result'=>'Follow'));  // Send back opposite so we can use words for buttons
-			}			
+			if ($h->isFollowing($user_id)) 
+				$h->unfollow($user_id);						
 		} else {
-			if (!$h->isFollowing($user_id)) {
-				$h->follow($user_id);
-				return json_encode(array('result'=>'Unfollow'));  // Send back opposite so we can use words for buttons
-			}			
+			if (!$h->isFollowing($user_id)) 
+				$h->follow($user_id);						
 		}
 
 		// Make a final check of the updated status, so we can return the correct label, otherwise an error may be returned
+		// Send back opposite so we can use words for buttons
 		if ($h->isFollowing($user_id)) { return json_encode(array('result'=>'Unfollow')); } else { return json_encode(array('result'=>'Follow')); }
 	}
 
