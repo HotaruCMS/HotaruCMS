@@ -128,12 +128,12 @@ class Friends
 		}
 		else
 		{
-		// if not following anyway, return false 
-		if ($h->isFollower($user_id)) { return false; }
-		
-		// stop following
-		$sql = "DELETE FROM " . DB_PREFIX . "follow WHERE (follower_user_id = %d AND following_user_id = %d)";
-		$h->db->query($h->db->prepare($sql, $h->currentUser->id, $user_id));
+			// if not following anyway, return false 
+			if ($h->isFollower($user_id)) { return false; }
+			
+			// stop following
+			$sql = "DELETE FROM " . DB_PREFIX . "follow WHERE (follower_user_id = %d AND following_user_id = %d)";
+			$h->db->query($h->db->prepare($sql, $h->currentUser->id, $user_id));
 		}
 		
 		return true;

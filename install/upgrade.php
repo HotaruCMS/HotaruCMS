@@ -445,17 +445,18 @@ function do_upgrade($old_version)
 	if ($old_version == "1.1.4") {
 
 		// check whether table exists first
-
-		// create a Friends table
-		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
-				`follower_user_id` int(20) NOT NULL default '0',
-				`following_user_id` int(20) NOT NULL default '0',
-                                `friends_date` datetime NOT NULL default '0000-00-00 00:00:00',
-                                `friends_updateby` datetime NOT NULL default '0000-00-00 00:00:00',
-				PRIMARY KEY (follower_user_id, following_user_id)
-	       ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Friends';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
-		$db->query($sql);
+		$exists = $h->db->table_exists('friends');
+		if (!$exists) {
+			// create a Friends table
+			$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
+					`follower_user_id` int(20) NOT NULL default '0',
+					`following_user_id` int(20) NOT NULL default '0',
+					`friends_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+					PRIMARY KEY (follower_user_id, following_user_id)
+			) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Friends';";
+			echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+			$h->db->query($sql);
+		}
 
 		// update "old version" for next set of upgrades
 		$old_version = "1.2.0";

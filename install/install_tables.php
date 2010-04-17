@@ -131,6 +131,21 @@ function create_table($table_name)
 	}
 	
 	
+	// FRIENDS TABLE
+	
+		if ($table_name == "friends") {
+		//echo "table doesn't exist. Stopping before creation."; exit;
+		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
+				`follower_user_id` int(20) NOT NULL default '0',
+				`following_user_id` int(20) NOT NULL default '0',
+				`friends_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+				PRIMARY KEY (follower_user_id, following_user_id)
+		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Friends';";
+		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		$db->query($sql);
+		}
+
+
 	// MISCDATA TABLE - for storing default permissions, etc.
 	
 	if ($table_name == "miscdata") {
@@ -531,27 +546,6 @@ function create_table($table_name)
 		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql); 
 	}
-
-
-	// FRIENDS TABLE
-
-        if ($table_name == "friends") {
-		//echo "table doesn't exist. Stopping before creation."; exit;
-		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
-				`follower_user_id` int(20) NOT NULL default '0',
-				`following_user_id` int(20) NOT NULL default '0',
-                                `friends_date` datetime NOT NULL default '0000-00-00 00:00:00',
-                                `friends_updateby` datetime NOT NULL default '0000-00-00 00:00:00',
-				PRIMARY KEY (follower_user_id, following_user_id)
-	       ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Friends';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
-		$db->query($sql);
-        }
-
-
-
-
-
 
 }
 ?>
