@@ -2,7 +2,7 @@
 /**
  * name: Save Posts
  * description: Save posts as favorites
- * version: 0.5
+ * version: 0.6
  * folder: save_post
  * class: SavePost
  * requires: sb_base 0.1
@@ -113,8 +113,7 @@ class SavePost
 	{
 		if ($h->currentUser->loggedIn) {
 			
-			$h->vars['user'] = new UserAuth();
-			$profile = $h->vars['user']->getProfileSettingsData($h, 'user_profile', $h->currentUser->id);
+			$profile = $h->currentUser->getProfileSettingsData($h, 'user_profile', $h->currentUser->id);
 
 			if ( isset($profile['saved_posts']) && in_array( $h->post->id, array_values($profile['saved_posts']) ) ) {
 				echo '<li><a href="javascript://" class="save_post_link remove_post_item" id="post_' . $h->post->id . '">' . $h->lang['save_post_remove'] .'</a></li>';
