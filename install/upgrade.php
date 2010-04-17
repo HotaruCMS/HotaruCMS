@@ -441,6 +441,26 @@ function do_upgrade($old_version)
 		$old_version = "1.1.4"; 
 	}
 
+	 // 1.1.4 to 1.2
+	if ($old_version == "1.1.4") {
+
+		// check whether table exists first
+
+		// create a Friends table
+		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
+				`follower_user_id` int(20) NOT NULL default '0',
+				`following_user_id` int(20) NOT NULL default '0',
+                                `friends_date` datetime NOT NULL default '0000-00-00 00:00:00',
+                                `friends_updateby` datetime NOT NULL default '0000-00-00 00:00:00',
+				PRIMARY KEY (follower_user_id, following_user_id)
+	       ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Friends';";
+		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		$db->query($sql);
+
+		// update "old version" for next set of upgrades
+		$old_version = "1.2.0";
+	}
+
 	// Update Hotaru version number to the database (referred to when upgrading)
 	$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_key = %s, miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";
 	$h->db->query($h->db->prepare($sql, 'hotaru_version', $h->version, $h->version, 'hotaru_version'));

@@ -217,7 +217,7 @@ function database_creation()
 	}
 	
 	//create tables
-	$tables = array('blocked', 'categories', 'comments', 'commentvotes', 'miscdata', 'plugins', 'pluginhooks', 'pluginsettings', 'posts', 'postmeta', 'postvotes', 'settings', 'tags', 'tempdata', 'tokens', 'users', 'usermeta', 'useractivity', 'widgets');
+	$tables = array('blocked', 'categories', 'comments', 'commentvotes', 'miscdata', 'plugins', 'pluginhooks', 'pluginsettings', 'posts', 'postmeta', 'postvotes', 'settings', 'tags', 'tempdata', 'tokens', 'users', 'usermeta', 'useractivity', 'widgets', 'friends');
 	foreach ($tables as $table_name) {
 		create_table($table_name);
 	} 
