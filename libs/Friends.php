@@ -127,7 +127,7 @@ class Friends
 			$h->db->query($h->db->prepare($sql, $h->currentUser->id, $user_id));
 		}
 		else
-		{
+		{   
 			// if not following anyway, return false 
 			if (!$h->isFollower($user_id)) { return false; }
 			
