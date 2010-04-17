@@ -33,21 +33,13 @@ $profile = $h->vars['profile'];
 
 <div id="profile" class="users_content">
 
-    <?php 
-        if ($h->isActive('avatar')) { 
-            echo "<div id='profile_avatar'>";
-            $h->setAvatar($h->vars['user']->id, 80);
-            echo $h->getAvatar();
-            echo "</div>";
-        }
-    ?>
-    
+   
     <div id="profile_bio">
         <?php echo $profile['bio']; ?>
     </div>
     
     <div class="clear"></div>
-    
+
     <?php $h->pluginHook('profile'); ?>
     
 </div>

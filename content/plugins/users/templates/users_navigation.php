@@ -29,6 +29,15 @@ $username = $h->vars['user']->name;
 
 <div class="profile_navigation">
 
+    <?php
+     if ($h->isActive('avatar')) {
+            echo "<div id='profile_avatar'>";
+            $h->setAvatar($h->vars['user']->id, 80);
+            echo $h->getAvatar();
+            echo "</div>";
+    }
+    ?>
+
     <ul>
     
     <li><a href='<?php echo $h->url(array('user'=>$username)); ?>'><?php echo $h->lang["users_profile"]; ?></a></li>
