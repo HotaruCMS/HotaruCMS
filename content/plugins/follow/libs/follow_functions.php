@@ -24,7 +24,7 @@ class FollowFuncs
 	 public function getFollowUsers($h, $type = 'follower', $user_id = 0)
 	 {
 		$user_id == 0 ? $user_id = $h->vars['user']->id : 0;
-	
+		
 		if ($type == 'follower') {
 			return $h->getFollowers($user_id, 'query');
 		} else { 

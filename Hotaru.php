@@ -2191,7 +2191,7 @@ class Hotaru
 	{
 		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
-		$friends->getFriends($this, $user_id, 'following', $return);
+		return $friends->getFriends($this, $user_id, 'following', $return);
 	}
 	
 	

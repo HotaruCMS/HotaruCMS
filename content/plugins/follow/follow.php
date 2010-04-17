@@ -35,46 +35,24 @@
 class Follow
 {
 
-    /**
-     * Add follow settings fields to the db.
-     */
-    public function install_plugin($h)
-    {
-        // Default settings
-        $follow_settings = $h->getSerializedSettings();
-
 	/**
-	*
-	* Type in your settings to be saved / retrieved from the db table
-	* e.g. for a simple checked box  if (!isset($follow_settings['setting_var_to_save'])) { $follow_settings['setting_var_to_save'] = "checked"; }
-	*
-	*/
+	 * Add follow settings fields to the db.
+	 */
+	public function install_plugin($h)
+	{
+		// Default settings
+		$follow_settings = $h->getSerializedSettings();
 
-	$h->updateSetting('follow_settings', serialize($follow_settings));
-
-	$this->create_table($h);
+		/**
+		*
+		* Type in your settings to be saved / retrieved from the db table
+		* e.g. for a simple checked box  if (!isset($follow_settings['setting_var_to_save'])) { $follow_settings['setting_var_to_save'] = "checked"; }
+		*
+		*/
+		
+		$h->updateSetting('follow_settings', serialize($follow_settings));
     }
-
-    /**
-     * Create db table for plugin
-     */
-    public function create_table($h)
-    {
-	# autoreader_campaign
-        $exists = $h->db->table_exists("follow");
-        if (!$exists) {
-            $h->db->query ( "CREATE TABLE `" . DB_PREFIX . "follow` (                                
-				follower_user_id int(20) NOT NULL default '0',
-				following_user_id int(20) NOT NULL default '0',
-                                lastactive datetime NOT NULL default '0000-00-00 00:00:00',
-                                created_on datetime NOT NULL default '0000-00-00 00:00:00',
-				PRIMARY KEY (follower_user_id, following_user_id)
-                           ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Follow plugin'; "
-            );
-        }
-	
-    }
-
+    
 
     /**
      * Profile menu link to "follow"
@@ -86,7 +64,7 @@ class Follow
 	
 	 echo "<li><a href='" . $h->url(array('page'=>'followers', 'user'=>$h->vars['user']->name)) . "'>" . $h->lang['follow_list_followers'] . "</a> <small>(" . $FollowFuncs->getFollowCount($h, "follower") . ")</small></li>\n";
 	 echo "<li><a href='" . $h->url(array('page'=>'following', 'user'=>$h->vars['user']->name)) . "'>" . $h->lang['follow_list_following'] . "</a> <small>(" . $FollowFuncs->getFollowCount($h, "following") . ")</small></li>\n";
-	 
+
 	 if ($h->vars['user']->name != $h->currentUser->name) {
 	    // check if already following
 	    $follow = $FollowFuncs->checkFollow($h, 'following');	    
@@ -135,8 +113,8 @@ class Follow
 	    $FollowFuncs = new FollowFuncs();
 
 	    // create a user object and fill it with user info (user being viewed)
-            $h->vars['user'] = new UserAuth();
-            $h->vars['user']->getUserBasic($h, 0, $user);
+		$h->vars['user'] = new UserAuth();
+		$h->vars['user']->getUserBasic($h, 0, $user);
 
 	    switch ($h->pageName)
 	    {
