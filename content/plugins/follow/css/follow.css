@@ -1,7 +1,7 @@
 /* 
     Document   : follow
     Created on : 2010/04/17, 18:45:22
-    Author     : acm2001
+    Author     : shibuya246
     Description:
         Purpose of the stylesheet follows.
 */
@@ -12,6 +12,18 @@
 */
 
 .follow_button {
-    color: lightblue;
+    color:blue;
 }
 
+.follow_list {
+    margin-left:auto;
+    margin-right:auto;
+    width:100%;
+
+}
+
+.follow_row {
+    background-color:#FFFFAA;
+    border-bottom:1px solid #CCCCCC;
+    border-top:1px solid #CCCCCC;
+}

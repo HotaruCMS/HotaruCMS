@@ -6,7 +6,7 @@
  * folder: follow
  * class: Follow
  * type: Follow
- * hooks: install_plugin,admin_plugin_settings,admin_sidebar_plugin_settings, profile_navigation, theme_index_top, breadcrumbs, theme_index_main
+ * hooks: install_plugin,admin_plugin_settings,admin_sidebar_plugin_settings, profile_navigation, theme_index_top, breadcrumbs, theme_index_main, header_include
  * author: shibuya246
  * authorurl: http://shibuya246.com
  *
