@@ -2136,7 +2136,33 @@ class Hotaru
  *  FRIEND FUNCTIONS
  *
  * *********************************************************** */
- 
+
+	/**
+	 * count followers
+	 *
+	 * @param int $userid - get people following this user
+	 */
+	public function countFollowers($userid = 0)
+	{
+		require_once(LIBS . 'Friends.php');
+		$friends = new Friends();
+		$friends->countFriends($this, $userid, 'follower')
+	}
+	
+	
+	/**
+	 * count following
+	 *
+	 * @param int $userid - get people following this user
+	 */
+	public function countFollowing($userid = 0)
+	{
+		require_once(LIBS . 'Friends.php');
+		$friends = new Friends();
+		$friends->countFriends($this, $userid, 'following')
+	}
+	
+	
 	/**
 	 * get followers
 	 *

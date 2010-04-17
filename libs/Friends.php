@@ -26,6 +26,29 @@
 class Friends
 {
 	/**
+	 * count followers / following
+	 *
+	 * @param int $userid - get people following this user
+	 * @param string $type - 'following' or 'follower'
+	 */
+	public function countFriends($h, $userid = 0, $type = 'follower')
+	{
+		if (!$userid) { $userid = $h->currentUser->id; }
+		
+		if ($type == 'follower') { 
+			$where = "following_user_id"; // get users who are followING this user
+		} else { 
+			$where = "follower_user_id";  // get users who list this user as a followER
+		}
+		
+		$sql = "SELECT count(*) FROM " . TABLE_FRIENDS . " WHERE " . $where . " = %s";
+		$count = $h->db->get_var($h->db->prepare($sql, $user_id));
+		
+		return $count;
+	}
+	
+	
+	/**
 	 * get followers
 	 *
 	 * @param int $userid - get people following this user
@@ -46,7 +69,7 @@ class Friends
 		if (!$userid) { $userid = $h->currentUser->id; }
 	}
 	
-	
+
 	/**
 	 * Follow / become a fan of user X
 	 *
