@@ -2129,5 +2129,63 @@ class Hotaru
 		
 		return $this->email->doEmail();
 	}
+	
+	
+/* *************************************************************
+ *
+ *  FRIEND FUNCTIONS
+ *
+ * *********************************************************** */
+ 
+	/**
+	 * get followers
+	 *
+	 * @param int $userid - get people following this user
+	 */
+	public function getFollowers($userid = 0)
+	{
+		require_once(LIBS . 'Friends.php');
+		$friends = new Friends();
+		$friends->getFollowers($this, $userid);
+	}
+	
+	
+	/**
+	 * get people this user is following
+	 *
+	 * @param int $userid - get people following this user
+	 */
+	public function getFollowing($userid = 0)
+	{
+		require_once(LIBS . 'Friends.php');
+		$friends = new Friends();
+		$friends->getFollowing($this, $userid);
+	}
+	
+	
+	/**
+	 * Follow / become a fan of user X
+	 *
+	 * @param int $follow - user to follow
+	 */
+	public function follow($userid = 0)
+	{
+		require_once(LIBS . 'Friends.php');
+		$friends = new Friends();
+		$friends->follow($this, $userid);
+	}
+	
+	
+	/**
+	 * Unfollow / stop being a fan of user X
+	 *
+	 * @param int $unfollow - user to stop following
+	 */
+	public function unfollow($userid = 0)
+	{
+		require_once(LIBS . 'Friends.php');
+		$friends = new Friends();
+		$friends->unfollow($this, $userid);
+	}
 }
 ?>
