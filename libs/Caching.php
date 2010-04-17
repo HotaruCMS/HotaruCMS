@@ -232,6 +232,9 @@ class Caching
 			case 'blocked':
 				$sql = "SELECT blocked_updatedts FROM " . DB_PREFIX . "blocked ORDER BY blocked_updatedts DESC";
 				break;
+			case 'friends':
+				$sql = "SELECT friends_updatedts FROM " . DB_PREFIX . "friends ORDER BY friends_updatedts DESC";
+				break;
 			default:
 				$h->vars['smart_cache_sql'] = '';
 				$h->pluginHook('smart_cache_sql');  // allow plugins to add additional table checks here
