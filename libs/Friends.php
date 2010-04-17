@@ -117,7 +117,7 @@ class Friends
 	{
 		if (!$user_id) { return false; }
 		
-		if ($action = 'follow') 
+		if ($action == 'follow')
 		{
 			// if already following, return false 
 			if ($h->isFollowing($user_id)) { return false; }
@@ -129,7 +129,7 @@ class Friends
 		else
 		{
 			// if not following anyway, return false 
-			if ($h->isFollower($user_id)) { return false; }
+			if (!$h->isFollower($user_id)) { return false; }
 			
 			// stop following
 			$sql = "DELETE FROM " . TABLE_FRIENDS . " WHERE (follower_user_id = %d AND following_user_id = %d)";
