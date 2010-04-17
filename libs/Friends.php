@@ -30,6 +30,8 @@ class Friends
 	 *
 	 * @param int $userid - get people following this user
 	 * @param string $type - 'following' or 'follower'
+	 *
+	 * @return int $count
 	 */
 	public function countFriends($h, $userid = 0, $type = 'follower')
 	{
@@ -46,30 +48,40 @@ class Friends
 		
 		return $count;
 	}
-	
-	
-	/**
-	 * get followers
-	 *
-	 * @param int $userid - get people following this user
-	 */
-	public function getFollowers($h, $userid = 0)
-	{
-		if (!$userid) { $userid = $h->currentUser->id; }
-	}
-	
-	
-	/**
-	 * get people this user is following
-	 *
-	 * @param int $userid - get people following this user
-	 */
-	public function getFollowing($h, $userid = 0)
-	{
-		if (!$userid) { $userid = $h->currentUser->id; }
-	}
-	
 
+	
+	 /**
+	 * Get Followers / Following
+	 *
+	 * @param int $userid - get people following this user
+	 * @param string $type - 'following' or 'follower'
+	 * @param string $return - 'array' or prepared 'query'
+	 * @return array | string
+	 */
+	 public function getFriends($h, $user_id = 0, $type = 'follower', $return = 'array')
+	 {
+		if (!$userid) { $userid = $h->currentUser->id; }
+
+		if ($type == 'follower') { 
+			$type1 = "follower_user_id"; 
+			$type2 = "following_user_id"; 
+		} else { 
+			$type1 = "following_user_id"; 
+			$type2 = "follower_user_id"; 
+		}
+		
+		$sql = "SELECT user_id, user_username FROM " . TABLE_USERS . " AS USERS JOIN " . TABLE_FRIENDS . " AS FOLLOW on FOLLOW." . $type1 . " = USERS.user_id WHERE FOLLOW." . $type2 . " = %d";
+		$query = $h->db->prepare($sql, $user_id);
+
+		if ($return == 'array') {
+			$results = $h->db->get_results($query);
+			return ($results) ? $results : false;
+		} else {
+			return $query;
+		}
+	 }
+	 
+	 
 	/**
 	 * Follow / become a fan of user X
 	 *

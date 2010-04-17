@@ -2141,12 +2141,13 @@ class Hotaru
 	 * count followers
 	 *
 	 * @param int $userid - get people following this user
+	 * @return int
 	 */
 	public function countFollowers($userid = 0)
 	{
 		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
-		$friends->countFriends($this, $userid, 'follower')
+		return $friends->countFriends($this, $userid, 'follower')
 	}
 	
 	
@@ -2154,38 +2155,43 @@ class Hotaru
 	 * count following
 	 *
 	 * @param int $userid - get people following this user
+	 * @return int
 	 */
 	public function countFollowing($userid = 0)
 	{
 		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
-		$friends->countFriends($this, $userid, 'following')
+		return $friends->countFriends($this, $userid, 'following')
 	}
 	
 	
 	/**
 	 * get followers
 	 *
-	 * @param int $userid - get people following this user
+	 * @param int $userid - get this user's followers
+	 * @param string $return - return 'array' of users of prepared 'query'
+	 * @return array|string
 	 */
-	public function getFollowers($userid = 0)
+	public function getFollowers($userid = 0, $return = 'array')
 	{
 		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
-		$friends->getFollowers($this, $userid);
+		return $friends->getFriends($this, $userid, 'follower', $return);
 	}
 	
 	
 	/**
 	 * get people this user is following
 	 *
-	 * @param int $userid - get people following this user
+	 * @param int $userid
+	 * @param string $return - return 'array' of users of prepared 'query'
+	 * @return array|string
 	 */
-	public function getFollowing($userid = 0)
+	public function getFollowing($userid = 0, $return = 'array')
 	{
 		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
-		$friends->getFollowing($this, $userid);
+		$friends->getFollowing($this, $userid, 'following', $return);
 	}
 	
 	
