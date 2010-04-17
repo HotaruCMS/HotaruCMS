@@ -2,7 +2,7 @@
 /**
  * name: Comments
  * description: Enables logged-in users to comment on posts
- * version: 1.9
+ * version: 2.0
  * folder: comments
  * class: Comments
  * type: comments
@@ -347,83 +347,110 @@ class Comments
     public function sb_base_show_post_extra_fields($h)
     {
         echo '<li><a class="comment_link" href="' . $h->url(array('page'=>$h->post->id)) . '">' . $h->countComments(false, $h->lang['comments_none_link']) . '</a></li>' . "\n";
-    }
+	}
+	
+	
+	/**
+	 * Prepare and display comments wrapper and form
+	 */
+	public function sb_base_post_show_post($h)
+	{
+		$this->prepareShowComments($h);
+		
+		if (!$h->isPage('submit3'))
+		{
+			$comments_settings = $h->getSerializedSettings();
+			$h->comment->pagination = $comments_settings['comment_pagination'];
+			$h->comment->order = $comments_settings['comment_order'];
+			$h->comment->itemsPerPage = $comments_settings['comment_items_per_page'];
+			
+			$this->showComments($h);
+		}
+		
+		$this->checkCommentDetails($h);
+	}
+	
+	
+	/**
+	 * Preparation for showing comments
+	 */
+	public function prepareShowComments($h)
+	{
+		// set default
+		$h->vars['subscribe_check'] = ''; 
+		
+		// Check if the currentUser is the post author
+		if ($h->post->author == $h->currentUser->id) {
+		    // Check if the user subscribed to comments as a submitter
+		    if ($h->post->subscribe == 1) { 
+		        $h->vars['subscribe_check'] = 'checked';
+		    } 
+		} 
+		
+		// Check if the user subscribed to comments as a commenter
+		$sql = "SELECT COUNT(comment_subscribe) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_user_id = %d AND comment_subscribe = %d";
+		$subscribe_result = $h->db->get_var($h->db->prepare($sql, $h->post->id, $h->currentUser->id, 1));
+		
+		if ($subscribe_result > 0) { 
+		    $h->vars['subscribe_check'] = 'checked';
+		} 
+	}
     
     
     /**
-     * Prepare and display comments wrapper and form
+     * Show comments
      */
-    public function sb_base_post_show_post($h)
-    {
-        // set default
-        $h->vars['subscribe_check'] = ''; 
-        
-        // Check if the currentUser is the post author
-        if ($h->post->author == $h->currentUser->id) {
-            // Check if the user subscribed to comments as a submitter
-            if ($h->post->subscribe == 1) { 
-                $h->vars['subscribe_check'] = 'checked';
-            } 
-        } 
-        
-        // Check if the user subscribed to comments as a commenter
-        $sql = "SELECT COUNT(comment_subscribe) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_user_id = %d AND comment_subscribe = %d";
-        $subscribe_result = $h->db->get_var($h->db->prepare($sql, $h->post->id, $h->currentUser->id, 1));
-        
-        if ($subscribe_result > 0) { 
-            $h->vars['subscribe_check'] = 'checked';
-        } 
-
-        if (!$h->isPage('submit3')) {
-        
-            $comments_settings = $h->getSerializedSettings();
-            $h->comment->pagination = $comments_settings['comment_pagination'];
-            $h->comment->order = $comments_settings['comment_order'];
-            $h->comment->itemsPerPage = $comments_settings['comment_items_per_page'];
-            
-            // GET ALL PARENT COMMENTS
-            $parents = $h->comment->readAllParents($h, $h->post->id, $h->comment->order);
-                    
-            echo "<!--  START COMMENTS_WRAPPER -->\n";
-            echo "<div id='comments_wrapper'>\n";
-            echo "<h2>" . $h->countComments(false, $h->lang['comments_leave_comment']) . "</h2>\n";
+	public function showComments($h)
+    {        
+        // GET ALL PARENT COMMENTS
+        $parents = $h->comment->readAllParents($h, $h->post->id, $h->comment->order);
                 
-            // IF PAGINATING COMMENTS:
-            if ($h->comment->pagination)
-            {
-                $pagedResults = $h->paginationFull($parents, $h->comment->itemsPerPage);
+        echo "<!--  START COMMENTS_WRAPPER -->\n";
+        echo "<div class='comments_wrapper'>\n";
+        echo "<h2>" . $h->countComments(false, $h->lang['comments_leave_comment']) . "</h2>\n";
+            
+        // IF PAGINATING COMMENTS:
+        if ($h->comment->pagination)
+        {
+            $pagedResults = $h->paginationFull($parents, $h->comment->itemsPerPage);
 
-                if (isset($pagedResults->items)) {
-                // cycle through the parents, and go get their children
-                    foreach($pagedResults->items as $parent) {
-        
-                            $this->displayComment($h, $parent);
-                            $this->commentTree($h, $parent->comment_id, 0);
-                            $h->comment->depth = 0;
-                    }
-                }
-            }
-            // IF NO PAGINATION:
-            else
-            {
-                if ($parents) { 
-                    // cycle through the parents, and go get their children
-                    foreach ($parents as $parent) {
+            if (isset($pagedResults->items)) {
+            // cycle through the parents, and go get their children
+                foreach($pagedResults->items as $parent) {
+    
                         $this->displayComment($h, $parent);
                         $this->commentTree($h, $parent->comment_id, 0);
                         $h->comment->depth = 0;
-                    }
                 }
             }
-
-            echo "</div><!-- close comments_wrapper -->\n";
-            echo "<!--  END COMMENTS -->\n";
         }
+        // IF NO PAGINATION:
+        else
+        {
+            if ($parents) { 
+                // cycle through the parents, and go get their children
+                foreach ($parents as $parent) {
+                    $this->displayComment($h, $parent);
+                    $this->commentTree($h, $parent->comment_id, 0);
+                    $h->comment->depth = 0;
+                }
+            }
+        }
+
+        echo "</div><!-- close comments_wrapper -->\n";
+        echo "<!--  END COMMENTS -->\n";
         
         if ($h->comment->pagination && $pagedResults) {
             echo $h->pageBar($pagedResults);
         }
-        
+	}
+
+
+	/**
+	 * Check comment details
+	 */
+	public function checkCommentDetails($h)
+	{        
         // determine where to return the user to after logging in:
         if (!$h->cage->get->keyExists('return')) {
             $host = $h->cage->server->sanitizeTags('HTTP_HOST');
@@ -453,18 +480,27 @@ class Comments
         }
 
         if (!$h->isPage('submit3')) {
-            // force non-reply form to have parent "0" and depth "0"
-            $h->comment->id = 0;
-            $h->comment->depth = 0;
-            $h->vars['subscribe'] = ($h->comment->subscribe) ? 'checked' : '';
-            $h->displayTemplate('comment_form', 'comments', false);
-            
-            $h->pluginHook('comments_post_last_form');
-            
-            if ($h->currentUser->getPermission('can_comment_manager_settings') == 'yes') {
-                echo "<a id='comment_manager_link' href='" . $h->url(array('page'=>'plugin_settings', 'plugin'=>'comment_manager'), 'admin') . "'>";
-                echo $h->lang['comments_access_comment_manager'] . "</a>";
-            }
+			$this->lastCommentForm($h);
+        }
+    }
+    
+    
+    /**
+     * Show last comment form
+     */
+    public function lastCommentForm($h)
+    {
+        // force non-reply form to have parent "0" and depth "0"
+        $h->comment->id = 0;
+        $h->comment->depth = 0;
+        $h->vars['subscribe'] = ($h->comment->subscribe) ? 'checked' : '';
+        $h->displayTemplate('comment_form', 'comments', false);
+        
+        $h->pluginHook('comments_post_last_form');
+        
+        if ($h->currentUser->getPermission('can_comment_manager_settings') == 'yes') {
+            echo "<a id='comment_manager_link' href='" . $h->url(array('page'=>'plugin_settings', 'plugin'=>'comment_manager'), 'admin') . "'>";
+            echo $h->lang['comments_access_comment_manager'] . "</a>";
         }
     }
     
@@ -565,16 +601,27 @@ class Comments
         
         if (isset($pagedResults->items)) {
             foreach ($pagedResults->items as $comment) {
-                $h->readPost($comment->comment_post_id);
-                // don't show this comment if its post is buried or pending:
-                if ($h->post->status == 'buried' || $h->post->status == 'pending') { continue; }
-                
-                $this->displayComment($h, $comment, true);
+				$this->showSingleComment($h, $comment);
             }
             
             echo $h->pageBar($pagedResults);
         }
         return true;
+    }
+    
+
+    /**
+     * Show a single comment
+     *
+     * @param $comment array object from database
+     */
+    public function showSingleComment($h, $comment = NULL)
+    {
+        $h->readPost($comment->comment_post_id);
+        // don't show this comment if its post is buried or pending:
+        if ($h->post->status == 'buried' || $h->post->status == 'pending') { continue; }
+        
+        $this->displayComment($h, $comment, true);
     }
     
     
