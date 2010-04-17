@@ -61,6 +61,7 @@ define("TABLE_BLOCKED", DB_PREFIX . "blocked");
 define("TABLE_CATEGORIES", DB_PREFIX . 'categories');
 define("TABLE_COMMENTS", DB_PREFIX . 'comments');
 define("TABLE_COMMENTVOTES", DB_PREFIX . 'commentvotes');
+define("TABLE_FRIENDS", DB_PREFIX . 'friends');
 define("TABLE_MISCDATA", DB_PREFIX . "miscdata");
 define("TABLE_PLUGINS", DB_PREFIX . "plugins");
 define("TABLE_PLUGINHOOKS", DB_PREFIX . "pluginhooks");
