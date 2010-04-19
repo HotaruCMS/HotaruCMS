@@ -31,6 +31,70 @@ class IncludeCssJs
 	protected $jsIncludesAdmin      = array();  // a list of js files to include in Admin
 	protected $includeType          = '';       // 'css' or 'js'
 	
+	
+	/**
+	 * Include individual CSS files, not merged into the CSS archive
+	 *
+	 * @param $files- array of files to include (no extensions)
+	 * @param $folder - optional pluin folder
+	 */
+	 public function includeOnceCss($h, $files = array(), $folder = '')
+	 {
+		if (empty($files)) { return false; }
+		
+		if (!$folder)) { $folder = $h->plugin->folder; }
+		
+		if (!$folder) { return false; }
+		
+		foreach ($files as $file) {
+			if (file_exists(THEMES . THEME . 'css/' . $file '.css')) {
+				echo "<link rel='stylesheet' href='" . BASEURL . "content/themes/" . THEME . "css/" . $file . ".css' type='text/css' />\n";
+			} else {
+				echo "<link rel='stylesheet' href='" . BASEURL . "content/plugins/" . $folder . "/css/" . $file . ".css' type='text/css' />\n";
+			}
+		}
+	
+		return true;
+	}
+	
+	
+	/**
+	 * Include individual JavaScript files, not merged into the JavaScript archive
+	 *
+	 * @param $files- array of files to include (no extensions)
+	 * @param $folder - optional pluin folder
+	 */
+	 public function includeOnceJs($h, $files = array(), $folder = '')
+	 {
+		if (empty($files)) { return false; }
+		
+		if (!$folder)) { $folder = $h->plugin->folder; }
+		
+		if (!$folder) { return false; }
+		
+		foreach ($files as $file) {
+			if (file_exists(THEMES . THEME . 'javascript/' . $file '.js')) {
+				echo "<script src='" . BASEURL . "content/themes/" . THEME . "javascript/" . $file . ".js' type='text/javascript' language='javascript' />\n";
+			} else {
+				echo "<script src='" . BASEURL . "content/plugins/" . $folder . "/javascript/" . $file . ".js' type='text/javascript' language='javascript' />\n";
+			}
+		}
+		return true;
+	}
+	 
+	 
+	/**
+	 * Include individual JavaScript files, not merged into the JavaScript archive
+	 *
+	 * @param $files- array of files to include (no extensions)
+	 * @param $folder - optional pluin folder
+	 */
+	 public function includeOnceCss(%h, $files = array(), $folder = '')
+	 {
+		return $this->includes->includeJs($this, $files, $folder);
+	 }
+	 
+	 
 	/**
 	 * setCssIncludes
 	 *
