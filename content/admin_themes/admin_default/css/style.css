@@ -2,15 +2,31 @@
  *	ADMIN DEFAULT THEME CSS         *
  ************************************** */
 
+/* globals */
 html, body { 
 	min-height: 100%; height: 100%;
 	font-size: 0.9em;
 }
 
-.clear {
-	clear: both;
-}
+.clear			{ clear: both; }
+.clearfix:after		{ clear: both; content: "."; display: block; height: 0; line-height: 0; visibility: hidden; }
+html[xmlns] .clearfix	{ display: block; }
+* html .clearfix	{ height: 1%; }
 
+/* common classes */
+.aligncenter				{ display: block; margin: 0 auto; }
+.alignright				{ float: right; margin: 0 0 1em 1em; }
+.alignleft				{ float: left; margin: 0 1em 1em 0; }
+.floatleft				{ float: left; }
+.floatright				{ float: right; }
+img.aligncenter, img.alignright,
+img.alignleft				{ border: 3px solid #EEE; }
+
+.textcenter				{ text-align: center; }
+.textright				{ text-align: right; }
+.textleft				{ text-align: left; }
+
+/* general */
 h1, h2, h3 { padding: 0.5em 0 0.5em 0; }
 h1	{ font-size: 1.6em; }
 h2	{ font-size: 1.4em; }
