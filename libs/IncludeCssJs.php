@@ -47,7 +47,7 @@ class IncludeCssJs
 		if (!$folder) { return false; }
 		
 		foreach ($files as $file) {
-			if (file_exists(THEMES . THEME . 'css/' . $file '.css')) {
+			if (file_exists(THEMES . THEME . 'css/' . $file . '.css')) {
 				echo "<link rel='stylesheet' href='" . BASEURL . "content/themes/" . THEME . "css/" . $file . ".css' type='text/css' />\n";
 			} else {
 				echo "<link rel='stylesheet' href='" . BASEURL . "content/plugins/" . $folder . "/css/" . $file . ".css' type='text/css' />\n";
@@ -73,7 +73,7 @@ class IncludeCssJs
 		if (!$folder) { return false; }
 		
 		foreach ($files as $file) {
-			if (file_exists(THEMES . THEME . 'javascript/' . $file '.js')) {
+			if (file_exists(THEMES . THEME . 'javascript/' . $file . '.js')) {
 				echo "<script src='" . BASEURL . "content/themes/" . THEME . "javascript/" . $file . ".js' type='text/javascript' language='javascript' />\n";
 			} else {
 				echo "<script src='" . BASEURL . "content/plugins/" . $folder . "/javascript/" . $file . ".js' type='text/javascript' language='javascript' />\n";
