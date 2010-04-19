@@ -1119,6 +1119,30 @@ class Hotaru
 	 {
 		return $this->includes->includeJs($this, $folder, $filename);
 	 }
+	 
+	 
+	/**
+	 * Include individual CSS files, not merged into the CSS archive
+	 *
+	 * @param $files- array of files to include (no extensions)
+	 * @param $folder - optional pluin folder
+	 */
+	 public function includeOnceCss($files = array(), $folder = '')
+	 {
+		return $this->includes->includeJs($this, $files, $folder);
+	 }
+	 
+	 
+	/**
+	 * Include individual JavaScript files, not merged into the JavaScript archive
+	 *
+	 * @param $files- array of files to include (no extensions)
+	 * @param $folder - optional pluin folder
+	 */
+	 public function includeOnceCss($files = array(), $folder = '')
+	 {
+		return $this->includes->includeJs($this, $files, $folder);
+	 }
      
      
  /* *************************************************************
