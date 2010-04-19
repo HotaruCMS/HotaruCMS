@@ -26,6 +26,8 @@ img.alignleft				{ border: 3px solid #EEE; }
 .textright				{ text-align: right; }
 .textleft				{ text-align: left; }
 
+.hide					{ display:none; }
+
 /* general */
 h1, h2, h3 { padding: 0.5em 0 0.5em 0; }
 h1	{ font-size: 1.6em; }
