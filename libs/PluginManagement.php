@@ -227,9 +227,11 @@ class PluginManagement
 		}
 		
 		foreach (explode(',', $h->plugin->requires) as $pair) 
-		{
-			list($k,$v) = explode(' ', trim($pair));
-			$h->plugin->dependencies[$k] = $v;
+		{		    
+		    $pair_array = explode(' ', trim(strtolower($pair)));
+		    $pair_array ? $k = $pair_array[0] : $k=$h->lang["admin_plugins_install_unknown_plugin"];
+		    count($pair_array) > 1 ? $v = $pair_array[1] : $v=0;		    
+		    $h->plugin->dependencies[$k] = $v;
 		}
 	}
 	

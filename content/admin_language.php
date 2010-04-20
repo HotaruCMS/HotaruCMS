@@ -68,6 +68,7 @@ $lang['admin_announcement_site_closed'] = SITE_NAME . " is currently closed!";
 $lang["admin_plugins_install_done"] = "Plugin successfully installed and activated";
 $lang["admin_plugins_install_sorry"] = "Sorry,";
 $lang["admin_plugins_install_requires"] = "requires";
+$lang["admin_plugins_install_unknown_plugin"] = "Unknown Plugin";
 $lang["admin_plugins_uninstall_done"] = "Plugin uninstalled";
 $lang["admin_plugins_uninstall_all_done"] = "All plugins uninstalled";
 $lang["admin_plugins_upgrade_done"] = "Plugin upgraded and activated";
