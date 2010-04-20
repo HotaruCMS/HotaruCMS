@@ -1139,7 +1139,7 @@ class Hotaru
 	 * @param $files- array of files to include (no extensions)
 	 * @param $folder - optional pluin folder
 	 */
-	 public function includeOnceCss($files = array(), $folder = '')
+	 public function includeOnceJs($files = array(), $folder = '')
 	 {
 		return $this->includes->includeJs($this, $files, $folder);
 	 }

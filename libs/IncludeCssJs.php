@@ -42,7 +42,7 @@ class IncludeCssJs
 	 {
 		if (empty($files)) { return false; }
 		
-		if (!$folder)) { $folder = $h->plugin->folder; }
+		if (!$folder) { $folder = $h->plugin->folder; }
 		
 		if (!$folder) { return false; }
 		
@@ -68,7 +68,7 @@ class IncludeCssJs
 	 {
 		if (empty($files)) { return false; }
 		
-		if (!$folder)) { $folder = $h->plugin->folder; }
+		if (!$folder) { $folder = $h->plugin->folder; }
 		
 		if (!$folder) { return false; }
 		
@@ -81,18 +81,6 @@ class IncludeCssJs
 		}
 		return true;
 	}
-	 
-	 
-	/**
-	 * Include individual JavaScript files, not merged into the JavaScript archive
-	 *
-	 * @param $files- array of files to include (no extensions)
-	 * @param $folder - optional pluin folder
-	 */
-	 public function includeOnceCss(%h, $files = array(), $folder = '')
-	 {
-		return $this->includes->includeJs($this, $files, $folder);
-	 }
 	 
 	 
 	/**
