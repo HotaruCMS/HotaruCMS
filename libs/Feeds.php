@@ -49,6 +49,8 @@ class Feeds
 				$rssItem->link = html_entity_decode($item['link'], ENT_QUOTES,'UTF-8');
 				$rssItem->setPubDate($item['date']);
 				$rssItem->description = "<![CDATA[ " . stripslashes(urldecode($item['description'])) . " ]]>";
+				if($item['enclosure']) $rssItem->enclosure($item['enclosure']['url'], $item['enclosure']['type'], $item['enclosure']['length']);
+				if($item['author']) $rssItem->addTag('author', $item['author']);
 				$feed->addItem($rssItem);
 			}
 		}
