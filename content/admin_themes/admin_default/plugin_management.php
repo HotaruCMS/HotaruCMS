@@ -76,10 +76,6 @@
 	if (!$the_plugins) { $the_plugins = array(); }
 	foreach ($the_plugins as $plug) {
 		$alt++;
-		$requires = '';
-		foreach ($plug['requires'] as $Key => $Value)
-		    $requires .= rtrim($Key) . ':' . rtrim($Value) . ', ';
-		$requires ? $requires = substr($requires,0,-2) : $requires = 'none';
 		echo "<tr class='table_tr table_row_" . $alt % 2 . "'>\n";
 		echo "<td class='table_active'>" . $plug['active'] . "</td>\n";
 		echo "<td class='table_installed_plugin'>";
@@ -91,7 +87,7 @@
 		}
 		echo "<td class='table_order'>" . $plug['order_output'] . "</td>\n";
 		echo "<td class='table_uninstall'>\n";
-		echo "<a class='table_drop_down' href='#' title='requires: " . $requires . "'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/info_16.png'></a>\n";
+		echo "<a class='table_drop_down' href='#'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/info_16.png'></a>\n";
 		echo "&nbsp;" . $plug['install'] . "</td>\n";
 		echo "</tr>\n";
 		echo "<tr class='table_tr_details' style='display:none;'><td colspan=3 class='table_description'>\n";
