@@ -1306,8 +1306,24 @@ class Hotaru
 		$feeds = new Feeds();
 		$feeds->adminNews($this->lang, $max_items, $items_with_content, $max_chars);
 	}
-    
-    
+
+
+	 /**
+	 * Create an RSS Feed
+	 *
+	 * @param string $title - feed title
+	 * @param string $link - url feed title should point to
+	 * @param string $description - feed description
+	 * @param array $items - $items[0] = array('title'=>TITLE, 'link'=>URL, 'date'=>TIMESTAMP, 'description'=>DESCRIPTION)
+	 */
+	public function rss($title = '', $link = '', $description = '', $items = array())
+	{
+		require_once(LIBS . 'Feeds.php');
+		$feeds = new Feeds();
+		$feeds->rss($this, $title, $link, $description, $items);
+	}
+	
+	
  /* *************************************************************
  *
  *  ADMIN FUNCTIONS

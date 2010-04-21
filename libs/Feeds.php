@@ -25,6 +25,38 @@
  */
 class Feeds
 {
+	 /**
+	 * Create an RSS Feed
+	 *
+	 * @param string $title - feed title
+	 * @param string $link - url feed title should point to
+	 * @param string $description - feed description
+	 * @param array $items - $items[0] = array('title'=>TITLE, 'link'=>URL, 'date'=>TIMESTAMP, 'description'=>DESCRIPTION)
+	 */
+	public function rss($h, $title = '', $link = '', $description = '', $items = array())
+	{
+		require_once(EXTENSIONS . 'RSSWriterClass/rsswriter.php');
+		
+		$feed           = new RSS();
+		$feed->title    = stripslashes(html_entity_decode(urldecode($title), ENT_QUOTES,'UTF-8'));
+		$feed->link     = html_entity_decode($link, ENT_QUOTES,'UTF-8');
+		$feed->description = $description;
+		
+		if ($items) {
+			foreach ($items as $item) {
+				$rssItem = new RSSItem();
+				$rssItem->title = stripslashes(html_entity_decode(urldecode($item['title']), ENT_QUOTES,'UTF-8'));
+				$rssItem->link = html_entity_decode($item['link'], ENT_QUOTES,'UTF-8');
+				$rssItem->setPubDate($item['date']);
+				$rssItem->description = "<![CDATA[ " . stripslashes(urldecode($item['description'])) . " ]]>";
+				$feed->addItem($rssItem);
+			}
+		}
+		
+		echo $feed->serve();
+	}
+	
+	
 	/**
 	 * Includes the SimplePie RSS file and sets the cache
 	 *
