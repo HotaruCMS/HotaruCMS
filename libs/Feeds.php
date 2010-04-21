@@ -43,14 +43,34 @@ class Feeds
 		$feed->description = $description;
 		
 		if ($items) {
-			foreach ($items as $item) {
+			foreach ($items as $item)
+			{
 				$rssItem = new RSSItem();
-				$rssItem->title = stripslashes(html_entity_decode(urldecode($item['title']), ENT_QUOTES,'UTF-8'));
-				$rssItem->link = html_entity_decode($item['link'], ENT_QUOTES,'UTF-8');
-				$rssItem->setPubDate($item['date']);
-				$rssItem->description = "<![CDATA[ " . stripslashes(urldecode($item['description'])) . " ]]>";
-				if($item['enclosure']) $rssItem->enclosure($item['enclosure']['url'], $item['enclosure']['type'], $item['enclosure']['length']);
-				if($item['author']) $rssItem->addTag('author', $item['author']);
+				
+				if(isset($item['title'])) { 
+					$rssItem->title = stripslashes(html_entity_decode(urldecode($item['title']), ENT_QUOTES,'UTF-8'));
+				}
+				
+				if(isset($item['link'])) { 
+					$rssItem->link = html_entity_decode($item['link'], ENT_QUOTES,'UTF-8');
+				}
+				
+				if(isset($item['date'])) { 
+					$rssItem->setPubDate($item['date']); 
+				}
+				
+				if(isset($item['description'])) {
+					$rssItem->description = "<![CDATA[ " . stripslashes(urldecode($item['description'])) . " ]]>";
+				}
+				
+				if(isset($item['enclosure'])) { 
+					$rssItem->enclosure($item['enclosure']['url'], $item['enclosure']['type'], $item['enclosure']['length']);
+				}
+				
+				if(isset($item['author'])) { 
+					$rssItem->addTag('author', $item['author']); 
+				}
+				
 				$feed->addItem($rssItem);
 			}
 		}
