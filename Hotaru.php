@@ -2333,7 +2333,7 @@ class Hotaru
 	 *
 	 * @param array $args e.g. array('userid'=>4, 'key'=>'post', 'value'=>'6408')
 	 */
-	public function insertActivity($h, $args = array())
+	public function insertActivity($args = array())
 	{
 		require_once(LIBS . 'SiteActivity.php');
 		$activity = new SiteActivity();
@@ -2346,7 +2346,7 @@ class Hotaru
 	 *
 	 * @param array $args e.g. array('userid'=>4, 'key'=>'post', 'value'=>'6408')
 	 */
-	public function updateActivity($h,  $args = array())
+	public function updateActivity($args = array())
 	{
 		require_once(LIBS . 'SiteActivity.php');
 		$activity = new SiteActivity();
@@ -2359,7 +2359,7 @@ class Hotaru
 	 *
 	 * @param array $args e.g. array('userid'=>4, 'key'=>'post', 'value'=>'6408')
 	 */
-	public function removeActivity($h, $args = array())
+	public function removeActivity($args = array())
 	{
 		require_once(LIBS . 'SiteActivity.php');
 		$activity = new SiteActivity();

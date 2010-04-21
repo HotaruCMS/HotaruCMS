@@ -401,7 +401,6 @@ class Submit
                 $h->deletePost(); 
                 $h->messages[$h->lang["submit_edit_deleted"]] = 'red';
                 $h->vars['post_deleted'] = true;
-                break;
             }
         }
         

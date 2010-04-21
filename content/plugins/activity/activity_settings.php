@@ -47,6 +47,7 @@ class ActivitySettings
         $user = $activity_settings['widget_user'];
         $widget_number = $activity_settings['widget_number'];
         $pg_number = $activity_settings['number'];
+        $rss_number = $activity_settings['rss_number'];
         $time = $activity_settings['time'];
     
         $h->pluginHook('activity_settings_get_values');
@@ -57,12 +58,16 @@ class ActivitySettings
         if (!$user) { $user = ''; }
         if (!$widget_number) { $widget_number = 5; }
         if (!$pg_number) { $pg_number = 20; }
+        if (!$rss_number) { $rss_number = 20; }
         if (!$time) { $time = ''; }
         
         echo "<form name='activity_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=activity' method='post'>\n";
         
         // number of items on the activity page
         echo "<p><input type='text' size=5 name='pg_number' value='" . $pg_number . "' /> " . $h->lang["activity_settings_number"] . "</p>\n";
+        
+        // number of items in the activity RSS feed
+        echo "<p><input type='text' size=5 name='rss_number' value='" . $rss_number . "' /> " . $h->lang["activity_settings_rss_number"] . "</p>\n";
         
         echo "<br /><p>" . $h->lang["activity_settings_instructions"] . "</p>";
         
@@ -153,6 +158,17 @@ class ActivitySettings
             $pg_number = 10; $error = 1;
         }
         
+        // number of items in the activity RSS feed
+        if ($h->cage->post->keyExists('rss_number')) { 
+            if ($h->cage->post->testInt('rss_number')) { 
+                $rss_number = $h->cage->post->testInt('rss_number');
+            } else { 
+                $rss_number = 10; $error = 1;
+            }
+        } else { 
+            $rss_number = 10; $error = 1;
+        }
+        
         $h->pluginHook('activity_save_settings');
                 
         if ($error == 1)
@@ -170,6 +186,7 @@ class ActivitySettings
             $activity_settings['widget_user'] = $user;
             $activity_settings['widget_number'] = $widget_number;
             $activity_settings['number'] = $pg_number;
+            $activity_settings['rss_number'] = $rss_number;
             $activity_settings['time'] = $time;
         
             $h->updateSetting('activity_settings', serialize($activity_settings));

@@ -51,6 +51,7 @@ class Activity
         if (!isset($activity_settings['widget_user'])) { $activity_settings['widget_user'] = ''; }
         if (!isset($activity_settings['widget_number'])) { $activity_settings['widget_number'] = 10; }
         if (!isset($activity_settings['number'])) { $activity_settings['number'] = 20; }
+        if (!isset($activity_settings['rss_number'])) { $activity_settings['rss_number'] = 20; }
         if (!isset($activity_settings['time'])) { $activity_settings['time'] = "checked"; }
         
         $h->updateSetting('activity_settings', serialize($activity_settings));
@@ -65,15 +66,16 @@ class Activity
      */
     public function comment_post_add_comment($h)
     {
-        $comment_id = $h->vars['last_insert_id'];
-        $comment_user_id = $h->comment->author;
-        $comment_post_id = $h->comment->postId;
-        $comment_status = $h->comment->status;
+        if ($h->comment->status != "approved") { $status = "hide"; } else { $status = "show"; }
+
+        $args['userid'] = $h->comment->author;
+        $args['status'] = $status;
+        $args['key'] = 'comment';
+        $args['value'] = $h->vars['last_insert_id'];
+        $args['key2'] = 'post';
+        $args['value2'] = $h->comment->postId;
         
-        if ($comment_status != "approved") { $status = "hide"; } else { $status = "show"; }
-        
-        $sql = "INSERT INTO " . TABLE_USERACTIVITY . " SET useract_archived = %s, useract_userid = %d, useract_status = %s, useract_key = %s, useract_value = %s, useract_key2 = %s, useract_value2 = %s, useract_date = CURRENT_TIMESTAMP, useract_updateby = %d";
-        $h->db->query($h->db->prepare($sql, 'N', $comment_user_id, $status, 'comment', $comment_id, 'post', $comment_post_id, $h->currentUser->id));
+        $h->insertActivity($args);
     }
     
     
@@ -82,12 +84,27 @@ class Activity
      */
     public function comment_update_comment($h)
     {
-        $comment_status = $h->comment->status;
+        if ($h->comment->status != "approved") { $status = "hide"; } else { $status = "show"; }
         
-        if ($comment_status != "approved") { $status = "hide"; } else { $status = "show"; }
+        $args['status'] = $status;
+        $args['where']['key'] = 'comment';
+        $args['where']['value'] = $h->comment->id;
         
-        $sql = "UPDATE " . TABLE_USERACTIVITY . " SET useract_status = %s, useract_updateby = %d WHERE useract_key = %s AND useract_value = %d";
-        $h->db->query($h->db->prepare($sql, $status, $h->currentUser->id, 'comment', $h->comment->id));
+        $h->updateActivity($args);
+    }
+    
+    
+    /**
+     * Delete comment from activity table
+     */
+    public function comment_delete_comment($h)
+    {
+        $args['key'] = 'comment';
+        $args['value'] = $h->comment->id;
+        
+        $h->removeActivity($args);
+        
+        $h->clearCache('html_cache', false);
     }
     
     
@@ -98,18 +115,6 @@ class Activity
     {
         $sql = "UPDATE " . TABLE_USERACTIVITY . " SET useract_status = %s, useract_updateby = %d WHERE useract_key = %s AND useract_status = %d";
         $h->db->query($h->db->prepare($sql, 'show', $h->currentUser->id, 'comment', 'hide'));
-    }
-    
-    
-    /**
-     * Delete comment from activity table
-     */
-    public function comment_delete_comment($h)
-    {
-        $sql = "DELETE FROM " . TABLE_USERACTIVITY . " WHERE useract_key = %s AND useract_value = %d";
-        $h->db->query($h->db->prepare($sql, 'comment', $h->comment->id));
-        
-        $h->clearCache('html_cache', false);
     }
 
 
@@ -431,7 +436,8 @@ class Activity
                     $cid = "#c" . $item->useract_value; // comment id to be put on the end of the url
                     break;
                 case 'post':
-                    $output .= $h->lang["activity_submitted"] . " ";
+                	$post_lang = "activity_submitted_" . $h->post->type; // e.g. news, blog, etc.
+                	$output .= $h->lang[$post_lang] . " ";
                     break;
                 case 'vote':
                     switch ($item->useract_value) {
@@ -525,7 +531,8 @@ class Activity
                 $cid = "#c" . $item->useract_value; // comment id to be put on the end of the url
                 break;
             case 'post':
-                $output .= $h->lang["activity_submitted"] . " ";
+                $post_lang = "activity_submitted_" . $h->post->type; // e.g. news, blog, etc.
+                $output .= $h->lang[$post_lang] . " ";
                 break;
             case 'vote':
                 switch ($item->useract_value) {
@@ -648,8 +655,6 @@ class Activity
 
         $limit = $h->cage->get->getInt('limit');
         $user = $h->cage->get->testUsername('user');
-
-        if (!$limit) { $limit = 10; }
         
         if ($user) { 
             $userid = $h->getUserIdFromName($user);
@@ -673,7 +678,11 @@ class Activity
 
         // Get settings from database if they exist...
         $activity_settings = $h->getSerializedSettings('activity');
-        $activity = $this->getLatestActivity($h, $activity_settings['widget_number'], $userid);
+        
+        if (!$limit) { $limit = $activity_settings['rss_number']; }
+        
+        // get latest activity
+        $activity = $this->getLatestActivity($h, $limit, $userid);
         
         if (!$activity) { echo $feed->serve(); return false; } // displays empty RSS feed
                 
@@ -699,7 +708,8 @@ class Activity
                     $cid = "#c" . $act->useract_value; // comment id to be put on the end of the url
                     break;
                 case 'post':
-                    $action = $h->lang["activity_submitted"] . " ";
+                	$post_lang = "activity_submitted_" . $h->post->type; // e.g. news, blog, etc.
+                    $action = $h->lang[$post_lang] . " ";
                     break;
                 case 'vote':
                     switch ($act->useract_value) {
