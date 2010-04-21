@@ -115,8 +115,6 @@ class SiteActivity
 	 */
 	public function updateActivity($h, $args = array())
 	{
-		if (!isset($args['userid'])) { $args['userid'] = $h->currentUser->id; }
-		
 		$prepare = array();
 		$prepare[0] = "temp";
 		
@@ -137,15 +135,15 @@ class SiteActivity
 		if (!isset($args['where'])) { return false; }
 		$sql .= " WHERE ";
 		
-		if (isset($args['where']['archived'])) { $sql .= "useract_archived = %s, "; array_push($prepare, $args['where']['archived']); }
-		if (isset($args['where']['userid'])) { $sql .= "useract_userid = %s, "; array_push($prepare, $args['where']['userid']); }
-		if (isset($args['where']['status'])) { $sql .= "useract_status = %s, "; array_push($prepare, $args['where']['status']); }
-		if (isset($args['where']['key'])) { $sql .= "useract_key = %s, "; array_push($prepare, $args['where']['key']); }
-		if (isset($args['where']['value'])) { $sql .= "useract_value = %s, "; array_push($prepare, $args['where']['value']); }
-		if (isset($args['where']['key2'])) { $sql .= "useract_key2 = %s, "; array_push($prepare, $args['where']['key2']); }
-		if (isset($args['where']['value2'])) { $sql .= "useract_value2 = %s, "; array_push($prepare, $args['where']['value2']); }
-
-		$prepare[0] = $sql . ")"; // replace "temp" with full $sql 
+		if (isset($args['where']['archived'])) { $sql .= "useract_archived = %s AND "; array_push($prepare, $args['where']['archived']); }
+		if (isset($args['where']['userid'])) { $sql .= "useract_userid = %s AND "; array_push($prepare, $args['where']['userid']); }
+		if (isset($args['where']['status'])) { $sql .= "useract_status = %s AND "; array_push($prepare, $args['where']['status']); }
+		if (isset($args['where']['key'])) { $sql .= "useract_key = %s AND "; array_push($prepare, $args['where']['key']); }
+		if (isset($args['where']['value'])) { $sql .= "useract_value = %s AND "; array_push($prepare, $args['where']['value']); }
+		if (isset($args['where']['key2'])) { $sql .= "useract_key2 = %s AND "; array_push($prepare, $args['where']['key2']); }
+		if (isset($args['where']['value2'])) { $sql .= "useract_value2 = %s AND "; array_push($prepare, $args['where']['value2']); }
+	
+		$prepare[0] = rstrtrim($sql, " AND "); // replace "temp" with full $sql 
 
 		$h->db->query($h->db->prepare($prepare));
 	}

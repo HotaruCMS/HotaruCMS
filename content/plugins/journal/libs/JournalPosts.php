@@ -229,7 +229,26 @@ class JournalPosts extends JournalBase
 	 */
 	public function showJournalPost($h)
 	{
-		$h->displayTemplate('journal_post', 'journal', false);
+		// defaults:
+		$buried = false; $pending = false;
+		
+		// check if buried:
+		if ($h->post->status == 'buried') {
+			$buried = true;
+			$h->messages[$h->lang["sb_base_post_buried"]] = "red";
+		} 
+		
+		// check if pending:
+		if ($h->post->status == 'pending') { 
+			$pending = true;
+			$h->messages[$h->lang["sb_base_post_pending"]] = "yellow";
+		}
+		
+		$h->showMessages();
+
+		if (!$buried && !$pending) {
+			$h->displayTemplate('journal_post', 'journal', false);
+		}
 	}
 	
 	

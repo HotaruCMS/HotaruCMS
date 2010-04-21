@@ -113,8 +113,11 @@ class Activity
      */
     public function com_man_approve_all_comments($h)
     {
-        $sql = "UPDATE " . TABLE_USERACTIVITY . " SET useract_status = %s, useract_updateby = %d WHERE useract_key = %s AND useract_status = %d";
-        $h->db->query($h->db->prepare($sql, 'show', $h->currentUser->id, 'comment', 'hide'));
+        $args['status'] = 'show';
+        $args['where']['key'] = 'comment';
+        $args['where']['status'] = 'hide';
+        
+        $h->updateActivity($args);
     }
 
 
@@ -123,14 +126,14 @@ class Activity
      */
     public function post_add_post($h)
     {
-        $post_id = $h->post->vars['last_insert_id'];
-        $post_author = $h->post->author;
-        $post_status = $h->post->status;
+        if ($h->post->status != 'new' && $h->post->status != 'top') { $status = "hide"; } else { $status = "show"; }
         
-        if ($post_status != 'new' && $post_status != 'top') { $status = "hide"; } else { $status = "show"; }
+        $args['userid'] = $h->post->author;
+        $args['status'] = $status;
+        $args['key'] = 'post';
+        $args['value'] = $h->post->vars['last_insert_id'];
         
-        $sql = "INSERT INTO " . TABLE_USERACTIVITY . " SET useract_archived = %s, useract_userid = %d, useract_status = %s, useract_key = %s, useract_value = %s, useract_date = CURRENT_TIMESTAMP, useract_updateby = %d";
-        $h->db->query($h->db->prepare($sql, 'N', $post_author, $status, 'post', $post_id, $h->currentUser->id));
+        $h->insertActivity($args);
     }
     
     
@@ -139,12 +142,13 @@ class Activity
      */
     public function post_update_post($h)
     {
-        $post_status = $h->post->status;
+        if ($h->post->status != 'new' && $h->post->status != 'top') { $status = "hide"; } else { $status = "show"; }
         
-        if ($post_status != 'new' && $post_status != 'top') { $status = "hide"; } else { $status = "show"; }
+        $args['status'] = 'show';
+        $args['where']['key'] = 'post';
+        $args['where']['value'] = $h->post->id;
         
-        $sql = "UPDATE " . TABLE_USERACTIVITY . " SET useract_status = %s, useract_updateby = %d WHERE useract_key = %s AND useract_value = %d";
-        $h->db->query($h->db->prepare($sql, $status, $h->currentUser->id, 'post', $h->post->id));
+        $h->updateActivity($args);
     }
     
     
@@ -162,15 +166,10 @@ class Activity
      */
     public function post_delete_post($h)
     {
-        $sql = "DELETE FROM " . TABLE_USERACTIVITY . " WHERE useract_key = %s AND useract_value = %d";
-        $h->db->query($h->db->prepare($sql, 'post', $h->post->id));
-        
-        $sql = "DELETE FROM " . TABLE_USERACTIVITY . " WHERE useract_key = %s AND useract_value2 = %d";
-        $h->db->query($h->db->prepare($sql, 'comment', $h->post->id));
-        
-        $sql = "DELETE FROM " . TABLE_USERACTIVITY . " WHERE useract_key = %s AND useract_value2 = %d";
-        $h->db->query($h->db->prepare($sql, 'vote', $h->post->id));
-        
+        $h->removeActivity(array('key'=>'post', 'value'=>$h->post->id));
+        $h->removeActivity(array('key'=>'comment', 'value2'=>$h->post->id));
+        $h->removeActivity(array('key'=>'vote', 'value2'=>$h->post->id));
+
         $h->clearCache('html_cache', false);
     }
     
