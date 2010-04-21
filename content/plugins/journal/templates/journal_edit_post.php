@@ -42,6 +42,7 @@
         <input type="hidden" name="post_process" id="post_process_<?php echo $h->post->id; ?>" value="newpost" />
         <input type="hidden" name="post_author" value="<?php echo $h->post->author; ?>" />
         <input type="hidden" name="post_id" value="<?php echo $h->post->id; ?>" />
+        <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
     </form>
 </div>
 

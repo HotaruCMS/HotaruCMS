@@ -24,17 +24,22 @@
  * @link      http://www.hotarucms.org/
  */
 
-/* Index */
+/* General */
+$lang['journal'] = "Journal";
+$lang['journals'] = "Journals";
 $lang["journal_site_name"] = SITE_NAME;
 $lang["journal_no_items"] = "No items found.";
 
 /* Journal Settings */
 $lang["journal_settings_header"] = "Journal Configuration";
-$lang["journal_settings_items_per_page"] = "Posts per page <small>(default: 10)</small>";
-$lang["journal_settings_allowable_tags"] = "Allowed HTML tags";
+$lang["journal_settings_items_per_page"] = "Number of journal entries per page";
+$lang["journal_settings_rss_items"] = "Number of journal entries in an RSS feed";
+$lang["journal_settings_content_min_length"] = "Minimum number of characters in a journal entry";
+$lang["journal_settings_summary"] = "Summary";
+$lang["journal_settings_summary_max_length"] = "Maximum characters";
+$lang["journal_settings_summary_instruct"] = "(Description truncated on list pages)";
+$lang["journal_settings_allowable_tags"] = "Allowed HTML tags in journal entry:";
 $lang["journal_settings_allowable_tags_example"] = "<small>(E.g. &lt;b&gt;&lt;u&gt;&lt;i&gt;&lt;blockquote&gt;)</small>";
-$lang["journal_settings_allowable_tags_posts"] = "Posts: ";
-$lang["journal_settings_allowable_tags_replies"] = "Replies: ";
 
 /* Journal Post & Reply Forms */
 $lang['journal_please_login'] = "You need to be logged in to comment.";
@@ -54,12 +59,26 @@ $lang['journal_reply_by'] = "Reply by";
 $lang['journal_time_ago'] = "ago";
 $lang['journal_reply_link'] = "Reply";
 $lang['journal_edit_link'] = "Edit";
+$lang['journal_no_title'] = "No Title";
 
 /* User page */
-$lang['journal'] = "Journal";
 $lang['journal_entry'] = "Post a new journal entry:";
 $lang['journal_header'] = "Journal: ";
 $lang['journal_title'] = " (Title)";
-$lang['journal_error_no_content'] = "Please write something.";
 
+/* Errors */
+$lang['journal_error_csrf'] = "CSRF error. Please try again.";
+$lang['journal_error_title_exists'] = "That title already exists.";
+$lang['journal_error_no_title'] = "Please enter a title.";
+$lang['journal_error_no_content'] = "Please write something.";
+$lang['journal_error_too_short'] = "Sorry, that's too short.";
+$lang['journal_error_no_perms'] = "Sorry, you need permission to post journal entries.";
+$lang['journal_error_pending'] = "Thank you!<br />Your post is awaiting moderator approval.";
+
+/* RSS */
+$lang['journal_rss_title'] = SITE_NAME . " Journals";
+$lang['journal_rss_user_title'] = SITE_NAME . " Journal: ";
+$lang['journal_rss_description'] = "Latest journal entries";
+$lang['journal_rss_user_description'] = "Latest journal entries from ";
+$lang["journal_rss_title_anchor"] = "Journal RSS";
 ?>

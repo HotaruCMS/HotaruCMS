@@ -27,7 +27,7 @@
 class JournalSettings
 {
      /**
-     * Admin settings for the Submit plugin
+     * Admin settings for the Journal plugin
      */
     public function settings($h)
     {
@@ -44,31 +44,43 @@ class JournalSettings
         $journal_settings = $h->getSerializedSettings();
         
         $items_per_page = $journal_settings['items_per_page'];
-        $allowable_tags_posts = $journal_settings['allowable_tags_posts'];
-        $allowable_tags_replies = $journal_settings['allowable_tags_replies'];
+        $rss_items = $journal_settings['rss_items'];
+        $content_length = $journal_settings['content_length'];
+        $summary = $journal_settings['summary'];
+        $summary_length = $journal_settings['summary_length'];
+        $allowable_tags = $journal_settings['allowable_tags'];
     
         $h->pluginHook('journal_settings_get_values');
         
         //...otherwise set to blank:
-        if (!$items_per_page) { $items_per_page = 10; }
+        if (!$content_length) { $content_length = ''; }
+        if (!$summary) { $summary = ''; }
+        if (!$summary_length) { $summary_length = ''; }
         
         echo "<form name='journal_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=journal' method='post'>\n";
 
-        // items per page
-        echo "<p><input type='text' size=5 name='items_per_page' value='" . $items_per_page . "' /> ";
-        echo $h->lang["journal_settings_items_per_page"] . "</p><br />\n";
+        echo "<p><input type='text' size=5 name='items_per_page' value='" . $items_per_page . "' /> " . $h->lang["journal_settings_items_per_page"] . "</p>\n";
         
-        // allowable tags
+        echo "<p><input type='text' size=5 name='rss_items' value='" . $rss_items . "' /> " . $h->lang["journal_settings_rss_items"] . "</p>\n";
         
-        echo "<p><b>" . $h->lang["journal_settings_allowable_tags"] . "</b> " . $h->lang["journal_settings_allowable_tags_example"] . "</p>\n";
-        echo "<p>" . $h->lang["journal_settings_allowable_tags_posts"] . " <input type='text' size=40 name='allowabletags_posts' value='" . $allowable_tags_posts . "' /><br />";
-        echo "<p>" . $h->lang["journal_settings_allowable_tags_replies"] . " <input type='text' size=40 name='allowabletags_replies' value='" . $allowable_tags_replies . "' /><br />";
+        echo "<p><input type='text' size=5 name='content_length' value='" . $content_length . "' /> " . $h->lang["journal_settings_content_min_length"] . "</p>\n";
         
+        echo "<p><input type='checkbox' name='summary' value='summary' " . $summary . ">&nbsp;&nbsp;" . $h->lang["journal_settings_summary"];
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;";
+        echo $h->lang["journal_settings_summary_max_length"] . ": <input type='text' size=5 name='summary_length' value='" . $summary_length . "' />\n";
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;";
+        
+        echo "<small>" . $h->lang["journal_settings_summary_instruct"] . "</small></p>\n";
     
         $h->pluginHook('journal_settings_form');
+        
+        echo "<p>" . $h->lang["journal_settings_allowable_tags"] . " <input type='text' size=40 name='allowable_tags' value='" . $allowable_tags . "' /><br />";
+        echo $h->lang["journal_settings_allowable_tags_example"] . "</p>\n";
+        
+        $h->pluginHook('journal_settings_form2');
     
         echo "<br />\n";
-
+        
         echo "<input type='hidden' name='submitted' value='true' />\n";
         echo "<input type='submit' value='" . $h->lang["main_form_save"] . "' />\n";
         echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
@@ -77,7 +89,7 @@ class JournalSettings
     
     
     /**
-     * Save Submit Settings
+     * Save Journal Settings
      */
     public function saveSettings($h) 
     {
@@ -85,20 +97,55 @@ class JournalSettings
         $journal_settings = $h->getSerializedSettings();
         
         // Items per page
-        $items_per_page = $h->cage->post->testInt('items_per_page'); 
+        $items_per_page = $h->cage->post->getInt('items_per_page'); 
         if (!$items_per_page) { 
-            $items_per_page = $journal_settings['items_per_page']; 
+            $items_per_page = $journal_settings['items_per_page'];
+        } 
+        
+        // Feed items
+        $rss_items = $h->cage->post->getInt('rss_items'); 
+        if (!$rss_items) { 
+            $rss_items = $journal_settings['rss_items'];
+        } 
+        
+        // Content length
+        $content_length = $h->cage->post->getInt('content_length'); 
+        if (!$content_length) { 
+            $content_length = $journal_settings['content_length'];
+        } 
+        
+        // Summary
+        if ($h->cage->post->keyExists('summary')) { 
+            $summary = 'checked'; 
+        } else { 
+            $summary = ''; 
         }
         
+        // Summary length
+        $summary_length = $h->cage->post->getInt('summary_length'); 
+        if (!$summary_length) { 
+            $summary_length = $journal_settings['summary_length'];
+        } 
+        
         // Allowable tags
-        $allowable_tags = $h->cage->post->getRaw('allowabletags'); 
+        $allowable_tags = $h->cage->post->getRaw('allowable_tags'); 
         if (!$allowable_tags) { 
-            $allowable_tags = $journal_settings['allowableTags']; 
+            $allowable_tags = $journal_settings['allowable_tags'];
+        } 
+        
+        // Set pending
+        $set_pending = $h->cage->post->testAlnumLines('set_pending');
+        if (!$set_pending) {
+            $set_pending = $journal_settings['set_pending'];
         }
-    
+        
         $h->pluginHook('journal_save_settings');
         
         $journal_settings['items_per_page'] = $items_per_page;
+        $journal_settings['rss_items'] = $rss_items;
+        $journal_settings['content_length'] = $content_length;
+        $journal_settings['summary'] = $summary;
+        $journal_settings['summary_length'] = $summary_length;
         $journal_settings['allowable_tags'] = $allowable_tags;
     
         $h->updateSetting('journal_settings', serialize($journal_settings));
@@ -106,7 +153,7 @@ class JournalSettings
         $h->message = $h->lang["main_settings_saved"];
         $h->messageType = "green";
         
-        return true;
+        return true;    
     }
     
 }

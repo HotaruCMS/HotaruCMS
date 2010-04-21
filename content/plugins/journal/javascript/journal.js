@@ -24,43 +24,12 @@
 $(document).ready(function(){
 
 	// Show/Hide box 
-	$(".show_post_edit").click(function () {
+	$("#journal_posts .show_post_edit").click(function () {
 		var target = $(this).parents(".show_post_author_date");
 		target = $(target).nextAll(".post_form"); // finds div surrounding form
 		target.fadeToggle();
 		return false;
 	});
-	
-	// Show reply box
-	$(".comment_form_fake").click(function () {
-		$(this).hide();
-		
-		var target = $(this).next(); // next should be a form
-		target.show(); // show the form
-		$(".comment_textarea").val('');
-		
-		return false;
-	});
-	
-	// hide reply box
-	$(".comment_form form").focusout(function () {
-		if ($(this).children('textarea').val() == '') {
-			$(this).hide();
-			
-			$(".comment_form_fake").show(); // show the mini textarea
-		}
-
-		return false;
-	});
-	
-	// Show/Hide box 
-	$(".comment_edit_link").click(function () {
-		var target = $(this).parents(".comment");
-		var content = target.next(".comment_form").children("form");
-		content.toggle();
-		return false;
-	});
-	
 });
 
 

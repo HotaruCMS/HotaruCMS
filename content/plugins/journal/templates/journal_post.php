@@ -27,6 +27,7 @@
 // get the user for this post:
 $user = new UserBase($h);
 $user->getUserBasic($h, $h->post->author);
+$h->showMessages();
 ?>
 
 <div class='journal_post_wrapper'>
@@ -53,9 +54,7 @@ $user->getUserBasic($h, $h->post->author);
 	        <?php echo time_difference(unixtimestamp($h->post->date), $h->lang) . " " . $h->lang["sb_base_post_ago"]; ?>
 	        <?php $h->pluginHook('sb_base_show_post_author_date'); ?>
 	        <?php
-	            if (($h->pageName != 'submit3') 
-	                && (($h->currentUser->getPermission('can_edit_posts') == 'yes') 
-	                || (($h->currentUser->getPermission('can_edit_posts') == 'own') && ($h->currentUser->id == $user->id)))) { ?>
+	            if ($h->currentUser->id == $user->id) { ?>
 	                <a href='#' class='show_post_edit' onclick="edit_post(
 	                    '<?php echo $h->post->id; ?>',
 	                    '<?php echo urlencode($h->post->content); ?>',
@@ -84,7 +83,7 @@ $user->getUserBasic($h, $h->post->author);
 	    
 	</div>
 	
-	<?php $h->pluginHook('sb_base_show_post_middle'); ?>
+	<?php $h->pluginHook('sb_base_show_post_middle', '', array(), array('who_voted', 'related_posts')); ?>
 	
 	<?php $h->pluginHook('journal_post_show_post'); ?>
 

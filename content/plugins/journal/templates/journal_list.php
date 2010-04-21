@@ -57,8 +57,11 @@ foreach ($h->vars['pagedResults']->items as $post) {
 		    </div>
 		        
 		    <div class="show_post_content">
-		        <?php echo nl2br($h->post->content); ?>
-		        <?php $h->pluginHook('sb_base_show_post_content_post'); ?>
+                <?php if ($h->vars['summary']) { ?>
+                    <?php echo truncate($h->post->content, $h->vars['summary_length']); ?>
+                <?php } else { ?>
+                    <?php echo nl2br($h->post->content); ?>
+                <?php } ?>
 		    </div>
 		    
 		    <div class="show_post_extra_fields">
