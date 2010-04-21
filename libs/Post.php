@@ -148,7 +148,7 @@ class Post
 	/**
 	 * Add a post to the database
 	 *
-	 * @return true
+	 * @return int $last_insert_id
 	 */    
 	public function addPost($h)
 	{
@@ -176,7 +176,7 @@ class Post
 		
 		$h->pluginHook('post_add_post');
 		
-		return true;
+		return $last_insert_id;
 	}
 	
 	

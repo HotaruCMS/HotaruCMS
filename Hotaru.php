@@ -1704,11 +1704,11 @@ class Hotaru
 	/**
 	 * Add a post to the database
 	 *
-	 * @return true
-	 */    
+	 * @return int $last_insert_id
+	 */
 	public function addPost()
 	{
-		$this->post->addPost($this);
+		return $this->post->addPost($this);
 	}
 	
 	
@@ -2288,6 +2288,82 @@ class Hotaru
 		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
 		return $friends->updateFriends($this, $user_id, 'unfollow');
+	}
+	
+	
+ /* *************************************************************
+ *
+ *  SITE ACTIVITY FUNCTIONS
+ *
+ * *********************************************************** */
+ 
+ 
+	/**
+	 * Get the latest site activity
+	 *
+	 * @param int $limit
+	 * @param int $userid
+	 * @param string $type blank or "count" or "query"
+	 * @return array|false
+	 */
+	public function getLatestActivity($limit = 0, $userid = 0, $type = '')
+	{
+		require_once(LIBS . 'SiteActivity.php');
+		$activity = new SiteActivity();
+		return $activity->getLatestActivity($this, $limit, $userid, $type);
+	}
+	
+	
+	/**
+	 * Check if an action already exists
+	 *
+	 * @param array $args e.g. array('userid'=>4, 'key'=>'post', 'value'=>'6408')
+	 * @return bool
+	 */
+	public function activityExists($args = array())
+	{
+		require_once(LIBS . 'SiteActivity.php');
+		$activity = new SiteActivity();
+		return $activity->activityExists($this, $args);
+	}
+	
+	
+	/**
+	 * Insert new activity
+	 *
+	 * @param array $args e.g. array('userid'=>4, 'key'=>'post', 'value'=>'6408')
+	 */
+	public function insertActivity($h, $args = array())
+	{
+		require_once(LIBS . 'SiteActivity.php');
+		$activity = new SiteActivity();
+		return $activity->insertActivity($this, $args);
+	}
+	
+	
+	/**
+	 * Update activity
+	 *
+	 * @param array $args e.g. array('userid'=>4, 'key'=>'post', 'value'=>'6408')
+	 */
+	public function updateActivity($h,  $args = array())
+	{
+		require_once(LIBS . 'SiteActivity.php');
+		$activity = new SiteActivity();
+		return $activity->updateActivity($this, $args);
+	}
+	
+	
+	/**
+	 * Remove activity
+	 *
+	 * @param array $args e.g. array('userid'=>4, 'key'=>'post', 'value'=>'6408')
+	 */
+	public function removeActivity($h, $args = array())
+	{
+		require_once(LIBS . 'SiteActivity.php');
+		$activity = new SiteActivity();
+		return $activity->removeActivity($this, $args);
 	}
 }
 ?>
