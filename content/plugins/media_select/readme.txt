@@ -12,6 +12,6 @@ Instructions
 
 Changelog
 ---------
-v.0.3 2010/04/05 - Nick - Minor update: Added plural for "news" language item
+v.0.3 2010/04/22 - Nick - Moved menu into a template and added plural for "news" language item
 v.0.2 2010/01/02 - Nick - Updated for compatibility with Hotaru 1.0
 v.0.1 2009/11/30 - Nick - Released first version

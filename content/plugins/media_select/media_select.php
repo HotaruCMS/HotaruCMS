@@ -199,12 +199,7 @@ class MediaSelect
      */
     public function category_bar_end($h)
     {
-        echo "<li><a href='#'>" . $h->lang['media_select'] . "</a>\n";
-        echo "<ul class='children'>\n";
-        echo "<li><a href='" . $h->url(array('media'=>'text')) . "'>" . $h->lang['media_select_texts'] . "</a></li>\n";
-        echo "<li><a href='" . $h->url(array('media'=>'video')) . "'>" . $h->lang['media_select_videos'] . "</a></li>\n";
-        echo "<li><a href='" . $h->url(array('media'=>'image')) . "'>" . $h->lang['media_select_images'] . "</a></li>\n";
-        echo "</ul></li>";
+		$h->displayTemplate('media_menu');
     }
     
     
