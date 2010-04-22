@@ -2308,8 +2308,8 @@ class Hotaru
 	 */
 	public function getLatestActivity($limit = 0, $userid = 0, $type = '')
 	{
-		require_once(LIBS . 'SiteActivity.php');
-		$activity = new SiteActivity();
+		require_once(LIBS . 'UserActivity.php');
+		$activity = new UserActivity();
 		return $activity->getLatestActivity($this, $limit, $userid, $type);
 	}
 	
@@ -2322,8 +2322,8 @@ class Hotaru
 	 */
 	public function activityExists($args = array())
 	{
-		require_once(LIBS . 'SiteActivity.php');
-		$activity = new SiteActivity();
+		require_once(LIBS . 'UserActivity.php');
+		$activity = new UserActivity();
 		return $activity->activityExists($this, $args);
 	}
 	
@@ -2335,8 +2335,8 @@ class Hotaru
 	 */
 	public function insertActivity($args = array())
 	{
-		require_once(LIBS . 'SiteActivity.php');
-		$activity = new SiteActivity();
+		require_once(LIBS . 'UserActivity.php');
+		$activity = new UserActivity();
 		return $activity->insertActivity($this, $args);
 	}
 	
@@ -2348,8 +2348,8 @@ class Hotaru
 	 */
 	public function updateActivity($args = array())
 	{
-		require_once(LIBS . 'SiteActivity.php');
-		$activity = new SiteActivity();
+		require_once(LIBS . 'UserActivity.php');
+		$activity = new UserActivity();
 		return $activity->updateActivity($this, $args);
 	}
 	
@@ -2361,8 +2361,8 @@ class Hotaru
 	 */
 	public function removeActivity($args = array())
 	{
-		require_once(LIBS . 'SiteActivity.php');
-		$activity = new SiteActivity();
+		require_once(LIBS . 'UserActivity.php');
+		$activity = new UserActivity();
 		return $activity->removeActivity($this, $args);
 	}
 }

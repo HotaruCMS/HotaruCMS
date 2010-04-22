@@ -1,6 +1,6 @@
 <?php
 /**
- * SiteActivity class
+ * UserActivity class
  *
  * PHP version 5
  *
@@ -24,7 +24,7 @@
  * @link      http://www.hotarucms.org/
  *
  */
-class SiteActivity
+class UserActivity
 {
 	/**
 	 * Get the latest site activity
@@ -173,7 +173,7 @@ class SiteActivity
 
 		$prepare[0] = rstrtrim($sql, " AND "); // replace "temp" with full $sql 
 
-		$h->db->query($h->db->prepare($prepare));
+		return $h->db->query($h->db->prepare($prepare));
 	}
 }
 ?>

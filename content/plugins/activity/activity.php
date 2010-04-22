@@ -201,7 +201,7 @@ class Activity
 		$args['key2'] = 'post';
 		$args['value2'] = $vars['post'];
             
-        $h->removeActivity($args);
+        $result = $h->removeActivity($args);
         
         // if there wasn't a previous vote, i.e. nothing was found when we tried to delete it, then we can add it as an up vote:
         if (!$result) {
@@ -233,7 +233,7 @@ class Activity
 		$args['key2'] = 'post';
 		$args['value2'] = $vars['post'];
             
-        $h->removeActivity($args);
+        $result = $h->removeActivity($args);
         
         // if there wasn't a previous vote, i.e. nothing was found when we tried to delete it, then we can add it as a down vote:
         if (!$result) {

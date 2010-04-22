@@ -67,7 +67,7 @@ foreach ($h->vars['pagedResults']->items as $post) {
 		    <div class="show_post_extra_fields">
 		        <ul>
 					<li><a class="comment_link" href="<?php echo $h->url(array('page'=>$h->post->id)); ?>"><?php echo $h->countComments(false, $h->lang['comments_leave_comment']); ?></a></li>
-		            <?php $h->pluginHook('sb_base_show_post_extra_fields', '', array(), array('comments')); ?>
+		            <?php $h->pluginHook('sb_base_show_post_extra_fields', '', array(), array('comments', 'vote', 'updown_voting')); ?>
 		        </ul>
 		    </div>
 		    
