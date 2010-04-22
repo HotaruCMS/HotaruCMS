@@ -2,7 +2,7 @@
 /**
  * name: Activity
  * description: Show recent activity
- * version: 0.7
+ * version: 0.8
  * folder: activity
  * class: Activity
  * requires: users 1.1, widgets 0.6
@@ -337,104 +337,6 @@ class Activity
         
         return $output;
     }
-    
-    
-    /**
-     * Get activity items
-     *
-     * @param array $activity 
-     * @param array $activity_settings
-     * return string $output
-     */
-    public function getActivityItems($h, $activity = array())
-    {
-        $output = '';
-        
-        // Get settings from database if they exist... (should be in cache by now)
-        $activity_settings = $h->getSerializedSettings('activity');
-        
-        if (!isset($user)) { $user = new UserBase(); }
-        
-        foreach ($activity as $item)
-        {
-            // Post used in Hotaru's url function
-            if ($item->useract_key == 'post') {
-                $h->readPost($item->useract_value);
-            } elseif  ($item->useract_key2 == 'post') {
-                $h->readPost($item->useract_value2);
-            }
-            
-            // Hide activity if its post has been buried or set to pending:
-            if ($h->post->status == 'pending' || $h->post->status == 'buried') { continue; }
-                       
-            // get user details
-            $user->getUserBasic($h, $item->useract_userid);
-            
-            $h->post->vars['catSafeName'] =  $h->getCatSafeName($h->post->category);
-
-            // OUTPUT ITEM
-            $output .= "<li class='activity_widget_item'>\n";
-            
-            if($h->isActive('avatar') && $activity_settings['widget_avatar']) {
-                $h->setAvatar($user->id, $activity_settings['widget_avatar_size']);
-                $output .= "<div class='activity_widget_avatar'>\n";
-                $output .= $h->linkAvatar();
-                $output .= "</div> \n";
-            }
-            
-            if ($activity_settings['widget_user']) {
-                $output .= "<a class='activity_widget_user' href='" . $h->url(array('user' => $user->name)) . "'>" . $user->name . "</a> \n";
-            }
-            
-            $output .= "<div class='activity_widget_content'>\n";
-            
-            $post_title = stripslashes(html_entity_decode(urldecode($h->post->title), ENT_QUOTES,'UTF-8'));
-            $title_link = $h->url(array('page'=>$h->post->id));
-            $cid = ''; // comment id string
-            
-            switch ($item->useract_key) {
-                case 'comment':
-                    $output .= $h->lang["activity_commented"] . " ";
-                    $cid = "#c" . $item->useract_value; // comment id to be put on the end of the url
-                    break;
-                case 'post':
-                	$post_lang = "activity_submitted_" . $h->post->type; // e.g. news, blog, etc.
-                	$output .= $h->lang[$post_lang] . " ";
-                    break;
-                case 'vote':
-                    switch ($item->useract_value) {
-                        case 'up':
-                            $output .= $h->lang["activity_voted_up"] . " ";
-                            break;
-                        case 'down':
-                            $output .= $h->lang["activity_voted_down"] . " ";
-                            break;
-                        case 'flag':
-                            $output .= $h->lang["activity_voted_flagged"] . " ";
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                default:
-                    break;
-            }
-            
-            $output .= "&quot;<a href='" . $title_link . $cid . "' >" . $post_title . "</a>&quot; \n";
-            
-            if ($activity_settings['time']) { 
-                // Commented this out because "8 mins ago" will never change when cached!
-                //$output .= "<small>[" . time_difference(unixtimestamp($item->useract_date), $h->lang);
-                //$output .= " " . $h->lang["submit_post_ago"] . "]</small>";
-                $output .= "<small>[" . date('g:ia, M jS', strtotime($item->useract_date)) . "]</small>";
-            }
-            
-            $output .= "</div>\n";
-            $output .= "</li>\n\n";
-        }
-        
-        return $output;
-    }
 
 
     /**
@@ -458,66 +360,6 @@ class Activity
         } else {
             return true;
         }
-    }
-    
-
-    /**
-     * Get activity content (Profile and Activity Pages only)
-     *
-     * @param array $activity 
-     * return string $output
-     */
-    public function activityContent($h, $item = array())
-    {
-        if (!$item) { return false; }
-        
-        $output = '';
-        
-        // Post used in Hotaru's url function
-        if ($item->useract_key == 'post') {
-            $h->readPost($item->useract_value);
-        } elseif  ($item->useract_key2 == 'post') {
-            $h->readPost($item->useract_value2);
-        }
-        
-        $h->post->vars['catSafeName'] =  $h->getCatSafeName($h->post->category);
-       
-        // content
-        $post_title = stripslashes(html_entity_decode(urldecode($h->post->title), ENT_QUOTES,'UTF-8'));
-        $title_link = $h->url(array('page'=>$h->post->id));
-        $cid = ''; // comment id string
-        
-        switch ($item->useract_key) {
-            case 'comment':
-                $output .= $h->lang["activity_commented"] . " ";
-                $cid = "#c" . $item->useract_value; // comment id to be put on the end of the url
-                break;
-            case 'post':
-                $post_lang = "activity_submitted_" . $h->post->type; // e.g. news, blog, etc.
-                $output .= $h->lang[$post_lang] . " ";
-                break;
-            case 'vote':
-                switch ($item->useract_value) {
-                    case 'up':
-                        $output .= $h->lang["activity_voted_up"] . " ";
-                        break;
-                    case 'down':
-                        $output .= $h->lang["activity_voted_down"] . " ";
-                        break;
-                    case 'flag':
-                        $output .= $h->lang["activity_voted_flagged"] . " ";
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            default:
-                break;
-        }
-        
-        $output .= "&quot;<a href='" . $title_link . $cid . "' >" . $post_title . "</a>&quot; \n";
-        
-        return $output;
     }
     
     
@@ -606,101 +448,208 @@ class Activity
     
     
     /**
-     * Publish content as an RSS feed
-     * Uses the 3rd party RSS Writer class.
-     */    
-    public function rssFeed($h)
+     * Get activity items
+     *
+     * @param array $activity 
+     * @param array $activity_settings
+     * return string $output
+     */
+    public function getActivityItems($h, $activity = array())
     {
-        require_once(EXTENSIONS . 'RSSWriterClass/rsswriter.php');
+        $output = '';
         
-        $select = '*';
-
-        $limit = $h->cage->get->getInt('limit');
-        $user = $h->cage->get->testUsername('user');
-        
-        if ($user) { 
-            $userid = $h->getUserIdFromName($user);
-        } else {
-            $userid = 0;
-        }
-        
-        $h->pluginHook('activity_rss_feed');
-        
-        $feed           = new RSS();
-        $feed->title    = SITE_NAME;
-        $feed->link     = BASEURL;
-        
-        if ($user) { 
-            $feed->description = $h->lang["activity_rss_latest_from_user"] . " " . $user; 
-        } else {
-            $feed->description = $h->lang["activity_rss_latest"] . SITE_NAME;
-        }
-        
-        $user = new UserBase($this->hotaru);
-
-        // Get settings from database if they exist...
+        // Get settings from database if they exist... (should be in cache by now)
         $activity_settings = $h->getSerializedSettings('activity');
         
-        if (!$limit) { $limit = $activity_settings['rss_number']; }
+        if (!isset($user)) { $user = new UserBase(); }
         
-        // get latest activity
-        $activity = $h->getLatestActivity($limit, $userid);
-        
-        if (!$activity) { echo $feed->serve(); return false; } // displays empty RSS feed
-                
-        foreach ($activity as $act) 
+        foreach ($activity as $item)
         {
             // Post used in Hotaru's url function
-            if ($act->useract_key == 'post') {
-                $h->readPost($act->useract_value);
-            } elseif  ($act->useract_key2 == 'post') {
-                $h->readPost($act->useract_value2);
+            if ($item->useract_key == 'post') {
+                $h->readPost($item->useract_value);
+            } elseif  ($item->useract_key2 == 'post') {
+                $h->readPost($item->useract_value2);
             }
             
-            $user->getUserBasic($h, $act->useract_userid);
+            // Hide activity if its post has been buried or set to pending:
+            if ($h->post->status == 'pending' || $h->post->status == 'buried') { continue; }
+                       
+            // get user details
+            $user->getUserBasic($h, $item->useract_userid);
             
-            $name = $user->name;
+            $h->post->vars['catSafeName'] =  $h->getCatSafeName($h->post->category);
+
+            // OUTPUT ITEM
+            $output .= "<li class='activity_widget_item'>\n";
+            
+            if($h->isActive('avatar') && $activity_settings['widget_avatar']) {
+                $h->setAvatar($user->id, $activity_settings['widget_avatar_size']);
+                $output .= "<div class='activity_widget_avatar'>\n";
+                $output .= $h->linkAvatar();
+                $output .= "</div> \n";
+            }
+            
+            if ($activity_settings['widget_user']) {
+                $output .= "<a class='activity_widget_user' href='" . $h->url(array('user' => $user->name)) . "'>" . $user->name . "</a> \n";
+            }
+            
+            $output .= "<div class='activity_widget_content'>\n";
+            
             $post_title = stripslashes(html_entity_decode(urldecode($h->post->title), ENT_QUOTES,'UTF-8'));
             $title_link = $h->url(array('page'=>$h->post->id));
-            $cid = ''; // comment id string
             
-            switch ($act->useract_key) {
-                case 'comment':
-                    $action = $h->lang["activity_commented"] . " ";
-                    $cid = "#c" . $act->useract_value; // comment id to be put on the end of the url
-                    break;
-                case 'post':
-                	$post_lang = "activity_submitted_" . $h->post->type; // e.g. news, blog, etc.
-                    $action = $h->lang[$post_lang] . " ";
-                    break;
-                case 'vote':
-                    switch ($act->useract_value) {
-                        case 'up':
-                            $action = $h->lang["activity_voted_up"] . " ";
-                            break;
-                        case 'down':
-                            $action = $h->lang["activity_voted_down"] . " ";
-                            break;
-                        case 'flag':
-                            $action = $h->lang["activity_voted_flagged"] . " ";
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                default:
-                    break;
+            $result = $this->activitySwitch($h, $item);
+            
+            $output .= $result['output'] . "&quot;<a href='" . $title_link . $result['cid'] . "' >" . $post_title . "</a>&quot; \n";
+            
+            if ($activity_settings['time']) { 
+                // Commented this out because "8 mins ago" will never change when cached!
+                //$output .= "<small>[" . time_difference(unixtimestamp($item->useract_date), $h->lang);
+                //$output .= " " . $h->lang["submit_post_ago"] . "]</small>";
+                $output .= "<small>[" . date('g:ia, M jS', strtotime($item->useract_date)) . "]</small>";
             }
             
-            $item = new RSSItem();
-
-            $item->title = $name . " " . $action . " \"" . $post_title . "\"";
-            $item->link  = $h->url(array('page'=>$h->post->id)) . $cid;
-            $item->setPubDate($act->useract_date); 
-            $feed->addItem($item);
+            $output .= "</div>\n";
+            $output .= "</li>\n\n";
         }
         
-        echo $feed->serve();
+        return $output;
     }
+    
+    
+	/**
+	 * Get activity content (Profile and Activity Pages only)
+	 *
+	 * @param array $activity 
+	 * return string $output
+	 */
+	public function activityContent($h, $item = array())
+	{
+		if (!$item) { return false; }
+		
+		$output = '';
+		
+		// Post used in Hotaru's url function
+		if ($item->useract_key == 'post') {
+			$h->readPost($item->useract_value);
+		} elseif  ($item->useract_key2 == 'post') {
+			$h->readPost($item->useract_value2);
+		}
+		
+		$h->post->vars['catSafeName'] =  $h->getCatSafeName($h->post->category);
+		
+		// content
+		$post_title = stripslashes(html_entity_decode(urldecode($h->post->title), ENT_QUOTES,'UTF-8'));
+		$title_link = $h->url(array('page'=>$h->post->id));
+		
+		$result = $this->activitySwitch($h, $item);
+		
+		$output = $result['output'] . "&quot;<a href='" . $title_link . $result['cid'] . "' >" . $post_title . "</a>&quot; \n";
+		
+		return $output;
+	}
+
+
+	/**
+	 * Publish content as an RSS feed
+	 * Uses the 3rd party RSS Writer class.
+	 */    
+	public function rssFeed($h)
+	{
+		$limit = $h->cage->get->getInt('limit');
+		$user = $h->cage->get->testUsername('user');
+		
+		$userid = ($user) ? $h->getUserIdFromName($user) : 0;
+		
+		// Get settings from database if they exist...
+		$activity_settings = $h->getSerializedSettings('activity');
+		
+		if (!$limit) { $limit = $activity_settings['rss_number']; }
+		
+		// get latest activity
+		$activity = $h->getLatestActivity($limit, $userid);
+		
+		$items = array();
+		
+		if ($activity) {
+			foreach ($activity as $act) 
+			{
+				// Post used in Hotaru's url function
+				if ($act->useract_key == 'post') {
+					$h->readPost($act->useract_value);
+				} elseif  ($act->useract_key2 == 'post') {
+					$h->readPost($act->useract_value2);
+				}
+				
+				$name = $h->getUserNameFromId($act->useract_userid);
+				$post_title = stripslashes(html_entity_decode(urldecode($h->post->title), ENT_QUOTES,'UTF-8'));
+				$title_link = $h->url(array('page'=>$h->post->id));
+				
+				$result = $this->activitySwitch($h, $act);
+				
+				$item['title'] = $name . " " . $result['output'] . " \"" . $post_title . "\"";
+				$item['link'] = $h->url(array('page'=>$h->post->id)) . $result['cid'];
+				$item['date'] = $act->useract_date;
+				array_push($items, $item);
+			}
+		}
+		
+		if ($user) { 
+			$description = $h->lang["activity_rss_latest_from_user"] . " " . $user; 
+		} else {
+			$description = $h->lang["activity_rss_latest"] . SITE_NAME;
+		}
+		
+		$h->rss(SITE_NAME, BASEURL, $description, $items);
+	}
+
+
+	/**
+	 * Determine the language for the action
+	 *
+	 * @param array $item
+	 * @return string $output
+	 */
+	public function activitySwitch($h, $item = NULL)
+	{
+		if (!$item) { return false; }
+		
+		$cid = ''; // comment id string
+		
+		switch ($item->useract_key) {
+			case 'comment':
+				$output = $h->lang["activity_commented"] . " ";
+				$cid = "#c" . $item->useract_value; // comment id to be put on the end of the url
+				break;
+			case 'post':
+				$post_lang = "activity_submitted_" . $h->post->type; // e.g. news, blog, etc.
+				$output = $h->lang[$post_lang] . " ";
+				break;
+			case 'vote':
+				switch ($item->useract_value) {
+					case 'up':
+						$output = $h->lang["activity_voted_up"] . " ";
+						break;
+					case 'down':
+						$output = $h->lang["activity_voted_down"] . " ";
+						break;
+					case 'flag':
+						$output = $h->lang["activity_voted_flagged"] . " ";
+						break;
+					default:
+						break;
+				}
+				break;
+			default:
+				// for plugins to add language of alternative "useract_key"s
+				$h->vars['activity_output'] = '';
+				$h->pluginHook('activity_output', '', array('key'=>$item->useract_key));
+				$output = $h->vars['activity_output'];
+				break;
+		}
+		
+		return array('output'=>$output, 'cid'=>$cid);
+	}
 }
 ?>

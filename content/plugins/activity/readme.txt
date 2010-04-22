@@ -15,6 +15,7 @@ Instructions
 
 Changelog
 ---------
+v.0.8 2010/04/22 - Nick - Reworked to use Hotaru 1.2's SiteActivity library.
 v.0.7 2010/03/03 - Nick - Updated to work with the "Up Down Voting" plugin.
 v.0.6 2010/02/28 - Nick - Removed unnecessary breadcrumbs for profiles
 v.0.5 2010/02/18 - Nick - Code changes for pagination
