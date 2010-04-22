@@ -101,6 +101,8 @@ class MediaSelect
      */
     public function post_update_post($h)
     {
+    	if (!isset($h->vars['submitted_data']['submit_media'])) { return false; }
+    	
         $h->post->vars['media'] = $h->vars['submitted_data']['submit_media'];
         
         $sql = "UPDATE " . TABLE_POSTS . " SET post_media = %s WHERE post_id = %d";

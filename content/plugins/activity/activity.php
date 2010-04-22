@@ -175,14 +175,11 @@ class Activity
     
     
     /**
-     * Delete votes from activity table
+     * Delete activity of killspammed users
      */
     public function userbase_killspam($h, $vars = array())
     {
-        $user_id = $vars['target_user'];
-        
-        $sql = "DELETE FROM " . TABLE_USERACTIVITY . " WHERE useract_userid = %d AND useract_key = %s";
-        $h->db->query($h->db->prepare($sql, 'vote', $user_id));
+        $h->removeActivity(array('userid'=>$vars['target_user']));
         
         $h->clearCache('html_cache', false);
     }
@@ -197,13 +194,26 @@ class Activity
         $post_id = $vars['post'];
         
         // if we're voting down something we previously voted up, we should remove the previous vote:
-        $sql = "DELETE FROM " . TABLE_USERACTIVITY . " WHERE useract_userid = %d AND useract_key = %s AND useract_value = %s AND useract_key2 = %s AND useract_value2 = %d";
-        $result = $h->db->query($h->db->prepare($sql, $user_id, 'vote', 'down', 'post', $post_id));
+        
+        $args['userid'] = $vars['user'];
+        $args['key'] = 'vote';
+        $args['value'] = 'down';
+		$args['key2'] = 'post';
+		$args['value2'] = $vars['post'];
+            
+        $h->removeActivity($args);
         
         // if there wasn't a previous vote, i.e. nothing was found when we tried to delete it, then we can add it as an up vote:
         if (!$result) {
-            $sql = "INSERT INTO " . TABLE_USERACTIVITY . " SET useract_archived = %s, useract_userid = %d, useract_status = %s, useract_key = %s, useract_value = %s, useract_key2 = %s, useract_value2 = %s, useract_date = CURRENT_TIMESTAMP, useract_updateby = %d";
-            $h->db->query($h->db->prepare($sql, 'N', $user_id, 'show', 'vote', 'up', 'post', $post_id, $h->currentUser->id));
+
+	        $args['userid'] = $vars['user'];
+	        $args['key'] = 'vote';
+	        $args['value'] = 'up';
+	        $args['key2'] = 'post';
+	        $args['value2'] = $vars['post'];
+	        
+	        $h->insertActivity($args);
+	        
         } else {
             $h->clearCache('html_cache', false); // clear the html cache in order to update the activity widget after the deletion
         }
@@ -215,17 +225,27 @@ class Activity
      */
     public function vote_negative_vote($h, $vars)
     {
-        $user_id = $vars['user'];
-        $post_id = $vars['post'];
-        
         // if we're un-voting or voting up something we previously voted down, we should remove the previous vote:
-        $sql = "DELETE FROM " . TABLE_USERACTIVITY . " WHERE useract_userid = %d AND useract_key = %s AND useract_value = %s AND useract_key2 = %s AND useract_value2 = %d";
-        $result = $h->db->query($h->db->prepare($sql, $user_id, 'vote', 'up', 'post', $post_id));
+        
+        $args['userid'] = $vars['user'];
+        $args['key'] = 'vote';
+        $args['value'] = 'up';
+		$args['key2'] = 'post';
+		$args['value2'] = $vars['post'];
+            
+        $h->removeActivity($args);
         
         // if there wasn't a previous vote, i.e. nothing was found when we tried to delete it, then we can add it as a down vote:
         if (!$result) {
-            $sql = "INSERT INTO " . TABLE_USERACTIVITY . " SET useract_archived = %s, useract_userid = %d, useract_status = %s, useract_key = %s, useract_value = %s, useract_key2 = %s, useract_value2 = %s, useract_date = CURRENT_TIMESTAMP, useract_updateby = %d";
-            $h->db->query($h->db->prepare($sql, 'N', $user_id, 'show', 'vote', 'down', 'post', $post_id, $h->currentUser->id));
+            
+	        $args['userid'] = $vars['user'];
+	        $args['key'] = 'vote';
+	        $args['value'] = 'down';
+	        $args['key2'] = 'post';
+	        $args['value2'] = $vars['post'];
+	        
+	        $h->insertActivity($args);
+            
         } else {
             $h->clearCache('html_cache', false); // clear the html cache in order to update the activity widget after the deletion
         }
@@ -238,9 +258,13 @@ class Activity
     public function vote_flag_insert($h)
     {
         // we don't need the status because if the post wasn't visible, it couldn't be voted for.
-        
-        $sql = "INSERT INTO " . TABLE_USERACTIVITY . " SET useract_archived = %s, useract_userid = %d, useract_status = %s, useract_key = %s, useract_value = %s, useract_key2 = %s, useract_value2 = %s, useract_date = CURRENT_TIMESTAMP, useract_updateby = %d";
-        $h->db->query($h->db->prepare($sql, 'N', $h->currentUser->id, 'show', 'vote', 'flag', 'post', $h->post->id, $h->currentUser->id));
+
+        $args['key'] = 'vote';
+        $args['value'] = 'flag';
+		$args['key2'] = 'post';
+		$args['value2'] = $h->post->id;
+            
+        $h->insertActivity($args);
     }
     
     
@@ -252,7 +276,8 @@ class Activity
         // Get settings from database if they exist...
         $activity_settings = $h->getSerializedSettings('activity');
         
-        $activity = $this->getLatestActivity($h, $activity_settings['widget_number']);
+        // Get latest activity
+        $activity = $h->getLatestActivity($activity_settings['widget_number']);
         
         // build link that will link the widget title to all activity...
         
@@ -277,68 +302,6 @@ class Activity
         
         // Display the whole thing:
         if (isset($output) && $output != '') { echo $output; }
-    }
-    
-    
-    /**
-     * Get activity
-     *
-     * return array $activity
-     */
-    public function getLatestActivity($h, $limit = 0, $userid = 0)
-    {
-        if (!$limit) { $limit = ""; } else { $limit = "LIMIT " . $limit; }
-        
-        if (!$userid) {
-            $sql = "SELECT * FROM " . TABLE_USERACTIVITY . " WHERE useract_status = %s ORDER BY useract_date DESC " . $limit;
-            $activity = $h->db->get_results($h->db->prepare($sql, 'show'));
-        } else {
-            $sql = "SELECT * FROM " . TABLE_USERACTIVITY . " WHERE useract_status = %s AND useract_userid = %d ORDER BY useract_date DESC " . $limit;
-            $activity = $h->db->get_results($h->db->prepare($sql, 'show', $userid));
-        }
-        
-        if ($activity) { return $activity; } else { return false; }
-    }
-    
-    
-    /**
-     * Get activity count
-     *
-     * @param int $limit
-     * @param int $userid
-     * @param string $return 'activity', 'query' or 'count'
-     * return array $activity
-     */
-    public function getLatestActivityCount($h, $userid = 0)
-    {
-        if (!$userid) {
-            $sql = "SELECT count(useract_id) AS number FROM " . TABLE_USERACTIVITY . " WHERE useract_status = %s ORDER BY useract_date DESC ";
-            $activity = $h->db->get_var($h->db->prepare($sql, 'show'));
-        } else {
-            $sql = "SELECT count(useract_id) AS number FROM " . TABLE_USERACTIVITY . " WHERE useract_status = %s AND useract_userid = %d ORDER BY useract_date DESC ";
-            $activity = $h->db->get_var($h->db->prepare($sql, 'show', $userid));
-        }
-        
-        if ($activity) { return $activity; } else { return false; }
-    }
-    
-    
-    /**
-     * Get activity
-     *
-     * return array $activity
-     */
-    public function getLatestActivityQuery($h, $userid = 0)
-    {
-        if (!$userid) {
-            $sql = "SELECT * FROM " . TABLE_USERACTIVITY . " WHERE useract_status = %s ORDER BY useract_date DESC ";
-            $query = $h->db->prepare($sql, 'show');
-            return $query;
-        } else {
-            $sql = "SELECT * FROM " . TABLE_USERACTIVITY . " WHERE useract_status = %s AND useract_userid = %d ORDER BY useract_date DESC ";
-            $query = $h->db->prepare($sql, 'show', $userid);
-            return $query;
-        }
     }
     
     
@@ -593,8 +556,8 @@ class Activity
         $activity_settings = $h->getSerializedSettings('activity');
         
         // gets query and total count for pagination
-        $act_query = $this->getLatestActivityQuery($h);
-        $act_count = $this->getLatestActivityCount($h);
+        $act_query = $h->getLatestActivity(0, 0, 'query');
+        $act_count = $h->getLatestActivity(0, 0, 'count');
         
         // pagination 
         $h->vars['pagedResults'] = $h->pagination($act_query, $act_count, $activity_settings['number'], 'useractivity');
@@ -617,8 +580,8 @@ class Activity
         $activity_settings = $h->getSerializedSettings('activity');
 
         // gets query and total count for pagination
-        $act_query = $this->getLatestActivityQuery($h, $userid);
-        $act_count = $this->getLatestActivityCount($h, $userid);
+        $act_query = $h->getLatestActivity(0, $userid, 'query');
+        $act_count = $h->getLatestActivity(0, $userid, 'count');
         
         // pagination 
         $h->vars['pagedResults'] = $h->pagination($act_query, $act_count, $activity_settings['number'], 'useractivity');
@@ -681,7 +644,7 @@ class Activity
         if (!$limit) { $limit = $activity_settings['rss_number']; }
         
         // get latest activity
-        $activity = $this->getLatestActivity($h, $limit, $userid);
+        $activity = $h->getLatestActivity($limit, $userid);
         
         if (!$activity) { echo $feed->serve(); return false; } // displays empty RSS feed
                 

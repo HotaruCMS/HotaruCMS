@@ -128,6 +128,7 @@ class SiteActivity
 		if (isset($args['value'])) { $sql .= "useract_value = %s, "; array_push($prepare, $args['value']); }
 		if (isset($args['key2'])) { $sql .= "useract_key2 = %s, "; array_push($prepare, $args['key2']); }
 		if (isset($args['value2'])) { $sql .= "useract_value2 = %s, "; array_push($prepare, $args['value2']); }
+		$sql .= "useract_updatedts = CURRENT_TIMESTAMP, "; 
 		$sql .= "useract_updateby = %d"; array_push($prepare, $h->currentUser->id);
 		
 		// WHERE ..
