@@ -43,14 +43,18 @@ class SitemapSettings extends Sitemap
 			$h->message = $h->lang["sitemap_password_generated"];
 			$h->messageType = "green";
 			$h->showMessage();
+		}else if ($h->cage->post->getAlpha('ping') == 'true') {
+			$this->pingSites($h);			
+			$h->messageType = "green";
+			$h->showMessage();
 		}
 
 		//Get settings from database
 		$sitemap_settings = $h->getSerializedSettings();
 		
-        // show header
-        echo "<h1>" . $h->lang["sitemap_settings_header"] . "</h1>\n";
-        
+	// show header
+	echo "<h1>" . $h->lang["sitemap_settings_header"] . "</h1>\n";
+
 		echo "<h3>" . $h->lang['sitemap_configure_sitemap'] . "</h3>\n";
 		
 		echo '<form name="input" action="'. BASEURL . 'admin_index.php?page=plugin_settings&amp;plugin=sitemap" method="post">';
@@ -82,6 +86,8 @@ class SitemapSettings extends Sitemap
 		}
 		echo "<br />";
 		echo '<input type="checkbox" name ="sitemap_cron" value="sitemap_cron" '.$sitemap_settings['sitemap_use_cron'].'">&nbsp;'.$h->lang['sitemap_use_cron'].' <br />';
+		echo '<input type="checkbox" name ="sitemap_ping_google" value="sitemap_ping_goolge" '.$sitemap_settings['sitemap_ping_google'].'">&nbsp;'.$h->lang['sitemap_ping_google'].' <br />';
+		echo '<input type="checkbox" name ="sitemap_ping_bing" value="sitemap_ping_bing" '.$sitemap_settings['sitemap_ping_bing'].'">&nbsp;'.$h->lang['sitemap_ping_bing'].' <br />';
 		echo "<br />";
 		
 		echo '<input type="hidden" name="submitted" value="true">';
@@ -92,7 +98,23 @@ class SitemapSettings extends Sitemap
 		echo '</form>';
 		
 		echo "<br />";
-		
+
+		//PING SITEMAP
+		echo "<h3>" . $h->lang['sitemap_ping'] . "</h3>\n";
+
+		//Display the last time you ran the sitemap ping tool
+		echo $h->lang['sitemap_last_pinged'].' '.$sitemap_settings['sitemap_last_pinged'].'<br />';
+
+		//Allow the user to run the sitemap creation tool
+		echo '<form name="input" action="'. BASEURL . 'admin_index.php?page=plugin_settings&amp;plugin=sitemap" method="post">';
+		echo '<input type="hidden" name="ping" value="true">';
+		echo '<input type="submit" value="' . $h->lang['sitemap_form_ping'] . '" />';
+		echo '<input type="hidden" name="csrf" value="' . $h->csrfToken . '" />';
+		echo '</form>';
+
+		echo '<br />';
+
+		//GENERATE SITEMAP
 		echo "<h3>" . $h->lang['sitemap_generate_sitemap'] . "</h3>\n";
 		
 		//Print where to find the sitemap
@@ -145,14 +167,7 @@ class SitemapSettings extends Sitemap
 		$sitemap_settings = $h->getSerializedSettings();
 		
 		//Change the compression of the sitemap
-		if($h->cage->post->keyExists('sitemap_compress'))
-		{
-			$sitemap_settings['sitemap_compress'] = 'checked';
-		}
-		else
-		{
-			$sitemap_settings['sitemap_compress'] = '';
-		}
+		$sitemap_settings['sitemap_compress'] = $h->cage->post->keyExists('sitemap_compress') ? 'checked' : '';
 		
 		//Change the frequency of page updates
 		if($h->cage->post->keyExists('sitemap_frequency'))
@@ -181,6 +196,10 @@ class SitemapSettings extends Sitemap
 			$cron_data = array('hook'=>$hook);
 			$h->pluginHook('cron_delete_job', 'cron', $cron_data);
 		}
+
+		// Ping Google, Bing
+		$sitemap_settings['sitemap_ping_google'] = $h->cage->post->keyExists('sitemap_ping_google') ? 'checked' : '';
+		$sitemap_settings['sitemap_ping_bing'] = $h->cage->post->keyExists('sitemap_ping_bing') ? 'checked' : '';
 		
 		// Get priorities
 		$priorities = $this->getPriorities($h);

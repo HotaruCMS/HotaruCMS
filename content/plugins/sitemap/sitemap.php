@@ -2,7 +2,7 @@
 /**
  * name: Sitemap
  * description: Produces a Sitemap for your site.
- * version: 0.5
+ * version: 0.6
  * folder:sitemap
  * hooks: install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, theme_index_top, sitemap_runcron
  * class: Sitemap
@@ -43,6 +43,7 @@ class Sitemap
 		
 		if (!isset($sitemap_settings['sitemap_location'])) { $sitemap_settings['sitemap_location'] = BASEURL; }
 		if (!isset($sitemap_settings['sitemap_last_run'])) { $sitemap_settings['sitemap_last_run'] = 'Never'; }
+		if (!isset($sitemap_settings['sitemap_last_pinged'])) { $sitemap_settings['sitemap_last_pinged'] = 'Never'; }
 		if (!isset($sitemap_settings['sitemap_compress'])) { $sitemap_settings['sitemap_compress'] = ''; }
 		if (!isset($sitemap_settings['sitemap_use_cron'])) { $sitemap_settings['sitemap_use_cron'] = ''; }
 		if (!isset($sitemap_settings['sitemap_frequency'])) { $sitemap_settings['sitemap_frequency'] = 'weekly'; }
@@ -50,6 +51,9 @@ class Sitemap
 		if (!isset($sitemap_settings['sitemap_priority_categories'])) { $sitemap_settings['sitemap_priority_categories'] = '0.8'; }
 		if (!isset($sitemap_settings['sitemap_priority_posts'])) { $sitemap_settings['sitemap_priority_posts'] = '0.5'; }
 		if (!isset($sitemap_settings['sitemap_password'])) { $sitemap_settings['sitemap_password'] = md5(rand()); }
+		if (!isset($sitemap_settings['sitemap_ping_google'])) { $sitemap_settings['sitemap_ping_google'] = false; }
+		if (!isset($sitemap_settings['sitemap_ping_bing'])) { $sitemap_settings['sitemap_ping_bing'] = false; }
+
 		
 		// Update plugin settings
 		$h->updateSetting('sitemap_settings', serialize($sitemap_settings));
@@ -112,8 +116,8 @@ class Sitemap
 			foreach($maps as $map)
 			{
 				$h->post->id = $map->post_id;
-                $h->post->category = $map->post_category;
-                $h->post->url = $map->post_url; 
+				$h->post->category = $map->post_category;
+				$h->post->url = $map->post_url;
 				//Format the date to ISO standards
 				$datetime = date("c", strtotime($map->post_updatedts));
 				//Stop it a bit early to be safe
@@ -221,7 +225,9 @@ class Sitemap
 	 */
 	public function sitemap_runcron($h)
 	{
-		$this->createSitemap($h);
+		$sitemap_settings = $h->getSerializedSettings();
+		$this->createSitemap($h);		
+		$this->pingSites($h);
 	}
 	
 	
@@ -232,15 +238,88 @@ class Sitemap
 	{
 		//Get settings from database
 		$sitemap_settings = $h->getSerializedSettings();
-
-		$this->newSitemap($h);
-		
-		$sitemap_settings['sitemap_last_run'] = date("F j, Y, g:i:s a");
-		
+		$this->newSitemap($h);		
+		$sitemap_settings['sitemap_last_run'] = date("F j, Y, g:i:s a");		
 		//Save the last run time
 		$h->updateSetting('sitemap_settings', serialize($sitemap_settings));
 		
 	}
-}
 
+	public function pingSites($h) {
+	    $sitemap_settings = $h->getSerializedSettings();
+	    $ext = $sitemap_settings['sitemap_compress'] == 'checked' ? 'gz' : xml;
+	    $sitemap = 'sitemap.' . $ext;
+	    $this->pingGoogle($h, $sitemap_settings, $sitemap);
+	    $this->pingBing($h, $sitemap_settings, $sitemap);
+	}
+
+	//Ping Google
+	public function pingGoogle($h, $sitemap_settings = array(), $sitemap = 'sitemap.xml') {
+	    if ($sitemap_settings['sitemap_ping_google']) {		
+		$pingUrl = "http://www.google.com/webmasters/sitemaps/ping?sitemap=" . urlencode($sitemap_settings['sitemap_location'] . $sitemap);
+		
+		$pingres = $this->getWebPage($pingUrl);
+		
+		if ($pingres['content'] == NULL || $pingres['content'] === false) {
+		    $h->message .= "Failed to ping Google: " . htmlspecialchars(strip_tags($pingres['content']));
+		} else {		
+		    $result = "success";
+		    $h->message .= 'Google ' . $h->lang["sitemap_ping_success"];
+		    $sitemap_settings['sitemap_last_pinged'] = date("F j, Y, g:i:s a");
+		}
+	    }
+	    $h->updateSetting('sitemap_settings', serialize($sitemap_settings));
+	}
+
+	//Ping Bing
+	public function pingBing($h, $sitemap_settings = array(), $sitemap = 'sitemap.xml') {
+	    if ($sitemap_settings['sitemap_ping_bing']) {		
+		$pingUrl = "http://www.bing.com/webmaster/ping.aspx?siteMap=" . urlencode($sitemap_settings['sitemap_location'] . $sitemap);
+
+		$pingres = $this->getWebPage($pingUrl);
+
+		if ($pingres['content'] == NULL || $pingres['content'] === false || strpos($pingres['content'], "Thanks for submitting your sitemap") === false) {
+		    $h->message .= "Failed to ping Bing: " . htmlspecialchars(strip_tags($pingres['content']));
+		} else {		
+		    $result = "success";
+		    $h->message .= 'Bing ' . $h->lang["sitemap_ping_success"];
+		    $sitemap_settings['sitemap_last_pinged'] = date("F j, Y, g:i:s a");
+		}
+	    }
+	    $h->updateSetting('sitemap_settings', serialize($sitemap_settings));	    
+	}
+	
+	/**
+	 * Get a web file (HTML, XHTML, XML, image, etc.) from a URL.  Return an
+	 * array containing the HTTP server response header fields and content.
+	 * code from http://nadeausoftware.com/articles/2007/06/php_tip_how_get_web_page_using_curl
+	 */
+	public function getWebPage( $url, $timeout = 120 )
+	{
+	    $options = array(
+		CURLOPT_RETURNTRANSFER => true,     // return web page
+		CURLOPT_HEADER         => false,    // don't return headers
+		CURLOPT_FOLLOWLOCATION => true,     // follow redirects
+		CURLOPT_ENCODING       => "",       // handle all encodings
+		CURLOPT_USERAGENT      => "sitemap", // who am i
+		CURLOPT_AUTOREFERER    => true,     // set referer on redirect
+		CURLOPT_CONNECTTIMEOUT => $timeout,      // timeout on connect
+		CURLOPT_TIMEOUT        => $timeout,      // timeout on response
+		CURLOPT_MAXREDIRS      => 10,       // stop after 10 redirects
+	    );
+
+	    $ch      = curl_init( $url );
+	    curl_setopt_array( $ch, $options );
+	    $content = curl_exec( $ch );
+	    $err     = curl_errno( $ch );
+	    $errmsg  = curl_error( $ch );
+	    $header  = curl_getinfo( $ch );
+	    curl_close( $ch );
+
+	    $header['errno']   = $err;
+	    $header['errmsg']  = $errmsg;
+	    $header['content'] = $content;
+	    return $header;
+	}
+}
 ?> 
