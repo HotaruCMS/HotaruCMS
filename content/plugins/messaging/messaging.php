@@ -2,7 +2,7 @@
 /**
  * name: Messaging
  * description: Enable users to send private messages to each other
- * version: 0.4
+ * version: 0.5
  * folder: messaging
  * class: Messaging
  * requires: users 1.5
@@ -18,27 +18,6 @@ class Messaging
      */
     public function install_plugin($h)
     {
-         // Create a new empty table called "messaging"
-        $exists = $h->db->table_exists('messaging');
-        if (!$exists) {
-            //echo "table doesn't exist. Stopping before creation."; exit;
-            $sql = "CREATE TABLE `" . DB_PREFIX . "messaging` (
-              `message_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-              `message_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-              `message_archived` enum('Y','N') NOT NULL DEFAULT 'N',
-              `message_from` int(20) NOT NULL DEFAULT 0,
-              `message_to` int(20) NOT NULL DEFAULT 0,
-              `message_date` timestamp NOT NULL,
-              `message_subject` varchar(255) NOT NULL DEFAULT '',
-              `message_content` text NULL,
-              `message_read` tinyint(1) NOT NULL DEFAULT '0',
-              `message_inbox` tinyint(1) NOT NULL DEFAULT '1',
-              `message_outbox` tinyint(1) NOT NULL DEFAULT '1',
-              `message_updateby` int(20) NOT NULL DEFAULT 0
-            ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Messaging';";
-            $h->db->query($sql); 
-        }
-        
         // Permissions
         $site_perms = $h->getDefaultPermissions('all');
         if (!isset($site_perms['can_do_messaging'])) { 
@@ -123,11 +102,11 @@ class Messaging
                 if ($h->cage->post->keyExists('delete_selected') && $h->cage->post->keyExists('message')) {
                     foreach ($h->cage->post->keyExists('message') as $id => $checked) {
                         // delete checked message
-                        $msgFuncs->deleteMessage($h, $id, 'inbox');
+                        $h->deleteMessage($id, 'inbox');
                     }
                 }
-                $count = $msgFuncs->getBoxCount($h, 'inbox');
-                $query = $msgFuncs->getBoxQuery($h, 'inbox');
+                $count = $h->getMessages('inbox', 'count');
+                $query = $h->getMessages('inbox', 'query');
                 $h->vars['messages_list'] = $h->pagination($query, $count, 20);
                 break;
                 
@@ -137,12 +116,12 @@ class Messaging
                 if ($h->cage->post->keyExists('delete_selected') && $h->cage->post->keyExists('message')) {
                     foreach ($h->cage->post->keyExists('message') as $id => $checked) {
                         // delete checked message
-                        $msgFuncs->deleteMessage($h, $id, 'outbox');
+                        $h->deleteMessage($id, 'outbox');
                     }
                 }
                 
-                $count = $msgFuncs->getBoxCount($h, 'outbox');
-                $query = $msgFuncs->getBoxQuery($h, 'outbox');
+                $count = $h->getMessages('outbox', 'count');
+                $query = $h->getMessages('outbox', 'query');
                 $h->vars['messages_list'] = $h->pagination($query, $count, 20);
                 break;
                 
@@ -191,7 +170,7 @@ class Messaging
                 elseif ($h->cage->get->testInt('reply'))
                 {
                     $h->vars['message_id'] = $h->cage->get->testInt('reply');
-                    $original_message = $msgFuncs->getMessage($h, $h->vars['message_id']);
+                    $original_message = $h->getMessage($h->vars['message_id']);
                     
                     if (!$original_message) { return false; }
                     $h->vars['message_to'] = $h->getUserNameFromId($original_message->message_from);
@@ -200,14 +179,14 @@ class Messaging
                     $h->vars['message_reply'] = true;
                     
                     // mark this message as read
-                    $msgFuncs->markRead($h, $h->vars['message_id']);
+                    $h->markRead($h->vars['message_id']);
                 }
                 break;
                 
             case 'show_message':
                 
                 $h->vars['message_id'] = $h->cage->get->testInt('id');
-                $original_message = $msgFuncs->getMessage($h, $h->vars['message_id']);
+                $original_message = $h->getMessage($h->vars['message_id']);
                 
                 if (!$original_message) { $h->vars['message_id'] = 0; return false; }
 				$h->vars['message_to_id'] = $original_message->message_to;
@@ -218,7 +197,7 @@ class Messaging
                 $h->vars['message_body'] = sanitize(urldecode($original_message->message_content), 'all');
                 
                 // mark this message as read
-                $msgFuncs->markRead($h, $h->vars['message_id']);
+                $h->markRead($h->vars['message_id']);
         }
     }
     

@@ -136,11 +136,34 @@ function create_table($table_name)
 		if ($table_name == "friends") {
 		//echo "table doesn't exist. Stopping before creation."; exit;
 		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
-				`follower_user_id` int(20) NOT NULL default '0',
-				`following_user_id` int(20) NOT NULL default '0',
-				`friends_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-				PRIMARY KEY (follower_user_id, following_user_id)
+			`follower_user_id` int(20) NOT NULL default '0',
+			`following_user_id` int(20) NOT NULL default '0',
+			`friends_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+			PRIMARY KEY (follower_user_id, following_user_id)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Friends';";
+		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		$db->query($sql);
+		}
+		
+		
+	// MESSAGING TABLE
+	
+		if ($table_name == "messaging") {
+		//echo "table doesn't exist. Stopping before creation."; exit;
+		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
+			`message_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+			`message_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			`message_archived` enum('Y','N') NOT NULL DEFAULT 'N',
+			`message_from` int(20) NOT NULL DEFAULT 0,
+			`message_to` int(20) NOT NULL DEFAULT 0,
+			`message_date` timestamp NOT NULL,
+			`message_subject` varchar(255) NOT NULL DEFAULT '',
+			`message_content` text NULL,
+			`message_read` tinyint(1) NOT NULL DEFAULT '0',
+			`message_inbox` tinyint(1) NOT NULL DEFAULT '1',
+			`message_outbox` tinyint(1) NOT NULL DEFAULT '1',
+			`message_updateby` int(20) NOT NULL DEFAULT 0
+		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Messaging';";
 		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);
 		}

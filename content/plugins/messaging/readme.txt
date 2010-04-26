@@ -24,6 +24,7 @@ Instructions
 
 Changelog
 ---------
+v.0.5 2010/04/26 - Nick - Updated to use Hotaru 1.2's PrivateMessaging library
 v.0.4 2010/03/01 - Nick - Fix for empty inbox and outbox
 v.0.3 2010/03/01 - williamd - Fix for unauthorized viewing of messages
 v.0.2 2010/03/01 - Nick - Bug fixes

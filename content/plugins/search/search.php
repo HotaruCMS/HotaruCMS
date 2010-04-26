@@ -2,7 +2,7 @@
 /**
  * name: Search
  * description: Displays "Search!"
- * version: 0.9
+ * version: 1.0
  * folder: search
  * class: Search
  * type: search
@@ -65,6 +65,7 @@ class Search
             $h->pageTitle = make_name($title);
             $h->subPage = 'search';
             $h->pageType = 'list';
+            $h->pageName = 'search';
         }
     } 
     

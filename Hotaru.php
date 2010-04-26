@@ -2365,5 +2365,86 @@ class Hotaru
 		$activity = new UserActivity();
 		return $activity->removeActivity($this, $args);
 	}
+	
+	
+ /* *************************************************************
+ *
+ *  MESSAGING FUNCTIONS
+ *
+ * *********************************************************** */
+ 
+
+	/**
+	 * Get Messages
+	 *
+	 * @param string $box "inbox" or "outbox"
+	 * @param string $type blank or "count" or "query"
+	 * @return int | array | false
+	 */
+	public function getMessages($box = 'inbox', $type = '')
+	{
+		require_once(LIBS . 'PrivateMessaging.php');
+		$pm = new PrivateMessaging();
+		return $pm->getMessages($this, $box, $type);
+	}
+	
+	
+	/**
+	 * Get Message
+	 *
+	 * @param int $message_id
+	 * @return array
+	 */
+	public function getMessage($message_id = 0)
+	{
+		require_once(LIBS . 'PrivateMessaging.php');
+		$pm = new PrivateMessaging();
+		return $pm->getMessage($this, $message_id);
+	}
+	 
+	 
+	/**
+	 * Mark message as read
+	 *
+	 * @param int $message_id
+	 */
+	public function markRead($message_id = 0)
+	{
+		require_once(LIBS . 'PrivateMessaging.php');
+		$pm = new PrivateMessaging();
+		$pm->markRead($this, $message_id);
+	}
+	
+	
+	/**
+	 * Delete Message
+	 *
+	 * @param int $message_id
+	 * @param string $box "inbox" or "outbox"
+	 * @return bool
+	 */
+	public function deleteMessage($message_id = 0, $box = 'inbox')
+	{
+		require_once(LIBS . 'PrivateMessaging.php');
+		$pm = new PrivateMessaging();
+		$pm->deleteMessage($this, $message_id, $box);
+	}
+	
+	
+	/**
+	 * Send Message
+	 *
+	 * @param string $to
+	 * @param string $from
+	 * @param string $subject
+	 * @param string $body
+	 * @return int | array (int on success, array on failure)
+	 */
+	public function sendMessage($to = '', $from = '', $subject = '', $body = '')
+	{
+		require_once(LIBS . 'PrivateMessaging.php');
+		$pm = new PrivateMessaging();
+		return $pm->sendMessage($this, $to, $from, $subject, $body);
+	}
 }
 ?>
