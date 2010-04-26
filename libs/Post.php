@@ -290,9 +290,9 @@ class Post
 	
 	
 	/**
-	 * Checks for existence of a source url (i social bookmarking)
+	 * Checks for existence of a source url (in social bookmarking)
 	 *
-	 * @return array|false - array of posts
+	 * @return array|false - array of exitsing posts
 	 */    
 	public function urlExists($h, $url = '')
 	{
@@ -310,10 +310,11 @@ class Post
 		}
 		
 		// One last check to see if a post is present:
-		$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_orig_url = %s";
-		$posts = $h->db->get_var($h->db->prepare($sql, urlencode($url)));
+		$sql = "SELECT * FROM " . TABLE_POSTS . " WHERE post_orig_url = %s LIMIT 1";
+		$post = $h->db->get_row($h->db->prepare($sql, urlencode($url)));
 		
-		if ($posts > 0) { return $posts; } else { return false; }
+		// if present return the first existing row
+		if ($post) { return $post; } else { return false; }
 	}
 	
 	

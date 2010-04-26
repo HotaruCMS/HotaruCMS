@@ -1800,7 +1800,7 @@ class Hotaru
 	/**
 	 * Checks for existence of a url
 	 *
-	 * @return array|false - array of posts
+	 * @return array|false - array containing existing post
 	 */    
 	public function urlExists($url = '')
 	{

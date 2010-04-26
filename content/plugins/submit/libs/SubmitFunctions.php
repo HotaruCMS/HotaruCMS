@@ -384,8 +384,14 @@ class SubmitFunctions
             $h->message = $h->lang['submit_url_not_present_error'];
             $h->messageType = 'red';
             $error = 1;
-        } elseif ($h->urlExists($url)) {
+        } elseif ($existing = $h->urlExists($url)) {
             // URL already exists...
+            if (($existing->post_status == 'new') || ($existing->post_status == 'top'))
+            {
+            	// redirect to the existing post unless you 
+            	header("Location: " . $h->url(array('page'=>$existing->post_id)));
+            	exit;
+            }
             $h->message = $h->lang['submit_url_already_exists_error'];
             $h->messageType = 'red';
             $error = 1;
