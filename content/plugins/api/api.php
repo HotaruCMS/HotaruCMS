@@ -37,8 +37,9 @@
 class Api
 {
     public function theme_index_top($h)
-    {       
-        if ($h->pageName == 'api') {                      
+    {
+      
+        if ($h->pageName == 'api') {
             $this->hotaruAPI($h);
             die(); exit;
         }        
@@ -47,12 +48,20 @@ class Api
     
     public function hotaruAPI($h)
     {
+
+        $query_string = $h->cage->server->sanitizeTags('HTTP_HOST');
+        $query_param = $h->cage->server->sanitizeTags('QUERY_PARAMETER');
+
+        //$xml = file_get_contents('php://input');
+        //$h->email('alan@finance.co.jp', 'api site',   $xml);
+
         // set to get for testing
         $api_key = $h->cage->post->testAlnumLines('api_key');
         $method = $h->cage->post->getHtmLawed('method');
         $format = $h->cage->post->testAlnumLines('format');
-        $args = $h->cage->post->getHtmLawed('args');
- 
+        $args = $h->cage->post->getRaw('args');
+        $args = stripslashes($args);
+       
         $data = array("result"=>"empty");
 
 //        print $method;
@@ -117,26 +126,32 @@ class Api
     }
 
     public function addSystemFeedback($h, $args) {
+        
         $data = unserialize($args);
+        $origUrl = $data['hotaru_baseurl'];     
 
-        $origUrl = $data['hotaru_baseurl'];
+        if (origUrl) {
+            $post_row = $h->db->get_row($h->db->prepare("SELECT * FROM " . TABLE_POSTS . " WHERE post_orig_url = %s", urlencode($origUrl)));
 
-        $result = $h->urlExists($origUrl);
+            if ($post_row) {
+                $h->readPost(0, $post_row);
+                $h->post->title = $data['hotaru_site_name'];
+                $h->post->content = "Updated: " . $post_row->post_updatedts . " " . $h->debug->logSystemReport($h, $data);
+                $return = $h->updatePost();
+            }
+            else {
+                $h->post = new Post();
 
-        if ($result) {           
-            $h->post = $result[0];
-            $h->post->content = $h->debug->logSystemReport($h, $data);
-            $return = $h->updatePost();
-        }
-        else {            
-            $h->post = new Post();
+                $h->email('alan@finance.co.jp', 'hotaru api site',   "New Site using Hotaru: " . $data['hotaru_baseurl']);
+                $h->email('nick@longcountdown.com', 'hotaru api site',   "New Site using Hotaru: " . $data['hotaru_baseurl']);
 
-            $h->post->author = 1;
-            $h->post->status = 'new';
-            $h->post->title = $data['hotaru_site_name'];
-            $h->post->origUrl = $data['hotaru_baseurl'];
-            $h->post->content = $h->debug->logSystemReport($h, $data);
-            $return = $h->addPost();
+                $h->post->author = 1;
+                $h->post->status = 'new';
+                $h->post->title = $data['hotaru_site_name'];
+                $h->post->origUrl = $data['hotaru_baseurl'];
+                $h->post->content = $h->debug->logSystemReport($h, $data);
+                $return = $h->addPost();
+            }
         }
     }
 }
