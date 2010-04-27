@@ -5,7 +5,8 @@
  * Original Template author: Nick Ramsay
  * Original Design: Erwin Aligam
  * Original Author URI : http://www.styleshout.com/ 
- * Template author: Carlo Armanni
+ * Template Author: Carlo Armanni
+ * Template Author URI : http://www.tr3ndy.com/
  *
  * PHP version 5
  *
