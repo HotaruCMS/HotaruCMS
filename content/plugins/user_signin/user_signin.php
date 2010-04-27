@@ -2,7 +2,7 @@
 /**
  * name: User Signin
  * description: Provides user registration and login
- * version: 0.5
+ * version: 0.6
  * folder: user_signin
  * type: signin
  * class: UserSignin

@@ -194,8 +194,6 @@ class UserSigninSettings
         $h->pluginHook('users_save_settings');
         
         $user_signin_settings['recaptcha_enabled'] = $recaptcha_enabled;
-        $user_signin_settings['recaptcha_pubkey'] = $recaptcha_pubkey;
-        $user_signin_settings['recaptcha_privkey'] = $recaptcha_privkey;
         $user_signin_settings['emailconf_enabled'] = $emailconf_enabled;
         $user_signin_settings['registration_status'] = $reg_status;
         $user_signin_settings['email_notify'] = $email_notify;
@@ -203,15 +201,9 @@ class UserSigninSettings
         
         $h->updateSetting('user_signin_settings', serialize($user_signin_settings));
         
-        if (($recaptcha_enabled == 'checked') && ($recaptcha_pubkey == "" || $recaptcha_privkey == "")) {
-            $h->message = $h->lang["user_signin_settings_no_keys"];
-            $h->messageType = "red";
-            $h->showMessage();
-        } else {
-            $h->message = $h->lang["user_signin_settings_saved"];
-            $h->messageType = "green";
-            $h->showMessage();
-        }
+        $h->message = $h->lang["user_signin_settings_saved"];
+        $h->messageType = "green";
+        $h->showMessage();
         
         return true;    
     }
