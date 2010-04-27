@@ -34,18 +34,19 @@ $h->start();
     require_once(PLUGINS . 'follow/follow.php');
     $Follow = new Follow($h);
    
-    $action = $h->cage->post->testAlnumLines('action');
-
-    require_once(PLUGINS . 'follow/libs/follow_functions.php');
-    $FollowFuncs = new FollowFuncs();
+    $action = $h->cage->post->testAlnumLines('action');  
 
     $user_id = $h->cage->post->testInt('user_id');
     switch ($action) {
 	case "unfollow":
+	    $h->unfollow($user_id);
+	    break;
 	case "follow":
-	    echo $FollowFuncs->updateFollow($h, $action, $user_id);
-	    exit;  // This is ajax call to stop here
+	    $h->follow($user_id);
+	    break;
     }
-
+    
+    if ($h->isFollowing($user_id)) { echo json_encode(array('result'=>'Unfollow')); } else { echo json_encode(array('result'=>'Follow')); }
+    exit; // This is ajax call to stop here, just in case we are thinking of printing anything else out below
 
 ?>

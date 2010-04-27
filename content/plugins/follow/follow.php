@@ -58,16 +58,13 @@ class Follow
      * Profile menu link to "follow"
      */
     public function profile_navigation($h)
-    {
-	include_once(PLUGINS . 'follow/libs/follow_functions.php');
-	$FollowFuncs = new FollowFuncs();
-	
-	 echo "<li><a href='" . $h->url(array('page'=>'followers', 'user'=>$h->vars['user']->name)) . "'>" . $h->lang['follow_list_followers'] . "</a> <small>(" . $FollowFuncs->getFollowCount($h, "follower") . ")</small></li>\n";
-	 echo "<li><a href='" . $h->url(array('page'=>'following', 'user'=>$h->vars['user']->name)) . "'>" . $h->lang['follow_list_following'] . "</a> <small>(" . $FollowFuncs->getFollowCount($h, "following") . ")</small></li>\n";
+    {	
+	 echo "<li><a href='" . $h->url(array('page'=>'followers', 'user'=>$h->vars['user']->name)) . "'>" . $h->lang['follow_list_followers'] . "</a> <small>(" . $h->countFollowers($h->vars['user']->id) . ")</small></li>\n";
+	 echo "<li><a href='" . $h->url(array('page'=>'following', 'user'=>$h->vars['user']->name)) . "'>" . $h->lang['follow_list_following'] . "</a> <small>(" . $h->countFollowing($h->vars['user']->id) . ")</small></li>\n";
 
 	 if ($h->vars['user']->name != $h->currentUser->name) {
 	    // check if already following
-	    $follow = $FollowFuncs->checkFollow($h, 'following');	    
+	    $follow = $h->isFollowing($h->vars['user']->id);
 	    if ($follow == 0)
 		echo "<li><a href='" . $h->url(array('page'=>'follow', 'user'=>$h->vars['user']->name)) . "'>" . $h->lang['follow_follow_user'] . "</a></li>\n";
 	    else
@@ -82,6 +79,7 @@ class Follow
     public function theme_index_top($h)
     {
         $user = $h->cage->get->testUsername('user');
+	
         if (!$user) { $user = $h->currentUser->name; }
 
 	$follow_page = false;
@@ -94,7 +92,7 @@ class Follow
 		break;
 	    case 'following':
 		$follow_page = true;
-		$h->pageTitle = $h->lang['follow_list_following'] . "[delimiter]" . $user;
+		$h->pageTitle = $h->lang['follow_list_followers'] . "[delimiter]" . $user;
 		break;
 	    case 'follow':
 	    case 'unfollow':
@@ -107,37 +105,33 @@ class Follow
 	// set page types & create UserAuth and MessagingFuncs objects
         if ($follow_page) {
 	    $h->pageType = 'user';  // this setting hides the posts filter bar
-	    $h->subPage = 'user';
-	    
-	    include_once(PLUGINS . 'follow/libs/follow_functions.php');
-	    $FollowFuncs = new FollowFuncs();
+	    $h->subPage = 'user';	    	   
 
 	    // create a user object and fill it with user info (user being viewed)
-		$h->vars['user'] = new UserAuth();
-		$h->vars['user']->getUserBasic($h, 0, $user);
+	    $h->vars['user'] = new UserAuth();
+	    $h->vars['user']->getUserBasic($h, 0, $user);
 
 	    switch ($h->pageName)
 	    {
-		case 'followers':
-		    $query = $FollowFuncs->getFollowUsers($h, 'follower');
+		case 'followers':		    
+		    $query = $h->getFollowers($h->vars['user']->id, 'query');
 		    $h->vars['follow_list'] = $h->pagination($query, count($query), 20);
 		    // how to also include the latest actvitiy for this person and a follow/unfollow button
 		    break;
 		case 'following':
-		    $query = $FollowFuncs->getFollowUsers($h, 'following');
+		    $query = $h->getFollowing($h->vars['user']->id, 'query');
 		    $h->vars['follow_list'] = $h->pagination($query, count($query), 20);
 		    break;
 		case 'follow':
+		    $result = $h->follow($h->vars['user']->id);
+		    $h->messages[$h->lang['follow_newfollow']] = 'green';
+		    $query = $h->getFollowing($h->vars['user']->id, 'query');
+		    $h->vars['follow_list'] = $h->pagination($query, count($query), 20);
+		    break;
 		case 'unfollow':
-		    $result = $h->pageName == "follow" ? $FollowFuncs->updateFollow($h, "follow", $h->vars['user']->id) : $FollowFuncs->updateFollow($h, "unfollow", $h->vars['user']->id);
-		    if ($result == "follow") {
-			$h->messages[$h->lang['follow_newfollow']] = 'green';
-		    } elseif ($result == "unfollow") {
-			$h->messages[$h->lang['follow_unfollow']] = 'green';
-		    }
-		    else
-			$h->messages[$h->lang['follow_unfollow']] = 'red';
-		    $query = $FollowFuncs->getFollowUsers($h, 'following');
+		    $result = $h->unfollow($h->vars['user']->id);
+		    $h->messages[$h->lang['follow_unfollow']] = 'green';
+		    $query = $h->getFollowing($h->vars['user']->id, 'query');
 		    $h->vars['follow_list'] = $h->pagination($query, count($query), 20);
 		    break;
 		}

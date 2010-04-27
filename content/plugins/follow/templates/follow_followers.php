@@ -36,7 +36,7 @@
 <h2><?php echo $follow_type . " (" . count($h->vars['follow_list']->items) .")"; ?></h2>
     
 
-<table class="messaging_list">
+<table class="follow_list">
     <tr class="messaging_list_headers">
         <td class="messaging_fom"><?php echo $follow_type; ?></td>
         <td class="messaging_subject"><?php echo $h->lang['follow_list_activity']; ?></td>
@@ -46,7 +46,7 @@
     <?php if (isset($h->vars['follow_list']->items)) { ?>
 
         <?php foreach ($h->vars['follow_list']->items as $user) { ?>
-            <tr id="<?php echo $user->user_id; ?>">
+            <tr id="follow_user_<?php echo $user->user_id; ?>" class="follow_row">
             
                 
                 <td class="follow_user">		    
@@ -63,22 +63,27 @@
 		    <?php if($h->isActive('activity')) {			
 			     $Activity = new Activity();			     
 			     $LatestActivity = $Activity->getLatestActivity($h, 1, $user->user_id);
-			     $action = $LatestActivity[0];
-			     echo $Activity->activityContent($h, $action);
-			     echo "<br /><small>[" . date('g:ia, M jS', strtotime($action->useract_date)) . "]</small>";
+			     $action = $LatestActivity[0];			     
+			     if (!$action) { echo "No activity yet."; } else {
+				echo $Activity->activityContent($h, $action);
+				echo "<br /><small>[" . date('g:ia, M jS', strtotime($action->useract_date)) . "]</small>";
+			     }
 			 } ?>
                     
                 </td>                               
 
 		<?php
-		if ($user->user_id != $h->currentUser->id) {
-		    $FollowFuncs = new FollowFuncs();
-		    $FollowFuncs->checkFollow($h, 'following', $user->user_id) == 0 ? $type = 'Follow' : $type = 'Unfollow';
+		if ($user->user_id != $h->currentUser->id) {		    
+		    $h->isFollowing($user->user_id)  == 0 ? $type = 'Follow' : $type = 'Unfollow';
 
 		    echo '<td class="follow_update"><center>';
 		    echo '<input type="button" class="follow_button" name="'. $type. '_' . $user->user_id .'" id="' . $type . '_' . $user->user_id .'" value="' . $type .'">';
 		    echo '</center></td>';
-		 } ?>
+		 }
+		 else {
+		     echo '<td class="follow_update"><center>You</center></td>';
+		 }
+		 ?>
             </tr>
         <?php } ?>
     

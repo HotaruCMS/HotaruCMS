@@ -23,7 +23,13 @@
 }
 
 .follow_row {
-    background-color:#FFFFAA;
+    background-color:#FFFFBB;
     border-bottom:1px solid #CCCCCC;
     border-top:1px solid #CCCCCC;
+}
+
+.follow_user .avatar {
+    -moz-border-radius:6px 6px 6px 6px;
+    border:1pt solid #666666;
+    padding:5px;
 }
