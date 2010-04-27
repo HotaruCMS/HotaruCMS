@@ -113,7 +113,7 @@ li a#navigation_active {color: #AB0805; }
 #pagination {text-align: center}
 .activity_item {list-style-type:none}
 
-.vote_color_new {background-color:transparent; border:none; color:#000000;}
+.vote_color_new, .vote_color_top {background-color:transparent; border:none; color:#000000;}
 .vote_button_bottom { background-color:transparent; background:none repeat scroll 0 0; border:none; margin-top:-15px; padding:0px 0px 2px 15px; width:50px;}
 .vote_button {position:relative; z-index: 999; margin: -7px 0px 0px -33px; height: 55px; width: 87px; background: url(../images/tab.png) no-repeat}
 .vote_button_top {padding: 2px 0px 0px 15px; }
