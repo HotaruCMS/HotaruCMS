@@ -25,70 +25,70 @@
  */
 
 /* Sidebar */
-$lang["vote_admin_sidebar"] = "Vote";
+$lang["vote_admin_sidebar"] = "Voti";
 
 /* Navigation */
 $lang["vote_navigation_top_posts"] = "Top Posts";
-$lang["vote_navigation_latest"] = "Latest";
+$lang["vote_navigation_latest"] = "Ultimi";
 
 /* Vote Button */
-$lang["vote_button_vote"] = "Vote!";
-$lang["vote_button_unvote"] = "Un-vote";
-$lang["vote_button_voted"] = "Voted";
-$lang["vote_button_up_link"] = "Up!";
-$lang["vote_button_up"] = "Up";
-$lang["vote_button_down_link"] = "Down!";
-$lang["vote_button_down"] = "Down";
-$lang["vote_button_yes_link"] = "Yes!";
-$lang["vote_button_yes"] = "Yes";
+$lang["vote_button_vote"] = "Vota!";
+$lang["vote_button_unvote"] = "Rimuovi";
+$lang["vote_button_voted"] = "Votato";
+$lang["vote_button_up_link"] = "Su!";
+$lang["vote_button_up"] = "Su";
+$lang["vote_button_down_link"] = "Giù!";
+$lang["vote_button_down"] = "Giù";
+$lang["vote_button_yes_link"] = "Si!";
+$lang["vote_button_yes"] = "Si";
 $lang["vote_button_no_link"] = "No!";
 $lang["vote_button_no"] = "No";
-$lang['vote_already_voted'] = "Sorry, you have already voted for this story.";
+$lang['vote_already_voted'] = "Mi dispiace, hai già votato per questo posts.";
 
 /* Show Post - ALert links and flagged message */
-$lang["vote_alert"] = "Flag it";
-$lang["vote_alert_reason_title"] = "Reason for flagging this post:";
+$lang["vote_alert"] = "Segnala";
+$lang["vote_alert_reason_title"] = "Motivo della segnalazione:";
 $lang["vote_alert_reason_1"] = "Spam";
-$lang["vote_alert_reason_2"] = "Inappropriate";
-$lang["vote_alert_reason_3"] = "Broken Link";
-$lang["vote_alert_reason_4"] = "Duplicate";
-$lang["vote_alert_reason_5"] = "Wrong Category";
-$lang["vote_alert_reason_6"] = "Really lame";
-$lang["vote_alert_already_flagged"] = "You've already flagged this post";
-$lang["vote_alert_flagged_message_1"] = "This post has been flagged by";
-$lang["vote_alert_flagged_message_2"] = "as";
-$lang["vote_alert_flagged_message_user"] = "user";
-$lang["vote_alert_flagged_message_users"] = "users";
-$lang["vote_alert_flagged_message_reason"] = "reason";
-$lang["vote_alert_flagged_message_reasons"] = "reasons";
-$lang["vote_alert_post_buried"] = "This post has been buried";
+$lang["vote_alert_reason_2"] = "Inappropriato";
+$lang["vote_alert_reason_3"] = "Link non funzioante";
+$lang["vote_alert_reason_4"] = "Duplicato";
+$lang["vote_alert_reason_5"] = "Categoria errata";
+$lang["vote_alert_reason_6"] = "Veramente inutile";
+$lang["vote_alert_already_flagged"] = "Hai già segnalato questo post";
+$lang["vote_alert_flagged_message_1"] = "Questo post è stato segnalato da";
+$lang["vote_alert_flagged_message_2"] = "come";
+$lang["vote_alert_flagged_message_user"] = "utente";
+$lang["vote_alert_flagged_message_users"] = "utenti";
+$lang["vote_alert_flagged_message_reason"] = "motivo";
+$lang["vote_alert_flagged_message_reasons"] = "motivi";
+$lang["vote_alert_post_buried"] = "Questo post è stato nascosto.";
 
 /* Vote Settings */
-$lang["vote_settings_header"] = "Vote Settings";
-$lang["vote_settings_vote_type"] = "Choose the vote type you want to use:";
-$lang["vote_settings_vote_unvote"] = "Vote & Un-vote - Standard voting method";
-$lang["vote_settings_up_down"] = "Up & Down - Vote posts above or below zero ";
-$lang["vote_settings_yes_no"] = "Yes/No Poll - Show votes for <i>and</i> against a post";
-$lang["vote_settings_vote_auto"] = "Auto-vote on submission:";
-$lang["vote_settings_submit_vote"] = "Automatically vote for a story you submit";
-$lang["vote_settings_vote_anonymous"] = "Allow anonymous votes:";
-$lang["vote_settings_anonymous_votes"] = "Let non-members vote for stories";
-$lang["vote_settings_submit_vote_value"] = "Give that automatic vote a value of";
-$lang["vote_settings_submit_vote_value_invalid"] = "The automatic vote must be a positive integer";
-$lang["vote_settings_vote_promote_bury"] = "Promoting and burying posts:";
-$lang["vote_settings_votes_to_promote"] = "Number of votes needed to get on the front page:";
-$lang["vote_settings_votes_to_promote_invalid"] = "The number of votes needed must be a positive integer";
-$lang["vote_settings_upcoming_duration"] = "Number of days a new post can sit on the Upcoming page:";
-$lang["vote_settings_upcoming_duration_invalid"] = "The number of days must be a positive integer";
-$lang["vote_settings_no_front_page"] = "Deadline for new posts to hit the front page (days):";
-$lang["vote_settings_back_to_latest"] = "Send posts back to the \"Latest\" page if <i>unvoted</i> back below the Top Posts threshold.";
-$lang["vote_settings_no_front_page_invalid"] = "The number of days must be a positive integer";
-$lang["vote_settings_use_alerts"] = "Enable Alerts (i.e. flag / bury). Alerts are only used on \"new\" posts";
-$lang["vote_settings_alerts_to_bury"] = "Number of alerts to automatically bury a post:";
-$lang["vote_settings_alerts_to_bury_invalid"] = "The number of alerts needed must be a positive integer";
-$lang["vote_settings_physical_delete"] = "Physically delete a post from the database when buried";
-$lang["vote_settings_other"] = "Other";
-$lang["vote_settings_posts_widget"] = "Show vote count before post links in widgets <small>(requires Posts Widget plugin)</small>";
-$lang["vote_settings_vote_on_url_click"] = "Automatically count a users vote when they click on the URL link";
+$lang["vote_settings_header"] = "Settaggio voti";
+$lang["vote_settings_vote_type"] = "Scegli la tipologia di voto che vuoi utilizzare:";
+$lang["vote_settings_vote_unvote"] = "Vota & Rimuovi - Metodo Standard di votazione";
+$lang["vote_settings_up_down"] = "Su & Giù - Vota i post +1 e -1 ";
+$lang["vote_settings_yes_no"] = "Si/No Sondaggio - Mostra i voti pro/contro un post";
+$lang["vote_settings_vote_auto"] = "Auto-vota su invio:";
+$lang["vote_settings_submit_vote"] = "Vota automaticamente un post, subito dopo il suo invio";
+$lang["vote_settings_vote_anonymous"] = "Permetti voti anonimi:";
+$lang["vote_settings_anonymous_votes"] = "Lascia votare i posts, dai non-membri del sito";
+$lang["vote_settings_submit_vote_value"] = "Assegna un valore automatico di voto pari a";
+$lang["vote_settings_submit_vote_value_invalid"] = "Il voto automatico deve essere un numero intero positivo";
+$lang["vote_settings_vote_promote_bury"] = "Promozione e occultamento:";
+$lang["vote_settings_votes_to_promote"] = "Numero dei voti necessari per arrivare in home page:";
+$lang["vote_settings_votes_to_promote_invalid"] = "Il numero dei voti necessari deve essere un numero intero positivo";
+$lang["vote_settings_upcoming_duration"] = "Numero di giorni nei quali un nuovo post può permanere nella pagina Ultimi in arrivo (Upcoming):";
+$lang["vote_settings_upcoming_duration_invalid"] = "Il numero di giorni deve essere un numero intero positivo";
+$lang["vote_settings_no_front_page"] = "Termine entro il quale i nuovi post possono raggiungere la pagina principale (in giorni):";
+$lang["vote_settings_back_to_latest"] = "Riporta indietro i posts in \"Ultimi\" (Latest) se <i>i voti rimossi</i> tornano sotto la soglia dei voti necessari per andare in home page.";
+$lang["vote_settings_no_front_page_invalid"] = "Il numero dei giorni deve essere un numero intero positivo";
+$lang["vote_settings_use_alerts"] = "Abilita segnalazioni (esempio bandierina / occultamente). Le segnalazioni sono attive solo sui \"nuovi\" posts";
+$lang["vote_settings_alerts_to_bury"] = "Numero delle segnalazioni necessarie per occultare automaticamente un post:";
+$lang["vote_settings_alerts_to_bury_invalid"] = "Il numero delle segnalazioni deve essere un numero intero positivo";
+$lang["vote_settings_physical_delete"] = "Rimuovi fisicamente dal database, un post che diviente occultato";
+$lang["vote_settings_other"] = "Altro";
+$lang["vote_settings_posts_widget"] = "Mostra la somma dei voti prima del link del post, nei widgets <small>(richiede Posts Widget plugin)</small>";
+$lang["vote_settings_vote_on_url_click"] = "Automaticamente conta un utente quando clicca il link URL";
 
 ?>

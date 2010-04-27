@@ -25,20 +25,20 @@
  */
 
 /* Widget Settings */
-$lang["widgets_settings_header"] = "Widgets Configuration";
+$lang["widgets_settings_header"] = "Configurazione Widgets";
 
 /* Widget Ordering */
-$lang["widgets_ordering_title"] = "Widget Block";
+$lang["widgets_ordering_title"] = "Blocco Widget";
 $lang["widgets_ordering_block_enabled"] = "On/Off";
 $lang["widgets_ordering_block_name"] = "Widget";
-$lang["widgets_ordering_block_order"] = "Order";
-$lang['widgets_order_updated'] = "Order updated";
-$lang['widgets_order_already_first'] = "That widget is already first";
-$lang['widgets_order_already_last'] = "That widget is already last";
-$lang['widgets_order_enabled'] = "Widget enabled!";
-$lang['widgets_order_disabled'] = "Widget disabled.";
-$lang['widgets_order_not_active'] = "Sorry, that plugin is either inactive or not installed.";
+$lang["widgets_ordering_block_order"] = "Ordine";
+$lang['widgets_order_updated'] = "Ordine aggiornato";
+$lang['widgets_order_already_first'] = "Questo widget è già primo";
+$lang['widgets_order_already_last'] = "questo widget è già ultimo";
+$lang['widgets_order_enabled'] = "Widget abilitato!";
+$lang['widgets_order_disabled'] = "Widget disabilitato.";
+$lang['widgets_order_not_active'] = "Mi dispiace, questo plugin è inattivo oppure non è installato.";
 $lang["widgets_ordering_guide"] = "Widget Tips";
-$lang["widgets_ordering_guide_1"] = "Once you've set up multiple blocks (<a href='http://hotarucms.org/showthread.php?t=64'>read how</a>), you can move the <i>last</i> plugin in a block to the next one by clicking the down arrow. Try it!";
+$lang["widgets_ordering_guide_1"] = "Una volta settati differenti blocchi (<a href='http://hotarucms.org/showthread.php?t=64'>leggi qui come</a>), puoi aggiungere una seconda sidebar, spostando l'<i>ultimo</i> blocco verso il basso, cliccando semplicemente sulla freccia bassa. Semplice no? Prova!";
 
 ?>
