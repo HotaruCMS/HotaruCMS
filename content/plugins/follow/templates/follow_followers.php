@@ -62,7 +62,8 @@
                 <td class="follow_activity">
 		    <?php if($h->isActive('activity')) {			
 			     $Activity = new Activity();			     
-			     $LatestActivity = $Activity->getLatestActivity($h, 1, $user->user_id);
+			     // $LatestActivity = $Activity->getLatestActivity($h, 1, $user->user_id);
+			     $LatestActivity = $h->getLatestActivity(1, $user->user_id);
 			     $action = $LatestActivity[0];			     
 			     if (!$action) { echo "No activity yet."; } else {
 				echo $Activity->activityContent($h, $action);
