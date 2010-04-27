@@ -33,7 +33,7 @@ $username = $h->vars['user']->name;
      if ($h->isActive('avatar')) {
             echo "<div id='profile_avatar'>";
             $h->setAvatar($h->vars['user']->id, 80);
-            echo $h->getAvatar();
+            echo $h->linkAvatar();
             echo "</div>";
     }
     ?>
