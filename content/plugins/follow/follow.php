@@ -2,7 +2,7 @@
 /**
  * name: Follow
  * description: Basic Follower/Following plugin
- * version: 0.1
+ * version: 0.2
  * folder: follow
  * class: Follow
  * type: Follow
