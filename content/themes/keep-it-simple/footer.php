@@ -61,21 +61,15 @@
 			
 			<div class="grid_8">
 					
-				<h3>Plugin for Top Users Gravatar? // Or plugin for Flickr RSS ??? </h3>					
-				<p class="thumbs">
-					<a href="<?php echo BASEURL;?>"><img src="<?php echo BASEURL . 'content/themes/' . THEME . 'images/thumb.jpg'; ?>" width="40" height="40" alt="thumbnail" /></a>
-					<a href="<?php echo BASEURL;?>"><img src="<?php echo BASEURL . 'content/themes/' . THEME . 'images/thumb.jpg'; ?>" width="40" height="40" alt="thumbnail" /></a>
-					<a href="<?php echo BASEURL;?>"><img src="<?php echo BASEURL . 'content/themes/' . THEME . 'images/thumb.jpg'; ?>" width="40" height="40" alt="thumbnail" /></a>
-					<a href="<?php echo BASEURL;?>"><img src="<?php echo BASEURL . 'content/themes/' . THEME . 'images/thumb.jpg'; ?>" width="40" height="40" alt="thumbnail" /></a>
-					<a href="<?php echo BASEURL;?>"><img src="<?php echo BASEURL . 'content/themes/' . THEME . 'images/thumb.jpg'; ?>" width="40" height="40" alt="thumbnail" /></a>
-					<a href="<?php echo BASEURL;?>"><img src="<?php echo BASEURL . 'content/themes/' . THEME . 'images/thumb.jpg'; ?>" width="40" height="40" alt="thumbnail" /></a>	
-					<a href="<?php echo BASEURL;?>"><img src="<?php echo BASEURL . 'content/themes/' . THEME . 'images/thumb.jpg'; ?>" width="40" height="40" alt="thumbnail" /></a>
-					<a href="<?php echo BASEURL;?>"><img src="<?php echo BASEURL . 'content/themes/' . THEME . 'images/thumb.jpg'; ?>" width="40" height="40" alt="thumbnail" /></a>													
-					<a href="<?php echo BASEURL;?>"><img src="<?php echo BASEURL . 'content/themes/' . THEME . 'images/thumb.jpg'; ?>" width="40" height="40" alt="thumbnail" /></a>
-					<a href="<?php echo BASEURL;?>"><img src="<?php echo BASEURL . 'content/themes/' . THEME . 'images/thumb.jpg'; ?>" width="40" height="40" alt="thumbnail" /></a>
-					<a href="<?php echo BASEURL;?>"><img src="<?php echo BASEURL . 'content/themes/' . THEME . 'images/thumb.jpg'; ?>" width="40" height="40" alt="thumbnail" /></a>													
-					<a href="<?php echo BASEURL;?>"><img src="<?php echo BASEURL . 'content/themes/' . THEME . 'images/thumb.jpg'; ?>" width="40" height="40" alt="thumbnail" /></a>
-				</p>	
+				<h3>Plugin User Rankings <br /> <?php echo $h->lang["user_rankings_subtitle"]; ?> </h3>					
+				<p>
+				<ul class='user_rankings_page_items'>
+				<?php 
+					$ur = new UserRankings();
+					echo $ur->displayUserRankings($h);
+				?>
+				</ul>
+				</p>
 			
 				<h3>About</h3>			
 				<p>

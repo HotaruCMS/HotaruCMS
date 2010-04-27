@@ -500,6 +500,12 @@ text-decoration:none;
 	padding-right: 0;
 }
 
+.user_rankings_page_item  {
+border-bottom: 1px dashed #EEEEEE;
+display: block;
+margin: -20px 0px -5px -30px;
+}
+
 /* postmeta */
 .postmeta {	
 	padding: 5px; margin: 20px 15px 15px 10px;	
