@@ -129,7 +129,7 @@ class Follow
 		    break;
 		case 'follow':
 		case 'unfollow':
-		    $h->pageName == "follow" ? $result = $FollowFuncs->updateFollow($h, "follow", $h->vars['user']->id) : $result = $FollowFuncs->updateFollow($h, "unfollow", $h->vars['user']->id);		   
+		    $result = $h->pageName == "follow" ? $FollowFuncs->updateFollow($h, "follow", $h->vars['user']->id) : $FollowFuncs->updateFollow($h, "unfollow", $h->vars['user']->id);
 		    if ($result == "follow") {
 			$h->messages[$h->lang['follow_newfollow']] = 'green';
 		    } elseif ($result == "unfollow") {
