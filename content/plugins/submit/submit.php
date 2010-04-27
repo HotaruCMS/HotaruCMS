@@ -565,7 +565,8 @@ class Submit
                 // submitted data
                 $h->vars['submit_editorial'] = $h->vars['submitted_data']['submit_editorial'];
                 $h->vars['submit_orig_url'] = urldecode($h->vars['submitted_data']['submit_orig_url']);
-                $h->vars['submit_title'] = sanitize($h->vars['submitted_data']['submit_title'], 'all');
+                //$h->vars['submit_title'] = sanitize($h->vars['submitted_data']['submit_title'], 'all'); // breaks accented chars
+                $h->vars['submit_title'] = sanitize($h->vars['submitted_data']['submit_title'], 'ents');
                 $h->vars['submit_content'] = sanitize($h->vars['submitted_data']['submit_content'], 'tags', $allowable_tags);
                 $h->vars['submit_post_id'] = $h->vars['submitted_data']['submit_id'];
                 $h->vars['submit_category'] = $h->vars['submitted_data']['submit_category'];
