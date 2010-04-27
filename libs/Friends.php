@@ -43,8 +43,7 @@ class Friends
 		}
 		
 		$sql = "SELECT count(*) FROM " . TABLE_FRIENDS . " WHERE " . $where . " = %s";
-		$count = $h->db->get_var($h->db->prepare($sql, $user_id));
-		
+		$count = $h->db->get_var($h->db->prepare($sql, $user_id));		
 		return $count;
 	}
 
@@ -129,13 +128,12 @@ class Friends
 		else
 		{   
 			// if not following anyway, return false 
-			if (!$h->isFollower($user_id)) { return false; }
+			if (!$h->isFollowing($user_id)) { return false; }
 			
 			// stop following
 			$sql = "DELETE FROM " . TABLE_FRIENDS . " WHERE (follower_user_id = %d AND following_user_id = %d)";
 			$h->db->query($h->db->prepare($sql, $h->currentUser->id, $user_id));
-		}
-		
+		}		
 		return true;
 	}
 
