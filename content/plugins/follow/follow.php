@@ -97,7 +97,7 @@ class Follow
 	    case 'follow':
 	    case 'unfollow':
 		$follow_page = true;
-		$h->pageTitle = $h->lang['follow_list_following'] . "[delimiter]" . $user;
+		$h->pageTitle = $h->lang['follow_list_followers'] . "[delimiter]" . $user;
 		break;
 	}
 
@@ -125,13 +125,13 @@ class Follow
 		case 'follow':
 		    $result = $h->follow($h->vars['user']->id);
 		    $h->messages[$h->lang['follow_newfollow']] = 'green';
-		    $query = $h->getFollowing($h->vars['user']->id, 'query');
+		    $query = $h->getFollowers($h->vars['user']->id, 'query');
 		    $h->vars['follow_list'] = $h->pagination($query, count($query), 20);
 		    break;
 		case 'unfollow':
 		    $result = $h->unfollow($h->vars['user']->id);
 		    $h->messages[$h->lang['follow_unfollow']] = 'green';
-		    $query = $h->getFollowing($h->vars['user']->id, 'query');
+		    $query = $h->getFollowers($h->vars['user']->id, 'query');
 		    $h->vars['follow_list'] = $h->pagination($query, count($query), 20);
 		    break;
 		}
@@ -156,7 +156,7 @@ class Follow
 		break;
 	    case 'follow':
 	    case 'unfollow':
-                return $h->lang['follow_list_following'];
+                return $h->lang['follow_list_followers'];
                 break;            
         }
     }

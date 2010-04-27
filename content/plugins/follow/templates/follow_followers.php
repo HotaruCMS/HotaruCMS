@@ -28,7 +28,7 @@
 
 <?php
     $page = $h->cage->get->testAlnumLines('page');
-    $page == "followers" ? $follow_type = $h->lang["follow_list_followers"] : $follow_type = $h->lang["follow_list_following"];
+    $page == "following" ? $follow_type = $h->lang["follow_list_following"] : $follow_type = $h->lang["follow_list_followers"];
 ?>
 
 <div id="list_followers" class="users_content">
