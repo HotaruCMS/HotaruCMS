@@ -2034,6 +2034,20 @@ class Hotaru
 	
 	
 	/**
+	 * Count all user comments
+	 *
+	 * @param int $user_id
+	 * @return int
+	 */
+	function countUserComments($user_id = 0)
+	{
+		require_once(LIBS . 'Comment.php');
+		$comment = new Comment();
+		return $comment->countUserComments($this, $user_id);
+	}
+	
+	
+	/**
 	 * Physically delete all comments by a specified user (and responses)
 	 *
 	 * @param array $user_id

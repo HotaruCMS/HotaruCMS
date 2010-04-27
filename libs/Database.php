@@ -60,13 +60,14 @@ class Database extends ezSQL_mysql
 	 * @param string $orderby - e.g. "post_date DESC"
 	 * @param string $limit - e.g. "10" or "5, 10"
 	 */
-	public function fillObject($select = array(), $table = '', $where = array(), $orderby = '', $limit = '')
+	public function fillObject($select = array(), $table = '', $where = array(), $orderby = '', $limit = '', $cache)
 	{
 		if ($select)  { $this->select = $select; }
 		if ($table)   { $this->table = $table; }
 		if ($where)   { $this->where = $where; }
 		if ($orderby) { $this->orderby = $orderby; }
 		if ($limit)   { $this->limit = $limit; }
+		if ($cache)   { $this->cache = true; } else { $this->cache = false; }
 	}
 	
 	/**
@@ -80,6 +81,7 @@ class Database extends ezSQL_mysql
 		$this->orderby       = '';
 		$this->limit         = '';
 		$this->prepare_array = array();
+		$this->cache         = true;
 	}
 	
 	
@@ -93,10 +95,10 @@ class Database extends ezSQL_mysql
 	 * @param array $limit - X, Y array
 	 * @return array|false
 	 */
-	public function select($h, $select = array(), $table = '', $where = array(), $orderby = '', $limit = array())
+	public function select($h, $select = array(), $table = '', $where = array(), $orderby = '', $limit = array(), $cache = true)
 	{
 		// for flexibility, we want to use object properties:
-		$this->fillObject($select, $table, $where, $orderby, $limit);
+		$this->fillObject($select, $table, $where, $orderby, $limit, $cache);
 		
 		// plugin hook
 		$h->pluginHook('database_select');
@@ -181,11 +183,11 @@ class Database extends ezSQL_mysql
 		
 		if (empty($this->prepare_array[1])) {
 			// there aren't any %d or %s parameters to fill in, so we'll skip the prepare function
-			$h->smartCache('on', $table, 60, $this->prepare_array[0]); // start using cache
+			if ($this->cache) { $h->smartCache('on', $table, 60, $this->prepare_array[0]); } // start using cache
 			$data = $h->db->get_results($this->prepare_array[0]); // ignoring the prepare function.
 		} else {
 			$query = $h->db->prepare($this->prepare_array);
-			$h->smartCache('on', $table, 60, $query); // start using cache
+			if ($this->cache) { $h->smartCache('on', $table, 60, $query); } // start using cache
 			$data = $h->db->get_results($query);
 		}
 		

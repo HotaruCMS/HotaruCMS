@@ -94,6 +94,23 @@ class Comment
 	
 	
 	/**
+	 * Count all user comments
+	 *
+	 * @param int $user_id
+	 * @return int
+	 */
+	function countUserComments($h, $user_id = 0)
+	{
+		if (!$user_id) { $user_id = $h->currentUser->id; }
+		
+		$sql = "SELECT COUNT(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_user_id = %d AND comment_status = %s";
+		$num_comments = $h->db->get_var($h->db->prepare($sql, $user_id , 'approved'));
+		
+		return $num_comments; 
+	}
+	
+	
+	/**
 	 * Read all comment parents
 	 *
 	 * @param int $post_id - the id of the post this comment is on
