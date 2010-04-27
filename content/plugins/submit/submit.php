@@ -692,14 +692,15 @@ class Submit
             $output .= "<option value='1' selected>" . $h->lang['submit_category_select'] . "</option>\n";
         }
         
-        $sql = "SELECT category_id, category_name FROM " . TABLE_CATEGORIES . " ORDER BY category_order ASC";
+        $sql = "SELECT category_id, category_parent, category_name FROM " . TABLE_CATEGORIES . " ORDER BY category_order ASC";
         $cats = $h->db->get_results($h->db->prepare($sql));
         
         if ($cats) {
             foreach ($cats as $cat) {
                 if ($cat->category_id != 1) { 
                     $cat_name = stripslashes(htmlentities(urldecode($cat->category_name), ENT_QUOTES,'UTF-8'));
-                    $output .= "<option value=" . $cat->category_id . ">" . $cat_name . "</option>\n";
+                    $indent = ($cat->category_parent != 1) ? '--- ' : ''; 
+                    $output .= "<option value=" . $cat->category_id . ">" . $indent . $cat_name . "</option>\n";
                 }
             }
         }
