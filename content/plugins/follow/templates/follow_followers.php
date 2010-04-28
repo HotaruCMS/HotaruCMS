@@ -28,12 +28,16 @@
 
 <?php
     $page = $h->cage->get->testAlnumLines('page');
-    $page == "following" ? $follow_type = $h->lang["follow_list_following"] : $follow_type = $h->lang["follow_list_followers"];
+    if ($page == "following") {
+	$follow_type = $h->lang["follow_list_following"];
+    } else {
+	$follow_type = $h->lang["follow_list_followers"];
+    }
 ?>
 
 <div id="list_followers" class="users_content">
 
-<h2><?php echo $follow_type . " (" . count($h->vars['follow_list']->items) .")"; ?></h2>
+<h2><?php echo $follow_type . " (" . $h->vars['follow_count'] .")"; ?></h2>
     
 
 <table class="follow_list">
