@@ -43,6 +43,7 @@ class JournalSettings
         // Get settings from database if they exist...
         $journal_settings = $h->getSerializedSettings();
         
+        $need_sb_post = $journal_settings['need_sb_post'];
         $items_per_page = $journal_settings['items_per_page'];
         $rss_items = $journal_settings['rss_items'];
         $content_length = $journal_settings['content_length'];
@@ -59,6 +60,8 @@ class JournalSettings
         
         echo "<form name='journal_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=journal' method='post'>\n";
 
+        echo "<p><input type='checkbox' name='need_sb_post' value='need_sb_post' " . $need_sb_post . ">&nbsp;&nbsp;" . $h->lang["journal_settings_need_sb_post"] . "</p>\n";
+        
         echo "<p><input type='text' size=5 name='items_per_page' value='" . $items_per_page . "' /> " . $h->lang["journal_settings_items_per_page"] . "</p>\n";
         
         echo "<p><input type='text' size=5 name='rss_items' value='" . $rss_items . "' /> " . $h->lang["journal_settings_rss_items"] . "</p>\n";
@@ -95,6 +98,13 @@ class JournalSettings
     {
         // Get current settings 
         $journal_settings = $h->getSerializedSettings();
+        
+        // Need social bookmarking post before being able to start a journal?
+        if ($h->cage->post->keyExists('need_sb_post')) { 
+            $need_sb_post = 'checked'; 
+        } else { 
+            $need_sb_post = ''; 
+        }
         
         // Items per page
         $items_per_page = $h->cage->post->getInt('items_per_page'); 
@@ -141,6 +151,7 @@ class JournalSettings
         
         $h->pluginHook('journal_save_settings');
         
+        $journal_settings['need_sb_post'] = $need_sb_post;
         $journal_settings['items_per_page'] = $items_per_page;
         $journal_settings['rss_items'] = $rss_items;
         $journal_settings['content_length'] = $content_length;

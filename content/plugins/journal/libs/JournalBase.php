@@ -48,6 +48,8 @@ class JournalBase
 		
 		// other settings
 		$h->comment->order = "DESC";
+		
+		return $journal_settings;
 	}
 	
 

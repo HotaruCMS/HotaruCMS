@@ -62,13 +62,14 @@ class Follow
 	 echo "<li><a href='" . $h->url(array('page'=>'followers', 'user'=>$h->vars['user']->name)) . "'>" . $h->lang['follow_list_followers'] . "</a> <small>(" . $h->countFollowers($h->vars['user']->id) . ")</small></li>\n";
 	 echo "<li><a href='" . $h->url(array('page'=>'following', 'user'=>$h->vars['user']->name)) . "'>" . $h->lang['follow_list_following'] . "</a> <small>(" . $h->countFollowing($h->vars['user']->id) . ")</small></li>\n";
 
-	 if ($h->vars['user']->name != $h->currentUser->name) {
+	 if ($h->currentUser->loggedIn && $h->vars['user']->name != $h->currentUser->name) {
 	    // check if already following
 	    $follow = $h->isFollowing($h->vars['user']->id);
-	    if ($follow == 0)
-		echo "<li><a href='" . $h->url(array('page'=>'follow', 'user'=>$h->vars['user']->name)) . "'>" . $h->lang['follow_follow_user'] . "</a></li>\n";
-	    else
-		echo "<li><a href='" . $h->url(array('page'=>'unfollow', 'user'=>$h->vars['user']->name)) . "'>" . $h->lang['follow_unfollow_user'] . "</a></li>\n";
+	    if ($follow == 0) {
+		 echo "<li><a href='" . $h->url(array('page'=>'follow', 'user'=>$h->vars['user']->name)) . "'>" . $h->lang['follow_follow_user'] . "</a></li>\n";
+	    } else {
+		 echo "<li><a href='" . $h->url(array('page'=>'unfollow', 'user'=>$h->vars['user']->name)) . "'>" . $h->lang['follow_unfollow_user'] . "</a></li>\n";
+		}
 	 }
     }
 

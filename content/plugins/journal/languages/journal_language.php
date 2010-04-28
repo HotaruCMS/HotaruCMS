@@ -32,6 +32,7 @@ $lang["journal_no_items"] = "No items found.";
 
 /* Journal Settings */
 $lang["journal_settings_header"] = "Journal Configuration";
+$lang["journal_settings_need_sb_post"] = "Require one approved social bookmarking post before being able to post journal entries";
 $lang["journal_settings_items_per_page"] = "Number of journal entries per page";
 $lang["journal_settings_rss_items"] = "Number of journal entries in an RSS feed";
 $lang["journal_settings_content_min_length"] = "Minimum number of characters in a journal entry";
@@ -73,6 +74,7 @@ $lang['journal_error_no_title'] = "Please enter a title.";
 $lang['journal_error_no_content'] = "Please write something.";
 $lang['journal_error_too_short'] = "Sorry, that's too short.";
 $lang['journal_error_no_perms'] = "Sorry, you need permission to post journal entries.";
+$lang['journal_error_no_approved_posts'] = "Sorry, you can't start a journal until you have submitted an article and had it approved by a moderator.";
 $lang['journal_error_pending'] = "Thank you!<br />Your post is awaiting moderator approval.";
 
 /* RSS */

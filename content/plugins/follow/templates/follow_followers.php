@@ -37,10 +37,10 @@
     
 
 <table class="follow_list">
-    <tr class="messaging_list_headers">
-        <td class="messaging_fom"><?php echo $follow_type; ?></td>
-        <td class="messaging_subject"><?php echo $h->lang['follow_list_activity']; ?></td>
-        <td class="messaging_delete"></td>
+    <tr class="follow_list_headers">
+        <td><?php echo $follow_type; ?></td>
+        <td><?php echo $h->lang['follow_list_activity']; ?></td>
+        <td>&nbsp;</td>
     </tr>
     
     <?php if (isset($h->vars['follow_list']->items)) { ?>

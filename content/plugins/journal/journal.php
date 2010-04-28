@@ -56,6 +56,7 @@ class Journal
 		
 		// Default settings 
 		$journal_settings = $h->getSerializedSettings();
+		if (!isset($journal_settings['need_sb_post'])) { $journal_settings['need_sb_post'] = ""; }
 		if (!isset($journal_settings['items_per_page'])) { $journal_settings['items_per_page'] = 10; }
 		if (!isset($journal_settings['rss_items'])) { $journal_settings['rss_items'] = 20; }
 		if (!isset($journal_settings['allowable_tags'])) { $journal_settings['allowable_tags'] = "<b><i><u><a><blockquote><del>"; }
@@ -224,11 +225,11 @@ class Journal
 
 		$journal = $this->getJournalObjects($h);
 		
-		// wrap everything in a journal_posts div
-		echo "<div id='journal_posts'>\n";
-		
 		if ($h->pageName == 'journal')
 		{
+			// wrap everything in a journal_posts div
+			echo "<div id='journal_posts' class='user_journals'>\n";
+		
 			$anchor_title = htmlentities($h->lang["journal_rss_title_anchor"], ENT_QUOTES, 'UTF-8');
 			$title = "<h2>" . $h->lang['journal_header'] . $h->vars['user']->name;
 			$title .= "<a href='" . $h->url(array('page'=>'journal', 'user'=>$h->vars['user']->name, 'rss'=>'true')) . "' title='" . $anchor_title . "'>\n";
@@ -241,11 +242,23 @@ class Journal
 				&& ($h->currentUser->id == $h->vars['user']->id)
 				&& !$h->post->id) 
 			{
+				// get journal settings
+				$journal_settings = $journal->getJournalSettings($h);
+		
 				// does user have permission to post journal entries?
-				if ($h->currentUser->getPermission('can_journal') == 'no') {
+				if ($h->currentUser->getPermission('can_journal') == 'no')
+				{
 					$h->messages[$h->lang['journal_error_no_perms']] = 'yellow';
 					$h->showMessages();
-				} else {
+				} 
+				// if an approved bookmarking post is needed and the user doesn't have on, then fail
+				elseif ($journal_settings['need_sb_post'] && (!$h->postsApproved())) 
+				{
+					$h->messages[$h->lang['journal_error_no_approved_posts']] = 'yellow';
+					$h->showMessages();
+				}
+				else
+				{
 					$h->displayTemplate('journal_post_form');
 				}
 			}
@@ -257,6 +270,10 @@ class Journal
 				$journal->showJournalPosts($h, $h->vars['user']->id);
 			}
 		} else {
+		
+			// wrap everything in a journal_posts div
+			echo "<div id='journal_posts' class='all_journals'>\n";
+			
 			$journal->showJournalPosts($h);
 		}
 			

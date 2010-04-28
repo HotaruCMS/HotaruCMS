@@ -86,10 +86,10 @@ class JournalPosts extends JournalBase
 		$allowed_tags = $journal_settings['allowable_tags'];
 		
 		// get content - return false if no content
-		$h->post->content = sanitize($h->cage->post->getHtmLawed('post_content'), 'tags', $allowed_tags);
+		$h->post->content = trim(sanitize($h->cage->post->getHtmLawed('post_content'), 'tags', $allowed_tags));
 		
 		// get title - take first 60 chars from content if no title provided
-		$h->post->title = $h->cage->post->getHtmLawed('post_title');
+		$h->post->title = trim($h->cage->post->getHtmLawed('post_title'));
 		if (!$h->post->title) {
 			$h->post->title = truncate($h->post->content, 60);
 		}

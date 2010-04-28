@@ -2,7 +2,14 @@
 
 #journal_posts { 
 	float: left; 
-	width: 80%;
+}
+
+.user_journals { 
+	width: 80%; 
+}
+
+.all_journals { 
+	width: 100%;
 }
 
 #journal_posts .post_form input { 

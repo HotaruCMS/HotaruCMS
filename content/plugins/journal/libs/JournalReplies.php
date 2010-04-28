@@ -1,7 +1,6 @@
 <?php
 /**
- * SB Base functions
- * Notes: This file is part of the SB Submit plugin.
+ * Journal comment functions
  *
  * PHP version 5
  *
