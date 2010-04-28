@@ -116,13 +116,13 @@ class Follow
 	    {
 		case 'followers':		    
 		    $query = $h->getFollowers($h->vars['user']->id, 'query');
-		    $h->vars['follow_count'] = $query;
+		    $h->vars['follow_count'] = count($query);
 		    $h->vars['follow_list'] = $h->pagination($query, count($query), 20);
 		    // how to also include the latest actvitiy for this person and a follow/unfollow button
 		    break;
 		case 'following':
 		    $query = $h->getFollowing($h->vars['user']->id, 'query');
-		    $h->vars['follow_count'] = $query;
+		    $h->vars['follow_count'] = count($query);
 		    $h->vars['follow_list'] = $h->pagination($query, count($query), 20);
 		    break;
 		case 'follow':
