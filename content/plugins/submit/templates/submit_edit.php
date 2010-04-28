@@ -55,8 +55,9 @@ $h->pluginHook('submit_2_assign');
     </tr>
     <tr>
         <td>&nbsp;</td>
-        <td style='vertical-align: top;' class="submit_instructions"><?php echo $h->lang['submit_allowable_tags']; ?>
-            <?php echo $h->vars['submit_allowable_tags']; ?>
+        <td style='vertical-align: top;' class="submit_instructions">
+        	<small><?php echo $h->lang['submit_allowable_tags']; ?>
+            <?php echo $h->vars['submit_allowable_tags']; ?></small>
         </td>
     </tr>
     <?php } ?>
@@ -70,14 +71,13 @@ $h->pluginHook('submit_2_assign');
     </tr>
     <?php } ?>
     
-    <?php
-        if ($h->vars['submit_use_tags']) { 
-            echo "<tr>";
-                echo "<td>" . $h->lang["submit_tags"] . "&nbsp; </td>";
-                echo "<td><input type='text' id='post_tags' name='post_tags' value='" . $h->vars['submit_tags'] . "'></td>";
-            echo "</tr>";
-        }
-    ?>
+    <?php if ($h->vars['submit_use_tags']) { ?>
+    	<tr>
+        	<td><?php echo $h->lang["submit_tags"]; ?>&nbsp; </td>
+            <td><input type='text' id='post_tags' name='post_tags' value='<?php echo $h->vars['submit_tags']; ?>'>&nbsp; 
+            <small><?php echo $h->lang['submit_tags_comma_separated']; ?></small></td>
+        </tr>
+    <?php } ?>
     
     <?php $h->pluginHook('submit_2_fields'); ?>
         
