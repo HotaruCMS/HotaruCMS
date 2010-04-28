@@ -98,7 +98,7 @@
     
 </table>
 
-    <?php echo $h->pageBar($h->vars['follow_list']); ?>
+    <?php echo $h->pageBar($h->vars['follow_count']); ?>
     
    
 </div>
