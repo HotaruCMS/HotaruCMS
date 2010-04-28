@@ -501,7 +501,7 @@ class SubmitFunctions
         
         // ******** CHECK TITLE ********
             
-        if (!$title) {
+        if (!trim($title)) {
             // No title present...
             $h->messages[$h->lang['submit_title_not_present_error']] = "red";
             $error_title= 1;
@@ -521,7 +521,7 @@ class SubmitFunctions
             
         // ******** CHECK DESCRIPTION ********
         if ($submit_settings['content']) { // if using the content field
-            if (!$content) {
+            if (!trim($content)) {
                 // No content present...
                 $h->messages[$h->lang['submit_content_not_present_error']] = "red";
                 $error_content = 1;
@@ -557,7 +557,7 @@ class SubmitFunctions
         if ($submit_settings['tags']) {
             $tags = sanitize($h->cage->post->noTags('post_tags'), 'tags');
             
-            if (!$tags) {
+            if (!trim($tags)) {
                 // No tags present...
                 $h->messages[$h->lang['submit_tags_not_present_error']] = "red";
                 $error_tags = 1;
