@@ -33,6 +33,8 @@
     } else {
 	$follow_type = $h->lang["follow_list_followers"];
     }
+
+     $follow_settings = $h->getSerializedSettings();
 ?>
 
 <div id="list_followers" class="users_content">
@@ -66,12 +68,14 @@
                 <td class="follow_activity">
 		    <?php if($h->isActive('activity')) {			
 			     $Activity = new Activity();			     
-			     //$LatestActivity = $Activity->getLatestActivity($h, 1, $user->user_id);
-			     $LatestActivity = $h->getLatestActivity(1, $user->user_id);
+			     $LatestActivity = $Activity->getLatestActivity($h, 1, $user->user_id);
+			     //$LatestActivity = $h->getLatestActivity(1, $user->user_id);
 			     $action = $LatestActivity[0];			     
 			     if (!$action) { echo "No activity yet."; } else {
 				echo $Activity->activityContent($h, $action);
-				echo "<br /><small>[" . date('g:ia, M jS', strtotime($action->useract_date)) . "]</small>";
+				if ($follow_settings['setting1']) {
+				    echo "<br /><small>[" . date('g:ia, M jS', strtotime($action->useract_date)) . "]</small>";
+				}
 			     }
 			 } ?>
                     

@@ -26,7 +26,7 @@
 
 /* Users Admin Settings */
 $lang["follow_settings_header"] = "Follow Settings";
-$lang["follow_settings_setting1"] = "Setting 1";
+$lang["follow_settings_setting1"] = "Show time/date on Latest Activity";
 $lang["follow_settings_setting2"] = "Setting 2";
 
 $lang["follow_settings_save"] = "Save";
