@@ -89,6 +89,8 @@ class MediaSelect
      */
     public function post_add_post($h)
     {
+    	if ($h->post->type != 'news') { return false; }
+    	
         $h->post->vars['media'] = $h->vars['submitted_data']['submit_media'];
         
         $sql = "UPDATE " . TABLE_POSTS . " SET post_media = %s WHERE post_id = %d";

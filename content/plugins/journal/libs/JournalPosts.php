@@ -216,7 +216,7 @@ class JournalPosts extends JournalBase
 		
 		$h->vars['pagedResults'] = $this->getJournalPosts($h, $userid, $per_page);
 		
-		if (!$h->vars['pagedResults']) { return false; }
+		if (!$h->vars['pagedResults']->items) { return false; }
 		
 		$h->displayTemplate('journal_list');
 

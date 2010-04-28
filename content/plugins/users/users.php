@@ -191,9 +191,11 @@ class Users
      */
     public function breadcrumbs($h)
     {
-        if (isset($h->vars['user'])) {
+        if (isset($h->vars['user']) && $h->vars['user']->name) {
             $userlink = "<a href='" . $h->url(array('user'=>$h->vars['user']->name)) . "'>";
             $userlink .= $h->vars['user']->name . "</a>";
+        } else {
+        	return false;
         }
         
         // This is for user pages, e.g. account, edit profile, etc:
@@ -262,6 +264,10 @@ class Users
     public function theme_index_main($h)
     {
         if ($h->pageType != 'user') { return false; }
+
+		// if user doesn't exist
+		if (!$h->vars['user']->name) { return false; }
+        if ($h->userExists(0, $h->vars['user']->name) == 'no') { return false; }
         
         // determine permissions
         $admin = false; $own = false; $denied = false;

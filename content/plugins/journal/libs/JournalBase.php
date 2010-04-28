@@ -43,8 +43,7 @@ class JournalBase
 		// get settings for the database
 		$journal_settings = $h->getSerializedSettings('journal');
 		$this->postsLimit = $journal_settings['items_per_page'];
-		$h->post->allowableTags = $journal_settings['allowable_tags_replies'];
-		$h->comment->allowableTags = $journal_settings['allowable_tags_replies'];
+		$h->post->allowableTags = $journal_settings['allowable_tags'];
 		
 		// other settings
 		$h->comment->order = "DESC";

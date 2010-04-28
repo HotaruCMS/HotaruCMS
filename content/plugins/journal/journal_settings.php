@@ -143,12 +143,6 @@ class JournalSettings
             $allowable_tags = $journal_settings['allowable_tags'];
         } 
         
-        // Set pending
-        $set_pending = $h->cage->post->testAlnumLines('set_pending');
-        if (!$set_pending) {
-            $set_pending = $journal_settings['set_pending'];
-        }
-        
         $h->pluginHook('journal_save_settings');
         
         $journal_settings['need_sb_post'] = $need_sb_post;
