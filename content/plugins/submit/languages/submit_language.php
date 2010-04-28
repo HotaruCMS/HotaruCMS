@@ -63,6 +63,7 @@ $lang["submit_category"] = "Category";
 $lang['submit_category_select'] = "Select a category";
 $lang['submit_category_error'] = "Please choose a category.";
 $lang["submit_tags"] = "Tags:";
+$lang["submit_tags_comma_separated"] = "(Comma separated)";
 $lang['submit_tags_not_present_error'] = "No tags entered.";
 $lang['submit_tags_length_error'] = "Sorry, you've entered too many tags.";
 
