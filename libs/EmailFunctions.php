@@ -73,7 +73,7 @@ class EmailFunctions
 				$this->headers = "From: " . $this->from . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
 			}
 		}
-		
+
 		switch ($this->type)
 		{
 			case 'log':

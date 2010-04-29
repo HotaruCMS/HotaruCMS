@@ -144,7 +144,7 @@ class Activity
     {
         if ($h->post->status != 'new' && $h->post->status != 'top') { $status = "hide"; } else { $status = "show"; }
         
-        $args['status'] = 'show';
+        $args['status'] = $status;
         $args['where']['key'] = 'post';
         $args['where']['value'] = $h->post->id;
         

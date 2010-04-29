@@ -32,7 +32,7 @@ class AdminPages
 	{
 		$h->vars['admin_sidebar_layout'] = 'vertical';
 		
-		$h->pluginHook('admin_pages');       
+		$h->pluginHook('admin_pages');
 		
 		switch ($page) {
 			case "admin_login":
@@ -61,7 +61,7 @@ class AdminPages
 				$h->vars['admin_sidebar_layout'] = 'horizontal';
 				$this->adminPlugins($h);
 				break;
-			case "plugin_settings":                
+			case "plugin_settings":
 				$h->vars['settings_plugin'] = $h->cage->get->testAlnumLines('plugin'); // get plugin name from url
 				if (!$h->vars['settings_plugin']) { 
 					$h->vars['settings_plugin'] = $h->cage->post->testAlnumLines('plugin');  // get plugin name from form
