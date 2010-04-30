@@ -108,4 +108,17 @@ function display_filesize($filesize)
 	}
 
 }
+
+/**
+ * Start Hotaru from Ajax callback
+ *  *
+ */
+function startHotaru() {
+    require_once('../hotaru_settings.php');
+    require_once('../Hotaru.php');
+
+    $h = new Hotaru();
+    $h->start();
+}
+
 ?>
