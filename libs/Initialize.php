@@ -43,6 +43,7 @@ class Initialize
 		
 		// The order here is important!
 		$this->setDefaultTimezone();
+		$this->setTableConstants();
 		$this->errorReporting(); 
 		$this->getFiles();
 		$this->db = $this->initDatabase();
@@ -102,6 +103,41 @@ class Initialize
 		
 		// point PHP to our error log
 		ini_set('error_log', $filename);
+	}
+
+	/**
+	 * Table Constants
+	 */
+	public function setTableConstants()
+	{
+	    // define database tables
+	    $tableConstants = array(
+		    "TABLE_BLOCKED" => "blocked",
+		    "TABLE_CATEGORIES"=>"categories",
+		    "TABLE_COMMENTS"=>"comments",
+		    "TABLE_COMMENTVOTES"=>"commentvotes",
+		    "TABLE_MISCDATA"=>"miscdata",
+		    "TABLE_PLUGINS"=>"plugins",
+		    "TABLE_PLUGINHOOKS"=>"pluginhooks",
+		    "TABLE_PLUGINSETTINGS"=>"pluginsettings",
+		    "TABLE_POSTS"=>"posts",
+		    "TABLE_POSTMETA"=>"postmeta",
+		    "TABLE_POSTVOTES"=>"postvotes",
+		    "TABLE_SETTINGS"=>"settings",
+		    "TABLE_TAGS"=>"tags",
+		    "TABLE_TEMPDATA"=>"tempdata",
+		    "TABLE_USERS"=>"users",
+		    "TABLE_USERMETA"=>"usermeta",
+		    "TABLE_USERACTIVITY"=>"useractivity",
+		    "TABLE_WIDGETS"=>"widgets",
+		    "TABLE_FRIENDS"=>"friends",
+		    "TABLE_MESSAGING"=>"messaging"
+		    );
+
+	    foreach ( $tableConstants as $key => $value ) {
+		if (!defined($key))
+		    define($key, DB_PREFIX . $value);
+	    }		    
 	}
 	
 	

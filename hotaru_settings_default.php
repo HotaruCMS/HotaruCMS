@@ -56,26 +56,4 @@ define("THEMES", dirname(__FILE__).'/content/themes/');
 define("PLUGINS", dirname(__FILE__).'/content/plugins/');
 define("ADMIN_THEMES", dirname(__FILE__).'/content/admin_themes/');
 
-// define database tables
-define("TABLE_BLOCKED", DB_PREFIX . "blocked");
-define("TABLE_CATEGORIES", DB_PREFIX . 'categories');
-define("TABLE_COMMENTS", DB_PREFIX . 'comments');
-define("TABLE_COMMENTVOTES", DB_PREFIX . 'commentvotes');
-define("TABLE_FRIENDS", DB_PREFIX . 'friends');
-define("TABLE_MESSAGING", DB_PREFIX . "messaging");
-define("TABLE_MISCDATA", DB_PREFIX . "miscdata");
-define("TABLE_PLUGINS", DB_PREFIX . "plugins");
-define("TABLE_PLUGINHOOKS", DB_PREFIX . "pluginhooks");
-define("TABLE_PLUGINSETTINGS", DB_PREFIX . "pluginsettings");
-define("TABLE_POSTS", DB_PREFIX . 'posts');
-define("TABLE_POSTMETA", DB_PREFIX . 'postmeta');
-define("TABLE_POSTVOTES", DB_PREFIX . 'postvotes');
-define("TABLE_SETTINGS", DB_PREFIX . "settings");
-define("TABLE_TAGS", DB_PREFIX . 'tags');
-define("TABLE_TEMPDATA", DB_PREFIX . 'tempdata');
-define("TABLE_USERS", DB_PREFIX . "users");
-define("TABLE_USERMETA", DB_PREFIX . "usermeta");
-define("TABLE_USERACTIVITY", DB_PREFIX . "useractivity");
-define("TABLE_WIDGETS", DB_PREFIX . 'widgets');
-
 ?>
