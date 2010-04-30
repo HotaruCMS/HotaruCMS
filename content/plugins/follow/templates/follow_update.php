@@ -25,11 +25,14 @@
  */
 
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/hotaru_settings.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/Hotaru.php');    // Not the cleanest way of getting to the root...
+//require_once($_SERVER['DOCUMENT_ROOT'] . '/hotaru_settings.php');
+//require_once($_SERVER['DOCUMENT_ROOT'] . '/Hotaru.php');    // Not the cleanest way of getting to the root...
+//
+//$h = new Hotaru();
+//$h->start();
 
-$h = new Hotaru();
-$h->start();
+require_once($_SERVER['DOCUMENT_ROOT'] . '/functions/funcs.files.php');
+$h = startHotaru();
 
     require_once(PLUGINS . 'follow/follow.php');
     $Follow = new Follow($h);
