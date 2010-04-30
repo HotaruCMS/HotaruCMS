@@ -10,7 +10,7 @@ class csrf
     private $sid;           // session id of user
 
 
-    public function csrfInit($h, $type = 'check', $action = 'unspecified', $life = 30)
+    public function csrfInit($h, $type = 'check', $action = 'unspecified', $life = 60)
     {
         $this->sid  = preg_replace('/[^a-z0-9]+/i', '', session_id());
         $this->action = (!$action ) ? $this->action = $h->getPagename() : $this->action = $action;
