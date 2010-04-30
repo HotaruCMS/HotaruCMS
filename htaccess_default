@@ -2,19 +2,15 @@
 ##### EDIT THIS SECTION #####
 #############################
 
-##### Re-directing Begin #####
 Options +Indexes +FollowSymlinks
 RewriteEngine on
-## If Hotaru is installed in a subfolder, change the below line to RewriteBase /name-of-subfolder
-RewriteBase /
-## If installed in a subfolder or subdomain you may need to add ## to the beginning of the next line
-RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /.*index\.php\ HTTP/
 
-## Remove these two lines if you have a subdomain like  http://bookmarking.myhotarusite.com  or http://localhost
-## Keep if your site url looks like http://www.myhotarusite.com
-RewriteCond %{HTTP_HOST} !^www\.
-RewriteRule ^\/?(.*)$ http://www.%{HTTP_HOST}/$1 [R=301,L]
-##### Re-directing End #####
+## Change to /folder if Hotaru is in a subfolder
+RewriteBase /
+
+## Redirect www.example.com to example.com. Add ## if you don't need the redirect.
+RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
 
 ################################################
 ##### DON'T EDIT ANYTHING BELOW THIS POINT #####
@@ -25,9 +21,6 @@ RewriteRule ^\/?(.*)$ http://www.%{HTTP_HOST}/$1 [R=301,L]
 ##### CORE ADMIN #####
 RewriteRule ^admin/?$ admin_index.php [L]
 RewriteRule ^admin/([a-zA-Z0-9_-]+)/?$ admin_index.php?page=$1 [L]
-RewriteRule ^admin/plugins/?$ admin_index.php?page=plugins [L]
-RewriteRule ^admin/settings/?$ admin_index.php?page=settings [L]
-RewriteRule ^admin/maintenance/?$ admin_index.php?page=maintenance [L]
 RewriteRule ^admin/plugin_settings/plugin/([a-zA-Z0-9_-]+)/?$ admin_index.php?page=plugin_settings&plugin=$1 [L]
 
 ##### GENERIC RULES #####
