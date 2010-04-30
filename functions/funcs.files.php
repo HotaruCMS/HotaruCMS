@@ -119,6 +119,8 @@ function startHotaru() {
 
     $h = new Hotaru();
     $h->start();
+
+    return $h;
 }
 
 ?>
