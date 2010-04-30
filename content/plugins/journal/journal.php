@@ -191,7 +191,9 @@ class Journal
 	public function breadcrumbs($h)
 	{
 		if ($h->pageName == 'journal') { 
-			return "<a href='" . $h->url(array('user'=>$h->vars['user']->name)) . "'>" . $h->vars['user']->name . "</a> &raquo; " . $h->lang['journal'];
+			$crumbs = "<a href='" . $h->url(array('user'=>$h->vars['user']->name)) . "'>" . $h->vars['user']->name . "</a> &raquo; ";
+			$crumbs .= "<a href='" . $h->url(array('page'=>'journal','user'=>$h->vars['user']->name)) . "'>" . $h->lang['journal'] . "</a>\n";
+			return $crumbs;
 		}
 		
 		if ($h->pageName == 'journals') { 
@@ -231,7 +233,7 @@ class Journal
 			echo "<div id='journal_posts' class='user_journals'>\n";
 		
 			$anchor_title = htmlentities($h->lang["journal_rss_title_anchor"], ENT_QUOTES, 'UTF-8');
-			$title = "<h2>" . $h->lang['journal_header'] . $h->vars['user']->name;
+			$title = "<h2><a href='" . $h->url(array('page'=>'journal','user'=>$h->vars['user']->name)) . "'>" . $h->lang['journal_header'] . $h->vars['user']->name . "</a>";
 			$title .= "<a href='" . $h->url(array('page'=>'journal', 'user'=>$h->vars['user']->name, 'rss'=>'true')) . "' title='" . $anchor_title . "'>\n";
 			$title .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png' alt='RSS' />\n</a>"; // RSS icon
 			$title .= "</h2>";
