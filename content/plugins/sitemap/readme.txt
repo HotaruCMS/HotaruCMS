@@ -47,6 +47,7 @@ http://hotarucms.org/forumdisplay.php?7-Plugins-and-Hacks
 
 Revision History
 *****************
+v.0.6 2010/04/23 - shibuya246 - Added pinging of Google and Bing, manually and as part of Cron job
 v.0.5 2010/04/09 - Nick - Fix for admin CSS bug, plus support for the Cron plugin
 v.0.4 2010/03/11 - williamd - Category urls added, plus priority settings for base url, categories and posts
 v.0.3 2010/03/03 - obzerver - Updated to support cron jobs

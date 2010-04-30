@@ -261,10 +261,10 @@ class Sitemap
 		$pingres = $this->getWebPage($pingUrl);
 		
 		if ($pingres['content'] == NULL || $pingres['content'] === false) {
-		    $h->message .= "Failed to ping Google: " . htmlspecialchars(strip_tags($pingres['content']));
+		    $h->messages["Failed to ping Google: " . htmlspecialchars(strip_tags($pingres['content']))] = 'red';
 		} else {		
 		    $result = "success";
-		    $h->message .= 'Google ' . $h->lang["sitemap_ping_success"];
+		    $h->messages['Google ' . $h->lang["sitemap_ping_success"]] = 'green';
 		    $sitemap_settings['sitemap_last_pinged'] = date("F j, Y, g:i:s a");
 		}
 	    }
@@ -279,10 +279,10 @@ class Sitemap
 		$pingres = $this->getWebPage($pingUrl);
 
 		if ($pingres['content'] == NULL || $pingres['content'] === false || strpos($pingres['content'], "Thanks for submitting your sitemap") === false) {
-		    $h->message .= "Failed to ping Bing: " . htmlspecialchars(strip_tags($pingres['content']));
+		    $h->messages["Failed to ping Bing: " . htmlspecialchars(strip_tags($pingres['content']))] = 'red';
 		} else {		
 		    $result = "success";
-		    $h->message .= 'Bing ' . $h->lang["sitemap_ping_success"];
+		    $h->messages['Bing ' . $h->lang["sitemap_ping_success"]] = 'green';
 		    $sitemap_settings['sitemap_last_pinged'] = date("F j, Y, g:i:s a");
 		}
 	    }

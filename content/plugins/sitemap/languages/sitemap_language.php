@@ -13,7 +13,7 @@
 	$lang['sitemap_last_run'] = "Sitemap Last Generated: ";
 	$lang['sitemap_last_pinged'] = "Sitemap Last Pinged: ";
 	$lang['sitemap_compress'] = "Compress Sitemap: ";
-	$lang['sitemap_use_cron'] = "Automatically generate a new sitemap once a day <small>(requires the Cron plugin)</small>";
+	$lang['sitemap_use_cron'] = "Automatically generate and ping networks a new sitemap once a day  <small>(requires the Cron plugin)</small>";
 	$lang['sitemap_ping_google'] = "Send sitemap to Google";
 	$lang['sitemap_ping_bing'] = "Send sitemap to Bing";
 	$lang['sitemap_frequency'] = "Page Change Frequency: ";

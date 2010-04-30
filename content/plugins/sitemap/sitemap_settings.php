@@ -44,9 +44,8 @@ class SitemapSettings extends Sitemap
 			$h->messageType = "green";
 			$h->showMessage();
 		}else if ($h->cage->post->getAlpha('ping') == 'true') {
-			$this->pingSites($h);			
-			$h->messageType = "green";
-			$h->showMessage();
+			$this->pingSites($h);						
+			$h->showMessages();
 		}
 
 		//Get settings from database
