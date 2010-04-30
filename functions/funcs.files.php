@@ -114,8 +114,10 @@ function display_filesize($filesize)
  *  *
  */
 function startHotaru() {
-    require_once('../hotaru_settings.php');
-    require_once('../Hotaru.php');
+    $root = $_SERVER['DOCUMENT_ROOT'];
+    
+    require_once($root . '/hotaru_settings.php');
+    require_once($root . '/Hotaru.php');
 
     $h = new Hotaru();
     $h->start();
