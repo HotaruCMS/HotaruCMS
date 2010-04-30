@@ -129,15 +129,15 @@ class Follow
 		    $result = $h->follow($h->vars['user']->id);
 		    $h->messages[$h->lang['follow_newfollow']] = 'green';
 		    $query = $h->getFollowers($h->vars['user']->id, 'query');
-		    $h->vars['follow_list'] = $h->pagination($query, count($query), 20);
 		    $h->vars['follow_count'] = $h->countFollowers($h->vars['user']->id);
+		    $h->vars['follow_list'] = $h->pagination($query, $h->vars['follow_count'], 20);
 		    break;
 		case 'unfollow':
 		    $result = $h->unfollow($h->vars['user']->id);
 		    $h->messages[$h->lang['follow_unfollow']] = 'green';
 		    $query = $h->getFollowers($h->vars['user']->id, 'query');
-		    $h->vars['follow_list'] = $h->pagination($query, count($query), 20);
 		    $h->vars['follow_count'] = $h->countFollowers($h->vars['user']->id);
+		    $h->vars['follow_list'] = $h->pagination($query, $h->vars['follow_count'], 20);
 		    break;
 		}
 	}
