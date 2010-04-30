@@ -177,6 +177,7 @@ class Vote
                 else
                 {
                     $h->messages[$h->lang["vote_alert_already_flagged"]] = "red";
+                    $h->showMessages();
                 }
             }
             
