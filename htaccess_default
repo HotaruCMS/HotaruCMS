@@ -16,30 +16,16 @@ RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
 ##### DON'T EDIT ANYTHING BELOW THIS POINT #####
 ################################################
 
-##### URL Rewriting Begin #####
-
 ##### CORE ADMIN #####
 RewriteRule ^admin/?$ admin_index.php [L]
 RewriteRule ^admin/([a-zA-Z0-9_-]+)/?$ admin_index.php?page=$1 [L]
 RewriteRule ^admin/plugin_settings/plugin/([a-zA-Z0-9_-]+)/?$ admin_index.php?page=plugin_settings&plugin=$1 [L]
 
 ##### GENERIC RULES #####
-RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc|txt|gz|xml|html)$
+RewriteRule \.(css|php|png|jpg|gif|ico|js|inc|txt|gz|xml|html)$ - [L]
 RewriteRule ^([^/]*)/?$ index.php?page=$1 [L]
-
-RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc|txt|gz|xml|html)$
 RewriteRule ^([^/]*)/([^/]*)/?$ index.php?$1=$2 [L]
-
-RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc|txt|gz|xml|html)$
 RewriteRule ^([^/]*)/([^/]*)/([^/]*)/?$ index.php?page=$1&$2=$3 [L]
-
-RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc|txt|gz|xml|html)$
 RewriteRule ^([^/]*)/([^/]*)/([^/]*)/([^/]*)/?$ index.php?$1=$2&$3=$4 [L]
-
-RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc|txt|gz|xml|html)$
 RewriteRule ^([^/]*)/([^/]*)/([^/]*)/([^/]*)/([^/]*)/?$ index.php?page=$1&$2=$3&$4=$5 [L]
-
-RewriteCond %{REQUEST_URI} !\.(css|php|png|jpg|gif|ico|js|inc|txt|gz|xml|html)$
 RewriteRule ^([^/]*)/([^/]*)/([^/]*)/([^/]*)/([^/]*)/([^/]*)/?$ index.php?$1=$2&$3=$4&$5=$6 [L]
-
-##### URL Rewriting End #####

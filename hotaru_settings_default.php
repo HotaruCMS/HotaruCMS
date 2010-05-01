@@ -39,7 +39,7 @@ define('DB_CHARSET', 'utf8');					// Database Character Set (UTF8 is Recommended
 define("DB_COLLATE", 'utf8_unicode_ci');		// Database Collation (UTF8 is Recommended), e.g. "utf8_unicode_ci"
 
 // Paths
-define('BASEURL', "http://www.mysite.com/");	// e.g. http://www.mysite.com/
+define('BASEURL', "http://example.com/");		// e.g. http://example.com/
 												// Needs trailing slash (/)
 
 // DON'T EDIT ANYTHING BEYOND THIS POINT
