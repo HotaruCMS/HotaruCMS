@@ -111,7 +111,7 @@ function list_plugin_tables()
 	
 	$plugin_tables = array();
 
-	$db->select(DB_NAME);
+	$db->selectDB(DB_NAME);
 	
 	if (!$db->get_col("SHOW TABLES",0)) { return $plugin_tables; }
 	
