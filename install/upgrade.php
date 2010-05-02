@@ -480,35 +480,67 @@ function do_upgrade($old_version)
 		}
 
 		//Add indices to tables
-		$exists = $h->db->table_exists('comments');
-		if ($exists) {
-		    $sql = "ALTER TABLE `" . DB_PREFIX . "comments` ADD INDEX (comment_archived)";		   
-		    $h->db->query($sql);
-		    $sql = "ALTER TABLE `" . DB_PREFIX . "comments` ADD INDEX (comment_status)";
-		    $h->db->query($sql);
-		}		
+		$tables = array( 'comments' => array('comment_archived', 'comment_status'),
+				 'posts' => array('post_archived', 'post_status', 'post_type'),
+				 'tags' => array('tags_archived'),
+				 'useractivity' => array('useract_userid'),
+				 'messaging' => array('message_archived')
+		    );
 
-		$exists = $h->db->table_exists('posts');
-		if ($exists) {
-		    $sql = "ALTER TABLE `" . DB_PREFIX . "posts` ADD INDEX (post_archived)";
-		    $h->db->query($sql);
-		    $sql = "ALTER TABLE `" . DB_PREFIX . "posts` ADD INDEX (post_status)";
-		    $h->db->query($sql);
-		    $sql = "ALTER TABLE `" . DB_PREFIX . "posts` ADD INDEX (post_type)";
-		    $h->db->query($sql);
-		}
+		foreach ($tables as $table) {
+		    if ($exists = $h->db->table_exists('comments'))
+		    {
+			foreach ($table as $index) {
+			    $sql = "SHOW INDEX FROM `" . DB_PREFIX . $table . "` WHERE KEY_NAME = '" . $index . "'";
+			    $result = $h->db->query($sql);
+			    if (!$result == 0) {
+				$sql = "ALTER TABLE `" . DB_PREFIX . $table . "` ADD INDEX (" . $index . ")";
+				$h->db->query($sql);
+			    }
+			}
+		    }
+		}			
 
-		$exists = $h->db->table_exists('tags');
-		if ($exists) {
-		    $sql = "ALTER TABLE `" . DB_PREFIX . "tags` ADD INDEX (tags_archived)";
-		    $h->db->query($sql);
-		}
-
-		$exists = $h->db->table_exists('useractivity');
-		if ($exists) {
-		    $sql = "ALTER TABLE `" . DB_PREFIX . "useractivity` ADD INDEX (useract_userid)";
-		    $h->db->query($sql);
-		}
+//
+//		$exists = $h->db->table_exists('comments');
+//		if ($exists) {
+//		    $sql = "SHOW INDEX FROM `" . DB_PREFIX . "comments` WHERE KEY_NAME = 'comment_archived'";
+//		    $result = $h->db->query($sql);
+//		    if (!$result == 0) {
+//			$sql = "ALTER TABLE `" . DB_PREFIX . "comments` ADD INDEX (comment_archived)";
+//			$h->db->query($sql);
+//		    }
+//		    $sql = "ALTER TABLE `" . DB_PREFIX . "comments` ADD INDEX (comment_status)";
+//		    $h->db->query($sql);
+//		}
+//
+//		$exists = $h->db->table_exists('posts');
+//		if ($exists) {
+//		    $sql = "ALTER TABLE `" . DB_PREFIX . "posts` ADD INDEX (post_archived)";
+//		    $h->db->query($sql);
+//		    $sql = "ALTER TABLE `" . DB_PREFIX . "posts` ADD INDEX (post_status)";
+//		    $h->db->query($sql);
+//		    $sql = "ALTER TABLE `" . DB_PREFIX . "posts` ADD INDEX (post_type)";
+//		    $h->db->query($sql);
+//		}
+//
+//		$exists = $h->db->table_exists('tags');
+//		if ($exists) {
+//		    $sql = "ALTER TABLE `" . DB_PREFIX . "tags` ADD INDEX (tags_archived)";
+//		    $h->db->query($sql);
+//		}
+//
+//		$exists = $h->db->table_exists('useractivity');
+//		if ($exists) {
+//		    $sql = "ALTER TABLE `" . DB_PREFIX . "useractivity` ADD INDEX (useract_userid)";
+//		    $h->db->query($sql);
+//		}
+//
+//		$exists = $h->db->table_exists('messaging');
+//		if ($exists) {
+//		    $sql = "ALTER TABLE `" . DB_PREFIX . "messaging` ADD INDEX (message_archived)";
+//		    $h->db->query($sql);
+//		}
 
 		// update "old version" for next set of upgrades
 		$old_version = "1.1.4"; //"1.2.0";
