@@ -482,14 +482,11 @@ function do_upgrade($old_version)
 		//Add indices to tables
 		$exists = $h->db->table_exists('comments');
 		if ($exists) {
-		    $sql = "ALTER TABLE `" . DB_PREFIX . "comments` ADD INDEX (comment_archived)";
-		    print $sql;
+		    $sql = "ALTER TABLE `" . DB_PREFIX . "comments` ADD INDEX (comment_archived)";		   
 		    $h->db->query($sql);
 		    $sql = "ALTER TABLE `" . DB_PREFIX . "comments` ADD INDEX (comment_status)";
 		    $h->db->query($sql);
-		}
-
-		exit;
+		}		
 
 		$exists = $h->db->table_exists('posts');
 		if ($exists) {
@@ -514,7 +511,7 @@ function do_upgrade($old_version)
 		}
 
 		// update "old version" for next set of upgrades
-		$old_version = "1.2.0";
+		$old_version = "1.1.4"; //"1.2.0";
 	}
 
 	// Update Hotaru version number to the database (referred to when upgrading)
