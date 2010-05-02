@@ -482,10 +482,10 @@ function do_upgrade($old_version)
 		//Add indices to tables
 		$exists = $h->db->table_exists('comments');
 		if ($exists) {
-		    $sql = "ALTER TABLE `" . DB_PREFIX . "comments` ADD FOREIGN KEY (comment_archived) REFERENCES (comment_archived)";
+		    $sql = "ALTER TABLE `" . DB_PREFIX . "comments` ADD INDEX (comment_archived)";
 		    print $sql;
 		    $h->db->query($sql);
-		    $sql = "ALTER TABLE `" . DB_PREFIX . "comments` ADD FOREIGN KEY (comment_status) REFERENCES (comment_status)";
+		    $sql = "ALTER TABLE `" . DB_PREFIX . "comments` ADD INDEX (comment_status)";
 		    $h->db->query($sql);
 		}
 
@@ -493,23 +493,23 @@ function do_upgrade($old_version)
 
 		$exists = $h->db->table_exists('posts');
 		if ($exists) {
-		    $sql = "ALTER TABLE `" . DB_PREFIX . "posts` ADD FOREIGN KEY (post_archived) REFERENCES (post_archived)";
+		    $sql = "ALTER TABLE `" . DB_PREFIX . "posts` ADD INDEX (post_archived)";
 		    $h->db->query($sql);
-		    $sql = "ALTER TABLE `" . DB_PREFIX . "posts` ADD FOREIGN KEY (post_status) REFERENCES (post_status)";
+		    $sql = "ALTER TABLE `" . DB_PREFIX . "posts` ADD INDEX (post_status)";
 		    $h->db->query($sql);
-		    $sql = "ALTER TABLE `" . DB_PREFIX . "posts` ADD FOREIGN KEY (post_type) REFERENCES (post_type)";
+		    $sql = "ALTER TABLE `" . DB_PREFIX . "posts` ADD INDEX (post_type)";
 		    $h->db->query($sql);
 		}
 
 		$exists = $h->db->table_exists('tags');
 		if ($exists) {
-		    $sql = "ALTER TABLE `" . DB_PREFIX . "tags` ADD FOREIGN KEY (tags_archived) REFERENCES (tags_archived)";
+		    $sql = "ALTER TABLE `" . DB_PREFIX . "tags` ADD INDEX (tags_archived)";
 		    $h->db->query($sql);
 		}
 
 		$exists = $h->db->table_exists('useractivity');
 		if ($exists) {
-		    $sql = "ALTER TABLE `" . DB_PREFIX . "useractivity` ADD FOREIGN KEY (useract_userid) REFERENCES (useract_userid)";
+		    $sql = "ALTER TABLE `" . DB_PREFIX . "useractivity` ADD INDEX (useract_userid)";
 		    $h->db->query($sql);
 		}
 
