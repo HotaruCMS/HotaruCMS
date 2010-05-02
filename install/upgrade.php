@@ -473,9 +473,37 @@ function do_upgrade($old_version)
 				`message_read` tinyint(1) NOT NULL DEFAULT '0',
 				`message_inbox` tinyint(1) NOT NULL DEFAULT '1',
 				`message_outbox` tinyint(1) NOT NULL DEFAULT '1',
-				`message_updateby` int(20) NOT NULL DEFAULT 0
+				`message_updateby` int(20) NOT NULL DEFAULT 0,
+				INDEX  (`message_archived`)
 			) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Messaging';";
 			$h->db->query($sql);
+		}
+
+		//Add indices to tables
+		$exists = $h->db->table_exists('comments');
+		if ($exists) {
+		    $sql = "ALTER TABLE `" . DB_PREFIX . "comments` ADD FOREIGN KEY (`comment_archived`) REFERENCES (`comment_archived`)";
+		    $h->db->query($sql);
+		    $sql = "ALTER TABLE `" . DB_PREFIX . "comments` ADD FOREIGN KEY (`comment_status`) REFERENCES (`comment_status`)";
+		    $h->db->query($sql);
+		}
+
+		$exists = $h->db->table_exists('posts');
+		if ($exists) {
+		    $sql = "ALTER TABLE `" . DB_PREFIX . "posts` ADD FOREIGN KEY (`post_archived`) REFERENCES (`post_archived`)";
+		    $h->db->query($sql);
+		}
+
+		$exists = $h->db->table_exists('tags');
+		if ($exists) {
+		    $sql = "ALTER TABLE `" . DB_PREFIX . "tags` ADD FOREIGN KEY (`tags_archived`) REFERENCES (`tags_archived`)";
+		    $h->db->query($sql);
+		}
+
+		$exists = $h->db->table_exists('useractivity');
+		if ($exists) {
+		    $sql = "ALTER TABLE `" . DB_PREFIX . "useractivity` ADD FOREIGN KEY (`useract_userid`) REFERENCES (`useract_userid`)";
+		    $h->db->query($sql);
 		}
 
 		// update "old version" for next set of upgrades

@@ -511,8 +511,7 @@ function create_table($table_name)
 			`user_lastvisit` timestamp NULL,
 			`user_updateby` int(20) NOT NULL DEFAULT 0,
 			UNIQUE KEY `key` (`user_username`),
-			KEY `user_email` (`user_email`),
-			INDEX  (`useract_archived`)
+			KEY `user_email` (`user_email`)			
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Users and Roles';";
 		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql); 
