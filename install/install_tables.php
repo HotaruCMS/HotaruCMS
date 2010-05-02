@@ -103,7 +103,9 @@ function create_table($table_name)
 			`comment_votes_down` smallint(11) NOT NULL DEFAULT '0',
 			`comment_subscribe` tinyint(1) NOT NULL DEFAULT '0',
 			`comment_updateby` int(20) NOT NULL DEFAULT 0,
-			FULLTEXT (`comment_content`)
+			FULLTEXT (`comment_content`),
+			INDEX  (`comment_archived`),
+			INDEX  (`comment_status`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Post Comments';";
 		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql); 
@@ -162,7 +164,8 @@ function create_table($table_name)
 			`message_read` tinyint(1) NOT NULL DEFAULT '0',
 			`message_inbox` tinyint(1) NOT NULL DEFAULT '1',
 			`message_outbox` tinyint(1) NOT NULL DEFAULT '1',
-			`message_updateby` int(20) NOT NULL DEFAULT 0
+			`message_updateby` int(20) NOT NULL DEFAULT 0,
+			INDEX  (`message_archived`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Messaging';";
 		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);
@@ -292,7 +295,8 @@ function create_table($table_name)
 			`post_comments` enum('open', 'closed') NOT NULL DEFAULT 'open',
 			`post_subscribe` tinyint(1) NOT NULL DEFAULT '0',
 			`post_updateby` int(20) NOT NULL DEFAULT 0, 
-			FULLTEXT (`post_title`, `post_domain`, `post_url`, `post_content`, `post_tags`)
+			FULLTEXT (`post_title`, `post_domain`, `post_url`, `post_content`, `post_tags`),
+			INDEX  (`post_archived`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Story Posts';";
 		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql); 
@@ -447,7 +451,8 @@ function create_table($table_name)
 			`tags_date` timestamp NOT NULL,
 			`tags_word` varchar(64) NOT NULL DEFAULT '',
 			`tags_updateby` int(20) NOT NULL DEFAULT 0, 
-			UNIQUE KEY `tags_post_id` (`tags_post_id`,`tags_word`)
+			UNIQUE KEY `tags_post_id` (`tags_post_id`,`tags_word`),
+			INDEX  (`tags_archived`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Post Tags';";
 		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql); 
@@ -506,7 +511,8 @@ function create_table($table_name)
 			`user_lastvisit` timestamp NULL,
 			`user_updateby` int(20) NOT NULL DEFAULT 0,
 			UNIQUE KEY `key` (`user_username`),
-			KEY `user_email` (`user_email`)
+			KEY `user_email` (`user_email`),
+			INDEX  (`useract_archived`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Users and Roles';";
 		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql); 
