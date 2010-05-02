@@ -6,6 +6,7 @@
  * folder: journal
  * class: Journal
  * type: blog
+ * requires: sb_base 1.0, comments 2.0, users 1.8
  * hooks: install_plugin, theme_index_top, theme_index_main, header_include, admin_plugin_settings, admin_sidebar_plugin_settings, journal_post_show_post, profile_navigation, breadcrumbs
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick

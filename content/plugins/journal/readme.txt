@@ -10,6 +10,7 @@ Instructions
 ------------
 1. Upload the "journal" folder to your plugins folder. 
 2. Install it from Plugin Management in Admin.
+3. Ensure that Journal comes *after* SB Base and Comments in the plugin order.
 
 Changelog
 ---------
