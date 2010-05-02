@@ -296,7 +296,9 @@ function create_table($table_name)
 			`post_subscribe` tinyint(1) NOT NULL DEFAULT '0',
 			`post_updateby` int(20) NOT NULL DEFAULT 0, 
 			FULLTEXT (`post_title`, `post_domain`, `post_url`, `post_content`, `post_tags`),
-			INDEX  (`post_archived`)
+			INDEX  (`post_archived`),
+			INDEX  (`post_status`),
+			INDEX  (`post_type`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Story Posts';";
 		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql); 
