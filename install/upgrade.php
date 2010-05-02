@@ -492,6 +492,10 @@ function do_upgrade($old_version)
 		if ($exists) {
 		    $sql = "ALTER TABLE `" . DB_PREFIX . "posts` ADD FOREIGN KEY (`post_archived`) REFERENCES (`post_archived`)";
 		    $h->db->query($sql);
+		    $sql = "ALTER TABLE `" . DB_PREFIX . "posts` ADD FOREIGN KEY (`post_status`) REFERENCES (`post_status`)";
+		    $h->db->query($sql);
+		    $sql = "ALTER TABLE `" . DB_PREFIX . "posts` ADD FOREIGN KEY (`post_type`) REFERENCES (`post_type`)";
+		    $h->db->query($sql);
 		}
 
 		$exists = $h->db->table_exists('tags');
