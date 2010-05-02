@@ -120,10 +120,12 @@ class SbBase
 				$h->pageTitle = $h->lang["sb_base_all"];
 				break;
 			case 'sort':
-				$h->pageType = 'list';
 				$sort = $h->cage->get->testPage('sort');
-				$sort_lang = 'sb_base_' . str_replace('-', '_', $sort);
-				$h->pageTitle = $h->lang[$sort_lang];
+				if ($sort) {
+					$h->pageType = 'list';
+					$sort_lang = 'sb_base_' . str_replace('-', '_', $sort);
+					$h->pageTitle = $h->lang[$sort_lang];
+				}
 				break;
 			default:
 				// no default or we'd mess up anything set by other plugins

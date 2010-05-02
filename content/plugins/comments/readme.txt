@@ -14,7 +14,8 @@ Instructions
 
 Changelog
 ---------
-v.2.0 2010/04/17 - Nick - Function changes for earier extending, and changed "comments_wrapper" from an id to a class.
+v.2.0 2010/05/02 - Nick - Function changes for earier extending, and changed "comments_wrapper" from an id to a class.
+                 - Nick - Uses new function in Hotaru 1.2 to convert text urls into clickable links
 v.1.9 2010/03/26 - shibuya246 - Fix for duplicate comments posted when double clicking "Submit"
 		 - Ties - New JavaScript urldecode function that works with Japanese characters
                  - Nick - Change to countComments() function call

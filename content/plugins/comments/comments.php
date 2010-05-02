@@ -218,6 +218,7 @@ class Comments
         
                     if ($h->cage->post->keyExists('comment_content')) {
                         $h->comment->content = sanitize($h->cage->post->getHtmLawed('comment_content'), 'tags', $h->comment->allowableTags);
+                        $h->comment->content = make_urls_clickable($h->comment->content);
                     }
                     
                     if ($h->cage->post->keyExists('comment_post_id')) {
@@ -601,7 +602,9 @@ class Comments
         
         if (isset($pagedResults->items)) {
             foreach ($pagedResults->items as $comment) {
-				$this->showSingleComment($h, $comment);
+				if (!$this->showSingleComment($h, $comment)) {
+					continue;
+				}
             }
             
             echo $h->pageBar($pagedResults);
@@ -619,9 +622,10 @@ class Comments
     {
         $h->readPost($comment->comment_post_id);
         // don't show this comment if its post is buried or pending:
-        if ($h->post->status == 'buried' || $h->post->status == 'pending') { continue; }
+        if ($h->post->status == 'buried' || $h->post->status == 'pending') { return false; }
         
         $this->displayComment($h, $comment, true);
+        return true;
     }
     
     

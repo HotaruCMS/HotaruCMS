@@ -173,14 +173,16 @@ class Caching
 		
 		// check if the cache file is older than our timeout:
 		$file_modified = filemtime($cache_file);
-		if ($file_modified < (time() - $timeout*60)) { 
-			unlink($cache_file); // delete old cache file so we can make a new one with fresh data
+		if ($file_modified < (time() - $timeout*60)) {
+			// delete old cache file so we can make a new one with fresh data
+			if (file_exists($cache_file)) { unlink($cache_file); } 
 			return true; 
 		}
 		
 		// check if the $last_update is more recent than the cache file:
 		if ($file_modified < $last_update) { 
-			unlink($cache_file); // delete old cache file so we can make a new one with fresh data
+			// delete old cache file so we can make a new one with fresh data
+			if (file_exists($cache_file)) { unlink($cache_file); } 
 			return true; 
 		}
 		
