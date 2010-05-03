@@ -531,7 +531,8 @@ function create_table($table_name)
 			`usermeta_value` text NULL,
 			`usermeta_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 			`usermeta_updateby` int(20) NOT NULL DEFAULT 0, 
-			INDEX  (`usermeta_userid`)
+			INDEX  (`usermeta_userid`),
+			INDEX  (`usermeta_key`),
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='User Meta';";
 		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql); 

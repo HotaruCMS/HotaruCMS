@@ -484,7 +484,8 @@ function do_upgrade($old_version)
 				 'posts' => array('post_archived', 'post_status', 'post_type'),
 				 'tags' => array('tags_archived'),
 				 'useractivity' => array('useract_userid'),
-				 'messaging' => array('message_archived')
+				 'messaging' => array('message_archived'),
+				 'usermeta' => array('usermeta_key')
 		    );
 
 		foreach ($tables as $table => $indices) {
