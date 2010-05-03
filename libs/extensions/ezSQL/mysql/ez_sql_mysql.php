@@ -224,7 +224,7 @@
             // If there is an error then take note of it..
             if ( $str = @mysql_error($this->dbh) )
             {
-                if (defined(DEBUG) && (DEBUG == 'true')) {
+                if (defined('DEBUG') && (DEBUG == 'true')) {
                     $subject = SITE_NAME . " Database Error";
                     $body = SITE_NAME . " Database Error\r\n\r\n";
                     $body .= "Date: " . date('d M Y H:i:s') . " (timezone: " . date_default_timezone_get() . ")\r\n\r\n";
