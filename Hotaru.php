@@ -560,7 +560,7 @@ class Hotaru
 	 * Physically delete a user
 	 * Note: You should delete all their posts, comments, etc. first
 	 *
-	 * @param array $user_id (optional)
+	 * @param int $user_id (optional)
 	 */
 	public function deleteUser($user_id = 0) 
 	{
@@ -569,6 +569,17 @@ class Hotaru
 	}
 
 
+	/**
+	 * Update user_lastvisit field
+	 *
+	 * @param int $user_id (optional)
+	 */
+	public function updateUserLastVisit($user_id = 0) 
+	{
+		return $this->currentUser->updateUserLastVisit($this, $user_id);
+	}
+	
+	
  /* *************************************************************
  *
  *  USERINFO FUNCTIONS

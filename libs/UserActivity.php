@@ -105,6 +105,8 @@ class UserActivity
 		$sql .= " VALUES (%d, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP, %d)";
 		
 		$h->db->query($h->db->prepare($sql, $userid, $status, $key, $value, $key2, $value2, $h->currentUser->id));
+		
+		$h->updateUserLastVisit($userid);
 	}
 	
 	

@@ -166,11 +166,12 @@ class UserAuth extends UserBase
 	 *
 	 * @return bool
 	 */
-	public function updateUserLastVisit($h)
+	public function updateUserLastVisit($h, $user_id = 0)
 	{
 		if ($this->id != 0) {
+			if (!$user_id) { $user_id = $this->id; }
 			$sql = "UPDATE " . TABLE_USERS . " SET user_lastvisit = CURRENT_TIMESTAMP WHERE user_id = %d";
-			$h->db->query($h->db->prepare($sql, $this->id));
+			$h->db->query($h->db->prepare($sql, $user_id));
 			return true;
 		} else {
 			return false;
