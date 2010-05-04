@@ -2,7 +2,7 @@
 /**
  * name: Comments Widget
  * description: Adds links in the sidebar to the latest comments on the site.
- * version: 0.2
+ * version: 0.3
  * folder: comments_widget
  * class: CommentsWidget
  * requires: widgets 0.6, comments 1.2
@@ -168,7 +168,7 @@ class CommentsWidget
             
             $comment_link = $h->url(array('page'=>$item->comment_post_id)) . "#c" . $item->comment_id;
             $comment_tooltip = $h->lang["comments_widget_title_tooltip"] . $h->post->title;
-            $anchor_title = htmlentities($comment_tooltip, ENT_QUOTES, 'UTF-8');
+            $comment_tooltip = htmlentities($comment_tooltip, ENT_QUOTES, 'UTF-8');
             $output .= "<a href='" . $comment_link . "' title='" . $comment_tooltip . "'>" . $item_content . "</a>\n</div>\n";
             $output .= "</li>\n\n";
         }

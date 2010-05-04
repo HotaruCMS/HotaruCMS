@@ -28,7 +28,8 @@
 
 <div class="post_form" style="display: none;">
     <form name='edit_post_form' action='<?php echo $h->url(array('page'=>'journal')); ?>' method='post' onsubmit="document.getElementById('post_submit_<?php echo $h->post->id; ?>').disabled = true; return true;">
-        <input type="text" name="post_title" id="post_title_<?php echo $h->post->id; ?>" value="<?php echo $h->post->title; ?>" /><?php echo $h->lang['journal_title']; ?><br />
+        <input type="text" name="post_title" id="post_title_<?php echo $h->post->id; ?>" value="<?php echo htmlentities($h->post->title,ENT_QUOTES,'UTF-8'); ?>" /><?php echo $h->lang['journal_title']; ?><br />
+        
         <textarea name="post_content" id="post_content_<?php echo $h->post->id; ?>" rows="6" cols="50"></textarea><br />
         
         <div class="form_submit">
