@@ -108,7 +108,7 @@ class PluginFunctions
 					if (method_exists($h, $hook)) {					    
 					    $result = $h->$hook($parameters);              // fall back on default function in Hotaru.php
 					} else {					    
-					    print "Could not find '" . $hook  .  "' function for " . $h->plugin_folder;
+					    echo "Could not find '" . $hook  .  "' function for " . $h->plugin_folder . "<br/>";
 					    $result ='';					   
 					}
 				}
