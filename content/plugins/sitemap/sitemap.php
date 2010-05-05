@@ -322,4 +322,4 @@ class Sitemap
 	    return $header;
 	}
 }
-?> 
+?>
