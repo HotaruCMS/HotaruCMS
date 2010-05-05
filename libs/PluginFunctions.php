@@ -104,8 +104,11 @@ class PluginFunctions
 					$result = $tempPluginObject->$hook($h, $parameters);
 				} else {
 					$h->readPlugin();                              // fill Hotaru's plugin properties
-					$h->includeLanguage();                         // if a language file exists, include it
-					$result = $h->$hook($parameters);              // fall back on default function in Hotaru.php
+					$h->includeLanguage();                         // if a language file exists, include it										
+					if (method_exists($h, $hook))
+					    $result = $h->$hook($parameters);              // fall back on default function in Hotaru.php
+					else
+					    $result ='';
 				}
 				
 				if ($result) {
