@@ -17,7 +17,7 @@
  *   You should have received a copy of the GNU General Public License along with Hotaru CMS. If not, 
  *   see http://www.gnu.org/licenses/.
  *   
- *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
+ *   Copyright (C) 2010 Hotaru CMS - http://www.hotarucms.org/
  *
  **************************************************************************************************** */
 
