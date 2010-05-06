@@ -15,4 +15,5 @@ Instructions
 
 Changelog
 ---------
+v.0.2 2010/5/07 - shibuya246 - Added forward slash to image in CSS for Hotaru 1.2
 v.0.1 2010/2/13 - Kyle - Released first version

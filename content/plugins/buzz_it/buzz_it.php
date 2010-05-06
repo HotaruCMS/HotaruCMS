@@ -2,7 +2,7 @@
 /**
  * name: Buzz It
  * description: Send posts to Google Reader/Buzz
- * version: 0.1
+ * version: 0.2
  * folder: buzz_it
  * class: BuzzIt
  * hooks: install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, sb_base_show_post_extra_fields, theme_index_top, header_include
