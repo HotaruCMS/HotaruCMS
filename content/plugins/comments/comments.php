@@ -587,10 +587,10 @@ class Comments
         
         if ($userid) {
             $comments_count = $h->comment->getAllCommentsCount($h, '', $userid);
-            $comments_query = $h->comment->getAllCommentsQuery($h, 'DESC', $userid);
+            $comments_query = $h->comment->getAllCommentsQuery($h, 'DESC', $userid);	   
         } else {
             $comments_count = $h->comment->getAllCommentsCount($h);
-            $comments_query = $h->comment->getAllCommentsQuery($h, 'DESC');
+            $comments_query = $h->comment->getAllCommentsQuery($h, 'DESC');	    
         }
         
         if (!$comments_count) {
@@ -816,15 +816,17 @@ class Comments
     public function admin_theme_main_stats($h, $vars)
     {
         echo "<li>&nbsp;</li>";
-    
-        foreach ($vars as $stat_type) {
-            require_once(LIBS . 'Comment.php');
-            $c = new Comment();
-            $comments = $c->stats($h, $stat_type);
-            if (!$comments) { $comments = 0; }
-            $lang_name = 'comments_admin_stats_' . $stat_type;
-            echo "<li>" . $h->lang[$lang_name] . ": " . $comments . "</li>";
-        }
+	foreach ($vars as $key => $value) {
+	    echo "<li class='title'>" . $key . "</li>";
+	    foreach ($value as $stat_type) {
+		require_once(LIBS . 'Comment.php');
+		$c = new Comment();
+		$comments = $c->stats($h, $stat_type);
+		if (!$comments) { $comments = 0; }
+		$lang_name = 'comments_admin_stats_' . $stat_type;
+		echo "<li>" . $h->lang[$lang_name] . ": " . $comments . "</li>";
+	    }
+	}
     }
     
     

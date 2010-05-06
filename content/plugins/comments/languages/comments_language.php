@@ -110,9 +110,10 @@ $lang["comment_rss_comment_on"] = "Comment on: ";
 $lang["comment_rss_commented_on"] = " commented on ";
 
 /* Admin Stats */
-$lang["comments_admin_stats_total_comments"] = "Total comments";
-$lang["comments_admin_stats_approved_comments"] = "Approved comments";
-$lang["comments_admin_stats_pending_comments"] = "Pending comments";
+$lang["comments_admin_stats_total_comments"] = "Total";
+$lang["comments_admin_stats_approved_comments"] = "Approved";
+$lang["comments_admin_stats_pending_comments"] = "Pending";
+$lang["comments_admin_stats_archived_comments"] = "Archived";
 
 /* Email to comment subscribers */
 $lang["comment_email_subject"] = " has commented on ";
