@@ -2,7 +2,7 @@
 /**
  * name: Disqus
  * description: Enables comments using Disqus
- * version: 0.6
+ * version: 0.7
  * folder: disqus
  * class: Disqus
  * type: comments
