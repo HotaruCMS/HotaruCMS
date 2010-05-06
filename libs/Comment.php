@@ -331,8 +331,8 @@ class Comment
 		
 		return $result;
 	}
-	
-	
+
+		
 	/**
 	 * Edit comment
 	 *
@@ -582,6 +582,10 @@ class Comment
 			case 'pending_comments':
 				$sql = "SELECT count(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_status = %s";
 				$comments = $h->db->get_var($h->db->prepare($sql, 'pending'));
+				break;
+			case 'archived_comments':
+				$sql = "SELECT count(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s";
+				$comments = $h->db->get_var($h->db->prepare($sql, 'Y'));
 				break;
 			default:
 				$comments = '';
