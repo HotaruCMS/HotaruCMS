@@ -112,21 +112,21 @@ class UserInfo extends UserBase
 	{
 		// id found
 		if ($id != 0) {
-			if ($db->get_var($db->prepare("SELECT * FROM " . TABLE_USERS . " WHERE user_id = %d  LIMIT 1", $id))) {
+			if ($db->get_var($db->prepare("SELECT user_id FROM " . TABLE_USERS . " WHERE user_id = %d  LIMIT 1", $id))) {
 				return 'id'; // id exists
 			} 
 		} 
 		
 		// name found
 		if ($username != '') {
-			if ($db->get_var($db->prepare("SELECT * FROM " . TABLE_USERS . " WHERE user_username = %s  LIMIT 1", $username))) {
+			if ($db->get_var($db->prepare("SELECT user_id FROM " . TABLE_USERS . " WHERE user_username = %s  LIMIT 1", $username))) {
 				return 'name'; // username exists
 			}
 		} 
 		
 		// email found
 		if ($email != '') {
-			if ($db->get_var($db->prepare("SELECT * FROM " . TABLE_USERS . " WHERE user_email = %s  LIMIT 1", $email))) {
+			if ($db->get_var($db->prepare("SELECT user_id FROM " . TABLE_USERS . " WHERE user_email = %s  LIMIT 1", $email))) {
 				return 'email'; // email exists
 			}
 		} 
@@ -315,19 +315,19 @@ class UserInfo extends UserBase
 	{
 		switch ($stat_type) {
 			case 'admins':
-				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s  LIMIT 1";
+				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
 				$users = $h->db->get_var($h->db->prepare($sql, 'admin'));
 				break;
 			case 'supermods':
-				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s  LIMIT 1";
+				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
 				$users = $h->db->get_var($h->db->prepare($sql, 'supermod'));
 				break;
 			case 'moderators':
-				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s  LIMIT 1";
+				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
 				$users = $h->db->get_var($h->db->prepare($sql, 'moderator'));
 				break;
 			case 'members':
-				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s  LIMIT 1";
+				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
 				$users = $h->db->get_var($h->db->prepare($sql, 'member'));
 				break;
 			case 'total_users':
@@ -335,23 +335,23 @@ class UserInfo extends UserBase
 				$users = $h->db->get_var($sql);
 				break;
 			case 'approved_users':
-				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s OR user_role = %s OR user_role = %s OR  user_role = %s  LIMIT 1";
+				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s OR user_role = %s OR user_role = %s OR  user_role = %s";
 				$users = $h->db->get_var($h->db->prepare($sql, 'admin', 'supermod', 'moderator', 'member'));
 				break;
 			case 'pending_users':
-				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s  LIMIT 1";
+				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
 				$users = $h->db->get_var($h->db->prepare($sql, 'pending'));
 				break;
 			case 'undermod_users':
-				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s  LIMIT 1";
+				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
 				$users = $h->db->get_var($h->db->prepare($sql, 'undermod'));
 				break;
 			case 'banned_users':
-				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s  LIMIT 1";
+				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
 				$users = $h->db->get_var($h->db->prepare($sql, 'banned'));
 				break;
 			case 'killspammed_users':
-				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s  LIMIT 1";
+				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
 				$users = $h->db->get_var($h->db->prepare($sql, 'killspammed'));
 				break;
 			default:
