@@ -273,7 +273,7 @@ class Users
         $admin = false; $own = false; $denied = false;
         if ($h->currentUser->getPermission('can_access_admin') == 'yes') { $admin = true; }
         if ($h->currentUser->id == $h->vars['user']->id) { $own = true; }
-        
+
         $h->displayTemplate('users_navigation');
         
         switch($h->pageName) {
@@ -437,13 +437,15 @@ class Users
         $ui = new UserInfo();
         
         echo "<li>&nbsp;</li>";
-
-        foreach ($vars as $stat_type) {
-            $users = $ui->stats($h, $stat_type);
-            if (!$users) { $users = 0; }
-            $lang_name = 'users_admin_stats_' . $stat_type;
-            echo "<li>" . $h->lang[$lang_name] . ": " . $users . "</li>";
-        }
+	foreach ($vars as $key => $value) {
+	    echo "<li class='title'>" . $key . "</li>";
+	    foreach ($value as $stat_type) {
+		$users = $ui->stats($h, $stat_type);
+		if (!$users) { $users = 0; }
+		$lang_name = 'users_admin_stats_' . $stat_type;
+		echo "<li>" . $h->lang[$lang_name] . ": " . $users . "</li>";
+	    }
+	}
     }
 }
 
