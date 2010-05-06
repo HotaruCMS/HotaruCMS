@@ -2,7 +2,7 @@
 /**
  * name: Recent Visitors
  * description: Show recent visitors in a widget
- * version: 0.4
+ * version: 0.5
  * folder: recent_visitors
  * class: RecentVisitors
  * requires: widgets 0.6, users 1.1
