@@ -64,16 +64,15 @@ class Caching
 	 * @return bool
 	 */
 	public function smartCacheHTML($h, $table = '', $timeout = 0, $html = '', $label = '')
-	{
+	{ 
 		if (!$table || !$timeout || (HTML_CACHE != 'true')) { return false; }
 		
 		if(isset($h->vars['last_updates'][$table])) {
 			$last_update = $h->vars['last_updates'][$table]; // cached
-		} else {
+		} else {		    
 			$last_update = $this->smartCacheSQL($h, $table);
 			$last_update = $h->vars['last_updates'][$table] = $last_update;
-		}
-		
+		}	
 		$cache_length = $timeout*60;   // seconds
 		$cache = CACHE . 'html_cache/';
 		if ($label) { $label = '_' . $label; } 
@@ -81,8 +80,7 @@ class Caching
 		
 		//echo "time now: " . time() . "<br />";
 		//echo "time minus timeout: " . (time() - $timeout*60) . "<br />";
-		//echo "last update: " . $last_update . "<br />";
-		
+		//echo "last update: " . $last_update . "<br />";	
 		if (!$html) {
 			// we only want to read the cache if it exists, hence no $html passed to this function
 			if (file_exists($file)) {
@@ -100,8 +98,7 @@ class Caching
 			} else {
 				return false;
 			}
-		}
-		
+		}	
 		// if we're here, we need to make or rewrite the cache
 		
 		$fp = fopen($file, "w");
@@ -112,8 +109,7 @@ class Caching
 			flock($fp, LOCK_UN); // release the lock
 		} else {
 			echo "Couldn't get the lock for the HTML cache!";
-		}
-		
+		}		
 		fclose($fp);
 		return true; // the calling function already has the HTML to output
 	}
@@ -202,40 +198,40 @@ class Caching
 		/* Get the last time the table was updated */
 		switch ($table) {
 			case 'categories':
-				$sql = "SELECT category_updatedts FROM " . DB_PREFIX . "categories ORDER BY category_updatedts DESC";
+				$sql = "SELECT category_updatedts FROM " . DB_PREFIX . "categories ORDER BY category_updatedts DESC LIMIT 1";
 				break;
 			case 'tags':
-				$sql = "SELECT tags_updatedts FROM " . DB_PREFIX . "tags ORDER BY tags_updatedts DESC";
+				$sql = "SELECT tags_updatedts FROM " . DB_PREFIX . "tags ORDER BY tags_updatedts DESC LIMIT 1";
 				break;
 			case 'posts':
-				$sql = "SELECT post_updatedts FROM " . DB_PREFIX . "posts ORDER BY post_updatedts DESC";
+				$sql = "SELECT post_updatedts FROM " . DB_PREFIX . "posts ORDER BY post_updatedts DESC LIMIT 1";
 				break;
 			case 'postvotes':
-				$sql = "SELECT vote_updatedts FROM " . DB_PREFIX . "postvotes ORDER BY vote_updatedts DESC";
+				$sql = "SELECT vote_updatedts FROM " . DB_PREFIX . "postvotes ORDER BY vote_updatedts DESC LIMIT 1";
 				break;
 			case 'comments':
-				$sql = "SELECT comment_updatedts FROM " . DB_PREFIX . "comments ORDER BY comment_updatedts DESC";
+				$sql = "SELECT comment_updatedts FROM " . DB_PREFIX . "comments ORDER BY comment_updatedts DESC LIMIT 1";
 				break;
 			case 'commentvotes':
-				$sql = "SELECT cvote_updatedts FROM " . DB_PREFIX . "commentvotes ORDER BY cvote_updatedts DESC";
+				$sql = "SELECT cvote_updatedts FROM " . DB_PREFIX . "commentvotes ORDER BY cvote_updatedts DESC LIMIT 1";
 				break;
 			case 'users':
-				$sql = "SELECT user_updatedts FROM " . DB_PREFIX . "users ORDER BY user_updatedts DESC";
+				$sql = "SELECT user_updatedts FROM " . DB_PREFIX . "users ORDER BY user_updatedts DESC LIMIT 1";
 				break;
 			case 'useractivity':
-				$sql = "SELECT useract_updatedts FROM " . DB_PREFIX . "useractivity ORDER BY useract_updatedts DESC";
+				$sql = "SELECT useract_updatedts FROM " . DB_PREFIX . "useractivity ORDER BY useract_updatedts DESC LIMIT 1";
 				break;
 			case 'usermeta':
-				$sql = "SELECT usermeta_updatedts FROM " . DB_PREFIX . "usermeta ORDER BY usermeta_updatedts DESC";
+				$sql = "SELECT usermeta_updatedts FROM " . DB_PREFIX . "usermeta ORDER BY usermeta_updatedts DESC LIMIT 1";
 				break;
 			case 'miscdata':
-				$sql = "SELECT miscdata_updatedts FROM " . DB_PREFIX . "miscdata ORDER BY miscdata_updatedts DESC";
+				$sql = "SELECT miscdata_updatedts FROM " . DB_PREFIX . "miscdata ORDER BY miscdata_updatedts DESC LIMIT 1";
 				break;
 			case 'blocked':
-				$sql = "SELECT blocked_updatedts FROM " . DB_PREFIX . "blocked ORDER BY blocked_updatedts DESC";
+				$sql = "SELECT blocked_updatedts FROM " . DB_PREFIX . "blocked ORDER BY blocked_updatedts DESC LIMIT 1";
 				break;
 			case 'friends':
-				$sql = "SELECT friends_updatedts FROM " . DB_PREFIX . "friends ORDER BY friends_updatedts DESC";
+				$sql = "SELECT friends_updatedts FROM " . DB_PREFIX . "friends ORDER BY friends_updatedts DESC LIMIT 1";
 				break;
 			default:
 				$h->vars['smart_cache_sql'] = '';
@@ -244,9 +240,9 @@ class Caching
 				if (!$sql) { return false; }
 		}
 		
-		// run DB query:
-		$last_update = unixtimestamp($h->db->get_var($sql));
-		
+		// run DB query:		
+		$last_update = unixtimestamp($h->db->get_var($sql));		
+
 		return $last_update;
 	}
 	
