@@ -282,19 +282,19 @@ class PluginFunctions
 	{
 		// first see if there's an active plugin with this *type*:
 		if ($type) { 
-			$sql = "SELECT plugin_enabled FROM " . TABLE_PLUGINS . " WHERE plugin_type = %s";
+			$sql = "SELECT count(plugin_enabled) FROM " . TABLE_PLUGINS . " WHERE plugin_type = %s";
 			$status = $h->db->get_var($h->db->prepare($sql, $type));
 		
 			// if there's no result, see if there's an active plugin with $type as its folder *name*:
 			if (!$status) {
-				$sql = "SELECT plugin_enabled FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
+				$sql = "SELECT count(plugin_enabled) FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
 				$status = $h->db->get_var($h->db->prepare($sql, $type));
 			}
 		}
 		else 
 		{
 			// if not $type provided, see if the *current* plugin is enabled... (which it obviously is! doh!)
-			$sql = "SELECT plugin_enabled FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
+			$sql = "SELECT count(plugin_enabled) FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
 			$status = $h->db->get_var($h->db->prepare($sql, $h->plugin->folder));
 		}
 		

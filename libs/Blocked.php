@@ -187,10 +187,10 @@ class Blocked
 	 */
 	public function addToBlockedList($h, $type = '', $value = 0, $msg = true)
 	{
-		$sql = "SELECT blocked_id FROM " . TABLE_BLOCKED . " WHERE blocked_type = %s AND blocked_value = %s"; 
-		$id = $h->db->get_var($h->db->prepare($sql, $type, $value));
+		$sql = "SELECT count(blocked_id) FROM " . TABLE_BLOCKED . " WHERE blocked_type = %s AND blocked_value = %s"; 
+		$exists = $h->db->get_var($h->db->prepare($sql, $type, $value));
 		
-		if ($id) { // already exists
+		if ($exists) { // already exists
 			if ($msg) { 
 				$h->message = $h->lang['admin_blocked_list_exists']; 
 				$h->messageType = 'red';
@@ -227,7 +227,7 @@ class Blocked
 	public function removeFromBlockedList($h, $id = 0)
 	{
 		$sql = "DELETE FROM " . TABLE_BLOCKED . " WHERE blocked_id = %d"; 
-		$h->db->get_var($h->db->prepare($sql, $id));
+		$h->db->query($h->db->prepare($sql, $id));
 		$h->clearCache('db_cache');
 	}
 	
@@ -248,13 +248,13 @@ class Blocked
 		
 		// if both type and value provided...
 		if ($type && $value) {
-			$sql = "SELECT blocked_value FROM " . TABLE_BLOCKED . " WHERE blocked_type = %s AND blocked_value " . $operator . " %s"; 
+			$sql = "SELECT count(blocked_value) FROM " . TABLE_BLOCKED . " WHERE blocked_type = %s AND blocked_value " . $operator . " %s"; 
 			$exists = $db->get_var($db->prepare($sql, $type, $value));
 		} 
 		// if only value provided...
 		elseif ($value) 
 		{
-			$sql = "SELECT blocked_value FROM " . TABLE_BLOCKED . " WHERE blocked_value " . $operator . " %s"; 
+			$sql = "SELECT count(blocked_value) FROM " . TABLE_BLOCKED . " WHERE blocked_value " . $operator . " %s"; 
 			$exists = $db->get_var($db->prepare($sql, $value));
 		}
 		

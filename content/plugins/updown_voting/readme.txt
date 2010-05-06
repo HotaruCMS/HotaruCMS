@@ -18,6 +18,7 @@ Add an option to automatically bury a post if it receives X down votes. Until th
 
 Changelog
 ---------
+v.0.6 2010/05/05 - Nick - Fix for user id 0 assign to auto-vote when using AutoReader
 v.0.5 2010/04/04 - Nick - Fix for updating the post_pub_date field
 v.0.4 2010/04/03 - Gunaxin - Fix for missing $undo variable
 v.0.3 2010/03/28 - Nick - Updates the new post_pub_date field when a story is promoted

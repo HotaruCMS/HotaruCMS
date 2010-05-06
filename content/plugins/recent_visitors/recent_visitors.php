@@ -168,8 +168,15 @@ class RecentVisitors
     public function getRecentVisitors($h, $limit)
     {
         $time_ago = date('Y-m-d H:i:s', strtotime("-1 day"));; // new users won't show up for 24 hours (reduces spammers showing up)
+        /*
         $sql = "SELECT user_id, user_username, user_email FROM " . TABLE_USERS . " WHERE (user_role != %s) AND (user_role != %s) AND (user_role != %s) AND (user_role != %s) AND (user_date < %s) ORDER BY user_lastvisit DESC LIMIT " . $limit;
         $visitors = $h->db->get_results($h->db->prepare($sql, 'killspammed', 'banned', 'suspended', 'pending', $time_ago));
+        */
+        
+        $sql = "SELECT distinct u.user_id, u.user_username, u.user_email FROM " . TABLE_USERS . " AS u JOIN " . TABLE_POSTS . " AS p on u.user_id = p.post_author WHERE (u.user_role != %s) AND (u.user_role != %s) AND (u.user_role != %s) AND (u.user_role != %s) AND (p.post_status = %s OR p.post_status = %s) ORDER BY u.user_lastvisit DESC LIMIT " . $limit;
+        $visitors = $h->db->get_results($h->db->prepare($sql, 'killspammed', 'banned', 'suspended', 'pending', 'top', 'new'));
+        
+        echo $h->db->prepare($sql, 'killspammed', 'banned', 'suspended', 'pending');
        
         if ($visitors) { return $visitors; } else {return false; }
     }

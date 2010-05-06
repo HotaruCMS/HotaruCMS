@@ -63,7 +63,7 @@ class PrivateMessaging
 		
 		if ($box == 'inbox') { $direction = "to"; } else { $direction = "from"; }
 		
-		$sql = "SELECT " . $select . " FROM " . TABLE_MESSAGING . " WHERE message_archived = %s AND message_" . $direction . " = %d AND message_" . $box . " = %d";
+		$sql = "SELECT " . $select . " FROM " . TABLE_MESSAGING . " WHERE message_archived = %s AND message_" . $direction . " = %d AND message_" . $box . " = %d LIMIT 1";
 		
 		if ($type != 'count') { $sql .= " ORDER BY message_date DESC"; }
 		

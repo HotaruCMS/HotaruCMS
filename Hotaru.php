@@ -67,10 +67,8 @@ class Hotaru
 	/**
 	 * CONSTRUCTOR - Initialize
 	 */
-	public function __construct($start = '', $admin = false)
+	public function __construct($start = '')
 	{
-		if ($admin) { $this->isAdmin = true; }      // we have this here because the checkCssJs function needs it 
-		
 		// initialize Hotaru
 		if (!$start) { 
 			require_once(LIBS . 'Initialize.php');
@@ -83,7 +81,6 @@ class Hotaru
 			$this->post         = new Post();           // instantiate Post object
 			$this->includes     = new IncludeCssJs();   // instantiate Includes object
 			
-			$this->checkCssJs();                        // check if we need to merge css/js
 			$this->csrf('set');                         // set a csrfToken
 			$this->db->setHotaru($this);                // pass $h object to EzSQL for error reporting
 		}
@@ -1083,20 +1080,6 @@ class Hotaru
  * *********************************************************** */
  
 
-	/**
-	 * Check if we need to combine CSS and JavaScript files (from start function )
-	 */
-	 public function checkCssJs()
-	 {
-		if (!$this->cage->get->keyExists('combine')) { return false; }
-		
-		$type = $this->cage->get->testAlpha('type');
-		$version = $this->cage->get->testInt('version');
-		$this->includes->combineIncludes($this, $type, $version);
-		return true;
-	 }
-	 
-	 
 	/**
 	 * Do Includes (called from template header.php)
 	 */

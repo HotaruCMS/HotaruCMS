@@ -42,7 +42,7 @@ class PluginSettings
 		if ($h->isAdmin)
 		{
 			// In Admin. Let's pull settings from the database to avoid problems when saving in Plugin Settings:
-			$sql = "SELECT plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
+			$sql = "SELECT plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s) LIMIT 1";
 			$value = $h->db->get_var($h->db->prepare($sql, $folder, $setting));
 		}
 		else
@@ -130,7 +130,7 @@ class PluginSettings
 	{
 		if (!$folder) { $folder = $h->plugin->folder; }
 		
-		$sql = "SELECT plugin_setting FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
+		$sql = "SELECT plugin_setting FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s) LIMIT 1";
 		$returned_setting = $h->db->get_var($h->db->prepare($sql, $folder, $setting));
 		if ($returned_setting) { 
 			return $returned_setting; 

@@ -333,7 +333,7 @@ class Users
             the previous profile for this user. */
         $sql = "SELECT usermeta_value FROM " . DB_PREFIX . "usermeta WHERE usermeta_userid = %d AND usermeta_key = %s";
         $query = $h->db->prepare($sql, $h->vars['user']->id, 'user_profile');
-        $cache_file = CACHE . 'db_cache/' . md5($query);
+        $cache_file = CACHE . 'db_cache/' . md5($query) . '.php';
         if (file_exists($cache_file)) {
             unlink($cache_file); // delete cache file.
         }
@@ -367,7 +367,7 @@ class Users
             the previous settings for this user. */
         $sql = "SELECT usermeta_value FROM " . DB_PREFIX . "usermeta WHERE usermeta_userid = %d AND usermeta_key = %s";
         $query = $h->db->prepare($sql, $h->vars['user']->id, 'user_settings');
-        $cache_file = CACHE . 'db_cache/' . md5($query);
+        $cache_file = CACHE . 'db_cache/' . md5($query) . '.php';
         if (file_exists($cache_file)) {
             unlink($cache_file); // delete cache file.
         }

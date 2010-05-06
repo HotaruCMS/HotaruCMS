@@ -341,7 +341,7 @@ class Post
 		}
 		
 		// One last check to see if a post is present:
-		$sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_title = %s";
+		$sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_title = %s LIMIT 1";
 		$post_id = $h->db->get_var($h->db->prepare($sql, urlencode($title)));
 		
 		if ($post_id) { return $post_id; } else { return false; }
@@ -356,7 +356,7 @@ class Post
 	 */
 	public function isPostUrl($h, $post_url = '')
 	{
-		$sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_url = %s";
+		$sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_url = %s LIMIT 1";
 		$post_id = $h->db->get_var($h->db->prepare($sql, urlencode($post_url)));
 		if ($post_id) { return $post_id; } else { return false; }
 	}

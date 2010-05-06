@@ -243,7 +243,7 @@ class UserBase
 		}
 		
 		// get default permissions from the database:
-		$query = "SELECT " . $field . " FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+		$query = "SELECT " . $field . " FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s LIMIT 1";
 		$sql = $h->db->prepare($query, 'permissions');
 		
 		// Create temp cache array
@@ -328,13 +328,13 @@ class UserBase
 	public function updatePermissions($h)
 	{
 		$sql = "UPDATE " . TABLE_USERS . " SET user_permissions = %s WHERE user_id = %d";
-		$h->db->get_var($h->db->prepare($sql, serialize($this->getAllPermissions()), $this->id));
+		$h->db->query($h->db->prepare($sql, serialize($this->getAllPermissions()), $this->id));
 		
 		// for undermods and above, set their emailValid to true when updating permissions or changing role
 		$safe_array = array('undermod', 'member', 'moderator', 'supermod', 'admin');
 		if (!$this->emailValid && in_array($this->role, $safe_array)) {
 			$sql = "UPDATE " . TABLE_USERS . " SET user_email_valid = %d WHERE user_id = %d";
-			$h->db->get_var($h->db->prepare($sql, 1, $this->id));
+			$h->db->query($h->db->prepare($sql, 1, $this->id));
 		}
 	}
 		
@@ -348,7 +348,7 @@ class UserBase
 	{
 		if (!$userid) { $userid = $this->id; }
 		
-		$query = "SELECT usermeta_value FROM " . DB_PREFIX . "usermeta WHERE usermeta_userid = %d AND usermeta_key = %s";
+		$query = "SELECT usermeta_value FROM " . DB_PREFIX . "usermeta WHERE usermeta_userid = %d AND usermeta_key = %s LIMIT 1";
 		$sql = $h->db->prepare($query, $userid, $type);
 		
 		if (isset($h->vars[$sql])) { 
@@ -422,7 +422,7 @@ class UserBase
 			return false;
 		}
 		
-		$query = "SELECT " . $field . " FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+		$query = "SELECT " . $field . " FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s LIMIT 1";
 		$sql = $h->db->prepare($query, 'user_settings');
 		
 		if (isset($h->vars['default_user_settings'][$sql])) { 

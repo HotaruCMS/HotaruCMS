@@ -36,7 +36,6 @@ $h->includeThemeLanguage();
 $result = $h->pluginHook('theme_index_top');
 if (!$result) {
 ?>
-		<!-- HEADER-->
 		<?php
 			// plugin hook
 			$result = $h->pluginHook('theme_index_header');

@@ -260,12 +260,16 @@ class IncludeCssJs
 	 * Combine Included CSS & JSS files
 	 *
 	 * @param string $type either 'css' or 'js'
-	 * @param string $prefix either 'hotaru_' or ''hotaru_admin_'
-	 * @return int version number or echo output to cache file
+	 * @return bool
 	 * @link http://www.ejeliot.com/blog/72 Based on work by Ed Eliot
 	 */
-	 public function combineIncludes($h, $type = 'css', $version = 0)
+	 public function combineIncludes($h, $type = 'css')
 	 {
+		// set up cache
+		$cache_length = 31356000;   // about one year
+		$cache = CACHE . 'css_js_cache/';
+		
+	 	// run plugin functions to include css/js files
 		if ($h->isAdmin) {
 			$h->pluginHook('admin_header_include');
 			$prefix = 'hotaru_admin_';
@@ -274,9 +278,10 @@ class IncludeCssJs
 			$prefix = 'hotaru_';
 		}
 		
-		$cache_length = 31356000;   // about one year
-		$cache = CACHE . 'css_js_cache/';
+		// append css or js to cache filename
+		$prefix .= ($type == 'css') ? 'css_' : 'js_'; 
 		
+		// fill "includes" array with all the files we need to merge
 		if($type == 'css') { 
 			$content_type = 'text/css';
 			$includes = $this->getCssIncludes($h->isAdmin);
@@ -293,111 +298,80 @@ class IncludeCssJs
 			$includes = $this->getJsIncludes($h->isAdmin);
 		}
 		
-		$includes = array_unique($includes);    // remove duplicate includes
+		// remove duplicate include files
+		$includes = array_unique($includes);
 		if(empty($includes)) { return false; }
 		
-		 /*
-			if version parameter is present then the script is being called directly, otherwise we're including it in 
-			another script with require or include. If calling directly we return code othewise we return the etag 
-			(version number) representing the latest files
-		*/
-		
-		
-		if ($version > 0) {        
-			// GET ACTUAL CODE - IF IT'S CACHED, SHOW THE CACHED CODE, OTHERWISE, GET INCLUDE FILES, BUILD AN ARCHIVE AND SHOW IT
-			
-			$iETag = $version;
-			$sLastModified = gmdate('D, d M Y H:i:s', $iETag).' GMT';
-			
-			// see if the user has an updated copy in browser cache
-			if (
-				($h->cage->server->keyExists('HTTP_IF_MODIFIED_SINCE') && $h->cage->server->testDate('HTTP_IF_MODIFIED_SINCE') == $sLastModified) ||
-				($h->cage->server->keyExists('HTTP_IF_NONE_MATCH') && $h->cage->server->testint('HTTP_IF_NONE_MATCH') == $iETag)
-			) {
-				header("{$h->cage->server->getRaw('SERVER_PROTOCOL')} 304 Not Modified");
-				exit;
-			}
-			
-			// create a directory for storing current and archive versions
-			if (!is_dir($cache)) {
-				mkdir($cache);
-			}
-			
-			// get code from archive folder if it exists, otherwise grab latest files, merge and save in archive folder
-			if ((CSS_JS_CACHE == "true") && file_exists($cache . $prefix . $type . '_' . $iETag . '.cache')) {
-				$sCode = file_get_contents($cache . $prefix . $type . '_' . $iETag . '.cache');
-			} else {
-				// get and merge code
-				$sCode = '';
-				$aLastModifieds = array();
-				
-				// if not in debug mode, get the Jsmin class
-				if (!$h->isDebug) {
-					require_once(EXTENSIONS . 'Jsmin/Jsmin.php');
-				}
-				
-				foreach ($includes as $sFile) {
-					if ($sFile) {
-						$aLastModifieds[] = filemtime($sFile);
-						if ($h->isDebug) {
-							$sCode .= "/* Open: " . $sFile . " */\n\n";
-							$sCode .= file_get_contents($sFile); // don't minify files when debugging
-							$sCode .= "\n\n/* Close: " . $sFile . " */\n\n";
-						} else {
-							$sCode .= JSMin::minify(file_get_contents($sFile)); // minify files
-						}
-					}
-				}
-			
-				// sort dates, newest first
-				rsort($aLastModifieds);
-				
-				if ($iETag == $aLastModifieds[0]) { // check for valid etag, we don't want invalid requests to fill up archive folder
-					$oFile = fopen($cache . $prefix . $type . '_' . $iETag . '.cache', 'w');
-					if (flock($oFile, LOCK_EX)) {
-						fwrite($oFile, $sCode);
-						flock($oFile, LOCK_UN);
-					}
-					fclose($oFile);
-				} else {
-					// archive file no longer exists or invalid etag specified
-					header("{$h->cage->server->getRaw('SERVER_PROTOCOL')} 404 Not Found");
-					exit;
-				}
-			}
-			
-			// send HTTP headers to ensure aggressive caching
-			header('Expires: '.gmdate('D, d M Y H:i:s', time() + $cache_length).' GMT'); // 1 year from now
-			header('Content-Type: ' . $content_type);
-			//header('Content-Length: '.strlen($sCode)); // causes site loading delays: http://hotarucms.org/showthread.php?t=197
-			header("Last-Modified: $sLastModified");
-			header("ETag: $iETag");
-			header('Cache-Control: max-age=' . $cache_length);
-		
-			// output merged code
-			echo $sCode;
-			
-			//if($type == 'js') { 
-			//	$global_ajax_var = "jQuery('document').ready(function($) {BASEURL = '". BASEURL ."'; ADMIN_THEME = '" . ADMIN_THEME . "'; });";    
-			//	echo  $global_ajax_var;
-			//}
-			
-			exit; // we don't want to drop out and continue building Hotaru or Admin objects when we're just including a file!
-		  
-		} else {
-		
-			// get last modified dates for all files to include
-			$aLastModifieds = array();
-			foreach ($includes as $sFile) {
-				$aLastModifieds[] = filemtime($sFile);
-			}
-			// sort dates, newest first
-			rsort($aLastModifieds);
-			
-			// return latest timestamp, i.e. the most recently updated include file
-			return $aLastModifieds[0];
-		
+		// get last modified dates for all files to include
+		$aLastModifieds = array();
+		foreach ($includes as $sFile) {
+			$aLastModifieds[] = filemtime($sFile);
 		}
+		// sort dates, newest first
+		rsort($aLastModifieds);
+		
+		// the most recently updated include file
+		$last_modified_include_file = $aLastModifieds[0];
+
+		// GET ACTUAL CODE - IF IT'S CACHED, SHOW THE CACHED CODE, OTHERWISE, GET INCLUDE FILES, BUILD AN ARCHIVE AND SHOW IT
+
+		// get code from archive folder if it exists, otherwise grab latest files, merge and save in archive folder
+		if ((CSS_JS_CACHE == "true") && file_exists($cache . $prefix . $last_modified_include_file . '.' . $type))
+		{
+			// use the exiting cache file
+			return $last_modified_include_file;
+		} 
+
+		// get and merge code
+		$sCode = '';
+		$aLastModifieds = array();
+		
+		// if not in debug mode, get the Jsmin class
+		if (!$h->isDebug) {
+			require_once(EXTENSIONS . 'Jsmin/Jsmin.php');
+		}
+		
+		foreach ($includes as $sFile) {
+			if ($sFile) {
+				$aLastModifieds[] = filemtime($sFile);
+				if ($h->isDebug) {
+					$sCode .= "/* Open: " . $sFile . " */\n\n";
+					$sCode .= file_get_contents($sFile); // don't minify files when debugging
+					$sCode .= "\n\n/* Close: " . $sFile . " */\n\n";
+				} else {
+					$sCode .= JSMin::minify(file_get_contents($sFile)); // minify files
+				}
+			}
+		}
+		
+		// sort dates, newest first
+		rsort($aLastModifieds);
+			
+		// create a directory for storing current and archive versions
+		if (!is_dir($cache)) {
+			mkdir($cache);
+		}
+		
+		 // check for valid file time, we don't want invalid requests to fill up archive folder
+		if ($last_modified_include_file == $aLastModifieds[0])
+		{
+			$oFile = fopen($cache . $prefix . $last_modified_include_file . '.' . $type, 'w');
+			if (flock($oFile, LOCK_EX)) {
+				fwrite($oFile, $sCode);
+				flock($oFile, LOCK_UN);
+			}
+			fclose($oFile);
+		} 
+		else 
+		{
+			// archive file no longer exists or invalid etag specified
+			header("{$h->cage->server->getRaw('SERVER_PROTOCOL')} 404 Not Found");
+			exit;
+		}
+	
+		// cache file written, return the time so we can add it within SCRIPT in the header
+		return $last_modified_include_file;
+
 	 }
 
 	
@@ -410,14 +384,14 @@ class IncludeCssJs
 	 */
 	 public function includeCombined($h, $version_js = 0, $version_css = 0, $admin = false)
 	 {
-		if ($admin) { $index = 'admin_index'; } else { $index = 'index'; }
+		if ($admin) { $prefix = 'hotaru_admin_'; } else { $prefix = 'hotaru_'; }
 		
 		if ($version_js > 0) {
-			echo "<script type='text/javascript' src='" . BASEURL . $index . ".php?combine=1&amp;type=js&amp;version=" . $version_js . "'></script>\n";
+			echo "<script type='text/javascript' src='" . BASEURL . "cache/css_js_cache/" . $prefix  . "js_" . $version_js . ".js'></script>\n";
 		}
 		
 		if ($version_css > 0) {
-			echo "<link rel='stylesheet' href='" . BASEURL . $index . ".php?combine=1&amp;type=css&amp;version=" . $version_css . "' type='text/css' />\n";
+			echo "<link rel='stylesheet' href='" . BASEURL . "cache/css_js_cache/" . $prefix  . "css_" . $version_css . ".css' type='text/css' />\n";
 		}
 		
 	 }

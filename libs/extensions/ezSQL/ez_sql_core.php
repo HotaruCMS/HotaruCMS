@@ -322,7 +322,7 @@
         {
 
             // The would be cache file for this query
-            $cache_file = $this->cache_dir.'/'.md5($query);
+            $cache_file = $this->cache_dir.'/'.md5($query).'.php';
 
             // disk caching of queries
             if ( $this->use_disk_cache && ( $this->cache_queries && ! $is_insert ) || ( $this->cache_inserts && $is_insert ))
@@ -349,8 +349,10 @@
                         //'return_value' => $this->num_rows,
                         'return_value' => $return,    // "empty" or number of rows
                     );
-                                    
-                    error_log ( serialize($result_cache), 3, $cache_file);
+                    
+                    $prevent_access = "<?php die(); ?>";
+                    $serialized_results = serialize($result_cache);
+                    error_log ($prevent_access . $serialized_results, 3, $cache_file);
                 }
             }
 
@@ -364,7 +366,7 @@
         {
 
             // The would be cache file for this query
-            $cache_file = $this->cache_dir.'/'.md5($query);
+            $cache_file = $this->cache_dir.'/'.md5($query).'.php';
 
             // Try to get previously cached version
             if ( $this->use_disk_cache && file_exists($cache_file) )
@@ -376,7 +378,8 @@
                 }
                 else
                 {
-                    $result_cache = unserialize(file_get_contents($cache_file));
+                	// skip the opening die() statement
+                    $result_cache = unserialize(file_get_contents($cache_file, NULL, NULL, 15));
 
                     $this->col_info = $result_cache['col_info'];
                     $this->last_result = $result_cache['last_result'];

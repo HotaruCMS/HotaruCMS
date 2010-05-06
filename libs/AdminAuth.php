@@ -30,7 +30,7 @@ class AdminAuth
 	 */
 	public function adminInit($h)
 	{
-		// Authenticate the admin if the Users plugin is INACTIVE:
+		// Authenticate the admin if the User Signin plugin is INACTIVE:
 		if (!$h->isActive('signin'))
 		{
 			if (($h->pageName != 'admin_login') && !$this->isAdminCookie($h))
@@ -108,9 +108,9 @@ class AdminAuth
 			
 			if ($login_result) {
 				//success
-				$this->setAdminCookie($username_check);
 				$h->currentUser->name = $username_check;
 				$h->currentUser->getUserBasic($h, 0, $username_check);
+				$this->setAdminCookie($h, $username_check);
 				$h->currentUser->loggedIn = true;
 				$h->currentUser->updateUserLastLogin($h);
 				$h->sidebars = true;
@@ -216,13 +216,11 @@ class AdminAuth
 	/**
 	 * Set a 30-day cookie for the administrator
 	 *
-	 * @param string $username
-	 *
 	 * @return bool
 	 */
-	public function setAdminCookie($username)
+	public function setAdminCookie($h)
 	{
-		if (!$username) 
+		if (!$h->currentUser->name) 
 		{ 
 			echo $this->lang["admin_login_error_cookie"];
 			return false;
@@ -230,20 +228,22 @@ class AdminAuth
 		else 
 		{
 			$strCookie=base64_encode(
-				join(':', array($username, crypt($username, 22)))
+				join(':', array($h->currentUser->name, 
+				$h->currentUser->generateHash($h->currentUser->name, md5(BASEURL)),
+				md5($h->currentUser->password)))
 			);
 			
 			// (2592000 = 60 seconds * 60 mins * 24 hours * 30 days.)
 			$month = 2592000 + time();
 			
 			if (strpos(BASEURL, "localhost") !== false) {
-			     setcookie("hotaru_user", $username, $month, "/");
+			     setcookie("hotaru_user", $h->currentUser->name, $month, "/");
 			     setcookie("hotaru_key", $strCookie, $month, "/");
 			} else {
 			     $parsed = parse_url(BASEURL); 
 			                
 			     // now we need a dot in front of that so cookies work across subdomains:
-			     setcookie("hotaru_user", $username, $month, "/", "." . $parsed['host']);
+			     setcookie("hotaru_user", $h->currentUser->name, $month, "/", "." . $parsed['host']);
 			     setcookie("hotaru_key", $strCookie, $month, "/", "." . $parsed['host']);
 			}  
 			
@@ -256,27 +256,14 @@ class AdminAuth
 	 *
 	 * @return bool
 	 *
-	 * Note: This is only used if the Users plugin is inactive.
+	 * NOTE!!! This is ONLY used if the User Signin plugin is inactive.
 	 */
 	public function isAdminCookie($h)
-	{   
-		// Check for a cookie. If present then the user goes through authentication
-		if (!$h->cage->cookie->testUsername('hotaru_user')) { return false; }
-		if (!$h->cage->cookie->keyExists('hotaru_key')) { return false; }
+	{
+		if (!$h->currentUser->checkCookie($h)) { return false; }
 		
-		$h_user = $h->cage->cookie->testUsername('hotaru_user');
-		
-		// authenticate...
-		$user_info=explode(":", base64_decode($h->cage->cookie->getRaw('hotaru_key')));
-		
-		if (($h_user != $user_info[0]) || (crypt($user_info[0], 22) != $user_info[1])) { return false; }
-		
-		if (!$h->isAdmin($h_user)) { return false; }
-		
-		if (!session_id()) {
-			$h->currentUser->updateUserLastVisit($h);
-		}
-		
+		if (!$h->isAdmin($h->currentUser->name)) { return false; }
+
 		//success...
 		return true;
 	}

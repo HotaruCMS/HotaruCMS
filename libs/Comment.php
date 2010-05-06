@@ -286,18 +286,13 @@ class Comment
 		$url_limit = $comments_settings['comment_url_limit'];
 		
 		$result['set_pending'] = $set_pending;
-		            
-		if ($set_pending == 'some_pending') {
-			$comments_approved = $this->commentsApproved($h, $h->currentUser->id);
-			$x_comments_needed = $comments_settings['comment_x_comments'];
-		}
 		
 		if ($h->currentUser->role == 'member')
 		{
 			if ($daily_limit && ($daily_limit < $this->countDailyComments($h)))
 			{
 				 // exceeded daily limit, set to pending
-				$this->status = 'pending'; 
+				$this->status = 'pending';
 				$result['exceeded_daily_limit'] = true;
 			}
 			
@@ -310,12 +305,18 @@ class Comment
 			
 		}
 
+		if ($set_pending == 'some_pending') {
+			$comments_approved = $this->commentsApproved($h, $h->currentUser->id);
+			$x_comments_needed = $comments_settings['comment_x_comments'];
+			if ($comments_approved < $x_comments_needed) {
+				$result['not_enough_comments'] = true;
+				$this->status = 'pending'; 
+			}
+		}
+		
 		if ($set_pending == 'all_pending') {
 			$this->status = 'pending';
-		} elseif (($set_pending == 'some_pending') && ($comments_approved <= $x_comments_needed)) {
-			$result['not_enough_comments'] = true;
-			$this->status = 'pending'; 
-		} 
+		}
 		
 		$sql = "INSERT INTO " . TABLE_COMMENTS . " SET comment_post_id = %d, comment_user_id = %d, comment_parent = %d, comment_date = CURRENT_TIMESTAMP, comment_status = %s, comment_content = %s, comment_subscribe = %d, comment_updateby = %d";
 		

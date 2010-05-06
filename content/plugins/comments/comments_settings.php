@@ -144,7 +144,7 @@ class CommentsSettings
         
         echo "<input type='radio' name='set_pending' value='auto_approve' " . $auto_approve . " >&nbsp;&nbsp;" . $h->lang["comments_settings_auto_approve"] . "<br />\n"; 
         echo "<input type='radio' name='set_pending' value='some_pending' " . $some_pending . " >&nbsp;&nbsp;" . $h->lang["comments_settings_some_pending_1"] . "\n"; 
-        echo "<select name='first_x_posts'>\n";
+        echo "<select name='first_x_comments'>\n";
             echo "<option>" . $x_comments . "</option>\n";
             echo '<option disabled>-----</option>';
             echo "<option>1</option>\n";

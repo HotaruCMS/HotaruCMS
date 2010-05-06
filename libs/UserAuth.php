@@ -42,15 +42,27 @@ class UserAuth extends UserBase
 		
 		$user_info=explode(":", base64_decode($h->cage->cookie->getRaw('hotaru_key')));
 		
-		if (($h_user != $user_info[0]) || (crypt($user_info[0], 22) != $user_info[1])) { 
+		if (($h_user != $user_info[0]) || ($h->currentUser->generateHash($h_user, md5(BASEURL)) != $user_info[1])) {
 		    $this->setLoggedOutUser($h);
 		    return false; 
 		}
 		
 		$this->name = $h_user;
-		if ($h_user) {
-			$valid = $this->getUserBasic($h, 0, $this->name);
+		if ($h_user)
+		{
+			$valid = false;
+			
+			// Read the user from the database
+			$user_exists = $this->getUserBasic($h, 0, $this->name);
 		
+			// validate the user's password
+			if ($user_info[2] != md5($user_exists->user_password)) {
+				$user_exists = false;
+			} else {
+				$valid = true;
+			}
+			
+			// Log the user in if valid
 			if ($valid) {
 				$this->loggedIn = true;
 				if (!session_id()) { $this->updateUserLastVisit($h); } // update user_lastvisit field when a new session is created
@@ -193,7 +205,9 @@ class UserAuth extends UserBase
 			return false;
 		} else {
 			$strCookie=base64_encode(
-				join(':', array($this->name, crypt($this->name, 22)))
+				join(':', array($this->name, 
+				$h->currentUser->generateHash($this->name, md5(BASEURL)),
+				md5($this->password)))
 			);
 			
 			if ($remember) { 
