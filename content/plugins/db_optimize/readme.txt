@@ -10,7 +10,6 @@ Instructions
 ------------
 1. Upload the "db otimize" folder to your plugins folder.
 2. Install it from Plugin Management in Admin. 
-3. Automatically, a system cron job to check daily for the latest hotaru version will be created
 
 Changelog
 ---------
