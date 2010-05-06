@@ -26,7 +26,7 @@ img.alignleft				{ border: 3px solid #EEE; }
 .textright				{ text-align: right; }
 .textleft				{ text-align: left; }
 
-.hide					{ display:none; }
+.hide					{ display: none; }
 
 /* general */
 h1, h2, h3 { padding: 0.5em 0 0.5em 0; }
@@ -351,3 +351,6 @@ table#settings {
 .warning_on {padding-left: 1.5em; background-image: url(../images/warning.png); background-repeat: no-repeat;}
 
 #sidebar.vertical .home {padding-left: 1.5em; background-image: url(../images/home.png); background-repeat: no-repeat;}
+
+#site-stats .title {font-weight:bold; margin-left:0; margin-bottom:2px; }
+#site-stats li {margin-left:4px;}
