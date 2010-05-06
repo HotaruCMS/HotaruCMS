@@ -214,7 +214,7 @@ class Widget
 	public function getPluginFromFunction($h, $function)
 	{
 		// Get settings from the database if they exist...
-		$sql = "SELECT widget_plugin FROM " . TABLE_WIDGETS . ' WHERE widget_function = %s';
+		$sql = "SELECT widget_plugin FROM " . TABLE_WIDGETS . ' WHERE widget_function = %s LIMIT 1';
 		$widget_plugin = $h->db->get_var($h->db->prepare($sql, $function));
 		return $widget_plugin;
 	}
