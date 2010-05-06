@@ -483,13 +483,15 @@ class SbBase
     public function admin_theme_main_stats($h, $vars)
     {
         echo "<li>&nbsp;</li>";
-    
-        foreach ($vars as $stat_type) {
-            $posts = $h->post->stats($h, $stat_type);
-            if (!$posts) { $posts = 0; }
-            $lang_name = 'sb_base_admin_stats_' . $stat_type;
-            echo "<li>" . $h->lang[$lang_name] . ": " . $posts . "</li>";
-        }
+	foreach ($vars as $key => $value) {
+	    echo "<li class='title'>" . $key . "</li>";
+	    foreach ($value as $stat_type) {
+		$posts = $h->post->stats($h, $stat_type);
+		if (!$posts) { $posts = 0; }
+		$lang_name = 'sb_base_admin_stats_' . $stat_type;
+		echo "<li>" . $h->lang[$lang_name] . ": " . $posts . "</li>";
+	    }
+	}
     }
     
     
