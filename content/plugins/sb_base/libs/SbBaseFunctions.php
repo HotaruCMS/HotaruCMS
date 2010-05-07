@@ -148,7 +148,7 @@ class SbBaseFunctions
             
             $h->vars['filter']['post_archived = %s'] = 'N'; 
             $h->vars['filter']['post_status = %s'] = 'new'; 
-            $start = date('YmdHis', strtotime("now"));
+            $start = date('YmdHis', time_block());
             $end = date('YmdHis', strtotime($upcoming_duration)); // should be negative
             $h->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
             $h->vars['orderby'] = "post_votes_up DESC, post_date DESC";
@@ -157,7 +157,7 @@ class SbBaseFunctions
         {
             // Filters page to "top" stories from the last 24 hours only
             $h->vars['filter']['post_status = %s'] = 'top'; 
-            $start = date('YmdHis', strtotime("now"));
+            $start = date('YmdHis', time_block());
             $end = date('YmdHis', strtotime("-1 day"));
             $h->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
             $h->vars['orderby'] = "post_votes_up DESC, post_date DESC";
@@ -166,7 +166,7 @@ class SbBaseFunctions
         {
             // Filters page to "top" stories from the last 48 hours only
             $h->vars['filter']['post_status = %s'] = 'top'; 
-            $start = date('YmdHis', strtotime("now"));
+            $start = date('YmdHis', time_block());
             $end = date('YmdHis', strtotime("-2 days"));
             $h->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
             $h->vars['orderby'] = "post_votes_up DESC, post_date DESC";
@@ -175,7 +175,7 @@ class SbBaseFunctions
         {
             // Filters page to "top" stories from the last 7 days only
             $h->vars['filter']['post_status = %s'] = 'top'; 
-            $start = date('YmdHis', strtotime("now"));
+            $start = date('YmdHis', time_block());
             $end = date('YmdHis', strtotime("-7 days"));
             $h->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
             $h->vars['orderby'] = "post_votes_up DESC, post_date DESC";
@@ -184,7 +184,7 @@ class SbBaseFunctions
         {
             // Filters page to "top" stories from the last 30 days only
             $h->vars['filter']['post_status = %s'] = 'top'; 
-            $start = date('YmdHis', strtotime("now"));
+            $start = date('YmdHis', time_block());
             $end = date('YmdHis', strtotime("-30 days"));
             $h->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
             $h->vars['orderby'] = "post_votes_up DESC, post_date DESC";
@@ -193,7 +193,7 @@ class SbBaseFunctions
         {
             // Filters page to "top" stories from the last 365 days only
             $h->vars['filter']['post_status = %s'] = 'top'; 
-            $start = date('YmdHis', strtotime("now"));
+            $start = date('YmdHis', time_block());
             $end = date('YmdHis', strtotime("-365 days"));
             $h->vars['filter']['(post_date >= %s AND post_date <= %s)'] = array($end, $start); 
             $h->vars['orderby'] = "post_votes_up DESC, post_date DESC";
