@@ -2,7 +2,7 @@
 /**
  * name: Tweet This
  * description: Send posts to Twitter
- * version: 0.3
+ * version: 0.4
  * folder: tweet_this
  * class: TweetThis
  * hooks: install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, sb_base_show_post_extra_fields, theme_index_top, header_include
