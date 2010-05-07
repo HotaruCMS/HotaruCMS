@@ -301,12 +301,14 @@ class SubmitFunctions
      /**
      * Delete temporary data older than 30 minutes
      */
-    public function deleteTempData($db)
-    {
-        $exp = date('YmdHis', strtotime("-30 mins"));
-        $sql = "DELETE FROM " . TABLE_TEMPDATA . " WHERE tempdata_updatedts < %s";
-        $db->query($db->prepare($sql, $exp));
-    }
+	public function deleteTempData($db)
+	{
+		$sql = 'SELECT NOW();'; // use mysql time
+		$timestamp = strtotime($db->get_var($sql));
+		$exp = date('YmdHis', $timestamp - (60 * 30));
+		$sql = "DELETE FROM " . TABLE_TEMPDATA . " WHERE tempdata_updatedts < %s";
+		$db->query($db->prepare($sql, $exp));
+	} 
     
     
      /**
