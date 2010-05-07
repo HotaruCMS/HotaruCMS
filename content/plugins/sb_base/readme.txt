@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.1.0 2010/05/07 - Nick - Fixes for better caching
 v.1.0 2010/04/14 - Nick - Changes to enable home page overriding
 v.0.9 2010/03/27 - Nick - 1 & 3 month options for post archiving, plus reorganization of post RSS methods
 v.0.8 2010/03/24 - Nick - Bug fix for Upcoming RSS and a new plugin hook before the RSS forwarding redirect. 
