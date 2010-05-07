@@ -16,7 +16,8 @@ Instructions
 
 Changelog
 ---------
-v.0.6 2010/04/17 - Nick - Fix for $h->vars['user'] clashing with other plugins
+v.0.6 2010/05/07 - Nick - Added forward slash to image in CSS for Hotaru 1.2
+                 - Nick - Fix for $h->vars['user'] clashing with other plugins
 v.0.5 2010/03/22 - Nick - Added a "Saved Posts" page in the user's profile
 v.0.4 2010/02/22 - William - Added icon in widget that removes the post on click
 v.0.3 2010/02/22 - William - Made it into its own widget.
