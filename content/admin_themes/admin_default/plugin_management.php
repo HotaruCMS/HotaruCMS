@@ -76,6 +76,8 @@
 	if (!$the_plugins) { $the_plugins = array(); }
 	foreach ($the_plugins as $plug) {
 		$alt++;
+		$info_icon = 'info_16.png';
+		if (isset($plug['latest_version'])) { if ($plug['latest_version'] > $plug['version']) $info_icon = 'info_green_16.png'; }
 		echo "<tr class='table_tr table_row_" . $alt % 2 . "'>\n";
 		echo "<td class='table_active'>" . $plug['active'] . "</td>\n";
 		echo "<td class='table_installed_plugin'>";
@@ -87,7 +89,7 @@
 		}
 		echo "<td class='table_order'>" . $plug['order_output'] . "</td>\n";
 		echo "<td class='table_uninstall'>\n";
-		echo "<a class='table_drop_down' href='#'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/info_16.png'></a>\n";
+		echo "<a class='table_drop_down' href='#'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/". $info_icon ."'></a>\n";
 		echo "&nbsp;" . $plug['install'] . "</td>\n";
 		echo "</tr>\n";
 		echo "<tr class='table_tr_details' style='display:none;'><td colspan=3 class='table_description'>\n";
@@ -167,6 +169,8 @@
 	if (!$the_plugins) { $the_plugins = array(); }
 	foreach ($the_plugins as $plug) {
 		$alt++;
+		$info_icon = 'info_16.png';
+		if (isset($plug['latest_version'])) { if ($plug['latest_version'] > $plug['version']) $info_icon = 'info_green_16.png'; }
 		echo "<tr id='table_tr' class='table_row_" . $alt % 2 . "'>\n";
 		echo "<td class='table_uninstalled_plugin'>" . $plug['name'] . " " . $plug['version'] . "<br />\n";
 		echo "<span class='table_requires'>";
@@ -176,7 +180,7 @@
 		}
 		echo rtrim($requires, ', ') . "</span></td>\n";
 		echo "<td class='table_install'>\n";
-		echo "<a class='table_drop_down' href='#'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/info_16.png'></a>\n";
+		echo "<a class='table_drop_down' href='#'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/". $info_icon ."'></a>\n";
 		echo "&nbsp;" . $plug['install'] . "</td>\n";
 		echo "</tr>\n";
 		echo "<tr class='table_tr_details' style='display:none;'><td class='table_description'>\n";
