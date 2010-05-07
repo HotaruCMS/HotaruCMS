@@ -19,56 +19,56 @@
  * @category  Content Management System
  * @package   HotaruCMS
  * @author    Nick Ramsay <admin@hotarucms.org>
- * @copyright Copyright (c) 2009, Hotaru CMS
+ * @copyright Copyright (c) 2010, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
 class Messages
 {
-    /**
-     * Display a SINGLE success or failure message
-     *
-     * @param object $h
-     * @param string $msg
-     * @param string $msg_type ('green' or 'red')
-     * 
-     *  Usage:
-     *    Longhand:
-     *        $this->hotaru->message = "This is a message";
-     *        $this->hotaru->messageType = "green";
-     *        $this->hotaru->showMessage();
-     *        
-     *    Shorthand:
-     *        $this->hotaru->showMessage("This is a message", "green");
-     */
-    public function showMessage($h, $msg = '', $msg_type = 'green')
-    {
-        if ($msg != '') {
-            echo "<div class='message " . $msg_type . "'>" . $msg . "</div>";
-        } elseif ($h->message != '') {
-            echo "<div class='message " . $h->messageType . "'>" . 
-            $h->message . "</div>";
-        }
-    }
-    
-    
-    /**
-     * Displays ALL success or failure messages
-     *
-     * @param object $h
-     *
-     *  Usage:
-     *        $this->hotaru->messages['This is a message'] = "green";
-     *        $this->hotaru->showMessages();
-     */
-    public function showMessages($h)
-    {
-        if ($h->messages) {
-            foreach ($h->messages as $msg => $msg_type) {
-                echo "<div class='message " . $msg_type . "'>" . 
-                $msg . "</div>";
-            }
-        }
-    }
+	/**
+	 * Display a SINGLE success or failure message
+	 *
+	 * @param object $h
+	 * @param string $msg
+	 * @param string $msg_type ('green' or 'red')
+	 * 
+	 *  Usage:
+	 *		Longhand:
+	 *			$this->hotaru->message = "This is a message";
+	 *			$this->hotaru->messageType = "green";
+	 *			$this->hotaru->showMessage();
+	 *
+	 *		Shorthand:
+	 *			$this->hotaru->showMessage("This is a message", "green");
+	 */
+	public function showMessage($h, $msg = '', $msg_type = 'green')
+	{
+		if ($msg != '') {
+			echo "<div class='message " . $msg_type . "'>" . $msg . "</div>";
+		} elseif ($h->message != '') {
+			echo "<div class='message " . $h->messageType . "'>" . 
+			$h->message . "</div>";
+		}
+	}
+	
+	
+	/**
+	 * Displays ALL success or failure messages
+	 *
+	 * @param object $h
+	 *
+	 *  Usage:
+	 *        $this->hotaru->messages['This is a message'] = "green";
+	 *        $this->hotaru->showMessages();
+	 */
+	public function showMessages($h)
+	{
+		if ($h->messages) {
+			foreach ($h->messages as $msg => $msg_type) {
+				echo "<div class='message " . $msg_type . "'>" . 
+				$msg . "</div>";
+			}
+		}
+	}
 }
 ?>

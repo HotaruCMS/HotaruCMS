@@ -16,6 +16,6 @@
 #users_posts_filter#sort_box.sort_menu li.active { background-color: #f8f8f8; }
 #users_posts_filter#sort_box.sort_menu li.active a { color: #000; font-weight: bold; }
 
-#profile_avatar { float: left; margin: 0.6em 1.0em 1.0em 0; }
+#profile_avatar {  margin: 0.6em 1.0em 1.0em 0; }
 #profile_bio { float: left; margin: 0.6em 0 1.0em 0; width: 80%; }
 #profile_usage { margin: 0 1.0em 1.0em 0; }

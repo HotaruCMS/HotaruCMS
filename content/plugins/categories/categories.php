@@ -2,7 +2,7 @@
 /**
  * name: Categories
  * description: Enables categories for posts
- * version: 1.4
+ * version: 1.5
  * folder: categories
  * class: Categories
  * type: categories
@@ -60,7 +60,7 @@ class Categories
                 $h->vars['category_safe_name'] = $category;
                 $h->pageTitle = $h->vars['category_name'];
             }
-            if (!$h->pageName) { $h->pageName = 'index'; }
+            if (!$h->pageName) { $h->pageName = 'popular'; }
             $h->subPage = 'category';
             $h->pageType = 'list';
         }

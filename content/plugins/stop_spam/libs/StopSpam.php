@@ -99,8 +99,8 @@ class StopSpamFunctions
         $url .= "&email=" . urlencode($email);
         $url .= "&api_key=" . $apikey;
         
-        require_once(EXTENSIONS . 'SWCMS/class.httprequest.php');
-        $r = new HTTPRequest($url);
+        require_once(EXTENSIONS . 'SWCMS/HotaruHttpRequest.php');
+        $r = new HotaruHttpRequest($url);
         $error = $r->DownloadToString();
         //if (!$error) { echo "Success"; } else { echo $error; }
     }

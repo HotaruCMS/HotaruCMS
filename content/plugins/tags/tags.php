@@ -2,7 +2,7 @@
 /**
  * name: Tags
  * description: Show tags, filter tags and RSS for tags
- * version: 1.5
+ * version: 1.6
  * folder: tags
  * class: Tags
  * type: tags
@@ -42,7 +42,7 @@ class Tags
     {
         if ($h->cage->get->keyExists('tag')) { 
             $h->pageTitle = stripslashes(make_name($h->cage->get->noTags('tag')));
-            if (!$h->pageName) { $h->pageName = 'index'; }
+            if (!$h->pageName) { $h->pageName = 'popular'; }
             $h->subPage = 'tags';
             $h->pageType = 'list';
             $h->vars['tag'] = $h->cage->get->noTags('tag');

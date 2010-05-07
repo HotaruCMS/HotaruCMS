@@ -75,11 +75,11 @@ $lang["sb_base_maintenance_archive_removed"] = "Done. There are currently no arc
 $lang["sb_base_maintenance_archive_updated"] = "Archive Updated";
 
 /* Admin Stats */
-$lang["sb_base_admin_stats_total_posts"] = "Total posts";
-$lang["sb_base_admin_stats_approved_posts"] = "Approved posts";
-$lang["sb_base_admin_stats_pending_posts"] = "Pending posts";
-$lang["sb_base_admin_stats_buried_posts"] = "Buried posts";
-$lang["sb_base_admin_stats_archived_posts"] = "Archived posts";
+$lang["sb_base_admin_stats_total_posts"] = "Total";
+$lang["sb_base_admin_stats_approved_posts"] = "Approved";
+$lang["sb_base_admin_stats_pending_posts"] = "Pending";
+$lang["sb_base_admin_stats_buried_posts"] = "Buried";
+$lang["sb_base_admin_stats_archived_posts"] = "Archived";
 
 /* User Settings */
 $lang['sb_base_users_settings_open_new_tab'] = "Open posts in a new tab?";

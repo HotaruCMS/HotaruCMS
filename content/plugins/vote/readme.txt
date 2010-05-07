@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.1.7 2010/05/05 - Nick - Fix for user id 0 assign to auto-vote when using AutoReader
 v.1.6 2010/04/04 - Nick - Fix for updating the post_pub_date field
 v.1.5 2010/03/28 - Nick - Updates the new post_pub_date field when a story is promoted
 v.1.4 2010/02/23 - Nick - Removed showMessages() function call because it's in SB Base 0.4

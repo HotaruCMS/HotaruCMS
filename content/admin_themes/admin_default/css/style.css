@@ -2,15 +2,33 @@
  *	ADMIN DEFAULT THEME CSS         *
  ************************************** */
 
+/* globals */
 html, body { 
 	min-height: 100%; height: 100%;
 	font-size: 0.9em;
 }
 
-.clear {
-	clear: both;
-}
+.clear			{ clear: both; }
+.clearfix:after		{ clear: both; content: "."; display: block; height: 0; line-height: 0; visibility: hidden; }
+html[xmlns] .clearfix	{ display: block; }
+* html .clearfix	{ height: 1%; }
 
+/* common classes */
+.aligncenter				{ display: block; margin: 0 auto; }
+.alignright				{ float: right; margin: 0 0 1em 1em; }
+.alignleft				{ float: left; margin: 0 1em 1em 0; }
+.floatleft				{ float: left; }
+.floatright				{ float: right; }
+img.aligncenter, img.alignright,
+img.alignleft				{ border: 3px solid #EEE; }
+
+.textcenter				{ text-align: center; }
+.textright				{ text-align: right; }
+.textleft				{ text-align: left; }
+
+.hide					{ display: none; }
+
+/* general */
 h1, h2, h3 { padding: 0.5em 0 0.5em 0; }
 h1	{ font-size: 1.6em; }
 h2	{ font-size: 1.4em; }
@@ -191,7 +209,7 @@ form {
 #table_list .table_text { font-size: 1.2em; font-weight: bold; }
 #table_list td.table_description { background-color: #fefefe; border-style:solid; border-width: 0.2em 0 0.2em 0.2em; border-color: #e0e0e0; }
 #table_list td.table_description_close { background-color: #fefefe; border-style:solid; border-width: 0.2em 0.2em 0.2em 0;
-	                            border-color: #e0e0e0; text-align: center; }
+										border-color: #e0e0e0; text-align: center; }
 
 /* *************************************
 *  Plugin Management table             *
@@ -252,27 +270,27 @@ table#settings {
 ************************************** */
 
 #pagination {
-    margin-top: 2.0em;
-    text-align: right;
-    font-size: 0.9em;
+	margin-top: 2.0em;
+	text-align: right;
+	font-size: 0.9em;
 }
 
 #pagination a {
-    display: inline;
-    padding: 0.3em 0.7em 0.3em 0.7em;
-    border:solid 1px #F0F0F0;
+	display: inline;
+	padding: 0.3em 0.7em 0.3em 0.7em;
+	border:solid 1px #F0F0F0;
 }
 
 #pagination .pagi_current {
-    background-color: #BBB;
-    font-weight: bold;
-    padding: 0.3em 0.7em 0.3em 0.7em;
-    border:solid 1px #444444;
+	background-color: #BBB;
+	font-weight: bold;
+	padding: 0.3em 0.7em 0.3em 0.7em;
+	border:solid 1px #444444;
 }
 
 #pagination a:hover {
-    border:solid 1px #444444;
-    text-decoration: none;
+	border:solid 1px #444444;
+	text-decoration: none;
 }
 
 .debug  { font-size: 0.8em; }
@@ -294,7 +312,7 @@ table#settings {
 	cursor: pointer;
 }
 .accordion .arrow {
-    background: #fff url(../images/arrow-square.gif) no-repeat right -51px;
+	background: #fff url(../images/arrow-square.gif) no-repeat right -51px;
 }
 
 .accordion li:hover {
@@ -333,3 +351,6 @@ table#settings {
 .warning_on {padding-left: 1.5em; background-image: url(../images/warning.png); background-repeat: no-repeat;}
 
 #sidebar.vertical .home {padding-left: 1.5em; background-image: url(../images/home.png); background-repeat: no-repeat;}
+
+#site-stats .title {font-weight:bold; margin-left:0; margin-bottom:2px; }
+#site-stats li {margin-left:4px;}

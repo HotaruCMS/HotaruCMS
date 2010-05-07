@@ -19,7 +19,7 @@
  *   You should have received a copy of the GNU General Public License along with Hotaru CMS. If not, 
  *   see http://www.gnu.org/licenses/.
  *   
- *   Copyright (C) 2009 Hotaru CMS - http://www.hotarucms.org/
+ *   Copyright (c) 2010 Hotaru CMS - http://www.hotarucms.org/
  *
  **************************************************************************************************** */
 
@@ -27,9 +27,9 @@
 $lang["upgrade_title"] = "Hotaru CMS Upgrade";
 $lang["upgrade_step1"] = "Step 1/2: Welcome Back";
 if (isset($old_version)) {
-    $lang["upgrade_step1_details"] = "To upgrade Hotaru from " . $old_version . " to " . $h->version . ", click 'Next'...";
+	$lang["upgrade_step1_details"] = "To upgrade Hotaru from " . $old_version . " to " . $h->version . ", click 'Next'...";
 } else {
-    $lang["upgrade_step1_details"] = "To upgrade Hotaru to version " . $h->version . ", click 'Next'...";
+	$lang["upgrade_step1_details"] = "To upgrade Hotaru to version " . $h->version . ", click 'Next'...";
 }
 
 /* Upgrade Step 2 */
@@ -53,7 +53,7 @@ $lang["install_step2_instructions"] = "To set up a database for Hotaru CMS, you'
 $lang["install_step2_instructions1"] = "Create a database called <i>hotaru</i> in your web host's control panel. Make a note of your username and password!";
 $lang["install_step2_instructions2"] = "Copy <pre>/hotaru_settings_default.php</pre> and rename it <pre>/hotaru_settings.php</pre>.";
 $lang["install_step2_instructions3"] = "Open <pre>/hotaru_settings.php</pre> and fill in the \"Database Details\" section.";
-$lang["install_step2_instructions4"] = "Fill in the <pre>baseurl</pre>, e.g. <i>http://www.myhotarusite.com/</i>. Don't forget the trailing slash (/)";
+$lang["install_step2_instructions4"] = "Fill in the <pre>baseurl</pre>, e.g. <i>http://example.com/</i>. Don't forget the trailing slash (/)";
 $lang["install_step2_instructions5"] = "Save and upload <pre>hotaru_settings.php</pre> to your server, then click \"Next\"...";
 $lang["install_step2_warning"] = "<b>Warning</b>";
 $lang["install_step2_warning_note"] = "When you click \"Next\", new database tables will be created, deleting any old ones you may have!";

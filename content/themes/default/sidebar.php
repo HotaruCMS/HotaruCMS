@@ -21,7 +21,7 @@
  * @category  Content Management System
  * @package   HotaruCMS
  * @author    Nick Ramsay <admin@hotarucms.org>
- * @copyright Copyright (c) 2009, Hotaru CMS
+ * @copyright Copyright (c) 2010, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
@@ -30,6 +30,6 @@
 
 <div id="sidebar">
 
-    <?php $h->pluginHook('widget_block', '', array(1)); ?>
+	<?php $h->pluginHook('widget_block', '', array(1)); ?>
 
 </div>

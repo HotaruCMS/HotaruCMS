@@ -67,7 +67,7 @@
         {
             $return_val = false;
             if ( ! $this->connect($dbuser, $dbpassword, $dbhost,true) ) ;
-            else if ( ! $this->select($dbname) ) ;
+            else if ( ! $this->selectDB($dbname) ) ;
             else $return_val = true;
             return $return_val;
         }
@@ -107,7 +107,7 @@
         *  Try to select a mySQL database
         */
 
-        function select($dbname='')
+        function selectDB($dbname='')
         {
             global $ezsql_mysql_str; $return_val = false;
 
@@ -212,7 +212,7 @@
             if ( ! isset($this->dbh) || ! $this->dbh )
             {
                 $this->connect($this->dbuser, $this->dbpassword, $this->dbhost);
-                $this->select($this->dbname);
+                $this->selectDB($this->dbname);
             }
 
             // Perform the query via std mysql_query function..
@@ -224,7 +224,7 @@
             // If there is an error then take note of it..
             if ( $str = @mysql_error($this->dbh) )
             {
-                if (defined(DEBUG) && (DEBUG == 'true')) {
+                if (defined('DEBUG') && (DEBUG == 'true')) {
                     $subject = SITE_NAME . " Database Error";
                     $body = SITE_NAME . " Database Error\r\n\r\n";
                     $body .= "Date: " . date('d M Y H:i:s') . " (timezone: " . date_default_timezone_get() . ")\r\n\r\n";

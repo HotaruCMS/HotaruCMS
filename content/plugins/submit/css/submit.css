@@ -8,7 +8,8 @@
 #submit_no_link { margin-top: 0.4em; }
 
 /* step 2 */
-#post_title, #post_content, #post_tags { width: 36em; }
+#post_title, #post_content { width: 36em; }
+#post_tags { width: 28em; }
 
 /* step 3 */
 #submit_edit_confirm { width: 100%; text-align: center; }

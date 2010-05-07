@@ -2,7 +2,7 @@
 /**
  * name: Submit
  * description: Social Bookmarking submit - Enables post submission
- * version: 2.4
+ * version: 2.6
  * folder: submit
  * class: Submit
  * type: post
@@ -401,7 +401,6 @@ class Submit
                 $h->deletePost(); 
                 $h->messages[$h->lang["submit_edit_deleted"]] = 'red';
                 $h->vars['post_deleted'] = true;
-                break;
             }
         }
         
@@ -566,7 +565,8 @@ class Submit
                 // submitted data
                 $h->vars['submit_editorial'] = $h->vars['submitted_data']['submit_editorial'];
                 $h->vars['submit_orig_url'] = urldecode($h->vars['submitted_data']['submit_orig_url']);
-                $h->vars['submit_title'] = sanitize($h->vars['submitted_data']['submit_title'], 'all');
+                //$h->vars['submit_title'] = sanitize($h->vars['submitted_data']['submit_title'], 'all'); // breaks accented chars
+                $h->vars['submit_title'] = sanitize($h->vars['submitted_data']['submit_title'], 'ents');
                 $h->vars['submit_content'] = sanitize($h->vars['submitted_data']['submit_content'], 'tags', $allowable_tags);
                 $h->vars['submit_post_id'] = $h->vars['submitted_data']['submit_id'];
                 $h->vars['submit_category'] = $h->vars['submitted_data']['submit_category'];
@@ -692,14 +692,15 @@ class Submit
             $output .= "<option value='1' selected>" . $h->lang['submit_category_select'] . "</option>\n";
         }
         
-        $sql = "SELECT category_id, category_name FROM " . TABLE_CATEGORIES . " ORDER BY category_order ASC";
+        $sql = "SELECT category_id, category_parent, category_name FROM " . TABLE_CATEGORIES . " ORDER BY category_order ASC";
         $cats = $h->db->get_results($h->db->prepare($sql));
         
         if ($cats) {
             foreach ($cats as $cat) {
                 if ($cat->category_id != 1) { 
                     $cat_name = stripslashes(htmlentities(urldecode($cat->category_name), ENT_QUOTES,'UTF-8'));
-                    $output .= "<option value=" . $cat->category_id . ">" . $cat_name . "</option>\n";
+                    $indent = ($cat->category_parent != 1) ? '--- ' : ''; 
+                    $output .= "<option value=" . $cat->category_id . ">" . $indent . $cat_name . "</option>\n";
                 }
             }
         }

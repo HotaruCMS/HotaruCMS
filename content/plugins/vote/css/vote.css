@@ -52,7 +52,7 @@
  * ******** FLAGGED MESSAGE **********
  * ********************************* */
  
- .alert_link { padding-left: 1.5em; background-image: url(content/themes/default/images/alert.png); }
+ .alert_link { padding-left: 1.5em; background-image: url(/content/themes/default/images/alert.png); }
  
  .alert_choices li {
 	display:inline; 

@@ -20,6 +20,7 @@ If you'd like to show the search box without using it in a widget, paste this PH
 
 Changelog
 ---------
+v.1.0 2010/04/24 - Nick - Set $h->pageName to "search" on search results page
 v.0.9 2010/02/18 - Nick - Code changes for pagination
 v.0.8 2009/12/31 - Nick - Updates for compatibility with Hotaru 1.0
 v.0.7 2009/11/04 - Nick - Updates for compatibility with Hotaru 0.8

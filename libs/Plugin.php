@@ -19,44 +19,44 @@
  * @category  Content Management System
  * @package   HotaruCMS
  * @author    Nick Ramsay <admin@hotarucms.org>
- * @copyright Copyright (c) 2009, Hotaru CMS
+ * @copyright Copyright (c) 2010, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
 class Plugin
 {
-    protected $id               = 0;
-    protected $folder           = '';
-    protected $enabled          = 0;
-    protected $name             = '';
-    protected $class            = '';
-    protected $extends          = '';
-    protected $type             = '';
-    protected $desc             = '';
-    protected $version          = 0;
-    protected $order            = 0;
-    protected $author           = '';
-    protected $authorurl        = '';
-    protected $requires         = '';
-    protected $dependencies     = array();
-    protected $hooks            = array();
-    
-    /**
-     * Access modifier to set protected properties
-     */
-    public function __set($var, $val)
-    {
-        $this->$var = $val;
-    }
-    
-    
-    /**
-     * Access modifier to get protected properties
-     * The & is necessary (http://bugs.php.net/bug.php?id=39449)
-     */
-    public function &__get($var)
-    {
-        return $this->$var;
-    }
+	protected $id               = 0;
+	protected $folder           = '';
+	protected $enabled          = 0;
+	protected $name             = '';
+	protected $class            = '';
+	protected $extends          = '';
+	protected $type             = '';
+	protected $desc             = '';
+	protected $version          = 0;
+	protected $order            = 0;
+	protected $author           = '';
+	protected $authorurl        = '';
+	protected $requires         = '';
+	protected $dependencies     = array();
+	protected $hooks            = array();
+	
+	/**
+	 * Access modifier to set protected properties
+	 */
+	public function __set($var, $val)
+	{
+		$this->$var = $val;
+	}
+	
+	
+	/**
+	 * Access modifier to get protected properties
+	 * The & is necessary (http://bugs.php.net/bug.php?id=39449)
+	 */
+	public function &__get($var)
+	{
+		return $this->$var;
+	}
 }
 ?>

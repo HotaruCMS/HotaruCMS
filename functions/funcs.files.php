@@ -19,7 +19,7 @@
  * @category  Content Management System
  * @package   HotaruCMS
  * @author    Nick Ramsay <admin@hotarucms.org>
- * @copyright Copyright (c) 2009, Hotaru CMS
+ * @copyright Copyright (c) 2010, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
@@ -33,22 +33,22 @@
  */
 function getFilenames($folder, $type='full')
 {
-    $filenames  = array();
-    $handle     = opendir($folder);
-    
-    while (false !== ($file = readdir($handle)))
-    {
-        if ($file != "." && $file != ".." && $file != ".svn") {
-            if ($type == 'full') {
-                      array_push($filenames, $folder . $file);    // full path
-                  } else {
-                      array_push($filenames, $file);        // filename only
-                  }
-              }
-    }
-    
-    closedir($handle);
-    return $filenames;
+	$filenames  = array();
+	$handle     = opendir($folder);
+	
+	while (false !== ($file = readdir($handle)))
+	{
+		if ($file != "." && $file != ".." && $file != ".svn") {
+			if ($type == 'full') {
+				array_push($filenames, $folder . $file);    // full path
+			} else {
+				array_push($filenames, $file);        // filename only
+			}
+		}
+	}
+	
+	closedir($handle);
+	return $filenames;
 }
 
 
@@ -60,13 +60,13 @@ function getFilenames($folder, $type='full')
  */
 function stripAllFileExtensions($fileNames)
 {
-    $stripped = array();
-    
-    foreach ($fileNames as $fileName) 
-    {
-        array_push($stripped, stripFileExtension($fileName));
-    }
-    return $stripped;
+	$stripped = array();
+	
+	foreach ($fileNames as $fileName) 
+	{
+		array_push($stripped, stripFileExtension($fileName));
+	}
+	return $stripped;
 }
 
 
@@ -77,7 +77,7 @@ function stripAllFileExtensions($fileNames)
  */
 function stripFileExtension($fileName)
 {
-    return strtok($fileName, ".");
+	return strtok($fileName, ".");
 }
 
 
@@ -90,20 +90,39 @@ function stripFileExtension($fileName)
  */
 function display_filesize($filesize)
 {
-    if(is_numeric($filesize)){
-    $decr = 1024; $step = 0;
-    $prefix = array('Byte','KB','MB','GB','TB','PB');
-       
-    while(($filesize / $decr) > 0.9)
-    {
-        $filesize = $filesize / $decr;
-        $step++;
-    }
-    return round($filesize,2).' '.$prefix[$step];
-    } else {
+	if (is_numeric($filesize)) 
+	{
+		$decr = 1024; $step = 0;
+		$prefix = array('Byte','KB','MB','GB','TB','PB');
 
-    return 'Error displaying filesize';
-    }
-   
+		while(($filesize / $decr) > 0.9)
+		{
+			$filesize = $filesize / $decr;
+			$step++;
+		}
+
+		return round($filesize,2).' '.$prefix[$step];
+		
+	} else {
+		return 'Error displaying filesize';
+	}
+
 }
+
+/**
+ * Start Hotaru from Ajax callback
+ *  *
+ */
+function startHotaru() {
+    $root = $_SERVER['DOCUMENT_ROOT'];
+    
+    require_once($root . '/hotaru_settings.php');
+    require_once($root . '/Hotaru.php');
+
+    $h = new Hotaru();
+    $h->start();
+
+    return $h;
+}
+
 ?>

@@ -21,7 +21,7 @@
 	background-repeat: no-repeat; background-position: 0 0px; 
 	font-weight: normal; color:#848484; 
 	margin-left: 0.8em; padding: 0.2em 0 0.2em 1.8em;;
-	background-image: url(content/themes/default/images/edit.png); 
+	background-image: url(/content/themes/default/images/edit.png);
 }
 .show_post_edit:hover { background-position: 0 -32px; color:#000; }
 

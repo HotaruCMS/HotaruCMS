@@ -21,35 +21,35 @@
  * @category  Content Management System
  * @package   HotaruCMS
  * @author    Nick Ramsay <admin@hotarucms.org>
- * @copyright Copyright (c) 2009, Hotaru CMS
+ * @copyright Copyright (c) 2010, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
 
 if ($h->vars['plugin_settings_csrf_error']) { 
-    $h->showMessage($h->lang['error_csrf'], 'red'); return false;
+	$h->showMessage($h->lang['error_csrf'], 'red'); return false;
 }
 
 ?>
 
 <div id="plugin_settings">
-    <?php 
-        $result = '';
-        if ($h->vars['settings_plugin']) {
-            $result = $h->pluginHook('admin_plugin_settings', $h->vars['settings_plugin']);
-        }
-        
-        if (!$result) {
-    ?>
-        <h3><?php echo $h->lang["admin_theme_plugin_settings"]; ?></h3>
-    <?php 
-            $sb_links = $h->pluginHook('admin_sidebar_plugin_settings');
-            if ($sb_links) {
-                $sb_links = sksort($sb_links, $subkey="name", $type="char", true);
-                foreach ($sb_links as $plugin => $details) { 
-                    echo "<li><a href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $details['plugin'] . "'>" . $details['name'] . "</a></li>";
-                }
-            }
-        }
-    ?>
+	<?php 
+		$result = '';
+		if ($h->vars['settings_plugin']) {
+			$result = $h->pluginHook('admin_plugin_settings', $h->vars['settings_plugin']);
+		}
+	
+		if (!$result) {
+	?>
+		<h3><?php echo $h->lang["admin_theme_plugin_settings"]; ?></h3>
+	<?php 
+			$sb_links = $h->pluginHook('admin_sidebar_plugin_settings');
+			if ($sb_links) {
+				$sb_links = sksort($sb_links, $subkey="name", $type="char", true);
+				foreach ($sb_links as $plugin => $details) { 
+					echo "<li><a href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $details['plugin'] . "'>" . $details['name'] . "</a></li>";
+				}
+			}
+		}
+	?>
 </div>

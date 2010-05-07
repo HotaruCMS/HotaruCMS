@@ -2,7 +2,7 @@
 /**
  * name: Users
  * description: Provides profile, settings and permission pages
- * version: 1.7
+ * version: 1.8
  * folder: users
  * type: users
  * class: Users
@@ -191,9 +191,11 @@ class Users
      */
     public function breadcrumbs($h)
     {
-        if (isset($h->vars['user'])) {
+        if (isset($h->vars['user']) && $h->vars['user']->name) {
             $userlink = "<a href='" . $h->url(array('user'=>$h->vars['user']->name)) . "'>";
             $userlink .= $h->vars['user']->name . "</a>";
+        } else {
+        	return false;
         }
         
         // This is for user pages, e.g. account, edit profile, etc:
@@ -262,12 +264,16 @@ class Users
     public function theme_index_main($h)
     {
         if ($h->pageType != 'user') { return false; }
+
+		// if user doesn't exist
+		if (!$h->vars['user']->name) { return false; }
+        if ($h->userExists(0, $h->vars['user']->name) == 'no') { return false; }
         
         // determine permissions
         $admin = false; $own = false; $denied = false;
         if ($h->currentUser->getPermission('can_access_admin') == 'yes') { $admin = true; }
         if ($h->currentUser->id == $h->vars['user']->id) { $own = true; }
-        
+
         $h->displayTemplate('users_navigation');
         
         switch($h->pageName) {
@@ -327,7 +333,7 @@ class Users
             the previous profile for this user. */
         $sql = "SELECT usermeta_value FROM " . DB_PREFIX . "usermeta WHERE usermeta_userid = %d AND usermeta_key = %s";
         $query = $h->db->prepare($sql, $h->vars['user']->id, 'user_profile');
-        $cache_file = CACHE . 'db_cache/' . md5($query);
+        $cache_file = CACHE . 'db_cache/' . md5($query) . '.php';
         if (file_exists($cache_file)) {
             unlink($cache_file); // delete cache file.
         }
@@ -361,7 +367,7 @@ class Users
             the previous settings for this user. */
         $sql = "SELECT usermeta_value FROM " . DB_PREFIX . "usermeta WHERE usermeta_userid = %d AND usermeta_key = %s";
         $query = $h->db->prepare($sql, $h->vars['user']->id, 'user_settings');
-        $cache_file = CACHE . 'db_cache/' . md5($query);
+        $cache_file = CACHE . 'db_cache/' . md5($query) . '.php';
         if (file_exists($cache_file)) {
             unlink($cache_file); // delete cache file.
         }
@@ -431,13 +437,15 @@ class Users
         $ui = new UserInfo();
         
         echo "<li>&nbsp;</li>";
-
-        foreach ($vars as $stat_type) {
-            $users = $ui->stats($h, $stat_type);
-            if (!$users) { $users = 0; }
-            $lang_name = 'users_admin_stats_' . $stat_type;
-            echo "<li>" . $h->lang[$lang_name] . ": " . $users . "</li>";
-        }
+	foreach ($vars as $key => $value) {
+	    echo "<li class='title'>" . $key . "</li>";
+	    foreach ($value as $stat_type) {
+		$users = $ui->stats($h, $stat_type);
+		if (!$users) { $users = 0; }
+		$lang_name = 'users_admin_stats_' . $stat_type;
+		echo "<li>" . $h->lang[$lang_name] . ": " . $users . "</li>";
+	    }
+	}
     }
 }
 

@@ -301,12 +301,14 @@ class SubmitFunctions
      /**
      * Delete temporary data older than 30 minutes
      */
-    public function deleteTempData($db)
-    {
-        $exp = date('YmdHis', strtotime("-30 mins"));
-        $sql = "DELETE FROM " . TABLE_TEMPDATA . " WHERE tempdata_updatedts < %s";
-        $db->query($db->prepare($sql, $exp));
-    }
+	public function deleteTempData($db)
+	{
+		$sql = 'SELECT NOW();'; // use mysql time
+		$timestamp = strtotime($db->get_var($sql));
+		$exp = date('YmdHis', $timestamp - (60 * 30));
+		$sql = "DELETE FROM " . TABLE_TEMPDATA . " WHERE tempdata_updatedts < %s";
+		$db->query($db->prepare($sql, $exp));
+	} 
     
     
      /**
@@ -384,8 +386,14 @@ class SubmitFunctions
             $h->message = $h->lang['submit_url_not_present_error'];
             $h->messageType = 'red';
             $error = 1;
-        } elseif ($h->urlExists($url)) {
+        } elseif ($existing = $h->urlExists($url)) {
             // URL already exists...
+            if (($existing->post_status == 'new') || ($existing->post_status == 'top'))
+            {
+            	// redirect to the existing post unless you 
+            	header("Location: " . $h->url(array('page'=>$existing->post_id)));
+            	exit;
+            }
             $h->message = $h->lang['submit_url_already_exists_error'];
             $h->messageType = 'red';
             $error = 1;
@@ -495,7 +503,7 @@ class SubmitFunctions
         
         // ******** CHECK TITLE ********
             
-        if (!$title) {
+        if (!trim($title)) {
             // No title present...
             $h->messages[$h->lang['submit_title_not_present_error']] = "red";
             $error_title= 1;
@@ -515,7 +523,7 @@ class SubmitFunctions
             
         // ******** CHECK DESCRIPTION ********
         if ($submit_settings['content']) { // if using the content field
-            if (!$content) {
+            if (!trim($content)) {
                 // No content present...
                 $h->messages[$h->lang['submit_content_not_present_error']] = "red";
                 $error_content = 1;
@@ -551,7 +559,7 @@ class SubmitFunctions
         if ($submit_settings['tags']) {
             $tags = sanitize($h->cage->post->noTags('post_tags'), 'tags');
             
-            if (!$tags) {
+            if (!trim($tags)) {
                 // No tags present...
                 $h->messages[$h->lang['submit_tags_not_present_error']] = "red";
                 $error_tags = 1;
@@ -695,10 +703,10 @@ class SubmitFunctions
      */
     public function fetchTitle($url)
     {
-        require_once(EXTENSIONS . 'SWCMS/class.httprequest.php');
+        require_once(EXTENSIONS . 'SWCMS/HotaruHttpRequest.php');
         
         if ($url != 'http://' && $url != ''){
-            $r = new HTTPRequest($url);
+            $r = new HotaruHttpRequest($url);
             $string = $r->DownloadToString();
         } else {
             $string = '';
