@@ -148,4 +148,22 @@ function unixtimestamp($timestamp)
 		}
 	}
 }
+
+ /**
+ * Returns the next time block of the day, e.g. now: 1:25, so returns 2:00 (if block = 1 hour)
+ *
+ * @param int $block - time in HOURS
+ * @return int - time in SECONDS
+ */
+function time_block($block = 1)
+{
+	$block = ($block * 60) * 60; // change into seconds
+	$time_now = time();
+	$start_of_current_block = floor($time_now/$block);
+	$start_of_current_block *= $block;
+	
+	$start_of_next_block = $start_of_current_block + $block;
+	
+	return $start_of_next_block;
+}
 ?>

@@ -535,7 +535,7 @@ class Comment
 	 */
 	public function countDailyComments($h)
 	{
-		$start = date('YmdHis', strtotime("now"));
+		$start = date('YmdHis', time_block());
 		$end = date('YmdHis', strtotime("-1 day"));
 		$sql = "SELECT COUNT(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s AND comment_user_id = %d AND (comment_date >= %s AND comment_date <= %s)";
 		$count = $h->db->get_var($h->db->prepare($sql, 'N', $this->author, $end, $start));

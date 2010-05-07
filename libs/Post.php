@@ -412,7 +412,7 @@ class Post
 			$time_ago = "-" . $minutes . " minutes";
 		} 
 		
-		$start = date('YmdHis', strtotime("now"));
+		$start = date('YmdHis', time_block());
 		$end = date('YmdHis', strtotime($time_ago));
 		$sql = "SELECT COUNT(post_id) FROM " . TABLE_POSTS . " WHERE post_archived = %s AND post_author = %d AND post_type = %s AND (post_date >= %s AND post_date <= %s)";
 		$count = $h->db->get_var($h->db->prepare($sql, 'N', $user_id, $post_type, $end, $start));
