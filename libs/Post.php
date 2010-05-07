@@ -386,7 +386,9 @@ class Post
 	 */
 	public function deleteProcessingPosts($h)
 	{
-		$exp = date('YmdHis', strtotime("-30 mins"));
+		$sql = 'SELECT NOW();'; // use mysql time
+		$timestamp = strtotime($h->db->get_var($sql));
+		$exp = date('YmdHis', $timestamp - (60 * 30));
 		$sql = "DELETE FROM " . TABLE_POSTS . " WHERE post_status = %s AND post_date < %s";
 		$h->db->query($h->db->prepare($sql, 'processing', $exp));
 	}
