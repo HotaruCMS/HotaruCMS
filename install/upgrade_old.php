@@ -28,11 +28,12 @@
  * @link      http://www.hotarucms.org/
  */
 
-
+require_once('../hotaru_settings.php');
+require_once(BASE . 'Hotaru.php');
 $h = new Hotaru(); // must come before language inclusion
 $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
 $old_version = $h->db->get_var($h->db->prepare($sql, "hotaru_version"));
-//require_once(INSTALL . 'install_language.php');    // language file for install
+require_once(INSTALL . 'install_language.php');    // language file for install
 
 // delete existing cache
 $h->deleteFiles(CACHE . 'db_cache');
@@ -43,12 +44,9 @@ $step = $h->cage->get->getInt('step');        // Installation steps.
 
 switch ($step) {
 	case 1:
-		//upgrade_welcome();     // "Welcome to Hotaru CMS.
+		upgrade_welcome();     // "Welcome to Hotaru CMS. 
 		break;
 	case 2:
-		upgrade_check($h, $old_version);
-		break;
-	case 3:
 		do_upgrade($old_version);
 		upgrade_complete();    // Delete "install" folder. Visit your site"
 		break;
@@ -61,85 +59,105 @@ switch ($step) {
 exit;
 
 
+/**
+ * HTML header
+ *
+ * @return string returns the html output for the page header
+ */
+function html_header()
+{
+	global $lang;
+	
+	$header = "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 3.2//EN'>\n";
+	$header .= "<HTML><HEAD>\n";
+	$header .= "<meta http-equiv=Content-Type content='text/html; charset=UTF-8'>\n";
+	
+	// Title
+	$header .= "<TITLE>" . $lang['upgrade_title'] . "</TITLE>\n";
+	$header .= "<META HTTP-EQUIV='Content-Type' CONTENT='text'>\n";
+	$header .= "<link rel='stylesheet' type='text/css' href='" . BASEURL . "install/reset-fonts-grids.css' type='text/css'>\n";
+	$header .= "<link rel='stylesheet' type='text/css' href='" . BASEURL . "install/install_style.css'>\n";
+	$header .= "</HEAD>\n";
+	
+	// Body start
+	$header .= "<BODY>\n";
+	$header .= "<div id='doc' class='yui-t7 install'>\n";
+	$header .= "<div id='hd' role='banner'>";
+	$header .= "<img align='left' src='" . BASEURL . "content/admin_themes/admin_default/images/hotaru.png' style='height:60px; width:60px;'>";
+	$header .= "<h1>" . $lang['upgrade_title'] . "</h1></div>\n"; 
+	$header .= "<div id='bd' role='main'>\n";
+	$header .= "<div class='yui-g'>\n";
+	
+	return $header;
+}
+
 
 /**
- * Step 2 of upgrade - checks existing version available and confirms details
+ * HTML footer
+ *
+ * @return string returns the html output for the page footer
  */
-function upgrade_check($h, $old_version) {
+function html_footer()
+{
+	global $lang;
+	
+	$footer = "<div class='clear'></div>\n"; // clear floats
+	
+	// Footer content (a link to the forums)
+	$footer .= "<div id='ft' role='contentinfo'>";
+	$footer .= "<p>" . $lang['install_trouble'] . "</p>";
+	$footer .= "</div>\n"; // close "ft" div
+	
+	$footer .= "</div>\n"; // close "yui-g" div
+	$footer .= "</div>\n"; // close "main" div
+	$footer .= "</div>\n"; // close "yui-t7 install" div
+	
+	$footer .= "</BODY>\n";
+	$footer .= "</HTML>\n";
+	
+	return $footer;
+}
+
+
+/**
+ * Step 1 of installation - Welcome message
+ */
+function upgrade_welcome()
+{
 	global $lang;
 	
 	echo html_header();
-
+	
 	// Step title
-	echo "<h2>" . $lang['upgrade_step2'] . "</h2>\n";
-
-	// Current version
-	if ( isset($old_version) )
-	    echo "<div class='install_content'>" . $lang['upgrade_step2_old_version'] . $old_version . "</div>\n";
-	else
-	    echo "<div class='install_content'>" . $lang['upgrade_step2_no_old_version'] . "</div>\n";
-
-	if ($h->version > $old_version)
-	    echo "<div class='install_content'>" . $lang['upgrade_step2_details'] . "</div>\n";
-	else
-	    echo "<div class='install_content'>" . $lang['upgrade_step2_current_version'] . "</div>\n";
-
-	// Previous/Next buttons
-	echo "<div class='back'><a href='install.php?step=1&action=upgrade'>" . $lang['install_back'] . "</a></div>\n";
-	echo "<div class='next'><a href='?step=3&action=upgrade'>" . $lang['install_next'] . "</a></div>\n";
-
+	echo "<h2>" . $lang['upgrade_step1'] . "</h2>\n";
+	
+	// Step content
+	echo "<div class='install_content'>" . $lang['upgrade_step1_details'] . "</div>\n";
+	
+	// Next button
+	echo "<div class='next'><a href='upgrade.php?step=2'>" . $lang['install_next'] . "</a></div>\n";
+	
 	echo html_footer();
 }
 
     
 /**
- * Step 3 of upgrade - shows completion.
+ * Step 2 of upgrade - shows completion.
  */
 function upgrade_complete()
 {
 	global $lang;
-	global $cage;
-	$delete = $cage->post->getAlpha('delete');        // delete install folder.
-	$delete_failed = false;
-
-	if ($delete) {
-	    // try to delete the folder
-
-	    // if was deleted then redirect to baseurl
-
-	    // else continue here with message that could not delete
-	    $delete_failed = true;
-	}
-
+	
 	echo html_header();
 	
 	// Step title
-	echo "<h2>" . $lang['upgrade_step3'] . "</h2>\n";
-
+	echo "<h2>" . $lang['upgrade_step2'] . "</h2>\n";
+	
 	// Step content
-	if (!$delete_failed) echo "<div class='install_content'>" . $lang['install_step5_installation_complete'] . "</div>\n";
-	echo "<div class='install_content'>" . $lang['install_step5_installation_delete'] . "</div>\n";
-
-	if (!$delete_failed) {
-	    // Confirm delete and continue install
-	    echo "<div class='install_content'>" . $lang['install_step5_installation_delete_folder'] . "</div>\n";
-	    echo "<form name='install_admin_reg_form' action='install.php?step=3&action=upgrade' method='post'>\n";
-	    echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />";
-	    echo "<input type='hidden' name='delete' value='folder' />";
-	    echo "<input type='hidden' name='step' value='3' />";
-
-	    echo "<input id='update' type='submit' value='" . $lang['install_step5_form_delete_folder'] . "' />";
-	    echo "</div></form>\n";
-	} else {
-	    echo "<br/><img src='../content/admin_themes/admin_default/images/delete.png' style='float:left; margin-left:12px;'>";
-	    echo "<div class='install_content'><span style='color: red;'>" . $lang['install_step2_warning'] . "</span>: " . $lang['install_step5_installation_delete_failed'] . "</div>\n";
-	}
-
-	echo "<br/><div class='install_content'>" . $lang['install_step5_installation_go_play'] . "</div><br/><br/>\n";
-
-	// Previous/Next buttons
-	echo "<div class='back'><a href='install.php?step=2&action=upgrade'>" . $lang['install_back'] . "</a></div>\n";
-	echo "<div class='next'><a href='" . BASEURL . "'>" . $lang['install_home'] . "</a></div>\n";
+	echo "<div class='install_content'>" . $lang['upgrade_step2_details'] . "</div>\n";
+	
+	// Next button
+	echo "<div class='next'><a href='" . BASEURL . "'>" . $lang['upgrade_home'] . "</a></div>\n";
 	
 	echo html_footer();    
 }
