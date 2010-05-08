@@ -116,19 +116,13 @@ small {
 	color: #ffffff;
 }
 
-#update {
-	padding: 0.3em 0.5em 0.3em 0.5em;
-	background-color: #f6f6f6;
-	-moz-border-radius: 0.5em;
-	-webkit-border-radius: 0.5em;
-	border: 0.1em solid #666;
+.update {
 	font-weight: bold;
 	color: #00f;
 }
 
-.next, .back {
-	margin-top: 0.8em;
-	float: right;
+.button {
+	margin-top: 0.8em;	
 	font-size: 1.2em;
 	padding: 0.3em 0.5em 0.3em 0.5em;
 	background-color: #f6f6f6;
@@ -145,7 +139,7 @@ small {
 }
 
 .select { float: left; margin-right: 2em; text-align: center; width: 300px; font-weight:bold; }
-.center a:hover {background-color: #ee1;}
+.center a:hover {background-color: #ee1; text-decoration: none;}
 
 .center { margin: 0 auto; width:720px;}
 
@@ -155,3 +149,4 @@ small {
 	text-align: center;
 	font-size: 0.8em;
 }
+

@@ -25,17 +25,16 @@
 
 /* Upgrade Step 1 */
 $lang["upgrade_title"] = "Hotaru CMS Upgrade";
-$lang["upgrade_step1"] = "Step 1/2: Welcome Back";
 
-$lang["upgrade_step2"] = "Step 2/3: Checking your exising setup";
-$lang["upgrade_step2_details"] = "To upgrade Hotaru to version " . $h->version . ", click 'Next'...";
-$lang["upgrade_step2_old_version"] = "You are currently running Hotaru CMS version ";
-$lang["upgrade_step2_old_no_version"] = "We could not find an existing version number of Hotaru CMS in your database.";
-$lang["upgrade_step2_current_version"] = "You already have the latest version of Hotaru installed.<br/><br/>If you want to run the upgrade script again click 'Next', otherwise you can close this browser window now.";
+$lang["upgrade_step1"] = "Step 1/2: Checking your exising setup";
+$lang["upgrade_step1_details"] = "To upgrade Hotaru to version " . $h->version . ", click 'Next'...";
+$lang["upgrade_step1_old_version"] = "You are currently running Hotaru CMS version ";
+$lang["upgrade_step1_old_no_version"] = "We could not find an existing version number of Hotaru CMS in your database.";
+$lang["upgrade_step1_current_version"] = "You already have the latest version of Hotaru installed.<br/><br/>If you want to run the upgrade script again click 'Next', otherwise you can close this browser window now.";
 
 /* Upgrade Step 2 */
-$lang["upgrade_step3"] = "Step 3/3: Upgrade Complete";
-$lang["upgrade_step3_details"] = "Congratulations! You have successfully upgraded Hotaru CMS.";
+$lang["upgrade_step2"] = "Step 2/2: Upgrade Complete";
+$lang["upgrade_step2_details"] = "Congratulations! You have successfully upgraded Hotaru CMS.";
 $lang["upgrade_home"] = "Finish";
 
 /* Install Common */
@@ -45,95 +44,95 @@ $lang["install_back"] = "Back";
 $lang["install_trouble"] = "Having trouble? Visit the forums at <a href='http://hotarucms.org'>HotaruCMS.org</a> for help.";
 
 /* Install Step 1 */
-$lang["install_step1"] = "Step 1/5: Welcome";
-$lang["install_step1_welcome"] = "Welcome to Hotaru CMS. Installing Hotaru can be completed in just 5 steps and normally requires just a few minutes.";
-$lang["install_step1_select"] = "Select below whether you want to make a new installation or upgrade an existing Hotaru site...";
+$lang["install_step0"] = "Welcome to Hotaru CMS";
+$lang["install_step0_welcome"] = "Installing Hotaru can be completed in just 4 steps and normally requires just a few minutes.";
+$lang["install_step0_select"] = "Select below whether you want to make a new installation or upgrade an existing Hotaru site...";
 $lang["install_new"] = "New Installation";
 $lang["install_upgrade"] = "Upgrade Existing Site";
 
 /* Install Step 2 */
-$lang["install_step2"] = "Step 2/5: Database Setup";
-$lang["install_step2_instructions"] = "To set up a database for Hotaru CMS, you'll need to do the following";
-$lang["install_step2_instructions1"] = "Create a database called <i>hotaru</i> in your web host's control panel. Make a note of your username and password!";
-$lang["install_step2_instructions2"] = "Copy <pre>/hotaru_settings_default.php</pre> and rename it <pre>/hotaru_settings.php</pre>.";
-$lang["install_step2_instructions3"] = "Open <pre>/hotaru_settings.php</pre> and fill in the \"Database Details\" section.";
-$lang["install_step2_instructions4"] = "Fill in the <pre>baseurl</pre>, e.g. <i>http://example.com/</i>. Don't forget the trailing slash (/)";
-$lang["install_step2_instructions5"] = "Save and upload <pre>hotaru_settings.php</pre> to your server, then click \"Next\"...";
-$lang["install_step2_instructions_create_db"] = "Create a new database on your server first then fill in the form below. These details will be unique to your server and database setup.";
-$lang["install_step2_instructions_manual_setup"] = "If you prefer to edit the settings file manually";
-$lang["install_step2_instructions_manual_setup_click"] = "click here";
-$lang["install_step2_warning"] = "<b>Warning</b>";
-$lang["install_step2_warning_note"] = "When you click \"Next\", new database tables will be created, deleting any old ones you may have!";
+$lang["install_step1"] = "Step 1/4: Database Setup";
+$lang["install_step1_instructions"] = "To set up a database for Hotaru CMS, you'll need to do the following";
+$lang["install_step1_instructions1"] = "Create a database called <i>hotaru</i> in your web host's control panel. Make a note of your username and password!";
+$lang["install_step1_instructions2"] = "Copy <pre>/hotaru_settings_default.php</pre> and rename it <pre>/hotaru_settings.php</pre>.";
+$lang["install_step1_instructions3"] = "Open <pre>/hotaru_settings.php</pre> and fill in the \"Database Details\" section.";
+$lang["install_step1_instructions4"] = "Fill in the <pre>baseurl</pre>, e.g. <i>http://example.com/</i>. Don't forget the trailing slash (/)";
+$lang["install_step1_instructions5"] = "Save and upload <pre>hotaru_settings.php</pre> to your server, then click \"Next\"...";
+$lang["install_step1_instructions_create_db"] = "Create a new database on your server first then fill in the form below. These details will be unique to your server and database setup.";
+$lang["install_step1_instructions_manual_setup"] = "If you prefer to edit the settings file manually";
+$lang["install_step1_instructions_manual_setup_click"] = "click here";
+$lang["install_step1_warning"] = "<b>Warning</b>";
+$lang["install_step1_warning_note"] = "When you click \"Next\", new database tables will be created, deleting any old ones you may have!";
 
-$lang["install_step2_baseurl"] = "<b>Baseurl</b>";
-$lang["install_step2_baseurl_explain"] = "e.g. http://example.com/ (Needs trailing slash '/')";
-$lang["install_step2_dbuser"] = "<b>Database User</b>";
-$lang["install_step2_dbuser_explain"] = "Add your own database details ";
-$lang["install_step2_dbpassword"] = "<b>Database Password</b>";
-$lang["install_step2_dbpassword_explain"] = "";
-$lang["install_step2_dbname"] = "<b>Database Name</b>";
-$lang["install_step2_dbname_explain"] = "";
-$lang["install_step2_dbprefix"] = "<b>Database Prefix</b>";
-$lang["install_step2_dbprefix_explain"] = "Database prefix, e.g. 'hotaru_'";
-$lang["install_step2_dbhost"] = "<b>Database Host</b>";
-$lang["install_step2_dbhost_explain"] = "You probably won't need to change this";
+$lang["install_step1_baseurl"] = "<b>Baseurl</b>";
+$lang["install_step1_baseurl_explain"] = "e.g. http://example.com/ (Needs trailing slash '/')";
+$lang["install_step1_dbuser"] = "<b>Database User</b>";
+$lang["install_step1_dbuser_explain"] = "Add your own database details ";
+$lang["install_step1_dbpassword"] = "<b>Database Password</b>";
+$lang["install_step1_dbpassword_explain"] = "";
+$lang["install_step1_dbname"] = "<b>Database Name</b>";
+$lang["install_step1_dbname_explain"] = "";
+$lang["install_step1_dbprefix"] = "<b>Database Prefix</b>";
+$lang["install_step1_dbprefix_explain"] = "Database prefix, e.g. 'hotaru_'";
+$lang["install_step1_dbhost"] = "<b>Database Host</b>";
+$lang["install_step1_dbhost_explain"] = "You probably won't need to change this";
 
-$lang["install_step2_dbpassword_error"] = "There was a problem with the password you entered.";
-$lang["install_step2_baseurl_error"] = "There was a problem with the baseurl";
-$lang["install_step2_dbuser_error"] = "There was a problem with the database user";
-$lang["install_step2_dbname_error"] = "There was a problem with the database name";
-$lang["install_step2_dbprefix_error"] = "There was a problem with the database prefix";
-$lang["install_step2_dbhost_error"] = "There was a problem with the database host";
+$lang["install_step1_dbpassword_error"] = "There was a problem with the password you entered.";
+$lang["install_step1_baseurl_error"] = "There was a problem with the baseurl";
+$lang["install_step1_dbuser_error"] = "There was a problem with the database user";
+$lang["install_step1_dbname_error"] = "There was a problem with the database name";
+$lang["install_step1_dbprefix_error"] = "There was a problem with the database prefix";
+$lang["install_step1_dbhost_error"] = "There was a problem with the database host";
 
-$lang["install_step2_settings_file_already_exists"] = "There is already a Hotaru settings file on your server. If you press 'update' your existing file will be overwritten.";
-$lang["install_step2_settings_db_already_exists"] = "There is already a Hotaru database on your server with live tables. If you press 'Next' your entire database will be wiped clean. Proceed with caution.";
-$lang["install_step2_update_file_writing_success"] = "The 'hotaru_settings' file was created.";
-$lang["install_step2_update_file_writing_failure"] = "There was a problem creating the 'hotaru_settings' file.";
+$lang["install_step1_settings_file_already_exists"] = "There is already a Hotaru settings file on your server. If you press 'update' your existing file will be overwritten.";
+$lang["install_step1_settings_db_already_exists"] = "There is already a Hotaru database on your server with live tables. If you press 'Next' your entire database will be wiped clean. Proceed with caution.";
+$lang["install_step1_update_file_writing_success"] = "The 'hotaru_settings' file was created.";
+$lang["install_step1_update_file_writing_failure"] = "There was a problem creating the 'hotaru_settings' file.";
 
 
 /* Install Step 3 */
-$lang["install_step3"] = "Step 3/5: Create Database Tables";
-$lang["install_step3_creating_table"] = "Creating table";
-$lang["install_step3_already_exists"] = "It seems there are already tables for Hotaru CMS in the database.";
-$lang["install_step3_continue"] = "Click \"Next\" to continue.";
-$lang["install_step3_rebuild_note"] = "<i>Note</i>: If you'd like to start fresh, ";
-$lang["install_step3_rebuild_link"] = "delete and rebuild the database tables";
-$lang["install_step3_success"] = "Database tables created successfully. Click \"Next\" to configure Hotaru CMS.";
-$lang["install_step3_existing_db"] = "You already have an existing installation of Hotaru CMS.<br/><br/>If you continue, this installation will DELETE all your existing tables and settings, including posts, users and plugin data.";
-$lang["install_step3_existing_confirm"] = "Confirm you wish to continue this install by typing 'DELETE' in the box and press the button";
-$lang["install_step3_existing_go_upgrade1"] = "Alternatively, you may wish to ";
-$lang["install_step3_existing_go_upgrade2"] = "run the upgrade script";
-$lang["install_step3_form_delete_confirm"] = "confirm";
-$lang["install_step3_form_delete"] = "Update";
+$lang["install_step2"] = "Step 2/4: Create Database Tables";
+$lang["install_step2_creating_table"] = "Creating table";
+$lang["install_step2_already_exists"] = "It seems there are already tables for Hotaru CMS in the database.";
+$lang["install_step2_continue"] = "Click \"Next\" to continue.";
+$lang["install_step2_rebuild_note"] = "<i>Note</i>: If you'd like to start fresh, ";
+$lang["install_step2_rebuild_link"] = "delete and rebuild the database tables";
+$lang["install_step2_success"] = "Database tables created successfully. Click \"Next\" to configure Hotaru CMS.";
+$lang["install_step2_existing_db"] = "You already have an existing installation of Hotaru CMS.<br/><br/>If you continue, this installation will DELETE all your existing tables and settings, including posts, users and plugin data.";
+$lang["install_step2_existing_confirm"] = "Confirm you wish to continue this install by typing 'DELETE' in the box and press the button";
+$lang["install_step2_existing_go_upgrade1"] = "Alternatively, you may wish to ";
+$lang["install_step2_existing_go_upgrade2"] = "run the upgrade script";
+$lang["install_step2_form_delete_confirm"] = "confirm";
+$lang["install_step2_form_delete"] = "Update";
 
 
 
 /* Install Step 4 */
-$lang["install_step4"] = "Step 4/5: Admin Registration";
-$lang["install_step4_instructions"] = "Register yourself as a site administrator";
-$lang["install_step4_username"] = "Username:";
-$lang["install_step4_email"] = "Email:";
-$lang["install_step4_password"] = "Password:";
-$lang["install_step4_password_verify"] = "Password (again):";
-$lang["install_step4_csrf_error"] = "Ah! You've triggered a CSRF error. That's only supposed to happen when someone tries hacking into the site...";
-$lang["install_step4_username_error"] = "Your username must be at least 4 characters and can contain letters, dashes and underscores only";
-$lang["install_step4_password_error"] = "The password must be at least 8 characters and can only contain letters, numbers and these symbols: @ * # - _";
-$lang["install_step4_password_match_error"] = "The password fields don't match";
-$lang["install_step4_email_error"] = "That doesn't parse as a valid email address";
-$lang["install_step4_make_note"] = "Make a note of your new username, email and password before clicking \"Next\"...";
-$lang["install_step4_update_success"] = "Updated successfully";
-$lang["install_step4_form_update"] = "Update";
+$lang["install_step3"] = "Step 3/4: Admin Registration";
+$lang["install_step3_instructions"] = "Register yourself as a site administrator";
+$lang["install_step3_username"] = "Username:";
+$lang["install_step3_email"] = "Email:";
+$lang["install_step3_password"] = "Password:";
+$lang["install_step3_password_verify"] = "Password (again):";
+$lang["install_step3_csrf_error"] = "Ah! You've triggered a CSRF error. That's only supposed to happen when someone tries hacking into the site...";
+$lang["install_step3_username_error"] = "Your username must be at least 4 characters and can contain letters, dashes and underscores only";
+$lang["install_step3_password_error"] = "The password must be at least 8 characters and can only contain letters, numbers and these symbols: @ * # - _";
+$lang["install_step3_password_match_error"] = "The password fields don't match";
+$lang["install_step3_email_error"] = "That doesn't parse as a valid email address";
+$lang["install_step3_make_note"] = "Make a note of your new username, email and password before clicking \"Next\"...";
+$lang["install_step3_update_success"] = "Updated successfully";
+$lang["install_step3_form_update"] = "Update";
 
 /* Install Step 5 */
-$lang["install_step5"] = "Step 5/5: Completion";
-$lang["install_step5_installation_complete"] = "Installation has been successfully completed.";
-$lang["install_step5_installation_delete"] = "You <b>must</b> delete the install folder or someone else could run the install script and wipe everything!";
-$lang["install_step5_installation_delete_folder"] = "Shall we try and delete the 'install' folder for you?";
-$lang["install_step5_form_delete_folder"] = "Delete Folder";
-$lang["install_step5_installation_delete_failed"] = "We were not able to delete the install folder. Please delete it manually.";
+$lang["install_step4"] = "Step 4/4: Completion";
+$lang["install_step4_installation_complete"] = "Installation has been successfully completed.";
+$lang["install_step4_installation_delete"] = "You <b>must</b> delete the install folder or someone else could run the install script and wipe everything!";
+$lang["install_step4_installation_delete_folder"] = "Shall we try and delete the 'install' folder for you?";
+$lang["install_step4_form_delete_folder"] = "Delete Folder";
+$lang["install_step4_installation_delete_failed"] = "We were not able to delete the install folder. Please delete it manually.";
 
 
-$lang["install_step5_installation_go_play"] = "Done? Okay, go and play with your new Hotaru site!";
+$lang["install_step4_installation_go_play"] = "Done? Okay, go and play with your new Hotaru site!";
 $lang["install_home"] = "Get Started!";
 
 ?>

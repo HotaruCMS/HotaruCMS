@@ -54,7 +54,7 @@ function create_table($table_name)
 			`blocked_updateby` int(20) NOT NULL DEFAULT 0,
 			INDEX  (`blocked_type`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Blocked IPs, users, emails, etc';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);
 	}
 	
@@ -77,7 +77,7 @@ function create_table($table_name)
 			`category_updateby` int(20) NOT NULL DEFAULT 0, 
 			UNIQUE KEY `key` (`category_name`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Categories';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);
 		
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (category_name, category_safe_name) VALUES (%s, %s)";
@@ -107,7 +107,7 @@ function create_table($table_name)
 			INDEX  (`comment_archived`),
 			INDEX  (`comment_status`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Post Comments';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql); 
 	}
 	
@@ -128,7 +128,7 @@ function create_table($table_name)
 			`cvote_reason` tinyint(3) NOT NULL DEFAULT 0,
 			`cvote_updateby` int(20) NOT NULL DEFAULT 0
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Comment Votes';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql); 
 	}
 	
@@ -143,7 +143,7 @@ function create_table($table_name)
 			`friends_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 			PRIMARY KEY (follower_user_id, following_user_id)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Friends';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);
 		}
 		
@@ -167,7 +167,7 @@ function create_table($table_name)
 			`message_updateby` int(20) NOT NULL DEFAULT 0,
 			INDEX  (`message_archived`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Messaging';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);
 		}
 
@@ -183,7 +183,7 @@ function create_table($table_name)
 			`miscdata_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`miscdata_updateby` int(20) NOT NULL DEFAULT 0
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Miscellaneous Data';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);
 		
 		// Add Hotaru version number to the database (referred to when upgrading)
@@ -234,7 +234,7 @@ function create_table($table_name)
 			`plugin_updateby` int(20) NOT NULL DEFAULT 0,
 			UNIQUE KEY `key` (`plugin_folder`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Application Plugins';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);
 	}
 	
@@ -249,7 +249,7 @@ function create_table($table_name)
 			`plugin_updateby` int(20) NOT NULL DEFAULT 0,
 			INDEX  (`plugin_folder`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Plugins Hooks';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);
 	}
 	
@@ -265,7 +265,7 @@ function create_table($table_name)
 			`plugin_updateby` int(20) NOT NULL DEFAULT 0,
 			INDEX  (`plugin_folder`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Plugins Settings';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);
 	}
 	
@@ -300,7 +300,7 @@ function create_table($table_name)
 			INDEX  (`post_status`),
 			INDEX  (`post_type`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Story Posts';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql); 
 	}
 	
@@ -319,7 +319,7 @@ function create_table($table_name)
 			`postmeta_updateby` int(20) NOT NULL DEFAULT 0, 
 			INDEX  (`postmeta_postid`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Post Meta';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql); 
 	}
 	
@@ -341,7 +341,7 @@ function create_table($table_name)
 			`vote_updateby` int(20) NOT NULL DEFAULT 0,
 			INDEX  (`vote_post_id`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Post Votes';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql); 
 	} 
 	
@@ -359,7 +359,7 @@ function create_table($table_name)
 			`settings_updateby` int(20) NOT NULL DEFAULT 0,
 			UNIQUE KEY `key` (`settings_name`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Application Settings';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);
 		
 		// Default settings:
@@ -456,7 +456,7 @@ function create_table($table_name)
 			UNIQUE KEY `tags_post_id` (`tags_post_id`,`tags_word`),
 			INDEX  (`tags_archived`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Post Tags';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql); 
 	}
 	
@@ -472,7 +472,7 @@ function create_table($table_name)
 			`tempdata_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 			`tempdata_updateby` int(20) NOT NULL DEFAULT 0
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Temporary Data';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql); 
 	}
 	
@@ -488,7 +488,7 @@ function create_table($table_name)
 			`token_action` varchar(64),
 			INDEX  (`token_key`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Tokens for CSRF protection';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);
 	}
 	
@@ -515,7 +515,7 @@ function create_table($table_name)
 			UNIQUE KEY `key` (`user_username`),
 			KEY `user_email` (`user_email`)			
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Users and Roles';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql); 
 	}
 	
@@ -534,7 +534,7 @@ function create_table($table_name)
 			INDEX  (`usermeta_userid`),
 			INDEX  (`usermeta_key`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='User Meta';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql); 
 	}
 	
@@ -557,7 +557,7 @@ function create_table($table_name)
 			`useract_updateby` int(20) NOT NULL DEFAULT 0, 
 			INDEX  (`useract_userid`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='User Activity';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql); 
 	}
 	
@@ -574,7 +574,7 @@ function create_table($table_name)
 			`widget_args` varchar(255) NULL, 
 			`widget_updateby` int(20) NOT NULL DEFAULT 0
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Widgets';";
-		echo $lang['install_step3_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql); 
 	}
 

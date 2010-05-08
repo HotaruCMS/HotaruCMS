@@ -137,3 +137,19 @@ function drop_table($table_name)
 	
 	$db->query("DROP TABLE " . $table_name);
 }
+
+/**
+ * Delete directory tree with files in it
+ * from php.net - anonyomous
+ */
+function delTree($dir) {
+    $files = glob( $dir . '*', GLOB_MARK );
+    foreach( $files as $file ){
+        if( is_dir( $file ) )
+            delTree( $file );
+        else
+            unlink( $file );
+    }
+
+    if (is_dir($dir)) return rmdir( $dir );
+}
