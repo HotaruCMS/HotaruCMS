@@ -436,7 +436,7 @@ function database_creation()
 
 		// Confirm delete and continue install
 		 echo "<form name='install_admin_reg_form' action='install.php?step=3' method='get'>\n";
-		echo "<div class='center clearfix'>" . $lang["install_step3_confirm_delete"] . "&nbsp; <input type='text' size=10 name='del' value='' />";
+		echo "<div class='center clearfix'>&nbsp; <input type='text' size=10 name='del' value='' />";
 		echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
 		echo "<input type='hidden' name='step' value='3' />\n";
 	    	    
