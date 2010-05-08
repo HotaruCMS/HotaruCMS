@@ -107,7 +107,7 @@ class PostManagerSettings
             $h->vars['search_term'] = $search_term; // used to refill the search box after a search
             if ($h->isActive('search')) {
                 if (strlen($search_term) < 3) {
-                    $h->message = $h->lang["user_man_search_too_short"];
+                    $h->message = $h->lang["post_man_search_too_short"];
                     $h->messageType = 'red';
                 } else {
                     $s = new Search();
@@ -238,9 +238,9 @@ class PostManagerSettings
             if ($pg) { $edit_link .= "&amp;pg=" . $pg; }
             
             // put icons next to the username with links to User Manager
-            $h->vars['user_manager_name_icons'] = array($username, ''); // second param is "output"
+            $h->vars['post_manager_name_icons'] = array($username, ''); // second param is "output"
             $h->pluginHook('post_manager_user_name');
-            $icons = $h->vars['user_manager_name_icons'][1]; // 1 is the second param: output
+            $icons = $h->vars['post_manager_name_icons'][1]; // 1 is the second param: output
             
             $output .= "<tr class='table_row_" . $alt % 2 . "'>\n";
             $output .= "<td class='pm_id'>" . $post->post_id . "</td>\n";

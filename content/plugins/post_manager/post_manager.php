@@ -58,7 +58,7 @@ class PostManager
                 }
             }
             $title = rstrtrim($title, ", ");
-            $icons .= " <img src = '" . BASEURL . "content/plugins/user_manager/images/flag_red.png' title='" . $title . "'>";
+            $icons .= " <img src = '" . BASEURL . "content/plugins/post_manager/images/flag_red.png' title='" . $title . "'>";
             $h->vars['user_manager_role'] = array($icons, $user_role, $user);
         }
     }
