@@ -214,7 +214,7 @@ class Category
 	 * @param int $cat_id
 	 * @return bool
 	 */
-	function isEmpty($h, $cat_id = 0)
+	public function isEmpty($h, $cat_id = 0)
 	{
 		$sql = "SELECT count(*) FROM " . TABLE_POSTS . " WHERE post_category = %d ";
 		$posts = $h->db->get_var($h->db->prepare($sql, $cat_id));
@@ -233,7 +233,7 @@ class Category
 	 * @param str $new_cat_name
 	 * @return bool
 	 */
-	function addNewCategory($h, $parent = 0, $new_cat_name = '')
+	public function addNewCategory($h, $parent = 0, $new_cat_name = '')
 	{
 		$sql = "SELECT category_order FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
 		$category_order = $h->db->get_var($h->db->prepare($sql, $parent));
@@ -294,8 +294,7 @@ class Category
 		return $right+1;
 	}
 
-
-	 /**
+	/**
 	 * Delete a category
 	 *
 	 * @param int $delete_category
@@ -324,5 +323,4 @@ class Category
 	}
 
 }
-
 ?>
