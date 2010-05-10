@@ -33,296 +33,188 @@ class CategoryManagerSettings
      * @return bool
      */
     function settings($h)
-    {    
+    {
         $action = $h->cage->get->testAlnumLines('action');
         if (!$action || $action == '') { $action = "home"; }
-    
-        if ($action == "home") {    
-            $h->vars['the_cats'] = $this->getCategories($h);     // Get all the category info                
-            $h->displayTemplate('cat_man_main', 'category_manager');
-            return true;
-        }
-        
-        if ($action == "order") { 
-            $h->vars['the_cats'] = $this->getCategories($h);     // Get all the category info
-            $h->displayTemplate('cat_man_order', 'category_manager');
-            return true;
-        }     
-            
-        if ($action == "order_alpha") { 
-            $this->order($h, "category_name");     // ORDER ALPHABETICALLY PERMANENTLY IN THE DATABASE
-            $h->showMessage($h->lang["cat_man_order_alpha"], 'green');
-            $h->vars['the_cats'] = $this->getCategories($h);     // Get all the category info
-            $h->displayTemplate('cat_man_order', 'category_manager');
-            return true;
-        } 
-        
-        if ($action == "order_length") { 
-            $this->order($h, "length(category_name)");     // ORDER BY LENGTH PERMANENTLY IN THE DATABASE
-            $h->showMessage($h->lang["cat_man_order_length"], 'green');
-            $h->vars['the_cats'] = $this->getCategories($h);     // Get all the category info
-            $h->displayTemplate('cat_man_order', 'category_manager');
-            return true;
-        }
-    
-        if ($action == "order_posts") { 
-            $this->orderByPosts($h);     // ORDER BY POSTS PERMANENTLY IN THE DATABASE
-            $h->showMessage($h->lang["cat_man_order_posts"], 'green');
-            $h->vars['the_cats'] = $this->getCategories($h);     // Get all the category info
-            $h->displayTemplate('cat_man_order', 'category_manager');
-            return true;
-        }
-    
-        if ($action == "order_id") { 
-            $this->order($h, "category_id");     // ORDER BY ID PERMANENTLY IN THE DATABASE
-            $h->showMessage($h->lang["cat_man_order_id"], 'green');
-            $h->vars['the_cats'] = $this->getCategories($h);     // Get all the category info
-            $h->displayTemplate('cat_man_order', 'category_manager');
-            return true;
-        }
-                    
-        if ($action == "edit") { 
-            $h->vars['the_cats'] = $this->getCategories($h);     // Get all the category info
-            $h->displayTemplate('cat_man_edit', 'category_manager');
-            return true;
-        } 
-        
-        if ($action == "edit_save") { 
-            if ($h->cage->post->keyExists('save_all')) {
-                $this->updateCategoryNames($h);
-                $h->showMessage($h->lang["cat_man_changes_saved"], 'green');
-            } else {
-                $h->showMessage($h->lang["cat_man_changes_cancelled"], 'green');
-            }
-            $h->vars['the_cats'] = $this->getCategories($h);     // Get all the category info
-            $h->displayTemplate('cat_man_edit', 'category_manager');
-            return true;
-        } 
-        
-        if ($action == "edit_meta") { 
-            $h->vars['the_cats'] = $this->getCategories($h);     // Get all the category info
-            $h->displayTemplate('cat_man_edit_meta', 'category_manager');
-            return true;
-        } 
-        
-        if ($action == "edit_meta_save") { 
-            if ($h->cage->get->keyExists('id')){ 
-                $category_meta_id = $h->cage->get->getInt('id');
-                if ($h->cage->post->keyExists('save_edit_meta')) {
-                    $description = $h->cage->post->sanitizeTags('description');
-                    $keywords = $h->cage->post->sanitizeTags('keywords');
-                    $this->saveMeta($h, $category_meta_id, $description, $keywords);
-                    $h->showMessage($h->lang["cat_man_changes_saved"], 'green');
-                }
-            } else {
-                $h->showMessage($h->lang["cat_man_form_error"], 'red');
-            }
-            $h->vars['the_cats'] = $this->getCategories($h);     // Get all the category info
-            $h->displayTemplate('cat_man_edit_meta', 'category_manager');
-            return true;
-        } 
-    
-        if ($action == "add") { 
-            $h->vars['the_cats'] = $this->getCategories($h);     // Get all the category info
-            $h->displayTemplate('cat_man_add', 'category_manager');
-            return true;
-        } 
-        
-        if ($action == "add_save") { 
-            if ($h->cage->post->keyExists('save_new_category1')) {
-                $parent = 1; // parent is "all" because this is a main category
-                $new_cat_name = $h->cage->post->sanitizeTags('new_category');
-                if ($new_cat_name != "") {
-                    $result = $this->addNewCategory($h, $parent, $new_cat_name);
-                    if ($result) {
-                        $h->showMessage($h->lang["cat_man_category_added"], 'green');
-                    } else {
-                        $h->showMessage($h->lang["cat_man_category_exists"], 'red');
-                    }
-                } else {
-                    $h->showMessage($h->lang["cat_man_category_not_added"], 'red');
-                }
-            } elseif ($h->cage->post->keyExists('save_new_category2')) {
-                $parent = $h->cage->post->getInt('parent');
-                $new_cat_name = $h->cage->post->sanitizeTags('new_category');
-                if ($new_cat_name != "") {
-                    $result = $this->addNewCategory($h, $parent, $new_cat_name);
-                    if ($result) {
-                        $h->showMessage($h->lang["cat_man_category_added"], 'green');
-                    } else {
-                        $h->showMessage($h->lang["cat_man_category_exists"], 'red');
-                    }
-                } else {
-                    $h->showMessage($h->lang["cat_man_category_not_added"], 'red');
-                }
-            } elseif ($h->cage->post->keyExists('save_new_category3')) {
-                $parent = $h->cage->post->getInt('parent');
-                $new_cat_name = $h->cage->post->sanitizeTags('new_category');
-                if ($new_cat_name != "") {
-                    $result = $this->addNewCategory($h, $parent, $new_cat_name);
-                    if ($result) {
-                        $h->showMessage($h->lang["cat_man_category_added"], 'green');
-                    } else {
-                        $h->showMessage($h->lang["cat_man_category_exists"], 'red');
-                    }
-                } else {
-                    $h->showMessage($h->lang["cat_man_category_not_added"], 'red');
-                }
-            } else {
-                $h->showMessage($h->lang["cat_man_form_error"], 'red');    
-            }
-            $h->vars['the_cats'] = $this->getCategories($h);     // Get all the category info
-            $h->displayTemplate('cat_man_add', 'category_manager');
-            return true;
-        }
-        
-        if ($action == "move") { 
-            $h->vars['the_cats'] = $this->getCategories($h);     // Get all the category info
-            $h->displayTemplate('cat_man_move', 'category_manager');
-            return true;
-        } 
-        
-        if ($action == "move_save") {
-            if ($h->cage->get->keyExists('id')) {
-                $cat_to_move = $h->cage->get->getInt('id');
-                //echo "Moving category " . $cat_to_move . "<br />";
-                if ($h->cage->post->keyExists('save_form1')) {
-                    $placement = $h->cage->post->testAlpha('placement');
-                    $target = $h->cage->post->testAlnum('parents');
-                    $success = $this->move($h, $cat_to_move, $placement, $target);
-                    if ($success) { 
-                        $h->showMessage($h->lang["cat_man_category_moved"], 'green');
-                    } else { 
-                        $h->showMessage($h->lang["cat_man_category_not_moved"], 'red');
-                    }
-    
-                } elseif ($h->cage->post->keyExists('save_form2')) {
-                    $target = $h->cage->post->testAlnum('moveup');
-                    $success = $this->move($h, $cat_to_move, 'none', $target);
-                    if ($success) { 
-                        $h->showMessage($h->lang["cat_man_category_moved"], 'green');
-                    } else { 
-                        $h->showMessage($h->lang["cat_man_category_not_moved"], 'red');
-                    }
-                } else {
-                    $h->showMessage($h->lang["cat_man_category_not_moved"], 'red');
-                }
-                
-            } else { 
-                $h->showMessage($h->lang["cat_man_category_not_moved"], 'red');
-            }
-            $h->vars['the_cats'] = $this->getCategories($h);     // Get all the category info
-            $h->displayTemplate('cat_man_move', 'category_manager');
-            return true;
-        }
-    
-        if ($action == "delete") { 
-            $h->vars['the_cats'] = $this->getCategories($h);     // Get all the category info
-            $h->displayTemplate('cat_man_delete', 'category_manager');
-            return true;
-        } 
-        
-        if ($action == "delete_save") { 
-            $h->vars['delete_list'] = array(); $del_count = 0;
-            if ($h->cage->post->keyExists('delete') && $h->cage->post->keyExists('delete_cats')) {
-                foreach ($h->cage->post->getInt('delete_cats') as $category_id=>$check) { 
-                    if ($check > 0) { 
-                        $h->vars['delete_list'][$del_count]['del_id'] = $category_id;
-                        $h->vars['delete_list'][$del_count]['del_name'] = $this->getNameForDeleteConfirm($h, $category_id);
-                    }
-                    $del_count++;
-                }
-                $h->vars['the_cats'] = $this->getCategories($h);     // Get all the category info
-                $h->displayTemplate('cat_man_delete_confirm', 'category_manager');
-                return true;
-            } else {
-                $h->showMessage($h->lang["cat_man_category_not_deleted"], 'red');
-                $h->vars['the_cats'] = $this->getCategories($h);     // Get all the category info
-                $h->displayTemplate('cat_man_delete', 'category_manager');
-                return true;
-            }
-            
-        }
-        
-        if ($action == "delete_confirm") {
-            if ($h->cage->post->keyExists('delete_confirm_yes') && $h->cage->post->keyExists('delete_list')) {
-                foreach ($h->cage->post->getInt('delete_list') as $cat_id) { 
-                        $this->deleteCategories($h, $cat_id); 
-                }
-                $this->rebuildTree($h, 1, 0);
-                $h->showMessage($h->lang["cat_man_category_deleted"], 'green');
-            } else {
-                $h->showMessage($h->lang["cat_man_category_not_deleted"], 'red');
-                $h->showMessage();
-            }
-    
-            $h->vars['the_cats'] = $this->getCategories($h);     // Get all the category info
-            $h->displayTemplate('cat_man_delete', 'category_manager');
-            return true;
-        }
-                
-        return false;
-        
+	$args = array('levels'=>'true');
+	$h->vars['the_cats'] = $h->getCategories($args);     // Get all the category info
+
+	switch ($action) {
+
+	    case "order":		
+		$h->displayTemplate('cat_man_order', 'category_manager');
+		return true;
+
+	    case 'order_alpha':
+		$this->order($h, "category_name");     // ORDER ALPHABETICALLY PERMANENTLY IN THE DATABASE
+		$h->showMessage($h->lang["cat_man_order_alpha"], 'green');		
+		$h->displayTemplate('cat_man_order', 'category_manager');
+		return true;
+
+	    case "order_length":
+		$this->order($h, "length(category_name)");     // ORDER BY LENGTH PERMANENTLY IN THE DATABASE
+		$h->showMessage($h->lang["cat_man_order_length"], 'green');		
+		$h->displayTemplate('cat_man_order', 'category_manager');
+		return true;
+
+	    case "order_posts":
+		$this->orderByPosts($h);     // ORDER BY POSTS PERMANENTLY IN THE DATABASE
+		$h->showMessage($h->lang["cat_man_order_posts"], 'green');		
+		$h->displayTemplate('cat_man_order', 'category_manager');
+		return true;
+
+	    case "order_id":
+		$this->order($h, "category_id");     // ORDER BY ID PERMANENTLY IN THE DATABASE
+		$h->showMessage($h->lang["cat_man_order_id"], 'green');		
+		$h->displayTemplate('cat_man_order', 'category_manager');
+		return true;
+
+	    case "edit":		
+		$h->displayTemplate('cat_man_edit', 'category_manager');
+		return true;
+
+	    case "edit_save":
+		if ($h->cage->post->keyExists('save_all')) {
+		    $this->updateCategoryNames($h);
+		    $h->showMessage($h->lang["cat_man_changes_saved"], 'green');
+		} else {
+		    $h->showMessage($h->lang["cat_man_changes_cancelled"], 'green');
+		}		
+		$h->displayTemplate('cat_man_edit', 'category_manager');
+		return true;
+
+	    case "edit_meta":
+		$args = array('levels'=>'true');
+		$h->displayTemplate('cat_man_edit_meta', 'category_manager');
+		return true;
+
+	    case "edit_meta_save":
+		if ($h->cage->get->keyExists('id')){
+		    $category_meta_id = $h->cage->get->getInt('id');
+		    if ($h->cage->post->keyExists('save_edit_meta')) {
+			$description = $h->cage->post->sanitizeTags('description');
+			$keywords = $h->cage->post->sanitizeTags('keywords');
+			$this->saveMeta($h, $category_meta_id, $description, $keywords);
+			$h->showMessage($h->lang["cat_man_changes_saved"], 'green');
+		    }
+		} else {
+		    $h->showMessage($h->lang["cat_man_form_error"], 'red');
+		}		
+		$h->displayTemplate('cat_man_edit_meta', 'category_manager');
+		return true;
+
+	    case "add":		
+		$h->displayTemplate('cat_man_add', 'category_manager');
+		return true;
+
+	    case "add_save":
+		$new_cat_name = $h->cage->post->sanitizeTags('new_category');
+		if ($h->cage->post->keyExists('save_new_category')) {
+		    if ($new_cat_name != "") {
+			$type = $h->cage->post->getInt('type');
+			switch ($type) {
+			    default:
+				$parent = 1; // parent is "all" because this is a main category
+			    case 2:
+			    case 3:
+				$parent = $h->cage->post->getInt('parent');
+			}
+			$result = $h->addCategory($h, $parent, $new_cat_name);
+			if ($result)
+			    $h->showMessage($h->lang["cat_man_category_added"], 'green');
+			else
+			    $h->showMessage($h->lang["cat_man_category_exists"], 'red');
+		    } else {
+			$h->showMessage($h->lang["cat_man_category_not_added"], 'red');
+		    }
+		} else {
+		    $h->showMessage($h->lang["cat_man_form_error"], 'red');
+		}
+		
+		$h->displayTemplate('cat_man_add', 'category_manager');
+		return true;
+
+	    case "move":		
+		$h->displayTemplate('cat_man_move', 'category_manager');
+		return true;
+
+	    case "move_save":
+		if ($h->cage->get->keyExists('id')) {
+		    $cat_to_move = $h->cage->get->getInt('id');
+		    //echo "Moving category " . $cat_to_move . "<br />";
+		    if ($h->cage->post->keyExists('save_form1')) {
+			$placement = $h->cage->post->testAlpha('placement');
+			$target = $h->cage->post->testAlnum('parents');
+			$success = $this->move($h, $cat_to_move, $placement, $target);
+			if ($success) {
+			    $h->showMessage($h->lang["cat_man_category_moved"], 'green');
+			} else {
+			    $h->showMessage($h->lang["cat_man_category_not_moved"], 'red');
+			}
+
+		    } elseif ($h->cage->post->keyExists('save_form2')) {
+			$target = $h->cage->post->testAlnum('moveup');
+			$success = $this->move($h, $cat_to_move, 'none', $target);
+			if ($success) {
+			    $h->showMessage($h->lang["cat_man_category_moved"], 'green');
+			} else {
+			    $h->showMessage($h->lang["cat_man_category_not_moved"], 'red');
+			}
+		    } else {
+			$h->showMessage($h->lang["cat_man_category_not_moved"], 'red');
+		    }
+
+		} else {
+		    $h->showMessage($h->lang["cat_man_category_not_moved"], 'red');
+		}		
+		$h->displayTemplate('cat_man_move', 'category_manager');
+		return true;
+
+	    case "delete":		
+		$h->displayTemplate('cat_man_delete', 'category_manager');
+		return true;
+
+	    case "delete_save":
+		$h->vars['delete_list'] = array(); $del_count = 0;
+		if ($h->cage->post->keyExists('delete') && $h->cage->post->keyExists('delete_cats')) {
+		    foreach ($h->cage->post->getInt('delete_cats') as $category_id=>$check) {
+			if ($check > 0) {
+			    $h->vars['delete_list'][$del_count]['del_id'] = $category_id;
+			    $h->vars['delete_list'][$del_count]['del_name'] = $this->getNameForDeleteConfirm($h, $category_id);
+			}
+			$del_count++;
+		    }		    
+		    $h->displayTemplate('cat_man_delete_confirm', 'category_manager');
+		    return true;
+		} else {
+		    $h->showMessage($h->lang["cat_man_category_not_deleted"], 'red');		   
+		    $h->displayTemplate('cat_man_delete', 'category_manager');
+		    return true;
+		}
+
+	    case "delete_confirm":
+		if ($h->cage->post->keyExists('delete_confirm_yes') && $h->cage->post->keyExists('delete_list')) {
+		    foreach ($h->cage->post->getInt('delete_list') as $cat_id) {
+			    $this->deleteCategories($h, $cat_id);
+		    }
+		    $this->rebuildTree($h, 1, 0);
+		    $h->showMessage($h->lang["cat_man_category_deleted"], 'green');
+		} else {
+		    $h->showMessage($h->lang["cat_man_category_not_deleted"], 'red');
+		    $h->showMessage();
+		}
+		
+		$h->displayTemplate('cat_man_delete', 'category_manager');
+		return true;
+
+	    default:		
+		$h->displayTemplate('cat_man_main', 'category_manager');
+		return true;
+	}
     }
     
     
-    /**
-     * Get categories
-     *
-     * @return array
-     */
-    function getCategories($h)
-    {
-        // This function gets all categories from the database.
-        $all_cats = array();
-        $sql = "SELECT category_name, category_safe_name, category_id, category_parent, category_desc, category_keywords FROM " . TABLE_CATEGORIES . " ORDER BY category_order ASC";
-        $categories = $h->db->get_results($h->db->prepare($sql));
-        $count = 0;
-        foreach ($categories as $category) {
-            $all_cats[$count]['category_name'] = stripslashes(urldecode($category->category_name));
-            $all_cats[$count]['category_safe_name'] = stripslashes(urldecode($category->category_safe_name));
-            $all_cats[$count]['category_id'] = $category->category_id;
-            $all_cats[$count]['category_parent'] = $category->category_parent;
-            $all_cats[$count]['category_description'] = stripslashes(urldecode($category->category_desc));
-            $all_cats[$count]['category_keywords'] = stripslashes(urldecode($category->category_keywords));
-            $level = 1; 
-            if ($category->category_parent == 1) { 
-                $all_cats[$count]['category_level'] = $level;
-            } else {
-                $level = $this->getCategoryLevels($h, $category->category_parent, $level);
-                $all_cats[$count]['category_level'] = $level;
-            }
-            if ($this->isEmpty($h, $category->category_id)) {
-                $all_cats[$count]['category_empty'] = true;
-            } else {
-                $all_cats[$count]['category_empty'] = false;
-            }
-            
-            $count++;
-        }
-        
-        return $all_cats;
-    }    
-    
-    
-    /**
-     * Get category levels
-     * 
-     * @param int $parent
-     * @param int $level
-     * @return int
-     */
-    function getCategoryLevels($h, $parent, $level)
-    {
-        $level++; 
-        $sql = "SELECT category_parent FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
-        $parent = $h->db->get_var($h->db->prepare($sql, $parent));
-        if ($parent != 1) {
-            $level = $this->getCategoryLevels($h, $parent, $level); // recursive function to find level depth
-        }
-        return $level;
-    }
-    
+   
     
     /**
      * Order categories
@@ -466,63 +358,7 @@ class CategoryManagerSettings
         }
     }
     
-    
-    /**
-     * Add a new category
-     *
-     * @param int $parent
-     * @param str $new_cat_name
-     * @return bool
-     */
-    function addNewCategory($h, $parent, $new_cat_name)
-    {
-        $sql = "SELECT category_order FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
-        $category_order = $h->db->get_var($h->db->prepare($sql, $parent));
-        
-        $position = $category_order + 1; // our new category will go right after the parent category
-        
-        // return false if duplicate name
-        $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_name = %s";
-        $exists = $h->db->get_var($h->db->prepare($sql, urlencode($new_cat_name)));
-        if ($exists) { return false; }
-        
-        // increment category_order for all categories after the parent:
-        $sql = "SELECT category_id, category_name, category_order FROM " . TABLE_CATEGORIES . " WHERE category_order > %d ORDER BY category_order ASC";
-        $categories = $h->db->get_results($h->db->prepare($sql, $category_order));    
-        if ($categories) {
-            foreach ( $categories as $category ) {
-                $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = category_order+1, category_updateby = %d WHERE category_id = %d";
-                $h->db->query($h->db->prepare($sql, $h->currentUser->id, $category->category_id));
-            }
-        }
-        
-        //insert new category after parent category:
-        $sql = "INSERT INTO " . TABLE_CATEGORIES . " (category_parent, category_name, category_safe_name, category_order, category_updateby) VALUES (%d, %s, %s, %d, %d)";
-        $h->db->query($h->db->prepare($sql, $parent, urlencode($new_cat_name), urlencode(make_url_friendly($new_cat_name)), $position, $h->currentUser->id));
-            
-        $this->rebuildTree($h, 1, 0);
-        
-        return true;
-    }
-    
-    
-    /**
-     * Check if category is empty
-     *
-     * @param int $cat_id
-     * @return bool
-     */
-    function isEmpty($h, $cat_id)
-    {
-        $sql = "SELECT count(*) FROM " . TABLE_POSTS . " WHERE post_category = %d ";
-        $posts = $h->db->get_var($h->db->prepare($sql, $cat_id));
-        if ($posts == 0) {
-            return true;    //empty
-        } else {
-            return false;    //not empty
-        }
-    }
-    
+   
     
     /**
      * Move category
@@ -587,13 +423,13 @@ class CategoryManagerSettings
             $target_parent = $cat_to_move;
             $this->moveChildren($h, $cat_to_move, $target_order, $target_parent); // update own children and their children etc.
             //echo "children moved to " . $target_parent . "<br />";
-            $this->rebuildTree($h, 1, 0);
+            $h->rebuildTree($h, 1, 0);
             $success = true;
         } else {
             $success = false;
         }
         $this->cleanOrder($h);
-        $this->rebuildTree($h, 1, 0);
+        $h->rebuildTree($h, 1, 0);
         return $success;
     }
     
@@ -692,29 +528,7 @@ class CategoryManagerSettings
     }
     
     
-    /**
-     * Delete categories
-     *
-     * @param int $delete_category
-     */
-    function deleteCategories($h, $delete_category)
-    {
-        // First, we need to get the parent of this category
-        $sql = "SELECT category_parent FROM  " . TABLE_CATEGORIES . " WHERE category_id = %d";
-        $grandparent = $h->db->get_var($h->db->prepare($sql, $delete_category));
-        // Second, we need to find children of this category and assign them to their "grandparent" instead
-        $sql = "SELECT category_id, category_parent FROM  " . TABLE_CATEGORIES . " WHERE category_parent = %d";
-        $children = $h->db->get_results($h->db->prepare($sql, $delete_category));
-        if ($children) {
-            foreach ($children as $child) {
-                $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_parent = %d, category_updateby = %d WHERE category_id = %d";
-                 $h->db->query($h->db->prepare($sql, $grandparent, $h->currentUser->id, $child->category_id));
-            }
-        }    
-        // Third, delete the category
-        $sql = "DELETE FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
-        $h->db->query($h->db->prepare($sql, $delete_category));
-    }
+    
     
     
     /**
@@ -748,34 +562,7 @@ class CategoryManagerSettings
         }
     }
     
-    /**
-     * Rebuild category tree
-     *
-     * @param int $parent_id
-     * @param int $left
-     * @return int
-     * @link http://www.sitepoint.com/article/hierarchical-data-database/3/
-     */
-    function rebuildTree($h, $parent_id, $left)
-    {
-        $right = $left+1;
-        // get all children of this node
-        $sql = "SELECT category_id FROM " . TABLE_CATEGORIES . " WHERE category_id != %d AND category_parent = %d ORDER BY category_order ASC";
-        $categories = $h->db->get_results($h->db->prepare($sql, $parent_id, $parent_id));
-        if ($categories) {
-            foreach ($categories as $this_category) {
-                 $right = $this->rebuildTree($h, $this_category->category_id, $right);
-            }
-        }
-        
-        // we've got the left value, and now that we've processed
-        // the children of this node we also know the right value
-        $sql = "UPDATE " . TABLE_CATEGORIES . " SET lft = %d, rgt = %d, category_updateby = %d WHERE category_id = %d";
-        $h->db->query($h->db->prepare($sql, $left, $right, $h->currentUser->id, $parent_id));
-        
-        // return the right value of this node + 1
-        return $right+1;
-    }
+    
     
     
      /**
@@ -787,14 +574,14 @@ class CategoryManagerSettings
     {
         echo "<div class='tree'>";
         foreach ($the_cats as $cat) {
-            if ($cat['category_safe_name'] != "all") {
-                if ($cat['category_parent'] > 1) {
-                    for($i=1; $i<$cat['category_level']; $i++) {
+            if ($cat->category_safe_name != "all") {
+                if ($cat->category_parent > 1) {
+                    for($i=1; $i<$cat->category_level; $i++) {
                         echo "--- ";
                     }
-                     echo $cat['category_name'] . " <span style='font-size: 0.7em; color: #888;'>[" . $cat['category_id'] . "]</span><br />";
+                     echo $cat->category_name . " <span style='font-size: 0.7em; color: #888;'>[" . $cat->category_id . "]</span><br />";
                 } else {
-                     echo $cat['category_name'] . " <span style='font-size: 0.7em; color: #888;'>[" . $cat['category_id'] . "]</span><br />";
+                     echo $cat->category_name . " <span style='font-size: 0.7em; color: #888;'>[" . $cat->category_id . "]</span><br />";
                 }
             }
         }
