@@ -153,4 +153,24 @@ function parse_object_to_array($object)
 	}
 	return $array;
 }
+
+/**
+ *
+ * @param <type> $array
+ * @return <type>
+ * http://www.lost-in-code.com/programming/php-code/php-array-to-object/
+ */
+    function parse_array_to_object($array = array()) {
+    if (!empty($array)) {
+        $data = false;
+
+        foreach ($array as $akey => $aval) {
+            $data -> {$akey} = $aval;
+        }
+
+        return $data;
+    }
+
+    return false;
+}
 ?>
