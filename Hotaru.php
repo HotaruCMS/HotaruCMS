@@ -1914,7 +1914,7 @@ class Hotaru
 	 * @param string $cat_name
 	 * @return int
 	 */
-	public function getCatId($cat_safe_name)
+	public function getCatId($cat_safe_name = '')
 	{
 		require_once(LIBS . 'Category.php');
 		$category = new Category();
@@ -1957,7 +1957,7 @@ class Hotaru
 	 * @param int $cat_id
 	 * @return int
 	 */
-	public function getCatParent($cat_id)
+	public function getCatParent($cat_id = 0)
 	{
 		require_once(LIBS . 'Category.php');
 		$category = new Category();
@@ -1971,7 +1971,7 @@ class Hotaru
 	 * @param int $cat_parent_id
 	 * @return int
 	 */
-	public function getCatChildren($cat_parent_id)
+	public function getCatChildren($cat_parent_id = 0)
 	{
 		require_once(LIBS . 'Category.php');
 		$category = new Category();
@@ -1998,7 +1998,7 @@ class Hotaru
 	 * @param int $cat_id
 	 * @return array|false
 	 */
-	public function getCatMeta($cat_id)
+	public function getCatMeta($cat_id = 0)
 	{
 		require_once(LIBS . 'Category.php');
 		$category = new Category();
@@ -2007,44 +2007,49 @@ class Hotaru
 
 
 	/**
+	 * Add a new category
 	 *
-	 * @param <type> $h
-	 * @param <type> $parent
-	 * @param <type> $new_cat_name
-	 * @return <type>
+	 * @param int $parent
+	 * @param string $new_cat_name
+	 * @return bool
 	 */
-	public function addNewCategory($h, $parent, $new_cat_name) {
+	public function addNewCategory($parent = 0, $new_cat_name = '')
+	{
 		require_once(LIBS . 'Category.php');
 		$category = new Category();
-		return $category->addNewCategory($h, $parent, $new_cat_name);
-	}
-
-	/**
-	 *
-	 * @param <type> $h
-	 * @param <type> $parent_id
-	 * @param <type> $left
-	 * @return <type>
-	 */
-	public function rebuildTree($h, $parent_id, $left) {
-		require_once(LIBS . 'Category.php');
-		$category = new Category();
-		return $category->rebuildTree($h, $parent_id, $left);
+		return $category->addNewCategory($this, $parent, $new_cat_name);
 	}
 
 
 	/**
+	 * rebuild the category tree
 	 *
-	 * @param <type> $h
-	 * @param <type> $delete_category
-	 * @return <type>
+	 * @param int $parent_id
+	 * @param int $left
+	 * @return int
 	 */
-	function deleteCategories($h, $delete_category) {
-	    	require_once(LIBS . 'Category.php');
+	public function rebuildTree($parent_id = 0, $left = 0)
+	{
+		require_once(LIBS . 'Category.php');
 		$category = new Category();
-		return $category->deleteCategories($h, $delete_category);
+		return $category->rebuildTree($this, $parent_id, $left);
 	}
-    
+
+
+	/**
+	 * Delete a category
+	 *
+	 * @param int $delete_category
+	 * @return bool
+	 */
+	function deleteCategory($delete_category = 0)
+	{
+		require_once(LIBS . 'Category.php');
+		$category = new Category();
+		return $category->deleteCategories($this, $delete_category);
+	}
+
+
 /* *************************************************************
  *
  *  COMMENT FUNCTIONS

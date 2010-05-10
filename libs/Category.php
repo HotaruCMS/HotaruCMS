@@ -151,6 +151,7 @@ class Category
 		if ($cat_meta) { return $cat_meta; } else { return false; }
 	}
 	
+	
 	 /**
 	 * Returns all categories
 	 *
@@ -168,15 +169,17 @@ class Category
 			$where_d = '';
 		}
 		
-		if (isset($args["orderby"])) {            
-			$orderBy = " ORDER BY " . $args["orderby"] . " ";            
+		if (isset($args["orderby"])) {
+			$orderBy = " ORDER BY " . $args["orderby"] . " ";
 			if (isset($args['order'])) {
 				if ($args["order"] == 'ASC' | $args["order"] == 'DESC') {
 					$orderBy .= $args["order"];
 					} else {$orderby .= 'ASC'; }}
 		}
 		else
-		{ $orderBy = ''; }
+		{ 
+			$orderBy = ''; 
+		}
 		
 		$sql = "SELECT * FROM " . TABLE_CATEGORIES . $where . $orderBy ;
 		
@@ -185,41 +188,43 @@ class Category
 		// if asked to retrieve Levels and Empty status as well
 		if (isset($args['levels'])) {		
 
-		    $count = 0;
-		    foreach ($categories as $category) {
+			$count = 0;
+			foreach ($categories as $category) {
 			if ($category->category_parent == 1) {
-			    $category->category_level = 1;
+				$category->category_level = 1;
 			} else {
-			    $level = $this->getCatLevel($h, $category->category_id, 1, $categories);
-			    $category->category_level = $level;
+				$level = $this->getCatLevel($h, $category->category_id, 1, $categories);
+				$category->category_level = $level;
 			}
 			if ($this->isEmpty($h, $category->category_id)) {
-			    $category->category_empty = true;
+				$category->category_empty = true;
 			} else {
-			    $category->category_empty = false;
+				$category->category_empty = false;
 			}
-		    }
+			}
 		}
 
 		if ($categories) { return $categories; } else { return false; }
 	}
 
-	    /**
-	     * Check if category is empty
-	     *
-	     * @param int $cat_id
-	     * @return bool
-	     */
-	    function isEmpty($h, $cat_id)
-	    {
+
+	/**
+	 * Check if category is empty
+	 *
+	 * @param int $cat_id
+	 * @return bool
+	 */
+	function isEmpty($h, $cat_id = 0)
+	{
 		$sql = "SELECT count(*) FROM " . TABLE_POSTS . " WHERE post_category = %d ";
 		$posts = $h->db->get_var($h->db->prepare($sql, $cat_id));
 		if ($posts == 0) {
-		    return true;    //empty
+			return true;	//empty
 		} else {
-		    return false;    //not empty
+			return false;	//not empty
 		}
-	    }
+	}
+
 
 	/**
 	 * Add a new category
@@ -228,35 +233,35 @@ class Category
 	 * @param str $new_cat_name
 	 * @return bool
 	 */
-	function addNewCategory($h, $parent, $new_cat_name)
+	function addNewCategory($h, $parent = 0, $new_cat_name = '')
 	{
-	    $sql = "SELECT category_order FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
-	    $category_order = $h->db->get_var($h->db->prepare($sql, $parent));
+		$sql = "SELECT category_order FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
+		$category_order = $h->db->get_var($h->db->prepare($sql, $parent));
 
-	    $position = $category_order + 1; // our new category will go right after the parent category
+		$position = $category_order + 1; // our new category will go right after the parent category
 
-	    // return false if duplicate name
-	    $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_name = %s";
-	    $exists = $h->db->get_var($h->db->prepare($sql, urlencode($new_cat_name)));
-	    if ($exists) { return false; }
+		// return false if duplicate name
+		$sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_name = %s";
+		$exists = $h->db->get_var($h->db->prepare($sql, urlencode($new_cat_name)));
+		if ($exists) { return false; }
 
-	    // increment category_order for all categories after the parent:
-	    $sql = "SELECT category_id, category_name, category_order FROM " . TABLE_CATEGORIES . " WHERE category_order > %d ORDER BY category_order ASC";
-	    $categories = $h->db->get_results($h->db->prepare($sql, $category_order));
-	    if ($categories) {
-		foreach ( $categories as $category ) {
-		    $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = category_order+1, category_updateby = %d WHERE category_id = %d";
-		    $h->db->query($h->db->prepare($sql, $h->currentUser->id, $category->category_id));
+		// increment category_order for all categories after the parent:
+		$sql = "SELECT category_id, category_name, category_order FROM " . TABLE_CATEGORIES . " WHERE category_order > %d ORDER BY category_order ASC";
+		$categories = $h->db->get_results($h->db->prepare($sql, $category_order));
+		if ($categories) {
+			foreach ( $categories as $category ) {
+				$sql = "UPDATE " . TABLE_CATEGORIES . " SET category_order = category_order+1, category_updateby = %d WHERE category_id = %d";
+				$h->db->query($h->db->prepare($sql, $h->currentUser->id, $category->category_id));
+			}
 		}
-	    }
-
-	    //insert new category after parent category:
-	    $sql = "INSERT INTO " . TABLE_CATEGORIES . " (category_parent, category_name, category_safe_name, category_order, category_updateby) VALUES (%d, %s, %s, %d, %d)";
-	    $h->db->query($h->db->prepare($sql, $parent, urlencode($new_cat_name), urlencode(make_url_friendly($new_cat_name)), $position, $h->currentUser->id));
-
-	    $this->rebuildTree($h, 1, 0);
-
-	    return true;
+		
+		//insert new category after parent category:
+		$sql = "INSERT INTO " . TABLE_CATEGORIES . " (category_parent, category_name, category_safe_name, category_order, category_updateby) VALUES (%d, %s, %s, %d, %d)";
+		$h->db->query($h->db->prepare($sql, $parent, urlencode($new_cat_name), urlencode(make_url_friendly($new_cat_name)), $position, $h->currentUser->id));
+		
+		$this->rebuildTree($h, 1, 0);
+		
+		return true;
 	}
 
 
@@ -268,44 +273,54 @@ class Category
 	 * @return int
 	 * @link http://www.sitepoint.com/article/hierarchical-data-database/3/
 	 */
-	function rebuildTree($h, $parent_id, $left)
+	function rebuildTree($h, $parent_id = 0, $left = 0)
 	{
-	    $right = $left+1;
-	    // get all children of this node
-	    $sql = "SELECT category_id FROM " . TABLE_CATEGORIES . " WHERE category_id != %d AND category_parent = %d ORDER BY category_order ASC";
-	    $categories = $h->db->get_results($h->db->prepare($sql, $parent_id, $parent_id));
-	    if ($categories) {
-		foreach ($categories as $this_category) {
-		     $right = $this->rebuildTree($h, $this_category->category_id, $right);
+		$right = $left+1;
+		// get all children of this node
+		$sql = "SELECT category_id FROM " . TABLE_CATEGORIES . " WHERE category_id != %d AND category_parent = %d ORDER BY category_order ASC";
+		$categories = $h->db->get_results($h->db->prepare($sql, $parent_id, $parent_id));
+		if ($categories) {
+			foreach ($categories as $this_category) {
+				$right = $this->rebuildTree($h, $this_category->category_id, $right);
+			}
 		}
-	    }
 
-	    // we've got the left value, and now that we've processed
-	    // the children of this node we also know the right value
-	    $sql = "UPDATE " . TABLE_CATEGORIES . " SET lft = %d, rgt = %d, category_updateby = %d WHERE category_id = %d";
-	    $h->db->query($h->db->prepare($sql, $left, $right, $h->currentUser->id, $parent_id));
-
-	    // return the right value of this node + 1
-	    return $right+1;
+		// we've got the left value, and now that we've processed
+		// the children of this node we also know the right value
+		$sql = "UPDATE " . TABLE_CATEGORIES . " SET lft = %d, rgt = %d, category_updateby = %d WHERE category_id = %d";
+		$h->db->query($h->db->prepare($sql, $left, $right, $h->currentUser->id, $parent_id));
+		
+		// return the right value of this node + 1
+		return $right+1;
 	}
 
-	function deleteCategories($h, $delete_category)
+
+	 /**
+	 * Delete a category
+	 *
+	 * @param int $delete_category
+	 * @return bool
+	 */
+	function deleteCategory($h, $delete_category = 0)
 	{
-	    // First, we need to get the parent of this category
-	    $sql = "SELECT category_parent FROM  " . TABLE_CATEGORIES . " WHERE category_id = %d";
-	    $grandparent = $h->db->get_var($h->db->prepare($sql, $delete_category));
-	    // Second, we need to find children of this category and assign them to their "grandparent" instead
-	    $sql = "SELECT category_id, category_parent FROM  " . TABLE_CATEGORIES . " WHERE category_parent = %d";
-	    $children = $h->db->get_results($h->db->prepare($sql, $delete_category));
-	    if ($children) {
-		foreach ($children as $child) {
-		    $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_parent = %d, category_updateby = %d WHERE category_id = %d";
-		     $h->db->query($h->db->prepare($sql, $grandparent, $h->currentUser->id, $child->category_id));
+		// First, we need to get the parent of this category
+		$sql = "SELECT category_parent FROM  " . TABLE_CATEGORIES . " WHERE category_id = %d";
+		$grandparent = $h->db->get_var($h->db->prepare($sql, $delete_category));
+		
+		// Second, we need to find children of this category and assign them to their "grandparent" instead
+		$sql = "SELECT category_id, category_parent FROM  " . TABLE_CATEGORIES . " WHERE category_parent = %d";
+		$children = $h->db->get_results($h->db->prepare($sql, $delete_category));
+		if ($children) {
+			foreach ($children as $child) {
+				$sql = "UPDATE " . TABLE_CATEGORIES . " SET category_parent = %d, category_updateby = %d WHERE category_id = %d";
+				$h->db->query($h->db->prepare($sql, $grandparent, $h->currentUser->id, $child->category_id));
+			}
 		}
-	    }
-	    // Third, delete the category
-	    $sql = "DELETE FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
-	    $h->db->query($h->db->prepare($sql, $delete_category));
+		
+		// Third, delete the category
+		$sql = "DELETE FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
+		$h->db->query($h->db->prepare($sql, $delete_category));
+		return true;
 	}
 
 }
