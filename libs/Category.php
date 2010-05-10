@@ -214,7 +214,7 @@ class Category
 	 * @param int $cat_id
 	 * @return bool
 	 */
-	public function isEmpty($h, $cat_id = 0)
+	public function isCatEmpty($h, $cat_id = 0)
 	{
 		$sql = "SELECT count(*) FROM " . TABLE_POSTS . " WHERE post_category = %d ";
 		$posts = $h->db->get_var($h->db->prepare($sql, $cat_id));
@@ -233,7 +233,7 @@ class Category
 	 * @param str $new_cat_name
 	 * @return bool
 	 */
-	public function addNewCategory($h, $parent = 0, $new_cat_name = '')
+	public function addCategory($h, $parent = 0, $new_cat_name = '')
 	{
 		$sql = "SELECT category_order FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
 		$category_order = $h->db->get_var($h->db->prepare($sql, $parent));
@@ -273,7 +273,7 @@ class Category
 	 * @return int
 	 * @link http://www.sitepoint.com/article/hierarchical-data-database/3/
 	 */
-	function rebuildTree($h, $parent_id = 0, $left = 0)
+	public function rebuildTree($h, $parent_id = 0, $left = 0)
 	{
 		$right = $left+1;
 		// get all children of this node
@@ -300,7 +300,7 @@ class Category
 	 * @param int $delete_category
 	 * @return bool
 	 */
-	function deleteCategory($h, $delete_category = 0)
+	public function deleteCategory($h, $delete_category = 0)
 	{
 		// First, we need to get the parent of this category
 		$sql = "SELECT category_parent FROM  " . TABLE_CATEGORIES . " WHERE category_id = %d";
