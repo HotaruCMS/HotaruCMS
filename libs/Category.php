@@ -196,7 +196,7 @@ class Category
 				$level = $this->getCatLevel($h, $category->category_id, 1, $categories);
 				$category->category_level = $level;
 			}
-			if ($this->isEmpty($h, $category->category_id)) {
+			if ($this->isCatEmpty($h, $category->category_id)) {
 				$category->category_empty = true;
 			} else {
 				$category->category_empty = false;
