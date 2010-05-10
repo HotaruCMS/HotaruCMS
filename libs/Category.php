@@ -183,9 +183,7 @@ class Category
 		$categories = $h->db->get_results($h->db->prepare($sql, $where_d));
 
 		// if asked to retrieve Levels and Empty status as well
-		if (isset($args['levels'])) {
-
-		    print "here";
+		if (isset($args['levels'])) {		
 
 		    $count = 0;
 		    foreach ($categories as $category) {
