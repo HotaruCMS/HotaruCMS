@@ -132,7 +132,7 @@ class SubmitFunctions
                     
                 // is a url submitted via the form?
                 } elseif ($h->cage->post->getAlpha('submit1') == 'true') { 
-                    $url = $h->cage->post->testUri('submit_orig_url');
+                    $url = $h->cage->post->getHtmLawed('submit_orig_url');
                     if (!$url) { break; }
                     $h->vars['submitted_data']['submit_orig_url'] = $url;
                     $h->vars['submitted_data']['submit_editorial'] = false;
@@ -142,7 +142,7 @@ class SubmitFunctions
                     
                 // is a url submitted via the url? (i.e. EVB or Bookmarklet)
                 } elseif ($h->cage->get->keyExists('url')) { 
-                    $url = $h->cage->get->testUri('url');
+                    $url = $h->cage->get->getHtmLawed('url');
                     if (!$url) { break; }
                     $h->vars['submitted_data']['submit_orig_url'] = $url;
                     $h->vars['submitted_data']['submit_editorial'] = false;
@@ -229,7 +229,7 @@ class SubmitFunctions
                     $h->vars['submitted_data']['submit_tags'] = $tags;
                     
                     // get url if present:
-                    if( $url = $h->cage->post->testUri('post_orig_url')) {
+                    if( $url = $h->cage->post->getHtmLawed('post_orig_url')) {
                         $h->vars['submitted_data']['submit_orig_url'] = $url;
                     } else {
                         $h->vars['submitted_data']['submit_orig_url'] = $h->post->origUrl;
