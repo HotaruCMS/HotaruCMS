@@ -36,14 +36,14 @@
         <form name='category_manager_edit_form' action='<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit_save' method='post'>
         <?php
         foreach ($h->vars['the_cats'] as $cat) {
-            if ($cat['category_safe_name'] != "all") {
-                if ($cat['category_parent']  > 1) {
-                    for($i=1; $i<$cat['category_level']; $i++) {
+            if ($cat->category_safe_name != "all") {
+                if ($cat->category_parent  > 1) {
+                    for($i=1; $i<$cat->category_level; $i++) {
                         echo "--- ";
                     }
-                    echo "<input name='" . $cat['category_id'] . "' type='text' value='" . $cat['category_name'] . "'> <span style='font-size: 0.8em; color: #888;'>(" . $cat['category_name'] . ")</span><br />";
+                    echo "<input name='" . $cat->category_id . "' type='text' value='" . $cat->category_name . "'> <span style='font-size: 0.8em; color: #888;'>(" . $cat->category_name . ")</span><br />";
                 } else {
-                    echo "<input name='" . $cat['category_id'] . "' type='text' value='" . $cat['category_name'] . "'> <span style='font-size: 0.8em; color: #888;'>(" . $cat['category_name'] . ")</span><br />";
+                    echo "<input name='" . $cat->category_id . "' type='text' value='" . $cat->category_name . "'> <span style='font-size: 0.8em; color: #888;'>(" . $cat->category_name . ")</span><br />";
                 }
             }
         }

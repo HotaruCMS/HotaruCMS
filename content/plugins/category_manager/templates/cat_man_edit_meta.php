@@ -35,22 +35,22 @@
     
         <?php
         foreach ($h->vars['the_cats'] as $cat) {
-            if ($cat['category_safe_name'] != "all") {
-                if ($cat['category_parent'] > 1) {
-                    for($i=1; $i<$cat['category_level']; $i++) {
+            if ($cat->category_safe_name != "all") {
+                if ($cat->category_parent > 1) {
+                    for($i=1; $i<$cat->category_level; $i++) {
                         echo "--- ";
                     }
-                    echo "<a href='#' class='cat_man_drop_down' title='" . $h->lang["cat_man_edit_meta_anchor_title"] . "'>" . $cat['category_name'] . "</a><br />";
+                    echo "<a href='#' class='cat_man_drop_down' title='" . $h->lang["cat_man_edit_meta_anchor_title"] . "'>" . $cat->category_name . "</a><br />";
                 } else {
-                    echo "<a href='#' class='cat_man_drop_down' title='" . $h->lang["cat_man_edit_meta_anchor_title"] . "'>" . $cat['category_name'] . "</a><br />";
+                    echo "<a href='#' class='cat_man_drop_down' title='" . $h->lang["cat_man_edit_meta_anchor_title"] . "'>" . $cat->category_name . "</a><br />";
                 }
                 ?>
                 
-                <div id='<?php echo $cat['category_id']; ?>' style='display: none;'>
-                    <form class='cat_man_edit_meta_form' style='margin-bottom: 0px;' name='category_manager_edit_meta_form' action='<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit_meta_save&amp;id=<?php echo $cat['category_id']; ?>' method='post'>
-                    <?php echo $h->lang["cat_man_edit_meta_description"]; ?> <input size='40' name='description' type='text' value='<?php echo $cat['category_description']; ?>'>
+                <div id='<?php echo $cat->category_id; ?>' style='display: none;'>
+                    <form class='cat_man_edit_meta_form' style='margin-bottom: 0px;' name='category_manager_edit_meta_form' action='<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit_meta_save&amp;id=<?php echo $cat->category_id; ?>' method='post'>
+                    <?php echo $h->lang["cat_man_edit_meta_description"]; ?> <input size='40' name='description' type='text' value='<?php echo $cat->category_desc; ?>'>
                     <br />
-                    <?php echo $h->lang["cat_man_edit_meta_keywords"]; ?> &nbsp;&nbsp;<input size='40' name='keywords' type='text' value='<?php echo $cat['category_keywords']; ?>'>
+                    <?php echo $h->lang["cat_man_edit_meta_keywords"]; ?> &nbsp;&nbsp;<input size='40' name='keywords' type='text' value='<?php echo $cat->category_keywords; ?>'>
                     &nbsp;&nbsp;<input type='submit' name='save_edit_meta' value='<?php echo $h->lang["cat_man_save"]; ?>'>
                     <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
                     </form>

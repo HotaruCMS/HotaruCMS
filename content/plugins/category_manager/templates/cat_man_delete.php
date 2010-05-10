@@ -39,24 +39,24 @@
         <form name='category_manager_delete_form' action='<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=delete_save' method='post'>
         <?php 
         foreach ($h->vars['the_cats'] as $cat) {
-            if ($cat['category_safe_name'] != "all") {
+            if ($cat->category_safe_name != "all") {
             
-                if ($cat['category_empty']) {    // safe to delete
-                    echo "<input type='checkbox' name='delete_cats[" . $cat['category_id'] . "]' value='" . $cat['category_id']. "'>&nbsp;&nbsp;";
+                if ($cat->category_empty) {    // safe to delete
+                    echo "<input type='checkbox' name='delete_cats[" . $cat->category_id . "]' value='" . $cat->category_id. "'>&nbsp;&nbsp;";
                 } else {
-                    echo "<input type='checkbox' name='delete_cats[" . $cat['category_id'] . "]' value='" . $cat['category_id']. "' DISABLED>&nbsp;&nbsp;";
+                    echo "<input type='checkbox' name='delete_cats[" . $cat->category_id . "]' value='" . $cat->category_id. "' DISABLED>&nbsp;&nbsp;";
                 }
                 
-                if ($cat['category_parent'] > 1) {
-                    for($i=1; $i<$cat['category_level']; $i++) {
+                if ($cat->category_parent > 1) {
+                    for($i=1; $i<$cat->category_level; $i++) {
                         echo "--- ";
                     }
                 }
                 
-                if ($cat['category_empty']) {
-                    echo $cat['category_name'] . " <span style='font-size: 0.8em; color: #888;'>(" . $cat['category_id'] . ")</span><br />";
+                if ($cat->category_empty) {
+                    echo $cat->category_name . " <span style='font-size: 0.8em; color: #888;'>(" . $cat->category_id . ")</span><br />";
                 } else {
-                    echo "<span style='color: #888;'>" . $cat['category_name'] . "</span> <span style='font-size: 0.8em; color: #888;'>(" . $cat['category_id'] . ")</span><br />";
+                    echo "<span style='color: #888;'>" . $cat->category_name . "</span> <span style='font-size: 0.8em; color: #888;'>(" . $cat->category_id . ")</span><br />";
                 }
             }
         }
