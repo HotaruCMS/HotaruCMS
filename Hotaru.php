@@ -2004,7 +2004,46 @@ class Hotaru
 		$category = new Category();
 		return $category->getCatMeta($this, $cat_id);
 	}
-    
+
+
+	/**
+	 *
+	 * @param <type> $h
+	 * @param <type> $parent
+	 * @param <type> $new_cat_name
+	 * @return <type>
+	 */
+	public function addNewCategory($h, $parent, $new_cat_name) {
+		require_once(LIBS . 'Category.php');
+		$category = new Category();
+		return $category->addNewCategory($h, $parent, $new_cat_name);
+	}
+
+	/**
+	 *
+	 * @param <type> $h
+	 * @param <type> $parent_id
+	 * @param <type> $left
+	 * @return <type>
+	 */
+	public function rebuildTree($h, $parent_id, $left) {
+		require_once(LIBS . 'Category.php');
+		$category = new Category();
+		return $category->rebuildTree($h, $parent_id, $left);
+	}
+
+
+	/**
+	 *
+	 * @param <type> $h
+	 * @param <type> $delete_category
+	 * @return <type>
+	 */
+	function deleteCategories($h, $delete_category) {
+	    	require_once(LIBS . 'Category.php');
+		$category = new Category();
+		return $category->deleteCategories($h, $delete_category);
+	}
     
 /* *************************************************************
  *
