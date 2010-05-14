@@ -69,10 +69,12 @@ class Hotaru
 	 */
 	public function __construct($start = '')
 	{
+	    require_once(LIBS . 'smartloader.class.php');
 		// initialize Hotaru
-		if (!$start) { 
-			require_once(LIBS . 'Initialize.php');
+		if (!$start) {
+			
 			$init = new Initialize($this);
+			
 			$this->db           = $init->db;            // database object
 			$this->cage         = $init->cage;          // Inspekt cage
 			$this->isDebug      = $init->isDebug;       // set debug
@@ -101,7 +103,6 @@ class Hotaru
 	{
 		// Set up debugging:
 		if ($this->isDebug) { 
-			require_once(LIBS . 'Debug.php');
 			$this->debug = new Debug();
 		}
 		
@@ -377,7 +378,6 @@ class Hotaru
 	 */
 	public function pagination($query, $total_items, $items_per_page = 10, $cache_table = '')
 	{
-		require_once(LIBS . 'Paginator.php');
 		$paginator = new Paginator();
 		return $paginator->pagination($this, $query, $total_items, $items_per_page, $cache_table);
 	}
@@ -392,7 +392,6 @@ class Hotaru
 	 */
 	public function paginationFull($data, $items_per_page = 10)
 	{
-		require_once(LIBS . 'Paginator.php');
 		$paginator = new Paginator();
 		return $paginator->paginationFull($this, $data, $items_per_page);
 	}
@@ -422,7 +421,6 @@ class Hotaru
 	 */
 	public function breadcrumbs()
 	{
-		require_once(LIBS . 'Breadcrumbs.php');
 		$breadcrumbs = new Breadcrumbs();
 		return $breadcrumbs->buildBreadcrumbs($this);
 	}
@@ -437,7 +435,6 @@ class Hotaru
 	 */    
 	public function rssBreadcrumbsLink($status = '', $vars = array())
 	{
-		require_once(LIBS . 'Breadcrumbs.php');
 		$breadcrumbs = new Breadcrumbs();
 		return $breadcrumbs->rssBreadcrumbsLink($this, $status, $vars);
 	}
@@ -592,7 +589,6 @@ class Hotaru
 	 */
 	public function getUserNameFromId($id = 0)
 	{
-		require_once(LIBS . 'UserInfo.php');
 		$userInfo = new UserInfo();
 		return $userInfo->getUserNameFromId($this, $id);
 	}
@@ -606,7 +602,6 @@ class Hotaru
 	 */
 	public function getUserIdFromName($username = '')
 	{
-		require_once(LIBS . 'UserInfo.php');
 		$userInfo = new UserInfo();
 		return $userInfo->getUserIdFromName($this, $username);
 	}
@@ -620,7 +615,6 @@ class Hotaru
 	 */
 	public function getEmailFromId($userid = 0)
 	{
-		require_once(LIBS . 'UserInfo.php');
 		$userInfo = new UserInfo();
 		return $userInfo->getEmailFromId($this, $userid);
 	}
@@ -634,7 +628,6 @@ class Hotaru
 	 */
 	public function getUserIdFromEmail($email = '')
 	{
-		require_once(LIBS . 'UserInfo.php');
 		$userInfo = new UserInfo();
 		return $userInfo->getUserIdFromEmail($this, $email);
 	}
@@ -647,7 +640,6 @@ class Hotaru
 	 */
 	public function isAdmin($username)
 	{
-		require_once(LIBS . 'UserInfo.php');
 		$userInfo = new UserInfo();
 		return $userInfo->isAdmin($this->db, $username);
 	}
@@ -664,7 +656,6 @@ class Hotaru
 	 */
 	public function userExists($id = 0, $username = '', $email = '')
 	{
-		require_once(LIBS . 'UserInfo.php');
 		$userInfo = new UserInfo();
 		return $userInfo->userExists($this->db, $id, $username, $email);
 	}
@@ -680,7 +671,6 @@ class Hotaru
 	 */
 	public function nameExists($username = '', $role = '', $exclude = 0)
 	{
-		require_once(LIBS . 'UserInfo.php');
 		$userInfo = new UserInfo();
 		return $userInfo->nameExists($this, $username, $role, $exclude);
 	}
@@ -696,7 +686,6 @@ class Hotaru
 	 */
 	public function emailExists($email = '', $role = '', $exclude = 0)
 	{
-		require_once(LIBS . 'UserInfo.php');
 		$userInfo = new UserInfo();
 		return $userInfo->emailExists($this, $email, $role, $exclude);
 	}
@@ -711,7 +700,6 @@ class Hotaru
 	 */
 	public function getMods($permission = 'can_access_admin', $value = 'yes')
 	{
-		require_once(LIBS . 'UserInfo.php');
 		$userInfo = new UserInfo();
 		return $userInfo->getMods($this, $permission, $value);
 	}
@@ -724,7 +712,6 @@ class Hotaru
 	 */
 	public function getUniqueRoles() 
 	{
-		require_once(LIBS . 'UserInfo.php');
 		$userInfo = new UserInfo();
 		return $userInfo->getUniqueRoles($this);
 	}
@@ -738,7 +725,6 @@ class Hotaru
 	 */
 	public function userIdNameList($role = '')
 	{
-		require_once(LIBS . 'UserInfo.php');
 		$userInfo = new UserInfo();
 		return $userInfo->userIdNameList($this, $role);
 	}
@@ -754,7 +740,6 @@ class Hotaru
 	 */
 	public function userListFull($id_array = array(), $start = 0, $range = 0)
 	{
-		require_once(LIBS . 'UserInfo.php');
 		$userInfo = new UserInfo();
 		return $userInfo->userListFull($this, $id_array, $start, $range);
 	}
@@ -768,7 +753,6 @@ class Hotaru
 	 */
 	public function userSettingsList($userid = 0)
 	{
-		require_once(LIBS . 'UserInfo.php');
 		$userInfo = new UserInfo();
 		return $userInfo->userSettingsList($this, $userid);
 	}
@@ -1036,7 +1020,6 @@ class Hotaru
 	 */
 	public function readThemeMeta($theme = 'default')
 	{
-		require_once(LIBS . 'ThemeSettings.php');
 		$themeSettings = new ThemeSettings();
 		return $themeSettings->readThemeMeta($this, $theme);
 	}
@@ -1051,7 +1034,6 @@ class Hotaru
 	 */
 	public function getThemeSettings($theme = '', $return = 'value')
 	{
-		require_once(LIBS . 'ThemeSettings.php');
 		$themeSettings = new ThemeSettings();
 		return $themeSettings->getThemeSettings($this, $theme, $return);
 	}
@@ -1067,7 +1049,6 @@ class Hotaru
 	 */
 	public function updateThemeSettings($settings = array(), $theme = '', $column = 'value')
 	{
-		require_once(LIBS . 'ThemeSettings.php');
 		$themeSettings = new ThemeSettings();
 		return $themeSettings->updateThemeSettings($this, $settings, $theme, $column);
 	}
@@ -1154,7 +1135,6 @@ class Hotaru
 	 */
 	public function showMessage($msg = '', $msg_type = 'green')
 	{
-		require_once(LIBS . 'Messages.php');
 		$messages = new Messages();
 		$messages->showMessage($this, $msg, $msg_type);
 	}
@@ -1165,7 +1145,6 @@ class Hotaru
 	 */
 	public function showMessages()
 	{
-		require_once(LIBS . 'Messages.php');
 		$messages = new Messages();
 		$messages->showMessages($this);
 	}
@@ -1186,7 +1165,6 @@ class Hotaru
 	 */
 	public function checkAnnouncements($announcement = '') 
 	{
-		require_once(LIBS . 'Announcements.php');
 		$announce = new Announcements();
 		if ($this->isAdmin) {
 			return $announce->checkAdminAnnouncements($this);
@@ -1208,8 +1186,8 @@ class Hotaru
 	 */
 	public function showQueriesAndTime()
 	{
-		if ($this->isDebug) {
-			$this->debug->showQueriesAndTime($this);
+		if ($this->isDebug) {		   
+		   $this->debug->showQueriesAndTime($this);
 		}
 	}
 	
@@ -1256,7 +1234,6 @@ class Hotaru
 	public function generateReport($type = 'log')
 	{
 		if (!is_object($this->debug)) { 
-			require_once(LIBS . 'Debug.php');
 			$this->debug = new Debug();
 		}
 		return $this->debug->generateReport($this, $type);
@@ -1281,7 +1258,6 @@ class Hotaru
 	 */
 	public function newSimplePie($feed='', $cache=RSS_CACHE, $cache_duration=RSS_CACHE_DURATION)
 	{
-		require_once(LIBS . 'Feeds.php');
 		$feeds = new Feeds();
 		return $feeds->newSimplePie($feed, $cache, $cache_duration);
 	}
@@ -1296,7 +1272,6 @@ class Hotaru
 	 */
 	public function adminNews($max_items = 10, $items_with_content = 3, $max_chars = 300)
 	{
-		require_once(LIBS . 'Feeds.php');
 		$feeds = new Feeds();
 		$feeds->adminNews($this->lang, $max_items, $items_with_content, $max_chars);
 	}
@@ -1312,7 +1287,6 @@ class Hotaru
 	 */
 	public function rss($title = '', $link = '', $description = '', $items = array())
 	{
-		require_once(LIBS . 'Feeds.php');
 		$feeds = new Feeds();
 		$feeds->rss($this, $title, $link, $description, $items);
 	}
@@ -1330,7 +1304,6 @@ class Hotaru
 	 */
 	public function adminPages($page = 'admin_login')
 	{
-		require_once(LIBS . 'AdminPages.php');
 		$admin = new AdminPages();
 		$admin->pages($this, $page);
 	}
@@ -1343,7 +1316,6 @@ class Hotaru
 	 */
 	public function adminLoginLogout($action = 'logout')
 	{
-		require_once(LIBS . 'AdminAuth.php');
 		$admin = new AdminAuth();
 		return ($action == 'login') ? $admin->adminLogin($this) : $admin->adminLogout($this);
 	}
@@ -1354,7 +1326,6 @@ class Hotaru
 	 */
 	public function adminLoginForm()
 	{
-		require_once(LIBS . 'AdminAuth.php');
 		$admin = new AdminAuth();
 		$admin->adminLoginForm($this);
 	}
@@ -1381,8 +1352,7 @@ class Hotaru
 		
 		if ($this->pageName == 'admin_login') { return true; }
 		
-		require_once(LIBS . 'Maintenance.php');
-		$maintenance = new Maintenance();
+				$maintenance = new Maintenance();
 		return $maintenance->siteClosed($this, $this->lang); // displays "Site Closed for Maintenance"
 	}
 	
@@ -1394,7 +1364,6 @@ class Hotaru
 	 */
 	public function openCloseSite($switch = 'open')
 	{
-		require_once(LIBS . 'Maintenance.php');
 		$maintenance = new Maintenance();
 		$maintenance->openCloseSite($this, $switch);
 	}
@@ -1405,7 +1374,6 @@ class Hotaru
 	 */
 	public function optimizeTables()
 	{
-		require_once(LIBS . 'Maintenance.php');
 		$maintenance = new Maintenance();
 		$maintenance->optimizeTables($this);
 	}
@@ -1419,7 +1387,6 @@ class Hotaru
 	 */
 	public function emptyTable($table_name = '', $msg = true)
 	{
-		require_once(LIBS . 'Maintenance.php');
 		$maintenance = new Maintenance();
 		$maintenance->emptyTable($this, $table_name, $msg);
 	}
@@ -1433,7 +1400,6 @@ class Hotaru
 	 */
 	public function dropTable($table_name = '', $msg = true)
 	{
-		require_once(LIBS . 'Maintenance.php');
 		$maintenance = new Maintenance();
 		$maintenance->dropTable($this, $table_name, $msg);
 	}
@@ -1447,7 +1413,6 @@ class Hotaru
 	 */
 	public function removeSettings($folder = '', $msg = true)
 	{
-		require_once(LIBS . 'Maintenance.php');
 		$maintenance = new Maintenance();
 		$maintenance->removeSettings($this, $folder, $msg);
 	}
@@ -1461,7 +1426,6 @@ class Hotaru
 	 */
 	public function deleteSettings($setting = '', $folder = '')
 	{
-		require_once(LIBS . 'Maintenance.php');
 		$maintenance = new Maintenance();
 		$maintenance->deleteSettings($this, $setting, $folder);
 	}
@@ -1475,7 +1439,6 @@ class Hotaru
 	 */    
 	public function deleteFiles($dir = '')
 	{
-		require_once(LIBS . 'Maintenance.php');
 		$maintenance = new Maintenance();
 		$maintenance->deleteFiles($dir);
 	}
@@ -1489,7 +1452,6 @@ class Hotaru
 	 */
 	public function clearCache($folder = '', $msg = true)
 	{
-		require_once(LIBS . 'Maintenance.php');
 		$maintenance = new Maintenance();
 		$maintenance->clearCache($this, $folder, $msg);
 	}
@@ -1504,7 +1466,6 @@ class Hotaru
 	 */    
 	public function getFiles($dir = '', $exclude = array())
 	{
-		require_once(LIBS . 'Maintenance.php');
 		$maintenance = new Maintenance();
 		return $maintenance->getFiles($dir, $exclude);
 	}
@@ -1539,7 +1500,6 @@ class Hotaru
 	 */
 	public function smartCache($switch = 'off', $table = '', $timeout = 0, $html_sql = '', $label = '')
 	{
-		require_once(LIBS . 'Caching.php');
 		$caching = new Caching();
 		return $caching->smartCache($this, $switch, $table, $timeout, $html_sql, $label);
 	}
@@ -1557,7 +1517,6 @@ class Hotaru
 	 */
 	public function cacheHTML($timeout = 0, $html = '', $label = '')
 	{
-		require_once(LIBS . 'Caching.php');
 		$caching = new Caching();
 		return $caching->cacheHTML($this, $timeout, $html, $label);
 	}
@@ -1579,7 +1538,6 @@ class Hotaru
 	 */
 	public function isBlocked($type = '', $value = '', $operator = '=')
 	{
-		require_once(LIBS . 'Blocked.php');
 		$blocked = new Blocked();
 		return $blocked->isBlocked($this->db, $type, $value, $operator);
 	}
@@ -1595,7 +1553,6 @@ class Hotaru
 	 */
 	public function addToBlockedList($type = '', $value = 0, $msg = false)
 	{
-		require_once(LIBS . 'Blocked.php');
 		$blocked = new Blocked();
 		return $blocked->addToBlockedList($this, $type, $value, $msg);
 	}
@@ -1619,7 +1576,6 @@ class Hotaru
 	 */
 	public function includeLanguage($folder = '', $filename = '')
 	{
-		require_once(LIBS . 'Language.php');
 		$language = new Language();
 		$language->includeLanguage($this, $folder, $filename);
 	}
@@ -1635,7 +1591,6 @@ class Hotaru
 	 */    
 	public function includeThemeLanguage($filename = 'main')
 	{
-		require_once(LIBS . 'Language.php');
 		$language = new Language();
 		$language->includeThemeLanguage($this, $filename);
 	}
@@ -1843,7 +1798,6 @@ class Hotaru
 	 */
 	public function sendTrackback()
 	{
-		require_once(LIBS . 'Trackback.php');
 		$trackback = new Trackback();
 		return $trackback->sendTrackback($this);
 	}
@@ -1916,7 +1870,6 @@ class Hotaru
 	 */
 	public function getCatId($cat_safe_name = '')
 	{
-		require_once(LIBS . 'Category.php');
 		$category = new Category();
 		return $category->getCatId($this, $cat_safe_name);
 	}
@@ -1931,7 +1884,6 @@ class Hotaru
 	 */
 	public function getCatName($cat_id = 0, $cat_safe_name = '')
 	{
-		require_once(LIBS . 'Category.php');
 		$category = new Category();
 		return $category->getCatName($this, $cat_id, $cat_safe_name);
 	}
@@ -1945,7 +1897,6 @@ class Hotaru
 	 */
 	public function getCatSafeName($cat_id = 0)
 	{
-		require_once(LIBS . 'Category.php');
 		$category = new Category();
 		return $category->getCatSafeName($this, $cat_id);
 	}
@@ -1959,7 +1910,6 @@ class Hotaru
 	 */
 	public function getCatParent($cat_id = 0)
 	{
-		require_once(LIBS . 'Category.php');
 		$category = new Category();
 		return $category->getCatParent($this, $cat_id);
 	}
@@ -1973,7 +1923,6 @@ class Hotaru
 	 */
 	public function getCatChildren($cat_parent_id = 0)
 	{
-		require_once(LIBS . 'Category.php');
 		$category = new Category();
 		return $category->getCatChildren($this, $cat_parent_id);
 	}
@@ -1986,7 +1935,6 @@ class Hotaru
 	 */
 	public function getCategories($args = array())
 	{
-		require_once(LIBS . 'Category.php');
 		$category = new Category();
 		return $category->getCategories($this, $args);
 	}
@@ -2000,7 +1948,6 @@ class Hotaru
 	 */
 	public function getCatMeta($cat_id = 0)
 	{
-		require_once(LIBS . 'Category.php');
 		$category = new Category();
 		return $category->getCatMeta($this, $cat_id);
 	}
@@ -2013,11 +1960,10 @@ class Hotaru
 	 * @param string $new_cat_name
 	 * @return bool
 	 */
-	public function addNewCategory($parent = 0, $new_cat_name = '')
+	public function addCategory($parent = 0, $new_cat_name = '')
 	{
-		require_once(LIBS . 'Category.php');
 		$category = new Category();
-		return $category->addNewCategory($this, $parent, $new_cat_name);
+		return $category->addCategory($this, $parent, $new_cat_name);
 	}
 
 
@@ -2030,7 +1976,6 @@ class Hotaru
 	 */
 	public function rebuildTree($parent_id = 0, $left = 0)
 	{
-		require_once(LIBS . 'Category.php');
 		$category = new Category();
 		return $category->rebuildTree($this, $parent_id, $left);
 	}
@@ -2044,7 +1989,6 @@ class Hotaru
 	 */
 	function deleteCategory($delete_category = 0)
 	{
-		require_once(LIBS . 'Category.php');
 		$category = new Category();
 		return $category->deleteCategories($this, $delete_category);
 	}
@@ -2065,7 +2009,6 @@ class Hotaru
 	 */
 	function countComments($digits_only = true, $no_comments_text = '')
 	{
-		require_once(LIBS . 'Comment.php');
 		$comment = new Comment();
 		return $comment->countComments($this, $digits_only, $no_comments_text);
 	}
@@ -2079,7 +2022,6 @@ class Hotaru
 	 */
 	function countUserComments($user_id = 0)
 	{
-		require_once(LIBS . 'Comment.php');
 		$comment = new Comment();
 		return $comment->countUserComments($this, $user_id);
 	}
@@ -2093,7 +2035,6 @@ class Hotaru
 	 */
 	public function deleteComments($user_id) 
 	{
-		require_once(LIBS . 'Comment.php');
 		$comment = new Comment();
 		return $comment->deleteComments($this, $user_id);
 	}
@@ -2107,7 +2048,6 @@ class Hotaru
 	 */
 	function getComment($comment_id = 0)
 	{
-		require_once(LIBS . 'Comment.php');
 		$comment = new Comment();
 		return $comment->getComment($this, $comment_id);
 	}
@@ -2120,7 +2060,6 @@ class Hotaru
 	 */
 	function readComment($comment_row = array())
 	{
-		require_once(LIBS . 'Comment.php');
 		$comment = new Comment();
 		return $comment->readComment($this, $comment_row);
 	}
@@ -2141,7 +2080,6 @@ class Hotaru
 	 */
 	public function addWidget($plugin = '', $function = '', $args = '')
 	{
-		require_once(LIBS . 'Widget.php');
 		$widget = new Widget();
 		$widget->addWidget($this, $plugin, $function, $args);
 	}
@@ -2158,7 +2096,6 @@ class Hotaru
 	 */
 	public function getArrayWidgets($widget_name = '')
 	{
-		require_once(LIBS . 'Widget.php');
 		$widget = new Widget();
 		return $widget->getArrayWidgets($this, $widget_name);
 	}
@@ -2171,7 +2108,6 @@ class Hotaru
 	 */
 	public function deleteWidget($function)
 	{
-		require_once(LIBS . 'Widget.php');
 		$widget = new Widget();
 		$widget->deleteWidget($this, $function);
 	}
@@ -2184,7 +2120,6 @@ class Hotaru
 	 */
 	public function getPluginFromFunction($function)
 	{
-		require_once(LIBS . 'Widget.php');
 		$widget = new Widget();
 		return $widget->getPluginFromFunction($this, $function);
 	}
@@ -2209,7 +2144,6 @@ class Hotaru
 	public function email($to = '', $subject = '', $body = '', $headers = '', $type = 'email')
 	{
 		if (!is_object($this->email)) { 
-			require_once(LIBS . 'EmailFunctions.php');
 			$this->email = new EmailFunctions();
 		}
 		
@@ -2237,7 +2171,6 @@ class Hotaru
 	 */
 	public function countFollowers($user_id = 0)
 	{
-		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
 		return $friends->countFriends($this, $user_id, 'follower');
 	}
@@ -2251,7 +2184,6 @@ class Hotaru
 	 */
 	public function countFollowing($user_id = 0)
 	{
-		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
 		return $friends->countFriends($this, $user_id, 'following');
 	}
@@ -2266,7 +2198,6 @@ class Hotaru
 	 */
 	public function getFollowers($user_id = 0, $return = 'array')
 	{
-		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
 		return $friends->getFriends($this, $user_id, 'follower', $return);
 	}
@@ -2281,7 +2212,6 @@ class Hotaru
 	 */
 	public function getFollowing($user_id = 0, $return = 'array')
 	{
-		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
 		return $friends->getFriends($this, $user_id, 'following', $return);
 	}
@@ -2295,7 +2225,6 @@ class Hotaru
 	 */
 	public function isFollower($user_id = 0)
 	{
-		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
 		return $friends->checkFriends($this, $user_id, 'follower');
 	}
@@ -2309,7 +2238,6 @@ class Hotaru
 	 */
 	public function isFollowing($user_id = 0)
 	{
-		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
 		return $friends->checkFriends($this, $user_id, 'following');
 	}
@@ -2323,7 +2251,6 @@ class Hotaru
 	 */
 	public function follow($user_id = 0)
 	{
-		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
 		return $friends->updateFriends($this, $user_id, 'follow');
 	}
@@ -2337,7 +2264,6 @@ class Hotaru
 	 */
 	public function unfollow($user_id = 0)
 	{
-		require_once(LIBS . 'Friends.php');
 		$friends = new Friends();
 		return $friends->updateFriends($this, $user_id, 'unfollow');
 	}
@@ -2360,7 +2286,6 @@ class Hotaru
 	 */
 	public function getLatestActivity($limit = 0, $userid = 0, $type = '')
 	{
-		require_once(LIBS . 'UserActivity.php');
 		$activity = new UserActivity();
 		return $activity->getLatestActivity($this, $limit, $userid, $type);
 	}
@@ -2374,7 +2299,6 @@ class Hotaru
 	 */
 	public function activityExists($args = array())
 	{
-		require_once(LIBS . 'UserActivity.php');
 		$activity = new UserActivity();
 		return $activity->activityExists($this, $args);
 	}
@@ -2387,7 +2311,6 @@ class Hotaru
 	 */
 	public function insertActivity($args = array())
 	{
-		require_once(LIBS . 'UserActivity.php');
 		$activity = new UserActivity();
 		return $activity->insertActivity($this, $args);
 	}
@@ -2400,7 +2323,6 @@ class Hotaru
 	 */
 	public function updateActivity($args = array())
 	{
-		require_once(LIBS . 'UserActivity.php');
 		$activity = new UserActivity();
 		return $activity->updateActivity($this, $args);
 	}
@@ -2413,7 +2335,6 @@ class Hotaru
 	 */
 	public function removeActivity($args = array())
 	{
-		require_once(LIBS . 'UserActivity.php');
 		$activity = new UserActivity();
 		return $activity->removeActivity($this, $args);
 	}
@@ -2435,7 +2356,6 @@ class Hotaru
 	 */
 	public function getMessages($box = 'inbox', $type = '')
 	{
-		require_once(LIBS . 'PrivateMessaging.php');
 		$pm = new PrivateMessaging();
 		return $pm->getMessages($this, $box, $type);
 	}
@@ -2449,7 +2369,6 @@ class Hotaru
 	 */
 	public function getMessage($message_id = 0)
 	{
-		require_once(LIBS . 'PrivateMessaging.php');
 		$pm = new PrivateMessaging();
 		return $pm->getMessage($this, $message_id);
 	}
@@ -2462,7 +2381,6 @@ class Hotaru
 	 */
 	public function markRead($message_id = 0)
 	{
-		require_once(LIBS . 'PrivateMessaging.php');
 		$pm = new PrivateMessaging();
 		$pm->markRead($this, $message_id);
 	}
@@ -2477,7 +2395,6 @@ class Hotaru
 	 */
 	public function deleteMessage($message_id = 0, $box = 'inbox')
 	{
-		require_once(LIBS . 'PrivateMessaging.php');
 		$pm = new PrivateMessaging();
 		$pm->deleteMessage($this, $message_id, $box);
 	}
@@ -2494,7 +2411,6 @@ class Hotaru
 	 */
 	public function sendMessage($to = '', $from = '', $subject = '', $body = '')
 	{
-		require_once(LIBS . 'PrivateMessaging.php');
 		$pm = new PrivateMessaging();
 		return $pm->sendMessage($this, $to, $from, $subject, $body);
 	}
