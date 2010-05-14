@@ -74,9 +74,9 @@ class IncludeCssJs
 		
 		foreach ($files as $file) {
 			if (file_exists(THEMES . THEME . 'javascript/' . $file . '.js')) {
-				echo "<script src='" . BASEURL . "content/themes/" . THEME . "javascript/" . $file . ".js' type='text/javascript' language='javascript' />\n";
+				echo "<script src='" . BASEURL . "content/themes/" . THEME . "javascript/" . $file . ".js' type='text/javascript' language='javascript'></script>\n";
 			} else {
-				echo "<script src='" . BASEURL . "content/plugins/" . $folder . "/javascript/" . $file . ".js' type='text/javascript' language='javascript' />\n";
+				echo "<script src='" . BASEURL . "content/plugins/" . $folder . "/javascript/" . $file . ".js' type='text/javascript' language='javascript'></script>\n";
 			}
 		}
 		return true;

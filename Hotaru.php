@@ -1104,7 +1104,7 @@ class Hotaru
 	 */
 	 public function includeOnceCss($files = array(), $folder = '')
 	 {
-		return $this->includes->includeJs($this, $files, $folder);
+		return $this->includes->includeOnceCss($this, $files, $folder);
 	 }
 	 
 	 
@@ -1116,7 +1116,7 @@ class Hotaru
 	 */
 	 public function includeOnceJs($files = array(), $folder = '')
 	 {
-		return $this->includes->includeJs($this, $files, $folder);
+		return $this->includes->includeOnceJs($this, $files, $folder);
 	 }
      
      
