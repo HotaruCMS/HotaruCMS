@@ -2,7 +2,7 @@
 /**
  * name: Users
  * description: Provides profile, settings and permission pages
- * version: 1.8
+ * version: 1.9
  * folder: users
  * type: users
  * class: Users
@@ -84,7 +84,7 @@ class Users
                 $h->pageType = 'user';
                 break;
             case 'index':
-                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["sb_base_top"] . '[delimiter]' . $user . '[delimiter]' . $h->pageTitle = $h->lang["sb_base_site_name"]; }
+                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["sb_base_top"] . '[delimiter]' . $user . '[delimiter]' . $h->lang["sb_base_site_name"]; }
                 break;
             case 'latest':
                 if ($h->subPage == 'user') { $h->pageTitle = $h->lang["sb_base_latest"] . '[delimiter]' . $user; }
@@ -103,9 +103,9 @@ class Users
                 }
                 break;
         }
-        
+
         // read this user into the global hotaru object for later use on this page
-        if ($h->pageType != 'user') { return false; }
+        if ($h->pageType != 'user' && $h->subPage != 'user') { return false; }
         
         $h->vars['user'] = new UserAuth();
         if ($user) {
@@ -222,7 +222,7 @@ class Users
                 return $crumbs;
                 break;
         }
-        
+
         // This is used for filtered story pages, e.g. popular, latest, etc:
         if ($h->subPage == 'user' && $h->pageType == 'list') {
             switch ($h->pageName) {

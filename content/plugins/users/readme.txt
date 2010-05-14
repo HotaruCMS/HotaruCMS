@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.1.9 2010/05/14 - Nick - Fix for missing RSS feed for individual user posts
 v.1.8 2010/04/17 - Nick - Added "Profile: username" header to profile page
                  - shibuya246 - Moved user profile avatar to the user navigation menu
 v.1.7 2010/03/20 - Nick - Fix for moderator email notification when using SMTP email authentication
