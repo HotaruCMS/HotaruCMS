@@ -50,7 +50,7 @@ switch ($step) {
 		break;
 	case 2:
 		do_upgrade($old_version);
-		upgrade_complete();    // Delete "install" folder. Visit your site"
+		upgrade_complete($h);    // Delete "install" folder. Visit your site"
 		break;
 	default:		
 		upgrade_welcome();
@@ -94,7 +94,7 @@ function upgrade_check($h, $old_version) {
 /**
  * Step 2 of upgrade - shows completion.
  */
-function upgrade_complete()
+function upgrade_complete($h)
 {
 	global $lang;
 	global $cage;
@@ -484,6 +484,18 @@ function do_upgrade($old_version)
 
 		// update "old version" for next set of upgrades
 		$old_version = "1.2.0";
+	}
+
+	 // 1.2.0 to 1.2.x
+	if ($old_version == "1.2.0") {
+
+	    $exists = $h->db->column_exists('plugins', 'plugin_latestversion');
+		if (!$exists) {
+			// Create a plugin_version column
+			$sql = "ALTER TABLE " . TABLE_PLUGINS . " ADD plugin_latestversion varchar(32) NOT NULL DEFAULT '0.0'";
+			$h->db->query($h->db->prepare($sql));
+			//echo "plugins" . " table updated" . "<br/>";
+		}
 	}
 
 	// Update Hotaru version number to the database (referred to when upgrading)

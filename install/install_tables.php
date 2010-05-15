@@ -232,6 +232,7 @@ function create_table($table_name)
 			`plugin_authorurl` varchar(128) NOT NULL DEFAULT '',
 			`plugin_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`plugin_updateby` int(20) NOT NULL DEFAULT 0,
+			`plugin_latest_version` varchar(32) NOT NULL DEFAULT '0.0',
 			UNIQUE KEY `key` (`plugin_folder`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Application Plugins';";
 		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
@@ -418,7 +419,7 @@ function create_table($table_name)
 		
 		// Debug
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'DEBUG', 'false', 'false', ''));
+		$db->query($db->prepare($sql, 'DEBUG', 'true', 'true', ''));
 		
 		// SMTP on
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
