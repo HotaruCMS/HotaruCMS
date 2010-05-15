@@ -118,6 +118,8 @@ $lang["admin_theme_plugins_settings"] = "Settings";
 $lang["admin_theme_plugins_readme"] = "Read Me";
 $lang["admin_theme_plugins_more_info"] = "More Info";
 $lang["admin_theme_plugins_readmetxt"] = "readme.txt";
+$lang["admin_theme_plugins_filenotfound"] = "The settings file for this plugin could not be found.";
+$lang["admin_theme_plugins_checkforfile"] = "Please check for this file: ";
 
 /* Settings */
 $lang['admin_settings_update_success'] = "Updated successfully";

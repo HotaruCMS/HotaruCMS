@@ -241,13 +241,17 @@ class Hotaru
 		}
 		
 		if (file_exists(PLUGINS . $this->plugin->folder . '/' . $this->plugin->folder . '_settings.php')) {
-			include_once(PLUGINS . $this->plugin->folder . '/' . $this->plugin->folder . '_settings.php');
-		}
+		    include_once(PLUGINS . $this->plugin->folder . '/' . $this->plugin->folder . '_settings.php');
 		
-		$settings_class = make_name($this->plugin->folder, '_') . 'Settings'; // e.g. CategoriesSettings
-		$settings_class = str_replace(' ', '', $settings_class); // strip spaces
-		$settings_object = new $settings_class();
-		$settings_object->settings($this);   // call the settings function
+		    $settings_class = make_name($this->plugin->folder, '_') . 'Settings'; // e.g. CategoriesSettings
+		    $settings_class = str_replace(' ', '', $settings_class); // strip spaces
+		    $settings_object = new $settings_class();
+		    $settings_object->settings($this);   // call the settings function		
+		}
+		else {
+		    echo $this->lang["admin_theme_plugins_filenotfound"] . "<br/><br/>";
+		    echo $this->lang["admin_theme_plugins_checkforfile"] . PLUGINS . $this->plugin->folder . '/' . $this->plugin->folder . '_settings.php';
+		}
 		return true;
 	}
     
