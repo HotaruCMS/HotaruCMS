@@ -111,10 +111,16 @@ function display_filesize($filesize)
 
 /**
  * Start Hotaru from Ajax callback
- *  *
  */
-function startHotaru() {
+function startHotaru()
+{
     $root = $_SERVER['DOCUMENT_ROOT'];
+    
+    echo $root;
+    
+    if (strpos($root, 'C:/') !== false) {
+    	$root = '../../..'; // a hack for Wamp. Works when calling this function from a theme or plugin folder
+    }
     
     require_once($root . '/hotaru_settings.php');
     require_once($root . '/Hotaru.php');
