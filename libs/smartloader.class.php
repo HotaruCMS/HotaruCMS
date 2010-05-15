@@ -23,28 +23,36 @@
 		/* initializing loader */
 		if(!$ldr) {
 			$ldr = new SmartLoader();
-			$ldr->setCacheFilename('cache/smartloader_cache.php');
+			$ldr->setCacheFilename(CACHE . '/smartloader_cache.php');
 			$ldr->addDir(LIBS);
 			$ldr->setClassFileEndings(array('.php'));
 			$ldr->setIgnoreHiddenFiles(true);
 		}
-		
-		/* load the class or trigger some fatal error on failure */
-		if(!$ldr->loadClass($class_name)) {
-		    $h  = new Hotaru;		    
-		    $folder = $h->pluginHook('libs_cache');
-		    if ($folder) {
-			foreach ($folder as $key => $value) { $libs_folder = $value; }
 
-			if (isset($libs_folder)) {
-			    $ldr->addDir(PLUGINS . $libs_folder);
-			    if(!$ldr->loadClass($class_name)) {
-				//trigger_error("SmartLoader: Cannot load class '".$class_name."'", E_USER_ERROR);
+		if ($class_name == 'Hotaru') {
+		    $ldr->addDir(BASE);		    
+		    if(!$ldr->loadClass($class_name)) {
+
+		    }
+		}
+		else {
+		    /* load the class or trigger some fatal error on failure */
+		    if(!$ldr->loadClass($class_name)) {
+			$h  = new Hotaru;
+			$folder = $h->pluginHook('libs_cache');
+			if ($folder) {
+			    foreach ($folder as $key => $value) { $libs_folder = $value; }
+
+			    if (isset($libs_folder)) {
+				$ldr->addDir(PLUGINS . $libs_folder);
+				if(!$ldr->loadClass($class_name)) {
+				    //trigger_error("SmartLoader: Cannot load class '".$class_name."'", E_USER_ERROR);
+				}
 			    }
 			}
 		    }
 		}
-	}
+	}	
 
 	/**
 	* SmartLoader Class
@@ -264,6 +272,7 @@
 				$cache_content .= "\t\$GLOBALS['smartloader_classes']['".$class_name."'] = '".$class_file."';\n";
 			}
 			$cache_content .= "?>";
+			
 			if($cacheFilename_handle = fopen($this->cacheFilename, "w+")) {
 				fwrite($cacheFilename_handle, $cache_content);
 				/* Allow ftp users to access/modify/delete cache file, suppress chmod errors here */
