@@ -432,7 +432,7 @@ public function _get_cron_array($h)  {
 	    if (array_key_exists($plugin->plugin_name, $info)) {
 		$sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_latestversion = %s WHERE (plugin_id = %d)";
 		$h->db->query($h->db->prepare($sql, $info[$plugin->plugin_name], $plugin->plugin_id));
-		print $plugin->plugin_name . ' ' . $info[$plugin->plugin_name] . '<br/>';
+		//print $plugin->plugin_name . ' ' . $info[$plugin->plugin_name] . '<br/>';
 	    }	    
 	}
     }
