@@ -74,10 +74,10 @@
 <?php
 	$alt = 0;
 	if (!$the_plugins) { $the_plugins = array(); }
-	foreach ($the_plugins as $plug) {
+	foreach ($the_plugins as $plug) {	    
 		$alt++;
 		$info_icon = 'info_16.png';
-		if (isset($plug['latest_version'])) { if ($plug['latest_version'] > $plug['version']) $info_icon = 'info_green_16.png'; }
+		if (isset($plug['latestversion'])) { if ($plug['latestversion'] > $plug['version']) $info_icon = 'info_green_16.png'; }
 		echo "<tr class='table_tr table_row_" . $alt % 2 . "'>\n";
 		echo "<td class='table_active'>" . $plug['active'] . "</td>\n";
 		echo "<td class='table_installed_plugin'>";
@@ -170,7 +170,7 @@
 	foreach ($the_plugins as $plug) {
 		$alt++;
 		$info_icon = 'info_16.png';
-		if (isset($plug['latest_version'])) { if ($plug['latest_version'] > $plug['version']) $info_icon = 'info_green_16.png'; }
+		if (isset($plug['latestversion'])) { if ($plug['latestversion'] > $plug['version']) $info_icon = 'info_green_16.png'; }
 		echo "<tr id='table_tr' class='table_row_" . $alt % 2 . "'>\n";
 		echo "<td class='table_uninstalled_plugin'>" . $plug['name'] . " " . $plug['version'] . "<br />\n";
 		echo "<span class='table_requires'>";
