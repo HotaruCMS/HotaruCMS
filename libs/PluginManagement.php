@@ -64,6 +64,7 @@ class PluginManagement
 					}
 					
 					$allplugins[$count]['version'] = $plugin_row->plugin_version;
+					$allplugins[$count]['latestversion'] = $plugin_row->plugin_latestversion;
 					$allplugins[$count]['install'] = "installed";
 					$allplugins[$count]['location'] = "database";
 					$allplugins[$count]['settings'] = $h->hasSettings($allplugins[$count]['folder']); // true or false
@@ -85,7 +86,7 @@ class PluginManagement
 					}
 					
 					$allplugins[$count]['status'] = "inactive";
-					$allplugins[$count]['version'] = $plugin_details['version'];
+					$allplugins[$count]['version'] = $plugin_details['version'];					
 					$allplugins[$count]['install'] = "install";
 					$allplugins[$count]['location'] = "folder";
 					$allplugins[$count]['order'] = 0;
