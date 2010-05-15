@@ -6,7 +6,7 @@
  * folder: cron
  * class: Cron
  * type: cron
- * hooks: install_plugin, admin_plugin_settings, admin_sidebar_plugin_settings, theme_index_top, admin_theme_index_top, cron_schedule_event, cron_update_job, cron_delete_job, cron_flush_hook, cron_hotaru_version, cron_hotaru_feedback, admin_theme_main_stats_post_version
+ * hooks: install_plugin, admin_plugin_settings, admin_sidebar_plugin_settings, theme_index_top, admin_theme_index_top, cron_schedule_event, cron_update_job, cron_delete_job, cron_flush_hook, cron_hotaru_version, cron_plugin_version_getAll, cron_hotaru_feedback, admin_theme_main_stats_post_version
  * author: shibuya246
  * authorurl: http://shibuya246.com
  *
@@ -44,6 +44,9 @@ class Cron
         $timestamp = time();
         $recurrence = "daily";
         $hook = "cron_hotaru_version";
+	$this->cron_schedule_event($h, $timestamp, $recurrence, $hook);
+
+	$hook = "cron_plugin_version_getAll";
 	$this->cron_schedule_event($h, $timestamp, $recurrence, $hook);
 
         if (SYS_FEEDBACK == 'true') {
@@ -410,6 +413,28 @@ public function _get_cron_array($h)  {
         // save the updated version number to the local db so we can display it on the admin panel until it gets updated.        
          if (isset($info['version']))
              $h->updateSetting('hotaru_latest_version', serialize($info), 'cron');
+    }
+
+    public function cron_plugin_version_getAll($h) {
+        $query_vals = array(
+            'api_key' => '',
+            'format' => 'json',
+            'method' => 'hotaru.plugin.version.getAll'
+        );
+
+         $info = $this->sendApiRequest($h, $query_vals);	
+	 
+        // save the updated version number to the local db so we can display it on the admin panel until it gets updated.
+        $sql = "SELECT plugin_id, plugin_name, plugin_latestversion FROM " . TABLE_PLUGINS;
+	$plugins = $h->db->get_results($h->db->prepare($sql));
+
+	foreach ($plugins as $plugin) {
+	    if (array_key_exists($plugin->plugin_name, $info)) {
+		$sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_latestversion = %s WHERE (plugin_id = %d)";
+		$h->db->query($h->db->prepare($sql, $info[$plugin->plugin_name], $plugin->plugin_id));
+		print $plugin->plugin_name . ' ' . $info[$plugin->plugin_name] . '<br/>';
+	    }	    
+	}
     }
 
     public function sendApiRequest($h, $query_vals) {
