@@ -480,8 +480,12 @@ class SbBaseFunctions
         
         require_once(PLUGINS . 'search/search.php');
         $search_plugin = new Search();
-        $prepared_search = $search_plugin->prepareSearchFilter($h, $search); 
+        $prepared_search = $search_plugin->prepareSearchFilter($h, $search);
+        //print_r($prepared_search); exit;
         extract($prepared_search);
+        $h->vars['postRssSelect'] = $select;
+        $h->vars['postRssFilter'] = $filter;
+        
         // override "relevance DESC" so the RSS feed updates with the latest related terms.
         $h->vars['postRssOrderBy'] = "post_date DESC";
         $h->vars['postRssFeed']['description'] = $h->lang["sb_base_rss_stories_search"] . " " . stripslashes($search);
@@ -505,7 +509,7 @@ class SbBaseFunctions
         
         // if no filter set...
         if (!isset($h->vars['postRssFilter'])) {
-            $h->vars['postRssFilter']['post_status = %s || post_status = %s'] = array('top', 'new'); // default to all posts
+            $h->vars['postRssFilter']['(post_status = %s || post_status = %s)'] = array('top', 'new'); // default to all posts
         }
         
         // if no limit set...
