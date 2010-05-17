@@ -130,6 +130,10 @@ $lang["install_step4_installation_delete"] = "You <b>must</b> delete the install
 $lang["install_step4_installation_delete_folder"] = "Shall we try and delete the 'install' folder for you?";
 $lang["install_step4_form_delete_folder"] = "Delete Folder";
 $lang["install_step4_installation_delete_failed"] = "We were not able to delete the install folder. Please delete it manually.";
+$lang["install_step4_form_check_php"] = "Check PHP Setup";
+$lang["install_step4_form_check_php_warning"] = "Note: Your server is missing the PHP module: ";
+$lang["install_step4_form_check_php_success"] = "Your server has the required PHP modules";
+$lang["install_step4_form_check_php_version"] = "Hotaru has not been tested on this version of PHP. You may need to upgrade";
 
 
 $lang["install_step4_installation_go_play"] = "Done? Okay, go and play with your new Hotaru site!";

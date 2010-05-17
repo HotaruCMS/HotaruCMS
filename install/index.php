@@ -652,7 +652,13 @@ function installation_complete()
 {
 	global $lang;
 	global $cage;
+	global $h;
+
+	$h  = new Hotaru(); // overwrites current global with fully initialized Hotaru object
+	
+	$phpinfo = $cage->post->getAlpha('phpinfo');        // delete install folder.
 	$delete = $cage->post->getAlpha('delete');        // delete install folder.
+	
 	$folder_deleted = 0;
 
 	if ($delete) {
@@ -673,11 +679,42 @@ function installation_complete()
 	if ($folder_deleted == 0) echo "<div class='install_content'>" . $lang['install_step4_installation_complete'] . "</div>\n";
 	echo "<div class='install_content'>" . $lang['install_step4_installation_delete'] . "</div>\n";
 
+
+	if ($phpinfo) {
+	    echo '<br/>';
+	    $php_version = phpversion();
+	    $modules = get_loaded_extensions();
+	    $php_module_not_found = false;
+
+	    $required = array('bcmath' => 'http://php.net/manual/en/book.bc.php',
+			      'mysql'=>'http://php.net/manual/en/book.mysql.php',
+			      'filter'=>'http://php.net/manual/en/book.filter.php');
+
+	    foreach ($required as $module => $url) {
+		if (!in_array($module, $modules)) {
+		    echo $h->showMessage($lang['install_step4_form_check_php_warning'] . '<a href="' . $url . '" target="_blank">' . $module . '</a><br/>','yellow');
+		    $php_module_not_found = true;
+		}
+	    }
+	    // check for correct version number of php
+	    if (version_compare($php_version, '5.2.5', '<')) { echo $h->showMessage($lang['install_step4_form_check_php_version'], 'yellow'); }
+
+	    // success of modules
+	    if (!$php_module_not_found) {
+		echo $h->showMessage($lang['install_step4_form_check_php_success'], 'green');
+	    }
+	} else {
+	    echo "<form name='install_admin_reg_form' action='index.php?step=4' method='post'>\n";	    
+	    echo "<input type='hidden' name='phpinfo' value='true' />";
+	    echo "<input type='hidden' name='step' value='4' />";
+	    echo "<input class='update button' type='submit' value='" . $lang['install_step4_form_check_php'] . "' />";
+	    echo "</div></form>\n";
+	}
+
 	if ($folder_deleted == 0) {
 	    // Confirm delete and continue install
 	    echo "<div class='install_content'>" . $lang['install_step4_installation_delete_folder'] . "</div>\n";
-	    echo "<form name='install_admin_reg_form' action='index.php?step=4' method='post'>\n";
-	    echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />";
+	    echo "<form name='install_admin_reg_form' action='index.php?step=4' method='post'>\n";	    
 	    echo "<input type='hidden' name='delete' value='folder' />";
 	    echo "<input type='hidden' name='step' value='4' />";
 
