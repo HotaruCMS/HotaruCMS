@@ -52,9 +52,15 @@ if (!$result) {
 			<div class="yui-u" style='width: 100%;'>
 	<?php } ?>
 				<!-- BREADCRUMBS -->
-				<div id='breadcrumbs'>
-					<?php echo $h->breadcrumbs(); ?>
+				<div class="">
+				    <div id='breadcrumbs' class="floatleft">
+					    <?php echo $h->breadcrumbs(); ?>
+				    </div>
+				    <div id="admin_topright" class="floatright">
+					<?php echo $h->pluginHook('admin_topright'); ?>
+				    </div>
 				</div>
+				<br class="clearfix"/>
 				
 				<!-- MAIN -->
 				<div id="main">

@@ -354,3 +354,5 @@ table#settings {
 
 #site-stats .title {font-weight:bold; margin-left:0; margin-bottom:2px; }
 #site-stats li {margin-left:4px;}
+
+#admin_topright {margin: 20px; width: 160px;}
