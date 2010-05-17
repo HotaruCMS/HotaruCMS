@@ -2,7 +2,7 @@
 /**
  * name: Vote
  * description: Adds voting ability to posted stories.
- * version: 1.8
+ * version: 1.9
  * folder: vote
  * class: Vote
  * type: vote
@@ -120,7 +120,7 @@ class Vote
             //Insert one vote for each of $submit_vote_value;
             for ($i=0; $i<$submit_vote_value; $i++) {
                 $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %s, %d)";
-                $h->db->query($h->db->prepare($sql, $h->post->id, $h->post->author, $h->cage->server->testIp('REMOTE_ADDR'), 'vote', 10, $voter_id));
+                $h->db->query($h->db->prepare($sql, $h->post->id, $h->post->author, $h->cage->server->testIp('REMOTE_ADDR'), 'vote', 10, $h->post->author));
             }
         }            
                     
