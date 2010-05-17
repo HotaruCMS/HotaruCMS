@@ -6,8 +6,7 @@
  * folder: users
  * type: users
  * class: Users
- * requires: sb_base 0.1
- * hooks: pagehandling_getpagename, sb_base_theme_index_top, header_include, sb_base_functions_preparelist, breadcrumbs, theme_index_main, users_edit_profile_save, user_settings_save, admin_theme_main_stats, header_meta
+ * hooks: pagehandling_getpagename, theme_index_top, header_include, sb_base_functions_preparelist, breadcrumbs, theme_index_main, users_edit_profile_save, user_settings_save, admin_theme_main_stats, header_meta
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -50,7 +49,7 @@ class Users
     /**
      * Determine what page we're looking at
      */
-    public function sb_base_theme_index_top($h)
+    public function theme_index_top($h)
     {
         $user = $h->cage->get->testUsername('user');
         if ($user) {
@@ -437,13 +436,17 @@ class Users
         $ui = new UserInfo();
         
         echo "<li>&nbsp;</li>";
-	foreach ($vars as $key => $value) {
-	    echo "<li class='title'>" . $key . "</li>";
-	    foreach ($value as $stat_type) {
-		$users = $ui->stats($h, $stat_type);
-		if (!$users) { $users = 0; }
-		$lang_name = 'users_admin_stats_' . $stat_type;
-		echo "<li>" . $h->lang[$lang_name] . ": " . $users . "</li>";
+	if (isset($vars) && (!empty($vars))) {	    
+	    foreach ($vars as $key => $value) {
+		echo "<li class='title'>" . $key . "</li>";
+		foreach ($value as $stat_type) {		    
+		    if (isset($value) && !empty($value)) {
+			$users = $ui->stats($h, $stat_type);
+			if (!$users) { $users = 0; }
+			$lang_name = 'users_admin_stats_' . $stat_type;
+			echo "<li>" . $h->lang[$lang_name] . ": " . $users . "</li>";
+		    }
+		}
 	    }
 	}
     }
