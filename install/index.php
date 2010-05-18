@@ -37,7 +37,7 @@ setcookie("hotaru_key", "", time()-3600, "/");
 // --------------------------------------------------
 
 
-require_once('../hotaru_settings.php');
+include_once('../hotaru_settings.php');
 require_once('install_tables.php');
 require_once('install_functions.php');
 require_once(BASE . 'Hotaru.php');
