@@ -116,8 +116,6 @@ function startHotaru()
 {
     $root = $_SERVER['DOCUMENT_ROOT'];
     
-    echo $root;
-    
     if (strpos($root, 'C:/') !== false) {
     	$root = '../../..'; // a hack for Wamp. Works when calling this function from a theme or plugin folder
     }
