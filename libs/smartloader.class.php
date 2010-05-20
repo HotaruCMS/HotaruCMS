@@ -23,7 +23,7 @@
 		/* initializing loader */
 		if(!$ldr) {
 			$ldr = new SmartLoader();
-			$ldr->setCacheFilename(CACHE . '/smartloader_cache.php');
+			$ldr->setCacheFilename(CACHE . 'smartloader_cache.php');
 			$ldr->addDir(LIBS);
 			$ldr->setClassFileEndings(array('.php'));
 			$ldr->setIgnoreHiddenFiles(true);
