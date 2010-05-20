@@ -56,9 +56,11 @@ if (!$result) {
 				    <div id='breadcrumbs' class="floatleft">
 					    <?php echo $h->breadcrumbs(); ?>
 				    </div>
-				    <div id="admin_topright" class="floatright">
-					<?php echo $h->pluginHook('admin_topright'); ?>
-				    </div>
+				    <?php if ($h->pageName == 'plugin_settings') { ?>
+				    	<div id="admin_topright" class="floatright">
+							<?php echo $h->pluginHook('admin_topright'); ?>
+				    	</div>
+				    <?php } ?>
 				</div>
 				<br class="clearfix"/>
 				
