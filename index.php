@@ -25,8 +25,20 @@
  */
  
 // includes
-require_once('hotaru_settings.php');
-require_once('Hotaru.php');
-$h = new Hotaru();
-$h->start('main');
+if (file_exists('hotaru_settings.php'))
+{
+    require_once('hotaru_settings.php');
+    require_once('Hotaru.php');
+    $h = new Hotaru();
+    $h->start('main');
+}
+else {
+    if (file_exists('install/index.php')) {
+        echo 'Hotaru is having trouble starting. You may need to install the system before you can proceed further.<br/><br/>';
+        echo 'More help at <a href="hotarucms.org/forum.php"> Hotaru Forums</a>';
+    }
+    else {
+        echo 'Hotaru is having trouble starting.';
+    }
+}
 ?>
