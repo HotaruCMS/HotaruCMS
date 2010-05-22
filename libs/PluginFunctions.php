@@ -114,6 +114,10 @@ class PluginFunctions
 				}
 				
 				if ($result) {
+					// allow a plugin to halt execution of remaining functions for this hook
+					if (is_string($result) && ($result == "skip")) { return false; }
+
+					// otherwise add to return array...
 					$return_array[$plugin->plugin_class . "_" . $hook] = $result; // name the result Class + hook name
 				}
 			}

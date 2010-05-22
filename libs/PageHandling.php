@@ -34,11 +34,10 @@ class PageHandling
 	public function setHome($h, $home = '', $pagename = '')
 	{
 		$h->home = $home;
+		$h->pageName = $h->getPageName(); 
 		
-		if ($pagename) { 
+		if (!$h->pageName) { 
 			$h->pageName = $pagename; // force pageName (optional)
-		} else {
-			$h->pageName = $h->getPageName();
 		}
 	}
 	

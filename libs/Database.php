@@ -184,11 +184,15 @@ class Database extends ezSQL_mysql
 	 * Gets data from the database
 	 *
 	 * @param string $table - table name without a prefix.
-	 * @param array $prepare array - obtained from select(), etc.
+	 * @param array $prepare array - optional if calling directly
 	 * @return array|false - object array of data
 	 */
-	public function getData($h, $table = 'posts')
+	public function getData($h, $table = 'posts', $prepare_array = array())
 	{
+		if ($prepare_array) {
+			$this->prepare_array = $prepare_array;
+		}
+		
 		if (!$this->prepare_array) { return false; }
 		
 		if (empty($this->prepare_array[1])) {
