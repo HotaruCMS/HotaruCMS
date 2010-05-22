@@ -31,6 +31,8 @@ class Database extends ezSQL_mysql
 	protected $orderby       = '';
 	protected $limit         = '';
 	protected $prepare_array = array();
+	protected $cache         = true;
+	protected $query_only    = false;
 	
 	/**
 	 * Access modifier to set protected properties
@@ -59,8 +61,10 @@ class Database extends ezSQL_mysql
 	 * @param array $where - associative array of where terms, e.g. array('id = %d' = 5, 'name = %s' = 'tony')
 	 * @param string $orderby - e.g. "post_date DESC"
 	 * @param string $limit - e.g. "10" or "5, 10"
+	 * @param bool $cache - cache results
+	 * @param bool $query_only - return just the query, not the results?
 	 */
-	public function fillObject($select = array(), $table = '', $where = array(), $orderby = '', $limit = '', $cache)
+	public function fillObject($select = array(), $table = '', $where = array(), $orderby = '', $limit = '', $cache, $query_only)
 	{
 		if ($select)  { $this->select = $select; }
 		if ($table)   { $this->table = $table; }
@@ -68,6 +72,7 @@ class Database extends ezSQL_mysql
 		if ($orderby) { $this->orderby = $orderby; }
 		if ($limit)   { $this->limit = $limit; }
 		if ($cache)   { $this->cache = true; } else { $this->cache = false; }
+		if ($query_only)   { $this->query_only = true; } else { $this->query_only = false; }
 	}
 	
 	/**
@@ -82,6 +87,7 @@ class Database extends ezSQL_mysql
 		$this->limit         = '';
 		$this->prepare_array = array();
 		$this->cache         = true;
+		$this->query_only    = false;
 	}
 	
 	
@@ -93,12 +99,14 @@ class Database extends ezSQL_mysql
 	 * @param array $where - associative array of where terms, e.g. array('id = %d' = 5, 'name = %s' = 'tony')
 	 * @param string $orderby - e.g. post_date DESC
 	 * @param string $limit - "X, Y"
+	 * @param bool $cache - cache results
+	 * @param bool $query_only - return just the query, not the results?
 	 * @return array|false
 	 */
-	public function select($h, $select = array(), $table = '', $where = array(), $orderby = '', $limit = '', $cache = true)
+	public function select($h, $select = array(), $table = '', $where = array(), $orderby = '', $limit = '', $cache = true, $query_only = false)
 	{
 		// for flexibility, we want to use object properties:
-		$this->fillObject($select, $table, $where, $orderby, $limit, $cache);
+		$this->fillObject($select, $table, $where, $orderby, $limit, $cache, $query_only);
 		
 		// plugin hook
 		$h->pluginHook('database_select');
@@ -124,7 +132,9 @@ class Database extends ezSQL_mysql
 		// Build query:
 		$sql = "SELECT " . $select . " FROM " . $table . $where . $orderby . $limit;
 		
-		$this->prepare_array[0] = $sql; 
+		$this->prepare_array[0] = $sql;
+		
+		if ($this->query_only) { return $this->prepare_array; }
 		
 		/*	Example:
 			$this->prepare_array[0] is "SELECT user_id FROM hotaru_users WHERE user_id = %d"
