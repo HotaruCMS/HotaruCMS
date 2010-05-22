@@ -63,78 +63,44 @@ class Bookmarking
 
 
 	/**
-	 * Determine the pageType
+	 * theme_index_top
 	 */
 	public function theme_index_top($h)
+	{
+		$this->determinePage($h);
+		// run all other theme_index_top functions except this one
+		$h->pluginHook('theme_index_top', '', array(), array('bookmarking'));
+		$this->finalizePage($h);
+		return "skip";
+	}
+	
+
+	/**
+	 * Determine the page
+	 */
+	public function determinePage($h)
 	{
 		// check if we're using the sort/filter links
 		if ($h->cage->get->keyExists('sort')) {
 			$h->pageName = 'sort';
 		}
 
-		$h->pluginHook('posts_pre_rss_forward');
-		 
-		// check if this is an RSS link forwarding to the source
-		if ($h->cage->get->keyExists('forward')) {
-			$post_id = $h->cage->get->testInt('forward');
-			if ($post_id) { $post = $h->getPost($post_id); }
-			if (isset($post->post_orig_url)) {
-				header("Location:" . urldecode($post->post_orig_url));
-				exit;
-			}
-		}
-
-		// include bookmarking_functions class:
-		require_once(PLUGINS . 'bookmarking/libs/BookmarkingFunctions.php');
-		$sb_funcs = new BookmarkingFunctions();
+		// check if we should forward an RSS link to its source
+		$this->rssForwarding($h);
 		
-		$h->pluginHook('posts_pre_set_home');
+		//check if we should set the home page to "popular"
+		$this->setHomePopular($h);
 
-		// Allow Bookmarking to set the homepage to "popular" unless already set.
-		if (!$h->home) {
-			$h->setHome('popular', 'popular'); // and set name to "popular", too, if not already set.
-		}
-
-		switch ($h->pageName)
-		{
-			case 'popular':
-				$h->pageType = 'list';
-				$h->pageTitle =  ($h->home == 'popular') ? $h->lang["bookmarking_site_name"] : $h->lang["bookmarking_top"];
-				break;
-			case 'latest':
-				$h->pageType = 'list';
-				$h->pageTitle = $h->lang["bookmarking_latest"];
-				break;
-			case 'upcoming':
-				$h->pageType = 'list';
-				$h->pageTitle = $h->lang["bookmarking_upcoming"];
-				break;
-			case 'all':
-				$h->pageType = 'list';
-				$h->pageTitle = $h->lang["bookmarking_all"];
-				break;
-			case 'sort':
-				$sort = $h->cage->get->testPage('sort');
-				if ($sort) {
-					$h->pageType = 'list';
-					$sort_lang = 'bookmarking_' . str_replace('-', '_', $sort);
-					$h->pageTitle = $h->lang[$sort_lang];
-				}
-				break;
-			default:
-				// no default or we'd mess up anything set by other plugins
-		}
-		
-		$h->pluginHook('posts_theme_index_top');
-		
-		// case for paginated pages, but no pagename
-		if ((!$h->pageName || $h->pageName == 'popular') && $h->cage->get->keyExists('pg')) {
-			if (!$h->home) { $h->setHome('popular'); } // query vars previously prevented getPageName returning a name
-			$h->pageName = 'popular';
-			$h->pageType = 'list';
-			$h->pageTitle = $h->lang["bookmarking_top"]; 
-		}
-
+		// check page name and set types and titles
+		$this->checkPageName($h);
+	}
+	
+	
+	/**
+	 * We should now know the pageName for certain, so finish setting up the page
+	 */
+	public function finalizePage($h)
+	{
 		// no need to continue for other types of homepage
 		if (($h->pageName == $h->home) && ($h->home != 'popular')) { return false; }
 
@@ -143,6 +109,9 @@ class Bookmarking
 			return false; 
 		}
 		
+		// get the BookmarkingFunctions class
+		$funcs = $this->getBookmarkingFunctions($h);
+
 		// get settings
 		$h->vars['bookmarking_settings'] = $h->getSerializedSettings('bookmarking');
 		$posts_per_page = $h->vars['bookmarking_settings']['posts_per_page'];
@@ -151,8 +120,8 @@ class Bookmarking
 		switch ($h->pageType)
 		{
 			case 'list':
-				$post_count = $sb_funcs->prepareList($h, '', 'count');   // get the number of posts
-				$post_query = $sb_funcs->prepareList($h, '', 'query');   // and the SQL query used
+				$post_count = $funcs->prepareList($h, '', 'count');   // get the number of posts
+				$post_query = $funcs->prepareList($h, '', 'query');   // and the SQL query used
 				$h->vars['pagedResults'] = $h->pagination($post_query, $post_count, $posts_per_page, 'posts');
 				break;
 			case 'post':
@@ -206,6 +175,94 @@ class Bookmarking
 		// get settings from Submit 
 		if (!isset($h->vars['submit_settings'])) {
 			$h->vars['submit_settings'] = $h->getSerializedSettings('submit');
+		}
+	}
+	
+
+	/**
+	 * Check if we should forward an RSS link to its source
+	 */
+	public function rssForwarding($h)
+	{
+		$h->pluginHook('posts_pre_rss_forward');
+		 
+		// check if this is an RSS link forwarding to the source
+		if (!$h->cage->get->keyExists('forward')) { return false; }
+		
+		$post_id = $h->cage->get->testInt('forward');
+		if ($post_id) { $post = $h->getPost($post_id); }
+		if (isset($post->post_orig_url)) {
+			header("Location:" . urldecode($post->post_orig_url));
+			exit;
+		}
+	}
+	
+	
+	/**
+	 * Check if we should set the home page to Popular
+	 */
+	public function setHomePopular($h)
+	{
+		$h->pluginHook('posts_pre_set_home');
+
+		// Allow Bookmarking to set the homepage to "popular" unless already set.
+		if (!$h->home) {
+			$h->setHome('popular', 'popular'); // and set name to "popular", too, if not already set.
+		}
+	}
+
+	/**
+	 * Get Bookmarking Functions
+	 */
+	public function getBookmarkingFunctions($h)
+	{
+		// include bookmarking_functions class:
+		require_once(PLUGINS . 'bookmarking/libs/BookmarkingFunctions.php');
+		return new BookmarkingFunctions();
+	}
+	
+
+	/**
+	 * Check page name and set types and titles
+	 */
+	public function checkPageName($h)
+	{
+		switch ($h->pageName)
+		{
+			case 'popular':
+				$h->pageType = 'list';
+				$h->pageTitle =  ($h->home == 'popular') ? $h->lang["bookmarking_site_name"] : $h->lang["bookmarking_top"];
+				break;
+			case 'latest':
+				$h->pageType = 'list';
+				$h->pageTitle = $h->lang["bookmarking_latest"];
+				break;
+			case 'upcoming':
+				$h->pageType = 'list';
+				$h->pageTitle = $h->lang["bookmarking_upcoming"];
+				break;
+			case 'all':
+				$h->pageType = 'list';
+				$h->pageTitle = $h->lang["bookmarking_all"];
+				break;
+			case 'sort':
+				$sort = $h->cage->get->testPage('sort');
+				if ($sort) {
+					$h->pageType = 'list';
+					$sort_lang = 'bookmarking_' . str_replace('-', '_', $sort);
+					$h->pageTitle = $h->lang[$sort_lang];
+				}
+				break;
+			default:
+				// no default or we'd mess up anything set by other plugins
+		}
+		
+		// case for paginated pages, but *no pagename*
+		if ((!$h->pageName || $h->pageName == 'popular') && $h->cage->get->keyExists('pg')) {
+			if (!$h->home) { $h->setHome('popular'); } // query vars previously prevented getPageName returning a name
+			$h->pageName = 'popular';
+			$h->pageType = 'list';
+			$h->pageTitle = $h->lang["bookmarking_top"]; 
 		}
 	}
 	
@@ -312,9 +369,9 @@ class Bookmarking
                 
                 // display post or show error message
                 if (!$buried && !$pending){
-                    $h->displayTemplate('sb_post');
+                    $h->displayTemplate('bookmarking_post');
                 } elseif ($can_edit) {
-                    $h->displayTemplate('sb_post');
+                    $h->displayTemplate('bookmarking_post');
                 } else {
                     // don't show the post
                 }
@@ -328,7 +385,7 @@ class Bookmarking
                     echo $h->pageBar($h->vars['pagedResults']);
                 } else {
                     $h->displayTemplate('bookmarking_no_posts');
-                } 
+                }
                 return true;
         }
     }
@@ -339,17 +396,17 @@ class Bookmarking
      */
     public function admin_theme_main_stats($h, $vars)
     {
-        echo "<li>&nbsp;</li>";
-	foreach ($vars as $key => $value) {
-	    echo "<li class='title'>" . $key . "</li>";
-	    foreach ($value as $stat_type) {
-		$posts = $h->post->stats($h, $stat_type);
-		if (!$posts) { $posts = 0; }
-		$lang_name = 'bookmarking_admin_stats_' . $stat_type;
-		echo "<li>" . $h->lang[$lang_name] . ": " . $posts . "</li>";
-	    }
+		echo "<li>&nbsp;</li>";
+		foreach ($vars as $key => $value) {
+			echo "<li class='title'>" . $key . "</li>";
+			foreach ($value as $stat_type) {
+				$posts = $h->post->stats($h, $stat_type);
+				if (!$posts) { $posts = 0; }
+				$lang_name = 'bookmarking_admin_stats_' . $stat_type;
+				echo "<li>" . $h->lang[$lang_name] . ": " . $posts . "</li>";
+			}
+		}
 	}
-    }
     
     
     /**

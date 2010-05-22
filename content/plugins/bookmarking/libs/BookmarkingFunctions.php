@@ -83,7 +83,7 @@ class BookmarkingFunctions
                     $this->prepareListFilters($h, 'all');
                 }
 
-            $h->pluginHook('bookmarking_functions_preparelist', '', array('return' => $return)); // formerly post_list_filter
+            $h->pluginHook('bookmarking_functions_preparelist', '', array('return' => $return));
         }
         
         // defaults
@@ -103,20 +103,32 @@ class BookmarkingFunctions
         if ($return == 'count' && (strpos($h->vars['select'], "MATCH") === false)) { $h->vars['select'] = "count(post_id) AS number"; }
         if ($return == 'query') { $all = true; }    // this removes the "LIMIT" parameter so we can add it later when paginating.
         
-        $prepared_filter = $this->filter($h->vars['filter'], $limit, $all, $h->vars['select'], $h->vars['orderby']);
+        if ($all == true) { $limit = ''; } elseif ($limit == 0) { $limit = "20"; }
+
+        // get the prepared SQL query
+        $prepare_array = $h->db->select(
+        	$h,
+        	array($h->vars['select']),
+        	'posts',
+            $h->vars['filter'],
+            $h->vars['orderby'],
+            $limit,
+            false,
+            true
+        );
         
         if ($return == 'query') { 
-            if (isset($prepared_filter[1])) {
-                return $h->db->prepare($prepared_filter);
+            if (isset($prepare_array[1])) {
+                return $h->db->prepare($prepare_array);
             } else {
-                return $prepared_filter[0];    // returns the prepared query array
+                return $prepare_array[0];    // returns the prepared query array
             }
         } elseif($return == 'count') {
             unset($h->vars['select']);  // so it doesn't get used again unintentionally
-            $count_array = $this->getPosts($h, $prepared_filter);
+            $count_array = $h->db->getData($h, 'posts', $prepare_array);
             return $count_array[0]->number; // returns the number of posts
         } else {
-            return $this->getPosts($h, $prepared_filter);   // returns the posts OR post count depending on the query
+            return $h->db->getData($h, 'posts', $prepare_array);   // returns the posts OR post count depending on the query
         }
     }
     
@@ -213,95 +225,6 @@ class BookmarkingFunctions
             $h->vars['filter']['(post_status = %s OR post_status = %s)'] = array('top', 'new');
             $h->vars['orderby'] = "post_date DESC";
         }
-    }
-    
-    
-    /**
-     * Gets all the posts from the database
-     *
-     * @param array $vars - search parameters
-     * @param int $limit - no. of rows to retrieve
-     * @param bool $all - true to retrieve ALL rows, else default 20
-     * @param string $select - the select clause
-     * @param string $orderby - the order by clause
-     * @return array|false $prepare_array is the prepared SQL statement
-     *
-     * Example usage: $post->filter(array('post_tags LIKE %s' => '%tokyo%'), 10);
-     */    
-    public function filter($vars = array(), $limit = 0, $all = false, $select = '*', $orderby = 'post_date DESC')
-    {
-        if(!isset($filter)) { $filter = ''; }
-        $prepare_array = array();
-        $prepare_array[0] = "temp";    // placeholder to be later filled with the SQL query.
-        
-        // default to posts of type "news" if not otherwise set
-        if (!isset($vars['post_type = %s'])) { $vars['post_type = %s'] = 'news'; } 
-        
-        if (!empty($vars)) {
-            $filter = " WHERE ";
-            foreach ($vars as $key => $value) {
-                $filter .= $key . " AND ";    // e.g. " post_tags LIKE %s "
-                
-                // Push the values of %s and %d into the prepare_array
-                
-                // sometimes the filter might contain multiple values, eg.
-                // WHERE post_status = %s OR post_status = %s. In that case,
-                // the values are stored in an array, e.g. array('top', 'new').
-                if (is_array($value)) {
-                    foreach ($value as $v) {
-                        array_push($prepare_array, $v);
-                    }
-                } else {
-                    // otherwise, push the single value into $prepared_array:
-                    array_push($prepare_array, $value);
-                }
-                
-            }
-            $filter = rstrtrim($filter, " AND ");
-        }
-        
-        if ($all == true) {
-            $limit = '';
-        } elseif ($limit == 0) { 
-            $limit = " LIMIT 20"; 
-        } else { 
-            $limit = " LIMIT " . $limit; 
-        }
-        
-        if ($orderby) { $orderby = "ORDER BY " . $orderby; }
-        
-        $sql = "SELECT " . $select . " FROM " . TABLE_POSTS . $filter . " " . $orderby . $limit;
-        
-        $prepare_array[0] = $sql;
-        
-        // $prepare_array needs to be passed to $this->db->prepare, i.e. $this->db->get_results($this->db->prepare($prepare_array));
-                
-        if ($prepare_array) { return $prepare_array; } else { return false; }
-    }
-    
-    
-    /**
-     * Gets all the posts from the database
-     *
-     * @param array $prepared array - prepared SQL statement from filter()
-     * @return array|false - array of posts
-     */    
-    public function getPosts($h, $prepared_array = array())
-    {
-        if (!$prepared_array) { return false; }
-        
-        if (empty($prepared_array[1])) {
-            $h->smartCache('on', 'posts', 60, $prepared_array[0]); // start using cache
-            $posts = $h->db->get_results($prepared_array[0]); // ignoring the prepare function.
-        } else {
-            $query = $h->db->prepare($prepared_array);
-            $h->smartCache('on', 'posts', 60, $query); // start using cache
-            $posts = $h->db->get_results($query);
-        }
-        
-        $h->smartCache('off'); // stop using cache
-        
-        if ($posts) { return $posts; } else { return false; }
     }
 }
 ?>
