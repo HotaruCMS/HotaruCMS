@@ -2,12 +2,12 @@
 /**
  * name: Tags
  * description: Show tags, filter tags and RSS for tags
- * version: 1.6
+ * version: 1.7
  * folder: tags
  * class: Tags
  * type: tags
  * requires: sb_base 0.1, submit 1.9
- * hooks: sb_base_theme_index_top, header_include, header_include_raw, header_meta, sb_base_show_post_extra_fields, sb_base_show_post_extras, sb_base_functions_preparelist, breadcrumbs
+ * hooks: sb_base_theme_index_top, header_include, header_include_raw, header_meta, sb_base_show_post_extra_fields, sb_base_show_post_extras, sb_base_functions_preparelist, breadcrumbs, post_rss_feed
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -43,6 +43,7 @@ class Tags
         if ($h->cage->get->keyExists('tag')) { 
             $h->pageTitle = stripslashes(make_name($h->cage->get->noTags('tag')));
             if (!$h->pageName) { $h->pageName = 'popular'; }
+            if ($h->pageName == $h->home) { $h->pageTitle .=  '[delimiter]' . SITE_NAME; }
             $h->subPage = 'tags';
             $h->pageType = 'list';
             $h->vars['tag'] = $h->cage->get->noTags('tag');
@@ -168,6 +169,20 @@ class Tags
             echo "</div>\n";
             echo "<div class='clear'>&nbsp;</div>\n";
         }
+    }
+    
+    
+    /**
+     * If a tag feed, set it up
+     */
+    public function post_rss_feed($h)
+    {
+        $tag = $h->cage->get->noTags('tag');
+        if (!$tag) { return false; }
+        
+        $h->vars['postRssFilter']['post_tags LIKE %s'] = '%' . urlencode(stripslashes($tag)) . '%'; 
+        $tag = str_replace('_', ' ', stripslashes(html_entity_decode($tag, ENT_QUOTES,'UTF-8'))); 
+        $h->vars['postRssFeed']['description'] = $h->lang["sb_base_rss_stories_tagged"] . " " . $tag;
     }
 }
 ?>

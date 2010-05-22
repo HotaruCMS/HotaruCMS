@@ -2,12 +2,12 @@
 /**
  * name: Search
  * description: Displays "Search!"
- * version: 1.0
+ * version: 1.1
  * folder: search
  * class: Search
  * type: search
  * requires: submit 1.9, widgets 0.6
- * hooks: install_plugin, sb_base_theme_index_top, header_include, sb_base_functions_preparelist, search_box, breadcrumbs
+ * hooks: install_plugin, sb_base_theme_index_top, header_include, sb_base_functions_preparelist, search_box, breadcrumbs, post_rss_feed
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -223,6 +223,27 @@ class Search
         $crumbs .= $h->vars['orig_search_terms'] . "</a>\n ";
         
         return $crumbs . $h->rssBreadcrumbsLink('', array('search'=>urlencode($h->vars['orig_search_terms'])));
+    }
+    
+    
+    /**
+     * If a search feed, set it up
+     */
+    public function post_rss_feed($h)
+    {
+        $search = $h->cage->get->sanitizeTags('search');
+        if (!$search || !$h->isActive('search')) { return false; }
+        
+        require_once(PLUGINS . 'search/search.php');
+        $search_plugin = new Search();
+        $prepared_search = $search_plugin->prepareSearchFilter($h, $search);
+        extract($prepared_search);
+        $h->vars['postRssSelect'] = $select;
+        $h->vars['postRssFilter'] = $filter;
+        
+        // override "relevance DESC" so the RSS feed updates with the latest related terms.
+        $h->vars['postRssOrderBy'] = "post_date DESC";
+        $h->vars['postRssFeed']['description'] = $h->lang["sb_base_rss_stories_search"] . " " . stripslashes($search);
     }
 }
 ?>

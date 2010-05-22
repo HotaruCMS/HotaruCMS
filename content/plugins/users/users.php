@@ -2,11 +2,11 @@
 /**
  * name: Users
  * description: Provides profile, settings and permission pages
- * version: 1.9
+ * version: 2.0
  * folder: users
  * type: users
  * class: Users
- * hooks: pagehandling_getpagename, theme_index_top, header_include, sb_base_functions_preparelist, breadcrumbs, theme_index_main, users_edit_profile_save, user_settings_save, admin_theme_main_stats, header_meta
+ * hooks: pagehandling_getpagename, theme_index_top, header_include, sb_base_functions_preparelist, breadcrumbs, theme_index_main, users_edit_profile_save, user_settings_save, admin_theme_main_stats, header_meta, post_rss_feed
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -82,7 +82,7 @@ class Users
                 $h->pageTitle = $h->lang["users_permissions"] . '[delimiter]' . $user;
                 $h->pageType = 'user';
                 break;
-            case 'index':
+            case 'popular':
                 if ($h->subPage == 'user') { $h->pageTitle = $h->lang["sb_base_top"] . '[delimiter]' . $user . '[delimiter]' . $h->lang["sb_base_site_name"]; }
                 break;
             case 'latest':
@@ -436,19 +436,33 @@ class Users
         $ui = new UserInfo();
         
         echo "<li>&nbsp;</li>";
-	if (isset($vars) && (!empty($vars))) {	    
-	    foreach ($vars as $key => $value) {
-		echo "<li class='title'>" . $key . "</li>";
-		foreach ($value as $stat_type) {		    
-		    if (isset($value) && !empty($value)) {
-			$users = $ui->stats($h, $stat_type);
-			if (!$users) { $users = 0; }
-			$lang_name = 'users_admin_stats_' . $stat_type;
-			echo "<li>" . $h->lang[$lang_name] . ": " . $users . "</li>";
-		    }
+		if (isset($vars) && (!empty($vars))) {	    
+			foreach ($vars as $key => $value) {
+				echo "<li class='title'>" . $key . "</li>";
+				foreach ($value as $stat_type) {		    
+					if (isset($value) && !empty($value)) {
+						$users = $ui->stats($h, $stat_type);
+						if (!$users) { $users = 0; }
+						$lang_name = 'users_admin_stats_' . $stat_type;
+						echo "<li>" . $h->lang[$lang_name] . ": " . $users . "</li>";
+					}
+				}
+			}
 		}
-	    }
-	}
+    }
+    
+    
+    /**
+     * If a user feed, set it up
+     */
+    public function post_rss_feed($h)
+    {
+        $user = $h->cage->get->testUsername('user');
+        if (!$user) { return false; }
+        
+        $user_id = $h->getUserIdFromName($user);
+        if ($user_id) { $h->vars['postRssFilter']['post_author = %d'] = $user_id; }
+        $h->vars['postRssFeed']['description'] = $h->lang["sb_base_rss_stories_from_user"] . " " . $user; 
     }
 }
 

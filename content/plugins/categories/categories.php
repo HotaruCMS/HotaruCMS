@@ -2,12 +2,12 @@
 /**
  * name: Categories
  * description: Enables categories for posts
- * version: 1.5
+ * version: 1.6
  * folder: categories
  * class: Categories
  * type: categories
  * requires: sb_base 0.1, submit 1.9, category_manager 0.7
- * hooks: sb_base_theme_index_top, header_include, pagehandling_getpagename, sb_base_functions_preparelist, sb_base_show_post_author_date, header_end, breadcrumbs, header_meta
+ * hooks: sb_base_theme_index_top, header_include, pagehandling_getpagename, sb_base_functions_preparelist, sb_base_show_post_author_date, header_end, breadcrumbs, header_meta, post_rss_feed
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -52,15 +52,15 @@ class Categories
                 $h->vars['category_id'] = $category;
                 $h->vars['category_name'] = $h->getCatName($category);
                 $h->vars['category_safe_name'] = $h->getCatSafeName($category);
-                $h->pageTitle = $h->vars['category_name'];
             } else {
                 // category should be a safe name
                 $h->vars['category_id'] = $h->getCatId($category);
                 $h->vars['category_name'] = $h->getCatName(0, $category);
                 $h->vars['category_safe_name'] = $category;
-                $h->pageTitle = $h->vars['category_name'];
             }
+            $h->pageTitle = $h->vars['category_name'];
             if (!$h->pageName) { $h->pageName = 'popular'; }
+            if ($h->pageName == $h->home) { $h->pageTitle .=  '[delimiter]' . SITE_NAME; }
             $h->subPage = 'category';
             $h->pageType = 'list';
         }
@@ -391,6 +391,42 @@ class Categories
         return $output; 
     } 
 
+
+    /**
+     * If a category feed, set it up
+     */
+    public function post_rss_feed($h)
+    {
+        $category = $h->cage->get->noTags('category');
+        
+        if (!$category) { return false; }
+        
+        if (FRIENDLY_URLS == "true") { $cat_id = $h->getCatId($category); }
+        if (FRIENDLY_URLS == "false") { $cat_id = $category; }
+        
+        if (!$cat_id) { return false; }
+
+        // When a user clicks a parent category, we need to show posts from all child categories, too.
+        // This only works for one level of sub-categories.
+
+        $filter_string = '(post_category = %d';
+        $values = array($cat_id);
+        $parent = $h->getCatParent($cat_id);
+        if ($parent == 1) {
+            $children = $h->getCatChildren($cat_id);
+            if ($children) {
+                foreach ($children as $child_id) {
+                    $filter_string .= ' || post_category = %d';
+                    array_push($values, $child_id->category_id); 
+                }
+            }
+        }
+        $filter_string .= ')';
+        $h->vars['postRssFilter'][$filter_string] = $values; 
+
+        $category = str_replace('_', ' ', stripslashes(html_entity_decode($cat_id, ENT_QUOTES,'UTF-8'))); 
+        $h->vars['postRssFeed']['description'] = $h->lang["sb_base_rss_stories_in_category"] . " " . $h->getCatName($cat_id); 
+    }
 }
 
 ?>
