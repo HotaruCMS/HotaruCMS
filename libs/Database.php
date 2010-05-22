@@ -92,10 +92,10 @@ class Database extends ezSQL_mysql
 	 * @param string $table - abbreviated table name, e.g. posts, users, comments
 	 * @param array $where - associative array of where terms, e.g. array('id = %d' = 5, 'name = %s' = 'tony')
 	 * @param string $orderby - e.g. post_date DESC
-	 * @param array $limit - X, Y array
+	 * @param string $limit - "X, Y"
 	 * @return array|false
 	 */
-	public function select($h, $select = array(), $table = '', $where = array(), $orderby = '', $limit = array(), $cache = true)
+	public function select($h, $select = array(), $table = '', $where = array(), $orderby = '', $limit = '', $cache = true)
 	{
 		// for flexibility, we want to use object properties:
 		$this->fillObject($select, $table, $where, $orderby, $limit, $cache);
