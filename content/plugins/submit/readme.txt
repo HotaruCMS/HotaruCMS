@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.2.8 2010/05/22 - Nick - Removed requirement to have SB Base installed
 v.2.7 2010/05/09 - Nick - Fixes for "invalid url" error with non-roman characters in urls
 v.2.6 2010/05/07 - Damon - Fix for clearing the temporary data table during post submission
 v.2.5 2010/04/26 - Nick - If the story being submitted already exists, the user is redirected to it

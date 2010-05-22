@@ -2,12 +2,11 @@
 /**
  * name: Submit
  * description: Social Bookmarking submit - Enables post submission
- * version: 2.7
+ * version: 2.8
  * folder: submit
  * class: Submit
  * type: post
  * hooks: install_plugin, admin_theme_index_top, theme_index_top, header_include, header_include_raw, navigation, admin_header_include_raw, breadcrumbs, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings
- * requires: sb_base 0.1
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *

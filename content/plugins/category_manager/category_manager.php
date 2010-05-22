@@ -2,10 +2,9 @@
 /**
  * name: Category Manager
  * description: Manage categories.
- * version: 0.7
+ * version: 0.8
  * folder: category_manager
  * class: CategoryManager
- * requires: sb_base 0.1
  * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
