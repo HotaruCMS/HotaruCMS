@@ -6,7 +6,7 @@
  * folder: users
  * type: users
  * class: Users
- * hooks: pagehandling_getpagename, theme_index_top, header_include, sb_base_functions_preparelist, breadcrumbs, theme_index_main, users_edit_profile_save, user_settings_save, admin_theme_main_stats, header_meta, post_rss_feed
+ * hooks: pagehandling_getpagename, theme_index_top, header_include, bookmarking_functions_preparelist, breadcrumbs, theme_index_main, users_edit_profile_save, user_settings_save, admin_theme_main_stats, header_meta, post_rss_feed
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -83,21 +83,21 @@ class Users
                 $h->pageType = 'user';
                 break;
             case 'popular':
-                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["sb_base_top"] . '[delimiter]' . $user . '[delimiter]' . $h->lang["sb_base_site_name"]; }
+                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["bookmarking_top"] . '[delimiter]' . $user . '[delimiter]' . SITE_NAME; }
                 break;
             case 'latest':
-                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["sb_base_latest"] . '[delimiter]' . $user; }
+                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["bookmarking_latest"] . '[delimiter]' . $user; }
                 break;
             case 'upcoming':
-                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["sb_base_upcoming"] . '[delimiter]' . $user; }
+                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["bookmarking_upcoming"] . '[delimiter]' . $user; }
                 break;
             case 'all':
-                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["sb_base_all"] . '[delimiter]' . $user; }
+                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["bookmarking_all"] . '[delimiter]' . $user; }
                 break;
             case 'sort':
                 if ($h->subPage == 'user') { 
                     $sort = $h->cage->get->testPage('sort');
-                    $sort_lang = 'sb_base_' . str_replace('-', '_', $sort);
+                    $sort_lang = 'bookmarking_' . str_replace('-', '_', $sort);
                     $h->pageTitle = $h->lang[$sort_lang] . '[delimiter]' . $user;
                 }
                 break;
@@ -176,7 +176,7 @@ class Users
     /**
      * Filter posts to this user
      */
-    public function sb_base_functions_preparelist($h)
+    public function bookmarking_functions_preparelist($h)
     {
         $username = $h->cage->get->testUsername('user');
         if ($username) {
@@ -226,20 +226,20 @@ class Users
         if ($h->subPage == 'user' && $h->pageType == 'list') {
             switch ($h->pageName) {
                 case 'index':
-                    $title = $h->lang["sb_base_top"];
+                    $title = $h->lang["bookmarking_top"];
                     break;
                 case 'latest':
-                    $title = $h->lang["sb_base_latest"];
+                    $title = $h->lang["bookmarking_latest"];
                     break;
                 case 'upcoming':
-                    $title = $h->lang["sb_base_upcoming"];
+                    $title = $h->lang["bookmarking_upcoming"];
                     break;
                 case 'all':
-                    $title = $h->lang["sb_base_all"];
+                    $title = $h->lang["bookmarking_all"];
                     break;
                 case 'sort':
                     $sort = $h->cage->get->testPage('sort');
-                    $sort_lang = 'sb_base_' . str_replace('-', '_', $sort);
+                    $sort_lang = 'bookmarking_' . str_replace('-', '_', $sort);
                     $title = $h->lang[$sort_lang];
                     break;
                 default:
@@ -462,7 +462,7 @@ class Users
         
         $user_id = $h->getUserIdFromName($user);
         if ($user_id) { $h->vars['postRssFilter']['post_author = %d'] = $user_id; }
-        $h->vars['postRssFeed']['description'] = $h->lang["sb_base_rss_stories_from_user"] . " " . $user; 
+        $h->vars['postRssFeed']['description'] = $h->lang["post_rss_from_user"] . " " . $user; 
     }
 }
 

@@ -6,8 +6,7 @@
  * folder: tags
  * class: Tags
  * type: tags
- * requires: sb_base 0.1, submit 1.9
- * hooks: sb_base_theme_index_top, header_include, header_include_raw, header_meta, sb_base_show_post_extra_fields, sb_base_show_post_extras, sb_base_functions_preparelist, breadcrumbs, post_rss_feed
+ * hooks: theme_index_top, header_include, header_include_raw, header_meta, posts_show_post_extra_fields, posts_show_post_extras, bookmarking_functions_preparelist, breadcrumbs, post_rss_feed
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -38,7 +37,7 @@ class Tags
     /**
      * Determine if we are filtering to tags
      */
-    public function sb_base_theme_index_top($h)
+    public function theme_index_top($h)
     {
         if ($h->cage->get->keyExists('tag')) { 
             $h->pageTitle = stripslashes(make_name($h->cage->get->noTags('tag')));
@@ -95,7 +94,7 @@ class Tags
     /**
      * Gets a tag from the url and sets the filter for get_posts
      */
-    public function sb_base_functions_preparelist($h)
+    public function bookmarking_functions_preparelist($h)
     {
         if ($h->subPage == 'tags') 
         {
@@ -130,7 +129,7 @@ class Tags
     /**
      * Shows tags in each post
      */
-    public function sb_base_show_post_extra_fields($h)
+    public function posts_show_post_extra_fields($h)
     { 
         if ($h->post->tags)
         { 
@@ -142,7 +141,7 @@ class Tags
      /**
      * List of tags
      */
-    public function sb_base_show_post_extras($h, $vars = array())
+    public function posts_show_post_extras($h, $vars = array())
     {
         if (!$h->post->tags) { return false; }
         
@@ -182,7 +181,7 @@ class Tags
         
         $h->vars['postRssFilter']['post_tags LIKE %s'] = '%' . urlencode(stripslashes($tag)) . '%'; 
         $tag = str_replace('_', ' ', stripslashes(html_entity_decode($tag, ENT_QUOTES,'UTF-8'))); 
-        $h->vars['postRssFeed']['description'] = $h->lang["sb_base_rss_stories_tagged"] . " " . $tag;
+        $h->vars['postRssFeed']['description'] = $h->lang["post_rss_tagged"] . " " . $tag;
     }
 }
 ?>

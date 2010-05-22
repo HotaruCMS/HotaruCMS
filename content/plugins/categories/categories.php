@@ -6,8 +6,8 @@
  * folder: categories
  * class: Categories
  * type: categories
- * requires: sb_base 0.1, submit 1.9, category_manager 0.7
- * hooks: sb_base_theme_index_top, header_include, pagehandling_getpagename, sb_base_functions_preparelist, sb_base_show_post_author_date, header_end, breadcrumbs, header_meta, post_rss_feed
+ * requires: category_manager 0.7
+ * hooks: theme_index_top, header_include, pagehandling_getpagename, bookmarking_functions_preparelist, posts_show_post_author_date, header_end, breadcrumbs, header_meta, post_rss_feed
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -40,7 +40,7 @@ class Categories
      * Categories might be numeric, e.g. category=3 or safe names, e.g. category=news_and_business
      * We also test for urls like domain.com/News/ where "News" is a category 
      */
-    public function sb_base_theme_index_top($h)
+    public function theme_index_top($h)
     {
         // if there's a "category" key in the url...
         
@@ -195,7 +195,7 @@ class Categories
      *
      * @return bool
      */
-    public function sb_base_functions_preparelist($h)
+    public function bookmarking_functions_preparelist($h)
     {
         if ($h->subPage == 'category') 
         {
@@ -264,13 +264,13 @@ class Categories
     /**
      * Shows category in each post
      */
-    public function sb_base_show_post_author_date($h)
+    public function posts_show_post_author_date($h)
     { 
         if ($h->post->category != 1) { 
 
             $cat_name = $h->getCatName($h->post->category);
             
-            echo " " . $h->lang["sb_base_post_in"] . " ";
+            echo " " . $h->lang["categories_post_in"] . " ";
             echo "<a href='" . $h->url(array('category'=>$h->post->category)) . "'>" . $cat_name . "</a>\n";
         }        
     }
@@ -425,7 +425,7 @@ class Categories
         $h->vars['postRssFilter'][$filter_string] = $values; 
 
         $category = str_replace('_', ' ', stripslashes(html_entity_decode($cat_id, ENT_QUOTES,'UTF-8'))); 
-        $h->vars['postRssFeed']['description'] = $h->lang["sb_base_rss_stories_in_category"] . " " . $h->getCatName($cat_id); 
+        $h->vars['postRssFeed']['description'] = $h->lang["post_rss_in_category"] . " " . $h->getCatName($cat_id); 
     }
 }
 

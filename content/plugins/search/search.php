@@ -6,8 +6,8 @@
  * folder: search
  * class: Search
  * type: search
- * requires: submit 1.9, widgets 0.6
- * hooks: install_plugin, sb_base_theme_index_top, header_include, sb_base_functions_preparelist, search_box, breadcrumbs, post_rss_feed
+ * requires: widgets 0.6
+ * hooks: install_plugin, theme_index_top, header_include, bookmarking_functions_preparelist, search_box, breadcrumbs, post_rss_feed
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -57,7 +57,7 @@ class Search
     /**
      * Get search results
      */
-    public function sb_base_theme_index_top($h)
+    public function theme_index_top($h)
     {
         // Get page title
         if ($h->cage->get->keyExists('search')) { 
@@ -91,7 +91,7 @@ class Search
     /**
      * Use the search terms to build a filter
      */
-    public function sb_base_functions_preparelist($h, $vars)
+    public function bookmarking_functions_preparelist($h, $vars)
     {
         if ($h->cage->get->keyExists('search')) 
         {
@@ -243,7 +243,7 @@ class Search
         
         // override "relevance DESC" so the RSS feed updates with the latest related terms.
         $h->vars['postRssOrderBy'] = "post_date DESC";
-        $h->vars['postRssFeed']['description'] = $h->lang["sb_base_rss_stories_search"] . " " . stripslashes($search);
+        $h->vars['postRssFeed']['description'] = $h->lang["post_rss_search"] . " " . stripslashes($search);
     }
 }
 ?>
