@@ -53,14 +53,14 @@ $user->getUserBasic($h, $h->post->author);
     </div>
 
     <div class="show_post_author_date">    
-        <?php echo " " . $h->lang["sb_base_post_posted_by"] . " <a href='" . $h->url(array('user' => $user->name)) . "'>" . $user->name . "</a>"; ?>
-        <?php echo time_difference(unixtimestamp($h->post->date), $h->lang) . " " . $h->lang["sb_base_post_ago"]; ?>
+        <?php echo " " . $h->lang["bookmarking_post_posted_by"] . " <a href='" . $h->url(array('user' => $user->name)) . "'>" . $user->name . "</a>"; ?>
+        <?php echo time_difference(unixtimestamp($h->post->date), $h->lang) . " " . $h->lang["bookmarking_post_ago"]; ?>
         <?php $h->pluginHook('posts_show_post_author_date'); ?>
         <?php
             if (($h->pageName != 'submit3') 
                 && (($h->currentUser->getPermission('can_edit_posts') == 'yes') 
                 || (($h->currentUser->getPermission('can_edit_posts') == 'own') && ($h->currentUser->id == $user->id)))) { 
-                echo "<a class='show_post_edit' href='" . BASEURL . "index.php?page=edit_post&amp;post_id=" . $h->post->id . "'>" . $h->lang["sb_base_post_edit"] . "</a>"; 
+                echo "<a class='show_post_edit' href='" . BASEURL . "index.php?page=edit_post&amp;post_id=" . $h->post->id . "'>" . $h->lang["bookmarking_post_edit"] . "</a>"; 
             }
         ?> 
     </div>

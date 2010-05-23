@@ -29,7 +29,7 @@
 
     <?php echo $h->lang["submit_instructions_3"]; ?> <br /><br />
     
-    <?php $h->displayTemplate('sb_post', 'sb_base') ?>
+    <?php $h->displayTemplate('bookmarking_post', 'bookmarking') ?>
     
     <?php $h->pluginHook('submit_step3_pre_buttons'); ?>
     
