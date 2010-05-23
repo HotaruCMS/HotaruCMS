@@ -316,47 +316,58 @@ class UserInfo extends UserBase
 		switch ($stat_type) {
 			case 'admins':
 				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+				$h->smartCache('on', 'users', 60, $sql); // start using cache
 				$users = $h->db->get_var($h->db->prepare($sql, 'admin'));
 				break;
 			case 'supermods':
 				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+				$h->smartCache('on', 'users', 60, $sql); // start using cache
 				$users = $h->db->get_var($h->db->prepare($sql, 'supermod'));
 				break;
 			case 'moderators':
 				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+				$h->smartCache('on', 'users', 60, $sql); // start using cache
 				$users = $h->db->get_var($h->db->prepare($sql, 'moderator'));
 				break;
 			case 'members':
 				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+				$h->smartCache('on', 'users', 60, $sql); // start using cache
 				$users = $h->db->get_var($h->db->prepare($sql, 'member'));
 				break;
 			case 'total_users':
 				$sql = "SELECT count(user_id) FROM " . TABLE_USERS;
+				$h->smartCache('on', 'users', 60, $sql); // start using cache
 				$users = $h->db->get_var($sql);
 				break;
 			case 'approved_users':
 				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s OR user_role = %s OR user_role = %s OR  user_role = %s";
+				$h->smartCache('on', 'users', 60, $sql); // start using cache
 				$users = $h->db->get_var($h->db->prepare($sql, 'admin', 'supermod', 'moderator', 'member'));
 				break;
 			case 'pending_users':
 				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+				$h->smartCache('on', 'users', 60, $sql); // start using cache
 				$users = $h->db->get_var($h->db->prepare($sql, 'pending'));
 				break;
 			case 'undermod_users':
 				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+				$h->smartCache('on', 'users', 60, $sql); // start using cache
 				$users = $h->db->get_var($h->db->prepare($sql, 'undermod'));
 				break;
 			case 'banned_users':
 				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+				$h->smartCache('on', 'users', 60, $sql); // start using cache
 				$users = $h->db->get_var($h->db->prepare($sql, 'banned'));
 				break;
 			case 'killspammed_users':
 				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+				$h->smartCache('on', 'users', 60, $sql); // start using cache
 				$users = $h->db->get_var($h->db->prepare($sql, 'killspammed'));
 				break;
 			default:
 				$users = 0;
 		}
+		$h->smartCache('off'); // stop using cache
 		
 		return $users;
 	}

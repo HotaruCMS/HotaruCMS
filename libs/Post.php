@@ -466,28 +466,34 @@ class Post
 		switch ($stat_type) {
 			case 'total_posts':
 				$sql = "SELECT count(post_id) FROM " . TABLE_POSTS;
+				$h->smartCache('on', 'posts', 60, $sql); // start using cache
 				$posts = $h->db->get_var($sql);
 				break;
 			case 'approved_posts':
 				$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s OR post_status = %s";
+				$h->smartCache('on', 'posts', 60, $sql); // start using cache
 				$posts = $h->db->get_var($h->db->prepare($sql, 'top', 'new'));
 				break;
 			case 'pending_posts':
 				$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s";
+				$h->smartCache('on', 'posts', 60, $sql); // start using cache
 				$posts = $h->db->get_var($h->db->prepare($sql, 'pending'));
 				break;
 			case 'buried_posts':
 				$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s";
+				$h->smartCache('on', 'posts', 60, $sql); // start using cache
 				$posts = $h->db->get_var($h->db->prepare($sql, 'buried'));
 				break;
 			case 'archived_posts':
 				$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_archived = %s";
+				$h->smartCache('on', 'posts', 60, $sql); // start using cache
 				$posts = $h->db->get_var($h->db->prepare($sql, 'Y'));
 				break;
 			default:
 				$posts = 0;
 		}
-	
+		$h->smartCache('off'); // stop using cache
+		
 		return $posts;
 	}
 }
