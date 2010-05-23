@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.2.0 2010/05/23 - Nick - Removed the requirement to have SB Base installed.
 v.1.9 2010/05/17 - Nick - Fix for undefined variable
 v.1.8 2010/05/14 - Nick - Fix for auto-votes being assigned to the current user when cron runs AutoReader 
 v.1.7 2010/05/05 - Nick - Fix for user id 0 assign to auto-vote when using AutoReader
