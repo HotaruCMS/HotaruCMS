@@ -36,25 +36,33 @@ setcookie("hotaru_user", "", time()-3600, "/");
 setcookie("hotaru_key", "", time()-3600, "/");
 // --------------------------------------------------
 
-// define shorthand paths
-define("BASE", dirname(__FILE__). '/../');
-define("ADMIN", dirname(__FILE__).'/../admin/');
-define("CACHE", dirname(__FILE__). '/../cache/');
-define("INSTALL", dirname(__FILE__).'/');
-define("LIBS", dirname(__FILE__).'/../libs/');
-define("EXTENSIONS", dirname(__FILE__).'/../libs/extensions/');
-define("FUNCTIONS", dirname(__FILE__).'/../functions/');
-define("THEMES", dirname(__FILE__).'/../content/themes/');
-define("PLUGINS", dirname(__FILE__).'/../content/plugins/');
-define("ADMIN_THEMES", dirname(__FILE__).'/../content/admin_themes/');
+// Read Settings
+define("SETTINGS", '../hotaru_settings.php');
 
-define("SETTINGS_FILE", BASE . 'hotaru_settings.php');
-
-if (file_exists(SETTINGS_FILE)) {
-    include_once(SETTINGS_FILE);
+if (file_exists(SETTINGS)) {
+    include_once(SETTINGS);
     $settings_file_exists = true;
 } else {
     $settings_file_exists = false;
+}
+
+// define path constants
+$path_constants = array(
+    "BASE" => "/../",
+    "ADMIN" => "/../admin/",
+    "CACHE" => "/../cache/",
+    "INSTALL" => "/",
+    "LIBS" => "/../libs/",
+    "EXTENSIONS" => "/../libs/extensions/",
+    "FUNCTIONS" => "/../functions/",
+    "THEMES" => "/../content/themes/",
+    "PLUGINS" => "/../content/plugins/",
+    "ADMIN_THEMES" => "/../content/admin_themes/",
+    );
+
+foreach ( $path_constants as $key => $value ) {
+if (!defined($key))
+    define($key, dirname(__FILE__) . $value);
 }
 
 require_once('install_tables.php');
@@ -296,15 +304,15 @@ function database_setup() {
 			$h->messages[$lang['install_step1_update_file_writing_failure']] = 'red';
 		    }
 		}
-                @chmod(SETTINGS_FILE,0644);
+                @chmod(SETTINGS,0644);
 	}
 
 
 	// Try to write the /hotaru_settings.php file to disk
 	//
-        @chmod(SETTINGS_FILE,0777);
+        @chmod(SETTINGS,0777);
         
-	$settings_file_writeable =  is_writeable(SETTINGS_FILE);
+	$settings_file_writeable =  is_writeable(SETTINGS);
 
 	if ($settings_file_writeable) {
 	    global $lang;
@@ -359,7 +367,7 @@ function database_setup() {
 	    echo "</table>";
 	    echo "</form>\n";
 
-	    if (SETTINGS_FILE) {
+	    if (SETTINGS) {
 		// Alert if Settings file already exists
 		echo "<br/><img align='center' src='../content/admin_themes/admin_default/images/delete.png' style='float:left;'>";
 		echo $lang["install_step1_settings_file_already_exists"] . "</div><br/>";
@@ -384,7 +392,7 @@ function database_setup() {
 	    echo html_footer();
 
 	} else {
-            @chmod(SETTINGS_FILE,0644);
+            @chmod(SETTINGS,0644);
 	    database_setup_manual();
 	}
 
@@ -431,7 +439,7 @@ function database_setup_manual()
 function database_upgrade()
 {
 
-    if (file_exists(SETTINGS_FILE)) {
+    if (file_exists(SETTINGS)) {
         include_once('install-upgrade.php');
     }
     else {

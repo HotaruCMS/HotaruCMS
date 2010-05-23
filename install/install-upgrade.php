@@ -49,7 +49,7 @@ switch ($step) {
 		upgrade_check($h, $old_version);
 		break;
 	case 2:
-		do_upgrade($old_version);
+		do_upgrade($h, $old_version);
 		upgrade_complete($h);    // Delete "install" folder. Visit your site"
 		break;
 	default:		
@@ -145,10 +145,8 @@ function upgrade_complete($h)
 /**
  * Do Upgrade
  */
-function do_upgrade($old_version)
+function do_upgrade($h, $old_version)
 {
-	global $h;
-	
 	// can't upgrade from pre-1.0 versions of Hotaru.
 	
 	// 1.0 to 1.0.1
