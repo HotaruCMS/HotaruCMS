@@ -2,7 +2,7 @@
 /**
  * name: Vote
  * description: Adds voting ability to posted stories.
- * version: 1.9
+ * version: 2.0
  * folder: vote
  * class: Vote
  * type: vote
