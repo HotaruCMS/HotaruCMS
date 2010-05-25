@@ -102,7 +102,8 @@ class Bookmarking
 	public function finalizePage($h)
 	{
 		// no need to continue for other types of homepage
-		if (($h->pageName == $h->home) && ($h->home != 'popular')) { return false; }
+		$valid_lists = array('popular', 'upcoming', 'latest', 'all');
+		if (($h->pageName == $h->home) && (!in_array($h->home, $valid_lists))) { return false; }
 
 		// stop here if not a list or the pageType has been set elsewhere:
 		if (!empty($h->pageType) && ($h->pageType != 'list') && ($h->pageType != 'post')) {
