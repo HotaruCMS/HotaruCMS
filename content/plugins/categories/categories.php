@@ -384,7 +384,8 @@ class Categories
             $active = " class='active_cat'";
         }
         
-        $category = stripslashes(html_entity_decode(urldecode($category->category_name), ENT_QUOTES,'UTF-8'));
+        $category = stripslashes(urldecode($category->category_name));
+        $category = htmlentities($category, ENT_QUOTES,'UTF-8');
         $output .= '<li' . $active . '><a href="' . $h->url(array('category'=>$link)) .'">' . $category . "</a>\n";
         
         return $output; 
