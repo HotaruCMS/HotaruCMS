@@ -1,3 +1,4 @@
+
 <?php
 /**
  * The Widget class contains some useful methods when using widgets
@@ -39,7 +40,7 @@ class Widget
 			foreach ($widgets_settings as $ws => $plugins) {
 				foreach ($plugins as $plugin) {
 					if (!$h->isInstalled($plugin['plugin'])) {
-						$this->deleteWidget($h, $plugin['function']);
+						$this->deleteWidget($h, $plugin['function'], $plugin['plugin']);
 						unset($widgets_settings['widgets'][$plugin['function']]);
 						// widget settings get updated at the end of this function
 					}
@@ -164,10 +165,19 @@ class Widget
 	/**
 	 * Delete a widget from the widget db table
 	 *
-	 * @param string $function 
+	 * @param string $function
+	 * @param string $plugin - plugin folder
 	 */
-	public function deleteWidget($h, $function)
+	public function deleteWidget($h, $function = '', $plugin = '')
 	{
+		if ($plugin) {
+			// Cached results tell us the widget's plugin is uninstalled, but if we 
+			// know the plugin, let's double check before deleting it:
+			$sql = "SELECT plugin_id FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
+			$result = $h->db->get_var($h->db->prepare($sql, $plugin));
+			if ($result) { return false; } //plugin still installed, don't delete
+		}
+		
 		// Get settings from the database if they exist...
 		$sql = "DELETE FROM " . DB_PREFIX . "widgets WHERE widget_function = %s";
 		$h->db->query($h->db->prepare($sql, $function));

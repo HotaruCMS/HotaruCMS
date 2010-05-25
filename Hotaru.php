@@ -2108,12 +2108,13 @@ class Hotaru
 	/**
 	 * Delete a widget from the widget db table
 	 *
-	 * @param string $function 
+	 * @param string $function
+	 * @param string $plugin - plugin folder (optional: used for double checking the plugin is uninstalled)
 	 */
-	public function deleteWidget($function)
+	public function deleteWidget($function = '', $plugin = '')
 	{
 		$widget = new Widget();
-		$widget->deleteWidget($this, $function);
+		$widget->deleteWidget($this, $function, $plugin);
 	}
 	
 	

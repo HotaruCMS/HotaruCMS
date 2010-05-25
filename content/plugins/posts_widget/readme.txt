@@ -15,6 +15,7 @@ Instructions
 
 Changelog
 ---------
+v.1.3 2010/05/26 - Nick - Updated for compatibility with the Bookmarking plugin
 v.1.2 2010/04/14 - Nick - Top stories page name changed from "index" to "popular"
 v.1.1 2010/01/15 - Nick - Widget title links and RSS feeds fixed
 v.1.0 2010/01/04 - Nick - Renamed from "Sidebar Posts" and updated for Hotaru 1.0

@@ -2,10 +2,10 @@
 /**
  * name: Posts Widget
  * description: Adds links in widgets to the latest posts and top stories on the site.
- * version: 1.2
+ * version: 1.3
  * folder: posts_widget
  * class: PostsWidget
- * requires: widgets 0.6, sb_base 0.1
+ * requires: widgets 0.6, bookmarking 0.1
  * hooks: install_plugin, hotaru_header, header_include
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
@@ -172,47 +172,47 @@ class PostsWidget
         $h->vars['limit'] = $limit;
         $posts = '';
         
-        // include sb_base_functions class:
-        require_once(PLUGINS . 'sb_base/libs/SbBaseFunctions.php');
-        $sbfuncs = new SbBaseFunctions();
+        // include bookmarking_functions class:
+        require_once(PLUGINS . 'bookmarking/libs/BookmarkingFunctions.php');
+        $funcs = new BookmarkingFunctions();
         
         if (!$custom) 
         {
             // Show latest on front page, top stories on latest page, or both otherwise
             if ($type == 'new' && $h->pageName != 'latest') { 
-                $posts = $sbfuncs->prepareList($h, 'new');
+                $posts = $funcs->prepareList($h, 'new');
             } elseif ($type == 'top' && $h->pageName != 'popular') {
-                $posts = $sbfuncs->prepareList($h, 'top');
+                $posts = $funcs->prepareList($h, 'top');
             } elseif ($type == 'upcoming' && $h->pageName != 'upcoming') {
-                $posts = $sbfuncs->prepareList($h, 'upcoming');
+                $posts = $funcs->prepareList($h, 'upcoming');
             }
         }
         else
         {
             // Return posts regardless of what page we're viewing
             if ($type == 'new') { 
-                $posts = $sbfuncs->prepareList($h, 'new');    // get latest stories
+                $posts = $funcs->prepareList($h, 'new');    // get latest stories
             } elseif ($type == 'top') {
-                $posts = $sbfuncs->prepareList($h, 'top');    // get top stories
+                $posts = $funcs->prepareList($h, 'top');    // get top stories
             } elseif ($type == 'upcoming') {
-                $posts = $sbfuncs->prepareList($h, 'upcoming');    // get upcoming stories
+                $posts = $funcs->prepareList($h, 'upcoming');    // get upcoming stories
             }
         }
         
         if ($type == 'all') {
-            $posts = $sbfuncs->prepareList($h, 'all');    // get all stories
+            $posts = $funcs->prepareList($h, 'all');    // get all stories
         } elseif ($type == 'top-24-hours') {
-            $posts = $sbfuncs->prepareList($h, 'top-24-hours');    // get top stories from last 24 hours
+            $posts = $funcs->prepareList($h, 'top-24-hours');    // get top stories from last 24 hours
         } elseif ($type == 'top-48-hours') {
-            $posts = $sbfuncs->prepareList($h, 'top-48-hours');    // get top stories from last 48 hours
+            $posts = $funcs->prepareList($h, 'top-48-hours');    // get top stories from last 48 hours
         } elseif ($type == 'top-7-days') {
-            $posts = $sbfuncs->prepareList($h, 'top-7-days');    // get top stories from last 7 days
+            $posts = $funcs->prepareList($h, 'top-7-days');    // get top stories from last 7 days
         } elseif ($type == 'top-30-days') {
-            $posts = $sbfuncs->prepareList($h, 'top-30-days');    // get top stories from last 30 days
+            $posts = $funcs->prepareList($h, 'top-30-days');    // get top stories from last 30 days
         } elseif ($type == 'top-365-days') {
-            $posts = $sbfuncs->prepareList($h, 'top-365-days');    // get top stories from last 365 days
+            $posts = $funcs->prepareList($h, 'top-365-days');    // get top stories from last 365 days
         } elseif ($type == 'top-all-time') {
-            $posts = $sbfuncs->prepareList($h, 'top-all-time');    // get top stories from all time
+            $posts = $funcs->prepareList($h, 'top-all-time');    // get top stories from all time
         }
 
         if ($posts) { return $posts; } else { return false; }
