@@ -298,7 +298,7 @@ class UserSignin
      */
     public function loginSuccess($h, $remember = 0)
     {
-        $h->currentUser->getUserBasic(0, $h->currentUser->name);
+        $h->currentUser->getUser(0, $h->currentUser->name);
         
         $user_signin_settings = $h->getSerializedSettings('user_signin');
         $h->vars['useEmailConf'] = $user_signin_settings['emailconf_enabled'];
@@ -592,7 +592,7 @@ class UserSignin
         $conf = $h->cage->get->getAlnum('conf');
         
         $user = new UserAuth();
-        $user->getUserBasic($h, $user_id);
+        $user->getUser($h, $user_id);
         
         if (!$user_id || !$conf) {
             $h->messages[$h->lang['user_signin_register_emailconf_fail']] = 'red';

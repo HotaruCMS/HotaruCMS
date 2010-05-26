@@ -623,7 +623,7 @@ function register_admin()
 		}
 		else
 		{
-			$user_info = $h->currentUser->getUserBasic($h, 0, $admin_name);
+			$user_info = $h->currentUser->getUser($h, 0, $admin_name);
 			// On returning to this page via back or next, the fields are empty at this point, so...
 			if (!isset($user_name)) { $user_name = ""; }
 			if (!isset($user_email)){ $user_email = ""; }

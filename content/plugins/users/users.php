@@ -108,14 +108,14 @@ class Users
         
         $h->vars['user'] = new UserAuth();
         if ($user) {
-            $result = $h->vars['user']->getUserBasic($h, 0, $user);
+            $result = $h->vars['user']->getUser($h, 0, $user);
         } else {
             // when the account page has been submitted (get id in case username has changed)
             $userid = $h->cage->post->testInt('userid');
             if ($userid) { 
-                $result = $h->vars['user']->getUserBasic($h, $userid); 
+                $result = $h->vars['user']->getUser($h, $userid); 
             } else {
-                $result = $h->vars['user']->getUserBasic($h, $h->currentUser->id); // default to self 
+                $result = $h->vars['user']->getUser($h, $h->currentUser->id); // default to self 
             }
         }
         

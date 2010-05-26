@@ -53,7 +53,7 @@ class UserAuth extends UserBase
 			$valid = false;
 			
 			// Read the user from the database
-			$user_exists = $this->getUserBasic($h, 0, $this->name);
+			$user_exists = $this->getUser($h, 0, $this->name);
 		
 			// validate the user's password
 			if ($user_info[2] != md5($user_exists->user_password)) {
@@ -275,7 +275,7 @@ class UserAuth extends UserBase
 		    $userid = $this->id; 
 		}
 		
-		$viewee->getUserBasic($h, $userid);
+		$viewee->getUser($h, $userid);
 		
 		$error = 0;
 		
@@ -347,7 +347,7 @@ class UserAuth extends UserBase
 			// If we've just edited our own account, let's refresh the cookie so it uses our latest username:
 			if ($h->currentUser->id == $h->cage->post->testInt('userid')) {
 				$h->currentUser->setCookie($h, false);           // delete the cookie
-				$h->currentUser->getUserBasic($h, $h->currentUser->id, '', true);    // re-read the database record to get updated info
+				$h->currentUser->getUser($h, $h->currentUser->id, '', true);    // re-read the database record to get updated info
 				$h->currentUser->setCookie($h, true);            // create a new, updated cookie
 			}
 		}
@@ -365,7 +365,7 @@ class UserAuth extends UserBase
 				// only update the cookie if it's your own account:
 				if ($userid == $this->id) { 
 				$h->currentUser->setCookie($h, false);           // delete the cookie
-				$h->currentUser->getUserBasic($h, $h->currentUser->id, '', true);    // re-read the database record to get updated info
+				$h->currentUser->getUser($h, $h->currentUser->id, '', true);    // re-read the database record to get updated info
 				$h->currentUser->setCookie($h, true);            // create a new, updated cookie
 				}
 				$h->messages[$h->lang['main_user_account_update_success']] = 'green';
@@ -453,7 +453,7 @@ class UserAuth extends UserBase
 				$this->password = $this->generateHash($password_check_new);
 				$this->updateUserBasic($h, $this->id); // update the database record for this user
 				$this->setCookie($h, false);           // delete the cookie
-				$this->getUserBasic($h, $this->id, '', true);    // re-read the database record to get updated info
+				$this->getUser($h, $this->id, '', true);    // re-read the database record to get updated info
 				$this->setCookie($h, true);            // create a new, updated cookie
 				$h->messages[$h->lang['main_user_account_update_password_success']] = 'green';
 			} else {

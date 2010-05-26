@@ -109,7 +109,7 @@ class AdminAuth
 			if ($login_result) {
 				//success
 				$h->currentUser->name = $username_check;
-				$h->currentUser->getUserBasic($h, 0, $username_check);
+				$h->currentUser->getUser($h, 0, $username_check);
 				$this->setAdminCookie($h, $username_check);
 				$h->currentUser->loggedIn = true;
 				$h->currentUser->updateUserLastLogin($h);
