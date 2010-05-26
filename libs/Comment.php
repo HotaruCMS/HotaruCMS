@@ -145,7 +145,9 @@ class Comment
 	 */
 	function readAllChildren($h, $parent)
 	{
-		$sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_parent = %d AND comment_status = %s ORDER BY comment_date";
+		$fields = "comment_id, comment_post_id, comment_user_id, comment_parent, comment_date, comment_status, comment_content, comment_votes_up, comment_votes_down, comment_subscribe";
+		
+		$sql = "SELECT " . $fields . " FROM " . TABLE_COMMENTS . " WHERE comment_parent = %d AND comment_status = %s ORDER BY comment_date";
 		$query = $h->db->prepare($sql, $parent, 'approved');
 		
 		$h->smartCache('on', 'comments', 60, $query); // start using cache
