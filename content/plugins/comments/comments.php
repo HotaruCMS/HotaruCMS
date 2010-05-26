@@ -218,7 +218,6 @@ class Comments
         
                     if ($h->cage->post->keyExists('comment_content')) {
                         $h->comment->content = sanitize($h->cage->post->getHtmLawed('comment_content'), 'tags', $h->comment->allowableTags);
-                        $h->comment->content = make_urls_clickable($h->comment->content);
                     }
                     
                     if ($h->cage->post->keyExists('comment_post_id')) {

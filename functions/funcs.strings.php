@@ -602,7 +602,7 @@ function make_urls_clickable($string)
 	$string = trim($string);
 	// Super RegEx for converting urls into clickable links unless already in an anchor tag.	
 	$string = preg_replace('|(?<!href=[\"\'])(https?://[A-Za-z0-9+\-=._/*(),@\'$:;&!?%]+)|i', '<a href="$1">$1</a>', $string);	
-	// Add nofollow to all links in comments
+	// Add nofollow to links
 	$string = preg_replace('/a[ ]+href[ ]*=[ ]*"http:\/\/(.*?)".*?/i', 'a href="http://$1" rel="nofollow"', $string);
 	return $string;
 }
