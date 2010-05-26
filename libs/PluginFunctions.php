@@ -37,21 +37,35 @@ class PluginFunctions
 	{
 		if (!$hook) { return false; }
 		
-		$where = '';
-		
-		if ($folder) {
-		    $where .= "AND (" . TABLE_PLUGINS . ".plugin_folder = %s) ";
+		if (!$h->allPluginDetails) { //not in memory
+			$this->getAllPluginDetails($h); // get from database
 		}
 		
-		$h->db->cache_queries = true;    // start using cache
+		if (!isset($h->allPluginDetails['hooks'])) { return false; }
 		
-		$sql = "SELECT " . TABLE_PLUGINS . ".plugin_enabled, " . TABLE_PLUGINS . ".plugin_folder, " . TABLE_PLUGINS . ".plugin_class, " . TABLE_PLUGINS . ".plugin_extends, " . TABLE_PLUGINS . ".plugin_type, " . TABLE_PLUGINHOOKS . ".plugin_hook  FROM " . TABLE_PLUGINHOOKS . ", " . TABLE_PLUGINS . " WHERE (" . TABLE_PLUGINHOOKS . ".plugin_hook = %s) AND (" . TABLE_PLUGINS . ".plugin_folder = " . TABLE_PLUGINHOOKS . ".plugin_folder) " . $where . "ORDER BY " . TABLE_PLUGINHOOKS . ".phook_id";
+		// get the plugins that use this hook
+		$valid_plugins = array();
+		foreach ($h->allPluginDetails['hooks'] as $hooks) {
+			if ($hooks->plugin_hook == $hook) { array_push($valid_plugins, $hooks->plugin_folder); }
+		}
 		
-		$plugins = $h->db->get_results($h->db->prepare($sql, $hook, $folder));
+		if (!$valid_plugins) { return false; } // no plugins use this hook
 		
-		$h->db->cache_queries = false;    // stop using cache
+		if ($folder) {
+			if (!in_array($folder, $valid_plugins)) { return false; } // targeted plugin doesn't use this hook
+			$valid_plugins = array($folder); // replace list of valid plugins with just the one we're targeting.
+		}
+
+		// get plugin details from memory
+		$plugins = array();
+		foreach ($h->allPluginDetails as $item => $key) {
+			if (!isset($key->plugin_folder)) { continue; }
+			if (in_array($key->plugin_folder, $valid_plugins)) {
+				array_push($plugins, $key);
+			}
+		}
 		
-		if (!$plugins) { return false; }
+		if (!$plugins) { return false; } // no matching plugins in allPluginDetails
 		
 		// chain of plugin folder names so we can revert to the parent one when plugins hook into other plugins.
 		if (!isset($h->vars['plugin_chain'])) { $h->vars['plugin_chain'] = array(); }
@@ -60,7 +74,7 @@ class PluginFunctions
 		{
 			if (!$plugin->plugin_enabled) { continue; } // if the plugin isn't active, skip this iteration
 			
-			if ($plugin->plugin_folder && $plugin->plugin_hook && ($plugin->plugin_enabled == 1)
+			if ($plugin->plugin_folder && ($plugin->plugin_enabled == 1)
 				&& !in_array($plugin->plugin_folder, $exclude)) 
 			{
 			
@@ -68,7 +82,6 @@ class PluginFunctions
 			
 				/*  loop through all the plugins that use this hook. Include any necessary parent classes
 					and skip to the next iteration if this class has children. */
-				
 				foreach ($plugins as $key => $value) {
 					// If this plugin class is a child, include the parent class
 					if ($value->plugin_enabled && $value->plugin_class == $plugin->plugin_extends) {
@@ -98,7 +111,7 @@ class PluginFunctions
 					// echo $rMethod->class;                            // the method's class
 					// echo get_class($tempPluginObject);               // the object's class
 					// give Hotaru the right plugin folder name (unless installing because data not yet avaialble)
-					if ($hook != 'install_plugin') { $h->getPluginFolderFromClass($rMethod->class); } 
+					if ($hook != 'install_plugin') { $h->getPluginFolderFromClass($rMethod->class); }
 					$h->readPlugin();                              // fill Hotaru's plugin properties
 					$h->includeLanguage();                         // if a language file exists, include it
 					$result = $tempPluginObject->$hook($h, $parameters);
@@ -132,8 +145,7 @@ class PluginFunctions
 			// return an array of return values from each function, 
 			// e.g. $return_array['ClassName_method_name'] = something
 			return $return_array;
-		} 
-		
+		}
 		return false;
 	}
 	
@@ -203,6 +215,7 @@ class PluginFunctions
 		{
 			// get plugin basics from memory
 			foreach ($h->allPluginDetails as $item => $key) {
+				if (!isset($key->plugin_folder)) { continue; }
 				if ($key->plugin_folder == $folder) {
 					return $key->$property;        // plugin property, e.g. "plugin_version"
 				}
@@ -214,6 +227,7 @@ class PluginFunctions
 			
 			// get plugin basics from memory
 			foreach ($h->allPluginDetails as $item => $key) {
+				if (!isset($key->$field)) { continue; }
 				if ($key->$field == $folder) {
 					return $key->$property;        // plugin property, e.g. "plugin_version"
 				}
@@ -271,7 +285,10 @@ class PluginFunctions
 	public function getAllPluginDetails($h)
 	{
 		$sql = "SELECT * FROM " . TABLE_PLUGINS;
-		$h->allPluginDetails = $h->db->get_results($h->db->prepare($sql));
+		$h->allPluginDetails = $h->db->get_results($sql);
+		
+		$sql = "SELECT plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS;
+		$h->allPluginDetails['hooks'] = $h->db->get_results($sql);
 	}
 	
 	
