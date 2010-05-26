@@ -465,29 +465,33 @@ class Post
 	{
 		switch ($stat_type) {
 			case 'total_posts':
-				$sql = "SELECT count(post_id) FROM " . TABLE_POSTS;
-				$h->smartCache('on', 'posts', 60, $sql); // start using cache
-				$posts = $h->db->get_var($sql);
+				$query = "SELECT count(post_id) FROM " . TABLE_POSTS;
+				$h->smartCache('on', 'posts', 60, $query); // start using cache
+				$posts = $h->db->get_var($query);
 				break;
 			case 'approved_posts':
 				$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s OR post_status = %s";
-				$h->smartCache('on', 'posts', 60, $sql); // start using cache
-				$posts = $h->db->get_var($h->db->prepare($sql, 'top', 'new'));
+				$query = $h->db->prepare($sql, 'top', 'new');
+				$h->smartCache('on', 'posts', 60, $query); // start using cache
+				$posts = $h->db->get_var($query);
 				break;
 			case 'pending_posts':
 				$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s";
-				$h->smartCache('on', 'posts', 60, $sql); // start using cache
-				$posts = $h->db->get_var($h->db->prepare($sql, 'pending'));
+				$query = $h->db->prepare($sql, 'pending');
+				$h->smartCache('on', 'posts', 60, $query); // start using cache
+				$posts = $h->db->get_var($query);
 				break;
 			case 'buried_posts':
 				$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s";
-				$h->smartCache('on', 'posts', 60, $sql); // start using cache
-				$posts = $h->db->get_var($h->db->prepare($sql, 'buried'));
+				$query = $h->db->prepare($sql, 'buried');
+				$h->smartCache('on', 'posts', 60, $query); // start using cache
+				$posts = $h->db->get_var($query);
 				break;
 			case 'archived_posts':
 				$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_archived = %s";
-				$h->smartCache('on', 'posts', 60, $sql); // start using cache
-				$posts = $h->db->get_var($h->db->prepare($sql, 'Y'));
+				$query = $h->db->prepare($sql, 'Y');
+				$h->smartCache('on', 'posts', 60, $query); // start using cache
+				$posts = $h->db->get_var($query);
 				break;
 			default:
 				$posts = 0;

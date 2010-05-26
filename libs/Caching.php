@@ -127,6 +127,7 @@ class Caching
 	 */
 	public function smartCacheDB($h, $switch = 'off', $table = '', $sql = '', $timeout = 0)
 	{
+		
 		// Stop caching?
 		if ($switch != 'on') {
 			$h->db->cache_queries = false;               // stop using cache
@@ -171,7 +172,7 @@ class Caching
 		$file_modified = filemtime($cache_file);
 		if ($file_modified < (time() - $timeout*60)) {
 			// delete old cache file so we can make a new one with fresh data
-			if (file_exists($cache_file)) { unlink($cache_file); } 
+			if (file_exists($cache_file)) { unlink($cache_file); }
 			return true; 
 		}
 		
