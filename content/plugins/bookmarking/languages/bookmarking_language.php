@@ -29,17 +29,9 @@ $lang["bookmarking_post_buried"] = "This post has been buried";
 $lang["bookmarking_post_pending"] = "This post is pending approval by a moderator";
 
 /* Settings */
-$lang["bookmarking_settings_header"] = "SB Base Configuration";
+$lang["bookmarking_settings_header"] = "Bookmarking Configuration";
 $lang["bookmarking_settings_posts_per_page"] = "Posts per page <small>(default: 10)</small>";
 $lang["bookmarking_settings_rss_redirect"] = "Automatically redirect RSS links to their original sources";
-
-/* Maintenance page */
-$lang["bookmarking_maintenance_update_archive"] = "Update the post archive";
-$lang["bookmarking_maintenance_update_archive_remove"] = "Move any archived posts out of the archive. <small>(See SB Base Settings)</small>";
-$lang["bookmarking_maintenance_update_archive_desc_1"] = "Posts older than ";
-$lang["bookmarking_maintenance_update_archive_desc_2"] = " will be moved into the archive. <small>(See SB Base Settings)</small>";
-$lang["bookmarking_maintenance_archive_removed"] = "Done. There are currently no archived posts.";
-$lang["bookmarking_maintenance_archive_updated"] = "Archive Updated";
 
 /* Admin Stats */
 $lang["bookmarking_admin_stats_total_posts"] = "Total";

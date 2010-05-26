@@ -1,6 +1,6 @@
 <?php
 /**
- *  SB Base Settings
+ *  Bookmarking Settings
  *
  * PHP version 5
  *
@@ -24,7 +24,7 @@
  * @link      http://www.hotarucms.org/
  */
 
-class SbBaseSettings
+class BookmarkingSettings
 {
      /**
      * Admin settings for the Submit plugin
@@ -36,52 +36,36 @@ class SbBaseSettings
             $this->saveSettings($h); 
         }    
         
-        echo "<h1>" . $h->lang["sb_base_settings_header"] . "</h1>\n";
+        echo "<h1>" . $h->lang["bookmarking_settings_header"] . "</h1>\n";
         
         $h->showMessage(); // Saved / Error message
         
         // Get settings from database if they exist...
-        $sb_base_settings = $h->getSerializedSettings();
+        $bookmarking_settings = $h->getSerializedSettings();
         
-        $posts_per_page = $sb_base_settings['posts_per_page'];
-        $rss_redirect = $sb_base_settings['rss_redirect'];
-        $archive = $sb_base_settings['archive'];
+        $posts_per_page = $bookmarking_settings['posts_per_page'];
+        $rss_redirect = $bookmarking_settings['rss_redirect'];
+        $archive = $bookmarking_settings['archive'];
     
-        $h->pluginHook('sb_base_settings_get_values');
+        $h->pluginHook('bookmarking_settings_get_values');
         
         //...otherwise set to blank:
         if (!$posts_per_page) { $posts_per_page = 10; }
         if (!$rss_redirect) { $rss_redirect = ''; }
         if (!$archive) { $archive = 'no_archive'; }
         
-        echo "<form name='sb_base_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=sb_base' method='post'>\n";
+        echo "<form name='bookmarking_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=bookmarking' method='post'>\n";
 
         // posts per page
         echo "<p><input type='text' size=5 name='posts_per_page' value='" . $posts_per_page . "' /> ";
-        echo $h->lang["sb_base_settings_posts_per_page"] . "</p>\n";
+        echo $h->lang["bookmarking_settings_posts_per_page"] . "</p>\n";
 
         // rss redirecting?
-        echo "<p><input type='checkbox' name='rss_redirect' value='rss_redirect' " . $rss_redirect . " >&nbsp;&nbsp;" . $h->lang["sb_base_settings_rss_redirect"] . "<br />\n"; 
+        echo "<p><input type='checkbox' name='rss_redirect' value='rss_redirect' " . $rss_redirect . " >&nbsp;&nbsp;" . $h->lang["bookmarking_settings_rss_redirect"] . "<br />\n"; 
     
-        $h->pluginHook('sb_base_settings_form');
+        $h->pluginHook('bookmarking_settings_form');
     
         echo "<br />\n";
-
-        // post archiving
-        echo $h->lang["sb_base_settings_post_archiving"] . "<br /><br />\n";
-        echo $h->lang["sb_base_settings_post_archive_desc"] . "<br /><br />\n";
-        echo "<select name='post_archive'>\n";
-            echo "<option value='" . $archive . "'>" . $h->lang["sb_base_settings_post_archive_$archive"] . "</option>\n";
-            echo '<option disabled>-----</option>';
-            echo "<option value='no_archive'>" . $h->lang["sb_base_settings_post_archive_no_archive"] . "</option>\n";
-            echo "<option value='30'>" . $h->lang["sb_base_settings_post_archive_30"] . "</option>\n";
-            echo "<option value='90'>" . $h->lang["sb_base_settings_post_archive_90"] . "</option>\n";
-            echo "<option value='180'>" . $h->lang["sb_base_settings_post_archive_180"] . "</option>\n";
-            echo "<option value='365'>" . $h->lang["sb_base_settings_post_archive_365"] . "</option>\n";
-            echo "<option value='730'>" . $h->lang["sb_base_settings_post_archive_730"] . "</option>\n";
-            echo "<option value='1095'>" . $h->lang["sb_base_settings_post_archive_1095"] . "</option>\n";
-        echo "</select>\n";
-        echo $h->lang["sb_base_settings_post_archive"] . "<br /><br />\n";
 
         echo "<input type='hidden' name='submitted' value='true' />\n";
         echo "<input type='submit' value='" . $h->lang["main_form_save"] . "' />\n";
@@ -96,12 +80,12 @@ class SbBaseSettings
     public function saveSettings($h) 
     {
         // Get current settings 
-        $sb_base_settings = $h->getSerializedSettings();
+        $bookmarking_settings = $h->getSerializedSettings();
         
         // Posts per page
         $posts_per_page = $h->cage->post->testInt('posts_per_page'); 
         if (!$posts_per_page) { 
-            $posts_per_page = $sb_base_settings['posts_per_page']; 
+            $posts_per_page = $bookmarking_settings['posts_per_page']; 
         }
         
     
@@ -112,19 +96,12 @@ class SbBaseSettings
             $rss_redirect = ''; 
         }
     
-        // Post Archiving
-        $archive = $h->cage->post->testAlnumLines('post_archive'); 
-        if (!$archive) { 
-            $archive = $sb_base_settings['archive']; 
-        } 
+        $h->pluginHook('bookmarking_save_settings');
         
-        $h->pluginHook('sb_base_save_settings');
-        
-        $sb_base_settings['posts_per_page'] = $posts_per_page;
-        $sb_base_settings['rss_redirect'] = $rss_redirect;
-        $sb_base_settings['archive'] = $archive;
+        $bookmarking_settings['posts_per_page'] = $posts_per_page;
+        $bookmarking_settings['rss_redirect'] = $rss_redirect;
     
-        $h->updateSetting('sb_base_settings', serialize($sb_base_settings));
+        $h->updateSetting('bookmarking_settings', serialize($bookmarking_settings));
         
         $h->message = $h->lang["main_settings_saved"];
         $h->messageType = "green";
