@@ -479,11 +479,28 @@ class Hotaru
 	 * @return array|false
 	 *
 	 * Note: Needs either userid or username, not both
-	 */    
+	 */
 	public function getUserBasic($userid = 0, $username = '', $no_cache = false)
 	{
 		$userbase = new UserBase();
 		return $userbase->getUserBasic($this, $userid, $username, $no_cache);
+	}
+	
+	
+	/**
+	 * Get full user details (i.e. permissions and settings, too)
+	 *
+	 * @param int $userid 
+	 * @param string $username
+	 * @param bool $no_cache - set true to disable caching of SQl results
+	 * @return array|false
+	 *
+	 * Note: Needs either userid or username, not both
+	 */
+	public function getUser($userid = 0, $username = '', $no_cache = false)
+	{
+		$userbase = new UserBase();
+		return $userbase->getUser($this, $userid, $username, $no_cache);
 	}
 	
 	

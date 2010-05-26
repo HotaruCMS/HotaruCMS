@@ -117,6 +117,7 @@ class UserBase
 	 *
 	 * @param int $userid 
 	 * @param string $username
+	 * @param bool $no_cache - set true to disable caching of SQl results
 	 * @return array|false
 	 *
 	 * Note: Needs either userid or username, not both
@@ -159,6 +160,25 @@ class UserBase
 		$this->email = $user_info->user_email;
 		$this->emailValid = $user_info->user_email_valid;
 		$this->ip = $user_info->user_ip;
+		
+		return $user_info;
+	}
+	
+	
+	/**
+	 * Get full user details (i.e. permissions and settings, too)
+	 *
+	 * @param int $userid 
+	 * @param string $username
+	 * @param bool $no_cache - set true to disable caching of SQl results
+	 * @return array|false
+	 *
+	 * Note: Needs either userid or username, not both
+	 */    
+	public function getUser($h, $userid = 0, $username = '', $no_cache = false)
+	{
+		$user_info = $this->getUserBasic($h, $userid, $username, $no_cache);
+		if (!$user_info) { return false; }
 		
 		// If a new plugin is installed, we need a way of adding any new default permissions
 		// that plugin provides. So, we get all defaults, then overwrite with existing perms.
