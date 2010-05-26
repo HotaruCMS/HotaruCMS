@@ -279,6 +279,7 @@ class AdminPages
 			$h->clearCache('css_js_cache', false);
 			$h->clearCache('rss_cache', false);
 			$h->clearCache('html_cache', false);
+			@unlink(CACHE . 'smartloader_cache.php');
 			$h->message = $h->lang['admin_maintenance_clear_all_cache_success'];
 			$h->messageType = 'green';
 		}

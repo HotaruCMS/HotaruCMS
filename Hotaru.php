@@ -69,7 +69,7 @@ class Hotaru
 	 */
 	public function __construct($start = '')
 	{
-	    require_once(LIBS . 'smartloader.class.php');
+	    require_once(EXTENSIONS . 'SmartLoader/smartloader.class.php');
 		// initialize Hotaru
 		if (!$start) {
 			
