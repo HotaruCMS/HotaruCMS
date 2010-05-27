@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.0.7 2010/05/27 - Nick - Removed need for SB Base, and added a "check all" checkbox
 v.0.6 2010/02/18 - Nick - Code changes for pagination
 v.0.5 2010/02/02 - Nick - User links added for easier spam management
 v.0.4 2010/01/04 - Nick - Updates for compatibility with Hotaru 1.0

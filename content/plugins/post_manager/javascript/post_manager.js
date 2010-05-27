@@ -39,6 +39,10 @@ jQuery('document').ready(function($) {
         var icons = td.children('.user_manager_name_icons');
         icons.toggle();
     });
+    
+	$('#checkall').click(function () {
+		$(this).parents('fieldset:eq(0)').find(':checkbox').attr('checked', this.checked);
+	});
 
 });
 

@@ -21,6 +21,6 @@
 #post_man_table td.pm_title a  { text-align: left; font-size: 0.9em;}
 #post_man_table td.pm_description   { line-height: 1.6em; border-right-width: 0.2em;}
 #post_man_table td.pm_edit   { width: 6%; }
-#post_man_table td.pm_check   { width: 5%; }
+#post_man_table td.pm_check   { width: 5%; text-align: center;}
 
 .post_man_submit_button { padding: 1.0em; float: right;}

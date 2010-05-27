@@ -111,18 +111,16 @@ class PostManagerSettings
                     $h->messageType = 'red';
                 } else {
                     $s = new Search();
-                    require_once(PLUGINS . 'sb_base/libs/SbBaseFunctions.php');
-                    $sbFuncs = new SbBaseFunctions();
                     
                     // get count
                     $s->prepareSearchFilter($h, stripslashes(trim($h->db->escape($search_term))), 'count');
-                    $filtered_search = $sbFuncs->filter($h->vars['filter'], 0, true, $h->vars['select'], $h->vars['orderby']);
-                    $posts_count = $sbFuncs->getPosts($h, $filtered_search);
+                    $filtered_search = $h->db->select($h, array($h->vars['select']), 'posts', $h->vars['filter'], $h->vars['orderby'], "1", false, true);
+                    $posts_count = $h->db->getData($h, 'posts', $filtered_search);
                     $count = $posts_count[0]->number;
                     
                     // get query
                     $s->prepareSearchFilter($h, stripslashes(trim($h->db->escape($search_term))), 'query');
-                    $prepared_filter = $sbFuncs->filter($h->vars['filter'], 0, true, $h->vars['select'], $h->vars['orderby']);
+                    $prepared_filter = $h->db->select($h, array($h->vars['select']), 'posts', $h->vars['filter'], $h->vars['orderby'], '', false, true);
                     if (isset($prepared_filter[1])) {
                         $query = $h->db->prepare($prepared_filter);
                     } else {
