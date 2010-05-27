@@ -98,10 +98,10 @@ class Widget
 	public function addWidget($h, $plugin = '', $function = '', $args = '')
 	{
 		// Check if it exists so we don't add a duplicate
-		$sql = "SELECT * FROM " . DB_PREFIX . "widgets WHERE widget_plugin = %s AND widget_function = %s AND widget_args = %s";
-		$results = $h->db->get_results($h->db->prepare($sql, $plugin, $function, $args));
+		$sql = "SELECT count(widget_id) FROM " . DB_PREFIX . "widgets WHERE widget_plugin = %s AND widget_function = %s AND widget_args = %s";
+		$result = $h->db->get_var($h->db->prepare($sql, $plugin, $function, $args));
 		
-		if (!$results) {
+		if (!$result) {
 			$sql = "INSERT INTO " . DB_PREFIX . "widgets (widget_plugin, widget_function, widget_args, widget_updateby) VALUES(%s, %s, %s, %d)";
 			$h->db->query($h->db->prepare($sql, $plugin, $function, $args, $h->currentUser->id));
 		}
@@ -122,7 +122,7 @@ class Widget
 		if (!$exists) { return false; }
 		
 		// Get settings from the database if they exist...
-		$sql = "SELECT * FROM " . DB_PREFIX . 'widgets';
+		$sql = "SELECT widget_plugin, widget_function, widget_args FROM " . DB_PREFIX . 'widgets';
 		$widgets_settings = $h->db->get_results($h->db->prepare($sql));
 		return $widgets_settings;
 	}
