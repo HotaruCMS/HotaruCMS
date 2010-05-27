@@ -5,7 +5,6 @@
  * version: 0.7
  * folder: post_manager
  * class: PostManager
- * requires: submit 1.9
  * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, user_manager_role, user_manager_details
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
