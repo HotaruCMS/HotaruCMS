@@ -37,7 +37,7 @@ class PluginFunctions
 	{
 		if (!$hook) { return false; }
 		
-		if (!$h->allPluginDetails) { //not in memory
+		if (!$h->allPluginDetails || ($hook == 'install_plugin')) { //not in memory
 			$this->getAllPluginDetails($h); // get from database
 		}
 		

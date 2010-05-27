@@ -141,7 +141,7 @@ class PageHandling
 			
 			// if this is the home page...
 			if ($h->pageName == $h->home) {
-				// title only (set by plugins, e.g. sb_base)
+				// title only (set by plugins, e.g. bookmarking)
 				return $h->pageTitle;
 			} else {
 				// title followed by site name
