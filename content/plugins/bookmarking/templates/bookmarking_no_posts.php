@@ -26,6 +26,6 @@
 
 ?>
 
-<div id='sb_base_no_posts'>
+<div id='bookmarking_no_posts'>
     <?php echo $h->lang['bookmarking_no_posts']; ?>
 </div>
