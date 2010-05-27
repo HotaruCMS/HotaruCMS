@@ -102,6 +102,7 @@ if (!isset($h->vars['user_man_navi'])) { $h->vars['user_man_navi'] = ''; }
 <form name='user_man_checkbox_form' style='margin: 0px; padding: 0px;' action='<?php echo BASEURL; ?>admin_index.php?plugin=user_manager' method='get'>
     
 <div id="table_list">
+	<fieldset>
     <table>
     <tr class='table_headers'>
         <td><?php echo $h->lang["user_man_id"]; ?></td>
@@ -110,10 +111,11 @@ if (!isset($h->vars['user_man_navi'])) { $h->vars['user_man_navi'] = ''; }
         <td><?php echo $h->lang["user_man_joined"]; ?></td>
         <td><?php echo $h->lang["user_man_account"]; ?></td>
         <td><?php echo $h->lang["user_man_perms"]; ?></td>
-        <td><?php echo $h->lang["user_man_check"]; ?></td>
+        <td><input type="checkbox" name="checkall" id="checkall"></td>
     </tr>
             <?php echo $h->vars['user_man_rows']; ?>
     </table>
+    </fieldset>
 </div>
 
 <div class='user_man_pre_submit'>

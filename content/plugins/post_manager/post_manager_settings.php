@@ -114,8 +114,7 @@ class PostManagerSettings
                     
                     // get count
                     $s->prepareSearchFilter($h, stripslashes(trim($h->db->escape($search_term))), 'count');
-                    $filtered_search = $h->db->select($h, array($h->vars['select']), 'posts', $h->vars['filter'], $h->vars['orderby'], "1", false, true);
-                    $posts_count = $h->db->getData($h, 'posts', $filtered_search);
+                    $posts_count = $h->db->select($h, array($h->vars['select']), 'posts', $h->vars['filter'], $h->vars['orderby'], "1", false);
                     $count = $posts_count[0]->number;
                     
                     // get query
