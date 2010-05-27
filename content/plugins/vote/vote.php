@@ -7,7 +7,7 @@
  * class: Vote
  * type: vote
  * requires: submit 1.9, users 1.1
- * hooks: install_plugin, theme_index_top, post_read_post, header_include, posts_show_post_title, posts_pre_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, post_add_post, submit_confirm_pre_trackback, posts_show_post_extra_fields, posts_show_post_extras, post_delete_post, header_include_raw
+ * hooks: install_plugin, theme_index_top, post_read_post, header_include, show_post_title, pre_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, post_add_post, submit_confirm_pre_trackback, show_post_extra_fields, show_post_extras, post_delete_post, header_include_raw
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -159,7 +159,7 @@ class Vote
      /**
      * Displays the vote button.
      */
-    public function posts_pre_show_post($h)
+    public function pre_show_post($h)
     {
         $h->vars['flagged'] = false;
         if ($h->post->status == 'new' && $h->vars['useAlerts'] == "checked") {
@@ -241,7 +241,7 @@ class Vote
      /**
      * Displays the flags next to the post title.
      */
-    public function posts_show_post_title($h)
+    public function show_post_title($h)
     {
         if (!isset($h->vars['flagged']) || !$h->vars['flagged']) { return false; }
         
@@ -263,7 +263,7 @@ class Vote
      /**
      * Add an "alert" link below the story
      */
-    public function posts_show_post_extra_fields($h)
+    public function show_post_extra_fields($h)
     {
         // Only show the Alert link ("Flag it") on new posts, not top stories
         if ($h->currentUser->loggedIn && $h->post->status == "new" && ($h->vars['useAlerts'] == "checked")) {
@@ -275,7 +275,7 @@ class Vote
      /**
      * List of alert reasons to choose from.
      */
-    public function posts_show_post_extras($h)
+    public function show_post_extras($h)
     {
         if ($h->post->status == "new" && ($h->vars['useAlerts'] == "checked")) {
             echo "<div class='alert_choices' style='display: none;'>";

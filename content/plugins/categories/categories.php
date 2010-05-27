@@ -6,7 +6,7 @@
  * folder: categories
  * class: Categories
  * type: categories
- * hooks: theme_index_top, header_include, pagehandling_getpagename, bookmarking_functions_preparelist, posts_show_post_author_date, header_end, breadcrumbs, header_meta, post_rss_feed
+ * hooks: theme_index_top, header_include, pagehandling_getpagename, bookmarking_functions_preparelist, show_post_author_date, header_end, breadcrumbs, header_meta, post_rss_feed
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -263,7 +263,7 @@ class Categories
     /**
      * Shows category in each post
      */
-    public function posts_show_post_author_date($h)
+    public function show_post_author_date($h)
     { 
         if ($h->post->category != 1) { 
 

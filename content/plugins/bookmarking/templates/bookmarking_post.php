@@ -29,12 +29,12 @@ $user = new UserBase($h);
 $user->getUserBasic($h, $h->post->author);
 ?>
 
-<?php $h->pluginHook('posts_pre_show_post'); ?>
+<?php $h->pluginHook('pre_show_post'); ?>
 
 <!-- POST -->
 <div class="show_post vote_button_space" id="show_post_<?php echo $h->post->id ?>" >
 
-    <?php $h->pluginHook('posts_show_post_pre_title'); ?>
+    <?php $h->pluginHook('show_post_pre_title'); ?>
 
     <?php   // Show avatars if enabled (requires an avatars plugin)
         if($h->isActive('avatar')) {
@@ -49,13 +49,13 @@ $user->getUserBasic($h, $h->post->author);
         <?php } else { ?>
             <?php echo $h->post->title; ?>
         <?php } ?>
-        <?php $h->pluginHook('posts_show_post_title'); ?>
+        <?php $h->pluginHook('show_post_title'); ?>
     </div>
 
     <div class="show_post_author_date">    
         <?php echo " " . $h->lang["bookmarking_post_posted_by"] . " <a href='" . $h->url(array('user' => $user->name)) . "'>" . $user->name . "</a>"; ?>
         <?php echo time_difference(unixtimestamp($h->post->date), $h->lang) . " " . $h->lang["bookmarking_post_ago"]; ?>
-        <?php $h->pluginHook('posts_show_post_author_date'); ?>
+        <?php $h->pluginHook('show_post_author_date'); ?>
         <?php
             if (($h->pageName != 'submit3') 
                 && (($h->currentUser->getPermission('can_edit_posts') == 'yes') 
@@ -68,24 +68,24 @@ $user->getUserBasic($h, $h->post->author);
     <?php if ($h->vars['use_content']) { ?>
         <div class="show_post_content">
             <?php echo nl2br($h->post->content); ?>
-            <?php $h->pluginHook('posts_show_post_content_post'); ?>
+            <?php $h->pluginHook('show_post_content_post'); ?>
         </div>
     <?php } ?>
     
     <div class="show_post_extra_fields">
         <ul>
-            <?php $h->pluginHook('posts_show_post_extra_fields'); ?>
+            <?php $h->pluginHook('show_post_extra_fields'); ?>
         </ul>
     </div>
         
     <div class="show_post_extras">
-        <?php $h->pluginHook('posts_show_post_extras'); ?>
+        <?php $h->pluginHook('show_post_extras'); ?>
     </div>
     
 </div>
 
-<?php $h->pluginHook('posts_show_post_middle'); ?>
+<?php $h->pluginHook('show_post_middle'); ?>
 
-<?php $h->pluginHook('posts_post_show_post'); ?>
+<?php $h->pluginHook('post_show_post'); ?>
 
 <!-- END POST --> 

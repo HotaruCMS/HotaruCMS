@@ -6,7 +6,7 @@
  * folder: tags
  * class: Tags
  * type: tags
- * hooks: theme_index_top, header_include, header_include_raw, header_meta, posts_show_post_extra_fields, posts_show_post_extras, bookmarking_functions_preparelist, breadcrumbs, post_rss_feed
+ * hooks: theme_index_top, header_include, header_include_raw, header_meta, show_post_extra_fields, show_post_extras, bookmarking_functions_preparelist, breadcrumbs, post_rss_feed
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -129,7 +129,7 @@ class Tags
     /**
      * Shows tags in each post
      */
-    public function posts_show_post_extra_fields($h)
+    public function show_post_extra_fields($h)
     { 
         if ($h->post->tags)
         { 
@@ -141,7 +141,7 @@ class Tags
      /**
      * List of tags
      */
-    public function posts_show_post_extras($h, $vars = array())
+    public function show_post_extras($h, $vars = array())
     {
         if (!$h->post->tags) { return false; }
         

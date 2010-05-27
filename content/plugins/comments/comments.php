@@ -7,7 +7,7 @@
  * class: Comments
  * type: comments
  * requires: users 1.1
- * hooks: install_plugin, theme_index_top, header_include, admin_header_include_raw, theme_index_main, posts_show_post_extra_fields, posts_post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_2_fields, submit_edit_admin_fields, post_delete_post, profile_navigation, admin_theme_main_stats, breadcrumbs, submit_functions_process_submitted, submit_2_process_submission
+ * hooks: install_plugin, theme_index_top, header_include, admin_header_include_raw, theme_index_main, show_post_extra_fields, post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_2_fields, submit_edit_admin_fields, post_delete_post, profile_navigation, admin_theme_main_stats, breadcrumbs, submit_functions_process_submitted, submit_2_process_submission
  *
  * PHP version 5
  *
@@ -344,7 +344,7 @@ class Comments
     /**
      * Link to comments
      */
-    public function posts_show_post_extra_fields($h)
+    public function show_post_extra_fields($h)
     {
         echo '<li><a class="comment_link" href="' . $h->url(array('page'=>$h->post->id)) . '">' . $h->countComments(false, $h->lang['comments_none_link']) . '</a></li>' . "\n";
 	}
@@ -353,7 +353,7 @@ class Comments
 	/**
 	 * Prepare and display comments wrapper and form
 	 */
-	public function posts_post_show_post($h)
+	public function post_show_post($h)
 	{
 		$this->prepareShowComments($h);
 		

@@ -185,7 +185,7 @@ class Bookmarking
 	 */
 	public function rssForwarding($h)
 	{
-		$h->pluginHook('posts_pre_rss_forward');
+		$h->pluginHook('pre_rss_forward');
 		 
 		// check if this is an RSS link forwarding to the source
 		if (!$h->cage->get->keyExists('forward')) { return false; }
@@ -204,7 +204,7 @@ class Bookmarking
 	 */
 	public function setHomePopular($h)
 	{
-		$h->pluginHook('posts_pre_set_home');
+		$h->pluginHook('pre_set_home');
 
 		// Allow Bookmarking to set the homepage to "popular" unless already set.
 		if (!$h->home) {

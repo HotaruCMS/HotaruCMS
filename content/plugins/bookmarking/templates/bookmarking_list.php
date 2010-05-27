@@ -31,11 +31,11 @@ foreach ($h->vars['pagedResults']->items as $post) {
 ?>
 
 <!-- POST -->
-<?php $h->pluginHook('posts_pre_show_post'); ?>
+<?php $h->pluginHook('pre_show_post'); ?>
 
     <div class="show_post vote_button_space" id="show_post_<?php echo $h->post->id ?>" >
     
-        <?php $h->pluginHook('posts_show_post_pre_title'); ?>
+        <?php $h->pluginHook('show_post_pre_title'); ?>
         
         <?php   // Show avatars if enabled (requires an avatars plugin)
             if($h->isActive('avatar')) {
@@ -50,13 +50,13 @@ foreach ($h->vars['pagedResults']->items as $post) {
             <?php } else { ?>
                 <a href='<?php echo $h->url(array('page'=>$h->post->id)); ?>' <?php echo $h->vars['target']; ?> class="click_to_post"><?php echo $h->post->title; ?></a>
             <?php } ?>
-            <?php $h->pluginHook('posts_show_post_title'); ?>
+            <?php $h->pluginHook('show_post_title'); ?>
         </div>
     
         <div class="show_post_author_date">    
             <?php echo " " . $h->lang["bookmarking_post_posted_by"] . " <a href='" . $h->url(array('user' => $user->name)) . "'>" . $user->name . "</a>"; ?>
             <?php echo time_difference(unixtimestamp($h->post->date), $h->lang) . " " . $h->lang["bookmarking_post_ago"]; ?>
-            <?php $h->pluginHook('posts_show_post_author_date'); ?>
+            <?php $h->pluginHook('show_post_author_date'); ?>
             <?php 
                 if (($h->currentUser->getPermission('can_edit_posts') == 'yes') 
                     || (($h->currentUser->getPermission('can_edit_posts') == 'own') && ($h->currentUser->id == $user->id))) { 
@@ -67,7 +67,7 @@ foreach ($h->vars['pagedResults']->items as $post) {
             
         <?php if ($h->vars['use_content']) { ?>
             <div class="show_post_content">
-                <?php $h->pluginHook('posts_show_post_content_list'); ?>
+                <?php $h->pluginHook('show_post_content_list'); ?>
                 <?php if ($h->vars['use_summary']) { ?>
                     <?php echo truncate($h->post->content, $h->vars['summary_length']); ?>
                 <?php } else { ?>
@@ -79,12 +79,12 @@ foreach ($h->vars['pagedResults']->items as $post) {
         
         <div class="show_post_extra_fields">
             <ul>
-                <?php $h->pluginHook('posts_show_post_extra_fields'); ?>
+                <?php $h->pluginHook('show_post_extra_fields'); ?>
             </ul>
         </div>
         
         <div class="show_post_extras">
-            <?php $h->pluginHook('posts_show_post_extras'); ?>
+            <?php $h->pluginHook('show_post_extras'); ?>
         </div>
             
     </div>
