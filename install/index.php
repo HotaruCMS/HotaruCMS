@@ -76,7 +76,7 @@ require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php'); // database
 $h  = new Hotaru('start');
 require_once(INSTALL . 'install_language.php');    // language file for install
 
-$version_number = "1.2";
+$version_number = $h->version;
 $cage = init_inspekt_cage();
 
 $step = $cage->get->getInt('step');        // Installation steps.

@@ -484,7 +484,7 @@ function do_upgrade($h, $old_version)
 		$old_version = "1.2.0";
 	}
 
-	 // 1.2.0 to 1.2.x
+	 // 1.2.0 to 1.3.0
 	if ($old_version == "1.2.0") {
 
 	    $exists = $h->db->column_exists('plugins', 'plugin_latestversion');
@@ -493,6 +493,15 @@ function do_upgrade($h, $old_version)
 			$sql = "ALTER TABLE " . TABLE_PLUGINS . " ADD plugin_latestversion varchar(32) NOT NULL DEFAULT '0.0'";
 			$h->db->query($h->db->prepare($sql));
 			//echo "plugins" . " table updated" . "<br/>";
+		}
+		
+		if ($exists = $h->db->table_exists('comments')) {
+			$sql = "SHOW INDEX FROM `" . DB_PREFIX . "comments` WHERE KEY_NAME = %s";
+			$result = $h->db->query($h->db->prepare($sql, 'comment_post_id'));
+			if (!$result) {
+				$sql = "ALTER TABLE `" . DB_PREFIX . "comments` ADD INDEX (comment_post_id)";
+				$h->db->query($sql);
+			}
 		}
 	}
 

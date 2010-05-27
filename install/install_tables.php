@@ -124,6 +124,7 @@ function create_table($table_name)
                         INDEX (`comment_siteid`),
 			FULLTEXT (`comment_content`),
 			INDEX  (`comment_archived`),
+			INDEX  (`comment_post_id`),
 			INDEX  (`comment_status`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Post Comments';";
 		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
