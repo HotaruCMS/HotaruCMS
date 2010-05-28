@@ -91,7 +91,7 @@ class UserAuth extends UserBase
 	public function loginCheck($h, $username = '', $password = '')
 	{
 		// Read the current user's basic details
-		$userX = $this->getUserBasic($h, 0, $username);
+		$userX = $this->getUser($h, 0, $username);
 		if (!$userX) { return false; }
 		
 		// destroy the cookie for the following usergroups:
