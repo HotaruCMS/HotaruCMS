@@ -205,111 +205,103 @@ class Comments
 
         // Is the comment form open on this thread? 
         $h->comment->thisForm = $h->comment->formStatus($h, 'select'); // returns 'open' or 'closed'
+        if (($h->comment->thisForm != 'open') || ($h->comment->allForms != 'checked')) { return false; }
 
-        if (   ($h->pageType == 'post') 
-            && ($h->comment->thisForm == 'open')
-            && ($h->comment->allForms == 'checked')) {
-            
-            if ($h->currentUser->loggedIn) {
+		// return false if not logged in
+		if (!$h->currentUser->loggedIn) { return false; }
 
-                if (($h->cage->post->getAlpha('comment_process') == 'newcomment') || 
-                    ($h->cage->post->getAlpha('comment_process') == 'editcomment'))
-                {
+		// return false if not posting or editing a comment
+        if (($h->cage->post->getAlpha('comment_process') != 'newcomment') && 
+            ($h->cage->post->getAlpha('comment_process') != 'editcomment')) { return false; }
+
+		// start filling the comment object
+        if ($h->cage->post->keyExists('comment_content')) {
+            $h->comment->content = sanitize($h->cage->post->getHtmLawed('comment_content'), 'tags', $h->comment->allowableTags);
+        }
         
-                    if ($h->cage->post->keyExists('comment_content')) {
-                        $h->comment->content = sanitize($h->cage->post->getHtmLawed('comment_content'), 'tags', $h->comment->allowableTags);
-                    }
-                    
-                    if ($h->cage->post->keyExists('comment_post_id')) {
-                        $h->comment->postId = $h->cage->post->testInt('comment_post_id');
-                    }
+        if ($h->cage->post->keyExists('comment_post_id')) {
+            $h->comment->postId = $h->cage->post->testInt('comment_post_id');
+        }
 
-                    if ($h->cage->post->keyExists('comment_user_id')) {
-                        $h->comment->author = $h->cage->post->testInt('comment_user_id');
-                    }
-                
-                    if ($h->cage->post->keyExists('comment_parent')) {
-                        $h->comment->parent = $h->cage->post->testInt('comment_parent');
-                        if ($h->cage->post->getAlpha('comment_process') == 'editcomment') {
-                            $h->comment->id = $h->cage->post->testInt('comment_parent');
-                        }
-                    }
-                    
-                    if ($h->cage->post->keyExists('comment_subscribe')) {
-                        $h->comment->subscribe = 1;
-                    } else {
-                        $h->comment->subscribe = 0;
-                        $h->comment->unsubscribe($h, $h->comment->postId);
-                    }
-                    
-                    if ($h->cage->post->getAlpha('comment_process') == 'newcomment')
+        if ($h->cage->post->keyExists('comment_user_id')) {
+            $h->comment->author = $h->cage->post->testInt('comment_user_id');
+        }
+    
+        if ($h->cage->post->keyExists('comment_parent')) {
+            $h->comment->parent = $h->cage->post->testInt('comment_parent');
+            if ($h->cage->post->getAlpha('comment_process') == 'editcomment') {
+                $h->comment->id = $h->cage->post->testInt('comment_parent');
+            }
+        }
+        
+        if ($h->cage->post->keyExists('comment_subscribe')) {
+            $h->comment->subscribe = 1;
+        } else {
+            $h->comment->subscribe = 0;
+            $h->comment->unsubscribe($h, $h->comment->postId);
+        }
+        
+        if ($h->cage->post->getAlpha('comment_process') == 'newcomment')
+        {
+            // before posting, we need to be certain this user has permission:
+            $safe = false;
+            $can_comment = $h->currentUser->getPermission('can_comment');
+            if ($can_comment == 'yes') { $safe = true; }
+            if ($can_comment == 'mod') { $safe = true; $h->comment->status = 'pending'; }
+            
+            $result = array(); // holds results from addComment function
+            
+            // Okay, safe to add the comment...
+            if ($safe) {
+                // A user can unsubscribe by submitting an empty comment, so...
+                if ($h->comment->content != '') {
+                    $result = $h->comment->addComment($h);
+
+                    // notify chosen mods of new comment by email if enabled and UserFunctions file exists
+                    if (($comments_settings['comment_email_notify']) && (file_exists(PLUGINS . 'users/libs/UserFunctions.php')))
                     {
-                        // before posting, we need to be certain this user has permission:
-                        $safe = false;
-                        $can_comment = $h->currentUser->getPermission('can_comment');
-                        if ($can_comment == 'yes') { $safe = true; }
-                        if ($can_comment == 'mod') { $safe = true; $h->comment->status = 'pending'; }
-                        
-                        $result = array(); // holds results from addComment function
-                        
-                        // Okay, safe to add the comment...
-                        if ($safe) {
-                            // A user can unsubscribe by submitting an empty comment, so...
-                            if ($h->comment->content != '') {
-                                $result = $h->comment->addComment($h);
+                        require_once(PLUGINS . 'users/libs/UserFunctions.php');
+                        $uf = new UserFunctions();
+                        $uf->notifyMods($h, 'comment', $h->comment->status, $h->comment->postId, $h->comment->id);
+                    }
 
-                                // notify chosen mods of new comment by email if enabled and UserFunctions file exists
-                                if (($comments_settings['comment_email_notify']) && (file_exists(PLUGINS . 'users/libs/UserFunctions.php')))
-                                {
-                                    require_once(PLUGINS . 'users/libs/UserFunctions.php');
-                                    $uf = new UserFunctions();
-                                    $uf->notifyMods($h, 'comment', $h->comment->status, $h->comment->postId, $h->comment->id);
-                                }
-
-                                // email comment subscribers if this comment has 'approved' status:
-                                if ($h->comment->status == 'approved') {
-                                    $this->emailCommentSubscribers($h, $h->comment->postId);
-                                }
-                            } else {
-                                //comment empty so just check subscribe box:
-                                $h->comment->updateSubscribe($h, $h->comment->postId);
-                                $h->messages[$h->lang['comment_moderation_unsubscribed']] = 'green';
-                            }
-                        }
-                        
-                        if ($result['exceeded_daily_limit']) {
-                            $h->messages[$h->lang['comment_moderation_exceeded_daily_limit']] = 'green';
-                        } elseif ($result['exceeded_url_limit']) {
-                            $h->messages[$h->lang['comment_moderation_exceeded_url_limit']] = 'green';
-                        } elseif ($result['not_enough_comments']) {
-                            $h->messages[$h->lang['comment_moderation_not_enough_comments']] = 'green';
-                        }
+                    // email comment subscribers if this comment has 'approved' status:
+                    if ($h->comment->status == 'approved') {
+                        $this->emailCommentSubscribers($h, $h->comment->postId);
                     }
-                    elseif($h->cage->post->getAlpha('comment_process') == 'editcomment')
-                    {
-                        // before editing, we need to be certain this user has permission:
-                        $safe = false;
-                        $can_edit = $h->currentUser->getPermission('can_edit_comments');
-                        if ($can_edit == 'yes') { $safe = true; }
-                        if (($can_edit == 'own') && ($h->currentUser->id == $h->comment->author)) { $safe = true; }
-                        if ($safe) {
-                            $h->comment->editComment($h);
-                        }
-                    }
-                   
-                    if ($h->comment->status == 'pending') {
-                        return false;
-                    }
-                    
-                    header("Location: " . $h->url(array('page'=>$h->comment->postId)));    // Go to the post
-                    die();
-                    
+                } else {
+                    //comment empty so just check subscribe box:
+                    $h->comment->updateSubscribe($h, $h->comment->postId);
+                    $h->messages[$h->lang['comment_moderation_unsubscribed']] = 'green';
                 }
             }
             
+            if ($result['exceeded_daily_limit']) {
+                $h->messages[$h->lang['comment_moderation_exceeded_daily_limit']] = 'green';
+            } elseif ($result['exceeded_url_limit']) {
+                $h->messages[$h->lang['comment_moderation_exceeded_url_limit']] = 'green';
+            } elseif ($result['not_enough_comments']) {
+                $h->messages[$h->lang['comment_moderation_not_enough_comments']] = 'green';
+            }
         }
-    
-        return false;
+        elseif($h->cage->post->getAlpha('comment_process') == 'editcomment')
+        {
+            // before editing, we need to be certain this user has permission:
+            $safe = false;
+            $can_edit = $h->currentUser->getPermission('can_edit_comments');
+            if ($can_edit == 'yes') { $safe = true; }
+            if (($can_edit == 'own') && ($h->currentUser->id == $h->comment->author)) { $safe = true; }
+            if ($safe) {
+                $h->comment->editComment($h);
+            }
+        }
+       
+        if ($h->comment->status == 'pending') {
+            return false;
+        }
+        
+        header("Location: " . $h->url(array('page'=>$h->comment->postId)));    // Go to the post
+        die();
     }
     
     

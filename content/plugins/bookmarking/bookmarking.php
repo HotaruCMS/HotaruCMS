@@ -126,7 +126,7 @@ class Bookmarking
 				$h->vars['pagedResults'] = $h->pagination($post_query, $post_count, $posts_per_page, 'posts');
 				break;
 			case 'post':
-				// if a post is already set (e.g. from the scategories plugin), we don't want to
+				// if a post is already set (e.g. from the categories plugin), we don't want to
 				// do the default stuff below. We do, however, need the "target", "editorial" stuff after it, though...
 				break;
 			default:
