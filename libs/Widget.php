@@ -1,4 +1,3 @@
-
 <?php
 /**
  * The Widget class contains some useful methods when using widgets
@@ -24,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-    
+
 class Widget
 {
 	/**
