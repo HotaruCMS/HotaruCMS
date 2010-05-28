@@ -51,7 +51,7 @@ class AdminPages
 			case "maintenance":
 				$this->maintenanceAction($h);
 				$h->vars['admin_plugin_settings'] = $this->listPluginSettings($h);
-				$h->vars['admin_plugin_tables'] = $this->listDbTables($h);
+				$h->vars['admin_plugin_tables'] = $this->listDbTables($h, true);
 				break;
 			case "blocked":
 				$h->vars['admin_blocked_list'] = $this->blocked($h);
@@ -329,7 +329,7 @@ class AdminPages
 	 *
 	 * @param bool $exclude_tables - true to exclude important tables
 	 */
-	public function listDbTables($h, $exclude_tables = true)
+	public function listDbTables($h, $exclude_tables = false)
 	{
 		$db_tables = array();
 		
