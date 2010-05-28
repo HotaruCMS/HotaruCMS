@@ -141,7 +141,7 @@ class Submit
         if (!$h->currentUser->loggedIn) { 
             $return = urlencode($h->url(array('page'=>'submit'))); // return user here after login
             header("Location: " . $h->url(array('page'=>'login', 'return'=>$return)));
-            return false; 
+            die(); exit;
         }
         
         // return false if submission is closed
@@ -358,6 +358,7 @@ class Submit
         } else {
             header("Location: " . $h->url(array('page'=>'latest')));    // Go to the Latest page
         }
+        die(); exit;
     }
     
     

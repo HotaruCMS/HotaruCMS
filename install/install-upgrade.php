@@ -503,6 +503,9 @@ function do_upgrade($h, $old_version)
 				$h->db->query($sql);
 			}
 		}
+		
+		// update "old version" for next set of upgrades
+		$old_version = "1.3.0";
 	}
 
 	// Update Hotaru version number to the database (referred to when upgrading)

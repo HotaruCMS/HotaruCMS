@@ -87,6 +87,7 @@ class UserSignin
                     } else {
                         header("Location: " . BASEURL);
                     }
+                    die(); exit;
                 } 
                 break;
             case 'register':
@@ -108,6 +109,7 @@ class UserSignin
                     } else {
                         // redirect to login page
                         header("Location: " . BASEURL . "index.php?page=login");
+                        die(); exit;
                     }
                 }
                 break;

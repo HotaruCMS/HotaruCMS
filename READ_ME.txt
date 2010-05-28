@@ -1,11 +1,11 @@
 HOTARU CMS
-Version: 1.2.0
-Released: May 7th 2010
+Version: 1.3.0
+Released: June 6th 2010
 
 INSTALLATION
 ------------
 
-Please visit http://hotarucms.org/showthread.php?t=14 for the most up-to-date version of these instructions.
+Please visit http://hotarudocs.com/Getting_Started#Installing_and_Upgrading for the most up-to-date version of these instructions.
 
 Instructions last updated: Mar 8th 2010
 

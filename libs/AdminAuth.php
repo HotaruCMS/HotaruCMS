@@ -36,6 +36,7 @@ class AdminAuth
 			if (($h->pageName != 'admin_login') && !$this->isAdminCookie($h))
 			{
 				header('Location: ' . BASEURL . 'admin_index.php?page=admin_login');
+				die; exit;
 			}
 		}
 		
