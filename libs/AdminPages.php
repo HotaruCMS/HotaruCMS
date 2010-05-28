@@ -327,28 +327,30 @@ class AdminPages
 	/**
 	 * List all created tables - used for emtying tables in Maintenance
 	 *
-	 * @param bool $exceptions - true to exclude important tables
+	 * @param bool $exclude_tables - true to exclude important tables
 	 */
-	public function listDbTables($h, $exclude = true)
+	public function listDbTables($h, $exclude_tables = true)
 	{
 		$db_tables = array();
 		
-		$exclude = array(
-			DB_PREFIX . 'settings',
-			DB_PREFIX . 'users',
-			DB_PREFIX . 'usermeta',
-			DB_PREFIX . 'categories',
-			DB_PREFIX . 'comments',
-			DB_PREFIX . 'commentvotes',
-			DB_PREFIX . 'miscdata',
-			DB_PREFIX . 'postmeta',
-			DB_PREFIX . 'posts',
-			DB_PREFIX . 'postvotes',
-			DB_PREFIX . 'site',
-			DB_PREFIX . 'tags',
-			DB_PREFIX . 'useractivity',
-			DB_PREFIX . 'widgets',
-		);
+		if ($exclude_tables) {
+			$exclude = array(
+				DB_PREFIX . 'settings',
+				DB_PREFIX . 'users',
+				DB_PREFIX . 'usermeta',
+				DB_PREFIX . 'categories',
+				DB_PREFIX . 'comments',
+				DB_PREFIX . 'commentvotes',
+				DB_PREFIX . 'miscdata',
+				DB_PREFIX . 'postmeta',
+				DB_PREFIX . 'posts',
+				DB_PREFIX . 'postvotes',
+				DB_PREFIX . 'site',
+				DB_PREFIX . 'tags',
+				DB_PREFIX . 'useractivity',
+				DB_PREFIX . 'widgets',
+			);
+		}
 
 		$h->db->selectDB(DB_NAME);
 		
@@ -356,7 +358,7 @@ class AdminPages
 		
 		foreach ( $h->db->get_col("SHOW TABLES",0) as $table_name )
 		{
-			if ($exclude) {
+			if ($exclude_tables) {
 				if (!in_array($table_name, $exclude)) {
 					array_push($db_tables, $table_name);
 				}
