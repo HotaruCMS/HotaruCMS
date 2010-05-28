@@ -38,7 +38,7 @@ class PluginFunctions
 		if (!$hook) { return false; }
 		
 		if (!$h->allPluginDetails || ($hook == 'install_plugin')) { //not in memory
-			$this->getAllPluginDetails($h); // get from database
+			$this->getAllPluginDetails($h); // get from database (false to disable cache)
 		}
 		
 		if (!isset($h->allPluginDetails['hooks'])) { return false; }
@@ -257,38 +257,45 @@ class PluginFunctions
 		
 		// get plugin basics from memory
 		foreach ($h->allPluginDetails as $item => $key) {
-			if ($key->plugin_folder == $folder) {
+			if (isset($key->plugin_folder) && ($key->plugin_folder == $folder)) {
 				$h->plugin->id             = $key->plugin_id;        // plugin id
 				$h->plugin->enabled        = $key->plugin_enabled;   // activate (1), inactive (0)
 				$h->plugin->name           = $key->plugin_name;      // plugin proper name
+				$h->plugin->folder         = $key->plugin_folder;    // plugin folder name
 				$h->plugin->class          = $key->plugin_class;     // plugin class name
 				$h->plugin->extends        = $key->plugin_extends;   // plugin class parent
 				$h->plugin->type           = $key->plugin_type;      // plugin class type e.g. "avatar"
 				$h->plugin->desc           = $key->plugin_desc;      // plugin description
+				$h->plugin->requires       = $key->plugin_requires;  // plugins required for use
 				$h->plugin->version        = $key->plugin_version;   // plugin version number
 				$h->plugin->order          = $key->plugin_order;     // plugin order number
 				$h->plugin->author         = $key->plugin_author;    // plugin author
 				$h->plugin->authorurl      = $key->plugin_authorurl; // plugin author's website
+				$h->plugin->latestversion  = $key->plugin_latestversion; // latest available version
 				
-				break;  // done what we need to do so break out of the loop...
+				return $key;  // done what we need to do so return $key (it may be handy);
 			}
 		}
 		
-		return true;
+		return false;
 	}
 	
 	
 	/**
 	 * Store all plugin details for ALL PLUGINS info in memory. This is a single query
-	 * per page load. Every thing else then draws what it needs from memory.
+	 * per page load unless cached. Every thing else then draws what it needs from memory.
 	 */
 	public function getAllPluginDetails($h)
 	{
 		$sql = "SELECT * FROM " . TABLE_PLUGINS . " ORDER BY plugin_order ASC";
+		$h->smartCache('on', 'plugins', $h->db->cache_timeout, $sql); // start using cache
 		$h->allPluginDetails = $h->db->get_results($sql);
 		
 		$sql = "SELECT plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS;
+		$h->smartCache('on', 'pluginhooks', $h->db->cache_timeout, $sql); // start using cache
 		$h->allPluginDetails['hooks'] = $h->db->get_results($sql);
+		
+		$h->smartCache('off');   // stop using cache 
 	}
 	
 	

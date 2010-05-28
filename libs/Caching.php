@@ -198,8 +198,11 @@ class Caching
 	{
 		/* Get the last time the table was updated */
 		switch ($table) {
-			case 'categories':
-				$sql = "SELECT category_updatedts FROM " . DB_PREFIX . "categories ORDER BY category_updatedts DESC LIMIT 1";
+			case 'plugins':
+				$sql = "SELECT plugin_updatedts FROM " . DB_PREFIX . "plugins ORDER BY plugin_updatedts DESC LIMIT 1";
+				break;
+			case 'pluginhooks':
+				$sql = "SELECT plugin_updatedts FROM " . DB_PREFIX . "pluginhooks ORDER BY plugin_updatedts DESC LIMIT 1";
 				break;
 			case 'tags':
 				$sql = "SELECT tags_updatedts FROM " . DB_PREFIX . "tags ORDER BY tags_updatedts DESC LIMIT 1";

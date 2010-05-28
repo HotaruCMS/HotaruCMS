@@ -445,6 +445,8 @@ class AdminPages
 				break;
 		}
 		
+		$plugman->refreshPluginDetails($h);
+		
 		// get and sort all the plugins ready for display:
 		$allplugins = $plugman->getPlugins($h);  // get plugins
 		

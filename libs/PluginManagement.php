@@ -45,8 +45,13 @@ class PluginManagement
 			foreach ($plugins_array as $plugin_details) {
 			
 				$allplugins[$count] = array();
-				$sql = "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
-				$plugin_row = $h->db->get_row($h->db->prepare($sql, $plugin_details['folder']));
+				if ($h->allPluginDetails) {
+					// get details from memory if we have them..
+					$plugin_row = $h->readPlugin($plugin_details['folder']);
+				} else {
+					$sql = "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
+					$plugin_row = $h->db->get_row($h->db->prepare($sql, $plugin_details['folder']));
+				}
 				
 				if ($plugin_row) 
 				{
@@ -365,15 +370,25 @@ class PluginManagement
 	 */
 	public function addPluginHooks($h)
 	{
+		$values = '';
+		$pvalues = array();
+		$pvalues[0] = "temp"; // will be filled with $sql
+		
 		foreach ($h->plugin->hooks as $hook)
 		{
 			$exists = $this->isHook($h, trim($hook));
-		
+			
 			if (!$exists) {
-				$sql = "INSERT INTO " . TABLE_PLUGINHOOKS . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
-				$h->db->query($h->db->prepare($sql, $h->plugin->folder, trim($hook), $h->currentUser->id));
+				$values .= "(%s, %s, %d), ";
+				array_push($pvalues, $h->plugin->folder);
+				array_push($pvalues, trim($hook));
+				array_push($pvalues, $h->currentUser->id);
 			}
 		}
+		
+		$values = rstrtrim($values, ", "); // strip off trailing comma
+		$pvalues[0] = "INSERT INTO " . TABLE_PLUGINHOOKS . " (plugin_folder, plugin_hook, plugin_updateby) VALUES " . $values;
+		$h->db->query($h->db->prepare($pvalues));
 	}
 	
 	
@@ -450,6 +465,27 @@ class PluginManagement
 	 */
 	public function refreshPluginOrder($h)
 	{
+		$need_refresh = false;
+		
+		// First, do a quick query and simple loop to check for gaps
+		$sql = "SELECT plugin_order FROM " . TABLE_PLUGINS . " ORDER BY plugin_order ASC";
+		$rows = $h->db->get_results($h->db->prepare($sql));
+		if ($rows) { 
+			$previous_row = 0;
+			foreach ($rows as $row) 
+			{
+				if ($row->plugin_order != ($previous_row + 1)) { 
+					$need_refresh = true;
+					break;
+				} else {
+					$previous_row = $row->plugin_order; // increment $previous_row
+				}
+			}
+		}
+		
+		if (!$need_refresh) { return true; }
+		
+		// Gaps found! Refresh all the plugin orders to fill the gaps!
 		$sql = "SELECT * FROM " . TABLE_PLUGINS . " ORDER BY plugin_order ASC";
 		$rows = $h->db->get_results($h->db->prepare($sql));
 		
@@ -481,18 +517,24 @@ class PluginManagement
 		// Drop and recreate the pluginhooks table, i.e. empty it.
 		$h->db->query($h->db->prepare("TRUNCATE TABLE " . TABLE_PLUGINHOOKS));
 		
+		$values = '';
+		$pvalues = array();
+		$pvalues[0] = "temp"; // will be filled with $sql
+		
 		// Add plugin hooks back into the hooks table
 		if ($rows) {
 			foreach ($rows  as $row)
 			{
-				$sql = "INSERT INTO " . TABLE_PLUGINHOOKS . " (plugin_folder, plugin_hook, plugin_updateby) VALUES (%s, %s, %d)";
-				$h->db->query($h->db->prepare($sql, $row->plugin_folder, $row->plugin_hook, $h->currentUser->id));
+				$values .= "(%s, %s, %d), ";
+				array_push($pvalues, $row->plugin_folder);
+				array_push($pvalues, $row->plugin_hook);
+				array_push($pvalues, $h->currentUser->id);
 			}
+			
+			$values = rstrtrim($values, ", "); // strip off trailing comma
+			$pvalues[0] = "INSERT INTO " . TABLE_PLUGINHOOKS . " (plugin_folder, plugin_hook, plugin_updateby) VALUES " . $values;
+			$h->db->query($h->db->prepare($pvalues));
 		}
-		
-		// optimize the table
-		$h->db->query("OPTIMIZE TABLE " . TABLE_PLUGINHOOKS);
-		
 	}
 	
 	
@@ -655,7 +697,6 @@ class PluginManagement
 	 * Updates plugin order and order of their hooks, i.e. changes the order 
 	 * of plugins in pluginHook.
 	 * 
-	 * @param string $folder plugin folder name
 	 * @param int $order current order
 	 * @param string $arrow direction to move
 	 */
@@ -666,7 +707,7 @@ class PluginManagement
 			return false;
 		}
 		
-		$h->getPluginName();
+		$this_plugin = $h->getPluginName();
 		
 		if ($arrow == "up")
 		{
@@ -675,7 +716,7 @@ class PluginManagement
 			$row_above = $h->db->get_row($h->db->prepare($sql, ($order - 1)));
 			
 			if (!$row_above) {
-				$h->messages[$h->plugin->name . " " . $h->lang['admin_plugins_order_first']] = 'red';
+				$h->messages[$this_plugin . " " . $h->lang['admin_plugins_order_first']] = 'red';
 				return false;
 			}
 			
@@ -683,14 +724,14 @@ class PluginManagement
 				$h->messages[$h->lang['admin_plugins_order_above']] = 'red';
 				return false;
 			}
-			
+
 			// update row above 
 			$sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_id = %d";
 			$h->db->query($h->db->prepare($sql, ($row_above->plugin_order + 1), $row_above->plugin_id)); 
 			
 			// update current plugin
 			$sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_folder = %s";
-			$h->db->query($h->db->prepare($sql, ($order - 1), $h->plugin->folder)); 
+			$h->db->query($h->db->prepare($sql, ($order - 1), $h->plugin->folder));
 		}
 		else
 		{
@@ -699,7 +740,7 @@ class PluginManagement
 			$row_below = $h->db->get_row($h->db->prepare($sql, ($order + 1)));
 			
 			if (!$row_below) {
-				$h->messages[$h->plugin->name . " " . $h->lang['admin_plugins_order_last']] = 'red';
+				$h->messages[$this_plugin . " " . $h->lang['admin_plugins_order_last']] = 'red';
 				return false;
 			}
 			
@@ -724,7 +765,21 @@ class PluginManagement
 		$this->sortPluginHooks($h);
 		
 		return true;
+	}
 	
+
+	/**
+	 * Refresh Plugin Details
+	 * Plugin Management updates often happen after $h->allPluginDetails has been filled.
+	 * This little hack clears the cached update time and refills $h->allPluginDetails
+	 * 
+	 * @param int $order current order
+	 * @param string $arrow direction to move
+	 */
+	public function refreshPluginDetails($h)
+	{
+		unset($h->vars['last_updates']['plugins']);
+		PluginFunctions::getAllPluginDetails($h);
 	}
 }
 ?>

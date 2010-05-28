@@ -40,6 +40,7 @@ class Plugin
 	protected $requires         = '';
 	protected $dependencies     = array();
 	protected $hooks            = array();
+	protected $latest_version   = 0.0;
 	
 	/**
 	 * Access modifier to set protected properties

@@ -202,7 +202,7 @@
                 // but rarely returns anything!
                 return $cache;
             } else {
-                //echo $query . "<br />"; // for testing purposes
+                // echo $query . "<br />"; // for testing purposes
             }
 
             // Count how many queries there have been

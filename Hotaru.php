@@ -806,11 +806,12 @@ class Hotaru
 	 * Get a single plugin's details for Hotaru
 	 *
 	 * @param string $folder - plugin folder name, else $h->plugin->folder is used
+	 * @return array - $key array object, e.g. $key->plugin_id
 	 */
 	public function readPlugin($folder = '')
 	{
 		$pluginFunctions = new PluginFunctions();
-		$pluginFunctions->readPlugin($this, $folder);
+		return $pluginFunctions->readPlugin($this, $folder);
 	}
 	
 	
@@ -931,8 +932,8 @@ class Hotaru
 		$pluginFunctions = new PluginFunctions();
 		return $pluginFunctions->hasSettings($this, $folder);
 	}
-	
- 
+
+
  /* *************************************************************
  *
  *  PLUGIN SETTINGS FUNCTIONS

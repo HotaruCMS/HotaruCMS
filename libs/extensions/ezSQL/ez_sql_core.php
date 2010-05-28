@@ -369,7 +369,7 @@
             $cache_file = $this->cache_dir.'/'.md5($query).'.php';
 
             // Try to get previously cached version
-            if ( $this->use_disk_cache && file_exists($cache_file) )
+            if ( $this->use_disk_cache && $this->cache_queries && file_exists($cache_file) )
             {
                 // Only use this cache file if less than 'cache_timeout' (hours)
                 if ( (time() - filemtime($cache_file)) > ($this->cache_timeout*3600) )
