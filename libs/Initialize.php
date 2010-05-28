@@ -44,9 +44,12 @@ class Initialize
 		// The order here is important!
 		$this->setDefaultTimezone();
 		$this->setTableConstants();
+                $this->setCurrentSiteID();
 		$this->errorReporting(); 
 		$this->getFiles();
 		$this->db = $this->initDatabase();
+                // reset error reporting now we know what siteid is
+                //$this->errorReporting();
 		$this->cage = $this->initInspektCage();
 		
 		$this->readSettings();
@@ -131,7 +134,8 @@ class Initialize
 		    "TABLE_USERACTIVITY"=>"useractivity",
 		    "TABLE_WIDGETS"=>"widgets",
 		    "TABLE_FRIENDS"=>"friends",
-		    "TABLE_MESSAGING"=>"messaging"
+		    "TABLE_MESSAGING"=>"messaging",
+                    "TABLE_SITE"=>"sites"
 		    );
 
 	    foreach ( $tableConstants as $key => $value ) {
@@ -140,7 +144,21 @@ class Initialize
 	    }		    
 	}
 	
-	
+	/**
+         * Sets the current SiteID if multiple sites.
+         */
+        public function setCurrentSiteID()
+        {
+            // if isactive('MU Plugin') {
+            //   $url = get the url
+            //   DEFINE siteid based on a query to TABLE_SITE of the $url
+            //   
+            // }
+            // else {
+            //  DEFINE siteid=0;
+            // }
+        }
+        
 	/**
 	 * Set the timezone
 	 */
