@@ -49,6 +49,7 @@ function create_table($table_name)
                 $sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
                         `site_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 			`site_adminuser_id` varchar(64) NULL,
+                        `site_url` varchar(128) NOT NULL DEFAULT '',
 			`site_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`site_updateby` int(20) NOT NULL DEFAULT 0
                 ) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Site Table';";
