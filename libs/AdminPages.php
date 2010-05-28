@@ -325,13 +325,15 @@ class AdminPages
 	
 	
 	/**
-	 * List all created tables
+	 * List all created tables - used for emtying tables in Maintenance
+	 *
+	 * @param bool $exceptions - true to exclude important tables
 	 */
-	public function listDbTables($h)
+	public function listDbTables($h, $exclude = true)
 	{
 		$db_tables = array();
 		
-		$exceptions = array(
+		$exclude = array(
 			DB_PREFIX . 'settings',
 			DB_PREFIX . 'users',
 			DB_PREFIX . 'usermeta',
@@ -342,6 +344,7 @@ class AdminPages
 			DB_PREFIX . 'postmeta',
 			DB_PREFIX . 'posts',
 			DB_PREFIX . 'postvotes',
+			DB_PREFIX . 'site',
 			DB_PREFIX . 'tags',
 			DB_PREFIX . 'useractivity',
 			DB_PREFIX . 'widgets',
@@ -353,7 +356,11 @@ class AdminPages
 		
 		foreach ( $h->db->get_col("SHOW TABLES",0) as $table_name )
 		{
-			if (!in_array($table_name, $exceptions)) {
+			if ($exclude) {
+				if (!in_array($table_name, $exclude)) {
+					array_push($db_tables, $table_name);
+				}
+			} else {
 				array_push($db_tables, $table_name);
 			}
 		}
