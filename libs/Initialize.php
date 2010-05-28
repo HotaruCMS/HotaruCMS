@@ -88,9 +88,11 @@ class Initialize
 		// display errors
 		ini_set('display_errors', 1); // Gets disabled later in checkDebug()
 		error_reporting(E_ALL);
-		
+
+                if (SITEID == 0) $site_dir = ''; else $site_dir = SITEID . '/';
+
 		// error log filename
-		$filename = CACHE . 'debug_logs/error_log.php';
+		$filename = CACHE . $site_dir . 'debug_logs/error_log.php';
 		
 		// delete file if over 500KB
 		if (file_exists($filename) && (filesize($filename) > 500000)) {
@@ -107,6 +109,7 @@ class Initialize
 		// point PHP to our error log
 		ini_set('error_log', $filename);
 	}
+
 
 	/**
 	 * Table Constants
@@ -155,7 +158,7 @@ class Initialize
             //   
             // }
             // else {
-            //  DEFINE siteid=0;
+              define('SITEID',0);
             // }
         }
         
@@ -251,8 +254,8 @@ class Initialize
 	 */
 	public function readSettings()
 	{
-		$sql = "SELECT * FROM " . TABLE_SETTINGS;
-		$settings = $this->db->get_results($this->db->prepare($sql));
+		$sql = "SELECT * FROM " . TABLE_SETTINGS . " WHERE SETTINGS_SITEID = %d";                
+		$settings = $this->db->get_results($this->db->prepare($sql, SITEID));
 		
 		if(!$settings) { return false; }
 		
