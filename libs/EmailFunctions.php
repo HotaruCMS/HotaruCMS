@@ -64,9 +64,12 @@ class EmailFunctions
 		if (!$this->from) { $this->from = SITE_NAME . ' <' . SITE_EMAIL . '>'; }
 		
 		if (SMTP == 'true') {
-			// note: this overwrites headers passed to this function:
 			if (is_array($this->to)) { $to = $this->to['To']; } else { $to = $this->to; }
-			$this->headers = array ('From' => $this->from, 'To' => $to, 'Subject' => $this->subject);
+			if (!$this->headers) {
+				$this->headers = array ('From' => $this->from, 'To' => $to, 'Subject' => $this->subject);
+			} else {
+				$this->headers['To'] = $to;
+			}
 		} else {
 			// if not using SMTP and no headers passed to this function, use default
 			if (!$this->headers) { 
@@ -86,8 +89,8 @@ class EmailFunctions
 				$debug->closeLog('email_log');
 				break;
 			case 'screen':
-				echo "Headers: " . $this->headers . "<br /><br />";
-				echo "To: " . $this->to . "<br /><br />";
+				echo "Headers: "; print_r($this->headers); echo "<br /><br />";
+				echo "To: "; print_r($this->to); echo "<br /><br />";
 				echo "Subject: " . $this->subject . "<br /><br />";
 				$this->body = nl2br($this->body);
 				echo "Body: " . $this->body . "<br /><br />";
