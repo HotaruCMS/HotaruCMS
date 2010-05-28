@@ -222,7 +222,7 @@ class UserInfo extends UserBase
 		
 		foreach ($users as $user) {
 			$details = new UserBase();
-			$details->getUserBasic($h, $user->user_id);
+			$details->getUser($h, $user->user_id);
 			if ($details->getPermission($permission) == $value) {
 				$mods[$details->id]['id'] = $details->id;
 				$mods[$details->id]['role'] = $details->role;
