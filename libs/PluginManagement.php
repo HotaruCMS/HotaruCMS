@@ -386,9 +386,11 @@ class PluginManagement
 			}
 		}
 		
-		$values = rstrtrim($values, ", "); // strip off trailing comma
-		$pvalues[0] = "INSERT INTO " . TABLE_PLUGINHOOKS . " (plugin_folder, plugin_hook, plugin_updateby) VALUES " . $values;
-		$h->db->query($h->db->prepare($pvalues));
+		if ($values) {
+			$values = rstrtrim($values, ", "); // strip off trailing comma
+			$pvalues[0] = "INSERT INTO " . TABLE_PLUGINHOOKS . " (plugin_folder, plugin_hook, plugin_updateby) VALUES " . $values;
+			$h->db->query($h->db->prepare($pvalues));
+		}
 	}
 	
 	
