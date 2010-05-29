@@ -488,67 +488,73 @@ function do_upgrade($h, $old_version)
 	if ($old_version == "1.2.0") {
 
 		$exists = $h->db->column_exists('plugins', 'plugin_latestversion');
-			if (!$exists) {
-				// Create a plugin_version column
-				$sql = "ALTER TABLE " . TABLE_PLUGINS . " ADD plugin_latestversion varchar(32) NOT NULL DEFAULT '0.0'";
+		if (!$exists) {
+			// Create a plugin_version column
+			$sql = "ALTER TABLE " . TABLE_PLUGINS . " ADD plugin_latestversion varchar(32) NOT NULL DEFAULT '0.0'";
+			$h->db->query($h->db->prepare($sql));
+		}
+		
+		$exists = $h->db->column_exists('settings', 'settings_show');
+		if (!$exists) {
+			// Create a plugin_version column
+			$sql = "ALTER TABLE " . TABLE_SETTINGS . " ADD settings_show enum(%s, %s) NOT NULL DEFAULT %s AFTER settings_note";
+			$h->db->query($h->db->prepare($sql, 'Y', 'N', 'Y'));
+		}
+
+		if ($exists = $h->db->table_exists('comments')) {
+			$sql = "SHOW INDEX FROM `" . DB_PREFIX . "comments` WHERE KEY_NAME = %s";
+			$result = $h->db->query($h->db->prepare($sql, 'comment_post_id'));
+			if (!$result) {
+				$sql = "ALTER TABLE `" . DB_PREFIX . "comments` ADD INDEX (comment_post_id)";
+				$h->db->query($sql);
+			}
+		}
+
+		// SITE TABLE - for multiple sites
+		if (!$exists = $h->db->table_exists('site')) {
+			$sql = "CREATE TABLE `" . DB_PREFIX . "site` (
+				`site_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+				`site_adminuser_id` varchar(64) NULL,
+				`site_url` varchar(128) NOT NULL DEFAULT '',
+				`site_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+				`site_updateby` int(20) NOT NULL DEFAULT 0
+			) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Site Table';";
+			$h->db->query($sql);
+		}
+
+		//Add site_id column and index to each table
+		$tables = array(
+			'blocked'=>'blocked','categories'=>'category',
+			'comments'=>'comment', 'plugins'=>'plugin',
+			'miscdata'=>'miscdata','pluginsettings'=>'pluginsetting',
+			'posts'=>'post','settings'=>'settings',
+			'tags'=>'tag', 'users'=>'user', 'widgets'=>'widget',
+		);
+
+		foreach ($tables as $table => $column) {
+
+			if (!$exists = $h->db->column_exists($table, $column . '_siteid')) {
+				// Create a column for index first
+				$sql = "ALTER TABLE " . DB_PREFIX . $table . " ADD " . $column . "_siteid INT NOT NULL DEFAULT 0";
 				$h->db->query($h->db->prepare($sql));
-				//echo "plugins" . " table updated" . "<br/>";
 			}
-
-			if ($exists = $h->db->table_exists('comments')) {
-				$sql = "SHOW INDEX FROM `" . DB_PREFIX . "comments` WHERE KEY_NAME = %s";
-				$result = $h->db->query($h->db->prepare($sql, 'comment_post_id'));
-				if (!$result) {
-					$sql = "ALTER TABLE `" . DB_PREFIX . "comments` ADD INDEX (comment_post_id)";
-					$h->db->query($sql);
-				}
-			}
-
-			// SITE TABLE - for multiple sites
-			if (!$exists = $h->db->table_exists('site')) {
-				$sql = "CREATE TABLE `" . DB_PREFIX . "`site (
-					`site_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-					`site_adminuser_id` varchar(64) NULL,
-					`site_url` varchar(128) NOT NULL DEFAULT '',
-					`site_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-					`site_updateby` int(20) NOT NULL DEFAULT 0
-				) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Site Table';";
+			
+			$sql = "SHOW INDEX FROM `" . DB_PREFIX . $table . "` WHERE KEY_NAME = '" . $column . "_siteid'";
+			$result = $h->db->query($sql);
+			if (!$result) {
+				$sql = "ALTER TABLE `" . DB_PREFIX . $table . "` ADD INDEX (" . $column . "_siteid)";
 				$h->db->query($sql);
 			}
 
-			//Add site_id column and index to each table
-			$tables = array(
-				'blocked'=>'blocked','categories'=>'category',
-				'comments'=>'comment', 'plugins'=>'plugin',
-				'miscdata'=>'miscdata','pluginsettings'=>'pluginsetting',
-				'posts'=>'post','settings'=>'setting',
-				'tags'=>'tag', 'users'=>'user', 'widgets'=>'widget',
-			);
-
-			foreach ($tables as $table => $column) {
-
-				if (!$exists = $h->db->column_exists($table, $column . '_siteid')) {
-					// Create a column for index first
-					$sql = "ALTER TABLE " . DB_PREFIX . $table . " ADD " . $column . "_siteid INT NOT NULL DEFAULT 0";
-					$h->db->query($h->db->prepare($sql));
-				}
-				
-				$sql = "SHOW INDEX FROM `" . DB_PREFIX . $table . "` WHERE KEY_NAME = '" . $column . "'_siteid";
-				$result = $h->db->query($sql);
-				if (!$result) {
-					$sql = "ALTER TABLE `" . DB_PREFIX . $table . "` ADD INDEX (" . $column . "_siteid)";
-					$h->db->query($sql);
-				}
-
-				// Unique Key 
-				/*
-				if ($column=='category') //  ALTER TABLE FOR     UNIQUE KEY `key` (`category_name`, `category_siteid`)
-				if ($column=='plugin') //  UNIQUE KEY `key` (`plugin_folder`, `plugin_siteid`)
-				if ($column=='settings') //  UNIQUE KEY `key` (`settings_name`, `settings_siteid`),
-				if ($column=='tags') //  UNIQUE KEY `tags_post_id` (`tags_post_id`,`tags_word`,`tags_siteid`),
-				if ($column=='user') //  UNIQUE KEY `key` (`user_username`, `user_siteid`),
-				*/
-			}
+			// Unique Key 
+			/*
+			if ($column=='category') //  ALTER TABLE FOR     UNIQUE KEY `key` (`category_name`, `category_siteid`)
+			if ($column=='plugin') //  UNIQUE KEY `key` (`plugin_folder`, `plugin_siteid`)
+			if ($column=='settings') //  UNIQUE KEY `key` (`settings_name`, `settings_siteid`),
+			if ($column=='tags') //  UNIQUE KEY `tags_post_id` (`tags_post_id`,`tags_word`,`tags_siteid`),
+			if ($column=='user') //  UNIQUE KEY `key` (`user_username`, `user_siteid`),
+			*/
+		}
 
 		// update "old version" for next set of upgrades
 		$old_version = "1.3.0";

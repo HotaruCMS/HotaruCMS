@@ -368,6 +368,7 @@ function create_table($table_name)
 			`settings_value` text NOT NULL DEFAULT '',
 			`settings_default` text NOT NULL DEFAULT '',
 			`settings_note` text NOT NULL DEFAULT '',
+			`settings_show` enum('Y','N') NOT NULL DEFAULT 'Y',
 			`settings_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`settings_updateby` int(20) NOT NULL DEFAULT 0,
 			`settings_siteid` int(20) NOT NULL DEFAULT 0,
