@@ -89,7 +89,7 @@ class Initialize
 		ini_set('display_errors', 1); // Gets disabled later in checkDebug()
 		error_reporting(E_ALL);
 
-		if (SITEID == 0) { $site_dir = ''; else $site_dir = SITEID . '/'; }
+		if (SITEID == 0) { $site_dir = ''; } else { $site_dir = SITEID . '/'; }
 
 		// error log filename
 		$filename = CACHE . $site_dir . 'debug_logs/error_log.php';
@@ -122,6 +122,8 @@ class Initialize
 			"TABLE_CATEGORIES"=>"categories",
 			"TABLE_COMMENTS"=>"comments",
 			"TABLE_COMMENTVOTES"=>"commentvotes",
+			"TABLE_FRIENDS"=>"friends",
+			"TABLE_MESSAGING"=>"messaging",
 			"TABLE_MISCDATA"=>"miscdata",
 			"TABLE_PLUGINS"=>"plugins",
 			"TABLE_PLUGINHOOKS"=>"pluginhooks",
@@ -130,15 +132,13 @@ class Initialize
 			"TABLE_POSTMETA"=>"postmeta",
 			"TABLE_POSTVOTES"=>"postvotes",
 			"TABLE_SETTINGS"=>"settings",
+			"TABLE_SITE"=>"sites",
 			"TABLE_TAGS"=>"tags",
 			"TABLE_TEMPDATA"=>"tempdata",
 			"TABLE_USERS"=>"users",
 			"TABLE_USERMETA"=>"usermeta",
 			"TABLE_USERACTIVITY"=>"useractivity",
-			"TABLE_WIDGETS"=>"widgets",
-			"TABLE_FRIENDS"=>"friends",
-			"TABLE_MESSAGING"=>"messaging",
-			"TABLE_SITE"=>"sites"
+			"TABLE_WIDGETS"=>"widgets"
 		);
 
 		foreach ( $tableConstants as $key => $value ) {
@@ -153,7 +153,7 @@ class Initialize
 	 */
 	public function setCurrentSiteID()
 	{
-		//if isactive('MU Plugin') {
+		//if isActive('MU Plugin') {
 		//	$url = get the url
 		//	DEFINE siteid based on a query to TABLE_SITE of the $url
 		//
@@ -254,7 +254,7 @@ class Initialize
 	 */
 	public function readSettings()
 	{
-		$sql = "SELECT * FROM " . TABLE_SETTINGS . " WHERE SETTINGS_SITEID = %d";                
+		$sql = "SELECT * FROM " . TABLE_SETTINGS . " WHERE setting_siteid = %d";
 		$settings = $this->db->get_results($this->db->prepare($sql, SITEID));
 		
 		if(!$settings) { return false; }
