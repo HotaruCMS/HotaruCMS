@@ -45,7 +45,7 @@ class Initialize
 		$this->setDefaultTimezone();
 		$this->setTableConstants();
 		$siteid = $this->setCurrentSiteID();
-		$this->errorReporting(); 
+		$this->errorReporting($siteid); 
 		$this->getFiles();
 		$this->db = $this->initDatabase();
 		// reset error reporting now we know what siteid is
@@ -83,13 +83,13 @@ class Initialize
 	/**
 	 * Error reporting
 	 */
-	public function errorReporting()
+	public function errorReporting($siteid = 0)
 	{
 		// display errors
 		ini_set('display_errors', 1); // Gets disabled later in checkDebug()
 		error_reporting(E_ALL);
 
-		if (SITEID == 0) { $site_dir = ''; } else { $site_dir = SITEID . '/'; }
+		if ($siteid == 0) { $site_dir = ''; } else { $site_dir = SITEID . '/'; }
 
 		// error log filename
 		$filename = CACHE . $site_dir . 'debug_logs/error_log.php';
