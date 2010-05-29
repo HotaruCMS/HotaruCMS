@@ -44,12 +44,12 @@ class Initialize
 		// The order here is important!
 		$this->setDefaultTimezone();
 		$this->setTableConstants();
-                $this->setCurrentSiteID();
+		$this->setCurrentSiteID();
 		$this->errorReporting(); 
 		$this->getFiles();
 		$this->db = $this->initDatabase();
-                // reset error reporting now we know what siteid is
-                //$this->errorReporting();
+		// reset error reporting now we know what siteid is
+		//$this->errorReporting();
 		$this->cage = $this->initInspektCage();
 		
 		$this->readSettings();
@@ -89,7 +89,7 @@ class Initialize
 		ini_set('display_errors', 1); // Gets disabled later in checkDebug()
 		error_reporting(E_ALL);
 
-                if (SITEID == 0) $site_dir = ''; else $site_dir = SITEID . '/';
+		if (SITEID == 0) { $site_dir = ''; else $site_dir = SITEID . '/'; }
 
 		// error log filename
 		$filename = CACHE . $site_dir . 'debug_logs/error_log.php';
@@ -116,52 +116,52 @@ class Initialize
 	 */
 	public function setTableConstants()
 	{
-	    // define database tables
-	    $tableConstants = array(
-		    "TABLE_BLOCKED" => "blocked",
-		    "TABLE_CATEGORIES"=>"categories",
-		    "TABLE_COMMENTS"=>"comments",
-		    "TABLE_COMMENTVOTES"=>"commentvotes",
-		    "TABLE_MISCDATA"=>"miscdata",
-		    "TABLE_PLUGINS"=>"plugins",
-		    "TABLE_PLUGINHOOKS"=>"pluginhooks",
-		    "TABLE_PLUGINSETTINGS"=>"pluginsettings",
-		    "TABLE_POSTS"=>"posts",
-		    "TABLE_POSTMETA"=>"postmeta",
-		    "TABLE_POSTVOTES"=>"postvotes",
-		    "TABLE_SETTINGS"=>"settings",
-		    "TABLE_TAGS"=>"tags",
-		    "TABLE_TEMPDATA"=>"tempdata",
-		    "TABLE_USERS"=>"users",
-		    "TABLE_USERMETA"=>"usermeta",
-		    "TABLE_USERACTIVITY"=>"useractivity",
-		    "TABLE_WIDGETS"=>"widgets",
-		    "TABLE_FRIENDS"=>"friends",
-		    "TABLE_MESSAGING"=>"messaging",
-                    "TABLE_SITE"=>"sites"
-		    );
+		// define database tables
+		$tableConstants = array(
+			"TABLE_BLOCKED" => "blocked",
+			"TABLE_CATEGORIES"=>"categories",
+			"TABLE_COMMENTS"=>"comments",
+			"TABLE_COMMENTVOTES"=>"commentvotes",
+			"TABLE_MISCDATA"=>"miscdata",
+			"TABLE_PLUGINS"=>"plugins",
+			"TABLE_PLUGINHOOKS"=>"pluginhooks",
+			"TABLE_PLUGINSETTINGS"=>"pluginsettings",
+			"TABLE_POSTS"=>"posts",
+			"TABLE_POSTMETA"=>"postmeta",
+			"TABLE_POSTVOTES"=>"postvotes",
+			"TABLE_SETTINGS"=>"settings",
+			"TABLE_TAGS"=>"tags",
+			"TABLE_TEMPDATA"=>"tempdata",
+			"TABLE_USERS"=>"users",
+			"TABLE_USERMETA"=>"usermeta",
+			"TABLE_USERACTIVITY"=>"useractivity",
+			"TABLE_WIDGETS"=>"widgets",
+			"TABLE_FRIENDS"=>"friends",
+			"TABLE_MESSAGING"=>"messaging",
+			"TABLE_SITE"=>"sites"
+		);
 
-	    foreach ( $tableConstants as $key => $value ) {
-		if (!defined($key))
-		    define($key, DB_PREFIX . $value);
-	    }		    
+		foreach ( $tableConstants as $key => $value ) {
+			if (!defined($key)) {
+				define($key, DB_PREFIX . $value);
+			}
+		}
 	}
 	
 	/**
-         * Sets the current SiteID if multiple sites.
-         */
-        public function setCurrentSiteID()
-        {
-            // if isactive('MU Plugin') {
-            //   $url = get the url
-            //   DEFINE siteid based on a query to TABLE_SITE of the $url
-            //   
-            // }
-            // else {
-              define('SITEID',0);
-            // }
-        }
-        
+	 * Sets the current SiteID if multiple sites.
+	 */
+	public function setCurrentSiteID()
+	{
+		//if isactive('MU Plugin') {
+		//	$url = get the url
+		//	DEFINE siteid based on a query to TABLE_SITE of the $url
+		//
+		//} else {
+		  define('SITEID',0);
+		//}
+	}
+
 	/**
 	 * Set the timezone
 	 */
@@ -329,6 +329,5 @@ class Initialize
 		}
 		return false;
 	}
-
 }
 ?>

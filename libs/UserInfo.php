@@ -286,7 +286,7 @@ class UserInfo extends UserBase
 		if (!$id_array) {
 			// get all users
 			$sql = "SELECT * FROM " . TABLE_USERS . " WHERE user_siteid = %d ORDER BY user_username ASC";
-                        $query = $h->db->prepare($sql, SITEID);
+			$query = $h->db->prepare($sql, SITEID);
 			$results = $h->db->get_results($query);
 		} else {
 			// for grabbing 
@@ -341,7 +341,7 @@ class UserInfo extends UserBase
 				break;
 			case 'total_users':
 				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_siteid = %d";
-                                $query = $h->db->prepare($sql, SITEID);
+				$query = $h->db->prepare($sql, SITEID);
 				$h->smartCache('on', 'users', 60, $query); // start using cache
 				$users = $h->db->get_var($query);
 				break;
