@@ -44,7 +44,7 @@ class Initialize
 		// The order here is important!
 		$this->setDefaultTimezone();
 		$this->setTableConstants();
-		$this->setCurrentSiteID();
+		$siteid = $this->setCurrentSiteID();
 		$this->errorReporting(); 
 		$this->getFiles();
 		$this->db = $this->initDatabase();
@@ -52,7 +52,7 @@ class Initialize
 		//$this->errorReporting();
 		$this->cage = $this->initInspektCage();
 		
-		$this->readSettings();
+		$this->readSettings($siteid);
 		$this->setUpDatabaseCache();
 		$this->isDebug = $this->checkDebug();
 		
@@ -158,7 +158,9 @@ class Initialize
 		//	DEFINE siteid based on a query to TABLE_SITE of the $url
 		//
 		//} else {
-		  define('SITEID',0);
+		  // define('SITEID',0);
+		  $siteid = 0;
+		  return $siteid;
 		//}
 	}
 
@@ -252,9 +254,9 @@ class Initialize
 	 *
 	 * @return bool
 	 */
-	public function readSettings()
+	public function readSettings($siteid = 0)
 	{
-		if (SITEID == 0) { 
+		if ($siteid == 0) { 
 			$sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;
 			$settings = $this->db->get_results($this->db->prepare($sql));
 		} else {
@@ -271,6 +273,8 @@ class Initialize
 				define($setting->settings_name, $setting->settings_value);
 			}
 		}
+		
+		if (!defined('SITEID')) { define('SITEID', 0); }
 		return true;
 	}
 	
