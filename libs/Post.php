@@ -86,7 +86,7 @@ class Post
 			if (!$post_row) { $h->vars['post_error'] = true; return false; }
 		}
 		
-		if ($post_row) {
+		if ($post_row && isset($post_row->post_id)) {
 			$this->id = $post_row->post_id;
 			$this->archived = $post_row->post_archived;
 			$this->author = $post_row->post_author;

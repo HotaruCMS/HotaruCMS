@@ -89,7 +89,7 @@ class Caching
 				//echo "last modified: " . $last_modified . "<br />";
 				if ($last_modified <= (time() - $cache_length)) { 
 					// delete cache
-					unlink($file);
+					@unlink($file);
 					return false;
 				} else {
 					if ($last_update >= $last_modified) { return false; } // there's been a recent update so don't use the cache.
@@ -172,14 +172,14 @@ class Caching
 		$file_modified = filemtime($cache_file);
 		if ($file_modified < (time() - $timeout*60)) {
 			// delete old cache file so we can make a new one with fresh data
-			if (file_exists($cache_file)) { unlink($cache_file); }
+			if (file_exists($cache_file)) { @unlink($cache_file); }
 			return true; 
 		}
 		
 		// check if the $last_update is more recent than the cache file:
 		if ($file_modified < $last_update) { 
 			// delete old cache file so we can make a new one with fresh data
-			if (file_exists($cache_file)) { unlink($cache_file); } 
+			if (file_exists($cache_file)) { @unlink($cache_file); } 
 			return true; 
 		}
 		
@@ -277,7 +277,7 @@ class Caching
 				//echo "last modified: " . $last_modified . "<br />";
 				if ($last_modified <= (time() - $cache_length)) { 
 					// delete cache
-					unlink($file);
+					@unlink($file);
 					return false;
 				} else {
 					return $content;    // return the HTML to display
