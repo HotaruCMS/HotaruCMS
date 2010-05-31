@@ -93,16 +93,18 @@ switch ($step) {
 		    if ($cage->get->getAlpha('type') == 'manual') database_setup_manual(); else database_setup();           // DB name, user, password, prefix...
 		break;
 	case 2:                
-		if ($action == 'upgrade')
+		if ($action == 'upgrade') {
 		    database_upgrade();
+		}
 		else {
                     $db = init_database();
 		    database_creation();        // Creates the database tables
 		}
 		break;
-	case 3:
-		if ($action == 'upgrade')
-		    upgrade_plugins($h);
+	case 3: 
+		if ($action == 'upgrade') {
+		    upgrade_plugins();
+		}
 		else {
 		    $db = init_database();
 		    register_admin();           // Username and password for Admin user...
@@ -785,27 +787,89 @@ function installation_complete()
 /**
  * Step 3 of upgrade - shows completion.
  */
-function upgrade_plugins($h)
+function upgrade_plugins()
 {
 	global $lang;
 	global $cage;
-
+	$h = new Hotaru();
 	echo html_header();
 
 	// Step title
 	echo "<h2>" . $lang['upgrade_step3'] . "</h2>\n";
 
-	// loop through all plugins and check version numbers for updating. point to forums for update
-	// instructions saying turn off plugins first then upload, then ..............
+	echo "<br/><div class='install_content'>" . $lang['upgrade_step3_details'] . "<br/><br/>\n";
 
-	echo "<br/><div class='install_content'>" . $lang['install_step4_installation_go_play'] . "</div><br/><br/>\n";
+//	plugin_version_getAll($h);
+//
+//	$plugins = $h->allPluginDetails;
+//
+//	foreach ($plugins as $plugin) {
+//	    if (key($plugin) != 'hooks') {
+//		if ($plugin->plugin_latestversion > $plugin->plugin_version) {
+//		    echo "<b>" . $plugin->plugin_name . "</b> requires an update to <span class='red'>version " . $plugin->plugin_latestversion . "</span><br/>";
+//		} else {
+//		    echo "<b>" . $plugin->plugin_name . "</b> is up to date at version " . $plugin->plugin_version . " <br/>";
+//		}
+//	    }
+//	}
+
+	echo "<br/>" . $lang['upgrade_step3_instructions'] . "<br/><br/>\n";
+	
+	echo "<br/>" . $lang['install_step4_installation_go_play'] . "</div><br/><br/>\n";
 
 	// Previous/Next buttons
-	echo "<div class='back button''><a href='install.php?step=2&action=upgrade'>" . $lang['install_back'] . "</a></div>\n";
+	echo "<div class='back button''><a href='index.php?step=2&action=upgrade'>" . $lang['install_back'] . "</a></div>\n";
 	echo "<div class='next button''><a href='" . BASEURL . "'>" . $lang['install_home'] . "</a></div>\n";
 
 	echo html_footer();
 }
+
+/**
+ *
+ * @param <type> $h
+ */
+function plugin_version_getAll($h) {
+    $query_vals = array(
+	'api_key' => '',
+	'format' => 'json',
+	'method' => 'hotaru.plugin.version.getAll'
+    );
+
+     $info = sendApiRequest($h, $query_vals);
+
+    // save the updated version number to the local db so we can display it on the admin panel until it gets updated.
+    $sql = "SELECT plugin_id, plugin_name, plugin_latestversion FROM " . TABLE_PLUGINS;
+    $plugins = $h->db->get_results($h->db->prepare($sql));
+
+    foreach ($plugins as $plugin) {
+	if (array_key_exists($plugin->plugin_name, $info)) {
+	    $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_latestversion = %s WHERE (plugin_id = %d)";
+	    $h->db->query($h->db->prepare($sql, $info[$plugin->plugin_name], $plugin->plugin_id));
+	    //print $plugin->plugin_name . ' ' . $info[$plugin->plugin_name] . '<br/>';
+	}
+    }
+}
+
+function sendApiRequest($h, $query_vals) {
+
+    // Generate the POST string
+    $ret = '';
+    foreach($query_vals as $key => $value) {
+	$ret .= $key.'='.urlencode($value).'&';
+    }
+
+    $ret = rtrim($ret, '&');
+
+    $ch = curl_init("http://api.hotarucms.org/index.php?page=api");
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $ret);
+    $response = curl_exec($ch);
+    curl_close ($ch);
+
+   return json_decode($response, true);
+}
+
 
 /**
  * create new settings file

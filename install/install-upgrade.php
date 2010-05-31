@@ -54,7 +54,7 @@ switch ($step) {
 		break;
 	case 3:
 		upgrade_plugins($h);
-	    break;
+		break;
 	default:		
 		upgrade_welcome();
 		break;
@@ -87,7 +87,7 @@ function upgrade_check($h, $old_version) {
 	    echo "<div class='install_content'>" . $lang['upgrade_step1_current_version'] . "</div>\n";
 
 	// Previous/Next buttons
-	echo "<div class='back button''><a href='install.php?step=0&action=upgrade'>" . $lang['install_back'] . "</a></div>\n";
+	echo "<div class='back button''><a href='index.php?step=0&action=upgrade'>" . $lang['install_back'] . "</a></div>\n";
 	echo "<div class='next button''><a href='?step=2&action=upgrade'>" . $lang['install_next'] . "</a></div>\n";
 
 	echo html_footer();
@@ -137,8 +137,8 @@ function upgrade_complete($h)
 	}	
 
 	// Previous/Next buttons
-	echo "<div class='back button''><a href='install.php?step=1&action=upgrade'>" . $lang['install_back'] . "</a></div>\n";
-	echo "<div class='back button''><a href='install.php?step=3&action=upgrade'>" . $lang['install_next'] . "</a></div>\n";
+	echo "<div class='back button''><a href='index.php?step=1&action=upgrade'>" . $lang['install_back'] . "</a></div>\n";
+	echo "<div class='next button''><a href='index.php?step=3&action=upgrade'>" . $lang['install_next'] . "</a></div>\n";
 	
 	echo html_footer();    
 }
