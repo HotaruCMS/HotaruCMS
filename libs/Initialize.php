@@ -44,15 +44,14 @@ class Initialize
 		// The order here is important!
 		$this->setDefaultTimezone();
 		$this->setTableConstants();
-		$siteid = $this->setCurrentSiteID();
-		$this->errorReporting($siteid); 
+		$multisite = $this->setCurrentSiteID();
+		$this->errorReporting($multisite); 
 		$this->getFiles();
 		$this->db = $this->initDatabase();
-		// reset error reporting now we know what siteid is
-		//$this->errorReporting();
+		// reset error reporting now we know whether multisite is true
 		$this->cage = $this->initInspektCage();
 		
-		$this->readSettings($siteid);
+		$this->readSettings($multisite);
 		$this->setUpDatabaseCache();
 		$this->isDebug = $this->checkDebug();
 		
@@ -83,13 +82,13 @@ class Initialize
 	/**
 	 * Error reporting
 	 */
-	public function errorReporting($siteid = 0)
+	public function errorReporting($multisite = 0)
 	{
 		// display errors
 		ini_set('display_errors', 1); // Gets disabled later in checkDebug()
 		error_reporting(E_ALL);
 
-		if ($siteid == 0) { $site_dir = ''; } else { $site_dir = SITEID . '/'; }
+		if (!$multisite) { $site_dir = ''; } else { $site_dir = SITEID . '/'; }
 
 		// error log filename
 		$filename = CACHE . $site_dir . 'debug_logs/error_log.php';
@@ -159,8 +158,7 @@ class Initialize
 		//
 		//} else {
 		  // define('SITEID',0);
-		  $siteid = 0;
-		  return $siteid;
+		  return false;
 		//}
 	}
 
@@ -188,20 +186,6 @@ class Initialize
 		require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
 		require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
 		require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php'); // database
-		
-		// include libraries
-		require_once(LIBS . 'Database.php');        // for database queries
-		require_once(LIBS . 'Avatar.php');          // for displaying avatars
-		require_once(LIBS . 'IncludeCssJs.php');    // for including and mergeing css and javascript
-		require_once(LIBS . 'InspektExtras.php');   // for custom Inspekt methods
-		require_once(LIBS . 'Language.php');
-		require_once(LIBS . 'PageHandling.php');    // for page handling
-		require_once(LIBS . 'Plugin.php');          // for plugin properties
-		require_once(LIBS . 'PluginFunctions.php'); // for plugin functions
-		require_once(LIBS . 'PluginSettings.php');  // for plugin settings
-		require_once(LIBS . 'Post.php');            // for posts
-		require_once(LIBS . 'UserBase.php');        // for users, settings and permissions
-		require_once(LIBS . 'UserAuth.php');        // for user authentication, login and registering
 		
 		// include functions
 		require_once(FUNCTIONS . 'funcs.strings.php');
@@ -251,17 +235,18 @@ class Initialize
 	
 	/**
 	 * Returns all site settings
+	 * @param int $multisite - site id
 	 *
 	 * @return bool
 	 */
-	public function readSettings($siteid = 0)
+	public function readSettings($multisite = 0)
 	{
-		if ($siteid == 0) { 
+		if (!$multisite) { 
 			$sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;
 			$settings = $this->db->get_results($this->db->prepare($sql));
 		} else {
 			$sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS . " WHERE settings_siteid = %d";
-			$settings = $this->db->get_results($this->db->prepare($sql, SITEID));
+			$settings = $this->db->get_results($this->db->prepare($sql, $multisite));
 		}
 		
 		if(!$settings) { return false; }
@@ -274,7 +259,7 @@ class Initialize
 			}
 		}
 		
-		if (!defined('SITEID')) { define('SITEID', 0); }
+		if (!defined('SITEID')) { define('SITEID', 1); }
 		return true;
 	}
 	
