@@ -505,7 +505,7 @@ function do_upgrade($h, $old_version)
 		}
 		
 		// Hide Database duration. It's still technically used, but smartCache overrides the duration
-		$sql = "UPDATE " . TABLE_SETTINGS . " SET settings_shown = %s WHERE settings_name = %s";
+		$sql = "UPDATE " . TABLE_SETTINGS . " SET settings_show = %s WHERE settings_name = %s";
 		$h->db->query($h->db->prepare($sql, 'N', 'DB_CACHE_DURATION'));
 
 		// Add index to comment_post_id to speed up countComments function
