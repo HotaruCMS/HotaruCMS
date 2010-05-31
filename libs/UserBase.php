@@ -136,7 +136,7 @@ class UserBase
 		}
 		
 		// Build SQL
-		$query = "SELECT * FROM " . TABLE_USERS . " WHERE " . $where;
+		$query = "SELECT user_id, user_username, user_password, user_role, user_email, user_email_valid, user_ip FROM " . TABLE_USERS . " WHERE " . $where;
 		$sql = $h->db->prepare($query, $param);
 		
 		if (!isset($h->vars['tempUserCache'])) { $h->vars['tempUserCache'] = array(); }
