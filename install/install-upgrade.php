@@ -541,11 +541,19 @@ function do_upgrade($h, $old_version)
 
 		foreach ($tables as $table => $column) {
 
-			if ($exists = $h->db->column_exists($table, $column . '_siteid')) {
+			if (!$exists = $h->db->column_exists($table, $column . '_siteid')) {
 				// Create a column for index first
 				$sql = "ALTER TABLE " . DB_PREFIX . $table . " ADD " . $column . "_siteid INT NOT NULL DEFAULT 1";
 				$h->db->query($h->db->prepare($sql));
+			} else {
+				// fix to make sure siteid=0 columns are changed to siteid=1
+				$sql = "ALTER TABLE " . DB_PREFIX . $table . " MODIFY " . $column . "_siteid INT NOT NULL DEFAULT 1";
+				$h->db->query($h->db->prepare($sql));
+
+				$sql = "UPDATE " . DB_PREFIX . $table . " SET " . $column . "_siteid=1 WHERE " . $column . "_siteid=0";
+				$h->db->query($h->db->prepare($sql));
 			}
+
 			
 			$sql = "SHOW INDEX FROM `" . DB_PREFIX . $table . "` WHERE KEY_NAME = '" . $column . "_siteid'";
 			$result = $h->db->query($sql);
