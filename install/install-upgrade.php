@@ -535,7 +535,7 @@ function do_upgrade($h, $old_version)
 
 			if (!$exists = $h->db->column_exists($table, $column . '_siteid')) {
 				// Create a column for index first
-				$sql = "ALTER TABLE " . DB_PREFIX . $table . " ADD " . $column . "_siteid INT NOT NULL DEFAULT 0";
+				$sql = "ALTER TABLE " . DB_PREFIX . $table . " ADD " . $column . "_siteid INT NOT NULL DEFAULT 1";
 				$h->db->query($h->db->prepare($sql));
 			}
 			
