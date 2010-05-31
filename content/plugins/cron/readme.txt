@@ -15,4 +15,5 @@ Instructions
 
 Changelog
 ---------
+v.0.2 2010/05/15 - shibuya246 - Added plugin version update job
 v.0.1 2010/03/21 - shibuya246 - Released first version

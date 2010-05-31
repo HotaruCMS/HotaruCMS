@@ -2,7 +2,7 @@
 /**
  * name: Cron
  * description: Enables setting of cron jobs
- * version: 0.1
+ * version: 0.2
  * folder: cron
  * class: Cron
  * type: cron
