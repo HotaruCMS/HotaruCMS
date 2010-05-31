@@ -490,7 +490,7 @@ function do_upgrade($h, $old_version)
 		$exists = $h->db->column_exists('plugins', 'plugin_latestversion');
 		if (!$exists) {
 			// Create a plugin_version column
-			$sql = "ALTER TABLE " . TABLE_PLUGINS . " ADD plugin_latestversion varchar(32) NOT NULL DEFAULT '0.0'";
+			$sql = "ALTER TABLE " . TABLE_PLUGINS . " ADD plugin_latestversion varchar(8) NOT NULL DEFAULT '0.0'";
 			$h->db->query($h->db->prepare($sql));
 		}
 		

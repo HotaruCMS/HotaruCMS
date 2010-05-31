@@ -238,7 +238,7 @@ function create_table($table_name)
 			`plugin_authorurl` varchar(128) NOT NULL DEFAULT '',
 			`plugin_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`plugin_updateby` int(20) NOT NULL DEFAULT 0,
-			`plugin_latest_version` varchar(32) NOT NULL DEFAULT '0.0',
+			`plugin_latestversion` varchar(8) NOT NULL DEFAULT '0.0',
 			`plugin_siteid` int(20) NOT NULL DEFAULT 0,
 			INDEX (`plugin_siteid`),
 			UNIQUE KEY `key` (`plugin_folder`, `plugin_siteid`)
