@@ -544,14 +544,14 @@ function do_upgrade($h, $old_version)
 			if (!$exists = $h->db->column_exists($table, $column . '_siteid')) {
 				// Create a column for index first
 				$sql = "ALTER TABLE " . DB_PREFIX . $table . " ADD " . $column . "_siteid INT NOT NULL DEFAULT 1";
-				$h->db->query($h->db->prepare($sql));
+				$h->db->query($sql);
 			} else {
 				// fix to make sure siteid=0 columns are changed to siteid=1
 				$sql = "ALTER TABLE " . DB_PREFIX . $table . " MODIFY " . $column . "_siteid INT NOT NULL DEFAULT 1";
-				$h->db->query($h->db->prepare($sql));
+				$h->db->query($sql);
 
 				$sql = "UPDATE " . DB_PREFIX . $table . " SET " . $column . "_siteid=1 WHERE " . $column . "_siteid=0";
-				$h->db->query($h->db->prepare($sql));
+				$h->db->query($sql);
 			}
 
 			
@@ -562,14 +562,40 @@ function do_upgrade($h, $old_version)
 				$h->db->query($sql);
 			}
 
-			// Unique Key 
+			// Unique Keys
 			/*
-			if ($column=='category') //  ALTER TABLE FOR     UNIQUE KEY `key` (`category_name`, `category_siteid`)
-			if ($column=='plugin') //  UNIQUE KEY `key` (`plugin_folder`, `plugin_siteid`)
-			if ($column=='settings') //  UNIQUE KEY `key` (`settings_name`, `settings_siteid`),
-			if ($column=='tags') //  UNIQUE KEY `tags_post_id` (`tags_post_id`,`tags_word`,`tags_siteid`),
-			if ($column=='user') //  UNIQUE KEY `key` (`user_username`, `user_siteid`),
-			*/
+			 *
+			 */
+			if ($exists = $h->db->column_exists('categories', 'category_siteid')) {
+			    $sql = "ALTER TABLE `" . TABLE_CATEGORIES . "` DROP KEY `key`";
+			    $h->db->query($sql);
+			    $sql = "ALTER TABLE `" . TABLE_CATEGORIES . "` ADD UNIQUE KEY `key` (`category_name`, `category_siteid`)";
+			    $h->db->query($sql);
+			}
+			if ($exists = $h->db->column_exists('plugins', 'plugin_siteid')) {
+			    $sql = "ALTER TABLE `" . TABLE_PLUGINS . "` DROP KEY `key`";
+			    $h->db->query($sql);
+			    $sql = "ALTER TABLE `" . TABLE_PLUGINS . "` ADD UNIQUE KEY `key` (`plugin_folder`, `plugin_siteid`)";
+			    $h->db->query($sql);
+			}
+			if ($exists = $h->db->column_exists('settings', 'settings_siteid')) {
+			    $sql = "ALTER TABLE `" . TABLE_SETTINGS . "` DROP KEY `key`";
+			    $h->db->query($sql);
+			    $sql = "ALTER TABLE `" . TABLE_SETTINGS . "` ADD UNIQUE KEY `key` (`settings_name`, `settings_siteid`)";
+			    $h->db->query($sql);
+			}
+			if ($exists = $h->db->column_exists('tags', 'tags_siteid')) {
+			    $sql = "ALTER TABLE `" . TABLE_TAGS . "` DROP KEY `key`";
+			    $h->db->query($sql);
+			    $sql = "ALTER TABLE `" . TABLE_TAGS . "` ADD UNIQUE KEY `key` (`tags_post_id`, `tags_word`, `tags_siteid`)";
+			    $h->db->query($sql);
+			}
+			if ($exists = $h->db->column_exists('users', 'user_siteid')) {
+			    $sql = "ALTER TABLE `" . TABLE_USERS . "` DROP KEY `key`";
+			    $h->db->query($sql);
+			    $sql = "ALTER TABLE `" . TABLE_USERS . "` ADD UNIQUE KEY `key` (`user_username`, `user_siteid`)";
+			    $h->db->query($sql);
+			}
 		}
 
 		// update "old version" for next set of upgrades
