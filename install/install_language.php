@@ -41,6 +41,7 @@ $lang["upgrade_home"] = "Finish";
 $lang["upgrade_step3"] = "Step 3/3: Check Plugins, Templates";
 $lang["upgrade_step3_details"] = "You have sucessfully upgraded Hotaru CMS. You may now need to upgrade the plugins you have installed.<br/>You can check the latest version numbers from the Plugin Management page in your admin dashboard.";
 $lang["upgrade_step3_instructions"] = "You may also need to modify any templates you have customised to make sure they work with the latest version of Hotaru CMS.";
+$lang["upgrade_step3_go_play"] = "Done? Okay, go and play with your Hotaru site!";
 $lang["upgrade_home"] = "Finish";
 
 /* Install Common */
