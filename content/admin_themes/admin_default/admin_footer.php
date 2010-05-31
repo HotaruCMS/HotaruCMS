@@ -32,9 +32,7 @@
 			$h->pluginHook('admin_footer');
 			
 			// Link to forums...
-			echo "<p>" . $h->lang["admin_theme_footer_having_trouble_vist_forums"];
-			echo " <a href='http://hotarucms.org'>HotaruCMS.org</a> ";
-			echo $h->lang["admin_theme_footer_for_help"] . "</p>";
+			echo "<p>" . $h->lang["admin_theme_footer_having_trouble_vist_forums"] . "</p>";
 			
 			if ($h->isDebug) {
 				$h->showQueriesAndTime();
