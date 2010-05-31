@@ -47,7 +47,9 @@ $loaded_settings = $h->vars['admin_settings'];
 	<?php     // **********************************************************
 	
 		// Loop through the settings, displaying each one as a row...    
-		foreach ($loaded_settings as $ls) { 
+		foreach ($loaded_settings as $ls)
+		{
+			if ($ls->settings_show == 'N') { continue; } // skip this row
 		
 			// replace underscores with spaces and make the first character of the setting name uppercase.
 			$name = ucfirst(preg_replace('/_/', ' ', $ls->settings_name));
