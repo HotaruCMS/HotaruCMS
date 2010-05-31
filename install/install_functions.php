@@ -95,19 +95,9 @@ function delete_files($dir)
 /**
  * List all plugin created tables
  */
-function list_plugin_tables()
+function list_plugin_tables($core_tables)
 {
 	global $db;
-	
-	// These should match the tables created in the install script.
-	$core_tables = array(
-		'hotaru_settings',
-		'hotaru_users',
-		'hotaru_plugins',
-		'hotaru_pluginsettings',
-		'hotaru_pluginhooks',
-		'hotaru_blocked'
-	);
 	
 	$plugin_tables = array();
 
@@ -117,7 +107,7 @@ function list_plugin_tables()
 	
 	foreach ( $db->get_col("SHOW TABLES",0) as $table_name )
 	{
-		if (!in_array($table_name, $core_tables)) {
+		if (!in_array($table_name, DB_PREFIX . $core_tables)) {
 			array_push($plugin_tables, $table_name);
 		}
 	}

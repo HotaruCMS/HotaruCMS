@@ -493,14 +493,15 @@ function database_creation()
 	    delete_files(CACHE . 'css_js_cache');
 	    delete_files(CACHE . 'rss_cache');
 
+	    $tables = array('blocked', 'categories', 'comments', 'commentvotes', 'friends', 'messaging', 'miscdata', 'plugins', 'pluginhooks', 'pluginsettings', 'posts', 'postmeta', 'postvotes', 'settings', 'site', 'tags', 'tempdata', 'tokens', 'users', 'usermeta', 'useractivity', 'widgets');
+
 	    // delete *all* plugin tables:
-	    $plugin_tables = list_plugin_tables();
+	    $plugin_tables = list_plugin_tables($tables);
 	    foreach ($plugin_tables as $pt) {
 		    drop_table($pt); // table name
 	    }
 
 	    //create tables
-	    $tables = array('blocked', 'categories', 'comments', 'commentvotes', 'friends', 'messaging', 'miscdata', 'plugins', 'pluginhooks', 'pluginsettings', 'posts', 'postmeta', 'postvotes', 'settings', 'site', 'tags', 'tempdata', 'tokens', 'users', 'usermeta', 'useractivity', 'widgets');
 	    foreach ($tables as $table_name) {
 		    create_table($table_name);
 	    }
