@@ -815,7 +815,7 @@ function upgrade_plugins()
 
 	echo "<br/>" . $lang['upgrade_step3_instructions'] . "<br/><br/>\n";
 	
-	echo "<br/>" . $lang['install_step4_installation_go_play'] . "</div><br/><br/>\n";
+	echo "<br/>" . $lang['upgrade_step3_go_play'] . "</div><br/><br/>\n";
 
 	// Previous/Next buttons
 	echo "<div class='back button''><a href='index.php?step=2&action=upgrade'>" . $lang['install_back'] . "</a></div>\n";
