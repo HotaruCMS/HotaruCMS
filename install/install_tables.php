@@ -51,7 +51,7 @@ function create_table($table_name)
 			`blocked_value` text NULL,
 			`blocked_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`blocked_updateby` int(20) NOT NULL DEFAULT 0,
-			`blocked_siteid` int(20) NOT NULL DEFAULT 0,
+			`blocked_siteid` int(20) NOT NULL DEFAULT 1,
 			INDEX (`blocked_siteid`),
 			INDEX  (`blocked_type`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Blocked IPs, users, emails, etc';";
@@ -76,7 +76,7 @@ function create_table($table_name)
 			`category_keywords` varchar(255) NOT NULL,
 			`category_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 			`category_updateby` int(20) NOT NULL DEFAULT 0,
-			`category_siteid` int(20) NOT NULL DEFAULT 0,
+			`category_siteid` int(20) NOT NULL DEFAULT 1,
 			INDEX (`category_siteid`),
 			UNIQUE KEY `key` (`category_name`, `category_siteid`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Categories';";
@@ -106,7 +106,7 @@ function create_table($table_name)
 			`comment_votes_down` smallint(11) NOT NULL DEFAULT '0',
 			`comment_subscribe` tinyint(1) NOT NULL DEFAULT '0',
 			`comment_updateby` int(20) NOT NULL DEFAULT 0,
-			`comment_siteid` int(20) NOT NULL DEFAULT 0,
+			`comment_siteid` int(20) NOT NULL DEFAULT 1,
 			INDEX (`comment_siteid`),
 			FULLTEXT (`comment_content`),
 			INDEX  (`comment_archived`),
@@ -188,7 +188,7 @@ function create_table($table_name)
 			`miscdata_default` text NOT NULL DEFAULT '',
 			`miscdata_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`miscdata_updateby` int(20) NOT NULL DEFAULT 0,
-			`miscdata_siteid` int(20) NOT NULL DEFAULT 0,
+			`miscdata_siteid` int(20) NOT NULL DEFAULT 1,
 			INDEX (`miscdata_siteid`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Miscellaneous Data';";
 		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
@@ -239,7 +239,7 @@ function create_table($table_name)
 			`plugin_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`plugin_updateby` int(20) NOT NULL DEFAULT 0,
 			`plugin_latestversion` varchar(8) NOT NULL DEFAULT '0.0',
-			`plugin_siteid` int(20) NOT NULL DEFAULT 0,
+			`plugin_siteid` int(20) NOT NULL DEFAULT 1,
 			INDEX (`plugin_siteid`),
 			UNIQUE KEY `key` (`plugin_folder`, `plugin_siteid`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Application Plugins';";
@@ -272,7 +272,7 @@ function create_table($table_name)
 			`plugin_value` text NULL,
 			`plugin_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`plugin_updateby` int(20) NOT NULL DEFAULT 0,
-			`plugin_siteid` int(20) NOT NULL DEFAULT 0,
+			`plugin_siteid` int(20) NOT NULL DEFAULT 1,
 			INDEX (`plugin_siteid`),
 			INDEX  (`plugin_folder`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Plugins Settings';";
@@ -306,7 +306,7 @@ function create_table($table_name)
 			`post_comments` enum('open', 'closed') NOT NULL DEFAULT 'open',
 			`post_subscribe` tinyint(1) NOT NULL DEFAULT '0',
 			`post_updateby` int(20) NOT NULL DEFAULT 0,
-			`post_siteid` int(20) NOT NULL DEFAULT 0,
+			`post_siteid` int(20) NOT NULL DEFAULT 1,
 			INDEX (`post_siteid`),
 			FULLTEXT (`post_title`, `post_domain`, `post_url`, `post_content`, `post_tags`),
 			INDEX  (`post_archived`),
@@ -371,7 +371,7 @@ function create_table($table_name)
 			`settings_show` enum('Y','N') NOT NULL DEFAULT 'Y',
 			`settings_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`settings_updateby` int(20) NOT NULL DEFAULT 0,
-			`settings_siteid` int(20) NOT NULL DEFAULT 0,
+			`settings_siteid` int(20) NOT NULL DEFAULT 1,
 			UNIQUE KEY `key` (`settings_name`, `settings_siteid`),
 			INDEX (`settings_siteid`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Application Settings';";
@@ -484,7 +484,7 @@ function create_table($table_name)
 			`tags_date` timestamp NOT NULL,
 			`tags_word` varchar(64) NOT NULL DEFAULT '',
 			`tags_updateby` int(20) NOT NULL DEFAULT 0,
-			`tags_siteid` int(20) NOT NULL DEFAULT 0,
+			`tags_siteid` int(20) NOT NULL DEFAULT 1,
 			INDEX (`tags_siteid`),
 			UNIQUE KEY `tags_post_id` (`tags_post_id`,`tags_word`,`tags_siteid`),
 			INDEX  (`tags_archived`)
@@ -545,7 +545,7 @@ function create_table($table_name)
 			`user_lastlogin` timestamp NULL,
 			`user_lastvisit` timestamp NULL,
 			`user_updateby` int(20) NOT NULL DEFAULT 0,
-			`user_siteid` int(20) NOT NULL DEFAULT 0,
+			`user_siteid` int(20) NOT NULL DEFAULT 1,
 			INDEX (`user_siteid`),
 			UNIQUE KEY `key` (`user_username`, `user_siteid`),
 			KEY `user_email` (`user_email`)			
@@ -608,7 +608,7 @@ function create_table($table_name)
 			`widget_function` varchar(255) NULL, 
 			`widget_args` varchar(255) NULL, 
 			`widget_updateby` int(20) NOT NULL DEFAULT 0,
-			`widget_siteid` int(20) NOT NULL DEFAULT 0,
+			`widget_siteid` int(20) NOT NULL DEFAULT 1,
 			INDEX (`widget_siteid`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Widgets';";
 		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
