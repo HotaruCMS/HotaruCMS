@@ -95,13 +95,18 @@ switch ($step) {
 	case 2:                
 		if ($action == 'upgrade')
 		    database_upgrade();
-		else
+		else {
                     $db = init_database();
 		    database_creation();        // Creates the database tables
+		}
 		break;
 	case 3:
-                $db = init_database();
-		register_admin();           // Username and password for Admin user...
+		if ($action == 'upgrade')
+		    upgrade_plugins($h);
+		else {
+		    $db = init_database();
+		    register_admin();           // Username and password for Admin user...
+		}
 		break;
 	case 4:
 		installation_complete();    // Delete "install" folder. Visit your site"
@@ -381,7 +386,7 @@ function database_setup() {
 
 	    // Previous/Next buttons
 	    echo "<div class='back button''><a href='index.php?step=0'>" . $lang['install_back'] . "</a></div>\n";
-	    if ($h->cage->post->getAlpha('updated') == 'true' && isset($fputs)) {
+	    if ($cage->post->getAlpha('updated') == 'true' && isset($fputs)) {
 		    // active "next" link if settings file has been created
 		    echo "<div class='next button''><a href='index.php?step=2'>" . $lang['install_next'] . "</a></div>\n";
 	    } else {
@@ -771,6 +776,32 @@ function installation_complete()
 
 	// Previous/Next buttons
 	echo "<div class='back button''><a href='index.php?step=3'>" . $lang['install_back'] . "</a></div>\n";
+	echo "<div class='next button''><a href='" . BASEURL . "'>" . $lang['install_home'] . "</a></div>\n";
+
+	echo html_footer();
+}
+
+
+/**
+ * Step 3 of upgrade - shows completion.
+ */
+function upgrade_plugins($h)
+{
+	global $lang;
+	global $cage;
+
+	echo html_header();
+
+	// Step title
+	echo "<h2>" . $lang['upgrade_step3'] . "</h2>\n";
+
+	// loop through all plugins and check version numbers for updating. point to forums for update
+	// instructions saying turn off plugins first then upload, then ..............
+
+	echo "<br/><div class='install_content'>" . $lang['install_step4_installation_go_play'] . "</div><br/><br/>\n";
+
+	// Previous/Next buttons
+	echo "<div class='back button''><a href='install.php?step=2&action=upgrade'>" . $lang['install_back'] . "</a></div>\n";
 	echo "<div class='next button''><a href='" . BASEURL . "'>" . $lang['install_home'] . "</a></div>\n";
 
 	echo html_footer();

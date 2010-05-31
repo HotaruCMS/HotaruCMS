@@ -26,15 +26,20 @@
 /* Upgrade Step 1 */
 $lang["upgrade_title"] = "Hotaru CMS Upgrade";
 
-$lang["upgrade_step1"] = "Step 1/2: Checking your exising setup";
+$lang["upgrade_step1"] = "Step 1/3: Checking your exising setup";
 $lang["upgrade_step1_details"] = "To upgrade Hotaru to version " . $h->version . ", click 'Next'...";
 $lang["upgrade_step1_old_version"] = "You are currently running Hotaru CMS version ";
 $lang["upgrade_step1_old_no_version"] = "We could not find an existing version number of Hotaru CMS in your database.";
 $lang["upgrade_step1_current_version"] = "You already have the latest version of Hotaru installed.<br/><br/>If you want to run the upgrade script again click 'Next', otherwise you can close this browser window now.";
 
 /* Upgrade Step 2 */
-$lang["upgrade_step2"] = "Step 2/2: Upgrade Complete";
+$lang["upgrade_step2"] = "Step 2/3: Upgrade Complete";
 $lang["upgrade_step2_details"] = "Congratulations! You have successfully upgraded Hotaru CMS.";
+$lang["upgrade_home"] = "Finish";
+
+/* Upgrade Step 2 */
+$lang["upgrade_step3"] = "Step 3/3: Check Plugins";
+$lang["upgrade_step3_details"] = "Congratulations! You have successfully upgraded Hotaru CMS.";
 $lang["upgrade_home"] = "Finish";
 
 /* Install Common */

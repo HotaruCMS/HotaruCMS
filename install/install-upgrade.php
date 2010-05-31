@@ -52,6 +52,9 @@ switch ($step) {
 		do_upgrade($h, $old_version);
 		upgrade_complete($h);    // Delete "install" folder. Visit your site"
 		break;
+	case 3:
+		upgrade_plugins($h);
+	    break;
 	default:		
 		upgrade_welcome();
 		break;
@@ -131,16 +134,16 @@ function upgrade_complete($h)
 	} else {
 	    echo "<br/><img src='../content/admin_themes/admin_default/images/delete.png' style='float:left; margin-left:12px;'>";
 	    echo "<div class='install_content'><span style='color: red;'>" . $lang['install_step1_warning'] . "</span>: " . $lang['install_step4_installation_delete_failed'] . "</div>\n";
-	}
-
-	echo "<br/><div class='install_content'>" . $lang['install_step4_installation_go_play'] . "</div><br/><br/>\n";
+	}	
 
 	// Previous/Next buttons
 	echo "<div class='back button''><a href='install.php?step=1&action=upgrade'>" . $lang['install_back'] . "</a></div>\n";
-	echo "<div class='next button''><a href='" . BASEURL . "'>" . $lang['install_home'] . "</a></div>\n";
+	echo "<div class='back button''><a href='install.php?step=3&action=upgrade'>" . $lang['install_next'] . "</a></div>\n";
 	
 	echo html_footer();    
 }
+
+
 
 /**
  * Do Upgrade
@@ -485,8 +488,8 @@ function do_upgrade($h, $old_version)
 	}
 
 	 // 1.2.0 to 1.3.0
-	if ($old_version == "1.2.0") {
-
+	if ($old_version == "1.2.0") {		
+		
 		$exists = $h->db->column_exists('plugins', 'plugin_latestversion');
 		if (!$exists) {
 			// Create a plugin_version column
@@ -533,7 +536,7 @@ function do_upgrade($h, $old_version)
 
 		foreach ($tables as $table => $column) {
 
-			if (!$exists = $h->db->column_exists($table, $column . '_siteid')) {
+			if ($exists = $h->db->column_exists($table, $column . '_siteid')) {
 				// Create a column for index first
 				$sql = "ALTER TABLE " . DB_PREFIX . $table . " ADD " . $column . "_siteid INT NOT NULL DEFAULT 1";
 				$h->db->query($h->db->prepare($sql));
