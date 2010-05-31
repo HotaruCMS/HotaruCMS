@@ -413,8 +413,8 @@ function create_table($table_name)
 		$db->query($db->prepare($sql, 'DB_CACHE', 'false', 'false', ''));
 		
 		// Database cache duration (hours)
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %d, %d, %s)";
-		$db->query($db->prepare($sql, 'DB_CACHE_DURATION', 12, 12, 'Hours'));
+		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note, settings_shown) VALUES (%s, %d, %d, %s, %s)";
+		$db->query($db->prepare($sql, 'DB_CACHE_DURATION', 12, 12, 'Hours', 'N')); // 'N' means Not shown on Admin Settings page
 		
 		// RSS cache
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
