@@ -136,7 +136,7 @@ class UserBase
 		}
 		
 		// Build SQL
-		$query = "SELECT user_id, user_username, user_password, user_role, user_email, user_email_valid, user_ip FROM " . TABLE_USERS . " WHERE " . $where;
+		$query = "SELECT user_id, user_username, user_password, user_role, user_email, user_email_valid, user_ip, user_permissions FROM " . TABLE_USERS . " WHERE " . $where;
 		$sql = $h->db->prepare($query, $param);
 		
 		if (!isset($h->vars['tempUserCache'])) { $h->vars['tempUserCache'] = array(); }
@@ -186,7 +186,7 @@ class UserBase
 		// get default permissions for the site
 		$default_perms = $this->getDefaultPermissions($h, $this->role);
 		
-		// get existing permissions for the user
+		// get existing permissions for the user		
 		$existing_perms = unserialize($user_info->user_permissions);
 		
 		// merge permissions
