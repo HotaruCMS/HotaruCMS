@@ -68,8 +68,22 @@ class Hotaru
 	 * CONSTRUCTOR - Initialize
 	 */
 	public function __construct($start = '')
-	{
-	    require_once(EXTENSIONS . 'SmartLoader/smartloader.class.php');
+	{ 
+		// define shorthand paths
+		if (!defined('BASE')) {
+		    define("BASE", dirname(__FILE__). '/');
+		    define("ADMIN", dirname(__FILE__).'/admin/');		    
+		    define("INSTALL", dirname(__FILE__).'/install/');
+		    define("LIBS", dirname(__FILE__).'/libs/');
+		    define("EXTENSIONS", dirname(__FILE__).'/libs/extensions/');
+		    define("FUNCTIONS", dirname(__FILE__).'/functions/');
+		    define("THEMES", dirname(__FILE__).'/content/themes/');
+		    define("PLUGINS", dirname(__FILE__).'/content/plugins/');
+		    define("ADMIN_THEMES", dirname(__FILE__).'/content/admin_themes/');
+		}
+
+		require_once(EXTENSIONS . 'SmartLoader/smartloader.class.php');
+
 		// initialize Hotaru
 		if (!$start) {
 			
