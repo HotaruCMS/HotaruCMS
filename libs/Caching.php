@@ -98,7 +98,8 @@ class Caching
 			} else {
 				return false;
 			}
-		}	
+		}
+		
 		// if we're here, we need to make or rewrite the cache
 
 		$fp = fopen($file, "w");
@@ -151,7 +152,7 @@ class Caching
 			$last_update = $h->vars['last_updates'][$table]; // cached
 		} else {
 			$last_update = $this->smartCacheSQL($h, $table);
-			$last_update = $h->vars['last_updates'][$table] = $last_update;
+			$h->vars['last_updates'][$table] = $last_update;
 		}
 		
 		// use caching?
@@ -177,13 +178,15 @@ class Caching
 			return true; 
 		}
 		
+
 		// check if the $last_update is more recent than the cache file:
-		if ($file_modified < $last_update) { 
+		if ($file_modified <= $last_update) { 
 			// delete old cache file so we can make a new one with fresh data
 			if (file_exists($cache_file)) { @unlink($cache_file); } 
 			return true; 
 		}
-		
+
+		// use cache file
 		return true;
 	}
 	
