@@ -382,11 +382,11 @@ class IncludeCssJs
 		if ($admin) { $prefix = 'hotaru_admin_'; } else { $prefix = 'hotaru_'; }
 		
 		if ($version_js > 0) {
-			echo "<script type='text/javascript' src='" . BASEURL . "cache/css_js_cache/" . $prefix  . "js_" . $version_js . ".js'></script>\n";
+			echo "<script type='text/javascript' src='" . BASEURL . "cache/" . SITEID . "/css_js_cache/" . $prefix  . "js_" . $version_js . ".js'></script>\n";
 		}
 		
 		if ($version_css > 0) {
-			echo "<link rel='stylesheet' href='" . BASEURL . "cache/css_js_cache/" . $prefix  . "css_" . $version_css . ".css' type='text/css' />\n";
+			echo "<link rel='stylesheet' href='" . BASEURL . "cache/" . SITEID . "/css_js_cache/" . $prefix  . "css_" . $version_css . ".css' type='text/css' />\n";
 		}
 		
 	 }
