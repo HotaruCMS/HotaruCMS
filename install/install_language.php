@@ -38,8 +38,8 @@ $lang["upgrade_step2_details"] = "Congratulations! You have successfully upgrade
 
 /* Upgrade Step 2 */
 $lang["upgrade_step3"] = "Step 3/3: Check Plugins, Templates";
-$lang["upgrade_step3_details"] = "You have successfully upgraded Hotaru CMS. After clicking \"Finish\" you may find some of your plugins need upgrading.<br/>You can check the latest version numbers from the Plugin Management page in your admin dashboard.";
-$lang["upgrade_step3_instructions"] = "You may also need to modify any templates you have customised to make sure they work with the latest version of Hotaru CMS.";
+$lang["upgrade_step3_details"] = "You have successfully upgraded Hotaru CMS.";
+$lang["upgrade_step3_instructions"] = "After clicking \"Finish\" you may find some of your plugins need upgrading. You can check the latest version numbers from the Plugin Management page in your admin dashboard. You may also need to modify any templates you have customised to make sure they work with the latest version of Hotaru CMS.";
 $lang["upgrade_step3_go_play"] = "Click \"Finish\" to access your Hotaru site!";
 $lang["upgrade_home"] = "Finish";
 
