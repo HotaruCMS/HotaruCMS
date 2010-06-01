@@ -166,7 +166,6 @@ class Initialize
 //		} else {
 		    $siteid = 1;
 //		}
-
 		if (!defined('SITEID')) {
 		    define('SITEID', $siteid);
 		    if (!defined('CACHE')) { define("CACHE", BASE . "cache/" . $siteid . "/"); }

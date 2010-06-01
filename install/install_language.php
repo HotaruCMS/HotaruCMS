@@ -26,7 +26,7 @@
 /* Upgrade Step 1 */
 $lang["upgrade_title"] = "Hotaru CMS Upgrade";
 
-$lang["upgrade_step1"] = "Step 1/3: Checking your exising setup";
+$lang["upgrade_step1"] = "Step 1/3: Checking your existing setup";
 $lang["upgrade_step1_details"] = "To upgrade Hotaru to version " . $h->version . ", click 'Next'...";
 $lang["upgrade_step1_old_version"] = "You are currently running Hotaru CMS version ";
 $lang["upgrade_step1_old_no_version"] = "We could not find an existing version number of Hotaru CMS in your database.";
@@ -39,9 +39,9 @@ $lang["upgrade_home"] = "Finish";
 
 /* Upgrade Step 2 */
 $lang["upgrade_step3"] = "Step 3/3: Check Plugins, Templates";
-$lang["upgrade_step3_details"] = "You have successfully upgraded Hotaru CMS. You may now need to upgrade the plugins you have installed.<br/>You can check the latest version numbers from the Plugin Management page in your admin dashboard.";
+$lang["upgrade_step3_details"] = "You have successfully upgraded Hotaru CMS. After clicking \"Finish\" you may find some of your plugins need upgrading.<br/>You can check the latest version numbers from the Plugin Management page in your admin dashboard.";
 $lang["upgrade_step3_instructions"] = "You may also need to modify any templates you have customised to make sure they work with the latest version of Hotaru CMS.";
-$lang["upgrade_step3_go_play"] = "Done? Okay, go and play with your Hotaru site!";
+$lang["upgrade_step3_go_play"] = "Click \"Finish\" to access your Hotaru site!";
 $lang["upgrade_home"] = "Finish";
 
 /* Install Common */

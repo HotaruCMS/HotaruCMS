@@ -380,7 +380,7 @@ function create_table($table_name)
 		
 		// Default settings:
 		
-		// Friendly urls
+		// Site open
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
 		$db->query($db->prepare($sql, 'SITE_OPEN', 'true', 'true', ''));
 		
@@ -396,17 +396,13 @@ function create_table($table_name)
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
 		$db->query($db->prepare($sql, 'ADMIN_THEME', 'admin_default/', 'admin_default/', 'You need the "\/"'));
 		
+		// Debug
+		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+		$db->query($db->prepare($sql, 'DEBUG', 'true', 'true', ''));
+		
 		// Friendly urls
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
 		$db->query($db->prepare($sql, 'FRIENDLY_URLS', 'false', 'false', ''));
-		
-		// Site email
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'SITE_EMAIL', 'email@example.com', 'email@example.com', 'Must be changed'));
-		
-		 // GMT Offset
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'SYS_FEEDBACK', 'true', 'true', 'send system report'));
 		
 		// Database cache
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
@@ -415,14 +411,6 @@ function create_table($table_name)
 		// Database cache duration (hours)
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note, settings_show) VALUES (%s, %d, %d, %s, %s)";
 		$db->query($db->prepare($sql, 'DB_CACHE_DURATION', 12, 12, 'Hours', 'N')); // 'N' means Not shown on Admin Settings page
-		
-		// RSS cache
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'RSS_CACHE', 'true', 'true', ''));
-		
-		// RSS cache duration (hours)
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note, settings_show) VALUES (%s, %d, %d, %s, %s)";
-		$db->query($db->prepare($sql, 'RSS_CACHE_DURATION', 60, 60, 'Minutes', 'N')); // 'N' means Not shown on Admin Settings page
 		
 		// CSS/JavaScript cache
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
@@ -436,9 +424,17 @@ function create_table($table_name)
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
 		$db->query($db->prepare($sql, 'LANG_CACHE', 'true', 'true', ''));
 		
-		// Debug
+		// RSS cache
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'DEBUG', 'true', 'true', ''));
+		$db->query($db->prepare($sql, 'RSS_CACHE', 'true', 'true', ''));
+		
+		// RSS cache duration (hours)
+		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note, settings_show) VALUES (%s, %d, %d, %s, %s)";
+		$db->query($db->prepare($sql, 'RSS_CACHE_DURATION', 60, 60, 'Minutes', 'N')); // 'N' means Not shown on Admin Settings page
+		
+		// Site email
+		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+		$db->query($db->prepare($sql, 'SITE_EMAIL', 'email@example.com', 'email@example.com', 'Must be changed'));
 		
 		// SMTP on
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
@@ -459,6 +455,10 @@ function create_table($table_name)
 		// SMTP password
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
 		$db->query($db->prepare($sql, 'SMTP_PASSWORD', '', '', ''));
+		
+		 // Sys Feedback
+		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+		$db->query($db->prepare($sql, 'SYS_FEEDBACK', 'true', 'true', 'send system report'));
 	}
 	
 	

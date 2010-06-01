@@ -38,6 +38,8 @@ $old_version = $h->db->get_var($h->db->prepare($sql, "hotaru_version"));
 $h->deleteFiles(CACHE . 'db_cache');
 $h->deleteFiles(CACHE . 'css_js_cache');
 $h->deleteFiles(CACHE . 'rss_cache');
+$h->deleteFiles(CACHE . 'lang_cache');
+$h->deleteFiles(CACHE . 'html_cache');
 
 $step = $h->cage->get->getInt('step');        // Installation steps.
 
@@ -609,11 +611,35 @@ function do_upgrade($h, $old_version)
 			    $h->db->query($sql);
 			}
 		}
+		
+		
+		// reorder the admin settings
+		$desired_order = array('SITE_OPEN', 'SITE_NAME', 'THEME', 'ADMIN_THEME', 'DEBUG', 'FRIENDLY_URLS', 'DB_CACHE', 'DB_CACHE_DURATION', 'CSS_JS_CACHE', 'HTML_CACHE', 'LANG_CACHE', 'RSS_CACHE', 'RSS_CACHE_DURATION', 'SITE_EMAIL', 'SMTP', 'SMTP_HOST', 'SMTP_PORT', 'SMTP_USERNAME', 'SMTP_PASSWORD', 'SYS_FEEDBACK'); 
+		$sql = "SELECT * FROM " . TABLE_SETTINGS;
+		$results = $h->db->get_results($sql);
+		$h->db->query("TRUNCATE TABLE " . TABLE_SETTINGS);
+
+		if ($results) {
+			$i = 0;
+			while (!empty($desired_order)) {
+				foreach ($results as $row) {
+					if (count($desired_order) == 0) { break; }
+					if ($row->settings_name == $desired_order[0]) {
+						$sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note, settings_show, settings_siteid) VALUES(%s, %s, %s, %s, %s, %d)";
+						$h->db->query($h->db->prepare($sql, $row->settings_name, $row->settings_value, $row->settings_default, $row->settings_note, $row->settings_show, $row->settings_siteid));
+						array_shift($desired_order);
+					}
+					$i++;
+					if ($i > 10000) { break; } // got stuck in a loop
+				}
+			}
+		}
 
 		// update "old version" for next set of upgrades
 		$old_version = "1.3.0";
 	}
-
+	
+	//$h->version ="1.2.0";
 	// Update Hotaru version number to the database (referred to when upgrading)
 	$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_key = %s, miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";
 	$h->db->query($h->db->prepare($sql, 'hotaru_version', $h->version, $h->version, 'hotaru_version'));

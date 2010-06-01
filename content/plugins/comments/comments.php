@@ -276,11 +276,11 @@ class Comments
                 }
             }
             
-            if ($result['exceeded_daily_limit']) {
+            if (isset($result['exceeded_daily_limit']) && $result['exceeded_daily_limit']) {
                 $h->messages[$h->lang['comment_moderation_exceeded_daily_limit']] = 'green';
-            } elseif ($result['exceeded_url_limit']) {
+            } elseif (isset($result['exceeded_url_limit']) && $result['exceeded_url_limit']) {
                 $h->messages[$h->lang['comment_moderation_exceeded_url_limit']] = 'green';
-            } elseif ($result['not_enough_comments']) {
+            } elseif (isset($result['not_enough_comments']) && $result['not_enough_comments']) {
                 $h->messages[$h->lang['comment_moderation_not_enough_comments']] = 'green';
             }
         }

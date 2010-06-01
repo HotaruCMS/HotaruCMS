@@ -282,7 +282,7 @@ class AdminPages
 			$h->clearCache('rss_cache', false);
 			$h->clearCache('html_cache', false);
 			$h->clearCache('lang_cache', false);
-			@unlink(CACHE . 'smartloader_cache.php');
+			@unlink(BASE. 'cache/smartloader_cache.php');
 			$h->message = $h->lang['admin_maintenance_clear_all_cache_success'];
 			$h->messageType = 'green';
 		}
