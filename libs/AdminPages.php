@@ -182,6 +182,7 @@ class AdminPages
 		{
 			$theme = strtolower($h->cage->post->testAlnumLines('theme') . "/" );
 			$this->adminSettingUpdate($h, 'THEME', $theme);
+			$h->deleteFiles(CACHE . 'css_js_cache'); // clear the CSS/JS cache
 			$json_array = array('activate'=>'true', 'message'=>$h->lang["admin_settings_theme_activate_success"], 'color'=>'green');
 			
 			// Send back result data
@@ -280,6 +281,7 @@ class AdminPages
 			$h->clearCache('css_js_cache', false);
 			$h->clearCache('rss_cache', false);
 			$h->clearCache('html_cache', false);
+			$h->clearCache('lang_cache', false);
 			@unlink(CACHE . 'smartloader_cache.php');
 			$h->message = $h->lang['admin_maintenance_clear_all_cache_success'];
 			$h->messageType = 'green';
@@ -288,6 +290,7 @@ class AdminPages
 		if ($action == 'clear_css_js_cache') { $h->clearCache('css_js_cache'); }
 		if ($action == 'clear_rss_cache') { $h->clearCache('rss_cache'); }
 		if ($action == 'clear_html_cache') { $h->clearCache('html_cache'); }
+		if ($action == 'clear_lang_cache') { $h->clearCache('lang_cache'); }
 		if ($action == 'optimize') { $h->optimizeTables(); }
 		if ($action == 'empty') { $h->emptyTable($h->cage->get->testAlnumLines('table')); }
 		if ($action == 'drop') { $h->dropTable($h->cage->get->testAlnumLines('table')); }

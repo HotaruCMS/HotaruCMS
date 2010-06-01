@@ -25,7 +25,7 @@
  */
 class Hotaru
 {
-	protected $version              = "1.2.0";  // Hotaru CMS version
+	protected $version              = "1.3.0";  // Hotaru CMS version
 	protected $isDebug              = false;    // show db queries and page loading time
 	protected $isAdmin              = false;    // flag to tell if we are in Admin or not
 	protected $sidebars             = true;     // enable or disable the sidebars
@@ -144,6 +144,8 @@ class Hotaru
 				if (!$entrance) { return false; }       // stop here if entrance not defined
 				$this->displayTemplate('index');        // displays the index page
 		}
+		
+		$lang->writeLanguageCache($this);
 		
 		exit;
 	}

@@ -78,6 +78,8 @@ $db_tables = $h->vars['admin_plugin_tables'];
 		<?php echo $h->lang["admin_theme_maintenance_css_js_cache"]; ?></a> - <?php echo $h->lang["admin_theme_maintenance_css_js_cache_desc"]; ?></li>
 	<li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=clear_html_cache">
 		<?php echo $h->lang["admin_theme_maintenance_html_cache"]; ?></a> - <?php echo $h->lang["admin_theme_maintenance_html_cache_desc"]; ?></li>
+	<li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=clear_lang_cache">
+		<?php echo $h->lang["admin_theme_maintenance_lang_cache"]; ?></a> - <?php echo $h->lang["admin_theme_maintenance_lang_cache_desc"]; ?></li>
 	<li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance&amp;action=clear_rss_cache">
 		<?php echo $h->lang["admin_theme_maintenance_rss_cache"]; ?></a> - <?php echo $h->lang["admin_theme_maintenance_rss_cache_desc"]; ?></li>
 </ul>
