@@ -35,6 +35,7 @@ class Initialize
 	 */
 	public function __construct($h)
 	{
+	    
 		// session to be used by CSRF, etc.
 		if (!isset($_SESSION['HotaruCMS'])) {
 			session_start();
@@ -43,15 +44,16 @@ class Initialize
 		
 		// The order here is important!
 		$this->setDefaultTimezone();
-		$this->setTableConstants();
-		$multisite = $this->setCurrentSiteID();
-		$this->errorReporting($multisite); 
-		$this->getFiles();
-		$this->db = $this->initDatabase();
-		// reset error reporting now we know whether multisite is true
-		$this->cage = $this->initInspektCage();
+		$this->setTableConstants();				
 		
-		$this->readSettings($multisite);
+		$this->getFiles();
+		$this->cage = $this->initInspektCage();
+		$this->db = $this->initDatabase();
+
+		$this->getCurrentSiteID();
+		$this->errorReporting();
+		
+		$this->readSettings();
 		$this->setUpDatabaseCache();
 		$this->isDebug = $this->checkDebug();
 		
@@ -82,16 +84,14 @@ class Initialize
 	/**
 	 * Error reporting
 	 */
-	public function errorReporting($multisite = 0)
+	public function errorReporting()
 	{
 		// display errors
 		ini_set('display_errors', 1); // Gets disabled later in checkDebug()
 		error_reporting(E_ALL);
-
-		if (!$multisite) { $site_dir = ''; } else { $site_dir = SITEID . '/'; }
-
+		
 		// error log filename
-		$filename = CACHE . $site_dir . 'debug_logs/error_log.php';
+		$filename = CACHE . 'debug_logs/error_log.php';
 		
 		// delete file if over 500KB
 		if (file_exists($filename) && (filesize($filename) > 500000)) {
@@ -131,7 +131,7 @@ class Initialize
 			"TABLE_POSTMETA"=>"postmeta",
 			"TABLE_POSTVOTES"=>"postvotes",
 			"TABLE_SETTINGS"=>"settings",
-			"TABLE_SITE"=>"sites",
+			"TABLE_SITE"=>"site",
 			"TABLE_TAGS"=>"tags",
 			"TABLE_TEMPDATA"=>"tempdata",
 			"TABLE_USERS"=>"users",
@@ -150,16 +150,37 @@ class Initialize
 	/**
 	 * Sets the current SiteID if multiple sites.
 	 */
-	public function setCurrentSiteID()
+	public function getCurrentSiteID()
 	{
-		//if isActive('MU Plugin') {
-		//	$url = get the url
-		//	DEFINE siteid based on a query to TABLE_SITE of the $url
-		//
-		//} else {
-		  // define('SITEID',0);
-		  return false;
-		//}
+//		if isActive($result) {
+//		    $url =  $this->cage->server->getRaw('HTTP_HOST');   // wanted to use sanitizeTags
+//		    $sql = "SELECT site_id, site_adminuser_id FROM " . TABLE_SITE . " WHERE site_url = %s";
+//		    $settings = $this->db->get_row($this->db->prepare($sql, $url));
+//		    var_dump( $settings);
+//
+//		    if ($settings) {
+//			$siteid = $settings->site_id;
+//		    } else {
+//			$siteid = 1;
+//		    }
+//		} else {
+		    $siteid = 1;
+//		}
+
+		if (!defined('SITEID')) {
+		    define('SITEID', $siteid);
+		    define("CACHE", BASE . "cache/" . $siteid . "/");
+
+		    $dirs = array('', 'debug_logs/' , 'db_cache/', 'css_js_cache/', 'html_cache/', 'rss_cache/');  // first array item is needed to create the SITEID base folder
+
+		    foreach ($dirs as $dir) {
+			if (!is_dir(CACHE . $dir)) {
+			    mkdir(CACHE . $dir);
+			}
+		    }
+		}
+
+		return false;
 	}
 
 	/**
@@ -258,8 +279,7 @@ class Initialize
 				define($setting->settings_name, $setting->settings_value);
 			}
 		}
-		
-		if (!defined('SITEID')) { define('SITEID', 1); }
+				
 		return true;
 	}
 	

@@ -100,7 +100,7 @@ class Caching
 			}
 		}	
 		// if we're here, we need to make or rewrite the cache
-		
+
 		$fp = fopen($file, "w");
 		
 		if (flock($fp, LOCK_EX)) { // do an exclusive lock
@@ -163,6 +163,7 @@ class Caching
 		
 		// check existence of a cache file for this query:
 		$cache_file = CACHE . 'db_cache/' . md5($sql) . '.php';
+		
 		if (!file_exists($cache_file)) {
 			// no cache file so return and pull data direct from DB, caching the query at the same time.
 			return true; 

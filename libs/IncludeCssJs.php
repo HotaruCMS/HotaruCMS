@@ -346,11 +346,6 @@ class IncludeCssJs
 		
 		// sort dates, newest first
 		rsort($aLastModifieds);
-			
-		// create a directory for storing current and archive versions
-		if (!is_dir($cache)) {
-			mkdir($cache);
-		}
 		
 		 // check for valid file time, we don't want invalid requests to fill up archive folder
 		if ($last_modified_include_file == $aLastModifieds[0])
