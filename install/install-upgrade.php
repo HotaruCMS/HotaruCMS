@@ -123,14 +123,14 @@ function upgrade_complete($h)
 
 	if ($folder_deleted == 0) {
 	    // Confirm delete and continue install
-	    echo "<div class='install_content'>" . $lang['install_step4_installation_delete_folder'] . "</div>\n";
-	    echo "<form name='install_admin_reg_form' action='index.php?step=2&action=upgrade' method='post'>\n";
-	    echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />";
-	    echo "<input type='hidden' name='delete' value='folder' />";
-	    echo "<input type='hidden' name='step' value='2' />";
-
-	    echo "<input class='update button' type='submit' value='" . $lang['install_step4_form_delete_folder'] . "' />";
-	    echo "</div></form>\n";
+//	    echo "<div class='install_content'>" . $lang['install_step4_installation_delete_folder'] . "</div>\n";
+//	    echo "<form name='install_admin_reg_form' action='index.php?step=2&action=upgrade' method='post'>\n";
+//	    echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />";
+//	    echo "<input type='hidden' name='delete' value='folder' />";
+//	    echo "<input type='hidden' name='step' value='2' />";
+//
+//	    echo "<input class='update button' type='submit' value='" . $lang['install_step4_form_delete_folder'] . "' />";
+//	    echo "</div></form>\n";
 	} else {
 	    echo "<br/><img src='../content/admin_themes/admin_default/images/delete.png' style='float:left; margin-left:12px;'>";
 	    echo "<div class='install_content'><span style='color: red;'>" . $lang['install_step1_warning'] . "</span>: " . $lang['install_step4_installation_delete_failed'] . "</div>\n";
