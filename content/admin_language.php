@@ -234,6 +234,7 @@ $lang["admin_theme_main_admin_home"] = "Admin Home";
 $lang["admin_theme_main_latest"] = "Latest from Hotaru CMS";
 $lang["admin_theme_main_stats"] = "Stats";
 $lang["admin_theme_main_help"] = "See anything you can help with?";
+$lang["admin_theme_main_join_us"] = "Join Hotaru on <a href='http://www.facebook.com/hotarucms'>Facebook</a> and <a href='http://twitter.com/hotarucms'>Twitter</a>!";
 
 /* theme settings */
 $lang["admin_theme_plugin_settings"] = "Plugin Settings";

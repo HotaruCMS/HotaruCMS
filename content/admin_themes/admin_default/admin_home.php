@@ -45,7 +45,7 @@
 	<?php echo $h->adminNews(10, 3, 300); ?>
 	
 	<br/>
-	 <h2>Join Hotaru on <a href="http://www.facebook.com/hotarucms">Facebook</a> and <a href="http://twitter.com/hotarucms">Twitter</a>!</h2>
+	 <h2><?php echo $h->lang["admin_theme_main_join_us"]; ?></h2>
 </td>
 
 <td id='right'>
