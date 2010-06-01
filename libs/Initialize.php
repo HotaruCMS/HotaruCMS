@@ -169,7 +169,7 @@ class Initialize
 
 		if (!defined('SITEID')) {
 		    define('SITEID', $siteid);
-		    define("CACHE", BASE . "cache/" . $siteid . "/");
+		    if (!defined('CACHE')) { define("CACHE", BASE . "cache/" . $siteid . "/"); }
 
 		    $dirs = array('', 'debug_logs/' , 'db_cache/', 'css_js_cache/', 'html_cache/', 'rss_cache/');  // first array item is needed to create the SITEID base folder
 
@@ -262,6 +262,7 @@ class Initialize
 	 */
 	public function readSettings($multisite = 0)
 	{
+
 		if (!$multisite) { 
 			$sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;
 			$settings = $this->db->get_results($this->db->prepare($sql));
