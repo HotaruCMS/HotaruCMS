@@ -31,11 +31,6 @@
 // start session:
 session_start();
 
-// Remove any cookies set in a previous installation:
-setcookie("hotaru_user", "", time()-3600, "/");
-setcookie("hotaru_key", "", time()-3600, "/");
-// --------------------------------------------------
-
 // Read Settings
 define("SETTINGS", '../hotaru_settings.php');
 
@@ -87,27 +82,31 @@ switch ($step) {
 		installation_welcome();     // "Welcome to Hotaru CMS.
 		break;
 	case 1: 
-		if ($action == 'upgrade')
-		    database_upgrade();
-		else
-		    if ($cage->get->getAlpha('type') == 'manual') database_setup_manual(); else database_setup();           // DB name, user, password, prefix...
+		if ($action == 'upgrade') {
+			database_upgrade();
+		} else {
+			// Remove any cookies set in a previous installation:
+			setcookie("hotaru_user", "", time()-3600, "/");
+			setcookie("hotaru_key", "", time()-3600, "/");
+			
+			// database setup (DB name, user, password, prefix...)
+			if ($cage->get->getAlpha('type') == 'manual') { database_setup_manual(); } else { database_setup(); }
+		}
 		break;
 	case 2:                
 		if ($action == 'upgrade') {
 		    database_upgrade();
-		}
-		else {
-                    $db = init_database();
-		    database_creation();        // Creates the database tables
+		} else {
+			$db = init_database();
+			database_creation();        // Creates the database tables
 		}
 		break;
 	case 3: 
 		if ($action == 'upgrade') {
-		    upgrade_plugins();
-		}
-		else {
-		    $db = init_database();
-		    register_admin();           // Username and password for Admin user...
+			upgrade_plugins();
+		} else {
+			$db = init_database();
+			register_admin();           // Username and password for Admin user...
 		}
 		break;
 	case 4:
