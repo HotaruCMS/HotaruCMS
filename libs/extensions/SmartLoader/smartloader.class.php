@@ -37,21 +37,10 @@
 		}
 		else {
 		    /* load the class or trigger some fatal error on failure */
-		    if(!$ldr->loadClass($class_name)) {
-			$h  = new Hotaru;
-			$folder = $h->pluginHook('libs_cache');
-			if ($folder) {
-			    foreach ($folder as $key => $value) { $libs_folder = $value; }
-
-			    if (isset($libs_folder)) {
-				$ldr->addDir(PLUGINS . $libs_folder);
-				if(!$ldr->loadClass($class_name)) {
-				    //trigger_error("SmartLoader: Cannot load class '".$class_name."'", E_USER_ERROR);
-				}
-			    }
-			}
+		    if(!$ldr->loadClass($class_name)) {			
+			//trigger_error("SmartLoader: Cannot load class '".$class_name."'", E_USER_ERROR);
 		    }
-		}
+		}		    		
 	}	
 
 	/**
