@@ -423,18 +423,21 @@ public function _get_cron_array($h)  {
         );
 
          $info = $this->sendApiRequest($h, $query_vals);	
-	 
-        // save the updated version number to the local db so we can display it on the admin panel until it gets updated.
-        $sql = "SELECT plugin_id, plugin_name, plugin_latestversion FROM " . TABLE_PLUGINS;
-	$plugins = $h->db->get_results($h->db->prepare($sql));
 
-	foreach ($plugins as $plugin) {
-	    if (array_key_exists($plugin->plugin_name, $info)) {
-		$sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_latestversion = %s WHERE (plugin_id = %d)";
-		$h->db->query($h->db->prepare($sql, $info[$plugin->plugin_name], $plugin->plugin_id));
-		//print $plugin->plugin_name . ' ' . $info[$plugin->plugin_name] . '<br/>';
-	    }	    
-	}
+	 if ($info) {
+	    // save the updated version number to the local db so we can display it on the admin panel until it gets updated.
+	    $sql = "SELECT plugin_id, plugin_name, plugin_latestversion FROM " . TABLE_PLUGINS;
+	    $plugins = $h->db->get_results($h->db->prepare($sql));
+
+	    foreach ($plugins as $plugin) {
+		if (array_key_exists($plugin->plugin_name, $info)) {
+		    $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_latestversion = %s WHERE (plugin_id = %d)";
+		    $h->db->query($h->db->prepare($sql, $info[$plugin->plugin_name], $plugin->plugin_id));
+		    //print $plugin->plugin_name . ' ' . $info[$plugin->plugin_name] . '<br/>';
+		}
+	    }
+	 }
+        
     }
 
     public function sendApiRequest($h, $query_vals) {
