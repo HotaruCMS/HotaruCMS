@@ -35,7 +35,6 @@ $lang["upgrade_step1_current_version"] = "You already have the latest version of
 /* Upgrade Step 2 */
 $lang["upgrade_step2"] = "Step 2/3: Upgrade Complete";
 $lang["upgrade_step2_details"] = "Congratulations! You have successfully upgraded Hotaru CMS.";
-$lang["upgrade_home"] = "Finish";
 
 /* Upgrade Step 2 */
 $lang["upgrade_step3"] = "Step 3/3: Check Plugins, Templates";
