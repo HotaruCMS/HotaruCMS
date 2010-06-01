@@ -48,9 +48,9 @@ class UserInfo extends UserBase
 	 */
 	public function getUserIdFromName($h, $username = '')
 	{
-		$sql = "SELECT user_id FROM " . TABLE_USERS . " WHERE user_username = %s AND user_siteid = %d  LIMIT 1";
+		$sql = "SELECT user_id FROM " . TABLE_USERS . " WHERE user_username = %s  LIMIT 1";
 		
-		$userid = $h->db->get_var($h->db->prepare($sql, $username, SITEID));
+		$userid = $h->db->get_var($h->db->prepare($sql, $username));
 		if ($userid) { return $userid; } else { return false; }
 	}
 	
@@ -92,8 +92,8 @@ class UserInfo extends UserBase
 	 */
 	public function isAdmin($db, $username)
 	{
-		$sql = "SELECT * FROM " . TABLE_USERS . " WHERE user_username = %s AND user_siteid = %d AND user_role = %s  LIMIT 1";
-		$role = $db->get_row($db->prepare($sql, $username, SITEID, 'admin'));
+		$sql = "SELECT * FROM " . TABLE_USERS . " WHERE user_username = %s AND user_role = %s  LIMIT 1";
+		$role = $db->get_row($db->prepare($sql, $username, 'admin'));
 		
 		if ($role) { return true; } else { return false; }
 	}
@@ -243,11 +243,11 @@ class UserInfo extends UserBase
 	public function userIdNameList($h, $role = '')
 	{
 		if ($role) { 
-			$sql = "SELECT user_id, user_username FROM " . TABLE_USERS . " WHERE user_siteid = %d AND user_role = %s ORDER BY user_username ASC";
-			$results = $h->db->get_results($h->db->prepare($sql, SITEID, $role));
+			$sql = "SELECT user_id, user_username FROM " . TABLE_USERS . " WHERE user_role = %s ORDER BY user_username ASC";
+			$results = $h->db->get_results($h->db->prepare($sql, $role));
 		} else {
-			$sql = "SELECT user_id, user_username FROM " . TABLE_USERS . " WHERE user_siteid = %d ORDER BY user_username ASC";
-			$results = $h->db->get_results($h->db->prepare($sql, SITEID));
+			$sql = "SELECT user_id, user_username FROM " . TABLE_USERS . " ORDER BY user_username ASC";
+			$results = $h->db->get_results($sql);
 		}
 		
 		return $results;
@@ -285,22 +285,21 @@ class UserInfo extends UserBase
 	{
 		if (!$id_array) {
 			// get all users
-			$sql = "SELECT * FROM " . TABLE_USERS . " WHERE user_siteid = %d ORDER BY user_username ASC";
-			$query = $h->db->prepare($sql, SITEID);
-			$results = $h->db->get_results($query);
+			$sql = "SELECT * FROM " . TABLE_USERS . " ORDER BY user_username ASC";
+			$results = $h->db->get_results($sql);
 		} else {
 			// for grabbing 
 			if ($range) { $limit = " LIMIT " . $start . ", " . $range; }
-			$sql = "SELECT * FROM " . TABLE_USERS . " WHERE (user_siteid = %d) AND (";
+			$sql = "SELECT * FROM " . TABLE_USERS . " WHERE ";
 			for ($i=0; $i < count($id_array); $i++) {
 				$sql .= "user_id = %d OR ";
 			}
 			$sql = rstrtrim($sql, "OR "); // strip trailing OR
-			$sql .= ") ORDER BY user_username ASC" . $limit;
+			$sql .= " ORDER BY user_username ASC" . $limit;
 		
-//			$prepare_array[0] = $sql;
-//			$prepare_array = array_merge($prepare_array, $id_array);
-			$results = $h->db->get_results($h->db->prepare($sql, SITEID, $id_array));
+			$prepare_array[0] = $sql;
+			$prepare_array = array_merge($prepare_array, $id_array);
+			$results = $h->db->get_results($h->db->prepare($prepare_array));
 		}
 		return $results;
 	}
@@ -316,62 +315,61 @@ class UserInfo extends UserBase
 	{
 		switch ($stat_type) {
 			case 'admins':
-				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_siteid = %d AND user_role = %s";
-				$query = $h->db->prepare($sql, SITEID, 'admin');
+				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+				$query = $h->db->prepare($sql, 'admin');
 				$h->smartCache('on', 'users', 60, $query); // start using cache
 				$users = $h->db->get_var($query);
 				break;
 			case 'supermods':
-				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_siteid = %d AND user_role = %s";
-				$query = $h->db->prepare($sql, SITEID, 'supermod');
+				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+				$query = $h->db->prepare($sql, 'supermod');
 				$h->smartCache('on', 'users', 60, $query); // start using cache
 				$users = $h->db->get_var($query);
 				break;
 			case 'moderators':
-				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_siteid = %d AND user_role = %s";
-				$query = $h->db->prepare($sql, SITEID, 'moderator');
+				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+				$query = $h->db->prepare($sql, 'moderator');
 				$h->smartCache('on', 'users', 60, $query); // start using cache
 				$users = $h->db->get_var($query);
 				break;
 			case 'members':
-				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_siteid = %d AND user_role = %s";
-				$query = $h->db->prepare($sql, SITEID, 'member');
+				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+				$query = $h->db->prepare($sql, 'member');
 				$h->smartCache('on', 'users', 60, $query); // start using cache
 				$users = $h->db->get_var($query);
 				break;
 			case 'total_users':
-				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_siteid = %d";
-				$query = $h->db->prepare($sql, SITEID);
+				$query = "SELECT count(user_id) FROM " . TABLE_USERS;
 				$h->smartCache('on', 'users', 60, $query); // start using cache
 				$users = $h->db->get_var($query);
 				break;
 			case 'approved_users':
-				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE (user_siteid = %d) AND user_role = %s OR user_role = %s OR user_role = %s OR  user_role = %s";
-				$query = $h->db->prepare($sql, SITEID, 'admin', 'supermod', 'moderator', 'member');
+				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s OR user_role = %s OR user_role = %s OR  user_role = %s";
+				$query = $h->db->prepare($sql, 'admin', 'supermod', 'moderator', 'member');
 				$h->smartCache('on', 'users', 60, $query); // start using cache
 				$users = $h->db->get_var($query);
 				break;
 			case 'pending_users':
-				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_siteid = %d AND user_role = %s";
-				$query = $h->db->prepare($sql, SITEID, 'pending');
+				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+				$query = $h->db->prepare($sql, 'pending');
 				$h->smartCache('on', 'users', 60, $query); // start using cache
 				$users = $h->db->get_var($query);
 				break;
 			case 'undermod_users':
-				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_siteid = %d AND user_role = %s";
-				$query = $h->db->prepare($sql, SITEID, 'undermod');
+				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+				$query = $h->db->prepare($sql, 'undermod');
 				$h->smartCache('on', 'users', 60, $query); // start using cache
 				$users = $h->db->get_var($query);
 				break;
 			case 'banned_users':
-				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_siteid = %d AND user_role = %s";
-				$query = $h->db->prepare($sql, SITEID, 'banned');
+				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+				$query = $h->db->prepare($sql, 'banned');
 				$h->smartCache('on', 'users', 60, $query); // start using cache
 				$users = $h->db->get_var($query);
 				break;
 			case 'killspammed_users':
-				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_siteid = %d AND user_role = %s";
-				$query = $h->db->prepare($sql, SITEID, 'killspammed');
+				$sql = "SELECT count(user_id) FROM " . TABLE_USERS . " WHERE user_role = %s";
+				$query = $h->db->prepare($sql, 'killspammed');
 				$h->smartCache('on', 'users', 60, $query); // start using cache
 				$users = $h->db->get_var($query);
 				break;
