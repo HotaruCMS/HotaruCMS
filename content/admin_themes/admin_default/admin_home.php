@@ -39,7 +39,7 @@
 		&nbsp;<?php echo $h->lang["admin_theme_main_latest"]; ?>
 	</h2>
 	
-	<h3>See anything you can help with?</h3>
+	<h3><?php echo $h->lang["admin_theme_main_help"]; ?></h3>
 	
 	<!-- Feed items, number to show content for, max characters for content -->
 	<?php echo $h->adminNews(10, 3, 300); ?>
