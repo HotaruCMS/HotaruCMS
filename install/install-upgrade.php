@@ -507,6 +507,18 @@ function do_upgrade($h, $old_version)
 		// Hide Database duration. It's still technically used, but smartCache overrides the duration
 		$sql = "UPDATE " . TABLE_SETTINGS . " SET settings_show = %s WHERE settings_name = %s";
 		$h->db->query($h->db->prepare($sql, 'N', 'DB_CACHE_DURATION'));
+		
+		// Hide RSS duration. It's still technically used, but only by Admin "News" so not worth showing
+		$sql = "UPDATE " . TABLE_SETTINGS . " SET settings_show = %s WHERE settings_name = %s";
+		$h->db->query($h->db->prepare($sql, 'N', 'RSS_CACHE_DURATION'));
+		
+		// insert new lang_cache option in Admin Settings
+		$sql = "SELECT settings_id FROM " . TABLE_SETTINGS . " WHERE settings_name = %s";
+		$result = $h->db->get_var($h->db->prepare($sql, 'LANG_CACHE'));
+		if (!$result) {
+			$sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_show) VALUES (%s, %s, %s, %s)";
+			$h->db->query($h->db->prepare($sql, 'LANG_CACHE', 'true', 'true', 'Y'));
+		}
 
 		// Add index to comment_post_id to speed up countComments function
 		if ($exists = $h->db->table_exists('comments')) {

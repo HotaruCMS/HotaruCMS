@@ -819,7 +819,7 @@ function upgrade_plugins()
 
 	// Previous/Next buttons
 	echo "<div class='back button''><a href='index.php?step=2&action=upgrade'>" . $lang['install_back'] . "</a></div>\n";
-	echo "<div class='next button''><a href='" . $h->url(array(), 'admin') . "'>" . $lang['install_home'] . "</a></div>\n";
+	echo "<div class='next button''><a href='" . BASEURL . "admin_index.php'>" . $lang['install_home'] . "</a></div>\n";
 
 	echo html_footer();
 }
