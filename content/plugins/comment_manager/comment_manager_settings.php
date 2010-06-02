@@ -401,8 +401,8 @@ class CommentManagerSettings
     
     
 	/**
-	 * Refresh Comment Details
-	 * This little hack clears the cached update time and refills $h->allPluginDetails
+	 * Refresh Comment Cache
+	 * This little hack clears the cached update time so data is refreshed
 	 */
 	public function refreshCommentCache($h)
 	{

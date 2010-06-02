@@ -91,6 +91,7 @@ class PostManagerSettings
                         break;
                 }
                 
+                $this->refreshPostsCache($h);
             }
             
             // Need to clear both these caches to be sure related items are updated in widgets, etc.:
@@ -271,5 +272,15 @@ class PostManagerSettings
         
         return $output;
     }
+    
+    
+	/**
+	 * Refresh Posts Cache
+	 * This little hack clears the cached update time so data is refreshed
+	 */
+	public function refreshPostsCache($h)
+	{
+		unset($h->vars['last_updates']['posts']);
+	}
 }
 ?>
