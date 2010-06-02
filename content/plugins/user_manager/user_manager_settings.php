@@ -109,6 +109,8 @@ class UserManagerSettings
                     }
                 }
                 
+                $this->refreshUsersCache($h);
+                
             }
         }
         
@@ -750,5 +752,15 @@ class UserManagerSettings
             $h->messages[$h->lang['user_man_user_not_found']] = 'red';
         }
     }
+    
+    
+	/**
+	 * Refresh User Cache
+	 * This little hack clears the cached update time so data is refreshed
+	 */
+	public function refreshUsersCache($h)
+	{
+		unset($h->vars['last_updates']['users']);
+	}
 }
 ?>
