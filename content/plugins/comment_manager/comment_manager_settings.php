@@ -66,7 +66,9 @@ class CommentManagerSettings
                 $c = new Comments($h);
                 $c->emailCommentSubscribers($h, $h->comment->postId);
             }
-                        
+            
+            $this->refreshCommentCache($h);
+            
             $h->message = $h->lang['com_man_comment_approved'];
             $h->messageType = 'green';
         }
@@ -79,6 +81,7 @@ class CommentManagerSettings
             $h->db->query($h->db->prepare($sql, 'approved', 'pending'));
             
             $h->pluginHook('com_man_approve_all_comments');
+            $this->refreshCommentCache($h);
             
             // No need for a message because the "There are no comments pending message (see further down) shows anyway.
         }
@@ -98,6 +101,7 @@ class CommentManagerSettings
                 
                 $h->comment->deleteComment($h); // delete this comment
                 $h->comment->deleteCommentTree($h, $cid);   // delete all responses, too.
+                $this->refreshCommentCache($h);
                 $h->message = $h->lang['com_man_comment_delete'];
                 $h->messageType = 'green';
             } else {
@@ -122,6 +126,7 @@ class CommentManagerSettings
                         $h->comment->deleteComment($h); // delete this comment
                         $h->comment->deleteCommentTree($h, $cid);   // delete all responses, too.
                     }
+                    $this->refreshCommentCache($h);
                     // No need for a message because the "There are no comments pending message (see further down) shows anyway.
                 }
             } else {
@@ -146,12 +151,15 @@ class CommentManagerSettings
                         $h->comment->deleteComment($h); // delete this comment
                         $h->comment->deleteCommentTree($h, $cid);   // delete all responses, too.
                     }
-                    // No need for a message because the "There are no comments pending message (see further down) shows anyway.
+                	$this->refreshCommentCache($h);
+                	// No need for a message because the "There are no comments pending message (see further down) shows anyway.
                 }
             } else {
                 $h->message = $h->lang['com_man_comment_delete_denied'];
                 $h->messageType = 'red';
             }
+            
+
         }
         
         
@@ -173,6 +181,7 @@ class CommentManagerSettings
             if ($safe) {
                 $h->comment->content = sanitize($h->cage->post->getHtmLawed('com_man_edit_content'), 'tags', $h->comment->allowableTags);
                 $h->comment->editComment($h);
+                $this->refreshCommentCache($h);
             } else {
                 $h->message = $h->lang["com_man_edit_form_denied"];
                 $h->messageType = 'red';
@@ -389,5 +398,15 @@ class CommentManagerSettings
         
         return $output;
     }
+    
+    
+	/**
+	 * Refresh Comment Details
+	 * This little hack clears the cached update time and refills $h->allPluginDetails
+	 */
+	public function refreshCommentCache($h)
+	{
+		unset($h->vars['last_updates']['comments']);
+	}
 }
 ?>
