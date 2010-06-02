@@ -282,7 +282,7 @@ class UserManagerSettings
             }
         }
 
-        $pagedResults = $h->pagination($query, $count, 30, 'users');
+        $pagedResults = $h->pagination($query, $count, 30);
         
         if ($pagedResults) { 
             $h->vars['user_man_rows'] = $this->drawRows($h, $pagedResults, $filter, $search_term);

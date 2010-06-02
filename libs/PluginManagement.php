@@ -783,9 +783,6 @@ class PluginManagement
 	 * Refresh Plugin Details
 	 * Plugin Management updates often happen after $h->allPluginDetails has been filled.
 	 * This little hack clears the cached update time and refills $h->allPluginDetails
-	 * 
-	 * @param int $order current order
-	 * @param string $arrow direction to move
 	 */
 	public function refreshPluginDetails($h)
 	{

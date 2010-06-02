@@ -197,7 +197,7 @@ class PostManagerSettings
             }
         }
         
-        $pagedResults = $h->pagination($query, $count, 20, 'posts');
+        $pagedResults = $h->pagination($query, $count, 20);
         
         if ($pagedResults) { 
             $h->vars['post_man_rows'] = $this->drawRows($h, $p, $pagedResults, $filter, $search_term);

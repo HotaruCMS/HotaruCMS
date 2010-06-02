@@ -280,7 +280,7 @@ class CommentManagerSettings
             }
         }
         
-        $pagedResults = $h->pagination($query, $count, 20, 'comments');
+        $pagedResults = $h->pagination($query, $count, 20);
         
         if ($pagedResults) { 
             $h->vars['com_man_rows'] = $this->drawRows($h, $pagedResults, $filter, $search_term);
