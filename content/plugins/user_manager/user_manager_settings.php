@@ -83,7 +83,7 @@ class UserManagerSettings
             foreach ($h->cage->get->keyExists('user_man') as $id => $checked) {
                 $h->message = $h->lang["user_man_checkboxes_role_changed"]; // default "Changed role" message
                 $u->id = $id;
-                $u->getUserBasic($h, $id);
+                $u->getUser($h, $id);
                 $new_role = $h->cage->get->testAlnumLines('checkbox_action');
                 if ($new_role != $u->role) { 
                     // change role:
