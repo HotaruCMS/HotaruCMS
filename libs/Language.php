@@ -185,7 +185,7 @@ class Language
 		
 		$cache_length = $timeout*60;   // seconds
 		$cache = CACHE . 'lang_cache/';
-		$file = $cache . "language.cache";
+		$file = $cache . "language.php";
 		
 		if (file_exists($file)) {
 			$last_modified = filemtime($file);
@@ -264,7 +264,7 @@ class Language
 
 		// If doesn't exist, create a new file
 		$cache = CACHE . 'lang_cache/';
-		$file = $cache . "language.cache";
+		$file = $cache . "language.php";
 		$fh = fopen($file, 'w+') or die("Sorry, I can't open " . $file);
 		if (flock($fh, LOCK_EX)) { // do an exclusive lock
 			ftruncate($fh, 0);  // truncate file

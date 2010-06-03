@@ -76,7 +76,7 @@ class Caching
 		$cache_length = $timeout*60;   // seconds
 		$cache = CACHE . 'html_cache/';
 		if ($label) { $label = '_' . $label; } 
-		$file = $cache . $table . $label . ".cache";
+		$file = $cache . $table . $label . ".php";
 		
 		//echo "time now: " . time() . "<br />";
 		//echo "time minus timeout: " . (time() - $timeout*60) . "<br />";
@@ -271,7 +271,7 @@ class Caching
 		
 		$cache_length = $timeout*60;   // seconds
 		$cache = CACHE . 'html_cache/';
-		$file = $cache . $label . ".cache";
+		$file = $cache . $label . ".php";
 		
 		if (!$html) {
 			// we only want to read the cache if it exists, hence no $html passed to this function
