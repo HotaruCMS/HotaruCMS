@@ -402,7 +402,13 @@ function database_setup() {
 		    echo "<div class='next button''><a href='index.php?step=2'>" . $lang['install_next'] . "</a></div>\n";
 	    } else {
 		    // link disbaled until "update" button pressed
-		    echo "<div class='next button''>" . $lang['install_next'] . "</div>\n";
+		    if ($show_next) {
+		    // and if db was connected ok
+			    echo "<div class='next button''><a href='index.php?step=2'>" . $lang['install_next'] . "</a></div>\n";
+		    } else {
+			    // link disbaled
+			    echo "<div class='next button''>" . $lang['install_next'] . "</div>\n";
+		    }
 	    }
 
 	    echo html_footer();
@@ -444,13 +450,7 @@ function database_setup_manual()
 
 	// Previous/Next buttons
 	echo "<div class='back button''><a href='index.php?step=0'>" . $lang['install_back'] . "</a></div>\n";
-	if ($show_next) {
-		// active "next" link
-		echo "<div class='next button''><a href='index.php?step=2'>" . $lang['install_next'] . "</a></div>\n";
-	} else {
-		// link disbaled
-		echo "<div class='next button''>" . $lang['install_next'] . "</div>\n";
-	}
+	echo "<div class='next button''><a href='index.php?step=2'>" . $lang['install_next'] . "</a></div>\n";
 
 	echo html_footer();
 }
