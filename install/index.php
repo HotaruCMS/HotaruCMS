@@ -311,6 +311,7 @@ function database_setup() {
 			$database_exists = $db->quick_connect($dbuser_name, $dbpassword_name, $dbname_name, $dbhost_name);
 			if (!$database_exists) {
 			    $h->messages[$lang['install_step1_no_db_exists_failure']] = 'red';
+			    $show_next = true;
 			} else {
 			    $table_exists = $db->table_exists(DBPREFIX . 'miscdata');
 			}			
@@ -443,7 +444,13 @@ function database_setup_manual()
 
 	// Previous/Next buttons
 	echo "<div class='back button''><a href='index.php?step=0'>" . $lang['install_back'] . "</a></div>\n";
-	echo "<div class='next button''><a href='index.php?step=2'>" . $lang['install_next'] . "</a></div>\n";
+	if ($show_next) {
+		// active "next" link
+		echo "<div class='next button''><a href='index.php?step=2'>" . $lang['install_next'] . "</a></div>\n";
+	} else {
+		// link disbaled
+		echo "<div class='next button''>" . $lang['install_next'] . "</div>\n";
+	}
 
 	echo html_footer();
 }
@@ -472,9 +479,14 @@ function database_creation()
 	global $db;
 	global $cage;
 
-        //@TODO this query throws an error for first time installations. need to test for existence without showing error to user
-	$sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
-	$old_version = $db->get_results($db->prepare($sql, "hotaru_version"));
+	$db->show_errors = false;
+	$table_exists = $db->table_exists(DBPREFIX . 'miscdata');
+
+	if (isset($table_exists)) {
+	    // Alert if database table already exists
+	    echo "<br/><img align='center' src='../content/admin_themes/admin_default/images/delete.png' style='float:left;'>";
+	    echo $lang["install_step1_settings_db_already_exists"] . "</div><br/>";
+	}
         
 	$delete = $cage->get->getAlpha('del');        // Confirm delete.
 	$show_next = false;
@@ -484,7 +496,7 @@ function database_creation()
 	// Step title
 	echo "<h2>" . $lang['install_step2'] . "</h2>\n";
 	
-	if ($old_version && $delete != 'DELETE') {
+	if ($table_exists && $delete != 'DELETE') {
 		// Warning message
 		echo "<br/><img align='center' src='../content/admin_themes/admin_default/images/delete.png' style='float:left;'>";
 		echo "<div class='install_content'><span style='color: red;'>" . $lang['install_step1_warning'] . "</span>: " . $lang['install_step2_existing_db'] . "</div>\n";
@@ -503,10 +515,6 @@ function database_creation()
 		echo "<a href='?step=1&action=upgrade'>" . $lang['install_step2_existing_go_upgrade2'] . "</a></div>\n";
 	}
 	else {	   
-	    // delete existing cache
-	    //delete_files(CACHE . 'db_cache');
-	    //delete_files(CACHE . 'css_js_cache');
-	    //delete_files(CACHE . 'rss_cache');
 
 	    $tables = array('blocked', 'categories', 'comments', 'commentvotes', 'friends', 'messaging', 'miscdata', 'plugins', 'pluginhooks', 'pluginsettings', 'posts', 'postmeta', 'postvotes', 'settings', 'site', 'tags', 'tempdata', 'tokens', 'users', 'usermeta', 'useractivity', 'widgets');
 
@@ -525,7 +533,7 @@ function database_creation()
 	    echo "<div class='install_content'>" . $lang['install_step2_success'] . "</div>\n";
 
 	    $show_next = true;
-	}	
+	}
 
 	// Previous/Next buttons
 	echo "<div class='back button''><a href='index.php?step=1'>" . $lang['install_back'] . "</a></div>\n";
