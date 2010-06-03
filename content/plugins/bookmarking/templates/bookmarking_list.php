@@ -75,17 +75,21 @@ foreach ($h->vars['pagedResults']->items as $post) {
                 <?php } ?>    
                 <small><a href='<?php echo $h->url(array('page'=>$h->post->id)); ?>'><?php echo $h->lang['bookmarking_post_read_more']; ?></a></small>
             </div>
-        <?php } ?>
-        
+        <?php } ?>	
+	
         <div class="show_post_extra_fields">
             <ul>
                 <?php $h->pluginHook('show_post_extra_fields'); ?>
             </ul>
         </div>
+
+	<div class="clear"></div>
         
         <div class="show_post_extras">
             <?php $h->pluginHook('show_post_extras'); ?>
         </div>
+
+	
             
     </div>
     
