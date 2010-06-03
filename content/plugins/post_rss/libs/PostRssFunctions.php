@@ -76,6 +76,11 @@ class PostRssFunctions
         // set post rss filter defaults if not already set
         $this->checkPostRssDefaults($h);
         
+        // default to posts of type "news" if not otherwise set
+        if (!isset($h->vars['postRssFilter']['post_type = %s'])) { 
+        	$h->vars['postRssFilter']['post_type = %s'] = 'news';
+        }
+        
         // get the prepared SQL query
         $this->feed_array = $h->db->select(
         	$h,

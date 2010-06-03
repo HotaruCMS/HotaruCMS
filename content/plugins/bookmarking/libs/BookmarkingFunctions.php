@@ -104,6 +104,9 @@ class BookmarkingFunctions
         if ($return == 'query') { $all = true; }    // this removes the "LIMIT" parameter so we can add it later when paginating.
         
         if ($all == true) { $limit = ''; } elseif ($limit == 0) { $limit = "20"; }
+        
+        // default to posts of type "news" if not otherwise set
+        if (!isset($h->vars['filter']['post_type = %s'])) { $h->vars['filter']['post_type = %s'] = 'news'; }
 
         // get the prepared SQL query
         $prepare_array = $h->db->select(
