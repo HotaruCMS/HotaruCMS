@@ -94,6 +94,7 @@ $lang["install_step1_settings_file_already_exists"] = "There is already a Hotaru
 $lang["install_step1_settings_db_already_exists"] = "There is already a Hotaru database on your server with live tables. If you press 'Next' your entire database will be wiped clean. Proceed with caution.";
 $lang["install_step1_update_file_writing_success"] = "The 'hotaru_settings' file was created.";
 $lang["install_step1_update_file_writing_failure"] = "There was a problem creating the 'hotaru_settings' file.";
+$lang["install_step1_no_db_exists_failure"] = "The database does not exist or the connection settings are incorrect.";
 
 
 /* Install Step 3 */

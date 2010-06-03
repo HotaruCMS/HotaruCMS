@@ -90,6 +90,9 @@ switch ($step) {
 			setcookie("hotaru_key", "", time()-3600, "/");
 			
 			// database setup (DB name, user, password, prefix...)
+			// use this direct call instead of $db = init_database() because db may not exist yet. We need to check and control the response
+			$db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
+
 			if ($cage->get->getAlpha('type') == 'manual') { database_setup_manual(); } else { database_setup(); }
 		}
 		break;
@@ -219,7 +222,7 @@ function installation_welcome()
  */
 function database_setup() {
 	global $lang;   //already included so Hotaru can't re-include it
-	//global $db;
+	global $db;
 	global $h;
         global $cage;
         global $settings_file_exists;
@@ -230,10 +233,10 @@ function database_setup() {
 
 	    $error = 0;
 	    // Test CSRF
-	    if (!$h->csrf()) {
-		    $h->messages[$lang['install_step3_csrf_error']] = 'red';
-		    $error = 1;
-	    }
+//	    if (!$h->csrf('check', 'index')) {
+//		    $h->messages[$lang['install_step3_csrf_error']] = 'red';
+//		    $error = 1;
+//	    }
 
 	    // Test baseurl
 	    $baseurl_name = $cage->post->testUri('baseurl');
@@ -281,12 +284,14 @@ function database_setup() {
             if ($settings_file_exists) {
                 $dbuser_name = DB_USER;
                 $dbname_name = DB_NAME;
+		$dbpassword_name = DB_PASSWORD;
                 $dbprefix_name = DB_PREFIX;
                 $dbhost_name = DB_HOST;
                 $baseurl_name = BASEURL;
             } else {
                 $dbuser_name = 'admin';
                 $dbname_name = 'hotaru';
+		$dbpassword_name = '';
                 $dbprefix_name = 'hotaru_';
                 $dbhost_name = 'localhost';
                 $baseurl_name = "http://"; // . $cage->server->sanitizeTags('HTTP_HOST') . "/";
@@ -302,9 +307,13 @@ function database_setup() {
 		    if ($fputs) {
 			$h->messages[$lang['install_step1_update_file_writing_success']] = 'green';
 			// Check whether database and tables exist on this server
-			$sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
-			$old_version = $h->db->get_var($h->db->prepare($sql, "hotaru_version"));
-			if ($old_version) $database_exists = true;
+			$db->show_errors = false;
+			$database_exists = $db->quick_connect($dbuser_name, $dbpassword_name, $dbname_name, $dbhost_name);
+			if (!$database_exists) {
+			    $h->messages[$lang['install_step1_no_db_exists_failure']] = 'red';
+			} else {
+			    $table_exists = $db->table_exists(DBPREFIX . 'miscdata');
+			}			
 			// if yes set warning message var
 		    } else {
 			$h->messages[$lang['install_step1_update_file_writing_failure']] = 'red';
@@ -351,7 +360,7 @@ function database_setup() {
 	    echo "<tr><td>" . $lang["install_step1_dbuser"] . "&nbsp; </td><td><input type='text' size=30 name='dbuser' value='" . $dbuser_name . "' />&nbsp;<small>" . $lang["install_step1_dbuser_explain"] . "</small></td></tr>\n";
 
 	    // DB_PASSWORD
-	    echo "<tr><td>" . $lang["install_step1_dbpassword"] . "&nbsp; </td><td><input type='password' size=30 name='dbpassword' value='' />&nbsp;<small>" . $lang["install_step1_dbpassword_explain"] . "</small></td></tr>\n";
+	    echo "<tr><td>" . $lang["install_step1_dbpassword"] . "&nbsp; </td><td><input type='password' size=30 name='dbpassword' value='" . $dbpassword_name . "' />&nbsp;<small>" . $lang["install_step1_dbpassword_explain"] . "</small></td></tr>\n";
 
 	    // DB_NAME
 	    echo "<tr><td>" . $lang["install_step1_dbname"] . "&nbsp; </td><td><input type='text' size=30 name='dbname' value='" . $dbname_name . "' />&nbsp;<small>" . $lang["install_step1_dbname_explain"] . "</small></td></tr>\n";
@@ -373,13 +382,13 @@ function database_setup() {
 	    echo "</table>";
 	    echo "</form>\n";
 
-	    if (SETTINGS) {
+	    if ($cage->post->getAlpha('updated') != 'true' && SETTINGS) {
 		// Alert if Settings file already exists
 		echo "<br/><img align='center' src='../content/admin_themes/admin_default/images/delete.png' style='float:left;'>";
 		echo $lang["install_step1_settings_file_already_exists"] . "</div><br/>";
 	    }
 
-	    if (isset($database_exists)) {
+	    if (isset($table_exists)) {
 		// Alert if database already exists
 		echo "<br/><img align='center' src='../content/admin_themes/admin_default/images/delete.png' style='float:left;'>";
 		echo $lang["install_step1_settings_db_already_exists"] . "</div><br/>";
@@ -878,7 +887,7 @@ function create_new_settings_file($dbuser_name, $dbpassword_name, $dbname_name, 
 
    ?>
 
-/* Configuration file for Hotaru CMS.
+/* Configuration file for Hotaru CMS. */
 
 // Paths
 define('BASEURL', "<?php echo $baseurl_name; ?>");    // e.g. http://www.mysite.com/    Needs trailing slash (/)
@@ -896,10 +905,7 @@ define("DB_ENGINE", 'MyISAM');					// Database Engine, e.g. "MyISAM"
 define('DB_CHARSET', 'utf8');					// Database Character Set (UTF8 is Recommended), e.g. "utf8"
 define("DB_COLLATE", 'utf8_unicode_ci');		// Database Collation (UTF8 is Recommended), e.g. "utf8_unicode_ci"
 
-
-?>
-
-<?php
+?><?php  // leave this line squashed up here as we dont want any blank lines at the end of the hotaru_settings file
    $page = "<?php" . ob_get_contents();
    ob_end_clean();
    $page = str_replace("\n", "", $page);
