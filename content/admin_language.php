@@ -275,7 +275,6 @@ $lang["admin_theme_zipdelete_error"] = " file could not be deleted from plugin f
 $lang["admin_theme_filecopy_permission_error"] = "The files could not be copied due to a permissions error.<br/>You might want to ask your server admin about enabling SuExec on your server";
 
 
-
 $lang["admin_theme_need_cron"] = "You need the 'cron' plugin installed to use this feature";
 $lang["admin_theme_check_latest_plugin_versions"] = "Check for latest plugin versions";
 $lang["admin_theme_version_check_completed"] = "The version numbers have been updated";
