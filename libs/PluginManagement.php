@@ -632,7 +632,11 @@ class PluginManagement
 			  $h->messages[$file . $h->lang['admin_theme_unzip_success']] = 'green';
 			}
 
-			unlink($copydir . $file);
+			@chmod($copydir . $file,666);
+			$deleted = unlink($copydir . $file);
+			if (!$deleted) {
+			    $h->messages[$file . $h->lang['admin_theme_zipdelete_error']] = 'yellow';
+			}
 
 		    } else {
 			$h->messages[$h->lang['admin_theme_filecopy_error'] . $file] = 'red';
