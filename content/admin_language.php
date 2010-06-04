@@ -271,6 +271,8 @@ $lang["admin_theme_filecopy_success"] = " was copied succesfully";
 $lang["admin_theme_unzip_error"] = "There was an error trying to unzip ";
 $lang["admin_theme_unzip_success"] = " was unzipped succesfully";
 $lang["admin_theme_fileexist_error"] = " file could not be found on plugin server";
+$lang["admin_theme_zipdelete_error"] = " zip file could not be deleted from plugin folder";
+
 
 
 $lang["admin_theme_need_cron"] = "You need the 'cron' plugin installed to use this feature";
