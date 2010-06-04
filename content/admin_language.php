@@ -262,7 +262,7 @@ $lang["admin_theme_header_hotarucms"] = "Hotaru CMS ";
 $lang["admin_theme_menu_admin_home"] = "Admin Home";
 $lang["admin_theme_menu_site_home"] = "Site Home";
 $lang["admin_theme_menu_hotaru_forums"] = "Hotaru Forums";
-$lang["admin_theme_menu_help"] = "Help & Docs";
+$lang["admin_theme_menu_help"] = "Documentation";
 $lang["admin_theme_menu_logout"] = "Logout";
 
 /* zip files */
