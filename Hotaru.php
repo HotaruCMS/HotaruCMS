@@ -2028,7 +2028,7 @@ class Hotaru
 	function deleteCategory($delete_category = 0)
 	{
 		$category = new Category();
-		return $category->deleteCategories($this, $delete_category);
+		return $category->deleteCategory($this, $delete_category);
 	}
 
 
