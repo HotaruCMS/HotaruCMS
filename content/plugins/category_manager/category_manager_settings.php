@@ -115,11 +115,13 @@ class CategoryManagerSettings
 			switch ($type) {
 			    default:
 				$parent = 1; // parent is "all" because this is a main category
+				break;
 			    case 2:
 			    case 3:
 				$parent = $h->cage->post->getInt('parent');
+				break;
 			}
-			$result = $h->addCategory($h, $parent, $new_cat_name);
+			$result = $h->addCategory($parent, $new_cat_name);
 			if ($result)
 			    $h->showMessage($h->lang["cat_man_category_added"], 'green');
 			else
@@ -195,9 +197,9 @@ class CategoryManagerSettings
 	    case "delete_confirm":
 		if ($h->cage->post->keyExists('delete_confirm_yes') && $h->cage->post->keyExists('delete_list')) {
 		    foreach ($h->cage->post->getInt('delete_list') as $cat_id) {
-			    $this->deleteCategories($h, $cat_id);
+			    $h->deleteCategory($cat_id);
 		    }
-		    $this->rebuildTree($h, 1, 0);
+		    $h->rebuildTree(1, 0);
 		    $h->showMessage($h->lang["cat_man_category_deleted"], 'green');
 		} else {
 		    $h->showMessage($h->lang["cat_man_category_not_deleted"], 'red');
@@ -235,7 +237,7 @@ class CategoryManagerSettings
                 $order++;
             }
         }
-        $this->rebuildTree($h, 1, 0);
+        $h->rebuildTree(1, 0);
     }
     
     
@@ -423,13 +425,13 @@ class CategoryManagerSettings
             $target_parent = $cat_to_move;
             $this->moveChildren($h, $cat_to_move, $target_order, $target_parent); // update own children and their children etc.
             //echo "children moved to " . $target_parent . "<br />";
-            $h->rebuildTree($h, 1, 0);
+            $h->rebuildTree(1, 0);
             $success = true;
         } else {
             $success = false;
         }
         $this->cleanOrder($h);
-        $h->rebuildTree($h, 1, 0);
+        $h->rebuildTree(1, 0);
         return $success;
     }
     
