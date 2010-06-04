@@ -226,6 +226,9 @@
 	<?php $h->pluginHook('plugins_guide_bottom'); ?>
 </div>
 
+<div >
+    <br/><a href="<?php echo BASEURL ?>/admin_index.php?page=plugin_management&action=version_check"><?php echo $h->lang["admin_theme_check_latest_plugin_versions"]; ?></a>
+</div>
 
 <?php $h->pluginHook('plugins_bottom'); ?>
 

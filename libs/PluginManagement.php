@@ -571,6 +571,7 @@ class PluginManagement
 
 	
 	/**
+	 * Update Plugins
 	 *
 	 * @param <type> $h
 	 * @param <type> $folder
@@ -641,6 +642,19 @@ class PluginManagement
 	     curl_close($ch);
 	}
 
+
+	public function versionCheck($h)
+	{
+		if ($h->isActive('cron')) {
+		    require_once(PLUGINS . 'cron/cron.php');
+		    $cron = new Cron();
+		    $cron->cron_plugin_version_getAll($h);
+		    $h->messages[$h->lang['admin_theme_version_check_completed']] = 'green';
+		} else {
+		     $h->messages[$h->lang['admin_theme_need_cron']] = 'red';
+		}
+
+	}
 
 	/**
 	 * Enables or disables a plugin, installing if necessary

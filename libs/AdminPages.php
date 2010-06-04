@@ -449,6 +449,9 @@ class AdminPages
 				$plugman->update($h);
 				$plugman->activateDeactivate($h, 1);
 				break;
+			case "version_check":
+				$plugman->versionCheck($h);
+				break;
 			default:
 				// nothing to do here...
 				break;
