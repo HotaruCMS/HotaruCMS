@@ -582,7 +582,7 @@ class PluginManagement
 		$folder = $h->plugin->folder;
 		$version= $h->cage->get->getHtmLawed('version');
 
-		$folder = str_replace('_', '-', $folder);
+		//$folder = str_replace('_', '-', $folder);
 		$version = str_replace('.', '-', $version);
 		$url = "http://hotaruplugins.com/zip/";
 		$copydir = PLUGINS . $folder . "/";
