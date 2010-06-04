@@ -99,7 +99,7 @@ class Announcements
 		}
 		
 		// Please enter a site email address
-		if (SITE_EMAIL == "admin@mysite.com") {
+		if (SITE_EMAIL == "email@example.com") {
 			array_push($announcements, $h->lang['admin_announcement_change_site_email']);    
 		} 
 		
