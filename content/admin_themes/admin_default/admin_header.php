@@ -60,21 +60,21 @@
             		<div class="adm-header-verion"><?php echo $h->lang["admin_theme_header_hotarucms"]; ?><?php echo $h->version; ?></div>
 			<div class="adm-header-admin"><?php echo $h->lang["admin_theme_header_admin"]; ?></div>
             	</div>
-            	<div class="adm-top-menu">
-		    <div  class="adm-tm-item">
-			<a href="<?php echo $h->url(array(), 'admin'); ?>">
-			    <div class="adm-tm-item-icon">
-				<img src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/admin_icon.png">
-			    </div>
-			    <div class="adm-tm-item-text"><?php echo $h->lang["admin_theme_menu_admin_home"]; ?></div>
-			</a>
-		    </div>
+            	<div class="adm-top-menu">		    
 		    <div class="adm-tm-item">
 			<a href="<?php echo BASEURL; ?>">
 			    <div class="adm-tm-item-icon">
 				<img src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/home_icon.png" />
 			    </div>
 			    <div class="adm-tm-item-text"><?php echo $h->lang["admin_theme_menu_site_home"]; ?></div>
+			</a>
+		    </div>
+		    <div  class="adm-tm-item">
+			<a href="<?php echo $h->url(array(), 'admin'); ?>">
+			    <div class="adm-tm-item-icon">
+				<img src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/admin_icon.png">
+			    </div>
+			    <div class="adm-tm-item-text"><?php echo $h->lang["admin_theme_menu_admin_home"]; ?></div>
 			</a>
 		    </div>
 		    <div class="adm-tm-item">
