@@ -67,13 +67,12 @@ class Cron
 
     public function admin_theme_main_stats_post_version($h) {
         $hotaru_version_settings = $h->getSerializedSettings('cron', 'hotaru_latest_version');
-        $hotaru_latest_version = $hotaru_version_settings['version'];
-	print $h->lang['cron_latest_version_installed'];
-        if (version_compare($hotaru_latest_version, $h->version) >= 0) {
-            echo "<li>". $h->lang['cron_latest_version_installed'] . "</li>";
+        $hotaru_latest_version = $hotaru_version_settings['version'];	
+        if (version_compare($hotaru_latest_version, $h->version) > 0) {
+	    echo "<li><a href='http://hotarucms.org/forumdisplay.php?23-Download-Hotaru-CMS'>" . $h->lang['cron_update_to'] .  $hotaru_latest_version . "</a></li>";
         }
         else {
-            echo "<li><a href='http://hotarucms.org/forumdisplay.php?23-Download-Hotaru-CMS'>" . $h->lang['cron_update_to'] .  $hotaru_latest_version . "</a></li>";
+            //echo "<li>". $h->lang['cron_latest_version_installed'] . "</li>";
         }
     }
 
