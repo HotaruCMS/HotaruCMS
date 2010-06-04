@@ -356,3 +356,78 @@ table#settings {
 #site-stats li {margin-left:4px;}
 
 #admin_topright {margin: 20px; width: 160px;}
+
+div.adm-header {
+   /*  background-image:url("/images/header_bg.png"); */
+background-position:0 0;
+background-repeat:repeat-x;
+border-bottom:1px solid #C8C8C8;
+height:87px;
+position:relative;
+background-color: #eee;
+border-bottom:1pt solid #666666;
+}
+
+div.adm-header-title {
+    color:#333333;
+float:left;
+font-size:42px;
+font-weight:bold;
+line-height:87px;
+padding:25px 0 25px 110px;
+position:relative;
+}
+
+div.adm-header-verion {
+    font-family:Verdana;
+font-size:10px;
+height:10px;
+left:166px;
+line-height:9px;
+position:absolute;
+top:66px;
+width:100px;
+}
+
+div.adm-top-menu { float:right; position:relative; }
+
+div.adm-tm-item {
+    float:left;
+height:87px;
+position:relative;
+width:100px;
+}
+
+div.adm-tm-item a {
+    color:#333333;
+display:block;
+height:87px;
+margin:0;
+padding:0;
+text-decoration:none;
+width:100px;
+}
+
+div.adm-tm-item-icon {height:32px;
+margin:0 auto;
+padding:23px 0 5px;
+width:32px;}
+
+div.adm-tm-item-icon img {
+    width:36px; height:36px;
+}
+div.adm-tm-item-text {font-size:11px; text-align:center;}
+
+img.adm-header-logo {height:70px;
+left:30px;
+position:absolute;
+top:15px;
+width:70px;}
+
+div.adm-header-admin {
+left:148px;
+position:absolute;
+top:0px;
+width:90px;}
+
+div.adm-frame {margin: 0 auto; width:75em;}

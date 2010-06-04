@@ -51,6 +51,70 @@
 
 </head>
 <body>
+
+
+    <div class="adm-header">
+	<div class="adm-frame">
+            	<div class="adm-header-title">
+                    <img class="adm-header-logo" src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/hotaru.png"/>
+            		<div class="adm-header-verion">Hotaru CMS <?php echo $h->version; ?></div>
+			<div class="adm-header-admin">ADMIN</div>
+            	</div>
+            	<div class="adm-top-menu">
+		    <div  class="adm-tm-item">
+			<a href="<?php echo $h->url(array(), 'admin'); ?>">
+			    <div class="adm-tm-item-icon">
+				<img src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/admin_icon.png">
+			    </div>
+			    <div class="adm-tm-item-text">Admin Home</div>
+			</a>
+		    </div>
+		    <div class="adm-tm-item">
+			<a href="<?php echo BASEURL; ?>">
+			    <div class="adm-tm-item-icon">
+				<img src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/home_icon.png" />
+			    </div>
+			    <div class="adm-tm-item-text">Site Home</div>
+			</a>
+		    </div>
+		    <div class="adm-tm-item">
+			<a href="http://hotarucms.org/forum.php">
+			    <div class="adm-tm-item-icon">
+				<img src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/forum_icon.png "/>
+			    </div>
+			    <div class="adm-tm-item-text">Hotaru Forums</div>
+			</a>
+		    </div>
+		    <!--　<div onmouseout="javascript:$(this).removeClass('adm-tm-item-active');" onmouseover="javascript:$(this).addClass('adm-tm-item-active');" class="adm-tm-item">
+			<a href="http://hotaruplugins.com">
+			    <div class="adm-tm-item-icon">
+				<img src="/images/icons/plugins.png">
+			    </div>
+			    <div class="adm-tm-item-text">Plugins</div>
+			</a>
+		    </div>-->
+		    <div class="adm-tm-item">
+			<a href="http://hotarudocs.com">
+			    <div class="adm-tm-item-icon">
+				<img src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/docs_icon.png" />
+			    </div>
+			    <div class="adm-tm-item-text">Help &amp; Docs</div>
+			</a>
+		    </div>
+		    <div class="adm-tm-item">
+			<a href="/logout/">
+			    <div class="adm-tm-item-icon">
+				<img src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/logout_icon.png" />
+			    </div>
+			    <div class="adm-tm-item-text">Logout</div>
+			</a>
+		    </div>
+		</div>
+	    <div class="clear_both">&nbsp;</div>
+        </div>
+    </div>
+
+
 <?php
 	$announcements = $h->checkAnnouncements();
 	if ($announcements && ($h->currentUser->getPermission('can_access_admin') == 'yes')) { 
