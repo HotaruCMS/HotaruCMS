@@ -127,7 +127,12 @@
 <?php } ?>
 <div id="doc2" class="yui-t7">
 	<div id="hd" role="banner">
-		<h1><img src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/hotaru.png" alt="Hotaru" style="vertical-align: bottom;" />&nbsp;<a href="<?php echo $h->url(array(), 'admin'); ?>"><?php echo SITE_NAME; ?> </a></h1>
+		<h1>
+		 <?php   if($h->isActive('avatar')) {
+                    $h->setAvatar($h->currentUser->id, 16);
+					echo $h->linkAvatar();
+                } ?>
+		    &nbsp;<a href="<?php echo $h->url(array(), 'admin'); ?>"><?php echo SITE_NAME; ?> </a></h1>
 		<?php $h->pluginHook('header_post_admin_title'); ?>
 		
 		<!-- NAVIGATION -->
