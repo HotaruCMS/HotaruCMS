@@ -364,7 +364,7 @@ background-repeat:repeat-x;
 border-bottom:1px solid #C8C8C8;
 height:87px;
 position:relative;
-background-color: #eee;
+background-color: #CBE2FF;
 border-bottom:1pt solid #666666;
 }
 
@@ -413,9 +413,7 @@ margin:0 auto;
 padding:23px 0 5px;
 width:32px;}
 
-div.adm-tm-item-icon img {
-    width:36px; height:36px;
-}
+div.adm-tm-item-icon img { width:36px; height:36px; }
 div.adm-tm-item-text {font-size:11px; text-align:center;}
 
 img.adm-header-logo {height:70px;

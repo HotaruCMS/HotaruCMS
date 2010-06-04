@@ -57,8 +57,8 @@
 	<div class="adm-frame">
             	<div class="adm-header-title">
                     <img class="adm-header-logo" src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/hotaru-80px.png"/>
-            		<div class="adm-header-verion">Hotaru CMS <?php echo $h->version; ?></div>
-			<div class="adm-header-admin">ADMIN</div>
+            		<div class="adm-header-verion"><?php echo $h->lang["admin_theme_header_hotarucms"]; ?><?php echo $h->version; ?></div>
+			<div class="adm-header-admin"><?php echo $h->lang["admin_theme_header_admin"]; ?></div>
             	</div>
             	<div class="adm-top-menu">
 		    <div  class="adm-tm-item">
@@ -66,7 +66,7 @@
 			    <div class="adm-tm-item-icon">
 				<img src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/admin_icon.png">
 			    </div>
-			    <div class="adm-tm-item-text">Admin Home</div>
+			    <div class="adm-tm-item-text"><?php echo $h->lang["admin_theme_menu_admin_home"]; ?></div>
 			</a>
 		    </div>
 		    <div class="adm-tm-item">
@@ -74,7 +74,7 @@
 			    <div class="adm-tm-item-icon">
 				<img src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/home_icon.png" />
 			    </div>
-			    <div class="adm-tm-item-text">Site Home</div>
+			    <div class="adm-tm-item-text"><?php echo $h->lang["admin_theme_menu_site_home"]; ?></div>
 			</a>
 		    </div>
 		    <div class="adm-tm-item">
@@ -82,7 +82,7 @@
 			    <div class="adm-tm-item-icon">
 				<img src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/forum_icon.png "/>
 			    </div>
-			    <div class="adm-tm-item-text">Hotaru Forums</div>
+			    <div class="adm-tm-item-text"><?php echo $h->lang["admin_theme_menu_hotaru_forums"]; ?></div>
 			</a>
 		    </div>
 		    <!--　<div onmouseout="javascript:$(this).removeClass('adm-tm-item-active');" onmouseover="javascript:$(this).addClass('adm-tm-item-active');" class="adm-tm-item">
@@ -98,7 +98,7 @@
 			    <div class="adm-tm-item-icon">
 				<img src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/docs_icon.png" />
 			    </div>
-			    <div class="adm-tm-item-text">Help &amp; Docs</div>
+			    <div class="adm-tm-item-text"><?php echo $h->lang["admin_theme_menu_help"]; ?></div>
 			</a>
 		    </div>
 		    <div class="adm-tm-item">
@@ -106,7 +106,7 @@
 			    <div class="adm-tm-item-icon">
 				<img src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/logout_icon.png" />
 			    </div>
-			    <div class="adm-tm-item-text">Logout</div>
+			    <div class="adm-tm-item-text"><?php echo $h->lang["admin_theme_menu_logout"]; ?></div>
 			</a>
 		    </div>
 		</div>
@@ -126,7 +126,7 @@
 	</div>
 <?php } ?>
 <div id="doc2" class="yui-t7">
-	<div id="hd" role="banner">
+<!--	<div id="hd" role="banner">
 		<h1>
 		 <?php   if($h->isActive('avatar')) {
                     $h->setAvatar($h->currentUser->id, 16);
@@ -135,6 +135,8 @@
 		    &nbsp;<a href="<?php echo $h->url(array(), 'admin'); ?>"><?php echo SITE_NAME; ?> </a></h1>
 		<?php $h->pluginHook('header_post_admin_title'); ?>
 		
-		<!-- NAVIGATION -->
+		 NAVIGATION 
 		<?php //echo $h->displayTemplate('admin_navigation'); ?>
-	</div>
+	</div>-->
+
+	<br/>
