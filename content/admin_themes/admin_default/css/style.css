@@ -358,7 +358,7 @@ table#settings {
 #admin_topright {margin: 20px; width: 160px;}
 
 div.adm-header {
-   /*  background-image:url("/images/header_bg.png"); */
+   /* background-image:url("../images/content-bg.jpg"); */
 background-position:0 0;
 background-repeat:repeat-x;
 border-bottom:1px solid #C8C8C8;

@@ -56,7 +56,7 @@
     <div class="adm-header">
 	<div class="adm-frame">
             	<div class="adm-header-title">
-                    <img class="adm-header-logo" src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/hotaru.png"/>
+                    <img class="adm-header-logo" src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/hotaru-80px.png"/>
             		<div class="adm-header-verion">Hotaru CMS <?php echo $h->version; ?></div>
 			<div class="adm-header-admin">ADMIN</div>
             	</div>
