@@ -68,11 +68,12 @@ class Cron
     public function admin_theme_main_stats_post_version($h) {
         $hotaru_version_settings = $h->getSerializedSettings('cron', 'hotaru_latest_version');
         $hotaru_latest_version = $hotaru_version_settings['version'];
-        if ($hotaru_latest_version == $h->version) {
-            echo "<li>Latest version installed</li>";
+	print $h->lang['cron_latest_version_installed'];
+        if (version_compare($hotaru_latest_version, $h->version) >= 0) {
+            echo "<li>". $h->lang['cron_latest_version_installed'] . "</li>";
         }
         else {
-            echo "<li><a href='http://hotarucms.org/forumdisplay.php?23-Download-Hotaru-CMS'>Update to v." . $hotaru_latest_version . "</a></li>";
+            echo "<li><a href='http://hotarucms.org/forumdisplay.php?23-Download-Hotaru-CMS'>" . $h->lang['cron_update_to'] .  $hotaru_latest_version . "</a></li>";
         }
     }
 
@@ -397,7 +398,7 @@ public function _get_cron_array($h)  {
             'args' => serialize($report)
         );
 
-       $info = $this->sendApiRequest($h, $query_vals);
+       $info = $this->sendApiRequest($h, $query_vals, 'http://api.hotarucms.org/index.php?page=api');
         
     }
 
@@ -408,7 +409,7 @@ public function _get_cron_array($h)  {
             'method' => 'hotaru.version.get'
         );
 
-         $info = $this->sendApiRequest($h, $query_vals);
+         $info = $this->sendApiRequest($h, $query_vals, 'http://hotaruplugins.com/index.php?page=api');
        
         // save the updated version number to the local db so we can display it on the admin panel until it gets updated.        
          if (isset($info['version']))
@@ -422,8 +423,8 @@ public function _get_cron_array($h)  {
             'method' => 'hotaru.plugin.version.getAll'
         );
 
-         $info = $this->sendApiRequest($h, $query_vals);	
-
+         $info = $this->sendApiRequest($h, $query_vals, 'http://hotaruplugins.com/index.php?page=api');
+//var_dump($info);
 	 if ($info) {
 	    // save the updated version number to the local db so we can display it on the admin panel until it gets updated.
 	    $sql = "SELECT plugin_id, plugin_name, plugin_latestversion FROM " . TABLE_PLUGINS;
@@ -440,7 +441,7 @@ public function _get_cron_array($h)  {
         
     }
 
-    public function sendApiRequest($h, $query_vals) {
+    public function sendApiRequest($h, $query_vals, $url) {
 
         // Generate the POST string
         $ret = '';
@@ -450,7 +451,7 @@ public function _get_cron_array($h)  {
 
         $ret = rtrim($ret, '&');
 
-        $ch = curl_init("http://api.hotarucms.org/index.php?page=api");
+        $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $ret);
