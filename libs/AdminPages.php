@@ -443,7 +443,12 @@ class AdminPages
 				break;    
 			case "orderdown":
 				$plugman->pluginOrder($h, $order, "down");
-				break;    
+				break;
+			case "update":
+				$plugman->activateDeactivate($h, 0);
+				$plugman->update($h);
+				$plugman->activateDeactivate($h, 1);
+				break;
 			default:
 				// nothing to do here...
 				break;

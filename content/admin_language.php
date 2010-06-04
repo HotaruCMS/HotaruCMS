@@ -256,4 +256,20 @@ $lang["admin_theme_404_page_not_found"] = "Page not found.";
 /* Account */
 $lang["admin_theme_account"] = "Account";
 
+
+$lang["admin_theme_header_admin"] = "ADMIN";
+$lang["admin_theme_header_hotarucms"] = "Hotaru CMS ";
+$lang["admin_theme_menu_admin_home"] = "Admin Home";
+$lang["admin_theme_menu_site_home"] = "Site Home";
+$lang["admin_theme_menu_hotaru_forums"] = "Hotaru Forums";
+$lang["admin_theme_menu_help"] = "Help & Docs";
+$lang["admin_theme_menu_logout"] = "Logout";
+
+/* zip files */
+$lang["admin_theme_filecopy_error"] = "There was an error trying to copy ";
+$lang["admin_theme_filecopy_success"] = " was copied succesfully";
+$lang["admin_theme_unzip_error"] = "There was an error trying to unzip ";
+$lang["admin_theme_unzip_success"] = " was unzipped succesfully";
+$lang["admin_theme_fileexist_error"] = " file could not be found on plugin server";
+
 ?>
