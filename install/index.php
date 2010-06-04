@@ -228,6 +228,7 @@ function database_setup() {
         global $settings_file_exists;
 
 	//$h  = new Hotaru(); // overwrites current global with fully initialized Hotaru object
+	$show_next = false;
 
 	if ($cage->post->KeyExists('updated')) {
 
@@ -305,16 +306,7 @@ function database_setup() {
 		    $fputs = create_new_settings_file($dbuser_name, $dbpassword_name, $dbname_name, $dbprefix_name, $dbhost_name, $baseurl_name);
 		    // if file written successfully then
 		    if ($fputs) {
-			$h->messages[$lang['install_step1_update_file_writing_success']] = 'green';
-			// Check whether database and tables exist on this server
-			$db->show_errors = false;
-			$database_exists = $db->quick_connect($dbuser_name, $dbpassword_name, $dbname_name, $dbhost_name);
-			if (!$database_exists) {
-			    $h->messages[$lang['install_step1_no_db_exists_failure']] = 'red';
-			    $show_next = true;
-			} else {
-			    $table_exists = $db->table_exists(DBPREFIX . 'miscdata');
-			}			
+			$h->messages[$lang['install_step1_update_file_writing_success']] = 'green';					
 			// if yes set warning message var
 		    } else {
 			$h->messages[$lang['install_step1_update_file_writing_failure']] = 'red';
@@ -323,6 +315,15 @@ function database_setup() {
                 @chmod(SETTINGS,0644);
 	}
 
+	// Check whether database and tables exist on this server
+	$db->show_errors = false;
+	$database_exists = $db->quick_connect($dbuser_name, $dbpassword_name, $dbname_name, $dbhost_name);
+	if (!$database_exists) {
+	    $h->messages[$lang['install_step1_no_db_exists_failure']] = 'red';
+	} else {
+	    $show_next = true;
+	    $table_exists = $db->table_exists(DBPREFIX . 'miscdata');	    
+	}
 
 	// Try to write the /hotaru_settings.php file to disk
 	//
@@ -389,7 +390,7 @@ function database_setup() {
 		echo $lang["install_step1_settings_file_already_exists"] . "</div><br/>";
 	    }
 
-	    if (isset($table_exists)) {
+	    if (isset($table_exists) && ($table_exists)) {
 		// Alert if database already exists
 		echo "<br/><img align='center' src='../content/admin_themes/admin_default/images/delete.png' style='float:left;'>";
 		echo $lang["install_step1_settings_db_already_exists"] . "</div><br/>";
@@ -397,18 +398,13 @@ function database_setup() {
 
 	    // Previous/Next buttons
 	    echo "<div class='back button''><a href='index.php?step=0'>" . $lang['install_back'] . "</a></div>\n";
-	    if ($cage->post->getAlpha('updated') == 'true' && isset($fputs)) {
-		    // active "next" link if settings file has been created
+	    
+	    if ($show_next) {
+	    // and if db was connected ok
 		    echo "<div class='next button''><a href='index.php?step=2'>" . $lang['install_next'] . "</a></div>\n";
 	    } else {
-		    // link disbaled until "update" button pressed
-		    if ($show_next) {
-		    // and if db was connected ok
-			    echo "<div class='next button''><a href='index.php?step=2'>" . $lang['install_next'] . "</a></div>\n";
-		    } else {
-			    // link disbaled
-			    echo "<div class='next button''>" . $lang['install_next'] . "</div>\n";
-		    }
+		    // link disbaled
+		    echo "<div class='next button''>" . $lang['install_next'] . "</div>\n";
 	    }
 
 	    echo html_footer();
@@ -478,16 +474,7 @@ function database_creation()
 	global $lang;
 	global $db;
 	global $cage;
-
-	$db->show_errors = false;
-	$table_exists = $db->table_exists(DBPREFIX . 'miscdata');
-
-	if (isset($table_exists)) {
-	    // Alert if database table already exists
-	    echo "<br/><img align='center' src='../content/admin_themes/admin_default/images/delete.png' style='float:left;'>";
-	    echo $lang["install_step1_settings_db_already_exists"] . "</div><br/>";
-	}
-        
+       
 	$delete = $cage->get->getAlpha('del');        // Confirm delete.
 	$show_next = false;
 
@@ -515,13 +502,18 @@ function database_creation()
 		echo "<a href='?step=1&action=upgrade'>" . $lang['install_step2_existing_go_upgrade2'] . "</a></div>\n";
 	}
 	else {	   
-
+	    
 	    $tables = array('blocked', 'categories', 'comments', 'commentvotes', 'friends', 'messaging', 'miscdata', 'plugins', 'pluginhooks', 'pluginsettings', 'posts', 'postmeta', 'postvotes', 'settings', 'site', 'tags', 'tempdata', 'tokens', 'users', 'usermeta', 'useractivity', 'widgets');
 
-	    // delete *all* plugin tables:
-	    $plugin_tables = list_plugin_tables($tables);
-	    foreach ($plugin_tables as $pt) {
-		    drop_table($pt); // table name
+	    // delete *all* tables in db:
+	    $db->selectDB(DB_NAME);
+
+	    if ($db->get_col("SHOW TABLES",0)) {
+		foreach ( $db->get_col("SHOW TABLES",0) as $table_name )
+		{
+			drop_table($table_name); // table name
+		}
+		echo $lang['install_step2_deleting_table'] . "'...<br /><br />\n";
 	    }
 
 	    //create tables
@@ -929,4 +921,7 @@ define("DB_COLLATE", 'utf8_unicode_ci');		// Database Collation (UTF8 is Recomme
 
 }
 
+function add_DBPREFIX($table) {   
+    return DB_PREFIX . $table;
+}
 ?>

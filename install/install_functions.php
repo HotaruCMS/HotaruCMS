@@ -98,22 +98,23 @@ function delete_files($dir)
 function list_plugin_tables($core_tables)
 {
 	global $db;
-	
+
 	$plugin_tables = array();
 
 	$db->selectDB(DB_NAME);
-	
+
 	if (!$db->get_col("SHOW TABLES",0)) { return $plugin_tables; }
-	
+
 	foreach ( $db->get_col("SHOW TABLES",0) as $table_name )
 	{
-		if (!in_array($table_name, DB_PREFIX . $core_tables)) {
+		if (!in_array($table_name, $core_tables)) {
 			array_push($plugin_tables, $table_name);
 		}
 	}
-	
+
 	return $plugin_tables;
 }
+
 
 
 /**

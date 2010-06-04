@@ -100,6 +100,7 @@ $lang["install_step1_no_db_exists_failure"] = "The database does not exist or th
 /* Install Step 3 */
 $lang["install_step2"] = "Step 2/4: Create Database Tables";
 $lang["install_step2_creating_table"] = "Creating table";
+$lang["install_step2_deleting_table"] = "Deleting existing tables";
 $lang["install_step2_already_exists"] = "It seems there are already tables for Hotaru CMS in the database.";
 $lang["install_step2_continue"] = "Click \"Next\" to continue.";
 $lang["install_step2_rebuild_note"] = "<i>Note</i>: If you'd like to start fresh, ";
