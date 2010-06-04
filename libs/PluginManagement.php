@@ -610,26 +610,36 @@ class PluginManagement
 
 		if ($statusCode == 200) {
 
-		    //reset this from above
-		    curl_setopt($ch, CURLOPT_NOBODY, false);
-		    $outfile = fopen($copydir . $file, 'wb');
-		    curl_setopt($ch, CURLOPT_FILE, $outfile);
+		    if (is_writeable($copydir . $file)) {
 
-		    $handle =base64_encode(curl_exec ($ch));
+			//reset this from above
+			curl_setopt($ch, CURLOPT_NOBODY, false);
+			$outfile = @fopen($copydir . $file, 'wb');
+			curl_setopt($ch, CURLOPT_FILE, $outfile);
+			$handle =base64_encode(curl_exec ($ch));
+			fclose($outfile);
 
-		    fclose($outfile);
+			if ($handle) {
+			    $h->messages[$file . $h->lang['admin_theme_filecopy_success']] = 'green';
 
-		    if ($handle) {
-			$h->messages[$file . $h->lang['admin_theme_filecopy_success']] = 'green';
+			    require_once(EXTENSIONS . 'pclZip/pclzip.lib.php');
+			    $archive = new PclZip($copydir . $file);
 
-			require_once(EXTENSIONS . 'pclZip/pclzip.lib.php');
-			$archive = new PclZip($copydir . $file);
+			    if (($v_result_list = $archive->extract(PCLZIP_OPT_PATH, PLUGINS)) == 0) {
+				//die("Error : ".$archive->errorInfo(true));
+				$h->messages[$h->lang['admin_theme_unzip_error'] . $file] = 'red';
+			    } else {
+			      $h->messages[$file . $h->lang['admin_theme_unzip_success']] = 'green';
+			    }
 
-			if (($v_result_list = $archive->extract(PCLZIP_OPT_PATH, PLUGINS)) == 0) {
-			    //die("Error : ".$archive->errorInfo(true));
-			    $h->messages[$h->lang['admin_theme_unzip_error'] . $file] = 'red';
+			    @chmod($copydir . $file,666);
+			    $deleted = @unlink($copydir . $file);
+			    if (!$deleted) {
+				$h->messages[$file . $h->lang['admin_theme_zipdelete_error']] = 'yellow';
+			    }
+
 			} else {
-			  $h->messages[$file . $h->lang['admin_theme_unzip_success']] = 'green';
+			    $h->messages[$h->lang['admin_theme_filecopy_error'] . $file] = 'red';
 			}
 
 			@chmod($copydir . $file,666);
@@ -639,10 +649,9 @@ class PluginManagement
 			}
 
 		    } else {
-			$h->messages[$h->lang['admin_theme_filecopy_error'] . $file] = 'red';
+			$h->messages[$h->lang['admin_theme_filecopy_permission_error']] = 'red';
 		    }
-	    }
-	    else {
+	    } else {
 		$h->messages[$file . $h->lang['admin_theme_fileexist_error']] = 'red';
 	    }
 	     curl_close($ch);
