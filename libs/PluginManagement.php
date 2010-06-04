@@ -583,10 +583,12 @@ class PluginManagement
 		$version= $h->cage->get->getHtmLawed('version');
 
 		//$folder = str_replace('_', '-', $folder);
+		$findfolder = str_replace('_', '-', $folder);
+
 		$version = str_replace('.', '-', $version);
 		$url = "http://hotaruplugins.com/zip/";
 		$copydir = PLUGINS . $folder . "/";
-		$file = $folder . "-" . $version . ".zip";
+		$file = $findfolder . "-" . $version . ".zip";
 
 		 // create a new CURL resource
 		$ch = curl_init();
