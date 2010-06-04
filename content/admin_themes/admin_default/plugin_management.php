@@ -110,7 +110,7 @@
 			echo $h->lang["admin_theme_plugins_readmetxt"] . "</a>";
 		}
 
-		if ($update) echo "<br/><a href='" . BASEURL . "/admin_index.php?page=plugin_management&action=update&plugin=". $plug['folder'] . "&version=" . $plug['latestversion'] . "' title=''>Update this plugin</a>";
+		if ($update) echo "<br/><a href='" . BASEURL . "admin_index.php?page=plugin_management&action=update&plugin=". $plug['folder'] . "&version=" . $plug['latestversion'] . "' title=''>Update this plugin</a>";
 		echo "</td>";
 		echo "<td class='table_description_close'><a class='table_hide_details' href='#'>";
 		echo $h->lang["admin_theme_plugins_close"] . "</a></td></tr>\n";
@@ -197,7 +197,7 @@
 			echo ": <a href='" . BASEURL . "content/plugins/" . $plug['folder'] . "/readme.txt' title='" . $h->lang["admin_theme_plugins_readme"] . "'>";
 			echo $h->lang["admin_theme_plugins_readmetxt"] . "</a>";			
 		}
-		if ($update) echo "<br/><a href='" . BASEURL . "/admin_index.php?page=plugin_management&action=update&plugin=". $plug['folder'] . "&version=" . $plug['latestversion'] . "' title=''>Update this plugin</a>";
+		if ($update) echo "<br/><a href='" . BASEURL . "admin_index.php?page=plugin_management&action=update&plugin=". $plug['folder'] . "&version=" . $plug['latestversion'] . "' title=''>Update this plugin</a>";
 		echo "</td>\n";
 		echo "<td class='table_description_close'><a class='table_hide_details' href='#'>";
 		echo $h->lang["admin_theme_plugins_close"] . "</a></td></tr>\n";
@@ -227,7 +227,7 @@
 </div>
 
 <div >
-    <br/><a href="<?php echo BASEURL ?>/admin_index.php?page=plugin_management&action=version_check"><?php echo $h->lang["admin_theme_check_latest_plugin_versions"]; ?></a>
+    <br/><a href="<?php echo BASEURL ?>admin_index.php?page=plugin_management&action=version_check"><?php echo $h->lang["admin_theme_check_latest_plugin_versions"]; ?></a>
 </div>
 
 <?php $h->pluginHook('plugins_bottom'); ?>
