@@ -30,14 +30,19 @@ class Breadcrumbs
 	 */
 	public function buildBreadcrumbs($h)
 	{
-		$output = '';
-		$output .= "<a href='" . BASEURL . "'>" . $h->lang['main_theme_breadcrumbs_home'] . "</a>\n"; 
+		$output = '';		
 		
 		// Admin only:
 		if ($h->isAdmin) {
+			$output .= "<a href='" . BASEURL . "'>" . SITE_NAME . " (" . $h->lang['main_theme_breadcrumbs_home'] . ")</a>\n";
+
 			$output .= " &raquo; <a href='" . $h->url(array(), 'admin') . "'>";
 			$output .= $h->lang['admin_theme_main_admin_cp'] . "</a>\n";
+		} else {
+			$output .= "<a href='" . BASEURL . "'>" . $h->lang['main_theme_breadcrumbs_home'] . "</a>\n"; 
 		}
+
+
 		
 		// plugin hook:
 		$crumbs = $h->pluginHook('breadcrumbs');
