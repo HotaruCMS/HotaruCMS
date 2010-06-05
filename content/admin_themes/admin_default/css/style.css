@@ -431,3 +431,4 @@ width:90px;}
 div.adm-frame {margin: 0 auto; width:75em;}
 
 div.adm-header-admin a {color:#000;}
+div.adm-header-admin a:hover {color:#333; text-decoration: none;}
