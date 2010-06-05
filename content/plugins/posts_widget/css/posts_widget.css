@@ -1,0 +1,7 @@
+/* posts widget */
+ 
+.posts_widget_vote { float: left; width: 1.8em; text-align: center;  margin-right: 0.5em; }
+.posts_widget_link  { display: block; }
+.posts_widget_indent { margin-left: 2.4em; }
+
+/* vote colors moved to vote.css in Vote plugin */

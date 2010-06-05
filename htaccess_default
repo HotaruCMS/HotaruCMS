@@ -1,0 +1,31 @@
+#############################
+##### EDIT THIS SECTION #####
+#############################
+
+Options +Indexes +FollowSymlinks
+RewriteEngine on
+
+## Change to /folder if Hotaru is in a subfolder
+RewriteBase /
+
+## Redirect www.example.com to example.com. Add ## if you don't need the redirect.
+RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+
+################################################
+##### DON'T EDIT ANYTHING BELOW THIS POINT #####
+################################################
+
+##### CORE ADMIN #####
+RewriteRule ^admin/?$ admin_index.php [L]
+RewriteRule ^admin/([a-zA-Z0-9_-]+)/?$ admin_index.php?page=$1 [L]
+RewriteRule ^admin/plugin_settings/plugin/([a-zA-Z0-9_-]+)/?$ admin_index.php?page=plugin_settings&plugin=$1 [L]
+
+##### GENERIC RULES #####
+RewriteRule \.(css|php|png|jpg|gif|ico|js|inc|txt|gz|xml|html)$ - [L]
+RewriteRule ^([^/]*)/?$ index.php?page=$1 [L]
+RewriteRule ^([^/]*)/([^/]*)/?$ index.php?$1=$2 [L]
+RewriteRule ^([^/]*)/([^/]*)/([^/]*)/?$ index.php?page=$1&$2=$3 [L]
+RewriteRule ^([^/]*)/([^/]*)/([^/]*)/([^/]*)/?$ index.php?$1=$2&$3=$4 [L]
+RewriteRule ^([^/]*)/([^/]*)/([^/]*)/([^/]*)/([^/]*)/?$ index.php?page=$1&$2=$3&$4=$5 [L]
+RewriteRule ^([^/]*)/([^/]*)/([^/]*)/([^/]*)/([^/]*)/([^/]*)/?$ index.php?$1=$2&$3=$4&$5=$6 [L]

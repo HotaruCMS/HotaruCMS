@@ -1,0 +1,19 @@
+/* comment manager */
+
+#table_list td.cm_id 	  	{ width: 7%; font-size: 0.8em;}
+#table_list td.cm_status  	{ width: 12%; font-size: 0.9em;}
+#table_list td.cm_date 	  	{ width: 14%; font-size: 0.8em;}
+#table_list td.cm_author  	{ width: 14%; text-align: left; font-size: 0.9em;}
+#table_list td.cm_post  	{ text-align: left; font-size: 0.8em; }
+#table_list .cm_details_0 td  	{ border: 0; border-top: 2px solid #666;  }
+#table_list .cm_details_1 td  	{ border: 0; border-top: 2px solid #666; background-color: #fff;}
+#table_list td.cm_summary_0   	{ text-align: left; border: 0; padding-bottom: 1.4em; }
+#table_list td.cm_summary_1   	{ text-align: left; border: 0; padding-bottom: 1.4em; background-color: #fff;}
+#table_list td.cm_description_0   { line-height: 1.6em; border: 0; border-bottom: 2px solid #666; background-color: #f0f0f0;}
+#table_list td.cm_description_1   { line-height: 1.6em; border: 0; border-bottom: 2px solid #666; background-color: #fff; }
+#table_list td.cm_approve   	{ width: 8%; }
+#table_list td.cm_delete   	{ width: 8%; }
+#table_list td.cm_check   	{ width: 5%; }
+#table_list td blockquote	{ padding: 0.4em; background-color: #F8F8F8; border: 1px dashed #666; margin-bottom: 0.4em; }
+
+#com_man_mass_edit { border-top: 1px solid #666; padding: 1.0em; text-align: center; }
