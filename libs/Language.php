@@ -47,14 +47,14 @@ class Language
 			}
 			
 			// include language file
-			include_once(BASE . 'content/' . $pack . '_language.php');
+			include(BASE . 'content/' . $pack . '_language.php');
 
 			// add to list of included language files
 			$lang_array['files'][$file] = true;
 		}
-		
+
 		// Add new language to our lang property
-		if (isset($lang)) {
+		if (isset($lang) && !empty($lang)) {
 			foreach($lang as $l => $text) {
 				$lang_array[$l] = $text;
 			}

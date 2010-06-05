@@ -35,6 +35,7 @@ class Maintenance
 	 *
 	 * @param string $folder - path to the cache folder
 	 * @param string $msg - show "cleared" message or not
+	 * @return bool $success
 	 */
 	public function clearCache($h, $folder, $msg = true)
 	{
@@ -46,6 +47,33 @@ class Maintenance
 		} else {
 			$h->message = $h->lang['admin_maintenance_clear_cache_failure'];
 			$h->messageType = 'red';    
+		}
+		
+		return $success;
+	}
+	
+	
+	/**
+	 * Clear Language Cache
+	 *
+	 * wipe the lang array and reinclude the main and admin lang so 
+	 * as not to break the Maintenance page
+	 */
+	public function clearLanguageCache($h, $msg = false)
+	{
+		$h->lang = array();
+		$success = $h->clearCache('lang_cache', false); // false to prevent showing message with language we don't have anymore
+		
+		$langObj = new Language();
+		$h->lang = $langObj->includeLanguagePack($h->lang, 'main');
+		$h->lang = $langObj->includeLanguagePack($h->lang, 'admin');
+		
+		if ($success && $msg) {
+			$h->message = $h->lang['admin_maintenance_clear_cache_success'];
+			$h->messageType = 'green';
+		} else {
+			$h->message = $h->lang['admin_maintenance_clear_cache_failure'];
+			$h->messageType = 'red';
 		}
 	}
 	
