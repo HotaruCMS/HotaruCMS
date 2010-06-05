@@ -610,7 +610,7 @@ class PluginManagement
 
 		if ($statusCode == 200) {
 
-		    if (is_writeable($copydir . $file)) {
+		    if (is_writeable($copydir)) {
 
 			//reset this from above
 			curl_setopt($ch, CURLOPT_NOBODY, false);
