@@ -660,15 +660,13 @@ class PluginManagement
 
 	public function versionCheck($h)
 	{
-		if ($h->isActive('cron')) {
-		    require_once(PLUGINS . 'cron/cron.php');
-		    $cron = new Cron();
-		    $cron->cron_plugin_version_getAll($h);
+		$systeminfo = New SystemInfo();
+		$result = $systeminfo->plugin_version_getAll($h);
+		if ($result) {
 		    $h->messages[$h->lang['admin_theme_version_check_completed']] = 'green';
 		} else {
-		     $h->messages[$h->lang['admin_theme_need_cron']] = 'red';
+		     // $h->messages[$h->lang['admin_theme_need_cron']] = 'red';
 		}
-
 	}
 
 	/**

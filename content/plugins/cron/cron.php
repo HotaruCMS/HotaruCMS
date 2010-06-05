@@ -43,14 +43,14 @@ class Cron
     {
         $timestamp = time();
         $recurrence = "daily";
-        $hook = "cron_hotaru_version";
+        $hook = "SystemInfo:hotaru_version";
 	$this->cron_schedule_event($h, $timestamp, $recurrence, $hook);
 
-	$hook = "cron_plugin_version_getAll";
+	$hook = "SystemInfo:plugin_version_getAll";
 	$this->cron_schedule_event($h, $timestamp, $recurrence, $hook);
 
         if (SYS_FEEDBACK == 'true') {
-            $hook = "cron_hotaru_feedback";
+            $hook = "SystemInfo:hotaru_feedback";
             $this->cron_schedule_event($h, $timestamp, $recurrence, $hook);
         }
     }  
@@ -387,79 +387,6 @@ public function _get_cron_array($h)  {
             return true;
     }
 
-    public function cron_hotaru_feedback($h) {       
-        $report = $h->generateReport("object");
-       
-        $query_vals = array(
-            'api_key' => '',
-            'format' => 'json',
-            'method' => 'hotaru.systemFeedback.add',
-            'args' => serialize($report)
-        );
-
-       $info = $this->sendApiRequest($h, $query_vals, 'http://api.hotarucms.org/index.php?page=api');
-        
-    }
-
-    public function cron_hotaru_version($h) {
-        $query_vals = array(
-            'api_key' => '',
-            'format' => 'json',
-            'method' => 'hotaru.version.get'
-        );
-
-         $info = $this->sendApiRequest($h, $query_vals, 'http://hotaruplugins.com/index.php?page=api');
-       
-        // save the updated version number to the local db so we can display it on the admin panel until it gets updated.        
-         if (isset($info['version']))
-             $h->updateSetting('hotaru_latest_version', serialize($info), 'cron');
-    }
-
-    public function cron_plugin_version_getAll($h) {
-        $query_vals = array(
-            'api_key' => '',
-            'format' => 'json',
-            'method' => 'hotaru.plugin.version.getAll'
-        );
-
-         $info = $this->sendApiRequest($h, $query_vals, 'http://hotaruplugins.com/index.php?page=api');
-//var_dump($info);
-	 if ($info) {
-	    // save the updated version number to the local db so we can display it on the admin panel until it gets updated.
-	    $sql = "SELECT plugin_id, plugin_name, plugin_latestversion FROM " . TABLE_PLUGINS;
-	    $plugins = $h->db->get_results($h->db->prepare($sql));
-
-	    foreach ($plugins as $plugin) {
-		if (array_key_exists($plugin->plugin_name, $info)) {
-		    $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_latestversion = %s WHERE (plugin_id = %d)";
-		    $h->db->query($h->db->prepare($sql, $info[$plugin->plugin_name], $plugin->plugin_id));
-		    //print $plugin->plugin_name . ' ' . $info[$plugin->plugin_name] . '<br/>';
-		}
-	    }
-	 }
-        
-    }
-
-    public function sendApiRequest($h, $query_vals, $url) {
-
-        // Generate the POST string
-        $ret = '';
-        foreach($query_vals as $key => $value) {
-            $ret .= $key.'='.urlencode($value).'&';
-        }
-
-        $ret = rtrim($ret, '&');
-
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $ret);
-        $response = curl_exec($ch);
-        curl_close ($ch);
-
-       return json_decode($response, true);
-    }
-
 
     public function checkrunCron($h) {
         if ( !empty($_POST) || defined('DOING_AJAX') || defined('DOING_CRON') )
@@ -490,7 +417,15 @@ public function _get_cron_array($h)  {
                     $this->cron_unschedule_event($h, $timestamp, $hook, $v['args']);
                     //call function to do task required for cron
                     //print "running hook..-> " . $hook. "     ";
-                    $h->pluginHook($hook, '', $v['args']);
+		    if (strpos($hook, ':')) {
+			$parts = explode(':', $hook);
+			if (count($parts) > 1) {
+			    $cron_call = new $parts[0]();
+			    $cron_call->$parts[1]($h);
+			}
+		    } else {
+			$h->pluginHook($hook, '', $v['args']);
+		    }
                 }
             }
        }
