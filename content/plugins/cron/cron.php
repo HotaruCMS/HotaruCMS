@@ -6,7 +6,7 @@
  * folder: cron
  * class: Cron
  * type: cron
- * hooks: install_plugin, admin_plugin_settings, admin_sidebar_plugin_settings, theme_index_top, admin_theme_index_top, cron_schedule_event, cron_update_job, cron_delete_job, cron_flush_hook, cron_hotaru_version, cron_plugin_version_getAll, cron_hotaru_feedback, admin_theme_main_stats_post_version
+ * hooks: install_plugin, admin_plugin_settings, admin_sidebar_plugin_settings, theme_index_top, admin_theme_index_top, cron_schedule_event, cron_update_job, cron_delete_job, cron_flush_hook, admin_theme_main_stats_post_version
  * author: shibuya246
  * authorurl: http://shibuya246.com
  *
