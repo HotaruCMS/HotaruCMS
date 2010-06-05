@@ -158,12 +158,12 @@ class AdminPages
 			if ($h->cage->post->keyExists('SYS_FEEDBACK') == 'true' ) {
 				$timestamp = time();
 				$recurrence = "daily";
-				$hook = "cron_hotaru_feedback";
+				$hook = "SystemInfo:hotaru_feedback";
 				$cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook);
 				$h->pluginHook('cron_update_job', 'cron', $cron_data);
 			}
 			else {
-				$hook = "cron_hotaru_feedback";
+				$hook = "SystemInfo:hotaru_feedback";
 				$cron_data = array('hook'=>$hook);
 				$h->pluginHook('cron_delete_job', 'cron', $cron_data);
 			}
