@@ -39,8 +39,23 @@ class Maintenance
 	 */
 	public function clearCache($h, $folder, $msg = true)
 	{
+		// clear language from memory (lang_cache only)
+		if ($folder == 'lang_cache') { $h->lang = array(); }
+		
+		// go delete the files
 		$success = $this->deleteFiles(CACHE . $folder);
+		
+		// lang_cache only:
+		if ($folder == 'lang_cache') { 
+			$langObj = new Language();
+			$h->lang = $langObj->includeLanguagePack($h->lang, 'main');
+			$h->lang = $langObj->includeLanguagePack($h->lang, 'admin');
+		}
+		
+		// no need to show a message, return now
 		if (!$msg) { return $success; }
+		
+		// prepare messages
 		if ($success) {
 			$h->message = $h->lang['admin_maintenance_clear_cache_success'];
 			$h->messageType = 'green';
@@ -49,32 +64,8 @@ class Maintenance
 			$h->messageType = 'red';    
 		}
 		
+		// return boolean result
 		return $success;
-	}
-	
-	
-	/**
-	 * Clear Language Cache
-	 *
-	 * wipe the lang array and reinclude the main and admin lang so 
-	 * as not to break the Maintenance page
-	 */
-	public function clearLanguageCache($h, $msg = false)
-	{
-		$h->lang = array();
-		$success = $h->clearCache('lang_cache', false); // false to prevent showing message with language we don't have anymore
-		
-		$langObj = new Language();
-		$h->lang = $langObj->includeLanguagePack($h->lang, 'main');
-		$h->lang = $langObj->includeLanguagePack($h->lang, 'admin');
-		
-		if ($success && $msg) {
-			$h->message = $h->lang['admin_maintenance_clear_cache_success'];
-			$h->messageType = 'green';
-		} else {
-			$h->message = $h->lang['admin_maintenance_clear_cache_failure'];
-			$h->messageType = 'red';
-		}
 	}
 	
 	

@@ -1496,18 +1496,6 @@ class Hotaru
 	
 	
 	/**
-	 * Clears the language cache (works a bit differently to clearCache)
-	 *
-	 * @param string $msg - show "cleared" message or not
-	 */
-	public function clearLanguageCache($msg = true)
-	{
-		$maintenance = new Maintenance();
-		return $maintenance->clearLanguageCache($this, $msg);
-	}
-	
-	
-	/**
 	 * Get all files in the specified directory except placeholder.txt
 	 *
 	 * @param string $dir - path to the folder

@@ -257,7 +257,7 @@ class PluginManagement
 		$h->deleteFiles(CACHE . 'css_js_cache');
 		
 		// Clear the language cache to ensure any new language files get included
-		$h->clearLanguageCache(false);
+		$h->clearCache('lang_cache', false);
 		
 		// Read meta from the top of the plugin file
 		$plugin_metadata = $this->readPluginMeta($h->plugin->folder);
@@ -425,7 +425,7 @@ class PluginManagement
 		$h->deleteFiles(CACHE . 'css_js_cache');
 		
 		// Clear the language cache to ensure any new language files get included
-		$h->clearLanguageCache(false);
+		$h->clearCache('lang_cache', false);
 		
 		$h->db->query("TRUNCATE TABLE " . TABLE_PLUGINS);
 		$h->db->query("TRUNCATE TABLE " . TABLE_PLUGINHOOKS);
@@ -448,7 +448,7 @@ class PluginManagement
 		$h->deleteFiles(CACHE . 'css_js_cache');
 		
 		// Clear the language cache to ensure any new language files get included
-		$h->clearLanguageCache(false);
+		$h->clearCache('lang_cache', false);
 		
 		if ($upgrade == 0) { // don't delete plugin when we're upgrading
 			$h->db->query($h->db->prepare("DELETE FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $h->plugin->folder));
