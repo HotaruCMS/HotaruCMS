@@ -54,10 +54,8 @@
 		<li>Hotaru CMS <?php echo $h->version; ?></li>
 
 		<?php
-		$systeminfo = new SystemInfo();
-		$systeminfo->hotaru_version($h);
 
-               $sql = "SELECT miscdata_value as latest_version FROM " . TABLE_MISCDATA ." WHERE miscdata_key = %s";
+		    $sql = "SELECT miscdata_value as latest_version FROM " . TABLE_MISCDATA ." WHERE miscdata_key = %s";
 		    $query = $h->db->get_row($h->db->prepare($sql, 'hotaru_latest_version'));
 		    if ($query) {			
 			$hotaru_latest_version = $query->latest_version;
