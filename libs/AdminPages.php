@@ -281,6 +281,7 @@ class AdminPages
 			$h->clearCache('css_js_cache', false);
 			$h->clearCache('rss_cache', false);
 			$h->clearCache('html_cache', false);
+			$h->lang = array(); // wipe the lang array
 			$h->clearCache('lang_cache', false);
 			@unlink(BASE. 'cache/smartloader_cache.php');
 			$h->message = $h->lang['admin_maintenance_clear_all_cache_success'];
@@ -290,7 +291,10 @@ class AdminPages
 		if ($action == 'clear_css_js_cache') { $h->clearCache('css_js_cache'); }
 		if ($action == 'clear_rss_cache') { $h->clearCache('rss_cache'); }
 		if ($action == 'clear_html_cache') { $h->clearCache('html_cache'); }
-		if ($action == 'clear_lang_cache') { $h->clearCache('lang_cache'); }
+		if ($action == 'clear_lang_cache') { 
+			$h->lang = array(); // wipe the lang array
+			$h->clearCache('lang_cache'); 
+		}
 		if ($action == 'optimize') { $h->optimizeTables(); }
 		if ($action == 'empty') { $h->emptyTable($h->cage->get->testAlnumLines('table')); }
 		if ($action == 'drop') { $h->dropTable($h->cage->get->testAlnumLines('table')); }
