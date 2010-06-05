@@ -51,7 +51,7 @@ class SystemInfo
 	/**
 	 * Calls external site to get latest available hotaru version number
 	 *
-	 * @return bool true
+	 * @return string versionnumber
 	 */
 	public function hotaru_version($h)
 	{
@@ -75,10 +75,12 @@ class SystemInfo
 		    } else {			
 			$sql = "INSERT INTO " . TABLE_MISCDATA . " (miscdata_value, miscdata_key) VALUES (%s, %s)";
 			$h->db->query($h->db->prepare($sql, $info['version'], 'hotaru_latest_version'));	
-		    }		   
-		}	  	
+		    }	
+		    return $info['version'];
+		}
 
-		return true;
+		return 0;
+		
 	}
 
 	/**
