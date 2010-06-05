@@ -6,7 +6,7 @@
  * folder: cron
  * class: Cron
  * type: cron
- * hooks: install_plugin, admin_plugin_settings, admin_sidebar_plugin_settings, theme_index_top, admin_theme_index_top, cron_schedule_event, cron_update_job, cron_delete_job, cron_flush_hook, admin_theme_main_stats_post_version
+ * hooks: install_plugin, admin_plugin_settings, admin_sidebar_plugin_settings, theme_index_top, admin_theme_index_top, cron_schedule_event, cron_update_job, cron_delete_job, cron_flush_hook
  * author: shibuya246
  * authorurl: http://shibuya246.com
  *
@@ -65,16 +65,6 @@ class Cron
         //$this->run_cron($h);
     }
 
-    public function admin_theme_main_stats_post_version($h) {
-        $hotaru_version_settings = $h->getSerializedSettings('cron', 'hotaru_latest_version');
-        $hotaru_latest_version = $hotaru_version_settings['version'];	
-        if (version_compare($hotaru_latest_version, $h->version) > 0) {
-	    echo "<li><a href='http://hotarucms.org/forumdisplay.php?23-Download-Hotaru-CMS'>" . $h->lang['cron_update_to'] .  $hotaru_latest_version . "</a></li>";
-        }
-        else {
-            //echo "<li>". $h->lang['cron_latest_version_installed'] . "</li>";
-        }
-    }
 
 
 /**
