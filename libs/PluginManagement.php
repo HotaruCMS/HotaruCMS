@@ -645,7 +645,7 @@ class PluginManagement
 			@chmod($copydir . $file,666);
 			$deleted = @unlink($copydir . $file);
 			if (!$deleted) {
-			    $h->messages[$file . $h->lang['admin_theme_zipdelete_error']] = 'yellow';
+			    //$h->messages[$file . $h->lang['admin_theme_zipdelete_error']] = 'yellow';
 			}
 
 		    } else {
