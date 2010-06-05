@@ -40,7 +40,7 @@ class Maintenance
 	public function clearCache($h, $folder, $msg = true)
 	{
 		$success = $this->deleteFiles(CACHE . $folder);
-		if (!$msg) { return true; }
+		if (!$msg) { return $success; }
 		if ($success) {
 			$h->message = $h->lang['admin_maintenance_clear_cache_success'];
 			$h->messageType = 'green';
@@ -142,6 +142,7 @@ class Maintenance
 			}
 		}
 		closedir($handle);
+
 		return $success;
 	}
 	

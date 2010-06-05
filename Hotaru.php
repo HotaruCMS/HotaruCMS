@@ -1491,7 +1491,7 @@ class Hotaru
 	public function clearCache($folder = '', $msg = true)
 	{
 		$maintenance = new Maintenance();
-		$maintenance->clearCache($this, $folder, $msg);
+		return $maintenance->clearCache($this, $folder, $msg);
 	}
 	
 	
