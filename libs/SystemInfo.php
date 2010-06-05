@@ -64,8 +64,19 @@ class SystemInfo
 		$info = $this->sendApiRequest($h, $query_vals, 'http://hotaruplugins.com/index.php?page=api');
 
 		// save the updated version number to the local db so we can display it on the admin panel until it gets updated.
-		if (isset($info['version']))
-		    $h->updateSetting('hotaru_latest_version', serialize($info), 'cron');
+		if (isset($info['version'])) {
+		    $sql = "SELECT miscdata_id FROM " . TABLE_MISCDATA ." WHERE miscdata_key = %s";
+		    $query = $h->db->get_row($h->db->prepare($sql, 'hotaru_latest_version'));
+		    
+		    if ($query) {
+			// update existing db record
+			$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s WHERE miscdata_key = %s";
+			$h->db->query($h->db->prepare($sql, $info['version'], 'hotaru_latest_version'));
+		    } else {			
+			$sql = "INSERT INTO " . TABLE_MISCDATA . " (miscdata_value, miscdata_key) VALUES (%s, %s)";
+			$h->db->query($h->db->prepare($sql, $info['version'], 'hotaru_latest_version'));	
+		    }		   
+		}	  	
 
 		return true;
 	}
