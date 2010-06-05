@@ -328,7 +328,7 @@ function database_setup() {
 	// Try to write the /hotaru_settings.php file to disk
 	//
         @chmod(SETTINGS,0777);
-        
+
 	$settings_file_writeable =  is_writeable(SETTINGS);
 
 	if ($settings_file_writeable) {
@@ -547,8 +547,7 @@ function database_creation()
 function register_admin()
 {
 	global $lang;   //already included so Hotaru can't re-include it
-	global $db;
-	global $h;
+	global $db;	
 
 	$h  = new Hotaru(); // overwrites current global with fully initialized Hotaru object
 
@@ -708,8 +707,7 @@ function register_admin()
 function installation_complete()
 {
 	global $lang;
-	global $cage;
-	global $h;
+	global $cage;	
 
 	$h  = new Hotaru(); // overwrites current global with fully initialized Hotaru object
 	
@@ -724,6 +722,12 @@ function installation_complete()
 	    $folder_deleted = 2;
 	    // if was deleted then redirect to baseurl
 	    if ($folder_deleted == 1) header("Location: /index.php" );
+	}
+
+	if (!$delete && !$phpinfo) {
+	    //send feedback report
+	    $systeminfo = new SystemInfo();
+	    $systeminfo->hotaru_feedback($h);
 	}
 
 	echo html_header();
@@ -807,8 +811,14 @@ function upgrade_plugins()
 
 	echo "<br/><div class='install_content'>" . $lang['upgrade_step3_details'] . "<br/><br/>\n";
 
-//	plugin_version_getAll($h);
-//
+
+        //send feedback report
+	$systeminfo = new SystemInfo();
+	$systeminfo->hotaru_feedback($h);
+
+	//refresh database to get all recent plugin versions
+	$systeminfo->plugin_version_getAll($h);
+	
 //	$plugins = $h->allPluginDetails;
 //
 //	foreach ($plugins as $plugin) {
@@ -831,52 +841,6 @@ function upgrade_plugins()
 
 	echo html_footer();
 }
-
-/**
- *
- * @param <type> $h
- */
-function plugin_version_getAll($h) {
-    $query_vals = array(
-	'api_key' => '',
-	'format' => 'json',
-	'method' => 'hotaru.plugin.version.getAll'
-    );
-
-     $info = sendApiRequest($h, $query_vals);
-
-    // save the updated version number to the local db so we can display it on the admin panel until it gets updated.
-    $sql = "SELECT plugin_id, plugin_name, plugin_latestversion FROM " . TABLE_PLUGINS;
-    $plugins = $h->db->get_results($h->db->prepare($sql));
-
-    foreach ($plugins as $plugin) {
-	if (array_key_exists($plugin->plugin_name, $info)) {
-	    $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_latestversion = %s WHERE (plugin_id = %d)";
-	    $h->db->query($h->db->prepare($sql, $info[$plugin->plugin_name], $plugin->plugin_id));
-	}
-    }
-}
-
-function sendApiRequest($h, $query_vals) {
-
-    // Generate the POST string
-    $ret = '';
-    foreach($query_vals as $key => $value) {
-	$ret .= $key.'='.urlencode($value).'&';
-    }
-
-    $ret = rtrim($ret, '&');
-
-    $ch = curl_init("http://api.hotarucms.org/index.php?page=api");
-    curl_setopt($ch, CURLOPT_HEADER, 0);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $ret);
-    $response = curl_exec($ch);
-    curl_close ($ch);
-
-   return json_decode($response, true);
-}
-
 
 /**
  * create new settings file
