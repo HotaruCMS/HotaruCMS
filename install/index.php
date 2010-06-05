@@ -726,8 +726,10 @@ function installation_complete()
 
 	if (!$delete && !$phpinfo) {
 	    //send feedback report
-	    $systeminfo = new SystemInfo();
-	    $systeminfo->hotaru_feedback($h);
+	    if ($socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP)) {
+		$systeminfo = new SystemInfo();
+		$systeminfo->hotaru_feedback($h);
+	    }
 	}
 
 	echo html_header();
@@ -811,10 +813,11 @@ function upgrade_plugins()
 
 	echo "<br/><div class='install_content'>" . $lang['upgrade_step3_details'] . "<br/><br/>\n";
 
-
-        //send feedback report
-	$systeminfo = new SystemInfo();
-	$systeminfo->hotaru_feedback($h);
+	if ($socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP)) {
+	    //send feedback report
+	    $systeminfo = new SystemInfo();
+	    $systeminfo->hotaru_feedback($h);
+	}	
 
 	//refresh database to get all recent plugin versions
 	$systeminfo->plugin_version_getAll($h);
