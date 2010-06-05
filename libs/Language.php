@@ -195,11 +195,13 @@ class Language
 				return false;
 			} else {
 				include($file);
-				return ($lang) ? $lang : false; // file exists and the language array has been included
+				if (isset($lang) && !empty($lang)) {
+					return $lang; // file exists and the language array has been included
+				}
 			}
-		} else {
-			return false;
 		}
+		
+		return false;
 	}
 	
 	
@@ -271,7 +273,7 @@ class Language
 			fwrite($fh, '<?php' . "\r\n");
 			fwrite($fh, '$lang = ');
 			fwrite($fh, var_export($h->lang, true));
-			fwrite($fh, '?>' . "\r\n");
+			fwrite($fh, '; ?>' . "\r\n");
 			flock($fh, LOCK_UN); // release the lock
 		} else {
 			echo "Couldn't get the lock for the language cache!";
