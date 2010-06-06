@@ -456,9 +456,13 @@ function create_table($table_name)
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
 		$db->query($db->prepare($sql, 'SMTP_PASSWORD', '', '', ''));
 		
-		 // Sys Feedback
+		// Sys Feedback
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
 		$db->query($db->prepare($sql, 'SYS_FEEDBACK', 'true', 'true', 'send system report'));
+
+		// Version Info Auto Update
+		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+		$db->query($db->prepare($sql, 'VERSION_INFO', 'true', 'true', 'auto-update version info'));
 	}
 	
 	

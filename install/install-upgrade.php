@@ -638,8 +638,17 @@ function do_upgrade($h, $old_version)
 		// update "old version" for next set of upgrades
 		$old_version = "1.3.0";
 	}
-	
-	//$h->version ="1.2.0";
+
+	 // 1.3.0 to 1.4.0
+	if ($old_version == "1.3.0") {
+
+	    // Version Info Auto Update
+	    $sql = "INSERT IGNORE INTO " . TABLE_SETTINGS . " SET settings_name = %s, settings_value = %s, settings_default = %s, settings_note = %s";
+	    $h->db->query($h->db->prepare($sql, 'VERSION_INFO', 'true', 'true', 'auto-update version info'));
+		
+	}
+
+
 	// Update Hotaru version number to the database (referred to when upgrading)
 	$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_key = %s, miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";
 	$h->db->query($h->db->prepare($sql, 'hotaru_version', $h->version, $h->version, 'hotaru_version'));
