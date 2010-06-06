@@ -42,24 +42,30 @@ class Cron
     public function install_plugin($h)
     {
 	//$h->vars['cron_settings'] = $h->getSerializedSettings();
+	
+	$create = false;
+	
+	if (!defined('SYS_UPDATES')) { $create = true; }
+	if (defined('SYS_UPDATES') && SYS_UPDATES == 'true') { $create = true; }
 
-	//if (!$h->vars['cron_settings']) {
-        $timestamp = time();
-        $recurrence = "daily";
-        $hook = "SystemInfo:hotaru_version";
-	$args = array('timestamp' => $timestamp, 'recurrence' => $recurrence, 'hook' => $hook);
+	if ($create) {
+	    $timestamp = time();
+	    $recurrence = "daily";
+	    
+	    $hook = "SystemInfo:hotaru_version";
+	    $args = array('timestamp' => $timestamp, 'recurrence' => $recurrence, 'hook' => $hook);
+	    $this->cron_update_job($h, $args);
 
-	$this->cron_update_job($h, $args);
+	    $hook = "SystemInfo:plugin_version_getAll";
+	    $args = array('timestamp' => $timestamp, 'recurrence' => $recurrence, 'hook' => $hook);
+	    $this->cron_update_job($h, $args);
 
-	$hook = "SystemInfo:plugin_version_getAll";
-	$args = array('timestamp' => $timestamp, 'recurrence' => $recurrence, 'hook' => $hook);
-	$this->cron_update_job($h, $args);
-
-        if (SYS_FEEDBACK == 'true') {
             $hook = "SystemInfo:hotaru_feedback";
 	    $args = array('timestamp' => $timestamp, 'recurrence' => $recurrence, 'hook' => $hook);
             $this->cron_update_job($h, $args);
-        }
+	}
+
+	
     }  
 
    public function theme_index_top($h) {

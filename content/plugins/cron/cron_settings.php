@@ -146,24 +146,22 @@ class CronSettings extends Cron
     }
     
     public function restoreCronDefaults($h) {
-	$timestamp = time();
-        $recurrence = "daily";
-        $hook = "SystemInfo:hotaru_version";
-	$args = array('timestamp' => $timestamp, 'recurrence' => $recurrence, 'hook' => $hook);
 
-	$this->cron_update_job($h, $args);
-
-	$hook = "SystemInfo:plugin_version_getAll";
-	$args = array('timestamp' => $timestamp, 'recurrence' => $recurrence, 'hook' => $hook);
-	$this->cron_update_job($h, $args);
-
-        if (SYS_FEEDBACK == 'true') {
-            $hook = "SystemInfo:hotaru_feedback";
+	    $timestamp = time();
+	    $recurrence = "daily";
+	    $hook = "SystemInfo:hotaru_version";
 	    $args = array('timestamp' => $timestamp, 'recurrence' => $recurrence, 'hook' => $hook);
-            $this->cron_update_job($h, $args);
-        }
-	
-    }
+
+	    $this->cron_update_job($h, $args);
+
+	    $hook = "SystemInfo:plugin_version_getAll";
+	    $args = array('timestamp' => $timestamp, 'recurrence' => $recurrence, 'hook' => $hook);
+	    $this->cron_update_job($h, $args);
+
+	    $hook = "SystemInfo:hotaru_feedback";
+	    $args = array('timestamp' => $timestamp, 'recurrence' => $recurrence, 'hook' => $hook);
+	    $this->cron_update_job($h, $args);
+	}  
 
 
 }
