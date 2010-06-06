@@ -77,7 +77,8 @@
 	foreach ($the_plugins as $plug) {	    
 		$alt++;
 		$info_icon = 'info_16.png';
-		if (isset($plug['latestversion'])) { if ($plug['latestversion'] > $plug['version']) $info_icon = 'info_green_16.png'; }
+		$update = false;
+		if (isset($plug['latestversion'])) { if ($plug['latestversion'] > $plug['version']) {$update=true; $info_icon = 'info_green_16.png'; }}
 		echo "<tr class='table_tr table_row_" . $alt % 2 . "'>\n";
 		echo "<td class='table_active'>" . $plug['active'] . "</td>\n";
 		echo "<td class='table_installed_plugin'>";
@@ -108,6 +109,8 @@
 			echo ": <a href='" . BASEURL . "content/plugins/" . $plug['folder'] . "/readme.txt' title='" . $h->lang["admin_theme_plugins_readme"] . "'>";
 			echo $h->lang["admin_theme_plugins_readmetxt"] . "</a>";
 		}
+
+		if ($update) echo "<br/><a href='" . BASEURL . "admin_index.php?page=plugin_management&action=update&plugin=". $plug['folder'] . "&version=" . $plug['latestversion'] . "' title=''>Update this plugin</a>";
 		echo "</td>";
 		echo "<td class='table_description_close'><a class='table_hide_details' href='#'>";
 		echo $h->lang["admin_theme_plugins_close"] . "</a></td></tr>\n";
@@ -170,7 +173,8 @@
 	foreach ($the_plugins as $plug) {
 		$alt++;
 		$info_icon = 'info_16.png';
-		if (isset($plug['latestversion'])) { if ($plug['latestversion'] > $plug['version']) $info_icon = 'info_green_16.png'; }
+		$update = false;
+		if (isset($plug['latestversion'])) { if ($plug['latestversion'] > $plug['version']) {$update = true; $info_icon = 'info_green_16.png'; }}
 		echo "<tr id='table_tr' class='table_row_" . $alt % 2 . "'>\n";
 		echo "<td class='table_uninstalled_plugin'>" . $plug['name'] . " " . $plug['version'] . "<br />\n";
 		echo "<span class='table_requires'>";
@@ -192,8 +196,9 @@
 		if (file_exists(PLUGINS . $plug['folder'] . "/readme.txt")) {
 			echo "<br />" . $h->lang["admin_theme_plugins_more_info"];
 			echo ": <a href='" . BASEURL . "content/plugins/" . $plug['folder'] . "/readme.txt' title='" . $h->lang["admin_theme_plugins_readme"] . "'>";
-			echo $h->lang["admin_theme_plugins_readmetxt"] . "</a>";
+			echo $h->lang["admin_theme_plugins_readmetxt"] . "</a>";			
 		}
+		if ($update) echo "<br/><a href='" . BASEURL . "admin_index.php?page=plugin_management&action=update&plugin=". $plug['folder'] . "&version=" . $plug['latestversion'] . "' title=''>Update this plugin</a>";
 		echo "</td>\n";
 		echo "<td class='table_description_close'><a class='table_hide_details' href='#'>";
 		echo $h->lang["admin_theme_plugins_close"] . "</a></td></tr>\n";
@@ -222,5 +227,14 @@
 	<?php $h->pluginHook('plugins_guide_bottom'); ?>
 </div>
 
+<div >
+    <br/><a href="<?php echo BASEURL ?>admin_index.php?page=plugin_management&action=version_check"><?php echo $h->lang["admin_theme_check_latest_plugin_versions"]; ?></a>
+</div>
 
 <?php $h->pluginHook('plugins_bottom'); ?>
+
+
+<?php
+
+
+?>

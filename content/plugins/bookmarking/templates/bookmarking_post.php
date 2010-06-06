@@ -77,6 +77,8 @@ $user->getUserBasic($h, $h->post->author);
             <?php $h->pluginHook('show_post_extra_fields'); ?>
         </ul>
     </div>
+    
+	<div class="clear"></div>
         
     <div class="show_post_extras">
         <?php $h->pluginHook('show_post_extras'); ?>

@@ -257,7 +257,7 @@ class PluginManagement
 		$h->deleteFiles(CACHE . 'css_js_cache');
 		
 		// Clear the language cache to ensure any new language files get included
-		$h->deleteFiles(CACHE . 'lang_cache');
+		$h->clearCache('lang_cache', false);
 		
 		// Read meta from the top of the plugin file
 		$plugin_metadata = $this->readPluginMeta($h->plugin->folder);
@@ -425,7 +425,7 @@ class PluginManagement
 		$h->deleteFiles(CACHE . 'css_js_cache');
 		
 		// Clear the language cache to ensure any new language files get included
-		$h->deleteFiles(CACHE . 'lang_cache');
+		$h->clearCache('lang_cache', false);
 		
 		$h->db->query("TRUNCATE TABLE " . TABLE_PLUGINS);
 		$h->db->query("TRUNCATE TABLE " . TABLE_PLUGINHOOKS);
@@ -448,7 +448,7 @@ class PluginManagement
 		$h->deleteFiles(CACHE . 'css_js_cache');
 		
 		// Clear the language cache to ensure any new language files get included
-		$h->deleteFiles(CACHE . 'lang_cache');
+		$h->clearCache('lang_cache', false);
 		
 		if ($upgrade == 0) { // don't delete plugin when we're upgrading
 			$h->db->query($h->db->prepare("DELETE FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $h->plugin->folder));
@@ -568,8 +568,107 @@ class PluginManagement
 		$this->uninstall($h, 1);    // 1 indicates that "upgrade" is true, used to disable the "Uninstalled" message
 		$this->install($h, 1);      // 1 indicates that "upgrade" is true.
 	}
+
 	
-	
+	/**
+	 * Update Plugins
+	 *
+	 * @param <type> $h
+	 * @param <type> $folder
+	 * @param <type> $version 
+	 */
+	public function update($h)
+	{
+		$folder = $h->plugin->folder;
+		$version= $h->cage->get->getHtmLawed('version');
+
+		//$folder = str_replace('_', '-', $folder);
+		$findfolder = str_replace('_', '-', $folder);
+
+		$version = str_replace('.', '-', $version);
+		$url = "http://hotaruplugins.com/zip/";
+		$copydir = PLUGINS . $folder . "/";
+		$file = $findfolder . "-" . $version . ".zip";
+
+		 // create a new CURL resource
+		$ch = curl_init();
+
+		// set URL and other appropriate options
+		curl_setopt($ch, CURLOPT_URL, $url . $file);
+		curl_setopt($ch, CURLOPT_HEADER, false);
+		curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+		set_time_limit(300); # 5 minutes for PHP
+		curl_setopt($ch, CURLOPT_TIMEOUT, 300); # and also for CURL
+
+		//don't fetch the actual page, you only want to check the connection is ok
+		curl_setopt($ch, CURLOPT_NOBODY, true);
+
+		$zipfile = curl_exec($ch);
+		$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+		if ($statusCode == 200) {
+
+		    if (is_writeable($copydir)) {
+
+			//reset this from above
+			curl_setopt($ch, CURLOPT_NOBODY, false);
+			$outfile = @fopen($copydir . $file, 'wb');
+			curl_setopt($ch, CURLOPT_FILE, $outfile);
+			$handle =base64_encode(curl_exec ($ch));
+			fclose($outfile);
+
+			if ($handle) {
+			    $h->messages[$file . $h->lang['admin_theme_filecopy_success']] = 'green';
+
+			    require_once(EXTENSIONS . 'pclZip/pclzip.lib.php');
+			    $archive = new PclZip($copydir . $file);
+
+			    if (($v_result_list = $archive->extract(PCLZIP_OPT_PATH, PLUGINS)) == 0) {
+				//die("Error : ".$archive->errorInfo(true));
+				$h->messages[$h->lang['admin_theme_unzip_error'] . $file] = 'red';
+			    } else {
+			      $h->messages[$file . $h->lang['admin_theme_unzip_success']] = 'green';
+			    }
+
+			    @chmod($copydir . $file,666);
+			    $deleted = @unlink($copydir . $file);
+			    if (!$deleted) {
+				$h->messages[$file . $h->lang['admin_theme_zipdelete_error']] = 'yellow';
+			    }
+
+			} else {
+			    $h->messages[$h->lang['admin_theme_filecopy_error'] . $file] = 'red';
+			}
+
+			@chmod($copydir . $file,666);
+			$deleted = @unlink($copydir . $file);
+			if (!$deleted) {
+			    //$h->messages[$file . $h->lang['admin_theme_zipdelete_error']] = 'yellow';
+			}
+
+		    } else {
+			$h->messages[$h->lang['admin_theme_filecopy_permission_error']] = 'red';
+		    }
+	    } else {
+		$h->messages[$file . $h->lang['admin_theme_fileexist_error']] = 'red';
+	    }
+	     curl_close($ch);
+	}
+
+
+	public function versionCheck($h)
+	{
+		$systeminfo = New SystemInfo();
+		$result = $systeminfo->plugin_version_getAll($h);
+		if ($result) {
+		    $h->messages[$h->lang['admin_theme_version_check_completed']] = 'green';
+		} else {
+		     // $h->messages[$h->lang['admin_theme_need_cron']] = 'red';
+		}
+	}
+
 	/**
 	 * Enables or disables a plugin, installing if necessary
 	 *

@@ -90,15 +90,17 @@ $lang["install_step1_dbname_error"] = "There was a problem with the database nam
 $lang["install_step1_dbprefix_error"] = "There was a problem with the database prefix";
 $lang["install_step1_dbhost_error"] = "There was a problem with the database host";
 
-$lang["install_step1_settings_file_already_exists"] = "There is already a Hotaru settings file on your server. If you press 'update' your existing file will be overwritten.";
+$lang["install_step1_settings_file_already_exists"] = "There is already a Hotaru settings file on your server. If you press 'update' your existing file will be updated with the settings above.";
 $lang["install_step1_settings_db_already_exists"] = "There is already a Hotaru database on your server with live tables. If you press 'Next' your entire database will be wiped clean. Proceed with caution.";
 $lang["install_step1_update_file_writing_success"] = "The 'hotaru_settings' file was created.";
 $lang["install_step1_update_file_writing_failure"] = "There was a problem creating the 'hotaru_settings' file.";
+$lang["install_step1_no_db_exists_failure"] = "The database does not exist or the connection settings are incorrect.";
 
 
 /* Install Step 3 */
 $lang["install_step2"] = "Step 2/4: Create Database Tables";
 $lang["install_step2_creating_table"] = "Creating table";
+$lang["install_step2_deleting_table"] = "Deleting existing tables";
 $lang["install_step2_already_exists"] = "It seems there are already tables for Hotaru CMS in the database.";
 $lang["install_step2_continue"] = "Click \"Next\" to continue.";
 $lang["install_step2_rebuild_note"] = "<i>Note</i>: If you'd like to start fresh, ";

@@ -1491,7 +1491,7 @@ class Hotaru
 	public function clearCache($folder = '', $msg = true)
 	{
 		$maintenance = new Maintenance();
-		$maintenance->clearCache($this, $folder, $msg);
+		return $maintenance->clearCache($this, $folder, $msg);
 	}
 	
 	
@@ -2028,7 +2028,7 @@ class Hotaru
 	function deleteCategory($delete_category = 0)
 	{
 		$category = new Category();
-		return $category->deleteCategories($this, $delete_category);
+		return $category->deleteCategory($this, $delete_category);
 	}
 
 

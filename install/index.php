@@ -90,6 +90,9 @@ switch ($step) {
 			setcookie("hotaru_key", "", time()-3600, "/");
 			
 			// database setup (DB name, user, password, prefix...)
+			// use this direct call instead of $db = init_database() because db may not exist yet. We need to check and control the response
+			$db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
+
 			if ($cage->get->getAlpha('type') == 'manual') { database_setup_manual(); } else { database_setup(); }
 		}
 		break;
@@ -219,21 +222,22 @@ function installation_welcome()
  */
 function database_setup() {
 	global $lang;   //already included so Hotaru can't re-include it
-	//global $db;
+	global $db;
 	global $h;
         global $cage;
         global $settings_file_exists;
 
 	//$h  = new Hotaru(); // overwrites current global with fully initialized Hotaru object
+	$show_next = false;
 
 	if ($cage->post->KeyExists('updated')) {
 
 	    $error = 0;
 	    // Test CSRF
-	    if (!$h->csrf()) {
-		    $h->messages[$lang['install_step3_csrf_error']] = 'red';
-		    $error = 1;
-	    }
+//	    if (!$h->csrf('check', 'index')) {
+//		    $h->messages[$lang['install_step3_csrf_error']] = 'red';
+//		    $error = 1;
+//	    }
 
 	    // Test baseurl
 	    $baseurl_name = $cage->post->testUri('baseurl');
@@ -281,12 +285,14 @@ function database_setup() {
             if ($settings_file_exists) {
                 $dbuser_name = DB_USER;
                 $dbname_name = DB_NAME;
+		$dbpassword_name = DB_PASSWORD;
                 $dbprefix_name = DB_PREFIX;
                 $dbhost_name = DB_HOST;
                 $baseurl_name = BASEURL;
             } else {
                 $dbuser_name = 'admin';
                 $dbname_name = 'hotaru';
+		$dbpassword_name = '';
                 $dbprefix_name = 'hotaru_';
                 $dbhost_name = 'localhost';
                 $baseurl_name = "http://"; // . $cage->server->sanitizeTags('HTTP_HOST') . "/";
@@ -300,11 +306,7 @@ function database_setup() {
 		    $fputs = create_new_settings_file($dbuser_name, $dbpassword_name, $dbname_name, $dbprefix_name, $dbhost_name, $baseurl_name);
 		    // if file written successfully then
 		    if ($fputs) {
-			$h->messages[$lang['install_step1_update_file_writing_success']] = 'green';
-			// Check whether database and tables exist on this server
-			$sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
-			$old_version = $h->db->get_var($h->db->prepare($sql, "hotaru_version"));
-			if ($old_version) $database_exists = true;
+			$h->messages[$lang['install_step1_update_file_writing_success']] = 'green';					
 			// if yes set warning message var
 		    } else {
 			$h->messages[$lang['install_step1_update_file_writing_failure']] = 'red';
@@ -313,11 +315,20 @@ function database_setup() {
                 @chmod(SETTINGS,0644);
 	}
 
+	// Check whether database and tables exist on this server
+	$db->show_errors = false;
+	$database_exists = $db->quick_connect($dbuser_name, $dbpassword_name, $dbname_name, $dbhost_name);
+	if (!$database_exists) {
+	    $h->messages[$lang['install_step1_no_db_exists_failure']] = 'red';
+	} else {
+	    $show_next = true;
+	    $table_exists = $db->table_exists(DBPREFIX . 'miscdata');	    
+	}
 
 	// Try to write the /hotaru_settings.php file to disk
 	//
         @chmod(SETTINGS,0777);
-        
+
 	$settings_file_writeable =  is_writeable(SETTINGS);
 
 	if ($settings_file_writeable) {
@@ -351,7 +362,7 @@ function database_setup() {
 	    echo "<tr><td>" . $lang["install_step1_dbuser"] . "&nbsp; </td><td><input type='text' size=30 name='dbuser' value='" . $dbuser_name . "' />&nbsp;<small>" . $lang["install_step1_dbuser_explain"] . "</small></td></tr>\n";
 
 	    // DB_PASSWORD
-	    echo "<tr><td>" . $lang["install_step1_dbpassword"] . "&nbsp; </td><td><input type='password' size=30 name='dbpassword' value='' />&nbsp;<small>" . $lang["install_step1_dbpassword_explain"] . "</small></td></tr>\n";
+	    echo "<tr><td>" . $lang["install_step1_dbpassword"] . "&nbsp; </td><td><input type='password' size=30 name='dbpassword' value='" . $dbpassword_name . "' />&nbsp;<small>" . $lang["install_step1_dbpassword_explain"] . "</small></td></tr>\n";
 
 	    // DB_NAME
 	    echo "<tr><td>" . $lang["install_step1_dbname"] . "&nbsp; </td><td><input type='text' size=30 name='dbname' value='" . $dbname_name . "' />&nbsp;<small>" . $lang["install_step1_dbname_explain"] . "</small></td></tr>\n";
@@ -373,13 +384,13 @@ function database_setup() {
 	    echo "</table>";
 	    echo "</form>\n";
 
-	    if (SETTINGS) {
+	    if ($cage->post->getAlpha('updated') != 'true' && SETTINGS) {
 		// Alert if Settings file already exists
 		echo "<br/><img align='center' src='../content/admin_themes/admin_default/images/delete.png' style='float:left;'>";
 		echo $lang["install_step1_settings_file_already_exists"] . "</div><br/>";
 	    }
 
-	    if (isset($database_exists)) {
+	    if (isset($table_exists) && ($table_exists)) {
 		// Alert if database already exists
 		echo "<br/><img align='center' src='../content/admin_themes/admin_default/images/delete.png' style='float:left;'>";
 		echo $lang["install_step1_settings_db_already_exists"] . "</div><br/>";
@@ -387,11 +398,12 @@ function database_setup() {
 
 	    // Previous/Next buttons
 	    echo "<div class='back button''><a href='index.php?step=0'>" . $lang['install_back'] . "</a></div>\n";
-	    if ($cage->post->getAlpha('updated') == 'true' && isset($fputs)) {
-		    // active "next" link if settings file has been created
+	    
+	    if ($show_next) {
+	    // and if db was connected ok
 		    echo "<div class='next button''><a href='index.php?step=2'>" . $lang['install_next'] . "</a></div>\n";
 	    } else {
-		    // link disbaled until "update" button pressed
+		    // link disbaled
 		    echo "<div class='next button''>" . $lang['install_next'] . "</div>\n";
 	    }
 
@@ -440,7 +452,7 @@ function database_setup_manual()
 }
 
 /**
- * Step 1 of Upgrade - update database tables
+ * Step 2 of Upgrade - update database tables
  */
 function database_upgrade()
 {
@@ -462,11 +474,7 @@ function database_creation()
 	global $lang;
 	global $db;
 	global $cage;
-
-        //@TODO this query throws an error for first time installations. need to test for existence without showing error to user
-	$sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
-	$old_version = $db->get_results($db->prepare($sql, "hotaru_version"));
-        
+       
 	$delete = $cage->get->getAlpha('del');        // Confirm delete.
 	$show_next = false;
 
@@ -475,7 +483,7 @@ function database_creation()
 	// Step title
 	echo "<h2>" . $lang['install_step2'] . "</h2>\n";
 	
-	if ($old_version && $delete != 'DELETE') {
+	if ($table_exists && $delete != 'DELETE') {
 		// Warning message
 		echo "<br/><img align='center' src='../content/admin_themes/admin_default/images/delete.png' style='float:left;'>";
 		echo "<div class='install_content'><span style='color: red;'>" . $lang['install_step1_warning'] . "</span>: " . $lang['install_step2_existing_db'] . "</div>\n";
@@ -494,17 +502,18 @@ function database_creation()
 		echo "<a href='?step=1&action=upgrade'>" . $lang['install_step2_existing_go_upgrade2'] . "</a></div>\n";
 	}
 	else {	   
-	    // delete existing cache
-	    delete_files(CACHE . 'db_cache');
-	    delete_files(CACHE . 'css_js_cache');
-	    delete_files(CACHE . 'rss_cache');
-
+	    
 	    $tables = array('blocked', 'categories', 'comments', 'commentvotes', 'friends', 'messaging', 'miscdata', 'plugins', 'pluginhooks', 'pluginsettings', 'posts', 'postmeta', 'postvotes', 'settings', 'site', 'tags', 'tempdata', 'tokens', 'users', 'usermeta', 'useractivity', 'widgets');
 
-	    // delete *all* plugin tables:
-	    $plugin_tables = list_plugin_tables($tables);
-	    foreach ($plugin_tables as $pt) {
-		    drop_table($pt); // table name
+	    // delete *all* tables in db:
+	    $db->selectDB(DB_NAME);
+
+	    if ($db->get_col("SHOW TABLES",0)) {
+		foreach ( $db->get_col("SHOW TABLES",0) as $table_name )
+		{
+			drop_table($table_name); // table name
+		}
+		echo $lang['install_step2_deleting_table'] . "'...<br /><br />\n";
 	    }
 
 	    //create tables
@@ -516,7 +525,7 @@ function database_creation()
 	    echo "<div class='install_content'>" . $lang['install_step2_success'] . "</div>\n";
 
 	    $show_next = true;
-	}	
+	}
 
 	// Previous/Next buttons
 	echo "<div class='back button''><a href='index.php?step=1'>" . $lang['install_back'] . "</a></div>\n";
@@ -538,8 +547,7 @@ function database_creation()
 function register_admin()
 {
 	global $lang;   //already included so Hotaru can't re-include it
-	global $db;
-	global $h;
+	global $db;	
 
 	$h  = new Hotaru(); // overwrites current global with fully initialized Hotaru object
 
@@ -699,8 +707,7 @@ function register_admin()
 function installation_complete()
 {
 	global $lang;
-	global $cage;
-	global $h;
+	global $cage;	
 
 	$h  = new Hotaru(); // overwrites current global with fully initialized Hotaru object
 	
@@ -715,6 +722,12 @@ function installation_complete()
 	    $folder_deleted = 2;
 	    // if was deleted then redirect to baseurl
 	    if ($folder_deleted == 1) header("Location: /index.php" );
+	}
+
+	if (!$delete && !$phpinfo) {
+	    //send feedback report	    
+	    $systeminfo = new SystemInfo();
+	    $systeminfo->hotaru_feedback($h);
 	}
 
 	echo html_header();
@@ -798,8 +811,13 @@ function upgrade_plugins()
 
 	echo "<br/><div class='install_content'>" . $lang['upgrade_step3_details'] . "<br/><br/>\n";
 
-//	plugin_version_getAll($h);
-//
+	//send feedback report
+	$systeminfo = new SystemInfo();
+	$systeminfo->hotaru_feedback($h);
+
+	//refresh database to get all recent plugin versions
+	$systeminfo->plugin_version_getAll($h);
+	
 //	$plugins = $h->allPluginDetails;
 //
 //	foreach ($plugins as $plugin) {
@@ -824,53 +842,6 @@ function upgrade_plugins()
 }
 
 /**
- *
- * @param <type> $h
- */
-function plugin_version_getAll($h) {
-    $query_vals = array(
-	'api_key' => '',
-	'format' => 'json',
-	'method' => 'hotaru.plugin.version.getAll'
-    );
-
-     $info = sendApiRequest($h, $query_vals);
-
-    // save the updated version number to the local db so we can display it on the admin panel until it gets updated.
-    $sql = "SELECT plugin_id, plugin_name, plugin_latestversion FROM " . TABLE_PLUGINS;
-    $plugins = $h->db->get_results($h->db->prepare($sql));
-
-    foreach ($plugins as $plugin) {
-	if (array_key_exists($plugin->plugin_name, $info)) {
-	    $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_latestversion = %s WHERE (plugin_id = %d)";
-	    $h->db->query($h->db->prepare($sql, $info[$plugin->plugin_name], $plugin->plugin_id));
-	    //print $plugin->plugin_name . ' ' . $info[$plugin->plugin_name] . '<br/>';
-	}
-    }
-}
-
-function sendApiRequest($h, $query_vals) {
-
-    // Generate the POST string
-    $ret = '';
-    foreach($query_vals as $key => $value) {
-	$ret .= $key.'='.urlencode($value).'&';
-    }
-
-    $ret = rtrim($ret, '&');
-
-    $ch = curl_init("http://api.hotarucms.org/index.php?page=api");
-    curl_setopt($ch, CURLOPT_HEADER, 0);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $ret);
-    $response = curl_exec($ch);
-    curl_close ($ch);
-
-   return json_decode($response, true);
-}
-
-
-/**
  * create new settings file
  */
 function create_new_settings_file($dbuser_name, $dbpassword_name, $dbname_name, $dbprefix_name, $dbhost_name, $baseurl_name) {
@@ -879,32 +850,10 @@ function create_new_settings_file($dbuser_name, $dbpassword_name, $dbname_name, 
 
    ?>
 
-/**
- * Configuration file for Hotaru CMS.
- *
- * PHP version 5
- *
- * LICENSE: Hotaru CMS is free software: you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of
- * the License, or (at your option) any later version.
- *
- * Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.
- *
- * You should have received a copy of the GNU General Public License along
- * with Hotaru CMS. If not, see http://www.gnu.org/licenses/.
- *
- * @category  Content Management System
- * @package   HotaruCMS
- * @author    Nick Ramsay <admin@hotarucms.org>
- * @copyright Copyright (c) 2009, Hotaru CMS
- * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
- * @link      http://www.hotarucms.org/
- */
+/* Configuration file for Hotaru CMS. */
 
-// EDIT THE FOLLOWING ONLY
+// Paths
+define('BASEURL', "<?php echo $baseurl_name; ?>");    // e.g. http://www.mysite.com/    Needs trailing slash (/)
 
 // Database details
 define("DB_USER", '<?php echo $dbuser_name; ?>');          			// Add your own database details
@@ -912,35 +861,14 @@ define("DB_PASSWORD", '<?php echo $dbpassword_name; ?>');
 define("DB_NAME", '<?php echo $dbname_name; ?>');
 define("DB_HOST", '<?php echo $dbhost_name; ?>');     			// You probably won't need to change this
 
+// You probably don't need to change these
 define("DB_PREFIX", '<?php echo $dbprefix_name; ?>');     			// Database prefix, e.g. "hotaru_"
 define("DB_LANG", 'en');            			// Database language, e.g. "en"
 define("DB_ENGINE", 'MyISAM');					// Database Engine, e.g. "MyISAM"
 define('DB_CHARSET', 'utf8');					// Database Character Set (UTF8 is Recommended), e.g. "utf8"
 define("DB_COLLATE", 'utf8_unicode_ci');		// Database Collation (UTF8 is Recommended), e.g. "utf8_unicode_ci"
 
-// Paths
-define('BASEURL', "<?php echo $baseurl_name; ?>");    // e.g. http://www.mysite.com/
-
-                                                // Needs trailing slash (/)
-
-// DON'T EDIT ANYTHING BEYOND THIS POINT
-
-// define shorthand paths
-define("BASE", dirname(__FILE__). '/');
-define("ADMIN", dirname(__FILE__).'/admin/');
-define("CACHE", dirname(__FILE__). '/cache/');
-define("INSTALL", dirname(__FILE__).'/install/');
-define("LIBS", dirname(__FILE__).'/libs/');
-define("EXTENSIONS", dirname(__FILE__).'/libs/extensions/');
-define("FUNCTIONS", dirname(__FILE__).'/functions/');
-define("THEMES", dirname(__FILE__).'/content/themes/');
-define("PLUGINS", dirname(__FILE__).'/content/plugins/');
-define("ADMIN_THEMES", dirname(__FILE__).'/content/admin_themes/');
-
-
-?>
-
-<?php
+?><?php  // leave this line squashed up here as we dont want any blank lines at the end of the hotaru_settings file
    $page = "<?php" . ob_get_contents();
    ob_end_clean();
    $page = str_replace("\n", "", $page);
@@ -956,4 +884,7 @@ define("ADMIN_THEMES", dirname(__FILE__).'/content/admin_themes/');
 
 }
 
+function add_DBPREFIX($table) {   
+    return DB_PREFIX . $table;
+}
 ?>

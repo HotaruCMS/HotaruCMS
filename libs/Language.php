@@ -47,14 +47,14 @@ class Language
 			}
 			
 			// include language file
-			include_once(BASE . 'content/' . $pack . '_language.php');
+			include(BASE . 'content/' . $pack . '_language.php');
 
 			// add to list of included language files
 			$lang_array['files'][$file] = true;
 		}
-		
+
 		// Add new language to our lang property
-		if (isset($lang)) {
+		if (isset($lang) && !empty($lang)) {
 			foreach($lang as $l => $text) {
 				$lang_array[$l] = $text;
 			}
@@ -185,7 +185,7 @@ class Language
 		
 		$cache_length = $timeout*60;   // seconds
 		$cache = CACHE . 'lang_cache/';
-		$file = $cache . "language.cache";
+		$file = $cache . "language.php";
 		
 		if (file_exists($file)) {
 			$last_modified = filemtime($file);
@@ -195,11 +195,13 @@ class Language
 				return false;
 			} else {
 				include($file);
-				return ($lang) ? $lang : false; // file exists and the language array has been included
+				if (isset($lang) && !empty($lang)) {
+					return $lang; // file exists and the language array has been included
+				}
 			}
-		} else {
-			return false;
 		}
+		
+		return false;
 	}
 	
 	
@@ -264,14 +266,14 @@ class Language
 
 		// If doesn't exist, create a new file
 		$cache = CACHE . 'lang_cache/';
-		$file = $cache . "language.cache";
+		$file = $cache . "language.php";
 		$fh = fopen($file, 'w+') or die("Sorry, I can't open " . $file);
 		if (flock($fh, LOCK_EX)) { // do an exclusive lock
 			ftruncate($fh, 0);  // truncate file
 			fwrite($fh, '<?php' . "\r\n");
 			fwrite($fh, '$lang = ');
 			fwrite($fh, var_export($h->lang, true));
-			fwrite($fh, '?>' . "\r\n");
+			fwrite($fh, '; ?>' . "\r\n");
 			flock($fh, LOCK_UN); // release the lock
 		} else {
 			echo "Couldn't get the lock for the language cache!";

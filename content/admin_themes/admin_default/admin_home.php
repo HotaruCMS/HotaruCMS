@@ -51,7 +51,20 @@
 <td id='right'>
 	<h2><?php echo SITE_NAME . " " . $h->lang["admin_theme_main_stats"]; ?></h2>
 	<ul id="site-stats">
-		<li>Hotaru CMS v.<?php echo $h->version; ?></li>
+		<li>Hotaru CMS <?php echo $h->version; ?></li>
+
+		<?php
+
+		    $sql = "SELECT miscdata_value as latest_version FROM " . TABLE_MISCDATA ." WHERE miscdata_key = %s";
+		    $query = $h->db->get_row($h->db->prepare($sql, 'hotaru_latest_version'));
+		    if ($query) {			
+			$hotaru_latest_version = $query->latest_version;
+			if (version_compare($hotaru_latest_version, $h->version) > 0) {
+			    echo "<li><a href='http://hotarucms.org/forumdisplay.php?23-Download-Hotaru-CMS'>" . $h->lang['admin_theme_version_update_to'] .  $hotaru_latest_version . "</a></li>";
+			}
+		    }
+		?>       
+
 		<?php $h->pluginHook('admin_theme_main_stats_post_version'); ?>
 		<?php $h->pluginHook('admin_theme_main_stats', 'users', array('Summary' => array('total_users', 'admins', 'supermods', 'moderators'))); ?>
 		<?php $h->pluginHook('admin_theme_main_stats', 'users', array('Users' => array('approved_users', 'undermod_users', 'pending_users', 'banned_users', 'killspammed_users'))); ?>

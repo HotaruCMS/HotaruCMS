@@ -256,4 +256,32 @@ $lang["admin_theme_404_page_not_found"] = "Page not found.";
 /* Account */
 $lang["admin_theme_account"] = "Account";
 
+
+$lang["admin_theme_header_admin"] = "ADMIN";
+$lang["admin_theme_header_hotarucms"] = "Hotaru CMS ";
+$lang["admin_theme_menu_admin_home"] = "Admin Home";
+$lang["admin_theme_menu_site_home"] = "Site Home";
+$lang["admin_theme_menu_hotaru_forums"] = "Hotaru Forums";
+$lang["admin_theme_menu_help"] = "Documentation";
+$lang["admin_theme_menu_logout"] = "Logout";
+
+/* zip files */
+$lang["admin_theme_filecopy_error"] = "There was an error trying to copy ";
+$lang["admin_theme_filecopy_success"] = " was copied succesfully";
+$lang["admin_theme_unzip_error"] = "There was an error trying to unzip ";
+$lang["admin_theme_unzip_success"] = " was unzipped succesfully";
+$lang["admin_theme_fileexist_error"] = " file could not be found on plugin server";
+$lang["admin_theme_zipdelete_error"] = " file could not be deleted from plugin folder";
+$lang["admin_theme_filecopy_permission_error"] = "The files could not be copied due to a permissions error.<br/>You might want to ask your server admin about enabling SuExec on your server";
+
+
+$lang["admin_theme_need_cron"] = "You need the 'cron' plugin installed to use this feature";
+$lang["admin_theme_check_latest_plugin_versions"] = "Check for latest plugin versions.";
+$lang["admin_theme_version_check_completed"] = "The version numbers have been updated";
+
+$lang["admin_theme_version_latest_version_installed"] = "Latest version installed";
+$lang["admin_theme_version_update_to"] = "Update to ";
+
+
+
 ?>

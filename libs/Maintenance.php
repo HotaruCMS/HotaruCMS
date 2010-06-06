@@ -35,11 +35,27 @@ class Maintenance
 	 *
 	 * @param string $folder - path to the cache folder
 	 * @param string $msg - show "cleared" message or not
+	 * @return bool $success
 	 */
 	public function clearCache($h, $folder, $msg = true)
 	{
+		// clear language from memory (lang_cache only)
+		if ($folder == 'lang_cache') { $h->lang = array(); }
+		
+		// go delete the files
 		$success = $this->deleteFiles(CACHE . $folder);
-		if (!$msg) { return true; }
+		
+		// lang_cache only:
+		if ($folder == 'lang_cache') { 
+			$langObj = new Language();
+			$h->lang = $langObj->includeLanguagePack($h->lang, 'main');
+			$h->lang = $langObj->includeLanguagePack($h->lang, 'admin');
+		}
+		
+		// no need to show a message, return now
+		if (!$msg) { return $success; }
+		
+		// prepare messages
 		if ($success) {
 			$h->message = $h->lang['admin_maintenance_clear_cache_success'];
 			$h->messageType = 'green';
@@ -47,6 +63,9 @@ class Maintenance
 			$h->message = $h->lang['admin_maintenance_clear_cache_failure'];
 			$h->messageType = 'red';    
 		}
+		
+		// return boolean result
+		return $success;
 	}
 	
 	
@@ -104,7 +123,8 @@ class Maintenance
 		
 		$success = false;
 		while (($file = readdir($handle))!==false) {
-			if ($file != 'placeholder.txt') {
+		    if (is_file($dir.'/'.$file)) {
+			if ($file != 'placeholder.txt') { 
 				if (@unlink($dir.'/'.$file)) {
 					// ignore setting $success for the JavascriptConstants file which is ALWAYS present (even gets regenerated after deletion)
 					if ($file != 'JavascriptConstants.js') { $success = true; }
@@ -112,6 +132,7 @@ class Maintenance
 					$success = false;
 				}
 			}
+		    }
 		}
 		closedir($handle);
 		return $success;

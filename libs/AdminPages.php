@@ -158,12 +158,12 @@ class AdminPages
 			if ($h->cage->post->keyExists('SYS_FEEDBACK') == 'true' ) {
 				$timestamp = time();
 				$recurrence = "daily";
-				$hook = "cron_hotaru_feedback";
+				$hook = "SystemInfo:hotaru_feedback";
 				$cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook);
 				$h->pluginHook('cron_update_job', 'cron', $cron_data);
 			}
 			else {
-				$hook = "cron_hotaru_feedback";
+				$hook = "SystemInfo:hotaru_feedback";
 				$cron_data = array('hook'=>$hook);
 				$h->pluginHook('cron_delete_job', 'cron', $cron_data);
 			}
@@ -269,7 +269,7 @@ class AdminPages
 			echo nl2br($debug_contents);
 			exit; 
 		}
-		        
+		
 		// check if we're performing an action
 		$action = $h->cage->get->testAlnumLines('action');
 		
@@ -443,7 +443,15 @@ class AdminPages
 				break;    
 			case "orderdown":
 				$plugman->pluginOrder($h, $order, "down");
-				break;    
+				break;
+			case "update":
+				$plugman->activateDeactivate($h, 0);
+				$plugman->update($h);
+				$plugman->activateDeactivate($h, 1);
+				break;
+			case "version_check":
+				$plugman->versionCheck($h);
+				break;
 			default:
 				// nothing to do here...
 				break;

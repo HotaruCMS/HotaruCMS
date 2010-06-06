@@ -31,10 +31,16 @@
 
 
 <ul id="sidebar" class='accordion <?php echo $h->vars['admin_sidebar_layout']; ?>'>
-	<li><a class="home" href="<?php echo $h->url(array(), 'admin'); ?>"><?php echo $h->lang["admin_theme_main_admin_home"]; ?></a></li>
-	<?php if ($h->currentUser->loggedIn == true) { ?>
-		<li><a href="<?php echo BASEURL; ?>admin_index.php?page=admin_account"><?php echo $h->lang["admin_theme_account"]; ?></a></li>
-	<?php } ?>
+	<li>
+<?php
+	     if($h->isActive('avatar')) {
+                    $h->setAvatar($h->currentUser->id, 16);
+					echo $h->linkAvatar();
+                }
+?>
+
+&nbsp;<a href="<?php echo BASEURL; ?>admin_index.php?page=admin_account"><?php echo $h->lang["admin_theme_account"]; ?></a></li>
+	
 	<li><a href="<?php echo BASEURL; ?>admin_index.php?page=settings"><?php echo $h->lang["admin_theme_settings"]; ?></a></li>
 	<li><a href="<?php echo BASEURL; ?>admin_index.php?page=maintenance"><?php echo $h->lang["admin_theme_maintenance"]; ?></a></li>
 	<li><a href="<?php echo BASEURL; ?>admin_index.php?page=blocked"><?php echo $h->lang["admin_theme_blocked_list"]; ?></a></li>
