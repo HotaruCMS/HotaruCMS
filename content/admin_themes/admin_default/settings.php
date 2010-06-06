@@ -59,7 +59,14 @@ $loaded_settings = $h->vars['admin_settings'];
 		
 		?>
 			<tr>
-			<td><?php echo $name; ?>: </td>
+			<td>
+			    <?php
+			    if (strpos($name, 'CACHE')) {echo "<a href='" . BASEURL . "/admin_index.php?page=maintenance'>" . $name . "</a>"; }
+			    elseif ($name == 'THEME') {echo "<a href='" . BASEURL . "admin_index.php?page=theme_settings&theme=" . $ls->settings_value . "'>" . $name . "</a>"; }
+			    else
+				echo $name;
+			    ?>:
+			</td>
 			<td>
 				<?php
 				if ( $ls->settings_value == 'true' || $ls->settings_value == 'false' ) {
