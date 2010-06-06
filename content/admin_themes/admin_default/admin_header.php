@@ -58,7 +58,7 @@
             	<div class="adm-header-title">
                     <img class="adm-header-logo" src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/hotaru-80px.png"/>
             		<div class="adm-header-verion"><?php echo $h->lang["admin_theme_header_hotarucms"]; ?><?php echo $h->version; ?></div>
-			<div class="adm-header-admin"><?php echo $h->lang["admin_theme_header_admin"]; ?></div>
+			<div class="adm-header-admin"><a href="<?php echo $h->url(array(), 'admin'); ?>"><?php echo $h->lang["admin_theme_header_admin"]; ?></a></div>
             	</div>
             	<div class="adm-top-menu">		    
 		    <div class="adm-tm-item">
