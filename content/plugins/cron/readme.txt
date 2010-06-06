@@ -15,6 +15,7 @@ Instructions
 
 Changelog
 ---------
+v.0.4 2010/06/07 - shibuya246 - Maintain settings when reinstall plugin. Provide way to flush all jobs from settings page
 v.0.3 2010/06/04 - shibuya246 - Change path of api request, add language file, new version check for Hotaru
 v.0.2 2010/05/15 - shibuya246 - Added plugin version update job
 v.0.1 2010/03/21 - shibuya246 - Released first version

@@ -26,10 +26,22 @@ class CronSettings extends Cron
 {
 	public function settings($h)
 	{
+	    echo "<h1>" . $h->lang["cron_settings_header"] . "</h1>";
+
+	     // If the form has been submitted, go and save the data...
+	    if ($h->cage->post->getAlpha('flush') == 'true') {
+		$this->flushCronJobs($h);
+	    }
+	    
+	    // If the form has been submitted, go and save the data...
+	    if ($h->cage->post->getAlpha('restore') == 'true') {
+		$this->restoreCronDefaults($h);
+	    }
+
+
+
             //Get the settings from the database and put them in an array
             $cron_settings = $h->getSetting('cron_settings');
-            //$cron_settings = unserialize($sitemap_settings);
-            //$cron = $this->_get_cron_array($h);
 
             $cron = $this->_get_cron_array($h);
 
@@ -47,32 +59,27 @@ class CronSettings extends Cron
                 }
             }
 
-//            echo "<pre>";
-//            print_r($cron);
-//            echo "</pre>";
             $schedules = $this->cron_get_schedules($h);
             $date_format =  'M j, Y @ G:i';
             ?>
+                            
 
-            <div class="wrap" id="cron-gui">
-                <div id="icon-tools" class="icon32"><br /></div>
-                <h2>What's in Cron?</h2>
-
-                <h3>Available schedules</h3>
-                <ul>
+                <h3><?php echo $h->lang["cron_settings_available_schedules"]; ?></h3>
+                <ul class="cron_schedules">
                     <?php foreach( $schedules as $schedule ) { ?>
-                            <li><strong><?php echo $schedule[ 'display' ]; ?></strong></li>
+                            <li><strong><?php echo $schedule[ 'display' ]; ?></strong>, </li>
                     <?php } ?>
                 </ul>
+		<br class="clearall"/>
 
-                <h3>Events</h3>
+                <h3><?php echo $h->lang["cron_settings_events"]; ?></h3>
                 <table class="widefat fixed">
                     <thead>
                         <tr>
-                            <th scope="col">Next due (GMT/UTC)</th>
-                            <th scope="col">Schedule</th>
-                            <th scope="col">Hook</th>
-                            <th scope="col">Arguments</th>
+                            <th scope="col"><?php echo $h->lang["cron_settings_table_nextdue"]; ?></th>
+                            <th scope="col"><?php echo $h->lang["cron_settings_table_schedule"]; ?></th>
+                            <th scope="col"><?php echo $h->lang["cron_settings_table_hooks"]; ?></th>
+                            <th scope="col"><?php echo $h->lang["cron_settings_table_args"]; ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -107,10 +114,58 @@ class CronSettings extends Cron
                         } ?>
                     </tbody>
                 </table>
-            </div>
-    <?php
+
+
+		<?php
+
+		// Form 1 - flush cron jobs
+		echo "<form name='ping_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=cron' method='post'>";
+
+		echo "<br /><br />";
+		echo "<input type='hidden' name='flush' value='true' />";
+		echo "<input type='submit' value='" . $h->lang["cron_button_flush_all"] . "' />";
+		echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />";
+		echo "</form>";
+
+		// Form 2 - cron defaults
+		echo "<form name='ping_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=cron' method='post'>";
+
+		
+		echo "<input type='hidden' name='restore' value='true' />";
+		echo "<input type='submit' value='" . $h->lang["cron_button_reset_defaults"] . "' />";
+		echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />";
+		echo "</form>";
+
     }
-      
+
+
+    public function flushCronJobs($h) {
+	$h->updateSetting('cron_settings', '');
+	$h->vars['cron_settings'] ='';
+	$crons = $this->_get_cron_array($h);
+    }
+    
+    public function restoreCronDefaults($h) {
+	$timestamp = time();
+        $recurrence = "daily";
+        $hook = "SystemInfo:hotaru_version";
+	$args = array('timestamp' => $timestamp, 'recurrence' => $recurrence, 'hook' => $hook);
+
+	$this->cron_update_job($h, $args);
+
+	$hook = "SystemInfo:plugin_version_getAll";
+	$args = array('timestamp' => $timestamp, 'recurrence' => $recurrence, 'hook' => $hook);
+	$this->cron_update_job($h, $args);
+
+        if (SYS_FEEDBACK == 'true') {
+            $hook = "SystemInfo:hotaru_feedback";
+	    $args = array('timestamp' => $timestamp, 'recurrence' => $recurrence, 'hook' => $hook);
+            $this->cron_update_job($h, $args);
+        }
+	
+    }
+
+
 }
 ?>
 
