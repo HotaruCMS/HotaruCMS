@@ -645,6 +645,22 @@ function do_upgrade($h, $old_version)
 	    // Version Info Auto Update
 	    $sql = "UPDATE  " . TABLE_SETTINGS . " SET settings_note = %s, settings_name = %s WHERE settings_name = %s";
 	    $h->db->query($h->db->prepare($sql, 'Hotaru updates', 'SYS_UPDATES', 'SYS_FEEDBACK'));
+
+	    // RELATES TABLE
+	    if (!$exists = $h->db->table_exists('relates')) {
+		//echo "table doesn't exist. Stopping before creation."; exit;
+		$sql = "CREATE TABLE `" . DB_PREFIX .  "relates` (
+			`relates_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+			`relates_user_id` int(20) NOT NULL default '0',
+			`relates_post_id` int(20) NOT NULL default '0',
+			`relates_type` varchar(64) default '',
+			`relates_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			INDEX  (`relates_user_id`),
+			INDEX  (`relates_post_id`),
+			INDEX  (`relates_type`)
+		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Relates';";		
+		$h->db->query($sql);
+	    }
 		
 	}
 

@@ -357,7 +357,27 @@ function create_table($table_name)
 		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql); 
 	} 
-	
+
+
+	// RELATES TABLE
+
+		if ($table_name == "relates") {
+		//echo "table doesn't exist. Stopping before creation."; exit;
+		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
+			`relates_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+			`relates_user_id` int(20) NOT NULL default '0',
+			`relates_post_id` int(20) NOT NULL default '0',
+			`relates_type` varchar(64) default '',
+			`relates_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			INDEX  (`relates_user_id`),
+			INDEX  (`relates_post_id`),
+			INDEX  (`relates_type`)
+		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Relates';";
+		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
+		$db->query($sql);
+		}
+
+
 	
 	// SETTINGS TABLE
 	
