@@ -458,11 +458,8 @@ function create_table($table_name)
 		
 		// Sys Feedback
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'SYS_FEEDBACK', 'true', 'true', 'send system report'));
+		$db->query($db->prepare($sql, 'SYS_UPDATES', 'true', 'true', 'Hotaru updates'));
 
-		// Version Info Auto Update
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'VERSION_INFO', 'true', 'true', 'auto-update version info'));
 	}
 	
 	

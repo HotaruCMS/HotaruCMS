@@ -643,8 +643,8 @@ function do_upgrade($h, $old_version)
 	if ($old_version == "1.3.0") {
 
 	    // Version Info Auto Update
-	    $sql = "INSERT IGNORE INTO " . TABLE_SETTINGS . " SET settings_name = %s, settings_value = %s, settings_default = %s, settings_note = %s";
-	    $h->db->query($h->db->prepare($sql, 'VERSION_INFO', 'true', 'true', 'auto-update version info'));
+	    $sql = "UPDATE  " . TABLE_SETTINGS . " SET settings_note = %s, settings_name = %s WHERE settings_name = %s";
+	    $h->db->query($h->db->prepare($sql, 'Hotaru updates', 'SYS_UPDATES', 'SYS_FEEDBACK'));
 		
 	}
 
