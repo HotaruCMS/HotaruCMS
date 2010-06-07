@@ -32,7 +32,7 @@
 
 <?php echo $h->lang["admin_theme_login_instructions"]; ?>
 
-<form name='login_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>    
+<form name='login_form' action='<?php echo SITEURL; ?>admin_index.php' method='post'>    
 <table>
 	<tr>
 	<td><?php echo $h->lang["admin_theme_login_username"]; ?>:&nbsp; </td>
@@ -54,7 +54,7 @@
 
 <a href="#" class="forgot_password"><?php echo $h->lang["admin_theme_login_forgot_password"]; ?></a>
 
-<form style="display: none;" name='forgot_password_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>    
+<form style="display: none;" name='forgot_password_form' action='<?php echo SITEURL; ?>admin_index.php' method='post'>    
 	<?php echo $h->lang['admin_theme_login_forgot_password_submit_instruct_1']; ?>
 <table>
 	<tr>

@@ -47,7 +47,7 @@ if ($h->vars['plugin_settings_csrf_error']) {
 			if ($sb_links) {
 				$sb_links = sksort($sb_links, $subkey="name", $type="char", true);
 				foreach ($sb_links as $plugin => $details) { 
-					echo "<li><a href='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $details['plugin'] . "'>" . $details['name'] . "</a></li>";
+					echo "<li><a href='" . SITEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $details['plugin'] . "'>" . $details['name'] . "</a></li>";
 				}
 			}
 		}

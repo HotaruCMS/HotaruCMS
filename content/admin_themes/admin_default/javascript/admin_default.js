@@ -54,7 +54,7 @@ jQuery('document').ready(function($) {
     $('#admin_theme_theme_activate').click(function() {        
         var theme = $(this).attr("name");       
         var formdata = 'admin=theme_settings&theme='  + theme;
-		var sendurl = BASEURL + "admin_index.php?page=settings";
+		var sendurl = SITEURL + "admin_index.php?page=settings";
 
         $.ajax(
 			{
@@ -62,7 +62,7 @@ jQuery('document').ready(function($) {
 				url: sendurl,
 				data: formdata,
 				beforeSend: function () {
-						$('#admin_theme_theme_activate').html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/ajax-loader.gif' + '"/>&nbsp;Attempting to activate theme.');
+						$('#admin_theme_theme_activate').html('<img src="' + SITEURL + "content/admin_themes/" + ADMIN_THEME + 'images/ajax-loader.gif' + '"/>&nbsp;Attempting to activate theme.');
 					},
 				error: 	function(XMLHttpRequest, textStatus, errorThrown) {
 						$('#admin_theme_theme_activate').html('ERROR');

@@ -35,7 +35,7 @@
 	 
 <!-- TITLE FOR ADMIN NEWS -->
 	<h2>
-		<a href="http://feeds2.feedburner.com/hotarucms"><img src="<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/rss_16.png" alt="rss" /></a>
+		<a href="http://feeds2.feedburner.com/hotarucms"><img src="<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/rss_16.png" alt="rss" /></a>
 		&nbsp;<?php echo $h->lang["admin_theme_main_latest"]; ?>
 	</h2>
 	

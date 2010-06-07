@@ -36,7 +36,7 @@
 			}
 		} ?>
 	
-	<li><a href="<?php echo BASEURL; ?>"><?php echo $h->lang["admin_theme_navigation_home"]; ?></a></li>
+	<li><a href="<?php echo SITEURL; ?>"><?php echo $h->lang["admin_theme_navigation_home"]; ?></a></li>
 	<?php $h->pluginHook('navigation'); ?>
 	<?php 
 		if (!$h->isActive('signin')) { 

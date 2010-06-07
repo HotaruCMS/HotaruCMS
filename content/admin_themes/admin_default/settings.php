@@ -34,7 +34,7 @@ $loaded_settings = $h->vars['admin_settings'];
 	
 	<?php $h->showMessage(); ?>
 	
-	<form id='settings_form' name='settings_form' action='<?php echo BASEURL; ?>admin_index.php?page=settings' method='post'>
+	<form id='settings_form' name='settings_form' action='<?php echo SITEURL; ?>admin_index.php?page=settings' method='post'>
 	
 	<table id="settings">    
 	<tr>
@@ -61,8 +61,8 @@ $loaded_settings = $h->vars['admin_settings'];
 			<tr>
 			<td>
 			    <?php
-			    if (strpos($name, 'CACHE')) {echo "<a href='" . BASEURL . "/admin_index.php?page=maintenance'>" . $name . "</a>"; }
-			    elseif ($name == 'THEME') {echo "<a href='" . BASEURL . "admin_index.php?page=theme_settings&theme=" . $ls->settings_value . "'>" . $name . "</a>"; }
+			    if (strpos($name, 'CACHE')) {echo "<a href='" . SITEURL . "/admin_index.php?page=maintenance'>" . $name . "</a>"; }
+			    elseif ($name == 'THEME') {echo "<a href='" . SITEURL . "admin_index.php?page=theme_settings&theme=" . $ls->settings_value . "'>" . $name . "</a>"; }
 			    else
 				echo $name;
 			    ?>:

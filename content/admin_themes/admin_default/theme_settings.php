@@ -62,7 +62,7 @@ $theme = $h->vars['settings_theme'];    // theme folder name
 				if ($themes) {
 					$themes = sksort($themes, $subkey="name", $type="char", true);
 					foreach ($themes as $theme) { 
-						echo "<li><a href='" . BASEURL . "admin_index.php?page=theme_settings&amp;theme=" . $theme . "'>" . $theme . "</a></li>";
+						echo "<li><a href='" . SITEURL . "admin_index.php?page=theme_settings&amp;theme=" . $theme . "'>" . $theme . "</a></li>";
 					}
 				}
 			?>
