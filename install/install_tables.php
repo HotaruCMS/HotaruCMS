@@ -480,6 +480,10 @@ function create_table($table_name)
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
 		$db->query($db->prepare($sql, 'SYS_UPDATES', 'true', 'true', 'Hotaru updates'));
 
+		// Multiple Sites
+		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+		$db->query($db->prepare($sql, 'MULTI_SITE', 'false', 'false', 'Multiple sites'));
+
 	}
 	
 	

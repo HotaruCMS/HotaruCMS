@@ -661,7 +661,20 @@ function do_upgrade($h, $old_version)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Relates';";		
 		$h->db->query($sql);
 	    }
-		
+
+	    // Version Info Auto Update
+	    $sql = "UPDATE  " . TABLE_SETTINGS . " SET settings_note = %s, settings_name = %s WHERE settings_name = %s";
+	    $h->db->query($h->db->prepare($sql, 'Hotaru updates', 'SYS_UPDATES', 'SYS_FEEDBACK'));
+
+	    // MULTI_SITE for SETTINGS table for siteid=1 only (admin)
+	    $sql = "SELECT settings_siteid FROM " . TABLE_SETTINGS . " WHERE settings_name = %s AND settings_siteid = %d";
+	    $result = $h->db->get_var($h->db->prepare($sql, 'MULTI_SITE', 1));
+
+	    if (!$result) {
+		$sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+		$h->db->query($h->db->prepare($sql, 'MULTI_SITE', 'false', 'false', 'multiple sites'));
+	    }
+
 	}
 
 
@@ -669,5 +682,28 @@ function do_upgrade($h, $old_version)
 	$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_key = %s, miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";
 	$h->db->query($h->db->prepare($sql, 'hotaru_version', $h->version, $h->version, 'hotaru_version'));
 }
+
+
+
+
+//	// loop through all sites to insert this setting into each one's SETTING TABLE
+//	$sql = "SELECT site_id FROM " . TABLE_SITE;
+//	$sites = $h->db->get_results($h->db->prepare($sql));
+//
+//	$sql = "SELECT settings_siteid FROM " . TABLE_SETTINGS . " WHERE settings_name = %s";
+//	$result = $h->db->get_results($h->db->prepare($sql, 'MULTI_SITE'), ARRAY_N);
+//	if (!$result) { $result = array(); }
+//	//var_dump($result);
+//	if ($sites) {
+//	    foreach ($sites as $site) {
+//		if (in_array($site->site_id, $result)) {
+//		    $sql = "UPDATE  " . TABLE_SETTINGS . " SET settings_value = %s WHERE settings_name = %s";
+//		    $h->db->query($h->db->prepare($sql, '', ''));
+//		} else {
+//		    $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+//		    $h->db->query($h->db->prepare($sql, '', '', '', ''));
+//		}
+//	    }
+//	}
 
 ?>
