@@ -52,7 +52,7 @@ class Initialize
 
 		$this->getCurrentSiteID();
 		$this->errorReporting();
-		
+
 		$this->readSettings();
 		$this->setUpDatabaseCache();
 		$this->isDebug = $this->checkDebug();
@@ -152,23 +152,34 @@ class Initialize
 	 */
 	public function getCurrentSiteID()
 	{
-//		if isActive($result) {
-//		    $url =  $this->cage->server->getRaw('HTTP_HOST');   // wanted to use sanitizeTags
-//		    $sql = "SELECT site_id, site_adminuser_id FROM " . TABLE_SITE . " WHERE site_url = %s";
-//		    $settings = $this->db->get_row($this->db->prepare($sql, $url));
-//		    var_dump( $settings);
-//
-//		    if ($settings) {
-//			$siteid = $settings->site_id;
-//		    } else {
-//			$siteid = 1;
-//		    }
-//		} else {
+		// read settings for default siteid=1 first to check whether MULTISITE is TRUE
+		$sql = "SELECT settings_value FROM " . TABLE_SETTINGS . " WHERE settings_name = %s AND settings_siteid = %d";
+		$multi_site = $this->db->get_var($this->db->prepare($sql, 'MULTI_SITE', 1));
+
+	        if ($multi_site == 'true') {		
+		    $url =  $this->cage->server->getRaw('HTTP_HOST');   // wanted to use sanitizeTags
+		    $sql = "SELECT site_id, site_adminuser_id FROM " . TABLE_SITE . " WHERE site_url = %s";
+		    $settings = $this->db->get_row($this->db->prepare($sql, $url));		 
+
+		    if ($settings) {
+			$siteid = $settings->site_id;
+			$siteurl = "http://" . $url;
+		    } else {
+			$siteid = 1;
+			$siteurl = BASEURL;
+		    }
+
+		} else {
 		    $siteid = 1;
-//		}
-		if (!defined('SITEID')) {
-		    define('SITEID', $siteid);
-		    if (!defined('CACHE')) { define("CACHE", BASE . "cache/" . $siteid . "/"); }
+		    $siteurl = BASEURL;
+		}
+
+		if (!defined('SITEID')) { define('SITEID', $siteid); }
+		if (!defined('SITEURL')) { define("SITEURL", $siteurl . "/"); }
+		
+		if (!defined('CACHE')) {
+
+		    define("CACHE", BASE . "cache/" . $siteid . "/");
 
 		    $dirs = array('', 'debug_logs/' , 'db_cache/', 'css_js_cache/', 'html_cache/', 'rss_cache/', 'lang_cache/');  // first array item is needed to create the SITEID base folder
 
@@ -177,6 +188,7 @@ class Initialize
 			    mkdir(CACHE . $dir);
 			}
 		    }
+		    
 		}
 
 		return false;
@@ -255,30 +267,24 @@ class Initialize
 	
 	/**
 	 * Returns all site settings
-	 * @param int $multisite - site id
-	 *
-	 * @return bool
+	 * @param <int> $siteid
+	 * 
+	 * @return <bool>
 	 */
-	public function readSettings($multisite = 0)
-	{ 
-		if (!$multisite) { 
-			$sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;
-			$settings = $this->db->get_results($this->db->prepare($sql));
-		} else {
-			$sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS . " WHERE settings_siteid = %d";
-			$settings = $this->db->get_results($this->db->prepare($sql, $multisite));
-		}
-		
-		if(!$settings) { return false; }
-		
+	public function readSettings() {
+	    $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS . " WHERE settings_siteid = %d";
+	    $settings = $this->db->get_results($this->db->prepare($sql, SITEID));
+
+	    if(!$settings) { return false; }
+
 		// Make Hotaru settings global constants
 		foreach ($settings as $setting)
 		{
-			if (!defined($setting->settings_name)) { 
+			if (!defined($setting->settings_name)) {
 				define($setting->settings_name, $setting->settings_value);
 			}
 		}
-				
+
 		return true;
 	}
 	
