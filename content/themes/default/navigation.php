@@ -37,7 +37,7 @@
 			} ?>
 
 	<?php if ($h->pageName == $h->home) { $status = "id='navigation_active'"; } else { $status = ""; } ?>
-	<li><a <?php echo $status; ?> href="<?php echo BASEURL; ?>"><?php echo $h->lang["main_theme_navigation_home"]; ?></a></li>
+	<li><a <?php echo $status; ?> href="<?php echo SITEURL; ?>"><?php echo $h->lang["main_theme_navigation_home"]; ?></a></li>
 	<?php $h->pluginHook('navigation'); ?>
 	<?php 
 		if (!$h->isActive('signin')) { 
@@ -64,7 +64,7 @@
 		if ($h->isActive('base')) { ?>
 		<li>
 		<a href="<?php echo $h->url(array('page'=>'rss')); ?>">RSS 
-			<img id="rss_icon" src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png" alt="RSS" />
+			<img id="rss_icon" src="<?php echo SITEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png" alt="RSS" />
 		</a>
 		</li>
 	<?php } ?>

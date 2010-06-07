@@ -52,8 +52,8 @@
 	<?php $h->doIncludes(); ?>
 	<!-- End -->
 	
-	<link rel="stylesheet" href="<?php echo BASEURL . 'content/themes/' . THEME . 'css/style.css'; ?>" type="text/css" />
-	<!-- <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico" /> -->
+	<link rel="stylesheet" href="<?php echo SITEURL . 'content/themes/' . THEME . 'css/style.css'; ?>" type="text/css" />
+	<!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico" /> -->
 	
 	<?php $h->pluginHook('header_include_raw'); ?>
 	
@@ -79,7 +79,7 @@
 	<div id="hd">
 		<!-- TITLE & AD BLOCKS -->
 		<div id="hd_title">
-			<h1><a href="<?php echo BASEURL; ?>"><?php echo SITE_NAME; ?></a></h1>
+			<h1><a href="<?php echo SITEURL; ?>"><?php echo SITE_NAME; ?></a></h1>
 		</div>
 		<div id="hd_block2">
 		</div>
