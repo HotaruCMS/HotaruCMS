@@ -45,7 +45,7 @@ class Trackback
 		
 		// we don't want friendly urls in case the title or category is edited after submission, thus
 		// changing and therefore breaking the trackback link posted on other sites. So...
-		$url = BASEURL . 'index.php?page=' . $h->post->id; 
+		$url = SITEURL . 'index.php?page=' . $h->post->id; 
 		
 		if ($this->ping($h, $trackback, $url, $title, $excerpt)) {
 			//echo "Trackback sent successfully...";

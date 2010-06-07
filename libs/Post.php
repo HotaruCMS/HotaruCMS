@@ -38,7 +38,7 @@ class Post
 	protected $title            = '';           // post title
 	protected $origUrl          = '';           // original url for the submitted post
 	protected $domain           = '';           // the domain of the submitted url
-	protected $url              = '';           // post slug (needs BASEURL and category attached)
+	protected $url              = '';           // post slug (needs SITEURL and category attached)
 	protected $content          = '';           // post description
 	protected $contentLength    = 50;           // default min characters for content
 	protected $summary          = '';           // truncated post description
@@ -187,7 +187,7 @@ class Post
 	 */    
 	public function updatePost($h)
 	{
-		if (strstr($this->origUrl, BASEURL)) {
+		if (strstr($this->origUrl, SITEURL)) {
 			// original url contains our base url, so it must be an "editorial" post.
 			// Therefore, it's essential we rebuild this source url to match the updated post title to avoid errors:
 			$this->origUrl = $h->url(array('page'=>$this->id)); // update the url with the real one

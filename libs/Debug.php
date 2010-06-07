@@ -153,7 +153,7 @@ class Debug
 		// essentials:
 		
 		$report['hotaru_site_name'] = SITE_NAME;
-		$report['hotaru_baseurl'] = BASEURL;
+		$report['hotaru_SITEURL'] = SITEURL;
 		
 		$report['php_version'] = phpversion();
 		$report['mysql_version'] = $h->db->get_var("SELECT VERSION() AS VE");
@@ -281,7 +281,7 @@ class Debug
 		$output = "\n\n";
 		
 		$output .= "Name: " . $report['hotaru_site_name'] . "\n";
-		$output .= "URL: " . $report['hotaru_baseurl'] . "\n";
+		$output .= "URL: " . $report['hotaru_SITEURL'] . "\n";
 		$output .= "Hotaru version: " . $report['hotaru_version'] . "\n";
 		$output .= "Hotaru version in database: " . $report['hotaru_version_db'] . "\n";
 		$output .= "PHP version: " . $report['php_version'] . "\n";

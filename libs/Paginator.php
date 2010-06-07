@@ -101,12 +101,12 @@ class Paginator
 		$path = "http://" . $host  . $uri;
 		
 		// if it doesn't contain $head, then it must be a friendly url 
-		if ($path != BASEURL && !strrpos($path, $head)) {
+		if ($path != SITEURL && !strrpos($path, $head)) {
 			$path = $this->friendlyToStandardUrl($path, $head, $h);
 		} 
 		
 		// add the head if we're on the top page (which doesn't have index.php attached) 
-		if ($path == BASEURL) { $path = BASEURL . $head; }
+		if ($path == SITEURL) { $path = SITEURL . $head; }
 		
 		// But, for pagination, we can't just add pg=8 etc to the url because there's
 		// quite likely a pg=X query variable already there! We need to strip that out:
@@ -207,12 +207,12 @@ class Paginator
 	 */
 	public function friendlyToStandardUrl($url, $head, $h) 
 	{
-		// strip off BASEURL and trailing slash
-		$url = str_replace(BASEURL, '', $url);
+		// strip off SITEURL and trailing slash
+		$url = str_replace(SITEURL, '', $url);
 		$url = rtrim($url, '/');
 		
 		// start the standard url
-		$standard_url = BASEURL . $head;
+		$standard_url = SITEURL . $head;
 		
 		// parts will hold the query vars
 		$parts = array();

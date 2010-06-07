@@ -257,9 +257,9 @@ class PageHandling
 		if (FRIENDLY_URLS == "false") {
 		
 			if ($head == 'index') {
-				$url = BASEURL . 'index.php?';
+				$url = SITEURL . 'index.php?';
 			} elseif ($head == 'admin') {
-				$url = BASEURL . 'admin_index.php?';    
+				$url = SITEURL . 'admin_index.php?';    
 			} else {
 				// Error. $head must be index or admin
 			}
@@ -279,11 +279,11 @@ class PageHandling
 		if (FRIENDLY_URLS == "true") {
 		
 			if ($head == 'index') { 
-				$url = BASEURL;
+				$url = SITEURL;
 			} elseif ($head == 'admin') {
-				$url = BASEURL . 'admin/';    
+				$url = SITEURL . 'admin/';    
 			} else {
-				$url = BASEURL . $head . '/';
+				$url = SITEURL . $head . '/';
 			}
 			
 			foreach ($parameters as $key => $value) {
@@ -360,14 +360,14 @@ class PageHandling
 			extra test to make sure this is a truly friendly url, and if not, send back
 			the one we have because it's already standard. */
 
-		if ($path == BASEURL || strrpos($path, $head)) { return $path; }
+		if ($path == SITEURL || strrpos($path, $head)) { return $path; }
 		
-		// strip off BASEURL and trailing slash
-		$url = str_replace(BASEURL, '', $friendly_url);
+		// strip off SITEURL and trailing slash
+		$url = str_replace(SITEURL, '', $friendly_url);
 		$url = rtrim($url, '/');
 		
 		// start the standard url
-		$standard_url = BASEURL . $head;
+		$standard_url = SITEURL . $head;
 		
 		// parts will hold the query vars
 		$parts = array();

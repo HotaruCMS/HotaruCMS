@@ -42,7 +42,7 @@ class UserAuth extends UserBase
 		
 		$user_info=explode(":", base64_decode($h->cage->cookie->getRaw('hotaru_key')));
 		
-		if (($h_user != $user_info[0]) || ($h->currentUser->generateHash($h_user, md5(BASEURL)) != $user_info[1])) {
+		if (($h_user != $user_info[0]) || ($h->currentUser->generateHash($h_user, md5(SITEURL)) != $user_info[1])) {
 		    $this->setLoggedOutUser($h);
 		    return false; 
 		}
@@ -206,7 +206,7 @@ class UserAuth extends UserBase
 		} else {
 			$strCookie=base64_encode(
 				join(':', array($this->name, 
-				$h->currentUser->generateHash($this->name, md5(BASEURL)),
+				$h->currentUser->generateHash($this->name, md5(SITEURL)),
 				md5($this->password)))
 			);
 			
@@ -217,11 +217,11 @@ class UserAuth extends UserBase
 				$month = 0; 
 			}
 			
-			if (strpos(BASEURL, "localhost") !== false) {
+			if (strpos(SITEURL, "localhost") !== false) {
 				setcookie("hotaru_user", $this->name, $month, "/");
 				setcookie("hotaru_key", $strCookie, $month, "/");
 			} else {
-				$parsed = parse_url(BASEURL); 
+				$parsed = parse_url(SITEURL); 
 				
 				// now we need a dot in front of that so cookies work across subdomains:
 				setcookie("hotaru_user", $this->name, $month, "/", "." . $parsed['host']);
@@ -239,11 +239,11 @@ class UserAuth extends UserBase
 	{
 		// setting a cookie with a negative time expires it
 		
-		if (strpos(BASEURL, "localhost") !== false) {
+		if (strpos(SITEURL, "localhost") !== false) {
 			setcookie("hotaru_user", "", time()-3600, "/");
 			setcookie("hotaru_key", "", time()-3600, "/");
 		} else {
-			$parsed = parse_url(BASEURL); 
+			$parsed = parse_url(SITEURL); 
 			
 			// now we need a dot in front of that so cookies are cleared across subdomains:
 			setcookie("hotaru_user", "", time()-3600, "/", "." . $parsed['host']);
@@ -484,9 +484,9 @@ class UserAuth extends UserBase
 		$next_line = "\r\n";
 		
 		if ($h->isActive('signin')) { 
-			$url = BASEURL . 'index.php?page=login&plugin=user_signin&userid=' . $userid . '&passconf=' . $pass_conf; 
+			$url = SITEURL . 'index.php?page=login&plugin=user_signin&userid=' . $userid . '&passconf=' . $pass_conf; 
 		} else { 
-			$url = BASEURL . 'admin_index.php?page=admin_login&userid=' . $userid . '&passconf=' . $pass_conf; 
+			$url = SITEURL . 'admin_index.php?page=admin_login&userid=' . $userid . '&passconf=' . $pass_conf; 
 		}
 		
 		// send email
@@ -534,9 +534,9 @@ class UserAuth extends UserBase
 		$next_line = "\r\n";
 		
 		if ($h->isActive('signin')) { 
-			$url = BASEURL . 'index.php?page=login&plugin=user_signin'; 
+			$url = SITEURL . 'index.php?page=login&plugin=user_signin'; 
 		} else { 
-			$url = BASEURL . 'admin_index.php?page=admin_login'; 
+			$url = SITEURL . 'admin_index.php?page=admin_login'; 
 		}
 		
 		$username = $h->getUserNameFromId($userid);

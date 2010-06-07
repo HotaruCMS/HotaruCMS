@@ -222,7 +222,7 @@ class Maintenance
 	{
 		// site closed and access not granted
 		echo "<HTML>\n<HEAD>\n";
-		echo "<link rel='stylesheet' href='" . BASEURL . "content/themes/" . THEME . "css/style.css' type='text/css'>\n";
+		echo "<link rel='stylesheet' href='" . SITEURL . "content/themes/" . THEME . "css/style.css' type='text/css'>\n";
 		echo "</HEAD>\n<BODY>\n";
 		echo "<div id='site_closed'>\n";
 		
@@ -235,7 +235,7 @@ class Maintenance
 		{
 			// show default maintenance page:
 			echo $lang['main_hotaru_site_closed'];
-			echo "<br /><span id='site_closed_admin_link'>[<a href='" . BASEURL . "admin_index.php?page=admin_login'>Admin Login</a>]</span>";
+			echo "<br /><span id='site_closed_admin_link'>[<a href='" . SITEURL . "admin_index.php?page=admin_login'>Admin Login</a>]</span>";
 		}
 		
 		echo "\n</div>\n</BODY>\n</HTML>\n";

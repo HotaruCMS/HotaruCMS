@@ -99,27 +99,27 @@ class PluginManagement
 				
 				// Conditions for "active"...
 				if (($allplugins[$count]['status'] == 'active') && ($allplugins[$count]['install'] == 'install')) {
-					$allplugins[$count]['active'] = "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/active_16.png'></a>";
+					$allplugins[$count]['active'] = "<img src='" . SITEURL . "content/admin_themes/" . ADMIN_THEME . "images/active_16.png'></a>";
 				} elseif (($allplugins[$count]['status'] == 'inactive') && ($allplugins[$count]['install'] == 'install')) {
-					$allplugins[$count]['active'] = "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/inactive_16.png'></a>";
+					$allplugins[$count]['active'] = "<img src='" . SITEURL . "content/admin_themes/" . ADMIN_THEME . "images/inactive_16.png'></a>";
 				} elseif ($allplugins[$count]['status'] == 'active') {
-					$allplugins[$count]['active'] = "<a href='" . BASEURL;
+					$allplugins[$count]['active'] = "<a href='" . SITEURL;
 					$allplugins[$count]['active'] .= "admin_index.php?page=plugin_management&amp;action=deactivate&amp;plugin=";
 					$allplugins[$count]['active'] .= $allplugins[$count]['folder'] . "'>";
-					$allplugins[$count]['active'] .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/active_16.png'></a>";
+					$allplugins[$count]['active'] .= "<img src='" . SITEURL . "content/admin_themes/" . ADMIN_THEME . "images/active_16.png'></a>";
 				} else {
-					$allplugins[$count]['active'] = "<a href='" . BASEURL;
+					$allplugins[$count]['active'] = "<a href='" . SITEURL;
 					$allplugins[$count]['active'] .= "admin_index.php?page=plugin_management&amp;action=activate&amp;plugin=";
 					$allplugins[$count]['active'] .= $allplugins[$count]['folder'] . "'>";
-					$allplugins[$count]['active'] .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/inactive_16.png'></a>";
+					$allplugins[$count]['active'] .= "<img src='" . SITEURL . "content/admin_themes/" . ADMIN_THEME . "images/inactive_16.png'></a>";
 				}
 				
 				
 				// Conditions for "install"...
 				if ($allplugins[$count]['install'] == 'install') { 
-					$allplugins[$count]['install'] = "<a href='" . BASEURL . "admin_index.php?page=plugin_management&amp;action=install&amp;plugin=". $allplugins[$count]['folder'] . "'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/install_16.png'></a>";
+					$allplugins[$count]['install'] = "<a href='" . SITEURL . "admin_index.php?page=plugin_management&amp;action=install&amp;plugin=". $allplugins[$count]['folder'] . "'><img src='" . SITEURL . "content/admin_themes/" . ADMIN_THEME . "images/install_16.png'></a>";
 				} else { 
-					$allplugins[$count]['install'] = "<a href='" . BASEURL . "admin_index.php?page=plugin_management&amp;action=uninstall&amp;plugin=". $allplugins[$count]['folder'] . "'><img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/uninstall_16.png'></a>";
+					$allplugins[$count]['install'] = "<a href='" . SITEURL . "admin_index.php?page=plugin_management&amp;action=uninstall&amp;plugin=". $allplugins[$count]['folder'] . "'><img src='" . SITEURL . "content/admin_themes/" . ADMIN_THEME . "images/uninstall_16.png'></a>";
 				}
 				
 				
@@ -145,16 +145,16 @@ class PluginManagement
 				// The order is sorted numerically in the plugin_management.php template, so we need separate order and order_output elements.
 				if ($allplugins[$count]['order'] != 0) { 
 					$order = $allplugins[$count]['order'];
-					$allplugins[$count]['order_output'] = "<a href='" . BASEURL;
+					$allplugins[$count]['order_output'] = "<a href='" . SITEURL;
 					$allplugins[$count]['order_output'] .= "admin_index.php?page=plugin_management&amp;";
 					$allplugins[$count]['order_output'] .= "action=orderup&amp;plugin=". $allplugins[$count]['folder'];
 					$allplugins[$count]['order_output'] .= "&amp;order=" . $order . "'>";
-					$allplugins[$count]['order_output'] .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/up_12.png'>";
-					$allplugins[$count]['order_output'] .= "</a> \n&nbsp;<a href='" . BASEURL;
+					$allplugins[$count]['order_output'] .= "<img src='" . SITEURL . "content/admin_themes/" . ADMIN_THEME . "images/up_12.png'>";
+					$allplugins[$count]['order_output'] .= "</a> \n&nbsp;<a href='" . SITEURL;
 					$allplugins[$count]['order_output'] .= "admin_index.php?page=plugin_management&amp;";
 					$allplugins[$count]['order_output'] .= "action=orderdown&amp;plugin=". $allplugins[$count]['folder'];
 					$allplugins[$count]['order_output'] .= "&amp;order=" . $order . "'>";
-					$allplugins[$count]['order_output'] .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/down_12.png'>";
+					$allplugins[$count]['order_output'] .= "<img src='" . SITEURL . "content/admin_themes/" . ADMIN_THEME . "images/down_12.png'>";
 					$allplugins[$count]['order_output'] .= "</a>\n";
 				} else {
 					$allplugins[$count]['order_output'] = "";

@@ -34,12 +34,12 @@ class Breadcrumbs
 		
 		// Admin only:
 		if ($h->isAdmin) {
-			$output .= "<a href='" . BASEURL . "'>" . SITE_NAME . " (" . $h->lang['main_theme_breadcrumbs_home'] . ")</a>\n";
+			$output .= "<a href='" . SITEURL . "'>" . SITE_NAME . " (" . $h->lang['main_theme_breadcrumbs_home'] . ")</a>\n";
 
 			$output .= " &raquo; <a href='" . $h->url(array(), 'admin') . "'>";
 			$output .= $h->lang['admin_theme_main_admin_cp'] . "</a>\n";
 		} else {
-			$output .= "<a href='" . BASEURL . "'>" . $h->lang['main_theme_breadcrumbs_home'] . "</a>\n"; 
+			$output .= "<a href='" . SITEURL . "'>" . $h->lang['main_theme_breadcrumbs_home'] . "</a>\n"; 
 		}
 
 
@@ -79,7 +79,7 @@ class Breadcrumbs
 			$url_array[$k] = $v;
 		}
 		$rss = "<a href='" . $h->url($url_array) . "'>";
-		$rss .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png' alt='" . $h->pageTitle . " RSS' /></a>";
+		$rss .= " <img src='" . SITEURL . "content/themes/" . THEME . "images/rss_10.png' alt='" . $h->pageTitle . " RSS' /></a>";
 		return $rss;
 	}
 }
