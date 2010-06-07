@@ -102,7 +102,7 @@
 			</a>
 		    </div>
 		    <div class="adm-tm-item">
-			<a href="<?PHP echo SITEURL ?>logout/">
+			<a href="<?php echo $h->url(array('page'=>'logout')); ?>">
 			    <div class="adm-tm-item-icon">
 				<img src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/logout_icon.png" />
 			    </div>
