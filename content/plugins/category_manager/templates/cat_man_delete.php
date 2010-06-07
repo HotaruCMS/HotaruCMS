@@ -54,9 +54,9 @@
                 }
                 
                 if ($cat->category_empty) {
-                    echo $cat->category_name . " <span style='font-size: 0.8em; color: #888;'>(" . $cat->category_id . ")</span><br />";
+                    echo urldecode($cat->category_name) . " <span style='font-size: 0.8em; color: #888;'>(" . $cat->category_id . ")</span><br />";
                 } else {
-                    echo "<span style='color: #888;'>" . $cat->category_name . "</span> <span style='font-size: 0.8em; color: #888;'>(" . $cat->category_id . ")</span><br />";
+                    echo "<span style='color: #888;'>" . urldecode($cat->category_name) . "</span> <span style='font-size: 0.8em; color: #888;'>(" . $cat->category_id . ")</span><br />";
                 }
             }
         }

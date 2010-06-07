@@ -581,9 +581,9 @@ class CategoryManagerSettings
                     for($i=1; $i<$cat->category_level; $i++) {
                         echo "--- ";
                     }
-                     echo $cat->category_name . " <span style='font-size: 0.7em; color: #888;'>[" . $cat->category_id . "]</span><br />";
+                     echo urldecode($cat->category_name) . " <span style='font-size: 0.7em; color: #888;'>[" . $cat->category_id . "]</span><br />";
                 } else {
-                     echo $cat->category_name . " <span style='font-size: 0.7em; color: #888;'>[" . $cat->category_id . "]</span><br />";
+                     echo urldecode($cat->category_name) . " <span style='font-size: 0.7em; color: #888;'>[" . $cat->category_id . "]</span><br />";
                 }
             }
         }

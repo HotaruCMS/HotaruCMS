@@ -40,9 +40,9 @@
                     for($i=1; $i<$cat->category_level; $i++) {
                         echo "--- ";
                     }
-                    echo "<a href='#' class='cat_man_drop_down' title='" . $h->lang["cat_man_edit_meta_anchor_title"] . "'>" . $cat->category_name . "</a><br />";
+                    echo "<a href='#' class='cat_man_drop_down' title='" . $h->lang["cat_man_edit_meta_anchor_title"] . "'>" . urldecode($cat->category_name) . "</a><br />";
                 } else {
-                    echo "<a href='#' class='cat_man_drop_down' title='" . $h->lang["cat_man_edit_meta_anchor_title"] . "'>" . $cat->category_name . "</a><br />";
+                    echo "<a href='#' class='cat_man_drop_down' title='" . $h->lang["cat_man_edit_meta_anchor_title"] . "'>" . urldecode($cat->category_name) . "</a><br />";
                 }
                 ?>
                 
