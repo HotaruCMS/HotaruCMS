@@ -154,16 +154,32 @@ class AdminPages
 				}
 			}
 		
-			// cron hook to include SYS_FEEDBACK job
-			if ($h->cage->post->keyExists('SYS_FEEDBACK') == 'true' ) {
+			// cron hook to include SYS_UPDATES job
+			if ($h->cage->post->keyExists('SYS_UPDATES') == 'true' ) {
 				$timestamp = time();
 				$recurrence = "daily";
 				$hook = "SystemInfo:hotaru_feedback";
 				$cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook);
 				$h->pluginHook('cron_update_job', 'cron', $cron_data);
+
+				$hook = "SystemInfo:hotaru_version";
+				$cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook);
+				$h->pluginHook('cron_update_job', 'cron', $cron_data);
+
+				$hook = "SystemInfo:plugin_version_getAll";
+				$cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook);
+				$h->pluginHook('cron_update_job', 'cron', $cron_data);
 			}
 			else {
 				$hook = "SystemInfo:hotaru_feedback";
+				$cron_data = array('hook'=>$hook);
+				$h->pluginHook('cron_delete_job', 'cron', $cron_data);
+
+				$hook = "SystemInfo:hotaru_version";
+				$cron_data = array('hook'=>$hook);
+				$h->pluginHook('cron_delete_job', 'cron', $cron_data);
+
+				$hook = "SystemInfo:plugin_version_getAll";
 				$cron_data = array('hook'=>$hook);
 				$h->pluginHook('cron_delete_job', 'cron', $cron_data);
 			}
@@ -203,8 +219,8 @@ class AdminPages
 	 */
 	public function getAllAdminSettings($db)
 	{
-		$sql = "SELECT settings_name, settings_value, settings_default, settings_note, settings_show FROM " . TABLE_SETTINGS;
-		$results = $db->get_results($db->prepare($sql));
+		$sql = "SELECT settings_name, settings_value, settings_default, settings_note, settings_show FROM " . TABLE_SETTINGS . " WHERE settings_siteid = %d";		
+		$results = $db->get_results($db->prepare($sql, SITEID));
 		if ($results) { return $results; } else { return false; }
 	}
 	
