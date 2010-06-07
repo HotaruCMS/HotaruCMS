@@ -1,6 +1,6 @@
 Categories Plugin for Hotaru CMS
 --------------------------------
-Created by: Nick Ramsay & Stuart Duff
+Created by: Nick Ramsay
 
 Description
 -----------
@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.1.7 2010/06/07 - Nick - Applied htmlentities to ampersands in posts, i.e. "posted in Food &amp; Drink"
 v.1.6 2010/05/22 - Nick - Fix for home page title tags and moved Category RSS from SB Base into this plugin
 v.1.5 2010/04/14 - Nick - Top stories page name changed from "index" to "popular"
 v.1.4 2010/03/24 - Nick - Added an "active_cat" class to the category bar for the current category

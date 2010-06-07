@@ -2,7 +2,7 @@
 /**
  * name: Categories
  * description: Enables categories for posts
- * version: 1.6
+ * version: 1.7
  * folder: categories
  * class: Categories
  * type: categories
@@ -268,6 +268,7 @@ class Categories
         if ($h->post->category != 1) { 
 
             $cat_name = $h->getCatName($h->post->category);
+            $cat_name = htmlentities($cat_name, ENT_QUOTES,'UTF-8');
             
             echo " " . $h->lang["categories_post_in"] . " ";
             echo "<a href='" . $h->url(array('category'=>$h->post->category)) . "'>" . $cat_name . "</a>\n";
