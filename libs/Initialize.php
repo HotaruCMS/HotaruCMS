@@ -163,7 +163,7 @@ class Initialize
 
 		    if ($settings) {
 			$siteid = $settings->site_id;
-			$siteurl = "http://" . $url;
+			$siteurl = "http://" . $url . "/";
 		    } else {
 			$siteid = 1;
 			$siteurl = BASEURL;
@@ -175,7 +175,7 @@ class Initialize
 		}
 
 		if (!defined('SITEID')) { define('SITEID', $siteid); }
-		if (!defined('SITEURL')) { define("SITEURL", $siteurl . "/"); }
+		if (!defined('SITEURL')) { define("SITEURL", $siteurl); }
 		
 		if (!defined('CACHE')) {
 
