@@ -88,10 +88,10 @@ class Hotaru
 		if (!$start) {
 			
 			$init = new Initialize($this);
-			
+
 			$this->db           = $init->db;            // database object
 			$this->cage         = $init->cage;          // Inspekt cage
-			$this->isDebug      = $init->isDebug;       // set debug
+			$this->isDebug      = $init->isDebug;       // set debug			
 			$this->currentUser  = new UserAuth();       // the current user
 			$this->plugin       = new Plugin();         // instantiate Plugin object
 			$this->post         = new Post();           // instantiate Post object
@@ -129,8 +129,7 @@ class Hotaru
 		switch ($entrance) {
 			case 'admin':
 				$this->isAdmin = true;
-				$this->lang = $lang->includeLanguagePack($this->lang, 'admin');
-				require_once(LIBS . 'AdminAuth.php');   // include Admin class
+				$this->lang = $lang->includeLanguagePack($this->lang, 'admin');				
 				$admin = new AdminAuth();               // new Admin object
 				$this->checkCookie();                   // check cookie reads user details
 				$this->checkAccess();                   // site closed if no access permitted
