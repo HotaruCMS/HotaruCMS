@@ -63,7 +63,7 @@
         foreach ($h->vars['the_cats'] as $cat) {
             if ($cat->category_safe_name != "all") {
                 if ($cat->category_parent  > 1) {
-                      echo "<option value='" . $cat->category_id . "'>" . $cat->category_name . "</option>";
+                      echo "<option value='" . $cat->category_id . "'>" . urldecode($cat->category_name) . "</option>";
                 }    
             }
           }

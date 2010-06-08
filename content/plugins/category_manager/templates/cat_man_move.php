@@ -57,11 +57,11 @@
                             <?php
                             foreach ($h->vars['the_cats'] as $cat2) {
                                 if ($cat2->category_safe_name != "all") {
-                                    if ($cat->category_id != $cat->category_id) {
+                                    if ($cat2->category_id != $cat->category_id) {
                                         if ($cat->category_parent == 1 && $cat2->category_parent == 1) {
-                                              echo "<option value='" . $cat2->category_id . "'>" . $cat2->category_name . "</option>";
+                                              echo "<option value='" . $cat2->category_id . "'>" . urldecode($cat2->category_name) . "</option>";
                                         } elseif ($cat->category_parent != 1 && ($cat->category_parent == $cat2->category_parent)) {
-                                              echo "<option value='" . $cat2->category_id . "'>" . $cat2->category_name . "</option>";
+                                              echo "<option value='" . $cat2->category_id . "'>" . urldecode($cat2->category_name) . "</option>";
                                         }
                                     }
                                 }
@@ -82,7 +82,7 @@
                             foreach ($h->vars['the_cats'] as $cat3) {
                                 if ($cat3->category_safe_name != "all") {
                                     if ($cat3->category_parent == 1 && ($cat->category_parent != $cat3->category_parent)) {
-                                          echo "<option value='" . $cat3->category_id . "'>" . $cat3->category_name . "</option>";
+                                          echo "<option value='" . $cat3->category_id . "'>" . urldecode($cat3->category_name) . "</option>";
                                     }
                                 }
                               }

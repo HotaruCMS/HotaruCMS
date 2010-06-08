@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.1.0 2010/06/08 - Nick - Fixes for missing categories, messed up category order and edits not showing instantly 
 v.0.9 2010/06/07 - shibuya246 - Fix for foreign language categories in admin not showing
 v.0.8 2010/05/22 - Nick - Removed requirement to have SB Base installed
 v.0.7 2009/12/23 - Nick - Updated for use with Hotaru 1.0
