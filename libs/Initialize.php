@@ -155,8 +155,9 @@ class Initialize
 		// read settings for default siteid=1 first to check whether MULTISITE is TRUE
 		$sql = "SELECT settings_value FROM " . TABLE_SETTINGS . " WHERE settings_name = %s AND settings_siteid = %d";
 		$multi_site = $this->db->get_var($this->db->prepare($sql, 'MULTI_SITE', 1));
+		if (!defined('MULTI_SITE')) { define ('MULTI_SITE', $multi_site); }
 
-	        if ($multi_site == 'true') {		
+	        if (MULTI_SITE == 'true') {
 		    $url =  $this->cage->server->getRaw('HTTP_HOST');   // wanted to use sanitizeTags
 		    $sql = "SELECT site_id, site_adminuser_id FROM " . TABLE_SITE . " WHERE site_url = %s";
 		    $settings = $this->db->get_row($this->db->prepare($sql, $url));		 
@@ -281,7 +282,7 @@ class Initialize
 		foreach ($settings as $setting)
 		{
 			if (!defined($setting->settings_name)) {
-				define($setting->settings_name, $setting->settings_value);
+				if ($setting->settings_name != 'MULTI_SITE') { define($setting->settings_name, $setting->settings_value); }
 			}
 		}
 
