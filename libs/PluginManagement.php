@@ -522,7 +522,7 @@ class PluginManagement
 	 */
 	public function sortPluginHooks($h)
 	{
-		$sql = "SELECT p.plugin_folder, p.plugin_order, p.plugin_id, h.* FROM " . TABLE_PLUGINHOOKS . " h, " . TABLE_PLUGINS . " p WHERE p.plugin_folder = h.plugin_folder ORDER BY p.plugin_order ASC";
+		$sql = "SELECT " . TABLE_PLUGINS . ".plugin_folder, " . TABLE_PLUGINS . ".plugin_order, " . TABLE_PLUGINS . ".plugin_id, h.* FROM " . TABLE_PLUGINS . ", " . TABLE_PLUGINHOOKS . " h WHERE " . TABLE_PLUGINS . ".plugin_folder = h.plugin_folder ORDER BY " . TABLE_PLUGINS . ".plugin_order ASC";
 		$rows = $h->db->get_results($h->db->prepare($sql));
 		
 		// Drop and recreate the pluginhooks table, i.e. empty it.
