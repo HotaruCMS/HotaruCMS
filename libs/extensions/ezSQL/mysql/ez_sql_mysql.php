@@ -215,6 +215,8 @@
                 $this->selectDB($this->dbname);
             }
 
+	    if (MULTI_SITE == 'true') { $query = $this->whereMultiSite($query); }
+
             // Perform the query via std mysql_query function..
             $this->result = @mysql_query($query,$this->dbh);
             
@@ -374,6 +376,45 @@
             
             return false;
         }
+
+
+	function whereMultisite($query)
+	{
+
+	    $siteidtables = array('blocked'=>'blocked', 'posts'=>'post', 'comments'=>'comment', 'categories'=>'category', 'users'=>'user',
+		'plugins'=>'plugin', 'pluginsettings'=>'plugin', 'tags'=>'tags', 'settings'=>'settings', 'miscdata'=>'miscdata',
+		'widgets'=>'widget');
+
+	    $before ="BEFORE: " . $query . "<br/><br/>";
+	    $after = "no";
+
+	    if (stripos($query, 'FROM')) {
+		$array = explode('FROM ',$query);
+		$array2 = explode(' ', $array[1]);
+		$table = $array2[0];
+		$array3 = explode('_', $table);
+		$tablename = $array3[1];
+
+		$tablename = str_replace(',', '', $tablename);
+		if (array_key_exists($tablename, $siteidtables)) {
+		    if (stripos($query, $table)) { 
+			if (stripos($query, 'WHERE') !== false) {
+			    $array = explode('WHERE ', $query);
+			    $query = $array[0] . ' WHERE ' . $siteidtables[$tablename] . '_siteid = ' . SITEID . " AND " . $array[1];
+			} else {
+			    $array = $array = explode('FROM ' . $table ,$query);
+			    $query = $array[0] . ' FROM ' . $table . ' WHERE ' . $siteidtables[$tablename] . '_siteid = ' . SITEID . $array[1];
+			}
+
+			$after =  "<span style='color:red; font-weight:bold;'>AFTER</span>: " . $query . "<br/><br/>";
+
+		    }
+		}		
+	    }
+	    if (!$after) { print $before; }
+
+	    return $query;
+	}
 
     }
 
