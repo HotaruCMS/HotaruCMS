@@ -383,12 +383,12 @@
 
 	    $siteidtables = array('blocked'=>'blocked', 'posts'=>'post', 'comments'=>'comment', 'categories'=>'category', 'users'=>'user',
 		'plugins'=>'plugin', 'pluginsettings'=>'plugin', 'tags'=>'tags', 'settings'=>'settings', 'miscdata'=>'miscdata',
-		'widgets'=>'widget');
+		'widgets'=>'widget', 'hotaru_plugins', 'hotaru_plugins');
 
-	    $before ="BEFORE: " . $query . "<br/><br/>";
+	    $before ="before: " . $query . "<br/><br/>";
 	    $after = "no";
 
-	    if (stripos($query, 'FROM')) {
+	    if (stripos($query, ' FROM ')  !== false) {
 		$array = explode('FROM ',$query);
 		$array2 = explode(' ', $array[1]);
 		$table = $array2[0];
@@ -396,12 +396,13 @@
 		$tablename = $array3[1];
 
 		$tablename = str_replace(',', '', $tablename);
+
 		if (array_key_exists($tablename, $siteidtables)) {
 		    if (stripos($query, $table)) { 
 			if (stripos($query, 'WHERE') !== false) {
 			    $array = explode('WHERE ', $query);
 			    $query = $array[0] . ' WHERE ' . $siteidtables[$tablename] . '_siteid = ' . SITEID . " AND " . $array[1];
-			} else {
+			} else {	
 			    $array = $array = explode('FROM ' . $table ,$query);
 			    $query = $array[0] . ' FROM ' . $table . ' WHERE ' . $siteidtables[$tablename] . '_siteid = ' . SITEID . $array[1];
 			}
@@ -410,8 +411,81 @@
 
 		    }
 		}		
+	    } 
+
+
+	    if (stripos($query, 'UPDATE ') !== false) {		
+		$pos1 = stripos($query, 'SET');
+//		print "pos1 = " . $pos1 . "<br/>";
+		$tablename = trim(substr($query, 7, $pos1 - 7));
+		$tablename = ltrim($tablename, DB_PREFIX);
+//		print ">>>>>>>>>>>>>>" . $tablename . '<<<<<<<<<<<<<<<<<<br/>';
+		if (array_key_exists($tablename, $siteidtables)) {
+			if (stripos($query, 'WHERE') !== false) {
+			    $array = explode('WHERE ', $query);
+			    $query = $array[0] . ' WHERE ' . $siteidtables[$tablename] . '_siteid = ' . SITEID . " AND " . $array[1];
+			} else {
+			    $query = $query . ' WHERE ' . $siteidtables[$tablename] . '_siteid = ' . SITEID;
+			}
+
+			$after =  "<br/><span style='color:red; font-weight:bold;'>AFTER</span>: " . $query . "<br/><br/>";
+//			print $after;
+		}
 	    }
-	    if (!$after) { print $before; }
+	    
+	    if (stripos($query, 'INSERT INTO ')  !== false) {
+//		print "<br/>this is INSERT " . $before;
+		$pattern = '/^INSERT INTO(.*?)\(/';
+		preg_match($pattern, $query, $matches);
+//		print_r($matches);
+		if ($matches) { $tablename = trim($matches[1]);	}
+		
+		$tablename = ltrim($tablename, DB_PREFIX);
+
+//print ">>>>>>>>>>>>>>" . $tablename . '<<<<<<<<<<<<<<<<<<br/>';
+		if (array_key_exists($tablename, $siteidtables)) {
+			if (stripos($query, 'VALUES') !== false) {
+			    $array = explode('INTO ' . DB_PREFIX . $tablename . ' (', $query);
+			    $query = 'INSERT INTO ' . DB_PREFIX . $tablename . ' (' . $siteidtables[$tablename] . '_siteid, ' . $array[1];
+			    $array = explode('VALUES (', $query);
+			    if (!$array[1]) {
+				print 'no 2nd part of array';
+			    $array = explode('VALUES(', $query);}
+			    print $query. '<br/>';
+			    $query = $array[0] . ' VALUES (' . SITEID . ", " . $array[1];
+			     print $query . '<br/>';
+			}
+
+			$after =  "<br/><span style='color:red; font-weight:bold;'>AFTER</span>: " . $query . "<br/><br/>";
+//			print $after;
+		}
+	    }
+
+	    if (stripos($query, 'REPLACE INTO ') !== false) {
+		$pattern = '/^REPLACE INTO(.*?)\(/';		
+		preg_match($pattern, $query, $matches);
+		if ($matches) { $tablename = trim($matches[1]);	}
+
+		$tablename = ltrim($tablename, DB_PREFIX);
+//print ">>>>>>>>>>>>>>" . $tablename . '<<<<<<<<<<<<<<<<<<br/>';
+		if (array_key_exists($tablename, $siteidtables)) {		    
+			if (stripos($query, 'VALUES') !== false) { 			    
+			    $array = explode('INTO ' . DB_PREFIX . $tablename . ' (', $query);			    
+			    $query = 'REPLACE INTO ' . DB_PREFIX . $tablename . ' (' . $siteidtables[$tablename] . '_siteid, ' . $array[1];			    
+			    $array = explode('VALUES (', $query);
+			    $query = $array[0] . ' VALUES (' . SITEID . ", " . $array[1];
+			}
+
+			$after =  "<br/><span style='color:red; font-weight:bold;'>AFTER</span>: " . $query . "<br/><br/>";
+//			print $after;
+		}
+
+		$after =  "<br/><span style='color:red; font-weight:bold;'>AFTER</span>: " . $query . "<br/><br/>";
+//		print $after;
+	    }
+
+
+	    //if ($after == 'no') { print $before; }
 
 	    return $query;
 	}
