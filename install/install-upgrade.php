@@ -675,6 +675,21 @@ function do_upgrade($h, $old_version)
 		$h->db->query($h->db->prepare($sql, 'MULTI_SITE', 'false', 'false', 'multiple sites'));
 	    }
 
+	    // Add siteid to pluginhooks table
+	    if (!$exists = $h->db->column_exists('pluginhooks', 'pluginhooks_siteid')) {
+		    // Create a column for index first
+		    $sql = "ALTER TABLE " . TABLE_PLUGINHOOKS . " ADD pluginhooks_siteid INT NOT NULL DEFAULT 1";
+		    $h->db->query($sql);
+	    }
+
+	    // Add index for siteid on pluginhooks table
+	    $sql = "SHOW INDEX FROM `" . TABLE_PLUGINHOOKS . "` WHERE KEY_NAME = 'pluginhooks_siteid'";
+		    $result = $h->db->query($sql);
+		    if (!$result) {
+			    $sql = "ALTER TABLE `" . TABLE_PLUGINHOOKS . "` ADD INDEX (pluginhooks_siteid)";
+			    $h->db->query($sql);
+		    }
+
 	}
 
 

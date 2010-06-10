@@ -256,7 +256,9 @@ function create_table($table_name)
 			`plugin_hook` varchar(128) NOT NULL DEFAULT '',
 			`plugin_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`plugin_updateby` int(20) NOT NULL DEFAULT 0,
-			INDEX  (`plugin_folder`)
+			`plugin_siteid` int(20) NOT NULL DEFAULT 1,
+			INDEX  (`pluginhooks_folder`),
+			INDEX (`pluginhooks_siteid`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Plugins Hooks';";
 		echo $lang['install_step2_creating_table'] . ": '" . $table_name . "'...<br />\n";
 		$db->query($sql);
