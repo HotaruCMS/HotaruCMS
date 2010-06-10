@@ -128,10 +128,20 @@ class PostManager
 					    default:
 						if (isset($posts[$stat_type])) { $post_count = $posts[$stat_type]; } else { $post_count = 0; }
 						break;
-					}
+					}					
 
+					$link = "";
+					$dontlink = array('archived');
+					if (!in_array($stat_type, $dontlink)) {
+					    $link = SITEURL . "admin_index.php?post_status_filter=$stat_type&plugin=post_manager&page=plugin_settings&type=filter&csrf=" . $h->csrfToken;
+					}
+					
 					$lang_name = 'post_man_admin_stats_' . $stat_type;
-					echo "<li>" . $h->lang[$lang_name] . ": " . $post_count . "</li>";
+					echo "<li>";
+					if ($link) { echo "<a href='" . $link . "'>"; }
+					echo $h->lang[$lang_name] . ": " . $post_count;
+					if ($link) { echo "</a>"; }
+					echo "</li>";
 				}
 			}
 		}

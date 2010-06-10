@@ -110,7 +110,7 @@ $lang["comment_rss_comment_on"] = "Comment on: ";
 $lang["comment_rss_commented_on"] = " commented on ";
 
 /* Admin Stats */
-$lang["comments_admin_stats_total_comments"] = "Total";
+$lang["comments_admin_stats_all"] = "Total";
 $lang["comments_admin_stats_approved"] = "Approved";
 $lang["comments_admin_stats_pending"] = "Pending";
 $lang["comments_admin_stats_archived"] = "Archived";

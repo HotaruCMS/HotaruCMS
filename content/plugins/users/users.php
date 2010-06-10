@@ -452,10 +452,10 @@ class Users
 				if (isset($value) && !empty($value)) {
 
 					switch ($stat_type) {
-					    case 'total_users':
+					    case 'all':
 						$user_count = array_sum($users);						
 						break;
-					    case 'approved_users':
+					    case 'approved':
 						$user_count = 0;
 						$array = array('admin', 'supermod', 'moderator', 'member');
 						foreach ($array as $item) {
@@ -467,8 +467,20 @@ class Users
 						break;
 					}
 					
+					$link = "";
+					$dontlink = array('approved');
+					if ($h->isActive('user_manager')) {
+					    if (!in_array($stat_type, $dontlink)) {
+						$link = SITEURL . "admin_index.php?user_filter=$stat_type&plugin=user_manager&page=plugin_settings&type=filter&csrf=" . $h->csrfToken;
+					    }
+					}
+					
 					$lang_name = 'users_admin_stats_' . $stat_type;
-					echo "<li>" . $h->lang[$lang_name] . ": " . $user_count . "</li>";
+					echo "<li>";
+					if ($link) { echo "<a href='" . $link . "'>"; }
+					echo $h->lang[$lang_name] . ": " . $user_count;
+					if ($link) { echo "</a>"; }
+					echo "</li>";
 				}
 			}
 		}

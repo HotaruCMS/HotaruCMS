@@ -68,11 +68,11 @@ $lang["users_permissions_update"] = "Update";
 $lang['users_permissions_updated'] = "Permissions Updated";
 
 /* Admin Stats */
-$lang["users_admin_stats_total_users"] = "Total users";
+$lang["users_admin_stats_all"] = "Total users";
 $lang["users_admin_stats_admin"] = "Admins";
 $lang["users_admin_stats_supermod"] = "Super Mods";
 $lang["users_admin_stats_moderator"] = "Moderators";
-$lang["users_admin_stats_approved_users"] = "Approved";
+$lang["users_admin_stats_approved"] = "Approved";
 $lang["users_admin_stats_pending"] = "Pending";
 $lang["users_admin_stats_undermod"] = "Under moderation";
 $lang["users_admin_stats_banned"] = "Banned";
