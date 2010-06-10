@@ -346,10 +346,12 @@ class PluginFunctions
 			$h->vars['all_plugin_hooks'] = $h->db->get_results($h->db->prepare($sql));
 		} 
 		
-		foreach ($h->vars['all_plugin_hooks'] as $item => $key) {
-		if (($key->plugin_folder == $folder) 
-			&& $key->plugin_hook == 'admin_plugin_settings') {
-				return true;
+		if ($h->vars['all_plugin_hooks']) {
+		    foreach ($h->vars['all_plugin_hooks'] as $item => $key) {
+			if (($key->plugin_folder == $folder)
+				&& $key->plugin_hook == 'admin_plugin_settings') {
+					return true;
+				}
 			}
 		}
 		
