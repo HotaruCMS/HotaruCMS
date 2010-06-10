@@ -342,19 +342,17 @@ class PluginFunctions
 		if (!$folder) { $folder = $h->plugin->folder; }
 		
 		if (!isset($h->vars['all_plugin_hooks'])) {
-			$sql = "SELECT plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS;
-			$h->vars['all_plugin_hooks'] = $h->db->get_results($h->db->prepare($sql));
+			$sql = "SELECT plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_hook = %s";
+			$h->vars['all_plugin_hooks'] = $h->db->get_results($h->db->prepare($sql, 'admin_plugin_settings'));
 		} 
-		
+
 		if ($h->vars['all_plugin_hooks']) {
 		    foreach ($h->vars['all_plugin_hooks'] as $item => $key) {
-			if (($key->plugin_folder == $folder)
-				&& $key->plugin_hook == 'admin_plugin_settings') {
+			if (($key->plugin_folder == $folder) && $key->plugin_hook == 'admin_plugin_settings') {
 					return true;
-				}
 			}
-		}
-		
+		    }
+		}		
 		return false;
 	}
 }

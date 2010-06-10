@@ -428,8 +428,7 @@ class AdminPages
 		
 		$action = $h->cage->get->testAlnumLines('action');
 		$order = $h->cage->get->testAlnumLines('order');
-		
-		require_once(LIBS . 'PluginManagement.php');
+				
 		$plugman = new PluginManagement();
 		
 		switch ($action) {

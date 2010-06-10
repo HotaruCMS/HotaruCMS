@@ -383,15 +383,18 @@
 
 	    $siteidtables = array('blocked'=>'blocked', 'posts'=>'post', 'comments'=>'comment', 'categories'=>'category', 'users'=>'user',
 		'plugins'=>'plugin', 'pluginsettings'=>'plugin', 'tags'=>'tags', 'settings'=>'settings', 'miscdata'=>'miscdata',
-		'widgets'=>'widget', 'hotaru_plugins', 'hotaru_plugins');
+		'widgets'=>'widget', 'pluginhooks'=>'pluginhooks');
 
 	    $before ="before: " . $query . "<br/><br/>";
 	    $after = "no";
 
-	    if (stripos($query, ' FROM ')  !== false) {
+	    if (stripos($query, ' SELECT ')  !== false  && stripos($query, ' FROM ')  !== false) {
 		$array = explode('FROM ',$query);
+		
+		if (!isset($array[1])) { var_dump($array);  }
 		$array2 = explode(' ', $array[1]);
 		$table = $array2[0];
+
 		$array3 = explode('_', $table);
 		$tablename = $array3[1];
 
@@ -408,7 +411,7 @@
 			}
 
 			$after =  "<span style='color:red; font-weight:bold;'>AFTER</span>: " . $query . "<br/><br/>";
-
+print $after;
 		    }
 		}		
 	    } 
@@ -417,7 +420,7 @@
 	    if (stripos($query, 'UPDATE ') !== false) {		
 		$pos1 = stripos($query, 'SET');
 //		print "pos1 = " . $pos1 . "<br/>";
-		$tablename = trim(substr($query, 7, $pos1 + 1 ));
+		$tablename = trim(substr($query, 7, $pos1 - 7 ));
 //		print ">>>>>>>>>>>>>>" . $tablename . '<<<<<<<<<<<<<<<<<<br/>';
 		$tablename = ltrim($tablename, DB_PREFIX);
 //		print ">>>>>>>>>>>>>>" . $tablename . '<<<<<<<<<<<<<<<<<<br/>';
@@ -435,31 +438,37 @@
 	    }
 	    
 	    if (stripos($query, 'INSERT INTO ')  !== false) {
-//		print "<br/>this is INSERT " . $before;
+  //  print "<br/>this is INSERT " . $before;
 		$pattern = '/^INSERT INTO(.*?)\(/';
 		preg_match($pattern, $query, $matches);
-//		print_r($matches);
-		if ($matches) { $tablename = trim($matches[1]);	}
 		
-		$tablename = ltrim($tablename, DB_PREFIX);
+		if ($matches) { $tablename = trim($matches[1]);	}
+		//print $tablename;
+		$tablename = str_ireplace(DB_PREFIX, '', $tablename);
 
 //print ">>>>>>>>>>>>>>" . $tablename . '<<<<<<<<<<<<<<<<<<br/>';
+
 		if (array_key_exists($tablename, $siteidtables)) {
 			if (stripos($query, 'VALUES') !== false) {
 			    $array = explode('INTO ' . DB_PREFIX . $tablename . ' (', $query);
 			    $query = 'INSERT INTO ' . DB_PREFIX . $tablename . ' (' . $siteidtables[$tablename] . '_siteid, ' . $array[1];
-			    $array = explode('VALUES (', $query);
-			    if (!$array[1]) {
-				print 'no 2nd part of array';
-			    $array = explode('VALUES(', $query);}
-			    print $query. '<br/>';
-			    $query = $array[0] . ' VALUES (' . SITEID . ", " . $array[1];
-			     print $query . '<br/>';
+
+//			    $array = explode('VALUES', $query);
+//			    $values = $array[1];
+//			    $pattern = '/\(.*?\)/';
+//			    preg_match_all($pattern, $values, $matches);
+			    //var_dump($matches);
+
+			    $array = explode('VALUES', $query);
+			    if (!$array[1]) { print 'no 2nd part of array'; $array = explode('VALUES(', $query);}
+			    $right_side = str_replace("(", "(" . SITEID . ",", $array[1]);
+			    $query = $array[0] . " VALUES " . $right_side;
+//			     print $query . '<br/>';
 			}
 
 			$after =  "<br/><span style='color:red; font-weight:bold;'>AFTER</span>: " . $query . "<br/><br/>";
 //			print $after;
-		}
+		}		
 	    }
 
 	    if (stripos($query, 'REPLACE INTO ') !== false) {
@@ -467,7 +476,7 @@
 		preg_match($pattern, $query, $matches);
 		if ($matches) { $tablename = trim($matches[1]);	}
 
-		$tablename = ltrim($tablename, DB_PREFIX);
+		$tablename = str_ireplace(DB_PREFIX, '', $tablename);
 //print ">>>>>>>>>>>>>>" . $tablename . '<<<<<<<<<<<<<<<<<<br/>';
 		if (array_key_exists($tablename, $siteidtables)) {		    
 			if (stripos($query, 'VALUES') !== false) { 			    
@@ -476,13 +485,38 @@
 			    $array = explode('VALUES (', $query);
 			    $query = $array[0] . ' VALUES (' . SITEID . ", " . $array[1];
 			}
-
-			$after =  "<br/><span style='color:red; font-weight:bold;'>AFTER</span>: " . $query . "<br/><br/>";
-//			print $after;
 		}
 
 		$after =  "<br/><span style='color:red; font-weight:bold;'>AFTER</span>: " . $query . "<br/><br/>";
-//		print $after;
+		//print $after;
+	    }
+
+//	    if (stripos($query, 'DELETE') !== false) {
+//print ">>>>>>DELETE>>>>>>>>" . $tablename . '<<<<<<<<<<<<<<<<<<br/>';
+// print $before;
+//
+//		if (array_key_exists($tablename, $siteidtables)) {
+//		    if (stripos($query, $table)) {
+//			print $query;
+//			if (stripos($query, 'WHERE') !== false) {
+//			    print "here";
+//			    $array = explode('WHERE ', $query);
+//			    $query = $array[0] . ' WHERE ' . $siteidtables[$tablename] . '_siteid = ' . SITEID . " AND " . $array[1];
+//			} else {
+//			    print "next";
+//			    $array = explode('FROM ' . $table ,$query);
+//			    $query = $array[0] . ' FROM ' . $table . ' WHERE ' . $siteidtables[$tablename] . '_siteid = ' . SITEID . $array[1];
+//			}
+//
+//			$after =  "<span style='color:red; font-weight:bold;'>AFTER</span>: " . $query . "<br/><br/>";
+//print $after;
+//		    }
+//		}
+//	    }
+
+	    if (stripos($query, 'TRUNCATE') !== false) {
+//print ">>>>>TRUNCATE>>>>>>>>>" . $tablename . '<<<<<<<<<<<<<<<<<<br/>';
+// print $before;
 	    }
 
 
@@ -490,7 +524,6 @@
 //	    print $after;
 	    return $query;
 	}
-
     }
 
 ?>
