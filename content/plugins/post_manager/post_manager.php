@@ -112,7 +112,7 @@ class PostManager
 				if (isset($value) && !empty($value)) {
 
 					switch ($stat_type) {
-					    case 'total_posts':
+					    case 'all':
 						$post_count = array_sum($posts);
 						break;
 					    case 'approved':						

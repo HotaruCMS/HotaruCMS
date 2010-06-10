@@ -824,7 +824,7 @@ class Comments
 				if (isset($value) && !empty($value)) {
 
 					switch ($stat_type) {
-					    case 'total_comments':
+					    case 'all':
 						if (isset($comments)) { $comment_count = array_sum($comments); } else { $comment_count = 0; }
 						break;
 					    case 'archived':
