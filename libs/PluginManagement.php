@@ -427,8 +427,8 @@ class PluginManagement
 		// Clear the language cache to ensure any new language files get included
 		$h->clearCache('lang_cache', false);
 		
-		$h->db->query("TRUNCATE TABLE " . TABLE_PLUGINS);
-		$h->db->query("TRUNCATE TABLE " . TABLE_PLUGINHOOKS);
+		$h->db->query("DELETE FROM " . TABLE_PLUGINS);
+		$h->db->query("DELETE FROM " . TABLE_PLUGINHOOKS);
 		
 		$h->messages[$h->lang["admin_plugins_uninstall_all_done"]] = 'green';
 	}
@@ -526,7 +526,7 @@ class PluginManagement
 		$rows = $h->db->get_results($h->db->prepare($sql));
 		
 		// Drop and recreate the pluginhooks table, i.e. empty it.
-		$h->db->query($h->db->prepare("TRUNCATE TABLE " . TABLE_PLUGINHOOKS));
+		$h->db->query($h->db->prepare("DELETE FROM " . TABLE_PLUGINHOOKS));
 		
 		$values = '';
 		$pvalues = array();
