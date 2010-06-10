@@ -164,7 +164,7 @@ class Maintenance
 	 */
 	public function emptyTable($h, $table_name, $msg = true)
 	{
-		$h->db->query("TRUNCATE TABLE " . $table_name);
+		$h->db->query("DELETE FROM " . $table_name);
 		
 		if ($msg) {
 			$h->message = $h->lang['admin_maintenance_table_emptied'];
