@@ -458,46 +458,21 @@ class Post
 	/**
 	 * Post stats
 	 *
-	 * @param string $stat_type
-	 * @return int
+	 * @return array
 	 */
-	public function stats($h, $stat_type = '')
+	public function stats($h)
 	{
-		switch ($stat_type) {
-			case 'total_posts':
-				$query = "SELECT count(post_id) FROM " . TABLE_POSTS;
-				$h->smartCache('on', 'posts', 60, $query); // start using cache
-				$posts = $h->db->get_var($query);
-				break;
-			case 'approved_posts':
-				$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s OR post_status = %s";
-				$query = $h->db->prepare($sql, 'top', 'new');
-				$h->smartCache('on', 'posts', 60, $query); // start using cache
-				$posts = $h->db->get_var($query);
-				break;
-			case 'pending_posts':
-				$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s";
-				$query = $h->db->prepare($sql, 'pending');
-				$h->smartCache('on', 'posts', 60, $query); // start using cache
-				$posts = $h->db->get_var($query);
-				break;
-			case 'buried_posts':
-				$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s";
-				$query = $h->db->prepare($sql, 'buried');
-				$h->smartCache('on', 'posts', 60, $query); // start using cache
-				$posts = $h->db->get_var($query);
-				break;
-			case 'archived_posts':
-				$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_archived = %s";
-				$query = $h->db->prepare($sql, 'Y');
-				$h->smartCache('on', 'posts', 60, $query); // start using cache
-				$posts = $h->db->get_var($query);
-				break;
-			default:
-				$posts = 0;
-		}
-		$h->smartCache('off'); // stop using cache
+		$sql = "SELECT post_status, count(post_id) FROM " . TABLE_POSTS . " GROUP BY post_status";
+		$query = $h->db->prepare($sql);
+		$h->smartCache('on', 'posts', 60, $query); // start using cache
+
+		$posts = $h->db->get_results($query, ARRAY_N);
+		$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_archived = %s";
+		$posts_archived = $h->db->get_var($h->db->prepare($sql, 'Y'));
+		if ($posts_archived) { $posts = array_merge($posts, $posts_archived); } 
 		
+		$h->smartCache('off'); // stop using cache
+
 		return $posts;
 	}
 }
