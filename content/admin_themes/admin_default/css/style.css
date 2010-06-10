@@ -352,6 +352,7 @@ table#settings {
 
 #sidebar.vertical .home {padding-left: 1.5em; background-image: url(../images/home.png); background-repeat: no-repeat;}
 
+#site_stats li a {color: #000;}
 #site-stats .title {font-weight:bold; margin-left:0; margin-bottom:2px; }
 #site-stats li {margin-left:4px;}
 
