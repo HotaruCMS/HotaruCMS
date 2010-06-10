@@ -96,6 +96,7 @@ class PostManager
     public function admin_theme_main_stats($h, $vars)
     {
 	    $stats = $h->post->stats($h);
+	    $stats_archived = $h->post->stats($h, 'archived');
 
 	    echo "<li>&nbsp;</li>";
 	    if ($stats) {
@@ -120,6 +121,9 @@ class PostManager
 						foreach ($array as $item) {
 						    if (isset($posts[$item])) { $post_count += $posts[$item]; }
 						}
+						break;
+					    case 'archived' :
+						if (isset($stats_archived)) { $post_count = $stats_archived; } else { $post_count = 0; }
 						break;
 					    default:
 						if (isset($posts[$stat_type])) { $post_count = $posts[$stat_type]; } else { $post_count = 0; }

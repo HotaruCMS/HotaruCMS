@@ -460,17 +460,23 @@ class Post
 	 *
 	 * @return array
 	 */
-	public function stats($h)
+	public function stats($h, $stat_type = '')
 	{
-		$sql = "SELECT post_status, count(post_id) FROM " . TABLE_POSTS . " GROUP BY post_status";
-		$query = $h->db->prepare($sql);
-		$h->smartCache('on', 'posts', 60, $query); // start using cache
+		switch ($stat_type) {
+		    default:
+			$sql = "SELECT post_status, count(post_id) FROM " . TABLE_POSTS . " GROUP BY post_status";
+			$query = $h->db->prepare($sql);
+			$h->smartCache('on', 'posts', 60, $query); // start using cache
+			$posts = $h->db->get_results($query, ARRAY_N);
+			break;
+		case 'archived':
+			$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_archived = %s";
+			$query = $h->db->prepare($sql, 'Y');
+			$h->smartCache('on', 'posts', 60, $query); // start using cache
+			$posts = $h->db->get_var();
+			break;
+		}
 
-		$posts = $h->db->get_results($query, ARRAY_N);
-		$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_archived = %s";
-		$posts_archived = $h->db->get_var($h->db->prepare($sql, 'Y'));
-		if ($posts_archived) { $posts = array_merge($posts, $posts_archived); } 
-		
 		$h->smartCache('off'); // stop using cache
 
 		return $posts;

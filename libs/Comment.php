@@ -611,37 +611,58 @@ class Comment
 	 * @return int
 	 */
 	public function stats($h, $stat_type = '')
-	{
+	{		
 		switch ($stat_type) {
-			case 'total_comments':
-				$query = "SELECT count(comment_id) FROM " . TABLE_COMMENTS;
-				$h->smartCache('on', 'comments', 60, $query); // start using cache
-				$comments = $h->db->get_var($query);
-				break;
-			case 'approved_comments':
-				$sql = "SELECT count(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_status = %s";
-				$query = $h->db->prepare($sql, 'approved');
-				$h->smartCache('on', 'comments', 60, $query); // start using cache
-				$comments = $h->db->get_var($query);
-				break;
-			case 'pending_comments':
-				$sql = "SELECT count(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_status = %s";
-				$query = $h->db->prepare($sql, 'pending');
-				$h->smartCache('on', 'comments', 60, $query); // start using cache
-				$comments = $h->db->get_var($query);
-				break;
-			case 'archived_comments':
-				$sql = "SELECT count(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s";
-				$query = $h->db->prepare($sql, 'Y');
-				$h->smartCache('on', 'comments', 60, $query); // start using cache
-				$comments = $h->db->get_var($query);
-				break;
-			default:
-				$comments = '';
+		    default:
+			$sql = "SELECT comment_status, count(comment_id) FROM " . TABLE_COMMENTS . " GROUP BY comment_status";
+			$query = $h->db->prepare($sql);
+			$h->smartCache('on', 'comments', 60, $query); // start using cache
+			$comments = $h->db->get_results($query, ARRAY_N);
+			break;
+		    case 'archived':
+			$sql = "SELECT count(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s";
+			$query = $h->db->prepare($sql, 'Y');
+			$h->smartCache('on', 'comments', 60, $query); // start using cache
+			$comments = $h->db->get_var();
+			break;
 		}
+
 		$h->smartCache('off'); // stop using cache
-		
+
 		return $comments;
+
+
+
+//		switch ($stat_type) {
+//			case 'total_comments':
+//				$query = "SELECT count(comment_id) FROM " . TABLE_COMMENTS;
+//				$h->smartCache('on', 'comments', 60, $query); // start using cache
+//				$comments = $h->db->get_var($query);
+//				break;
+//			case 'approved_comments':
+//				$sql = "SELECT count(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_status = %s";
+//				$query = $h->db->prepare($sql, 'approved');
+//				$h->smartCache('on', 'comments', 60, $query); // start using cache
+//				$comments = $h->db->get_var($query);
+//				break;
+//			case 'pending_comments':
+//				$sql = "SELECT count(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_status = %s";
+//				$query = $h->db->prepare($sql, 'pending');
+//				$h->smartCache('on', 'comments', 60, $query); // start using cache
+//				$comments = $h->db->get_var($query);
+//				break;
+//			case 'archived_comments':
+//				$sql = "SELECT count(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s";
+//				$query = $h->db->prepare($sql, 'Y');
+//				$h->smartCache('on', 'comments', 60, $query); // start using cache
+//				$comments = $h->db->get_var($query);
+//				break;
+//			default:
+//				$comments = '';
+//		}
+//		$h->smartCache('off'); // stop using cache
+//
+//		return $comments;
 	}
 }
 ?>

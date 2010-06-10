@@ -806,18 +806,41 @@ class Comments
      */
     public function admin_theme_main_stats($h, $vars)
     {
-        echo "<li>&nbsp;</li>";
-	foreach ($vars as $key => $value) {
-	    echo "<li class='title'>" . $key . "</li>";
-	    foreach ($value as $stat_type) {
-		require_once(LIBS . 'Comment.php');
-		$c = new Comment();
-		$comments = $c->stats($h, $stat_type);
-		if (!$comments) { $comments = 0; }
-		$lang_name = 'comments_admin_stats_' . $stat_type;
-		echo "<li>" . $h->lang[$lang_name] . ": " . $comments . "</li>";
+	    $c = new Comment();
+	    $stats = $c->stats($h);
+	    $stats_archived = $c->stats($h, 'archived');
+	    
+	    echo "<li>&nbsp;</li>";
+	    if ($stats) {
+		foreach ($stats as $stat) {
+		    $comments[$stat[0]] = $stat[1];
+		}
 	    }
-	}
+
+	    if (isset($vars) && (!empty($vars))) {
+		foreach ($vars as $key => $value) {
+			echo "<li class='title'>" . $key . "</li>";
+			foreach ($value as $stat_type) {
+				if (isset($value) && !empty($value)) {
+
+					switch ($stat_type) {
+					    case 'total_comments':
+						if (isset($comments)) { $comment_count = array_sum($comments); } else { $comment_count = 0; }
+						break;
+					    case 'archived':
+						if (isset($stats_archived)) { $comment_count = $stats_archived; } else { $comment_count = 0; }
+						break;
+					    default:
+						if (isset($comments[$stat_type])) { $comment_count = $comments[$stat_type]; } else { $comment_count = 0; }
+						break;
+					}
+
+					$lang_name = 'comments_admin_stats_' . $stat_type;
+					echo "<li>" . $h->lang[$lang_name] . ": " . $comment_count . "</li>";
+				}
+			}
+		}
+	    }
     }
     
     
