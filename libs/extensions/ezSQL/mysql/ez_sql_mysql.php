@@ -416,7 +416,7 @@
 
 	    if (stripos($query, 'UPDATE ') !== false) {		
 		$pos1 = stripos($query, 'SET');
-		print "pos1 = " . $pos1 . "<br/>";
+//		print "pos1 = " . $pos1 . "<br/>";
 		$tablename = trim(substr($query, 7, $pos1 + 1 ));
 //		print ">>>>>>>>>>>>>>" . $tablename . '<<<<<<<<<<<<<<<<<<br/>';
 		$tablename = ltrim($tablename, DB_PREFIX);
@@ -430,7 +430,7 @@
 			}
 
 			$after =  "<br/><span style='color:red; font-weight:bold;'>AFTER</span>: " . $query . "<br/><br/>";
-			print $after;
+//			print $after;
 		}
 	    }
 	    
@@ -486,7 +486,7 @@
 	    }
 
 
-	    if ($after == 'no') { print $before; }
+	    //if ($after == 'no') { print $before; }
 //	    print $after;
 	    return $query;
 	}
