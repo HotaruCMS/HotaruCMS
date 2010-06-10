@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.1.8 2010/06/10 - Alan - Added admin settings page, exclusion tag words for list and post page
 v.1.7 2010/05/22 - Nick - Fix for home page title tags and moved Tag RSS from SB Base into this plugin
 v.1.6 2010/04/14 - Nick - Top stories page name changed from "index" to "popular"
 v.1.5 2010/02/20 - Nick - Meta description and keywords added for browsing tag pages
