@@ -5,7 +5,7 @@
  * version: 0.7
  * folder: post_manager
  * class: PostManager
- * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, user_manager_role, user_manager_details
+ * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, user_manager_role, user_manager_details, admin_theme_main_stats
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -88,6 +88,50 @@ class PostManager
             $output = rstrtrim($output, ", ");
             $h->vars['user_manager_details'] = array($output, $user);
         }
+    }
+
+    /**
+     * Show stats on Admin home page
+     */
+    public function admin_theme_main_stats($h, $vars)
+    {
+	    $stats = $h->post->stats($h);
+
+	    echo "<li>&nbsp;</li>";
+	    if ($stats) {
+		foreach ($stats as $stat) {
+		    $posts[$stat[0]] = $stat[1];
+		}
+	    }
+
+	    if (isset($vars) && (!empty($vars))) {
+		foreach ($vars as $key => $value) {
+			echo "<li class='title'>" . $key . "</li>";
+			foreach ($value as $stat_type) {
+				if (isset($value) && !empty($value)) {
+
+					switch ($stat_type) {
+					    case 'total_posts':
+						$post_count = array_sum($posts);
+						break;
+					    case 'approved_posts':						
+						$post_count = 0;
+						$array = array('top', 'new');
+						foreach ($array as $item) {
+						    if (isset($posts[$item])) { $post_count += $posts[$item]; }
+						}
+						break;
+					    default:
+						if (isset($posts[$stat_type])) { $post_count = $posts[$stat_type]; } else { $post_count = 0; }
+						break;
+					}
+
+					$lang_name = 'post_man_admin_stats_' . $stat_type;
+					echo "<li>" . $h->lang[$lang_name] . ": " . $post_count . "</li>";
+				}
+			}
+		}
+	    }
     }
 }
 
