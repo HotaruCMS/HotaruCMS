@@ -431,24 +431,48 @@ class Users
      * Show stats on Admin home page
      */
     public function admin_theme_main_stats($h, $vars)
-    {
-        require_once(LIBS . 'UserInfo.php');
+    {        
         $ui = new UserInfo();
-        
-        echo "<li>&nbsp;</li>";
-		if (isset($vars) && (!empty($vars))) {	    
-			foreach ($vars as $key => $value) {
-				echo "<li class='title'>" . $key . "</li>";
-				foreach ($value as $stat_type) {		    
-					if (isset($value) && !empty($value)) {
-						$users = $ui->stats($h, $stat_type);
-						if (!$users) { $users = 0; }
-						$lang_name = 'users_admin_stats_' . $stat_type;
-						echo "<li>" . $h->lang[$lang_name] . ": " . $users . "</li>";
+        $stats = $ui->stats($h);
+
+	//var_dump($stats);
+
+	echo "<li>&nbsp;</li>";
+	if ($stats) {
+	    foreach ($stats as $stat) {
+		//var_dump($stat);
+		$users[$stat[0]] = $stat[1];
+	    }
+	}
+ 
+	if (isset($vars) && (!empty($vars))) {
+		foreach ($vars as $key => $value) {
+			echo "<li class='title'>" . $key . "</li>";
+			foreach ($value as $stat_type) {
+				if (isset($value) && !empty($value)) {
+
+					switch ($stat_type) {
+					    case 'total_users':
+						$user_count = array_sum($users);						
+						break;
+					    case 'approved_users':
+						$user_count = 0;
+						$array = array('admin', 'supermod', 'moderator', 'member');
+						foreach ($array as $item) {
+						    if (isset($users[$item])) {$user_count .+ $users[$item];}
+						}
+						break;
+					    default:
+						if (isset($users[$stat_type])) { $user_count = $users[$stat_type]; } else { $user_count = 0; }
+						break;
 					}
+					
+					$lang_name = 'users_admin_stats_' . $stat_type;
+					echo "<li>" . $h->lang[$lang_name] . ": " . $user_count . "</li>";
 				}
 			}
 		}
+	}
     }
     
     
