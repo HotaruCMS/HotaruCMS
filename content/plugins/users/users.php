@@ -459,7 +459,7 @@ class Users
 						$user_count = 0;
 						$array = array('admin', 'supermod', 'moderator', 'member');
 						foreach ($array as $item) {
-						    if (isset($users[$item])) {$user_count .+ $users[$item];}
+						    if (isset($users[$item])) {$user_count += $users[$item];}
 						}
 						break;
 					    default:
