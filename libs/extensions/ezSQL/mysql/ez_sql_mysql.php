@@ -388,7 +388,7 @@
 	    $before ="before: " . $query . "<br/><br/>";
 	    $after = "no";
 
-	    if (stripos($query, 'SELECT ')  !== false  && stripos($query, ' FROM ')  !== false) {
+	    if (stripos($query, ' FROM ')  !== false) {
 		$array = explode('FROM ',$query);
 		
 		if (!isset($array[1])) { var_dump($array);  }
