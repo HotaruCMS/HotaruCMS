@@ -68,7 +68,7 @@
 		<?php $h->pluginHook('admin_theme_main_stats_post_version'); ?>
 		<?php $h->pluginHook('admin_theme_main_stats', 'users', array('Summary' => array('total_users', 'admin', 'supermod', 'moderator'))); ?>
 		<?php $h->pluginHook('admin_theme_main_stats', 'users', array('Users' => array('approved_users', 'undermod', 'pending', 'banned', 'killspammed'))); ?>
-		<?php $h->pluginHook('admin_theme_main_stats', 'post_manager', array('Posts' => array('total_posts', 'approved_posts', 'pending_posts', 'buried_posts', 'archived_posts'))); ?>
+		<?php $h->pluginHook('admin_theme_main_stats', 'post_manager', array('Posts' => array('total_posts', 'approved', 'pending', 'buried', 'archived'))); ?>
 		<?php $h->pluginHook('admin_theme_main_stats', 'comments', array('Comments' => array('total_comments', 'approved_comments', 'pending_comments', 'archived_comments'))); ?>
 	</ul>
 </td>
