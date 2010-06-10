@@ -73,4 +73,10 @@ $lang["post_man_admin_sidebar"] = "Post Manager";
 /* User Manager */
 $lang["post_man_flagged_reasons"] = "Posts from this user are: ";
 
+
+$lang["post_man_admin_stats_total_posts"] = "Total";
+$lang["post_man_admin_stats_approved_posts"] = "Approved";
+$lang["post_man_admin_stats_pending_posts"] = "Pending";
+$lang["post_man_admin_stats_buried_posts"] = "Buried";
+$lang["post_man_admin_stats_archived_posts"] = "Archived";
 ?>
