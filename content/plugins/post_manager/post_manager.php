@@ -115,7 +115,7 @@ class PostManager
 					    case 'total_posts':
 						$post_count = array_sum($posts);
 						break;
-					    case 'approved_posts':						
+					    case 'approved':						
 						$post_count = 0;
 						$array = array('top', 'new');
 						foreach ($array as $item) {
