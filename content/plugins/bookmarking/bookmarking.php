@@ -6,7 +6,7 @@
  * folder: bookmarking
  * class: Bookmarking
  * type: base
- * hooks: install_plugin, theme_index_top, header_meta, header_include, navigation, breadcrumbs, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, admin_theme_main_stats, user_settings_pre_save, user_settings_fill_form, user_settings_extra_settings, theme_index_pre_main, profile_navigation, post_rss_feed_items
+ * hooks: install_plugin, theme_index_top, header_meta, header_include, navigation, breadcrumbs, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, user_settings_pre_save, user_settings_fill_form, user_settings_extra_settings, theme_index_pre_main, profile_navigation, post_rss_feed_items
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -389,25 +389,7 @@ class Bookmarking
                 }
                 return true;
         }
-    }
-
-    
-    /**
-     * Show stats on Admin home page
-     */
-    public function admin_theme_main_stats($h, $vars)
-    {
-		echo "<li>&nbsp;</li>";
-		foreach ($vars as $key => $value) {
-			echo "<li class='title'>" . $key . "</li>";
-			foreach ($value as $stat_type) {
-				$posts = $h->post->stats($h, $stat_type);
-				if (!$posts) { $posts = 0; }
-				$lang_name = 'bookmarking_admin_stats_' . $stat_type;
-				echo "<li>" . $h->lang[$lang_name] . ": " . $posts . "</li>";
-			}
-		}
-	}
+    }  
     
     
     /**
