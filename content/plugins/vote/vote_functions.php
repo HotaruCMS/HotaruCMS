@@ -49,15 +49,20 @@ if ($h->cage->post->keyExists('post_id')) {
 }
 
 function vote($h, $post_id, $vote_rating, $user_ip, $referer, $vote_settings) {
-    // Only proceed if the user is logged in
-    if (!$h->currentUser->loggedIn) { return false; }
 
-    $user_id = $h->currentUser->id;
+    if ($vote_settings['vote_anon_vote'] && !$h->currentUser->loggedIn) {
+	$user_id = 0;  // include user_id = 0 since if regd user votes after anon at same ip, we dont want to delete both votes later if anon user unvotes
+	$sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_user_ip = %s AND vote_rating != %d";
+	$voted = $h->db->get_var($h->db->prepare($sql, $post_id, $user_id, $user_ip, -999));
+    } else {
+	// Only proceed if the user is logged in
+	if (!$h->currentUser->loggedIn) { return false; }
+	$user_id = $h->currentUser->id;
 
-    // get vote history for this post:
-
-    $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating != %d";
-    $voted = $h->db->get_var($h->db->prepare($sql, $post_id, $user_id, -999));
+	// get vote history for this post:
+	$sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating != %d";
+	$voted = $h->db->get_var($h->db->prepare($sql, $post_id, $user_id, -999));
+    }
 
     if ($voted == $vote_rating) {
         // Repeat vote. Must be from a double-click. Return false and
@@ -87,6 +92,7 @@ function vote($h, $post_id, $vote_rating, $user_ip, $referer, $vote_settings) {
         // Update Posts table
         $h->db->query($h->db->prepare($sql, $post_status, $post_id));
 
+
         // Update Postvotes table
         $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %d, %d)";
         $h->db->query($h->db->prepare($sql, $post_id, $user_id, $user_ip, 'vote', $vote_rating, $user_id));
@@ -108,9 +114,14 @@ function vote($h, $post_id, $vote_rating, $user_ip, $referer, $vote_settings) {
                 $h->db->query($h->db->prepare($sql, 'new', $post_id));
             }
 
-            // Update Postvotes table
-            $sql = "DELETE FROM  " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating = %d";
-            $h->db->query($h->db->prepare($sql, $post_id, $user_id, $voted));
+	    // Update Postvotes table
+	    if ($vote_settings['vote_anon_vote'] && !$h->currentUser->loggedIn) {
+		$sql = "DELETE FROM  " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_user_ip = %s AND vote_rating = %d";
+		$h->db->query($h->db->prepare($sql, $post_id, 0, $user_ip, $voted));
+	    } else {
+		$sql = "DELETE FROM  " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating = %d";
+		$h->db->query($h->db->prepare($sql, $post_id, $user_id, $voted));
+	    }
 
             $h->pluginHook('vote_negative_vote', '', array('user' => $user_id, 'post'=>$post_id));
         }

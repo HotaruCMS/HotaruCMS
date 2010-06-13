@@ -41,7 +41,7 @@ $vote_button_type = 'vote_color_' . $status;  // for css difference between top 
 <div id='votes_<?php echo $h->post->id; ?>' class='vote_button_top <?php echo $vote_button_type; ?>'><?php echo $h->vars['votesUp']; ?></div>
 
 <!-- VOTE OR UN-VOTE LINK -->
-<?php if ($h->currentUser->loggedIn && !$h->vars['voted']) { ?>
+<?php if (($h->currentUser->loggedIn || $h->vars['vote_anon_vote']) && !$h->vars['voted']) { ?>
     <!-- Logged in and not voted yet -->
     
     <!-- Shown -->
@@ -54,7 +54,7 @@ $vote_button_type = 'vote_color_' . $status;  // for css difference between top 
         <a href="#" onclick="vote(<?php echo $h->post->id; ?>, -10); return false;"><?php echo $h->lang["vote_button_unvote"]; ?></a>
     </div>        
     
-<?php } elseif ($h->currentUser->loggedIn && $h->vars['voted']) { ?>
+<?php } elseif (($h->currentUser->loggedIn || $h->vars['vote_anon_vote']) && $h->vars['voted']) { ?>
     <!-- Logged in and already voted -->
     
     <!-- Hidden -->

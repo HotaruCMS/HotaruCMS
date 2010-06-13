@@ -2,7 +2,7 @@
 /**
  * name: Vote
  * description: Adds voting ability to posted stories.
- * version: 2.0
+ * version: 2.1
  * folder: vote
  * class: Vote
  * type: vote
@@ -53,7 +53,7 @@ class Vote
         if (!isset($vote_settings['no_front_page'])) { $vote_settings['no_front_page'] = 5; }
         if (!isset($vote_settings['posts_widget'])) { $vote_settings['posts_widget'] = 'checked'; }
         if (!isset($vote_settings['vote_on_url_click'])) { $vote_settings['vote_on_url_click'] = ''; }
-
+	if (!isset($vote_settings['vote_anon_vote'])) { $vote_settings['vote_anon_vote'] = ''; }
         
         $h->updateSetting('vote_settings', serialize($vote_settings));
     }  
@@ -161,6 +161,10 @@ class Vote
      */
     public function pre_show_post($h)
     {
+	// Get settings from the database if they exist...
+        $vote_settings = unserialize($h->getSetting('vote_settings'));
+	$h->vars['vote_anon_vote'] = $vote_settings['vote_anon_vote'];
+
         $h->vars['flagged'] = false;
         if ($h->post->status == 'new' && $h->vars['useAlerts'] == "checked") {
             // CHECK TO SEE IF THIS POST IS BEING FLAGGED AND IF SO, ADD IT TO THE DATABASE
@@ -181,10 +185,7 @@ class Vote
                 }
             }
             
-            // CHECK TO SEE IF THIS POST HAS BEEN FLAGGED AND IF SO, SHOW THE ALERT STATUS
-        
-            // Get settings from the database if they exist...
-            $vote_settings = unserialize($h->getSetting('vote_settings')); 
+            // CHECK TO SEE IF THIS POST HAS BEEN FLAGGED AND IF SO, SHOW THE ALERT STATUS                  
             
             // Check if already flagged...
             $sql = "SELECT * FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_rating = %d";
@@ -216,13 +217,17 @@ class Vote
                 $h->vars['flagged'] = true;
             }
         }
-        
-        
+                
         // CHECK TO SEE IF THE CURRENT USER HAS VOTED FOR THIS POST
          if ($h->currentUser->loggedIn) {
             $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating != %d LIMIT 1";
             $h->vars['voted'] = $h->db->get_var($h->db->prepare($sql, $h->post->id, $h->currentUser->id, -999));
-        } 
+        } elseif ($vote_settings['vote_anon_vote']) {	    
+	    $user_ip = $h->cage->server->testIp('REMOTE_ADDR');
+	    $user_id = 0; 
+	    $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_user_ip = %s AND vote_rating != %d LIMIT 1";
+            $h->vars['voted'] = $h->db->get_var($h->db->prepare($sql, $h->post->id, $user_id, $user_ip, -999));
+	}
 
         // determine where to return the user to after logging in:
         if (!$h->cage->get->keyExists('return')) {
