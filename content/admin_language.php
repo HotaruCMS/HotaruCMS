@@ -276,7 +276,7 @@ $lang["admin_theme_filecopy_permission_error"] = "The files could not be copied 
 
 
 $lang["admin_theme_need_cron"] = "You need the 'cron' plugin installed to use this feature";
-$lang["admin_theme_check_latest_plugin_versions"] = "Check for latest plugin versions.";
+$lang["admin_theme_check_latest_plugin_versions"] = "Update versions";
 $lang["admin_theme_version_check_completed"] = "The version numbers have been updated";
 
 $lang["admin_theme_version_latest_version_installed"] = "Latest version installed";

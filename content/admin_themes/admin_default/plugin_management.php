@@ -57,6 +57,11 @@
 	&nbsp;&nbsp;
 	<img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/uninstall_16.png' alt="">
 	<?php echo $h->lang["admin_theme_plugins_uninstall"]; ?>
+	
+
+	<span style="float:right; font-size:10pt;">
+	    <a href="<?php echo SITEURL ?>admin_index.php?page=plugin_management&action=version_check"><?php echo $h->lang["admin_theme_check_latest_plugin_versions"]; ?></a>
+	</span>
 	</span>
 </td></tr>
 
@@ -227,9 +232,7 @@
 	<?php $h->pluginHook('plugins_guide_bottom'); ?>
 </div>
 
-<div >
-    <br/><a href="<?php echo SITEURL ?>admin_index.php?page=plugin_management&action=version_check"><?php echo $h->lang["admin_theme_check_latest_plugin_versions"]; ?></a>
-</div>
+
 
 <?php $h->pluginHook('plugins_bottom'); ?>
 
