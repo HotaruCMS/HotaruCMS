@@ -59,6 +59,7 @@ $lang["admin_news_more_threads"] = "More recent threads...";
 
 /* Announcements /class.hotaru.php */
 $lang['admin_announcement_delete_install'] = "Please delete the install folder before someone deletes your database!";
+$lang['admin_announcement_run_install'] = "You have a new version of Hotaru but have not run the upgrade script yet.";
 $lang['admin_announcement_plugins_disabled'] = "Go to Plugin Management to enable some plugins.";
 $lang['admin_announcement_users_disabled'] = "Please enable the Users plugin in Plugin Management.";
 $lang['admin_announcement_change_site_email'] = "Please change the site email address in the Settings page.";
