@@ -273,8 +273,8 @@ class Initialize
 	 * @return <bool>
 	 */
 	public function readSettings() {
-	    $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS . " WHERE settings_siteid = %d";
-	    $settings = $this->db->get_results($this->db->prepare($sql, SITEID));
+	    $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;
+	    $settings = $this->db->get_results($this->db->prepare($sql));
 
 	    if(!$settings) { return false; }
 
