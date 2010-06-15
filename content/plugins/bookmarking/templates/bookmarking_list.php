@@ -46,12 +46,12 @@ foreach ($h->vars['pagedResults']->items as $post) {
         
         <div class="show_post_title">
             <?php if ($h->vars['link_action'] == 'source') { ?>
-                <a href='<?php echo $h->post->origUrl; ?>' <?php echo $h->vars['target']; ?> class="click_to_source" rel="nofollow"><?php echo $h->post->title; ?></a>
+                <a href='<?php echo $h->post->origUrl; ?>' <?php echo $h->vars['target']; ?> class="click_to_source" rel="nofollow"><?php echo urldecode($h->post->title); ?></a>
             <?php } else { ?>
-                <a href='<?php echo $h->url(array('page'=>$h->post->id)); ?>' <?php echo $h->vars['target']; ?> class="click_to_post"><?php echo $h->post->title; ?></a>
+                <a href='<?php echo $h->url(array('page'=>$h->post->id)); ?>' <?php echo $h->vars['target']; ?> class="click_to_post"><?php echo  urldecode($h->post->title); ?></a>
             <?php } ?>
             <?php $h->pluginHook('show_post_title'); ?>
-        </div>
+        </div> 
     
         <div class="show_post_author_date">    
             <?php echo " " . $h->lang["bookmarking_post_posted_by"] . " <a href='" . $h->url(array('user' => $user->name)) . "'>" . $user->name . "</a>"; ?>

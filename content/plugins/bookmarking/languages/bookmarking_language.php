@@ -31,6 +31,8 @@ $lang["bookmarking_post_pending"] = "This post is pending approval by a moderato
 /* Settings */
 $lang["bookmarking_settings_header"] = "Bookmarking Configuration";
 $lang["bookmarking_settings_posts_per_page"] = "Posts per page <small>(default: 10)</small>";
+$lang["bookmarking_settings_default_type"] = "Post type to show as default on list and post pages";
+$lang["bookmarking_settings_default_page"] = "Page type to show as deault";
 $lang["bookmarking_settings_rss_redirect"] = "Automatically redirect RSS links to their original sources";
 
 /* Admin Stats */

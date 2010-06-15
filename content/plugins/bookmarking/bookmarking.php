@@ -43,6 +43,8 @@ class Bookmarking
 		$bookmarking_settings = $h->getSerializedSettings();
 		if (!isset($bookmarking_settings['posts_per_page'])) { $bookmarking_settings['posts_per_page'] = 10; }
 		if (!isset($bookmarking_settings['rss_redirect'])) { $bookmarking_settings['rss_redirect'] = ''; }
+		if (!isset($bookmarking_settings['default_type'])) { $bookmarking_settings['default_type'] = 'news'; }
+		if (!isset($bookmarking_settings['default_page'])) { $bookmarking_settings['default_page'] = 'popular'; }
 		if (!isset($bookmarking_settings['archive'])) { $bookmarking_settings['archive'] = "no_archive"; }
 		$h->updateSetting('bookmarking_settings', serialize($bookmarking_settings));
 		
@@ -85,11 +87,14 @@ class Bookmarking
 			$h->pageName = 'sort';
 		}
 
+		// get settings
+		$h->vars['bookmarking_settings'] = $h->getSerializedSettings('bookmarking');		
+		
 		// check if we should forward an RSS link to its source
 		$this->rssForwarding($h);
 		
-		//check if we should set the home page to "popular"
-		$this->setHomePopular($h);
+		//check if we should set the home page to settings default page
+		$this->setHomeDefaultPage($h);
 
 		// check page name and set types and titles
 		$this->checkPageName($h);
@@ -111,10 +116,8 @@ class Bookmarking
 		}
 		
 		// get the BookmarkingFunctions class
-		$funcs = $this->getBookmarkingFunctions($h);
+		$funcs = $this->getBookmarkingFunctions($h);		
 
-		// get settings
-		$h->vars['bookmarking_settings'] = $h->getSerializedSettings('bookmarking');
 		$posts_per_page = $h->vars['bookmarking_settings']['posts_per_page'];
 		
 		// if a list, get the posts:
@@ -122,7 +125,7 @@ class Bookmarking
 		{
 			case 'list':
 				$post_count = $funcs->prepareList($h, '', 'count');   // get the number of posts
-				$post_query = $funcs->prepareList($h, '', 'query');   // and the SQL query used
+				$post_query = $funcs->prepareList($h, '', 'query');   // and the SQL query used				
 				$h->vars['pagedResults'] = $h->pagination($post_query, $post_count, $posts_per_page, 'posts');
 				break;
 			case 'post':
@@ -200,15 +203,16 @@ class Bookmarking
 	
 	
 	/**
-	 * Check if we should set the home page to Popular
+	 * Check if we should set the home page to the settings default page
 	 */
-	public function setHomePopular($h)
+	public function setHomeDefaultPage($h)
 	{
 		$h->pluginHook('pre_set_home');
 
-		// Allow Bookmarking to set the homepage to "popular" unless already set.
+		// Allow Bookmarking to set the homepage to settings page default unless already set.
 		if (!$h->home) {
-			$h->setHome('popular', 'popular'); // and set name to "popular", too, if not already set.
+		    print "check" . $h->vars['bookmarking_settings']['default_page'];
+			$h->setHome($h->vars['bookmarking_settings']['default_page'], $h->vars['bookmarking_settings']['default_page']); // and set name to settings page default, too, if not already set.
 		}
 	}
 

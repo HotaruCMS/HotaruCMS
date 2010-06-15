@@ -13,4 +13,5 @@ Instructions
 
 Changelog
 ---------
+v.0.2 2010/06/15 - Alan - Add settings to change default main page and default type of posts to show on lists page
 v.0.1 2010/06/02 - Nick - Released first version (formerly SB Base)

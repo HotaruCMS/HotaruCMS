@@ -45,6 +45,8 @@ class BookmarkingSettings
         
         $posts_per_page = $bookmarking_settings['posts_per_page'];
         $rss_redirect = $bookmarking_settings['rss_redirect'];
+	$default_type = $bookmarking_settings['default_type'];
+	$default_page = $bookmarking_settings['default_page'];
         $archive = $bookmarking_settings['archive'];
     
         $h->pluginHook('bookmarking_settings_get_values');
@@ -52,6 +54,7 @@ class BookmarkingSettings
         //...otherwise set to blank:
         if (!$posts_per_page) { $posts_per_page = 10; }
         if (!$rss_redirect) { $rss_redirect = ''; }
+	if (!$default_type) { $default_type = 'news'; }
         if (!$archive) { $archive = 'no_archive'; }
         
         echo "<form name='bookmarking_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=bookmarking' method='post'>\n";
@@ -59,6 +62,25 @@ class BookmarkingSettings
         // posts per page
         echo "<p><input type='text' size=5 name='posts_per_page' value='" . $posts_per_page . "' /> ";
         echo $h->lang["bookmarking_settings_posts_per_page"] . "</p>\n";
+
+	$sql = "SELECT DISTINCT post_type FROM " . TABLE_POSTS . " ORDER BY post_type ASC";
+	$types = $h->db->get_results($h->db->prepare($sql));	
+	echo "<p><select name ='default_type'>";
+	foreach ($types as $type) {
+	    echo "<option ";
+	    if ($type->post_type == $default_type) { echo "selected='yes' "; }
+	    echo "value='" . $type->post_type . "'>" . $type->post_type . "</option>";
+	}
+	echo "</select> " . $h->lang["bookmarking_settings_default_type"] . "</p>";
+
+	echo "<p><select name ='default_page'>";
+	$pages = array('popular', 'upcoming', 'latest', 'all');
+	foreach ($pages as $page) {
+	    echo "<option ";
+	    if ($page == $default_page) { echo "selected='yes' "; }
+	    echo "value='" . $page . "'>" . $page . "</option>";
+	}
+	echo "</select> " . $h->lang["bookmarking_settings_default_page"] . "</p>";
 
         // rss redirecting?
         echo "<p><input type='checkbox' name='rss_redirect' value='rss_redirect' " . $rss_redirect . " >&nbsp;&nbsp;" . $h->lang["bookmarking_settings_rss_redirect"] . "<br />\n"; 
@@ -95,11 +117,29 @@ class BookmarkingSettings
         } else { 
             $rss_redirect = ''; 
         }
+	
+	// default type
+	if ($h->cage->post->testAlnumLines('default_type')) {
+            $default_type = $h->cage->post->testAlnumLines('default_type');
+        } else { 
+            $default_type = 'news'; 
+        }
+
+	// default page
+	if ($h->cage->post->testAlnumLines('default_page')) {
+            $default_page = $h->cage->post->testAlnumLines('default_page');
+        } else {
+            $default_page = 'popular';
+        }
+
+
     
         $h->pluginHook('bookmarking_save_settings');
         
         $bookmarking_settings['posts_per_page'] = $posts_per_page;
         $bookmarking_settings['rss_redirect'] = $rss_redirect;
+	$bookmarking_settings['default_type'] = $default_type;
+	$bookmarking_settings['default_page'] = $default_page;
     
         $h->updateSetting('bookmarking_settings', serialize($bookmarking_settings));
         
