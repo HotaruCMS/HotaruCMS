@@ -210,8 +210,7 @@ class Bookmarking
 		$h->pluginHook('pre_set_home');
 
 		// Allow Bookmarking to set the homepage to settings page default unless already set.
-		if (!$h->home) {
-		    print "check" . $h->vars['bookmarking_settings']['default_page'];
+		if (!$h->home) {		   
 			$h->setHome($h->vars['bookmarking_settings']['default_page'], $h->vars['bookmarking_settings']['default_page']); // and set name to settings page default, too, if not already set.
 		}
 	}
