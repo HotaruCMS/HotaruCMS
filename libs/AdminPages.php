@@ -219,8 +219,8 @@ class AdminPages
 	 */
 	public function getAllAdminSettings($db)
 	{
-		$sql = "SELECT settings_name, settings_value, settings_default, settings_note, settings_show FROM " . TABLE_SETTINGS . " WHERE settings_siteid = %d";		
-		$results = $db->get_results($db->prepare($sql, SITEID));
+		$sql = "SELECT settings_name, settings_value, settings_default, settings_note, settings_show FROM " . TABLE_SETTINGS;		
+		$results = $db->get_results($db->prepare($sql));
 		if ($results) { return $results; } else { return false; }
 	}
 	
