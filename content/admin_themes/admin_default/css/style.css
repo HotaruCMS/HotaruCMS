@@ -360,7 +360,7 @@ table#settings {
 
 #admin_topright {margin: 20px; width: 160px;}
 
-div.adm-header {
+div.admin-header {
    /* background-image:url("../images/content-bg.jpg"); */
 background-position:0 0;
 background-repeat:repeat-x;
@@ -371,7 +371,7 @@ background-color: #CBE2FF;
 border-bottom:1pt solid #666666;
 }
 
-div.adm-header-title {
+div.admin-header-title {
     color:#333333;
 float:left;
 font-size:42px;
@@ -381,7 +381,7 @@ padding:25px 0 25px 110px;
 position:relative;
 }
 
-div.adm-header-verion {
+div.admin-header-version {
     font-family:Verdana;
 font-size:10px;
 height:10px;
@@ -392,16 +392,16 @@ top:66px;
 width:100px;
 }
 
-div.adm-top-menu { float:right; position:relative; }
+div.admin-top-menu { float:right; position:relative; }
 
-div.adm-tm-item {
+div.admin-menu-item {
     float:left;
 height:87px;
 position:relative;
 width:100px;
 }
 
-div.adm-tm-item a {
+div.admin-menu-item a {
     color:#333333;
 display:block;
 height:87px;
@@ -411,30 +411,30 @@ text-decoration:none;
 width:100px;
 }
 
-div.adm-tm-item-icon {height:32px;
+div.admin-menu-item-icon {height:32px;
 margin:0 auto;
 padding:23px 0 5px;
 width:32px;}
 
-div.adm-tm-item-icon img { width:36px; height:36px; }
-div.adm-tm-item-text {font-size:11px; text-align:center;}
+div.admin-menu-item-icon img { width:36px; height:36px; }
+div.admin-menu-item-text {font-size:11px; text-align:center;}
 
-img.adm-header-logo {height:70px;
+img.admin-header-logo {height:70px;
 left:30px;
 position:absolute;
 top:15px;
 width:70px;}
 
-div.adm-header-admin {
+div.admin-header-admin {
 left:148px;
 position:absolute;
 top:0px;
 width:90px;}
 
-div.adm-frame {margin: 0 auto; width:75em;}
+div.admin-frame {margin: 0 auto; width:75em;}
 
-div.adm-header-admin a {color:#000;}
-div.adm-header-admin a:hover {color:#333; text-decoration: none;}
+div.admin-header-admin a {color:#000;}
+div.admin-header-admin a:hover {color:#333; text-decoration: none;}
 #settings a {color:#000;}
 #settings a:hover {color:blue;}
 
