@@ -284,6 +284,8 @@ $lang["admin_theme_version_check_completed"] = "The version numbers have been up
 $lang["admin_theme_version_latest_version_installed"] = "Latest version installed";
 $lang["admin_theme_version_update_to"] = "Update to ";
 
+$lang["admin_theme_plugin_search_submit"] = "Search";
+
 
 
 ?>
