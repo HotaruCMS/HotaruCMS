@@ -45,8 +45,8 @@ if (file_exists(SETTINGS)) {
 $path_constants = array(
     "BASE" => "/../",
     "ADMIN" => "/../admin/",
-    "CACHE" => "/../cache/",
     "INSTALL" => "/",
+    "CACHE" => "/../cache/1/",
     "LIBS" => "/../libs/",
     "EXTENSIONS" => "/../libs/extensions/",
     "FUNCTIONS" => "/../functions/",
@@ -317,12 +317,12 @@ function database_setup() {
 
 	// Check whether database and tables exist on this server
 	$db->show_errors = false;
-	$database_exists = $db->quick_connect($dbuser_name, $dbpassword_name, $dbname_name, $dbhost_name);
+	$database_exists = $db->quick_connect($dbuser_name, $dbpassword_name, $dbname_name, $dbhost_name);	
 	if (!$database_exists) {
 	    $h->messages[$lang['install_step1_no_db_exists_failure']] = 'red';
 	} else {
-	    $show_next = true;
-	    $table_exists = $db->table_exists(DBPREFIX . 'miscdata');	    
+	    $show_next = true;	   
+	    $table_exists = $db->table_exists(DB_PREFIX . 'miscdata');	   
 	}
 
 	// Try to write the /hotaru_settings.php file to disk
@@ -508,21 +508,43 @@ function database_creation()
 	    // delete *all* tables in db:
 	    $db->selectDB(DB_NAME);
 
+
+
+	    // Used as test to check whether we have tables yet
+//	    $sql = "SELECT * FROM `" . DB_PREFIX . "miscdata`";
+//	    var_dump($db->get_results($sql)); die;
+
 	    if ($db->get_col("SHOW TABLES",0)) {
+		echo  $lang['install_step2_checking_tables']; 
 		foreach ( $db->get_col("SHOW TABLES",0) as $table_name )
 		{
+		    print $table_name . ', ';
 			drop_table($table_name); // table name
 		}
-		echo $lang['install_step2_deleting_table'] . "'...<br /><br />\n";
+		echo '<br /><br />' . $lang['install_step2_deleting_table'] . "'...<br /><br />\n";
+	    } else {
+		echo $lang['install_step2_no_tables'] . "<br/><br />\n";
 	    }
 
+
+	    $create_tables_problem = false;
 	    //create tables
 	    foreach ($tables as $table_name) {
+		    $error = '';
 		    create_table($table_name);
+		    $error = mysql_error();
+		    if ($error) {
+			echo $error . ' ';
+			$create_tables_problem = true;
+		    }
 	    }
 
 	    // Step content
-	    echo "<div class='install_content'>" . $lang['install_step2_success'] . "</div>\n";
+	    if (!$create_tables_problem) {
+		echo "<div class='install_content'>" . $lang['install_step2_success'] . "</div>\n";
+	    } else {
+		echo "<div class='install_content'>" . $lang['install_step2_fail'] . "</div>\n";
+	    }
 
 	    $show_next = true;
 	}
@@ -547,9 +569,22 @@ function database_creation()
 function register_admin()
 {
 	global $lang;   //already included so Hotaru can't re-include it
-	global $db;	
+	global $db;
+
+	// Make sure that the cache folders have been created before we call $h for the first time
+	// Since we have defined CACHE in install script, the normal Initialize script will think folders are already present
+	$dirs = array('', 'debug_logs/' , 'db_cache/', 'css_js_cache/', 'html_cache/', 'rss_cache/', 'lang_cache/');  // first array item is needed to create the SITEID base folder
+
+	foreach ($dirs as $dir) {
+	    //print "checking where dir exists at " . CACHE . $dir . '<br/>';
+	    if (!is_dir(CACHE . $dir)) {
+		//print "trying to create " . CACHE . $dir . '<br/>';
+		mkdir(CACHE . $dir);
+	    }
+	}
 
 	$h  = new Hotaru(); // overwrites current global with fully initialized Hotaru object
+
 
 	echo html_header();
 
@@ -850,28 +885,28 @@ function create_new_settings_file($dbuser_name, $dbpassword_name, $dbname_name, 
 
    ?>
 
-/* Configuration file for Hotaru CMS. */
+ /* Configuration file for Hotaru CMS. */
 
 // Paths
-define('BASEURL', "<?php echo $baseurl_name; ?>");    // e.g. http://www.mysite.com/    Needs trailing slash (/)
+define("BASEURL", '<?php echo $baseurl_name; ?>');    // e.g. http://www.mysite.com/    Needs trailing slash (/)
 
 // Database details
-define("DB_USER", '<?php echo $dbuser_name; ?>');          			// Add your own database details
+define("DB_USER", '<?php echo $dbuser_name; ?>');          		// Add your own database details
 define("DB_PASSWORD", '<?php echo $dbpassword_name; ?>');
 define("DB_NAME", '<?php echo $dbname_name; ?>');
 define("DB_HOST", '<?php echo $dbhost_name; ?>');     			// You probably won't need to change this
 
 // You probably don't need to change these
-define("DB_PREFIX", '<?php echo $dbprefix_name; ?>');     			// Database prefix, e.g. "hotaru_"
+define("DB_PREFIX", '<?php echo $dbprefix_name; ?>');     		// Database prefix, e.g. "hotaru_"
 define("DB_LANG", 'en');            			// Database language, e.g. "en"
-define("DB_ENGINE", 'MyISAM');					// Database Engine, e.g. "MyISAM"
-define('DB_CHARSET', 'utf8');					// Database Character Set (UTF8 is Recommended), e.g. "utf8"
+define("DB_ENGINE", 'MyISAM');				// Database Engine, e.g. "MyISAM"
+define('DB_CHARSET', 'utf8');				// Database Character Set (UTF8 is Recommended), e.g. "utf8"
 define("DB_COLLATE", 'utf8_unicode_ci');		// Database Collation (UTF8 is Recommended), e.g. "utf8_unicode_ci"
 
 ?><?php  // leave this line squashed up here as we dont want any blank lines at the end of the hotaru_settings file
    $page = "<?php" . ob_get_contents();
    ob_end_clean();
-   $page = str_replace("\n", "", $page);
+   //$page = str_replace("\n", "", $page);
    $cwd = getcwd();
    $file = $cwd . "/../hotaru_settings.php";
    @chmod($file,0777);

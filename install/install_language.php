@@ -99,13 +99,17 @@ $lang["install_step1_no_db_exists_failure"] = "The database does not exist or th
 
 /* Install Step 3 */
 $lang["install_step2"] = "Step 2/4: Create Database Tables";
+$lang["install_step2_checking_tables"] = "Checking for existing tables in database: ";
+$lang["install_step2_no_tables"] = "No existing tables were found in the database";
 $lang["install_step2_creating_table"] = "Creating table";
+$lang["install_step2_adding_data"] = "Adding data to";
 $lang["install_step2_deleting_table"] = "Deleting existing tables";
 $lang["install_step2_already_exists"] = "It seems there are already tables for Hotaru CMS in the database.";
 $lang["install_step2_continue"] = "Click \"Next\" to continue.";
 $lang["install_step2_rebuild_note"] = "<i>Note</i>: If you'd like to start fresh, ";
 $lang["install_step2_rebuild_link"] = "delete and rebuild the database tables";
 $lang["install_step2_success"] = "Database tables created successfully. Click \"Next\" to configure Hotaru CMS.";
+$lang["install_step2_fail"] = "There were some errors in creating database tables. Not all tables may have been created correctly.";
 $lang["install_step2_existing_db"] = "You already have an existing installation of Hotaru CMS.<br/><br/>If you continue, this installation will DELETE all your existing tables and settings, including posts, users and plugin data.";
 $lang["install_step2_existing_confirm"] = "Confirm you wish to continue this install by typing 'DELETE' in the box and press the button";
 $lang["install_step2_existing_go_upgrade1"] = "Alternatively, you may wish to ";
