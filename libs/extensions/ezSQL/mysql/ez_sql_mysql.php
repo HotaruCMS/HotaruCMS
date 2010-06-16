@@ -165,10 +165,10 @@
         }
 
         /**********************************************************************
-        *  Perform mySQL query and try to detirmin result value
+        *  Perform mySQL query and try to determine result value
         */
 
-        function query($query = '', $add_siteid_to_query = TRUE)
+        function query($query = '')
         {
 
             // Initialise return
@@ -215,7 +215,8 @@
                 $this->selectDB($this->dbname);
             }
 
-	    if (MULTI_SITE == 'true' && $add_siteid_to_query) { $query = $this->whereMultiSite($query); }
+	    // Decide whether need for multisite siteid string to be added to query
+	    if (MULTI_SITE == 'true' && !strpos($query, '_siteid')) { $query = $this->whereMultiSite($query); }
 
             // Perform the query via std mysql_query function..
             $this->result = @mysql_query($query,$this->dbh);
@@ -330,11 +331,9 @@
          */
  
         function table_exists($table2check) {
-            foreach ( $this->get_col("SHOW TABLES",0) as $table_name ) {
-                if($table_name == DB_PREFIX . $table2check) { 
-                    return true; 
-                }
-            }
+	    $tables = $this->get_col("SHOW TABLES",0);
+	    if (in_array($table2check, $tables)) { return true; }
+
             return false;
         }
         
@@ -379,8 +378,7 @@
 
 
 	function whereMultisite($query)
-	{
-
+	{   
 	    $siteidtables = array('blocked'=>'blocked', 'posts'=>'post', 'comments'=>'comment', 'categories'=>'category', 'users'=>'user',
 		'plugins'=>'plugin', 'pluginsettings'=>'plugin', 'tags'=>'tags', 'settings'=>'settings', 'miscdata'=>'miscdata',
 		'widgets'=>'widget', 'pluginhooks'=>'pluginhooks');
@@ -391,7 +389,7 @@
 	    if (stripos($query, ' FROM ')  !== false) {
 		$array = explode('FROM ',$query);
 
-		if ($array[0] != 'SHOW COLUMNS') {
+		if ($array[0] != 'SHOW COLUMNS ') {
 
 		    if (!isset($array[1])) { var_dump($array);  }
 		    $array2 = explode(' ', $array[1]);
@@ -413,7 +411,6 @@
 			    }
 
 			    $after =  "<span style='color:red; font-weight:bold;'>AFTER</span>: " . $query . "<br/><br/>";
-    //print $after;
 			}
 		    }
 		}
@@ -422,11 +419,9 @@
 
 	    if (stripos($query, 'UPDATE ') !== false) {		
 		$pos1 = stripos($query, 'SET');
-//		print "pos1 = " . $pos1 . "<br/>";
 		$tablename = trim(substr($query, 7, $pos1 - 7 ));
-//		print ">>>>>>>>>>>>>>" . $tablename . '<<<<<<<<<<<<<<<<<<br/>';
 		$tablename = ltrim($tablename, DB_PREFIX);
-//		print ">>>>>>>>>>>>>>" . $tablename . '<<<<<<<<<<<<<<<<<<br/>';
+
 		if (array_key_exists($tablename, $siteidtables)) {
 			if (stripos($query, 'WHERE') !== false) {
 			    $array = explode('WHERE ', $query);
@@ -436,12 +431,10 @@
 			}
 
 			$after =  "<br/><span style='color:red; font-weight:bold;'>AFTER</span>: " . $query . "<br/><br/>";
-//			print $after;
 		}
 	    }
 	    
 	    if (stripos($query, 'INSERT INTO ')  !== false) {
-   // print "<br/>this is INSERT " . $before;
 		$pattern = '/^INSERT INTO(.*?)\SET/';
 		preg_match($pattern, $query, $matches);
 		if ($matches) { $tablename = trim($matches[1]);	} else {
@@ -450,10 +443,8 @@
 		    if ($matches) { $tablename = trim($matches[1]);	}
 		}
 
-//		print $tablename;
 		$tablename = str_ireplace(DB_PREFIX, '', $tablename);
 
-//print ">>>>>>>>>>>>>>" . $tablename . '<<<<<<<<<<<<<<<<<<br/>';
 
 		if (array_key_exists($tablename, $siteidtables)) {
 			if (stripos($query, 'VALUES') !== false) {
@@ -464,17 +455,14 @@
 //			    $values = $array[1];
 //			    $pattern = '/\(.*?\)/';
 //			    preg_match_all($pattern, $values, $matches);
-			    //var_dump($matches);
 
 			    $array = explode('VALUES', $query);
 			    if (!$array[1]) { print 'no 2nd part of array'; $array = explode('VALUES(', $query);}
 			    $right_side = str_replace("(", "(" . SITEID . ",", $array[1]);
 			    $query = $array[0] . " VALUES " . $right_side;
-//			     print $query . '<br/>';
 			}
 
 			$after =  "<br/><span style='color:red; font-weight:bold;'>AFTER</span>: " . $query . "<br/><br/>";
-//			print $after;
 		}		
 	    }
 
@@ -484,7 +472,7 @@
 		if ($matches) { $tablename = trim($matches[1]);	}
 
 		$tablename = str_ireplace(DB_PREFIX, '', $tablename);
-//print ">>>>>>>>>>>>>>" . $tablename . '<<<<<<<<<<<<<<<<<<br/>';
+
 		if (array_key_exists($tablename, $siteidtables)) {		    
 			if (stripos($query, 'VALUES') !== false) { 			    
 			    $array = explode('INTO ' . DB_PREFIX . $tablename . ' (', $query);			    
@@ -495,39 +483,38 @@
 		}
 
 		$after =  "<br/><span style='color:red; font-weight:bold;'>AFTER</span>: " . $query . "<br/><br/>";
-		//print $after;
 	    }
 
-//	    if (stripos($query, 'DELETE') !== false) {
-//print ">>>>>>DELETE>>>>>>>>" . $tablename . '<<<<<<<<<<<<<<<<<<br/>';
-// print $before;
-//
-//		if (array_key_exists($tablename, $siteidtables)) {
-//		    if (stripos($query, $table)) {
-//			print $query;
-//			if (stripos($query, 'WHERE') !== false) {
-//			    print "here";
-//			    $array = explode('WHERE ', $query);
-//			    $query = $array[0] . ' WHERE ' . $siteidtables[$tablename] . '_siteid = ' . SITEID . " AND " . $array[1];
-//			} else {
-//			    print "next";
-//			    $array = explode('FROM ' . $table ,$query);
-//			    $query = $array[0] . ' FROM ' . $table . ' WHERE ' . $siteidtables[$tablename] . '_siteid = ' . SITEID . $array[1];
-//			}
-//
-//			$after =  "<span style='color:red; font-weight:bold;'>AFTER</span>: " . $query . "<br/><br/>";
-//print $after;
-//		    }
-//		}
-//	    }
+	    //	    if (stripos($query, 'DELETE') !== false) {
+	    //print ">>>>>>DELETE>>>>>>>>" . $tablename . '<<<<<<<<<<<<<<<<<<br/>';
+	    // print $before;
+	    //
+	    //		if (array_key_exists($tablename, $siteidtables)) {
+	    //		    if (stripos($query, $table)) {
+	    //			print $query;
+	    //			if (stripos($query, 'WHERE') !== false) {
+	    //			    print "here";
+	    //			    $array = explode('WHERE ', $query);
+	    //			    $query = $array[0] . ' WHERE ' . $siteidtables[$tablename] . '_siteid = ' . SITEID . " AND " . $array[1];
+	    //			} else {
+	    //			    print "next";
+	    //			    $array = explode('FROM ' . $table ,$query);
+	    //			    $query = $array[0] . ' FROM ' . $table . ' WHERE ' . $siteidtables[$tablename] . '_siteid = ' . SITEID . $array[1];
+	    //			}
+	    //
+	    //			$after =  "<span style='color:red; font-weight:bold;'>AFTER</span>: " . $query . "<br/><br/>";
+	    //print $after;
+	    //		    }
+	    //		}
+	    //	    }
 
 	    if (stripos($query, 'TRUNCATE') !== false) {
-//print ">>>>>TRUNCATE>>>>>>>>>" . $tablename . '<<<<<<<<<<<<<<<<<<br/>';
-// print $before;
+
 	    }
 
 
 	    //if ($after == 'no') { print $before; }
+	    //print $before;
 	    //print $after;
 	    return $query;
 	}
