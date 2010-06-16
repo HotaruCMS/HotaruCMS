@@ -60,7 +60,7 @@
 
 
 	    <div class="plugin_management_right">
-		<a href="<?php echo SITEURL ?>admin_index.php?page=plugin_management&action=search">
+		<a href="<?php echo SITEURL ?>admin_index.php?page=plugin_search">
 		    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/search.png' alt="">
 		    <?php echo $h->lang["admin_theme_search"]; ?>
 		</a>
