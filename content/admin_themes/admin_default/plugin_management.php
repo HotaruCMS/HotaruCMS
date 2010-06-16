@@ -39,29 +39,37 @@
 <tr class='table_a'><td colspan=3>
 	<?php echo $h->lang["admin_theme_plugins_installed"]; ?>
 	<span class='table_key'>
-	&nbsp;&nbsp;
-	<img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/active_16.png' alt="">
-	<?php echo $h->lang["admin_theme_plugins_active"]; ?>
-	&nbsp;&nbsp;
-	<img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/inactive_16.png' alt="">
-	<?php echo $h->lang["admin_theme_plugins_inactive"]; ?>
-	&nbsp;&nbsp;
-	<img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/up_12.png' alt="">
-	<?php echo $h->lang["admin_theme_plugins_order_up"]; ?>
-	&nbsp;&nbsp;
-	<img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/down_12.png' alt="">
-	<?php echo $h->lang["admin_theme_plugins_order_down"]; ?>
-	&nbsp;&nbsp;
-	<img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/info_16.png' alt="">
-	<?php echo $h->lang["admin_theme_plugins_details"]; ?>
-	&nbsp;&nbsp;
-	<img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/uninstall_16.png' alt="">
-	<?php echo $h->lang["admin_theme_plugins_uninstall"]; ?>
-	
+	    &nbsp;&nbsp;
+	    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/active_16.png' alt="">
+	    <?php echo $h->lang["admin_theme_plugins_active"]; ?>
+	    &nbsp;&nbsp;
+	    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/inactive_16.png' alt="">
+	    <?php echo $h->lang["admin_theme_plugins_inactive"]; ?>
+	    &nbsp;&nbsp;
+	    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/up_12.png' alt="">
+	    <?php echo $h->lang["admin_theme_plugins_order_up"]; ?>
+	    &nbsp;&nbsp;
+	    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/down_12.png' alt="">
+	    <?php echo $h->lang["admin_theme_plugins_order_down"]; ?>
+	    &nbsp;&nbsp;
+	    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/info_16.png' alt="">
+	    <?php echo $h->lang["admin_theme_plugins_details"]; ?>
+	    &nbsp;&nbsp;
+	    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/uninstall_16.png' alt="">
+	    <?php echo $h->lang["admin_theme_plugins_uninstall"]; ?>
 
-	<span style="float:right; font-size:10pt;">
-	    <a href="<?php echo SITEURL ?>admin_index.php?page=plugin_management&action=version_check"><?php echo $h->lang["admin_theme_check_latest_plugin_versions"]; ?></a>
-	</span>
+
+	    <div class="plugin_management_right">
+		<a href="<?php echo SITEURL ?>admin_index.php?page=plugin_management&action=search">
+		    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/search.png' alt="">
+		    <?php echo $h->lang["admin_theme_search"]; ?>
+		</a>
+		 &nbsp;&nbsp;
+		<a href="<?php echo SITEURL ?>admin_index.php?page=plugin_management&action=version_check">
+		    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/update_16.png' alt="">
+		    <?php echo $h->lang["admin_theme_check_latest_plugin_versions"]; ?>
+		</a>
+	    </div>
 	</span>
 </td></tr>
 
