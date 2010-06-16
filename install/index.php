@@ -482,7 +482,8 @@ function database_creation()
 	
 	// Step title
 	echo "<h2>" . $lang['install_step2'] . "</h2>\n";
-	
+
+	$table_exists = $db->table_exists(DB_PREFIX . 'miscdata');	 
 	if ($table_exists && $delete != 'DELETE') {
 		// Warning message
 		echo "<br/><img align='center' src='../content/admin_themes/admin_default/images/delete.png' style='float:left;'>";
