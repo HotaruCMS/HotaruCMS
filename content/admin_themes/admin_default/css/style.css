@@ -449,3 +449,9 @@ div.admin-header-admin a:hover {color:#333; text-decoration: none;}
 
 #login_form td {font:14px "Lucida Grande",Verdana,Arial,"Bitstream Vera Sans",sans-serif;}
 
+#plugin_search_form {-moz-border-radius:14px; background:none repeat scroll 0 0 #D4F07F; margin:30px auto; padding:20px; text-align:center; width:500px; -moz-box-shadow:0 4px 18px #C8C8C8; }
+#plugin_search_form input {-moz-border-radius:4px; border: 1pt solid #d0d0d0;}
+#plugin_search_form #admin_plugin_search {padding:4px; font-size:24px;}
+#plugin_search_form #admin_plugin_search_button {padding:4px; font-weight:bold; color:#777; background-color:#ccc;}
+#plugin_search_form #admin_plugin_search_button:hover {color:navy; cursor:pointer;}
+
