@@ -61,6 +61,11 @@ class AdminPages
 				$h->vars['admin_sidebar_layout'] = 'horizontal';
 				$this->adminPlugins($h);
 				break;
+			case "plugin_search":
+				$h->sidebars = false;
+				$h->vars['admin_sidebar_layout'] = 'horizontal';
+				//$this->adminPluginSearch($h);				
+				break;
 			case "plugin_settings":
 				$h->vars['settings_plugin'] = $h->cage->get->testAlnumLines('plugin'); // get plugin name from url
 				if (!$h->vars['settings_plugin']) { 
@@ -416,8 +421,8 @@ class AdminPages
 	*  PLUGIN MANAGEMENT PAGE
 	*
 	* *********************************************************** */
-	
-	
+
+
 	 /**
 	 * Call functions based on user actions in Plugin Management
 	 */
