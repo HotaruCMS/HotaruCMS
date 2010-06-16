@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.2.1 2010/06/16 - Alan - Include option for anonymous voting
 v.2.0 2010/05/23 - Nick - Removed the requirement to have SB Base installed.
 v.1.9 2010/05/17 - Nick - Fix for undefined variable
 v.1.8 2010/05/14 - Nick - Fix for auto-votes being assigned to the current user when cron runs AutoReader 
@@ -21,7 +22,7 @@ v.1.7 2010/05/05 - Nick - Fix for user id 0 assign to auto-vote when using AutoR
 v.1.6 2010/04/04 - Nick - Fix for updating the post_pub_date field
 v.1.5 2010/03/28 - Nick - Updates the new post_pub_date field when a story is promoted
 v.1.4 2010/02/23 - Nick - Removed showMessages() function call because it's in SB Base 0.4
-v.1.3 2010/02/10 - shibuya246 - Option to automatically increase vote count when clicking a post link
+v.1.3 2010/02/10 - Alan - Option to automatically increase vote count when clicking a post link
 v.1.2 2010/01/12 - Nick - Fixes for auto-vote on post submission
 v.1.1 2010/01/03 - Nick - Updated for Hotaru 1.0
 v.1.0 2009/11/30 - Nick - Ability to filter to media type (requires Media Select plugin)
