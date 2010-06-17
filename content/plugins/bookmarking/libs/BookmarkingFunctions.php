@@ -61,8 +61,7 @@ class BookmarkingFunctions
         if ($type) {
             // For the posts widget or other non-pages... 
             $h->vars['filter'] = array(); // flush filter
-            $this->prepareListFilters($h, $type);
-            
+            $this->prepareListFilters($h, $type);            
         } else {
             // for pages, i.e. lists of stories with pagination
             switch ($h->pageName) {
