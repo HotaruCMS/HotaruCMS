@@ -59,7 +59,7 @@ if ($h->cage->post->getInt('remember') == 1){ $remember_check = "checked"; } els
     
     
     
-    <form style="display: none;" name='forgot_password_form' action='<?php echo BASEURL; ?>index.php' method='post'>    
+    <form id="forgot_password_form" style="display: none;" name='forgot_password_form' action='<?php echo BASEURL; ?>index.php' method='post'>
         <?php echo $h->lang['user_signin_login_forgot_password_submit_instruct_1']; ?>
     <table>
         <tr>
