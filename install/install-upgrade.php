@@ -81,7 +81,7 @@ function upgrade_check($h, $old_version) {
 	if ( isset($old_version) )
 	    echo "<div class='install_content'>" . $lang['upgrade_step1_old_version'] . $old_version . "</div>\n";
 	else
-	    echo "<div class='install_content'>" . $lang['upgrade_step1_no_old_version'] . "</div>\n";
+	    echo "<div class='install_content'>" . $lang['upgrade_step1_old_no_version'] . "</div>\n";
 
 	if ($h->version > $old_version)
 	    echo "<div class='install_content'>" . $lang['upgrade_step1_details'] . "</div>\n";
