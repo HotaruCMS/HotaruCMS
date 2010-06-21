@@ -191,9 +191,13 @@ class PageHandling
 		if (!$plugin) { $plugin = $h->plugin->folder; }
 		
 		if ($h->isAdmin) { 
-			$themes = ADMIN_THEMES; $theme = ADMIN_THEME; 
+			$themes = ADMIN_THEMES; 
+			$theme = ADMIN_THEME;
+			$default = 'admin_default/';
 		} else {
-			$themes = THEMES; $theme = THEME; 
+			$themes = THEMES;
+			$theme = THEME;
+			$default = 'default/';
 		} 
 		
 		$page = $page . '.php';
@@ -214,13 +218,13 @@ class PageHandling
 				include_once($themes . $theme . $page);
 			}
 		} 
-		elseif (file_exists($themes . 'default/' . $page))
+		elseif (file_exists($themes . $default . $page))
 		{
 			if (!$include_once) {
 				// Special case, do not restrict to include once.
-				include($themes . 'default/' . $page);
+				include($themes . $default . $page);
 			} else {
-				include_once($themes . 'default/' . $page);
+				include_once($themes . $default . $page);
 			}
 		}
 		elseif ($plugin != '' && file_exists(PLUGINS .  $plugin . '/templates/' . $page))
