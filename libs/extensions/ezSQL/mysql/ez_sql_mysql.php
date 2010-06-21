@@ -215,8 +215,10 @@
                 $this->selectDB($this->dbname);
             }
 
-	    // Decide whether need for multisite siteid string to be added to query
-	    if (MULTI_SITE == 'true' && !strpos($query, '_siteid')) { $query = $this->whereMultiSite($query); }
+		// Decide whether need for multisite siteid string to be added to query
+		if (defined('MULTI_SITE') && MULTI_SITE == 'true' && !strpos($query, '_siteid')) { 
+			$query = $this->whereMultiSite($query);
+		}
 
             // Perform the query via std mysql_query function..
             $this->result = @mysql_query($query,$this->dbh);
