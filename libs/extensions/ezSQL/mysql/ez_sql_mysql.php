@@ -334,7 +334,7 @@
  
         function table_exists($table2check) {
 	    $tables = $this->get_col("SHOW TABLES",0);
-	    if (in_array($table2check, $tables)) { return true; }
+	    if (in_array(DB_PREFIX . $table2check, $tables)) { return true; }
 
             return false;
         }
