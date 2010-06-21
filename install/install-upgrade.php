@@ -672,7 +672,7 @@ function do_upgrade($h, $old_version)
 
 	    if (!$result) {
 		$sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$h->db->query($h->db->prepare($sql, 'MULTI_SITE', 'false', 'false', 'multiple sites'));
+		$h->db->query($h->db->prepare($sql, 'MULTI_SITE', 'false', 'false', 'Multiple sites'));
 	    }
 
 	    // Add siteid to pluginhooks table
