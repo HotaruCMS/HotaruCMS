@@ -684,11 +684,18 @@ function do_upgrade($h, $old_version)
 
 	    // Add index for siteid on pluginhooks table
 	    $sql = "SHOW INDEX FROM `" . TABLE_PLUGINHOOKS . "` WHERE KEY_NAME = 'pluginhooks_siteid'";
-		    $result = $h->db->query($sql);
-		    if (!$result) {
-			    $sql = "ALTER TABLE `" . TABLE_PLUGINHOOKS . "` ADD INDEX (pluginhooks_siteid)";
-			    $h->db->query($sql);
-		    }
+	    $result = $h->db->query($sql);
+	    if (!$result) {
+		    $sql = "ALTER TABLE `" . TABLE_PLUGINHOOKS . "` ADD INDEX (pluginhooks_siteid)";
+		    $h->db->query($sql);
+	    }
+
+	    // Change post_title column from `post_title` varchar(255) NULL, to `post_title` text NULL,
+	    $exists = $h->db->column_exists('posts', 'post_title');
+	    if (!$exists) {
+		    $sql = "ALTER TABLE " . TABLE_POSTS . " MODIFY post_title text NUL";
+		    $h->db->query($h->db->prepare($sql));
+	    }
 
 	}
 

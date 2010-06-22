@@ -299,7 +299,7 @@ function create_table($table_name)
 			`post_type` varchar(32) NULL,
 			`post_category` int(20) NOT NULL DEFAULT 1,
 			`post_tags` text NULL,
-			`post_title` varchar(255) NULL, 
+			`post_title` text NULL,
 			`post_orig_url` varchar(255) NULL, 
 			`post_domain` varchar(255) NULL, 
 			`post_url` varchar(255) NULL, 
