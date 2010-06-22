@@ -35,17 +35,17 @@ class Initialize
 	 */
 	public function __construct($h)
 	{
-	    
+
 		// session to be used by CSRF, etc.
 		if (!isset($_SESSION['HotaruCMS'])) {
 			session_start();
 			$_SESSION['HotaruCMS'] = time();
 		}
-		
+
 		// The order here is important!
 		$this->setDefaultTimezone();
 		$this->setTableConstants();				
-		
+
 		$this->getFiles();
 		$this->cage = $this->initInspektCage();
 		$this->db = $this->initDatabase();
@@ -179,7 +179,7 @@ class Initialize
 		if (!defined('SITEURL')) { define("SITEURL", $siteurl); }
 		
 		if (!defined('CACHE')) {
-
+		    
 		    define("CACHE", BASE . "cache/" . $siteid . "/");
 
 		    $dirs = array('', 'debug_logs/' , 'db_cache/', 'css_js_cache/', 'html_cache/', 'rss_cache/', 'lang_cache/');  // first array item is needed to create the SITEID base folder
