@@ -110,6 +110,9 @@ class Debug
 	 */
 	public function generateReport($h, $type = 'log')
 	{
+		$sysinfo = new SystemInfo();
+		$sysinfo->plugin_version_getAll($h);
+        
 		$report = $this->getSystemData($h);
 		
 		if ($type == 'object') { return $report; }
@@ -175,13 +178,14 @@ class Debug
 		
 		// plugins: folder, enabled, version, order
 		
-		$sql = "SELECT plugin_folder, plugin_enabled, plugin_version, plugin_order FROM " . TABLE_PLUGINS . " ORDER BY plugin_order";
+		$sql = "SELECT plugin_folder, plugin_enabled, plugin_version, plugin_order, plugin_latestversion FROM " . TABLE_PLUGINS . " ORDER BY plugin_order";
 		$plugins = $h->db->get_results($h->db->prepare($sql));
 		if ($plugins) {
 			foreach ($plugins as $plugin) {
 				$report['hotaru_plugins'][$plugin->plugin_folder]['enabled'] = $plugin->plugin_enabled;
 				$report['hotaru_plugins'][$plugin->plugin_folder]['version'] = $plugin->plugin_version;
 				$report['hotaru_plugins'][$plugin->plugin_folder]['order'] = $plugin->plugin_order;
+				$report['hotaru_plugins'][$plugin->plugin_folder]['plugin_latestversion'] = $plugin->plugin_latestversion;
 			}
 		}
 		
@@ -316,9 +320,11 @@ class Debug
 		if (isset($report['hotaru_plugins'])) {
 			foreach ($report['hotaru_plugins'] as $key => $value) {
 				$output .= $value['order'] . ". " . $key . " v." . $value['version'] . " ";
-				if ($value['enabled']) { $output .= "[enabled] \n"; } else { $output .= "[disabled] \n"; }
+				$output .= " (" . $value['plugin_latestversion']  .") ";
+				if ($value['enabled']) { $output .= "[enabled] \n"; } else { $output .= "[disabled] \n"; }				
 			}
 		}
+		$output .= "\n(Number in brackets above denotes latest versions available at HotaruCMS.org)\n";
 		
 		$output .= "\n";
 		
