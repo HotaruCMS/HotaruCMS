@@ -218,6 +218,8 @@
 		// Decide whether need for multisite siteid string to be added to query
 		if (defined('MULTI_SITE') && MULTI_SITE == 'true' && !strpos($query, '_siteid')) { 
 			$query = $this->whereMultiSite($query);
+		} else {
+		   // print "missing query" . $query . '<br/>';
 		}
 
             // Perform the query via std mysql_query function..
@@ -395,9 +397,10 @@
 
 		    if (!isset($array[1])) { var_dump($array);  }
 		    $array2 = explode(' ', $array[1]);
-		    $table = $array2[0];
-
+		    if ($array2[0] == '') { $table = $array2[1]; } else { $table = $array2[0]; }
+		    
 		    $array3 = explode('_', $table);
+
 		    $tablename = $array3[1];
 
 		    $tablename = str_replace(',', '', $tablename);
@@ -420,9 +423,12 @@
 
 
 	    if (stripos($query, 'UPDATE ') !== false) {		
-		$pos1 = stripos($query, 'SET');
-		$tablename = trim(substr($query, 7, $pos1 - 7 ));
-		$tablename = ltrim($tablename, DB_PREFIX);
+		$pattern = '/^UPDATE(.*?)\SET/';
+		preg_match($pattern, $query, $matches);
+		if ($matches) { $tablename = trim($matches[1]);	} else {
+
+		}
+		$tablename = str_ireplace(DB_PREFIX, '', $tablename);
 
 		if (array_key_exists($tablename, $siteidtables)) {
 			if (stripos($query, 'WHERE') !== false) {
@@ -447,7 +453,6 @@
 
 		$tablename = str_ireplace(DB_PREFIX, '', $tablename);
 
-
 		if (array_key_exists($tablename, $siteidtables)) {
 			if (stripos($query, 'VALUES') !== false) {
 			    $array = explode('INTO ' . DB_PREFIX . $tablename . ' (', $query);
@@ -462,6 +467,10 @@
 			    if (!$array[1]) { print 'no 2nd part of array'; $array = explode('VALUES(', $query);}
 			    $right_side = str_replace("(", "(" . SITEID . ",", $array[1]);
 			    $query = $array[0] . " VALUES " . $right_side;
+			}
+			else {
+			    $array = explode('SET ', $query);
+			    $query = $array[0] . " SET " . $siteidtables[$tablename] . "_siteid = " . SITEID . ", " . $array[1];
 			}
 
 			$after =  "<br/><span style='color:red; font-weight:bold;'>AFTER</span>: " . $query . "<br/><br/>";
@@ -516,8 +525,8 @@
 
 
 	    //if ($after == 'no') { print $before; }
-	    //print $before;
-	    //print $after;
+	   // print $before;
+	 //   print $after;
 	    return $query;
 	}
     }
