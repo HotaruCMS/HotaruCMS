@@ -1,12 +1,12 @@
 <?php
 
     $search = $h->cage->post->testAlnumLines('plugin_search');
+    $sysinfo = new SystemInfo();
 
-    if ($search) {
-	$sysinfo = new SystemInfo();
-	$plugins = $sysinfo->plugin_search($h, $search);
-
+    if ($search) {	
+	$plugins = $sysinfo->pluginSearch($h, $search);
     } else {
+	$tags = $sysinfo->pluginTagCloud($h, 20);
 	$plugins = null;
     }
 
@@ -35,11 +35,18 @@
 if ($plugins) {    
     foreach ($plugins as $plugin) {
 	//var_dump($plugin);
-	echo "<div class='plugin_col'><a href=''>" . urldecode($plugin['post_title']) . "</a></div>";
+	echo "<div class='plugin_col'><a href=''>" . urldecode($plugin['post_title']) . "</a> " . urldecode($plugin['post_content']) . "</div>";
 	//post_content
     }
 } else {
-    echo "no plugins found for that search";
+    if ($tags) {
+   //var_dump($tags);
+     foreach ($tags as $tag) {	
+	echo "<div class='plugin_col'><a href=''>" . urldecode($tag['tags_word']) . "</a> " . urldecode($tag['CNT']) . "</div>";
+	//post_content
+    }
+    }
+    //echo "no plugins found for that search";
 }
 
 
