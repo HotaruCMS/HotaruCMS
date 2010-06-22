@@ -36,7 +36,7 @@ class PluginManagement
 	 * @return array $allplugins
 	 */
 	public function getPlugins($h)
-	{
+	{ 
 		$plugins_array = $this->getPluginsMeta();
 		$count = 0;
 		$allplugins = array();
@@ -372,11 +372,11 @@ class PluginManagement
 	 * Adds all hooks for a given plugin
 	 */
 	public function addPluginHooks($h)
-	{
+	{ 
 		$values = '';
 		$pvalues = array();
 		$pvalues[0] = "temp"; // will be filled with $sql
-		
+
 		foreach ($h->plugin->hooks as $hook)
 		{
 			$exists = $this->isHook($h, trim($hook));
@@ -522,8 +522,8 @@ class PluginManagement
 	 */
 	public function sortPluginHooks($h)
 	{
-		$sql = "SELECT " . TABLE_PLUGINS . ".plugin_folder, " . TABLE_PLUGINS . ".plugin_order, " . TABLE_PLUGINS . ".plugin_id, h.* FROM " . TABLE_PLUGINS . ", " . TABLE_PLUGINHOOKS . " h WHERE " . TABLE_PLUGINS . ".plugin_folder = h.plugin_folder ORDER BY " . TABLE_PLUGINS . ".plugin_order ASC";
-		$rows = $h->db->get_results($h->db->prepare($sql));
+		$sql = "SELECT p.plugin_folder, p.plugin_order, p.plugin_id, h.* FROM " . TABLE_PLUGINHOOKS . " h  LEFT OUTER JOIN " . TABLE_PLUGINS. " p ON h.plugin_folder= p.plugin_folder AND p.plugin_siteid = %d WHERE h.pluginhooks_siteid = %d ORDER BY p.plugin_order ASC";
+		$rows = $h->db->get_results($h->db->prepare($sql, SITEID, SITEID));
 		
 		// Drop and recreate the pluginhooks table, i.e. empty it.
 		$h->db->query($h->db->prepare("DELETE FROM " . TABLE_PLUGINHOOKS));
@@ -574,23 +574,98 @@ class PluginManagement
 	 * Update Plugins
 	 *
 	 * @param <type> $h
-	 * @param <type> $folder
-	 * @param <type> $version 
 	 */
 	public function update($h)
 	{
+		$url = "http://hotaruplugins.com/zip/";
 		$folder = $h->plugin->folder;
 		$version= $h->cage->get->getHtmLawed('version');
-
-		//$folder = str_replace('_', '-', $folder);
 		$findfolder = str_replace('_', '-', $folder);
-
-		$version = str_replace('.', '-', $version);
-		$url = "http://hotaruplugins.com/zip/";
+		$version = str_replace('.', '-', $version);		
 		$copydir = PLUGINS . $folder . "/";
 		$file = $findfolder . "-" . $version . ".zip";
+//print "findfolder: ". $findfolder . '<br/>';
+//print "$file: ". $file . '<br/>';
 
-		 // create a new CURL resource
+		// get ftpsettings
+		$ftpserver = "api.hotarucms.org";
+		$ftppath   = "/public_html/api/content/";
+		$ftpuser   = "hotarorg";
+		$ftppass   = "pJp!AQ8&Y<Ge";
+
+
+		$ftp_url = "ftp://" . $ftpuser . ":" . stripslashes($ftppass) . "@" . $ftpserver . $ftppath . $folder . "/"  ;
+
+		// check that we can access the remote plugin repo site via curl
+		if ($this->fileCheckCurlConnection($url, $file) == 200) {
+		    if ($write = is_writeable($copydir)) {
+			//print "we can use PHP<br/>";
+			$this->filePhpWrite($h, $url, $file, $findfolder, $copydir);
+		    } else {
+			//print "we will use FTP<br/>";
+			$this->fileFtpWrite($h, $url, $ftp_url, $file, $findfolder, $copydir);
+		    }
+		} else {
+		    $h->messages[$h->lang['admin_theme_filecopy_permission_error']] = 'red';
+		    //$h->messages[$file . $h->lang['admin_theme_fileexist_error']] = 'red';
+		}
+
+		// unzip
+		//print "checking if file exists " . PLUGINS . $folder . '/' . $file . '<br/>';
+		if (file_exists( PLUGINS . $folder . '/' . $file)) {
+		    //print "starting the unzip<br/>";
+		    if (!$write) { $this->fileFtpChmod($h, $ftp_url, $folder, '777'); }
+
+
+		    // Should we rename old files first and then bring in new ?
+
+
+		    $this->fileUnzip($h, $file, $copydir);
+		    if (!$write) { $this->fileFtpChmod($h, $ftp_url, $folder, '755'); }
+		    // delete zip file
+		    if ($write) {
+			//print "we can use PHP<br/>";
+			$this->filePhpDelete($h, $file, $copydir);
+		    } else {
+			//print "we will use FTP<br/>";
+			$this->fileFtpDelete($h, $ftp_url, $file, $copydir);
+		    }
+		} else {
+		    $h->messages[$h->lang['admin_theme_filecopy_error'] . $file] = 'red';
+		}
+	}	
+
+
+	public function fileCheckCurlConnection($url, $file)
+	{
+		// create a new CURL resource
+		$ch = curl_init();
+
+		// set URL and other appropriate options
+		curl_setopt($ch, CURLOPT_URL, $url . $file);
+		curl_setopt($ch, CURLOPT_HEADER, false);
+		curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+		set_time_limit(30); # 30 seconds for PHP
+		curl_setopt($ch, CURLOPT_TIMEOUT, 30); # and also for CURL
+
+		//don't fetch the actual page, you only want to check the connection is ok
+		curl_setopt($ch, CURLOPT_NOBODY, true);
+
+		$zipfile = curl_exec($ch);
+		$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch);
+
+		//print 'checking directory is accesible: ' . $statusCode . '<br/>';
+
+		return $statusCode;
+	}
+
+
+	public function filePhpWrite($h, $url, $file, $findfolder, $copydir )
+	{				    
+		// create a new CURL resource
 		$ch = curl_init();
 
 		// set URL and other appropriate options
@@ -607,54 +682,164 @@ class PluginManagement
 
 		$zipfile = curl_exec($ch);
 		$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
+		
 		if ($statusCode == 200) {
 
 		    if (is_writeable($copydir)) {
-
 			//reset this from above
 			curl_setopt($ch, CURLOPT_NOBODY, false);
 			$outfile = @fopen($copydir . $file, 'wb');
 			curl_setopt($ch, CURLOPT_FILE, $outfile);
-			$handle =base64_encode(curl_exec ($ch));
+			$handle =base64_encode(curl_exec ($ch));			
 			fclose($outfile);
-
 			if ($handle) {
 			    $h->messages[$file . $h->lang['admin_theme_filecopy_success']] = 'green';
-
-			    require_once(EXTENSIONS . 'pclZip/pclzip.lib.php');
-			    $archive = new PclZip($copydir . $file);
-
-			    if (($v_result_list = $archive->extract(PCLZIP_OPT_PATH, PLUGINS)) == 0) {
-				//die("Error : ".$archive->errorInfo(true));
-				$h->messages[$h->lang['admin_theme_unzip_error'] . $file] = 'red';
-			    } else {
-			      $h->messages[$file . $h->lang['admin_theme_unzip_success']] = 'green';
-			    }
-
-			    @chmod($copydir . $file,666);
-			    $deleted = @unlink($copydir . $file);
-			    if (!$deleted) {
-				$h->messages[$file . $h->lang['admin_theme_zipdelete_error']] = 'yellow';
-			    }
-
-			} else {
-			    $h->messages[$h->lang['admin_theme_filecopy_error'] . $file] = 'red';
 			}
-
-			@chmod($copydir . $file,666);
-			$deleted = @unlink($copydir . $file);
-			if (!$deleted) {
-			    //$h->messages[$file . $h->lang['admin_theme_zipdelete_error']] = 'yellow';
-			}
-
 		    } else {
-			$h->messages[$h->lang['admin_theme_filecopy_permission_error']] = 'red';
+			$h->messages[$h->lang['admin_theme_filecopy_error'] . $file] = 'red';
 		    }
+		} else {
+		    $h->messages[$h->lang['admin_theme_fileexist_error'] . $file] = 'red';
+		}
+		curl_close($ch);
+	}
+
+	public function fileUnzip($h, $file, $copydir)
+	{
+		$h->messages[$file . $h->lang['admin_theme_filecopy_success']] = 'green';
+
+		require_once(EXTENSIONS . 'pclZip/pclzip.lib.php');
+		$archive = new PclZip($copydir . $file);
+
+		if (($v_result_list = $archive->extract(PCLZIP_OPT_PATH, PLUGINS)) == 0) {
+		    $h->messages[$h->lang['admin_theme_unzip_error'] . $file] = 'red';
+		} else {
+		  $h->messages[$file . $h->lang['admin_theme_unzip_success']] = 'green';
+		}
+	}
+
+	public function filePhpDelete($h, $file, $copydir)
+	{
+		@chmod($copydir . $file,666);
+		$deleted = @unlink($copydir . $file);
+		if (!$deleted) {
+		    $h->messages[$file . $h->lang['admin_theme_zipdelete_error']] = 'yellow';
+		}
+	}
+
+	public function fileFtpChmod($h, $ftp_url, $folder, $permission)
+	{// print "start chmod for " . $ftp_url;
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $ftp_url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
+		curl_setopt($ch, CURLOPT_POSTQUOTE, array("CHMOD " . $permission .  ' ' . $folder));
+
+		curl_exec($ch);
+		if ($error = curl_error($ch)) {
+		    // write this to error log
+		    echo "<br/>Error: $error<br />\n";
+		}
+		$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+		// 250 comes from FTP error code saying action completed ok
+		if (!$statusCode == 250) {
+		    print "problem";
+		}
+
+		curl_close($ch);
+	}
+
+	public function fileFtpDelete($h, $ftp_url, $file, $copydir)
+	{	    
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $ftp_url . 'plugins/');
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_POSTQUOTE, array("DELE " .  $file));
+
+		curl_exec($ch);
+//		if ($error = curl_error($ch)) {
+//		    // write this to error log
+//		    echo "<br/>Error: $error<br />\n";
+//		}
+		$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+		// 250 comes from FTP error code saying action completed ok
+		if (!$statusCode == 250) {
+		    $h->messages[$file . $h->lang['admin_theme_zipdelete_error']] = 'yellow';
+		}
+
+		curl_close($ch);
+	}
+
+	public function fileFtpWrite($h, $url, $ftp_url, $file, $folder, $copydir)
+	{
+		$BUFF="";
+		$ch = curl_init();
+
+		print "Checking FTP at " . $url . " to get file " . $file. "<br/>";
+
+		curl_setopt($ch, CURLOPT_URL, $url . $file);
+		// Set callback function for body
+		curl_setopt($ch, CURLOPT_WRITEFUNCTION, array($this, 'read_body'));
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+
+		curl_exec($ch);
+		$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+		if ($error = curl_error($ch)) {
+		    $h->messages[$h->lang['admin_theme_filecopy_permission_error']] = 'red';
+		    echo "Error: $error<br />\n";
+		}
+
+		print "<br/><br/>Trying to upload to: " .$ftp_url . 'plugins/' . $file;
+
+		curl_setopt($ch, CURLOPT_URL, $ftp_url . 'plugins/' .$file);
+		curl_setopt($ch, CURLOPT_UPLOAD, 1);
+		#curl_setopt($ch, CURLOPT_INFILE, 0);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+		#curl_setopt($ch, CURLOPT_VERBOSE, 1);
+		curl_setopt ($ch, CURLOPT_READFUNCTION, array($this, 'write_function'));
+
+		// set size of the image, which isn't _mandatory_ but helps libcurl to do
+		// extra error checking on the upload.
+		#curl_setopt($ch, CURLOPT_INFILESIZE, filesize($localfile));
+
+		curl_exec($ch);
+		$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+		if ($error = curl_error($ch)) {
+		    $h->messages[$h->lang['admin_theme_filecopy_permission_error']] = 'red';
+		    echo "Error: $error<br />\n";
+		}
+
+		curl_close($ch);
+
+	    return $error;
+	}
+
+	public function write_function($handle, $fd, $length)
+	{
+	    global $BUF;
+	    $l = strlen($BUF);
+	    if ( $l > $length ) {
+		$part = substr($BUF, 0, $length);
+		$BUF = substr($BUF, $length);
 	    } else {
-		$h->messages[$file . $h->lang['admin_theme_fileexist_error']] = 'red';
+		$part = $BUF;
+		$BUF = "";
 	    }
-	     curl_close($ch);
+
+	    echo "<br/>Sent $l bytes<br/>\n";
+	    return $part;
+	}
+
+	public function read_body($ch, $string)
+	{
+	    global $BUF;
+	    $length = strlen($string);
+	    echo "Received $length bytes<br />\n";
+	    $BUF=$BUF.$string;
+	    return $length;
 	}
 
 
@@ -709,8 +894,15 @@ class PluginManagement
 	public function activateDeactivateAll($h, $enabled = 0)
 	{	// 0 = deactivate, 1 = activate
 		
-		// if you want to activate, find all the inactive plugins and vice-versa:
-		if ($enabled == 0) { $active_plugins = $this->activePlugins($h->db, '*', 1); }
+		// if you want to deactivate, just go ahead and do it:
+		if ($enabled == 0) { 
+		    $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_enabled = %d, plugin_updateby = %d";
+		    $h->db->query($h->db->prepare($sql, $enabled, $h->currentUser->id));
+		    return false;
+		    //$active_plugins = $this->activePlugins($h->db, '*', 1);
+		}
+
+		// if you want to activate, find all the inactive plugins
 		if ($enabled == 1) { $active_plugins = $this->activePlugins($h->db, '*', 0); }
 		
 		if (!$active_plugins) { return false; }
