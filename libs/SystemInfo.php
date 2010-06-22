@@ -118,6 +118,48 @@ class SystemInfo
 	}
 
 
+	/**
+	 *
+	 * @param <type> $search
+	 */
+	public function pluginSearch($h, $search)
+	{
+		$query_vals = array(
+		    'api_key' => '',
+		    'format' => 'json',
+		    'method' => 'hotaru.plugin.search',
+		    'args' => $search
+		);
+
+		 $plugins = $this->sendApiRequest($h, $query_vals, 'http://hotaruplugins.com/index.php?page=api');
+
+		 return $plugins;
+	}
+
+	/**
+	 *
+	 */
+	public function pluginTagCloud($h, $number = 20)
+	{
+		$query_vals = array(
+		    'api_key' => '',
+		    'format' => 'json',
+		    'method' => 'hotaru.plugin.tagcloud',
+		    'args' => $number
+		);
+
+		 $result = $this->sendApiRequest($h, $query_vals, 'http://hotaruplugins.com/index.php?page=api');
+
+		 return $result;
+	}
+
+
+	/**
+	 *
+	 * @param <type> $query_vals
+	 * @param <type> $url
+	 * @return <type>
+	 */
 	public function sendApiRequest($h, $query_vals, $url)
 	{
 		// Generate the POST string
