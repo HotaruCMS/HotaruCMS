@@ -95,6 +95,7 @@ class Announcements
 		    }
 
 		    // Check if install file has not been run
+		    $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
 		    $hotaru_version = $h->db->get_var($h->db->prepare($sql, 'hotaru_version'));
 		    if (version_compare($h->version, $hotaru_version, '>')) {
 			    array_push($announcements, $h->lang['admin_announcement_run_install']);
