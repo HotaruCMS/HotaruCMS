@@ -187,10 +187,10 @@ class Post
 	 */    
 	public function updatePost($h)
 	{
-		if (strstr($this->origUrl, SITEURL)) {
+		if (!$this->origUrl || strstr($this->origUrl, SITEURL)) {
 			// original url contains our base url, so it must be an "editorial" post.
 			// Therefore, it's essential we rebuild this source url to match the updated post title to avoid errors:
-			$this->origUrl = $h->url(array('page'=>$this->id)); // update the url with the real one
+			$this->origUrl = $h->url(array('page'=>$this->id)); // update the url with the real one			
 		}
 		
 		$parsed = parse_url($this->origUrl);
@@ -202,8 +202,7 @@ class Post
 		
 		$h->post->id = $this->id; // a small hack to get the id for use in plugins.
 		
-		// Update tags in the Tags table:
-		require_once(LIBS . 'Tags.php');
+		// Update tags in the Tags table:		
 		$tags = new TagFunctions();
 		$tags->deleteTags($h, $this->id); // delete existing tags
 		$tags->addTags($h, $this->id, $this->tags); // insert new or updated tags
