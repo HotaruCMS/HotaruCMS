@@ -50,6 +50,7 @@ $loaded_settings = $h->vars['admin_settings'];
 		foreach ($loaded_settings as $ls)
 		{
 			if ($ls->settings_show == 'N') { continue; } // skip this row
+			if ($ls->settings_name == 'MULTI_SITE' && SITEID !=1) { continue; } // skip this row
 		
 			// replace underscores with spaces and make the first character of the setting name uppercase.
 			$name = ucfirst(preg_replace('/_/', ' ', $ls->settings_name));
