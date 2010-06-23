@@ -393,7 +393,7 @@
 
 	    $before ="before: " . $query . "<br/><br/>";
 	    $after = "no";
-//print $before;
+
 	    // Note, must be case sensitive to avoid text being inserted as from and then being picked up
 	    if (strpos($query, ' FROM ')  !== false) {
 		$array = explode('FROM ',$query);
@@ -407,7 +407,6 @@
 		    $array3 = explode(DB_PREFIX , $table);
 
 		    $tablename = $array3[1];
-
 		    $tablename = str_replace(',', '', $tablename);
 
 		    if (array_key_exists($tablename, $siteidtables)) {

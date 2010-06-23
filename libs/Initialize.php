@@ -170,13 +170,14 @@ class Initialize
 			$siteurl = BASEURL;
 		    }
 
+
 		    if (!defined('MS_TABLES')) {
 			$ms_tables = array();
 			//get $h->$ms_tables
 			foreach ( $this->db->get_col("SHOW TABLES",0) as $table_name )
 			{
 			    $sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.Columns where TABLE_NAME = %s AND RIGHT(COLUMN_NAME,7) = %s";
-			    $columns = $this->db->get_row($this->db->prepare($sql, $table_name, '%_siteid'));
+			    $columns = $this->db->get_row($this->db->prepare($sql, $table_name, '_siteid'));
 			    //var_dump($columns);
 			    $array1 = explode(DB_PREFIX, $table_name);
 			    $tablename = $array1[1];
@@ -186,7 +187,7 @@ class Initialize
 			    }			
 			}
 			//define('MS_TABLES','return ' . var_export($ms_tables, 1) . ';');
-			 define('MS_TABLES',serialize($ms_tables));
+			 define('MS_TABLES',serialize($ms_tables));			
 		    }
 
 
