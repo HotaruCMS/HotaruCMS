@@ -2,7 +2,7 @@
 /**
  * name: Post Manager
  * description: Manage posts.
- * version: 0.7
+ * version: 0.8
  * folder: post_manager
  * class: PostManager
  * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, user_manager_role, user_manager_details, admin_theme_main_stats

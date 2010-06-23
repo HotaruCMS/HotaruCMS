@@ -230,6 +230,8 @@ class PostManagerSettings
             $p->readPost($h, 0, $post);
             $h->post = $p;
 
+			$restricted = array('blog');
+			
             $edit_link = BASEURL . "index.php?from=post_man&amp;page=edit_post&amp;post_id=" . $post->post_id; 
             if ($filter) { $edit_link .= "&amp;post_status_filter=" . $filter; }
             if ($search_term) { $edit_link .= "&amp;search_value=" . $search_term; }
@@ -247,22 +249,40 @@ class PostManagerSettings
             $output .= "<td class='pm_author'><a href='" . $h->url(array('user'=>$username)) . "' title='User Profile'>" . $username . "</a>" . $icons . "</td>\n";
             $output .= "<td class='pm_title'><a class='table_drop_down' href='#' title='" . $h->lang["post_man_show_content"] . "'>";
             $output .= stripslashes(urldecode($post->post_title)) . "</a></td>\n";
-            $output .= "<td class='pm_edit'>" . "<a href='" . $edit_link . "'>\n";
-            $output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/edit.png'>" . "</a></td>\n";
+            
+            // edit link - hidden for "blog" posts, i.e. journals (because they don't have edit pages)
+            $output .= "<td class='pm_edit'>";
+            if (!in_array($post->post_type, $restricted)) {
+            	$output .= "<a href='" . $edit_link . "'>\n";
+            	$output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/edit.png'>" . "</a>";
+        	}
+        	$output .= "</td>\n";
+        	
             $output .= "<td class='pm_check'><input type='checkbox' name='post[" . $post->post_id . "]' value='" . $post->post_id . "'></td>\n";
             $output .= "</tr>\n";
             
             $output .= "<tr class='table_tr_details' style='display:none;'>\n";
             $output .= "<td colspan=7 class='table_description pm_description'>\n";
             $output .= "<a class='table_hide_details' style='float: right;' href='#'>[" . $h->lang["admin_theme_plugins_close"] . "]</a>";
-            $output .= "<b>" . stripslashes(urldecode($post->post_title)) . "</b><br />\n";
+            $output .= "<b>" . stripslashes(urldecode($post->post_title)) . "</b> [" . $post->post_type . "]<br />\n";
             $output .= "<i>" . $h->lang["post_man_posted"] ."</i> " .  date('d M Y H:i:s', strtotime($post->post_date)) . "<br />\n";
             $output .= "<i>" . $h->lang["post_man_author"] ."</i> <a href='" . $h->url(array('user'=>$username)) . "' title='User Profile'>" . $username . "</a> (id:" .  $post->post_author . ")" . "<br />\n";
             $output .= "<p><i>" . $h->lang["post_man_content"] ."</i> " . stripslashes(urldecode($post->post_content)) . "</p> \n";
             $output .= "<i>" . $h->lang["post_man_category"] ."</i> " . $category . "<br /> \n";   // we got $category above
-            $output .= "<i>" . $h->lang["post_man_tags"] ."</i> " . (urldecode($post->post_tags)) . "<br /> \n";
-            $output .= "<i>" . $h->lang["post_man_urls"] ."</i> <a href='" . $h->url(array('page'=>$post->post_id)) . "'>" . SITE_NAME . " " . $h->lang["post_man_post"] ."</a> | \n";
-            $output .= "<a href='" . urldecode($post->post_orig_url) . "'>" . $h->lang["post_man_original_post"] ."</a><br />\n";
+            
+            //tags:
+            if (!in_array($post->post_type, $restricted)) {
+            	$output .= "<i>" . $h->lang["post_man_tags"] ."</i> " . (urldecode($post->post_tags)) . "<br /> \n";
+            }
+            
+            //urls:
+           	$output .= "<i>" . $h->lang["post_man_urls"] ."</i> <a href='" . $h->url(array('page'=>$post->post_id)) . "'>" . SITE_NAME . " " . $h->lang["post_man_post"] ."</a>\n";
+            if (!in_array($post->post_type, $restricted)) {
+				$output .= " | ";
+            	$output .= "<a href='" . urldecode($post->post_orig_url) . "'>" . $h->lang["post_man_original_post"] ."</a>\n";
+            }
+            
+            $output .= "<br />\n";
             $output .= "</td></tr>";
         }
         
