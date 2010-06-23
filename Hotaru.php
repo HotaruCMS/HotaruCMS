@@ -62,7 +62,7 @@ class Hotaru
 	protected $messages             = array();  // for multiple messages
 	
 	// miscellaneous
-	protected $vars                 = array();  // multi-purpose
+	protected $vars                 = array();  // multi-purpose	
     
 	/**
 	 * CONSTRUCTOR - Initialize

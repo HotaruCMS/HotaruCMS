@@ -219,7 +219,7 @@
 		if (defined('MULTI_SITE') && MULTI_SITE == 'true' && !strpos($query, '_siteid')) { 
 			$query = $this->whereMultiSite($query);
 		} else {
-		   // print "missing query" . $query . '<br/>';
+		    // print "missing query" . $query . '<br/>';
 		}
 
             // Perform the query via std mysql_query function..
@@ -387,10 +387,15 @@
 		'plugins'=>'plugin', 'pluginsettings'=>'plugin', 'tags'=>'tags', 'settings'=>'settings', 'miscdata'=>'miscdata',
 		'widgets'=>'widget', 'pluginhooks'=>'pluginhooks');
 
+	    //$const = eval(MS_TABLES);
+	    $const = unserialize(MS_TABLES);       
+	    if ($const) { $siteidtables = $const;} else { }
+
 	    $before ="before: " . $query . "<br/><br/>";
 	    $after = "no";
-
-	    if (stripos($query, ' FROM ')  !== false) {
+//print $before;
+	    // Note, must be case sensitive to avoid text being inserted as from and then being picked up
+	    if (strpos($query, ' FROM ')  !== false) {
 		$array = explode('FROM ',$query);
 
 		if ($array[0] != 'SHOW COLUMNS ') {
@@ -399,7 +404,7 @@
 		    $array2 = explode(' ', $array[1]);
 		    if ($array2[0] == '') { $table = $array2[1]; } else { $table = $array2[0]; }
 		    
-		    $array3 = explode('_', $table);
+		    $array3 = explode(DB_PREFIX , $table);
 
 		    $tablename = $array3[1];
 
@@ -526,7 +531,7 @@
 
 	    //if ($after == 'no') { print $before; }
 	   // print $before;
-	 //   print $after;
+	//    print $after;
 	    return $query;
 	}
     }
