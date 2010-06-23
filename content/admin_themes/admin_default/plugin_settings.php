@@ -45,10 +45,12 @@ if ($h->vars['plugin_settings_csrf_error']) {
 	<?php 
 			$sb_links = $h->pluginHook('admin_sidebar_plugin_settings');
 			if ($sb_links) {
+				echo "<ul>\n";
 				$sb_links = sksort($sb_links, $subkey="name", $type="char", true);
 				foreach ($sb_links as $plugin => $details) { 
 					echo "<li><a href='" . SITEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $details['plugin'] . "'>" . $details['name'] . "</a></li>";
 				}
+				echo "</ul>\n";
 			}
 		}
 	?>
