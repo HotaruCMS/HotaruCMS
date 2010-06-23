@@ -693,7 +693,7 @@ function do_upgrade($h, $old_version)
 	    // Change post_title column from `post_title` varchar(255) NULL, to `post_title` text NULL,
 	    $exists = $h->db->column_exists('posts', 'post_title');
 	    if (!$exists) {
-		    $sql = "ALTER TABLE " . TABLE_POSTS . " MODIFY post_title text NUL";
+		    $sql = "ALTER TABLE " . TABLE_POSTS . " MODIFY post_title text NULL";
 		    $h->db->query($h->db->prepare($sql));
 	    }
 
