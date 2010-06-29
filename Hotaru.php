@@ -77,6 +77,7 @@ class Hotaru
 		    define("LIBS", dirname(__FILE__).'/libs/');
 		    define("EXTENSIONS", dirname(__FILE__).'/libs/extensions/');
 		    define("FUNCTIONS", dirname(__FILE__).'/functions/');
+		    define("CONTENT", dirname(__FILE__).'/content/');
 		    define("THEMES", dirname(__FILE__).'/content/themes/');
 		    define("PLUGINS", dirname(__FILE__).'/content/plugins/');
 		    define("ADMIN_THEMES", dirname(__FILE__).'/content/admin_themes/');
