@@ -696,6 +696,11 @@ function do_upgrade($h, $old_version)
 		    $sql = "ALTER TABLE " . TABLE_POSTS . " MODIFY post_title text NULL";
 		    $h->db->query($h->db->prepare($sql));
 	    }
+	    
+	    // Drop token_id column from the tokens table
+	    if ($h->db->column_exists('tokens', 'token_id')) {
+		    $h->db->query("ALTER TABLE " . DB_PREFIX . "tokens DROP token_id");
+	    }
 
 	}
 

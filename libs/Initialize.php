@@ -359,7 +359,7 @@ class Initialize
 	public function setUpJsConstants()
 	{
 		// Start timer if debugging
-		$global_js_var = "jQuery('document').ready(function($) {BASEURL = '". SITEURL ."'; SITEURL = '". SITEURL ."'; ADMIN_THEME = '" . ADMIN_THEME . "'; THEME = '" . THEME . "';});";
+		$global_js_var = "jQuery('document').ready(function($) {BASE = '" . BASE . "'; BASEURL = '". SITEURL ."'; SITEURL = '". SITEURL ."'; ADMIN_THEME = '" . ADMIN_THEME . "'; THEME = '" . THEME . "';});";
 		$JsConstantsFile = "css_js_cache/JavascriptConstants.js";
 	
 		if (!file_exists(CACHE . $JsConstantsFile)) {

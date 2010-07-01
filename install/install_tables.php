@@ -548,7 +548,6 @@ function create_table($table_name)
 	
 	if ($table_name == "tokens") {
 		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
-			`token_id` INT(11) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
 			`token_sid` varchar(32) NOT NULL,
 			`token_key` CHAR(32) NOT NULL,
 			`token_stamp` INT(11) NOT NULL default '0',
