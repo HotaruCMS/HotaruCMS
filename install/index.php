@@ -783,10 +783,11 @@ function installation_complete()
 	    $modules = get_loaded_extensions();
 	    $php_module_not_found = false;
 
-	    $required = array('bcmath' => 'http://php.net/manual/en/book.bc.php',
-			      'mysql'=>'http://php.net/manual/en/book.mysql.php',
+	    $required = array('mysql'=>'http://php.net/manual/en/book.mysql.php',
 			      'filter'=>'http://php.net/manual/en/book.filter.php',
 			      'mb_substr'=>'http://php.net/manual/en/function.mb-substr.php');
+			      
+		/* No longer required: 'bcmath' => 'http://php.net/manual/en/book.bc.php' */
 
 	    foreach ($required as $module => $url) {
 		if (!in_array($module, $modules)) {
