@@ -249,7 +249,7 @@ $lang["admin_theme_theme_activate_error"] = " Theme was not activated due to an 
 
 
 /* footer */
-$lang["admin_theme_footer_having_trouble_vist_forums"] = "Having trouble? Read the <a href='http://hotarudocs.com'>Documentation</a> or ask for help in the <a href='http://hotarucms.org/forum.php'>Forums</a>.";
+$lang["admin_theme_footer_having_trouble_vist_forums"] = "Having trouble? Read the <a href='http://hotarudocs.com'>Documentation</a> or ask for help in the <a href='http://forums.hotarucms.org'>Forums</a>.";
 
 /* 404 */
 $lang["admin_theme_404_page_not_found"] = "Page not found.";
