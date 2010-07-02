@@ -39,6 +39,6 @@ $lang['widgets_order_enabled'] = "Widget enabled!";
 $lang['widgets_order_disabled'] = "Widget disabled.";
 $lang['widgets_order_not_active'] = "Sorry, that plugin is either inactive or not installed.";
 $lang["widgets_ordering_guide"] = "Widget Tips";
-$lang["widgets_ordering_guide_1"] = "Once you've set up multiple blocks (<a href='http://hotarucms.org/showthread.php?t=64'>read how</a>), you can move the <i>last</i> plugin in a block to the next one by clicking the down arrow. Try it!";
+$lang["widgets_ordering_guide_1"] = "Once you've set up multiple blocks (<a href='http://hotarudocs.com/How_to_Add_Another_Sidebar'>read how</a>), you can move the <i>last</i> plugin in a block to the next one by clicking the down arrow. Try it!";
 
 ?>
