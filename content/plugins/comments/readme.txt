@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.2.2 2010/07/07 - Nick - Fix for page load continuing after displaying the RSS feed
 v.2.1 2010/05/23 - Nick - Removed the requirement to have SB Base installed.
 v.2.0 2010/05/02 - Nick - Function changes for easier extending, and changed "comments_wrapper" from an id to a class.
                  - Nick - Uses new function in Hotaru 1.2 to convert text urls into clickable links

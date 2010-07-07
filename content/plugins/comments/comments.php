@@ -2,7 +2,7 @@
 /**
  * name: Comments
  * description: Enables logged-in users to comment on posts
- * version: 2.1
+ * version: 2.2
  * folder: comments
  * class: Comments
  * type: comments
@@ -798,6 +798,7 @@ class Comments
             }
         }
         echo $feed->serve();
+        exit;
     }
     
     
