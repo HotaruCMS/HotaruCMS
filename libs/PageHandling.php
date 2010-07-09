@@ -25,6 +25,9 @@
  */
 class PageHandling
 {
+	protected $default = 'default/';
+	protected $adminDefault = 'admin_default/';
+	
 	/**
 	 * Set the homepage (and set page name)
 	 *
@@ -193,11 +196,11 @@ class PageHandling
 		if ($h->isAdmin) { 
 			$themes = ADMIN_THEMES; 
 			$theme = ADMIN_THEME;
-			$default = 'admin_default/';
+			$default = $this->adminDefault;
 		} else {
 			$themes = THEMES;
 			$theme = THEME;
-			$default = 'default/';
+			$default = $this->default;
 		} 
 		
 		$page = $page . '.php';

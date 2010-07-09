@@ -43,6 +43,7 @@ class Hotaru
 	protected $includes;                        // for CSS/JavaScript includes
 	protected $debug;                           // Debug object
 	protected $email;                           // Email object
+	protected $pageHandling;                    // PageHandling object
 	
 	// page info
 	protected $home                 = '';       // name for front page
@@ -97,6 +98,7 @@ class Hotaru
 			$this->plugin       = new Plugin();         // instantiate Plugin object
 			$this->post         = new Post();           // instantiate Post object
 			$this->includes     = new IncludeCssJs();   // instantiate Includes object
+			$this->pageHandling = new PageHandling();   // instantiate PageHandling object
 			
 			$this->csrf('set');                         // set a csrfToken
 			$this->db->setHotaru($this);                // pass $h object to EzSQL for error reporting
@@ -313,8 +315,7 @@ class Hotaru
 	 */
 	public function displayTemplate($page = '', $plugin = '', $include_once = true)
 	{
-		$pageHandling = new PageHandling();
-		$pageHandling->displayTemplate($this, $page, $plugin, $include_once);
+		$this->pageHandling->displayTemplate($this, $page, $plugin, $include_once);
 	}
     
     
