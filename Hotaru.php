@@ -288,8 +288,7 @@ class Hotaru
 	 */
 	public function setHome($home = '', $pagename = '')
 	{
-		$pageHandling = new PageHandling();
-		$pageHandling->setHome($this, $home, $pagename);
+		$this->pageHandling->setHome($this, $home, $pagename);
 	}
 	
 	
@@ -301,8 +300,7 @@ class Hotaru
 	 */
 	public function getTitle($delimiter = ' &laquo; ', $raw = false)
 	{
-		$pageHandling = new PageHandling();
-		return $pageHandling->getTitle($this, $delimiter, $raw);
+		return $this->pageHandling->getTitle($this, $delimiter, $raw);
 	}
     
     
@@ -326,8 +324,7 @@ class Hotaru
 	 */
 	public function isPage($page = '')
 	{
-		$pageHandling = new PageHandling();
-		return $pageHandling->isPage($this, $page);
+		return $this->pageHandling->isPage($this, $page);
 	}
     
     
@@ -345,8 +342,7 @@ class Hotaru
 	 */
 	public function isSettingsPage($folder = '')
 	{
-		$pageHandling = new PageHandling();
-		return $pageHandling->isSettingsPage($this, $folder);
+		return $this->pageHandling->isSettingsPage($this, $folder);
 	}
 
     
@@ -355,8 +351,7 @@ class Hotaru
 	 */
 	public function getPageName()
 	{
-		$pageHandling = new PageHandling();
-		$this->pageName = $pageHandling->getPageName($this);
+		$this->pageName = $this->pageHandling->getPageName($this);
 		return $this->pageName;
 	}
     
@@ -369,8 +364,7 @@ class Hotaru
 	 */
 	public function friendlyToStandardUrl($friendly_url) 
 	{
-		$pageHandling = new PageHandling();
-		return $pageHandling->friendlyToStandardUrl($this, $friendly_url);
+		return $this->pageHandling->friendlyToStandardUrl($this, $friendly_url);
 	}
     
     
@@ -383,8 +377,7 @@ class Hotaru
 	 */
 	public function url($parameters = array(), $head = 'index')
 	{
-		$pageHandling = new PageHandling();
-		return $pageHandling->url($this, $parameters, $head);
+		return $this->pageHandling->url($this, $parameters, $head);
 	}
     
     
