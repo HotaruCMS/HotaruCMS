@@ -28,6 +28,26 @@ class PageHandling
 	protected $default = 'default/';
 	protected $adminDefault = 'admin_default/';
 	
+	
+	/**
+	 * Access modifier to set protected properties
+	 */
+	public function __set($var, $val)
+	{
+		$this->$var = $val;
+	}
+    
+    
+	/**
+	 * Access modifier to get protected properties
+	 * The & is necessary (http://bugs.php.net/bug.php?id=39449)
+	 */
+	public function &__get($var)
+	{
+		return $this->$var;
+	}
+	
+	
 	/**
 	 * Set the homepage (and set page name)
 	 *

@@ -36,10 +36,14 @@ $theme = $h->vars['settings_theme'];    // theme folder name
 <div id="theme_settings">
 	<?php 
 		$result = '';
-		if ($theme) {
+		if ($theme)
+		{
 			echo '<div id="admin_theme_theme_activate" class="power_on" name="'. $theme .'">' . make_name($theme, '-') . $h->lang['admin_theme_theme_activate'] . '</div><br/>';
-			if (file_exists(THEMES . $theme . '/settings.php')) {
-				$meta = $h->readThemeMeta($theme);
+			
+			$no_settings = '<i>' . make_name($theme, '-') . $h->lang['admin_theme_theme_no_settings'] . '</i>';
+			
+			$meta = $h->readThemeMeta($theme);
+			if ($meta) {
 				foreach ($meta as $key => $value) {
 					if ($key != 'author') { 
 						echo ucfirst($key) . ": " . $value . "<br />\n";
@@ -49,11 +53,18 @@ $theme = $h->vars['settings_theme'];    // theme folder name
 					}
 				}
 				echo "<br /><br />";
-				require_once(THEMES . $theme . '/settings.php');
+				
+				if (file_exists(THEMES . $theme . '/settings.php')) {
+					require_once(THEMES . $theme . '/settings.php');
+				} else {
+					echo $no_settings;
+				}
 			} else {
-				echo '<i>' . make_name($theme, '-') . $h->lang['admin_theme_theme_no_settings'] . '</i>';
+				echo $no_settings;
 			}
-		} else {
+		} 
+		else 
+		{
 	?>
 		<h3><?php echo $h->lang["admin_theme_theme_settings"]; ?></h3>
 		<ul id="plugin_settings_list">
