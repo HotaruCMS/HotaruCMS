@@ -17,4 +17,4 @@
 #submit_edit_confirm input { width: 10.0em; }
 
 /* edit */
-#post_orig_url { width: 36em; } /* source url for admins only */
+#post_orig_url { width: 100%; } /* source url for admins only */
