@@ -2,7 +2,7 @@
 /**
  * name: Category Manager
  * description: Manage categories.
- * version: 0.8
+ * version: 1.0
  * folder: category_manager
  * class: CategoryManager
  * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings

@@ -41,9 +41,9 @@
                     for($i=1; $i<$cat->category_level; $i++) {
                         echo "--- ";
                     }
-                    echo "<input name='" . $cat->category_id . "' type='text' value='" . $cat->category_name . "'> <span style='font-size: 0.8em; color: #888;'>(" . $cat->category_name . ")</span><br />";
+                    echo "<input name='" . $cat->category_id . "' type='text' value='" . urldecode($cat->category_name) . "'> <span style='font-size: 0.8em; color: #888;'>(" . urldecode($cat->category_name) . ")</span><br />";
                 } else {
-                    echo "<input name='" . $cat->category_id . "' type='text' value='" . $cat->category_name . "'> <span style='font-size: 0.8em; color: #888;'>(" . $cat->category_name . ")</span><br />";
+                    echo "<input name='" . $cat->category_id . "' type='text' value='" . urldecode($cat->category_name) . "'> <span style='font-size: 0.8em; color: #888;'>(" . urldecode($cat->category_name) . ")</span><br />";
                 }
             }
         }

@@ -32,8 +32,8 @@
 $(document).ready(function(){
 
 	// Show/Hide box 
-	$(".alert_link").click(function () {
-		var target = $(this).parents('div').next('div').children('div.alert_choices');
+	$(".alert_link").click(function () {	    
+		var target = $(this).parents('div').nextAll('div.show_post_extras').children('div.alert_choices');
                 target.fadeToggle();
                 return false;
         });

@@ -61,8 +61,7 @@ class BookmarkingFunctions
         if ($type) {
             // For the posts widget or other non-pages... 
             $h->vars['filter'] = array(); // flush filter
-            $this->prepareListFilters($h, $type);
-            
+            $this->prepareListFilters($h, $type);            
         } else {
             // for pages, i.e. lists of stories with pagination
             switch ($h->pageName) {
@@ -106,7 +105,7 @@ class BookmarkingFunctions
         if ($all == true) { $limit = ''; } elseif ($limit == 0) { $limit = "20"; }
         
         // default to posts of type "news" if not otherwise set
-        if (!isset($h->vars['filter']['post_type = %s'])) { $h->vars['filter']['post_type = %s'] = 'news'; }
+        if (!isset($h->vars['filter']['post_type = %s'])) { $h->vars['filter']['post_type = %s'] = $h->vars['bookmarking_settings']['default_type']; }
 
         // get the prepared SQL query
         $prepare_array = $h->db->select(

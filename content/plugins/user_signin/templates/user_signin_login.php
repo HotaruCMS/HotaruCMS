@@ -39,7 +39,7 @@ if ($h->cage->post->getInt('remember') == 1){ $remember_check = "checked"; } els
     <?php $h->pluginHook('user_signin_login_pre_login_form'); ?>
     
     <div class='user_login_reg'>
-    <?php echo $h->lang["user_signin_login_instructions"]; ?>
+    <?php //echo $h->lang["user_signin_login_instructions"]; ?>
     
         <form name='login_form' action='<?php echo BASEURL; ?>index.php' method='post'>
         <table>
@@ -51,12 +51,15 @@ if ($h->cage->post->getInt('remember') == 1){ $remember_check = "checked"; } els
         <input type='hidden' name='page' value='login'>
         <input type='hidden' name='return' value='<?php echo $return_check; ?>'>
         <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
+
+	<a href="#" class="forgot_password"><?php echo $h->lang["user_signin_login_forgot_password"]; ?></a>
         </form>
+	
     </div>
     
-    <a href="#" class="forgot_password"><?php echo $h->lang["user_signin_login_forgot_password"]; ?></a>
     
-    <form style="display: none;" name='forgot_password_form' action='<?php echo BASEURL; ?>index.php' method='post'>    
+    
+    <form id="forgot_password_form" style="display: none;" name='forgot_password_form' action='<?php echo BASEURL; ?>index.php' method='post'>
         <?php echo $h->lang['user_signin_login_forgot_password_submit_instruct_1']; ?>
     <table>
         <tr>

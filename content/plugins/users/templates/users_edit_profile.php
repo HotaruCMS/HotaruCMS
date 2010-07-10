@@ -56,7 +56,7 @@ $h->pluginHook('user_edit_profile_fill_form');
     <table>
     
     <tr><td><?php echo $h->lang["users_profile_edit_bio"]; ?>&nbsp; </td>
-        <td><textarea cols=60 rows=5 name='bio'><?php echo $profile['bio']; ?></textarea></td>
+        <td><textarea rows=5 name='bio'><?php echo $profile['bio']; ?></textarea></td>
     </tr>
     
     <?php // Add your own profile fields here. Use tr and td tags. ?>

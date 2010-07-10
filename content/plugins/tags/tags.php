@@ -2,11 +2,11 @@
 /**
  * name: Tags
  * description: Show tags, filter tags and RSS for tags
- * version: 1.7
+ * version: 1.8
  * folder: tags
  * class: Tags
  * type: tags
- * hooks: theme_index_top, header_include, header_include_raw, header_meta, show_post_extra_fields, show_post_extras, bookmarking_functions_preparelist, breadcrumbs, post_rss_feed
+ * hooks: theme_index_top, header_include, header_include_raw, header_meta, show_post_extra_fields, show_post_extras, bookmarking_functions_preparelist, breadcrumbs, post_rss_feed, admin_plugin_settings, admin_sidebar_plugin_settings
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -146,7 +146,17 @@ class Tags
         if (!$h->post->tags) { return false; }
         
         $tags = explode(',', $h->post->tags);
-        
+
+	$tags_settings = $h->getSerializedSettings('tags');
+	
+	if ($tags_settings['tags_setting_exclude_active'] && $tags_settings['tags_setting_exclude_words'])  {
+	    $exclude_tags = explode(',', $tags_settings['tags_setting_exclude_words']);	    
+	    array_walk($exclude_tags, array($this,'trim_value'));	    
+	    if ($exclude_tags) {
+		$tags = array_diff( $tags, $exclude_tags );
+	    }
+	}
+
         // lots of nice issets for php 5.3 compatibility
         if (isset($vars[0]) && isset($vars[1]) && ($vars[0] == "tags") && ($vars[1] == "raw")) {
             $raw = true;
@@ -168,7 +178,18 @@ class Tags
             echo "</div>\n";
             echo "<div class='clear'>&nbsp;</div>\n";
         }
+
     }
+
+
+    
+    //required for above array_walk method
+    public function trim_value(&$value)
+    { 
+	$value = trim($value);
+    }
+
+
     
     
     /**

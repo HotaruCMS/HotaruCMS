@@ -53,6 +53,7 @@ class VoteSettings
         $no_front_page = $vote_settings['no_front_page'];
         $posts_widget = $vote_settings['posts_widget'];
         $vote_on_url_click = $vote_settings['vote_on_url_click'];
+	$anon_vote = $vote_settings['vote_anon_vote'];
         
         //...otherwise set to blank or default:
         if (!$submit_vote) { $submit_vote = ''; }
@@ -66,6 +67,7 @@ class VoteSettings
         if (!$no_front_page) { $no_front_page = 5; }
         if (!$posts_widget) { $posts_widget = 'checked'; }
         if (!$vote_on_url_click) { $vote_on_url_click = ''; }
+	if (!$anon_vote) { $anon_vote = ''; }
         
         // A plugin hook so other plugin developers can add settings
         $h->pluginHook('vote_settings_get_values');
@@ -95,6 +97,7 @@ class VoteSettings
         echo "<br /><p><b>" . $h->lang["vote_settings_other"] . "</b></p>";
         echo "<p><input type='checkbox' name='widget_votes' value='widget_votes' " . $posts_widget . ">&nbsp;&nbsp;" . $h->lang["vote_settings_posts_widget"] . "</p>\n";
         echo "<p><input type='checkbox' name='vote_on_url_click' value=vote_on_url_click' " . $vote_on_url_click . ">&nbsp;&nbsp;" . $h->lang["vote_settings_vote_on_url_click"] . "</p>\n";
+	echo "<p><input type='checkbox' name='vote_anon_vote' value=vote_anon_vote' " . $anon_vote . ">&nbsp;&nbsp;" . $h->lang["vote_settings_vote_anon_vote"] . "</p>\n";
 
 
         // A plugin hook so other plugin developers can show settings
@@ -235,6 +238,13 @@ class VoteSettings
             $vote_on_url_click = '';
         }
 
+	 // vote_anon_vote
+        if ($h->cage->post->keyExists('vote_anon_vote')) {
+            $anon_vote = 'checked';
+        } else {
+            $anon_vote = '';
+        }
+
         
         // A plugin hook so other plugin developers can save settings   
         $h->pluginHook('vote_save_settings');
@@ -251,6 +261,7 @@ class VoteSettings
         $vote_settings['no_front_page'] = $no_front_page;
         $vote_settings['posts_widget'] = $posts_widget;
         $vote_settings['vote_on_url_click'] = $vote_on_url_click;
+	$vote_settings['vote_anon_vote'] = $anon_vote;
        
         // parameters: plugin folder name, setting name, setting value
         $h->updateSetting('vote_settings', serialize($vote_settings));

@@ -90,5 +90,7 @@ $lang["vote_settings_physical_delete"] = "Physically delete a post from the data
 $lang["vote_settings_other"] = "Other";
 $lang["vote_settings_posts_widget"] = "Show vote count before post links in widgets <small>(requires Posts Widget plugin)</small>";
 $lang["vote_settings_vote_on_url_click"] = "Automatically count a users vote when they click on the URL link";
+$lang["vote_settings_vote_anon_vote"] = "Allow anonymous users to vote";
+
 
 ?>

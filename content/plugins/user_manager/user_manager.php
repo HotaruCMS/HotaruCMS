@@ -5,7 +5,7 @@
  * version: 1.0
  * folder: user_manager
  * class: UserManager
- * requires: users 1.1
+ * requires: users 1.1, user_signin 0.5
  * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, post_manager_user_name, comment_manager_user_name, submit_edit_end
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick

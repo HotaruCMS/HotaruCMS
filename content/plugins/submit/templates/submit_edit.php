@@ -43,8 +43,7 @@ $h->pluginHook('submit_2_assign');
     <tr>
         <td><?php echo $h->lang["submit_title"]; ?>&nbsp; </td>
         <td><input type='text' id='post_title' name='post_title' value='<?php echo $h->vars['submit_title']; ?>'></td>
-    </tr>
-    
+    </tr>    
     <?php if ($h->vars['submit_use_content']) { ?>
     
     <tr>
