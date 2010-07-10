@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.2.9 2010/07/10 - Nick - CSS Fixes for form item widths.
 v.2.8 2010/05/22 - Nick - Removed requirement to have SB Base installed
 v.2.7 2010/05/09 - Nick - Fixes for "invalid url" error with non-roman characters in urls
 v.2.6 2010/05/07 - Damon - Fix for clearing the temporary data table during post submission

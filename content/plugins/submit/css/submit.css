@@ -1,15 +1,16 @@
 /* submit */
 
 #submit_1, #submit_2, #submit_3, #submit_edit { margin-top: 1.0em; }
+#submit_2 table, #submit_edit table { width: 100%; }
 
 /* step 1 */
-#submit_orig_url { width: 30em; }
+#submit_orig_url { width: 80%; }
 #submit_button_1 { float: right; }
 #submit_no_link { margin-top: 0.4em; }
 
 /* step 2 */
-#post_title, #post_content { width: 36em; }
-#post_tags { width: 28em; }
+#post_title, #post_content { width: 100%; }
+#post_tags { width: 100%; }
 
 /* step 3 */
 #submit_edit_confirm { width: 100%; text-align: center; }
