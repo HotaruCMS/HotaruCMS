@@ -12,6 +12,14 @@
     float: left;
 }
 
+#users_edit_profile.users_content table, .users_content textarea { 
+	width: 100%;
+}
+
+.users_content table td {
+	vertical-align: top;
+}
+
 #users_posts_filter#sort_box.sort_menu li { display: block; margin: 0;}
 #users_posts_filter#sort_box.sort_menu li.active { background-color: #f8f8f8; }
 #users_posts_filter#sort_box.sort_menu li.active a { color: #000; font-weight: bold; }
