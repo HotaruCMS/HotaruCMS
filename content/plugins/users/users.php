@@ -471,7 +471,7 @@ class Users
 					$dontlink = array('approved');
 					if ($h->isActive('user_manager')) {
 					    if (!in_array($stat_type, $dontlink)) {
-						$link = SITEURL . "admin_index.php?user_filter=$stat_type&plugin=user_manager&page=plugin_settings&type=filter&csrf=" . $h->csrfToken;
+						$link = BASEURL . "admin_index.php?user_filter=$stat_type&plugin=user_manager&page=plugin_settings&type=filter&csrf=" . $h->csrfToken;
 					    }
 					}
 					

@@ -839,7 +839,7 @@ class Comments
 					$link = "archived";
 					$dontlink = array('');					
 					if (!in_array($stat_type, $dontlink)) {
-					    $link = SITEURL . "admin_index.php?comment_status_filter=$stat_type&plugin=comment_manager&page=plugin_settings&type=filter&csrf=" . $h->csrfToken;
+					    $link = BASEURL . "admin_index.php?comment_status_filter=$stat_type&plugin=comment_manager&page=plugin_settings&type=filter&csrf=" . $h->csrfToken;
 					}
 					
 					$lang_name = 'comments_admin_stats_' . $stat_type;
