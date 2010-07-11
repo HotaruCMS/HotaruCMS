@@ -133,7 +133,7 @@ class PostManager
 					$link = "";
 					$dontlink = array('archived');
 					if (!in_array($stat_type, $dontlink)) {
-					    $link = SITEURL . "admin_index.php?post_status_filter=$stat_type&plugin=post_manager&page=plugin_settings&type=filter&csrf=" . $h->csrfToken;
+					    $link = BASEURL . "admin_index.php?post_status_filter=$stat_type&plugin=post_manager&page=plugin_settings&type=filter&csrf=" . $h->csrfToken;
 					}
 					
 					$lang_name = 'post_man_admin_stats_' . $stat_type;
