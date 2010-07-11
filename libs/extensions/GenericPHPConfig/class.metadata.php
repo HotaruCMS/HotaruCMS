@@ -199,10 +199,12 @@ class generic_pmd {
       #   lines - with same length from everyone! - don't care about actual
       #   pattern, but allow shortened lines (missing spaces after # or *)
       preg_match("_^([*#/ ]+)\w+( \w+)?:_m", $src, $uu);
-      $n = strlen($uu[1]);
-      $src = preg_replace("_^[*#/ ]{0,$n}_m", "", $src);
-
-      return($src);
+      if ($uu) {
+	      $n = strlen($uu[1]);
+	      $src = preg_replace("_^[*#/ ]{0,$n}_m", "", $src);
+	      return($src);
+	  }
+	  return false;
    }
 
 
