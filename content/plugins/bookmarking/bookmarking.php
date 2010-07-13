@@ -294,14 +294,14 @@ class Bookmarking
 			if ($h->pageName == 'popular') { $status = "id='navigation_active'"; } else { $status = ""; }
 			
 			// display the link in the navigation bar
-			echo "<li><a  " . $status . " href='" . $h->url(array('page'=>'popular')) . "'>" . $h->lang["bookmarking_top"] . "</a></li>\n";
+			echo "<li " . $status . "><a href='" . $h->url(array('page'=>'popular')) . "'>" . $h->lang["bookmarking_top"] . "</a></li>";
 		}
 		
 		// highlight "Latest" as active tab
 		if ($h->pageName == 'latest') { $status = "id='navigation_active'"; } else { $status = ""; }
 		
 		// display the link in the navigation bar
-		echo "<li><a  " . $status . " href='" . $h->url(array('page'=>'latest')) . "'>" . $h->lang["bookmarking_latest"] . "</a></li>\n";
+		echo "<li " . $status . "><a href='" . $h->url(array('page'=>'latest')) . "'>" . $h->lang["bookmarking_latest"] . "</a></li>";
 	}
 
 

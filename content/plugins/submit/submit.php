@@ -502,7 +502,7 @@ class Submit
         if ($h->pageType == 'submit') { $status = "id='navigation_active'"; } else { $status = ""; }
         
         // display the link in the navigation bar
-        echo "<li><a  " . $status . " href='" . $h->url(array('page'=>'submit')) . "'>" . $h->lang['submit_submit_a_story'] . "</a></li>\n";
+        echo "<li " . $status . "><a href='" . $h->url(array('page'=>'submit')) . "'>" . $h->lang['submit_submit_a_story'] . "</a></li>";
     }
     
     
