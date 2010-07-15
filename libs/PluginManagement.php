@@ -524,8 +524,14 @@ class PluginManagement
 	{
 		$sql = "SELECT p.plugin_folder, p.plugin_order, p.plugin_id, h.* FROM " . TABLE_PLUGINHOOKS . " h  LEFT OUTER JOIN " . TABLE_PLUGINS. " p ON h.plugin_folder= p.plugin_folder AND p.plugin_siteid = %d WHERE h.pluginhooks_siteid = %d ORDER BY p.plugin_order ASC";
 		$rows = $h->db->get_results($h->db->prepare($sql, SITEID, SITEID));
+
+		// check if we need to truncate the table because the phook_id is dangerously big
+		if ($rows[0]->phook_id > 999999999999999) { //15 digits although the column is int(20)
+			$this->rebuildPluginHooksTable($h);
+			return true;
+		} 
 		
-		// Drop and recreate the pluginhooks table, i.e. empty it.
+		// Remove all hooks for this site
 		$h->db->query($h->db->prepare("DELETE FROM " . TABLE_PLUGINHOOKS));
 		
 		$values = '';
@@ -548,6 +554,38 @@ class PluginManagement
 		}
 	}
 	
+
+	/**
+	 * Get all pluginhooks, truncate the table and refill it, therefore refreshing phook_ids
+	 */
+	public function rebuildPluginHooksTable($h)
+	{
+		$sql = "SELECT p.plugin_folder, p.plugin_order, p.plugin_id, h.* FROM " . TABLE_PLUGINHOOKS . " h  LEFT OUTER JOIN " . TABLE_PLUGINS. " p ON h.plugin_folder = p.plugin_folder AND p.plugin_siteid = h.pluginhooks_siteid ORDER BY p.plugin_order ASC";
+		$rows = $h->db->get_results($h->db->prepare($sql));
+		
+		// Drop and recreate the pluginhooks table, i.e. empty it.
+		$h->db->query($h->db->prepare("TRUNCATE TABLE " . TABLE_PLUGINHOOKS));
+		
+		$values = '';
+		$pvalues = array();
+		$pvalues[0] = "temp"; // will be filled with $sql
+		
+		// Add plugin hooks back into the hooks table
+		if ($rows) {
+			foreach ($rows  as $row)
+			{
+				$values .= "(%s, %s, %d, %d), ";
+				array_push($pvalues, $row->plugin_folder);
+				array_push($pvalues, $row->plugin_hook);
+				array_push($pvalues, $h->currentUser->id);
+				array_push($pvalues, $row->pluginhooks_siteid);
+			}
+			
+			$values = rstrtrim($values, ", "); // strip off trailing comma
+			$pvalues[0] = "INSERT INTO " . TABLE_PLUGINHOOKS . " (plugin_folder, plugin_hook, plugin_updateby, pluginhooks_siteid) VALUES " . $values;
+			$h->db->query($h->db->prepare($pvalues));
+		}
+	}
 	
 	/**
 	 * Upgrade plugin
