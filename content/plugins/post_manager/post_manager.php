@@ -2,10 +2,10 @@
 /**
  * name: Post Manager
  * description: Manage posts.
- * version: 0.8
+ * version: 0.9
  * folder: post_manager
  * class: PostManager
- * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, user_manager_role, user_manager_details
+ * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, user_manager_role, user_manager_details, admin_theme_main_stats
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -88,6 +88,68 @@ class PostManager
             $output = rstrtrim($output, ", ");
             $h->vars['user_manager_details'] = array($output, $user);
         }
+    }
+
+
+    /**
+     * Show stats on Admin home page
+     */
+    public function admin_theme_main_stats($h, $vars)
+    {
+	    $stats = $h->post->stats($h);
+	    $stats_archived = $h->post->stats($h, 'archived');
+
+	    echo "<li>&nbsp;</li>";
+	    if ($stats) {
+		foreach ($stats as $stat) {
+		    $posts[$stat[0]] = $stat[1];
+		}
+	    }
+
+	    if (isset($vars) && (!empty($vars))) {
+		foreach ($vars as $key => $value) {
+			$key_lang = 'post_man_admin_stats_' . $key;
+			echo "<li class='title'>" . $h->lang[$key_lang] . "</li>";
+			foreach ($value as $stat_type) {
+				if (isset($value) && !empty($value)) {
+
+					switch ($stat_type) {
+					    case 'all':
+						$post_count = array_sum($posts);
+						break;
+					    case 'approved':						
+						$post_count = 0;
+						$array = array('top', 'new');
+						foreach ($array as $item) {
+						    if (isset($posts[$item])) { $post_count += $posts[$item]; }
+						}
+						break;
+					    case 'archived' :
+						if (isset($stats_archived)) { $post_count = $stats_archived; } else { $post_count = 0; }
+						break;
+					    default:
+						if (isset($posts[$stat_type])) { $post_count = $posts[$stat_type]; } else { $post_count = 0; }
+						break;
+					}					
+
+					if (!defined('SITEURL')) { define('SITEURL', BASEURL); }
+
+					$link = "";
+					$dontlink = array('archived');
+					if (!in_array($stat_type, $dontlink)) {
+					    $link = SITEURL . "admin_index.php?post_status_filter=$stat_type&plugin=post_manager&page=plugin_settings&type=filter&csrf=" . $h->csrfToken;
+					}
+					
+					$lang_name = 'post_man_admin_stats_' . $stat_type;
+					echo "<li>";
+					if ($link) { echo "<a href='" . $link . "'>"; }
+					echo $h->lang[$lang_name] . ": " . $post_count;
+					if ($link) { echo "</a>"; }
+					echo "</li>";
+				}
+			}
+		}
+	    }
     }
 }
 
