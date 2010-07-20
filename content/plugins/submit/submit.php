@@ -558,13 +558,14 @@ class Submit
                 // submitted data
                 $h->vars['submit_editorial'] = $h->vars['submitted_data']['submit_editorial'];
                 $h->vars['submit_orig_url'] = urldecode($h->vars['submitted_data']['submit_orig_url']);
-                $h->vars['submit_title'] = htmlspecialchars(sanitize($h->vars['submitted_data']['submit_title'], 'tags'), ENT_QUOTES);
+                $h->vars['submit_title'] = htmlspecialchars(sanitize($h->vars['submitted_data']['submit_title'], 'tags'), ENT_QUOTES);  
                 $h->vars['submit_content'] = sanitize($h->vars['submitted_data']['submit_content'], 'tags', $allowable_tags);
                 $h->vars['submit_post_id'] = $h->vars['submitted_data']['submit_id'];
                 $h->vars['submit_category'] = $h->vars['submitted_data']['submit_category'];
                 $h->vars['submit_tags'] = sanitize($h->vars['submitted_data']['submit_tags'], 'all');
                 
                 // strip htmlentities before showing in the form:
+				$h->vars['submit_title'] = html_entity_decode($h->vars['submit_title']);
                 $h->vars['submit_content'] = html_entity_decode($h->vars['submit_content']);
                 $h->vars['submit_tags'] = html_entity_decode($h->vars['submit_tags']);
                 
