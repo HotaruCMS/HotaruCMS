@@ -45,7 +45,6 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 ?>
 
 <body>
-	<div class="container_12">
 
 	<?php $h->pluginHook('post_open_body'); ?>	
 	<?php if ($announcements = $h->checkAnnouncements()) { ?>
@@ -55,6 +54,8 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 			<?php $h->pluginHook('announcement_last'); ?>
 		</div>
 	<?php } ?>
+
+	<div class="container_12">
 
 	<div id="navigation" class="grid_12">
 		<!-- NAVIGATION -->
