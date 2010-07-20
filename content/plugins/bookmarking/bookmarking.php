@@ -2,7 +2,7 @@
 /**
  * name: Bookmarking
  * description: Social Bookmarking base - provides "list" and "post" templates. 
- * version: 0.3
+ * version: 0.4
  * folder: bookmarking
  * class: Bookmarking
  * type: base

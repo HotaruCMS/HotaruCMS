@@ -2,7 +2,7 @@
 /**
  * name: Comments
  * description: Enables logged-in users to comment on posts
- * version: 2.3
+ * version: 2.4
  * folder: comments
  * class: Comments
  * type: comments
