@@ -2,7 +2,7 @@
 /**
  * name: Submit
  * description: Social Bookmarking submit - Enables post submission
- * version: 2.9
+ * version: 3.0
  * folder: submit
  * class: Submit
  * type: post
@@ -125,23 +125,16 @@ class Submit
         {
             return false;
         }
-        
-        // check user has permission to post. Exit if not.
+
+        // check user is logged in and has permission to post. Exit if not.
         $h->vars['posting_denied'] = false;
-        if ($h->currentUser->getPermission('can_submit') == 'no') {
+        if ($h->currentUser->loggedIn && $h->currentUser->getPermission('can_submit') == 'no') {
             // No permission to submit
             $h->messages[$h->lang['submit_no_post_permission']] = "red";
             $h->vars['posting_denied'] = true;
             $h->vars['can_edit'] = false;
             $h->vars['post_deleted'] = false;
             return false;
-        }
-        
-        // redirect to log in page if not logged in
-        if (!$h->currentUser->loggedIn) { 
-            $return = urlencode($h->url(array('page'=>'submit'))); // return user here after login
-            header("Location: " . $h->url(array('page'=>'login', 'return'=>$return)));
-            die(); exit;
         }
         
         // return false if submission is closed
@@ -565,7 +558,7 @@ class Submit
                 // submitted data
                 $h->vars['submit_editorial'] = $h->vars['submitted_data']['submit_editorial'];
                 $h->vars['submit_orig_url'] = urldecode($h->vars['submitted_data']['submit_orig_url']);
-                $h->vars['submit_title'] = sanitize($h->vars['submitted_data']['submit_title'], 'tags');
+                $h->vars['submit_title'] = htmlspecialchars(sanitize($h->vars['submitted_data']['submit_title'], 'tags'), ENT_QUOTES);
                 $h->vars['submit_content'] = sanitize($h->vars['submitted_data']['submit_content'], 'tags', $allowable_tags);
                 $h->vars['submit_post_id'] = $h->vars['submitted_data']['submit_id'];
                 $h->vars['submit_category'] = $h->vars['submitted_data']['submit_category'];
