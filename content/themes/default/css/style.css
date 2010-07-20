@@ -3,18 +3,25 @@
  ************************************** */
 
 /* BODY */
-html, body { color: #666; font-family: Helvetica, Arial, 'Liberation Sans', FreeSans, sans-serif; }
+body {
+	color: #262626; 
+}
 
 /* DEFAULTS */
 
-h1, h2, h3 { padding: 0em 0 0.5em 0; color: #666; }
-h1 { font-size: 1.6em; }
-h2 { font-size: 1.5em; }
-h3 { font-weight: bold; }
-p { padding: 0.5em 0 0.5em 0; }
-li { padding: 0.5em 0 0.5em 0; }
+h1, h2, h3, h4 { 
+	margin-bottom: 0.5em; 
+	font-weight:normal;
+}
+p { 
+	padding: 0.5em 0 0.5em 0; 
+	margin-bottom: 0.6em;
+}
+
+ul { list-style-type: none; }
+li { padding: 0.5em 0 0.5em 0; margin-left: 0; }
 a { text-decoration: none; color: #666; }
-a:hover { color: #000; background-color: #f8f8f8; }
+a:hover { color: #262626; background-color: #f8f8f8; }
 form { padding: 1.0em; }
 td { padding: 0.5em; }
 small { font-size: 0.8em; }
@@ -22,50 +29,48 @@ del { text-decoration: line-through; }
 
 /* LAYOUT */
 
-.clear	{ clear: both; margin: 0; line-height: 0em;} /* need line-height for IE */
-    
-/* YAHOO USER INTERFACE (YUI) : http://developer.yahoo.com/yui/grids/  */
-
-.yui-t7 { } /* Template 7 - complete frame*/
-.yui-gc { padding: 1.0em; } /* Grid C: 66% + 33% - container around content and sidebar*/
-.yui-g { } /* Grid: 100% - container around content when sidebar disabled */
-.yui-u, .first { } /* Units - the content (first) and sidebar */
+.clear	{ clear: both; margin: 0; line-height: 0em; height: 0; } /* need line-height for IE */
 
 /* ANNOUNCEMENTS */
 
 #announcement {
 	background-color: #f8f8f8;
-	border-bottom: 1px solid #000;
+	border-bottom: 1px solid #262626;
 	padding: 0.4em;
 	text-align: center;
 }
 
 /* HEADER */
 
-#hd { margin: 0.4em 0 0.4em 0;} /* wraps the title and ad blocks */
+#header { margin: 0.8em; }
+#hd_title { float: left; }
+#hd_title h1 { display: inline; font-size: 3.0em; margin-right: 0.5em; }    /* Site title */
+#hd_title h1 a { color: #262626; }
+#hd_title h1 a:hover { color: #262626; }
+#hd_title h3 { display: inline; font-size: 1.8em; font-weight: normal; }
 
-#hd_title { float: left;  height: 60px; width:468px; background-color: #f4f4f4; border: 1px solid #d0d0d0; }
-#hd_title h1 { font-size: 2.2em; font-weight: bold; padding: 0.5em 0.4em 0.4em 0.4em;}    /* Site title */
-#hd_title h1 a { color: #666; }
-#hd_title h1 a:hover { color: #000; }
-
-#hd_block2 { float: right; height: 60px; width:468px; background-color: #f4f4f4; border: 1px solid #d0d0d0; }
-
-#nav { margin: 0.4em 0 0.4em 0; } /* wraps the navigation bar */
-ul.navigation { float: left; list-style: none; }
-ul.navigation li { display: inline; font-size: 1.2em; font-weight: bold; }
-ul.navigation li a { color: #666; padding: 0.2em 0.4em 0.2em 0.4em; }
-ul.navigation li a:hover { color: #000; }
+#navigation { margin-top: 0; padding: 0.3em 0 0.3em 0; background-color: #262626; } /* wraps the navigation bar */
+ul.navigation { float: left; list-style: none; margin: 0 0 0 0.4em; text-transform: uppercase; }
+ul.navigation li { display: inline; font-size: 1.1em; font-weight: bold; }
+ul.navigation li a { color: #b0b0b0; padding: 0 0.6em 0 0.6em; }
+ul.navigation li a:hover { background-color: #262626; color: #fff; }
 ul.navigation li a img { vertical-align: middle; }
-li a#navigation_active { background-color: #f8f8f8; color: #000; }
+li#navigation_active a { color: #fff; }
 ul.nav_right { display: inline; float: right; }
 #rss_icon { margin-top: -0.2em; }
 
-#post_header { background-color: #f8f8f8; } /* wraps the categories bar, etc. */
+#header_end { /* wraps the categories bar, etc. */
+	border-bottom: 1px solid #d0d0d0;
+	padding-bottom: 1.0em;
+	margin-bottom: 1.0em;
+} 
 
 /* BODY */
 
-#bd { background-color: #fff;}
+#main {
+	padding-right: 2.0em;
+	border-right: 1px solid #d0d0d0;
+}
 
 .message {
 	margin: 1.0em auto 1.0em auto;
@@ -83,7 +88,7 @@ ul.nav_right { display: inline; float: right; }
 
 /* SITE CLOSED MESSAGE */
 
-#site_closed { background-color: #fff; border-top: 2px solid #000; border-bottom: 2px solid #000; 
+#site_closed { background-color: #fff; border-top: 2px solid #262626; border-bottom: 2px solid #262626; 
 		text-align: center; margin-top: 4em; font-size: 1.6em; line-height: 1.8em; }
 		
 #site_closed_admin_link { font-size: 8pt; margin-top: 1.0em; }
@@ -91,6 +96,7 @@ ul.nav_right { display: inline; float: right; }
 /* BREADCRUMBS */
 
 #breadcrumbs {
+	font-size: 0.86em;
 	margin-bottom: 1.0em;
 }
 
@@ -110,7 +116,7 @@ ul.nav_right { display: inline; float: right; }
 
 #pagination .pagi_current {
 	color: #fff;
-	background-color: #000;
+	background-color: #262626;
 	font-weight: bold;
 	padding: 0.3em 0.7em 0.3em 0.7em;
 	border:solid 1px #444444;
@@ -130,8 +136,8 @@ input.submit {
 
 /* SIDEBAR */
 
-#sidebar { padding: 1.0em; background-color: #f8f8f8; }
-#sidebar ul li { padding: 0.1em; border-bottom: solid 1px #eee; }
+#sidebar { padding: 1.0em; }
+#sidebar ul li { padding: 0.5em; border-bottom: solid 1px #f0f0f0; }
 
 /* FOOTER */
 

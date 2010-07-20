@@ -133,7 +133,6 @@ function sanitize($var, $santype = 'all', $allowable_tags = '')
 		else {
 			return stripslashes(htmlentities(strip_tags($var, $allowable_tags),ENT_QUOTES,'UTF-8'));
 		}
-		return false;
 	}
 	
 	// Strip tags
@@ -144,7 +143,6 @@ function sanitize($var, $santype = 'all', $allowable_tags = '')
 		else {
 			return stripslashes(strip_tags($var, $allowable_tags));
 		}
-		return false;
 	}
 	
 	// htmlentities
@@ -155,8 +153,9 @@ function sanitize($var, $santype = 'all', $allowable_tags = '')
 		else {
 			return stripslashes(htmlentities($var,ENT_QUOTES,'UTF-8'));
 		}
-		return false;
 	}
+
+	return false;
 }
 
 

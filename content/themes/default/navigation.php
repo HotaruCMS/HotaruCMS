@@ -69,3 +69,5 @@
 		</li>
 	<?php } ?>
 </ul>
+
+<div class="clear"></div>

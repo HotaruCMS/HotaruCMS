@@ -28,8 +28,4 @@
 
 ?>
 
-<div id="sidebar">
-
-	<?php $h->pluginHook('widget_block', '', array(1)); ?>
-
-</div>
+<?php $h->pluginHook('widget_block', '', array(1)); ?>
