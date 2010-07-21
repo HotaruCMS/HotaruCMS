@@ -78,7 +78,7 @@
 			</a>
 		    </div>
 		    <div class="admin-menu-item">
-			<a href="http://hotarucms.org/forum.php">
+			<a href="http://forums.hotarucms.org">
 			    <div class="admin-menu-item-icon">
 				<img src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/forum_icon.png "/>
 			    </div>
