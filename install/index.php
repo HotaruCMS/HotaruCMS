@@ -785,7 +785,7 @@ function installation_complete()
 
 	    $required = array('mysql'=>'http://php.net/manual/en/book.mysql.php',
 			      'filter'=>'http://php.net/manual/en/book.filter.php',
-			      'mb_substr'=>'http://php.net/manual/en/function.mb-substr.php');
+			      'mbstring'=>'http://www.php.net/manual/en/book.mbstring.php');
 			      
 		/* No longer required: 'bcmath' => 'http://php.net/manual/en/book.bc.php' */
 
