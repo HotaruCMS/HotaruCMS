@@ -438,6 +438,10 @@ div.admin-header-admin a:hover {color:#333; text-decoration: none;}
 #settings a {color:#000;}
 #settings a:hover {color:blue;}
 
+/*
+
+This breaks the layout in IE:
+
 #login_form {-moz-border-radius:14px; background:none repeat scroll 0 0 #D4F07F; margin:30px auto; padding:20px; text-align:center; width:500px; -moz-box-shadow:0 4px 18px #C8C8C8; }
 #login_form input {-moz-border-radius:4px; border: 1pt solid #d0d0d0;}
 #login_form #admin_login_button {padding:4px; font-weight:bold; color:#777; background-color:#ccc;}
@@ -448,6 +452,7 @@ div.admin-header-admin a:hover {color:#333; text-decoration: none;}
 #login_form .forgot_password:hover {text-decoration:none; color:navy;}
 
 #login_form td {font:14px "Lucida Grande",Verdana,Arial,"Bitstream Vera Sans",sans-serif;}
+*/
 
 #plugin_search_form {-moz-border-radius:14px; background:none repeat scroll 0 0 #eee640; margin:30px auto; padding:20px; text-align:center; width:500px; -moz-box-shadow:0 4px 18px #C8C8C8; }
 #plugin_search_form input {-moz-border-radius:4px; border: 1pt solid #d0d0d0;}
