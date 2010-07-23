@@ -57,9 +57,13 @@
 	text-align: right;
 }
 
-#comment_manager_link {
+#post_comments_admin {
 	float: right;
-	text-align: right;	
+	text-align: right;
+}
+
+#post_comments_admin li {
+	padding: 0;
 }
 
 .comment_header {
