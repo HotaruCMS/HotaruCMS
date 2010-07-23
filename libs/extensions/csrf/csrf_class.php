@@ -57,8 +57,8 @@ class csrf
                 }
             }
             if (isset($valid)) {
-                $sql = "DELETE FROM " . $this->table . " WHERE token_sid = %s";
-                $h->db->query($h->db->prepare($sql, $valid));
+                $sql = "DELETE FROM " . $this->table . " WHERE token_sid = %s AND token_key = %s";
+                $h->db->query($h->db->prepare($sql, $valid, $cleanKey));
                 return true;
             }
         }
