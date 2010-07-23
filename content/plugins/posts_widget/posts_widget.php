@@ -2,7 +2,7 @@
 /**
  * name: Posts Widget
  * description: Adds links in widgets to the latest posts and top stories on the site.
- * version: 1.3
+ * version: 1.4
  * folder: posts_widget
  * class: PostsWidget
  * requires: widgets 0.6, bookmarking 0.1
@@ -34,6 +34,8 @@
  
 class PostsWidget
 {
+	private $limit = 10; // number of items to show in the widget
+
     /**
      *  Add default settings for Posts Widget plugin on installation
      */
@@ -167,8 +169,9 @@ class PostsWidget
      * @param $type either 'top' or 'new', matching the post_status in the db.
      * return array $posts
      */
-    public function getPostsWidget($h, $type, $custom = true, $limit = 10)
+    public function getPostsWidget($h, $type, $custom = true, $limit = 0)
     {
+		if (!$limit) { $limit = $this->limit; } 
         $h->vars['limit'] = $limit;
         $posts = '';
         
