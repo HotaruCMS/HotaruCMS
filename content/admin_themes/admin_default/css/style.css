@@ -348,6 +348,7 @@ table#settings {
 .accordion .horizontal { }
 
 #admin_theme_theme_activate {cursor: pointer; margin-top: 10px; }
+#admin_theme_theme_activate span.activate { background-color: #fbe760; padding: 0.4em; }
 .power_on {padding-left: 1.5em; background-image: url(../images/power_on.png); background-repeat: no-repeat;}
 .tick_on {padding-left: 1.5em; background-image: url(../images/tick_yes.png); background-repeat: no-repeat;}
 .warning_on {padding-left: 1.5em; background-image: url(../images/warning.png); background-repeat: no-repeat;}

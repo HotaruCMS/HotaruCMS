@@ -38,7 +38,15 @@ $theme = $h->vars['settings_theme'];    // theme folder name
 		$result = '';
 		if ($theme)
 		{
-			echo '<div id="admin_theme_theme_activate" class="power_on" name="'. $theme .'">' . make_name($theme, '-') . $h->lang['admin_theme_theme_activate'] . '</div><br/>';
+			if ($theme == rtrim(THEME, '/')) {
+				$span = "current";
+				$instruct = $h->lang['admin_theme_theme_activate_current'];
+			} else {
+				$span = "activate";
+				$instruct = $h->lang['admin_theme_theme_activate'];
+			}
+
+			echo '<div id="admin_theme_theme_activate" class="power_on" name="'. $theme .'"><span class="' . $span . '">' . make_name($theme, '-') . $instruct . '</span></div><br/>';
 			
 			$no_settings = '<i>' . make_name($theme, '-') . $h->lang['admin_theme_theme_no_settings'] . '</i>';
 			
