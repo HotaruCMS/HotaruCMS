@@ -69,14 +69,16 @@
 			    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_site_home"]; ?></div>
 			</a>
 		    </div>
-		    <div  class="admin-menu-item">
-			<a href="<?php echo $h->url(array(), 'admin'); ?>">
-			    <div class="admin-menu-item-icon">
-				<img src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/admin_icon.png">
+			<?php if ($h->currentUser->getPermission('can_access_admin') == 'yes') { ?>
+			    <div  class="admin-menu-item">
+				<a href="<?php echo $h->url(array(), 'admin'); ?>">
+				    <div class="admin-menu-item-icon">
+					<img src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/admin_icon.png">
+				    </div>
+				    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_admin_home"]; ?></div>
+				</a>
 			    </div>
-			    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_admin_home"]; ?></div>
-			</a>
-		    </div>
+			<?php } ?>
 		    <div class="admin-menu-item">
 			<a href="http://forums.hotarucms.org">
 			    <div class="admin-menu-item-icon">
@@ -101,14 +103,16 @@
 			    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_help"]; ?></div>
 			</a>
 		    </div>
-		    <div class="admin-menu-item">
-			<a href="<?php echo $h->url(array('page'=>'logout')); ?>">
-			    <div class="admin-menu-item-icon">
-				<img src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/logout_icon.png" />
+			<?php if ($h->currentUser->loggedIn) { ?>
+			    <div class="admin-menu-item">
+				<a href="<?php echo $h->url(array('page'=>'logout')); ?>">
+				    <div class="admin-menu-item-icon">
+					<img src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/logout_icon.png" />
+				    </div>
+				    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_logout"]; ?></div>
+				</a>
 			    </div>
-			    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_logout"]; ?></div>
-			</a>
-		    </div>
+			<?php } ?>
 		</div>
 	    <div class="clear_both">&nbsp;</div>
         </div>
