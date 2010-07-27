@@ -54,8 +54,8 @@ class Categories
             } else {
                 // category should be a safe name
                 $h->vars['category_id'] = $h->getCatId($category);
-                $h->vars['category_name'] = $h->getCatName(0, $category);
-                $h->vars['category_safe_name'] = $category;
+                $h->vars['category_name'] = $h->getCatName(0, urlencode($category));
+                $h->vars['category_safe_name'] = urlencode($category);
             }
             $h->pageTitle = $h->vars['category_name'];
             if (!$h->pageName) { $h->pageName = 'popular'; }
@@ -70,7 +70,7 @@ class Categories
             /*  if $h->pageName is set, then there must be an odd number of query vars where
                 the first one is the page name. Let's see if it's a category safe name... */
             $sql = "SELECT category_id, category_name FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s LIMIT 1";
-            $exists = $h->db->get_row($h->db->prepare($sql, $h->pageName));
+            $exists = $h->db->get_row($h->db->prepare($sql, urlencode($h->pageName)));
             if ($exists) {
                 $h->vars['category_id'] = $exists->category_id;
                 $h->vars['category_name'] = $exists->category_name;
