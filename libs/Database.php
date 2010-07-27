@@ -115,7 +115,7 @@ class Database extends ezSQL_mysql
 		$this->prepare_array[0] = "temp";    // placeholder to be later filled with the SQL query.
 		
 		// set SELECT:
-		$select = ($this->select) ? implode(', ', $this->select) : '';
+		$select = ($this->select) ? $this->buildSelect() : '';
 		
 		// set TABLE:
 		$table = ($this->table) ? DB_PREFIX . $this->table : TABLE_POSTS; // defaults to TABLE_POSTS
@@ -146,6 +146,40 @@ class Database extends ezSQL_mysql
 	}
 	
 	
+	/**
+	 * Build the SELECT string
+	 *
+	 * @return string
+	 */
+	public function buildSelect()
+	{
+		if (!$this->select) { return ''; }
+
+		$select = ""; // the new select string we make from the $this->select array
+
+		foreach ($this->select as $key => $value) {
+			// e.g.
+			// $select[0] = 'post_id';
+			// $select[1] = array('blah %s blah'=>'value for %s');
+
+			// Push the values of %s and %d into the prepare_array
+			if (is_array($value)) {
+				foreach ($value as $k => $v) {
+					$select .= $k . ', ';
+					array_push($this->prepare_array, $v);
+				}
+			} else {
+				// otherwise add the single value to the select string
+				$select .= $value . ', ';
+			}
+	
+		}
+		$select = rstrtrim($select, ", "); // strip off trailing AND
+		
+		return $select;
+	}
+
+
 	/**
 	 * Build the WHERE string
 	 *

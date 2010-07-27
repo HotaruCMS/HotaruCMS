@@ -128,6 +128,7 @@ class Search
         $search_terms_clean = '';
         $full_index = true; // Do a full index (better) search if all terms are longer than 3 characters
         foreach($search_terms as $search_term) {
+			$search_term = urlencode($search_term);
             if ($this->isStopword($search_term)) {
                 continue; // don't include this in $search_terms_clean
             }
@@ -148,9 +149,9 @@ class Search
         
         if ($full_index) {
             if ($return == 'count') { $select = "count(*) AS number "; } else { $select = "*"; }
-            $h->vars['select'] = $select . ", MATCH(post_title, post_domain, post_url, post_content, post_tags) AGAINST ('" . $search_terms_clean . "') AS relevance";
+            $h->vars['select'] = array($select . ", MATCH(post_title, post_domain, post_url, post_content, post_tags) AGAINST (%s) AS relevance" => trim($search_terms_clean));
             $h->vars['orderby'] = "relevance DESC";
-            $h->vars['filter']["MATCH (post_title, post_domain, post_url, post_content, post_tags) AGAINST (%s IN BOOLEAN MODE)"] = $search_terms_clean; 
+            $h->vars['filter']["MATCH (post_title, post_domain, post_url, post_content, post_tags) AGAINST (%s IN BOOLEAN MODE)"] = trim($search_terms_clean); 
         } else {
             if ($return == 'count') { $select = "count(*) AS number "; } else { $select = "*"; }
             $h->vars['select'] = $select;
