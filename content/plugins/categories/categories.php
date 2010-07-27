@@ -2,7 +2,7 @@
 /**
  * name: Categories
  * description: Enables categories for posts
- * version: 1.7
+ * version: 1.8
  * folder: categories
  * class: Categories
  * type: categories
@@ -124,7 +124,7 @@ class Categories
         if (!$key || !$value) { return false; }
 
         $sql = "SELECT category_id FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s LIMIT 1";
-        $exists = $h->db->get_var($h->db->prepare($sql, $key));
+        $exists = $h->db->get_var($h->db->prepare($sql, urlencode($key)));
         
         // no category? exit...
         if (!$exists) { return false; }
