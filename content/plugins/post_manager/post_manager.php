@@ -115,7 +115,7 @@ class PostManager
 
 					switch ($stat_type) {
 					    case 'all':
-						$post_count = array_sum($posts);
+						if(isset($posts)) { $post_count = array_sum($posts); } else { $post_count = 0; }
 						break;
 					    case 'approved':						
 						$post_count = 0;
