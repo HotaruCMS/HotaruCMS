@@ -362,7 +362,7 @@ class UserManagerSettings
             $h->pluginHook('user_manager_details');
             $output = $h->vars['user_manager_details'][0]; // $output
             $output .= "<br />";
-    
+    		$output .= "<i>" . $h->lang['user_man_ip_address'] . "</i> " . $user->user_ip . "<br />";
             $output .= "<i>" . $h->lang['user_man_email'] . "</i> <a href='mailto:" . $user->user_email . "'>$user->user_email</a>";
             $output .= "</td></tr>";
         }
