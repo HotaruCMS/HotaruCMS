@@ -244,6 +244,7 @@ $lang["admin_theme_plugin_settings"] = "Plugin Settings";
 $lang["admin_theme_theme_settings"] = "Theme Settings";
 $lang["admin_theme_theme_no_settings"] = " doesn't have any settings.";
 $lang["admin_theme_theme_activate"] = " Theme can be activated by clicking here.";
+$lang["admin_theme_theme_activate_current"] = " Theme is currently active.";
 $lang["admin_theme_theme_activate_success"] = " Theme was activated successfully.";
 $lang["admin_theme_theme_activate_error"] = " Theme was not activated due to an error.";
 
