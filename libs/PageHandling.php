@@ -63,6 +63,35 @@ class PageHandling
 			$h->pageName = $pagename; // force pageName (optional)
 		}
 	}
+
+
+	/**
+	 * Test if the current url is the *true* homepage, i.e. equal to SITEURL
+	 *
+	 * @return bool
+	 */
+	public function isHome($h)
+	{
+		if ($h->pageName != $h->home) { return false; }
+	
+		/*  Sometimes $h->home is not unique. E.g. if $h->home is "popular", then 
+			a category page filtered to popular will match $h->home. We need to test
+			for the true home page. If it's the true homepage, the current url will 
+			match either SITEURL, or SITEURL + index.php */
+	
+		// get full url from address bar
+		$host = $h->cage->server->sanitizeTags('HTTP_HOST');
+		$uri = $h->cage->server->sanitizeTags('REQUEST_URI');
+		$path = "http://" . $host  . $uri;
+	
+		switch ($path) {
+			case BASEURL:
+			case BASEURL . 'index.php':
+				return true;
+			default:
+				return false;
+		}
+	}
 	
 	
 	/**

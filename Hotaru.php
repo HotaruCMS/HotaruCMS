@@ -290,6 +290,16 @@ class Hotaru
 	{
 		$this->pageHandling->setHome($this, $home, $pagename);
 	}
+
+	/**
+	 * Test if the current url is the *true* homepage, i.e. equal to SITEURL
+	 *
+	 * @return bool
+	 */
+	public function isHome()
+	{
+		return $this->pageHandling->isHome($this);
+	}
 	
 	
 	/**
