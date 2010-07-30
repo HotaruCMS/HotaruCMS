@@ -63,17 +63,30 @@ class EmailFunctions
 		if (!$this->to) { $this->to = SITE_NAME . ' <' . SITE_EMAIL . '>'; }
 		if (!$this->from) { $this->from = SITE_NAME . ' <' . SITE_EMAIL . '>'; }
 		
-		if (SMTP == 'true') {
+		if (SMTP == 'true')
+		{
 			if (is_array($this->to)) { $to = $this->to['To']; } else { $to = $this->to; }
 			if (!$this->headers) {
 				$this->headers = array ('From' => $this->from, 'To' => $to, 'Subject' => $this->subject);
 			} else {
 				$this->headers['To'] = $to;
 			}
-		} else {
+
+			// set content type to work with French accents, etc.
+			if (!isset($this->headers['Content-Type'])) {
+				$this->headers['Content-Type'] = 'text/plain; charset=UTF-8';
+			}
+		}
+		else 
+		{
 			// if not using SMTP and no headers passed to this function, use default
 			if (!$this->headers) { 
 				$this->headers = "From: " . $this->from . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
+			}
+
+			// set content type to work with French accents, etc.
+			if (stripos($this->headers, 'content-type') === false) {
+				$this->headers .= 'Content-Type: text/plain; charset="UTF-8"'. "\r\n";
 			}
 		}
 
