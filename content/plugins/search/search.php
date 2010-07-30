@@ -154,13 +154,12 @@ class Search
         // filter to top or new stories only:
         $h->vars['filter']['(post_status = %s OR post_status = %s)'] = array('top', 'new');
         
+		$select = ($return == 'count') ? "count(*) AS number " : "*";
         if ($full_text) {
-            if ($return == 'count') { $select = "count(*) AS number "; } else { $select = "*"; }
             $h->vars['select'] = array($select . ", MATCH(post_title, post_domain, post_url, post_content, post_tags) AGAINST (%s) AS relevance" => trim($search_terms_clean));
             $h->vars['orderby'] = "relevance DESC";
             $h->vars['filter']["MATCH (post_title, post_domain, post_url, post_content, post_tags) AGAINST (%s IN BOOLEAN MODE)"] = trim($search_terms_clean); 
         } else {
-            if ($return == 'count') { $select = "count(*) AS number "; } else { $select = "*"; }
             $h->vars['select'] = $select;
             $h->vars['orderby'] = "post_date DESC";
             $h->vars['filter_vars'] = array();
