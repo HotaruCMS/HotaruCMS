@@ -143,6 +143,9 @@ class PostsWidgetSettings
 	{
 		switch ($name)
 		{
+			case 'latest':
+				return 'new';
+				break;
 			case 'day':
 				return 'top-24-hours';
 				break;
