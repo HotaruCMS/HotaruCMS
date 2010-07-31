@@ -180,7 +180,8 @@ class Users
     {
         $username = $h->cage->get->testUsername('user');
         if ($username) {
-            $h->vars['filter']['post_author = %d'] = $h->getUserIdFromName($username); 
+            $h->vars['filter']['post_author = %d'] = $h->getUserIdFromName($username);
+			unset($h->vars['filter']['post_archived = %s']);
         }
     }
     
