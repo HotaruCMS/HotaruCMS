@@ -13,10 +13,9 @@ Instructions
 3. Enable votes from Admin -> Vote
 4. Enable the widget in Admin -> Widgets
 
-Note: The default number of posts to show is 10. This can be changed by editing $limit at the top of posts_widget.php
-
 Changelog
 ---------
+v.1.5 2010/07/31 - Nick - Added settings for number of items, item length, and remove unwanted widgets
 v.1.4 2010/07/24 - Nick - Set number of posts by editing $limit at the top of posts_widget.php
 v.1.3 2010/05/26 - Nick - Updated for compatibility with the Bookmarking plugin
 v.1.2 2010/04/14 - Nick - Top stories page name changed from "index" to "popular"

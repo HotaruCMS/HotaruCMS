@@ -2,11 +2,11 @@
 /**
  * name: Posts Widget
  * description: Adds links in widgets to the latest posts and top stories on the site.
- * version: 1.4
+ * version: 1.5
  * folder: posts_widget
  * class: PostsWidget
  * requires: widgets 0.6, bookmarking 0.1
- * hooks: install_plugin, hotaru_header, header_include
+ * hooks: install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, hotaru_header, header_include
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -34,13 +34,30 @@
  
 class PostsWidget
 {
-	private $limit = 10; // number of items to show in the widget
-
     /**
      *  Add default settings for Posts Widget plugin on installation
      */
     public function install_plugin($h)
     {
+        // Plugin settings
+        $pw_settings = $h->getSerializedSettings();
+        if (!isset($pw_settings['items'])) { $pw_settings['items'] = 10; }
+        if (!isset($pw_settings['length'])) { $pw_settings['length'] = 0; }
+
+		// for adding or removing from the Widgets page:
+		$widgets['posts_widget_top'] = 'checked';
+		$widgets['posts_widget_latest'] = 'checked';
+		$widgets['posts_widget_upcoming'] = 'checked';
+		$widgets['posts_widget_day'] = 'checked';
+		$widgets['posts_widget_week'] = 'checked';
+		$widgets['posts_widget_month'] = 'checked';
+		$widgets['posts_widget_year'] = 'checked';
+		$widgets['posts_widget_all-time'] = 'checked';
+
+        if (!isset($pw_settings['widgets'])) { $pw_settings['widgets'] = $widgets; }
+        
+        $h->updateSetting('posts_widget_settings', serialize($pw_settings));
+
         // Widgets:
         // plugin name, function name, optional arguments
         $h->addWidget('posts_widget', 'posts_widget_top', 'top');
@@ -171,7 +188,11 @@ class PostsWidget
      */
     public function getPostsWidget($h, $type, $custom = true, $limit = 0)
     {
-		if (!$limit) { $limit = $this->limit; } 
+		if (!$limit) { 
+			$pw_settings = $h->getSerializedSettings('posts_widget', 'posts_widget_settings');
+			$limit = (isset($pw_settings['items'])) ? $pw_settings['items'] : 10; 
+		}
+ 
         $h->vars['limit'] = $limit;
         $posts = '';
         
@@ -241,7 +262,12 @@ class PostsWidget
         } else {
             $need_cache = true;
         }
+
+		// get max post title length
+		$pw_settings = $h->getSerializedSettings('posts_widget', 'posts_widget_settings');
+		$length = (isset($pw_settings['length'])) ? $pw_settings['length'] : 0; 
         
+		// determine if we should show vote counts before titles...
         $vote_settings = $h->getSerializedSettings('vote', 'vote_settings');
         $widget_votes = $vote_settings['posts_widget'];
         
@@ -264,6 +290,9 @@ class PostsWidget
                 $output .= "<div class='posts_widget_link'>\n";
             }
             $item_title = stripslashes(html_entity_decode(urldecode($item->post_title), ENT_QUOTES,'UTF-8'));
+			if ($length) {
+				$item_title = truncate($item_title, $length);
+			}
             $output .= "<a href='" . $h->url(array('page'=>$item->post_id)) . "' title='" . urldecode($item->post_domain) . "'>\n" . $item_title . "\n</a></div>\n";
             $output .= "</li>\n";
         }
