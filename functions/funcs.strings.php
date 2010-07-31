@@ -24,6 +24,12 @@
  * @link      http://www.hotarucms.org/
  */
  
+// We need to set the default internal encoding for the functions to operate properly.
+if (extension_loaded('mbstring')) {
+	mb_internal_encoding("UTF-8");
+}
+
+
 /**
  * Truncate a string
  *
@@ -34,11 +40,21 @@
  */
 function truncate($string, $chars=0, $dot=true)
 {
-	$length = strlen($string);
-	$truncated = substr(strip_tags($string), 0, $chars);    // strips tags to prevent broken tags
-	if ($dot && ($length >= $chars)) {
+	if (extension_loaded('mbstring')) 
+	{
+		$length = mb_strlen($string);
+		$truncated = mb_substr(strip_tags($string), 0, $chars); // strips tags to prevent broken tags
+	}
+	else 
+	{
+		$length = strlen($string);
+		$truncated = substr(strip_tags($string), 0, $chars); // strips tags to prevent broken tags
+	}
+
+	if( $dot && ($length >= $chars) ) {
 		$truncated .= '...';
 	}
+
 	return $truncated;
 }
 
