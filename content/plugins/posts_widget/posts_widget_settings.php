@@ -106,7 +106,7 @@ class PostsWidgetSettings
 				// add widget
 				$pw_settings['widgets']["posts_widget_$name"] = 'checked';
 				if (!isset($widgets_settings['widgets']["posts_widget_$name"])) {
-					$h->addWidget('posts_widget', "posts_widget_$name", $name);
+					$h->addWidget('posts_widget', "posts_widget_$name", $this->pwConvert($name));
 				}
 			} else {
 				// remove widget
@@ -132,5 +132,35 @@ class PostsWidgetSettings
         
         return true;    
     }
+
+
+	/* Convert widget name to widget type
+	 * 
+ 	 * @param string $name
+ 	 * @return string
+	 */
+	public function pwConvert($name = '')
+	{
+		switch ($name)
+		{
+			case 'day':
+				return 'top-24-hours';
+				break;
+			case 'week':
+				return 'top-7-days';
+				break;
+			case 'month':
+				return 'top-30-days';
+				break;
+			case 'year':
+				return 'top-365-days';
+				break;
+			case 'all-time':
+				return 'top-all-time';
+				break;
+			default:
+				return $name; // no change
+		}
+	}
 }
 ?>
