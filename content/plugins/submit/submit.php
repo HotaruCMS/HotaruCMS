@@ -599,7 +599,7 @@ class Submit
                 
             // Edit Post
             case 'edit_post':
-                if ($h->vars['post_deleted'] || !$h->vars['can_edit']) {
+                if ((isset($h->vars['post_deleted']) && $h->vars['post_deleted']) || !$h->vars['can_edit']) {
                     $h->showMessages();
                     return true;
                 }
