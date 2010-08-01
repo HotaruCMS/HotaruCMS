@@ -1,6 +1,7 @@
 <?php // settings.php
 
-$theme = rtrim(THEME, '/');
+$cTheme = rtrim(THEME, '/'); // currently active theme, not necessarily the one we're viewing.
+$vTheme = $h->cage->get->testAlnumLines('theme'); // theme we're viewing the settings for.
 
 // If the form has been submitted, save the data...
 if ($h->cage->post->getAlpha('submitted') == 'true')
@@ -16,7 +17,7 @@ if ($h->cage->post->getAlpha('submitted') == 'true')
 	if ($error) {
 		$h->showMessage($error, 'red');
 	} else {
-		$h->updateThemeSettings($theme_settings, $theme);
+		$h->updateThemeSettings($theme_settings, $vTheme);
 		$h->showMessage('Settings updated', 'green');
 	}
 }
@@ -24,8 +25,8 @@ if ($h->cage->post->getAlpha('submitted') == 'true')
 // If the user wants to revert to the defaults...
 if ($h->cage->get->getAlpha('reset') == 'true')
 { 
-	$theme_settings = $h->getThemeSettings($theme, 'default');
-	$h->updateThemeSettings($theme_settings, $theme, 'value');
+	$theme_settings = $h->getThemeSettings($vTheme, 'default');
+	$h->updateThemeSettings($theme_settings, $vTheme, 'value');
 	$h->showMessage('Reverted to default settings', 'green');
 }
  
@@ -33,14 +34,14 @@ if ($h->cage->get->getAlpha('reset') == 'true')
 $defaults['tagline'] = "Social Bookmarking";
  
 // Get settings from database if they exist...
-$theme_settings = $h->getThemeSettings($theme);
+$theme_settings = $h->getThemeSettings($vTheme);
 if (!$theme_settings) { 
-	$h->updateThemeSettings($defaults, $theme, 'both');     // inserts settings for the first time
+	$h->updateThemeSettings($defaults, $vTheme, 'both');     // inserts settings for the first time
 	$theme_settings = $defaults;                                      // use the defaults
 }
 ?>
  
-<form name='theme_settings_form' action='<?php echo BASEURL; ?>admin_index.php?page=theme_settings&amp;theme=<?php echo $theme; ?>' method='post'>
+<form name='theme_settings_form' action='<?php echo BASEURL; ?>admin_index.php?page=theme_settings&amp;theme=<?php echo $vTheme; ?>' method='post'>
 
 <p>Tagline: <input type='text' size="70" name='tagline' value='<?php echo $theme_settings['tagline']; ?>'></p>
  
@@ -51,4 +52,4 @@ if (!$theme_settings) {
 </form>
  
 <br />
-<a href="<?php echo BASEURL; ?>admin_index.php?page=theme_settings&amp;theme=<?php echo $theme; ?>&amp;reset=true">Revert to <?php echo make_name($theme, '-'); ?> default settings</a>
+<a href="<?php echo BASEURL; ?>admin_index.php?page=theme_settings&amp;theme=<?php echo $vTheme; ?>&amp;reset=true"><?php echo $h->lang["admin_theme_theme_revert_settings"]; ?></a>
