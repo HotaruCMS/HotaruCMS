@@ -88,6 +88,7 @@ class PageHandling
 			case BASEURL:
 			case BASEURL . 'index.php':
 				return true;
+				break;
 			default:
 				return false;
 		}
