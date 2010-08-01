@@ -59,6 +59,7 @@
 	    <?php echo $h->lang["admin_theme_plugins_uninstall"]; ?>
 
 
+	<!--  temporarily removed until we can maintain a plugin repository
 	    <div class="plugin_management_right">
 		<a href="<?php echo SITEURL ?>admin_index.php?page=plugin_search">
 		    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/search.png' alt="">
@@ -70,6 +71,7 @@
 		    <?php echo $h->lang["admin_theme_check_latest_plugin_versions"]; ?>
 		</a>
 	    </div>
+	-->
 	</span>
 </td></tr>
 
@@ -91,7 +93,8 @@
 		$alt++;
 		$info_icon = 'info_16.png';
 		$update = false;
-		if (isset($plug['latestversion'])) { if ($plug['latestversion'] > $plug['version']) {$update=true; $info_icon = 'info_green_16.png'; }}
+		/* temporarily removed until we can maintain a plugin repository
+			if (isset($plug['latestversion'])) { if ($plug['latestversion'] > $plug['version']) {$update=true; $info_icon = 'info_green_16.png'; }} */
 		echo "<tr class='table_tr table_row_" . $alt % 2 . "'>\n";
 		echo "<td class='table_active'>" . $plug['active'] . "</td>\n";
 		echo "<td class='table_installed_plugin'>";
@@ -123,7 +126,7 @@
 			echo $h->lang["admin_theme_plugins_readmetxt"] . "</a>";
 		}
 
-		if ($update) echo "<br/><a href='" . SITEURL . "admin_index.php?page=plugin_management&action=update&plugin=". $plug['folder'] . "&version=" . $plug['latestversion'] . "' title=''>Update this plugin</a>";
+		if ($update) { echo "<br/><a href='" . SITEURL . "admin_index.php?page=plugin_management&action=update&plugin=". $plug['folder'] . "&version=" . $plug['latestversion'] . "' title=''>Update this plugin</a>"; }
 		echo "</td>";
 		echo "<td class='table_description_close'><a class='table_hide_details' href='#'>";
 		echo $h->lang["admin_theme_plugins_close"] . "</a></td></tr>\n";
