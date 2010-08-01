@@ -150,7 +150,8 @@ class AdminPages
 					}
 				} else {
 					// values that are allowed to be empty:
-					$exempt = array('SMTP_USERNAME', 'SMTP_PASSWORD');
+					 // multi-site added here because the feature is hidden in settings template. Remove from below when visible.
+					$exempt = array('SMTP_USERNAME', 'SMTP_PASSWORD', 'MULTI_SITE');
 					if ($setting_name->settings_show == 'N') { array_push($exempt, $setting_name->settings_name); }
 					if (!in_array($setting_name->settings_name, $exempt)) { 
 						// otherwise flag as an error:
