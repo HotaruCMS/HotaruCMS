@@ -702,6 +702,8 @@ function do_upgrade($h, $old_version)
 		    $h->db->query("ALTER TABLE " . DB_PREFIX . "tokens DROP token_id");
 	    }
 
+		// update "old version" for next set of upgrades
+		$old_version = "1.4.0";
 	}
 
 
