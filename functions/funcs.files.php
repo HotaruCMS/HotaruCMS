@@ -34,20 +34,15 @@
 function getFilenames($folder, $type='full')
 {
 	$filenames  = array();
-	$handle     = opendir($folder);
-	
-	while (false !== ($file = readdir($handle)))
+	$directory = new DirectoryIterator($folder);
+	foreach( $directory as $file )
 	{
-		if ($file != "." && $file != ".." && $file != ".svn") {
-			if ($type == 'full') {
-				array_push($filenames, $folder . $file);    // full path
-			} else {
-				array_push($filenames, $file);        // filename only
-			}
+		if( !$file->isDot() )
+		{
+			$filename = ($type === 'full') ? $folder.($file->getFilename()) : $file->getFilename();
+			array_push($filenames, $file->getFilename());
 		}
 	}
-	
-	closedir($handle);
 	return $filenames;
 }
 
