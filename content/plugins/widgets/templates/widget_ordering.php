@@ -69,7 +69,7 @@ for ($i=1; $i<=$blocks; $i++) {
                     $alt++;
                     echo "<tr id='table_tr' class='table_row_" . $alt % 2 . "'>\n";
                         echo "<td class='plugins_active widgets_active'>" . $enabled_output . "</td>\n";
-                        echo "<td class='table_text'>" . make_name($widget) . " </td>\n";
+                        echo "<td class='table_text widgets_name'>" . make_name($widget) . " </td>\n";
                         echo "<td class='plugins_order widgets_order'>" . $order_output . "</td>\n";
                     echo "</tr>\n";
                 }

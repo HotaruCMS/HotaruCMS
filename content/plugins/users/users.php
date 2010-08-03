@@ -2,7 +2,7 @@
 /**
  * name: Users
  * description: Provides profile, settings and permission pages
- * version: 2.1
+ * version: 2.2
  * folder: users
  * type: users
  * class: Users
@@ -180,7 +180,8 @@ class Users
     {
         $username = $h->cage->get->testUsername('user');
         if ($username) {
-            $h->vars['filter']['post_author = %d'] = $h->getUserIdFromName($username); 
+            $h->vars['filter']['post_author = %d'] = $h->getUserIdFromName($username);
+			unset($h->vars['filter']['post_archived = %s']);
         }
     }
     
@@ -431,20 +432,52 @@ class Users
      * Show stats on Admin home page
      */
     public function admin_theme_main_stats($h, $vars)
-    {
-        require_once(LIBS . 'UserInfo.php');
+    {        
         $ui = new UserInfo();
-        
-        echo "<li>&nbsp;</li>";
-		if (isset($vars) && (!empty($vars))) {	    
+        $stats = $ui->stats($h);
+
+		//var_dump($stats);
+	
+		echo "<li>&nbsp;</li>";
+		if ($stats) {
+		    foreach ($stats as $stat) {
+			//var_dump($stat);
+			$users[$stat[0]] = $stat[1];
+		    }
+		}
+	 
+		if (isset($vars) && (!empty($vars))) {
 			foreach ($vars as $key => $value) {
-				echo "<li class='title'>" . $key . "</li>";
-				foreach ($value as $stat_type) {		    
+				$key_lang = 'users_admin_stats_' . $key;
+				echo "<li class='title'>" . $h->lang[$key_lang] . "</li>";
+				foreach ($value as $stat_type) {
 					if (isset($value) && !empty($value)) {
-						$users = $ui->stats($h, $stat_type);
-						if (!$users) { $users = 0; }
+	
+						switch ($stat_type) {
+						    case 'all':
+							$user_count = array_sum($users);						
+							break;
+						    default:
+							if (isset($users[$stat_type])) { $user_count = $users[$stat_type]; } else { $user_count = 0; }
+							break;
+						}
+
+						if (!defined('SITEURL')) { define('SITEURL', BASEURL); }
+
+						$link = "";
+						$dontlink = array('');
+						if ($h->isActive('user_manager')) {
+							if (!in_array($stat_type, $dontlink)) {
+							$link = SITEURL . "admin_index.php?user_filter=$stat_type&plugin=user_manager&page=plugin_settings&type=filter&csrf=" . $h->csrfToken;
+							}
+						}
+						
 						$lang_name = 'users_admin_stats_' . $stat_type;
-						echo "<li>" . $h->lang[$lang_name] . ": " . $users . "</li>";
+						echo "<li>";
+						if ($link) { echo "<a href='" . $link . "'>"; }
+						echo $h->lang[$lang_name] . ": " . $user_count;
+						if ($link) { echo "</a>"; }
+						echo "</li>";
 					}
 				}
 			}

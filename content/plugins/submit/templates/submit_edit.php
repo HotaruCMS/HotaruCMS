@@ -38,7 +38,7 @@ $h->pluginHook('submit_2_assign');
     <table>
     <tr>
         <td><?php echo $h->lang["submit_url"]; ?>&nbsp; </td>
-        <td><?php echo "<a target='_blank' href='" . $h->vars['submit_orig_url'] . "'>" . $h->vars['submit_orig_url'] . "</a>"; ?></td>
+        <td><?php echo "<a target='_blank' href='" . $h->vars['submit_orig_url'] . "'>" . truncate($h->vars['submit_orig_url'], 60) . "</a>"; ?></td>
     </tr>
     <tr>
         <td><?php echo $h->lang["submit_title"]; ?>&nbsp; </td>

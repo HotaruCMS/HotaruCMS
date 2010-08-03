@@ -12,6 +12,9 @@ Instructions
 
 Changelog
 ---------
+v.3.1 2010/08/01 - Nick - Fixed an undefined index error and truncated source urls to prevent sidebar overlap
+v.3.0 2010/07/20 - Nick - Redirects logged out users to the login page and returns them to submit step 2
+		   Nick - Fix for truncated titles and French accents on submit step 2
 v.2.9 2010/07/10 - Nick - CSS Fixes for form item widths.
 v.2.8 2010/05/22 - Nick - Removed requirement to have SB Base installed
 v.2.7 2010/05/09 - Nick - Fixes for "invalid url" error with non-roman characters in urls

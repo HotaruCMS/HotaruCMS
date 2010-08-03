@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.0.9 2010/07/15 - shibuya246 - Admin stats moved here from Bookmarking
 v.0.8 2010/06/23 - Nick - Hid edit and source links for Journal (blog) entries because they don't apply
 v.0.7 2010/05/27 - Nick - Removed need for SB Base, and added a "check all" checkbox
 v.0.6 2010/02/18 - Nick - Code changes for pagination

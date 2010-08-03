@@ -14,6 +14,9 @@ Instructions
 
 Changelog
 ---------
+v.2.5 2010/07/24 - Nick - Moved "comments_post_last_form" plugin hook
+v.2.4 2010/07/20 - Nick - Edits to CSS for comments
+v.2.3 2010/07/15 - Nick - Reimplemented admin stats
 v.2.2 2010/07/07 - Nick - Fix for page load continuing after displaying the RSS feed
 v.2.1 2010/05/23 - Nick - Removed the requirement to have SB Base installed.
 v.2.0 2010/05/02 - Nick - Function changes for easier extending, and changed "comments_wrapper" from an id to a class.

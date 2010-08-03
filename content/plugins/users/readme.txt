@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.2.2 2010/07/15 - Nick - Reimplemented admin stats
 v.2.1 2010/07/10 - Nick - CSS Fixes for form item widths
 v.2.0 2010/05/22 - Nick - Fix for home page title tags and moved User RSS from SB Base into this plugin
 v.1.9 2010/05/14 - Nick - Fix for missing RSS feed for individual user posts

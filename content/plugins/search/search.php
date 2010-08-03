@@ -2,7 +2,7 @@
 /**
  * name: Search
  * description: Displays "Search!"
- * version: 1.1
+ * version: 1.2
  * folder: search
  * class: Search
  * type: search
@@ -126,17 +126,25 @@ class Search
         $search_terms = array_iunique($search_terms);
     
         $search_terms_clean = '';
-        $full_index = true; // Do a full index (better) search if all terms are longer than 3 characters
+        $full_text = true; // Do a full text (better) search if all terms are longer than 3 characters
         foreach($search_terms as $search_term) {
+
             if ($this->isStopword($search_term)) {
                 continue; // don't include this in $search_terms_clean
             }
+
             if (strlen(trim($search_term)) < 4) {
-                $full_index = false;
+                $full_text = false;
             }
-            if ($this->isStopword($search_term) == false) {
-                $search_terms_clean .= trim($h->db->escape($search_term)) . " ";
-            }
+
+			$search_term = trim($h->db->escape($search_term));
+
+			// if the urlencoded term contains a percent sign, we can't use a full text search
+			if (strpos(urlencode($search_term), '%') !== false) {
+				$full_text = false;
+			}
+
+			$search_terms_clean .= $search_term . " ";
         }
         
         // Undo the filter that limits results to either 'top', 'new' or archived (See submit.php -> sub_prepare_list())
@@ -146,13 +154,12 @@ class Search
         // filter to top or new stories only:
         $h->vars['filter']['(post_status = %s OR post_status = %s)'] = array('top', 'new');
         
-        if ($full_index) {
-            if ($return == 'count') { $select = "count(*) AS number "; } else { $select = "*"; }
-            $h->vars['select'] = $select . ", MATCH(post_title, post_domain, post_url, post_content, post_tags) AGAINST ('" . $search_terms_clean . "') AS relevance";
+		$select = ($return == 'count') ? "count(*) AS number " : "*";
+        if ($full_text) {
+            $h->vars['select'] = array($select . ", MATCH(post_title, post_domain, post_url, post_content, post_tags) AGAINST (%s) AS relevance" => trim($search_terms_clean));
             $h->vars['orderby'] = "relevance DESC";
-            $h->vars['filter']["MATCH (post_title, post_domain, post_url, post_content, post_tags) AGAINST (%s IN BOOLEAN MODE)"] = $search_terms_clean; 
+            $h->vars['filter']["MATCH (post_title, post_domain, post_url, post_content, post_tags) AGAINST (%s IN BOOLEAN MODE)"] = trim($search_terms_clean); 
         } else {
-            if ($return == 'count') { $select = "count(*) AS number "; } else { $select = "*"; }
             $h->vars['select'] = $select;
             $h->vars['orderby'] = "post_date DESC";
             $h->vars['filter_vars'] = array();
@@ -182,7 +189,10 @@ class Search
         foreach(explode(' ', trim($search_terms)) as $word){
             if ($word) {
                 $query .= $column . " LIKE %s OR ";
-                array_push($h->vars['filter_vars'], "%" . urlencode(" " . trim($h->db->escape($word)) . " ") . "%");
+				$search_term = urlencode(" " . trim($h->db->escape($word)) . " ");
+				// escape all percent signs for use in LIKE query:
+				$search_term = str_replace('%', '\%', $search_term);
+                array_push($h->vars['filter_vars'], "%" . $search_term . "%");
             }
         }
         

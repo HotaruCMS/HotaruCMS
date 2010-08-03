@@ -146,12 +146,12 @@ class UserSignin
         if ($h->currentUser->loggedIn) {
             
             if ($h->pageName == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
-            echo "<li><a  " . $status . " href='" . $h->url(array('page'=>'logout')) . "'>" . $h->lang["user_signin_logout"] . "</a></li>\n";
+            echo "<li " . $status . "><a href='" . $h->url(array('page'=>'logout')) . "'>" . $h->lang["user_signin_logout"] . "</a></li>";
             
             if ($h->currentUser->getPermission('can_access_admin') == 'yes') {
                 
                 if ($h->pageName == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
-                echo "<li><a  " . $status . " href='" . $h->url(array(), 'admin') . "'>" . $h->lang["user_signin_admin"] . "</a></li>\n";
+                echo "<li " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["user_signin_admin"] . "</a></li>";
             }
         } else {    
             
@@ -175,13 +175,13 @@ class UserSignin
                 if ($h->pageName == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
                 
                 if (!$h->isPage('login')) {
-                    echo "<li><a  " . $status . " href='" . BASEURL . "index.php?page=login&amp;return=" . $return . "'>" . $h->lang["user_signin_login"] . "</a></li>\n";
+                    echo "<li " . $status . "><a href='" . BASEURL . "index.php?page=login&amp;return=" . $return . "'>" . $h->lang["user_signin_login"] . "</a></li>";
                 } else {
-                    echo "<li><a  " . $status . " href='" . $h->url(array('page'=>'login')) . "'>" . $h->lang["user_signin_login"] . "</a></li>\n";
+                    echo "<li " . $status . "><a href='" . $h->url(array('page'=>'login')) . "'>" . $h->lang["user_signin_login"] . "</a></li>";
                 }
                 
                 if ($h->pageName == 'register') { $status = "id='navigation_active'"; } else { $status = ""; }
-                echo "<li><a  " . $status . " href='" . $h->url(array('page'=>'register')) . "'>" . $h->lang["user_signin_register"] . "</a></li>\n";
+                echo "<li " . $status . "><a href='" . $h->url(array('page'=>'register')) . "'>" . $h->lang["user_signin_register"] . "</a></li>";
             }
         }
     }

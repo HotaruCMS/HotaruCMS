@@ -98,8 +98,9 @@ class BookmarkingFunctions
         }
         
         // if we want to count the totals, we need to replace the select clause with COUNT, but some queries that use MATCH and relevance are a bit complicated, 
-        // so we'll let those plugins (e.g. search) add COUNT to their queries themselves and skip them here (which we can do by checking for MATCH).
-        if ($return == 'count' && (strpos($h->vars['select'], "MATCH") === false)) { $h->vars['select'] = "count(post_id) AS number"; }
+        // so we'll let those plugins (e.g. search) add COUNT to their queries themselves and skip them here (which we can do by checking if select is an array).
+
+        if ($return == 'count' && (!is_array($h->vars['select']))) { $h->vars['select'] = "count(post_id) AS number"; }
         if ($return == 'query') { $all = true; }    // this removes the "LIMIT" parameter so we can add it later when paginating.
         
         if ($all == true) { $limit = ''; } elseif ($limit == 0) { $limit = "20"; }
@@ -118,7 +119,7 @@ class BookmarkingFunctions
             false,
             true
         );
-        
+
         if ($return == 'query') { 
             if (isset($prepare_array[1])) {
                 return $h->db->prepare($prepare_array);

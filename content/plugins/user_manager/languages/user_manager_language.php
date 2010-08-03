@@ -37,6 +37,7 @@ $lang["user_man_user_email_icon"] = "Email address not validated yet.";
 $lang["user_man_user_email_not_validated"] = ", but has <b>not</b> validated his or her email address yet.";
 $lang["user_man_user_email_validated"] = " and has validated his or her email address.";
 $lang['user_man_here'] = "here";
+$lang['user_man_ip_address'] = "IP address:";
 $lang['user_man_email'] = "Email:";
 $lang["user_man_desc"] = "The User Manager enables you to quickly find and edit users, ordered newest first.";
 $lang["user_man_search"] = "Search for a user: <span style='font-weight: normal;'><small>(username or email)</small></span>";

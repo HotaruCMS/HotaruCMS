@@ -20,6 +20,7 @@ If you'd like to show the search box without using it in a widget, paste this PH
 
 Changelog
 ---------
+v.1.2 2010/07/29 - Nick - Fixes for searching non-alphanumeric phrases
 v.1.1 2010/05/22 - Nick - Moved Search RSS from SB Base into this plugin
 v.1.0 2010/04/24 - Nick - Set $h->pageName to "search" on search results page
 v.0.9 2010/02/18 - Nick - Code changes for pagination

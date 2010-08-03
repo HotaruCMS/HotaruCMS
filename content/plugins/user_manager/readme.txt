@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.1.1 2010/07/30 - Nick - Added user's IP address
 v.1.0 2010/05/27 - Nick - Added "check all" checkbox
 v.0.9 2010/03/17 - Nick - New page for creating users, sending new passwords and email validation requests
 v.0.8 2010/02/18 - Nick - Fixes for changing user permissions and pagination

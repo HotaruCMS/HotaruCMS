@@ -12,6 +12,8 @@ Instructions
 
 Changelog
 ---------
+v.1.9 2010/07/30 - Nick - Parent category tab gets active status when viewing sub category or post.  
+v.1.8 2010/07/27 - Nick - Fix for url friendly post pages breaking with non-alphanumeric category safe names.
 v.1.7 2010/06/07 - Nick - Applied htmlentities to ampersands in posts, i.e. "posted in Food &amp; Drink"
 v.1.6 2010/05/22 - Nick - Fix for home page title tags and moved Category RSS from SB Base into this plugin
 v.1.5 2010/04/14 - Nick - Top stories page name changed from "index" to "popular"

@@ -27,10 +27,11 @@
 ?>
 
 <div id="category_bar">
-<ul>
-<?php $h->pluginHook('category_bar_start'); ?>
-<?php echo $h->vars['output']; ?>
-<?php $h->pluginHook('category_bar_end'); ?>
-</ul>
-</div> 
+	<ul>
+		<?php $h->pluginHook('category_bar_start'); ?>
+		<?php echo $h->vars['output']; ?>
+		<?php $h->pluginHook('category_bar_end'); ?>
+	</ul>
+</div>
+
 <div class="clear"></div>

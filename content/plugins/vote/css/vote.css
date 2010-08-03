@@ -9,34 +9,31 @@
 }
 
 .vote_button_top {
-	line-height: 2.0em;
-	font-size: 1.5em;
+	line-height: 1.1em;
+	font-size: 3.0em;
 	width: 50px; 
-	font-weight: bold;
 }
 
 .vote_button_bottom {
-  margin-top:5px;
-  padding: 2px 0 2px 0;
-  background: #f2f2f2;
-  border: 1px solid #d0d0d0;
+	margin-top:5px;
+	padding: 2px 0 2px 0;
+	background-color: #fff;
+	border: 1px solid #d0d0d0;
 	width: 50px; 
 }
 
 .vote_button_bottom a { 
-	color: #454545;
-	background:transparent;
+
 }
 
 .vote_button_bottom a:hover { 
-	color: #454545;
 	background:transparent;
 }
 
 /* colors */
 
-.vote_color_top { border: 1px solid #d0d0d0; background-color: #f0f0f0; color: #000; }
-.vote_color_new { border: 1px solid #d0d0d0; background-color: #ffffff; color: #000; }
+.vote_color_top { border: 1px solid #d0d0d0; background-color: #fff; color: #cc0000; }
+.vote_color_new { border: 1px solid #d0d0d0; background-color: #fff; color: #0000cc; }
 
 .vote_color_top_clicked { background-color: #f0f0aa; }
 .vote_color_top_just_voted { background-color: #f99555; }

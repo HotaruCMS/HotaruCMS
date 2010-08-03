@@ -2,7 +2,7 @@
 /**
  * name: Categories
  * description: Enables categories for posts
- * version: 1.7
+ * version: 1.9
  * folder: categories
  * class: Categories
  * type: categories
@@ -51,11 +51,13 @@ class Categories
                 $h->vars['category_id'] = $category;
                 $h->vars['category_name'] = $h->getCatName($category);
                 $h->vars['category_safe_name'] = $h->getCatSafeName($category);
+				$h->vars['category_parent'] = $h->getCatParent($category);
             } else {
                 // category should be a safe name
                 $h->vars['category_id'] = $h->getCatId($category);
-                $h->vars['category_name'] = $h->getCatName(0, $category);
-                $h->vars['category_safe_name'] = $category;
+                $h->vars['category_name'] = $h->getCatName($h->vars['category_id']);
+                $h->vars['category_safe_name'] = $h->getCatSafeName($h->vars['category_id']);
+				$h->vars['category_parent'] = $h->getCatParent($h->vars['category_id']);
             }
             $h->pageTitle = $h->vars['category_name'];
             if (!$h->pageName) { $h->pageName = 'popular'; }
@@ -70,7 +72,7 @@ class Categories
             /*  if $h->pageName is set, then there must be an odd number of query vars where
                 the first one is the page name. Let's see if it's a category safe name... */
             $sql = "SELECT category_id, category_name FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s LIMIT 1";
-            $exists = $h->db->get_row($h->db->prepare($sql, $h->pageName));
+            $exists = $h->db->get_row($h->db->prepare($sql, urlencode($h->pageName)));
             if ($exists) {
                 $h->vars['category_id'] = $exists->category_id;
                 $h->vars['category_name'] = $exists->category_name;
@@ -124,7 +126,7 @@ class Categories
         if (!$key || !$value) { return false; }
 
         $sql = "SELECT category_id FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s LIMIT 1";
-        $exists = $h->db->get_var($h->db->prepare($sql, $key));
+        $exists = $h->db->get_var($h->db->prepare($sql, urlencode($key)));
         
         // no category? exit...
         if (!$exists) { return false; }
@@ -228,7 +230,7 @@ class Categories
                 
         if ($h->subPage == 'category') // the pageType is "list"
         {
-            $parent_id = $h->getCatParent($h->vars['category_id']);
+            $parent_id = $h->vars['category_parent'];
             if ($parent_id > 1) {
                 $parent_name = $h->getCatName($parent_id);
                 $parent_name = stripslashes(htmlentities($parent_name, ENT_QUOTES, 'UTF-8'));
@@ -243,7 +245,14 @@ class Categories
         }
         elseif ($h->pageType == 'post') // the pageName is the post slug (post_url)
         {
-            $parent_id = $h->getCatParent($h->post->category);
+
+			if (isset($h->vars['category_parent'])) {
+				$parent_id = $h->vars['category_parent']; // assigned to $h->vars in header_end function
+			} else {
+				$parent_id = $h->getCatParent($h->post->category);
+			}
+
+			$parent_id = $h->getCatParent($h->post->category);
             if ($parent_id > 1) {
                 $parent_name = $h->getCatName($parent_id);
                 $parent_name = stripslashes(htmlentities($parent_name, ENT_QUOTES, 'UTF-8'));
@@ -298,6 +307,12 @@ class Categories
         $query = $h->db->prepare($sql, 1, 1);
         $h->smartCache('on', 'categories', 60, $query); // start using cache
         $categories = $h->db->get_results($query);
+
+		if ($h->pageType == 'post') {
+			// for showing the category tab as active when looking at a post:
+			$h->vars['category_id'] = $h->post->category;
+			$h->vars['category_parent'] = $h->getCatParent($h->post->category);
+		}
        
         if($categories)
         {
@@ -381,8 +396,19 @@ class Categories
         }
         
         $active = '';
-        if (isset($h->vars['category_id']) && ($h->vars['category_id'] == $category->category_id)) {
-            $active = " class='active_cat'";
+
+		// give active status to highest parent tab 
+        if (isset($h->vars['category_id']))
+			{
+			// is this already a parent catgeory? Make the tab active:
+			if (($h->vars['category_id'] == $category->category_id)
+				&& ($category->category_parent == 1)) {
+			$active = " class='active_cat'";
+			} 
+			// is this a child category? If so, make the parent tab active:
+			elseif ($h->vars['category_parent'] == $category->category_id) {
+            	$active = " class='active_cat'";
+			}
         }
         
         $category = stripslashes(urldecode($category->category_name));

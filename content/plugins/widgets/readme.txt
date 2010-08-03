@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.1.0 2010/07/30 - petsagouris - Style edits for widgets page
 v.0.9 2010/04/14 - Nick - singleWidget function for calling individual widgets
 v.0.8 2010/03/04 - Nick - Wrapped "widget_head" and "widget_body" in a "widget" div
 v.0.7 2010/02/02 - Alan - jQuery for instant widget activation
