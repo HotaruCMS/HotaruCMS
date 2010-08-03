@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.2.2 2010/07/20 - Nick - Edits to CSS for vote button
 v.2.1 2010/06/16 - Alan - Include option for anonymous voting
 v.2.0 2010/05/23 - Nick - Removed the requirement to have SB Base installed.
 v.1.9 2010/05/17 - Nick - Fix for undefined variable

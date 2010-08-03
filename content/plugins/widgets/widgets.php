@@ -2,7 +2,7 @@
 /**
  * name: Widgets
  * description: Manages the contents of the widget blocks
- * version: 0.9
+ * version: 1.0
  * folder: widgets
  * class: Widgets
  * hooks: theme_index_top, admin_theme_index_top, header_include, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, widget_block

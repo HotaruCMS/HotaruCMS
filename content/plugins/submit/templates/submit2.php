@@ -38,7 +38,7 @@ $h->pluginHook('submit_2_assign');
     <?php if (!$h->vars['submit_editorial']) { // only show if posting a link ?>
         <tr>
             <td><?php echo $h->lang["submit_url"]; ?>&nbsp; </td>
-            <td><?php echo $h->vars['submit_orig_url']; ?></td>
+            <td><?php echo truncate($h->vars['submit_orig_url'], 60); ?></td>
         </tr>
     <?php } ?>
     

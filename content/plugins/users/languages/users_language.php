@@ -68,15 +68,16 @@ $lang["users_permissions_update"] = "Update";
 $lang['users_permissions_updated'] = "Permissions Updated";
 
 /* Admin Stats */
-$lang["users_admin_stats_total_users"] = "Total users";
-$lang["users_admin_stats_admins"] = "Admins";
-$lang["users_admin_stats_supermods"] = "Super Mods";
-$lang["users_admin_stats_moderators"] = "Moderators";
-$lang["users_admin_stats_approved_users"] = "Approved";
-$lang["users_admin_stats_pending_users"] = "Pending";
-$lang["users_admin_stats_undermod_users"] = "Under moderation";
-$lang["users_admin_stats_banned_users"] = "Banned";
-$lang["users_admin_stats_killspammed_users"] = "Killspammed";
+$lang["users_admin_stats_users"] = "Users";
+$lang["users_admin_stats_all"] = "Total users";
+$lang["users_admin_stats_admin"] = "Admins";
+$lang["users_admin_stats_supermod"] = "Super Mods";
+$lang["users_admin_stats_moderator"] = "Moderators";
+$lang["users_admin_stats_member"] = "Members";
+$lang["users_admin_stats_pending"] = "Pending";
+$lang["users_admin_stats_undermod"] = "Under moderation";
+$lang["users_admin_stats_banned"] = "Banned";
+$lang["users_admin_stats_killspammed"] = "Killspammed";
 
 /* UserFunctions CLASS: */
 

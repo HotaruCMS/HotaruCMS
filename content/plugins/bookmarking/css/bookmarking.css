@@ -3,9 +3,11 @@
 /* ******* SORT LINKS ******** */
  
 #sort_box { font-size: 0.9em; margin-bottom: 1.0em;}
-.sort_menu li { display: inline; margin: 0 0.3em 0 0.3em; padding: 0.2em;}
-.sort_menu li.active { background-color: #f8f8f8; }
-.sort_menu li.active a { color: #000; font-weight: bold; }
+.sort_menu li { display: inline; margin: 0 0.3em 0 0.3em; padding: 0;}
+.sort_menu li a, .sort_menu li.active a { padding: 0.2em; }
+.sort_menu li.active { font-weight: bold; background-color: #262626; padding: 0.2em; }
+.sort_menu li.active a {color: #fff; }
+.sort_menu li a:hover { background-color: #262626; color: #fff; padding: 0.2em; }
 
 /* ******* POST CSS ******** */
 

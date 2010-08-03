@@ -340,14 +340,27 @@ class SubmitFunctions
      */
     public function checkErrors1($h, $key = '')
     {
-    
+        // check user is logged in
+        if (!$h->currentUser->loggedIn) {
+            // Redirect to login page
+			$url = $h->vars['submitted_data']['submit_orig_url'];
+			if ($url) {
+            	$return = urlencode(BASEURL . 'index.php?page=submit&url=' . $url);
+				header("Location: " . BASEURL . 'index.php?page=login&return=' . $return);
+			} else {
+				$return = urlencode($h->url(array('page'=>'submit')));
+				header("Location: " . $h->url(array('page'=>'login', 'return'=>$return)));
+			}
+            die(); exit;
+        }
+
         if (!$key) {
             // Nothing submitted
             $h->message = $h->lang['submit_nothing_submitted'];
             $h->messageType = 'red';
             return true; // error found
         }
-        
+
         // check user has permission to post
         if ($h->currentUser->getPermission('can_submit') == 'no') {
             // No permission to submit
@@ -441,6 +454,20 @@ class SubmitFunctions
      */
     public function checkErrors2($h, $key = '')
     {
+        // check user is logged in
+        if (!$h->currentUser->loggedIn) {
+            // Redirect to login page
+			$url = $h->vars['submitted_data']['submit_orig_url'];
+			if ($url) {
+            	$return = urlencode(BASEURL . 'index.php?page=submit&url=' . $url);
+				header("Location: " . BASEURL . 'index.php?page=login&return=' . $return);
+			} else {
+				$return = urlencode($h->url(array('page'=>'submit')));
+				header("Location: " . $h->url(array('page'=>'login', 'return'=>$return)));
+			}
+            die(); exit;
+        }
+
         // check user has permission to post
         if ($h->currentUser->getPermission('can_submit') == 'no') {
             // No permission to submit

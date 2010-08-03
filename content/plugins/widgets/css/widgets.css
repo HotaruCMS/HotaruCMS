@@ -1,8 +1,28 @@
 /* widgets */
 
-td.widgets_active, td.widgets_order {
+td.widgets_order {
 	width: 6.0em;
 }
 
-.widget_head { margin-top: 0.4em; }
-.widget_body { margin-bottom: 2.5em; overflow: hidden; width: 100%; }
+td.widgets_active {
+	width: 1em;
+}
+
+#table_list td.widgets_name {
+	text-align: left !important;
+	font-weight: normal;
+}
+
+div.widget_onoff{
+	cursor: pointer;
+	cursor: hand;
+}
+
+.widget_head { 
+	margin-top: 0.4em;
+}
+.widget_body { 
+	margin-bottom: 2.5em;
+	overflow: hidden;
+	width: 100%;
+}
