@@ -54,3 +54,5 @@ If you want to use friendly urls, rename htaccess_default to .htaccess, and edit
 Troubleshooting
 
 If you're having trouble installing Hotaru, please post your questions with as much detail as possible in the forums at http://hotarucms.org. Thanks.
+
+(testing first commit to github)
