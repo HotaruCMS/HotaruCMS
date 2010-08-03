@@ -38,7 +38,7 @@ class Post
 	protected $title            = '';           // post title
 	protected $origUrl          = '';           // original url for the submitted post
 	protected $domain           = '';           // the domain of the submitted url
-	protected $url              = '';           // post slug (needs BASEURL and category attached)
+	protected $url              = '';           // post slug (needs SITEURL and category attached)
 	protected $content          = '';           // post description
 	protected $contentLength    = 50;           // default min characters for content
 	protected $summary          = '';           // truncated post description
@@ -187,10 +187,10 @@ class Post
 	 */    
 	public function updatePost($h)
 	{
-		if (strstr($this->origUrl, BASEURL)) {
+		if (!$this->origUrl || strstr($this->origUrl, SITEURL)) {
 			// original url contains our base url, so it must be an "editorial" post.
 			// Therefore, it's essential we rebuild this source url to match the updated post title to avoid errors:
-			$this->origUrl = $h->url(array('page'=>$this->id)); // update the url with the real one
+			$this->origUrl = $h->url(array('page'=>$this->id)); // update the url with the real one			
 		}
 		
 		$parsed = parse_url($this->origUrl);
@@ -202,8 +202,7 @@ class Post
 		
 		$h->post->id = $this->id; // a small hack to get the id for use in plugins.
 		
-		// Update tags in the Tags table:
-		require_once(LIBS . 'Tags.php');
+		// Update tags in the Tags table:		
 		$tags = new TagFunctions();
 		$tags->deleteTags($h, $this->id); // delete existing tags
 		$tags->addTags($h, $this->id, $this->tags); // insert new or updated tags
@@ -458,46 +457,27 @@ class Post
 	/**
 	 * Post stats
 	 *
-	 * @param string $stat_type
-	 * @return int
+	 * @return array
 	 */
 	public function stats($h, $stat_type = '')
 	{
 		switch ($stat_type) {
-			case 'total_posts':
-				$query = "SELECT count(post_id) FROM " . TABLE_POSTS;
-				$h->smartCache('on', 'posts', 60, $query); // start using cache
-				$posts = $h->db->get_var($query);
-				break;
-			case 'approved_posts':
-				$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s OR post_status = %s";
-				$query = $h->db->prepare($sql, 'top', 'new');
-				$h->smartCache('on', 'posts', 60, $query); // start using cache
-				$posts = $h->db->get_var($query);
-				break;
-			case 'pending_posts':
-				$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s";
-				$query = $h->db->prepare($sql, 'pending');
-				$h->smartCache('on', 'posts', 60, $query); // start using cache
-				$posts = $h->db->get_var($query);
-				break;
-			case 'buried_posts':
-				$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status = %s";
-				$query = $h->db->prepare($sql, 'buried');
-				$h->smartCache('on', 'posts', 60, $query); // start using cache
-				$posts = $h->db->get_var($query);
-				break;
-			case 'archived_posts':
-				$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_archived = %s";
-				$query = $h->db->prepare($sql, 'Y');
-				$h->smartCache('on', 'posts', 60, $query); // start using cache
-				$posts = $h->db->get_var($query);
-				break;
-			default:
-				$posts = 0;
+		    default:
+			$sql = "SELECT post_status, count(post_id) FROM " . TABLE_POSTS . " GROUP BY post_status";
+			$query = $h->db->prepare($sql);
+			$h->smartCache('on', 'posts', 60, $query); // start using cache
+			$posts = $h->db->get_results($query, ARRAY_N);
+			break;
+		case 'archived':
+			$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_archived = %s";
+			$query = $h->db->prepare($sql, 'Y');
+			$h->smartCache('on', 'posts', 60, $query); // start using cache
+			$posts = $h->db->get_var($query);
+			break;
 		}
+
 		$h->smartCache('off'); // stop using cache
-		
+
 		return $posts;
 	}
 }

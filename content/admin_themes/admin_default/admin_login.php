@@ -30,31 +30,37 @@
 
 <?php $h->showMessage(); ?>
 
-<?php echo $h->lang["admin_theme_login_instructions"]; ?>
+<?php //echo $h->lang["admin_theme_login_instructions"]; ?>
 
-<form name='login_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>    
-<table>
-	<tr>
-	<td><?php echo $h->lang["admin_theme_login_username"]; ?>:&nbsp; </td>
-	<td><input type='text' size=30 name='username' value='<?php echo $username_check; ?>' /></td>
-	</tr>
-	<tr>
-	<td><?php echo $h->lang["admin_theme_login_password"]; ?>:&nbsp; </td>
-	<td><input type='password' size=30 name='password' value='<?php echo $password_check; ?>' /></td>
-	</tr>
-	<tr>
-	<td>&nbsp; </td>
-	<td style='text-align:right;'><input type='submit' value='<?php echo $h->lang['admin_theme_login_form_submit']; ?>' /></td>
-	</tr>
-</table>
-<input type='hidden' name='login_attempted' value='true'>
-<input type='hidden' name='page' value='admin_login'>
-<input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
-</form>
+<div id ="login_form">
+    <form name='login_form' action='<?php echo SITEURL; ?>admin_index.php' method='post'>
 
-<a href="#" class="forgot_password"><?php echo $h->lang["admin_theme_login_forgot_password"]; ?></a>
+	
 
-<form style="display: none;" name='forgot_password_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>    
+	<table>
+		<tr>
+		<td><?php echo $h->lang["admin_theme_login_username"]; ?>&nbsp; </td>
+		<td><input id='admin_login_name' type='text' size=20 name='username' value='<?php echo $username_check; ?>' /></td>
+		</tr>
+		<tr>
+		<td><?php echo $h->lang["admin_theme_login_password"]; ?>&nbsp; </td>
+		<td><input id='admin_login_password' type='password' size=20 name='password' value='<?php echo $password_check; ?>' /></td>
+		</tr>
+		<tr>
+		<td>&nbsp; </td>
+		<td style='text-align:right;'><input id='admin_login_button' type='submit' value='<?php echo $h->lang['admin_theme_login_form_submit']; ?>'  /></td>
+		</tr>
+	</table>
+
+	<input type='hidden' name='login_attempted' value='true'>
+	<input type='hidden' name='page' value='admin_login'>
+	<input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
+    </form>
+
+    <a href="#" class="forgot_password"><?php echo $h->lang["admin_theme_login_forgot_password"]; ?></a>
+ </div>
+
+<form style="display: none;" id='forgot_password_form' name='forgot_password_form' action='<?php echo SITEURL; ?>admin_index.php' method='post'>    
 	<?php echo $h->lang['admin_theme_login_forgot_password_submit_instruct_1']; ?>
 <table>
 	<tr>

@@ -35,24 +35,24 @@ class Initialize
 	 */
 	public function __construct($h)
 	{
-	    
+
 		// session to be used by CSRF, etc.
 		if (!isset($_SESSION['HotaruCMS'])) {
 			session_start();
 			$_SESSION['HotaruCMS'] = time();
 		}
-		
+
 		// The order here is important!
 		$this->setDefaultTimezone();
 		$this->setTableConstants();				
-		
+
 		$this->getFiles();
 		$this->cage = $this->initInspektCage();
 		$this->db = $this->initDatabase();
 
 		$this->getCurrentSiteID();
 		$this->errorReporting();
-		
+
 		$this->readSettings();
 		$this->setUpDatabaseCache();
 		$this->isDebug = $this->checkDebug();
@@ -152,23 +152,56 @@ class Initialize
 	 */
 	public function getCurrentSiteID()
 	{
-//		if isActive($result) {
-//		    $url =  $this->cage->server->getRaw('HTTP_HOST');   // wanted to use sanitizeTags
-//		    $sql = "SELECT site_id, site_adminuser_id FROM " . TABLE_SITE . " WHERE site_url = %s";
-//		    $settings = $this->db->get_row($this->db->prepare($sql, $url));
-//		    var_dump( $settings);
-//
-//		    if ($settings) {
-//			$siteid = $settings->site_id;
-//		    } else {
-//			$siteid = 1;
-//		    }
-//		} else {
+		// read settings for default siteid=1 first to check whether MULTISITE is TRUE
+		$sql = "SELECT settings_value FROM " . TABLE_SETTINGS . " WHERE settings_name = %s AND settings_siteid = %d";
+		$multi_site = $this->db->get_var($this->db->prepare($sql, 'MULTI_SITE', 1));
+		if (!defined('MULTI_SITE')) { define ('MULTI_SITE', $multi_site); }
+
+	        if (MULTI_SITE == 'true') {
+		    $url =  $this->cage->server->getRaw('HTTP_HOST');   // wanted to use sanitizeTags
+		    $sql = "SELECT site_id, site_adminuser_id FROM " . TABLE_SITE . " WHERE site_url = %s";
+		    $settings = $this->db->get_row($this->db->prepare($sql, $url));		 
+
+		    if ($settings) {
+			$siteid = $settings->site_id;
+			$siteurl = "http://" . $url . "/";
+		    } else {
+			$siteid = 1;
+			$siteurl = BASEURL;
+		    }
+
+
+		    if (!defined('MS_TABLES')) {
+			$ms_tables = array();
+			//get $h->$ms_tables
+			foreach ( $this->db->get_col("SHOW TABLES",0) as $table_name )
+			{
+			    $sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.Columns where TABLE_NAME = %s AND RIGHT(COLUMN_NAME,7) = %s";
+			    $columns = $this->db->get_row($this->db->prepare($sql, $table_name, '_siteid'));
+			    //var_dump($columns);
+			    $array1 = explode(DB_PREFIX, $table_name);
+			    $tablename = $array1[1];
+			    if ($columns) {
+				$array2 = explode('_siteid', $columns->COLUMN_NAME);
+				$ms_tables[$tablename] = $array2[0];
+			    }			
+			}
+			//define('MS_TABLES','return ' . var_export($ms_tables, 1) . ';');
+			 define('MS_TABLES',serialize($ms_tables));			
+		    }
+
+
+		} else {
 		    $siteid = 1;
-//		}
-		if (!defined('SITEID')) {
-		    define('SITEID', $siteid);
-		    if (!defined('CACHE')) { define("CACHE", BASE . "cache/" . $siteid . "/"); }
+		    $siteurl = BASEURL;
+		}
+
+		if (!defined('SITEID')) { define('SITEID', $siteid); }
+		if (!defined('SITEURL')) { define("SITEURL", $siteurl); }
+		
+		if (!defined('CACHE')) {
+		    
+		    define("CACHE", BASE . "cache/" . $siteid . "/");
 
 		    $dirs = array('', 'debug_logs/' , 'db_cache/', 'css_js_cache/', 'html_cache/', 'rss_cache/', 'lang_cache/');  // first array item is needed to create the SITEID base folder
 
@@ -177,6 +210,7 @@ class Initialize
 			    mkdir(CACHE . $dir);
 			}
 		    }
+		    
 		}
 
 		return false;
@@ -255,30 +289,24 @@ class Initialize
 	
 	/**
 	 * Returns all site settings
-	 * @param int $multisite - site id
-	 *
-	 * @return bool
+	 * @param <int> $siteid
+	 * 
+	 * @return <bool>
 	 */
-	public function readSettings($multisite = 0)
-	{ 
-		if (!$multisite) { 
-			$sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;
-			$settings = $this->db->get_results($this->db->prepare($sql));
-		} else {
-			$sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS . " WHERE settings_siteid = %d";
-			$settings = $this->db->get_results($this->db->prepare($sql, $multisite));
-		}
-		
-		if(!$settings) { return false; }
-		
+	public function readSettings() {
+	    $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;
+	    $settings = $this->db->get_results($this->db->prepare($sql));
+
+	    if(!$settings) { return false; }
+
 		// Make Hotaru settings global constants
 		foreach ($settings as $setting)
 		{
-			if (!defined($setting->settings_name)) { 
-				define($setting->settings_name, $setting->settings_value);
+			if (!defined($setting->settings_name)) {
+				if ($setting->settings_name != 'MULTI_SITE') { define($setting->settings_name, $setting->settings_value); }
 			}
 		}
-				
+
 		return true;
 	}
 	
@@ -331,7 +359,7 @@ class Initialize
 	public function setUpJsConstants()
 	{
 		// Start timer if debugging
-		$global_js_var = "jQuery('document').ready(function($) {BASEURL = '". BASEURL ."'; ADMIN_THEME = '" . ADMIN_THEME . "'; THEME = '" . THEME . "';});";	
+		$global_js_var = "jQuery('document').ready(function($) {BASE = '" . BASE . "'; BASEURL = '". SITEURL ."'; SITEURL = '". SITEURL ."'; ADMIN_THEME = '" . ADMIN_THEME . "'; THEME = '" . THEME . "';});";
 		$JsConstantsFile = "css_js_cache/JavascriptConstants.js";
 	
 		if (!file_exists(CACHE . $JsConstantsFile)) {

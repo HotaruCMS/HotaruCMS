@@ -33,7 +33,7 @@ extract($h->vars['admin_account']); // extracts $username_check, etc.
 
 <br />
 <?php echo $h->lang["main_user_theme_account_instructions"]; ?>
-<form name='admin_theme_update_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>    
+<form name='admin_theme_update_form' action='<?php echo SITEURL; ?>admin_index.php' method='post'>    
 	<table>
 		<tr>
 			<td><?php echo $h->lang["main_user_theme_update_username"]; ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check; ?>' /></td></tr>
@@ -57,7 +57,7 @@ extract($h->vars['admin_account']); // extracts $username_check, etc.
 <br />
 
 <?php echo $h->lang["main_user_theme_update_password_instruct"]; ?>
-<form name='update_form' action='<?php echo BASEURL; ?>admin_index.php' method='post'>
+<form name='update_form' action='<?php echo SITEURL; ?>admin_index.php' method='post'>
 	<table>
 		<tr>
 			<td colspan='2'><small><?php echo $h->lang["main_user_account_password_requirements"]; ?></small></td>

@@ -237,6 +237,8 @@ form {
 #plugin_management td.table_install { width: 17%; font-size: 0.8em; }
 #plugin_management td.table_description { font-size: 0.8em; background-color: #fefefe; border-style:solid; border-width: 0.2em 0 0.2em 0.2em; border-color: #e0e0e0; }
 #plugin_management td.table_description_close { font-size: 0.8em; background-color: #fefefe; border-style:solid; border-width: 0.2em 0.2em 0.2em 0; border-color: #e0e0e0; text-align: center; }
+#plugin_management .plugin_management_right {float:right; font-weight:bold;}
+#plugin_management a:hover {text-decoration: none; color: #000;}
 
 /* *************************************
 *  Site Settings  *
@@ -345,19 +347,21 @@ table#settings {
 
 .accordion .horizontal { }
 
-#admin_theme_theme_activate {cursor: pointer;  }
+#admin_theme_theme_activate {cursor: pointer; margin-top: 10px; }
+#admin_theme_theme_activate span.activate { background-color: #fbe760; padding: 0.4em; }
 .power_on {padding-left: 1.5em; background-image: url(../images/power_on.png); background-repeat: no-repeat;}
 .tick_on {padding-left: 1.5em; background-image: url(../images/tick_yes.png); background-repeat: no-repeat;}
 .warning_on {padding-left: 1.5em; background-image: url(../images/warning.png); background-repeat: no-repeat;}
 
 #sidebar.vertical .home {padding-left: 1.5em; background-image: url(../images/home.png); background-repeat: no-repeat;}
 
+#site_stats li a {color: #000;}
 #site-stats .title {font-weight:bold; margin-left:0; margin-bottom:2px; }
 #site-stats li {margin-left:4px;}
 
 #admin_topright {margin: 20px; width: 160px;}
 
-div.adm-header {
+div.admin-header {
    /* background-image:url("../images/content-bg.jpg"); */
 background-position:0 0;
 background-repeat:repeat-x;
@@ -368,7 +372,7 @@ background-color: #CBE2FF;
 border-bottom:1pt solid #666666;
 }
 
-div.adm-header-title {
+div.admin-header-title {
     color:#333333;
 float:left;
 font-size:42px;
@@ -378,7 +382,7 @@ padding:25px 0 25px 110px;
 position:relative;
 }
 
-div.adm-header-verion {
+div.admin-header-version {
     font-family:Verdana;
 font-size:10px;
 height:10px;
@@ -389,16 +393,16 @@ top:66px;
 width:100px;
 }
 
-div.adm-top-menu { float:right; position:relative; }
+div.admin-top-menu { float:right; position:relative; }
 
-div.adm-tm-item {
+div.admin-menu-item {
     float:left;
 height:87px;
 position:relative;
 width:100px;
 }
 
-div.adm-tm-item a {
+div.admin-menu-item a {
     color:#333333;
 display:block;
 height:87px;
@@ -408,27 +412,52 @@ text-decoration:none;
 width:100px;
 }
 
-div.adm-tm-item-icon {height:32px;
+div.admin-menu-item-icon {height:32px;
 margin:0 auto;
 padding:23px 0 5px;
 width:32px;}
 
-div.adm-tm-item-icon img { width:36px; height:36px; }
-div.adm-tm-item-text {font-size:11px; text-align:center;}
+div.admin-menu-item-icon img { width:36px; height:36px; }
+div.admin-menu-item-text {font-size:11px; text-align:center;}
 
-img.adm-header-logo {height:70px;
+img.admin-header-logo {height:70px;
 left:30px;
 position:absolute;
 top:15px;
 width:70px;}
 
-div.adm-header-admin {
+div.admin-header-admin {
 left:148px;
 position:absolute;
 top:0px;
 width:90px;}
 
-div.adm-frame {margin: 0 auto; width:75em;}
+div.admin-frame {margin: 0 auto; width:75em;}
 
-div.adm-header-admin a {color:#000;}
-div.adm-header-admin a:hover {color:#333; text-decoration: none;}
+div.admin-header-admin a {color:#000;}
+div.admin-header-admin a:hover {color:#333; text-decoration: none;}
+#settings a {color:#000;}
+#settings a:hover {color:blue;}
+
+/*
+
+This breaks the layout in IE:
+
+#login_form {-moz-border-radius:14px; background:none repeat scroll 0 0 #D4F07F; margin:30px auto; padding:20px; text-align:center; width:500px; -moz-box-shadow:0 4px 18px #C8C8C8; }
+#login_form input {-moz-border-radius:4px; border: 1pt solid #d0d0d0;}
+#login_form #admin_login_button {padding:4px; font-weight:bold; color:#777; background-color:#ccc;}
+#login_form #admin_login_button:hover {color:navy; cursor:pointer;}
+#login_form #admin_login_name {padding:4px; font-size:24px;}
+#login_form #admin_login_password {padding:4px; font-size:24px;}
+#login_form .forgot_password {color:#777;}
+#login_form .forgot_password:hover {text-decoration:none; color:navy;}
+
+#login_form td {font:14px "Lucida Grande",Verdana,Arial,"Bitstream Vera Sans",sans-serif;}
+*/
+
+#plugin_search_form {-moz-border-radius:14px; background:none repeat scroll 0 0 #eee640; margin:30px auto; padding:20px; text-align:center; width:500px; -moz-box-shadow:0 4px 18px #C8C8C8; }
+#plugin_search_form input {-moz-border-radius:4px; border: 1pt solid #d0d0d0;}
+#plugin_search_form #admin_plugin_search {padding:4px; font-size:24px;}
+#plugin_search_form #admin_plugin_search_button {padding:4px; font-weight:bold; color:#777; background-color:#ccc;}
+#plugin_search_form #admin_plugin_search_button:hover {color:navy; cursor:pointer;}
+

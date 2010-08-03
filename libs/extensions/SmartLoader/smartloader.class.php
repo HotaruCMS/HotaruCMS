@@ -266,6 +266,8 @@
 				fwrite($cacheFilename_handle, $cache_content);
 				/* Allow ftp users to access/modify/delete cache file, suppress chmod errors here */
 				@chmod($this->cacheFilename, 0664);
+			} else {
+			    print "Can not write to the cache folder. You may need to change the permissions to this folder and files within it, before Hotaru can start.";
 			}
 		}
 		

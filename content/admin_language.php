@@ -59,6 +59,7 @@ $lang["admin_news_more_threads"] = "More recent threads...";
 
 /* Announcements /class.hotaru.php */
 $lang['admin_announcement_delete_install'] = "Please delete the install folder before someone deletes your database!";
+$lang['admin_announcement_run_install'] = "You have a new version of Hotaru but have not run the upgrade script yet.";
 $lang['admin_announcement_plugins_disabled'] = "Go to Plugin Management to enable some plugins.";
 $lang['admin_announcement_users_disabled'] = "Please enable the Users plugin in Plugin Management.";
 $lang['admin_announcement_change_site_email'] = "Please change the site email address in the Settings page.";
@@ -224,6 +225,15 @@ $lang['pagination_last'] = "Last";
 $lang['pagination_previous'] = "Previous";
 $lang['pagination_next'] = "Next";
 
+/* header */
+$lang["admin_theme_header_admin"] = "ADMIN";
+$lang["admin_theme_header_hotarucms"] = "Hotaru CMS ";
+$lang["admin_theme_menu_admin_home"] = "Admin Home";
+$lang["admin_theme_menu_site_home"] = "Site Home";
+$lang["admin_theme_menu_hotaru_forums"] = "Hotaru Forums";
+$lang["admin_theme_menu_help"] = "Documentation";
+$lang["admin_theme_menu_logout"] = "Logout";
+
 /* navigation */
 $lang["admin_theme_navigation_home"] = "Home";
 $lang["admin_theme_navigation_admin"] = "Admin";
@@ -243,27 +253,20 @@ $lang["admin_theme_plugin_settings"] = "Plugin Settings";
 $lang["admin_theme_theme_settings"] = "Theme Settings";
 $lang["admin_theme_theme_no_settings"] = " doesn't have any settings.";
 $lang["admin_theme_theme_activate"] = " Theme can be activated by clicking here.";
+$lang["admin_theme_theme_activate_current"] = " Theme is currently active.";
 $lang["admin_theme_theme_activate_success"] = " Theme was activated successfully.";
 $lang["admin_theme_theme_activate_error"] = " Theme was not activated due to an error.";
+$lang["admin_theme_theme_revert_settings"] = "Revert this theme to its default settings";
 
 
 /* footer */
-$lang["admin_theme_footer_having_trouble_vist_forums"] = "Having trouble? Read the <a href='http://hotarudocs.com'>Documentation</a> or ask for help in the <a href='http://hotarucms.org/forum.php'>Forums</a>.";
+$lang["admin_theme_footer_having_trouble_vist_forums"] = "Having trouble? Read the <a href='http://hotarudocs.com'>Documentation</a> or ask for help in the <a href='http://forums.hotarucms.org'>Forums</a>.";
 
 /* 404 */
 $lang["admin_theme_404_page_not_found"] = "Page not found.";
 
 /* Account */
 $lang["admin_theme_account"] = "Account";
-
-
-$lang["admin_theme_header_admin"] = "ADMIN";
-$lang["admin_theme_header_hotarucms"] = "Hotaru CMS ";
-$lang["admin_theme_menu_admin_home"] = "Admin Home";
-$lang["admin_theme_menu_site_home"] = "Site Home";
-$lang["admin_theme_menu_hotaru_forums"] = "Hotaru Forums";
-$lang["admin_theme_menu_help"] = "Documentation";
-$lang["admin_theme_menu_logout"] = "Logout";
 
 /* zip files */
 $lang["admin_theme_filecopy_error"] = "There was an error trying to copy ";
@@ -274,13 +277,16 @@ $lang["admin_theme_fileexist_error"] = " file could not be found on plugin serve
 $lang["admin_theme_zipdelete_error"] = " file could not be deleted from plugin folder";
 $lang["admin_theme_filecopy_permission_error"] = "The files could not be copied due to a permissions error.<br/>You might want to ask your server admin about enabling SuExec on your server";
 
-
+/* Updating */
 $lang["admin_theme_need_cron"] = "You need the 'cron' plugin installed to use this feature";
-$lang["admin_theme_check_latest_plugin_versions"] = "Check for latest plugin versions.";
+$lang["admin_theme_check_latest_plugin_versions"] = "Update";
+$lang["admin_theme_search"] = "Search";
 $lang["admin_theme_version_check_completed"] = "The version numbers have been updated";
-
 $lang["admin_theme_version_latest_version_installed"] = "Latest version installed";
 $lang["admin_theme_version_update_to"] = "Update to ";
+
+/* Plugin search */
+$lang["admin_theme_plugin_search_submit"] = "Search";
 
 
 

@@ -35,7 +35,7 @@ class AdminAuth
 		{
 			if (($h->pageName != 'admin_login') && !$this->isAdminCookie($h))
 			{
-				header('Location: ' . BASEURL . 'admin_index.php?page=admin_login');
+				header('Location: ' . SITEURL . 'admin_index.php?page=admin_login');
 				die; exit;
 			}
 		}
@@ -47,7 +47,7 @@ class AdminAuth
 			// and there's no cookie for the Admin yet.
 			if (($h->currentUser->name == "") && $h->isActive('signin')) 
 			{
-				header('Location: ' . BASEURL . 'index.php?page=login');
+				header('Location: ' . SITEURL . 'index.php?page=login');
 				die; exit;
 			} 
 			elseif ($h->currentUser->getPermission('can_access_admin') != 'yes') 
@@ -230,18 +230,18 @@ class AdminAuth
 		{
 			$strCookie=base64_encode(
 				join(':', array($h->currentUser->name, 
-				$h->currentUser->generateHash($h->currentUser->name, md5(BASEURL)),
+				$h->currentUser->generateHash($h->currentUser->name, md5(SITEURL)),
 				md5($h->currentUser->password)))
 			);
 			
 			// (2592000 = 60 seconds * 60 mins * 24 hours * 30 days.)
 			$month = 2592000 + time();
 			
-			if (strpos(BASEURL, "localhost") !== false) {
+			if (strpos(SITEURL, "localhost") !== false) {
 			     setcookie("hotaru_user", $h->currentUser->name, $month, "/");
 			     setcookie("hotaru_key", $strCookie, $month, "/");
 			} else {
-			     $parsed = parse_url(BASEURL); 
+			     $parsed = parse_url(SITEURL); 
 			                
 			     // now we need a dot in front of that so cookies work across subdomains:
 			     setcookie("hotaru_user", $h->currentUser->name, $month, "/", "." . $parsed['host']);
@@ -277,7 +277,7 @@ class AdminAuth
 	public function adminLogout($h)
 	{
 		$h->currentUser->destroyCookieAndSession();
-		header("Location: " . BASEURL);
+		header("Location: " . SITEURL);
 		return true;
 	}
 }

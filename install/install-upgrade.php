@@ -81,7 +81,7 @@ function upgrade_check($h, $old_version) {
 	if ( isset($old_version) )
 	    echo "<div class='install_content'>" . $lang['upgrade_step1_old_version'] . $old_version . "</div>\n";
 	else
-	    echo "<div class='install_content'>" . $lang['upgrade_step1_no_old_version'] . "</div>\n";
+	    echo "<div class='install_content'>" . $lang['upgrade_step1_old_no_version'] . "</div>\n";
 
 	if ($h->version > $old_version)
 	    echo "<div class='install_content'>" . $lang['upgrade_step1_details'] . "</div>\n";
@@ -638,11 +638,101 @@ function do_upgrade($h, $old_version)
 		// update "old version" for next set of upgrades
 		$old_version = "1.3.0";
 	}
-	
-	//$h->version ="1.2.0";
+
+	 // 1.3.0 to 1.4.0
+	if ($old_version == "1.3.0") {
+
+	    // Version Info Auto Update
+	    $sql = "UPDATE  " . TABLE_SETTINGS . " SET settings_note = %s, settings_name = %s WHERE settings_name = %s";
+	    $h->db->query($h->db->prepare($sql, 'Hotaru updates', 'SYS_UPDATES', 'SYS_FEEDBACK'));
+
+	    // RELATES TABLE
+	    if (!$exists = $h->db->table_exists('relates')) {
+		//echo "table doesn't exist. Stopping before creation."; exit;
+		$sql = "CREATE TABLE `" . DB_PREFIX .  "relates` (
+			`relates_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+			`relates_user_id` int(20) NOT NULL default '0',
+			`relates_post_id` int(20) NOT NULL default '0',
+			`relates_type` varchar(64) default '',
+			`relates_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			INDEX  (`relates_user_id`),
+			INDEX  (`relates_post_id`),
+			INDEX  (`relates_type`)
+		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Relates';";		
+		$h->db->query($sql);
+	    }
+
+	    // Version Info Auto Update
+	    $sql = "UPDATE  " . TABLE_SETTINGS . " SET settings_note = %s, settings_name = %s WHERE settings_name = %s";
+	    $h->db->query($h->db->prepare($sql, 'Hotaru updates', 'SYS_UPDATES', 'SYS_FEEDBACK'));
+
+	    // MULTI_SITE for SETTINGS table for siteid=1 only (admin)
+	    $sql = "SELECT settings_siteid FROM " . TABLE_SETTINGS . " WHERE settings_name = %s AND settings_siteid = %d";
+	    $result = $h->db->get_var($h->db->prepare($sql, 'MULTI_SITE', 1));
+
+	    if (!$result) {
+		$sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+		$h->db->query($h->db->prepare($sql, 'MULTI_SITE', 'false', 'false', 'Multiple sites'));
+	    }
+
+	    // Add siteid to pluginhooks table
+	    if (!$exists = $h->db->column_exists('pluginhooks', 'pluginhooks_siteid')) {
+		    // Create a column for index first
+		    $sql = "ALTER TABLE " . TABLE_PLUGINHOOKS . " ADD pluginhooks_siteid INT NOT NULL DEFAULT 1";
+		    $h->db->query($sql);
+	    }
+
+	    // Add index for siteid on pluginhooks table
+	    $sql = "SHOW INDEX FROM `" . TABLE_PLUGINHOOKS . "` WHERE KEY_NAME = 'pluginhooks_siteid'";
+	    $result = $h->db->query($sql);
+	    if (!$result) {
+		    $sql = "ALTER TABLE `" . TABLE_PLUGINHOOKS . "` ADD INDEX (pluginhooks_siteid)";
+		    $h->db->query($sql);
+	    }
+
+	    // Change post_title column from `post_title` varchar(255) NULL, to `post_title` text NULL,
+	    $exists = $h->db->column_exists('posts', 'post_title');
+	    if (!$exists) {
+		    $sql = "ALTER TABLE " . TABLE_POSTS . " MODIFY post_title text NULL";
+		    $h->db->query($h->db->prepare($sql));
+	    }
+	    
+	    // Drop token_id column from the tokens table
+	    if ($h->db->column_exists('tokens', 'token_id')) {
+		    $h->db->query("ALTER TABLE " . DB_PREFIX . "tokens DROP token_id");
+	    }
+
+		// update "old version" for next set of upgrades
+		$old_version = "1.4.0";
+	}
+
+
 	// Update Hotaru version number to the database (referred to when upgrading)
 	$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_key = %s, miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";
 	$h->db->query($h->db->prepare($sql, 'hotaru_version', $h->version, $h->version, 'hotaru_version'));
 }
+
+
+
+
+//	// loop through all sites to insert this setting into each one's SETTING TABLE
+//	$sql = "SELECT site_id FROM " . TABLE_SITE;
+//	$sites = $h->db->get_results($h->db->prepare($sql));
+//
+//	$sql = "SELECT settings_siteid FROM " . TABLE_SETTINGS . " WHERE settings_name = %s";
+//	$result = $h->db->get_results($h->db->prepare($sql, 'MULTI_SITE'), ARRAY_N);
+//	if (!$result) { $result = array(); }
+//	//var_dump($result);
+//	if ($sites) {
+//	    foreach ($sites as $site) {
+//		if (in_array($site->site_id, $result)) {
+//		    $sql = "UPDATE  " . TABLE_SETTINGS . " SET settings_value = %s WHERE settings_name = %s";
+//		    $h->db->query($h->db->prepare($sql, '', ''));
+//		} else {
+//		    $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+//		    $h->db->query($h->db->prepare($sql, '', '', '', ''));
+//		}
+//	    }
+//	}
 
 ?>

@@ -130,13 +130,13 @@ class Blocked
 				$output .= "<td>" . $block->blocked_type . "</td>\n";
 				$output .= "<td>" . $block->blocked_value . "</td>\n";
 				$output .= "<td>" . "<a class='table_drop_down' href='#'>\n";
-				$output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/edit.png'>" . "</a></td>\n";
-				$output .= "<td>" . "<a href='" . BASEURL . "admin_index.php?page=blocked&amp;action=remove&amp;id=" . $block->blocked_id . "'>\n";
-				$output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/delete.png'>" . "</a></td>\n";
+				$output .= "<img src='" . SITEURL . "content/admin_themes/" . ADMIN_THEME . "images/edit.png'>" . "</a></td>\n";
+				$output .= "<td>" . "<a href='" . SITEURL . "admin_index.php?page=blocked&amp;action=remove&amp;id=" . $block->blocked_id . "'>\n";
+				$output .= "<img src='" . SITEURL . "content/admin_themes/" . ADMIN_THEME . "images/delete.png'>" . "</a></td>\n";
 				$output .= "</tr>\n";
 				$output .= "<tr class='table_tr_details' style='display:none;'>\n";
 				$output .= "<td colspan=3 class='table_description'>\n";
-				$output .= "<form name='blocked_list_edit_form' action='" . BASEURL . "admin_index.php' method='post'>\n";
+				$output .= "<form name='blocked_list_edit_form' action='" . SITEURL . "admin_index.php' method='post'>\n";
 				$output .= "<table><tr><td><select name='blocked_type'>\n";
 				
 				switch($block->blocked_type) { 

@@ -865,13 +865,23 @@ class Inspekt
 
 		$value = str_replace($locale['decimal_point'], '.', $value);
 		$value = str_replace($locale['thousands_sep'], '', $value);
-				
+		
+		/*
 		$is_valid = (
 			is_numeric($value)  // Must be able to be converted to a number
 			&& preg_replace("/^-?([0-9]+)$/", "", $value) == ""  // Must be an integer (no floats or e-powers)
 			&& bccomp($value, "-9223372036854775807") >= 0  // Must be greater than than min of 64-bit
 			&& bccomp($value, "9223372036854775807") <= 0  // Must be less than max of 64-bit
+		);*/
+		
+		/* remove Hotaru's dependency on BC Math */
+		$is_valid = (
+			is_numeric($value)  // Must be able to be converted to a number
+			&& preg_replace("/^-?([0-9]+)$/", "", $value) == ""  // Must be an integer (no floats or e-powers)
+			&& ($value >= -9223372036854775807)  // Must be greater than than min of 64-bit
+			&& ($value <= 9223372036854775807)  // Must be less than max of 64-bit
 		);
+		
 		if (!$is_valid) {
 			return false;
 		} else {

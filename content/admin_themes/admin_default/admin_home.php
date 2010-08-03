@@ -35,7 +35,7 @@
 	 
 <!-- TITLE FOR ADMIN NEWS -->
 	<h2>
-		<a href="http://feeds2.feedburner.com/hotarucms"><img src="<?php echo BASEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/rss_16.png" alt="rss" /></a>
+		<a href="http://feeds2.feedburner.com/hotarucms"><img src="<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/rss_16.png" alt="rss" /></a>
 		&nbsp;<?php echo $h->lang["admin_theme_main_latest"]; ?>
 	</h2>
 	
@@ -66,10 +66,9 @@
 		?>       
 
 		<?php $h->pluginHook('admin_theme_main_stats_post_version'); ?>
-		<?php $h->pluginHook('admin_theme_main_stats', 'users', array('Summary' => array('total_users', 'admins', 'supermods', 'moderators'))); ?>
-		<?php $h->pluginHook('admin_theme_main_stats', 'users', array('Users' => array('approved_users', 'undermod_users', 'pending_users', 'banned_users', 'killspammed_users'))); ?>
-		<?php $h->pluginHook('admin_theme_main_stats', 'bookmarking', array('Posts' => array('total_posts', 'approved_posts', 'pending_posts', 'buried_posts', 'archived_posts'))); ?>
-		<?php $h->pluginHook('admin_theme_main_stats', 'comments', array('Comments' => array('total_comments', 'approved_comments', 'pending_comments', 'archived_comments'))); ?>
+		<?php $h->pluginHook('admin_theme_main_stats', 'users', array('users' => array('all', 'admin', 'supermod', 'moderator', 'member', 'undermod', 'pending', 'banned', 'killspammed'))); ?>
+		<?php $h->pluginHook('admin_theme_main_stats', 'post_manager', array('posts' => array('all', 'approved', 'pending', 'buried', 'archived'))); ?>
+		<?php $h->pluginHook('admin_theme_main_stats', 'comments', array('comments' => array('all', 'approved', 'pending', 'archived'))); ?>
 	</ul>
 </td>
 

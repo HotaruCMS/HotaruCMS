@@ -48,9 +48,9 @@ class IncludeCssJs
 		
 		foreach ($files as $file) {
 			if (file_exists(THEMES . THEME . 'css/' . $file . '.css')) {
-				echo "<link rel='stylesheet' href='" . BASEURL . "content/themes/" . THEME . "css/" . $file . ".css' type='text/css' />\n";
+				echo "<link rel='stylesheet' href='" . SITEURL . "content/themes/" . THEME . "css/" . $file . ".css' type='text/css' />\n";
 			} else {
-				echo "<link rel='stylesheet' href='" . BASEURL . "content/plugins/" . $folder . "/css/" . $file . ".css' type='text/css' />\n";
+				echo "<link rel='stylesheet' href='" . SITEURL . "content/plugins/" . $folder . "/css/" . $file . ".css' type='text/css' />\n";
 			}
 		}
 	
@@ -74,9 +74,9 @@ class IncludeCssJs
 		
 		foreach ($files as $file) {
 			if (file_exists(THEMES . THEME . 'javascript/' . $file . '.js')) {
-				echo "<script src='" . BASEURL . "content/themes/" . THEME . "javascript/" . $file . ".js' type='text/javascript' language='javascript'></script>\n";
+				echo "<script src='" . SITEURL . "content/themes/" . THEME . "javascript/" . $file . ".js' type='text/javascript' language='javascript'></script>\n";
 			} else {
-				echo "<script src='" . BASEURL . "content/plugins/" . $folder . "/javascript/" . $file . ".js' type='text/javascript' language='javascript'></script>\n";
+				echo "<script src='" . SITEURL . "content/plugins/" . $folder . "/javascript/" . $file . ".js' type='text/javascript' language='javascript'></script>\n";
 			}
 		}
 		return true;
@@ -382,11 +382,11 @@ class IncludeCssJs
 		if ($admin) { $prefix = 'hotaru_admin_'; } else { $prefix = 'hotaru_'; }
 		
 		if ($version_js > 0) {
-			echo "<script type='text/javascript' src='" . BASEURL . "cache/" . SITEID . "/css_js_cache/" . $prefix  . "js_" . $version_js . ".js'></script>\n";
+			echo "<script type='text/javascript' src='" . SITEURL . "cache/" . SITEID . "/css_js_cache/" . $prefix  . "js_" . $version_js . ".js'></script>\n";
 		}
 		
 		if ($version_css > 0) {
-			echo "<link rel='stylesheet' href='" . BASEURL . "cache/" . SITEID . "/css_js_cache/" . $prefix  . "css_" . $version_css . ".css' type='text/css' />\n";
+			echo "<link rel='stylesheet' href='" . SITEURL . "cache/" . SITEID . "/css_js_cache/" . $prefix  . "css_" . $version_css . ".css' type='text/css' />\n";
 		}
 		
 	 }

@@ -124,17 +124,25 @@ class Language
 			return true;
 		}
 		
-		// Look in the current theme for a language file...
-		$file = THEMES . THEME . 'languages/' . $filename . '_language.php';
+		// check the current theme for a language file, then the default theme...
 		
-		// check if this language is already cached
-		if ($this->checkLanguageCached($h, $file)) {
-			return true;
+		$files = array(
+			THEMES . THEME . 'languages/' . $filename . '_language.php',
+			THEMES . $h->pageHandling->default . 'languages/' . $filename . '_language.php'
+		);
+		
+		foreach ($files as $file) 
+		{
+			// check if this language is already cached
+			if ($this->checkLanguageCached($h, $file)) {
+				return true;
+			}
+				
+			if (file_exists($file)) {
+				$this->addLanguageFile($h, $file);
+				return true;
+			}
 		}
-			
-		if (file_exists($file)) {
-			$this->addLanguageFile($h, $file);
-		} 
 	}
 	
 	

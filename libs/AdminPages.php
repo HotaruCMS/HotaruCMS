@@ -61,6 +61,11 @@ class AdminPages
 				$h->vars['admin_sidebar_layout'] = 'horizontal';
 				$this->adminPlugins($h);
 				break;
+			case "plugin_search":
+				$h->sidebars = false;
+				$h->vars['admin_sidebar_layout'] = 'horizontal';
+				//$this->adminPluginSearch($h);				
+				break;
 			case "plugin_settings":
 				$h->vars['settings_plugin'] = $h->cage->get->testAlnumLines('plugin'); // get plugin name from url
 				if (!$h->vars['settings_plugin']) { 
@@ -145,7 +150,8 @@ class AdminPages
 					}
 				} else {
 					// values that are allowed to be empty:
-					$exempt = array('SMTP_USERNAME', 'SMTP_PASSWORD');
+					 // multi-site added here because the feature is hidden in settings template. Remove from below when visible.
+					$exempt = array('SMTP_USERNAME', 'SMTP_PASSWORD', 'MULTI_SITE');
 					if ($setting_name->settings_show == 'N') { array_push($exempt, $setting_name->settings_name); }
 					if (!in_array($setting_name->settings_name, $exempt)) { 
 						// otherwise flag as an error:
@@ -154,16 +160,32 @@ class AdminPages
 				}
 			}
 		
-			// cron hook to include SYS_FEEDBACK job
-			if ($h->cage->post->keyExists('SYS_FEEDBACK') == 'true' ) {
+			// cron hook to include SYS_UPDATES job
+			if ($h->cage->post->keyExists('SYS_UPDATES') == 'true' ) {
 				$timestamp = time();
 				$recurrence = "daily";
 				$hook = "SystemInfo:hotaru_feedback";
 				$cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook);
 				$h->pluginHook('cron_update_job', 'cron', $cron_data);
+
+				$hook = "SystemInfo:hotaru_version";
+				$cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook);
+				$h->pluginHook('cron_update_job', 'cron', $cron_data);
+
+				$hook = "SystemInfo:plugin_version_getAll";
+				$cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook);
+				$h->pluginHook('cron_update_job', 'cron', $cron_data);
 			}
 			else {
 				$hook = "SystemInfo:hotaru_feedback";
+				$cron_data = array('hook'=>$hook);
+				$h->pluginHook('cron_delete_job', 'cron', $cron_data);
+
+				$hook = "SystemInfo:hotaru_version";
+				$cron_data = array('hook'=>$hook);
+				$h->pluginHook('cron_delete_job', 'cron', $cron_data);
+
+				$hook = "SystemInfo:plugin_version_getAll";
 				$cron_data = array('hook'=>$hook);
 				$h->pluginHook('cron_delete_job', 'cron', $cron_data);
 			}
@@ -203,7 +225,7 @@ class AdminPages
 	 */
 	public function getAllAdminSettings($db)
 	{
-		$sql = "SELECT settings_name, settings_value, settings_default, settings_note, settings_show FROM " . TABLE_SETTINGS;
+		$sql = "SELECT settings_name, settings_value, settings_default, settings_note, settings_show FROM " . TABLE_SETTINGS;		
 		$results = $db->get_results($db->prepare($sql));
 		if ($results) { return $results; } else { return false; }
 	}
@@ -400,8 +422,8 @@ class AdminPages
 	*  PLUGIN MANAGEMENT PAGE
 	*
 	* *********************************************************** */
-	
-	
+
+
 	 /**
 	 * Call functions based on user actions in Plugin Management
 	 */
@@ -412,8 +434,7 @@ class AdminPages
 		
 		$action = $h->cage->get->testAlnumLines('action');
 		$order = $h->cage->get->testAlnumLines('order');
-		
-		require_once(LIBS . 'PluginManagement.php');
+				
 		$plugman = new PluginManagement();
 		
 		switch ($action) {

@@ -137,7 +137,7 @@ class Avatar
 	{
 		if (!$this->user_id) { return false; }
 		
-		$output = "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>\n";
+		$output = "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>";
 		$result = $h->pluginHook('avatar_get_avatar');
 		if ($result) {
 			foreach ($result as $key => $value) {
@@ -145,7 +145,7 @@ class Avatar
 			}
 			$output .= $avatar; // uses the last avatar sent to this hook
 		}
-		$output .= "</a>\n";
+		$output .= "</a>";
 		return $output;
 	}
 	
@@ -158,7 +158,7 @@ class Avatar
 		if (!$this->user_id) { return false; }
 		
 		$output = "<div class='avatar_wrapper'>";
-		$output .= "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>\n";
+		$output .= "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>";
 		$result = $h->pluginHook('avatar_get_avatar');
 		if ($result) {
 			foreach ($result as $key => $value) {
@@ -166,8 +166,8 @@ class Avatar
 			}
 			$output .= $avatar; // uses the last avatar sent to this hook
 		}
-		$output .= "</a>\n";
-		$output .= "</div>\n";
+		$output .= "</a>";
+		$output .= "</div>";
 		return $output;
 	}
 	
@@ -179,9 +179,9 @@ class Avatar
 	{
 		if (!$this->user_id) { return false; }
 		
-		$output = "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>\n";
+		$output = "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>";
 		$output .= $avatar_image; // avatar in img tags
-		$output .= "</a>\n";
+		$output .= "</a>";
 		return $output;
 	}
 	
@@ -194,10 +194,10 @@ class Avatar
 		if (!$this->user_id) { return false; }
 		
 		$output = "<div class='avatar_wrapper'>";
-		$output .= "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>\n";
+		$output .= "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>";
 		$output .= $avatar_image; // avatar in img tags
-		$output .= "</a>\n";
-		$output .= "</div>\n";
+		$output .= "</a>";
+		$output .= "</div>";
 		return $output;
 	}
 }

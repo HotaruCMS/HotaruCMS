@@ -25,7 +25,7 @@
  */
 class Hotaru
 {
-	protected $version              = "1.3.0";  // Hotaru CMS version
+	protected $version              = "1.4.0";  // Hotaru CMS version
 	protected $isDebug              = false;    // show db queries and page loading time
 	protected $isAdmin              = false;    // flag to tell if we are in Admin or not
 	protected $sidebars             = true;     // enable or disable the sidebars
@@ -43,6 +43,7 @@ class Hotaru
 	protected $includes;                        // for CSS/JavaScript includes
 	protected $debug;                           // Debug object
 	protected $email;                           // Email object
+	protected $pageHandling;                    // PageHandling object
 	
 	// page info
 	protected $home                 = '';       // name for front page
@@ -62,7 +63,7 @@ class Hotaru
 	protected $messages             = array();  // for multiple messages
 	
 	// miscellaneous
-	protected $vars                 = array();  // multi-purpose
+	protected $vars                 = array();  // multi-purpose	
     
 	/**
 	 * CONSTRUCTOR - Initialize
@@ -77,6 +78,7 @@ class Hotaru
 		    define("LIBS", dirname(__FILE__).'/libs/');
 		    define("EXTENSIONS", dirname(__FILE__).'/libs/extensions/');
 		    define("FUNCTIONS", dirname(__FILE__).'/functions/');
+		    define("CONTENT", dirname(__FILE__).'/content/');
 		    define("THEMES", dirname(__FILE__).'/content/themes/');
 		    define("PLUGINS", dirname(__FILE__).'/content/plugins/');
 		    define("ADMIN_THEMES", dirname(__FILE__).'/content/admin_themes/');
@@ -88,14 +90,15 @@ class Hotaru
 		if (!$start) {
 			
 			$init = new Initialize($this);
-			
+
 			$this->db           = $init->db;            // database object
 			$this->cage         = $init->cage;          // Inspekt cage
-			$this->isDebug      = $init->isDebug;       // set debug
+			$this->isDebug      = $init->isDebug;       // set debug			
 			$this->currentUser  = new UserAuth();       // the current user
 			$this->plugin       = new Plugin();         // instantiate Plugin object
 			$this->post         = new Post();           // instantiate Post object
 			$this->includes     = new IncludeCssJs();   // instantiate Includes object
+			$this->pageHandling = new PageHandling();   // instantiate PageHandling object
 			
 			$this->csrf('set');                         // set a csrfToken
 			$this->db->setHotaru($this);                // pass $h object to EzSQL for error reporting
@@ -129,8 +132,7 @@ class Hotaru
 		switch ($entrance) {
 			case 'admin':
 				$this->isAdmin = true;
-				$this->lang = $lang->includeLanguagePack($this->lang, 'admin');
-				require_once(LIBS . 'AdminAuth.php');   // include Admin class
+				$this->lang = $lang->includeLanguagePack($this->lang, 'admin');				
 				$admin = new AdminAuth();               // new Admin object
 				$this->checkCookie();                   // check cookie reads user details
 				$this->checkAccess();                   // site closed if no access permitted
@@ -286,8 +288,17 @@ class Hotaru
 	 */
 	public function setHome($home = '', $pagename = '')
 	{
-		$pageHandling = new PageHandling();
-		$pageHandling->setHome($this, $home, $pagename);
+		$this->pageHandling->setHome($this, $home, $pagename);
+	}
+
+	/**
+	 * Test if the current url is the *true* homepage, i.e. equal to SITEURL
+	 *
+	 * @return bool
+	 */
+	public function isHome()
+	{
+		return $this->pageHandling->isHome($this);
 	}
 	
 	
@@ -299,8 +310,7 @@ class Hotaru
 	 */
 	public function getTitle($delimiter = ' &laquo; ', $raw = false)
 	{
-		$pageHandling = new PageHandling();
-		return $pageHandling->getTitle($this, $delimiter, $raw);
+		return $this->pageHandling->getTitle($this, $delimiter, $raw);
 	}
     
     
@@ -313,8 +323,7 @@ class Hotaru
 	 */
 	public function displayTemplate($page = '', $plugin = '', $include_once = true)
 	{
-		$pageHandling = new PageHandling();
-		$pageHandling->displayTemplate($this, $page, $plugin, $include_once);
+		$this->pageHandling->displayTemplate($this, $page, $plugin, $include_once);
 	}
     
     
@@ -325,8 +334,7 @@ class Hotaru
 	 */
 	public function isPage($page = '')
 	{
-		$pageHandling = new PageHandling();
-		return $pageHandling->isPage($this, $page);
+		return $this->pageHandling->isPage($this, $page);
 	}
     
     
@@ -344,8 +352,7 @@ class Hotaru
 	 */
 	public function isSettingsPage($folder = '')
 	{
-		$pageHandling = new PageHandling();
-		return $pageHandling->isSettingsPage($this, $folder);
+		return $this->pageHandling->isSettingsPage($this, $folder);
 	}
 
     
@@ -354,8 +361,7 @@ class Hotaru
 	 */
 	public function getPageName()
 	{
-		$pageHandling = new PageHandling();
-		$this->pageName = $pageHandling->getPageName($this);
+		$this->pageName = $this->pageHandling->getPageName($this);
 		return $this->pageName;
 	}
     
@@ -368,8 +374,7 @@ class Hotaru
 	 */
 	public function friendlyToStandardUrl($friendly_url) 
 	{
-		$pageHandling = new PageHandling();
-		return $pageHandling->friendlyToStandardUrl($this, $friendly_url);
+		return $this->pageHandling->friendlyToStandardUrl($this, $friendly_url);
 	}
     
     
@@ -382,8 +387,7 @@ class Hotaru
 	 */
 	public function url($parameters = array(), $head = 'index')
 	{
-		$pageHandling = new PageHandling();
-		return $pageHandling->url($this, $parameters, $head);
+		return $this->pageHandling->url($this, $parameters, $head);
 	}
     
     

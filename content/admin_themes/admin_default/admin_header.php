@@ -43,9 +43,9 @@
 	<?php $h->doIncludes(); ?>
 	<!-- End -->
 	
-	<link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/reset-fonts-grids.css'; ?>" type="text/css">
-	<link rel="stylesheet" href="<?php echo BASEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css'; ?>" type="text/css">
-	<!-- <link rel="shortcut icon" href="<?php echo BASEURL; ?>favicon.ico"> -->
+	<link rel="stylesheet" href="<?php echo SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/reset-fonts-grids.css'; ?>" type="text/css">
+	<link rel="stylesheet" href="<?php echo SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css'; ?>" type="text/css">
+	<!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico"> -->
 	
 	<?php $h->pluginHook('admin_header_include_raw'); ?>
 
@@ -53,62 +53,66 @@
 <body>
 
 
-    <div class="adm-header">
-	<div class="adm-frame">
-            	<div class="adm-header-title">
-                    <img class="adm-header-logo" src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/hotaru-80px.png"/>
-            		<div class="adm-header-verion"><?php echo $h->lang["admin_theme_header_hotarucms"]; ?><?php echo $h->version; ?></div>
-			<div class="adm-header-admin"><a href="<?php echo $h->url(array(), 'admin'); ?>"><?php echo $h->lang["admin_theme_header_admin"]; ?></a></div>
+    <div class="admin-header">
+	<div class="admin-frame">
+            	<div class="admin-header-title">
+                    <img class="admin-header-logo" src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/hotaru-80px.png"/>
+            		<div class="admin-header-version"><?php echo $h->lang["admin_theme_header_hotarucms"]; ?><?php echo $h->version; ?></div>
+			<div class="admin-header-admin"><a href="<?php echo $h->url(array(), 'admin'); ?>"><?php echo $h->lang["admin_theme_header_admin"]; ?></a></div>
             	</div>
-            	<div class="adm-top-menu">		    
-		    <div class="adm-tm-item">
-			<a href="<?php echo BASEURL; ?>">
-			    <div class="adm-tm-item-icon">
-				<img src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/home_icon.png" />
+            	<div class="admin-top-menu">
+		    <div class="admin-menu-item">
+			<a href="<?php echo SITEURL; ?>">
+			    <div class="admin-menu-item-icon">
+				<img src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/home_icon.png" />
 			    </div>
-			    <div class="adm-tm-item-text"><?php echo $h->lang["admin_theme_menu_site_home"]; ?></div>
+			    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_site_home"]; ?></div>
 			</a>
 		    </div>
-		    <div  class="adm-tm-item">
-			<a href="<?php echo $h->url(array(), 'admin'); ?>">
-			    <div class="adm-tm-item-icon">
-				<img src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/admin_icon.png">
+			<?php if ($h->currentUser->getPermission('can_access_admin') == 'yes') { ?>
+			    <div  class="admin-menu-item">
+				<a href="<?php echo $h->url(array(), 'admin'); ?>">
+				    <div class="admin-menu-item-icon">
+					<img src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/admin_icon.png">
+				    </div>
+				    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_admin_home"]; ?></div>
+				</a>
 			    </div>
-			    <div class="adm-tm-item-text"><?php echo $h->lang["admin_theme_menu_admin_home"]; ?></div>
+			<?php } ?>
+		    <div class="admin-menu-item">
+			<a href="http://forums.hotarucms.org">
+			    <div class="admin-menu-item-icon">
+				<img src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/forum_icon.png "/>
+			    </div>
+			    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_hotaru_forums"]; ?></div>
 			</a>
 		    </div>
-		    <div class="adm-tm-item">
-			<a href="http://hotarucms.org/forum.php">
-			    <div class="adm-tm-item-icon">
-				<img src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/forum_icon.png "/>
-			    </div>
-			    <div class="adm-tm-item-text"><?php echo $h->lang["admin_theme_menu_hotaru_forums"]; ?></div>
-			</a>
-		    </div>
-		    <!--　<div onmouseout="javascript:$(this).removeClass('adm-tm-item-active');" onmouseover="javascript:$(this).addClass('adm-tm-item-active');" class="adm-tm-item">
+		    <!--　<div onmouseout="javascript:$(this).removeClass('admin-menu-item-active');" onmouseover="javascript:$(this).addClass('admin-menu-item-active');" class="admin-menu-item">
 			<a href="http://hotaruplugins.com">
-			    <div class="adm-tm-item-icon">
+			    <div class="admin-menu-item-icon">
 				<img src="/images/icons/plugins.png">
 			    </div>
-			    <div class="adm-tm-item-text">Plugins</div>
+			    <div class="admin-menu-item-text">Plugins</div>
 			</a>
 		    </div>-->
-		    <div class="adm-tm-item">
+		    <div class="admin-menu-item">
 			<a href="http://hotarudocs.com">
-			    <div class="adm-tm-item-icon">
-				<img src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/docs_icon.png" />
+			    <div class="admin-menu-item-icon">
+				<img src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/docs_icon.png" />
 			    </div>
-			    <div class="adm-tm-item-text"><?php echo $h->lang["admin_theme_menu_help"]; ?></div>
+			    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_help"]; ?></div>
 			</a>
 		    </div>
-		    <div class="adm-tm-item">
-			<a href="/logout/">
-			    <div class="adm-tm-item-icon">
-				<img src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/logout_icon.png" />
+			<?php if ($h->currentUser->loggedIn) { ?>
+			    <div class="admin-menu-item">
+				<a href="<?php echo $h->url(array('page'=>'logout')); ?>">
+				    <div class="admin-menu-item-icon">
+					<img src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/logout_icon.png" />
+				    </div>
+				    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_logout"]; ?></div>
+				</a>
 			    </div>
-			    <div class="adm-tm-item-text"><?php echo $h->lang["admin_theme_menu_logout"]; ?></div>
-			</a>
-		    </div>
+			<?php } ?>
 		</div>
 	    <div class="clear_both">&nbsp;</div>
         </div>

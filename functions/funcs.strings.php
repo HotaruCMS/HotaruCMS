@@ -24,6 +24,9 @@
  * @link      http://www.hotarucms.org/
  */
  
+// We need to set the default internal encoding for the functions to operate properly.
+mb_internal_encoding("UTF-8");
+
 /**
  * Truncate a string
  *
@@ -34,11 +37,13 @@
  */
 function truncate($string, $chars=0, $dot=true)
 {
-	$length = strlen($string);
-	$truncated = substr(strip_tags($string), 0, $chars);    // strips tags to prevent broken tags
-	if ($dot && ($length >= $chars)) {
+	$length = mb_strlen($string);
+	$truncated = mb_substr(strip_tags($string), 0, $chars); // strips tags to prevent broken tags
+
+	if( $dot && ($length >= $chars) ) {
 		$truncated .= '...';
 	}
+
 	return $truncated;
 }
 
@@ -52,25 +57,23 @@ function truncate($string, $chars=0, $dot=true)
  */
 function rstrtrim($str, $remove=null)
 {
-	$str    = (string)$str;
-	$remove = (string)$remove;   
+	$str = (string) $str;
+	$remove = (string) $remove;
 	
-	if (empty($remove)) {
+	if( empty($remove) ) {
 		return rtrim($str);
 	}
 	
-	$len = strlen($remove);
-	$offset = strlen($str)-$len;
+	$len = mb_strlen($remove);
+	$offset = mb_strlen($str) - $len;
 	
-	while($offset > 0 && $offset == strpos($str, $remove, $offset))
-	{
-		$str    = substr($str, 0, $offset);
-		$offset = strlen($str)-$len;
+	while( $offset > 0 && $offset == mb_strpos($str, $remove, $offset) ) {
+		$str = mb_substr($str, 0, $offset);
+		$offset = mb_strlen($str) - $len;
 	}
 	
 	return rtrim($str);
 }
-
 
 /**
  * Changes 'plugin_name' into 'Plugin Name'
@@ -81,13 +84,13 @@ function rstrtrim($str, $remove=null)
  */
 function make_name($string, $delim = '_', $caps = true)
 {
-	$dep_array  = array();
-	$dep_array  = explode($delim, trim($string));
-	if ($caps) {
-		$dep_array  = array_map('ucfirst', $dep_array);
-		$string     = implode(' ', $dep_array);
+	$dep_array = array( );
+	$dep_array = explode($delim, trim($string));
+	if( $caps ) {
+		$dep_array = array_map('ucfirst', $dep_array);
+		$string = implode(' ', $dep_array);
 	} else {
-		$string     = ucfirst(implode(' ', $dep_array));
+		$string = ucfirst(implode(' ', $dep_array));
 	}
 	
 	return $string;
@@ -105,7 +108,7 @@ function random_string($length = 8)
 {
 	$chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxwz0123456789";
 	$string = '';
-	for($i = 0; $i < $length; $i++){
+	for( $i = 0; $i < $length; $i++ ) {
 		$rand_key = mt_rand(0, strlen($chars));
 		$string .= substr($chars, $rand_key, 1);
 	}
@@ -126,37 +129,30 @@ function random_string($length = 8)
 function sanitize($var, $santype = 'all', $allowable_tags = '')
 {
 	// htmlentities & Strip tags
-	if ($santype == 'all') {
-		if (!get_magic_quotes_gpc()) {
-			return htmlentities(strip_tags($var, $allowable_tags),ENT_QUOTES,'UTF-8');
+	if( $santype == 'all' ) {
+		if( !get_magic_quotes_gpc() ) {
+			return htmlentities(strip_tags($var, $allowable_tags), ENT_QUOTES, 'UTF-8');
 		}
-		else {
-			return stripslashes(htmlentities(strip_tags($var, $allowable_tags),ENT_QUOTES,'UTF-8'));
-		}
-		return false;
+		return stripslashes(htmlentities(strip_tags($var, $allowable_tags), ENT_QUOTES, 'UTF-8'));
 	}
 	
 	// Strip tags
-	if ($santype == 'tags') {
-		if (!get_magic_quotes_gpc()) {
+	if( $santype == 'tags' ) {
+		if( !get_magic_quotes_gpc() ) {
 			return strip_tags($var, $allowable_tags);
 		}
-		else {
-			return stripslashes(strip_tags($var, $allowable_tags));
-		}
-		return false;
+		return stripslashes(strip_tags($var, $allowable_tags));
 	}
 	
 	// htmlentities
-	if ($santype == 'ents') {
-		if (!get_magic_quotes_gpc()) {
-			return htmlentities($var,ENT_QUOTES,'UTF-8');
+	if( $santype == 'ents' ) {
+		if( !get_magic_quotes_gpc() ) {
+			return htmlentities($var, ENT_QUOTES, 'UTF-8');
 		}
-		else {
-			return stripslashes(htmlentities($var,ENT_QUOTES,'UTF-8'));
-		}
-		return false;
+		return stripslashes(htmlentities($var, ENT_QUOTES, 'UTF-8'));
 	}
+
+	return false;
 }
 
 
@@ -172,15 +168,18 @@ function make_url_friendly($input)
 {
 	$output = replace_symbols($input);        
 	$output = mb_substr($output, 0, 240);
-	$output = mb_strtolower($output, "UTF-8");
+	$output = mb_strtolower($output, 'UTF-8');
 	$output = trim($output);    
 	//From Wordpress and http://www.bernzilla.com/item.php?id=1007
 	$output = sanitize_title_with_dashes($output);
 	$output = urldecode($output); 
 	
-	if ($output) { return $output; } else { return false; }
-}
+	if( $output ) {
+		return $output;
+	}
 
+	return false;
+}
 
 /**
  * Replace symbols and ascii characters with simpler alternatives
@@ -194,9 +193,8 @@ function replace_symbols($input)
 {
 	// FOR THIS TO WORK, THIS FUNCS.STRINGS.PHP FILE MUST BE SAVED 
 	// IN UTF-8 CHARACTER ENCODING !!!
-	    
 	// Replace spaces with hyphens
-	$output = preg_replace('/\s+/' , '-' , $input); 
+	$output = preg_replace('/\s+/', '-', $input);
 	
 	// Replace other characters
 	$output = str_replace("--", "-", $output);      
@@ -270,14 +268,12 @@ function sanitize_title_with_dashes($title)
 	
 	$title = remove_accents($title);
 	
-	if (seems_utf8($title)) {
-		if (function_exists('mb_strtolower')) {
-			$title = mb_strtolower($title, 'UTF-8');
-		}
+	$title = mb_strtolower($title, 'UTF-8');
+
+	if( seems_utf8($title) ) {
 		$title = utf8_uri_encode($title, 200);
 	}
 	
-	$title = strtolower($title);
 	$title = preg_replace('/&.+?;/', '', $title); // kill entities
 	$title = preg_replace('/[^%a-z0-9 _-]/', '', $title);
 	$title = preg_replace('/\s+/', '-', $title);
@@ -298,11 +294,11 @@ function sanitize_title_with_dashes($title)
  */
 function remove_accents($string) 
 {
-	if ( !preg_match('/[\x80-\xff]/', $string) ) {
+	if( !preg_match('/[\x80-\xff]/', $string) ) {
 		return $string;
 	}
 
-	if (seems_utf8($string)) {
+	if( seems_utf8($string) ) {
 		$chars = array(
 		// Decompositions for Latin-1 Supplement
 		chr(195).chr(128) => 'A', chr(195).chr(129) => 'A',
@@ -359,7 +355,7 @@ function remove_accents($string)
 		chr(196).chr(172) => 'I', chr(196).chr(173) => 'i',
 		chr(196).chr(174) => 'I', chr(196).chr(175) => 'i',
 		chr(196).chr(176) => 'I', chr(196).chr(177) => 'i',
-		chr(196).chr(178) => 'IJ',chr(196).chr(179) => 'ij',
+		chr(196).chr(178) => 'IJ', chr(196).chr(179) => 'ij',
 		chr(196).chr(180) => 'J', chr(196).chr(181) => 'j',
 		chr(196).chr(182) => 'K', chr(196).chr(183) => 'k',
 		chr(196).chr(184) => 'k', chr(196).chr(185) => 'L',
@@ -375,13 +371,13 @@ function remove_accents($string)
 		chr(197).chr(140) => 'O', chr(197).chr(141) => 'o',
 		chr(197).chr(142) => 'O', chr(197).chr(143) => 'o',
 		chr(197).chr(144) => 'O', chr(197).chr(145) => 'o',
-		chr(197).chr(146) => 'OE',chr(197).chr(147) => 'oe',
-		chr(197).chr(148) => 'R',chr(197).chr(149) => 'r',
-		chr(197).chr(150) => 'R',chr(197).chr(151) => 'r',
-		chr(197).chr(152) => 'R',chr(197).chr(153) => 'r',
-		chr(197).chr(154) => 'S',chr(197).chr(155) => 's',
-		chr(197).chr(156) => 'S',chr(197).chr(157) => 's',
-		chr(197).chr(158) => 'S',chr(197).chr(159) => 's',
+		chr(197).chr(146) => 'OE', chr(197).chr(147) => 'oe',
+		chr(197).chr(148) => 'R', chr(197).chr(149) => 'r',
+		chr(197).chr(150) => 'R', chr(197).chr(151) => 'r',
+		chr(197).chr(152) => 'R', chr(197).chr(153) => 'r',
+		chr(197).chr(154) => 'S', chr(197).chr(155) => 's',
+		chr(197).chr(156) => 'S', chr(197).chr(157) => 's',
+		chr(197).chr(158) => 'S', chr(197).chr(159) => 's',
 		chr(197).chr(160) => 'S', chr(197).chr(161) => 's',
 		chr(197).chr(162) => 'T', chr(197).chr(163) => 't',
 		chr(197).chr(164) => 'T', chr(197).chr(165) => 't',
@@ -401,10 +397,11 @@ function remove_accents($string)
 		// Euro Sign
 		chr(226).chr(130).chr(172) => 'E',
 		// GBP (Pound) Sign
-		chr(194).chr(163) => '');
+		chr(194).chr(163) => '' );
 		
 		$string = strtr($string, $chars);
-	} else {
+	}
+	else {
 		// Assume ISO-8859-1 if not UTF-8
 		$chars['in'] = chr(128).chr(131).chr(138).chr(142).chr(154).chr(158)
 			.chr(159).chr(162).chr(165).chr(181).chr(192).chr(193).chr(194)
@@ -420,8 +417,8 @@ function remove_accents($string)
 		$chars['out'] = "EfSZszYcYuAAAAAACEEEEIIIINOOOOOOUUUUYaaaaaaceeeeiiiinoooooouuuuyy";
 		
 		$string = strtr($string, $chars['in'], $chars['out']);
-		$double_chars['in'] = array(chr(140), chr(156), chr(198), chr(208), chr(222), chr(223), chr(230), chr(240), chr(254));
-		$double_chars['out'] = array('OE', 'oe', 'AE', 'DH', 'TH', 'ss', 'ae', 'dh', 'th');
+		$double_chars['in'] = array( chr(140), chr(156), chr(198), chr(208), chr(222), chr(223), chr(230), chr(240), chr(254) );
+		$double_chars['out'] = array( 'OE', 'oe', 'AE', 'DH', 'TH', 'ss', 'ae', 'dh', 'th' );
 		$string = str_replace($double_chars['in'], $double_chars['out'], $string);
     }
 
@@ -440,34 +437,26 @@ function remove_accents($string)
 function seems_utf8($str)
 {
 	$length = strlen($str);
-	for ($i=0; $i < $length; $i++)
-	{
-		if (ord($str[$i]) < 0x80) { 
+	for( $i = 0; $i < $length; $i++ ) {
+		if( ord($str[$i]) < 0x80 ) {
 			continue; // 0bbbbbbb 
-		
-		} elseif ((ord($str[$i]) & 0xE0) == 0xC0) {
-			$n=1; // 110bbbbb
-		
-		} elseif ((ord($str[$i]) & 0xF0) == 0xE0) {
-			$n=2; // 1110bbbb
-		
-		} elseif ((ord($str[$i]) & 0xF8) == 0xF0) {
-			$n=3; // 11110bbb
-		
-		} elseif ((ord($str[$i]) & 0xFC) == 0xF8) {
-			$n=4; // 111110bb
-		
-		} elseif ((ord($str[$i]) & 0xFE) == 0xFC) {
-			$n=5; // 1111110b
-		
-		} else { 
+		} elseif( (ord($str[$i]) & 0xE0) == 0xC0 ) {
+			$n = 1; // 110bbbbb
+		} elseif( (ord($str[$i]) & 0xF0) == 0xE0 ) {
+			$n = 2; // 1110bbbb
+		} elseif( (ord($str[$i]) & 0xF8) == 0xF0 ) {
+			$n = 3; // 11110bbb
+		} elseif( (ord($str[$i]) & 0xFC) == 0xF8 ) {
+			$n = 4; // 111110bb
+		} elseif( (ord($str[$i]) & 0xFE) == 0xFC ) {
+			$n = 5; // 1111110b
+		} else {
 			return false; // Does not match any model
 		}
 		
-		for ($j=0; $j<$n; $j++) 
-		{ 
+		for( $j = 0; $j < $n; $j++ ) {
 			// n bytes matching 10bbbbbb follow ?
-			if ((++$i == $length) || ((ord($str[$i]) & 0xC0) != 0x80)) {
+			if( (++$i == $length) || ((ord($str[$i]) & 0xC0) != 0x80) ) {
 				return false;
 			}
 		}
@@ -485,49 +474,44 @@ function seems_utf8($str)
  *
  * Note: Borrowed from Wordpress
  */
-function utf8_uri_encode( $utf8_string, $length = 0 )
+function utf8_uri_encode($utf8_string, $length = 0)
 {
-	$unicode        = '';
-	$values         = array();
-	$num_octets     = 1;
+	$unicode = '';
+	$values = array( );
+	$num_octets = 1;
 	$unicode_length = 0;
 
-	$string_length = strlen( $utf8_string );
-	for ($i = 0; $i < $string_length; $i++ )
-	{
-		$value = ord( $utf8_string[ $i ] );
+	$string_length = strlen($utf8_string);
+	for( $i = 0; $i < $string_length; $i++ ) {
+		$value = ord($utf8_string[$i]);
 		
-		if ( $value < 128 )
-		{
-			if ($length && ( $unicode_length >= $length )) {
+		if( $value < 128 ) {
+			if( $length && ( $unicode_length >= $length ) ) {
 				break;
 			}
 			$unicode .= chr($value);
 			$unicode_length++;
-		} 
-		else 
-		{
-			if (count( $values ) == 0) {
+		} else {
+			if( count($values) == 0 ) {
 				$num_octets = ( $value < 224 ) ? 2 : 3;
 			}
 			
 			$values[] = $value;
 			
-			if ($length && ($unicode_length + ($num_octets * 3)) > $length) {
+			if( $length && ($unicode_length + ($num_octets * 3)) > $length ) {
 				break;
 			}
 			
-			if (count($values) == $num_octets) 
-			{
-				if ($num_octets == 3) {
-					$unicode .= '%' . dechex($values[0]) . '%' . dechex($values[1]) . '%' . dechex($values[2]);
+			if( count($values) == $num_octets ) {
+				if( $num_octets == 3 ) {
+					$unicode .= '%'.dechex($values[0]).'%'.dechex($values[1]).'%'.dechex($values[2]);
 					$unicode_length += 9;
 				} else {
-					$unicode .= '%' . dechex($values[0]) . '%' . dechex($values[1]);
+					$unicode .= '%'.dechex($values[0]).'%'.dechex($values[1]);
 					$unicode_length += 6;
 				}
 				
-				$values     = array();
+				$values = array( );
 				$num_octets = 1;
 			}
 		}
@@ -546,17 +530,16 @@ function utf8_uri_encode( $utf8_string, $length = 0 )
 function get_domain($url = '')
 {
 	$parsed = parse_url($url);
-	if (isset($parsed['scheme'])){ 
-		$domain = $parsed['scheme'] . "://" . $parsed['host']; 
+	if( isset($parsed['scheme']) ) {
+		$domain = $parsed['scheme']."://".$parsed['host'];
 		return $domain;
 	}
 	
 	return false;
 }
 
+if( !function_exists("iconv") ) {
 
-if(!function_exists("iconv"))
-{
 	/**
 	 * Convert string to requested character encoding if iconv library not installed
 	 *
@@ -572,8 +555,8 @@ if(!function_exists("iconv"))
 		$converted = html_entity_decode($converted, ENT_NOQUOTES, $to);
 		return $converted;
 	}
-}
 
+}
 
 /**
  * Count urls within a block of text
@@ -590,7 +573,6 @@ function countUrls($text = '')
 	return $href + $url;
 }
 
-
 /**
  * Convert textual urls into clickable HTML links, and add nofollow.
  *
@@ -606,7 +588,6 @@ function make_urls_clickable($string)
 	$string = preg_replace('/a[ ]+href[ ]*=[ ]*"http:\/\/(.*?)".*?/i', 'a href="http://$1" rel="nofollow"', $string);
 	return $string;
 }
-
 
 /**
  * Strip foreign characters from latin1/utf8 database yuckiness

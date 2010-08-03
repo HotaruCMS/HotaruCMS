@@ -1,8 +1,10 @@
 <?php 
 /**
- * Theme name: default
- * Template name: index.php
- * Template author: Nick Ramsay
+ * name: Default
+ * description: Default theme for Hotaru CMS
+ * version: 0.2
+ * author: Nick Ramsay
+ * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
  *
@@ -32,75 +34,92 @@ $h->setHome();
 // get language
 $h->includeThemeLanguage();
 
-// plugin hook
-$result = $h->pluginHook('theme_index_top');
-if (!$result) {
+// get settings:
+$h->vars['theme_settings'] = $h->getThemeSettings();
+
+// plugins work here before anything is displayed. Return if overriding.
+if ($h->pluginHook('theme_index_top')) { return false; };
+
+// display header if not overriden by a plugin
+if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 ?>
-		<?php
-			// plugin hook
-			$result = $h->pluginHook('theme_index_header');
-			if (!$result) {
-				$h->displayTemplate('header');
-			}
-		?>
+
+<body>
+
+	<?php $h->pluginHook('post_open_body'); ?>	
+	<?php if ($announcements = $h->checkAnnouncements()) { ?>
+		<div id="announcement">
+			<?php $h->pluginHook('announcement_first'); ?>
+			<?php foreach ($announcements as $announcement) { echo $announcement . "<br />"; } ?>
+			<?php $h->pluginHook('announcement_last'); ?>
+		</div>
+	<?php } ?>
+
+	<div class="container_12">
+
+	<div id="navigation" class="grid_12">
+		<!-- NAVIGATION -->
+		<?php echo $h->displayTemplate('navigation'); ?>
+	</div>
 		
-		<div id="bd">
-			<div id="yui-main"> 
-			<?php if ($h->sidebars) { // determines whether to show the sidebar or not ?>
-				<div class='yui-gc'> 
-					<div class="yui-u first">
-			<?php } else { ?>
-				<div class='yui-g'>
-						<div class="yui-u first" style='width: 100%;'>
-				<?php } ?>
-							<!-- BREADCRUMBS -->
-							<div id='breadcrumbs'>
-								<?php echo $h->breadcrumbs(); ?>
-							</div>
-							
-							<!-- POST BREADCRUMBS -->
-							<?php 
-								// plugin hook
-								$result = $h->pluginHook('theme_index_post_breadcrumbs');
-							?>
-							
-							<!-- FILTER TABS -->
-							<?php 
-								// plugin hook
-								$result = $h->pluginHook('theme_index_pre_main');
-							?>
-							
-							<!-- MAIN -->
-							<?php     
-							// plugin hook
-							$result = $h->pluginHook('theme_index_main');
-							if (!$result) {
-								$h->displayTemplate($h->pageName); 
-							}
-							?>
-					</div> <!-- close "yui-u first" -->
-				<?php if ($h->sidebars) { ?>
-					<div class="yui-u">
+	<div id="header" class="grid_12">
+		<!-- TITLE & AD BLOCKS -->
+		<div id="hd_title">
+			<h1><a href="<?php echo SITEURL; ?>"><?php echo SITE_NAME; ?></a></h1>
+			<h3 class="subtitle"><?php echo $h->vars['theme_settings']['tagline']; ?></h3>
+		</div>
+		<div class="clear"></div>
+	</div>
+		
+	<div id="header_end" class="grid_12">
+		<!-- CATEGORIES, ETC -->
+		<?php $h->pluginHook('header_end'); ?>
+	</div>
+
+		<div id="content">
+
+			<?php $width = ($h->sidebars) ? '8' : '12'; ?>
+			<div id="main_container" class="grid_<?php echo $width; ?>">
+				<div id="main">
+
+					<!-- BREADCRUMBS -->
+					<div id='breadcrumbs'>
+						<?php echo $h->breadcrumbs(); ?>
+					</div>
 					
-						<!-- SIDEBAR -->
-						<?php
-							// plugin hook
-							$result = $h->pluginHook('theme_index_sidebar');
-							if (!$result) {
-								$h->displayTemplate('sidebar');
-							}
-						?>
-					</div> <!-- close "yui-u" -->
-				<?php } ?>
-			</div> <!-- close "yui-gc" or "yui-g" -->
-			</div> <!-- close "yui-main" -->
-		</div> <!-- close "bd" -->
+					<!-- POST BREADCRUMBS -->
+					<?php $h->pluginHook('theme_index_post_breadcrumbs'); ?>
+					
+					<!-- FILTER TABS -->
+					<?php $h->pluginHook('theme_index_pre_main'); ?>
+					
+					<!-- MAIN -->
+					<?php if (!$h->pluginHook('theme_index_main')) { $h->displayTemplate($h->pageName); } ?>
+
+					<div class="clear"></div>
+				</div>
+			</div>
+
+			<!-- SIDEBAR -->
+			<?php if ($h->sidebars) { ?>
+				<div id="sidebar_container" class="grid_4">
+					<div id="sidebar">
+						<?php if (!$h->pluginHook('theme_index_sidebar')) { $h->displayTemplate('sidebar'); } ?>
+					</div>
+				</div> 
+			<?php } ?>
+
+		</div> <!-- close "content" -->
+
+
 		<!-- FOOTER -->
-		<?php
-			// plugin hook
-			$result = $h->pluginHook('theme_index_footer');
-			if (!$result) {
-				$h->displayTemplate('footer');
-			}
-		?>
-<?php } ?>
+		<div id="footer" class="grid_16">
+			<?php if (!$h->pluginHook('theme_index_footer')) { $h->displayTemplate('footer'); } ?>
+		</div>
+
+	</div> <!-- close "container_12" -->
+
+	<?php $h->pluginHook('pre_close_body'); ?>
+
+</body>
+</html>

@@ -99,7 +99,7 @@ $(document).ready(function(){
 
 	// Show/Hide forgot password form
 	$(".forgot_password").click(function () {
-		var target = $(this).next("form");
+		var target = $("#forgot_password_form");
 		target.fadeToggle();
 		return false;
 	});  

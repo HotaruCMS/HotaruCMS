@@ -164,7 +164,7 @@ class Maintenance
 	 */
 	public function emptyTable($h, $table_name, $msg = true)
 	{
-		$h->db->query("TRUNCATE TABLE " . $table_name);
+		$h->db->query("DELETE FROM " . $table_name);
 		
 		if ($msg) {
 			$h->message = $h->lang['admin_maintenance_table_emptied'];
@@ -221,8 +221,15 @@ class Maintenance
 	public function siteClosed($h, $lang)
 	{
 		// site closed and access not granted
-		echo "<HTML>\n<HEAD>\n";
-		echo "<link rel='stylesheet' href='" . BASEURL . "content/themes/" . THEME . "css/style.css' type='text/css'>\n";
+		echo "<HTML id='site_closed_body'>\n<HEAD>\n";
+
+		// include current theme style and default style
+		if (file_exists(BASE . 'content/themes/' . $h->pageHandling->default . 'css/style.css')) {
+			echo "<link rel='stylesheet' href='" . SITEURL . "content/themes/" . $h->pageHandling->default . "css/style.css' type='text/css'>\n";
+		}
+		if (file_exists(BASE . 'content/themes/' . THEME . 'css/style.css')) {
+			echo "<link rel='stylesheet' href='" . SITEURL . "content/themes/" . THEME . "css/style.css' type='text/css'>\n";
+		}
 		echo "</HEAD>\n<BODY>\n";
 		echo "<div id='site_closed'>\n";
 		
@@ -235,7 +242,7 @@ class Maintenance
 		{
 			// show default maintenance page:
 			echo $lang['main_hotaru_site_closed'];
-			echo "<br /><span id='site_closed_admin_link'>[<a href='" . BASEURL . "admin_index.php?page=admin_login'>Admin Login</a>]</span>";
+			echo "<br /><span id='site_closed_admin_link'>[<a href='" . SITEURL . "admin_index.php?page=admin_login'>Admin Login</a>]</span>";
 		}
 		
 		echo "\n</div>\n</BODY>\n</HTML>\n";

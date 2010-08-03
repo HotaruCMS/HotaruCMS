@@ -25,6 +25,29 @@
  */
 class PageHandling
 {
+	protected $default = 'default/';
+	protected $adminDefault = 'admin_default/';
+	
+	
+	/**
+	 * Access modifier to set protected properties
+	 */
+	public function __set($var, $val)
+	{
+		$this->$var = $val;
+	}
+    
+    
+	/**
+	 * Access modifier to get protected properties
+	 * The & is necessary (http://bugs.php.net/bug.php?id=39449)
+	 */
+	public function &__get($var)
+	{
+		return $this->$var;
+	}
+	
+	
 	/**
 	 * Set the homepage (and set page name)
 	 *
@@ -38,6 +61,36 @@ class PageHandling
 		
 		if (!$h->pageName) { 
 			$h->pageName = $pagename; // force pageName (optional)
+		}
+	}
+
+
+	/**
+	 * Test if the current url is the *true* homepage, i.e. equal to SITEURL
+	 *
+	 * @return bool
+	 */
+	public function isHome($h)
+	{
+		if ($h->pageName != $h->home) { return false; }
+	
+		/*  Sometimes $h->home is not unique. E.g. if $h->home is "popular", then 
+			a category page filtered to popular will match $h->home. We need to test
+			for the true home page. If it's the true homepage, the current url will 
+			match either SITEURL, or SITEURL + index.php */
+	
+		// get full url from address bar
+		$host = $h->cage->server->sanitizeTags('HTTP_HOST');
+		$uri = $h->cage->server->sanitizeTags('REQUEST_URI');
+		$path = "http://" . $host  . $uri;
+	
+		switch ($path) {
+			case BASEURL:
+			case BASEURL . 'index.php':
+				return true;
+				break;
+			default:
+				return false;
 		}
 	}
 	
@@ -191,9 +244,13 @@ class PageHandling
 		if (!$plugin) { $plugin = $h->plugin->folder; }
 		
 		if ($h->isAdmin) { 
-			$themes = ADMIN_THEMES; $theme = ADMIN_THEME; 
+			$themes = ADMIN_THEMES; 
+			$theme = ADMIN_THEME;
+			$default = $this->adminDefault;
 		} else {
-			$themes = THEMES; $theme = THEME; 
+			$themes = THEMES;
+			$theme = THEME;
+			$default = $this->default;
 		} 
 		
 		$page = $page . '.php';
@@ -214,13 +271,13 @@ class PageHandling
 				include_once($themes . $theme . $page);
 			}
 		} 
-		elseif (file_exists($themes . 'default/' . $page))
+		elseif (file_exists($themes . $default . $page))
 		{
 			if (!$include_once) {
 				// Special case, do not restrict to include once.
-				include($themes . 'default/' . $page);
+				include($themes . $default . $page);
 			} else {
-				include_once($themes . 'default/' . $page);
+				include_once($themes . $default . $page);
 			}
 		}
 		elseif ($plugin != '' && file_exists(PLUGINS .  $plugin . '/templates/' . $page))
@@ -257,9 +314,9 @@ class PageHandling
 		if (FRIENDLY_URLS == "false") {
 		
 			if ($head == 'index') {
-				$url = BASEURL . 'index.php?';
+				$url = SITEURL . 'index.php?';
 			} elseif ($head == 'admin') {
-				$url = BASEURL . 'admin_index.php?';    
+				$url = SITEURL . 'admin_index.php?';    
 			} else {
 				// Error. $head must be index or admin
 			}
@@ -279,11 +336,11 @@ class PageHandling
 		if (FRIENDLY_URLS == "true") {
 		
 			if ($head == 'index') { 
-				$url = BASEURL;
+				$url = SITEURL;
 			} elseif ($head == 'admin') {
-				$url = BASEURL . 'admin/';    
+				$url = SITEURL . 'admin/';    
 			} else {
-				$url = BASEURL . $head . '/';
+				$url = SITEURL . $head . '/';
 			}
 			
 			foreach ($parameters as $key => $value) {
@@ -360,14 +417,14 @@ class PageHandling
 			extra test to make sure this is a truly friendly url, and if not, send back
 			the one we have because it's already standard. */
 
-		if ($path == BASEURL || strrpos($path, $head)) { return $path; }
+		if ($path == SITEURL || strrpos($path, $head)) { return $path; }
 		
-		// strip off BASEURL and trailing slash
-		$url = str_replace(BASEURL, '', $friendly_url);
+		// strip off SITEURL and trailing slash
+		$url = str_replace(SITEURL, '', $friendly_url);
 		$url = rtrim($url, '/');
 		
 		// start the standard url
-		$standard_url = BASEURL . $head;
+		$standard_url = SITEURL . $head;
 		
 		// parts will hold the query vars
 		$parts = array();
