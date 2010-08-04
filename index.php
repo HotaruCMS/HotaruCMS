@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Includes settings and constructs Hotaru.
  *
@@ -23,22 +24,18 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
- 
 // includes
-if (file_exists('hotaru_settings.php'))
-{
-    require_once('hotaru_settings.php');
-    require_once('Hotaru.php');
-    $h = new Hotaru();
-    $h->start('main');
-}
-else {
-    if (file_exists('install/index.php')) {
-        echo 'Hotaru is having trouble starting. You may need to install the system before you can proceed further.<br/><br/>';
-        echo 'Help is available in the <a href="http://forums.hotarucms.org/">Hotaru CMS Forums</a>.';
-    }
-    else {
-        echo 'Hotaru is having trouble starting.';
-    }
+if( file_exists('hotaru_settings.php') ) {
+	require_once('hotaru_settings.php');
+	require_once('Hotaru.php');
+	$h = new Hotaru();
+	$h->start('main');
+} else {
+	if( file_exists('install/index.php') ) {
+		echo 'Hotaru is having trouble starting. You may need to install the system before you can proceed further.<br/><br/>';
+		echo 'Help is available in the <a href="http://forums.hotarucms.org/">Hotaru CMS Forums</a>.';
+	} else {
+		echo 'Hotaru is having trouble starting.';
+	}
 }
 ?>
