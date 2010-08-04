@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A collection of functions to deal with files
  *
@@ -23,7 +24,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
- 
+
 /**
  * Get filenames or paths in a specified order
  * 
@@ -33,19 +34,17 @@
  */
 function getFilenames($folder, $type='full')
 {
-	$filenames  = array();
+	$filenames = array();
 	$directory = new DirectoryIterator($folder);
-	foreach( $directory as $file )
-	{
-		if( !$file->isDot() )
-		{
+	foreach( $directory as $file ) {
+		if( !$file->isDot() ) {
 			$filename = ($type === 'full') ? $folder.($file->getFilename()) : $file->getFilename();
 			array_push($filenames, $file->getFilename());
 		}
 	}
 	return $filenames;
-}
 
+}
 
 /**
  * Strip all extensions from files, e.g. .php, .js, .html
@@ -56,14 +55,13 @@ function getFilenames($folder, $type='full')
 function stripAllFileExtensions($fileNames)
 {
 	$stripped = array();
-	
-	foreach ($fileNames as $fileName) 
-	{
+
+	foreach( $fileNames as $fileName ) {
 		array_push($stripped, stripFileExtension($fileName));
 	}
 	return $stripped;
-}
 
+}
 
 /**
  * Strip extensions from a single file, e.g. .php, .js, .html
@@ -73,8 +71,8 @@ function stripAllFileExtensions($fileNames)
 function stripFileExtension($fileName)
 {
 	return strtok($fileName, ".");
-}
 
+}
 
 /**
  * Displaya filesize in a legible format
@@ -85,23 +83,19 @@ function stripFileExtension($fileName)
  */
 function display_filesize($filesize)
 {
-	if (is_numeric($filesize)) 
-	{
-		$decr = 1024; $step = 0;
-		$prefix = array('Byte','KB','MB','GB','TB','PB');
+	if( is_numeric($filesize) ) {
+		$decr = 1024;
+		$step = 0;
+		$prefix = array('Byte', 'KB', 'MB', 'GB', 'TB', 'PB');
 
-		while(($filesize / $decr) > 0.9)
-		{
+		while( ($filesize / $decr) > 0.9 ) {
 			$filesize = $filesize / $decr;
 			$step++;
 		}
 
-		return round($filesize,2).' '.$prefix[$step];
-		
-	} else {
-		return 'Error displaying filesize';
+		return round($filesize, 2).' '.$prefix[$step];
 	}
-
+	return 'Error displaying filesize';
 }
 
 /**
@@ -109,19 +103,18 @@ function display_filesize($filesize)
  */
 function startHotaru()
 {
-    $root = $_SERVER['DOCUMENT_ROOT'];
-    
-    if (strpos($root, 'C:/') !== false) {
-    	$root = '../../..'; // a hack for Wamp. Works when calling this function from a theme or plugin folder
-    }
-    
-    require_once($root . '/hotaru_settings.php');
-    require_once($root . '/Hotaru.php');
+	$root = $_SERVER['DOCUMENT_ROOT'];
 
-    $h = new Hotaru();
-    $h->start();
+	if( strpos($root, 'C:/') !== false ) {
+		$root = '../../..'; // a hack for Wamp. Works when calling this function from a theme or plugin folder
+	}
 
-    return $h;
+	require_once($root.'/hotaru_settings.php');
+	require_once($root.'/Hotaru.php');
+
+	$h = new Hotaru();
+	$h->start();
+
+	return $h;
 }
-
 ?>
