@@ -42,15 +42,15 @@ class Language
 		} 
 		elseif (file_exists($file))
 		{
-			if (isset($lang_array['files'][$file]) && ($lang_array['files'][$file] == true)) {
-				return $lang_array; // return what we've got. No need to reinclude the language
+			if (isset($lang['files'][$file]) && ($lang['files'][$file] == true)) {
+				return $lang; // return what we've got. No need to reinclude the language
 			}
 			
 			// include language file
 			include(BASE . 'content/' . $pack . '_language.php');
 
 			// add to list of included language files
-			$lang_array['files'][$file] = true;
+			$lang['files'][$file] = true;
 		}
 
 		// Add new language to our lang property
