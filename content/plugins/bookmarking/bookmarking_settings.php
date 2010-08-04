@@ -66,10 +66,17 @@ class BookmarkingSettings
 	$sql = "SELECT DISTINCT post_type FROM " . TABLE_POSTS . " ORDER BY post_type ASC";
 	$types = $h->db->get_results($h->db->prepare($sql));	
 	echo "<p><select name ='default_type'>";
-	foreach ($types as $type) {
-	    echo "<option ";
-	    if ($type->post_type == $default_type) { echo "selected='yes' "; }
-	    echo "value='" . $type->post_type . "'>" . $type->post_type . "</option>";
+	if ($types)
+	{
+		foreach ($types as $type) {
+		    echo "<option ";
+		    if ($type->post_type == $default_type) { echo "selected='yes' "; }
+		    echo "value='" . $type->post_type . "'>" . $type->post_type . "</option>";
+		}
+	}
+	else 
+	{
+	    echo "<option selected='yes' value='" . $default_type . "'>" . $default_type . "</option>";
 	}
 	echo "</select> " . $h->lang["bookmarking_settings_default_type"] . "</p>";
 
