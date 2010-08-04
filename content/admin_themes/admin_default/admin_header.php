@@ -27,7 +27,6 @@
  */
 
 ?>
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
  "http://www.w3.org/TR/html4/strict.dtd">
 <html>
@@ -105,7 +104,7 @@
 		    </div>
 			<?php if ($h->currentUser->loggedIn) { ?>
 			    <div class="admin-menu-item">
-				<a href="<?php echo $h->url(array('page'=>'admin_logout')); ?>">
+				<a href="<?php echo $h->url(array('page'=>'logout')); ?>">
 				    <div class="admin-menu-item-icon">
 					<img src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/logout_icon.png" />
 				    </div>
