@@ -105,7 +105,7 @@
 		    </div>
 			<?php if ($h->currentUser->loggedIn) { ?>
 			    <div class="admin-menu-item">
-				<a href="<?php echo $h->url(array('page'=>'logout')); ?>">
+				<a href="<?php echo $h->url(array('page'=>'admin_logout')); ?>">
 				    <div class="admin-menu-item-icon">
 					<img src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/logout_icon.png" />
 				    </div>
