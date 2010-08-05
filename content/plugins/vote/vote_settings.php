@@ -97,7 +97,7 @@ class VoteSettings
         echo "<br /><p><b>" . $h->lang["vote_settings_other"] . "</b></p>";
         echo "<p><input type='checkbox' name='widget_votes' value='widget_votes' " . $posts_widget . ">&nbsp;&nbsp;" . $h->lang["vote_settings_posts_widget"] . "</p>\n";
         echo "<p><input type='checkbox' name='vote_on_url_click' value=vote_on_url_click' " . $vote_on_url_click . ">&nbsp;&nbsp;" . $h->lang["vote_settings_vote_on_url_click"] . "</p>\n";
-	echo "<p><input type='checkbox' name='vote_anon_vote' value=vote_anon_vote' " . $anon_vote . ">&nbsp;&nbsp;" . $h->lang["vote_settings_vote_anon_vote"] . "</p>\n";
+	echo "<p><input type='checkbox' name='vote_anon_vote' value=vote_anon_vote' " . $anon_vote . ">&nbsp;&nbsp;" . $h->lang["vote_settings_anonymous_votes"] . "</p>\n";
 
 
         // A plugin hook so other plugin developers can show settings

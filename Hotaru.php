@@ -1858,10 +1858,11 @@ class Hotaru
 	 * @param $user_id
 	 * @param $size avatar size in pixels
 	 * @param $rating avatar rating (g, pg, r or x in Gravatar)
+	 * @return bool
 	 */
 	public function setAvatar($user_id = 0, $size = 32, $rating = 'g')
 	{
-		$this->avatar = new Avatar($this, $user_id, $size, $rating);
+		return $this->avatar = new Avatar($this, $user_id, $size, $rating);
 	}
 	
 	

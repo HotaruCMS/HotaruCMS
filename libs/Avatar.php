@@ -54,8 +54,6 @@ class Avatar
 	 */
 	public function  __construct($h, $user_id = 0, $size = 32, $rating = 'g')
 	{
-		if (!$user_id) { return false; }
-		
 		$this->user_id = $user_id;
 		
 		$user = new UserBase();
@@ -67,9 +65,11 @@ class Avatar
 		$this->rating = $rating;
 		
 		$this->setVars($h);
+
+		return ($this->user_id) ? true : false;
 	}
-	
-	
+
+
 	/**
 	 * Add Avatar properties to a vars array for plugins to use
 	 */
@@ -94,8 +94,6 @@ class Avatar
 	 */
 	public function testAvatar($h)
 	{
-		if (!$this->user_id) { return false; }
-		
 		$result = $h->pluginHook('avatar_test_avatar');
 		
 		if (!$result) {
@@ -116,8 +114,6 @@ class Avatar
 	 */
 	public function getAvatar($h)
 	{
-		if (!$this->user_id) { return false; }
-		
 		$result = $h->pluginHook('avatar_get_avatar');
 		if ($result) {
 			foreach ($result as $key => $value) {
@@ -135,9 +131,16 @@ class Avatar
 	 */
 	public function linkAvatar($h)
 	{
-		if (!$this->user_id) { return false; }
+		if (!$this->user_id)
+		{
+			$title = (isset($h->lang['main_anonymous'])) ? $h->lang['main_anonymous'] : '';
+			$output = "<span class='anon_avatar' title='" . $title . "'>";
+		}
+		else
+		{
+			$output = "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>";
+		}
 		
-		$output = "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>";
 		$result = $h->pluginHook('avatar_get_avatar');
 		if ($result) {
 			foreach ($result as $key => $value) {
@@ -145,7 +148,8 @@ class Avatar
 			}
 			$output .= $avatar; // uses the last avatar sent to this hook
 		}
-		$output .= "</a>";
+
+		$output .= ($this->user_id) ? "</a>" : "</span>";
 		return $output;
 	}
 	

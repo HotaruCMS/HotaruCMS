@@ -135,4 +135,7 @@ $lang["main_user_theme_update_new_password"] = "New password:";
 $lang["main_user_theme_update_new_password_verify"] = "New password (again):";
 $lang["main_user_theme_update_form_submit"] = "Update";
 
+/* Avatar */
+$lang["main_anonymous"] = "Anonymous";
+
 ?>
