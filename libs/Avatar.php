@@ -141,13 +141,7 @@ class Avatar
 			$output = "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>";
 		}
 		
-		$result = $h->pluginHook('avatar_get_avatar');
-		if ($result) {
-			foreach ($result as $key => $value) {
-				$avatar = $value;
-			}
-			$output .= $avatar; // uses the last avatar sent to this hook
-		}
+		$output .= $this->getAvatar($h);
 
 		$output .= ($this->user_id) ? "</a>" : "</span>";
 		return $output;
@@ -159,18 +153,8 @@ class Avatar
 	 */
 	public function wrapAvatar($h)
 	{
-		if (!$this->user_id) { return false; }
-		
 		$output = "<div class='avatar_wrapper'>";
-		$output .= "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>";
-		$result = $h->pluginHook('avatar_get_avatar');
-		if ($result) {
-			foreach ($result as $key => $value) {
-				$avatar = $value;
-			}
-			$output .= $avatar; // uses the last avatar sent to this hook
-		}
-		$output .= "</a>";
+		$output .= $this->linkAvatar($h);
 		$output .= "</div>";
 		return $output;
 	}
@@ -181,9 +165,16 @@ class Avatar
 	 */
 	public function linkAvatarImage($h, $avatar_image = '')
 	{
-		if (!$this->user_id) { return false; }
+		if (!$this->user_id)
+		{
+			$title = (isset($h->lang['main_anonymous'])) ? $h->lang['main_anonymous'] : '';
+			$output = "<span class='anon_avatar' title='" . $title . "'>";
+		}
+		else
+		{
+			$output = "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>";
+		}
 		
-		$output = "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>";
 		$output .= $avatar_image; // avatar in img tags
 		$output .= "</a>";
 		return $output;
@@ -195,12 +186,8 @@ class Avatar
 	 */
 	public function wrapAvatarImage($h, $avatar_image = '')
 	{
-		if (!$this->user_id) { return false; }
-		
 		$output = "<div class='avatar_wrapper'>";
-		$output .= "<a href='" . $h->url(array('user' => $this->user_name)) . "' title='" . $this->user_name . "'>";
-		$output .= $avatar_image; // avatar in img tags
-		$output .= "</a>";
+		$output .= $this->linkAvatarImage($h, $avatar_image);
 		$output .= "</div>";
 		return $output;
 	}
