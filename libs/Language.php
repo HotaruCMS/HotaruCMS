@@ -35,31 +35,28 @@ class Language
 	{
 		$lang = $this->getLanguageCache();
 
-		$file = BASE . 'content/' . $pack . '_language.php';
+		$file = BASE.'content/'.$pack.'_language.php';
+
+		if( file_exists($file) ) {
 		
-		if ($pack == 'install') {
-			include_once(INSTALL . 'install_language.php');    // language file for install
-		} 
-		elseif (file_exists($file))
-		{
-			if (isset($lang['files'][$file]) && ($lang['files'][$file] == true)) {
+			if( isset($lang['files'][$file]) && ($lang['files'][$file] == true) ) {
 				return $lang; // return what we've got. No need to reinclude the language
 			}
-			
+
 			// include language file
-			include(BASE . 'content/' . $pack . '_language.php');
+			include(BASE.'content/'.$pack.'_language.php');
 
 			// add to list of included language files
 			$lang['files'][$file] = true;
 		}
 
 		// Add new language to our lang property
-		if (isset($lang) && !empty($lang)) {
-			foreach($lang as $l => $text) {
+		if( isset($lang) && !empty($lang) ) {
+			foreach( $lang as $l => $text ) {
 				$lang_array[$l] = $text;
 			}
 		}
-		
+
 		return $lang_array;
 	}
 	
@@ -75,33 +72,33 @@ class Language
 	 */    
 	public function includeLanguage($h, $folder = '', $filename = '')
 	{
-		if (!$folder) { $folder = $h->plugin->folder; }
-		
-		if ($folder) {
-		
+		$folder = ($folder)? $folder: $h->plugin->folder;
+
+		if( $folder ) {
+
 			// If not filename given, make the plugin name the file name
-			if (!$filename) { $filename = $folder; }
-			
+			$filename = ($filename) ? $filename : $folder;
+
+			$file1 = THEMES.THEME.'languages/'.$filename.'_language.php';
+			$file2 = PLUGINS.$folder.'/languages/'.$filename.'_language.php';
+
 			// check if this language is already cached
-			$file1 = THEMES . THEME . 'languages/' . $filename . '_language.php';
-			$file2 = PLUGINS . $folder . '/languages/' . $filename . '_language.php';
-			if ($this->checkLanguageCached($h, $file1) || $this->checkLanguageCached($h, $file2)) {
-				return true;
+			if( $this->checkLanguageCached($h, $file1) || $this->checkLanguageCached($h, $file2) ) {
+				return TRUE;
 			}
-			
-			// First, look in the user's theme languages folder for a language file...
-			
-			if (file_exists($file1)) {
+
+			// Look for the file to load.
+			if( file_exists($file1) ) {
+				// It is in the user theme languages folder.
 				$this->addLanguageFile($h, $file1);
-			    
-			// If still not found, look in the plugin folder for a language file... 
-			} elseif (file_exists($file2)) {
+			} elseif( file_exists($file2) ) {
+				// It is in the plugin folder.
 				$this->addLanguageFile($h, $file2);
 			}
-			
+
 			// Add new language to our lang property
-			if (isset($lang)) {
-				foreach($lang as $l => $text) {
+			if( isset($lang) ) {
+				foreach( $lang as $l => $text ) {
 					$h->lang[$l] = $text;
 				}
 			}
@@ -119,28 +116,27 @@ class Language
 	 */    
 	public function includeThemeLanguage($h, $filename = 'main')
 	{
-		if ($filename == 'admin') {
+		if( $filename == 'admin' ) {
 			$this->includeAdminLanguage($h);
-			return true;
+			return TRUE;
 		}
-		
+
 		// check the current theme for a language file, then the default theme...
-		
+
 		$files = array(
-			THEMES . THEME . 'languages/' . $filename . '_language.php',
-			THEMES . $h->pageHandling->default . 'languages/' . $filename . '_language.php'
+			THEMES.THEME.'languages/'.$filename.'_language.php',
+			THEMES.$h->pageHandling->default.'languages/'.$filename.'_language.php'
 		);
-		
-		foreach ($files as $file) 
-		{
+
+		foreach( $files as $file ) {
 			// check if this language is already cached
-			if ($this->checkLanguageCached($h, $file)) {
-				return true;
+			if( $this->checkLanguageCached($h, $file) ) {
+				return TRUE;
 			}
-				
-			if (file_exists($file)) {
+
+			if( file_exists($file) ) {
 				$this->addLanguageFile($h, $file);
-				return true;
+				return TRUE;
 			}
 		}
 	}
@@ -219,11 +215,9 @@ class Language
 	 * @param string $file - language file path
 	 * @return bool - true if already cached
 	 */
-	public function checkLanguageCached($h, $file = '')
+	private function checkLanguageCached($h, $file = '')
 	{
-		if (isset($h->lang['files'][$file])) { return true; }
-		
-		return false;
+		return isset($h->lang['files'][$file]);
 	}
 	
 	
@@ -232,26 +226,30 @@ class Language
 	 *
 	 * @param string $file - language file path
 	 */
-	public function addLanguageFile($h, $file = '')
+	private function addLanguageFile($h, $file = '')
 	{
 		// add to list of included language files
-		if (isset($h->lang['files'][$file])) { return false; } // already present
+		if( isset($h->lang['files'][$file]) ) {
+			// already present
+			return FALSE;
+		}
 
 		// add name of file
-		$h->lang['files'][$file] = true;
-		
+		$h->lang['files'][$file] = TRUE;
+
 		// include file
 		include_once($file); // this should contain $lang used below
-		
+
 		// add language
-		if (isset($lang)) {
-			foreach($lang as $l => $text) {
+		if( isset($lang) ) {
+			foreach( $lang as $l => $text ) {
 				$h->lang[$l] = $text;
 			}
 		}
+
+		$h->vars['update_lang_cache'] = TRUE;
 		
-		$h->vars['update_lang_cache'] = true;
-		return true; // added
+		return TRUE; // added
 	}
 	
 	
@@ -262,10 +260,9 @@ class Language
 	 */
 	public function writeLanguageCache($h, $timeout = 60)
 	{
-		if ($this->getLanguageCache()) 
-		{
+		if( $this->getLanguageCache() ) {
 			// cache already exists. Does it need updating?
-			if (isset($h->vars['update_lang_cache']) && ($h->vars['update_lang_cache'] == true)) {
+			if( isset($h->vars['update_lang_cache']) && ($h->vars['update_lang_cache'] == true) ) {
 				// update needed, fall through to code below...
 			} else {
 				return false;
@@ -273,15 +270,15 @@ class Language
 		}
 
 		// If doesn't exist, create a new file
-		$cache = CACHE . 'lang_cache/';
-		$file = $cache . "language.php";
-		$fh = fopen($file, 'w+') or die("Sorry, I can't open " . $file);
-		if (flock($fh, LOCK_EX)) { // do an exclusive lock
+		$cache = CACHE.'lang_cache/';
+		$file = $cache."language.php";
+		$fh = fopen($file, 'w+') or die("Sorry, I can't open ".$file);
+		if( flock($fh, LOCK_EX) ) { // do an exclusive lock
 			ftruncate($fh, 0);  // truncate file
-			fwrite($fh, '<?php' . "\r\n");
+			fwrite($fh, '<?php'."\r\n");
 			fwrite($fh, '$lang = ');
 			fwrite($fh, var_export($h->lang, true));
-			fwrite($fh, '; ?>' . "\r\n");
+			fwrite($fh, '; ?>'."\r\n");
 			flock($fh, LOCK_UN); // release the lock
 		} else {
 			echo "Couldn't get the lock for the language cache!";
