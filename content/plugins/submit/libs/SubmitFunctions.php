@@ -142,7 +142,7 @@ class SubmitFunctions
                     
                 // is a url submitted via the url? (i.e. EVB or Bookmarklet)
                 } elseif ($h->cage->get->keyExists('url')) { 
-                    $url = $h->cage->get->getHtmLawed('url');
+                    $url = htmlspecialchars_decode($h->cage->get->getHtmLawed('url'));
                     if (!$url) { break; }
                     $h->vars['submitted_data']['submit_orig_url'] = $url;
                     $h->vars['submitted_data']['submit_editorial'] = false;
@@ -248,7 +248,7 @@ class SubmitFunctions
         }
         
         $h->pluginHook('submit_functions_process_submitted');
-        
+
         // save submitted data...
         $key = $this->saveSubmitData($h);
         return $key;
@@ -265,7 +265,7 @@ class SubmitFunctions
     {
         // delete everything in this table older than 30 minutes:
         $this->deleteTempData($h->db);
-        
+
         $sid = preg_replace('/[^a-z0-9]+/i', '', session_id());
         $key = md5(microtime() . $sid . rand());
         $sql = "INSERT INTO " . TABLE_TEMPDATA . " (tempdata_key, tempdata_value, tempdata_updateby) VALUES (%s,%s, %d)";
@@ -345,7 +345,7 @@ class SubmitFunctions
             // Redirect to login page
 			$url = $h->vars['submitted_data']['submit_orig_url'];
 			if ($url) {
-            	$return = urlencode(BASEURL . 'index.php?page=submit&url=' . $url);
+            	$return = urlencode(BASEURL . 'index.php?page=submit&url=' . urlencode($url));
 				header("Location: " . BASEURL . 'index.php?page=login&return=' . $return);
 			} else {
 				$return = urlencode($h->url(array('page'=>'submit')));
@@ -459,7 +459,7 @@ class SubmitFunctions
             // Redirect to login page
 			$url = $h->vars['submitted_data']['submit_orig_url'];
 			if ($url) {
-            	$return = urlencode(BASEURL . 'index.php?page=submit&url=' . $url);
+            	$return = urlencode(BASEURL . 'index.php?page=submit&url=' . urlencode($url));
 				header("Location: " . BASEURL . 'index.php?page=login&return=' . $return);
 			} else {
 				$return = urlencode($h->url(array('page'=>'submit')));

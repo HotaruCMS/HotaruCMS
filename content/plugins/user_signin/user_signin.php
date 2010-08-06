@@ -2,7 +2,7 @@
 /**
  * name: User Signin
  * description: Provides user registration and login
- * version: 0.6
+ * version: 0.7
  * folder: user_signin
  * type: signin
  * class: UserSignin
@@ -81,7 +81,7 @@ class UserSignin
                 $h->pageType = 'login';
                 if ($this->login($h)) { 
                     // success, return to front page, logged IN.
-                    $return = $h->cage->post->testUri('return');
+                    $return = str_replace('&amp;', '&', $h->cage->post->getHtmLawed('return'));
                     if ($return) {
                         header("Location: " . $return);
                     } else {

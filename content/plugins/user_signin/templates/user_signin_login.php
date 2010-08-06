@@ -26,8 +26,8 @@
  
 if (!$username_check = $h->cage->post->testUsername('username')) { $username_check = ""; } 
 if (!$password_check = $h->cage->post->testPassword('password')) { $password_check = ""; }
-$return_check = $h->cage->get->testUri('return');
-if (!$return_check) { $return_check = $h->cage->post->testUri('return'); }
+$return_check = $h->cage->get->getHtmLawed('return');
+if (!$return_check) { $return_check = $h->cage->post->getHtmLawed('return'); }
 if (!$email_check = $h->cage->post->testEmail('email')) { $email_check = ""; }
 if ($h->cage->post->getInt('remember') == 1){ $remember_check = "checked"; } else { $remember_check = ""; }
 
