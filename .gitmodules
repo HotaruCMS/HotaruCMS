@@ -1,3 +1,6 @@
 [submodule "content/plugins/order_by_pub_date"]
 	path = content/plugins/order_by_pub_date
 	url = git@github.com:nickramsay/Hotaru-Plugin-Order-By-Pub-Date.git
+[submodule "hotaru_plugin_order_by_pub_date"]
+	path = hotaru_plugin_order_by_pub_date
+	url = git@github.com:nickramsay/hotaru_plugin_order_by_pub_date.git
