@@ -1,5 +1,4 @@
 <?php
-
 /**
  * A collection of functions to deal with time
  *
@@ -24,8 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-
-/**
+ 
+ 
+ /**
  * Start timer for calculating page loading time
  *
  * @return true
@@ -35,13 +35,15 @@
 function timer_start()
 {
 	global $timestart;
-
-	$timestart = microtime(TRUE);
-	return TRUE;
-
+	
+	$mtime = explode(' ', microtime() );
+	$mtime = $mtime[1] + $mtime[0];
+	$timestart = $mtime;
+	return true;
 }
 
-/**
+
+ /**
  * Stop the timer
  *
  * @param int $precision number of digits after the decimal point
@@ -52,16 +54,22 @@ function timer_start()
 function timer_stop($precision = 3)
 {
 	//if called like timer_stop(1), will echo $timetotal
-
-	global $timeend;
-
-	$timetotal = microtime(TRUE) - $timestart;
-	$r = (function_exists('number_format_i18n')) ? number_format_i18n($timetotal, $precision) : number_format($timetotal, $precision);
+	
+	global $timestart, $timeend;
+	
+	$mtime = microtime();
+	$mtime = explode(' ',$mtime);
+	$mtime = $mtime[1] + $mtime[0];
+	$timeend = $mtime;
+	$timetotal = $timeend-$timestart;
+	$r = (function_exists('number_format_i18n')) ? 
+		number_format_i18n($timetotal, $precision) : 
+		number_format($timetotal, $precision);
 	return $r;
-
 }
 
-/**
+
+ /**
  * Calculate time difference between now and a given time
  *
  * @param string $from time
@@ -71,46 +79,46 @@ function timer_stop($precision = 3)
  */
 function time_difference($from, $lang)
 {
-	$output = '';
-	$now = time();
-	$diff = $now - $from;
-	$days = intval($diff / 86400);
-	$diff = $diff % 86400;
-	$hours = intval($diff / 3600);
-	$diff = $diff % 3600;
-	$minutes = intval($diff / 60);
+	$output     = '';
+	$now        = time();
+	$diff       = $now-$from;
+	$days       = intval($diff/86400);
+	$diff       = $diff%86400;
+	$hours      = intval($diff/3600);
+	$diff       = $diff%3600;
+	$minutes    = intval($diff/60);
 
-	if( $days > 1 ) {
-		$output .= $days." ".$lang['main_times_days']." ";
-	} elseif( $days == 1 ) {
-		$output .= $days." ".$lang['main_times_day']." ";
+	if ($days > 1) {
+		$output .= $days . " " . $lang['main_times_days'] . " ";
+	} elseif ($days == 1) { 
+		$output .= $days . " " . $lang['main_times_day'] . " ";
 	}
-
-	if( $days < 2 ) {
-		if( $hours > 1 ) {
-			$output .= $hours." ".$lang['main_times_hours']." ";
-		} elseif( $hours == 1 ) {
-			$output .= $hours." ".$lang['main_times_hour']." ";
+	
+	if ($days < 2){
+		if ($hours > 1) {
+			$output .= $hours . " " . $lang['main_times_hours'] . " ";
+		} elseif ($hours == 1) { 
+			$output .= $hours . " " . $lang['main_times_hour'] . " ";
 		}
-
-		if( $hours < 3 ) {
-			if( $minutes > 1 ) {
-				$output .= $minutes." ".$lang['main_times_minutes']." ";
-			} elseif( $minutes == 1 ) {
-				$output .= $minutes." ".$lang['main_times_minute']." ";
+	
+		if ($hours < 3) {
+			if ($minutes > 1) {
+				$output .= $minutes . " " . $lang['main_times_minutes'] . " ";
+			} elseif ($minutes == 1) {
+				$output .= $minutes . " " . $lang['main_times_minute'] . " ";
 			}
 		}
 	}
-
-	if( $output == '' ) {
-		$output = $lang['main_times_seconds']." ";
+	
+	if ($output=='') { 
+		$output = $lang['main_times_seconds'] . " ";
 	}
-
+	
 	return $output;
-
 }
 
-/**
+
+ /**
  * Converts a timestamp into a number
  *
  * @param string $timestamp
@@ -120,20 +128,28 @@ function time_difference($from, $lang)
  */
 function unixtimestamp($timestamp)
 {
-	if( strlen($timestamp) == 0 ) {
-		return 0;
+	if (strlen($timestamp) == 14)
+	{
+		$time = substr($timestamp,0,4)."-".
+				substr($timestamp,4,2)."-".
+				substr($timestamp,6,2);
+		$time .= " ";
+		$time .= substr($timestamp,8,2).":".
+				substr($timestamp,10,2).":".
+				substr($timestamp,12,2);
+		return strtotime($time);
+	} 
+	else 
+	{
+		if (strlen($timestamp) == 0) {
+			return 0;
+		} else {
+			return strtotime($timestamp);
+		}
 	}
-
-	if( strlen($timestamp) == 14 ) {
-		$time = strptime($timestamp, '%Y%m%d%H%M%S');
-		return mktime($time['tm_hour'], $time['tm_min'], $time['tm_sec'],1,$time['tm_yday']+1,$time['tm_year']+1900);
-	}
-
-	return strtotime($timestamp);
-
 }
 
-/**
+ /**
  * Returns the next time block of the day, e.g. now: 1:25, so returns 2:00 (if block = 1 hour)
  *
  * @param int $block - time in HOURS
@@ -143,12 +159,11 @@ function time_block($block = 1)
 {
 	$block = ($block * 60) * 60; // change into seconds
 	$time_now = time();
-	$start_of_current_block = floor($time_now / $block);
+	$start_of_current_block = floor($time_now/$block);
 	$start_of_current_block *= $block;
-
+	
 	$start_of_next_block = $start_of_current_block + $block;
-
+	
 	return $start_of_next_block;
-
 }
 ?>
