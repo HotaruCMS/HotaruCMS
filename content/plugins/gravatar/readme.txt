@@ -21,9 +21,9 @@ If most of your users don't have Gravatar accounts, you might prefer to enable t
 
 	0: Off - the default avatar will not be randomized
 	
-	1: Normal - shows a random avatar per user, per page. E.g. user "max_99" has the same avatar in all places on the page
+	1: Normal - shows a random avatar per user, per page. E.g. user "max_98" has the same avatar in all places on the page
 	
-	2: Extreme - shows a random avatar per user per instance. E.g. user "max_99" has different avatars on the same page
+	2: Extreme - shows a random avatar per user per instance. E.g. user "max_98" has different avatars on the same page
 
 The images are only used when a user does *not* have a Gravatar account. The images can be found in the /gravatar/images folder and were taken from http://www.phpbbhacks.com/avatars.php. You can change the images, the number of images, and their filenames. 
 
