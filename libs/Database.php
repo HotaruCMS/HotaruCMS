@@ -25,7 +25,7 @@
  */
 class Database extends ezSQL_mysql
 {
-	protected $select        = array();
+	protected $selectTerms        = array();
 	protected $table         = '';
 	protected $where         = array();
 	protected $orderby       = '';
@@ -56,7 +56,7 @@ class Database extends ezSQL_mysql
 	/**
 	 * Fill Database Object
 	 *
-	 * @param array $select - associative array of select terms
+	 * @param array $selectTerms - associative array of select terms
 	 * @param string $table - full table name including prefix
 	 * @param array $where - associative array of where terms, e.g. array('id = %d' = 5, 'name = %s' = 'tony')
 	 * @param string $orderby - e.g. "post_date DESC"
@@ -64,9 +64,9 @@ class Database extends ezSQL_mysql
 	 * @param bool $cache - cache results
 	 * @param bool $query_only - return just the query, not the results?
 	 */
-	public function fillObject($select = array(), $table = '', $where = array(), $orderby = '', $limit = '', $cache, $query_only)
+	public function fillObject($selectTerms = array(), $table = '', $where = array(), $orderby = '', $limit = '', $cache, $query_only)
 	{
-		if ($select)  { $this->select = $select; }
+		if ($selectTerms)  { $this->selectTerms = $selectTerms; }
 		if ($table)   { $this->table = $table; }
 		if ($where)   { $this->where = $where; }
 		if ($orderby) { $this->orderby = $orderby; }
@@ -80,7 +80,7 @@ class Database extends ezSQL_mysql
 	 */
 	public function emptyObject()
 	{
-		$this->select        = array();
+		$this->selectTerms        = array();
 		$this->table         = '';
 		$this->where         = array();
 		$this->orderby       = '';
@@ -94,7 +94,7 @@ class Database extends ezSQL_mysql
 	/**
 	 * Build an SQL "SELECT" query
 	 *
-	 * @param array $select - associative array of select terms
+	 * @param array $selectTerms - associative array of select terms
 	 * @param string $table - abbreviated table name, e.g. posts, users, comments
 	 * @param array $where - associative array of where terms, e.g. array('id = %d' = 5, 'name = %s' = 'tony')
 	 * @param string $orderby - e.g. post_date DESC
@@ -103,10 +103,10 @@ class Database extends ezSQL_mysql
 	 * @param bool $query_only - return just the query, not the results?
 	 * @return array|false
 	 */
-	public function select($h, $select = array(), $table = '', $where = array(), $orderby = '', $limit = '', $cache = true, $query_only = false)
+	public function selectTerms($h, $selectTerms = array(), $table = '', $where = array(), $orderby = '', $limit = '', $cache = true, $query_only = false)
 	{
 		// for flexibility, we want to use object properties:
-		$this->fillObject($select, $table, $where, $orderby, $limit, $cache, $query_only);
+		$this->fillObject($selectTerms, $table, $where, $orderby, $limit, $cache, $query_only);
 		
 		// plugin hook
 		$h->pluginHook('database_select');
@@ -115,7 +115,7 @@ class Database extends ezSQL_mysql
 		$this->prepare_array[0] = "temp";    // placeholder to be later filled with the SQL query.
 		
 		// set SELECT:
-		$select = ($this->select) ? $this->buildSelect() : '';
+		$selectTerms = ($this->selectTerms) ? $this->buildSelect() : '';
 		
 		// set TABLE:
 		$table = ($this->table) ? DB_PREFIX . $this->table : TABLE_POSTS; // defaults to TABLE_POSTS
@@ -130,7 +130,7 @@ class Database extends ezSQL_mysql
 		$limit = ($this->limit) ? ' LIMIT ' . $this->limit : '';
 		
 		// Build query:
-		$sql = "SELECT " . $select . " FROM " . $table . $where . $orderby . $limit;
+		$sql = "SELECT " . $selectTerms . " FROM " . $table . $where . $orderby . $limit;
 		
 		$this->prepare_array[0] = $sql;
 		
@@ -153,30 +153,30 @@ class Database extends ezSQL_mysql
 	 */
 	public function buildSelect()
 	{
-		if (!$this->select) { return ''; }
+		if (!$this->selectTerms) { return ''; }
 
-		$select = ""; // the new select string we make from the $this->select array
+		$selectTerms = ""; // the new select string we make from the $this->selectTerms array
 
-		foreach ($this->select as $key => $value) {
+		foreach ($this->selectTerms as $key => $value) {
 			// e.g.
-			// $select[0] = 'post_id';
-			// $select[1] = array('blah %s blah'=>'value for %s');
+			// $selectTerms[0] = 'post_id';
+			// $selectTerms[1] = array('blah %s blah'=>'value for %s');
 
 			// Push the values of %s and %d into the prepare_array
 			if (is_array($value)) {
 				foreach ($value as $k => $v) {
-					$select .= $k . ', ';
+					$selectTerms .= $k . ', ';
 					array_push($this->prepare_array, $v);
 				}
 			} else {
-				// otherwise add the single value to the select string
-				$select .= $value . ', ';
+				// otherwise add the single value to the selectTerms string
+				$selectTerms .= $value . ', ';
 			}
 	
 		}
-		$select = rstrtrim($select, ", "); // strip off trailing AND
+		$selectTerms = rstrtrim($selectTerms, ", "); // strip off trailing AND
 		
-		return $select;
+		return $selectTerms;
 	}
 
 
