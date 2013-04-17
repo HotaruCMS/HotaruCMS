@@ -141,23 +141,22 @@ class Widget
 		// Get settings from the database if they exist...
 		$widgets_settings = $h->getSerializedSettings('widgets'); 
 		
-		if ($widgets_settings['widgets']) {
-			$widgets = $widgets_settings['widgets'];    // associative array
+		if (!$widgets_settings['widgets']) { return false; }
+		
+		$widgets = $widgets_settings['widgets'];	// associative array
 			
-			// return an individual widget
-			if ($widget_name && isset($widgets[$widget_name])) { 
-				if (!$h->isActive($widgets[$widget_name]['plugin'])) { 
-					return false; 
-				} else { 
-					return $widgets[$widget_name]; 
-				}
+		// return an individual widget
+		if ($widget_name && isset($widgets[$widget_name])) { 
+			if (!$h->isActive($widgets[$widget_name]['plugin'])) { 
+				return false; 
+			} else { 
+				return $widgets[$widget_name]; 
 			}
-		
-			$widgets = $this->orderWidgets($widgets);    // sorts plugins by "order"
-		
-			return $widgets;
 		}
-		return false;
+	
+		$widgets = $this->orderWidgets($widgets);    // sorts plugins by "order"
+	
+		return $widgets;
 	}
 	
 	

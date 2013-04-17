@@ -292,66 +292,6 @@ class Comment
 	 */
 	function addComment($h)
 	{
-		$result = array(); // this will be sent back containing various info
-		
-		// setup
-		$result['set_pending'] = '';
-		$result['comments_approved'] = 0;
-		$result['comments_needed'] = 0;
-		$result['exceeded_daily_limit'] = false;
-		$result['exceeded_url_limit'] = false;
-		$result['under_moderation'] = false;
-		$result['not_enough_comments'] = false;
-		
-		$h->pluginHook('comment_pre_add_comment');  // Akismet uses this to change the status
-		
-		$can_comment = $h->currentUser->getPermission('can_comment'); // This was already checked, but Akismet sometimes reverts the status, so we do it again.
-		
-		if ($can_comment == 'mod') { // forces all to 'pending' if user's comments are moderated
-			$this->status = 'pending'; 
-			$result['under_moderation'] = true;
-		} 
-		
-		// Get settings from database...
-		$comments_settings = $h->getSerializedSettings('comments');
-		
-		$set_pending = $comments_settings['comment_set_pending'];
-		$daily_limit = $comments_settings['comment_daily_limit'];
-		$url_limit = $comments_settings['comment_url_limit'];
-		
-		$result['set_pending'] = $set_pending;
-		
-		if ($h->currentUser->role == 'member')
-		{
-			if ($daily_limit && ($daily_limit < $this->countDailyComments($h)))
-			{
-				 // exceeded daily limit, set to pending
-				$this->status = 'pending';
-				$result['exceeded_daily_limit'] = true;
-			}
-			
-			if ($url_limit && ($url_limit < $this->countUrls()))
-			{ 
-				// exceeded url limit, set to pending
-				$this->status = 'pending';
-				$result['exceeded_url_limit'] = true;
-			}
-			
-		}
-
-		if ($set_pending == 'some_pending') {
-			$comments_approved = $this->commentsApproved($h, $h->currentUser->id);
-			$x_comments_needed = $comments_settings['comment_x_comments'];
-			if ($comments_approved < $x_comments_needed) {
-				$result['not_enough_comments'] = true;
-				$this->status = 'pending'; 
-			}
-		}
-		
-		if ($set_pending == 'all_pending') {
-			$this->status = 'pending';
-		}
-		
 		$sql = "INSERT INTO " . TABLE_COMMENTS . " SET comment_post_id = %d, comment_user_id = %d, comment_parent = %d, comment_date = CURRENT_TIMESTAMP, comment_status = %s, comment_content = %s, comment_subscribe = %d, comment_updateby = %d";
 		
 		$h->db->query($h->db->prepare($sql, $this->postId, $this->author, $this->parent, $this->status, urlencode(trim(stripslashes($this->content))), $this->subscribe, $h->currentUser->id));
@@ -362,8 +302,6 @@ class Comment
 		$h->vars['last_insert_id'] = $last_insert_id;    // make it available outside this class
 		
 		$h->pluginHook('comment_post_add_comment');
-		
-		return $result;
 	}
 
 		

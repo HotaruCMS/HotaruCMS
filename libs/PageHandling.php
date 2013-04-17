@@ -167,6 +167,7 @@ class PageHandling
 		} 
 		
 		if ($page) {
+			$page = str_replace('..', '', $page); // prevents access outside the current folder
 			$page = rtrim($page, '/');
 			return $page;
 		} else {
@@ -184,7 +185,7 @@ class PageHandling
 	public function getTitle($h, $delimiter = ' &laquo; ', $raw = false)
 	{
 		// if the title is already set...
-		if ($h->pageTitle != "")
+		if ($h->pageTitle)
 		{
 			// replace [delimiter] text with the specified delimiter:
 			$h->pageTitle = str_replace('[delimiter]', $delimiter, $h->pageTitle);
@@ -253,6 +254,7 @@ class PageHandling
 			$default = $this->default;
 		} 
 		
+		$page = str_replace('..', '', $page); // prevents access outside the current folder
 		$page = $page . '.php';
 	
 		/* 
@@ -354,7 +356,7 @@ class PageHandling
 					$value = $h->post->url;
 					
 					// if we're using categories and the category is not "all"...
-					if ($h->isActive('categories') && $h->post->category != 1) {
+					if ($h->isActive('categories') && $h->post->category > 1) {
 						$url .= $h->getCatSafeName($h->post->category) . '/';
 					}
 					

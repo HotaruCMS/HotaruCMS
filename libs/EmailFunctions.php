@@ -62,6 +62,9 @@ class EmailFunctions
 		
 		if (!$this->to) { $this->to = SITE_NAME . ' <' . SITE_EMAIL . '>'; }
 		if (!$this->from) { $this->from = SITE_NAME . ' <' . SITE_EMAIL . '>'; }
+
+		// Fixing the subject for non-ASCII characters:
+		$this->subject = '=?UTF-8?B?'.base64_encode($this->subject).'?=';
 		
 		if (SMTP == 'true')
 		{
@@ -115,7 +118,7 @@ class EmailFunctions
 				if (SMTP == 'true') {
 					$this->doSmtpEmail();
 				} else {
-					mail($this->to, $this->subject, $this->body, $this->headers);
+					$sentmail = mail($this->to, $this->subject, $this->body, $this->headers);					
 				}
 		}
 	}

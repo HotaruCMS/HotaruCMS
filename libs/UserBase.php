@@ -245,6 +245,26 @@ class UserBase
 	
 	
 	/**
+	 * Physically delete this user
+	 * Note: You should delete all their posts, comments, etc. first
+	 *
+	 * @param array $user_id (optional)
+	 */
+	public function deleteUser($h, $user_id = 0) 
+	{
+		if (!$user_id) { $user_id = $this->id; }
+		
+		$h->pluginHook('userbase_delete_user', '', array('user_id'=>$user_id));
+		
+		$sql = "DELETE FROM " . TABLE_USERS . " WHERE user_id = %d";
+		$h->db->query($h->db->prepare($sql, $user_id));
+		
+		$sql = "DELETE FROM " . TABLE_USERMETA . " WHERE usermeta_userid = %d";
+		$h->db->query($h->db->prepare($sql, $user_id));
+	}
+
+
+	/**
 	 * Default permissions
 	 *
 	 * @param string $role or 'all'
@@ -307,33 +327,47 @@ class UserBase
 	 * Update Default permissions
 	 *
 	 * @param array $new_perms from a plugin's install function
-	 * @param string $defaults - either "site", "base" or "both" 
+	 * @param string $defaults - either "site", "base" or "both"
+	 * @param bool $remove - false if adding perms, true if deleting them
 	 */
-	public function updateDefaultPermissions($h, $new_perms = array(), $defaults = 'both') 
+	public function updateDefaultPermissions($h, $new_perms = array(), $defaults = 'both', $remove = false) 
 	{
 		if (!$new_perms) { return false; }
 		
 		// get and merge permissions
 		if ($defaults == 'site')
 		{
-			$site_perms = $this->getDefaultPermissions($h,'all', 'site'); //get site defaults
-			$site_perms = array_merge_recursive($site_perms, $new_perms); // merge
+			if ($remove) {
+				$site_perms = $new_perms;
+			} else {
+				$site_perms = $this->getDefaultPermissions($h,'all', 'site'); //get site defaults
+				$site_perms = array_merge_recursive($site_perms, $new_perms); // merge
+			}
 			$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s WHERE miscdata_key = %s";
 			$h->db->query($h->db->prepare($sql, serialize($site_perms), 'permissions'));
 		} 
 		elseif ($defaults == 'base')
 		{
-			$base_perms = $this->getDefaultPermissions($h,'all', 'base'); // get base defaults
-			$base_perms = array_merge_recursive($site_perms, $new_perms); // merge
+			if ($remove) {
+				$base_perms = $new_perms;
+			} else {
+				$base_perms = $this->getDefaultPermissions($h,'all', 'base'); // get base defaults
+				$base_perms = array_merge_recursive($base_perms, $new_perms); // merge
+			}
 			$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_default = %s WHERE miscdata_key = %s";
 			$h->db->query($h->db->prepare($sql, serialize($base_perms), 'permissions'));
 		}
 		else 
 		{
-			$site_perms = $this->getDefaultPermissions($h,'all', 'site'); //get site defaults
-			$site_perms = array_merge_recursive($site_perms, $new_perms); // merge
-			$base_perms = $this->getDefaultPermissions($h,'all', 'base'); // get base defaults
-			$base_perms = array_merge_recursive($base_perms, $new_perms); // merge
+			if ($remove) {
+				$site_perms = $new_perms;
+				$base_perms = $new_perms;
+			} else {
+				$site_perms = $this->getDefaultPermissions($h,'all', 'site'); //get site defaults
+				$site_perms = array_merge_recursive($site_perms, $new_perms); // merge
+				$base_perms = $this->getDefaultPermissions($h,'all', 'base'); // get base defaults
+				$base_perms = array_merge_recursive($base_perms, $new_perms); // merge
+			}
 			$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";
 			$h->db->query($h->db->prepare($sql, serialize($site_perms), serialize($base_perms), 'permissions'));
 		}
@@ -483,24 +517,272 @@ class UserBase
 			$h->db->query($h->db->prepare($sql, $settings, $h->currentUser->id, 'user_settings'));
 		}
 	}
-	
-	
+
+
 	/**
-	 * Physically delete this user
-	 * Note: You should delete all their posts, comments, etc. first
+	 * Get User Roles - returns an array of role names
 	 *
-	 * @param array $user_id (optional)
+	 * @param string $type 'all', 'default', or 'custom'
+	 * @return array|false
 	 */
-	public function deleteUser($h, $user_id = 0) 
+	public function getRoles($h, $type = 'all') 
 	{
-		if (!$user_id) { $user_id = $this->id; }
+		switch ($type)
+		{
+			case 'default':
+				return $this->getDefaultRoles();
+				break;
+			case 'custom':
+				return $this->getCustomRoles($h);
+				break;
+			default:
+				return $this->getUniqueRoles($h);
+				break;
+		}
+	}
+
+
+	/**
+	 * Get Unique User Roles
+	 *
+	 * @return array|false
+	 */
+	public function getUniqueRoles($h) 
+	{
+		$unique_roles = $this->getDefaultRoles();
 		
-		$h->pluginHook('userbase_delete_user', '', array('user_id'=>$user_id));
+		// Add any custom roles:
+		$custom_roles = $this->getCustomRoles($h);
+		if ($custom_roles)
+		{
+			foreach ($custom_roles as $role) 
+			{
+				if (!in_array($role, $unique_roles))
+				{ 
+					array_push($unique_roles, $role);
+				}
+			}
+		}
 		
-		$sql = "DELETE FROM " . TABLE_USERS . " WHERE user_id = %d";
-		$h->db->query($h->db->prepare($sql, $user_id));
+		if ($unique_roles) { return $unique_roles; } else { return false; }
+	}
+
+
+	/**
+	 * Get Default User Roles
+	 *
+	 * @return array|false
+	 */
+	public function getDefaultRoles() 
+	{
+		return array('admin', 'supermod', 'moderator', 'member', 'undermod', 'pending', 'suspended', 'banned', 'killspammed'); 
+	}
+
+
+	/**
+	 * Get Custom User Roles
+	 *
+	 * @return array|false
+	 */
+	public function getCustomRoles($h) 
+	{
+		$sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s LIMIT 1";
+		$result = $h->db->get_var($h->db->prepare($sql, 'custom_roles'));
+		if (!$result) { return false; } 
 		
-		$sql = "DELETE FROM " . TABLE_USERMETA . " WHERE usermeta_userid = %d";
-		$h->db->query($h->db->prepare($sql, $user_id));
+		$custom_roles = unserialize($result); // result should be an array
+
+		return $custom_roles; 
+	}
+
+
+	/**
+	 * Add Custom User Role
+	 *
+	 * @param string $new_role name of new custom role
+	 * @return bool
+	 */
+	public function addCustomRole($h, $new_role = '', $base_role = 'default') 
+	{
+		if (!$new_role) { return false; }
+
+		$new_role = mb_strtolower($new_role, 'UTF-8');
+
+		// test if this role name is reserved:
+		$default_roles = $this->getDefaultRoles();
+		if (in_array($new_role, $default_roles)) { return false; }
+
+		// test if this role name is already a custom role:
+		$custom_roles = $this->getCustomRoles($h);
+		if ($custom_roles && (in_array($new_role, $custom_roles))) { return false; }
+
+		// add new role to custom roles
+		if (!$custom_roles) { $custom_roles = array(); }
+		array_push($custom_roles, $new_role);
+		
+		// check custom_roles row exists in the database:
+		$sql = "SELECT miscdata_id FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s LIMIT 1";
+		$result = $h->db->get_var($h->db->prepare($sql, 'custom_roles'));
+
+		// update or insert accordingly 
+		if ($result)
+		{
+			$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
+			$h->db->query($h->db->prepare($sql, serialize($custom_roles), $h->currentUser->id, 'custom_roles'));
+		} 
+		else 
+		{
+			$sql = "INSERT INTO " . TABLE_MISCDATA . " (miscdata_key, miscdata_value, miscdata_updateby) VALUES(%s, %s, %d)";
+			$h->db->query($h->db->prepare($sql, 'custom_roles', serialize($custom_roles), $h->currentUser->id));
+		}
+
+		// Next, update Hotaru's base permissions
+		$base_perms = $h->getDefaultPermissions('all', 'base');
+		$base_perms = $this->copyRolePerms($h, $base_perms, $new_role, $base_role);
+		$h->updateDefaultPermissions($base_perms, 'base');
+
+		// Next, update Hotaru's site permissions
+		$site_perms = $h->getDefaultPermissions('all', 'site');
+		$site_perms = $this->copyRolePerms($h, $site_perms, $new_role, $base_role);
+		$h->updateDefaultPermissions($site_perms, 'site');
+
+		return true;
+	}
+
+
+	/**
+	 * Remove Custom User Role
+	 *
+	 * @param string $remove_role name of custom role to remove
+	 * @param string $move_to name of role to move existing users to
+	 * @return bool
+	 */
+	public function removeCustomRole($h, $remove_role = '', $move_to = '') 
+	{
+		if (!$remove_role) { return false; }
+
+		$remove_role = mb_strtolower($remove_role, 'UTF-8');
+
+		// return false if this is a default role:
+		$default_roles = $this->getDefaultRoles();
+		if (in_array($remove_role, $default_roles)) { return false; }
+
+		// return false if this is not a custom role:
+		$custom_roles = $this->getCustomRoles($h);
+		if (!$custom_roles || (!in_array($remove_role, $custom_roles))) { return false; }
+
+		// update all users with the old role
+		if ($move_to) { $this->bulkRoleChange($h, $remove_role, $move_to); }
+
+		// remove role from custom roles
+		$custom_roles = array_remove($custom_roles, $remove_role); // custom Hotaru function
+
+		// update custom_roles record
+		$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
+		$h->db->query($h->db->prepare($sql, serialize($custom_roles), $h->currentUser->id, 'custom_roles'));
+
+		// remove the role from Hotaru's base permissions
+		$base_perms = $h->getDefaultPermissions('all', 'base');
+		$base_perms = $this->removeRolePerms($h, $base_perms, $remove_role);
+		$h->updateDefaultPermissions($base_perms, 'base', true);
+
+		// remove the role from  Hotaru's site permissions
+		$site_perms = $h->getDefaultPermissions('all', 'site');
+		$site_perms = $this->removeRolePerms($h, $site_perms, $remove_role);
+		$h->updateDefaultPermissions($site_perms, 'site', true);
+
+		return true;
+	}
+
+
+	/**
+	 * Bulk User Role Change
+	 *
+	 * @param string $from name of role to move from
+	 * @param string $to name of role to move to
+	 * @return bool
+	 */
+	public function bulkRoleChange($h, $from = '', $to = '') 
+	{
+		if (!$from || !$to) { return false; }
+
+		// check $from and $to exist
+		$unique_roles = $this->getUniqueRoles($h);
+		if (!in_array($from, $unique_roles)) { return false; }
+		if (!in_array($to, $unique_roles)) { return false; }
+
+		$sql = "SELECT user_id FROM " . TABLE_USERS . " WHERE user_role = %s";
+		$items = $h->db->get_results($h->db->prepare($sql, $from));
+		if ($items) 
+		{
+			// Change role and permissions for each user being moved
+			foreach ($items as $item) 
+			{
+				$user = new UserAuth();
+				$user->getUser($h, $item->user_id);
+				$user->role = $to;
+				$new_perms = $user->getDefaultPermissions($h, $user->role);
+				$user->setAllPermissions($new_perms);
+				$user->updateUserBasic($h);
+			}
+		}
+		
+		return true;
+	}
+
+
+	/**
+	 * Copy Usergroup Default Permissions
+	 *
+	 * @param array $perms
+	 * @param string $new_role name of custom role to copy to
+	 * @param string $base_role name of base role to copy from
+	 * @return array
+	 */
+	public function copyRolePerms($h, $perms = array(), $new_role = '', $base_role = 'default') 
+	{
+		if (!$perms || !$new_role) { return array(); }
+
+		$new_perms = array();
+
+		foreach ($perms as $perm => $roles)
+		{
+			foreach ($roles as $role => $value)
+			{
+				if ($role == $base_role)
+				{
+					$new_perms[$perm][$new_role] = $value;
+				}
+			} 
+		}
+
+		return $new_perms;
+	}
+
+
+	/**
+	 * Remove Usergroup Default Permissions
+	 *
+	 * @param array $perms
+	 * @param string $new_role name of custom role to copy to
+	 * @param string $base_role name of base role to copy from
+	 * @return array
+	 */
+	public function removeRolePerms($h, $perms = array(), $delete_role = '') 
+	{
+		if (!$perms || !$delete_role) { return array(); }
+
+		foreach ($perms as $perm => $roles)
+		{
+			foreach ($roles as $role => $value)
+			{
+				if ($role == $delete_role)
+				{
+					unset($perms[$perm][$delete_role]);
+				}
+			} 
+		}
+
+		return $perms;
 	}
 }

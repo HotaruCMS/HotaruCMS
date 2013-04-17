@@ -24,133 +24,26 @@
  * @link      http://www.hotarucms.org/
  */
 class SystemInfo
-{	
-	
+{
 	/**
 	 * Calls external site to provide system info feedback report
 	 *
 	 * @return bool true
 	 */
-	public function hotaru_feedback($h)
+	public function hotaru_feedback($h, $format = 'json')
 	{
 		$report = $h->generateReport("object");
-
+		
 		$query_vals = array(
-		    'api_key' => '',
-		    'format' => 'json',
-		    'method' => 'hotaru.systemFeedback.add',
-		    'args' => serialize($report)
+			'api_key' => '',
+			'format' => $format,
+			'method' => 'hotaru.systemFeedback.add',
+			'args' => serialize($report)
 		);
-
+		
 		$info = $this->sendApiRequest($h, $query_vals, 'http://api.hotarucms.org/index.php?page=api');
 		
 		return true;
-	}
-
-
-	/**
-	 * Calls external site to get latest available hotaru version number
-	 *
-	 * @return string versionnumber
-	 */
-	public function hotaru_version($h)
-	{
-		$query_vals = array(
-		    'api_key' => '',
-		    'format' => 'json',
-		    'method' => 'hotaru.version.get'
-		);
-
-		$info = $this->sendApiRequest($h, $query_vals, 'http://hotaruplugins.com/index.php?page=api');
-
-		// save the updated version number to the local db so we can display it on the admin panel until it gets updated.
-		if (isset($info['version'])) {
-		    $sql = "SELECT miscdata_id FROM " . TABLE_MISCDATA ." WHERE miscdata_key = %s";
-		    $query = $h->db->get_row($h->db->prepare($sql, 'hotaru_latest_version'));
-		    
-		    if ($query) {
-			// update existing db record
-			$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s WHERE miscdata_key = %s";
-			$h->db->query($h->db->prepare($sql, $info['version'], 'hotaru_latest_version'));
-		    } else {			
-			$sql = "INSERT INTO " . TABLE_MISCDATA . " (miscdata_value, miscdata_key) VALUES (%s, %s)";
-			$h->db->query($h->db->prepare($sql, $info['version'], 'hotaru_latest_version'));	
-		    }	
-		    return $info['version'];
-		}
-
-		return 0;
-		
-	}
-
-	/**
-	 * Calls external site to get latest available hotaru version number
-	 *
-	 * @return bool true
-	 */
-	public function plugin_version_getAll($h)
-	{
-		$query_vals = array(
-		    'api_key' => '',
-		    'format' => 'json',
-		    'method' => 'hotaru.plugin.version.getAll'
-		);
-
-		 $info = $this->sendApiRequest($h, $query_vals, 'http://hotaruplugins.com/index.php?page=api');
-
-		 if ($info) {
-		    // save the updated version numbers to the local db so we can display it on the plugin management panel
-		    $sql = "SELECT plugin_id, plugin_name, plugin_latestversion FROM " . TABLE_PLUGINS;
-		    $plugins = $h->db->get_results($h->db->prepare($sql));
-
-		    if ($plugins) {
-			foreach ($plugins as $plugin) {
-			    if (array_key_exists($plugin->plugin_name, $info)) {
-				$sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_latestversion = %s WHERE (plugin_id = %d)";
-				$h->db->query($h->db->prepare($sql, $info[$plugin->plugin_name], $plugin->plugin_id));
-				//print $plugin->plugin_name . ' ' . $info[$plugin->plugin_name] . '<br/>';
-			    }
-			}
-		    }
-		 }
-
-		return true;
-	}
-
-
-	/**
-	 *
-	 * @param <type> $search
-	 */
-	public function pluginSearch($h, $search)
-	{
-		$query_vals = array(
-		    'api_key' => '',
-		    'format' => 'json',
-		    'method' => 'hotaru.plugin.search',
-		    'args' => $search
-		);
-
-		 $plugins = $this->sendApiRequest($h, $query_vals, 'http://hotaruplugins.com/index.php?page=api');
-
-		 return $plugins;
-	}
-
-	/**
-	 *
-	 */
-	public function pluginTagCloud($h, $number = 20)
-	{
-		$query_vals = array(
-		    'api_key' => '',
-		    'format' => 'json',
-		    'method' => 'hotaru.plugin.tagcloud',
-		    'args' => $number
-		);
-
-		 $result = $this->sendApiRequest($h, $query_vals, 'http://hotaruplugins.com/index.php?page=api');
-
-		 return $result;
 	}
 
 
@@ -162,25 +55,25 @@ class SystemInfo
 	 */
 	public function sendApiRequest($h, $query_vals, $url)
 	{
-		// Generate the POST string
+		// Generate the POST string 
 		$ret = '';
 		foreach($query_vals as $key => $value) {
-		    $ret .= $key.'='.urlencode($value).'&';
+			$ret .= $key.'='.urlencode($value).'&';
 		}
 
 		$ret = rtrim($ret, '&');
-
+		
 		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $ret);
 		$response = curl_exec($ch);
 		curl_close ($ch);
-
+		
 		return json_decode($response, true);
 	}
-	
-	
+
+
 	/**
 	 * Get system data
 	 *
@@ -356,11 +249,9 @@ class SystemInfo
 		if (isset($report['hotaru_plugins'])) {
 			foreach ($report['hotaru_plugins'] as $key => $value) {
 				$output .= $value['order'] . ". " . $key . " v." . $value['version'] . " ";
-				$output .= " (" . $value['plugin_latestversion']  .") ";
 				if ($value['enabled']) { $output .= "[enabled] \n"; } else { $output .= "[disabled] \n"; }				
 			}
 		}
-		$output .= "\n(Number in brackets above denotes latest versions available at HotaruCMS.org)\n";
 		
 		$output .= "\n";
 		
@@ -440,5 +331,9 @@ class SystemInfo
 		}
 		return $output;
 	}
+
+	/* These can be removed after the Cron plugin is updated to no longer use them */
+	public function hotaru_version() { return false; }
+	public function plugin_version_getAll() { return false; }
 }
 ?>

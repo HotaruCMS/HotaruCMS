@@ -46,6 +46,17 @@ class Debug
 			echo $h->lang['main_hotaru_hotaru_version'] . $h->version; 
 			echo "</p>"; 
 		}
+		elseif ($h->pageTemplate && function_exists('file_get_contents'))
+		{
+			$template = file_get_contents(THEMES . THEME . $h->pageTemplate . '.php');
+
+			$hlink1 = stripos($template,"href='http://hotarucms.org'");
+			$hlink2 = stripos($template,"href=\"http://hotarucms.org\"");
+			if (($hlink1 === FALSE) && ($hlink2 === FALSE)) {
+				// Hotaru link removed from footer so put it back in:
+				echo "<p><small><a href='http://hotarucms.org' title='HotaruCMS.org'>Powered by HotaruCMS</a></small></p>";
+			}
+		}
 	
 		if ($h->currentUser->loggedIn) {echo "<span id='loggedIn' class='loggedIn_true'/>"; } else {"<span id='loggedIn' class='loggedIn_false'/>";}
 	}
@@ -111,8 +122,7 @@ class Debug
 	public function generateReport($h, $type = 'log')
 	{
 		$sysinfo = new SystemInfo();
-		$sysinfo->plugin_version_getAll($h);
-        
+
 		$report = $sysinfo->getSystemData($h);
 		
 		if ($type == 'object') { return $report; }

@@ -150,8 +150,7 @@ class AdminPages
 					}
 				} else {
 					// values that are allowed to be empty:
-					 // multi-site added here because the feature is hidden in settings template. Remove from below when visible.
-					$exempt = array('SMTP_USERNAME', 'SMTP_PASSWORD', 'MULTI_SITE');
+					$exempt = array('SMTP_USERNAME', 'SMTP_PASSWORD');
 					if ($setting_name->settings_show == 'N') { array_push($exempt, $setting_name->settings_name); }
 					if (!in_array($setting_name->settings_name, $exempt)) { 
 						// otherwise flag as an error:
@@ -225,7 +224,7 @@ class AdminPages
 	 */
 	public function getAllAdminSettings($db)
 	{
-		$sql = "SELECT settings_name, settings_value, settings_default, settings_note, settings_show FROM " . TABLE_SETTINGS;		
+		$sql = "SELECT settings_name, settings_value, settings_default, settings_note, settings_show FROM " . TABLE_SETTINGS;
 		$results = $db->get_results($db->prepare($sql));
 		if ($results) { return $results; } else { return false; }
 	}
@@ -378,7 +377,7 @@ class AdminPages
 			);
 		}
 
-		$h->db->select(DB_NAME);
+		$h->db->selectDB(DB_NAME);
 		
 		if (!$h->db->get_col("SHOW TABLES",0)) { return $db_tables; }
 		

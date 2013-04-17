@@ -35,22 +35,22 @@ class Initialize
 	 */
 	public function __construct($h)
 	{
-
 		// session to be used by CSRF, etc.
 		if (!isset($_SESSION['HotaruCMS'])) {
-			session_start();
+			@session_start();
 			$_SESSION['HotaruCMS'] = time();
 		}
 
 		// The order here is important!
 		$this->setDefaultTimezone();
-		$this->setTableConstants();				
+		$this->setTableConstants();
+
+		$this->MakeCacheFolders();
 
 		$this->getFiles();
 		$this->cage = $this->initInspektCage();
 		$this->db = $this->initDatabase();
 
-		$this->getCurrentSiteID();
 		$this->errorReporting();
 
 		$this->readSettings();
@@ -99,7 +99,9 @@ class Initialize
 		}
 		
 		// If doesn't exist, create a new file with die() at the top
-		if (!file_exists($filename)) {
+		if (!file_exists($filename))
+		{
+			// write the error log
 			$fh = fopen($filename, 'w') or die("Sorry, I can't open cache/debug_logs/error_log.php");
 			fwrite($fh, "<?php die(); ?>\r\n");
 			fclose($fh);
@@ -131,7 +133,6 @@ class Initialize
 			"TABLE_POSTMETA"=>"postmeta",
 			"TABLE_POSTVOTES"=>"postvotes",
 			"TABLE_SETTINGS"=>"settings",
-			"TABLE_SITE"=>"site",
 			"TABLE_TAGS"=>"tags",
 			"TABLE_TEMPDATA"=>"tempdata",
 			"TABLE_USERS"=>"users",
@@ -145,75 +146,6 @@ class Initialize
 				define($key, DB_PREFIX . $value);
 			}
 		}
-	}
-	
-	/**
-	 * Sets the current SiteID if multiple sites.
-	 */
-	public function getCurrentSiteID()
-	{
-		// read settings for default siteid=1 first to check whether MULTISITE is TRUE
-		$sql = "SELECT settings_value FROM " . TABLE_SETTINGS . " WHERE settings_name = %s AND settings_siteid = %d";
-		$multi_site = $this->db->get_var($this->db->prepare($sql, 'MULTI_SITE', 1));
-		if (!defined('MULTI_SITE')) { define ('MULTI_SITE', $multi_site); }
-
-	        if (MULTI_SITE == 'true') {
-		    $url =  $this->cage->server->getRaw('HTTP_HOST');   // wanted to use sanitizeTags
-		    $sql = "SELECT site_id, site_adminuser_id FROM " . TABLE_SITE . " WHERE site_url = %s";
-		    $settings = $this->db->get_row($this->db->prepare($sql, $url));		 
-
-		    if ($settings) {
-			$siteid = $settings->site_id;
-			$siteurl = "http://" . $url . "/";
-		    } else {
-			$siteid = 1;
-			$siteurl = BASEURL;
-		    }
-
-
-		    if (!defined('MS_TABLES')) {
-			$ms_tables = array();
-			//get $h->$ms_tables
-			foreach ( $this->db->get_col("SHOW TABLES",0) as $table_name )
-			{
-			    $sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.Columns where TABLE_NAME = %s AND RIGHT(COLUMN_NAME,7) = %s";
-			    $columns = $this->db->get_row($this->db->prepare($sql, $table_name, '_siteid'));
-			    //var_dump($columns);
-			    $array1 = explode(DB_PREFIX, $table_name);
-			    $tablename = $array1[1];
-			    if ($columns) {
-				$array2 = explode('_siteid', $columns->COLUMN_NAME);
-				$ms_tables[$tablename] = $array2[0];
-			    }			
-			}
-			//define('MS_TABLES','return ' . var_export($ms_tables, 1) . ';');
-			 define('MS_TABLES',serialize($ms_tables));			
-		    }
-
-
-		} else {
-		    $siteid = 1;
-		    $siteurl = BASEURL;
-		}
-
-		if (!defined('SITEID')) { define('SITEID', $siteid); }
-		if (!defined('SITEURL')) { define("SITEURL", $siteurl); }
-		
-		if (!defined('CACHE')) {
-		    
-		    define("CACHE", BASE . "cache/" . $siteid . "/");
-
-		    $dirs = array('', 'debug_logs/' , 'db_cache/', 'css_js_cache/', 'html_cache/', 'rss_cache/', 'lang_cache/');  // first array item is needed to create the SITEID base folder
-
-		    foreach ($dirs as $dir) {
-			if (!is_dir(CACHE . $dir)) {
-			    mkdir(CACHE . $dir);
-			}
-		    }
-		    
-		}
-
-		return false;
 	}
 
 	/**
@@ -246,6 +178,7 @@ class Initialize
 		require_once(FUNCTIONS . 'funcs.arrays.php');
 		require_once(FUNCTIONS . 'funcs.times.php');
 		require_once(FUNCTIONS . 'funcs.files.php');
+		require_once(FUNCTIONS . 'funcs.http.php'); 
 	}
 	
 	
@@ -289,7 +222,6 @@ class Initialize
 	
 	/**
 	 * Returns all site settings
-	 * @param <int> $siteid
 	 * 
 	 * @return <bool>
 	 */
@@ -303,7 +235,7 @@ class Initialize
 		foreach ($settings as $setting)
 		{
 			if (!defined($setting->settings_name)) {
-				if ($setting->settings_name != 'MULTI_SITE') { define($setting->settings_name, $setting->settings_value); }
+				define($setting->settings_name, $setting->settings_value);
 			}
 		}
 
@@ -311,6 +243,31 @@ class Initialize
 	}
 	
 	
+	/**
+	 * Make cache folders if they don't already exist
+	 */
+	public function MakeCacheFolders()
+	{
+		// create a debug_logs folder if one doesn't exist.
+		if (!is_dir(CACHE . 'debug_logs')) { mkdir(CACHE . 'debug_logs'); }
+
+		// create a db_cache folder if one doesn't exist.
+		if (!is_dir(CACHE . 'db_cache')) { mkdir(CACHE . 'db_cache'); }
+
+		// create a css_js_cache folder if one doesn't exist.
+		if (!is_dir(CACHE . 'css_js_cache')) { mkdir(CACHE . 'css_js_cache'); }
+
+		// create a lang_cache folder if one doesn't exist.
+		if (!is_dir(CACHE . 'lang_cache')) { mkdir(CACHE . 'lang_cache'); }
+
+		// create an rss_cache folder if one doesn't exist.
+		if (!is_dir(CACHE . 'rss_cache')) { mkdir(CACHE . 'rss_cache'); }
+
+		// create an html_cache folder if one doesn't exist.
+		if (!is_dir(CACHE . 'html_cache')) { mkdir(CACHE . 'html_cache'); }
+	}
+
+
 	/**
 	 * Set up database cache
 	 *
@@ -321,6 +278,7 @@ class Initialize
 		// Setup database cache
 		$this->db->cache_timeout = DB_CACHE_DURATION; // Note: this is hours
 		$this->db->cache_dir = CACHE . 'db_cache';
+
 		if (DB_CACHE == "true") {
 			$this->db->use_disk_cache = true;
 			return true;
@@ -358,11 +316,15 @@ class Initialize
 	 */
 	public function setUpJsConstants()
 	{
+		if (!defined('SITEURL')) { define("SITEURL", BASEURL); }
+
 		// Start timer if debugging
 		$global_js_var = "jQuery('document').ready(function($) {BASE = '" . BASE . "'; BASEURL = '". SITEURL ."'; SITEURL = '". SITEURL ."'; ADMIN_THEME = '" . ADMIN_THEME . "'; THEME = '" . THEME . "';});";
 		$JsConstantsFile = "css_js_cache/JavascriptConstants.js";
 	
-		if (!file_exists(CACHE . $JsConstantsFile)) {
+		if (!file_exists(CACHE . $JsConstantsFile)) 
+		{
+			// write the JavascriptConstants file
 			$JsConstantsPath = CACHE . $JsConstantsFile;
 			$JsConstantsfh = fopen($JsConstantsPath, 'w') or die ("Can't open file");	
 			fwrite($JsConstantsfh, $global_js_var);

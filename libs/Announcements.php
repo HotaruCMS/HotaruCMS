@@ -87,19 +87,17 @@ class Announcements
 		
 		$announcements = array();
 
-		if (SITEID == 1) {
-		    // Check if install file has been deleted
-		    $filename = INSTALL . 'install.php';
-		    if (file_exists($filename)) {
-			    array_push($announcements, $h->lang['admin_announcement_delete_install']);
-		    }
-
-		    // Check if install file has not been run
-		    $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
-		    $hotaru_version = $h->db->get_var($h->db->prepare($sql, 'hotaru_version'));
-		    if (version_compare($h->version, $hotaru_version, '>')) {
-			    array_push($announcements, $h->lang['admin_announcement_run_install']);
-		    }
+		// Check if install file has been deleted
+		$filename = INSTALL . 'install.php';
+		if (file_exists($filename)) {
+			array_push($announcements, $h->lang['admin_announcement_delete_install']);
+		}
+		
+		// Check if install file has not been run
+		$sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+		$hotaru_version = $h->db->get_var($h->db->prepare($sql, 'hotaru_version'));
+		if (version_compare($h->version, $hotaru_version, '>')) {
+			array_push($announcements, $h->lang['admin_announcement_run_install']);
 		}
 		
 		// Site is currently undergoing maintenance

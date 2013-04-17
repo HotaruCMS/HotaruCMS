@@ -65,43 +65,31 @@ class Trackback
 	 *
 	 * Adapted from Pligg.com and SocialWebCMS.com
 	 */
-	public function detectTrackback($h)
+	private function detectTrackback($h)
 	{
-		include_once(EXTENSIONS . 'SWCMS/HotaruHttpRequest.php');
-		
 		// Fetch the content of the original url...
 		$url = $h->post->origUrl;
-		
-		if ($url != 'http://' && $url != ''){
-		$r = new HotaruHttpRequest($url);
-		$content = $r->DownloadToString();
-		} else {
-			$content = '';
-		}
-		
+		$content = ($url != 'http://' && $url != '') ? hotaru_http_request($url) : '';
 		$trackback = '';
-		
+
 		if (preg_match('/trackback:ping="([^"]+)"/i', $content, $matches) ||
-			preg_match('/trackback:ping +rdf:resource="([^>]+)"/i', $content, $matches) ||
-			preg_match('/<trackback:ping>([^<>]+)/i', $content, $matches)) {
-				$trackback = trim($matches[1]);
-		
+				preg_match('/trackback:ping +rdf:resource="([^>]+)"/i', $content, $matches) ||
+				preg_match('/<trackback:ping>([^<>]+)/i', $content, $matches)) {
+			$trackback = trim($matches[1]);
 		} elseif (preg_match('/<a[^>]+rel="trackback"[^>]*>/i', $content, $matches)) {
 			if (preg_match('/href="([^"]+)"/i', $matches[0], $matches2)) {
 				$trackback = trim($matches2[1]);
 			}
-		
 		} elseif (preg_match('/<a[^>]+href=[^>]+>trackback<\/a>/i', $content, $matches)) {
 			if (preg_match('/href="([^"]+)"/i', $matches[0], $matches2)) {
 				$trackback = trim($matches2[1]);
 			}
 		} elseif (preg_match('/http:([^ ]+)trackback.php([^<|^ ]+)/i', $content, $matches)) {
-				$trackback = trim($matches[1]);
-		
+			$trackback = trim($matches[1]);
 		} elseif (preg_match('/trackback:ping="([^"]+)"/', $content, $matches)) {
-				$trackback = trim($matches[1]);
+			$trackback = trim($matches[1]);
 		}
-		
+
 		return $trackback;
 	}
 	

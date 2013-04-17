@@ -272,6 +272,8 @@ class Language
 		// If doesn't exist, create a new file
 		$cache = CACHE.'lang_cache/';
 		$file = $cache."language.php";
+
+		// write the file
 		$fh = fopen($file, 'w+') or die("Sorry, I can't open ".$file);
 		if( flock($fh, LOCK_EX) ) { // do an exclusive lock
 			ftruncate($fh, 0);  // truncate file

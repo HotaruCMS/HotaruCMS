@@ -326,6 +326,9 @@ class Post
 	public function titleExists($h, $title = '')
 	{
 		$title = trim($title);
+
+		if (!$title) { return FALSE; }
+
 		$sql = "SELECT post_id, post_status FROM " . TABLE_POSTS . " WHERE post_title = %s";
 		$posts = $h->db->get_results($h->db->prepare($sql, urlencode($title)));
 		

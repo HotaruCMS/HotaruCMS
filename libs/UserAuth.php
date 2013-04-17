@@ -117,7 +117,7 @@ class UserAuth extends UserBase
 		elseif ($plugin_result)
 		{
 			// a positive result was returned from the plugin(s)
-			// let's hope the plugin did its own authentication because we've skipped the usual username/passowrd check!
+			// let's hope the plugin did its own authentication because we've skipped the usual username/password check!
 			$result = true;
 		} 
 		
@@ -157,15 +157,17 @@ class UserAuth extends UserBase
 	
 	
 	/**
-	 * Update last login
+	 * Update last login timeand update user ip
 	 *
 	 * @return bool
 	 */
 	public function updateUserLastLogin($h)
 	{
-		if ($this->id != 0) {
-			$sql = "UPDATE " . TABLE_USERS . " SET user_lastlogin = CURRENT_TIMESTAMP WHERE user_id = %d";
-			$h->db->query($h->db->prepare($sql, $this->id));
+		if ($this->id != 0)
+		{
+			$ip = $h->cage->server->testIp('REMOTE_ADDR');
+			$sql = "UPDATE " . TABLE_USERS . " SET user_lastlogin = CURRENT_TIMESTAMP, user_ip = %s WHERE user_id = %d";
+			$h->db->query($h->db->prepare($sql, $ip, $this->id));
 			return true;
 		} else {
 			return false;
@@ -321,7 +323,7 @@ class UserAuth extends UserBase
 				$viewee->email = $email_check;
 			}
 			
-			$role_check = $h->cage->post->testAlnumLines('user_role'); // from Users plugin account page
+			$role_check = $h->cage->post->testUsername('user_role'); // from Users plugin account page
 			// compare with current role and update if different
 			if (!$error && $role_check && ($role_check != $viewee->role)) {
 				$viewee->role = $role_check;

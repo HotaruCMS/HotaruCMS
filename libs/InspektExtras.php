@@ -167,7 +167,8 @@ class getHtmLawed extends AccessorAbstract
 		$config = array('safe' => 1, 'make_tag_strict' => 0);
 		
 		// Allow plugins to alter the value of $config/
-		// Plugins should return an array, e.g. array('safe' => 1); 
+		// Plugins should return an array, e.g. array('safe' => 1);
+		/*
 		require_once(BASE . 'Hotaru.php');
 		$h = new Hotaru();
 		$results = $h->pluginHook('hotaru_inspekt_htmlawed_config');
@@ -177,6 +178,7 @@ class getHtmLawed extends AccessorAbstract
 				$config = $res; // $config takes on the value returned from the last plugin using this hook.
 			}
 		}
+		*/
 		
 		require_once(EXTENSIONS . 'htmLawed/htmLawed.php');
 		
