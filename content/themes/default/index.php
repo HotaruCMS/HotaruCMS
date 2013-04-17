@@ -25,7 +25,7 @@
  * @author    Nick Ramsay <admin@hotarucms.org>
  * @copyright Copyright (c) 2010, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
- * @link      http://www.hotarucms.org/
+ * @link      http://hotarucms.org/
  */
 
 // set a custom home page:
@@ -113,7 +113,7 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 
 
 		<!-- FOOTER -->
-		<div id="footer" class="grid_16">
+		<div id="footer" class="grid_12">
 			<?php if (!$h->pluginHook('theme_index_footer')) { $h->displayTemplate('footer'); } ?>
 		</div>
 

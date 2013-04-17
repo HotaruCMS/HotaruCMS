@@ -59,7 +59,7 @@ $lang["admin_news_more_threads"] = "More recent threads...";
 
 /* Announcements /class.hotaru.php */
 $lang['admin_announcement_delete_install'] = "Please delete the install folder before someone deletes your database!";
-$lang['admin_announcement_run_install'] = "You have a new version of Hotaru but have not run the upgrade script yet.";
+$lang['admin_announcement_run_install'] = 'You have a new version of Hotaru but have not run <a href="'.BASEURL.'install/upgrade.php">the upgrade script</a> yet.';
 $lang['admin_announcement_plugins_disabled'] = "Go to Plugin Management to enable some plugins.";
 $lang['admin_announcement_users_disabled'] = "Please enable the Users plugin in Plugin Management.";
 $lang['admin_announcement_change_site_email'] = "Please change the site email address in the Settings page.";
@@ -112,6 +112,7 @@ $lang["admin_theme_plugins_guide1"] = "To upgrade a plugin, simply turn it off, 
 $lang["admin_theme_plugins_guide2"] = "The order column is used to determine which plugins are checked for hooks first.";
 $lang["admin_theme_plugins_guide3"] = "Uninstalling a plugin will delete it from the <i>plugins</i> and <i>pluginhooks</i> tables, but not <i>pluginsettings</i>.";
 $lang["admin_theme_plugins_guide4"] = "Any other database entries created by the plugin will not be removed.";
+
 $lang["admin_theme_plugins_deactivate_all"] = "Turn OFF all plugins";
 $lang["admin_theme_plugins_activate_all"] = "Turn ON (upgrade) all plugins";
 $lang["admin_theme_plugins_uninstall_all"] = "Uninstall all plugins";
@@ -260,7 +261,7 @@ $lang["admin_theme_theme_revert_settings"] = "Revert this theme to its default s
 
 
 /* footer */
-$lang["admin_theme_footer_having_trouble_vist_forums"] = "Having trouble? Read the <a href='http://hotarudocs.com'>Documentation</a> or ask for help in the <a href='http://forums.hotarucms.org'>Forums</a>.";
+$lang["admin_theme_footer_having_trouble_vist_forums"] = "Having trouble? Read the <a href='http://docs.hotarucms.org'>Documentation</a> or ask for help in the <a href='http://forums.hotarucms.org'>Forums</a>.";
 
 /* 404 */
 $lang["admin_theme_404_page_not_found"] = "Page not found.";

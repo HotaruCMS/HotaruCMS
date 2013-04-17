@@ -1,5 +1,4 @@
 <?php
-
 /**
  * A collection of functions for manipulating arrays
  *
@@ -24,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-
+ 
 /**
  * Sort an associative array by by the key of a sub-array
  *
@@ -36,54 +35,57 @@
  *
  * Note: http://us2.php.net/manual/en/function.ksort.php
  */
+  
 function sksort(&$array, $subkey="id", $type="int", $sort_ascending=false)
 {
 
-	if( empty($array) ) {
-		return false;
-	}
-
-	if( count($array) ) {
+	if (empty($array)) { return false; }
+	
+	if (count($array)) {
 		$temp_array[key($array)] = array_shift($array);
 	}
 
-	foreach( $array as $key => $val ) {
+	foreach ($array as $key => $val)
+	{
 		$offset = 0;
 		$found = false;
-		foreach( $temp_array as $tmp_key => $tmp_val ) {
-			if( $type == "int" ) {
-				if( !$found && ($val[$subkey]) > ($tmp_val[$subkey]) ) {
+		foreach ($temp_array as $tmp_key => $tmp_val)
+		{
+			if ($type == "int") {
+				if (!$found && ($val[$subkey]) > ($tmp_val[$subkey])) 
+				{
 					$temp_array = array_merge(
-									(array) array_slice($temp_array, 0, $offset),
-									array($key => $val),
-									array_slice($temp_array, $offset)
+						(array)array_slice($temp_array,0,$offset),
+						array($key => $val),
+						array_slice($temp_array,$offset)
 					);
 					$found = true;
 				}
 			} else {
-
-				if( !$found && strtolower($val[$subkey]) > strtolower($tmp_val[$subkey]) ) {
+			
+				if (!$found && strtolower($val[$subkey]) > strtolower($tmp_val[$subkey])) 
+				{
 					$temp_array = array_merge(
-									(array) array_slice($temp_array, 0, $offset),
-									array($key => $val),
-									array_slice($temp_array, $offset)
+						(array)array_slice($temp_array,0,$offset),
+						array($key => $val),
+						array_slice($temp_array,$offset)
 					);
 					$found = true;
 				}
 			}
-
+		
 			$offset++;
 		}
-		if( !$found ) {
+		if (!$found) {
 			$temp_array = array_merge($temp_array, array($key => $val));
 		}
 	}
 
-	if( $sort_ascending ) {
-		return array_reverse($temp_array);
-	}
-	return $temp_array;
-
+	if ($sort_ascending) { $array = array_reverse($temp_array); }
+	
+	else $array = $temp_array;
+	
+	return $array;
 }
 
 /**
@@ -93,14 +95,12 @@ function sksort(&$array, $subkey="id", $type="int", $sort_ascending=false)
  */
 function in_iarray($str, $a)
 {
-	foreach( $a as $v ) {
-		if( strcasecmp($str, $v) == 0 ) {
-			return true;
-		}
+	foreach($a as $v) {
+		if (strcasecmp($str, $v) == 0) { return true;}
 	}
 	return false;
-
 }
+
 
 /**
  * Is unique in case insensitive array
@@ -110,14 +110,12 @@ function in_iarray($str, $a)
 function array_iunique($a)
 {
 	$n = array();
-	foreach( $a as $k => $v ) {
-		if( !in_iarray($v, $n) ) {
-			$n[$k] = $v;
-		}
+	foreach ($a as $k=>$v) {
+		if (!in_iarray($v, $n)) { $n[$k] = $v; }
 	}
 	return $n;
-
 }
+
 
 /**
  * Is serialized?
@@ -128,17 +126,16 @@ function array_iunique($a)
  */
 function is_serialized($data)
 {
-	if( !$data || !is_string($data) ) {
+	if (!$data || !is_string($data)) {
 		return false;
 	}
-
-	if( preg_match("/^(i|s|a|o|d)(.*);/si", $data) ) {
+	
+	if (preg_match("/^(i|s|a|o|d)(.*);/si",$data)) {
 		return true;
 	}
-
 	return false;
-
 }
+
 
 /**
  * Convert/Parse Object to Array
@@ -150,33 +147,58 @@ function is_serialized($data)
 function parse_object_to_array($object)
 {
 	$array = array();
-	if( is_object($object) ) {
-		foreach( $object as $item )
-			array_push($array, $item);
+	if (is_object($object)) {
+		foreach($object as $item)
+		array_push($array, $item);
 	}
 	return $array;
-
 }
 
+
 /**
+ * Parse array to object
  *
  * @param <type> $array
  * @return <type>
- * http://www.lost-in-code.com/programming/php-code/php-array-to-object/
+ * @link http://www.lost-in-code.com/programming/php-code/php-array-to-object/
  */
 function parse_array_to_object($array = array())
 {
-	if( !empty($array) ) {
-		$data = false;
+    if (!empty($array)) {
+        $data = false;
 
-		foreach( $array as $akey => $aval ) {
-			$data->{$akey} = $aval;
+        foreach ($array as $akey => $aval) {
+            $data -> {$akey} = $aval;
+        }
+
+        return $data;
+    }
+
+    return false;
+}
+
+
+/**
+ * Remove item from array
+ *
+ * @param array $array
+ * @param string $str
+ * @return array
+ * @link http://php.net/manual/en/ref.array.php  - jan at hooda dot de
+ */
+function array_remove($array, $str)
+{
+	if (in_array($str,$array)==true)
+	{
+		foreach ($array as $key=>$value) 
+		{
+			if ($value==$str) 
+			{ 
+				unset($array[$key]); 
+			}
 		}
-
-		return $data;
 	}
 
-	return false;
-
+	return $array;
 }
 ?>

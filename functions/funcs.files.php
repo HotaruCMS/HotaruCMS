@@ -37,7 +37,7 @@ function getFilenames($folder, $type='full')
 	$filenames = array();
 	$directory = new DirectoryIterator($folder);
 	foreach( $directory as $file ) {
-		if( !$file->isDot() ) {
+		if( !$file->isDot() && ($file->getFilename() != '.svn') ) {
 			$filename = ($type === 'full') ? $folder.($file->getFilename()) : $file->getFilename();
 			array_push($filenames, $file->getFilename());
 		}

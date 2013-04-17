@@ -53,18 +53,6 @@
 	<ul id="site-stats">
 		<li>Hotaru CMS <?php echo $h->version; ?></li>
 
-		<?php
-
-		    $sql = "SELECT miscdata_value as latest_version FROM " . TABLE_MISCDATA ." WHERE miscdata_key = %s";
-		    $query = $h->db->get_row($h->db->prepare($sql, 'hotaru_latest_version'));
-		    if ($query) {			
-			$hotaru_latest_version = $query->latest_version;
-			if (version_compare($hotaru_latest_version, $h->version) > 0) {
-			    echo "<li><a href='http://hotarucms.org/forumdisplay.php?23-Download-Hotaru-CMS'>" . $h->lang['admin_theme_version_update_to'] .  $hotaru_latest_version . "</a></li>";
-			}
-		    }
-		?>       
-
 		<?php $h->pluginHook('admin_theme_main_stats_post_version'); ?>
 		<?php $h->pluginHook('admin_theme_main_stats', 'users', array('users' => array('all', 'admin', 'supermod', 'moderator', 'member', 'undermod', 'pending', 'banned', 'killspammed'))); ?>
 		<?php $h->pluginHook('admin_theme_main_stats', 'post_manager', array('posts' => array('all', 'approved', 'pending', 'buried', 'archived'))); ?>

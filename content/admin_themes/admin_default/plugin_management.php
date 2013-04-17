@@ -57,21 +57,6 @@
 	    &nbsp;&nbsp;
 	    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/uninstall_16.png' alt="">
 	    <?php echo $h->lang["admin_theme_plugins_uninstall"]; ?>
-
-
-	<!--  temporarily removed until we can maintain a plugin repository
-	    <div class="plugin_management_right">
-		<a href="<?php echo SITEURL ?>admin_index.php?page=plugin_search">
-		    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/search.png' alt="">
-		    <?php echo $h->lang["admin_theme_search"]; ?>
-		</a>
-		 &nbsp;&nbsp;
-		<a href="<?php echo SITEURL ?>admin_index.php?page=plugin_management&action=version_check">
-		    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/update_16.png' alt="">
-		    <?php echo $h->lang["admin_theme_check_latest_plugin_versions"]; ?>
-		</a>
-	    </div>
-	-->
 	</span>
 </td></tr>
 
@@ -89,12 +74,10 @@
 <?php
 	$alt = 0;
 	if (!$the_plugins) { $the_plugins = array(); }
-	foreach ($the_plugins as $plug) {	    
+	foreach ($the_plugins as $plug) {
 		$alt++;
 		$info_icon = 'info_16.png';
-		$update = false;
-		/* temporarily removed until we can maintain a plugin repository
-			if (isset($plug['latestversion'])) { if ($plug['latestversion'] > $plug['version']) {$update=true; $info_icon = 'info_green_16.png'; }} */
+
 		echo "<tr class='table_tr table_row_" . $alt % 2 . "'>\n";
 		echo "<td class='table_active'>" . $plug['active'] . "</td>\n";
 		echo "<td class='table_installed_plugin'>";
@@ -126,7 +109,6 @@
 			echo $h->lang["admin_theme_plugins_readmetxt"] . "</a>";
 		}
 
-		if ($update) { echo "<br/><a href='" . SITEURL . "admin_index.php?page=plugin_management&action=update&plugin=". $plug['folder'] . "&version=" . $plug['latestversion'] . "' title=''>Update this plugin</a>"; }
 		echo "</td>";
 		echo "<td class='table_description_close'><a class='table_hide_details' href='#'>";
 		echo $h->lang["admin_theme_plugins_close"] . "</a></td></tr>\n";
@@ -189,8 +171,7 @@
 	foreach ($the_plugins as $plug) {
 		$alt++;
 		$info_icon = 'info_16.png';
-		$update = false;
-		if (isset($plug['latestversion'])) { if ($plug['latestversion'] > $plug['version']) {$update = true; $info_icon = 'info_green_16.png'; }}
+
 		echo "<tr id='table_tr' class='table_row_" . $alt % 2 . "'>\n";
 		echo "<td class='table_uninstalled_plugin'>" . $plug['name'] . " " . $plug['version'] . "<br />\n";
 		echo "<span class='table_requires'>";
@@ -214,7 +195,7 @@
 			echo ": <a href='" . SITEURL . "content/plugins/" . $plug['folder'] . "/readme.txt' title='" . $h->lang["admin_theme_plugins_readme"] . "'>";
 			echo $h->lang["admin_theme_plugins_readmetxt"] . "</a>";			
 		}
-		if ($update) echo "<br/><a href='" . SITEURL . "admin_index.php?page=plugin_management&action=update&plugin=". $plug['folder'] . "&version=" . $plug['latestversion'] . "' title=''>Update this plugin</a>";
+
 		echo "</td>\n";
 		echo "<td class='table_description_close'><a class='table_hide_details' href='#'>";
 		echo $h->lang["admin_theme_plugins_close"] . "</a></td></tr>\n";
@@ -235,20 +216,8 @@
 <div class="clear"></div>
 <div id="plugin_management_notice" class="info_box gray_box" style="margin-top: 2.0em";>
 	<p class="info_header"><?php echo $h->lang["admin_theme_plugins_guide"]; ?></p>
-	<?php $h->pluginHook('plugins_guide_top'); ?>
 	&raquo; <?php echo $h->lang["admin_theme_plugins_guide1"]; ?><br />
 	&raquo; <?php echo $h->lang["admin_theme_plugins_guide2"]; ?><br />
 	&raquo; <?php echo $h->lang["admin_theme_plugins_guide3"]; ?><br />
 	&raquo; <?php echo $h->lang["admin_theme_plugins_guide4"]; ?><br />
-	<?php $h->pluginHook('plugins_guide_bottom'); ?>
 </div>
-
-
-
-<?php $h->pluginHook('plugins_bottom'); ?>
-
-
-<?php
-
-
-?>

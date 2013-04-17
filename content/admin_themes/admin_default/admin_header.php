@@ -86,16 +86,9 @@
 			    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_hotaru_forums"]; ?></div>
 			</a>
 		    </div>
-		    <!--　<div onmouseout="javascript:$(this).removeClass('admin-menu-item-active');" onmouseover="javascript:$(this).addClass('admin-menu-item-active');" class="admin-menu-item">
-			<a href="http://hotaruplugins.com">
-			    <div class="admin-menu-item-icon">
-				<img src="/images/icons/plugins.png">
-			    </div>
-			    <div class="admin-menu-item-text">Plugins</div>
-			</a>
-		    </div>-->
+
 		    <div class="admin-menu-item">
-			<a href="http://hotarudocs.com">
+			<a href="http://docs.hotarucms.org">
 			    <div class="admin-menu-item-icon">
 				<img src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/docs_icon.png" />
 			    </div>
@@ -104,7 +97,7 @@
 		    </div>
 			<?php if ($h->currentUser->loggedIn) { ?>
 			    <div class="admin-menu-item">
-				<a href="<?php echo $h->url(array('page'=>'logout')); ?>">
+				<a href="<?php echo $h->url(array('page'=>'admin_logout'), 'admin'); ?>">
 				    <div class="admin-menu-item-icon">
 					<img src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/logout_icon.png" />
 				    </div>

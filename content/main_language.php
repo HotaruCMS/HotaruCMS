@@ -24,6 +24,10 @@
  * @link      http://www.hotarucms.org/
  */
 
+/* header */
+$lang["header_meta_description"] = "Hotaru CMS is an open source content management system, written in PHP.";
+$lang["header_meta_keywords"] = "hotaru, cms, platform, content, open source";
+
 /* Forms */
 $lang['main_form_submit'] = "Submit";
 $lang['main_form_update'] = "Update";
@@ -49,7 +53,7 @@ $lang['main_hotaru_page_load_time'] = "Page load time: ";
 $lang['main_hotaru_memory_usage'] = "Memory usage: ";
 $lang['main_hotaru_php_version'] = "PHP v.";
 $lang['main_hotaru_mysql_version'] = "MySQL v.";
-$lang['main_hotaru_hotaru_version'] = "Hotaru CMS v.";
+$lang['main_hotaru_hotaru_version'] = "<a href='http://hotarucms.org' title='HotaruCMS.org'>Hotaru CMS</a> v.";
 $lang['main_hotaru_site_closed'] = SITE_NAME . " is undergoing maintenance.<br />Please come back later.";
 
 /* Announcements */
@@ -76,10 +80,6 @@ $lang['pagination_next'] = "Next";
 /* Errors */
 $lang["main_theme_page_not_found"] = "Page not found";
 $lang['error_csrf'] = "CSRF error. Please try again.";
-
-/* header */
-$lang["header_meta_description"] = "Hotaru CMS is an open source content management system, written in PHP.";
-$lang["header_meta_keywords"] = "hotaru, cms, platform, content, open source";
 
 /* navigation */
 $lang["main_theme_navigation_home"] = "Home";

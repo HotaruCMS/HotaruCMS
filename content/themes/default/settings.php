@@ -31,7 +31,7 @@ if ($h->cage->get->getAlpha('reset') == 'true')
 }
  
 // Default settings:
-$defaults['tagline'] = "Social Bookmarking";
+$defaults['tagline'] = "Possibly the greatest site on the Internet.";
  
 // Get settings from database if they exist...
 $theme_settings = $h->getThemeSettings($vTheme);

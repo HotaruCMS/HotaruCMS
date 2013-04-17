@@ -23,7 +23,7 @@
  * @author    Nick Ramsay <admin@hotarucms.org>
  * @copyright Copyright (c) 2010, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
- * @link      http://www.hotarucms.org/
+ * @link      http://hotarucms.org/
  */
 
 ?>
@@ -32,13 +32,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
 <head profile="http://gmpg.org/xfn/11">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="Hotaru CMS <?php echo $h->version; ?>" />
 
 	<title><?php echo $h->getTitle(); ?></title>
 	
 		<?php
 			// plugin hook
 			$result = $h->pluginHook('header_meta');
-			if (!isset($result) || !is_array($result)) { ?>
+			if (!$result) { ?>
 				<meta name="description" content="<?php echo $h->lang['header_meta_description']; ?>" />
 				<meta name="keywords" content="<?php echo $h->lang['header_meta_keywords']; ?>" />
 		<?php } ?>

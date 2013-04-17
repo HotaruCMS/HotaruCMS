@@ -23,13 +23,13 @@
  * @author    Nick Ramsay <admin@hotarucms.org>
  * @copyright Copyright (c) 2010, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
- * @link      http://www.hotarucms.org/
+ * @link      http://hotarucms.org/
  */
 
 ?>
 
 <?php $h->pluginHook('footer'); ?>
 
-<p><a href='http://hotarucms.org' title='<?php echo $h->lang["main_theme_footer_hotaru_link"]; ?>'><img src='<?php echo SITEURL; ?>content/themes/<?php echo THEME; ?>images/hotarucms.png' alt='<?php echo $h->lang["main_theme_footer_hotaru_link"]; ?>' /></a></p>
+<p><a href="http://hotarucms.org" title='<?php echo $h->lang["main_theme_footer_hotaru_link"]; ?>'><img src='<?php echo SITEURL; ?>content/themes/<?php echo THEME; ?>images/hotarucms.png' alt='<?php echo $h->lang["main_theme_footer_hotaru_link"]; ?>' /></a></p>
 
 <?php $h->showQueriesAndTime(); ?>

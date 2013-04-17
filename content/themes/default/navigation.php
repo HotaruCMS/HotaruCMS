@@ -26,7 +26,7 @@
  * @author    Nick Ramsay <admin@hotarucms.org>
  * @copyright Copyright (c) 2010, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
- * @link      http://www.hotarucms.org/
+ * @link      http://hotarucms.org/
  */
 ?>
 
