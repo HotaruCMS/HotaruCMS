@@ -129,7 +129,7 @@ class BookmarkingFunctions
         } elseif($return == 'count') {
             unset($h->vars['select']);  // so it doesn't get used again unintentionally
             $count_array = $h->db->getData($h, 'posts', $prepare_array);
-            return $count_array[0]->number; // returns the number of posts
+            if ($count_array) return $count_array[0]->number; else return 0; // returns the number of posts
         } else {
             return $h->db->getData($h, 'posts', $prepare_array);   // returns the posts OR post count depending on the query
         }

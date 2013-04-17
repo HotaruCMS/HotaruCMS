@@ -16,6 +16,9 @@
  *
  **************************************************************************************************** */
 
+// @todo Remove SWCMS folder once Stop Spam is updated to use the 
+// functions merged and moved to `functions/funcs.http.php`. 
+
 class HotaruHttpRequest
 {
    var $_fp;        // HTTP socket

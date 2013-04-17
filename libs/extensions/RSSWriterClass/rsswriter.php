@@ -1,174 +1,158 @@
 <?php
+/* Publishes content as an RSS feed
+  http://snipplr.com/view/23/rss-writer-class/
 
-/* Publishes content as an RSS feed 
-   http://snipplr.com/view/23/rss-writer-class/ 
-   
-   E X A M P L E -----------------------------------------------
-		$feed = new RSS();
-		$feed->title       = "RSS Feed Title";
-		$feed->link        = "http://website.com";
-		$feed->description = "Recent articles on your website.";
+  E X A M P L E -----------------------------------------------
+  $feed = new RSS();
+  $feed->title       = "RSS Feed Title";
+  $feed->link        = "http://website.com";
+  $feed->description = "Recent articles on your website.";
 
-		$db->query($query);
-		$result = $db->result;
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
-		{
-			$item = new RSSItem();
-			$item->title = $title;
-			$item->link  = $link;
-			$item->setPubDate($create_date); 
-			$item->description = "<![CDATA[ $html ]]>";
-			$feed->addItem($item);
+  $db->query($query);
+  $result = $db->result;
+  while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+  {
+  $item = new RSSItem();
+  $item->title = $title;
+  $item->link  = $link;
+  $item->setPubDate($create_date);
+  $item->description = "<![CDATA[ $html ]]>";
+  $feed->addItem($item);
+  }
+  echo $feed->serve();
+  ---------------------------------------------------------------- */
+
+class RSS {
+
+	public $title;
+	public $rss_link;
+	public $link;
+	public $description;
+	public $language = "en-us";
+	public $pubDate;
+	public $items = array();
+	public $tags = array();
+
+	public function __construct($rss_link) {
+		$this->rss_link = (empty($rss_link))? SITEURL.'index.php?page=rss' : $rss_link ;
+	}
+
+	public function addItem($item) {
+		if (is_array($item)) {
+			foreach ($item as $i) {
+				array_push($this->items, new RSSItem($i));
+			}
 		}
-		echo $feed->serve();
-	---------------------------------------------------------------- */
+		array_push($this->items, $item);
+	}
 
-	class RSS
-	{
-		var $title;
-		var $link;
-		var $description;
-		var $language = "en-us";
-		var $pubDate;
-		var $items;
-		var $tags;
+	public function setPubDate($when) {
+		$this->pubDate = date("D, d M Y H:i:s O", ((strtotime($when)) ? strtotime($when) : $when));
+	}
 
-		function RSS()
-		{
-			$this->items = array();
-			$this->tags  = array();
-		}
+	public function addTag($tag, $value) {
+		$this->tags[$tag] = $value;
+	}
 
-		function addItem($item)
-		{
-			$this->items[] = $item;
-		}
+	public function out($serve_contentType = FALSE) {
 
-		function setPubDate($when)
-		{
-			if(strtotime($when) == false)
-				$this->pubDate = date("D, d M Y H:i:s ", $when) . "GMT";
-			else
-				$this->pubDate = date("D, d M Y H:i:s ", strtotime($when)) . "GMT";
-		}
-
-		function getPubDate()
-		{
-  			if(empty($this->pubDate))
-				return date("D, d M Y H:i:s ") . "GMT";
-			else
-				return $this->pubDate;
-		}
-
-		function addTag($tag, $value)
-		{
-			$this->tags[$tag] = $value;
+		if (is_string($serve_contentType)) {
+			header("Content-type: $serve_contentType");
+		} elseif (is_bool($serve_contentType)) {
+			header("Content-type: application/xml");
 		}
 
-		function out()
-		{
-			$out  = $this->header();
-			$out .= "<channel>\n";
-			$out .= "<title>" . $this->title . "</title>\n";
-			$out .= "<link>" . $this->link . "</link>\n";
-			$out .= "<description>" . $this->description . "</description>\n";
-			$out .= "<language>" . $this->language . "</language>\n";
-			$out .= "<pubDate>" . $this->getPubDate() . "</pubDate>\n";
+		$out = '<?xml version="1.0" encoding="utf-8"?>'."\n";
+		$out .= '<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">'."\n";
+		$out .= "<channel>\n";
+		$out .= "<title>".$this->title."</title>\n";
+		$out .= '<atom:link href="'.$this->rss_link.'" rel="self" type="application/rss+xml" />'."\n";
+		$out .= "<link>".$this->link."</link>\n";
+		$out .= "<description>".$this->description."</description>\n";
+		$out .= "<language>".$this->language."</language>\n";
+		$out .= "<pubDate>".((empty($this->pubDate)) ? date("D, d M Y H:i:s O") : $this->pubDate)."</pubDate>\n";
 
-			foreach($this->tags as $key => $val) $out .= "<$key>$val</$key>\n";
-			foreach($this->items as $item) $out .= $item->out();
-
-			$out .= "</channel>\n";
-			
-			$out .= $this->footer();
-
-			$out = str_replace("&", "&amp;", $out);
-
-			return $out;
-		}
-		
-		function serve($contentType = "application/xml")
-		{
-			$xml = $this->out();
-			header("Content-type: $contentType");
-			echo $xml;
+		foreach ($this->tags as $key => $val) {
+			$out .= "<$key>$val</$key>\n";
 		}
 
-		function header()
-		{
-			$out  = '<?xml version="1.0" encoding="utf-8"?>' . "\n";
-			$out .= '<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">' . "\n";
-			return $out;
+		foreach ($this->items as $item) {
+			if ($item instanceof RSSItem) {
+				$out .= $item->out();
+			}
 		}
 
-		function footer()
-		{
-			return '</rss>';
+		$out .= "</channel>\n";
+
+		$out .= "</rss>";
+
+		return str_replace("&", "&amp;", $out);
+	}
+
+}
+
+class RSSItem {
+
+	public $title;
+	public $link;
+	public $description;
+	public $pubDate;
+	public $guid;
+	public $tags = array();
+	public $attachment;
+	public $length;
+	public $mimetype;
+
+	public function __construct($options) {
+		if (isset($options['title'])) {
+			$this->title = stripslashes(html_entity_decode(urldecode($options['title']), ENT_QUOTES, 'UTF-8'));
+		}
+
+		if (isset($options['link'])) {
+			$this->link = html_entity_decode($options['link'], ENT_QUOTES, 'UTF-8');
+		}
+
+		if (isset($options['date'])) {
+			$this->pubDate = date("D, d M Y H:i:s O", ((strtotime($options['date'])) ? strtotime($options['date']) : $options['date']));
+		}
+
+		if (isset($options['description'])) {
+			$this->description = "<![CDATA[ ".stripslashes(urldecode($options['description']))." ]]>";
+		}
+
+		if (isset($options['enclosure'])) {
+			$this->attachment = $options['enclosure']['url'];
+			$this->mimetype = $options['enclosure']['type'];
+			$this->length = $options['enclosure']['length'];
+		}
+
+		if (isset($options['author'])) {
+			$this->tags['author'] = $options['author'];
 		}
 	}
 
-	class RSSItem
-	{
-		var $title;
-		var $link;
-		var $description;
-		var $pubDate;
-		var $guid;
-		var $tags;
-		var $attachment;
-		var $length;
-		var $mimetype;
+	public function out() {
+		$out = "<item>\n";
+		$out .= "<title>".$this->title."</title>\n";
+		$out .= "<link>".$this->link."</link>\n";
+		$out .= "<description>".$this->description."</description>\n";
+		$out .= "<pubDate>".((empty($this->pubDate)) ? date("D, d M Y H:i:s O") : $this->pubDate)."</pubDate>\n";
 
-		function RSSItem()
-		{ 
-			$this->tags = array();
+		if (!empty($this->attachment)) {
+			$out .= "<enclosure url='{$this->attachment}' length='{$this->length}' type='{$this->mimetype}' />";
 		}
 
-		function setPubDate($when)
-		{
-			if(strtotime($when) == false)
-				$this->pubDate = date("D, d M Y H:i:s ", $when) . "GMT";
-			else
-				$this->pubDate = date("D, d M Y H:i:s ", strtotime($when)) . "GMT";
+		$this->guid = (empty($this->guid)) ?  $this->link : $this->guid;
+
+		$out .= "<guid>".$this->guid."</guid>\n";
+
+		foreach ($this->tags as $key => $val) {
+			$out .= "<$key>$val</$key\n>";
 		}
 
-		function getPubDate()
-		{
-			if(empty($this->pubDate))
-				return date("D, d M Y H:i:s ") . "GMT";
-			else
-				return $this->pubDate;
-		}
-
-		function addTag($tag, $value)
-		{
-			$this->tags[$tag] = $value;
-		}
-
-		function out()
-		{
-			$out = "<item>\n";
-			$out .= "<title>" . $this->title . "</title>\n";
-			$out .= "<link>" . $this->link . "</link>\n";
-			$out .= "<description>" . $this->description . "</description>\n";
-			$out .= "<pubDate>" . $this->getPubDate() . "</pubDate>\n";
-
-			if($this->attachment != "")
-				$out .= "<enclosure url='{$this->attachment}' length='{$this->length}' type='{$this->mimetype}' />";
-
-			if(empty($this->guid)) $this->guid = $this->link;
-			$out .= "<guid>" . $this->guid . "</guid>\n";
-
-			foreach($this->tags as $key => $val) $out .= "<$key>$val</$key\n>";
-			$out .= "</item>\n";
-			return $out;
-		}
-
-		function enclosure($url, $mimetype, $length)
-		{
-			$this->attachment = $url;
-			$this->mimetype   = $mimetype;
-			$this->length     = $length;
-		}
+		return $out."</item>\n";
 	}
+
+}
+
 ?>
