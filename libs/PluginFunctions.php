@@ -285,7 +285,7 @@ class PluginFunctions
 	 * Store all plugin details for ALL PLUGINS info in memory. This is a single query
 	 * per page load unless cached. Every thing else then draws what it needs from memory.
 	 */
-	public function getAllPluginDetails($h)
+	public static function getAllPluginDetails($h)
 	{
 		$sql = "SELECT * FROM " . TABLE_PLUGINS . " ORDER BY plugin_order ASC";
 		$h->smartCache('on', 'plugins', $h->db->cache_timeout, $sql); // start using cache
