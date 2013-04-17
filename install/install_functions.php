@@ -101,7 +101,7 @@ function list_plugin_tables($core_tables)
 
 	$plugin_tables = array();
 
-	$db->select(DB_NAME);
+	$db->selectDB(DB_NAME);
 
 	if (!$db->get_col("SHOW TABLES",0)) { return $plugin_tables; }
 
@@ -134,13 +134,15 @@ function drop_table($table_name)
  * from php.net - anonyomous
  */
 function delTree($dir) {
-    $files = glob( $dir . '*', GLOB_MARK );
-    foreach( $files as $file ){
-        if( is_dir( $file ) )
-            delTree( $file );
-        else
-            unlink( $file );
-    }
 
-    if (is_dir($dir)) return rmdir( $dir );
+	$files = glob( $dir . '*', GLOB_MARK );
+
+	foreach( $files as $file ){
+		if( is_dir( $file ) )
+			delTree( $file );
+		else
+			@unlink( $file );
+	}
+	
+	if (is_dir($dir)) return @rmdir( $dir );
 }

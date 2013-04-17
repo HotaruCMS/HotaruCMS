@@ -46,7 +46,7 @@ $path_constants = array(
     "BASE" => "/../",
     "ADMIN" => "/../admin/",
     "INSTALL" => "/",
-    "CACHE" => "/../cache/1/",
+    "CACHE" => "/../cache/",
     "LIBS" => "/../libs/",
     "EXTENSIONS" => "/../libs/extensions/",
     "FUNCTIONS" => "/../functions/",
@@ -101,7 +101,7 @@ switch ($step) {
 		    database_upgrade();
 		} else {
 			$db = init_database();
-			database_creation();        // Creates the database tables
+			database_creation($h);        // Creates the database tables
 		}
 		break;
 	case 3: 
@@ -224,8 +224,8 @@ function database_setup() {
 	global $lang;   //already included so Hotaru can't re-include it
 	global $db;
 	global $h;
-        global $cage;
-        global $settings_file_exists;
+	global $cage;
+	global $settings_file_exists;
 
 	//$h  = new Hotaru(); // overwrites current global with fully initialized Hotaru object
 	$show_next = false;
@@ -469,7 +469,7 @@ function database_upgrade()
 /**
  * Step 2 of installation - Creates database tables
  */
-function database_creation()
+function database_creation($h)
 {
 	global $lang;
 	global $db;
@@ -507,7 +507,7 @@ function database_creation()
 	    $tables = array('blocked', 'categories', 'comments', 'commentvotes', 'friends', 'messaging', 'miscdata', 'plugins', 'pluginhooks', 'pluginsettings', 'posts', 'postmeta', 'postvotes', 'settings', 'site', 'tags', 'tempdata', 'tokens', 'users', 'usermeta', 'useractivity', 'widgets');
 
 	    // delete *all* tables in db:
-	    $db->select(DB_NAME);
+	    $db->selectDB(DB_NAME);
 
 
 
@@ -574,7 +574,7 @@ function register_admin()
 
 	// Make sure that the cache folders have been created before we call $h for the first time
 	// Since we have defined CACHE in install script, the normal Initialize script will think folders are already present
-	$dirs = array('', 'debug_logs/' , 'db_cache/', 'css_js_cache/', 'html_cache/', 'rss_cache/', 'lang_cache/');  // first array item is needed to create the SITEID base folder
+	$dirs = array('debug_logs/' , 'db_cache/', 'css_js_cache/', 'html_cache/', 'rss_cache/', 'lang_cache/'); 
 
 	foreach ($dirs as $dir) {
 	    //print "checking where dir exists at " . CACHE . $dir . '<br/>';
@@ -593,7 +593,7 @@ function register_admin()
 	echo "<h2>" . $lang['install_step3'] . "</h2>\n";
 
 	// Step content
-	echo "<div class='install_content'>" . $lang['install_step3_instructions'] . ":<br />\n";
+	echo "<div class='install_content'>" . $lang['install_step3_instructions'] . ":<br /><br />\n";
 
 	$error = 0;
 	if ($h->cage->post->getInt('step') == 4)
@@ -748,22 +748,11 @@ function installation_complete()
 	$h  = new Hotaru(); // overwrites current global with fully initialized Hotaru object
 	
 	$phpinfo = $cage->post->getAlpha('phpinfo');        // delete install folder.
-	$delete = $cage->post->getAlpha('delete');        // delete install folder.
-	
-	$folder_deleted = 0;
 
-	if ($delete) {
-	    // try to delete the folder
-	    //$folder_deleted = delTree('install');
-	    $folder_deleted = 2;
-	    // if was deleted then redirect to baseurl
-	    if ($folder_deleted == 1) header("Location: /index.php" );
-	}
-
-	if (!$delete && !$phpinfo) {
-	    //send feedback report	    
-	    $systeminfo = new SystemInfo();
-	    $systeminfo->hotaru_feedback($h);
+	if (!$phpinfo) { 
+		//send feedback report 
+		$systeminfo = new SystemInfo(); 
+		$systeminfo->hotaru_feedback($h); 
 	}
 
 	echo html_header();
@@ -772,8 +761,7 @@ function installation_complete()
 	echo "<h2>" . $lang['install_step4'] . "</h2>\n";
 
 	// Step content
-	
-	if ($folder_deleted == 0) echo "<div class='install_content'>" . $lang['install_step4_installation_complete'] . "</div>\n";
+	echo "<div class='install_content'>" . $lang['install_step4_installation_complete'] . "</div>\n";
 	echo "<div class='install_content'>" . $lang['install_step4_installation_delete'] . "</div>\n";
 
 
@@ -783,10 +771,12 @@ function installation_complete()
 	    $modules = get_loaded_extensions();
 	    $php_module_not_found = false;
 
-	    $required = array('mysql'=>'http://php.net/manual/en/book.mysql.php',
-			      'filter'=>'http://php.net/manual/en/book.filter.php',
-			      'mbstring'=>'http://www.php.net/manual/en/book.mbstring.php');
-			      
+	    $required = array(
+			'mysql'=>'http://php.net/manual/en/book.mysql.php',
+			'filter'=>'http://php.net/manual/en/book.filter.php',
+			'curl'=>'http://php.net/manual/en/book.curl.php',
+			'mbstring'=>'http://www.php.net/manual/en/book.mbstring.php');
+
 		/* No longer required: 'bcmath' => 'http://php.net/manual/en/book.bc.php' */
 
 	    foreach ($required as $module => $url) {
@@ -808,20 +798,6 @@ function installation_complete()
 	    echo "<input type='hidden' name='step' value='4' />";
 	    echo "<input class='update button' type='submit' value='" . $lang['install_step4_form_check_php'] . "' />";
 	    echo "</div></form>\n";
-	}
-
-	if ($folder_deleted == 0) {
-	    // Confirm delete and continue install
-	    echo "<div class='install_content'>" . $lang['install_step4_installation_delete_folder'] . "</div>\n";
-	    echo "<form name='install_admin_reg_form' action='index.php?step=4' method='post'>\n";	    
-	    echo "<input type='hidden' name='delete' value='folder' />";
-	    echo "<input type='hidden' name='step' value='4' />";
-
-	    echo "<input class='update button' type='submit' value='" . $lang['install_step4_form_delete_folder'] . "' />";
-	    echo "</div></form>\n";
-	} else {
-	    echo "<br/><img src='../content/admin_themes/admin_default/images/delete.png' style='float:left; margin-left:12px;'>";
-	    echo "<div class='install_content'><span style='color: red;'>" . $lang['install_step1_warning'] . "</span>: " . $lang['install_step4_installation_delete_failed'] . "</div>\n";
 	}
 
 	echo "<br/><div class='install_content'>" . $lang['install_step4_installation_go_play'] . "</div><br/><br/>\n";
@@ -852,21 +828,6 @@ function upgrade_plugins()
 	//send feedback report
 	$systeminfo = new SystemInfo();
 	$systeminfo->hotaru_feedback($h);
-
-	//refresh database to get all recent plugin versions
-	$systeminfo->plugin_version_getAll($h);
-	
-//	$plugins = $h->allPluginDetails;
-//
-//	foreach ($plugins as $plugin) {
-//	    if (key($plugin) != 'hooks') {
-//		if ($plugin->plugin_latestversion > $plugin->plugin_version) {
-//		    echo "<b>" . $plugin->plugin_name . "</b> requires an update to <span class='red'>version " . $plugin->plugin_latestversion . "</span><br/>";
-//		} else {
-//		    echo "<b>" . $plugin->plugin_name . "</b> is up to date at version " . $plugin->plugin_version . " <br/>";
-//		}
-//	    }
-//	}
 
 	echo "<br/>" . $lang['upgrade_step3_instructions'] . "<br/><br/>\n";
 	

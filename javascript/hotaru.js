@@ -103,6 +103,13 @@ $(document).ready(function(){
 		target.fadeToggle();
 		return false;
 	});  
+	
+	// Show/Hide generic
+	$(".show_hide").click(function () {
+		var target = $(".show_hide_target");
+		target.fadeToggle();
+		return false;
+	});
  
 });
 

@@ -47,7 +47,7 @@ $lang["upgrade_home"] = "Finish";
 $lang["install_title"] = "Hotaru CMS Setup";
 $lang["install_next"] = "Next";
 $lang["install_back"] = "Back";
-$lang["install_trouble"] = "Having trouble? Read the <a href='http://hotarudocs.com'>Documentation</a> or ask for help in the <a href='http://hotarucms.org/forum.php'>Forums</a>.";
+$lang["install_trouble"] = "Having trouble? Read the <a href='http://docs.hotarucms.org'>Documentation</a> or ask for help in the <a href='http://hotarucms.org/forum.php'>Forums</a>.";
 
 /* Install Step 1 */
 $lang["install_step0"] = "Welcome to Hotaru CMS";
@@ -138,10 +138,8 @@ $lang["install_step3_form_update"] = "Update";
 /* Install Step 5 */
 $lang["install_step4"] = "Step 4/4: Completion";
 $lang["install_step4_installation_complete"] = "Installation has been successfully completed.";
-$lang["install_step4_installation_delete"] = "You <b>must</b> delete the install folder or someone else could run the install script and wipe everything!";
-$lang["install_step4_installation_delete_folder"] = "Shall we try and delete the 'install' folder for you?";
-$lang["install_step4_form_delete_folder"] = "Delete Folder";
-$lang["install_step4_installation_delete_failed"] = "We were not able to delete the install folder. Please delete it manually.";
+$lang["install_step4_installation_delete"] = "<span style='color: red;'><b>WARNING:</b> You <b>must</b> delete the install folder or someone else could run the install script and wipe everything!</span>";
+
 $lang["install_step4_form_check_php"] = "Check PHP Setup";
 $lang["install_step4_form_check_php_warning"] = "Note: Your server is missing the PHP module: ";
 $lang["install_step4_form_check_php_success"] = "Your server has the required PHP modules";

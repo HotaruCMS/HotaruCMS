@@ -25,7 +25,7 @@
  */
 class Hotaru
 {
-	protected $version              = "1.4.0";  // Hotaru CMS version
+	protected $version              = "1.4.2";  // Hotaru CMS version
 	protected $isDebug              = false;    // show db queries and page loading time
 	protected $isAdmin              = false;    // flag to tell if we are in Admin or not
 	protected $sidebars             = true;     // enable or disable the sidebars
@@ -72,16 +72,18 @@ class Hotaru
 	{ 
 		// define shorthand paths
 		if (!defined('BASE')) {
-		    define("BASE", dirname(__FILE__). '/');
-		    define("ADMIN", dirname(__FILE__).'/admin/');		    
-		    define("INSTALL", dirname(__FILE__).'/install/');
-		    define("LIBS", dirname(__FILE__).'/libs/');
-		    define("EXTENSIONS", dirname(__FILE__).'/libs/extensions/');
-		    define("FUNCTIONS", dirname(__FILE__).'/functions/');
-		    define("CONTENT", dirname(__FILE__).'/content/');
-		    define("THEMES", dirname(__FILE__).'/content/themes/');
-		    define("PLUGINS", dirname(__FILE__).'/content/plugins/');
-		    define("ADMIN_THEMES", dirname(__FILE__).'/content/admin_themes/');
+			define("BASE", dirname(__FILE__). '/');
+			define("CACHE", dirname(__FILE__).'/cache/');
+			define("ADMIN", dirname(__FILE__).'/admin/');
+			define("INSTALL", dirname(__FILE__).'/install/');
+			define("LIBS", dirname(__FILE__).'/libs/');
+			define("EXTENSIONS", dirname(__FILE__).'/libs/extensions/');
+			define("FUNCTIONS", dirname(__FILE__).'/functions/');
+			define("CONTENT", dirname(__FILE__).'/content/');
+			define("THEMES", dirname(__FILE__).'/content/themes/');
+			define("PLUGINS", dirname(__FILE__).'/content/plugins/');
+			define("ADMIN_THEMES", dirname(__FILE__).'/content/admin_themes/');
+			define("SITEURL", BASEURL);
 		}
 
 		require_once(EXTENSIONS . 'SmartLoader/smartloader.class.php');
@@ -99,6 +101,7 @@ class Hotaru
 			$this->post         = new Post();           // instantiate Post object
 			$this->includes     = new IncludeCssJs();   // instantiate Includes object
 			$this->pageHandling = new PageHandling();   // instantiate PageHandling object
+			$this->debug        = new Debug();          // instantiate Debug object
 			
 			$this->csrf('set');                         // set a csrfToken
 			$this->db->setHotaru($this);                // pass $h object to EzSQL for error reporting
@@ -118,11 +121,6 @@ class Hotaru
 	 */
 	public function start($entrance = '')
 	{
-		// Set up debugging:
-		if ($this->isDebug) { 
-			$this->debug = new Debug();
-		}
-		
 		// include "main" language pack
 		$lang = new Language();
 		$this->lang = $lang->includeLanguagePack($this->lang, 'main');
@@ -544,11 +542,12 @@ class Hotaru
 	 *
 	 * @param array $new_perms from a plugin's install function
 	 * @param string $defaults - either "site", "base" or "both" 
+	 * @param bool $remove - false if adding perms, true if deleting them
 	 */
-	public function updateDefaultPermissions($new_perms = array(), $defaults = 'both') 
+	public function updateDefaultPermissions($new_perms = array(), $defaults = 'both', $remove = false) 
 	{
 		$userbase = new UserBase();
-		return $userbase->updateDefaultPermissions($this, $new_perms, $defaults);
+		return $userbase->updateDefaultPermissions($this, $new_perms, $defaults, $remove);
 	}
 	
 	
@@ -614,6 +613,29 @@ class Hotaru
 		return $this->currentUser->updateUserLastVisit($this, $user_id);
 	}
 	
+
+	/**
+	 * Get User Roles - returns an array of role names
+	 *
+	 * @param string $type 'all', 'default', or 'custom'
+	 * @return array|false
+	 */
+	public function getRoles($type = 'all') 
+	{
+		return $this->currentUser->getRoles($this, $type);
+	}
+
+
+	/**
+	 * Get Unique User Roles - DEPRECATED Hotaru 1.4.1 - Plugins should be updated to use above getRoles() instead
+	 *
+	 * @return array|false
+	 */
+	public function getUniqueRoles() 
+	{
+		return $this->getRoles();
+	}
+
 	
  /* *************************************************************
  *
@@ -743,18 +765,6 @@ class Hotaru
 	{
 		$userInfo = new UserInfo();
 		return $userInfo->getMods($this, $permission, $value);
-	}
-	
-	
-	/**
-	 * Get Unique Roles
-	 *
-	 * @return array|false
-	 */
-	public function getUniqueRoles() 
-	{
-		$userInfo = new UserInfo();
-		return $userInfo->getUniqueRoles($this);
 	}
 	
 	
@@ -1228,9 +1238,7 @@ class Hotaru
 	 */
 	public function showQueriesAndTime()
 	{
-		if ($this->isDebug) {		   
-		   $this->debug->showQueriesAndTime($this);
-		}
+		$this->debug->showQueriesAndTime($this);
 	}
 	
 	/**
@@ -1482,7 +1490,7 @@ class Hotaru
 	public function deleteFiles($dir = '')
 	{
 		$maintenance = new Maintenance();
-		$maintenance->deleteFiles($dir);
+		return $maintenance->deleteFiles($dir);
 	}
 	
 	
@@ -2457,6 +2465,98 @@ class Hotaru
 	{
 		$pm = new PrivateMessaging();
 		return $pm->sendMessage($this, $to, $from, $subject, $body);
+	}
+
+
+ /* *************************************************************
+ *
+ *  VOTE FUNCTIONS
+ *
+ * *********************************************************** */
+ 
+
+	/**
+	 * Get Individual Vote Rating 
+	 *
+	 * @param int $post_id
+	 * @param int $user_id
+	 * @param string $ip
+	 * @param bool $anon
+	 * @return int - vote rating e.g. 10, -10
+	 */
+	public function getVoteRating($post_id = 0, $user_id = 0, $ip = '', $anon = false)
+	{
+		return VoteFunctions::getVoteRating($this, $post_id, $user_id, $ip, $anon);
+	}
+
+
+	/**
+	 * Get Post Vote Info
+	 *
+	 * @param int $post_id
+	 * @return array|false
+	 */
+	public function getPostVoteInfo($post_id = 0)
+	{
+		return VoteFunctions::getPostVoteInfo($this, $post_id);
+	}
+
+
+	/**
+	 * Add Vote to PostVotes table
+	 *
+	 * @param int $post_id
+	 * @param int $user_id
+	 * @param string $ip
+	 * @param int $rating
+	 * @param string $type - usually the plugin name
+	 */
+	public function addVote($post_id = 0, $user_id = 0, $ip = '', $rating = 0, $type = 'vote')
+	{
+		VoteFunctions::addVote($this, $post_id, $user_id, $ip, $rating, $type);
+	}
+
+
+	/**
+	 * Update Post Vote Info
+	 *
+	 * @param int $post_id
+	 * @param int $post_votes_up - either -1, 0 or 1
+	 * @param int $post_votes_down - either -1, 0 or 1
+	 * @param string $post_status
+	 * @param bool $pub_date - set to TRUE to update to current time
+	 */
+	public function updatePostVoteInfo($post_id = 0, $post_votes_up = 0, $post_votes_down = 0, $post_status = '', $pub_date = FALSE)
+	{
+		VoteFunctions::updatePostVoteInfo($this, $post_id, $post_votes_up, $post_votes_down, $post_status, $pub_date);
+	}
+
+
+	/**
+	 * Delete Vote from PostVotes table
+	 *
+	 * @param int $post_id
+	 * @param int $user_id
+	 * @param int $rating
+	 * @param string $ip
+	 * @param bool $anon
+	 */
+	public function deleteVote($post_id = 0, $user_id = 0, $rating = 0, $ip = '', $anon = FALSE)
+	{
+		VoteFunctions::deleteVote($this, $post_id, $user_id, $rating, $ip, $anon);
+	}
+
+
+	/**
+	 * Count votes by a user
+	 *
+	 * @param string $type - 'all', 'pos', 'neg', 'flags' (flags not included in 'all')
+	 * @param int $user_id
+	 * return int|false
+	 */
+	public function countUserVotes($type = 'all', $user_id = 0)
+	{
+		return VoteFunctions::countUserVotes($this, $type, $user_id);
 	}
 }
 ?>

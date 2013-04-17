@@ -51,8 +51,6 @@ function create_table($table_name)
 			`blocked_value` text NULL,
 			`blocked_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`blocked_updateby` int(20) NOT NULL DEFAULT 0,
-			`blocked_siteid` int(20) NOT NULL DEFAULT 1,
-			INDEX (`blocked_siteid`),
 			INDEX  (`blocked_type`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Blocked IPs, users, emails, etc';";
 		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
@@ -74,12 +72,10 @@ function create_table($table_name)
 			`lft` int(11) NOT NULL DEFAULT '0',
 			`category_order` int(11) NOT NULL DEFAULT '0',
 			`category_desc` text NULL,
-			`category_keywords` varchar(255) NOT NULL,
+			`category_keywords` varchar(255) NULL,
 			`category_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 			`category_updateby` int(20) NOT NULL DEFAULT 0,
-			`category_siteid` int(20) NOT NULL DEFAULT 1,
-			INDEX (`category_siteid`),
-			UNIQUE KEY `key` (`category_name`, `category_siteid`)
+			UNIQUE KEY `key` (`category_name`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Categories';";
 		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
 		$db->query($sql);
@@ -100,15 +96,13 @@ function create_table($table_name)
 			`comment_post_id` int(20) NOT NULL DEFAULT '0',
 			`comment_user_id` int(20) NOT NULL DEFAULT '0',
 			`comment_parent` int(20) DEFAULT '0',
-			`comment_date` timestamp NOT NULL,
+			`comment_date` timestamp NULL,
 			`comment_status` varchar(32) NOT NULL DEFAULT 'approved',
-			`comment_content` text NOT NULL,
+			`comment_content` text NULL,
 			`comment_votes_up` smallint(11) NOT NULL DEFAULT '0',
 			`comment_votes_down` smallint(11) NOT NULL DEFAULT '0',
 			`comment_subscribe` tinyint(1) NOT NULL DEFAULT '0',
 			`comment_updateby` int(20) NOT NULL DEFAULT 0,
-			`comment_siteid` int(20) NOT NULL DEFAULT 1,
-			INDEX (`comment_siteid`),
 			FULLTEXT (`comment_content`),
 			INDEX  (`comment_archived`),
 			INDEX  (`comment_post_id`),
@@ -130,7 +124,7 @@ function create_table($table_name)
 			`cvote_comment_id` int(11) NOT NULL DEFAULT '0',
 			`cvote_user_id` int(11) NOT NULL DEFAULT '0',
 			`cvote_user_ip` varchar(32) NOT NULL DEFAULT '0',
-			`cvote_date` timestamp NOT NULL,
+			`cvote_date` timestamp NULL,
 			`cvote_rating` smallint(11) NOT NULL DEFAULT '0',
 			`cvote_reason` tinyint(3) NOT NULL DEFAULT 0,
 			`cvote_updateby` int(20) NOT NULL DEFAULT 0
@@ -165,7 +159,7 @@ function create_table($table_name)
 			`message_archived` enum('Y','N') NOT NULL DEFAULT 'N',
 			`message_from` int(20) NOT NULL DEFAULT 0,
 			`message_to` int(20) NOT NULL DEFAULT 0,
-			`message_date` timestamp NOT NULL,
+			`message_date` timestamp NULL,
 			`message_subject` varchar(255) NOT NULL DEFAULT '',
 			`message_content` text NULL,
 			`message_read` tinyint(1) NOT NULL DEFAULT '0',
@@ -184,13 +178,11 @@ function create_table($table_name)
 	if ($table_name == "miscdata") {
 		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
 			`miscdata_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-			`miscdata_key` varchar(64) NOT NULL,
-			`miscdata_value` text NOT NULL DEFAULT '',
-			`miscdata_default` text NOT NULL DEFAULT '',
+			`miscdata_key` varchar(64) NULL,
+			`miscdata_value` text NULL,
+			`miscdata_default` text NULL,
 			`miscdata_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-			`miscdata_updateby` int(20) NOT NULL DEFAULT 0,
-			`miscdata_siteid` int(20) NOT NULL DEFAULT 1,
-			INDEX (`miscdata_siteid`)
+			`miscdata_updateby` int(20) NOT NULL DEFAULT 0
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Miscellaneous Data';";
 		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
 		$db->query($sql);
@@ -240,9 +232,7 @@ function create_table($table_name)
 			`plugin_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`plugin_updateby` int(20) NOT NULL DEFAULT 0,
 			`plugin_latestversion` varchar(8) NOT NULL DEFAULT '0.0',
-			`plugin_siteid` int(20) NOT NULL DEFAULT 1,
-			INDEX (`plugin_siteid`),
-			UNIQUE KEY `key` (`plugin_folder`, `plugin_siteid`)
+			UNIQUE KEY `key` (`plugin_folder`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Application Plugins';";
 		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
 		$db->query($sql);
@@ -257,9 +247,7 @@ function create_table($table_name)
 			`plugin_hook` varchar(128) NOT NULL DEFAULT '',
 			`plugin_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`plugin_updateby` int(20) NOT NULL DEFAULT 0,
-			`pluginhooks_siteid` int(20) NOT NULL DEFAULT 1,
-			INDEX  (`plugin_folder`),
-			INDEX (`pluginhooks_siteid`)
+			INDEX  (`plugin_folder`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Plugins Hooks';";
 		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
 		$db->query($sql);
@@ -270,13 +258,11 @@ function create_table($table_name)
 	if ($table_name == "pluginsettings") {
 		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
 			`psetting_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-			`plugin_folder` varchar(64) NOT NULL,
+			`plugin_folder` varchar(64) NULL,
 			`plugin_setting` varchar(64) NULL,
 			`plugin_value` text NULL,
 			`plugin_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`plugin_updateby` int(20) NOT NULL DEFAULT 0,
-			`plugin_siteid` int(20) NOT NULL DEFAULT 1,
-			INDEX (`plugin_siteid`),
 			INDEX  (`plugin_folder`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Plugins Settings';";
 		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
@@ -293,8 +279,8 @@ function create_table($table_name)
 			`post_archived` enum('Y','N') NOT NULL DEFAULT 'N',
 			`post_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 			`post_author` int(20) NOT NULL DEFAULT 0,
-			`post_date` timestamp NOT NULL,
-			`post_pub_date` timestamp NOT NULL,
+			`post_date` timestamp NULL,
+			`post_pub_date` timestamp NULL,
 			`post_status` varchar(32) NOT NULL DEFAULT 'processing',
 			`post_type` varchar(32) NULL,
 			`post_category` int(20) NOT NULL DEFAULT 1,
@@ -309,8 +295,6 @@ function create_table($table_name)
 			`post_comments` enum('open', 'closed') NOT NULL DEFAULT 'open',
 			`post_subscribe` tinyint(1) NOT NULL DEFAULT '0',
 			`post_updateby` int(20) NOT NULL DEFAULT 0,
-			`post_siteid` int(20) NOT NULL DEFAULT 1,
-			INDEX (`post_siteid`),
 			FULLTEXT (`post_title`, `post_domain`, `post_url`, `post_content`, `post_tags`),
 			INDEX  (`post_archived`),
 			INDEX  (`post_status`),
@@ -350,7 +334,7 @@ function create_table($table_name)
 			`vote_post_id` int(11) NOT NULL DEFAULT '0',
 			`vote_user_id` int(11) NOT NULL DEFAULT '0',
 			`vote_user_ip` varchar(32) NOT NULL DEFAULT '0',
-			`vote_date` timestamp NOT NULL,
+			`vote_date` timestamp NULL,
 			`vote_type` varchar(32) NULL,
 			`vote_rating` smallint(11) NOT NULL DEFAULT '0',
 			`vote_reason` tinyint(3) NOT NULL DEFAULT 0,
@@ -361,42 +345,19 @@ function create_table($table_name)
 		$db->query($sql); 
 	} 
 
-
-	// RELATES TABLE
-
-		if ($table_name == "relates") {
-		//echo "table doesn't exist. Stopping before creation."; exit;
-		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
-			`relates_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-			`relates_user_id` int(20) NOT NULL default '0',
-			`relates_post_id` int(20) NOT NULL default '0',
-			`relates_type` varchar(64) default '',
-			`relates_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-			INDEX  (`relates_user_id`),
-			INDEX  (`relates_post_id`),
-			INDEX  (`relates_type`)
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Relates';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
-		$db->query($sql);
-		}
-
-
-	
 	// SETTINGS TABLE
 	
 	if ($table_name == "settings") {
 		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
 			`settings_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-			`settings_name` varchar(64) NOT NULL,
-			`settings_value` text NOT NULL DEFAULT '',
-			`settings_default` text NOT NULL DEFAULT '',
-			`settings_note` text NOT NULL DEFAULT '',
+			`settings_name` varchar(64) NULL,
+			`settings_value` text NULL,
+			`settings_default` text NULL,
+			`settings_note` text NULL,
 			`settings_show` enum('Y','N') NOT NULL DEFAULT 'Y',
 			`settings_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`settings_updateby` int(20) NOT NULL DEFAULT 0,
-			`settings_siteid` int(20) NOT NULL DEFAULT 1,
-			UNIQUE KEY `key` (`settings_name`, `settings_siteid`),
-			INDEX (`settings_siteid`)
+			UNIQUE KEY `key` (`settings_name`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Application Settings';";
 		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
 		$db->query($sql);
@@ -478,34 +439,10 @@ function create_table($table_name)
 		// SMTP password
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
 		$db->query($db->prepare($sql, 'SMTP_PASSWORD', '', '', ''));
-		
-		// Sys Feedback
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'SYS_UPDATES', 'true', 'true', 'Hotaru updates'));
-
-		// Multiple Sites
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'MULTI_SITE', 'false', 'false', 'Multiple sites'));
 
 		echo $lang['install_step2_adding_data'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
 
 	}
-	
-	
-	// SITE TABLE - for multiple sites
-
-	if ($table_name == "site") {
-		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
-			`site_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-			`site_adminuser_id` varchar(64) NULL,
-			`site_url` varchar(128) NOT NULL DEFAULT '',
-			`site_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-			`site_updateby` int(20) NOT NULL DEFAULT 0
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Site Table';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
-		$db->query($sql);
-	}
-	
 	
 	// TAGS TABLE - tags
 	
@@ -515,12 +452,10 @@ function create_table($table_name)
 			`tags_post_id` int(11) NOT NULL DEFAULT '0',
 			`tags_archived` enum('Y','N') NOT NULL DEFAULT 'N',
 			`tags_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-			`tags_date` timestamp NOT NULL,
+			`tags_date` timestamp NULL,
 			`tags_word` varchar(64) NOT NULL DEFAULT '',
 			`tags_updateby` int(20) NOT NULL DEFAULT 0,
-			`tags_siteid` int(20) NOT NULL DEFAULT 1,
-			INDEX (`tags_siteid`),
-			UNIQUE KEY `tags_post_id` (`tags_post_id`,`tags_word`,`tags_siteid`),
+			UNIQUE KEY `tags_post_id` (`tags_post_id`,`tags_word`),
 			INDEX  (`tags_archived`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Post Tags';";
 		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
@@ -548,8 +483,8 @@ function create_table($table_name)
 	
 	if ($table_name == "tokens") {
 		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
-			`token_sid` varchar(32) NOT NULL,
-			`token_key` CHAR(32) NOT NULL,
+			`token_sid` varchar(32) NULL,
+			`token_key` CHAR(32) NULL,
 			`token_stamp` INT(11) NOT NULL default '0',
 			`token_action` varchar(64),
 			INDEX  (`token_key`)
@@ -565,22 +500,20 @@ function create_table($table_name)
 		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
 			`user_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 			`user_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-			`user_username` varchar(32) NOT NULL,
+			`user_username` varchar(32) NULL,
 			`user_role` varchar(32) NOT NULL DEFAULT 'member',
-			`user_date` timestamp NOT NULL,
+			`user_date` timestamp NULL,
 			`user_password` varchar(64) NOT NULL DEFAULT '',
 			`user_password_conf` varchar(128) NULL,
 			`user_email` varchar(128) NOT NULL DEFAULT '',
 			`user_email_valid` tinyint(3) NOT NULL DEFAULT 0,
 			`user_email_conf` varchar(128) NULL,
-			`user_permissions` text NOT NULL DEFAULT '',
+			`user_permissions` text NULL,
 			`user_ip` varchar(32) NOT NULL DEFAULT '0',
 			`user_lastlogin` timestamp NULL,
 			`user_lastvisit` timestamp NULL,
 			`user_updateby` int(20) NOT NULL DEFAULT 0,
-			`user_siteid` int(20) NOT NULL DEFAULT 1,
-			INDEX (`user_siteid`),
-			UNIQUE KEY `key` (`user_username`, `user_siteid`),
+			UNIQUE KEY `key` (`user_username`),
 			KEY `user_email` (`user_email`)			
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Users and Roles';";
 		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
@@ -621,7 +554,7 @@ function create_table($table_name)
 			`useract_value` text NULL,
 			`useract_key2` varchar(255) NULL,
 			`useract_value2` text NULL,
-			`useract_date` timestamp NOT NULL,
+			`useract_date` timestamp NULL,
 			`useract_updateby` int(20) NOT NULL DEFAULT 0, 
 			INDEX  (`useract_userid`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='User Activity';";
@@ -640,9 +573,7 @@ function create_table($table_name)
 			`widget_plugin` varchar(32) NOT NULL DEFAULT '',
 			`widget_function` varchar(255) NULL, 
 			`widget_args` varchar(255) NULL, 
-			`widget_updateby` int(20) NOT NULL DEFAULT 0,
-			`widget_siteid` int(20) NOT NULL DEFAULT 1,
-			INDEX (`widget_siteid`)
+			`widget_updateby` int(20) NOT NULL DEFAULT 0
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Widgets';";
 		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
 		$db->query($sql); 
