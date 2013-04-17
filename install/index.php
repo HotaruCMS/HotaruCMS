@@ -507,7 +507,7 @@ function database_creation()
 	    $tables = array('blocked', 'categories', 'comments', 'commentvotes', 'friends', 'messaging', 'miscdata', 'plugins', 'pluginhooks', 'pluginsettings', 'posts', 'postmeta', 'postvotes', 'settings', 'site', 'tags', 'tempdata', 'tokens', 'users', 'usermeta', 'useractivity', 'widgets');
 
 	    // delete *all* tables in db:
-	    $db->selectDB(DB_NAME);
+	    $db->select(DB_NAME);
 
 
 
