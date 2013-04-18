@@ -687,6 +687,13 @@ function do_upgrade($h, $old_version)
 		$old_version = "1.4.2";
 
 	}
+        
+        // 1.4.2 to 1.5.0
+	if ($old_version == "1.4.2") {
+            
+                // update "old version" for next set of upgrades
+		$old_version = "1.5.0";
+        }
 
 	// Update Hotaru version number to the database (referred to when upgrading)
 	$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_key = %s, miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";
