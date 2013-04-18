@@ -43,8 +43,7 @@
 				<meta name="description" content="<?php echo $h->lang['header_meta_description']; ?>" />
 				<meta name="keywords" content="<?php echo $h->lang['header_meta_keywords']; ?>" />
 		<?php } ?>
-	
-	<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js?ver=1.4.2'></script>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	
 	<!-- include 960 CSS framework -->
 	<?php $css = SITEURL . "content/themes/" . THEME . "css/"; ?>
