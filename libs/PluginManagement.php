@@ -210,7 +210,7 @@ class PluginManagement
 	 */
 	public function readPluginMeta($plugin_file)
 	{
-		if ($plugin_file == 'placeholder.txt') { return false; }
+		if ($plugin_file === 'placeholder.txt' || $plugin_file === 'README.md') { return false; }
 		
 		// Include the generic_pmd class that reads post metadata from the a plugin
 		require_once(EXTENSIONS . 'GenericPHPConfig/class.metadata.php');
