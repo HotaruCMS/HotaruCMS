@@ -80,7 +80,7 @@ class Database extends ezSQL_mysql
 	 */
 	public function emptyObject()
 	{
-		$this->selectTerms        = array();
+		$this->selectTerms   = array();
 		$this->table         = '';
 		$this->where         = array();
 		$this->orderby       = '';
@@ -155,7 +155,7 @@ class Database extends ezSQL_mysql
 	{
 		if (!$this->selectTerms) { return ''; }
 
-		$select = ""; // the new select string we make from the $this->select array
+		$selectTerms = ""; // the new select string we make from the $this->selectTerms array
 
 		foreach ($this->selectTerms as $key => $value) {
 			// e.g.
