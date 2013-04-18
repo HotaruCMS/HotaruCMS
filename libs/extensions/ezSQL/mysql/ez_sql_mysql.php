@@ -69,7 +69,7 @@
 		{
 			$return_val = false;
 			if ( ! $this->connect($dbuser, $dbpassword, $dbhost,true) ) ;
-			else if ( ! $this->select($dbname,$encoding) ) ;
+			else if ( ! $this->selectDB($dbname,$encoding) ) ;
 			else $return_val = true;
 			return $return_val;
 		}
@@ -112,7 +112,7 @@
 		*  Try to select a mySQL database
 		*/
 
-		function select($dbname='', $encoding='')
+		function selectDB($dbname='', $encoding='')
 		{
 			global $ezsql_mysql_str; $return_val = false;
 
@@ -132,7 +132,7 @@
 
 			// Try to connect to the database
 			else if ( !@mysql_select_db($dbname,$this->dbh) )
-			{
+			{                            
 				// Try to get error supplied by mysql if not use our own
 				if ( !$str = @mysql_error($this->dbh))
 					  $str = $ezsql_mysql_str[5];
@@ -174,7 +174,7 @@
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{
 				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost);
-				$this->select($this->dbname, $this->encoding);
+				$this->selectDB($this->dbname, $this->encoding);
 			}
 
 			return mysql_real_escape_string(stripslashes($str));
@@ -244,7 +244,7 @@
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{
 				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost);
-				$this->select($this->dbname,$this->encoding);
+				$this->selectDB($this->dbname,$this->encoding);
 			}
 
 			// Perform the query via std mysql_query function..

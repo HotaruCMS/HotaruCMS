@@ -144,7 +144,7 @@ class Maintenance
 	 */
 	public function optimizeTables($h)
 	{
-		$h->db->select(DB_NAME);
+		$h->db->selectDB(DB_NAME);
 		
 		foreach ( $h->db->get_col("SHOW TABLES",0) as $table_name )
 		{
