@@ -72,15 +72,19 @@ class RSS {
 		$out .= "<language>".$this->language."</language>\n";
 		$out .= "<pubDate>".((empty($this->pubDate)) ? date("D, d M Y H:i:s O") : $this->pubDate)."</pubDate>\n";
 
-		foreach ($this->tags as $key => $val) {
-			$out .= "<$key>$val</$key>\n";
-		}
+                if ($this->tags) {
+                    foreach ($this->tags as $key => $val) {
+                            $out .= "<$key>$val</$key>\n";
+                    }
+                }
 
-		foreach ($this->items as $item) {
-			if ($item instanceof RSSItem) {
-				$out .= $item->out();
-			}
-		}
+                if ($this->items) {
+                    foreach ($this->items as $item) {
+                            if ($item instanceof RSSItem) {
+                                    $out .= $item->out();
+                            }
+                    }
+                }
 
 		$out .= "</channel>\n";
 
