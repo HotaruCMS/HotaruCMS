@@ -1,6 +1,6 @@
 <?php 
 /**
- * Theme name: admin_default
+ * Theme name: admin_classic
  * Template name: maintenance.php
  * Template author: Nick Ramsay
  *
@@ -36,12 +36,13 @@ $db_tables = $h->vars['admin_plugin_tables'];
 
 <?php $h->pluginHook('admin_maintenance_top'); ?>
 
-<ul class="">
+<h2><?php echo $h->lang["admin_theme_maintenance_site"]; ?></h2>
+<ul>
 	<?php if (SITE_OPEN == "true") { ?>
-	<li><a class="btn btn-warning" href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=close">
+	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=close">
 		<?php echo $h->lang["admin_theme_maintenance_close_site"]; ?></a> - <?php echo $h->lang["admin_theme_maintenance_close_site_desc"]; ?></li>
 	<?php } else { ?>
-	<li><a class="btn btn-primary" href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=open">
+	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=open">
 		<?php echo $h->lang["admin_theme_maintenance_open_site"]; ?></a> - <?php echo $h->lang["admin_theme_maintenance_open_site_desc"]; ?></li>
 	<?php } ?>
 	
@@ -51,7 +52,7 @@ $db_tables = $h->vars['admin_plugin_tables'];
 	<form name='maintenance_announcement' action='<?php echo SITEURL; ?>admin_index.php' method='get'>    
 	<table>
 		<tr>
-		<td colspan=2><textarea name='announcement_text' cols=120 rows=3><?php echo $h->vars['admin_announcement']; ?></textarea><br />
+		<td colspan=2><textarea name='announcement_text' cols=80 rows=3><?php echo $h->vars['admin_announcement']; ?></textarea><br />
 		<?php echo $h->lang["admin_theme_maintenance_announcement_tags"]; ?>
 		</td>
 		</tr>

@@ -2,7 +2,7 @@
 /**
  * Theme name: admin_default
  * Template name: index.php
- * Template author: Nick Ramsay
+ * Template author: shibuya246
  *
  * PHP version 5
  *
@@ -20,8 +20,8 @@
  * 
  * @category  Content Management System
  * @package   HotaruCMS
- * @author    Nick Ramsay <admin@hotarucms.org>
- * @copyright Copyright (c) 2010, Hotaru CMS
+ * @author    shibuya246 <admin@hotarucms.org>
+ * @copyright Copyright (c) 2013, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
@@ -43,60 +43,59 @@ if (!$result) {
 	}
 ?>
 
-<div id="bd" role="main">
-	<?php if ($h->sidebars) { ?>
-		<div class='yui-gf'> 
-		<div class="yui-u">
-	<?php } else { ?>
-		<div class='yui-g'>
-			<div class="yui-u" style='width: 100%;'>
-	<?php } ?>
-				<!-- BREADCRUMBS -->
-				<div class="">
-				    <div id='breadcrumbs' class="floatleft">
-					    <?php echo $h->breadcrumbs(); ?>
-				    </div>
-				    <?php if ($h->pageName == 'plugin_settings') { ?>
-				    	<div id="admin_topright" class="floatright">
-							<?php echo $h->pluginHook('admin_topright'); ?>
-				    	</div>
-				    <?php } ?>
-				</div>
-				<br class="clearfix"/>
-				
-				<!-- MAIN -->
-				<div id="main">
-				<?php
-				// plugin hook
-				$result = $h->pluginHook('admin_theme_index_main');
-				if (!$result) {
-					if ($h->pageName == 'admin_login') {
-						if ($h->currentUser->loggedIn) {
-							$h->displayTemplate('admin_home');
-						} else {
-							$h->adminLoginForm();
-						}
-					} else {
-						$h->displayTemplate($h->pageName);
-					} 
-				}
-				?>
-				</div> 
-			</div>
-			<?php if ($h->sidebars) { ?>
-				<div class="yui-u first">
-				<!-- SIDEBAR -->
-				<?php
-					// plugin hook
-					$result = $h->pluginHook('admin_theme_index_sidebar');
-					if (!$result) {
-						$h->displayTemplate('admin_sidebar');
-					}
-				?>
-				</div>
-			<?php } ?>
-	</div>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <!-- BREADCRUMBS -->
+        <div class='breadcrumb'>
+                <?php echo $h->breadcrumbs("/"); ?>
+        </div>
+        
+        <?php if ($h->pageName == 'plugin_settings') { ?>
+            <div id="admin_topright" class="floatright">
+                    <?php echo $h->pluginHook('admin_topright'); ?>
+            </div>
+        <?php } ?>  
+        
+    </div>
 </div>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+                    
+            <div class="span3">
+                <!-- SIDEBAR -->
+                <?php
+                        // plugin hook
+                        $result = $h->pluginHook('admin_theme_index_sidebar');
+                        if (!$result) {
+                                $h->displayTemplate('admin_sidebar');
+                        }
+                ?>
+            </div>           
+				
+            <!-- MAIN -->
+            <div class="span9">
+            <?php
+            // plugin hook
+            $result = $h->pluginHook('admin_theme_index_main');
+            if (!$result) {
+                    if ($h->pageName == 'admin_login') {
+                            if ($h->currentUser->loggedIn) {
+                                    $h->displayTemplate('admin_home');
+                            } else {
+                                    $h->adminLoginForm();
+                            }
+                    } else {
+                            $h->displayTemplate($h->pageName);
+                    } 
+            }
+            ?>
+            </div> 	
+
+    </div>
+</div>
+
+</div> <!--/wrap-->
 <!-- FOOTER -->
 <?php
 	// plugin hook
@@ -105,4 +104,8 @@ if (!$result) {
 		$h->displayTemplate('admin_footer');
 	}
 ?>
+</body>
+</html>
 <?php } ?>
+
+

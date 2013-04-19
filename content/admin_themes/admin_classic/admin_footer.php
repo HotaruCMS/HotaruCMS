@@ -1,8 +1,8 @@
 <?php 
 /**
- * Theme name: admin_default
+ * Theme name: admin_classic
  * Template name: footer.php
- * Template author: shibuya246
+ * Template author: Nick Ramsay
  *
  * PHP version 5
  *
@@ -20,17 +20,14 @@
  * 
  * @category  Content Management System
  * @package   HotaruCMS
- * @author    shibuya246 <admin@hotarucms.org>
- * @copyright Copyright (c) 2013, Hotaru CMS
+ * @author    Nick Ramsay <admin@hotarucms.org>
+ * @copyright Copyright (c) 2010, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-    
-?>
 
+?>
 	<div id="ft" role="contentinfo">
-            <div class="container">
-                <hr/>
 		<?php
 			$h->pluginHook('admin_footer');
 			
@@ -41,14 +38,10 @@
 				$h->showQueriesAndTime();
 			}
 		?>
-            </div>
 	</div>
-
+</div>
 
 <?php $h->pluginHook('pre_close_body'); ?>
 
-<?php $js = SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'javascript/'; ?>
-
-<script src="<?php echo $js;?>bootstrap.min.js"</script>
-<script src="<?php echo $js;?>bootstrap-dropdown.js"></script>
-
+</body>
+</html>

@@ -2,7 +2,7 @@
 /**
  * Theme name: admin_default
  * Template name: header.php
- * Template author: Nick Ramsay
+ * Template author: shibuya246
  *
  * PHP version 5
  *
@@ -20,8 +20,8 @@
  * 
  * @category  Content Management System
  * @package   HotaruCMS
- * @author    Nick Ramsay <admin@hotarucms.org>
- * @copyright Copyright (c) 2010, Hotaru CMS
+ * @author    shibuya246 <admin@hotarucms.org>
+ * @copyright Copyright (c) 2013, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
@@ -32,7 +32,8 @@
 <html>
 <head>
 	<meta http-equiv=Content-Type content="text/html; charset=UTF-8" />
-	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
 	<title><?php echo $h->getTitle(); ?></title>
 	
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -43,8 +44,13 @@
 	<?php $h->doIncludes(); ?>
 	<!-- End -->
 	
-	<link rel="stylesheet" href="<?php echo SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/reset-fonts-grids.css'; ?>" type="text/css">
-	<link rel="stylesheet" href="<?php echo SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css'; ?>" type="text/css">
+        
+        <link rel="stylesheet" href="<?php echo SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/bootstrap.min.css'; ?>" type="text/css">
+	
+        <link rel="stylesheet" href="<?php echo SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css'; ?>" type="text/css">
+	
+        
+	<link rel="stylesheet" href="<?php echo SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/bootstrap-responsive.min.css'; ?>" type="text/css">
 	<!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico"> -->
 	
 	<?php $h->pluginHook('admin_header_include_raw'); ?>
@@ -52,63 +58,45 @@
 </head>
 <body>
 
-
-    <div class="admin-header">
-	<div class="admin-frame">
-            	<div class="admin-header-title">
-                    <img class="admin-header-logo" src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/hotaru-80px.png"/>
-            		<div class="admin-header-version"><?php echo $h->lang["admin_theme_header_hotarucms"]; ?><?php echo $h->version; ?></div>
-			<div class="admin-header-admin"><a href="<?php echo $h->url(array(), 'admin'); ?>"><?php echo $h->lang["admin_theme_header_admin"]; ?></a></div>
-            	</div>
-            	<div class="admin-top-menu">
-		    <div class="admin-menu-item">
-			<a href="<?php echo SITEURL; ?>">
-			    <div class="admin-menu-item-icon">
-				<img src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/home_icon.png" />
-			    </div>
-			    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_site_home"]; ?></div>
-			</a>
-		    </div>
-			<?php if ($h->currentUser->getPermission('can_access_admin') == 'yes') { ?>
-			    <div  class="admin-menu-item">
-				<a href="<?php echo $h->url(array(), 'admin'); ?>">
-				    <div class="admin-menu-item-icon">
-					<img src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/admin_icon.png">
-				    </div>
-				    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_admin_home"]; ?></div>
-				</a>
-			    </div>
-			<?php } ?>
-		    <div class="admin-menu-item">
-			<a href="http://forums.hotarucms.org">
-			    <div class="admin-menu-item-icon">
-				<img src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/forum_icon.png "/>
-			    </div>
-			    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_hotaru_forums"]; ?></div>
-			</a>
-		    </div>
-
-		    <div class="admin-menu-item">
-			<a href="http://docs.hotarucms.org">
-			    <div class="admin-menu-item-icon">
-				<img src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/docs_icon.png" />
-			    </div>
-			    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_help"]; ?></div>
-			</a>
-		    </div>
-			<?php if ($h->currentUser->loggedIn) { ?>
-			    <div class="admin-menu-item">
-				<a href="<?php echo $h->url(array('page'=>'admin_logout'), 'admin'); ?>">
-				    <div class="admin-menu-item-icon">
-					<img src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/logout_icon.png" />
-				    </div>
-				    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_logout"]; ?></div>
-				</a>
-			    </div>
-			<?php } ?>
-		</div>
-	    <div class="clear_both">&nbsp;</div>
+    <div id="wrap">
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="/"><?php echo SITE_NAME; ?></a>
+          <div class="nav-collapse collapse">
+            <p class="navbar-text pull-right">
+              <a href="#" class="navbar-link">
+                  <?php echo $h->lang["admin_theme_header_hotarucms"]; ?><?php echo $h->version; ?>
+              </a>
+            </p>
+            <ul class="nav">
+              <li class="active"><a href="<?php echo $h->url(array(), 'admin'); ?>"><?php echo $h->lang["admin_theme_menu_admin_home"]; ?></a></li>
+              <li><a href="<?php echo SITEURL; ?>"><?php echo $h->lang["admin_theme_menu_site_home"]; ?></a></li>
+              
+              <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $h->lang["admin_theme_menu_hotaru_forums"]; ?> <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="http://forums.hotarucms.org/">Top</a></li>
+                    <li><a href="http://forums.hotarucms.org/forumdisplay.php?2-News-and-Announcements">News</a></li>
+                    <li><a href="http://forums.hotarucms.org/search.php?do=getnew&contenttype=vBForum_Post">Latest</a></li>
+                    <li class="divider"></li>
+                    <li class="nav-header">Github</li>
+                    <li><a href="http://github.com/hotarucms/hotarucms">HotaruCMS</a></li>
+                    <li><a href="http://github.com/hotarucms/coreplugins">Core Plugins</a></li>
+                  </ul>
+                </li>
+              
+              <li><a href="http://docs.hotarucms.org"><?php echo $h->lang["admin_theme_menu_help"]; ?></a></li>
+              <li><a href="<?php echo $h->url(array('page'=>'admin_logout'), 'admin'); ?>"><?php echo $h->lang["admin_theme_menu_logout"]; ?></a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
         </div>
+      </div>
     </div>
 
 
@@ -122,18 +110,5 @@
 		<?php $h->pluginHook('admin_announcement_last'); ?>
 	</div>
 <?php } ?>
-<div id="doc2" class="yui-t7">
-<!--	<div id="hd" role="banner">
-		<h1>
-		 <?php   if($h->isActive('avatar')) {
-                    $h->setAvatar($h->currentUser->id, 16);
-					echo $h->linkAvatar();
-                } ?>
-		    &nbsp;<a href="<?php echo $h->url(array(), 'admin'); ?>"><?php echo SITE_NAME; ?> </a></h1>
-		<?php $h->pluginHook('header_post_admin_title'); ?>
-		
-		 NAVIGATION 
-		<?php //echo $h->displayTemplate('admin_navigation'); ?>
-	</div>-->
 
 	<br/>

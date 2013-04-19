@@ -1,6 +1,6 @@
 <?php 
 /**
- * Theme name: admin_default
+ * Theme name: admin_classic
  * Template name: plugins.php
  * Template author: Nick Ramsay
  *
@@ -28,8 +28,6 @@
 ?>
 
 <?php $h->displayTemplate('admin_sidebar'); ?>
-
-<h2><?php echo $h->lang["admin_theme_plugins"]; ?></h2>
 
 <?php $h->showMessages(); ?>
 

@@ -1,6 +1,6 @@
 <?php 
 /**
- * Theme name: admin_default
+ * Theme name: admin_classic
  * Template name: main.php
  * Template author: Nick Ramsay
  *
@@ -28,7 +28,10 @@
 
 ?>
 
-<div class="span9">
+<table id='admin-home'>
+<tr>
+
+<td id='left'>
 	 
 <!-- TITLE FOR ADMIN NEWS -->
 	<h2>
@@ -42,17 +45,12 @@
 	<?php echo $h->adminNews(10, 3, 300); ?>
 	
 	<br/>
-        <div class="">
-            <h2><?php echo $h->lang["admin_theme_main_join_us"]; ?></h2>
-         </div>
-</div>
+	 <h2><?php echo $h->lang["admin_theme_main_join_us"]; ?></h2>
+</td>
 
-<div class="span3">
-
-    <div class="well sidebar-nav">
-	
-	<ul id="site-stats" class="nav nav-list">
-            <li class="nav-header"><?php echo SITE_NAME . " " . $h->lang["admin_theme_main_stats"]; ?></li>
+<td id='right'>
+	<h2><?php echo SITE_NAME . " " . $h->lang["admin_theme_main_stats"]; ?></h2>
+	<ul id="site-stats">
 		<li>Hotaru CMS <?php echo $h->version; ?></li>
 
 		<?php $h->pluginHook('admin_theme_main_stats_post_version'); ?>
@@ -60,5 +58,7 @@
 		<?php $h->pluginHook('admin_theme_main_stats', 'post_manager', array('posts' => array('all', 'approved', 'pending', 'buried', 'archived'))); ?>
 		<?php $h->pluginHook('admin_theme_main_stats', 'comments', array('comments' => array('all', 'approved', 'pending', 'archived'))); ?>
 	</ul>
-    </div>
-</div>
+</td>
+
+</tr>
+</table>

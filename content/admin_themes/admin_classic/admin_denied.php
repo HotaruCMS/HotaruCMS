@@ -1,8 +1,8 @@
 <?php 
 /**
- * Theme name: admin_default
- * Template name: footer.php
- * Template author: shibuya246
+ * Theme name: admin_classic
+ * Template name: access_denied.php
+ * Template author: Nick Ramsay
  *
  * PHP version 5
  *
@@ -20,35 +20,27 @@
  * 
  * @category  Content Management System
  * @package   HotaruCMS
- * @author    shibuya246 <admin@hotarucms.org>
- * @copyright Copyright (c) 2013, Hotaru CMS
+ * @author    Nick Ramsay <admin@hotarucms.org>
+ * @copyright Copyright (c) 2010, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-    
+
 ?>
+<!-- HEADER-->
+<?php $h->displayTemplate('header'); ?>
 
-	<div id="ft" role="contentinfo">
-            <div class="container">
-                <hr/>
-		<?php
-			$h->pluginHook('admin_footer');
-			
-			// Link to forums...
-			echo "<p>" . $h->lang["admin_theme_footer_having_trouble_vist_forums"] . "</p>";
-			
-			if ($h->isDebug) {
-				$h->showQueriesAndTime();
-			}
-		?>
-            </div>
+<div id="bd" role="main">
+	<div class='yui-g''>
+		<div class="yui-u" style='width: 100%;'>
+		
+			<!-- MAIN -->
+			<div id="main">
+				<?php echo $h->showMessages(); ?>
+			</div>
+		</div>
 	</div>
+</div>
 
-
-<?php $h->pluginHook('pre_close_body'); ?>
-
-<?php $js = SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'javascript/'; ?>
-
-<script src="<?php echo $js;?>bootstrap.min.js"</script>
-<script src="<?php echo $js;?>bootstrap-dropdown.js"></script>
-
+<!-- FOOTER -->
+<?php $h->displayTemplate('footer'); ?>

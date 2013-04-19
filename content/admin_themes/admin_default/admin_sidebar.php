@@ -29,58 +29,76 @@
 ?>
 
 
-
-<ul id="sidebar" class='accordion <?php echo $h->vars['admin_sidebar_layout']; ?>'>
+<div class="well sidebar-nav">
+<ul class='nav nav-list'>
 	<li>
-<?php
+            <span>
+            <?php
 	     if($h->isActive('avatar')) {
-                    $h->setAvatar($h->currentUser->id, 16);
-					echo $h->linkAvatar();
-                }
-?>
+                    $h->setAvatar($h->currentUser->id, 24, 'g', 'img-polaroid left');
+                    echo  $h->linkAvatar();
+            }
+            ?>
+               &nbsp;<a style="vertical-align:bottom;" href="<?php echo SITEURL; ?>admin_index.php?page=admin_account"><?php echo $h->currentUser->name; ?></a>
+ 
+                </span>
+            </li>
+            <hr style="margin:10px 0;"/>
 
-&nbsp;<a href="<?php echo SITEURL; ?>admin_index.php?page=admin_account"><?php echo $h->lang["admin_theme_account"]; ?></a></li>
 	
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=settings"><?php echo $h->lang["admin_theme_settings"]; ?></a></li>
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance"><?php echo $h->lang["admin_theme_maintenance"]; ?></a></li>
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=blocked"><?php echo $h->lang["admin_theme_blocked_list"]; ?></a></li>
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_management"><?php echo $h->lang["admin_theme_plugins"]; ?></a></li>
+        <li><a href="<?php echo $h->url(array(), 'admin'); ?>"><i class="icon-home"></i> <?php echo $h->lang["admin_theme_navigation_home"]; ?></a></li>
 	
+	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=settings"><i class="icon-wrench"></i> <?php echo $h->lang["admin_theme_settings"]; ?></a></li>
+	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance"><i class="icon-pencil"></i> <?php echo $h->lang["admin_theme_maintenance"]; ?></a></li>
+	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=blocked"><i class="icon-flag"></i> <?php echo $h->lang["admin_theme_blocked_list"]; ?></a></li>
+	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_management"><i class="icon-check"></i> <?php echo $h->lang["admin_theme_plugins"]; ?></a></li>
 	
-	<?php if ($h->vars['admin_sidebar_layout'] == 'horizontal') { ?>
-		<li><a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_settings"><?php echo $h->lang["admin_theme_plugin_settings"]; ?></a></li>
-	<?php } else { ?>
-		<li><?php echo $h->lang["admin_theme_plugin_settings"]; ?>
-		<ul id="plugin_settings_list">
-			<?php 
-				$sb_links = $h->pluginHook('admin_sidebar_plugin_settings');
-				if ($sb_links) {
-					$sb_links = sksort($sb_links, $subkey="name", $type="char", true);
-					foreach ($sb_links as $plugin => $details) { 
-						echo "<li><a href='" . SITEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $details['plugin'] . "'>" . $details['name'] . "</a></li>\n";
-					}
-				}
-			?>
-		</ul></li>
-	<?php } ?>
+        <hr style="margin:10px 0;"/>	         
+        
+	<!-- Plugins -->
+        <?php $sb_links = $h->pluginHook('admin_sidebar_plugin_settings'); ?>
+        <?php $pluginsCount = ($sb_links) ? count($sb_links) : 0; ?>
+
+        <li class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_plugins_list"><?php echo $h->lang["admin_theme_plugin_settings"]; ?>
+            &nbsp;&nbsp;<span class="badge badge-info"><?php echo $pluginsCount; ?></span>
+
+            <div id="admin_plugins_list" class="collapse out">    
+                <ul id="plugin_settings_list">
+                        <?php                                     
+                                if ($sb_links) {
+                                        $sb_links = sksort($sb_links, $subkey="name", $type="char", true);
+                                        foreach ($sb_links as $plugin => $details) { 
+                                                echo "<li><a href='" . SITEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $details['plugin'] . "'>" . $details['name'] . "</a></li>\n";
+                                        }
+                                }
+                        ?>
+                </ul>
+            </div> 
+        </li>
 	
-	<?php if ($h->vars['admin_sidebar_layout'] != 'horizontal') { ?>
-		<li><?php echo $h->lang["admin_theme_theme_settings"]; ?>
-			<ul id="plugin_settings_list">
-			<?php 
-				$themes = $h->getFiles(THEMES, array('404error.php'));
-				if ($themes) {
-					$themes = sksort($themes, $subkey="name", $type="char", true);
-					foreach ($themes as $theme) { 
-						if ($theme == rtrim(THEME, '/')) { $active = ' <i><small>(current)</small></i>'; } else { $active = ''; } 
-							echo "<li><a href='" . SITEURL . "admin_index.php?page=theme_settings&amp;theme=" . $theme . "'>" . make_name($theme, '-') . "</a>" . $active . "</li>\n";
-					}
-				}
-			?>
-			</ul>
-		</li>
-	<?php } ?>
+        <hr style="margin:10px 0;"/>
+            
+        <!-- Themes -->	
+        <?php $themes = $h->getFiles(THEMES, array('404error.php')); ?>
+        <?php $themesCount = ($themes) ? count($themes) : 0; ?>
+        <li class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#themes_list"><?php echo $h->lang["admin_theme_theme_settings"]; ?>
+            &nbsp;&nbsp;<span class="badge badge-info"><?php echo $themesCount; ?></span>
+            <div id="themes_list" class="collapse out">
+                <ul id="plugin_settings_list">
+                <?php 
+
+                        if ($themes) {
+                                sort($themes); // sort alphabetically
+                                foreach ($themes as $theme) { 
+                                        if ($theme == rtrim(THEME, '/')) { $active = ' <i><small>(current)</small></i>'; } else { $active = ''; } 
+                                                echo "<li><a href='" . SITEURL . "admin_index.php?page=theme_settings&amp;theme=" . $theme . "'>" . make_name($theme, '-') . "</a>" . $active . "</li>\n";
+                                }
+                        }
+                ?>
+                </ul>
+            </div>
+        </li>	
 	
 	<?php $h->pluginHook('admin_sidebar'); ?>
 </ul>
-
+</div>
