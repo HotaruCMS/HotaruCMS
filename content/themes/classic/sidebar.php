@@ -1,8 +1,8 @@
 <?php 
 /**
- * Theme name: default
+ * Theme name: classic
  * Template name: sidebar.php
- * Template author: shibuya246
+ * Template author: Nick Ramsay
  *
  * PHP version 5
  *
@@ -28,10 +28,5 @@
 
 ?>
 
-<div class="span4">
-    <div class="well sidebar-nav">
-        <div id="sidebar" class="container-fluid">
+
             <?php $h->pluginHook('widget_block', '', array(1)); ?>
-        </div>
-    </div>
-</div>

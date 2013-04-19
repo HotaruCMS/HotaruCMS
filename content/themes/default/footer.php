@@ -2,7 +2,7 @@
 /**
  * Theme name: default
  * Template name: footer.php
- * Template author: Nick Ramsay
+ * Template author: shibuya246
  *
  * PHP version 5
  *
@@ -31,5 +31,8 @@
 <?php $h->pluginHook('footer'); ?>
 
 <p><a href="http://hotarucms.org" title='<?php echo $h->lang["main_theme_footer_hotaru_link"]; ?>'><img src='<?php echo SITEURL; ?>content/themes/<?php echo THEME; ?>images/hotarucms.png' alt='<?php echo $h->lang["main_theme_footer_hotaru_link"]; ?>' /></a></p>
+
+<?php $js = SITEURL . "content/themes/" . THEME . "javascript/"; ?>
+<script src="<?php echo $js; ?>bootstrap.min.js"></script>
 
 <?php $h->showQueriesAndTime(); ?>

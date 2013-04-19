@@ -1,8 +1,8 @@
 <?php 
 /**
- * name: Default
- * description: Default theme for Hotaru CMS
- * version: 0.2
+ * name: classic
+ * description: Classic default theme for Hotaru CMS
+ * version: 0.3
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -55,40 +55,37 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 		</div>
 	<?php } ?>
 
-	
-        <!-- NAVIGATION -->
-        <?php echo $h->displayTemplate('navigation'); ?>
-	
+	<div class="container_12">
+
+	<div id="navigation" class="grid_12">
+		<!-- NAVIGATION -->
+		<?php echo $h->displayTemplate('navigation'); ?>
+	</div>
 		
-	<div class="container-fluid">
-            <div class="row-fluid">
+	<div id="header" class="grid_12">
 		<!-- TITLE & AD BLOCKS -->
-                <!--
 		<div id="hd_title">
-			<h1><a href="<?php //echo SITEURL; ?>"><?php //echo SITE_NAME; ?></a></h1>
-			<h3 class="subtitle"><?php //echo $h->vars['theme_settings']['tagline']; ?></h3>
+			<h1><a href="<?php echo SITEURL; ?>"><?php echo SITE_NAME; ?></a></h1>
+			<h3 class="subtitle"><?php echo $h->vars['theme_settings']['tagline']; ?></h3>
 		</div>
-                -->
+		<div class="clear"></div>
+	</div>
 		
-            
-		
-                <div id="header_end" class="grid_12">
-                        <!-- CATEGORIES, ETC -->
-                        <?php $h->pluginHook('header_end'); ?>
-                </div>
-                
-            
+	<div id="header_end" class="grid_12">
+		<!-- CATEGORIES, ETC -->
+		<?php $h->pluginHook('header_end'); ?>
+	</div>
 
 		<div id="content">
 
 			<?php $width = ($h->sidebars) ? '8' : '12'; ?>
-			<div id="main_container" class="span<?php echo $width; ?>">
+			<div id="main_container" class="grid_<?php echo $width; ?>">
 				<div id="main">
 
 					<!-- BREADCRUMBS -->
-					<ul class='breadcrumb'>
-						<?php echo $h->breadcrumbs("/"); ?>
-					</ul>
+					<div id='breadcrumbs'>
+						<?php echo $h->breadcrumbs(); ?>
+					</div>
 					
 					<!-- POST BREADCRUMBS -->
 					<?php $h->pluginHook('theme_index_post_breadcrumbs'); ?>
@@ -105,20 +102,22 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 
 			<!-- SIDEBAR -->
 			<?php if ($h->sidebars) { ?>
-                            <?php if (!$h->pluginHook('theme_index_sidebar')) { $h->displayTemplate('sidebar'); } ?>					
+				<div id="sidebar_container" class="grid_4">
+					<div id="sidebar">
+						<?php if (!$h->pluginHook('theme_index_sidebar')) { $h->displayTemplate('sidebar'); } ?>
+					</div>
+				</div> 
 			<?php } ?>
 
 		</div> <!-- close "content" -->
-                
-            </div>
 
-            <hr/>
+
 		<!-- FOOTER -->
-		<footer>
+		<div id="footer" class="grid_12">
 			<?php if (!$h->pluginHook('theme_index_footer')) { $h->displayTemplate('footer'); } ?>
-		</footer>
-        </div>
-	
+		</div>
+
+	</div> <!-- close "container_12" -->
 
 	<?php $h->pluginHook('pre_close_body'); ?>
 

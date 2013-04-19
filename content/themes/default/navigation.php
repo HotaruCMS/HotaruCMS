@@ -31,43 +31,69 @@
 ?>
 
 <!-- Navigation Bar -->
-<ul class="navigation">
-	<?php	if ($h->currentUser->loggedIn) {
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="<?php echo SITEURL; ?>"><?php echo SITE_NAME; ?></a>
+            <span class="btn-navbar">
+            <?php	if ($h->currentUser->loggedIn) {
 				if($h->isActive('avatar')) {
-					$h->setAvatar($h->currentUser->id, 16);
-					echo '<li>' . $h->linkAvatar() . '</li>';
+					$h->setAvatar($h->currentUser->id, 24, 'g', 'img-circle');
+					echo  $h->linkAvatar();
 				}
 			} ?>
-<?php if ($h->pageName == $h->home) { $status = "id='navigation_active'"; } else { $status = ""; } ?>
-<li <?php echo $status; ?>><a href="<?php echo SITEURL; ?>"><?php echo $h->lang["main_theme_navigation_home"]; ?></a></li><?php $h->pluginHook('navigation'); ?><?php 
-		if (!$h->isActive('signin')) { 
+            </span>
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    <?php if ($h->currentUser->loggedIn) {
+                            if($h->isActive('avatar')) {
+                                    $h->setAvatar($h->currentUser->id, 22, 'g', 'img-circle');
+                                    echo '<li class="visible-desktop">' . $h->linkAvatar() . '</li>';
+                            }
+                    } ?>
+                    
+                    <?php if ($h->pageName == $h->home) { $status = "id='navigation_active'"; } else { $status = ""; } ?>
+                    <li <?php echo $status; ?>><a href="<?php echo SITEURL; ?>"><?php echo $h->lang["main_theme_navigation_home"]; ?></a></li><?php $h->pluginHook('navigation'); ?>
+                    <?php // RSS Link and icon if a type "base" plugin is active
+                        if ($h->isActive('base')) { ?>
+                            <li>
+                                <a href="<?php echo $h->url(array('page'=>'rss')); ?>">RSS 
+                                        <img src="<?php echo SITEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png" alt="RSS" />
+                                </a>
+                            </li>
+                        <?php } ?>
+                </ul>
+                <ul class="nav nav-pills pull-right">
+               
+                    <?php
+                    if (!$h->isActive('signin')) { 
 		
 			if ($h->currentUser->loggedIn == true) { 
 			
 				if ($h->isAdmin) { $status = "id='navigation_active'"; } else { $status = ""; }
-				echo "<li " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_admin"] . "</a></li>";
+				echo "<a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_admin"] . "</a>";
 			
 				if ($h->pageName == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
-				echo "<li " . $status . "><a href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang["main_theme_navigation_logout"] . "</a></li>";
+				echo "<a href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang["main_theme_navigation_logout"] . "</a>";
 			} else { 
 				if ($h->pageName == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
-				echo "<li " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_login"] . "</a></li>";
+				echo "<a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_login"] . "</a>";
 			}
-		} else {
-			$h->pluginHook('navigation_users'); // ensures login/logout/register are last.
-		}
-	?>
-</ul>
+                    } else {
+                            $h->pluginHook('navigation_users'); // ensures login/logout/register are last.
+                    }
+                ?>
+                </ul>
+               
+            </div>
+        </div>
+    </div>
+</div>
 
-<ul class="navigation nav_right">
-	<?php     // RSS Link and icon if a type "base" plugin is active
-		if ($h->isActive('base')) { ?>
-		<li>
-		<a href="<?php echo $h->url(array('page'=>'rss')); ?>">RSS 
-			<img id="rss_icon" src="<?php echo SITEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png" alt="RSS" />
-		</a>
-		</li>
-	<?php } ?>
-</ul>
 
-<div class="clear"></div>
+

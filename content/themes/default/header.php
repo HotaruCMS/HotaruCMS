@@ -35,7 +35,7 @@
 <meta name="generator" content="Hotaru CMS <?php echo $h->version; ?>" />
 
 	<title><?php echo $h->getTitle(); ?></title>
-	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<?php
 			// plugin hook
 			$result = $h->pluginHook('header_meta');
@@ -45,18 +45,19 @@
 		<?php } ?>
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	
-	<!-- include 960 CSS framework -->
+	<!-- include CSS framework -->
 	<?php $css = SITEURL . "content/themes/" . THEME . "css/"; ?>
-	<link rel="stylesheet" href="<?php echo $css; ?>960/reset.css" type="text/css" />
-	<link rel="stylesheet" href="<?php echo $css; ?>960/960.css" type="text/css" />
-	<link rel="stylesheet" href="<?php echo $css; ?>960/text.css" type="text/css" />
+	<link rel="stylesheet" href="<?php echo $css; ?>bootstrap/bootstrap.min.css" type="text/css" />
+	<link rel="stylesheet" href="<?php echo $css; ?>style.css" type="text/css" />
 	
 	<!-- Include merged files for all the plugin css and javascript (if any) -->
 	<?php $h->doIncludes(); ?>
 	<!-- End -->
 	
-	<link rel="stylesheet" href="<?php echo $css; ?>style.css" type="text/css" />
-	<!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico" /> -->
+        <!-- include this CSS last so it gets priority -->
+        <link rel="stylesheet" href="<?php echo $css; ?>bootstrap/bootstrap-responsive.min.css" type="text/css" />
+	
+        <!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico" /> -->
 	
 	<?php $h->pluginHook('header_include_raw'); ?>
 	

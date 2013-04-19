@@ -1,8 +1,8 @@
 <?php 
 /**
- * Theme name: default
- * Template name: sidebar.php
- * Template author: shibuya246
+ * Theme name: classic
+ * Template name: footer.php
+ * Template author: Nick Ramsay
  *
  * PHP version 5
  *
@@ -28,10 +28,10 @@
 
 ?>
 
-<div class="span4">
-    <div class="well sidebar-nav">
-        <div id="sidebar" class="container-fluid">
-            <?php $h->pluginHook('widget_block', '', array(1)); ?>
-        </div>
-    </div>
-</div>
+<?php $h->pluginHook('footer'); ?>
+
+<p><a href="http://hotarucms.org" title='<?php echo $h->lang["main_theme_footer_hotaru_link"]; ?>'><img src='<?php echo SITEURL; ?>content/themes/<?php echo THEME; ?>images/hotarucms.png' alt='<?php echo $h->lang["main_theme_footer_hotaru_link"]; ?>' /></a></p>
+
+<?php $js = SITEURL . "content/themes/" . THEME . "javascript/"; ?>
+
+<?php $h->showQueriesAndTime(); ?>
