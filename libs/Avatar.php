@@ -41,6 +41,7 @@ class Avatar
 	public $user_email  = '';
 	public $size        = 32;
 	public $rating      = 'g';  // "global" used by Gravatar
+        public $img_class   = '';   // css options for image shape
 	public $valid       = true;
 	
 	
@@ -52,7 +53,7 @@ class Avatar
 	 * @param $size avatar size in pixels
 	 * @param $rating avatar rating (g, pg, r or x in Gravatar)
 	 */
-	public function  __construct($h, $user_id = 0, $size = 32, $rating = 'g')
+	public function  __construct($h, $user_id = 0, $size = 32, $rating = 'g', $img_class = '')
 	{
 		if (!$user_id) { return false; }
 		
@@ -65,6 +66,7 @@ class Avatar
 		
 		$this->size = $size;
 		$this->rating = $rating;
+                $this->img_class = $img_class;
 		
 		$this->setVars($h);
 	}
@@ -80,7 +82,8 @@ class Avatar
 			'user_name'=>$this->user_name,
 			'user_email'=>$this->user_email,
 			'size'=>$this->size,
-			'rating'=>$this->rating
+			'rating'=>$this->rating,
+                        'img_class'=>$this->img_class
 			);
 		
 		$h->pluginHook('avatar_set_avatar', '', $vars);

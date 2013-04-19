@@ -441,10 +441,10 @@ class Hotaru
 	/**
 	 * Build breadcrumbs
 	 */
-	public function breadcrumbs()
+	public function breadcrumbs($sep = "&raquo;")
 	{
 		$breadcrumbs = new Breadcrumbs();
-		return $breadcrumbs->buildBreadcrumbs($this);
+		return $breadcrumbs->buildBreadcrumbs($this, $sep);
 	}
     
     
@@ -1868,9 +1868,9 @@ class Hotaru
 	 * @param $rating avatar rating (g, pg, r or x in Gravatar)
 	 * @return bool
 	 */
-	public function setAvatar($user_id = 0, $size = 32, $rating = 'g')
+	public function setAvatar($user_id = 0, $size = 32, $rating = 'g', $img_class = '')
 	{
-		return $this->avatar = new Avatar($this, $user_id, $size, $rating);
+		return $this->avatar = new Avatar($this, $user_id, $size, $rating, $img_class);
 	}
 	
 	

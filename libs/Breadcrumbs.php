@@ -28,18 +28,16 @@ class Breadcrumbs
 	/**
 	 * Build breadcrumbs
 	 */
-	public function buildBreadcrumbs($h)
+	public function buildBreadcrumbs($h, $sep)
 	{
 		$output = '';		
 		
 		// Admin only:
 		if ($h->isAdmin) {
-			$output .= "<a href='" . SITEURL . "'>" . SITE_NAME . " (" . $h->lang['main_theme_breadcrumbs_home'] . ")</a>\n";
-
-			$output .= " &raquo; <a href='" . $h->url(array(), 'admin') . "'>";
+			$output .= "<a href='" . $h->url(array(), 'admin') . "'>";
 			$output .= $h->lang['admin_theme_main_admin_cp'] . "</a>\n";
 		} else {
-			$output .= "<a href='" . SITEURL . "'>" . $h->lang['main_theme_breadcrumbs_home'] . "</a>\n"; 
+			$output .= "<li><a href='" . SITEURL . "'>" . $h->lang['main_theme_breadcrumbs_home'] . "</a></li>"; 
 		}
 
 
@@ -49,13 +47,13 @@ class Breadcrumbs
 		if ($crumbs) {
 			$crumbs = array_reverse($crumbs); // so the last one gets used.
 			foreach ($crumbs as $key => $value) {
-				$output .= " &raquo; " . $value;
+                                $output .=  '<li><span class="divider">' . $sep . '</span>' . $value. '</li>';
 				return $output; // we only want the first result so return now.
 			}
 		} 
 		
 		// in case of no plugins:
-		$output .= " &raquo; " . $h->pageTitle;
+		$output .= '<li><span class="divider">' . $sep . '</span>' . $h->pageTitle . '</li>';
 		return $output;
 	}
 	
