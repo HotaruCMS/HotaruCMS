@@ -125,21 +125,23 @@ class Post
 	public function getPost($h, $post_id = 0)
 	{
 		// Build SQL
-		$query = "SELECT * FROM " . TABLE_POSTS . " WHERE post_id = %d ORDER BY post_date DESC";
-		$sql = $h->db->prepare($query, $post_id);
-		
+		//$query = "SELECT * FROM " . TABLE_POSTS . " WHERE post_id = %d ORDER BY post_date DESC";
+		//$sql = $h->db->prepare($query, $post_id);
+                
+                $post = models\Posts::find_by_pk($post_id, null);
+
 		// Create temp cache array
-		if (!isset($h->vars['tempPostCache'])) { $h->vars['tempPostCache'] = array(); }
-		
-		// If this query has already been read once this page load, we should have it in memory...
-		if (array_key_exists($sql, $h->vars['tempPostCache'])) {
-			// Fetch from memory
-			$post = $h->vars['tempPostCache'][$sql];
-		} else {
-			// Fetch from database
-			$post = $h->db->get_row($sql);
-			$h->vars['tempPostCache'][$sql] = $post;
-		}
+//		if (!isset($h->vars['tempPostCache'])) { $h->vars['tempPostCache'] = array(); }
+//		
+//		// If this query has already been read once this page load, we should have it in memory...
+//		if (array_key_exists($sql, $h->vars['tempPostCache'])) {
+//			// Fetch from memory
+//			$post = $h->vars['tempPostCache'][$sql];
+//		} else {
+//			// Fetch from database
+//			$post = $h->db->get_row($sql);
+//			$h->vars['tempPostCache'][$sql] = $post;
+//		}
 		
 		if ($post) { return $post; } else { return false; }
 	}
