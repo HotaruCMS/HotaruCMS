@@ -7,12 +7,12 @@ INSTALLATION
 
 Please visit [the appropriate documentation page][1] for the most up-to-date version of these instructions.
 
-Instructions last updated: Mar 8th 2010
+Instructions last updated: Apr 19th 2013
 
 Requirements
 ------------
 
-Hotaru CMS has been tested using PHP 5.2.5 ~ 5.3.2 and MySQL 5.0~.
+Hotaru CMS has been tested using PHP 5.3.2~  and MySQL 5.0~.
 
 Upgrading
 ---------
