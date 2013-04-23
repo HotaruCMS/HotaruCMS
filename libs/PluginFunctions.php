@@ -157,9 +157,8 @@ class PluginFunctions
 	 */
 	public function numActivePlugins($db)
 	{
-                $enabled = models\Plugins::count_by_plugin_enabled(1);
-                //$enabled = $db->get_var($db->prepare("SELECT count(*) FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d", 1));
-                if ($enabled > 0) { return $enabled; } else { return false; }
+		$enabled = $db->get_var($db->prepare("SELECT count(*) FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d", 1));
+		if ($enabled > 0) { return $enabled; } else { return false; }
 	}
 	
 	
@@ -288,16 +287,13 @@ class PluginFunctions
 	 */
 	public static function getAllPluginDetails($h)
 	{
-                $h->allPluginDetails = models\Plugins::find('all');
-                $h->allPluginDetails['hooks'] = models\Pluginhooks::find('all');
-            
-//		$sql = "SELECT * FROM " . TABLE_PLUGINS . " ORDER BY plugin_order ASC";
-//		$h->smartCache('on', 'plugins', $h->db->cache_timeout, $sql); // start using cache
-//		$h->allPluginDetails = $h->db->get_results($sql);
+		$sql = "SELECT * FROM " . TABLE_PLUGINS . " ORDER BY plugin_order ASC";
+		$h->smartCache('on', 'plugins', $h->db->cache_timeout, $sql); // start using cache
+		$h->allPluginDetails = $h->db->get_results($sql);
 		
-//		$sql = "SELECT plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS;
-//		$h->smartCache('on', 'pluginhooks', $h->db->cache_timeout, $sql); // start using cache
-//		$h->allPluginDetails['hooks'] = $h->db->get_results($sql);
+		$sql = "SELECT plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS;
+		$h->smartCache('on', 'pluginhooks', $h->db->cache_timeout, $sql); // start using cache
+		$h->allPluginDetails['hooks'] = $h->db->get_results($sql);
 		
 		$h->smartCache('off');   // stop using cache 
 	}
@@ -314,26 +310,20 @@ class PluginFunctions
 	{
 		// first see if there's an active plugin with this *type*:
 		if ($type) { 
-                        $status = models\Plugins::count_by_plugin_type(1);
-                        //$status = models\Plugins::count(array('conditions' => 'plugin_type', $type));
-//			$sql = "SELECT count(plugin_enabled) FROM " . TABLE_PLUGINS . " WHERE plugin_type = %s";
-//			$status = $h->db->get_var($h->db->prepare($sql, $type));
+			$sql = "SELECT count(plugin_enabled) FROM " . TABLE_PLUGINS . " WHERE plugin_type = %s";
+			$status = $h->db->get_var($h->db->prepare($sql, $type));
 		
 			// if there's no result, see if there's an active plugin with $type as its folder *name*:
 			if (!$status) {
-                                $status = models\Plugins::count_by_plugin_folder($type);
-                                //$status = models\Plugins::count(array('conditions' => 'plugin_folder', $type));
-//				$sql = "SELECT count(plugin_enabled) FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
-//				$status = $h->db->get_var($h->db->prepare($sql, $type));
+				$sql = "SELECT count(plugin_enabled) FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
+				$status = $h->db->get_var($h->db->prepare($sql, $type));
 			}
 		}
 		else 
 		{
 			// if not $type provided, see if the *current* plugin is enabled... (which it obviously is! doh!)
-			$status = models\Plugins::count_by_plugin_folder($h->plugin->folder);
-                        //$status = models\Plugins::count(array('conditions' => 'plugin_folder', $h->plugin->folder));
-//                        $sql = "SELECT count(plugin_enabled) FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
-//			$status = $h->db->get_var($h->db->prepare($sql, $h->plugin->folder));
+			$sql = "SELECT count(plugin_enabled) FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
+			$status = $h->db->get_var($h->db->prepare($sql, $h->plugin->folder));
 		}
 		
 		if ($status) { return true; } else { return false; }
@@ -352,11 +342,8 @@ class PluginFunctions
 		if (!$folder) { $folder = $h->plugin->folder; }
 		
 		if (!isset($h->vars['all_plugin_hooks'])) {
-                        $h->vars['all_plugin_hooks'] = models\Pluginhooks::find('first', array(
-                            'conditions' => array('plugin_hook', 'admin_plugin_settings')                        
-                        )); 
-//			$sql = "SELECT plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_hook = %s";
-//			$h->vars['all_plugin_hooks'] = $h->db->get_results($h->db->prepare($sql, 'admin_plugin_settings'));
+			$sql = "SELECT plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_hook = %s";
+			$h->vars['all_plugin_hooks'] = $h->db->get_results($h->db->prepare($sql, 'admin_plugin_settings'));
 		} 
 
 		if ($h->vars['all_plugin_hooks']) {

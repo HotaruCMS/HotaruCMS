@@ -125,36 +125,32 @@ class UserBase
 	public function getUserBasic($h, $userid = 0, $username = '', $no_cache = false)
 	{
 		// Prepare SQL
-		if ($userid != 0){              
-                        // use userid
-                        $user_info = models\Users::find_by_pk($userid, null);
-//			$where = "user_id = %d";
-//			$param = $userid;
-		} elseif ($username != '') {    
-                        // use username
-                        $user_info = models\Users::find('first', array('conditions' => array('user_username=?',$username)));                     
-//			$where = "user_username = %s";
-//			$param = $username;
+		if ($userid != 0){              // use userid
+			$where = "user_id = %d";
+			$param = $userid;
+		} elseif ($username != '') {    // use username
+			$where = "user_username = %s";
+			$param = $username;
 		} else {
 			return false;
 		}
 		
 		// Build SQL
-//		$query = "SELECT user_id, user_username, user_password, user_role, user_email, user_email_valid, user_ip, user_permissions FROM " . TABLE_USERS . " WHERE " . $where;
-//		$sql = $h->db->prepare($query, $param);
+		$query = "SELECT user_id, user_username, user_password, user_role, user_email, user_email_valid, user_ip, user_permissions FROM " . TABLE_USERS . " WHERE " . $where;
+		$sql = $h->db->prepare($query, $param);
 		
-//		if (!isset($h->vars['tempUserCache'])) { $h->vars['tempUserCache'] = array(); }
-//		
-//		// If this query has already been read once this page load, we should have it in memory...
-//		if (!$no_cache && array_key_exists($sql, $h->vars['tempUserCache'])) {
-//			// Fetch from memory
-//			$user_info = $h->vars['tempUserCache'][$sql];
-//		} else {
-//			// Fetch from database
-//			$user_info = $h->db->get_row($sql);
-//			$h->vars['tempUserCache'][$sql] = $user_info;
-//		}
-		 
+		if (!isset($h->vars['tempUserCache'])) { $h->vars['tempUserCache'] = array(); }
+		
+		// If this query has already been read once this page load, we should have it in memory...
+		if (!$no_cache && array_key_exists($sql, $h->vars['tempUserCache'])) {
+			// Fetch from memory
+			$user_info = $h->vars['tempUserCache'][$sql];
+		} else {
+			// Fetch from database
+			$user_info = $h->db->get_row($sql);
+			$h->vars['tempUserCache'][$sql] = $user_info;
+		}
+		
 		if (!$user_info) { return false; }
 		
 		$this->id = $user_info->user_id;
@@ -203,9 +199,7 @@ class UserBase
 		
 		// get user settings:
 		$this->settings = $this->getProfileSettingsData($h, 'user_settings', $this->id);
-                
-                // TODO check why we had user_settings added here
-		//$user_info->user_settings = $this->settings;   // update $user_info
+		$user_info->user_settings = $this->settings;   // update $user_info
 		
 		return $user_info;
 	}

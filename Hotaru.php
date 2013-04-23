@@ -97,7 +97,7 @@ class Hotaru
 			$this->cage         = $init->cage;          // Inspekt cage
 			$this->isDebug      = $init->isDebug;       // set debug			
 			$this->currentUser  = new UserAuth();       // the current user
-                        $this->plugin       = new Plugin();         // instantiate Plugin object
+			$this->plugin       = new Plugin();         // instantiate Plugin object
 			$this->post         = new Post();           // instantiate Post object
 			$this->includes     = new IncludeCssJs();   // instantiate Includes object
 			$this->pageHandling = new PageHandling();   // instantiate PageHandling object

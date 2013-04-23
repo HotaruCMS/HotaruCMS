@@ -169,15 +169,8 @@ class Initialize
 	{
 		// include third party libraries
 		require_once(EXTENSIONS . 'csrf/csrf_class.php'); // protection against CSRF attacks
-		
-                require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
-                require_once(LIBS . 'InspektExtras.php'); // sanitation
-                
-                require_once(EXTENSIONS . 'php-activerecord/ActiveRecord.php'); // database
-                //require_once('Log.php'); // PEAR function
-                
+		require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
 		require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
-                require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
 		require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php'); // database
 		
 		// include functions
@@ -195,32 +188,12 @@ class Initialize
 	 * @return object
 	 */
 	public function initDatabase()
-	{                       
-
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300)
-                {
-                 // leave ezSql for these people ?
-                }
-                
-                ActiveRecord\Config::initialize(function($cfg)
-                {
-                    $cfg->set_model_directory(LIBS);
-                    $cfg->set_connections(array('development' => 'mysql://' . DB_USER .':' . DB_PASSWORD . '@' . DB_HOST . '/' . DB_NAME . ';charset=utf8'));
-                
-                    //if ($h->isDebug) {
-//                        $logger = Log::singleton('file', CACHE . '/debug_logs/phpar.log','ident',array('mode' => 0664, 'timeFormat' =>  '%Y-%m-%d %H:%M:%S'));
-//                        $cfg->set_logging(true);
-//                        $cfg->set_logger($logger); 
-                    //}
-                    
-                });          
-                
-                // TODO : remove ezSQL when activeRecord is fully working with all plugins
-                $ezSQL = new Database(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
+	{
+		$ezSQL = new Database(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
 		$ezSQL->query("SET NAMES 'utf8'");
 		
 		return $ezSQL;
-        }
+	}
 	
 	
 	/**
@@ -255,8 +228,6 @@ class Initialize
 	public function readSettings() {
 	    $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;
 	    $settings = $this->db->get_results($this->db->prepare($sql));
-            
-            $settings = models\Settings::all();
 
 	    if(!$settings) { return false; }
 
@@ -314,8 +285,8 @@ class Initialize
 		} else {
 			$this->db->use_disk_cache = false;
 			return false;
-		}
-	} 
+		}   
+	}
 	
 	
 	/**

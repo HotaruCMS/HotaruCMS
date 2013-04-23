@@ -96,10 +96,9 @@ class Widget
 	 */
 	public function addWidget($h, $plugin = '', $function = '', $args = '')
 	{
-                $result = models\Widgets::count_by_widget_plugin_and_widget_function_and_widget_args($plugin, $function, $args);
 		// Check if it exists so we don't add a duplicate
-//		$sql = "SELECT count(widget_id) FROM " . DB_PREFIX . "widgets WHERE widget_plugin = %s AND widget_function = %s AND widget_args = %s";
-//		$result = $h->db->get_var($h->db->prepare($sql, $plugin, $function, $args));
+		$sql = "SELECT count(widget_id) FROM " . DB_PREFIX . "widgets WHERE widget_plugin = %s AND widget_function = %s AND widget_args = %s";
+		$result = $h->db->get_var($h->db->prepare($sql, $plugin, $function, $args));
 		
 		if (!$result) {
 			$sql = "INSERT INTO " . DB_PREFIX . "widgets (widget_plugin, widget_function, widget_args, widget_updateby) VALUES(%s, %s, %s, %d)";
@@ -121,13 +120,10 @@ class Widget
 		
 		if (!$exists) { return false; }
 		
-                $widgets_settings = models\Widgets::all();
 		// Get settings from the database if they exist...
-//		$sql = "SELECT widget_plugin, widget_function, widget_args FROM " . DB_PREFIX . 'widgets';
-//		$widgets_settings = $h->db->get_results($h->db->prepare($sql));
-		
-                if (!$widgets_settings) { return false; }                
-                return $widgets_settings;
+		$sql = "SELECT widget_plugin, widget_function, widget_args FROM " . DB_PREFIX . 'widgets';
+		$widgets_settings = $h->db->get_results($h->db->prepare($sql));
+		return $widgets_settings;
 	}
 	
 	
@@ -226,9 +222,8 @@ class Widget
 	public function getPluginFromFunction($h, $function)
 	{
 		// Get settings from the database if they exist...
-                $widget_plugin = models\Widgets::find_by_widget_function($function);
-//		$sql = "SELECT widget_plugin FROM " . TABLE_WIDGETS . ' WHERE widget_function = %s LIMIT 1';
-//		$widget_plugin = $h->db->get_var($h->db->prepare($sql, $function));
+		$sql = "SELECT widget_plugin FROM " . TABLE_WIDGETS . ' WHERE widget_function = %s LIMIT 1';
+		$widget_plugin = $h->db->get_var($h->db->prepare($sql, $function));
 		return $widget_plugin;
 	}
 
