@@ -37,7 +37,7 @@ class Breadcrumbs
 			$output .= "<a href='" . $h->url(array(), 'admin') . "'>";
 			$output .= $h->lang['admin_theme_main_admin_cp'] . "</a>\n";
 		} else {
-			$output .= "<li><a href='" . SITEURL . "'>" . $h->lang['main_theme_breadcrumbs_home'] . "</a></li>"; 
+			$output .= "<a href='" . SITEURL . "'>" . $h->lang['main_theme_breadcrumbs_home'] . "</a>&nbsp;"; 
 		}
 
 
@@ -47,13 +47,13 @@ class Breadcrumbs
 		if ($crumbs) {
 			$crumbs = array_reverse($crumbs); // so the last one gets used.
 			foreach ($crumbs as $key => $value) {
-                                $output .=  '<li><span class="divider">' . $sep . '</span>' . $value. '</li>';
+                                $output .=  '<span class="divider">' . $sep . '</span>&nbsp;' . $value. '&nbsp;';
 				return $output; // we only want the first result so return now.
 			}
 		} 
 		
 		// in case of no plugins:
-		$output .= '<li><span class="divider">' . $sep . '</span>' . $h->pageTitle . '</li>';
+		$output .= '<span class="divider">' . $sep . '</span>&nbsp;' . $h->pageTitle . '&nbsp;';
 		return $output;
 	}
 	
