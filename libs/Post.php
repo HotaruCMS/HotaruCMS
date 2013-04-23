@@ -172,7 +172,7 @@ class Post
 		}
 		
 		// Add tags to the Tags table:
-		require_once(LIBS . 'Tags.php');
+		//require_once(LIBS . 'Tags.php');
 		$tags = new TagFunctions();
 		$tags->addTags($h, $this->id, $this->tags);
 		
@@ -230,7 +230,7 @@ class Post
 		$h->post->id = $this->id; // a small hack to get the id for use in plugins.
 		
 		// Delete tags from the Tags table:
-		require_once(LIBS . 'Tags.php');
+		//require_once(LIBS . 'Tags.php');
 		$tags = new TagFunctions();
 		$tags->deleteTags($h, $this->id); // delete existing tags
 		
