@@ -174,6 +174,8 @@ class Initialize
                 require_once(LIBS . 'InspektExtras.php'); // sanitation
                 
                 require_once(EXTENSIONS . 'php-activerecord/ActiveRecord.php'); // database
+                //require_once('Log.php'); // PEAR function
+                
 		require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
                 require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
 		require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php'); // database
@@ -202,8 +204,15 @@ class Initialize
                 
                 ActiveRecord\Config::initialize(function($cfg)
                 {
-                    $cfg->set_model_directory('libs');
+                    $cfg->set_model_directory(LIBS);
                     $cfg->set_connections(array('development' => 'mysql://' . DB_USER .':' . DB_PASSWORD . '@' . DB_HOST . '/' . DB_NAME . ';charset=utf8'));
+                
+                    //if ($h->isDebug) {
+//                        $logger = Log::singleton('file', CACHE . '/debug_logs/phpar.log','ident',array('mode' => 0664, 'timeFormat' =>  '%Y-%m-%d %H:%M:%S'));
+//                        $cfg->set_logging(true);
+//                        $cfg->set_logger($logger); 
+                    //}
+                    
                 });          
                 
                 // TODO : remove ezSQL when activeRecord is fully working with all plugins
