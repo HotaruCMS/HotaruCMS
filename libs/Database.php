@@ -23,6 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
+ 
 class Database extends ezSQL_mysql
 {
 	protected $select   = array();
@@ -246,4 +247,5 @@ class Database extends ezSQL_mysql
 		if ($data) { return $data; } else { return false; }
 	}
 }
+
 ?>
