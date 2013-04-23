@@ -9,6 +9,10 @@ class Posts extends \ActiveRecord\Model
 
         # explicit pk since our pk is not "id" 
         static $primary_key = 'post_id';
+        
+//        static $belongs_to = array(
+//            array('users', 'readonly' => true)
+//        );
 }
 
 ?>
