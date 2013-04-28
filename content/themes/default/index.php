@@ -72,7 +72,7 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 		
             
 		
-                <div id="header_end" class="grid_12">
+                <div id="header_end" class="">
                         <!-- CATEGORIES, ETC -->
                         <?php $h->pluginHook('header_end'); ?>
                 </div>
@@ -98,7 +98,18 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 					
 					<!-- MAIN -->
 					<?php if (!$h->pluginHook('theme_index_main')) { $h->displayTemplate($h->pageName); } ?>
-
+                                        <?php 
+                                        
+                                        $postCount = $h->postStats('total');
+                                        
+                                        if ($postCount && $postCount < 1) { ?>
+                                            <div style="padding:15px 25px;" class="hero-unit">
+                                                    <h2>Welcome to Hotaru CMS</h2>
+                                                    <p>It looks like you are just getting started with your new Hotaru CMS website. Why not submit your first post and publish it to the homepage straight away.</p>
+                                                    <p><a href="/submit/" class="btn btn-primary">Submit Your First Post</a></p>
+                                            </div>
+                                        <?php } ?>
+                                        
 					<div class="clear"></div>
 				</div>
 			</div>

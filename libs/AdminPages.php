@@ -191,10 +191,10 @@ class AdminPages
 		
 			if ($error == 0) {
 				$h->message = $h->lang['admin_settings_update_success'];
-				$h->messageType = 'green';
+				$h->messageType = 'green alert-success';
 			} else {
 				$h->message = $h->lang['admin_settings_update_failure'];
-				$h->messageType = 'red';
+				$h->messageType = 'red alert-error';
 			}
 		}
 		
@@ -204,7 +204,7 @@ class AdminPages
 			$theme = strtolower($h->cage->post->testAlnumLines('theme') . "/" );
 			$this->adminSettingUpdate($h, 'THEME', $theme);
 			$h->deleteFiles(CACHE . 'css_js_cache'); // clear the CSS/JS cache
-			$json_array = array('activate'=>'true', 'message'=>$h->lang["admin_settings_theme_activate_success"], 'color'=>'green');
+			$json_array = array('activate'=>'true', 'message'=>$h->lang["admin_settings_theme_activate_success"], 'color'=>'green alert-success');
 			
 			// Send back result data
 			echo json_encode($json_array);
@@ -305,7 +305,7 @@ class AdminPages
 			$h->clearCache('lang_cache', false);
 			@unlink(BASE. 'cache/smartloader_cache.php');
 			$h->message = $h->lang['admin_maintenance_clear_all_cache_success'];
-			$h->messageType = 'green';
+			$h->messageType = 'green alert-success';
 		}
 		if ($action == 'clear_db_cache') { $h->clearCache('db_cache'); }
 		if ($action == 'clear_css_js_cache') { $h->clearCache('css_js_cache'); }

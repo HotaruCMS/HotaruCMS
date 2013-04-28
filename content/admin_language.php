@@ -252,8 +252,10 @@ $lang["admin_theme_main_join_us"] = "Join Hotaru on <a href='http://www.facebook
 /* theme settings */
 $lang["admin_theme_plugin_settings"] = "Plugin Settings";
 $lang["admin_theme_theme_settings"] = "Theme Settings";
-$lang["admin_theme_theme_no_settings"] = " doesn't have any settings.";
-$lang["admin_theme_theme_activate"] = " Theme can be activated by clicking here.";
+$lang["admin_theme_theme_no_settings"] = "There are settings for this theme";
+$lang["admin_theme_theme_no_about"] = "There is not About information for this theme";
+$lang["admin_theme_theme_no_screenshots"] = "There are no screenshots for this theme";
+$lang["admin_theme_theme_activate"] = "Activate this theme";
 $lang["admin_theme_theme_activate_current"] = " Theme is currently active.";
 $lang["admin_theme_theme_activate_success"] = " Theme was activated successfully.";
 $lang["admin_theme_theme_activate_error"] = " Theme was not activated due to an error.";
@@ -289,6 +291,9 @@ $lang["admin_theme_version_update_to"] = "Update to ";
 /* Plugin search */
 $lang["admin_theme_plugin_search_submit"] = "Search";
 
+
+/* Plugins */
+$lang["admin_theme_users"] = "Users";
 
 
 ?>

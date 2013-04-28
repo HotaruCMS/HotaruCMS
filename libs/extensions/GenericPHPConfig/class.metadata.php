@@ -106,6 +106,26 @@ class generic_pmd {
         //return(NULL);
       }
    }
+   
+   
+   /**
+    * get text info data from a single ..text plugin
+    * - we only read first 4KiB of file
+    *
+    */
+   function readText($fn, $size=4096) {
+   
+      // read from given filename
+      if (file_exists($fn) and ($f = fopen($fn, "r"))) {
+         $src = fread($f, $size);
+         fclose($f);
+         return $src;
+      }
+      // file not found/readable
+      else {
+        return "The file '" . $fn . "' couldn't be found in your plugins folder.";                
+      }
+   }
 
 
    

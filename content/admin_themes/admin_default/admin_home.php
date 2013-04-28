@@ -53,7 +53,7 @@
 	
 	<ul id="site-stats" class="nav nav-list">
             <li class="nav-header"><?php echo SITE_NAME . " " . $h->lang["admin_theme_main_stats"]; ?></li>
-		<li>Hotaru CMS <?php echo $h->version; ?></li>
+		<li>Hotaru CMS <?php echo $h->version; ?></li>                                    
 
 		<?php $h->pluginHook('admin_theme_main_stats_post_version'); ?>
 		<?php $h->pluginHook('admin_theme_main_stats', 'users', array('users' => array('all', 'admin', 'supermod', 'moderator', 'member', 'undermod', 'pending', 'banned', 'killspammed'))); ?>

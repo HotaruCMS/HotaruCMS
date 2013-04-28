@@ -54,6 +54,9 @@ class Breadcrumbs
 		
 		// in case of no plugins:
 		$output .= '<span class="divider">' . $sep . '</span>&nbsp;' . $h->pageTitle . '&nbsp;';
+                
+                if ($h->cage->get->testAlnumLines('plugin')) $output .= '<span class="divider">' . $sep . '</span>&nbsp;' . ucfirst ($h->cage->get->testAlnumLines('plugin')) . '&nbsp;';
+                
 		return $output;
 	}
 	

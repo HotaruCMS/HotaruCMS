@@ -51,8 +51,8 @@ if (!$result) {
         </div>
         
         <?php if ($h->pageName == 'plugin_settings') { ?>
-            <div id="admin_topright" class="floatright">
-                    <?php echo $h->pluginHook('admin_topright'); ?>
+            <div id="admin_topright" class="floatright pull-right">
+                    <?php echo $h->pluginHook('admin_topright'); ?>                
             </div>
         <?php } ?>  
         
@@ -68,7 +68,7 @@ if (!$result) {
                         // plugin hook
                         $result = $h->pluginHook('admin_theme_index_sidebar');
                         if (!$result) {
-                                $h->displayTemplate('admin_sidebar');
+                                $h->displayTemplate('admin_sidebar');                                
                         }
                 ?>
             </div>           
@@ -86,6 +86,12 @@ if (!$result) {
                                     $h->adminLoginForm();
                             }
                     } else {
+                            if ($h->pageName == 'plugin_settings') {  
+                                // TODO
+                                // Put in the tab navs for all plugins here
+                                // then separate by hooks
+                            } 
+                            
                             $h->displayTemplate($h->pageName);
                     } 
             }

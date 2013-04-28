@@ -816,6 +816,19 @@ class Hotaru
  * *********************************************************** */
  
  
+        /**
+	 * Read and return plugin info from top of a plugin file.
+	 *
+	 * @param string $theme - theme folder
+	 * @return array|false
+	 */
+	public function readPluginMeta($folder = '')
+	{
+		$pluginFunctions = new PluginFunctions();
+		return $pluginFunctions->readPluginMeta($this, $folder);
+	}
+        
+        
 	/**
 	 * Look for and run actions at a given plugin hook
 	 *
@@ -1850,6 +1863,16 @@ class Hotaru
 	{
 		$trackback = new Trackback();
 		return $trackback->sendTrackback($this);
+	}
+        
+        /**
+	 * Prepares and calls functions to send a trackback
+	 * Uses $h->post->id
+	 */
+	public function postStats($stat_type)
+	{
+		$post = new Post();
+		return $post->stats($this, $stat_type);
 	}
     
     

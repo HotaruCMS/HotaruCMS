@@ -25,6 +25,25 @@
  */
 class PluginFunctions
 {
+        /**
+	 * Read and return plugin info from top of a plugin file.
+	 *
+	 * @param string $plugin_file - a file from the /plugins folder 
+	 * @return array|false
+	 */
+	public function readPluginMeta($h, $folder = '')
+	{
+		if (!$folder) { $folder = rtrim(PLUGINS, '/'); }
+		
+		// Include the generic_pmd class that reads post metadata from the a plugin
+		require_once(EXTENSIONS . 'GenericPHPConfig/class.metadata.php');
+		$metaReader = new generic_pmd();
+		$plugin_metadata = $metaReader->read(PLUGINS . $folder . '/' . $folder . '.php');
+		
+		if ($plugin_metadata) { return $plugin_metadata; } else { return false; }
+	}
+        
+        
 	/**
 	 * Look for and run actions at a given plugin hook
 	 *
