@@ -30,13 +30,121 @@ if ($h->vars['plugin_settings_csrf_error']) {
 	$h->showMessage($h->lang['error_csrf'], 'red'); return false;
 }
 
+$plugin = $h->vars['settings_plugin'];    // theme folder name
+//$meta = $h->readPluginMeta($plugin);
+
+// TODO
+// Access this information from an internal hotaru function
+//$meta = $h->readPluginMeta('piwik');
+require_once(EXTENSIONS . 'GenericPHPConfig/class.metadata.php');
+$metaReader = new generic_pmd();
+$meta = $metaReader->read(PLUGINS . $plugin . "/" . $plugin . ".php");
+
 ?>
 
 <div id="plugin_settings">
 	<?php 
 		$result = '';
 		if ($h->vars['settings_plugin']) {
-			$result = $h->pluginHook('admin_plugin_settings', $h->vars['settings_plugin']);
+                    
+                    echo '
+                    <ul class="nav nav-tabs" id="Admin_Plugins_Tab">                         
+                        <li class="active"><a href="#home" data-toggle="tab">Overview</a></li>
+                        <li><a href="#settings" data-toggle="tab">Settings</a></li>
+                        <li><a href="#support" data-toggle="tab">Support</a></li>
+                        <li><a href="#about" data-toggle="tab">About</a></li> 
+                        <li class="pull-right btn btn-info disable">' . ucfirst($plugin) . '</li>
+                    </ul>';
+
+                echo '<div class="tab-content">';
+                
+                    echo '<div class="tab-pane active" id="home">';
+                    
+                        echo 'Active status';
+			echo '<br/><br/>';  
+                                              
+                        echo "<div class='well'><div class='lead'>Screenshots";
+                        //echo "<div class='btn btn-primary btn-small pull-right'>Check for Updates</div>";
+                        echo "</div>";
+                        if (is_dir(PLUGINS . $plugin . '/screenshot')) { $screenshotDir = "/screenshot/"; }
+                        elseif (is_dir(PLUGINS . $plugin . '/screenshots')) { $screenshotDir = "/screenshots/"; }
+                        else { $screenshotDir = ""; }
+                        
+                        if ($screenshotDir) {                              
+                            $files = glob(PLUGINS . $plugin . $screenshotDir . '*.{jpg,png,gif}', GLOB_BRACE);
+                            
+                            foreach($files as $file) {
+                                echo '<img src="' . SITEURL . "content/plugins/" . $plugin . $screenshotDir . basename($file) . '"/>';
+                            }
+
+                        } else {
+                            print $h->lang['admin_theme_theme_no_screenshots'];
+                        }
+                        echo "</div>";
+                        
+                    echo '</div>';
+                
+                    echo '<div class="form tab-pane" id="settings">';
+                    
+                        $result = $h->pluginHook('admin_plugin_settings', $h->vars['settings_plugin']);
+                    
+                    echo '</div>';
+                  
+                    echo '<div class="tab-pane" id="support">';
+                        echo 'Support<br/>';
+                        echo 'Rating: N/A<br/><br/>';
+                        
+                        // Plugin hook for old versions of donate button
+                        echo $h->pluginHook('admin_topright');
+                        echo $h->pluginHook('admin_settings_support_content');
+                    
+                echo '</div>';
+                    
+                    echo '<div class="tab-pane" id="about">'; 
+                    
+			if (isset($meta)) {
+				foreach ($meta as $key => $value) {
+					if ($key == 'author') { 
+                                                echo "<b>" . ucfirst($key) . "</b>: <a href='" . $meta['authorurl'] . "'>" . $value . "</a>";
+						break;
+                                        } elseif ($key == 'help') {
+                                            // do nothing						
+					} else {
+						echo "<b>" . ucfirst($key) . "</b>: " . $value . "<br />\n";
+					}
+				}
+				echo "<hr/>";
+				
+				
+			} else {
+				echo 'No information to show';
+			}										                                                
+                        
+                        // TODO
+                        // Access the ReadMe file from the $metaReader file
+                        // Hotaru CMS v.1.5.0
+                        //$readMe = $metaReader->readText(PLUGINS . "piwik/readme.txt");
+                        $fn = PLUGINS . $plugin . "/readme.txt";
+                        $size = 4096;
+                        
+                        if (file_exists($fn) and ($f = fopen($fn, "r"))) {
+                            $src = fread($f, $size);
+                            fclose($f);
+                            $readMe = $src;
+                         }
+                         // file not found/readable
+                         else {
+                           $readMe = "The file '" . $fn . "' couldn't be found in your plugins folder.";                
+                         }
+                         
+                        if ($readMe) {                                
+				echo nl2br($readMe) . "<br /><br />";								
+                        }
+                        
+                    echo '</div>';
+                                        
+                echo '</div>';                                
+                
 		}
 	
 		if (!$result) {

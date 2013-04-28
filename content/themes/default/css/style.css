@@ -31,7 +31,32 @@
     
 
 
+/* PAGINATION */
 
+#pagination {
+	font-size: 0.9em;
+	margin-top: 2.0em;
+	text-align: right;
+}
+
+#pagination a {
+	display: inline;
+	padding: 0.3em 0.7em 0.3em 0.7em;
+	border:solid 1px #F0F0F0;
+}
+
+#pagination .pagi_current {
+	color: #fff;
+	background-color: #262626;
+	font-weight: bold;
+	padding: 0.3em 0.7em 0.3em 0.7em;
+	border:solid 1px #444444;
+}
+
+#pagination a:hover {
+	border:solid 1px #444444;
+	text-decoration: none;
+}
 
 
 /* ANNOUNCEMENTS */
@@ -47,21 +72,6 @@
 #rss_icon { margin-top: -0.2em; }
 
 
-
-
-
-.message {
-	margin: 1.0em auto 1.0em auto;
-	width: 90%;
-	padding: 0.8em;
-	text-align: center;
-	font-size: 1.2em;
-	font-weight: bold;
-}
-
-.green    { background-color: #99FF66; }
-.yellow   { background-color: #fbe760; }
-.red      { background-color: #FF6A55; color: #ffffff; }
 .bold_red { color: red; font-weight: bold; }
 
 /* SITE CLOSED MESSAGE */

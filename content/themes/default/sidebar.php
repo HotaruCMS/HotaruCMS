@@ -28,7 +28,7 @@
 
 ?>
 
-<div class="span4">
+<div class="span3">
     <div class="well sidebar-nav">
         <div id="sidebar" class="container-fluid">
             <?php $h->pluginHook('widget_block', '', array(1)); ?>

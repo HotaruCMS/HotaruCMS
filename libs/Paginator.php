@@ -166,7 +166,7 @@ class Paginator
 			else {
 				$link = $path . '&pg=' . $i;
 				$link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark
-				$str .= "<a class='pagi_page' href='" . $link . "'>$i</a>\n";
+				$str .= "<a class='pagi_page pagination' href='" . $link . "'>$i</a>\n";
 			}
 			if ($i != $currentPage + $after && $i != $this->totalPages) { $str .= ' '; }
 		} //end for

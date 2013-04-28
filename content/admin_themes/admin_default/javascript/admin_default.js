@@ -56,34 +56,31 @@ jQuery('document').ready(function($) {
         var formdata = 'admin=theme_settings&theme='  + theme;
 		var sendurl = SITEURL + "admin_index.php?page=settings";
 
-        $.ajax(
+                $.ajax(
 			{
 			type: 'post',
 				url: sendurl,
 				data: formdata,
 				beforeSend: function () {
-						$('#admin_theme_theme_activate').html('<img src="' + SITEURL + "content/admin_themes/" + ADMIN_THEME + 'images/ajax-loader.gif' + '"/>&nbsp;Attempting to activate theme.');
+						$('#admin_theme_theme_activate').html('<img src="' + SITEURL + "content/admin_themes/" + ADMIN_THEME + 'images/ajax-loader.gif' + '"/>&nbsp;Attempting to activate theme.<br/>');
 					},
 				error: 	function(XMLHttpRequest, textStatus, errorThrown) {
 						$('#admin_theme_theme_activate').html('ERROR');
-                        $('#admin_theme_theme_activate').removeClass('power_on').addClass('warning_on');
+                                                $('#admin_theme_theme_activate').removeClass('power_on').addClass('warning_on');
 				},
 				success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
 					if (data.error === true) {
-                        $('#admin_theme_theme_activate').removeClass('power_on').addClass('warning_on');
+                                                $('#admin_theme_theme_activate').removeClass('power_on').addClass('warning_on');
 					}
 					else
 					{                        
-                        $('#admin_theme_theme_activate').html(data.message);
-                        $('#admin_theme_theme_activate').removeClass('power_on').addClass('tick_on');
+                                                $('#admin_theme_theme_activate').html(data.message);
+                                                $('#admin_theme_theme_activate').removeClass('power_on').addClass('tick_on alert alert-success');
 					}
 					$('.message').html(data.message).addClass(data.color, 'visible');
 				},
 				dataType: "json"
 		});
-
     });
-
-
-	
+    
 });	

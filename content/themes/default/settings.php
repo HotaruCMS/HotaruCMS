@@ -15,10 +15,10 @@ if ($h->cage->post->getAlpha('submitted') == 'true')
 	}
 	
 	if ($error) {
-		$h->showMessage($error, 'red');
+		$h->showMessage($error, 'alert-error');
 	} else {
 		$h->updateThemeSettings($theme_settings, $vTheme);
-		$h->showMessage('Settings updated', 'green');
+		$h->showMessage('Settings updated', 'alert-success');
 	}
 }
  
@@ -27,7 +27,7 @@ if ($h->cage->get->getAlpha('reset') == 'true')
 { 
 	$theme_settings = $h->getThemeSettings($vTheme, 'default');
 	$h->updateThemeSettings($theme_settings, $vTheme, 'value');
-	$h->showMessage('Reverted to default settings', 'green');
+	$h->showMessage('Reverted to default settings', 'alert-success');
 }
  
 // Default settings:

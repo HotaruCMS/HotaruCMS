@@ -271,7 +271,7 @@
                                         $body .=  "Plugin: " . $this->h->plugin->folder . "\r\n\r\n";
                                     }
 
-                                    $body .= "If you need help, visit the forums at http://hotarucms.org\r\n";
+                                    $body .= "If you need help, visit the forums at http://forums.hotarucms.org\r\n";
 
                                     // we can avoid using the $h object (which we might not have) by calling EmailFunctions directly.
                                     require_once(LIBS . 'EmailFunctions.php');
