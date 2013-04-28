@@ -31,6 +31,8 @@ if ($h->vars['theme_settings_csrf_error']) {
 }
 
 $theme = $h->vars['settings_theme'];    // theme folder name
+$meta = $h->readThemeMeta($theme);
+
 ?>
 
 <div id="theme_settings">
@@ -38,19 +40,72 @@ $theme = $h->vars['settings_theme'];    // theme folder name
 		$result = '';
 		if ($theme)
 		{
-			if ($theme == rtrim(THEME, '/')) {
+                    echo '
+                        <ul class="nav nav-tabs" id="Admin_Themes_Tab">                         
+                            <li class="active"><a href="#home" data-toggle="tab">Overview</a></li>
+                            <li><a href="#settings" data-toggle="tab">Settings</a></li>
+                            <li><a href="#support" data-toggle="tab">Support</a></li>
+                            <li><a href="#about" data-toggle="tab">About</a></li> 
+                            <li class="pull-right btn btn-info disable">' . ucfirst($theme) . '</li>
+                        </ul>';
+
+                echo '<div class="tab-content">';
+                
+                    echo '<div class="tab-pane active" id="home">';
+                        
+                        if ($theme == rtrim(THEME, '/')) {
 				$span = "current";
 				$instruct = $h->lang['admin_theme_theme_activate_current'];
 			} else {
-				$span = "activate";
+				$span = "activate btn btn-success";
 				$instruct = $h->lang['admin_theme_theme_activate'];
 			}
 
-			echo '<div id="admin_theme_theme_activate" class="power_on" name="'. $theme .'"><span class="' . $span . '">' . make_name($theme, '-') . $instruct . '</span></div><br/>';
-			
-			$no_settings = '<i>' . make_name($theme, '-') . $h->lang['admin_theme_theme_no_settings'] . '</i>';
-			
-			$meta = $h->readThemeMeta($theme);
+			echo '<div id="admin_theme_theme_activate" class="power_on" name="'. $theme .'">' .
+                                '<span class="' . $span . '">' . $instruct . '</span>';
+                                                      
+                            
+                        echo '<br/><br/></div>';  
+                                              
+                        echo "<div class='well'><div class='lead'>Screenshots";
+                        echo "<div class='btn btn-primary btn-small pull-right'>Check for Updates</div></div>";
+                        if (is_dir(THEMES . $theme . '/screenshot')) { $screenshotDir = "/screenshot/"; }
+                        elseif (is_dir(THEMES . $theme . '/screenshots')) { $screenshotDir = "/screenshots/"; }
+                        else { $screenshotDir = ""; }
+                        
+                        if ($screenshotDir) {                              
+                            $files = glob(THEMES . $theme . $screenshotDir . '*.{jpg,png,gif}', GLOB_BRACE);
+                            
+                            foreach($files as $file) {
+                                echo '<img src="' . SITEURL . "content/themes/" . $theme . $screenshotDir . basename($file) . '"/>';
+                            }
+
+                        } else {
+                            print $h->lang['admin_theme_theme_no_screenshots'];
+                        }
+                        echo "</div>";
+                    
+                    echo '</div>';
+                
+                    echo '<div class="form tab-pane" id="settings">';
+                       
+                       if (file_exists(THEMES . $theme . '/settings.php')) {
+                                require_once(THEMES . $theme . '/settings.php');
+                        } else {
+                                echo $h->lang['admin_theme_theme_no_settings'];
+                        }
+                    echo '</div>';
+                  
+                    echo '<div class="tab-pane" id="support">';
+                        echo 'Support<br/>';
+                        echo 'Rating: N/A<br/><br/>';
+                        
+                        if (file_exists(THEMES . $theme . '/support.php')) {                            
+                                require_once(THEMES . $theme . '/support.php');
+                        } 
+                    echo '</div>';
+                    
+                    echo '<div class="tab-pane" id="about">';                        
 			if ($meta) {
 				foreach ($meta as $key => $value) {
 					if ($key != 'author') { 
@@ -60,16 +115,17 @@ $theme = $h->vars['settings_theme'];    // theme folder name
 						break;
 					}
 				}
-				echo "<br /><br />";
-				
-				if (file_exists(THEMES . $theme . '/settings.php')) {
-					require_once(THEMES . $theme . '/settings.php');
-				} else {
-					echo $no_settings;
-				}
+				echo "<br /><br />";				
 			} else {
-				echo $no_settings;
-			}
+				echo $h->lang['admin_theme_theme_no_about'];
+			}											                                                
+                        
+                    echo '</div>';
+                                        
+                echo '</div>';                                        
+                    
+			
+			
 		} 
 		else 
 		{
@@ -88,3 +144,5 @@ $theme = $h->vars['settings_theme'];    // theme folder name
 		</ul>
 	<?php } ?>
 </div>
+
+

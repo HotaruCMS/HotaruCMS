@@ -36,18 +36,20 @@
 
 	<title><?php echo $h->getTitle(); ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<?php
-			// plugin hook
-			$result = $h->pluginHook('header_meta');
-			if (!$result) { ?>
-				<meta name="description" content="<?php echo $h->lang['header_meta_description']; ?>" />
-				<meta name="keywords" content="<?php echo $h->lang['header_meta_keywords']; ?>" />
-		<?php } ?>
+        <?php
+                // plugin hook
+                $result = $h->pluginHook('header_meta');
+                if (!$result) { ?>
+                        <meta name="description" content="<?php echo $h->lang['header_meta_description']; ?>" />
+                        <meta name="keywords" content="<?php echo $h->lang['header_meta_keywords']; ?>" />
+        <?php } ?>
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	
 	<!-- include CSS framework -->
 	<?php $css = SITEURL . "content/themes/" . THEME . "css/"; ?>
+        <!-- Bootstrap -->
 	<link rel="stylesheet" href="<?php echo $css; ?>bootstrap/bootstrap.min.css" type="text/css" />
+        <!-- Theme -->
 	<link rel="stylesheet" href="<?php echo $css; ?>style.css" type="text/css" />
 	
 	<!-- Include merged files for all the plugin css and javascript (if any) -->
@@ -55,6 +57,7 @@
 	<!-- End -->
 	
         <!-- include this CSS last so it gets priority -->
+        <!-- Bootstrap Responsive -->
         <link rel="stylesheet" href="<?php echo $css; ?>bootstrap/bootstrap-responsive.min.css" type="text/css" />
 	
         <!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico" /> -->

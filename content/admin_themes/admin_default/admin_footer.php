@@ -47,6 +47,9 @@
 
 <?php $h->pluginHook('pre_close_body'); ?>
 
+<script type='text/javascript' src='http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js'></script>
+
+
 <?php $js = SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'javascript/'; ?>
 
 <script src="<?php echo $js;?>bootstrap.min.js"</script>

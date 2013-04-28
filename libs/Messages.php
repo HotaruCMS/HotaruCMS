@@ -41,13 +41,30 @@ class Messages
 	 *		Shorthand:
 	 *			$this->hotaru->showMessage("This is a message", "green");
 	 */
-	public function showMessage($h, $msg = '', $msg_type = 'green')
+	public function showMessage($h, $msg = '', $msg_type = '')
 	{
 		if ($msg != '') {
-			echo "<div class='message " . $msg_type . "'>" . $msg . "</div>";
+                        // for older hotaru plugins
+                        if ($msg_type == 'red') $msg_type .= ' alert-error';
+                        if ($msg_type == 'green') $msg_type .= ' alert-success';
+                        if ($msg_type == 'blue') $msg_type .= ' alert-info';
+                    
+			echo "<div class='alert message " . $msg_type . "'>";
+                            echo '<button type="button" class="close" data-dismiss="alert">×</button>';
+                            echo $msg;
+                        echo "</div>";
 		} elseif ($h->message != '') {
-			echo "<div class='message " . $h->messageType . "'>" . 
-			$h->message . "</div>";
+                    
+                        $msg_type = $h->messageType;
+                        // for older hotaru plugins
+                        if ($msg_type == 'red') $msg_type .= ' alert-error';
+                        if ($msg_type == 'green') $msg_type .= ' alert-success';
+                        if ($msg_type == 'blue') $msg_type .= ' alert-info';
+                    
+			echo "<div class='alert message " . $msg_type . "'>";
+                            echo '<button type="button" class="close" data-dismiss="alert">×</button>';
+                            echo $h->message;
+                        echo "</div>";
 		}
 	}
 	
@@ -65,8 +82,14 @@ class Messages
 	{
 		if ($h->messages) {
 			foreach ($h->messages as $msg => $msg_type) {
-				echo "<div class='message " . $msg_type . "'>" . 
-				$msg . "</div>";
+                                // for older hotaru plugins
+                                if ($msg_type == 'red') $msg_type .= ' alert-error';
+                                if ($msg_type == 'green') $msg_type .= ' alert-success';
+                                if ($msg_type == 'blue') $msg_type .= ' alert-info';
+                
+				echo "<div class='alert message " . $msg_type . "'>";
+                                echo '<button type="button" class="close" data-dismiss="alert">×</button>';
+                                echo $msg . "</div>";
 			}
 		}
 	}

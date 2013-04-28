@@ -25,6 +25,41 @@
  */
 class TagFunctions
 {
+        /**
+	 * Retrieve tags from the tags table
+	 */
+	public function getTags($h, $post_id = 0)
+	{
+		$sql = "SELECT * FROM " . TABLE_TAGS . " WHERE tags_post_id = %d";
+		return $h->db->query($h->db->prepare($sql, $post_id));
+	}
+        
+        /**
+	 * Check if tag already exists in the tags table for this post
+	 */
+	public function tagExists($h, $post_id = 0, $tagWord = '')
+	{
+		$sql = "SELECT tags_post_id FROM " . TABLE_TAGS . " WHERE tags_post_id = %d AND tags_word = %s";
+		$result = $h->db->query($h->db->prepare($sql, $post_id, $tagWord));
+                
+                if ($result) return true; else return false;
+	}
+        
+        /**
+	 * Add single tag to the tags table
+	 */
+        public function addTag($h, $post_id = 0, $tag = '')
+	{
+            if ($tag) {                
+                $tagWord = urlencode(str_replace(' ', '_', trim($tag)));
+                if (!$this->tagExists($h, $post_id, $tagWord)) {
+                    $sql = "INSERT INTO " . TABLE_TAGS . " SET tags_post_id = %d, tags_date = CURRENT_TIMESTAMP, tags_word = %s, tags_updateby = %d";
+                    $h->db->query($h->db->prepare($sql, $post_id, $tagWord, $h->currentUser->id));
+                }                          
+            }
+        }
+        
+        
 	/**
 	 * Add tags to the tags table
 	 */
@@ -35,9 +70,8 @@ class TagFunctions
 			$tags_array = explode(',', $new_tags);
 			if ($tags_array) {
 				foreach ($tags_array as $tag) {
-					$sql = "INSERT INTO " . TABLE_TAGS . " SET tags_post_id = %d, tags_date = CURRENT_TIMESTAMP, tags_word = %s, tags_updateby = %d";
-					$h->db->query($h->db->prepare($sql, $post_id, urlencode(str_replace(' ', '_', trim($tag))), $h->currentUser->id));
-				}
+                                    $this->addTag($h, $post_id, $tag);                     
+                                }
 			}
 		}
 	}
@@ -51,5 +85,7 @@ class TagFunctions
 		$sql = "DELETE FROM " . TABLE_TAGS . " WHERE tags_post_id = %d";
 		$h->db->query($h->db->prepare($sql, $post_id));
 	}
+        
+        
 }
 ?>

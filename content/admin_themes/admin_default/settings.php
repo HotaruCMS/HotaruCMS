@@ -30,18 +30,18 @@ $loaded_settings = $h->vars['admin_settings'];
 
 <?php $h->pluginHook('admin_settings_top'); ?>
 
-	<h2><?php echo $h->lang["admin_theme_settings_title"]; ?></h2>
+<!--	<h2><?php echo $h->lang["admin_theme_settings_title"]; ?></h2>-->
 	
 	<?php $h->showMessage(); ?>
 	
-	<form id='settings_form' name='settings_form' action='<?php echo SITEURL; ?>admin_index.php?page=settings' method='post'>
+	<form id='settings_form' class='form' name='settings_form' action='<?php echo SITEURL; ?>admin_index.php?page=settings' method='post'>
 	
-	<table id="settings">    
-	<tr>
-		<td><b><u><?php echo $h->lang["admin_theme_settings_setting"]; ?></u></b></td>
-		<td><b><u><?php echo $h->lang["admin_theme_settings_value"]; ?></u></b></td>
-		<td><b><u><?php echo $h->lang["admin_theme_settings_default"]; ?></u></b></td>
-		<td><b><u><?php echo $h->lang["admin_theme_settings_notes"]; ?></u></b></td>
+	<table id="settings" class="table table-bordered">    
+	<tr class="info">
+		<td><?php echo $h->lang["admin_theme_settings_setting"]; ?></td>
+		<td><?php echo $h->lang["admin_theme_settings_value"]; ?></td>
+		<td><?php echo $h->lang["admin_theme_settings_default"]; ?></td>
+		<td><?php echo $h->lang["admin_theme_settings_notes"]; ?></td>
 	</tr>
 	
 	<?php     // **********************************************************
@@ -99,11 +99,13 @@ $loaded_settings = $h->vars['admin_settings'];
 	 
 	<?php	} // End loop **********************************************************     ?>
 	
-	<br />
+	
 	<input type='hidden' name='settings_update' value='true' />
 	<input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
 	</table>
-	<input id='settings_submit' type='submit' value='Save' />
+        <div class="form-actions">
+            <input id='settings_submit' class='btn btn-primary' type='submit' value='Save' />
+        </div>
 	</form>
 
 <?php $h->pluginHook('admin_settings_bottom'); ?>

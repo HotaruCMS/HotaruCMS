@@ -53,10 +53,14 @@
 	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=blocked"><i class="icon-flag"></i> <?php echo $h->lang["admin_theme_blocked_list"]; ?></a></li>
 	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_management"><i class="icon-check"></i> <?php echo $h->lang["admin_theme_plugins"]; ?></a></li>
 	
+        <?php $sb_links = $h->pluginHook('admin_sidebar_plugin_settings'); ?>        
+        
         <hr style="margin:10px 0;"/>	         
         
-	<!-- Plugins -->
-        <?php $sb_links = $h->pluginHook('admin_sidebar_plugin_settings'); ?>
+	<!-- Plugins -->       
+        
+        <?php $h->pluginHook('admin_sidebar_users'); ?>
+        
         <?php $pluginsCount = ($sb_links) ? count($sb_links) : 0; ?>
 
         <li class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_plugins_list"><?php echo $h->lang["admin_theme_plugin_settings"]; ?>
