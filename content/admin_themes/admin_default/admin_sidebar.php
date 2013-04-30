@@ -61,6 +61,10 @@
         
         <?php $h->pluginHook('admin_sidebar_users'); ?>
         
+        <?php $h->pluginHook('admin_sidebar_posts'); ?>
+        
+        <?php $h->pluginHook('admin_sidebar_stats'); ?>
+        
         <?php $pluginsCount = ($sb_links) ? count($sb_links) : 0; ?>
 
         <li class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_plugins_list"><?php echo $h->lang["admin_theme_plugin_settings"]; ?>
@@ -72,7 +76,7 @@
                                 if ($sb_links) {
                                         $sb_links = sksort($sb_links, $subkey="name", $type="char", true);
                                         foreach ($sb_links as $plugin => $details) { 
-                                                echo "<li><a href='" . SITEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $details['plugin'] . "'>" . $details['name'] . "</a></li>\n";
+                                                echo "<li><a href='" . SITEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $details['plugin'] . "#tab_settings'>" . $details['name'] . "</a></li>\n";
                                         }
                                 }
                         ?>

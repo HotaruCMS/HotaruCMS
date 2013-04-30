@@ -24,23 +24,24 @@
 
 jQuery('document').ready(function($) {
 
-    $('.accordion li').has('ul').addClass('arrow');
+    // Javascript to enable link to tab
+    var hash = document.location.hash;
+    var prefix = "tab_";
+    if (hash) {
+        $('.nav-tabs a[href='+hash.replace(prefix,"")+']').tab('show');
+        $('form').prop('action', window.location.hash);
+    } 
 
-	$('li.arrow').click(function(e) {
-        var clicked = jQuery(e.target);
-
-        if(!clicked.is('li.arrow')) {
-            return;
-        }
-
-        e.preventDefault();
-
-        if ($(this).children("ul").is(":hidden")) {
-            $(this).children("ul").slideDown("slow");
-        } else {
-            $(this).children("ul").slideUp("slow");
-        }		
-	});       
+    // Change hash for page-reload
+    $('.nav-tabs a').on('shown', function (e) {
+        window.location.hash = e.target.hash.replace("#", "#" + prefix);
+        
+        $('form').prop('action', function(i, val) {
+            $('form').prop('action', window.location.hash);
+        });
+    });
+    
+    
 
     $('.warning_slash').blur(function() {
         var value = $(this).val();

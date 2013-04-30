@@ -117,41 +117,49 @@ class PluginFunctions
 				// include this plugin's file (even child classes need the parent class)
 				include_once(PLUGINS . $plugin->plugin_folder . "/" . $plugin->plugin_folder . ".php");
 				
-				$tempPluginObject = new $plugin->plugin_class($h);        // create a temporary object of the plugin class
-				$h->plugin->folder = $plugin->plugin_folder;     // assign plugin folder to $h
-				
-				// add this plugin to the chain...
-				array_push($h->vars['plugin_chain'], $h->plugin->folder);
-				
-				// call the method that matches this hook
-				if (method_exists($tempPluginObject, $hook)) {
-					$rClass = new ReflectionClass($plugin->plugin_class);
-					$rMethod = $rClass->getMethod($hook);
-					// echo $rMethod->class;                            // the method's class
-					// echo get_class($tempPluginObject);               // the object's class
-					// give Hotaru the right plugin folder name (unless installing because data not yet avaialble)
-					if ($hook != 'install_plugin') { $h->getPluginFolderFromClass($rMethod->class); }
-					$h->readPlugin();                              // fill Hotaru's plugin properties
-					$h->includeLanguage();                         // if a language file exists, include it
-					$result = $tempPluginObject->$hook($h, $parameters);
-				} else {
-					$h->readPlugin();                              // fill Hotaru's plugin properties
-					$h->includeLanguage();                         // if a language file exists, include it										
-					if (method_exists($h, $hook)) {
-					    $result = $h->$hook($parameters);              // fall back on default function in Hotaru.php
-					} else {					    
-					    echo "Could not find '" . $hook  .  "' function for " . $plugin->plugin_folder . "<br/>";
-					    $result ='';					   
-					}
-				}
-				
-				if ($result) {
-					// allow a plugin to halt execution of remaining functions for this hook
-					if (is_string($result) && ($result == "skip")) { return false; }
+                                if (class_exists($plugin->plugin_class)) {
+                                    $tempPluginObject = new $plugin->plugin_class($h);        // create a temporary object of the plugin class
+                                    $h->plugin->folder = $plugin->plugin_folder;     // assign plugin folder to $h
 
-					// otherwise add to return array...
-					$return_array[$plugin->plugin_class . "_" . $hook] = $result; // name the result Class + hook name
-				}
+                                    // add this plugin to the chain...
+                                    array_push($h->vars['plugin_chain'], $h->plugin->folder);                                
+                                
+                                
+                                    // call the method that matches this hook
+                                    if (method_exists($tempPluginObject, $hook)) {
+                                            $rClass = new ReflectionClass($plugin->plugin_class);
+                                            $rMethod = $rClass->getMethod($hook);
+                                            // echo $rMethod->class;                            // the method's class
+                                            // echo get_class($tempPluginObject);               // the object's class
+                                            // give Hotaru the right plugin folder name (unless installing because data not yet avaialble)
+                                            if ($hook != 'install_plugin') { $h->getPluginFolderFromClass($rMethod->class); }
+                                            $h->readPlugin();                              // fill Hotaru's plugin properties
+                                            $h->includeLanguage();                         // if a language file exists, include it
+                                            $result = $tempPluginObject->$hook($h, $parameters);
+                                    } else {
+                                            $h->readPlugin();                              // fill Hotaru's plugin properties
+                                            $h->includeLanguage();                         // if a language file exists, include it										
+                                            if (method_exists($h, $hook)) {
+                                                $result = $h->$hook($parameters);              // fall back on default function in Hotaru.php
+                                            } else {					    
+                                                echo "Could not find '" . $hook  .  "' function for " . $plugin->plugin_folder . "<br/>";
+                                                $result ='';					   
+                                            }
+                                    }
+				
+                                    if ($result) {
+                                            // allow a plugin to halt execution of remaining functions for this hook
+                                            if (is_string($result) && ($result == "skip")) { return false; }
+
+                                            // otherwise add to return array...
+                                            $return_array[$plugin->plugin_class . "_" . $hook] = $result; // name the result Class + hook name
+                                    }
+                                } else {
+                                    // TODO
+                                    // Report that a plugin could not be loaded properly
+                                    $h->messages['Plugin class could not be found'] = "alert-error";
+                                    return false;
+                                }
 			}
 		
 			// finished with this hook so remove this plugin from the chain and revert $h->plugin->folder to the previous one:
@@ -318,7 +326,7 @@ class PluginFunctions
 //		$h->smartCache('on', 'pluginhooks', $h->db->cache_timeout, $sql); // start using cache
 //		$h->allPluginDetails['hooks'] = $h->db->get_results($sql);
 		
-		$h->smartCache('off');   // stop using cache 
+//		$h->smartCache('off');   // stop using cache 
 	}
 	
 	

@@ -96,8 +96,7 @@ $meta = $h->readThemeMeta($theme);
                         }
                     echo '</div>';
                   
-                    echo '<div class="tab-pane" id="support">';
-                        echo 'Support<br/>';
+                    echo '<div class="tab-pane" id="support">';                        
                         echo 'Rating: N/A<br/><br/>';
                         
                         if (file_exists(THEMES . $theme . '/support.php')) {                            
@@ -108,11 +107,13 @@ $meta = $h->readThemeMeta($theme);
                     echo '<div class="tab-pane" id="about">';                        
 			if ($meta) {
 				foreach ($meta as $key => $value) {
-					if ($key != 'author') { 
-						echo ucfirst($key) . ": " . $value . "<br />\n";
-					} else {
-						echo ucfirst($key) . ": <a href='" . $meta['authorurl'] . "'>" . $value . "</a>";
+					if ($key == 'author') { 
+                                                echo "<b>" . ucfirst($key) . "</b>: <a href='" . $meta['authorurl'] . "'>" . $value . "</a>";
 						break;
+                                        } elseif ($key == 'help') {
+                                            // do nothing						
+					} else {
+						echo "<b>" . ucfirst($key) . "</b>: " . $value . "<br />\n";
 					}
 				}
 				echo "<br /><br />";				

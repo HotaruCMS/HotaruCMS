@@ -163,30 +163,41 @@ class AdminPages
 			if ($h->cage->post->keyExists('SYS_UPDATES') == 'true' ) {
 				$timestamp = time();
 				$recurrence = "daily";
-				$hook = "SystemInfo:hotaru_feedback";
-				$cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook);
-				$h->pluginHook('cron_update_job', 'cron', $cron_data);
-
-				$hook = "SystemInfo:hotaru_version";
-				$cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook);
-				$h->pluginHook('cron_update_job', 'cron', $cron_data);
-
-				$hook = "SystemInfo:plugin_version_getAll";
-				$cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook);
-				$h->pluginHook('cron_update_job', 'cron', $cron_data);
+                                
+                                $hooks = array("SystemInfo:hotaru_feedback", "SystemInfo:hotaru_version", "SystemInfo:plugin_version_getAll");
+				foreach ( $$hooks as $hook ) {
+                                    $h->pluginHook('cron_update_job', 'cron', array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook));
+                                }
+                                
+//				$hook = "SystemInfo:hotaru_feedback";
+//				$cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook);
+//				$h->pluginHook('cron_update_job', 'cron', $cron_data);
+//
+//				$hook = "SystemInfo:hotaru_version";
+//				$cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook);
+//				$h->pluginHook('cron_update_job', 'cron', $cron_data);
+//
+//				$hook = "SystemInfo:plugin_version_getAll";
+//				$cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook);
+//				$h->pluginHook('cron_update_job', 'cron', $cron_data);
 			}
 			else {
-				$hook = "SystemInfo:hotaru_feedback";
-				$cron_data = array('hook'=>$hook);
-				$h->pluginHook('cron_delete_job', 'cron', $cron_data);
-
-				$hook = "SystemInfo:hotaru_version";
-				$cron_data = array('hook'=>$hook);
-				$h->pluginHook('cron_delete_job', 'cron', $cron_data);
-
-				$hook = "SystemInfo:plugin_version_getAll";
-				$cron_data = array('hook'=>$hook);
-				$h->pluginHook('cron_delete_job', 'cron', $cron_data);
+                                $hooks = array("SystemInfo:hotaru_feedback", "SystemInfo:hotaru_version", "SystemInfo:plugin_version_getAll");
+				foreach ( $$hooks as $hook ) {
+                                    $h->pluginHook('cron_delete_job', 'cron', array('hook'=>$hook));
+                                }
+                                
+//                                $hook = "SystemInfo:hotaru_feedback";
+//				$cron_data = array('hook'=>$hook);
+//				$h->pluginHook('cron_delete_job', 'cron', $cron_data);
+//
+//				$hook = "SystemInfo:hotaru_version";
+//				$cron_data = array('hook'=>$hook);
+//				$h->pluginHook('cron_delete_job', 'cron', $cron_data);
+//
+//				$hook = "SystemInfo:plugin_version_getAll";
+//				$cron_data = array('hook'=>$hook);
+//				$h->pluginHook('cron_delete_job', 'cron', $cron_data);
 			}
 		
 			if ($error == 0) {

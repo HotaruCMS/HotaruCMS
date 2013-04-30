@@ -796,5 +796,299 @@ class PluginManagement
 		unset($h->vars['last_updates']['plugins']);
 		PluginFunctions::getAllPluginDetails($h);
 	}
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        /**
+	 * Update Plugins
+	 *
+	 * @param <type> $h
+	 */
+	public function update($h)
+	{
+		$url = "http://hotaruplugins.com/zip/";
+		$folder = $h->plugin->folder;
+		$version= $h->cage->get->getHtmLawed('version');
+		$findfolder = str_replace('_', '-', $folder);
+		$version = str_replace('.', '-', $version);		
+		$copydir = PLUGINS . $folder . "/";
+		$file = $findfolder . "-" . $version . ".zip";
+//print "findfolder: ". $findfolder . '<br/>';
+//print "$file: ". $file . '<br/>';
+
+		// get ftpsettings
+		$ftpserver = "api.hotarucms.org";
+		$ftppath   = "/public_html/api/content/";
+		$ftpuser   = "hotarorg";
+		$ftppass   = "pJp!AQ8&Y<Ge";
+
+
+		$ftp_url = "ftp://" . $ftpuser . ":" . stripslashes($ftppass) . "@" . $ftpserver . $ftppath . $folder . "/"  ;
+
+		// check that we can access the remote plugin repo site via curl
+		if ($this->fileCheckCurlConnection($url, $file) == 200) {
+		    if ($write = is_writeable($copydir)) {
+			//print "we can use PHP<br/>";
+			$this->filePhpWrite($h, $url, $file, $findfolder, $copydir);
+		    } else {
+			//print "we will use FTP<br/>";
+			$this->fileFtpWrite($h, $url, $ftp_url, $file, $findfolder, $copydir);
+		    }
+		} else {
+		    $h->messages[$h->lang['admin_theme_filecopy_permission_error']] = 'red';
+		    //$h->messages[$file . $h->lang['admin_theme_fileexist_error']] = 'red';
+		}
+
+		// unzip
+		//print "checking if file exists " . PLUGINS . $folder . '/' . $file . '<br/>';
+		if (file_exists( PLUGINS . $folder . '/' . $file)) {
+		    //print "starting the unzip<br/>";
+		    if (!$write) { $this->fileFtpChmod($h, $ftp_url, $folder, '777'); }
+
+
+		    // Should we rename old files first and then bring in new ?
+
+
+		    $this->fileUnzip($h, $file, $copydir);
+		    if (!$write) { $this->fileFtpChmod($h, $ftp_url, $folder, '755'); }
+		    // delete zip file
+		    if ($write) {
+			//print "we can use PHP<br/>";
+			$this->filePhpDelete($h, $file, $copydir);
+		    } else {
+			//print "we will use FTP<br/>";
+			$this->fileFtpDelete($h, $ftp_url, $file, $copydir);
+		    }
+		} else {
+		    $h->messages[$h->lang['admin_theme_filecopy_error'] . $file] = 'red';
+		}
+	}	
+
+
+	public function fileCheckCurlConnection($url, $file)
+	{
+		// create a new CURL resource
+		$ch = curl_init();
+
+		// set URL and other appropriate options
+		curl_setopt($ch, CURLOPT_URL, $url . $file);
+		curl_setopt($ch, CURLOPT_HEADER, false);
+		curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+		set_time_limit(30); # 30 seconds for PHP
+		curl_setopt($ch, CURLOPT_TIMEOUT, 30); # and also for CURL
+
+		//don't fetch the actual page, you only want to check the connection is ok
+		curl_setopt($ch, CURLOPT_NOBODY, true);
+
+		$zipfile = curl_exec($ch);
+		$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch);
+
+		//print 'checking directory is accesible: ' . $statusCode . '<br/>';
+
+		return $statusCode;
+	}
+
+
+	public function filePhpWrite($h, $url, $file, $findfolder, $copydir )
+	{				    
+		// create a new CURL resource
+		$ch = curl_init();
+
+		// set URL and other appropriate options
+		curl_setopt($ch, CURLOPT_URL, $url . $file);
+		curl_setopt($ch, CURLOPT_HEADER, false);
+		curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+		set_time_limit(300); # 5 minutes for PHP
+		curl_setopt($ch, CURLOPT_TIMEOUT, 300); # and also for CURL
+
+		//don't fetch the actual page, you only want to check the connection is ok
+		curl_setopt($ch, CURLOPT_NOBODY, true);
+
+		$zipfile = curl_exec($ch);
+		$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		
+		if ($statusCode == 200) {
+
+		    if (is_writeable($copydir)) {
+			//reset this from above
+			curl_setopt($ch, CURLOPT_NOBODY, false);
+			$outfile = @fopen($copydir . $file, 'wb');
+			curl_setopt($ch, CURLOPT_FILE, $outfile);
+			$handle =base64_encode(curl_exec ($ch));			
+			fclose($outfile);
+			if ($handle) {
+			    $h->messages[$file . $h->lang['admin_theme_filecopy_success']] = 'green';
+			}
+		    } else {
+			$h->messages[$h->lang['admin_theme_filecopy_error'] . $file] = 'red';
+		    }
+		} else {
+		    $h->messages[$h->lang['admin_theme_fileexist_error'] . $file] = 'red';
+		}
+		curl_close($ch);
+	}
+
+	public function fileUnzip($h, $file, $copydir)
+	{
+		$h->messages[$file . $h->lang['admin_theme_filecopy_success']] = 'green';
+
+		require_once(EXTENSIONS . 'pclZip/pclzip.lib.php');
+		$archive = new PclZip($copydir . $file);
+
+		if (($v_result_list = $archive->extract(PCLZIP_OPT_PATH, PLUGINS)) == 0) {
+		    $h->messages[$h->lang['admin_theme_unzip_error'] . $file] = 'red';
+		} else {
+		  $h->messages[$file . $h->lang['admin_theme_unzip_success']] = 'green';
+		}
+	}
+
+	public function filePhpDelete($h, $file, $copydir)
+	{
+		@chmod($copydir . $file,666);
+		$deleted = @unlink($copydir . $file);
+		if (!$deleted) {
+		    $h->messages[$file . $h->lang['admin_theme_zipdelete_error']] = 'yellow';
+		}
+	}
+
+	public function fileFtpChmod($h, $ftp_url, $folder, $permission)
+	{// print "start chmod for " . $ftp_url;
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $ftp_url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
+		curl_setopt($ch, CURLOPT_POSTQUOTE, array("CHMOD " . $permission .  ' ' . $folder));
+
+		curl_exec($ch);
+		if ($error = curl_error($ch)) {
+		    // write this to error log
+		    echo "<br/>Error: $error<br />\n";
+		}
+		$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+		// 250 comes from FTP error code saying action completed ok
+		if (!$statusCode == 250) {
+		    print "problem";
+		}
+
+		curl_close($ch);
+	}
+
+	public function fileFtpDelete($h, $ftp_url, $file, $copydir)
+	{	    
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $ftp_url . 'plugins/');
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_POSTQUOTE, array("DELE " .  $file));
+
+		curl_exec($ch);
+//		if ($error = curl_error($ch)) {
+//		    // write this to error log
+//		    echo "<br/>Error: $error<br />\n";
+//		}
+		$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+		// 250 comes from FTP error code saying action completed ok
+		if (!$statusCode == 250) {
+		    $h->messages[$file . $h->lang['admin_theme_zipdelete_error']] = 'yellow';
+		}
+
+		curl_close($ch);
+	}
+
+	public function fileFtpWrite($h, $url, $ftp_url, $file, $folder, $copydir)
+	{
+		$BUFF="";
+		$ch = curl_init();
+
+		print "Checking FTP at " . $url . " to get file " . $file. "<br/>";
+
+		curl_setopt($ch, CURLOPT_URL, $url . $file);
+		// Set callback function for body
+		curl_setopt($ch, CURLOPT_WRITEFUNCTION, array($this, 'read_body'));
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+
+		curl_exec($ch);
+		$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+		if ($error = curl_error($ch)) {
+		    $h->messages[$h->lang['admin_theme_filecopy_permission_error']] = 'red';
+		    echo "Error: $error<br />\n";
+		}
+
+		print "<br/><br/>Trying to upload to: " .$ftp_url . 'plugins/' . $file;
+
+		curl_setopt($ch, CURLOPT_URL, $ftp_url . 'plugins/' .$file);
+		curl_setopt($ch, CURLOPT_UPLOAD, 1);
+		#curl_setopt($ch, CURLOPT_INFILE, 0);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+		#curl_setopt($ch, CURLOPT_VERBOSE, 1);
+		curl_setopt ($ch, CURLOPT_READFUNCTION, array($this, 'write_function'));
+
+		// set size of the image, which isn't _mandatory_ but helps libcurl to do
+		// extra error checking on the upload.
+		#curl_setopt($ch, CURLOPT_INFILESIZE, filesize($localfile));
+
+		curl_exec($ch);
+		$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+		if ($error = curl_error($ch)) {
+		    $h->messages[$h->lang['admin_theme_filecopy_permission_error']] = 'red';
+		    echo "Error: $error<br />\n";
+		}
+
+		curl_close($ch);
+
+	    return $error;
+	}
+
+	public function write_function($handle, $fd, $length)
+	{
+	    global $BUF;
+	    $l = strlen($BUF);
+	    if ( $l > $length ) {
+		$part = substr($BUF, 0, $length);
+		$BUF = substr($BUF, $length);
+	    } else {
+		$part = $BUF;
+		$BUF = "";
+	    }
+
+	    echo "<br/>Sent $l bytes<br/>\n";
+	    return $part;
+	}
+
+	public function read_body($ch, $string)
+	{
+	    global $BUF;
+	    $length = strlen($string);
+	    echo "Received $length bytes<br />\n";
+	    $BUF=$BUF.$string;
+	    return $length;
+	}
+
+
+	public function versionCheck($h)
+	{
+		$systeminfo = New SystemInfo();
+		$result = $systeminfo->plugin_version_getAll($h);
+		if ($result) {
+		    $h->messages[$h->lang['admin_theme_version_check_completed']] = 'alert-info';
+		}
+	}
 }
 ?>

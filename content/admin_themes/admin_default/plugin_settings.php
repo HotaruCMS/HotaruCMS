@@ -30,15 +30,21 @@ if ($h->vars['plugin_settings_csrf_error']) {
 	$h->showMessage($h->lang['error_csrf'], 'red'); return false;
 }
 
-$plugin = $h->vars['settings_plugin'];    // theme folder name
-//$meta = $h->readPluginMeta($plugin);
+$plugin = $h->vars['settings_plugin'];    // plugin folder name
 
-// TODO
-// Access this information from an internal hotaru function
-//$meta = $h->readPluginMeta('piwik');
-require_once(EXTENSIONS . 'GenericPHPConfig/class.metadata.php');
-$metaReader = new generic_pmd();
-$meta = $metaReader->read(PLUGINS . $plugin . "/" . $plugin . ".php");
+$meta = $h->readPluginMeta($plugin);
+$pluginData = $h->readPlugin($plugin);
+
+
+if (version_compare($pluginData->plugin_latestversion, $pluginData->plugin_version) == 1) {     
+    $h->showMessage('There is a newer version of this plugin, version ' . $pluginData->plugin_latestversion . '. <a href="#">upgrade now</a>', 'alert-info'); 
+    // show version number in the message
+}
+
+if ($pluginData->plugin_latestversion == '0.0') {     
+    $h->showMessage('No version information could be found on the plugin server ', ''); 
+    // show version number in the message
+}
 
 ?>
 
@@ -48,26 +54,34 @@ $meta = $metaReader->read(PLUGINS . $plugin . "/" . $plugin . ".php");
 		if ($h->vars['settings_plugin']) {
                     
                     echo '
-                    <ul class="nav nav-tabs" id="Admin_Plugins_Tab">                         
-                        <li class="active"><a href="#home" data-toggle="tab">Overview</a></li>
+                    <ul class="nav nav-tabs" id="Admin_Plugins_Tab">';
+                    $h->pluginHook('admin_plugin_tabLabel_pre_first', $plugin);
+                  echo '<li class="active"><a href="#home" data-toggle="tab">Overview</a></li>
                         <li><a href="#settings" data-toggle="tab">Settings</a></li>
                         <li><a href="#support" data-toggle="tab">Support</a></li>
                         <li><a href="#about" data-toggle="tab">About</a></li> 
-                        <li class="pull-right btn btn-info disable">' . ucfirst($plugin) . '</li>
-                    </ul>';
+                        <li class="pull-right btn btn-info disable">' . ucfirst($plugin) . '</li>';
+                  $h->pluginHook('admin_plugin_tabLabel_after_last', $plugin);
+                  echo '</ul>';
 
                 echo '<div class="tab-content">';
+                
+                    $h->pluginHook('admin_plugin_tabContent_pre_first', $plugin);
                 
                     echo '<div class="tab-pane active" id="home">';
                     
                         echo 'Active status';
-			echo '<br/><br/>';  
+			echo '<br/>'; 
+                        
+                        echo 'Latest Version : ' . $pluginData->plugin_latestversion; echo '<br/>';
+                        echo 'Your Version : ' . $pluginData->plugin_version; echo '<br/>';
+                        echo 'Last checked for newer version : need to add field for this in db';
+                        echo '<br/><br/>';
                                               
                         echo "<div class='well'><div class='lead'>Screenshots";
                         //echo "<div class='btn btn-primary btn-small pull-right'>Check for Updates</div>";
                         echo "</div>";
-                        if (is_dir(PLUGINS . $plugin . '/screenshot')) { $screenshotDir = "/screenshot/"; }
-                        elseif (is_dir(PLUGINS . $plugin . '/screenshots')) { $screenshotDir = "/screenshots/"; }
+                        if (is_dir(PLUGINS . $plugin . '/screenshot')) { $screenshotDir = "/screenshot/"; }                        
                         else { $screenshotDir = ""; }
                         
                         if ($screenshotDir) {                              
@@ -86,17 +100,18 @@ $meta = $metaReader->read(PLUGINS . $plugin . "/" . $plugin . ".php");
                 
                     echo '<div class="form tab-pane" id="settings">';
                     
-                        $result = $h->pluginHook('admin_plugin_settings', $h->vars['settings_plugin']);
+                        $result = $h->pluginHook('admin_plugin_settings', $plugin);
                     
                     echo '</div>';
                   
-                    echo '<div class="tab-pane" id="support">';
-                        echo 'Support<br/>';
+                    echo '<div class="tab-pane" id="support">';                        
                         echo 'Rating: N/A<br/><br/>';
                         
                         // Plugin hook for old versions of donate button
                         echo $h->pluginHook('admin_topright');
-                        echo $h->pluginHook('admin_settings_support_content');
+                        
+                        // Plugin hook for adding content to support tab
+                        echo $h->pluginHook('admin_plugin_support', $plugin);
                     
                 echo '</div>';
                     
@@ -121,8 +136,7 @@ $meta = $metaReader->read(PLUGINS . $plugin . "/" . $plugin . ".php");
 			}										                                                
                         
                         // TODO
-                        // Access the ReadMe file from the $metaReader file
-                        // Hotaru CMS v.1.5.0
+                        // Access the ReadMe file from the $metaReader file                        
                         //$readMe = $metaReader->readText(PLUGINS . "piwik/readme.txt");
                         $fn = PLUGINS . $plugin . "/readme.txt";
                         $size = 4096;
@@ -142,6 +156,8 @@ $meta = $metaReader->read(PLUGINS . $plugin . "/" . $plugin . ".php");
                         }
                         
                     echo '</div>';
+                    
+                    $h->pluginHook('admin_plugin_tabContent_after_last', $plugin);
                                         
                 echo '</div>';                                
                 

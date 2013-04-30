@@ -251,7 +251,7 @@ $lang["admin_theme_main_join_us"] = "Join Hotaru on <a href='http://www.facebook
 
 /* theme settings */
 $lang["admin_theme_plugin_settings"] = "Plugin Settings";
-$lang["admin_theme_theme_settings"] = "Theme Settings";
+$lang["admin_theme_theme_settings"] = "Themes";
 $lang["admin_theme_theme_no_settings"] = "There are settings for this theme";
 $lang["admin_theme_theme_no_about"] = "There is not About information for this theme";
 $lang["admin_theme_theme_no_screenshots"] = "There are no screenshots for this theme";
@@ -282,7 +282,7 @@ $lang["admin_theme_filecopy_permission_error"] = "The files could not be copied 
 
 /* Updating */
 $lang["admin_theme_need_cron"] = "You need the 'cron' plugin installed to use this feature";
-$lang["admin_theme_check_latest_plugin_versions"] = "Update";
+$lang["admin_theme_check_latest_plugin_versions"] = "check updates";
 $lang["admin_theme_search"] = "Search";
 $lang["admin_theme_version_check_completed"] = "The version numbers have been updated";
 $lang["admin_theme_version_latest_version_installed"] = "Latest version installed";
