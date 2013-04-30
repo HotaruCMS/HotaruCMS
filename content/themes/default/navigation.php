@@ -76,13 +76,13 @@
 			if ($h->currentUser->loggedIn == true) { 
 			
 				if ($h->isAdmin) { $status = "id='navigation_active'"; } else { $status = ""; }
-				echo "<a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_admin"] . "</a>";
+				echo "<li " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_admin"] . "</a></li>";
 			
 				if ($h->pageName == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
-				echo "<a href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang["main_theme_navigation_logout"] . "</a>";
+				echo "<li " . $status . "><a href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang["main_theme_navigation_logout"] . "</a></li>";
 			} else { 
 				if ($h->pageName == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
-				echo "<a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_login"] . "</a>";
+				echo "<li " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_login"] . "</a></li>";
 			}
                     } else {
                             $h->pluginHook('navigation_users'); // ensures login/logout/register are last.
