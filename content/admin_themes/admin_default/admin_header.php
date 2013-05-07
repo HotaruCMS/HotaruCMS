@@ -68,6 +68,14 @@
             <span class="icon-bar"></span>
           </button>
           <a class="brand" href="/"><?php echo SITE_NAME; ?></a>
+          <span class="btn-navbar">
+            <?php	if ($h->currentUser->loggedIn) {
+				if($h->isActive('avatar')) {
+					$h->setAvatar($h->currentUser->id, 24, 'g', 'img-circle');
+					echo  $h->linkAvatar();
+				}
+			} ?>
+            </span>
           <div class="nav-collapse collapse">
             <p class="navbar-text pull-right">
               <a href="#" class="navbar-link">

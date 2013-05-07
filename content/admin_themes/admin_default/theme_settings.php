@@ -68,9 +68,9 @@ $meta = $h->readThemeMeta($theme);
                         echo '<br/><br/></div>';  
                                               
                         echo "<div class='well'><div class='lead'>Screenshots";
-                        echo "<div class='btn btn-primary btn-small pull-right'>Check for Updates</div></div>";
-                        if (is_dir(THEMES . $theme . '/screenshot')) { $screenshotDir = "/screenshot/"; }
-                        elseif (is_dir(THEMES . $theme . '/screenshots')) { $screenshotDir = "/screenshots/"; }
+                        //echo "<div class='btn btn-primary btn-small pull-right'>Check for Updates</div>";
+                        echo "</div>";
+                        if (is_dir(THEMES . $theme . '/screenshot')) { $screenshotDir = "/screenshot/"; }                        
                         else { $screenshotDir = ""; }
                         
                         if ($screenshotDir) {                              

@@ -62,7 +62,7 @@ if (!$result) {
 <div class="container-fluid">
     <div class="row-fluid">
                     
-        <?php if (!$h->sidebar) { ?>
+        <?php if ($h->sidebars) { ?>
             <div class="span3">
                 <!-- SIDEBAR -->
                 <?php                
