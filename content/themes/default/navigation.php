@@ -2,7 +2,7 @@
 /**
  * Theme name: default
  * Template name: navigation.php
- * Template author: Nick Ramsay
+ * Template author: Shibuya246
  *
  * This file looks a bit ugly because whitespace between LI tags 
  * renders as spaces, so I had to squash all the lines together
@@ -23,7 +23,7 @@
  * 
  * @category  Content Management System
  * @package   HotaruCMS
- * @author    Nick Ramsay <admin@hotarucms.org>
+ * @author    Shibuya246 <admin@hotarucms.org>
  * @copyright Copyright (c) 2010, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://hotarucms.org/
@@ -33,7 +33,7 @@
 <!-- Navigation Bar -->
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
-        <div class="container-fluid">
+        <div class="container<?php if ($h->vars['theme_settings']['fullWidth']) echo '-fluid'; ?>">
             <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -82,7 +82,45 @@
 				echo "<li " . $status . "><a href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang["main_theme_navigation_logout"] . "</a></li>";
 			} else { 
 				if ($h->pageName == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
-				echo "<li " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_login"] . "</a></li>";
+				echo "<li class='hidden-desktop' " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_login"] . "</a></li>";
+                                
+                                ?>
+                                
+                                    <li class="dropdown visible-desktop">
+							<a data-toggle="dropdown" class="dropdown-toggle" href="#"><?php echo $h->lang["main_theme_navigation_login"]; ?> <b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li>
+									<form id="signin" action="<?php echo SITEURL; ?>admin_index.php" method="post">
+										<div style="margin:5px 15px 0 15px;">
+                                                                                        <label for="username"><?php echo $h->lang["admin_theme_login_username"]; ?></label>
+											<input id="username" name="username" value="" title="username" tabindex="1" type="text">
+										</div>
+										<div style="margin:5px 15px 0 15px;">
+											<label for="password"><?php echo $h->lang["admin_theme_login_password"]; ?></label>
+											<input id="password" name="password" value="" title="password" tabindex="2" type="password">
+										</div>
+										<div style="margin:0px 0 0 15px;">
+											<input id="remember" style="float:left;margin-right:5px;" name="persistent" value="1" tabindex="3" type="checkbox">
+											<label for="remember" style="float:left;font-size:10px;">Remember</label>
+											<div style="clear:both;"></div>
+										</div>
+										<div style="margin:0;text-align:center;margin:0 auto;width:100%;">
+											<input type="hidden" name="processlogin" value="1">
+											<input type="hidden" name="return" value="">
+											<input id="signin_submit" class="btn btn-primary" style="margin:0;width:90%;" value="<?php echo $h->lang['admin_theme_login_form_submit']; ?>" tabindex="4" type="submit">
+											<a id="forgot_password_link" class="btn" style="margin:8px 0 0 12px;width:74%;" href="/index.php?page=adminreturn=/"><?php echo $h->lang["admin_theme_login_forgot_password"]; ?></a>
+										</div>
+                                                                                <input type='hidden' name='login_attempted' value='true'>
+                                                                                <input type='hidden' name='page' value='admin_login'>
+                                                                                <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
+									</form>
+								</li>
+							</ul><!--/.dropdown-menu -->
+						</li>
+                    
+                                
+                                <?php
+                                
 			}
                     } else {
                             $h->pluginHook('navigation_users'); // ensures login/logout/register are last.

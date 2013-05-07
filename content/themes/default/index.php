@@ -2,8 +2,8 @@
 /**
  * name: Default
  * description: Default theme for Hotaru CMS
- * version: 0.2
- * author: Nick Ramsay
+ * version: 0.1
+ * author: shibuya246
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
  * PHP version 5
@@ -22,7 +22,7 @@
  * 
  * @category  Content Management System
  * @package   HotaruCMS
- * @author    Nick Ramsay <admin@hotarucms.org>
+ * @author    shibuya246 <admin@hotarucms.org>
  * @copyright Copyright (c) 2010, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://hotarucms.org/
@@ -60,8 +60,8 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
         <?php echo $h->displayTemplate('navigation'); ?>
 	
 		
-	<div class="container-fluid">
-            <div class="row-fluid">
+	<div class="container<?php if ($h->vars['theme_settings']['fullWidth']) echo '-fluid'; ?>">
+            <div class="row<?php if ($h->vars['theme_settings']['fullWidth']) echo '-fluid'; ?>">
 		<!-- TITLE & AD BLOCKS -->
                 <!--
 		<div id="hd_title">
@@ -116,8 +116,10 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 
 			<!-- SIDEBAR -->
 			<?php if ($h->sidebars) { ?>
+                            <div class="span4">
                             <?php if (!$h->pluginHook('theme_index_sidebar')) { $h->displayTemplate('sidebar'); } ?>					
-			<?php } ?>
+                            </div>
+                        <?php } ?>
 
 		</div> <!-- close "content" -->
                 
