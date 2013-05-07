@@ -257,6 +257,9 @@ class PageHandling
 		$page = str_replace('..', '', $page); // prevents access outside the current folder
 		$page = $page . '.php';
 	
+                // Include this for testing
+                if ($h->isTest) print $themes . $theme . $page;
+                
 		/* 
 			1. Check the custom theme
 			2. Check the default theme
