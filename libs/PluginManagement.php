@@ -821,38 +821,50 @@ class PluginManagement
 		$version= $h->cage->get->getHtmLawed('version');
 		$findfolder = str_replace('_', '-', $folder);
 		$version = str_replace('.', '-', $version);		
-		$copydir = PLUGINS . $folder . "/";
+		$copydir = CONTENT . "temp/";
 		$file = $findfolder . "-" . $version . ".zip";
-//print "findfolder: ". $findfolder . '<br/>';
-//print "$file: ". $file . '<br/>';
 
+                // Create those directories if need be:
+	                 
+                if (! is_dir($copydir) && ! mkdir($copydir, 0777) )  {	                        
+                        $h->messages['Failed to create temp directory.' . $copydir] = 'red';                        
+                } else {
+                    if ($h->debug) $h->messages['temp folder located'] = 'alert-info';
+                }
+	        
 		// get ftpsettings
-		$ftpserver = "api.hotarucms.org";
-		$ftppath   = "/public_html/api/content/";
-		$ftpuser   = "hotarorg";
-		$ftppass   = "pJp!AQ8&Y<Ge";
+//		$ftpserver = "api.hotarucms.org";
+//		$ftppath   = "/public_html/api/content/";
+//		$ftpuser   = "hotarorg";
+//		$ftppass   = "";
+                if ($h->debug) $h->messages['setting copy directory as ' . $copydir] = 'alert-info';
 
-
-		$ftp_url = "ftp://" . $ftpuser . ":" . stripslashes($ftppass) . "@" . $ftpserver . $ftppath . $folder . "/"  ;
+		//$ftp_url = "ftp://" . $ftpuser . ":" . stripslashes($ftppass) . "@" . $ftpserver . $ftppath . $folder . "/"  ;
 
 		// check that we can access the remote plugin repo site via curl
 		if ($this->fileCheckCurlConnection($url, $file) == 200) {
+                    $h->messages['File succesfully located on remote plugin server'] = 'alert-success';
 		    if ($write = is_writeable($copydir)) {
 			//print "we can use PHP<br/>";
+                        if ($h->debug) $h->messages['we will use php for file copy'] = 'alert-info';
 			$this->filePhpWrite($h, $url, $file, $findfolder, $copydir);
 		    } else {
 			//print "we will use FTP<br/>";
-			$this->fileFtpWrite($h, $url, $ftp_url, $file, $findfolder, $copydir);
+                        if ($h->debug) $h->messages['we will use ftp for file copy'] = 'alert-info';
+                        $h->messages['ftp copy not operational yet in this version of Hotaru CMS'] = 'red';
+			//$this->fileFtpWrite($h, $url, $ftp_url, $file, $findfolder, $copydir);
 		    }
-		} else {
-		    $h->messages[$h->lang['admin_theme_filecopy_permission_error']] = 'red';
-		    //$h->messages[$file . $h->lang['admin_theme_fileexist_error']] = 'red';
+		} else {		    
+		    $h->messages[$file . $h->lang['admin_theme_fileexist_error']] = 'red';
 		}
 
 		// unzip
 		//print "checking if file exists " . PLUGINS . $folder . '/' . $file . '<br/>';
-		if (file_exists( PLUGINS . $folder . '/' . $file)) {
+		if (file_exists( $copydir . $file)) {
 		    //print "starting the unzip<br/>";
+                    $h->messages['About to start the unzip process'] = 'alert-info';
+                    
+                    // check chmod
 		    if (!$write) { $this->fileFtpChmod($h, $ftp_url, $folder, '777'); }
 
 
@@ -862,6 +874,7 @@ class PluginManagement
 		    $this->fileUnzip($h, $file, $copydir);
 		    if (!$write) { $this->fileFtpChmod($h, $ftp_url, $folder, '755'); }
 		    // delete zip file
+                    if ($h->debug) $h->messages['About to delete zip file'] = 'alert-info';
 		    if ($write) {
 			//print "we can use PHP<br/>";
 			$this->filePhpDelete($h, $file, $copydir);
@@ -898,12 +911,28 @@ class PluginManagement
 
 		//print 'checking directory is accesible: ' . $statusCode . '<br/>';
 
-		return $statusCode;
+		return $statusCode;                                
 	}
 
 
 	public function filePhpWrite($h, $url, $file, $findfolder, $copydir )
-	{				    
+	{			
+           
+$h->messages['url = ' . $url . $file] = 'alert-info';
+$ch = curl_init($url . $file);
+$fp = fopen($copydir . $file, "w");
+
+curl_setopt($ch, CURLOPT_FILE, $fp);
+curl_setopt($ch, CURLOPT_HEADER, 0);
+
+curl_exec($ch);
+curl_close($ch);
+fclose($fp);
+
+           
+            if (1==0) {
+            
+            
 		// create a new CURL resource
 		$ch = curl_init();
 
@@ -941,20 +970,109 @@ class PluginManagement
 		    $h->messages[$h->lang['admin_theme_fileexist_error'] . $file] = 'red';
 		}
 		curl_close($ch);
+            }
 	}
 
-	public function fileUnzip($h, $file, $copydir)
+	public function fileUnzip($h, $file, $to)
 	{
-		$h->messages[$file . $h->lang['admin_theme_filecopy_success']] = 'green';
+		//$h->messages[$file . $h->lang['admin_theme_filecopy_success']] = 'green';
+                $z = new ZipArchive();
+	        $zopen = $z->open($to . $file, ZIPARCHIVE::CHECKCONS);
+            
+          
+            if ($h->debug) $h->messages['Attempt to unzip ' . $to . $file] = 'alert-info';
+//                print $to . $file;
+//                $za = new ZipArchive();
+//                $za->open($to . $file); 
+//                
+//
+//for( $i = 0; $i < $za->numFiles; $i++ ){ 
+//    $stat = $za->statIndex( $i ); 
+//    print_r( basename( $stat['name'] ) . PHP_EOL ); 
+//} die();
+                
+                if ($zopen !== true) {
+                        $h->messages['Could not open zip file ' . $file] = 'red';
+                        return false;
+                }
 
-		require_once(EXTENSIONS . 'pclZip/pclzip.lib.php');
-		$archive = new PclZip($copydir . $file);
+                // code from Wordpress with much appreciation
+                for ( $i = 0; $i < $z->numFiles; $i++ ) {
+	                if ( ! $info = $z->statIndex($i) ) {
+                            $h->messages['Could not retrieve file from archive.' . $file] = 'red';
+	                    return false;
+                        }
+                       
+                        if ( '__MACOSX/' === substr($info['name'], 0, 9) ) // Skip the OS X-created __MACOSX directory
+	                        continue;
+	
+	                if ( '/' == substr($info['name'], -1) ) // directory
+	                        $needed_dirs[] = $to . rtrim($info['name'], '/');
+	                else
+	                        $needed_dirs[] = $to . rtrim(dirname($info['name']),'/');
+	        } 
+	
+	        $needed_dirs = array_unique($needed_dirs);
+	        foreach ( $needed_dirs as $dir ) {
+	                // Check the parent folders of the folders all exist within the creation array.
+	                if ( rtrim($to,'/') == $dir ) // Skip over the working directory, We know this exists (or will exist)
+	                        continue;
+	                if ( strpos($dir, $to) === false ) // If the directory is not within the working directory, Skip it
+	                        continue;
+	
+	                $parent_folder = dirname($dir);
+	                while ( !empty($parent_folder) && rtrim($to,'/') != $parent_folder && !in_array($parent_folder, $needed_dirs) ) {
+	                        $needed_dirs[] = $parent_folder;
+	                        $parent_folder = dirname($parent_folder);
+	                }
+	        }
+	        asort($needed_dirs);
+	
+	        // Create those directories if need be:
+	        foreach ( $needed_dirs as $_dir ) {          
+	                if ( ! mkdir($_dir, 0777) && ! is_dir($_dir) )  {// Only check to see if the Dir exists upon creation failure. Less I/O this way.	                        
+                                $h->messages['Could not create directory.' . $dir] = 'red';
+                                return false;
+                        }
+	        }
+	        unset($needed_dirs);
+	
+	        for ( $i = 0; $i < $z->numFiles; $i++ ) {
+	                if ( ! $info = $z->statIndex($i) ) {
+                                $h->messages['Could not retrieve file from archive.'] = 'red';
+                                return false;
+                        }	                        
+	
+	                if ( '/' == substr($info['name'], -1) ) // directory
+	                        continue;
+	
+	                if ( '__MACOSX/' === substr($info['name'], 0, 9) ) // Don't extract the OS X-created __MACOSX directory files
+	                        continue;
+	
+	                $contents = $z->getFromIndex($i);
+	                if ( false === $contents ) {
+                                $h->messages['Could not extract file from archive.' . $info['name']] = 'red';
+                                return false;
+                        }	                       
 
-		if (($v_result_list = $archive->extract(PCLZIP_OPT_PATH, PLUGINS)) == 0) {
-		    $h->messages[$h->lang['admin_theme_unzip_error'] . $file] = 'red';
-		} else {
-		  $h->messages[$file . $h->lang['admin_theme_unzip_success']] = 'green';
-		}
+	                if ( ! file_put_contents( $to . $info['name'], $contents, 644) ) {
+                                $h->messages['Could not copy file.' . $info['filename']] = 'red';
+                                return false;
+                        }	                        
+	        }
+                
+//		require_once(EXTENSIONS . 'pclZip/pclzip.lib.php');
+//		$archive = new PclZip($copydir . $file);
+//
+//		if (($list = $archive->extract(PCLZIP_OPT_PATH, PLUGINS)) == 0) {
+//		    $h->messages[$h->lang['admin_theme_unzip_error'] . $file] = 'red';
+//                    return false;
+//		}
+                                
+                $h->messages[$file . $h->lang['admin_theme_unzip_success']] = 'green';
+                $z->close();
+                
+                return true;		
 	}
 
 	public function filePhpDelete($h, $file, $copydir)
@@ -1087,8 +1205,10 @@ class PluginManagement
 		$systeminfo = New SystemInfo();
 		$result = $systeminfo->plugin_version_getAll($h);
 		if ($result) {
-		    $h->messages[$h->lang['admin_theme_version_check_completed']] = 'alert-info';
-		}
+		    $h->messages[$h->lang['admin_theme_version_check_completed']] = 'alert-success';
+		} else {
+                    $h->messages[$h->lang['admin_theme_version_check_failed']] = 'alert-error';
+                }
 	}
 }
 ?>

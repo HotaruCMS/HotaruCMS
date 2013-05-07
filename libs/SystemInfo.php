@@ -109,10 +109,12 @@ class SystemInfo
 				//print $plugin->plugin_name . ' ' . $info[$plugin->plugin_name] . '<br/>';
 			    }
 			}
-		    }
+                        
+                        return true;
+		    }                                        
 		 }
 
-		return true;
+		return false;
 	}
 
 
