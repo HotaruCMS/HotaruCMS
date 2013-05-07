@@ -31,7 +31,8 @@ class AdminPages
 	public function pages($h, $page = 'admin_login')
 	{
 		$h->vars['admin_sidebar_layout'] = 'vertical';
-		
+		$h->sidebars = true;
+                
 		$h->pluginHook('admin_pages');
 		
 		switch ($page) {
@@ -56,13 +57,11 @@ class AdminPages
 			case "blocked":
 				$h->vars['admin_blocked_list'] = $this->blocked($h);
 				break;
-			case "plugin_management":
-				$h->sidebars = false;
+			case "plugin_management":				
 				$h->vars['admin_sidebar_layout'] = 'horizontal';
 				$this->adminPlugins($h);
 				break;
-			case "plugin_search":
-				$h->sidebars = false;
+			case "plugin_search":				
 				$h->vars['admin_sidebar_layout'] = 'horizontal';
 				//$this->adminPluginSearch($h);				
 				break;
@@ -165,7 +164,7 @@ class AdminPages
 				$recurrence = "daily";
                                 
                                 $hooks = array("SystemInfo:hotaru_feedback", "SystemInfo:hotaru_version", "SystemInfo:plugin_version_getAll");
-				foreach ( $$hooks as $hook ) {
+				foreach ( $hooks as $hook ) {
                                     $h->pluginHook('cron_update_job', 'cron', array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook));
                                 }
                                 
@@ -183,7 +182,7 @@ class AdminPages
 			}
 			else {
                                 $hooks = array("SystemInfo:hotaru_feedback", "SystemInfo:hotaru_version", "SystemInfo:plugin_version_getAll");
-				foreach ( $$hooks as $hook ) {
+				foreach ( $hooks as $hook ) {
                                     $h->pluginHook('cron_delete_job', 'cron', array('hook'=>$hook));
                                 }
                                 
