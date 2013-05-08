@@ -60,21 +60,21 @@
 	    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/uninstall_16.png' alt="">
 	    <?php echo $h->lang["admin_theme_plugins_uninstall"]; ?>
             
-            <?php if (SYS_UPDATES == "true") { ?>
-                <div class="plugin_management_right">
-                    <!--
-                    <a href="<?php echo SITEURL ?>admin_index.php?page=plugin_search">
-                        <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/search.png' alt="">
-                        <?php echo $h->lang["admin_theme_search"]; ?>
-                    </a>
-                    -->
-                     &nbsp;&nbsp;
-                    <a href="<?php echo SITEURL ?>admin_index.php?page=plugin_management&action=version_check">
-                        <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/update_16.png' alt="">
-                        <?php echo $h->lang["admin_theme_check_latest_plugin_versions"]; ?>
-                    </a>
-                </div>
-            <?php } ?>
+            
+            <div class="plugin_management_right">
+                
+                <a href="<?php echo SITEURL ?>admin_index.php?page=plugin_search">
+                    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/search.png' alt="">
+                    <?php echo $h->lang["admin_theme_search"]; ?>
+                </a>
+                
+                 &nbsp;&nbsp;
+                <a href="<?php echo SITEURL ?>admin_index.php?page=plugin_management&action=version_check">
+                    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/update_16.png' alt="">
+                    <?php echo $h->lang["admin_theme_check_latest_plugin_versions"]; ?>
+                </a>
+            </div>
+            
             
 	</span>
 </td></tr>
