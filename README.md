@@ -31,8 +31,8 @@ First-time Installation
 
   1. Download the latest version of Hotaru CMS.
   2. Create a database called `hotaru` in you MySQL (using phpMyAdmin or similar).
-  3. Rename `/hotaru_settings_default.php` to `/hotaru_settings.php`.
-  4. Open `/hotaru_settings.php` and edit the top section with your database details and path to Hotaru, e.g. `http://example.com/`
+  3. Rename `/settings_default.php` to `/config/settings.php`.
+  4. Open `/config/settings.php` and edit the top section with your database details and path to Hotaru, e.g. `http://example.com/`
   5. Upload the contents of the `hotaru` folder to your server.
   6. Files should have permissions set to 644 and folders should be set to 755, except...
   7. Set `/cache` and its sub-folders to 777

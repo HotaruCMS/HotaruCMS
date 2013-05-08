@@ -263,7 +263,7 @@ class SystemInfo
 						$setting->settings_value = preg_replace("/[a-zA-Z0-9]/", "*", $setting->settings_value);
 						break;
 				}
-				$report['hotaru_settings'][$setting->settings_name] = $setting->settings_value;
+				$report['settings'][$setting->settings_name] = $setting->settings_value;
 			}
 		}
 		
@@ -388,8 +388,8 @@ class SystemInfo
 		$output .= "\n";
 		
 		$output .= "Hotaru Settings: \n";
-		if (isset($report['hotaru_settings'])) {
-			foreach ($report['hotaru_settings'] as $key => $value) {
+		if (isset($report['settings'])) {
+			foreach ($report['settings'] as $key => $value) {
 				$output .= $key . " => " . $value . " \n";
 			}
 		}

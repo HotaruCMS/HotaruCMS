@@ -60,10 +60,10 @@ $lang["install_upgrade"] = "Upgrade Existing Site";
 $lang["install_step1"] = "Step 1/4: Database Setup";
 $lang["install_step1_instructions"] = "To set up a database for Hotaru CMS, you'll need to do the following";
 $lang["install_step1_instructions1"] = "Create a database called <i>hotaru</i> in your web host's control panel. Make a note of your username and password!";
-$lang["install_step1_instructions2"] = "Copy <pre>/hotaru_settings_default.php</pre> and rename it <pre>/hotaru_settings.php</pre>.";
-$lang["install_step1_instructions3"] = "Open <pre>/hotaru_settings.php</pre> and fill in the \"Database Details\" section.";
+$lang["install_step1_instructions2"] = "Copy <pre>/config/settings_default.php</pre> and rename it <pre>/settings.php</pre>.";
+$lang["install_step1_instructions3"] = "Open <pre>/config/settings.php</pre> and fill in the \"Database Details\" section.";
 $lang["install_step1_instructions4"] = "Fill in the <pre>baseurl</pre>, e.g. <i>http://example.com/</i>. Don't forget the trailing slash (/)";
-$lang["install_step1_instructions5"] = "Save and upload <pre>hotaru_settings.php</pre> to your server, then click \"Next\"...";
+$lang["install_step1_instructions5"] = "Save and upload <pre>/config/settings.php</pre> to your server, then click \"Next\"...";
 $lang["install_step1_instructions_create_db"] = "Create a new database on your server first then fill in the form below. These details will be unique to your server and database setup.";
 $lang["install_step1_instructions_manual_setup"] = "If you prefer to edit the settings file manually";
 $lang["install_step1_instructions_manual_setup_click"] = "click here";
@@ -92,8 +92,8 @@ $lang["install_step1_dbhost_error"] = "There was a problem with the database hos
 
 $lang["install_step1_settings_file_already_exists"] = "There is already a Hotaru settings file on your server. If you press 'update' your existing file will be updated with the settings above.";
 $lang["install_step1_settings_db_already_exists"] = "There is already a Hotaru database on your server with live tables. If you press 'Next' your entire database will be wiped clean. Proceed with caution.";
-$lang["install_step1_update_file_writing_success"] = "The 'hotaru_settings' file was created.";
-$lang["install_step1_update_file_writing_failure"] = "There was a problem creating the 'hotaru_settings' file.";
+$lang["install_step1_update_file_writing_success"] = "The 'settings' file was created.";
+$lang["install_step1_update_file_writing_failure"] = "There was a problem creating the 'settings' file.";
 $lang["install_step1_no_db_exists_failure"] = "The database does not exist or the connection settings are incorrect.";
 
 

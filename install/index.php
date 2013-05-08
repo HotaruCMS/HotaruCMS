@@ -32,7 +32,7 @@
 session_start();
 
 // Read Settings
-define("SETTINGS", '../hotaru_settings.php');
+define("SETTINGS", '../config/settings.php');
 
 if (file_exists(SETTINGS)) {
     include_once(SETTINGS);
@@ -325,7 +325,7 @@ function database_setup() {
 	    $table_exists = $db->table_exists('miscdata');	   
 	}
 
-	// Try to write the /hotaru_settings.php file to disk
+	// Try to write the /config/settings.php file to disk
 	//
         @chmod(SETTINGS,0777);
 
@@ -418,7 +418,7 @@ function database_setup() {
 
 
 /**
- * Step 1a of installation - asks to put database info in hotaru_settings.php
+ * Step 1a of installation - asks to put database info in settings.php
  */
 function database_setup_manual()
 {
@@ -461,7 +461,7 @@ function database_upgrade()
         include_once('install-upgrade.php');
     }
     else {
-        echo 'You need to have a "hotaru_settings.php" file to upgrade Hotaru.';
+        echo 'You need to have a "settings.php" file in the config folder to upgrade Hotaru.';
     }
 }
 
@@ -867,12 +867,12 @@ define("DB_ENGINE", 'MyISAM');				// Database Engine, e.g. "MyISAM"
 define('DB_CHARSET', 'utf8');				// Database Character Set (UTF8 is Recommended), e.g. "utf8"
 define("DB_COLLATE", 'utf8_unicode_ci');		// Database Collation (UTF8 is Recommended), e.g. "utf8_unicode_ci"
 
-?><?php  // leave this line squashed up here as we dont want any blank lines at the end of the hotaru_settings file
+?><?php  // leave this line squashed up here as we dont want any blank lines at the end of the settings file
    $page = "<?php" . ob_get_contents();
    ob_end_clean();
    //$page = str_replace("\n", "", $page);
    $cwd = getcwd();
-   $file = $cwd . "/../hotaru_settings.php";
+   $file = $cwd . "/../config/settings.php";
    @chmod($file,0777);
    $fw = fopen($file, "w");
    $fputs = fputs($fw,$page, strlen($page));
