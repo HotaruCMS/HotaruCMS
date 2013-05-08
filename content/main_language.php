@@ -87,6 +87,13 @@ $lang["main_theme_navigation_admin"] = "Admin";
 $lang["main_theme_navigation_login"] = "Login";
 $lang["main_theme_navigation_logout"] = "Logout";
 
+/* login */
+$lang["main_theme_login_username"] = "Username";
+$lang["main_theme_login_password"] = "Password";
+$lang["main_theme_login_form_submit"] = "Submit";
+$lang["main_theme_login_forgot_password"] = "Forgotten Password";
+$lang["main_theme_navigation_logout"] = "Logout";
+
 /* breadcrumbs */
 $lang['main_theme_breadcrumbs_home'] = "Home";
 
