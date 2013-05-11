@@ -25,12 +25,45 @@
  * @link      http://www.hotarucms.org/
  */
 // includes
-if( file_exists('hotaru_settings.php') ) {
-	require_once('hotaru_settings.php');
-	require_once('Hotaru.php');
+if( file_exists('config/settings.php') && file_exists('Hotaru.php')) {
+	require_once('config/settings.php');
+        //require_once('config/application.php');
+
+//        try
+//        {
+//                // Process the HTTP request using only the routers we need for this application.
+//                $fc = new Lvc_FrontController();
+//                $fc->addRouter(new Lvc_RegexRewriteRouter($regexRoutes));
+//                $fc->processRequest(new Lvc_HttpRequest());
+//        }
+//        catch (Lvc_Exception $e)
+//        {
+//                // Log the error message
+//                error_log($e->getMessage());
+//
+//                // Get a request for the 404 error page.
+//                $request = new Lvc_Request();
+//                $request->setControllerName('error');
+//                $request->setActionName('view');
+//                $request->setActionParams(array('error' => '404'));
+//
+//                // Get a new front controller without any routers, and have it process our handmade request.
+//                $fc = new Lvc_FrontController();
+//                $fc->processRequest($request);
+//        }
+//        catch (Exception $e)
+//        {
+//                // Some other error, output "technical difficulties" message to user?
+//                error_log($e->getMessage());
+//        }
+
+//print_r($regexRoutes); 
+ 
+        require_once('Hotaru.php');
 	$h = new Hotaru();
 	$h->start('main');
-} else {
+        
+        } else {
 	if( file_exists('install/index.php') ) {
 		echo 'Hotaru is having trouble starting. You may need to install the system before you can proceed further.<br/><br/>';
 		echo 'Help is available in the <a href="http://forums.hotarucms.org/">Hotaru CMS Forums</a>.';

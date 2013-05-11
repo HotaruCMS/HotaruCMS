@@ -137,6 +137,11 @@ class Hotaru
 				$page = $admin->adminInit($this);       // initialize Admin & get desired page
 				$this->adminPages($page);               // Direct to desired Admin page
 				break;
+                        case 'mvc':
+                                $this->isAdmin = false;
+                                $this->checkCookie();                   // log in user if cookie
+                                $this->checkAccess();                                
+                                break;
 			default:
 				$this->isAdmin = false;
 				$this->checkCookie();                   // log in user if cookie
