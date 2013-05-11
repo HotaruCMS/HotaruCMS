@@ -27,10 +27,12 @@
  */
 
 ?>
-
+<div class="well sidebar-nav">
+        <center><a href="http://ipadrank.com/submit/"><div class="btn btn-success">Submit New Content</div></a></center>
+</div>
 
 <div class="well sidebar-nav">
-    <div id="sidebar" class="container<?php if ($h->vars['theme_settings']['fullWidth']) echo '-fluid'; ?>">
+    <div id="sidebar">               
         <?php $h->pluginHook('widget_block', '', array(1)); ?>
     </div>
 </div>

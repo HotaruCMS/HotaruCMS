@@ -57,7 +57,7 @@
                             }
                     } ?>
                     
-                    <?php if ($h->pageName == $h->home) { $status = "id='navigation_active'"; } else { $status = ""; } ?>
+                    <?php if ($h->pageName == $h->home) { $status = "class='active'"; } else { $status = ""; } ?>
                     <li <?php echo $status; ?>><a href="<?php echo SITEURL; ?>"><?php echo $h->lang["main_theme_navigation_home"]; ?></a></li><?php $h->pluginHook('navigation'); ?>
                     <?php // RSS Link and icon if a type "base" plugin is active
                         if ($h->isActive('base')) { ?>
@@ -75,13 +75,13 @@
 		
 			if ($h->currentUser->loggedIn == true) { 
 			
-				if ($h->isAdmin) { $status = "id='navigation_active'"; } else { $status = ""; }
+				if ($h->isAdmin) { $status = "class='active'"; } else { $status = ""; }
 				echo "<li " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_admin"] . "</a></li>";
 			
-				if ($h->pageName == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
+				if ($h->pageName == 'logout') { $status = "class='active'"; } else { $status = ""; }
 				echo "<li " . $status . "><a href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang["main_theme_navigation_logout"] . "</a></li>";
 			} else { 
-				if ($h->pageName == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
+				if ($h->pageName == 'login') { $status = "class='active'"; } else { $status = ""; }
 				echo "<li class='hidden-desktop' " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_login"] . "</a></li>";
                                 
                                 ?>
@@ -92,11 +92,11 @@
 								<li>
 									<form id="signin" action="<?php echo SITEURL; ?>admin_index.php" method="post">
 										<div style="margin:5px 15px 0 15px;">
-                                                                                        <label for="username"><?php echo $h->lang["admin_theme_login_username"]; ?></label>
+                                                                                        <label for="username"><?php echo $h->lang["main_theme_login_username"]; ?></label>
 											<input id="username" name="username" value="" title="username" tabindex="1" type="text">
 										</div>
 										<div style="margin:5px 15px 0 15px;">
-											<label for="password"><?php echo $h->lang["admin_theme_login_password"]; ?></label>
+											<label for="password"><?php echo $h->lang["main_theme_login_password"]; ?></label>
 											<input id="password" name="password" value="" title="password" tabindex="2" type="password">
 										</div>
 										<div style="margin:0px 0 0 15px;">
@@ -107,11 +107,12 @@
 										<div style="margin:0;text-align:center;margin:0 auto;width:100%;">
 											<input type="hidden" name="processlogin" value="1">
 											<input type="hidden" name="return" value="">
-											<input id="signin_submit" class="btn btn-primary" style="margin:0;width:90%;" value="<?php echo $h->lang['admin_theme_login_form_submit']; ?>" tabindex="4" type="submit">
-											<a id="forgot_password_link" class="btn" style="margin:8px 0 0 12px;width:74%;" href="/index.php?page=adminreturn=/"><?php echo $h->lang["admin_theme_login_forgot_password"]; ?></a>
+											<input id="signin_submit" class="btn btn-primary" style="margin:0;width:90%;" value="<?php echo $h->lang['main_theme_login_form_submit']; ?>" tabindex="4" type="submit">
+											<a id="forgot_password_link" class="btn" style="margin:8px 0 0 12px;width:74%;" href="/index.php?page=return=/"><?php echo $h->lang["main_theme_login_forgot_password"]; ?></a>
 										</div>
                                                                                 <input type='hidden' name='login_attempted' value='true'>
                                                                                 <input type='hidden' name='page' value='admin_login'>
+                                                                                <?php $h->csrf('set', 'navigation'); ?>
                                                                                 <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
 									</form>
 								</li>

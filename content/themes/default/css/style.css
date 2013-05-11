@@ -9,7 +9,7 @@
         padding-bottom: 40px;
       }
       .sidebar-nav {
-        padding: 9px 0;
+        padding: 9px 4px;
       }
       
       ul {
@@ -84,3 +84,5 @@
 
 
 .debug { font-size: 0.8em; }
+
+#sidebar ul li { padding: 0.5em;  }

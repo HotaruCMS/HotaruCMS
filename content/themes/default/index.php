@@ -72,7 +72,7 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 		
             
 		
-                <div id="header_end" class="">
+                <div id="header_end" class="container<?php if ($h->vars['theme_settings']['fullWidth']) echo '-fluid'; ?>">
                         <!-- CATEGORIES, ETC -->
                         <?php $h->pluginHook('header_end'); ?>
                 </div>
@@ -81,7 +81,7 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 
 		<div id="content">
 
-			<?php $width = ($h->sidebars) ? '8' : '12'; ?>
+			<?php $width = ($h->sidebars) ? '9' : '12'; ?>
 			<div id="main_container" class="span<?php echo $width; ?>">
 				<div id="main">
 
@@ -116,7 +116,7 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 
 			<!-- SIDEBAR -->
 			<?php if ($h->sidebars) { ?>
-                            <div class="span4">
+                            <div class="span3">
                             <?php if (!$h->pluginHook('theme_index_sidebar')) { $h->displayTemplate('sidebar'); } ?>					
                             </div>
                         <?php } ?>
