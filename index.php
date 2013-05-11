@@ -25,8 +25,8 @@
  * @link      http://www.hotarucms.org/
  */
 // includes
-if( file_exists('hotaru_settings.php') ) {
-	require_once('hotaru_settings.php');
+if( file_exists('config/settings.php') ) {
+	require_once('config/settings.php');
 	require_once('Hotaru.php');
 	$h = new Hotaru();
 	$h->start('main');
