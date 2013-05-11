@@ -101,9 +101,9 @@ class generic_pmd {
       }
       // file not found/readable
       else {
-        echo "The file '" . $fn . "' couldn't be found in your plugins folder.";
+        //echo "The file '" . $fn . "' couldn't be found in your plugins folder.";
         //echo "uh-oh, file '" . $fn . "' not found in class.metadata.php";
-        //return(NULL);
+        return(NULL);
       }
    }
    
