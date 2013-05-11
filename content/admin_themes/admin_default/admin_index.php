@@ -82,10 +82,14 @@ if (!$result) {
             $result = $h->pluginHook('admin_theme_index_main');
             if (!$result) {
                     if ($h->pageName == 'admin_login') {
-                            if ($h->currentUser->loggedIn) {
+                            if ($h->currentUser->loggedIn && $h->currentUser->role == 'admin') {
                                     $h->displayTemplate('admin_home');
                             } else {
-                                    $h->adminLoginForm();
+                                if ($h->currentUser->role != 'admin')  {
+                                        $h->message = $h->lang["admin_not_adminuser"];
+                                        $h->messageType = "red";
+                                }
+                                $h->adminLoginForm();
                             }
                     } else {
                             if ($h->pageName == 'plugin_settings') {  

@@ -53,7 +53,12 @@
 	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=blocked"><i class="icon-flag"></i> <?php echo $h->lang["admin_theme_blocked_list"]; ?></a></li>
 	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_management"><i class="icon-check"></i> <?php echo $h->lang["admin_theme_plugins"]; ?></a></li>
 	
-        <?php $sb_links = $h->pluginHook('admin_sidebar_plugin_settings'); ?>        
+        <?php 
+        $pluginFunc = new PluginFunctions();
+        $sb_links = $pluginFunc::getAllActivePluginNames($h);
+        // Taken below out so we dont need to use the admin_sidebar_plugin_settings hook, but instead list all installed plugins in the sidebar        
+        //$sb_links = $h->pluginHook('admin_sidebar_plugin_settings'); 
+        ?>        
         
         <hr style="margin:10px 0;"/>	         
         
@@ -74,9 +79,9 @@
                 <ul id="plugin_settings_list">
                         <?php                                     
                                 if ($sb_links) {
-                                        $sb_links = sksort($sb_links, $subkey="name", $type="char", true);
-                                        foreach ($sb_links as $plugin => $details) { 
-                                                echo "<li><a href='" . SITEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $details['plugin'] . "#tab_settings'>" . $details['name'] . "</a></li>\n";
+                                        //$sb_links = sksort($sb_links, $subkey="name", $type="char", true);
+                                        foreach ($sb_links as $plugin) { 
+                                                echo "<li><a href='" . SITEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $plugin->plugin_folder . "#tab_settings'>" . $plugin->plugin_name . "</a></li>\n";
                                         }
                                 }
                         ?>

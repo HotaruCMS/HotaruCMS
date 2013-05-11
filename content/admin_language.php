@@ -45,6 +45,7 @@ $lang['admin_theme_login_forgot_password_submit'] = "Submit";
 $lang['admin_theme_login_forgot_password_submit_instruct_1'] = "Enter the email address for your Admin account:";
 $lang['admin_theme_login_forgot_password_submit_instruct_2'] = "You will be emailed a confirmation code. Click that confirmation code to be sent a new, random password. Use that to access your account and change it to something you can remember.";
 $lang["admin_theme_update_email"] = "Email:";
+$lang["admin_not_adminuser"] = "You are not an admin of this site";
 
 /* Forgotten Password */
 $lang['admin_email_password_conf_sent'] = "An email has been sent to the address provided";

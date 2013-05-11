@@ -28,19 +28,20 @@
 
 ?>
 <!-- HEADER-->
+<?php // turn off admin so we can jump to THEME templates instead ?>
+<?php $h->isAdmin = false; ?>
+
 <?php $h->displayTemplate('header'); ?>
 
-<div id="bd" role="main">
-	<div class='yui-g''>
-		<div class="yui-u" style='width: 100%;'>
-		
-			<!-- MAIN -->
-			<div id="main">
+<div class="container">
+            <div class="row">
+		<div id="content">
+			
 				<?php echo $h->showMessages(); ?>
-			</div>
+			
 		</div>
-	</div>
+            </div>
 </div>
 
 <!-- FOOTER -->
-<?php $h->displayTemplate('footer'); ?>
+<?php //$h->displayTemplate('footer'); ?>

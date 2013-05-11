@@ -70,12 +70,12 @@ if ($pluginData->plugin_latestversion == '0.0') {
                 
                     echo '<div class="tab-pane active" id="home">';
                     
-                        echo 'Active status';
-			echo '<br/>'; 
+                        //echo 'Active status';
+			//echo '<br/>'; 
                         
                         echo 'Latest Version : ' . $pluginData->plugin_latestversion; echo '<br/>';
                         echo 'Your Version : ' . $pluginData->plugin_version; echo '<br/>';
-                        echo 'Last checked for newer version : need to add field for this in db';
+                        //echo 'Last checked for newer version : need to add field for this in db';
                         echo '<br/><br/>';
                                               
                         echo "<div class='well'><div class='lead'>Screenshots";
@@ -101,6 +101,9 @@ if ($pluginData->plugin_latestversion == '0.0') {
                     echo '<div class="form tab-pane" id="settings">';
                     
                         $result = $h->pluginHook('admin_plugin_settings', $plugin);
+                        if (!$result) {
+                            echo "No settings found for this plugin";                 			
+                        }
                     
                     echo '</div>';
                   
@@ -117,10 +120,11 @@ if ($pluginData->plugin_latestversion == '0.0') {
                     
                     echo '<div class="tab-pane" id="about">'; 
                     
-			if (isset($meta)) {
+			if (isset($meta) && is_array($meta)) {
 				foreach ($meta as $key => $value) {
 					if ($key == 'author') { 
-                                                echo "<b>" . ucfirst($key) . "</b>: <a href='" . $meta['authorurl'] . "'>" . $value . "</a>";
+                                                $authorUrl = isset($meta['authorurl']) ? "<a href='" . $meta['authorurl'] . "'>" . $value . "</a>" : $value;
+                                                echo "<b>" . ucfirst($key) . "</b>: " . $authorUrl;
 						break;
                                         } elseif ($key == 'help') {
                                             // do nothing						
@@ -132,7 +136,7 @@ if ($pluginData->plugin_latestversion == '0.0') {
 				
 				
 			} else {
-				echo 'No information to show';
+				echo 'No information to show.<br/>';
 			}										                                                
                         
                         // TODO
@@ -163,19 +167,6 @@ if ($pluginData->plugin_latestversion == '0.0') {
                 
 		}
 	
-		if (!$result) {
-	?>
-		<h3><?php echo $h->lang["admin_theme_plugin_settings"]; ?></h3>
-	<?php 
-			$sb_links = $h->pluginHook('admin_sidebar_plugin_settings');
-			if ($sb_links) {
-				echo "<ul>\n";
-				$sb_links = sksort($sb_links, $subkey="name", $type="char", true);
-				foreach ($sb_links as $plugin => $details) { 
-					echo "<li><a href='" . SITEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $details['plugin'] . "'>" . $details['name'] . "</a></li>";
-				}
-				echo "</ul>\n";
-			}
-		}
+		
 	?>
 </div>
