@@ -30,6 +30,10 @@ class AdminAuth
 	 */
 	public function adminInit($h)
 	{
+                if (($h->pageName == 'admin_logout')) {
+                    $this->adminLogout($h);
+                }
+                    
 		// Authenticate the admin if the User Signin plugin is INACTIVE:
 		if (!$h->isActive('signin'))
 		{
@@ -94,9 +98,8 @@ class AdminAuth
 		}
 		
 		if ($h->cage->post->keyExists('login_attempted') || $h->cage->post->keyExists('forgotten_password')) {
-			// if either the login or forgot password form is submitted, check the CSRF key
-			
-			if (!$h->csrf()) {
+			// check the CSRF key coming from either the navigation bar, login or forgot password forms     
+			if (!$h->csrf('check', 'navigation') && !$h->csrfToken) {
 				$h->message = $h->lang["error_csrf"];
 				$h->messageType = "red";
 				return false;
@@ -108,14 +111,24 @@ class AdminAuth
 			$login_result = $h->currentUser->loginCheck($h, $username_check, $password_check);
 			
 			if ($login_result) {
-				//success
+				//success                            
 				$h->currentUser->name = $username_check;
 				$h->currentUser->getUser($h, 0, $username_check);
 				$this->setAdminCookie($h, $username_check);
 				$h->currentUser->loggedIn = true;
 				$h->currentUser->updateUserLastLogin($h);
-				$h->sidebars = true;
-				$h->pageName = 'admin_home'; // a wee hack
+                                
+                                // check role is admin
+                                if ($h->currentUser->role == 'admin') 
+                                { 	$h->sidebars = true;
+                                        $h->pageName = 'admin_home'; // a wee hack
+                                } else {
+                                        $h->sidebars = false;
+                                        $h->pageName = 'admin_login';
+                                        $h->message = $h->lang["admin_not_adminuser"];
+                                        $h->messageType = "red";
+                                }
+                				
 				return true;
 			} else {
 				// login failed
@@ -220,7 +233,7 @@ class AdminAuth
 	 * @return bool
 	 */
 	public function setAdminCookie($h)
-	{
+	{                                
 		if (!$h->currentUser->name) 
 		{ 
 			echo $this->lang["admin_login_error_cookie"];

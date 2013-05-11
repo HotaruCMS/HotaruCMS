@@ -34,7 +34,7 @@ class AdminPages
 		$h->sidebars = true;
                 
 		$h->pluginHook('admin_pages');
-		
+                                
 		switch ($page) {
 			case "admin_login":
 				$h->sidebars = false;
