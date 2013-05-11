@@ -39,6 +39,7 @@ class PluginFunctions
 		require_once(EXTENSIONS . 'GenericPHPConfig/class.metadata.php');
 		$metaReader = new generic_pmd();
 		$plugin_metadata = $metaReader->read(PLUGINS . $folder . '/' . $folder . '.php');
+                if (!$plugin_metadata) $h->showMessage('File "' . $folder . '/' . $folder . '.php"' . ' could not be found', 'red');
 		
 		if ($plugin_metadata) { return $plugin_metadata; } else { return false; }
 	}
@@ -69,10 +70,10 @@ class PluginFunctions
 		}
 		
 		if (!$valid_plugins) { return false; } // no plugins use this hook
-		
+
 		if ($folder) {
-			if (!in_array($folder, $valid_plugins)) { return false; } // targeted plugin doesn't use this hook
-			$valid_plugins = array($folder); // replace list of valid plugins with just the one we're targeting.
+			if (!in_array($folder, $valid_plugins)) { return false; } // targeted plugin doesn't use this hook			
+                        $valid_plugins = array($folder); // replace list of valid plugins with just the one we're targeting.
 		}
 
 		// get plugin details from memory
@@ -308,6 +309,22 @@ class PluginFunctions
 		return false;
 	}
 	
+        
+        /**
+         * Get list of all plugins (names only)
+         * @param type $h
+         */
+        public static function getAllActivePluginNames($h)
+	{
+                $sql = "SELECT plugin_name, plugin_folder FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = 1 ORDER BY plugin_name ASC";
+		$h->smartCache('on', 'plugins', $h->db->cache_timeout, $sql); // start using cache
+		$pluginNames = $h->db->get_results($sql);
+		
+		$h->smartCache('off');   // stop using cache 
+                
+                return $pluginNames;
+        }
+        
 	
 	/**
 	 * Store all plugin details for ALL PLUGINS info in memory. This is a single query
