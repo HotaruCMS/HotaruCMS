@@ -182,7 +182,7 @@ class PageHandling
 	 * @param bool $raw -return the title only
 	 * @return string - the title
 	 */
-	public function getTitle($h, $delimiter = ' &laquo; ', $raw = false)
+	public function getTitle($h, $delimiter = ' | ', $raw = false)
 	{
 		// if the title is already set...
 		if ($h->pageTitle)
