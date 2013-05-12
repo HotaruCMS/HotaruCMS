@@ -49,8 +49,12 @@ class PluginManagement
 					// get details from memory if we have them..
 					$plugin_row = $h->readPlugin($plugin_details['folder']);
 				} else {
-					$sql = "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
-					$plugin_row = $h->db->get_row($h->db->prepare($sql, $plugin_details['folder']));
+                                        if (defined('PHP_VERSION_ID') && PHP_VERSION_ID < 50300) {  
+                                            $sql = "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
+                                            $plugin_row = $h->db->get_row($h->db->prepare($sql, $plugin_details['folder']));
+                                        } else {
+                                            $plugin_row = models\Plugins::first(array('conditions'=>array('plugin_folder = ?', $plugin_details['folder'])));
+                                        }
 				}
 				
 				if ($plugin_row) 
@@ -258,6 +262,8 @@ class PluginManagement
 		
 		// Clear the language cache to ensure any new language files get included
 		$h->clearCache('lang_cache', false);
+                
+                $h->messages['db, css, language caches cleared'] = 'alert-info'; 
 		
 		// Read meta from the top of the plugin file
 		$plugin_metadata = $this->readPluginMeta($h->plugin->folder);
@@ -426,6 +432,8 @@ class PluginManagement
 		
 		// Clear the language cache to ensure any new language files get included
 		$h->clearCache('lang_cache', false);
+                
+                $h->messages['db, css, language caches cleared'] = 'alert-info'; 
 		
 		$h->db->query("TRUNCATE TABLE " . TABLE_PLUGINS);
 		$h->db->query("TRUNCATE TABLE " . TABLE_PLUGINHOOKS);
@@ -449,6 +457,8 @@ class PluginManagement
 		
 		// Clear the language cache to ensure any new language files get included
 		$h->clearCache('lang_cache', false);
+                
+                $h->messages['db, css, language caches cleared'] = 'alert-info'; 
 		
 		if ($upgrade == 0) { // don't delete plugin when we're upgrading
 			$h->db->query($h->db->prepare("DELETE FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $h->plugin->folder));
@@ -584,6 +594,8 @@ class PluginManagement
 		
 		// Clear the css/js cache to ensure any new ones get included
 		$h->deleteFiles(CACHE . 'css_js_cache');
+                
+                $h->messages['db, css caches cleared'] = 'alert-info'; 
 		
 		// Get the enabled status for this plugin...
 		$plugin_row = $h->db->get_row($h->db->prepare("SELECT plugin_folder, plugin_enabled FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $h->plugin->folder));
