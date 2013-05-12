@@ -63,7 +63,7 @@ Troubleshooting
 If you're having trouble installing Hotaru, please post your questions with as much detail as possible [in the forums][4]. Thanks.
 
 
-  [1]: http://hotarudocs.com/Getting_Started#Installing_and_Upgrading
-  [2]: http://hotarudocs.com/File_Organization
+  [1]: http://docs.hotarucms.org/index.php/Getting_Started#Installing_and_Upgrading
+  [2]: http://docs.hotarucms.org/index.php/File_Organization
   [3]: http://forums.hotarucms.org/forumdisplay.php?18-Plugin-Downloads
   [4]: http://forums.hotarucms.org/forum.php
