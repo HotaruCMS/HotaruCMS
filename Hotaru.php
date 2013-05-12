@@ -441,7 +441,7 @@ class Hotaru
 	/**
 	 * Build breadcrumbs
 	 */
-	public function breadcrumbs($sep = "&raquo;")
+	public function breadcrumbs($sep = "/")  //&raquo;
 	{
 		$breadcrumbs = new Breadcrumbs();
 		return $breadcrumbs->buildBreadcrumbs($this, $sep);
