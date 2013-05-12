@@ -427,11 +427,11 @@ class Post
                     $sql = "SELECT COUNT(*) FROM " . TABLE_POSTS . " WHERE (post_status = %s || post_status = %s) AND post_author = %d AND post_type = %s";
                     $count = $h->db->get_var($h->db->prepare($sql, 'top', 'new', $user_id, $post_type));
                 } else {                                 
-                    $count = Posts::count(array(
-                        'conditions' => array('post_status = ? OR post_status = ?) AND post_author = ? AND post_type = ?', 'top', 'new', $user_id, $post_type))
+                    $count = models\Posts::count(array(
+                        'conditions' => array('(post_status = ? OR post_status = ?) AND post_author = ? AND post_type = ?', 'top', 'new', $user_id, $post_type))
                      );;
                 }
-                
+                 
 		return $count;	
 	}
 	
