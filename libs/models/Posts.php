@@ -5,7 +5,7 @@ namespace models;
 class Posts extends \ActiveRecord\Model
 {
         # explicit table name since our table is not "books" 
-        static $table_name =  'hotaru_posts';
+        static $table_name =  TABLE_POSTS;
 
         # explicit pk since our pk is not "id" 
         static $primary_key = 'post_id';

@@ -124,24 +124,27 @@ class Post
 	 */    
 	public function getPost($h, $post_id = 0)
 	{
-		// Build SQL
-		//$query = "SELECT * FROM " . TABLE_POSTS . " WHERE post_id = %d ORDER BY post_date DESC";
-		//$sql = $h->db->prepare($query, $post_id);
-                
-                $post = models\Posts::find_by_pk($post_id, null);
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {
+                    // Build SQL
+                    $query = "SELECT * FROM " . TABLE_POSTS . " WHERE post_id = %d ORDER BY post_date DESC";
+                    $sql = $h->db->prepare($query, $post_id);                                
 
-		// Create temp cache array
-//		if (!isset($h->vars['tempPostCache'])) { $h->vars['tempPostCache'] = array(); }
-//		
-//		// If this query has already been read once this page load, we should have it in memory...
-//		if (array_key_exists($sql, $h->vars['tempPostCache'])) {
-//			// Fetch from memory
-//			$post = $h->vars['tempPostCache'][$sql];
-//		} else {
-//			// Fetch from database
-//			$post = $h->db->get_row($sql);
-//			$h->vars['tempPostCache'][$sql] = $post;
-//		}
+                    // Create temp cache array
+                    if (!isset($h->vars['tempPostCache'])) { $h->vars['tempPostCache'] = array(); }
+
+                    // If this query has already been read once this page load, we should have it in memory...
+                    if (array_key_exists($sql, $h->vars['tempPostCache'])) {
+                            // Fetch from memory
+                            $post = $h->vars['tempPostCache'][$sql];
+                    } else {
+                            // Fetch from database
+                            $post = $h->db->get_row($sql);
+                            $h->vars['tempPostCache'][$sql] = $post;
+                    }
+                } else {
+                    $post = models\Posts::find_by_post_id($post_id);
+                    // note we dont use models\Posts::($post_id); because it will throw an error if record not foound
+                }
 		
 		if ($post) { return $post; } else { return false; }
 	}
@@ -252,9 +255,15 @@ class Post
 	{
 		if (!$user_id) { return false; }
 		
-		$sql = "SELECT post_id FROM " . TABLE_POSTS. " WHERE post_author = %d";
-		$results = $h->db->get_results($h->db->prepare($sql, $user_id));
-		
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {
+                    $sql = "SELECT post_id FROM " . TABLE_POSTS. " WHERE post_author = %d";
+                    $results = $h->db->get_results($h->db->prepare($sql, $user_id));
+                } else {
+                    $results = models\Posts::all(array(
+                        'conditions' => array('post_author = ?', $user_id)
+                     ));
+                }
+				
 		if ($results) {
 			foreach ($results as $r) {
 				$h->post->id = $r->post_id; // used by other plugins in "post_delete_post" function/hook
@@ -297,8 +306,15 @@ class Post
 	 */    
 	public function urlExists($h, $url = '')
 	{
-		$sql = "SELECT post_id, post_status FROM " . TABLE_POSTS . " WHERE post_orig_url = %s";
-		$posts = $h->db->get_results($h->db->prepare($sql, urlencode($url)));
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {
+                    $sql = "SELECT post_id, post_status FROM " . TABLE_POSTS . " WHERE post_orig_url = %s";
+                    $posts = $h->db->get_results($h->db->prepare($sql, urlencode($url)));
+                } else {
+                    $posts = models\Posts::all(array(
+                        'select' => 'post_id, post_status',
+                        'conditions' => array('post_orig_url = ?', urlencode($url))
+                        ));
+                }                		
 		
 		if (!$posts) { return false; }
 		
@@ -311,9 +327,15 @@ class Post
 		}
 		
 		// One last check to see if a post is present:
-		$sql = "SELECT * FROM " . TABLE_POSTS . " WHERE post_orig_url = %s LIMIT 1";
-		$post = $h->db->get_row($h->db->prepare($sql, urlencode($url)));
-		
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {
+                    $sql = "SELECT * FROM " . TABLE_POSTS . " WHERE post_orig_url = %s LIMIT 1";
+                    $post = $h->db->get_row($h->db->prepare($sql, urlencode($url)));
+                } else {
+                    $post = models\Posts::first(array(                        
+                        'conditions' => array('post_orig_url = ?', urlencode($url))
+                     ));
+                }  
+				
 		// if present return the first existing row
 		if ($post) { return $post; } else { return false; }
 	}
@@ -331,8 +353,15 @@ class Post
 
 		if (!$title) { return FALSE; }
 
-		$sql = "SELECT post_id, post_status FROM " . TABLE_POSTS . " WHERE post_title = %s";
-		$posts = $h->db->get_results($h->db->prepare($sql, urlencode($title)));
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {
+                    $sql = "SELECT post_id, post_status FROM " . TABLE_POSTS . " WHERE post_title = %s";
+                    $posts = $h->db->get_results($h->db->prepare($sql, urlencode($title)));
+                } else {
+                    $posts = models\Posts::all(array(
+                        'select' => 'post_id, post_status',
+                        'conditions' => array('post_title = ?', urlencode($title))
+                    ));
+                } 		
 		
 		if (!$posts) { return false; }
 		
@@ -345,8 +374,16 @@ class Post
 		}
 		
 		// One last check to see if a post is present:
-		$sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_title = %s LIMIT 1";
-		$post_id = $h->db->get_var($h->db->prepare($sql, urlencode($title)));
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {
+                    $sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_title = %s LIMIT 1";
+                    $post_id = $h->db->get_var($h->db->prepare($sql, urlencode($title)));
+                } else {
+                    $post = models\Posts::first(array( 
+                        'select' => 'post_id',
+                        'conditions' => array('post_title = ?', urlencode($title))
+                    ));
+                    if (isset($post->post_id)) $post_id = $post->post_id; else return false;
+                } 		
 		
 		if ($post_id) { return $post_id; } else { return false; }
 	}
@@ -360,8 +397,17 @@ class Post
 	 */
 	public function isPostUrl($h, $post_url = '')
 	{
-		$sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_url = %s LIMIT 1";
-		$post_id = $h->db->get_var($h->db->prepare($sql, urlencode($post_url)));
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {
+                    $sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_url = %s LIMIT 1";
+                    $post_id = $h->db->get_var($h->db->prepare($sql, urlencode($post_url)));
+                } else {
+                    $post = models\Posts::first(array( 
+                        'select' => 'post_id',
+                        'conditions' => array('post_url = ?', urlencode($post_url))
+                      ));
+                    if (isset($post->post_id)) $post_id = $post->post_id; else return false;
+                }
+                
 		if ($post_id) { return $post_id; } else { return false; }
 	}
 	
@@ -377,11 +423,16 @@ class Post
 	{
 		if (!$user_id) { $user_id = $h->currentUser->id; }
 		
-		$sql = "SELECT COUNT(*) FROM " . TABLE_POSTS . " WHERE (post_status = %s || post_status = %s) AND post_author = %d AND post_type = %s";
-		$count = $h->db->get_var($h->db->prepare($sql, 'top', 'new', $user_id, $post_type));
-		
-		return $count;
-		
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {
+                    $sql = "SELECT COUNT(*) FROM " . TABLE_POSTS . " WHERE (post_status = %s || post_status = %s) AND post_author = %d AND post_type = %s";
+                    $count = $h->db->get_var($h->db->prepare($sql, 'top', 'new', $user_id, $post_type));
+                } else {                                 
+                    $count = Posts::count(array(
+                        'conditions' => array('post_status = ? OR post_status = ?) AND post_author = ? AND post_type = ?', 'top', 'new', $user_id, $post_type))
+                     );;
+                }
+                
+		return $count;	
 	}
 	
 	

@@ -42,14 +42,16 @@ class VoteFunctions
 			/*  include user_id = 0 since if registered user votes after anon at same ip, 
 				we dont want to delete both votes later if anon user unvotes*/
 			$user_id = 0;
-
-                        $voted = models\Postvotes::find('first', array(
-                            'conditions' => array('vote_post_id=? and vote_user_id=? and vote_user_ip=? and vote_rating != ?',
-                                $post_id, $user_id, $ip, -999)
+                                                        
+                        if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {
+                            $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_user_ip = %s AND vote_rating != %d LIMIT 1";
+                            $voted = $h->db->get_var($h->db->prepare($sql, $post_id, $user_id, $ip, -999)); // exclude flags                            
+                        } else {
+                            $voted = models\Postvotes::find('first', array(
+                                'select' => 'vote_rating',
+                                'conditions' => array('vote_post_id=? and vote_user_id=? and vote_user_ip=? and vote_rating != ?', $post_id, $user_id, $ip, -999)
                             ));
-                                
-			//$sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_user_ip = %s AND vote_rating != %d LIMIT 1";
-			//$voted = $h->db->get_var($h->db->prepare($sql, $post_id, $user_id, $ip, -999)); // exclude flags
+                        }
 		}
 		else 
 		{
@@ -57,13 +59,16 @@ class VoteFunctions
 			if (!$h->currentUser->loggedIn) { return FALSE; }
 			if (!$user_id) { $user_id = $h->currentUser->id; }
 		
-			// get vote history for this post:
-                        $voted = models\Postvotes::find('first', array(
-                            'conditions' => array('vote_post_id=? and vote_user_id=? and and vote_rating != ?',
-                                $post_id, $user_id, -999)
+			// get vote history for this post:                        
+                        if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {
+                            $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating != %d LIMIT 1";
+                            $voted = $h->db->get_var($h->db->prepare($sql, $post_id, $user_id, -999)); // exclude flags
+                        } else {
+                            $voted = models\Postvotes::find('first', array(
+                                'select' => 'vote_rating',
+                                'conditions' => array('vote_post_id=? and vote_user_id=? and and vote_rating != ?', $post_id, $user_id, -999)
                             ));
-			//$sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating != %d LIMIT 1";
-			//$voted = $h->db->get_var($h->db->prepare($sql, $post_id, $user_id, -999)); // exclude flags
+                        }    
 		}
 
 		return ($voted) ? $voted : FALSE;
@@ -80,9 +85,15 @@ class VoteFunctions
 	{
 		if (!$post_id) { return FALSE; }
 
-                $info = models\Postvotes::find('first', array('conditions' => array('vote_post_id=?', $post_id)));
-//		$sql = "SELECT post_votes_up, post_votes_down, post_status, post_date FROM " . TABLE_POSTS . " WHERE post_id = %d LIMIT 1";
-//		$info = $h->db->get_row($h->db->prepare($sql, $post_id));
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {
+                    $sql = "SELECT post_votes_up, post_votes_down, post_status, post_date FROM " . TABLE_POSTS . " WHERE post_id = %d LIMIT 1";
+                    $info = $h->db->get_row($h->db->prepare($sql, $post_id));
+                } else {
+                    $info = models\Postvotes::find('first', array(
+                        'select' => 'post_votes_up, post_votes_down, post_status, post_date',
+                        'conditions' => array('vote_post_id=?', $post_id)
+                     ));                
+                }
 
 		return ($info) ? $info : FALSE;
 	}
@@ -221,9 +232,12 @@ class VoteFunctions
 				$vote_rating = -999;
 		}
 
-                $votes = models\Postvotes::count_by_vote_user_id_and_rating($user_id, $vote_rating);
-//		$sql = "SELECT count(vote_rating) FROM " . TABLE_POSTVOTES . " WHERE vote_user_id = %d AND " . $rating;
-//		$votes = $h->db->get_var($h->db->prepare($sql, $user_id, $vote_rating));
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {
+                    $sql = "SELECT count(vote_rating) FROM " . TABLE_POSTVOTES . " WHERE vote_user_id = %d AND " . $rating;
+                    $votes = $h->db->get_var($h->db->prepare($sql, $user_id, $vote_rating));
+                } else {
+                    $votes = models\Postvotes::count_by_vote_user_id_and_rating($user_id, $vote_rating);
+                }                		
 
 		return ($votes) ? $votes : FALSE;
 	}

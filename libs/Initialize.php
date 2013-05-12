@@ -252,11 +252,14 @@ class Initialize
 	 * 
 	 * @return <bool>
 	 */
-	public function readSettings() {
-	    $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;
-	    $settings = $this->db->get_results($this->db->prepare($sql));
+	public function readSettings() {	    
             
-            $settings = models\Settings::all();
+            if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {
+                $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;
+                $settings = $this->db->get_results($this->db->prepare($sql));                
+            } else {
+                $settings = models\Settings::all(array('select' => 'settings_name, settings_value'));
+            }
 
 	    if(!$settings) { return false; }
 
