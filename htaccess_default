@@ -12,6 +12,10 @@ RewriteBase /
 RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
 RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
 
+<IfModule mod_headers.c>
+Header set Connection keep-alive
+</IfModule>
+
 ################################################
 ##### DON'T EDIT ANYTHING BELOW THIS POINT #####
 ################################################
