@@ -43,7 +43,7 @@ class VoteFunctions
 				we dont want to delete both votes later if anon user unvotes*/
 			$user_id = 0;
                                                         
-                        if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {
+                        if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $h->ar == false) {
                             $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_user_ip = %s AND vote_rating != %d LIMIT 1";
                             $voted = $h->db->get_var($h->db->prepare($sql, $post_id, $user_id, $ip, -999)); // exclude flags                            
                         } else {
@@ -60,7 +60,7 @@ class VoteFunctions
 			if (!$user_id) { $user_id = $h->currentUser->id; }
 		
 			// get vote history for this post:                        
-                        if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {
+                        if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $h->ar == false) {
                             $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating != %d LIMIT 1";
                             $voted = $h->db->get_var($h->db->prepare($sql, $post_id, $user_id, -999)); // exclude flags
                         } else {
@@ -85,7 +85,7 @@ class VoteFunctions
 	{
 		if (!$post_id) { return FALSE; }
 
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $h->ar == false) {
                     $sql = "SELECT post_votes_up, post_votes_down, post_status, post_date FROM " . TABLE_POSTS . " WHERE post_id = %d LIMIT 1";
                     $info = $h->db->get_row($h->db->prepare($sql, $post_id));
                 } else {
@@ -232,7 +232,7 @@ class VoteFunctions
 				$vote_rating = -999;
 		}
 
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $h->ar == false) {
                     $sql = "SELECT count(vote_rating) FROM " . TABLE_POSTVOTES . " WHERE vote_user_id = %d AND " . $rating;
                     $votes = $h->db->get_var($h->db->prepare($sql, $user_id, $vote_rating));
                 } else {

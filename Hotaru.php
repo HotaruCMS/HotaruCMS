@@ -63,7 +63,8 @@ class Hotaru
 	protected $messages             = array();  // for multiple messages
 	
 	// miscellaneous
-	protected $vars                 = array();  // multi-purpose	
+	protected $vars                 = array();  // multi-purpose
+        protected $ar                   = false;     // quick test indicator for activerecord usage
     
 	/**
 	 * CONSTRUCTOR - Initialize
@@ -880,7 +881,7 @@ class Hotaru
 	public function numActivePlugins()
 	{
 		$pluginFunctions = new PluginFunctions();
-		return $pluginFunctions->numActivePlugins($this->db);
+		return $pluginFunctions->numActivePlugins($this);
 	}
 	
 	
