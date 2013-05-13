@@ -33,9 +33,7 @@ $h->includeThemeLanguage('admin');
 // plugin hook
 $result = $h->pluginHook('admin_theme_index_top');
 if (!$result) {
-?>
 
-<?php
 	// plugin hook
 	$result = $h->pluginHook('admin_theme_index_header');
 	if (!$result) {

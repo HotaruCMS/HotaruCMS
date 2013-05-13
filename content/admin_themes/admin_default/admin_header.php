@@ -27,20 +27,17 @@
  */
 
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
- "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
-	<meta http-equiv=Content-Type content="text/html; charset=UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<?php header('Content-type: text/html; charset=utf-8'); ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
+<head profile="http://gmpg.org/xfn/11">
+
+        <title><?php echo $h->getTitle(); ?></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
         
-	<title><?php echo $h->getTitle(); ?></title>
-	               
         <!-- Bootstrap -->
         <?php $h->getFramework(); ?>	
         
-        <!--<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>-->
-
         <!-- Theme -->
         <!-- Include merged files for all the plugin css and javascript (if any) -->
 	<?php $h->getThemeCss('admin'); ?>
@@ -54,6 +51,7 @@
 	<?php $h->pluginHook('admin_header_include_raw'); ?>
 
 </head>
+
 <body>
 
     <div id="wrap">
