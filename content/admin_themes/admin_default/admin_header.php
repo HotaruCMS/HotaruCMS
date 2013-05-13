@@ -37,7 +37,7 @@
 	<title><?php echo $h->getTitle(); ?></title>
 	               
         <!-- Bootstrap -->
-        <?php $h->getBootstrap(); ?>	
+        <?php $h->getFramework(); ?>	
         
         <!--<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>-->
 
@@ -47,7 +47,7 @@
 	
 	<!-- include this CSS last so it gets priority -->
         <!-- Bootstrap Responsive -->
-        <?php $h->getBootstrap('responsive'); ?>
+        <?php $h->getFramework('bootstrap-responsive'); ?>
 
         <!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico"> -->
 	

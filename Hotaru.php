@@ -1133,7 +1133,7 @@ class Hotaru
 	 public function doIncludes()
 	 {                
                 echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';             
-                $this->getBootstrap('lite');
+                $this->getFramework('bootstrap-lite');
                 
                 $version_js = $this->includes->combineIncludes($this, 'js');
 		$version_css = $this->includes->combineIncludes($this, 'css');
@@ -1195,7 +1195,7 @@ class Hotaru
                     echo '<link rel="stylesheet" href="' . SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css" type="text/css" />';         
              } else {
                     echo '<link rel="stylesheet" href="' . SITEURL . 'content/themes/' . THEME . 'css/style.css" type="text/css" />';
-                    $this->getBootstrap('lite');
+                    $this->getFramework('bootstrap-lite');
              }
              
              $version_css = $this->includes->combineIncludes($this, 'css');
@@ -1213,7 +1213,7 @@ class Hotaru
          }
 
          
-         public function getBootstrap($file = 'bootstrap')
+         public function getFramework($file = 'bootstrap')
 	 {
                 //js files first
                 $this->includeJs(LIBS . 'frameworks/bootstrap/', 'bootstrap.min'); 
@@ -1223,7 +1223,7 @@ class Hotaru
                     case 'bootstrap':
                         $this->includeCss(LIBS . 'frameworks/bootstrap', 'bootstrap.min'); 
                          break;
-                    case 'lite':          
+                    case 'bootstrap-lite':          
                         // don't load the lite version if we already have the main
                         $exists = false;
                         foreach ($this->includes->getCssIncludes() as $filename) {                         
@@ -1234,7 +1234,7 @@ class Hotaru
                         }
                         if (!$exists) $this->includeCss(LIBS . 'frameworks/bootstrap', 'bootstrap-lite.min');                    
                         break;
-                    case 'responsive':
+                    case 'bootstrap-responsive':
                        $this->includeCss(LIBS . 'frameworks/bootstrap', 'bootstrap-responsive.min'); 
                         break;
                     default:

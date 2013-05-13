@@ -46,7 +46,7 @@
                         
 	
         <!-- Bootstrap -->
-        <?php $h->getBootstrap(); ?>	
+        <?php $h->getFramework(); ?>	
         
         <!-- Theme CSS from stlye.css in folder for theme -->
         <!-- Include merged files for all the plugin css and javascript (if any) -->
@@ -55,7 +55,7 @@
 	
         <!-- include this CSS last so it gets priority -->
         <!-- Bootstrap Responsive - only include when required -->
-        <?php $h->getBootstrap('responsive'); ?>
+        <?php $h->getFramework('bootstrap-responsive'); ?>
         
         <!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico" /> -->
 	
