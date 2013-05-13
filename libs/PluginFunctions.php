@@ -183,10 +183,10 @@ class PluginFunctions
 	 *
 	 * @return int|false
 	 */
-	public function numActivePlugins($db)
+	public function numActivePlugins($h)
 	{
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {
-                    $enabled = $db->get_var($db->prepare("SELECT count(*) FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d", 1));   
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $h->ar == false) {
+                    $enabled = $h->db->get_var($h->db->prepare("SELECT count(*) FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d", 1));   
                 } else {
                     $enabled = models\Plugins::count_by_plugin_enabled(1);
                 }
@@ -320,7 +320,7 @@ class PluginFunctions
          */
         public static function getAllActivePluginNames($h)
 	{
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $h->ar == false) {
                     $sql = "SELECT plugin_name, plugin_folder FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = 1 ORDER BY plugin_name ASC";
                     $h->smartCache('on', 'plugins', $h->db->cache_timeout, $sql); // start using cache
                     $pluginNames = $h->db->get_results($sql);
@@ -344,7 +344,7 @@ class PluginFunctions
 	 */
 	public static function getAllPluginDetails($h)
 	{
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {           
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $h->ar == false) {           
                     $sql = "SELECT * FROM " . TABLE_PLUGINS . " ORDER BY plugin_order ASC";
                     $h->smartCache('on', 'plugins', $h->db->cache_timeout, $sql); // start using cache
                     $h->allPluginDetails = $h->db->get_results($sql);
@@ -370,7 +370,7 @@ class PluginFunctions
 	 */
 	public function isActive($h, $type = '')
 	{
-                if (defined('PHP_VERSION_ID') && PHP_VERSION_ID < 50300) {                       
+                if (defined('PHP_VERSION_ID') && PHP_VERSION_ID < 50300 || $h->ar == false) {                       
                     // first see if there's an active plugin with this *type*:
                     if ($type) {                                                 
                         $sql = "SELECT count(plugin_enabled) FROM " . TABLE_PLUGINS . " WHERE plugin_type = %s";
@@ -413,7 +413,7 @@ class PluginFunctions
 		if (!$folder) { $folder = $h->plugin->folder; }
 		
 		if (!isset($h->vars['all_plugin_hooks'])) {
-                    if (defined('PHP_VERSION_ID') && PHP_VERSION_ID < 50300) {  
+                    if (defined('PHP_VERSION_ID') && PHP_VERSION_ID < 50300 || $h->ar == false) {  
                         $sql = "SELECT plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_hook = %s";
 			$h->vars['all_plugin_hooks'] = $h->db->get_results($h->db->prepare($sql, 'admin_plugin_settings'));		
                     } else {

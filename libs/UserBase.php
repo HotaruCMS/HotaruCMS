@@ -124,7 +124,7 @@ class UserBase
 	 */    
 	public function getUserBasic($h, $userid = 0, $username = '', $no_cache = false)
 	{
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $h->ar == false) {
                 
                     // Prepare SQL
                     if ($userid != 0){              

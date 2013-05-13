@@ -28,7 +28,7 @@ class Initialize
 	protected $db;                          // database object
 	protected $cage;                        // Inspekt object
 	protected $isDebug          = false;    // show db queries and page loading time
-	
+	protected $ar               = false;
 	
 	/**
 	 * Initialize Hotaru with the essentials
@@ -173,7 +173,10 @@ class Initialize
                 require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
                 require_once(LIBS       . 'InspektExtras.php'); // sanitation
                 
-                require_once(EXTENSIONS . 'php-activerecord/ActiveRecord.php'); // database
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $this->ar == false)
+                { } else {
+                    require_once(EXTENSIONS . 'php-activerecord/ActiveRecord.php'); // database
+                }
                 //require_once('Log.php'); // PEAR function
                 
 		require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
@@ -197,7 +200,7 @@ class Initialize
 	public function initDatabase()
 	{                       
 
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300)
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $this->ar == false)
                 {
                     // leave ezSql for these people ?                    
                 } else {
@@ -220,6 +223,33 @@ class Initialize
                     });   
                                        
                 }
+                
+                
+////memcached simple test
+//$memcache = new Memcache;
+//$memcache->connect('localhost', 11211) or die ("Could not connect");
+//$version = $memcache->getVersion();  
+//echo 'Version: '.$version . '<br/>'; 
+//
+//$key = md5('42data');  //something unique
+//for ($k=0; $k<5; $k++) {
+//    $data = $memcache->get($key);
+//    if ($data == NULL) {
+//        $data = array();
+//        //generate an array of random shit
+//        echo "expensive query";
+//        for ($i=0; $i<100; $i++) {
+//            for ($j=0; $j<10; $j++) {
+//                $data[$i][$j] = 42;  //who cares
+//                }
+//            }
+//            $memcache->set($key,$data,0,3600);
+//        } else {
+//    echo "cached : array size = ";
+//    print count($data);
+//    print "<br/>";
+//    }
+//}
                 
                 
                 
@@ -273,7 +303,7 @@ class Initialize
 	 */
 	public function readSettings() {	    
             
-            if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300) {
+            if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $this->ar == false) {
                 $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;
                 $settings = $this->db->get_results($this->db->prepare($sql));                
             } else {
