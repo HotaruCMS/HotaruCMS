@@ -39,14 +39,15 @@ if ($plugins) {
 	//post_content
     }
 } else {
-    if ($tags) {
+    if (isset($tags)) {
    //var_dump($tags);
-     foreach ($tags as $tag) {	
-	echo "<div class='plugin_col'><a href=''>" . urldecode($tag['tags_word']) . "</a> " . urldecode($tag['CNT']) . "</div>";
-	//post_content
+        foreach ($tags as $tag) {	
+            echo "<div class='plugin_col'><a href=''>" . urldecode($tag['tags_word']) . "</a> " . urldecode($tag['CNT']) . "</div>";
+            //post_content
+        }
+    } else {
+        echo "no plugins found for that search";
     }
-    }
-    //echo "no plugins found for that search";
 }
 
 
