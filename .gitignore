@@ -1,2 +1,9 @@
 # Ignore Settings
 config/settings.php
+*.properties
+
+nbproject/private/private.xml
+
+nbproject/project.xml
+
+.htaccess
