@@ -1191,6 +1191,9 @@ class Hotaru
          
          public function getThemeCss($type = '')
 	 {
+             // bringing this up-top because some inline js on plugins needs to have jquery loaded first to work
+             echo '<script type="text/javascript" defer async src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
+             
              if ($type == 'admin') {
                     echo '<link rel="stylesheet" href="' . SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css" type="text/css" />';         
              } else {
@@ -1206,7 +1209,6 @@ class Hotaru
          
          public function getThemeJs()
 	 {
-             echo '<script type="text/javascript" defer async src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
              $version_js = $this->includes->combineIncludes($this, 'js');
              
              $this->includes->includeCombined($this, $version_js, 0, $this->isAdmin); 
