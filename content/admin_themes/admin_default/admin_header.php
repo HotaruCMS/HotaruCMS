@@ -35,23 +35,21 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
         
 	<title><?php echo $h->getTitle(); ?></title>
-	
-        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
-	
+	               
+        <!-- Bootstrap -->
+        <?php $h->getBootstrap(); ?>	
         
-	<!-- Include merged files for all the plugin css and javascript (if any) -->
-	<?php $h->doIncludes(); ?>
-	<!-- End -->
+        <!--<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>-->
+
+        <!-- Theme -->
+        <!-- Include merged files for all the plugin css and javascript (if any) -->
+	<?php $h->getThemeCss('admin'); ?>
 	
-        
-        <link rel="stylesheet" href="<?php echo SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/bootstrap.min.css'; ?>" type="text/css">
-	
-        <link rel="stylesheet" href="<?php echo SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css'; ?>" type="text/css">
-	
-        
-	<link rel="stylesheet" href="<?php echo SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/bootstrap-responsive.min.css'; ?>" type="text/css">
-	<!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico"> -->
+	<!-- include this CSS last so it gets priority -->
+        <!-- Bootstrap Responsive -->
+        <?php $h->getBootstrap('responsive'); ?>
+
+        <!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico"> -->
 	
 	<?php $h->pluginHook('admin_header_include_raw'); ?>
 

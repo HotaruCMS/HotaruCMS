@@ -43,23 +43,20 @@
                         <meta name="description" content="<?php echo $h->lang['header_meta_description']; ?>" />
                         <meta name="keywords" content="<?php echo $h->lang['header_meta_keywords']; ?>" />
         <?php } ?>
-	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+                        
 	
-	<!-- include CSS framework -->
-	<?php $css = SITEURL . "content/themes/" . THEME . "css/"; ?>
         <!-- Bootstrap -->
-	<link rel="stylesheet" href="<?php echo $css; ?>bootstrap/bootstrap.min.css" type="text/css" />
-        <!-- Theme -->
-	<link rel="stylesheet" href="<?php echo $css; ?>style.css" type="text/css" />
-	
-	<!-- Include merged files for all the plugin css and javascript (if any) -->
-	<?php $h->doIncludes(); ?>
-	<!-- End -->
+        <?php $h->getBootstrap(); ?>	
+        
+        <!-- Theme CSS from stlye.css in folder for theme -->
+        <!-- Include merged files for all the plugin css and javascript (if any) -->
+        <!-- Will also include Jquery as standard -->
+        <?php $h->getThemeCss(); ?>			
 	
         <!-- include this CSS last so it gets priority -->
-        <!-- Bootstrap Responsive -->
-        <link rel="stylesheet" href="<?php echo $css; ?>bootstrap/bootstrap-responsive.min.css" type="text/css" />
-	
+        <!-- Bootstrap Responsive - only include when required -->
+        <?php $h->getBootstrap('responsive'); ?>
+        
         <!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico" /> -->
 	
 	<?php $h->pluginHook('header_include_raw'); ?>
