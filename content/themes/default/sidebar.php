@@ -27,9 +27,11 @@
  */
 
 ?>
-<div class="well sidebar-nav">
-        <center><a href="http://ipadrank.com/submit/"><div class="btn btn-success">Submit New Content</div></a></center>
+<?php if ($h->isActive('submit')) { ?>
+<div class="well sidebar-nav">    
+        <center><a href="<?php echo $h->url(array('page'=>'submit'));?>"><div class="btn btn-success"><?php echo $h->lang['submit_submit_a_story']; ?></div></a></center>
 </div>
+<?php } ?>
 
 <div class="well sidebar-nav">
     <div id="sidebar">               
