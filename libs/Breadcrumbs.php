@@ -80,7 +80,7 @@ class Breadcrumbs
 			$url_array[$k] = $v;
 		}
 		$rss = "<a href='" . $h->url($url_array) . "'>";
-		$rss .= " <img src='" . SITEURL . "content/themes/" . THEME . "images/rss_10.png' alt='" . $h->pageTitle . " RSS' /></a>";
+		$rss .= " <img src='" . SITEURL . "content/themes/" . THEME . "images/rss_10.png' width='10' height='10' alt='" . $h->pageTitle . " RSS' /></a>";
 		return $rss;
 	}
 }
