@@ -63,7 +63,7 @@
                         if ($h->isActive('base')) { ?>
                             <li>
                                 <a href="<?php echo $h->url(array('page'=>'rss')); ?>">RSS 
-                                        <img src="<?php echo SITEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png" alt="RSS" />
+                                        <img src="<?php echo SITEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png" width="16" height="16" alt="RSS" />
                                 </a>
                             </li>
                         <?php } ?>
