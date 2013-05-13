@@ -171,7 +171,7 @@ class Initialize
 		require_once(EXTENSIONS . 'csrf/csrf_class.php'); // protection against CSRF attacks
 		
                 require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
-                require_once(LIBS . 'InspektExtras.php'); // sanitation
+                require_once(LIBS       . 'InspektExtras.php'); // sanitation
                 
                 require_once(EXTENSIONS . 'php-activerecord/ActiveRecord.php'); // database
                 //require_once('Log.php'); // PEAR function
@@ -199,22 +199,40 @@ class Initialize
 
                 if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300)
                 {
-                 // leave ezSql for these people ?
+                    // leave ezSql for these people ?                    
+                } else {
+                    ActiveRecord\Config::initialize(function($cfg)
+                    {
+                        $cfg->set_model_directory(LIBS);
+                        $cfg->set_connections(array('development' => 'mysql://' . DB_USER .':' . DB_PASSWORD . '@' . DB_HOST . '/' . DB_NAME . ';charset=utf8'));
+                        
+                        if(class_exists('Memcache')){
+                            // Memcache is enabled.
+                            $cfg->set_cache("memcache://localhost",array("expire" => 60));
+                        }
+
+                        //if ($h->isDebug) {
+    //                        $logger = Log::singleton('file', CACHE . '/debug_logs/phpar.log','ident',array('mode' => 0664, 'timeFormat' =>  '%Y-%m-%d %H:%M:%S'));
+    //                        $cfg->set_logging(true);
+    //                        $cfg->set_logger($logger); 
+                        //}
+
+                    });   
+                                       
                 }
                 
-                ActiveRecord\Config::initialize(function($cfg)
-                {
-                    $cfg->set_model_directory(LIBS);
-                    $cfg->set_connections(array('development' => 'mysql://' . DB_USER .':' . DB_PASSWORD . '@' . DB_HOST . '/' . DB_NAME . ';charset=utf8'));
-                    //$cfg->set_cache("memcache://localhost",array("expire" => 60));
-                    
-                    //if ($h->isDebug) {
-//                        $logger = Log::singleton('file', CACHE . '/debug_logs/phpar.log','ident',array('mode' => 0664, 'timeFormat' =>  '%Y-%m-%d %H:%M:%S'));
-//                        $cfg->set_logging(true);
-//                        $cfg->set_logger($logger); 
-                    //}
-                    
-                });          
+                
+                
+                //$memcache = new Memcache;  
+//$memcache->connect('localhost', 11211) or die ("Connexion impossible");  
+//$version = $memcache->getVersion();  
+//echo 'Version: '.$version;  
+//$memcache->set('key', 'koreus', false, 10) or die ("Echec de la sauvegarde des donnÃ© sur le serveur");  
+//echo "Les donnÃ© ont Ã© stockÃ© dans le cache (les donnÃ© expireront dans 10 secondes)";   
+//$get_result = $memcache->get('key');  
+//echo 'DonnÃ© depuis le cache : '. $get_result;
+                
+                
                 
                 // TODO : remove ezSQL when activeRecord is fully working with all plugins
                 $ezSQL = new Database(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
