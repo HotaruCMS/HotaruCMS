@@ -1130,10 +1130,13 @@ class Hotaru
 	 * Do Includes (called from template header.php)
 	 */
 	 public function doIncludes()
-	 {
-		$version_js = $this->includes->combineIncludes($this, 'js');
+	 {                
+                echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';             
+                $this->getBootstrap('lite');
+                
+                $version_js = $this->includes->combineIncludes($this, 'js');
 		$version_css = $this->includes->combineIncludes($this, 'css');
-		$this->includes->includeCombined($this, $version_js, $version_css, $this->isAdmin);
+		$this->includes->includeCombined($this, $version_js, $version_css, $this->isAdmin);                               
 	 }
 	 
 	 
@@ -1165,7 +1168,7 @@ class Hotaru
 	 * Include individual CSS files, not merged into the CSS archive
 	 *
 	 * @param $files- array of files to include (no extensions)
-	 * @param $folder - optional pluin folder
+	 * @param $folder - optional plugin folder
 	 */
 	 public function includeOnceCss($files = array(), $folder = '')
 	 {
@@ -1177,12 +1180,67 @@ class Hotaru
 	 * Include individual JavaScript files, not merged into the JavaScript archive
 	 *
 	 * @param $files- array of files to include (no extensions)
-	 * @param $folder - optional pluin folder
+	 * @param $folder - optional plugin folder
 	 */
 	 public function includeOnceJs($files = array(), $folder = '')
 	 {
 		return $this->includes->includeOnceJs($this, $files, $folder);
 	 }
+         
+         
+         public function getThemeCss($type = '')
+	 {
+             if ($type == 'admin') {
+                    echo '<link rel="stylesheet" href="' . SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css" type="text/css" />';         
+             } else {
+                    echo '<link rel="stylesheet" href="' . SITEURL . 'content/themes/' . THEME . 'css/style.css" type="text/css" />';
+                    $this->getBootstrap('lite');
+             }
+             
+             $version_css = $this->includes->combineIncludes($this, 'css');
+             
+             $this->includes->includeCombined($this, 0, $version_css, $this->isAdmin); 
+         }
+         
+         
+         public function getThemeJs()
+	 {
+             echo '<script type="text/javascript" defer async src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
+             $version_js = $this->includes->combineIncludes($this, 'js');
+             
+             $this->includes->includeCombined($this, $version_js, 0, $this->isAdmin); 
+         }
+
+         
+         public function getBootstrap($file = 'bootstrap')
+	 {
+                //js files first
+                $this->includeJs(LIBS . 'frameworks/bootstrap/', 'bootstrap.min'); 
+                          
+                // then css files
+                switch ($file) {
+                    case 'bootstrap':
+                        $this->includeCss(LIBS . 'frameworks/bootstrap', 'bootstrap.min'); 
+                         break;
+                    case 'lite':          
+                        // don't load the lite version if we already have the main
+                        $exists = false;
+                        foreach ($this->includes->getCssIncludes() as $filename) {                         
+                           if (strpos($filename, 'bootstrap.min', false)) {
+                                $exists = true;
+                                break; 
+                           }
+                        }
+                        if (!$exists) $this->includeCss(LIBS . 'frameworks/bootstrap', 'bootstrap-lite.min');                    
+                        break;
+                    case 'responsive':
+                       $this->includeCss(LIBS . 'frameworks/bootstrap', 'bootstrap-responsive.min'); 
+                        break;
+                    default:
+                       echo 'bootstrap css incorrect params : ' . $file;
+                       break;
+                }            
+         }
      
      
  /* *************************************************************
