@@ -89,11 +89,11 @@ class IncludeCssJs
 	 * @param string $file - full path to the CSS file
 	 */
 	public function setCssIncludes($file, $admin = false)
-	{
-		if ($admin) { 
-			array_push($this->cssIncludesAdmin, $file);
-		} else {
-			array_push($this->cssIncludes, $file);
+	{                
+		if ($admin) {                         
+                            array_push($this->cssIncludesAdmin, $file);
+		} else {                        
+                            array_push($this->cssIncludes, $file);                        
 		}
 	}
 	
@@ -118,10 +118,10 @@ class IncludeCssJs
 	 */
 	public function setJsIncludes($file, $admin = false)
 	{        
-		if ($admin) { 
-			array_push($this->jsIncludesAdmin, $file);        
-		} else {
-			array_push($this->jsIncludes, $file);
+		if ($admin) {                         
+                            array_push($this->jsIncludesAdmin, $file);        
+		} else {                       
+                            array_push($this->jsIncludes, $file);
 		}
 	}
 	
@@ -209,7 +209,11 @@ class IncludeCssJs
 		
 		// If still not found, look in the plugin folder for a css file... 
 		} elseif (file_exists(PLUGINS . $folder . '/css/' . $filename . '.css')) {
-			$file_location = PLUGINS . $folder . '/css/' . $filename . '.css';
+			$file_location = PLUGINS . $folder . '/css/' . $filename . '.css';		
+                
+                // If still not found, look in the full given folder itself for a js file... 
+		} elseif (file_exists($folder . '/css/' . $filename . '.css')) {
+			$file_location = $folder . '/css/' . $filename . '.css';
 		}
 		 
 		if (isset($file_location)) {
@@ -249,7 +253,7 @@ class IncludeCssJs
 		} elseif (file_exists($folder . $filename . '.js')) {
 			$file_location = $folder . $filename . '.js';
 		}
-		 //print $folder . $filename . '.js      ---        ';
+
 		if (isset($file_location)) {
 			return $file_location;
 		}
@@ -382,7 +386,7 @@ class IncludeCssJs
 		if ($admin) { $prefix = 'hotaru_admin_'; } else { $prefix = 'hotaru_'; }
 		
 		if ($version_js > 0) {
-			echo "<script type='text/javascript' src='" . SITEURL . "cache/css_js_cache/" . $prefix  . "js_" . $version_js . ".js'></script>\n";
+			echo "<script type='text/javascript' defer async src='" . SITEURL . "cache/css_js_cache/" . $prefix  . "js_" . $version_js . ".js'></script>\n";
 		}
 		
 		if ($version_css > 0) {
