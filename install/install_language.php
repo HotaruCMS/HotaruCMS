@@ -47,7 +47,7 @@ $lang["upgrade_home"] = "Finish";
 $lang["install_title"] = "Hotaru CMS Setup";
 $lang["install_next"] = "Next";
 $lang["install_back"] = "Back";
-$lang["install_trouble"] = "Having trouble? Read the <a href='http://docs.hotarucms.org'>Documentation</a> or ask for help in the <a href='http://hotarucms.org/forum.php'>Forums</a>.";
+$lang["install_trouble"] = "Having trouble? Read the <a href='http://docs.hotarucms.org'>Documentation</a> or ask for help in the <a href='http://forums.hotarucms.org'>Forums</a>.";
 
 /* Install Step 1 */
 $lang["install_step0"] = "Welcome to Hotaru CMS";
