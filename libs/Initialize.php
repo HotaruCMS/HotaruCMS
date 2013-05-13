@@ -206,7 +206,7 @@ class Initialize
                         $cfg->set_model_directory(LIBS);
                         $cfg->set_connections(array('development' => 'mysql://' . DB_USER .':' . DB_PASSWORD . '@' . DB_HOST . '/' . DB_NAME . ';charset=utf8'));
                         
-                        if(class_exists('Memcache')){
+                        if(class_exists('Memcache',false)) {
                             // Memcache is enabled.
                             $cfg->set_cache("memcache://localhost",array("expire" => 60));
                         }
