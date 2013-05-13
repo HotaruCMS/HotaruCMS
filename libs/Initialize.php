@@ -206,7 +206,8 @@ class Initialize
                 {
                     $cfg->set_model_directory(LIBS);
                     $cfg->set_connections(array('development' => 'mysql://' . DB_USER .':' . DB_PASSWORD . '@' . DB_HOST . '/' . DB_NAME . ';charset=utf8'));
-                
+                    //$cfg->set_cache("memcache://localhost",array("expire" => 60));
+                    
                     //if ($h->isDebug) {
 //                        $logger = Log::singleton('file', CACHE . '/debug_logs/phpar.log','ident',array('mode' => 0664, 'timeFormat' =>  '%Y-%m-%d %H:%M:%S'));
 //                        $cfg->set_logging(true);
