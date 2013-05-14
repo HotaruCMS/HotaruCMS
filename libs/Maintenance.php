@@ -278,18 +278,23 @@ class Maintenance
 	public function getSiteAnnouncement($h)
 	{
 		// get announcement from database
-		$sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA ." WHERE miscdata_key = %s";
-		$query = $h->db->prepare($sql, 'site_announcement');
+                if ($h->pageName != 'maintenance') 
+                    $result = $h->miscdata('site_announcement');
+                else
+                    $result = $h->miscdata('site_announcement', false);
+                
+//		$sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA ." WHERE miscdata_key = %s";
+//		$query = $h->db->prepare($sql, 'site_announcement');
 		
-		if ($h->pageName != 'maintenance') {
-			$h->smartCache('on', 'miscdata', 60, $query); // start using cache
-		}
+//		if ($h->pageName != 'maintenance') {
+//			$h->smartCache('on', 'miscdata', 60, $query); // start using cache
+//		}
 		
-		$result = $h->db->get_var($query);
+		//$result = $h->db->get_var($query);
 		
-		if ($h->pageName != 'maintenance') {
-			$h->smartCache('off'); // stop using cache 
-		}
+//		if ($h->pageName != 'maintenance') {
+//			$h->smartCache('off'); // stop using cache 
+//		}
 		
 		// assign results to $h
 		if ($result) {

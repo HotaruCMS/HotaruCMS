@@ -1129,10 +1129,10 @@ class Hotaru
  *
  * *********************************************************** */
         
-        public function miscdata($key)
+        public function miscdata($key, $cache)
         {
                 $systemInfo = new SystemInfo();
-		return $systemInfo->miscdata($this, $key);
+		return $systemInfo->miscdata($this, $key, $cache);
         }
 
  /* *************************************************************

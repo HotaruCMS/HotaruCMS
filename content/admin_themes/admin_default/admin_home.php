@@ -40,7 +40,7 @@
 	
 	<!-- Feed items, number to show content for, max characters for content -->
         <div id="adminNews"></div>
-	<?php //echo $h->adminNews(10, 3, 300); ?>
+	<?php echo $h->adminNews(10, 3, 300); ?>
 	
 	<br/>
         <div class="">
@@ -80,15 +80,16 @@
     </div>
 </div>
 
-<script type='text/javascript'>
+<!--<script type='text/javascript'>
 $(window).load(function() {        
         
         var sendurl = SITEURL + "admin_index.php?page=admin_news";
         
         $.ajax(
             {
-            type: 'post',
+            type: 'get',
                     url: sendurl,
+                    cache: false,
                     //data: formdata,
                     beforeSend: function () {
                                     $('#adminNews').html('<img src="' + SITEURL + "content/admin_themes/" + ADMIN_THEME + 'images/ajax-loader.gif' + '"/>&nbsp;Loading latest news.<br/>');
@@ -97,10 +98,10 @@ $(window).load(function() {
                                     $('#adminNews').html('ERROR');
                                     $('#adminNews').removeClass('power_on').addClass('warning_on');
                     },
-                    success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg                                                                               
+                    success: function(data) { // success means it returned some form of json code to us. may be code with custom error msg                                                                               
                                     $('#adminNews').html(data);     
-                    }//,
-                    //dataType: "json"
+                    },
+                    dataType: "html"
     });
 });
-</script>
+</script>-->
