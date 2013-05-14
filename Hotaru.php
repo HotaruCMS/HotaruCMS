@@ -1236,7 +1236,7 @@ class Hotaru
                                 $exists = true;
                                 break; 
                            }
-                        }
+                        }                        
                         if (!$exists) $this->includeCss(LIBS . 'frameworks/bootstrap', 'bootstrap-lite.min');                    
                         break;
                     case 'bootstrap-responsive':                        
