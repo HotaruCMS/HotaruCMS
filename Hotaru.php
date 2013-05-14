@@ -1221,7 +1221,7 @@ class Hotaru
          public function getFramework($file = 'bootstrap')
 	 {
                 //js files first
-                $this->includeJs(LIBS . 'frameworks/bootstrap/', 'bootstrap.min'); 
+                $this->includeJs(LIBS . 'frameworks/bootstrap/js/', 'bootstrap.min'); 
                           
                 // then css files
                 switch ($file) {
