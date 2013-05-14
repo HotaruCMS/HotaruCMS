@@ -79,6 +79,7 @@ class Hotaru
 			define("INSTALL", dirname(__FILE__).'/install/');
 			define("LIBS", dirname(__FILE__).'/libs/');
 			define("EXTENSIONS", dirname(__FILE__).'/libs/extensions/');
+                        define("FRAMEWORKS", dirname(__FILE__).'/libs/frameworks/');
 			define("FUNCTIONS", dirname(__FILE__).'/functions/');
 			define("CONTENT", dirname(__FILE__).'/content/');
 			define("THEMES", dirname(__FILE__).'/content/themes/');
@@ -1502,6 +1503,16 @@ class Hotaru
 	{
 		$maintenance = new Maintenance();
 		$maintenance->optimizeTables($this);
+	}
+        
+        
+        /**
+	 * Optimize all database tables
+	 */
+	public function exportDatabase()
+	{
+		$maintenance = new Maintenance();
+		$maintenance->exportDatabase($this);
 	}
 	
 	

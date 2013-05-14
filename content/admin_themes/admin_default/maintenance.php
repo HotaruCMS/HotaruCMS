@@ -112,7 +112,9 @@ $db_tables = $h->vars['admin_plugin_tables'];
 <ul>
 	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=optimize">
 		<?php echo $h->lang["admin_theme_maintenance_optimize_database"]; ?></a> - <?php echo $h->lang["admin_theme_maintenance_optimize_desc"]; ?></li>
-	<?php $h->pluginHook('admin_maintenance_database'); ?>
+        <li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=export">
+		<?php echo $h->lang["admin_theme_maintenance_export_database"]; ?></a> - <?php echo $h->lang["admin_theme_maintenance_export_desc"]; ?></li>
+        <?php $h->pluginHook('admin_maintenance_database'); ?>
 </ul>
 
 <?php $h->pluginHook('admin_maintenance_middle'); ?>

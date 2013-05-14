@@ -154,6 +154,27 @@ class Maintenance
 		$h->message = $h->lang['admin_maintenance_optimize_success'];
 		$h->messageType = 'green';
 	}
+        
+        
+        /**
+	 * Exports all database tables
+	 */
+	public function exportDatabase($h)
+	{
+		$h->db->selectDB(DB_NAME);
+
+		$backupFile = CONTENT . 'temp/' . DB_NAME . date("Y-m-d-H-i-s") . '.gz';
+                $command = "mysqldump --opt -h " . DB_HOST . " -u'" . DB_USER . "' -p'" . DB_PASSWORD . "' " . DB_NAME . " | gzip > " .  $backupFile;    
+
+                try {
+                    system($command);                    
+                    $h->message = $h->lang['admin_maintenance_export_success'] . ' : ' . $backupFile;
+                    $h->messageType = 'green';
+                } catch (Exception $e) {
+                    //echo( "Caught exception: " . $e->getMessage() );
+                    $h->messages['admin_maintenance_export_failure'] = "alert-error";
+                }
+	}
 	
 	
 	/**

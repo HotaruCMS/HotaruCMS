@@ -323,6 +323,7 @@ class AdminPages
 		if ($action == 'clear_html_cache') { $h->clearCache('html_cache'); }
 		if ($action == 'clear_lang_cache') { $h->clearCache('lang_cache'); }
 		if ($action == 'optimize') { $h->optimizeTables(); }
+                if ($action == 'export') { $h->exportDatabase(); }
 		if ($action == 'empty') { $h->emptyTable($h->cage->get->testAlnumLines('table')); }
 		if ($action == 'drop') { $h->dropTable($h->cage->get->testAlnumLines('table')); }
 		if ($action == 'remove_settings') { $h->removeSettings($h->cage->get->testAlnumLines('settings')); }
