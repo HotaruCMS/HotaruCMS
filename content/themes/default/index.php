@@ -61,22 +61,11 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 		
 	<div class="container<?php if ($h->vars['theme_settings']['fullWidth']) echo '-fluid'; ?>">
             <div class="row<?php if ($h->vars['theme_settings']['fullWidth']) echo '-fluid'; ?>">
-		<!-- TITLE & AD BLOCKS -->
-                <!--
-		<div id="hd_title">
-			<h1><a href="<?php //echo SITEURL; ?>"><?php //echo SITE_NAME; ?></a></h1>
-			<h3 class="subtitle"><?php //echo $h->vars['theme_settings']['tagline']; ?></h3>
-		</div>
-                -->
-		
-            
-		
+
                 <div id="header_end" class="container<?php if ($h->vars['theme_settings']['fullWidth']) echo '-fluid'; ?>">
                         <!-- CATEGORIES, ETC -->
                         <?php $h->pluginHook('header_end'); ?>
                 </div>
-                
-            
 
 		<div id="content">
 

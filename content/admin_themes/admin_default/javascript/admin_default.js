@@ -24,7 +24,7 @@
 
 jQuery('document').ready(function($) {
 
-    // Javascript to enable link to tab
+    // Javascript to enable link to tab (used with bootstrap)
     var hash = document.location.hash;
     var prefix = "tab_";
     if (hash) {
@@ -42,13 +42,13 @@ jQuery('document').ready(function($) {
     });
     
     
-
+    // add warning slash to the settings page for when admins leave slash off end of setting
     $('.warning_slash').blur(function() {
         var value = $(this).val();
         var length = value.length;
         var check = value.substring(length-1,length);        
-        var notes = $(this).parent().parent().children('td:eq(3)'); 
-        if (check != '/' ) { notes.addClass('red'); } else { notes.removeClass('red');}
+        var notes = $(this).parent().parent().children('td:eq(3)');
+        if (check != '/' ) { notes.addClass('alert-error'); } else { notes.removeClass('alert-error');}
     });
 
 
@@ -85,3 +85,5 @@ jQuery('document').ready(function($) {
     });
     
 });	
+
+

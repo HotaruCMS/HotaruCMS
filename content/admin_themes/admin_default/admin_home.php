@@ -39,11 +39,12 @@
 	<h3><?php echo $h->lang["admin_theme_main_help"]; ?></h3>
 	
 	<!-- Feed items, number to show content for, max characters for content -->
+        <div id="adminNews"></div>
 	<?php //echo $h->adminNews(10, 3, 300); ?>
 	
 	<br/>
         <div class="">
-            <h2><?php echo $h->lang["admin_theme_main_join_us"]; ?></h2>
+            <h2><?php //echo $h->lang["admin_theme_main_join_us"]; ?></h2>
          </div>
 </div>
 
@@ -56,17 +57,19 @@
 		<li>Hotaru CMS <?php echo $h->version; ?></li>   
                                
 		<?php                
-		    $sql = "SELECT miscdata_value as latest_version FROM " . TABLE_MISCDATA ." WHERE miscdata_key = %s";
-		    $query = $h->db->get_row($h->db->prepare($sql, 'hotaru_latest_version'));
-		    if ($query) {			
-			$hotaru_latest_version = $query->latest_version;
+                    $hotaru_latest_version = $h->miscdata('hotaru_latest_version');
+                
+//		    $sql = "SELECT miscdata_value as latest_version FROM " . TABLE_MISCDATA ." WHERE miscdata_key = %s";
+//		    $query = $h->db->get_row($h->db->prepare($sql, 'hotaru_latest_version'));
+//		    if ($query) {			
+			//$hotaru_latest_version = $query->latest_version;
 			if (version_compare($hotaru_latest_version, $h->version) == 1) {
 			    //echo "<li><a href='http://hotarucms.org/forumdisplay.php?23-Download-Hotaru-CMS'>" . $h->lang['admin_theme_version_update_to'] .  $hotaru_latest_version . "</a></li>";
                             $h->showMessage('A newer version of Hotaru CMS is available, v.' . $hotaru_latest_version . '. <a href="#">upgrade now</a>', 'alert-info');                                                 
                         } else {
                             echo $h->lang["admin_theme_version_latest_version_installed"];
                         }
-		    }
+		    //}
 		?>       
 
 		<?php $h->pluginHook('admin_theme_main_stats_post_version'); ?>
@@ -76,3 +79,28 @@
 	</ul>
     </div>
 </div>
+
+<script type='text/javascript'>
+$(window).load(function() {        
+        
+        var sendurl = SITEURL + "admin_index.php?page=admin_news";
+        
+        $.ajax(
+            {
+            type: 'post',
+                    url: sendurl,
+                    //data: formdata,
+                    beforeSend: function () {
+                                    $('#adminNews').html('<img src="' + SITEURL + "content/admin_themes/" + ADMIN_THEME + 'images/ajax-loader.gif' + '"/>&nbsp;Loading latest news.<br/>');
+                            },
+                    error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+                                    $('#adminNews').html('ERROR');
+                                    $('#adminNews').removeClass('power_on').addClass('warning_on');
+                    },
+                    success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg                                                                               
+                                    $('#adminNews').html(data);     
+                    }//,
+                    //dataType: "json"
+    });
+});
+</script>

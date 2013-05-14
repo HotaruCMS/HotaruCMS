@@ -43,6 +43,9 @@ class AdminPages
 			case "admin_logout":
 				$h->adminLoginLogout('logout');
 				break;
+                        case "admin_news":
+				echo $h->adminNews(10, 3, 300);
+				die();
 			case "admin_account":
 				$h->vars['admin_account'] = $this->adminAccount($h);
 				break;

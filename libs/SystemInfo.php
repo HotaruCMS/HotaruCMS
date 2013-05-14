@@ -310,7 +310,25 @@ class SystemInfo
 		return $array;
 	}
 	
-	
+        
+        /**
+         * 
+         * @param type $h
+         * @param type $type
+         */
+        public function miscdata($h, $key)
+        {
+                $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA ." WHERE miscdata_key = %s";
+		$query = $h->db->prepare($sql, $key);                
+                $h->smartCache('on', 'miscdata_value_' . $key, 60, $query); // start using cache
+                $value = $h->db->get_var($query);
+			
+                $h->smartCache('off'); // stop using cache
+
+		return $value;
+        }
+        
+        
 	/**
 	 * Convert report object to text for logging to file
 	 *

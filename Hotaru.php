@@ -1121,6 +1121,19 @@ class Hotaru
 		return $themeSettings->updateThemeSettings($this, $settings, $theme, $column);
 	}
 
+        
+        
+/* *************************************************************
+ *
+ *  MISCDATA
+ *
+ * *********************************************************** */
+        
+        public function miscdata($key)
+        {
+                $systemInfo = new SystemInfo();
+		return $systemInfo->miscdata($this, $key);
+        }
 
  /* *************************************************************
  *
