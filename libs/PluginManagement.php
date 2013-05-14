@@ -49,7 +49,7 @@ class PluginManagement
 					// get details from memory if we have them..
 					$plugin_row = $h->readPlugin($plugin_details['folder']);
 				} else {
-                                        if (defined('PHP_VERSION_ID') && PHP_VERSION_ID < 50300 || $h->ar == false) {  
+                                        if (defined('PHP_VERSION_ID') && PHP_VERSION_ID < 50300 || !ACTIVERECORD) {  
                                             $sql = "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
                                             $plugin_row = $h->db->get_row($h->db->prepare($sql, $plugin_details['folder']));
                                         } else {

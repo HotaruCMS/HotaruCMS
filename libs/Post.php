@@ -124,7 +124,7 @@ class Post
 	 */    
 	public function getPost($h, $post_id = 0)
 	{
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $h->ar == false) {
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
                     // Build SQL
                     $query = "SELECT * FROM " . TABLE_POSTS . " WHERE post_id = %d ORDER BY post_date DESC";
                     $sql = $h->db->prepare($query, $post_id);                                
@@ -255,7 +255,7 @@ class Post
 	{
 		if (!$user_id) { return false; }
 		
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $h->ar == false) {
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
                     $sql = "SELECT post_id FROM " . TABLE_POSTS. " WHERE post_author = %d";
                     $results = $h->db->get_results($h->db->prepare($sql, $user_id));
                 } else {
@@ -306,7 +306,7 @@ class Post
 	 */    
 	public function urlExists($h, $url = '')
 	{
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $h->ar == false) {
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
                     $sql = "SELECT post_id, post_status FROM " . TABLE_POSTS . " WHERE post_orig_url = %s";
                     $posts = $h->db->get_results($h->db->prepare($sql, urlencode($url)));
                 } else {
@@ -327,7 +327,7 @@ class Post
 		}
 		
 		// One last check to see if a post is present:
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $h->ar == false) {
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
                     $sql = "SELECT * FROM " . TABLE_POSTS . " WHERE post_orig_url = %s LIMIT 1";
                     $post = $h->db->get_row($h->db->prepare($sql, urlencode($url)));
                 } else {
@@ -353,7 +353,7 @@ class Post
 
 		if (!$title) { return FALSE; }
 
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $h->ar == false) {
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
                     $sql = "SELECT post_id, post_status FROM " . TABLE_POSTS . " WHERE post_title = %s";
                     $posts = $h->db->get_results($h->db->prepare($sql, urlencode($title)));
                 } else {
@@ -374,7 +374,7 @@ class Post
 		}
 		
 		// One last check to see if a post is present:
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $h->ar == false) {
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
                     $sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_title = %s LIMIT 1";
                     $post_id = $h->db->get_var($h->db->prepare($sql, urlencode($title)));
                 } else {
@@ -397,7 +397,7 @@ class Post
 	 */
 	public function isPostUrl($h, $post_url = '')
 	{
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $h->ar == false) {
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
                     $sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_url = %s LIMIT 1";
                     $post_id = $h->db->get_var($h->db->prepare($sql, urlencode($post_url)));
                 } else {
@@ -423,7 +423,7 @@ class Post
 	{
 		if (!$user_id) { $user_id = $h->currentUser->id; }
 		
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $h->ar == false) {
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
                     $sql = "SELECT COUNT(*) FROM " . TABLE_POSTS . " WHERE (post_status = %s || post_status = %s) AND post_author = %d AND post_type = %s";
                     $count = $h->db->get_var($h->db->prepare($sql, 'top', 'new', $user_id, $post_type));
                 } else {                                 

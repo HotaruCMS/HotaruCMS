@@ -97,7 +97,7 @@ class Widget
 	public function addWidget($h, $plugin = '', $function = '', $args = '')
 	{
                 // Check if it exists so we don't add a duplicate
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $h->ar == false) {
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
                     $sql = "SELECT count(widget_id) FROM " . DB_PREFIX . "widgets WHERE widget_plugin = %s AND widget_function = %s AND widget_args = %s";
                     $result = $h->db->get_var($h->db->prepare($sql, $plugin, $function, $args));		
                 } else {
@@ -125,7 +125,7 @@ class Widget
 		if (!$exists) { return false; }
 		
                 // Get settings from the database if they exist...
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $h->ar == false) {
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
                     $sql = "SELECT widget_plugin, widget_function, widget_args FROM " . DB_PREFIX . 'widgets';
                     $widgets_settings = $h->db->get_results($h->db->prepare($sql));
                 } else {
@@ -232,7 +232,7 @@ class Widget
 	public function getPluginFromFunction($h, $function)
 	{
 		// Get settings from the database if they exist...
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $h->ar == false) {
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
                     $sql = "SELECT widget_plugin FROM " . TABLE_WIDGETS . ' WHERE widget_function = %s LIMIT 1';
                     $widget_plugin = $h->db->get_var($h->db->prepare($sql, $function));
                 } else {

@@ -28,7 +28,6 @@ class Initialize
 	protected $db;                          // database object
 	protected $cage;                        // Inspekt object
 	protected $isDebug          = false;    // show db queries and page loading time
-	protected $ar               = false;
 	
 	/**
 	 * Initialize Hotaru with the essentials
@@ -173,7 +172,7 @@ class Initialize
                 require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
                 require_once(LIBS       . 'InspektExtras.php'); // sanitation
                 
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $this->ar == false)
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD)
                 { } else {
                     require_once(EXTENSIONS . 'php-activerecord/ActiveRecord.php'); // database
                 }
@@ -200,7 +199,7 @@ class Initialize
 	public function initDatabase()
 	{                       
 
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $this->ar == false)
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD)
                 {
                     // leave ezSql for these people ?                    
                 } else {
@@ -303,7 +302,7 @@ class Initialize
 	 */
 	public function readSettings() {	    
             
-            if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || $this->ar == false) {
+            if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
                 $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;
                 $settings = $this->db->get_results($this->db->prepare($sql));                
             } else {

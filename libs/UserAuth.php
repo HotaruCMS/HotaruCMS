@@ -252,7 +252,9 @@ class UserAuth extends UserBase
 			setcookie("hotaru_key", "", time()-3600, "/", "." . $parsed['host']);
 		}
 		
-		session_destroy(); // sessions are used in CSRF
+                if (session_name() != '') {
+                    session_destroy(); // sessions are used in CSRF
+                }		
 		
 		$this->loggedIn = false;
 	}

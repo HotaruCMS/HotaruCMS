@@ -63,8 +63,7 @@ class Hotaru
 	protected $messages             = array();  // for multiple messages
 	
 	// miscellaneous
-	protected $vars                 = array();  // multi-purpose
-        protected $ar                   = false;     // quick test indicator for activerecord usage
+        protected $vars                 = array();  // multi-purpose        
     
 	/**
 	 * CONSTRUCTOR - Initialize
@@ -87,6 +86,8 @@ class Hotaru
 			define("ADMIN_THEMES", dirname(__FILE__).'/content/admin_themes/');
 			define("SITEURL", BASEURL);
 		}
+                
+                if (!defined('ACTIVERECORD')) define('ACTIVERECORD', false);
 
 		require_once(EXTENSIONS . 'SmartLoader/smartloader.class.php');
 
@@ -97,7 +98,7 @@ class Hotaru
 
 			$this->db           = $init->db;            // database object
 			$this->cage         = $init->cage;          // Inspekt cage
-			$this->isDebug      = $init->isDebug;       // set debug			
+			$this->isDebug      = $init->isDebug;       // set debug		
 			$this->currentUser  = new UserAuth();       // the current user
                         $this->plugin       = new Plugin();         // instantiate Plugin object
 			$this->post         = new Post();           // instantiate Post object
