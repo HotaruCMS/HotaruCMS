@@ -27,5 +27,31 @@
 
 ?>
 
-<?php echo $h->lang['main_theme_page_not_found']; ?>
+<?php //echo $h->lang['main_theme_page_not_found']; ?>
+<div class="span11">
+<div class="jumbotron">
+        <h1>Oops!</h1>
+        <p class="lead"><?php echo $h->lang['main_theme_page_not_found']; ?></p>
+<!--        <a class="btn btn-large btn-primary" href="/">Back to Home</a>-->
+      </div>
 
+      <hr>
+
+      <div class="row-fluid marketing">
+        <div class="span6">
+          <h4>Hotaru CMS</h4>
+          <p>Hotaru CMS allows you to create great bookmarking, journal and other social web sites. Be your own site admin and create your own social network niche.</p>
+
+          <h4>Social</h4>
+          <p>Built for sharing information, Hotaru CMS lets you add content easily and share it with other social networks.</p>
+        </div>
+
+        <div class="span6">
+          <h4>Bookmarking</h4>
+          <p>Although flexible to be used for different purposes, Hotaru CMS is a leader in creating social bookmarking sites. </p>
+
+          <h4>Forums</h4>
+          <p>There is always plenty of help in the forums from developers and site owners</p>
+        </div>
+      </div>
+</div>

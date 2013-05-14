@@ -32,14 +32,14 @@
 	 
 <!-- TITLE FOR ADMIN NEWS -->
 	<h2>
-		<a href="http://feeds2.feedburner.com/hotarucms"><img src="<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/rss_16.png" alt="rss" /></a>
+		<a href="http://feeds2.feedburner.com/hotarucms"><img src="<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/rss_16.png" width="16" height="16" alt="rss" /></a>
 		&nbsp;<?php echo $h->lang["admin_theme_main_latest"]; ?>
 	</h2>
 	
 	<h3><?php echo $h->lang["admin_theme_main_help"]; ?></h3>
 	
 	<!-- Feed items, number to show content for, max characters for content -->
-	<?php echo $h->adminNews(10, 3, 300); ?>
+	<?php //echo $h->adminNews(10, 3, 300); ?>
 	
 	<br/>
         <div class="">
@@ -55,8 +55,7 @@
             <li class="nav-header"><?php echo SITE_NAME . " " . $h->lang["admin_theme_main_stats"]; ?></li>
 		<li>Hotaru CMS <?php echo $h->version; ?></li>   
                                
-		<?php
-
+		<?php                
 		    $sql = "SELECT miscdata_value as latest_version FROM " . TABLE_MISCDATA ." WHERE miscdata_key = %s";
 		    $query = $h->db->get_row($h->db->prepare($sql, 'hotaru_latest_version'));
 		    if ($query) {			

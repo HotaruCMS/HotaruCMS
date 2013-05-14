@@ -47,18 +47,17 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 <body>
 
 	<?php $h->pluginHook('post_open_body'); ?>	
-	<?php if ($announcements = $h->checkAnnouncements()) { ?>
+
+        <!-- NAVIGATION -->
+        <?php echo $h->displayTemplate('navigation'); ?>
+	
+        <?php if ($announcements = $h->checkAnnouncements()) { ?>
 		<div id="announcement">
 			<?php $h->pluginHook('announcement_first'); ?>
 			<?php foreach ($announcements as $announcement) { echo $announcement . "<br />"; } ?>
 			<?php $h->pluginHook('announcement_last'); ?>
 		</div>
 	<?php } ?>
-
-	
-        <!-- NAVIGATION -->
-        <?php echo $h->displayTemplate('navigation'); ?>
-	
 		
 	<div class="container<?php if ($h->vars['theme_settings']['fullWidth']) echo '-fluid'; ?>">
             <div class="row<?php if ($h->vars['theme_settings']['fullWidth']) echo '-fluid'; ?>">
