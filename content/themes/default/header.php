@@ -48,14 +48,18 @@
         <!-- Bootstrap -->
         <?php $h->getFramework(); ?>	
         
-        <!-- Theme CSS from stlye.css in folder for theme -->
-        <!-- Include merged files for all the plugin css and javascript (if any) -->
-        <!-- Will also include Jquery as standard -->
-        <?php $h->getThemeCss(); ?>			
-	
+        <!-- Theme -->
+        <?php $h->getThemeCss(); ?>
+        
         <!-- include this CSS last so it gets priority -->
         <!-- Bootstrap Responsive - only include when required -->
         <?php $h->getFramework('bootstrap-responsive'); ?>
+        
+        <!-- Theme CSS from stlye.css in folder for theme -->
+        <!-- Include merged files for all the plugin css and javascript (if any) -->
+        <!-- Will also include Jquery as standard -->
+        <?php $h->doIncludes('css'); ?>			
+	        
         
         <!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico" /> -->
 	

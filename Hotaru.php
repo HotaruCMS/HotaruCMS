@@ -1130,14 +1130,31 @@ class Hotaru
 	/**
 	 * Do Includes (called from template header.php)
 	 */
-	 public function doIncludes()
+	 public function doIncludes($type = 'all')
 	 {                
-                echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';             
-                $this->getFramework('bootstrap-lite');
-                
-                $version_js = $this->includes->combineIncludes($this, 'js');
-		$version_css = $this->includes->combineIncludes($this, 'css');
-		$this->includes->includeCombined($this, $version_js, $version_css, $this->isAdmin);                               
+             switch ($type) {
+                    case 'all':
+                        echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';             
+                        $this->getFramework('bootstrap-lite');
+
+                        $version_js = $this->includes->combineIncludes($this, 'js');
+                        $version_css = $this->includes->combineIncludes($this, 'css');
+                        $this->includes->includeCombined($this, $version_js, $version_css, $this->isAdmin);                               	                        
+                        break;
+                    case 'js': 
+                        $version_js = $this->includes->combineIncludes($this, 'js');
+                        $this->includes->includeCombined($this, $version_js, 0, $this->isAdmin);                               	                        
+                        break;
+                    case 'css': 
+                        // bringing this up-top with css because some inline js on plugins needs to have jquery loaded first to work
+                        echo '<script type="text/javascript" defer async src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
+             
+                        $version_css = $this->includes->combineIncludes($this, 'css');
+                        $this->includes->includeCombined($this, 0, $version_css, $this->isAdmin);
+                        break;
+                    default :
+                        break;
+             }                                                           
 	 }
 	 
 	 
@@ -1189,30 +1206,15 @@ class Hotaru
 	 }
          
          
-         public function getThemeCss($type = '')
+         public function getThemeCss()
 	 {
-             // bringing this up-top because some inline js on plugins needs to have jquery loaded first to work
-             echo '<script type="text/javascript" defer async src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
-             
-             if ($type == 'admin') {
+             if ($this->isAdmin) {
                     echo '<link rel="stylesheet" href="' . SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css" type="text/css" />';         
              } else {
                     echo '<link rel="stylesheet" href="' . SITEURL . 'content/themes/' . THEME . 'css/style.css" type="text/css" />';
                     $this->getFramework('bootstrap-lite');
-             }
-             
-             $version_css = $this->includes->combineIncludes($this, 'css');
-             
-             $this->includes->includeCombined($this, 0, $version_css, $this->isAdmin); 
-         }
-         
-         
-         public function getThemeJs()
-	 {
-             $version_js = $this->includes->combineIncludes($this, 'js');
-             
-             $this->includes->includeCombined($this, $version_js, 0, $this->isAdmin); 
-         }
+             }                          
+         }                
 
          
          public function getFramework($file = 'bootstrap')
@@ -1236,11 +1238,11 @@ class Hotaru
                         }
                         if (!$exists) $this->includeCss(LIBS . 'frameworks/bootstrap', 'bootstrap-lite.min');                    
                         break;
-                    case 'bootstrap-responsive':
+                    case 'bootstrap-responsive':                        
                        $this->includeCss(LIBS . 'frameworks/bootstrap', 'bootstrap-responsive.min'); 
                         break;
                     default:
-                       echo 'bootstrap css incorrect params : ' . $file;
+                       echo 'framework css incorrect params : ' . $file;
                        break;
                 }            
          }
