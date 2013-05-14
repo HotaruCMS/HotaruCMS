@@ -90,8 +90,8 @@ extract($h->vars['admin_blocked_list']); // extracts $output and $pagedResults;
 </tr></table>
 
 <div id="table_list">
-	<table>
-	<tr class='table_headers'>
+	<table class="table table-bordered">
+	<tr class='table_headers info'>
 		<td><?php echo $h->lang["admin_theme_blocked_type"]; ?></td>
 		<td><?php echo $h->lang["admin_theme_blocked_value"]; ?></td>
 		<td><?php echo $h->lang["admin_theme_blocked_edit"]; ?></td>
