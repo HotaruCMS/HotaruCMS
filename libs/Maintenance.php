@@ -281,20 +281,7 @@ class Maintenance
                 if ($h->pageName != 'maintenance') 
                     $result = $h->miscdata('site_announcement');
                 else
-                    $result = $h->miscdata('site_announcement', false);
-                
-//		$sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA ." WHERE miscdata_key = %s";
-//		$query = $h->db->prepare($sql, 'site_announcement');
-		
-//		if ($h->pageName != 'maintenance') {
-//			$h->smartCache('on', 'miscdata', 60, $query); // start using cache
-//		}
-		
-		//$result = $h->db->get_var($query);
-		
-//		if ($h->pageName != 'maintenance') {
-//			$h->smartCache('off'); // stop using cache 
-//		}
+                    $result = $h->miscdata('site_announcement', false);               
 		
 		// assign results to $h
 		if ($result) {
@@ -304,8 +291,7 @@ class Maintenance
 		} else {
 			$h->vars['admin_announcement'] = "";
 			$h->vars['admin_announcement_enabled'] = "";
-		}
-		
+		}		
 	}
 	
 	
