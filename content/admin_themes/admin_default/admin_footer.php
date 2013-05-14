@@ -49,5 +49,5 @@
 
 <script type='text/javascript' src='http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js'></script>
 
-<?php $h->getThemeJs(); ?>
+<?php $h->doIncludes('js'); ?>
 

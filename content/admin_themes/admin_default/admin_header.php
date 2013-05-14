@@ -39,12 +39,15 @@
         <?php $h->getFramework(); ?>	
         
         <!-- Theme -->
-        <!-- Include merged files for all the plugin css and javascript (if any) -->
-	<?php $h->getThemeCss('admin'); ?>
-	
-	<!-- include this CSS last so it gets priority -->
+        <?php $h->getThemeCss(); ?>
+        
+        <!-- include this CSS last so it gets priority -->
         <!-- Bootstrap Responsive -->
         <?php $h->getFramework('bootstrap-responsive'); ?>
+        
+        <!-- Include merged files for all the plugin css and javascript (if any) -->
+        <?php $h->doIncludes('css'); ?>		
+	
 
         <!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico"> -->
 	
