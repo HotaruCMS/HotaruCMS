@@ -57,9 +57,7 @@
         
         <!-- Theme CSS from stlye.css in folder for theme -->
         <!-- Include merged files for all the plugin css and javascript (if any) -->
-        <!-- Will also include Jquery as standard -->
-        <?php $h->doIncludes('css'); ?>			
-	        
+        <?php $h->doIncludes('css'); ?>				        
         
         <!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico" /> -->
 	

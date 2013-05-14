@@ -47,7 +47,6 @@
         
         <!-- Include merged files for all the plugin css and javascript (if any) -->
         <?php $h->doIncludes('css'); ?>		
-	
 
         <!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico"> -->
 	
