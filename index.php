@@ -25,14 +25,14 @@
  * @link      http://www.hotarucms.org/
  */
 // includes
-if( !file_exists('config/settings.php') ) {
+if(file_exists('config/settings.php') ) {
 	require_once('config/settings.php');
 	require_once('Hotaru.php');
 	$h = new Hotaru();
 	$h->start('main');
 } else {
         	
-	if( !file_exists('install/index.php') ) {
+	if(file_exists('install/index.php') ) {
             $msg1 = 'Hotaru is having trouble starting.<br/>You may need to install the system before you can proceed further.<br/><br/>';		
 	} else {
             $msg1 = 'Hotaru is having trouble starting.<br/>The install files need to be downloaded before you can proceed further.<br/><br/>';
