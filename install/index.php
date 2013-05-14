@@ -142,6 +142,7 @@ function html_header()
 	$header .= "<TITLE>" . $lang['install_title'] . "</TITLE>\n";
 	$header .= "<META HTTP-EQUIV='Content-Type' CONTENT='text'>\n";
 	$header .= "<link rel='stylesheet' type='text/css' href='reset-fonts-grids.css' type='text/css'>\n";
+        $header .= "<link rel='stylesheet' type='text/css' href='/libs/frameworks/bootstrap.css' type='text/css'>\n";	
 	$header .= "<link rel='stylesheet' type='text/css' href='install_style.css'>\n";
 	$header .= "</HEAD>\n";
 
