@@ -302,7 +302,7 @@ class Maintenance
 	 */
 	public function addSiteAnnouncement($h)
 	{
-		$allowable_tags = "<div><p><span><b><i><u><a><img><blockquote><del><br>";
+		$allowable_tags = "<div><p><span><b><i><u><a><img><blockquote><del><br><br/>";
 		$h->vars['admin_announcement'] = sanitize($h->cage->get->getHtmLawed('announcement_text'), 'tags', $allowable_tags);
 		if ($h->cage->get->keyExists('announcement_enabled')) {
 			$h->vars['admin_announcement_enabled'] = "checked";

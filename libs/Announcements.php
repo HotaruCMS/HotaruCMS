@@ -111,7 +111,7 @@ class Announcements
 		
 		// "Go to Plugin Management to enable some plugins"
 		if (!$h->numActivePlugins()) {
-			array_push($announcements, $h->lang['admin_announcement_plugins_disabled']);    
+			array_push($announcements, $h->lang['admin_announcement_plugins_disabled']);                        
 		}
                 
                 // "Don't forget - debug mode is on"

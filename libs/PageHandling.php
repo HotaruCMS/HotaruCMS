@@ -138,7 +138,7 @@ class PageHandling
 		
 		// Try POST...
 		if (!$page) { $page = $h->cage->post->testPage('page'); }
-		
+
 		// Analyze the URL:
 		if (!$page) {
 			$host = $h->cage->server->sanitizeTags('HTTP_HOST');
@@ -155,7 +155,7 @@ class PageHandling
 				$index = ($h->home) ? $h->home : ''; 
 				return ($h->isAdmin) ? 'admin_index' : $index;
 			}
-			
+
 			parse_str($query_args, $parsed_query_args); // split query vars into key->value pairs
 			
 			$results = $h->pluginHook('pagehandling_getpagename', '', $parsed_query_args);
@@ -252,13 +252,16 @@ class PageHandling
 			$themes = THEMES;
 			$theme = THEME;
 			$default = $this->default;
+                        
+                        // custom rules for when problems occur on site
+                        if (!$h->numActivePlugins()) $h->pageName = 'pluginsdisabled';
 		} 
-		
-		$page = str_replace('..', '', $page); // prevents access outside the current folder
+                
+                $page = str_replace('..', '', $page); // prevents access outside the current folder
 		$page = $page . '.php';
-	
+
                 // Include this for testing
-                if ($h->isTest) print $themes . $theme . $page;
+                if ($h->isTest) print $themes . $theme . $page . '<br/>';
                 
 		/* 
 			1. Check the custom theme
