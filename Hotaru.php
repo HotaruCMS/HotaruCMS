@@ -1240,21 +1240,24 @@ class Hotaru
                 // then css files
                 switch ($file) {
                     case 'bootstrap':
-                        $this->includeCss(LIBS . 'frameworks/bootstrap', 'bootstrap.min'); 
+                        //$this->includeCss(LIBS . 'frameworks/bootstrap', 'bootstrap.min'); 
+                        echo "<link rel='stylesheet' href='" . BASEURL . "libs/frameworks/bootstrap/css/bootstrap.min.css' type='text/css' />\n";
                          break;
                     case 'bootstrap-lite':          
                         // don't load the lite version if we already have the main
-                        $exists = false;
-                        foreach ($this->includes->getCssIncludes() as $filename) {                         
-                           if (strpos($filename, 'bootstrap.min', false)) {
-                                $exists = true;
-                                break; 
-                           }
-                        }                        
-                        if (!$exists) $this->includeCss(LIBS . 'frameworks/bootstrap', 'bootstrap-lite.min');                    
+//                        $exists = false;
+//                        foreach ($this->includes->getCssIncludes() as $filename) {                         
+//                           if (strpos($filename, 'bootstrap.min', false)) {
+//                                $exists = true;
+//                                break; 
+//                           }
+//                        }                        
+//                        if (!$exists) $this->includeCss(LIBS . 'frameworks/bootstrap', 'bootstrap-lite.min');  
+                        echo "<link rel='stylesheet' href='" . BASEURL . "libs/frameworks/bootstrap/css/bootstrap-lite.min.css' type='text/css' />\n";
                         break;
                     case 'bootstrap-responsive':                        
-                       $this->includeCss(LIBS . 'frameworks/bootstrap', 'bootstrap-responsive.min'); 
+                       //$this->includeCss(LIBS . 'frameworks/bootstrap', 'bootstrap-responsive.min'); 
+                        echo "<link rel='stylesheet' href='" . BASEURL . "libs/frameworks/bootstrap/css/bootstrap-responsive.min.css' type='text/css' />\n";
                         break;
                     default:
                        echo 'framework css incorrect params : ' . $file;
