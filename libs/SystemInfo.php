@@ -316,7 +316,7 @@ class SystemInfo
          * @param type $h
          * @param type $type
          */
-        public function miscdata($h, $key, $cache = 'true')
+        public function miscdata($h, $key = '', $cache = 'true')
         {
                 $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA ." WHERE miscdata_key = %s";
 		$query = $h->db->prepare($sql, $key);                

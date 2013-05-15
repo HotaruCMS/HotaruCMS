@@ -1129,7 +1129,7 @@ class Hotaru
  *
  * *********************************************************** */
         
-        public function miscdata($key, $cache)
+        public function miscdata($key = '', $cache = 'true')
         {
                 $systemInfo = new SystemInfo();
 		return $systemInfo->miscdata($this, $key, $cache);
@@ -1162,7 +1162,7 @@ class Hotaru
                         break;
                     case 'css': 
                         // bringing this up-top with css because some inline js on plugins needs to have jquery loaded first to work
-                        echo '<script type="text/javascript" defer async src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
+                        echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
              
                         $version_css = $this->includes->combineIncludes($this, 'css');
                         $this->includes->includeCombined($this, 0, $version_css, $this->isAdmin);
@@ -1226,7 +1226,7 @@ class Hotaru
              if ($this->isAdmin) {
                     echo '<link rel="stylesheet" href="' . SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css" type="text/css" />';         
              } else {
-                    echo '<link rel="stylesheet" href="' . SITEURL . 'content/themes/' . THEME . 'css/style.css" type="text/css" />';
+                    echo '<link rel="stylesheet" href="' . SITEURL . 'content/themes/' . THEME . '/css/style.css" type="text/css" />';
                     $this->getFramework('bootstrap-lite');
              }                          
          }                
