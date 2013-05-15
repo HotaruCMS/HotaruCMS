@@ -433,5 +433,31 @@ class PluginFunctions
 		}		
 		return false;
 	}
+        
+        
+        /**
+         * Get the values that have been passed to the pluginhook and return them in a simple array
+         * 
+         * @param type $h
+         * @param type $pluginResult
+         * @param type $folder
+         * @return boolean
+         */
+        public static function getValues($h, $pluginResult = '', $folder = '')
+        {          
+            if (!is_array($pluginResult)) return false;
+                        
+            if ($folder == '') {
+                // no plugin name selected so lets strip off all plugin names and return values                
+                reset ($pluginResult); // reset back to first point in array                            
+                $result = array_values($pluginResult); // remove the plugin names first                                         
+            } else {
+                if (isset($pluginResult[$folder])) {
+                    $result = $pluginResult[$folder];
+                }
+            }
+            
+            if (isset($result)) return $result; else return false;
+        }
 }
 ?>

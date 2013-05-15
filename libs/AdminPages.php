@@ -484,10 +484,13 @@ class AdminPages
         
         public static function sidebarPluginsList($h, $pluginResult)
         {
-            if ($pluginResult){
-                reset ($pluginResult); // reset back to first point in array                            
-                $base = array_values($pluginResult); // remove the plugin names first                         
-            }
+//            if ($pluginResult){
+//                reset ($pluginResult); // reset back to first point in array                            
+//                $base = array_values($pluginResult); // remove the plugin names first                         
+//            }
+            
+            $pFuncs = new PluginFunctions();
+            $base = $pFuncs::getValues($h, $pluginResult);
 
             if (isset($base)) {
                 foreach ($base as $links) {  // loop through each plugins array
@@ -501,5 +504,7 @@ class AdminPages
                 }
             }
         }
+        
+        
 }
 ?>
