@@ -65,6 +65,7 @@ $lang['admin_announcement_plugins_disabled'] = "Go to Plugin Management to enabl
 $lang['admin_announcement_users_disabled'] = "Please enable the Users plugin in Plugin Management.";
 $lang['admin_announcement_change_site_email'] = "Please change the site email address in the Settings page.";
 $lang['admin_announcement_site_closed'] = SITE_NAME . " is currently closed!";
+$lang['admin_announcement_debug_mode_on'] = "Debug mode is on";
 
 /* Plugins */
 $lang["admin_plugins_install_done"] = "Plugin successfully installed and activated";

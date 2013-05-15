@@ -95,8 +95,6 @@ class Announcements
 		
 		// Check if install file has not been run
                 $hotaru_version = $h->miscdata('hotaru_version');
-//		$sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
-//		$hotaru_version = $h->db->get_var($h->db->prepare($sql, 'hotaru_version'));
 		if (version_compare($h->version, $hotaru_version, '>')) {
 			array_push($announcements, $h->lang['admin_announcement_run_install']);
 		}
@@ -114,6 +112,11 @@ class Announcements
 		// "Go to Plugin Management to enable some plugins"
 		if (!$h->numActivePlugins()) {
 			array_push($announcements, $h->lang['admin_announcement_plugins_disabled']);    
+		}
+                
+                // "Don't forget - debug mode is on"
+		if ($h->isDebug) {
+			array_push($announcements, $h->lang['admin_announcement_debug_mode_on']);    
 		}
 		
 		// Plugins can add announcements with this:
