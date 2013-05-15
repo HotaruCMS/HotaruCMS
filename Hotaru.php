@@ -25,8 +25,9 @@
  */
 class Hotaru
 {
-	protected $version              = "1.5.0";  // Hotaru CMS version
+	protected $version              = "1.5.0 RC1";  // Hotaru CMS version
 	protected $isDebug              = false;    // show db queries and page loading time
+        protected $isTest               = false;     // show page files for testing
 	protected $isAdmin              = false;    // flag to tell if we are in Admin or not
 	protected $sidebars             = true;     // enable or disable the sidebars
 	protected $csrfToken            = '';       // token for CSRF
@@ -93,7 +94,7 @@ class Hotaru
 
 		// initialize Hotaru
 		if (!$start) {
-			
+
 			$init = new Initialize($this);
 
 			$this->db           = $init->db;            // database object
