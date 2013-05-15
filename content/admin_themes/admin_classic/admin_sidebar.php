@@ -68,7 +68,7 @@
 		<li><?php echo $h->lang["admin_theme_theme_settings"]; ?>
 			<ul id="plugin_settings_list">
 			<?php 
-				$themes = $h->getFiles(THEMES, array('404error.php'));
+				$themes = $h->getFiles(THEMES, array('404error.php', 'pages'));
 				if ($themes) {                
                                         sort($themes); // sort alphabetically
 					foreach ($themes as $theme) { 
