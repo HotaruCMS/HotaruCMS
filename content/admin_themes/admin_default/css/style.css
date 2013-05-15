@@ -124,3 +124,12 @@ ul { list-style-type: none;}
 
 .debug  { font-size: 0.8em; }
 
+#hotaruImg { 
+    background-image:url('../images/hotaru-80px.png');
+    background-repeat:no-repeat;
+    opacity: 0.3;
+    background-position: center center;
+    height: 80px;
+    margin: 120px auto;    
+}
+

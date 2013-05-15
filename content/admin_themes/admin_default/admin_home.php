@@ -40,6 +40,7 @@
 	
 	<!-- Feed items, number to show content for, max characters for content -->
         <div id="adminNews" style="display:none;"></div>
+        <div id="hotaruImg">&nbsp;</div>
 	<?php //echo $h->adminNews(10, 3, 300); ?>
 	
 	<br/>
@@ -99,7 +100,9 @@ $(window).load(function() {
                                     $('#adminNews').removeClass('power_on').addClass('warning_on');
                     },
                     success: function(data) { // success means it returned some form of json code to us. may be code with custom error msg                                                                               
-                                    $('#adminNews').html(data).fadeIn("slow");     
+                                    $('#adminNews').html(data).fadeIn("fast");
+                                    $('#hotaruImg').fadeOut("slow");
+                                     
                     },
                     dataType: "html"
     });

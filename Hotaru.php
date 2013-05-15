@@ -1227,7 +1227,7 @@ class Hotaru
              if ($this->isAdmin) {
                     echo '<link rel="stylesheet" href="' . SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css" type="text/css" />';         
              } else {
-                    echo '<link rel="stylesheet" href="' . SITEURL . 'content/themes/' . THEME . '/css/style.css" type="text/css" />';
+                    echo '<link rel="stylesheet" href="' . SITEURL . 'content/themes/' . THEME . 'css/style.css" type="text/css" />';
                     $this->getFramework('bootstrap-lite');
              }                          
          }                
