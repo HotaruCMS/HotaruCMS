@@ -492,7 +492,7 @@ class AdminPages
             $pFuncs = new PluginFunctions();
             $base = $pFuncs::getValues($h, $pluginResult);
 
-            if (isset($base)) {
+            if (is_array($base)) {
                 foreach ($base as $links) {  // loop through each plugins array
                     foreach ($links as $label => $params) {  // loop through each link item
                         // Going to check the arrays first as we dont want this to break
