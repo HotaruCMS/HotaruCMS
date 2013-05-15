@@ -54,11 +54,12 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
         <?php if ($announcements = $h->checkAnnouncements()) { ?>
 		<div id="announcement">
 			<?php $h->pluginHook('announcement_first'); ?>
-			<?php foreach ($announcements as $announcement) { echo $announcement . "<br />"; } ?>
+			<?php foreach ($announcements as $announcement) { echo $announcement . "<br/>"; } ?>
 			<?php $h->pluginHook('announcement_last'); ?>
 		</div>
 	<?php } ?>
 		
+        <br/>
 	<div class="container<?php if ($h->vars['theme_settings']['fullWidth']) echo '-fluid'; ?>">
             <div class="row<?php if ($h->vars['theme_settings']['fullWidth']) echo '-fluid'; ?>">
 
@@ -84,13 +85,14 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 					<!-- FILTER TABS -->
 					<?php $h->pluginHook('theme_index_pre_main'); ?>
 					
-					<!-- MAIN -->
+					<!-- MAIN -->                                        
+                                        <?php print_r($h->pluginHook('theme_index_main')); ?>
 					<?php if (!$h->pluginHook('theme_index_main')) { $h->displayTemplate($h->pageName); } ?>
                                         <?php 
                                         
                                         $postCount = $h->postStats('total');
                                         
-                                        if ($postCount && $postCount < 1) { ?>
+                                        if (!isset($postCount) || $postCount < 1) { ?>
                                             <div style="padding:15px 25px;" class="hero-unit">
                                                     <h2>Welcome to Hotaru CMS</h2>
                                                     <p>It looks like you are just getting started with your new Hotaru CMS website. Why not submit your first post and publish it to the homepage straight away.</p>
