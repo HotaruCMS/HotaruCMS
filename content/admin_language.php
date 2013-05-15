@@ -301,6 +301,6 @@ $lang["admin_theme_plugin_search_submit"] = "Search";
 
 /* Plugins */
 $lang["admin_theme_users"] = "Users";
-
+$lang["admin_theme_posts"] = "Posts";
 
 ?>

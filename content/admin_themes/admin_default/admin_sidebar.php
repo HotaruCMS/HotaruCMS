@@ -56,17 +56,48 @@
         <?php 
         $pluginFunc = new PluginFunctions();
         $sb_links = $pluginFunc::getAllActivePluginNames($h);
-        // Taken below out so we dont need to use the admin_sidebar_plugin_settings hook, but instead list all installed plugins in the sidebar        
-        //$sb_links = $h->pluginHook('admin_sidebar_plugin_settings'); 
         ?>        
         
         <hr style="margin:10px 0;"/>	         
         
 	<!-- Plugins -->       
         
-        <?php $h->pluginHook('admin_sidebar_users'); ?>
+        <?php
+        if ($h->isActive('user_manager')) {
+            echo '<li class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_users_list">' . $h->lang["admin_theme_users"];
+                echo '<div id="admin_users_list" class="collapse out">';  
+                    echo '<ul id="users_list">';
+                    
+                        $pluginResult = $h->pluginHook('admin_sidebar_users');
+                        
+                        $adminPages = new AdminPages();
+                        echo $adminPages::sidebarPluginsList($h, $pluginResult);                        
+                        
+                    echo '</ul>';
+                echo '</div>';
+            echo '</li>';
+            echo '<hr style="margin:10px 0;"/>';
+        }
+        ?>
         
-        <?php $h->pluginHook('admin_sidebar_posts'); ?>
+        
+        <?php
+        if ($h->isActive('post_manager')) {
+            echo '<li class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_posts_list">' . $h->lang["admin_theme_posts"];
+                echo '<div id="admin_posts_list" class="collapse out">';  
+                    echo '<ul id="posts_list">';
+                    
+                        $pluginResult = $h->pluginHook('admin_sidebar_posts');
+                        
+                        $adminPages = new AdminPages();
+                        echo $adminPages::sidebarPluginsList($h, $pluginResult);                        
+                        
+                    echo '</ul>';
+                echo '</div>';
+            echo '</li>';
+            echo '<hr style="margin:10px 0;"/>';
+        }
+        ?>
         
         <?php $h->pluginHook('admin_sidebar_stats'); ?>
         

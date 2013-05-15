@@ -480,5 +480,26 @@ class AdminPages
 		
 		return true;
 	}
+        
+        
+        public static function sidebarPluginsList($h, $pluginResult)
+        {
+            if ($pluginResult){
+                reset ($pluginResult); // reset back to first point in array                            
+                $base = array_values($pluginResult); // remove the plugin names first                         
+            }
+
+            if (isset($base)) {
+                foreach ($base as $links) {  // loop through each plugins array
+                    foreach ($links as $label => $params) {  // loop through each link item
+                        // Going to check the arrays first as we dont want this to break
+                        // TODO really should move this away from theme and into core, but since not many people make admin themes will leave it here for now and maybe forever
+                        $linkLabel = isset($label) ? $label : '---';
+                        $linkUrl = isset($params[0]) ? $params[0] : '#';
+                        echo "<li><a href='" . BASEURL . $linkUrl . "'>" . $linkLabel . "</a></li>";        
+                    }
+                }
+            }
+        }
 }
 ?>
