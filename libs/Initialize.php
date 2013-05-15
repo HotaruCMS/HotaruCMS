@@ -201,7 +201,8 @@ class Initialize
 
                 if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD)
                 {
-                    // leave ezSql for these people ?                    
+                    // debug message
+                    
                 } else {
                     ActiveRecord\Config::initialize(function($cfg)
                     {
@@ -221,47 +222,7 @@ class Initialize
 
                     });   
                                        
-                }
-                
-                
-////memcached simple test
-//$memcache = new Memcache;
-//$memcache->connect('localhost', 11211) or die ("Could not connect");
-//$version = $memcache->getVersion();  
-//echo 'Version: '.$version . '<br/>'; 
-//
-//$key = md5('42data');  //something unique
-//for ($k=0; $k<5; $k++) {
-//    $data = $memcache->get($key);
-//    if ($data == NULL) {
-//        $data = array();
-//        //generate an array of random shit
-//        echo "expensive query";
-//        for ($i=0; $i<100; $i++) {
-//            for ($j=0; $j<10; $j++) {
-//                $data[$i][$j] = 42;  //who cares
-//                }
-//            }
-//            $memcache->set($key,$data,0,3600);
-//        } else {
-//    echo "cached : array size = ";
-//    print count($data);
-//    print "<br/>";
-//    }
-//}
-                
-                
-                
-                //$memcache = new Memcache;  
-//$memcache->connect('localhost', 11211) or die ("Connexion impossible");  
-//$version = $memcache->getVersion();  
-//echo 'Version: '.$version;  
-//$memcache->set('key', 'koreus', false, 10) or die ("Echec de la sauvegarde des donnÃ© sur le serveur");  
-//echo "Les donnÃ© ont Ã© stockÃ© dans le cache (les donnÃ© expireront dans 10 secondes)";   
-//$get_result = $memcache->get('key');  
-//echo 'DonnÃ© depuis le cache : '. $get_result;
-                
-                
+                }                                    
                 
                 // TODO : remove ezSQL when activeRecord is fully working with all plugins
                 $ezSQL = new Database(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
