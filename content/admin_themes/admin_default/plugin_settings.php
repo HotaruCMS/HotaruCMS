@@ -56,8 +56,8 @@ if ($pluginData->plugin_latestversion == '0.0') {
                     echo '
                     <ul class="nav nav-tabs" id="Admin_Plugins_Tab">';
                     $h->pluginHook('admin_plugin_tabLabel_pre_first', $plugin);
-                  echo '<li class="active"><a href="#home" data-toggle="tab">Overview</a></li>
-                        <li><a href="#settings" data-toggle="tab">Settings</a></li>
+                  echo '<li><a href="#settings" data-toggle="tab">Settings</a></li>
+                        <li><a href="#home" data-toggle="tab">Overview</a></li>
                         <li><a href="#support" data-toggle="tab">Support</a></li>
                         <li><a href="#about" data-toggle="tab">About</a></li> 
                         <li class="pull-right btn btn-info disable">' . ucfirst($plugin) . '</li>';
