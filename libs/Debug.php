@@ -44,6 +44,9 @@ class Debug
 			echo $h->lang['main_hotaru_php_version'] . phpversion() . " | ";
 			echo $h->lang['main_hotaru_mysql_version'] . $mysql_version . " | ";
 			echo $h->lang['main_hotaru_hotaru_version'] . $h->version; 
+                        
+                        $h->pluginHook('debugFooter');
+                        
 			echo "</p>"; 
 		}
 		elseif ($h->pageTemplate && function_exists('file_get_contents'))
