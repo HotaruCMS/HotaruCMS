@@ -86,7 +86,6 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 					<?php $h->pluginHook('theme_index_pre_main'); ?>
 					
 					<!-- MAIN -->                                        
-                                        <?php print_r($h->pluginHook('theme_index_main')); ?>
 					<?php if (!$h->pluginHook('theme_index_main')) { $h->displayTemplate($h->pageName); } ?>
                                         <?php 
                                         
