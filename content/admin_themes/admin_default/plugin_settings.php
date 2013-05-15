@@ -56,7 +56,7 @@ if ($pluginData->plugin_latestversion == '0.0') {
                     echo '
                     <ul class="nav nav-tabs" id="Admin_Plugins_Tab">';
                     $h->pluginHook('admin_plugin_tabLabel_pre_first', $plugin);
-                  echo '<li><a href="#settings" data-toggle="tab">Settings</a></li>
+                  echo '<li class="active"><a href="#settings" data-toggle="tab">Settings</a></li>
                         <li><a href="#home" data-toggle="tab">Overview</a></li>
                         <li><a href="#support" data-toggle="tab">Support</a></li>
                         <li><a href="#about" data-toggle="tab">About</a></li> 
@@ -68,7 +68,7 @@ if ($pluginData->plugin_latestversion == '0.0') {
                 
                     $h->pluginHook('admin_plugin_tabContent_pre_first', $plugin);
                 
-                    echo '<div class="tab-pane active" id="home">';
+                    echo '<div class="tab-pane" id="home">';
                     
                         //echo 'Active status';
 			//echo '<br/>'; 
@@ -98,7 +98,7 @@ if ($pluginData->plugin_latestversion == '0.0') {
                         
                     echo '</div>';
                 
-                    echo '<div class="form tab-pane" id="settings">';
+                    echo '<div class="form tab-pane active" id="settings">';
                     
                         $result = $h->pluginHook('admin_plugin_settings', $plugin);
                         if (!$result) {
