@@ -45,7 +45,7 @@ class Debug
 			echo $h->lang['main_hotaru_mysql_version'] . $mysql_version . " | ";
 			echo $h->lang['main_hotaru_hotaru_version'] . $h->version; 
                         
-                        $h->pluginHook('debugFooter');
+                        $h->pluginHook('debug_footer');
                         
 			echo "</p>"; 
 		}
