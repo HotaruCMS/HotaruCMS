@@ -47,7 +47,7 @@
         <div class="nav-collapse collapse">
           <div class="pull-right">
             <a href="#" class="brand">
-                <small><?php echo $h->lang["admin_theme_header_hotarucms"]; ?><?php echo $h->version; ?></small>
+                <span style="font-size:75%;"><?php echo $h->lang["admin_theme_header_hotarucms"]; ?><?php echo $h->version; ?></span>
             </a>
           </div>
           <ul class="nav">
