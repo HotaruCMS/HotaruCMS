@@ -254,7 +254,7 @@ class PageHandling
 			$default = $this->default;
                         
                         // custom rules for when problems occur on site
-                        if (!$h->numActivePlugins()) $h->pageName = 'pluginsdisabled';
+                        if (!$h->numActivePlugins()) $h->pageName = 'welcome';
 		} 
                 
                 $page = str_replace('..', '', $page); // prevents access outside the current folder
