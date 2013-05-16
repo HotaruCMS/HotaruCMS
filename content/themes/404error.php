@@ -37,7 +37,7 @@
 
       <hr>
 
-      <div class="row-fluid marketing">
+<!--      <div class="row-fluid marketing">
         <div class="span6">
           <h4>Hotaru CMS</h4>
           <p>Hotaru CMS allows you to create great bookmarking, journal and other social web sites. Be your own site admin and create your own social network niche.</p>
@@ -53,5 +53,5 @@
           <h4>Forums</h4>
           <p>There is always plenty of help in the forums from developers and site owners</p>
         </div>
-      </div>
+      </div>-->
 </div>
