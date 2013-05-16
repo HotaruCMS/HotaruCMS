@@ -1148,25 +1148,28 @@ class Hotaru
 	 */
 	 public function doIncludes($type = 'all')
 	 {                
+             // Note: dont use async or defer on the js otherwise inline jquery wihch may be in plugins has trouble running
+             
              switch ($type) {
                     case 'all':
-                        echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';             
                         $this->getFramework('bootstrap-lite');
 
                         $version_js = $this->includes->combineIncludes($this, 'js');
                         $version_css = $this->includes->combineIncludes($this, 'css');
                         $this->includes->includeCombined($this, $version_js, $version_css, $this->isAdmin);                               	                        
+                        
+                        echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';             
                         break;
                     case 'js': 
                         $version_js = $this->includes->combineIncludes($this, 'js');
                         $this->includes->includeCombined($this, $version_js, 0, $this->isAdmin);                               	                        
                         break;
                     case 'css': 
-                        // bringing this up-top with css because some inline js on plugins needs to have jquery loaded first to work
-                        echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
-             
                         $version_css = $this->includes->combineIncludes($this, 'css');
                         $this->includes->includeCombined($this, 0, $version_css, $this->isAdmin);
+                        
+                        // bringing this up-top with css because some inline js on plugins needs to have jquery loaded first to work
+                        echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
                         break;
                     default :
                         break;
@@ -1228,7 +1231,9 @@ class Hotaru
                     echo '<link rel="stylesheet" href="' . SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css" type="text/css" />';         
              } else {
                     echo '<link rel="stylesheet" href="' . SITEURL . 'content/themes/' . THEME . 'css/style.css" type="text/css" />';
-                    $this->getFramework('bootstrap-lite');
+                    // TODO
+                    // change so other themes dont double up on css code for bootstrap
+                    if (THEME != 'default/') $this->getFramework('bootstrap-lite');
              }                          
          }                
 

@@ -82,7 +82,7 @@
 </div>
 
 <script type='text/javascript'>
-$(window).load(function() {        
+jQuery(window).load(function() {        
         
         var sendurl = SITEURL + "admin_index.php?page=admin_news";
         

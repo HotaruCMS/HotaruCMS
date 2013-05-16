@@ -386,7 +386,7 @@ class IncludeCssJs
 		if ($admin) { $prefix = 'hotaru_admin_'; } else { $prefix = 'hotaru_'; }
 		
 		if ($version_js > 0) {
-			echo "<script type='text/javascript' src='" . SITEURL . "cache/css_js_cache/" . $prefix  . "js_" . $version_js . ".js'></script>\n";
+			echo "<script type='text/javascript' async src='" . SITEURL . "cache/css_js_cache/" . $prefix  . "js_" . $version_js . ".js'></script>\n";
 		}
 		
 		if ($version_css > 0) {
