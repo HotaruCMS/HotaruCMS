@@ -94,7 +94,7 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 					<?php $h->pluginHook('theme_index_pre_main'); ?>
 					
 					<!-- MAIN -->
-					<?php if (!$h->pluginHook('theme_index_main')) { $h->displayTemplate($h->pageName); } ?>
+					<?php if (!$h->pluginHook('theme_index_main')) { $h->displayTemplate($h->pageName, 'pages'); } ?>
 
 					<div class="clear"></div>
 				</div>

@@ -123,7 +123,7 @@
         <hr style="margin:10px 0;"/>
             
         <!-- Themes -->	
-        <?php $themes = $h->getFiles(THEMES, array('404error.php')); ?>
+        <?php $themes = $h->getFiles(THEMES, array('404error.php', 'pages')); ?>
         <?php $themesCount = ($themes) ? count($themes) : 0; ?>
         <li class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#themes_list"><?php echo $h->lang["admin_theme_theme_settings"]; ?>
             &nbsp;&nbsp;<span class="badge badge-info"><?php echo $themesCount; ?></span>
