@@ -253,7 +253,10 @@ class PageHandling
 			$theme = THEME;
 			$default = $this->default;
                         
+                        //$postCount = $h->postStats('total');
                         // custom rules for when problems occur on site
+                        // TODO
+                        // Also display welcome page if postCount < 0, but do we want to check for postcount on every page load?
                         if (!$h->numActivePlugins()) $h->pageName = 'welcome';
 		} 
                 
