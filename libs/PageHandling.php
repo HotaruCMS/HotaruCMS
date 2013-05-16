@@ -211,7 +211,7 @@ class PageHandling
 			// return the title only
 			if ($raw) { return $h->pageTitle; }
 			
-			// return just the site name for the omepage
+			// return just the site name for the homepage
 			if ($h->pageName == $h->home) { return SITE_NAME; }
 			
 			// return with site name
@@ -264,13 +264,13 @@ class PageHandling
                 if ($h->isTest) print $themes . $theme . $page . '<br/>';
                 
 		/* 
-			1. Check the custom theme
+			1. Check the custom theme (skip steps 1 and 2 if plugin is "pages")
 			2. Check the default theme
 			3. Check the plugin folder
 			4. Show the 404 Not Found page from the theme
 			5. Show the 404 Not Found page from "themes" folder
 		*/
-		if (file_exists($themes . $theme . $page))
+		if (file_exists($themes . $theme . $page) && ($plugin != 'pages')) 
 		{
 			if (!$include_once) {
 				// Special case, do not restrict to include once.
@@ -279,7 +279,7 @@ class PageHandling
 				include_once($themes . $theme . $page);
 			}
 		} 
-		elseif (file_exists($themes . $default . $page))
+		elseif (file_exists($themes . $default . $page) && ($plugin != 'pages')) 
 		{
 			if (!$include_once) {
 				// Special case, do not restrict to include once.
@@ -288,6 +288,10 @@ class PageHandling
 				include_once($themes . $default . $page);
 			}
 		}
+		elseif ($plugin == 'pages' && file_exists($themes . '/pages/' . $page))
+		{
+			include_once($themes . '/pages/' . $page);
+		} 
 		elseif ($plugin != '' && file_exists(PLUGINS .  $plugin . '/templates/' . $page))
 		{
 			if (!$include_once) {
