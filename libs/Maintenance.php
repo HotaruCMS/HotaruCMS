@@ -241,33 +241,33 @@ class Maintenance
 	 */
 	public function siteClosed($h, $lang)
 	{
-		// site closed and access not granted
-		echo "<HTML id='site_closed_body'>\n<HEAD>\n";
-
-		// include current theme style and default style
-		if (file_exists(BASE . 'content/themes/' . $h->pageHandling->default . 'css/style.css')) {
-			echo "<link rel='stylesheet' href='" . SITEURL . "content/themes/" . $h->pageHandling->default . "css/style.css' type='text/css'>\n";
-		}
-		if (file_exists(BASE . 'content/themes/' . THEME . 'css/style.css')) {
-			echo "<link rel='stylesheet' href='" . SITEURL . "content/themes/" . THEME . "css/style.css' type='text/css'>\n";
-		}
-		echo "</HEAD>\n<BODY>\n";
-		echo "<div id='site_closed'>\n";
-		
-		// show custom maintenance page if one exists:
-		if (file_exists(THEMES . THEME . 'closed.php'))
+                // show custom maintenance page if one exists:
+                if (file_exists(THEMES . THEME . 'closed.php'))
 		{
 			$h->displayTemplate('closed');
 		} 
 		else
 		{
+                        // site closed and access not granted
+                        echo "<HTML id='site_closed_body'>\n<HEAD>\n";
+
+                        // include current theme style and default style
+                        if (file_exists(BASE . 'content/themes/' . $h->pageHandling->default . 'css/style.css')) {
+                                echo "<link rel='stylesheet' href='" . SITEURL . "content/themes/" . $h->pageHandling->default . "css/style.css' type='text/css'>\n";
+                        }
+                        if (file_exists(BASE . 'content/themes/' . THEME . 'css/style.css')) {
+                                echo "<link rel='stylesheet' href='" . SITEURL . "content/themes/" . THEME . "css/style.css' type='text/css'>\n";
+                        }
+                        echo "</HEAD>\n<BODY>\n";
+                        echo "<div id='site_closed'>\n";
+
 			// show default maintenance page:
 			echo $lang['main_hotaru_site_closed'];
 			echo "<br /><span id='site_closed_admin_link'>[<a href='" . SITEURL . "admin_index.php?page=admin_login'>Admin Login</a>]</span>";
+
+                        echo "\n</div>\n</BODY>\n</HTML>\n";
 		}
-		
-		echo "\n</div>\n</BODY>\n</HTML>\n";
-		
+                
 		die(); exit;
 	}
 	
