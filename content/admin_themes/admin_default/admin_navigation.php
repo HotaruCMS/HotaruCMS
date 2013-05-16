@@ -45,11 +45,11 @@
                       } ?>
           </span>
         <div class="nav-collapse collapse">
-          <p class="navbar-text pull-right">
-            <a href="#" class="navbar-link">
-                <?php echo $h->lang["admin_theme_header_hotarucms"]; ?><?php echo $h->version; ?>
+          <div class="pull-right">
+            <a href="#" class="brand">
+                <small><?php echo $h->lang["admin_theme_header_hotarucms"]; ?><?php echo $h->version; ?></small>
             </a>
-          </p>
+          </div>
           <ul class="nav">
             <li class="active"><a href="<?php echo $h->url(array(), 'admin'); ?>"><?php echo $h->lang["admin_theme_menu_admin_home"]; ?></a></li>
             <li><a href="<?php echo SITEURL; ?>"><?php echo $h->lang["admin_theme_menu_site_home"]; ?></a></li>
