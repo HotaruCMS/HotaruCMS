@@ -42,6 +42,10 @@ if ($h->pluginHook('theme_index_top')) { return false; };
 
 // display header if not overriden by a plugin
 if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
+
+// check whether we have the fluid setting. If not make false
+$fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
+
 ?>
 
 <body>
@@ -60,10 +64,10 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 	<?php } ?>
 		
         <br/>
-	<div class="container<?php if ($h->vars['theme_settings']['fullWidth']) echo '-fluid'; ?>">
-            <div class="row<?php if ($h->vars['theme_settings']['fullWidth']) echo '-fluid'; ?>">
+	<div class="container<?php echo $fluid; ?>">
+            <div class="row<?php echo $fluid; ?>">
 
-                <div id="header_end" class="container<?php if ($h->vars['theme_settings']['fullWidth']) echo '-fluid'; ?>">
+                <div id="header_end" class="container<?php echo $fluid; ?>">
                         <!-- CATEGORIES, ETC -->
                         <?php $h->pluginHook('header_end'); ?>
                 </div>
@@ -87,18 +91,7 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 					
 					<!-- MAIN -->                                        
 					<?php if (!$h->pluginHook('theme_index_main')) { $h->displayTemplate($h->pageName, 'pages'); } ?>
-                                        <?php 
-                                        
-                                        $postCount = $h->postStats('total');
-                                        
-                                        if (!isset($postCount) || $postCount < 1) { ?>
-                                            <div style="padding:15px 25px;" class="hero-unit">
-                                                    <h2>Welcome to Hotaru CMS</h2>
-                                                    <p>It looks like you are just getting started with your new Hotaru CMS website. Why not submit your first post and publish it to the homepage straight away.</p>
-                                                    <p><a href="/submit/" class="btn btn-primary">Submit Your First Post</a></p>
-                                            </div>
-                                        <?php } ?>
-                                        
+
 					<div class="clear"></div>
 				</div>
 			</div>
