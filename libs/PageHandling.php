@@ -237,7 +237,7 @@ class PageHandling
 	 * @param string $plugin optional plugin name
 	 * @param bool $include_once true or false
 	 */
-	public function displayTemplate($h, $page = '', $plugin = '', $include_once = true)
+	public function template($h, $page = '', $plugin = '', $include_once = true)
 	{
 		$h->pageTemplate = $page;
 		
@@ -289,9 +289,9 @@ class PageHandling
 				include_once($themes . $default . $page);
 			}
 		}
-		elseif ($plugin == 'pages' && file_exists($themes . '/pages/' . $page))
+		elseif ($plugin == 'pages' && file_exists(CONTENT . 'pages/' . $page))
 		{
-			include_once($themes . '/pages/' . $page);
+			include_once(CONTENT . 'pages/' . $page);
 		} 
 		elseif ($plugin != '' && file_exists(PLUGINS .  $plugin . '/templates/' . $page))
 		{
