@@ -146,7 +146,7 @@ class Hotaru
 				$this->checkCookie();                   // log in user if cookie
 				$this->checkAccess();                   // site closed if no access permitted
 				if (!$entrance) { return false; }       // stop here if entrance not defined
-				$this->displayTemplate('index');        // displays the index page
+				$this->template('index');        // displays the index page
 		}
 		
 		$lang->writeLanguageCache($this);
@@ -228,7 +228,7 @@ class Hotaru
 	 */
 	public function pre_close_body()
 	{
-		$this->displayTemplate($this->plugin->folder . '_footer', $this->plugin->folder);
+		$this->template($this->plugin->folder . '_footer', $this->plugin->folder);
 	}
     
 
@@ -316,6 +316,16 @@ class Hotaru
 	}
     
     
+        /**
+	 * Deprecated function in favor of $h->template
+         * 
+	 */
+	public function displayTemplate($page = '', $plugin = '', $include_once = true)
+	{
+		$this->template($page, $plugin, $include_once);
+	}
+        
+        
 	/**
 	 * Includes a template to display
 	 *
@@ -323,9 +333,9 @@ class Hotaru
 	 * @param string $plugin optional plugin name
 	 * @param bool $include_once true or false
 	 */
-	public function displayTemplate($page = '', $plugin = '', $include_once = true)
+	public function template($page = '', $plugin = '', $include_once = true)
 	{
-		$this->pageHandling->displayTemplate($this, $page, $plugin, $include_once);
+		$this->pageHandling->template($this, $page, $plugin, $include_once);
 	}
     
     

@@ -41,7 +41,7 @@ $h->vars['theme_settings'] = $h->getThemeSettings();
 if ($h->pluginHook('theme_index_top')) { return false; };
 
 // display header if not overriden by a plugin
-if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
+if (!$h->pluginHook('theme_index_header')) { $h->template('header'); }
 ?>
 
 <body>
@@ -59,7 +59,7 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 
 	<div id="navigation" class="grid_12">
 		<!-- NAVIGATION -->
-		<?php echo $h->displayTemplate('navigation'); ?>
+		<?php echo $h->template('navigation'); ?>
 	</div>
 		
 	<div id="header" class="grid_12">
@@ -94,7 +94,7 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 					<?php $h->pluginHook('theme_index_pre_main'); ?>
 					
 					<!-- MAIN -->
-					<?php if (!$h->pluginHook('theme_index_main')) { $h->displayTemplate($h->pageName, 'pages'); } ?>
+					<?php if (!$h->pluginHook('theme_index_main')) { $h->template($h->pageName, 'pages'); } ?>
 
 					<div class="clear"></div>
 				</div>
@@ -104,7 +104,7 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 			<?php if ($h->sidebars) { ?>
 				<div id="sidebar_container" class="grid_4">
 					<div id="sidebar">
-						<?php if (!$h->pluginHook('theme_index_sidebar')) { $h->displayTemplate('sidebar'); } ?>
+						<?php if (!$h->pluginHook('theme_index_sidebar')) { $h->template('sidebar'); } ?>
 					</div>
 				</div> 
 			<?php } ?>
@@ -114,7 +114,7 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 
 		<!-- FOOTER -->
 		<div id="footer" class="grid_12">
-			<?php if (!$h->pluginHook('theme_index_footer')) { $h->displayTemplate('footer'); } ?>
+			<?php if (!$h->pluginHook('theme_index_footer')) { $h->template('footer'); } ?>
 		</div>
 
 	</div> <!-- close "container_12" -->

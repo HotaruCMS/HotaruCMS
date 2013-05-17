@@ -62,14 +62,14 @@ class AdminAuth
 					$permission = "can_" . $plugin . "_settings";
 					if ($h->currentUser->getPermission($permission) == 'yes') {
 						$h->sidebars = false; // hide sidebars
-						$h->displayTemplate('index');
+						$h->template('index');
 						die(); exit;
 					}
 				}
 				
 				// User doesn't have permission to access Admin
 				$h->messages[$h->lang['main_access_denied']] = 'red';
-				$h->displayTemplate('admin_denied');
+				$h->template('admin_denied');
 				die(); exit;
 			}
 		}

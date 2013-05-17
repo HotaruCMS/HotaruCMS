@@ -37,7 +37,7 @@ if (!$result) {
 	// plugin hook
 	$result = $h->pluginHook('admin_theme_index_header');
 	if (!$result) {
-		$h->displayTemplate('admin_header');
+		$h->template('admin_header');
 	}
 ?>
 
@@ -67,7 +67,7 @@ if (!$result) {
                         // plugin hook
                         $result = $h->pluginHook('admin_theme_index_sidebar');
                         if (!$result) {
-                                $h->displayTemplate('admin_sidebar');                                
+                                $h->template('admin_sidebar');                                
                         }
                 ?>
             </div>           
@@ -81,7 +81,7 @@ if (!$result) {
             if (!$result) {
                     if ($h->pageName == 'admin_login') {
                             if ($h->currentUser->loggedIn && $h->currentUser->role == 'admin') {
-                                    $h->displayTemplate('admin_home');
+                                    $h->template('admin_home');
                             } else {
                                 if ($h->currentUser->role != 'admin')  {
                                         $h->message = $h->lang["admin_not_adminuser"];
@@ -96,7 +96,7 @@ if (!$result) {
                                 // then separate by hooks
                             } 
                             
-                            $h->displayTemplate($h->pageName);
+                            $h->template($h->pageName);
                     } 
             }
             ?>
@@ -111,7 +111,7 @@ if (!$result) {
 	// plugin hook
 	$result = $h->pluginHook('admin_theme_index_footer');
 	if (!$result) {
-		$h->displayTemplate('admin_footer');
+		$h->template('admin_footer');
 	}
 ?>
 </body>

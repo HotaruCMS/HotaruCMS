@@ -27,7 +27,7 @@
  */
 ?>
 
-<?php $h->displayTemplate('admin_sidebar'); ?>
+<?php $h->template('admin_sidebar'); ?>
 
 <!--<h2><?php echo $h->lang["admin_theme_plugins"]; ?></h2>-->
 

@@ -28,7 +28,7 @@
 
 ?>
 <!-- HEADER-->
-<?php $h->displayTemplate('header'); ?>
+<?php $h->template('header'); ?>
 
 <div id="bd" role="main">
 	<div class='yui-g''>
@@ -43,4 +43,4 @@
 </div>
 
 <!-- FOOTER -->
-<?php $h->displayTemplate('footer'); ?>
+<?php $h->template('footer'); ?>

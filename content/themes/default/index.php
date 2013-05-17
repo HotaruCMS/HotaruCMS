@@ -41,7 +41,7 @@ $h->vars['theme_settings'] = $h->getThemeSettings();
 if ($h->pluginHook('theme_index_top')) { return false; };
 
 // display header if not overriden by a plugin
-if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
+if (!$h->pluginHook('theme_index_header')) { $h->template('header'); }
 
 // check whether we have the fluid setting. If not make false
 $fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
@@ -52,7 +52,7 @@ $fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
 	<?php $h->pluginHook('post_open_body'); ?>	
 
         <!-- NAVIGATION -->
-        <?php echo $h->displayTemplate('navigation'); ?>
+        <?php echo $h->template('navigation'); ?>
 	
         <?php if ($announcements = $h->checkAnnouncements()) { ?>
 		<div id="announcement">
@@ -89,7 +89,7 @@ $fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
 					<?php $h->pluginHook('theme_index_pre_main'); ?>
 					
 					<!-- MAIN -->                                        
-					<?php if (!$h->pluginHook('theme_index_main')) { $h->displayTemplate($h->pageName, 'pages'); } ?>
+					<?php if (!$h->pluginHook('theme_index_main')) { $h->template($h->pageName, 'pages'); } ?>
 
 					<div class="clear"></div>
 				</div>
@@ -98,7 +98,7 @@ $fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
 			<!-- SIDEBAR -->
 			<?php if ($h->sidebars) { ?>
                             <div class="span3">
-                            <?php if (!$h->pluginHook('theme_index_sidebar')) { $h->displayTemplate('sidebar'); } ?>					
+                            <?php if (!$h->pluginHook('theme_index_sidebar')) { $h->template('sidebar'); } ?>					
                             </div>
                         <?php } ?>
 
@@ -109,7 +109,7 @@ $fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
             <hr/>
 		<!-- FOOTER -->
 		<footer>
-			<?php if (!$h->pluginHook('theme_index_footer')) { $h->displayTemplate('footer'); } ?>
+			<?php if (!$h->pluginHook('theme_index_footer')) { $h->template('footer'); } ?>
 		</footer>
         </div>
 	

@@ -78,7 +78,7 @@ class AdminPages
 					$h->vars['plugin_settings_csrf_error'] = (!$h->csrf()) ? true : false;
 				}
 				$alt_template = $h->cage->get->testPage('alt_template');
-				if ($alt_template) { $h->displayTemplate($alt_template, $h->vars['settings_plugin']); exit; }
+				if ($alt_template) { $h->template($alt_template, $h->vars['settings_plugin']); exit; }
 				break;
 			case "theme_settings":
 				$h->vars['settings_theme'] = $h->cage->get->testAlnumLines('theme'); // get plugin name from url
@@ -97,7 +97,7 @@ class AdminPages
 		}
 		
 		// Display the main theme's index.php template
-		$h->displayTemplate('admin_index');
+		$h->template('admin_index');
 	}
 	
 	

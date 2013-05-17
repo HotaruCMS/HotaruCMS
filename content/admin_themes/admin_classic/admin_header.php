@@ -133,7 +133,7 @@
 		<?php $h->pluginHook('header_post_admin_title'); ?>
 		
 		 NAVIGATION 
-		<?php //echo $h->displayTemplate('admin_navigation'); ?>
+		<?php //echo $h->template('admin_navigation'); ?>
 	</div>-->
 
 	<br/>

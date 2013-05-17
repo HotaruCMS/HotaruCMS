@@ -31,7 +31,7 @@
 <?php // turn off admin so we can jump to THEME templates instead ?>
 <?php $h->isAdmin = false; ?>
 
-<?php $h->displayTemplate('header'); ?>
+<?php $h->template('header'); ?>
 
 <div class="container">
             <div class="row">
@@ -44,4 +44,4 @@
 </div>
 
 <!-- FOOTER -->
-<?php //$h->displayTemplate('footer'); ?>
+<?php //$h->template('footer'); ?>

@@ -244,7 +244,7 @@ class Maintenance
                 // show custom maintenance page if one exists:
                 if (file_exists(THEMES . THEME . 'closed.php'))
 		{
-			$h->displayTemplate('closed');
+			$h->template('closed');
 		} 
 		else
 		{

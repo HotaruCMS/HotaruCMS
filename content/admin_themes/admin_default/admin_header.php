@@ -57,7 +57,7 @@
 <body>
 
     <div id="wrap">       
-        <?php echo $h->displayTemplate('admin_navigation'); ?>
+        <?php echo $h->template('admin_navigation'); ?>
 
         <?php
 	$announcements = $h->checkAnnouncements();
