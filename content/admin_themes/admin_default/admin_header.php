@@ -68,7 +68,8 @@
                     <?php foreach ($announcements as $announcement) { echo $announcement . "<br/>"; } ?>
                     <?php $h->pluginHook('admin_announcement_last'); ?>
             </div>
-            <br/>
+           
         <?php } ?>
 
+         <br/>
 	
