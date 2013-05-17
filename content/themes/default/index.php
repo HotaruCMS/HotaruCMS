@@ -45,7 +45,6 @@ if (!$h->pluginHook('theme_index_header')) { $h->displayTemplate('header'); }
 
 // check whether we have the fluid setting. If not make false
 $fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
-
 ?>
 
 <body>
