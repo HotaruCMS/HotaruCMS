@@ -54,7 +54,8 @@ class UserAuth extends UserBase
 			
 			// Read the user from the database
 			$user_exists = $this->getUser($h, 0, $this->name);
-		
+                        if (!$user_exists) return false;
+                        
 			// validate the user's password
 			if ($user_info[2] != md5($user_exists->user_password)) {
 				$user_exists = false;
