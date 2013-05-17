@@ -34,6 +34,9 @@ $h->setHome();
 // get language
 $h->includeThemeLanguage();
 
+// get announcements
+$announcements = $h->checkAnnouncements();
+
 // get settings:
 $h->vars['theme_settings'] = $h->getThemeSettings();
 
@@ -54,7 +57,7 @@ $fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
         <!-- NAVIGATION -->
         <?php echo $h->template('navigation'); ?>
 	
-        <?php if ($announcements = $h->checkAnnouncements()) { ?>
+        <?php if ($announcements) { ?>
 		<div id="announcement">
 			<?php $h->pluginHook('announcement_first'); ?>
 			<?php foreach ($announcements as $announcement) { echo $announcement . "<br/>"; } ?>

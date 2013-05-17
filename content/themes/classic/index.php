@@ -34,6 +34,9 @@ $h->setHome();
 // get language
 $h->includeThemeLanguage();
 
+// get announcements
+$announcements = $h->checkAnnouncements();
+
 // get settings:
 $h->vars['theme_settings'] = $h->getThemeSettings();
 
@@ -47,7 +50,7 @@ if (!$h->pluginHook('theme_index_header')) { $h->template('header'); }
 <body>
 
 	<?php $h->pluginHook('post_open_body'); ?>	
-	<?php if ($announcements = $h->checkAnnouncements()) { ?>
+	<?php if ($announcements) { ?>
 		<div id="announcement">
 			<?php $h->pluginHook('announcement_first'); ?>
 			<?php foreach ($announcements as $announcement) { echo $announcement . "<br />"; } ?>
