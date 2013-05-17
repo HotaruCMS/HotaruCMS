@@ -146,7 +146,7 @@ class Hotaru
 				$this->checkCookie();                   // log in user if cookie
 				$this->checkAccess();                   // site closed if no access permitted
 				if (!$entrance) { return false; }       // stop here if entrance not defined
-				$this->template('index');        // displays the index page
+				$this->template('index');               // displays the index page
 		}
 		
 		$lang->writeLanguageCache($this);

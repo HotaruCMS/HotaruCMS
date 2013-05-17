@@ -52,12 +52,11 @@ class Initialize
 
 		$this->errorReporting();
 
-		$this->readSettings();
-		$this->setUpDatabaseCache();
-		$this->isDebug = $this->checkDebug();
-		
-		$this->setUpJsConstants();
-		
+                $this->readSettings();
+                $this->setUpDatabaseCache();
+                $this->isDebug = $this->checkDebug();
+                $this->setUpJsConstants();                
+                
 		return $this;
 	}
 	
@@ -263,14 +262,20 @@ class Initialize
 	 */
 	public function readSettings() {	    
             
-            if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
-                $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;
-                $settings = $this->db->get_results($this->db->prepare($sql));                
-            } else {
-                $settings = models\Settings::all(array('select' => 'settings_name, settings_value'));
-            }
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
+                    $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;
+                    $settings = $this->db->get_results($this->db->prepare($sql));                
+                } else {
+                    $settings = models\Settings::all(array('select' => 'settings_name, settings_value'));
+                }
 
-	    if(!$settings) { return false; }
+                if(!$settings) { 
+                    $default_settings = array('THEME'=>'default/', 'SITE_NAME'=>'Hotaru CMS', 'FRIENDLY_URLS'=>false, 'LANG_CACHE'=>false, 'SITE_OPEN'=>false, 'DB_CACHE_DURATION'=>0, 'DB_CACHE'=>false, 'DEBUG'=>false);
+                    foreach ($default_settings as $setting => $value) {
+                        if (!defined($setting)) define ($setting, $value);
+                    }                    
+                    return false; 
+                }
 
 		// Make Hotaru settings global constants
 		foreach ($settings as $setting)

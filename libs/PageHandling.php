@@ -251,11 +251,7 @@ class PageHandling
 		} else {
 			$themes = THEMES;
 			$theme = THEME;
-			$default = $this->default;
-                        
-                        //$postCount = $h->postStats('total');
-                        // custom rules for when problems occur on site
-                        if (!$h->numActivePlugins()) $h->pageName = 'welcome';
+			$default = $this->default;                        
 		} 
                 
                 $page = str_replace('..', '', $page); // prevents access outside the current folder
@@ -271,7 +267,8 @@ class PageHandling
 			4. Show the 404 Not Found page from the theme
 			5. Show the 404 Not Found page from "themes" folder
 		*/
-		if (file_exists($themes . $theme . $page) && ($plugin != 'pages')) 
+             
+		if ($plugin != 'pages' && file_exists($themes . $theme . $page))
 		{
 			if (!$include_once) {
 				// Special case, do not restrict to include once.
@@ -280,7 +277,7 @@ class PageHandling
 				include_once($themes . $theme . $page);
 			}
 		} 
-		elseif (file_exists($themes . $default . $page) && ($plugin != 'pages')) 
+		elseif ($plugin != 'pages' && file_exists($themes . $default . $page)) 
 		{
 			if (!$include_once) {
 				// Special case, do not restrict to include once.

@@ -48,6 +48,7 @@ class Announcements
 				$announcements, 
 				$h->lang['main_announcement_plugins_disabled']
 			);
+                        if (SITE_OPEN) { $h->pageName = 'welcome'; $h->pageTitle = 'Welcome'; }
 		}
 		
 		// if using the announcement parameter, then add to non-admin pages only:
