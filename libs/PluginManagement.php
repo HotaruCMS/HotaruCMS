@@ -622,10 +622,19 @@ class PluginManagement
 	public function activateDeactivateAll($h, $enabled = 0)
 	{	// 0 = deactivate, 1 = activate
 		
+                // Clear the database cache to ensure plugins and hooks are up-to-date.
+		$h->deleteFiles(CACHE . 'db_cache');
+		
+		// Clear the css/js cache to ensure any new ones get included
+		$h->deleteFiles(CACHE . 'css_js_cache');
+                
+                $h->messages['db, css caches cleared'] = 'alert-info'; 
+                
 		// if you want to deactivate, just go ahead and do it:
 		if ($enabled == 0) { 
 		    $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_enabled = %d, plugin_updateby = %d";
 		    $h->db->query($h->db->prepare($sql, $enabled, $h->currentUser->id));
+                    $h->messages[$h->lang["admin_plugins_deactivated"]] = 'green'; 
 		    return false;
 		    //$active_plugins = $this->activePlugins($h->db, '*', 1);
 		}
