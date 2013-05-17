@@ -38,7 +38,7 @@
     <meta name="title" content="Hotaru CMS">
 
     <!-- styles -->
-    <link href="/libs/frameworks/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?php echo SITEURL; ?>libs/frameworks/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
       body {
         padding-top: 20px;
@@ -76,7 +76,7 @@
         margin-top: 28px;
       }
     </style>
-    <link href="/libs/frameworks/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="<?php echo SITEURL; ?>libs/frameworks/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
 
   </head>
 
@@ -102,7 +102,7 @@
 
         <p>
             <br/>
-        <center><img src="/content/admin_themes/admin_default/images/hotaru-80px.png"></center>
+        <center><img src="<?php echo SITEURL; ?>content/admin_themes/admin_default/images/hotaru-80px.png"></center>
       </p>
       </div>
 
