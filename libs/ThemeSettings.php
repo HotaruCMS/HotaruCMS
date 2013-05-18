@@ -57,7 +57,12 @@ class ThemeSettings
 		
 		// Get settings from the database if they exist...
 		$sql = "SELECT miscdata_value, miscdata_default FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
-		$settings = $h->db->get_row($h->db->prepare($sql, $theme . '_settings'));
+		$query = $h->db->prepare($sql, $theme . '_settings');
+                
+                $h->smartCache('on', 'theme_settings', 60, $query); // start using cache
+                $settings = $h->db->get_row($query);
+                $h->smartCache('off'); // stop using cache
+                
 		if (!$settings) { return false; } 
 		
 		if ($return == 'value') {
