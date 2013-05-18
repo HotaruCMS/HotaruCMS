@@ -258,11 +258,11 @@ class PageHandling
 		$page = $page . '.php';
 
                 // Include this for testing
-                if ($h->isTest) print $themes . $theme . $page . '<br/>';
+                if ($h->isTest) print "plugin = " . $plugin . ' : pages = ' . $page . '<br/>';
                 
 		/* 
-			1. Check the custom theme (skip steps 1 and 2 if plugin is "pages")
-			2. Check the default theme
+			1. Check the custom theme (skip step 1 if plugin is "pages")
+			2. Check the default theme (skip step 2 if plugin is "pages")
 			3. Check the plugin folder
 			4. Show the 404 Not Found page from the theme
 			5. Show the 404 Not Found page from "themes" folder
