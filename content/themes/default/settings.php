@@ -7,6 +7,7 @@ $vTheme = $h->cage->get->testAlnumLines('theme'); // theme we're viewing the set
 $defaults['tagline'] = "Possibly the greatest site on the Internet.";
 $defaults['fullWidth'] = '0';  // must be something otherwise it wont save
 $defaults['link_color'] = 'ffcc00';
+$defaults['leftSpan'] = 9;
 
 // If the form has been submitted, save the data...
 if ($h->cage->post->getAlpha('submitted') == 'true')
@@ -24,6 +25,13 @@ if ($h->cage->post->getAlpha('submitted') == 'true')
             $theme_settings['fullWidth'] = 'checked';
         } else {
             $theme_settings['fullWidth'] = '0';  // must be something otherwise it wont save
+	}
+        
+        // full width UI:
+        if ($h->cage->post->keyExists('leftSpan')) {
+		$theme_settings['leftSpan'] = $h->cage->post->getInt('leftSpan');
+	} else {
+		$error = 'Invalid integer for left column span';
 	}
         
         // link color
@@ -68,6 +76,11 @@ if (!$theme_settings) {
 &nbsp;&nbsp;<a href="http://www.colorpicker.com/" target="blank">Online color picker.</a></p>
 
 <p><input type='checkbox' name='fullWidth' value='fullWidth' <?php echo $theme_settings['fullWidth']; ?>/>&nbsp;Full width UI&nbsp;&nbsp;
+
+<p>Left Column Span: <input type='text' size="20" name='leftSpan' value='<?php echo $theme_settings['leftSpan']; ?>'/>
+<br/>Note: The default setting is 9, the max is 12
+</p>
+ 
     
 <br />
     <div class="form-actions">
