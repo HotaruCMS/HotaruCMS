@@ -60,7 +60,6 @@ ul { list-style-type: none;}
 *  Plugin Management table             *
 ************************************** */
 
-#plugin_management { margin-top: 1.0em; }
 #plugin_management table { margin: auto; width: 100%; }
 #plugin_management tr.table_a td, #plugin_management tr.table_b td { font-size: 1.2em; font-weight: bold; padding: 0.4em 0.5em 0.4em 0.5em; text-align: left; }
 #plugin_management tr.table_a td img, #plugin_management tr.table_b td img { vertical-align: middle; padding: 0 0.4em 0.2em 0;}
