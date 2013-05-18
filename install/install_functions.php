@@ -67,57 +67,6 @@ function init_inspekt_cage()
 
 
 /**
- * Delete all files in the specified directory except placeholder.txt
- *
- * @param string $dir - path to the cache folder
- * @return bool
- */    
-function delete_files($dir)
-{
-	$handle=opendir($dir);
-	
-	while (($file = readdir($handle))!==false) {
-		if ($file != 'placeholder.txt') {
-			if (@unlink($dir.'/'.$file)) {
-				$success = true;
-			} else {
-				$success = false;
-			}
-		}
-	}
-	
-	closedir($handle);
-	
-	return $success;
-}
-
-
-/**
- * List all plugin created tables
- */
-function list_plugin_tables($core_tables)
-{
-	global $db;
-
-	$plugin_tables = array();
-
-	$db->selectDB(DB_NAME);
-
-	if (!$db->get_col("SHOW TABLES",0)) { return $plugin_tables; }
-
-	foreach ( $db->get_col("SHOW TABLES",0) as $table_name )
-	{
-		if (!in_array($table_name, $core_tables)) {
-			array_push($plugin_tables, $table_name);
-		}
-	}
-
-	return $plugin_tables;
-}
-
-
-
-/**
  * Delete plugin database table
  *
  * @param string $table_name - table to drop
@@ -127,22 +76,4 @@ function drop_table($table_name)
 	global $db;
 	
 	$db->query("DROP TABLE " . $table_name);
-}
-
-/**
- * Delete directory tree with files in it
- * from php.net - anonyomous
- */
-function delTree($dir) {
-
-	$files = glob( $dir . '*', GLOB_MARK );
-
-	foreach( $files as $file ){
-		if( is_dir( $file ) )
-			delTree( $file );
-		else
-			@unlink( $file );
-	}
-	
-	if (is_dir($dir)) return @rmdir( $dir );
 }
