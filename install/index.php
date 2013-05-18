@@ -805,7 +805,7 @@ function installation_complete()
 
 	// Previous/Next buttons
 	echo "<div class='back button''><a href='index.php?step=3'>" . $lang['install_back'] . "</a></div>\n";
-	echo "<div class='next button''><a href='" . BASEURL . "admin_index.php'>" . $lang['install_home'] . "</a></div>\n";
+	echo "<div class='next button''><a href='" . BASEURL . "index.php'>" . $lang['install_home'] . "</a></div>\n";
 
 	echo html_footer();
 }
@@ -836,7 +836,7 @@ function upgrade_plugins()
 
 	// Previous/Next buttons
 	echo "<div class='back button''><a href='index.php?step=2&action=upgrade'>" . $lang['install_back'] . "</a></div>\n";
-	echo "<div class='next button''><a href='" . BASEURL . "admin_index.php'>" . $lang['upgrade_home'] . "</a></div>\n";
+	echo "<div class='next button''><a href='" . BASEURL . "index.php'>" . $lang['upgrade_home'] . "</a></div>\n";
 
 	echo html_footer();
 }

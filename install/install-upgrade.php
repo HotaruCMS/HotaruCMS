@@ -103,16 +103,6 @@ function upgrade_complete($h)
 {
 	global $lang;
 	global $cage;
-	$delete = $cage->post->getAlpha('delete');        // delete install folder.
-	$folder_deleted = 0;
-
-	if ($delete) {
-	    // try to delete the folder
-	    //$folder_deleted = delTree('install');	   
-	    $folder_deleted = 2;
-	    // if was deleted then redirect to baseurl
-	    if ($folder_deleted == 1) header("Location: /index.php" );
-	}
 
 	echo html_header();
 	
@@ -120,23 +110,8 @@ function upgrade_complete($h)
 	echo "<h2>" . $lang['upgrade_step2'] . "</h2>\n";
 
 	// Step content
-	if ($folder_deleted == 0) echo "<div class='install_content'>" . $lang['install_step4_installation_complete'] . "</div>\n";
+	echo "<div class='install_content'>" . $lang['install_step4_installation_complete'] . "</div>\n";
 	echo "<div class='install_content'>" . $lang['install_step4_installation_delete'] . "</div>\n";
-
-	if ($folder_deleted == 0) {
-	    // Confirm delete and continue install
-//	    echo "<div class='install_content'>" . $lang['install_step4_installation_delete_folder'] . "</div>\n";
-//	    echo "<form name='install_admin_reg_form' action='index.php?step=2&action=upgrade' method='post'>\n";
-//	    echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />";
-//	    echo "<input type='hidden' name='delete' value='folder' />";
-//	    echo "<input type='hidden' name='step' value='2' />";
-//
-//	    echo "<input class='update button' type='submit' value='" . $lang['install_step4_form_delete_folder'] . "' />";
-//	    echo "</div></form>\n";
-	} else {
-	    echo "<br/><img src='../content/admin_themes/admin_default/images/delete.png' style='float:left; margin-left:12px;'>";
-	    echo "<div class='install_content'><span style='color: red;'>" . $lang['install_step1_warning'] . "</span>: " . $lang['install_step4_installation_delete_failed'] . "</div>\n";
-	}	
 
 	// Previous/Next buttons
 	echo "<div class='back button''><a href='index.php?step=1&action=upgrade'>" . $lang['install_back'] . "</a></div>\n";
