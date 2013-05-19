@@ -14,7 +14,7 @@
 
 
 <div id ="plugin_search_form">
-    <form name='plugin_search_form' action='<?php echo SITEURL; ?>admin_index.php?page=plugin_search' method='post'>
+    <form name='plugin_search_form' action='<?php echo SITEURL; ?>admin_index.php?page=plugin_search#tab_search' method='post'>
 
 	<table align="center">
 		<tr>		

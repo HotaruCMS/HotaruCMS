@@ -39,58 +39,25 @@
 
     <ul class="nav nav-tabs" id="Admin_Plugins_Tab">
         <li class="active"><a href="#home" data-toggle="tab">Install</a></li>        
-<!--        <li><a href="#search" data-toggle="tab">Search</a></li>-->
+        <li><a href="#search" data-toggle="tab">Search</a></li>
         <li><a href="#help" data-toggle="tab">Help</a></li>
     </ul>
     
     <div class="tab-content">
         <div class="tab-pane" id="help">
             
-            <div>
-                    <p class="info_header"><?php echo $h->lang["admin_theme_plugins_guide"]; ?></p>
-                    &raquo; <?php echo $h->lang["admin_theme_plugins_guide1"]; ?><br />
-                    &raquo; <?php echo $h->lang["admin_theme_plugins_guide2"]; ?><br />
-                    &raquo; <?php echo $h->lang["admin_theme_plugins_guide3"]; ?><br />
-                    &raquo; <?php echo $h->lang["admin_theme_plugins_guide4"]; ?><br />
-            </div>
-            <br/>
-            <p>
-            Install order for a social bookmarking site
-Here's a quick start guide for the order in which the main plugins should be installed:
-
-First, install the plugins that have no dependencies (How?):
-
-            <ul>
-                <li>Bookmarking</li>
-                <li>User Signin</li>
-                <li>Widgets</li>
-            </ul>
-Then install key plugins that depend on those:
-
-            <ul>
-                <li>Users</li>
-                <li>Submit</li>
-                <li>Comments</li>
-                <li>Category Manager</li>
-            </ul>
-Now those are done, the rest are easy. Here are the other must-have plugins to bring your social bookmarking site together:
-
-            <ul>
-                
-                <li>Categories</li>
-                <li>Search</li>
-                <li>Tags</li>
-                <li>Vote</li>
-                <li>Post Manager</li>
-                <li>User Manager</li>
-                <li>Comment Manager</li>
-            </ul>
-Now you're free to pick and choose other plugins to enhance your site from those that remain.
-            </p>
+            <?php $h->render('plugin_management_help'); ?>
+            
+        </div>
+        
+        <div class="tab-pane" id="search">
+            
+            <?php $h->render('plugin_search'); ?>
+            
         </div>
    
     
-    <div class="active tab-pane" id="home">
+        <div class="active tab-pane" id="home">
         
     
 <table>
@@ -117,14 +84,7 @@ Now you're free to pick and choose other plugins to enhance your site from those
 	    <?php echo $h->lang["admin_theme_plugins_uninstall"]; ?>
             
             
-            <div class="plugin_management_right">
-                
-                <a href="<?php echo SITEURL ?>admin_index.php?page=plugin_search">
-                    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/search.png' alt="">
-                    <?php echo $h->lang["admin_theme_search"]; ?>
-                </a>
-                
-                 &nbsp;&nbsp;
+            <div class="plugin_management_right">                                               
                 <a href="<?php echo SITEURL ?>admin_index.php?page=plugin_management&action=version_check">
                     <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/update_16.png' alt="">
                     <?php echo $h->lang["admin_theme_check_latest_plugin_versions"]; ?>

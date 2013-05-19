@@ -337,6 +337,19 @@ class Hotaru
 	{
 		$this->pageHandling->template($this, $page, $plugin, $include_once);
 	}
+        
+        
+        /**
+	 * Includes a view to display
+	 *
+	 * @param string $page page name
+	 * @param string $plugin optional plugin name
+	 * @param bool $include_once true or false
+	 */
+	public function render($page = '', $data = array())
+	{                
+		$this->pageHandling->render($this, $page, $data);
+	}
     
     
 	/**
