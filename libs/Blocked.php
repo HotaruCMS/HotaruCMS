@@ -86,7 +86,7 @@ class Blocked
 		if ($safe && $h->cage->post->getAlpha('type') == 'search') {
 			$search_term = $h->cage->post->sanitizeTags('search_value');
 			$where_clause = " WHERE blocked_value LIKE %s";
-			$count_sql = "SELECT count(*) AS number FROM " . TABLE_BLOCKED . $where_clause;
+			$count_sql = "SELECT count(blocked_id) AS number FROM " . TABLE_BLOCKED . $where_clause;
 			$count = $h->db->get_var($h->db->prepare($count_sql, '%' . trim($search_term) . '%'));
 			$sql = "SELECT * FROM " . TABLE_BLOCKED . $where_clause . $sort_clause;
 			$query = $h->db->prepare($sql, '%' . trim($search_term) . '%');
@@ -97,12 +97,12 @@ class Blocked
 		if ($safe && $h->cage->post->getAlpha('type') == 'filter') {
 			$filter = $h->cage->post->testAlnumLines('blocked_type');
 			if ($filter == 'all') { 
-				$count_sql = "SELECT count(*) AS number FROM " . TABLE_BLOCKED;
+				$count_sql = "SELECT count(blocked_id) AS number FROM " . TABLE_BLOCKED;
 				$count = $h->db->get_var($h->db->prepare($count_sql));
 				$sql = "SELECT * FROM " . TABLE_BLOCKED . $sort_clause;
 				$query = $h->db->prepare($sql);
 			} else {
-				$count_sql = "SELECT count(*) AS number FROM " . TABLE_BLOCKED . " WHERE blocked_type = %s";
+				$count_sql = "SELECT count(blocked_id) AS number FROM " . TABLE_BLOCKED . " WHERE blocked_type = %s";
 				$count = $h->db->get_var($h->db->prepare($count_sql, $filter));
 				$sql = "SELECT * FROM " . TABLE_BLOCKED . " WHERE blocked_type = %s" . $sort_clause;
 				$query = $h->db->prepare($sql, $filter);
@@ -111,7 +111,7 @@ class Blocked
 		
 		// SQL
 		if (!$query) { 
-			$count_sql = "SELECT count(*) AS number FROM " . TABLE_BLOCKED;
+			$count_sql = "SELECT count(blocked_id) AS number FROM " . TABLE_BLOCKED;
 			$count = $h->db->get_var($h->db->prepare($count_sql));
 			$sql = "SELECT * FROM " . TABLE_BLOCKED . $sort_clause;
 			$query = $h->db->prepare($sql);

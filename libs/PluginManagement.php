@@ -414,7 +414,7 @@ class PluginManagement
 	{
 		if (!$folder) { $folder = $h->plugin->folder; }
 		
-		$sql = "SELECT count(*) FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_folder = %s AND plugin_hook = %s";
+		$sql = "SELECT count(phook_id) FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_folder = %s AND plugin_hook = %s";
 		if ($h->db->get_var($h->db->prepare($sql, $folder, $hook))) { return true;} else { return false; }
 	}
 	
