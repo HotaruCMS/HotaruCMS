@@ -75,14 +75,14 @@ function upgrade_check($h, $old_version) {
 	echo html_header();
 
 	// Step title
-	echo "<h2>" . $lang['upgrade_step1'] . "</h2>\n";
-
+	echo "<legend>" . $lang['upgrade_step1'] . "</legend>\n";
+	
 	// Complete Step Progress Bar
 	echo "<!-- Complete Step Progress Bar -->
 	<div class=\"progress progress-info\">
-		<div class=\"bar\" style=\"width: 33.3%\"></div>
+		<div class=\"bar\" style=\"width: 33.33%\"></div>
 	</div>";
-	
+
 	// Current version
 	if ( isset($old_version) )
 	    echo "<div class='well'><h4>" . $lang['upgrade_step1_old_version'] . $old_version . "</h4></div>\n";
@@ -113,14 +113,14 @@ function upgrade_complete($h)
 	echo html_header();
 	
 	// Step title
-	echo "<h2>" . $lang['upgrade_step2'] . "</h2>\n";
-
+	echo "<legend>" . $lang['upgrade_step2'] . "</legend>\n";
+	
 	// Complete Step Progress Bar
 	echo "<!-- Complete Step Progress Bar -->
 	<div class=\"progress progress-info\">
-		<div class=\"bar\" style=\"width: 66.6%\"></div>
+		<div class=\"bar\" style=\"width: 66.66%\"></div>
 	</div>";
-	
+
 	// Step content
 	echo "
 	<div class=\"alert alert-success\">

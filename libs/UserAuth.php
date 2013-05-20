@@ -224,11 +224,21 @@ class UserAuth extends UserBase
 				setcookie("hotaru_user", $this->name, $month, "/");
 				setcookie("hotaru_key", $strCookie, $month, "/");
 			} else {
-				$parsed = parse_url(SITEURL); 
+				//$parsed = parse_url(SITEURL); 
 				
-				// now we need a dot in front of that so cookies work across subdomains:
-				setcookie("hotaru_user", $this->name, $month, "/", "." . $parsed['host']);
-				setcookie("hotaru_key", $strCookie, $month, "/", "." . $parsed['host']);
+                                /*
+                                 * http://no2.php.net/setcookie
+                                 * bool setcookie ( string $name [, string $value [, int $expire = 0 [, string $path [, string $domain [, bool $secure = false [, bool $httponly = false ]]]]]] )
+                                 * 
+                                 * The domain that the cookie is available to.
+                                 * Setting the domain to 'www.example.com' will make the cookie available in the www subdomain and higher subdomains.
+                                 * Cookies available to a lower domain, such as 'example.com' will be available to higher subdomains, such as 'www.example.com'.
+                                 * Older browsers still implementing the deprecated » RFC 2109 may require a leading . to match all subdomains.
+                                 * Since we dont want the cookie set on one subdomain to pass to another, we call setcookie without the domain paramater :'get a cookie with "subdomain.example.net" (and not ".subdomain.example.net")'
+                                 */                    
+                                //setcookie("hotaru_user", $this->name, $month, "/", $parsed['host']);
+				setcookie("hotaru_user", $this->name, $month, "/");
+				setcookie("hotaru_key", $strCookie, $month, "/");
 			}
 			return true;
 		}
@@ -246,14 +256,13 @@ class UserAuth extends UserBase
 			setcookie("hotaru_user", "", time()-3600, "/");
 			setcookie("hotaru_key", "", time()-3600, "/");
 		} else {
-			$parsed = parse_url(SITEURL); 
+			//$parsed = parse_url(SITEURL); 
 			
 			// now we need a dot in front of that so cookies are cleared across subdomains:
-			setcookie("hotaru_user", "", time()-3600, "/", "." . $parsed['host']);
-			setcookie("hotaru_key", "", time()-3600, "/", "." . $parsed['host']);
+			setcookie("hotaru_user", "", time()-3600, "/");
+			setcookie("hotaru_key", "", time()-3600, "/");
 		}
 		
-                session_start();
                 session_destroy(); // sessions are used in CSRF                		
 		
 		$this->loggedIn = false;

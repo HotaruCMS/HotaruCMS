@@ -311,6 +311,27 @@ class PageHandling
 		}
 	}
 	
+        
+        /**
+	 * Includes a view template to display
+	 *
+	 * @param string $page page name
+	 * @param array $data optional array of data
+	 */
+	public function render($h, $page = '', $data = array())
+	{
+		$page = str_replace('..', '', $page); // prevents access outside the current folder
+                $page = $page . '.php';
+                
+                if ($h->isAdmin) { 
+                    $folder = ADMIN_THEMES . ADMIN_THEME;
+                }
+                 
+                if (file_exists($folder . 'views/' . $page))
+                {
+                    include_once($folder . 'views/' . $page);			
+                }                
+        }
 	
 	/**
 	 * Generate either default or friendly urls

@@ -197,11 +197,7 @@ function html_footer()
 	global $lang;
 
 	// Footer content (a link to the forums)
-	$footer .= "
-<hr>
-<footer>
-	<p> " . $lang['admin_theme_header_hotarucms'] . " 2013</p>
-</footer>";
+	$footer .= "<hr /><footer><p>" . $lang['admin_theme_header_hotarucms'] . " 2013</p></footer>";
 	$footer .= "<p>" . $lang['install_trouble'] . "</p>";
 
 	$footer .= "</div>\n"; // close "row" div
@@ -237,10 +233,10 @@ function installation_welcome()
 
 	// Step content
 	echo "
-<div class=\"form-actions span6\">
-	<a class=\"btn btn-large btn-primary\" href=\"index.php?step=1&action=install\">" . $lang['install_new'] . "</a>
-	<a class=\"btn btn-large\" href=\"index.php?step=1&action=upgrade\">" . $lang['install_upgrade'] . "</a>
-</div>";	
+	<div class=\"form-actions span6\">
+		<a class=\"btn btn-large btn-primary\" href=\"index.php?step=1&action=install\">" . $lang['install_new'] . "</a>
+		<a class=\"btn btn-large\" href=\"index.php?step=1&action=upgrade\">" . $lang['install_upgrade'] . "</a>
+	</div>";	
 
 	// Next button
 	//echo "<div class='next button''><a href='index.php?step=1'>" . $lang['install_next'] . "</a></div>\n";
@@ -369,19 +365,20 @@ function database_setup() {
 	    echo html_header();
 
 	    // Step title
-	    echo "<h2>" . $lang['install_step1'] . "</h2>\n";
+	    echo "<legend>" . $lang['install_step1'] . "</legend>\n";
 		
 		// Complete Step Progress Bar
-		echo "<!-- Complete Step Progress Bar -->
-		<div class=\"progress progress-info\">
-			<div class=\"bar\" style=\"width: 25%\"></div>
+		echo "
+		<div class=\"alert\">
+			<strong>" . $lang['install_step1_instructions_create_db'] . "</strong>
+			<!-- Complete Step Progress Bar -->
+			<div class=\"progress progress-info\">
+				<div class=\"bar\" style=\"width: 25%\"></div>
+			</div>
 		</div>";
 
 	    // Splash image
 	    echo "<img align='center' src='../content/admin_themes/admin_default/images/create_db.png' style='float:left;'>";
-
-	    // Step content
-	    echo "<div class='install_content clearfix'>" . $lang['install_step1_instructions_create_db'] . "</div>\n";
 
 	    //Manual creation link
 	    echo "<div class='install_content clearfix' style='margin-left:54px;'>" . $lang['install_step1_instructions_manual_setup'] . "&nbsp;<a href='?step=1&action=install&type=manual'>" . $lang['install_step1_instructions_manual_setup_click'] . "</a>.";
@@ -471,14 +468,18 @@ function database_setup_manual()
 	global $lang;
 
 	echo html_header();
-
+	
 	// Step title
-	echo "<h2>" . $lang['install_step1'] . "</h2>\n";
+	echo "<legend>" . $lang['install_step1'] . "</legend>\n";
 
 	// Complete Step Progress Bar
-	echo "<!-- Complete Step Progress Bar -->
-	<div class=\"progress progress-info\">
-		<div class=\"bar\" style=\"width: 50%\"></div>
+	echo "
+	<div class=\"alert\">
+		<strong>" . $lang['install_step1_instructions_create_db'] . "</strong>
+		<!-- Complete Step Progress Bar -->
+		<div class=\"progress progress-info\">
+			<div class=\"bar\" style=\"width: 50%\"></div>
+		</div>
 	</div>";
 	
 	// Step content
@@ -537,7 +538,7 @@ function database_creation($h)
 	echo html_header();
 	
 	// Step title
-	echo "<h2>" . $lang['install_step2'] . "</h2>\n";
+	echo "<legend>" . $lang['install_step2'] . "</legend>\n";
 
 	// Complete Step Progress Bar
 	echo "<!-- Complete Step Progress Bar -->
@@ -608,22 +609,22 @@ function database_creation($h)
 
 	    // Step content
 	    if (!$create_tables_problem) {
-		echo "<div class='install_content'>" . $lang['install_step2_success'] . "</div>\n";
+		echo "<div class='text-success'>" . $lang['install_step2_success'] . "</div>\n";
 	    } else {
-		echo "<div class='install_content'>" . $lang['install_step2_fail'] . "</div>\n";
+		echo "<div class='text-error'>" . $lang['install_step2_fail'] . "</div>\n";
 	    }
 
 	    $show_next = true;
 	}
 
 	// Previous/Next buttons
-	echo "<div class='btn'><a href='index.php?step=1'>" . $lang['install_back'] . "</a></div>\n";
+	echo "<a class='btn' href='index.php?step=1'>" . $lang['install_back'] . "</a>\n";
 	if ($show_next) {
 		// active "next" link
-		echo "<div class='btn'><a href='index.php?step=3'>" . $lang['install_next'] . "</a></div>\n";
+		echo "<a class=\"btn btn-primary\" href='index.php?step=3'>" . $lang['install_next'] . "</a>\n";
 	} else {
 		// link disbaled
-		echo "<div class='btn disabled'>" . $lang['install_next'] . "</div>\n";
+		echo "<a class='btn btn-primary disabled'>" . $lang['install_next'] . "</a>\n";
 	}
 
 	echo html_footer();
@@ -656,10 +657,19 @@ function register_admin()
 	echo html_header();
 
 	// Step title
-	echo "<h2>" . $lang['install_step3'] . "</h2>\n";
+	echo "<legend>" . $lang['install_step3'] . "</legend>\n";
 
+	// Complete Step Progress Bar
+	echo "<!-- Complete Step Progress Bar -->
+	<div class=\"progress progress-info\">
+		<div class=\"bar\" style=\"width: 75%\"></div>
+	</div>";
+	
 	// Step content
-	echo "<div class='install_content'>" . $lang['install_step3_instructions'] . ":<br /><br />\n";
+	echo "<div class='well'><h4>" . $lang['install_step3_instructions'] . ":</h4>\n";
+	
+	// Make note of password message
+	echo $lang["install_step3_make_note"] . "<br />\n";
 
 	$error = 0;
 	if ($h->cage->post->getInt('step') == 4)
@@ -781,22 +791,20 @@ function register_admin()
 	echo "<input type='hidden' name='updated' value='true' />\n";
 
 	// Update button
-	echo "<tr><td>&nbsp;</td><td style='text-align:right;'><input class='update button' class='button' type='submit' value='" . $lang['install_step3_form_update'] . "' /></td></tr>\n";
+	echo "<tr><td>&nbsp;</td><td style='text-align:right;'><input class='btn btn-primary' type='submit' value='" . $lang['install_step3_form_update'] . "' /></td></tr>\n";
 
 	echo "</table>";
 	echo "</form>\n";
-
-	// Make note of password message
-	echo $lang["install_step3_make_note"] . "</div>\n";
-
+	echo "</div>";
+	
 	// Previous/Next buttons
-	echo "<div class='back button''><a href='index.php?step=2'>" . $lang['install_back'] . "</a></div>\n";
+	echo "<a class='btn' href='index.php?step=2'>" . $lang['install_back'] . "</a>\n";
 	if ($h->cage->post->getAlpha('updated') == 'true' && isset($next_button)) {
 		// active "next" link if user has been updated
-		echo "<div class='next button''><a href='index.php?step=4'>" . $lang['install_next'] . "</a></div>\n";
+		echo "<a class='btn btn-primary' href='index.php?step=4'>" . $lang['install_next'] . "</a>\n";
 	} else {
 		// link disbaled until "update" button pressed
-		echo "<div class='next button''>" . $lang['install_next'] . "</div>\n";
+		echo "<a class='btn btn-primary disabled'>" . $lang['install_next'] . "</a>\n";
 	}
 
 	echo html_footer();
@@ -824,11 +832,23 @@ function installation_complete()
 	echo html_header();
 
 	// Step title
-	echo "<h2>" . $lang['install_step4'] . "</h2>\n";
+	echo "<legend>" . $lang['install_step4'] . "</legend>\n";
+	
+	echo "
+	<div class=\"alert alert-success\">
+		<strong>" . $lang['install_step4_installation_complete'] . "</strong><br />
+		<!-- Complete Step Progress Bar -->
+		<div class=\"progress progress-success\">
+			<div class=\"bar\" style=\"width: 100%\"></div>
+		</div>
+	</div>";
 
 	// Step content
-	echo "<div class='install_content'>" . $lang['install_step4_installation_complete'] . "</div>\n";
-	echo "<div class='install_content'>" . $lang['install_step4_installation_delete'] . "</div>\n";
+	echo "
+	<div class=\"alert alert-error\">
+		<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>
+		" . $lang['install_step4_installation_delete'] . "
+	</div>\n";
 
 
 	if ($phpinfo) {
@@ -866,11 +886,11 @@ function installation_complete()
 	    echo "</div></form>\n";
 	}
 
-	echo "<br/><div class='install_content'>" . $lang['install_step4_installation_go_play'] . "</div><br/><br/>\n";
+	echo "<br/><div class='well'>" . $lang['install_step4_installation_go_play'] . "</div><br/><br/>\n";
 
 	// Previous/Next buttons
-	echo "<div class='btn'><a href='index.php?step=3'>" . $lang['install_back'] . "</a></div>\n";
-	echo "<div class='btn'><a href='" . BASEURL . "index.php'>" . $lang['install_home'] . "</a></div>\n";
+	echo "<a class='btn' href='index.php?step=3'>" . $lang['install_back'] . "</a>\n";
+	echo "<a class='btn btn-primary' href='" . BASEURL . "index.php'>" . $lang['install_home'] . "</a>\n";
 
 	echo html_footer();
 }

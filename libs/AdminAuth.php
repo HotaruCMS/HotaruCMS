@@ -257,8 +257,8 @@ class AdminAuth
 			     $parsed = parse_url(SITEURL); 
 			                
 			     // now we need a dot in front of that so cookies work across subdomains:
-			     setcookie("hotaru_user", $h->currentUser->name, $month, "/", "." . $parsed['host']);
-			     setcookie("hotaru_key", $strCookie, $month, "/", "." . $parsed['host']);
+			     setcookie("hotaru_user", $h->currentUser->name, $month, "/");
+			     setcookie("hotaru_key", $strCookie, $month, "/");
 			}  
 			
 			return true;
