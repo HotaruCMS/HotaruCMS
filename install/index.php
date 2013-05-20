@@ -146,25 +146,34 @@ function html_header()
 	$header .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"../libs/frameworks/bootstrap/css/bootstrap.min.css\">\n";	
 	$header .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"../libs/frameworks/bootstrap/css/bootstrap-responsive.css\">\n";	
 	$header .= "<script type=\"text/javascript\" src=\"//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js\"></script>\n";	
+	$header .= "
+	<style type=\"text/css\">
+	body {
+		position: relative;
+		background-color: #fff;
+		background-image: url(../libs/frameworks/bootstrap/img/grid-18px-masked.png);
+		background-repeat: repeat-x;
+		background-position: 0 40px;
+	}
+	</style>\n";	
 	  //$header .= "<link rel='stylesheet' type='text/css' href='install_style.css'>\n";
 	$header .= "</head>\n";
 
 	// Body start
 	$header .= "<body>\n";
 	$header .= "
-<div class=\"navbar navbar-static-top\">
-	<div class=\"navbar-inner\">
-		<div class=\"container\">
-			<a class=\"brand\" href=\"#\">" . $lang['admin_theme_header_hotarucms'] . "</a>
-			<ul class=\"nav\">
-				<li class=\"active\"><a href=\"index.php\">Home</a></li>
-				<li><a href=\"index.php?step=1&action=install\">" . $lang['install_new2'] . "</a></li>
-				<li><a href=\"index.php?step=1&action=upgrade\">" . $lang['install_upgrade2'] . "</a></li>
-				<li><a href=\"../index.php\">Site</a></li>
-			</ul>
+	<div class=\"navbar navbar-static-top\">
+		<div class=\"navbar-inner\">
+			<div class=\"container\">
+				<a class=\"brand\" href=\"index.php\">" . $lang['admin_theme_header_hotarucms'] . "</a>
+				<ul class=\"nav\">
+					<li class=\"active\"><a href=\"index.php?step=1&action=install\">" . $lang['install_new2'] . "</a></li>
+					<li><a href=\"index.php?step=1&action=upgrade\">" . $lang['install_upgrade2'] . "</a></li>
+					<li><a href=\"../index.php\">Home</a></li>
+				</ul>
+			</div>
 		</div>
-	</div>
-</div><br />\n";      
+	</div><br />\n";      
 	$header .= "<div class=\"container\">";
 	/*
 		$header .= "
@@ -181,7 +190,7 @@ function html_header()
 		</div>	
 		";
 	*/
-	$header .= "<div class=\"row\">\n";
+
 
 	return $header;
 }
@@ -195,12 +204,17 @@ function html_header()
 function html_footer()
 {
 	global $lang;
+	global $version_number;
 
 	// Footer content (a link to the forums)
-	$footer .= "<hr /><footer><p>" . $lang['admin_theme_header_hotarucms'] . " 2013</p></footer>";
+	
+	$footer = "<div class='clearfix'></div>\n"; // clear floats
+	
+	$footer .= "<hr /><footer>\n";
+	$footer .= "<p>&copy; 2013 " . $lang['admin_theme_header_hotarucms'] . " v." . $version_number ."</p>";
+	$footer .= "</footer>";
 	$footer .= "<p>" . $lang['install_trouble'] . "</p>";
 
-	$footer .= "</div>\n"; // close "row" div
 	$footer .= "</div>\n"; // close "container" div
 	
 	$footer .= "<script src=\"../libs/frameworks/bootstrap/js/bootstrap.min.js\"></script>\n"; 
@@ -222,11 +236,9 @@ function installation_welcome()
 
 	// Step content
 	echo "
-	<div class=\"page-header\">
-		<h2>" . $lang['install_step0'] . "</h2> 
-		<span class=\"text-info\">" . $lang['install_step0_welcome'] . " <br />
-		" . $lang['install_step0_select'] . "</span>
-	</div>\n";
+	<legend>" . $lang['install_step0'] . "</legend> 
+	<span class=\"text-info\">" . $lang['install_step0_welcome'] . " <br />
+	" . $lang['install_step0_select'] . "</span>\n";
 
 	// Splash image
 	echo "<img align=\"center\" src=\"hotarucms_splash.jpg\" style=\"height:170px; margin:50px 0;\">";
@@ -478,20 +490,20 @@ function database_setup_manual()
 		<strong>" . $lang['install_step1_instructions_create_db'] . "</strong>
 		<!-- Complete Step Progress Bar -->
 		<div class=\"progress progress-info\">
-			<div class=\"bar\" style=\"width: 50%\"></div>
+			<div class=\"bar\" style=\"width: 25%\"></div>
 		</div>
 	</div>";
 	
 	// Step content
 	echo "<div class='install_content'>" . $lang['install_step1_instructions'] . ":</div>\n";
 
-	echo "<ol class='install_content'>\n";
+	echo "<ul>\n";
 	echo "<li>" . $lang['install_step1_instructions1'] . "</li>\n";
 	echo "<li>" . $lang['install_step1_instructions2'] . "</li>\n";
 	echo "<li>" . $lang['install_step1_instructions3'] . "</li>\n";
 	echo "<li>" . $lang['install_step1_instructions4'] . "</li>\n";
 	echo "<li>" . $lang['install_step1_instructions5'] . "</li>\n";
-	echo "</ol>\n";
+	echo "</ul>\n";
 
 	// Warning message
 	echo "
@@ -907,18 +919,17 @@ function upgrade_plugins()
 	echo html_header();
 
 	// Step title
-	echo "<h2>" . $lang['upgrade_step3'] . "</h2>\n";
+	echo "<legend>" . $lang['upgrade_step3'] . "</legend>\n";
 
 	// Complete Step Progress Bar
-	echo "<!-- Complete Step Progress Bar -->
-	<div class=\"progress progress-success\">
-		<div class=\"bar\" style=\"width: 100%\"></div>
-	</div>";
-	
 	echo "
 	<div class=\"alert alert-success\">
-		<h4>" . $lang['upgrade_step3_details'] . "</h4>
-	</div>\n";
+		<strong>" . $lang['upgrade_step3_details'] . "</strong>
+		<!-- Complete Step Progress Bar -->
+		<div class=\"progress progress-success\">
+			<div class=\"bar\" style=\"width: 100%\"></div>
+		</div>
+	</div>";
 
 	//send feedback report
 	$systeminfo = new SystemInfo();

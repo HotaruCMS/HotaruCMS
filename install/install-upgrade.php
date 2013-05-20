@@ -78,9 +78,12 @@ function upgrade_check($h, $old_version) {
 	echo "<legend>" . $lang['upgrade_step1'] . "</legend>\n";
 	
 	// Complete Step Progress Bar
-	echo "<!-- Complete Step Progress Bar -->
-	<div class=\"progress progress-info\">
-		<div class=\"bar\" style=\"width: 33.33%\"></div>
+	echo "
+	<div class=\"alert\">
+		<!-- Complete Step Progress Bar -->
+		<div class=\"progress progress-info\">
+			<div class=\"bar\" style=\"width: 33.33%\"></div>
+		</div>
 	</div>";
 
 	// Current version
