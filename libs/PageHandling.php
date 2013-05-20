@@ -220,7 +220,7 @@ class PageHandling
 		else
 		{ 
 			// there's no title and no page name - assume "page not found"
-			$h->pageTitle = $h->lang['main_theme_page_not_found'];
+			$h->pageTitle = $h->lang('main_theme_page_not_found');
 			
 			// return the title only
 			if ($raw) { return $h->pageTitle; }

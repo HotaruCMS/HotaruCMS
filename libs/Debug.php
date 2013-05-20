@@ -38,12 +38,12 @@ class Debug
 			$mysql_version = $h->db->get_var("SELECT VERSION() AS VE");
 			
 			echo "<p class='debug'>";
-			echo $h->lang['main_hotaru_db_queries'] . $h->db->num_queries . " | ";
-			echo $h->lang['main_hotaru_page_load_time'] . timer_stop(1) . $h->lang['main_times_secs'] . " | ";
-			echo $h->lang['main_hotaru_memory_usage'] . display_filesize(memory_get_usage()) . " | ";
-			echo $h->lang['main_hotaru_php_version'] . phpversion() . " | ";
-			echo $h->lang['main_hotaru_mysql_version'] . $mysql_version . " | ";
-			echo $h->lang['main_hotaru_hotaru_version'] . $h->version; 
+			echo $h->lang('main_hotaru_db_queries') . $h->db->num_queries . " | ";
+			echo $h->lang('main_hotaru_page_load_time') . timer_stop(1) . $h->lang('main_times_secs') . " | ";
+			echo $h->lang('main_hotaru_memory_usage') . display_filesize(memory_get_usage()) . " | ";
+			echo $h->lang('main_hotaru_php_version') . phpversion() . " | ";
+			echo $h->lang('main_hotaru_mysql_version') . $mysql_version . " | ";
+			echo $h->lang('main_hotaru_hotaru_version') . $h->version; 
                         
                         $h->pluginHook('debug_footer');
                         
@@ -135,7 +135,7 @@ class Debug
 			$subject = "System Report from " . SITE_NAME;
 			$body = $sysinfo->logSystemReport($h, $report);
 			$h->email($to, $subject, $body);
-			$h->message = $h->lang['admin_maintenance_system_report_emailed'];
+			$h->message = $h->lang('admin_maintenance_system_report_emailed');
 			$h->messageType = 'green';
 			return true;
 		}
@@ -148,11 +148,11 @@ class Debug
 			$h->writeLog('system_report', $output);
 			$h->closeLog('system_report');
 			
-			$h->message = $h->lang['admin_maintenance_system_report_success'];
+			$h->message = $h->lang('admin_maintenance_system_report_success');
 			$h->messageType = 'green';
 			return true;
 		} else {
-			$h->message = $h->lang['admin_maintenance_system_report_failure'];
+			$h->message = $h->lang('admin_maintenance_system_report_failure');
 			$h->messageType = 'red';
 			return false;
 		}

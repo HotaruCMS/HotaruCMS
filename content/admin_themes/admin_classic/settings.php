@@ -30,7 +30,7 @@ $loaded_settings = $h->vars['admin_settings'];
 
 <?php $h->pluginHook('admin_settings_top'); ?>
 
-	<h2><?php echo $h->lang["admin_theme_settings_title"]; ?></h2>
+	<h2><?php echo $h->lang("admin_theme_settings_title"); ?></h2>
 	
 	<?php $h->showMessage(); ?>
 	
@@ -38,10 +38,10 @@ $loaded_settings = $h->vars['admin_settings'];
 	
 	<table id="settings">    
 	<tr>
-		<td><b><u><?php echo $h->lang["admin_theme_settings_setting"]; ?></u></b></td>
-		<td><b><u><?php echo $h->lang["admin_theme_settings_value"]; ?></u></b></td>
-		<td><b><u><?php echo $h->lang["admin_theme_settings_default"]; ?></u></b></td>
-		<td><b><u><?php echo $h->lang["admin_theme_settings_notes"]; ?></u></b></td>
+		<td><b><u><?php echo $h->lang("admin_theme_settings_setting"); ?></u></b></td>
+		<td><b><u><?php echo $h->lang("admin_theme_settings_value"); ?></u></b></td>
+		<td><b><u><?php echo $h->lang("admin_theme_settings_default"); ?></u></b></td>
+		<td><b><u><?php echo $h->lang("admin_theme_settings_notes"); ?></u></b></td>
 	</tr>
 	
 	<?php     // **********************************************************

@@ -27,7 +27,7 @@
  */
 
 if ($h->vars['plugin_settings_csrf_error']) { 
-	$h->showMessage($h->lang['error_csrf'], 'red'); return false;
+	$h->showMessage($h->lang('error_csrf'), 'red'); return false;
 }
 
 $plugin = $h->vars['settings_plugin'];    // plugin folder name
@@ -92,7 +92,7 @@ if ($pluginData->plugin_latestversion == '0.0') {
                             }
 
                         } else {
-                            print $h->lang['admin_theme_theme_no_screenshots'];
+                            print $h->lang('admin_theme_theme_no_screenshots');
                         }
                         echo "</div>";
                         

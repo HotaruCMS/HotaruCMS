@@ -269,8 +269,8 @@ class Hotaru
 		    $settings_object->settings($this);   // call the settings function		
 		}
 		else {
-		    echo $this->lang["admin_theme_plugins_filenotfound"] . "<br/><br/>";
-		    echo $this->lang["admin_theme_plugins_checkforfile"] . PLUGINS . $this->plugin->folder . '/' . $this->plugin->folder . '_settings.php';
+		    $this->showMessage($this->lang["admin_theme_plugins_filenotfound"] . "<br/><br/>", 'red');		    
+                    $this->showMessage($this->lang["admin_theme_plugins_checkforfile"] . PLUGINS . $this->plugin->folder . '/' . $this->plugin->folder . '_settings.php', 'red');
 		}
 		return true;
 	}
@@ -1747,6 +1747,19 @@ class Hotaru
  *
  * *********************************************************** */
 
+        /**
+         * echoes the lang file variable if found and a clean error message if not
+         * 
+         * @param type $title
+         */
+        function lang($title = '')
+        {
+            if (isset($this->lang[$title]) || ($this->isAdmin && $this->isDebug))
+                return $this->lang[$title];
+            else  
+                return $title;
+        }
+        
 
 	/**
 	 * Include a language file in a plugin
@@ -2470,6 +2483,39 @@ class Hotaru
  *
  * *********************************************************** */
  
+        public function activity($method = '', $params = '')
+        {
+            print "class = " . 'UserActivity' . '<br/>';
+            if (class_exists('UserActivity')) print "class exists<br/>"; else print "class does not exist<br/>";
+            $activity = new UserActivity();
+            
+            print "method = " . $method . '<br/>';             
+            if (method_exists($activity,$method)) print "method exists<br/>"; else print "method does not exist<br/>";
+                
+            print ($activity->$method);
+            
+            //
+            $r = new ReflectionMethod($activity, $method);
+            $params = $r->getParameters();
+            foreach ($params as $param) {
+                //$param is an instance of ReflectionParameter
+                echo $param->getName();
+                echo $param->isOptional();
+            }
+            //
+            
+            
+            foreach ($params as $param)
+            {
+                extract($params);                
+            }
+            print_r($params);
+            
+            $result = $activity->$method($this, $params);
+            return $result;
+        }
+        
+        
  
 	/**
 	 * Get the latest site activity

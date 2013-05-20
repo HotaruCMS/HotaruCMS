@@ -116,7 +116,7 @@ class Trackback
 		
 		if (empty($excerpt)) {
 			// If no excerpt show "This article has been featured on Site Name".
-			$excerpt = $h->lang['submit_trackback_excerpt'] . " " . SITE_NAME;
+			$excerpt = $h->lang('submit_trackback_excerpt') . " " . SITE_NAME;
 		} 
 		
 		// Parse the target

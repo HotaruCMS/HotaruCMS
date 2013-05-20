@@ -25,6 +25,6 @@
 
 ?>
 
-<?php echo $h->lang['admin_theme_404_page_not_found']; ?>
+<?php echo $h->lang('admin_theme_404_page_not_found'); ?>
 
 

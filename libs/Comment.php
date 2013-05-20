@@ -88,9 +88,9 @@ class Comment
 		if ($digits_only) { return $num_comments; } // just return the number
 		
 		if ($num_comments == 1) {
-			return "1 " . $h->lang['comments_singular_link'];
+			return "1 " . $h->lang('comments_singular_link');
 		} elseif ($num_comments > 1) {
-			return $num_comments . " " . $h->lang['comments_plural_link'];
+			return $num_comments . " " . $h->lang('comments_plural_link');
 		} 
 		
 		return $no_comments_text;  // shows "Leave a comment" above comment form when no comments

@@ -35,9 +35,9 @@ class Breadcrumbs
 		// Admin only:
 		if ($h->isAdmin) {
 			$output .= "<a href='" . $h->url(array(), 'admin') . "'>";
-			$output .= $h->lang['admin_theme_main_admin_cp'] . "</a>\n";
+			$output .= $h->lang('admin_theme_main_admin_cp') . "</a>\n";
 		} else {
-			$output .= "<a href='" . SITEURL . "'>" . $h->lang['main_theme_breadcrumbs_home'] . "</a>&nbsp;"; 
+			$output .= "<a href='" . SITEURL . "'>" . $h->lang('main_theme_breadcrumbs_home') . "</a>&nbsp;"; 
 		}
 
 

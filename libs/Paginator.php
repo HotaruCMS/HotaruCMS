@@ -135,7 +135,7 @@ class Paginator
 			$previousPage = $currentPage - 1;
 			$link = $path . '&pg=' . $previousPage;
 			$link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark
-			$str .= "<a class='pagi_previous' href='" . $link . "' title='" . $h->lang['pagination_previous'] . "'>&laquo; " . $h->lang['pagination_previous'] . "</a> \n";
+			$str .= "<a class='pagi_previous' href='" . $link . "' title='" . $h->lang('pagination_previous') . "'>&laquo; " . $h->lang('pagination_previous') . "</a> \n";
 		}
 		
 		// NOT FIRST PAGE
@@ -143,7 +143,7 @@ class Paginator
 			if ($currentPage != 1) {
 				$link = $path . '&pg=1';
 				$link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark
-				$str .= "<a class='pagi_first' href='" . $link . "'  title='" . $h->lang['pagination_first'] . "'>1</a> \n";
+				$str .= "<a class='pagi_first' href='" . $link . "'  title='" . $h->lang('pagination_first') . "'>1</a> \n";
 				if ($currentPage > ($before+1)) {
 					$str .= " <span class='dots'>...</span> \n";
 				}
@@ -177,7 +177,7 @@ class Paginator
 				if ($currentPage < ($this->totalPages - ($after + 1))) { $str .= " <span class='pagi_dots'>...</span> \n"; }
 				$link = $path . '&pg=' . $this->totalPages;
 				$link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark
-				$str .= "<a class='pagi_last' href='" . $link . "'  title='" . $h->lang['pagination_last'] . "'>".$this->totalPages."</a> \n";
+				$str .= "<a class='pagi_last' href='" . $link . "'  title='" . $h->lang('pagination_last') . "'>".$this->totalPages."</a> \n";
 			}
 		}
 		
@@ -186,7 +186,7 @@ class Paginator
 			$nextPage = $currentPage + 1;
 			$link = $path . '&pg=' . $nextPage;
 			$link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark
-			$str .= "<a class='pagi_next' href='" . $link . "' title='" . $h->lang['pagination_next'] . "'>" . $h->lang['pagination_next'] . " &raquo;</a> \n";
+			$str .= "<a class='pagi_next' href='" . $link . "' title='" . $h->lang('pagination_next') . "'>" . $h->lang('pagination_next') . " &raquo;</a> \n";
 		}
 	
 		// Wrap in a div

@@ -37,26 +37,26 @@
 
 <table>
 <tr class='table_a'><td colspan=3>
-	<?php echo $h->lang["admin_theme_plugins_installed"]; ?>
+	<?php echo $h->lang("admin_theme_plugins_installed"); ?>
 	<span class='table_key'>
 	    &nbsp;&nbsp;
 	    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/active_16.png' alt="">
-	    <?php echo $h->lang["admin_theme_plugins_active"]; ?>
+	    <?php echo $h->lang("admin_theme_plugins_active"); ?>
 	    &nbsp;&nbsp;
 	    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/inactive_16.png' alt="">
-	    <?php echo $h->lang["admin_theme_plugins_inactive"]; ?>
+	    <?php echo $h->lang("admin_theme_plugins_inactive"); ?>
 	    &nbsp;&nbsp;
 	    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/up_12.png' alt="">
-	    <?php echo $h->lang["admin_theme_plugins_order_up"]; ?>
+	    <?php echo $h->lang("admin_theme_plugins_order_up"); ?>
 	    &nbsp;&nbsp;
 	    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/down_12.png' alt="">
-	    <?php echo $h->lang["admin_theme_plugins_order_down"]; ?>
+	    <?php echo $h->lang("admin_theme_plugins_order_down"); ?>
 	    &nbsp;&nbsp;
 	    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/info_16.png' alt="">
-	    <?php echo $h->lang["admin_theme_plugins_details"]; ?>
+	    <?php echo $h->lang("admin_theme_plugins_details"); ?>
 	    &nbsp;&nbsp;
 	    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/uninstall_16.png' alt="">
-	    <?php echo $h->lang["admin_theme_plugins_uninstall"]; ?>
+	    <?php echo $h->lang("admin_theme_plugins_uninstall"); ?>
 	</span>
 </td></tr>
 
@@ -82,7 +82,7 @@
 		echo "<td class='table_active'>" . $plug['active'] . "</td>\n";
 		echo "<td class='table_installed_plugin'>";
 		if ($plug['settings']) {
-			echo "<a href='" . SITEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $plug['folder'] . "' title='" . $h->lang["admin_theme_plugins_settings"] . "'>";
+			echo "<a href='" . SITEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $plug['folder'] . "' title='" . $h->lang("admin_theme_plugins_settings") . "'>";
 			echo $plug['name'] . " " . $plug['version'] . "</a></td>\n";
 		} else {
 			echo $plug['name'] . " " . $plug['version'] . "</td>\n";
@@ -98,20 +98,20 @@
 		foreach ($plug['requires'] as $key=>$value) {
 			$requires .= $key . " " . $value . ", ";
 		}
-		if ($requires != "") { echo $h->lang["admin_theme_plugins_requires"] . " " . rstrtrim($requires, ", "); } else { echo $h->lang["admin_theme_plugins_no_plugins"]; }
-		if (isset($plug['author'])) { echo "<br />" . $h->lang["admin_theme_plugins_author"] . ": \n"; }
+		if ($requires != "") { echo $h->lang("admin_theme_plugins_requires") . " " . rstrtrim($requires, ", "); } else { echo $h->lang("admin_theme_plugins_no_plugins"); }
+		if (isset($plug['author'])) { echo "<br />" . $h->lang("admin_theme_plugins_author") . ": \n"; }
 		if (isset($plug['authorurl'])) { echo "<a href='" . $plug['authorurl'] . "' title='" . $plug['authorurl'] . "'>"; }
 		if (isset($plug['author'])) { echo $plug['author']; }
 		if (isset($plug['authorurl'])) { echo "</a>\n"; }
 		if (file_exists(PLUGINS . $plug['folder'] . "/readme.txt")) {
-			echo "<br />" . $h->lang["admin_theme_plugins_more_info"];
-			echo ": <a href='" . SITEURL . "content/plugins/" . $plug['folder'] . "/readme.txt' title='" . $h->lang["admin_theme_plugins_readme"] . "'>";
-			echo $h->lang["admin_theme_plugins_readmetxt"] . "</a>";
+			echo "<br />" . $h->lang("admin_theme_plugins_more_info");
+			echo ": <a href='" . SITEURL . "content/plugins/" . $plug['folder'] . "/readme.txt' title='" . $h->lang("admin_theme_plugins_readme") . "'>";
+			echo $h->lang("admin_theme_plugins_readmetxt") . "</a>";
 		}
 
 		echo "</td>";
 		echo "<td class='table_description_close'><a class='table_hide_details' href='#'>";
-		echo $h->lang["admin_theme_plugins_close"] . "</a></td></tr>\n";
+		echo $h->lang("admin_theme_plugins_close") . "</a></td></tr>\n";
 		array_shift($the_plugins);
 		if ($alt >= $per_column) { break; }
 	}
@@ -128,14 +128,14 @@
 <tr>
 <td colspan=3><small>
 	<a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_management&amp;action=deactivate_all">
-		<?php echo $h->lang["admin_theme_plugins_deactivate_all"]; ?></a>
+		<?php echo $h->lang("admin_theme_plugins_deactivate_all"); ?></a>
 		| 
 	<a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_management&amp;action=activate_all">
-		<?php echo $h->lang["admin_theme_plugins_activate_all"]; ?></a>
+		<?php echo $h->lang("admin_theme_plugins_activate_all"); ?></a>
 </small></td>
 <td colspan=2 style='text-align: right;'><small>
 	<a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_management&amp;action=uninstall_all">
-		<?php echo $h->lang["admin_theme_plugins_uninstall_all"]; ?></a>
+		<?php echo $h->lang("admin_theme_plugins_uninstall_all"); ?></a>
 </small></td>
 </tr>
 </table>
@@ -143,14 +143,14 @@
 <table><tr>
 <tr><td colspan=3>&nbsp;</td></tr>
 <tr class='table_b'><td colspan=3>
-	<?php echo $h->lang["admin_theme_plugins_not_installed"]; ?>
+	<?php echo $h->lang("admin_theme_plugins_not_installed"); ?>
 	<span class='table_key'>
 	&nbsp;&nbsp;
 	<img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/info_16.png' alt="">
-	<?php echo $h->lang["admin_theme_plugins_details"]; ?>
+	<?php echo $h->lang("admin_theme_plugins_details"); ?>
 	&nbsp;&nbsp;
 	<img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/install_16.png' alt="">
-	<?php echo $h->lang["admin_theme_plugins_install"]; ?>
+	<?php echo $h->lang("admin_theme_plugins_install"); ?>
 	</span>
 </td></tr>
 
@@ -186,19 +186,19 @@
 		echo "</tr>\n";
 		echo "<tr class='table_tr_details' style='display:none;'><td class='table_description'>\n";
 		echo $plug['description'];
-		if (isset($plug['author'])) { echo "<br />" . $h->lang["admin_theme_plugins_author"] . ": \n"; }
+		if (isset($plug['author'])) { echo "<br />" . $h->lang("admin_theme_plugins_author") . ": \n"; }
 		if (isset($plug['authorurl'])) { echo "<a href='" . $plug['authorurl'] . "' title='" . $plug['authorurl'] . "'>"; }
 		if (isset($plug['author'])) { echo $plug['author']; }
 		if (isset($plug['authorurl'])) { echo "</a>\n"; }
 		if (file_exists(PLUGINS . $plug['folder'] . "/readme.txt")) {
-			echo "<br />" . $h->lang["admin_theme_plugins_more_info"];
-			echo ": <a href='" . SITEURL . "content/plugins/" . $plug['folder'] . "/readme.txt' title='" . $h->lang["admin_theme_plugins_readme"] . "'>";
-			echo $h->lang["admin_theme_plugins_readmetxt"] . "</a>";			
+			echo "<br />" . $h->lang("admin_theme_plugins_more_info");
+			echo ": <a href='" . SITEURL . "content/plugins/" . $plug['folder'] . "/readme.txt' title='" . $h->lang("admin_theme_plugins_readme") . "'>";
+			echo $h->lang("admin_theme_plugins_readmetxt") . "</a>";			
 		}
 
 		echo "</td>\n";
 		echo "<td class='table_description_close'><a class='table_hide_details' href='#'>";
-		echo $h->lang["admin_theme_plugins_close"] . "</a></td></tr>\n";
+		echo $h->lang("admin_theme_plugins_close") . "</a></td></tr>\n";
 		array_shift($the_plugins);
 		if ($alt >= $per_column) { break; }
 	}
@@ -215,9 +215,9 @@
 </div>
 <div class="clear"></div>
 <div id="plugin_management_notice" class="info_box gray_box" style="margin-top: 2.0em";>
-	<p class="info_header"><?php echo $h->lang["admin_theme_plugins_guide"]; ?></p>
-	&raquo; <?php echo $h->lang["admin_theme_plugins_guide1"]; ?><br />
-	&raquo; <?php echo $h->lang["admin_theme_plugins_guide2"]; ?><br />
-	&raquo; <?php echo $h->lang["admin_theme_plugins_guide3"]; ?><br />
-	&raquo; <?php echo $h->lang["admin_theme_plugins_guide4"]; ?><br />
+	<p class="info_header"><?php echo $h->lang("admin_theme_plugins_guide"); ?></p>
+	&raquo; <?php echo $h->lang("admin_theme_plugins_guide1"); ?><br />
+	&raquo; <?php echo $h->lang("admin_theme_plugins_guide2"); ?><br />
+	&raquo; <?php echo $h->lang("admin_theme_plugins_guide3"); ?><br />
+	&raquo; <?php echo $h->lang("admin_theme_plugins_guide4"); ?><br />
 </div>

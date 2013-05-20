@@ -57,8 +57,8 @@
 	<div class="admin-frame">
             	<div class="admin-header-title">
                     <img class="admin-header-logo" src="<?php echo SITEURL; ?>content/admin_themes/admin_classic/images/hotaru-80px.png"/>
-            		<div class="admin-header-version"><?php echo $h->lang["admin_theme_header_hotarucms"]; ?><?php echo $h->version; ?></div>
-			<div class="admin-header-admin"><a href="<?php echo $h->url(array(), 'admin'); ?>"><?php echo $h->lang["admin_theme_header_admin"]; ?></a></div>
+            		<div class="admin-header-version"><?php echo $h->lang("admin_theme_header_hotarucms"); ?><?php echo $h->version; ?></div>
+			<div class="admin-header-admin"><a href="<?php echo $h->url(array(), 'admin'); ?>"><?php echo $h->lang("admin_theme_header_admin"); ?></a></div>
             	</div>
             	<div class="admin-top-menu">
 		    <div class="admin-menu-item">
@@ -66,7 +66,7 @@
 			    <div class="admin-menu-item-icon">
 				<img src="<?php echo SITEURL; ?>content/admin_themes/admin_classic/images/home_icon.png" />
 			    </div>
-			    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_site_home"]; ?></div>
+			    <div class="admin-menu-item-text"><?php echo $h->lang("admin_theme_menu_site_home"); ?></div>
 			</a>
 		    </div>
 			<?php if ($h->currentUser->getPermission('can_access_admin') == 'yes') { ?>
@@ -75,7 +75,7 @@
 				    <div class="admin-menu-item-icon">
 					<img src="<?php echo SITEURL; ?>content/admin_themes/admin_classic/images/admin_icon.png">
 				    </div>
-				    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_admin_home"]; ?></div>
+				    <div class="admin-menu-item-text"><?php echo $h->lang("admin_theme_menu_admin_home"); ?></div>
 				</a>
 			    </div>
 			<?php } ?>
@@ -84,7 +84,7 @@
 			    <div class="admin-menu-item-icon">
 				<img src="<?php echo SITEURL; ?>content/admin_themes/admin_classic/images/forum_icon.png "/>
 			    </div>
-			    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_hotaru_forums"]; ?></div>
+			    <div class="admin-menu-item-text"><?php echo $h->lang("admin_theme_menu_hotaru_forums"); ?></div>
 			</a>
 		    </div>
 
@@ -93,7 +93,7 @@
 			    <div class="admin-menu-item-icon">
 				<img src="<?php echo SITEURL; ?>content/admin_themes/admin_classic/images/docs_icon.png" />
 			    </div>
-			    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_help"]; ?></div>
+			    <div class="admin-menu-item-text"><?php echo $h->lang("admin_theme_menu_help"); ?></div>
 			</a>
 		    </div>
 			<?php if ($h->currentUser->loggedIn) { ?>
@@ -102,7 +102,7 @@
 				    <div class="admin-menu-item-icon">
 					<img src="<?php echo SITEURL; ?>content/admin_themes/admin_classic/images/logout_icon.png" />
 				    </div>
-				    <div class="admin-menu-item-text"><?php echo $h->lang["admin_theme_menu_logout"]; ?></div>
+				    <div class="admin-menu-item-text"><?php echo $h->lang("admin_theme_menu_logout"); ?></div>
 				</a>
 			    </div>
 			<?php } ?>

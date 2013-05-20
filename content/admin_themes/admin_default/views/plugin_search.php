@@ -20,7 +20,7 @@
 		<tr>		
 		<td><input id='admin_plugin_search' type='text' size=24 name='plugin_search' value='<?php echo $search; ?>' /></td>
 		<td>
-		<input id='admin_plugin_search_button' type='submit' value='<?php echo $h->lang['admin_theme_plugin_search_submit']; ?>'  /></td>
+		<input id='admin_plugin_search_button' type='submit' value='<?php echo $h->lang('admin_theme_plugin_search_submit'); ?>'  /></td>
 		</tr>
 	</table>
 
