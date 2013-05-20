@@ -52,7 +52,7 @@ class Announcements
 		}
 		
 		// if using the announcement parameter, then add to non-admin pages only:
-		if ($announcement && !$h->isAdmin) {
+		if ($announcement && !$h->adminPage) {
 			array_push($announcements, $announcement);
 		}
 		

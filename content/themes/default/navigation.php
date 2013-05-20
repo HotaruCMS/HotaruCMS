@@ -74,9 +74,8 @@
                     if (!$h->isActive('signin')) { 
 		
 			if ($h->currentUser->loggedIn == true) { 
-			
-				if ($h->isAdmin) { $status = "class='active'"; } else { $status = ""; }
-				echo "<li " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang("main_theme_navigation_admin") . "</a></li>";
+							
+				echo "<li><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang("main_theme_navigation_admin") . "</a></li>";
 			
 				if ($h->pageName == 'logout') { $status = "class='active'"; } else { $status = ""; }
 				echo "<li " . $status . "><a href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang("main_theme_navigation_logout") . "</a></li>";

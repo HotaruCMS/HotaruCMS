@@ -39,7 +39,7 @@ class PluginSettings
 	{
 		if (!$folder) { $folder = $h->plugin->folder; }
 		
-		if ($h->isAdmin)
+		if ($h->adminPage)
 		{
 			// In Admin. Let's pull settings from the database to avoid problems when saving in Plugin Settings:
 			$sql = "SELECT plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s) LIMIT 1";

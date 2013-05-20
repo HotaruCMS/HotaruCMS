@@ -97,8 +97,7 @@ $sideBarWidth = 12 - $leftSpan;
 					<!-- FILTER TABS -->
 					<?php $h->pluginHook('theme_index_pre_main'); ?>
 					
-					<!-- MAIN --> 
-                                        <?php if (!$h->isAdmin) $h->showMessages(); ?>
+					<!-- MAIN -->                                                                                  
 					<?php if (!$h->pluginHook('theme_index_main')) { $h->template($h->pageName, 'pages'); } ?>
 
 					<div class="clear"></div>

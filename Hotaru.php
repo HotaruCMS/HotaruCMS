@@ -27,8 +27,8 @@ class Hotaru
 {
 	protected $version              = "1.5.0";  // Hotaru CMS version
 	protected $isDebug              = false;    // show db queries and page loading time
-        protected $isTest               = false;     // show page files for testing
-	protected $isAdmin              = false;    // flag to tell if we are in Admin or not
+        protected $isTest               = false;    // show page files for testing
+	protected $adminPage            = false;    // flag to tell if we are in Admin or not
 	protected $sidebars             = true;     // enable or disable the sidebars
 	protected $csrfToken            = '';       // token for CSRF
 	protected $lang                 = array();  // stores language file content
@@ -61,6 +61,7 @@ class Hotaru
 	// messages
 	protected $message              = '';       // message to display
 	protected $messageType          = 'green';  // green or red, color of message box
+        protected $messageRole          = '';       // the Role that this message will display for
 	protected $messages             = array();  // for multiple messages
 	
 	// miscellaneous
@@ -133,7 +134,7 @@ class Hotaru
 		
 		switch ($entrance) {
 			case 'admin':
-				$this->isAdmin = true;
+				$this->adminPage = true;
 				$this->lang = $lang->includeLanguagePack($this->lang, 'admin');				
 				$admin = new AdminAuth();               // new Admin object
 				$this->checkCookie();                   // check cookie reads user details
@@ -142,7 +143,7 @@ class Hotaru
 				$this->adminPages($page);               // Direct to desired Admin page
 				break;
 			default:
-				$this->isAdmin = false;
+				$this->adminPage = false;
 				$this->checkCookie();                   // log in user if cookie
 				$this->checkAccess();                   // site closed if no access permitted
 				if (!$entrance) { return false; }       // stop here if entrance not defined
@@ -202,7 +203,7 @@ class Hotaru
 	 */
 	public function header_include()
 	{
-		if ($this->isAdmin) { return false; }
+		if ($this->adminPage) { return false; }
 		
 		// include a files that match the name of the plugin folder:
 		$this->includeJs($this->plugin->folder); // folder name, filename
@@ -215,7 +216,7 @@ class Hotaru
 	 */
 	public function admin_header_include()
 	{
-		if (!$this->isAdmin) { return false; }
+		if (!$this->adminPage) { return false; }
 		
 		// include a files that match the name of the plugin folder:
 		$this->includeJs($this->plugin->folder); // folder name, filename
@@ -1179,17 +1180,17 @@ class Hotaru
 
                         $version_js = $this->includes->combineIncludes($this, 'js');
                         $version_css = $this->includes->combineIncludes($this, 'css');
-                        $this->includes->includeCombined($this, $version_js, $version_css, $this->isAdmin);                               	                        
+                        $this->includes->includeCombined($this, $version_js, $version_css, $this->adminPage);                               	                        
                         
                         echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';             
                         break;
                     case 'js': 
                         $version_js = $this->includes->combineIncludes($this, 'js');
-                        $this->includes->includeCombined($this, $version_js, 0, $this->isAdmin);                               	                        
+                        $this->includes->includeCombined($this, $version_js, 0, $this->adminPage);                               	                        
                         break;
                     case 'css': 
                         $version_css = $this->includes->combineIncludes($this, 'css');
-                        $this->includes->includeCombined($this, 0, $version_css, $this->isAdmin);
+                        $this->includes->includeCombined($this, 0, $version_css, $this->adminPage);
                         
                         // bringing this up-top with css because some inline js on plugins needs to have jquery loaded first to work
                         echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
@@ -1250,7 +1251,7 @@ class Hotaru
          
          public function getThemeCss()
 	 {
-             if ($this->isAdmin) {
+             if ($this->adminPage) {
                     echo '<link rel="stylesheet" href="' . SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css" type="text/css" />';         
              } else {
                     echo '<link rel="stylesheet" href="' . SITEURL . 'content/themes/' . THEME . 'css/style.css" type="text/css" />';
@@ -1301,6 +1302,20 @@ class Hotaru
  *
  * *********************************************************** */
  
+         /**
+          * Add a new message to the messages array for display later
+          * Default role is empty for members
+          * 
+          * @param type $msg
+          * @param type $msg_type
+          * @param type $msg_role
+          */
+         public function addMessage($msg = '', $msg_type = '', $msg_role = '')
+         {
+             $messages = new Messages();
+             $messages->addMessage($this, $msg, $msg_type, $msg_role);
+         }
+         
  
 	/**
 	 * Display a SINGLE success or failure message
@@ -1341,7 +1356,7 @@ class Hotaru
 	public function checkAnnouncements($announcement = '') 
 	{
 		$announce = new Announcements();
-		if ($this->isAdmin) {
+		if ($this->adminPage) {
 			return $announce->checkAdminAnnouncements($this);
 		} else {
 			return $announce->checkAnnouncements($this, $announcement);
@@ -1754,7 +1769,7 @@ class Hotaru
          */
         function lang($title = '')
         {
-            if (isset($this->lang[$title]) || ($this->isAdmin && $this->isDebug))
+            if (isset($this->lang[$title]) || ($this->currentUser->isAdmin && $this->isDebug))
                 return $this->lang[$title];
             else  
                 return $title;

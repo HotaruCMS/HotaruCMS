@@ -93,7 +93,7 @@ class Paginator
 	public function pageBar($h) 
 	{
 		// NOTE: FRIENDLY URLS ARE NOT USED IN PAGINATION (I tried, but there's always *something* that screws up. Nick)
-		if ($h->isAdmin == true) { $head = 'admin_index.php?'; } else { $head = 'index.php?'; }
+		if ($h->adminPage == true) { $head = 'admin_index.php?'; } else { $head = 'index.php?'; }
 		
 		// get full url from address bar
 		$host = $h->cage->server->sanitizeTags('HTTP_HOST');

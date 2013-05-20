@@ -153,7 +153,7 @@ class PageHandling
 			
 			if (!$query_args) { // no query vars - must be the home page
 				$index = ($h->home) ? $h->home : ''; 
-				return ($h->isAdmin) ? 'admin_index' : $index;
+				return ($h->adminPage) ? 'admin_index' : $index;
 			}
 
 			parse_str($query_args, $parsed_query_args); // split query vars into key->value pairs
@@ -244,7 +244,7 @@ class PageHandling
 		// if no plugin folder, provide it:
 		if (!$plugin) { $plugin = $h->plugin->folder; }
 		
-		if ($h->isAdmin) { 
+		if ($h->adminPage) { 
 			$themes = ADMIN_THEMES; 
 			$theme = ADMIN_THEME;
 			$default = $this->adminDefault;
@@ -323,7 +323,7 @@ class PageHandling
 		$page = str_replace('..', '', $page); // prevents access outside the current folder
                 $page = $page . '.php';
                 
-                if ($h->isAdmin) { 
+                if ($h->adminPage) { 
                     $folder = ADMIN_THEMES . ADMIN_THEME;
                 }
                  
@@ -437,7 +437,7 @@ class PageHandling
 	{
 		$path = $friendly_url;
 		
-		if ($h->isAdmin) { 
+		if ($h->adminPage) { 
 			$head = 'admin_index.php?';
 		} else {
 			$head = 'index.php?';

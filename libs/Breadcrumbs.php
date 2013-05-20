@@ -33,7 +33,7 @@ class Breadcrumbs
 		$output = '';		
 		
 		// Admin only:
-		if ($h->isAdmin) {
+		if ($h->adminPage) {
 			$output .= "<a href='" . $h->url(array(), 'admin') . "'>";
 			$output .= $h->lang('admin_theme_main_admin_cp') . "</a>\n";
 		} else {
