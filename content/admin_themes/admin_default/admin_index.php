@@ -82,11 +82,7 @@ if (!$result) {
                     if ($h->pageName == 'admin_login') {
                             if ($h->currentUser->loggedIn && $h->currentUser->role == 'admin') {
                                     $h->template('admin_home');
-                            } else {
-                                if ($h->currentUser->role != 'admin')  {
-                                        $h->message = $h->lang["admin_not_adminuser"];
-                                        $h->messageType = "red";
-                                }
+                            } else {                                
                                 $h->adminLoginForm();
                             }
                     } else {
