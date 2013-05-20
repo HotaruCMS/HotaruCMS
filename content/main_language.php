@@ -93,6 +93,7 @@ $lang["main_theme_login_password"] = "Password";
 $lang["main_theme_login_form_submit"] = "Submit";
 $lang["main_theme_login_forgot_password"] = "Forgotten Password";
 $lang["main_theme_navigation_logout"] = "Logout";
+$lang["main_theme_button_admin_login"] = "Admin Login";
 
 /* breadcrumbs */
 $lang['main_theme_breadcrumbs_home'] = "Home";
@@ -144,5 +145,11 @@ $lang["main_user_theme_update_form_submit"] = "Update";
 
 /* Avatar */
 $lang["main_anonymous"] = "Anonymous";
+
+/* Startup */
+$lang["main_welcome"] = "Welcome to Hotaru CMS";
+$lang["main_welcome_looking_forward"] = "We are looking forward to seeing what you create with your new website";
+$lang["main_welcome_getting_started"] = "It looks like you are just getting started with your new website";
+$lang["main_welcome_install_plugins"] = "Time to install some plugins and open your site";
 
 ?>
