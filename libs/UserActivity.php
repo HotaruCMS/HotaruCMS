@@ -38,7 +38,7 @@ class UserActivity
 	{
 		if (!$limit) { $limit = ""; } else { $limit = "LIMIT " . $limit; }
 		
-		$select = ($type == 'count') ? 'count(*)' : '*';
+		$select = ($type == 'count') ? 'count(useract_id)' : '*';
 		
 		if (!$userid)
 		{
@@ -70,7 +70,7 @@ class UserActivity
 		$prepare = array();
 		$prepare[0] = "temp";
 		
-		$sql = "SELECT count(*) FROM " . TABLE_USERACTIVITY . " WHERE ";
+		$sql = "SELECT count(useract_id) FROM " . TABLE_USERACTIVITY . " WHERE ";
 		
 		if (isset($args['userid'])) { $sql = "useract_userid = %d AND "; array_push($prepare, $args['userid']); }
 		if (isset($args['key'])) { $sql .= "useract_key = %s AND "; array_push($prepare, $args['key']); }
