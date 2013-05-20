@@ -92,6 +92,7 @@ class Messages
                                     if (!$h->adminPage) $msg = "<strong>" . ucfirst($msg_role) . "</strong>: " . $msg;
                                 } else {
                                     $msg_type = $msg_params;
+                                    $msg_role = '';
                                 }
                                 
                                 if (!$msg_role == '') {
