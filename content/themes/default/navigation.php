@@ -108,7 +108,7 @@
 											<input type="hidden" name="processlogin" value="1">
 											<input type="hidden" name="return" value="">
 											<input id="signin_submit" class="btn btn-primary" style="margin:0;width:90%;" value="<?php echo $h->lang['main_theme_login_form_submit']; ?>" tabindex="4" type="submit">
-											<a id="forgot_password_link" class="btn" style="margin:8px 0 0 12px;width:74%;" href="/index.php?page=return=/"><?php echo $h->lang["main_theme_login_forgot_password"]; ?></a>
+											<a id="forgot_password_link" class="btn" style="margin:8px 0 0 12px;width:74%;" href="/admin_index.php"><?php echo $h->lang["main_theme_login_forgot_password"]; ?></a>
 										</div>
                                                                                 <input type='hidden' name='login_attempted' value='true'>
                                                                                 <input type='hidden' name='page' value='admin_login'>

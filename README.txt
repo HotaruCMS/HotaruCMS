@@ -1,5 +1,7 @@
 HOTARU CMS
 ==========
+Version 1.5.0 RC3 - May 19th 2013
+
 Version: 1.4.2 - November 20th 2010
 
 INSTALLATION
@@ -7,7 +9,7 @@ INSTALLATION
 
 Please visit [the appropriate documentation page][1] for the most up-to-date version of these instructions.
 
-Instructions last updated: Apr 19th 2013
+Instructions last updated: May 19th 2013
 
 Requirements
 ------------

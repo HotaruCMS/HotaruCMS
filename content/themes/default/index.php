@@ -48,6 +48,13 @@ if (!$h->pluginHook('theme_index_header')) { $h->template('header'); }
 
 // check whether we have the fluid setting. If not make false
 $fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
+
+// check for span from settings. if none then make default of 9
+$leftSpan = isset($h->vars['theme_settings']['leftSpan']) ? $h->vars['theme_settings']['leftSpan'] : 9;
+
+$width = ($h->sidebars) ? $leftSpan : 12;
+$sideBarWidth = 12 - $leftSpan;
+
 ?>
 
 <body>
@@ -75,8 +82,7 @@ $fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
                 </div>
 
 		<div id="content">
-
-			<?php $width = ($h->sidebars) ? '9' : '12'; ?>
+			
 			<div id="main_container" class="span<?php echo $width; ?>">
 				<div id="main">
 
@@ -91,7 +97,8 @@ $fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
 					<!-- FILTER TABS -->
 					<?php $h->pluginHook('theme_index_pre_main'); ?>
 					
-					<!-- MAIN -->                                        
+					<!-- MAIN --> 
+                                        <?php $h->showMessages(); ?>
 					<?php if (!$h->pluginHook('theme_index_main')) { $h->template($h->pageName, 'pages'); } ?>
 
 					<div class="clear"></div>
@@ -100,7 +107,7 @@ $fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
 
 			<!-- SIDEBAR -->
 			<?php if ($h->sidebars) { ?>
-                            <div class="span3">
+                            <div class="span<?php echo $sideBarWidth; ?>">
                             <?php if (!$h->pluginHook('theme_index_sidebar')) { $h->template('sidebar'); } ?>					
                             </div>
                         <?php } ?>

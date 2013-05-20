@@ -7,3 +7,4 @@ nbproject/private/private.xml
 nbproject/project.xml
 
 .htaccess
+/cache/debug_logs/

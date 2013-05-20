@@ -37,6 +37,29 @@
 
 <?php $h->pluginHook('plugins_top'); ?>
 
+    <ul class="nav nav-tabs" id="Admin_Plugins_Tab">
+        <li class="active"><a href="#home" data-toggle="tab">Install</a></li>        
+        <li><a href="#search" data-toggle="tab">Search</a></li>
+        <li><a href="#help" data-toggle="tab">Help</a></li>
+    </ul>
+    
+    <div class="tab-content">
+        <div class="tab-pane" id="help">
+            
+            <?php $h->render('plugin_management_help'); ?>
+            
+        </div>
+        
+        <div class="tab-pane" id="search">
+            
+            <?php $h->render('plugin_search'); ?>
+            
+        </div>
+   
+    
+        <div class="active tab-pane" id="home">
+        
+    
 <table>
 <tr class='table_a'><td colspan=3>
 	<?php echo $h->lang["admin_theme_plugins_installed"]; ?>
@@ -61,14 +84,7 @@
 	    <?php echo $h->lang["admin_theme_plugins_uninstall"]; ?>
             
             
-            <div class="plugin_management_right">
-                
-                <a href="<?php echo SITEURL ?>admin_index.php?page=plugin_search">
-                    <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/search.png' alt="">
-                    <?php echo $h->lang["admin_theme_search"]; ?>
-                </a>
-                
-                 &nbsp;&nbsp;
+            <div class="plugin_management_right">                                               
                 <a href="<?php echo SITEURL ?>admin_index.php?page=plugin_management&action=version_check">
                     <img src='<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/update_16.png' alt="">
                     <?php echo $h->lang["admin_theme_check_latest_plugin_versions"]; ?>
@@ -176,6 +192,7 @@
 </td></tr>
 
 
+
 <?php
 	$the_plugins = $h->vars['uninstalled_plugins']; // don't remove
 	$per_column = count($the_plugins)/3;
@@ -235,11 +252,8 @@
 
 
 </div>
+        
+        </div>
+         </div>
+
 <div class="clear"></div>
-<div id="plugin_management_notice" class="info_box gray_box" style="margin-top: 2.0em";>
-	<p class="info_header"><?php echo $h->lang["admin_theme_plugins_guide"]; ?></p>
-	&raquo; <?php echo $h->lang["admin_theme_plugins_guide1"]; ?><br />
-	&raquo; <?php echo $h->lang["admin_theme_plugins_guide2"]; ?><br />
-	&raquo; <?php echo $h->lang["admin_theme_plugins_guide3"]; ?><br />
-	&raquo; <?php echo $h->lang["admin_theme_plugins_guide4"]; ?><br />
-</div>
