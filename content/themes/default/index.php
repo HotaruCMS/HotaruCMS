@@ -98,7 +98,7 @@ $sideBarWidth = 12 - $leftSpan;
 					<?php $h->pluginHook('theme_index_pre_main'); ?>
 					
 					<!-- MAIN --> 
-                                        <?php $h->showMessages(); ?>
+                                        <?php if (!$h->isAdmin) $h->showMessages(); ?>
 					<?php if (!$h->pluginHook('theme_index_main')) { $h->template($h->pageName, 'pages'); } ?>
 
 					<div class="clear"></div>
