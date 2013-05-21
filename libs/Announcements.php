@@ -38,7 +38,7 @@ class Announcements
 		if (SITE_OPEN == "false") {
 			array_push(
 				$announcements, 
-				$h->lang['main_announcement_site_closed']
+				$h->lang('main_announcement_site_closed')
 			);
 		}
 		
@@ -46,13 +46,13 @@ class Announcements
 		if (!$h->numActivePlugins()) {
 			array_push(
 				$announcements, 
-				$h->lang['main_announcement_plugins_disabled']
+				$h->lang('main_announcement_plugins_disabled')
 			);
                         if (SITE_OPEN) { $h->pageName = 'welcome'; $h->pageTitle = 'Welcome'; }
 		}
 		
 		// if using the announcement parameter, then add to non-admin pages only:
-		if ($announcement && !$h->isAdmin) {
+		if ($announcement && !$h->adminPage) {
 			array_push($announcements, $announcement);
 		}
 		
@@ -91,33 +91,33 @@ class Announcements
 		// Check if install file has been deleted
 		$filename = INSTALL . 'install.php';
 		if (file_exists($filename)) {
-			array_push($announcements, $h->lang['admin_announcement_delete_install']);
+			array_push($announcements, $h->lang('admin_announcement_delete_install'));
 		}
 		
 		// Check if install file has not been run
                 $hotaru_version = $h->miscdata('hotaru_version');
 		if (version_compare($h->version, $hotaru_version, '>')) {
-			array_push($announcements, $h->lang['admin_announcement_run_install']);
+			array_push($announcements, $h->lang('admin_announcement_run_install'));
 		}
 		
 		// Site is currently undergoing maintenance
 		if (SITE_OPEN == "false") {
-			array_push($announcements, $h->lang['admin_announcement_site_closed']);
+			array_push($announcements, $h->lang('admin_announcement_site_closed'));
 		}
 		
 		// Please enter a site email address
 		if (SITE_EMAIL == "email@example.com") {
-			array_push($announcements, $h->lang['admin_announcement_change_site_email']);    
+			array_push($announcements, $h->lang('admin_announcement_change_site_email'));    
 		} 
 		
 		// "Go to Plugin Management to enable some plugins"
 		if (!$h->numActivePlugins()) {
-			array_push($announcements, $h->lang['admin_announcement_plugins_disabled']);                        
+			array_push($announcements, $h->lang('admin_announcement_plugins_disabled'));                        
 		}
                 
                 // "Don't forget - debug mode is on"
 		if ($h->isDebug) {
-			array_push($announcements, $h->lang['admin_announcement_debug_mode_on']);    
+			array_push($announcements, $h->lang('admin_announcement_debug_mode_on'));    
 		}
 		
 		// Plugins can add announcements with this:

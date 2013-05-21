@@ -29,7 +29,7 @@ if(file_exists('config/settings.php') ) {
 	require_once('config/settings.php');
 	require_once('Hotaru.php');
 	$h = new Hotaru();
-	$h->start('main');
+        $h->start('main');
 } else {
         	
 	if(file_exists('install/index.php') ) {

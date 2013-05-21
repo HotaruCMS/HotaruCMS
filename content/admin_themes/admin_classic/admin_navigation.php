@@ -36,15 +36,15 @@
 			}
 		} ?>
 	
-	<li><a href="<?php echo SITEURL; ?>"><?php echo $h->lang["admin_theme_navigation_home"]; ?></a></li>
+	<li><a href="<?php echo SITEURL; ?>"><?php echo $h->lang("admin_theme_navigation_home"); ?></a></li>
 	<?php $h->pluginHook('navigation'); ?>
 	<?php 
 		if (!$h->isActive('signin')) { 
 			if ($h->currentUser->loggedIn == true) { 
-				echo "<li><a id='navigation_active' href='" . $h->url(array(), 'admin') . "'>" . $h->lang["admin_theme_navigation_admin"] . "</a></li>"; 
-				echo "<li><a href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang["admin_theme_navigation_logout"] . "</a></li>";
+				echo "<li><a id='navigation_active' href='" . $h->url(array(), 'admin') . "'>" . $h->lang("admin_theme_navigation_admin") . "</a></li>"; 
+				echo "<li><a href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang("admin_theme_navigation_logout") . "</a></li>";
 			} else { 
-				echo "<li><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["admin_theme_navigation_login"] . "</a></li>"; 
+				echo "<li><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang("admin_theme_navigation_login") . "</a></li>"; 
 			}
 		} else {
 			$h->pluginHook('navigation_users'); // ensures login/logout/register are last.

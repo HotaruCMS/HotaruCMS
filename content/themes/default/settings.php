@@ -85,10 +85,10 @@ if (!$theme_settings) {
 <br />
     <div class="form-actions">
         <input type='hidden' name='submitted' value='true' />
-        <input type='submit' class="btn btn-primary"value='<?php echo $h->lang["main_form_save"]; ?>' />
+        <input type='submit' class="btn btn-primary"value='<?php echo $h->lang("main_form_save"); ?>' />
         <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
     </div>
 </form>
  
 <br />
-<a href="<?php echo BASEURL; ?>admin_index.php?page=theme_settings&amp;theme=<?php echo $vTheme; ?>&amp;reset=true"><?php echo $h->lang["admin_theme_theme_revert_settings"]; ?></a>
+<a href="<?php echo BASEURL; ?>admin_index.php?page=theme_settings&amp;theme=<?php echo $vTheme; ?>&amp;reset=true"><?php echo $h->lang("admin_theme_theme_revert_settings"); ?></a>

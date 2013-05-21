@@ -27,7 +27,7 @@
  */
 
 if ($h->vars['theme_settings_csrf_error']) { 
-	$h->showMessage($h->lang['error_csrf'], 'red'); return false;
+	$h->showMessage($h->lang('error_csrf'), 'red'); return false;
 }
 
 $theme = $h->vars['settings_theme'];    // theme folder name
@@ -55,10 +55,10 @@ $meta = $h->readThemeMeta($theme);
                         
                         if ($theme == rtrim(THEME, '/')) {
 				$span = "current";
-				$instruct = $h->lang['admin_theme_theme_activate_current'];
+				$instruct = $h->lang('admin_theme_theme_activate_current');
 			} else {
 				$span = "activate btn btn-success";
-				$instruct = $h->lang['admin_theme_theme_activate'];
+				$instruct = $h->lang('admin_theme_theme_activate');
 			}
 
 			echo '<div id="admin_theme_theme_activate" class="power_on" name="'. $theme .'">' .
@@ -81,7 +81,7 @@ $meta = $h->readThemeMeta($theme);
                             }
 
                         } else {
-                            print $h->lang['admin_theme_theme_no_screenshots'];
+                            print $h->lang('admin_theme_theme_no_screenshots');
                         }
                         echo "</div>";
                     
@@ -92,7 +92,7 @@ $meta = $h->readThemeMeta($theme);
                        if (file_exists(THEMES . $theme . '/settings.php')) {
                                 require_once(THEMES . $theme . '/settings.php');
                         } else {
-                                echo $h->lang['admin_theme_theme_no_settings'];
+                                echo $h->lang('admin_theme_theme_no_settings');
                         }
                     echo '</div>';
                   
@@ -118,7 +118,7 @@ $meta = $h->readThemeMeta($theme);
 				}
 				echo "<br /><br />";				
 			} else {
-				echo $h->lang['admin_theme_theme_no_about'];
+				echo $h->lang('admin_theme_theme_no_about');
 			}											                                                
                         
                     echo '</div>';
@@ -131,7 +131,7 @@ $meta = $h->readThemeMeta($theme);
 		else 
 		{
 	?>
-		<h3><?php echo $h->lang["admin_theme_theme_settings"]; ?></h3>
+		<h3><?php echo $h->lang("admin_theme_theme_settings"); ?></h3>
 		<ul id="plugin_settings_list">
 			<?php 
 				$themes = $h->getFiles(THEMES, array('404error.php'));

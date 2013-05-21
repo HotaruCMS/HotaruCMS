@@ -30,7 +30,7 @@
 
 <?php $h->pluginHook('footer'); ?>
 
-<p><a href="http://hotarucms.org" title='<?php echo $h->lang["main_theme_footer_hotaru_link"]; ?>'><img src='<?php echo SITEURL; ?>content/themes/<?php echo THEME; ?>images/hotarucms.png' width='80' height='15' alt='<?php echo $h->lang["main_theme_footer_hotaru_link"]; ?>' /></a></p>
+<p><a href="http://hotarucms.org" title='<?php echo $h->lang("main_theme_footer_hotaru_link"); ?>'><img src='<?php echo SITEURL; ?>content/themes/<?php echo THEME; ?>images/hotarucms.png' width='80' height='15' alt='<?php echo $h->lang("main_theme_footer_hotaru_link"); ?>' /></a></p>
 
 <?php $h->doIncludes('js'); ?>
 

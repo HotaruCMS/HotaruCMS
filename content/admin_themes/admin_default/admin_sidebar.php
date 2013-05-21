@@ -46,12 +46,12 @@
             <hr style="margin:10px 0;"/>
 
 	
-        <li><a href="<?php echo $h->url(array(), 'admin'); ?>"><i class="icon-home"></i> <?php echo $h->lang["admin_theme_navigation_home"]; ?></a></li>
+        <li><a href="<?php echo $h->url(array(), 'admin'); ?>"><i class="icon-home"></i> <?php echo $h->lang("admin_theme_navigation_home"); ?></a></li>
 	
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=settings"><i class="icon-wrench"></i> <?php echo $h->lang["admin_theme_settings"]; ?></a></li>
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance"><i class="icon-pencil"></i> <?php echo $h->lang["admin_theme_maintenance"]; ?></a></li>
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=blocked"><i class="icon-flag"></i> <?php echo $h->lang["admin_theme_blocked_list"]; ?></a></li>
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_management"><i class="icon-check"></i> <?php echo $h->lang["admin_theme_plugins"]; ?></a></li>
+	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=settings"><i class="icon-wrench"></i> <?php echo $h->lang("admin_theme_settings"); ?></a></li>
+	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance"><i class="icon-pencil"></i> <?php echo $h->lang("admin_theme_maintenance"); ?></a></li>
+	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=blocked"><i class="icon-flag"></i> <?php echo $h->lang("admin_theme_blocked_list"); ?></a></li>
+	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_management"><i class="icon-check"></i> <?php echo $h->lang("admin_theme_plugins"); ?></a></li>
 	
         <?php 
         $pluginFunc = new PluginFunctions();
@@ -64,7 +64,7 @@
         
         <?php
         if ($h->isActive('user_manager')) {
-            echo '<li class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_users_list">' . $h->lang["admin_theme_users"];
+            echo '<li class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_users_list">' . $h->lang("admin_theme_users");
                 echo '<div id="admin_users_list" class="collapse out">';  
                     echo '<ul id="users_list">';
                     
@@ -83,7 +83,7 @@
         
         <?php
         if ($h->isActive('post_manager')) {
-            echo '<li class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_posts_list">' . $h->lang["admin_theme_posts"];
+            echo '<li class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_posts_list">' . $h->lang("admin_theme_posts");
                 echo '<div id="admin_posts_list" class="collapse out">';  
                     echo '<ul id="posts_list">';
                     
@@ -103,7 +103,7 @@
         
         <?php $pluginsCount = ($sb_links) ? count($sb_links) : 0; ?>
 
-        <li class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_plugins_list"><?php echo $h->lang["admin_theme_plugin_settings"]; ?>
+        <li class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_plugins_list"><?php echo $h->lang("admin_theme_plugin_settings"); ?>
             &nbsp;&nbsp;<span class="badge badge-info"><?php echo $pluginsCount; ?></span>
 
             <div id="admin_plugins_list" class="collapse out">    
@@ -125,7 +125,7 @@
         <!-- Themes -->	
         <?php $themes = $h->getFiles(THEMES, array('404error.php', 'pages')); ?>
         <?php $themesCount = ($themes) ? count($themes) : 0; ?>
-        <li class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#themes_list"><?php echo $h->lang["admin_theme_theme_settings"]; ?>
+        <li class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#themes_list"><?php echo $h->lang("admin_theme_theme_settings"); ?>
             &nbsp;&nbsp;<span class="badge badge-info"><?php echo $themesCount; ?></span>
             <div id="themes_list" class="collapse out">
                 <ul id="plugin_settings_list">

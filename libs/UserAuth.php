@@ -204,7 +204,7 @@ class UserAuth extends UserBase
 	{
 		if (!$this->name)
 		{ 
-			echo $h->lang['main_userbase_cookie_error'];
+			echo $h->lang('main_userbase_cookie_error');
 			return false;
 		} else {
 			$strCookie=base64_encode(
@@ -306,16 +306,16 @@ class UserAuth extends UserBase
 		
 			// check CSRF key
 			if (!$h->csrf()) {
-				$h->messages[$h->lang['error_csrf']] = 'red';
+				$h->messages[$h->lang('error_csrf')] = 'red';
 				$error = 1;
 			}
 			
 			$username_check = $h->cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
 			if (!$username_check) {
-				$h->messages[$h->lang['main_user_account_update_username_error']] = 'red';
+				$h->messages[$h->lang('main_user_account_update_username_error')] = 'red';
 				$error = 1;
 			} elseif($h->nameExists($username_check, '', $viewee->id) || $h->isBlocked('user', $username_check)) {
-				$h->messages[$h->lang['main_user_account_update_username_exists']] = 'red';
+				$h->messages[$h->lang('main_user_account_update_username_exists')] = 'red';
 				$error = 1;
 			} else {
 				//success
@@ -324,10 +324,10 @@ class UserAuth extends UserBase
 			
 			$email_check = $h->cage->post->testEmail('email');
 			if (!$email_check) {
-				$h->messages[$h->lang['main_user_account_update_email_error']] = 'red';
+				$h->messages[$h->lang('main_user_account_update_email_error')] = 'red';
 				$error = 1;
 			} elseif($h->emailExists($email_check, '', $viewee->id) || $h->isBlocked('email', $email_check)) {
-				$h->messages[$h->lang['main_user_account_update_email_exists']] = 'red';
+				$h->messages[$h->lang('main_user_account_update_email_exists')] = 'red';
 				$error = 1;
 			} else {
 				//success
@@ -350,7 +350,7 @@ class UserAuth extends UserBase
 					if ($role_check == 'deleted') { 
 						$h->deleteUser($viewee->id); 
 						$checks['username_check'] = 'deleted';
-						$h->message = $h->lang["users_account_deleted"];
+						$h->message = $h->lang("users_account_deleted");
 						$h->messageType = 'red';
 						return $checks; // This will then show a red "deleted" notice
 					}
@@ -381,10 +381,10 @@ class UserAuth extends UserBase
 				$h->currentUser->getUser($h, $h->currentUser->id, '', true);    // re-read the database record to get updated info
 				$h->currentUser->setCookie($h, true);            // create a new, updated cookie
 				}
-				$h->messages[$h->lang['main_user_account_update_success']] = 'green';
+				$h->messages[$h->lang('main_user_account_update_success')] = 'green';
 			} else {
 				//fail
-				$h->messages[$h->lang["main_user_account_update_unexpected_error"]] = 'red';
+				$h->messages[$h->lang("main_user_account_update_unexpected_error")] = 'red';
 			}
 		} else {
 			// error must = 1 so fall through and display the form again
@@ -419,7 +419,7 @@ class UserAuth extends UserBase
 		
 			// check CSRF key
 			if (!$h->csrf()) {
-				$h->messages[$h->lang['error_csrf']] = 'red';
+				$h->messages[$h->lang('error_csrf')] = 'red';
 				$error = 1;
 			}
 			
@@ -429,7 +429,7 @@ class UserAuth extends UserBase
 			if ($this->loginCheck($h, $this->name, $password_check_old)) {
 				// safe, the old password matches the password for this user.
 			} else {
-				$h->messages[$h->lang['main_user_account_update_password_error_old']] = 'red';
+				$h->messages[$h->lang('main_user_account_update_password_error_old')] = 'red';
 				$error = 1;
 			}
 			
@@ -440,15 +440,15 @@ class UserAuth extends UserBase
 					if ($password_check_new == $password_check_new2) {
 						// safe, the two new password fields match
 					} else {
-						$h->messages[$h->lang['main_user_account_update_password_error_match']] = 'red';
+						$h->messages[$h->lang('main_user_account_update_password_error_match')] = 'red';
 						$error = 1;
 					}
 				} else {
-					$h->messages[$h->lang['main_user_account_update_password_error_new']] = 'red';
+					$h->messages[$h->lang('main_user_account_update_password_error_new')] = 'red';
 					$error = 1;
 				}
 			} else {
-				$h->messages[$h->lang['main_user_account_update_password_error_not_provided']] = 'red';
+				$h->messages[$h->lang('main_user_account_update_password_error_not_provided')] = 'red';
 				$error = 1;
 			}
 		
@@ -468,10 +468,10 @@ class UserAuth extends UserBase
 				$this->setCookie($h, false);           // delete the cookie
 				$this->getUser($h, $this->id, '', true);    // re-read the database record to get updated info
 				$this->setCookie($h, true);            // create a new, updated cookie
-				$h->messages[$h->lang['main_user_account_update_password_success']] = 'green';
+				$h->messages[$h->lang('main_user_account_update_password_success')] = 'green';
 			} else {
 				//fail
-				$h->messages[$h->lang["main_user_account_update_unexpected_error"]] = 'red';
+				$h->messages[$h->lang("main_user_account_update_unexpected_error")] = 'red';
 			}
 		} else {
 			// error must = 1 so fall through and display the form again
@@ -503,19 +503,19 @@ class UserAuth extends UserBase
 		}
 		
 		// send email
-		$subject = $h->lang['main_user_email_password_conf_subject'];
-		$body = $h->lang['main_user_email_password_conf_body_hello'] . " " . $h->getUserNameFromId($userid);
+		$subject = $h->lang('main_user_email_password_conf_subject');
+		$body = $h->lang('main_user_email_password_conf_body_hello') . " " . $h->getUserNameFromId($userid);
 		$body .= $line_break;
-		$body .= $h->lang['main_user_email_password_conf_body_welcome'];
-		$body .= $h->lang['main_user_email_password_conf_body_click'];
+		$body .= $h->lang('main_user_email_password_conf_body_welcome');
+		$body .= $h->lang('main_user_email_password_conf_body_click');
 		$body .= $line_break;
 		$body .= $url;
 		$body .= $line_break;
-		$body .= $h->lang['main_user_email_password_conf_body_no_request'];
+		$body .= $h->lang('main_user_email_password_conf_body_no_request');
 		$body .= $line_break;
-		$body .= $h->lang['main_user_email_password_conf_body_regards'];
+		$body .= $h->lang('main_user_email_password_conf_body_regards');
 		$body .= $next_line;
-		$body .= $h->lang['main_user_email_password_conf_body_sign'];
+		$body .= $h->lang('main_user_email_password_conf_body_sign');
 		$to = $email;
 		
 		$h->email($to, $subject, $body);    
@@ -555,24 +555,24 @@ class UserAuth extends UserBase
 		$username = $h->getUserNameFromId($userid);
 		
 		// send email
-		$subject = $h->lang['main_user_email_new_password_subject'];
-		$body = $h->lang['main_user_email_password_conf_body_hello'] . " " . $username;
+		$subject = $h->lang('main_user_email_new_password_subject');
+		$body = $h->lang('main_user_email_password_conf_body_hello') . " " . $username;
 		$body .= $line_break;
-		$body .= $h->lang['main_user_email_password_conf_body_requested'];
+		$body .= $h->lang('main_user_email_password_conf_body_requested');
 		$body .= $line_break;
 		$body .= $username;
 		$body .= $next_line;
 		$body .= $temp_pass;
 		$body .= $line_break;
-		$body .= $h->lang['main_user_email_password_conf_body_remember'];
+		$body .= $h->lang('main_user_email_password_conf_body_remember');
 		$body .= $line_break;
-		$body .= $h->lang['main_user_email_password_conf_body_pass_change'];
+		$body .= $h->lang('main_user_email_password_conf_body_pass_change');
 		$body .= $line_break;
 		$body .= $url; 
 		$body .= $line_break;
-		$body .= $h->lang['main_user_email_password_conf_body_regards'];
+		$body .= $h->lang('main_user_email_password_conf_body_regards');
 		$body .= $next_line;
-		$body .= $h->lang['main_user_email_password_conf_body_sign'];
+		$body .= $h->lang('main_user_email_password_conf_body_sign');
 		$to = $email;
 		
 		$h->email($to, $subject, $body);    

@@ -40,8 +40,8 @@
 			// plugin hook
 			$result = $h->pluginHook('header_meta');
 			if (!$result) { ?>
-				<meta name="description" content="<?php echo $h->lang['header_meta_description']; ?>" />
-				<meta name="keywords" content="<?php echo $h->lang['header_meta_keywords']; ?>" />
+				<meta name="description" content="<?php echo $h->lang('header_meta_description'); ?>" />
+				<meta name="keywords" content="<?php echo $h->lang('header_meta_keywords'); ?>" />
 		<?php } ?>
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	

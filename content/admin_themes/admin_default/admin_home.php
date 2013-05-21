@@ -33,10 +33,10 @@
 <!-- TITLE FOR ADMIN NEWS -->
 	<h2>
 		<a href="http://feeds2.feedburner.com/hotarucms"><img src="<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/rss_16.png" width="16" height="16" alt="rss" /></a>
-		&nbsp;<?php echo $h->lang["admin_theme_main_latest"]; ?>
+		&nbsp;<?php echo $h->lang("admin_theme_main_latest"); ?>
 	</h2>
 	
-	<h3><?php echo $h->lang["admin_theme_main_help"]; ?></h3>
+	<h3><?php echo $h->lang("admin_theme_main_help"); ?></h3>
 	
 	<!-- Feed items, number to show content for, max characters for content -->
         <div id="adminNews" style="display:none;"></div>
@@ -45,7 +45,7 @@
 	
 	<br/>
         <div class="">
-            <h2><?php //echo $h->lang["admin_theme_main_join_us"]; ?></h2>
+            <h2><?php //echo $h->lang("admin_theme_main_join_us"); ?></h2>
          </div>
 </div>
 
@@ -54,16 +54,16 @@
     <div class="well sidebar-nav">
 	
 	<ul id="site-stats" class="nav nav-list">
-            <li class="nav-header"><?php echo SITE_NAME . " " . $h->lang["admin_theme_main_stats"]; ?></li>
+            <li class="nav-header"><?php echo SITE_NAME . " " . $h->lang("admin_theme_main_stats"); ?></li>
 		<li>Hotaru CMS <?php echo $h->version; ?></li>   
                                
 		<?php                
                         $hotaru_latest_version = $h->miscdata('hotaru_latest_version');                
 			if (version_compare($hotaru_latest_version, $h->version) == 1) {
-			    //echo "<li><a href='http://hotarucms.org/forumdisplay.php?23-Download-Hotaru-CMS'>" . $h->lang['admin_theme_version_update_to'] .  $hotaru_latest_version . "</a></li>";
+			    //echo "<li><a href='http://hotarucms.org/forumdisplay.php?23-Download-Hotaru-CMS'>" . $h->lang('admin_theme_version_update_to') .  $hotaru_latest_version . "</a></li>";
                             $h->showMessage('A newer version of Hotaru CMS is available, v.' . $hotaru_latest_version . '. <a href="#">upgrade now</a>', 'alert-info');                                                 
                         } else {
-                            echo $h->lang["admin_theme_version_latest_version_installed"];
+                            echo $h->lang("admin_theme_version_latest_version_installed");
                         }
 		?>       
 

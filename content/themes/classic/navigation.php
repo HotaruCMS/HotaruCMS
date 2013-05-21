@@ -39,19 +39,17 @@
 				}
 			} ?>
 <?php if ($h->pageName == $h->home) { $status = "id='navigation_active'"; } else { $status = ""; } ?>
-<li <?php echo $status; ?>><a href="<?php echo SITEURL; ?>"><?php echo $h->lang["main_theme_navigation_home"]; ?></a></li><?php $h->pluginHook('navigation'); ?><?php 
+<li <?php echo $status; ?>><a href="<?php echo SITEURL; ?>"><?php echo $h->lang("main_theme_navigation_home"); ?></a></li><?php $h->pluginHook('navigation'); ?><?php 
 		if (!$h->isActive('signin')) { 
 		
-			if ($h->currentUser->loggedIn == true) { 
-			
-				if ($h->isAdmin) { $status = "id='navigation_active'"; } else { $status = ""; }
-				echo "<li " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_admin"] . "</a></li>";
+			if ($h->currentUser->loggedIn == true) { 							
+				echo "<li " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang("main_theme_navigation_admin") . "</a></li>";
 			
 				if ($h->pageName == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
-				echo "<li " . $status . "><a href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang["main_theme_navigation_logout"] . "</a></li>";
+				echo "<li " . $status . "><a href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang("main_theme_navigation_logout") . "</a></li>";
 			} else { 
 				if ($h->pageName == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
-				echo "<li " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_login"] . "</a></li>";
+				echo "<li " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang("main_theme_navigation_login") . "</a></li>";
 			}
 		} else {
 			$h->pluginHook('navigation_users'); // ensures login/logout/register are last.

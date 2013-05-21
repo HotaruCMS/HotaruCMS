@@ -75,7 +75,7 @@ if (!$result) {
 							$h->template('admin_home');
 						} else {
                                                     if ($h->currentUser->role != 'admin')  {
-                                                            $h->message = $h->lang["admin_not_adminuser"];
+                                                            $h->message = $h->lang("admin_not_adminuser");
                                                             $h->messageType = "red";
                                                     }
                                                     $h->adminLoginForm();

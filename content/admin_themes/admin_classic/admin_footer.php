@@ -32,7 +32,7 @@
 			$h->pluginHook('admin_footer');
 			
 			// Link to forums...
-			echo "<p>" . $h->lang["admin_theme_footer_having_trouble_vist_forums"] . "</p>";
+			echo "<p>" . $h->lang("admin_theme_footer_having_trouble_vist_forums") . "</p>";
 			
 			if ($h->isDebug) {
 				$h->showQueriesAndTime();
