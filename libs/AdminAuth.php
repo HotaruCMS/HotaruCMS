@@ -253,10 +253,7 @@ class AdminAuth
 			if (strpos(SITEURL, "localhost") !== false) {
 			     setcookie("hotaru_user", $h->currentUser->name, $month, "/");
 			     setcookie("hotaru_key", $strCookie, $month, "/");
-			} else {
-			     $parsed = parse_url(SITEURL); 
-			                
-			     // now we need a dot in front of that so cookies work across subdomains:
+			} else {			                
 			     setcookie("hotaru_user", $h->currentUser->name, $month, "/");
 			     setcookie("hotaru_key", $strCookie, $month, "/");
 			}  
