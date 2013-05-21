@@ -74,9 +74,13 @@
                     if (!$h->isActive('signin')) { 
 		
 			if ($h->currentUser->loggedIn == true) { 
-							
-				echo "<li><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang("main_theme_navigation_admin") . "</a></li>";
-			
+				
+                                if ($h->currentUser->getPermission('can_access_admin') == 'yes') {
+                                    adminNav($h);
+                                } else {
+                                    echo "<li><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang("main_theme_navigation_admin") . "</a></li>";
+                                }
+                                
 				if ($h->pageName == 'logout') { $status = "class='active'"; } else { $status = ""; }
 				echo "<li " . $status . "><a href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang("main_theme_navigation_logout") . "</a></li>";
 			} else { 
@@ -133,5 +137,34 @@
     </div>
 </div>
 
+<?php
 
+// TODO 
+// make a function that can be called in Hotaru by any themes
+// make the li list dynamic based on plugins available
+function adminNav($h)
+{
+ ?>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $h->lang("main_theme_navigation_admin"); ?> <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="<?php echo $h->url(array(), 'admin'); ?>">Home</a></li>
+              <li><a href="<?php echo $h->url(array('page' => 'plugin_management'), 'admin'); ?>">Plugins</a></li>
+              <li><a href="<?php echo $h->url(array('page' => 'maintenance'), 'admin'); ?>">Maintenance</a></li>
+              <li class="divider"></li>
+              <li class="nav-header">Plugins</li>
+              <?php if ($h->isActive('user_manager')) { ?>
+                <li><a href="<?php echo $h->url(array('page' => 'plugin_settings', 'plugin' => 'user_manager'), 'admin'); ?>">User Manager</a></li>
+              <?php  } ?>
+                <?php if ($h->isActive('post_manager')) { ?>
+                <li><a href="<?php echo $h->url(array('page' => 'plugin_settings', 'plugin' => 'post_manager'), 'admin'); ?>">Post Manager</a></li>
+              <?php  } ?>
+              <?php if ($h->isActive('category_manager')) { ?>
+                <li><a href="<?php echo $h->url(array('page' => 'plugin_settings', 'plugin' => 'category_manager'), 'admin'); ?>">Category Manager</a></li>
+              <?php  } ?>
+            </ul>
+          </li>
+<?php
+}
+?>
 
