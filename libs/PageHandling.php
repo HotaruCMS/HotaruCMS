@@ -286,6 +286,10 @@ class PageHandling
 				include_once($themes . $default . $page);
 			}
 		}
+                elseif ($h->adminPage && file_exists($themes . $theme . 'views/' . $page)) 
+                {
+                        include_once($themes . $theme . 'views/' . $page);
+                }
 		elseif ($plugin == 'pages' && file_exists(CONTENT . 'pages/' . $page))
 		{
 			include_once(CONTENT . 'pages/' . $page);
@@ -320,12 +324,12 @@ class PageHandling
 	 */
 	public function render($h, $page = '', $data = array())
 	{
+                if (!$h->adminPage) return false;
+                
 		$page = str_replace('..', '', $page); // prevents access outside the current folder
                 $page = $page . '.php';
                 
-                if ($h->adminPage) { 
-                    $folder = ADMIN_THEMES . ADMIN_THEME;
-                }
+                $folder = ADMIN_THEMES . ADMIN_THEME;                
                  
                 if (file_exists($folder . 'views/' . $page))
                 {

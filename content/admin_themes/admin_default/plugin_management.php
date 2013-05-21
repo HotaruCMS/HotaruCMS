@@ -46,7 +46,7 @@
     <div class="tab-content">
         <div class="tab-pane" id="help">
             
-            <?php $h->render('plugin_management_help'); ?>
+            <?php $h->template('plugin_management_help', 'admin'); ?>
             
         </div>
         
