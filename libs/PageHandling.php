@@ -346,6 +346,7 @@ class PageHandling
 	 */
 	public function url($h, $parameters = array(), $head = 'index')
 	{
+                $url = '';
 		if (FRIENDLY_URLS == "false") {
 		
 			if ($head == 'index') {
