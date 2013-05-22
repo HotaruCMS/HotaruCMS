@@ -57,19 +57,19 @@
 <body>
 
     <div id="wrap">       
-        <?php if ($h->currentUser->loggedIn) {
+        <?php if ($h->currentUser->accessAdmin) {
             echo $h->template('admin_navigation');
-         } 
-                  
-        $announcements = $h->checkAnnouncements();
-        if ($announcements && ($h->currentUser->getPermission('can_access_admin') == 'yes')) { 
+                           
+            $announcements = $h->checkAnnouncements();
+            if ($announcements && $h->currentUser->accessAdmin) { 
 
-            echo '<div id="announcement">';
-                    $h->pluginHook('admin_announcement_first');
-                    foreach ($announcements as $announcement) { echo $announcement . "<br/>"; }
-                    $h->pluginHook('admin_announcement_last');
-            echo '</div>';
+                echo '<div id="announcement">';
+                        $h->pluginHook('admin_announcement_first');
+                        foreach ($announcements as $announcement) { echo $announcement . "<br/>"; }
+                        $h->pluginHook('admin_announcement_last');
+                echo '</div>';
 
+             } 
          } 
         
         ?>

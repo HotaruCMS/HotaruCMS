@@ -1505,6 +1505,13 @@ class Hotaru
 		$admin = new AdminAuth();
 		$admin->adminLoginForm($this);
 	}
+        
+        
+        public function adminNav()
+        {
+                $admin = New AdminPages();
+                $admin->adminNav($this);
+        }
     
     
  /* *************************************************************

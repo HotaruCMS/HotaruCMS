@@ -80,10 +80,10 @@ if (!$result) {
             $result = $h->pluginHook('admin_theme_index_main');
             if (!$result) {
                     if ($h->pageName == 'admin_login') {
-                            if ($h->currentUser->loggedIn && $h->currentUser->role == 'admin') {
+                            if ($h->currentUser->loggedIn && $h->currentUser->accessAdmin) {
                                     $h->template('admin_home');
                             } else {                                
-                                $h->adminLoginForm();
+                                    $h->adminLoginForm();
                             }
                     } else {
                             if ($h->pageName == 'plugin_settings') {  

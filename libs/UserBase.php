@@ -29,6 +29,7 @@ class UserBase
 	protected $name         = '';
 	protected $role         = 'member';
         protected $isAdmin      = false;
+        protected $accessAdmin  = false;
 	protected $password     = 'password';
 	protected $email        = '';
 	protected $emailValid   = 0;
@@ -176,6 +177,7 @@ class UserBase
 		$this->password = $user_info->user_password;
 		$this->role = $user_info->user_role;
                 $this->idAdmin = $this->role == 'admin' ? true : false;
+                $this->accessAdmin = $this->getPermission('can_access_admin') == 'yes' ? true : false;
 		$this->email = $user_info->user_email;
 		$this->emailValid = $user_info->user_email_valid;
 		$this->ip = $user_info->user_ip;

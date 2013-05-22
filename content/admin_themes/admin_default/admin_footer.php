@@ -27,7 +27,7 @@
  */
     
 ?>
-<?php if ($h->currentUser->loggedIn) { ?>
+<?php if ($h->currentUser->accessAdmin) { ?>
 	<div id="ft" role="contentinfo">
             <div class="container">
                 <hr/>

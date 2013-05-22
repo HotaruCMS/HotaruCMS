@@ -483,12 +483,7 @@ class AdminPages
         
         
         public static function sidebarPluginsList($h, $pluginResult)
-        {
-//            if ($pluginResult){
-//                reset ($pluginResult); // reset back to first point in array                            
-//                $base = array_values($pluginResult); // remove the plugin names first                         
-//            }
-            
+        {           
             $pFuncs = new PluginFunctions();
             $base = $pFuncs::getValues($h, $pluginResult);
 
@@ -497,7 +492,6 @@ class AdminPages
                     foreach ($base as $links) {  // loop through each plugins array
                         foreach ($links as $label => $params) {  // loop through each link item
                             // Going to check the arrays first as we dont want this to break
-                            // TODO really should move this away from theme and into core, but since not many people make admin themes will leave it here for now and maybe forever
                             $linkLabel = isset($label) ? $label : '---';
                             $linkUrl = isset($params[0]) ? $params[0] : '#';
                             echo "<li><a href='" . BASEURL . $linkUrl . "'>" . $linkLabel . "</a></li>";        
@@ -510,6 +504,30 @@ class AdminPages
             
         }
         
-        
+ 
+        public function adminNav($h)
+        {
+            ?>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $h->lang("main_theme_navigation_admin"); ?> <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="<?php echo $h->url(array(), 'admin'); ?>">Home</a></li>
+                      <li><a href="<?php echo $h->url(array('page' => 'plugin_management'), 'admin'); ?>">Plugins</a></li>
+                      <li><a href="<?php echo $h->url(array('page' => 'maintenance'), 'admin'); ?>">Maintenance</a></li>
+                      <li class="divider"></li>
+                      <li class="nav-header">Plugins</li>
+                      <?php if ($h->isActive('user_manager')) { ?>
+                        <li><a href="<?php echo $h->url(array('page' => 'plugin_settings', 'plugin' => 'user_manager'), 'admin'); ?>">User Manager</a></li>
+                      <?php  } ?>
+                        <?php if ($h->isActive('post_manager')) { ?>
+                        <li><a href="<?php echo $h->url(array('page' => 'plugin_settings', 'plugin' => 'post_manager'), 'admin'); ?>">Post Manager</a></li>
+                      <?php  } ?>
+                      <?php if ($h->isActive('category_manager')) { ?>
+                        <li><a href="<?php echo $h->url(array('page' => 'plugin_settings', 'plugin' => 'category_manager'), 'admin'); ?>">Category Manager</a></li>
+                      <?php  } ?>
+                    </ul>
+                  </li>
+            <?php
+        }
 }
 ?>
