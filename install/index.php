@@ -129,7 +129,7 @@ exit;
  *
  * @return string returns the html output for the page header
  */
-function html_header()
+function html_install_header()
 {
 	global $lang;
 	global $version_number;
@@ -142,42 +142,118 @@ function html_header()
 	// Title
 	$header .= "<title>" . $lang['install_title'] . "</title>\n";
 	$header .= "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n";
-	$header .= "<META HTTP-EQUIV='Content-Type' CONTENT='text'>\n";
+	$header .= "<meta http-equiv=\"Content-Type\" content=\"text\">\n";
 	$header .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"../libs/frameworks/bootstrap/css/bootstrap.min.css\">\n";	
-	$header .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"../libs/frameworks/bootstrap/css/bootstrap-responsive.css\">\n";	
+	$header .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"../libs/frameworks/bootstrap/css/bootstrap-responsive.min.css\">\n";	
 	$header .= "<script type=\"text/javascript\" src=\"//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js\"></script>\n";	
 	$header .= "
 	<style type=\"text/css\">
 	body {
 		position: relative;
 		background-color: #fff;
-		background-image: url(../libs/frameworks/bootstrap/img/grid-18px-masked.png);
+		background-image: url(grid-18px-masked.png);
 		background-repeat: repeat-x;
 		background-position: 0 40px;
 	}
 	</style>\n";	
-	  //$header .= "<link rel='stylesheet' type='text/css' href='install_style.css'>\n";
 	$header .= "</head>\n";
 
 	// Body start
 	$header .= "<body>\n";
-	$header .= "
-	<div class=\"navbar navbar-static-top\">
-		<div class=\"navbar-inner\">
-			<div class=\"container\">
-				<a class=\"brand\" href=\"index.php\">" . $lang['admin_theme_header_hotarucms'] . "</a>
-				<ul class=\"nav\">
-					<li class=\"active\"><a href=\"index.php?step=1&action=install\">" . $lang['install_new2'] . "</a></li>
-					<li><a href=\"index.php?step=1&action=upgrade\">" . $lang['install_upgrade2'] . "</a></li>
-					<li><a href=\"../index.php\">Home</a></li>
-				</ul>
-			</div>
+	$header .= "<div class=\"navbar navbar-inverse navbar-static-top\">
+	<div class=\"navbar-inner\">
+		<div class=\"container\">
+			<button type=\"button\" class=\"btn btn-navbar\" data-toggle=\"collapse\" data-target=\".nav-collapse\">
+				<span class=\"icon-bar\"></span>
+				<span class=\"icon-bar\"></span>
+				<span class=\"icon-bar\"></span>
+			</button>
+			<a class=\"brand\" href=\"index.php\">" . $lang['admin_theme_header_hotarucms'] . "</a>
+			<ul class=\"nav\">
+				<li class=\"active\"><a href=\"index.php?step=1&action=install\">" . $lang['install_new2'] . "</a></li>
+				<li><a href=\"index.php?step=1&action=upgrade\">" . $lang['install_upgrade2'] . "</a></li>
+				<li><a href=\"instruction.html\">Readme</a></li>
+				<li><a href=\"../index.php\">Home</a></li>
+			</ul>
 		</div>
-	</div><br />\n";      
-	$header .= "<div class=\"container\">";
+	</div>\n";
+	$header .= "</div><br />\n";      
+	
+	$header .= "<div class=\"container\">\n";
 	/*
 		$header .= "
-		<div class=\"hero-unit span9\">
+		<div class=\"hero-unit span10\">
+			<!--<img align='left' src='../content/admin_themes/admin_default/images/hotaru.png' style='height:60px; width:60px;'>-->
+			<h1>" . $lang['install_title'] . "</h1>
+			<p>v." . $version_number ."</p>
+			
+			<p>
+				<a class=\"btn btn-primary btn-large\" href=\"http://forums.hotarucms.org/showthread.php?1998-Download-Hotaru-CMS-1-5-0-(Beta2)\" target=\"_blank\">
+					Learn more
+				</a>
+			</p>
+		</div>	
+		";
+	*/
+
+
+	return $header;
+}
+
+function html_upgrade_header()
+{
+	global $lang;
+	global $version_number;
+
+	$header = "<!DOCTYPE html>\n";
+	$header .= "<html lang=\"en\">\n";
+	$header .= "<head>\n";
+	$header .= "<meta http-equiv=Content-Type content='text/html; charset=UTF-8'>\n";
+
+	// Title
+	$header .= "<title>" . $lang['install_title'] . "</title>\n";
+	$header .= "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n";
+	$header .= "<meta http-equiv=\"Content-Type\" content=\"text\">\n";
+	$header .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"../libs/frameworks/bootstrap/css/bootstrap.min.css\">\n";	
+	$header .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"../libs/frameworks/bootstrap/css/bootstrap-responsive.min.css\">\n";	
+	$header .= "<script type=\"text/javascript\" src=\"//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js\"></script>\n";	
+	$header .= "
+	<style type=\"text/css\">
+	body {
+		position: relative;
+		background-color: #fff;
+		background-image: url(grid-18px-masked.png);
+		background-repeat: repeat-x;
+		background-position: 0 40px;
+	}
+	</style>\n";	
+	$header .= "</head>\n";
+
+	// Body start
+	$header .= "<body>\n";
+	$header .= "<div class=\"navbar navbar-inverse navbar-static-top\">
+	<div class=\"navbar-inner\">
+		<div class=\"container\">
+			<button type=\"button\" class=\"btn btn-navbar\" data-toggle=\"collapse\" data-target=\".nav-collapse\">
+				<span class=\"icon-bar\"></span>
+				<span class=\"icon-bar\"></span>
+				<span class=\"icon-bar\"></span>
+			</button>
+			<a class=\"brand\" href=\"index.php\">" . $lang['admin_theme_header_hotarucms'] . "</a>
+			<ul class=\"nav\">
+				<li><a href=\"index.php?step=1&action=install\">" . $lang['install_new2'] . "</a></li>
+				<li class=\"active\"><a href=\"index.php?step=1&action=upgrade\">" . $lang['install_upgrade2'] . "</a></li>
+				<li><a href=\"instruction.html\">Readme</a></li>
+				<li><a href=\"../index.php\">Home</a></li>
+			</ul>
+		</div>
+	</div>\n";
+	$header .= "</div><br />\n";      
+	
+	$header .= "<div class=\"container\">\n";
+	/*
+		$header .= "
+		<div class=\"hero-unit span10\">
 			<!--<img align='left' src='../content/admin_themes/admin_default/images/hotaru.png' style='height:60px; width:60px;'>-->
 			<h1>" . $lang['install_title'] . "</h1>
 			<p>v." . $version_number ."</p>
@@ -211,7 +287,7 @@ function html_footer()
 	$footer = "<div class='clearfix'></div>\n"; // clear floats
 	
 	$footer .= "<hr /><footer>\n";
-	$footer .= "<p>&copy; 2013 " . $lang['admin_theme_header_hotarucms'] . " v." . $version_number ."</p>";
+	$footer .= "<p>&copy; " . date('Y') . " " . $lang['admin_theme_header_hotarucms'] . " v." . $version_number ."</p>";
 	$footer .= "</footer>";
 	$footer .= "<p>" . $lang['install_trouble'] . "</p>";
 
@@ -232,24 +308,21 @@ function installation_welcome()
 {
 	global $lang;
 
-	echo html_header();
+	echo html_install_header();
 
 	// Step content
 	echo "
-	<legend>" . $lang['install_step0'] . "</legend> 
-	<span class=\"text-info\">" . $lang['install_step0_welcome'] . " <br />
-	" . $lang['install_step0_select'] . "</span>\n";
-
-	// Splash image
-	echo "<img align=\"center\" src=\"hotarucms_splash.jpg\" style=\"height:170px; margin:50px 0;\">";
-
-	// Step content
-	echo "
-	<div class=\"form-actions span6\">
-		<a class=\"btn btn-large btn-primary\" href=\"index.php?step=1&action=install\">" . $lang['install_new'] . "</a>
-		<a class=\"btn btn-large\" href=\"index.php?step=1&action=upgrade\">" . $lang['install_upgrade'] . "</a>
-	</div>";	
-
+	<div class=\"hero-unit\">
+		<!--<img align='left' src='../content/admin_themes/admin_default/images/hotaru.png' style='height:60px; width:60px;'>-->
+		<h1>" . $lang['install_step0'] . "</h1>
+		<p class=\"text-info\">" . $lang['install_step0_welcome'] . "<br /> " . $lang['install_step0_select'] . "</p>
+		<img align=\"center\" src=\"hotarucms_splash.jpg\" class=\"img-polaroid\" style=\"height:170px; margin:50px 0;\">
+		<p class=\"text-center\">
+			<a class=\"btn btn-primary btn-large\" href=\"index.php?step=1&action=install\">" . $lang['install_new'] . "</a>
+			<a class=\"btn btn-large\" href=\"index.php?step=1&action=upgrade\">" . $lang['install_upgrade'] . "</a>
+		</p>
+	</div>";
+		
 	// Next button
 	//echo "<div class='next button''><a href='index.php?step=1'>" . $lang['install_next'] . "</a></div>\n";
 
@@ -374,7 +447,7 @@ function database_setup() {
 	if ($settings_file_writeable) {
 	    global $lang;
 
-	    echo html_header();
+	    echo html_install_header();
 
 	    // Step title
 	    echo "<legend>" . $lang['install_step1'] . "</legend>\n";
@@ -479,7 +552,7 @@ function database_setup_manual()
 {
 	global $lang;
 
-	echo html_header();
+	echo html_install_header();
 	
 	// Step title
 	echo "<legend>" . $lang['install_step1'] . "</legend>\n";
@@ -547,7 +620,7 @@ function database_creation($h)
 	$delete = $cage->get->getAlpha('del');        // Confirm delete.
 	$show_next = false;
 
-	echo html_header();
+	echo html_install_header();
 	
 	// Step title
 	echo "<legend>" . $lang['install_step2'] . "</legend>\n";
@@ -666,7 +739,7 @@ function register_admin()
 	$h  = new Hotaru(); // overwrites current global with fully initialized Hotaru object
 
 
-	echo html_header();
+	echo html_install_header();
 
 	// Step title
 	echo "<legend>" . $lang['install_step3'] . "</legend>\n";
@@ -841,7 +914,7 @@ function installation_complete()
 		$systeminfo->hotaru_feedback($h); 
 	}
 
-	echo html_header();
+	echo html_install_header();
 
 	// Step title
 	echo "<legend>" . $lang['install_step4'] . "</legend>\n";
@@ -916,7 +989,7 @@ function upgrade_plugins()
 	global $lang;
 	global $cage;
 	$h = new Hotaru();
-	echo html_header();
+	echo html_upgrade_header();
 
 	// Step title
 	echo "<legend>" . $lang['upgrade_step3'] . "</legend>\n";
@@ -937,7 +1010,7 @@ function upgrade_plugins()
 
 	echo "<div class='well'>" . $lang['upgrade_step3_instructions'] . "</div>\n";
 	
-	echo "<br/>" . $lang['upgrade_step3_go_play'] . "</div><br/>\n";
+	echo "<br/>" . $lang['upgrade_step3_go_play'] . "<br/><br/>\n";
 
 	// Previous/Next buttons
 	echo "<a class=\"btn\" href='index.php?step=2&action=upgrade'>" . $lang['install_back'] . "</a>\n";
