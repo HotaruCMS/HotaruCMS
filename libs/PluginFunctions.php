@@ -186,7 +186,7 @@ class PluginFunctions
 	public function numActivePlugins($h)
 	{
                 if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
-                    $enabled = $h->db->get_var($h->db->prepare("SELECT count(*) FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d", 1));   
+                    $enabled = $h->db->get_var($h->db->prepare("SELECT count(plugin_id) FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d", 1));   
                 } else {
                     $enabled = models\Plugins::count_by_plugin_enabled(1);
                 }

@@ -33,10 +33,11 @@
 <?php //echo $h->lang("admin_theme_login_instructions"); ?>
 
 <div id ="login_form">
+    <center>
+
     <form name='login_form' action='<?php echo SITEURL; ?>admin_index.php' method='post'>
-
-	
-
+        <h3>Admin Login</h3>
+        
 	<table>
 		<tr>
 		<td><?php echo $h->lang("admin_theme_login_username"); ?>&nbsp; </td>
@@ -56,6 +57,8 @@
 	<input type='hidden' name='page' value='admin_login'>
 	<input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
     </form>
+        
+        <p><a href="<?php echo SITEURL; ?>">Back to Site</a></p>
 
     <a href="#" class="forgot_password"><?php echo $h->lang("admin_theme_login_forgot_password"); ?></a>
  </div>
@@ -74,3 +77,4 @@
 <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
 	<?php echo $h->lang('admin_theme_login_forgot_password_submit_instruct_2'); ?>
 </form>
+</center>

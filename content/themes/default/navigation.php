@@ -74,14 +74,18 @@
                     if (!$h->isActive('signin')) { 
 		
 			if ($h->currentUser->loggedIn == true) { 
-							
-				echo "<li><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang("main_theme_navigation_admin") . "</a></li>";
-			
+				
+                                if ($h->currentUser->getPermission('can_access_admin') == 'yes') {
+                                    $h->adminNav();
+                                } else {
+                                    echo "<li><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang("main_theme_navigation_admin") . "</a></li>";
+                                }
+                                
 				if ($h->pageName == 'logout') { $status = "class='active'"; } else { $status = ""; }
 				echo "<li " . $status . "><a href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang("main_theme_navigation_logout") . "</a></li>";
 			} else { 
 				if ($h->pageName == 'login') { $status = "class='active'"; } else { $status = ""; }
-				echo "<li class='hidden-desktop' " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang("main_theme_navigation_login") . "</a></li>";
+				echo "<li class='hidden-desktop' " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang("main_theme_navigation_admin") . "</a></li>";
                                 
                                 ?>
                                 
@@ -132,6 +136,3 @@
         </div>
     </div>
 </div>
-
-
-

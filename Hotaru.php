@@ -25,7 +25,7 @@
  */
 class Hotaru
 {
-	protected $version              = "1.5.0";  // Hotaru CMS version
+	protected $version              = "1.5.0.RC4";  // Hotaru CMS version
 	protected $isDebug              = false;    // show db queries and page loading time
         protected $isTest               = false;    // show page files for testing
 	protected $adminPage            = false;    // flag to tell if we are in Admin or not
@@ -232,18 +232,6 @@ class Hotaru
 		$this->template($this->plugin->folder . '_footer', $this->plugin->folder);
 	}
     
-
-	/**
-	 * Display Admin sidebar link
-	 */
-	public function admin_sidebar_plugin_settings()
-	{
-		$vars['plugin'] = $this->plugin->folder;
-		$vars['name'] = $this->plugin->name;
-		//$vars['name'] = make_name($this->plugin->folder);
-		return $vars;
-	}
-	
 	
 	/**
 	 * Display Admin settings page
@@ -1517,6 +1505,13 @@ class Hotaru
 		$admin = new AdminAuth();
 		$admin->adminLoginForm($this);
 	}
+        
+        
+        public function adminNav()
+        {
+                $admin = New AdminPages();
+                $admin->adminNav($this);
+        }
     
     
  /* *************************************************************

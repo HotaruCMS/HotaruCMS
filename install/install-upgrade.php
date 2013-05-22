@@ -72,30 +72,28 @@ exit;
 function upgrade_check($h, $old_version) {
 	global $lang;
 	
-	echo html_header();
+	echo html_upgrade_header();
 
 	// Step title
 	echo "<legend>" . $lang['upgrade_step1'] . "</legend>\n";
 	
 	// Complete Step Progress Bar
-	echo "
-	<div class=\"alert\">
-		<!-- Complete Step Progress Bar -->
+	echo "<div class=\"alert\">";
+	if ( isset($old_version) ) 
+		 echo "<strong>" . $lang['upgrade_step1_old_version'] . $old_version . "</strong>\n";
+	else 
+		echo "<strong>" . $lang['upgrade_step1_old_no_version'] . "</strong>\n";
+		
+	echo "<!-- Complete Step Progress Bar -->
 		<div class=\"progress progress-info\">
 			<div class=\"bar\" style=\"width: 33.33%\"></div>
-		</div>
-	</div>";
-
-	// Current version
-	if ( isset($old_version) )
-	    echo "<div class='well'><h4>" . $lang['upgrade_step1_old_version'] . $old_version . "</h4></div>\n";
-	else
-	    echo "<div class='well'>" . $lang['upgrade_step1_old_no_version'] . "</div>\n";
-
+		</div>";
+	
 	if ($h->version > $old_version)
-	    echo "<div class='well text-success'><h4>" . $lang['upgrade_step1_details'] . "</h4></div>\n";
+	    echo $lang['upgrade_step1_details'];
 	else
-	    echo "<div class='well'>" . $lang['upgrade_step1_current_version'] . "</div>\n";
+	    echo $lang['upgrade_step1_current_version'];
+	echo "</div>\n";
 
 	// Previous/Next buttons
 	echo "<a class='btn' href='index.php?step=0&action=upgrade'>" . $lang['install_back'] . "</a>\n";
@@ -113,22 +111,22 @@ function upgrade_complete($h)
 	global $lang;
 	global $cage;
 
-	echo html_header();
+	echo html_upgrade_header();
 	
 	// Step title
 	echo "<legend>" . $lang['upgrade_step2'] . "</legend>\n";
 	
 	// Complete Step Progress Bar
-	echo "<!-- Complete Step Progress Bar -->
-	<div class=\"progress progress-info\">
-		<div class=\"bar\" style=\"width: 66.66%\"></div>
-	</div>";
-
-	// Step content
 	echo "
 	<div class=\"alert alert-success\">
-		<h4>" . $lang['install_step4_installation_complete'] . "</h4>
+		<strong>" . $lang['install_step4_installation_complete'] . "</strong>
+		<!-- Complete Step Progress Bar -->
+		<div class=\"progress progress-success\">
+			<div class=\"bar\" style=\"width: 66.66%;\"></div>
+		</div>
 	</div>\n";
+
+	// Step content	
 	echo "
 	<div class=\"alert alert-error\">
 		" . $lang['install_step4_installation_delete'] . "

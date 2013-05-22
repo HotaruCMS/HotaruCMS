@@ -27,7 +27,7 @@
  */
     
 ?>
-
+<?php if ($h->currentUser->accessAdmin) { ?>
 	<div id="ft" role="contentinfo">
             <div class="container">
                 <hr/>
@@ -43,6 +43,7 @@
 		?>
             </div>
 	</div>
+<?php } ?>
 
 
 <?php $h->pluginHook('pre_close_body'); ?>

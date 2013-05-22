@@ -223,9 +223,7 @@ class UserAuth extends UserBase
 			if (strpos(SITEURL, "localhost") !== false) {
 				setcookie("hotaru_user", $this->name, $month, "/");
 				setcookie("hotaru_key", $strCookie, $month, "/");
-			} else {
-				//$parsed = parse_url(SITEURL); 
-				
+			} else {				
                                 /*
                                  * http://no2.php.net/setcookie
                                  * bool setcookie ( string $name [, string $value [, int $expire = 0 [, string $path [, string $domain [, bool $secure = false [, bool $httponly = false ]]]]]] )
@@ -236,7 +234,7 @@ class UserAuth extends UserBase
                                  * Older browsers still implementing the deprecated » RFC 2109 may require a leading . to match all subdomains.
                                  * Since we dont want the cookie set on one subdomain to pass to another, we call setcookie without the domain paramater :'get a cookie with "subdomain.example.net" (and not ".subdomain.example.net")'
                                  */                    
-                                //setcookie("hotaru_user", $this->name, $month, "/", $parsed['host']);
+
 				setcookie("hotaru_user", $this->name, $month, "/");
 				setcookie("hotaru_key", $strCookie, $month, "/");
 			}

@@ -141,7 +141,7 @@ class Post
                             $post = $h->db->get_row($sql);
                             $h->vars['tempPostCache'][$sql] = $post;
                     }
-                } else {
+                } else {                                       
                     $post = models\Posts::find_by_post_id($post_id);
                     // note we dont use models\Posts::($post_id); because it will throw an error if record not foound
                 }
@@ -424,7 +424,7 @@ class Post
 		if (!$user_id) { $user_id = $h->currentUser->id; }
 		
                 if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
-                    $sql = "SELECT COUNT(*) FROM " . TABLE_POSTS . " WHERE (post_status = %s || post_status = %s) AND post_author = %d AND post_type = %s";
+                    $sql = "SELECT COUNT(post_id) FROM " . TABLE_POSTS . " WHERE (post_status = %s || post_status = %s) AND post_author = %d AND post_type = %s";
                     $count = $h->db->get_var($h->db->prepare($sql, 'top', 'new', $user_id, $post_type));
                 } else {                                 
                     $count = models\Posts::count(array(
