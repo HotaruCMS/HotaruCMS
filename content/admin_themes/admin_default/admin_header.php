@@ -56,7 +56,7 @@
 
 <body>
 
-    <div id="wrap">       
+    <div id="wrap">        
         <?php if ($h->currentUser->accessAdmin) {
             echo $h->template('admin_navigation');
                            
