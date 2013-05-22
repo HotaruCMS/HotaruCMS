@@ -57,6 +57,8 @@
 	<input type='hidden' name='page' value='admin_login'>
 	<input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
     </form>
+        
+        <p><a href="<?php echo SITEURL; ?>">Back to Site</a></p>
 
     <a href="#" class="forgot_password"><?php echo $h->lang("admin_theme_login_forgot_password"); ?></a>
  </div>
