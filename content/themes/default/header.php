@@ -32,7 +32,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
 <head profile="http://gmpg.org/xfn/11">
 <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-<meta name="generator" content="Hotaru CMS <?php echo $h->version; ?>" />
+<meta name="generator" content="Hotaru CMS" />
 
 	<title><?php echo $h->getTitle(); ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
