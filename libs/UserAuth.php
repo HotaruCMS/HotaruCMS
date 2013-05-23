@@ -253,15 +253,14 @@ class UserAuth extends UserBase
 		if (strpos(SITEURL, "localhost") !== false) {
 			setcookie("hotaru_user", "", time()-3600, "/");
 			setcookie("hotaru_key", "", time()-3600, "/");
-		} else {
-			//$parsed = parse_url(SITEURL); 
-			
-			// now we need a dot in front of that so cookies are cleared across subdomains:
+		} else {		
 			setcookie("hotaru_user", "", time()-3600, "/");
 			setcookie("hotaru_key", "", time()-3600, "/");
 		}
 		
-                session_destroy(); // sessions are used in CSRF                		
+                if (session_id()) {
+                    session_destroy(); // sessions are used in CSRF
+                }
 		
 		$this->loggedIn = false;
 	}
