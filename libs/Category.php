@@ -62,13 +62,13 @@ class Category
                 } else {
                     if ($cat_id == 0 && $cat_safe_name != '') {
                             // Use safe name
-                            $category = models\Categories::first(array( 
+                            $category = models___Categories::first(array( 
                                 'select' => 'category_name',
                                 'conditions' => array('category_safe_name = ?', urlencode($cat_safe_name))
                               ));
                     } else {
                             // Use id
-                            $category = models\Categories::first(array( 
+                            $category = models___Categories::first(array( 
                                 'select' => 'category_name',
                                 'conditions' => array('category_id = ?', urlencode($cat_id))
                               ));

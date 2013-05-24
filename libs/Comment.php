@@ -86,7 +86,7 @@ class Comment
                     $num_comments = $h->db->get_var($query);
                     $h->smartCache('off'); // stop using cache		
                 } else {                                       
-                    $num_comments = models\Comments::count(array(
+                    $num_comments = models___Comments::count(array(
                         'conditions' => array('comment_post_id = ? AND comment_status = ?', $h->post->id, 'approved'))
                      );;
                 }

@@ -159,10 +159,10 @@ class UserBase
                 } else {
                     if ($userid != 0){              
                             // use userid
-                            $user_info = models\Users::find_by_user_id($userid);
+                            $user_info = models___Users::find_by_user_id($userid);
                     } elseif ($username != '') {    
                             // use username
-                            $user_info = models\Users::find('first', array(
+                            $user_info = models___Users::find('first', array(
                                 'conditions' => array('user_username=?',$username)
                                 ));
                     } else {

@@ -53,7 +53,7 @@ class PluginManagement
                                             $sql = "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
                                             $plugin_row = $h->db->get_row($h->db->prepare($sql, $plugin_details['folder']));
                                         } else {
-                                            $plugin_row = models\Plugins::first(array('conditions'=>array('plugin_folder = ?', $plugin_details['folder'])));
+                                            $plugin_row = models___Plugins::first(array('conditions'=>array('plugin_folder = ?', $plugin_details['folder'])));
                                         }
 				}
 				

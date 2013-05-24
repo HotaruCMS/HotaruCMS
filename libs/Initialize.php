@@ -266,7 +266,7 @@ class Initialize
                     $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;
                     $settings = $this->db->get_results($this->db->prepare($sql));                
                 } else {
-                    $settings = models\Settings::all(array('select' => 'settings_name, settings_value'));
+                    $settings = models___Settings::all(array('select' => 'settings_name, settings_value'));
                 }
 
                 if(!$settings) { 
