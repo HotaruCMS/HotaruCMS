@@ -8,6 +8,7 @@ $defaults['tagline'] = "Possibly the greatest site on the Internet.";
 $defaults['fullWidth'] = '0';  // must be something otherwise it wont save
 $defaults['link_color'] = 'ffcc00';
 $defaults['leftSpan'] = 9;
+$defaults['userProfile_tabs'] = false;
 
 // If the form has been submitted, save the data...
 if ($h->cage->post->getAlpha('submitted') == 'true')
@@ -39,6 +40,13 @@ if ($h->cage->post->getAlpha('submitted') == 'true')
                 $theme_settings['link_color'] = $h->cage->post->testAlnum('link_color');
         } else {
 		$error = 'Invalid color';
+	}
+        
+        // userProfile_tabs
+        if ($h->cage->post->keyExists('userProfile_tabs')) { 
+            $theme_settings['userProfile_tabs'] = 'checked';
+        } else {
+            $theme_settings['userProfile_tabs'] = '0';  // must be something otherwise it wont save
 	}
 	
 	if ($error) {
@@ -77,6 +85,8 @@ if (!$theme_settings) {
 
 <p><input type='checkbox' name='fullWidth' value='fullWidth' <?php echo $theme_settings['fullWidth']; ?>/>&nbsp;Full width UI&nbsp;&nbsp;
 
+<p><input type='checkbox' name='userProfile_tabs' value='userProfile_tabs' <?php echo $theme_settings['userProfile_tabs']; ?>/>&nbsp;Tabs on user profile&nbsp;&nbsp;
+    
 <p>Left Column Span: <input type='text' size="20" name='leftSpan' value='<?php echo $theme_settings['leftSpan']; ?>'/>
 <br/>Note: The default setting is 9, the max is 12
 </p>

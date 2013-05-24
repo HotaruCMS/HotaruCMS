@@ -33,12 +33,16 @@
 <?php
 // check whether we have the fluid setting. If not make false
 $fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
+$h->vars['theme_settings']['userProfile_tabs'] = isset($h->vars['theme_settings']['userProfile_tabs']) ? $h->vars['theme_settings']['userProfile_tabs'] : 0;
+
+
+//print_r($h->vars['theme_settings']);
 ?>
 
 <!-- Navigation Bar -->
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
-        <div class="container<?php if ($h->vars['theme_settings']['fullWidth']) echo $fluid; ?>">
+        <div class="container<?php echo $fluid; ?>">
             <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -110,7 +114,7 @@ $fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
                     </li>
 
                     <li class="current-user" data-name="profile">
-                        <?php if (isset($h->vars['user_profile_tabs']) && $h->vars['user_profile_tabs']) { ?>
+                        <?php if ($h->vars['theme_settings']['userProfile_tabs']) { ?>                        
                             <a href="<?php echo $h->url(array('user' => $h->currentUser->name . '#tab_editProfile')); ?>" class="account-nav account-nav-small">
                         <?php } else { ?>
                             <a href="<?php echo $h->url(array('page' => 'edit-profile' , 'user' => $h->currentUser->name)); ?>" class="account-nav account-nav-small">
@@ -138,7 +142,7 @@ $fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
                     <li class="divider"></li>
 
                     <li class="messages" data-name="messages">
-                        <?php if (isset($h->vars['user_profile_tabs']) && $h->vars['user_profile_tabs']) { ?>
+                        <?php if ($h->vars['theme_settings']['userProfile_tabs']) { ?>
                             <a href="<?php echo $h->url(array('user' => $h->currentUser->name . '#inbox')) ?>">
                           <?php } else { ?>
                             <a href="<?php echo $h->url(array('page'=>'inbox', 'user' => $h->currentUser->name)) ?>">
@@ -152,7 +156,7 @@ $fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
                     <li class="divider"></li>
 
                     <li>
-                        <?php if (isset($h->vars['user_profile_tabs']) && $h->vars['user_profile_tabs']) { ?>
+                        <?php if ($h->vars['theme_settings']['userProfile_tabs']) { ?>
                             <a href="<?php echo $h->url(array('user' => $h->currentUser->name . '#tab_settings')) ?>" data-nav="messages">
                          <?php } else { ?>
                             <a href="<?php echo $h->url(array('page'=>'user-settings', 'user' => $h->currentUser->name )); ?>">

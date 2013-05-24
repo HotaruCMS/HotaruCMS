@@ -62,6 +62,5 @@
         <!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico" /> -->
 	
 	<?php $h->pluginHook('header_include_raw'); ?>
-	
-        
+	        
 </head>
