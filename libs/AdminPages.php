@@ -516,6 +516,12 @@ class AdminPages
                       <li><a href="<?php echo $h->url(array('page' => 'maintenance'), 'admin'); ?>">Maintenance</a></li>
                       <li class="divider"></li>
                       <li class="nav-header">Plugins</li>
+                      <?php $h->pluginHook('adminNav_plugins'); ?>
+                      
+                      <?php // TODO
+                            // Include the following plugins in list by calling them from the plugin
+                            // after plugin has been updated for v.1.5.0
+                      ?>
                       <?php if ($h->isActive('user_manager')) { ?>
                         <li><a href="<?php echo $h->url(array('page' => 'plugin_settings', 'plugin' => 'user_manager'), 'admin'); ?>">User Manager</a></li>
                       <?php  } ?>
