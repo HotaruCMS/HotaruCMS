@@ -27,7 +27,7 @@
  */
     
 ?>
-<?php if ($h->currentUser->accessAdmin) { ?>
+<?php if ($h->currentUser->adminAccess) { ?>
 	<div id="ft" role="contentinfo">
             <div class="container">
                 <hr/>

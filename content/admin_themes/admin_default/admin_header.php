@@ -57,11 +57,11 @@
 <body>
 
     <div id="wrap">        
-        <?php if ($h->currentUser->accessAdmin) {
+        <?php if ($h->currentUser->adminAccess) {
             echo $h->template('admin_navigation');
                            
             $announcements = $h->checkAnnouncements();
-            if ($announcements && $h->currentUser->accessAdmin) { 
+            if ($announcements && $h->currentUser->adminAccess) { 
 
                 echo '<div id="announcement">';
                         $h->pluginHook('admin_announcement_first');
