@@ -86,3 +86,58 @@
 .debug { font-size: 0.8em; }
 
 #sidebar ul li { padding: 0.5em;  }
+
+#nav_usersettings {
+    background: url('../images/settings-16x16.png') no-repeat top left;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: text-top;
+}
+
+.metadata {
+    display: block;
+    font-size: 11px;
+    color: #999;
+}
+
+
+.account-nav .avatar {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.account-nav-small .content {
+    margin-left: 42px;
+}
+
+.account-nav .avatar {
+    top: 10px;
+    left: 22px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.account-nav .content {
+    line-height: 14px;
+    margin-top: 4px;
+}
+
+.account-nav {
+    min-height: 32px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-bottom: 0;
+}
+
+.visuallyhidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
